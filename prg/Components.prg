@@ -93,7 +93,7 @@ CLASS PrintSeries FROM ResourceBuilder
    METHOD SetCompras()
    METHOD SetVentas()
 
-   METHOD AddComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
+   METHOD AddComponent( oComponent )      INLINE ( aAdd( ::aComponents, oComponent ) )
 
    METHOD Resource()
       METHOD StartResource()

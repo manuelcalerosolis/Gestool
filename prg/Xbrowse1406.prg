@@ -16,7 +16,7 @@
    #endif
 #endif
 
-#define SRCCOPY      0x00CC0020
+#define SRCCOPY                 0x00CC0020
 
 #define GWL_STYLE             -16
 #define GWL_EXSTYLE           -20   // 2009-11-11
@@ -7939,7 +7939,7 @@ METHOD ToDbf( cFile, bProgress, aCols, lPrompt ) CLASS TXBrowse
    ::nRowSel   := nRowPos
    ::Refresh()
 
-   if lPrompt .and. MsgYesNo( If( FWSetLanguage() == 2, "¿ ", "" ) + ;
+   if lPrompt .and. MsgYesNo( If( FWSetLanguage() == 2, "Â¿ ", "" ) + ;
                               FWString( "View" ) + " " + cFile + " ?",;
                               FWString( "Please select" ) )
       XBrowse( cFile )

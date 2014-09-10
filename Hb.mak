@@ -28,7 +28,7 @@ EXE 				= 	Bin\GestoolHb.exe
 
 PRG            		=    	\
 Factu.prg               	\
-DialogExtend.prg           	\
+DialogExtend.prg           \
 C5Lib.prg               	\
 RpreviewC3.prg          	\
 ReportC3.prg            	\
@@ -65,7 +65,7 @@ Extage.prg              	\
 Lqdalm.prg              	\
 Pedcli.prg              	\
 Precli.prg              	\
-Satcli.prg 					\
+Satcli.prg 						\
 Factcli.prg             	\
 Facant.prg              	\
 Facrec.prg              	\
@@ -87,8 +87,8 @@ Almacen.prg             	\
 Agenda.prg              	\
 Tmov.prg                	\
 Tipart.prg              	\
-Tproyecto.prg 				\
-TpvMenu.prg 				\
+Tproyecto.prg 					\
+TpvMenu.prg 					\
 TpvMenuArticulo.prg			\
 TpvMenuOrdenes.prg 			\
 TFraPub.prg             	\
@@ -134,7 +134,7 @@ Tdelobs.prg             	\
 Tdeltarifasclientes.prg 	\
 Tankes.prg              	\
 Grpcli.prg              	\
-Atipicas.prg 				\
+Atipicas.prg 					\
 Grpfacauto.prg 				\
 Recprv.prg              	\
 Tinfgen.prg             	\
@@ -142,8 +142,8 @@ TNewInfGen.prg          	\
 TFastReportInfGen.prg   	\
 TFastVentasArticulos.prg	\
 TFastVentasClientes.prg 	\
-TFastVentasProveedores.prg 	\
-TFastProduccion.prg 		\
+TFastVentasProveedores.prg \
+TFastProduccion.prg 			\
 Titemgroup.prg          	\
 Ttikstka.prg            	\
 TStockMinimoFamilia.prg 	\
@@ -201,7 +201,7 @@ Tidxutil.prg            	\
 Tindex.prg              	\
 Stock.prg               	\
 IXbrowse.prg            	\
-Xbrowse1406.prg            	\
+Xbrowse1406.prg            \
 Autoseek.prg            	\
 Cccheck.prg             	\
 Digit.prg               	\
@@ -336,7 +336,7 @@ Fabricantes.prg         	\
 ExportaTarifas.prg      	\
 TComentarios.prg        	\
 TDetComentarios.prg     	\
-OrdenComanda.prg 			\
+OrdenComanda.prg 				\
 Fideliza.prg            	\
 TDetFideliza.prg        	\
 PlantillaXML.prg        	\
@@ -367,17 +367,17 @@ TpvPunto.prg            	\
 TpvMesa.prg             	\
 TpvSalon.prg            	\
 TScripts.prg            	\
-Cuaderno.prg 				\
+Cuaderno.prg 					\
 FacturarLineasAlbaranes.prg \
 Components.prg 				\
-TLabelGenerator.prg 		\
+TLabelGenerator.prg 			\
 TTreevie.prg            	\
 ApoloMeter.prg 				\
-xBrowse1406.prg 			\
+TGridSay.prg 					\
 
-C               =       \
-Img2pdf.c               \
-Treeview.c 				\
+C               =       	\
+Img2pdf.c               	\
+Treeview.c 						\
 
 
 OBJS            =       \
@@ -412,7 +412,7 @@ Extage.obj              \
 Lqdalm.obj              \
 Pedcli.obj              \
 Precli.obj              \
-Satcli.obj 				\
+Satcli.obj 					\
 Factcli.obj             \
 Facant.obj              \
 Facrec.obj              \
@@ -434,9 +434,9 @@ Tmov.obj                \
 Almacen.obj             \
 Agenda.obj              \
 Tipart.obj              \
-Tproyecto.obj 			\
-TpvMenu.obj				\
-TpvMenuArticulo.obj 	\
+Tproyecto.obj 				\
+TpvMenu.obj					\
+TpvMenuArticulo.obj 		\
 TpvMenuOrdenes.obj		\
 TFraPub.obj             \
 SalaVta.obj             \
@@ -577,7 +577,7 @@ Tidxutil.obj            \
 Tindex.obj              \
 Stock.obj               \
 IXbrowse.obj            \
-XBrowse1406.obj 		\
+XBrowse1406.obj 			\
 Autoseek.obj            \
 Cccheck.obj             \
 Digit.obj               \
@@ -597,7 +597,7 @@ Pdreport.obj            \
 RcolumnC3.obj           \
 Metafi32.obj            \
 Img2pdf.obj             \
-Treeview.obj 			\
+Treeview.obj 				\	
 Ean.obj                 \
 C5Lib.obj               \
 TInfseanum.obj          \
@@ -703,7 +703,7 @@ Fabricantes.obj         \
 ExportaTarifas.obj      \
 TComentarios.obj        \
 TDetComentarios.obj     \
-OrdenComanda.obj 		\
+OrdenComanda.obj 			\
 PlantillaXML.obj        \
 Fideliza.obj            \
 TDetFideliza.obj        \
@@ -736,11 +736,11 @@ TpvSalon.obj            \
 TScripts.obj            \
 Cuaderno.obj 				\
 FacturarLineasAlbaranes.obj \
-Components.obj 				\
+Components.obj 			\
 TLabelGenerator.obj 		\
 TTreevie.obj 				\
-ApoloMeter.obj 				\
-xBrowse1406.obj				\
+ApoloMeter.obj 			\
+TGridSay.obj				\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -813,7 +813,7 @@ $(OBJ)\Tipart.obj               +
 $(OBJ)\Tproyecto.obj            +
 $(OBJ)\TpvMenu.obj              +
 $(OBJ)\TpvMenuArticulo.obj      +
-$(OBJ)\TpvMenuOrdenes.obj		+
+$(OBJ)\TpvMenuOrdenes.obj			+
 $(OBJ)\TFraPub.obj              +
 $(OBJ)\SalaVta.obj              +
 $(OBJ)\Tvta.obj                 +
@@ -862,7 +862,7 @@ $(OBJ)\Webbar.obj               +
 $(OBJ)\Webmap.obj               +
 $(OBJ)\Tankes.obj               +
 $(OBJ)\Grpcli.obj               +
-$(OBJ)\Atipicas.obj 			+
+$(OBJ)\Atipicas.obj 					+
 $(OBJ)\Grpfacauto.obj           +
 $(OBJ)\Recprv.obj               +
 $(OBJ)\TInfAlm.obj              +
@@ -1084,72 +1084,73 @@ $(OBJ)\TpvPunto.obj             	+
 $(OBJ)\TpvMesa.obj              	+
 $(OBJ)\TpvSalon.obj             	+
 $(OBJ)\TScripts.obj             	+
-$(OBJ)\Cuaderno.obj 		  		+
+$(OBJ)\Cuaderno.obj 		  			+
 $(OBJ)\FacturarLineasAlbaranes.obj 	+
-$(OBJ)\Components.obj 				+
+$(OBJ)\Components.obj 					+
 $(OBJ)\TLabelGenerator.obj 			+
-$(OBJ)\TTreevie.obj 				+
-$(OBJ)\ApoloMeter.obj 				
+$(OBJ)\TTreevie.obj 						+
+$(OBJ)\ApoloMeter.obj 					+
+$(OBJ)\TGridSay.obj 						
 $<,$*
-$(FWLIB)\FiveH.lib              +
-$(FWLIB)\FiveHC.lib             +
-$(FWLIB)\Dolphin.lib            +
-$(FWLIB)\libmysql.lib           +
-$(HBLIB)\hbwin.lib 				+
-$(HBLIB)\gtwin.lib 				+ 
-$(HBLIB)\gtgui.lib 				+ 
-$(HBLIB)\hbrtl.lib 				+ 
-$(HBLIB)\hbvm.lib 				+ 
-$(HBLIB)\hblang.lib 			+
-$(HBLIB)\hbmacro.lib 			+
-$(HBLIB)\hbrdd.lib 				+ 
-$(HBLIB)\rddntx.lib 			+
-$(HBLIB)\rddcdx.lib 			+
-$(HBLIB)\rddfpt.lib 			+
-$(HBLIB)\hbsix.lib 				+ 
-$(HBLIB)\hbdebug.lib 			+
-$(HBLIB)\hbcommon.lib 			+
-$(HBLIB)\hbpp.lib 				+ 
-$(HBLIB)\hbcpage.lib 			+
-$(HBLIB)\hbcplr.lib 			+
-$(HBLIB)\hbct.lib 				+ 
-$(HBLIB)\hbpcre.lib 			+
-$(HBLIB)\xhb.lib 				+ 
-$(HBLIB)\hbziparc.lib 			+
-$(HBLIB)\hbmzip.lib 			+
-$(HBLIB)\hbzlib.lib 			+
-$(HBLIB)\minizip.lib 			+
-$(HBLIB)\png.lib 				+ 
-$(HBLIB)\hbcurl.lib 			+
-$(HBLIB)\hbusrrdd.lib 			+
-$(HBLIB)\libcurl.lib 			+
-$(IMG2PDFLIB)\Image2pdf.lib     +
-$(HBLIB)\b32\rddads.lib			+
-$(HBLIB)\ace32.lib 				+
-$(BORLANDLIB)\cw32.lib 			+ 
-$(BORLANDLIB)\uuid.lib 			+ 
+$(FWLIB)\FiveH.lib              	+
+$(FWLIB)\FiveHC.lib             	+
+$(FWLIB)\Dolphin.lib            	+
+$(FWLIB)\libmysql.lib           	+
+$(HBLIB)\hbwin.lib 					+
+$(HBLIB)\gtwin.lib 					+ 
+$(HBLIB)\gtgui.lib 					+ 
+$(HBLIB)\hbrtl.lib 					+ 
+$(HBLIB)\hbvm.lib 					+ 
+$(HBLIB)\hblang.lib 					+
+$(HBLIB)\hbmacro.lib 				+
+$(HBLIB)\hbrdd.lib 					+ 
+$(HBLIB)\rddntx.lib 					+
+$(HBLIB)\rddcdx.lib 					+
+$(HBLIB)\rddfpt.lib 					+
+$(HBLIB)\hbsix.lib 					+ 
+$(HBLIB)\hbdebug.lib 				+
+$(HBLIB)\hbcommon.lib 				+
+$(HBLIB)\hbpp.lib 					+ 
+$(HBLIB)\hbcpage.lib 				+
+$(HBLIB)\hbcplr.lib 					+
+$(HBLIB)\hbct.lib 					+ 
+$(HBLIB)\hbpcre.lib 					+
+$(HBLIB)\xhb.lib 						+ 
+$(HBLIB)\hbziparc.lib 				+
+$(HBLIB)\hbmzip.lib 					+
+$(HBLIB)\hbzlib.lib 					+
+$(HBLIB)\minizip.lib 				+
+$(HBLIB)\png.lib 						+ 
+$(HBLIB)\hbcurl.lib 					+
+$(HBLIB)\hbusrrdd.lib 				+
+$(HBLIB)\libcurl.lib 				+
+$(IMG2PDFLIB)\Image2pdf.lib     	+
+$(HBLIB)\b32\rddads.lib				+
+$(HBLIB)\ace32.lib 					+
+$(BORLANDLIB)\cw32.lib 				+ 
+$(BORLANDLIB)\uuid.lib 				+ 
 $(BORLANDLIB)\import32.lib 		+ 
-$(BORLANDLIB)\ws2_32.lib 		+ 
+$(BORLANDLIB)\ws2_32.lib 			+ 
 $(BORLANDLIB)\psdk\odbc32.lib 	+
 $(BORLANDLIB)\psdk\nddeapi.lib 	+
-$(BORLANDLIB)\psdk\iphlpapi.lib +
+$(BORLANDLIB)\psdk\iphlpapi.lib 	+
 $(BORLANDLIB)\psdk\msimg32.lib 	+
-$(BORLANDLIB)\psdk\psapi.lib 	+ 
-$(BORLANDLIB)\psdk\rasapi32.lib +
+$(BORLANDLIB)\psdk\psapi.lib 		+ 
+$(BORLANDLIB)\psdk\rasapi32.lib 	+
 $(BORLANDLIB)\psdk\gdiplus.lib 	+
 $(BORLANDLIB)\psdk\shell32.lib,
-$(RESOURCE)\GstDialog.Res       +
-$(RESOURCE)\GstTactil.Res       +
-$(RESOURCE)\GstImage1.Res       +
-$(RESOURCE)\GstImage2.Res       +
-$(RESOURCE)\GstImage3.Res       +
-$(RESOURCE)\GstImage4.Res       +
-$(RESOURCE)\GstImage5.Res       +
-$(RESOURCE)\GstImage6.Res       +
-$(RESOURCE)\GstImage7.Res       +
-$(RESOURCE)\GstImage8.Res       +
-$(RESOURCE)\GstImage9.Res       +
-$(RESOURCE)\GstImage10.Res      +
-$(RESOURCE)\GstImage11.Res      +
-$(RESOURCE)\GstImage12.Res      +
+$(RESOURCE)\GstDialog.Res       	+
+$(RESOURCE)\GstTactil.Res       	+
+$(RESOURCE)\GstImage1.Res       	+
+$(RESOURCE)\GstImage2.Res       	+
+$(RESOURCE)\GstImage3.Res       	+
+$(RESOURCE)\GstImage4.Res       	+
+$(RESOURCE)\GstImage5.Res       	+
+$(RESOURCE)\GstImage6.Res       	+
+$(RESOURCE)\GstImage7.Res       	+
+$(RESOURCE)\GstImage8.Res       	+
+$(RESOURCE)\GstImage9.Res       	+
+$(RESOURCE)\GstImage10.Res      	+
+$(RESOURCE)\GstImage11.Res      	+
+$(RESOURCE)\GstImage12.Res      	+
 |

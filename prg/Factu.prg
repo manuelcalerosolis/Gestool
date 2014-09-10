@@ -233,6 +233,10 @@ function Main( cParams )
 
    cNameVersion()
 
+#ifndef __XHARBOUR__
+   testGrid()
+#endif
+
    // Chequeamos los datos de los usuarios-------------------------------------
 
    if !TReindex():lFreeHandle()
@@ -5749,45 +5753,6 @@ Return ( lFidelity )
 
 //--------------------------------------------------------------------------//   
 
-FUNCTION Test()
-
-   ? "dbCreate"
-   dbCreate( "Test.dbf", { { "nNum", "N", 10, 0 },;
-                           { "nInc", "N", 10, 0, 8, 1 } },;
-                           "DBFCDX" )
-
-   ? "dbUseArea"
-   dbUseArea( .t., cDriver(), "Test.dbf", "Test", .f. )
-
-   if Test->( dbAppend() )
-      Test->nNum := 1
-      Test->( dbUnLock() )
-   end if
-
-   ? Test->nInc
-
-   if Test->( dbAppend() )
-      Test->nNum := 2
-      Test->( dbUnLock() ) 
-   end if
-
-   ? Test->nInc
-
-   if Test->( dbAppend() )
-      Test->nNum := 3
-      Test->( dbUnLock() )
-   end if
-
-   ? Test->nInc
-
-   Test->( dbCloseArea() )
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//
-
-#endif
-
 Static Function nDaySaas()
 
    local oReg
@@ -5823,7 +5788,7 @@ Static Function DeleteDaySaas()
    oReg:Close()
 
 Return ( nil )
-
+ 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -5835,67 +5800,74 @@ Comenzamos la parte de código que se compila para PDA--------------------------
 -------------------------------------------------------------------------------
 */
 
-Function TestMeter()
+#ifndef __XHARBOUR__
+
+Function testGrid()
 
    local oDlg
-   local oMtr
+   local oGet
+   local nGet     := 1
 
-   DEFINE DIALOG oDlg RESOURCE "XTEST"
+   DEFINE DIALOG oDlg FROM 1, 5 TO 40, 100 TITLE "GridTest" ;
+      STYLE nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
 
-   REDEFINE BUTTON ;
-      ID          IDOK ; 
-      OF          oDlg ;
-      ACTION      ( StartTestMeter( oDlg ) )
+   with object ( TGridSay():New( 1, 0, {|| "Cliente" }, oDlg, , , , , .t., .t., , , {|| GridWidth( 2, oDlg ) }, 28, .f. ) )
+   end with
 
-   ACTIVATE DIALOG oDlg CENTER
+   with object ( TGridGet():New( 1, {|| GridWidth( 2, oDlg ) }, { | u | If( PCount() == 0, nGet, nGet:= u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, 28, , , , , , , , .t. ) )
+      :bWhen      := { || ShowKeyboard() }
+   end with
+
+   with object ( TGridGet():New( 1, {|| GridWidth( 4, oDlg ) }, { | u | If( PCount() == 0, nGet, nGet:= u ) }, oDlg, {|| GridWidth( 7, oDlg ) }, 28, , , , , , , , .t. ) )
+      :bWhen      := { || ShowKeyboard() }
+   end with
+
+   oDlg:bResized  := {|| resizeGrid( oDlg ) }
+
+   ACTIVATE DIALOG oDlg CENTER ;
+      ON INIT     ( maximizeGrid( oDlg ) ) 
 
 Return nil 
 
-Static Function StartTestMeter( oDlg )
+Static Function maximizeGrid( oDlg )
 
-   local nMeter
-   local oMeter
-
-   oMeter         := TMeter():New( 0, 0, {| u | if( pCount() == 0, nMeter, nMeter := u ) }, 5, oDlg, oDlg:nWidth, 4 )
-
-   msgWait("Pausa 1", "", 1 )
-
-   oMeter:Set( 1 )
-
-   msgWait("Pausa 2", "", 2 )
-
-   oMeter:Set( 2 )
-
-   msgWait("Pausa 3", "", 3 )
-
-   oMeter:Set( 3 )
-
-   msgWait("Pausa 4", "", 4 )
-
-   oMeter:Set( 4 )
-
-   msgWait("Pausa 5", "", 5 )
-
-   oMeter:Set( 5 )
+   oDlg:Maximize()
 
 Return nil
 
-#else
+Static Function resizeGrid( oDlg )
 
-//---------------------------------------------------------------------------//
+   local o
 
-function Main()
+   for each o in oDlg:aControls
+      if ( o:ClassName() $ "TGET,TSAY" ) .and. !Empty( o:Cargo )
+         o:Move( o:nTop, GridWidth( o:Cargo[ "Left" ], oDlg ), GridWidth( o:Cargo[ "Width" ], oDlg ), o:nHeight )
+      end if
+      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY" )
+         o:ReAdjust()
+      end if
+   next
 
-   SET DATE FORMAT   "dd/mm/yyyy"
-   SET DELETED       ON
-   SET EPOCH         TO 2000
-   SET OPTIMIZE      ON
-   SET EXACT         ON
+Return nil   
 
-   msginfo("Pueba para aplicacion pda ROCIO")
+Static Function GridWidth( nCols, oDlg )
+   
+Return ( oDlg:nWidth() / 12 * nCols )
 
-Return Nil 
+Static Function ShowKeyboard()
 
-//---------------------------------------------------------------------------//
+   local cKeyboard   := GetEnv( "windir" ) + "\system32\osk.exe"
+
+   msgAlert( "ShowKeyboard")
+
+   ShellExecute( 0, "open", "tabtip.exe" ) 
+
+Return .t. 
+
+Static Function HideKeyboard()
+
+   SendMessage( FindWindow( 0, "Teclado en pantalla" ), WM_CLOSE )
+
+Return .t. 
 
 #endif

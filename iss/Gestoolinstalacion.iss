@@ -82,6 +82,7 @@ Name: "{app}\Emp00VG";  Permissions: everyone-full
 Name: "{app}\Datos";    Permissions: everyone-full
 Name: "{app}\Psion";    Permissions: everyone-full
 Name: "{app}\Harbour";  Permissions: everyone-full
+Name: "{app}\XHarbour"; Permissions: everyone-full
 Name: "{app}\Include";  Permissions: everyone-full
 Name: "{app}\Client";   Permissions: everyone-full
 Name: "{app}\Backup";   Permissions: everyone-full
@@ -174,7 +175,8 @@ Source: "c:\fw195\actualiza\psion\*.*";               DestDir: "{app}\Psion";   
 
 ; Scripts
 
-Source: "c:\fw195\gestool\harbour\harbour.exe";       DestDir: "{app}\Harbour";   Flags: ignoreversion;
+Source: "c:\fw195\gestool\bin\harbour\harbour.exe";   DestDir: "{app}\Harbour";   Flags: ignoreversion;
+Source: "c:\fw195\gestool\bin\xharbour\harbour.exe";  DestDir: "{app}\XHarbour";  Flags: ignoreversion;
 Source: "c:\fw195\gestool\include\*.*";               DestDir: "{app}\Include";   Flags: ignoreversion onlyifdoesntexist
 
 ; Firma electronica

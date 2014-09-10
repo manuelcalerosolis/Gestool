@@ -74,9 +74,11 @@ METHOD New( oWnd )
 
    ::Super:New( oWnd )
 
-   ::l2007        := .f.
+   ::bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::l2007           := .f.
 
-return Self
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -119,7 +121,7 @@ Method ReindexData( cPath )
 
    end if
 
-Return ( self )
+Return ( Self )
 
 //------------------------------------------------------------------------//
 
@@ -127,9 +129,6 @@ Method LoadData()
 
    local oBlock
    local oError
-
-   ::bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -148,11 +147,9 @@ Method LoadData()
 
       end if
 
-      ::MakeTotals()
-
    RECOVER USING oError
 
-      msgStop( "Error al establecer la configuraci髇 de columnas." + CRLF + ErrorMessage( oError ) )
+      msgStop( "Error al establecer la configuraci贸n de columnas." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -196,7 +193,7 @@ Method SaveData( lSaveBrowseState )
       end if
 
       if lSaveBrowseState
-         msgInfo( "Configuraci髇 de columnas guardada.", ::cName )
+         msgInfo( "Configuraci贸n de columnas guardada.", ::cName )
       end if
 
    end if
@@ -322,7 +319,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "Table_Selection_All_16", oMenu )
 
-   MenuAddItem( "&Quitar selecci髇", "Quita la selecci髇 de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "Table_Sql_16", oMenu )
+   MenuAddItem( "&Quitar selecci贸n", "Quita la selecci贸n de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "Table_Sql_16", oMenu )
 
    MenuAddItem()
 

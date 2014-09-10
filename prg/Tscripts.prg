@@ -369,8 +369,20 @@ METHOD CompilarFicheroScript() CLASS TScripts
 
       ferase( ::cFicheroHbr )
       
-      logwrite( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " )      
+
+#ifdef __XHARBOUR__
+
+      msgalert( FullCurDir() + "xharbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " )      
+
+      waitRun( FullCurDir() + "xharbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
+
+#else
+
+      msgalert( FullCurDir() + "harbour\harbour.exe " + valtoprg( ::cFicheroPrg ) + " /i" + FullCurDir() + "include /gh /n /p /o" + valtoprg( ::cFicheroHbr ) + " > " )      
+
       waitRun( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
+
+#endif
 
       if !file( ::cFicheroHbr )
          msgStop( "Error al compilar el fichero " + ::cFicheroHbr )

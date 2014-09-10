@@ -9,28 +9,28 @@ FWLIB 				= 	\Fwh102\Lib
 
 RESOURCE 			= 	.\Resource
 
-BORLAND 			= 	\Bcc55
+BORLAND 				= 	\Bcc55
 BORLANDLIB 			= 	\Bcc55\Lib\Psdk
 
 IMG2PDFLIB 			= 	\Img2Pdf
 
-OBJ 				= 	Obj
+OBJ 					= 	Obj
 SOURCEPRG 			= 	Prg
 
-SOURCEC 			=	C
-PPO 				= 	Ppo
+SOURCEC 				=	C
+PPO 					= 	Ppo
 
-EXE 				= 	Bin\Gestool.exe
+EXE 					= 	Bin\Gestool.exe
 
-.path.prg      		=	.\$(SOURCEPRG)
+.path.prg      	=	.\$(SOURCEPRG)
 .path.c       		=	.\$(SOURCEC)
-.path.obj      		=	.\$(OBJ)
+.path.obj      	=	.\$(OBJ)
 
-PRG            		=    	\
-Factu.prg               	\
-Font.prg                	\
-DialogExtend.prg            \
-Window.prg              	\
+PRG            	=    	\
+Factu.prg               \
+Font.prg                \
+DialogExtend.prg        \
+Window.prg              \
 Msgbar.prg 					\ 
 Menu.prg 					\
 Tmsgitem.prg 				\
@@ -111,8 +111,8 @@ Almacen.prg             	\
 Agenda.prg              	\
 Tmov.prg                	\
 Tipart.prg              	\
-Tproyecto.prg 				\
-TpvMenu.prg 				\
+Tproyecto.prg 					\
+TpvMenu.prg 					\
 TpvMenuArticulo.prg			\
 TpvMenuOrdenes.prg 			\
 TFraPub.prg             	\
@@ -159,10 +159,10 @@ Tdelobs.prg             	\
 Tdeltarifasclientes.prg 	\
 TftpC3.prg              	\
 Tftpfile.prg            	\
-ApoloMeter.prg               	\
+ApoloMeter.prg             \
 Tankes.prg              	\
 Grpcli.prg              	\
-Atipicas.prg 				\
+Atipicas.prg 					\
 Grpfacauto.prg 				\
 Recprv.prg              	\
 Tinfgen.prg             	\
@@ -170,8 +170,8 @@ TNewInfGen.prg          	\
 TFastReportInfGen.prg   	\
 TFastVentasArticulos.prg	\
 TFastVentasClientes.prg 	\
-TFastVentasProveedores.prg 	\
-TFastProduccion.prg 		\
+TFastVentasProveedores.prg \
+TFastProduccion.prg 			\
 Titemgroup.prg          	\
 Ttikstka.prg            	\
 TStockMinimoFamilia.prg 	\
@@ -374,7 +374,7 @@ Fabricantes.prg         	\
 ExportaTarifas.prg      	\
 TComentarios.prg        	\
 TDetComentarios.prg     	\
-OrdenComanda.prg 			\
+OrdenComanda.prg 				\
 IBrowse.prg             	\
 Fideliza.prg            	\
 TDetFideliza.prg        	\
@@ -394,23 +394,23 @@ Dotnetco.prg            	\
 Dotnetgr.prg            	\
 ExportaCompras.prg      	\
 SincronizaPreventa.prg  	\
-MsTable.prg             \
-TipoImpresora.prg       \
-PageIni.prg             \
-TpvTactil.prg           \
-TpvUtilidadesMesa.prg 	\
-TpvCobros.prg           \
-TpvListaTicket.prg      \
-TpvRestaurante.prg      \
-TpvPunto.prg            \
-TpvMesa.prg             \
-TpvSalon.prg            \
-TScripts.prg            \
-OutLook2010.prg         \
-Cuaderno.prg 				\
+MsTable.prg             	\
+TipoImpresora.prg       	\
+PageIni.prg             	\
+TpvTactil.prg           	\
+TpvUtilidadesMesa.prg 		\
+TpvCobros.prg           	\
+TpvListaTicket.prg      	\
+TpvRestaurante.prg      	\
+TpvPunto.prg            	\
+TpvMesa.prg             	\
+TpvSalon.prg            	\
+TScripts.prg            	\
+OutLook2010.prg         	\
+Cuaderno.prg 					\
 FacturarLineasAlbaranes.prg \
-Components.prg 			\
-TLabelGenerator.prg 	\
+Components.prg 				\
+TLabelGenerator.prg 			\
 
 C               =       \
 Metafi32.c              \
