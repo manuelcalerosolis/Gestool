@@ -490,6 +490,9 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cCodPrv",     "C", 12, 0, {|| "@!" }, "Código proveedor lineas"                 )
    ::AddField( "cNomPrv",     "C", 80, 0, {|| "@!" }, "Nombre proveedor lineas"                 )
 
+   ::AddField( "nBultos",     "N", 16, 0, {|| "" },   "Numero de bultos en líneas"              )
+   ::AddField( "cFormato",    "C",100, 0, {|| "" },   "Formato de compra/venta en líneas"       )
+
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
 
@@ -956,6 +959,9 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oSatCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oSatCliT:cTimCre, 4, 2 )
 
+                  ::oDbf:nBultos    := ::oSatCliL:nBultos
+                  ::oDbf:cFormato   := ::osatCliL:cFormato
+
                   /*
                   AÃ±adimos un nuevo registro-----------------------------------
                   */
@@ -1107,6 +1113,9 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oPreCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 4, 2 )
 
+                  ::oDbf:nBultos    := ::oPreCliL:nBultos
+                  ::oDbf:cFormato   := ::oPreCliL:cFormato
+
                   ::InsertIfValid()
 
                end if
@@ -1249,6 +1258,9 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:dFecDoc    := ::oPedCliT:dFecPed
                   ::oDbf:cHorDoc    := SubStr( ::oPedCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 4, 2 )
+
+                  ::oDbf:nBultos    := ::PedCliL:nBultos
+                  ::oDbf:cFormato   := ::PedCliL:cFormato
 
                   ::InsertIfValid()
 
@@ -1402,6 +1414,9 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
 
+                  ::oDbf:nBultos    := ::oAlbCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
+                  ::oDbf:cFormato   := ::oAlbCliL:cFormato
+
                   ::InsertIfValid()
 
                end if
@@ -1548,6 +1563,9 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oFacCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oFacCliT:cTimCre, 4, 2 )
 
+                  ::oDbf:nBultos    := ::oFacCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
+                  ::oDbf:cFormato   := ::oFacCliL:cFormato
+
                   ::InsertIfValid()
 
                end if
@@ -1690,6 +1708,9 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
                   ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
+
+                  ::oDbf:nBultos    := ::oFacRecL:nBultos * if( ::lUnidadesNegativo, -1, 1)
+                  ::oDbf:cFormato   := ::oFacRecL:cFormato
 
                   ::InsertIfValid()
 
@@ -2187,6 +2208,9 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cHorDoc    := SubStr( ::oPedPrvT:cTimChg, 1, 2 )
                      ::oDbf:cMinDoc    := SubStr( ::oPedPrvT:cTimChg, 4, 2 )
 
+                     ::oDbf:nBultos    := ::oPedPrvL:nBultos   
+                     ::oDbf:cFormtao   := ::oPedPrvL:cFormato
+
                   ::InsertIfValid()
 
                end if
@@ -2326,6 +2350,9 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oAlbPrvT:cTimChg, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oAlbPrvT:cTimChg, 4, 2 )
 
+                  ::oDbf:nBultos    := ::oAlbPrvL:nBultos
+                  ::oDbf:cFOrmato   := ::oAlbPrvL:cFOrmato
+
                   ::InsertIfValid()
                   
                end if
@@ -2458,6 +2485,9 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oFacPrvT:cTimChg, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oFacPrvT:cTimChg, 4, 2 )
 
+                  ::oDbf:nBultos    := ::oFacPrvL:nBultos
+                  ::oDbf:cFormato   := ::oFacPrvL:cFormato
+
                   ::InsertIfValid()
 
                end if
@@ -2588,6 +2618,9 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:dFecDoc    := ::oRctPrvT:dFecFac
                   ::oDbf:cHorDoc    := SubStr( ::oRctPrvT:cTimChg, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oRctPrvT:cTimChg, 4, 2 )
+
+                  ::oDbf:nBultos    := ::oRctPrvL:nBultos
+                  ::oDbf:cFormato   := ::oRctPrvL:cFormato
 
                   ::InsertIfValid()
 
