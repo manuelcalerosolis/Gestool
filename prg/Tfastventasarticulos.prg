@@ -492,6 +492,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "nBultos",     "N", 16, 0, {|| "" },   "Numero de bultos en líneas"              )
    ::AddField( "cFormato",    "C",100, 0, {|| "" },   "Formato de compra/venta en líneas"       )
+   ::AddField( "nCajas",      "N", 16, 6, {|| "" },   "Cajas en líneas"                         )
 
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
@@ -961,6 +962,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oSatCliL:nBultos
                   ::oDbf:cFormato   := ::osatCliL:cFormato
+                  ::oDbf:nCajas     := ::oSatCliL:nCanSat
 
                   /*
                   AÃ±adimos un nuevo registro-----------------------------------
@@ -1115,6 +1117,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oPreCliL:nBultos
                   ::oDbf:cFormato   := ::oPreCliL:cFormato
+                  ::oDbf:nCajas     := ::oPreCliL:nCanPre
 
                   ::InsertIfValid()
 
@@ -1259,8 +1262,9 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cHorDoc    := SubStr( ::oPedCliT:cTimCre, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 4, 2 )
 
-                  ::oDbf:nBultos    := ::PedCliL:nBultos
-                  ::oDbf:cFormato   := ::PedCliL:cFormato
+                  ::oDbf:nBultos    := ::oPedCliL:nBultos
+                  ::oDbf:cFormato   := ::oPedCliL:cFormato
+                  ::oDbf:nCajas     := ::oPedCliL:nCanPed
 
                   ::InsertIfValid()
 
@@ -1416,6 +1420,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oAlbCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
                   ::oDbf:cFormato   := ::oAlbCliL:cFormato
+                  ::oDbf:nCajas     := ::oAlbCliL:nCanEnt
 
                   ::InsertIfValid()
 
@@ -1565,6 +1570,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oFacCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
                   ::oDbf:cFormato   := ::oFacCliL:cFormato
+                  ::oDBf:nCajas     := ::oFacCliL:nCanEnt
 
                   ::InsertIfValid()
 
@@ -1711,6 +1717,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oFacRecL:nBultos * if( ::lUnidadesNegativo, -1, 1)
                   ::oDbf:cFormato   := ::oFacRecL:cFormato
+                  ::oDbf:nCajas     := ::oFacRecL:nCanEnt
 
                   ::InsertIfValid()
 
@@ -2210,6 +2217,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
                      ::oDbf:nBultos    := ::oPedPrvL:nBultos   
                      ::oDbf:cFormtao   := ::oPedPrvL:cFormato
+                     ::oDbf:nCajas     := ::oPedPrvL:nCanPed
 
                   ::InsertIfValid()
 
@@ -2352,6 +2360,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oAlbPrvL:nBultos
                   ::oDbf:cFOrmato   := ::oAlbPrvL:cFOrmato
+                  ::oDBf:nCaja      := ::oAlbPrvL:nCanEnt
 
                   ::InsertIfValid()
                   
@@ -2487,6 +2496,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oFacPrvL:nBultos
                   ::oDbf:cFormato   := ::oFacPrvL:cFormato
+                  ::oDbf:nCajas     := ::oFacPrvL:nCanEnt
 
                   ::InsertIfValid()
 
@@ -2621,6 +2631,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oRctPrvL:nBultos
                   ::oDbf:cFormato   := ::oRctPrvL:cFormato
+                  ::oDbf:nCajas     := ::oRctPrvL:nCanEnt
 
                   ::InsertIfValid()
 
