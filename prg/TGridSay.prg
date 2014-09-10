@@ -27,7 +27,6 @@ METHOD New( nRow, nCol, bText, oWnd, cPicture, oFont,;
             nWidth, nHeight, lDesign, lUpdate, lShaded, lBox, lRaised,;
             lAdjust, lTransparent, cVarName ) CLASS TGridSay
 
-
    if isBlock( nRow )
       ::bRow         := nRow
       nRow           := Eval( nRow )
@@ -82,7 +81,7 @@ CLASS TGridGet FROM TGet
    DATA bWidth
    DATA bHeight
 
-METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
+   METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
             lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
             lPassword, lNoBorder, nHelpId, lSpinner,;
@@ -131,9 +130,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
             cCueText ) 
 
-
-
-return Self
+Return Self
 
 //----------------------------------------------------------------------------//
 
@@ -155,5 +152,69 @@ return Self
 
 //----------------------------------------------------------------------------//
 
+CLASS TGridButton FROM TButton
 
+   DATA bRow
+   DATA bCol
+   DATA bWidth
+   DATA bHeight
 
+   METHOD New( nRow, nCol, cCaption, oWnd, bAction, nWidth, nHeight, ;
+            nHelpId, oFont, lDefault, lPixel, lDesign, cMsg,;
+            lUpdate, bWhen, bValid, lCancel, cVarName, lMultiline ) 
+
+   METHOD ReAdjust()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+   METHOD New( nRow, nCol, cCaption, oWnd, bAction, nWidth, nHeight, ;
+            nHelpId, oFont, lDefault, lPixel, lDesign, cMsg,;
+            lUpdate, bWhen, bValid, lCancel, cVarName, lMultiline ) CLASS TGridButton
+
+   if isBlock( nRow )
+      ::bRow         := nRow
+      nRow           := Eval( nRow )
+   end if 
+
+   if isBlock( nCol )
+      ::bCol         := nCol
+      nCol           := Eval( nCol )
+   end if 
+
+   if isBlock( nWidth )
+      ::bWidth       := nWidth
+      nWidth         := Eval( nWidth )
+   end if 
+
+   if isBlock( nHeight )
+      ::bHeight      := nHeight
+      nHeight        := Eval( nHeight )
+   end if 
+
+   ::Super:New( nRow, nCol, cCaption, oWnd, bAction, nWidth, nHeight, ;
+            nHelpId, oFont, lDefault, lPixel, lDesign, cMsg,;
+            lUpdate, bWhen, bValid, lCancel, cVarName, lMultiline )
+
+return Self
+
+//----------------------------------------------------------------------------//
+
+METHOD ReAdjust() CLASS TGridButton
+
+   local nRow     := if( !empty(::bRow), eval(::bRow), ::nTop )
+   local nLeft    := if( !empty(::bCol), eval(::bCol), ::nLeft )
+   local nWidth   := if( !empty(::bWidth), eval(::bWidth), ::nWidth )
+   local nHeight  := if( !empty(::bHeight), eval(::bHeight), ::nHeight )
+/*
+   msgAlert( nRow, "nRow")
+   msgAlert( nLeft, "nLeft")
+   msgAlert( nWidth, "nWidth")
+   msgAlert( nHeight, "nHeight")
+*/
+   ::Move( nRow, nLeft, nWidth, nHeight )  
+
+return Self
+
+//----------------------------------------------------------------------------//
