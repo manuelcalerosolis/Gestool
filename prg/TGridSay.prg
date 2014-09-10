@@ -89,6 +89,8 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
             cCueText ) CONSTRUCTOR
 
+   METHOD GotFocus( hCtlLost )   INLINE ( ShellExecute( 0, "open", "tabtip.exe" ), ::Super:GotFocus( hCtlLost ) )
+
    METHOD ReAdjust()
 
 END CLASS
@@ -128,6 +130,8 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             lPassword, lNoBorder, nHelpId, lSpinner,;
             bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
             cCueText ) 
+
+
 
 return Self
 

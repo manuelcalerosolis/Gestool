@@ -59,8 +59,6 @@ static cTypeVersion  := ""
 -------------------------------------------------------------------------------
 */
 
-#ifndef __PDA__
-
 function Main( cParams )
 
    local nError
@@ -5755,15 +5753,11 @@ Return ( lFidelity )
 
 Static Function nDaySaas()
 
-   local oReg
-   local cRef
-   local uVar
+   local cRef  := "SOFTWARE\" + HB_Crypt( "Gestool", SERIALNUMBER )
+   local oReg  := TReg32():Create( HKEY_LOCAL_MACHINE, cRef )
+   local uVar  := oReg:Get( "Date", Date() )
 
-   cRef     := "SOFTWARE\" + HB_Crypt( "Gestool", SERIALNUMBER )
-   oReg     := TReg32():Create( HKEY_LOCAL_MACHINE, cRef )
-   uVar     := oReg:Get( "Date", Date() )
-
-   if Empty( uVar )
+   if Empty( uVar ) 
       oReg:Set( "Date", Date() )
    end if
 
@@ -5807,19 +5801,25 @@ Function testGrid()
    local oDlg
    local oGet
    local nGet     := 1
+   local cGet     := "Manuel Calero Solis"
+   local oFnt     := TFont():New( "Segoe UI Light",  0, 52, .f., .f. )
+   local oSym     := TFont():New( "Segoe UI Symbol",  0, 52, .f., .f. )
 
-   DEFINE DIALOG oDlg FROM 1, 5 TO 40, 100 TITLE "GridTest" ;
+   DEFINE DIALOG oDlg FROM 1, 5 TO 40, 100; 
+      TITLE "GridTest" ;
+      FONT  oFnt ;
       STYLE nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
 
-   with object ( TGridSay():New( 1, 0, {|| "Cliente" }, oDlg, , , , , .t., .t., , , {|| GridWidth( 2, oDlg ) }, 28, .f. ) )
+   with object ( TGridSay():New( 12, 0, {|| "Cliente" }, oDlg, , , , , .t., .t., , , {|| GridWidth( 2, oDlg ) }, 28, .f. ) )
    end with
 
-   with object ( TGridGet():New( 1, {|| GridWidth( 2, oDlg ) }, { | u | If( PCount() == 0, nGet, nGet:= u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, 28, , , , , , , , .t. ) )
-      :bWhen      := { || ShowKeyboard() }
+   with object ( TGridGet():New( 12, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, nGet, nGet:= u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, 28, , , , , , , , .t. ) )
    end with
 
-   with object ( TGridGet():New( 1, {|| GridWidth( 4, oDlg ) }, { | u | If( PCount() == 0, nGet, nGet:= u ) }, oDlg, {|| GridWidth( 7, oDlg ) }, 28, , , , , , , , .t. ) )
-      :bWhen      := { || ShowKeyboard() }
+   with object ( TGridGet():New( 12, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, cGet, cGet:= u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, 28, , , , , , , , .t. ) )
+   end with
+
+   with object ( TGridButton():New( 12, {|| GridWidth( 10, oDlg ) }, "Next", oDlg, {|| msgAlert("next") }, {|| GridWidth( 1, oDlg ) }, 28, , oSym )
    end with
 
    oDlg:bResized  := {|| resizeGrid( oDlg ) }
@@ -5843,7 +5843,7 @@ Static Function resizeGrid( oDlg )
       if ( o:ClassName() $ "TGET,TSAY" ) .and. !Empty( o:Cargo )
          o:Move( o:nTop, GridWidth( o:Cargo[ "Left" ], oDlg ), GridWidth( o:Cargo[ "Width" ], oDlg ), o:nHeight )
       end if
-      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY" )
+      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY,TGRIDBUTTON" )
          o:ReAdjust()
       end if
    next
@@ -5854,9 +5854,7 @@ Static Function GridWidth( nCols, oDlg )
    
 Return ( oDlg:nWidth() / 12 * nCols )
 
-Static Function ShowKeyboard()
-
-   local cKeyboard   := GetEnv( "windir" ) + "\system32\osk.exe"
+Function ShowKeyboard()
 
    msgAlert( "ShowKeyboard")
 
