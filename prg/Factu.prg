@@ -5819,7 +5819,7 @@ Function testGrid()
    with object ( TGridGet():New( 12, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, cGet, cGet:= u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, 28, , , , , , , , .t. ) )
    end with
 
-   with object ( TGridButton():New( 12, {|| GridWidth( 10, oDlg ) }, "Next", oDlg, {|| msgAlert("next") }, {|| GridWidth( 1, oDlg ) }, 28, , oSym ) )
+   with object ( TGridButton():New( 12, {|| GridWidth( 10, oDlg ) }, AnsiToWide("&E0AF"), oDlg, {|| msgAlert("next") }, {|| GridWidth( 1, oDlg ) }, 28, , oSym ) )
    end with
 
    oDlg:bResized  := {|| resizeGrid( oDlg ) }

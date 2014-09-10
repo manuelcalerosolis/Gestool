@@ -48,7 +48,7 @@ METHOD New( nRow, nCol, bText, oWnd, cPicture, oFont,;
    end if 
 
    ::Super:New( nRow, nCol, bText, oWnd, cPicture, oFont,;
-            lCentered, lRight, lBorder, lPixels, nClrText, nClrBack,;
+            lCentered, lRight, lBorder, .t., nClrText, nClrBack,;
             nWidth, nHeight, lDesign, lUpdate, lShaded, lBox, lRaised,;
             lAdjust, lTransparent, cVarName )
 
@@ -124,7 +124,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
    end if 
 
    ::Super:New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
-            nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
+            nClrFore, nClrBack, oFont, lDesign, oCursor, .t., cMsg,;
             lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
             lPassword, lNoBorder, nHelpId, lSpinner,;
             bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
@@ -194,7 +194,7 @@ END CLASS
    end if 
 
    ::Super:New( nRow, nCol, cCaption, oWnd, bAction, nWidth, nHeight, ;
-            nHelpId, oFont, lDefault, lPixel, lDesign, cMsg,;
+            nHelpId, oFont, lDefault, .t., lDesign, cMsg,;
             lUpdate, bWhen, bValid, lCancel, cVarName, lMultiline )
 
 return Self
