@@ -1420,7 +1420,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oAlbCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
                   ::oDbf:cFormato   := ::oAlbCliL:cFormato
-                  ::oDbf:nCajas     := ::oAlbCliL:nCanEnt
+                  ::oDbf:nCajas     := ::oAlbCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
 
                   ::InsertIfValid()
 
@@ -1570,7 +1570,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oFacCliL:nBultos * if( ::lUnidadesNegativo, -1, 1 )
                   ::oDbf:cFormato   := ::oFacCliL:cFormato
-                  ::oDBf:nCajas     := ::oFacCliL:nCanEnt
+                  ::oDBf:nCajas     := ::oFacCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
 
                   ::InsertIfValid()
 
@@ -1717,7 +1717,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oFacRecL:nBultos * if( ::lUnidadesNegativo, -1, 1)
                   ::oDbf:cFormato   := ::oFacRecL:cFormato
-                  ::oDbf:nCajas     := ::oFacRecL:nCanEnt
+                  ::oDbf:nCajas     := ::oFacRecL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
 
                   ::InsertIfValid()
 

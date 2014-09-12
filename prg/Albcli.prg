@@ -5372,6 +5372,8 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   (dbfTmpLin)->cNumPed    := cPedido
                   (dbfTmpLin)->lControl   := (dbfPedCliL)->lControl
                   (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
+                  (dbfTmpLin)->nBultos    := (dbfPedCliL)->nBultos
+                  (dbfTmpLin)->cFormato   := (dbfPedCliL)->cFormato
 
                   /*
                   Pasamos las ubicaciones de la mercancía
@@ -12075,6 +12077,8 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->nIncPnt    := (dbfPreCliL)->nIncPnt
                (dbfTmpLin)->lControl   := (dbfPreCliL)->lControl
                (dbfTmpLin)->lLinOfe    := (dbfPreCliL)->lLinOfe
+               (dbfTmpLin)->nBultos    := (dbfPreCliL)->nBultos
+               (dbfTmpLin)->cFormato   := (dbfPreCliL)->cFormato
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -12311,6 +12315,8 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->lControl   := (dbfSatCliL)->lControl
                (dbfTmpLin)->lLinOfe    := (dbfSatCliL)->lLinOfe
                (dbfTmpLin)->cNumSat    := cNumSat
+               (dbfTmpLin)->nBultos    := (dbfSatCliL)->nBultos
+               (dbfTmpLin)->cFormato   := (dbfSatCliL)->cFormato
 
                (dbfSatCliL)->( dbSkip() )
 

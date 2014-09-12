@@ -3493,6 +3493,10 @@ CLASS TDetMovimientos FROM TDet
    DATA  oCajMov
    DATA  oUndMov
 
+   DATA  oGetBultos  
+   DATA  oSayBultos
+   DATA  oGetFormato
+
    DATA  oGetStockOrigen
    DATA  oGetStockDestino
 
@@ -3599,6 +3603,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       FIELD NAME "cVolumen"            TYPE "C" LEN   2 DEC 0 COMMENT "Unidad del volumen"                  OF oDbf
       FIELD NAME "nPesoKg"             TYPE "N" LEN  16 DEC 6 COMMENT "Peso del producto"                   OF oDbf
       FIELD NAME "cPesoKg"             TYPE "C" LEN   2 DEC 0 COMMENT "Unidad de peso del producto"         OF oDbf
+      FIELD NAME "nBultos"             TYPE "N" LEN  16 DEC 0 COMMENT "Número de bultos en líneas"          OF oDbf
+      FIELD NAME "cFormato"            TYPE "C" LEN 100 DEC 0 COMMENT "Formato de compra/venta"             OF oDbf
 
       INDEX TO ( cFileName ) TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "dFecMov" ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
@@ -3785,6 +3791,17 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          ID       132 ;
          OF       oDlg
 
+      REDEFINE GET ::oGetBultos VAR ::oDbfVir:nBultos;
+         ID       430 ;
+         SPINNER  ;
+         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE  ::oParent:cPicUnd;
+         OF       oDlg
+
+      REDEFINE SAY ::oSayBultos PROMPT uFieldempresa( "cNbrBultos" );
+         ID       431;
+         OF       oDlg
+
       REDEFINE GET ::oCajMov VAR ::oDbfVir:nCajMov;
          ID       140;
 			SPINNER ;
@@ -3904,6 +3921,10 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       REDEFINE GET ::oDbfVir:cVolumen ;
          ID       230 ;
          WHEN     ( .f. ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oGetFormato VAR ::oDbfVir:cFormato;
+         ID       440;
          OF       oDlg
 
       REDEFINE BUTTON ::oBtnSerie ;
@@ -4524,6 +4545,11 @@ METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
       ::oSayPr2:Hide()
       ::oSayVp2:Hide()
 
+      if !uFieldEmpresa( "lUseBultos" )
+         ::oGetBultos:Hide()
+         ::oSayBultos:Hide()
+      end if 
+
       if !lUseCaj()
          ::oCajMov:Hide()
          ::oSayCaj:Hide()
@@ -4561,6 +4587,11 @@ METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
          ::oValPr2:Hide()
          ::oSayPr2:Hide()
          ::oSayVp2:Hide()
+      end if
+
+      if !uFieldempresa( "lUseBultos" )
+         ::oGetBultos:Hide()
+         ::oSayBultos:Hide()
       end if
 
       if !lUseCaj()

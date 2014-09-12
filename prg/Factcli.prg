@@ -6081,6 +6081,8 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->lLinOfe    := (dbfAlbCliL)->lLinOfe
                (dbfTmpLin)->cNumSat 	:= (dbfAlbCliL)->cNumSat
                (dbfTmpLin)->cSuPed     := cSuPed
+               (dbfTmpLin)->nBultos 	:= (dbfAlbCliL)->nBultos
+               (dbfTmpLin)->cFormato 	:= (dbfAlbCliL)->cFormato
 
                ( dbfAlbCliL )->( dbSkip() )
 
@@ -6368,6 +6370,8 @@ STATIC FUNCTION cFacPrv( cFacPrv, aGet, aTmp, oBrw, nMode )
                ( dbfTmpLin )->nMedTre    	:= ( dbfFacPrvL )->nMedTre
                ( dbfTmpLin )->nFacCnv    	:= ( dbfFacPrvL )->nFacCnv
                ( dbfTmpLin )->mObsLin    	:= ( dbfFacPrvL )->mObsLin
+               ( dbfTmpLin )->nBultos 		:= ( dbfFacPrvL )->nBultos
+               ( dbfTmpLin )->cFormato 	:= ( dbfFacPrvL )->cFormato
 
             end if
 
@@ -7312,6 +7316,8 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->lControl   := (dbfPedCliL)->lControl
                (dbfTmpLin)->cNumPed    := cPedido
                (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
+               (dbfTmpLin)->nBultos 	:= (dbfPedCliL)->nBultos
+               (dbfTmpLin)->cFormato 	:= (dbfPedCliL)->cFormato
 
                /*
                Vamos a ver si se estan llavando cajas
@@ -7689,6 +7695,8 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->nIncPnt    := (dbfPreCliL)->nIncPnt
                (dbfTmpLin)->lControl   := (dbfPreCliL)->lControl
                (dbfTmpLin)->lLinOfe    := (dbfPreCliL)->lLinOfe
+               (dbfTmpLin)->nBultos 	:= (dbfPreCliL)->nBultos
+               (dbfTmpLin)->cFormato 	:= (dbfPreCliL)->cFormato
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -15518,6 +15526,8 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->lControl   := (dbfSatCliL)->lControl
                (dbfTmpLin)->lLinOfe    := (dbfSatCliL)->lLinOfe
                (dbfTmpLin)->cNumSat 	:= cNumSat 
+               (dbfTmpLin)->nBultos 	:= (dbfSatCliL)->nBultos
+               (dbfTmpLin)->cFormato 	:= (dbfSatCliL)->cFormato
 
                (dbfSatCliL)->( dbSkip() )
 

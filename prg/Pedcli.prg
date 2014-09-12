@@ -12808,6 +12808,8 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
                (dbfTmpLin)->nDtoPnt    := (dbfPreCliL)->nDtoPnt
                (dbfTmpLin)->nIncPnt    := (dbfPreCliL)->nIncPnt
                (dbfTmpLin)->lLinOfe    := (dbfPreCliL)->lLinOfe
+               (dbfTmpLin)->nBultos 	:= (dbfPreCliL)->nBultos
+               (dbfTmpLin)->cFormato 	:= (dbfPreCliL)->cFormato
 
                (dbfPreCliL)->( dbSkip() )
 

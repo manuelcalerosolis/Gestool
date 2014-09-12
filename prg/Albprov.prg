@@ -4728,6 +4728,8 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->nMedTre    := ( TDataView():PedidosProveedoresLineas( nView ) )->nMedTre
                   (dbfTmp)->cCodPed    := cPedido
                   (dbfTmp)->cNumPed    := cPedCli
+                  (dbfTmp)->nBultos    := ( TDataView():PedidosProveedoresLineas( nView ) )->nBultos
+                  (dbfTmp)->cFormato   := ( TDataView():PedidosProveedoresLineas( nView ) )->cFormato
 
                   /*
                   Comprobamos si hay calculos por cajas

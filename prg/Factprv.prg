@@ -8225,6 +8225,8 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
          ( dbfTmp )->nMedDos     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nMedDos
          ( dbfTmp )->nMedTre     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nMedTre
          ( dbfTmp )->dFecCad     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->dFecCad
+         ( dbfTmp )->nBultos     := ( TDataView():AlbaranesProveedoresLineas( nView ) )->nBultos
+         ( dbfTmp )->cFormato    := ( TDataView():AlbaranesProveedoresLineas( nView ) )->cFormato
 
          /*
          Pasamos series de pedidos---------------------------------------------------

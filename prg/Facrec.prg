@@ -8932,6 +8932,8 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->nVolumen   := ( dbfFacCliL )->nVolumen
                   ( dbfTmpLin )->lLinOfe    := ( dbfFacCliL )->lLinOfe
                   ( dbfTmpLin )->dFecCad    := ( dbfFacCliL )->dFecCad
+                  ( dbfTmpLin )->nBultos    := ( dbfFacCliL )->nBultos
+                  ( dbfTmpLin )->cFormato   := ( dbfFacCliL )->cFormato
 
                end if
 

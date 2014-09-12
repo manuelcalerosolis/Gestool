@@ -5936,6 +5936,8 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
             ( dbfTmp )->nMedTre  := ( TDataView():FacturasProveedoresLineas( nView ) )->nMedTre
             ( dbfTmp )->dFecCad  := ( TDataView():FacturasProveedoresLineas( nView ) )->dFecCad
             ( dbfTmp )->lGasSup  := ( TDataView():FacturasProveedoresLineas( nView ) )->lGasSup
+            ( dbfTmp )->nBultos  := ( TDataView():FacturasProveedoresLineas( nView ) )->nBultos
+            ( dbfTmp )->cFormato := ( TDataView():FacturasProveedoresLineas( nView ) )->cFormato   
 
             ( TDataView():FacturasProveedoresLineas( nView ) )->( dbSkip() )
 
