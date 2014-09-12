@@ -1912,7 +1912,19 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo albaranes a clientes"
    DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
+   //DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) == 0, Max( Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) ) )
+
+   if Empty( nCopies )
+      nCopies           := Retfld( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, TDataView():Get( "Client", nView ), "CopiasF" ) 
+   end if
+
+   if nCopies == 0 
+      nCopies           := nCopiasDocumento( ( TDataView():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", TDataView():Get( "NCount", nView ) )
+   end if 
+
+   if nCopies == 0
+      nCopies           := 1
+   end if  
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "AC", TDataView():Documentos( nView ) )
@@ -13512,7 +13524,8 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
 
    oPrinter:bSkip    := {||   ( TDataView():AlbaranesClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenAlbCli( nDevice, "Imprimiendo documento : " + TDataView():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   //oPrinter:bAction  := {||   GenAlbCli( nDevice, "Imprimiendo documento : " + TDataView():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenAlbCli( nDevice, "Imprimiendo documento : " + TDataView():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue ) }
 
    oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ) }
 
