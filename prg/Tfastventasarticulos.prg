@@ -2360,7 +2360,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oAlbPrvL:nBultos
                   ::oDbf:cFOrmato   := ::oAlbPrvL:cFOrmato
-                  ::oDBf:nCaja      := ::oAlbPrvL:nCanEnt
+                  ::oDBf:nCajas      := ::oAlbPrvL:nCanEnt
 
                   ::InsertIfValid()
                   

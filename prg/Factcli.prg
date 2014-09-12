@@ -1324,7 +1324,19 @@ STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo facturas a clientes"
    DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
+   //DEFAULT nCopies      := max( nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ), Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ) )
+
+   if Empty( nCopies )
+   	nCopies 				:= Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" )
+   end if
+
+   if nCopies == 0
+   	nCopies 				:= nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount )
+   end if
+
+   if nCopies == 0
+   	nCopies 				:= 1
+   end if 
 
    /*
    DEFAULT cPrinter     := PrnGetName()
@@ -5640,6 +5652,8 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    if nRango == 1
 
+
+
       nRecno      := ( TDataView():FacturasClientes( nView ) )->( recno() )
       nOrdAnt     := ( TDataView():FacturasClientes( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
@@ -5680,9 +5694,10 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
+               //nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
 
-               GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+               //GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+               GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter )
 
             else
 
@@ -5715,7 +5730,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                   nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
 
-                  GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter,  )
+                  GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter  )
 
                else
 
@@ -5741,9 +5756,10 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
+                  //nCopyClient := if( nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( TDataView():FacturasClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
 
-                  GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+                  //GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+                  GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():FacturasClientes( nView ) )->cSerie + str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) + ( TDataView():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter  )
 
                else
 
@@ -16509,7 +16525,8 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    oPrinter:bSkip    := {||   ( TDataView():FacturasClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenFacCli( nDevice, "Imprimiendo documento : " + TDataView():FacturasClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   //oPrinter:bAction  := {||   GenFacCli( nDevice, "Imprimiendo documento : " + TDataView():FacturasClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenFacCli( nDevice, "Imprimiendo documento : " + TDataView():FacturasClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 
