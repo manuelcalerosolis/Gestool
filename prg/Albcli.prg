@@ -122,7 +122,7 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 Definici¢n de la base de datos de lineas de detalle
 */
 
-#define _dCSERALB                 1
+#define _dCSERALB                 1           
 #define _dNNUMALB                 2
 #define _dCSUFALB                 3
 #define _CREF                     4
@@ -2630,10 +2630,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:CreateFromResource( 240 )
       
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Oferta"
+         :cHeader             := "Of. Oferta"
          :bStrData            := {|| "" }
          :bEditValue          := {|| ( dbfTmpLin )->lLinOfe }
-         :nWidth              := 60
+         :nWidth              := 20
          :SetCheck( { "Star_Red_16", "Nil16" } )
       end with
 
@@ -4174,7 +4174,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       aGet[ _CREF ]:bValid       := {|| LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode ) }
       aGet[ _CREF ]:bHelp        := {|| BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ] ) }
-      aGet[ _CREF ]:bLostFocus   := {|| lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
+      //aGet[ _CREF ]:bLostFocus   := {|| lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
       REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
          ID       110 ;
@@ -4331,7 +4331,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          OF       oFld:aDialogs[1] ;
          IDSAY    611
 
-      REDEFINE GET aGet[_NCANENT] VAR aTmp[ _NCANENT ];
+      REDEFINE GET aGet[ _NCANENT ] VAR aTmp[ _NCANENT ];
          ID       130;
          SPINNER ;
          WHEN     ( !aTmp[ _LCONTROL ] .AND. lUseCaj() .AND. nMode != ZOOM_MODE ) ;
@@ -4343,13 +4343,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ _NUNICAJA ] VAR aTmp[ _NUNICAJA ] ;
          ID       140;
+         IDSAY    141;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
-         VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1] ;
-         IDSAY    141
+
+//         VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
 
       REDEFINE GET aGet[ _NFACCNV ] VAR aTmp[ _NFACCNV ] ;
          ID       295 ;
@@ -9275,7 +9276,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
       end if
    end if
 
-   aGet[ _NUNICAJA ]:SetText( cNombreUnidades() )
+   // aGet[ _NUNICAJA ]:SetText( cNombreUnidades() )
 
    if aGet[ _NVALIMP ] != nil
 
@@ -9331,14 +9332,14 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
    do case
    case nMode == APPD_MODE
 
-      aGet[ _CREF    ]:cText( Space( 200 ) )
+      aGet[ _CREF     ]:cText( Space( 200 ) )
 
-      aTmp[ _LIVALIN ]  := aTmpAlb[ _LIVAINC ]
-      aTmp[ _DFECCAD ]  := Ctod( "" )
+      aTmp[ _LIVALIN  ] := aTmpAlb[ _LIVAINC ]
+      aTmp[ _DFECCAD  ] := Ctod( "" )
 
 
-      aGet[ _NCANENT ]:cText( 1 )
-      aGet[ _NUNICAJA]:cText( 1 )
+      aGet[ _NCANENT  ]:cText( 1 )
+      aGet[ _NUNICAJA ]:cText( 1 )
 
       if !Empty( aGet[ _NNUMLIN ] )
          aGet[ _NNUMLIN ]:cText( nLastNum( dbfTmpLin )  )
@@ -10032,19 +10033,19 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             */
 
             if !Empty( ( dbfArticulo )->cCodImp )
+
                aTmp[ _CCODIMP ]     := ( dbfArticulo )->cCodImp
                aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( dbfArticulo )->cCodImp ) )
-
                aTmp[ _LVOLIMP ]     := RetFld( ( dbfArticulo )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
 
             end if
 
             if ( dbfArticulo )->nCajEnt != 0
-               aGet[_NCANENT ]:cText( ( dbfArticulo )->nCajEnt )
+               aGet[ _NCANENT ]:cText( ( dbfArticulo )->nCajEnt )
             end if
 
             if ( dbfArticulo )->nUniCaja != 0
-               aGet[_NUNICAJA]:cText( ( dbfArticulo )->nUniCaja )
+               aGet[ _NUNICAJA ]:cText( ( dbfArticulo )->nUniCaja )
             end if
 
             /*
@@ -10068,8 +10069,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             Tipo de articulo---------------------------------------------------
             */
 
-            if !Empty( aGet[_CCODTIP ] )
-               aGet[_CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
+            if !Empty( aGet[ _CCODTIP ] )
+               aGet[ _CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
             end if
 
             /*
@@ -10095,8 +10096,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             Buscamos la familia del articulo y anotamos las propiedades--------
             */
 
-            aTmp[_CCODPR1 ]   := ( dbfArticulo )->cCodPrp1
-            aTmp[_CCODPR2 ]   := ( dbfArticulo )->cCodPrp2
+            aTmp[ _CCODPR1 ]   := ( dbfArticulo )->cCodPrp1
+            aTmp[ _CCODPR2 ]   := ( dbfArticulo )->cCodPrp2
 
             if !Empty( aTmp[ _CCODPR1 ] )
 
@@ -10186,10 +10187,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
             //--Tomamos el precio recomendado, el costo y el punto verde--//
 
-            aTmp[_NPVSATC ]      := ( dbfArticulo )->PvpRec
+            aTmp[ _NPVSATC ]      := ( dbfArticulo )->PvpRec
 
-            if !Empty( aGet[_NPNTVER ] )
-               aGet[_NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
+            if !Empty( aGet[ _NPNTVER ] )
+               aGet[ _NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
             end if
          
             /*
@@ -10222,7 +10223,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                   case nNumDto == 3
 
                      if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO]:cText( ( dbfArticulo )->nDtoArt3 )
+                        aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt3 )
                         aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt3
                      else
                         aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt3
@@ -10249,7 +10250,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                   case nNumDto == 6
 
                      if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO]:cText( ( dbfArticulo )->nDtoArt6 )
+                        aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt6 )
                         aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt6
                      else
                         aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt6
@@ -10318,13 +10319,13 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
                nImpOfe     := RetPctTar( aTmp[ _CREF ], cCodFam, aTmpAlb[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
                if nImpOfe  != 0
-                  aGet[_NDTO    ]:cText( nImpOfe )
+                  aGet[ _NDTO    ]:cText( nImpOfe )
                end if
 
                //--Descuento Lineal--//
                nImpOfe     := RetLinTar( aTmp[ _CREF ], cCodFam, aTmpAlb[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
                if nImpOfe  != 0
-                  aGet[_NDTODIV ]:cText( nImpOfe )
+                  aGet[ _NDTODIV ]:cText( nImpOfe )
                end if
 
                //--comisión de agente--//
@@ -10332,14 +10333,14 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                nImpOfe     := RetComTar( aTmp[ _CREF ], cCodFam, aTmpAlb[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpAlb[_CCODAGE], dbfTarPreL, dbfTarPreS )
 
                if nImpOfe  != 0
-                  aGet[_NCOMAGE ]:cText( nImpOfe )
+                  aGet[ _NCOMAGE ]:cText( nImpOfe )
                end if
 
                //--Descuento de promoci¢n--//
 
                nImpOfe     := RetDtoPrm( aTmp[ _CREF ], cCodFam, aTmpAlb[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpAlb[_DFECALB], dbfTarPreL )
                if nImpOfe  != 0
-                  aGet[_NDTOPRM]:cText( nImpOfe )
+                  aGet[ _NDTOPRM ]:cText( nImpOfe )
                end if
 
                //--Descuento de promoci¢n para agente--//
@@ -10533,13 +10534,16 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             end if
 
          else
+
             aGet[ _NPREUNIT ]:HardDisable() 
             aGet[ _NIMPTRN  ]:HardDisable()
             aGet[ _NPNTVER  ]:HardDisable()
             aGet[ _NDTO     ]:HardDisable()
             aGet[ _NDTOPRM  ]:HardDisable()
             aGet[ _NDTODIV  ]:HardDisable()
+         
          end if
+
 
       else
 
@@ -10550,6 +10554,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
       end if
 
    end if
+
+   msgalert( "fin sospecho")
 
 RETURN ( .t. )
 
@@ -12952,6 +12958,8 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
 
             AppendDatosAtipicas( aTmpAlb )
 
+            lSearch  := .t.
+
          end if
 
          SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
@@ -13020,8 +13028,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
 
    if !dbSeekInOrd( ( TDataView():Atipicas( nView ) )->cCodArt, "cRef", dbfTmpLin )
       
-      if ( dbfArticulo )->( dbSeek( ( TDataView():Atipicas( nView ) )->cCodArt ) ) .and.;
-         !( dbfArticulo )->lObs
+      if ( dbfArticulo )->( dbSeek( ( TDataView():Atipicas( nView ) )->cCodArt ) ) .and. !( dbfArticulo )->lObs
 
          ( dbfTmpLin )->( dbAppend() )
 

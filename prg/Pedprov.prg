@@ -5674,7 +5674,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
 
       if ( TDataView():Articulos( nView ) )->( dbSeek( aTmp[ _CCODPRV ] ) )
 
-            while ( TDataView():Articulos( nView ) )->cPrvHab == aTmp[ _CCODPRV ] .and. !( TDataView():Articulos( nView ) )->( eof() )
+         while ( TDataView():Articulos( nView ) )->cPrvHab == aTmp[ _CCODPRV ] .and. !( TDataView():Articulos( nView ) )->( eof() )
 
             if !dbSeekInOrd( ( TDataView():Articulos( nView ) )->Codigo, "cRef", dbfTmpLin ) .and. !( TDataView():Articulos( nView ) )->lObs 
                   
@@ -6368,15 +6368,9 @@ FUNCTION BrwPedPrv( oGetNum, cPedPrvT, cPedPrvL, cIva, cDiv, cFPago )
    local oCbxOrd
    local aCbxOrd  := { "Número", "Fecha", "Código", "Nombre" }
    local cCbxOrd
-   local aDbfBmp  := {  LoadBitmap( GetResources(), "bRed"   ),;
-                        LoadBitmap( GetResources(), "bYelow" ),;
-                        LoadBitmap( GetResources(), "bGreen" ) }
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
-
-   ( cPedPrvT )->( dbSetFilter( {|| Field->nEstado != 3 }, "nEstado != 3" ) )
-
    nOrd           := ( cPedPrvT )->( OrdSetFocus( nOrd ) )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Pedido a proveedores"
@@ -6487,21 +6481,23 @@ FUNCTION BrwPedPrv( oGetNum, cPedPrvT, cPedPrvL, cIva, cDiv, cFPago )
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      oGetNum:cText( ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed )
-      oGetNum:Disable()
+
+      if ( cPedPrvT )->nEstado != 3
+         oGetNum:cText( ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed )
+         oGetNum:Disable()
+      else 
+         msgStop( "El pedido ya fue entregado." )
+      end if 
    end if
 
    DestroyFastFilter( cPedPrvT )
 
    SetBrwOpt( "BrwPedPrv", ( cPedPrvT )->( OrdNumber() ) )
 
-   ( cPedPrvT )->( dbSetFilter() )
    ( cPedPrvT )->( OrdSetFocus( nOrd ) )
 
-   AEval( aDbfBmp, { | hBmp | DeleteObject( hBmp ) } )
-
    /*
-   Guardamos los datos del browse
+   Guardamos los datos del browse----------------------------------------------
    */
    
    oBrw:CloseData()

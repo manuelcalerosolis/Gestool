@@ -347,6 +347,8 @@ CLASS ImportarProductosProveedor FROM PrintSeries
 
    DATA oPorcentaje
 
+   DATA oProceso
+
    METHOD New( nView )
 
    METHOD Resource()
@@ -368,6 +370,8 @@ METHOD New( nView ) CLASS ImportarProductosProveedor
    ::oFechaFin:LastDayPreviusMonth()
 
    ::oPorcentaje           := GetPorcentaje():New( 120, Self )
+
+   ::oProceso              := nil
 
 RETURN ( Self )
 
@@ -872,7 +876,7 @@ CLASS GetPorcentaje FROM ComponentGet
    METHOD Resource()
 
 END CLASS 
-
+  
 METHOD New( idGet, oContainer ) CLASS GetPorcentaje
 
    ::Super:New( idGet, oContainer )

@@ -218,3 +218,65 @@ METHOD ReAdjust() CLASS TGridButton
 return Self
 
 //----------------------------------------------------------------------------//
+
+CLASS TGridImage FROM TImage
+
+   DATA bTop
+   DATA bLeft
+   DATA bWidth
+   DATA bHeight
+
+   METHOD New( nTop, nLeft, nWidth, nHeight, cResName, cBmpFile, lNoBorder,;
+            oWnd, bLClicked, bRClicked, lScroll, lStretch, oCursor,;
+            cMsg, lUpdate, bWhen, lPixel, bValid, lDesign, cVarName ) 
+
+   METHOD ReAdjust()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD New( nTop, nLeft, nWidth, nHeight, cResName, cBmpFile, lNoBorder,;
+            oWnd, bLClicked, bRClicked, lScroll, lStretch, oCursor,;
+            cMsg, lUpdate, bWhen, lPixel, bValid, lDesign, cVarName ) CLASS TGridImage
+
+   if isBlock( nTop )
+      ::bTop         := nTop
+      nTop           := Eval( nTop )
+   end if 
+
+   if isBlock( nLeft )
+      ::bLeft         := nLeft
+      nLeft           := Eval( nLeft )
+   end if 
+
+   if isBlock( nWidth )
+      ::bWidth       := nWidth
+      nWidth         := Eval( nWidth )
+   end if 
+
+   if isBlock( nHeight )
+      ::bHeight      := nHeight
+      nHeight        := Eval( nHeight )
+   end if 
+
+   ::Super:New( nTop, nLeft, nWidth, nHeight, cResName, cBmpFile, lNoBorder,;
+            oWnd, bLClicked, bRClicked, lScroll, lStretch, oCursor,;
+            cMsg, lUpdate, bWhen, .t., bValid, lDesign, cVarName ) 
+
+return Self
+
+//----------------------------------------------------------------------------//
+
+METHOD ReAdjust() CLASS TGridImage
+
+   local nTop     := if( !empty(::bTop), eval(::bTop), ::nTop )
+   local nLeft    := if( !empty(::bLeft), eval(::bLeft), ::nLeft )
+   local nWidth   := if( !empty(::bWidth), eval(::bWidth), ::nWidth )
+   local nHeight  := if( !empty(::bHeight), eval(::bHeight), ::nHeight )
+
+   ::Move( nTop, nLeft, nWidth, nHeight )  
+
+return Self
+
+//----------------------------------------------------------------------------//

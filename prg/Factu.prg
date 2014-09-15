@@ -232,7 +232,7 @@ function Main( cParams )
    cNameVersion()
 
 #ifndef __XHARBOUR__
-   testGrid()
+//   testGrid()
 #endif
 
    // Chequeamos los datos de los usuarios-------------------------------------
@@ -5800,6 +5800,7 @@ Function testGrid()
 
    local oDlg
    local oGet
+   local oImg
    local nGet     := 1
    local cGet     := "Manuel Calero Solis"
    local oFnt     := TFont():New( "Segoe UI Light",  0, 52, .f., .f. )
@@ -5810,17 +5811,20 @@ Function testGrid()
       FONT  oFnt ;
       STYLE nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
 
-   with object ( TGridSay():New( 12, 0, {|| "Cliente" }, oDlg, , , , , .t., .t., , , {|| GridWidth( 2, oDlg ) }, 28, .f. ) )
+   // TGridImage():New( 12, {|| GridWidth( 10, oDlg ) },,,, FullCurDir() + "metro\Gestool.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
+
+   with object ( TGridSay():New( 48, 0, {|| "Cliente" }, oDlg, , , , , .t., .t., , , {|| GridWidth( 2, oDlg ) }, 28, .f. ) )
    end with
 
-   with object ( TGridGet():New( 12, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, nGet, nGet:= u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, 28, , , , , , , , .t. ) )
+   with object ( TGridGet():New( 48, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, nGet, nGet:= u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, 28, , , , , , , , .t. ) )
    end with
 
-   with object ( TGridGet():New( 12, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, cGet, cGet:= u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, 28, , , , , , , , .t. ) )
+   with object ( TGridGet():New( 48, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, cGet, cGet:= u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, 28, , , , , , , , .t. ) )
    end with
 
-   with object ( TGridButton():New( 12, {|| GridWidth( 10, oDlg ) }, AnsiToWide("&E0AF"), oDlg, {|| msgAlert("next") }, {|| GridWidth( 1, oDlg ) }, 28, , oSym ) )
-   end with
+   TGridImage():New( 48, {|| GridWidth( 10, oDlg ) },,,, FullCurDir() + "metro\back-black-48.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
+
+   TGridImage():New( 48, {|| GridWidth( 10.5, oDlg ) },,,, FullCurDir() + "metro\Arrowhead-Right-48.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
 
    oDlg:bResized  := {|| resizeGrid( oDlg ) }
 
@@ -5843,7 +5847,7 @@ Static Function resizeGrid( oDlg )
       if ( o:ClassName() $ "TGET,TSAY" ) .and. !Empty( o:Cargo )
          o:Move( o:nTop, GridWidth( o:Cargo[ "Left" ], oDlg ), GridWidth( o:Cargo[ "Width" ], oDlg ), o:nHeight )
       end if
-      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY,TGRIDBUTTON" )
+      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY,TGRIDBUTTON,TGRIDIMAGE" )
          o:ReAdjust()
       end if
    next

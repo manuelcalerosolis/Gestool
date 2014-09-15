@@ -74,9 +74,10 @@ METHOD New( oWnd )
 
    ::Super:New( oWnd )
 
+   ::lAutoSort       := .t.
+   ::l2007           := .f.
    ::bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-   ::l2007           := .f.
 
 Return ( Self )
 
@@ -149,7 +150,7 @@ Method LoadData()
 
    RECOVER USING oError
 
-      msgStop( "Error al establecer la configuraci贸n de columnas." + CRLF + ErrorMessage( oError ) )
+      msgStop( "Error al establecer la configuraci髇 de columnas." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -193,7 +194,7 @@ Method SaveData( lSaveBrowseState )
       end if
 
       if lSaveBrowseState
-         msgInfo( "Configuraci贸n de columnas guardada.", ::cName )
+         msgInfo( "Configuraci髇 de columnas guardada.", ::cName )
       end if
 
    end if
@@ -319,13 +320,13 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    MenuAddItem( "Seleccionar &todo", "Selecciona todas las filas de la rejilla", .f., .t., {|| ::SelectAll() }, , "Table_Selection_All_16", oMenu )
 
-   MenuAddItem( "&Quitar selecci贸n", "Quita la selecci贸n de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "Table_Sql_16", oMenu )
+   MenuAddItem( "&Quitar selecci髇", "Quita la selecci髇 de todas las filas de la rejilla", .f., .t., {|| ::SelectNone() }, , "Table_Sql_16", oMenu )
 
    MenuAddItem()
 
    MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| CursorWait(), ::ToExcel(), CursorWe() }, , "Text_Sum_16", oMenu )
 
-   MenuEnd()
+   MenuEnd() 
 
    oMenu:Activate( nRow, nCol, Self )
 

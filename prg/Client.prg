@@ -6465,10 +6465,10 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
 
    end if
 
-   oFntBrw                 := TFont():New( "Segoe UI",  0, 20, .f., .t. )
+   oFntBrw                 := TFont():New( "Segoe UI",  0, 20, .f., .t. ) 
 
    nRec                    := ( dbfCli )->( Recno() )
-   nOrdAnt                 := ( dbfCli )->( OrdSetFocus( "Telefono" ) )
+   nOrdAnt                 := ( dbfCli )->( OrdSetFocus( "Telefono" ) ) 
 
    ( dbfCli )->( dbGoTop() )
 
@@ -6645,7 +6645,7 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;
-         WHEN     .f. ;
+         WHEN     .f. ; 
          ID       130 ;
          OF       oDlg
 
@@ -7017,7 +7017,7 @@ Method Create() CLASS TClienteLabelGenerator
             :bStrData         := {|| "" }
             :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->lLabel }
             :nWidth           := 20
-            :SetCheck( { "Sel16", "Nil16" } )
+            :SetCheck( { "Sel16", "Nil16" } ) 
          end with
 
          with object ( ::oBrwLabel:AddCol() )

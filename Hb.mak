@@ -9,21 +9,21 @@ FWLIB 				= 	\Fwh1406\lib
 
 RESOURCE 			= 	.\Resource
 
-BORLAND 			= 	\Bcc582
+BORLAND 				= 	\Bcc582
 BORLANDLIB 			= 	\Bcc582\lib
 
 IMG2PDFLIB 			= 	\Img2Pdf
 
-OBJ 				= 	Obj1406
+OBJ 					= 	Obj1406
 SOURCEPRG 			= 	Prg
 
-SOURCEC 			=	C
-PPO 				= 	Ppo1406
+SOURCEC 				=	C
+PPO 					= 	Ppo1406
 
-EXE 				= 	Bin\GestoolHb.exe
+EXE 					= 	Bin\Gestool.exe
 
 .path.prg      		=	.\$(SOURCEPRG)
-.path.c       		=	.\$(SOURCEC)
+.path.c       			=	.\$(SOURCEC)
 .path.obj      		=	.\$(OBJ)
 
 PRG            		=    	\

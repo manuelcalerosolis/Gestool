@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Folder.ch"
+#include "Folder.ch" 
 #include "Label.ch"
 #include "Image.ch"
 #include "Xbrowse.ch"
@@ -15465,7 +15465,8 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    Recalculo de precios--------------------------------------------------------
    */
 
-   /*if lRecPrc
+   /*
+   if lRecPrc
 
       dbUseArea( .t., cDriver(), cPath + "Articulo.Dbf", cCheckArea( "Articulo", @dbfArticulo ), .f. )
 
