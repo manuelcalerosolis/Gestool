@@ -4667,6 +4667,7 @@ METHOD AppendKit() CLASS TDetMovimientos
             ::oDbfVir:cAliMov    := cAliMov
             ::oDbfVir:cAloMov    := cAloMov
             ::oDbfVir:cRefMov    := ::oParent:oArtKit:cRefKit
+            ::oDbfVir:cNomMov    := ::oParent:oArtKit:cDesKit
             ::oDbfVir:cCodMov    := cCodMov
             ::oDbfVir:cCodPr1    := Space( 20 )
             ::oDbfVir:cCodPr2    := Space( 20 )
