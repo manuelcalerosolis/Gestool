@@ -2507,7 +2507,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
                         LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oDlg, oBmp, oGetStk ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[_CCODPR1 ] ) ) ;
-	   OF 		oFld:aDialogs[1]
+	      OF 		oFld:aDialogs[1]
 
          aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oGetStk ) }
 
@@ -7089,28 +7089,31 @@ FUNCTION rxPedPrv( cPath, oMeter )
 
    dbUseArea( .t., cDriver(), cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @cPedPrvT ), .f. )
    if !( cPedPrvT )->( neterr() )
-      ( cPedPrvT)->( __dbPack() )
+      ( cPedPrvT )->( __dbPack() )
 
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "nNumPed", "cSerPed + Str( nNumPed ) + cSufPed", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PEDPROVL.CDX", "nNumPed", "cSerPed + Str( nNumPed ) + cSufPed", {|| Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
 
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cRef", "cRef", {|| Field->cRef }, ) )
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PEDPROVL.CDX", "cRef", "cRef", {|| Field->cRef }, ) )
 
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PEDPROVL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
 
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PEDPROVL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
 
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliRef", "cPedCli + cRef + cValPr1 + cValPr2", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliRef", "cPedCli + cRef + cValPr1 + cValPr2", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
 
-      ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliDet", "cPedCli + cRef + cValPr1 + cValPr2 + cRefPrv ", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cRefPrv } ) ) // + cDetalle
+      ( cPedPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliDet", "cPedCli + cRef + cValPr1 + cValPr2 + cRefPrv ", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cRefPrv } ) ) // + cDetalle
 
       ( cPedPrvT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "iNumPed", "'01' + cSerPed + Str( nNumPed ) + cSufPed", {|| '01' + Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
+
+      ( cPedPrvT )->( ordCondSet( "!Deleted() .and. nEstado != 3", {|| !Deleted() .and. Field->nEstado != 3 } ) )
+      ( cPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "cStkFast", "cRef + cAlmLin", {|| Field->cRef + Field->cAlmLin }, ) )
 
       ( cPedPrvT )->( dbCloseArea() )
    else
@@ -8642,21 +8645,21 @@ Function Generador( oBrwPed )
       ID       500 ;
       OF       oDlg
 
-   REDEFINE PAGES oPag ID 110 OF oDlg ;
-      DIALOGS "ASS_PEDPRV1", "ASS_PEDCLI2"
+   REDEFINE PAGES oPag ;
+      ID       110 ;
+      OF       oDlg ;
+      DIALOGS  "ASS_PEDPRV1", "ASS_PEDCLI2"
 
    REDEFINE GET oProvee VAR cProvee;
       ID       110;
       VALID    cProvee( oProvee, TDataView():Proveedores( nView ), oSayPrv ) ;
       BITMAP   "LUPA" ;
       ON HELP  BrwProvee( oProvee, oSayPrv ) ;
-            COLOR       CLR_GET ;
       OF       oPag:aDialogs[1]
 
    REDEFINE GET oSayPrv VAR cSayPrv ;
       ID       120;
       WHEN     .f.;
-      COLOR    CLR_GET ;
       OF       oPag:aDialogs[1]
 
    REDEFINE GET oArtOrg VAR cArtOrg;
@@ -8667,7 +8670,7 @@ Function Generador( oBrwPed )
       OF       oPag:aDialogs[1]
 
    REDEFINE GET oSayArtOrg VAR cSayArtOrg ;
-            WHEN        .F.;
+      WHEN     .f.;
       ID       160 ;
       OF       oPag:aDialogs[1]
 
@@ -8679,7 +8682,7 @@ Function Generador( oBrwPed )
       OF       oPag:aDialogs[1]
 
    REDEFINE GET oSayArtDes VAR cSayArtDes ;
-            WHEN        .F.;
+      WHEN     .f.;
       ID       180 ;
       OF       oPag:aDialogs[1]
 
@@ -8688,11 +8691,10 @@ Function Generador( oBrwPed )
       VALID    ( cAlmacen( oCodAlm, TDataView():Almacen( nView ), oNomAlm ) ) ;
       BITMAP   "LUPA" ;
       ON HELP  ( BrwAlmacen( oCodAlm, oNomAlm ) ) ;
-      COLOR    CLR_GET ;
       OF       oPag:aDialogs[1]
 
    REDEFINE GET oNomAlm VAR cNomAlm ;
-      WHEN     .F. ;
+      WHEN     .f. ;
       ID       200 ;
       OF       oPag:aDialogs[1]
 
@@ -8706,91 +8708,86 @@ Function Generador( oBrwPed )
 
  REDEFINE APOLOMETER oMtr ;
       VAR      nMtr ;
-            PROMPT      "Procesando" ;
+      PROMPT   "Procesando" ;
       ID       220 ;
       TOTAL    ( ( TDataView():Articulos( nView ) )->( LastRec() ) ) ;
       OF       oPag:aDialogs[ 1 ]
 
+   // Browse de pedido---------------------------------------------------------
+
    oBrw                 := IXBrowse():New( oPag:aDialogs[ 2 ] )
 
-   oBrw:lHScroll        := .f.
-
-   oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
+   oBrw:lHScroll        := .t.
    oBrw:cAlias          := dbfTmpArt
-   oBrw:nMarqueeStyle   := 5
-   oBrw:cName           := "Pedido a proveedores.Asistente"
-   oBrw:lFastEdit       := .t.
    oBrw:nMarqueeStyle   := MARQSTYLE_HIGHLCELL
+   oBrw:cName           := "Pedido a proveedores asistente"
+   oBrw:bLDblClick   := {|| oCol:Edit() }
 
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Se. Seleccionado"
-         :bStrData      := {|| "" }
-         :bEditValue    := {|| ( dbfTmpArt )->lSelArt }
-         :nEditType     := 0
-         :nWidth        := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-      end with
+   with object ( oBrw:AddCol() )
+      :cHeader       := "Se. Seleccionado"
+      :bStrData      := {|| "" }
+      :bEditValue    := {|| ( dbfTmpArt )->lSelArt }
+      :nEditType     := 0
+      :nWidth        := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end with
 
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Código"
-         :bEditValue    := {|| ( dbfTmpArt )->cRef }
-         :nEditType     := 0
-         :nWidth        := 60
-      end with
+   with object ( oBrw:AddCol() )
+      :cHeader       := "Código"
+      :bEditValue    := {|| ( dbfTmpArt )->cRef }
+      :nEditType     := 0
+      :nWidth        := 60
+   end with
 
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Detalle"
-         :bEditValue    := {|| ( dbfTmpArt )->cDetalle }
-         :nEditType     := 0
-         :nWidth        := 200
-      end with
+   with object ( oBrw:AddCol() )
+      :cHeader       := "Detalle"
+      :bEditValue    := {|| ( dbfTmpArt )->cDetalle }
+      :nEditType     := 0
+      :nWidth        := 200
+   end with
 
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Objetivo"
-         :bEditValue    := {|| ( dbfTmpArt )->nObjUni }
-         :cEditPicture  := MasUnd()
-         :nEditType     := 0
-         :nWidth        := 65
-         :nDataStrAlign := AL_RIGHT
-         :nHeadStrAlign := AL_RIGHT
-      end with
+   with object ( oBrw:AddCol() )
+      :cHeader       := "Objetivo"
+      :bEditValue    := {|| ( dbfTmpArt )->nObjUni }
+      :cEditPicture  := MasUnd()
+      :nEditType     := 0
+      :nWidth        := 65
+      :nDataStrAlign := AL_RIGHT
+      :nHeadStrAlign := AL_RIGHT
+   end with
 
-      with object ( oCol := oBrw:AddCol() )
-         :cHeader       := "A pedir"
-         :bEditValue    := {|| ( dbfTmpArt )->nNumUni }
-         :cEditPicture  := MasUnd()
-         :nEditType     := 1
-         :nWidth        := 65
-         :bOnPostEdit   := {|o,x| if( x > 0, ( dbfTmpArt )->nNumUni := x, ), .t. }
-         :nDataStrAlign := AL_RIGHT
-         :nHeadStrAlign := AL_RIGHT
-      end with
+   with object ( oCol := oBrw:AddCol() )
+      :cHeader       := "A pedir"
+      :bEditValue    := {|| ( dbfTmpArt )->nNumUni }
+      :cEditPicture  := MasUnd()
+      :nEditType     := 1
+      :nWidth        := 65
+      :bOnPostEdit   := {|o,x| if( x > 0, ( dbfTmpArt )->nNumUni := x, ), .t. }
+      :nDataStrAlign := AL_RIGHT
+      :nHeadStrAlign := AL_RIGHT
+   end with
 
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Stock actual"
-         :bEditValue    := {|| ( dbfTmpArt )->nStkFis }
-         :cEditPicture  := MasUnd()
-         :nEditType     := 0
-         :nWidth        := 65
-         :nDataStrAlign := AL_RIGHT
-         :nHeadStrAlign := AL_RIGHT
-      end with
+   with object ( oBrw:AddCol() )
+      :cHeader       := "Stock actual"
+      :bEditValue    := {|| ( dbfTmpArt )->nStkFis }
+      :cEditPicture  := MasUnd()
+      :nEditType     := 0
+      :nWidth        := 65
+      :nDataStrAlign := AL_RIGHT
+      :nHeadStrAlign := AL_RIGHT
+   end with
 
-      with object ( oBrw:AddCol() )
-         :cHeader       := "Stock disponible"
-         :bEditValue    := {|| ( dbfTmpArt )->nStkDis }
-         :cEditPicture  := MasUnd()
-         :nEditType     := 0
-         :nWidth        := 65
-         :nDataStrAlign := AL_RIGHT
-         :nHeadStrAlign := AL_RIGHT
-      end with
+   with object ( oBrw:AddCol() )
+      :cHeader       := "Stock disponible"
+      :bEditValue    := {|| ( dbfTmpArt )->nStkDis }
+      :cEditPicture  := MasUnd()
+      :nEditType     := 0
+      :nWidth        := 65
+      :nDataStrAlign := AL_RIGHT
+      :nHeadStrAlign := AL_RIGHT
+   end with
 
    oBrw:CreateFromResource( 100 )
-
-   oBrw:bLDblClick      := {|| oCol:Edit() }
 
    REDEFINE BUTTON ;
       ID       110;

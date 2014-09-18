@@ -5191,6 +5191,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ON HELP  aGet[_DFECHA]:cText( Calendario( aTmp[_DFECHA] ) ) ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aGet[ __DFECFAC ] VAR aTmp[ __DFECFAC ] ;
+         ID       360 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         ON HELP  aGet[ __DFECFAC ]:cText( Calendario( aTmp[ __DFECFAC ] ) ) ;
+         OF       oFld:aDialogs[2]
+
       REDEFINE CHECKBOX aGet[_LCONTROL] VAR aTmp[_LCONTROL]  ;
          ID       130 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -13310,9 +13317,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       while ( dbfTmpLin )->( !eof() )
 
          if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
-
-         	( dbfTmpLin )->dFecFac  	:= dFecFac
-       	   ( dbfTmpLin )->cCodCli 		:= cCodCli
+         	
+       		( dbfTmpLin )->dFecFac  := if( !empty( ( dbfTmpLin )->dFecAlb ), ( dbfTmpLin )->dFecAlb, dFecFac )
+       	   ( dbfTmpLin )->cCodCli 	:= cCodCli
 
          	dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
 
@@ -18201,6 +18208,13 @@ function SynFacCli( cPath )
          	end if
          end if
 
+         if !Empty( ( dbfFacCliL )->dFecAlb ) .and. ( dbfFacCliL )->dFecFac != ( dbfFacCliL )->dFecAlb
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->dFecFac    := ( dbfFacCliL )->dFecAlb
+               ( dbfFacCliL )->( dbUnLock() )
+         	end if
+         end if
+
          if Empty( ( dbfFacCliL )->cCodCli )
             if ( dbfFacCliL )->( dbRLock() )
                ( dbfFacCliL )->cCodCli    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, TDataView():FacturasClientes( nView ), "cCodCli" )
@@ -18800,9 +18814,15 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( dbfFacCliL )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecFac )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecFac ) } ) )
 
+      ( dbfFacCliL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted() }, , , , , , , , , .t. ) )
+      ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) } ) )
+
       ( dbfFacCliL )->( dbCloseArea() )
+
    else
+
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de clientes" )
+
    end if
 
    dbUseArea( .t., cDriver(), cPath + "FacCliI.DBF", cCheckArea( "FacCliI", @dbfFacCliI ), .f. )
@@ -20780,7 +20800,7 @@ FUNCTION nChkPagFacCli( cFacCli, cFacCliT, dbfFacCliP )
       Return ( 1 )
    end if
 
-   nOrd 				:= ( dbfFacCliP )->( ordsetfocus( "nNumFac" ) )
+   nOrd 						:= ( dbfFacCliP )->( ordsetfocus( "nNumFac" ) )
    if ( dbfFacCliP )->( dbSeek( cFacCli ) )
 
       while ( dbfFacCliP )->cSerie + str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFacCli .and. !( dbfFacCliP )->( eof() )
@@ -20788,6 +20808,7 @@ FUNCTION nChkPagFacCli( cFacCli, cFacCliT, dbfFacCliP )
          if ( dbfFaccliP )->lCobrado .and. !( dbfFacCliP )->lDevuelto
 
             nBitmap     := 2
+            
             exit
 
          end if
@@ -20797,6 +20818,7 @@ FUNCTION nChkPagFacCli( cFacCli, cFacCliT, dbfFacCliP )
       end while
 
    end if
+
    ( dbfFacCliP )->( ordsetfocus( nOrd ) )
 
 RETURN ( nBitmap )
@@ -20843,9 +20865,9 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 
 	local nRecAlbL 			:= ( dbfAlbCliL )->( Recno() )
 	local nRecFacL 			:= ( dbfFacCliL )->( Recno() )
-	local nOrdAlbL			:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
-	local nOrdFacL			:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
-	local dUltimaFactura	:= ctod( "" )
+	local nOrdAlbL				:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
+	local nOrdFacL				:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
+	local dUltimaFactura		:= ctod( "" )
 	local dUltimoAlbaran 	:= ctod( "" )
 
 	CursorWait()
@@ -20884,12 +20906,12 @@ Return ( if( dUltimaFactura > dUltimoAlbaran, dUltimaFactura, dUltimoAlbaran ) )
 Function nUnidadesUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 
 	local nUnidades 		:= 0
-	local nRecAlbL 			:= ( dbfAlbCliL )->( Recno() )
-	local nRecFacL 			:= ( dbfFacCliL )->( Recno() )
+	local nRecAlbL 		:= ( dbfAlbCliL )->( Recno() )
+	local nRecFacL 		:= ( dbfFacCliL )->( Recno() )
 	local nOrdAlbL			:= ( dbfAlbCliL )->( OrdSetFocus( "cRefFec" ) )
 	local nOrdFacL			:= ( dbfFacCliL )->( OrdSetFocus( "cRefFec" ) )
 	local dUltimaFactura	:= ctod( "" )
-	local dUltimoAlbaran 	:= ctod( "" )
+	local dUltimoAlbaran := ctod( "" )
 
 	CursorWait()
 
@@ -20898,7 +20920,7 @@ Function nUnidadesUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL
 	*/
 
 	if ( dbfAlbCliL )->( dbSeek( cCodArt + cCodCli ) )
-		dUltimoAlbaran 		:= ( dbfAlbCliL )->dFecAlb 
+		dUltimoAlbaran 	:= ( dbfAlbCliL )->dFecAlb 
 	end if
 
 	/*

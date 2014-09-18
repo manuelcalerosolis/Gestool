@@ -1,4 +1,4 @@
-#include "FiveWin.Ch"
+#include "FiveWin.Ch" 
 #include "Folder.ch"
 #include "Report.ch"
 #include "Menu.ch"
@@ -1434,7 +1434,6 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatEmp() + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPROVL.CDX" ) ADDITIVE
-      SET TAG TO "cStkFast"
 
       USE ( cPatEmp() + "ALBPRVS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPRVS", @dbfAlbPrvS ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPRVS.CDX" ) ADDITIVE
@@ -2973,18 +2972,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen ) ;
          ACTION   ( aGet[ _NDTODOS ]:cText( Val( GetPvProfString( "Descuentos", "Descuento dos", 0, cPatEmp() + "Empresa.Ini" ) ) ), RecalculaTotal( aTmp ) )
 
-      if IsMuebles()
-
-         REDEFINE GET aGet[_NMONTAJE] VAR aTmp[_NMONTAJE];
-            ID       750 ;
-            WHEN     ( lWhen ) ;
-            PICTURE  "@E 999.99" ;
-            SPINNER;
-            COLOR    CLR_GET ;
-            OF       oFld:aDialogs[1]
-
-      end if
-
       /*
       Desglose del impuestos---------------------------------------------------------
       */
@@ -4174,7 +4161,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       aGet[ _CREF ]:bValid       := {|| LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode ) }
       aGet[ _CREF ]:bHelp        := {|| BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ] ) }
-      //aGet[ _CREF ]:bLostFocus   := {|| lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
+      aGet[ _CREF ]:bLostFocus   := {|| lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
       REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
          ID       110 ;
@@ -8054,7 +8041,7 @@ Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
       oGetKgs:cText( 0 )
 
    else
-
+ 
       if oTrans:oDbf:SeekInOrd( uValor, "cCodTrn" )
          oGetCod:cText( uValor )
          oSayTrn:cText( oTrans:oDbf:cNomTrn )
@@ -10555,8 +10542,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
    end if
 
-   msgalert( "fin sospecho")
-
 RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
@@ -12957,8 +12942,6 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
          if lConditionAtipica( nil, TDataView():Atipicas( nView ) ) .and. ( TDataView():Atipicas( nView ) )->lAplAlb
 
             AppendDatosAtipicas( aTmpAlb )
-
-            lSearch  := .t.
 
          end if
 
@@ -15744,7 +15727,6 @@ function nTotNAlbCli( uDbf )
             nTotUnd  *= NotCero( uDbf:nMedDos )
             nTotUnd  *= NotCero( uDbf:nMedTre )
 
-
          else
 
             nTotUnd  := NotCaja( uDbf:nCanEnt )
@@ -16350,9 +16332,6 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumRef", "cSerAlb + Str( nNumAlb ) + cSufAlb + cRef", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Field->cRef } ) )
 
-      ( cAlbCliT )->( ordCondSet("!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cStkFast", "cRef", {|| Field->cRef } ) )
-
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
 
@@ -16362,9 +16341,15 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
+      ( cAlbCliT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
+
       ( cAlbCliT )->( dbCloseArea() )
+
    else
+
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
+
    end if
 
    // Pagos de albaranes

@@ -7939,7 +7939,7 @@ METHOD ToDbf( cFile, bProgress, aCols, lPrompt ) CLASS TXBrowse
    ::nRowSel   := nRowPos
    ::Refresh()
 
-   if lPrompt .and. MsgYesNo( If( FWSetLanguage() == 2, "Â¿ ", "" ) + ;
+   if lPrompt .and. MsgYesNo( If( FWSetLanguage() == 2, "¿ ", "" ) + ;
                               FWString( "View" ) + " " + cFile + " ?",;
                               FWString( "Please select" ) )
       XBrowse( cFile )
@@ -11859,23 +11859,11 @@ METHOD SetOrder() CLASS TXBrwColumn
    LOCAL   lDolphin  := .f.
    LOCAL   cOrdBag   := If( ValType( ::cOrdBag ) == 'B', Eval( ::cOrdBag ), ::cOrdBag )
 
-   msgAlert( "joder")
-
    if ::cOrder == 'A' .and. ! ::oBrw:lSortDescend
-      msgAlert( "salgo por aki")
       return .f.
    endif
 
-   msgAlert( ::oBrw:lAutoSort, "::oBrw:lAutoSort" )
-   msgAlert( ::cSortOrder != nil, "::cSortOrder != nil" )
-
-   msgAlert( ::oBrw:lAutoSort .and. ::cSortOrder != nil, "::oBrw:lAutoSort .and. ::cSortOrder != nil" )
-
-   msgAlert( ValType( ::oBrw:cAlias ) == 'C' .and. ValType( ::cSortOrder ) == 'C', "ValType( ::oBrw:cAlias ) == C .and. ValType( ::cSortOrder ) == C" )
-
    if ::oBrw:lAutoSort .and. ::cSortOrder != nil
-
-      msgAlert( "dentro" )
 
       if ValType( ::cSortOrder ) == "B"
          uVal  := Eval( ::cSortOrder, Self )
@@ -11982,11 +11970,7 @@ METHOD SetOrder() CLASS TXBrwColumn
 
          cSort         := ( ::oBrw:cAlias )->( OrdSetFocus() )   // Save the present value
 
-         MsgAlert( cSort, "the presnt value")
-
          DEFAULT cOrdBag := ( ::oBrw:cAlias )->( OrdBagName() )
-
-         MsgAlert( (::oBrw:cAlias)->( OrdSetFocus() ) == Upper( ::cSortOrder ), "comparacion" )
 
          if (::oBrw:cAlias)->( OrdSetFocus() ) == Upper( ::cSortOrder )
             if !Empty( ::cOrder ) .and. Upper( cOrdBag ) == ( ::oBrw:cAlias )->( OrdBagName() )
@@ -12004,8 +11988,6 @@ METHOD SetOrder() CLASS TXBrwColumn
             lSorted              := .t.
 
          else
-
-            MsgAlert( ::cSortOrder, "cSortOrder" )
 
             (::oBrw:cAlias)->( OrdSetFocus( ::cSortOrder, cOrdBag ) )
             lSorted   := .T.

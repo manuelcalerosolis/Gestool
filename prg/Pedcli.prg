@@ -7307,8 +7307,6 @@ Method Dialog() CLASS TPedidosClientes2PedidosProveedor
 
       ::oBrw:bLDblClick    := {|| ::EditLine() }
 
-      ::oBrw:SetRdd()
-
       ::oBrw:CreateFromResource( 100 )
 
       with object ( ::oBrw:AddCol() )

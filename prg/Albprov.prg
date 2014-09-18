@@ -8097,62 +8097,6 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
       dbUseArea( .t., cDriver(), cPathOld + "ALBPRVD.Dbf", cCheckArea( "ALBPRVD", @oldAlbPrvD ), .f. )
       ( oldAlbPrvD )->( ordListAdd( cPathOld + "ALBPRVD.Cdx"  ) )
 
-      while !( oldAlbPrvT )->( eof() )
-
-         if eval( bFor, oldAlbPrvT )
-            dbCopy( oldAlbPrvT, cAlbPrvT, .t. )
-
-            if ( cAlbPrvT )->( Rlock() )
-               ( cAlbPrvT )->cTurAlb    := "   1"
-               ( cAlbPrvT )->( dbRUnlock() )
-            end if
-
-            if ( oldAlbPrvL )->( dbSeek( ( oldAlbPrvT )->cSerAlb + Str( ( oldAlbPrvT )->nNumAlb ) + ( oldAlbPrvT )->CSUFALB ) )
-
-               while (oldAlbPrvT)->cSerAlb + Str( (oldAlbPrvL)->nNumAlb ) + (oldAlbPrvL)->CSUFALB == (cAlbPrvT)->cSerAlb + Str( (cAlbPrvT)->nNumAlb ) + (cAlbPrvT)->CSUFALB .and. !(oldAlbPrvL)->( eof() )
-
-                  dbCopy( oldAlbPrvL, cAlbPrvL, .t. )
-
-                  /*
-                  Quitamos stocks del stock inicial
-                  */
-
-                  if dbfMov != nil
-                     putStock( ( cAlbPrvL )->cRef, ( cAlbPrvT )->cCodAlm, nCanEnt() * - 1 , dbfMov, "EI" )
-                  end if
-
-                  ( oldAlbPrvL )->( dbSkip() )
-
-               end while
-
-            end if
-
-            if ( oldAlbPrvI )->( dbSeek( (oldAlbPrvT)->cSerAlb + Str( (oldAlbPrvT)->nNumAlb ) + (oldAlbPrvT)->CSUFALB ) )
-               while ( oldAlbPrvI )->cSerAlb + Str( ( oldAlbPrvI )->nNumAlb ) + ( oldAlbPrvI )->cSufAlb == ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb .and. !( oldAlbPrvI )->( eof() )
-                  dbCopy( oldAlbPrvL, cAlbPrvI, .t. )
-                  ( oldAlbPrvI )->( dbSkip() )
-               end while
-            end if
-
-            if ( oldAlbPrvD )->( dbSeek( (oldAlbPrvT)->cSerAlb + Str( (oldAlbPrvT)->nNumAlb ) + (oldAlbPrvT)->CSUFALB ) )
-               while ( oldAlbPrvD )->cSerAlb + Str( ( oldAlbPrvD )->nNumAlb ) + ( oldAlbPrvD )->cSufAlb == ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb .and. !( oldAlbPrvI )->( eof() )
-                  dbCopy( oldAlbPrvD, cAlbPrvD, .t. )
-                  ( oldAlbPrvD )->( dbSkip() )
-               end while
-            end if
-
-         end if
-
-         ( oldAlbPrvT )->( dbSkip() )
-
-      end while
-
-      /*
-      Reemplaza la antigua sesion----------------------------------------------
-      */
-
-      ( cAlbPrvT )->( dbEval( {|| ( cAlbPrvT )->cTurAlb := Space( 6 ) },,,,, .f. ) )
-
       /*
       Cerramos las bases de datos----------------------------------------------
       */
@@ -8277,10 +8221,7 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cPedPrvDet", "cCodPed + cRef + cValPr1 + cValPr2 + cRefPrv ", {|| Field->cCodPed + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cRefPrv } ) ) // + cDetalle
 
-      ( cAlbPrvT)->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFast", "cRef", {|| Field->cRef } ) )
-
-      ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted()}  ) )
+      ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted()}, , , , , , , , , .f. ) )
       ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkRef", "cRef + cValPr1 + cValPr2 + cLote", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
@@ -8297,6 +8238,12 @@ FUNCTION rxAlbPrv( cPath, oMeter )
 
       ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
       ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+
+      ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastIn", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
+
+      ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastOut", "cRef + cAlmOrigen + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmOrigen + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbPrvT )->( dbCloseArea() )
    else

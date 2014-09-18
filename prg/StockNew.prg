@@ -6,12 +6,9 @@
 
 CLASS TStock
 
-   CLASSDATA aStocks                AS ARRAY INIT {}
+   CLASSDATA aStocks     AS ARRAY INIT {}
    CLASSDATA cCodigoAlmacen
    CLASSDATA cCodigoArticulo
-
-   CLASSDATA cCodigoConsolidacion
-   CLASSDATA dConsolidacion
 
    DATA cPath
 
@@ -100,6 +97,7 @@ CLASS TStock
 
    DATA aMovAlm            AS ARRAY INIT {}
    
+   DATA dConsolidacion
 
    DATA lAlbPrv            AS LOGIC INIT .t.
    DATA lAlbCli            AS LOGIC INIT .t.
@@ -220,12 +218,7 @@ CLASS TStock
 
       METHOD aStockAlbaranCliente()
       METHOD aStockFacturaCliente()
-      METHOD aStockRectificativaCliente()
-      METHOD aStockTicketsCliente()
-      METHOD aStockProduccion()
-      METHOD aStockMateriaPrima()
-      METHOD aStockPendiente()
-   
+
       METHOD Integra( sStock )
 
    METHOD nOperacionesCliente(cCodigoCliente, lRiesgo)
@@ -278,7 +271,6 @@ CLASS TStock
    METHOD InsertStockTiketsClientes( lNumeroSerie, lCombinado )
    METHOD InsertStockMaterialesProducidos( lNumeroSerie )
    METHOD InsertStockMateriasPrimas( lNumeroSerie )
-   METHOD InsertStockPendiente()
 
    METHOD SaveStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
    
@@ -4160,71 +4152,47 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   nOrdPedPrvL          := ( ::cPedPrvL )->( OrdSetFocus( "cRef"     ) )
+   nOrdPedCliL          := ( ::cPedCliL )->( OrdSetFocus( "cRef"     ) )
+   nOrdTikCliL          := ( ::cTikL    )->( OrdSetFocus( "cStkFast" ) )
+   nOrdProducL          := ( ::cProducL )->( OrdSetFocus( "cCodArt"  ) )
+   nOrdProducM          := ( ::cProducM )->( OrdSetFocus( "cCodArt"  ) )
+
    for each cCodAlm in aAlmacenes
 
       // Colocamos el codigo de almacen-----------------------------------------
 
       ::SetCodigoAlmacen( cCodAlm )
-      SysRefresh()
 
       // Movimientos de almacén------------------------------------------------
 
       ::aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
 
       // Albaranes de proveedor------------------------------------------------------
 
       if IsTrue( ::lAlbPrv ) 
          ::aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-         SysRefresh()
       end if 
 
       // Facturas proveedor----------------------------------------------------
 
       ::aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
 
       // Rectificativas de provedor--------------------------------------------
 
       ::aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
 
       // Albaranes de clientes-------------------------------------------------
 
+      ? "aStockAlbaranCliente"
+
       ::aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
 
       // Factura de clientes--------------------------------------------------
 
+      ? "aStockFacturaCliente"
+
       ::aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
-
-      // Rectificativas de clientes--------------------------------------------
-
-      ::aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
-
-      // Tickets de clientes---------------------------------------------------
-
-      ::aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
-
-      // Produccion------------------------------------------------------------
-
-      ::aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
-
-      // Materia prima---------------------------------------------------------
-
-      ::aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-      SysRefresh()
-
-      // Stock pendiente de entregar-------------------------------------------
-
-      if !lNotPendiente
-         ::aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-         SysRefresh()
-      end if 
 
    next 
 
@@ -4236,10 +4204,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Asignamos el array al browse------------------------------------------------
 
-   if Empty( ::aStocks )
-      ::aStocks         := { sStock():New() }
-   end if
-
    if !Empty( oBrw )
 
       oBrw:aArrayData   := {}
@@ -4249,7 +4213,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
          if !Empty( oStocks ) .and. ( ( Round( oStocks:nUnidades, 6 ) != 0.000000 ) .or. ( Round( oStocks:nPendientesRecibir, 6 ) != 0.000000 ) .or. ( Round( oStocks:nPendientesEntregar, 6 ) != 0.000000 ) )
             aAdd( oBrw:aArrayData, oStocks )
          end if
-
       next
 
       oBrw:Refresh()
@@ -4269,6 +4232,381 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    Return ( ::aStocks )
 
    /*
+   Facturas de clientes--------------------------------------------------------
+   */
+
+   SysRefresh()
+
+   /*
+   Facturas rectificativas-----------------------------------------------------
+   */
+
+   SysRefresh()
+
+   if ( ::cFacRecL )->( dbSeek( cCodArt ) )
+
+      while ( ::cFacRecL )->cRef == cCodArt .and. !( ::cFacRecL )->( Eof() )
+
+         if ( ( ::cFacRecL )->nCtlStk < 2 ) .and.;
+            ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac ) .and.;
+            ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )   .and.;
+            ( ::lCodigoAlmacen( ( ::cFacRecL )->cAlmLin ) )
+
+            /*
+            Buscamos el numero de serie----------------------------------------
+            */
+
+            if lNumeroSerie .and. ( ::cFacRecS )->( dbSeek( ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) ) )
+
+               while ( ::cFacRecS )->cSerFac + Str( ( ::cFacRecS )->nNumFac ) + ( ::cFacRecS )->cSufFac + Str( ( ::cFacRecS )->nNumLin ) == ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) .and. !( ::cFacRecS )->( eof() )
+
+                  ::InsertStockRectificativaClientes( .t. )
+
+                  ( ::cFacRecS )->( dbSkip() )
+
+               end while
+
+            else 
+
+               ::InsertStockRectificativaClientes()
+
+            end if 
+
+         end if
+
+         ( ::cFacRecL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   /*
+   Tickets de clientes normales------------------------------------------------
+   */
+
+   SysRefresh()
+
+   if ( ::cTikL )->( dbSeek( cCodArt ) )
+
+      while ( ::cTikL )->cCbaTil == cCodArt .and. !( ::cTikL )->( Eof() )
+
+         if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik )  .and.;
+            ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and.;
+            ( ( ::cTikL )->nCtlStk < 2 ) .and. ;
+            ( ::lCodigoAlmacen( ( ::cTikL )->cAlmLin ) )
+
+            // Buscamos el numero de serie-------------------------------------
+
+            if lNumeroSerie .and. ( ::cTikS )->( dbSeek( ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikl )->nNumLin ) ) )
+
+               while ( ::cTikS )->cSerTiK + ( ::cTiks )->cNumTik + ( ::cTikS )->CSUFTIK + Str( ( ::cTikS )->nNumLin ) == ( ::cTikl )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikL )->nNumLin ) .and. !( ::cTikS )->( eof() )
+
+                  ::InsertStockTiketsClientes( .t. )
+
+                  ( ::cTikS )->( dbSkip() )
+
+               end while
+
+            else 
+
+               ::InsertStockTiketsClientes()
+
+            end if 
+
+         end if
+
+         // Siguiente registro-------------------------------------------------
+
+         ( ::cTikL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   /*
+   Tickets de clientes combinados----------------------------------------------
+   */
+
+   SysRefresh()
+
+   nOrdAnt              := ( ::cTikL )->( OrdSetFocus( "cStkCom" ) )
+
+   if ( ::cTikL )->( dbSeek( cCodArt ) )
+
+      while ( ::cTikL )->cComTil == cCodArt .and. !( ::cTikL )->( Eof() )
+
+         if ::lCheckConsolidacion( ( ::cTikL )->cComTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik )  .and.;
+            ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin )   .and.;
+            ( ( ::cTikL )->nComStk < 2 ) .and.;
+            ( ::lCodigoAlmacen( ( ::cTikL )->cAlmLin ) )
+
+            ::InsertStockTiketsClientes( .f. , .t.)
+
+         end if 
+
+         ( ::cTikL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::cTikL )->( OrdSetFocus( nOrdAnt ) )
+
+   /*
+   Materiales producidos-------------------------------------------------------
+   */
+
+   SysRefresh()
+
+   if ( ::cProducL )->( dbSeek( cCodArt ) )
+
+      while ( ::cProducL )->cCodArt == cCodArt .and. !( ::cProducL )->( Eof() )
+
+         if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd )  .and.;
+            ( Empty( dFecIni ) .or. ( ::cProducL )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducL )->dFecOrd <= dFecFin )  .and.;
+            ( ::lCodigoAlmacen( ( ::cProducL )->cAlmOrd ) )
+
+            /*
+            Buscamos el numero de serie----------------------------------------
+            */
+
+            if lNumeroSerie .and. ( ::cProducS )->( dbSeek( ( ::cProducL )->cSerOrd + Str( ( ::cProducL )->nNumOrd ) + ( ::cProducL )->cSufOrd + Str( ( ::cProducL )->nNumLin ) ) )
+
+               while ( ::cProducS )->cSerOrd + Str( ( ::cProducS )->nNumOrd ) + ( ::cProducS )->cSufOrd + Str( ( ::cProducS )->nNumLin ) == ( ::cProducL )->cSerOrd + Str( ( ::cProducL )->nNumOrd ) + ( ::cProducL )->cSufOrd + Str( ( ::cProducL )->nNumLin ) .and. !( ::cProducS )->( eof() )
+
+                  ::InsertStockMaterialesProducidos( .t. )
+
+                  ( ::cProducS )->( dbSkip() )
+
+               end while
+
+            else 
+
+               ::InsertStockMaterialesProducidos()
+
+            end if 
+
+         end if  
+
+         ( ::cProducL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   /*
+   Materias primas-------------------------------------------------------------
+   */
+
+   SysRefresh()
+
+   if ( ::cProducM )->( dbSeek( cCodArt ) )
+
+      while ( ::cProducM )->cCodArt == cCodArt .and. !( ::cProducM )->( Eof() )
+
+         if !Empty( ::cProducT )
+            ( ::cProducT )->( dbGoTop() )
+            ( ::cProducT )->( dbSeek( ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd ) )
+         end if
+
+         if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd )  .and.;
+            ( Empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )   .and.;
+            ( ::lCodigoAlmacen( ( ::cProducM )->cAlmOrd ) )
+
+            /*
+            Buscamos el numero de serie----------------------------------------
+            */
+
+            if lNumeroSerie .and. ( ::cProducP )->( dbSeek( ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) ) )
+
+               while ( ::cProducP )->cSerOrd + Str( ( ::cProducP )->nNumOrd ) + ( ::cProducP )->cSufOrd + Str( ( ::cProducP )->nNumLin ) == ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) .and. !( ::cProducP )->( eof() )
+
+                  ::InsertStockMateriasPrimas( .t. )
+
+                  ( ::cProducP )->( dbSkip() )
+
+               end while
+
+            else 
+
+               ::InsertStockMateriasPrimas ()
+
+            end if 
+
+         end if  
+
+         ( ::cProducM )->( dbSkip() )
+
+      end while
+
+   end if
+
+   if !lNotPendiente .and. ( ::cAlbPrvL )->( Used() ) .and. ( ::cPedPrvL )->( Used() )
+
+      /*
+      Pendientes de recibir----------------------------------------------------
+      */
+
+      SysRefresh()
+
+      ( ::cAlbPrvL )->( OrdSetFocus( "cPedRef" ) )
+
+      if ( ::cPedPrvL )->( dbSeek( cCodArt ) )
+
+         while ( ::cPedPrvL )->cRef == cCodArt .and. !( ::cPedPrvL )->( Eof() )
+
+            if ::lCodigoAlmacen( ( ::cPedPrvL )->cAlmLin )
+
+               if ( ::cPedPrvL )->nEstado != 3
+
+                  nTotal               := nTotNPedPrv( ::cPedPrvL )
+                  
+                  if ( ::cAlbPrvL )->( dbSeek( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt ) )
+
+                     while ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt == ( ::cAlbPrvL )->cCodPed + ( ::cAlbPrvL )->cRef .and.;
+                           !( ::cAlbPrvL )->( Eof() )
+
+                        nTotal         -= nTotNAlbPrv( ::cAlbPrvL )
+
+                        ( ::cAlbPrvL )->( dbSkip() )
+
+                     end while
+
+                  end if
+
+                  with object ( SStock():New() )
+
+                     :cTipoDocumento      := PED_PRV
+                     :cCodigo             := ( ::cPedPrvL )->cRef
+                     :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
+                     :cDelegacion         := ( ::cPedPrvL )->cSufPed
+                     :dFechaDocumento     := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
+                     :cCodigoAlmacen      := ( ::cPedPrvL )->cAlmLin
+                     :cCodigoPropiedad1   := ( ::cPedPrvL )->cCodPr1
+                     :cCodigoPropiedad2   := ( ::cPedPrvL )->cCodPr2
+                     :cValorPropiedad1    := ( ::cPedPrvL )->cValPr1
+                     :cValorPropiedad2    := ( ::cPedPrvL )->cValPr2
+                     :cLote               := ( ::cPedPrvL )->cLote
+                     :nPendientesRecibir  := if( nTotal > 0, nTotal, 0 )
+
+                     ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
+                  end with
+
+               end if   
+
+            end if
+
+            ( ::cPedPrvL )->( dbSkip() )
+
+         end while
+
+      end if
+
+      /*
+      Pendientes de entregar---------------------------------------------------
+      
+
+      SysRefresh()
+
+      ( ::cAlbCliL )->( OrdSetFocus( "cPedRef" ) )
+      ( ::cFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
+
+      if ( ::cPedCliL )->( dbSeek( cCodArt ) )
+
+         while ( ::cPedCliL )->cRef == cCodArt .and. !( ::cPedCliL )->( Eof() )
+
+            if Empty( cCodAlm ) .or. ( ::cPedCliL )->cAlmLin == cCodAlm
+
+               if ( ::cAlbCliL )->( dbSeek( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed + cCodArt ) )
+
+                  nTotal               := nTotNPedCli( ::cPedCliL )
+
+                  while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed + cCodArt == ( ::cAlbCliL )->cNumPed + ( ::cAlbCliL )->cRef .and.;
+                        !( ::cAlbCliL )->( Eof() )
+
+                     nTotal            -= nTotNAlbCli( ::cAlbCliL )
+
+                     ( ::cAlbCliL )->( dbSkip() )
+
+                  end while
+
+               elseif ( ::cFacCliL )->( dbSeek( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed + cCodArt ) )
+
+                  nTotal               := nTotNPedCli( ::cPedCliL )
+
+                  while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed + cCodArt == ( ::cFacCliL )->cNumPed + ( ::cFacCliL )->cRef .and.;
+                        !( ::cFacCliL )->( Eof() )
+
+                     nTotal            -= nTotNFacCli( ::cFacCliL )
+
+                     ( ::cFacCliL )->( dbSkip() )
+
+                  end while
+
+               else
+
+                  nTotal               := nTotNPedCli( ::cPedCliL )
+
+               end if
+
+               with object ( SStock():New() )
+
+                  :cTipoDocumento      := PED_CLI
+                  :cCodigo             := ( ::cPedCliL )->cRef
+                  :cNumeroDocumento    := ( ::cPedCliL )->cSerPed + "/" + Alltrim( Str( ( ::cPedCliL )->nNumPed ) )
+                  :cDelegacion         := ( ::cPedCliL )->cSufPed
+                  :dFechaDocumento     := dFecPedCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ::cPedCliT )
+                  :cCodigoAlmacen      := ( ::cPedCliL )->cAlmLin
+                  :cCodigoPropiedad1   := ( ::cPedCliL )->cCodPr1
+                  :cCodigoPropiedad2   := ( ::cPedCliL )->cCodPr2
+                  :cValorPropiedad1    := ( ::cPedCliL )->cValPr1
+                  :cValorPropiedad2    := ( ::cPedCliL )->cValPr2
+                  :cLote               := ( ::cPedCliL )->cLote
+                  :nPendientesEntregar := if( nTotal > 0, nTotal, 0 )
+
+                  ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
+               end with
+
+               ( ::cPedCliL )->( dbSkip() )
+
+            end if
+
+         end while
+
+      end if
+      */
+
+   end if
+
+   /*
+   Comprobamos la marca de la empresa para no mostrar los valores cero --------
+   */
+
+   if( ( ::cPedPrvL )->( Used() ), ( ::cPedPrvL )->( OrdSetFocus( nOrdPedPrvL ) ), )
+   if( ( ::cAlbPrvL )->( Used() ), ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) ), )
+   if( ( ::cAlbPrvS )->( Used() ), ( ::cAlbPrvS )->( OrdSetFocus( nOrdAlbPrvS ) ), )
+   if( ( ::cFacPrvL )->( Used() ), ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) ), )
+   if( ( ::cRctPrvL )->( Used() ), ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) ), )
+   if( ( ::cPedCliL )->( Used() ), ( ::cPedCliL )->( OrdSetFocus( nOrdPedCliL ) ), )
+   if( ( ::cAlbCliL )->( Used() ), ( ::cAlbCliL )->( OrdSetFocus( nOrdAlbCliL ) ), )
+   if( ( ::cFacCliL )->( Used() ), ( ::cFacCliL )->( OrdSetFocus( nOrdFacCliL ) ), )
+   if( ( ::cFacRecL )->( Used() ), ( ::cFacRecL )->( OrdSetFocus( nOrdFacRecL ) ), )
+   if( ( ::cTikL    )->( Used() ), ( ::cTikL    )->( OrdSetFocus( nOrdTikCliL ) ), )
+   if( ( ::cProducL )->( Used() ), ( ::cProducL )->( OrdSetFocus( nOrdProducL ) ), )
+   if( ( ::cProducM )->( Used() ), ( ::cProducM )->( OrdSetFocus( nOrdProducM ) ), )
+   if( ( ::cHisMovT )->( Used() ), ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) ), )
+
+   /*
+   Repasamos el valor de lo obtenido-------------------------------------------
+   */
+
+   if Empty( ::aStocks )
+      ::aStocks                     := { sStock():New() }
+   end if
+
+   /*
    Pasamos por el temporal para albaranes--------------------------------------
    */
 
@@ -4277,7 +4615,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       nRec                          := ( ::tmpAlbCliL )->( Recno() )
 
       ( ::tmpAlbCliL )->( dbGoTop() )
-      while !( ::tmpAlbCliL )->( eof() )
+      while !( ::tmpAlbCliL )->( Eof() )
 
          if ( ( ::tmpAlbCliL )->cRef == cCodArt ) .and. ( Empty( cCodAlm ) .or. ( ::tmpAlbCliL )->cAlmLin == cCodAlm )
 
@@ -4352,6 +4690,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       ( ::tmpFacCliL )->( dbGoTo( nRec ) )
 
    end if
+
 
 Return ( ::aStocks )
 
@@ -4944,7 +5283,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          ( ::cTikL )->( dbGoTop() )
 
-         nOrdAnt              := ( ::cTikL )->( OrdSetFocus( "cStkComb" ) )
+         nOrdAnt              := ( ::cTikL )->( OrdSetFocus( "CSTKCOM" ) )
 
          if ( ::cTikL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
@@ -5505,7 +5844,7 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
       while ( ::cFacRecL )->cRef == cCodArt .and. !( ::cFacRecL )->( Eof() )
 
          if ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni )   .and. ;
-            ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )   .and. ;
+            ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )   .and.;
             ( Empty( cValPr1 ) .or. ( ::cFacRecL )->cValPr1 == cValPr1 )   .and. ;
             ( Empty( cValPr2 ) .or. ( ::cFacRecL )->cValPr2 == cValPr2 )   .and. ;
             ( Empty( cCodAlm ) .or. ( ::cFacRecL )->cAlmLin == cCodAlm )
@@ -5552,7 +5891,7 @@ Method nConsumoArticulo( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecIni, dFe
 
    SysRefresh()
 
-   ( ::cTikL )->( OrdSetFocus( "cStkComb" ) )
+   ( ::cTikL )->( OrdSetFocus( "cStkCom" ) )
 
    if ( ::cTikL )->( dbSeek( cCodArt ) )
 
@@ -5623,8 +5962,8 @@ Return ( nRiesgo )
 
 METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
                      
-   local nRec           
-   local nOrd           
+   local nRec           := ( ::cHisMovT )->( Recno() )
+   local nOrd           := ( ::cHisMovT )->( OrdSetFocus( "cStock" ) )
 
    DEFAULT cCodAlm      := Space( 16 )  
    DEFAULT cCodPrp1     := Space( 20 )
@@ -5633,7 +5972,11 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    DEFAULT cValPrp2     := Space( 40 )
    DEFAULT cLote        := Space( 12 )
 
-   // Hay veces que los valores no tienen la longitud correcta pr eso obligamos a que cada una tenga la longitud que debe tener
+   ::dConsolidacion     := nil
+
+   /*
+   Hay veces que los valores no tienen la longitud correcta pr eso obligamos a que cada una tenga la longitud que debe tener
+   */
 
    cCodArt              := if ( len( cCodart )  != 18, Padr( cCodart, 18 ), cCodArt )
    cCodAlm              := if ( len( cCodAlm )  != 16, Padr( cCodAlm, 16 ), cCodAlm )
@@ -5642,19 +5985,6 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    cValPrp1             := if ( len( cValPrp1 ) != 40, Padr( cValPrp1, 40 ), cValPrp1 )
    cValPrp2             := if ( len( cValPrp2 ) != 40, Padr( cValPrp2, 40 ), cValPrp2 )
    cLote                := if ( len( cLote )    != 12, Padr( cLote, 12 ), cLote )
-
-   // Si el criterio de la peticion no cambia devolvemos la fecha de consolidacion
-
-   if ::cCodigoConsolidacion == cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote .and. !empty( ::dConsolidacion )
-      Return ( ::dConsolidacion )
-   end if 
-
-   // Entramos en el calculo real de la consolidacion--------------------------
-
-   ::dConsolidacion     := nil
-
-   nRec                 := ( ::cHisMovT )->( Recno() )
-   nOrd                 := ( ::cHisMovT )->( OrdSetFocus( "cStock" ) )
 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote ) )
 
@@ -5667,7 +5997,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
          else
 
             if ( ::cHisMovT)->dFecMov > ::dConsolidacion
-               ::dConsolidacion  := ( ::cHisMovT )->dFecMov
+               ::dConsolidacion  := ( ::cHisMovT)->dFecMov
             end if
 
          end if
@@ -5677,10 +6007,6 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
       end while
 
    end if
-
-   // Guardamos el criterio de busqueda para la proxima-----------------------
-
-   ::cCodigoConsolidacion        := cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote
 
    ( ::cHisMovT )->( ordSetFocus( nOrd ) )
    ( ::cHisMovT )->( dbGoTo( nRec ) )
@@ -5851,7 +6177,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
          else 
 
-         exit 
+            exit 
 
          end if
 
@@ -6019,9 +6345,13 @@ RETURN ( nil )
 METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local nOrdAlbCliL          := ( ::cAlbCliL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdAlbCliS          := ( ::cAlbCliS )->( OrdSetFocus( "nNumAlb"  ) )
+   local nOrdAlbCliS          := ( ::cAlbCliS )->( OrdSetFocus( "nNumFac"  ) )
+
+   ? ( ::cAlbCliL )->( OrdSetFocus() )
 
    if ( ::cAlbCliL )->( dbSeek( cCodArt + cCodAlm ) )
+
+   ? 2
 
       while ( ::cAlbCliL )->cRef == cCodArt .and. ( ::cAlbCliL )->cAlmLin == cCodAlm .and. !( ::cAlbCliL )->( eof() )
 
@@ -6071,14 +6401,15 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
    local nOrdFacCliL          := ( ::cFacCliL )->( OrdSetFocus( "cStkFast" ) )
    local nOrdFacCliS          := ( ::cFacCliS )->( OrdSetFocus( "nNumFac"  ) )
 
+? 1
    if ( ::cFacCliL )->( dbSeek( cCodArt + cCodAlm ) )
-
+? 2
       while ( ::cFacCliL )->cRef == cCodArt .and. ( ::cFacCliL )->cAlmLin == cCodAlm .and. !( ::cFacCliL )->( Eof() )
-
+? 3
          if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac ) 
-         
+? 4         
             if ( Empty( dFecIni ) .or. ( ::cFacCliL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacCliL )->dFecFac <= dFecFin )
-
+? 5
                if lNumeroSerie .and. ( ::cFacCliS )->( dbSeek( ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) ) )
 
                   while ( ::cFacCliS )->cSerFac + Str( ( ::cFacCliS )->nNumFac ) + ( ::cFacCliS )->cSufFac + Str( ( ::cFacCliS )->nNumLin ) == ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) .and. !( ::cFacCliS )->( eof() )
@@ -6111,307 +6442,6 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
    ( ::cFacCliL )->( OrdSetFocus( nOrdFacCliL ) )
    ( ::cFacCliS )->( OrdSetFocus( nOrdFacCliS ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-
-   local nOrdFacRecL          := ( ::cFacRecL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdFacRecS          := ( ::cFacRecS )->( OrdSetFocus( "nNumFac"  ) )
-
-   if ( ::cFacRecL )->( dbSeek( cCodArt + cCodAlm ) )
-
-      while ( ::cFacRecL )->cRef == cCodArt .and. ( ::cFacRecL )->cAlmLin == cCodAlm .and. !( ::cFacRecL )->( Eof() )
-
-         if ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac )
-
-            if ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )
-
-               if lNumeroSerie .and. ( ::cFacRecS )->( dbSeek( ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) ) )
-
-                  while ( ::cFacRecS )->cSerFac + Str( ( ::cFacRecS )->nNumFac ) + ( ::cFacRecS )->cSufFac + Str( ( ::cFacRecS )->nNumLin ) == ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) .and. !( ::cFacRecS )->( eof() )
-
-                     ::InsertStockRectificativaClientes( .t. )
-
-                     ( ::cFacRecS )->( dbSkip() )
-
-                  end while
-
-               else 
-
-                  ::InsertStockRectificativaClientes()
-
-               end if 
-
-            end if 
-
-         else 
-
-            exit
-
-         end if
-
-         ( ::cFacRecL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( ::cFacRecL )->( OrdSetFocus( nOrdFacRecL ) )
-   ( ::cFacRecS )->( OrdSetFocus( nOrdFacRecS ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-
-   local nOrdTikL    := ( ::cTikL )->( OrdSetFocus( "cStkFast" ) )
-   local nOrdTikS    := ( ::cTikS )->( OrdSetFocus( "nNumTik" ) )
-
-   if ( ::cTikL )->( dbSeek( cCodArt + cCodAlm ) )
-
-      while ( ::cTikL )->cCbaTil == cCodArt .and. ( ::cTikL )->cAlmLin == cCodAlm .and. !( ::cTikL )->( Eof() )
-
-         if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik ) 
-
-            if ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
-
-               if lNumeroSerie .and. ( ::cTikS )->( dbSeek( ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikl )->nNumLin ) ) )
-
-                  while ( ::cTikS )->cSerTiK + ( ::cTiks )->cNumTik + ( ::cTikS )->CSUFTIK + Str( ( ::cTikS )->nNumLin ) == ( ::cTikl )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil + Str( ( ::cTikL )->nNumLin ) .and. !( ::cTikS )->( eof() )
-
-                     ::InsertStockTiketsClientes( .t. )
-
-                     ( ::cTikS )->( dbSkip() )
-
-                  end while
-
-               else 
-
-                  ::InsertStockTiketsClientes()
-
-               end if 
-
-            end if 
-
-         else
-
-            exit 
-
-         end if
-
-         ( ::cTikL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   // Tickets de clientes combinados----------------------------------------------
-
-   ( ::cTikL )->( OrdSetFocus( "cStkComb" ) )
-
-   if ( ::cTikL )->( dbSeek( cCodArt + cCodAlm ) )
-
-      while ( ::cTikL )->cComTil == cCodArt .and. ( ::cTikL )->cAlmLin == cCodAlm .and. !( ::cTikL )->( eof() )
-
-         if ::lCheckConsolidacion( ( ::cTikL )->cComTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik ) 
-
-            if ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
-
-               ::InsertStockTiketsClientes( .f. , .t. )
-
-            end if 
-
-         else 
-
-            exit
-
-         end if 
-
-         ( ::cTikL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( ::cTikL )->( OrdSetFocus( nOrdTikL ) )
-   ( ::cTikS )->( OrdSetFocus( nOrdTikS ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-
-   local nOrdProL    := ( ::cProducL )->( ordSetFocus( "cStkFast" ) )
-   local nOrdProS    := ( ::cProducS )->( ordSetFocus( "cNumOrd" ) )
-
-   if ( ::cProducL )->( dbSeek( cCodArt + cCodAlm ) )
-
-      while ( ::cProducL )->cCodArt == cCodArt .and. ( ::cProducL )->cAlmOrd == cCodAlm .and. !( ::cProducL )->( Eof() )
-
-         if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd )
-
-            if ( Empty( dFecIni ) .or. ( ::cProducL )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducL )->dFecOrd <= dFecFin )
-
-               if lNumeroSerie .and. ( ::cProducS )->( dbSeek( ( ::cProducL )->cSerOrd + Str( ( ::cProducL )->nNumOrd ) + ( ::cProducL )->cSufOrd + Str( ( ::cProducL )->nNumLin ) ) )
-
-                  while ( ::cProducS )->cSerOrd + Str( ( ::cProducS )->nNumOrd ) + ( ::cProducS )->cSufOrd + Str( ( ::cProducS )->nNumLin ) == ( ::cProducL )->cSerOrd + Str( ( ::cProducL )->nNumOrd ) + ( ::cProducL )->cSufOrd + Str( ( ::cProducL )->nNumLin ) .and. !( ::cProducS )->( eof() )
-
-                     ::InsertStockMaterialesProducidos( .t. )
-
-                     ( ::cProducS )->( dbSkip() )
-
-                  end while
-
-               else 
-
-                  ::InsertStockMaterialesProducidos()
-
-               end if
-
-            end if 
-
-         else 
-
-            exit 
-
-         end if  
-
-         ( ::cProducL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( ::cProducL )->( ordSetFocus( nOrdProL ) )
-   ( ::cProducS )->( ordSetFocus( nOrdProS ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-
-   local nOrdProL    := ( ::cProducL )->( ordSetFocus( "cStkFast" ) )
-   local nOrdProS    := ( ::cProducS )->( ordSetFocus( "cNumOrd" ) )
-
-   if ( ::cProducM )->( dbSeek( cCodArt + cCodAlm ) )
-
-      while ( ::cProducM )->cCodArt == cCodArt .and. ( ::cProducM )->cAlmOrd == cCodAlm .and. !( ::cProducM )->( Eof() )
-
-         if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd ) 
-
-            if ( Empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )
-
-               if lNumeroSerie .and. ( ::cProducP )->( dbSeek( ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) ) )
-
-                  while ( ::cProducP )->cSerOrd + Str( ( ::cProducP )->nNumOrd ) + ( ::cProducP )->cSufOrd + Str( ( ::cProducP )->nNumLin ) == ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) .and. !( ::cProducP )->( eof() )
-
-                     ::InsertStockMateriasPrimas( .t. )
-
-                     ( ::cProducP )->( dbSkip() )
-
-                  end while
-
-               else 
-
-                  ::InsertStockMateriasPrimas()
-
-               end if 
-
-            end if 
-
-         else 
-
-            exit
-
-         end if  
-
-         ( ::cProducM )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( ::cProducL )->( ordSetFocus( nOrdProL ) )
-   ( ::cProducS )->( ordSetFocus( nOrdProS ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-//
-// Pendientes de recibir-------------------------------------------------------
-//
-
-METHOD aStockPendiente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
-
-   local nTotal            := 0
-   local nOrdPedPrvL       := ( ::cPedPrvL )->( ordSetFocus( "cStkFast" ) )
-   local nOrdAlbPrvL       := ( ::cAlbPrvL )->( ordSetFocus( "cPedRef" ) )
-
-   if ( ::cPedPrvL )->( dbSeek( cCodArt + cCodAlm ) )
-
-      while ( ::cPedPrvL )->cRef == cCodArt .and. ( ::cPedPrvL )->cAlmLin == cCodAlm .and. !( ::cPedPrvL )->( eof() )
-
-         nTotal            := nTotNPedPrv( ::cPedPrvL )
-                  
-         // Quitamos a las unidades lo ya albaranado---------------------------
-
-         if ( ::cAlbPrvL )->( dbSeek( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt ) )
-
-            while ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed + cCodArt == ( ::cAlbPrvL )->cCodPed + ( ::cAlbPrvL )->cRef .and. !( ::cAlbPrvL )->( eof() )
-
-               if ( ::cAlbPrvL )->cAlmLin == cCodAlm
-                  nTotal   -= nTotNAlbPrv( ::cAlbPrvL )
-               end if 
-
-               ( ::cAlbPrvL )->( dbSkip() )
-
-            end while
-
-         end if
-
-         // realizamos el apunte en stock-------------------------------------
-
-         ::InsertStockPendiente( nTotal, lLote, lNumeroSerie )
-
-         ( ::cPedPrvL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( ::cPedPrvL )->( ordSetFocus( nOrdPedPrvL ) )
-   ( ::cAlbPrvL )->( ordSetFocus( nOrdAlbPrvL ) )
-
-RETURN ( nil )
-
-//---------------------------------------------------------------------------//
-
-METHOD InsertStockPendiente( nTotal, lLote, lNumeroSerie )
-
-   with object ( SStock():New() )
-
-      :cTipoDocumento      := PED_PRV
-      :cCodigo             := ( ::cPedPrvL )->cRef
-      :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
-      :cDelegacion         := ( ::cPedPrvL )->cSufPed
-      :dFechaDocumento     := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
-      :cCodigoAlmacen      := ( ::cPedPrvL )->cAlmLin
-      :cCodigoPropiedad1   := ( ::cPedPrvL )->cCodPr1
-      :cCodigoPropiedad2   := ( ::cPedPrvL )->cCodPr2
-      :cValorPropiedad1    := ( ::cPedPrvL )->cValPr1
-      :cValorPropiedad2    := ( ::cPedPrvL )->cValPr2
-      :cLote               := ( ::cPedPrvL )->cLote
-      :nPendientesRecibir  := if( nTotal > 0, nTotal, 0 )
-
-      ::Integra( hb_QWith(), lLote, lNumeroSerie )
-
-   end with
 
 RETURN ( nil )
 
@@ -6617,3 +6647,4 @@ RETURN (  Self )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+

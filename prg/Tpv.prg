@@ -17848,11 +17848,11 @@ FUNCTION rxTpv( cPath, oMeter )
       ( dbfTikL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "CCOMTIL", "CCOMTIL", {|| Field->CCOMTIL } ) )
 
-      ( dbfTikL )->( ordCondSet("!Deleted() .and. cTipTil != '2' .and. cTipTil != '3'", {||!Deleted() .and. Field->cTipTil != '2' .and. Field->cTipTil != '3' } ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "CSTKFAST", "CCBATIL", {|| Field->CCBATIL } ) )
+      ( dbfTikL )->( ordCondSet("!Deleted() .and. cTipTil != '2' .and. cTipTil != '3' .and. nCtlStk < 2", {||!Deleted() .and. Field->cTipTil != '2' .and. Field->cTipTil != '3' .and. Field->nCtlStk < 2 }, , , , , , , , , .t. ) )
+      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "cStkFast", "cCbaTil + cAlmLin + dtos( dFecTik )", {|| Field->cCbaTil + Field->cAlmLin + dtos( Field->dFecTik ) } ) )
 
-      ( dbfTikL )->( ordCondSet("!Deleted() .and. cTipTil != '2' .and. cTipTil != '3'", {||!Deleted() .and. Field->cTipTil != '2' .and. Field->cTipTil != '3' } ) )
-      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "CSTKCOM", "CCOMTIL", {|| Field->CCOMTIL } ) )
+      ( dbfTikL )->( ordCondSet("!Deleted() .and. cComTil != '' .and. cTipTil != '2' .and. cTipTil != '3' .and. nCtlStk < 2", {||!Deleted() .and. Field->cComTil != '' .and. Field->cTipTil != '2' .and. Field->cTipTil != '3' .and. Field->nCtlStk < 2 }, , , , , , , , , .t. ) )
+      ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "cStkComb", "cComTil  + cAlmLin + dtos( dFecTik )", {|| Field->cComTil + Field->cAlmLin + dtos( Field->dFecTik ) } ) )
 
       ( dbfTikL )->( ordCondSet("!Deleted() .and. cTipTil == '6' ", {||!Deleted()  .and. Field->cTipTil == '6' } ) )
       ( dbfTikL )->( ordCreate( cPath + "TIKEL.CDX", "cTikVal", "CSERTIL + CNUMTIL + CSUFTIL", {|| Field->CSERTIL + Field->CNUMTIL + Field->CSUFTIL } ) )

@@ -6767,28 +6767,33 @@ Comprueba q no existan recibos pagados
 Static Function lRecibosPagados( uFacPrv, cRctPrvP )
 
    local cNumFac
-   local lRecPgd  := .f.
-   local nRecAct  := ( TDataView():FacturasProveedoresPagos( nView ) )->( Recno() )
-   local nOrdAct  := ( TDataView():FacturasProveedoresPagos( nView ) )->( OrdSetFocus( "NNUMFAC" ) )
+   local nRecAct  	
+   local nOrdAct  	
+   local lRecPgd  	:= .f.
+
+   DEFAULT cRctPrvP 	:= TDataView():FacturasProveedoresPagos( nView )
+
+   nRecAct  			:= ( cRctPrvP )->( Recno() )
+   nOrdAct  			:= ( cRctPrvP )->( OrdSetFocus( "NNUMFAC" ) )
 
    if ValType( uFacPrv ) == "A"
-      cNumFac     := uFacPrv[ _CSERFAC ] + Str( uFacPrv[ _NNUMFAC ], 9 ) + uFacPrv[ _CSUFFAC ]
+      cNumFac     	:= uFacPrv[ _CSERFAC ] + Str( uFacPrv[ _NNUMFAC ], 9 ) + uFacPrv[ _CSUFFAC ]
    else
-      cNumFac     := ( uFacPrv )->CSERFAC + Str( ( uFacPrv )->NNUMFAC ) + ( uFacPrv )->CSUFFAC
+      cNumFac     	:= ( uFacPrv )->CSERFAC + Str( ( uFacPrv )->NNUMFAC ) + ( uFacPrv )->CSUFFAC
    end if
 
-   if ( TDataView():FacturasProveedoresPagos( nView ) )->( dbSeek( cNumFac ) )
-      while cNumFac == ( TDataView():FacturasProveedoresPagos( nView ) )->cSerFac + Str( ( TDataView():FacturasProveedoresPagos( nView ) )->nNumFac ) + ( TDataView():FacturasProveedoresPagos( nView ) )->cSufFac .and. !( TDataView():FacturasProveedoresPagos( nView ) )->( eof() )
-         if ( TDataView():FacturasProveedoresPagos( nView ) )->lCobrado .and. !( TDataView():FacturasProveedoresPagos( nView ) )->lDevuelto
-            lRecPgd   := .t.
+   if ( cRctPrvP )->( dbSeek( cNumFac ) )
+      while cNumFac == ( cRctPrvP )->cSerFac + Str( ( cRctPrvP )->nNumFac ) + ( cRctPrvP )->cSufFac .and. !( cRctPrvP )->( eof() )
+         if ( cRctPrvP )->lCobrado .and. !( cRctPrvP )->lDevuelto
+            lRecPgd  := .t.
             exit
          end if
-         ( TDataView():FacturasProveedoresPagos( nView ) )->( dbSkip() )
+         ( cRctPrvP )->( dbSkip() )
       end while
    end if
 
-   ( TDataView():FacturasProveedoresPagos( nView ) )->( OrdSetFocus( nOrdAct ) )
-   ( TDataView():FacturasProveedoresPagos( nView ) )->( dbGoTo( nRecAct) )
+   ( cRctPrvP )->( OrdSetFocus( nOrdAct ) )
+   ( cRctPrvP )->( dbGoTo( nRecAct) )
 
 return ( lRecPgd )
 
@@ -9908,20 +9913,26 @@ FUNCTION rxRctPrv( cPath, oMeter )
       ( dbfRctPrvL )->( __dbPack() )
 
       ( dbfRctPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.CDX", "NNUMFAC", "CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "NNUMFAC", "CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
 
       ( dbfRctPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.CDX", "cRef", "cRef + cValPr1 + cValPr2", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 }, ) )
+      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "cRef", "cRef + cValPr1 + cValPr2", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 }, ) )
 
       ( dbfRctPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
+      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "Lote", "cLote", {|| Field->cLote }, ) )
+
+      ( dbfRctPrvL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) } ) )
 
       ( dbfRctPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.CDX", "iNumRct", "'04' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '04' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "iNumRct", "'04' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '04' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
 
       ( dbfRctPrvL )->( dbCloseArea() )
+
    else
+
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de proveedores" )
+
    end if
 
    dbUseArea( .t., cDriver(), cPath + "RctPrvI.DBF", cCheckArea( "FacPrvI", @cRctPrvT ), .f. )
@@ -10068,6 +10079,9 @@ RETURN ( cNomPrv )
 FUNCTION nEstRctPrv( cFacPrv, cRctPrvT, cRctPrvP )
 
    local nBitmap  := 3
+
+   ? cRctPrvT
+   ? cRctPrvP
 
    if ( cRctPrvT )->( dbSeek( cFacPrv ) )
       nBitmap     := ChkPagRctPrv( cRctPrvT, cRctPrvP )

@@ -1,11 +1,11 @@
 cd \fw195\gestool\
 
-taskkill /F /IM gestool.exe
+taskkill /F /IM gestoolhb.exe
 
 \BCC55\BIN\MAKE -S -fHB.MAK -D__GST__
 
 cd \fw195\gestool\bin\
 
-gestool.exe /NOPASSWORD
+gestoolhb.exe /NOPASSWORD
 
 cd \fw195\gestool\

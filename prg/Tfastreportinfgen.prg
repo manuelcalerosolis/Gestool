@@ -1774,6 +1774,10 @@ METHOD lLoadInfo() CLASS TFastReportInfGen
 
    local oTreeInforme      := ::oTreeReporting:GetSelected()
 
+   if empty( oTreeInforme ) 
+      Return ( .f. )
+   end if
+
    /*
    Obtenemos los datos necesarios para el informe------------------------------
    */

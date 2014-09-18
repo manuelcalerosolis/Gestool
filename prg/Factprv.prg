@@ -9244,6 +9244,9 @@ FUNCTION rxFacPrv( cPath, oMeter )
       ( cFacPrvL )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cFacPrvL )->( ordCreate( cPath + "FACPRVL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
 
+      ( cFacPrvL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) } ) )
+
       ( cFacPrvL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )

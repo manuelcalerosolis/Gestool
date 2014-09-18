@@ -20,7 +20,7 @@ SOURCEPRG 			= 	Prg
 SOURCEC 				=	C
 PPO 					= 	Ppo1406
 
-EXE 					= 	Bin\Gestool.exe
+EXE 					= 	Bin\Gestoolhb.exe
 
 .path.prg      		=	.\$(SOURCEPRG)
 .path.c       			=	.\$(SOURCEC)
@@ -1090,6 +1090,7 @@ $(OBJ)\Components.obj 					+
 $(OBJ)\TLabelGenerator.obj 			+
 $(OBJ)\TTreevie.obj 						+
 $(OBJ)\ApoloMeter.obj 					+
+$(OBJ)\Xbrowse1406.Obj            	+
 $(OBJ)\TGridSay.obj 						
 $<,$*
 $(FWLIB)\FiveH.lib              	+

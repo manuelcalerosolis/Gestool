@@ -453,15 +453,15 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
       cOrdKey              := ( cAlias )->( OrdKey() )
 
       if lInclude
-         cExpresionFilter        := "'" + cExpresionFilter + "' $ " + cOrdKey + " .and. !Deleted()"
+         cExpresionFilter  := "'" + cExpresionFilter + "' $ " + cOrdKey + " .and. !Deleted()"
       end if
 
       if Empty( cExpUsuario ) .and. !Empty( cFiltroUsuario )
-         cExpresionFilter        += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroUsuario
+         cExpresionFilter  += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroUsuario
       end if
 
       if Empty( cExpFecha ) .and. !Empty( cFiltroFecha )
-         cExpresionFilter        += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
+         cExpresionFilter  += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
       end if
 
       if !Empty( cExpresionFilter )
@@ -516,13 +516,6 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
       Select( cAlias )
 
       bExpFilter           := bCheck2Block( cExpresionFilter )
-/*
-      msgInfo( !Empty( bExpFilter ), "!Empty( bExpFilter )" )
-      msgInfo( valtoprg( bExpFilter ), "( bExpFilter )" )
-      msgInfo( !Empty( cOldIndexName ), "!Empty( cOldIndexName )" )
-      msgInfo( valtoprg( cOldIndexName ), "( cOldIndexName )" )
-      msgInfo( !Empty( cBagAnterior ), "!Empty( cBagAnterior )" )
-      msgInfo( valtoprg( cBagAnterior ), "( cBagAnterior )" )*/
 
       if !Empty( bExpFilter ) .and. !Empty( cOldIndexName ) .and. !Empty( cBagAnterior )
          ( cAlias )->( OrdCondSet( cExpresionFilter, bExpFilter ) )
@@ -611,66 +604,3 @@ Return .t.
 //
 // Crea Bag Customer con tags indicados o Bag normal con sus tags correspondientes si es un filtro
 //
-/*
-FUNCTION cAddBagTmp( aTags, xCond, cBag, lAddKeys, lCustomer, lTemporal )
-
-   LOCAL nPos, cCond, bCond
-   LOCAL nTag  := OrdNumber()
-   LOCAL nTags := Len( aTags )
-   LOCAL cType := ValType( xCond )
-
-   DEFAULT cBag      := cTmpFileName( "CDX" ),;
-           lAddKeys  := .T.,;
-           lCustomer := cType $ 'BUA',;
-           lTemporal := .F.
-
-   IF cType = 'B'
-      cCond := ''
-      bCond := xCond
-   ELSEIF cType != 'A'
-      DEFAULT xCond := '.T.'
-      cCond := xCond
-      bCond := &('{|| ' + xCond + '}')
-   ENDIF
-
-   IF ! lCustomer .OR. ( lAddKeys .AND. cType != 'A' )
-
-      FOR nPos := 1 TO nTags
-         IF Len( aTags[nPos] ) = 2
-            AAdd( aTags[nPos], &('{|| ' + aTags[nPos,2] + '}') )
-         ENDIF
-         OrdCondSet( cCond, bCond,,,,,,,,,,, .T., .T.,,,, lTemporal, .T., .T. )
-         OrdCreate( cBag, aTags[nPos,1], aTags[nPos,2], aTags[nPos,3] )
-         IF lCustomer
-            DbOrderInfo( DBOI_CUSTOM, cBag, aTags[nPos,1], .T. )
-            DbOrderInfo( DBOI_CONDITION, cBag, aTags[nPos,1], ".T." )
-         ENDIF
-      NEXT nPos
-      OrdListAdd( cBag )
-      OrdSetFocus( aTags[1,1], cBag )
-      DbGoTop()
-   ELSE
-      FOR nPos := 1 TO nTags
-         IF Len( aTags[nPos] ) = 2
-            AAdd( aTags[nPos], &('{|| ' + aTags[nPos,2] + '}') )
-         ENDIF
-         OrdCondSet( ,,,,,,,,,,,, .T., .F., .T., .F.,, lTemporal, .T., .T. )
-         OrdCreate( cBag, aTags[nPos,1], aTags[nPos,2], aTags[nPos,3] )
-      NEXT nPos
-      OrdListAdd( cBag )
-      OrdSetFocus( nTag )
-      IF lAddKeys // cType == 'A'
-         IF nTags = 1
-            AEval( xCond, {|n| DbGoTo( n ), OrdKeyAdd( aTags[1,1], cBag ) } )
-         ELSE
-            AEval( xCond, {|n| DbGoTo( n ), AEval( aTags, {|a| OrdKeyAdd( a[1], cBag ) } ) } )
-         ENDIF
-         // Fijamos primer tag del bag temporal
-         OrdSetFocus( aTags[1,1], cBag )
-         DbGoTop()
-      ENDIF
-   ENDIF
-
-RETURN cBag
-*/
-//---------------------------------------------------------------------------//

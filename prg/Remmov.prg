@@ -3606,18 +3606,20 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       FIELD NAME "nBultos"             TYPE "N" LEN  16 DEC 0 COMMENT "Número de bultos en líneas"          OF oDbf
       FIELD NAME "cFormato"            TYPE "C" LEN 100 DEC 0 COMMENT "Formato de compra/venta"             OF oDbf
 
-      INDEX TO ( cFileName ) TAG "nNumRem" ON "Str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "dFecMov" ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "cRefMov" ON "cRefMov + cValPr1 + cValPr2 + cLote"    NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "cNomMov" ON "cNomMov"                                NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "cAloMov" ON "cAloMov"                                NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "cAliMov" ON "cAliMov"                                NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "cRefAlm" ON "cRefMov + cValPr1 + cValPr2 + cAliMov"  NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "cLote"   ON "cLote"                                  NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "nNumLin" ON "Str( nNumLin )"                         NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "lSndDoc" ON "lSndDoc"                                NODELETED                              FOR "lSndDoc"        OF oDbf
-      INDEX TO ( cFileName ) TAG "nTipMov" ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4"   OF oDbf
-      INDEX TO ( cFileName ) TAG "cStock"  ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "nTipMov == 4"   OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumRem"      ON "Str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "dFecMov"      ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cRefMov"      ON "cRefMov + cValPr1 + cValPr2 + cLote"    NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cNomMov"      ON "cNomMov"                                NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cAloMov"      ON "cAloMov"                                NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cAliMov"      ON "cAliMov"                                NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cRefAlm"      ON "cRefMov + cValPr1 + cValPr2 + cAliMov"  NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cLote"        ON "cLote"                                  NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumLin"      ON "Str( nNumLin )"                         NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "lSndDoc"      ON "lSndDoc"                                NODELETED                              FOR "lSndDoc"        OF oDbf
+      INDEX TO ( cFileName ) TAG "nTipMov"      ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4"   OF oDbf
+      INDEX TO ( cFileName ) TAG "cStock"       ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "nTipMov == 4"   OF oDbf
+      INDEX TO ( cFileName ) TAG "cStkFastIn"   ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
+      INDEX TO ( cFileName ) TAG "cStkFastOut"  ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
 
    END DATABASE oDbf
 

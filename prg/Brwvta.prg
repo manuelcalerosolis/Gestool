@@ -1739,80 +1739,14 @@ return nil
 Calculamos cajas, unidades e importe de ventas del mes
 */
 
-static function nVentas( cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacRecT, dbfFacRecL, dbfTikCliT, dbfTikCliL, nYear )
-
-   local cCodEmp
-   local dbfAlbEmpT
-   local dbfAlbEmpL
-   local dbfFacEmpT
-   local dbfFacEmpL
-   local dbfTikEmpT
-   local dbfTikEmpL
-   local dbfFacRecEmpT
-   local dbfFacRecEmpL
+Static Function nVentas( cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacRecT, dbfFacRecL, dbfTikCliT, dbfTikCliL, nYear )
 
    aEval( aVta, {|a| Afill( a, 0 ) } )
 
-   if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()
-
-            nTotAlbVta( cCodArt, dbfAlbCliT, dbfAlbCliL, nYear )
-            nTotFacVta( cCodArt, dbfFacCliT, dbfFacCliL, nYear )
-            nTotRecVta( cCodArt, dbfFacRecT, dbfFacRecL, nYear )
-            nTotTikVta( cCodArt, dbfTikCliT, dbfTikCliL, nYear )
-
-         else
-
-            USE ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ADDITIVE
-            SET TAG TO "CREF"
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIT.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIL.CDX" ) ADDITIVE
-            SET TAG TO "CREF"
-
-            USE ( cPatStk( cCodEmp ) + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECT.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfFacRecEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRECL.CDX" ) ADDITIVE
-            SET TAG TO "CREF"
-
-            USE ( cPatStk( cCodEmp ) + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKET.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKEL.CDX" ) ADDITIVE
-            SET TAG TO "CCBATIL"
-
-            nTotAlbVta( cCodArt, dbfAlbEmpT, dbfAlbEmpL, nYear )
-            nTotFacVta( cCodArt, dbfFacEmpT, dbfFacEmpL, nYear )
-            nTotRecVta( cCodArt, dbfFacRecEmpT, dbfFacRecEmpL, nYear )
-            nTotTikVta( cCodArt, dbfTikEmpT, dbfTikEmpL, nYear )
-
-            CLOSE( dbfAlbEmpT )
-            CLOSE( dbfAlbEmpL )
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-            CLOSE( dbfFacRecEmpT )
-            CLOSE( dbfFacRecEmpL )
-            CLOSE( dbfTikEmpT )
-            CLOSE( dbfTikEmpL )
-
-         end if
-
-      next
-
-   end if
+   nTotAlbVta( cCodArt, dbfAlbCliT, dbfAlbCliL, nYear )
+   nTotFacVta( cCodArt, dbfFacCliT, dbfFacCliL, nYear )
+   nTotRecVta( cCodArt, dbfFacRecT, dbfFacRecL, nYear )
+   nTotTikVta( cCodArt, dbfTikCliT, dbfTikCliL, nYear )
 
 Return ( nil )
 
@@ -2195,6 +2129,7 @@ Static Function LoadRectificativaProveedor( cCodArt, nYear )
    local aEstadoFactura    := { "Pagada", "Parcialmente", "Pendiente" }
 
    if ( dbfRctPrvL )->( dbSeek( cCodArt ) )
+      
       while ( dbfRctPrvL )->cRef == cCodArt .and. !( dbfRctPrvL )->( eof() )
 
          if nYear == nil .or. Year( dFecRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT ) ) == nYear

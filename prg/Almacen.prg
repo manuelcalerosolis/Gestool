@@ -1028,7 +1028,7 @@ function IsAlmacen( cPatEmp )
    USE ( cPatEmp + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlmT ) )
    SET ADSINDEX TO ( cPatEmp + "ALMACEN.CDX" ) ADDITIVE
 
-   if !( dbfAlmT )->( dbSeek( "000" ) ) .and. ( dbfAlmT )->( LastRec() ) == 0
+   if ( dbfAlmT )->( ordKeyCount() ) == 0
       ( dbfAlmT )->( dbAppend() )
       ( dbfAlmT )->cCodAlm := "000"
       ( dbfAlmT )->cNomAlm := "Almacén principal"

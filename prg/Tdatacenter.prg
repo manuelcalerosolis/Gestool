@@ -285,7 +285,7 @@ METHOD OpenFacCliP( dbf ) CLASS TDataCenter
 
       end if 
 
-      Return ( lOpen )   
+Return ( lOpen )   
 
 //---------------------------------------------------------------------------//
 

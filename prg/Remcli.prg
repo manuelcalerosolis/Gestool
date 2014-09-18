@@ -302,27 +302,25 @@ METHOD DefineDetails( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "lRemesa"    TYPE "L" LEN   1 DEC 0 OF oDbf     
       FIELD NAME "cNumMtr"    TYPE "C" LEN  15 DEC 0 OF oDbf
 
-      INDEX TO ( cFileName ) TAG "nNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodCli"   ON "cCodCli"                                                               NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cNomCli"   ON "cNomCli"                                                               NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "lCodCli"   ON "cCodCli"                                                               NODELETED FOR "!lCobrado" OF oDbf
-      INDEX TO ( cFileName ) TAG "dPreCob"   ON "dPreCob"                                                               NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "dFecVto"   ON "dFecVto"                                                               NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "dEntrada"  ON "dEntrada"                                                              NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "nImporte"  ON "nImporte"                                                              NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "pNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          NODELETED FOR "!lCobrado" OF oDbf
-      INDEX TO ( cFileName ) TAG "tNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          NODELETED FOR "lCobrado"  OF oDbf
-      INDEX TO ( cFileName ) TAG "nNumRem"   ON "Str( nNumRem ) + cSufRem"                                              NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "nNumCli"   ON "Str( nNumRem ) + cSufRem + cCodCli"                                    NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cCtaRem"   ON "cCtaRem"                                                               NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodAge"   ON "cCodAge"                                                               NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "nNumCob"   ON "Str( nNumCob ) + cSufCob"                                              NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "cTurRec"   ON "cTurRec + cSufFac + cCodCaj"                                           NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "fNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          NODELETED FOR "Empty( cTipRec )"  OF oDbf
-      INDEX TO ( cFileName ) TAG "rNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          NODELETED FOR "!Empty( cTipRec )" OF oDbf
-      INDEX TO ( cFileName ) TAG "cRecDec"   ON "cRecDev"                                                               NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "lCtaBnc"   ON "cEntEmp + cSucEmp + cDigEmp + cCtaEmp"                                 NODELETED FOR "lCobrado" OF oDbf
-      INDEX TO ( cFileName ) TAG "cNumMtr"   ON "cNumMtr"                                                               NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodCli"   ON "cCodCli"                                                               	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cNomCli"   ON "cNomCli"                                                               	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "lCodCli"   ON "cCodCli"                                                               	NODELETED FOR "!lCobrado" OF oDbf
+      INDEX TO ( cFileName ) TAG "dPreCob"   ON "dPreCob"                                                               	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "dFecVto"   ON "dFecVto"                                                               	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "dEntrada"  ON "dEntrada"                                                              	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "nImporte"  ON "nImporte"                                                                 NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumRem"   ON "Str( nNumRem ) + cSufRem + cCodCli"                                    	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCtaRem"   ON "cCtaRem"                                                               	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodAge"   ON "cCodAge"                                                               	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumCob"   ON "Str( nNumCob ) + cSufCob"                                              	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "cTurRec"   ON "cTurRec + cSufFac + cCodCaj"                                           	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "fNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          	NODELETED FOR "Empty( cTipRec )"  OF oDbf
+      INDEX TO ( cFileName ) TAG "rNumFac"   ON "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec"          	NODELETED FOR "!Empty( cTipRec )" OF oDbf
+      INDEX TO ( cFileName ) TAG "cRecDec"   ON "cRecDev"                                                               	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "lCtaBnc"   ON "cEntEmp + cSucEmp + cDigEmp + cCtaEmp"                                 	NODELETED FOR "lCobrado" OF oDbf
+      INDEX TO ( cFileName ) TAG "cNumMtr"   ON "cNumMtr"                                                              	 	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "iNumFac"   ON "'21' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac + Str( nNumRec )"   NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -2147,7 +2145,7 @@ METHOD InitMod19( oDlg )
    end if
 
    if ::lAgruparRecibos
-      ::oDbfDet:OrdSetFocus( "nNumCli" )
+      ::oDbfDet:OrdSetFocus( "nNumRem" )
    end if
 
    nHandle           := fCreate( Rtrim( ::cFicheroExportacion ) )
@@ -2455,7 +2453,7 @@ METHOD InitSepa19( oDlg )
    BEGIN SEQUENCE
 */
    if ::lAgruparRecibos
-      ::oDbfDet:OrdSetFocus( "nNumCli" )
+      ::oDbfDet:OrdSetFocus( "nNumRem" )
    end if
 
    ::dAnteriorVencimiento  := nil
