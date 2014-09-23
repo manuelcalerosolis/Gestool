@@ -8243,7 +8243,7 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastIn", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
-      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastOut", "cRef + cAlmOrigen + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmOrigen + dtos( Field->dFecAlb ) } ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastOu", "cRef + cAlmOrigen + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmOrigen + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbPrvT )->( dbCloseArea() )
    else

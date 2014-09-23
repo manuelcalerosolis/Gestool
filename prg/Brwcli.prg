@@ -2017,7 +2017,7 @@ Static Function LoadAnticiposCliente( cCodCli, dbfDiv, dbfIva, Anio )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc      := ANT_CLI
             oDbfTmp:cNumDoc      := ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt
-            if( dbfAntCliT )->lLiquidada
+            if( dbfAntCliT )->lLiquidada 
                oDbfTmp:cEstado   := "Liquidado"
             else
                oDbfTmp:cEstado   := "No liquidado"

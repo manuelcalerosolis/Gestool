@@ -421,12 +421,12 @@ Pwebbtn.c               \
 Stretchblt.c            \
 Rebars.c                \
 Treeview.c              \
-Notify.c 				\
+Notify.c 					\
 Wininet.c               \
 Rasapi.c                \
 Attrib.c                \
-Comm.c 					\
-Listview.c 				\
+Comm.c 						\
+Listview.c 					\
 
 OBJS            =       \
 Factu.obj               \

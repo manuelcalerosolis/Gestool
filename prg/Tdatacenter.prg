@@ -671,7 +671,7 @@ METHOD lAdministratorTask()
 
       DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creación de diccionario de datos para " + ::cDataDictionaryFile
 
-      ::oBrwEmpresas                         := IXBrowse():New( ::oDlg )
+      ::oBrwEmpresas                         := TXBrowse():New( ::oDlg )
 
       ::oBrwEmpresas:lRecordSelector         := .t.
       ::oBrwEmpresas:lTransparent            := .f.
@@ -775,8 +775,13 @@ METHOD StartAdministratorTask()
    ::oBtnOk:Disable()
    ::oBntCancel:Disable()
 
-   ::oMtrActualiza:SetTotal( len( ::aEmpresas ) )
-   ::oMtrDiccionario:SetTotal( 5 )
+   if !empty( ::oMtrActualiza )
+   	::oMtrActualiza:SetTotal( len( ::aEmpresas ) )
+   end if 
+   
+   if !empty( ::oMtrDiccionario )
+	   ::oMtrDiccionario:SetTotal( 5 )
+	end if 
 
    /*
    Recorremos el array de las empresas par actualizarlas--------------------
@@ -792,7 +797,9 @@ METHOD StartAdministratorTask()
 
             ::oMsg:SetText( "Actualizando empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
 
-            ::oMtrActualiza:Set( hb_EnumIndex() )
+            if !empty( ::oMtrActualiza )
+            	::oMtrActualiza:Set( hb_EnumIndex() )
+            end if
 
             SetEmpresa( cEmp[ 1 ], , , , , , .t. )
 
@@ -808,8 +815,10 @@ METHOD StartAdministratorTask()
       next
 
    end if 
-
-   ::oMtrDiccionario:Set( 1 )
+   
+   if !empty(::oMtrDiccionario)
+   	::oMtrDiccionario:Set( 1 )
+   end if
 
    /*
    Conectamos de nuevo con ADS------------------------------------------------
@@ -850,7 +859,9 @@ METHOD StartAdministratorTask()
 
             ::oMsg:SetText( "Creando diccionario de empresa " + Rtrim( cEmp[ 1 ] ) + " - " + Rtrim( cEmp[ 2 ] ) )
 
-            ::oMtrActualiza:Set( hb_EnumIndex() )
+            if !empty( ::oMtrActualiza )
+            	::oMtrActualiza:Set( hb_EnumIndex() )
+            end if 
 
             SetEmpresa( cEmp[ 1 ], , , , , , .t. )
 
@@ -869,7 +880,9 @@ METHOD StartAdministratorTask()
 
       next
 
-      ::oMtrDiccionario:Set( 2 )
+      if !empty(::oMtrDiccionario)
+     		::oMtrDiccionario:Set( 2 )
+     	end if 
 
       /*
       Creamos las tablas de operacioens----------------------------------------
@@ -883,7 +896,9 @@ METHOD StartAdministratorTask()
 
       ::CreateAllLocksTablesUsers()
 
-      ::oMtrDiccionario:Set( 3 )
+      if !empty(::oMtrDiccionario)
+	      ::oMtrDiccionario:Set( 3 )
+	   end if
 
       /*
       Creamos los triggers de los datos----------------------------------------
@@ -893,7 +908,9 @@ METHOD StartAdministratorTask()
 
       ::CreateDataTrigger()
 
-      ::oMtrDiccionario:Set( 4 )
+      if !empty(::oMtrDiccionario)
+	      ::oMtrDiccionario:Set( 4 )
+	   end if
 
       /*
       Creamos los triggers de las empresas-------------------------------------
@@ -903,7 +920,9 @@ METHOD StartAdministratorTask()
 
       ::CreateEmpresaTrigger()
 
-      ::oMtrDiccionario:Set( 5 )
+      if !empty(::oMtrDiccionario)
+	      ::oMtrDiccionario:Set( 5 )
+	   end if
 
    end if
 
@@ -1016,11 +1035,15 @@ METHOD CreateDataTrigger()
 
    local oTable
 
-   ::oMtrActualiza:SetTotal( len( ::aDataTables ) )
+   if !empty( ::oMtrActualiza )
+   	::oMtrActualiza:SetTotal( len( ::aDataTables ) )
+   end if 
 
    for each oTable in ::aDataTables
 
-      ::oMtrActualiza:Set( hb_EnumIndex() )
+      if !empty( ::oMtrActualiza )
+      	::oMtrActualiza:Set( hb_EnumIndex() )
+      end if 
 
       if oTable:lTrigger
          ::AddTrigger( oTable )
@@ -1050,11 +1073,15 @@ METHOD CreateEmpresaTrigger()
 
    local oTable
 
-   ::oMtrActualiza:SetTotal( len( ::aEmpresaTables ) )
+   if !empty( ::oMtrActualiza )
+   	::oMtrActualiza:SetTotal( len( ::aEmpresaTables ) )
+   end if 
 
    for each oTable in ::aEmpresaTables
 
-      ::oMtrActualiza:Set( hb_EnumIndex() )
+   	if !empty( ::oMtrActualiza )
+   	   ::oMtrActualiza:Set( hb_EnumIndex() )
+   	end if 
 
       if oTable:lTrigger
          ::AddTrigger( oTable )
