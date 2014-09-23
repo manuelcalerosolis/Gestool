@@ -9403,6 +9403,10 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
          end if
 
+         if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
+             aTmp[ _NDTOTARIFA ]    := ( TDataView():Clientes( nView ) )->nDtoArt
+         end if
+
          if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:lValid()
@@ -12236,6 +12240,7 @@ Static Function hValue( aTmp, aTmpPed )
          hValue[ "cCodigoGrupo"      ] := aTmpPed[ _CCODGRP ]
          hValue[ "lIvaIncluido"      ] := aTmpPed[ _LIVAINC ]
          hValue[ "dFecha"            ] := aTmpPed[ _DFECPED ]
+         hValue[ "nDescuentoTarifa"  ] := aTmpPed[ _NDTOTARIFA ]
 
       case ValType( aTmpPed ) == "C"
          
@@ -12243,6 +12248,7 @@ Static Function hValue( aTmp, aTmpPed )
          hValue[ "cCodigoGrupo"      ] := ( aTmpPed )->cCodGrp
          hValue[ "lIvaIncluido"      ] := ( aTmpPed )->lIvaInc
          hValue[ "dFecha"            ] := ( aTmpPed )->dFecPed
+         hValue[ "nDescuentoTarifa"  ] := ( aTmpPed )->nDtoTarifa
 
    end case
 

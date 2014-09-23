@@ -109,6 +109,7 @@
 #define _CDIGBNC            97
 #define _CCTABNC            98
 #define _LOPERPV            99
+#define _NDTOTARIFA 	   100
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -6588,6 +6589,10 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
          end if
 
+         if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
+             aTmp[ _NDTOTARIFA ]    := ( TDataView():Clientes( nView ) )->nDtoArt
+         end if
+
          if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:lValid()
@@ -10674,6 +10679,7 @@ Static Function hValue( aTmp, aTmpFac )
          hValue[ "cCodigoGrupo"      ] := aTmpFac[ _CCODGRP ]
          hValue[ "lIvaIncluido"      ] := aTmpFac[ _LIVAINC ]
          hValue[ "dFecha"            ] := aTmpFac[ _DFECFAC ]
+         hValue[ "nDescuentoTarifa"  ] := aTmpFac[ _NDTOTARIFA ]
 
       case ValType( aTmpFac ) == "C"
          
@@ -10681,6 +10687,7 @@ Static Function hValue( aTmp, aTmpFac )
          hValue[ "cCodigoGrupo"      ] := ( aTmpFac )->cCodGrp
          hValue[ "lIvaIncluido"      ] := ( aTmpFac )->lIvaInc
          hValue[ "dFecha"            ] := ( aTmpFac )->dFecFac
+         hValue[ "nDescuentoTarifa"  ] := ( aTmpFac )->nDtoTarifa
 
    end case
 
@@ -12592,11 +12599,12 @@ function aItmFacRec()
    aAdd( aItmFacRec, {"cBanco"      ,"C", 50, 0, "Nombre del banco del cliente" ,                        "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN de la cuenta bancaria del cliente",         "", 						 "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",               "", "( cDbf )"} )
-  	aAdd( aItmFacRec, {"cEntBnc"     ,"C",  4, 0, "Entidad de la cuenta bancaria del cliente" ,           "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"cEntBnc"     ,"C",  4, 0, "Entidad de la cuenta bancaria del cliente" ,           "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cSucBnc"     ,"C",  4, 0, "Sucursal de la cuenta bancaria del cliente" ,          "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cDigBnc"     ,"C",  2, 0, "Dígito de control de la cuenta bancaria del cliente" , "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"cCtaBnc"     ,"C", 10, 0, "Cuenta bancaria del cliente" ,                         "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"lOperPV"     ,"L",  1, 0, "Lógico para operar con punto verde" ,                  "",                   "", "( cDbf )", .t. } )
+   aAdd( aItmFacRec, {"nDtoTarifa"  ,"N",  6, 2, "Descuento de tarifa de cliente",                       "",                   "", "( cDbf )"} )
 
 RETURN ( aItmFacRec )
 

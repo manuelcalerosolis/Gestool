@@ -93,6 +93,7 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _NTOTREQ                  78
 #define _NTOTPRE                  79
 #define _LOPERPV                  80
+#define _NDTOTARIFA               81  
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -6678,6 +6679,10 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
          end if
 
+         if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
+             aTmp[ _NDTOTARIFA ]    := ( TDataView():Clientes( nView ) )->nDtoArt
+         end if
+
          if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:lValid()
@@ -8099,6 +8104,7 @@ Static Function hValue( aTmp, aTmpPre )
          hValue[ "cCodigoGrupo"      ] := aTmpPre[ _CCODGRP ]
          hValue[ "lIvaIncluido"      ] := aTmpPre[ _LIVAINC ]
          hValue[ "dFecha"            ] := aTmpPre[ _DFECPRE ]
+         hValue[ "nDescuentoTarifa"  ] := aTmpPre[ _NDTOTARIFA ]
 
       case ValType( aTmpPre ) == "C"
          
@@ -8106,7 +8112,7 @@ Static Function hValue( aTmp, aTmpPre )
          hValue[ "cCodigoGrupo"      ] := ( aTmpPre )->cCodGrp
          hValue[ "lIvaIncluido"      ] := ( aTmpPre )->lIvaInc
          hValue[ "dFecha"            ] := ( aTmpPre )->dFecPre
-
+         hValue[ "nDescuentoTarifa"  ] := ( aTmpPre )->nDtoTarifa
    end case
 
    hValue[ "nTipoDocumento"         ] := PRE_CLI
@@ -10142,6 +10148,7 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "", "", "( cDbf )"} )
    aAdd( aItmPreCli, { "nTotPre",   "N", 16,  6, "Total presupuesto" ,                                "", "", "( cDbf )"} )
    aAdd( aItmPreCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
+   aAdd( aItmPreCli, { "nDtoTarifa","N",  6,  2, "Descuento de tarifa de cliente",                    "", "", "( cDbf )"} )
 
 return ( aItmPreCli )
 
