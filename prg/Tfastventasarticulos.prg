@@ -494,6 +494,10 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cFormato",    "C",100, 0, {|| "" },   "Formato de compra/venta en líneas"       )
    ::AddField( "nCajas",      "N", 16, 6, {|| "" },   "Cajas en líneas"                         )
 
+   ::AddField( "lKitArt",     "L",  1, 0, {|| "" },   "Línea con escandallos"                   )
+   ::AddField( "lKitChl",     "L",  1, 0, {|| "" },   "Línea perteneciente a escandallo"        )
+
+
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
 
@@ -964,6 +968,9 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:cFormato   := ::osatCliL:cFormato
                   ::oDbf:nCajas     := ::oSatCliL:nCanSat
 
+                  ::oDbf:lKitArt    := ::oSatCliL:lKitArt
+                  ::oDbf:lKitChl    := ::oSatCliL:lKitChl
+
                   /*
                   AÃ±adimos un nuevo registro-----------------------------------
                   */
@@ -1119,6 +1126,9 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cFormato   := ::oPreCliL:cFormato
                   ::oDbf:nCajas     := ::oPreCliL:nCanPre
 
+                  ::oDbf:lKitArt    := ::oPreCliL:lKitArt
+                  ::oDbf:lKitChl    := ::oPreCliL:lKitChl
+
                   ::InsertIfValid()
 
                end if
@@ -1265,6 +1275,9 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nBultos    := ::oPedCliL:nBultos
                   ::oDbf:cFormato   := ::oPedCliL:cFormato
                   ::oDbf:nCajas     := ::oPedCliL:nCanPed
+
+                  ::oDbf:lKitArt    := ::oPedCliL:lKitArt
+                  ::oDbf:lKitChl    := ::oPedCliL:lKitChl
 
                   ::InsertIfValid()
 
@@ -1422,6 +1435,9 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cFormato   := ::oAlbCliL:cFormato
                   ::oDbf:nCajas     := ::oAlbCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
 
+                  ::oDbf:lKitArt    := ::oAlbCliL:lKitArt
+                  ::oDbf:lKitChl    := ::oAlbCliL:lKitChl
+
                   ::InsertIfValid()
 
                end if
@@ -1572,6 +1588,9 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cFormato   := ::oFacCliL:cFormato
                   ::oDBf:nCajas     := ::oFacCliL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
 
+                  ::oDbf:lKitArt    := ::oFacCliL:lKitArt
+                  ::oDbf:lKitChl    := ::oFacCliL:lKitChl
+
                   ::InsertIfValid()
 
                end if
@@ -1719,6 +1738,9 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:cFormato   := ::oFacRecL:cFormato
                   ::oDbf:nCajas     := ::oFacRecL:nCanEnt * if( ::lUnidadesNegativo, -1, 1 )
 
+                  ::oDbf:lKitArt    := ::oFacRecL:lKitArt
+                  ::oDbf:lKitChl    := ::oFacRecL:lKitChl
+
                   ::InsertIfValid()
 
                end if
@@ -1854,6 +1876,9 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
                   ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
                   ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
+
+                  ::oDbf:lKitArt    := ::oTikCliL:lKitArt
+                  ::oDbf:lKitChl    := ::oTikCliL:lKitChl
 
                // Añadimos un nuevo registro-----------------------------------
 
