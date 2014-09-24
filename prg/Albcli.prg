@@ -10454,7 +10454,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             */
 
             if !uFieldEmpresa( "lCosAct" )
-               nCosPro           := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ] )
+
+               nCosPro           := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ] )
+
                if nCosPro == 0
                   nCosPro        := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , TDataView():Get( "Divisas", nView ) )
                end if
@@ -15250,7 +15252,7 @@ function SynAlbCli( cPath )
          /*
          Cargamos los costos para Marbaroso------------------------------------
          */
-         /*
+         
 
          if !Empty( ( TDataView():Get( "AlbCliL", nView ) )->cRef ) .and. Empty( ( TDataView():Get( "AlbCliL", nView ) )->nCosDiv )
             if dbLock( TDataView():Get( "AlbCliL", nView ) )
@@ -15259,7 +15261,7 @@ function SynAlbCli( cPath )
             end if
          end if
 
-         */
+         
 
          // Numeros de serie------------------------------------------------------
 
