@@ -12302,7 +12302,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       	*/
 
          if !uFieldEmpresa( "lCosAct" )
-            nCosPro              := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ] )
+            nCosPro              := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ] )
          end if
 
          if nCosPro == 0
@@ -18247,12 +18247,14 @@ function SynFacCli( cPath )
          	end if
          end if
 
-         /*if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nCosDiv )
+         //Cargamos el costo medio para marbarroso
+
+         if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nCosDiv )
          	if ( dbfFacCliL )->( dbRLock() )
          	   ( dbfFacCliL )->nCosDiv 	:= oStock:nCostoMedio( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cAlmLin, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2, ( dbfFacCliL )->cLote )   
                ( dbfFacCliL )->( dbUnLock() )         	   
          	end if
-         end if */
+         end if 
 
          ( dbfFacCliL )->( dbSkip() )
 

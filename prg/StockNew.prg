@@ -6095,7 +6095,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
    end if
 
-   ( ::cHisMovT )->( OrdSetFocus( "cStkFastOut" ) )
+   ( ::cHisMovT )->( OrdSetFocus( "cStkFastOu" ) )
 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -6189,7 +6189,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
    // Albaranes con doble almacen----------------------------------------------
 
-   ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastOut" ) )
+   ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastOu" ) )
 
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 

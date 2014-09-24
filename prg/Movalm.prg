@@ -1786,7 +1786,7 @@ FUNCTION rxHisMov( cPath, oMeter )
       ( dbfHisMov )->( ordCreate( cPath + "HisMov.Cdx", "cStkFastIn", "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote", {|| Field->cRefMov + Field->cAliMov + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
 
       ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfHisMov )->( ordCreate( cPath + "HisMov.Cdx", "cStkFastOut", "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote", {|| Field->cRefMov + Field->cAloMov + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HisMov.Cdx", "cStkFastOu", "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote", {|| Field->cRefMov + Field->cAloMov + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
 
       ( dbfHisMov )->( dbCloseArea() )
 

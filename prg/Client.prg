@@ -12191,7 +12191,7 @@ Return ( hAtipica )
 Function hValoresAtipica( hValue, hAtipica )
 
    local nTarifa
-   local nDescuentoTarifa
+   local nDescuentoTarifa              := 1
 
    if hhaskey( hValue, "nTarifaPrecio" )
       nTarifa                          := hValue[ "nTarifaPrecio" ]
@@ -12245,14 +12245,14 @@ Function hValoresAtipica( hValue, hAtipica )
    Buscamos en las tarifas anteriores si lo tiene marcado en la empresa--------
    */
 
-   if nTarifa == 0
+   if empty( nTarifa )
       nTarifa        := 1
    end if
 
    while .t.
 
       do case
-         case nDescuentoTarifa == 1
+         case nDescuentoTarifa <= 1
 
             if hhaskey( hAtipica, "nImporte" )
                if hAtipica[ "nImporte" ] == 0.00000

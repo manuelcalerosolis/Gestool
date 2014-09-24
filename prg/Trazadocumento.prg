@@ -1521,6 +1521,8 @@ Method CargaAlbaranCliente( cNumDoc )
 
    ::oDbfTmp:Zap()
 
+   ? cNumDoc
+
    /*
    Etiquetas-------------------------------------------------------------------
    */
@@ -1533,6 +1535,8 @@ Method CargaAlbaranCliente( cNumDoc )
    /*
    Lineas----------------------------------------------------------------------
    */
+
+   ? ::oAlbCliL:OrdSetFocus()
 
    if ::oAlbCliL:Seek( cNumDoc )
 

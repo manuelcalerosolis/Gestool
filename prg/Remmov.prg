@@ -3619,7 +3619,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       INDEX TO ( cFileName ) TAG "nTipMov"      ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4"   OF oDbf
       INDEX TO ( cFileName ) TAG "cStock"       ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "nTipMov == 4"   OF oDbf
       INDEX TO ( cFileName ) TAG "cStkFastIn"   ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
-      INDEX TO ( cFileName ) TAG "cStkFastOut"  ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
+      INDEX TO ( cFileName ) TAG "cStkFastOu"  	ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
 
    END DATABASE oDbf
 

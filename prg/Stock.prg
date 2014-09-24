@@ -4157,8 +4157,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Proceso------------------------------------------------------------------
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+//   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+//   BEGIN SEQUENCE
 
    for each cCodAlm in aAlmacenes
 
@@ -4258,13 +4258,13 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Control de errores-------------------------------------------------------
 
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Calculo de stock" )
-
-   END SEQUENCE
-   
-   ErrorBlock( oBlock )
+//   RECOVER USING oError
+//
+//      msgStop( ErrorMessage( oError ), "Calculo de stock" )
+//
+//   END SEQUENCE
+//   
+//   ErrorBlock( oBlock )
 
    Return ( ::aStocks )
 
@@ -5769,7 +5769,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
    end if
 
-   ( ::cHisMovT )->( OrdSetFocus( "cStkFastOut" ) )
+   ( ::cHisMovT )->( OrdSetFocus( "cStkFastOu" ) )
 
    if ( ::cHisMovT )->( dbSeek( cCodArt + cCodAlm ) )
 
@@ -5863,7 +5863,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
    // Albaranes con doble almacen----------------------------------------------
 
-   ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastOut" ) )
+   ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastOu" ) )
 
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
