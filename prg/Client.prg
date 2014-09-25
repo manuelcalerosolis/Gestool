@@ -347,6 +347,7 @@ STATIC FUNCTION OpenFiles( lExt )
       TDataView():Get( "FacCliT", nView )
 
       TDataView():Get( "FacCliP", nView )
+      ( TDataView():Get( "FacCliP", nView ) )->( OrdSetFocus( "cCodCli" ) )
 
       TDataView():Get( "TipInci", nView )
 
@@ -1421,9 +1422,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
    aTmp[ _CTIPINCI ]       := oUser():cTipoIncidencia()
 
-   /*
-   Colocamos los filtros
-   */
+   // Colocamos los filtros----------------------------------------------------
+
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdScope( 0, aTmp[ _COD ] ) )
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdScope( 1, aTmp[ _COD ] ) )
+
+   // Dialogo------------------------------------------------------------------
 
    DEFINE DIALOG  oDlg ;
          RESOURCE "CLIENT" ;
@@ -1459,7 +1463,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "CLIENT_16" ,;
                   "CLIENT_18"
       /*
-      Primera pestanña---------------------------------------------------------
+      Primera pestaña----------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpGeneral ;
@@ -3694,6 +3698,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       ON INIT  ( EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode ) ) ;
       VALID    ( KillTrans( oBmpDiv, oBrwBnc, oBrwObr, oBrwCta, oBrwAtp, oBrwInc, oBrwCon ) ) ;
       CENTER
+
+   // Quitamos los filtros-----------------------------------------------------
+
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdScope( 0, nil ) )
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdScope( 1, nil ) )
 
    EndEdtRotorMenu()
 
@@ -12963,12 +12972,6 @@ RETURN ( .t. )
 Static Function LoadPageClient( cCodigoCliente )
 
    local cExpHead    := ""
-
-   ( TDataView():Get( "FacCliP", nView ) )->( OrdSetFocus( "cCodCli" ) )
-   ( TDataView():Get( "FacCliP", nView ) )->( OrdScope( 0, cCodigoCliente ) )
-   ( TDataView():Get( "FacCliP", nView ) )->( OrdScope( 0, cCodigoCliente ) )
-
-   ? '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
 
    do case
       case oEstadoCli:nAt == 1

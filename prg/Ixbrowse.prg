@@ -60,9 +60,10 @@ CLASS IXBrowse FROM TXBrowse
    Method CheckExtendInfo()
 
    Method ShowExtendInfo()
-/*
+
    Method SetRDD( lAddColumns, lAutoOrder, aFldNames )
 
+/*
    Method Refresh( lComplete )
 */
    
@@ -436,7 +437,7 @@ METHOD Refresh( lComplete )
 Return ( ::Super:Refresh( lComplete ) )
 */
 //----------------------------------------------------------------------------//
-/*
+
 METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
 
    local oCol, aStruct
@@ -483,7 +484,7 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
    endif
 
 return nil
-*/
+
 //----------------------------------------------------------------------------//
 
 static function FindTag( cFld, nOrder )

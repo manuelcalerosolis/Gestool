@@ -4099,19 +4099,6 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    local nOrdAnt
    local oStocks
    local aAlmacenes
-   local nOrdPedPrvL
-   local nOrdAlbPrvL
-   local nOrdAlbPrvS
-   local nOrdFacPrvL
-   local nOrdRctPrvL
-   local nOrdPedCliL
-   local nOrdAlbCliL
-   local nOrdFacCliL
-   local nOrdFacRecL
-   local nOrdTikCliL
-   local nOrdProducL
-   local nOrdProducM
-   local nOrdHisMov
 
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNumeroSerie := !uFieldEmpresa( "lCalSer" )
@@ -5644,11 +5631,11 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    cLote                := if ( len( cLote )    != 12, Padr( cLote, 12 ), cLote )
 
    // Si el criterio de la peticion no cambia devolvemos la fecha de consolidacion
-
+   
    if ::cCodigoConsolidacion == cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote .and. !empty( ::dConsolidacion )
       Return ( ::dConsolidacion )
    end if 
-
+   
    // Entramos en el calculo real de la consolidacion--------------------------
 
    ::dConsolidacion     := nil
@@ -5818,6 +5805,7 @@ Return ( nil )
 
 METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
+   local cCodigoArticulo      := ""
    local nOrdAlbPrvL          := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastIn" ) )
    local nOrdAlbPrvS          := ( ::cAlbPrvS )->( OrdSetFocus( "nNumAlb"  ) )
 
@@ -5825,35 +5813,39 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
       while ( ::cAlbPrvL )->cRef == cCodArt .and. ( ::cAlbPrvL )->cAlmLin == cCodAlm .and. !( ::cAlbPrvL )->( eof() )
 
-         if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) 
+         if cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
 
-            if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
+            if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) 
 
-               // Buscamos el numero de serie----------------------------------------
+               if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 
-               if lNumeroSerie .and. ( ::cAlbPrvS )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) ) )
-                  
-                  while ( ::cAlbPrvS )->cSerAlb + Str( ( ::cAlbPrvS )->nNumAlb ) + ( ::cAlbPrvS )->cSufAlb + Str( ( ::cAlbPrvS )->nNumLin ) == ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) .and. !( ::cAlbPrvS )->( eof() )
+                  // Buscamos el numero de serie----------------------------------------
 
-                     ::InsertStockAlbaranProveedores( .t. )
+                  if lNumeroSerie .and. ( ::cAlbPrvS )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) ) )
+                     
+                     while ( ::cAlbPrvS )->cSerAlb + Str( ( ::cAlbPrvS )->nNumAlb ) + ( ::cAlbPrvS )->cSufAlb + Str( ( ::cAlbPrvS )->nNumLin ) == ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) .and. !( ::cAlbPrvS )->( eof() )
 
-                     ( ::cAlbPrvS )->( dbSkip() )
+                        ::InsertStockAlbaranProveedores( .t. )
 
-                  end while
+                        ( ::cAlbPrvS )->( dbSkip() )
 
-               else 
+                     end while
 
-                  ::InsertStockAlbaranProveedores()
+                  else 
 
-               end if 
+                     ::InsertStockAlbaranProveedores()
+
+                  end if 
+
+               end if
+
+            else 
+
+               cCodigoArticulo   := ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
 
             end if
 
-         else 
-
-         exit 
-
-         end if
+         end if 
 
          ( ::cAlbPrvL )->( dbSkip() )
 
@@ -5863,41 +5855,47 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
    // Albaranes con doble almacen----------------------------------------------
 
+   cCodigoArticulo            := ""
+
    ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastOu" ) )
 
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cCodAlm ) )
 
       while ( ::cAlbPrvL )->cRef == cCodArt .and. ( ::cAlbPrvL )->cAlmOrigen == cCodAlm .and. !( ::cAlbPrvL )->( eof() )
 
-         if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) 
+         if cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
 
-            if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
+            if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) 
 
-               // Buscamos el numero de serie----------------------------------------
+               if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 
-               if lNumeroSerie .and. ( ::cAlbPrvS )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) ) )
+                  // Buscamos el numero de serie----------------------------------------
 
-                  while ( ::cAlbPrvS )->cSerAlb + Str( ( ::cAlbPrvS )->nNumAlb ) + ( ::cAlbPrvS )->cSufAlb + Str( ( ::cAlbPrvS )->nNumLin ) == ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) .and. !( ::cAlbPrvS )->( eof() )
-                  
-                     ::DeleteStockAlbaranProveedores( .t. )
+                  if lNumeroSerie .and. ( ::cAlbPrvS )->( dbSeek( ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) ) )
 
-                     ( ::cAlbPrvS )->( dbSkip() )
+                     while ( ::cAlbPrvS )->cSerAlb + Str( ( ::cAlbPrvS )->nNumAlb ) + ( ::cAlbPrvS )->cSufAlb + Str( ( ::cAlbPrvS )->nNumLin ) == ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb + Str( ( ::cAlbPrvL )->nNumLin ) .and. !( ::cAlbPrvS )->( eof() )
+                     
+                        ::DeleteStockAlbaranProveedores( .t. )
 
-                  end while
+                        ( ::cAlbPrvS )->( dbSkip() )
 
-               else 
+                     end while
 
-                  ::DeleteStockAlbaranProveedores()
+                  else 
+
+                     ::DeleteStockAlbaranProveedores()
+
+                  end if 
 
                end if 
 
+            else 
+
+               cCodigoArticulo := ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
+
             end if 
 
-         else 
-
-            exit 
-
-         end if 
+         end if
 
          ( ::cAlbPrvL )->( dbSkip() )
 
@@ -5914,6 +5912,7 @@ RETURN ( nil )
 
 METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
+   local cCodigoArticulo      := ""
    local nOrdFacPrvL          := ( ::cFacPrvL )->( OrdSetFocus( "cStkFast" ) )
    local nOrdFacPrvS          := ( ::cFacPrvS )->( OrdSetFocus( "nNumFac"  ) )
 
@@ -5921,35 +5920,39 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
       while ( ::cFacPrvL )->cRef == cCodArt .and. ( ::cFacPrvL )->cAlmLin == cCodAlm .and. !( ::cFacPrvL )->( Eof() )
 
-         if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) )
+         if cCodigoArticulo != ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmLin + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
 
-            if ( Empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
-               
-               // Buscamos el numero de serie----------------------------------
+            if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) )
 
-               if lNumeroSerie .and. ( ::cFacPrvS )->( dbSeek( ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) ) )
+               if ( Empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
+                  
+                  // Buscamos el numero de serie----------------------------------
 
-                  while ( ::cFacPrvS )->cSerFac + Str( ( ::cFacPrvS )->nNumFac ) + ( ::cFacPrvS )->cSufFac + Str( ( ::cFacPrvS )->nNumLin ) == ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) .and. !( ::cFacPrvS )->( eof() )
+                  if lNumeroSerie .and. ( ::cFacPrvS )->( dbSeek( ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) ) )
 
-                     ::InsertStockFacturaProveedores( .t. )
+                     while ( ::cFacPrvS )->cSerFac + Str( ( ::cFacPrvS )->nNumFac ) + ( ::cFacPrvS )->cSufFac + Str( ( ::cFacPrvS )->nNumLin ) == ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) .and. !( ::cFacPrvS )->( eof() )
 
-                     ( ::cFacPrvS )->( dbSkip() )
+                        ::InsertStockFacturaProveedores( .t. )
 
-                  end while
+                        ( ::cFacPrvS )->( dbSkip() )
 
-               else 
+                     end while
 
-                  ::InsertStockFacturaProveedores()
+                  else 
+
+                     ::InsertStockFacturaProveedores()
+
+                  end if 
 
                end if 
 
-            end if 
+            else 
 
-         else 
+               cCodigoArticulo := ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmLin + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
 
-            exit 
+            end if
 
-         end if
+         end if 
 
          ( ::cFacPrvL )->( dbSkip() )
 
@@ -5966,6 +5969,7 @@ RETURN ( nil )
 
 METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
+   local cCodigoArticulo      := ""
    local nOrdRctPrvL          := ( ::cRctPrvL )->( OrdSetFocus( "cStkFast" ) )
    local nOrdRctPrvS          := ( ::cRctPrvS )->( OrdSetFocus( "nNumFac"  ) )
 
@@ -5973,33 +5977,37 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
 
       while ( ::cRctPrvL )->cRef == cCodArt  .and. ( ::cRctPrvL )->cAlmLin == cCodAlm .and. !( ::cRctPrvL )->( Eof() )
 
-         if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac ) 
+         if cCodigoArticulo != ( ::cRctPrvL )->cRef + ( ::cRctPrvL )->cAlmLin + ( ::cRctPrvL )->cCodPr1 + ( ::cRctPrvL )->cCodPr2 + ( ::cRctPrvL )->cValPr1 + ( ::cRctPrvL )->cValPr2 + ( ::cRctPrvL )->cLote
 
-            if ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
+            if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac ) 
 
-               // Buscamos el numero de serie-------------------------------------
+               if ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
 
-               if lNumeroSerie .and. ( ::cRctPrvS )->( dbSeek( ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac + Str( ( ::cRctPrvL )->nNumLin ) ) )
+                  // Buscamos el numero de serie-------------------------------------
 
-                 while ( ::cRctPrvS )->cSerFac + Str( ( ::cRctPrvS )->nNumFac ) + ( ::cRctPrvS )->cSufFac + Str( ( ::cRctPrvS )->nNumLin ) == ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac + Str( ( ::cRctPrvL )->nNumLin ) .and. !( ::cRctPrvS )->( eof() )
+                  if lNumeroSerie .and. ( ::cRctPrvS )->( dbSeek( ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac + Str( ( ::cRctPrvL )->nNumLin ) ) )
 
-                     ::InsertStockRectificativaProveedores( .t. )
+                    while ( ::cRctPrvS )->cSerFac + Str( ( ::cRctPrvS )->nNumFac ) + ( ::cRctPrvS )->cSufFac + Str( ( ::cRctPrvS )->nNumLin ) == ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac + Str( ( ::cRctPrvL )->nNumLin ) .and. !( ::cRctPrvS )->( eof() )
 
-                     ( ::cRctPrvS )->( dbSkip() )
+                        ::InsertStockRectificativaProveedores( .t. )
 
-                  end while
+                        ( ::cRctPrvS )->( dbSkip() )
 
-               else 
+                     end while
 
-                  ::InsertStockRectificativaProveedores()
+                  else 
 
-               end if 
+                     ::InsertStockRectificativaProveedores()
 
-            end if
+                  end if 
 
-         else 
+               end if
 
-            exit
+            else 
+
+               cCodigoArticulo   := ( ::cRctPrvL )->cRef + ( ::cRctPrvL )->cAlmLin + ( ::cRctPrvL )->cCodPr1 + ( ::cRctPrvL )->cCodPr2 + ( ::cRctPrvL )->cValPr1 + ( ::cRctPrvL )->cValPr2 + ( ::cRctPrvL )->cLote
+
+            end if 
 
          end if 
 
@@ -6018,6 +6026,7 @@ RETURN ( nil )
 
 METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
+   local cCodigoArticulo      := ""
    local nOrdAlbCliL          := ( ::cAlbCliL )->( OrdSetFocus( "cStkFast" ) )
    local nOrdAlbCliS          := ( ::cAlbCliS )->( OrdSetFocus( "nNumAlb"  ) )
 
@@ -6025,31 +6034,35 @@ METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
       while ( ::cAlbCliL )->cRef == cCodArt .and. ( ::cAlbCliL )->cAlmLin == cCodAlm .and. !( ::cAlbCliL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb ) 
+         if cCodigoArticulo   != ( ::cAlbCliL )->cRef + ( ::cAlbCliL )->cAlmLin + ( ::cAlbCliL )->cCodPr1 + ( ::cAlbCliL )->cCodPr2 + ( ::cAlbCliL )->cValPr1 + ( ::cAlbCliL )->cValPr2 + ( ::cAlbCliL )->cLote
 
-            if ( Empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )  
+            if ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb ) 
 
-               if lNumeroSerie .and. ( ::cAlbCliS )->( dbSeek( ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb + Str( ( ::cAlbCliL )->nNumLin ) ) )
+               if ( Empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )  
 
-                  while ( ::cAlbCliS )->cSeralb + Str( ( ::cAlbCliS )->nNumAlb ) + ( ::cAlbCliS )->cSufAlb + Str( ( ::cAlbCliS )->nNumLin ) == ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb + Str( ( ::cAlbCliL )->nNumLin ) .and. !( ::cAlbCliS )->( eof() )
+                  if lNumeroSerie .and. ( ::cAlbCliS )->( dbSeek( ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb + Str( ( ::cAlbCliL )->nNumLin ) ) )
 
-                     ::InsertStockAlbaranClientes( .t. )
+                     while ( ::cAlbCliS )->cSeralb + Str( ( ::cAlbCliS )->nNumAlb ) + ( ::cAlbCliS )->cSufAlb + Str( ( ::cAlbCliS )->nNumLin ) == ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb + Str( ( ::cAlbCliL )->nNumLin ) .and. !( ::cAlbCliS )->( eof() )
 
-                     ( ::cAlbCliS )->( dbSkip() )
+                        ::InsertStockAlbaranClientes( .t. )
 
-                  end while
+                        ( ::cAlbCliS )->( dbSkip() )
 
-               else 
+                     end while
 
-                  ::InsertStockAlbaranClientes()
+                  else 
+
+                     ::InsertStockAlbaranClientes()
+
+                  end if 
 
                end if 
 
-            end if 
+            else 
 
-         else 
+               cCodigoArticulo   := ( ::cAlbCliL )->cRef + ( ::cAlbCliL )->cAlmLin + ( ::cAlbCliL )->cCodPr1 + ( ::cAlbCliL )->cCodPr2 + ( ::cAlbCliL )->cValPr1 + ( ::cAlbCliL )->cValPr2 + ( ::cAlbCliL )->cLote
 
-            exit
+            end if
 
          end if
 
@@ -6068,6 +6081,7 @@ RETURN ( nil )
 
 METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
+   local cCodigoArticulo      := ""
    local nOrdFacCliL          := ( ::cFacCliL )->( OrdSetFocus( "cStkFast" ) )
    local nOrdFacCliS          := ( ::cFacCliS )->( OrdSetFocus( "nNumFac"  ) )
 
@@ -6075,31 +6089,35 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
       while ( ::cFacCliL )->cRef == cCodArt .and. ( ::cFacCliL )->cAlmLin == cCodAlm .and. !( ::cFacCliL )->( Eof() )
 
-         if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac ) 
+         if cCodigoArticulo != ( ::cFacCliL )->cRef + ( ::cFacCliL )->cAlmLin + ( ::cFacCliL )->cCodPr1 + ( ::cFacCliL )->cCodPr2 + ( ::cFacCliL )->cValPr1 + ( ::cFacCliL )->cValPr2 + ( ::cFacCliL )->cLote
+
+            if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac ) 
          
-            if ( Empty( dFecIni ) .or. ( ::cFacCliL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacCliL )->dFecFac <= dFecFin )
+               if ( Empty( dFecIni ) .or. ( ::cFacCliL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacCliL )->dFecFac <= dFecFin )
 
-               if lNumeroSerie .and. ( ::cFacCliS )->( dbSeek( ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) ) )
+                  if lNumeroSerie .and. ( ::cFacCliS )->( dbSeek( ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) ) )
 
-                  while ( ::cFacCliS )->cSerFac + Str( ( ::cFacCliS )->nNumFac ) + ( ::cFacCliS )->cSufFac + Str( ( ::cFacCliS )->nNumLin ) == ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) .and. !( ::cFacCliS )->( eof() )
+                     while ( ::cFacCliS )->cSerFac + Str( ( ::cFacCliS )->nNumFac ) + ( ::cFacCliS )->cSufFac + Str( ( ::cFacCliS )->nNumLin ) == ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac + Str( ( ::cFacCliL )->nNumLin ) .and. !( ::cFacCliS )->( eof() )
 
-                     ::InsertStockFacturaClientes( .t. )
+                        ::InsertStockFacturaClientes( .t. )
 
-                     ( ::cFacCliS )->( dbSkip() )
+                        ( ::cFacCliS )->( dbSkip() )
 
-                  end while
+                     end while
 
-               else 
+                  else 
 
-                  ::InsertStockFacturaClientes()
+                     ::InsertStockFacturaClientes()
 
-               end if
+                  end if
 
-            end if 
+               end if 
 
-         else  
+            else  
 
-            exit
+               cCodigoArticulo   := ( ::cFacCliL )->cRef + ( ::cFacCliL )->cAlmLin + ( ::cFacCliL )->cCodPr1 + ( ::cFacCliL )->cCodPr2 + ( ::cFacCliL )->cValPr1 + ( ::cFacCliL )->cValPr2 + ( ::cFacCliL )->cLote
+
+            end if
 
          end if
 
@@ -6118,6 +6136,7 @@ RETURN ( nil )
 
 METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
+   local cCodigoArticulo      := ""
    local nOrdFacRecL          := ( ::cFacRecL )->( OrdSetFocus( "cStkFast" ) )
    local nOrdFacRecS          := ( ::cFacRecS )->( OrdSetFocus( "nNumFac"  ) )
 
@@ -6125,33 +6144,37 @@ METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIn
 
       while ( ::cFacRecL )->cRef == cCodArt .and. ( ::cFacRecL )->cAlmLin == cCodAlm .and. !( ::cFacRecL )->( Eof() )
 
-         if ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac )
+         if cCodigoArticulo != ( ::cFacRecL )->cRef + ( ::cFacRecL )->cAlmLin + ( ::cFacRecL )->cCodPr1 + ( ::cFacRecL )->cCodPr2 + ( ::cFacRecL )->cValPr1 + ( ::cFacRecL )->cValPr2 + ( ::cFacRecL )->cLote
 
-            if ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )
+            if ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac )
 
-               if lNumeroSerie .and. ( ::cFacRecS )->( dbSeek( ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) ) )
+               if ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )
 
-                  while ( ::cFacRecS )->cSerFac + Str( ( ::cFacRecS )->nNumFac ) + ( ::cFacRecS )->cSufFac + Str( ( ::cFacRecS )->nNumLin ) == ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) .and. !( ::cFacRecS )->( eof() )
+                  if lNumeroSerie .and. ( ::cFacRecS )->( dbSeek( ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) ) )
 
-                     ::InsertStockRectificativaClientes( .t. )
+                     while ( ::cFacRecS )->cSerFac + Str( ( ::cFacRecS )->nNumFac ) + ( ::cFacRecS )->cSufFac + Str( ( ::cFacRecS )->nNumLin ) == ( ::cFacRecL )->cSerie + Str( ( ::cFacRecL )->nNumFac ) + ( ::cFacRecL )->cSufFac + Str( ( ::cFacRecL )->nNumLin ) .and. !( ::cFacRecS )->( eof() )
 
-                     ( ::cFacRecS )->( dbSkip() )
+                        ::InsertStockRectificativaClientes( .t. )
 
-                  end while
+                        ( ::cFacRecS )->( dbSkip() )
 
-               else 
+                     end while
 
-                  ::InsertStockRectificativaClientes()
+                  else 
+
+                     ::InsertStockRectificativaClientes()
+
+                  end if 
 
                end if 
 
-            end if 
+            else 
 
-         else 
+               cCodigoArticulo   := ( ::cFacRecL )->cRef + ( ::cFacRecL )->cAlmLin + ( ::cFacRecL )->cCodPr1 + ( ::cFacRecL )->cCodPr2 + ( ::cFacRecL )->cValPr1 + ( ::cFacRecL )->cValPr2 + ( ::cFacRecL )->cLote
 
-            exit
+            end if
 
-         end if
+         end if  
 
          ( ::cFacRecL )->( dbSkip() )
 
@@ -6277,7 +6300,7 @@ METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin
 
          else 
 
-            exit 
+            //exit 
 
          end if  
 
@@ -6327,7 +6350,7 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
 
          else 
 
-            exit
+            //exit
 
          end if  
 
