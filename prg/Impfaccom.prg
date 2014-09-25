@@ -1534,8 +1534,13 @@ METHOD ImportaAlbaranesClientes()
    ::oDbfAlbTFac:GoTop()
    while !( ::oDbfAlbTFac:eof() )
 
-      cSerie                        := SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 1, 1 )
-      nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbTFac:Numero ), 2 ) )
+      cSerie                        := Left( ::oDbfAlbLFac:RfaLin, 1 ) 
+
+      if Empty( cSerie )
+         cSerie                     := "A"
+      end if
+
+      nNumero                       := Val( SubStr( ::oDbfAlbTFac:Numero, 2 ) )
 
       while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + "0" )
          ::oDbfAlbTGst:Delete( .f. )
@@ -1633,8 +1638,16 @@ METHOD ImportaAlbaranesClientes()
 
       if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "A"
 
-         cSerie                        := SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 1 )
-         nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 6, 6 ) )
+      cSerie                        := SubStr( ::oDbfAlbLFac:RfaLin, 2, 1  ) 
+
+      if Empty( cSerie )
+         cSerie                     := "A"
+      end if
+
+      nNumero                       := Val( SubStr( ::oDbfAlbTFac:Numero, 2, 8 ) )
+
+         //cSerie                        := SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 1 )
+         //nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 6, 6 ) )
 
          ::oDbfAlbLGst:Append()
 
