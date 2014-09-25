@@ -12795,7 +12795,7 @@ CAPTION "Ayuda a la entrada"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 104, "Edit", WS_BORDER|WS_TABSTOP, 7, 13, 278, 11
-  CONTROL "", 105, "txbrowse", WS_TABSTOP|0x00b00000, 2, 32, 373, 226
+  CONTROL "", 105, "IXBrowse", WS_TABSTOP|0x00b00000, 2, 32, 373, 226
   CONTROL "", 102, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 294, 13, 77, 138
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 2, 268, 50, 14
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 57, 268, 50, 14

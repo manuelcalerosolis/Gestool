@@ -12964,22 +12964,29 @@ Static Function LoadPageClient( cCodigoCliente )
 
    local cExpHead    := ""
 
-   ( TDataView():Get( "FacCliP", nView ) )->( OrdSetFocus( "dFecVto" ) )
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdSetFocus( "cCodCli" ) )
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdScope( 0, cCodigoCliente ) )
+   ( TDataView():Get( "FacCliP", nView ) )->( OrdScope( 0, cCodigoCliente ) )
+
+   ? '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
 
    do case
       case oEstadoCli:nAt == 1
-         cExpHead    := '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+
+         ( TDataView():Get( "FacCliP", nView ) )->( dbSetFilter( {|| !Field->lCobrado .and. Field->dFecVto >= dFecIniCli .and. Field->dFecVto <= dFecFinCli },;
+                                             '!lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )' ) )
+
       case oEstadoCli:nAt == 2
-         cExpHead    := 'lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+
+         ( TDataView():Get( "FacCliP", nView ) )->( dbSetFilter( {|| Field->lCobrado .and. Field->dFecVto >= dFecIniCli .and. Field->dFecVto <= dFecFinCli },;
+                                             'lCobrado .and. dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )' ) )
+
       case oEstadoCli:nAt == 3
-         cExpHead    := 'dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )'
+         ( TDataView():Get( "FacCliP", nView ) )->( dbSetFilter( {|| Field->dFecVto >= dFecIniCli .and. Field->dFecVto <= dFecFinCli },;
+                                             'dFecVto >= Ctod( "' + Dtoc( dFecIniCli ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( dFecFinCli ) + '" )' ) )
    end case
 
-   if !empty( cCodigoCliente )
-      cExpHead       += ' .and. rtrim( cCodCli ) == "' + rtrim( cCodigoCliente ) + '"'
-   end if
-
-   CreateFastFilter( cExpHead, TDataView():Get( "FacCliP", nView ), .f. )
+   ( TDataView():Get( "FacCliP", nView ) )->( dbGoTop() )
 
    // Refrescamos los browse------------------------------------------------------
 
