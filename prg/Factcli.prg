@@ -576,6 +576,7 @@ static bEdtRec             := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMod
 static bEdtDet             := { |aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 static bEdtInc             := { |aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode, aTmpLin| EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc             := { |aTmp, aGet, dbfFacCliD, oBrw, bWhen, bValid, nMode, aTmpLin| EdtDoc( aTmp, aGet, dbfFacCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
+static bEdtTablet          := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtTablet( aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 
 //---------------------------------------------------------------------------//
 //Funciones del programa
@@ -5485,6 +5486,181 @@ Static Function EdtDoc( aTmp, aGet, dbfFacCliD, oBrw, bWhen, bValid, nMode, aTmp
 Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
+
+STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
+
+   local oDlg
+   local oFnt     		:= TFont():New( "Segoe UI Light",  0, 28, .f., .f. )
+   local oSayCliente
+   local oSayDireccion
+   local oSayPoblacion
+   local oSayProvincia
+   local oSayTelefono
+   local oSayEstablecimiento
+   local oGetEstablecimiento
+   local oTextEstablecimiento
+   local oBtnLupaCliente
+   local nAltoGet 		:= 20
+
+   /*
+   Comineza la transaccion-----------------------------------------------------
+   */
+
+   if BeginTrans( aTmp, nMode )
+      Return .f.
+   end if
+
+   //------------------------------------------------------------------------//
+
+   DEFINE DIALOG oDlg FROM 1, 5 TO 40, 100; 
+      TITLE "GESTOOL TABLET" ;
+      FONT  oFnt ;
+      STYLE nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
+
+ 	// TGridImage():New( 12, {|| GridWidth( 10, oDlg ) },,,, FullCurDir() + "metro\Gestool.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
+
+   	/*with object ( TGridButton():New( 20, {|| GridWidth( 10, oDlg ) }, "<", 	  oDlg, {|| Msginfo( "Primer boton responsive" ) }, , 28 ) )
+   	end with
+
+   	with object ( TGridButton():New( 20, {|| GridWidth( 11, oDlg ) }, ">", 	  oDlg, {|| Msginfo( "Segundo boton responsive" ) }, , 28 ) )
+   	end with*/
+
+   	/*
+	Cliente--------------------------------------------------------------------
+   	*/
+
+   	oSayCliente 		:= TGridSay():New( 20, 0, {|| "Cliente" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+
+   	aGet[ _CCODCLI ] 	:= TGridGet():New( 20, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
+	
+	with object ( aGet[ _CCODCLI ] )
+		:bValid 		:= {|| loaCli( aGet, aTmp, nMode, oGetEstablecimiento ) }		
+	end with
+
+   	aGet[ _CNOMCLI ] 	:= TGridGet():New( 20, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+   	oBtnLupaCliente		:= TGridButton():New( 20, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| Msginfo( "Botón para el browse" ) }, , nAltoGet )
+
+   	/*
+	Establecimiento------------------------------------------------------------
+    */
+
+   	oSayEstablecimiento	:= TGridSay():New( 50, 0, {|| "Establecimiento" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+
+   	oGetEstablecimiento	:= TGridGet():New( 50, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, oTextEstablecimiento, oTextEstablecimiento := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+    /*
+	Dirección------------------------------------------------------------------
+    */
+
+   	oSayDireccion 		:= TGridSay():New( 80, 0, {|| "Dirección" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+
+   	aGet[ _CDIRCLI ] 	:= TGridGet():New( 80, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CDIRCLI ], aTmp[ _CDIRCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+   	/*
+	Población------------------------------------------------------------------
+    */
+
+   	oSayPoblacion 		:= TGridSay():New( 110, 0, {|| "Población" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+
+   	aGet[ _CPOBCLI ] 	:= TGridGet():New( 110, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPOBCLI ], aTmp[ _CPOBCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+   	/*
+	CP. Provincia--------------------------------------------------------------
+   	*/
+
+   	oSayProvincia 		:= TGridSay():New( 140, 0, {|| "CP/Provincia " }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+
+   	aGet[ _CPOSCLI ] 	:= TGridGet():New( 140, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPOSCLI ], aTmp[ _CPOSCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
+	
+   	aGet[ _CPRVCLI ] 	:= TGridGet():New( 140, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPRVCLI ], aTmp[ _CPRVCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+   	/*
+	Población------------------------------------------------------------------
+    */
+
+   	oSayTelefono 		:= TGridSay():New( 170, 0, {|| "Teléfono" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+
+   	aGet[ _CTLFCLI ] 	:= TGridGet():New( 170, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CTLFCLI ], aTmp[ _CTLFCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+   	/*
+	Redimensionamos y activamos el diálogo-------------------------------------
+   	*/
+
+   	oDlg:bResized  		:= {|| resizeGrid( oDlg ) }
+
+   	ACTIVATE DIALOG oDlg CENTER ;
+      ON INIT     ( maximizeGrid( oDlg ) )
+
+    MsgAlert( aTmp[ _CCODCLI ], "CCODCLI" )
+    MsgAlert( aTmp[ _CNOMCLI ], "CNOMCLI" )
+    MsgAlert( aTmp[ _CDIRCLI ], "CDIRCLI" )
+    MsgAlert( aTmp[ _CPOBCLI ], "CPOBCLI" )
+
+   	/*
+   	Salimos --------------------------------------------------------------------
+   	*/
+
+   	DisableAcceso() 
+   
+   	KillTrans()
+
+   	SysRefresh()
+
+   	EnableAcceso()
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function maximizeGrid( oDlg )
+
+   oDlg:Maximize()
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function resizeGrid( oDlg )
+
+   local o
+
+   for each o in oDlg:aControls
+      if ( o:ClassName() $ "TGET,TSAY" ) .and. !Empty( o:Cargo )
+         o:Move( o:nTop, GridWidth( o:Cargo[ "Left" ], oDlg ), GridWidth( o:Cargo[ "Width" ], oDlg ), o:nHeight )
+      end if
+      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY,TGRIDBUTTON,TGRIDIMAGE" )
+         o:ReAdjust()
+      end if
+   next
+
+Return nil   
+
+//---------------------------------------------------------------------------//
+
+Static Function GridWidth( nCols, oDlg )
+   
+Return ( oDlg:nWidth() / 12 * nCols )
+
+//---------------------------------------------------------------------------//
+
+Function ShowKeyboard()
+
+   msgAlert( "ShowKeyboard")
+
+   ShellExecute( 0, "open", "tabtip.exe" ) 
+
+Return .t. 
+
+//---------------------------------------------------------------------------//
+
+Static Function HideKeyboard()
+
+   SendMessage( FindWindow( 0, "Teclado en pantalla" ), WM_CLOSE )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 STATIC FUNCTION PrnSerie()
 
@@ -10580,7 +10756,7 @@ Return ( lErrors )
 Cargaos los datos del cliente
 */
 
-STATIC FUNCTION loaCli( aGet, aTmp, nMode )
+STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
 
    local lValid      := .t.
    local cNewCodCli  := aGet[ _CCODCLI ]:varGet()
@@ -10610,21 +10786,29 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
          aGet[ _CNOMCLI ]:SetColor( , ( TDataView():Clientes( nView ) )->nColor )
       end if
 
-      if Empty( aGet[ _CNOMCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CNOMCLI ]:cText( ( TDataView():Clientes( nView ) )->Titulo )
+      if !Empty( aGet[ _CNOMCLI ] )
+      	if Empty( aGet[ _CNOMCLI ]:varGet() ) .or. lChgCodCli
+         	aGet[ _CNOMCLI ]:cText( ( TDataView():Clientes( nView ) )->Titulo )
+      	end if
+      end if	
+
+      if !Empty( aGet[ _CDIRCLI ] )
+      	if Empty( aGet[ _CDIRCLI ]:varGet() ) .or. lChgCodCli
+         	aGet[ _CDIRCLI ]:cText( ( TDataView():Clientes( nView ) )->Domicilio )
+      	end if
       end if
 
-      if Empty( aGet[ _CDIRCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CDIRCLI ]:cText( ( TDataView():Clientes( nView ) )->Domicilio )
-      end if
+      if !Empty( aGet[ _CTLFCLI ] )
+      	if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
+         	aGet[ _CTLFCLI ]:cText( ( TDataView():Clientes( nView ) )->Telefono )
+      	end if
+      end if	
 
-      if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CTLFCLI ]:cText( ( TDataView():Clientes( nView ) )->Telefono )
-      end if
-
-      if Empty( aGet[_CPOBCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CPOBCLI]:cText( ( TDataView():Clientes( nView ) )->Poblacion )
-      end if
+      if !Empty( aGet[_CPOBCLI] )
+      	if Empty( aGet[_CPOBCLI]:varGet() ) .or. lChgCodCli
+         	aGet[_CPOBCLI]:cText( ( TDataView():Clientes( nView ) )->Poblacion )
+      	end if
+      end if	
 
       if !Empty( aGet[_CPRVCLI] )
          if Empty( aGet[ _CPRVCLI ]:varGet() ) .or. lChgCodCli
@@ -10642,6 +10826,10 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
          if Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli
             aGet[ _CDNICLI ]:cText( ( TDataView():Clientes( nView ) )->Nif )
          end if
+      end if
+
+      if !Empty( oGetEstablecimiento )
+      	oGetEstablecimiento:cText( ( TDataView():Clientes( nView ) )->NbrEst )
       end if
 
       /*
@@ -10714,7 +10902,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
 
          end if
 
-         if ( Empty( aGet[ _CCODPAGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->CodPago )
+         if !Empty( aGet[ _CCODPAGO ] ) .and. ( Empty( aGet[ _CCODPAGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->CodPago )
 
             aGet[ _CCODPAGO ]:cText( ( TDataView():Clientes( nView ) )->CodPago )
             aGet[ _CCODPAGO ]:lValid()
@@ -10771,28 +10959,39 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode )
             end if
          end if
 
-         if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodRut )
-            aGet[ _CCODRUT ]:cText( ( TDataView():Clientes( nView ))->cCodRut )
-            aGet[ _CCODRUT ]:lValid()
-         end if
+         if !Empty( aGet[ _CCODRUT ] )
+         	if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodRut )
+	            aGet[ _CCODRUT ]:cText( ( TDataView():Clientes( nView ))->cCodRut )
+            	aGet[ _CCODRUT ]:lValid()
+         	end if
+         end if	
 
-         if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->nTarifa )
-            aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
+		 if !Empty( aGet[ _NTARIFA ] )         
+         	if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->nTarifa )
+            	aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
+         	end if
          end if
 
 		 if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
             aTmp[ _NDTOTARIFA ] := ( TDataView():Clientes( nView ) )->nDtoArt
          end if
 
-         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
-            aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
-            aGet[ _CCODTRN ]:lValid()
-         end if
+         if !Empty( aGet[ _CCODTRN ] )
+         	if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
+	            aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
+            	aGet[ _CCODTRN ]:lValid()
+         	end if
+         end if	
 
          if lChgCodCli
 
-            aGet[ _LRECARGO ]:Click( ( TDataView():Clientes( nView ) )->lReq )
-            aGet[ _LRECC    ]:Click( lRECCEmpresa() )
+            if !Empty( aGet[ _LRECARGO ] )
+            	aGet[ _LRECARGO ]:Click( ( TDataView():Clientes( nView ) )->lReq )
+            end if
+            
+            if !Empty( aGet[ _LRECC ] )
+            	aGet[ _LRECC ]:Click( lRECCEmpresa() )
+            end if
 
             if !Empty( aGet[ _MOBSERV ] )
                aGet[ _MOBSERV ]:cText( ( TDataView():Clientes( nView ) )->mComent )
@@ -17861,6 +18060,25 @@ FUNCTION VisFacCli( cNumFac, lOpenBrowse, cCaption, cFormato, cPrinter )
    end if
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function AppFacCliTablet()
+
+   	local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   	if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
+      	msgStop( 'Acceso no permitido.' )
+      	return .t.
+   	end if
+
+    if OpenFiles( .t. )
+    	nTotFacCli()
+        WinAppRec( nil, bEdtTablet, TDataView():FacturasClientes( nView ) )
+        CloseFiles()
+    end if
+
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
