@@ -2551,6 +2551,16 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "Document_user1_32"
    oItem:lShow          := .t.
 
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Facturas tablet'
+   oItem:cMessage       := 'Acceso a las facturas de clientes'
+   oItem:bAction        := {|| AppFacCliTablet() }
+   oItem:cId            := "01058"
+   oItem:cBmp           := "Document_user1_16"
+   oItem:cBmpBig        := "Document_user1_32"
+   oItem:lShow          := .t.
+
    if IsStandard()
 
    oItem                := oItemVentas:Add()
