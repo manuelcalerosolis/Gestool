@@ -2,6 +2,9 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 
+
+static oFont
+
 //----------------------------------------------------------------------------//
 
 CLASS TGridSay FROM TSay
@@ -81,6 +84,8 @@ CLASS TGridGet FROM TGet
    DATA bWidth
    DATA bHeight
 
+   METHOD Build( hBuilder ) 
+
    METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
             lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
@@ -93,6 +98,51 @@ CLASS TGridGet FROM TGet
    METHOD ReAdjust()
 
 END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS TGridGet
+   
+   local nRow        := if( hhaskey( hBuilder, "nRow" ),       hBuilder[ "nRow"     ], nil )
+   local nCol        := if( hhaskey( hBuilder, "nCol" ),       hBuilder[ "nCol"     ], nil )
+   local bSetGet     := if( hhaskey( hBuilder, "bSetGet" ),    hBuilder[ "bSetGet"  ], nil )
+   local oWnd        := if( hhaskey( hBuilder, "oWnd" ),       hBuilder[ "oWnd"     ], nil )
+   local nWidth      := if( hhaskey( hBuilder, "nWidth" ),     hBuilder[ "nWidth"   ], nil )
+   local nHeight     := if( hhaskey( hBuilder, "nHeight" ),    hBuilder[ "nHeight"  ], nil )
+   local cPict       := if( hhaskey( hBuilder, "cPict" ),      hBuilder[ "cPict"    ], nil )
+   local bValid      := if( hhaskey( hBuilder, "bValid" ),     hBuilder[ "bValid"   ], nil )
+   local nClrFore    := if( hhaskey( hBuilder, "nClrFore" ),   hBuilder[ "nClrFore" ], nil )
+   local nClrBack    := if( hhaskey( hBuilder, "nClrBack" ),   hBuilder[ "nClrBack" ], nil )
+   local oFont       := if( hhaskey( hBuilder, "oFont" ),      hBuilder[ "oFont"    ], nil )
+   local lDesign     := if( hhaskey( hBuilder, "lDesign" ),    hBuilder[ "lDesign"  ], nil )
+   local oCursor     := if( hhaskey( hBuilder, "oCursor" ),    hBuilder[ "oCursor"  ], nil )
+   local lPixel      := if( hhaskey( hBuilder, "lPixel" ),     hBuilder[ "lPixel"   ], nil )
+   local cMsg        := if( hhaskey( hBuilder, "cMsg" ),       hBuilder[ "cMsg"     ], nil )
+   local lUpdate     := if( hhaskey( hBuilder, "lUpdate" ),    hBuilder[ "lUpdate"  ], nil )
+   local bWhen       := if( hhaskey( hBuilder, "bWhen" ),      hBuilder[ "bWhen"    ], nil )
+   local lCenter     := if( hhaskey( hBuilder, "lCenter" ),    hBuilder[ "lCenter"  ], nil )
+   local lRight      := if( hhaskey( hBuilder, "lRight" ),     hBuilder[ "lRight"   ], nil )
+   local bChanged    := if( hhaskey( hBuilder, "bChanged" ),   hBuilder[ "bChanged" ], nil )
+   local lReadOnly   := if( hhaskey( hBuilder, "lReadOnly" ),  hBuilder[ "lReadOnly"], nil )
+   local lPassword   := if( hhaskey( hBuilder, "lPassword" ),  hBuilder[ "lPassword"], nil )
+   local lNoBorder   := if( hhaskey( hBuilder, "lNoBorder" ),  hBuilder[ "lNoBorder"], nil )
+   local nHelpId     := if( hhaskey( hBuilder, "nHelpId" ),    hBuilder[ "nHelpId"  ], nil )
+   local lSpinner    := if( hhaskey( hBuilder, "lSpinner" ),   hBuilder[ "lSpinner" ], nil )
+   local bUp         := if( hhaskey( hBuilder, "bUp" ),        hBuilder[ "bUp"      ], nil )
+   local bDown       := if( hhaskey( hBuilder, "bDown" ),      hBuilder[ "bDown"    ], nil )
+   local bMin        := if( hhaskey( hBuilder, "bMin" ),       hBuilder[ "bMin"     ], nil )
+   local bMax        := if( hhaskey( hBuilder, "bMax" ),       hBuilder[ "bMax"     ], nil )
+   local bAction     := if( hhaskey( hBuilder, "bAction" ),    hBuilder[ "bAction"  ], nil )
+   local cBmpName    := if( hhaskey( hBuilder, "cBmpName" ),   hBuilder[ "cBmpName" ], nil )
+   local cVarName    := if( hhaskey( hBuilder, "cVarName" ),   hBuilder[ "cVarName" ], nil )
+   local cCueText    := if( hhaskey( hBuilder, "cCueText" ),   hBuilder[ "cCueText" ], nil )
+
+   Return ( ::New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
+            nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
+            lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
+            lPassword, lNoBorder, nHelpId, lSpinner,;
+            bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
+            cCueText ) )
 
 //----------------------------------------------------------------------------//
 
@@ -280,3 +330,40 @@ METHOD ReAdjust() CLASS TGridImage
 return Self
 
 //----------------------------------------------------------------------------//
+
+Function oGridFont()
+
+   if empty( oFont )
+      oFont    := TFont():New( "Segoe UI Light",  0, 42, .f., .f. )
+   end if 
+
+Return ( oFont )   
+
+//----------------------------------------------------------------------------//
+
+Function GridMaximize( oDlg )
+
+   oDlg:Maximize()
+
+Return nil
+
+//----------------------------------------------------------------------------//
+
+Function GridResize( oDlg )
+
+   local o
+
+   for each o in oDlg:aControls
+      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY,TGRIDBUTTON,TGRIDIMAGE" )
+         o:ReAdjust()
+      end if
+   next
+
+Return nil   
+
+//----------------------------------------------------------------------------//
+
+Function GridWidth( nCols, oDlg )
+   
+Return ( oDlg:nWidth() / 12 * nCols )
+

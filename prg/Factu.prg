@@ -174,8 +174,6 @@ function Main( cParams )
 
    TDataCenter():BuildData()
 
-   // TDataCenter():CheckData()   
-
    /*
    Opciones especiales de arranque hace la operacion y salir-------------------
    */
@@ -230,10 +228,6 @@ function Main( cParams )
    IsOsCommerce()
 
    cNameVersion()
-
-#ifndef __XHARBOUR__
-//   testGrid()
-#endif
 
    // Chequeamos los datos de los usuarios-------------------------------------
 
@@ -983,6 +977,8 @@ Function lStartCheck()
 
    CursorWait()
 
+   ? " // Chequeamos los cambios de versiones-------------------------------------- "
+
    // Chequeamos los cambios de versiones--------------------------------------
 
    oMsgText( 'Chequeando versión de empresa' )
@@ -1016,6 +1012,12 @@ Function lStartCheck()
    if uFieldEmpresa( "lSelAlm", .f. )
       SelectAlmacen()
    end if
+
+   // Test de BrwClient--------------------------------------------------------
+
+   ? "// Test de BrwClient--------------------------------------------------------"
+
+   GridBrwClient() 
 
    // Lanzamos para los documentos automáticos---------------------------------
 
@@ -5803,13 +5805,11 @@ Function testGrid()
    local oImg
    local nGet     := 1
    local cGet     := "Manuel Calero Solis"
-   local oFnt     := TFont():New( "Segoe UI Light",  0, 52, .f., .f. )
-   local oSym     := TFont():New( "Segoe UI Symbol",  0, 52, .f., .f. )
 
    DEFINE DIALOG oDlg FROM 1, 5 TO 40, 100; 
-      TITLE "GridTest" ;
-      FONT  oFnt ;
-      STYLE nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
+      TITLE       "GridTest" ;
+      FONT        oGridFont() ;
+      STYLE       nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
 
    // TGridImage():New( 12, {|| GridWidth( 10, oDlg ) },,,, FullCurDir() + "metro\Gestool.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
 
@@ -5853,10 +5853,6 @@ Static Function resizeGrid( oDlg )
    next
 
 Return nil   
-
-Static Function GridWidth( nCols, oDlg )
-   
-Return ( oDlg:nWidth() / 12 * nCols )
 
 Function ShowKeyboard()
 

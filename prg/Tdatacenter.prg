@@ -1564,6 +1564,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Mapas"
    oDataTable:cName        := cPatDat() + "Mapas"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Mapas.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Mapas.Cdx"

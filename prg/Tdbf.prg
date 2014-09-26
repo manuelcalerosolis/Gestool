@@ -38,8 +38,9 @@ CLASS TDbf
          aBuffer, aStatus                           AS ARRAY
     DATA cAlias, cVer, cRDD, cFile, cName, cPath,   ;
          cFldInvalid, cComment                      AS STRING
-    DATA nArea, FieldCount, hDataFile, Count,       ;
+    DATA nArea, FieldCount, Count,       ;
          nType, nLang, nRecno                       AS NUMERIC
+    DATA hDataFile
     DATA lRecycle, lShared, lReadOnly, lProtec,     ;
          lScope,                                    ;
          lMemo, lValid, lAppend, lCount, lFilter,   ;
