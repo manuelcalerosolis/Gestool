@@ -17,6 +17,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oProLin
    DATA  oProMat
    DATA  oHisMov
+   DATA  oArtPrv
 
    DATA  oStock
 
@@ -69,7 +70,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD lStocks()                       INLINE ( ::cReportType == "Por stocks" )
 
-   METHOD AddVariableStock()              
+   METHOD AddVariableStock() 
+
+   METHOD lValidProveedor()             
 
 END CLASS
 
@@ -239,6 +242,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oHisMov  PATH ( cPatEmp() ) CLASS "HisMov"      FILE "HisMov.Dbf"    VIA ( cDriver() ) SHARED INDEX "HisMov.Cdx"
 
+      DATABASE NEW ::oArtPrv  PATH ( cPatEmp() ) CLASS "ArtPrv"      FILE "ProvArt.Dbf"   VIA ( cDriver() ) SHARED INDEX "ProvArt.Cdx"
+
       ::oProCab   := TDataCenter():oProCab()
 
       ::oProLin   := TDataCenter():oProLin()
@@ -393,6 +398,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !Empty( ::oHisMov ) .and. ( ::oHisMov:Used() )
          ::oHisMov:end()
+      end if
+
+      if !Empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
+         ::oArtPrv:end()
       end if
 
       if !Empty( ::oProCab ) .and. ( ::oProCab:Used() )
@@ -623,6 +632,10 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde() .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:getHasta() ) .and.;
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:getHasta() )       .and.;
       ( ::lStocks() .or. ( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:getDesde() .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() ) )
+
+      if !Empty( ::oGrupoProveedor:Cargo:getDesde() ) .or. ::oGrupoProveedor:Cargo:getHasta() != replicate( "Z", 12 )
+         RETURN( ::lValidProveedor( ::oDbf:cCodArt ) )
+      end if
 
       Return .t.
 
@@ -2018,7 +2031,7 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       if ::InsertIfValid() .and. lStock
          ::oStock:SaveStockArticulo( ::oDbfArt:Codigo, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
       end if
- 
+
       // Siguiente-------------------------------------------------------------
 
       ::oDbfArt:Skip()
@@ -2707,3 +2720,20 @@ METHOD AddVariableStock()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD lValidProveedor( cCodArt )
+
+  if ::oArtPrv:Seek( cCodArt )
+
+   while ::oArtPrv:cCodArt == cCodArt
+
+      if ( ::oArtPrv:cCodPrv >= ::oGrupoProveedor:Cargo:getDesde() ) .and. ( ::oArtPrv:cCodPrv <= ::oGrupoProveedor:Cargo:getHasta() ) 
+         return ( .t.)
+      end if
+
+      ::oArtPrv:Skip()
+   end while
+
+  end if
+
+RETURN ( .f. )

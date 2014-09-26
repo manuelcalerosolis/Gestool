@@ -1540,7 +1540,7 @@ METHOD ImportaAlbaranesClientes()
          cSerie                     := "A"
       end if
 
-      nNumero                       := Val( SubStr( ::oDbfAlbTFac:Numero, 2 ) )
+      nNumero                       := Val( SubStr( Alltrim( ::oDbfAlbTFac:Numero), 2 ) )
 
       while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + "0" )
          ::oDbfAlbTGst:Delete( .f. )
@@ -1638,47 +1638,47 @@ METHOD ImportaAlbaranesClientes()
 
       if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "A"
 
-      cSerie                        := SubStr( ::oDbfAlbLFac:RfaLin, 2, 1  ) 
-
+      cSerie                           := SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 2, 1  ) 
+      
       if Empty( cSerie )
-         cSerie                     := "A"
+         cSerie                        := "A"
       end if
 
-      nNumero                       := Val( SubStr( ::oDbfAlbTFac:Numero, 2, 8 ) )
+      nNumero                          := Val( SubStr( Alltrim( ::oDbfAlbTFac:Numero ), 3, 9 ) )
 
          //cSerie                        := SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 1 )
          //nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 6, 6 ) )
 
          ::oDbfAlbLGst:Append()
 
-         ::oDbfAlbLGst:cSerAlb     := cSerie
-         ::oDbfAlbLGst:nNumAlb     := nNumero
-         ::oDbfAlbLGst:cSufAlb     := "00"
+         ::oDbfAlbLGst:cSerAlb         := cSerie
+         ::oDbfAlbLGst:nNumAlb         := nNumero
+         ::oDbfAlbLGst:cSufAlb         := "00"
 
          if ::oDbfAlbLFac:Codigo == ""
             ::oDbfFacPrvLGst:mLngDes := ::oDbfAlbLFac:Concepto            
          else 
-            ::oDbfAlbLGst:cRef        := ::oDbfAlbLFac:Codigo
-            ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
+            ::oDbfAlbLGst:cRef         := ::oDbfAlbLFac:Codigo
+            ::oDbfAlbLGst:cDetalle     := ::oDbfAlbLFac:Concepto
          end if 
          
-         ::oDbfAlbLGst:cSufAlb     := Space( 2 )
-         ::oDbfAlbLGst:cRef        := ::oDbfAlbLFac:Codigo
-         ::oDbfAlbLGst:cDetalle    := ::oDbfAlbLFac:Concepto
-         ::oDbfAlbLGst:nPreUnit    := ::oDbfAlbLFac:Precio
-         ::oDbfAlbLGst:nDto        := ::oDbfAlbLFac:Descuento
-         ::oDbfAlbLGst:nIva        := ::oDbfAlbLFac:Iva
-         ::oDbfAlbLGst:nCanEnt     := 1
-         ::oDbfAlbLGst:nUniCaja    := ::oDbfAlbLFac:Cantidad
-         ::oDbfAlbLGst:dFecha      := ::oDbfAlbLFac:Fecha
-         ::oDbfAlbLGst:cAlmLin     := oUser():cAlmacen()
-         ::oDbfAlbLGst:nNumLin     := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12, 6 ) ) 
+         ::oDbfAlbLGst:cSufAlb         := Space( 2 )
+         ::oDbfAlbLGst:cRef            := ::oDbfAlbLFac:Codigo
+         ::oDbfAlbLGst:cDetalle        := ::oDbfAlbLFac:Concepto
+         ::oDbfAlbLGst:nPreUnit        := ::oDbfAlbLFac:Precio
+         ::oDbfAlbLGst:nDto            := ::oDbfAlbLFac:Descuento
+         ::oDbfAlbLGst:nIva            := ::oDbfAlbLFac:Iva
+         ::oDbfAlbLGst:nCanEnt         := 1
+         ::oDbfAlbLGst:nUniCaja        := ::oDbfAlbLFac:Cantidad
+         ::oDbfAlbLGst:dFecha          := ::oDbfAlbLFac:Fecha
+         ::oDbfAlbLGst:cAlmLin         := oUser():cAlmacen()
+         ::oDbfAlbLGst:nNumLin         := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12, 6 ) ) 
 
          ::oDbfArtGst:GoTop()
          if ::oDbfArtGst:Seek( ::oDbfAlbLFac:Codigo )
-            ::oDbfAlbLGst:nCtlStk  := ::oDbfArtGst:nCtlStock
-            ::oDbfAlbLGst:nCosDiv  := ::oDbfArtGst:pCosto
-            ::oDbfAlbLGst:lIvaLin  := ::oDbfArtGst:lIvaInc
+            ::oDbfAlbLGst:nCtlStk      := ::oDbfArtGst:nCtlStock
+            ::oDbfAlbLGst:nCosDiv      := ::oDbfArtGst:pCosto
+            ::oDbfAlbLGst:lIvaLin      := ::oDbfArtGst:lIvaInc
          end if
 
          ::oDbfAlbLGst:Save()
