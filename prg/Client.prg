@@ -13078,7 +13078,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                           "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
                                           "oWnd"      => oDlg,;
                                           "nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                          "nHeight"   => 28,;
+                                          "nHeight"   => 30,;
                                           "aItems"    => aCbxOrd,;
                                           "bChanged"  => {| nKey, nFlags, Self | ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
 
