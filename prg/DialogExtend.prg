@@ -36,7 +36,16 @@ local hClass
   hClass        := TWBrowse():ClassH
 
   __clsAddMsg( hClass, "_lDrawHeaders", __cls_IncData( hClass ), 9, .f., 1, .f., .f. )
+/*
+  hClass        := TBtnBmp():ClassH
 
+  __clsAddMsg( hClass, "bTop", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "bLeft", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "bWidth", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "bHeight", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
+
+  __clsAddMsg( hClass, "ReAdjust", @BtnBmpReAdjust(), 0, nil, 1, .f., .f. )
+*/
 Return nil
 
 //----------------------------------------------------------------------------//
@@ -135,3 +144,16 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
+Static Function BtnBmpReAdjust() 
+
+   local Self     := HB_QSelf()
+   local nRow     := if( !empty( Self:bRow ),     eval( Self:bRow ),    Self:nTop   )
+   local nLeft    := if( !empty( Self:bCol ),     eval( Self:bCol ),    Self:nLeft  )
+   local nWidth   := if( !empty( Self:bWidth ),   eval( Self:bWidth ),  Self:nWidth )
+   local nHeight  := if( !empty( Self:bHeight ),  eval( Self:bHeight ), Self:nHeight )
+
+   Self:Move( nRow, nLeft, nWidth, nHeight )  
+
+return Self
+
+//----------------------------------------------------------------------------//

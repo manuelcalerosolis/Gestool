@@ -5518,28 +5518,42 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       FONT  oFnt ;
       STYLE nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
 
-   	/*
+   /*
 	Barra de botones-----------------------------------------------------------
-   	*/
+   */
 
 	oSayGeneral  		:= TGridSay():Build(    { 	"nRow"      => 0,;
-                                          			"nCol"      => 0,;
-                                          			"bText"  	=> {|| "Factura de cliente" },;
-                                          			"oWnd"      => oDlg,;
-                                          			"oFont" 	=> oFntBold,;
-                                          			"lPixels" 	=> .t.,;
-                                          			"nClrText" 	=> Rgb( 255, 255, 255 ),;
-                                          			"nClrBack"  => Rgb( 78, 166, 234 ),;
-                                          			"nWidth"    => {|| GridWidth( 12, oDlg ) },;
-                                          			"nHeight"   => 32,;
-                                          			"lDesign"    => .f. } )
+                                       			"nCol"      => 0,;
+                                       			"bText"  	=> {|| "Factura de cliente" },;
+                                       			"oWnd"      => oDlg,;
+                                       			"oFont" 		=> oGridFontBold(),;
+                                       			"lPixels" 	=> .t.,;
+                                       			"nClrText" 	=> Rgb( 255, 255, 255 ),;
+                                       			"nClrBack"  => nGridColor(),;
+                                       			"nWidth"    => {|| GridWidth( 12, oDlg ) },;
+                                       			"nHeight"   => 32,;
+                                       			"lDesign"    => .f. } )
 
-	oBtnAceptar			:= TGridButton():New( 5, {|| GridWidth( 9, oDlg ) }, "Acep", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
-   	oBtnCancelar		:= TGridButton():New( 5, {|| GridWidth( 10, oDlg ) }, "Can", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+	oBtnAceptar			:= TGridImage():Build(  {  "nTop"      => 5,;
+                                          		"nLeft"     => {|| GridWidth( 9, oDlg ) },;
+                                          		"nWidth"    => 32,;
+                                          		"nHeight"   => 32,;
+                                          		"cResName"  => "CheckFlat_32",;
+                                          		"bLClicked" => {|| oDlg:End() },;
+                                          		"oWnd"      => oDlg } )
 
-   	/*
+	oBtnCancelar		:= TGridImage():Build(  {  "nTop"      => 5,;
+                                          		"nLeft"     => {|| GridWidth( 10, oDlg ) },;
+                                          		"nWidth"    => 32,;
+                                          		"nHeight"   => 32,;
+                                          		"cResName"  => "CancelFlat_32",;
+                                          		"bLClicked" => {|| oDlg:End() },;
+                                          		"oWnd"      => oDlg } )
+
+
+ 	/*
 	Cliente--------------------------------------------------------------------
-   	*/
+  	*/
 
    	oSayCliente  		:= TGridSay():Build(    { 	"nRow"      => 40,;
                                           			"nCol"      => 0,;
@@ -5550,7 +5564,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"nHeight"   => nAltoGet,;
                                           			"lDesign"   => .f. } )
    	
-   	aGet[ _CCODCLI ]  	:= TGridGet():Build(    { 	"nRow"      => 40,;
+   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 2, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5559,7 +5573,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| loaCli( aGet, aTmp, nMode ) } } )
 	
-   	aGet[ _CNOMCLI ]  	:= TGridGet():Build(    { 	"nRow"      => 40,;
+   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 4, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;

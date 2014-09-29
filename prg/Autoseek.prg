@@ -104,7 +104,13 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
 
    oGet:Assign()
 
-   xCadena              := Rtrim( oGet:VarGet() )
+   xCadena              := oGet:VarGet()
+
+   if isChar( xCadena )
+      xCadena           := Rtrim( xCadena )
+   else
+      xCadena           := ""
+   end if
 
    cType                := ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) )
 

@@ -3,7 +3,7 @@
 #include "MesDbf.ch"
 
 static oFont
-static aLayouts := { "TOP", "LEFT", "BOTTOM", "RIGHT" }
+static oFontBold
 
 //----------------------------------------------------------------------------//
 
@@ -276,7 +276,7 @@ METHOD Build( hBuilder ) CLASS TGridImage
    local nHeight        := if( hhaskey( hBuilder, "nHeight"       ), hBuilder[ "nHeight"     ], nil )               
    local cResName       := if( hhaskey( hBuilder, "cResName"      ), hBuilder[ "cResName"    ], nil )                  
    local cBmpFile       := if( hhaskey( hBuilder, "cBmpFile"      ), hBuilder[ "cBmpFile"    ], nil )                  
-   local lNoBorder      := if( hhaskey( hBuilder, "lNoBorder"     ), hBuilder[ "lNoBorder"   ], nil )
+   local lNoBorder      := if( hhaskey( hBuilder, "lNoBorder"     ), hBuilder[ "lNoBorder"   ], .t. )
    local oWnd           := if( hhaskey( hBuilder, "oWnd"          ), hBuilder[ "oWnd"        ], nil )            
    local bLClicked      := if( hhaskey( hBuilder, "bLClicked"     ), hBuilder[ "bLClicked"   ], nil )
    local bRClicked      := if( hhaskey( hBuilder, "bRClicked"     ), hBuilder[ "bRClicked"   ], nil )
@@ -284,9 +284,9 @@ METHOD Build( hBuilder ) CLASS TGridImage
    local lStretch       := if( hhaskey( hBuilder, "lStretch"      ), hBuilder[ "lStretch"    ], nil )
    local oCursor        := if( hhaskey( hBuilder, "oCursor"       ), hBuilder[ "oCursor"     ], nil )
    local cMsg           := if( hhaskey( hBuilder, "cMsg"          ), hBuilder[ "cMsg"        ], nil )
-   local lUpdate        := if( hhaskey( hBuilder, "lUpdate"       ), hBuilder[ "lUpdate"     ], nil )
+   local lUpdate        := if( hhaskey( hBuilder, "lUpdate"       ), hBuilder[ "lUpdate"     ], .t. )
    local bWhen          := if( hhaskey( hBuilder, "bWhen"         ), hBuilder[ "bWhen"       ], nil )
-   local lPixel         := if( hhaskey( hBuilder, "lPixel"        ), hBuilder[ "lPixel"      ], nil )
+   local lPixel         := if( hhaskey( hBuilder, "lPixel"        ), hBuilder[ "lPixel"      ], .t. )
    local bValid         := if( hhaskey( hBuilder, "bValid"        ), hBuilder[ "bValid"      ], nil )
    local lDesign        := if( hhaskey( hBuilder, "lDesign"       ), hBuilder[ "lDesign"     ], nil )
    local cVarName       := if( hhaskey( hBuilder, "cVarName"      ), hBuilder[ "cVarName"    ], nil )
@@ -327,7 +327,7 @@ return Self
 
 //----------------------------------------------------------------------------//
 
-CLASS TGridBtnBmp FROM TBtnBmp, TGridable
+CLASS TGridBtnBmp FROM TBtnBmp// , TGridable
 
    METHOD New()
 
@@ -386,12 +386,12 @@ METHOD New( nTop, nLeft, nWidth, nHeight,;
             cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
             l2007, cResName4, cBmpFile4, lTransparent, cToolTip, lRound,;
             bGradColors, lPixel, lDesign ) CLASS TGridBtnBmp
-
+/*
    nTop     := ::EvalTop( nTop )
    nLeft    := ::EvalLeft( nLeft )
    nWidth   := ::EvalWidth( nWidth )
    nHeight  := ::EvalHeight( nHeight )
-
+*/
 Return ( ::Super:New( nTop, nLeft, nWidth, nHeight,;
          cResName1, cResName2, cBmpFile1, cBmpFile2,;
          bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
@@ -506,10 +506,26 @@ return Self
 Function oGridFont()
 
    if empty( oFont )
-      oFont    := TFont():New( "Segoe UI Light", 0, 42, .f., .f. )
+      oFont       := TFont():New( "Segoe UI Light", 0, 42, .f., .f. ) // Segoe UI Light"
    end if 
 
 Return ( oFont )   
+
+//----------------------------------------------------------------------------//
+
+Function oGridFontBold()
+
+   if empty( oFontBold )
+      oFontBold   := TFont():New( "Segoe UI", 0, 42, .f., .t. ) // Segoe UI Light"
+   end if 
+
+Return ( oFontBold )   
+
+//----------------------------------------------------------------------------//
+
+Function nGridColor()
+
+Return ( Rgb( 78, 166, 234 ) )
 
 //----------------------------------------------------------------------------//
 
@@ -536,6 +552,12 @@ Return nil
 Function GridWidth( nCols, oDlg )
    
 Return ( oDlg:nWidth() / 12 * nCols )
+
+//----------------------------------------------------------------------------//
+
+Function GridHeigth( oDlg )
+   
+Return ( oDlg:nHeight() )
 
 //----------------------------------------------------------------------------//
 
