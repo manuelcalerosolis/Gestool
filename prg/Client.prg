@@ -13083,7 +13083,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                           "aItems"    => aCbxOrd,;
                                           "bChanged"  => {| nKey, nFlags, Self | ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
 
-   TGridBtnBmp():New( 216, 190, 46, 46, "End32",,,, {|| if( ApoloMsgNoYes( "Desea salir de la aplicación", "" ), oDlg:End(), ) }, oDlg,,, .f., .t.,,,,, .f., "BOTTOM" )
+   TBtnBmp():New( 216, 190, 46, 46, "End32",,,, {|| if( ApoloMsgNoYes( "Desea salir de la aplicación", "" ), oDlg:End(), ) }, oDlg,,, .f., .t.,,,,, .f., "BOTTOM" )
 
 /*
    oBtnOk   := TGridBtnBmp():Build(    {  "nTop"      => 1,;
