@@ -13083,17 +13083,13 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                           "aItems"    => aCbxOrd,;
                                           "bChanged"  => {| nKey, nFlags, Self | ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
 
-   TBtnBmp():New( 216, 190, 46, 46, "End32",,,, {|| if( ApoloMsgNoYes( "Desea salir de la aplicación", "" ), oDlg:End(), ) }, oDlg,,, .f., .t.,,,,, .f., "BOTTOM" )
-
-/*
-   oBtnOk   := TGridBtnBmp():Build(    {  "nTop"      => 1,;
+   oBtnOk   := TGridImage():Build(     {  "nTop"      => 1,;
                                           "nLeft"     => {|| GridWidth( 2, oDlg ) },;
                                           "nWidth"    => 32,;
                                           "nHeight"   => 32,;
-                                          "cResName1" => "End32",;
-                                          "bAction"   => {|| msgAlert( "Tst" ) },;
-                                          "oWnd"      => oDlg,;
-                                          "cLayout"   => "BOTTOM" } )
+                                          "cResName"  => "End32",;
+                                          "bLClicked" => {|| msgAlert( "Tst" ) },;
+                                          "oWnd"      => oDlg } )
 
    oBrw                 := TGridIXBrowse():New( oDlg )
 
@@ -13232,55 +13228,20 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    oBrw:CreateFromCode( 105 )
 */
    oDlg:bResized        := {|| GridResize( oDlg ) }
+//   oDlg:bStart          := {|| oBrw:Load() }
 
    ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) ) 
 
-   CloseFiles()
-
-   Return nil 
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end(IDOK) )
-
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     nAnd( nLevel, ACC_APPD ) != 0 ;
-         ACTION   ( WinAppRec( oBrw, bEdtRec, ( TDataView():Get( "Client", nView ) ) ) )
-
-      REDEFINE BUTTON ;
-         ID       501 ;
-         OF       oDlg ;
-         WHEN     nAnd( nLevel, ACC_EDIT ) != 0;
-         ACTION   ( WinEdtRec( oBrw, bEdtRec, ( TDataView():Get( "Client", nView ) ) ) )
-
-      oDlg:AddFastKey( VK_F2,    {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdtRec, ( TDataView():Get( "Client", nView ) ) ), ) } )
-      oDlg:AddFastKey( VK_F3,    {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdtRec, ( TDataView():Get( "Client", nView ) ) ), ) } )
-
-   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
-   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
-
-   oDlg:bStart                := {|| oBrw:Load() }
-
-   ACTIVATE DIALOG oDlg CENTER
-
    if oDlg:nResult == IDOK
 
-      if ValType( uGet ) == "O"
+      if IsObject( uGet )
          uGet:cText( ( TDataView():Get( "Client", nView ) )->Cod )
          uGet:lValid()
       else
          uGet  := ( TDataView():Get( "Client", nView ) )->Cod
       end if
 
-      if ValType( uGetName ) == "O"
+      if IsObject( uGetName ) 
          uGetName:cText( ( TDataView():Get( "Client", nView ) )->Titulo )
       end if
 
@@ -13292,10 +13253,10 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
 
    CloseFiles()
 
-   if Valtype( uGet ) == "O"
+   if IsObject( uGet ) 
       uGet:setFocus()
    end if
 
-RETURN oDlg:nResult == IDOK
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//

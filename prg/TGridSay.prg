@@ -3,6 +3,7 @@
 #include "MesDbf.ch"
 
 static oFont
+static aLayouts := { "TOP", "LEFT", "BOTTOM", "RIGHT" }
 
 //----------------------------------------------------------------------------//
 
@@ -255,16 +256,11 @@ return Self
 
 //----------------------------------------------------------------------------//
 
-CLASS TGridImage FROM TImage
+CLASS TGridImage FROM TImage, TGridable
 
-   DATA bTop
-   DATA bLeft
-   DATA bWidth
-   DATA bHeight
+   METHOD Build()
 
-   METHOD New( nTop, nLeft, nWidth, nHeight, cResName, cBmpFile, lNoBorder,;
-            oWnd, bLClicked, bRClicked, lScroll, lStretch, oCursor,;
-            cMsg, lUpdate, bWhen, lPixel, bValid, lDesign, cVarName ) 
+   METHOD New() 
 
    METHOD ReAdjust()
 
@@ -272,29 +268,43 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
+METHOD Build( hBuilder ) CLASS TGridImage
+
+   local nTop           := if( hhaskey( hBuilder, "nTop"          ), hBuilder[ "nTop"        ], nil )            
+   local nLeft          := if( hhaskey( hBuilder, "nLeft"         ), hBuilder[ "nLeft"       ], nil )               
+   local nWidth         := if( hhaskey( hBuilder, "nWidth"        ), hBuilder[ "nWidth"      ], nil )               
+   local nHeight        := if( hhaskey( hBuilder, "nHeight"       ), hBuilder[ "nHeight"     ], nil )               
+   local cResName       := if( hhaskey( hBuilder, "cResName"      ), hBuilder[ "cResName"    ], nil )                  
+   local cBmpFile       := if( hhaskey( hBuilder, "cBmpFile"      ), hBuilder[ "cBmpFile"    ], nil )                  
+   local lNoBorder      := if( hhaskey( hBuilder, "lNoBorder"     ), hBuilder[ "lNoBorder"   ], nil )
+   local oWnd           := if( hhaskey( hBuilder, "oWnd"          ), hBuilder[ "oWnd"        ], nil )            
+   local bLClicked      := if( hhaskey( hBuilder, "bLClicked"     ), hBuilder[ "bLClicked"   ], nil )
+   local bRClicked      := if( hhaskey( hBuilder, "bRClicked"     ), hBuilder[ "bRClicked"   ], nil )
+   local lScroll        := if( hhaskey( hBuilder, "lScroll"       ), hBuilder[ "lScroll"     ], nil )
+   local lStretch       := if( hhaskey( hBuilder, "lStretch"      ), hBuilder[ "lStretch"    ], nil )
+   local oCursor        := if( hhaskey( hBuilder, "oCursor"       ), hBuilder[ "oCursor"     ], nil )
+   local cMsg           := if( hhaskey( hBuilder, "cMsg"          ), hBuilder[ "cMsg"        ], nil )
+   local lUpdate        := if( hhaskey( hBuilder, "lUpdate"       ), hBuilder[ "lUpdate"     ], nil )
+   local bWhen          := if( hhaskey( hBuilder, "bWhen"         ), hBuilder[ "bWhen"       ], nil )
+   local lPixel         := if( hhaskey( hBuilder, "lPixel"        ), hBuilder[ "lPixel"      ], nil )
+   local bValid         := if( hhaskey( hBuilder, "bValid"        ), hBuilder[ "bValid"      ], nil )
+   local lDesign        := if( hhaskey( hBuilder, "lDesign"       ), hBuilder[ "lDesign"     ], nil )
+   local cVarName       := if( hhaskey( hBuilder, "cVarName"      ), hBuilder[ "cVarName"    ], nil )
+
+Return   (  ::New( nTop, nLeft, nWidth, nHeight, cResName, cBmpFile, lNoBorder,;
+            oWnd, bLClicked, bRClicked, lScroll, lStretch, oCursor,;
+            cMsg, lUpdate, bWhen, lPixel, bValid, lDesign, cVarName ) )
+
+//----------------------------------------------------------------------------//
+
 METHOD New( nTop, nLeft, nWidth, nHeight, cResName, cBmpFile, lNoBorder,;
             oWnd, bLClicked, bRClicked, lScroll, lStretch, oCursor,;
             cMsg, lUpdate, bWhen, lPixel, bValid, lDesign, cVarName ) CLASS TGridImage
 
-   if isBlock( nTop )
-      ::bTop         := nTop
-      nTop           := Eval( nTop )
-   end if 
-
-   if isBlock( nLeft )
-      ::bLeft         := nLeft
-      nLeft           := Eval( nLeft )
-   end if 
-
-   if isBlock( nWidth )
-      ::bWidth       := nWidth
-      nWidth         := Eval( nWidth )
-   end if 
-
-   if isBlock( nHeight )
-      ::bHeight      := nHeight
-      nHeight        := Eval( nHeight )
-   end if 
+   nTop     := ::EvalTop( nTop )
+   nLeft    := ::EvalLeft( nLeft )
+   nWidth   := ::EvalWidth( nWidth )
+   nHeight  := ::EvalHeight( nHeight )
 
    ::Super:New( nTop, nLeft, nWidth, nHeight, cResName, cBmpFile, lNoBorder,;
             oWnd, bLClicked, bRClicked, lScroll, lStretch, oCursor,;
@@ -355,14 +365,18 @@ METHOD Build( hBuilder ) CLASS TGridBtnBmp
    local cResName4      := if( hhaskey( hBuilder, "cResName4"     ), hBuilder[ "cResName4"   ], nil )                  
    local cBmpFile4      := if( hhaskey( hBuilder, "cBmpFile4"     ), hBuilder[ "cBmpFile4"   ], nil )                  
    local lTransparent   := if( hhaskey( hBuilder, "lTransparent"  ), hBuilder[ "lTransparent"], .f. )                     
-   local cToolTip       := if( hhaskey( hBuilder, "cToolTip"      ), hBuilder[ "cToolTip"    ], nil )                  
-   local nId            := if( hhaskey( hBuilder, "nId"           ), hBuilder[ "nId"         ], nil )               
+   local cToolTip       := if( hhaskey( hBuilder, "cToolTip"      ), hBuilder[ "cToolTip"    ], nil ) 
+   local lRound         := if( hhaskey( hBuilder, "lRound"        ), hBuilder[ "lRound"      ], nil )
+   local bGradColors    := if( hhaskey( hBuilder, "bGradColors"   ), hBuilder[ "bGradColors" ], nil )
+   local lPixel         := if( hhaskey( hBuilder, "lPixel"        ), hBuilder[ "lPixel"      ], nil )
+   local lDesign        := if( hhaskey( hBuilder, "lDesign"       ), hBuilder[ "lDesign"     ], nil )
 
 Return   (  ::New( nTop, nLeft, nWidth, nHeight,;
             cResName1, cResName2, cBmpFile1, cBmpFile2,;
             bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
             cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
-            l2007, cResName4, cBmpFile4, lTransparent, cToolTip, nId ) )
+            l2007, cResName4, cBmpFile4, lTransparent, cToolTip, lRound,;
+            bGradColors, lPixel, lDesign ) )
 
 //----------------------------------------------------------------------------//
 
@@ -370,20 +384,20 @@ METHOD New( nTop, nLeft, nWidth, nHeight,;
             cResName1, cResName2, cBmpFile1, cBmpFile2,;
             bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
             cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
-            l2007, cResName4, cBmpFile4, lTransparent, cToolTip, nId ) CLASS TGridBtnBmp
+            l2007, cResName4, cBmpFile4, lTransparent, cToolTip, lRound,;
+            bGradColors, lPixel, lDesign ) CLASS TGridBtnBmp
 
    nTop     := ::EvalTop( nTop )
    nLeft    := ::EvalLeft( nLeft )
    nWidth   := ::EvalWidth( nWidth )
    nHeight  := ::EvalHeight( nHeight )
 
-   ::Super:New( nTop, nLeft, nWidth, nHeight,;
-            cResName1, cResName2, cBmpFile1, cBmpFile2,;
-            bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
-            cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
-            l2007, cResName4, cBmpFile4, lTransparent, cToolTip, nId )
-
-Return ( Self )
+Return ( ::Super:New( nTop, nLeft, nWidth, nHeight,;
+         cResName1, cResName2, cBmpFile1, cBmpFile2,;
+         bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
+         cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
+         l2007, cResName4, cBmpFile4, lTransparent, cToolTip, lRound,;
+         bGradColors, lPixel, lDesign ) )
 
 //----------------------------------------------------------------------------//
 
@@ -542,3 +556,4 @@ Static Function HideKeyboard()
 Return .t. 
 
 //----------------------------------------------------------------------------//
+
