@@ -977,8 +977,6 @@ Function lStartCheck()
 
    CursorWait()
 
-   ? " // Chequeamos los cambios de versiones-------------------------------------- "
-
    // Chequeamos los cambios de versiones--------------------------------------
 
    oMsgText( 'Chequeando versión de empresa' )
@@ -1014,8 +1012,6 @@ Function lStartCheck()
    end if
 
    // Test de BrwClient--------------------------------------------------------
-
-   ? "// Test de BrwClient--------------------------------------------------------"
 
    GridBrwClient() 
 
@@ -5800,82 +5796,3 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 //--------------PDA ROCIO----------------------------------------------------//
 
-/*
--------------------------------------------------------------------------------
-Comenzamos la parte de código que se compila para PDA--------------------------
--------------------------------------------------------------------------------
-*/
-
-#ifndef __XHARBOUR__
-
-Function testGrid()
-
-   local oDlg
-   local oGet
-   local oImg
-   local nGet     := 1
-   local cGet     := "Manuel Calero Solis"
-
-   DEFINE DIALOG oDlg FROM 1, 5 TO 40, 100; 
-      TITLE       "GridTest" ;
-      FONT        oGridFont() ;
-      STYLE       nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
-
-   // TGridImage():New( 12, {|| GridWidth( 10, oDlg ) },,,, FullCurDir() + "metro\Gestool.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
-
-   with object ( TGridSay():New( 48, 0, {|| "Cliente" }, oDlg, , , , , .t., .t., , , {|| GridWidth( 2, oDlg ) }, 28, .f. ) )
-   end with
-
-   with object ( TGridGet():New( 48, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, nGet, nGet:= u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, 28, , , , , , , , .t. ) )
-   end with
-
-   with object ( TGridGet():New( 48, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, cGet, cGet:= u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, 28, , , , , , , , .t. ) )
-   end with
-
-   TGridImage():New( 48, {|| GridWidth( 10, oDlg ) },,,, FullCurDir() + "metro\back-black-48.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
-
-   TGridImage():New( 48, {|| GridWidth( 10.5, oDlg ) },,,, FullCurDir() + "metro\Arrowhead-Right-48.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
-
-   oDlg:bResized  := {|| resizeGrid( oDlg ) }
-
-   ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT     ( maximizeGrid( oDlg ) ) 
-
-Return nil 
-
-Static Function maximizeGrid( oDlg )
-
-   oDlg:Maximize()
-
-Return nil
-
-Static Function resizeGrid( oDlg )
-
-   local o
-
-   for each o in oDlg:aControls
-      if ( o:ClassName() $ "TGET,TSAY" ) .and. !Empty( o:Cargo )
-         o:Move( o:nTop, GridWidth( o:Cargo[ "Left" ], oDlg ), GridWidth( o:Cargo[ "Width" ], oDlg ), o:nHeight )
-      end if
-      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY,TGRIDBUTTON,TGRIDIMAGE" )
-         o:ReAdjust()
-      end if
-   next
-
-Return nil   
-
-Function ShowKeyboard()
-
-   msgAlert( "ShowKeyboard")
-
-   ShellExecute( 0, "open", "tabtip.exe" ) 
-
-Return .t. 
-
-Static Function HideKeyboard()
-
-   SendMessage( FindWindow( 0, "Teclado en pantalla" ), WM_CLOSE )
-
-Return .t. 
-
-#endif

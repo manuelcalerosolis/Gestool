@@ -13024,8 +13024,8 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    local oDlg
    local hBmp
    local oBrw
-   local uGet1
-   local cGet1
+   local oGetSearch
+   local cGetSearch
    local cTxtOrigen  := if( !empty( uGet ), uGet:VarGet(), )
    local nOrdAnt     := GetBrwOpt( "BrwGridClient" )
    local oCbxOrd
@@ -13039,8 +13039,6 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    cCbxOrd           := aCbxOrd[ nOrdAnt ]
 
    DEFAULT lBigStyle := .f.
-
-   ? "GridBrwClient( uGet, uGetName, lBigStyle )"
 
    if !OpenFiles( .t. )
       Return nil
@@ -13066,15 +13064,26 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
       FONT        oGridFont() ;
       STYLE       nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
 
-   with object ( TGridGet():Build(  {  "nRow"      => 48,;
+   oGetSearch  := TGridGet():Build( {  "nRow"      => 48,;
                                        "nCol"      => {|| GridWidth( 2, oDlg ) },;
-                                       "bSetGet"   => {|u| if( PCount() == 0, cGet1, cGet1 := u ) },;
+                                       "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
                                        "oWnd"      => oDlg,;
-                                       "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                       "nWidth"    => {|| GridWidth( 4, oDlg ) },;
                                        "nHeight"   => 28,;
                                        "bValid"    => {|| OrdClearScope( oBrw, ( TDataView():Get( "Client", nView ) ) ) },;
-                                       "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, nil, ( TDataView():Get( "Client", nView ) ), .t. ) } } ) )
-   end with
+                                       "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, nil, ( TDataView():Get( "Client", nView ) ), .t. ) } } )
+
+   oCbxOrd  := TGridComboBox():Build(  {  "nRow"      => 48,;
+                                          "nCol"      => {|| GridWidth( 6, oDlg ) },;
+                                          "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                                          "oWnd"      => oDlg,;
+                                          "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                          "nHeight"   => 28,;
+                                          "aItems"    => aCbxOrd,;
+                                          "bChanged"  => {| nKey, nFlags, Self | ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
+
+
+//   TComboBox():New( 78, 10,  {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) }, {"uno", "dos"}, 80, 28, oDlg)
 
    ACTIVATE DIALOG oDlg CENTER ;
       ON INIT     ( GridMaximize( oDlg ) ) 
@@ -13082,13 +13091,6 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    CloseFiles()
 
    Return nil 
-
-      REDEFINE COMBOBOX oCbxOrd ;
-         VAR      cCbxOrd ;
-         ID       102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), uGet1:SetFocus() ) ;
-         OF       oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
