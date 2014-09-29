@@ -5491,6 +5491,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    local oDlg
    local oFnt     		:= TFont():New( "Segoe UI Light",  0, 28, .f., .f. )
+   local oSayGeneral
    local oSayCliente
    local oSayDireccion
    local oSayPoblacion
@@ -5526,76 +5527,79 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	end with*/
 
    	/*
+	Barra de botones-----------------------------------------------------------
+   	*/
+
+	oSayGeneral 		:= TGridSay():New( 5, 0, {|| "Factura de cliente" }, oDlg, , , , , , .t., , , {|| GridWidth( 10, oDlg ) }, nAltoGet, .f. )
+	oBtnLupaCliente		:= TGridButton():New( 5, {|| GridWidth( 10, oDlg ) }, "Sig", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+   	oBtnLupaCliente		:= TGridButton():New( 5, {|| GridWidth( 11, oDlg ) }, "Can", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+
+   	/*
 	Cliente--------------------------------------------------------------------
    	*/
 
-   	oSayCliente 		:= TGridSay():New( 20, 0, {|| "Cliente" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+   	oSayCliente 		:= TGridSay():New( 40, 0, {|| "Cliente" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
 
-   	aGet[ _CCODCLI ] 	:= TGridGet():New( 20, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CCODCLI ] 	:= TGridGet():New( 40, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
 	
 	with object ( aGet[ _CCODCLI ] )
 		:bValid 		:= {|| loaCli( aGet, aTmp, nMode, oGetEstablecimiento ) }		
 	end with
 
-   	aGet[ _CNOMCLI ] 	:= TGridGet():New( 20, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CNOMCLI ] 	:= TGridGet():New( 40, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
 
-   	oBtnLupaCliente		:= TGridButton():New( 20, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| Msginfo( "Botón para el browse" ) }, , nAltoGet )
+   	oBtnLupaCliente		:= TGridButton():New( 40, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| Msginfo( "Botón para el browse" ) }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
 
    	/*
 	Establecimiento------------------------------------------------------------
     */
 
-   	oSayEstablecimiento	:= TGridSay():New( 50, 0, {|| "Establecimiento" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+   	oSayEstablecimiento	:= TGridSay():New( 70, 0, {|| "Establecimiento" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
 
-   	oGetEstablecimiento	:= TGridGet():New( 50, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, oTextEstablecimiento, oTextEstablecimiento := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	oGetEstablecimiento	:= TGridGet():New( 70, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, oTextEstablecimiento, oTextEstablecimiento := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
 
     /*
 	Dirección------------------------------------------------------------------
     */
 
-   	oSayDireccion 		:= TGridSay():New( 80, 0, {|| "Dirección" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+   	oSayDireccion 		:= TGridSay():New( 100, 0, {|| "Dirección" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
 
-   	aGet[ _CDIRCLI ] 	:= TGridGet():New( 80, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CDIRCLI ], aTmp[ _CDIRCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CDIRCLI ] 	:= TGridGet():New( 100, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CDIRCLI ], aTmp[ _CDIRCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
 
    	/*
 	Población------------------------------------------------------------------
     */
 
-   	oSayPoblacion 		:= TGridSay():New( 110, 0, {|| "Población" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+   	oSayPoblacion 		:= TGridSay():New( 130, 0, {|| "Población" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
 
-   	aGet[ _CPOBCLI ] 	:= TGridGet():New( 110, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPOBCLI ], aTmp[ _CPOBCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CPOBCLI ] 	:= TGridGet():New( 130, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPOBCLI ], aTmp[ _CPOBCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
 
    	/*
 	CP. Provincia--------------------------------------------------------------
    	*/
 
-   	oSayProvincia 		:= TGridSay():New( 140, 0, {|| "CP/Provincia " }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+   	oSayProvincia 		:= TGridSay():New( 160, 0, {|| "CP/Provincia " }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
 
-   	aGet[ _CPOSCLI ] 	:= TGridGet():New( 140, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPOSCLI ], aTmp[ _CPOSCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CPOSCLI ] 	:= TGridGet():New( 160, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPOSCLI ], aTmp[ _CPOSCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
 	
-   	aGet[ _CPRVCLI ] 	:= TGridGet():New( 140, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPRVCLI ], aTmp[ _CPRVCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CPRVCLI ] 	:= TGridGet():New( 160, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPRVCLI ], aTmp[ _CPRVCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
 
    	/*
 	Población------------------------------------------------------------------
     */
 
-   	oSayTelefono 		:= TGridSay():New( 170, 0, {|| "Teléfono" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+   	oSayTelefono 		:= TGridSay():New( 190, 0, {|| "Teléfono" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
 
-   	aGet[ _CTLFCLI ] 	:= TGridGet():New( 170, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CTLFCLI ], aTmp[ _CTLFCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CTLFCLI ] 	:= TGridGet():New( 190, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CTLFCLI ], aTmp[ _CTLFCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
 
    	/*
 	Redimensionamos y activamos el diálogo-------------------------------------
    	*/
 
-   	oDlg:bResized  		:= {|| resizeGrid( oDlg ) }
+   	oDlg:bResized  		:= {|| GridResize( oDlg ) }
 
    	ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT     ( maximizeGrid( oDlg ) )
-
-    MsgAlert( aTmp[ _CCODCLI ], "CCODCLI" )
-    MsgAlert( aTmp[ _CNOMCLI ], "CNOMCLI" )
-    MsgAlert( aTmp[ _CDIRCLI ], "CDIRCLI" )
-    MsgAlert( aTmp[ _CPOBCLI ], "CPOBCLI" )
+      ON INIT     ( GridMaximize( oDlg ) )
 
    	/*
    	Salimos --------------------------------------------------------------------
@@ -5610,55 +5614,6 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	EnableAcceso()
 
 RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-Static Function maximizeGrid( oDlg )
-
-   oDlg:Maximize()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Static Function resizeGrid( oDlg )
-
-   local o
-
-   for each o in oDlg:aControls
-      if ( o:ClassName() $ "TGET,TSAY" ) .and. !Empty( o:Cargo )
-         o:Move( o:nTop, GridWidth( o:Cargo[ "Left" ], oDlg ), GridWidth( o:Cargo[ "Width" ], oDlg ), o:nHeight )
-      end if
-      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY,TGRIDBUTTON,TGRIDIMAGE" )
-         o:ReAdjust()
-      end if
-   next
-
-Return nil   
-
-//---------------------------------------------------------------------------//
-
-Static Function GridWidth( nCols, oDlg )
-   
-Return ( oDlg:nWidth() / 12 * nCols )
-
-//---------------------------------------------------------------------------//
-
-Function ShowKeyboard()
-
-   msgAlert( "ShowKeyboard")
-
-   ShellExecute( 0, "open", "tabtip.exe" ) 
-
-Return .t. 
-
-//---------------------------------------------------------------------------//
-
-Static Function HideKeyboard()
-
-   SendMessage( FindWindow( 0, "Teclado en pantalla" ), WM_CLOSE )
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
