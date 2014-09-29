@@ -5493,14 +5493,9 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oFnt     		:= TFont():New( "Segoe UI Light",  0, 28, .f., .f. )
    local oSayGeneral
    local oSayCliente
-   local oSayDireccion
-   local oSayPoblacion
-   local oSayProvincia
-   local oSayTelefono
-   local oSayEstablecimiento
-   local oGetEstablecimiento
-   local oTextEstablecimiento
    local oBtnLupaCliente
+   local oBtnAceptar
+   local oBtnCancelar
    local nAltoGet 		:= 20
 
    /*
@@ -5518,21 +5513,13 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       FONT  oFnt ;
       STYLE nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
 
- 	// TGridImage():New( 12, {|| GridWidth( 10, oDlg ) },,,, FullCurDir() + "metro\Gestool.png", .t., oDlg,,, .f., .f.,,, .f.,, .t.,, .f., "oImg" )
-
-   	/*with object ( TGridButton():New( 20, {|| GridWidth( 10, oDlg ) }, "<", 	  oDlg, {|| Msginfo( "Primer boton responsive" ) }, , 28 ) )
-   	end with
-
-   	with object ( TGridButton():New( 20, {|| GridWidth( 11, oDlg ) }, ">", 	  oDlg, {|| Msginfo( "Segundo boton responsive" ) }, , 28 ) )
-   	end with*/
-
    	/*
 	Barra de botones-----------------------------------------------------------
    	*/
 
 	oSayGeneral 		:= TGridSay():New( 5, 0, {|| "Factura de cliente" }, oDlg, , , , , , .t., , , {|| GridWidth( 10, oDlg ) }, nAltoGet, .f. )
-	oBtnLupaCliente		:= TGridButton():New( 5, {|| GridWidth( 10, oDlg ) }, "Sig", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
-   	oBtnLupaCliente		:= TGridButton():New( 5, {|| GridWidth( 11, oDlg ) }, "Can", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+	oBtnAceptar			:= TGridButton():New( 5, {|| GridWidth( 10, oDlg ) }, "Acep", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+   	oBtnCancelar		:= TGridButton():New( 5, {|| GridWidth( 11, oDlg ) }, "Can", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
 
    	/*
 	Cliente--------------------------------------------------------------------
@@ -5543,54 +5530,12 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	aGet[ _CCODCLI ] 	:= TGridGet():New( 40, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
 	
 	with object ( aGet[ _CCODCLI ] )
-		:bValid 		:= {|| loaCli( aGet, aTmp, nMode, oGetEstablecimiento ) }		
+		:bValid 		:= {|| loaCli( aGet, aTmp, nMode ) }		
 	end with
 
    	aGet[ _CNOMCLI ] 	:= TGridGet():New( 40, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
 
    	oBtnLupaCliente		:= TGridButton():New( 40, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| Msginfo( "Botón para el browse" ) }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
-
-   	/*
-	Establecimiento------------------------------------------------------------
-    */
-
-   	oSayEstablecimiento	:= TGridSay():New( 70, 0, {|| "Establecimiento" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
-
-   	oGetEstablecimiento	:= TGridGet():New( 70, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, oTextEstablecimiento, oTextEstablecimiento := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
-
-    /*
-	Dirección------------------------------------------------------------------
-    */
-
-   	oSayDireccion 		:= TGridSay():New( 100, 0, {|| "Dirección" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
-
-   	aGet[ _CDIRCLI ] 	:= TGridGet():New( 100, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CDIRCLI ], aTmp[ _CDIRCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
-
-   	/*
-	Población------------------------------------------------------------------
-    */
-
-   	oSayPoblacion 		:= TGridSay():New( 130, 0, {|| "Población" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
-
-   	aGet[ _CPOBCLI ] 	:= TGridGet():New( 130, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPOBCLI ], aTmp[ _CPOBCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
-
-   	/*
-	CP. Provincia--------------------------------------------------------------
-   	*/
-
-   	oSayProvincia 		:= TGridSay():New( 160, 0, {|| "CP/Provincia " }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
-
-   	aGet[ _CPOSCLI ] 	:= TGridGet():New( 160, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPOSCLI ], aTmp[ _CPOSCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
-	
-   	aGet[ _CPRVCLI ] 	:= TGridGet():New( 160, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CPRVCLI ], aTmp[ _CPRVCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
-
-   	/*
-	Población------------------------------------------------------------------
-    */
-
-   	oSayTelefono 		:= TGridSay():New( 190, 0, {|| "Teléfono" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
-
-   	aGet[ _CTLFCLI ] 	:= TGridGet():New( 190, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CTLFCLI ], aTmp[ _CTLFCLI ] := u ) }, oDlg, {|| GridWidth( 8, oDlg ) }, nAltoGet, , , , , , , , .t. )
 
    	/*
 	Redimensionamos y activamos el diálogo-------------------------------------
@@ -10745,46 +10690,56 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
       	if Empty( aGet[ _CNOMCLI ]:varGet() ) .or. lChgCodCli
          	aGet[ _CNOMCLI ]:cText( ( TDataView():Clientes( nView ) )->Titulo )
       	end if
+      else
+      	aTmp[ _CNOMCLI ] 	:= ( TDataView():Clientes( nView ) )->Titulo
       end if	
 
       if !Empty( aGet[ _CDIRCLI ] )
       	if Empty( aGet[ _CDIRCLI ]:varGet() ) .or. lChgCodCli
          	aGet[ _CDIRCLI ]:cText( ( TDataView():Clientes( nView ) )->Domicilio )
       	end if
+      else
+      	aTmp[ _CDIRCLI ] 	:= ( TDataView():Clientes( nView ) )->Domicilio
       end if
 
       if !Empty( aGet[ _CTLFCLI ] )
       	if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
          	aGet[ _CTLFCLI ]:cText( ( TDataView():Clientes( nView ) )->Telefono )
       	end if
+      else
+      	aTmp[ _CTLFCLI ] 	:= ( TDataView():Clientes( nView ) )->Telefono
       end if	
 
       if !Empty( aGet[_CPOBCLI] )
       	if Empty( aGet[_CPOBCLI]:varGet() ) .or. lChgCodCli
          	aGet[_CPOBCLI]:cText( ( TDataView():Clientes( nView ) )->Poblacion )
       	end if
+      else
+      	aTmp[ _CPOBCLI ] 	:= ( TDataView():Clientes( nView ) )->Poblacion
       end if	
 
       if !Empty( aGet[_CPRVCLI] )
          if Empty( aGet[ _CPRVCLI ]:varGet() ) .or. lChgCodCli
             aGet[ _CPRVCLI ]:cText( ( TDataView():Clientes( nView ) )->Provincia )
          end if
+      else
+      	aTmp[ _CPRVCLI ] 	:= ( TDataView():Clientes( nView ) )->Provincia
       end if
 
       if !Empty( aGet[_CPOSCLI] )
          if Empty( aGet[ _CPOSCLI ]:varGet() ) .or. lChgCodCli
             aGet[ _CPOSCLI ]:cText( ( TDataView():Clientes( nView ) )->CodPostal )
          end if
+      else
+      	aTmp[ _CPOSCLI ] 	:= ( TDataView():Clientes( nView ) )->CodPostal
       end if
 
       if !Empty( aGet[_CDNICLI] )
          if Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli
             aGet[ _CDNICLI ]:cText( ( TDataView():Clientes( nView ) )->Nif )
          end if
-      end if
-
-      if !Empty( oGetEstablecimiento )
-      	oGetEstablecimiento:cText( ( TDataView():Clientes( nView ) )->NbrEst )
+      else
+      	aTmp[ _CDNICLI ] 	:= ( TDataView():Clientes( nView ) )->Nif
       end if
 
       /*
@@ -10839,22 +10794,22 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
 
          end if
 
-         if aGet[ _CCODALM ] != nil
-
+         if !Empty( aGet[ _CCODALM ] )
             if ( Empty( aGet[ _CCODALM ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodAlm )
                aGet[ _CCODALM ]:cText( ( TDataView():Clientes( nView ) )->cCodAlm )
                aGet[ _CCODALM ]:lValid()
             end if
-
+         else
+         	aTmp[ _CCODALM ] 	:= ( TDataView():Clientes( nView ) )->cCodAlm
          end if
 
-         if aGet[ _CCODTAR ] != nil
-
+         if !Empty( aGet[ _CCODTAR ] )
             if ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTar )
                aGet[ _CCODTAR ]:cText( ( TDataView():Clientes( nView ) )->cCodTar )
                aGet[ _CCODTAR ]:lValid()
             end if
-
+         else
+         	aTmp[ _CCODTAR ] 	:= ( TDataView():Clientes( nView ) )->cCodTar
          end if
 
          if !Empty( aGet[ _CCODPAGO ] ) .and. ( Empty( aGet[ _CCODPAGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->CodPago )
@@ -10868,40 +10823,54 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
 
             if lBancoDefecto( ( TDataView():Clientes( nView ) )->Cod, dbfCliBnc )
 
-               if !Empty( aGet[ _CBANCO ] )
-                  aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
-                  aGet[ _CBANCO ]:lValid()
-               end if
+               	if !Empty( aGet[ _CBANCO ] )
+                  	aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
+                  	aGet[ _CBANCO ]:lValid()
+               	else
+               		aTmp[ _CBANCO ] 	:= ( dbfCliBnc )->cCodBnc
+               	end if
 
 	            if !Empty( aGet[ _CPAISIBAN ] )
 	               aGet[ _CPAISIBAN ]:cText( ( dbfCliBnc )->cPaisIBAN )
 	               aGet[ _CPAISIBAN ]:lValid()
+	            else
+	            	aTmp[ _CPAISIBAN ] 	:= ( dbfCliBnc )->cPaisIBAN
 	            end if
 
-   	         if !Empty( aGet[ _CCTRLIBAN ] )
-   	            aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
-   	            aGet[ _CCTRLIBAN ]:lValid()
-   	         end if
+   	         	if !Empty( aGet[ _CCTRLIBAN ] )
+   	            	aGet[ _CCTRLIBAN ]:cText( ( dbfCliBnc )->cCtrlIBAN )
+   	            	aGet[ _CCTRLIBAN ]:lValid()
+   	           	else
+   	           		aTmp[ _CCTRLIBAN ] 	:= ( dbfCliBnc )->cCtrlIBAN
+   	         	end if
 
-               if !Empty( aGet[ _CENTBNC ] )
-                  aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
-                  aGet[ _CENTBNC ]:lValid()
-               end if
+               	if !Empty( aGet[ _CENTBNC ] )
+                  	aGet[ _CENTBNC ]:cText( ( dbfCliBnc )->cEntBnc )
+                  	aGet[ _CENTBNC ]:lValid()
+                else
+                	aTmp[ _CENTBNC ] 	:= ( dbfCliBnc )->cEntBnc
+               	end if
 
-               if !Empty( aGet[ _CSUCBNC ] )
-                  aGet[ _CSUCBNC ]:cText( ( dbfCliBnc )->cSucBnc )
-                  aGet[ _CSUCBNC ]:lValid()
-               end if
+               	if !Empty( aGet[ _CSUCBNC ] )
+                  	aGet[ _CSUCBNC ]:cText( ( dbfCliBnc )->cSucBnc )
+                  	aGet[ _CSUCBNC ]:lValid()
+                else
+                	aTmp[ _CSUCBNC ] 	:= ( dbfCliBnc )->cSucBnc
+               	end if
 
-               if !Empty( aGet[ _CDIGBNC ] )
-                  aGet[ _CDIGBNC ]:cText( ( dbfCliBnc )->cDigBnc )
-                  aGet[ _CDIGBNC ]:lValid()
-               end if
+               	if !Empty( aGet[ _CDIGBNC ] )
+                  	aGet[ _CDIGBNC ]:cText( ( dbfCliBnc )->cDigBnc )
+                  	aGet[ _CDIGBNC ]:lValid()
+                else
+                	aTmp[ _CDIGBNC ] 	:= ( dbfCliBnc )->cDigBnc
+               	end if
 
-               if !Empty( aGet[ _CCTABNC ] )
-                  aGet[ _CCTABNC ]:cText( ( dbfCliBnc )->cCtaBnc )
-                  aGet[ _CCTABNC ]:lValid()
-               end if
+               	if !Empty( aGet[ _CCTABNC ] )
+                  	aGet[ _CCTABNC ]:cText( ( dbfCliBnc )->cCtaBnc )
+                  	aGet[ _CCTABNC ]:lValid()
+                else
+                	aTmp[ _CCTABNC ] 	:= ( dbfCliBnc )->cCtaBnc
+               	end if
 
             end if
 
@@ -10912,6 +10881,8 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
                aGet[ _CCODAGE ]:cText( ( TDataView():Clientes( nView ) )->cAgente )
                aGet[ _CCODAGE ]:lValid()
             end if
+         else
+         	aTmp[ _CCODAGE ]	:= ( TDataView():Clientes( nView ) )->cAgente
          end if
 
          if !Empty( aGet[ _CCODRUT ] )
@@ -10919,12 +10890,16 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
 	            aGet[ _CCODRUT ]:cText( ( TDataView():Clientes( nView ))->cCodRut )
             	aGet[ _CCODRUT ]:lValid()
          	end if
+         else
+         	aTmp[ _CCODRUT ] 	:= ( TDataView():Clientes( nView ) )->cAgente
          end if	
 
 		 if !Empty( aGet[ _NTARIFA ] )         
          	if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->nTarifa )
             	aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
          	end if
+         else
+         	aTmp[ _NTARIFA ] 	:= ( TDataView():Clientes( nView ) )->nTarifa
          end if
 
 		 if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
@@ -10936,6 +10911,8 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
 	            aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
             	aGet[ _CCODTRN ]:lValid()
          	end if
+         else
+         	aTmp[ _CCODTRN ] 	:= ( TDataView():Clientes( nView ) )->cCodTrn
          end if	
 
          if lChgCodCli
@@ -10949,7 +10926,9 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
             end if
 
             if !Empty( aGet[ _MOBSERV ] )
-               aGet[ _MOBSERV ]:cText( ( TDataView():Clientes( nView ) )->mComent )
+               	aGet[ _MOBSERV ]:cText( ( TDataView():Clientes( nView ) )->mComent )
+            else
+            	aTmp[ _MOBSERV ] 	:= ( TDataView():Clientes( nView ) )->mComent
             end if
 
 	      	if !Empty( oRieCli ) .and. lChgCodCli
