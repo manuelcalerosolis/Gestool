@@ -5490,13 +5490,18 @@ Return ( oDlg:nResult == IDOK )
 STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    local oDlg
-   local oFnt     		:= TFont():New( "Segoe UI Light",  0, 28, .f., .f. )
+   local oFnt     		:= TFont():New( "Segoe UI Light",  0, 32, .f., .f. )
+   local oFntBold 		:= TFont():New( "Segoe UI Light",  0, 36, .f., .t. )
    local oSayGeneral
    local oSayCliente
+   local oSayDireccion
+   local oGetNombreDireccion
+   local cGetNombreDireccion
    local oBtnLupaCliente
+   local oBtnLupaDireccion
    local oBtnAceptar
    local oBtnCancelar
-   local nAltoGet 		:= 20
+   local nAltoGet 		:= 24
 
    /*
    Comineza la transaccion-----------------------------------------------------
@@ -5517,9 +5522,9 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Barra de botones-----------------------------------------------------------
    	*/
 
-	oSayGeneral 		:= TGridSay():New( 5, 0, {|| "Factura de cliente" }, oDlg, , , , , , .t., , , {|| GridWidth( 10, oDlg ) }, nAltoGet, .f. )
-	oBtnAceptar			:= TGridButton():New( 5, {|| GridWidth( 10, oDlg ) }, "Acep", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
-   	oBtnCancelar		:= TGridButton():New( 5, {|| GridWidth( 11, oDlg ) }, "Can", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+	oSayGeneral 		:= TGridSay():New( 0, 0, {|| "Factura de cliente" }, oDlg, , oFntBold, , , , .t., Rgb( 255, 255, 255 ), Rgb( 78, 166, 234 ), {|| GridWidth( 12, oDlg ) }, 32, .f. )
+	oBtnAceptar			:= TGridButton():New( 5, {|| GridWidth( 9, oDlg ) }, "Acep", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+   	oBtnCancelar		:= TGridButton():New( 5, {|| GridWidth( 10, oDlg ) }, "Can", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
 
    	/*
 	Cliente--------------------------------------------------------------------
@@ -5538,7 +5543,23 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	oBtnLupaCliente		:= TGridButton():New( 40, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| Msginfo( "Botón para el browse" ) }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
 
    	/*
-	Redimensionamos y activamos el diálogo-------------------------------------
+	Direcciones del Cliente----------------------------------------------------
+   	*/
+
+   	oSayDireccion 		:= TGridSay():New( 65, 0, {|| "Dirección" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+
+   	aGet[ _CCODOBR ] 	:= TGridGet():New( 65, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CCODOBR ], aTmp[ _CCODOBR ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+	with object ( aGet[ _CCODOBR ] )
+		:bValid 		:= {|| cObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) }		
+	end with
+	
+   	oGetNombreDireccion := TGridGet():New( 65, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, cGetNombreDireccion, cGetNombreDireccion := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+   	oBtnLupaDireccion	:= TGridButton():New( 65, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| brwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+
+   	/*
+	Redimensionamos y activamos el diálogo------------------------------------- 
    	*/
 
    	oDlg:bResized  		:= {|| GridResize( oDlg ) }
@@ -5551,6 +5572,14 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	*/
 
    	DisableAcceso() 
+
+   	if !Empty( oFnt )
+   		oFnt:End()
+   	end if
+
+   	if !Empty( oFntBold )
+   		oFntBold:End()
+   	end if
    
    	KillTrans()
 
