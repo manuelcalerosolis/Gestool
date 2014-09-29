@@ -317,6 +317,89 @@ return Self
 
 //----------------------------------------------------------------------------//
 
+CLASS TGridBtnBmp FROM TBtnBmp, TGridable
+
+   METHOD New()
+
+   METHOD Build()
+
+   METHOD ReAdjust()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS TGridBtnBmp
+
+   local nTop           := if( hhaskey( hBuilder, "nTop"          ), hBuilder[ "nTop"        ], nil )            
+   local nLeft          := if( hhaskey( hBuilder, "nLeft"         ), hBuilder[ "nLeft"       ], nil )               
+   local nWidth         := if( hhaskey( hBuilder, "nWidth"        ), hBuilder[ "nWidth"      ], nil )               
+   local nHeight        := if( hhaskey( hBuilder, "nHeight"       ), hBuilder[ "nHeight"     ], nil )               
+   local cResName1      := if( hhaskey( hBuilder, "cResName1"     ), hBuilder[ "cResName1"   ], nil )                  
+   local cResName2      := if( hhaskey( hBuilder, "cResName2"     ), hBuilder[ "cResName2"   ], nil )                  
+   local cBmpFile1      := if( hhaskey( hBuilder, "cBmpFile1"     ), hBuilder[ "cBmpFile1"   ], nil )                  
+   local cBmpFile2      := if( hhaskey( hBuilder, "cBmpFile2"     ), hBuilder[ "cBmpFile2"   ], nil )                  
+   local bAction        := if( hhaskey( hBuilder, "bAction"       ), hBuilder[ "bAction"     ], nil )               
+   local oWnd           := if( hhaskey( hBuilder, "oWnd"          ), hBuilder[ "oWnd"        ], nil )            
+   local cMsg           := if( hhaskey( hBuilder, "cMsg"          ), hBuilder[ "cMsg"        ], ""  )            
+   local bWhen          := if( hhaskey( hBuilder, "bWhen"         ), hBuilder[ "bWhen"       ], nil )               
+   local lAdjust        := if( hhaskey( hBuilder, "lAdjust"       ), hBuilder[ "lAdjust"     ], .f. )               
+   local lUpdate        := if( hhaskey( hBuilder, "lUpdate"       ), hBuilder[ "lUpdate"     ], .t. )               
+   local cPrompt        := if( hhaskey( hBuilder, "cPrompt"       ), hBuilder[ "cPrompt"     ], ""  )               
+   local oFont          := if( hhaskey( hBuilder, "oFont"         ), hBuilder[ "oFont"       ], nil )               
+   local cResName3      := if( hhaskey( hBuilder, "cResName3"     ), hBuilder[ "cResName3"   ], nil )                  
+   local cBmpFile3      := if( hhaskey( hBuilder, "cBmpFile3"     ), hBuilder[ "cBmpFile3"   ], nil )                  
+   local lBorder        := if( hhaskey( hBuilder, "lBorder"       ), hBuilder[ "lBorder"     ], .f. )               
+   local cLayout        := if( hhaskey( hBuilder, "cLayout"       ), hBuilder[ "cLayout"     ], nil )               
+   local l2007          := if( hhaskey( hBuilder, "l2007"         ), hBuilder[ "l2007"       ], .f. )               
+   local cResName4      := if( hhaskey( hBuilder, "cResName4"     ), hBuilder[ "cResName4"   ], nil )                  
+   local cBmpFile4      := if( hhaskey( hBuilder, "cBmpFile4"     ), hBuilder[ "cBmpFile4"   ], nil )                  
+   local lTransparent   := if( hhaskey( hBuilder, "lTransparent"  ), hBuilder[ "lTransparent"], .f. )                     
+   local cToolTip       := if( hhaskey( hBuilder, "cToolTip"      ), hBuilder[ "cToolTip"    ], nil )                  
+   local nId            := if( hhaskey( hBuilder, "nId"           ), hBuilder[ "nId"         ], nil )               
+
+Return   (  ::New( nTop, nLeft, nWidth, nHeight,;
+            cResName1, cResName2, cBmpFile1, cBmpFile2,;
+            bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
+            cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
+            l2007, cResName4, cBmpFile4, lTransparent, cToolTip, nId ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD New( nTop, nLeft, nWidth, nHeight,;
+            cResName1, cResName2, cBmpFile1, cBmpFile2,;
+            bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
+            cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
+            l2007, cResName4, cBmpFile4, lTransparent, cToolTip, nId ) CLASS TGridBtnBmp
+
+   nTop     := ::EvalTop( nTop )
+   nLeft    := ::EvalLeft( nLeft )
+   nWidth   := ::EvalWidth( nWidth )
+   nHeight  := ::EvalHeight( nHeight )
+
+   ::Super:New( nTop, nLeft, nWidth, nHeight,;
+            cResName1, cResName2, cBmpFile1, cBmpFile2,;
+            bAction, oWnd, cMsg, bWhen, lAdjust, lUpdate,;
+            cPrompt, oFont, cResName3, cBmpFile3, lBorder, cLayout, ;
+            l2007, cResName4, cBmpFile4, lTransparent, cToolTip, nId )
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD ReAdjust() CLASS TGridBtnBmp
+
+   local nTop     := if( !empty(::bTop), eval(::bTop), ::nTop )
+   local nLeft    := if( !empty(::bLeft), eval(::bLeft), ::nLeft )
+   local nWidth   := if( !empty(::bWidth), eval(::bWidth), ::nWidth )
+   local nHeight  := if( !empty(::bHeight), eval(::bHeight), ::nHeight )
+
+   ::Move( nTop, nLeft, nWidth, nHeight )  
+
+return Self
+
+//----------------------------------------------------------------------------//
+
 CLASS TGridComboBox FROM TComboBox, TGridable
 
    METHOD Build( hBuilder )
@@ -366,17 +449,10 @@ METHOD New( nRow, nCol, bSetGet, aItems, nWidth, nHeight, oWnd, nHelpId,;
             cMsg, lUpdate, bWhen, lDesign, acBitmaps, bDrawItem, nStyle,;
             cPict, bEChange, cVarName ) CLASS TGridComboBox
 
-   ? "new TGridComboBox"   
-
    nRow     := ::EvalRow( nRow )
    nCol     := ::EvalCol( nCol )
    nWidth   := ::EvalWidth( nWidth )
    nHeight  := ::EvalHeight( nHeight )
-
-   ? nRow   
-   ? nCol   
-   ? nWidth 
-   ? nHeight
 
    ::Super:New( nRow, nCol, bSetGet, aItems, nWidth, nHeight, oWnd, nHelpId,;
             bChange, bValid, nClrFore, nClrBack, lPixel, oFont,;
@@ -385,6 +461,28 @@ METHOD New( nRow, nCol, bSetGet, aItems, nWidth, nHeight, oWnd, nHelpId,;
 
 Return Self
 
+//----------------------------------------------------------------------------//
+
+CLASS TGridIXBrowse FROM IXBrowse, TGridable
+
+   METHOD ReAdjust()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD ReAdjust()
+
+   local nRow     := if( !empty(::bRow), eval(::bRow), ::nTop )
+   local nLeft    := if( !empty(::bCol), eval(::bCol), ::nLeft )
+   local nWidth   := if( !empty(::bWidth), eval(::bWidth), ::nWidth )
+   local nHeight  := if( !empty(::bHeight), eval(::bHeight), ::nHeight )
+
+   ::Move( nRow, nLeft, nWidth, nHeight )  
+
+return Self
+
+//----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -412,7 +510,7 @@ Function GridResize( oDlg )
    local o
 
    for each o in oDlg:aControls
-      if ( o:ClassName() $ "TGRIDGET,TGRIDSAY,TGRIDBUTTON,TGRIDIMAGE,TGRIDCOMBOBOX" )
+      if ( "TGRID" $ o:ClassName()  )
          o:ReAdjust()
       end if
    next

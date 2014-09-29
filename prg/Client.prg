@@ -13022,7 +13022,8 @@ Return .t.
 FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
 
    local oDlg
-   local hBmp
+   local oBtnOk
+   local oBtnCancel
    local oBrw
    local oGetSearch
    local cGetSearch
@@ -13064,14 +13065,14 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
       FONT        oGridFont() ;
       STYLE       nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
 
-   oGetSearch  := TGridGet():Build( {  "nRow"      => 48,;
-                                       "nCol"      => {|| GridWidth( 2, oDlg ) },;
-                                       "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
-                                       "oWnd"      => oDlg,;
-                                       "nWidth"    => {|| GridWidth( 4, oDlg ) },;
-                                       "nHeight"   => 28,;
-                                       "bValid"    => {|| OrdClearScope( oBrw, ( TDataView():Get( "Client", nView ) ) ) },;
-                                       "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, nil, ( TDataView():Get( "Client", nView ) ), .t. ) } } )
+   oGetSearch  := TGridGet():Build(    {  "nRow"      => 48,;
+                                          "nCol"      => {|| GridWidth( 2, oDlg ) },;
+                                          "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
+                                          "oWnd"      => oDlg,;
+                                          "nWidth"    => {|| GridWidth( 4, oDlg ) },;
+                                          "nHeight"   => 28,;
+                                          "bValid"    => {|| OrdClearScope( oBrw, ( TDataView():Get( "Client", nView ) ) ) },;
+                                          "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, nil, ( TDataView():Get( "Client", nView ) ), .t. ) } } )
 
    oCbxOrd  := TGridComboBox():Build(  {  "nRow"      => 48,;
                                           "nCol"      => {|| GridWidth( 6, oDlg ) },;
@@ -13082,148 +13083,161 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                           "aItems"    => aCbxOrd,;
                                           "bChanged"  => {| nKey, nFlags, Self | ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
 
+   TGridBtnBmp():New( 216, 190, 46, 46, "End32",,,, {|| if( ApoloMsgNoYes( "Desea salir de la aplicación", "" ), oDlg:End(), ) }, oDlg,,, .f., .t.,,,,, .f., "BOTTOM" )
 
-//   TComboBox():New( 78, 10,  {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) }, {"uno", "dos"}, 80, 28, oDlg)
+/*
+   oBtnOk   := TGridBtnBmp():Build(    {  "nTop"      => 1,;
+                                          "nLeft"     => {|| GridWidth( 2, oDlg ) },;
+                                          "nWidth"    => 32,;
+                                          "nHeight"   => 32,;
+                                          "cResName1" => "End32",;
+                                          "bAction"   => {|| msgAlert( "Tst" ) },;
+                                          "oWnd"      => oDlg,;
+                                          "cLayout"   => "BOTTOM" } )
 
-   ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT     ( GridMaximize( oDlg ) ) 
+   oBrw                 := TGridIXBrowse():New( oDlg )
+
+   oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   oBrw:cAlias          := ( TDataView():Get( "Client", nView ) )
+   oBrw:nMarqueeStyle   := 5
+   oBrw:cName           := "Browse.Clientes"
+
+   oBrw:nTop            := oBrw:EvalRow( 88 )
+   oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 1, oDlg ) } )
+   oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 10, oDlg ) } )
+   oBrw:nHeight         := oBrw:EvalHeight( 200 )
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Bl. Bloqueado"
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->lBlqCli }
+      :nWidth           := 20
+      :SetCheck( { "Cnt16", "Nil16" } )
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Código"
+      :cSortOrder       := "Cod"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Cod }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Nombre"
+      :cSortOrder       := "Titulo"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Titulo }
+      :nWidth           := 280
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "NIF/CIF"
+      :cSortOrder       := "Nif"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Nif }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Teléfono"
+      :cSortOrder       := "Telefono"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Telefono }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Fax"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Fax }
+      :nWidth           := 80
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Domicilio"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Domicilio }
+      :nWidth           := 300
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Población"
+      :cSortOrder       := "Poblacion"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Poblacion }
+      :nWidth           := 200
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Código postal"
+      :cSortOrder       := "CodPostal"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->CodPostal }
+      :nWidth           := 60
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Provincia"
+      :cSortOrder       := "Provincia"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Provincia }
+      :nWidth           := 100
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Establecimiento"
+      :cSortOrder       := "NbrEst"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->NbrEst }
+      :nWidth           := 100
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Correo electrónico"
+      :cSortOrder       := "cMeiInt"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->cMeiInt }
+      :nWidth           := 100
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Riesgo"
+      :bEditValue       := {|| Trans( ( TDataView():Get( "Client", nView ) )->nImpRie, PicOut() ) }
+      :nWidth           := 60
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Contacto"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->cPerCto }
+      :nWidth           := 100
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Observaciones"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->mComent }
+      :nWidth           := 200
+   end with
+
+   oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+   oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+   
+   oBrw:nHeaderHeight   := 36
+   oBrw:nFooterHeight   := 36
+   oBrw:nRowHeight      := 36
+
+   oBrw:CreateFromCode( 105 )
+*/
+   oDlg:bResized        := {|| GridResize( oDlg ) }
+
+   ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) ) 
 
    CloseFiles()
 
    Return nil 
-
-      oBrw                 := IXBrowse():New( oDlg )
-
-      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrw:cAlias          := ( TDataView():Get( "Client", nView ) )
-      oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Browse.Clientes"
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Bl. Bloqueado"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->lBlqCli }
-         :nWidth           := 20
-         :SetCheck( { "Cnt16", "Nil16" } )
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "Cod"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Cod }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "Titulo"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Titulo }
-         :nWidth           := 280
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "NIF/CIF"
-         :cSortOrder       := "Nif"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Nif }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Teléfono"
-         :cSortOrder       := "Telefono"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Telefono }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Fax"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Fax }
-         :nWidth           := 80
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Domicilio"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Domicilio }
-         :nWidth           := 300
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Población"
-         :cSortOrder       := "Poblacion"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Poblacion }
-         :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Código postal"
-         :cSortOrder       := "CodPostal"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->CodPostal }
-         :nWidth           := 60
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Provincia"
-         :cSortOrder       := "Provincia"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Provincia }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Establecimiento"
-         :cSortOrder       := "NbrEst"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->NbrEst }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Correo electrónico"
-         :cSortOrder       := "cMeiInt"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->cMeiInt }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Riesgo"
-         :bEditValue       := {|| Trans( ( TDataView():Get( "Client", nView ) )->nImpRie, PicOut() ) }
-         :nWidth           := 60
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Contacto"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->cPerCto }
-         :nWidth           := 100
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Observaciones"
-         :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->mComent }
-         :nWidth           := 200
-      end with
-
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
-
-      oBrw:CreateFromResource( 105 )
-
-      if lBigStyle
-         oBrw:nHeaderHeight   := 36
-         oBrw:nFooterHeight   := 36
-         oBrw:nLineHeight     := 36
-      end if
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -13281,8 +13295,6 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    if Valtype( uGet ) == "O"
       uGet:setFocus()
    end if
-
-   DeleteObject( hBmp )
 
 RETURN oDlg:nResult == IDOK
 
