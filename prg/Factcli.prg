@@ -5522,7 +5522,18 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Barra de botones-----------------------------------------------------------
    	*/
 
-	oSayGeneral 		:= TGridSay():New( 0, 0, {|| "Factura de cliente" }, oDlg, , oFntBold, , , , .t., Rgb( 255, 255, 255 ), Rgb( 78, 166, 234 ), {|| GridWidth( 12, oDlg ) }, 32, .f. )
+	oSayGeneral  		:= TGridSay():Build(    { 	"nRow"      => 0,;
+                                          			"nCol"      => 0,;
+                                          			"bText"  	=> {|| "Factura de cliente" },;
+                                          			"oWnd"      => oDlg,;
+                                          			"oFont" 	=> oFntBold,;
+                                          			"lPixels" 	=> .t.,;
+                                          			"nClrText" 	=> Rgb( 255, 255, 255 ),;
+                                          			"nClrBack"  => Rgb( 78, 166, 234 ),;
+                                          			"nWidth"    => {|| GridWidth( 12, oDlg ) },;
+                                          			"nHeight"   => 32,;
+                                          			"lDesign"    => .f. } )
+
 	oBtnAceptar			:= TGridButton():New( 5, {|| GridWidth( 9, oDlg ) }, "Acep", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
    	oBtnCancelar		:= TGridButton():New( 5, {|| GridWidth( 10, oDlg ) }, "Can", 	  oDlg, {|| oDlg:End() }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
 
@@ -5530,15 +5541,31 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Cliente--------------------------------------------------------------------
    	*/
 
-   	oSayCliente 		:= TGridSay():New( 40, 0, {|| "Cliente" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
-
-   	aGet[ _CCODCLI ] 	:= TGridGet():New( 40, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	oSayCliente  		:= TGridSay():Build(    { 	"nRow"      => 40,;
+                                          			"nCol"      => 0,;
+                                          			"bText"  	=> {|| "Cliente" },;
+                                          			"oWnd"      => oDlg,;
+                                          			"lPixels" 	=> .t.,;
+                                          			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                          			"nHeight"   => nAltoGet,;
+                                          			"lDesign"   => .f. } )
+   	
+   	aGet[ _CCODCLI ]  	:= TGridGet():Build(    { 	"nRow"      => 40,;
+                                          			"nCol"      => {|| GridWidth( 2, oDlg ) },;
+                                          			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) },;
+                                          			"oWnd"      => oDlg,;
+                                          			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                          			"nHeight"   => nAltoGet,;
+                                          			"lPixels" 	=> .t.,;
+                                          			"bValid"    => {|| loaCli( aGet, aTmp, nMode ) } } )
 	
-	with object ( aGet[ _CCODCLI ] )
-		:bValid 		:= {|| loaCli( aGet, aTmp, nMode ) }		
-	end with
-
-   	aGet[ _CNOMCLI ] 	:= TGridGet():New( 40, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CNOMCLI ]  	:= TGridGet():Build(    { 	"nRow"      => 40,;
+                                          			"nCol"      => {|| GridWidth( 4, oDlg ) },;
+                                          			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) },;
+                                          			"oWnd"      => oDlg,;
+                                          			"lPixels" 	=> .t.,;
+                                          			"nWidth"    => {|| GridWidth( 6, oDlg ) },;
+                                          			"nHeight"   => nAltoGet } )
 
    	oBtnLupaCliente		:= TGridButton():New( 40, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| Msginfo( "Botón para el browse" ) }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
 
@@ -5546,17 +5573,83 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Direcciones del Cliente----------------------------------------------------
    	*/
 
-   	oSayDireccion 		:= TGridSay():New( 65, 0, {|| "Dirección" }, oDlg, , , , , , .t., , , {|| GridWidth( 2, oDlg ) }, nAltoGet, .f. )
+   	oSayDireccion  		:= TGridSay():Build(    { 	"nRow"      => 65,;
+                                          			"nCol"      => 0,;
+                                          			"bText"  	=> {|| "Dirección" },;
+                                          			"oWnd"      => oDlg,;
+                                          			"lPixels" 	=> .t.,;
+                                          			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                          			"nHeight"   => nAltoGet,;
+                                          			"lDesign"   => .f. } )
 
-   	aGet[ _CCODOBR ] 	:= TGridGet():New( 65, {|| GridWidth( 2, oDlg ) }, {|u| if( PCount() == 0, aTmp[ _CCODOBR ], aTmp[ _CCODOBR ] := u ) }, oDlg, {|| GridWidth( 2, oDlg ) }, nAltoGet, , , , , , , , .t. )
+   	aGet[ _CCODOBR ]  	:= TGridGet():Build(    { 	"nRow"      => 65,;
+                                          			"nCol"      => {|| GridWidth( 2, oDlg ) },;
+                                          			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODOBR ], aTmp[ _CCODOBR ] := u ) },;
+                                          			"oWnd"      => oDlg,;
+                                          			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                          			"nHeight"   => nAltoGet,;
+                                          			"lPixels" 	=> .t.,;
+                                          			"bValid"    => {|| cObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) } } )
 
-	with object ( aGet[ _CCODOBR ] )
-		:bValid 		:= {|| cObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) }		
-	end with
-	
-   	oGetNombreDireccion := TGridGet():New( 65, {|| GridWidth( 4, oDlg ) }, {|u| if( PCount() == 0, cGetNombreDireccion, cGetNombreDireccion := u ) }, oDlg, {|| GridWidth( 6, oDlg ) }, nAltoGet, , , , , , , , .t. )
+
+
+   	oGetNombreDireccion := TGridGet():Build(    { 	"nRow"      => 65,;
+                                          			"nCol"      => {|| GridWidth( 4, oDlg ) },;
+                                          			"bSetGet"   => {|u| if( PCount() == 0, cGetNombreDireccion, cGetNombreDireccion := u ) },;
+                                          			"oWnd"      => oDlg,;
+                                          			"nWidth"    => {|| GridWidth( 6, oDlg ) },;
+                                          			"lPixels" 	=> .t.,;
+                                          			"nHeight"   => nAltoGet } )
 
    	oBtnLupaDireccion	:= TGridButton():New( 65, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| brwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+
+   	/*
+	Browse se las líneas-------------------------------------------------------
+   	*/
+
+   /*	oBrw                 := TGridIXBrowse():New( oDlg )
+
+   oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   oBrw:cAlias          := ( TDataView():Get( "Client", nView ) )
+   oBrw:nMarqueeStyle   := 5
+   oBrw:cName           := "Browse.Clientes"
+
+   oBrw:nTop            := oBrw:EvalRow( 88 )
+   oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 1, oDlg ) } )
+   oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 10, oDlg ) } )
+   oBrw:nHeight         := oBrw:EvalHeight( 200 )
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Código"
+      :cSortOrder       := "Cod"
+      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Cod }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+   oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+   
+   oBrw:nHeaderHeight   := 36
+   oBrw:nFooterHeight   := 36
+   oBrw:nRowHeight      := 36
+
+   oBrw:CreateFromCode( 105 )*/
+
+
+
+
+
+
+
+
+
+
+
+
+
 
    	/*
 	Redimensionamos y activamos el diálogo------------------------------------- 
