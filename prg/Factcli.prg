@@ -5490,8 +5490,7 @@ Return ( oDlg:nResult == IDOK )
 STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    local oDlg
-   local oFnt     		:= TFont():New( "Segoe UI Light",  0, 32, .f., .f. )
-   local oFntBold 		:= TFont():New( "Segoe UI Light",  0, 36, .f., .t. )
+   local oBrwLin
    local oSayGeneral
    local oSayCliente
    local oSayDireccion
@@ -5501,71 +5500,73 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oBtnLupaDireccion
    local oBtnAceptar
    local oBtnCancelar
-   local nAltoGet 		:= 24
+   local oBtnAdd
+   local oBtnEdt
+   local oBtnDel
+   local nAltoGet 		:= 23
 
-   /*
-   Comineza la transaccion-----------------------------------------------------
-   */
+   	/*
+   	Comineza la transaccion----------------------------------------------------
+   	*/
 
-   if BeginTrans( aTmp, nMode )
-      Return .f.
-   end if
+   	if BeginTrans( aTmp, nMode )
+      	Return .f.
+   	end if
 
-   //------------------------------------------------------------------------//
+   	//-----------------------------------------------------------------------//
 
-   DEFINE DIALOG oDlg FROM 1, 5 TO 40, 100; 
-      TITLE "GESTOOL TABLET" ;
-      FONT  oFnt ;
-      STYLE nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX )
+    oDlg           := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
-   /*
-	Barra de botones-----------------------------------------------------------
-   */
+	/*
+	Cabeceras------------------------------------------------------------------
+	*/
 
-	oSayGeneral  		:= TGridSay():Build(    { 	"nRow"      => 0,;
-                                       			"nCol"      => 0,;
-                                       			"bText"  	=> {|| "Factura de cliente" },;
-                                       			"oWnd"      => oDlg,;
-                                       			"oFont" 		=> oGridFontBold(),;
-                                       			"lPixels" 	=> .t.,;
-                                       			"nClrText" 	=> Rgb( 255, 255, 255 ),;
-                                       			"nClrBack"  => nGridColor(),;
-                                       			"nWidth"    => {|| GridWidth( 12, oDlg ) },;
-                                       			"nHeight"   => 32,;
-                                       			"lDesign"    => .f. } )
+	oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
+                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             		"bText"     => {|| "Factura de clientes" },;
+                                             		"oWnd"      => oDlg,;
+                                             		"oFont"     => oGridFontBold(),;
+                                             		"lPixels"   => .t.,;
+                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
+                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
+                                             		"nWidth"    => {|| GridWidth( 10, oDlg ) },;
+                                             		"nHeight"   => 32,;
+                                             		"lDesign"   => .f. } )
 
-	oBtnAceptar			:= TGridImage():Build(  {  "nTop"      => 5,;
-                                          		"nLeft"     => {|| GridWidth( 9, oDlg ) },;
-                                          		"nWidth"    => 32,;
-                                          		"nHeight"   => 32,;
-                                          		"cResName"  => "CheckFlat_32",;
-                                          		"bLClicked" => {|| oDlg:End() },;
-                                          		"oWnd"      => oDlg } )
+   	oBtnAceptar    		:= TGridImage():Build(  {  	"nTop"      => 5,;
+                                             		"nLeft"     => {|| GridWidth( 11, oDlg ) },;
+                                             		"nWidth"    => 32,;
+                                             		"nHeight"   => 32,;
+                                             		"cResName"  => "CheckFlat_32",;
+                                             		"bLClicked" => {|| oDlg:End( IDOK ) },;
+                                             		"oWnd"      => oDlg } )
 
-	oBtnCancelar		:= TGridImage():Build(  {  "nTop"      => 5,;
-                                          		"nLeft"     => {|| GridWidth( 10, oDlg ) },;
-                                          		"nWidth"    => 32,;
-                                          		"nHeight"   => 32,;
-                                          		"cResName"  => "CancelFlat_32",;
-                                          		"bLClicked" => {|| oDlg:End() },;
-                                          		"oWnd"      => oDlg } )
-
+   	oBtnCancelar   		:= TGridImage():Build(  {  	"nTop"      => 5,;
+                                             		"nLeft"     => {|| GridWidth( 11.5, oDlg ) },;
+                                             		"nWidth"    => 32,;
+                                            	 	"nHeight"   => 32,;
+                                             		"cResName"  => "CancelFlat_32",;
+                                             		"bLClicked" => {|| oDlg:End() },;
+                                             		"oWnd"      => oDlg } )
 
  	/*
 	Cliente--------------------------------------------------------------------
   	*/
 
    	oSayCliente  		:= TGridSay():Build(    { 	"nRow"      => 40,;
-                                          			"nCol"      => 0,;
+                                          			"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                           			"bText"  	=> {|| "Cliente" },;
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
                                           			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                          			"nClrText"  => Rgb( 0, 0, 0 ),;
+                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
                                           			"nHeight"   => nAltoGet,;
-                                          			"lDesign"   => .f. } )
-   	
-   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
-                                          			"nCol"      => {|| GridWidth( 2, oDlg ) },;
+                                          			"lDesign"   => .f.,;
+                                          			"bAction" 	=> {|| GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ) } } )
+
+   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
+                                          			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
                                           			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
@@ -5573,31 +5574,40 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| loaCli( aGet, aTmp, nMode ) } } )
 	
-   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
-                                          			"nCol"      => {|| GridWidth( 4, oDlg ) },;
+   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
+                                          			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
-                                          			"nWidth"    => {|| GridWidth( 6, oDlg ) },;
+                                          			"nWidth"    => {|| GridWidth( 7, oDlg ) },;
                                           			"nHeight"   => nAltoGet } )
 
-   	oBtnLupaCliente		:= TGridButton():New( 40, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| Msginfo( "Botón para el browse" ) }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+   	/*oBtnLupaCliente   	:= TGridImage():Build(  {  	"nTop"      => 40,;
+                                             		"nLeft"     => {|| GridWidth( 10.3, oDlg ) },;
+                                             		"nWidth"    => 32,;
+                                             		"nHeight"   => 32,;
+                                             		"cResName"  => "SearchFlat_32",;
+                                             		"bLClicked" => {||GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ) },;
+                                             		"oWnd"      => oDlg } )*/
 
    	/*
 	Direcciones del Cliente----------------------------------------------------
    	*/
 
    	oSayDireccion  		:= TGridSay():Build(    { 	"nRow"      => 65,;
-                                          			"nCol"      => 0,;
+                                          			"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                           			"bText"  	=> {|| "Dirección" },;
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
+                                          			"nClrText"  => Rgb( 0, 0, 0 ),;
+                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
                                           			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                           			"nHeight"   => nAltoGet,;
-                                          			"lDesign"   => .f. } )
+                                          			"lDesign"   => .f.,;
+                                          			"bAction" 	=> {|| brwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) } } )
 
    	aGet[ _CCODOBR ]  	:= TGridGet():Build(    { 	"nRow"      => 65,;
-                                          			"nCol"      => {|| GridWidth( 2, oDlg ) },;
+                                          			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODOBR ], aTmp[ _CCODOBR ] := u ) },;
                                           			"oWnd"      => oDlg,;
                                           			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
@@ -5605,71 +5615,85 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| cObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) } } )
 
-
-
    	oGetNombreDireccion := TGridGet():Build(    { 	"nRow"      => 65,;
-                                          			"nCol"      => {|| GridWidth( 4, oDlg ) },;
+                                          			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, cGetNombreDireccion, cGetNombreDireccion := u ) },;
                                           			"oWnd"      => oDlg,;
-                                          			"nWidth"    => {|| GridWidth( 6, oDlg ) },;
+                                          			"nWidth"    => {|| GridWidth( 7, oDlg ) },;
                                           			"lPixels" 	=> .t.,;
                                           			"nHeight"   => nAltoGet } )
 
-   	oBtnLupaDireccion	:= TGridButton():New( 65, {|| GridWidth( 10, oDlg ) }, "lupa", 	  oDlg, {|| brwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) }, {|| GridWidth( 1, oDlg ) }, nAltoGet )
+   	/*oBtnLupaDireccion  	:= TGridImage():Build(  {  	"nTop"      => 65,;
+                                             		"nLeft"     => {|| GridWidth( 10.3, oDlg ) },;
+                                             		"nWidth"    => 32,;
+                                             		"nHeight"   => 32,;
+                                             		"cResName"  => "SearchFlat_32",;
+                                             		"bLClicked" => {||brwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) },;
+                                             		"oWnd"      => oDlg } )*/
+
+   	/*
+	Botones de las lineas------------------------------------------------------
+   	*/
+
+
+
+   	oBtnAdd  			:= TGridImage():Build(  {  	"nTop"      => 90,;
+                                             		"nLeft"     => {|| GridWidth( 2, oDlg ) },;
+                                             		"nWidth"    => 32,;
+                                             		"nHeight"   => 32,;
+                                             		"cResName"  => "SearchFlat_32",;
+                                             		"bLClicked" => {|| Msginfo( "Añadir" ) },;
+                                             		"oWnd"      => oDlg } )
+
+   	oBtnEdt  			:= TGridImage():Build(  {  	"nTop"      => 90,;
+                                             		"nLeft"     => {|| GridWidth( 3, oDlg ) },;
+                                             		"nWidth"    => 32,;
+                                             		"nHeight"   => 32,;
+                                             		"cResName"  => "SearchFlat_32",;
+                                             		"bLClicked" => {|| Msginfo( "Modificar" ) },;
+                                             		"oWnd"      => oDlg } )
+
+   	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 90,;
+                                             		"nLeft"     => {|| GridWidth( 4, oDlg ) },;
+                                             		"nWidth"    => 32,;
+                                             		"nHeight"   => 32,;
+                                             		"cResName"  => "SearchFlat_32",;
+                                             		"bLClicked" => {|| Msginfo( "Eliminar" ) },;
+                                             		"oWnd"      => oDlg } )
+   	
 
    	/*
 	Browse se las líneas-------------------------------------------------------
    	*/
 
-   /*	oBrw                 := TGridIXBrowse():New( oDlg )
+   	oBrwLin                 	:= TGridIXBrowse():New( oDlg )
 
-   oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   	oBrwLin:nTop            	:= oBrwLin:EvalRow( 115 )
+   	oBrwLin:nLeft           	:= oBrwLin:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   	oBrwLin:nWidth          	:= oBrwLin:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   	oBrwLin:nHeight         	:= oBrwLin:EvalHeight( {|| GridHeigth( oDlg ) - oBrwLin:nTop - 10 } )
 
-   oBrw:cAlias          := ( TDataView():Get( "Client", nView ) )
-   oBrw:nMarqueeStyle   := 5
-   oBrw:cName           := "Browse.Clientes"
+   	oBrwLin:cAlias          	:= dbfTmpLin
+   	oBrwLin:nMarqueeStyle   	:= 5
+   	oBrwLin:cName           	:= "Grid lineas facturas"
 
-   oBrw:nTop            := oBrw:EvalRow( 88 )
-   oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 1, oDlg ) } )
-   oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 10, oDlg ) } )
-   oBrw:nHeight         := oBrw:EvalHeight( 200 )
+   	with object ( oBrwLin:AddCol() )
+      	:cHeader          		:= "Código"
+      	:bEditValue       		:= {|| ( dbfTmpLin )->cRef }
+      	:nWidth           		:= 180
+   	end with
 
-   with object ( oBrw:AddCol() )
-      :cHeader          := "Código"
-      :cSortOrder       := "Cod"
-      :bEditValue       := {|| ( TDataView():Get( "Client", nView ) )->Cod }
-      :nWidth           := 80
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-   end with
+   	oBrwLin:nHeaderHeight   	:= 40
+   	oBrwLin:nFooterHeight   	:= 40
+   	oBrwLin:nRowHeight      	:= 40
 
-   oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-   oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
-   
-   oBrw:nHeaderHeight   := 36
-   oBrw:nFooterHeight   := 36
-   oBrw:nRowHeight      := 36
-
-   oBrw:CreateFromCode( 105 )*/
-
-
-
-
-
-
-
-
-
-
-
-
-
+   	oBrwLin:CreateFromCode( 105 )
 
    	/*
 	Redimensionamos y activamos el diálogo------------------------------------- 
    	*/
 
-   	oDlg:bResized  		:= {|| GridResize( oDlg ) }
+   	oDlg:bResized  				:= {|| GridResize( oDlg ) }
 
    	ACTIVATE DIALOG oDlg CENTER ;
       ON INIT     ( GridMaximize( oDlg ) )
@@ -5679,15 +5703,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	*/
 
    	DisableAcceso() 
-
-   	if !Empty( oFnt )
-   		oFnt:End()
-   	end if
-
-   	if !Empty( oFntBold )
-   		oFntBold:End()
-   	end if
-   
+ 
    	KillTrans()
 
    	SysRefresh()
