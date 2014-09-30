@@ -18760,7 +18760,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "lPixels"   => .t.,;
                                              "nClrText"  => Rgb( 0, 0, 0 ),;
                                              "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             "nWidth"    => {|| GridWidth( 10, oDlg ) },;
+                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
                                              "nHeight"   => 32,;
                                              "lDesign"   => .f.,;
                                              "bAction"   => {|| MsgInfo( "action" ) } } )
@@ -18776,7 +18776,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
 */
 
    oBtnAceptar    := TGridImage():Build(  {  "nTop"      => 5,;
-                                             "nLeft"     => {|| GridWidth( 11, oDlg ) },;
+                                             "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
                                              "cResName"  => "CheckFlat_32",;
@@ -18784,7 +18784,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "oWnd"      => oDlg } )
 
    oBtnCancelar   := TGridImage():Build(  {  "nTop"      => 5,;
-                                             "nLeft"     => {|| GridWidth( 11.5, oDlg ) },;
+                                             "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
                                              "cResName"  => "CancelFlat_32",;
