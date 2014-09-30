@@ -1013,7 +1013,7 @@ Function lStartCheck()
 
    // Test de BrwClient--------------------------------------------------------
 
-   GridBrwClient() 
+   GridBrwArticulo() 
 
    // Lanzamos para los documentos automáticos---------------------------------
 

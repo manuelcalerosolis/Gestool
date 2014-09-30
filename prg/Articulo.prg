@@ -18715,3 +18715,296 @@ FUNCTION cNomValPrp2Art( uArticulo, uTblPro )
 RETURN ( cBarPrp2 )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
+
+   local oDlg
+   local oBrw
+   local oSayGeneral
+   local oBtnAceptar
+   local oBtnCancelar
+   local oGetSearch
+   local cGetSearch  := Space( 100 )
+   local cTxtOrigen  := if( !empty( uGet ), uGet:VarGet(), )
+   local nOrdAnt     := GetBrwOpt( "BrwGridArticulo" )
+   local oCbxOrd
+   local aCbxOrd     := { "Código", "Nombre", "Proveedor" }
+   local cCbxOrd
+   local nLevel      := nLevelUsr( "01032" )
+
+   nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrdAnt ]
+
+   if !OpenFiles( .t. )
+      Return nil
+   end if
+
+   /*
+   Origen de busqueda----------------------------------------------------------
+   */
+
+   if !Empty( cTxtOrigen ) .and. !( dbfArticulo )->( dbSeek( cTxtOrigen ) )
+      ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfArticulo )->( dbGoTop() )
+   else
+      ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
+   end if
+
+   oDlg           := TDialog():New( 1, 5, 40, 100, "Buscar artículos",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb(255,255,255),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+
+   oSayGeneral    := TGridSay():Build(    {  "nRow"      => 0,;
+                                             "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             "bText"     => {|| "Buscar artículos" },;
+                                             "oWnd"      => oDlg,;
+                                             "oFont"     => oGridFontBold(),;
+                                             "lPixels"   => .t.,;
+                                             "nClrText"  => Rgb( 0, 0, 0 ),;
+                                             "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                             "nWidth"    => {|| GridWidth( 10, oDlg ) },;
+                                             "nHeight"   => 32,;
+                                             "lDesign"   => .f. } )
+
+   oBtnAceptar    := TGridImage():Build(  {  "nTop"      => 5,;
+                                             "nLeft"     => {|| GridWidth( 11, oDlg ) },;
+                                             "nWidth"    => 32,;
+                                             "nHeight"   => 32,;
+                                             "cResName"  => "CheckFlat_32",;
+                                             "bLClicked" => {|| oDlg:End( IDOK ) },;
+                                             "oWnd"      => oDlg } )
+
+   oBtnCancelar   := TGridImage():Build(  {  "nTop"      => 5,;
+                                             "nLeft"     => {|| GridWidth( 11.5, oDlg ) },;
+                                             "nWidth"    => 32,;
+                                             "nHeight"   => 32,;
+                                             "cResName"  => "CancelFlat_32",;
+                                             "bLClicked" => {|| oDlg:End() },;
+                                             "oWnd"      => oDlg } )
+
+   // Texto de busqueda--------------------------------------------------------
+
+   oGetSearch     := TGridGet():Build(    {  "nRow"      => 38,;
+                                             "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
+                                             "oWnd"      => oDlg,;
+                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             "nHeight"   => 25,;
+                                             "bValid"    => {|| OrdClearScope( oBrw, dbfArticulo ) },;
+                                             "bChanged"  => {| nKey, nFlags, Self | SpecialSeek( nKey, nFlags, Self, oBrw, oCbxOrd, dbfArticulo, dbfCodebar )  } } )
+
+   oCbxOrd     := TGridComboBox():Build(  {  "nRow"      => 38,;
+                                             "nCol"      => {|| GridWidth( 9.5, oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                                             "oWnd"      => oDlg,;
+                                             "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                             "nHeight"   => 25,;
+                                             "aItems"    => aCbxOrd,;
+                                             "bChanged"  => {| nKey, nFlags, Self | ( dbfArticulo )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
+
+   // Browse de articulos ------------------------------------------------------
+
+   oBrw                 := TGridIXBrowse():New( oDlg )
+
+   oBrw:nTop            := oBrw:EvalRow( 64 )
+   oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   oBrw:nHeight         := oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )
+
+   oBrw:cAlias          := dbfArticulo
+   oBrw:nMarqueeStyle   := 5
+   oBrw:cName           := "BrwGridArticulo"
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Código"
+      :cSortOrder       := "CodObs"
+      :bEditValue       := {|| ( dbfArticulo )->Codigo }
+      :nWidth           := 180
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Nombre"
+      :cSortOrder       := "NomObs"
+      :bEditValue       := {|| ( dbfArticulo )->Nombre }
+      :nWidth           := 560
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Tipo"
+      :bEditValue       := {|| AllTrim( oRetFld( ( dbfArticulo )->cCodTip, oTipart:oDbf ) ) }
+      :nWidth           := 250
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Proveedor"
+      :bEditValue       := {|| if( !Empty( ( dbfArticulo )->cPrvHab ), AllTrim( ( dbfArticulo )->cPrvHab ) + " - " + RetProvee( ( dbfArticulo )->cPrvHab, dbfProv ), "" ) }
+      :nWidth           := 420
+      :lHide            := .t.
+      :cSortOrder       := "cPrvHab"
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
+      :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + " " + cImp() + " inc."
+      :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
+      :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + " " + cImp() + " inc."
+      :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
+      :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + " " + cImp() + " inc."
+      :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
+      :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + " " + cImp() + " inc."
+      :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
+      :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + " " + cImp() + " inc."
+      :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
+      :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + " " + cImp() + " inc."
+      :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   if ( oUser():lCostos() )
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Costo"
+      :bStrData         := {|| nCosto( nil, dbfArticulo, dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) }
+      :nWidth           := 180
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
+
+   end if 
+
+   oBrw:nHeaderHeight   := 40
+   oBrw:nFooterHeight   := 40
+   oBrw:nRowHeight      := 40
+
+   oBrw:CreateFromCode( 105 )
+
+   // Dialogo------------------------------------------------------------------
+
+   oDlg:bResized        := {|| GridResize( oDlg ) }
+   oDlg:bStart          := {|| oBrw:Load() }
+
+   ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) ) 
+
+   if oDlg:nResult == IDOK
+
+      if isObject( uGet )
+         uGet:cText( ( dbfArticulo )->Codigo )
+         uGet:lValid()
+      else
+         uGet           := ( dbfArticulo )->Codigo
+      end if
+
+      if isObject( uGetName ) 
+         uGetName:cText( ( dbfArticulo )->Nombre )
+      end if
+
+   end if
+
+   DestroyFastFilter( dbfArticulo )
+
+   SetBrwOpt( "BrwGridArticulo", ( dbfArticulo )->( OrdNumber() ) )
+
+   CloseFiles()
+
+   if IsObject( uGet ) 
+      uGet:setFocus()
+   end if
+
+   oBtnAceptar:end()
+   oBtnCancelar:end()
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
