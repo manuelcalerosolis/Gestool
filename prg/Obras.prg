@@ -928,3 +928,181 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
 Return lValid
 
 //---------------------------------------------------------------------------//
+
+FUNCTION GridBrwObras( oGet, oGetName, cCodCli, dbfObras )
+
+   local oDlg
+   local oBrw
+   local oSayGeneral
+   local oBtnAceptar
+   local oBtnCancelar
+   local oGetSearch
+   local cGetSearch  := Space( 100 )
+   local cTxtOrigen  := if( !empty( oGet ), oGet:VarGet(), )
+   local nOrdAnt     := GetBrwOpt( "BrwGridObras" )
+   local oCbxOrd
+   local aCbxOrd     := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel      := nLevelUsr( "01032" )
+   local lClose      := .f.
+
+   nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrdAnt ]
+
+   DEFAULT cCodCli   := "000000      "
+
+   if Empty( dbfObras )
+      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObras ) )
+      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+      lClose         := .t.
+   end if
+
+   ( dbfObras )->( ordSetFocus( nOrdAnt ) )
+
+   // Filtro de la busqueda----------------------------------------------------
+
+   SetScopeObras( cCodCli, dbfObras )
+
+   // Dialogo------------------------------------------------------------------
+
+   oDlg           := TDialog():New( 1, 5, 40, 100, "Buscar direcciones",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb(255,255,255),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+
+   oSayGeneral    := TGridSay():Build(    {  "nRow"      => 0,;
+                                             "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             "bText"     => {|| "Buscar direcciones" },;
+                                             "oWnd"      => oDlg,;
+                                             "oFont"     => oGridFontBold(),;
+                                             "lPixels"   => .t.,;
+                                             "nClrText"  => Rgb( 0, 0, 0 ),;
+                                             "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                             "nWidth"    => {|| GridWidth( 10, oDlg ) },;
+                                             "nHeight"   => 32 } )
+
+   oBtnAceptar    := TGridImage():Build(  {  "nTop"      => 5,;
+                                             "nLeft"     => {|| GridWidth( 11, oDlg ) },;
+                                             "nWidth"    => 32,;
+                                             "nHeight"   => 32,;
+                                             "cResName"  => "CheckFlat_32",;
+                                             "bLClicked" => {|| oDlg:End( IDOK ) },;
+                                             "oWnd"      => oDlg } )
+
+   oBtnCancelar   := TGridImage():Build(  {  "nTop"      => 5,;
+                                             "nLeft"     => {|| GridWidth( 11.5, oDlg ) },;
+                                             "nWidth"    => 32,;
+                                             "nHeight"   => 32,;
+                                             "cResName"  => "CancelFlat_32",;
+                                             "bLClicked" => {|| oDlg:End() },;
+                                             "oWnd"      => oDlg } )
+
+   // Texto de busqueda--------------------------------------------------------
+
+   oGetSearch     := TGridGet():Build(    {  "nRow"      => 38,;
+                                             "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
+                                             "oWnd"      => oDlg,;
+                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             "nHeight"   => 25,;
+                                             "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, dbfObras, .t., cCodCli ) } } )
+
+   oCbxOrd     := TGridComboBox():Build(  {  "nRow"      => 38,;
+                                             "nCol"      => {|| GridWidth( 9.5, oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                                             "oWnd"      => oDlg,;
+                                             "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                             "nHeight"   => 25,;
+                                             "aItems"    => aCbxOrd,;
+                                             "bChange"   => {| nKey, nFlags, Self | ( dbfObras )->( OrdSetFocus( oCbxOrd:nAt ) ),;
+                                                                                    SetScopeObras( cCodCli, dbfObras ),;
+                                                                                    oBrw:Refresh(),;
+                                                                                    oGetSearch:SetFocus() } } )
+
+   // Browse de articulos ------------------------------------------------------
+
+   oBrw                 := TGridIXBrowse():New( oDlg )
+
+   oBrw:nTop            := oBrw:EvalRow( 64 )
+   oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   oBrw:nHeight         := oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )
+
+   oBrw:cAlias          := dbfObras
+   oBrw:nMarqueeStyle   := 5
+   oBrw:cName           := "BrwGridObras"
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Código"
+      :bEditValue       := {|| ( dbfObras )->cCodObr }
+      :nWidth           := 200
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Nombre"
+      :bEditValue       := {|| ( dbfObras )->cNomObr }
+      :nWidth           := 560
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
+   end with
+
+   oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+   oBrw:nHeaderHeight   := 48
+   oBrw:nFooterHeight   := 48
+   oBrw:nRowHeight      := 48
+
+   oBrw:CreateFromCode( 105 )
+
+   // Dialogo------------------------------------------------------------------
+
+   oDlg:bResized        := {|| GridResize( oDlg ) }
+   oDlg:bStart          := {|| oBrw:Load() }
+
+   ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) ) 
+
+   if oDlg:nResult == IDOK
+
+      if isObject( oGet )
+         oGet:cText( ( dbfObras )->cCodObr )
+         oGet:lValid()
+      else
+         oGet           := ( dbfObras )->cNomObr
+      end if
+
+      if isObject( oGetName ) 
+         oGetName:cText( ( dbfObras )->cNomObr )
+      end if
+
+   end if
+
+   DestroyFastFilter( dbfObras )
+
+   SetBrwOpt( "BrwGridObras", ( dbfObras )->( OrdNumber() ) )
+
+   // Cerramos la tabla--------------------------------------------------------
+
+   if lClose
+      ( dbfObrasT )->( dbCloseArea() )
+   else
+      ( dbfObrasT )->( OrdSetFocus( nOrdAnt ) )
+      SetScopeObras( nil, dbfObras )
+   end if
+
+   if IsObject( oGet ) 
+      oGet:setFocus()
+   end if
+
+   oBtnAceptar:end()
+   oBtnCancelar:end()
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Function SetScopeObras( cCodigoCliente, dbfObras )
+
+   ( dbfObras )->( OrdScope( 0, cCodigoCliente ) )
+   ( dbfObras )->( OrdScope( 1, cCodigoCliente ) )
+   ( dbfObras )->( dbGoTop() )
+
+Return ( .t. )   
+
+//---------------------------------------------------------------------------//

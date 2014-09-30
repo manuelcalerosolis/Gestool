@@ -1095,6 +1095,7 @@ Static Function StartDbfInfo( dbfAlias, oTreeInfo )
    oTreeInfo:Add( "RDDI_RECORDMAP   : "  + cValToChar( dbInfo( RDDI_RECORDMAP   ) ) )
    oTreeInfo:Add( "RDDI_ENCRYPTION  : "  + cValToChar( dbInfo( RDDI_ENCRYPTION  ) ) )
    oTreeInfo:Add( "RDDI_AUTOLOCK    : "  + cValToChar( dbInfo( RDDI_AUTOLOCK    ) ) )
+   oTreeInfo:Add( "DBI_DBFILTER     : "  + cValToChar( dbInfo( DBI_DBFILTER     ) ) )
 
    oTreeInfo:Add( "Index parameters" )
    oTreeInfo:Add( "RDDI_STRUCTORD   : "  + cValToChar( dbInfo( RDDI_STRUCTORD   ) ) )

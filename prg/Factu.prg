@@ -1014,7 +1014,7 @@ Function lStartCheck()
    // Test de BrwClient--------------------------------------------------------
 
 #ifndef __XHARBOUR__
-   GridBrwArticulo() 
+   GridBrwObras() 
 #endif
 
    // Lanzamos para los documentos automáticos---------------------------------

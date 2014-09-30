@@ -18764,16 +18764,6 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "nHeight"   => 32,;
                                              "lDesign"   => .f.,;
                                              "bAction"   => {|| MsgInfo( "action" ) } } )
-/*
-   TGridUrllink():Build(    {  "nTop"      => 0,;
-                                             "nLeft"     => {|| GridWidth( 5.5, oDlg ) },;
-                                             "cURL"      => "Link",;
-                                             "oWnd"      => oDlg,;
-                                             "oFont"     => oGridFontBold(),;
-                                             "lPixel"    => .t.,;
-                                             "nClrInit"  => nGridColor(),;
-                                             "bAction"   => {|| MsgInfo( "action" ) } } )
-*/
 
    oBtnAceptar    := TGridImage():Build(  {  "nTop"      => 5,;
                                              "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
