@@ -72,8 +72,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD AddVariableStock() 
 
-   METHOD lValidProveedor()             
-
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -506,9 +504,11 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "lKitArt",     "L",  1, 0, {|| "" },   "Línea con escandallos"                   )
    ::AddField( "lKitChl",     "L",  1, 0, {|| "" },   "Línea perteneciente a escandallo"        )
 
+   ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
+   ::AddTmpIndex( "cPrvHab", "cPrvHab")
 
 RETURN ( Self )
 
@@ -631,11 +631,8 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()        .and. ::oDbf:cCodAge   <= ::oGrupoAgente:Cargo:getHasta() )        .and.;
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde() .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:getHasta() ) .and.;
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:getHasta() )       .and.;
+      ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()     .and. ::oDbf:cPrvHab   <= ::oGrupoProveedor:Cargo:getHasta() )     .and.;
       ( ::lStocks() .or. ( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:getDesde() .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() ) )
-
-      if !Empty( ::oGrupoProveedor:Cargo:getDesde() ) .or. ::oGrupoProveedor:Cargo:getHasta() != replicate( "Z", 12 )
-         RETURN( ::lValidProveedor( ::oDbf:cCodArt ) )
-      end if
 
       Return .t.
 
@@ -785,9 +782,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
    ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
 
+   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cCodCli } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",                          {|| ::oDbf:cCodUsr } )
 
    /*
@@ -2017,6 +2014,7 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       ::oDbf:Blank()
 
       ::oDbf:cCodArt  := ::oDbfArt:Codigo
+      ::oDbf:cCodCli  := ::oDbfArt:cPrvHab
       ::oDbf:cNomArt  := ::oDbfArt:Nombre
       ::oDbf:cCodFam  := ::oDbfArt:Familia
       ::oDbf:TipoIva  := ::oDbfArt:TipoIva
@@ -2025,6 +2023,7 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
       ::oDbf:cCodFab  := ::oDbfArt:cCodFab
       ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+      ::oDbf:cPrvHab  := ::oDbfArt:cPrvHab
 
       // Añadimos los stocks---------------------------------------------------
 
@@ -2720,20 +2719,3 @@ METHOD AddVariableStock()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD lValidProveedor( cCodArt )
-
-  if ::oArtPrv:Seek( cCodArt )
-
-   while ::oArtPrv:cCodArt == cCodArt
-
-      if ( ::oArtPrv:cCodPrv >= ::oGrupoProveedor:Cargo:getDesde() ) .and. ( ::oArtPrv:cCodPrv <= ::oGrupoProveedor:Cargo:getHasta() ) 
-         return ( .t.)
-      end if
-
-      ::oArtPrv:Skip()
-   end while
-
-  end if
-
-RETURN ( .f. )

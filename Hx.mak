@@ -411,6 +411,7 @@ Cuaderno.prg 					\
 FacturarLineasAlbaranes.prg \
 Components.prg 				\
 TLabelGenerator.prg 			\
+TGridSay.prg 					\
 
 C               =       \
 Metafi32.c              \
@@ -837,6 +838,7 @@ Cuaderno.obj 				\
 FacturarLineasAlbaranes.obj \
 Components.obj 			\
 TLabelGenerator.obj 	\
+TGridSay.obj 			\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1233,6 +1235,7 @@ $(OBJ)\Cuaderno.obj 		  	+
 $(OBJ)\FacturarLineasAlbaranes.obj +
 $(OBJ)\Components.obj 			+
 $(OBJ)\TLabelGenerator.obj 		+
+$(OBJ)\TGridSay.obj 					+
 $(OBJ)\MsTable.obj
 $<,$*
 $(FWLIB)\xc5h.lib               +
