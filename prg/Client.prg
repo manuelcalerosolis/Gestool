@@ -13022,10 +13022,10 @@ Return .t.
 FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
 
    local oDlg
+   local oBrw
    local oSayGeneral
    local oBtnAceptar
    local oBtnCancelar
-   local oBrw
    local oGetSearch
    local cGetSearch  := Space( 100 )
    local cTxtOrigen  := if( !empty( uGet ), uGet:VarGet(), )
@@ -13034,8 +13034,6 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    local aCbxOrd     := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento", "Correo electrónico" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01032" )
-   local oSayText
-   local cSayText    := "Listado de clientes"
 
    nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrdAnt ]

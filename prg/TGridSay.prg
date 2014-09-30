@@ -82,23 +82,24 @@ METHOD Build( hBuilder ) CLASS TGridSay
    local lAdjust        := if( hhaskey( hBuilder, "lAdjust"),        hBuilder[ "lAdjust"  ], nil )
    local lTransparent   := if( hhaskey( hBuilder, "lTransparent"),   hBuilder[ "lTransparent"], nil )      
    local cVarName       := if( hhaskey( hBuilder, "cVarName"),       hBuilder[ "cVarName" ], nil )   
+   local bAction        := if( hhaskey( hBuilder, "bAction"),        hBuilder[ "bAction"  ], nil )
 
 Return ( ::New( nRow, nCol, bText, oWnd, cPicture, oFont,;
             lCentered, lRight, lBorder, lPixels, nClrText, nClrBack,;
             nWidth, nHeight, lDesign, lUpdate, lShaded, lBox, lRaised,;
-            lAdjust, lTransparent, cVarName ) )
+            lAdjust, lTransparent, cVarName, bAction ) )
 
 //----------------------------------------------------------------------------//
 
 METHOD New( nRow, nCol, bText, oWnd, cPicture, oFont,;
             lCentered, lRight, lBorder, lPixels, nClrText, nClrBack,;
             nWidth, nHeight, lDesign, lUpdate, lShaded, lBox, lRaised,;
-            lAdjust, lTransparent, cVarName ) CLASS TGridSay
+            lAdjust, lTransparent, cVarName, bAction ) CLASS TGridSay
 
-   nRow     := ::EvalRow( nRow )
-   nCol     := ::EvalCol( nCol )
-   nWidth   := ::EvalWidth( nWidth )
-   nHeight  := ::EvalHeight( nHeight )
+   nRow           := ::EvalRow( nRow )
+   nCol           := ::EvalCol( nCol )
+   nWidth         := ::EvalWidth( nWidth )
+   nHeight        := ::EvalHeight( nHeight )
 
    ::Super:New( nRow, nCol, bText, oWnd, cPicture, oFont,;
             lCentered, lRight, lBorder, lPixels, nClrText, nClrBack,;
@@ -106,6 +107,67 @@ METHOD New( nRow, nCol, bText, oWnd, cPicture, oFont,;
             lAdjust, lTransparent, cVarName )
 
 Return Self
+
+//----------------------------------------------------------------------------//
+
+CLASS TGridURLLink FROM TURLLink, TGridable
+
+   METHOD Build()
+
+   METHOD New() CONSTRUCTOR
+
+   METHOD ReAdjust()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS TGridURLLink
+
+   local nTop           := if( hhaskey( hBuilder, "nTop" ),          hBuilder[ "nTop"     ], nil )
+   local nLeft          := if( hhaskey( hBuilder, "nLeft" ),         hBuilder[ "nLeft"    ], nil )
+   local oWnd           := if( hhaskey( hBuilder, "oWnd"),           hBuilder[ "oWnd"     ], nil )
+   local lPixel         := if( hhaskey( hBuilder, "lPixel" ),        hBuilder[ "lPixel"   ], .t. )
+   local lDesign        := if( hhaskey( hBuilder, "lDesign"),        hBuilder[ "lDesign"  ], nil )
+   local oFont          := if( hhaskey( hBuilder, "oFont" ),         hBuilder[ "oFont"    ], nil )
+   local cMsg           := if( hhaskey( hBuilder, "cMsg" ),          hBuilder[ "cMsg"     ], nil )   
+   local cURL           := if( hhaskey( hBuilder, "cURL" ),          hBuilder[ "cURL"     ], nil )   
+   local cTooltip       := if( hhaskey( hBuilder, "cTooltip" ),      hBuilder[ "lcTooltip"], nil )
+   local nClrInit       := if( hhaskey( hBuilder, "nClrInit" ),      hBuilder[ "nClrInit" ], nil )
+   local nClrOver       := if( hhaskey( hBuilder, "nClrOver" ),      hBuilder[ "nClrOver" ], nil )   
+   local nClrVisit      := if( hhaskey( hBuilder, "nClrVisit" ),     hBuilder[ "nClrVisit"], nil )   
+   local bAction        := if( hhaskey( hBuilder, "bAction" ),       hBuilder[ "bAction"  ], nil )
+
+Return ( ::New( nTop, nLeft, oWnd, lPixel, lDesign, oFont, cMsg, cURL, ;
+            cToolTip, nClrInit, nClrOver, nClrVisit, bAction ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD New( nTop, nLeft, oWnd, lPixel, lDesign, oFont, cMsg, cURL, ;
+            cToolTip, nClrInit, nClrOver, nClrVisit, bAction ) CLASS TGridURLLink
+
+   nTop           := ::EvalRow( nTop )
+   nLeft          := ::EvalCol( nLeft )
+
+   ::Super:New( nTop, nLeft, oWnd, lPixel, lDesign, oFont, cMsg, cURL, ;
+            cToolTip, nClrInit, nClrOver, nClrVisit )
+
+   ::bAction      := bAction
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+METHOD ReAdjust() CLASS TGridURLLink
+
+   local nRow     := if( !empty(::bRow), eval(::bRow), ::nTop )
+   local nLeft    := if( !empty(::bCol), eval(::bCol), ::nLeft )
+   local nWidth   := if( !empty(::bWidth), eval(::bWidth), ::nWidth )
+   local nHeight  := if( !empty(::bHeight), eval(::bHeight), ::nHeight )
+
+   ::Move( nRow, nLeft, nWidth, nHeight )  
+
+return Self
 
 //----------------------------------------------------------------------------//
 
