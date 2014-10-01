@@ -11086,7 +11086,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             Avisaremos del stock bajo minimo--------------------------------------
             */
 
-            if ( dbfArticulo )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" )
+            if ( dbfArticulo )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. ( dbfArticulo)->nMinimo > 0
 
                nStkActual     := oStock:nStockAlmacen( ( dbfKit )->cRefKit, cAlmLin )
                nUnidades      := nUniCaj * ( dbfKit )->nUndKit

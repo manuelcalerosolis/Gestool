@@ -146,7 +146,7 @@ Pdreport.prg            \
 Pedcli.prg              \
 Pedprov.prg             \
 Precli.prg              \
-Satcli.prg 				\
+Satcli.prg 					\
 Pro.prg                 \
 Producc.prg             \
 Promo.prg               \
@@ -1057,6 +1057,7 @@ TpvMenuArticulo.prg 		\
 TpvMenuOrdenes.prg 		\
 ApoloMeter.prg 			\
 Components.prg 			\
+TGridSay.prg 				\
 
 C               =       \
 Metafi32.c              \
@@ -2117,7 +2118,8 @@ TpvMenu.obj 				\
 TpvMenuArticulo.obj 		\
 TpvMenuOrdenes.obj 		\
 ApoloMeter.obj 			\
-Components.prg 			\
+Components.obj 			\
+TGridSay.obj 				\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3179,6 +3181,7 @@ $(OBJ)\TpvMenuArticulo.obj 		+
 $(OBJ)\TpvMenuOrdenes.obj 			+
 $(OBJ)\ApoloMeter.obj 				+
 $(OBJ)\Components.obj 				+
+$(OBJ)\TGridSay.obj 					+
 (HBLIB)\Mapi32.obj
 $<,$*
 $(FWLIB)\xc5h.lib               +

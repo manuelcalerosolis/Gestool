@@ -90,42 +90,18 @@ CLASS TTrazaDocumento
 
    Method TrazaTicketCliente( cNumDoc )
 
-   Method AddPedidoProveedor( lMainDocument, oTree )     INLINE   ( oTree:Add("Pedido proveedor"                                                                                 + " - " +;
-                                                                              ::oPedPrvT:cSerPed + "/" + Ltrim( Str( ::oPedPrvT:nNumPed ) ) + "/" + Rtrim( ::oPedPrvT:cSufPed )  + " - " +;
-                                                                              Dtoc( ::oPedPrvT:dFecPed ),;
-                                                                              if( lMainDocument, 1, 0 ),;
-                                                                              { PED_PRV, ::oPedPrvT:cSerPed + Str( ::oPedPrvT:nNumPed ) + ::oPedPrvT:cSufPed } ) )
-
-   Method AddAlbaranProveedor( lMainDocument, oTree )    INLINE   ( oTree:Add("Albarán proveedor"                                                                                 + " - " +;
-                                                                              ::oAlbPrvT:cSerAlb + "/" + Ltrim( Str( ::oAlbPrvT:nNumAlb ) ) + "/" + Rtrim( ::oAlbPrvT:cSufAlb )   + " - " +;
-                                                                              Dtoc( ::oAlbPrvT:dFecAlb ),;
-                                                                              if( lMainDocument, 1, 0 ),;
-                                                                              { ALB_PRV, ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb } ) )
-
-   Method AddFacturaProveedor( lMainDocument, oTree )    INLINE   ( oTree:Add("Factura proveedor"                                                                                + " - " +;
-                                                                              ::oFacPrvT:cSerFac + "/" + Ltrim( Str( ::oFacPrvT:nNumFac ) ) + "/" + Rtrim( ::oFacPrvT:cSufFac )  + " - " +;
-                                                                              Dtoc( ::oFacPrvT:dFecFac ),;
-                                                                              if( lMainDocument, 1, 0 ),;
-                                                                              { FAC_PRV, ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac } ) )
-
-   Method AddPresupuestoCliente( lMainDocument, oTree )  INLINE ( oTree:Add(  "Presupuesto cliente"                                                                              + " - " +;
-                                                                              ::oPreCliT:cSerPre + "/" + Ltrim( Str( ::oPreCliT:nNumPre ) ) + "/" + Rtrim( ::oPreCliT:cSufPre )  + " - " +;
-                                                                              Dtoc( ::oPreCliT:dFecPre ),;
-                                                                              if( lMainDocument, 1, 0 ),;
-                                                                              { PRE_CLI, ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre } ) )
-
-   Method AddPedidoCliente( lMainDocument, oTree )       INLINE ( oTree:Add(  "Pedido cliente"                                                                                   + " - " +;
-                                                                              ::oPedCliT:cSerPed + "/" + Ltrim( Str( ::oPedCliT:nNumPed ) ) + "/" + Rtrim( ::oPedCliT:cSufPed )  + " - " +;
-                                                                              Dtoc( ::oPedCliT:dFecPed ),;
-                                                                              if( lMainDocument, 1, 0 ),;
-                                                                              { PED_CLI, ::oPedCliT:cSerPed + Str( ::oPedCliT:nNumPed ) + ::oPedCliT:cSufPed } ) )
-
-   Method AddAlbaranCliente( lMainDocument, oTree )      INLINE ( oTree:Add(  "Albarán cliente"                                                                                  + " - " +;
-                                                                              ::oAlbCliT:cSerAlb + "/" + Ltrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + Rtrim( ::oAlbCliT:cSufAlb )  + " - " +;
-                                                                              Dtoc( ::oAlbCliT:dFecAlb ),;
-                                                                              if( lMainDocument, 1, 0 ),;
-                                                                              { ALB_CLI, ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb } ) )
-
+   Method AddPedidoProveedor( lMainDocument, oTree )     
+   
+   Method AddAlbaranProveedor( lMainDocument, oTree )    
+   
+   Method AddFacturaProveedor( lMainDocument, oTree )    
+   
+   Method AddPresupuestoCliente( lMainDocument, oTree )  
+   
+   Method AddPedidoCliente( lMainDocument, oTree )       
+   
+   Method AddAlbaranCliente( lMainDocument, oTree )      
+   
    Method AddAlbaranClienteLinea( lMainDocument, oTree )
 
    Method AddFacturaCliente( lMainDocument, oTree )
@@ -506,21 +482,37 @@ Method TrazaDocumento( cTypeDocument, cNumDoc )
 
    do case
       case cTypeDocument == PED_PRV
+
          ::TrazaPedidoProveedor( cNumDoc )
+
       case cTypeDocument == ALB_PRV
+
          ::TrazaAlbaranProveedor( cNumDoc )
+
       case cTypeDocument == FAC_PRV
+
          ::TrazaFacturaProveedor( cNumDoc )
+
       case cTypeDocument == PRE_CLI
+
          ::TrazaPresupuestoCliente( cNumDoc )
+
       case cTypeDocument == PED_CLI
+
          ::TrazaPedidoCliente( cNumDoc )
+
       case cTypeDocument == ALB_CLI
+
          ::TrazaAlbaranCliente( cNumDoc )
+
       case cTypeDocument == FAC_CLI
+
          ::TrazaFacturaCliente( cNumDoc )
+
       case cTypeDocument == TIK_CLI
+
          ::TrazaTicketCliente( cNumDoc )
+
    end case
 
    CursorWE()
@@ -531,27 +523,45 @@ RETURN ( Self )
 
 Method ChangeDocument( oTree )
 
-   local oItemTree   := oTree:GetItem()
+   local oItemTree   := oTree:GetSelected()
 
-   if !Empty( oItemTree ) .and. !Empty( oItemTree:bAction )
+   if !Empty( oItemTree ) .and. !Empty( oItemTree:Cargo )
+
       do case
-         case oItemTree:bAction[ 1 ] == PED_PRV
-            ::CargaPedidoProveedor( oItemTree:bAction[ 2 ] )
-         case oItemTree:bAction[ 1 ] == ALB_PRV
-            ::CargaAlbaranProveedor( oItemTree:bAction[ 2 ] )
-         case oItemTree:bAction[ 1 ] == FAC_PRV
-            ::CargaFacturaProveedor( oItemTree:bAction[ 2 ] )
-         case oItemTree:bAction[ 1 ] == PRE_CLI
-            ::CargaPresupuestoCliente( oItemTree:bAction[ 2 ] )
-         case oItemTree:bAction[ 1 ] == PED_CLI
-            ::CargaPedidoCliente( oItemTree:bAction[ 2 ] )
-         case oItemTree:bAction[ 1 ] == ALB_CLI
-            ::CargaAlbaranCliente( oItemTree:bAction[ 2 ] )
-         case oItemTree:bAction[ 1 ] == FAC_CLI
-            ::CargaFacturaCliente( oItemTree:bAction[ 2 ] )
-         case oItemTree:bAction[ 1 ] == TIK_CLI
-            ::CargaTicketCliente( oItemTree:bAction[ 2 ] )
+         case oItemTree:Cargo[ 1 ] == PED_PRV
+            
+            ::CargaPedidoProveedor( oItemTree:Cargo[ 2 ] )
+
+         case oItemTree:Cargo[ 1 ] == ALB_PRV
+            
+            ::CargaAlbaranProveedor( oItemTree:Cargo[ 2 ] )
+
+         case oItemTree:Cargo[ 1 ] == FAC_PRV
+            
+            ::CargaFacturaProveedor( oItemTree:Cargo[ 2 ] )
+
+         case oItemTree:Cargo[ 1 ] == PRE_CLI
+            
+            ::CargaPresupuestoCliente( oItemTree:Cargo[ 2 ] )
+
+         case oItemTree:Cargo[ 1 ] == PED_CLI
+            
+            ::CargaPedidoCliente( oItemTree:Cargo[ 2 ] )
+
+         case oItemTree:Cargo[ 1 ] == ALB_CLI
+            
+            ::CargaAlbaranCliente( oItemTree:Cargo[ 2 ] )
+
+         case oItemTree:Cargo[ 1 ] == FAC_CLI
+            
+            ::CargaFacturaCliente( oItemTree:Cargo[ 2 ] )
+
+         case oItemTree:Cargo[ 1 ] == TIK_CLI
+            
+            ::CargaTicketCliente( oItemTree:Cargo[ 2 ] )
+
       end case
+
    end if
 
 Return ( Self )
@@ -579,7 +589,6 @@ Return ( Self )
 //----------------------------------------------------------------------------//
 
 Method DeleteDocument()
-
 
    if ::bDelete != nil
       Eval( ::bDelete )
@@ -1112,9 +1121,7 @@ METHOD TrazaFacturaCliente( cNumDoc )
 
                if ::oPedCliT:SeekInOrd( aNumeroPedido[ n ], 'nNumPed' )
 
-                  /*
-                  Hacia atras miramos los presupuestos-------------------------------
-                  */
+                  // Hacia atras miramos los presupuestos-------------------------------
 
                   if ::oPreCliT:SeekInOrd( ::oPedCliT:cNumPre, 'nNumPre' )
 
@@ -1521,8 +1528,6 @@ Method CargaAlbaranCliente( cNumDoc )
 
    ::oDbfTmp:Zap()
 
-   ? cNumDoc
-
    /*
    Etiquetas-------------------------------------------------------------------
    */
@@ -1535,8 +1540,6 @@ Method CargaAlbaranCliente( cNumDoc )
    /*
    Lineas----------------------------------------------------------------------
    */
-
-   ? ::oAlbCliL:OrdSetFocus()
 
    if ::oAlbCliL:Seek( cNumDoc )
 
@@ -1703,19 +1706,94 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+Method AddPedidoProveedor( lMainDocument, oTree )
+   
+   local oNode := oTree:Add(  "Pedido proveedor"                                                                                 + " - " +;
+                              ::oPedPrvT:cSerPed + "/" + Ltrim( Str( ::oPedPrvT:nNumPed ) ) + "/" + Rtrim( ::oPedPrvT:cSufPed )  + " - " +;
+                              Dtoc( ::oPedPrvT:dFecPed ),;
+                              if( lMainDocument, 1, 0 ) )
+   oNode:Cargo := { PED_PRV, ::oPedPrvT:cSerPed + Str( ::oPedPrvT:nNumPed ) + ::oPedPrvT:cSufPed } 
+
+Return ( oNode )
+
+//----------------------------------------------------------------------------//
+
+Method AddAlbaranProveedor( lMainDocument, oTree )
+
+   local oNode := oTree:Add(  "Albarán proveedor"                                                                                 + " - " +;
+                              ::oAlbPrvT:cSerAlb + "/" + Ltrim( Str( ::oAlbPrvT:nNumAlb ) ) + "/" + Rtrim( ::oAlbPrvT:cSufAlb )   + " - " +;
+                              Dtoc( ::oAlbPrvT:dFecAlb ),;
+                              if( lMainDocument, 1, 0 ) )
+   oNode:Cargo := { ALB_PRV, ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb }
+
+Return ( oNode )
+
+//----------------------------------------------------------------------------//
+
+Method AddFacturaProveedor( lMainDocument, oTree )    
+
+   local oNode := oTree:Add("Factura proveedor"                                                                                + " - " +;
+                              ::oFacPrvT:cSerFac + "/" + Ltrim( Str( ::oFacPrvT:nNumFac ) ) + "/" + Rtrim( ::oFacPrvT:cSufFac )  + " - " +;
+                              Dtoc( ::oFacPrvT:dFecFac ),;
+                              if( lMainDocument, 1, 0 ) )
+   oNode:Cargo := { FAC_PRV, ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac }
+
+Return ( oNode )
+
+//----------------------------------------------------------------------------//
+
+Method AddPresupuestoCliente( lMainDocument, oTree )  
+
+   local oNode := oTree:Add(  "Presupuesto cliente"                                                                              + " - " +;
+                              ::oPreCliT:cSerPre + "/" + Ltrim( Str( ::oPreCliT:nNumPre ) ) + "/" + Rtrim( ::oPreCliT:cSufPre )  + " - " +;
+                              Dtoc( ::oPreCliT:dFecPre ),;
+                              if( lMainDocument, 1, 0 ) )
+   oNode:Cargo := { PRE_CLI, ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre }
+
+Return ( oNode )
+
+//----------------------------------------------------------------------------//
+
+Method AddPedidoCliente( lMainDocument, oTree )       
+
+   local oNode := oTree:Add(  "Pedido cliente"                                                                                   + " - " +;
+                              ::oPedCliT:cSerPed + "/" + Ltrim( Str( ::oPedCliT:nNumPed ) ) + "/" + Rtrim( ::oPedCliT:cSufPed )  + " - " +;
+                              Dtoc( ::oPedCliT:dFecPed ),;
+                              if( lMainDocument, 1, 0 ) )
+   oNode:Cargo := { PED_CLI, ::oPedCliT:cSerPed + Str( ::oPedCliT:nNumPed ) + ::oPedCliT:cSufPed } 
+
+Return ( oNode )
+
+//----------------------------------------------------------------------------//
+
+Method AddAlbaranCliente( lMainDocument, oTree )      
+
+   local oNode := oTree:Add(  "Albarán cliente"                                                                                  + " - " +;
+                              ::oAlbCliT:cSerAlb + "/" + Ltrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + Rtrim( ::oAlbCliT:cSufAlb )  + " - " +;
+                              Dtoc( ::oAlbCliT:dFecAlb ),;
+                              if( lMainDocument, 1, 0 ) )
+   oNode:Cargo := { ALB_CLI, ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb } 
+
+Return ( oNode )
+
+//----------------------------------------------------------------------------//
+
 Method AddAlbaranProveedorLinea( lMainDocument, oTree )
 
+   local oNode
    local cDocNum  := ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb
 
    if aScan( ::aAlbProveedor, cDocNum ) == 0
 
       aAdd( ::aAlbProveedor, cDocNum )
 
-      Return ( oTree:Add(  "Albarán proveedor" + " - " +;
-                           ::oAlbPrvL:cSerAlb + "/" + Ltrim( Str( ::oAlbPrvL:nNumAlb ) ) + "/" + Rtrim( ::oAlbPrvL:cSufAlb )  + " - " +;
-                           Dtoc( dFecAlbPrv( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT:cAlias ) ),;
-                           if( lMainDocument, 1, 0 ),;
-                           { ALB_PRV, cDocNum } ) )
+      oNode       := oTree:Add(  "Albarán proveedor" + " - " +;
+                                 ::oAlbPrvL:cSerAlb + "/" + Ltrim( Str( ::oAlbPrvL:nNumAlb ) ) + "/" + Rtrim( ::oAlbPrvL:cSufAlb )  + " - " +;
+                                 Dtoc( dFecAlbPrv( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT:cAlias ) ),;
+                                 if( lMainDocument, 1, 0 ) )
+      oNode:Cargo := { ALB_PRV, cDocNum }  
+
+      Return ( oNode )
 
    end if
 
@@ -1725,17 +1803,20 @@ Return ( oTree )
 
 Method AddAlbaranClienteLinea( lMainDocument, oTree )
 
+   local oNode
    local cDocNum  := ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb
 
    if aScan( ::aAlbaranes, cDocNum ) == 0
 
       aAdd( ::aAlbaranes, cDocNum )
 
-      Return ( oTree:Add(  "Albarán cliente" + " - " +;
-                           ::oAlbCliL:cSerAlb + "/" + Ltrim( Str( ::oAlbCliL:nNumAlb ) ) + "/" + Rtrim( ::oAlbCliL:cSufAlb )  + " - " +;
-                           Dtoc( dFecAlbCli( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT ) ),;
-                           if( lMainDocument, 1, 0 ),;
-                           { ALB_CLI, cDocNum } ) )
+      oNode       := oTree:Add(  "Albarán cliente" + " - " +;
+                                 ::oAlbCliL:cSerAlb + "/" + Ltrim( Str( ::oAlbCliL:nNumAlb ) ) + "/" + Rtrim( ::oAlbCliL:cSufAlb )  + " - " +;
+                                 Dtoc( dFecAlbCli( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT ) ),;
+                                 if( lMainDocument, 1, 0 ) )
+      oNode:Cargo := { ALB_CLI, cDocNum }  
+
+      Return ( oNode )
 
    end if
 
@@ -1745,17 +1826,21 @@ Return ( oTree )
 
 Method AddFacturaCliente( lMainDocument, oTree )
 
+   local oNode
    local cDocNum  := ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac
 
    if aScan( ::aFacturas, cDocNum ) == 0
 
       aAdd( ::aFacturas, cDocNum )
 
-      Return ( oTree:Add(  "Factura cliente"                                                                                  + " - " +;
-                           ::oFacCliT:cSerie + "/" + Ltrim( Str( ::oFacCliT:nNumFac ) ) + "/" + Rtrim( ::oFacCliT:cSufFac )   + " - " +;
-                           Dtoc( ::oFacCliT:dFecFac ),;
-                           if( lMainDocument, 1, 0 ),;
-                           { FAC_CLI, ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac } ) )
+      oNode       := oTree:Add(  "Factura cliente"                                                                                  + " - " +;
+                                 ::oFacCliT:cSerie + "/" + Ltrim( Str( ::oFacCliT:nNumFac ) ) + "/" + Rtrim( ::oFacCliT:cSufFac )   + " - " +;
+                                 Dtoc( ::oFacCliT:dFecFac ),;
+                                 if( lMainDocument, 1, 0 ) )
+
+      oNode:Cargo := { FAC_CLI, ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac }  
+
+      Return ( oNode ) 
 
    end if
 
@@ -1765,17 +1850,20 @@ Return ( oTree )
 
 Method AddTicketCliente( lMainDocument, oTree )
 
+   local oNode
    local cDocNum  := ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik
 
    if aScan( ::aTickets, cDocNum ) == 0
 
       aAdd( ::aTickets, cDocNum )
 
-      Return ( oTree:Add(  aTipTik( ::oTikCliT )                                                                        + " - " +;
-                           ::oTikCliT:cSerTik + "/" + Ltrim( ::oTikCliT:cNumTik ) + "/" + Rtrim( ::oTikCliT:cSufTik )   + " - " +;
-                           Dtoc( ::oTikCliT:dFecTik ),;
-                           if( lMainDocument, 1, 0 ),;
-                           { TIK_CLI, ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik } ) )
+      oNode       := oTree:Add(  aTipTik( ::oTikCliT )                                                                        + " - " +;
+                                 ::oTikCliT:cSerTik + "/" + Ltrim( ::oTikCliT:cNumTik ) + "/" + Rtrim( ::oTikCliT:cSufTik )   + " - " +;
+                                 Dtoc( ::oTikCliT:dFecTik ),;
+                                 if( lMainDocument, 1, 0 ) )
+      oNode:Cargo := { TIK_CLI, ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik }  
+
+      Return ( oNode )
 
    end if
 
