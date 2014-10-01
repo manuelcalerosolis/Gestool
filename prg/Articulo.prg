@@ -18769,7 +18769,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
-                                             "cResName"  => "CheckFlat_32",;
+                                             "cResName"  => "flat_check_64",;
                                              "bLClicked" => {|| oDlg:End( IDOK ) },;
                                              "oWnd"      => oDlg } )
 
@@ -18777,7 +18777,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
-                                             "cResName"  => "CancelFlat_32",;
+                                             "cResName"  => "flat_del_64",;
                                              "bLClicked" => {|| oDlg:End() },;
                                              "oWnd"      => oDlg } )
 
@@ -18964,6 +18964,8 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
    end with
 
    end if 
+
+   oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
 
    oBrw:nHeaderHeight   := 40
    oBrw:nFooterHeight   := 40

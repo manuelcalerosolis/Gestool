@@ -173,6 +173,8 @@ return Self
 
 CLASS TGridGet FROM TGet, TGridable
 
+   DATA bOldWhen
+
    METHOD Build( hBuilder ) 
 
    METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
@@ -183,6 +185,10 @@ CLASS TGridGet FROM TGet, TGridable
             cCueText ) CONSTRUCTOR
 
    METHOD GotFocus( hCtlLost )   INLINE ( ShellExecute( 0, "open", "tabtip.exe" ), ::Super:GotFocus( hCtlLost ) )
+
+   METHOD HardEnable()
+
+   METHOD HardDisable()
 
 END CLASS
 
@@ -253,6 +259,23 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             cCueText ) 
 
 Return Self
+
+//---------------------------------------------------------------------------//
+
+Method HardEnable() CLASS TGridGet
+
+   ::bWhen     := ::bOldWhen
+
+Return ( ::Enable() )
+
+//---------------------------------------------------------------------------//
+
+Method HardDisable() CLASS TGridGet
+
+   ::bOldWhen  := ::bWhen
+   ::bWhen     := {|| .f. }
+
+return ( ::Disable() )
 
 //----------------------------------------------------------------------------//
 

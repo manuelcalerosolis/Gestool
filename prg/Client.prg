@@ -13077,7 +13077,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                              "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
-                                             "cResName"  => "CheckFlat_32",;
+                                             "cResName"  => "flat_check_64",;
                                              "bLClicked" => {|| oDlg:End( IDOK ) },;
                                              "oWnd"      => oDlg } )
 
@@ -13085,7 +13085,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                              "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
-                                             "cResName"  => "CancelFlat_32",;
+                                             "cResName"  => "flat_del_64",;
                                              "bLClicked" => {|| oDlg:End() },;
                                              "oWnd"      => oDlg } )
 
