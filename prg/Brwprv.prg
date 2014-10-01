@@ -29,8 +29,8 @@ static aTotCom
 static oCom
 static oTotCom
 static oBrwTmp
-static nComFac    := 0
-static nCobFac    := 0
+static nComFac       := 0
+static nCobFac       := 0
 static oTotFac
 static oTotCob
 static oTotal
@@ -1310,7 +1310,7 @@ static function nTotImpCom( cCodPrv, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacP
 
             nTotImpCom           += nImpComAlb( cCodPrv, nMes, dbfAlbPrvT, dbfAlbPrvL, dbfIva, dbfDiv, nYear )
             nTotImpCom           += nImpComFac( cCodPrv, nMes, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, nYear )
-            nTotImpCom           += nImpComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, nYear )
+            nTotImpCom           += nImpComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, dbfFacPrvP, dbfIva, dbfDiv, nYear )
 
          else
 
@@ -1337,7 +1337,7 @@ static function nTotImpCom( cCodPrv, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacP
 
             nTotImpCom           += nImpComAlb( cCodPrv, nMes, dbfAlbEmpT, dbfAlbEmpL, dbfIva, dbfDiv, nYear )
             nTotImpCom           += nImpComFac( cCodPrv, nMes, dbfFacEmpT, dbfFacEmpL, dbfIva, dbfDiv, nYear )
-            nTotImpCom           += nImpComRct( cCodPrv, nMes, dbfRctEmpT, dbfRctEmpL, dbfIva, dbfDiv, nYear )
+            nTotImpCom           += nImpComRct( cCodPrv, nMes, dbfRctEmpT, dbfRctEmpL, dbfFacPrvP, dbfIva, dbfDiv, nYear )
 
             CLOSE( dbfAlbEmpT )
             CLOSE( dbfAlbEmpL )
@@ -1728,7 +1728,7 @@ return ( nCon )
 
 //--------------------------------------------------------------------------//
 
-static function nImpComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, nYear )
+static function nImpComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, dbfFacPrvP, dbfIva, dbfDiv, nYear )
 
    local nCon     := 0
    local nRec     := ( dbfRctPrvT )->( Recno() )
@@ -1737,10 +1737,9 @@ static function nImpComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDi
 
       while ( dbfRctPrvT )->cCodPrv == cCodPrv .and. !( dbfRctPrvT )->( Eof() )
 
-         if ( nYear == nil .or. Year( ( dbfRctPrvT )->dFecFac ) == nYear ) .and.;
-            ( nMes == 0 .or. Month( ( dbfRctPrvT )->dFecFac ) == nMes )
+         if ( nYear == nil .or. Year( ( dbfRctPrvT )->dFecFac ) == nYear ) .and. ( nMes == 0 .or. Month( ( dbfRctPrvT )->dFecFac ) == nMes )
 
-            nCon     += nTotRctPrv( ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, nil, nil, cDivEmp(), .f. )
+            nCon     += nTotRctPrv( ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, dbfFacPrvP, nil, cDivEmp(), .f. )
 
          end if
 

@@ -2625,6 +2625,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:nMarqueeStyle   := 6
       oBrwLin:cName           := "Albaran de cliente.Detalle"
       oBrwLin:lFooter         := .t.
+      oBrwLin:lAutoSort       := .t.
 
       oBrwLin:CreateFromResource( 240 )
       
@@ -2640,7 +2641,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :cHeader             := "Número"
          :cSortOrder          := "nNumLin"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :cEditPicture        := "9999"
          :nWidth              := 65
          :nDataStrAlign       := 1
@@ -2651,7 +2652,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :cHeader             := "Código"
          :cSortOrder          := "cRef"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
-         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :nWidth              := 70
       end with
 

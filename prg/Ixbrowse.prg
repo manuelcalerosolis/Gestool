@@ -455,18 +455,18 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
    cAlias      				:= ::cAlias
    ::nDataType 				:= DATATYPE_RDD
 
-   DEFAULT lAddColumns      := .f.
-   DEFAULT lAutoOrder       := ::lAutoSort
-   DEFAULT  ::bGoTop       	:= {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbGoTop() ), ) },;
-            ::bGoBottom    	:= {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbGoBottom() ), ) },;
-            ::bSkip        	:= {| n | iif( n == nil, n := 1, ), if( ( cAlias )->( Used() ), ( cAlias )->( DbSkipper( n ) ), 0 ) },;
-            ::bBof         	:= {|| if( ( cAlias )->( Used() ), ( cAlias )->( Bof() ), .t. ) },;
-            ::bEof         	:= {|| if( ( cAlias )->( Used() ), ( cAlias )->( Eof() ), .t. ) },;
-            ::bBookMark    	:= {| n | iif( n == nil, if( ( cAlias )->( Used() ), ( cAlias )->( RecNo() ), 0 ), if( ( cAlias )->( Used() ), ( cAlias )->( DbGoto( n ) ), 0 ) ) },;
-            ::bKeyNo       	:= {| n | iif( n == nil, if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyNo() ), 0 ), if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyGoto( n ) ), 0 ) ) },;
-            ::bKeyCount    	:= {|| if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyCount() ), 0 ) }
-            ::bLock        	:= {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbrLock() ), .f. ) }
-            ::bUnlock      	:= {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbrUnlock() ), .f. ) }
+   DEFAULT lAddColumns     := .f.
+   DEFAULT lAutoOrder      := .f. // ::lAutoSort
+   DEFAULT  ::bGoTop       := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbGoTop() ), ) },;
+            ::bGoBottom    := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbGoBottom() ), ) },;
+            ::bSkip        := {| n | iif( n == nil, n := 1, ), if( ( cAlias )->( Used() ), ( cAlias )->( DbSkipper( n ) ), 0 ) },;
+            ::bBof         := {|| if( ( cAlias )->( Used() ), ( cAlias )->( Bof() ), .t. ) },;
+            ::bEof         := {|| if( ( cAlias )->( Used() ), ( cAlias )->( Eof() ), .t. ) },;
+            ::bBookMark    := {| n | iif( n == nil, if( ( cAlias )->( Used() ), ( cAlias )->( RecNo() ), 0 ), if( ( cAlias )->( Used() ), ( cAlias )->( DbGoto( n ) ), 0 ) ) },;
+            ::bKeyNo       := {| n | iif( n == nil, if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyNo() ), 0 ), if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyGoto( n ) ), 0 ) ) },;
+            ::bKeyCount    := {|| if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyCount() ), 0 ) }
+            ::bLock        := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbrLock() ), .f. ) }
+            ::bUnlock      := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbrUnlock() ), .f. ) }
 
    if lAutoOrder
       for nFor := 1 to Len( ::aCols )
