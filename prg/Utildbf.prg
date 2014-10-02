@@ -1513,7 +1513,7 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       ( cAlias )->( OrdSetFocus ( nOrd ) )
    end if
 
-   if lReturn .and. !Empty( oBrw ) .and. ( oBrw:lActive )
+   if !Empty( oBrw ) .and. ( oBrw:lActive )
 
       oBrw:Select( 0 )
       oBrw:Select( 1 )

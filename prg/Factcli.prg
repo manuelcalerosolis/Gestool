@@ -5584,7 +5584,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
-   	oBtnConfigurar 		:= TGridImage():Build(  {  	"nTop"      => 5,;
+   	oBtnConfigurar 	:= TGridImage():Build(  {  "nTop"      => 5,;
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5596,7 +5596,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Cliente--------------------------------------------------------------------
   	*/
 
-   	oSayCliente  		:= TGridUrllink():Build({  	"nTop"      => 40,;
+   	oSayCliente  		:= TGridUrllink():Build({ 	"nTop"      => 40,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"cURL"      => "Cliente",;
                                              		"oWnd"      => oDlg,;
@@ -5604,10 +5604,10 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"lPixel"    => .t.,;
                                              		"nClrInit"  => nGridColor(),;
                                              		"nClrOver" 	=> nGridColor(),;
-													"nClrVisit" => nGridColor(),;
+																	"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ) } } )
 
-   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
+   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5616,7 +5616,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| loaCli( aGet, aTmp, nMode ) } } )
 	
-   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
+   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5636,10 +5636,10 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"lPixel"    => .t.,;
                                              		"nClrInit"  => nGridColor(),;
                                              		"nClrOver" 	=> nGridColor(),;
-													"nClrVisit" => nGridColor(),;
+																	"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT )  } } )
 
-   	aGet[ _CCODOBR ]  	:= TGridGet():Build(    { 	"nRow"      => 65,;
+   	aGet[ _CCODOBR ]  	:= TGridGet():Build( { 	"nRow"      => 65,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODOBR ], aTmp[ _CCODOBR ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5648,7 +5648,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| cObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) } } )
 
-   	oGetNombreDireccion := TGridGet():Build(    { 	"nRow"      => 65,;
+   	oGetNombreDireccion := TGridGet():Build(  { 	"nRow"      => 65,;
                                           			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, cGetNombreDireccion, cGetNombreDireccion := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5780,9 +5780,9 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
     end with
 
     with object ( oBrwLin:AddCol() )
-       	:cHeader             := "Precio"
-       	:bEditValue          := {|| nTotUFacCli( dbfTmpLin, nDouDiv ) }
-       	:cEditPicture        := cPouDiv
+        :cHeader            := "Precio"
+        :bEditValue         := {|| nTotUFacCli( dbfTmpLin, nDouDiv ) }
+        :cEditPicture       := cPouDiv
         :nWidth              := 90
         :nDataStrAlign       := 1
         :nHeadStrAlign       := 1
@@ -5836,9 +5836,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    	oBrwLin:CreateFromCode( 105 )
 
-   	/*
-	Redimensionamos y activamos el diálogo------------------------------------- 
-   	*/
+		// Redimensionamos y activamos el diálogo------------------------------------- 
 
    	oDlg:bResized  				:= {|| GridResize( oDlg ), oBrwLin:Load() }
 
