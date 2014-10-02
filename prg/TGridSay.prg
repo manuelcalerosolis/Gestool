@@ -577,6 +577,8 @@ METHOD ReAdjust()
    local nWidth   := if( !empty(::bWidth), eval(::bWidth), ::nWidth )
    local nHeight  := if( !empty(::bHeight), eval(::bHeight), ::nHeight )
 
+   msgAlert( nHeight, "nHeight" )
+
    ::Move( nRow, nLeft, nWidth, nHeight )  
 
 return Self

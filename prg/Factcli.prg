@@ -6343,13 +6343,11 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
                                              		"nHeight"   => 25,;
                                              		"aItems"    => aCbxOrd } )
 
-   	/*
-	Desglose de I.V.A.---------------------------------------------------------
-   	*/
+		// Desglose de I.V.A.---------------------------------------------------------
 
    	oBrwIva                 := TGridIXBrowse():New( oDlg )
 
-    oBrwIva:nTop            := oBrwIva:EvalRow( 130 )
+    	oBrwIva:nTop            := oBrwIva:EvalRow( 130 )
    	oBrwIva:nLeft           := oBrwIva:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    	oBrwIva:nWidth          := oBrwIva:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    	oBrwIva:nHeight         := 5
@@ -6357,8 +6355,8 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
     oBrwIva:SetArray( aTotIva, , , .f. )
 
     oBrwIva:nMarqueeStyle   := 6
-    oBrwIva:lFooter 		:= .t.
-    oBrwIva:cName          	:= "Grid lineas facturas"
+    oBrwIva:lFooter 				:= .t.
+    oBrwIva:cName          	:= "Grid iva facturas"
 
     with object ( oBrwIva:AddCol() )
        	:cHeader          	:= "Base"
