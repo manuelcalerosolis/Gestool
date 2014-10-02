@@ -62,10 +62,10 @@ Method New( nLanguage )
    LlDefineVariableStart( ::hJob )
 
    LlDefineVariableExt( ::hJob, "Clientes.Nombre",    "Nombre del cliente",      LL_TEXT, "" )
-   LlDefineVariableExt( ::hJob, "Clientes.Dirección", "Dirección del cliente",   LL_TEXT, "" )
+   LlDefineVariableExt( ::hJob, "Clientes.dirección", "dirección del cliente",   LL_TEXT, "" )
 
    LlDefineVariableExt( ::hJob, "Agente.Nombre",      "Nombre del agente",       LL_TEXT, "" )
-   LlDefineVariableExt( ::hJob, "Agente.Dirección",   "Dirección del agente",    LL_TEXT, "" )
+   LlDefineVariableExt( ::hJob, "Agente.dirección",   "dirección del agente",    LL_TEXT, "" )
 
    LlDefineFieldExt( ::hJob, "Field 1", "Valor del field 1", LL_TEXT, "" )
    LlDefineFieldExt( ::hJob, "Field 2", "Valor del field 2", LL_TEXT, "" )
@@ -81,10 +81,10 @@ Method New( nLanguage )
    ::JobOpen( 1 )
 
    LlDefineVariableExt( ::hJob, "Clientes.Nombre",    "Manuel Calero Solís",     LL_TEXT, "" )
-   LlDefineVariableExt( ::hJob, "Clientes.Dirección", "Cl. Real, 58",            LL_TEXT, "" )
+   LlDefineVariableExt( ::hJob, "Clientes.dirección", "Cl. Real, 58",            LL_TEXT, "" )
 
    LlDefineVariableExt( ::hJob, "Agente.Nombre",      "James Bond",              LL_TEXT, "" )
-   LlDefineVariableExt( ::hJob, "Agente.Dirección",   "Cl. Octopusi, 10",        LL_TEXT, "" )
+   LlDefineVariableExt( ::hJob, "Agente.dirección",   "Cl. Octopusi, 10",        LL_TEXT, "" )
 
    LlDefineFieldExt( ::hJob, "Field 1", "Valor del field 1", LL_TEXT, "" )
    LlDefineFieldExt( ::hJob, "Field 2", "Valor del field 2", LL_TEXT, "" )

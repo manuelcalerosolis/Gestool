@@ -1178,7 +1178,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Fecha",;
                "Código",;
                "Nombre",;
-               "Obra",;
+               "Dirección",;
                "Agente",;
                "Operario",;
                "Categoría",;
@@ -1368,7 +1368,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
          :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodObr }
          :nWidth           := 50
@@ -1627,7 +1627,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
             ACTION   ( if( !Empty( ( TDataView():SatClientes( nView ) )->cCodObr ), EdtObras( ( TDataView():SatClientes( nView ) )->cCodCli, ( TDataView():SatClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al S.A.T." ) ) );
-            TOOLTIP  "Modificar obra" ;
+            TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
@@ -3050,8 +3050,8 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código cliente vacío" ) ) );
 
-            MENUITEM    "&4. Modificar obra";
-               MESSAGE  "Modificar ficha de la obra" ;
+            MENUITEM    "&4. Modificar dirección";
+               MESSAGE  "Modificar ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el S.A.T." ) ) )
 
@@ -10012,7 +10012,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "CDNICLI",   "C", 30,  0, "DNI del cliente",                 "'@!'",               "", "( cDbf )"} )
    aAdd( aItmSatCli, { "LMODCLI",   "L",  1,  0, "Modificar datos del cliente",     "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODAGE",   "C",  3,  0, "Código del agente",               "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "CCODOBR",   "C", 10,  0, "Código de obra",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODOBR",   "C", 10,  0, "Código de dirección",                  "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODTAR",   "C",  5,  0, "Código de tarifa",                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODALM",   "C", 16,  0, "Código del almacen",              "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODCAJ",   "C",  3,  0, "Código de caja",                  "",                   "", "( cDbf )"} )

@@ -545,7 +545,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
                "Fecha",;
                "Código",;
                "Nombre",;
-               "Obra",;
+               "Dirección",;
                "Agente",;
                "Su albarán",;
                "Facturado";
@@ -728,7 +728,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :cSortOrder       := "cObra"
          :bEditValue       := {|| ( TDataView():Get( "AlbCliT", nView ) )->cCodObr }
          :nWidth           := 40
@@ -1109,7 +1109,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( TDataView():Get( "AlbCliT", nView ) )->cCodCli, ( TDataView():Get( "AlbCliT", nView ) )->cCodObr, dbfObrasT ) );
-         TOOLTIP  "Modificar obra" ;
+         TOOLTIP  "Modificar dirección" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
@@ -3983,8 +3983,8 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&6. Modificar obra";
-               MESSAGE  "Modifica ficha de la obra" ;
+            MENUITEM    "&6. Modificar dirección";
+               MESSAGE  "Modifica ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
@@ -5752,7 +5752,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :bEditValue       := {|| Rtrim( aPedidos[ oBrwLin:nArrayAt, 7 ] ) + Space(1) + aPedidos[ oBrwLin:nArrayAt, 8 ] }
          :nWidth           := 220
       end with
@@ -8427,7 +8427,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 6 meses",            "CallHbFunc('dJulianoAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 8 meses",            "CallHbFunc('dJulianoAlbAnio')" )
 
-   oFr:AddVariable(     "Lineas de albaranes",   "Dirección del SAT",                   "CallHbFunc('cDireccionSAT')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "dirección del SAT",                   "CallHbFunc('cDireccionSAT')" )
 
 Return nil
 
@@ -12553,7 +12553,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :bEditValue       := {|| Rtrim( aSats[ oBrwLin:nArrayAt, 7 ] ) + Space(1) + aSats[ oBrwLin:nArrayAt, 8 ] }
          :nWidth           := 220
       end with
@@ -16658,7 +16658,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "NBULTOS"   ,"N",  3, 0, "Número de bultos" ,                                     "'999'",              "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "NPORTES"   ,"N", 16, 6, "Importe de los portes" ,                                "cPouDivAlb",         "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CCODAGE"   ,"C",  3, 0, "Código del agente" ,                                    "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODOBR"   ,"C", 10, 0, "Código de obra" ,                                       "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "CCODOBR"   ,"C", 10, 0, "Código de dirección" ,                                       "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CCODTAR"   ,"C",  5, 0, "Código de tarifa" ,                                     "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CCODRUT"   ,"C",  4, 0, "Código de ruta" ,                                       "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CNUMPED"   ,"C", 12, 0, "Número del pedido" ,                                    "",                   "", "( cDbf )"} )

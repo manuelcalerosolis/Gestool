@@ -320,7 +320,7 @@ Function GenFCli( oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClien
    end with
 
    with object ( oBrwAlb:AddCol() )
-      :cHeader             := "Obra"
+      :cHeader             := "Dirección"
       :bEditValue          := {|| oDbfTmp:cCodObr }
       :nWidth              := 35
    end with

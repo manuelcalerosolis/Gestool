@@ -594,7 +594,7 @@ METHOD Activate( oMenuItem, oWnd, lStart )
    end with
 
    with object ( ::oBrw:AddCol() )
-      :cHeader          := "Obra"
+      :cHeader          := "Dirección"
       :cSortOrder       := "cCodObr"
       :lHide            := .t.
       :bStrData         := {|| ::oDbfTmp:cCodObr }

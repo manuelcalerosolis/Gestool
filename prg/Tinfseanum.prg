@@ -41,7 +41,7 @@ METHOD Create()
    ::AddField( "dFecDoc",  "D", 8, 0, {|| "@!" },     "Fecha",        .t., "Fecha del documento",   12, .f.  )
    ::AddField( "cCodCli",  "C",12, 0, {|| "@!" },     "Cod. Cli/Prv", .t., "Código del Cli/Prv",    15, .f.  )
    ::AddField( "cCliPrv",  "C",50, 0, {|| "@!" },     "Nom. Cli/Prv", .t., "Nombre del Cli/Prv",    50, .f.  )
-   ::AddField( "cCodObr",  "C",10, 0, {|| "@!" },     "Obra",         .t., "Obra",                  10, .f.  )
+   ::AddField( "cCodObr",  "C",10, 0, {|| "@!" },     "Dirección",         .t., "Dirección",                  10, .f.  )
 
    ::AddTmpIndex ( "dFecDoc", "dFecDoc" )
 

@@ -150,7 +150,7 @@ static aBase1     := {{"NNUMFAC"    ,"N",  9, 0, "Número del abono" },;
                      { "CCODPRV"    ,"C", 12, 0, "Codigo del proveedor" },;
                      { "CCODALM"    ,"C",  3, 0, "Codigo de almacen" },;
 							{ "CNOMPRV"    ,"C", 35, 0, "Nombre del proveedor" },;
-							{ "CDIRPRV"    ,"C", 35, 0, "Dirección del proveedor" },;
+							{ "CDIRPRV"    ,"C", 35, 0, "dirección del proveedor" },;
 							{ "CPOBPRV"    ,"C", 25, 0, "Población del proveedor" },;
 							{ "CPRVPRV"    ,"C", 20, 0, "Provincia del proveedor" },;
                      { "NCODPRV"    ,"N",  2, 0, "Número de provincia proveedor" },;

@@ -275,7 +275,7 @@ Function GenFacAlqCli( oBrw, aDbfBmp, dbfAlqCliT, dbfAlqCliL, dbfAlqCliP, dbfCli
                   "Fecha" ,;
                   "Cliente",;
                   cImp(),;
-                  "Obra",;
+                  "Dirección",;
                   "F. Pago",;
                   "Importe" ;
          JUSTIFY  .f., .f., .f., .f., .f., .f., .f., .f., .t. ;

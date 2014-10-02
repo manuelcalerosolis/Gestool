@@ -19,7 +19,7 @@
 #define _CCODALM             7      //,"C", 16, 0, "Codigo de almacen" },;
 #define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
 #define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
-#define _CDIRCLI            10      //,"C", 60, 0, "Dirección del cliente" },;
+#define _CDIRCLI            10      //,"C", 60, 0, "dirección del cliente" },;
 #define _CPOBCLI            11      //,"C", 25, 0, "Población del cliente" },;
 #define _CPRVCLI            12      //,"C", 20, 0, "Provincia del cliente" },;
 #define _NCODPROV           13      //,"N",  2, 0, "Número de provincia cliente" },;
@@ -31,7 +31,7 @@
 #define _CCODAGE            19      //,"C",  3, 0, "Codigo del agente" },;
 #define _CCODRUT            20      //,"C",  4, 0, "Codigo de la ruta" },;
 #define _CCODTAR            21      //,"C",  5, 0, "Codigo de la tarifa" },;
-#define _CCODOBR            22      //,"C",  3, 0, "Codigo de la obra" },;
+#define _CCODOBR            22      //,"C",  3, 0, "Codigo de la dirección" },;
 #define _NPCTCOMAGE         23      //,"N",  6, 2, "Porcentaje de comisión del agente" },;
 #define _LLIQUIDADA         24      //,"L",  1, 0, "Lógico de la liquidación" },;
 #define _LCONTAB            25      //,"L",  1, 0, "Lógico de la contabilización" },;
@@ -44,8 +44,8 @@
 #define _CCODPAGO           32      //,"C",  2, 0, "Codigo del tipo de pago" },;
 #define _NBULTOS            33      //,"N",  3, 0, "Número de bultos" },;
 #define _NPORTES            34      //,"N",  6, 0, "Valor de los portes" },;
-#define _NIVAMAN            35      //,"N",  6, 0, "Valor de la mano de obra" },;
-#define _NMANOBR            36      //,"N",  6, 0, "Valor de la mano de obra" },;
+#define _NIVAMAN            35      //,"N",  6, 0, "Valor de la mano de dirección" },;
+#define _NMANOBR            36      //,"N",  6, 0, "Valor de la mano de dirección" },;
 #define _CNUMFAC            37      //,"C", 12, 0, "Número de albaran" },;
 #define _NTIPOFAC           38      //,"N",  1, 0, "Número del tipo de factura" },;
 #define _CDTOESP            39      //,"N",  5, 2, "Porcentaje de descuento especial" },;
@@ -1502,7 +1502,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
                "Fecha",;
                "Código",;
                "Nombre",;
-               "Obra",;
+               "Dirección",;
                "Sesión",;
                "Agente",;
                "Pago";
@@ -1699,7 +1699,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
          :bEditValue       := {|| ( TDataView():FacturasRectificativas( nView ) )->cCodObr }
          :nWidth           := 50
@@ -1971,7 +1971,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
     DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
         NOBORDER ;
         ACTION   ( EdtObras( ( TDataView():FacturasRectificativas( nView ) )->cCodCli, ( TDataView():FacturasRectificativas( nView ) )->cCodObr, dbfObrasT ) );
-        TOOLTIP  "Modificar obra" ;
+        TOOLTIP  "Modificar dirección" ;
         FROM     oRotor ;
         CLOSED ;
 
@@ -8690,8 +8690,8 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&4. Modificar obra";
-               MESSAGE  "Modifica ficha de la obra" ;
+            MENUITEM    "&4. Modificar dirección";
+               MESSAGE  "Modifica ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
@@ -12526,7 +12526,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, {"CCODAGE"     ,"C",  3, 0, "Código del agente" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CCODRUT"     ,"C",  4, 0, "Código de la ruta" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CCODTAR"     ,"C",  5, 0, "Código de la tarifa" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODOBR"     ,"C", 10, 0, "Código de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODOBR"     ,"C", 10, 0, "Código de la dirección" ,                                   "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NPCTCOMAGE"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
    aAdd( aItmFacRec, {"LLIQUIDADA"  ,"L",  1, 0, "Lógico de la liquidación" ,                            "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"LCONTAB"     ,"L",  1, 0, "Lógico de la contabilización" ,                        "",                   "", "( cDbf )"} )

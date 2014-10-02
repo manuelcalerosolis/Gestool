@@ -1063,7 +1063,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
                "Fecha",;
                "Código",;
                "Nombre",;
-               "Obra",;
+               "Dirección",;
                "Agente",;
                "Entrada",;
                "Comercio electrónico";
@@ -1301,7 +1301,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
          :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cCodObr }
          :nWidth           := 50
@@ -1636,7 +1636,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
             ACTION   ( EdtObras( ( TDataView():PedidosClientes( nView ) )->cCodCli, ( TDataView():PedidosClientes( nView ) )->cCodObr, dbfObrasT ) );
-            TOOLTIP  "Modificar obra" ;
+            TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "NOTEBOOK_USER1_" OF oWndBrw ;
@@ -3949,7 +3949,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "Info16";
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&6. Modificar obra";
+            MENUITEM    "&6. Modificar dirección";
                MESSAGE  "Modifica la obra del documento" ;
                RESOURCE "Worker16";
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
@@ -5940,7 +5940,7 @@ static function ImpRec()
                      "Agente" ,;
                      "Ruta" ,;
                      "Almacen",;
-                     "Obra" ,;
+                     "Dirección" ,;
                      "Div.",;
                      "Importe " + cDivEmp();
          FIELDSIZES  80,;
@@ -15486,7 +15486,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "CDNICLI", "C",   30,  0, "DNI del cliente",                 "'@!'",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LMODCLI", "L",    1,  0, "Modificar datos del cliente",     "'@!'",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODAGE", "C",    3,  0, "Código del agente",               "",                   "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODOBR", "C",   10,  0, "Código de obra",                  "",                   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODOBR", "C",   10,  0, "Código de dirección",                  "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODTAR", "C",    5,  0, "Código de tarifa",                "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODALM", "C",   16,  0, "Código del almacen",              "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODCAJ", "C",    3,  0, "Código de caja",                  "",                   "", "( cDbf )", nil } )

@@ -1150,7 +1150,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
                "Cajero",;
                "Código",;
                "Nombre",;
-               "Obra",;
+               "Dirección",;
                "Sesión" ;
       MRU      "Cashier_user1_16";
       BITMAP   clrTopTPV ;
@@ -1293,7 +1293,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
          :bEditValue       := {|| ( dbfTikT )->cCodObr }
          :nWidth           := 40
@@ -3705,7 +3705,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          end if
 
          if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. Empty( aTmp[ _CCODOBR ] )
-            MsgStop( "Debe de introducir una obra", "Imposible archivar como factura" )
+            MsgStop( "Debe de introducir una dirección", "Imposible archivar como factura" )
             aGet[ _CCODOBR ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
@@ -3758,7 +3758,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          end if
 
          if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. Empty( aTmp[ _CCODOBR ] )
-            MsgStop( "Debe de introducir una obra", "Imposible archivar como albarán" )
+            MsgStop( "Debe de introducir una dirección", "Imposible archivar como albarán" )
             aGet[ _CCODOBR ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
@@ -11428,7 +11428,7 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
       end if
 
       if lObras() .and. Empty( aTmp[ _CCODOBR ] ) .and. lChgCodCli
-         msgWait( "Introduzca la obra", "Info", 0 )
+         msgWait( "Introduzca la dirección", "Info", 0 )
          aGet[ _CCODOBR ]:SetFocus()
       end if
 
@@ -18081,7 +18081,7 @@ function aItmTik()
    aAdd( aItmTik, { "cCodAge",  "C",      3,     0, "Código del agente" }                                     )
    aAdd( aItmTik, { "cCodRut",  "C",      4,     0, "Código de la ruta" }                                     )
    aAdd( aItmTik, { "cCodTar",  "C",      5,     0, "Código de la tarifa" }                                   )
-   aAdd( aItmTik, { "cCodObr",  "C",     10,     0, "Código de la obra" }                                     )
+   aAdd( aItmTik, { "cCodObr",  "C",     10,     0, "Código de la dirección" }                                     )
    aAdd( aItmTik, { "nComAge",  "N",      6,     2, "Porcentaje de comisión del agente" }                     )
    aAdd( aItmTik, { "lLiqTik",  "L",      1,     0, "Tiket liquidado" }                                       )
    aAdd( aItmTik, { "cCodPro",  "C",      9,     0, "Código de proyecto en contabilidad"}                     )

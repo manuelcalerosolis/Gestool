@@ -644,7 +644,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
                "Fecha",;
                "Código",;
                "Nombre",;
-               "Obra";
+               "Dirección";
       MRU      "Document_money2_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfAntCliT );
@@ -817,7 +817,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
          :bEditValue       := {|| ( dbfAntCliT )->cCodObr }
          :nWidth           := 40
@@ -1081,7 +1081,7 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
       DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( dbfAntCliT )->cCodCli, ( dbfAntCliT )->cCodObr, dbfObrasT ) );
-         TOOLTIP  "Modificar obra" ;
+         TOOLTIP  "Modificar dirección" ;
          FROM     oRotor ;
          CLOSED ;
 
@@ -4359,8 +4359,8 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&4. Modificar obra";
-               MESSAGE  "Modifica ficha de la obra" ;
+            MENUITEM    "&4. Modificar dirección";
+               MESSAGE  "Modifica ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
@@ -5142,7 +5142,7 @@ function aItmAntCli()
    aAdd( aItmAntCli, {"lMayor"      ,"L",  1, 0, "Lógico de mayorista" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cCodAge"     ,"C",  3, 0, "Código del agente" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"cCodRut"     ,"C",  4, 0, "Código de la ruta" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAntCli, {"cCodObr"     ,"C", 10, 0, "Código de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodObr"     ,"C", 10, 0, "Código de la dirección" ,                                   "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nPctComAge"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
    aAdd( aItmAntCli, {"lLiquidada"  ,"L",  1, 0, "Lógico de la liquidación" ,                            "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"dLiquidada"  ,"D",  8, 0, "Fecha de la liquidación" ,                             "",                   "", "( cDbf )"} )

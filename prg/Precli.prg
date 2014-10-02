@@ -1287,7 +1287,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Fecha",;
                "Código",;
                "Nombre",;
-               "Obra",;
+               "Dirección",;
                "Agente";
       MRU      "Notebook_user1_16";
       BITMAP   clrTopArchivos ;
@@ -1457,7 +1457,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
          :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cCodObr }
          :nWidth           := 50
@@ -1716,7 +1716,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
             ACTION   ( if( !Empty( ( TDataView():PresupuestosClientes( nView ) )->cCodObr ), EdtObras( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, ( TDataView():PresupuestosClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al presupuesto" ) ) );
-            TOOLTIP  "Modificar obra" ;
+            TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
@@ -3159,8 +3159,8 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código cliente vacío" ) ) );
 
-            MENUITEM    "&4. Modificar obra";
-               MESSAGE  "Modificar ficha de la obra" ;
+            MENUITEM    "&4. Modificar dirección";
+               MESSAGE  "Modificar ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) )
 
@@ -10083,7 +10083,7 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "CDNICLI",   "C", 30,  0, "DNI del cliente",                 "'@!'",               "", "( cDbf )"} )
    aAdd( aItmPreCli, { "LMODCLI",   "L",  1,  0, "Modificar datos del cliente",     "",                   "", "( cDbf )"} )
    aAdd( aItmPreCli, { "CCODAGE",   "C",  3,  0, "Código del agente",               "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODOBR",   "C", 10,  0, "Código de obra",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmPreCli, { "CCODOBR",   "C", 10,  0, "Código de dirección",                  "",                   "", "( cDbf )"} )
    aAdd( aItmPreCli, { "CCODTAR",   "C",  5,  0, "Código de tarifa",                "",                   "", "( cDbf )"} )
    aAdd( aItmPreCli, { "CCODALM",   "C", 16,  0, "Código del almacen",              "",                   "", "( cDbf )"} )
    aAdd( aItmPreCli, { "CCODCAJ",   "C",  3,  0, "Código de caja",                  "",                   "", "( cDbf )"} )

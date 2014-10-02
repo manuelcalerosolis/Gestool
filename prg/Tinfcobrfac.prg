@@ -32,8 +32,8 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField ( "cCodObr", "C", 18, 0, {|| "@!" },         "Obra",                      .f., "Código obra",            14 )
-   ::AddField ( "cNomObr", "C", 50, 0, {|| "@!" },         "Nom.obra",                  .f., "Nombre obra",            20 )
+   ::AddField ( "cCodObr", "C", 18, 0, {|| "@!" },         "Dirección",                      .f., "Código dirección",            14 )
+   ::AddField ( "cNomObr", "C", 50, 0, {|| "@!" },         "Nom.obra",                  .f., "Nombre dirección",            20 )
    ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },         "Cod. artículo",             .t., "Código artículo",        14 )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },         "Descripción",               .t., "Nombre artículo",        32 )
    ::FldPropiedades()

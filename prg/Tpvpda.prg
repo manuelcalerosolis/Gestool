@@ -2870,7 +2870,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig )
       end if
 
       if Empty( aTmp[ _CDIRCLI ] ) .and. !( "GA" $ oWnd():Cargo )
-         msgStop( "Dirección de cliente no puede estar vacia." )
+         msgStop( "dirección de cliente no puede estar vacia." )
          return .f.
       end if
 
@@ -2891,7 +2891,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig )
       end if
 
       if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. Empty( aTmp[ _CCODOBR ] )
-         MsgStop( "Debe de introducir una obra", "Imposible archivar como factura" )
+         MsgStop( "Debe de introducir una dirección", "Imposible archivar como factura" )
          aGet[ _CCODOBR ]:SetFocus()
          return .f.
       end if
@@ -2933,7 +2933,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig )
       end if
 
       if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. Empty( aTmp[ _CCODOBR ] )
-         MsgStop( "Debe de introducir una obra", "Imposible archivar como albarán" )
+         MsgStop( "Debe de introducir una dirección", "Imposible archivar como albarán" )
          aGet[ _CCODOBR ]:SetFocus()
          return .f.
       end if
@@ -10363,7 +10363,7 @@ Static Function loaCli( aGet, aTmp, nMode, oTlfCli )
       end if
 
       if lObras() .and. Empty( aTmp[ _CCODOBR ] ) .and. lChgCodCli
-         msgWait( "Introduzca la obra", "Info", 0 )
+         msgWait( "Introduzca la dirección", "Info", 0 )
          aGet[ _CCODOBR ]:SetFocus()
       end if
 
@@ -11841,8 +11841,8 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) );
 
-            MENUITEM    "&3. Modificar obra";
-               MESSAGE  "Modificar ficha de la obra" ;
+            MENUITEM    "&3. Modificar dirección";
+               MESSAGE  "Modificar ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) )
 
@@ -15219,7 +15219,7 @@ function aItmTik()
    aAdd( aItmTik , { "cCliTik",  "C",     12,     0, "Código del cliente" }                          )
    aAdd( aItmTik , { "nTarifa",  "N",      1,     0, "Tarifa de precios" }                           )
    aAdd( aItmTik , { "cNomTik",  "C",     80,     0, "Nombre del cliente" }                          )
-   aAdd( aItmTik , { "cDirCli",  "C",    100,     0, "Dirección del cliente" }                       )
+   aAdd( aItmTik , { "cDirCli",  "C",    100,     0, "dirección del cliente" }                       )
    aAdd( aItmTik , { "cPobCli",  "C",     35,     0, "Población del cliente" }                       )
    aAdd( aItmTik , { "cPrvCli",  "C",     20,     0, "Provincia del cliente" }                       )
    aAdd( aItmTik , { "nCodProv", "N",      2,     0, "Número de provincia cliente" }                 )
@@ -15240,7 +15240,7 @@ function aItmTik()
    aAdd( aItmTik , { "cCodAge",  "C",      3,     0, "Código del agente" }                           )
    aAdd( aItmTik , { "cCodRut",  "C",      4,     0, "Código de la ruta" }                           )
    aAdd( aItmTik , { "cCodTar",  "C",      5,     0, "Código de la tarifa" }                         )
-   aAdd( aItmTik , { "cCodObr",  "C",     10,     0, "Código de la obra" }                           )
+   aAdd( aItmTik , { "cCodObr",  "C",     10,     0, "Código de la dirección" }                           )
    aAdd( aItmTik , { "nComAge",  "N",      6,     2, "Porcentaje de comisión del agente" }           )
    aAdd( aItmTik , { "lLiqTik",  "L",      1,     0, "Tiket liquidado" }                             )
    aAdd( aItmTik , { "cCodPro",  "C",      9,     0, "Código de proyecto en contabilidad"}           )

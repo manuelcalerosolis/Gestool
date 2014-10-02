@@ -2177,7 +2177,7 @@ METHOD lGrupoObra( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoObra                  := TRGroup():New( {|| ::oDbf:cCodObra }, {|| "Obra : " + AllTrim( ::oDbf:cCodObra ) + " - " + AllTRim( ::oDbf:cNomObra ) }, {|| "Total obra : " + ::oDbf:cCodObra }, {|| 3 }, ::lSalto )
 
    ::oGrupoObra:Cargo            := TItemGroup()
-   ::oGrupoObra:Cargo:Nombre     := "Obra"
+   ::oGrupoObra:Cargo:Nombre     := "Dirección"
    ::oGrupoObra:Cargo:Expresion  := "cCodObra"
    ::oGrupoObra:Cargo:Todos      := .t.
    ::oGrupoObra:Cargo:Desde      := Space( 10 )

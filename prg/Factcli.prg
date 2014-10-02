@@ -28,7 +28,7 @@
 #define _CCODALM             7      //,"C", 16, 0, "Codigo de almacen" },;
 #define _CCODCAJ             8      //,"C",  3, 0, "Codigo de almacen" },;
 #define _CNOMCLI             9      //,"C", 50, 0, "Nombre del cliente" },;
-#define _CDIRCLI            10      //,"C", 60, 0, "Dirección del cliente" },;
+#define _CDIRCLI            10      //,"C", 60, 0, "dirección del cliente" },;
 #define _CPOBCLI            11      //,"C", 25, 0, "Población del cliente" },;
 #define _CPRVCLI            12      //,"C", 20, 0, "Provincia del cliente" },;
 #define _NCODPROV           13      //,"N",  2, 0, "Número de provincia cliente" },;
@@ -40,7 +40,7 @@
 #define _CCODAGE            19      //,"C",  3, 0, "Codigo del agente" },;
 #define _CCODRUT            20      //,"C",  4, 0, "Codigo de la ruta" },;
 #define _CCODTAR            21      //,"C",  5, 0, "Codigo de la tarifa" },;
-#define _CCODOBR            22      //,"C",  3, 0, "Codigo de la obra" },;
+#define _CCODOBR            22      //,"C",  3, 0, "Codigo de la dirección" },;
 #define _NPCTCOMAGE         23      //,"N",  6, 2, "Porcentaje de comisión del agente" },;
 #define _LLIQUIDADA         24      //,"L",  1, 0, "Lógico de la liquidación" },;
 #define _LCONTAB            25      //,"L",  1, 0, "Lógico de la contabilización" },;
@@ -53,8 +53,8 @@
 #define _CCODPAGO           32      //,"C",  2, 0, "Codigo del tipo de pago" },;
 #define _NBULTOS            33      //,"N",  3, 0, "Número de bultos" },;
 #define _NPORTES            34      //,"N",  6, 0, "Valor de los portes" },;
-#define _NIVAMAN            35      //,"N",  6, 0, "IvaValor de la mano de obra" },;
-#define _NMANOBR            36      //,"N",  6, 0, "Valor de la mano de obra" },;
+#define _NIVAMAN            35      //,"N",  6, 0, "IvaValor de la mano de dirección" },;
+#define _NMANOBR            36      //,"N",  6, 0, "Valor de la mano de dirección" },;
 #define _CNUMALB            37      //,"C", 12, 0, "Número de albaran" },;
 #define _CNUMPED            38      //,"C", 12, 0, "Número de pedido
 #define _CNUMPRE            39      //,"C", 12, 0, "Número de presupuesto
@@ -635,7 +635,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
                "Código",;
                "Nombre",;
                "Población",;
-               "Obra",;
+               "Dirección",;
                "Agente",;
                "Sesión",;
                "NFC",;
@@ -904,7 +904,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
          :bEditValue       := {|| ( TDataView():FacturasClientes( nView ) )->cCodObr }
          :nWidth           := 40
@@ -1229,7 +1229,7 @@ end if
       DEFINE BTNSHELL RESOURCE "WORKER" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( EdtObras( ( TDataView():FacturasClientes( nView ) )->cCodCli, ( TDataView():FacturasClientes( nView ) )->cCodObr, dbfObrasT ) );
-         TOOLTIP  "Modificar obra" ;
+         TOOLTIP  "Modificar dirección" ;
          FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "NOTEBOOK_USER1_" OF oWndBrw ;
@@ -9595,8 +9595,8 @@ Static Function EdtRecMenu( aTmp, oDlg )
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&8. Modificar obra";
-               MESSAGE  "Modifica ficha de la obra" ;
+            MENUITEM    "&8. Modificar dirección";
+               MESSAGE  "Modifica ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
@@ -9862,7 +9862,7 @@ Return ( nil )
                   "Agente" ,;
                   "Ruta" ,;
                   "Almacén",;
-                  "Obra" ,;
+                  "Dirección" ,;
                   "Div.",;
                   "Importe " + cDivEmp() ;
          FIELDSIZES ;
@@ -10726,7 +10726,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Fecha en juliano 4 meses",                        "CallHbFunc('dJuliano4FacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                   "CallHbFunc('nNoIncUFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
-   oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
+   oFr:AddVariable(     "Lineas de facturas",   "dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
    oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             				"CallHbFunc('nStockLineaFasCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             					   "CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
 
@@ -16644,7 +16644,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader          := "Obra"
+         :cHeader          := "Dirección"
          :bEditValue       := {|| Rtrim( aNumalb[ oBrwLin:nArrayAt, 7 ] ) + Space(1) + aNumalb[ oBrwLin:nArrayAt, 8 ] }
          :nWidth           := 220
       end with
@@ -20017,7 +20017,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"CCODAGE"     ,"C",  3, 0, "Código del agente" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CCODRUT"     ,"C",  4, 0, "Código de la ruta" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CCODTAR"     ,"C",  5, 0, "Código de la tarifa" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CCODOBR"     ,"C", 10, 0, "Código de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CCODOBR"     ,"C", 10, 0, "Código de la dirección" ,                                   "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NPCTCOMAGE"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
    aAdd( aItmFacCli, {"LLIQUIDADA"  ,"L",  1, 0, "Lógico de la factura pagada" ,                         "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"LCONTAB"     ,"L",  1, 0, "Lógico de la factura contabilizada" ,                  "",                   "", "( cDbf )"} )

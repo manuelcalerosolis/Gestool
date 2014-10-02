@@ -43,8 +43,8 @@ METHOD Create()
    ::AddField( "cNomTrans","C", 50, 0, {|| "@!" },  "Nom. trans.",       .f., "Transportista",      40, .f. )
    ::AddField( "cCodGCli", "C",  4, 0, {|| "@!" },  "G. cliente",        .f., "Grupo cliente",       5, .f. )
    ::AddField( "cNomGCli", "C", 30, 0, {|| "@!" },  "G. cliente",        .f., "Grupo cliente",      40, .f. )
-   ::AddField( "cCodObra", "C", 10, 0, {|| "@!" },  "Cod. obra",         .f., "Código obra",         5, .f. )
-   ::AddField( "cNomObra", "C", 50, 0, {|| "@!" },  "Nom. obra",         .f., "Nombre obra",        40, .f. )
+   ::AddField( "cCodObra", "C", 10, 0, {|| "@!" },  "Cod. dirección",         .f., "Código dirección",         5, .f. )
+   ::AddField( "cNomObra", "C", 50, 0, {|| "@!" },  "Nom. dirección",         .f., "Nombre dirección",        40, .f. )
    ::FldDiario()
 
 RETURN ( self )
@@ -204,7 +204,7 @@ METHOD lGenerate()
    end if
 
    if ::oGrupoCliente:Cargo:Desde == ::oGrupoCliente:Cargo:Hasta .and. !::oGrupoObra:Cargo:Todos
-      aAdd( ::aHeader, {|| Padr( "Obra", 13 ) + ": " + AllTrim( ::oGrupoObra:Cargo:Desde ) + " > " + AllTrim( ::oGrupoObra:Cargo:Hasta ) } )
+      aAdd( ::aHeader, {|| Padr( "Dirección", 13 ) + ": " + AllTrim( ::oGrupoObra:Cargo:Desde ) + " > " + AllTrim( ::oGrupoObra:Cargo:Hasta ) } )
    end if
 
    if !::oGrupoAgente:Cargo:Todos

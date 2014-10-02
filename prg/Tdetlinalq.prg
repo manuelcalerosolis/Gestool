@@ -40,8 +40,8 @@ METHOD Create()
    ::AddField( "cNomTrans","C",50, 0, {|| "@!" },        "Nom. trans.",                .f., "Transportista",               40, .f. )
    ::AddField( "cCodGCli","C",  4, 0, {|| "@!" },        "G. cliente",                 .f., "Grupo cliente",                5, .f. )
    ::AddField( "cNomGCli","C", 30, 0, {|| "@!" },        "G. cliente",                 .f., "Grupo cliente",               40, .f. )
-   ::AddField( "cCodObra","C", 10, 0, {|| "@!" },        "Cod. obra",                  .f., "Código obra",                  5, .f. )
-   ::AddField( "cNomObra","C", 50, 0, {|| "@!" },        "Nom. obra",                  .f., "Nombre obra",                 40, .f. )
+   ::AddField( "cCodObra","C", 10, 0, {|| "@!" },        "Cod. dirección",                  .f., "Código dirección",                  5, .f. )
+   ::AddField( "cNomObra","C", 50, 0, {|| "@!" },        "Nom. dirección",                  .f., "Nombre dirección",                 40, .f. )
    ::FldCliente()
    ::AddField( "cCodFam", "C", 16, 0, {|| "@!" },        "Cod. fam.",                  .f., "Cod. familia",                 3, .f. )
    ::AddField( "cNomFam", "C", 40, 0, {|| "@!" },        "Familia",                    .f., "Nombre familia",              15, .f. )
@@ -237,7 +237,7 @@ METHOD lGenerate()
    end if
 
    if ::oGrupoCliente:Cargo:Desde == ::oGrupoCliente:Cargo:Hasta .and. !::oGrupoObra:Cargo:Todos
-      aAdd( ::aHeader, {|| Padr( "Obra", 13 ) + ": " + AllTrim( ::oGrupoObra:Cargo:Desde ) + " > " + AllTrim( ::oGrupoObra:Cargo:Hasta ) } )
+      aAdd( ::aHeader, {|| Padr( "Dirección", 13 ) + ": " + AllTrim( ::oGrupoObra:Cargo:Desde ) + " > " + AllTrim( ::oGrupoObra:Cargo:Hasta ) } )
    end if
 
    if !::oGrupoAgente:Cargo:Todos

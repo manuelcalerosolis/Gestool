@@ -367,7 +367,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfPromoT, oBrw, bWhen, bValid, nMode )
 						Trans( (dbfTmp2)->NDTOPRO, "@E 999,99" ),;
 						Trans( (dbfTmp2)->NCOMAGE, "@E 999,99" );
          HEAD     "Cliente",;
-						"Cod. Obra",;
+						"Cod. dirección",;
 						"% Dto. Prm.",;
 						"% Com. Age.";
 			FIELDSIZES;
@@ -403,7 +403,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfPromoT, oBrw, bWhen, bValid, nMode )
          end with
 
          with object ( oBrw3:AddCol() )
-            :cHeader          := "Obra"
+            :cHeader          := "Dirección"
             :bStrData         := {|| ( dbfTmp2 )->cCodObr }
             :nWidth           := 40
          end with
@@ -1416,7 +1416,7 @@ FUNCTION aCliPrm()
 
    aAdd( aCliPrm, { "CCODPRO",   "C",    5,    0, "Código de la promoción" }  )
    aAdd( aCliPrm, { "CCODCLI",   "C",   12,    0, "Código del cliente" }      )
-   aAdd( aCliPrm, { "CCODOBR",   "C",   10,    0, "Código de la obra" }       )
+   aAdd( aCliPrm, { "CCODOBR",   "C",   10,    0, "Código de la dirección" }       )
    aAdd( aCliPrm, { "NDTOPRO",   "N",    5,    2, "" }                        )
    aAdd( aCliPrm, { "NCOMAGE",   "N",    5,    2, "" }                        )
 

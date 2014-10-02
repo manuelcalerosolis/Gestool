@@ -283,7 +283,7 @@ FUNCTION EdtObras( cCodCli, cCodObr, dbfObrasT, oBrw, lControl )
       if ( dbfObrasT )->( dbSeek( cCodCli + cCodObr ) )
          WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli )
       else
-         MsgStop( "No se encuentra la obra" )
+         MsgStop( "No se encuentra la dirección" )
       end if
 
    end if
