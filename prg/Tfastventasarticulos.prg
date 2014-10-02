@@ -604,7 +604,7 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
                                                                               ::FastReportRectificativaProveedor() } },;
-                     "Por artículo" =>                {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
+                     "Por artículo" =>                {  "Generate" =>  {||   ::AddArticulo( .t., .t. ) },;
                                                          "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } },;
                      "Por stocks" =>                  {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
@@ -1985,9 +1985,10 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
+METHOD AddArticulo( lStock, lCeroUnd ) CLASS TFastVentasArticulos
 
    DEFAULT lStock          := .f.
+   DEFAULT lCeroUnd        := .f.
 
    ::oDbfArt:OrdClearScope()   
 
@@ -2028,7 +2029,11 @@ METHOD AddArticulo( lStock ) CLASS TFastVentasArticulos
       // Añadimos los stocks---------------------------------------------------
 
       if ::InsertIfValid() .and. lStock
-         ::oStock:SaveStockArticulo( ::oDbfArt:Codigo, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
+         if lCeroUnd
+            ::oStock:SaveAllStockArticulo( ::oDbfArt:Codigo, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
+         else
+            ::oStock:SaveStockArticulo( ::oDbfArt:Codigo, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
+         end if
       end if
 
       // Siguiente-------------------------------------------------------------

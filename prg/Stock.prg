@@ -281,6 +281,7 @@ CLASS TStock
    METHOD InsertStockPendiente()
 
    METHOD SaveStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
+   METHOD SaveAllStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
    
    METHOD nUnidadesInStock()  
    METHOD nPendientesRecibirInStock()  
@@ -2317,6 +2318,24 @@ RETURN ( lDup )
    RETURN ( Self )
 
    //---------------------------------------------------------------------------//
+
+   METHOD SaveAllStockArticulo( cCodArt, cAlmcenOrigen, cAlmacenDestino, dFechaInicio, dFechaFin )
+
+      local aStock
+
+      for each aStock in ::aStockArticulo( cCodArt, , , , , dFechaInicio, dFechaFin ) 
+
+         if ( Empty( cAlmcenOrigen )     .or. rtrim( aStock:cCodigoAlmacen ) >= rtrim( cAlmcenOrigen )   ) .and. ;
+            ( Empty( cAlmacenDestino )   .or. rtrim( aStock:cCodigoAlmacen ) <= rtrim( cAlmacenDestino ) ) 
+
+            aStock:Save( ::oDbfStock )
+         
+         end if 
+      
+      next 
+
+   RETURN ( Self )
+
 
    METHOD nUnidadesInStock()  
          
