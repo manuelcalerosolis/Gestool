@@ -6131,7 +6131,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Redimensionamos y activamos el diálogo------------------------------------- 
    	*/
 
-   	oDlg:bResized  				:= {|| GridResize( oDlg ) }
+   	oDlg:bResized  				:= {|| GridResize( oDlg ) }  
 
    	ACTIVATE DIALOG oDlg CENTER ;
       ON INIT     ( GridMaximize( oDlg ) )
