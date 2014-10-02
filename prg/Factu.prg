@@ -1013,9 +1013,9 @@ Function lStartCheck()
 
    // Test de BrwClient--------------------------------------------------------
 
-#ifndef __XHARBOUR__
+/*#ifndef __XHARBOUR__
    GridBrwObras() 
-#endif
+#endif*/
 
    // Lanzamos para los documentos automáticos---------------------------------
 
@@ -2490,7 +2490,7 @@ Function CreateAcceso( oWnd )
    // Ventas-------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 8
+   oGrupo:nBigItems     := 9
    oGrupo:cPrompt       := 'Ventas'
    oGrupo:cLittleBitmap := "Document_user1_16"
    oGrupo:cBigBitmap    := "Document_user1_32"
