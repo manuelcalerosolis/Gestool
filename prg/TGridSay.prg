@@ -572,12 +572,15 @@ END CLASS
 
 METHOD ReAdjust()
 
-   local nRow     := if( !empty(::bRow), eval(::bRow), ::nTop )
-   local nLeft    := if( !empty(::bCol), eval(::bCol), ::nLeft )
-   local nWidth   := if( !empty(::bWidth), eval(::bWidth), ::nWidth )
-   local nHeight  := if( !empty(::bHeight), eval(::bHeight), ::nHeight )
+   local nRow     
+   local nLeft    
+   local nWidth   
+   local nHeight  
 
-   msgAlert( nHeight, "nHeight" )
+   nRow     		:= if( !empty(::bRow), eval(::bRow), ::nTop )
+   nLeft    		:= if( !empty(::bCol), eval(::bCol), ::nLeft )
+   nWidth   		:= if( !empty(::bWidth), eval(::bWidth), ::nWidth )
+   nHeight  		:= if( !empty(::bHeight), eval(::bHeight), ::nHeight )
 
    ::Move( nRow, nLeft, nWidth, nHeight )  
 

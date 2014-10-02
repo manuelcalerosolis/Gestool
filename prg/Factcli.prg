@@ -6350,7 +6350,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
     	oBrwIva:nTop            := oBrwIva:EvalRow( 130 )
    	oBrwIva:nLeft           := oBrwIva:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    	oBrwIva:nWidth          := oBrwIva:EvalWidth( {|| GridWidth( 11, oDlg ) } )
-   	oBrwIva:nHeight         := 5
+   	oBrwIva:nHeight         := oBrwIva:EvalHeight( {|| 266 } )
 
     oBrwIva:SetArray( aTotIva, , , .f. )
 
@@ -6365,7 +6365,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
         else
            	:bStrData      	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
         end if
-        :nWidth           	:= 95
+        :nWidth           	:= 200
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
     end with
@@ -6374,7 +6374,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
         :cHeader       		:= "%" + cImp()
         :bStrData      		:= {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), aTotIva[ oBrwIva:nArrayAt, 3 ], "" ) }
         :bEditValue    		:= {|| aTotIva[ oBrwIva:nArrayAt, 3 ] }
-        :nWidth        		:= 78
+        :nWidth        		:= 180
         :cEditPicture  		:= "@E 999.99"
         :nDataStrAlign 		:= 1
         :nHeadStrAlign 		:= 1
@@ -6384,7 +6384,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
     with object ( oBrwIva:AddCol() )
         :cHeader          	:= cImp()
         :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 8 ], cPorDiv ), "" ) }
-        :nWidth           	:= 76
+        :nWidth           	:= 180
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
     end with
@@ -6392,7 +6392,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
     with object ( oBrwIva:AddCol() )
         :cHeader          	:= "% R.E."
         :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 999.99"), "" ) }
-        :nWidth           	:= 78
+        :nWidth           	:= 180
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
     end with
@@ -6400,25 +6400,22 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
     with object ( oBrwIva:AddCol() )
         :cHeader          	:= "R.E."
         :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ),    "" ) }
-        :nWidth           	:= 76
+        :nWidth           	:= 180
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
     end with
 
-    oBrwIva:nHeaderHeight  	:= 48
+    	oBrwIva:nHeaderHeight  	:= 48
    	oBrwIva:nFooterHeight  	:= 48
    	oBrwIva:nRowHeight     	:= 48
 
    	oBrwIva:CreateFromCode()
 
-   	/*
-	Redimensionamos y activamos el diálogo------------------------------------- 
-   	*/
+		// Redimensionamos y activamos el diálogo------------------------------------- 
 
    	oDlg:bResized  				:= {|| GridResize( oDlg ) }
 
-   	ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT     ( GridMaximize( oDlg ) )
+   	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
    
 RETURN ( oDlg:nResult == IDOK )
 
@@ -11631,11 +11628,11 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
          if Empty( aTmp[ _CSERIE ] )
 
             if !Empty( ( TDataView():Clientes( nView ) )->Serie )
-				if !Empty( aGet[ _CSERIE ] )               
-               		aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
-               	else
-               		aTmp[ _CSERIE ]	:= ( TDataView():Clientes( nView ) )->Serie
-               	end if	
+					if !Empty( aGet[ _CSERIE ] )               
+               	aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+               else
+               	aTmp[ _CSERIE ]	:= ( TDataView():Clientes( nView ) )->Serie
+               end if	
             end if
 
          else
@@ -13559,17 +13556,21 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
       return nil
    end if
 
-   if Empty( aTmp[ _CALMLIN ] )
+   if Empty( aTmp[ _CALMLIN ] ) .and. !empty( aGet[ _CALMLIN ] )
+      
       MsgStop( "Código de almacen no puede estar vacio" )
-      aGet[ _CALMLIN ]:SetFocus()
+
+	  	aGet[ _CALMLIN ]:SetFocus()
+
       Return nil
+
    end if
 
-   	if !Empty( aGet[ _CALMLIN ] )
-   		if !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
-      	Return nil
-   		end if
-   	end if	
+	if !Empty( aGet[ _CALMLIN ] )
+		if !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
+   		Return nil
+		end if
+	end if	
 
    /*
    Comprobamos si tiene que introducir números de serie------------------------
@@ -13577,7 +13578,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], dbfArticulo, "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
       MsgStop( "Tiene que introducir números de serie para este artículo." )
-      oBtnSer:Click()
+      if !empty( oBtnSer )
+	      oBtnSer:Click()
+	   end if 
       Return nil
    end if
 
