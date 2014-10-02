@@ -5534,7 +5534,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       		aTmp[ _CCODUSR    ]  := cCurUsr()
       		aTmp[ _DFECIMP    ]  := Ctod("")
       		aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
-      		aTmp[ _LIVAINC    ]  := .t.
+      		aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
       		aTmp[ _CMANOBR    ]  := Padr( "Gastos", 250 )
       		aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
       		aTmp[ _NENTINI    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nEntIni" )
@@ -11633,7 +11633,11 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
          if Empty( aTmp[ _CSERIE ] )
 
             if !Empty( ( TDataView():Clientes( nView ) )->Serie )
-               aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+				if !Empty( aGet[ _CSERIE ] )               
+               		aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+               	else
+               		aTmp[ _CSERIE ]	:= ( TDataView():Clientes( nView ) )->Serie
+               	end if	
             end if
 
          else
@@ -11641,7 +11645,12 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
             if !Empty( ( TDataView():Clientes( nView ) )->Serie )               .and.;
                aTmp[ _CSERIE ] != ( TDataView():Clientes( nView ) )->Serie      .and.;
                ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
-               aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+               
+               	if !Empty( aGet[ _CSERIE ] )
+               		aGet[ _CSERIE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+               	else
+               		aTmp[ _CSERIE ]	:= ( TDataView():Clientes( nView ) )->Serie
+               	end if	
             end if
 
          end if
