@@ -2551,16 +2551,22 @@ Return nil*/
 
 //----------------------------------------------------------------------------//
 
-function aDocs( cCodDoc, dbfDoc )
+function aDocs( cCodDoc, dbfDoc, lIncNoImp )
 
    local aDocs := {}
    local nOrd  := ( dbfDoc )->( OrdSetFocus( "cTipo" ) )
+
+   DEFAULT lIncNoImp    := .f.
 
    if !( dbfDoc )->( dbSeek( cCodDoc ) )
 
       aAdd( aDocs, "    - No hay documentos" )
 
    else
+
+      if lIncNoImp 
+            aAdd( aDocs, "No imprimir" )
+      end if
 
       while ( dbfDoc )->cTipo == cCodDoc .and. !( dbfDoc )->( eof() )
 

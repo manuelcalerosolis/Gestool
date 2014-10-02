@@ -6131,7 +6131,8 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Redimensionamos y activamos el diálogo------------------------------------- 
    	*/
 
-   	oDlg:bResized  				:= {|| GridResize( oDlg ) }  
+   	oDlg:bResized  				:= {|| GridResize( oDlg ) }
+   	oDlg:bStart 				:= {|| aGet[ _CREF ]:SetFocus() }  
 
    	ACTIVATE DIALOG oDlg CENTER ;
       ON INIT     ( GridMaximize( oDlg ) )
@@ -6149,7 +6150,6 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
 	local oSayCliente
 	local oSayDireccion
 	local oSayImpresion
-	local oSayTotal
 	local oCodCliente
 	local cCodCliente 	:= aGet[ _CCODCLI ]:VarGet()
 	local oNomCliente
@@ -6162,7 +6162,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
 	local oBtnSalir
 	local oCbxOrd
 	local cCbxOrd 		:= "No imprimir"
-	local aCbxOrd 		:= { "No imprimir", "Opción 1", "Opción 2", "Opción 3" }
+	local aCbxOrd 		:= aDocs( "FC", dbfDoc, .t. )
 
 	/*
 	Comprobamos que el cliente no esté vacío-----------------------------------
@@ -6177,7 +6177,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
 	Comprobamos que el documento tenga líneas----------------------------------
 	*/
 
-	if ( dbfTmpLin )->( eof() )
+	if ( dbfTmpLin )->( OrdKeyCount() ) <= 0
       	MsgStop( "No puede almacenar un documento sin lineas." )
       	return .f.
    	end if
@@ -6293,61 +6293,14 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bWhen" 	=> {|| .f. },;
                                           			"nHeight"   => nAltoGet } )
+   	
    	/*
-	Total de factura-----------------------------------------------------------
+   	Desglose de I.V.A.---------------------------------------------------------
    	*/
-
-
-   	oSayTotal		:= TGridSay():Build(    { 		"nRow"      => 90,;
-                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             		"bText"     => {|| "Total factura: " },;
-                                             		"oWnd"      => oDlg,;
-                                             		"oFont"     => oGridFont(),;
-                                             		"lPixels"   => .t.,;
-                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
-                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                             		"nHeight"   => nAltoGet,;
-                                             		"lDesign"   => .f. } )
-
-   	oGetTotal 		:= TGridGet():Build(    	{ 	"nRow"      => 90,;
-                                          			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
-                                          			"bSetGet"   => {|u| if( PCount() == 0, nTotFac, nTotFac := u ) },;
-                                          			"oWnd"      => oDlg,;
-                                          			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                          			"lPixels" 	=> .t.,;
-                                          			"lRight"    => .t.,;
-                                          			"bWhen" 	=> {|| .f. },;
-                                          			"nHeight"   => nAltoGet } )
-   	/*
-	Opciones de impresión------------------------------------------------------
-   	*/
-
-   	oSayImpresion    	:= TGridSay():Build(    { 	"nRow"      => 90,;
-                                             		"nCol"      => {|| GridWidth( 6.5, oDlg ) },;
-                                             		"bText"     => {|| "Opciones de impresión " },;
-                                             		"oWnd"      => oDlg,;
-                                             		"oFont"     => oGridFont(),;
-                                             		"lPixels"   => .t.,;
-                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
-                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 3, oDlg ) },;
-                                             		"nHeight"   => 25,;
-                                             		"lDesign"   => .f. } )
-
-   	oCbxOrd     		:= TGridComboBox():Build(  {"nRow"      => 90,;
-                                             		"nCol"      => {|| GridWidth( 9.5, oDlg ) },;
-                                             		"bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
-                                             		"oWnd"      => oDlg,;
-                                             		"nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                             		"nHeight"   => 25,;
-                                             		"aItems"    => aCbxOrd } )
-
-		// Desglose de I.V.A.---------------------------------------------------------
 
    	oBrwIva                 := TGridIXBrowse():New( oDlg )
 
-    	oBrwIva:nTop            := oBrwIva:EvalRow( 130 )
+    oBrwIva:nTop            := oBrwIva:EvalRow( 100 )
    	oBrwIva:nLeft           := oBrwIva:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    	oBrwIva:nWidth          := oBrwIva:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    	oBrwIva:nHeight         := oBrwIva:EvalHeight( {|| 266 } )
@@ -6355,7 +6308,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
     oBrwIva:SetArray( aTotIva, , , .f. )
 
     oBrwIva:nMarqueeStyle   := 6
-    oBrwIva:lFooter 				:= .t.
+    oBrwIva:lFooter 		:= .t.
     oBrwIva:cName          	:= "Grid iva facturas"
 
     with object ( oBrwIva:AddCol() )
@@ -6365,55 +6318,97 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
         else
            	:bStrData      	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
         end if
-        :nWidth           	:= 200
+        :nWidth           	:= 170
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
+        :nFootStrAlign 		:= 1
+        :bFooter          	:= {|| if( nTotNet != 0, Trans( nTotNet, cPorDiv ), "" ) }
     end with
 
     with object ( oBrwIva:AddCol() )
         :cHeader       		:= "%" + cImp()
-        :bStrData      		:= {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), aTotIva[ oBrwIva:nArrayAt, 3 ], "" ) }
-        :bEditValue    		:= {|| aTotIva[ oBrwIva:nArrayAt, 3 ] }
-        :nWidth        		:= 180
-        :cEditPicture  		:= "@E 999.99"
+        :bStrData      		:= {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 3 ], "@E 999" ), "" ) }
+        :nWidth        		:= 160
         :nDataStrAlign 		:= 1
         :nHeadStrAlign 		:= 1
-        :nFootStrAlign 		:= 1
     end with
 
     with object ( oBrwIva:AddCol() )
         :cHeader          	:= cImp()
         :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 8 ], cPorDiv ), "" ) }
-        :nWidth           	:= 180
+        :nWidth           	:= 160
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
+        :nFootStrAlign 		:= 1
+        :bFooter          	:= {|| if( nTotIva != 0, Trans( nTotIva, cPorDiv ), "" ) }
     end with
 
     with object ( oBrwIva:AddCol() )
-        :cHeader          	:= "% R.E."
-        :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 999.99"), "" ) }
-        :nWidth           	:= 180
+        :cHeader          	:= "% RE"
+        :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 999"), "" ) }
+        :nWidth           	:= 160
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
+        :lHide 				:= .t.
     end with
 
     with object ( oBrwIva:AddCol() )
-        :cHeader          	:= "R.E."
-        :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ),    "" ) }
-        :nWidth           	:= 180
+        :cHeader          	:= "RE"
+        :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
+        :nWidth           	:= 160
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
+        :nFootStrAlign 		:= 1
+        :lHide 				:= .t.
+        :bFooter          	:= {|| if( nTotReq != 0, Trans( nTotReq, cPorDiv ), "" ) }
     end with
 
-    	oBrwIva:nHeaderHeight  	:= 48
+    with object ( oBrwIva:AddCol() )
+        :cHeader          	:= "Factura"
+        :bStrData         	:= {|| "" }
+        :nWidth           	:= 170
+        :nDataStrAlign    	:= 1
+        :nHeadStrAlign    	:= 1
+        :nFootStrAlign 		:= 1
+        :bFooter          	:= {|| if( nTotFac != 0, Trans( nTotFac, cPorDiv ), "" ) }
+    end with
+
+    oBrwIva:nHeaderHeight  	:= 48
    	oBrwIva:nFooterHeight  	:= 48
    	oBrwIva:nRowHeight     	:= 48
 
    	oBrwIva:CreateFromCode()
 
-		// Redimensionamos y activamos el diálogo------------------------------------- 
+   	/*
+	Opciones de impresión------------------------------------------------------
+   	*/
+
+   	oSayImpresion    	:= TGridSay():Build(    { 	"nRow"      => 250,;
+                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             		"bText"     => {|| "Impresión:" },;
+                                             		"oWnd"      => oDlg,;
+                                             		"oFont"     => oGridFont(),;
+                                             		"lPixels"   => .t.,;
+                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
+                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
+                                             		"nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                             		"nHeight"   => 25,;
+                                             		"lDesign"   => .f. } )
+
+   	oCbxOrd     		:= TGridComboBox():Build(  {"nRow"      => 250,;
+                                             		"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
+                                             		"bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                                             		"oWnd"      => oDlg,;
+                                             		"nWidth"    => {|| GridWidth( 6, oDlg ) },;
+                                             		"nHeight"   => 25,;
+                                             		"aItems"    => aCbxOrd } )
+
+	/*
+	Redimensionamos y activamos el diálogo-------------------------------------
+	*/
 
    	oDlg:bResized  				:= {|| GridResize( oDlg ) }
+   	oDlg:bStart 				:= {|| oBrwIva:Load(), oBrwIva:MakeTotals() }
 
    	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
    
@@ -11773,6 +11768,8 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
 
             if !Empty( aGet[ _LRECARGO ] )
             	aGet[ _LRECARGO ]:Click( ( TDataView():Clientes( nView ) )->lReq )
+            else
+            	aTmp[ _LRECARGO ] 	:= ( TDataView():Clientes( nView ) )->lReq
             end if
             
             if !Empty( aGet[ _LRECC ] )
