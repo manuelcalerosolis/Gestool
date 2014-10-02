@@ -5878,13 +5878,23 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
    ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastOu" ) )
 
+	// msgAlert( ( ::cAlbPrvL )->( dbSeek( cCodArt + cCodAlm ) ), "( ::cAlbPrvL )->( dbSeek( cCodArt + cCodAlm )" )
+
    if ( ::cAlbPrvL )->( dbSeek( cCodArt + cCodAlm ) )
+
+   	// msgAlert( ( ::cAlbPrvL )->cRef == cCodArt .and. ( ::cAlbPrvL )->cAlmOrigen == cCodAlm .and. !( ::cAlbPrvL )->( eof() ), "while" )
 
       while ( ::cAlbPrvL )->cRef == cCodArt .and. ( ::cAlbPrvL )->cAlmOrigen == cCodAlm .and. !( ::cAlbPrvL )->( eof() )
 
+      	// msgAlert( cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote, "cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote")
+
          if cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
 
+         	// msgAlert( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ), "::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb )")
+
             if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) 
+
+            	// msgAlert( ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ), "( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin )" )
 
                if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 

@@ -184,7 +184,7 @@ CLASS TGridGet FROM TGet, TGridable
             bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
             cCueText ) CONSTRUCTOR
 
-   METHOD GotFocus( hCtlLost )   INLINE ( ShellExecute( 0, "open", "tabtip.exe" ), ::Super:GotFocus( hCtlLost ) )
+   METHOD GotFocus( hCtlLost )   INLINE ( ShowKeyboard(), ::Super:GotFocus( hCtlLost ) )
 
    METHOD HardEnable()
 
@@ -651,11 +651,9 @@ Return ( oDlg:nHeight() )
 
 //----------------------------------------------------------------------------//
 
-Function ShowKeyboard()
+Function ShowKeyboard( lNumeric )
 
-   msgAlert( "ShowKeyboard")
-
-   ShellExecute( 0, "open", "tabtip.exe" ) 
+ 	ShellExecute( 0, "open", "tabtip.exe" )
 
 Return .t. 
 
