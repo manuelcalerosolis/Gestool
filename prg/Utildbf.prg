@@ -1514,9 +1514,16 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    end if
 
    if lReturn .and. !Empty( oBrw ) .and. ( oBrw:lActive )
+
       oBrw:Select( 0 )
       oBrw:Select( 1 )
+
+		if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
+			oBrw:MakeTotals()
+		end if 
+
       oBrw:Refresh()
+   
    end if
 
 RETURN lReturn
@@ -1588,9 +1595,16 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    end if
 
    if lResult .and. !Empty( oBrw ) .and. ( oBrw:lActive )
+
       oBrw:Select( 0 )
       oBrw:Select( 1 )
+
+		if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
+			oBrw:MakeTotals()
+		end if 
+
       oBrw:Refresh()
+
    end if
 
 RETURN lResult
@@ -1641,9 +1655,16 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    end if
 
    if lResult .and. oBrw != nil
-      oBrw:Refresh()
+
       oBrw:Select( 0 )
       oBrw:Select( 1 )
+
+		if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
+			oBrw:MakeTotals()
+		end if 
+
+      oBrw:Refresh()
+
    end if
 
 RETURN lResult

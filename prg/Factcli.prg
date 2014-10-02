@@ -11328,22 +11328,6 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
       	aTmp[ _CDNICLI ] 	:= ( TDataView():Clientes( nView ) )->Nif
       end if
 
-      /*
-      Cargamos la obra por defecto-------------------------------------
-
-      if ( lChgCodCli ) .and. !Empty( aGet[ _CCODOBR ] )
-
-			if dbSeekInOrd( cNewCodCli, "lDefObr", dbfObrasT )
-   	      aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
-      	else
-         	aGet[ _CCODOBR ]:cText( Space( 10 ) )
-       	end if
-
-   	   aGet[ _CCODOBR ]:lValid()
-
-      end if
-      */
-
       if Empty( aTmp[ _CCODGRP ] ) .or. lChgCodCli
          aTmp[ _CCODGRP ]  := ( TDataView():Clientes( nView ) )->cCodGrp
       end if
@@ -11360,9 +11344,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
 
          aTmp[ _NREGIVA ]  := ( TDataView():Clientes( nView ) )->nRegIva
 
-         /*
-         Si estamos a¤adiendo cargamos todos los datos del cliente
-         */
+         // Si estamos añadiendo cargamos todos los datos del cliente
 
          if Empty( aTmp[ _CSERIE ] )
 
@@ -11403,9 +11385,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
             aGet[ _CCODPAGO ]:cText( ( TDataView():Clientes( nView ) )->CodPago )
             aGet[ _CCODPAGO ]:lValid()
 
-            /*
-            Si la forma de pago es un movimiento bancario le asignamos el banco y cuenta por defecto
-            */
+            // Si la forma de pago es un movimiento bancario le asignamos el banco y cuenta por defecto
 
             if lBancoDefecto( ( TDataView():Clientes( nView ) )->Cod, dbfCliBnc )
 
@@ -11525,9 +11505,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
             	msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
          	end if 
 
-            /*
-            Retenciones desde la ficha de cliente----------------------------------
-            */
+            // Retenciones desde la ficha de cliente----------------------------------
 
             if !Empty( aGet[ _NTIPRET ] )
                aGet[ _NTIPRET  ]:Select( ( TDataView():Clientes( nView ) )->nTipRet )
@@ -11541,9 +11519,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
                aTmp[ _NPCTRET  ] := ( TDataView():Clientes( nView ) )->nPctRet
             end if
 
-            /*
-            Descuentos desde la ficha de cliente----------------------------------
-            */
+            // Descuentos desde la ficha de cliente----------------------------------
 
             if !Empty( aGet[ _CDTOESP ] )
                aGet[ _CDTOESP ]:cText( ( TDataView():Clientes( nView ) )->cDtoEsp )

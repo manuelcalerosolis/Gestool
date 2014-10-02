@@ -950,18 +950,13 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                dFecFac                 := ( dbfAlbCliT )->dFecAlb
             end if
 
-            /*
-            Si no estamos agrupando por clientes anotamos el numero del albaran en la
-            factura
-            */
+            // Si no estamos agrupando por clientes anotamos el numero del albaran en la factura
 
             if !lGrpCli
                ( dbfFacCliT )->cNumAlb    := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
             end if
 
-            /*
-            Asignando datos del cliente----------------------------------------
-            */
+            // Asignando datos del cliente----------------------------------------
 
             cCodCli                       := ( dbfAlbCliT )->cCodCli
             cNomCli                       := ( dbfClient )->Titulo
@@ -980,9 +975,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                cCodPgo                    := ( dbfClient )->CodPago
             end if
 
-            /*
-            Recoje la forma de pago--------------------------------------------
-            */
+            // Recoje la forma de pago--------------------------------------------
 
             if lUniPgo
                ( dbfFacCliT )->cCodPago   := GetFormaDePago( cCodCli, cCodPgo, oDbfTmp )
@@ -1015,9 +1008,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             ( dbfFacCliT )->lIvaInc       := ( dbfAlbCliT )->lIvaInc
             ( dbfFacCliT )->lSndDoc       := .t.
 
-            /*
-            Informamos de la factura que de ha generado------------------------
-            */
+            // Informamos de la factura que de ha generado------------------------
 
             aAdd( aMsg, {.t., "Factura generada : " + ( dbfFacCliT )->cSerie + "/" + Alltrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac } )
 
@@ -1156,10 +1147,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                   ( dbfFacCliL )->lImpLin := ( dbfAlbCliL )->lImpLin
                end if
 
-
-               /*
-               Metemos si tiene numeros de serie-------------------------------
-               */
+               // Metemos si tiene numeros de serie-------------------------------
 
                if ( dbfAlbCliS )->( dbSeek( oDbfTmp:cNumAlb + Str( ( dbfAlbCliL )->nNumLin ) ) )
 

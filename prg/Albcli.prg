@@ -910,22 +910,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
-      /*DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( AlbRecDel( .t., .f. ) );
-         TOOLTIP  "Solo cabecera" ;
-         FROM     oDel ;
-         CLOSED ;
-         LEVEL    ACC_DELE
-
-      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( AlbRecDel( .f., .t. ) );
-         TOOLTIP  "Solo detalle" ;
-         FROM     oDel ;
-         CLOSED ;
-         LEVEL    ACC_DELE*/
-
       DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( DelSerie( oWndBrw ) );
@@ -13918,7 +13902,6 @@ FUNCTION VisAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
          if dbSeekInOrd( cNumAlb, "nNumAlb", TDataView():Get( "AlbCliT", nView ) )
             nTotAlbCli()
             ImprimirSeriesAlbaranes( IS_SCREEN, .t. )
-            //GenAlbCli( IS_SCREEN, cCaption, cFormato, cPrinter )
          end if
 
          CloseFiles()
