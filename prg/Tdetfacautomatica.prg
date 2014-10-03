@@ -344,7 +344,7 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-         aGet[ _CVALPR1 ]:bHelp  := {|| brwPrpAct( aGet[ _CVALPR1 ], aGet[ _CVALPR1 ]:oHelpText, ::oDbfVir:cCodPr1 ) }
+         aGet[ _CVALPR1 ]:bHelp  := {|| brwPropiedadActual( aGet[ _CVALPR1 ], aGet[ _CVALPR1 ]:oHelpText, ::oDbfVir:cCodPr1 ) }
          aGet[ _CVALPR1 ]:bValid := {|| if( lPrpAct( ::oDbfVir:cValPr1, aGet[ _CVALPR1 ]:oHelpText, ::oDbfVir:cCodPr1, ::oDbfTblPro:cAlias ), ( ::lLoaArt( aGet ), ::lCalcDeta() ), .f. ) }
 
       REDEFINE GET aGet[ _CVALPR2 ] VAR ::oDbfVir:cValPr2 ;
@@ -355,7 +355,7 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-         aGet[ _CVALPR2 ]:bHelp  := {|| brwPrpAct( aGet[ _CVALPR2 ], aGet[ _CVALPR2 ]:oHelpText, ::oDbfVir:cCodPr2 ) }
+         aGet[ _CVALPR2 ]:bHelp  := {|| brwPropiedadActual( aGet[ _CVALPR2 ], aGet[ _CVALPR2 ]:oHelpText, ::oDbfVir:cCodPr2 ) }
          aGet[ _CVALPR2 ]:bValid := {|| if( lPrpAct( ::oDbfVir:cValPr2, aGet[ _CVALPR2 ]:oHelpText, ::oDbfVir:cCodPr2, ::oDbfTblPro:cAlias ), ( ::lLoaArt( aGet ), ::lCalcDeta() ), .f. ) }
 
       REDEFINE GET aGet[ _NIVA ] VAR ::oDbfVir:nIva ;

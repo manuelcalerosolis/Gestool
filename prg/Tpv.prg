@@ -7444,7 +7444,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            BITMAP   "LUPA" ;
                            OF       oDlgDet
 
-               aGet[ _CVALPR1 ]:bHelp              := {|| SetLostFocusOff(), brwPrpAct( aGet[ _CVALPR1 ], nil, aTmp[ _CCODPR1 ] ), SetLostFocusOn() }
+               aGet[ _CVALPR1 ]:bHelp              := {|| SetLostFocusOff(), brwPropiedadActual( aGet[ _CVALPR1 ], nil, aTmp[ _CCODPR1 ] ), SetLostFocusOn() }
 
                do case
                case nCaptura == 1
@@ -7468,7 +7468,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            BITMAP   "LUPA" ;
                            OF       oDlgDet
 
-               aGet[ _CVALPR2 ]:bHelp              := {|| SetLostFocusOff(), brwPrpAct( aGet[ _CVALPR2 ], nil, aTmp[ _CCODPR2 ] ), SetLostFocusOn() }
+               aGet[ _CVALPR2 ]:bHelp              := {|| SetLostFocusOff(), brwPropiedadActual( aGet[ _CVALPR2 ], nil, aTmp[ _CCODPR2 ] ), SetLostFocusOn() }
 
                do case
                case nCaptura == 1

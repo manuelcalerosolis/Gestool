@@ -3764,7 +3764,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          OF       oDlg
 
       ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::LoaArt( oDlg, .f., nMode ), .f. ) }
-      ::oValPr1:bHelp      := {|| brwPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
+      ::oValPr1:bHelp      := {|| brwPropiedadActual( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
 
       REDEFINE GET ::oSayVp1 VAR ::cSayVp1;
          ID       121 ;
@@ -3782,7 +3782,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          OF       oDlg
 
       ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::LoaArt( oDlg, .f., nMode ), .f. ) }
-      ::oValPr2:bHelp      := {|| brwPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
+      ::oValPr2:bHelp      := {|| brwPropiedadActual( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
 
       REDEFINE GET ::oSayVp2 VAR ::cSayVp2 ;
          ID       131 ;

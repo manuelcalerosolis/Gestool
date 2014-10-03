@@ -4962,7 +4962,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            PICTURE  "@!" ;
                            WHEN     ( !Empty( aTmp[_CCODPR1 ] ) .and. lUsePrp1() ) ;
                            BITMAP   "LUPA" ;
-                           ON HELP  ( brwPrpAct( aGet[_CVALPR1], nil, aTmp[_CCODPR1 ] ) ) ;
+                           ON HELP  ( brwPropiedadActual( aGet[_CVALPR1], nil, aTmp[_CCODPR1 ] ) ) ;
                            OF       oDlg
 
                aGet[ _CVALPR1 ]:bLostFocus         := {|| if(  lPrpAct( aTmp[ _CVALPR1 ], nil, aTmp[ _CCODPR1 ], dbfTblPro ),;
@@ -4986,7 +4986,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            PICTURE  "@!" ;
                            WHEN     ( !Empty( aTmp[_CCODPR2 ] ) .and. lUsePrp2() ) ;
                            BITMAP   "LUPA" ;
-                           ON HELP  ( brwPrpAct( aGet[_CVALPR2], nil, aTmp[_CCODPR2 ] ) ) ;
+                           ON HELP  ( brwPropiedadActual( aGet[_CVALPR2], nil, aTmp[_CCODPR2 ] ) ) ;
                            OF       oDlg
 
                aGet[ _CVALPR2 ]:bLostFocus         := {|| if(  lPrpAct( aTmp[ _CVALPR2 ], nil, aTmp[ _CCODPR2 ], dbfTblPro ),;

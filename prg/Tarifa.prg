@@ -952,7 +952,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodTar )
          ID       250 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode == APPD_MODE ) ;
-         ON HELP  ( brwPrpAct( aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ], oSayVp1, aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR1" ) ) ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ], oSayVp1, aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR1" ) ) ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSayVp1 VAR cSayVp1;
@@ -968,7 +968,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodTar )
          ID       260 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode == APPD_MODE ) ;
-         ON HELP  ( brwPrpAct( aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ], oSayVp2, aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR2" ) ) ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ], oSayVp2, aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR2" ) ) ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSayVp2 VAR cSayVp2;

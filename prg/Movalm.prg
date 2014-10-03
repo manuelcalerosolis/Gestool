@@ -783,7 +783,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfHisMov, oBrw, cCodArt, nTipMov, nMode, lE
          ID       220 ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], dbfTblPro ), LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayArt, oSayLote, oDlg ), .f. ) ) ;
-         ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
          OF       oDlg
 
       REDEFINE SAY oSayPr1 VAR cSayPr1;
@@ -799,7 +799,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfHisMov, oBrw, cCodArt, nTipMov, nMode, lE
          ID       230 ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], dbfTblPro ), LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayArt, oSayLote, oDlg ), .f. ) ) ;
-         ON HELP  ( brwPrpAct( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ] ) ) ;
          OF       oDlg
 
       REDEFINE SAY oSayPr2 VAR cSayPr2;

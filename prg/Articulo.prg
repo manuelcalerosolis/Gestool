@@ -7292,8 +7292,8 @@ STATIC FUNCTION EdtCodebar( aTmp, aGet, dbfTmpCodebar, oBrw, bWhen, bValid, nMod
             IDTEXT   121 ;
             PICTURE  "@!" ;
             BITMAP   "LUPA" ;
-            VALID    ( lPrpAct(   aTmp[ ( dbfTmpCodebar )->( FieldPos( "cValPr1" ) ) ], aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr1" ) ) ]:oHelpText, aTmp[ ( dbfTmpCodebar )->( FieldPos( "cCodPr1" ) ) ], dbfTblPro ) ) ;
-            ON HELP  ( brwPrpAct( aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr1" ) ) ], aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr1" ) ) ]:oHelpText, aTmp[ ( dbfTmpCodebar )->( FieldPos( "cCodPr1" ) ) ] ) ) ;
+            VALID    ( lPrpAct( aTmp[ ( dbfTmpCodebar )->( FieldPos( "cValPr1" ) ) ], aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr1" ) ) ]:oHelpText, aTmp[ ( dbfTmpCodebar )->( FieldPos( "cCodPr1" ) ) ], dbfTblPro ) ) ;
+            ON HELP  ( brwPropiedadActual( aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr1" ) ) ], aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr1" ) ) ]:oHelpText, aTmp[ ( dbfTmpCodebar )->( FieldPos( "cCodPr1" ) ) ] ) ) ;
             OF       oDlg
 
       REDEFINE GET   aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ] ;
@@ -7303,8 +7303,8 @@ STATIC FUNCTION EdtCodebar( aTmp, aGet, dbfTmpCodebar, oBrw, bWhen, bValid, nMod
             IDTEXT   131 ;
             PICTURE  "@!" ;
             BITMAP   "LUPA" ;
-            VALID    ( lPrpAct(   aTmp[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ], aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ]:oHelpText, aTmp[ ( dbfTmpCodebar )->( FieldPos( "cCodPr2" ) ) ], dbfTblPro ) ) ;
-            ON HELP  ( brwPrpAct( aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ], aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ]:oHelpText, aTmp[ ( dbfTmpCodebar )->( FieldPos( "cCodPr2" ) ) ] ) ) ;
+            VALID    ( lPrpAct( aTmp[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ], aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ]:oHelpText, aTmp[ ( dbfTmpCodebar )->( FieldPos( "cCodPr2" ) ) ], dbfTblPro ) ) ;
+            ON HELP  ( brwPropiedadActual( aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ], aGet[ ( dbfTmpCodebar )->( FieldPos( "cValPr2" ) ) ]:oHelpText, aTmp[ ( dbfTmpCodebar )->( FieldPos( "cCodPr2" ) ) ] ) ) ;
             OF       oDlg
 
       REDEFINE BUTTON ;

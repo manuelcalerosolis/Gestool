@@ -1838,6 +1838,142 @@ RETURN ( lRet )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
+
+   local oDlg
+   local oBrw
+   local lRet        := .f.
+   local oBlock
+   local oError
+   local cTitle      := ""
+   local oGetNbr
+   local cGetNbr
+   local oCbxOrd
+   local cCbxOrd     := "Código"
+   local aCbxOrd     := { "Código", "Nombre" }
+
+   if Empty( cPrp )
+      MsgStop( "No hay propiedades seleccionadas para este artículo." )
+      Return .f.
+   end if
+
+   if !OpenFiles()
+      Return .f.
+   end if
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   // Titulo del dialogo-------------------------------------------------------
+
+   cTitle            := "Seleccionar propiedad : " + retProp( cPrp, dbfProT )
+
+   // Creacion de una dbf temporal---------------------------------------------
+
+   ( dbfProL )->( ordScope( 0, cPrp ) )
+   ( dbfProL )->( ordScope( 1, cPrp ) )
+   ( dbfProL )->( dbGoTop() )
+
+   // Mostramos el dialogo-----------------------------------------------------
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE cTitle
+
+      REDEFINE GET oGetNbr VAR cGetNbr ;
+         ID       	104 ;
+         ON CHANGE 	AutoSeek( nKey, nFlags, Self, oBrw, dbfProL ) ;
+         BITMAP   	"FIND" ;
+         OF       	oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      	cCbxOrd ;
+         ID       	102 ;
+         ITEMS    	aCbxOrd ;
+         ON CHANGE	( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfTmpBrw )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() ) ;
+         OF       	oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := dbfProL
+
+      oBrw:nMarqueeStyle   := 5
+      oBrw:lHScroll        := .t.
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodTbl"
+         :bEditValue       := {|| ( dbfProL )->cCodTbl }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cDesTbl"
+         :bEditValue       := {|| ( dbfProL )->cDesTbl }
+         :nWidth           := 280
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         ACTION   ( WinAppRec( oBrw, bEdit, dbfProT ) )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         ACTION   ( WinEdtRec( oBrw, bEdit, dbfProT ) )
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+      oDlg:AddFastKey( VK_F2,       {|| WinAppRec( oBrw, bEdit, dbfProT ) } )
+      oDlg:AddFastKey( VK_F3,       {|| WinEdtRec( oBrw, bEdit, dbfProT ) } )
+      oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if ( oDlg:nResult == IDOK )
+
+      oGet:cText( ( dbfProL )->cCodTbl )
+
+      if IsObject( oSay )
+         oSay:SetText( ( dbfProL )->cDesTbl )
+      end if
+
+      lRet        := .t.
+
+   end if
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible mostrar tablas de propiedades" )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   CloseFiles()
+
+RETURN ( lRet )
+
+//---------------------------------------------------------------------------//
+
+
 STATIC FUNCTION OpenFiles()
 
    local lOpen    := .t.
@@ -2051,7 +2187,7 @@ Function rxPro( cPath, oMeter )
          ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "NBARPRO", "Field->cCodPro + Field->nBarTbl", {|| Field->cCodPro + Field->nBarTbl } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CPRO", "Field->CCODPRO", {|| Field->CCODPRO } ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CPRO", "Field->cCodPro", {|| Field->cCodPro } ) )
 
          ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
          ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CCODDES", "Field->cCodPro + Field->cDesTbl", {|| Field->cCodPro + Field->cDesTbl } ) )

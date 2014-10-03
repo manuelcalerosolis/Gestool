@@ -4231,7 +4231,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          VALID    ( if( lPrpAct( aTmp[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], dbfTblPro ),;
                         LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ),;
                         .f. ) );
-         ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE SAY oSayPr1 VAR cSayPr1;
@@ -4251,7 +4251,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          VALID    ( if( lPrpAct( aTmp[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], dbfTblPro ),;
                         LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ),;
                         .f. ) );
-         ON HELP  ( brwPrpAct( aGet[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE SAY oSayPr2 VAR cSayPr2;
@@ -8003,7 +8003,7 @@ Method EditLine() CLASS TPedidosClientes2PedidosProveedor
          OF       ::oDlgEditLine
 
       ::oGetValorPropiedad1:bValid  := {|| lPrpAct( ::oGetValorPropiedad1, ::oGetValorPropiedad1:oSay, aTmp[ ( dbfTmpPedLin )->( FieldPos( "cCodPr1" ) ) ], dbfTblPro ) }
-      ::oGetValorPropiedad1:bHelp   := {|| brwPrpAct( ::oGetValorPropiedad1, ::oGetValorPropiedad1:oSay, aTmp[ ( dbfTmpPedLin )->( FieldPos( "cCodPr1" ) ) ], dbfTblPro ) }
+      ::oGetValorPropiedad1:bHelp   := {|| brwPropiedadActual( ::oGetValorPropiedad1, ::oGetValorPropiedad1:oSay, aTmp[ ( dbfTmpPedLin )->( FieldPos( "cCodPr1" ) ) ], dbfTblPro ) }
 
       REDEFINE GET ::oGetValorPropiedad2 VAR aTmp[ ( dbfTmpPedLin )->( FieldPos( "cValPr2" ) ) ];
          ID       140 ;
@@ -8014,7 +8014,7 @@ Method EditLine() CLASS TPedidosClientes2PedidosProveedor
          OF       ::oDlgEditLine
 
       ::oGetValorPropiedad2:bValid  := {|| lPrpAct( ::oGetValorPropiedad2, ::oGetValorPropiedad2:oSay, aTmp[ ( dbfTmpPedLin )->( FieldPos( "cCodPr2" ) ) ], dbfTblPro ) }
-      ::oGetValorPropiedad2:bHelp   := {|| brwPrpAct( ::oGetValorPropiedad2, ::oGetValorPropiedad2:oSay, aTmp[ ( dbfTmpPedLin )->( FieldPos( "cCodPr2" ) ) ], dbfTblPro ) }
+      ::oGetValorPropiedad2:bHelp   := {|| brwPropiedadActual( ::oGetValorPropiedad2, ::oGetValorPropiedad2:oSay, aTmp[ ( dbfTmpPedLin )->( FieldPos( "cCodPr2" ) ) ], dbfTblPro ) }
 
       /*
       Cajas y unidades

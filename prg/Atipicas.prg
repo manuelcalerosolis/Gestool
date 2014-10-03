@@ -376,7 +376,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          WHEN           ( ::nMode == APPD_MODE ) ;
          OF             ::oFld:aDialogs[1]
 
-         ::oCodigoPrimeraPropiedad:bHelp     := {|| brwPrpAct( ::oCodigoPrimeraPropiedad, ::oTextoPrimeraPropiedad, ::oDbfVir:cCodPr1 ) }
+         ::oCodigoPrimeraPropiedad:bHelp     := {|| brwPropiedadActual( ::oCodigoPrimeraPropiedad, ::oTextoPrimeraPropiedad, ::oDbfVir:cCodPr1 ) }
          ::oCodigoPrimeraPropiedad:bValid    := {|| ::LoadAtipica() }
 
       REDEFINE GET      ::oValorPrimeraPropiedad ;
@@ -401,7 +401,7 @@ METHOD Resource( nMode ) CLASS TAtipicas
          WHEN           ( ::nMode == APPD_MODE ) ;
          OF             ::oFld:aDialogs[1]
 
-         ::oCodigoSegundaPropiedad:bHelp     := {|| brwPrpAct( ::oCodigoSegundaPropiedad, ::oTextoSegundaPropiedad, ::oDbfVir:cCodPr2 ) }
+         ::oCodigoSegundaPropiedad:bHelp     := {|| brwPropiedadActual( ::oCodigoSegundaPropiedad, ::oTextoSegundaPropiedad, ::oDbfVir:cCodPr2 ) }
          ::oCodigoSegundaPropiedad:bValid    := {|| ::LoadAtipica() }
 
       REDEFINE GET      ::oValorSegundaPropiedad ;

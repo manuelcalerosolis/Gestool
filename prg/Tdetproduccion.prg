@@ -317,7 +317,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          OF       oFld:aDialogs[1]
 
          ::oValPr1:bValid := {|| lPrpAct( ::oDbfVir:cValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) }
-         ::oValPr1:bHelp  := {|| brwPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
+         ::oValPr1:bHelp  := {|| brwPropiedadActual( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
 
       REDEFINE GET ::oSayVp1 VAR cSayVp1;
          ID       222 ;
@@ -337,7 +337,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          OF       oFld:aDialogs[1]
 
          ::oValPr2:bValid := {|| lPrpAct( ::oDbfVir:cValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) }
-         ::oValPr2:bHelp  := {|| brwPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
+         ::oValPr2:bHelp  := {|| brwPropiedadActual( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
 
       REDEFINE GET ::oSayVp2 VAR cSayVp2;
          ID       232 ;

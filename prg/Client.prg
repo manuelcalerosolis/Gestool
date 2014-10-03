@@ -4040,7 +4040,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          ID       250 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode == APPD_MODE ) ;
-         ON HELP  ( brwPrpAct( aGet[ _aCVALPR1 ], oSayVp1, aTmp[ _aCCODPR1 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[ _aCVALPR1 ], oSayVp1, aTmp[ _aCCODPR1 ] ) ) ;
          VALID    ( if( lPrpAct( aGet[ _aCVALPR1 ], oSayVp1, aTmp[ _aCCODPR1 ], dbfProL ),;
                     IsCliAtp( aGet, aTmp, oGetArticulo, ( TDataView():Get( "CliAtp", nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
                     .f. ) ) ;
@@ -4059,7 +4059,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          ID       260 ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode == APPD_MODE ) ;
-         ON HELP  ( brwPrpAct( aGet[ _aCVALPR2 ], oSayVp2, aTmp[ _aCCODPR2 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[ _aCVALPR2 ], oSayVp2, aTmp[ _aCCODPR2 ] ) ) ;
          VALID    ( if( lPrpAct( aGet[ _aCVALPR2 ], oSayVp2, aTmp[ _aCCODPR2 ], dbfProL ),;
                     IsCliAtp( aGet, aTmp, oGetArticulo, ( TDataView():Get( "CliAtp", nView ) ), nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oCosto ),;
                     .f. ) ) ;

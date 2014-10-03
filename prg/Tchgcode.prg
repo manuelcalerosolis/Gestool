@@ -561,7 +561,7 @@ METHOD Resource( cFldRes ) CLASS TChgCode
       ID       161 ;
       BITMAP   "LUPA" ;
       VALID    ( lPrpAct( oThis:oGetPr1Old, oThis:oSayPr1Old, oThis:cCodPr1Old, oThis:oDbfTblPro:cAlias ), .t. ) ;
-      ON HELP  ( brwPrpAct( oThis:oGetPr1Old, oThis:oSayPr1Old, oThis:cCodPr1Old ) ) ;
+      ON HELP  ( brwPropiedadActual( oThis:oGetPr1Old, oThis:oSayPr1Old, oThis:cCodPr1Old ) ) ;
       OF       ::oDlg
 
    REDEFINE GET ::oSayPr1Old VAR cSayPr1Old ;
@@ -577,7 +577,7 @@ METHOD Resource( cFldRes ) CLASS TChgCode
       ID       171 ;
       BITMAP   "LUPA" ;
       VALID    ( lPrpAct( oThis:oGetPr2Old, oThis:oSayPr2Old, oThis:cCodPr2Old, oThis:oDbfTblPro:cAlias ), .t. ) ;
-      ON HELP  ( brwPrpAct( oThis:oGetPr2Old, oThis:oSayPr2Old, oThis:cCodPr2Old ) ) ;
+      ON HELP  ( brwPropiedadActual( oThis:oGetPr2Old, oThis:oSayPr2Old, oThis:cCodPr2Old ) ) ;
       OF       ::oDlg
 
    REDEFINE GET ::oSayPr2Old VAR cSayPr2Old ;
@@ -606,7 +606,7 @@ METHOD Resource( cFldRes ) CLASS TChgCode
       ID       191 ;
       BITMAP   "LUPA" ;
       VALID    ( lPrpAct( oThis:oGetPr1New, oThis:oSayPr1New, oThis:cCodPr1New, oThis:oDbfTblPro:cAlias ), .t. ) ;
-      ON HELP  ( brwPrpAct( oThis:oGetPr1New, oThis:oSayPr1New, oThis:cCodPr1New ) ) ;
+      ON HELP  ( brwPropiedadActual( oThis:oGetPr1New, oThis:oSayPr1New, oThis:cCodPr1New ) ) ;
       OF       ::oDlg
 
    REDEFINE GET ::oSayPr1New VAR cSayPr1New ;
@@ -622,7 +622,7 @@ METHOD Resource( cFldRes ) CLASS TChgCode
       ID       201 ;
       BITMAP   "LUPA" ;
       VALID    ( lPrpAct( oThis:oGetPr2New, oThis:oSayPr2New, oThis:cCodPr2New, oThis:oDbfTblPro:cAlias ), .t. ) ;
-      ON HELP  ( brwPrpAct( oThis:oGetPr2New, oThis:oSayPr2New, oThis:cCodPr2New ) ) ;
+      ON HELP  ( brwPropiedadActual( oThis:oGetPr2New, oThis:oSayPr2New, oThis:cCodPr2New ) ) ;
       OF       ::oDlg
 
    REDEFINE GET ::oSayPr2New VAR cSayPr2New ;

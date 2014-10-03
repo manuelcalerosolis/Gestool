@@ -484,7 +484,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION brwPrpAct( oGet, oSay, cPrp )
+FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 
 	local oDlg
    local oGetNbr

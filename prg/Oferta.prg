@@ -822,7 +822,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .and. aBlank[ _NTBLOFE ] == 1 ) ;
-         ON HELP  ( brwPrpAct( aoGet[ _CVALPR1 ], oSayVp1, aBlank[ _CCODPR1 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aoGet[ _CVALPR1 ], oSayVp1, aBlank[ _CCODPR1 ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSayVp1 VAR cSayVp1;
@@ -840,7 +840,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .and. aBlank[ _NTBLOFE ] == 1 ) ;
-         ON HELP  ( brwPrpAct( aoGet[ _CVALPR2 ], oSayVp2, aBlank[ _CCODPR2 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aoGet[ _CVALPR2 ], oSayVp2, aBlank[ _CCODPR2 ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSayVp2 VAR cSayVp2;

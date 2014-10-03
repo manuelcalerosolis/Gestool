@@ -3423,18 +3423,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       // Tree de resultados-------------------------------------------------------
 
-      /*
-      REDEFINE LISTBOX ::oBrwTotales ;
-         FIELDS   ;
-         HEADERS  "",;
-                  "Importes";
-         ID       800 ;
-         OF       ::oFldTurno:aDialogs[ 3 ]
-
-         ::oBrwTotales:oFont        := oFntBrw
-         ::oBrwTotales:bKeyChar     := { | nKey, nFlags | if( nKey == 13, ( ::oBrwTotales:Cargo:Toggle(), ::oBrwTotales:Refresh() ), ) }
-      */
-
       ::oBrwTotales                 := IXBrowse():New( ::oFldTurno:aDialogs[ 3 ] )
 
       ::oBrwTotales:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -3531,63 +3519,33 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       if ::lArqueoTactil()
 
-         REDEFINE SAY   ::oTotalEfectivo ;
-            VAR         ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) ;
-            ID          400 ;
-            FONT        oFntSay ;
-            PICTURE     ::cPorDiv ;
-            OF          ::oFldTurno:aDialogs[3]
+      REDEFINE SAY   ::oTotalEfectivo ;
+         VAR         ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) ;
+         ID          400 ;
+         FONT        oFntSay ;
+         PICTURE     ::cPorDiv ;
+         OF          ::oFldTurno:aDialogs[3]
 
-         REDEFINE SAY   ::oTotalTarjeta ;
-            VAR         ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ;
-            ID          410 ;
-            FONT        oFntSay ;
-            PICTURE     ::cPorDiv ;
-            OF          ::oFldTurno:aDialogs[3]
+      REDEFINE SAY   ::oTotalTarjeta ;
+         VAR         ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ;
+         ID          410 ;
+         FONT        oFntSay ;
+         PICTURE     ::cPorDiv ;
+         OF          ::oFldTurno:aDialogs[3]
 
-         REDEFINE SAY   ::oTotalNoEfectivo ;
-            VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCurCaja ) ;
-            ID          411 ;
-            FONT        oFntSay ;
-            PICTURE     ::cPorDiv ;
-            OF          ::oFldTurno:aDialogs[3]
+      REDEFINE SAY   ::oTotalNoEfectivo ;
+         VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCurCaja ) ;
+         ID          411 ;
+         FONT        oFntSay ;
+         PICTURE     ::cPorDiv ;
+         OF          ::oFldTurno:aDialogs[3]
 
-         REDEFINE SAY   ::oTotalCobros ;
-            VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) + ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ) ;
-            ID          415 ;
-            FONT        oFntSay ;
-            PICTURE     ::cPorDiv ;
-            OF          ::oFldTurno:aDialogs[3]
-
-      else
-
-         REDEFINE SAY   ::oTotalEfectivo ;
-            VAR         ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) ;
-            ID          400 ;
-            PICTURE     ::cPorDiv ;
-            OF          ::oFldTurno:aDialogs[3]
-
-         REDEFINE SAY   ::oTotalTarjeta ;
-            VAR         ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ;
-            ID          410 ;
-            PICTURE     ::cPorDiv ;
-            OF          ::oFldTurno:aDialogs[3]
-
-         REDEFINE SAY   ::oTotalNoEfectivo ;
-            VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCurCaja ) ;
-            ID          411 ;
-            PICTURE     ::cPorDiv ;
-            OF          ::oFldTurno:aDialogs[3]
-
-         REDEFINE SAY   ::oTotalCobros ;
-            VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) + ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ) ;
-            ID          415 ;
-            PICTURE     ::cPorDiv ;
-            OF          ::oFldTurno:aDialogs[3]
-
-      end if
-
-      if ::lArqueoTactil()
+      REDEFINE SAY   ::oTotalCobros ;
+         VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) + ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ) ;
+         ID          415 ;
+         FONT        oFntSay ;
+         PICTURE     ::cPorDiv ;
+         OF          ::oFldTurno:aDialogs[3]
 
       REDEFINE BUTTONBMP oBtnEfectivo;
          ID       220 ;
@@ -3597,6 +3555,30 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ACTION   ( ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() )
 
       else
+
+      REDEFINE SAY   ::oTotalEfectivo ;
+         VAR         ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) ;
+         ID          400 ;
+         PICTURE     ::cPorDiv ;
+         OF          ::oFldTurno:aDialogs[3]
+
+      REDEFINE SAY   ::oTotalTarjeta ;
+         VAR         ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ;
+         ID          410 ;
+         PICTURE     ::cPorDiv ;
+         OF          ::oFldTurno:aDialogs[3]
+
+      REDEFINE SAY   ::oTotalNoEfectivo ;
+         VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCurCaja ) ;
+         ID          411 ;
+         PICTURE     ::cPorDiv ;
+         OF          ::oFldTurno:aDialogs[3]
+
+      REDEFINE SAY   ::oTotalCobros ;
+         VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCurCaja ) + ::oTotales:nTotSaldoTarjeta( ::cCurCaja ) ) ;
+         ID          415 ;
+         PICTURE     ::cPorDiv ;
+         OF          ::oFldTurno:aDialogs[3]
 
          oBtnEfectivo            := TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, ::oFldTurno:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
          oBtnEfectivo:lTransparent  := .t.
@@ -4165,7 +4147,6 @@ return nil
 METHOD GoNext( oCajTur, oBrwCnt )
 
    local oItem
-   local nCodCaj  := 0
    local cCodCaj  := ""
 
    do case
@@ -4228,7 +4209,6 @@ METHOD GoNext( oCajTur, oBrwCnt )
          while !( ::oDbfCaj:Eof() )
             if ( ::lInCajaSelect( ::oDbfCaj:FieldGetByName( "cCodCaj" ) ) .and. !::oDbfCaj:FieldGetByName( "lCajClo" ) )
                cCodCaj  := ::oDbfCaj:FieldGetByName( "cCodCaj" )
-               ++nCodCaj
             end if
             ::oDbfCaj:Skip()
          end while
@@ -4239,12 +4219,10 @@ METHOD GoNext( oCajTur, oBrwCnt )
          Si hay mas de una caja seleccionada-----------------------------------
          */
 
-         if nCodCaj > 1
-            ::oCodCaj:cText( Space( 3 ) )
-         else 
+         if !empty( cCodCaj )
             ::oCodCaj:cText( cCodCaj )
+	         ::oCodCaj:lValid()
          end if 
-         ::oCodCaj:lValid()
 
          /*
          Refresco del turno----------------------------------------------------
@@ -4654,10 +4632,10 @@ METHOD lCalTurno( cTurno, cCaja )
    DEFAULT cCaja                 := ::cCurCaja
 
    CursorWait()
-/*
+
    oBlock                        := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
       if !Empty( ::oDlgTurno )
          ::oDlgTurno:Disable()
       end if
@@ -4725,21 +4703,6 @@ METHOD lCalTurno( cTurno, cCaja )
             ::oBrwTotales:oTreeItem := ::oTreeTotales:oFirst
 
          end if 
-
-/*
-         ::oBrwTotales:SetTree( ::oTotales:CreateTree( cCaja, cTurno ) )
-
-         ::oBrwTotales:lDrawHeaders := .f.
-         ::oBrwTotales:bLine        := {|| { if( ::oBrwTotales:Cargo:lOpened, ::oBrwTotales:Cargo:hBmpOpen, ::oBrwTotales:Cargo:hBmpClose ), 
-         if( len( ::oBrwTotales:Cargo:Cargo ) >= 4, ::oBrwTotales:Cargo:Cargo[ 4 ], 0 ), ::oBrwTotales:Cargo:Cargo[ 1 ], if( ::oBrwTotales:Cargo:cPrompt == "Espacio", "", Trans( ::oBrwTotales:Cargo:Cargo[ 2 ], ::cPorDiv ) ) } }
-         ::oBrwTotales:aHeaders     := { "", "", "", "Importes" }
-         ::oBrwTotales:aColSizes    := { 18, 18, if( ::lArqueoTactil(), 350, 450 ), 150 }
-         ::oBrwTotales:aJustify     := { .f., .f., .f., .t. }
-         ::oBrwTotales:nClrPane     := {|| if( Empty( ::oBrwTotales:Cargo:cPrompt ), CLR_BAR, CLR_WHITE ) }
-         ::oBrwTotales:bLDblClick   := {|| ::ClickBrwTotales() }
-         ::oBrwTotales:bKeyChar     := {|| ::ClickBrwTotales() }
-         ::oBrwTotales:aLinActions  := { {|| ::ClickBrwTotales() }, , }
-*/
 
          ::oBrwTotales:Refresh()
 
@@ -4908,7 +4871,7 @@ METHOD lCalTurno( cTurno, cCaja )
          public nRetiradoEnCaja     := 0
 
       end if
-/*
+
    RECOVER USING oError
 
       msgStop( "Error al calcular caja." + CRLF + ErrorMessage( oError ) )
@@ -4916,7 +4879,7 @@ METHOD lCalTurno( cTurno, cCaja )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    CursorWE()
 
    if !Empty( ::oDbfCaj )
