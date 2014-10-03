@@ -2721,40 +2721,23 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-/*Function ApoloMsgNoYes( cText, cTitle, lTactil ) 
+Function ApoloMsgStop( cText, cTitle ) 
 
    local oDlg
-   local oBmp
    local oBtnOk
-   local oBtnCancel
 
    DEFAULT cText              := "¿Desea eliminar el registro en curso?"
-   DEFAULT cTitle             := "Confirme"
-   DEFAULT lTactil            := .f.
+   DEFAULT cTitle             := "¡Atención!"
 
-   if lTactil
-      DEFINE DIALOG oDlg RESOURCE "DeleteRecnoTct" TITLE ( cTitle )
-   else
-      DEFINE DIALOG oDlg RESOURCE "DeleteRecno" TITLE ( cTitle )
-   end if
-
-   REDEFINE BITMAP oBmp       ID 500         OF oDlg RESOURCE "Symbol_questionmark_48_Alpha" TRANSPARENT
+   DEFINE DIALOG oDlg RESOURCE "MsgStopTCT" TITLE ( cTitle )
 
    REDEFINE SAY PROMPT cText  ID 100         OF oDlg
 
    REDEFINE BUTTON oBtnOk     ID IDOK        OF oDlg ACTION ( oDlg:end( IDOK ) )
 
-   REDEFINE BUTTON oBtnCancel ID IDCANCEL    OF oDlg ACTION ( oDlg:end() )
-
-   oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
-
    ACTIVATE DIALOG oDlg CENTER
 
-   if !Empty( oBmp )
-      oBmp:End()
-   end if
-
-RETURN ( oDlg:nResult == IDOK )*/
+RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 

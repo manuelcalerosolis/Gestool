@@ -5495,6 +5495,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	local oSayGeneral
    	local oSayCliente
    	local oSayDireccion
+   	local oSaySerie
    	local oGetNombreDireccion
    	local cGetNombreDireccion
    	local oBtnLupaCliente
@@ -5505,6 +5506,8 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	local oBtnAdd
    	local oBtnEdt
    	local oBtnDel
+   	local oBtnDown
+   	local oBtnUp
    	local nAltoGet 		:= 23
 
    	do case
@@ -5520,6 +5523,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          		Return .f.
       		end if
 
+      		aTmp[ _CSERIE 	  ]  := "A"
       		aTmp[ _CTURFAC    ]  := cCurSesion()
       		aTmp[ _DFECENT    ]  := Ctod("")
       		aTmp[ _CCODALM    ]  := oUser():cAlmacen()
@@ -5574,7 +5578,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
 	oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             		"bText"     => {|| "Factura de clientes" },;
+                                             		"bText"     => {|| LblTitle( nMode ) + " factura de clientes" },;
                                              		"oWnd"      => oDlg,;
                                              		"oFont"     => oGridFontBold(),;
                                              		"lPixels"   => .t.,;
@@ -5584,12 +5588,20 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
-   	oBtnConfigurar 	:= TGridImage():Build(  {  "nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+   	oBtnAceptar  		:= TGridImage():Build(  {  	"nTop"      => 5,;
+                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
-                                             		"cResName"  => "flat_config_64",;
-                                             		"bLClicked" => {|| Msginfo( "Configurar" ) },;
+                                             		"cResName"  => "flat_check_64",;
+                                             		"bLClicked" => {|| EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlg ) },;
+                                             		"oWnd"      => oDlg } )
+
+   	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
+                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                            	 	"nHeight"   => 64,;
+                                             		"cResName"  => "flat_del_64",;
+                                             		"bLClicked" => {|| oDlg:End() },;
                                              		"oWnd"      => oDlg } )
 
  	/*
@@ -5607,16 +5619,16 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 																	"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ) } } )
 
-   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
+   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
                                           			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                           			"nHeight"   => nAltoGet,;
                                           			"lPixels" 	=> .t.,;
-                                          			"bValid"    => {|| loaCli( aGet, aTmp, nMode ) } } )
+                                          			"bValid"    => {|| loaCli( aGet, aTmp, nMode, , .f. ) } } )
 	
-   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
+   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5655,12 +5667,35 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"nWidth"    => {|| GridWidth( 7, oDlg ) },;
                                           			"lPixels" 	=> .t.,;
                                           			"nHeight"   => nAltoGet } )
+
+   	/*
+	Serie de la factura--------------------------------------------------------
+   	*/
+
+   	oSaySerie  			:= TGridUrllink():Build({ 	"nTop"      => 90,;
+                                             		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                                             		"cURL"      => "Serie",;
+                                             		"oWnd"      => oDlg,;
+                                             		"oFont"     => oGridFont(),;
+                                             		"lPixel"    => .t.,;
+                                             		"nClrInit"  => nGridColor(),;
+                                             		"nClrOver" 	=> nGridColor(),;
+													"nClrVisit" => nGridColor(),;
+                                             		"bAction"   => {|| ChangeSerieTablet( aGet ) } } )
+
+   	aGet[ _CSERIE ]  	:= TGridGet():Build( 	{ 	"nRow"      => 90,;
+                                          			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
+                                          			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CSERIE ], aTmp[ _CSERIE ] := u ) },;
+                                          			"oWnd"      => oDlg,;
+                                          			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                          			"nHeight"   => nAltoGet,;
+                                          			"lPixels" 	=> .t. } )
    
    	/*
 	Botones de las lineas------------------------------------------------------
    	*/
 
-   	oBtnAdd  			:= TGridImage():Build(  {  	"nTop"      => 95,;
+   	oBtnAdd  			:= TGridImage():Build(  {  	"nTop"      => 120,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5668,7 +5703,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| AppDeta( oBrwLin, bEdtDetTablet, aTmp, .f. ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnEdt  			:= TGridImage():Build(  {  	"nTop"      => 95,;
+   	oBtnEdt  			:= TGridImage():Build(  {  	"nTop"      => 120,;
                                              		"nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5676,7 +5711,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| EdtDeta( oBrwLin, bEdtDetTablet, aTmp, .f., nMode ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 95,;
+   	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 120,;
                                              		"nLeft"     => {|| GridWidth( 2.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5684,22 +5719,21 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| WinDelRec( oBrwLin, dbfTmpLin, , , , .t. ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnAceptar  		:= TGridImage():Build(  {  	"nTop"      => 95,;
+   	oBtnUp  			:= TGridImage():Build(  {  	"nTop"      => 120,;
                                              		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
-                                             		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode ) },;
+                                             		"cResName"  => "flat_up_64",;
+                                             		"bLClicked" => {|| oBrwLin:GoUp(), oBrwLin:Select( 0 ), oBrwLin:Select( 1 ), oBrwLin:Refresh()  },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 95,;
+   	oBtnDown  			:= TGridImage():Build(  {  	"nTop"      => 120,;
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
-                                            	 	"nHeight"   => 64,;
-                                             		"cResName"  => "flat_del_64",;
-                                             		"bLClicked" => {|| oDlg:End() },;
+                                             		"nHeight"   => 64,;
+                                             		"cResName"  => "flat_down_64",;
+                                             		"bLClicked" => {|| oBrwLin:GoDown(), oBrwLin:Select( 0 ), oBrwLin:Select( 1 ), oBrwLin:Refresh() },;
                                              		"oWnd"      => oDlg } )
-   	
 
    	/*
 	Browse se las líneas-------------------------------------------------------
@@ -5707,7 +5741,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    	oBrwLin                 	:= TGridIXBrowse():New( oDlg )
 
-   	oBrwLin:nTop            	:= oBrwLin:EvalRow( 130 )
+   	oBrwLin:nTop            	:= oBrwLin:EvalRow( 155 )
    	oBrwLin:nLeft           	:= oBrwLin:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    	oBrwLin:nWidth          	:= oBrwLin:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    	oBrwLin:nHeight         	:= oBrwLin:EvalHeight( {|| GridHeigth( oDlg ) - oBrwLin:nTop - 10 } )
@@ -5907,7 +5941,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 
 	oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             		"bText"     => {|| LblTitle( nMode ) + "líneas de facturas" },;
+                                             		"bText"     => {|| LblTitle( nMode ) + " líneas de facturas" },;
                                              		"oWnd"      => oDlg,;
                                              		"oFont"     => oGridFontBold(),;
                                              		"lPixels"   => .t.,;
@@ -5922,7 +5956,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode ) },;
+                                             		"bLClicked" => {|| if( !Empty( aTmp[ _CREF ] ), SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode ), ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
@@ -6141,7 +6175,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
+static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlgFac )
 
 	local oDlg
 	local oBrwIva
@@ -6161,15 +6195,15 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
 	local oBtnAceptar
 	local oBtnSalir
 	local oCbxOrd
-	local cCbxOrd 		:= "No imprimir"
 	local aCbxOrd 		:= aDocs( "FC", dbfDoc, .t. )
+	local cCbxOrd 		:= cDocumentoDefecto( aTmp[ _CSERIE ], aCbxOrd )
 
 	/*
 	Comprobamos que el cliente no esté vacío-----------------------------------
 	*/
 
 	if Empty( aGet[ _CCODCLI ]:VarGet() )
-      	MsgStop( "Tiene que elegir un cliente para hacer una factura." )
+      	ApoloMsgStop( "Tiene que elegir un cliente para hacer una factura.", "¡Atención!" )
       	return .f.
    	end if
 
@@ -6178,7 +6212,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
 	*/
 
 	if ( dbfTmpLin )->( OrdKeyCount() ) <= 0
-      	MsgStop( "No puede almacenar un documento sin lineas." )
+		ApoloMsgStop( "No puede almacenar un documento sin lineas.", "¡Atención!" )
       	return .f.
    	end if
 
@@ -6215,7 +6249,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| oDlg:End() },;
+                                             		"bLClicked" => {|| if( EndTrans( aTmp, aGet, , , , {}, nMode, oDlg ), ( if( cCbxOrd != "No imprimir", GenFacCli( IS_PRINTER, , Left( cCbxOrd, 3 ) ),  ), oDlgFac:End() ), ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
@@ -6399,7 +6433,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
                                              		"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                              		"bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
                                              		"oWnd"      => oDlg,;
-                                             		"nWidth"    => {|| GridWidth( 6, oDlg ) },;
+                                             		"nWidth"    => {|| GridWidth( 9, oDlg ) },;
                                              		"nHeight"   => 25,;
                                              		"aItems"    => aCbxOrd } )
 
@@ -6413,6 +6447,44 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode )
    	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
    
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+static function ChangeSerieTablet( aGet )
+
+	local cSerie 	:= aGet[ _CSERIE ]:VarGet()
+
+		do case
+			case cSerie == "A"
+				if !Empty( aGet[ _CSERIE ] )
+					aGet[ _CSERIE ]:cText( "B" )
+					aGet[ _CSERIE ]:Refresh()
+				end if	
+
+			case cSerie == "B"
+				if !Empty( aGet[ _CSERIE ] )
+					aGet[ _CSERIE ]:cText( "A" )
+					aGet[ _CSERIE ]:Refresh()
+				end if	
+
+			otherwise
+				if !Empty( aGet[ _CSERIE ] )
+					aGet[ _CSERIE ]:cText( "A" )
+					aGet[ _CSERIE ]:Refresh()
+				end if	
+
+		end case
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+static function cDocumentoDefecto( cSerie, aCbxOrd )
+
+	local cDocumento 	:= ""
+	local cFormato 		:= cFormatoDocumento( cSerie, "nFacCli", dbfCount )
+
+return aCbxOrd[ aScan( aCbxOrd, {|x| Left( x, 3 ) == cFormato } ) ]
 
 //---------------------------------------------------------------------------//
 
@@ -11516,11 +11588,13 @@ Return ( lErrors )
 Cargaos los datos del cliente
 */
 
-STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
+STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 
    local lValid      := .t.
    local cNewCodCli  := aGet[ _CCODCLI ]:varGet()
    local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
+
+   DEFAULT lShowInc  := .t.
 
    if Empty( cNewCodCli )
       Return .t.
@@ -11866,7 +11940,9 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento )
          MsgStop( Trim( ( TDataView():Clientes( nView ) )->mComent ) )
       end if
 
-      ShowIncidenciaCliente( ( TDataView():Clientes( nView ) )->Cod, nView )
+      if lShowInc
+      	ShowIncidenciaCliente( ( TDataView():Clientes( nView ) )->Cod, nView )
+      end if	
 
       cOldCodCli  := ( TDataView():Clientes( nView ) )->Cod
 
@@ -14192,7 +14268,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    cNumPed              := aTmp[ _CNUMPED ]
    cNumAlb              := aTmp[ _CNUMALB ]
    dFecFac              := aTmp[ _DFECFAC ]
-   cCodCli 					:= aTmp[ _CCODCLI ]
+   cCodCli 				:= aTmp[ _CCODCLI ]
 
    /*
    Comprobamos la fecha del documento------------------------------------------
@@ -14208,61 +14284,81 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    if lCliBlq( aTmp[ _CCODCLI ], TDataView():Clientes( nView ) )
       msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
-      aGet[ _CCODCLI ]:SetFocus()
+      if !Empty( aGet[ _CCODCLI ] )
+      	aGet[ _CCODCLI ]:SetFocus()
+      end if	
       return .f.
    end if
 
    if Empty( aTmp[ _CNOMCLI ] )
       msgStop( "Nombre de cliente no puede estar vacío." )
-      aGet[ _CNOMCLI ]:SetFocus()
+      if !Empty( aGet[ _CNOMCLI ] )
+      	aGet[ _CNOMCLI ]:SetFocus()
+      end if	
       return .f.
    end if
 
    if Empty( aTmp[ _CDIRCLI ] )
       msgStop( "Domicilio de cliente no puede estar vacío." )
-      aGet[ _CDIRCLI ]:SetFocus()
+      if !Empty( aGet[ _CDIRCLI ] )
+      	aGet[ _CDIRCLI ]:SetFocus()
+      end if
       return .f.
    end if
 
    if Empty( aTmp[ _CDNICLI ] )
       msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacío." )
-      aGet[ _CDNICLI ]:SetFocus()
+      if !Empty( aGet[ _CDNICLI ] )
+      	aGet[ _CDNICLI ]:SetFocus()
+      end if	
       return .f.
    end if
 
    if Empty( aTmp[ _CCODALM ] )
       msgStop( "Almacén no puede estar vacío.", "Imposible archivar como factura" )
-      aGet[ _CCODALM ]:SetFocus()
+      if !Empty( aGet[ _CCODALM ] )
+      	aGet[ _CCODALM ]:SetFocus()
+      end if	
       return .f.
    end if
 
    if Empty( aTmp[ _CCODPAGO ] )
       msgStop( "Forma de pago no puede estar vacía.", "Imposible archivar como factura" )
-      aGet[ _CCODPAGO ]:SetFocus()
+      if !Empty( aGet[ _CCODPAGO ] )
+      	aGet[ _CCODPAGO ]:SetFocus()
+      end if	
       return .f.
    end if
 
    if Empty( aTmp[ _CDIVFAC ] )
       MsgStop( "No puede almacenar documento sin código de divisa.", "Imposible archivar como factura" )
-      aGet[ _CDIVFAC ]:SetFocus()
+      if !Empty( aGet[ _CDIVFAC ] )
+      	aGet[ _CDIVFAC ]:SetFocus()
+      end if	
       return .f.
    end if
 
    if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, TDataView():Clientes( nView ) )
       msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
-      aGet[ _CCODCLI ]:SetFocus()
+      if !Empty( aGet[ _CCODCLI ] )
+      	aGet[ _CCODCLI ]:SetFocus()
+      end if	
       return .f.
    end if
 
    if Empty( aTmp[ _CCODAGE ] ) .and. lRecogerAgentes()
       msgStop( "Agente no puede estar vacío." )
-      aGet[ _CCODAGE ]:SetFocus()
+      if !Empty( aGet[ _CCODAGE ] )
+      	aGet[ _CCODAGE ]:SetFocus()
+      end if	
       return .f.
    end if
 
    if Empty( aTmp[ _CCODOBR ] ) .and. lObras()
       MsgStop( "Debe de introducir una obra." )
-      aGet[ _CCODOBR ]:SetFocus()
+      if !Empty( aGet[ _CCODOBR ] )
+      	aGet[ _CCODOBR ]:SetFocus()
+      end if
       return .f.
    end if
 
@@ -14300,7 +14396,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    BEGIN SEQUENCE
 
       oMsgText( "Archivando" )
-      oMeter:Set( 1 )
+      
+      if !Empty( oMeter )
+      	oMeter:Set( 1 )
+      end if	
 
       BeginTransaction()
 
@@ -14331,7 +14430,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
          oMsgText( "Obteniendo nuevos numeros" )
-         oMeter:Set( 2 )
+         if !Empty( oMeter )
+         	oMeter:Set( 2 )
+         end if
 
          /*
          Obtenemos el nuevo numero de la factura----------------------------------
@@ -14348,7 +14449,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       case nMode == EDIT_MODE
 
          oMsgText( "Eliminando detalles anteriores" )
-         oMeter:Set( 2 )
+         if !Empty( oMeter )
+         	oMeter:Set( 2 )
+         end if	
 
          /*
          Rollback de todos los articulos si la factura no se importo de albaranes-
@@ -14442,7 +14545,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       end case
 
       oMsgText( "Almancenando datos" )
-      oMeter:Set( 3 )
+      
+      if !Empty( oMeter )
+      	oMeter:Set( 3 )
+      end if	
 
       /*
       Ahora escribimos en el fichero definitivo-----------------------------------
@@ -14573,7 +14679,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       */
 
       oMsgText( "Guardamos los totales" )
-      oMeter:Set( 4 )
+      
+      if !Empty( oMeter )
+      	oMeter:Set( 4 )
+      end if	
 
       aTmp[ _NTOTNET ]  := nTotNet
       aTmp[ _NTOTIVA ]  := nTotIva
@@ -14588,7 +14697,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       */
 
       oMsgText( "Guardamos el documento" )
-      oMeter:Set( 4 )
+      
+      if !Empty( oMeter )
+      	oMeter:Set( 4 )
+      end if	
 
       WinGather( aTmp, , TDataView():FacturasClientes( nView ), , nMode )
 
@@ -14603,7 +14715,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       */
 
       oMsgText( "Actualizamos el estado de los albaranes" )
-      oMeter:Set( 5 )
+      
+      if !Empty( oMeter )
+      	oMeter:Set( 5 )
+      end if	
 
       if len( aNumAlb ) > 0
          for n := 1 to len( aNumAlb )
@@ -14618,7 +14733,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       */
 
       oMsgText( "Actualizamos el estado de los pedidos" )
-      oMeter:Set( 6 )
+      
+      if !Empty( oMeter )
+      	oMeter:Set( 6 )
+      end if	
 
       if !Empty( cNumPed )
 
@@ -14652,7 +14770,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       */
 
       oMsgText( "Marcamos las entregas de los albaranes" )
-      oMeter:Set( 7 )
+      
+      if !Empty( oMeter )
+	      oMeter:Set( 7 )
+	  end if    
 
       if !Empty( cNumAlb )
 
@@ -14692,7 +14813,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       */
 
       oMsgText( "Generamos los pagos" )
-      oMeter:Set( 8 )
+      
+	  if !Empty( oMeter )
+	      oMeter:Set( 8 )
+	  end if    
 
       GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, TDataView():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
 
@@ -14701,7 +14825,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       */
 
       oMsgText( "Comprobamos el estado de la factura" )
-      oMeter:Set( 9 )
+      
+      if !Empty( oMeter )
+      	oMeter:Set( 9 )
+      end if	
 
       ChkLqdFacCli( nil, TDataView():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
 
@@ -14719,7 +14846,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    */
 
    oMsgText( "Cerramos el dialogo" )
-   oMeter:Set( 10 )
+   
+   if !Empty( oMeter )
+   	oMeter:Set( 10 )
+   end if	
 
    oDlg:Enable()
    oDlg:End( IDOK )
