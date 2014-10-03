@@ -1850,7 +1850,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
    local cGetNbr
    local oCbxOrd
    local cCbxOrd     := "Código"
-   local aCbxOrd     := { "Código", "Nombre" }
+   local aCbxOrd     := { "Código" }
 
    if Empty( cPrp )
       MsgStop( "No hay propiedades seleccionadas para este artículo." )
@@ -1880,7 +1880,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 
       REDEFINE GET oGetNbr VAR cGetNbr ;
          ID       	104 ;
-         ON CHANGE 	AutoSeek( nKey, nFlags, Self, oBrw, dbfProL ) ;
+         ON CHANGE 	AutoSeek( nKey, nFlags, Self, oBrw, dbfProL, nil, cPrp ) ;
          BITMAP   	"FIND" ;
          OF       	oDlg
 
@@ -1888,7 +1888,6 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
          VAR      	cCbxOrd ;
          ID       	102 ;
          ITEMS    	aCbxOrd ;
-         ON CHANGE	( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfTmpBrw )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() ) ;
          OF       	oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
