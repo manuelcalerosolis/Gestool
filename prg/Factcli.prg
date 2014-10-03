@@ -6505,6 +6505,8 @@ Function FacCliTablet()
 	local oBtnDel
 	local oBtnUp
 	local oBtnDown
+	local oBtnUpPage
+	local oBtnDownPage
 
     /*
 	Abrimos los ficheros-------------------------------------------------------
@@ -6540,7 +6542,7 @@ Function FacCliTablet()
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                             	 	"nHeight"   => 64,;
-                                             		"cResName"  => "flat_del_64",;
+                                             		"cResName"  => "flat_end_64",;
                                              		"bLClicked" => {|| oDlg:End() },;
                                              		"oWnd"      => oDlg } )
 
@@ -6587,7 +6589,7 @@ Function FacCliTablet()
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_edit_64",;
-                                             		"bLClicked" => {|| MsgInfo( "Modificar" ) },;
+                                             		"bLClicked" => {|| WinEdtRec( nil, bEdtTablet, TDataView():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 70,;
@@ -6595,11 +6597,19 @@ Function FacCliTablet()
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_minus_64",;
-                                             		"bLClicked" => {|| MsgInfo( "Eliminar" ) },;
+                                             		"bLClicked" => {|| WinDelRec( oBrw, TDataView():FacturasClientes( nView ), {|| QuiFacCli() }, , , .t. ) },;
+                                             		"oWnd"      => oDlg } )
+
+   	oBtnUpPage			:= TGridImage():Build(  {  	"nTop"      => 70,;
+                                             		"nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                             		"nHeight"   => 64,;
+                                             		"cResName"  => "flat_page_up_64",;
+                                             		"bLClicked" => {|| oBrw:PageUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnUp  			:= TGridImage():Build(  {  	"nTop"      => 70,;
-                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 8.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_up_64",;
@@ -6607,12 +6617,20 @@ Function FacCliTablet()
                                              		"oWnd"      => oDlg } )
 
    	oBtnDown  			:= TGridImage():Build(  {  	"nTop"      => 70,;
-                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_down_64",;
                                              		"bLClicked" => {|| oBrw:GoDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
                                              		"oWnd"      => oDlg } )
+
+   	oBtnDownPage		:= TGridImage():Build(  {  	"nTop"      => 70,;
+                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                             		"nHeight"   => 64,;
+                                             		"cResName"  => "flat_page_down_64",;
+                                             		"bLClicked" => {|| oBrw:PageDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
+                                             		"oWnd"      => oDlg } ) 
 
    	/*
 	Browse de facturas-------------------------------------------------------
@@ -6630,35 +6648,15 @@ Function FacCliTablet()
    	oBrw:cName           	:= "Grid facturas"
 
     with object ( oBrw:AddCol() )
-       	:cHeader            := "Número"
-       	:cSortOrder       	:= "nNumFac"
-        :bEditValue         := {|| ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) }
-        :nWidth             := 80
-        :bLClickHeader    	:= {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+       	:cHeader            := "Factura"
+        :bEditValue         := {|| ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) + CRLF + Dtoc( ( TDataView():FacturasClientes( nView ) )->dFecFac ) }
+        :nWidth             := 160
     end with
 
     with object ( oBrw:AddCol() )
-       	:cHeader            := "Fecha"
-       	:cSortOrder       	:= "dFecFac"
-        :bEditValue         := {|| Dtoc( ( TDataView():FacturasClientes( nView ) )->dFecFac )  }
-        :nWidth             := 80
-        :bLClickHeader    	:= {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
-    end with
-
-    with object ( oBrw:AddCol() )
-       	:cHeader            := "Código"
-       	:cSortOrder       	:= "cCodCli"
-        :bEditValue         := {|| AllTrim( ( TDataView():FacturasClientes( nView ) )->cCodCli )  }
-        :nWidth             := 80
-        :bLClickHeader    	:= {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
-    end with
-
-    with object ( oBrw:AddCol() )
-       	:cHeader            := "Nombre"
-       	:cSortOrder       	:= "cNomCli"
-        :bEditValue         := {|| AllTrim( ( TDataView():FacturasClientes( nView ) )->cNomCli )  }
-        :nWidth             := 180
-        :bLClickHeader    	:= {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+       	:cHeader            := "Cliente"
+        :bEditValue         := {|| AllTrim( ( TDataView():FacturasClientes( nView ) )->cCodCli ) + CRLF + AllTrim( ( TDataView():FacturasClientes( nView ) )->cNomCli )  }
+        :nWidth             := 320
     end with
 
     with object ( oBrw:AddCol() )
@@ -6695,14 +6693,17 @@ Function FacCliTablet()
        	:cHeader            := "Total"
         :bEditValue         := {|| ( TDataView():FacturasClientes( nView ) )->nTotFac }
         :cEditPicture     	:= cPorDiv()
-        :nWidth             := 80
+        :nWidth             := 190
         :nDataStrAlign    	:= 1
         :nHeadStrAlign    	:= 1
     end with
 
    	oBrw:nHeaderHeight   	:= 48
    	oBrw:nFooterHeight   	:= 48
-   	oBrw:nRowHeight      	:= 48
+   	oBrw:nRowHeight      	:= 96
+   	oBrw:nDataLines      	:= 2
+
+   	oBrw:bLDblClick      	:= {|| WinEdtRec( nil, bEdtTablet, TDataView():FacturasClientes( nView ) ) }
 
    	oBrw:CreateFromCode( 105 )
 
@@ -6720,7 +6721,7 @@ Function FacCliTablet()
 
     CloseFiles()
 
-RETURN ( oDlg:nResult == IDOK )
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 
