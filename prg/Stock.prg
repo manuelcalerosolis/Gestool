@@ -5666,6 +5666,8 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
       while ( ::cHisMovT )->cRefMov == cCodArt .and. ( ::cHisMovT )->cAliMov == cCodAlm .and. ( ::cHisMovT )->cCodPr1 == cCodPrp1 .and. ( ::cHisMovT )->cCodPr2 == cCodPrp2 .and. ( ::cHisMovT )->cValPr1 == cValPrp1 .and. ( ::cHisMovT )->cValPr2 == cValPrp2 .and. ( ::cHisMovT )->cLote == cLote .and. !( ::cHisMovT)->( Eof() )
 
+//         msgAlert( ( ::cHisMovT )->dFecMov, "consolidacion actual")
+
          if Empty( ::dConsolidacion )
 
             ::dConsolidacion     := ( ::cHisMovT )->dFecMov
@@ -5683,6 +5685,8 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
       end while
 
    end if
+
+//   msgAlert( ::dConsolidacion, "consolidacion devuelta" )
 
    // Guardamos el criterio de busqueda para la proxima-----------------------
 

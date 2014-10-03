@@ -121,6 +121,7 @@ CLASS TShell FROM TMdiChild
    DATA  lOpenData      AS LOGIC    INIT .t.
 
    DATA  lFechado       AS LOGIC    INIT .f.
+   DATA  lFooter        AS LOGIC    INIT .f.
 
    DATA  oFilter
 
