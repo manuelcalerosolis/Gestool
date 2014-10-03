@@ -639,6 +639,14 @@ Return nil
 
 //----------------------------------------------------------------------------//
 
+Function GridRow( nLines )
+   
+   DEFAULT nLines    := 1
+
+Return ( nLines * 35 )
+
+//----------------------------------------------------------------------------//
+
 Function GridWidth( nCols, oDlg )
    
 Return ( oDlg:nWidth() / 12 * nCols )

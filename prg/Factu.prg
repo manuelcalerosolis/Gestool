@@ -1013,9 +1013,9 @@ Function lStartCheck()
 
    // Test de BrwClient--------------------------------------------------------
 
-/*#ifndef __XHARBOUR__
-   GridBrwObras() 
-#endif*/
+#ifndef __XHARBOUR__
+   MainTablet() 
+#endif
 
    // Lanzamos para los documentos automáticos---------------------------------
 
@@ -5798,3 +5798,78 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 //--------------PDA ROCIO----------------------------------------------------//
 
+Function MainTablet()
+
+	local oDlg
+
+   oDlg                 := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+
+	/*
+	Cabeceras------------------------------------------------------------------
+   */
+
+   TGridSay():Build(    { 	"nRow"      => 0,;
+                     		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                     		"bText"     => {|| "Gestool tablet" },;
+                     		"oWnd"      => oDlg,;
+                     		"oFont"     => oGridFontBold(),;
+                     		"lPixels"   => .t.,;
+                     		"nClrText"  => Rgb( 0, 0, 0 ),;
+                     		"nClrBack"  => Rgb( 255, 255, 255 ),;
+                     		"nWidth"    => {|| GridWidth( 5, oDlg ) },;
+                     		"nHeight"   => {|| GridRow() },;
+                     		"lDesign"   => .f. } )
+
+   TGridImage():Build(  {  "nTop"      => 4,;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 138 },;
+                           "nWidth"    => 138,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "Gestool",;
+                           "oWnd"      => oDlg } )
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 2 ) },;
+                     		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                     		"nWidth"    => 64,;
+                     		"nHeight"   => 64,;
+                     		"cResName"  => "flat_document_64",;
+                     		"bLClicked" => {|| Msginfo( "Configurar" ) },;
+                     		"oWnd"      => oDlg } )
+
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 2 ) },;
+                           "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                           "cURL"      => "Facturas de clientes",;
+                           "oWnd"      => oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| MsgInfo("Configurar") } } )
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 5 ) },;
+                           "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_config_64",;
+                           "bLClicked" => {|| Msginfo( "Configurar" ) },;
+                           "oWnd"      => oDlg } )
+
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 5 ) },;
+                           "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                           "cURL"      => "Configurar",;
+                           "oWnd"      => oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| MsgInfo("Configurar") } } )
+
+
+	// Redimensionamos y activamos el diálogo------------------------------------- 
+
+	oDlg:bResized       := {|| GridResize( oDlg ) }
+
+	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
+
+RETURN ( .t. )
