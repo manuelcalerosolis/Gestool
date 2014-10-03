@@ -2490,7 +2490,7 @@ Function CreateAcceso( oWnd )
    // Ventas-------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 9
+   oGrupo:nBigItems     := 8
    oGrupo:cPrompt       := 'Ventas'
    oGrupo:cLittleBitmap := "Document_user1_16"
    oGrupo:cBigBitmap    := "Document_user1_32"
@@ -2544,16 +2544,6 @@ Function CreateAcceso( oWnd )
    oItem:cPrompt        := 'Facturas'
    oItem:cMessage       := 'Acceso a las facturas de clientes'
    oItem:bAction        := {|| FactCli( "01058", oWnd ) }
-   oItem:cId            := "01058"
-   oItem:cBmp           := "Document_user1_16"
-   oItem:cBmpBig        := "Document_user1_32"
-   oItem:lShow          := .t.
-
-   oItem                := oItemVentas:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Facturas tablet'
-   oItem:cMessage       := 'Acceso a las facturas de clientes'
-   oItem:bAction        := {|| AppFacCliTablet() }
    oItem:cId            := "01058"
    oItem:cBmp           := "Document_user1_16"
    oItem:cBmpBig        := "Document_user1_32"
@@ -5832,7 +5822,7 @@ Function MainTablet()
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
                      		"cResName"  => "flat_document_64",;
-                     		"bLClicked" => {|| Msginfo( "Configurar" ) },;
+                     		"bLClicked" => {|| FacCliTablet() },;
                      		"oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 2 ) },;
@@ -5844,7 +5834,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| MsgInfo("Configurar") } } )
+                           "bAction"   => {|| FacCliTablet() } } )
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 5 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
