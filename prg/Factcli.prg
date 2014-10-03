@@ -5870,7 +5870,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    	oBrwLin:CreateFromCode( 105 )
 
-		// Redimensionamos y activamos el diálogo------------------------------------- 
+	// Redimensionamos y activamos el diálogo------------------------------------- 
 
    	oDlg:bResized  				:= {|| GridResize( oDlg ), oBrwLin:Load() }
 
@@ -6485,6 +6485,242 @@ static function cDocumentoDefecto( cSerie, aCbxOrd )
 	local cFormato 		:= cFormatoDocumento( cSerie, "nFacCli", dbfCount )
 
 return aCbxOrd[ aScan( aCbxOrd, {|x| Left( x, 3 ) == cFormato } ) ]
+
+//---------------------------------------------------------------------------//
+
+Function FacCliTablet()
+
+	local oDlg
+	local oBrw
+	local oSayGeneral
+	local nAltoGet 		:= 23
+	local oBtnSalir
+	local oGetSearch
+	local cGetSearch 	:= Space( 100 )
+	local oCbxOrd
+	local aCbxOrd 		:= { "Número", "Fecha", "Código", "Nombre" }
+	local cCbxOrd 		:= "Número"
+	local oBtnAdd
+	local oBtnEdt
+	local oBtnDel
+	local oBtnUp
+	local oBtnDown
+
+    /*
+	Abrimos los ficheros-------------------------------------------------------
+    */
+
+    if !OpenFiles( .t. )
+    	Return .f.
+    end if
+
+    /*
+	Diálogo--------------------------------------------------------------------
+	*/
+
+	oDlg           		:= TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+
+	/*
+	Cabeceras------------------------------------------------------------------
+	*/
+
+	oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
+                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             		"bText"     => {|| "Facturas de clientes" },;
+                                             		"oWnd"      => oDlg,;
+                                             		"oFont"     => oGridFontBold(),;
+                                             		"lPixels"   => .t.,;
+                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
+                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
+                                             		"nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             		"nHeight"   => 32,;
+                                             		"lDesign"   => .f. } )
+
+   	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
+                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                            	 	"nHeight"   => 64,;
+                                             		"cResName"  => "flat_del_64",;
+                                             		"bLClicked" => {|| oDlg:End() },;
+                                             		"oWnd"      => oDlg } )
+
+   	/*
+   	Texto de busqueda----------------------------------------------------------
+   	*/
+
+   	oGetSearch     		:= TGridGet():Build(    { 	"nRow"      => 40,;
+                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             		"bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
+                                             		"oWnd"      => oDlg,;
+                                             		"nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             		"nHeight"   => 25,;
+                                             		"bValid"    => {|| OrdClearScope( oBrw, TDataView():FacturasClientes( nView ) ) },;
+                                             		"bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, TDataView():FacturasClientes( nView ), .t. ) } } )
+
+   	/*
+	Orden----------------------------------------------------------------------
+   	*/
+
+   	oCbxOrd     		:= TGridComboBox():Build({  "nRow"      => 40,;
+                                             		"nCol"      => {|| GridWidth( 9.5, oDlg ) },;
+                                             		"bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                                             		"oWnd"      => oDlg,;
+                                             		"nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                             		"nHeight"   => 25,;
+                                             		"aItems"    => aCbxOrd,;
+                                             		"bChanged"  => {| nKey, nFlags, Self | ( TDataView():FacturasClientes( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
+	
+	/*
+	Botones de las lineas------------------------------------------------------
+   	*/
+
+   	oBtnAdd  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+                                             		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                             		"nHeight"   => 64,;
+                                             		"cResName"  => "flat_add_64",;
+                                             		"bLClicked" => {|| WinAppRec( nil, bEdtTablet, TDataView():FacturasClientes( nView ) ) },;
+                                             		"oWnd"      => oDlg } )
+
+   	oBtnEdt  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+                                             		"nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                             		"nHeight"   => 64,;
+                                             		"cResName"  => "flat_edit_64",;
+                                             		"bLClicked" => {|| MsgInfo( "Modificar" ) },;
+                                             		"oWnd"      => oDlg } )
+
+   	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+                                             		"nLeft"     => {|| GridWidth( 2.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                             		"nHeight"   => 64,;
+                                             		"cResName"  => "flat_minus_64",;
+                                             		"bLClicked" => {|| MsgInfo( "Eliminar" ) },;
+                                             		"oWnd"      => oDlg } )
+
+   	oBtnUp  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                             		"nHeight"   => 64,;
+                                             		"cResName"  => "flat_up_64",;
+                                             		"bLClicked" => {|| oBrw:GoUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
+                                             		"oWnd"      => oDlg } )
+
+   	oBtnDown  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             		"nWidth"    => 64,;
+                                             		"nHeight"   => 64,;
+                                             		"cResName"  => "flat_down_64",;
+                                             		"bLClicked" => {|| oBrw:GoDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
+                                             		"oWnd"      => oDlg } )
+
+   	/*
+	Browse de facturas-------------------------------------------------------
+   	*/
+
+   	oBrw                 	:= TGridIXBrowse():New( oDlg )
+
+   	oBrw:nTop            	:= oBrw:EvalRow( 110 )
+   	oBrw:nLeft           	:= oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   	oBrw:nWidth          	:= oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   	oBrw:nHeight         	:= oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )
+
+   	oBrw:cAlias          	:= TDataView():FacturasClientes( nView )
+   	oBrw:nMarqueeStyle   	:= 6
+   	oBrw:cName           	:= "Grid facturas"
+
+    with object ( oBrw:AddCol() )
+       	:cHeader            := "Número"
+       	:cSortOrder       	:= "nNumFac"
+        :bEditValue         := {|| ( TDataView():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( TDataView():FacturasClientes( nView ) )->nNumFac ) ) }
+        :nWidth             := 80
+        :bLClickHeader    	:= {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+    end with
+
+    with object ( oBrw:AddCol() )
+       	:cHeader            := "Fecha"
+       	:cSortOrder       	:= "dFecFac"
+        :bEditValue         := {|| Dtoc( ( TDataView():FacturasClientes( nView ) )->dFecFac )  }
+        :nWidth             := 80
+        :bLClickHeader    	:= {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+    end with
+
+    with object ( oBrw:AddCol() )
+       	:cHeader            := "Código"
+       	:cSortOrder       	:= "cCodCli"
+        :bEditValue         := {|| AllTrim( ( TDataView():FacturasClientes( nView ) )->cCodCli )  }
+        :nWidth             := 80
+        :bLClickHeader    	:= {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+    end with
+
+    with object ( oBrw:AddCol() )
+       	:cHeader            := "Nombre"
+       	:cSortOrder       	:= "cNomCli"
+        :bEditValue         := {|| AllTrim( ( TDataView():FacturasClientes( nView ) )->cNomCli )  }
+        :nWidth             := 180
+        :bLClickHeader    	:= {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), oGetSearch:SetFocus() }
+    end with
+
+    with object ( oBrw:AddCol() )
+       	:cHeader            := "Base"
+        :bEditValue         := {|| ( TDataView():FacturasClientes( nView ) )->nTotNet  }
+        :cEditPicture     	:= cPorDiv()
+        :nWidth             := 80
+        :nDataStrAlign    	:= 1
+        :nHeadStrAlign    	:= 1
+        :lHide            	:= .t.
+    end with
+
+    with object ( oBrw:AddCol() )
+       	:cHeader            := cImp()
+        :bEditValue         := {|| ( TDataView():FacturasClientes( nView ) )->nTotIva  }
+        :cEditPicture     	:= cPorDiv()
+        :nWidth             := 80
+        :nDataStrAlign    	:= 1
+        :nHeadStrAlign    	:= 1
+        :lHide            	:= .t.
+    end with
+
+    with object ( oBrw:AddCol() )
+       	:cHeader            := "R.E."
+        :bEditValue         := {|| ( TDataView():FacturasClientes( nView ) )->nTotReq  }
+        :cEditPicture     	:= cPorDiv()
+        :nWidth             := 80
+        :nDataStrAlign    	:= 1
+        :nHeadStrAlign    	:= 1
+        :lHide            	:= .t.
+    end with
+
+    with object ( oBrw:AddCol() )
+       	:cHeader            := "Total"
+        :bEditValue         := {|| ( TDataView():FacturasClientes( nView ) )->nTotFac }
+        :cEditPicture     	:= cPorDiv()
+        :nWidth             := 80
+        :nDataStrAlign    	:= 1
+        :nHeadStrAlign    	:= 1
+    end with
+
+   	oBrw:nHeaderHeight   	:= 48
+   	oBrw:nFooterHeight   	:= 48
+   	oBrw:nRowHeight      	:= 48
+
+   	oBrw:CreateFromCode( 105 )
+
+   	/*
+	Redimensionamos y activamos el diálogo-------------------------------------
+	*/
+
+   	oDlg:bResized  				:= {|| GridResize( oDlg ) }
+
+   	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
+   
+    /*
+	Cerramos los ficheros------------------------------------------------------
+    */
+
+    CloseFiles()
+
+RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
@@ -19129,25 +19365,6 @@ FUNCTION VisFacCli( cNumFac, lOpenBrowse, cCaption, cFormato, cPrinter )
    end if
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-Function AppFacCliTablet()
-
-   	local nLevel         := nLevelUsr( _MENUITEM_ )
-
-   	if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_APPD ) == 0
-      	msgStop( 'Acceso no permitido.' )
-      	return .t.
-   	end if
-
-    if OpenFiles( .t. )
-    	nTotFacCli()
-        WinAppRec( nil, bEdtTablet, TDataView():FacturasClientes( nView ) )
-        CloseFiles()
-    end if
-
-RETURN .t.
 
 //---------------------------------------------------------------------------//
 
