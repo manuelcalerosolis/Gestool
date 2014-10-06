@@ -5841,25 +5841,46 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_config_64",;
-                           "bLClicked" => {|| Msginfo( "Configurar" ) },;
+                           "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 5 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
-                           "cURL"      => "Configurar",;
+                           "cURL"      => "Envío y recepción",;
                            "oWnd"      => oDlg,;
                            "oFont"     => oGridFont(),;
                            "lPixel"    => .t.,;
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| MsgInfo("Configurar") } } )
+                           "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 8 ) },;
+                           "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_End_64",;
+                           "bLClicked" => {|| oDlg:End() },;
+                           "oWnd"      => oDlg } )
+
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 8 ) },;
+                           "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                           "cURL"      => "Salir",;
+                           "oWnd"      => oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| oDlg:End() } } )
 
 
-	// Redimensionamos y activamos el diálogo------------------------------------- 
+	// Redimensionamos y activamos el diálogo----------------------------------- 
 
 	oDlg:bResized       := {|| GridResize( oDlg ) }
 
 	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
