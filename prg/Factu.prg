@@ -185,7 +185,7 @@ function Main( cParams )
             cEmpUsr( Right( cParamsMain, 2 ) )
          end if
 
-         if lInitCheck( .t. )
+         if lInitCheck()
             TSndRecInf():New():LoadFromIni():Activate( nil, .t. ) // AutoExecute( .t. )
          end if
 
@@ -197,7 +197,7 @@ function Main( cParams )
             cEmpUsr( Right( cParamsMain, 2 ) )
          end if
 
-         if lInitCheck( .t. )
+         if lInitCheck()
             oIndex               := TReindex():New()
             oIndex:lMessageEnd   := .f.
             oIndex:Resource( .t. )
@@ -250,6 +250,12 @@ function Main( cParams )
          
          if AccessCode():Resource()
             CreateMainPdaWindow( oIconApp )
+         end if
+
+      case ( "TABLET" $ cParamsMain )
+         
+         if AccessCode():FileResource()
+            CreateMainTabletWindow( oIconApp )
          end if
 
       otherwise
@@ -343,6 +349,18 @@ Static Function CreateMainWindow( oIconApp )
    SysRefresh()
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function CreateMainTabletWindow()
+
+   lDemoMode( .f. )
+
+   if lInitCheck()
+      MainTablet()
+   end if 
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -850,17 +868,15 @@ Return nil
 //-----------------------------------------------------------------------------//
 // Comprobaciones iniciales
 
-FUNCTION lInitCheck( lDir, oMessage, oProgress )
+FUNCTION lInitCheck( oMessage, oProgress )
 
    local oError
    local lCheck      := .t.
 
-   DEFAULT lDir      := .f.
-
    CursorWait()
 
    if !Empty( oProgress )
-      oProgress:SetTotal( 6 )
+      oProgress:SetTotal( 6  )
    end if
 
    if !Empty( oMessage )
@@ -873,25 +889,7 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
 
    // Comprobamos que exista los directorios necesarios------------------------
 
-   if( !lIsDir( cPatDat() ),     MakeDir( cNamePath( cPatDat() ) ), )
-   if( !lIsDir( cPatADS() ),     MakeDir( cNamePath( cPatADS() ) ), )
-   if( !lIsDir( cPatIn()  ),     MakeDir( cNamePath( cPatIn()  ) ), )
-   if( !lIsDir( cPatTmp() ),     MakeDir( cNamePath( cPatTmp() ) ), )
-   if( !lIsDir( cPatOut() ),     MakeDir( cNamePath( cPatOut() ) ), )
-   if( !lIsDir( cPatSnd() ),     MakeDir( cNamePath( cPatSnd() ) ), )
-   if( !lIsDir( cPatLog() ),     MakeDir( cNamePath( cPatLog() ) ), )
-   if( !lIsDir( cPatBmp() ),     MakeDir( cNamePath( cPatBmp() ) ), )
-   if( !lIsDir( cPatHtm() ),     MakeDir( cNamePath( cPatHtm() ) ), )
-   if( !lIsDir( cPatXml() ),     MakeDir( cNamePath( cPatXml() ) ), )
-   if( !lIsDir( cPatSafe() ),    MakeDir( cNamePath( cPatSafe() ) ), )
-   if( !lIsDir( cPatPsion() ),   MakeDir( cNamePath( cPatPsion() ) ), )
-   if( !lIsDir( cPatEmpTmp() ),  MakeDir( cNamePath( cPatEmpTmp() ) ), )
-   if( !lIsDir( cPatScript() ),  MakeDir( cNamePath( cPatScript() ) ), )
-
-   // Elimina los temporales de la aplicación----------------------------------
-
-   EraseFilesInDirectory( cPatTmp(), "*.*" )
-   EraseFilesInDirectory( cPatLog(), "*.*" )
+   CheckDirectory()
 
    // Cargamos los datos de la empresa-----------------------------------------
 
@@ -1011,37 +1009,31 @@ Function lStartCheck()
       SelectAlmacen()
    end if
 
-   // Test de BrwClient--------------------------------------------------------
-
-#ifndef __XHARBOUR__
-   MainTablet() 
-#endif
-
    // Lanzamos para los documentos automáticos---------------------------------
 
    oMsgText( 'Facturas automáticas' )
 
-   lFacturasAutomaticas()
+      lFacturasAutomaticas()
 
    // Aviso de pedidos pendientes de procesar----------------------------------
 
    oMsgText( 'Pedidos por la web' )
 
-   lPedidosWeb()
+      lPedidosWeb()
 
    // Navegación---------------------------------------------------------------
 
    oMsgText( 'Abriendo panel de navegación' )
 
    if !Empty( oWnd ) .and. !( Os_IsWTSClient() )
-       OpenWebBrowser( oWnd )
+      OpenWebBrowser( oWnd )
    end if
 
    // Colocamos los avisos pa las notas----------------------------------------
 
    oMsgText( 'Servicios de timers' )
-
-   InitServices()
+   
+      InitServices()
 
    // Texto limpio y a trabajar------------------------------------------------
 
@@ -1052,6 +1044,33 @@ Function lStartCheck()
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+Static Function CheckDirectory()
+
+   if( !lIsDir( cPatDat() ),     MakeDir( cNamePath( cPatDat() ) ), )
+   if( !lIsDir( cPatADS() ),     MakeDir( cNamePath( cPatADS() ) ), )
+   if( !lIsDir( cPatIn()  ),     MakeDir( cNamePath( cPatIn()  ) ), )
+   if( !lIsDir( cPatTmp() ),     MakeDir( cNamePath( cPatTmp() ) ), )
+   if( !lIsDir( cPatOut() ),     MakeDir( cNamePath( cPatOut() ) ), )
+   if( !lIsDir( cPatSnd() ),     MakeDir( cNamePath( cPatSnd() ) ), )
+   if( !lIsDir( cPatLog() ),     MakeDir( cNamePath( cPatLog() ) ), )
+   if( !lIsDir( cPatBmp() ),     MakeDir( cNamePath( cPatBmp() ) ), )
+   if( !lIsDir( cPatHtm() ),     MakeDir( cNamePath( cPatHtm() ) ), )
+   if( !lIsDir( cPatXml() ),     MakeDir( cNamePath( cPatXml() ) ), )
+   if( !lIsDir( cPatSafe() ),    MakeDir( cNamePath( cPatSafe() ) ), )
+   if( !lIsDir( cPatPsion() ),   MakeDir( cNamePath( cPatPsion() ) ), )
+   if( !lIsDir( cPatEmpTmp() ),  MakeDir( cNamePath( cPatEmpTmp() ) ), )
+   if( !lIsDir( cPatScript() ),  MakeDir( cNamePath( cPatScript() ) ), )
+
+   // Elimina los temporales de la aplicación----------------------------------
+
+   EraseFilesInDirectory( cPatTmp(), "*.*" )
+   EraseFilesInDirectory( cPatLog(), "*.*" )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 /*
 Ejecuta un fichero .hrb creado a partir de un .prg
 c:\xharbour\bin>harbour c:\test.prg /gh /n
@@ -4948,42 +4967,22 @@ RETURN oMenu
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION lTactilInitCheck( lDir )
+STATIC FUNCTION lTactilInitCheck()
 
    local oError
    local oBlock
    local lCheck   := .t.
 
-   DEFAULT lDir   := .f.
-
    CursorWait()
-
-   oMsgText( 'Comprobando directorios' )
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       lDemoMode( .f. )
 
-      // Comprobamos que exista los directorios necesarios------------------------
+      oMsgText( 'Comprobando directorios' )
 
-      if( !lIsDir( cPatDat() ),     MakeDir( cNamePath( cPatDat() ) ), )
-      if( !lIsDir( cPatIn()  ),     MakeDir( cNamePath( cPatIn()  ) ), )
-      if( !lIsDir( cPatTmp() ),     MakeDir( cNamePath( cPatTmp() ) ), )
-      if( !lIsDir( cPatOut() ),     MakeDir( cNamePath( cPatOut() ) ), )
-      if( !lIsDir( cPatSnd() ),     MakeDir( cNamePath( cPatSnd() ) ), )
-      if( !lIsDir( cPatLog() ),     MakeDir( cNamePath( cPatLog() ) ), )
-      if( !lIsDir( cPatBmp() ),     MakeDir( cNamePath( cPatBmp() ) ), )
-      if( !lIsDir( cPatHtm() ),     MakeDir( cNamePath( cPatHtm() ) ), )
-      if( !lIsDir( cPatSafe() ),    MakeDir( cNamePath( cPatSafe()) ), )
-      if( !lIsDir( cPatPsion()),    MakeDir( cNamePath( cPatPsion())), )
-      if( !lIsDir( cPatEmpTmp() ),  MakeDir( cNamePath( cPatEmpTmp() ) ), )
-
-      // Borrar los ficheros de los directorios temporales------------------------
-
-      oMsgText( 'Borrando ficheros temporales' )
-
-      EraseFilesInDirectory(cPatTmp(), "*.*" )
+      CheckDirectory()
 
       // Cargamos los datos de la empresa-----------------------------------------
 

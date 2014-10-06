@@ -31,6 +31,14 @@ CLASS TFabricantes FROM TMANT
 
    METHOD lPreSave( oGet, oGet2, oDlg, nMode )
 
+   METHOD CreateData()
+   METHOD RestoreData()
+   METHOD SendData()
+   METHOD ReciveData()
+   METHOD Process()
+
+   METHOD nGetNumberToSend()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -385,3 +393,286 @@ METHOD Envio() CLASS TFabricantes
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+Method CreateData()
+
+   local lSnd        := .t.
+   local oFabricantes
+   local oFabricantesTmp
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "Fabricantes" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "Fabricantes" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   ::oSender:SetText( "Enviando movimientos de almacén" )
+
+   oFabricantes      := ::DefineFiles( cPatEmp() )
+   oFabricantes:Activate()
+
+   oFabricantes:OrdSetFocus( "cCodFab" )
+
+   /*
+   Creamos todas las bases de datos relacionadas con Articulos
+   */
+
+   oFabricantesTmp   := ::DefineFiles( cPatSnd() )
+   oFabricantesTmp:Activate()
+
+   oFabricantesTmp:OrdSetFocus( "cCodFab" )
+
+   /*
+   Creamos todas las bases de datos relacionadas con Articulos
+   */
+
+   while !oFabricantes:eof()
+
+      if oFabricantes:lSelDoc
+
+         lSnd  := .t.
+
+         dbPass( oFabricantes:nArea, oFabricantesTmp:nArea, .t. )
+
+         ::oSender:SetText( oFabricantes:cCodFab )
+
+      end if
+
+      oFabricantes:Skip()
+
+   end while
+
+   /*
+   Cerrar ficheros temporales--------------------------------------------------
+   */
+
+   oFabricantes:End()
+   oFabricantesTmp:End()
+
+   if lSnd
+
+      /*
+      Comprimir los archivos
+      */
+
+      ::oSender:SetText( "Comprimiendo fabricantes" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos en " + Rtrim( cFileName ) )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end if
+
+   else
+
+      ::oSender:SetText( "No hay movimientos de almacén para enviar" )
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method RestoreData()
+
+   local oFabricantes
+
+   if ::lSuccesfullSend
+
+      oFabricantes   := ::DefineFiles( cPatEmp() )
+      oFabricantes:Activate()
+
+      oFabricantes:oDbf:GoTop()
+
+      while !oFabricantes:oDbf:Eof()
+
+         if oFabricantes:oDbf:lSelDoc
+            oFabricantes:oDbf:FieldPutByName( "lSelDoc", .f. )
+         end if
+
+         oFabricantes:oDbf:Skip()
+
+      end while
+
+      oFabricantes:End()
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method SendData()
+
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "Fabricantes" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "Fabricantes" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   if file( cPatOut() + cFileName )
+
+      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+         ::lSuccesfullSend := .t.
+         ::IncNumberToSend()
+         ::oSender:SetText( "Fichero enviado " + cFileName )
+      else
+         ::oSender:SetText( "ERROR fichero no enviado" )
+      end if
+
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method ReciveData()
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt        := aRetDlgEmp()
+   else
+      aExt        := { "All" }
+   end if
+
+   /*
+   Recibirlo de internet
+   */
+
+   ::oSender:SetText( "Recibiendo fabricantes" )
+
+   for n := 1 to len( aExt )
+      ftpGetFiles( "Fabricantes*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+   next
+
+   ::oSender:SetText( "Fabricantes recibidos" )
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+Method Process()
+
+   local m
+   local oBlock
+   local oError
+   local oFabricantes
+   local oFabricantesTmp
+   local aFiles               := Directory( cPatIn() )
+
+   /*
+   Recibirlo de internet
+   */
+
+   ::oSender:SetText( "Importando movimientos de almacén" )
+
+   for m := 1 to len( aFiles )
+
+      oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      /*
+      descomprimimos el fichero
+      */
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+         /*
+         Ficheros temporales---------------------------------------------------
+         */
+
+         ::oSender:SetText( "Procesando fichero " + cPatIn() + aFiles[ m, 1 ] )
+
+         if file( cPatSnd() + "Fabricantes.Dbf" )
+
+            oFabricantes      := ::DefineFiles( cPatEmp() )
+            oFabricantes:Activate()
+
+            oFabricantes:OrdSetFocus( "cCodFab" )
+
+            /*
+            Creamos todas las bases de datos relacionadas con Articulos
+            */
+
+            oFabricantesTmp   := ::DefineFiles( cPatSnd() )
+            oFabricantesTmp:Activate()
+
+            oFabricantesTmp:OrdSetFocus( "cCodFab" )
+
+            /*
+            Trasbase de turnos-------------------------------------------------------
+            */
+
+            while !( oFabricantesTmp:eof() )
+
+               if oFabricantes:Seek( oFabricantesTmp:cCodFab )
+                  if !::oSender:lServer
+                     dbPass( oFabricantesTmp:cAlias, oFabricantes:cAlias )
+                     ::oSender:SetText( "Reemplazado : " + AllTrim( oFabricantes:cCodFab ) + "; " + AllTrim( oFabricantes:cNomFab ) )
+                  else
+                     ::oSender:SetText( "Desestimado : " + AllTrim( oFabricantes:cCodFab ) + "; " + AllTrim( oFabricantes:cNomFab ) )
+                  end if
+               else
+                     dbPass( oFabricantesTmp:cAlias, oFabricantes:cAlias, .t. )
+                     ::oSender:SetText( "Añadido : " + AllTrim( oFabricantes:cCodFab ) + "; " + AllTrim( oFabricantes:cNomFab ) )
+               end if
+
+               oFabricantesTmp:Skip() 
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:Set( oFabricantesTmp:OrdKeyNo() ) 
+               end if
+
+               SysRefresh()
+
+            end while
+
+            /*
+            Finalizando--------------------------------------------------------
+            */
+
+            oFabricantes:End()
+            oFabricantesTmp:End()
+
+            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+         else
+
+            ::oSender:SetText( "Faltan ficheros" )
+
+            if !File( cPatSnd() + "Fabricantes.Dbf" )
+               ::oSender:SetText( "Falta " + cPatSnd() + "Fabricantes.Dbf" )
+            end if
+
+         end if
+
+      end if
+
+       RECOVER USING oError
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   next
+
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+Method nGetNumberToSend()
+
+   ::nNumberSend     := GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile )
+
+Return ( ::nNumberSend )
+
+//----------------------------------------------------------------------------//

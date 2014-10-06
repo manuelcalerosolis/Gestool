@@ -12164,9 +12164,9 @@ Method CreateData()
          precios en distintas divisas
          */
 
-         if ( dbfArtVta )->( dbSeek( ( dbfArticulo )->CODIGO ) )
+         if ( dbfArtVta )->( dbSeek( ( dbfArticulo )->Codigo ) )
 
-            while ( dbfArtVta )->cCodArt == ( dbfArticulo )->Codigo .AND. !( dbfArtVta )->( eof() )
+            while ( dbfArtVta )->cCodArt == ( dbfArticulo )->Codigo .and. !( dbfArtVta )->( eof() )
 
                dbPass( dbfArtVta, tmpArtVta, .t. )
                ( dbfArtVta )->( dbSkip( 1 ) )
@@ -12181,7 +12181,7 @@ Method CreateData()
 
          if ( dbfArtKit )->( dbSeek( ( dbfArticulo )->CODIGO ) )
 
-            while ( dbfArtKit )->cCodKit == ( dbfArticulo )->Codigo .AND. !( dbfArtKit )->( eof() )
+            while ( dbfArtKit )->cCodKit == ( dbfArticulo )->Codigo .and. !( dbfArtKit )->( eof() )
 
                dbPass( dbfArtKit, tmpKit, .t. )
                ( dbfArtKit )->( dbSkip( 1 ) )
@@ -12196,7 +12196,7 @@ Method CreateData()
 
          if ( dbfOfe )->( dbSeek( ( dbfArticulo )->Codigo ) )
 
-            while ( dbfOfe )->cArtOfe == ( dbfArticulo )->Codigo .AND. !( dbfOfe )->( eof() )
+            while ( dbfOfe )->cArtOfe == ( dbfArticulo )->Codigo .and. !( dbfOfe )->( eof() )
 
                dbPass( dbfOfe, tmpOfe, .t. )
                ( dbfOfe )->( dbSkip( 1 ) )
@@ -12210,7 +12210,7 @@ Method CreateData()
          */
 
          if ( dbfImg )->( dbSeek( ( dbfArticulo )->Codigo ) )
-            while ( dbfImg )->cCodArt == ( dbfArticulo )->Codigo .AND. !( dbfImg )->( eof() )
+            while ( dbfImg )->cCodArt == ( dbfArticulo )->Codigo .and. !( dbfImg )->( eof() )
                dbPass( dbfImg, tmpImg, .t. )
                ( dbfImg )->( dbSkip( 1 ) )
             end while

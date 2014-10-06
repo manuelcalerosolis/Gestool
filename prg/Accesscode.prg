@@ -62,6 +62,8 @@ CLASS AccessCode
    METHOD InitResource()
    METHOD EndResource( oDlg )
 
+   METHOD FileResource()
+
    METHOD TactilResource()
    METHOD InitTactilResource( oDlg, oImgUsr, oLstUsr, dbfUsr )
    METHOD SelectTactilResource( nOpt, oLstUsr )
@@ -234,7 +236,7 @@ METHOD EndResource( oDlg ) CLASS AccessCode
       ::oProgress:Show()
       ::oMessage:Show()
 
-      lInitCheck( , ::oMessage, ::oProgress )
+      lInitCheck( ::oMessage, ::oProgress )
 
       ::oProgress:Hide()
 
@@ -245,6 +247,32 @@ METHOD EndResource( oDlg ) CLASS AccessCode
 RETURN ( nil )
 
 //--------------------------------------------------------------------------//
+
+METHOD FileResource( oDlg ) CLASS AccessCode
+
+   SysRefresh()
+
+   ::cGetUser        := GetPvProfString(  "Tablet", "User",       "",   FullCurDir() + "GstApolo.Ini" )
+   ::cGetPassword    := GetPvProfString(  "Tablet", "Password",   "",   FullCurDir() + "GstApolo.Ini" )
+
+   if empty( ::cGetUser ) 
+      apoloMsgStop( "Código de usuario esta vacio")
+      Return ( .f. )
+   end if 
+
+   if empty( ::cGetPassword ) 
+      apoloMsgStop( "Clave de acceso esta vacia" )
+      Return ( .f. )
+   end if 
+
+   if lChkUser( ::cGetUser, ::cGetPassword )
+      Return ( .t. )
+   end if
+
+Return ( .f. )
+
+//--------------------------------------------------------------------------//
+
 
 METHOD InitResource( oDlg ) CLASS AccessCode
 
@@ -514,7 +542,7 @@ METHOD EndTactilResource( oDlg ) CLASS AccessCode
       ( ::dbfCajas )->( dbCloseArea() )
    end if
 
-   lInitCheck( , ::oMessage, ::oProgress )
+   lInitCheck( ::oMessage, ::oProgress )
 
    oDlg:End( IDOK )
 

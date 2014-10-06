@@ -7419,8 +7419,11 @@ Method CreateData()
 
    oTurno:oDbf:GoTop()
    while !oTurno:oDbf:eof()
+      
       if oTurno:oDbf:lSndTur
+      
          lSnd  := .t.
+      
          dbPass( oTurno:oDbf:cAlias, oTurnoTmp:oDbf:cAlias, .t. )
 
          ::oSender:SetText( oTurno:oDbf:cNumTur + "; " + Dtoc( oTurno:oDbf:dOpnTur ) + "; " + oTurno:oDbf:cHorOpn + "; " + Dtoc( oTurno:oDbf:dCloTur ) + "; " + oTurno:oDbf:cHorClo + "; " + oTurno:oDbf:cCajTur )
@@ -7442,8 +7445,11 @@ Method CreateData()
          end if
 
       end if
+      
       oTurno:oDbf:Skip()
+      
       SysRefresh()
+   
    end while
 
    /*
@@ -7459,7 +7465,7 @@ Method CreateData()
    if lSnd
 
       /*
-      Comprimir los archivos
+      Comprimir los archivos---------------------------------------------------
       */
 
       ::oSender:SetText( "Comprimiendo sesiones" )

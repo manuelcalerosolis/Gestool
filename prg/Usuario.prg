@@ -2687,7 +2687,7 @@ FUNCTION mkUsuario( cPath, oMeter )
    DEFAULT cPath     := cPatDat()
 
 	IF oMeter != NIL
-		oMeter:cText	:= "Generando Bases"
+		oMeter:cText	:= "Generando bases"
       SysRefresh()
 	END IF
 
