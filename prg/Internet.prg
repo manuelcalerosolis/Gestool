@@ -1493,7 +1493,9 @@ FUNCTION FtpSndFile( aSource, aTarget, nBufSize, oSender, lDisco )
 
    if !Empty( oSender )
 
-      oSender:oMtr:nTotal     := nTotSize
+      if !Empty( oSender:oMtr )
+         oSender:oMtr:nTotal     := nTotSize
+      end if   
 
       oSender:SetText( "Tamaño fichero " + Alltrim( Str( nTotSize ) ) )
 
@@ -1511,8 +1513,10 @@ FUNCTION FtpSndFile( aSource, aTarget, nBufSize, oSender, lDisco )
          hTarget        := fCreate( cRutConInt() + aTarget[ n ] )
 
          if !Empty( oSender )
-            oSender:oMtr:Set( 0 )
-            oSender:oMtr:nTotal := nTotSize
+            if !Empty( oSender:oMtr )
+               oSender:oMtr:Set( 0 )
+               oSender:oMtr:nTotal := nTotSize
+            end if   
          end if
 
          /*
@@ -1527,7 +1531,7 @@ FUNCTION FtpSndFile( aSource, aTarget, nBufSize, oSender, lDisco )
 
             fWrite( hTarget, cBuffer, nBytes )
 
-            if !Empty( oSender )
+            if !Empty( oSender:oMtr )
                oSender:oMtr:Set( nFile += nBytes )
             end if
 
@@ -1581,7 +1585,7 @@ FUNCTION FtpSndFile( aSource, aTarget, nBufSize, oSender, lDisco )
 
    end if
 
-   if !Empty( oSender )
+   if !Empty( oSender:oMtr )
       oSender:oMtr:Set( 0 )
    end if
 
@@ -2015,7 +2019,7 @@ METHOD ActivateTablet() CLASS TSndRecInf
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_check_64",;
-                                                   "bLClicked" => {|| ::Execute() },;
+                                                   "bLClicked" => {|| oBtnAceptar:Hide(), oBtnSalir:Disable(), ::Execute(), oBtnSalir:Enable() },;
                                                    "oWnd"      => oDlg } )
 
    oBtnSalir         := TGridImage():Build(  {     "nTop"      => 5,;
@@ -2030,7 +2034,12 @@ METHOD ActivateTablet() CLASS TSndRecInf
    Montamos el treeview--------------------------------------------------------
    */
 
-   ::oTree           := TTreeView():New( 50, GridWidth( 0.5, oDlg ), oDlg, , , .t., , GridWidth( 9, oDlg ), GridWidth( 9, oDlg ) )
+   ::oTree           := TGridTreeView():Build(  {  "nTop"      => 50 ,;
+                                                   "nLeft"     => GridWidth( 0.5, oDlg ),;
+                                                   "oWnd"      => oDlg,;
+                                                   "lPixel"    => .t.,;
+                                                   "nWidth"    => GridWidth( 9, oDlg ),;
+                                                   "nHeight"   => GridWidth( 6.75, oDlg ) } ) 
 
    /*
    Redimensionamos y activamos el diálogo-------------------------------------
