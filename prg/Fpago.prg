@@ -1615,3 +1615,157 @@ function cFPagoWeb( cCodWeb, cFPago )
 return cCodigoFormaPago
 
 //---------------------------------------------------------------------------//
+
+FUNCTION GridBrwfPago( oGet, oGet2 )
+
+   local oDlg
+   local oSayTit
+   local oBtn
+   local oGet1
+   local cGet1       := Space( 200 )
+   local oBrw
+   local nOrd        := GetBrwOpt( "BrwFPago" )
+   local oCbxOrd
+   local aCbxOrd     := { "Código", "Nombre" }
+   local cCbxOrd     := "Código"
+   local nLevel      := nLevelUsr( "01039" )
+   local oSayText
+   local cSayText    := "Formas de pago"
+   local cReturn     := Space( 2 )
+   local oSayGeneral
+   local oBtnAceptar
+   local oBtnCancelar
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   if !OpenFiles()
+      Return .f.
+   end if
+
+   nOrd              := ( dbfFormasPago )->( OrdSetFocus( nOrd ) )
+   ( dbfFormasPago )->( dbGoTop() )
+
+   oDlg           := TDialog():New( 1, 5, 40, 100, "Buscar forma de pago",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb(255,255,255),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+
+   oSayGeneral    := TGridSay():Build(    {  "nRow"      => 0,;
+                                             "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             "bText"     => {|| "Buscar forma de pago" },;
+                                             "oWnd"      => oDlg,;
+                                             "oFont"     => oGridFontBold(),;
+                                             "lPixels"   => .t.,;
+                                             "nClrText"  => Rgb( 0, 0, 0 ),;
+                                             "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             "nHeight"   => 32,;
+                                             "lDesign"   => .f. } )
+
+   oBtnAceptar    := TGridImage():Build(  {  "nTop"      => 5,;
+                                             "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             "nWidth"    => 32,;
+                                             "nHeight"   => 32,;
+                                             "cResName"  => "flat_check_64",;
+                                             "bLClicked" => {|| oDlg:End( IDOK ) },;
+                                             "oWnd"      => oDlg } )
+
+   oBtnCancelar   := TGridImage():Build(  {  "nTop"      => 5,;
+                                             "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             "nWidth"    => 32,;
+                                             "nHeight"   => 32,;
+                                             "cResName"  => "flat_del_64",;
+                                             "bLClicked" => {|| oDlg:End() },;
+                                             "oWnd"      => oDlg } )
+
+   // Texto de busqueda--------------------------------------------------------
+
+   oGet1       := TGridGet():Build(    {     "nRow"      => 38,;
+                                             "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, cGet1, cGet1 := u ) },;
+                                             "oWnd"      => oDlg,;
+                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             "nHeight"   => 25,;
+                                             "bValid"    => {|| OrdClearScope( oBrw, dbfFormasPago ) },;
+                                             "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, dbfFormasPago ) } } )
+
+   oCbxOrd     := TGridComboBox():Build(  {  "nRow"      => 38,;
+                                             "nCol"      => {|| GridWidth( 9.5, oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                                             "oWnd"      => oDlg,;
+                                             "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                             "nHeight"   => 25,;
+                                             "aItems"    => aCbxOrd,;
+                                             "bChange"   => {|| ( dbfFormasPago )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:refresh() } } )
+
+   /*
+   Rejilla de datos------------------------------------------------------------
+   */
+
+   oBrw                 := TGridIXBrowse():New( oDlg )
+
+   oBrw:nTop            := oBrw:EvalRow( 64 )
+   oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   oBrw:nHeight         := oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )
+
+   oBrw:cAlias          := dbfFormasPago
+   oBrw:nMarqueeStyle   := 5
+   oBrw:cName           := "BrwGridFormaPago"
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Código"
+      :cSortOrder       := "cCodPago"
+      :bEditValue       := {|| ( dbfFormasPago )->cCodPago }
+      :nWidth           := 120
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Nombre"
+      :cSortOrder       := "cDesPago"
+      :bEditValue       := {|| ( dbfFormasPago )->cDesPago }
+      :nWidth           := 300
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+   oBrw:nHeaderHeight   := 40
+   oBrw:nFooterHeight   := 40
+   oBrw:nRowHeight      := 40
+
+   oBrw:CreateFromCode( 105 )
+
+   // Dialogo------------------------------------------------------------------
+
+   oDlg:bResized        := {|| GridResize( oDlg ) }
+   oDlg:bStart          := {|| oBrw:Load() }
+
+   ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
+
+   if oDlg:nResult == IDOK
+
+      cReturn     := ( dbfFormasPago )->cCodPago
+
+      if IsObject( oGet )
+         oGet:cText( ( dbfFormasPago )->cCodPago )
+      end if
+
+      if IsObject( oGet2 )
+         oGet2:cText( ( dbfFormasPago )->cDesPago )
+      end if
+
+   end if
+
+   OrdClearScope( oBrw, dbfFormasPago )
+
+   SetBrwOpt( "BrwFPago", ( dbfFormasPago )->( OrdNumber() ) )
+
+   CloseFiles()
+
+   if IsObject( oGet )
+      oGet:SetFocus()
+   end if
+
+RETURN ( cReturn )
+
+//---------------------------------------------------------------------------//
