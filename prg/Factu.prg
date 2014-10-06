@@ -5879,13 +5879,14 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "oWnd"      => oDlg,;
                            "lPixel"    => .t.,;
-                           "nWidth"    => {|| GridWidth( 5, oDlg ) },;
-                           "nHeight"   => {|| GridRow( 7, oDlg ) } } )
+                           "nWidth"    => {|| GridWidth( 11, oDlg ) },;
+                           "nHeight"   => {|| GridRow( 8, oDlg ) } } )
 
 	// Redimensionamos y activamos el diálogo----------------------------------- 
 
 	oDlg:bResized       := {|| GridResize( oDlg ) }
    oDlg:bStart         := {|| oGridTree:Add( "Usuario : "      + Rtrim( oUser():cNombre() ) ),;
+                              oGridTree:Add( "Empresa : "      + uFieldEmpresa( "CodEmp" ) + "-" + uFieldEmpresa( "cNombre" ) ),;
                               oGridTree:Add( "Delegación : "   + Rtrim( oUser():cDelegacion() ) ),;
                               oGridTree:Add( "Caja : "         + oUser():cCaja() ),;
                               oGridTree:Add( "Almacén : "      + Rtrim( oUser():cAlmacen() ) ),;
