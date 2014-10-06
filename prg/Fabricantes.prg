@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TFabricantes FROM TMANT
+CLASS TFabricantes FROM TMant
 
    METHOD Create( cPath ) CONSTRUCTOR
 
@@ -429,7 +429,7 @@ Method CreateData()
 
    while !oFabricantes:eof()
 
-      if oFabricantes:lSelDoc
+      if oFabricantes:lSndDoc
 
          lSnd  := .t.
 
@@ -663,7 +663,6 @@ Method Process()
       ErrorBlock( oBlock )
 
    next
-
 
 Return Self
 

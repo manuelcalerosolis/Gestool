@@ -1,14 +1,8 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
 
 #define __LENCIF__            9
 #define __LENSS__             12
 
-#ifndef __PDA__
 //-------------------------------------------------------------------------//
 //Funciones del programa
 //-------------------------------------------------------------------------//
@@ -80,7 +74,11 @@ FUNCTION cDgtControl( cEntidad, cSucursal, cDigito, cCuenta )
    cC1            := cEntidad + cSucursal  // primera cadena : Banco y Oficina
    cC2            := cCuenta
 
-	for i	:=1 to len( cC1 )
+   if len( cC1 ) > len( nPesos ) .or. len( cC2 ) > len( nPesos )
+       Return ( cDigito )    
+   end if 
+
+	for i	:= 1 to len( cC1 )
       nD1         := nD1 + ( val( subStr( cC1, len( cC1 ) - i + 1, 1 ) ) * nPesos[ i ] )
 	next i
 
@@ -1115,10 +1113,6 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
    end if 
 
 Return ( cVar )
-
-//--------------------------------------------------------------------------//
-
-#endif
 
 //--------------------------------------------------------------------------//
 //Funciones para el programa y pda

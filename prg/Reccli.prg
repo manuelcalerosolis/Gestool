@@ -4243,8 +4243,7 @@ Function rxRecCli( cPath, oMeter )
 
    DEFAULT cPath  := cPatEmp()
 
-   if !lExistTable( cPath + "FacCliP.Dbf" ) .or. ;
-      !lExistTable( cPath + "FacCliG.Dbf" ) 
+   if !lExistTable( cPath + "FacCliP.Dbf" ) .or. !lExistTable( cPath + "FacCliG.Dbf" ) 
       mkRecCli( cPath, oMeter, .f. )
    end if
 
@@ -4309,7 +4308,7 @@ Function rxRecCli( cPath, oMeter )
       // Numero de remesas
 
       ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumRem", "Str( nNumRem ) + cSufRem + cCodCli", {|| Str( Field->nNumRem ) + Field->cSufRem + Field->cCodCli } ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumRem", "Str( nNumRem ) + cSufRem", {|| Str( Field->nNumRem ) + Field->cSufRem } ) )
 
       // Numero de remesas
 

@@ -310,7 +310,7 @@ METHOD DefineDetails( cPath, cVia, lUniqueName, cFileName )
       INDEX TO ( cFileName ) TAG "dFecVto"   ON "dFecVto"                                                               	NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "dEntrada"  ON "dEntrada"                                                              	NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "nImporte"  ON "nImporte"                                                                 NODELETED OF oDbf
-      INDEX TO ( cFileName ) TAG "nNumRem"   ON "Str( nNumRem ) + cSufRem + cCodCli"                                    	NODELETED OF oDbf
+      INDEX TO ( cFileName ) TAG "nNumRem"   ON "Str( nNumRem ) + cSufRem"                                    	            NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCtaRem"   ON "cCtaRem"                                                               	NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodAge"   ON "cCodAge"                                                               	NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "nNumCob"   ON "Str( nNumCob ) + cSufCob"                                              	NODELETED OF oDbf
