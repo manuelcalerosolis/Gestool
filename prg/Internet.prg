@@ -577,7 +577,7 @@ METHOD Activate( oWnd, lAuto )
          ID       110 ;
          OF       ::oFld:aDialogs[ 4 ]
 
-REDEFINE APOLOMETER ::oMtr ;
+      REDEFINE APOLOMETER ::oMtr ;
          VAR      ::nMtr ;
          ID       120 ;
          OF       ::oFld:aDialogs[ 4 ]
@@ -1980,6 +1980,14 @@ METHOD ActivateTablet() CLASS TSndRecInf
    local oBtnAceptar
    local oBtnSalir
 
+   if !::OpenFiles()
+      return ( Self )
+   end if
+
+   ::lInProcess   := .t.
+
+   ::LoadFromIni()
+
    /*
    Diálogo--------------------------------------------------------------------
    */
@@ -2019,16 +2027,10 @@ METHOD ActivateTablet() CLASS TSndRecInf
                                                    "oWnd"      => oDlg } )
 
    /*
-   Montamos el Meter-----------------------------------------------------------
-   */
-
-
-
-   /*
    Montamos el treeview--------------------------------------------------------
    */
 
-   ::oTree           := TTreeView():New( 40, GridWidth( 0.5, oDlg ), oDlg, , , .t., , GridWidth( 9, oDlg ), 100 )
+   ::oTree           := TTreeView():New( 50, GridWidth( 0.5, oDlg ), oDlg, , , .t., , GridWidth( 9, oDlg ), GridWidth( 9, oDlg ) )
 
    /*
    Redimensionamos y activamos el diálogo-------------------------------------
@@ -2037,6 +2039,20 @@ METHOD ActivateTablet() CLASS TSndRecInf
    oDlg:bResized     := {|| GridResize( oDlg ) }
 
    ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
+
+   /*
+   Grabamos el fichero---------------------------------------------------------
+   */
+
+   ::SaveMessageToFile()
+
+   /*
+   Saliendo--------------------------------------------------------------------
+   */
+
+   ::CloseFiles()
+
+   ::lInProcess   := .f.
 
 Return ( Self )
 
