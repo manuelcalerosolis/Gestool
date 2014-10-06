@@ -5790,6 +5790,7 @@ Return ( nil )
 Function MainTablet()
 
 	local oDlg
+   local oGridTree
 
    oDlg                 := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
@@ -5873,10 +5874,22 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| oDlg:End() } } )
 
+   oGridTree   := TGridTreeView():Build( ;
+                        {  "nTop"      => {|| GridRow( 6 ) },;
+                           "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                           "oWnd"      => oDlg,;
+                           "lPixel"    => .t.,;
+                           "nWidth"    => {|| GridWidth( 5, oDlg ) },;
+                           "nHeight"   => {|| GridRow( 7, oDlg ) } } )
 
 	// Redimensionamos y activamos el diálogo----------------------------------- 
 
 	oDlg:bResized       := {|| GridResize( oDlg ) }
+   oDlg:bStart         := {|| oGridTree:Add( "Usuario : "      + Rtrim( oUser():cNombre() ) ),;
+                              oGridTree:Add( "Delegación : "   + Rtrim( oUser():cDelegacion() ) ),;
+                              oGridTree:Add( "Caja : "         + oUser():cCaja() ),;
+                              oGridTree:Add( "Almacén : "      + Rtrim( oUser():cAlmacen() ) ),;
+                              oGridTree:Add( "Sesión : "       + Alltrim( Transform( cCurSesion(), "######" ) ) ) } 
 
 	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
 
