@@ -129,6 +129,8 @@ CLASS TSndRecInf
 
    Method SyncAllDbf()
 
+   METHOD ActivateTablet()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -1966,6 +1968,75 @@ Method SyncAllDbf()
 
    lCheckDbf( ::oDbfSenderReciver )
    lCheckDbf( ::oDbfFilesReciver )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ActivateTablet() CLASS TSndRecInf
+
+   local oDlg
+   local oSayGeneral
+   local oBtnAceptar
+   local oBtnSalir
+
+   /*
+   Diálogo--------------------------------------------------------------------
+   */
+
+   oDlg              := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+
+   /*
+   Cabeceras------------------------------------------------------------------
+   */
+
+   oSayGeneral       := TGridSay():Build(    {     "nRow"      => 0,;
+                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "bText"     => {|| "Envío y recepción de información" },;
+                                                   "oWnd"      => oDlg,;
+                                                   "oFont"     => oGridFontBold(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                                   "nHeight"   => 32,;
+                                                   "lDesign"   => .f. } )
+
+   oBtnAceptar       := TGridImage():Build(  {     "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_check_64",;
+                                                   "bLClicked" => {|| ::Execute() },;
+                                                   "oWnd"      => oDlg } )
+
+   oBtnSalir         := TGridImage():Build(  {     "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_del_64",;
+                                                   "bLClicked" => {|| oDlg:End() },;
+                                                   "oWnd"      => oDlg } )
+
+   /*
+   Montamos el Meter-----------------------------------------------------------
+   */
+
+
+
+   /*
+   Montamos el treeview--------------------------------------------------------
+   */
+
+   ::oTree           := TTreeView():New( 40, GridWidth( 0.5, oDlg ), oDlg, , , .t., , GridWidth( 9, oDlg ), 100 )
+
+   /*
+   Redimensionamos y activamos el diálogo-------------------------------------
+   */
+
+   oDlg:bResized     := {|| GridResize( oDlg ) }
+
+   ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
 
 Return ( Self )
 

@@ -587,6 +587,48 @@ METHOD ReAdjust()
 return Self
 
 //----------------------------------------------------------------------------//
+
+CLASS TGridTreeView FROM TTreeView, TGridable
+
+   METHOD Build()
+
+   METHOD New()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS TGridTreeView
+
+   local nTop        := if( hhaskey( hBuilder, "nTop" ),          hBuilder[ "nTop"        ], nil )
+   local nLeft       := if( hhaskey( hBuilder, "nLeft" ),         hBuilder[ "nLeft"       ], nil )
+   local oWnd        := if( hhaskey( hBuilder, "oWnd" ),          hBuilder[ "oWnd"        ], nil )
+   local nClrFore    := if( hhaskey( hBuilder, "nClrFore" ),      hBuilder[ "nClrFore"    ], nil )
+   local nClrBack    := if( hhaskey( hBuilder, "nClrBack" ),      hBuilder[ "nClrBack"    ], nil )
+   local lPixel      := if( hhaskey( hBuilder, "lPixel" ),        hBuilder[ "lPixel"      ], .t. )
+   local lDesign     := if( hhaskey( hBuilder, "lDesign" ),       hBuilder[ "lDesign"     ], nil )
+   local nWidth      := if( hhaskey( hBuilder, "nWidth" ),        hBuilder[ "nWidth"      ], nil )
+   local nHeight     := if( hhaskey( hBuilder, "nHeight" ),       hBuilder[ "nHeight"     ], nil )
+   local cMsg        := if( hhaskey( hBuilder, "cMsg" ),          hBuilder[ "cMsg"        ], nil )
+   local lCheckBoxes := if( hhaskey( hBuilder, "lCheckBoxes" ),   hBuilder[ "lCheckBoxes" ], .f. )
+   local bChange     := if( hhaskey( hBuilder, "bChange" ),       hBuilder[ "bChange"     ], nil )
+
+Return ( ::New( nTop, nLeft, oWnd, nClrFore, nClrBack, lPixel, lDesign, nWidth, nHeight, cMsg, lCheckBoxes, bChange ) ) 
+
+//----------------------------------------------------------------------------//
+
+METHOD New( nTop, nLeft, oWnd, nClrFore, nClrBack, lPixel, lDesign, nWidth, nHeight, cMsg, lCheckBoxes, bChange ) CLASS TGridTreeView
+
+   nTop     := ::EvalTop( nTop )
+   nLeft    := ::EvalLeft( nLeft )
+   nWidth   := ::EvalWidth( nWidth )
+   nHeight  := ::EvalHeight( nHeight )
+
+   ::Super:New( nTop, nLeft, oWnd, nClrFore, nClrBack, lPixel, lDesign, nWidth, nHeight, cMsg, lCheckBoxes, bChange )
+
+Return Self
+
+//----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
