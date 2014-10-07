@@ -27,7 +27,7 @@ Return ( cTime )
 
 Function GetBic( cEntidad )
 
-   local cDevuelve
+   local cDevuelve   := Space( 10 )
    local BIC         := {=>}
 
    BIC[ "0030" ]     := 'ESPCESMMXXX'
@@ -189,9 +189,10 @@ Function GetBic( cEntidad )
    BIC[ "9000" ]     := 'ESPBESMMXXX'
 
    BEGIN SEQUENCE 
-      cDevuelve      := BIC[ cEntidad ]
+      if hHasKey( BIC, cEntidad )
+         cDevuelve   := BIC[ cEntidad ]
+      end if
    RECOVER
-      cDevuelve      := Space(10)
    END SEQUENCE
 
 Return cDevuelve

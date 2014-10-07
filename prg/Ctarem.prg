@@ -233,7 +233,7 @@ METHOD Resource( nMode )
          BITMAP   "LUPA" ;
          OF       oDlg
 
-      oBanco:bHelp   := {|| ::lCargaBanco( oBanco, oPaisIBAN, oCtrlIBAN, oEntBnc, oSucBnc, oGetDgtBan, oCtaBnc, oEntPre, oAgcPre ) }
+      oBanco:bHelp   := {|| ::lCargaBanco( oBanco, oEntBnc, oSucBnc, oGetDgtBan, oCtaBnc, oEntPre, oAgcPre ) }
 
       REDEFINE GET oPaisIBAN VAR ::oDbf:cPaisIBAN ;
          ID       130 ;
