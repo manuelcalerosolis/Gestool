@@ -2898,7 +2898,7 @@ Method SendData()
       Enviarlos a internet-----------------------------------------------------
       */
 
-      if FtpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if FtpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::IncNumberToSend()
          ::lSuccesfullSend := .t.
          ::oSender:SetText( "Ficheros de proveedores enviados " + cFileName )
@@ -2929,7 +2929,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo proveedores" )
 
    for n := 1 to len( aExt )
-      FtpGetFiles( "Prv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      FtpGetFiles( "Prv*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "Proveedores recibidos" )

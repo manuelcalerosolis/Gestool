@@ -13860,7 +13860,7 @@ Method SendData() CLASS TPedidosClientesSenderReciver
       Enviarlos a internet
       */
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -13888,13 +13888,13 @@ Method ReciveData() CLASS TPedidosClientesSenderReciver
    	if !::oSender:lFranquiciado
 
    		for n := 1 to len( aExt )
-      		ftpGetFiles( "PedCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      		ftpGetFiles( "PedCli*." + aExt[ n ], cPatIn(), ::oSender )
    		next
 
    	else
 
 		for n := 1 to len( aExt )
-      		ftpGetFiles( "PedPrv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      		ftpGetFiles( "PedPrv*." + aExt[ n ], cPatIn(), ::oSender )
    		next   	
 
    	end if	

@@ -158,6 +158,7 @@ METHOD New( oMenuItem, oWnd )
    ::cIniFile           := cPatEmp() + "Empresa.Ini"
 
    aAdd( ::aSend, TArticuloSenderReciver():New(             "Artículos",                Self ) )
+   aAdd( ::aSend, TFabricantes():New(                       "Fabricantes",              Self ) )
    aAdd( ::aSend, TFamiliaSenderReciver():New(              "Familias",                 Self ) )
    aAdd( ::aSend, TClienteSenderReciver():New(              "Clientes",                 Self ) )
    aAdd( ::aSend, TProveedorSenderReciver():New(            "Proveedor",                Self ) )
@@ -1009,7 +1010,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
 
                   for n := 1 to len( aFiles )
 
-                     if ftpSndFile( cPatOut() + aFiles[ n, 1 ], aFiles[ n, 1 ], 2000, Self )
+                     if ftpSndFile( cPatOut() + aFiles[ n, 1 ], aFiles[ n, 1 ], Self )
                         ::SetText( "Fichero reenviados " + cValToChar( aFiles[ n, 1 ] ), 2 )
                      else
                         ::SetText( "ERROR reenviando fichero " + cValToChar( aFiles[ n, 1 ] ), 2 )
@@ -1445,20 +1446,20 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION FtpSndFile( aSource, aTarget, nBufSize, oSender, lDisco )
+FUNCTION FtpSndFile( aSource, aTarget, oSender, lDisco )
 
    local n
    local oFile
    local hSource
    local hTarget
    local cBuffer
+   local nBuffer        := 2000
    local nBytes         := 0
    local nFile          := 0
    local nTotSize       := 0
    local lRet           := .f.
 
    DEFAULT aTarget      := aSource
-   DEFAULT nBufSize     := 2000
    DEFAULT lDisco       := ( nTipConInt() == 1 )
 
    IF ValType( aSource ) != "A"
@@ -1469,7 +1470,7 @@ FUNCTION FtpSndFile( aSource, aTarget, nBufSize, oSender, lDisco )
       aTarget           := { aTarget }
    END IF
 
-   cBuffer              := Space( nBufSize )
+   cBuffer              := Space( nBuffer )
 
    for n := 1 to Len( aSource )
 
@@ -1512,22 +1513,20 @@ FUNCTION FtpSndFile( aSource, aTarget, nBufSize, oSender, lDisco )
          hSource        := fOpen( aSource[ n ] )
          hTarget        := fCreate( cRutConInt() + aTarget[ n ] )
 
-         if !Empty( oSender )
-            if !Empty( oSender:oMtr )
-               oSender:oMtr:Set( 0 )
-               oSender:oMtr:nTotal := nTotSize
-            end if   
+         if !Empty( oSender ) .and. !Empty( oSender:oMtr )
+            oSender:oMtr:Set( 0 )
+            oSender:oMtr:nTotal := nTotSize
          end if
 
          /*
-         Nos vamos al principio del fichero
+         Nos vamos al principio del fichero------------------------------------
          */
 
          fSeek( hSource, 0, 0 )
 
          SysRefresh()
 
-         while ( nBytes := fRead( hSource, @cBuffer, nBufSize ) ) > 0
+         while ( nBytes := fRead( hSource, @cBuffer, nBuffer ) ) > 0
 
             fWrite( hTarget, cBuffer, nBytes )
 

@@ -490,6 +490,14 @@ Return ( if( !lShort, FullCurDir(), "" ) + "In\" )
 
 //---------------------------------------------------------------------------//
 
+Function cPatInFrq( lShort )
+
+   DEFAULT lShort  := .f.
+
+Return ( if( !lShort, FullCurDir(), "" ) + "InFrq\" )
+
+//---------------------------------------------------------------------------//
+
 Function cPatScript( lShort )
 
    DEFAULT lShort  := .f.

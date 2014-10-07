@@ -10679,7 +10679,7 @@ Method SendData()
       Enviarlos a internet
       */
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -10705,7 +10705,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo S.A.T. de clientes" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "SatCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "SatCli*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "S.A.T. de clientes recibidos" )

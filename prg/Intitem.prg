@@ -321,7 +321,7 @@ Method SendData() CLASS TClienteSenderReciver
 
    if file( cPatOut() + cFileName )
 
-      if FtpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if FtpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::IncNumberToSend()
          ::lSuccesfullSend := .t.
          ::oSender:SetText( "Ficheros de clientes enviados " + cFileName )
@@ -353,7 +353,7 @@ Method ReciveData() CLASS TClienteSenderReciver
    ::oSender:SetText( "Recibiendo clientes" )
 
    for n := 1 to len( aExt )
-      FtpGetFiles( "Cli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      FtpGetFiles( "Cli*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "Clientes recibidos" )

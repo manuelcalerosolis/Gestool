@@ -301,3 +301,5 @@
 #define _LSHOWORG 		  	  	301	
 #define _LBULTOS					302
 #define _CNBRBULTOS				303
+#define _CCODCLIFRQ           304
+#define _CCODPRVFRQ           305

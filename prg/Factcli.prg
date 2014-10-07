@@ -22916,7 +22916,7 @@ Method SendData()
 
    if File( cPatOut() + cFileNameFacturas )
 
-      if ftpSndFile( cPatOut() + cFileNameFacturas, cFileNameFacturas, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileNameFacturas, cFileNameFacturas, ::oSender )
          ::lSuccesfullSendFacturas  := .t.
          ::oSender:SetText( "Fichero facturas de clientes enviados " + cFileNameFacturas )
       else
@@ -22931,7 +22931,7 @@ Method SendData()
 
    if File( cPatOut() + cFileNameAnticipos )
 
-      if ftpSndFile( cPatOut() + cFileNameAnticipos, cFileNameAnticipos, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileNameAnticipos, cFileNameAnticipos, ::oSender )
          ::lSuccesfullSendAnticipos := .t.
          ::oSender:SetText( "Fichero anticipos de clientes enviados " + cFileNameAnticipos )
       else
@@ -22972,8 +22972,8 @@ Method ReciveData()
 		::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
 
    		for n := 1 to len( aExt )
-		    ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
-      		ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+            ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), ::oSender )
+            ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), ::oSender )
    		next
 
    		::oSender:SetText( "Facturas y anticipos de clientes recibidos" )
@@ -23121,8 +23121,8 @@ Method Process()
             CLOSE ( dbfFacCliL )
             CLOSE ( dbfFacCliP )
             CLOSE ( dbfCliente )
-	        CLOSE ( tmpFacCliT )
-	        CLOSE ( tmpFacCliL )
+            CLOSE ( tmpFacCliT )
+            CLOSE ( tmpFacCliL )
             CLOSE ( tmpFacCliP )
 
             ::oSender:AppendFileRecive( aFiles[ m, 1 ] )

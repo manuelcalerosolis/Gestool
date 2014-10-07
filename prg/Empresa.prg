@@ -2480,6 +2480,16 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       310 ;
             OF       fldComunicaciones
 
+      REDEFINE GET aGet[ _CCODCLIFRQ ] VAR aTmp[ _CCODCLIFRQ ] ;
+            ID       320 ;
+            PICTURE  "@!" ;
+            OF       fldComunicaciones
+
+      REDEFINE GET aGet[ _CCODPRVFRQ ] VAR aTmp[ _CCODPRVFRQ ] ;
+            ID       330 ;
+            PICTURE  "@!" ;
+            OF       fldComunicaciones
+
       /*
       Botones --------------------------------------------------------------------
       */
@@ -6626,7 +6636,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lShowOrg",   "L",  1, 0, "Mostrar almacén origen en compras",                     "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lUseBultos", "L",  1, 0, "Usar bultos",                                           "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNbrBultos", "C",100, 0, "Descripción para bultos",                               "", "", "aEmp()", nil } )
-
+   aAdd( aDbf, {"cCodCliFrq", "C", 12, 0, "Código de cliente para franquicia",                     "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodPrvFrq", "C", 12, 0, "Código de proveedor para franquicia",                   "", "", "aEmp()", nil } )
 
 Return ( aDbf )
 
