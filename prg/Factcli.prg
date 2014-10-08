@@ -23313,6 +23313,10 @@ Method ProcessFrq()
 
    local aFiles      := Directory( cPatIn() + "Frq\FacCli*.*" )
 
+   if len( aFiles ) == 0
+      Return .f.
+   end if 
+
    if empty( uFieldempresa( "cCodCliFrq" ) )
       ::oSender:SetText( "Debe cumplimentar el código de cliente en la confifuración de la empresa." )
       Return .f.
@@ -23325,7 +23329,7 @@ Method ProcessFrq()
 
    for m := 1 to len( aFiles )
 
-      msgAlert( "Procesando fichero : " + aFiles[ m, 1 ] )
+      msgAlert( "Procesando fichero franquicia : " + aFiles[ m, 1 ] )
 
       // Descomprimimos el fichero---------------------------------------------
 
