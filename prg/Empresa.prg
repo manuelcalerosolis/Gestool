@@ -2346,6 +2346,16 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTRNO ] ) ;
             OF       fldEnvios
 
+      REDEFINE GET aTmp[ _CCODCLIFRQ ] ;
+            ID       320 ;
+            PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) ) ;
+            OF       fldEnvios
+
+      REDEFINE GET aTmp[ _CCODPRVFRQ ] ;
+            ID       330;
+            PICTURE  ( Replicate( "X", RetNumCodPrvEmp() ) ) ;
+            OF       fldEnvios
+
       /*
       Page 7 comunicacion------------------------------------------------------
       */
@@ -2469,7 +2479,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       200 ;
             OF       fldComunicaciones
 
-      REDEFINE GET aGet[ _CRUTEDI ] VAR aTmp[ _CRUTEDI ] ;
+      REDEFINE GET   aGet[ _CRUTEDI ] ;
+            VAR      aTmp[ _CRUTEDI ] ;
             ID       300 ;
             PICTURE  "@!" ;
             BITMAP   "FOLDER" ;
@@ -2480,17 +2491,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       310 ;
             OF       fldComunicaciones
 
-      REDEFINE GET aGet[ _CCODCLIFRQ ] VAR aTmp[ _CCODCLIFRQ ] ;
-            ID       320 ;
-            PICTURE  "@!" ;
-            OF       fldComunicaciones
-
-      REDEFINE GET aGet[ _CCODPRVFRQ ] VAR aTmp[ _CCODPRVFRQ ] ;
-            ID       330 ;
-            PICTURE  "@!" ;
-            OF       fldComunicaciones
-
-      /*
+      /*            
       Botones --------------------------------------------------------------------
       */
 

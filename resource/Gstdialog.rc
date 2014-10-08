@@ -5851,7 +5851,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 251, 133, 55, 11
   CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 154, 124, 11
   CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 121, 167, 120, 11
-  CONTROL "", 330, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 121, 179, 120, 11
+  CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 121, 179, 120, 11
   CONTROL "Enviar cierre de turnos por correo electrónico", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 208, 155, 12
   CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 119, 223, 306, 12
   CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 58, 125, 55, 8

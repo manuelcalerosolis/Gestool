@@ -22583,13 +22583,14 @@ CLASS TFacturasClientesSenderReciver FROM TSenderReciverItem
    Data nAnticipoNumberSend
 
    Method CreateData()
-
    Method RestoreData()
-
    Method SendData()
+   
    Method ReciveData()
+   Method ReciveFrq()
 
    Method Process()
+   Method ProcessFrq()   
 
    Method nGetFacturaNumberToSend()    INLINE ( ::nFacturaNumberSend    := GetPvProfInt( "Numero", "Facturas clientes", ::nFacturaNumberSend, ::cIniFile ) )
    Method nGetAnticipoNumberToSend()   INLINE ( ::nAnticipoNumberSend   := GetPvProfInt( "Numero", "Anticipos clientes", ::nAnticipoNumberSend, ::cIniFile ) )
@@ -22898,6 +22899,11 @@ Method SendData()
 
    local cFileNameFacturas
    local cFileNameAnticipos
+   local cDirectory           := ""
+
+   if ::oSender:lFranquiciado
+      cDirectory              := "Frq\"
+   end if
 
    if ::oSender:lServer
       cFileNameFacturas       := "FacCli" + StrZero( ::nGetFacturaNumberToSend(), 6 ) + ".All"
@@ -22916,7 +22922,7 @@ Method SendData()
 
    if File( cPatOut() + cFileNameFacturas )
 
-      if ftpSndFile( cPatOut() + cFileNameFacturas, cFileNameFacturas, ::oSender )
+      if ::oSender:SendFile( cPatOut() + cFileNameFacturas, cDirectory + cFileNameFacturas, cDirectory )
          ::lSuccesfullSendFacturas  := .t.
          ::oSender:SetText( "Fichero facturas de clientes enviados " + cFileNameFacturas )
       else
@@ -22931,7 +22937,7 @@ Method SendData()
 
    if File( cPatOut() + cFileNameAnticipos )
 
-      if ftpSndFile( cPatOut() + cFileNameAnticipos, cFileNameAnticipos, ::oSender )
+      if ::oSender:SendFile( cPatOut() + cFileNameAnticipos, cFileNameAnticipos, cDirectory )
          ::lSuccesfullSendAnticipos := .t.
          ::oSender:SetText( "Fichero anticipos de clientes enviados " + cFileNameAnticipos )
       else
@@ -22954,35 +22960,27 @@ Return ( Self )
 
 Method ReciveData()
 
-   	local n
-   	local aExt
+	local n
+	local aExt
 
-   	if ::oSender:lServer
-      	aExt  := aRetDlgEmp()
-   	else
-      	aExt  := { "All" }
-   	end if
+	if ::oSender:lServer
+   	aExt  := aRetDlgEmp()
+	else
+   	aExt  := { "All" }
+	end if
 
-   	/*
-   	Recibirlo de internet
-   	*/
+	/*
+	Recibirlo de internet-------------------------------------------------------
+	*/
 
-	if !::oSender:lFranquiciado
+	::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
 
-		::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
+	for n := 1 to len( aExt )
+      ::oSender:GetFile( "FacCli*." + aExt[ n ], cPatIn() )
+      ::oSender:GetFile( "AntCli*." + aExt[ n ], cPatIn() )
+	next
 
-   		for n := 1 to len( aExt )
-            ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), ::oSender )
-            ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), ::oSender )
-   		next
-
-   		::oSender:SetText( "Facturas y anticipos de clientes recibidos" )
-
-   	else
-
-		::oSender:SetText( "Activado el modo franquiciado no puede recibir facturas" )   	
-		
-   	end if	
+	::oSender:SetText( "Facturas y anticipos de clientes recibidos" )
 
 Return Self
 
@@ -23022,18 +23020,16 @@ Method Process()
       BEGIN SEQUENCE
 
       /*
-      descomprimimos el fichero
+      Descomprimimos el fichero
       */
 
-    if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-        /*
-        Ficheros temporales
-        */
+         /*
+         Ficheros temporales
+         */
 
-        if file( cPatSnd() + "FacCliT.Dbf" ) .and.;
-	    	file( cPatSnd() + "FacCliL.Dbf" ) .and.;
-            file( cPatSnd() + "FacCliP.Dbf" )
+         if file( cPatSnd() + "FacCliT.Dbf" ) .and. file( cPatSnd() + "FacCliL.Dbf" ) .and. file( cPatSnd() + "FacCliP.Dbf" )
 
             USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
             SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
@@ -23061,30 +23057,29 @@ Method Process()
 
             while ( tmpFacCliT )->( !eof() )
 
-               	/*
-               	Comprobamos que no exista la factura en la base de datos
-               	*/
+            	/*
+            	Comprobamos que no exista la factura en la base de datos
+            	*/
 
-               	if lValidaOperacion( ( tmpFacCliT )->dFecFac, .f. ) .and. ;
-                	!( dbfFacCliT )->( dbSeek( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
+            	if lValidaOperacion( ( tmpFacCliT )->dFecFac, .f. ) .and. !( dbfFacCliT )->( dbSeek( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
 
-                	dbPass( tmpFacCliT, dbfFacCliT, .t. )
+                  dbPass( tmpFacCliT, dbfFacCliT, .t. )
 
-                  	if lClient .and. dbLock( dbfFacCliT )
-                    	( dbfFacCliT )->lSndDoc := .f.
-                    	( dbfFacCliT )->( dbUnLock() )
-                  	end if
+               	if lClient .and. dbLock( dbfFacCliT )
+                 	   ( dbfFacCliT )->lSndDoc := .f.
+                 	   ( dbfFacCliT )->( dbUnLock() )
+               	end if
 
-                  	::oSender:SetText( "Añadida factura     : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+               	::oSender:SetText( "Añadida factura     : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
-                  	if ( tmpFacCliL )->( dbSeek( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
+               	if ( tmpFacCliL )->( dbSeek( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
                     	while ( tmpFacCliL )->cSerie + str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac .and. !( tmpFacCliL )->( eof() )
-	                      	dbPass( tmpFacCliL, dbfFacCliL, .t. )
-                       		( tmpFacCliL )->( dbSkip() )
+                        dbPass( tmpFacCliL, dbfFacCliL, .t. )
+                        ( tmpFacCliL )->( dbSkip() )
                     	end do
-                  	end if
+               	end if
 
-               	else
+            	else
 
                 	::oSender:SetText( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
@@ -23102,12 +23097,12 @@ Method Process()
 
             	if !( dbfFacCliP )->( dbSeek( ( tmpFacCliP )->cSerie + str( ( tmpFacCliP )->nNumFac ) + ( tmpFacCliP )->cSufFac + str( ( tmpFacCliP )->nNumRec ) ) )
 
-               		dbPass( tmpFacCliP, dbfFacCliP, .t. )
-               		::oSender:SetText( "Añadido recibo     : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfCliente ) )
+                  dbPass( tmpFacCliP, dbfFacCliP, .t. )
+                  ::oSender:SetText( "Añadido recibo     : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfCliente ) )
 
             	else
 
-               		::oSender:SetText( "Desestimado recibo : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfCliente ) )
+                  ::oSender:SetText( "Desestimado recibo : " + ( tmpFacCliP )->cSerie + "/" + AllTrim( str( ( tmpFacCliP )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliP )->cSufFac ) + "-" + str( ( tmpFacCliP )->nNumRec ) + "; " + Dtoc( ( tmpFacCliP )->dEntrada ) + "; " + AllTrim( ( tmpFacCliP )->cCodCli ) + "; " + RetClient( ( tmpFacCliP )->cCodCli, dbfCliente ) )
 
             	end if
 
@@ -23127,12 +23122,12 @@ Method Process()
 
             ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
 
-        else
+         else
 
            	::oSender:SetText( "Faltan ficheros" )
 
-        	if !file( cPatSnd() + "FacCliT.Dbf" )
-				::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
+        	   if !file( cPatSnd() + "FacCliT.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
           	end if
 
            	if !file( cPatSnd() + "FacCliL.Dbf" )
@@ -23145,11 +23140,11 @@ Method Process()
 
        	end if
 
-    else
+      else
 
-        ::oSender:SetText( "Error al descomprimir fichero " + cPatIn() + aFiles[ m, 1 ] )
+         ::oSender:SetText( "Error al descomprimir fichero " + cPatIn() + aFiles[ m, 1 ] )
 
-    end if
+      end if
 
       RECOVER USING oError
 
@@ -23159,7 +23154,7 @@ Method Process()
         CLOSE ( tmpFacCliT )
         CLOSE ( tmpFacCliL )
         CLOSE ( tmpFacCliP )
-        CLOSE ( dbfCliente  )
+        CLOSE ( dbfCliente )
 
         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
         ::oSender:SetText( ErrorMessage( oError ) )
@@ -23245,7 +23240,7 @@ Method Process()
 
          else
 
-               ::oSender:SetText( "Error al descomprimir fichero " + cPatIn() + aFiles[ m, 1 ] )
+            ::oSender:SetText( "Error al descomprimir fichero " + cPatIn() + aFiles[ m, 1 ] )
 
          end if
 
@@ -23263,3 +23258,136 @@ Method Process()
 Return Self
 
 //---------------------------------------------------------------------------//
+
+Method ReciveFrq()
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt  := aRetDlgEmp()
+   else
+      aExt  := { "All" }
+   end if
+
+   /*
+   Recibirlo de internet-------------------------------------------------------
+   */
+
+   ::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
+
+   for n := 1 to len( aExt )
+      ::oSender:GetFile( "Frq\FacCli*." + aExt[ n ], cPatIn() )
+      ::oSender:GetFile( "Frq\AntCli*." + aExt[ n ], cPatIn() )
+   next
+
+   ::oSender:SetText( "Facturas y anticipos de clientes recibidos" )
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+Method ProcessFrq()
+
+   local m
+
+   local dbfFacCliT
+   local dbfFacCliL
+   local dbfFacCliP
+   local dbfAntCliT
+   
+   local tmpFacCliT
+   local tmpFacCliL
+   local tmpFacCliP
+   local tmpAntCliT
+   
+   local dbfCliente
+   local dbfProvee
+
+   local oBlock
+   local oError
+
+   local cSerie
+   local nNumero
+   local cSufijo
+
+   local aFiles      := Directory( cPatIn() + "Frq\FacCli*.*" )
+
+   if empty( uFieldempresa( "cCodCliFrq" ) )
+      ::oSender:SetText( "Debe cumplimentar el código de cliente en la confifuración de la empresa." )
+      Return .f.
+   end if 
+
+   if empty( uFieldempresa( "cCodPrvFrq" ) )
+      ::oSender:SetText( "Debe cumplimentar el código de proveedor en la confifuración de la empresa." )
+      Return .f.
+   end if 
+
+   for m := 1 to len( aFiles )
+
+      msgAlert( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      // Descomprimimos el fichero---------------------------------------------
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+         // Ficheros temporales-------------------------------------------------
+
+         if file( cPatSnd() + "FacCliT.Dbf" ) .and. file( cPatSnd() + "FacCliL.Dbf" ) .and. file( cPatSnd() + "FacCliP.Dbf" )
+
+            USE ( cPatSnd() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
+            SET ADSINDEX TO ( cPatSnd() + "FacCliT.Cdx" ) ADDITIVE
+
+            USE ( cPatSnd() + "FacCliL.Dbf" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
+            SET ADSINDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
+
+            USE ( cPatSnd() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
+            SET ADSINDEX TO ( cPatSnd() + "FacCliP.Cdx" ) ADDITIVE
+
+            while ( tmpFacCliT )->( !eof() )
+
+               msgAlert( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac )
+
+               if rtrim( ( tmpFacCliT )->cCodCli ) == rtrim( uFieldempresa( "cCodCliFrq" ) )
+
+                  ::oSender:SetText( "Procesando factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+
+               else 
+
+                  ::oSender:SetText( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+
+               end if
+
+               ( tmpFacCliT )->( dbSkip() )
+
+            end do
+
+            CLOSE ( dbfFacCliT )
+            CLOSE ( dbfFacCliL )
+            CLOSE ( dbfFacCliP )
+
+         else
+
+            ::oSender:SetText( "Faltan ficheros" )
+
+            if !file( cPatSnd() + "FacCliT.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
+            end if
+
+            if !file( cPatSnd() + "FacCliL.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "FacCliL.Dbf" )
+            end if
+
+            if !file( cPatSnd() + "FacCliP.Dbf" )
+               ::oSender:SetText( "Falta" + cPatSnd() + "FacCliP.Dbf" )
+            end if
+
+         end if
+
+      end if 
+
+   next
+
+Return Self
+
+//----------------------------------------------------------------------------//
