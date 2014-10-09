@@ -76,6 +76,7 @@ CLASS TSndRecInf
    DATA  oImageList
 
    DATA  cPath
+   DATA  cPathComunication    INIT ""
 
    Method New()
    Method Create()                  INLINE ( Self )
@@ -130,8 +131,11 @@ CLASS TSndRecInf
    Method GetFile()
 
    Method SyncAllDbf()
-
    METHOD ActivateTablet()
+
+
+   METHOD setPathComunication( cPathComunication ) INLINE ( ::cPathComunication := cPathComunication )
+   METHOD getPathComunication()                    INLINE ( ::cPathComunication )
 
 END CLASS
 
@@ -158,6 +162,10 @@ METHOD New( oMenuItem, oWnd )
    ::aFilesProcessed    := {}
    ::lFtpValido         := .f.
    ::cIniFile           := cPatEmp() + "Empresa.Ini"
+   
+   // Path de comunicaciones---------------------------------------------------
+
+   ::setPathComunication( cRutConInt() )
 
 //   aAdd( ::aSend, TFabricantes():Initiate(                  "Fabricantes",              Self ) )
 
@@ -913,8 +921,10 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
          if lRecive
             aEval( ::aSend, {|o| if ( o:lSelectRecive,;
                                     ( ::SetText( o:cText, 2 ), o:ReciveData(), Self ), ) } )
+/*
             aEval( ::aSend, {|o| if ( o:lSelectRecive .and. __ObjHasMethod( o, "RECIVEFRQ" ),;
                                     ( ::SetText( o:cText, 2 ), o:ReciveFrq(), Self ), ) } )
+*/
          end if
 
          /*
@@ -926,8 +936,9 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
          if lRecive
             aEval( ::aSend, {|o| if ( o:lSelectRecive,;
                                     ( ::SetText( o:cText, 2 ), o:Process(), Self ), ) } )
-            aEval( ::aSend, {|o| if ( o:lSelectRecive .and. __ObjHasMethod( o, "PROCESSFRQ" ),;
-                                    ( ::SetText( o:cText, 2 ), o:Process(), Self ), ) } )
+/*          aEval( ::aSend, {|o| if ( o:lSelectRecive .and. __ObjHasMethod( o, "PROCESSFRQ" ),;
+                                    ( ::SetText( o:cText, 2 ), o:ProcessFrq(), Self ), ) } )
+*/                                 
          end if
 
          /*
@@ -1513,14 +1524,14 @@ METHOD SendFile( aSource, aTarget, cDirectory )
 
    if lDisco
 
-      if !empty( cDirectory ) .and. !lIsDir( cRutConInt() + cDirectory )
-         makeDir( cNamePath( cRutConInt() + cDirectory ) )
+      if !empty( cDirectory ) .and. !lIsDir( ::getPathComunication() + cDirectory )
+         makeDir( cNamePath( ::getPathComunication() + cDirectory ) )
       end if 
 
       for n := 1 to Len( aSource )
 
          hSource           := fOpen( aSource[ n ] )
-         hTarget           := fCreate( cRutConInt() + aTarget[ n ] )
+         hTarget           := fCreate( ::getPathComunication() + aTarget[ n ] )
 
          if !Empty( ::oMtr )
             ::oMtr:Set( 0 )
@@ -1598,18 +1609,17 @@ Return ( lRet )
 
 METHOD GetFile( aSource, cTarget )
 
-   local n
-   local i
+   local nBytes
+   local cSource
    local hTarget
    local cBuffer
    local nBuffer        := 2000
-   local nBytes
+   local cFile
    local oFile
    local aFiles
-   local nFile          := 0
-   local nTotSize       := 0
-   local lSuccess       := .f.
    local lDisco         := ( nTipConInt() == 1 )
+   local cFileName
+   local nFileSize
 
    if ValType( aSource ) != "A"
       aSource           := { aSource }
@@ -1621,39 +1631,31 @@ METHOD GetFile( aSource, cTarget )
    Comenzemos a bajar el fichero-----------------------------------------------
    */
 
-   for n := 1 to Len( aSource )
+   for each cSource in aSource 
 
       if lDisco
-         aFiles         := Directory( cRutConInt() + aSource[ n ] )
+         msgAlert( ::getPathComunication() + cSource, "::getPathComunication() + cSource" )
+         aFiles         := Directory( ::getPathComunication() + cSource )
       else
-         aFiles         := ::oFTP:Directory( aSource[ n ] )
+         aFiles         := ::oFTP:Directory( cSource )
       end if
 
-      for i := 1 to Len( aFiles )
+      for each cFile in aFiles
 
-         ::SetText( "Ficheros en el servidor : " + cValToChar( aFiles[ i, 1 ] ) )
+         cFileName      := cValToChar( cFile[ 1 ] )
+         nFileSize      := cFile[ 2 ] 
 
-         if ( Len( aFiles ) > 0 ) .and. isNum( aFiles[ i, 2 ] ) .and. ( aFiles[ i, 2 ] != 0 )
-            nTotSize    += aFiles[ i , 2 ]
-         endif
+         ::SetText( "Ficheros en el servidor : " + cFileName )
 
-      next
-
-      if ::oMtr != nil
-         ::oMtr:nTotal  := nTotSize
-      end if
-
-      for i := 1 to Len( aFiles )
-
-         if ::lFileProcesed( aFiles[ i, 1 ] )
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " ya procesado." )
+         if ::lFileProcesed( cFileName )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( cFileName ) + " ya procesado." )
             if !::lGetProcesados
                loop
             end if
          end if
 
-         if !::lFileRecive( aFiles[ i, 1 ] ) .and. !::lPriorFileRecive( aFiles[ i, 1 ] )
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " fuera de secuencia." )
+         if !::lFileRecive( cFileName ) .and. !::lPriorFileRecive( cFileName )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( cFileName ) + " fuera de secuencia." )
             if !::lGetFueraSecuencia
                loop
             end if
@@ -1661,50 +1663,33 @@ METHOD GetFile( aSource, cTarget )
 
          // Comprueba q el tamaño del fichero sea distinto de cero ------------
 
-         if aFiles[ i, 2 ] != 0
+         if nFileSize != 0
 
-            if IsChar( aFiles[ i, 1 ] )
-
-               hTarget     := fCreate( cTarget + aFiles[ i, 1 ] )
+            if IsChar( cFileName )
 
                if lDisco
-                  oFile    := TTxtFile():New( cRutConInt() + aFiles[ i, 1 ] )
-               else
-                  oFile    := TFtpFile():New( aFiles[ i, 1 ], ::oFTP )
-                  oFile:OpenRead()
-               end if
 
-               while ( nBytes := Len( cBuffer := if( lDisco, oFile:cGetStr( nBuffer ), oFile:Read( nBuffer ) ) ) ) > 0
+                  __CopyFile( ::getPathComunication() + cFileName, cTarget + cFileName )
 
-                  fWrite( hTarget, cBuffer, nBytes )
+               else 
+                  
+                  CopyFtpFile( cFileName, cTarget + cFileName, ::oFTP )
 
-                  if ::oMtr != nil
-                     ::oMtr:Set( nFile += nBytes )
-                  end if
+               end if 
 
-                  SysRefresh()
+               ::SetText( "Fichero recibido : " + cValToChar( cFileName ) )
 
-               end while
-
-               fClose( hTarget )
-
-               oFile:end()
-
-               ::SetText( "Fichero recibido : " + cValToChar( aFiles[ i, 1 ] ) )
-
-               ::AppendFileRecive( aFiles[ i, 1 ] )
+               ::AppendFileRecive( cFileName )
 
             end if
 
          else
 
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " está vacio." )
+            ::SetText( "INFORMACIÓN, fichero " + cValToChar( cFileName ) + " está vacio." )
 
          end if
 
       next
-
-      lSuccess          := ( nFile >= nTotSize )
 
    next
 
@@ -1712,7 +1697,7 @@ METHOD GetFile( aSource, cTarget )
       ::oMtr:Set( 0 )
    end if
 
-Return ( lSuccess )
+Return ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -1785,7 +1770,7 @@ FUNCTION FtpSndFile( aSource, aTarget, oSender, cDirectory )
       for n := 1 to Len( aSource )
 
          hSource        := fOpen( aSource[ n ] )
-         hTarget        := fCreate( cRutConInt() + aTarget[ n ] )
+         hTarget        := fCreate( oSender:getPathComunication() + aTarget[ n ] )
 
          if !Empty( oSender ) .and. !Empty( oSender:oMtr )
             oSender:oMtr:Set( 0 )
@@ -1899,7 +1884,7 @@ function ftpGetFiles( aSource, cTarget, oSender, lDisco )
    for n := 1 to Len( aSource )
 
       if lDisco
-         aFiles         := Directory( cRutConInt() + aSource[ n ] )
+         aFiles         := Directory( oSender:getPathComunication() + aSource[ n ] )
       else
          aFiles         := oFTP:Directory( aSource[ n ] )
       end if
@@ -1943,7 +1928,7 @@ function ftpGetFiles( aSource, cTarget, oSender, lDisco )
                hTarget     := fCreate( cTarget + aFiles[ i, 1 ] )
 
                if lDisco
-                  oFile    := TTxtFile():New( cRutConInt() + aFiles[ i, 1 ] )
+                  oFile    := TTxtFile():New( oSender:getPathComunication() + aFiles[ i, 1 ] )
                else
                   oFile    := TFtpFile():New( aFiles[ i, 1 ], oFTP )
                   oFile:OpenRead()
@@ -1998,7 +1983,7 @@ Function ftpDeleteMask( cMask, oSender, lDisco )
    DEFAULT lDisco          := ( nTipConInt() == 1 )
 
    if lDisco
-      EraseFilesInDirectory(cRutConInt(), cMask )
+      EraseFilesInDirectory( oSender:getPathComunication(), cMask )
    else
       if oFtp != nil
          oFtp:DeleteMask( cMask )
@@ -2016,7 +2001,7 @@ Function ftpEraseFile( cFile, oSender, lDisco )
    DEFAULT lDisco          := ( nTipConInt() == 1 )
 
    if lDisco
-      fErase( cRutConInt() + cFile )
+      fErase( oSender:getPathComunication() + cFile )
    else
       if oFtp != nil
          oFtp:DeleteFile( cFile )
@@ -2339,3 +2324,35 @@ METHOD ActivateTablet() CLASS TSndRecInf
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+Function CopyFtpFile( cOrigen, cDestino, oFTP )
+
+   local oFile
+   local nBytes
+   local cBytes
+   local hTarget
+
+   hTarget        := fCreate( cDestino )
+
+   if fError() != 0
+
+      oFile       := TFtpFile():New( cOrigen, oFTP )
+      oFile:OpenRead()
+
+
+      while ( nBytes := Len( cBytes := oFile:Read( 2000 ) ) ) > 0
+         fWrite( hTarget, cBytes, nBytes )
+      end while
+
+      fClose( hTarget )
+
+      oFile:end()
+
+      Return .t.
+
+   end if 
+
+Return .f.
+
+//---------------------------------------------------------------------------//
+

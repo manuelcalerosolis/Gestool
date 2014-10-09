@@ -6619,7 +6619,7 @@ Function FacCliTablet()
 	Orden----------------------------------------------------------------------
    	*/
 
-   	oCbxOrd     		:= TGridComboBox():Build({  "nRow"      => 40,;
+   	oCbxOrd     		:= TGridComboBox():Build({ "nRow"      => 40,;
                                              		"nCol"      => {|| GridWidth( 9.5, oDlg ) },;
                                              		"bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
                                              		"oWnd"      => oDlg,;
@@ -6632,7 +6632,7 @@ Function FacCliTablet()
 	Botones de las lineas------------------------------------------------------
    	*/
 
-   	oBtnAdd  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+   	oBtnAdd  			:= TGridImage():Build(  {  "nTop"      => 70,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6640,7 +6640,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| WinAppRec( nil, bEdtTablet, TDataView():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnEdt  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+   	oBtnEdt  			:= TGridImage():Build(  {  "nTop"      => 70,;
                                              		"nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6648,7 +6648,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| WinEdtRec( nil, bEdtTablet, TDataView():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+   	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 70,;
                                              		"nLeft"     => {|| GridWidth( 2.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6656,7 +6656,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| WinDelRec( oBrw, TDataView():FacturasClientes( nView ), {|| QuiFacCli() }, , , .t. ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnUpPage			:= TGridImage():Build(  {  	"nTop"      => 70,;
+   	oBtnUpPage			:= TGridImage():Build(  {  "nTop"      => 70,;
                                              		"nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -23274,11 +23274,15 @@ Method ReciveFrq()
    Recibirlo de internet-------------------------------------------------------
    */
 
+   msgAlert( cRutConFrq(), "cRutConFrq()")
+
+   ::oSender:setPathComunication( cRutConFrq() )
+
    ::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
 
    for n := 1 to len( aExt )
-      ::oSender:GetFile( "Frq\FacCli*." + aExt[ n ], cPatIn() )
-      ::oSender:GetFile( "Frq\AntCli*." + aExt[ n ], cPatIn() )
+      ::oSender:GetFile( "FacCli*." + aExt[ n ], cPatInFrq() )
+      ::oSender:GetFile( "AntCli*." + aExt[ n ], cPatInFrq() )
    next
 
    ::oSender:SetText( "Facturas y anticipos de clientes recibidos" )
@@ -23311,7 +23315,10 @@ Method ProcessFrq()
    local nNumero
    local cSufijo
 
-   local aFiles      := Directory( cPatIn() + "Frq\FacCli*.*" )
+   local aFiles      := Directory( cPatInFrq() + "FacCli*.*" )
+
+   msgAlert( "ProcessFrq" )
+   msgAlert( len( aFiles), "len(aFiles)")
 
    if len( aFiles ) == 0
       Return .f.
@@ -23330,10 +23337,12 @@ Method ProcessFrq()
    for m := 1 to len( aFiles )
 
       msgAlert( "Procesando fichero franquicia : " + aFiles[ m, 1 ] )
+      msgAlert( cPatInFrq() + aFiles[ m, 1 ], "cPatInFrq() + aFiles[ m, 1 ]" )
+      msgAlert( file( cPatInFrq() + aFiles[ m, 1 ] ), "file( cPatInFrq() + aFiles[ m, 1 ] )" )
 
       // Descomprimimos el fichero---------------------------------------------
 
-      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+      if ::oSender:lUnZipData( cPatInFrq() + aFiles[ m, 1 ] )
 
          // Ficheros temporales-------------------------------------------------
 
@@ -23348,15 +23357,21 @@ Method ProcessFrq()
             USE ( cPatSnd() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
             SET ADSINDEX TO ( cPatSnd() + "FacCliP.Cdx" ) ADDITIVE
 
+            msgAlert( ( tmpFacCliT )->( OrdKeyCount() ) )
+
             while ( tmpFacCliT )->( !eof() )
 
-               msgAlert( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac )
+               AppendFacturaProveedores()
 
                if rtrim( ( tmpFacCliT )->cCodCli ) == rtrim( uFieldempresa( "cCodCliFrq" ) )
+
+                  msgAlert( "Procesando factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
                   ::oSender:SetText( "Procesando factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
                else 
+
+                  msgAlert( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
                   ::oSender:SetText( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
@@ -23371,6 +23386,8 @@ Method ProcessFrq()
             CLOSE ( dbfFacCliP )
 
          else
+
+            msgAlert( "Faltan ficheros" )
 
             ::oSender:SetText( "Faltan ficheros" )
 
