@@ -13474,7 +13474,7 @@ Function AppendFacturaProveedores( hHeader, aLines )
 
    hb_MemoWrit( "c:\ads\serialize.txt", hHeader )   
 
-   hHeader  := hb_deserialize( hb_memoread( "c:\ads\serialize.txt" ) )
+   hHeader  := hb_deserialize( memoread( "c:\ads\serialize.txt" ) )
 
       for n := 1 to len( hHeader )
          msgAlert( HGetKeyAt( hHeader, n ) )  
