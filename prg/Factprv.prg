@@ -13460,7 +13460,28 @@ Function AppendFacturaProveedores( hHeader, aLines )
 
    hHeader  := {  "Serie"  => "A",;
                   "Numero" => 1,;
-                  "Fecha"  => Date() }
+                  "Fecha"  => Date(),; 
+                  "Lineas" => {  {  "Serie"  => "A",;
+                                    "Numero" => 1,;
+                                    "Codigo" => "123"},;
+                                 {  "Serie"  => "A",;
+                                    "Numero" => 2,;
+                                    "Codigo" => "124"},;
+                              };
+               }
+
+   hHeader  := hb_serialize( hHeader )
+
+   hb_MemoWrit( "c:\ads\serialize.txt", hHeader )   
+
+   hHeader  := hb_deserialize( hb_memoread( "c:\ads\serialize.txt" ) )
+
+      for n := 1 to len( hHeader )
+         msgAlert( HGetKeyAt( hHeader, n ) )  
+         msgAlert( HGetValueAt( hHeader, n ) )
+      next
+
+   Return .f.
 
    if !OpenFiles()
       return .f.
