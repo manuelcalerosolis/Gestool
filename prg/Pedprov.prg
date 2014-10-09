@@ -8286,7 +8286,7 @@ Method SendData()
 
    if File( cPatOut() + cFileName )
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -8312,7 +8312,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo pedidos de proveedores" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "PedPrv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "PedPrv*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "Pedidos de proveedores recibidos" )

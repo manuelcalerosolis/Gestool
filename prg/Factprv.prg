@@ -10649,7 +10649,7 @@ Method SendData() CLASS TFacturasProveedorSenderReciver
       Enviarlos a internet
       */
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -10683,13 +10683,13 @@ Method ReciveData() CLASS TFacturasProveedorSenderReciver
    if !::oSender:lFranquiciado
 
       for n := 1 to len( aExt )
-         ftpGetFiles( "FacPrv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+         ftpGetFiles( "FacPrv*." + aExt[ n ], cPatIn(), ::oSender )
       next
 
    else
 
       for n := 1 to len( aExt )
-         ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+         ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), ::oSender )
       next
    
    end if   
@@ -13450,3 +13450,102 @@ Function lIntelliArtciculoSearch( cCodArt, cCodPrv, cArticulo, cArtPrv, cCodebar
 Return ( .f. )
 
 //---------------------------------------------------------------------------//
+
+Function AppendFacturaProveedores( hHeader, aLines )
+
+   local n
+   local oError
+   local oBlock
+   local nFieldPos
+
+   hHeader  := {  "Serie"  => "A",;
+                  "Numero" => 1,;
+                  "Fecha"  => Date() }
+
+   if !OpenFiles()
+      return .f.
+   end if
+
+   CursorWait()
+
+   oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ( TDataview():FacturasProveedores( nView ) )->( dbAppend() )
+
+      for n := 1 to len( hHeader )
+
+         nFieldPos   := ( TDataview():FacturasProveedores( nView ) )->( fieldPos( HGetKeyAt( hHeader, n ) ) ) 
+         if nFieldPos != 0
+            ( TDataview():FacturasProveedores( nView ) )->( fieldput( nFieldPos, HGetValueAt( hHeader, n ) ) )
+         end if
+
+      next
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible crear factura de proveedores"  )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   CloseFiles()
+
+   CursorWE()
+
+   Return .f.
+
+/*
+
+
+
+   aTmp[ _NTOTREQ ]  := nTotReq
+   aTmp[ _NTOTFAC ]  := nTotFac
+
+   WinGather( aTmp, , TDataView():FacturasProveedores( nView ), , nMode )
+
+   ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
+
+   CommitTransaction()
+
+   GenPgoFacPrv( cSerFac + Str( nNumFac ) + cSufFac, TDataView():FacturasProveedores( nView ), TDataView():FacturasProveedoresLineas( nView ), TDataView():FacturasProveedoresPagos( nView ), TDataView():Proveedores( nView ), TDataView():TiposIva( nView ), TDataView():FormasPago( nView ), TDataView():Divisas( nView ) )
+
+   if nMode == APPD_MODE
+
+      if Len( aNumAlb ) > 0
+
+         for nItem := 1 to Len( aNumAlb )
+
+            if ( TDataView():AlbaranesProveedores( nView ) )->( dbSeek( aNumAlb[ nItem ] ) )
+
+               SetFacturadoAlbaranProveedor( .t., , , TDataView():AlbaranesProveedores( nView ), TDataView():AlbaranesProveedoresLineas( nView ), TDataView():AlbaranesProveedoresSeries( nView ), cSerFac + Str( nNumFac ) + cSufFac )
+
+            end if
+
+         next
+
+      end if
+
+   end if
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+
+      msgStop( ErrorMessage( oError ), "Imposible almacenar documentos"  )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   oMsgText()
+   EndProgress()
+
+   oDlg:Enable()
+   oDlg:End( IDOK )
+
+   CursorWE()
+*/
+
+RETURN .T.
+
+//------------------------------------------------------------------------//

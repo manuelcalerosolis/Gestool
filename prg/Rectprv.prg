@@ -7937,7 +7937,7 @@ Method SendData() CLASS TRectificativasProveedorSenderReciver
       Enviarlos a internet
       */
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -7963,7 +7963,7 @@ Method ReciveData() CLASS TRectificativasProveedorSenderReciver
    ::oSender:SetText( "Recibiendo facturas de proveedores" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "FacPrv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "FacPrv*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "Facturas rectificativas de proveedores recibidas" )

@@ -7516,7 +7516,7 @@ Method SendData()
 
    if file( cPatOut() + cFileName )
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado" )
@@ -7542,7 +7542,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo sesiones" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "Tur*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "Tur*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "Sesiones recibidas" )

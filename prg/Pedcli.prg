@@ -13860,7 +13860,7 @@ Method SendData() CLASS TPedidosClientesSenderReciver
       Enviarlos a internet
       */
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -13888,13 +13888,13 @@ Method ReciveData() CLASS TPedidosClientesSenderReciver
    	if !::oSender:lFranquiciado
 
    		for n := 1 to len( aExt )
-      		ftpGetFiles( "PedCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      		ftpGetFiles( "PedCli*." + aExt[ n ], cPatIn(), ::oSender )
    		next
 
    	else
 
 		for n := 1 to len( aExt )
-      		ftpGetFiles( "PedPrv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      		ftpGetFiles( "PedPrv*." + aExt[ n ], cPatIn(), ::oSender )
    		next   	
 
    	end if	
@@ -13944,70 +13944,68 @@ Method Process() CLASS TPedidosClientesSenderReciver
             	Ficheros temporales
             	*/
 
-            	if file( cPatSnd() + "PedCliT.DBF" )   .and.;
-               	   file( cPatSnd() + "PedCliL.DBF" )   .and.;
-               	   file( cPatSnd() + "PedCliI.DBF" )
+            	if file( cPatSnd() + "PedCliT.DBF" ) .and. file( cPatSnd() + "PedCliL.DBF" ) .and. file( cPatSnd() + "PedCliI.DBF" )
 
-               		USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
-               		SET ADSINDEX TO ( cPatSnd() + "PedCliT.CDX" ) ADDITIVE
+                  USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
+                  SET ADSINDEX TO ( cPatSnd() + "PedCliT.CDX" ) ADDITIVE
 
-               		USE ( cPatSnd() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliL", @tmpPedCliL ) )
-               		SET ADSINDEX TO ( cPatSnd() + "PedCliL.CDX" ) ADDITIVE
+                  USE ( cPatSnd() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliL", @tmpPedCliL ) )
+                  SET ADSINDEX TO ( cPatSnd() + "PedCliL.CDX" ) ADDITIVE
 
-               		USE ( cPatSnd() + "PedCliI.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliI", @tmpPedCliI ) )
-               		SET ADSINDEX TO ( cPatSnd() + "PedCliI.CDX" ) ADDITIVE
+                  USE ( cPatSnd() + "PedCliI.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliI", @tmpPedCliI ) )
+                  SET ADSINDEX TO ( cPatSnd() + "PedCliI.CDX" ) ADDITIVE
 
-               		USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @cPedCliT ) )
-               		SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
+                  USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @cPedCliT ) )
+                  SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
 
-               		USE ( cPatEmp() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @dbfPedCliL ) )
-               		SET ADSINDEX TO ( cPatEmp() + "PedCliL.CDX" ) ADDITIVE
+                  USE ( cPatEmp() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @dbfPedCliL ) )
+                  SET ADSINDEX TO ( cPatEmp() + "PedCliL.CDX" ) ADDITIVE
 
-               		USE ( cPatEmp() + "PedCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliI", @dbfPedCliI ) )
-               		SET ADSINDEX TO ( cPatEmp() + "PedCliI.CDX" ) ADDITIVE
+                  USE ( cPatEmp() + "PedCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliI", @dbfPedCliI ) )
+                  SET ADSINDEX TO ( cPatEmp() + "PedCliI.CDX" ) ADDITIVE
 
-               		while ( tmpPedCliT )->( !eof() )
+                  while ( tmpPedCliT )->( !eof() )
 
-                  		if lValidaOperacion( ( tmpPedCliT )->dFecPed, .f. ) .and. ;
-                     		!( cPedCliT )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+                  	if lValidaOperacion( ( tmpPedCliT )->dFecPed, .f. ) .and. ;
+                  		!( cPedCliT )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
 
-                     		dbPass( tmpPedCliT, cPedCliT, .t. )
-                     		::oSender:SetText( "Añadido     : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
+                  		dbPass( tmpPedCliT, cPedCliT, .t. )
+                  		::oSender:SetText( "Añadido     : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
 
-                     		if ( tmpPedCliL )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
-                        		do while ( tmpPedCliL )->cSerPed + Str( ( tmpPedCliL )->nNumPed ) + ( tmpPedCliL )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliL )->( eof() )
-                           			dbPass( tmpPedCliL, dbfPedCliL, .t. )
-                           			( tmpPedCliL )->( dbSkip() )
-                        		end do
-                     		end if
-
-                     		if ( tmpPedCliI )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
-                        		do while ( tmpPedCliI )->cSerPed + Str( ( tmpPedCliI )->nNumPed ) + ( tmpPedCliI )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliI )->( eof() )
-                           			dbPass( tmpPedCliI, dbfPedCliI, .t. )
-                           			( tmpPedCliI )->( dbSkip() )
-                        		end do
-                     		end if
-
-                  		else
-
-                     		::oSender:SetText( "Desestimado : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
-
+                  		if ( tmpPedCliL )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+                     		do while ( tmpPedCliL )->cSerPed + Str( ( tmpPedCliL )->nNumPed ) + ( tmpPedCliL )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliL )->( eof() )
+                        			dbPass( tmpPedCliL, dbfPedCliL, .t. )
+                        			( tmpPedCliL )->( dbSkip() )
+                     		end do
                   		end if
 
-                  		( tmpPedCliT )->( dbSkip() )
+                  		if ( tmpPedCliI )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+                     		do while ( tmpPedCliI )->cSerPed + Str( ( tmpPedCliI )->nNumPed ) + ( tmpPedCliI )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliI )->( eof() )
+                        			dbPass( tmpPedCliI, dbfPedCliI, .t. )
+                        			( tmpPedCliI )->( dbSkip() )
+                     		end do
+                  		end if
 
-               		end do
+                  	else
 
-               		CLOSE ( cPedCliT )
-               		CLOSE ( dbfPedCliL )
-               		CLOSE ( dbfPedCliI )
-               		CLOSE ( tmpPedCliT )
-               		CLOSE ( tmpPedCliL )
-               		CLOSE ( tmpPedCliI )
+                  		::oSender:SetText( "Desestimado : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
+
+                  	end if
+
+                  	( tmpPedCliT )->( dbSkip() )
+
+                  end do
+
+                  CLOSE ( cPedCliT )
+                  CLOSE ( dbfPedCliL )
+                  CLOSE ( dbfPedCliI )
+                  CLOSE ( tmpPedCliT )
+                  CLOSE ( tmpPedCliL )
+                  CLOSE ( tmpPedCliI )
 
             	else
 
-               		::oSender:SetText( "Faltan ficheros" )
+               	::oSender:SetText( "Faltan ficheros" )
 
             	end if
 
@@ -14017,50 +14015,48 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
             else
 
-            /*
-			Modo franquicia----------------------------------------------------
-            */
+               /*
+   			   Modo franquicia----------------------------------------------------
+               */
 
-            	if file( cPatSnd() + "PedProvT.dbf" )   .and.;
-               	   file( cPatSnd() + "PedProvL.dbf" )
+            	if file( cPatSnd() + "PedProvT.dbf" ) .and. file( cPatSnd() + "PedProvL.dbf" )
 
-               		USE ( cPatSnd() + "PedProvT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedProvT", @tmpPedCliT ) )
-               		SET ADSINDEX TO ( cPatSnd() + "PedProvT.CDX" ) ADDITIVE
+            		USE ( cPatSnd() + "PedProvT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedProvT", @tmpPedCliT ) )
+            		SET ADSINDEX TO ( cPatSnd() + "PedProvT.CDX" ) ADDITIVE
 
-               		USE ( cPatSnd() + "PedProvL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedProvL", @tmpPedCliL ) )
-               		SET ADSINDEX TO ( cPatSnd() + "PedProvL.CDX" ) ADDITIVE
+            		USE ( cPatSnd() + "PedProvL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedProvL", @tmpPedCliL ) )
+            		SET ADSINDEX TO ( cPatSnd() + "PedProvL.CDX" ) ADDITIVE
 
-               		USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @cPedCliT ) )
-               		SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
+            		USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @cPedCliT ) )
+            		SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
 
-               		USE ( cPatEmp() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @dbfPedCliL ) )
-               		SET ADSINDEX TO ( cPatEmp() + "PedCliL.CDX" ) ADDITIVE
+            		USE ( cPatEmp() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @dbfPedCliL ) )
+            		SET ADSINDEX TO ( cPatEmp() + "PedCliL.CDX" ) ADDITIVE
 
-               		USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-               		SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
+            		USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
+            		SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
 
 
-               		while ( tmpPedCliT )->( !eof() )
+            		while ( tmpPedCliT )->( !eof() )
 
-                  		/*
-                  		Comprobamos que no exista la factura en la base de datos---
+               		/*
+               		Comprobamos que no exista la factura en la base de datos---
+               		*/
+
+               		( cPedCliT )->( OrdSetFocus( "cSuPed" ) )
+
+               		if !( cPedCliT )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+
+                     	/*
+                  		Pasamos las cabeceras----------------------------------
                   		*/
 
-                  		( cPedCliT )->( OrdSetFocus( "cSuPed" ) )
+                  		cSerie      := ( tmpPedCliT )->cSerPed
+                  		nNumero     := nNewDoc( ( tmpPedCliT )->cSerPed, cPedCliT, "NPEDCLI", , dbfCount )
+                  		cSufijo  	:= oUser():cDelegacion()
 
-                  		if !( cPedCliT )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
-
-	                     	/*
-                     		Pasamos las cabeceras----------------------------------
-                     		*/
-
-                     		cSerie      := ( tmpPedCliT )->cSerPed
-                     		nNumero     := nNewDoc( ( tmpPedCliT )->cSerPed, cPedCliT, "NPEDCLI", , dbfCount )
-                     		cSufijo  	:= oUser():cDelegacion()
-
-                     		( cPedCliT)->( dbAppend() )
-
-							( cPedCliT)->CSERPED 			:= cSerie
+                  		( cPedCliT)->( dbAppend() )
+   							( cPedCliT)->CSERPED 			:= cSerie
    						 	( cPedCliT)->NNUMPED 			:= nNumero
    						 	( cPedCliT)->CSUFPED 			:= cSufijo
    						 	( cPedCliT)->CTURPED 			:= cCurSesion()
@@ -14105,88 +14101,86 @@ Method Process() CLASS TPedidosClientesSenderReciver
    						 	( cPedCliT)->nTotReq 			:= ( tmpPedCliT )->nTotReq       // "N",  16,  6, "Total recago" ,                   "",                   "", "( cDbf )", nil } )
    						 	( cPedCliT)->nTotPed 			:= ( tmpPedCliT )->nTotPed       // "N",  16,  6, "Total pedido" ,                   "",                   "", "( cDbf )", nil } )
 
-                     		( cPedCliT )->( dbUnLock() )
+                   		( cPedCliT )->( dbUnLock() )
 
-                     		::oSender:SetText( "Añadido pedido     : " + cSerie + "/" + AllTrim( Str( nNumero ) ) + "/" +  AllTrim( cSufijo ) )
+                   		::oSender:SetText( "Añadido pedido     : " + cSerie + "/" + AllTrim( Str( nNumero ) ) + "/" +  AllTrim( cSufijo ) )
 
-                     		/*
-							Pasamos las lineas de los pedidos------------------
-                     		*/
+                    		/*
+   							Pasamos las lineas de los pedidos------------------
+                    		*/
 
-                     		if ( tmpPedCliL )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
+                    		if ( tmpPedCliL )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
                            
-                        		while ( tmpPedCliL )->cSerPed + Str( ( tmpPedCliL )->nNumPed ) + ( tmpPedCliL )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliL )->( eof() )
+                        	while ( tmpPedCliL )->cSerPed + Str( ( tmpPedCliL )->nNumPed ) + ( tmpPedCliL )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliL )->( eof() )
                               
-                           		( dbfPedCliL)->( dbAppend() )
+                           	( dbfPedCliL)->( dbAppend() )
+                              ( dbfPedCliL )->cSerPed   	:= cSerie
+                              ( dbfPedCliL )->nNumPed   	:= nNumero
+                              ( dbfPedCliL )->cSufPed   	:= cSufijo
+                              ( dbfPedCliL )->cRef      	:= ( tmpPedCliL )->cRef
+                              ( dbfPedCliL )->cCodPr1   	:= ( tmpPedCliL )->cCodPr1
+                              ( dbfPedCliL )->cCodPr2   	:= ( tmpPedCliL )->cCodPr2
+                              ( dbfPedCliL )->cValPr1   	:= ( tmpPedCliL )->cValPr1
+                              ( dbfPedCliL )->cValPr2   	:= ( tmpPedCliL )->cValPr2
+                              ( dbfPedCliL )->cDetalle  	:= ( tmpPedCliL )->cDetalle
+                              ( dbfPedCliL )->nIva  		:= ( tmpPedCliL )->nIva
+                              ( dbfPedCliL )->nCanPed  	:= ( tmpPedCliL )->nCanPed
+                              ( dbfPedCliL )->nUniCaja  	:= ( tmpPedCliL )->nUniCaja
+                              ( dbfPedCliL )->nUndKit   	:= ( tmpPedCliL )->nUndKit
+                              ( dbfPedCliL )->nPreDiv  	:= ( tmpPedCliL )->nPreDiv
+                              ( dbfPedCliL )->NDTO      	:= ( tmpPedCliL )->nDtoLin
+                              ( dbfPedCliL )->NDTOPRM   	:= ( tmpPedCliL )->nDtoPrm
+                              ( dbfPedCliL )->NCANENT   	:= ( tmpPedCliL )->nCanEnt
+                              ( dbfPedCliL )->NUNIENT   	:= ( tmpPedCliL )->nUniEnt
+                              ( dbfPedCliL )->CUNIDAD   	:= ( tmpPedCliL )->cUnidad
+                              ( dbfPedCliL )->MLNGDES   	:= ( tmpPedCliL )->mLngDes
+                              ( dbfPedCliL )->NFACCNV   	:= ( tmpPedCliL )->nFacCnv
+                              ( dbfPedCliL )->NNUMLIN   	:= ( tmpPedCliL )->nNumLin
+                              ( dbfPedCliL )->NCTLSTK   	:= ( tmpPedCliL )->nCtlStk
+                              ( dbfPedCliL )->NCOSDIV   	:= ( tmpPedCliL )->nPreDiv
+                              ( dbfPedCliL )->CALMLIN   	:= oUser():cAlmacen()
+                              ( dbfPedCliL )->LLOTE     	:= ( tmpPedCliL )->lLote
+                              ( dbfPedCliL )->NLOTE     	:= ( tmpPedCliL )->nLote
+                              ( dbfPedCliL )->CLOTE     	:= ( tmpPedCliL )->cLote
+                              ( dbfPedCliL )->LKITART   	:= ( tmpPedCliL )->lKitArt
+                              ( dbfPedCliL )->LKITCHL   	:= ( tmpPedCliL )->lKitChl
+                              ( dbfPedCliL )->LKITPRC   	:= ( tmpPedCliL )->lKitPrc
+                              ( dbfPedCliL )->LCONTROL  	:= ( tmpPedCliL )->lControl
+                              ( dbfPedCliL )->CCODFAM   	:= ( tmpPedCliL )->cCodFam
+                              ( dbfPedCliL )->CGRPFAM   	:= ( tmpPedCliL )->cGrpFam
+                              ( dbfPedCliL )->NREQ      	:= ( tmpPedCliL )->nReq
+                              ( dbfPedCliL )->MOBSLIN   	:= ( tmpPedCliL )->mObsLin
+                              ( dbfPedCliL )->CREFPRV   	:= ( tmpPedCliL )->cRefPrv
+                              ( dbfPedCliL )->nNumMed   	:= ( tmpPedCliL )->nNumMed
+                              ( dbfPedCliL )->nMedUno   	:= ( tmpPedCliL )->nMedUno
+                              ( dbfPedCliL )->nMedDos   	:= ( tmpPedCliL )->nMedDos
+                              ( dbfPedCliL )->nMedTre   	:= ( tmpPedCliL )->nMedTre
+                         		( dbfPedCliL )->( dbUnLock() )
 
-								( dbfPedCliL )->cSerPed   	:= cSerie
-   							 	( dbfPedCliL )->nNumPed   	:= nNumero
-   							 	( dbfPedCliL )->cSufPed   	:= cSufijo
-   							 	( dbfPedCliL )->cRef      	:= ( tmpPedCliL )->cRef
-   							 	( dbfPedCliL )->cCodPr1   	:= ( tmpPedCliL )->cCodPr1
-   							 	( dbfPedCliL )->cCodPr2   	:= ( tmpPedCliL )->cCodPr2
-   							 	( dbfPedCliL )->cValPr1   	:= ( tmpPedCliL )->cValPr1
-   							 	( dbfPedCliL )->cValPr2   	:= ( tmpPedCliL )->cValPr2
-   							 	( dbfPedCliL )->cDetalle  	:= ( tmpPedCliL )->cDetalle
-   							 	( dbfPedCliL )->nIva  		:= ( tmpPedCliL )->nIva
-   							 	( dbfPedCliL )->nCanPed  	:= ( tmpPedCliL )->nCanPed
-   							 	( dbfPedCliL )->nUniCaja  	:= ( tmpPedCliL )->nUniCaja
-   							 	( dbfPedCliL )->nUndKit   	:= ( tmpPedCliL )->nUndKit
-   							 	( dbfPedCliL )->nPreDiv  	:= ( tmpPedCliL )->nPreDiv
-   							 	( dbfPedCliL )->NDTO      	:= ( tmpPedCliL )->nDtoLin
-   							 	( dbfPedCliL )->NDTOPRM   	:= ( tmpPedCliL )->nDtoPrm
-   							 	( dbfPedCliL )->NCANENT   	:= ( tmpPedCliL )->nCanEnt
-   							 	( dbfPedCliL )->NUNIENT   	:= ( tmpPedCliL )->nUniEnt
-   							 	( dbfPedCliL )->CUNIDAD   	:= ( tmpPedCliL )->cUnidad
-   							 	( dbfPedCliL )->MLNGDES   	:= ( tmpPedCliL )->mLngDes
-   							 	( dbfPedCliL )->NFACCNV   	:= ( tmpPedCliL )->nFacCnv
-   							 	( dbfPedCliL )->NNUMLIN   	:= ( tmpPedCliL )->nNumLin
-   							 	( dbfPedCliL )->NCTLSTK   	:= ( tmpPedCliL )->nCtlStk
-   							 	( dbfPedCliL )->NCOSDIV   	:= ( tmpPedCliL )->nPreDiv
-   							 	( dbfPedCliL )->CALMLIN   	:= oUser():cAlmacen()
-   							 	( dbfPedCliL )->LLOTE     	:= ( tmpPedCliL )->lLote
-   							 	( dbfPedCliL )->NLOTE     	:= ( tmpPedCliL )->nLote
-   							 	( dbfPedCliL )->CLOTE     	:= ( tmpPedCliL )->cLote
-   							 	( dbfPedCliL )->LKITART   	:= ( tmpPedCliL )->lKitArt
-   							 	( dbfPedCliL )->LKITCHL   	:= ( tmpPedCliL )->lKitChl
-   							 	( dbfPedCliL )->LKITPRC   	:= ( tmpPedCliL )->lKitPrc
-   							 	( dbfPedCliL )->LCONTROL  	:= ( tmpPedCliL )->lControl
-   							 	( dbfPedCliL )->CCODFAM   	:= ( tmpPedCliL )->cCodFam
-   							 	( dbfPedCliL )->CGRPFAM   	:= ( tmpPedCliL )->cGrpFam
-   							 	( dbfPedCliL )->NREQ      	:= ( tmpPedCliL )->nReq
-   							 	( dbfPedCliL )->MOBSLIN   	:= ( tmpPedCliL )->mObsLin
-   							 	( dbfPedCliL )->CREFPRV   	:= ( tmpPedCliL )->cRefPrv
-   							 	( dbfPedCliL )->nNumMed   	:= ( tmpPedCliL )->nNumMed
-   							 	( dbfPedCliL )->nMedUno   	:= ( tmpPedCliL )->nMedUno
-   							 	( dbfPedCliL )->nMedDos   	:= ( tmpPedCliL )->nMedDos
-   							 	( dbfPedCliL )->nMedTre   	:= ( tmpPedCliL )->nMedTre
+                          		( tmpPedCliL )->( dbSkip() )
 
-                           		( dbfPedCliL )->( dbUnLock() )
+                        	end while
 
-                           		( tmpPedCliL )->( dbSkip() )
+                     	end if
 
-                        		end while
+                  	else
 
-                     		end if
+                  		::oSender:SetText( "Desestimado pedido : " + ( tmpPedCliT )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliT )->nNumPed ) ) + "/" +  AllTrim( ( tmpPedCliL )->cSufPed ) )
 
-                     	else
-
-                     		::oSender:SetText( "Desestimado pedido : " + ( tmpPedCliT )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliT )->nNumPed ) ) + "/" +  AllTrim( ( tmpPedCliL )->cSufPed ) )
-
-                  		end if
+               		end if
 
                   	( tmpPedCliT )->( dbSkip() )
 
-               		end while
+            		end while
 
-               		CLOSE ( tmpPedCliT )
-               		CLOSE ( tmpPedCliL )
-               		CLOSE ( cPedCliT )
-               		CLOSE ( dbfPedCliL )
+            		CLOSE ( tmpPedCliT )
+            		CLOSE ( tmpPedCliL )
+            		CLOSE ( cPedCliT   )
+            		CLOSE ( dbfPedCliL )
 
             	else
 
-               		::oSender:SetText( "Faltan ficheros" )
+              		::oSender:SetText( "Faltan ficheros" )
 
             	end if
 
@@ -14195,13 +14189,13 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
             end if	
 
-        else
+         else
 
            	::oSender:SetText( "Error al descomprimir los ficheros" )
 
-        end if
+         end if
 
-        ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+         ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
 
       RECOVER USING oError
 

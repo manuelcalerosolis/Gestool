@@ -171,9 +171,6 @@ METHOD Load( lAppend ) CLASS TDet
 
    ::oDbfVir:Zap()
 
-   msgAlert( ::oParent:cFirstKey, "::oParent:cFirstKey" ) 
-   msgAlert( ::oDbf:OrdSetFocus(), "::oDbf:OrdSetFocus()" )     
-
    if ::oParent:cFirstKey != nil
 
       if ( lAppend ) .and. ::oDbf:Seek( ::oParent:cFirstKey )

@@ -6,9 +6,16 @@
 
 CLASS TFabricantes FROM TMant
 
-   METHOD Create( cPath ) CONSTRUCTOR
-
-   METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
+   DATA  cText
+   DATA  oSender
+   DATA  lSelectSend
+   DATA  lSelectRecive
+   DATA  cIniFile
+   DATA  lSuccesfullSend
+   
+   METHOD Create( cPath )                       CONSTRUCTOR
+   METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
+   METHOD Initiate( cText, oSender )            CONSTRUCTOR
 
    METHOD Activate()
 
@@ -38,6 +45,8 @@ CLASS TFabricantes FROM TMant
    METHOD Process()
 
    METHOD nGetNumberToSend()
+   METHOD Save()
+   METHOD Load()
 
 END CLASS
 
@@ -75,6 +84,17 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::cBitmap            := clrTopArchivos
 
    ::lCreateShell       := .f.
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Initiate( cText, oSender )
+
+   ::cText              := cText
+   ::oSender            := oSender
+   ::cIniFile           := cPatEmp() + "Empresa.Ini"
+   ::lSuccesfullSend    := .f.
 
 RETURN ( Self )
 
@@ -515,7 +535,7 @@ Method SendData()
 
    if file( cPatOut() + cFileName )
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -547,7 +567,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo fabricantes" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "Fabricantes*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "Fabricantes*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "Fabricantes recibidos" )
@@ -673,5 +693,23 @@ Method nGetNumberToSend()
    ::nNumberSend     := GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile )
 
 Return ( ::nNumberSend )
+
+//----------------------------------------------------------------------------//
+
+METHOD Save()
+
+   WritePProString( "Envio",     ::cText, cValToChar( ::lSelectSend ), ::cIniFile )
+   WritePProString( "Recepcion", ::cText, cValToChar( ::lSelectRecive ), ::cIniFile )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Load()
+
+   ::lSelectSend     := ( Upper( GetPvProfString( "Envio",     ::cText, cValToChar( ::lSelectSend ),   ::cIniFile ) ) == ".T." )
+   ::lSelectRecive   := ( Upper( GetPvProfString( "Recepcion", ::cText, cValToChar( ::lSelectRecive ), ::cIniFile ) ) == ".T." )
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//

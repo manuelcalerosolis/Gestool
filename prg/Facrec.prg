@@ -8482,7 +8482,7 @@ Return ( Self )*/
 
    if File( cPatOut() + cFileNameFacturas )
 
-      if ftpSndFile( cPatOut() + cFileNameFacturas, cFileNameFacturas, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileNameFacturas, cFileNameFacturas, ::oSender )
          ::lSuccesfullSendFacturas  := .t.
          ::oSender:SetText( "Fichero facturas rectificativas enviados " + cFileNameFacturas )
       else
@@ -8520,8 +8520,8 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo facturas rectificativas de clientes" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "FacRec*." + aExt[ n ], cPatIn(), 2000, ::oSender )
-      ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "FacRec*." + aExt[ n ], cPatIn(), ::oSender )
+      ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "Facturas rectificativas de clientes recibidos" )

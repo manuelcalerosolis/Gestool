@@ -1828,7 +1828,7 @@ Method SendData()
 
    if file( cPatOut() + cFileName )
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -1860,7 +1860,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo movimientos de almacén" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "MovAlm*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "MovAlm*." + aExt[ n ], cPatIn(), ::oSender )
    next
 
    ::oSender:SetText( "Movimientos de almacén recibidos" )
