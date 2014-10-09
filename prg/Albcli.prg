@@ -5260,7 +5260,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                ( dbfTmpLin )->( dbAppend() )
                cDesAlb                 := Rtrim( cNumPed() ) + Space( 1 ) + ( dbfPedCliT )->cSerPed + "/" + AllTrim( Str( ( dbfPedCliT )->nNumPed ) ) + "/" + ( dbfPedCliT )->cSufPed
                cDesAlb                 += " - Fecha " + Dtoc( ( dbfPedCliT )->dFecPed )
-               (dbfTmpLin)->cDetalle   := cDesAlb
+               (dbfTmpLin)->cDetalle   := cDesAlb  
                (dbfTmpLin)->lControl   := .t.
             end if
 
