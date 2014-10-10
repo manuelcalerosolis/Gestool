@@ -5998,7 +5998,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Cabeceras------------------------------------------------------------------
 	*/
 
-	oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
+	  oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| LblTitle( nMode ) + " líneas de facturas" },;
                                              		"oWnd"      => oDlg,;
@@ -6010,18 +6010,18 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
-   	oBtnAceptar  		:= TGridImage():Build(  {  	"nTop"      => 5,;
+   	oBtnAceptar  		:= TGridImage():Build(  {  "nTop"      => 5,;
                                              		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| if( !Empty( aTmp[ _CREF ] ), SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode ), ) },;
+                                             		"bLClicked" => {|| if( !Empty( aTmp[ _CREF ] ), SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode, , , , , , , oSayLote ), ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
+   	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
-                                            	 	"nHeight"   => 64,;
+                                            	 	   "nHeight"   => 64,;
                                              		"cResName"  => "flat_del_64",;
                                              		"bLClicked" => {|| oDlg:End() },;
                                              		"oWnd"      => oDlg } )
@@ -6041,14 +6041,14 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 													            "nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) } } )
 
-   	aGet[ _CREF ]  	:= TGridGet():Build( { 			"nRow"      => 40,;
+   	aGet[ _CREF ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CREF ], aTmp[ _CREF ] := u ) },;
                                           			"oWnd"      => oDlg,;
                                           			"nWidth"    => {|| GridWidth( 3, oDlg ) },;
                                           			"nHeight"   => nAltoGet,;
                                           			"lPixels" 	=> .t.,;
-                                          			"bValid"    => {|| LoaArt( aTmp[ _CREF ], aGet, aTmp, aTmpFac,,,,,,, nMode ), lCalcDeta( aTmp, aTmpFac ) } } )
+                                          			"bValid"    => {|| LoaArt( aTmp[ _CREF ], aGet, aTmp, aTmpFac,,,,,,, nMode, , oSayLote ), lCalcDeta( aTmp, aTmpFac ) } } )
 	
    	aGet[ _CDETALLE ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 5.5, oDlg ) },;
@@ -6062,7 +6062,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
       Lote---------------------------------------------------------------------
       */
 
-      oSayUnidades      := TGridSay():Build(    {  "nRow"      => 65,;
+      oSayLote          := TGridSay():Build(    {  "nRow"      => 65,;
                                                    "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                                    "bText"     => {|| "Lote" },;
                                                    "oWnd"      => oDlg,;
@@ -6104,7 +6104,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
                                           			"nWidth"    => {|| GridWidth( 3, oDlg ) },;
-                                          			"cPict" 	=> MasUnd(),;
+                                          			"cPict" 	   => MasUnd(),;
                                           			"lRight" 	=> .t.,;
                                           			"nHeight"   => nAltoGet,;
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
@@ -6131,13 +6131,13 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
                                           			"nWidth"    => {|| GridWidth( 3, oDlg ) },;
-                                          			"cPict" 	=> MasUnd(),;
+                                          			"cPict" 	   => MasUnd(),;
                                           			"lRight" 	=> .t.,;
                                           			"nHeight"   => nAltoGet,;
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
 
    	/*
-	Precio----------------------------------------------------------------------
+	   Precio----------------------------------------------------------------------
    	*/
 
    	oSayPrecio    		:= TGridSay():Build(    { 	"nRow"      => 140,;
@@ -6164,7 +6164,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
 
    	/*
-	Descuento porcentual-------------------------------------------------------
+	   Descuento porcentual-------------------------------------------------------
    	*/
 
    	oSayDto    			:= TGridSay():Build(    { 	"nRow"      => 165,;
@@ -6179,7 +6179,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	aGet[ _NDTO ]  		:= TGridGet():Build( { 		"nRow"      => 165,;
+   	aGet[ _NDTO ]  		:= TGridGet():Build( { 	"nRow"      => 165,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _NDTO ], aTmp[ _NDTO ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6191,7 +6191,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
 
    	/*
-	Descuento lineal-----------------------------------------------------------
+	   Descuento lineal-----------------------------------------------------------
    	*/
 
    	oSayDtoLin  		:= TGridSay():Build(    { 	"nRow"      => 190,;
@@ -6206,7 +6206,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	aGet[ _NDTODIV ]  	:= TGridGet():Build( { 		"nRow"      => 190,;
+   	aGet[ _NDTODIV ]  	:= TGridGet():Build( { 	"nRow"      => 190,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _NDTODIV ], aTmp[ _NDTODIV ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6218,10 +6218,10 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
 
    	/*
-	Total de la linea----------------------------------------------------------
+	   Total de la linea----------------------------------------------------------
    	*/
 
-   	oTotal  			:= TGridSay():Build(    { 	"nRow"      => 230,;
+   	oTotal  			:= TGridSay():Build(    { 	   "nRow"      => 230,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "Total" },;
                                              		"oWnd"      => oDlg,;
@@ -6246,10 +6246,10 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 
 	/*
 	Redimensionamos y activamos el diálogo------------------------------------- 
-   	*/
+   */
 
-   	oDlg:bResized  				:= {|| GridResize( oDlg ) }
-   	oDlg:bStart 				:= {|| aGet[ _CREF ]:SetFocus() }  
+   	oDlg:bResized  			:= {|| GridResize( oDlg ) }
+   	oDlg:bStart 				:= {|| SetDlgMode( aTmp, aGet, , , , , , , nMode, , aTmpFac, , oSayLote ), aGet[ _CREF ]:SetFocus() }  
 
    	ACTIVATE DIALOG oDlg CENTER ;
       ON INIT     ( GridMaximize( oDlg ) )
@@ -12495,7 +12495,7 @@ return ( lRecPgd )
 Comprtamiento de la caja de dialogo
 */
 
-STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, oRentLin )
+STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, oRentLin, oSayLote )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
 
@@ -12598,28 +12598,32 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
       	end if	
    end if
 
-   if !( "TABLET" $ cParamsMain() )
+   if aTmp[ _LLOTE ]
 
-      if aTmp[ _LLOTE ]
+      if !Empty( aGet[ _CLOTE ] )
+         aGet[ _CLOTE ]:Show()
+      end if
 
-         if !Empty( aGet[ _CLOTE ] )
-            aGet[ _CLOTE ]:Show()
-         end if
+      if !Empty( aGet[ _DFECCAD ] )
+         aGet[ _DFECCAD ]:Show()
+      end if
 
-         if !Empty( aGet[ _DFECCAD ] )
-            aGet[ _DFECCAD ]:Show()
-         end if
+      if !Empty( oSayLote )
+         oSayLote:Show()
+      end if
 
-      else
+   else
 
-         if !Empty( aGet[ _CLOTE ] )
-            aGet[ _CLOTE ]:Hide()
-         end if
+      if !Empty( aGet[ _CLOTE ] )
+         aGet[ _CLOTE ]:Hide()
+      end if
 
-         if !Empty( aGet[ _DFECCAD ] )
-            aGet[ _DFECCAD ]:Hide()
-         end if
+      if !Empty( aGet[ _DFECCAD ] )
+         aGet[ _DFECCAD ]:Hide()
+      end if
 
+      if !Empty( oSayLote )
+         oSayLote:Hide()
       end if
 
    end if
@@ -12944,7 +12948,7 @@ Return nil
 Carga los articulos en la factura
 */
 
-STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, lFocused )
+STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, lFocused, oSayLote )
 
    local hHas128
    local cLote
@@ -13730,6 +13734,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
+            if !Empty( oSayLote )
+               oSayLote:Show()
+            end if
+
             if Empty( dFechaCaducidad )
                dFechaCaducidad      := dFechaCaducidadLote( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], dbfAlbPrvL, dbfFacPrvL, dbfProLin )
             end if 
@@ -13752,16 +13760,16 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          else
 
-         	if !( "TABLET" $ cParamsMain() )
+            if !Empty( aGet[ _CLOTE ] )
+               aGet[ _CLOTE ]:Hide()
+            end if
 
-               if !Empty( aGet[ _CLOTE ] )
-                  aGet[ _CLOTE ]:Hide()
-               end if
+            if !Empty( aGet[ _DFECCAD ] )
+               aGet[ _DFECCAD ]:Hide()
+            end if
 
-               if !Empty( aGet[ _DFECCAD ] )
-                  aGet[ _DFECCAD ]:Hide()
-               end if
-
+            if !Empty( oSayLote )
+               oSayLote:Hide()
             end if
 
          end if
@@ -13891,7 +13899,7 @@ RETURN .t.
 Guarda la linea de detalle
 */
 
-STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotal, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
+STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotal, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer, oSayLote )
 
    local nRec
    local aClo
@@ -14270,7 +14278,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
       RecalculaTotal( aTmpFac )
 
-      SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac )
+      SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, , oSayLote )
 
       SysRefresh()
 
