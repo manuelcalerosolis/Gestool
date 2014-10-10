@@ -99,6 +99,8 @@ function Main( cParams )
    Test------------------------------------------------------------------------
    */
 
+   // AppendFacturaProveedores()
+
    SetResDebug( .t. )
 
    DialogExtend() 
@@ -389,6 +391,7 @@ FUNCTION ControlAplicacion()
    local oBmpPerpetua
    local oBmpSaas
    local oBmpDemo
+   local oSayDemo
    local oSerialHD
    local nSerialHD
    local oSerialUSR
@@ -396,7 +399,6 @@ FUNCTION ControlAplicacion()
    local oLicencia
    local nlicencia      
    local oSayPerpetua   
-   local oSayDemo
    local oSayAlquiler   
    local cSayAlquiler   
 

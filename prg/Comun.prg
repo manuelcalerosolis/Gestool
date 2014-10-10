@@ -2847,33 +2847,18 @@ Return ( HB_RegExMatch( "[A-Z0-9._%-]+@[A-Z0-9.-]+\.[A-Z]{2,4}", cMail, .f. ) )
 
 //----------------------------------------------------------------------------//
 
+Function hashRecord( dbf )
 
+  local n
+  local hHash   := {=>}
 
+  for n := 1 to ( dbf )->( fcount() )
+    hSet( hHash, ( dbf )->( fieldname( n ) ), ( dbf )->( fieldget( n ) ) )
+  next 
 
+Return ( hHash )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//----------------------------------------------------------------------------//
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 

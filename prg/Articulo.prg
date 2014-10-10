@@ -12135,14 +12135,10 @@ Method CreateData()
          */
 
          if ( dbfCodebar )->( dbSeek( ( dbfArticulo )->Codigo ) )
-
             while ( dbfCodebar )->cCodArt == ( dbfArticulo )->Codigo .and. !( dbfCodebar )->( eof() )
-
                dbPass( dbfCodebar, tmpCodebar, .t. )
                ( dbfCodebar )->( dbSkip( 1 ) )
-
             end while
-
          end if
 
          /*
@@ -12150,14 +12146,10 @@ Method CreateData()
          */
 
          if ( dbfArtPrv )->( dbSeek( ( dbfArticulo )->Codigo ) )
-
             while ( dbfArtPrv )->cCodArt == ( dbfArticulo )->Codigo .and. !( dbfArtPrv )->( eof() )
-
                dbPass( dbfArtPrv, tmpArtPrv, .t. )
                ( dbfArtPrv )->( dbSkip( 1 ) )
-
             end while
-
          end if
 
          /*
@@ -12165,29 +12157,21 @@ Method CreateData()
          */
 
          if ( dbfArtVta )->( dbSeek( ( dbfArticulo )->Codigo ) )
-
             while ( dbfArtVta )->cCodArt == ( dbfArticulo )->Codigo .and. !( dbfArtVta )->( eof() )
-
                dbPass( dbfArtVta, tmpArtVta, .t. )
                ( dbfArtVta )->( dbSkip( 1 ) )
-
             end while
-
          end if
 
          /*
          kits asociados
          */
 
-         if ( dbfArtKit )->( dbSeek( ( dbfArticulo )->CODIGO ) )
-
+         if ( dbfArtKit )->( dbSeek( ( dbfArticulo )->Codigo ) )
             while ( dbfArtKit )->cCodKit == ( dbfArticulo )->Codigo .and. !( dbfArtKit )->( eof() )
-
                dbPass( dbfArtKit, tmpKit, .t. )
                ( dbfArtKit )->( dbSkip( 1 ) )
-
             end while
-
          end if
 
          /*
@@ -12195,14 +12179,10 @@ Method CreateData()
          */
 
          if ( dbfOfe )->( dbSeek( ( dbfArticulo )->Codigo ) )
-
             while ( dbfOfe )->cArtOfe == ( dbfArticulo )->Codigo .and. !( dbfOfe )->( eof() )
-
                dbPass( dbfOfe, tmpOfe, .t. )
                ( dbfOfe )->( dbSkip( 1 ) )
-
             end while
-
          end if
 
          /*
@@ -19011,3 +18991,35 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+Function ScriptArticulo()
+
+   local aArticulos
+   local dbfArticulo
+
+   aArticulos           := {}
+
+   USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
+
+   ( dbfArticulo )->( ordSetFocus( "SndCod" ) )
+
+   ( dbfArticulo )->( dbGoTop() )
+   while !( dbfArticulo )->( eof() )
+
+      if ( dbfArticulo )->lSndDoc
+         aAdd( aArticulos, hashRecord( dbfArticulo ) )
+      end if
+
+      ( dbfArticulo )->( dbSkip() )
+
+   end while
+
+   CLOSE ( dbfArticulo )
+
+   hb_MemoWrit( "c:\ads\art" + dtos( date() ) + strtran( time(), ":", "" ) , hb_serialize( aArticulos ) )   
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+

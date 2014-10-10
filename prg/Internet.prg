@@ -1634,7 +1634,6 @@ METHOD GetFile( aSource, cTarget )
    for each cSource in aSource 
 
       if lDisco
-         msgAlert( ::getPathComunication() + cSource, "::getPathComunication() + cSource" )
          aFiles         := Directory( ::getPathComunication() + cSource )
       else
          aFiles         := ::oFTP:Directory( cSource )
