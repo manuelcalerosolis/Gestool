@@ -22980,8 +22980,8 @@ Method ReciveData()
 	::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
 
 	for n := 1 to len( aExt )
-      ::oSender:GetFile( "FacCli*." + aExt[ n ], cPatIn() )
-      ::oSender:GetFile( "AntCli*." + aExt[ n ], cPatIn() )
+      ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), ::oSender )
+      ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), ::oSender )
 	next
 
 	::oSender:SetText( "Facturas y anticipos de clientes recibidos" )
