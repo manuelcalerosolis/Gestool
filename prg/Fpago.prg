@@ -1622,7 +1622,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
    local oSayTit
    local oBtn
    local oGet1
-   local cGet1       := Space( 200 )
+   local cGet1       := Space( 100 )
    local oBrw
    local nOrd        := GetBrwOpt( "BrwFPago" )
    local oCbxOrd
@@ -1685,7 +1685,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                              "nWidth"    => {|| GridWidth( 9, oDlg ) },;
                                              "nHeight"   => 25,;
                                              "bValid"    => {|| OrdClearScope( oBrw, dbfFormasPago ) },;
-                                             "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, dbfFormasPago ) } } )
+                                             "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, dbfFormasPago, .t. ) } } )
 
    oCbxOrd     := TGridComboBox():Build(  {  "nRow"      => 38,;
                                              "nCol"      => {|| GridWidth( 9.5, oDlg ) },;

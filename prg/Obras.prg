@@ -1011,10 +1011,10 @@ FUNCTION GridBrwObras( oGet, oGetName, cCodCli, dbfObras )
                                              "nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                              "nHeight"   => 25,;
                                              "aItems"    => aCbxOrd,;
-                                             "bChange"   => {| nKey, nFlags, Self | ( dbfObras )->( OrdSetFocus( oCbxOrd:nAt ) ),;
-                                                                                    SetScopeObras( cCodCli, dbfObras ),;
-                                                                                    oBrw:Refresh(),;
-                                                                                    oGetSearch:SetFocus() } } )
+                                             "bChange"   => {|| ( dbfObras )->( OrdSetFocus( oCbxOrd:nAt ) ),;
+                                                                                SetScopeObras( cCodCli, dbfObras ),;
+                                                                                oBrw:Refresh(),;
+                                                                                oGetSearch:SetFocus() } } )
 
    // Browse de articulos ------------------------------------------------------
 

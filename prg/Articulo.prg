@@ -18799,7 +18799,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                              "nHeight"   => 25,;
                                              "aItems"    => aCbxOrd,;
-                                             "bChanged"  => {| nKey, nFlags, Self | ( dbfArticulo )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
+                                             "bChange"   => {|| ( dbfArticulo )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus(), oBrw:Refresh() } } )
 
    // Browse de articulos ------------------------------------------------------
 

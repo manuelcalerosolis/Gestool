@@ -5597,7 +5597,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlg ) },;
+                                             		"bLClicked" => {|| EndTransTablet( aTmp, aGet, nMode, oDlg ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
@@ -5871,7 +5871,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
     with object ( oBrwLin:AddCol() )
         :cHeader            := "Precio"
-        :bEditValue         := {|| nTotUFacCli( dbfTmpLin, nDouDiv ) }
+        :bEditValue         := {|| nTotUFacCli( dbfTmpLin, nDouDiv ) + nIvaUFacCli( dbfTmpLin, nDouDiv ) + nReqUFacCli( dbfTmpLin, nDouDiv ) }
         :cEditPicture       := cPouDiv
         :nWidth              := 90
         :nDataStrAlign       := 1
@@ -5885,7 +5885,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
         :nWidth              := 55
         :nDataStrAlign       := 1
         :nHeadStrAlign       := 1
-        :lHide 				 := .t.
+        :lHide 				  := .t.
     end with
 
     with object ( oBrwLin:AddCol() )
@@ -5910,13 +5910,15 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
     with object ( oBrwLin:AddCol() )
         :cHeader             := "Total"
-        :bEditValue          := {|| nTotLFacCli( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
+        :bEditValue          := {|| nTotFFacCli( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
         :cEditPicture        := cPorDiv
         :nWidth              := 94
         :nDataStrAlign       := 1
         :nHeadStrAlign       := 1
         :nFooterType         := AGGR_SUM
     end with
+
+    //nTotLFacCli( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
 
    	oBrwLin:nHeaderHeight   	:= 48
    	oBrwLin:nFooterHeight   	:= 48
@@ -5963,6 +5965,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	local oSayDto
 	local oSayDtoLin
 	local oTotal
+   local oSayLote
 
    	do case
    		case nMode == APPD_MODE
@@ -6035,7 +6038,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"lPixel"    => .t.,;
                                              		"nClrInit"  => nGridColor(),;
                                              		"nClrOver" 	=> nGridColor(),;
-													"nClrVisit" => nGridColor(),;
+													            "nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) } } )
 
    	aGet[ _CREF ]  	:= TGridGet():Build( { 			"nRow"      => 40,;
@@ -6047,7 +6050,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| LoaArt( aTmp[ _CREF ], aGet, aTmp, aTmpFac,,,,,,, nMode ), lCalcDeta( aTmp, aTmpFac ) } } )
 	
-   	aGet[ _CDETALLE ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
+   	aGet[ _CDETALLE ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 5.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CDETALLE ], aTmp[ _CDETALLE ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6056,10 +6059,34 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"nHeight"   => nAltoGet } )
 
    	/*
+      Lote---------------------------------------------------------------------
+      */
+
+      oSayUnidades      := TGridSay():Build(    {  "nRow"      => 65,;
+                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "bText"     => {|| "Lote" },;
+                                                   "oWnd"      => oDlg,;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                                   "nHeight"   => nAltoGet,;
+                                                   "lDesign"   => .f. } )
+
+      aGet[ _CLOTE ]    := TGridGet():Build( {     "nRow"      => 65,;
+                                                   "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CLOTE ], aTmp[ _CLOTE ] := u ) },;
+                                                   "oWnd"      => oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 3, oDlg ) },;
+                                                   "nHeight"   => nAltoGet,;
+                                                   "lPixels"   => .t. } )
+
+      /*
    	Cajas----------------------------------------------------------------------
    	*/
 
-   	oSayCajas    		:= TGridSay():Build(    { 	"nRow"      => 65,;
+   	oSayCajas    		:= TGridSay():Build(    { 	"nRow"      => 90,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "Cajas" },;
                                              		"oWnd"      => oDlg,;
@@ -6071,7 +6098,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	aGet[_NCANENT]  	:= TGridGet():Build( { 		"nRow"      => 65,;
+   	aGet[_NCANENT]  	:= TGridGet():Build( { 		"nRow"      => 90,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[_NCANENT], aTmp[_NCANENT] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6086,7 +6113,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
    	Unidades-------------------------------------------------------------------
    	*/
 
-   	oSayUnidades    	:= TGridSay():Build(    { 	"nRow"      => 90,;
+   	oSayUnidades    	:= TGridSay():Build(    { 	"nRow"      => 115,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "Unidades" },;
                                              		"oWnd"      => oDlg,;
@@ -6098,7 +6125,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	aGet[_NUNICAJA]  	:= TGridGet():Build( { 		"nRow"      => 90,;
+   	aGet[_NUNICAJA]  	:= TGridGet():Build( { 		"nRow"      => 115,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[_NUNICAJA], aTmp[_NUNICAJA] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6113,7 +6140,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Precio----------------------------------------------------------------------
    	*/
 
-   	oSayPrecio    		:= TGridSay():Build(    { 	"nRow"      => 115,;
+   	oSayPrecio    		:= TGridSay():Build(    { 	"nRow"      => 140,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "Precio" },;
                                              		"oWnd"      => oDlg,;
@@ -6125,7 +6152,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	aGet[_NPREUNIT]  	:= TGridGet():Build( { 		"nRow"      => 115,;
+   	aGet[_NPREUNIT]  	:= TGridGet():Build( { 		"nRow"      => 140,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[_NPREUNIT], aTmp[_NPREUNIT] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6140,7 +6167,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Descuento porcentual-------------------------------------------------------
    	*/
 
-   	oSayDto    			:= TGridSay():Build(    { 	"nRow"      => 140,;
+   	oSayDto    			:= TGridSay():Build(    { 	"nRow"      => 165,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "% Dto" },;
                                              		"oWnd"      => oDlg,;
@@ -6152,7 +6179,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	aGet[ _NDTO ]  		:= TGridGet():Build( { 		"nRow"      => 140,;
+   	aGet[ _NDTO ]  		:= TGridGet():Build( { 		"nRow"      => 165,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _NDTO ], aTmp[ _NDTO ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6167,7 +6194,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Descuento lineal-----------------------------------------------------------
    	*/
 
-   	oSayDtoLin  		:= TGridSay():Build(    { 	"nRow"      => 165,;
+   	oSayDtoLin  		:= TGridSay():Build(    { 	"nRow"      => 190,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "Dto. lineal" },;
                                              		"oWnd"      => oDlg,;
@@ -6179,7 +6206,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	aGet[ _NDTODIV ]  	:= TGridGet():Build( { 		"nRow"      => 165,;
+   	aGet[ _NDTODIV ]  	:= TGridGet():Build( { 		"nRow"      => 190,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _NDTODIV ], aTmp[ _NDTODIV ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6194,7 +6221,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Total de la linea----------------------------------------------------------
    	*/
 
-   	oTotal  			:= TGridSay():Build(    { 	"nRow"      => 200,;
+   	oTotal  			:= TGridSay():Build(    { 	"nRow"      => 230,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "Total" },;
                                              		"oWnd"      => oDlg,;
@@ -6206,7 +6233,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	oTotalLinea  		:= TGridGet():Build( { 		"nRow"      => 200,;
+   	oTotalLinea  		:= TGridGet():Build( { 		"nRow"      => 230,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, nTotalLinea, nTotalLinea := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -6231,7 +6258,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlgFac )
+static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
 
 	local oDlg
 	local oBrwIva
@@ -6244,10 +6271,6 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlgFac 
 	local cCodCliente 	:= aGet[ _CCODCLI ]:VarGet()
 	local oNomCliente
 	local cNomCliente 	:= aGet[ _CNOMCLI ]:VarGet()
-	local oCodDireccion
-	local cCodDireccion := aGet[ _CCODOBR ]:VarGet()
-	local oNomDireccion
-	local cNomDireccion := oGetNombreDireccion:VarGet()
 	local oBtnAceptar
 	local oBtnSalir
 	local oCbxOrd
@@ -6308,10 +6331,10 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlgFac 
                                              		"bLClicked" => {|| if( EndTrans( aTmp, aGet, , , , {}, nMode, oDlg ), ( if( cCbxOrd != "No imprimir", GenFacCli( IS_PRINTER, , Left( cCbxOrd, 3 ) ),  ), oDlgFac:End() ), ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
+   oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
-                                            	 	"nHeight"   => 64,;
+                                            	 	   "nHeight"   => 64,;
                                              		"cResName"  => "flat_del_64",;
                                              		"bLClicked" => {|| oDlg:End() },;
                                              		"oWnd"      => oDlg } )
@@ -6320,7 +6343,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlgFac 
 	Cliente--------------------------------------------------------------------
   	*/
 
-   	oSayCliente    		:= TGridSay():Build(    { 	"nRow"      => 40,;
+   oSayCliente    		:= TGridSay():Build(    { 	"nRow"      => 40,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "Cliente: " },;
                                              		"oWnd"      => oDlg,;
@@ -6332,7 +6355,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlgFac 
                                              		"nHeight"   => nAltoGet,;
                                              		"lDesign"   => .f. } )
 
-   	oCodCliente  		:= TGridGet():Build( { 		"nRow"      => 40,;
+   oCodCliente  		   := TGridGet():Build( { 		"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"oWnd"      => oDlg,;
                                           			"bSetGet"   => {|u| if( PCount() == 0, cCodCliente, cCodCliente := u ) },;
@@ -6341,7 +6364,7 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlgFac 
                                           			"bWhen" 	=> {|| .f. },;
                                           			"lPixels" 	=> .t. } )
 	
-   	oNomCliente  		:= TGridGet():Build( { 		"nRow"      => 40,;
+   oNomCliente  		   := TGridGet():Build( { 		"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"oWnd"      => oDlg,;
                                           			"bSetGet"   => {|u| if( PCount() == 0, cNomCliente, cNomCliente := u ) },;
@@ -6350,157 +6373,108 @@ static function EndTransTablet( aTmp, aGet, oGetNombreDireccion, nMode, oDlgFac 
                                           			"bWhen" 	=> {|| .f.},;
                                           			"nHeight"   => nAltoGet } )
 
-   	/*
-	Direcciones del Cliente----------------------------------------------------
-   	*/
+   /*
+   Opciones de impresión------------------------------------------------------
+   */
 
-   	oSayDireccion	:= TGridSay():Build(    { 		"nRow"      => 65,;
-                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             		"bText"     => {|| "Dirección: " },;
-                                             		"oWnd"      => oDlg,;
-                                             		"oFont"     => oGridFont(),;
-                                             		"lPixels"   => .t.,;
-                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
-                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                             		"nHeight"   => nAltoGet,;
-                                             		"lDesign"   => .f. } )
+   oSayImpresion     := TGridSay():Build(    {     "nRow"      => 65,;
+                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "bText"     => {|| "Impresión:" },;
+                                                   "oWnd"      => oDlg,;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "lDesign"   => .f. } )
 
-   	oCodDireccion  	:= TGridGet():Build(    	{ 	"nRow"      => 65,;
-                                          			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
-                                          			"bSetGet"   => {|u| if( PCount() == 0, cCodDireccion, cCodDireccion := u ) },;
-                                          			"oWnd"      => oDlg,;
-                                          			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                          			"nHeight"   => nAltoGet,;
-                                          			"bWhen" 	=> {|| .f. },;
-                                          			"lPixels" 	=> .t. } )
+   oCbxOrd           := TGridComboBox():Build(  {  "nRow"      => 65,;
+                                                   "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                                                   "oWnd"      => oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "aItems"    => aCbxOrd } )
 
-   	oNomDireccion 	:= TGridGet():Build(    	{ 	"nRow"      => 65,;
-                                          			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
-                                          			"bSetGet"   => {|u| if( PCount() == 0, cNomDireccion, cNomDireccion := u ) },;
-                                          			"oWnd"      => oDlg,;
-                                          			"nWidth"    => {|| GridWidth( 7, oDlg ) },;
-                                          			"lPixels" 	=> .t.,;
-                                          			"bWhen" 	=> {|| .f. },;
-                                          			"nHeight"   => nAltoGet } )
-   	
-   	/*
-   	Desglose de I.V.A.---------------------------------------------------------
-   	*/
+   /*
+   Desglose de I.V.A.---------------------------------------------------------
+   */
 
-   	oBrwIva                 := TGridIXBrowse():New( oDlg )
+   oBrwIva                 := TGridIXBrowse():New( oDlg )
 
-    oBrwIva:nTop            := oBrwIva:EvalRow( 100 )
-   	oBrwIva:nLeft           := oBrwIva:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
-   	oBrwIva:nWidth          := oBrwIva:EvalWidth( {|| GridWidth( 11, oDlg ) } )
-   	oBrwIva:nHeight         := oBrwIva:EvalHeight( {|| 266 } )
+   oBrwIva:nTop            := oBrwIva:EvalRow( 100 )
+   oBrwIva:nLeft           := oBrwIva:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   oBrwIva:nWidth          := oBrwIva:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   oBrwIva:nHeight         := oBrwIva:EvalHeight( {|| GridHeigth( oDlg ) - oBrwIva:nTop - 10 } )
 
-    oBrwIva:SetArray( aTotIva, , , .f. )
+   oBrwIva:SetArray( aTotIva, , , .f. )
 
-    oBrwIva:nMarqueeStyle   := 6
-    oBrwIva:lFooter 		:= .t.
-    oBrwIva:cName          	:= "Grid iva facturas"
+   oBrwIva:nMarqueeStyle   := 6
+   oBrwIva:lFooter 		   := .t.
+   oBrwIva:cName          	:= "Grid iva facturas"
 
-    with object ( oBrwIva:AddCol() )
-       	:cHeader          	:= "Base"
+   with object ( oBrwIva:AddCol() )
+      :cHeader          	:= "Base"
        	if uFieldEmpresa( "lIvaImpEsp" )
-        	:bStrData      	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( ( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 6 ] ), cPorDiv ), "" ) }
-        else
-           	:bStrData      	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
-        end if
-        :nWidth           	:= 170
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :nFootStrAlign 		:= 1
-        :bFooter          	:= {|| if( nTotNet != 0, Trans( nTotNet, cPorDiv ), "" ) }
-    end with
+        	   :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( ( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 6 ] ), cPorDiv ), "" ) }
+         else
+           	:bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
+         end if
+      :nWidth           	:= 170
+      :nDataStrAlign    	:= 1
+      :nHeadStrAlign    	:= 1
+      :nFootStrAlign 		:= 1
+      :bFooter          	:= {|| if( nTotNet != 0, Trans( nTotNet, cPorDiv ), "" ) }
+   end with
 
-    with object ( oBrwIva:AddCol() )
-        :cHeader       		:= "%" + cImp()
-        :bStrData      		:= {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 3 ], "@E 999" ), "" ) }
-        :nWidth        		:= 160
-        :nDataStrAlign 		:= 1
-        :nHeadStrAlign 		:= 1
-    end with
+   with object ( oBrwIva:AddCol() )
+      :cHeader       		:= "%" + cImp() + " - % RE"
+      :bStrData      		:= {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), Trans( aTotIva[ oBrwIva:nArrayAt, 3 ], "@E 999.99" ), "" ) + CRLF + if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 999.99"), "" ) }
+      :nWidth        		:= 160
+      :nDataStrAlign 		:= 1
+      :nHeadStrAlign 		:= 1
+   end with
 
-    with object ( oBrwIva:AddCol() )
-        :cHeader          	:= cImp()
-        :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 8 ], cPorDiv ), "" ) }
-        :nWidth           	:= 160
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :nFootStrAlign 		:= 1
-        :bFooter          	:= {|| if( nTotIva != 0, Trans( nTotIva, cPorDiv ), "" ) }
-    end with
+   with object ( oBrwIva:AddCol() )
+      :cHeader          	:= cImp() + " - RE"
+      :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 8 ], cPorDiv ), "" ) + CRLF + if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
+      :nWidth           	:= 160
+      :nDataStrAlign    	:= 1
+      :nHeadStrAlign    	:= 1
+      :nFootStrAlign 		:= 1
+      :bFooter          	:= {|| Trans( nTotIva + nTotReq, cPorDiv ) }
+   end with
 
-    with object ( oBrwIva:AddCol() )
-        :cHeader          	:= "% RE"
-        :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 999"), "" ) }
-        :nWidth           	:= 160
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :lHide 				:= .t.
-    end with
+   with object ( oBrwIva:AddCol() )
+      :cHeader          	:= "Factura"
+      if uFieldEmpresa( "lIvaImpEsp" )
+            :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( ( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 6 ] + aTotIva[ oBrwIva:nArrayAt, 8 ] + aTotIva[ oBrwIva:nArrayAt, 9 ] ), cPorDiv ), "" ) }
+         else
+            :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 8 ] + aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
+         end if
+      :nWidth           	:= 170
+      :nDataStrAlign    	:= 1
+      :nHeadStrAlign    	:= 1
+      :nFootStrAlign 		:= 1
+      :bFooter          	:= {|| if( nTotFac != 0, Trans( nTotFac, cPorDiv ), "" ) }
+   end with
 
-    with object ( oBrwIva:AddCol() )
-        :cHeader          	:= "RE"
-        :bStrData         	:= {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
-        :nWidth           	:= 160
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :nFootStrAlign 		:= 1
-        :lHide 				:= .t.
-        :bFooter          	:= {|| if( nTotReq != 0, Trans( nTotReq, cPorDiv ), "" ) }
-    end with
+   oBrwIva:nHeaderHeight  	:= 48
+   oBrwIva:nFooterHeight  	:= 48
+   oBrwIva:nRowHeight      := 96
+   oBrwIva:nDataLines      := 2
 
-    with object ( oBrwIva:AddCol() )
-        :cHeader          	:= "Factura"
-        :bStrData         	:= {|| "" }
-        :nWidth           	:= 170
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :nFootStrAlign 		:= 1
-        :bFooter          	:= {|| if( nTotFac != 0, Trans( nTotFac, cPorDiv ), "" ) }
-    end with
-
-    oBrwIva:nHeaderHeight  	:= 48
-   	oBrwIva:nFooterHeight  	:= 48
-   	oBrwIva:nRowHeight     	:= 48
-
-   	oBrwIva:CreateFromCode()
-
-   	/*
-	Opciones de impresión------------------------------------------------------
-   	*/
-
-   	oSayImpresion    	:= TGridSay():Build(    { 	"nRow"      => 250,;
-                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             		"bText"     => {|| "Impresión:" },;
-                                             		"oWnd"      => oDlg,;
-                                             		"oFont"     => oGridFont(),;
-                                             		"lPixels"   => .t.,;
-                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
-                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                             		"nHeight"   => 25,;
-                                             		"lDesign"   => .f. } )
-
-   	oCbxOrd     		:= TGridComboBox():Build(  {"nRow"      => 250,;
-                                             		"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
-                                             		"bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
-                                             		"oWnd"      => oDlg,;
-                                             		"nWidth"    => {|| GridWidth( 9, oDlg ) },;
-                                             		"nHeight"   => 25,;
-                                             		"aItems"    => aCbxOrd } )
+   oBrwIva:CreateFromCode()
 
 	/*
 	Redimensionamos y activamos el diálogo-------------------------------------
 	*/
 
-   	oDlg:bResized  				:= {|| GridResize( oDlg ) }
-   	oDlg:bStart 				:= {|| oBrwIva:Load(), oBrwIva:MakeTotals() }
+   oDlg:bResized  			:= {|| GridResize( oDlg ) }
+   oDlg:bStart 				:= {|| oBrwIva:Load(), oBrwIva:MakeTotals() }
 
-   	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
+   ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
    
 RETURN ( oDlg:nResult == IDOK )
 
@@ -12536,13 +12510,21 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
    end if
 
    if !lUseCaj()
-      if !Empty( aGet[ _NCANENT ] )
-      	aGet[ _NCANENT ]:Hide()
-      end if	
+      
+      if !( "TABLET" $ cParamsMain() )
+
+         if !Empty( aGet[ _NCANENT ] )
+         	aGet[ _NCANENT ]:Hide()
+         end if
+
+      end if
+
    else
+
       if !Empty( aGet[ _NCANENT ] )
       	aGet[ _NCANENT ]:SetText( cNombreCajas() )
-      end if	
+      end if
+
    end if
 
    	if !Empty( aGet[ _NUNICAJA ] )
@@ -12598,7 +12580,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
    end if
 
    if aGet[ _NDTODIV ] != nil
-      if !uFieldEmpresa( "lDtoLin", .f. )
+      if !( "TABLET" $ cParamsMain() ) .and. !uFieldEmpresa( "lDtoLin", .f. )
          aGet[ _NDTODIV ]:Hide()
       end if
    end if
@@ -12616,24 +12598,28 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
       	end if	
    end if
 
-   if aTmp[ _LLOTE ]
+   if !( "TABLET" $ cParamsMain() )
 
-      if !Empty( aGet[ _CLOTE ] )
-         aGet[ _CLOTE ]:Show()
-      end if
+      if aTmp[ _LLOTE ]
 
-      if !Empty( aGet[ _DFECCAD ] )
-         aGet[ _DFECCAD ]:Show()
-      end if
+         if !Empty( aGet[ _CLOTE ] )
+            aGet[ _CLOTE ]:Show()
+         end if
 
-   else
+         if !Empty( aGet[ _DFECCAD ] )
+            aGet[ _DFECCAD ]:Show()
+         end if
 
-      if !Empty( aGet[ _CLOTE ] )
-         aGet[ _CLOTE ]:Hide()
-      end if
+      else
 
-      if !Empty( aGet[ _DFECCAD ] )
-         aGet[ _DFECCAD ]:Hide()
+         if !Empty( aGet[ _CLOTE ] )
+            aGet[ _CLOTE ]:Hide()
+         end if
+
+         if !Empty( aGet[ _DFECCAD ] )
+            aGet[ _DFECCAD ]:Hide()
+         end if
+
       end if
 
    end if
@@ -12997,7 +12983,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
       aGet[ _CDETALLE ]:cText( Space( 50 ) )
       aGet[ _CDETALLE ]:bWhen   := {|| .t. }
-      aGet[ _CDETALLE ]:Hide()
+
+      if !( "TABLET" $ cParamsMain() )
+         aGet[ _CDETALLE ]:Hide()
+      end if
 
       if !Empty( aGet[ _MLNGDES ] )
          aGet[ _MLNGDES ]:Show()
@@ -13763,12 +13752,16 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          else
 
-         	if !Empty( aGet[ _CLOTE ] )
-               aGet[ _CLOTE ]:Hide()
-            end if
+         	if !( "TABLET" $ cParamsMain() )
 
-            if !Empty( aGet[ _DFECCAD ] )
-               aGet[ _DFECCAD ]:Hide()
+               if !Empty( aGet[ _CLOTE ] )
+                  aGet[ _CLOTE ]:Hide()
+               end if
+
+               if !Empty( aGet[ _DFECCAD ] )
+                  aGet[ _DFECCAD ]:Hide()
+               end if
+
             end if
 
          end if
@@ -14019,7 +14012,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
    end if
 
-   aTmp[ _NREQ ]     := nPReq( dbfIva, aTmp[ _NIVA ] )
+   if aTmp[ _NREQ ]  == 0
+      aTmp[ _NREQ ]     := nPReq( dbfIva, aTmp[ _NIVA ] )
+   end if   
 
    if nMode == APPD_MODE
 
@@ -18258,9 +18253,9 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nReqLFacCli( dbfFacT, dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nReqLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nImpLFacCli( dbfFacT, dbfLin, nDec, nRou, nVdv )
+   local nCalculo := nTotLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    nCalculo       := Round( nCalculo * ( dbfLin )->nReq / 100, nRou )
 
@@ -21974,6 +21969,7 @@ FUNCTION nTotFFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
 
    nCalculo          += nNoIncLFacCli( dbfLin )
    nCalculo          += nIvaLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+   nCalculo          += nReqLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 

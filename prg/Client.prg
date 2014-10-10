@@ -12958,7 +12958,7 @@ Static Function lRecargaFecha( oFechaInicio, oFechaFin, cPeriodo )
       case cPeriodo == "Todos"
 
          oFechaInicio:cText( CtoD( "01/01/2000" ) ) 
-         oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+         oFechaFin:cText( CtoD( "31/12/3000" ) )
 
    end case
 
@@ -13107,7 +13107,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                              "nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                              "nHeight"   => 25,;
                                              "aItems"    => aCbxOrd,;
-                                             "bChanged"  => {| nKey, nFlags, Self | ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
+                                             "bChange"   => {|| ( TDataView():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus(), oBrw:Refresh() } } )
 
    // Browse de clientes ------------------------------------------------------
 
