@@ -5004,6 +5004,8 @@ CLASS TDataView
    METHOD PedidosClientesReservas( nView )   INLINE ( ::Get( "PedCliR", nView ) )
 
    METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
+   METHOD ClientesId( nView )                INLINE ( ( ::Get( "Client", nView ) )->Cod )
+
       METHOD GruposClientes( nView )         INLINE ( ::GetObject( "GruposClientes", nView ) )
 
    METHOD PresupuestosClientes( nView )      INLINE ( ::Get( "PreCliT", nView ) )

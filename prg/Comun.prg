@@ -100,15 +100,19 @@ FUNCTION nAjuste( nNumber, cAdjust )
       nAjusteIncrementa := nAjusteIncrementa( cAdjust )
       nAjusteDecrementa := nAjusteDecrementa( cAdjust )
 
-      nResult           := Round( nNumber, nAjusteDecimales )
+      if !empty(nAjusteDecimales)
 
-      if nResult - nNumber > 0
-         nResult        += nAjusteDecrementa
-      else 
-         nResult        += nAjusteIncrementa 
+        nResult         := Round( nNumber, nAjusteDecimales )
+
+        if nResult - nNumber > 0
+           nResult      += nAjusteDecrementa
+        else 
+           nResult      += nAjusteIncrementa 
+        end if 
+
+        aAdd( aNumber, nResult )
+
       end if 
-
-      aAdd( aNumber, nResult )
 
    next 
 
@@ -2859,6 +2863,34 @@ Function hashRecord( dbf )
 Return ( hHash )
 
 //----------------------------------------------------------------------------//
+
+Function appendHashRecord( hHash, dbf, aExclude )
+
+  ( dbf )->( dbappend() )
+  if !( dbf )->( neterr() )  
+    writeHashRecord( hHash, dbf, aExclude )
+  end if
+
+Return ( hHash )
+
+//----------------------------------------------------------------------------//
+
+Function writeHashRecord( hHash, dbf, aExclude )
+
+  local n
+
+  DEFAULT aExclude  := {}
+
+  for n := 1 to ( dbf )->( fcount() )
+    if hHasKey( hHash, ( dbf )->( fieldname( n ) ) ) .and. aScan( aExclude, ( dbf )->( fieldname( n ) ) ) == 0
+      ( dbf )->( fieldput( n, hGet( hHash, ( dbf )->( fieldname( n ) ) ) ) )
+    end if
+  next 
+
+Return ( hHash )
+
+//----------------------------------------------------------------------------//
+
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 

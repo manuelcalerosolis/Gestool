@@ -4539,7 +4539,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       msgStop( ErrorMessage( oError ), "Imposible abrir el dialogo de artículos" )
 
    END SEQUENCE
-
    ErrorBlock( oBlock )
 
    CursorWait()
