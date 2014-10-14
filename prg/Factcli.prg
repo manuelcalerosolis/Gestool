@@ -639,7 +639,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
                "Agente",;
                "Sesión",;
                "NFC",;
-               "Pago";
+               "Pago",;
+               "Envio";
       MRU      "Document_user1_16";
       BITMAP   clrTopVentas ;
       ALIAS    ( D():FacturasClientes( nView ) );
@@ -692,6 +693,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Envio"
+         :cSortOrder       := "lSndDoc"
          :nHeadBmpNo       := 3
          :bStrData         := {|| if( ( D():FacturasClientes( nView ) )->lSndDoc, "Enviado", "No enviado" ) }
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lSndDoc }
@@ -20470,8 +20472,11 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CABNFAC", "CABNFAC", {|| Field->CABNFAC } ) )
 
-      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
+      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted()  } ))
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+
+      ( cFacCliT )->( ordCondSet("!Deleted() .and. lSndDoc", {|| !Deleted() .and. Field->lSndDoc }  ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "SndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "cNumDoc", "cNumDoc", {|| Field->cNumDoc } ) )
