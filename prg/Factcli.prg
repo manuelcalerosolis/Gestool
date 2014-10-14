@@ -5871,7 +5871,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
     with object ( oBrwLin:AddCol() )
         :cHeader            := "Precio"
-        :bEditValue         := {|| nTotUFacCli( dbfTmpLin, nDouDiv ) + nIvaUFacCli( dbfTmpLin, nDouDiv ) + nReqUFacCli( dbfTmpLin, nDouDiv ) }
+        :bEditValue         := {|| nTotUFacCli( dbfTmpLin, nDouDiv ) }
         :cEditPicture       := cPouDiv
         :nWidth              := 90
         :nDataStrAlign       := 1
@@ -5910,15 +5910,13 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
     with object ( oBrwLin:AddCol() )
         :cHeader             := "Total"
-        :bEditValue          := {|| nTotFFacCli( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
+        :bEditValue          := {|| nTotLFacCli( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
         :cEditPicture        := cPorDiv
         :nWidth              := 94
         :nDataStrAlign       := 1
         :nHeadStrAlign       := 1
         :nFooterType         := AGGR_SUM
     end with
-
-    //nTotLFacCli( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
 
    	oBrwLin:nHeaderHeight   	:= 48
    	oBrwLin:nFooterHeight   	:= 48
@@ -5977,7 +5975,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
       	aTmp[ _CALMLIN  ]       := aTmpFac[ _CCODALM ]
       	aTmp[ _LIVALIN  ]       := aTmpFac[ _LIVAINC ]
       	aTmp[ _CTIPMOV  ]       := cDefVta()
-	    aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
+	      aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
       	aTmp[ __CNUMPED ]       := aTmpFac[ _CNUMPED ]
       	aTmp[ __DFECSAL ]       := aTmpFac[ _DFECSAL  ]
       	aTmp[ __DFECENT ]       := aTmpFac[ _DFECENTR ]
@@ -6030,7 +6028,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Artículos------------------------------------------------------------------
 	*/
 
-	oSayArticulo  		:= TGridUrllink():Build({  	"nTop"      => 40,;
+	   oSayArticulo  		:= TGridUrllink():Build({  	"nTop"      => 40,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"cURL"      => "Artículo",;
                                              		"oWnd"      => oDlg,;
@@ -12519,17 +12517,17 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 
       end if
 
-   else
+   /*else
 
       if !Empty( aGet[ _NCANENT ] )
       	aGet[ _NCANENT ]:SetText( cNombreCajas() )
-      end if
+      end if*/
 
    end if
 
-   	if !Empty( aGet[ _NUNICAJA ] )
+   	/*if !Empty( aGet[ _NUNICAJA ] )
    		aGet[ _NUNICAJA ]:SetText( cNombreUnidades() )
-   	end if	
+   	end if	*/
 
    if !Empty( aGet[ _LGASSUP ] )
       aGet[ _LGASSUP ]:Show()
