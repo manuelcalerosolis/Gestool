@@ -1140,8 +1140,6 @@ METHOD NextResource( nMode )
       ::oBrwHistorial:Refresh( .t. )
       ::oBrwHistorial:GoTop()
 
-      ::lPostLoad()
-
    else
 
       ::oDlg:End( IDOK )
@@ -1171,8 +1169,6 @@ METHOD PriorResource( nMode )
 
       ::oBrwHistorial:Refresh( .t. )
       ::oBrwHistorial:GoTop()
-
-      ::lPostLoad()
 
    else
 
