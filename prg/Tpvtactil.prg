@@ -1172,9 +1172,9 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::lOpenFiles               := .t.
 
-   ::nView                    := TDataView():CreateView()
+   ::nView                    := D():CreateView()
    
-   TDataView():Get( "LogPorta", ::nView )
+   D():Get( "LogPorta", ::nView )
 
    DATABASE NEW ::oTiketCabecera                            PATH ( cPatEmp() )   FILE "TIKET.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
@@ -1833,7 +1833,7 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oTpvMenuArticulo:End()
    end if 
 
-   TDataView():DeleteView( ::nView )
+   D():DeleteView( ::nView )
 
    ::oTiketCabecera                          := nil
    ::oTiketLinea                             := nil

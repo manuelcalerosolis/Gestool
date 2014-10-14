@@ -547,8 +547,8 @@ CLASS GetCliente FROM ComponentGetSay
    METHOD First()    INLINE ( ::cText( Space( RetNumCodCliEmp() ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", RetNumCodCliEmp() ) ) )
 
-   METHOD Top()      INLINE ( ::cText( TDataView():Top( "Client", ::oContainer:nView ) ) )
-   METHOD Bottom()   INLINE ( ::cText( TDataView():Bottom( "Client", ::oContainer:nView ) ) )
+   METHOD Top()      INLINE ( ::cText( D():Top( "Client", ::oContainer:nView ) ) )
+   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Client", ::oContainer:nView ) ) )
 
 END CLASS 
 
@@ -556,7 +556,7 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetCliente
 
    ::Super:New( idGet, idSay, idText, oContainer )
 
-   ::bValid       := {|| cClient( ::oGetControl, TDataView():Clientes( ::oContainer:nView ), ::oSayControl ) }
+   ::bValid       := {|| cClient( ::oGetControl, D():Clientes( ::oContainer:nView ), ::oSayControl ) }
    ::bHelp        := {|| BrwClient( ::oGetControl, ::oSayControl ) }
 
 Return ( Self )
@@ -572,8 +572,8 @@ CLASS GetGrupoCliente FROM ComponentGetSay
    METHOD First()    INLINE ( ::cText( Space( 4 ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", 4 ) ) )
 
-   METHOD Top()      INLINE ( ::cText( TDataView():GetObject( "GruposClientes", ::oContainer:nView ):Top() ) )
-   METHOD Bottom()   INLINE ( ::cText( TDataView():GetObject( "GruposClientes", ::oContainer:nView ):Bottom() ) )
+   METHOD Top()      INLINE ( ::cText( D():GetObject( "GruposClientes", ::oContainer:nView ):Top() ) )
+   METHOD Bottom()   INLINE ( ::cText( D():GetObject( "GruposClientes", ::oContainer:nView ):Bottom() ) )
 
 END CLASS 
 
@@ -583,8 +583,8 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoCliente
 
    ::uGetValue    := Space( 4 )
 
-   ::bValid       := {|| TDataView():GruposClientes( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
-   ::bHelp        := {|| TDataView():GruposClientes( ::oContainer:nView ):Buscar( ::oGetControl ) }
+   ::bValid       := {|| D():GruposClientes( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
+   ::bHelp        := {|| D():GruposClientes( ::oContainer:nView ):Buscar( ::oGetControl ) }
 
 Return ( Self )
 
@@ -613,7 +613,7 @@ METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumento
 
    ::uGetValue    := Space( 3 )
 
-   ::bValid       := {|| cDocumento( ::oGetControl, ::oSayControl, TDataView():Documentos( ::oContainer:nView ) ) }
+   ::bValid       := {|| cDocumento( ::oGetControl, ::oSayControl, D():Documentos( ::oContainer:nView ) ) }
    ::bHelp        := {|| brwDocumento( ::oGetControl, ::oSayControl, ::TypeDocumento() ) }
 
 Return ( Self )
@@ -929,8 +929,8 @@ CLASS GetProveedor FROM ComponentGetSay
    METHOD First()    INLINE ( ::cText( Space( RetNumCodPrvEmp() ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", RetNumCodPrvEmp() ) ) )
 
-   METHOD Top()      INLINE ( ::cText( TDataView():Top( "Provee", ::oContainer:nView ) ) )
-   METHOD Bottom()   INLINE ( ::cText( TDataView():Bottom( "Provee", ::oContainer:nView ) ) )
+   METHOD Top()      INLINE ( ::cText( D():Top( "Provee", ::oContainer:nView ) ) )
+   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Provee", ::oContainer:nView ) ) )
 
 END CLASS 
 
@@ -938,7 +938,7 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetProveedor
 
    ::Super:New( idGet, idSay, idText, oContainer )
 
-   ::bValid       := {|| cProvee( ::oGetControl, TDataView():Proveedores( ::oContainer:nView ), ::oSayControl ) }
+   ::bValid       := {|| cProvee( ::oGetControl, D():Proveedores( ::oContainer:nView ), ::oSayControl ) }
    ::bHelp        := {|| BrwProvee( ::oGetControl, ::oSayControl ) }
 
 Return ( Self )
@@ -954,8 +954,8 @@ CLASS GetGrupoProveedor FROM ComponentGetSay
    METHOD First()    INLINE ( ::cText( Space( 4 ) ) )
    METHOD Last()     INLINE ( ::cText( Replicate( "Z", 4 ) ) )
 
-   METHOD Top()      INLINE ( ::cText( TDataView():GetObject( "GruposProveedores", ::oContainer:nView ):Top() ) )
-   METHOD Bottom()   INLINE ( ::cText( TDataView():GetObject( "GruposProveedores", ::oContainer:nView ):Bottom() ) )
+   METHOD Top()      INLINE ( ::cText( D():GetObject( "GruposProveedores", ::oContainer:nView ):Top() ) )
+   METHOD Bottom()   INLINE ( ::cText( D():GetObject( "GruposProveedores", ::oContainer:nView ):Bottom() ) )
 
 END CLASS 
 
@@ -965,8 +965,8 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetGrupoProveedor
 
    ::uGetValue    := Space( 4 )
 
-   ::bValid       := {|| TDataView():GruposProveedores( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
-   ::bHelp        := {|| TDataView():GruposProveedores( ::oContainer:nView ):Buscar( ::oGetControl ) }
+   ::bValid       := {|| D():GruposProveedores( ::oContainer:nView ):Existe( ::oGetControl, ::oSayControl, "cNomGrp", .t., .t., "0" ) }
+   ::bHelp        := {|| D():GruposProveedores( ::oContainer:nView ):Buscar( ::oGetControl ) }
 
 Return ( Self )
 

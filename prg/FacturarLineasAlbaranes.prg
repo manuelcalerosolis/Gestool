@@ -133,18 +133,18 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    ::cNumFac   := ""
    ::lPrint    := .f.
    ::nView     := nView
-   ::cNumAlb   := TDataView():AlbaranesClientesId( ::nView ) 
+   ::cNumAlb   := D():AlbaranesClientesId( ::nView ) 
 
    /*
    Comprobaciones antes de entrar----------------------------------------------
    */
 
-   if ( TDataView():Get( "AlbCliT", ::nView ) )->lFacturado
+   if ( D():Get( "AlbCliT", ::nView ) )->lFacturado
       msgStop( "Albarán ya facturado" )
       Return .f.
    end if
 
-   if Empty( ( TDataView():Get( "AlbCliT", ::nView ) )->cSerAlb )
+   if Empty( ( D():Get( "AlbCliT", ::nView ) )->cSerAlb )
       msgStop( "Tiene que seleccionar un albarán para facturarlo" )
       Return .f.
    end if      
@@ -244,10 +244,10 @@ Return ( Self )
 
 METHOD CargaTemporal() CLASS TFacturarLineasAlbaranes
 
-   if ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) )
-      while ( ( TDataView():Get( "AlbCliL", ::nView ) )->cSerAlb + Str( ( TDataView():Get( "AlbCliL", ::nView ) )->nNumAlb ) + ( TDataView():Get( "AlbCliL", ::nView ) )->cSufAlb ) == ::cNumAlb .and. !( TDataView():Get( "AlbCliL", ::nView ) )->( eof() )
-         dbPass( TDataView():Get( "AlbCliL", ::nView ), ::cTemporalLineaAlbaran, .t. )
-         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSkip() )
+   if ( D():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) )
+      while ( ( D():Get( "AlbCliL", ::nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", ::nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", ::nView ) )->cSufAlb ) == ::cNumAlb .and. !( D():Get( "AlbCliL", ::nView ) )->( eof() )
+         dbPass( D():Get( "AlbCliL", ::nView ), ::cTemporalLineaAlbaran, .t. )
+         ( D():Get( "AlbCliL", ::nView ) )->( dbSkip() )
       end while
       end if
 
@@ -407,7 +407,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
       with object ( ::oColTotalAlbaran := ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) }
+         :bEditValue          := {|| nNetLAlbCli( D():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) }
          :cEditPicture        := cPorDiv()
          :nWidth              := 80
          :nDataStrAlign       := 1
@@ -428,7 +428,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
       with object ( ::oColNetoAlbaran := ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "Base"
-         :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) }
+         :bEditValue          := {|| nNetLAlbCli( D():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) }
          :cEditPicture        := cPorDiv()
          :nWidth              := 80
          :nDataStrAlign       := 1
@@ -460,7 +460,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
       with object ( ::oColTotalAlbaran := ::oBrwLineasAlbaran:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) + nIvaLAlbCli( ::cTemporalLineaAlbaran ) }
+         :bEditValue          := {|| nNetLAlbCli( D():Get( "AlbCliT", ::nView ), ::cTemporalLineaAlbaran, , , , .f. ) + nIvaLAlbCli( ::cTemporalLineaAlbaran ) }
          :cEditPicture        := cPorDiv()
          :nWidth              := 45
          :nDataStrAlign       := 1
@@ -643,7 +643,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
       with object ( ::oColNetoFactura := ::oBrwLineasFactura:AddCol() )
          :cHeader             := "Base"
-         :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaFactura, , , , .f. ) }
+         :bEditValue          := {|| nNetLAlbCli( D():Get( "AlbCliT", ::nView ), ::cTemporalLineaFactura, , , , .f. ) }
          :cEditPicture        := cPorDiv()
          :nWidth              := 80
          :nDataStrAlign       := 1
@@ -675,7 +675,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
 
       with object ( ::oColTotalFactura := ::oBrwLineasFactura:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nNetLAlbCli( TDataView():Get( "AlbCliT", ::nView ), ::cTemporalLineaFactura, , , , .f. ) + nIvaLAlbCli( ::cTemporalLineaFactura ) }
+         :bEditValue          := {|| nNetLAlbCli( D():Get( "AlbCliT", ::nView ), ::cTemporalLineaFactura, , , , .f. ) + nIvaLAlbCli( ::cTemporalLineaFactura ) }
          :cEditPicture        := cPorDiv()
          :nWidth              := 60
          :nDataStrAlign       := 1
@@ -1179,10 +1179,10 @@ METHOD GuardaAlbaran() CLASS TFacturarLineasAlbaranes
    Hacemos un RollBack---------------------------------------------------------
    */
 
-   while ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) ) .and. !( TDataView():Get( "AlbCliL", ::nView ) )->( eof() )
-      if dbLock( TDataView():Get( "AlbCliL", ::nView ) )
-         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbDelete() )
-         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbUnLock() )
+   while ( D():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) ) .and. !( D():Get( "AlbCliL", ::nView ) )->( eof() )
+      if dbLock( D():Get( "AlbCliL", ::nView ) )
+         ( D():Get( "AlbCliL", ::nView ) )->( dbDelete() )
+         ( D():Get( "AlbCliL", ::nView ) )->( dbUnLock() )
       end if
    end while
 
@@ -1194,7 +1194,7 @@ METHOD GuardaAlbaran() CLASS TFacturarLineasAlbaranes
 
    while !( ::cTemporalLineaAlbaran )->( eof() )
 
-      dbPass( ::cTemporalLineaAlbaran, TDataView():Get( "AlbCliL", ::nView ), .t. )
+      dbPass( ::cTemporalLineaAlbaran, D():Get( "AlbCliL", ::nView ), .t. )
 
       ( ::cTemporalLineaAlbaran )->( dbSkip() )
 
@@ -1205,17 +1205,17 @@ METHOD GuardaAlbaran() CLASS TFacturarLineasAlbaranes
    */
 
    aTotAlb  := aTotAlbCli( ::cNumAlb,;
-                           TDataView():Get( "AlbCliT", ::nView ),;
-                           TDataView():Get( "AlbCliL", ::nView ),;
-                           TDataView():Get( "TIva", ::nView ),;
-                           TDataView():Get( "Divisas", ::nView ) )
+                           D():Get( "AlbCliT", ::nView ),;
+                           D():Get( "AlbCliL", ::nView ),;
+                           D():Get( "TIva", ::nView ),;
+                           D():Get( "Divisas", ::nView ) )
 
-   if dbLock( TDataView():Get( "AlbCliT", ::nView ) )
-      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotNet    := aTotAlb[1]
-      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotIva    := aTotAlb[2]
-      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotReq    := aTotAlb[3]
-      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotAlb    := aTotAlb[4]
-      ( TDataView():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
+   if dbLock( D():Get( "AlbCliT", ::nView ) )
+      ( D():Get( "AlbCliT", ::nView ) )->nTotNet    := aTotAlb[1]
+      ( D():Get( "AlbCliT", ::nView ) )->nTotIva    := aTotAlb[2]
+      ( D():Get( "AlbCliT", ::nView ) )->nTotReq    := aTotAlb[3]
+      ( D():Get( "AlbCliT", ::nView ) )->nTotAlb    := aTotAlb[4]
+      ( D():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
    end if
 
 Return ( Self )
@@ -1230,10 +1230,10 @@ METHOD GuardaAlbaranModa() CLASS TFacturarLineasAlbaranes
    Hacemos un RollBack---------------------------------------------------------
    */
 
-   while ( TDataView():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) ) .and. !( TDataView():Get( "AlbCliL", ::nView ) )->( eof() )
-      if dbLock( TDataView():Get( "AlbCliL", ::nView ) )
-         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbDelete() )
-         ( TDataView():Get( "AlbCliL", ::nView ) )->( dbUnLock() )
+   while ( D():Get( "AlbCliL", ::nView ) )->( dbSeek( ::cNumAlb ) ) .and. !( D():Get( "AlbCliL", ::nView ) )->( eof() )
+      if dbLock( D():Get( "AlbCliL", ::nView ) )
+         ( D():Get( "AlbCliL", ::nView ) )->( dbDelete() )
+         ( D():Get( "AlbCliL", ::nView ) )->( dbUnLock() )
       end if
    end while
 
@@ -1246,7 +1246,7 @@ METHOD GuardaAlbaranModa() CLASS TFacturarLineasAlbaranes
    while !( ::cTemporalLineaAlbaran )->( eof() )
 
       appendPass( ::cTemporalLineaAlbaran,;
-                  TDataView():Get( "AlbCliL", ::nView ),;
+                  D():Get( "AlbCliL", ::nView ),;
                   {  "nIva" => 0,;
                      "nReq" => 0 } )
 
@@ -1259,17 +1259,17 @@ METHOD GuardaAlbaranModa() CLASS TFacturarLineasAlbaranes
    */
 
    aTotAlb  := aTotAlbCli( ::cNumAlb,;
-                           TDataView():Get( "AlbCliT", ::nView ),;
-                           TDataView():Get( "AlbCliL", ::nView ),;
-                           TDataView():Get( "TIva", ::nView ),;
-                           TDataView():Get( "Divisas", ::nView ) )
+                           D():Get( "AlbCliT", ::nView ),;
+                           D():Get( "AlbCliL", ::nView ),;
+                           D():Get( "TIva", ::nView ),;
+                           D():Get( "Divisas", ::nView ) )
 
-   if dbLock( TDataView():Get( "AlbCliT", ::nView ) )
-      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotNet    := aTotAlb[1]
-      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotIva    := aTotAlb[2]
-      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotReq    := aTotAlb[3]
-      ( TDataView():Get( "AlbCliT", ::nView ) )->nTotAlb    := aTotAlb[4]
-      ( TDataView():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
+   if dbLock( D():Get( "AlbCliT", ::nView ) )
+      ( D():Get( "AlbCliT", ::nView ) )->nTotNet    := aTotAlb[1]
+      ( D():Get( "AlbCliT", ::nView ) )->nTotIva    := aTotAlb[2]
+      ( D():Get( "AlbCliT", ::nView ) )->nTotReq    := aTotAlb[3]
+      ( D():Get( "AlbCliT", ::nView ) )->nTotAlb    := aTotAlb[4]
+      ( D():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
    end if
 
 Return ( Self )
@@ -1289,8 +1289,8 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    Pasamos la cabecera de la factura-------------------------------------------
    */
 
-   ::nNumeroFactura     := nNewDoc( ::cSerieFactura, TDataView():Get( "FacCliT", ::nView ), "NFACCLI", , TDataView():Get( "NCount", ::nView ) )
-   ::cSufijoFactura     := ( TDataView():Get( "AlbCliT", ::nView ) )->cSufAlb
+   ::nNumeroFactura     := nNewDoc( ::cSerieFactura, D():Get( "FacCliT", ::nView ), "NFACCLI", , D():Get( "NCount", ::nView ) )
+   ::cSufijoFactura     := ( D():Get( "AlbCliT", ::nView ) )->cSufAlb
 
    ::cNumFac            := ::cSerieFactura + Str( ::nNumeroFactura ) + ::cSufijoFactura
 
@@ -1298,8 +1298,8 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    Pasamos los datos de la cabecera--------------------------------------------
    */
 
-   appendPass( TDataView():Get( "AlbCliT", ::nView ),;
-               TDataView():Get( "FacCliT", ::nView ),;
+   appendPass( D():Get( "AlbCliT", ::nView ),;
+               D():Get( "FacCliT", ::nView ),;
                {  "cSerie"    => ::cSerieFactura,;
                   "nNumFac"   => ::nNumeroFactura,;
                   "cSufFac"   => ::cSufijoFactura,;
@@ -1316,7 +1316,7 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    while !( ::cTemporalLineaFactura )->( Eof() )
 
       appendPass( ::cTemporalLineaFactura,;
-                  TDataView():Get( "FacCliL", ::nView ),;
+                  D():Get( "FacCliL", ::nView ),;
                   {  "cSerie"    => ::cSerieFactura,;
                      "nNumFac"   => ::nNumeroFactura,;
                      "cSufFac"   => ::cSufijoFactura,;
@@ -1332,19 +1332,19 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    */
 
    aTotFac  := aTotFacCli( ::cSerieFactura + str( ::nNumeroFactura ) + ::cSufijoFactura,;
-                           TDataView():Get( "FacCliT", ::nView ),;
-                           TDataView():Get( "FacCliL", ::nView ),;
-                           TDataView():Get( "TIva", ::nView ),;
-                           TDataView():Get( "Divisas", ::nView ),;
-                           TDataView():Get( "FacCliP", ::nView ),;
-                           TDataView():Get( "AntCliT", ::nView ) )
+                           D():Get( "FacCliT", ::nView ),;
+                           D():Get( "FacCliL", ::nView ),;
+                           D():Get( "TIva", ::nView ),;
+                           D():Get( "Divisas", ::nView ),;
+                           D():Get( "FacCliP", ::nView ),;
+                           D():Get( "AntCliT", ::nView ) )
 
-   if dbLock( TDataView():Get( "FacCliT", ::nView ) )
-      ( TDataView():Get( "FacCliT", ::nView ) )->nTotNet    := aTotFac[1]
-      ( TDataView():Get( "FacCliT", ::nView ) )->nTotIva    := aTotFac[2]
-      ( TDataView():Get( "FacCliT", ::nView ) )->nTotReq    := aTotFac[3]
-      ( TDataView():Get( "FacCliT", ::nView ) )->nTotFac    := aTotFac[4]
-      ( TDataView():Get( "FacCliT", ::nView ) )->( dbUnLock() )
+   if dbLock( D():Get( "FacCliT", ::nView ) )
+      ( D():Get( "FacCliT", ::nView ) )->nTotNet    := aTotFac[1]
+      ( D():Get( "FacCliT", ::nView ) )->nTotIva    := aTotFac[2]
+      ( D():Get( "FacCliT", ::nView ) )->nTotReq    := aTotFac[3]
+      ( D():Get( "FacCliT", ::nView ) )->nTotFac    := aTotFac[4]
+      ( D():Get( "FacCliT", ::nView ) )->( dbUnLock() )
    end if   
 
    /*
@@ -1352,14 +1352,14 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    */
 
    GenPgoFacCli( ::cSerieFactura + Str( ::nNumeroFactura ) + ::cSufijoFactura,;
-                 TDataView():Get( "FacCliT", ::nView ),;
-                 TDataView():Get( "FacCliL", ::nView ),;
-                 TDataView():Get( "FacCliP", ::nView ),;
-                 TDataView():Get( "AntCliT", ::nView ),;
-                 TDataView():Get( "Client", ::nView ),;
-                 TDataView():Get( "FPago", ::nView ),;
-                 TDataView():Get( "Divisas", ::nView ),; 
-                 TDataView():Get( "TIva", ::nView ),;
+                 D():Get( "FacCliT", ::nView ),;
+                 D():Get( "FacCliL", ::nView ),;
+                 D():Get( "FacCliP", ::nView ),;
+                 D():Get( "AntCliT", ::nView ),;
+                 D():Get( "Client", ::nView ),;
+                 D():Get( "FPago", ::nView ),;
+                 D():Get( "Divisas", ::nView ),; 
+                 D():Get( "TIva", ::nView ),;
                  APPD_MODE )
 
    /*
@@ -1367,12 +1367,12 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    */
 
    ChkLqdFacCli( nil,;
-                 TDataView():Get( "FacCliT", ::nView ),;
-                 TDataView():Get( "FacCliL", ::nView ),;
-                 TDataView():Get( "FacCliP", ::nView ),;
-                 TDataView():Get( "AntCliT", ::nView ),;
-                 TDataView():Get( "TIva", ::nView ),;
-                 TDataView():Get( "Divisas", ::nView ) )
+                 D():Get( "FacCliT", ::nView ),;
+                 D():Get( "FacCliL", ::nView ),;
+                 D():Get( "FacCliP", ::nView ),;
+                 D():Get( "AntCliT", ::nView ),;
+                 D():Get( "TIva", ::nView ),;
+                 D():Get( "Divisas", ::nView ) )
 
    /*
    Quito el recargo del albaran en modo modas----------------------------------
@@ -1380,9 +1380,9 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
 
    if ( "MODA" $ cParamsMain() )
 
-      if dbLock( TDataView():Get( "AlbCliT", ::nView ) )
-         ( TDataView():Get( "AlbCliT", ::nView ) )->lRecargo   := .f.
-         ( TDataView():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
+      if dbLock( D():Get( "AlbCliT", ::nView ) )
+         ( D():Get( "AlbCliT", ::nView ) )->lRecargo   := .f.
+         ( D():Get( "AlbCliT", ::nView ) )->( dbUnLock() )
       end if
 
    end if   
@@ -1409,7 +1409,7 @@ METHOD CalculaTotales() CLASS TFacturarLineasAlbaranes
 
       ::nSayTotal    := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal   
 
-      if ( TDataView():Get( "AlbCliT", ::nView ) )->lRecargo
+      if ( D():Get( "AlbCliT", ::nView ) )->lRecargo
          ::nSayIva   += ::oColReqFactura:nTotal
          ::nSayTotal += ::oColReqFactura:nTotal
       end if   
@@ -1422,7 +1422,7 @@ METHOD CalculaTotales() CLASS TFacturarLineasAlbaranes
 
       ::nSayTotal := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal
 
-      if ( TDataView():Get( "AlbCliT", ::nView ) )->lRecargo
+      if ( D():Get( "AlbCliT", ::nView ) )->lRecargo
          ::nSayIva   += ::oColReqAlbaran:nTotal
          ::nSayIva   += ::oColReqFactura:nTotal
          ::nSayTotal += ::oColReqAlbaran:nTotal

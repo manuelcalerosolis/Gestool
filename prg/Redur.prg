@@ -38,46 +38,46 @@ ENDCLASS
 
       if ::OpenFiles()
 
-         if ( TDataView():AlbaranesClientes( ::nView ) )->( dbseek( date() ) )
+         if ( D():AlbaranesClientes( ::nView ) )->( dbseek( date() ) )
 
-            while !( TDataView():AlbaranesClientes( ::nView ) )->( eof() )
+            while !( D():AlbaranesClientes( ::nView ) )->( eof() )
 
-               if rtrim( ( TDataView():AlbaranesClientes( ::nView ) )->cCodTrn ) == "001"
+               if rtrim( ( D():AlbaranesClientes( ::nView ) )->cCodTrn ) == "001"
 
                   if Empty( ::oAlbaran )
                      ::oAlbaran                          := Redur():New()
                   end if 
 
-                  ::oAlbaran:Tracking(                   '500324' + strzero( ( TDataView():AlbaranesClientes( ::nView ) )->nNumAlb, 9 ) )
+                  ::oAlbaran:Tracking(                   '500324' + strzero( ( D():AlbaranesClientes( ::nView ) )->nNumAlb, 9 ) )
                   ::oAlbaran:Remitente(                  'CAZU' )
-                  ::oAlbaran:NombreConsignatario(        ( TDataView():AlbaranesClientes( ::nView ) )->cNomCli )
+                  ::oAlbaran:NombreConsignatario(        ( D():AlbaranesClientes( ::nView ) )->cNomCli )
 
-                  if Empty( TDataView():AlbaranesClientes( ::nView ) )->cCodObr )
+                  if Empty( D():AlbaranesClientes( ::nView ) )->cCodObr )
 
-                     ::oAlbaran:DireccionConsignatario(     ( TDataView():AlbaranesClientes( ::nView ) )->cDirCli )
-                     ::oAlbaran:PoblacionConsignatario(     ( TDataView():AlbaranesClientes( ::nView ) )->cPobCli )
-                     ::oAlbaran:CodigoPostalConsignatario(  ( TDataView():AlbaranesClientes( ::nView ) )->cPosCli )
-                     ::oAlbaran:ProvinciaConsignatario(     '00' + left( ( TDataView():AlbaranesClientes( ::nView ) )->cPosCli, 2 ) )
+                     ::oAlbaran:DireccionConsignatario(     ( D():AlbaranesClientes( ::nView ) )->cDirCli )
+                     ::oAlbaran:PoblacionConsignatario(     ( D():AlbaranesClientes( ::nView ) )->cPobCli )
+                     ::oAlbaran:CodigoPostalConsignatario(  ( D():AlbaranesClientes( ::nView ) )->cPosCli )
+                     ::oAlbaran:ProvinciaConsignatario(     '00' + left( ( D():AlbaranesClientes( ::nView ) )->cPosCli, 2 ) )
 
                   else
 
-                     if dbSeekInOrd( TDataView():AlbaranesClientes( ::nView ) )->cCodCli + TDataView():AlbaranesClientes( ::nView ) )->cCodObr, "cCodCli", TDataView():Get( "ObrasT", nView ) )
-                        ::oAlbaran:DireccionConsignatario(     ( TDataView():Get( "ObrasT", nView ) )->cDirObr )
-                        ::oAlbaran:PoblacionConsignatario(     ( TDataView():Get( "ObrasT", nView ) )->cPobObr )
-                        ::oAlbaran:CodigoPostalConsignatario(  ( TDataView():Get( "ObrasT", nView ) )->cPosObr )
-                        ::oAlbaran:ProvinciaConsignatario(     '00' + left( ( TDataView():Get( "ObrasT", nView ) )->cPosObr, 2 ) )
+                     if dbSeekInOrd( D():AlbaranesClientes( ::nView ) )->cCodCli + D():AlbaranesClientes( ::nView ) )->cCodObr, "cCodCli", D():Get( "ObrasT", nView ) )
+                        ::oAlbaran:DireccionConsignatario(     ( D():Get( "ObrasT", nView ) )->cDirObr )
+                        ::oAlbaran:PoblacionConsignatario(     ( D():Get( "ObrasT", nView ) )->cPobObr )
+                        ::oAlbaran:CodigoPostalConsignatario(  ( D():Get( "ObrasT", nView ) )->cPosObr )
+                        ::oAlbaran:ProvinciaConsignatario(     '00' + left( ( D():Get( "ObrasT", nView ) )->cPosObr, 2 ) )
                      end if   
 
                   end if
-                  ::oAlbaran:Bultos(                     ( TDataView():AlbaranesClientes( ::nView ) )->nBultos )
-                  ::oAlbaran:Referencia(                 str( ( TDataView():AlbaranesClientes( ::nView ) )->nNumAlb ) )
-                  ::oAlbaran:Peso(                       nTotalPesoAlbaranCliente( ( TDataView():AlbaranesClientesId( ::nView ) ), ::nView ) )
+                  ::oAlbaran:Bultos(                     ( D():AlbaranesClientes( ::nView ) )->nBultos )
+                  ::oAlbaran:Referencia(                 str( ( D():AlbaranesClientes( ::nView ) )->nNumAlb ) )
+                  ::oAlbaran:Peso(                       nTotalPesoAlbaranCliente( ( D():AlbaranesClientesId( ::nView ) ), ::nView ) )
                   
                   ::oAlbaran:SerializeASCII()
 
                end if 
 
-               ( TDataView():AlbaranesClientes( ::nView ) )->( dbSkip() )
+               ( D():AlbaranesClientes( ::nView ) )->( dbSkip() )
 
             end while
 
@@ -109,15 +109,15 @@ ENDCLASS
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::nView           := TDataView():CreateView()
+      ::nView           := D():CreateView()
 
-      TDataView():AlbaranesClientes( ::nView )
+      D():AlbaranesClientes( ::nView )
 
-      TDataView():AlbaranesClientesLineas( ::nView )      
+      D():AlbaranesClientesLineas( ::nView )      
 
-      ( TDataView():AlbaranesClientes( ::nView ) )->( ordsetfocus( "dFecAlb" ) )
+      ( D():AlbaranesClientes( ::nView ) )->( ordsetfocus( "dFecAlb" ) )
 
-      TDataView():Get( "ObrasT", nView )
+      D():Get( "ObrasT", nView )
 
    RECOVER USING oError
 
@@ -135,7 +135,7 @@ ENDCLASS
 
    METHOD CloseFiles CLASS AlbarenesClientesRedur
 
-      TDataView():DeleteView( ::nView )
+      D():DeleteView( ::nView )
 
    Return ( Self )
 

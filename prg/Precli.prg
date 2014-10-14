@@ -408,16 +408,16 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    local oDevice
    local nNumPre
 
-   if ( TDataView():PresupuestosClientes( nView ) )->( Lastrec() ) == 0
+   if ( D():PresupuestosClientes( nView ) )->( Lastrec() ) == 0
       return nil
    end if
 
-   nNumPre              := ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre
+   nNumPre              := ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo presupuesto"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "RC", dbfDoc )
@@ -453,26 +453,26 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       Recalculo del total
       */
 
-      nTotPreCli( nNumPre, TDataView():PresupuestosClientes( nView ), dbfPreCliL, dbfIva, dbfDiv, dbfFpago, nil, nil, .t. )
+      nTotPreCli( nNumPre, D():PresupuestosClientes( nView ), dbfPreCliL, dbfIva, dbfDiv, dbfFpago, nil, nil, .t. )
 
       /*
       Posicionamiento
       */
 
       ( dbfPreCliL )->( dbSeek( nNumPre ) )
-      ( TDataView():Clientes( nView )  )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->CCODCLI ) )
-      ( dbfAgent   )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->CCODAGE ) )
-      ( dbfFPago   )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->CCODPGO ) )
-      ( dbfRuta    )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->cCodRut ) )
-      ( dbfObrasT  )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->CCODCLI + ( TDataView():PresupuestosClientes( nView ) )->CCODOBR ) )
+      ( D():Clientes( nView )  )->( dbSeek( ( D():PresupuestosClientes( nView ) )->CCODCLI ) )
+      ( dbfAgent   )->( dbSeek( ( D():PresupuestosClientes( nView ) )->CCODAGE ) )
+      ( dbfFPago   )->( dbSeek( ( D():PresupuestosClientes( nView ) )->CCODPGO ) )
+      ( dbfRuta    )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cCodRut ) )
+      ( dbfObrasT  )->( dbSeek( ( D():PresupuestosClientes( nView ) )->CCODCLI + ( D():PresupuestosClientes( nView ) )->CCODOBR ) )
 
-      oTrans:oDbf:Seek( ( TDataView():PresupuestosClientes( nView ) )->cCodTrn )
+      oTrans:oDbf:Seek( ( D():PresupuestosClientes( nView ) )->cCodTrn )
 
-      private cDbf         := TDataView():PresupuestosClientes( nView )
+      private cDbf         := D():PresupuestosClientes( nView )
       private cDbfCol      := dbfPreCliL
       private cDetalle     := dbfPreCliL
-      private cCliente     := TDataView():Clientes( nView )
-      private cDbfCli      := TDataView():Clientes( nView )
+      private cCliente     := D():Clientes( nView )
+      private cDbfCli      := D():Clientes( nView )
       private cDbfObr      := dbfObrasT
       private cDbfAge      := dbfAgent
       private cAgente      := dbfAgent
@@ -518,7 +518,7 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
          oInf:lAutoland       := .f.
          oInf:lFinish         := .f.
          oInf:lNoCancel       := .t.
-         oInf:bSkip           := {|| PreCliReportSkipper( TDataView():PresupuestosClientes( nView ), dbfPreCliL ) }
+         oInf:bSkip           := {|| PreCliReportSkipper( D():PresupuestosClientes( nView ), dbfPreCliL ) }
 
          oInf:oDevice:lPrvModal  := .t.
 
@@ -559,7 +559,7 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    end if
 
-   lChgImpDoc( TDataView():PresupuestosClientes( nView ) )
+   lChgImpDoc( D():PresupuestosClientes( nView ) )
 
 RETURN NIL
 
@@ -608,23 +608,23 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      nView             := TDataView():CreateView()
+      nView             := D():CreateView()
 
       /*
       Atipicas de clientes-----------------------------------------------------
       */
 
-      TDataView():Atipicas( nView )
+      D():Atipicas( nView )
 
-      TDataView():Get( "CliInc", nView )
+      D():Get( "CliInc", nView )
 
-      TDataView():PresupuestosClientes( nView )
+      D():PresupuestosClientes( nView )
 
-      TDataView():Clientes( nView )
+      D():Clientes( nView )
 
-      TDataView():GruposClientes( nView )
+      D():GruposClientes( nView )
 /*
-      if !TDataCenter():OpenPreCliT( @TDataView():PresupuestosClientes( nView ) )
+      if !TDataCenter():OpenPreCliT( @D():PresupuestosClientes( nView ) )
          lOpenFiles     := .f.
       end if 
 */
@@ -640,7 +640,7 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 /*
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @TDataView():Clientes( nView ) ) )
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 */
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
@@ -893,7 +893,7 @@ STATIC FUNCTION OpenFiles( lExt )
             cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
          end if 
 
-         ( TDataView():PresupuestosClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
+         ( D():PresupuestosClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
 
       end if
 
@@ -923,7 +923,7 @@ STATIC FUNCTION CloseFiles()
 
    DisableAcceso()
 
-   DestroyFastFilter( TDataView():PresupuestosClientes( nView ), .t., .t. )
+   DestroyFastFilter( D():PresupuestosClientes( nView ), .t., .t. )
 
    if !Empty( oFont )
       oFont:end()
@@ -1165,7 +1165,7 @@ STATIC FUNCTION CloseFiles()
       oFraPub:end()
    end if
 
-   TDataView():DeleteView( nView )
+   D():DeleteView( nView )
 
    dbfPreCliL     := nil
    dbfPreCliI     := nil
@@ -1291,12 +1291,12 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Agente";
       MRU      "Notebook_user1_16";
       BITMAP   clrTopArchivos ;
-      ALIAS    ( TDataView():PresupuestosClientes( nView ) );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, TDataView():PresupuestosClientes( nView ), cCodCli, cCodArt ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, TDataView():PresupuestosClientes( nView ), cCodCli, cCodArt ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, TDataView():PresupuestosClientes( nView ), cCodCli, cCodArt ) );
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, TDataView():PresupuestosClientes( nView ) ) );
-      DELETE   ( WinDelRec( oWndBrw:oBrw, TDataView():PresupuestosClientes( nView ), {|| QuiPreCli() } ) ) ;
+      ALIAS    ( D():PresupuestosClientes( nView ) );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():PresupuestosClientes( nView ), cCodCli, cCodArt ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, D():PresupuestosClientes( nView ), cCodCli, cCodArt ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, D():PresupuestosClientes( nView ), cCodCli, cCodArt ) );
+      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, D():PresupuestosClientes( nView ) ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, D():PresupuestosClientes( nView ), {|| QuiPreCli() } ) ) ;
       LEVEL    nLevel ;
       OF       oWnd
 
@@ -1308,7 +1308,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->lCloPre }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lCloPre }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Zoom16" )
@@ -1319,7 +1319,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Estado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->lEstado }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lEstado }
          :nWidth           := 20
          :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
          :AddResource( "trafficlight_on_16" )
@@ -1329,7 +1329,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->lSndDoc }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Lbl16" )
@@ -1340,7 +1340,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Incidencia"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nEstadoIncidencia( ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre ) }
+         :bBmpData         := {|| nEstadoIncidencia( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) }
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Bullet_Square_Red_16" )
@@ -1353,7 +1353,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Imprimir"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->lImprimido }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -1362,7 +1362,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipPre[ if( ( TDataView():PresupuestosClientes( nView ) )->lAlquiler, 2, 1 ) ] }
+         :bEditValue       := {|| aTipPre[ if( ( D():PresupuestosClientes( nView ) )->lAlquiler, 2, 1 ) ] }
          :nWidth           := 50
          :lHide            := .t.
       end with
@@ -1370,21 +1370,21 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumPre"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cSerPre + "/" + AllTrim( Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) ) }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cSerPre + "/" + AllTrim( Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cSufPre }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cSufPre }
          :nWidth           := 20
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión"
-         :bEditValue       := {|| Trans( ( TDataView():PresupuestosClientes( nView ) )->cTurPre, "######" ) }
+         :bEditValue       := {|| Trans( ( D():PresupuestosClientes( nView ) )->cTurPre, "######" ) }
          :nWidth           := 40
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1394,28 +1394,28 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := "dFecPre"
-         :bEditValue       := {|| Dtoc( ( TDataView():PresupuestosClientes( nView ) )->dFecPre ) }
+         :bEditValue       := {|| Dtoc( ( D():PresupuestosClientes( nView ) )->dFecPre ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cCodCaj }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cCodCaj }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cCodUsr }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cCodUsr }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Situación"
-         :bEditValue       := {|| AllTrim( ( TDataView():PresupuestosClientes( nView ) )->cSituac ) }
+         :bEditValue       := {|| AllTrim( ( D():PresupuestosClientes( nView ) )->cSituac ) }
          :nWidth           := 80
          :lHide            := .t.
       end with
@@ -1423,7 +1423,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( TDataView():PresupuestosClientes( nView ) )->cCodCli ) }
+         :bEditValue       := {|| AllTrim( ( D():PresupuestosClientes( nView ) )->cCodCli ) }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1431,7 +1431,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cNomCli }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cNomCli }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1439,35 +1439,35 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cCodAge }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cCodAge }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cCodRut }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cCodRut }
          :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cCodAlm }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cCodAlm }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->cCodObr }
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->cCodObr }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->nTotNet }
-         :cEditPicture     := cPorDiv( ( TDataView():PresupuestosClientes( nView ) )->cDivPre, dbfDiv )
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->nTotNet }
+         :cEditPicture     := cPorDiv( ( D():PresupuestosClientes( nView ) )->cDivPre, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1476,8 +1476,8 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->nTotIva }
-         :cEditPicture     := cPorDiv( ( TDataView():PresupuestosClientes( nView ) )->cDivPre, dbfDiv )
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->nTotIva }
+         :cEditPicture     := cPorDiv( ( D():PresupuestosClientes( nView ) )->cDivPre, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1486,8 +1486,8 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->nTotReq }
-         :cEditPicture     := cPorDiv( ( TDataView():PresupuestosClientes( nView ) )->cDivPre, dbfDiv )
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->nTotReq }
+         :cEditPicture     := cPorDiv( ( D():PresupuestosClientes( nView ) )->cDivPre, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1496,8 +1496,8 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( TDataView():PresupuestosClientes( nView ) )->nTotPre }
-         :cEditPicture     := cPorDiv( ( TDataView():PresupuestosClientes( nView ) )->cDivPre, dbfDiv )
+         :bEditValue       := {|| ( D():PresupuestosClientes( nView ) )->nTotPre }
+         :cEditPicture     := cPorDiv( ( D():PresupuestosClientes( nView ) )->cDivPre, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1505,7 +1505,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( TDataView():PresupuestosClientes( nView ) )->cDivPre ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( D():PresupuestosClientes( nView ) )->cDivPre ), dbfDiv ) }
          :nWidth           := 30
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1631,13 +1631,13 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       MENU     This:Toggle() ;
       TOOLTIP  "En(v)iar" ;
       MESSAGE  "Seleccionar presupuestos para ser enviados" ;
-      ACTION   lSnd( oWndBrw, TDataView():PresupuestosClientes( nView ) ) ;
+      ACTION   lSnd( oWndBrw, D():PresupuestosClientes( nView ) ) ;
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():PresupuestosClientes( nView ), "lSndDoc", .t., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():PresupuestosClientes( nView ), "lSndDoc", .t., .t., .t. ) );
          TOOLTIP  "Todos" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1645,7 +1645,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():PresupuestosClientes( nView ), "lSndDoc", .f., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():PresupuestosClientes( nView ), "lSndDoc", .f., .t., .t. ) );
          TOOLTIP  "Ninguno" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1653,7 +1653,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():PresupuestosClientes( nView ), "lSndDoc", .t., .f., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():PresupuestosClientes( nView ), "lSndDoc", .t., .f., .t. ) );
          TOOLTIP  "Abajo" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1670,7 +1670,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( ReplaceCreator( oWndBrw, TDataView():PresupuestosClientes( nView ), aItmPreCli() ) ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, D():PresupuestosClientes( nView ), aItmPreCli() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
@@ -1686,7 +1686,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TTrazaDocumento():Activate( PRE_CLI, ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre ) ) ;
+      ACTION   ( TTrazaDocumento():Activate( PRE_CLI, ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) ) ;
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
@@ -1705,40 +1705,40 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          TOOLTIP  "Rotor" ;
 
       DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
-            ACTION   ( EdtCli( ( TDataView():PresupuestosClientes( nView ) )->cCodCli ) );
+            ACTION   ( EdtCli( ( D():PresupuestosClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
-            ACTION   ( InfCliente( ( TDataView():PresupuestosClientes( nView ) )->cCodCli ) );
+            ACTION   ( InfCliente( ( D():PresupuestosClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
-            ACTION   ( if( !Empty( ( TDataView():PresupuestosClientes( nView ) )->cCodObr ), EdtObras( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, ( TDataView():PresupuestosClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al presupuesto" ) ) );
+            ACTION   ( if( !Empty( ( D():PresupuestosClientes( nView ) )->cCodObr ), EdtObras( ( D():PresupuestosClientes( nView ) )->cCodCli, ( D():PresupuestosClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al presupuesto" ) ) );
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( TDataView():PresupuestosClientes( nView ) )->lEstado, PedCli( nil, nil, nil, nil, ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, PedCli( nil, nil, nil, nil, ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar pedido" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
-            ACTION   ( Pre2Ped( ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre ) );
+            ACTION   ( Pre2Ped( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) );
             TOOLTIP  "Modificar pedido" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( TDataView():PresupuestosClientes( nView ) )->lEstado, AlbCli( nil, nil, { "Presupuesto" => ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, AlbCli( nil, nil, { "Presupuesto" => ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( TDataView():PresupuestosClientes( nView ) )->lEstado, FactCli( nil, nil, { "Presupuesto" => ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, FactCli( nil, nil, { "Presupuesto" => ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
@@ -1750,7 +1750,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( TDataView():PresupuestosClientes( nView ) )->lEstado .and. Empty( ( TDataView():PresupuestosClientes( nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, nil, nil } ), MsgStop( "Presupuesto aceptado o convertido a ticket" ) ) );
+            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado .and. Empty( ( D():PresupuestosClientes( nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, nil, nil } ), MsgStop( "Presupuesto aceptado o convertido a ticket" ) ) );
             TOOLTIP  "Convertir a ticket" ;
             FROM     oRotor ;
 
@@ -1911,14 +1911,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    */
 
    if Empty( aTmp[ _CTLFCLI ] )
-      aTmp[ _CTLFCLI ] := RetFld( aTmp[ _CCODCLI ], TDataView():Clientes( nView ), "Telefono" )
+      aTmp[ _CTLFCLI ] := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
    end if
 
    /*
    Necestamos el orden el la primera clave-------------------------------------
    */
 
-   nOrd                 := ( TDataView():PresupuestosClientes( nView ) )->( ordSetFocus( 1 ) )
+   nOrd                 := ( D():PresupuestosClientes( nView ) )->( ordSetFocus( 1 ) )
 
    cPicUnd              := MasUnd()
    cPouDiv              := cPouDiv( aTmp[ _CDIVPRE ], dbfDiv ) // Picture de la divisa
@@ -1941,7 +1941,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    cSay[10 ]            := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
    cSay[11 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
 
-   cTlfCli              := RetFld( aTmp[ _CCODCLI ], TDataView():Clientes( nView ), "Telefono" )
+   cTlfCli              := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
 
    nRieCli              := oStock:nRiesgo( aTmp[ _CCODCLI ] )
 
@@ -2665,7 +2665,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( TDataView():PresupuestosClientes( nView ), dbfTmpLin, oBrwLin ) )
+         ACTION   ( ShowKit( D():PresupuestosClientes( nView ), dbfTmpLin, oBrwLin ) )
 
       REDEFINE GET aGet[_CSERPRE] VAR aTmp[_CSERPRE] ;
          ID       90 ;
@@ -3102,7 +3102,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( TDataView():PresupuestosClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, TDataView():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( D():PresupuestosClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, D():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ) }
 
    end case
 
@@ -3120,7 +3120,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    oBmpDiv:end()
    oBmpGeneral:End()
 
-   ( TDataView():PresupuestosClientes( nView ) )->( ordSetFocus( nOrd ) )
+   ( D():PresupuestosClientes( nView ) )->( ordSetFocus( nOrd ) )
 
    KillTrans( oBrwLin )
 
@@ -4555,7 +4555,7 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
 
    if nMode == APPD_MODE .AND. lEntCon()
 
-      nTotPreCli( nil, TDataView():PresupuestosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmpPre )
+      nTotPreCli( nil, D():PresupuestosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmpPre )
 
       SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre )
 
@@ -4698,17 +4698,17 @@ STATIC FUNCTION PrnSerie()
 
 	local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount )
    local oSayFmt
    local cSayFmt
    local oSerIni
    local oSerFin
-   local cSerIni     := ( TDataView():PresupuestosClientes( nView ) )->cSerPre
-   local cSerFin     := ( TDataView():PresupuestosClientes( nView ) )->cSerPre
-   local nDocIni     := ( TDataView():PresupuestosClientes( nView ) )->nNumPre
-   local nDocFin     := ( TDataView():PresupuestosClientes( nView ) )->nNumPre
-   local cSufIni     := ( TDataView():PresupuestosClientes( nView ) )->cSufPre
-   local cSufFin     := ( TDataView():PresupuestosClientes( nView ) )->cSufPre
+   local cSerIni     := ( D():PresupuestosClientes( nView ) )->cSerPre
+   local cSerFin     := ( D():PresupuestosClientes( nView ) )->cSerPre
+   local nDocIni     := ( D():PresupuestosClientes( nView ) )->nNumPre
+   local nDocFin     := ( D():PresupuestosClientes( nView ) )->nNumPre
+   local cSufIni     := ( D():PresupuestosClientes( nView ) )->cSufPre
+   local cSufFin     := ( D():PresupuestosClientes( nView ) )->cSufPre
    local oPrinter
    local cPrinter    := PrnGetName()
    local lCopiasPre  := .t.
@@ -4718,7 +4718,7 @@ STATIC FUNCTION PrnSerie()
    local oRango
    local nRango      := 1
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
 
    if Empty( cFmtDoc )
       cFmtDoc           := cSelPrimerDoc( "RC" )
@@ -4867,32 +4867,32 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    if nRango == 1
 
-      nRecno      := ( TDataView():PresupuestosClientes( nView ) )->( recno() )
-      nOrdAnt     := ( TDataView():PresupuestosClientes( nView ) )->( OrdSetFocus( "nNumPre" ) )
+      nRecno      := ( D():PresupuestosClientes( nView ) )->( recno() )
+      nOrdAnt     := ( D():PresupuestosClientes( nView ) )->( OrdSetFocus( "nNumPre" ) )
 
       if ! lInvOrden
 
-         if ( TDataView():PresupuestosClientes( nView ) )->( dbSeek( cDocIni, .t. ) )
+         if ( D():PresupuestosClientes( nView ) )->( dbSeek( cDocIni, .t. ) )
 
-            while ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre >= cDocIni   .and. ;
-                  ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre <= cDocFin   .and. ;
-                  !( TDataView():PresupuestosClientes( nView ) )->( Eof() )
+            while ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre >= cDocIni   .and. ;
+                  ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre <= cDocFin   .and. ;
+                  !( D():PresupuestosClientes( nView ) )->( Eof() )
 
-                  lChgImpDoc( TDataView():PresupuestosClientes( nView ) )
+                  lChgImpDoc( D():PresupuestosClientes( nView ) )
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
 
-                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
+                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nNumCop )
+                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
-               ( TDataView():PresupuestosClientes( nView ) )->( dbSkip() )
+               ( D():PresupuestosClientes( nView ) )->( dbSkip() )
 
             end do
 
@@ -4900,27 +4900,27 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
       else
 
-         if ( TDataView():PresupuestosClientes( nView ) )->( dbSeek( cDocFin ) )
+         if ( D():PresupuestosClientes( nView ) )->( dbSeek( cDocFin ) )
 
-            while ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre >= cDocIni   .and.;
-                  ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre <= cDocFin   .and.;
-                  !( TDataView():PresupuestosClientes( nView ) )->( Bof() )
+            while ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre >= cDocIni   .and.;
+                  ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre <= cDocFin   .and.;
+                  !( D():PresupuestosClientes( nView ) )->( Bof() )
 
-                  lChgImpDoc( TDataView():PresupuestosClientes( nView ) )
+                  lChgImpDoc( D():PresupuestosClientes( nView ) )
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
 
-                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
+                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nNumCop )
+                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
-               ( TDataView():PresupuestosClientes( nView ) )->( dbSkip( -1 ) )
+               ( D():PresupuestosClientes( nView ) )->( dbSkip( -1 ) )
 
             end while
 
@@ -4930,62 +4930,62 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    else
 
-      nRecno      := ( TDataView():PresupuestosClientes( nView ) )->( recno() )
-      nOrdAnt     := ( TDataView():PresupuestosClientes( nView ) )->( OrdSetFocus( "dFecPre" ) )
+      nRecno      := ( D():PresupuestosClientes( nView ) )->( recno() )
+      nOrdAnt     := ( D():PresupuestosClientes( nView ) )->( OrdSetFocus( "dFecPre" ) )
 
       if ! lInvOrden
 
-         ( TDataView():PresupuestosClientes( nView ) )->( dbGoTop() )
+         ( D():PresupuestosClientes( nView ) )->( dbGoTop() )
 
-         while !( TDataView():PresupuestosClientes( nView ) )->( Eof() )
+         while !( D():PresupuestosClientes( nView ) )->( Eof() )
 
-            if ( TDataView():PresupuestosClientes( nView ) )->dFecPre >= dFecDesde .and. ( TDataView():PresupuestosClientes( nView ) )->dFecPre <= dFecHasta
+            if ( D():PresupuestosClientes( nView ) )->dFecPre >= dFecDesde .and. ( D():PresupuestosClientes( nView ) )->dFecPre <= dFecHasta
 
-               lChgImpDoc( TDataView():PresupuestosClientes( nView ) )
+               lChgImpDoc( D():PresupuestosClientes( nView ) )
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
 
-                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
+                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nNumCop )
+                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
             end if   
 
-            ( TDataView():PresupuestosClientes( nView ) )->( dbSkip() )
+            ( D():PresupuestosClientes( nView ) )->( dbSkip() )
 
          end while
 
       else
 
-         ( TDataView():PresupuestosClientes( nView ) )->( dbGobottom() )
+         ( D():PresupuestosClientes( nView ) )->( dbGobottom() )
 
-         while !( TDataView():PresupuestosClientes( nView ) )->( Bof() )
+         while !( D():PresupuestosClientes( nView ) )->( Bof() )
 
-            if ( TDataView():PresupuestosClientes( nView ) )->dFecPre >= dFecDesde .and. ( TDataView():PresupuestosClientes( nView ) )->dFecPre <= dFecHasta
+            if ( D():PresupuestosClientes( nView ) )->dFecPre >= dFecDesde .and. ( D():PresupuestosClientes( nView ) )->dFecPre <= dFecHasta
 
-               lChgImpDoc( TDataView():PresupuestosClientes( nView ) )
+               lChgImpDoc( D():PresupuestosClientes( nView ) )
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
 
-                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
+                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nNumCop )
+                  GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
             end if
 
-            ( TDataView():PresupuestosClientes( nView ) )->( dbSkip( -1 ) )
+            ( D():PresupuestosClientes( nView ) )->( dbSkip( -1 ) )
 
          end while
 
@@ -4993,8 +4993,8 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    end if
 
-   ( TDataView():PresupuestosClientes( nView ) )->( dbGoTo( nRecNo ) )
-   ( TDataView():PresupuestosClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( D():PresupuestosClientes( nView ) )->( dbGoTo( nRecNo ) )
+   ( D():PresupuestosClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oDlg:enable()
 
@@ -5004,7 +5004,7 @@ RETURN NIL
 
 STATIC FUNCTION RecalculaTotal( aTmp )
 
-   nTotPreCli( nil, TDataView():PresupuestosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp )
+   nTotPreCli( nil, D():PresupuestosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp )
 
    /*
    Refrescos en Pantalla-------------------------------------------------------
@@ -5581,7 +5581,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
             Descuento de artículo----------------------------------------------
             */
 
-            nNumDto              := RetFld( aTmpPre[ _CCODCLI ], TDataView():Clientes( nView ), "nDtoArt" )
+            nNumDto              := RetFld( aTmpPre[ _CCODCLI ], D():Clientes( nView ), "nDtoArt" )
 
             if nNumDto != 0
 
@@ -6375,7 +6375,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumPre              := nNewDoc( cSerPre, TDataView():PresupuestosClientes( nView ), "nPreCli", , dbfCount )
+      nNumPre              := nNewDoc( cSerPre, D():PresupuestosClientes( nView ), "nPreCli", , dbfCount )
       aTmp[ _NNUMPRE ]     := nNumPre
 
    case nMode == EDIT_MODE
@@ -6469,7 +6469,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTPRE ]     := nTotPre
 
-   WinGather( aTmp, , TDataView():PresupuestosClientes( nView ), , nMode )
+   WinGather( aTmp, , D():PresupuestosClientes( nView ), , nMode )
 
    /*
    Escribe los datos pendientes------------------------------------------------
@@ -6531,61 +6531,61 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
 
-   if ( TDataView():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
+   if ( D():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
 
-      if ( TDataView():Clientes( nView ) )->lBlqCli
+      if ( D():Clientes( nView ) )->lBlqCli
          msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
          return .f.
       end if
 
       if oTlfCli != nil
-         oTlfCli:SetText( ( TDataView():Clientes( nView ) )->Telefono )
+         oTlfCli:SetText( ( D():Clientes( nView ) )->Telefono )
       end if
 
       /*
       Asignamos el codigo siempre
       */
 
-      aGet[ _CCODCLI ]:cText( ( TDataView():Clientes( nView ) )->Cod )
+      aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
 
       /*
       Color de fondo del cliente-----------------------------------------------
       */
 
-      if ( TDataView():Clientes( nView ) )->nColor != 0
-         aGet[ _CNOMCLI ]:SetColor( , ( TDataView():Clientes( nView ) )->nColor )
+      if ( D():Clientes( nView ) )->nColor != 0
+         aGet[ _CNOMCLI ]:SetColor( , ( D():Clientes( nView ) )->nColor )
       end if
 
       if Empty( aGet[ _CNOMCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CNOMCLI ]:cText( ( TDataView():Clientes( nView ) )->Titulo )
+         aGet[ _CNOMCLI ]:cText( ( D():Clientes( nView ) )->Titulo )
       end if
 
       if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CTLFCLI ]:cText( ( TDataView():Clientes( nView ) )->Telefono )
+         aGet[ _CTLFCLI ]:cText( ( D():Clientes( nView ) )->Telefono )
       end if
 
       if !Empty( aGet[ _CDIRCLI ] ) .and. ( Empty( aGet[ _CDIRCLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CDIRCLI ]:cText( ( TDataView():Clientes( nView ) )->Domicilio )
+         aGet[ _CDIRCLI ]:cText( ( D():Clientes( nView ) )->Domicilio )
       end if
 
       if !Empty( aGet[ _CPOBCLI ] ) .and. ( Empty( aGet[ _CPOBCLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CPOBCLI ]:cText( ( TDataView():Clientes( nView ) )->Poblacion )
+         aGet[ _CPOBCLI ]:cText( ( D():Clientes( nView ) )->Poblacion )
       end if
 
       if !Empty( aGet[ _CPRVCLI ] ) .and. ( Empty( aGet[ _CPRVCLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CPRVCLI ]:cText( ( TDataView():Clientes( nView ) )->Provincia )
+         aGet[ _CPRVCLI ]:cText( ( D():Clientes( nView ) )->Provincia )
       end if
 
       if !Empty( aGet[ _CPOSCLI ] ) .and. ( Empty( aGet[ _CPOSCLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CPOSCLI ]:cText( ( TDataView():Clientes( nView ) )->CodPostal )
+         aGet[ _CPOSCLI ]:cText( ( D():Clientes( nView ) )->CodPostal )
       end if
 
       if !Empty( aGet[_CDNICLI] ) .and. ( Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CDNICLI ]:cText( ( TDataView():Clientes( nView ) )->Nif )
+         aGet[ _CDNICLI ]:cText( ( D():Clientes( nView ) )->Nif )
       end if
 
       if ( Empty( aTmp[_CCODGRP] ) .or. lChgCodCli )
-         aTmp[ _CCODGRP ]  := ( TDataView():Clientes( nView ) )->cCodGrp
+         aTmp[ _CCODGRP ]  := ( D():Clientes( nView ) )->cCodGrp
       end if
 
       /*
@@ -6611,20 +6611,20 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          */
 
          if oRieCli != nil
-            oStock:SetRiesgo( cNewCodCli, oRieCli, ( TDataView():Clientes( nView ) )->Riesgo )
+            oStock:SetRiesgo( cNewCodCli, oRieCli, ( D():Clientes( nView ) )->Riesgo )
          end if
 
-         aTmp[ _LMODCLI ]  := ( TDataView():Clientes( nView ) )->lModDat
+         aTmp[ _LMODCLI ]  := ( D():Clientes( nView ) )->lModDat
 
       end if
 
       if ( lChgCodCli )
-         aTmp[ _LOPERPV ]  := ( TDataView():Clientes( nView ) )->lPntVer
+         aTmp[ _LOPERPV ]  := ( D():Clientes( nView ) )->lPntVer
       end if
 
       if nMode == APPD_MODE
 
-         aTmp[ _NREGIVA ]   := ( TDataView():Clientes( nView ) )->nRegIva
+         aTmp[ _NREGIVA ]   := ( D():Clientes( nView ) )->nRegIva
 
          /*
          Si estamos a¤adiendo cargamos todos los datos del cliente
@@ -6632,85 +6632,85 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          if Empty( aTmp[ _CSERPRE ] )
 
-            if !Empty( ( TDataView():Clientes( nView ) )->Serie )
-               aGet[ _CSERPRE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+            if !Empty( ( D():Clientes( nView ) )->Serie )
+               aGet[ _CSERPRE ]:cText( ( D():Clientes( nView ) )->Serie )
             end if
 
          else
 
-            if !Empty( ( TDataView():Clientes( nView ) )->Serie ) .and. aTmp[ _CSERPRE ] != ( TDataView():Clientes( nView ) )->Serie .and. ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
-               aGet[ _CSERPRE ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+            if !Empty( ( D():Clientes( nView ) )->Serie ) .and. aTmp[ _CSERPRE ] != ( D():Clientes( nView ) )->Serie .and. ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               aGet[ _CSERPRE ]:cText( ( D():Clientes( nView ) )->Serie )
             end if
 
          end if
 
          if !Empty( aGet[ _CCODALM ] )
-            if ( Empty( aGet[ _CCODALM ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodAlm )
-               aGet[ _CCODALM ]:cText( ( TDataView():Clientes( nView ) )->cCodAlm )
+            if ( Empty( aGet[ _CCODALM ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodAlm )
+               aGet[ _CCODALM ]:cText( ( D():Clientes( nView ) )->cCodAlm )
                aGet[ _CCODALM ]:lValid()
             end if
          end if
 
          if aGet[ _CCODTAR ] != nil
-            if !Empty( aGet[ _CCODTAR ] ) .and. ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTar )
-               aGet[ _CCODTAR ]:cText( ( TDataView():Clientes( nView ) )->cCodTar )
+            if !Empty( aGet[ _CCODTAR ] ) .and. ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTar )
+               aGet[ _CCODTAR ]:cText( ( D():Clientes( nView ) )->cCodTar )
                aGet[ _CCODTAR ]:lValid()
             end if
          end if
 
-         if ( Empty( aGet[ _CCODPGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->CodPago )
-            aGet[ _CCODPGO ]:cText( (TDataView():Clientes( nView ) )->CodPago )
+         if ( Empty( aGet[ _CCODPGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->CodPago )
+            aGet[ _CCODPGO ]:cText( (D():Clientes( nView ) )->CodPago )
             aGet[ _CCODPGO ]:lValid()
          end if
 
          if aGet[_CCODAGE] != nil
-            if ( Empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cAgente )
-               aGet[ _CCODAGE ]:cText( ( TDataView():Clientes( nView ) )->cAgente )
+            if ( Empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cAgente )
+               aGet[ _CCODAGE ]:cText( ( D():Clientes( nView ) )->cAgente )
                aGet[ _CCODAGE ]:lValid()
             end if
          end if
 
-         if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodRut )
-            aGet[ _CCODRUT ]:cText( ( TDataView():Clientes( nView ) )->cCodRut )
+         if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodRut )
+            aGet[ _CCODRUT ]:cText( ( D():Clientes( nView ) )->cCodRut )
             aGet[ _CCODRUT ]:lValid()
          end if
 
-         if !Empty( aGet[ _NTARIFA ] ) .and. ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->nTarifa )
-            aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
+         if !Empty( aGet[ _NTARIFA ] ) .and. ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->nTarifa )
+            aGet[ _NTARIFA ]:cText( ( D():Clientes( nView ) )->nTarifa )
          end if
 
          if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
-             aTmp[ _NDTOTARIFA ]    := ( TDataView():Clientes( nView ) )->nDtoArt
+             aTmp[ _NDTOTARIFA ]    := ( D():Clientes( nView ) )->nDtoArt
          end if
 
-         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
-            aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
+         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTrn )
+            aGet[ _CCODTRN ]:cText( ( D():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:lValid()
          end if
 
          if lChgCodCli
 
-            aGet[ _LRECARGO ]:Click( ( TDataView():Clientes( nView ) )->lReq ):Refresh()
+            aGet[ _LRECARGO ]:Click( ( D():Clientes( nView ) )->lReq ):Refresh()
 
-            aGet[ _LOPERPV ]:Click( ( TDataView():Clientes( nView ) )->lPntVer ):Refresh()
+            aGet[ _LOPERPV ]:Click( ( D():Clientes( nView ) )->lPntVer ):Refresh()
 
-            if ( TDataView():Clientes( nView ) )->lMosCom .and. !Empty( ( TDataView():Clientes( nView ) )->mComent ) .and. lChgCodCli
-               MsgStop( Trim( ( TDataView():Clientes( nView ) )->mComent ) )
+            if ( D():Clientes( nView ) )->lMosCom .and. !Empty( ( D():Clientes( nView ) )->mComent ) .and. lChgCodCli
+               MsgStop( Trim( ( D():Clientes( nView ) )->mComent ) )
             end if
 
             /*
             Retenciones desde la ficha de cliente----------------------------------
 
             if !Empty( aGet[ _NTIPRET ] )
-               aGet[ _NTIPRET  ]:Select( ( TDataView():Clientes( nView ) )->nTipRet )
+               aGet[ _NTIPRET  ]:Select( ( D():Clientes( nView ) )->nTipRet )
             else
-               aTmp[ _NTIPRET  ] := ( TDataView():Clientes( nView ) )->nTipRet
+               aTmp[ _NTIPRET  ] := ( D():Clientes( nView ) )->nTipRet
             end if
 
             if !Empty( aGet[ _NPCTRET ] )
-               aGet[ _NPCTRET  ]:cText( ( TDataView():Clientes( nView ) )->nPctRet )
+               aGet[ _NPCTRET  ]:cText( ( D():Clientes( nView ) )->nPctRet )
             else
-               aTmp[ _NPCTRET  ] := ( TDataView():Clientes( nView ) )->nPctRet
+               aTmp[ _NPCTRET  ] := ( D():Clientes( nView ) )->nPctRet
             end if
             */
 
@@ -6718,33 +6718,33 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             Descuentos desde la ficha de cliente----------------------------------
             */
 
-            aGet[ _CDTOESP ]:cText( ( TDataView():Clientes( nView ) )->cDtoEsp )
+            aGet[ _CDTOESP ]:cText( ( D():Clientes( nView ) )->cDtoEsp )
 
-            aGet[ _NDTOESP ]:cText( ( TDataView():Clientes( nView ) )->nDtoEsp )
+            aGet[ _NDTOESP ]:cText( ( D():Clientes( nView ) )->nDtoEsp )
 
-            aGet[ _CDPP    ]:cText( ( TDataView():Clientes( nView ) )->cDpp )
+            aGet[ _CDPP    ]:cText( ( D():Clientes( nView ) )->cDpp )
 
-            aGet[ _NDPP    ]:cText( ( TDataView():Clientes( nView ) )->nDpp )
+            aGet[ _NDPP    ]:cText( ( D():Clientes( nView ) )->nDpp )
 
-            aGet[ _CDTOUNO ]:cText( ( TDataView():Clientes( nView ) )->cDtoUno )
+            aGet[ _CDTOUNO ]:cText( ( D():Clientes( nView ) )->cDtoUno )
 
-            aGet[ _NDTOUNO ]:cText( ( TDataView():Clientes( nView ) )->nDtoCnt )
+            aGet[ _NDTOUNO ]:cText( ( D():Clientes( nView ) )->nDtoCnt )
 
-            aGet[ _CDTODOS ]:cText( ( TDataView():Clientes( nView ) )->cDtoDos )
+            aGet[ _CDTODOS ]:cText( ( D():Clientes( nView ) )->cDtoDos )
 
-            aGet[ _NDTODOS ]:cText( ( TDataView():Clientes( nView ) )->nDtoRap )
+            aGet[ _NDTODOS ]:cText( ( D():Clientes( nView ) )->nDtoRap )
 
-            aTmp[ _NDTOATP ]  := ( TDataView():Clientes( nView ) )->nDtoAtp
+            aTmp[ _NDTOATP ]  := ( D():Clientes( nView ) )->nDtoAtp
 
-            aTmp[ _NSBRATP ]  := ( TDataView():Clientes( nView ) )->nSbrAtp
+            aTmp[ _NSBRATP ]  := ( D():Clientes( nView ) )->nSbrAtp
 
-            ShowIncidenciaCliente( ( TDataView():Clientes( nView ) )->Cod, nView )
+            ShowIncidenciaCliente( ( D():Clientes( nView ) )->Cod, nView )
 
          end if
 
       end if
 
-      cOldCodCli  := ( TDataView():Clientes( nView ) )->Cod
+      cOldCodCli  := ( D():Clientes( nView ) )->Cod
 
       lValid      := .t.
 
@@ -6797,11 +6797,11 @@ STATIC FUNCTION ChgState( oBrw )
 
    for each nRec in ( oBrw:aSelected )
 
-      ( TDataView():PresupuestosClientes( nView ) )->( dbGoTo( nRec ) )
+      ( D():PresupuestosClientes( nView ) )->( dbGoTo( nRec ) )
 
-      if dbLock( TDataView():PresupuestosClientes( nView ) )
-         ( TDataView():PresupuestosClientes( nView ) )->lEstado := !( TDataView():PresupuestosClientes( nView ) )->lEstado
-         ( TDataView():PresupuestosClientes( nView ) )->( dbRUnlock() )
+      if dbLock( D():PresupuestosClientes( nView ) )
+         ( D():PresupuestosClientes( nView ) )->lEstado := !( D():PresupuestosClientes( nView ) )->lEstado
+         ( D():PresupuestosClientes( nView ) )->( dbRUnlock() )
       end if
 
    next
@@ -6926,10 +6926,10 @@ return ( bGen )
 static function nGenPreCli( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
 
    local nImpYet     := 1
-   local nCopyClient := Retfld( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" )
+   local nCopyClient := Retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
 
    DEFAULT nDevice   := IS_PRINTER
-   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
+   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
 
    nCopy             := Max( nCopy, 1 )
 
@@ -6939,7 +6939,7 @@ static function nGenPreCli( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
    end while
 
    //Funcion para marcar el documento como imprimido
-   lChgImpDoc( TDataView():PresupuestosClientes( nView ) )
+   lChgImpDoc( D():PresupuestosClientes( nView ) )
 
 return nil
 
@@ -7118,33 +7118,33 @@ Static Function PreCliNotas()
    local cObserv  := ""
    local aData    := {}
 
-   aAdd( aData, "Presupuesto " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + "/" + AllTrim( Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) ) + "/" + Alltrim( ( TDataView():PresupuestosClientes( nView ) )->cSufPre ) + " de " + Rtrim( ( TDataView():PresupuestosClientes( nView ) )->cNomCli ) )
+   aAdd( aData, "Presupuesto " + ( D():PresupuestosClientes( nView ) )->cSerPre + "/" + AllTrim( Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) ) + "/" + Alltrim( ( D():PresupuestosClientes( nView ) )->cSufPre ) + " de " + Rtrim( ( D():PresupuestosClientes( nView ) )->cNomCli ) )
    aAdd( aData, PRE_CLI )
-   aAdd( aData, ( TDataView():PresupuestosClientes( nView ) )->cCodCli )
-   aAdd( aData, ( TDataView():PresupuestosClientes( nView ) )->cNomCli )
-   aAdd( aData, ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre )
+   aAdd( aData, ( D():PresupuestosClientes( nView ) )->cCodCli )
+   aAdd( aData, ( D():PresupuestosClientes( nView ) )->cNomCli )
+   aAdd( aData, ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre )
 
-   if !Empty( ( TDataView():PresupuestosClientes( nView ) )->cRetPor )
-      cObserv     += Rtrim( ( TDataView():PresupuestosClientes( nView ) )->cRetPor ) + Space( 1 )
+   if !Empty( ( D():PresupuestosClientes( nView ) )->cRetPor )
+      cObserv     += Rtrim( ( D():PresupuestosClientes( nView ) )->cRetPor ) + Space( 1 )
    end if
 
-   if !Empty( ( TDataView():PresupuestosClientes( nView ) )->cRetMat )
-      cObserv     += Rtrim( ( TDataView():PresupuestosClientes( nView ) )->cRetMat ) + Space( 1 )
+   if !Empty( ( D():PresupuestosClientes( nView ) )->cRetMat )
+      cObserv     += Rtrim( ( D():PresupuestosClientes( nView ) )->cRetMat ) + Space( 1 )
    end if
 
    /*
-   if ( TDataView():Clientes( nView ) )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->cCodCli ) )
+   if ( D():Clientes( nView ) )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cCodCli ) )
 
-      if !Empty( ( TDataView():Clientes( nView ) )->Telefono )
-         cObserv  += "Télefono : " + Rtrim( ( TDataView():Clientes( nView ) )->Telefono ) + Space( 1 )
+      if !Empty( ( D():Clientes( nView ) )->Telefono )
+         cObserv  += "Télefono : " + Rtrim( ( D():Clientes( nView ) )->Telefono ) + Space( 1 )
       end if
 
-      if !Empty( ( TDataView():Clientes( nView ) )->Movil )
-         cObserv  += "Móvil : " + Rtrim( ( TDataView():Clientes( nView ) )->Movil ) + Space( 1 )
+      if !Empty( ( D():Clientes( nView ) )->Movil )
+         cObserv  += "Móvil : " + Rtrim( ( D():Clientes( nView ) )->Movil ) + Space( 1 )
       end if
 
-      if !Empty( ( TDataView():Clientes( nView ) )->Fax )
-         cObserv  += "Fax : " + Rtrim( ( TDataView():Clientes( nView ) )->Fax ) + Space( 1 )
+      if !Empty( ( D():Clientes( nView ) )->Fax )
+         cObserv  += "Fax : " + Rtrim( ( D():Clientes( nView ) )->Fax ) + Space( 1 )
       end if
 
    end if
@@ -7377,9 +7377,9 @@ STATIC FUNCTION DupSerie( oWndBrw )
    local oSerFin
    local oTxtDup
    local nTxtDup     := 0
-   local nRecno      := ( TDataView():PresupuestosClientes( nView ) )->( Recno() )
-   local nOrdAnt     := ( TDataView():PresupuestosClientes( nView ) )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, ( TDataView():PresupuestosClientes( nView ) )->nNumPre, ( TDataView():PresupuestosClientes( nView ) )->cSufPre, GetSysDate() )
+   local nRecno      := ( D():PresupuestosClientes( nView ) )->( Recno() )
+   local nOrdAnt     := ( D():PresupuestosClientes( nView ) )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( D():PresupuestosClientes( nView ) )->cSerPre, ( D():PresupuestosClientes( nView ) )->nNumPre, ( D():PresupuestosClientes( nView ) )->cSufPre, GetSysDate() )
    local lCancel     := .f.
    local oBtnAceptar
    local oBtnCancel
@@ -7474,15 +7474,15 @@ STATIC FUNCTION DupSerie( oWndBrw )
  REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
-      TOTAL    ( TDataView():PresupuestosClientes( nView ) )->( OrdKeyCount() ) ;
+      TOTAL    ( D():PresupuestosClientes( nView ) )->( OrdKeyCount() ) ;
       OF       oDlg
 
       oDlg:AddFastKey( VK_F5, {|| DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, @lCancel, cFecDoc ) } )
 
    ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
 
-   ( TDataView():PresupuestosClientes( nView ) )->( dbGoTo( nRecNo ) )
-   ( TDataView():PresupuestosClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( D():PresupuestosClientes( nView ) )->( dbGoTo( nRecNo ) )
+   ( D():PresupuestosClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oWndBrw:SetFocus()
    oWndBrw:Refresh()
@@ -7502,28 +7502,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
    if oDesde:nRadio == 1
 
-      nOrd              := ( TDataView():PresupuestosClientes( nView ) )->( OrdSetFocus( "nNumPre" ) )
+      nOrd              := ( D():PresupuestosClientes( nView ) )->( OrdSetFocus( "nNumPre" ) )
 
-      ( TDataView():PresupuestosClientes( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+      ( D():PresupuestosClientes( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
 
-      while !lCancel .and. ( TDataView():PresupuestosClientes( nView ) )->( !eof() )
+      while !lCancel .and. ( D():PresupuestosClientes( nView ) )->( !eof() )
 
-         if ( TDataView():PresupuestosClientes( nView ) )->cSerPre >= oDesde:cSerieInicio  .and.;
-            ( TDataView():PresupuestosClientes( nView ) )->cSerPre <= oDesde:cSerieFin     .and.;
-            ( TDataView():PresupuestosClientes( nView ) )->nNumPre >= oDesde:nNumeroInicio .and.;
-            ( TDataView():PresupuestosClientes( nView ) )->nNumPre <= oDesde:nNumeroFin    .and.;
-            ( TDataView():PresupuestosClientes( nView ) )->cSufPre >= oDesde:cSufijoInicio .and.;
-            ( TDataView():PresupuestosClientes( nView ) )->cSufPre <= oDesde:cSufijoFin
+         if ( D():PresupuestosClientes( nView ) )->cSerPre >= oDesde:cSerieInicio  .and.;
+            ( D():PresupuestosClientes( nView ) )->cSerPre <= oDesde:cSerieFin     .and.;
+            ( D():PresupuestosClientes( nView ) )->nNumPre >= oDesde:nNumeroInicio .and.;
+            ( D():PresupuestosClientes( nView ) )->nNumPre <= oDesde:nNumeroFin    .and.;
+            ( D():PresupuestosClientes( nView ) )->cSufPre >= oDesde:cSufijoInicio .and.;
+            ( D():PresupuestosClientes( nView ) )->cSufPre <= oDesde:cSufijoFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) ) + "/" + ( TDataView():PresupuestosClientes( nView ) )->cSufPre
+            oTxtDup:cText  := "Duplicando : " + ( D():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) ) + "/" + ( D():PresupuestosClientes( nView ) )->cSufPre
 
             DupPresupuesto( cFecDoc )
 
          end if
 
-         ( TDataView():PresupuestosClientes( nView ) )->( dbSkip() )
+         ( D():PresupuestosClientes( nView ) )->( dbSkip() )
 
          ++nProcesed
 
@@ -7531,28 +7531,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( TDataView():PresupuestosClientes( nView ) )->( OrdSetFocus( nOrd ) )
+      ( D():PresupuestosClientes( nView ) )->( OrdSetFocus( nOrd ) )
 
    else
 
-      nOrd              := ( TDataView():PresupuestosClientes( nView ) )->( OrdSetFocus( "dFecPre" ) )
+      nOrd              := ( D():PresupuestosClientes( nView ) )->( OrdSetFocus( "dFecPre" ) )
 
-      ( TDataView():PresupuestosClientes( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+      ( D():PresupuestosClientes( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
 
-      while !lCancel .and. ( TDataView():PresupuestosClientes( nView ) )->( !eof() )
+      while !lCancel .and. ( D():PresupuestosClientes( nView ) )->( !eof() )
 
-         if ( TDataView():PresupuestosClientes( nView ) )->dFecPre >= oDesde:dFechaInicio  .and.;
-            ( TDataView():PresupuestosClientes( nView ) )->dFecPre <= oDesde:dFechaFin
+         if ( D():PresupuestosClientes( nView ) )->dFecPre >= oDesde:dFechaInicio  .and.;
+            ( D():PresupuestosClientes( nView ) )->dFecPre <= oDesde:dFechaFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) ) + "/" + ( TDataView():PresupuestosClientes( nView ) )->cSufPre
+            oTxtDup:cText  := "Duplicando : " + ( D():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) ) + "/" + ( D():PresupuestosClientes( nView ) )->cSufPre
 
             DupPresupuesto( cFecDoc )
 
          end if
 
-         ( TDataView():PresupuestosClientes( nView ) )->( dbSkip() )
+         ( D():PresupuestosClientes( nView ) )->( dbSkip() )
 
          ++nProcesed
 
@@ -7560,7 +7560,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( TDataView():PresupuestosClientes( nView ) )->( OrdSetFocus( nOrd ) )
+      ( D():PresupuestosClientes( nView ) )->( OrdSetFocus( nOrd ) )
 
    end if
 
@@ -7636,20 +7636,20 @@ STATIC FUNCTION DupPresupuesto( cFecDoc )
 
    //Recogemos el nuevo numero de presupuesto--------------------------------------
 
-   nNewNumPre  := nNewDoc( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, TDataView():PresupuestosClientes( nView ), "NPRECLI" )
+   nNewNumPre  := nNewDoc( ( D():PresupuestosClientes( nView ) )->cSerPre, D():PresupuestosClientes( nView ), "NPRECLI" )
 
    //Duplicamos las cabeceras--------------------------------------------------
 
-   PreRecDup( TDataView():PresupuestosClientes( nView ), ( TDataView():PresupuestosClientes( nView ) )->cSerPre, nNewNumPre, ( TDataView():PresupuestosClientes( nView ) )->cSufPre, .t., cFecDoc )
+   PreRecDup( D():PresupuestosClientes( nView ), ( D():PresupuestosClientes( nView ) )->cSerPre, nNewNumPre, ( D():PresupuestosClientes( nView ) )->cSufPre, .t., cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfPreCliL )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre ) )
+   if ( dbfPreCliL )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) )
 
-      while ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre == ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre .and. ;
+      while ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre == ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre .and. ;
             !( dbfPreCliL )->( Eof() )
 
-         PreRecDup( dbfPreCliL, ( TDataView():PresupuestosClientes( nView ) )->cSerPre, nNewNumPre, ( TDataView():PresupuestosClientes( nView ) )->cSufPre, .f. )
+         PreRecDup( dbfPreCliL, ( D():PresupuestosClientes( nView ) )->cSerPre, nNewNumPre, ( D():PresupuestosClientes( nView ) )->cSufPre, .f. )
 
          ( dbfPreCliL )->( dbSkip() )
 
@@ -7659,12 +7659,12 @@ STATIC FUNCTION DupPresupuesto( cFecDoc )
 
    //Duplicamos los documentos-------------------------------------------------
 
-   if ( dbfPreCliD )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre ) )
+   if ( dbfPreCliD )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) )
 
-      while ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre == ( dbfPreCliD )->cSerPre + Str( ( dbfPreCliD )->nNumPre ) + ( dbfPreCliD )->cSufPre .and. ;
+      while ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre == ( dbfPreCliD )->cSerPre + Str( ( dbfPreCliD )->nNumPre ) + ( dbfPreCliD )->cSufPre .and. ;
             !( dbfPreCliD )->( Eof() )
 
-         PreRecDup( dbfPreCliD, ( TDataView():PresupuestosClientes( nView ) )->cSerPre, nNewNumPre, ( TDataView():PresupuestosClientes( nView ) )->cSufPre, .f. )
+         PreRecDup( dbfPreCliD, ( D():PresupuestosClientes( nView ) )->cSerPre, nNewNumPre, ( D():PresupuestosClientes( nView ) )->cSufPre, .f. )
 
          ( dbfPreCliD )->( dbSkip() )
 
@@ -7883,7 +7883,7 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "Presupuestos", ( TDataView():PresupuestosClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "Presupuestos", ( D():PresupuestosClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Presupuestos", cItemsToReport( aItmPreCli() ) )
 
    oFr:SetWorkArea(     "Lineas de presupuestos", ( dbfPreCliL )->( Select() ) )
@@ -7898,7 +7898,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Clientes", ( TDataView():Clientes( nView ) )->( Select() ) )
+   oFr:SetWorkArea(     "Clientes", ( D():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
    oFr:SetWorkArea(     "Obras", ( dbfObrasT )->( Select() ) )
@@ -7931,18 +7931,18 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
-   oFr:SetMasterDetail( "Presupuestos", "Lineas de presupuestos",          {|| ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre } )
-   oFr:SetMasterDetail( "Presupuestos", "Incidencias de presupuestos",     {|| ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre } )
-   oFr:SetMasterDetail( "Presupuestos", "Documentos de presupuestos",      {|| ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre } )
+   oFr:SetMasterDetail( "Presupuestos", "Lineas de presupuestos",          {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
+   oFr:SetMasterDetail( "Presupuestos", "Incidencias de presupuestos",     {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
+   oFr:SetMasterDetail( "Presupuestos", "Documentos de presupuestos",      {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
    oFr:SetMasterDetail( "Presupuestos", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Presupuestos", "Clientes",                        {|| ( TDataView():PresupuestosClientes( nView ) )->cCodCli } )
-   oFr:SetMasterDetail( "Presupuestos", "Obras",                           {|| ( TDataView():PresupuestosClientes( nView ) )->cCodCli + ( TDataView():PresupuestosClientes( nView ) )->cCodObr } )
-   oFr:SetMasterDetail( "Presupuestos", "Almacen",                         {|| ( TDataView():PresupuestosClientes( nView ) )->cCodAlm } )
-   oFr:SetMasterDetail( "Presupuestos", "Rutas",                           {|| ( TDataView():PresupuestosClientes( nView ) )->cCodRut } )
-   oFr:SetMasterDetail( "Presupuestos", "Agentes",                         {|| ( TDataView():PresupuestosClientes( nView ) )->cCodAge } )
-   oFr:SetMasterDetail( "Presupuestos", "Formas de pago",                  {|| ( TDataView():PresupuestosClientes( nView ) )->cCodPgo } )
-   oFr:SetMasterDetail( "Presupuestos", "Transportistas",                  {|| ( TDataView():PresupuestosClientes( nView ) )->cCodTrn } )
-   oFr:SetMasterDetail( "Presupuestos", "Usuarios",                        {|| ( TDataView():PresupuestosClientes( nView ) )->cCodUsr } )
+   oFr:SetMasterDetail( "Presupuestos", "Clientes",                        {|| ( D():PresupuestosClientes( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Presupuestos", "Obras",                           {|| ( D():PresupuestosClientes( nView ) )->cCodCli + ( D():PresupuestosClientes( nView ) )->cCodObr } )
+   oFr:SetMasterDetail( "Presupuestos", "Almacen",                         {|| ( D():PresupuestosClientes( nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "Presupuestos", "Rutas",                           {|| ( D():PresupuestosClientes( nView ) )->cCodRut } )
+   oFr:SetMasterDetail( "Presupuestos", "Agentes",                         {|| ( D():PresupuestosClientes( nView ) )->cCodAge } )
+   oFr:SetMasterDetail( "Presupuestos", "Formas de pago",                  {|| ( D():PresupuestosClientes( nView ) )->cCodPgo } )
+   oFr:SetMasterDetail( "Presupuestos", "Transportistas",                  {|| ( D():PresupuestosClientes( nView ) )->cCodTrn } )
+   oFr:SetMasterDetail( "Presupuestos", "Usuarios",                        {|| ( D():PresupuestosClientes( nView ) )->cCodUsr } )
 
    oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",             {|| ( dbfPreCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de presupuestos", "Ofertas",               {|| ( dbfPreCliL )->cRef } )
@@ -8052,14 +8052,14 @@ Return nil
 Static Function YearComboBoxChange()
 
 	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( TDataView():PresupuestosClientes( nView ) )
-      CreateUserFilter( "", TDataView():PresupuestosClientes( nView ), .f., , , "all" )
+		DestroyFastFilter( D():PresupuestosClientes( nView ) )
+      CreateUserFilter( "", D():PresupuestosClientes( nView ), .f., , , "all" )
 	 else
-		DestroyFastFilter( TDataView():PresupuestosClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox(), TDataView():PresupuestosClientes( nView ), .f., , , "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox() )
+		DestroyFastFilter( D():PresupuestosClientes( nView ) )
+      CreateUserFilter( "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox(), D():PresupuestosClientes( nView ), .f., , , "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox() )
 	 end if
 
-	 ( TDataView():PresupuestosClientes( nView ) )->( dbGoTop() )
+	 ( D():PresupuestosClientes( nView ) )->( dbGoTop() )
 
 	 oWndBrw:Refresh()
 
@@ -8138,14 +8138,14 @@ Static Function ImprimirSeriesPresupuestosClientes( nDevice, lExt )
 
    // Establecemos sus valores-------------------------------------------------
 
-   oPrinter:Serie(      ( TDataView():PresupuestosClientes( nView ) )->cSerPre )
-   oPrinter:Documento(  ( TDataView():PresupuestosClientes( nView ) )->nNumPre )
-   oPrinter:Sufijo(     ( TDataView():PresupuestosClientes( nView ) )->cSufPre )
+   oPrinter:Serie(      ( D():PresupuestosClientes( nView ) )->cSerPre )
+   oPrinter:Documento(  ( D():PresupuestosClientes( nView ) )->nNumPre )
+   oPrinter:Sufijo(     ( D():PresupuestosClientes( nView ) )->cSufPre )
 
    if lExt
 
-      oPrinter:oFechaInicio:cText( ( TDataView():PresupuestosClientes( nView ) )->dFecPre )
-      oPrinter:oFechaFin:cText( ( TDataView():PresupuestosClientes( nView ) )->dFecPre )
+      oPrinter:oFechaInicio:cText( ( D():PresupuestosClientes( nView ) )->dFecPre )
+      oPrinter:oFechaFin:cText( ( D():PresupuestosClientes( nView ) )->dFecPre )
 
    end if
 
@@ -8153,28 +8153,28 @@ Static Function ImprimirSeriesPresupuestosClientes( nDevice, lExt )
 
    // Formato de documento-----------------------------------------------------
 
-   cFormato          := cFormatoDocumento( ( TDataView():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", TDataView():Contadores( nView ) )
+   cFormato          := cFormatoDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", D():Contadores( nView ) )
    if empty( cFormato )
-      cFormato       := cFirstDoc( "RC", TDataView():Documentos( nView ) )
+      cFormato       := cFirstDoc( "RC", D():Documentos( nView ) )
    end if
    oPrinter:oFormatoDocumento:cText( cFormato )
 
    // Codeblocks para que trabaje----------------------------------------------
 
-   aStatus           := TDataview():GetInitStatus( "PreCliT", nView )
+   aStatus           := D():GetInitStatus( "PreCliT", nView )
 
-   oPrinter:bInit    := {||   ( TDataview():PresupuestosClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
+   oPrinter:bInit    := {||   ( D():PresupuestosClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
 
-   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( TDataView():PresupuestosClientesId( nView ) )                  .and. ;
-                              ( TDataView():PresupuestosClientes( nView ) )->( !eof() ) }
+   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( D():PresupuestosClientesId( nView ) )                  .and. ;
+                              ( D():PresupuestosClientes( nView ) )->( !eof() ) }
 
-   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( TDataView():PresupuestosClientes( nView ) )->dFecPre )           .and. ;
-                              oPrinter:InRangeCliente( ( TDataView():PresupuestosClientes( nView ) )->cCodCli )         .and. ;
-                              oPrinter:InRangeGrupoCliente( retGrpCli( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) ) }
+   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():PresupuestosClientes( nView ) )->dFecPre )           .and. ;
+                              oPrinter:InRangeCliente( ( D():PresupuestosClientes( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeGrupoCliente( retGrpCli( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ) ) ) }
 
-   oPrinter:bSkip    := {||   ( TDataView():PresupuestosClientes( nView ) )->( dbSkip() ) }
+   oPrinter:bSkip    := {||   ( D():PresupuestosClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenPreCli( nDevice, "Imprimiendo documento : " + TDataView():PresupuestosClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenPreCli( nDevice, "Imprimiendo documento : " + D():PresupuestosClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 
@@ -8184,7 +8184,7 @@ Static Function ImprimirSeriesPresupuestosClientes( nDevice, lExt )
 
    // Restore -----------------------------------------------------------------
 
-   TDataview():SetStatus( "PreCliT", nView, aStatus )
+   D():SetStatus( "PreCliT", nView, aStatus )
    
    if !Empty( oWndBrw )
       oWndBrw:Refresh()
@@ -8229,12 +8229,12 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    local n
    local nDescuentosLineas := 0
 
-   DEFAULT cPreCliT        := TDataView():PresupuestosClientes( nView )
+   DEFAULT cPreCliT        := D():PresupuestosClientes( nView )
    DEFAULT cPreCliL        := dbfPreCliL
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT cFPago          := dbfFPago
-   DEFAULT cPresupuesto    := ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre
+   DEFAULT cPresupuesto    := ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre
    DEFAULT lPic            := .f.
 
    if Empty( Select( cPreCliT ) )
@@ -11149,7 +11149,7 @@ Function AppPreCli( cCodCli, cCodArt, lOpenBrowse )
    else
 
       if OpenFiles( .t. )
-         WinAppRec( nil, bEdtRec, TDataView():PresupuestosClientes( nView ), cCodCli, cCodArt )
+         WinAppRec( nil, bEdtRec, D():PresupuestosClientes( nView ), cCodCli, cCodArt )
          CloseFiles()
       end if
 
@@ -11173,7 +11173,7 @@ FUNCTION EdtPreCli( cNumPre, lOpenBrowse )
    if lOpenBrowse
 
       if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
             oWndBrw:RecEdit()
          else
             MsgStop( "No se encuentra presupuesto" )
@@ -11184,8 +11184,8 @@ FUNCTION EdtPreCli( cNumPre, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
-            WinEdtRec( nil, bEdtRec, TDataView():PresupuestosClientes( nView ) )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
+            WinEdtRec( nil, bEdtRec, D():PresupuestosClientes( nView ) )
          end if
 
          CloseFiles()
@@ -11213,7 +11213,7 @@ FUNCTION ZooPreCli( cNumPre, lOpenBrowse, lPda )
    if lOpenBrowse
 
       if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
             oWndBrw:RecZoom()
          else
             MsgStop( "No se encuentra presupuesto" )
@@ -11224,8 +11224,8 @@ FUNCTION ZooPreCli( cNumPre, lOpenBrowse, lPda )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
-            WinZooRec( nil, bEdtRec, TDataView():PresupuestosClientes( nView ) )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
+            WinZooRec( nil, bEdtRec, D():PresupuestosClientes( nView ) )
          end if
 
          CloseFiles()
@@ -11252,8 +11252,8 @@ FUNCTION DelPreCli( cNumPre, lOpenBrowse )
    if lOpenBrowse
 
       if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
-            WinDelRec( nil, TDataView():PresupuestosClientes( nView ), {|| QuiPreCli() } )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
+            WinDelRec( nil, D():PresupuestosClientes( nView ), {|| QuiPreCli() } )
          else
             MsgStop( "No se encuentra presupuesto" )
          end if
@@ -11263,8 +11263,8 @@ FUNCTION DelPreCli( cNumPre, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
-            WinDelRec( nil, TDataView():PresupuestosClientes( nView ), {|| QuiPreCli() } )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
+            WinDelRec( nil, D():PresupuestosClientes( nView ), {|| QuiPreCli() } )
          end if
 
          CloseFiles()
@@ -11291,7 +11291,7 @@ FUNCTION PrnPreCli( cNumPre, lOpenBrowse )
    if lOpenBrowse
 
       if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
             ImprimirSeriesPresupuestosClientes( IS_PRINTER, .t. )
             //GenPreCli( IS_PRINTER )
          else
@@ -11302,7 +11302,7 @@ FUNCTION PrnPreCli( cNumPre, lOpenBrowse )
    else
 
       if OpenFiles( .t. )
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
             ImprimirSeriesPresupuestosClientes( IS_PRINTER, .t. )
             //GenPreCli( IS_PRINTER )
          else
@@ -11331,7 +11331,7 @@ FUNCTION VisPreCli( cNumPre, lOpenBrowse )
    if lOpenBrowse
 
       if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
             ImprimirSeriesPresupuestosClientes( IS_SCREEN, .t. )
             //GenPreCli( IS_SCREEN )
          else
@@ -11343,7 +11343,7 @@ FUNCTION VisPreCli( cNumPre, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPre, "nNumPre", TDataView():PresupuestosClientes( nView ) )
+         if dbSeekInOrd( cNumPre, "nNumPre", D():PresupuestosClientes( nView ) )
             ImprimirSeriesPresupuestosClientes( IS_SCREEN, .t. )
             //GenPreCli( IS_SCREEN )
          end if
@@ -11364,7 +11364,7 @@ FUNCTION QuiPreCli()
    local nOrdInc
    local nOrdDoc
 
-   if ( TDataView():PresupuestosClientes( nView ) )->lCloPre .and. !oUser():lAdministrador()
+   if ( D():PresupuestosClientes( nView ) )->lCloPre .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar presupuestos cerrados los administradores." )
       Return .f.
    end if
@@ -11378,7 +11378,7 @@ FUNCTION QuiPreCli()
    Detalle---------------------------------------------------------------------
    */
 
-   while ( dbfPreCliL )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView )  )->cSufPre ) ) .and. !( dbfPreCliL )->( eof() )
+   while ( dbfPreCliL )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView )  )->cSufPre ) ) .and. !( dbfPreCliL )->( eof() )
       if dbLock( dbfPreCliL )
          ( dbfPreCliL )->( dbDelete() )
          ( dbfPreCliL )->( dbUnLock() )
@@ -11389,7 +11389,7 @@ FUNCTION QuiPreCli()
    Documentos------------------------------------------------------------------
    */
 
-   while ( dbfPreCliI )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView )  )->cSufPre ) ) .and. !( dbfPreCliI )->( eof() )
+   while ( dbfPreCliI )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView )  )->cSufPre ) ) .and. !( dbfPreCliI )->( eof() )
       if dbLock( dbfPreCliI )
          ( dbfPreCliI )->( dbDelete() )
          ( dbfPreCliI )->( dbUnLock() )
@@ -11400,7 +11400,7 @@ FUNCTION QuiPreCli()
    Incidencias-----------------------------------------------------------------
    */
 
-   while ( dbfPreCliD )->( dbSeek( ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView )  )->cSufPre ) ) .and. !( dbfPreCliD )->( eof() )
+   while ( dbfPreCliD )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView )  )->cSufPre ) ) .and. !( dbfPreCliD )->( eof() )
       if dbLock( dbfPreCliD )
          ( dbfPreCliD )->( dbDelete() )
          ( dbfPreCliD )->( dbUnLock() )
@@ -11696,7 +11696,7 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
 
-  local cFilePdf       := cPatTmp() + "PresupuestoCliente" + StrTran( ( TDataView():PresupuestosClientes( nView ) )->cSerPre + Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) + ( TDataView():PresupuestosClientes( nView ) )->cSufPre, " ", "" ) + ".Pdf"
+  local cFilePdf       := cPatTmp() + "PresupuestoCliente" + StrTran( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -11790,15 +11790,15 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetDe(           uFieldEmpresa( "cNombre" ) )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( TDataView():PresupuestosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envio de presupuesto de cliente número " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro presupuesto de cliente " + ( TDataView():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( TDataView():PresupuestosClientes( nView ) )->nNumPre ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( TDataView():PresupuestosClientes( nView ) )->dFecPre ) + Space( 1 ) )
+                  :SetPara(         RetFld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
+                  :SetAsunto(       "Envio de presupuesto de cliente número " + ( D():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro presupuesto de cliente " + ( D():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( D():PresupuestosClientes( nView ) )->dFecPre ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( TDataView():PresupuestosClientes( nView ), aItmPreCli() )
+                  :GeneralResource( D():PresupuestosClientes( nView ), aItmPreCli() )
 
                end with
 

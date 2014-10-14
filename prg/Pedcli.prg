@@ -478,16 +478,16 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    local oDevice
    local nNumPed
 
-   if ( TDataView():PedidosClientes( nView ) )->( Lastrec() ) == 0
+   if ( D():PedidosClientes( nView ) )->( Lastrec() ) == 0
       return nil
    end if
 
-   nNumPed              := ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed
+   nNumPed              := ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo pedido"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "PC", dbfDoc )
@@ -519,23 +519,23 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    else
 
-      nTotPedCli( nNumPed, TDataView():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp() )
+      nTotPedCli( nNumPed, D():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp() )
       nPagPedCli( nNumPed, dbfPedCliP, dbfDiv, cDivEmp() )
 
       ( dbfPedCliL )->( dbSeek( nNumPed ) )
       ( dbfPedCliP )->( dbSeek( nNumPed ) )
-      ( TDataView():Clientes( nView )  )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->CCODCLI ) )
-      ( dbfAgent   )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->CCODAGE ) )
-      ( dbfFPago   )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->CCODPGO ) )
-      ( dbfObrasT  )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->CCODCLI + ( TDataView():PedidosClientes( nView ) )->CCODOBR ) )
+      ( D():Clientes( nView )  )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODCLI ) )
+      ( dbfAgent   )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODAGE ) )
+      ( dbfFPago   )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODPGO ) )
+      ( dbfObrasT  )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODCLI + ( D():PedidosClientes( nView ) )->CCODOBR ) )
 
-      oTrans:oDbf:Seek( ( TDataView():PedidosClientes( nView ) )->cCodTrn )
+      oTrans:oDbf:Seek( ( D():PedidosClientes( nView ) )->cCodTrn )
 
-      private cDbf         := TDataView():PedidosClientes( nView )
+      private cDbf         := D():PedidosClientes( nView )
       private cDbfCol      := dbfPedCliL
       private cDbfPag      := dbfPedCliP
-      private cCliente     := TDataView():Clientes( nView )
-      private cDbfCli      := TDataView():Clientes( nView )
+      private cCliente     := D():Clientes( nView )
+      private cDbfCli      := D():Clientes( nView )
       private cDbfObr      := dbfObrasT
       private cAgente      := dbfAgent
       private cDbfAge      := dbfAgent
@@ -620,7 +620,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    end if
 
-   lChgImpDoc( TDataView():PedidosClientes( nView ) )
+   lChgImpDoc( D():PedidosClientes( nView ) )
 
 RETURN NIL
 
@@ -678,21 +678,21 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      nView             := TDataView():CreateView()
+      nView             := D():CreateView()
 
       /*
     	Atipicas de clientes-----------------------------------------------------
       */
 
-      TDataView():Atipicas( nView )
+      D():Atipicas( nView )
 
-      TDataView():PedidosClientes( nView )
+      D():PedidosClientes( nView )
 
-      TDataView():Clientes( nView )
+      D():Clientes( nView )
 
-      TDataView():GruposClientes( nView )
+      D():GruposClientes( nView )
 
-      TDataView():Get( "CliInc", nView )
+      D():Get( "CliInc", nView )
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -739,7 +739,7 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 /*
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @TDataView():Clientes( nView ) ) )
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 */
       USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
@@ -986,7 +986,7 @@ STATIC FUNCTION OpenFiles( lExt )
             cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
          end if 
 
-         ( TDataView():PedidosClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
+         ( D():PedidosClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
 
       end if
 
@@ -1069,12 +1069,12 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
                "Comercio electrónico";
       MRU      "Clipboard_empty_user1_16";
       BITMAP   clrTopArchivos ;
-      ALIAS    ( TDataView():PedidosClientes( nView ) );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, TDataView():PedidosClientes( nView ), cCodCli, cCodArt, cCodPre ) ) ;
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, TDataView():PedidosClientes( nView ), cCodCli, cCodArt, cCodPre ) ) ;
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, TDataView():PedidosClientes( nView ), cCodCli, cCodArt, cCodPre ) ) ;
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, TDataView():PedidosClientes( nView ) ) ) ;
-      DELETE   ( WinDelRec( oWndBrw:oBrw, TDataView():PedidosClientes( nView ), {|| QuiPedCli() } ) ) ;
+      ALIAS    ( D():PedidosClientes( nView ) );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():PedidosClientes( nView ), cCodCli, cCodArt, cCodPre ) ) ;
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, D():PedidosClientes( nView ), cCodCli, cCodArt, cCodPre ) ) ;
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, D():PedidosClientes( nView ), cCodCli, cCodArt, cCodPre ) ) ;
+      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, D():PedidosClientes( nView ) ) ) ;
+      DELETE   ( WinDelRec( oWndBrw:oBrw, D():PedidosClientes( nView ), {|| QuiPedCli() } ) ) ;
       LEVEL    nLevel ;
       OF       oWnd
 
@@ -1086,7 +1086,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->lCloPed }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lCloPed }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Zoom16" )
@@ -1096,7 +1096,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Estado"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| ( TDataView():PedidosClientes( nView ) )->nEstado }
+         :bBmpData         := {|| ( D():PedidosClientes( nView ) )->nEstado }
          :nWidth           := 20
          :AddResource( "Bullet_Square_Red_16" )
          :AddResource( "Bullet_Square_Yellow_16" )
@@ -1108,7 +1108,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->lSndDoc }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Lbl16" )
@@ -1118,7 +1118,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Incidencia"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nEstadoIncidencia( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) }
+         :bBmpData         := {|| nEstadoIncidencia( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) }
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Bullet_Square_Red_16" )
@@ -1130,8 +1130,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Producción"
          :nHeadBmpNo       := 4
-         :bStrData         := {|| cEstadoProduccion( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) }
-         :bBmpData         := {|| nEstadoProduccion( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) }
+         :bStrData         := {|| cEstadoProduccion( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) }
+         :bBmpData         := {|| nEstadoProduccion( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) }
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Bullet_Square_Green_16" )
@@ -1144,7 +1144,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Impreso"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->lImprimido }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -1156,7 +1156,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cSortOrder       := "lInternet"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->lInternet }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lInternet }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -1167,7 +1167,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Listo para entregar"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->lPdtCrg }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lPdtCrg }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -1176,14 +1176,14 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Generado"
-         :bEditValue       := {|| aEstGen[ Max( Min( ( TDataView():PedidosClientes( nView ) )->nGenerado, len( aEstGen ) ), 1 ) ] }
+         :bEditValue       := {|| aEstGen[ Max( Min( ( D():PedidosClientes( nView ) )->nGenerado, len( aEstGen ) ), 1 ) ] }
          :nWidth           := 60
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Recibido"
-         :bEditValue       := {|| aEstGen[ Max( Min( ( TDataView():PedidosClientes( nView ) )->nRecibido, len( aEstGen ) ), 1 ) ] }
+         :bEditValue       := {|| aEstGen[ Max( Min( ( D():PedidosClientes( nView ) )->nRecibido, len( aEstGen ) ), 1 ) ] }
          :nWidth           := 60
          :lHide            := .t.
       end with
@@ -1191,7 +1191,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Entrega"
          :cSortOrder       := "dFecEnt"
-         :bEditValue       := {|| Dtoc( ( TDataView():PedidosClientes( nView ) )->dFecEnt ) }
+         :bEditValue       := {|| Dtoc( ( D():PedidosClientes( nView ) )->dFecEnt ) }
          :nWidth           := 80
          :lHide            := .t.
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -1199,7 +1199,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipPed[ if( ( TDataView():PedidosClientes( nView ) )->lAlquiler, 2, 1 ) ] }
+         :bEditValue       := {|| aTipPed[ if( ( D():PedidosClientes( nView ) )->lAlquiler, 2, 1 ) ] }
          :nWidth           := 50
          :lHide            := .t.
       end with
@@ -1207,21 +1207,21 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumPed"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cSerPed + "/" + AllTrim( Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) ) }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cSerPed + "/" + AllTrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cSufPed }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cSufPed }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión"
-         :bEditValue       := {|| Trans( ( TDataView():PedidosClientes( nView ) )->cTurPed, "######" ) }
+         :bEditValue       := {|| Trans( ( D():PedidosClientes( nView ) )->cTurPed, "######" ) }
          :nWidth           := 40
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1231,28 +1231,28 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := "dFecPed"
-         :bEditValue       := {|| Dtoc( ( TDataView():PedidosClientes( nView ) )->dFecPed ) }
+         :bEditValue       := {|| Dtoc( ( D():PedidosClientes( nView ) )->dFecPed ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cCodCaj }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodCaj }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cCodUsr }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodUsr }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Situación"
-         :bEditValue       := {|| AllTrim( ( TDataView():PedidosClientes( nView ) )->cSituac ) }
+         :bEditValue       := {|| AllTrim( ( D():PedidosClientes( nView ) )->cSituac ) }
          :nWidth           := 80
          :lHide            := .t.
       end with
@@ -1260,7 +1260,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( TDataView():PedidosClientes( nView ) )->cCodCli ) }
+         :bEditValue       := {|| AllTrim( ( D():PedidosClientes( nView ) )->cCodCli ) }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1268,7 +1268,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cNomCli }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cNomCli }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1276,41 +1276,41 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cCodAge }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodAge }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cCodRut }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodRut }
          :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Forma pago"
-         :bEditValue       := {|| if( !Empty( ( TDataView():PedidosClientes( nView ) )->cCodPgo ), ( TDataView():PedidosClientes( nView ) )->cCodPgo + " - " + AllTrim( RetFld( ( TDataView():PedidosClientes( nView ) )->cCodPgo, dbfFPago, "cDesPago" ) ), "" ) }
+         :bEditValue       := {|| if( !Empty( ( D():PedidosClientes( nView ) )->cCodPgo ), ( D():PedidosClientes( nView ) )->cCodPgo + " - " + AllTrim( RetFld( ( D():PedidosClientes( nView ) )->cCodPgo, dbfFPago, "cDesPago" ) ), "" ) }
          :nWidth           := 200
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cCodAlm }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodAlm }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cCodObr }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodObr }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Entregado " + cDivEmp()
-         :bEditValue       := {|| nPagPedCli( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, dbfPedCliP, dbfDiv, if( lEuro, cDivChg(), cDivEmp() ), .t. ) }
+         :bEditValue       := {|| nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfPedCliP, dbfDiv, if( lEuro, cDivChg(), cDivEmp() ), .t. ) }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1319,8 +1319,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->nTotNet }
-         :cEditPicture     := cPorDiv( ( TDataView():PedidosClientes( nView ) )->cDivPed, dbfDiv )
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nTotNet }
+         :cEditPicture     := cPorDiv( ( D():PedidosClientes( nView ) )->cDivPed, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1329,8 +1329,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->nTotIva }
-         :cEditPicture     := cPorDiv( ( TDataView():PedidosClientes( nView ) )->cDivPed, dbfDiv )
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nTotIva }
+         :cEditPicture     := cPorDiv( ( D():PedidosClientes( nView ) )->cDivPed, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1339,8 +1339,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->nTotReq }
-         :cEditPicture     := cPorDiv( ( TDataView():PedidosClientes( nView ) )->cDivPed, dbfDiv )
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nTotReq }
+         :cEditPicture     := cPorDiv( ( D():PedidosClientes( nView ) )->cDivPed, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1349,8 +1349,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->nTotPed }
-         :cEditPicture     := cPorDiv( ( TDataView():PedidosClientes( nView ) )->cDivPed, dbfDiv )
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nTotPed }
+         :cEditPicture     := cPorDiv( ( D():PedidosClientes( nView ) )->cDivPed, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1358,7 +1358,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( TDataView():PedidosClientes( nView ) )->cDivPed ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( D():PedidosClientes( nView ) )->cDivPed ), dbfDiv ) }
          :nWidth           := 30
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1366,7 +1366,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Pendiente"
-         :bEditValue       := {|| ( nTotPedCli( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, TDataView():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, nil, .f. ) - nPagPedCli( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, dbfPedCliP, dbfDiv, nil, .f. ) ) }
+         :bEditValue       := {|| ( nTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, nil, .f. ) - nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfPedCliP, dbfDiv, nil, .f. ) ) }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1376,7 +1376,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Comisión agente"
-         :bEditValue       := {|| sTotPedCli( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, TDataView():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv ):nTotalAgente }
+         :bEditValue       := {|| sTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv ):nTotalAgente }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1386,14 +1386,14 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Transportista"
-         :bEditValue       := {|| if( Empty( ( TDataView():PedidosClientes( nView ) )->cCodTrn ), "", ( TDataView():PedidosClientes( nView ) )->cCodTrn + " - " + AllTrim( RetFld( ( TDataView():PedidosClientes( nView ) )->cCodTrn, oTrans:GetAlias(), "cNomTrn" ) ) ) }
+         :bEditValue       := {|| if( Empty( ( D():PedidosClientes( nView ) )->cCodTrn ), "", ( D():PedidosClientes( nView ) )->cCodTrn + " - " + AllTrim( RetFld( ( D():PedidosClientes( nView ) )->cCodTrn, oTrans:GetAlias(), "cNomTrn" ) ) ) }
          :nWidth           := 200
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Horas montaje"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->nMontaje }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nMontaje }
          :nWidth           := 70
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1403,14 +1403,14 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Su Pedido"
-         :bEditValue       := {|| ( TDataView():PedidosClientes( nView ) )->cSuPed }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cSuPed }
          :nWidth           := 100
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Condición"
-         :bEditValue       := {|| AllTrim( ( TDataView():PedidosClientes( nView ) )->cCondEnt ) }
+         :bEditValue       := {|| AllTrim( ( D():PedidosClientes( nView ) )->cCondEnt ) }
          :nWidth           := 200
          :lHide            := .t.
       end with
@@ -1547,13 +1547,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       MENU     This:Toggle() ;
       TOOLTIP  "En(v)iar" ;
       MESSAGE  "Seleccionar pedidos para ser enviados" ;
-      ACTION   lSnd( oWndBrw, TDataView():PedidosClientes( nView ) ) ;
+      ACTION   lSnd( oWndBrw, D():PedidosClientes( nView ) ) ;
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():PedidosClientes( nView ), "lSndDoc", .t., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():PedidosClientes( nView ), "lSndDoc", .t., .t., .t. ) );
          TOOLTIP  "Todos" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1561,7 +1561,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():PedidosClientes( nView ), "lSndDoc", .f., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():PedidosClientes( nView ), "lSndDoc", .f., .t., .t. ) );
          TOOLTIP  "Ninguno" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1569,7 +1569,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():PedidosClientes( nView ), "lSndDoc", .t., .f., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():PedidosClientes( nView ), "lSndDoc", .t., .f., .t. ) );
          TOOLTIP  "Abajo" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1586,7 +1586,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( ReplaceCreator( oWndBrw, TDataView():PedidosClientes( nView ), aItmPedCli() ) ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, D():PedidosClientes( nView ), aItmPedCli() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
@@ -1602,13 +1602,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TPedidosClientes2PedidosProveedor():New( ( TDataView():PedidosClientes( nView ) )->cSerPed, ( TDataView():PedidosClientes( nView ) )->nNumPed, ( TDataView():PedidosClientes( nView ) )->cSufPed, oStock ):Dialog() ) ;
+      ACTION   ( TPedidosClientes2PedidosProveedor():New( ( D():PedidosClientes( nView ) )->cSerPed, ( D():PedidosClientes( nView ) )->nNumPed, ( D():PedidosClientes( nView ) )->cSufPed, oStock ):Dialog() ) ;
       TOOLTIP  "(G)enerar pedido a proveedores" ;
       HOTKEY   "G";
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TTrazaDocumento():Activate( PED_CLI, ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) ) ;
+      ACTION   ( TTrazaDocumento():Activate( PED_CLI, ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) ;
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
@@ -1625,52 +1625,52 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          TOOLTIP  "Rotor" ;
 
       DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
-            ACTION   ( EdtCli( ( TDataView():PedidosClientes( nView ) )->cCodCli ) );
+            ACTION   ( EdtCli( ( D():PedidosClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
-            ACTION   ( InfCliente( ( TDataView():PedidosClientes( nView ) )->cCodCli ) );
+            ACTION   ( InfCliente( ( D():PedidosClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
-            ACTION   ( EdtObras( ( TDataView():PedidosClientes( nView ) )->cCodCli, ( TDataView():PedidosClientes( nView ) )->cCodObr, dbfObrasT ) );
+            ACTION   ( EdtObras( ( D():PedidosClientes( nView ) )->cCodCli, ( D():PedidosClientes( nView ) )->cCodObr, dbfObrasT ) );
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "NOTEBOOK_USER1_" OF oWndBrw ;
-            ACTION   ( if( !Empty( ( TDataView():PedidosClientes( nView ) )->cNumPre ), ZooPreCli( ( TDataView():PedidosClientes( nView ) )->cNumPre ), MsgStop( "El pedido no proviene de presupuesto" ) ) );
+            ACTION   ( if( !Empty( ( D():PedidosClientes( nView ) )->cNumPre ), ZooPreCli( ( D():PedidosClientes( nView ) )->cNumPre ), MsgStop( "El pedido no proviene de presupuesto" ) ) );
             TOOLTIP  "Visualizar presupuesto" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( TDataView():PedidosClientes( nView ) )->nEstado != 3, AlbCli( nil, nil, { "Pedido" => ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
+            ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado != 3, AlbCli( nil, nil, { "Pedido" => ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( Ped2AlbCli( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, dbfAlbCliT ) );
+            ACTION   ( Ped2AlbCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfAlbCliT ) );
             TOOLTIP  "Modificar albarán" ;
             FROM     oRotor ;
             CLOSED ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( TDataView():PedidosClientes( nView ) )->nEstado <= 2, FactCli( nil, nil, { "Pedido" => ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
+            ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado <= 2, FactCli( nil, nil, { "Pedido" => ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
-            ACTION   ( Ped2FacCli( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, dbfFacCliT ) );
+            ACTION   ( Ped2FacCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfFacCliT ) );
             TOOLTIP  "Modificar factura" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( FacAntCli( , , ( TDataView():PedidosClientes( nView ) )->cCodCli ) );
+            ACTION   ( FacAntCli( , , ( D():PedidosClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Generar anticipo" ;
             FROM     oRotor ;
 
@@ -1682,7 +1682,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( TDataView():PedidosClientes( nView ) )->nEstado <=1 .and. Empty( ( TDataView():PedidosClientes( nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, nil } ), MsgStop( "Pedido albaranado, cancelado o convertido a ticket" ) ) );
+            ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado <=1 .and. Empty( ( D():PedidosClientes( nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, nil } ), MsgStop( "Pedido albaranado, cancelado o convertido a ticket" ) ) );
             TOOLTIP  "Convertir a ticket" ;
             FROM     oRotor ;
 
@@ -1698,8 +1698,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
    end if
 
    if lPedWeb
-      ( TDataView():PedidosClientes( nView ) )->( OrdSetFocus( "lInternet" ) )
-      ( TDataView():PedidosClientes( nView ) )->( dbGoTop() )
+      ( D():PedidosClientes( nView ) )->( OrdSetFocus( "lInternet" ) )
+      ( D():PedidosClientes( nView ) )->( dbGoTop() )
    end if
 
    ACTIVATE SHELL oWndBrw VALID ( CloseFiles() )
@@ -1854,7 +1854,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    */
 
    if Empty( aTmp[ _CTLFCLI ] )
-      aTmp[ _CTLFCLI ] := RetFld( aTmp[ _CCODCLI ], TDataView():Clientes( nView ), "Telefono" )
+      aTmp[ _CTLFCLI ] := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
    end if
 
    nRieCli              := oStock:nRiesgo( aTmp[ _CCODCLI ] )
@@ -1863,7 +1863,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    Necestamos el orden el la primera clave-------------------------------------
    */
 
-   nOrd                 := ( TDataView():PedidosClientes( nView ) )->( ordSetFocus( 1 ) )
+   nOrd                 := ( D():PedidosClientes( nView ) )->( ordSetFocus( 1 ) )
 
    cPouDiv              := cPouDiv( aTmp[ _CDIVPED ], dbfDiv ) // Picture de la divisa
    cPorDiv              := cPorDiv( aTmp[ _CDIVPED ], dbfDiv ) // Picture de la divisa
@@ -2653,7 +2653,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@E 99.99" ;
          VALID    ( lTiva( dbfIva, aTmp[ _NIVAMAN ] ) );
-         ON CHANGE( nTotPedCli( nil, TDataView():PedidosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ) );
+         ON CHANGE( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwIva( aGet[ _NIVAMAN ], dbfIva, , .t. ) );
          OF       oFld:aDialogs[1]
@@ -2662,8 +2662,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ID       400 ;
          PICTURE  cPorDiv ;
          WHEN     ( lWhen ) ;
-         VALID    ( nTotPedCli( nil, TDataView():PedidosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ), .t. ) ;
-         ON CHANGE( nTotPedCli( nil, TDataView():PedidosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ) );
+         VALID    ( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ), .t. ) ;
+         ON CHANGE( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE SAY oGetNet VAR nTotNet ;
@@ -3401,7 +3401,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
    end if
 
-   ( TDataView():PedidosClientes( nView ) )->( ordSetFocus( nOrd ) )
+   ( D():PedidosClientes( nView ) )->( ordSetFocus( nOrd ) )
 
    oBmpGeneral:End()
 
@@ -3409,7 +3409,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    Muestra los avisos para nuevos pedidos por internet-------------------------
    */
 
-   lPedidosWeb( TDataView():PedidosClientes( nView ) )
+   lPedidosWeb( D():PedidosClientes( nView ) )
 
    /*
    Guardamos los datos browse--------------------------------------------------
@@ -3517,7 +3517,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
    local cPorDiv
    local oBmpBancos
 
-   DEFAULT aTmpPed   := dbScatter( TDataView():PedidosClientes( nView ) )
+   DEFAULT aTmpPed   := dbScatter( D():PedidosClientes( nView ) )
 
    do case
       case nMode == APPD_MODE
@@ -3562,7 +3562,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
 
    end case
 
-   cGetCli           := RetFld( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ], TDataView():Clientes( nView ), "Titulo" )
+   cGetCli           := RetFld( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ], D():Clientes( nView ), "Titulo" )
    cGetAge           := cNbrAgent( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodAge" ) ) ], dbfAgent )
    cGetCaj           := RetFld( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ], dbfCajT, "cNomCaj" )
    cPorDiv           := cPorDiv(aTmp[ ( dbfTmpPgo )->( FieldPos( "cDivPgo" ) ) ], dbfDiv )
@@ -3651,7 +3651,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
          VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ;
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cClient( aGet[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ], TDataView():Clientes( nView ), oGetCli ) ) ;
+         VALID    ( cClient( aGet[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ], D():Clientes( nView ), oGetCli ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwClient( aGet[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ], oGetCli ) ) ;
          OF       oFld:aDialogs[ 1 ]
@@ -5360,17 +5360,17 @@ Static Function PrnSerie()
 
 	local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount )
    local oSayFmt
    local cSayFmt
    local oSerIni
    local oSerFin
-   local cSerIni     := (TDataView():PedidosClientes( nView ))->cSerPed
-   local cSerFin     := (TDataView():PedidosClientes( nView ))->cSerPed
-   local nDocIni     := (TDataView():PedidosClientes( nView ))->nNumPed
-   local nDocFin     := (TDataView():PedidosClientes( nView ))->nNumPed
-   local cSufIni     := (TDataView():PedidosClientes( nView ))->cSufPed
-   local cSufFin     := (TDataView():PedidosClientes( nView ))->cSufPed
+   local cSerIni     := (D():PedidosClientes( nView ))->cSerPed
+   local cSerFin     := (D():PedidosClientes( nView ))->cSerPed
+   local nDocIni     := (D():PedidosClientes( nView ))->nNumPed
+   local nDocFin     := (D():PedidosClientes( nView ))->nNumPed
+   local cSufIni     := (D():PedidosClientes( nView ))->cSufPed
+   local cSufFin     := (D():PedidosClientes( nView ))->cSufPed
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
    local dFecHasta   := Date()
    local oRango
@@ -5380,7 +5380,7 @@ Static Function PrnSerie()
    local lCopiasPre  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
 
    if Empty( cFmtDoc )
       cFmtDoc        := cSelPrimerDoc( "PC" )
@@ -5528,58 +5528,58 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    	if nRango == 1
 
-   		nRecno      := (TDataView():PedidosClientes( nView ))->( recno() )
-   		nOrdAnt     := (TDataView():PedidosClientes( nView ))->( OrdSetFocus("NNUMPED") )
+   		nRecno      := (D():PedidosClientes( nView ))->( recno() )
+   		nOrdAnt     := (D():PedidosClientes( nView ))->( OrdSetFocus("NNUMPED") )
 
    		if !lInvOrden
 
-      		( TDataView():PedidosClientes( nView ) )->( dbSeek( cDocIni, .t. ) )
+      		( D():PedidosClientes( nView ) )->( dbSeek( cDocIni, .t. ) )
 
-      		while ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed >= cDocIni .and. ;
-            		( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed <= cDocFin .and. ;
-            		!( TDataView():PedidosClientes( nView ) )->( eof() )
+      		while ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed >= cDocIni .and. ;
+            		( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed <= cDocFin .and. ;
+            		!( D():PedidosClientes( nView ) )->( eof() )
 
-            		lChgImpDoc( TDataView():PedidosClientes( nView ) )
+            		lChgImpDoc( D():PedidosClientes( nView ) )
 
          		if lCopiasPre
 
-		            nCopyClient := if( nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
+		            nCopyClient := if( nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
 
-            		GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nCopyClient )
+            		GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nCopyClient )
 
          		else
 
-		            GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nNumCop )
+		            GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nNumCop )
 
          		end if
 
-         		( TDataView():PedidosClientes( nView ) )->( dbSkip() )
+         		( D():PedidosClientes( nView ) )->( dbSkip() )
 
       		end do
 
    		else
 
-      		( TDataView():PedidosClientes( nView ) )->( DbSeek( cDocFin ) )
+      		( D():PedidosClientes( nView ) )->( DbSeek( cDocFin ) )
 
-      		while ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed >= cDocIni .and.;
-            		( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed <= cDocFin .and.;
-            		!( TDataView():PedidosClientes( nView ) )->( Bof() )
+      		while ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed >= cDocIni .and.;
+            		( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed <= cDocFin .and.;
+            		!( D():PedidosClientes( nView ) )->( Bof() )
 
-            		lChgImpDoc( TDataView():PedidosClientes( nView ) )
+            		lChgImpDoc( D():PedidosClientes( nView ) )
 
          		if lCopiasPre
 
-		            nCopyClient := if( nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
+		            nCopyClient := if( nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
 
-            		GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nCopyClient )
+            		GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nCopyClient )
 
          		else
 
-		            GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nNumCop )
+		            GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nNumCop )
 
          		end if
 
-         		( TDataView():PedidosClientes( nView ) )->( dbSkip( -1 ) )
+         		( D():PedidosClientes( nView ) )->( dbSkip( -1 ) )
 
       		end while
 
@@ -5587,62 +5587,62 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    	else
 
-   		nRecno      := (TDataView():PedidosClientes( nView ))->( recno() )
-   		nOrdAnt     := (TDataView():PedidosClientes( nView ))->( OrdSetFocus( "DFECPED" ) )
+   		nRecno      := (D():PedidosClientes( nView ))->( recno() )
+   		nOrdAnt     := (D():PedidosClientes( nView ))->( OrdSetFocus( "DFECPED" ) )
 
    		if !lInvOrden
 
-      		( TDataView():PedidosClientes( nView ) )->( dbGoTop() )
+      		( D():PedidosClientes( nView ) )->( dbGoTop() )
 
-      		while !( TDataView():PedidosClientes( nView ) )->( eof() )
+      		while !( D():PedidosClientes( nView ) )->( eof() )
 
-            	if ( TDataView():PedidosClientes( nView ) )->dFecPed >= dFecDesde .and. ( TDataView():PedidosClientes( nView ) )->dFecPed <= dFecHasta
+            	if ( D():PedidosClientes( nView ) )->dFecPed >= dFecDesde .and. ( D():PedidosClientes( nView ) )->dFecPed <= dFecHasta
 
-            		lChgImpDoc( TDataView():PedidosClientes( nView ) )
+            		lChgImpDoc( D():PedidosClientes( nView ) )
 
          			if lCopiasPre
 
-			            nCopyClient := if( nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
+			            nCopyClient := if( nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
 
-	            		GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nCopyClient )
+	            		GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nCopyClient )
 
          			else
 
-		            	GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nNumCop )
+		            	GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nNumCop )
 
          			end if
 
          		end if	
 
-         		( TDataView():PedidosClientes( nView ) )->( dbSkip() )
+         		( D():PedidosClientes( nView ) )->( dbSkip() )
 
       		end do
 
    		else
 
-      		( TDataView():PedidosClientes( nView ) )->( dbGobottom() )
+      		( D():PedidosClientes( nView ) )->( dbGobottom() )
 
-      		while !( TDataView():PedidosClientes( nView ) )->( Bof() )
+      		while !( D():PedidosClientes( nView ) )->( Bof() )
 
-            	if ( TDataView():PedidosClientes( nView ) )->dFecPed >= dFecDesde .and. ( TDataView():PedidosClientes( nView ) )->dFecPed <= dFecHasta
+            	if ( D():PedidosClientes( nView ) )->dFecPed >= dFecDesde .and. ( D():PedidosClientes( nView ) )->dFecPed <= dFecHasta
 
-            		lChgImpDoc( TDataView():PedidosClientes( nView ) )
+            		lChgImpDoc( D():PedidosClientes( nView ) )
 
          			if lCopiasPre
 
-			            nCopyClient := if( nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( TDataView():PedidosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
+			            nCopyClient := if( nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
 
-            			GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nCopyClient )
+            			GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nCopyClient )
 
          			else
 
-			            GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nNumCop )
+			            GenPedCli( IS_PRINTER, "Imprimiendo documento : " + ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, cFmtDoc, cPrinter, nNumCop )
 
          			end if
 
          		end if	
 
-         		( TDataView():PedidosClientes( nView ) )->( dbSkip( -1 ) )
+         		( D():PedidosClientes( nView ) )->( dbSkip( -1 ) )
 
       		end while
 
@@ -5650,8 +5650,8 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    	end if
 
-   	( TDataView():PedidosClientes( nView ) )->( dbGoTo( nRecNo ) )
-   	( TDataView():PedidosClientes( nView ) )->( ordSetFocus( nOrdAnt ) )	
+   	( D():PedidosClientes( nView ) )->( dbGoTo( nRecNo ) )
+   	( D():PedidosClientes( nView ) )->( ordSetFocus( nOrdAnt ) )	
 
    	oDlg:enable()
 
@@ -5665,11 +5665,11 @@ Borra todas las lineas de detalle de un pedido
 
 STATIC FUNCTION DelDetalle( cNumPed )
 
-   DEFAULT cNumPed   := ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView )  )->cSufPed
+   DEFAULT cNumPed   := ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView )  )->cSufPed
 
    // Stock -------------------------------------------------------------------
 
-   //oStock:PedCli( cNumPed, ( TDataView():PedidosClientes( nView ) )->cCodAlm, .t., .f. )
+   //oStock:PedCli( cNumPed, ( D():PedidosClientes( nView ) )->cCodAlm, .t., .f. )
 
    // Lineas ------------------------------------------------------------------
 
@@ -5698,7 +5698,7 @@ STATIC FUNCTION DelDetalle( cNumPed )
    //Entregas------------------------------------------------------------------
 
    if ( dbfPedCliP )->( dbSeek( cNumPed ) )
-      while ( dbfPedCliP )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliP )->( eof() )
+      while ( dbfPedCliP )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliP )->( eof() )
          if dbDialogLock( dbfPedCliP )
             ( dbfPedCliP )->( dbDelete() )
             ( dbfPedCliP )->( dbUnLock() )
@@ -5723,26 +5723,26 @@ STATIC FUNCTION ChgSta( oBrw )
 
       for each nRec in ( oBrw:aSelected )
 
-         ( TDataView():PedidosClientes( nView ) )->( dbGoTo( nRec ) )
+         ( D():PedidosClientes( nView ) )->( dbGoTo( nRec ) )
 
          lQuit                         := .f.
 
-         cNumPed                       := ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed
+         cNumPed                       := ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed
 
          /*
          Cambiamos el estado---------------------------------------------------
          */
 
-         if dbLock( TDataView():PedidosClientes( nView ) )
+         if dbLock( D():PedidosClientes( nView ) )
 
-            if ( TDataView():PedidosClientes( nView ) )->nEstado == 1
-               ( TDataView():PedidosClientes( nView ) )->nEstado := 3
+            if ( D():PedidosClientes( nView ) )->nEstado == 1
+               ( D():PedidosClientes( nView ) )->nEstado := 3
             else
                lQuit                   := .t.
-               ( TDataView():PedidosClientes( nView ) )->nEstado := 1
+               ( D():PedidosClientes( nView ) )->nEstado := 1
             end if
 
-            ( TDataView():PedidosClientes( nView ) )->( dbRUnlock() )
+            ( D():PedidosClientes( nView ) )->( dbRUnlock() )
 
          end if
 
@@ -5998,13 +5998,13 @@ static function IntBtnNxt( oPag, oBtnPrv, oBtnNxt, oDlg, oBrw, dbfEmp )
 
    MsgGet( "Seleccione", "Serie destino :", @cSerPed )
 
-   nNumPed           := nNewDoc( cSerPed, TDataView():PedidosClientes( nView ), "NPEDCLI" )
+   nNumPed           := nNewDoc( cSerPed, D():PedidosClientes( nView ), "NPEDCLI" )
 
    aTabla            := DBScatter( dbfPedT )
    aTabla[_CSERPED]  := cSerPed
    aTabla[_NNUMPED]  := nNumPed
-   ( TDataView():PedidosClientes( nView ) )->( dbAppend() )
-   dbGather( aTabla, TDataView():PedidosClientes( nView ) )
+   ( D():PedidosClientes( nView ) )->( dbAppend() )
+   dbGather( aTabla, D():PedidosClientes( nView ) )
 
    if ( dbfPedL )->( dbSeek( ( dbfPedT )->CSERPED + Str( ( dbfPedT )->NNUMPED ) + ( dbfPedT )->CSUFPED ) )
 
@@ -6420,28 +6420,28 @@ Static Function PedCliNotas()
    local cObserv  := ""
    local aData    := {}
 
-   aAdd( aData, "Pedido " + ( TDataView():PedidosClientes( nView ) )->cSerPed + "/" + AllTrim( Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) ) + "/" + Alltrim( ( TDataView():PedidosClientes( nView ) )->cSufPed ) + " de " + Rtrim( ( TDataView():PedidosClientes( nView ) )->cNomCli ) )
+   aAdd( aData, "Pedido " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + AllTrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) + "/" + Alltrim( ( D():PedidosClientes( nView ) )->cSufPed ) + " de " + Rtrim( ( D():PedidosClientes( nView ) )->cNomCli ) )
    aAdd( aData, PED_CLI )
-   aAdd( aData, ( TDataView():PedidosClientes( nView ) )->cCodCli )
-   aAdd( aData, ( TDataView():PedidosClientes( nView ) )->cNomCli )
-   aAdd( aData, ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed )
+   aAdd( aData, ( D():PedidosClientes( nView ) )->cCodCli )
+   aAdd( aData, ( D():PedidosClientes( nView ) )->cNomCli )
+   aAdd( aData, ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed )
 
-   if ( TDataView():Clientes( nView ) )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cCodCli ) )
+   if ( D():Clientes( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->cCodCli ) )
 
-      if !Empty( ( TDataView():Clientes( nView ) )->cPerCto )
-         cObserv  += Rtrim( ( TDataView():Clientes( nView ) )->cPerCto ) + Space( 1 )
+      if !Empty( ( D():Clientes( nView ) )->cPerCto )
+         cObserv  += Rtrim( ( D():Clientes( nView ) )->cPerCto ) + Space( 1 )
       end if
 
-      if !Empty( ( TDataView():Clientes( nView ) )->Telefono )
-         cObserv  += "Télefono : " + Rtrim( ( TDataView():Clientes( nView ) )->Telefono ) + Space( 1 )
+      if !Empty( ( D():Clientes( nView ) )->Telefono )
+         cObserv  += "Télefono : " + Rtrim( ( D():Clientes( nView ) )->Telefono ) + Space( 1 )
       end if
 
-      if !Empty( ( TDataView():Clientes( nView ) )->Movil )
-         cObserv  += "Móvil : " + Rtrim( ( TDataView():Clientes( nView ) )->Movil ) + Space( 1 )
+      if !Empty( ( D():Clientes( nView ) )->Movil )
+         cObserv  += "Móvil : " + Rtrim( ( D():Clientes( nView ) )->Movil ) + Space( 1 )
       end if
 
-      if !Empty( ( TDataView():Clientes( nView ) )->Fax )
-         cObserv  += "Fax : " + Rtrim( ( TDataView():Clientes( nView ) )->Fax ) + Space( 1 )
+      if !Empty( ( D():Clientes( nView ) )->Fax )
+         cObserv  += "Fax : " + Rtrim( ( D():Clientes( nView ) )->Fax ) + Space( 1 )
       end if
 
    end if
@@ -6550,10 +6550,10 @@ static function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies, dbfPedCliP )
 
    else
 
-      private cDbf         := TDataView():PedidosClientes( nView )
+      private cDbf         := D():PedidosClientes( nView )
       private cDbfEnt      := dbfPedCliP
-      private cCliente     := TDataView():Clientes( nView )
-      private cDbfCli      := TDataView():Clientes( nView )
+      private cCliente     := D():Clientes( nView )
+      private cDbfCli      := D():Clientes( nView )
       private cFPago       := dbfFPago
       private cDbfPgo      := dbfFPago
       private cDbfAge      := dbfAgent
@@ -6621,9 +6621,9 @@ STATIC FUNCTION DupSerie( oWndBrw )
    local oSerFin
    local oTxtDup
    local nTxtDup     := 0
-   local nRecno      := ( TDataView():PedidosClientes( nView ) )->( Recno() )
-   local nOrdAnt     := ( TDataView():PedidosClientes( nView ) )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( TDataView():PedidosClientes( nView ) )->cSerPed, ( TDataView():PedidosClientes( nView ) )->nNumPed, ( TDataView():PedidosClientes( nView ) )->cSufPed, GetSysDate() )
+   local nRecno      := ( D():PedidosClientes( nView ) )->( Recno() )
+   local nOrdAnt     := ( D():PedidosClientes( nView ) )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( D():PedidosClientes( nView ) )->cSerPed, ( D():PedidosClientes( nView ) )->nNumPed, ( D():PedidosClientes( nView ) )->cSufPed, GetSysDate() )
    local lCancel     := .f.
    local oBtnAceptar
    local oBtnCancel
@@ -6718,15 +6718,15 @@ STATIC FUNCTION DupSerie( oWndBrw )
    REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
-      TOTAL    ( TDataView():PedidosClientes( nView ) )->( OrdKeyCount() ) ;
+      TOTAL    ( D():PedidosClientes( nView ) )->( OrdKeyCount() ) ;
       OF       oDlg
 
       oDlg:AddFastKey( VK_F5, {|| DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, @lCancel, cFecDoc ) } )
 
    ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
 
-   ( TDataView():PedidosClientes( nView ) )->( dbGoTo( nRecNo ) )
-   ( TDataView():PedidosClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( D():PedidosClientes( nView ) )->( dbGoTo( nRecNo ) )
+   ( D():PedidosClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oWndBrw:SetFocus()
    oWndBrw:Refresh()
@@ -6746,28 +6746,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
    if oDesde:nRadio == 1
 
-      nOrd              := ( TDataView():PedidosClientes( nView ) )->( OrdSetFocus( "nNumPed" ) )
+      nOrd              := ( D():PedidosClientes( nView ) )->( OrdSetFocus( "nNumPed" ) )
 
-      ( TDataView():PedidosClientes( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+      ( D():PedidosClientes( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
 
-      while !lCancel .and. ( TDataView():PedidosClientes( nView ) )->( !eof() )
+      while !lCancel .and. ( D():PedidosClientes( nView ) )->( !eof() )
 
-         if ( TDataView():PedidosClientes( nView ) )->cSerPed >= oDesde:cSerieInicio  .and.;
-            ( TDataView():PedidosClientes( nView ) )->cSerPed <= oDesde:cSerieFin     .and.;
-            ( TDataView():PedidosClientes( nView ) )->nNumPed >= oDesde:nNumeroInicio .and.;
-            ( TDataView():PedidosClientes( nView ) )->nNumPed <= oDesde:nNumeroFin    .and.;
-            ( TDataView():PedidosClientes( nView ) )->cSufPed >= oDesde:cSufijoInicio .and.;
-            ( TDataView():PedidosClientes( nView ) )->cSufPed <= oDesde:cSufijoFin
+         if ( D():PedidosClientes( nView ) )->cSerPed >= oDesde:cSerieInicio  .and.;
+            ( D():PedidosClientes( nView ) )->cSerPed <= oDesde:cSerieFin     .and.;
+            ( D():PedidosClientes( nView ) )->nNumPed >= oDesde:nNumeroInicio .and.;
+            ( D():PedidosClientes( nView ) )->nNumPed <= oDesde:nNumeroFin    .and.;
+            ( D():PedidosClientes( nView ) )->cSufPed >= oDesde:cSufijoInicio .and.;
+            ( D():PedidosClientes( nView ) )->cSufPed <= oDesde:cSufijoFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) ) + "/" + ( TDataView():PedidosClientes( nView ) )->cSufPed
+            oTxtDup:cText  := "Duplicando : " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) + "/" + ( D():PedidosClientes( nView ) )->cSufPed
 
             DupPedido( cFecDoc )
 
          end if
 
-         ( TDataView():PedidosClientes( nView ) )->( dbSkip() )
+         ( D():PedidosClientes( nView ) )->( dbSkip() )
 
          ++nProcesed
 
@@ -6775,28 +6775,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( TDataView():PedidosClientes( nView ) )->( OrdSetFocus( nOrd ) )
+      ( D():PedidosClientes( nView ) )->( OrdSetFocus( nOrd ) )
 
    else
 
-      nOrd              := ( TDataView():PedidosClientes( nView ) )->( OrdSetFocus( "dFecPed" ) )
+      nOrd              := ( D():PedidosClientes( nView ) )->( OrdSetFocus( "dFecPed" ) )
 
-      ( TDataView():PedidosClientes( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+      ( D():PedidosClientes( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
 
-      while !lCancel .and. ( TDataView():PedidosClientes( nView ) )->( !eof() )
+      while !lCancel .and. ( D():PedidosClientes( nView ) )->( !eof() )
 
-         if ( TDataView():PedidosClientes( nView ) )->dFecPed >= oDesde:dFechaInicio  .and.;
-            ( TDataView():PedidosClientes( nView ) )->dFecPed <= oDesde:dFechaFin
+         if ( D():PedidosClientes( nView ) )->dFecPed >= oDesde:dFechaInicio  .and.;
+            ( D():PedidosClientes( nView ) )->dFecPed <= oDesde:dFechaFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( TDataView():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) ) + "/" + ( TDataView():PedidosClientes( nView ) )->cSufPed
+            oTxtDup:cText  := "Duplicando : " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) + "/" + ( D():PedidosClientes( nView ) )->cSufPed
 
             DupPedido( cFecDoc )
 
          end if
 
-         ( TDataView():PedidosClientes( nView ) )->( dbSkip() )
+         ( D():PedidosClientes( nView ) )->( dbSkip() )
 
          ++nProcesed
 
@@ -6804,7 +6804,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( TDataView():PedidosClientes( nView ) )->( OrdSetFocus( nOrd ) )
+      ( D():PedidosClientes( nView ) )->( OrdSetFocus( nOrd ) )
 
    end if
 
@@ -6880,20 +6880,20 @@ STATIC FUNCTION DupPedido( cFecDoc )
 
    //Recogemos el nuevo numero de pedido--------------------------------------
 
-   nNewNumPed  := nNewDoc( ( TDataView():PedidosClientes( nView ) )->cSerPed, TDataView():PedidosClientes( nView ), "NPEDCLI", , dbfCount )
+   nNewNumPed  := nNewDoc( ( D():PedidosClientes( nView ) )->cSerPed, D():PedidosClientes( nView ), "NPEDCLI", , dbfCount )
 
    //Duplicamos las cabeceras--------------------------------------------------
 
-   PedRecDup( TDataView():PedidosClientes( nView ), ( TDataView():PedidosClientes( nView ) )->cSerPed, nNewNumPed, ( TDataView():PedidosClientes( nView ) )->cSufPed, .t., cFecDoc )
+   PedRecDup( D():PedidosClientes( nView ), ( D():PedidosClientes( nView ) )->cSerPed, nNewNumPed, ( D():PedidosClientes( nView ) )->cSufPed, .t., cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfPedCliL )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) )
+   if ( dbfPedCliL )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) )
 
-      while ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed == ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed .and. ;
+      while ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed == ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed .and. ;
             !( dbfPedCliL )->( Eof() )
 
-            PedRecDup( dbfPedCliL, ( TDataView():PedidosClientes( nView ) )->cSerPed, nNewNumPed, ( TDataView():PedidosClientes( nView ) )->cSufPed, .f. )
+            PedRecDup( dbfPedCliL, ( D():PedidosClientes( nView ) )->cSerPed, nNewNumPed, ( D():PedidosClientes( nView ) )->cSufPed, .f. )
 
          ( dbfPedCliL )->( dbSkip() )
 
@@ -6903,12 +6903,12 @@ STATIC FUNCTION DupPedido( cFecDoc )
 
    //Duplicamos los documentos-------------------------------------------------
 
-   if ( dbfPedCliD )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) )
+   if ( dbfPedCliD )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) )
 
-      while ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed == ( dbfPedCliD )->cSerPed + Str( ( dbfPedCliD )->nNumPed ) + ( dbfPedCliD )->cSufPed .and. ;
+      while ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed == ( dbfPedCliD )->cSerPed + Str( ( dbfPedCliD )->nNumPed ) + ( dbfPedCliD )->cSufPed .and. ;
             !( dbfPedCliD )->( Eof() )
 
-            PedRecDup( dbfPedCliD, ( TDataView():PedidosClientes( nView ) )->cSerPed, nNewNumPed, ( TDataView():PedidosClientes( nView ) )->cSufPed, .f. )
+            PedRecDup( dbfPedCliD, ( D():PedidosClientes( nView ) )->cSerPed, nNewNumPed, ( D():PedidosClientes( nView ) )->cSufPed, .f. )
 
          ( dbfPedCliD )->( dbSkip() )
 
@@ -8179,9 +8179,9 @@ return nUnidades
 
 STATIC FUNCTION SelSend( oBrw )
 
-   if dbDialogLock( TDataView():PedidosClientes( nView ) )
-      ( TDataView():PedidosClientes( nView ) )->lPdtCrg := !( TDataView():PedidosClientes( nView ) )->lPdtCrg
-      ( TDataView():PedidosClientes( nView ) )->( dbUnLock() )
+   if dbDialogLock( D():PedidosClientes( nView ) )
+      ( D():PedidosClientes( nView ) )->lPdtCrg := !( D():PedidosClientes( nView ) )->lPdtCrg
+      ( D():PedidosClientes( nView ) )->( dbUnLock() )
    end if
 
    oBrw:Refresh()
@@ -8229,7 +8229,7 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "Pedidos", ( TDataView():PedidosClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "Pedidos", ( D():PedidosClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Pedidos", cItemsToReport( aItmPedCli() ) )
 
    oFr:SetWorkArea(     "Lineas de pedidos", ( dbfPedCliL )->( Select() ) )
@@ -8244,7 +8244,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Clientes", ( TDataView():Clientes( nView ) )->( Select() ) )
+   oFr:SetWorkArea(     "Clientes", ( D():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
    oFr:SetWorkArea(     "Obras", ( dbfObrasT )->( Select() ) )
@@ -8277,18 +8277,18 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
-   oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed } )
-   oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed } )
-   oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",             {|| ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed } )
+   oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
+   oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
+   oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",             {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Empresa",                           {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Pedidos", "Clientes",                          {|| ( TDataView():PedidosClientes( nView ) )->cCodCli } )
-   oFr:SetMasterDetail( "Pedidos", "Obras",                             {|| ( TDataView():PedidosClientes( nView ) )->cCodCli + ( TDataView():PedidosClientes( nView ) )->cCodObr } )
-   oFr:SetMasterDetail( "Pedidos", "Almacen",                           {|| ( TDataView():PedidosClientes( nView ) )->cCodAlm } )
-   oFr:SetMasterDetail( "Pedidos", "Rutas",                             {|| ( TDataView():PedidosClientes( nView ) )->cCodRut } )
-   oFr:SetMasterDetail( "Pedidos", "Agentes",                           {|| ( TDataView():PedidosClientes( nView ) )->cCodAge } )
-   oFr:SetMasterDetail( "Pedidos", "Formas de pago",                    {|| ( TDataView():PedidosClientes( nView ) )->cCodPgo } )
-   oFr:SetMasterDetail( "Pedidos", "Transportistas",                    {|| ( TDataView():PedidosClientes( nView ) )->cCodTrn } )
-   oFr:SetMasterDetail( "Pedidos", "Usuarios",                        	{|| ( TDataView():PedidosClientes( nView ) )->cCodUsr } )
+   oFr:SetMasterDetail( "Pedidos", "Clientes",                          {|| ( D():PedidosClientes( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Pedidos", "Obras",                             {|| ( D():PedidosClientes( nView ) )->cCodCli + ( D():PedidosClientes( nView ) )->cCodObr } )
+   oFr:SetMasterDetail( "Pedidos", "Almacen",                           {|| ( D():PedidosClientes( nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "Pedidos", "Rutas",                             {|| ( D():PedidosClientes( nView ) )->cCodRut } )
+   oFr:SetMasterDetail( "Pedidos", "Agentes",                           {|| ( D():PedidosClientes( nView ) )->cCodAge } )
+   oFr:SetMasterDetail( "Pedidos", "Formas de pago",                    {|| ( D():PedidosClientes( nView ) )->cCodPgo } )
+   oFr:SetMasterDetail( "Pedidos", "Transportistas",                    {|| ( D():PedidosClientes( nView ) )->cCodTrn } )
+   oFr:SetMasterDetail( "Pedidos", "Usuarios",                        	{|| ( D():PedidosClientes( nView ) )->cCodUsr } )
 
    oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( dbfPedCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Ofertas",                 {|| ( dbfPedCliL )->cRef } )
@@ -8409,13 +8409,13 @@ Static Function DataReportEntPedCli( oFr, cPedCliP )
    end if
    oFr:SetFieldAliases( "Entrega", cItemsToReport( aPedCliPgo() ) )
 
-   oFr:SetWorkArea(     "Pedido de cliente", ( TDataView():PedidosClientes( nView ) )->( Select() ) )
+   oFr:SetWorkArea(     "Pedido de cliente", ( D():PedidosClientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Pedido de cliente", cItemsToReport( aItmPedCli() ) )
 
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Clientes", ( TDataView():Clientes( nView ) )->( Select() ) )
+   oFr:SetWorkArea(     "Clientes", ( D():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
    oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
@@ -8554,9 +8554,9 @@ STATIC FUNCTION CloseFiles()
 
    DisableAcceso()
 
-   lPedidosWeb( TDataView():PedidosClientes( nView ) )
+   lPedidosWeb( D():PedidosClientes( nView ) )
 
-   DestroyFastFilter( TDataView():PedidosClientes( nView ), .t., .t. )
+   DestroyFastFilter( D():PedidosClientes( nView ), .t., .t. )
 
    if !Empty( oFont )
       oFont:end()
@@ -8638,7 +8638,7 @@ STATIC FUNCTION CloseFiles()
       oUndMedicion:end()
    end if
 
-   TDataView():DeleteView( nView )
+   D():DeleteView( nView )
 
    dbfPedCliL     := nil
    dbfPedCliI     := nil
@@ -8787,7 +8787,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    Estos campos no pueden estar vacios
    */
 
-   if lCliBlq( aTmp[ _CCODCLI ], TDataView():Clientes( nView ) )
+   if lCliBlq( aTmp[ _CCODCLI ], D():Clientes( nView ) )
       msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta." )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
@@ -8864,13 +8864,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
 
        case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-         nNumPed           := nNewDoc( cSerPed, TDataView():PedidosClientes( nView ), "NPEDCLI", , dbfCount )
+         nNumPed           := nNewDoc( cSerPed, D():PedidosClientes( nView ), "NPEDCLI", , dbfCount )
          aTmp[ _NNUMPED ]  := nNumPed
 
        case nMode == EDIT_MODE
 
    /*if !Empty( oStock )
-         oStock:PedCli( cSerPed + Str( nNumPed ) + cSufPed, ( TDataView():PedidosClientes( nView ) )->cCodAlm, .t., .f. )
+         oStock:PedCli( cSerPed + Str( nNumPed ) + cSufPed, ( D():PedidosClientes( nView ) )->cCodAlm, .t., .f. )
    end if*/
 
          if nNumPed != 0
@@ -9013,7 +9013,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    Escritura en el fichero definitivo------------------------------------------
    */
 
-   WinGather( aTmp, aGet, TDataView():PedidosClientes( nView ), , nMode )
+   WinGather( aTmp, aGet, D():PedidosClientes( nView ), , nMode )
 
    /*
    Actualizamos el estado del pedido-------------------------------------------
@@ -9065,7 +9065,7 @@ Return .t.
 
 Static Function RecalculaTotal( aTmp )
 
-   local nTotPedCli  := nTotPedCli( nil, TDataView():PedidosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp, nil, .f. )
+   local nTotPedCli  := nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp, nil, .f. )
    local nEntPedCli  := nPagPedCli( nil, dbfTmpPgo, dbfDiv )
 
    aTotIva              := aSort( aTotIva,,, {|x,y| x[1] > y[1] } )
@@ -9196,7 +9196,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
 
-   if ( TDataView():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
+   if ( D():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
 
       /*
       Si tenemos parcado en la empresa que mostremos el saldo pendiente del cliente
@@ -9207,60 +9207,60 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       Asignamos el codigo siempre----------------------------------------------
       */
 
-      aGet[ _CCODCLI ]:cText( ( TDataView():Clientes( nView ) )->Cod )
+      aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
 
       /*
       Color de fondo del cliente-----------------------------------------------
       */
 
-      if ( TDataView():Clientes( nView ) )->nColor != 0
-         aGet[ _CNOMCLI ]:SetColor( , ( TDataView():Clientes( nView ) )->nColor )
+      if ( D():Clientes( nView ) )->nColor != 0
+         aGet[ _CNOMCLI ]:SetColor( , ( D():Clientes( nView ) )->nColor )
       end if
 
       if Empty( aGet[ _CNOMCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CNOMCLI ]:cText( ( TDataView():Clientes( nView ) )->Titulo )
+         aGet[ _CNOMCLI ]:cText( ( D():Clientes( nView ) )->Titulo )
       end if
 
       if Empty( aGet[ _CDIRCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CDIRCLI ]:cText( ( TDataView():Clientes( nView ) )->Domicilio )
+         aGet[ _CDIRCLI ]:cText( ( D():Clientes( nView ) )->Domicilio )
       end if
 
       if Empty( aGet[ _CPOBCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CPOBCLI ]:cText( ( TDataView():Clientes( nView ) )->Poblacion )
+         aGet[ _CPOBCLI ]:cText( ( D():Clientes( nView ) )->Poblacion )
       end if
 
       if aGet[ _CPRVCLI ] != nil
 
          if Empty( aGet[ _CPRVCLI ]:varGet() ) .or. lChgCodCli
-            aGet[ _CPRVCLI ]:cText( ( TDataView():Clientes( nView ) )->Provincia )
+            aGet[ _CPRVCLI ]:cText( ( D():Clientes( nView ) )->Provincia )
          end if
 
       end if
 
       if Empty( aGet[ _CPOSCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CPOSCLI ]:cText( ( TDataView():Clientes( nView ) )->CodPostal )
+         aGet[ _CPOSCLI ]:cText( ( D():Clientes( nView ) )->CodPostal )
       end if
 
       if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CTLFCLI ]:cText( ( TDataView():Clientes( nView ) )->Telefono )
+         aGet[ _CTLFCLI ]:cText( ( D():Clientes( nView ) )->Telefono )
       end if
 
       if !Empty( aGet[ _CDNICLI ] )
 
          if Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli
-            aGet[ _CDNICLI ]:cText( ( TDataView():Clientes( nView ) )->Nif )
+            aGet[ _CDNICLI ]:cText( ( D():Clientes( nView ) )->Nif )
          end if
 
       else
 
          if Empty( aTmp[ _CDNICLI ] ) .or. lChgCodCli
-            aTmp[ _CDNICLI ]  := ( TDataView():Clientes( nView ) )->Nif
+            aTmp[ _CDNICLI ]  := ( D():Clientes( nView ) )->Nif
          end if
 
       end if
 
       if Empty( aTmp[ _CCODGRP ] ) .or. lChgCodCli
-         aTmp[ _CCODGRP ]     := ( TDataView():Clientes( nView ) )->cCodGrp
+         aTmp[ _CCODGRP ]     := ( D():Clientes( nView ) )->cCodGrp
       end if
 
       /*
@@ -9286,20 +9286,20 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          */
 
          if oRieCli != nil
-            oStock:SetRiesgo( cNewCodCli, oRieCli, ( TDataView():Clientes( nView ) )->Riesgo )
+            oStock:SetRiesgo( cNewCodCli, oRieCli, ( D():Clientes( nView ) )->Riesgo )
          end if
 
-         aTmp[ _LMODCLI ]     := ( TDataView():Clientes( nView ) )->lModDat
+         aTmp[ _LMODCLI ]     := ( D():Clientes( nView ) )->lModDat
 
       end if
 
       if ( lChgCodCli )
-         aTmp[ _LOPERPV ]     := ( TDataView():Clientes( nView ) )->lPntVer
+         aTmp[ _LOPERPV ]     := ( D():Clientes( nView ) )->lPntVer
       end if
 
       if nMode == APPD_MODE
 
-         aTmp[_NREGIVA ]      := ( TDataView():Clientes( nView ) )->nRegIva
+         aTmp[_NREGIVA ]      := ( D():Clientes( nView ) )->nRegIva
 
          /*
          Si estamos a¤adiendo cargamos todos los datos del cliente
@@ -9307,24 +9307,24 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          if Empty( aTmp[ _CSERPED ] )
 
-            if !Empty( ( TDataView():Clientes( nView ) )->Serie )
-               aGet[ _CSERPED ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+            if !Empty( ( D():Clientes( nView ) )->Serie )
+               aGet[ _CSERPED ]:cText( ( D():Clientes( nView ) )->Serie )
             end if
 
          else
 
-            if !Empty( ( TDataView():Clientes( nView ) )->Serie )                .and.;
-               aTmp[ _CSERPED ] != ( TDataView():Clientes( nView ) )->Serie      .and.;
+            if !Empty( ( D():Clientes( nView ) )->Serie )                .and.;
+               aTmp[ _CSERPED ] != ( D():Clientes( nView ) )->Serie      .and.;
                ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
-               aGet[ _CSERPED ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+               aGet[ _CSERPED ]:cText( ( D():Clientes( nView ) )->Serie )
             end if
 
          end if
 
          if aGet[ _CCODALM ] != nil
 
-            if ( Empty( aGet[ _CCODALM ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodAlm )
-               aGet[ _CCODALM ]:cText( ( TDataView():Clientes( nView ) )->cCodAlm )
+            if ( Empty( aGet[ _CCODALM ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodAlm )
+               aGet[ _CCODALM ]:cText( ( D():Clientes( nView ) )->cCodAlm )
                aGet[ _CCODALM ]:lValid()
             end if
 
@@ -9332,15 +9332,15 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          if aGet[ _CCODTAR ] != nil
 
-            if ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTar )
-               aGet[ _CCODTAR ]:cText( ( TDataView():Clientes( nView ) )->CCODTAR )
+            if ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTar )
+               aGet[ _CCODTAR ]:cText( ( D():Clientes( nView ) )->CCODTAR )
                aGet[ _CCODTAR ]:lValid()
             end if
 
          end if
 
-         if ( Empty( aGet[ _CCODPGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->CodPago )
-            aGet[ _CCODPGO ]:cText( ( TDataView():Clientes( nView ) )->CodPago )
+         if ( Empty( aGet[ _CCODPGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->CodPago )
+            aGet[ _CCODPGO ]:cText( ( D():Clientes( nView ) )->CodPago )
             aGet[ _CCODPGO ]:lValid()
          end if
 
@@ -9348,7 +9348,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          Si la forma de pago es un movimiento bancario le asignamos el banco y cuenta por defecto
          */
 
-         if ( lChgCodCli .and. lBancoDefecto( ( TDataView():Clientes( nView ) )->Cod, dbfCliBnc ) )
+         if ( lChgCodCli .and. lBancoDefecto( ( D():Clientes( nView ) )->Cod, dbfCliBnc ) )
 
             if !Empty( aGet[ _CBANCO ] )
                aGet[ _CBANCO ]:cText( ( dbfCliBnc )->cCodBnc )
@@ -9388,49 +9388,49 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          end if
 
          if !Empty( aGet[ _CCODAGE ] )
-            if ( Empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cAgente )
-               aGet[ _CCODAGE ]:cText( ( TDataView():Clientes( nView ) )->cAgente )
+            if ( Empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cAgente )
+               aGet[ _CCODAGE ]:cText( ( D():Clientes( nView ) )->cAgente )
                aGet[ _CCODAGE ]:lValid()
             end if
          end if
 
-         if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodRut )
-            aGet[ _CCODRUT ]:cText( ( TDataView():Clientes( nView ))->CCODRUT )
+         if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodRut )
+            aGet[ _CCODRUT ]:cText( ( D():Clientes( nView ))->CCODRUT )
             aGet[ _CCODRUT ]:lValid()
          end if
 
-         if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->nTarifa )
-            aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
+         if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->nTarifa )
+            aGet[ _NTARIFA ]:cText( ( D():Clientes( nView ) )->nTarifa )
          end if
 
          if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
-             aTmp[ _NDTOTARIFA ]    := ( TDataView():Clientes( nView ) )->nDtoArt
+             aTmp[ _NDTOTARIFA ]    := ( D():Clientes( nView ) )->nDtoArt
          end if
 
-         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
-            aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
+         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTrn )
+            aGet[ _CCODTRN ]:cText( ( D():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:lValid()
          end if
 
          if lChgCodCli
 
-            aGet[ _LRECARGO ]:Click( ( TDataView():Clientes( nView ) )->lReq ):Refresh()
+            aGet[ _LRECARGO ]:Click( ( D():Clientes( nView ) )->lReq ):Refresh()
 
-            aGet[ _LOPERPV  ]:Click( ( TDataView():Clientes( nView ) )->lPntVer ):Refresh()
+            aGet[ _LOPERPV  ]:Click( ( D():Clientes( nView ) )->lPntVer ):Refresh()
 
             /*
             Retenciones desde la ficha de cliente----------------------------------
 
             if !Empty( aGet[ _NTIPRET ] )
-               aGet[ _NTIPRET  ]:Select( ( TDataView():Clientes( nView ) )->nTipRet )
+               aGet[ _NTIPRET  ]:Select( ( D():Clientes( nView ) )->nTipRet )
             else
-               aTmp[ _NTIPRET  ] := ( TDataView():Clientes( nView ) )->nTipRet
+               aTmp[ _NTIPRET  ] := ( D():Clientes( nView ) )->nTipRet
             end if
 
             if !Empty( aGet[ _NPCTRET ] )
-               aGet[ _NPCTRET  ]:cText( ( TDataView():Clientes( nView ) )->nPctRet )
+               aGet[ _NPCTRET  ]:cText( ( D():Clientes( nView ) )->nPctRet )
             else
-               aTmp[ _NPCTRET  ] := ( TDataView():Clientes( nView ) )->nPctRet
+               aTmp[ _NPCTRET  ] := ( D():Clientes( nView ) )->nPctRet
             end if
             */
 
@@ -9438,37 +9438,37 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             Descuentos desde la ficha de cliente----------------------------------
             */
 
-            aGet[ _CDTOESP ]:cText( ( TDataView():Clientes( nView ) )->cDtoEsp )
+            aGet[ _CDTOESP ]:cText( ( D():Clientes( nView ) )->cDtoEsp )
 
-            aGet[ _NDTOESP ]:cText( ( TDataView():Clientes( nView ) )->nDtoEsp )
+            aGet[ _NDTOESP ]:cText( ( D():Clientes( nView ) )->nDtoEsp )
 
-            aGet[ _CDPP    ]:cText( ( TDataView():Clientes( nView ) )->cDpp )
+            aGet[ _CDPP    ]:cText( ( D():Clientes( nView ) )->cDpp )
 
-            aGet[ _NDPP    ]:cText( ( TDataView():Clientes( nView ) )->nDpp )
+            aGet[ _NDPP    ]:cText( ( D():Clientes( nView ) )->nDpp )
 
-            aGet[ _CDTOUNO ]:cText( ( TDataView():Clientes( nView ) )->cDtoUno )
+            aGet[ _CDTOUNO ]:cText( ( D():Clientes( nView ) )->cDtoUno )
 
-            aGet[ _CDTODOS ]:cText( ( TDataView():Clientes( nView ) )->cDtoDos )
+            aGet[ _CDTODOS ]:cText( ( D():Clientes( nView ) )->cDtoDos )
 
-            aGet[ _NDTOUNO ]:cText( ( TDataView():Clientes( nView ) )->nDtoCnt )
+            aGet[ _NDTOUNO ]:cText( ( D():Clientes( nView ) )->nDtoCnt )
 
-            aGet[ _NDTODOS ]:cText( ( TDataView():Clientes( nView ) )->nDtoRap )
+            aGet[ _NDTODOS ]:cText( ( D():Clientes( nView ) )->nDtoRap )
 
-            aTmp[ _NDTOATP ] := ( TDataView():Clientes( nView ) )->nDtoAtp
+            aTmp[ _NDTOATP ] := ( D():Clientes( nView ) )->nDtoAtp
 
-            aTmp[ _NSBRATP ] := ( TDataView():Clientes( nView ) )->nSbrAtp
+            aTmp[ _NSBRATP ] := ( D():Clientes( nView ) )->nSbrAtp
 
          end if
 
       end if
 
-      cOldCodCli  := ( TDataView():Clientes( nView ) )->Cod
+      cOldCodCli  := ( D():Clientes( nView ) )->Cod
 
-      if ( TDataView():Clientes( nView ) )->lMosCom .and. !Empty( ( TDataView():Clientes( nView ) )->mComent ) .and. lChgCodCli
-         MsgStop( Trim( ( TDataView():Clientes( nView ) )->mComent ) )
+      if ( D():Clientes( nView ) )->lMosCom .and. !Empty( ( D():Clientes( nView ) )->mComent ) .and. lChgCodCli
+         MsgStop( Trim( ( D():Clientes( nView ) )->mComent ) )
       end if
 
-      ShowIncidenciaCliente( ( TDataView():Clientes( nView ) )->Cod, nView )
+      ShowIncidenciaCliente( ( D():Clientes( nView ) )->Cod, nView )
 
       lValid      := .t.
 
@@ -11264,7 +11264,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             Descuento de artículo----------------------------------------------
             */
 
-            nNumDto              := RetFld( aTmpPed[ _CCODCLI ], TDataView():Clientes( nView ), "nDtoArt" )
+            nNumDto              := RetFld( aTmpPed[ _CCODCLI ], D():Clientes( nView ), "nDtoArt" )
 
             if nNumDto != 0
 
@@ -11639,9 +11639,9 @@ Static Function ChangePedidosWeb()
 
    ( dbfTmpLin )->( __dbZap() )
 
-   if ( dbfPedCliL )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) )
+   if ( dbfPedCliL )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) )
 
-      while ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) .AND. ( dbfPedCliL )->( !eof() )
+      while ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) .AND. ( dbfPedCliL )->( !eof() )
 
          dbPass( dbfPedCliL, dbfTmpLin, .t. )
 
@@ -11692,7 +11692,7 @@ Static Function StartPedidosWeb( oDlgPedidosWeb )
    oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Acciones", .f. )
 
    oBoton                     := TDotNetButton():New( 60, oGrupo, "Procesar32",        "Procesar",       1, {|| oDlgPedidosWeb:End( IDOK ) }, , , .f., .f., .f. )
-   oBoton                     := TDotNetButton():New( 60, oGrupo, "Garbage_Empty_32",  "Eliminar",       2, {|| WinDelRec( oBrwPedidosWeb, TDataView():PedidosClientes( nView ), {|| QuiPedCli() } ), ChangePedidosWeb() } , , , .f., .f., .f. )
+   oBoton                     := TDotNetButton():New( 60, oGrupo, "Garbage_Empty_32",  "Eliminar",       2, {|| WinDelRec( oBrwPedidosWeb, D():PedidosClientes( nView ), {|| QuiPedCli() } ), ChangePedidosWeb() } , , , .f., .f., .f. )
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Salir", .f. )
 
@@ -11707,14 +11707,14 @@ Return ( nil )
 Static Function YearComboBoxChange()
 
 	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( TDataView():PedidosClientes( nView ) )
-      CreateUserFilter( "", TDataView():PedidosClientes( nView ), .f., , , "all" )
+		DestroyFastFilter( D():PedidosClientes( nView ) )
+      CreateUserFilter( "", D():PedidosClientes( nView ), .f., , , "all" )
 	 else
-		DestroyFastFilter( TDataView():PedidosClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), TDataView():PedidosClientes( nView ), .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
+		DestroyFastFilter( D():PedidosClientes( nView ) )
+      CreateUserFilter( "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox(), D():PedidosClientes( nView ), .f., , , "Year( Field->dFecPed ) == " + oWndBrw:oWndBar:cYearComboBox() )
 	 end if
 
-	 ( TDataView():PedidosClientes( nView ) )->( dbGoTop() )
+	 ( D():PedidosClientes( nView ) )->( dbGoTop() )
 
 	 oWndBrw:Refresh()
 
@@ -11932,29 +11932,29 @@ Static Function CargaAtipicasCliente( aTmpPed, oBrwLin, oDlg )
    Controlamos que el cliente tenga atipicas----------------------------------
    */
 
-   nOrder            := ( TDataView():Atipicas( nView ) )->( OrdSetFocus( "cCodCli" ) )
+   nOrder            := ( D():Atipicas( nView ) )->( OrdSetFocus( "cCodCli" ) )
 
-   if ( TDataView():Atipicas( nView ) )->( dbSeek( aTmpPed[ _CCODCLI ] ) )
+   if ( D():Atipicas( nView ) )->( dbSeek( aTmpPed[ _CCODCLI ] ) )
 
       AutoMeterDialog( oDlg )
 
-      SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+      SetTotalAutoMeterDialog( ( D():Atipicas( nView ) )->( LastRec() ) )
 
-      while ( TDataView():Atipicas( nView ) )->cCodCli == aTmpPed[ _CCODCLI ] .and. !( TDataView():Atipicas( nView ) )->( Eof() )
+      while ( D():Atipicas( nView ) )->cCodCli == aTmpPed[ _CCODCLI ] .and. !( D():Atipicas( nView ) )->( Eof() )
 
-         if lConditionAtipica( nil, TDataView():Atipicas( nView ) ) .and. ( TDataView():Atipicas( nView ) )->lAplPed
+         if lConditionAtipica( nil, D():Atipicas( nView ) ) .and. ( D():Atipicas( nView ) )->lAplPed
 
             AppendDatosAtipicas( aTmpPed )
 
          end if
 
-         SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
+         SetAutoMeterDialog( ( D():Atipicas( nView ) )->( Recno() ) )
 
-         ( TDataView():Atipicas( nView ) )->( dbSkip() )
+         ( D():Atipicas( nView ) )->( dbSkip() )
 
       end while
 
-      EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+      EndAutoMeterDialog( ( D():Atipicas( nView ) )->( LastRec() ) )
 
    end if
 
@@ -11964,33 +11964,33 @@ Static Function CargaAtipicasCliente( aTmpPed, oBrwLin, oDlg )
 
    if !lSearch
 
-      ( TDataView():Atipicas( nView ) )->( OrdSetFocus( "cCodGrp" ) )
+      ( D():Atipicas( nView ) )->( OrdSetFocus( "cCodGrp" ) )
    
-      if ( TDataView():Atipicas( nView ) )->( dbSeek( aTmpPed[ _CCODGRP ] ) )
+      if ( D():Atipicas( nView ) )->( dbSeek( aTmpPed[ _CCODGRP ] ) )
 
          AutoMeterDialog( oDlg )
 
-         SetTotalAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+         SetTotalAutoMeterDialog( ( D():Atipicas( nView ) )->( LastRec() ) )
    
-         while ( TDataView():Atipicas( nView ) )->cCodGrp == aTmpPed[ _CCODGRP ] .and. !( TDataView():Atipicas( nView ) )->( Eof() )
+         while ( D():Atipicas( nView ) )->cCodGrp == aTmpPed[ _CCODGRP ] .and. !( D():Atipicas( nView ) )->( Eof() )
    
-            if lConditionAtipica( nil, TDataView():Atipicas( nView ) ) .and. ( TDataView():Atipicas( nView ) )->lAplAlb
+            if lConditionAtipica( nil, D():Atipicas( nView ) ) .and. ( D():Atipicas( nView ) )->lAplAlb
    
                AppendDatosAtipicas( aTmpPed )
    
             end if
 
-            SetAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( Recno() ) )
+            SetAutoMeterDialog( ( D():Atipicas( nView ) )->( Recno() ) )
    
-            ( TDataView():Atipicas( nView ) )->( dbSkip() )
+            ( D():Atipicas( nView ) )->( dbSkip() )
    
          end while
 
-         EndAutoMeterDialog( ( TDataView():Atipicas( nView ) )->( LastRec() ) )
+         EndAutoMeterDialog( ( D():Atipicas( nView ) )->( LastRec() ) )
    
       end if
    
-      ( TDataView():Atipicas( nView ) )->( OrdSetFocus( nOrder ) )
+      ( D():Atipicas( nView ) )->( OrdSetFocus( nOrder ) )
 
    end if 
 
@@ -12012,20 +12012,20 @@ Static Function AppendDatosAtipicas( aTmpPed )
    local nPrecioAtipica
    local hAtipica
 
-   if !dbSeekInOrd( ( TDataView():Atipicas( nView ) )->cCodArt, "cRef", dbfTmpLin )
+   if !dbSeekInOrd( ( D():Atipicas( nView ) )->cCodArt, "cRef", dbfTmpLin )
       
-      if ( dbfArticulo )->( dbSeek( ( TDataView():Atipicas( nView ) )->cCodArt ) ) .and.;
+      if ( dbfArticulo )->( dbSeek( ( D():Atipicas( nView ) )->cCodArt ) ) .and.;
          !( dbfArticulo )->lObs
 
          ( dbfTmpLin )->( dbAppend() )
 
          ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )
-         ( dbfTmpLin )->cRef           := ( TDataView():Atipicas( nView ) )->cCodArt
-         ( dbfTmpLin )->cCodPr1        := ( TDataView():Atipicas( nView ) )->cCodPr1
-         ( dbfTmpLin )->cCodPr2        := ( TDataView():Atipicas( nView ) )->cCodPr2
-         ( dbfTmpLin )->cValPr1        := ( TDataView():Atipicas( nView ) )->cValPr1
-         ( dbfTmpLin )->cValPr2        := ( TDataView():Atipicas( nView ) )->cValPr2
-         ( dbfTmpLin )->nCosDiv        := ( TDataView():Atipicas( nView ) )->nPrcCom
+         ( dbfTmpLin )->cRef           := ( D():Atipicas( nView ) )->cCodArt
+         ( dbfTmpLin )->cCodPr1        := ( D():Atipicas( nView ) )->cCodPr1
+         ( dbfTmpLin )->cCodPr2        := ( D():Atipicas( nView ) )->cCodPr2
+         ( dbfTmpLin )->cValPr1        := ( D():Atipicas( nView ) )->cValPr1
+         ( dbfTmpLin )->cValPr2        := ( D():Atipicas( nView ) )->cValPr2
+         ( dbfTmpLin )->nCosDiv        := ( D():Atipicas( nView ) )->nPrcCom
          ( dbfTmpLin )->cAlmLin        := aTmpPed[ _CCODALM ]
          ( dbfTmpLin )->lIvaLin        := aTmpPed[ _LIVAINC ]
          ( dbfTmpLin )->nTarLin        := aTmpPed[ _NTARIFA ]
@@ -12050,8 +12050,8 @@ Static Function AppendDatosAtipicas( aTmpPed )
          ( dbfTmpLin )->cCodFam        := ( dbfArticulo )->Familia
          ( dbfTmpLin )->nPesoKg        := ( dbfArticulo )->nPesoKg
    
-         ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpPed[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
-         ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpPed[ _CCODCLI ], ( TDataView():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
+         ( dbfTmpLin )->dFecUltCom     := dFechaUltimaVenta( aTmpPed[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
+         ( dbfTmpLin )->nUniUltCom     := nUnidadesUltimaVenta( aTmpPed[ _CCODCLI ], ( D():Atipicas( nView ) )->cCodArt, dbfAlbCliL, dbfFacCliL )
 
          /*
          Vamos a por los catos de la tarifa
@@ -12275,14 +12275,14 @@ Static Function ImprimirSeriesPedidosClientes( nDevice, lExt )
 
    // Establecemos sus valores-------------------------------------------------
 
-   oPrinter:Serie(      ( TDataView():PedidosClientes( nView ) )->cSerPed )
-   oPrinter:Documento(  ( TDataView():PedidosClientes( nView ) )->nNumPed )
-   oPrinter:Sufijo(     ( TDataView():PedidosClientes( nView ) )->cSufPed )
+   oPrinter:Serie(      ( D():PedidosClientes( nView ) )->cSerPed )
+   oPrinter:Documento(  ( D():PedidosClientes( nView ) )->nNumPed )
+   oPrinter:Sufijo(     ( D():PedidosClientes( nView ) )->cSufPed )
 
    if lExt
 
-      oPrinter:oFechaInicio:cText( ( TDataView():PedidosClientes( nView ) )->dFecPed )
-      oPrinter:oFechaFin:cText( ( TDataView():PedidosClientes( nView ) )->dFecPed )
+      oPrinter:oFechaInicio:cText( ( D():PedidosClientes( nView ) )->dFecPed )
+      oPrinter:oFechaFin:cText( ( D():PedidosClientes( nView ) )->dFecPed )
 
    end if
 
@@ -12290,28 +12290,28 @@ Static Function ImprimirSeriesPedidosClientes( nDevice, lExt )
 
    // Formato de documento-----------------------------------------------------
 
-   cFormato          := cFormatoDocumento( ( TDataView():PedidosClientes( nView ) )->cSerPed, "nPedCli", TDataView():Contadores( nView ) )
+   cFormato          := cFormatoDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", D():Contadores( nView ) )
    if empty( cFormato )
-      cFormato       := cFirstDoc( "PC", TDataView():Documentos( nView ) )
+      cFormato       := cFirstDoc( "PC", D():Documentos( nView ) )
    end if
    oPrinter:oFormatoDocumento:cText( cFormato )
 
    // Codeblocks para que trabaje----------------------------------------------
 
-   aStatus           := TDataview():GetInitStatus( "PedCliT", nView )
+   aStatus           := D():GetInitStatus( "PedCliT", nView )
 
-   oPrinter:bInit    := {||   ( TDataview():PedidosClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
+   oPrinter:bInit    := {||   ( D():PedidosClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
 
-   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( TDataView():PedidosClientesId( nView ) )                  .and. ;
-                              ( TDataView():PedidosClientes( nView ) )->( !eof() ) }
+   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( D():PedidosClientesId( nView ) )                  .and. ;
+                              ( D():PedidosClientes( nView ) )->( !eof() ) }
 
-   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( TDataView():PedidosClientes( nView ) )->dFecPed )           .and. ;
-                              oPrinter:InRangeCliente( ( TDataView():PedidosClientes( nView ) )->cCodCli )         .and. ;
-                              oPrinter:InRangeGrupoCliente( retGrpCli( ( TDataView():PedidosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) ) }
+   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():PedidosClientes( nView ) )->dFecPed )           .and. ;
+                              oPrinter:InRangeCliente( ( D():PedidosClientes( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeGrupoCliente( retGrpCli( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ) ) ) }
 
-   oPrinter:bSkip    := {||   ( TDataView():PedidosClientes( nView ) )->( dbSkip() ) }
+   oPrinter:bSkip    := {||   ( D():PedidosClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenPedCli( nDevice, "Imprimiendo documento : " + TDataView():PedidosClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenPedCli( nDevice, "Imprimiendo documento : " + D():PedidosClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 
@@ -12321,7 +12321,7 @@ Static Function ImprimirSeriesPedidosClientes( nDevice, lExt )
 
    // Restore -----------------------------------------------------------------
 
-   TDataview():SetStatus( "PedCliT", nView, aStatus )
+   D():SetStatus( "PedCliT", nView, aStatus )
    
    if !Empty( oWndBrw )
       oWndBrw:Refresh()
@@ -12926,42 +12926,42 @@ FUNCTION EdmPedCli( cCodRut, cPathTo, oStru, aSucces )
       dFecPed  := Ctod( SubStr( cLine,  1, 10 ) )
       cCodCli  := SubStr( cLine, 11,  7 )
 
-      if ( TDataView():Clientes( nView ) )->( dbSeek( cCodCli ) )
+      if ( D():Clientes( nView ) )->( dbSeek( cCodCli ) )
 
-         nNumPed                    := nNewDoc( ( TDataView():Clientes( nView ) )->Serie, TDataView():PedidosClientes( nView ), "NPEDCLI", , dbfCount )
-         ( TDataView():PedidosClientes( nView ) )->( dbAppend() )
-         ( TDataView():PedidosClientes( nView ) )->cSerPed    := ( TDataView():Clientes( nView ) )->Serie
-         ( TDataView():PedidosClientes( nView ) )->cSufPed    := RetSufEmp()
-         ( TDataView():PedidosClientes( nView ) )->nNumPed    := nNumPed
-         ( TDataView():PedidosClientes( nView ) )->dFecPed    := dFecPed
-         ( TDataView():PedidosClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
-         ( TDataView():PedidosClientes( nView ) )->cDivPed    := cDivEmp()
-         ( TDataView():PedidosClientes( nView ) )->nVdvPed    := nChgDiv( ( TDataView():PedidosClientes( nView ) )->cDivPed, dbfDiv )
-         ( TDataView():PedidosClientes( nView ) )->nEstado    := 1
-         ( TDataView():PedidosClientes( nView ) )->cCodCli    := ( TDataView():Clientes( nView ) )->Cod
-         ( TDataView():PedidosClientes( nView ) )->cNomCli    := ( TDataView():Clientes( nView ) )->Titulo
-         ( TDataView():PedidosClientes( nView ) )->cDirCli    := ( TDataView():Clientes( nView ) )->Domicilio
-         ( TDataView():PedidosClientes( nView ) )->cPobCli    := ( TDataView():Clientes( nView ) )->Poblacion
-         ( TDataView():PedidosClientes( nView ) )->cPrvCli    := ( TDataView():Clientes( nView ) )->Provincia
-         ( TDataView():PedidosClientes( nView ) )->cPosCli    := ( TDataView():Clientes( nView ) )->CodPostal
-         ( TDataView():PedidosClientes( nView ) )->cDniCli    := ( TDataView():Clientes( nView ) )->Nif
-         ( TDataView():PedidosClientes( nView ) )->cCodTar    := ( TDataView():Clientes( nView ) )->cCodTar
-         ( TDataView():PedidosClientes( nView ) )->cCodPgo    := ( TDataView():Clientes( nView ) )->CodPago
-         ( TDataView():PedidosClientes( nView ) )->cCodAge    := ( TDataView():Clientes( nView ) )->cAgente
-         ( TDataView():PedidosClientes( nView ) )->cCodRut    := ( TDataView():Clientes( nView ) )->cCodRut
-         ( TDataView():PedidosClientes( nView ) )->nTarifa    := ( TDataView():Clientes( nView ) )->nTarifa
-         ( TDataView():PedidosClientes( nView ) )->lRecargo   := ( TDataView():Clientes( nView ) )->lReq
-         ( TDataView():PedidosClientes( nView ) )->lOperPv    := ( TDataView():Clientes( nView ) )->lPntVer
-         ( TDataView():PedidosClientes( nView ) )->cDtoEsp    := ( TDataView():Clientes( nView ) )->cDtoEsp
-         ( TDataView():PedidosClientes( nView ) )->cDpp       := ( TDataView():Clientes( nView ) )->cDpp
-         ( TDataView():PedidosClientes( nView ) )->nDtoEsp    := ( TDataView():Clientes( nView ) )->nDtoEsp
-         ( TDataView():PedidosClientes( nView ) )->nDpp       := ( TDataView():Clientes( nView ) )->nDpp
-         ( TDataView():PedidosClientes( nView ) )->nDtoCnt    := ( TDataView():Clientes( nView ) )->nDtoCnt
-         ( TDataView():PedidosClientes( nView ) )->nDtoRap    := ( TDataView():Clientes( nView ) )->nDtoRap
-         ( TDataView():PedidosClientes( nView ) )->nDtoUno    := ( TDataView():Clientes( nView ) )->nDtoCnt
-         ( TDataView():PedidosClientes( nView ) )->nDtoDos    := ( TDataView():Clientes( nView ) )->nDtoRap
+         nNumPed                    := nNewDoc( ( D():Clientes( nView ) )->Serie, D():PedidosClientes( nView ), "NPEDCLI", , dbfCount )
+         ( D():PedidosClientes( nView ) )->( dbAppend() )
+         ( D():PedidosClientes( nView ) )->cSerPed    := ( D():Clientes( nView ) )->Serie
+         ( D():PedidosClientes( nView ) )->cSufPed    := RetSufEmp()
+         ( D():PedidosClientes( nView ) )->nNumPed    := nNumPed
+         ( D():PedidosClientes( nView ) )->dFecPed    := dFecPed
+         ( D():PedidosClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
+         ( D():PedidosClientes( nView ) )->cDivPed    := cDivEmp()
+         ( D():PedidosClientes( nView ) )->nVdvPed    := nChgDiv( ( D():PedidosClientes( nView ) )->cDivPed, dbfDiv )
+         ( D():PedidosClientes( nView ) )->nEstado    := 1
+         ( D():PedidosClientes( nView ) )->cCodCli    := ( D():Clientes( nView ) )->Cod
+         ( D():PedidosClientes( nView ) )->cNomCli    := ( D():Clientes( nView ) )->Titulo
+         ( D():PedidosClientes( nView ) )->cDirCli    := ( D():Clientes( nView ) )->Domicilio
+         ( D():PedidosClientes( nView ) )->cPobCli    := ( D():Clientes( nView ) )->Poblacion
+         ( D():PedidosClientes( nView ) )->cPrvCli    := ( D():Clientes( nView ) )->Provincia
+         ( D():PedidosClientes( nView ) )->cPosCli    := ( D():Clientes( nView ) )->CodPostal
+         ( D():PedidosClientes( nView ) )->cDniCli    := ( D():Clientes( nView ) )->Nif
+         ( D():PedidosClientes( nView ) )->cCodTar    := ( D():Clientes( nView ) )->cCodTar
+         ( D():PedidosClientes( nView ) )->cCodPgo    := ( D():Clientes( nView ) )->CodPago
+         ( D():PedidosClientes( nView ) )->cCodAge    := ( D():Clientes( nView ) )->cAgente
+         ( D():PedidosClientes( nView ) )->cCodRut    := ( D():Clientes( nView ) )->cCodRut
+         ( D():PedidosClientes( nView ) )->nTarifa    := ( D():Clientes( nView ) )->nTarifa
+         ( D():PedidosClientes( nView ) )->lRecargo   := ( D():Clientes( nView ) )->lReq
+         ( D():PedidosClientes( nView ) )->lOperPv    := ( D():Clientes( nView ) )->lPntVer
+         ( D():PedidosClientes( nView ) )->cDtoEsp    := ( D():Clientes( nView ) )->cDtoEsp
+         ( D():PedidosClientes( nView ) )->cDpp       := ( D():Clientes( nView ) )->cDpp
+         ( D():PedidosClientes( nView ) )->nDtoEsp    := ( D():Clientes( nView ) )->nDtoEsp
+         ( D():PedidosClientes( nView ) )->nDpp       := ( D():Clientes( nView ) )->nDpp
+         ( D():PedidosClientes( nView ) )->nDtoCnt    := ( D():Clientes( nView ) )->nDtoCnt
+         ( D():PedidosClientes( nView ) )->nDtoRap    := ( D():Clientes( nView ) )->nDtoRap
+         ( D():PedidosClientes( nView ) )->nDtoUno    := ( D():Clientes( nView ) )->nDtoCnt
+         ( D():PedidosClientes( nView ) )->nDtoDos    := ( D():Clientes( nView ) )->nDtoRap
 
-         aAdd( aSucces, { .f., "Nuevo pedido de clientes " + ( TDataView():PedidosClientes( nView ) )->cSerPed + "/" + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + "/" + ( TDataView():PedidosClientes( nView ) )->cSufPed } )
+         aAdd( aSucces, { .f., "Nuevo pedido de clientes " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + "/" + ( D():PedidosClientes( nView ) )->cSufPed } )
 
       end if
 
@@ -12978,9 +12978,9 @@ FUNCTION EdmPedCli( cCodRut, cPathTo, oStru, aSucces )
          */
 
          ( dbfPedCliL )->( dbAppend() )
-         ( dbfPedCliL )->cSerPed := ( TDataView():PedidosClientes( nView ) )->cSerPed
-         ( dbfPedCliL )->nNumPed := ( TDataView():PedidosClientes( nView ) )->nNumPed
-         ( dbfPedCliL )->cSufPed := ( TDataView():PedidosClientes( nView ) )->cSufPed
+         ( dbfPedCliL )->cSerPed := ( D():PedidosClientes( nView ) )->cSerPed
+         ( dbfPedCliL )->nNumPed := ( D():PedidosClientes( nView ) )->nNumPed
+         ( dbfPedCliL )->cSufPed := ( D():PedidosClientes( nView ) )->cSufPed
          ( dbfPedCliL )->cRef    := Ltrim( SubStr( cLine, 18, 13 ) )
          ( dbfPedCliL )->cDetalle:= RetFld( ( dbfPedCliL )->cRef, dbfArticulo )
          ( dbfPedCliL )->nPreDiv := Val( SubStr( cLine, 31,  7 ) )
@@ -13428,7 +13428,7 @@ FUNCTION QuiPedCli()
    local nOrdInc
    local nOrdDoc
 
-   if ( TDataView():PedidosClientes( nView ) )->lCloPed .and. !oUser():lAdministrador()
+   if ( D():PedidosClientes( nView ) )->lCloPed .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar pedidos cerrados los administradores." )
       Return .f.
    end if
@@ -13444,7 +13444,7 @@ FUNCTION QuiPedCli()
    */
 
    if !Empty( dbfPreCliT )
-      if dbSeekInOrd( ( TDataView():PedidosClientes( nView ) )->cNumPre, 'nNumPre', dbfPreCliT ) .and. ( dbfPreCliT )->( dbRLock() )
+      if dbSeekInOrd( ( D():PedidosClientes( nView ) )->cNumPre, 'nNumPre', dbfPreCliT ) .and. ( dbfPreCliT )->( dbRLock() )
          ( dbfPreCliT )->lEstado := .f.
          ( dbfPreCliT )->( dbUnLock() )
       end if
@@ -13454,7 +13454,7 @@ FUNCTION QuiPedCli()
    Lineas--------------------------------------------------------------------
    */
 
-   while ( dbfPedCliL )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliL )->( eof() )
+   while ( dbfPedCliL )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliL )->( eof() )
       if dbLock( dbfPedCliL )
          ( dbfPedCliL )->( dbDelete() )
          ( dbfPedCliL )->( dbUnLock() )
@@ -13465,7 +13465,7 @@ FUNCTION QuiPedCli()
    Reservas--------------------------------------------------------------------
    */
 
-   while ( dbfPedCliR )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliR )->( eof() )
+   while ( dbfPedCliR )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliR )->( eof() )
       if dbLock( dbfPedCliR )
          ( dbfPedCliR )->( dbDelete() )
          ( dbfPedCliR )->( dbUnLock() )
@@ -13476,7 +13476,7 @@ FUNCTION QuiPedCli()
    Entregas--------------------------------------------------------------------
    */
 
-   while ( dbfPedCliP )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliP )->( eof() )
+   while ( dbfPedCliP )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliP )->( eof() )
       if dbDialogLock( dbfPedCliP )
          ( dbfPedCliP )->( dbDelete() )
          ( dbfPedCliP )->( dbUnLock() )
@@ -13487,7 +13487,7 @@ FUNCTION QuiPedCli()
    Incidencias-----------------------------------------------------------------
    */
 
-   while ( dbfPedCliI )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView )  )->cSufPed ) ) .and. !( dbfPedCliI )->( eof() )
+   while ( dbfPedCliI )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView )  )->cSufPed ) ) .and. !( dbfPedCliI )->( eof() )
       if dbLock( dbfPedCliI )
          ( dbfPedCliI )->( dbDelete() )
          ( dbfPedCliI )->( dbUnLock() )
@@ -13498,7 +13498,7 @@ FUNCTION QuiPedCli()
    Documentos------------------------------------------------------------------
    */
 
-   while ( dbfPedCliD )->( dbSeek( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView )  )->cSufPed ) ) .and. !( dbfPedCliD )->( eof() )
+   while ( dbfPedCliD )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView )  )->cSufPed ) ) .and. !( dbfPedCliD )->( eof() )
       if dbLock( dbfPedCliD )
          ( dbfPedCliD )->( dbDelete() )
          ( dbfPedCliD )->( dbUnLock() )
@@ -14382,7 +14382,7 @@ Function AppPedCli( cCodCli, cCodArt, lOpenBrowse )
 
       if OpenFiles( .t. )
          nTotPedCli()
-         WinAppRec( nil, bEdtRec, TDataView():PedidosClientes( nView ), cCodCli, cCodArt )
+         WinAppRec( nil, bEdtRec, D():PedidosClientes( nView ), cCodCli, cCodArt )
          CloseFiles()
       end if
 
@@ -14406,7 +14406,7 @@ Function EdtPedCli( cNumPed, lOpenBrowse )
    if lOpenBrowse
 
       if PedCli()
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             oWndBrw:RecEdit()
          else
             MsgStop( "No se encuentra pedido" )
@@ -14417,9 +14417,9 @@ Function EdtPedCli( cNumPed, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             nTotPedCli()
-            WinEdtRec( nil, bEdtRec, TDataView():PedidosClientes( nView ) )
+            WinEdtRec( nil, bEdtRec, D():PedidosClientes( nView ) )
          end if
 
          CloseFiles()
@@ -14446,7 +14446,7 @@ FUNCTION ZooPedCli( cNumPed, lOpenBrowse )
    if lOpenBrowse
 
       if PedCli()
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             oWndBrw:RecZoom()
          else
             MsgStop( "No se encuentra pedido" )
@@ -14457,9 +14457,9 @@ FUNCTION ZooPedCli( cNumPed, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             nTotPedCli()
-            WinZooRec( nil, bEdtRec, TDataView():PedidosClientes( nView ) )
+            WinZooRec( nil, bEdtRec, D():PedidosClientes( nView ) )
          end if
 
          CloseFiles()
@@ -14486,8 +14486,8 @@ FUNCTION DelPedCli( cNumPed, lOpenBrowse )
    if lOpenBrowse
 
       if PedCli()
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
-            WinDelRec( nil, TDataView():PedidosClientes( nView ), {|| QuiPedCli() } )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
+            WinDelRec( nil, D():PedidosClientes( nView ), {|| QuiPedCli() } )
          else
             MsgStop( "No se encuentra pedido" )
          end if
@@ -14497,9 +14497,9 @@ FUNCTION DelPedCli( cNumPed, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             nTotPedCli()
-            WinDelRec( nil, TDataView():PedidosClientes( nView ), {|| QuiPedCli() } )
+            WinDelRec( nil, D():PedidosClientes( nView ), {|| QuiPedCli() } )
          end if
 
          CloseFiles()
@@ -14526,7 +14526,7 @@ FUNCTION PrnPedCli( cNumPed, lOpenBrowse )
    if lOpenBrowse
 
       if PedCli()
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             ImprimirSeriesPedidosClientes( IS_PRINTER, .t. )
             //GenPedCli( IS_PRINTER )
          else
@@ -14538,7 +14538,7 @@ FUNCTION PrnPedCli( cNumPed, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             nTotPedCli()
             ImprimirSeriesPedidosClientes( IS_PRINTER, .t. )
             //GenPedCli( IS_PRINTER )
@@ -14568,7 +14568,7 @@ FUNCTION VisPedCli( cNumPed, lOpenBrowse )
    if lOpenBrowse
 
       if PedCli()
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             ImprimirSeriesPedidosClientes( IS_SCREEN, .t. )
             //GenPedCli( IS_SCREEN )
          else
@@ -14580,7 +14580,7 @@ FUNCTION VisPedCli( cNumPed, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPed, "nNumPed", TDataView():PedidosClientes( nView ) )
+         if dbSeekInOrd( cNumPed, "nNumPed", D():PedidosClientes( nView ) )
             nTotPedCli()
             ImprimirSeriesPedidosClientes( IS_SCREEN, .t. )
             //GenPedCli( IS_SCREEN )
@@ -14804,7 +14804,7 @@ Return .t.
 Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
-   local cFilePdf       := cPatTmp() + "PedidoCliente" + StrTran( ( TDataView():PedidosClientes( nView ) )->cSerPed + Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) + ( TDataView():PedidosClientes( nView ) )->cSufPed, " ", "" ) + ".Pdf"
+   local cFilePdf       := cPatTmp() + "PedidoCliente" + StrTran( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -14895,15 +14895,15 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetDe(           uFieldEmpresa( "cNombre" ) )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( TDataView():PedidosClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envio de pedido de cliente número " + ( TDataView():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro pedido de cliente " + ( TDataView():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( TDataView():PedidosClientes( nView ) )->nNumPed ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( TDataView():PedidosClientes( nView ) )->dfecPed ) + Space( 1 ) )
+                  :SetPara(         RetFld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
+                  :SetAsunto(       "Envio de pedido de cliente número " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro pedido de cliente " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( D():PedidosClientes( nView ) )->dfecPed ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( TDataView():PedidosClientes( nView ), aItmPedCli() )
+                  :GeneralResource( D():PedidosClientes( nView ), aItmPedCli() )
 
                end with
 
@@ -15910,8 +15910,8 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    	local lPntVer           := .f.
 
    	if !Empty( nView )
-   		DEFAULT cPedCliT   	:= TDataView():PedidosClientes( nView )
-		DEFAULT cClient   	:= TDataView():Clientes( nView )
+   		DEFAULT cPedCliT   	:= D():PedidosClientes( nView )
+		DEFAULT cClient   	:= D():Clientes( nView )
 	end if	
    	
    	DEFAULT cPedCliL        := dbfPedCliL

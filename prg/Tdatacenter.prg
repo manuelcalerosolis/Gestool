@@ -4956,7 +4956,7 @@ RETURN lGood
 
 //---------------------------------------------------------------------------//
 
-CLASS TDataView
+CLASS D
 
    CLASSDATA   aStatus
 
@@ -5081,17 +5081,17 @@ CLASS TDataView
 
    METHOD ProveedorArticulo( nView )         INLINE ( ::Get( "ProvArt", nView ) )
 
-   METHOD CodigoBarrasArticulo( nView )      INLINE ( ::Get( "ArtCodebar", nView ) )
-
    METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
+      METHOD ArticulosCodigosBarras( nView ) ;
+                                             INLINE ( ::Get( "ArtCodebar", nView ) )
+      METHOD ArticuloPrecioPropiedades( nView ) ;
+                                             INLINE ( ::Get( "ArtDiv", nView ) )
 
    METHOD Familias( nView )                  INLINE ( ::Get( "Familias", nView ) )
 
    METHOD Kit( nView )                       INLINE ( ::Get( "ArtKit", nView ) )
 
    METHOD FormasPago( nView )                INLINE ( ::Get( "FPago", nView ) )
-
-   METHOD ArticuloPrecioPropiedades( nView ) INLINE ( ::Get( "ArtDiv", nView ) )
 
    METHOD Divisas( nView )                   INLINE ( ::Get( "Divisas", nView ) )
 
@@ -5141,7 +5141,7 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
-   METHOD AssertView( nView ) CLASS TDataView
+   METHOD AssertView( nView ) CLASS D
 
       DEFAULT nView  := ::nView
 
@@ -5159,7 +5159,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD DeleteView( nView ) CLASS TDataView
+   METHOD DeleteView( nView ) CLASS D
 
       local u
       local value
@@ -5197,7 +5197,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD Get( cDatabase, nView ) CLASS TDataView
+   METHOD Get( cDatabase, nView ) CLASS D
 
       local cHandle  := ::GetView( cDatabase, nView )
 
@@ -5209,7 +5209,7 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
-   METHOD GetObject( cName, nView ) CLASS TDataView
+   METHOD GetObject( cName, nView ) CLASS D
 
       local cHandle  := ::GetView( cName, nView )
 
@@ -5221,7 +5221,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD GetView( cDatabase, nView ) CLASS TDataView
+   METHOD GetView( cDatabase, nView ) CLASS D
 
       local hView
       local cHandle
@@ -5241,7 +5241,7 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
-   METHOD AddView( cDatabase, cHandle, nView ) CLASS TDataView
+   METHOD AddView( cDatabase, cHandle, nView ) CLASS D
 
       local hView
 
@@ -5258,7 +5258,7 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
-   METHOD OpenDataBase( cDataTable, nView ) CLASS TDataView
+   METHOD OpenDataBase( cDataTable, nView ) CLASS D
 
       local dbf
       local lOpen
@@ -5288,7 +5288,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD OpenObject( cObject, nView ) CLASS TDataView
+   METHOD OpenObject( cObject, nView ) CLASS D
 
       local lOpen
       local oObject     := TDataCenter():ScanObject( cObject )
@@ -5312,7 +5312,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 /*
-   METHOD OpenTDbf( cDataTable, nView ) CLASS TDataView
+   METHOD OpenTDbf( cDataTable, nView ) CLASS D
 
       local oDbf
       local lOpen

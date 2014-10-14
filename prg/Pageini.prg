@@ -67,31 +67,31 @@ STATIC FUNCTION OpenFiles()
 
    BEGIN SEQUENCE
 
-      nView       := TDataView():CreateView()
+      nView       := D():CreateView()
    
-      TDataView():Get( "Client", nView )
-      TDataView():Get( "CliInc", nView )
+      D():Get( "Client", nView )
+      D():Get( "CliInc", nView )
    
-      TDataView():Get( "TipInci", nView )
+      D():Get( "TipInci", nView )
    
-      TDataView():Get( "FacPrvT", nView )
-      TDataView():Get( "FacPrvL", nView )
-      TDataView():Get( "FacPrvP", nView )
+      D():Get( "FacPrvT", nView )
+      D():Get( "FacPrvL", nView )
+      D():Get( "FacPrvP", nView )
    
-      TDataView():Get( "FacRecT", nView )
-      TDataView():Get( "FacRecL", nView )
+      D():Get( "FacRecT", nView )
+      D():Get( "FacRecL", nView )
    
-      TDataView():Get( "AntCliT", nView )
+      D():Get( "AntCliT", nView )
    
-      TDataView():Get( "FacPrvT", nView )
-      TDataView():Get( "FacPrvL", nView )
-      TDataView():Get( "FacPrvP", nView )
+      D():Get( "FacPrvT", nView )
+      D():Get( "FacPrvL", nView )
+      D():Get( "FacPrvP", nView )
    
-      TDataView():Get( "RctPrvT", nView )
-      TDataView():Get( "RctPrvL", nView )
+      D():Get( "RctPrvT", nView )
+      D():Get( "RctPrvL", nView )
    
-      TDataView():Get( "TIva", nView )
-      TDataView():Get( "Divisas", nView )
+      D():Get( "TIva", nView )
+      D():Get( "Divisas", nView )
 
    RECOVER
 
@@ -111,7 +111,7 @@ Return ( lOpen )
 
 STATIC FUNCTION CloseFiles()
 
-   TDataView():DeleteView( nView )  
+   D():DeleteView( nView )  
 
 Return .t.
 
@@ -249,9 +249,9 @@ FUNCTION PageIniClient( View )
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   cCodigoCliente          := ( TDataView():Get( "Client", nView ) )->Cod
-   cNombreCliente          := ( TDataView():Get( "Client", nView ) )->Titulo
-   cTelefonoCliente        := ( TDataView():Get( "Client", nView ) )->Telefono
+   cCodigoCliente          := ( D():Get( "Client", nView ) )->Cod
+   cNombreCliente          := ( D():Get( "Client", nView ) )->Titulo
+   cTelefonoCliente        := ( D():Get( "Client", nView ) )->Telefono
 
    // Cargamos los valores por defecto-----------------------------------------
 
@@ -304,9 +304,9 @@ FUNCTION PageIniClient( View )
 
    ErrorBlock( oBlock )
 
-   DestroyFastFilter( TDataView():Get( "FacPrvP", nView ) )
+   DestroyFastFilter( D():Get( "FacPrvP", nView ) )
 
-   DestroyFastFilter( TDataView():Get( "FacPrvP", nView ) )
+   DestroyFastFilter( D():Get( "FacPrvP", nView ) )
 
    /*
    Guardamos el orden de los browse--------------------------------------------
@@ -349,7 +349,7 @@ Static Function LoadPageClient()
 
    local cExpHead    := ""
 
-   ( TDataView():Get( "FacCliP", nView ) )->( OrdSetFocus( "dFecVto" ) )
+   ( D():Get( "FacCliP", nView ) )->( OrdSetFocus( "dFecVto" ) )
 
    do case
       case oEstadoCli:nAt == 1
@@ -364,7 +364,7 @@ Static Function LoadPageClient()
       cExpHead       += ' .and. rtrim( cCodCli ) == "' + rtrim( cCodigoCliente ) + '"'
    end if
 
-    CreateFastFilter( cExpHead, TDataView():Get( "FacCliP", nView ), .f. )
+    CreateFastFilter( cExpHead, D():Get( "FacCliP", nView ), .f. )
 
    // Refrescamos los browse------------------------------------------------------
 
@@ -380,7 +380,7 @@ Static Function LoadPageProveedor()
 
    local cExpHead    := ""
 
-   ( TDataView():Get( "FacPrvP", nView ) )->( OrdSetFocus( "dFecVto" ) )
+   ( D():Get( "FacPrvP", nView ) )->( OrdSetFocus( "dFecVto" ) )
 
    do case
       case oEstadoPrv:nAt == 1
@@ -395,7 +395,7 @@ Static Function LoadPageProveedor()
       cExpHead       += ' .and. rtrim( cCodPrv ) == "' + rtrim( cCodigoProveedor ) + '"'
    end if
 
-   CreateFastFilter( cExpHead, TDataView():Get( "FacPrvP", nView ), .f. )
+   CreateFastFilter( cExpHead, D():Get( "FacPrvP", nView ), .f. )
 
    // Refrescamos los browse------------------------------------------------------
 
@@ -445,8 +445,8 @@ Static Function PageIniCobros()
       REDEFINE BUTTON oBtnModificarRecibo ;
          ID          180 ;
          OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      (  if ( !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cSerie ),;
-                           EdtRecCli( TDataView():FacturasClientesCobrosId( nView ), .f., !Empty( ( TDataView():FacturasClientesCobros( nView ) )->cTipRec ) ), ),;
+         ACTION      (  if ( !Empty( ( D():FacturasClientesCobros( nView ) )->cSerie ),;
+                           EdtRecCli( D():FacturasClientesCobrosId( nView ), .f., !Empty( ( D():FacturasClientesCobros( nView ) )->cTipRec ) ), ),;
                            oBrwRecCli:Refresh() )
 
       oBrwRecCli                 := IXBrowse():New( oFld:aDialogs[ nFolder ] )
@@ -454,7 +454,7 @@ Static Function PageIniCobros()
       oBrwRecCli:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwRecCli:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwRecCli:cAlias          := ( TDataView():Get( "FacCliP", nView ) )
+      oBrwRecCli:cAlias          := ( D():Get( "FacCliP", nView ) )
 
       oBrwRecCli:nMarqueeStyle   := 6
       oBrwRecCli:lRecordSelector := .f.
@@ -467,32 +467,32 @@ Static Function PageIniCobros()
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "E. Estado"
          :bStrData               := {|| "" }
-         :bEditValue             := {|| ( TDataView():Get( "FacCliP", nView ) )->lCobrado }
+         :bEditValue             := {|| ( D():Get( "FacCliP", nView ) )->lCobrado }
          :nWidth                 := 18
          :SetCheck( { "Sel16", "Cnt16" } )
       end with
 
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "T. Tipo"
-         :bEditValue             := {|| if( Empty( ( TDataView():Get( "FacCliP", nView ) )->cTipRec ), "Factura", "Rectificativa" ) }
+         :bEditValue             := {|| if( Empty( ( D():Get( "FacCliP", nView ) )->cTipRec ), "Factura", "Rectificativa" ) }
          :nWidth                 := 18
       end with
 
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "Número"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cSerie ) + "/" + AllTrim( Str( ( TDataView():Get( "FacCliP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( TDataView():Get( "FacCliP", nView ) )->nNumRec ) ) }
+         :bEditValue             := {|| AllTrim( ( D():Get( "FacCliP", nView ) )->cSerie ) + "/" + AllTrim( Str( ( D():Get( "FacCliP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( D():Get( "FacCliP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( D():Get( "FacCliP", nView ) )->nNumRec ) ) }
          :nWidth                 := 80
       end with
 
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "Cliente"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cCodCli ) }
+         :bEditValue             := {|| AllTrim( ( D():Get( "FacCliP", nView ) )->cCodCli ) }
          :nWidth                 := 60
       end with
 
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "Nombre"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacCliP", nView ) )->cNomCli ) }
+         :bEditValue             := {|| AllTrim( ( D():Get( "FacCliP", nView ) )->cNomCli ) }
          :nWidth                 := 160
       end with
 
@@ -505,20 +505,20 @@ Static Function PageIniCobros()
 
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "Fecha"
-         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dPreCob ) }
+         :bEditValue             := {|| Dtoc( ( D():Get( "FacCliP", nView ) )->dPreCob ) }
          :nWidth                 := 80
       end with
 
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "Vencimiento"
-         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacCliP", nView ) )->dFecVto ) }
-         :bClrStd                := {|| { if( ( TDataView():Get( "FacCliP", nView ) )->dFecVto < GetSysDate(), CLR_HRED, CLR_BLACK ), GetSysColor( COLOR_WINDOW )} }
+         :bEditValue             := {|| Dtoc( ( D():Get( "FacCliP", nView ) )->dFecVto ) }
+         :bClrStd                := {|| { if( ( D():Get( "FacCliP", nView ) )->dFecVto < GetSysDate(), CLR_HRED, CLR_BLACK ), GetSysColor( COLOR_WINDOW )} }
          :nWidth                 := 80
       end with
 
       with object ( oBrwRecCli:AddCol() )
          :cHeader                := "Importe"
-         :bEditValue             := {|| ( TDataView():Get( "FacCliP", nView ) )->nImporte }
+         :bEditValue             := {|| ( D():Get( "FacCliP", nView ) )->nImporte }
          :cEditPicture           := cPorDiv()
          :nWidth                 := 70
          :nDataStrAlign          := 1
@@ -569,8 +569,8 @@ Static Function PageIniPagos()
       REDEFINE BUTTON oBtnModificarRecibo ;
          ID          180 ;
          OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      (  if ( !Empty( ( TDataView():FacturasProveedoresCobros( nView ) )->cSerFac ),;
-                           EdtRecPrv( TDataView():FacturasProveedoresCobrosId( nView ), .f., !Empty( ( TDataView():FacturasProveedoresCobros( nView ) )->cTipRec ) ), ),;
+         ACTION      (  if ( !Empty( ( D():FacturasProveedoresCobros( nView ) )->cSerFac ),;
+                           EdtRecPrv( D():FacturasProveedoresCobrosId( nView ), .f., !Empty( ( D():FacturasProveedoresCobros( nView ) )->cTipRec ) ), ),;
                            oBrwRecPrv:Refresh() )
 
       oBrwRecPrv                 := IXBrowse():New( oFld:aDialogs[ nFolder ] )
@@ -578,7 +578,7 @@ Static Function PageIniPagos()
       oBrwRecPrv:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwRecPrv:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwRecPrv:cAlias          := ( TDataView():Get( "FacPrvP", nView ) )
+      oBrwRecPrv:cAlias          := ( D():Get( "FacPrvP", nView ) )
 
       oBrwRecPrv:nMarqueeStyle   := 6
       oBrwRecPrv:lRecordSelector := .f.
@@ -591,50 +591,50 @@ Static Function PageIniPagos()
       with object ( oBrwRecPrv:AddCol() )
          :cHeader                := "E. Estado"
          :bStrData               := {|| "" }
-         :bEditValue             := {|| ( TDataView():Get( "FacPrvP", nView ) )->lCobrado }
+         :bEditValue             := {|| ( D():Get( "FacPrvP", nView ) )->lCobrado }
          :nWidth                 := 18
          :SetCheck( { "Sel16", "Cnt16" } )
       end with
 
       with object ( oBrwRecPrv:AddCol() )
          :cHeader                := "T. Tipo"
-         :bEditValue             := {|| if( Empty( ( TDataView():Get( "FacPrvP", nView ) )->cTipRec ), "Factura", "Rectificativa" ) }
+         :bEditValue             := {|| if( Empty( ( D():Get( "FacPrvP", nView ) )->cTipRec ), "Factura", "Rectificativa" ) }
          :nWidth                 := 18
       end with
 
       with object ( oBrwRecPrv:AddCol() )
          :cHeader                := "Número"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacPrvP", nView ) )->cSerFac ) + "/" + AllTrim( Str( ( TDataView():Get( "FacPrvP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( TDataView():Get( "FacPrvP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( TDataView():Get( "FacPrvP", nView ) )->nNumRec ) ) }
+         :bEditValue             := {|| AllTrim( ( D():Get( "FacPrvP", nView ) )->cSerFac ) + "/" + AllTrim( Str( ( D():Get( "FacPrvP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( D():Get( "FacPrvP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( D():Get( "FacPrvP", nView ) )->nNumRec ) ) }
          :nWidth                 := 80
       end with
 
       with object ( oBrwRecPrv:AddCol() )
          :cHeader                := "Proveedor"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacPrvP", nView ) )->cCodPrv ) }
+         :bEditValue             := {|| AllTrim( ( D():Get( "FacPrvP", nView ) )->cCodPrv ) }
          :nWidth                 := 60
       end with
 
       with object ( oBrwRecPrv:AddCol() )
          :cHeader                := "Nombre"
-         :bEditValue             := {|| AllTrim( ( TDataView():Get( "FacPrvP", nView ) )->cNomPrv ) }
+         :bEditValue             := {|| AllTrim( ( D():Get( "FacPrvP", nView ) )->cNomPrv ) }
          :nWidth                 := 160
       end with
 
       with object ( oBrwRecPrv:AddCol() )
          :cHeader                := "Fecha"
-         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacPrvP", nView ) )->dPreCob ) }
+         :bEditValue             := {|| Dtoc( ( D():Get( "FacPrvP", nView ) )->dPreCob ) }
          :nWidth                 := 80
       end with
 
       with object ( oBrwRecPrv:AddCol() )
          :cHeader                := "Vencimiento"
-         :bEditValue             := {|| Dtoc( ( TDataView():Get( "FacPrvP", nView ) )->dFecVto ) }
+         :bEditValue             := {|| Dtoc( ( D():Get( "FacPrvP", nView ) )->dFecVto ) }
          :nWidth                 := 80
       end with
 
       with object ( oBrwRecPrv:AddCol() )
          :cHeader                := "Importe"
-         :bEditValue             := {|| ( TDataView():Get( "FacPrvP", nView ) )->nImporte }
+         :bEditValue             := {|| ( D():Get( "FacPrvP", nView ) )->nImporte }
          :cEditPicture           := cPorDiv()
          :nWidth                 := 70
          :nDataStrAlign          := 1
@@ -664,7 +664,7 @@ Static Function PageIniIncidecias()
       oBrwInc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwInc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwInc:cAlias          := TDataView():Get( "CliInc", nView )
+      oBrwInc:cAlias          := D():Get( "CliInc", nView )
       oBrwInc:nMarqueeStyle   := 6
       oBrwInc:cName           := "Clientes.Incidencias"
 
@@ -673,7 +673,7 @@ Static Function PageIniIncidecias()
       with object ( oBrwInc:AddCol() )
          :cHeader             := "Rs. Resuelta"
          :bStrData            := {|| "" }
-         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->lListo }
+         :bEditValue          := {|| ( D():Get( "CliInc", nView ) )->lListo }
          :nWidth              := 18
          :SetCheck( { "Sel16", "Nil16" } )
       end with
@@ -681,26 +681,26 @@ Static Function PageIniIncidecias()
       with object ( oBrwInc:AddCol() )
          :cHeader             := "Fecha"
          :cSortOrder          := "cCodPrv"
-         :bEditValue          := {|| Dtoc( ( TDataView():Get( "CliInc", nView ) )->dFecInc ) }
+         :bEditValue          := {|| Dtoc( ( D():Get( "CliInc", nView ) )->dFecInc ) }
          :nWidth              := 80
       end with
 
       with object ( oBrwInc:AddCol() )
          :cHeader             := "Descripción"
-         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->mDesInc }
+         :bEditValue          := {|| ( D():Get( "CliInc", nView ) )->mDesInc }
          :nWidth              := 350
       end with
 
       with object ( oBrwInc:AddCol() )
          :cHeader             := "Código"
          :cSortOrder          := "cCodTip"
-         :bEditValue          := {|| ( TDataView():Get( "CliInc", nView ) )->cCodTip }
+         :bEditValue          := {|| ( D():Get( "CliInc", nView ) )->cCodTip }
          :nWidth              := 40
       end with
 
       with object ( oBrwInc:AddCol() )
          :cHeader             := "Tipo incidencia"
-         :bEditValue          := {|| cNomInci( ( TDataView():Get( "CliInc", nView ) )->cCodTip, TDataView():Get( "TipInci", nView ) ) }
+         :bEditValue          := {|| cNomInci( ( D():Get( "CliInc", nView ) )->cCodTip, D():Get( "TipInci", nView ) ) }
          :nWidth              := 180
       end with
 

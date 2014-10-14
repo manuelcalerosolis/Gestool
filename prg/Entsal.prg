@@ -329,9 +329,9 @@ STATIC FUNCTION OpenFiles()
 		mkEntSal()
 	END IF
 
-   nView          := TDataView():CreateView()
+   nView          := D():CreateView()
    
-   TDataView():Get( "LogPorta", nView )
+   D():Get( "LogPorta", nView )
 
    USE ( cPatEmp() + "ENTSAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ENTSAL", @dbfEntT ) )
    SET ADSINDEX TO ( cPatEmp() + "ENTSAL.CDX" ) ADDITIVE
@@ -373,7 +373,7 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfUser   )
    CLOSE ( dbfCaj    )
 
-   TDataView():DeleteView( nView )
+   D():DeleteView( nView )
 
    dbfEntT     := nil
    dbfDivisa   := nil

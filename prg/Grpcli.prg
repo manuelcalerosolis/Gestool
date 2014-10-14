@@ -109,7 +109,7 @@ METHOD OpenFiles( lExclusive, cPath )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::nView           := TDataView():CreateView()
+      ::nView           := D():CreateView()
 
       if !::Super:OpenFiles()
          lOpen          := .f.
@@ -121,13 +121,13 @@ METHOD OpenFiles( lExclusive, cPath )
          TAtipicas():GetInstance():oDbf:OrdSetFocus( "cCodGrp" ) 
       end if
       
-      TDataView():Get( "Articulo", ::nView )
+      D():Get( "Articulo", ::nView )
 
-      TDataView():Get( "Familias", ::nView )
+      D():Get( "Familias", ::nView )
 
-      TDataView():Get( "Artkit", ::nView )
+      D():Get( "Artkit", ::nView )
 
-      TDataView():Get( "Artdiv", ::nView )
+      D():Get( "Artdiv", ::nView )
 
    RECOVER USING oError
 
@@ -156,7 +156,7 @@ METHOD CloseFiles()
 
    if !empty( ::nView )
 
-      TDataView():DeleteView( ::nView )
+      D():DeleteView( ::nView )
       ::nView     := nil
       
    end if   

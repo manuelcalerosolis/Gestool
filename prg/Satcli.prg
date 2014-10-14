@@ -413,16 +413,16 @@ FUNCTION GenSatCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    local oDevice
    local nNumSat
 
-   if ( TDataView():SatClientes( nView ) )->( Lastrec() ) == 0
+   if ( D():SatClientes( nView ) )->( Lastrec() ) == 0
       return nil
    end if
 
-   nNumSat              := ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat
+   nNumSat              := ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo S.A.T."
-   DEFAULT cCodDoc      := cFormatoDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "SC", dbfDoc )
@@ -438,7 +438,7 @@ FUNCTION GenSatCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
 
-   lChgImpDoc( TDataView():SatClientes( nView ) )
+   lChgImpDoc( D():SatClientes( nView ) )
 
 RETURN NIL
 
@@ -487,21 +487,21 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      nView             := TDataView():CreateView()
+      nView             := D():CreateView()
 
       /*
       Atipicas de clientes-----------------------------------------------------
       */
 
-      TDataView():Atipicas( nView )
+      D():Atipicas( nView )
 
-      TDataView():SatClientes( nView )
+      D():SatClientes( nView )
 
-      TDataView():Clientes( nView )
+      D():Clientes( nView )
 
-      TDataView():GruposClientes( nView )
+      D():GruposClientes( nView )
 
-      TDataView():Get( "CliInc", nView )
+      D():Get( "CliInc", nView )
 
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
@@ -518,7 +518,7 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 /*
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @TDataView():Clientes( nView ) ) )
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 */
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
@@ -670,7 +670,7 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
       SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
 /*
-      if !TDataCenter():OpenSatCliT( @TDataView():SatClientes( nView ) )
+      if !TDataCenter():OpenSatCliT( @D():SatClientes( nView ) )
          lOpenFiles     := .f.
       end if
 */
@@ -779,7 +779,7 @@ STATIC FUNCTION OpenFiles( lExt )
             cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
          end if 
 
-         ( TDataView():SatClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
+         ( D():SatClientes( nView ) )->( AdsSetAOF( cFiltroUsuario ) )
 
       end if
 
@@ -809,7 +809,7 @@ STATIC FUNCTION CloseFiles()
 
    DisableAcceso()
 
-   DestroyFastFilter( TDataView():SatClientes( nView ), .t., .t. )
+   DestroyFastFilter( D():SatClientes( nView ), .t., .t. )
 
    if !Empty( oFont )
       oFont:end()
@@ -832,8 +832,8 @@ STATIC FUNCTION CloseFiles()
       ( dbfSatCliS   )->( dbCloseArea() )
    end if
 
-   if !Empty( TDataView():Clientes( nView ) )
-      ( TDataView():Clientes( nView )    )->( dbCloseArea() )
+   if !Empty( D():Clientes( nView ) )
+      ( D():Clientes( nView )    )->( dbCloseArea() )
    end if
 
    if !Empty( dbfIva )
@@ -1056,7 +1056,7 @@ STATIC FUNCTION CloseFiles()
       oOperario:End()
    end if   
 
-   TDataView():DeleteView( nView )
+   D():DeleteView( nView )
 
    dbfSatCliL     := nil
    dbfSatCliI     := nil
@@ -1185,18 +1185,18 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Situación";
       MRU      "Power-drill_user1_16";
       BITMAP   clrTopArchivos ;
-      ALIAS    ( TDataView():SatClientes( nView ) );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, TDataView():SatClientes( nView ), cCodCli, cCodArt ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, TDataView():SatClientes( nView ), cCodCli, cCodArt ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, TDataView():SatClientes( nView ), cCodCli, cCodArt ) );
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, TDataView():SatClientes( nView ) ) );
-      DELETE   ( WinDelRec( oWndBrw:oBrw, TDataView():SatClientes( nView ), {|| QuiSatCli() } ) ) ;
+      ALIAS    ( D():SatClientes( nView ) );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():SatClientes( nView ), cCodCli, cCodArt ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, D():SatClientes( nView ), cCodCli, cCodArt ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, D():SatClientes( nView ), cCodCli, cCodArt ) );
+      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, D():SatClientes( nView ) ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, D():SatClientes( nView ), {|| QuiSatCli() } ) ) ;
       LEVEL    nLevel ;
       OF       oWnd
 
      oWndBrw:lFechado     := .t.
 
-     oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, TDataView():SatClientes( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", TDataView():SatClientes( nView ), .f. ) ) }
+     oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, D():SatClientes( nView ), .f., , cFiltroUsuario ), CreateFastFilter( "", D():SatClientes( nView ), .f. ) ) }
 
      oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -1204,7 +1204,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->lCloSat }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->lCloSat }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Zoom16" )
@@ -1215,7 +1215,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Estado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->lEstado }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->lEstado }
          :nWidth           := 20
          :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
          :AddResource( "Trafficlight_on_16" )
@@ -1225,7 +1225,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->lSndDoc }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Lbl16" )
@@ -1236,7 +1236,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Incidencia"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nEstadoIncidencia( ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat ) }
+         :bBmpData         := {|| nEstadoIncidencia( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat ) }
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Bullet_Square_Red_16" )
@@ -1249,7 +1249,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Imprimir"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->lImprimido }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -1259,21 +1259,21 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumSat"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cSerSat + "/" + AllTrim( Str( ( TDataView():SatClientes( nView ) )->nNumSat ) ) }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cSerSat + "/" + AllTrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodDlg }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cCodDlg }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión"
-         :bEditValue       := {|| Trans( ( TDataView():SatClientes( nView ) )->cTurSat, "######" ) }
+         :bEditValue       := {|| Trans( ( D():SatClientes( nView ) )->cTurSat, "######" ) }
          :nWidth           := 40
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1283,21 +1283,21 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
          :cSortOrder       := "dFecSat"
-         :bEditValue       := {|| Dtoc( ( TDataView():SatClientes( nView ) )->dFecSat ) }
+         :bEditValue       := {|| Dtoc( ( D():SatClientes( nView ) )->dFecSat ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodCaj }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cCodCaj }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodUsr }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cCodUsr }
          :nWidth           := 40
          :lHide            := .t.
       end with
@@ -1305,7 +1305,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cCodCli ) }
+         :bEditValue       := {|| AllTrim( ( D():SatClientes( nView ) )->cCodCli ) }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1313,7 +1313,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cNomCli }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cNomCli }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1321,7 +1321,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodAge }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cCodAge }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1329,7 +1329,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Situación"
          :cSortOrder       := "cSituac"
-         :bEditValue       := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cSituac ) }
+         :bEditValue       := {|| AllTrim( ( D():SatClientes( nView ) )->cSituac ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
@@ -1338,8 +1338,8 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Categoría"
          :cSortOrder       := "cCodCat"
-         :bStrData         := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cCodCat ) + if( !Empty( ( TDataView():SatClientes( nView ) )->cCodCat ), " - ", "" ) + RetFld( ( TDataView():SatClientes( nView ) )->cCodCat, dbfCategoria, "cNombre" ) }
-         :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( TDataView():SatClientes( nView ) )->cCodCat, dbfCategoria, "cTipo" ) ) }
+         :bStrData         := {|| AllTrim( ( D():SatClientes( nView ) )->cCodCat ) + if( !Empty( ( D():SatClientes( nView ) )->cCodCat ), " - ", "" ) + RetFld( ( D():SatClientes( nView ) )->cCodCat, dbfCategoria, "cNombre" ) }
+         :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( D():SatClientes( nView ) )->cCodCat, dbfCategoria, "cTipo" ) ) }
          :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t. 
@@ -1349,7 +1349,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Operario"
          :cSortOrder       := "cCodOpe"
-         :bStrData         := {|| AllTrim( ( TDataView():SatClientes( nView ) )->cCodOpe ) + if( !Empty( ( TDataView():SatClientes( nView ) )->cCodOpe ), " - ", "" ) + oRetFld( ( TDataView():SatClientes( nView ) )->cCodOpe, oOperario:oDbf, "cNomTra", "cCodTra" ) }
+         :bStrData         := {|| AllTrim( ( D():SatClientes( nView ) )->cCodOpe ) + if( !Empty( ( D():SatClientes( nView ) )->cCodOpe ), " - ", "" ) + oRetFld( ( D():SatClientes( nView ) )->cCodOpe, oOperario:oDbf, "cNomTra", "cCodTra" ) }
          :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t. 
@@ -1357,27 +1357,27 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodRut }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cCodRut }
          :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodAlm }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cCodAlm }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Dirección"
          :cSortOrder       := "cCodObr"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->cCodObr }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->cCodObr }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->nTotNet }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->nTotNet }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1387,7 +1387,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->nTotIva }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->nTotIva }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1397,7 +1397,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->nTotReq }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->nTotReq }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1407,7 +1407,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( TDataView():SatClientes( nView ) )->nTotSat }
+         :bEditValue       := {|| ( D():SatClientes( nView ) )->nTotSat }
          :cEditPicture     := cPorDiv()
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1416,7 +1416,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( TDataView():SatClientes( nView ) )->cDivSat ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( D():SatClientes( nView ) )->cDivSat ), dbfDiv ) }
          :nWidth           := 30
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1542,13 +1542,13 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       MENU     This:Toggle() ;
       TOOLTIP  "En(v)iar" ;
       MESSAGE  "Seleccionar S.A.T. para ser enviados" ;
-      ACTION   lSnd( oWndBrw, TDataView():SatClientes( nView ) ) ;
+      ACTION   lSnd( oWndBrw, D():SatClientes( nView ) ) ;
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():SatClientes( nView ), "lSndDoc", .t., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():SatClientes( nView ), "lSndDoc", .t., .t., .t. ) );
          TOOLTIP  "Todos" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1556,7 +1556,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():SatClientes( nView ), "lSndDoc", .f., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():SatClientes( nView ), "lSndDoc", .f., .t., .t. ) );
          TOOLTIP  "Ninguno" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1564,7 +1564,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, TDataView():SatClientes( nView ), "lSndDoc", .t., .f., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, D():SatClientes( nView ), "lSndDoc", .t., .f., .t. ) );
          TOOLTIP  "Abajo" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1581,7 +1581,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( ReplaceCreator( oWndBrw, TDataView():SatClientes( nView ), aItmSatCli() ) ) ;
+         ACTION   ( ReplaceCreator( oWndBrw, D():SatClientes( nView ), aItmSatCli() ) ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
@@ -1597,7 +1597,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TTrazaDocumento():Activate( SAT_CLI, ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat ) ) ;
+      ACTION   ( TTrazaDocumento():Activate( SAT_CLI, ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat ) ) ;
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
@@ -1616,29 +1616,29 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          TOOLTIP  "Rotor" ;
 
       DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
-            ACTION   ( EdtCli( ( TDataView():SatClientes( nView ) )->cCodCli ) );
+            ACTION   ( EdtCli( ( D():SatClientes( nView ) )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
-            ACTION   ( InfCliente( ( TDataView():SatClientes( nView ) )->cCodCli ) ); 
+            ACTION   ( InfCliente( ( D():SatClientes( nView ) )->cCodCli ) ); 
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
-            ACTION   ( if( !Empty( ( TDataView():SatClientes( nView ) )->cCodObr ), EdtObras( ( TDataView():SatClientes( nView ) )->cCodCli, ( TDataView():SatClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al S.A.T." ) ) );
+            ACTION   ( if( !Empty( ( D():SatClientes( nView ) )->cCodObr ), EdtObras( ( D():SatClientes( nView ) )->cCodCli, ( D():SatClientes( nView ) )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al S.A.T." ) ) );
             TOOLTIP  "Modificar dirección" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( TDataView():SatClientes( nView ) )->lEstado, AlbCli( nil, nil, { "SAT" => ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( D():SatClientes( nView ) )->lEstado, AlbCli( nil, nil, { "SAT" => ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( TDataView():SatClientes( nView ) )->lEstado, FactCli( nil, nil, { "SAT" => ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( D():SatClientes( nView ) )->lEstado, FactCli( nil, nil, { "SAT" => ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
@@ -1793,14 +1793,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    */
 
    if Empty( aTmp[ _CTLFCLI ] )
-      aTmp[ _CTLFCLI ]  := RetFld( aTmp[ _CCODCLI ], TDataView():Clientes( nView ), "Telefono" )
+      aTmp[ _CTLFCLI ]  := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
    end if
 
    /*
    Necestamos el orden el la primera clave-------------------------------------
    */
 
-   nOrd                 := ( TDataView():SatClientes( nView ) )->( ordSetFocus( 1 ) )
+   nOrd                 := ( D():SatClientes( nView ) )->( ordSetFocus( 1 ) )
 
    cPicUnd              := MasUnd()
    cPouDiv              := cPouDiv( aTmp[ _CDIVSAT ], dbfDiv ) // Picture de la divisa
@@ -1823,7 +1823,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    cSay[10 ]            := RetFld( aTmp[ _CCODUSR ], dbfUsr, "cNbrUse" )
    cSay[11 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], dbfDelega, "cNomDlg" )
 
-   cTlfCli              := RetFld( aTmp[ _CCODCLI ], TDataView():Clientes( nView ), "Telefono" )
+   cTlfCli              := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
 
    nRieCli              := oStock:nRiesgo( aTmp[ _CCODCLI ] )
 
@@ -2571,7 +2571,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
          OF       oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( TDataView():SatClientes( nView ), dbfTmpLin, oBrwLin ) )
+         ACTION   ( ShowKit( D():SatClientes( nView ), dbfTmpLin, oBrwLin ) )
 
       REDEFINE GET aGet[_CSERSAT] VAR aTmp[_CSERSAT] ;
          ID       90 ;
@@ -2992,7 +2992,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( TDataView():SatClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, TDataView():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ), aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid() }
+         oDlg:bStart := {|| ShowKit( D():SatClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, D():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ), aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid() }
 
    end case
 
@@ -3011,7 +3011,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    oBmpGeneral:End()
    oBmpCategoria:End()
 
-   ( TDataView():SatClientes( nView ) )->( ordSetFocus( nOrd ) )
+   ( D():SatClientes( nView ) )->( ordSetFocus( nOrd ) )
 
    KillTrans( oBrwLin )
 
@@ -4451,7 +4451,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
    if nMode == APPD_MODE .and. lEntCon()
 
-      nTotSatCli( nil, TDataView():SatClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmpSat )
+      nTotSatCli( nil, D():SatClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmpSat )
 
       SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote )
 
@@ -4624,23 +4624,23 @@ STATIC FUNCTION PrnSerie()
 
    local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount )
    local oSayFmt
    local cSayFmt
    local oSerIni
    local oSerFin   
-   local cSerIni     := ( TDataView():SatClientes( nView ) )->cSerSat
-   local cSerFin     := ( TDataView():SatClientes( nView ) )->cSerSat
-   local nDocIni     := ( TDataView():SatClientes( nView ) )->nNumSat
-   local nDocFin     := ( TDataView():SatClientes( nView ) )->nNumSat
-   local cSufIni     := ( TDataView():SatClientes( nView ) )->cSufSat
-   local cSufFin     := ( TDataView():SatClientes( nView ) )->cSufSat
+   local cSerIni     := ( D():SatClientes( nView ) )->cSerSat
+   local cSerFin     := ( D():SatClientes( nView ) )->cSerSat
+   local nDocIni     := ( D():SatClientes( nView ) )->nNumSat
+   local nDocFin     := ( D():SatClientes( nView ) )->nNumSat
+   local cSufIni     := ( D():SatClientes( nView ) )->cSufSat
+   local cSufFin     := ( D():SatClientes( nView ) )->cSufSat
    local oPrinter
    local cPrinter    := PrnGetName()
    local lCopiasSat  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
    local oRango
    local nRango      := 1
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
@@ -4793,32 +4793,32 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSa
 
    if nRango == 1
 
-      nRecno      := ( TDataView():SatClientes( nView ) )->( recno() )
-      nOrdAnt     := ( TDataView():SatClientes( nView ) )->( OrdSetFocus( "nNumSat" ) )
+      nRecno      := ( D():SatClientes( nView ) )->( recno() )
+      nOrdAnt     := ( D():SatClientes( nView ) )->( OrdSetFocus( "nNumSat" ) )
 
       if ! lInvOrden
 
-         if ( TDataView():SatClientes( nView ) )->( dbSeek( cDocIni, .t. ) )
+         if ( D():SatClientes( nView ) )->( dbSeek( cDocIni, .t. ) )
 
-            while ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat >= cDocIni   .and. ;
-                  ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat <= cDocFin   .and. ;
-                  !( TDataView():SatClientes( nView ) )->( Eof() )
+            while ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat >= cDocIni   .and. ;
+                  ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat <= cDocFin   .and. ;
+                  !( D():SatClientes( nView ) )->( Eof() )
 
-                  lChgImpDoc( TDataView():SatClientes( nView ) )
+                  lChgImpDoc( D():SatClientes( nView ) )
 
                if lCopiasSat
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
 
-                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
+                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nNumCop )
+                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
-               ( TDataView():SatClientes( nView ) )->( dbSkip() )
+               ( D():SatClientes( nView ) )->( dbSkip() )
 
             end do
 
@@ -4826,27 +4826,27 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSa
 
       else
 
-         if ( TDataView():SatClientes( nView ) )->( dbSeek( cDocFin ) )
+         if ( D():SatClientes( nView ) )->( dbSeek( cDocFin ) )
 
-            while ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat >= cDocIni   .and.;
-                  ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat <= cDocFin   .and.;
-                  !( TDataView():SatClientes( nView ) )->( Bof() )
+            while ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat >= cDocIni   .and.;
+                  ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat <= cDocFin   .and.;
+                  !( D():SatClientes( nView ) )->( Bof() )
 
-                  lChgImpDoc( TDataView():SatClientes( nView ) )
+                  lChgImpDoc( D():SatClientes( nView ) )
 
                if lCopiasSat
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
 
-                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
+                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nNumCop )
+                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
-               ( TDataView():SatClientes( nView ) )->( dbSkip( -1 ) )
+               ( D():SatClientes( nView ) )->( dbSkip( -1 ) )
 
             end while
 
@@ -4856,62 +4856,62 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSa
 
    else
    
-      nRecno      := ( TDataView():SatClientes( nView ) )->( recno() )
-      nOrdAnt     := ( TDataView():SatClientes( nView ) )->( OrdSetFocus( "dFecSat" ) )
+      nRecno      := ( D():SatClientes( nView ) )->( recno() )
+      nOrdAnt     := ( D():SatClientes( nView ) )->( OrdSetFocus( "dFecSat" ) )
 
       if ! lInvOrden
 
-         ( TDataView():SatClientes( nView ) )->( dbGoTop() )
+         ( D():SatClientes( nView ) )->( dbGoTop() )
 
-         while !( TDataView():SatClientes( nView ) )->( Eof() )
+         while !( D():SatClientes( nView ) )->( Eof() )
 
-            if ( TDataView():SatClientes( nView ) )->dFecSat >= dFecDesde .and. ( TDataView():SatClientes( nView ) )->dFecSat <= dFecHasta
+            if ( D():SatClientes( nView ) )->dFecSat >= dFecDesde .and. ( D():SatClientes( nView ) )->dFecSat <= dFecHasta
 
-               lChgImpDoc( TDataView():SatClientes( nView ) )
+               lChgImpDoc( D():SatClientes( nView ) )
 
                if lCopiasSat
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
 
-                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
+                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nNumCop )
+                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
             end if   
 
-            ( TDataView():SatClientes( nView ) )->( dbSkip() )
+            ( D():SatClientes( nView ) )->( dbSkip() )
 
          end while
 
       else
 
-         ( TDataView():SatClientes( nView ) )->( dbGobottom() )
+         ( D():SatClientes( nView ) )->( dbGobottom() )
 
-         while !( TDataView():SatClientes( nView ) )->( Bof() )
+         while !( D():SatClientes( nView ) )->( Bof() )
 
-            if ( TDataView():SatClientes( nView ) )->dFecSat >= dFecDesde .and. ( TDataView():SatClientes( nView ) )->dFecSat <= dFecHasta
+            if ( D():SatClientes( nView ) )->dFecSat >= dFecDesde .and. ( D():SatClientes( nView ) )->dFecSat <= dFecHasta
 
-               lChgImpDoc( TDataView():SatClientes( nView ) )
+               lChgImpDoc( D():SatClientes( nView ) )
 
                if lCopiasSat
 
-                  nCopyClient := if( nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
 
-                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
+                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
                else
 
-                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nNumCop )
+                  GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nNumCop )
 
                end if
 
             end if   
 
-            ( TDataView():SatClientes( nView ) )->( dbSkip( -1 ) )
+            ( D():SatClientes( nView ) )->( dbSkip( -1 ) )
 
          end while
 
@@ -4919,8 +4919,8 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSa
 
    end if   
 
-   ( TDataView():SatClientes( nView ) )->( dbGoTo( nRecNo ) )
-   ( TDataView():SatClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( D():SatClientes( nView ) )->( dbGoTo( nRecNo ) )
+   ( D():SatClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oDlg:enable()
 
@@ -4930,7 +4930,7 @@ RETURN NIL
 
 STATIC FUNCTION RecalculaTotal( aTmp )
 
-   nTotSatCli( nil, TDataView():SatClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp )
+   nTotSatCli( nil, D():SatClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp )
 
    /*
    Refrescos en Pantalla-------------------------------------------------------
@@ -5498,7 +5498,7 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             Descuento de artículo----------------------------------------------
             */
 
-            nNumDto              := RetFld( aTmpSat[ _CCODCLI ], TDataView():Clientes( nView ), "nDtoArt" )
+            nNumDto              := RetFld( aTmpSat[ _CCODCLI ], D():Clientes( nView ), "nDtoArt" )
 
             if nNumDto != 0
 
@@ -6323,7 +6323,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumSat              := nNewDoc( cSerSat, TDataView():SatClientes( nView ), "nSatCli", , dbfCount )
+      nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , dbfCount )
       aTmp[ _NNUMSAT ]     := nNumSat
 
    case nMode == EDIT_MODE
@@ -6426,7 +6426,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTSAT ]     := nTotSat
 
-   WinGather( aTmp, , TDataView():SatClientes( nView ), , nMode )
+   WinGather( aTmp, , D():SatClientes( nView ), , nMode )
 
    /*
    Escribe los datos pendientes------------------------------------------------
@@ -6491,61 +6491,61 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
 
-   if ( TDataView():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
+   if ( D():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
 
-      if ( TDataView():Clientes( nView ) )->lBlqCli
+      if ( D():Clientes( nView ) )->lBlqCli
          msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
          return .f.
       end if
 
       if oTlfCli != nil
-         oTlfCli:SetText( ( TDataView():Clientes( nView ) )->Telefono )
+         oTlfCli:SetText( ( D():Clientes( nView ) )->Telefono )
       end if
 
       /*
       Asignamos el codigo siempre
       */
 
-      aGet[ _CCODCLI ]:cText( ( TDataView():Clientes( nView ) )->Cod )
+      aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
 
       /*
       Color de fondo del cliente-----------------------------------------------
       */
 
-      if ( TDataView():Clientes( nView ) )->nColor != 0
-         aGet[ _CNOMCLI ]:SetColor( , ( TDataView():Clientes( nView ) )->nColor )
+      if ( D():Clientes( nView ) )->nColor != 0
+         aGet[ _CNOMCLI ]:SetColor( , ( D():Clientes( nView ) )->nColor )
       end if
 
       if Empty( aGet[ _CNOMCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CNOMCLI ]:cText( ( TDataView():Clientes( nView ) )->Titulo )
+         aGet[ _CNOMCLI ]:cText( ( D():Clientes( nView ) )->Titulo )
       end if
 
       if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
-         aGet[ _CTLFCLI ]:cText( ( TDataView():Clientes( nView ) )->Telefono )
+         aGet[ _CTLFCLI ]:cText( ( D():Clientes( nView ) )->Telefono )
       end if
 
       if !Empty( aGet[ _CDIRCLI ] ) .and. ( Empty( aGet[ _CDIRCLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CDIRCLI ]:cText( ( TDataView():Clientes( nView ) )->Domicilio )
+         aGet[ _CDIRCLI ]:cText( ( D():Clientes( nView ) )->Domicilio )
       end if
 
       if !Empty( aGet[ _CPOBCLI ] ) .and. ( Empty( aGet[ _CPOBCLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CPOBCLI ]:cText( ( TDataView():Clientes( nView ) )->Poblacion )
+         aGet[ _CPOBCLI ]:cText( ( D():Clientes( nView ) )->Poblacion )
       end if
 
       if !Empty( aGet[ _CPRVCLI ] ) .and. ( Empty( aGet[ _CPRVCLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CPRVCLI ]:cText( ( TDataView():Clientes( nView ) )->Provincia )
+         aGet[ _CPRVCLI ]:cText( ( D():Clientes( nView ) )->Provincia )
       end if
 
       if !Empty( aGet[ _CPOSCLI ] ) .and. ( Empty( aGet[ _CPOSCLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CPOSCLI ]:cText( ( TDataView():Clientes( nView ) )->CodPostal )
+         aGet[ _CPOSCLI ]:cText( ( D():Clientes( nView ) )->CodPostal )
       end if
 
       if !Empty( aGet[_CDNICLI] ) .and. ( Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli )
-         aGet[ _CDNICLI ]:cText( ( TDataView():Clientes( nView ) )->Nif )
+         aGet[ _CDNICLI ]:cText( ( D():Clientes( nView ) )->Nif )
       end if
 
       if ( Empty( aTmp[_CCODGRP] ) .or. lChgCodCli )
-         aTmp[ _CCODGRP ]  := ( TDataView():Clientes( nView ) )->cCodGrp
+         aTmp[ _CCODGRP ]  := ( D():Clientes( nView ) )->cCodGrp
       end if
 
       /*
@@ -6571,20 +6571,20 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          */
 
          if oRieCli != nil
-            oStock:SetRiesgo( cNewCodCli, oRieCli, ( TDataView():Clientes( nView ) )->Riesgo )
+            oStock:SetRiesgo( cNewCodCli, oRieCli, ( D():Clientes( nView ) )->Riesgo )
          end if
 
-         aTmp[ _LMODCLI ]  := ( TDataView():Clientes( nView ) )->lModDat
+         aTmp[ _LMODCLI ]  := ( D():Clientes( nView ) )->lModDat
 
       end if
 
       if ( lChgCodCli )
-         aTmp[ _LOPERPV ]  := ( TDataView():Clientes( nView ) )->lPntVer
+         aTmp[ _LOPERPV ]  := ( D():Clientes( nView ) )->lPntVer
       end if
 
       if nMode == APPD_MODE
 
-         aTmp[ _NREGIVA ]   := ( TDataView():Clientes( nView ) )->nRegIva
+         aTmp[ _NREGIVA ]   := ( D():Clientes( nView ) )->nRegIva
 
          /*
          Si estamos a¤adiendo cargamos todos los datos del cliente
@@ -6592,99 +6592,99 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          if Empty( aTmp[ _CSERSAT ] )
 
-            if !Empty( ( TDataView():Clientes( nView ) )->Serie )
-               aGet[ _CSERSAT ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+            if !Empty( ( D():Clientes( nView ) )->Serie )
+               aGet[ _CSERSAT ]:cText( ( D():Clientes( nView ) )->Serie )
             end if
 
          else
 
-            if !Empty( ( TDataView():Clientes( nView ) )->Serie ) .and. aTmp[ _CSERSAT ] != ( TDataView():Clientes( nView ) )->Serie .and. ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
-               aGet[ _CSERSAT ]:cText( ( TDataView():Clientes( nView ) )->Serie )
+            if !Empty( ( D():Clientes( nView ) )->Serie ) .and. aTmp[ _CSERSAT ] != ( D():Clientes( nView ) )->Serie .and. ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               aGet[ _CSERSAT ]:cText( ( D():Clientes( nView ) )->Serie )
             end if
 
          end if
 
          if !Empty( aGet[ _CCODALM ] )
-            if ( Empty( aGet[ _CCODALM ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodAlm )
-               aGet[ _CCODALM ]:cText( ( TDataView():Clientes( nView ) )->cCodAlm )
+            if ( Empty( aGet[ _CCODALM ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodAlm )
+               aGet[ _CCODALM ]:cText( ( D():Clientes( nView ) )->cCodAlm )
                aGet[ _CCODALM ]:lValid()
             end if
          end if
 
          if aGet[ _CCODTAR ] != nil
-            if !Empty( aGet[ _CCODTAR ] ) .and. ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTar )
-               aGet[ _CCODTAR ]:cText( ( TDataView():Clientes( nView ) )->cCodTar )
+            if !Empty( aGet[ _CCODTAR ] ) .and. ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTar )
+               aGet[ _CCODTAR ]:cText( ( D():Clientes( nView ) )->cCodTar )
                aGet[ _CCODTAR ]:lValid()
             end if
          end if
 
-         if ( Empty( aGet[ _CCODPGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->CodPago )
-            aGet[ _CCODPGO ]:cText( (TDataView():Clientes( nView ) )->CodPago )
+         if ( Empty( aGet[ _CCODPGO ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->CodPago )
+            aGet[ _CCODPGO ]:cText( (D():Clientes( nView ) )->CodPago )
             aGet[ _CCODPGO ]:lValid()
          end if
 
          if aGet[_CCODAGE] != nil
-            if ( Empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cAgente )
-               aGet[ _CCODAGE ]:cText( ( TDataView():Clientes( nView ) )->cAgente )
+            if ( Empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cAgente )
+               aGet[ _CCODAGE ]:cText( ( D():Clientes( nView ) )->cAgente )
                aGet[ _CCODAGE ]:lValid()
             end if
          end if
 
-         if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodRut )
-            aGet[ _CCODRUT ]:cText( ( TDataView():Clientes( nView ) )->cCodRut )
+         if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodRut )
+            aGet[ _CCODRUT ]:cText( ( D():Clientes( nView ) )->cCodRut )
             aGet[ _CCODRUT ]:lValid()
          end if
 
-         if !Empty( aGet[ _NTARIFA ] ) .and. ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->nTarifa )
-            aGet[ _NTARIFA ]:cText( ( TDataView():Clientes( nView ) )->nTarifa )
+         if !Empty( aGet[ _NTARIFA ] ) .and. ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->nTarifa )
+            aGet[ _NTARIFA ]:cText( ( D():Clientes( nView ) )->nTarifa )
          end if
 
-         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( TDataView():Clientes( nView ) )->cCodTrn )
-            aGet[ _CCODTRN ]:cText( ( TDataView():Clientes( nView ) )->cCodTrn )
+         if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTrn )
+            aGet[ _CCODTRN ]:cText( ( D():Clientes( nView ) )->cCodTrn )
             aGet[ _CCODTRN ]:lValid()
          end if
 
          if lChgCodCli
 
-            aGet[ _LRECARGO ]:Click( ( TDataView():Clientes( nView ) )->lReq ):Refresh()
+            aGet[ _LRECARGO ]:Click( ( D():Clientes( nView ) )->lReq ):Refresh()
 
-            aGet[ _LOPERPV ]:Click( ( TDataView():Clientes( nView ) )->lPntVer ):Refresh()
+            aGet[ _LOPERPV ]:Click( ( D():Clientes( nView ) )->lPntVer ):Refresh()
 
-            if ( TDataView():Clientes( nView ) )->lMosCom .and. !Empty( ( TDataView():Clientes( nView ) )->mComent ) .and. lChgCodCli
-               MsgStop( Trim( ( TDataView():Clientes( nView ) )->mComent ) )
+            if ( D():Clientes( nView ) )->lMosCom .and. !Empty( ( D():Clientes( nView ) )->mComent ) .and. lChgCodCli
+               MsgStop( Trim( ( D():Clientes( nView ) )->mComent ) )
             end if
 
             /*
             Descuentos desde la ficha de cliente----------------------------------
             */
 
-            aGet[ _CDTOESP ]:cText( ( TDataView():Clientes( nView ) )->cDtoEsp )
+            aGet[ _CDTOESP ]:cText( ( D():Clientes( nView ) )->cDtoEsp )
 
-            aGet[ _NDTOESP ]:cText( ( TDataView():Clientes( nView ) )->nDtoEsp )
+            aGet[ _NDTOESP ]:cText( ( D():Clientes( nView ) )->nDtoEsp )
 
-            aGet[ _CDPP    ]:cText( ( TDataView():Clientes( nView ) )->cDpp )
+            aGet[ _CDPP    ]:cText( ( D():Clientes( nView ) )->cDpp )
 
-            aGet[ _NDPP    ]:cText( ( TDataView():Clientes( nView ) )->nDpp )
+            aGet[ _NDPP    ]:cText( ( D():Clientes( nView ) )->nDpp )
 
-            aGet[ _CDTOUNO ]:cText( ( TDataView():Clientes( nView ) )->cDtoUno )
+            aGet[ _CDTOUNO ]:cText( ( D():Clientes( nView ) )->cDtoUno )
 
-            aGet[ _NDTOUNO ]:cText( ( TDataView():Clientes( nView ) )->nDtoCnt )
+            aGet[ _NDTOUNO ]:cText( ( D():Clientes( nView ) )->nDtoCnt )
 
-            aGet[ _CDTODOS ]:cText( ( TDataView():Clientes( nView ) )->cDtoDos )
+            aGet[ _CDTODOS ]:cText( ( D():Clientes( nView ) )->cDtoDos )
 
-            aGet[ _NDTODOS ]:cText( ( TDataView():Clientes( nView ) )->nDtoRap )
+            aGet[ _NDTODOS ]:cText( ( D():Clientes( nView ) )->nDtoRap )
 
-            aTmp[ _NDTOATP ]  := ( TDataView():Clientes( nView ) )->nDtoAtp
+            aTmp[ _NDTOATP ]  := ( D():Clientes( nView ) )->nDtoAtp
 
-            aTmp[ _NSBRATP ]  := ( TDataView():Clientes( nView ) )->nSbrAtp
+            aTmp[ _NSBRATP ]  := ( D():Clientes( nView ) )->nSbrAtp
 
-            ShowIncidenciaCliente( ( TDataView():Clientes( nView ) )->Cod, nView )
+            ShowIncidenciaCliente( ( D():Clientes( nView ) )->Cod, nView )
 
          end if
 
       end if
 
-      cOldCodCli  := ( TDataView():Clientes( nView ) )->Cod
+      cOldCodCli  := ( D():Clientes( nView ) )->Cod
 
       lValid      := .t.
 
@@ -6731,11 +6731,11 @@ STATIC FUNCTION ChgState( oBrw )
 
    for each nRec in ( oBrw:aSelected )
 
-      ( TDataView():SatClientes( nView ) )->( dbGoTo( nRec ) )
+      ( D():SatClientes( nView ) )->( dbGoTo( nRec ) )
 
-      if dbLock( TDataView():SatClientes( nView ) )
-         ( TDataView():SatClientes( nView ) )->lEstado := !( TDataView():SatClientes( nView ) )->lEstado
-         ( TDataView():SatClientes( nView ) )->( dbRUnlock() )
+      if dbLock( D():SatClientes( nView ) )
+         ( D():SatClientes( nView ) )->lEstado := !( D():SatClientes( nView ) )->lEstado
+         ( D():SatClientes( nView ) )->( dbRUnlock() )
       end if
 
    next
@@ -6831,10 +6831,10 @@ return ( bGen )
 static function nGenSatCli( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
 
    local nImpYet     := 1
-   local nCopyClient := Retfld( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "CopiasF" )
+   local nCopyClient := Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
 
    DEFAULT nDevice   := IS_PRINTER
-   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
 
    nCopy             := Max( nCopy, 1 )
 
@@ -6844,7 +6844,7 @@ static function nGenSatCli( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
    end while
 
    //Funcion para marcar el documento como imprimido
-   lChgImpDoc( TDataView():SatClientes( nView ) )
+   lChgImpDoc( D():SatClientes( nView ) )
 
 return nil
 
@@ -7140,18 +7140,18 @@ Static Function SatCliNotas()
    local cObserv  := ""
    local aData    := {}
 
-   aAdd( aData, "S.A.T. " + ( TDataView():SatClientes( nView ) )->cSerSat + "/" + AllTrim( Str( ( TDataView():SatClientes( nView ) )->nNumSat ) ) + "/" + Alltrim( ( TDataView():SatClientes( nView ) )->cSufSat ) + " de " + Rtrim( ( TDataView():SatClientes( nView ) )->cNomCli ) )
+   aAdd( aData, "S.A.T. " + ( D():SatClientes( nView ) )->cSerSat + "/" + AllTrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) + "/" + Alltrim( ( D():SatClientes( nView ) )->cSufSat ) + " de " + Rtrim( ( D():SatClientes( nView ) )->cNomCli ) )
    aAdd( aData, SAT_CLI )
-   aAdd( aData, ( TDataView():SatClientes( nView ) )->cCodCli )
-   aAdd( aData, ( TDataView():SatClientes( nView ) )->cNomCli )
-   aAdd( aData, ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat )
+   aAdd( aData, ( D():SatClientes( nView ) )->cCodCli )
+   aAdd( aData, ( D():SatClientes( nView ) )->cNomCli )
+   aAdd( aData, ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat )
 
-   if !Empty( ( TDataView():SatClientes( nView ) )->cRetPor )
-      cObserv     += Rtrim( ( TDataView():SatClientes( nView ) )->cRetPor ) + Space( 1 )
+   if !Empty( ( D():SatClientes( nView ) )->cRetPor )
+      cObserv     += Rtrim( ( D():SatClientes( nView ) )->cRetPor ) + Space( 1 )
    end if
 
-   if !Empty( ( TDataView():SatClientes( nView ) )->cRetMat )
-      cObserv     += Rtrim( ( TDataView():SatClientes( nView ) )->cRetMat ) + Space( 1 )
+   if !Empty( ( D():SatClientes( nView ) )->cRetMat )
+      cObserv     += Rtrim( ( D():SatClientes( nView ) )->cRetMat ) + Space( 1 )
    end if
 
    aAdd( aData, cObserv )
@@ -7369,9 +7369,9 @@ STATIC FUNCTION DupSerie( oWndBrw )
    local oSerFin
    local oTxtDup
    local nTxtDup     := 0
-   local nRecno      := ( TDataView():SatClientes( nView ) )->( Recno() )
-   local nOrdAnt     := ( TDataView():SatClientes( nView ) )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( TDataView():SatClientes( nView ) )->cSerSat, ( TDataView():SatClientes( nView ) )->nNumSat, ( TDataView():SatClientes( nView ) )->cSufSat, GetSysDate() )
+   local nRecno      := ( D():SatClientes( nView ) )->( Recno() )
+   local nOrdAnt     := ( D():SatClientes( nView ) )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( D():SatClientes( nView ) )->cSerSat, ( D():SatClientes( nView ) )->nNumSat, ( D():SatClientes( nView ) )->cSufSat, GetSysDate() )
    local lCancel     := .f.
    local oBtnAceptar
    local oBtnCancel
@@ -7466,15 +7466,15 @@ STATIC FUNCTION DupSerie( oWndBrw )
  REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
-      TOTAL    ( TDataView():SatClientes( nView ) )->( OrdKeyCount() ) ;
+      TOTAL    ( D():SatClientes( nView ) )->( OrdKeyCount() ) ;
       OF       oDlg
 
       oDlg:AddFastKey( VK_F5, {|| DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, @lCancel, cFecDoc ) } )
 
    ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
 
-   ( TDataView():SatClientes( nView ) )->( dbGoTo( nRecNo ) )
-   ( TDataView():SatClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
+   ( D():SatClientes( nView ) )->( dbGoTo( nRecNo ) )
+   ( D():SatClientes( nView ) )->( ordSetFocus( nOrdAnt ) )
 
    oWndBrw:SetFocus()
    oWndBrw:Refresh()
@@ -7494,28 +7494,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
    if oDesde:nRadio == 1
 
-      nOrd              := ( TDataView():SatClientes( nView ) )->( OrdSetFocus( "nNumSat" ) )
+      nOrd              := ( D():SatClientes( nView ) )->( OrdSetFocus( "nNumSat" ) )
 
-      ( TDataView():SatClientes( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+      ( D():SatClientes( nView ) )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
 
-      while !lCancel .and. ( TDataView():SatClientes( nView ) )->( !eof() )
+      while !lCancel .and. ( D():SatClientes( nView ) )->( !eof() )
 
-         if ( TDataView():SatClientes( nView ) )->cSerSat >= oDesde:cSerieInicio  .and.;
-            ( TDataView():SatClientes( nView ) )->cSerSat <= oDesde:cSerieFin     .and.;
-            ( TDataView():SatClientes( nView ) )->nNumSat >= oDesde:nNumeroInicio .and.;
-            ( TDataView():SatClientes( nView ) )->nNumSat <= oDesde:nNumeroFin    .and.;
-            ( TDataView():SatClientes( nView ) )->cSufSat >= oDesde:cSufijoInicio .and.;
-            ( TDataView():SatClientes( nView ) )->cSufSat <= oDesde:cSufijoFin
+         if ( D():SatClientes( nView ) )->cSerSat >= oDesde:cSerieInicio  .and.;
+            ( D():SatClientes( nView ) )->cSerSat <= oDesde:cSerieFin     .and.;
+            ( D():SatClientes( nView ) )->nNumSat >= oDesde:nNumeroInicio .and.;
+            ( D():SatClientes( nView ) )->nNumSat <= oDesde:nNumeroFin    .and.;
+            ( D():SatClientes( nView ) )->cSufSat >= oDesde:cSufijoInicio .and.;
+            ( D():SatClientes( nView ) )->cSufSat <= oDesde:cSufijoFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( TDataView():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( TDataView():SatClientes( nView ) )->nNumSat ) ) + "/" + ( TDataView():SatClientes( nView ) )->cSufSat
+            oTxtDup:cText  := "Duplicando : " + ( D():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) + "/" + ( D():SatClientes( nView ) )->cSufSat
 
             DupSatsupuesto( cFecDoc )
 
          end if
 
-         ( TDataView():SatClientes( nView ) )->( dbSkip() )
+         ( D():SatClientes( nView ) )->( dbSkip() )
 
          ++nProcesed
 
@@ -7523,28 +7523,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( TDataView():SatClientes( nView ) )->( OrdSetFocus( nOrd ) )
+      ( D():SatClientes( nView ) )->( OrdSetFocus( nOrd ) )
 
    else
 
-      nOrd              := ( TDataView():SatClientes( nView ) )->( OrdSetFocus( "dFecSat" ) )
+      nOrd              := ( D():SatClientes( nView ) )->( OrdSetFocus( "dFecSat" ) )
 
-      ( TDataView():SatClientes( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+      ( D():SatClientes( nView ) )->( dbSeek( oDesde:dFechaInicio, .t. ) )
 
-      while !lCancel .and. ( TDataView():SatClientes( nView ) )->( !eof() )
+      while !lCancel .and. ( D():SatClientes( nView ) )->( !eof() )
 
-         if ( TDataView():SatClientes( nView ) )->dFecSat >= oDesde:dFechaInicio  .and.;
-            ( TDataView():SatClientes( nView ) )->dFecSat <= oDesde:dFechaFin
+         if ( D():SatClientes( nView ) )->dFecSat >= oDesde:dFechaInicio  .and.;
+            ( D():SatClientes( nView ) )->dFecSat <= oDesde:dFechaFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( TDataView():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( TDataView():SatClientes( nView ) )->nNumSat ) ) + "/" + ( TDataView():SatClientes( nView ) )->cSufSat
+            oTxtDup:cText  := "Duplicando : " + ( D():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) + "/" + ( D():SatClientes( nView ) )->cSufSat
 
             DupSatsupuesto( cFecDoc )
 
          end if
 
-         ( TDataView():SatClientes( nView ) )->( dbSkip() )
+         ( D():SatClientes( nView ) )->( dbSkip() )
 
          ++nProcesed
 
@@ -7552,7 +7552,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( TDataView():SatClientes( nView ) )->( OrdSetFocus( nOrd ) )
+      ( D():SatClientes( nView ) )->( OrdSetFocus( nOrd ) )
 
    end if
 
@@ -7628,20 +7628,20 @@ STATIC FUNCTION DupSatsupuesto( cFecDoc )
 
    //Recogemos el nuevo numero de S.A.T.--------------------------------------
 
-   nNewNumSat  := nNewDoc( ( TDataView():SatClientes( nView ) )->cSerSat, TDataView():SatClientes( nView ), "NSATCLI" )
+   nNewNumSat  := nNewDoc( ( D():SatClientes( nView ) )->cSerSat, D():SatClientes( nView ), "NSATCLI" )
 
    //Duplicamos las cabeceras--------------------------------------------------
 
-   SatRecDup( TDataView():SatClientes( nView ), ( TDataView():SatClientes( nView ) )->cSerSat, nNewNumSat, ( TDataView():SatClientes( nView ) )->cSufSat, .t., cFecDoc )
+   SatRecDup( D():SatClientes( nView ), ( D():SatClientes( nView ) )->cSerSat, nNewNumSat, ( D():SatClientes( nView ) )->cSufSat, .t., cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfSatCliL )->( dbSeek( ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat ) )
+   if ( dbfSatCliL )->( dbSeek( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat ) )
 
-      while ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat == ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat .and. ;
+      while ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat == ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat .and. ;
             !( dbfSatCliL )->( Eof() )
 
-         SatRecDup( dbfSatCliL, ( TDataView():SatClientes( nView ) )->cSerSat, nNewNumSat, ( TDataView():SatClientes( nView ) )->cSufSat, .f. )
+         SatRecDup( dbfSatCliL, ( D():SatClientes( nView ) )->cSerSat, nNewNumSat, ( D():SatClientes( nView ) )->cSufSat, .f. )
 
          ( dbfSatCliL )->( dbSkip() )
 
@@ -7651,12 +7651,12 @@ STATIC FUNCTION DupSatsupuesto( cFecDoc )
 
    //Duplicamos los documentos-------------------------------------------------
 
-   if ( dbfSatCliD )->( dbSeek( ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat ) )
+   if ( dbfSatCliD )->( dbSeek( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat ) )
 
-      while ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat == ( dbfSatCliD )->cSerSat + Str( ( dbfSatCliD )->nNumSat ) + ( dbfSatCliD )->cSufSat .and. ;
+      while ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat == ( dbfSatCliD )->cSerSat + Str( ( dbfSatCliD )->nNumSat ) + ( dbfSatCliD )->cSufSat .and. ;
             !( dbfSatCliD )->( Eof() )
 
-         SatRecDup( dbfSatCliD, ( TDataView():SatClientes( nView ) )->cSerSat, nNewNumSat, ( TDataView():SatClientes( nView ) )->cSufSat, .f. )
+         SatRecDup( dbfSatCliD, ( D():SatClientes( nView ) )->cSerSat, nNewNumSat, ( D():SatClientes( nView ) )->cSufSat, .f. )
 
          ( dbfSatCliD )->( dbSkip() )
 
@@ -7852,7 +7852,7 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "SAT", ( TDataView():SatClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "SAT", ( D():SatClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
    oFr:SetWorkArea(     "Lineas de SAT", ( dbfSatCliL )->( Select() ) )
@@ -7870,7 +7870,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Clientes", ( TDataView():Clientes( nView ) )->( Select() ) )
+   oFr:SetWorkArea(     "Clientes", ( D():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
    oFr:SetWorkArea(     "Obras", ( dbfObrasT )->( Select() ) )
@@ -7903,19 +7903,19 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
-   oFr:SetMasterDetail( "SAT", "Lineas de SAT",                   {|| ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat } )
-   oFr:SetMasterDetail( "SAT", "Series de lineas de SAT",         {|| ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat } )
-   oFr:SetMasterDetail( "SAT", "Incidencias de SAT",              {|| ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat } )
-   oFr:SetMasterDetail( "SAT", "Documentos de SAT",               {|| ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat } )
+   oFr:SetMasterDetail( "SAT", "Lineas de SAT",                   {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
+   oFr:SetMasterDetail( "SAT", "Series de lineas de SAT",         {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
+   oFr:SetMasterDetail( "SAT", "Incidencias de SAT",              {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
+   oFr:SetMasterDetail( "SAT", "Documentos de SAT",               {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "SAT", "Clientes",                        {|| ( TDataView():SatClientes( nView ) )->cCodCli } )
-   oFr:SetMasterDetail( "SAT", "Obras",                           {|| ( TDataView():SatClientes( nView ) )->cCodCli + ( TDataView():SatClientes( nView ) )->cCodObr } )
-   oFr:SetMasterDetail( "SAT", "Almacen",                         {|| ( TDataView():SatClientes( nView ) )->cCodAlm } )
-   oFr:SetMasterDetail( "SAT", "Rutas",                           {|| ( TDataView():SatClientes( nView ) )->cCodRut } )
-   oFr:SetMasterDetail( "SAT", "Agentes",                         {|| ( TDataView():SatClientes( nView ) )->cCodAge } )
-   oFr:SetMasterDetail( "SAT", "Formas de pago",                  {|| ( TDataView():SatClientes( nView ) )->cCodPgo } )
-   oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( TDataView():SatClientes( nView ) )->cCodTrn } )
-   oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( TDataView():SatClientes( nView ) )->cCodUsr } )
+   oFr:SetMasterDetail( "SAT", "Clientes",                        {|| ( D():SatClientes( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "SAT", "Obras",                           {|| ( D():SatClientes( nView ) )->cCodCli + ( D():SatClientes( nView ) )->cCodObr } )
+   oFr:SetMasterDetail( "SAT", "Almacen",                         {|| ( D():SatClientes( nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "SAT", "Rutas",                           {|| ( D():SatClientes( nView ) )->cCodRut } )
+   oFr:SetMasterDetail( "SAT", "Agentes",                         {|| ( D():SatClientes( nView ) )->cCodAge } )
+   oFr:SetMasterDetail( "SAT", "Formas de pago",                  {|| ( D():SatClientes( nView ) )->cCodPgo } )
+   oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( D():SatClientes( nView ) )->cCodTrn } )
+   oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( D():SatClientes( nView ) )->cCodUsr } )
 
    oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( dbfSatCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
@@ -8101,14 +8101,14 @@ Static Function ImprimirSeriesSatClientes( nDevice, lExt )
 
    // Establecemos sus valores-------------------------------------------------
 
-   oPrinter:Serie(      ( TDataView():SatClientes( nView ) )->cSerSat )
-   oPrinter:Documento(  ( TDataView():SatClientes( nView ) )->nNumSat )
-   oPrinter:Sufijo(     ( TDataView():SatClientes( nView ) )->cSufSat )
+   oPrinter:Serie(      ( D():SatClientes( nView ) )->cSerSat )
+   oPrinter:Documento(  ( D():SatClientes( nView ) )->nNumSat )
+   oPrinter:Sufijo(     ( D():SatClientes( nView ) )->cSufSat )
 
    if lExt
 
-      oPrinter:oFechaInicio:cText( ( TDataView():SatClientes( nView ) )->dFecSat )
-      oPrinter:oFechaFin:cText( ( TDataView():SatClientes( nView ) )->dFecSat )
+      oPrinter:oFechaInicio:cText( ( D():SatClientes( nView ) )->dFecSat )
+      oPrinter:oFechaFin:cText( ( D():SatClientes( nView ) )->dFecSat )
 
    end if
 
@@ -8116,28 +8116,28 @@ Static Function ImprimirSeriesSatClientes( nDevice, lExt )
 
    // Formato de documento-----------------------------------------------------
 
-   cFormato          := cFormatoDocumento( ( TDataView():SatClientes( nView ) )->cSerSat, "nSatCli", TDataView():Contadores( nView ) )
+   cFormato          := cFormatoDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Contadores( nView ) )
    if empty( cFormato )
-      cFormato       := cFirstDoc( "SC", TDataView():Documentos( nView ) )
+      cFormato       := cFirstDoc( "SC", D():Documentos( nView ) )
    end if
    oPrinter:oFormatoDocumento:cText( cFormato )
 
    // Codeblocks para que trabaje----------------------------------------------
 
-   aStatus           := TDataview():GetInitStatus( "SatCliT", nView )
+   aStatus           := D():GetInitStatus( "SatCliT", nView )
 
-   oPrinter:bInit    := {||   ( TDataview():SatClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
+   oPrinter:bInit    := {||   ( D():SatClientes( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
 
-   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( TDataView():SatClientesId( nView ) )                  .and. ;
-                              ( TDataView():SatClientes( nView ) )->( !eof() ) }
+   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( D():SatClientesId( nView ) )                  .and. ;
+                              ( D():SatClientes( nView ) )->( !eof() ) }
 
-   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( TDataView():SatClientes( nView ) )->dFecSat )           .and. ;
-                              oPrinter:InRangeCliente( ( TDataView():SatClientes( nView ) )->cCodCli )         .and. ;
-                              oPrinter:InRangeGrupoCliente( retGrpCli( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ) ) ) }
+   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():SatClientes( nView ) )->dFecSat )           .and. ;
+                              oPrinter:InRangeCliente( ( D():SatClientes( nView ) )->cCodCli )         .and. ;
+                              oPrinter:InRangeGrupoCliente( retGrpCli( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ) ) ) }
 
-   oPrinter:bSkip    := {||   ( TDataView():SatClientes( nView ) )->( dbSkip() ) }
+   oPrinter:bSkip    := {||   ( D():SatClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenSatCli( nDevice, "Imprimiendo documento : " + TDataView():SatClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenSatCli( nDevice, "Imprimiendo documento : " + D():SatClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 
@@ -8147,7 +8147,7 @@ Static Function ImprimirSeriesSatClientes( nDevice, lExt )
 
    // Restore -----------------------------------------------------------------
 
-   TDataview():SetStatus( "SatCliT", nView, aStatus )
+   D():SetStatus( "SatCliT", nView, aStatus )
    
    if !Empty( oWndBrw )
       oWndBrw:Refresh()
@@ -8192,7 +8192,7 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    local n
    local nDescuentosLineas := 0
 
-   DEFAULT cSatCliT        := TDataView():SatClientes( nView )
+   DEFAULT cSatCliT        := D():SatClientes( nView )
    DEFAULT cSatCliL        := dbfSatCliL
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
@@ -10896,7 +10896,7 @@ Function AppSatCli( cCodCli, cCodArt, lOpenBrowse )
    else
 
       if OpenFiles( .t. )
-         WinAppRec( nil, bEdtRec, TDataView():SatClientes( nView ), cCodCli, cCodArt )
+         WinAppRec( nil, bEdtRec, D():SatClientes( nView ), cCodCli, cCodArt )
          CloseFiles()
       end if
 
@@ -10920,7 +10920,7 @@ FUNCTION EdtSatCli( cNumSat, lOpenBrowse )
    if lOpenBrowse
 
       if SatCli()
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
             oWndBrw:RecEdit()
          else
             MsgStop( "No se encuentra S.A.T." )
@@ -10931,8 +10931,8 @@ FUNCTION EdtSatCli( cNumSat, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
-            WinEdtRec( nil, bEdtRec, TDataView():SatClientes( nView ) )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
+            WinEdtRec( nil, bEdtRec, D():SatClientes( nView ) )
          end if
 
          CloseFiles()
@@ -10960,7 +10960,7 @@ FUNCTION ZooSatCli( cNumSat, lOpenBrowse, lPda )
    if lOpenBrowse
 
       if SatCli()
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
             oWndBrw:RecZoom()
          else
             MsgStop( "No se encuentra S.A.T." )
@@ -10971,8 +10971,8 @@ FUNCTION ZooSatCli( cNumSat, lOpenBrowse, lPda )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
-            WinZooRec( nil, bEdtRec, TDataView():SatClientes( nView ) )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
+            WinZooRec( nil, bEdtRec, D():SatClientes( nView ) )
          end if
 
          CloseFiles()
@@ -10999,8 +10999,8 @@ FUNCTION DelSatCli( cNumSat, lOpenBrowse )
    if lOpenBrowse
 
       if SatCli()
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
-            WinDelRec( nil, TDataView():SatClientes( nView ), {|| QuiSatCli() } )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
+            WinDelRec( nil, D():SatClientes( nView ), {|| QuiSatCli() } )
          else
             MsgStop( "No se encuentra S.A.T." )
          end if
@@ -11010,8 +11010,8 @@ FUNCTION DelSatCli( cNumSat, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
-            WinDelRec( nil, TDataView():SatClientes( nView ), {|| QuiSatCli() } )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
+            WinDelRec( nil, D():SatClientes( nView ), {|| QuiSatCli() } )
          end if
 
          CloseFiles()
@@ -11038,7 +11038,7 @@ FUNCTION PrnSatCli( cNumSat, lOpenBrowse )
    if lOpenBrowse
 
       if SatCli()
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
             GenSatCli( IS_PRINTER )
          else
             MsgStop( "No se encuentra S.A.T." )
@@ -11048,7 +11048,7 @@ FUNCTION PrnSatCli( cNumSat, lOpenBrowse )
    else
 
       if OpenFiles( .t. )
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
             GenSatCli( IS_PRINTER )
          else
             MsgStop( "No se encuentra S.A.T." )
@@ -11076,7 +11076,7 @@ FUNCTION VisSatCli( cNumSat, lOpenBrowse )
    if lOpenBrowse
 
       if SatCli()
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
             GenSatCli( IS_SCREEN )
          else
             MsgStop( "No se encuentra S.A.T." )
@@ -11087,7 +11087,7 @@ FUNCTION VisSatCli( cNumSat, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumSat, "nNumSat", TDataView():SatClientes( nView ) )
+         if dbSeekInOrd( cNumSat, "nNumSat", D():SatClientes( nView ) )
             GenSatCli( IS_SCREEN )
          end if
 
@@ -11107,12 +11107,12 @@ FUNCTION QuiSatCli()
    local nOrdInc
    local nOrdDoc
 
-   if ( TDataView():SatClientes( nView ) )->lEstado
+   if ( D():SatClientes( nView ) )->lEstado
       msgStop( "No se pueden eliminar S.A.T. ya procesados." )
       Return .f.
    end if
 
-   if ( TDataView():SatClientes( nView ) )->lCloSat .and. !oUser():lAdministrador()
+   if ( D():SatClientes( nView ) )->lCloSat .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar S.A.T. cerrados los administradores." )
       Return .f.
    end if
@@ -11125,7 +11125,7 @@ FUNCTION QuiSatCli()
    Detalle---------------------------------------------------------------------
    */
 
-   while ( dbfSatCliL )->( dbSeek( ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView )  )->cSufSat ) ) .and. !( dbfSatCliL )->( eof() )
+   while ( dbfSatCliL )->( dbSeek( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView )  )->cSufSat ) ) .and. !( dbfSatCliL )->( eof() )
       if dbLock( dbfSatCliL )
          ( dbfSatCliL )->( dbDelete() )
          ( dbfSatCliL )->( dbUnLock() )
@@ -11136,7 +11136,7 @@ FUNCTION QuiSatCli()
    Documentos------------------------------------------------------------------
    */
 
-   while ( dbfSatCliI )->( dbSeek( ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView )  )->cSufSat ) ) .and. !( dbfSatCliI )->( eof() )
+   while ( dbfSatCliI )->( dbSeek( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView )  )->cSufSat ) ) .and. !( dbfSatCliI )->( eof() )
       if dbLock( dbfSatCliI )
          ( dbfSatCliI )->( dbDelete() )
          ( dbfSatCliI )->( dbUnLock() )
@@ -11147,7 +11147,7 @@ FUNCTION QuiSatCli()
    Incidencias-----------------------------------------------------------------
    */
 
-   while ( dbfSatCliD )->( dbSeek( ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView )  )->cSufSat ) ) .and. !( dbfSatCliD )->( eof() )
+   while ( dbfSatCliD )->( dbSeek( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView )  )->cSufSat ) ) .and. !( dbfSatCliD )->( eof() )
       if dbLock( dbfSatCliD )
          ( dbfSatCliD )->( dbDelete() )
          ( dbfSatCliD )->( dbUnLock() )
@@ -11307,7 +11307,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
 
-  local cFilePdf       := cPatTmp() + "SATCliente" + StrTran( ( TDataView():SatClientes( nView ) )->cSerSat + Str( ( TDataView():SatClientes( nView ) )->nNumSat ) + ( TDataView():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
+  local cFilePdf       := cPatTmp() + "SATCliente" + StrTran( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -11401,15 +11401,15 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetDe(           uFieldEmpresa( "cNombre" ) )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( TDataView():SatClientes( nView ) )->cCodCli, TDataView():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envio de S.A.T. de cliente número " + ( TDataView():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( TDataView():SatClientes( nView ) )->nNumSat ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro S.A.T. de cliente " + ( TDataView():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( TDataView():SatClientes( nView ) )->nNumSat ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( TDataView():SatClientes( nView ) )->dFecSat ) + Space( 1 ) )
+                  :SetPara(         RetFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
+                  :SetAsunto(       "Envio de S.A.T. de cliente número " + ( D():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro S.A.T. de cliente " + ( D():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( D():SatClientes( nView ) )->dFecSat ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( TDataView():SatClientes( nView ), aItmSatCli() )
+                  :GeneralResource( D():SatClientes( nView ), aItmSatCli() )
 
                end with
 
@@ -11456,14 +11456,14 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 Static Function YearComboBoxChange()
 
     if oWndBrw:oWndBar:lAllYearComboBox()
-      DestroyFastFilter( TDataView():SatClientes( nView ) )
-      CreateUserFilter( "", TDataView():SatClientes( nView ), .f., , , "all" )
+      DestroyFastFilter( D():SatClientes( nView ) )
+      CreateUserFilter( "", D():SatClientes( nView ), .f., , , "all" )
     else
-      DestroyFastFilter( TDataView():SatClientes( nView ) )
-      CreateUserFilter( "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox(), TDataView():SatClientes( nView ), .f., , , "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox() )
+      DestroyFastFilter( D():SatClientes( nView ) )
+      CreateUserFilter( "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox(), D():SatClientes( nView ), .f., , , "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox() )
     end if
 
-    ( TDataView():SatClientes( nView ) )->( dbGoTop() )
+    ( D():SatClientes( nView ) )->( dbGoTop() )
 
     oWndBrw:Refresh()
 
