@@ -675,6 +675,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Envio"
+         :cSortOrder       := "lSndInt"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->lSndInt }
@@ -3700,9 +3701,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       CENTER
 
    // Quitamos los filtros-----------------------------------------------------
-
-   ( D():Get( "FacCliP", nView ) )->( OrdScope( 0, nil ) )
-   ( D():Get( "FacCliP", nView ) )->( OrdScope( 1, nil ) )
 
    EndEdtRotorMenu()
 
@@ -9497,6 +9495,9 @@ Static Function KillTrans( oBmpDiv, oBrwBnc, oBrwObr, oBrwCta, oBrwAtp, oBrwInc,
    if oBrwCon != nil
       oBrwCon:CloseData()
    end if
+
+   ( D():Get( "FacCliP", nView ) )->( OrdScope( 0, nil ) )
+   ( D():Get( "FacCliP", nView ) )->( OrdScope( 1, nil ) )
 
 Return .t.
 

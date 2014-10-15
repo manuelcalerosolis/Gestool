@@ -9444,7 +9444,6 @@ FUNCTION GenPgoFacPrv( cNumFac, cFacPrvT, cFacPrvL, cFacPrvP, cPrv, cIva, cFPago
       cSucursal      := aTmp[ _CSUCBNC    ]
       cControl       := aTmp[ _CDIGBNC    ]
       cCuenta        := aTmp[ _CCTABNC    ]
-
    else
       cSerFac        := ( cFacPrvT )->cSerFac
       nNumFac        := ( cFacPrvT )->nNumFac
@@ -13514,59 +13513,6 @@ Function AppendFacturaProveedores( hHeader, aLines )
 
    CursorWE()
 
-   Return .f.
-
-/*
-
-
-
-   aTmp[ _NTOTREQ ]  := nTotReq
-   aTmp[ _NTOTFAC ]  := nTotFac
-
-   WinGather( aTmp, , D():FacturasProveedores( nView ), , nMode )
-
-   ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
-
-   CommitTransaction()
-
-   GenPgoFacPrv( cSerFac + Str( nNumFac ) + cSufFac, D():FacturasProveedores( nView ), D():FacturasProveedoresLineas( nView ), D():FacturasProveedoresPagos( nView ), D():Proveedores( nView ), D():TiposIva( nView ), D():FormasPago( nView ), D():Divisas( nView ) )
-
-   if nMode == APPD_MODE
-
-      if Len( aNumAlb ) > 0
-
-         for nItem := 1 to Len( aNumAlb )
-
-            if ( D():AlbaranesProveedores( nView ) )->( dbSeek( aNumAlb[ nItem ] ) )
-
-               SetFacturadoAlbaranProveedor( .t., , , D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ), D():AlbaranesProveedoresSeries( nView ), cSerFac + Str( nNumFac ) + cSufFac )
-
-            end if
-
-         next
-
-      end if
-
-   end if
-
-   RECOVER USING oError
-
-      RollBackTransaction()
-
-      msgStop( ErrorMessage( oError ), "Imposible almacenar documentos"  )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
-
-   oMsgText()
-   EndProgress()
-
-   oDlg:Enable()
-   oDlg:End( IDOK )
-
-   CursorWE()
-*/
-
-RETURN .T.
+Return .f.
 
 //------------------------------------------------------------------------//

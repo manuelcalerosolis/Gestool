@@ -4985,6 +4985,7 @@ CLASS D
 
    METHOD FacturasClientes( nView )             INLINE ( ::Get( "FacCliT", nView ) )
       METHOD FacturasClientesId( nView )        INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) + ( ::Get( "FacCliT", nView ) )->cSufFac )
+      METHOD FacturasClientesIdText( nView )    INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )
 
    METHOD FacturasClientesLineas( nView )       INLINE ( ::Get( "FacCliL", nView ) )
       METHOD FacturasClientesLineasId( nView )  INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
@@ -4992,8 +4993,6 @@ CLASS D
    METHOD FacturasClientesCobros( nView )       INLINE ( ::Get( "FacCliP", nView ) )
       METHOD FacturasClientesCobrosId( nView )  INLINE ( ( ::Get( "FacCliP", nView ) )->cSerie + Str( ( ::Get( "FacCliP", nView ) )->nNumFac ) +  ( ::Get( "FacCliP", nView ) )->cSufFac + Str( ( ::Get( "FacCliP", nView ) )->nNumRec ) )
 
-   METHOD FacturasProveedoresCobros( nView )       INLINE ( ::Get( "FacPrvP", nView ) )
-      METHOD FacturasProveedoresCobrosId( nView )  INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumFac ) +  ( ::Get( "FacPrvP", nView ) )->cSufFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumRec ) )
 
    METHOD FacturasRectificativas( nView )       INLINE ( ::Get( "FacRecT", nView ) )
       METHOD FacturasRectificativasId( nView )  INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
@@ -5005,6 +5004,8 @@ CLASS D
 
    METHOD Clientes( nView )                  INLINE ( ::Get( "Client", nView ) )
    METHOD ClientesId( nView )                INLINE ( ( ::Get( "Client", nView ) )->Cod )
+      METHOD ClientesDirecciones( nView )    INLINE ( ::Get( "ObrasT", nView ) )
+      METHOD ClientesDireccionesId( nView )  INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
 
       METHOD GruposClientes( nView )         INLINE ( ::GetObject( "GruposClientes", nView ) )
 
@@ -5033,8 +5034,14 @@ CLASS D
    METHOD AlbaranesProveedoresDocumentos( nView )     INLINE ( ::Get( "AlbPrvD", nView ) )
    METHOD AlbaranesProveedoresSeries( nView )         INLINE ( ::Get( "AlbPrvS", nView ) )
 
-   METHOD FacturasProveedores( nView )       INLINE ( ::Get( "FacPrvT", nView ) ) 
-      METHOD FacturasProveedoresId( nView )  INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvT", nView ) )->cSufFac )
+   // Facturas proveedores-----------------------------------------------------
+
+   METHOD FacturasProveedores( nView )             INLINE ( ::Get( "FacPrvT", nView ) ) 
+      METHOD FacturasProveedoresId( nView )        INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvT", nView ) )->cSufFac )
+      METHOD FacturasProveedoresIdText( nView )    INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + "/" + alltrim( str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) ) + "/" + ( ::Get( "FacPrvT", nView ) )->cSufFac )
+
+      METHOD FacturasProveedoresCobros( nView )    INLINE ( ::Get( "FacPrvP", nView ) )
+      METHOD FacturasProveedoresCobrosId( nView )  INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumFac ) +  ( ::Get( "FacPrvP", nView ) )->cSufFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumRec ) )
 
    METHOD FacturasProveedoresLineas( nView )       INLINE ( ::Get( "FacPrvL", nView ) )
       METHOD FacturasProveedoresLineasId( nView )  INLINE ( ( ::Get( "FacPrvL", nView ) )->cSerFac + str( ( ::Get( "FacPrvL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvL", nView ) )->cSufFac )
@@ -5050,6 +5057,8 @@ CLASS D
 
    METHOD FacturasProveedoresPagos( nView )        INLINE ( ::Get( "FacPrvP", nView ) )
       METHOD FacturasProveedoresPagosId( nView )   INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + str( ( ::Get( "FacPrvP", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvP", nView ) )->cSufFac )
+
+   // Facturas rectificativas proveedores--------------------------------------
 
    METHOD FacturasRectificativasProveedores( nView )        INLINE ( ::Get( "RctPrvT", nView ) )
       METHOD FacturasRectificativasProveedoresId( nView )   INLINE ( ( ::Get( "RctPrvT", nView ) )->cSerFac + str( ( ::Get( "RctPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "RctPrvT", nView ) )->cSufFac )
@@ -5081,11 +5090,12 @@ CLASS D
 
    METHOD ProveedorArticulo( nView )         INLINE ( ::Get( "ProvArt", nView ) )
 
-   METHOD Articulos( nView )                 INLINE ( ::Get( "Articulo", nView ) )
-      METHOD ArticulosCodigosBarras( nView ) ;
-                                             INLINE ( ::Get( "ArtCodebar", nView ) )
-      METHOD ArticuloPrecioPropiedades( nView ) ;
-                                             INLINE ( ::Get( "ArtDiv", nView ) )
+   METHOD Articulos( nView )                                      INLINE ( ::Get( "Articulo", nView ) )
+   METHOD ArticulosId( nView )                                    INLINE ( ( ::Get( "Articulo", nView ) )->Codigo )
+   METHOD ArticulosIdText( nView )                                INLINE ( alltrim( ( ::Get( "Articulo", nView ) )->Codigo ) + Space(1) + alltrim( ( ::Get( "Articulo", nView ) )->Nombre ) )
+
+      METHOD ArticulosCodigosBarras( nView )                      INLINE ( ::Get( "ArtCodebar", nView ) )
+      METHOD ArticuloPrecioPropiedades( nView )                   INLINE ( ::Get( "ArtDiv", nView ) )
 
    METHOD Familias( nView )                  INLINE ( ::Get( "Familias", nView ) )
 
