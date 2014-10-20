@@ -2462,7 +2462,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 	   ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oDlg, oBmp, oGetStk ) );
-         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) ) ;
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ] ) ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[1]
 
@@ -5677,7 +5677,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
          while ( D():Articulos( nView ) )->cPrvHab == aTmp[ _CCODPRV ] .and. !( D():Articulos( nView ) )->( eof() )
 
             if !dbSeekInOrd( ( D():Articulos( nView ) )->Codigo, "cRef", dbfTmpLin ) .and. !( D():Articulos( nView ) )->lObs 
-                  
+
                   ( dbfTmpLin )->( dbAppend() )
 
                   ( dbfTmpLin )->nNumLin        := nLastNum( dbfTmpLin )                  

@@ -195,7 +195,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfGrpCliFac PATH ( ::cPathFac ) FILE "GRUPCLI.DBF"  VIA ( cLocalDriver() ) CLASS "GRPCLIFAC"
    end if
 
-   if !File( ::cPathFac + "CLIENTES.DBF" ) .or. !File( ::cPathFac + "DIRCLI.DBF" ) .or. !File( ::cPathFac + "PROVINC.DBF" ) .or. !File( ::cPathFac + "ATIPICAS.DBF" )
+   if !File( ::cPathFac + "CLIENTES.DBF" ) .or. !File( ::cPathFac + "DIRCLI.DBF" ) .or. !File( ::cPathFac + "PROVINC.DBF" ) .or. !File( ::cPathFac + "ATIPICAS.DBF" ) .or. !File( ::cPathFac + "BANCOSCL.DBF" )
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de clientes ni direcciones", ::cPathFac + "CLIENTES.DBF" + ::cPathFac + "DIRCLI.DBF" )
    else

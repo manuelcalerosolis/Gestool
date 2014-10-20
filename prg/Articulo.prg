@@ -5632,6 +5632,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    local lChange           := .f.
    local nRec
    local lDefault          := .f.
+   local cProvHab          := ""
 
    DEFAULT lActualizaWeb   := .f.
 
@@ -5816,6 +5817,11 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       ( dbfTmpPrv )->( dbGoTop() )
       while !( dbfTmpPrv )->( eof() )
          ( dbfTmpPrv )->cCodArt  := cCod
+
+         if ( dbfTmpPrv )->lDefPrv
+            cProvHab             := ( dbfTmpPrv )->cCodPrv
+         end if
+
           dbPass( dbfTmpPrv, dbfArtPrv, .t. )
          ( dbfTmpPrv )->( dbSkip() )
       end while
@@ -5883,6 +5889,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       Tomamos algunos valores-----------------------------------------------------
       */
 
+      aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]       := cProvHab
       aTmp[ ( dbfArticulo )->( fieldpos( "lLabel"  ) ) ]       := .t.
       aTmp[ ( dbfArticulo )->( fieldpos( "lSndDoc" ) ) ]       := .t.
       aTmp[ ( dbfArticulo )->( fieldpos( "cCodUsr" ) ) ]       := cCurUsr()
@@ -11508,33 +11515,49 @@ function SynArt( cPath )
 
          end if
 
-         /*
-         Marca para proveedor habitual
-         */
+         nOrdAnt := ( dbfArtPrv )->( OrdSetFocus( "lDefPrv" ) )
 
-         if !Empty( ( dbfArticulo )->cPrvHab )
+         if !( dbfArtPrv )->( dbSeek( ( dbfArticulo )->Codigo ) )
 
-            if !( dbfArtPrv )->( dbSeek( ( dbfArticulo )->Codigo + ( dbfArticulo )->cPrvHab ) )
+            /*
+            Marca para proveedor habitual
+            */
 
-               if ( dbfArtPrv )->( dbSeek( ( dbfArticulo )->Codigo ) )
+            if !Empty( ( dbfArticulo )->cPrvHab )
 
-                  while ( dbfArtPrv )->cCodArt == ( dbfArticulo )->Codigo .and. !( dbfArtPrv )->( eof() )
-                     ( dbfArtPrv )->lDefPrv   := .f.
-                     ( dbfArtPrv )->( dbSkip() )
-                  end while
+               if !( dbfArtPrv )->( dbSeek( ( dbfArticulo )->Codigo + ( dbfArticulo )->cPrvHab ) )
 
-                  ( dbfArtPrv )->( dbAppend() )
-                  ( dbfArtPrv )->cCodArt         := ( dbfArticulo )->Codigo
-                  ( dbfArtPrv )->cCodPrv         := ( dbfArticulo )->cPrvHab
-                  ( dbfArtPrv )->cDivPrv         := cDivEmp()
-                  ( dbfArtPrv )->lDefPrv         := .t.
-                  ( dbfArtPrv )->( dbUnLock() )
+                  if ( dbfArtPrv )->( dbSeek( ( dbfArticulo )->Codigo ) )
+
+                     while ( dbfArtPrv )->cCodArt == ( dbfArticulo )->Codigo .and. !( dbfArtPrv )->( eof() )
+                        ( dbfArtPrv )->lDefPrv   := .f.
+                        ( dbfArtPrv )->( dbSkip() )
+                     end while
+
+                     ( dbfArtPrv )->( dbAppend() )
+                     ( dbfArtPrv )->cCodArt         := ( dbfArticulo )->Codigo
+                     ( dbfArtPrv )->cCodPrv         := ( dbfArticulo )->cPrvHab
+                     ( dbfArtPrv )->cDivPrv         := cDivEmp()
+                     ( dbfArtPrv )->lDefPrv         := .t.
+                     ( dbfArtPrv )->( dbUnLock() )
+
+                  end if
 
                end if
 
             end if
 
-         end if
+         else 
+         
+            if ( dbfArtPrv )->cCodArt  != ( dbfArticulo )->cPrvHab
+
+               ( dbfArticulo )->cPrvHab            := ( dbfArtPrv )->cCodPrv
+
+            end if
+
+         end if 
+
+         ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
 
          /*
          Sincronizamos las fechas de LASTCHGcreación y de cambio---------------
@@ -15316,6 +15339,9 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfArticulo )->( ordCreate( cPath + "PROVART.CDX", "cRefArt", "cCodArt + cCodPrv + cRefPrv", {|| Field->cCodArt + Field->cCodPrv + Field->cRefPrv } ) )
+
+      ( dbfArticulo )->( ordCondSet("!Deleted() .and. lDefPrv", {|| !Deleted() } ) )
+      ( dbfArticulo )->( ordCreate( cPath + "PROVART.CDX", "lDefPrv", "CCODART", {|| Field->CCODART } ) )
 
       ( dbfArticulo )->( dbCloseArea() )
 

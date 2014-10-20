@@ -2879,7 +2879,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oDlg, oSayLote, oBeneficioSobre, oTotal, nMode ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) ) ;
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ] ) ) ;
          OF       oFld:aDialogs[1]
 
       /*
