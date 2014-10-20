@@ -4340,6 +4340,15 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
 
    SysRefresh()
 
+   // control de precios minimos-----------------------------------------------
+
+   if lPrecioMinimo( aTmp[ _CREF ], aTmp[ _NPREDIV ], nMode, dbfArticulo )
+      msgStop( "El precio de venta es inferior al precio mínimo.")
+      return nil
+   end if 
+
+   // Situaciones atipicas-----------------------------------------------------
+
    aClo                          := aClone( aTmp )
    nRec                          := ( dbfTmpLin )->( RecNo() )
 
@@ -4353,17 +4362,12 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
       Buscamos si existen atipicas de clientes---------------------------------
       */
 
-      hAtipica := hAtipica( hValue( aTmp, aTmpPre ) )
+      hAtipica                   := hAtipica( hValue( aTmp, aTmpPre ) )
 
-      if !Empty( hAtipica )
+      if !Empty( hAtipica ) .and. hhaskey( hAtipica, "nTipoXY" ) .and. hhaskey( hAtipica, "nUnidadesGratis" )
 
-         if hhaskey( hAtipica, "nTipoXY" )               .and.;
-            hhaskey( hAtipica, "nUnidadesGratis" )
-
-            if hAtipica[ "nUnidadesGratis" ] != 0
-               aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
-            end if
-
+         if hAtipica[ "nUnidadesGratis" ] != 0
+            aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
          end if
 
       end if
@@ -4452,10 +4456,10 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
 
             aTmp[ _NCANPRE  ] := aXbYStr[ 2 ]
             aTmp[ _NPREDIV  ] := 0
-            aTmp[ _NDTO ]     := 0
-            aTmp[ _NDTODIV ]  := 0
-            aTmp[ _NDTOPRM ]  := 0
-            aTmp[ _NCOMAGE ]  := 0
+            aTmp[ _NDTO     ] := 0
+            aTmp[ _NDTODIV  ] := 0
+            aTmp[ _NDTOPRM  ] := 0
+            aTmp[ _NCOMAGE  ] := 0
 
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 

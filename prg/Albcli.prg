@@ -10571,6 +10571,13 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       return nil
    end if
 
+   // control de precios minimos-----------------------------------------------
+
+   if lPrecioMinimo( aTmp[ _CREF ], aTmp[ _NPREUNIT ], nMode, dbfArticulo )
+      msgStop( "El precio de venta es inferior al precio mínimo.")
+      return nil
+   end if 
+
    /*
    Comprobamos si tiene que introducir números de serie------------------------
    */

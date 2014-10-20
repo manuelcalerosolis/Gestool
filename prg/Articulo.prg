@@ -19048,3 +19048,18 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+Function lPrecioMinimo( cCodigoArticulo, nPrecioVenta, nMode, dbfArticulo )
+
+   if !uFieldEmpresa( "lPreMin")
+      return .f.
+   end if 
+
+   if dbSeekInOrd( cCodigoArticulo, "Codigo", dbfArticulo ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      if !empty( (dbfArticulo)->PvpRec ) .and. (dbfArticulo)->PvpRec > nPrecioVenta
+         return .t.
+      end if
+   end if 
+
+return .f.
+
+//---------------------------------------------------------------------------//

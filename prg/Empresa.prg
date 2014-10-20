@@ -1359,6 +1359,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       195 ;
          OF       fldGeneral
 
+      REDEFINE CHECKBOX aGet[ _LPREMIN ] VAR aTmp[ _LPREMIN ] ;
+         ID       196 ;
+         OF       fldGeneral
+
       REDEFINE CHECKBOX aGet[ _LTIPMOV ] VAR aTmp[ _LTIPMOV ] ;
          ID       180 ;
          OF       fldGeneral
@@ -6571,7 +6575,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lConIva",    "L",  1, 0, "Lógico para contabilizar apuntes de impuestos siempre", "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"lIvaImpEsp", "L",  1, 0, "Aplicar impuestos a impuestos especiales",              "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lBtnFam",    "L",  1, 0, "Seleccion de familias por botones en PDA",              "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lMixFam",    "L",  1, 0, "Seleccion mixta de articulos en PDA",                   "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lPreMin",    "L",  1, 0, "Lógico no permitir ventas bajo precio mínimo",          "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lCalLot",    "L",  1, 0, "Lógico calculo de lotes en stock",                      "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lCalSer",    "L",  1, 0, "Lógico calculo de números de serie en stock",           "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lMovCos",    "L",  1, 0, "Lógico no usar movimientos en costo medio",             "", "", "aEmp()", .f. } )

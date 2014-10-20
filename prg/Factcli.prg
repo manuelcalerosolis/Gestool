@@ -13924,13 +13924,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    end if
 
    if Empty( aTmp[ _CALMLIN ] ) .and. !empty( aGet[ _CALMLIN ] )
-      
       MsgStop( "Código de almacen no puede estar vacio" )
-
 	  	aGet[ _CALMLIN ]:SetFocus()
-
       Return nil
-
    end if
 
 	if !Empty( aGet[ _CALMLIN ] )
@@ -13938,6 +13934,13 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    		Return nil
 		end if
 	end if	
+
+   // control de precios minimos-----------------------------------------------
+
+   if lPrecioMinimo( aTmp[ _CREF ], aTmp[ _NPREUNIT ], nMode, dbfArticulo )
+      msgStop( "El precio de venta es inferior al precio mínimo.")
+      return nil
+   end if 
 
    /*
    Comprobamos si tiene que introducir números de serie------------------------

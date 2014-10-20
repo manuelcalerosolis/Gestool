@@ -10171,6 +10171,15 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       return nil
    end if
 
+   // control de precios minimos-----------------------------------------------
+
+   if lPrecioMinimo( aTmp[ _CREF ], aTmp[ _NPREDIV ], nMode, dbfArticulo )
+      msgStop( "El precio de venta es inferior al precio mínimo.")
+      return nil
+   end if 
+   
+   // Situaciones atipicas-----------------------------------------------------
+
    CursorWait()
 
    aClo     							:= aClone( aTmp )

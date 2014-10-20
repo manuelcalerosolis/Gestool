@@ -4189,11 +4189,11 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
    if Empty( aTmp[ _CALMLIN ] ) .and. !Empty( aTmp[ _CREF ] )
       msgStop( "Código de almacén no puede estar vacío", "Atención" )
-      Return nil
+      return nil
    end if
 
    if !cAlmacen( aGet[ _CALMLIN ], dbfAlm )
-      Return nil
+      return nil
    end if
 
    /*
@@ -4206,9 +4206,18 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       Return .f.
    end if
 
+   // control de precios minimos-----------------------------------------------
+
+   if lPrecioMinimo( aTmp[ _CREF ], aTmp[ _NPREDIV ], nMode, dbfArticulo )
+      msgStop( "El precio de venta es inferior al precio mínimo.")
+      return nil
+   end if 
+
+   // Situaciones atipicas-----------------------------------------------------
+
    if nMode == APPD_MODE
 
-      aTmp[_CREF]    := cCodArt
+      aTmp[ _CREF ]     := cCodArt
 
       if aTmp[ _LLOTE ]
          GraLotArt( aTmp[ _CREF ], dbfArticulo, aTmp[ _CLOTE ] )

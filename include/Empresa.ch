@@ -235,7 +235,7 @@
 #define _LCONIVA              235
 #define _LIVAIMPESP           236
 #define _LBTNFAM              237
-#define _LMIXFAM              238
+#define _LPREMIN              238
 #define _LCALLOT              239
 #define _LCALSER              240
 #define _LMOVCOS              241
