@@ -1855,6 +1855,11 @@ FUNCTION TpvDelRec()
             ( dbfAlbCliT )->( dbUnLock() )
          end if
 
+         if dbLock( dbfAlbCliT )
+            ( dbfAlbCliT )->nFacturado    := 1
+            ( dbfAlbCliT )->( dbUnLock() )
+         end if
+
       end if
 
       nOrdAlb           := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
@@ -1865,6 +1870,11 @@ FUNCTION TpvDelRec()
 
             if dbLock( dbfAlbCliL )
                ( dbfAlbCliL )->lFacturado    := .f.
+               ( dbfAlbCliL )->( dbUnLock() )
+            end if
+
+            if dbLock( dbfAlbCliL )
+               ( dbfAlbCliL )->nFacturado    := 1
                ( dbfAlbCliL )->( dbUnLock() )
             end if
 
@@ -3871,8 +3881,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       CursorWait()
 
-      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
+      /*oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE*/
 
          oDlgTpv:Disable()
 
@@ -4065,6 +4075,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
                if dbLock( dbfAlbCliT )
                   ( dbfAlbCliT )->lFacturado    := .t.
+                  ( dbfAlbCliT )->nFacturado    := 3
                   ( dbfAlbCliT )->cNumTik       := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
                   ( dbfAlbCliT )->( dbUnLock() )
                end if
@@ -4079,6 +4090,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
                   if dbLock( dbfAlbCliL )
                      ( dbfAlbCliL )->lFacturado := .t.
+                     ( dbfAlbCliL )->nFacturado := 3
                      ( dbfAlbCliL )->( dbUnLock() )
                   end if
 
@@ -4422,7 +4434,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Cerrando el control de errores-------------------------------------------
          */
 
-      RECOVER USING oError
+      /*RECOVER USING oError
 
          RollBackTransaction()
 
@@ -4430,7 +4442,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       END SEQUENCE
 
-      ErrorBlock( oBlock )
+      ErrorBlock( oBlock )*/
 
       CursorWE()
 

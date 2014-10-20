@@ -139,7 +139,7 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    Comprobaciones antes de entrar----------------------------------------------
    */
 
-   if ( D():Get( "AlbCliT", ::nView ) )->lFacturado
+   if lFacturado( D():Get( "AlbCliT", ::nView ) )
       msgStop( "Albarán ya facturado" )
       Return .f.
    end if

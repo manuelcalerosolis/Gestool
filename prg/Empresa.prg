@@ -3975,7 +3975,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando albaranes a clientes" )
       end if
-      mkAlbCli( cPath, aImportacion:lAlbCli, cPathOld, nil, {| dbf | !( dbf )->lFacturado } ) ; SysRefresh()
+      mkAlbCli( cPath, aImportacion:lAlbCli, cPathOld, nil, {| dbf | !lFacturado( dbf ) } ) ; SysRefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando facturas a clientes" )

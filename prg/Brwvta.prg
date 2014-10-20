@@ -1766,7 +1766,7 @@ static function nTotAlbVta( cCodArt, dbfAlbCliT, dbfAlbCliL, nYear )
 
          if ( dbfAlbCliT )->( dbSeek( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb ) )
 
-            if !( dbfAlbCliT )->lFacturado .and. ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
+            if !lFacturado( dbfAlbCliT ) .and. ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
 
                nMes              := Min( Max( Month( ( dbfAlbCliT )->dFecAlb ), 1 ), 12 )
 

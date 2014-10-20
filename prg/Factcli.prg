@@ -7152,7 +7152,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
    if ( dbfAlbCliT )->( dbSeek( cAlbaran ) )
 
-      if ( dbfAlbCliT )->lFacturado
+      if lFacturado( dbfAlbCliT )
 
          MsgStop( "Albarán facturado" )
 

@@ -6819,6 +6819,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    ::oAlbaranClienteCabecera:cCodUsr      := oUser():cCodigo()
    ::oAlbaranClienteCabecera:cTurAlb      := cCurSesion()
    ::oAlbaranClienteCabecera:lFacturado   := .f.
+   ::oAlbaranClienteCabecera:nFacturado   := 1
    ::oAlbaranClienteCabecera:lSndDoc      := .t.
    ::oAlbaranClienteCabecera:lIvaInc      := .t.
    ::oAlbaranClienteCabecera:cCodCaj      := oUser():cCaja()

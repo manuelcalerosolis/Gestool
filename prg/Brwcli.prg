@@ -1874,7 +1874,7 @@ Static Function LoadAlbaranesCliente( cCodCli, dbfDiv, dbfIva, Anio )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc      := ALB_CLI
             oDbfTmp:cNumDoc      := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-            if( dbfAlbCliT )->lFacturado
+            if lFacturado( dbfAlbCliT )
                oDbfTmp:cEstado   := "Facturado"
             else
                oDbfTmp:cEstado   := "No facturado"
@@ -2340,7 +2340,7 @@ Function nTotEntCli( cCodCli, dbfPedCliT, dbfPedCliP, dbfAlbCliT, dbfAlbCliP, cP
 
       while ( dbfAlbCliT )->cCodCli == cCodCli .and. !( dbfAlbCliT )->( Eof() )
 
-         if !( dbfAlbCliT )->lFacturado .and. ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
+         if !lFacturado( dbfAlbCliT ) .and. ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
 
             if ( dbfAlbCliP )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) )
 
@@ -2410,7 +2410,7 @@ static function TotalAlbaranesClientes( cCodCli, dbfAlbCliT, dbfAlbCliL, dbfDiv,
 
       while ( Empty( cCodCli ) .or. ( dbfAlbCliT )->cCodCli == cCodCli ) .and. !( dbfAlbCliT )->( Eof() )
 
-         if !( dbfAlbCliT )->lFacturado .and. ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
+         if !lFacturado( dbfAlbCliT ) .and. ( nYear == nil .or. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
 
             nMes                    := Month( ( dbfAlbCliT )->dFecAlb )
             a                       := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, cDivEmp() )

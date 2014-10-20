@@ -116,7 +116,8 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CSUCBNC                  99
 #define _CDIGBNC                  100
 #define _CCTABNC                  101
-#define _NDTOTARIFA               102  
+#define _NDTOTARIFA               102 
+#define _NFACTURADO               103   
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -222,6 +223,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DUNIULTCOM               98
 #define __NBULTOS                 99
 #define _CFORMATO                100
+#define __NFACTURADO             101
 
 /*
 Definici¢n de Array para impuestos
@@ -547,8 +549,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
                "Nombre",;
                "Dirección",;
                "Agente",;
-               "Su albarán",;
-               "Facturado";
+               "Su albarán";
       MRU      "Document_plain_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():Get( "AlbCliT", nView ) );
@@ -576,6 +577,18 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Facturado"
+         :nHeadBmpNo       := 4
+         :bStrData         := {|| "" }
+         :bBmpData         := {|| ( D():Get( "AlbCliT", nView ) )->nFacturado }
+         :nWidth           := 20
+         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "Bullet_Square_Yellow_16" )
+         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "trafficlight_on_16" )
+      end with
+
+      /*with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Facturado"
          :nHeadBmpNo       := 3
          :cSortOrder       := "lFacturado"
          :bStrData         := {|| "" }
@@ -583,7 +596,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :nWidth           := 20
          :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
          :AddResource( "trafficlight_on_16" )
-      end with
+      end with*/
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Envio"
@@ -973,7 +986,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
    DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( If( !( D():Get( "AlbCliT", nView ) )->lFacturado, WinAppRec( oWndBrw:oBrw, bEdtPgo, D():Get( "AlbCliP", nView ) ), MsgStop( "El albarán ya fue facturado." ) ) );
+      ACTION   ( If( !lFacturado( D():Get( "AlbCliT", nView ) ), WinAppRec( oWndBrw:oBrw, bEdtPgo, D():Get( "AlbCliP", nView ) ), MsgStop( "El albarán ya fue facturado." ) ) );
       TOOLTIP  "Entregas a (c)uenta" ;
       HOTKEY   "C";
       LEVEL    ACC_APPD
@@ -989,7 +1002,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( if( ApoloMsgNoYes(  "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !( D():Get( "AlbCliT", nView ) )->lFacturado, oWndBrw:oBrw ), ) ) ;
+         ACTION   ( if( ApoloMsgNoYes(  "¿ Está seguro de cambiar el estado del documento ?", "Elija una opción" ), SetFacturadoAlbaranCliente( !lFacturado( D():Get( "AlbCliT", nView ) ), oWndBrw:oBrw ), ) ) ;
          TOOLTIP  "Cambiar Es(t)ado" ;
          HOTKEY   "T";
          LEVEL    ACC_EDIT
@@ -1103,7 +1116,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( if( !( D():Get( "AlbCliT", nView ) )->lFacturado, FactCli( nil, nil, { "Albaran" => ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
+         ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ), FactCli( nil, nil, { "Albaran" => ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
 
@@ -1114,7 +1127,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_MONEY2_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( FacAntCli( nil, nil, ( D():Get( "AlbCliT", nView ) )->cCodCli ) );
+         ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ), FacAntCli( nil, nil, ( D():Get( "AlbCliT", nView ) )->cCodCli ), msgStop( "Albarán ya facturado" ) ) );
          TOOLTIP  "Generar anticipo" ;
          FROM     oRotor ;
 
@@ -1126,7 +1139,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( if( !( D():Get( "AlbCliT", nView ) )->lFacturado .and. Empty( ( D():Get( "AlbCliT", nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
+         ACTION   ( if( !lFacturado( D():Get( "AlbCliT", nView ) ) .and. Empty( ( D():Get( "AlbCliT", nView ) )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { nil, nil, ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } ), MsgStop( "Albarán facturado o convertido a ticket" ) ) );
          TOOLTIP  "Convertir a ticket" ;
          FROM     oRotor ;
 
@@ -2143,6 +2156,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _LIVAINC   ]   := uFieldEmpresa( "lIvaInc" )
          aTmp[ _NIVAMAN   ]   := nIva( D():Get( "TIva", nView ), cDefIva() )
          aTmp[ _CMANOBR   ]   := Padr( "Gastos", 250 )
+         aTmp[ _NFACTURADO]   := 1
 
       case nMode == DUPL_MODE
 
@@ -2163,6 +2177,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _LSNDDOC   ]   := .t.
          aTmp[ _CNUMPED   ]   := ""
          aTmp[ _LCLOALB   ]   := .f.
+         aTmp[ _NFACTURADO]   := 1
 
       case nMode == EDIT_MODE
 
@@ -2171,7 +2186,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             Return .f.
          end if
 
-         if aTmp[ _LFACTURADO ]
+         if lFacturado( aTmp ) //aTmp[ _LFACTURADO ]
             MsgStop( "El albarán ya fue facturado." )
             return .t.
          end if
@@ -2230,7 +2245,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    nDorDiv                    := nRouDiv( aTmp[ _CDIVALB ], D():Get( "Divisas", nView ) ) // Numero de decimales de la divisa
    nDpvDiv                    := nDpvDiv( aTmp[ _CDIVALB ], D():Get( "Divisas", nView ) ) // Decimales de redondeo del punto verde
 
-   if aTmp[ _LFACTURADO ]
+   if lFacturado( aTmp )
       cEstAlb                 := "Facturado"
    else
       cEstAlb                 := "Pendiente"
@@ -2612,7 +2627,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:lAutoSort       := .t.
 
       oBrwLin:CreateFromResource( 240 )
-      
+
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Of. Oferta"
          :bStrData            := {|| "" }
@@ -10620,6 +10635,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
          GraLotArt( aTmp[ _CREF ], dbfArticulo, aTmp[ _CLOTE ] )
       end if
 
+      aTmp[ __NFACTURADO ]    := 1
+
       /*
       Buscamos si existen atipicas de clientes---------------------------------
       */
@@ -13967,7 +13984,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
 
-   ( D():Get( "AlbCliT", nView ) )->( dbSetFilter( {|| !Field->lFacturado .and. Field->lIvaInc == lIva }, "!lFacturado .and. lIvaInc == lIva" ) )
+   ( D():Get( "AlbCliT", nView ) )->( dbSetFilter( {|| Field->nFacturado != 3 .and. Field->lIvaInc == lIva }, "nFacturado != 3 .and. lIvaInc == lIva" ) )
    ( D():Get( "AlbCliT", nView ) )->( dbGoTop() )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE if( lIva, "Albaranes de clientes con " + cImp() + " incluido", "Albaranes de clientes con " + cImp() + " desglosado" )
@@ -14483,7 +14500,7 @@ function nVtaAlbCli( cCodCli, dDesde, dHasta, cAlbCliT, cAlbCliL, cDbfIva, cDbfD
 
          if ( dDesde == nil .or. ( cAlbCliT )->dFecAlb >= dDesde )    .and.;
             ( dHasta == nil .or. ( cAlbCliT )->dFecAlb <= dHasta )    .and.;
-            ( if( lNotFac, !( cAlbCliT )->lFacturado, .t. ) )         .and.;
+            ( if( lNotFac, !lFacturado( cAlbCliT ), .t. ) )         .and.;
             ( nYear == nil .or. Year( ( cAlbCliT )->dFecAlb ) == nYear )
 
             nCon  += nTotAlbCli( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb, cAlbCliT, cAlbCliL, cDbfIva, cDbfDiv, nil, cDivEmp(), .f. )
@@ -14732,6 +14749,7 @@ FUNCTION EdmAlbCli( cCodRut, cPathTo, oStru, aSucces )
                   ( D():Get( "AlbCliT", nView ) )->cDivAlb    := cDivEmp()
                   ( D():Get( "AlbCliT", nView ) )->nVdvAlb    := nChgDiv( ( D():Get( "AlbCliT", nView ) )->cDivAlb, D():Get( "Divisas", nView ) )
                   ( D():Get( "AlbCliT", nView ) )->lFacturado := .f.
+                  ( D():Get( "AlbCliT", nView ) )->nFacturado := 1
                   ( D():Get( "AlbCliT", nView ) )->cCodCli    := ( D():Get( "Client", nView ) )->Cod
                   ( D():Get( "AlbCliT", nView ) )->cNomCli    := ( D():Get( "Client", nView ) )->Titulo
                   ( D():Get( "AlbCliT", nView ) )->cDirCli    := ( D():Get( "Client", nView ) )->Domicilio
@@ -14956,6 +14974,36 @@ function SynAlbCli( cPath )
       ( D():Get( "AlbCliT", nView ) )->( dbGoTop() )
 
       while !( D():Get( "AlbCliT", nView ) )->( eof() )
+
+         /*
+         Miramos si estamos usando los campos nuevos de estado, y si no es asi, pasamos el estado
+         */
+
+         if ( D():Get( "AlbCliT", nView ) )->nFacturado == 0
+
+            if ( D():Get( "AlbCliT", nView ) )->lFacturado
+               
+               if D():Lock( "AlbCliT", nView )
+
+                  ( D():Get( "AlbCliT", nView ) )->nFacturado := 3
+
+                  D():UnLock( "AlbCliT", nView )
+
+               end if
+
+            else
+               
+               if D():Lock( "AlbCliT", nView )
+
+                  ( D():Get( "AlbCliT", nView ) )->nFacturado := 1
+
+                  D():UnLock( "AlbCliT", nView )
+
+               end if
+                  
+            end if
+
+         end if
 
          if Empty( ( D():Get( "AlbCliT", nView ) )->cSufAlb )
             
@@ -16602,6 +16650,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",        "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nBultos",   "N", 16, 6, "Numero de bultos",              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",              "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "nFacturado","N",  1, 0, "Estado de la línea del albarán","",                  "", "( cDbfCol )", 1 } )
 
 Return ( aColAlbCli )
 
@@ -16713,6 +16762,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cDigBnc"  , "C",  2, 0, "Dígito de control de la cuenta bancaria del cliente",   "",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                           "",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nDtoTarifa","N",  6, 2, "Descuento de tarifa de cliente",                        "",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albarán",                                    "",                   "", "( cDbf )", 1} )
 
 Return ( aItmAlbCli )
 
@@ -17704,13 +17754,13 @@ FUNCTION lFacAlbCli( cAlbCli, uAlbCliT )
    if ValType( uAlbCliT ) == "C"
 
       if ( uAlbCliT )->( dbSeek( cAlbCli ) )
-         lFacAlb  := ( uAlbCliT )->lFacturado
+         lFacAlb  := lFacturado( uAlbCliT )
       end if
 
    else
 
       if uAlbCliT:Seek( cAlbCli )
-         lFacAlb  := uAlbCliT:lFacturado
+         lFacAlb  := lFacturado( uAlbCliT )
       end if
 
    end if
@@ -17747,6 +17797,22 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
             ( cAlbCliT )->lFacturado := lFacturado
             ( cAlbCliT )->cNumFac    := cNumFac
             ( cAlbCliT )->( dbUnLock() )
+         end if
+
+         if lFacturado
+
+            if dbLock( cAlbCliT )
+               ( cAlbCliT )->nFacturado := 3
+               ( cAlbCliT )->( dbUnLock() )
+            end if
+
+         else
+
+            if dbLock( cAlbCliT )
+               ( cAlbCliT )->nFacturado := 1
+               ( cAlbCliT )->( dbUnLock() )
+            end if
+
          end if
 
          /*
@@ -17807,6 +17873,22 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
          ( cAlbCliT )->lFacturado := lFacturado
          ( cAlbCliT )->cNumFac    := cNumFac
          ( cAlbCliT )->( dbUnLock() )
+      end if
+
+      if lFacturado
+
+         if dbLock( cAlbCliT )
+            ( cAlbCliT )->nFacturado := 3
+            ( cAlbCliT )->( dbUnLock() )
+         end if
+
+      else
+
+         if dbLock( cAlbCliT )
+            ( cAlbCliT )->nFacturado := 1
+            ( cAlbCliT )->( dbUnLock() )
+         end if
+
       end if
 
       /*
@@ -17965,5 +18047,28 @@ Function cDireccionSAT()
    CLOSE ( dbfObras )
 
 Return ( cDireccion )
+
+//---------------------------------------------------------------------------//
+
+function lFacturado( cAlbCliT )
+
+   local lReturn  := .f.
+
+   do case
+      case ValType( cAlbCliT ) == "A"
+
+         lReturn  := cAlbCliT[ _NFACTURADO ] == 3
+
+      case ValType( cAlbCliT ) == "C"         
+
+         lReturn  := ( cAlbCliT )->nFacturado == 3
+
+      case ValType( cAlbCliT ) == "O"         
+
+         lReturn  := cAlbCliT:nFacturado == 3   
+
+   end case
+
+Return ( lReturn )
 
 //---------------------------------------------------------------------------//
