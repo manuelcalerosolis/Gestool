@@ -144,9 +144,9 @@ METHOD lGenerate() CLASS TInfAlbTip
 
    do case
       case ::oEstado:nAt == 1
-         bValid   := {|| !::oAlbCliT:lFacturado }
+         bValid   := {|| !lFacturado( ::oAlbCliT ) }
       case ::oEstado:nAt == 2
-         bValid   := {|| ::oAlbCliT:lFacturado }
+         bValid   := {|| lFacturado( ::oAlbCliT ) }
       case ::oEstado:nAt == 3
          bValid   := {|| .t. }
    end case

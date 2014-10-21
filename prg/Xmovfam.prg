@@ -211,7 +211,7 @@ METHOD lGenerate()
 
       if ::oAlbCliT:dFecAlb >= ::dIniInf                                      .AND.;
          ::oAlbCliT:dFecAlb <= ::dFinInf                                      .AND.;
-         !::oAlbCliT:lFacturado                                               .AND.;
+         !lFacturado( ::oAlbCliT )                                            .AND.;
          lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
 
          if ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )

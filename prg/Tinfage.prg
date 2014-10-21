@@ -214,7 +214,7 @@ METHOD lGenerate()
 
    WHILE ::oAlbCliT:CCODAGE >= ::cAgeOrg           .AND.;
          ::oAlbCliT:CCODAGE <= ::cAgeDes           .AND.;
-         ::oAlbCliT:lFacturado                     .AND.;
+         lFacturado( ::oAlbCliT )                  .AND.;
          !::oAlbCliT:Eof()
 
          IF ::oAlbCliT:DFECALB >= ::dIniInf        .AND.;

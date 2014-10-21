@@ -440,7 +440,7 @@ METHOD nTotAlbCli( cCodArt, cCodAlm )
       while ::oAlbCliL:cRef == cCodArt .and. !::oAlbCliL:Eof()
 
          if ::oAlbCliT:Seek( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb ) .AND.;
-            !::oAlbCliT:lFacturado                                                                 .AND.;
+            !lFacturado( ::oAlbCliT )                                                              .AND.;
             ::oAlbCliT:dFecAlb >= ::dIniInf                                                        .AND.;
             ::oAlbCliT:dFecAlb <= ::dFinInf                                                        .AND.;
             !Empty( ::oAlbCliL:cAlmLin ) .and. ::oAlbCliL:cAlmLin == cCodAlm

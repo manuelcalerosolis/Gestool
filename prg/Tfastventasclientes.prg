@@ -1079,7 +1079,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
       ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
       if lNoFacturados
-         cExpHead       := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead       := 'nFacturado < 3 .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       else
          cExpHead       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       end if

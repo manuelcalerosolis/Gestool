@@ -160,9 +160,9 @@ METHOD lGenerate() CLASS TAnuGAlb
 
    do case
       case ::oEstado:nAt == 1
-         cExpHead    := '!lFacturado'
+         cExpHead    := 'nFacturado < 3'
       case ::oEstado:nAt == 2
-         cExpHead    := 'lFacturado'
+         cExpHead    := 'nFacturado == 3'
       otherwise
          cExpHead    := '.t.'
    end case

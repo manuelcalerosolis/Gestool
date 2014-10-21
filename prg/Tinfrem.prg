@@ -148,9 +148,9 @@ METHOD lGenerate()
 
    do case
       case ::nEstado == 1
-         bValid   := {|| !::oAlbCliT:lFacturado }
+         bValid   := {|| !lFacturado( ::oAlbCliT ) }
       case ::nEstado == 2
-         bValid   := {|| ::oAlbCliT:lFacturado }
+         bValid   := {|| lFacturado( ::oAlbCliT ) }
       case ::nEstado == 3
          bValid   := {|| .t. }
    end case

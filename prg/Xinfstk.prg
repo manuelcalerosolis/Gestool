@@ -395,7 +395,7 @@ METHOD nCalStock( cCodArt )
 
             if ::oAlbCliT:Seek( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb )
 
-               if !::oAlbCliT:lFacturado                                 .AND.;
+               if !lFacturado( ::oAlbCliT )                              .AND.;
                   ::oAlbCliT:dFecAlb >= ::dIniInf                        .AND.;
                   ::oAlbCliT:dFecAlb <= ::dFinInf                        .AND.;
                   lChkSer( ::oAlbCliT:cSerAlb, ::aSer )

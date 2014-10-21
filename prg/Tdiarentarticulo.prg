@@ -213,7 +213,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
    Creo los filtros para luego utilizarlo en las tablas------------------------
    */
 
-   cExpLine          := 'dFecha >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecha <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. lFacturado == .f.'
+   cExpLine          := 'dFecha >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecha <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. nFacturado < 3'
 
    if !::oGrupoArticulo:Cargo:Todos
       cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'

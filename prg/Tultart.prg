@@ -322,7 +322,7 @@ METHOD GetDocument()
 
       while ::oAlbCliT:cCodCli == ::oDbfCli:Cod .and. !::oAlbCliT:Eof()
 
-         if !::oAlbCliT:lFacturado                                                                   .AND.;
+         if !lFacturado( ::oAlbCliT )                                                                .AND.;
             ( ::lAgeAll .or. ::oAlbCliT:cCodAge >= ::cAgeOrg .and. ::oAlbCliT:cCodAge <= ::cAgeDes ) .AND.;
             ::oAlbCliT:dFecAlb >= ::dIniInf                                                          .AND.;
             ::oAlbCliT:dFecAlb <= ::dFinInf                                                          .AND.;

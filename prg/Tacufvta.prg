@@ -187,7 +187,7 @@ METHOD lGenerate() CLASS TAcuFVta
    ::oAlbCliT:OrdSetFocus( "dFecAlb" )
    ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
-   cExpHead          := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead          := 'lFacturado < 3 .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
    if !::lAllCli
       cExpHead       += '.and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'

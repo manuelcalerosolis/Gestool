@@ -211,7 +211,7 @@ METHOD lGenerate()
    ::oAlbCliT:GoTop()
    while ! ::oAlbCliT:Eof()
 
-      if !::oAlbCliT:lFacturado                                                 .AND.;
+      if !lFacturado( ::oAlbCliT )                                              .AND.;
          Year( ::oAlbCliT:dFecAlb ) == ::nYeaInf                                .AND.;
          lChkSer( ::oAlbCliT:CSERALB, ::aSer )
 

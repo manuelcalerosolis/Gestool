@@ -272,7 +272,7 @@ METHOD lGenerate() CLASS TDlAgeVta
 
    while ! ::oAlbCliT:Eof()
 
-      if !::oAlbCliT:lFacturado                                                             .AND.;
+      if !lFacturado( ::oAlbCliT )                                                          .AND.;
          ::oAlbCliT:DFECALB >= ::dIniInf                                                    .AND.;
          ::oAlbCliT:DFECALB <= ::dFinInf                                                    .AND.;
          ::oAlbCliT:CCODAGE >= ::cAgeOrg                                                    .AND.;

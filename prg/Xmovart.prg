@@ -174,7 +174,7 @@ METHOD lGenerate()
 
    while !::lBreak .and. !::oAlbCliT:Eof()
 
-      if !::oAlbCliT:lFacturado              .AND.;
+      if !lFacturado( ::oAlbCliT )           .AND.;
          ::oAlbCliT:dFecAlb >= ::dIniInf     .AND.;
          ::oAlbCliT:dFecAlb <= ::dFinInf     .AND.;
          lChkSer( ::oAlbCliT:cSerAlb, ::aSer )

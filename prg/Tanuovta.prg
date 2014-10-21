@@ -168,7 +168,7 @@ METHOD lGenerate()
    ::oAlbCliT:OrdSetFocus( "dFecAlb" )
    ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
-   cExpHead          := '!lFacturado'
+   cExpHead          := 'nFacturado < 3'
 
    if !::lAllFpg
       cExpHead       += ' .and. cCodPago >= "' + Rtrim( ::cFpgDes ) + '" .and. cCodPago <= "' + Rtrim( ::cFpgHas ) + '"'

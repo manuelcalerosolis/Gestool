@@ -171,7 +171,7 @@ METHOD lGenerate()
 
    while ! ::oAlbCliT:Eof()
 
-      if !::oAlbCliT:lFacturado                                                             .AND.;
+      if !lFacturado( ::oAlbCliT )                                                          .AND.;
          ::oAlbCliT:DFECALB >= ::dIniInf                                                    .AND.;
          ::oAlbCliT:DFECALB <= ::dFinInf                                                    .AND.;
          lChkSer( ::oAlbCliT:CSERALB, ::aSer )

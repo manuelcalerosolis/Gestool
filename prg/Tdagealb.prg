@@ -200,11 +200,11 @@ METHOD lGenerate() CLASS TdAgeAlb
 
          do case
             case ::oEstado:nAt == 1
-               if bValid   := {|| !::oAlbCliT:lFacturado }
+               if bValid   := {|| !lFacturado( ::oAlbCliT ) }
                   ::AppendLine( aTotal )
                end if
             case ::oEstado:nAt == 2
-               if bValid   := {|| ::oAlbCliT:lFacturado }
+               if bValid   := {|| lFacturado( ::oAlbCliT ) }
                   ::AppendLine( aTotal )
                end if
             case ::oEstado:nAt == 3

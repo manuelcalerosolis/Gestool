@@ -291,9 +291,9 @@ METHOD lGenerate()
 
    do case
       case ::oEstadoUno:nAt == 1
-         cExpHead    := '!lFacturado .and. dFecAlq >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlq <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead    := 'nFacturado < 3 .and. dFecAlq >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlq <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       case ::oEstadoUno:nAt == 2
-         cExpHead    := 'lFacturado .and. dFecAlq >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlq <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead    := 'nFacturado == 3 .and. dFecAlq >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlq <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       case ::oEstadoUno:nAt == 3
          cExpHead    := 'dFecAlq >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlq <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    end case
