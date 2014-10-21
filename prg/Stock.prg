@@ -2974,7 +2974,7 @@ METHOD nTotAlbCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
                   if ( ::cAlbCliT )->( dbSeek( ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb ) )  .and.;
                      ( Empty( dFecha ) .or. ( ::cAlbCliT )->dFecAlb <= dFecha )                                                        .and.;
-                     !( ::cAlbCliT )->lFacturado
+                     !lFacturado( ::cAlbCliT )
 
                      if ( cCodAlm == ( ::cAlbCliL )->cAlmLin )     .and.;
                         ( cValPr1 == ( ::cAlbCliL )->cValPr1 )     .and.;
@@ -3009,7 +3009,7 @@ METHOD nTotAlbCli( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
 
                   if ( cAlbEmpT )->( dbSeek( ( cAlbEmpL )->cSerAlb + Str( ( cAlbEmpL )->nNumAlb ) + ( cAlbEmpL )->cSufAlb ) )  .and.;
                      ( Empty( dFecha ) .or. ( cAlbEmpT )->dFecAlb <= dFecha )                                                        .and.;
-                     !( cAlbEmpT )->lFacturado
+                     !lFacturado( cAlbEmpT )
 
                      if ( cCodAlm == ( cAlbEmpL )->cAlmLin )     .and.;
                         ( cValPr1 == ( cAlbEmpL )->cValPr1 )     .and.;
@@ -3454,7 +3454,7 @@ METHOD nTotalSaldo( cCodArt, cCodCli, dFecha ) CLASS TStock
          if dbSeekInOrd( ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb, "nNumAlb", ::cAlbCliT )  .and.;
             ( ::cAlbCliT )->cCodCli == cCodCli .and.;
             ( ::cAlbCliT )->dFecAlb <= dFecha .and.;
-            !( ::cAlbCliT )->lFacturado
+            !lFacturado( ::cAlbCliT )
 
             nTotal   += nTotNAlbCli( ::cAlbCliL )
 

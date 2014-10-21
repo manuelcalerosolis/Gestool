@@ -9526,7 +9526,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             ( lIvaInc == ( dbfAlbCliT )->lIvaInc  )                                          .and.;
             ( Empty( aTmp[ _CCODOBR ] ) .or. ( dbfAlbCliT )->cCodObr == aTmp[ _CCODOBR ] )
 
-            aAdd( aAlbaranes, {  ( dbfAlbCliT )->lFacturado ,;
+            aAdd( aAlbaranes, {  lFacturado( dbfAlbCliT ) ,;
                                  ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb,;
                                  ( dbfAlbCliT )->cCodSuAlb ,;
                                  ( dbfAlbCliT )->dFecAlb ,;

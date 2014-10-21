@@ -5076,7 +5076,7 @@ METHOD TotVenta( cTurno, cCaja )
 
       while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurno + cCaja  .and. !::oAlbCliT:eof()
 
-         if !::oAlbCliT:lFacturado
+         if !lFacturado( ::oAlbCliT )
 
             ::oTotales:addTotAlbCliContadores(  cCaja, ::oAlbCliT:cSerAlb, ::nCntAlbaranCliente(), ::cTxtAlbaranCliente(), ::bEdtAlbaranCliente() )
             ::oTotales:addTotAlbCliVentas(      cCaja, ::oAlbCliT:cSerAlb, ::nTotAlbaranCliente(), ::cTxtAlbaranCliente(), ::bEdtAlbaranCliente() )
@@ -9524,7 +9524,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
 
-            if !::oAlbCliT:lFacturado .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+            if !lFacturado( ::oAlbCliT ) .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
                while ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb == ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb .and. !::oAlbCliL:eof()
 
@@ -9726,7 +9726,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
 
-            if !::oAlbCliT:lFacturado .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+            if !lFacturado( ::oAlbCliT ) .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
                while ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb == ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb .and. !::oAlbCliL:eof()
 
@@ -9871,7 +9871,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
 
-            if !::oAlbCliT:lFacturado .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+            if !lFacturado( ::oAlbCliT ) .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
                while ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb == ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb .and. !::oAlbCliL:eof()
 
@@ -10016,7 +10016,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
 
-            if !::oAlbCliT:lFacturado .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+            if !lFacturado( ::oAlbCliT ) .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
                while ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb == ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb .and. !::oAlbCliL:eof()
 
@@ -10161,7 +10161,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
 
-            if !::oAlbCliT:lFacturado .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+            if !lFacturado( ::oAlbCliT ) .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
                while ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb == ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb .and. !::oAlbCliL:eof()
 
@@ -10306,7 +10306,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
 
-            if !::oAlbCliT:lFacturado .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+            if !lFacturado( ::oAlbCliT ) .and. ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
                while ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb == ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb .and. !::oAlbCliL:eof()
 
@@ -10427,7 +10427,7 @@ METHOD FillTemporal( cCodCaj )
 
          while ::oAlbCliT:cTurAlb + ::oAlbCliT:cSufAlb + ::oAlbCliT:cCodCaj == cTurnoCaja .and. !::oAlbCliT:eof()
 
-            if !::oAlbCliT:lFacturado
+            if !lFacturado( ::oAlbCliT )
                ::AppendInTemporal( ::oAlbCliT:cCodUsr, Rtrim( ::oAlbCliT:cCodUsr ) + Space( 1 ) + Rtrim( RetUser( ::oAlbCliT:cCodUsr, ::oUser:cAlias ) ), nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
             end if
 

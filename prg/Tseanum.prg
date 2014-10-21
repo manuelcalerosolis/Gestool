@@ -2064,4 +2064,3 @@ METHOD AutoSerializa() CLASS TNumerosSerie
 Return ( Self )
 
 //----------------------------------------------------------------------------//
-

@@ -4108,6 +4108,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       aTmp[ __DFECENT ]       := aTmpAlb[ _DFECENTR ]
       aTmp[ __LALQUILER ]     := !Empty( oTipAlb ) .and. oTipAlb:nAt == 2
 
+      aTmp[ __NFACTURADO ]    := 1
+
       if !Empty( cCodArtEnt )
          cCodArt              := cCodArtEnt
       end if
@@ -7922,6 +7924,7 @@ STATIC FUNCTION AlbRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _CHORIMP     ]  := Space( 5 )
       aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
       aTabla[ _LFACTURADO  ]  := .f.
+      aTabla[ _NFACTURADO  ]  := 1
 
       nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMALB" ) )
 
@@ -10642,8 +10645,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
          GraLotArt( aTmp[ _CREF ], dbfArticulo, aTmp[ _CLOTE ] )
       end if
 
-      aTmp[ __NFACTURADO ]    := 1
-
       /*
       Buscamos si existen atipicas de clientes---------------------------------
       */
@@ -10886,6 +10887,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       RecalculaTotal( aTmpAlb )
 
       SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb )
+
+      aTmp[ __NFACTURADO ]    := 1
 
       SysRefresh()
 
@@ -11876,6 +11879,7 @@ Static Function SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg )
       ( dbfTmpSer )->cAlmLin     := aTmp[ _CALMLIN     ]
       ( dbfTmpSer )->nNumLin     := aTmp[ _NNUMLIN     ]
       ( dbfTmpSer )->lFacturado  := aTmp[ _dLFACTURADO ]
+      ( dbfTmpSer )->nFacturado  := aTmp[ __NFACTURADO ]
       ( dbfTmpSer )->cNumSer     := cNumSer
 
       if !Empty( oProSer ) .and. ( Mod( hb_enumindex(), int( nTotUnd / 100 ) ) == 0 )
@@ -14957,6 +14961,7 @@ function aSerAlbCli()
    aAdd( aColAlbCli,  { "cRef",        "C", 18,   0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli,  { "cAlmLin",     "C", 16,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli,  { "cNumSer",     "C", 30,   0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli,  { "nFacturado",  "N",  1,   0, "Estado de la linea de albarán",    "",                  "", "( cDbfCol )" } )
 
 return ( aColAlbCli )
 
@@ -15313,6 +15318,7 @@ function SynAlbCli( cPath )
                ( D():Get( "AlbCliS", nView ) )->cAlmLin    := ( D():Get( "AlbCliL", nView ) )->cAlmLin
                ( D():Get( "AlbCliS", nView ) )->nNumLin    := ( D():Get( "AlbCliL", nView ) )->nNumLin
                ( D():Get( "AlbCliS", nView ) )->lFacturado := ( D():Get( "AlbCliL", nView ) )->lFacturado
+               ( D():Get( "AlbCliS", nView ) )->nFacturado := ( D():Get( "AlbCliL", nView ) )->nFacturado
                ( D():Get( "AlbCliS", nView ) )->cNumSer    := cNumSer
                ( D():Get( "AlbCliS", nView ) )->( dbUnLock() )
             next
@@ -16320,7 +16326,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. nFacturado == 3", {|| !Deleted() .and. Field->nFacturado == 3 }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
@@ -16378,7 +16384,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCondSet( "nFacturado == 3 .and. nCtlStk < 2 .and. !Deleted()", {|| Field->nFacturado == 3 .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbCliT )->( dbCloseArea() )
@@ -16459,10 +16465,10 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCondSet( "nFacturado == 3 .and. !Deleted()", {|| Field->nFacturado == 3 .and. !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCondSet( "nFacturado == 3 .and. !Deleted()", {|| Field->nFacturado == 3 .and. !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
@@ -17837,6 +17843,22 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
                   ( cAlbCliL )->( dbUnlock() )
                 end if
 
+                if lFacturado
+
+                  if dbLock( cAlbCliL )
+                     ( cAlbCliL )->nFacturado := 3
+                     ( cAlbCliL )->( dbUnLock() )
+                  end if
+
+               else
+
+                  if dbLock( cAlbCliL )
+                     ( cAlbCliL )->nFacturado := 1
+                     ( cAlbCliL )->( dbUnLock() )
+                  end if
+
+               end if
+
                ( cAlbCliL )->( dbSkip() )
 
             end while
@@ -17859,6 +17881,22 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
                   ( cAlbCliS )->lFacturado := lFacturado
                   ( cAlbCliS )->( dbUnlock() )
                 end if
+
+                if lFacturado
+
+                  if dbLock( cAlbCliS )
+                     ( cAlbCliS )->nFacturado := 3
+                     ( cAlbCliS )->( dbUnLock() )
+                  end if
+
+               else
+
+                  if dbLock( cAlbCliS )
+                     ( cAlbCliS )->nFacturado := 1
+                     ( cAlbCliS )->( dbUnLock() )
+                  end if
+
+               end if
 
                ( cAlbCliS )->( dbSkip() )
 
