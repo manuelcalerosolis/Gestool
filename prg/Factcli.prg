@@ -6015,7 +6015,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| if( !Empty( aTmp[ _CREF ] ), SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode, , , , , , , oSayLote ), ) },;
+                                             		"bLClicked" => {|| aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode, , , , , , , oSayLote ) ), ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
@@ -6030,7 +6030,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Artículos------------------------------------------------------------------
 	*/
 
-	   oSayArticulo  		:= TGridUrllink():Build({  	"nTop"      => 40,;
+	   oSayArticulo  		:= TGridUrllink():Build({  "nTop"      => 40,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"cURL"      => "Artículo",;
                                              		"oWnd"      => oDlg,;
