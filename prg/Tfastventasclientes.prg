@@ -447,8 +447,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    */
 
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",               {|| cCodEmp() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
-   //::oFastReport:SetMasterDetail(   "Informe", "Cliente.Direcciones",   {|| ::oDbf:cCodCli } )
+   //::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
+   //::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Bancos",                {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Tarifas de cliente",    {|| ::oDbf:cCodCli } )
@@ -461,11 +461,20 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Formas de pago",       {|| ::oDbfCli:CodPago } )
 
+   /*
+   Relación con la tabla de direcciones en funcion del tipo de informe
+   */
+
+   if    ::cReportType == "Listado" 
+         ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )      
+   else
+         ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
+   end if
+
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Facturas" )
    ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
    ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
-   //::oFastReport:SetResyncPair(     "Informe", "Cliente.Direcciones" )
    ::oFastReport:SetResyncPair(     "Informe", "Bancos" )
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )
@@ -475,7 +484,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
    
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
-   ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )
+   ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )   
 
    do case
       case ::cReportType == "SAT de clientes"
