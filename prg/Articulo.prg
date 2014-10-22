@@ -21,7 +21,7 @@
 #define DT_TABSTOP                  0x00000080
 #define DT_NOCLIP                   0x00000100
 #define DT_EXTERNALLEADING          0x00000200
-#define DT_CALCRECT                 0x000004
+#define DT_CALCRECT                 0x00000004
 #define DT_NOPREFIX                 0x00000800
 #define DT_INTERNAL                 0x00001000
 
@@ -78,6 +78,8 @@ static filTmpSubCta
 static dbfTmpSubCta
 static filTmpSubCom
 static dbfTmpSubCom
+static filTmpAlm
+static dbfTmpAlm
 
 static oStock
 static oTankes
@@ -117,12 +119,15 @@ static cImageOld           := ""
 static bEdit               := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdit2              := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtRec2( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
+static bEdtAlm             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtAlm( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtVta             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtVta( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtKit             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtKit( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtImg             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtImg( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtCod             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtCodebar( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 
 static oCbxPrecio 
+
+static nView
 
 static dbfArticulo
 static dbfFam
@@ -181,31 +186,13 @@ static oTimerBrw
 static cOldCodeBar   := ""
 static aOldCodeBar   := {}
 
+
+
 static oBtnAceptarActualizarWeb
 
 //---------------------------------------------------------------------------//
 
 #ifndef __PDA__
-
-//---------------------------------------------------------------------------//
-//Parte para el programa normal
-//---------------------------------------------------------------------------//
-
-Static Function aItmCom()
-
-   local aBase := {}
-
-   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código de artículo"            , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodDiv",   "C",  3, 0, "Código de divisa"              , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad"   , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad"   , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValPr1",   "C", 40, 0, "Valor de primera propiedad"    , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValPr2",   "C", 40, 0, "Valor de segunda propiedad"    , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nPreCom",   "N", 16, 6, "Precio de compras"             , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nValPnt",   "N", 16, 6, "Valor del punto"               , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoPnt",   "N",  6, 2, "Descuento del punto"           , "",                  "", "( cDbfArt )", nil } )
-
-Return ( aBase )
 
 //---------------------------------------------------------------------------//
 
@@ -230,6 +217,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
    BEGIN SEQUENCE
 
       oMsgText( 'Abriendo ficheros artículos' )
+
+      nView       := D():CreateView()
 
       lOpenFiles  := .t.
 
@@ -372,6 +361,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       USE ( cPatDat() + "TIPIMP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPIMP", @dbfTImp ) )
       SET ADSINDEX TO ( cPatDat() + "TIPIMP.CDX" ) ADDITIVE
+
+      D():ArticuloStockAlmacenes( nView )
 
       oBandera             := TBandera():New()
 
@@ -1546,15 +1537,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local nGetDebe       := 0
    local nGetHaber      := 0
    local oGetCtaCom
-   local cGetCtaCom     := ""
-   local nDebCom        := 0
-   local nHabCom        := 0
+   local cGetCtaCom           := ""
+   local nDebCom              := 0
+   local nHabCom              := 0
    local oGetSalCom
-   local nGetSalCom     := 0
+   local nGetSalCom           := 0
    local oGetCtaTrn
-   local cGetCtaTrn     := ""
+   local cGetCtaTrn           := ""
    local oGetSalTrn
-   local nGetSalTrn     := 0
+   local nGetSalTrn           := 0
    local cSubCtaAnt
    local cSubCtaAntCom
    local oNombre
@@ -1589,6 +1580,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oImpComanda2
    local cImpComanda1
    local cImpComanda2
+   local oBtnStockAlmacenes
 
    CursorWait()
 
@@ -1596,7 +1588,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       Return .f.
    end if
 
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   oBlock                     := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    do case
@@ -3472,6 +3464,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  cPicUnd ;
 			COLOR 	CLR_GET ;
          OF       fldStocks
+
+   REDEFINE BUTTON oBtnStockAlmacenes; 
+         ID       300 ;
+         OF       fldStocks;
+         ACTION   ( StockAlmacenes( aTmp, aGet, nMode ) )
 
    REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "NCNTACT" ) ) ] ;
          ID       120 ;
@@ -5431,10 +5428,10 @@ Static Function BeginTrans( aTmp, nMode )
    local aItmSubCta
    local oError
    local oBlock
-
+/*
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    aItmSubCta        := {}
 
    cCodArt           := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"  ) ) ]
@@ -5452,6 +5449,7 @@ Static Function BeginTrans( aTmp, nMode )
    aAdd( aItmSubCta, { "nIva",      "N",  5, 2, "I.V.A"      } )
 
    filTmpPrv         := cGetNewFileName( cPatTmp() + "PrvArt" )
+   filTmpAlm         := cGetNewFileName( cPatTmp() + "ArtAlm" )
    filTmpVta         := cGetNewFileName( cPatTmp() + "VtaArt" )
    filTmpKit         := cGetNewFileName( cPatTmp() + "KitArt" )
    filTmpOfe         := cGetNewFileName( cPatTmp() + "OfeArt" )
@@ -5484,6 +5482,28 @@ Static Function BeginTrans( aTmp, nMode )
       end if
 
    end if
+
+   // base de datos stocks por almacenes------------------------------------------
+
+   dbCreate( filTmpAlm, aSqlStruct( aItmAlm() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), filTmpAlm, cCheckArea( "ArtAlm", @dbfTmpAlm ), .f. )
+
+   if !NetErr()
+
+      ( dbfTmpAlm )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpAlm )->( OrdCreate( filTmpAlm, "cCodArt + cCodAlm", "cCodArt + cCodAlm", {|| Field->cCodArt + Field->cCodAlm } ) )
+
+      if nMode != APPD_MODE .and. ( D():ArticuloStockAlmacenes( nView ) )->( dbSeek( cCodArt ) )
+         while ( D():ArticuloStockAlmacenesId( nView ) ) == cCodArt .and. !( D():ArticuloStockAlmacenes( nView ) )->( eof() )
+            dbPass( D():ArticuloStockAlmacenes( nView ), dbfTmpAlm, .t. )
+            ( D():ArticuloStockAlmacenes( nView ) )->( dbSkip() )
+         end while
+         ( dbfTmpAlm )->( dbGoTop() )
+      end if
+
+   end if
+
+   // base de datos de ventas--------------------------------------------------
 
    dbCreate( filTmpVta, aSqlStruct( aItmVta() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), filTmpVta, cCheckArea( "VtaArt", @dbfTmpVta ), .f. )
@@ -5603,7 +5623,7 @@ Static Function BeginTrans( aTmp, nMode )
    */
 
    aOldCodeBar    := aDbfToArr( dbfTmpCodebar, 2 )
-
+/*
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales " + CRLF + ErrorMessage( oError ) )
@@ -5615,7 +5635,7 @@ Static Function BeginTrans( aTmp, nMode )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 Return ( lErrors )
 
 //--------------------------------------------------------------------------//
@@ -5826,6 +5846,15 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          ( dbfTmpPrv )->( dbSkip() )
       end while
 
+      ( dbfTmpAlm )->( OrdSetFocus( 0 ) )
+      ( dbfTmpAlm )->( dbGoTop() )
+      while !( dbfTmpAlm )->( eof() )
+         ( dbfTmpAlm )->cCodArt  := cCod
+          dbPass( dbfTmpAlm, D():ArticuloStockAlmacenes( nView ), .t. )
+         ( dbfTmpAlm )->( dbSkip() )
+      end while
+
+
       ( dbfTmpVta )->( OrdSetFocus( 0 ) )
       ( dbfTmpVta )->( dbGoTop() )
       while !( dbfTmpVta )->( eof() )
@@ -5993,6 +6022,10 @@ Static Function KillTrans( oBrwPrv, oBrwDiv, oBrwStk, oBrwCta, oBrwCom, oBrw2, o
       ( dbfTmpPrv )->( dbCloseArea() )
    end if
 
+   if !Empty( dbfTmpAlm ) .and. ( dbfTmpAlm )->( Used() )
+      ( dbfTmpAlm )->( dbCloseArea() )
+   end if
+
    if !Empty( dbfTmpVta ) .and. ( dbfTmpVta )->( Used() )
       ( dbfTmpVta )->( dbCloseArea() )
    end if
@@ -6029,8 +6062,10 @@ Static Function KillTrans( oBrwPrv, oBrwDiv, oBrwStk, oBrwCta, oBrwCom, oBrw2, o
    dbfTmpKit      := nil
    dbfTmpOfe      := nil
    dbfTmpImg      := nil
+   dbfTmpAlm      := nil 
 
    dbfErase( filTmpPrv     )
+   dbfErase( filTmpAlm     )
    dbfErase( filTmpVta     )
    dbfErase( filTmpKit     )
    dbfErase( filTmpOfe     )
@@ -15178,6 +15213,10 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
       dbCreate( cPath + "ArtImg.Dbf",     aSqlStruct( aItmImg() ),      cDriver() )
    end if
 
+   if !lExistTable( cPath + "ArtAlm.Dbf" )
+      dbCreate( cPath + "ArtAlm.Dbf",     aSqlStruct( aItmAlm() ),      cDriver() )
+   end if
+
    /*
    Regeneramos indices---------------------------------------------------------
    */
@@ -15191,6 +15230,7 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
       AppDbf( cPathOld, cPath, "ArtKit"      )
       AppDbf( cPathOld, cPath, "ArtLbl"      )
       AppDbf( cPathOld, cPath, "ArtImg"      )
+      AppDbf( cPathOld, cPath, "ArtAlm"      )
 
       if lMovAlm
          AppDbf( cPathOld, cPath, "MovAlm"   )
@@ -15218,7 +15258,8 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       !lExistTable( cPath + "ArtKit.Dbf"     ) .or. ;
       !lExistTable( cPath + "ArtCodebar.Dbf" ) .or. ;
       !lExistTable( cPath + "ArtLbl.Dbf"     ) .or. ;
-      !lExistTable( cPath + "ArtImg.Dbf"     )
+      !lExistTable( cPath + "ArtImg.Dbf"     ) .or. ;
+      !lExistTable( cPath + "ArtAlm.Dbf"     )
 
       mkArticulo( cPath )
 
@@ -15231,6 +15272,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    fErase( cPath + "ArtCodebar.Cdx" )
    fErase( cPath + "ArtLbl.Cdx"     )
    fErase( cPath + "ArtImg.Cdx"     )
+   fErase( cPath + "ArtAlm.Cdx"     )
 
    dbUseArea( .t., cDriver(), cPath + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
 
@@ -15460,6 +15502,22 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
       ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfArticulo )->( ordCreate( cPath + "ArtImg.Cdx", "cImgArt", "cImgArt", {|| Field->cImgArt } ) )
+
+      ( dbfArticulo )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
+   end if
+
+   /*
+   Articulos Kit______________________________________________________________________________________________
+   */
+
+   dbUseArea( .t., cDriver(), cPath + "ArtAlm.Dbf", cCheckArea( "ArtAlm", @dbfArticulo ), .f. )
+   if !( dbfArticulo )->( neterr() )
+      ( dbfArticulo )->( __dbPack() )
+
+      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ArtAlm.Cdx", "cCodArt + cCodAlm", "cCodArt + cCodAlm", {|| Field->cCodArt + Field->cCodAlm } ) )
 
       ( dbfArticulo )->( dbCloseArea() )
    else
@@ -15866,6 +15924,36 @@ Return ( aBase )
 
 //---------------------------------------------------------------------------//
 
+Static Function aItmCom()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código de artículo"            , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodDiv",   "C",  3, 0, "Código de divisa"              , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad"   , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad"   , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValPr1",   "C", 40, 0, "Valor de primera propiedad"    , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cValPr2",   "C", 40, 0, "Valor de segunda propiedad"    , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nPreCom",   "N", 16, 6, "Precio de compras"             , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nValPnt",   "N", 16, 6, "Valor del punto"               , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoPnt",   "N",  6, 2, "Descuento del punto"           , "",                  "", "( cDbfArt )", nil } )
+
+Return ( aBase )
+
+//---------------------------------------------------------------------------//
+
+Static Function aItmAlm()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código de artículo"            , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodAlm",   "C", 16, 0, "Código de almacen"             , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nStkMin",   "N", 16, 6, "Stock mínimo por almacen"      , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nStkMax",   "N", 16, 6, "Stock maximo por almacen"      , "",                  "", "( cDbfArt )", nil } )
+
+Return ( aBase )
+
+//---------------------------------------------------------------------------//
 //
 // Devuelve si se contempla stock en componentes
 //
@@ -19063,3 +19151,163 @@ Function lPrecioMinimo( cCodigoArticulo, nPrecioVenta, nMode, dbfArticulo )
 return .f.
 
 //---------------------------------------------------------------------------//
+
+Static Function StockAlmacenes( aTmp, aGet, nMode )
+
+   local oDlg
+   local oBrwAlm
+
+   DEFINE DIALOG oDlg RESOURCE "ART_ALMACEN"
+
+   oBrwAlm                 := IXBrowse():New( oDlg )
+
+   oBrwAlm:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   oBrwAlm:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   oBrwAlm:cAlias          := dbfTmpAlm
+
+   oBrwAlm:nMarqueeStyle   := 5
+   oBrwAlm:cName           := "Stock por almacenes"
+
+      with object ( oBrwAlm:AddCol() )
+         :cHeader          := "Código almacén"
+         :bEditValue       := {|| ( dbfTmpAlm )->cCodAlm }
+         :nWidth           := 60
+      end with
+
+      with object ( oBrwAlm:AddCol() )
+         :cHeader          := "Almacén"
+         :bEditValue       := {|| RetAlmacen( ( dbfTmpAlm )->cCodAlm, dbfAlmT ) }
+         :nWidth           := 200
+      end with
+
+      with object ( oBrwAlm:AddCol() )
+         :cHeader          := "Stock mínimo"
+         :bEditValue       := {|| ( dbfTmpAlm )->nStkMin }
+         :nWidth           := 80
+         :cEditPicture     := MasUnd()
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      with object ( oBrwAlm:AddCol() )
+         :cHeader          := "Stock máximo"
+         :bEditValue       := {|| ( dbfTmpAlm )->nStkMax }
+         :nWidth           := 80
+         :cEditPicture     := MasUnd()
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
+
+      if nMode != ZOOM_MODE
+         oBrwAlm:bLDblClick   := {|| nil }
+      end if
+
+      oBrwAlm:CreateFromResource( 100 )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( WinAppRec( oBrwAlm, bEdtAlm, dbfTmpAlm, aTmp ) )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( WinEdtRec( oBrwAlm, bEdtAlm, dbfTmpAlm, aTmp ) )
+
+      REDEFINE BUTTON ;
+         ID       502 ;
+         OF       oDlg;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( nil )
+
+      REDEFINE BUTTON ;
+         ID       550 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       560 ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+      if nMode != ZOOM_MODE
+         oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrwPrv, bEdtAlm, dbfTmpAlm, aTmp ) } )
+         oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPrv, bEdtAlm, dbfTmpAlm, aTmp ) } )
+         oDlg:AddFastKey( VK_F4, {|| nil } )
+
+         oDlg:AddFastKey(  VK_F5, {|| oDlg:end( IDOK ) } )
+      end if
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return nil    
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION EdtAlm( aTmp, aGet, dbfArtAlm, oBrw, bWhen, bValid, nMode )
+
+   local oDlg
+
+   DEFINE DIALOG oDlg RESOURCE "ART_ALMACEN_EDICION" TITLE LblTitle( nMode ) + "stock por almacenes"
+
+      REDEFINE GET   aGet[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ] ;
+         VAR         aTmp[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ] ;
+         ID          100 ;
+         IDTEXT      101 ;
+         WHEN        ( nMode == APPD_MODE ) ;
+         VALID       ( cAlmacen( aGet[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ], nil, aGet[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ]:oHelpText ) ) ;
+         BITMAP      "Lupa" ;
+         ON HELP     ( BrwAlmacen( aGet[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ], aGet[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ]:oHelpText ) ) ;
+         OF          oDlg
+
+      REDEFINE GET   aGet[ ( dbfTmpAlm )->( fieldPos( "nStkMin" ) ) ] ;
+         VAR         aTmp[ ( dbfTmpAlm )->( fieldPos( "nStkMin" ) ) ] ;
+         ID          110 ;
+         PICTURE     ( cPicUnd );
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
+
+      REDEFINE GET   aGet[ ( dbfTmpAlm )->( fieldPos( "nStkMax" ) ) ] ;
+         VAR         aTmp[ ( dbfTmpAlm )->( fieldPos( "nStkMax" ) ) ] ;
+         ID          120 ;
+         PICTURE     ( cPicUnd );
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         OF          oDlg
+
+      REDEFINE BUTTON ;
+         ID          IDOK ;
+         OF          oDlg ;
+         WHEN        ( nMode != ZOOM_MODE );
+         ACTION      ( EndEdtAlm() )
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
+         OF          oDlg ;
+         CANCEL ;
+         ACTION      ( oDlg:end() )
+
+      oDlg:AddFastKey( VK_F5, {|| EndEdtAlm( aTmp, aGet, oDlg ) } )
+
+      oDlg:bStart    := {|| StartEdtAlm() }
+
+   ACTIVATE DIALOG oDlg ON PAINT ( EvalGet( aGet ) ) CENTER
+
+RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static Function StartEdtAlm()
+
+Return nil
+
+//--------------------------------------------------------------------------//
+
+Static Function EndEdtAlm()
+
+Return nil
+

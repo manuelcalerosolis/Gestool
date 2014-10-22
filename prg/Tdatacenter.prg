@@ -2049,6 +2049,15 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "ArtAlm"
+   oDataTable:cName        := cPatEmp() + "ArtAlm"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtAlm.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtAlm.Cdx"
+   oDataTable:bSyncFile    := {|| SynArt( cPatEmp() ) }
+   oDataTable:cDescription := "Artículos stock almacenes"
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
    oDataTable:cArea        := "Familias"
    oDataTable:cName        := cPatEmp() + "Familias"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Familias.Dbf"
@@ -5113,6 +5122,8 @@ CLASS D
 
       METHOD ArticulosCodigosBarras( nView )                      INLINE ( ::Get( "ArtCodebar", nView ) )
       METHOD ArticuloPrecioPropiedades( nView )                   INLINE ( ::Get( "ArtDiv", nView ) )
+      METHOD ArticuloStockAlmacenes( nView )                      INLINE ( ::Get( "ArtAlm", nView ) )
+      METHOD ArticuloStockAlmacenesId( nView )                    INLINE ( ( ::Get( "ArtAlm", nView ) )->cCodArt ) 
 
    METHOD Familias( nView )                  INLINE ( ::Get( "Familias", nView ) )
 
@@ -5154,6 +5165,8 @@ CLASS D
    METHOD GetStatus( cDatabase, nView )      INLINE ( ::aStatus := aGetStatus( ::Get( cDatabase, nView ) ) )
    METHOD GetInitStatus( cDatabase, nView )  INLINE ( ::aStatus := aGetStatus( ::Get( cDatabase, nView ), .t. ) )
    METHOD SetStatus( cDatabase, nView )      INLINE ( SetStatus( ::Get( cDatabase, nView ), ::aStatus ) ) 
+
+   METHOD Seek( cDatabase, nView, uValue )   INLINE ( ( ::Get( cDatabase, nView ) )->( dbSeek( uValue ) ) ) 
 
    METHOD SeekInOrd( cDatabase, nView, uValue, cOrder ) ;
                                              INLINE ( dbSeekInOrd( uValue, cOrder, ::Get( cDatabase, nView ) ) )
