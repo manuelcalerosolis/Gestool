@@ -1363,6 +1363,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       196 ;
          OF       fldGeneral
 
+      REDEFINE CHECKBOX aGet[ _LSTKALM ] VAR aTmp[ _LSTKALM ] ;
+         ID       197 ;
+         OF       fldGeneral
+
       REDEFINE CHECKBOX aGet[ _LTIPMOV ] VAR aTmp[ _LTIPMOV ] ;
          ID       180 ;
          OF       fldGeneral
@@ -4460,6 +4464,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "ArtLbl",    "artículos relación de codigos de barras", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "ArtImg",    "artículos relación de imagenes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "ProvArt",   "artículos por proveedor", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "ArtAlm",    "stock por almacenes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "HisMov",    "historicos de movimientos", oMet, oMsg, aMsg )
 
@@ -6643,6 +6648,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cNbrBultos", "C",100, 0, "Descripción para bultos",                               "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodCliFrq", "C", 12, 0, "Código de cliente para franquicia",                     "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodPrvFrq", "C", 12, 0, "Código de proveedor para franquicia",                   "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lStkAlm",    "L",  1, 0, "Lógico de usar stock por almacenes",                    "", "", "aEmp()", nil } )
 
 Return ( aDbf )
 

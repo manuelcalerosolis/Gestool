@@ -186,7 +186,7 @@ static oTimerBrw
 static cOldCodeBar   := ""
 static aOldCodeBar   := {}
 
-
+static oBtnStockAlmacenes
 
 static oBtnAceptarActualizarWeb
 
@@ -1580,7 +1580,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oImpComanda2
    local cImpComanda1
    local cImpComanda2
-   local oBtnStockAlmacenes
 
    CursorWait()
 
@@ -3447,17 +3446,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldStocks
 
-   REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "NMINIMO" ) ) ] ;
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "NMINIMO" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "NMINIMO" ) ) ] ;
          ID       110 ;
+         IDSAY    111 ;
          SPINNER  MIN 0 ;
          WHEN     ( aTmp[( dbfArticulo )->( fieldpos( "NCTLSTOCK" ) ) ] <= 1 .AND. nMode != ZOOM_MODE ) ;
          VALID    aTmp[( dbfArticulo )->( fieldpos( "NMINIMO" ) ) ] >= 0 ;
          PICTURE  cPicUnd ;
-			COLOR 	CLR_GET ;
          OF       fldStocks
 
-   REDEFINE GET aTmp[( dbfArticulo )->( fieldpos( "nMaximo" ) ) ] ;
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nMaximo" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nMaximo" ) ) ] ;
          ID       115 ;
+         IDSAY    116 ;
          SPINNER  MIN 0 ;
          WHEN     ( aTmp[( dbfArticulo )->( fieldpos( "NCTLSTOCK" ) ) ] <= 1 .AND. nMode != ZOOM_MODE ) ;
          VALID    aTmp[( dbfArticulo )->( fieldpos( "nMaximo" ) ) ] >= 0 ;
@@ -4906,13 +4908,13 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       ON HELP  ( aGet[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]:cText( NextKey( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfArticulo ) ) );
       OF       oDlg
 
-   REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "Nombre" ) ) ] ;
-      VAR      aTmp[( dbfArticulo )->( fieldpos( "Nombre" ) ) ];
-      ID       110 ;
-      ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
-      OF       oDlg
+   REDEFINE GET   aGet[( dbfArticulo )->( fieldpos( "Nombre" ) ) ];
+      VAR         aTmp[( dbfArticulo )->( fieldpos( "Nombre" ) ) ];
+      ID          110 ;
+      ON CHANGE   ( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
+      OF          oDlg
 
-   //Definición de la familia del nuevo artículo
+   // Definición de la familia del nuevo artículo------------------------------
 
    REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "Familia" ) ) ] ;
       VAR      aTmp[( dbfArticulo )->( fieldpos( "Familia" ) ) ] ;
@@ -4927,7 +4929,7 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       ID       121 ;
       OF       oDlg
 
-   //Definición del catálogo del artículo
+   // Definición del catálogo del artículo-------------------------------------
 
    REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ] ;
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ] ;
@@ -5147,6 +5149,12 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
    end if
 
    aGet[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]:SetFocus()
+
+   if uFieldEmpresa( "lStkAlm" )
+      aGet[ ( dbfArticulo )->( fieldpos( "nMinimo" ) ) ]:Hide()
+      aGet[ ( dbfArticulo )->( fieldpos( "nMaximo" ) ) ]:Hide()
+      oBtnStockAlmacenes:Show()
+   end if
 
    oBtnMoneda:Show()
 
@@ -5493,6 +5501,9 @@ Static Function BeginTrans( aTmp, nMode )
       ( dbfTmpAlm )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
       ( dbfTmpAlm )->( OrdCreate( filTmpAlm, "cCodArt + cCodAlm", "cCodArt + cCodAlm", {|| Field->cCodArt + Field->cCodAlm } ) )
 
+      ( dbfTmpAlm )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpAlm )->( OrdCreate( filTmpAlm, "cCodAlm", "cCodAlm", {|| Field->cCodAlm } ) )
+
       if nMode != APPD_MODE .and. ( D():ArticuloStockAlmacenes( nView ) )->( dbSeek( cCodArt ) )
          while ( D():ArticuloStockAlmacenesId( nView ) ) == cCodArt .and. !( D():ArticuloStockAlmacenes( nView ) )->( eof() )
             dbPass( D():ArticuloStockAlmacenes( nView ), dbfTmpAlm, .t. )
@@ -5784,6 +5795,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
             end if
          end while
 
+         while ( D():ArticuloStockAlmacenes( nView ) )->( dbSeek( cCod ) ) .and. !( D():ArticuloStockAlmacenes( nView ) )->( eof() )
+            if dbLock( D():ArticuloStockAlmacenes( nView ) )
+               ( D():ArticuloStockAlmacenes( nView ) )->( dbDelete() )
+               ( D():ArticuloStockAlmacenes( nView ) )->( dbUnLock() )
+            end if
+         end while
+
          while ( dbfArtVta )->( dbSeek( cCod ) ) .and. !( dbfArtVta )->( eof() )
             if dbLock( dbfArtVta )
                ( dbfArtVta )->( dbDelete() )
@@ -5854,12 +5872,11 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          ( dbfTmpAlm )->( dbSkip() )
       end while
 
-
       ( dbfTmpVta )->( OrdSetFocus( 0 ) )
       ( dbfTmpVta )->( dbGoTop() )
       while !( dbfTmpVta )->( eof() )
          ( dbfTmpVta )->cCodArt  := cCod
-          dbPass( dbfTmpVta, dbfArtVta, .t. )
+         dbPass( dbfTmpVta, dbfArtVta, .t. )
          ( dbfTmpVta )->( dbSkip() )
       end while
 
@@ -5867,7 +5884,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       ( dbfTmpKit )->( dbGoTop() )
       while !( dbfTmpKit )->( eof() )
          ( dbfTmpKit )->cCodKit := cCod
-          dbPass( dbfTmpKit, dbfArtKit, .t. )
+         dbPass( dbfTmpKit, dbfArtKit, .t. )
          ( dbfTmpKit )->( dbSkip() )
       end while
 
@@ -5875,7 +5892,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       ( dbfTmpOfe )->( dbGoTop() )
       while !( dbfTmpOfe )->( eof() )
          ( dbfTmpOfe )->cArtOfe := cCod
-          dbPass( dbfTmpOfe, dbfOfe, .t. )
+         dbPass( dbfTmpOfe, dbfOfe, .t. )
          ( dbfTmpOfe )->( dbSkip() )
       end while
 
@@ -5883,7 +5900,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       ( dbfTmpImg )->( dbGoTop() )
       while !( dbfTmpImg )->( eof() )
          ( dbfTmpImg )->cCodArt := cCod
-          dbPass( dbfTmpImg, dbfImg, .t. )
+         dbPass( dbfTmpImg, dbfImg, .t. )
          ( dbfTmpImg )->( dbSkip() )
       end while
 
@@ -19166,19 +19183,19 @@ Static Function StockAlmacenes( aTmp, aGet, nMode )
 
    oBrwAlm:cAlias          := dbfTmpAlm
 
-   oBrwAlm:nMarqueeStyle   := 5
+   oBrwAlm:nMarqueeStyle   := 6
    oBrwAlm:cName           := "Stock por almacenes"
 
       with object ( oBrwAlm:AddCol() )
          :cHeader          := "Código almacén"
          :bEditValue       := {|| ( dbfTmpAlm )->cCodAlm }
-         :nWidth           := 60
+         :nWidth           := 100
       end with
 
       with object ( oBrwAlm:AddCol() )
          :cHeader          := "Almacén"
          :bEditValue       := {|| RetAlmacen( ( dbfTmpAlm )->cCodAlm, dbfAlmT ) }
-         :nWidth           := 200
+         :nWidth           := 260
       end with
 
       with object ( oBrwAlm:AddCol() )
@@ -19200,7 +19217,7 @@ Static Function StockAlmacenes( aTmp, aGet, nMode )
       end with
 
       if nMode != ZOOM_MODE
-         oBrwAlm:bLDblClick   := {|| nil }
+         oBrwAlm:bLDblClick:= {|| WinEdtRec( oBrwAlm, bEdtAlm, dbfTmpAlm, aTmp ) }
       end if
 
       oBrwAlm:CreateFromResource( 100 )
@@ -19221,7 +19238,7 @@ Static Function StockAlmacenes( aTmp, aGet, nMode )
          ID       502 ;
          OF       oDlg;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtAlm, dbfTmpAlm ) )
+         ACTION   ( WinDelRec( oBrwAlm, dbfTmpAlm ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -19238,8 +19255,7 @@ Static Function StockAlmacenes( aTmp, aGet, nMode )
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrwAlm, bEdtAlm, dbfTmpAlm, aTmp ) } )
          oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrwAlm, bEdtAlm, dbfTmpAlm, aTmp ) } )
-         oDlg:AddFastKey( VK_F4, {|| WinZooRec( oBrwAlm, bEdtAlm, dbfTmpAlm ) } )
-
+         oDlg:AddFastKey( VK_F4, {|| WinDelRec( oBrwAlm, dbfTmpAlm ) } )
          oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
       end if
 
@@ -19249,11 +19265,13 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtAlm( aTmp, aGet, dbfArtAlm, oBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtAlm( aTmp, aGet, dbfTmpAlm, oBrw, bWhen, bValid, nMode )
 
    local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "ART_ALMACEN_EDICION" TITLE LblTitle( nMode ) + "stock por almacenes"
+   DEFINE DIALOG     oDlg ;
+      RESOURCE       "ART_ALMACEN_EDICION" ;
+      TITLE          LblTitle( nMode ) + "stock por almacenes"
 
       REDEFINE GET   aGet[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ] ;
          VAR         aTmp[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ] ;
@@ -19269,6 +19287,7 @@ STATIC FUNCTION EdtAlm( aTmp, aGet, dbfArtAlm, oBrw, bWhen, bValid, nMode )
          VAR         aTmp[ ( dbfTmpAlm )->( fieldPos( "nStkMin" ) ) ] ;
          ID          110 ;
          PICTURE     ( cPicUnd );
+         SPINNER ;
          WHEN        ( nMode != ZOOM_MODE ) ;
          OF          oDlg
 
@@ -19276,6 +19295,7 @@ STATIC FUNCTION EdtAlm( aTmp, aGet, dbfArtAlm, oBrw, bWhen, bValid, nMode )
          VAR         aTmp[ ( dbfTmpAlm )->( fieldPos( "nStkMax" ) ) ] ;
          ID          120 ;
          PICTURE     ( cPicUnd );
+         SPINNER ;
          WHEN        ( nMode != ZOOM_MODE ) ;
          OF          oDlg
 
@@ -19291,17 +19311,19 @@ STATIC FUNCTION EdtAlm( aTmp, aGet, dbfArtAlm, oBrw, bWhen, bValid, nMode )
          CANCEL ;
          ACTION      ( oDlg:end() )
 
-      oDlg:AddFastKey( VK_F5, {|| EndEdtAlm( aTmp, aGet, oDlg ) } )
+      oDlg:AddFastKey( VK_F5, {|| EndEdtAlm( aTmp, aGet, oBrw, oDlg, nMode ) } )
 
-      oDlg:bStart    := {|| StartEdtAlm() }
+      oDlg:bStart    := {|| StartEdtAlm( aGet ) }
 
-   ACTIVATE DIALOG oDlg ON PAINT ( EvalGet( aGet ) ) CENTER
+   ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtAlm()
+Static Function StartEdtAlm( aGet )
+
+   EvalGet( aGet )
 
 Return nil
 
@@ -19312,14 +19334,48 @@ Static Function EndEdtAlm( aTmp, aGet, oBrw, oDlg, nMode )
    local lExiste  := .f.
 
    if nMode == APPD_MODE
-      msgAlert( ( dbfTmpAlm )->( Recno() ), "antes" )
-      ( dbfTmpAlm )->( dbeval( {|| lExiste := .t. }, {|| (dbfTmpAlm)->cCodAlm == aTmp[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ] } ) )
-      msgAlert( ( dbfTmpAlm )->( Recno() ), "despues" )
+
+      if dbSeekInOrd( aTmp[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ], "cCodAlm", dbfTmpAlm ) 
+         msgStop( "El código de almacén ya existe." )
+         return nil
+      end if
+
    end if 
+
+   if aTmp[ ( dbfTmpAlm )->( fieldPos( "nStkMax" ) ) ] != 0 .and. aTmp[ ( dbfTmpAlm )->( fieldPos( "nStkMax" ) ) ] < aTmp[ ( dbfTmpAlm )->( fieldPos( "nStkMin" ) ) ]
+      msgStop( "El stock máximo debe ser mayor q el stock mínimo." )
+      return nil
+   end if
 
    WinGather( aTmp, aGet, dbfTmpAlm, oBrw, nMode )
 
    oDlg:End( IDOK )
 
 Return nil
+
+//--------------------------------------------------------------------------//
+
+Function nStockMinimo( cCodigoArticulo, cCodigoAlmacen, nView )
+
+   local nStockMinimo   := 0   
+
+   if ( D():ArticuloStockAlmacenes() )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
+      nStockMinimo      := ( D():ArticuloStockAlmacenes() )->nStkMin
+   end if 
+
+Return nStockMinimo
+
+//--------------------------------------------------------------------------//
+
+Function nStockMaximo( cCodigoArticulo, cCodigoAlmacen, nView )
+
+   local nStockMaximo   := 0   
+
+   if ( D():ArticuloStockAlmacenes() )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
+      nStockMaximo      := ( D():ArticuloStockAlmacenes() )->nStkMax
+   end if 
+
+Return nStockMaximo
+
+//--------------------------------------------------------------------------//
 

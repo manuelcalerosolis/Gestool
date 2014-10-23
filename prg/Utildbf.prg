@@ -1853,9 +1853,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
       return ( .f. )
    end if
 
-   /*
-   Cuantos registros marcados tenemos
-   */
+   // Cuantos registros marcados tenemos---------------------------------------
 
    if !Empty( oBrw ) .and. ( "XBROWSE" $ oBrw:ClassName() )
 
@@ -1883,8 +1881,6 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
                if !Empty( bPostBlock )
                   CheckEval( bPostBlock )
                end if
-
-               // oBrw:Refresh()
 
             end if
 

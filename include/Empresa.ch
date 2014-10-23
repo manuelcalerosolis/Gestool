@@ -303,3 +303,4 @@
 #define _CNBRBULTOS				303
 #define _CCODCLIFRQ           304
 #define _CCODPRVFRQ           305
+#define _LSTKALM              306

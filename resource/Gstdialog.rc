@@ -1087,29 +1087,29 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "Controlar stocks", 101, "Button", BS_AUTORADIOBUTTON, 44, 35, 64, 10
-  CONTROL "", 110, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 108, 47, 60, 11
-  CONTROL "", 130, "TXBrowse", 0x00200000, 54, 60, 433, 99
-  CONTROL "Avisar en movimientos de almacén sin stock o bajo minimo", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 160, 197, 10
-  CONTROL "Avisar en venta sin stock o bajo minimo", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 172, 137, 10
-  CONTROL "Avisar en venta por número de serie sin stock", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 184, 159, 10
-  CONTROL "NO permitir venta sin stock", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 196, 100, 10
-  CONTROL "", 115, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 109, 208, 60, 11
-  CONTROL "Contadores", 102, "Button", BS_AUTORADIOBUTTON|WS_GROUP|WS_TABSTOP, 44, 225, 51, 10
-  CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 110, 236, 60, 11
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 204, 236, 40, 11
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 246, 236, 239, 11
-  CONTROL "Combustible", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 251, 60, 10
-  CONTROL "No controlar stock", 103, "Button", BS_AUTORADIOBUTTON|WS_GROUP|WS_TABSTOP, 44, 267, 72, 10
-  CONTROL "", -1, "Button", BS_GROUPBOX, 40, 29, 451, 252
-  CONTROL "Stock minimo", -1, "Static", WS_GROUP, 54, 50, 42, 8
-  CONTROL "Número actual", -1, "Static", WS_GROUP, 54, 239, 51, 8
-  CONTROL "Tanque", -1, "Static", WS_GROUP, 172, 239, 28, 8
-  CONTROL "Stock maximo", -1, "Static", WS_GROUP, 54, 211, 50, 8
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 43, 221, 446, 1
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 43, 263, 446, 1
+  CONTROL "", 110, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 108, 48, 60, 11
+  CONTROL "Stock por almacenes", 300, "Button", NOT WS_VISIBLE|WS_TABSTOP, 54, 47, 75, 14
+  CONTROL "", 130, "TXBrowse", 0x00200000, 54, 61, 433, 99
+  CONTROL "Avisar en movimientos de almacén sin stock o bajo minimo", 127, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 161, 197, 10
+  CONTROL "Avisar en venta sin stock o bajo minimo", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 173, 137, 10
+  CONTROL "Avisar en venta por número de serie sin stock", 128, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 185, 159, 10
+  CONTROL "NO permitir venta sin stock", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 197, 100, 10
+  CONTROL "", 115, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 109, 209, 60, 11
+  CONTROL "Contadores", 102, "Button", BS_AUTORADIOBUTTON|WS_GROUP|WS_TABSTOP, 44, 226, 51, 10
+  CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 110, 237, 60, 11
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 204, 237, 40, 11
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 246, 237, 239, 11
+  CONTROL "Combustible", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 252, 60, 10
+  CONTROL "No controlar stock", 103, "Button", BS_AUTORADIOBUTTON|WS_GROUP|WS_TABSTOP, 44, 268, 72, 10
+  CONTROL "", -1, "Button", BS_GROUPBOX, 40, 29, 451, 253
+  CONTROL "Stock minimo", 111, "Static", WS_GROUP, 54, 51, 42, 8
+  CONTROL "Número actual", -1, "Static", WS_GROUP, 54, 240, 51, 8
+  CONTROL "Tanque", -1, "Static", WS_GROUP, 172, 240, 28, 8
+  CONTROL "Stock maximo", 116, "Static", WS_GROUP, 54, 212, 50, 8
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 43, 222, 446, 1
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 43, 264, 446, 1
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones de stock del artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
-  CONTROL "Button", 300, "Button", WS_TABSTOP, 437, 45, 50, 14
 }
 
 ART_4 DIALOG DISCARDABLE 25, 9, 496, 286
@@ -5624,7 +5624,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Inicio", -1, "Static", WS_GROUP, 296, 203, 22, 8
   CONTROL "Fin", -1, "Static", WS_GROUP, 296, 215, 15, 8
   CONTROL "Código empresa", -1, "Static", WS_GROUP, 50, 242, 51, 8
-  CONTROL "Nº reg. mercantil", -1, "Static", WS_GROUP, 50, 75, 56, 8
+  CONTROL "Reg. mercantil", -1, "Static", WS_GROUP, 50, 75, 51, 8
   CONTROL "Divisas", -1, "Button", BS_GROUPBOX, 44, 190, 128, 37
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales de la empresa", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 347, 8
@@ -5736,6 +5736,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Costo actual en documentos", 761, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 168, 103, 10
   CONTROL "No mostrar precios de costo en ventas", 205, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 179, 135, 10
   CONTROL "Aplicar IVA a impuestos especiales", 153, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 190, 125, 10
+  CONTROL "Stocks mínimos y máximos por almacenes", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 202, 161, 10
   CONTROL "No usar movimientos para costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 230, 135, 10
   CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 230, 137, 10
   CONTROL "Mostrar almacén origen en compras", 306, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 241, 135, 10
