@@ -19869,7 +19869,6 @@ FONT 15, "Segoe UI Light"
   CONTROL "¿ Desea eliminar el registro en curso\?", 100, "Static", SS_CENTER|WS_GROUP, 2, 4, 200, 21
 }
 
-<<<<<<< HEAD
 FACTURALINEASCOMPLETASALBARANES DIALOG DISCARDABLE 79, -78, 672, 370
 STYLE WS_POPUP|DS_MODALFRAME|DS_CONTEXTHELP|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Albaranes de proveedor"
@@ -19901,7 +19900,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, 4, 667, 32
   CONTROL "Desde", -1, "Static", WS_GROUP, 474, 18, 22, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 562, 18, 21, 8
-=======
+}
+
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
 ART_ALMACEN DIALOG DISCARDABLE 32, 6, 431, 250
@@ -19931,6 +19931,5 @@ FONT 8, "MS Sans Serif"
   CONTROL "Almacen", -1, "Static", WS_GROUP, 4, 15, 33, 8
   CONTROL "Stock mínimo", -1, "Static", WS_GROUP, 4, 29, 49, 8
   CONTROL "Stock maximo", -1, "Static", WS_GROUP, 4, 43, 49, 8
->>>>>>> origin/master
 }
 
