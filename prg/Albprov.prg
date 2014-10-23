@@ -76,6 +76,7 @@ Definici¢n de la base de datos de albaranes a proveedores
 #define _NTOTREQ                  59
 #define _NTOTALB                  60
 #define _CALMORIGEN               61  
+#define _NFACTURADO               62
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -409,13 +410,25 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :AddResource( "Lbl16" )
       end with
 
-      with object ( oWndBrw:AddXCol() )
+      /*with object ( oWndBrw:AddXCol() )
          :cHeader          := "Facturado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->lFacturado }
          :nWidth           := 20
          :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
+         :AddResource( "Trafficlight_on_16" )
+      end with*/
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Facturado"
+         :nHeadBmpNo       := 4
+         :bStrData         := {|| "" }
+         :bBmpData         := {|| ( D():AlbaranesProveedores( nView ) )->nFacturado }
+         :nWidth           := 20
+         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "Bullet_Square_Yellow_16" )
+         :AddResource( "Bullet_Square_Green_16" )
          :AddResource( "Trafficlight_on_16" )
       end with
 
@@ -691,7 +704,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       DEFINE BTNSHELL RESOURCE "ChgState" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( SetFacturadoAlbaranProveedor( !( D():AlbaranesProveedores( nView ) )->lFacturado, oStock, oWndBrw:oBrw ) );
+         ACTION   ( SetFacturadoAlbaranProveedor( !lFacturado( D():AlbaranesProveedores( nView ) ), oStock, oWndBrw:oBrw ) );
          TOOLTIP  "Cambiar es(t)ado" ;
          HOTKEY   "T";
          LEVEL    ACC_EDIT
@@ -770,7 +783,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_BUSINESSMAN_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( if( ( D():AlbaranesProveedores( nView ) )->lFacturado, MsgStop( "Albarán facturado" ), FacPrv( nil, oWnd, nil, nil, ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) ) );
+         ACTION   ( if( lFacturado( D():AlbaranesProveedores( nView ) ), MsgStop( "Albarán facturado" ), FacPrv( nil, oWnd, nil, nil, ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
@@ -780,6 +793,12 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          TOOLTIP  "Modificar factura" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( TFacturarLineasAlbaranesProveedor():FacturarLineasCompletas( nView ) );
+         TOOLTIP  "Facturas parciales" ;
+         FROM     oRotor
 
    if ( "ICG" $ cParamsMain() )
 
@@ -1034,7 +1053,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    local oGetMasDiv
    local cGetMasDiv     := ""
    local oBmpEmp
-   local cEstado        := if( aTmp[ _LFACTURADO ], "Facturado", "No facturado" )
+   local cEstado        := if( aTmp[ _LFACTURADO ] == 3, "Facturado", "No facturado" )
    local cTlfPrv
    local oTlfPrv
    local oBmpGeneral
@@ -1061,6 +1080,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       aTmp[ _CCODDLG ]     := oUser():cDelegacion()
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _DSUALB  ]     := Ctod( "" )
+      aTmp[ _NFACTURADO ]  := 1
 
       if !Empty( cCodPrv )
          aTmp[ _CCODPRV ]  := cCodPrv
@@ -1082,10 +1102,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       aTmp[ _LSNDDOC ]     := .t.
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _LCLOALB ]     := .f.
+      aTmp[ _NFACTURADO ]  := 1
 
    CASE nMode == EDIT_MODE
 
-      if aTmp[ _LFACTURADO ]
+      if aTmp[ _LFACTURADO ] == 3
          msgStop( "Albarán ya fue facturado." )
          Return .t.
       end if
@@ -7912,7 +7933,7 @@ FUNCTION BrwAlbPrv( oGetNum, cAlbPrvT, cAlbPrvL, cIva, cDiv )
    cCbxOrd        := aCbxOrd[ nOrd ]
    nOrd           := ( cAlbPrvT )->( OrdSetFocus( nOrd ) )
 
-   ( cAlbPrvT )->( dbSetFilter( {|| !Field->lFacturado }, "!lFacturado" ) )
+   ( cAlbPrvT )->( dbSetFilter( {|| Field->nFacturado < 3 }, "nFacturado < 3" ) )
    ( cAlbPrvT )->( dbGoTop() )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Albaranes de proveedores"
@@ -7947,9 +7968,11 @@ FUNCTION BrwAlbPrv( oGetNum, cAlbPrvT, cAlbPrvL, cIva, cDiv )
       with object ( oBrw:AddCol() )
          :cHeader          := "Es. Estado"
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( cAlbPrvT )->lFacturado }
+         :bBmpData         := {|| ( cAlbPrvT )->nFacturado }
          :nWidth           := 20
-         :SetCheck( { "Sel16", "Cnt16" } )
+         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "Bullet_Square_Yellow_16" )
+         :AddResource( "Bullet_Square_Green_16" )
       end with
 
       with object ( oBrw:AddCol() )
@@ -8371,7 +8394,7 @@ FUNCTION lFacAlbPrv( cAlbPrv, cAlbPrvT )
    local lFacAlb  := .f.
 
    if ( cAlbPrvT )->( dbSeek( cAlbPrv ) )
-      lFacAlb     := ( cAlbPrvT )->lFacturado
+      lFacAlb     := ( ( cAlbPrvT )->lFacturado == 3 )
    end if
 
 RETURN ( lFacAlb )
@@ -8805,12 +8828,13 @@ function aItmAlbPrv()
    aAdd( aItmAlbPrv, { "DFECCHG",      "D",  8,  0, "Fecha de modificación del documento", "",           "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "CTIMCHG",      "C",  5,  0, "Hora de modificación del documento", "",            "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "CCODDLG",      "C",  2,  0, "Código delegación",           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbPrv, { "nRegIva",      "N",  1,  0, "Regimen de " + cImp(),           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "nRegIva",      "N",  1,  0, "Regimen de " + cImp(),        "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nTotNet",      "N", 16,  6, "Total neto",                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbPrv, { "nTotIva",      "N", 16,  6, "Total " + cImp(),                "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "nTotIva",      "N", 16,  6, "Total " + cImp(),             "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nTotReq",      "N", 16,  6, "Total R.E.",                  "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nTotAlb",      "N", 16,  6, "Total albarán",               "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía","",              "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "nFacturado",   "N",  1,  0, "Estado del albarán",          "",                   "", "( cDbf )"} )
 
 Return ( aItmAlbPrv )
 
@@ -9100,6 +9124,12 @@ Function SynAlbPrv( cPath )
 
       if !Empty( ( cAlbPrvT )->cNumFac ) .and. Len( AllTrim( ( cAlbPrvT )->cNumFac ) ) != 12
          ( cAlbPrvT )->cNumFac := AllTrim( ( cAlbPrvT )->cNumFac ) + "00"
+      end if
+
+      if ( cAlbPrvT )->lFacturado
+         ( cAlbPrvT )->nFacturado   := 3
+      else
+         ( cAlbPrvT )->nFacturado   := 1
       end if
 
       /*
@@ -9645,6 +9675,22 @@ FUNCTION SetFacturadoAlbaranProveedor( lFacturado, oStock, oBrw, cAlbPrvT, cAlbP
       ( cAlbPrvT )->lFacturado := lFacturado
       ( cAlbPrvT )->cNumFac    := cNumFac
       ( cAlbPrvT )->( dbUnlock() )
+
+   end if
+
+   if lFacturado
+
+      if dbDialogLock( cAlbPrvT )
+         ( cAlbPrvT )->nFacturado := 3
+         ( cAlbPrvT )->( dbUnlock() )
+      end if
+
+   else
+
+      if dbDialogLock( cAlbPrvT )
+         ( cAlbPrvT )->nFacturado := 1
+         ( cAlbPrvT )->( dbUnlock() )
+      end if
 
    end if
 

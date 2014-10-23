@@ -19869,3 +19869,36 @@ FONT 15, "Segoe UI Light"
   CONTROL "¿ Desea eliminar el registro en curso\?", 100, "Static", SS_CENTER|WS_GROUP, 2, 4, 200, 21
 }
 
+FACTURALINEASCOMPLETASALBARANES DIALOG DISCARDABLE 79, -78, 672, 370
+STYLE WS_POPUP|DS_MODALFRAME|DS_CONTEXTHELP|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
+CAPTION "Albaranes de proveedor"
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 44, 15, 70, 11
+  CONTROL "", 140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 115, 15, 215, 11
+  CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 340, 14, 125, 134
+  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 499, 14, 55, 12
+  CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 589, 14, 55, 12
+  CONTROL "", 150, "TBtnBmp", 0x00000000, 654, 15, 12, 11
+  CONTROL "", 200, "TXBrowse", WS_TABSTOP|0x00300000, 5, 50, 326, 236
+  CONTROL "Pasar todo >>", 210, "Button", WS_TABSTOP, 5, 289, 54, 14
+  CONTROL "Pasar linea >", 220, "Button", WS_TABSTOP, 277, 289, 54, 14
+  CONTROL "", 300, "TXBrowse", WS_TABSTOP|0x00300000, 340, 50, 326, 236
+  CONTROL "< Pasar linea", 310, "Button", WS_TABSTOP, 340, 289, 54, 14
+  CONTROL "<< Pasar todo", 320, "Button", WS_TABSTOP, 612, 289, 54, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 565, 353, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 620, 353, 50, 14
+  CONTROL "Factura de proveedor", -1, "Button", BS_GROUPBOX, 336, 40, 334, 268
+  CONTROL "Albaranes de proveedor", -1, "Button", BS_GROUPBOX, 2, 40, 332, 267
+  CONTROL "0", 400, "Static", SS_RIGHT|WS_GROUP, 585, 310, 80, 8
+  CONTROL "Neto", -1, "Static", WS_GROUP, 488, 310, 53, 8
+  CONTROL "0", 410, "Static", SS_RIGHT|WS_GROUP, 585, 322, 80, 8
+  CONTROL "Impuestos", -1, "Static", WS_GROUP, 488, 322, 53, 8
+  CONTROL "Total", 291, "Static", WS_GROUP, 488, 335, 87, 16
+  CONTROL "0", 420, "Static", SS_RIGHT|WS_GROUP, 579, 335, 86, 16
+  CONTROL "Proveedor", -1, "Static", WS_GROUP, 5, 18, 34, 8
+  CONTROL "Rango", -1, "Button", BS_GROUPBOX, 2, 4, 667, 32
+  CONTROL "Desde", -1, "Static", WS_GROUP, 474, 18, 22, 8
+  CONTROL "Hasta", -1, "Static", WS_GROUP, 562, 18, 21, 8
+}
+

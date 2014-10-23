@@ -833,6 +833,8 @@ METHOD SetText( cText, nLevel ) CLASS TComercio
 
    DEFAULT nLevel    := 2
 
+   ::cTextoWait( cText )
+
    if Empty( ::cFilTxt )
       ::cFilTxt      := cGetNewFileName( cPatLog() + "Com" + Dtos( Date() ) + StrTran( Time(), ":", "" ) ) + ".Txt"
       ::hFilTxt      := fCreate( ::cFilTxt )
@@ -3885,6 +3887,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    */
 
    if lExt
+      ::cTextoWait( "Añadiendo imágenes del artículo: " + AllTrim( ::oArt:Nombre ) )
       ::AppendImagesPrestashop()
    end if   
 
@@ -3899,13 +3902,17 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    local nParent     := ::GetParentCategories()
    local nTotStock   := 0
 
+   ::DeleteProductsPrestashop()
+
+   ::InsertProductsPrestashop( .t. )
+
    /*
    ----------------------------------------------------------------------------
    ACTUALIZAMOS LAS TABLAS DE ARTÍCULO-----------------------------------------
    ----------------------------------------------------------------------------
    */
 
-   ::cTextoWait( "Modificando artículo: " + AllTrim( ::oArt:Nombre ) )
+   /*::cTextoWait( "Modificando artículo: " + AllTrim( ::oArt:Nombre ) )
 
    cCommand          := "UPDATE " + ::cPrefixTable( "product" ) + " SET " + ;
                            "id_manufacturer='" + AllTrim( Str( oRetFld( ::oArt:cCodFab, ::oFab, "CCODWEB", "CCODFAB" ) ) ) + "', " + ;
@@ -3942,7 +3949,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
                            "id_category='" + AllTrim( Str( nParent ) ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
 
-   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )*/
 
    /*
    ----------------------------------------------------------------------------
@@ -3950,13 +3957,13 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    ----------------------------------------------------------------------------
    */
 
-   nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+   /*nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
 
    cCommand          := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
                            "quantity='" + AllTrim( Str( nTotStock ) ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
 
-   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )*/
 
    /*
    ----------------------------------------------------------------------------
@@ -3964,7 +3971,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    ----------------------------------------------------------------------------
    */
 
-   ::ActualizaPropiedadesProducts( ::oArt:cCodWeb )
+   //::ActualizaPropiedadesProducts( ::oArt:cCodWeb )
 
    /*
    ----------------------------------------------------------------------------
@@ -3972,7 +3979,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    ----------------------------------------------------------------------------
    */
 
-   ::UpdateOfertasPrestashop()
+   //::UpdateOfertasPrestashop()
 
    /*
    ----------------------------------------------------------------------------
@@ -3980,7 +3987,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    ----------------------------------------------------------------------------
    */ 
 
-   SysRefresh()
+   /*SysRefresh()
 
    if lChangeImage
 
@@ -3994,7 +4001,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
       ::AppendImagesPrestashop()
 
-   end if
+   end if*/
 
 Return ( self )
 
@@ -4008,111 +4015,185 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
    local oQuery
    local oQuery2
 
-   ::cTextoWait( "Eliminando artículo de prestashop"  )
+   ::cTextoWait( "Eliminando artículo de Prestashop" )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+   ::cTextoWait( "Eliminando adjuntos de Prestashop"  )
+
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attachment" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   ::cTextoWait( "Eliminando impuestos de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_country_tax" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+   ::cTextoWait( "Eliminando archivos de Prestashop"  )
+
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_download" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   ::cTextoWait( "Eliminando cache de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_group_reduction_cache" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+   ::cTextoWait( "Eliminando multitienda de Prestashop"  )
+
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_shop" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   ::cTextoWait( "Eliminando descripciones de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_lang" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+   ::cTextoWait( "Eliminando ofertas de Prestashop"  )
+
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_sale" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   ::cTextoWait( "Eliminando etiquetas de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_tag" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+   ::cTextoWait( "Eliminando complementos de Prestashop"  )
+
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_supplier" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   ::cTextoWait( "Eliminando transporte de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_carrier" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+   ::cTextoWait( "Eliminando atributos de Prestashop"  )
+
    cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "product_attribute" ) +  ' WHERE id_product=' + AllTrim( Str( ::oArt:cCodWeb ) )
    oQuery            := TMSQuery():New( ::oCon, cCommand )
    
+   ::cTextoWait( "Eliminando lineas atributos de Prestashop"  )
+
    if oQuery:Open()
    
       if oQuery:RecCount() > 0
 
-         idDelete    := oQuery:FieldGetByName( "id_product_attribute" )
+         oQuery:GoTop()
 
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         while !oQuery:Eof()
 
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            idDelete    := oQuery:FieldGet( 1 )
 
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            if !Empty( idDelete )
 
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            end if
+
+            oQuery:Skip()
+
+            SysRefresh()
+
+         end while
    
       end if
 
    end if
 
+   ::cTextoWait( "Eliminando precios especificos de Prestashop"  )
+
    cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   ::cTextoWait( "Eliminando prioridad de precio de Prestashop"  )
 
    cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price_priority" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+   ::cTextoWait( "Eliminando funciones de Prestashop"  )
+
    cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_product" ) +  ' WHERE id_product=' + AllTrim( Str( ::oArt:cCodWeb ) )
    oQuery            := TMSQuery():New( ::oCon, cCommand )
    
+   ::cTextoWait( "Eliminando lineas funciones de Prestashop"  )
+
    if oQuery:Open()
    
       if oQuery:RecCount() > 0
 
-         idDelete    := oQuery:FieldGetByName( "id_feature" )
+         oQuery:GoTop()
 
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_product" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         while !oQuery:Eof()
 
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "feature" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            idDelete    := oQuery:FieldGet( 1 )
 
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_lang" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            if !Empty( idDelete )
 
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_shop" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-         cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_value" ) +  ' WHERE id_feature=' + AllTrim( Str( idDelete ) )
-         oQuery2           := TMSQuery():New( ::oCon, cCommand )
-
-         if oQuery2:Open()
-   
-            if oQuery2:RecCount() > 0
-
-               idDelete2    := oQuery:FieldGetByName( "id_feature_value" )
-
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value" ) + " WHERE id_feature_value=" + AllTrim( Str( idDelete2 ) )
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_product" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
                TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value_lang" ) + " WHERE id_feature_value=" + AllTrim( Str( idDelete2 ) )
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
                TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_lang" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+               cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_shop" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+               cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_value" ) +  ' WHERE id_feature=' + AllTrim( Str( idDelete ) )
+               oQuery2           := TMSQuery():New( ::oCon, cCommand )
+
+               if oQuery2:Open()
+         
+                  if oQuery2:RecCount() > 0
+
+                     oQuery2:GoTop()
+
+                     while !oQuery2:Eof()
+
+                     idDelete2    := oQuery:FieldGet( 1 )
+
+                        if !Empty( idDelete2 )
+
+                           cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value" ) + " WHERE id_feature_value=" + AllTrim( Str( idDelete2 ) )
+                           TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                           cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value_lang" ) + " WHERE id_feature_value=" + AllTrim( Str( idDelete2 ) )
+                           TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                        end if
+
+                        oQuery2:Skip()
+
+                        SysRefresh()
+
+                     end while      
+
+                  end if
+
+               end if
 
             end if
 
-         end if   
+            oQuery:Skip()
+
+            SysRefresh()
+
+         end while      
    
       end if
 
@@ -4256,9 +4337,9 @@ Return nil
 Method InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
 
    local cCommand          := ""
-   
+
    if ::oArt:lSbrInt .and. ::oArt:nDtoInt1 != 0
-            
+
       cCommand          := "INSERT INTO " + ::cPrefixTable( "specific_price" ) + ; 
                            " ( id_specific_price_rule, " + ;
                               "id_cart, " + ;
@@ -4298,7 +4379,7 @@ Method InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
 
          ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
 
-      end if   
+      end if
 
    end if
 

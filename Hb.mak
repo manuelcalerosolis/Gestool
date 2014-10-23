@@ -374,6 +374,7 @@ TLabelGenerator.prg 			\
 TTreevie.prg            	\
 ApoloMeter.prg 				\
 TGridSay.prg 					\
+FacturarLineasAlbaranesProveedor.prg\
 
 C               =       	\
 Img2pdf.c               	\
@@ -741,6 +742,7 @@ TLabelGenerator.obj 		\
 TTreevie.obj 				\
 ApoloMeter.obj 			\
 TGridSay.obj				\
+FacturarLineasAlbaranesProveedor.obj\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1091,6 +1093,7 @@ $(OBJ)\TLabelGenerator.obj 			+
 $(OBJ)\TTreevie.obj 						+
 $(OBJ)\ApoloMeter.obj 					+
 $(OBJ)\Xbrowse1406.Obj            	+
+$(OBJ)\FacturarLineasAlbaranesProveedor.obj+
 $(OBJ)\TGridSay.obj 						
 $<,$*
 $(FWLIB)\FiveH.lib              	+
