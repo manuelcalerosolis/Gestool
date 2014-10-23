@@ -19221,26 +19221,26 @@ Static Function StockAlmacenes( aTmp, aGet, nMode )
          ID       502 ;
          OF       oDlg;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( nil )
+         ACTION   ( WinZooRec( oWndBrw:oBrw, bEdtAlm, dbfTmpAlm ) )
 
       REDEFINE BUTTON ;
-         ID       550 ;
+         ID       IDOK ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( oDlg:end( IDOK ) )
 
       REDEFINE BUTTON ;
-         ID       560 ;
+         ID       IDCANCEL ;
          OF       oDlg ;
          CANCEL ;
          ACTION   ( oDlg:end() )
 
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrwPrv, bEdtAlm, dbfTmpAlm, aTmp ) } )
-         oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPrv, bEdtAlm, dbfTmpAlm, aTmp ) } )
-         oDlg:AddFastKey( VK_F4, {|| nil } )
+         oDlg:AddFastKey( VK_F2, {|| WinAppRec( oBrwAlm, bEdtAlm, dbfTmpAlm, aTmp ) } )
+         oDlg:AddFastKey( VK_F3, {|| WinEdtRec( oBrwAlm, bEdtAlm, dbfTmpAlm, aTmp ) } )
+         oDlg:AddFastKey( VK_F4, {|| WinZooRec( oBrwAlm, bEdtAlm, dbfTmpAlm ) } )
 
-         oDlg:AddFastKey(  VK_F5, {|| oDlg:end( IDOK ) } )
+         oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
       end if
 
    ACTIVATE DIALOG oDlg CENTER
@@ -19283,7 +19283,7 @@ STATIC FUNCTION EdtAlm( aTmp, aGet, dbfArtAlm, oBrw, bWhen, bValid, nMode )
          ID          IDOK ;
          OF          oDlg ;
          WHEN        ( nMode != ZOOM_MODE );
-         ACTION      ( EndEdtAlm() )
+         ACTION      ( EndEdtAlm( aTmp, aGet, oBrw, oDlg, nMode ) )
 
       REDEFINE BUTTON ;
          ID          IDCANCEL ;
@@ -19307,7 +19307,19 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-Static Function EndEdtAlm()
+Static Function EndEdtAlm( aTmp, aGet, oBrw, oDlg, nMode )
+
+   local lExiste  := .f.
+
+   if nMode == APPD_MODE
+      msgAlert( ( dbfTmpAlm )->( Recno() ), "antes" )
+      ( dbfTmpAlm )->( dbeval( {|| lExiste := .t. }, {|| (dbfTmpAlm)->cCodAlm == aTmp[ ( dbfTmpAlm )->( fieldPos( "cCodAlm" ) ) ] } ) )
+      msgAlert( ( dbfTmpAlm )->( Recno() ), "despues" )
+   end if 
+
+   WinGather( aTmp, aGet, dbfTmpAlm, oBrw, nMode )
+
+   oDlg:End( IDOK )
 
 Return nil
 
