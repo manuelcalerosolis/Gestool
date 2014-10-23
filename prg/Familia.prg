@@ -1071,11 +1071,12 @@ static function LoadTree( oTree, cCodFam )
    local nOrd
    local oNode
 
-   DEFAULT oTree     := oTreePadre
-
    if Empty( cCodFam )
-      cCodFam      := Space( 16 )
+      // return .t.
+      cCodFam        := Space( 16 )
    end if
+
+   DEFAULT oTree     := oTreePadre
 
    CursorWait()
 
@@ -1084,7 +1085,7 @@ static function LoadTree( oTree, cCodFam )
 
    if ( dbfFamilia )->( dbSeek( cCodFam ) )
 
-      while ( ( dbfFamilia )->cFamCmb == cCodFam .and. !( dbfFamilia )->( Eof() ) )
+      while ( ( dbfFamilia )->cFamCmb == cCodFam .and. !( dbfFamilia )->( eof() ) )
 
          oNode       := oTree:Add( Alltrim( ( dbfFamilia )->cNomFam ) )
          oNode:Cargo := ( dbfFamilia )->cCodFam
@@ -1092,6 +1093,8 @@ static function LoadTree( oTree, cCodFam )
          LoadTree( oNode, ( dbfFamilia )->cCodFam )
 
          ( dbfFamilia )->( dbSkip() )
+
+         SysRefresh()
 
       end while
 
