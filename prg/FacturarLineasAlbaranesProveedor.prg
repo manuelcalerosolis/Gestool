@@ -15,14 +15,14 @@ CLASS TFacturarLineasAlbaranesProveedor
 
    DATA lPrint
 
-   DATA oFecIniCli
-   DATA oFecFinCli
-   DATA dFecIniCli
-   DATA dFecFinCli
+   DATA oFecIniPrv
+   DATA oFecFinPrv
+   DATA dFecIniPrv
+   DATA dFecFinPrv
 
-   DATA oPeriodoCli
-   DATA aPeriodoCli            AS ARRAY INIT {}
-   DATA cPeriodoCli
+   DATA oPeriodoPrv
+   DATA aPeriodoPrv            AS ARRAY INIT {}
+   DATA cPeriodoPrv
 
    DATA cNumFac
 
@@ -87,28 +87,24 @@ METHOD ResourceLineasCompleta() CLASS TFacturarLineasAlbaranesProveedor
 
    DEFINE DIALOG ::oDlg RESOURCE "FacturaLineasCompletasAlbaranes"
 
-      REDEFINE COMBOBOX ::oPeriodoCli ;
-         VAR         ::cPeriodoCli ;
+      REDEFINE COMBOBOX ::oPeriodoPrv ;
+         VAR         ::cPeriodoPrv ;
          ID          100 ;
-         ITEMS       ::aPeriodoCli ;
+         ITEMS       ::aPeriodoPrv ;
          ON CHANGE   ( Msginfo( "cambio" ) ); //lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ), LoadPageClient( aTmp[ _COD ] ) ) ;
          OF          ::oDlg
 
-      REDEFINE GET ::oFecIniCli VAR ::dFecIniCli;
+      REDEFINE GET ::oFecIniPrv VAR ::dFecIniPrv;
          ID          110 ;
          SPINNER ;
          VALID       ( .t. ); //LoadPageClient( aTmp[ _COD ] ) );
          OF          ::oDlg
 
-      REDEFINE GET ::oFecFinCli VAR ::dFecFinCli;
+      REDEFINE GET ::oFecFinPrv VAR ::dFecFinPrv;
          ID          120 ;
          SPINNER ;
          VALID       ( .t. ); //LoadPageClient( aTmp[ _COD ] ) );
          OF          ::oDlg
-
-
-
-
 
       /*
       Botones------------------------------------------------------------------

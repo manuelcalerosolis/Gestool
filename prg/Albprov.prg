@@ -1053,7 +1053,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    local oGetMasDiv
    local cGetMasDiv     := ""
    local oBmpEmp
-   local cEstado        := if( aTmp[ _LFACTURADO ] == 3, "Facturado", "No facturado" )
+   local cEstado        := if( aTmp[ _NFACTURADO ] == 3, "Facturado", "No facturado" )
    local cTlfPrv
    local oTlfPrv
    local oBmpGeneral
@@ -1106,7 +1106,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 
    CASE nMode == EDIT_MODE
 
-      if aTmp[ _LFACTURADO ] == 3
+      if aTmp[ _NFACTURADO ] == 3
          msgStop( "Albarán ya fue facturado." )
          Return .t.
       end if
