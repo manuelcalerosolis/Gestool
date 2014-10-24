@@ -10928,6 +10928,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
    local nRecLin                       := ( dbfTmpLin )->( RecNo() )
    local nUnidades                     := 0
    local nStkActual                    := 0
+   local nStockMinimo                  := 0
 
    if ValType( uTmpLin ) == "A"
       cCodArt                          := uTmpLin[ _CREF    ]
@@ -10970,7 +10971,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
    end if
 
    /*
-   Guardamos los productos kits
+   Guardamos los productos kits------------------------------------------------
    */
 
    if ( dbfKit )->( dbSeek( cCodArt ) )
@@ -11089,7 +11090,9 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             Avisaremos del stock bajo minimo--------------------------------------
             */
 
-            if ( D():Articulos( nView ) )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. ( D():Articulos( nView ) )->nMinimo > 0
+            nStockMinimo      := nStockMinimo( cCodArt, cCodAlm, nView )
+
+            if ( D():Articulos( nView ) )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo != 0
 
                nStkActual     := oStock:nStockAlmacen( ( dbfKit )->cRefKit, cAlmLin )
                nUnidades      := nUniCaj * ( dbfKit )->nUndKit
@@ -11097,18 +11100,19 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
                do case
                   case nStkActual - nUnidades < 0
 
-                        MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
-                                 "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ),;
-                                 "¡Atención!" )
+                     MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
+                              "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ),;
+                              "¡Atención!" )
 
-                  case nStkActual - nUnidades < ( D():Articulos( nView ) )->nMinimo
+                  case nStkActual - nUnidades < nStockMinimo
 
-                        MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + CRLF + ;
-                                 "está bajo minimo."                                                                                      + CRLF + ;
-                                 "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) )                                         + CRLF + ;
-                                 "Stock minimo : " + AllTrim( Trans( ( D():Articulos( nView ))->nMinimo, MasUnd() ) )                                + CRLF + ;
-                                 "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
-                                 "¡Atención!" )
+                     MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre )  + CRLF + ;
+                              "está bajo minimo."                                                                                                  + CRLF + ;
+                              "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) )                                                     + CRLF + ;
+                              "Stock minimo : " + AllTrim( Trans( nStockMinimo, MasUnd() ) )                                                       + CRLF + ;
+                              "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
+                              "¡Atención!" )
+
                end case
 
             end if
