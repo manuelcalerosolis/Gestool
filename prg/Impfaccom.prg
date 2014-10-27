@@ -82,7 +82,7 @@ METHOD OpenFiles()
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    if Empty( ::cPathFac )
-      MsgStop( "Ruta de factucont Â® estÃ¡ vacÃ­a" )
+      MsgStop( "Ruta de factucont  esta vacía" )
       return .f.
    end if
 
@@ -1534,19 +1534,21 @@ METHOD ImportaAlbaranesClientes()
    ::oDbfAlbTFac:GoTop()
    while !( ::oDbfAlbTFac:eof() )
 
-      cSerie                        := Left( ::oDbfAlbLFac:RfaLin, 1 ) 
+      //comprobamos si estan utilizando series de albaranes
+
+      cSerie                        := Left( ::oDbfAlbTFac:Numero, 1 ) 
 
       if Empty( cSerie )
          cSerie                     := "A"
       end if
 
-      nNumero                       := Val( SubStr( Alltrim( ::oDbfAlbTFac:Numero), 2 ) )
+      nNumero                       := Val( Alltrim( SubStr( ::oDbfAlbTFac:Numero, 2 ) ))
 
-      while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + "0" )
+      while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + "00" )
          ::oDbfAlbTGst:Delete( .f. )
       end while
 
-      while ::oDbfAlbLGst:Seek( cSerie + str( nNumero, 9 ) + "0" )
+      while ::oDbfAlbLGst:Seek( cSerie + str( nNumero, 9 ) + "00" )
 
          ::oDbfAlbLGst:Delete( .f. )
       end while
@@ -1630,6 +1632,8 @@ METHOD ImportaAlbaranesClientes()
 
    end while
 
+   //traspaso de las líneas
+
    ::aMtrIndices[ 4 ]:SetTotal( ::oDbfAlbLFac:LastRec() )
 
    ::oDbfAlbLFac:GoTop()
@@ -1644,7 +1648,7 @@ METHOD ImportaAlbaranesClientes()
          cSerie                        := "A"
       end if
 
-      nNumero                          := Val( SubStr( Alltrim( ::oDbfAlbTFac:Numero ), 3, 9 ) )
+      nNumero                          := Val( SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 3, 9 ) )
 
          //cSerie                        := SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 1 )
          //nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 6, 6 ) )
@@ -1662,7 +1666,6 @@ METHOD ImportaAlbaranesClientes()
             ::oDbfAlbLGst:cDetalle     := ::oDbfAlbLFac:Concepto
          end if 
          
-         ::oDbfAlbLGst:cSufAlb         := Space( 2 )
          ::oDbfAlbLGst:cRef            := ::oDbfAlbLFac:Codigo
          ::oDbfAlbLGst:cDetalle        := ::oDbfAlbLFac:Concepto
          ::oDbfAlbLGst:nPreUnit        := ::oDbfAlbLFac:Precio
@@ -1700,31 +1703,43 @@ METHOD ImportaFacturasClientes()
    //Traspaso de facturas de clientes
 
    local nOrdAnt
+   local cSerie := ""
+   local nNumero := ""
 
    ::aMtrIndices[ 5 ]:SetTotal( ::oDbfFacTFac:LastRec() )
 
    ::oDbfFacTFac:GoTop()
    while !( ::oDbfFacTFac:eof() )
 
-         while ::oDbfFacTGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero ), 9 ) + "00" )
-            ::oDbfFacTGst:Delete( .f. )
-         end
+      //comporbamos si estan utilizando series
 
-         while ::oDbfFacLGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
-            ::oDbfFacLGst:Delete( .f. )
-         end
+      cSerie                        := Left( ::oDbfFacTFac:Numero, 1 ) 
 
-         while ::oDbfFacPGst:Seek( "A" + Str( Val( ::oDbfFacTFac:Numero), 9 ) + "00" )
-            ::oDbfFacPGst:Delete( .f. )
-         end
+      if Empty( cSerie )
+         cSerie                     := "A"
+      end if
 
-         if SubStr(::oDbfFacTFac:Numero, 1, 1) != "R"  
+      nNumero                       := Val( Alltrim( SubStr( ::oDbfFacTFac:Numero, 2 ) ))
 
+      while ::oDbfFacTGst:Seek( cSerie + str( nNumero, 9 ) + "00" )
+         ::oDbfFacTGst:Delete( .f. )
+      end while
+
+      while ::oDbfFacLGst:Seek( cSerie + str( nNumero, 9 ) + "00" )
+         ::oDbfFacLGst:Delete( .f. )
+      end while
+
+      while ::oDbfFacPGst:Seek( cSerie + str( nNumero, 9 ) + "00" )
+         ::oDbfFacPGst:Delete( .f. )
+      end while      
+
+         //if SubStr(::oDbfFacTFac:Numero, 1, 1) != "R"  esto era el caso de facturas con la serie R
+         
             ::oDbfFacTGst:Append()
             ::oDbfFacTGst:Blank()
       
-            ::oDbfFacTGst:cSerie      := "A"
-            ::oDbfFacTGst:nNumFac     := Val( ::oDbfFacTFac:Numero )
+            ::oDbfFacTGst:cSerie      := cSerie
+            ::oDbfFacTGst:nNumFac     := nNumero
             ::oDbfFacTGst:cSufFac     := "00"
             ::oDbfFacTGst:cTurFac     := cCurSesion()
             ::oDbfFacTGst:dFecFac     := ::oDbfFacTFac:Fecha
@@ -1794,25 +1809,35 @@ METHOD ImportaFacturasClientes()
       
             ::oDbfFacTGst:Save()
 
-         end if
-
          ::aMtrIndices[ 5 ]:Set( ::oDbfFacTFac:Recno() )
 
          ::oDbfFacTFac:Skip()
 
    end while
 
+   //importa líneas de facturas
+
    ::aMtrIndices[ 5 ]:SetTotal( ::oDbfAlbLFac:LastRec() )
 
    ::oDbfAlbLFac:GoTop()
    while !( ::oDbfAlbLFac:eof() )
 
-      if Left( ::oDbfAlbLFac:RfaLin, 2 ) == "F "
+      if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "F"    
+
+         //comprobamos si esan utilizando series de facturas     
+
+         cSerie                           := SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 2, 1  ) 
+      
+         if Empty( cSerie )
+            cSerie                        := "A"
+         end if
+
+         nNumero                          := Val( SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 3, 9 ) )
 
          ::oDbfFacLGst:Append()
 
-         ::oDbfFacLGst:cSerie      := "A"
-         ::oDbfFacLGst:nNumFac     := Val( SubStr( ::oDbfAlbLFac:RfaLin, 5, 7 ) )
+         ::oDbfFacLGst:cSerie      := cSerie
+         ::oDbfFacLGst:nNumFac     := nNumero
          ::oDbfFacLGst:cSufFac     := "00"
          ::oDbfFacLGst:cRef        := ::oDbfAlbLFac:Codigo
          ::oDbfFacLGst:cDetalle    := ::oDbfAlbLFac:Concepto
@@ -2085,7 +2110,13 @@ METHOD ImportaFacturasProveedores()
          ::oDbfFacPrvLGst:nNumFac   := Val( SubStr( ::oDbfAlbLFac:RfaLin, 5, 7 ) )
          ::oDbfFacPrvLGst:cSufFac   := "00"
          ::oDbfFacPrvLGst:cRef      := ::oDbfAlbLFac:Codigo
-         ::oDbfFacPrvLGst:cDetalle  := ::oDbfAlbLFac:Concepto
+         
+         if ::oDbfAlbLFac:Codigo == '' 
+            ::oDbfFacPrvLGst:cDetalle  := ::oDbfAlbLFac:Concepto
+         else 
+            ::oDbfFacPrvLGst:mLngDes  := ::oDbfAlbLFac:Concepto
+         end if
+
          ::oDbfFacPrvLGst:nPreUnit  := ::oDbfAlbLFac:Precio
          ::oDbfFacPrvLGst:nDto      := ::oDbfAlbLFac:Descuento
          ::oDbfFacPrvLGst:nIva      := ::oDbfAlbLFac:Iva
