@@ -6015,7 +6015,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode, , , , , , , oSayLote ) ), ) },;
+                                             		"bLClicked" => {|| msgWait("Guardando","",.1), aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode, , , , , , , oSayLote ) ), ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
@@ -6212,7 +6212,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
                                           			"nWidth"    => {|| GridWidth( 3, oDlg ) },;
-                                          			"cPict" 	=> cPouDiv,;
+                                          			"cPict" 	   => cPouDiv,;
                                           			"lRight" 	=> .t.,;
                                           			"nHeight"   => nAltoGet,;
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
@@ -6511,10 +6511,12 @@ Return ( .t. )
 
 static function cDocumentoDefecto( cSerie, aCbxOrd )
 
-	local cDocumento 	:= ""
-	local cFormato 		:= cFormatoDocumento( cSerie, "nFacCli", dbfCount )
+	local cDocumento     := ""
+	local cFormato       := cFormatoDocumento( cSerie, "nFacCli", dbfCount )
+   local nFormato       := aScan( aCbxOrd, {|x| Left( x, 3 ) == cFormato } )
+   nFormato             := Max(Min(nFormato,len(aCbxOrd)),1)
 
-return aCbxOrd[ aScan( aCbxOrd, {|x| Left( x, 3 ) == cFormato } ) ]
+return aCbxOrd[ nFormato ]
 
 //---------------------------------------------------------------------------//
 
@@ -6526,7 +6528,7 @@ Function FacCliTablet()
 	local nAltoGet 		:= 23
 	local oBtnSalir
 	local oGetSearch
-	local cGetSearch 	:= Space( 100 )
+	local cGetSearch 	   := Space( 100 )
 	local oCbxOrd
 	local aCbxOrd 		:= { "Número", "Fecha", "Código", "Nombre" }
 	local cCbxOrd 		:= "Número"

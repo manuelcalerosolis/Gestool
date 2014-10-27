@@ -11090,7 +11090,9 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             Avisaremos del stock bajo minimo--------------------------------------
             */
 
-            nStockMinimo      := nStockMinimo( cCodArt, cCodAlm, nView )
+            nStockMinimo      := nStockMinimo( cCodArt, cAlmLin, nView )
+
+            msgAlert( nStockMinimo, "nStockMinimo" )
 
             if ( D():Articulos( nView ) )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo != 0
 
@@ -13144,7 +13146,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
+Static Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
 
    local cCodigoArticulo
    local cCodigoAlmacen
@@ -13176,6 +13178,8 @@ Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
 
    end case
 
+   msgAlert( nStockMinimo( cCodigoArticulo, cCodigoAlmacen, nView ) )
+
    if nTotalUnidades  != 0
 
       do case
@@ -13190,7 +13194,7 @@ Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
                Return ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + " en almacén " + cCodigoAlmacen + ".", "¿Desea continuar?" )
             end if
 
-         case ( nStockActual - nTotalUnidades ) < RetFld( cCodigoArticulo, D():Articulos( nView ), "nMinimo"  )
+         case ( nStockActual - nTotalUnidades ) < nStockMinimo( cCodigoArticulo, cCodigoAlmacen, nView )
 
             if lMsgVta
                Return ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
