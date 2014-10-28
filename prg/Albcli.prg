@@ -11091,7 +11091,15 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             */
 
             nStockMinimo      := nStockMinimo( cCodArt, cAlmLin, nView )
+<<<<<<< HEAD
+=======
 
+<<<<<<< HEAD
+=======
+            msgAlert( nStockMinimo, "nStockMinimo" )
+>>>>>>> origin/master
+
+>>>>>>> origin/master
             if ( D():Articulos( nView ) )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo != 0
 
                nStkActual     := oStock:nStockAlmacen( ( dbfKit )->cRefKit, cAlmLin )

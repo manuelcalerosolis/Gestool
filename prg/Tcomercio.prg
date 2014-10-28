@@ -13,7 +13,7 @@
 
 static oTimer
 static oComercio
-Static oMsgAlarm
+static oMsgAlarm
 
 //---------------------------------------------------------------------------//
 
@@ -937,8 +937,8 @@ Method ExportarPrestashop() Class TComercio
 
    ::oBtnCancel:Disable()
 
-   /*oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
    if ::OpenFiles()
 
@@ -1063,13 +1063,13 @@ Method ExportarPrestashop() Class TComercio
 
    end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    ::Closefiles()
 
@@ -1093,8 +1093,8 @@ Method ImportarPrestashop()
 
    ::oBtnCancel:Disable()
 
-   /*oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
    if ::OpenFiles()
 
@@ -1157,13 +1157,13 @@ Method ImportarPrestashop()
 
    end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    ::Closefiles()
 
