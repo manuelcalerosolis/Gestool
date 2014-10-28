@@ -19415,9 +19415,13 @@ Function nStockMinimo( cCodigoArticulo, cCodigoAlmacen, nView )
 
    local nStockMinimo   := 0   
 
-   if ( D():ArticuloStockAlmacenes() )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
-      nStockMinimo      := ( D():ArticuloStockAlmacenes() )->nStkMin
-   end if 
+   if uFieldEmpresa( "lStkAlm" )
+      if ( D():ArticuloStockAlmacenes() )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
+         nStockMinimo   := ( D():ArticuloStockAlmacenes() )->nStkMin
+      end if 
+   else 
+      nStockMinimo      := ( D():Articulos() )->nMinimo
+   end if
 
 Return nStockMinimo
 
@@ -19427,8 +19431,12 @@ Function nStockMaximo( cCodigoArticulo, cCodigoAlmacen, nView )
 
    local nStockMaximo   := 0   
 
-   if ( D():ArticuloStockAlmacenes() )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
-      nStockMaximo      := ( D():ArticuloStockAlmacenes() )->nStkMax
+   if uFieldEmpresa( "lStkAlm" )
+      if ( D():ArticuloStockAlmacenes() )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
+         nStockMaximo   := ( D():ArticuloStockAlmacenes() )->nStkMax
+      end if 
+   else 
+      nStockMaximo      := ( D():Articulos() )->nMaximo
    end if 
 
 Return nStockMaximo

@@ -189,9 +189,9 @@ CLASS TGridGet FROM TGet, TGridable
    METHOD HardEnable()
 
    METHOD HardDisable()
-
+/*
    METHOD LButtonDown( nRow, nCol, nFlags )
-
+*/
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -263,7 +263,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
 Return Self
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TGridGet
 
    ::Super:LButtonDown( nRow, nCol, nFlags )
@@ -271,7 +271,7 @@ METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TGridGet
    ::SelectAll()
 
 Return .t.
-
+*/
 //---------------------------------------------------------------------------//
 
 Method HardEnable() CLASS TGridGet
