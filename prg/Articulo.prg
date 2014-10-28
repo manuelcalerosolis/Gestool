@@ -4517,13 +4517,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       fldImagenes:AddFastKey( VK_F4, {|| WinDelRec( oBrwImg, dbfTmpImg ) } )
 
       oDlg:AddFastKey(  VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
-      oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
+      //oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
 
       oDlg:AddFastKey(  VK_F5, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
 
       if uFieldEmpresa( "lRealWeb" )
          oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda, .t. ) } )
       end if
+
+      oDlg:AddFastKey( VK_F8,    {|| BuildWeb( aTmp[ ( dbfArticulo )->( fieldpos("Codigo") ) ] ) } )
 
    end if
 
@@ -5671,7 +5673,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    Tomamos los valores de los códigos de barra---------------------------------
    */
 
-   cCod              := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]
+   cCod                    := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]
 
    if Empty( cCod ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       MsgStop( "Código no puede estar vacio" )
@@ -17906,6 +17908,10 @@ Return ( oDlgToolTip )
 
 Static Function startToolTip( cCodArt, oBrwStock, oTreeInfo, oImageListInfo )
 
+   local sStock
+   local nStockMinimo
+   local nStockUnidades
+
    CursorWait()
 
    oTreeInfo:SetImageList( oImageListInfo )
@@ -17935,9 +17941,15 @@ Static Function startToolTip( cCodArt, oBrwStock, oTreeInfo, oImageListInfo )
       Aviso de stock bajo minimo--------------------------------------------------
       */
 
-      if ( dbfArticulo )->nMinimo > nStockUnidades( oBrwStock )
-         oTreeInfo:Add( "Stock bajo minimos, stock actual " + Alltrim( Trans( nStockUnidades( oBrwStock ), MasUnd() ) ) + "; minimo " + Alltrim( Trans( ( dbfArticulo )->nMinimo, MasUnd() ) ) + "." , 0 )
-      end if
+      for each sStock in oStock:aStocks
+
+         nStockMinimo   := nStockMinimo( sStock:cCodigo, sStock:cCodigoAlmacen, nView )
+
+         if nStockMinimo > sStock:nUnidades
+            oTreeInfo:Add( "Stock bajo minimos, stock actual " + Alltrim( Trans( sStock:nUnidades, MasUnd() ) ) + "; minimo " + Alltrim( Trans( nStockMinimo, MasUnd() ) ) + "." , 0 )
+         end if
+
+      next 
 
    end if
 
@@ -18281,12 +18293,16 @@ Return ( nStock )
 
 //---------------------------------------------------------------------------//
 
-Function nStockUnidades( oBrwStock )
+Function nStockUnidades( oBrwStock, cCodigoAlmacen )
 
    local nStock   := 0
 
    if !Empty( oBrwStock ) .and. !Empty( oBrwStock:aArrayData )
-      aEval( oBrwStock:aArrayData, {|a| nStock += a:nUnidades } )
+      if empty( cCodigoAlmacen )
+         aEval( oBrwStock:aArrayData, {|a| nStock += a:nUnidades } )
+      else
+         aEval( oBrwStock:aArrayData, {|a| if( cCodigoAlmacen == oBrwStock:cCodigoAlmacen, nStock += a:nUnidades, ) } )
+      end if 
    end if
 
 Return ( nStock )
@@ -18627,7 +18643,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function Actualizaweb( cCodArt, lChangeImage, lActualizaWeb )
+Static Function ActualizaWeb( cCodArt, lChangeImage, lActualizaWeb )
 
    if lActualizaWeb .and. uFieldEmpresa( "lRealWeb" )
 
@@ -18644,6 +18660,23 @@ Static Function Actualizaweb( cCodArt, lChangeImage, lActualizaWeb )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Static Function BuildWeb( cCodArt )
+
+   if lPubArt()
+
+      msgAlert( cCodArt )
+
+      with object ( TComercio():GetInstance() )  
+         :BuildProductPrestashop( cCodArt )
+      end with
+
+   end if   
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 
 Static Function lPubArt()
 
@@ -19360,11 +19393,11 @@ Function nStockMinimo( cCodigoArticulo, cCodigoAlmacen, nView )
    local nStockMinimo   := 0   
 
    if uFieldEmpresa( "lStkAlm" )
-      if ( D():ArticuloStockAlmacenes() )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
-         nStockMinimo   := ( D():ArticuloStockAlmacenes() )->nStkMin
+      if ( D():ArticuloStockAlmacenes( nView ) )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
+         nStockMinimo   := ( D():ArticuloStockAlmacenes( nView ) )->nStkMin
       end if 
    else 
-      nStockMinimo      := ( D():Articulos() )->nMinimo
+      nStockMinimo      := ( D():Articulos( nView ) )->nMinimo
    end if
 
 Return nStockMinimo
@@ -19376,11 +19409,11 @@ Function nStockMaximo( cCodigoArticulo, cCodigoAlmacen, nView )
    local nStockMaximo   := 0   
 
    if uFieldEmpresa( "lStkAlm" )
-      if ( D():ArticuloStockAlmacenes() )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
-         nStockMaximo   := ( D():ArticuloStockAlmacenes() )->nStkMax
+      if ( D():ArticuloStockAlmacenes( nView ) )->( dbSeek( cCodigoArticulo + cCodigoAlmacen ) )
+         nStockMaximo   := ( D():ArticuloStockAlmacenes( nView ) )->nStkMax
       end if 
    else 
-      nStockMaximo      := ( D():Articulos() )->nMaximo
+      nStockMaximo      := ( D():Articulos( nView ) )->nMaximo
    end if 
 
 Return nStockMaximo

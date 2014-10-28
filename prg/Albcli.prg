@@ -11092,8 +11092,6 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
 
             nStockMinimo      := nStockMinimo( cCodArt, cAlmLin, nView )
 
-            msgAlert( nStockMinimo, "nStockMinimo" )
-
             if ( D():Articulos( nView ) )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo != 0
 
                nStkActual     := oStock:nStockAlmacen( ( dbfKit )->cRefKit, cAlmLin )
@@ -11148,7 +11146,7 @@ STATIC FUNCTION lMoreIva( nCodIva )
       RETURN .T.
    END IF
 
-   MsgStop( "Documento con mas de 3 Tipos de " + cImp() )
+   MsgStop( "Documento con mas de 3 tipos de " + cImp() )
 
 RETURN .F.
 
@@ -11320,7 +11318,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    aTmp[ _CTIMCRE ]        := Time()
 
    /*
-   Guardamos el tipo para alquileres
+   Guardamos el tipo para alquileres-------------------------------------------
    */
 
    if !Empty( oTipAlb ) .and. oTipAlb:nAt == 2
@@ -13177,8 +13175,6 @@ Static Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
          end if
 
    end case
-
-   msgAlert( nStockMinimo( cCodigoArticulo, cCodigoAlmacen, nView ) )
 
    if nTotalUnidades  != 0
 

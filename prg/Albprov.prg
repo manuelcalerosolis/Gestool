@@ -5239,15 +5239,17 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       ( dbfTmp )->( dbGoTop() )
       while !( dbfTmp )->( eof() )
 
-         aTbl                                               := dbScatter( dbfTmp )
-         aTbl[ _CSERALB ]                                   := cSerAlb
-         aTbl[ _NNUMALB ]                                   := nNumAlb
-         aTbl[ _CSUFALB ]                                   := cSufAlb
-         aTbl[ _LCHGLIN ]                                   := .f.
-         aTbl[ _NPRECOM ]                                   := nNetUAlbPrv( aTbl, aTmp, nDinDiv, nDirDiv, aTmp[ _NVDVALB ] )
-         aTbl[ ( D():AlbaranesProveedoresLineas( nView ) )->( FieldPos( "dFecAlb" ) ) ]  := aTmp[ _DFECALB ]
+         aTbl                 := dbScatter( dbfTmp )
+         aTbl[ _CSERALB ]     := cSerAlb
+         aTbl[ _NNUMALB ]     := nNumAlb
+         aTbl[ _CSUFALB ]     := cSufAlb
+         aTbl[ _LCHGLIN ]     := .f.
+         aTbl[ _NPRECOM ]     := nNetUAlbPrv( aTbl, aTmp, nDinDiv, nDirDiv, aTmp[ _NVDVALB ] )
+         aTbl[ __DFECALB]     := aTmp[ _DFECALB ]
 
          AppendReferenciaProveedor( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVALB ], aTbl[ _NPREDIV ], D():ProveedorArticulo( nView ), nMode )
+
+         AppendPropiedadesArticulos( aTbl, aTmp )
 
          /*
          Cambios de precios-------------------------------------------------------
@@ -10087,6 +10089,25 @@ Function dFechaCaducidadLote( cCodArt, cValPr1, cValPr2, cLote, cAlbPrvL, cFacPr
 Return ( dFechaCaducidad )
 
 //---------------------------------------------------------------------------//
+
+Static Function AppendPropiedadesArticulos( aTbl, aTmp )
+
+   if ( D():ArticuloPrecioPropiedades( nView ) )->( dbSeek( aTbl[ _CREF ] +  aTbl[ _CCODPR1 ] + aTbl[ _CCODPR2 ] + aTbl[ _CVALPR1 ] + aTbl[ _CVALPR2 ] ) )
+      
+      ( D():ArticuloPrecioPropiedades( nView ) )->( dbAppend() )
+      ( D():ArticuloPrecioPropiedades( nView ) )->cCodDiv    := aTmp[ _CDIVALB ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->cCodArt    := aTbl[ _CREF    ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->cCodPr1    := aTbl[ _CCODPR1 ] 
+      ( D():ArticuloPrecioPropiedades( nView ) )->cCodPr2    := aTbl[ _CCODPR2 ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->cValPr1    := aTbl[ _CVALPR1 ] 
+      ( D():ArticuloPrecioPropiedades( nView ) )->cValPr2    := aTbl[ _CVALPR2 ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->nPreCom    := 0
+      ( D():ArticuloPrecioPropiedades( nView ) )->( dbUnlock() )
+
+   end if 
+
+Return ( nil )
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -11456,3 +11477,4 @@ Method SelectColumn( oCombo ) CLASS TAlbaranProveedoresLabelGenerator
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
