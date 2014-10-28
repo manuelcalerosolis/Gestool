@@ -5498,6 +5498,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	local oSayCliente
    	local oSayDireccion
    	local oSaySerie
+      local oSayRuta
    	local oGetNombreDireccion
    	local cGetNombreDireccion
    	local oGetNombrePago
@@ -5514,6 +5515,11 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	local oBtnUp
    	local nAltoGet 		:= 23
    	local oSayPago
+      local oBtnUpPage
+      local oBtnDownPage
+      local oCbxRuta
+      local aCbxRuta       := { "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Todos" }
+      local cCbxRuta       := aCbxRuta[ Dow( GetSysDate() ) ]
 
    	do case
    		case nMode == APPD_MODE
@@ -5528,7 +5534,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          		Return .f.
       		end if
 
-      		aTmp[ _CSERIE 	  ]  := "A"
+      		aTmp[ _CSERIE 	   ]  := "A"
       		aTmp[ _CTURFAC    ]  := cCurSesion()
       		aTmp[ _DFECENT    ]  := Ctod("")
       		aTmp[ _CCODALM    ]  := oUser():cAlmacen()
@@ -5594,20 +5600,20 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
-   	oBtnAceptar  		:= TGridImage():Build(  {  	"nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+   	oBtnSalir        := TGridImage():Build(  {  "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_del_64",;
+                                                   "bLClicked" => {|| oDlg:End() },;
+                                                   "oWnd"      => oDlg } )
+
+      oBtnAceptar  		:= TGridImage():Build(  {  "nTop"      => 5,;
+                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
                                              		"bLClicked" => {|| EndTransTablet( aTmp, aGet, nMode, oDlg ) },;
-                                             		"oWnd"      => oDlg } )
-
-   	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
-                                             		"nWidth"    => 64,;
-                                            	 	"nHeight"   => 64,;
-                                             		"cResName"  => "flat_del_64",;
-                                             		"bLClicked" => {|| oDlg:End() },;
                                              		"oWnd"      => oDlg } )
 
  	/*
@@ -5624,7 +5630,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"lPixel"    => .t.,;
                                              		"nClrInit"  => nGridColor(),;
                                              		"nClrOver" 	=> nGridColor(),;
-													"nClrVisit" => nGridColor(),;
+													            "nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| ChangeSerieTablet( aGet ) } } )
    	else
 
@@ -5649,14 +5655,39 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"oWnd"      => oDlg,;
                                           			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                           			"nHeight"   => nAltoGet,;
-                                          			"bWhen" 	=> {|| nMode == APPD_MODE },;
+                                          			"bWhen" 	   => {|| nMode == APPD_MODE },;
                                           			"lPixels" 	=> .t. } )
 
  	/*
+   Combo de rutas-------------------------------------------------------------
+   */
+
+      oSayRuta          := TGridSay():Build(    {  "nRow"      => 65,;
+                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "bText"     => {|| "Ruta" },;
+                                                   "oWnd"      => oDlg,;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 1, oDlg ) },;
+                                                   "nHeight"   => nAltoGet,;
+                                                   "lDesign"   => .f. } )
+
+      oCbxRuta     := TGridComboBox():Build(  {    "nRow"      => 65,;
+                                                   "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, cCbxRuta, cCbxRuta := u ) },;
+                                                   "oWnd"      => oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "aItems"    => aCbxRuta,;
+                                                   "bChange"   => {|| Msginfo( "cambio el combo" ) } } )
+
+   /*
 	Cliente--------------------------------------------------------------------
   	*/
 
-   	oSayCliente  		:= TGridUrllink():Build({ 	"nTop"      => 65,;
+   	oSayCliente  		:= TGridUrllink():Build({ 	"nTop"      => 90,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"cURL"      => "Cliente",;
                                              		"oWnd"      => oDlg,;
@@ -5667,7 +5698,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 																	"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ) } } )
 
-   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 		"nRow"      => 65,;
+   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 		"nRow"      => 90,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5676,7 +5707,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| loaCli( aGet, aTmp, nMode, , .f. ) } } )
 	
-   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 		"nRow"      => 65,;
+   	aGet[ _CNOMCLI ]  	:= TGridGet():Build( { 		"nRow"      => 90,;
                                           			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CNOMCLI ], aTmp[ _CNOMCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5688,7 +5719,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Direcciones del Cliente----------------------------------------------------
    	*/
 
-   	oSayDireccion  		:= TGridUrllink():Build({  	"nTop"      => 90,;
+   	oSayDireccion  		:= TGridUrllink():Build({  	"nTop"      => 115,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"cURL"      => "Dirección",;
                                              		"oWnd"      => oDlg,;
@@ -5699,7 +5730,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 													"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT )  } } )
 
-   	aGet[ _CCODOBR ]  	:= TGridGet():Build( { 		"nRow"      => 90,;
+   	aGet[ _CCODOBR ]  	:= TGridGet():Build( { 		"nRow"      => 115,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODOBR ], aTmp[ _CCODOBR ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5708,7 +5739,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| cObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ) } } )
 
-   	oGetNombreDireccion := TGridGet():Build(  { 	"nRow"      => 90,;
+   	oGetNombreDireccion := TGridGet():Build(  { 	"nRow"      => 115,;
                                           			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, cGetNombreDireccion, cGetNombreDireccion := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5720,7 +5751,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Forma de pago--------------------------------------------------------------
    	*/
 
-   	oSayPago  			:= TGridUrllink():Build({  	"nTop"      => 115,;
+   	oSayPago  			:= TGridUrllink():Build({  	"nTop"      => 140,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"cURL"      => "F. pago",;
                                              		"oWnd"      => oDlg,;
@@ -5731,7 +5762,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 													"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwfPago( aGet[ _CCODPAGO ], oGetNombrePago ) } } )
 
-   	aGet[ _CCODPAGO ]  	:= TGridGet():Build( { 		"nRow"      => 115,;
+   	aGet[ _CCODPAGO ]  	:= TGridGet():Build( { 		"nRow"      => 140,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODPAGO ], aTmp[ _CCODPAGO ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5740,7 +5771,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                           			"lPixels" 	=> .t.,;
                                           			"bValid"    => {|| cFpago( aGet[ _CCODPAGO ], dbfFPago, oGetNombrePago ) } } )
 
-   	oGetNombrePago 		:= TGridGet():Build(  { 	"nRow"      => 115,;
+   	oGetNombrePago 		:= TGridGet():Build(  { 	"nRow"      => 140,;
                                           			"nCol"      => {|| GridWidth( 4.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, cGetNombrePago, cGetNombrePago := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5753,7 +5784,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Botones de las lineas------------------------------------------------------
    	*/
 
-   	oBtnAdd  			:= TGridImage():Build(  {  	"nTop"      => 145,;
+   	oBtnAdd  			:= TGridImage():Build(  {  	"nTop"      => 170,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5761,7 +5792,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| AppDeta( oBrwLin, bEdtDetTablet, aTmp, .f. ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnEdt  			:= TGridImage():Build(  {  	"nTop"      => 145,;
+   	oBtnEdt  			:= TGridImage():Build(  {  	"nTop"      => 170,;
                                              		"nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5769,7 +5800,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| EdtDeta( oBrwLin, bEdtDetTablet, aTmp, .f., nMode ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 145,;
+   	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 170,;
                                              		"nLeft"     => {|| GridWidth( 2.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5777,46 +5808,62 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| WinDelRec( oBrwLin, dbfTmpLin, , , , .t. ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnUp  			:= TGridImage():Build(  {  	"nTop"      => 145,;
-                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
-                                             		"nWidth"    => 64,;
-                                             		"nHeight"   => 64,;
-                                             		"cResName"  => "flat_up_64",;
-                                             		"bLClicked" => {|| oBrwLin:GoUp(), oBrwLin:Select( 0 ), oBrwLin:Select( 1 ), oBrwLin:Refresh()  },;
-                                             		"oWnd"      => oDlg } )
+      oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 170,;
+                                                   "nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_page_up_64",;
+                                                   "bLClicked" => {|| oBrwLin:PageUp(), oBrwLin:Select( 0 ), oBrwLin:Select( 1 ), oBrwLin:Refresh()  },;
+                                                   "oWnd"      => oDlg } )
 
-   	oBtnDown  			:= TGridImage():Build(  {  	"nTop"      => 145,;
-                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
-                                             		"nWidth"    => 64,;
-                                             		"nHeight"   => 64,;
-                                             		"cResName"  => "flat_down_64",;
-                                             		"bLClicked" => {|| oBrwLin:GoDown(), oBrwLin:Select( 0 ), oBrwLin:Select( 1 ), oBrwLin:Refresh() },;
-                                             		"oWnd"      => oDlg } )
+      oBtnUp         := TGridImage():Build(  {     "nTop"      => 170,;
+                                                   "nLeft"     => {|| GridWidth( 8.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_up_64",;
+                                                   "bLClicked" => {|| oBrwLin:GoUp(), oBrwLin:Select( 0 ), oBrwLin:Select( 1 ), oBrwLin:Refresh()  },;
+                                                   "oWnd"      => oDlg } )
 
-   	/*
+      oBtnDown          := TGridImage():Build(  {  "nTop"      => 170,;
+                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_down_64",;
+                                                   "bLClicked" => {|| oBrwLin:GoDown(), oBrwLin:Select( 0 ), oBrwLin:Select( 1 ), oBrwLin:Refresh() },;
+                                                   "oWnd"      => oDlg } )
+
+      oBtnDownPage      := TGridImage():Build(  {  "nTop"      => 170,;
+                                                   "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_page_down_64",;
+                                                   "bLClicked" => {|| oBrwLin:PageDown(), oBrwLin:Select( 0 ), oBrwLin:Select( 1 ), oBrwLin:Refresh() },;
+                                                   "oWnd"      => oDlg } ) 
+
+   /*
 	Browse se las líneas-------------------------------------------------------
-   	*/
+   */
 
-   	oBrwLin                 	:= TGridIXBrowse():New( oDlg )
+   oBrwLin                 	:= TGridIXBrowse():New( oDlg )
 
-   	oBrwLin:nTop            	:= oBrwLin:EvalRow( 180 )
-   	oBrwLin:nLeft           	:= oBrwLin:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
-   	oBrwLin:nWidth          	:= oBrwLin:EvalWidth( {|| GridWidth( 11, oDlg ) } )
-   	oBrwLin:nHeight         	:= oBrwLin:EvalHeight( {|| GridHeigth( oDlg ) - oBrwLin:nTop - 10 } )
+   oBrwLin:nTop            	:= oBrwLin:EvalRow( 205 )
+   oBrwLin:nLeft           	:= oBrwLin:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   oBrwLin:nWidth          	:= oBrwLin:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   oBrwLin:nHeight         	:= oBrwLin:EvalHeight( {|| GridHeigth( oDlg ) - oBrwLin:nTop - 10 } )
 
-   	oBrwLin:cAlias          	:= dbfTmpLin
-   	oBrwLin:nMarqueeStyle   	:= 6
-   	oBrwLin:lFooter 		  	:= .t.
-   	oBrwLin:cName           	:= "Grid lineas facturas"
+   oBrwLin:cAlias          	:= dbfTmpLin
+   oBrwLin:nMarqueeStyle   	:= 6
+   oBrwLin:lFooter 		  	   := .t.
+   oBrwLin:cName           	:= "Grid lineas facturas"
 
     with object ( oBrwLin:AddCol() )
        	:cHeader             := "Número"
-        :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
-        :cEditPicture        := "9999"
-        :nWidth              := 55
-        :nDataStrAlign       := 1
-        :nHeadStrAlign       := 1
-        :lHide 				 := .t.   
+        :bEditValue           := {|| ( dbfTmpLin )->nNumLin }
+        :cEditPicture         := "9999"
+        :nWidth               := 55
+        :nDataStrAlign        := 1
+        :nHeadStrAlign        := 1
+        :lHide 				   := .t.   
     end with
 
     with object ( oBrwLin:AddCol() )
@@ -6011,7 +6058,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"lDesign"   => .f. } )
 
    	oBtnAceptar  		:= TGridImage():Build(  {  "nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
@@ -6019,7 +6066,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                             	 	   "nHeight"   => 64,;
                                              		"cResName"  => "flat_del_64",;
@@ -6324,7 +6371,7 @@ static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
                                              		"lDesign"   => .f. } )
 
 	oBtnAceptar  		:= TGridImage():Build(  {  	"nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
@@ -6332,7 +6379,7 @@ static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
                                              		"oWnd"      => oDlg } )
 
    oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                             	 	   "nHeight"   => 64,;
                                              		"cResName"  => "flat_del_64",;
@@ -6556,7 +6603,7 @@ Function FacCliTablet()
 	Cabeceras------------------------------------------------------------------
 	*/
 
-	oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
+	  oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bText"     => {|| "Facturas de clientes" },;
                                              		"oWnd"      => oDlg,;
@@ -6646,7 +6693,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| oBrw:GoUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDown  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+   	oBtnDown  			:= TGridImage():Build(  {  "nTop"      => 70,;
                                              		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6654,7 +6701,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| oBrw:GoDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDownPage		:= TGridImage():Build(  {  	"nTop"      => 70,;
+   	oBtnDownPage		:= TGridImage():Build(  {  "nTop"      => 70,;
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6662,9 +6709,9 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| oBrw:PageDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
                                              		"oWnd"      => oDlg } ) 
 
-   	/*
+   /*
 	Browse de facturas-------------------------------------------------------
-   	*/
+   */
 
    	oBrw                 	:= TGridIXBrowse():New( oDlg )
 

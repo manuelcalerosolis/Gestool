@@ -18841,6 +18841,12 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
    local aCbxOrd     := { "Código", "Nombre", "Proveedor" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01032" )
+   local oBtnAdd
+   local oBtnEdt
+   local oBtnUp
+   local oBtnDown
+   local oBtnUpPage
+   local oBtnDownPage
 
    nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrdAnt ]
@@ -18876,7 +18882,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "bAction"   => {|| MsgInfo( "action" ) } } )
 
    oBtnAceptar    := TGridImage():Build(  {  "nTop"      => 5,;
-                                             "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
                                              "cResName"  => "flat_check_64",;
@@ -18884,7 +18890,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "oWnd"      => oDlg } )
 
    oBtnCancelar   := TGridImage():Build(  {  "nTop"      => 5,;
-                                             "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                             "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
                                              "cResName"  => "flat_del_64",;
@@ -18911,11 +18917,61 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "aItems"    => aCbxOrd,;
                                              "bChange"   => {|| ( dbfArticulo )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus(), oBrw:Refresh() } } )
 
+   oBtnAdd           := TGridImage():Build(  {  "nTop"      => 70,;
+                                                   "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_add_64",;
+                                                   "bLClicked" => {|| nil },;
+                                                   "bWhen"     => {|| .f. },;
+                                                   "oWnd"      => oDlg } )
+
+      oBtnEdt           := TGridImage():Build(  {  "nTop"      => 70,;
+                                                   "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_edit_64",;
+                                                   "bLClicked" => {|| nil },;
+                                                   "bWhen"     => {|| .f. },;
+                                                   "oWnd"      => oDlg } )
+
+      oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 70,;
+                                                   "nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_page_up_64",;
+                                                   "bLClicked" => {|| oBrw:PageUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
+                                                   "oWnd"      => oDlg } )
+
+      oBtnUp         := TGridImage():Build(  {     "nTop"      => 70,;
+                                                   "nLeft"     => {|| GridWidth( 8.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_up_64",;
+                                                   "bLClicked" => {|| oBrw:GoUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
+                                                   "oWnd"      => oDlg } )
+
+      oBtnDown          := TGridImage():Build(  {  "nTop"      => 70,;
+                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_down_64",;
+                                                   "bLClicked" => {|| oBrw:GoDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
+                                                   "oWnd"      => oDlg } )
+
+      oBtnDownPage      := TGridImage():Build(  {  "nTop"      => 70,;
+                                                   "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_page_down_64",;
+                                                   "bLClicked" => {|| oBrw:PageDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
+                                                   "oWnd"      => oDlg } )
+
    // Browse de articulos ------------------------------------------------------
 
    oBrw                 := TGridIXBrowse():New( oDlg )
 
-   oBrw:nTop            := oBrw:EvalRow( 64 )
+   oBrw:nTop            := oBrw:EvalRow( 110 )
    oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    oBrw:nHeight         := oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )

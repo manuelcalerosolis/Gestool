@@ -11090,7 +11090,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             Avisaremos del stock bajo minimo--------------------------------------
             */
 
-            nStockMinimo      := nStockMinimo( cCodArt, cCodAlm, nView )
+            nStockMinimo      := nStockMinimo( cCodArt, cAlmLin, nView )
 
             if ( D():Articulos( nView ) )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo != 0
 

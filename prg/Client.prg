@@ -13035,6 +13035,12 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    local aCbxOrd     := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento", "Correo electrónico" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01032" )
+   local oBtnAdd
+   local oBtnEdt
+   local oBtnUp
+   local oBtnDown
+   local oBtnUpPage
+   local oBtnDownPage
 
    nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrdAnt ]
@@ -13062,59 +13068,109 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
 
    oDlg           := TDialog():New( 1, 5, 40, 100, "Buscar clientes",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb(255,255,255),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
-   oSayGeneral    := TGridSay():Build(    {  "nRow"      => 0,;
-                                             "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             "bText"     => {|| "Buscar clientes" },;
-                                             "oWnd"      => oDlg,;
-                                             "oFont"     => oGridFontBold(),;
-                                             "lPixels"   => .t.,;
-                                             "nClrText"  => Rgb( 0, 0, 0 ),;
-                                             "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
-                                             "nHeight"   => 32,;
-                                             "lDesign"   => .f. } )
+   oSayGeneral    := TGridSay():Build(    {     "nRow"      => 0,;
+                                                "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                "bText"     => {|| "Buscar clientes" },;
+                                                "oWnd"      => oDlg,;
+                                                "oFont"     => oGridFontBold(),;
+                                                "lPixels"   => .t.,;
+                                                "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                                "nHeight"   => 32,;
+                                                "lDesign"   => .f. } )
 
-   oBtnAceptar    := TGridImage():Build(  {  "nTop"      => 5,;
-                                             "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
-                                             "nWidth"    => 32,;
-                                             "nHeight"   => 32,;
-                                             "cResName"  => "flat_check_64",;
-                                             "bLClicked" => {|| oDlg:End( IDOK ) },;
-                                             "oWnd"      => oDlg } )
+   oBtnAceptar    := TGridImage():Build(  {     "nTop"      => 5,;
+                                                "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                                "nWidth"    => 32,;
+                                                "nHeight"   => 32,;
+                                                "cResName"  => "flat_check_64",;
+                                                "bLClicked" => {|| oDlg:End( IDOK ) },;
+                                                "oWnd"      => oDlg } )
 
-   oBtnCancelar   := TGridImage():Build(  {  "nTop"      => 5,;
-                                             "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
-                                             "nWidth"    => 32,;
-                                             "nHeight"   => 32,;
-                                             "cResName"  => "flat_del_64",;
-                                             "bLClicked" => {|| oDlg:End() },;
-                                             "oWnd"      => oDlg } )
+   oBtnCancelar   := TGridImage():Build(  {     "nTop"      => 5,;
+                                                "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                "nWidth"    => 32,;
+                                                "nHeight"   => 32,;
+                                                "cResName"  => "flat_del_64",;
+                                                "bLClicked" => {|| oDlg:End() },;
+                                                "oWnd"      => oDlg } )
 
    // Texto de busqueda--------------------------------------------------------
 
-   oGetSearch     := TGridGet():Build(    {  "nRow"      => 38,;
-                                             "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
-                                             "oWnd"      => oDlg,;
-                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
-                                             "nHeight"   => 25,;
-                                             "bValid"    => {|| OrdClearScope( oBrw, ( D():Get( "Client", nView ) ) ) },;
-                                             "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, ( D():Get( "Client", nView ) ), .t. ) } } )
+   oGetSearch     := TGridGet():Build(    {     "nRow"      => 38,;
+                                                "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
+                                                "oWnd"      => oDlg,;
+                                                "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                                "nHeight"   => 25,;
+                                                "bValid"    => {|| OrdClearScope( oBrw, ( D():Get( "Client", nView ) ) ) },;
+                                                "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, ( D():Get( "Client", nView ) ), .t. ) } } )
 
-   oCbxOrd     := TGridComboBox():Build(  {  "nRow"      => 38,;
-                                             "nCol"      => {|| GridWidth( 9.5, oDlg ) },;
-                                             "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
-                                             "oWnd"      => oDlg,;
-                                             "nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                             "nHeight"   => 25,;
-                                             "aItems"    => aCbxOrd,;
-                                             "bChange"   => {|| ( D():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus(), oBrw:Refresh() } } )
+   oCbxOrd        := TGridComboBox():Build(  {  "nRow"      => 38,;
+                                                "nCol"      => {|| GridWidth( 9.5, oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                                                "oWnd"      => oDlg,;
+                                                "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                                "nHeight"   => 25,;
+                                                "aItems"    => aCbxOrd,;
+                                                "bChange"   => {|| ( D():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus(), oBrw:Refresh() } } )
+
+   oBtnAdd        := TGridImage():Build(  {     "nTop"      => 70,;
+                                                "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                                                "nWidth"    => 64,;
+                                                "nHeight"   => 64,;
+                                                "cResName"  => "flat_add_64",;
+                                                "bLClicked" => {|| nil },;
+                                                "bWhen"     => {|| .f. },;
+                                                "oWnd"      => oDlg } )
+
+   oBtnEdt           := TGridImage():Build(  {  "nTop"      => 70,;
+                                                "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                                                "nWidth"    => 64,;
+                                                "nHeight"   => 64,;
+                                                "cResName"  => "flat_edit_64",;
+                                                "bLClicked" => {|| nil },;
+                                                "bWhen"     => {|| .f. },;
+                                                "oWnd"      => oDlg } )
+
+   oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 70,;
+                                                "nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
+                                                "nWidth"    => 64,;
+                                                "nHeight"   => 64,;
+                                                "cResName"  => "flat_page_up_64",;
+                                                "bLClicked" => {|| oBrw:PageUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
+                                                "oWnd"      => oDlg } )
+
+   oBtnUp            := TGridImage():Build(  {  "nTop"      => 70,;
+                                                "nLeft"     => {|| GridWidth( 8.5, oDlg ) },;
+                                                "nWidth"    => 64,;
+                                                "nHeight"   => 64,;
+                                                "cResName"  => "flat_up_64",;
+                                                "bLClicked" => {|| oBrw:GoUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
+                                                "oWnd"      => oDlg } )
+
+   oBtnDown          := TGridImage():Build(  {  "nTop"      => 70,;
+                                                "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                "nWidth"    => 64,;
+                                                "nHeight"   => 64,;
+                                                "cResName"  => "flat_down_64",;
+                                                "bLClicked" => {|| oBrw:GoDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
+                                                "oWnd"      => oDlg } )
+
+   oBtnDownPage      := TGridImage():Build(  {  "nTop"      => 70,;
+                                                "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                                "nWidth"    => 64,;
+                                                "nHeight"   => 64,;
+                                                "cResName"  => "flat_page_down_64",;
+                                                "bLClicked" => {|| oBrw:PageDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
+                                                "oWnd"      => oDlg } )
 
    // Browse de clientes ------------------------------------------------------
 
    oBrw                 := TGridIXBrowse():New( oDlg )
 
-   oBrw:nTop            := oBrw:EvalRow( 64 )
+   oBrw:nTop            := oBrw:EvalRow( 110 )
    oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    oBrw:nHeight         := oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )
