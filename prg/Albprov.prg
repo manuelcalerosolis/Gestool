@@ -9070,6 +9070,7 @@ Function SynAlbPrv( cPath )
    local cDiv
    local cPedPrvT
    local cPedPrvL
+   local cArtDiv
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -9106,6 +9107,9 @@ Function SynAlbPrv( cPath )
 
    dbUseArea( .t., cDriver(), cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @cPedPrvL ), .f. )
    if !lAIS(); ordListAdd( cPath + "PEDPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "ArtDiv.DBF", cCheckArea( "ArtDiv", @cArtDiv ), .f. )
+   if !lAIS(); ordListAdd( cPath + "ArtDiv.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    ( cAlbPrvT )->( ordSetFocus( 0 ) )
    ( cAlbPrvT )->( dbGoTop() )
@@ -9250,6 +9254,24 @@ Function SynAlbPrv( cPath )
          if !Empty( cCodPrv )
             AppendReferenciaProveedor( ( cAlbPrvL )->cRefPrv, cCodPrv, ( cAlbPrvL )->cRef, ( cAlbPrvL )->nDtoLin, ( cAlbPrvL )->nDtoPrm, ( cAlbPrvT )->cDivAlb, ( cAlbPrvL )->nPreDiv, cArtPrv )
          end if 
+      end if
+
+      /*
+      Precios por propiedades de articulos-------------------------------------
+      */
+
+      if !( cArtDiv )->( dbSeek( ( cAlbPrvL )->CREF +  ( cAlbPrvL )->CCODPR1 + ( cAlbPrvL )->CCODPR2 + ( cAlbPrvL )->CVALPR1 + ( cAlbPrvL )->CVALPR2 ) )
+      
+         ( cArtDiv )->( dbAppend() )
+         ( cArtDiv )->cCodDiv    := cDivEmp()
+         ( cArtDiv )->cCodArt    := ( cAlbPrvL )->CREF
+         ( cArtDiv )->cCodPr1    := ( cAlbPrvL )->CCODPR1 
+         ( cArtDiv )->cCodPr2    := ( cAlbPrvL )->CCODPR2
+         ( cArtDiv )->cValPr1    := ( cAlbPrvL )->CVALPR1 
+         ( cArtDiv )->cValPr2    := ( cAlbPrvL )->CVALPR2
+         ( cArtDiv )->nPreCom    := ( cAlbPrvL )->NPREDIV
+         ( cArtDiv )->( dbUnlock() )
+
       end if
 
       ( cAlbPrvL )->( dbSkip() )
@@ -9406,6 +9428,10 @@ Function SynAlbPrv( cPath )
 
    if !Empty( cPedPrvL ) .and. ( cPedPrvL )->( Used() )
       ( cPedPrvL )->( dbCloseArea() )
+   end if
+
+   if !Empty( cArtDiv ) .and. ( cArtDiv )->( Used() )
+      ( cArtDiv )->( dbCloseArea() )
    end if
 
    /*
@@ -10092,7 +10118,7 @@ Return ( dFechaCaducidad )
 
 Static Function AppendPropiedadesArticulos( aTbl, aTmp )
 
-   if ( D():ArticuloPrecioPropiedades( nView ) )->( dbSeek( aTbl[ _CREF ] +  aTbl[ _CCODPR1 ] + aTbl[ _CCODPR2 ] + aTbl[ _CVALPR1 ] + aTbl[ _CVALPR2 ] ) )
+   if !( D():ArticuloPrecioPropiedades( nView ) )->( dbSeek( aTbl[ _CREF ] +  aTbl[ _CCODPR1 ] + aTbl[ _CCODPR2 ] + aTbl[ _CVALPR1 ] + aTbl[ _CVALPR2 ] ) )
       
       ( D():ArticuloPrecioPropiedades( nView ) )->( dbAppend() )
       ( D():ArticuloPrecioPropiedades( nView ) )->cCodDiv    := aTmp[ _CDIVALB ]
@@ -10101,7 +10127,7 @@ Static Function AppendPropiedadesArticulos( aTbl, aTmp )
       ( D():ArticuloPrecioPropiedades( nView ) )->cCodPr2    := aTbl[ _CCODPR2 ]
       ( D():ArticuloPrecioPropiedades( nView ) )->cValPr1    := aTbl[ _CVALPR1 ] 
       ( D():ArticuloPrecioPropiedades( nView ) )->cValPr2    := aTbl[ _CVALPR2 ]
-      ( D():ArticuloPrecioPropiedades( nView ) )->nPreCom    := 0
+      ( D():ArticuloPrecioPropiedades( nView ) )->nPreCom    := aTbl[ _NPREDIV ]
       ( D():ArticuloPrecioPropiedades( nView ) )->( dbUnlock() )
 
    end if 

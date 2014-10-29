@@ -6588,7 +6588,7 @@ Static Function NextClient( aGet, oCbxRuta, lAnterior, oSayTextRuta )
             if !Empty( oSayTextRuta )
                oSayTextRuta:cText( AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyNo() ) ) ) + "/" + AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyCount() ) ) ) )
                oSayTextRuta:Refresh()
-            end ifsdx
+            end if
 
          end if   
 

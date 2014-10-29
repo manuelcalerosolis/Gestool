@@ -5224,7 +5224,27 @@ STATIC FUNCTION GetArtPrv( cRefPrv, cCodPrv, aGet )
 
 return .t.
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+Static Function AppendPropiedadesArticulos( aTbl, aTmp )
+
+   if !( D():ArticuloPrecioPropiedades( nView ) )->( dbSeek( aTbl[ _CREF ] +  aTbl[ _CCODPR1 ] + aTbl[ _CCODPR2 ] + aTbl[ _CVALPR1 ] + aTbl[ _CVALPR2 ] ) )
+      
+      ( D():ArticuloPrecioPropiedades( nView ) )->( dbAppend() )
+      ( D():ArticuloPrecioPropiedades( nView ) )->cCodDiv    := aTmp[ _CDIVFAC ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->cCodArt    := aTbl[ _CREF    ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->cCodPr1    := aTbl[ _CCODPR1 ] 
+      ( D():ArticuloPrecioPropiedades( nView ) )->cCodPr2    := aTbl[ _CCODPR2 ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->cValPr1    := aTbl[ _CVALPR1 ] 
+      ( D():ArticuloPrecioPropiedades( nView ) )->cValPr2    := aTbl[ _CVALPR2 ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->nPreCom    := aTbl[ _NPRECOM ]
+      ( D():ArticuloPrecioPropiedades( nView ) )->( dbUnlock() )
+
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
 
 STATIC FUNCTION SearchFact( oBrw )
 
@@ -6859,6 +6879,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       */
 
       AppendReferenciaProveedor( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], D():ProveedorArticulo( nView ), nMode )
+
+      AppendPropiedadesArticulos( aTbl, aTmp )
 
       /*
       Cambios de precios-------------------------------------------------------
@@ -10200,6 +10222,7 @@ Function SynFacPrv( cPath )
    local aTotFac
    local aNumSer
    local cNumSer
+   local cArtDiv
 
    BEGIN SEQUENCE
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
@@ -10227,6 +10250,9 @@ Function SynFacPrv( cPath )
 
    dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
    if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPatArt() + "ARTDIV.DBF", cCheckArea( "ARTDIV", @cArtDiv ), .f. )
+   if !lAIS(); ordListAdd( cPatArt() + "ARTDIV.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
    if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
@@ -10319,6 +10345,24 @@ Function SynFacPrv( cPath )
             ( dbfFacPrvS )->cNumSer    := cNumSer
          next
          ( dbfFacPrvL )->mNumSer       := ""
+      end if
+
+      /*
+      Precios por propiedades de articulos-------------------------------------
+      */
+
+      if !( cArtDiv )->( dbSeek( ( dbfFacPrvL )->CREF +  ( dbfFacPrvL )->CCODPR1 + ( dbfFacPrvL )->CCODPR2 + ( dbfFacPrvL )->CVALPR1 + ( dbfFacPrvL )->CVALPR2 ) )
+      
+         ( cArtDiv )->( dbAppend() )
+         ( cArtDiv )->cCodDiv    := cDivEmp()
+         ( cArtDiv )->cCodArt    := ( dbfFacPrvL )->CREF
+         ( cArtDiv )->cCodPr1    := ( dbfFacPrvL )->CCODPR1 
+         ( cArtDiv )->cCodPr2    := ( dbfFacPrvL )->CCODPR2
+         ( cArtDiv )->cValPr1    := ( dbfFacPrvL )->CVALPR1 
+         ( cArtDiv )->cValPr2    := ( dbfFacPrvL )->CVALPR2
+         ( cArtDiv )->nPreCom    := ( dbfFacPrvL )->NPRECOM
+         ( cArtDiv )->( dbUnlock() )
+
       end if
 
       ( dbfFacPrvL )->( dbSkip() )
@@ -10443,6 +10487,10 @@ Function SynFacPrv( cPath )
 
    if !Empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
       ( dbfDiv )->( dbCloseArea() )
+   end if
+
+   if !Empty( cArtDiv ) .and. ( cArtDiv )->( Used() )
+      ( cArtDiv )->( dbCloseArea() )
    end if
 
 return nil
