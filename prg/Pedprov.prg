@@ -4922,7 +4922,7 @@ static function BtnNxt( oPag, oBtnNxt, oBtnAnt, oDlg, oProvee, cProvee, cArtOrg,
          Llena la temporal con los artículos que cumplen las condiciones deseadas
          */
 
-         LlenaTemporal( cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, oMtr )
+         LlenaTemporal( cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, cCodAlm, oMtr )
 
          oBrw:Refresh()
 
@@ -4986,17 +4986,21 @@ Return nil
 Llena la temporal con los artículos que cumplen las condiciones deseadas
 */
 
-Static Function LlenaTemporal( cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, oMtr )
+Static Function LlenaTemporal( cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, cCodAlm, oMtr )
 
    local nStkFisico
    local nStkDisponible
+   local nStkMinimo
+   local nStkMaximo
 
    ( D():Articulos( nView ) )->( dbGoTop() )
 
    while !( D():Articulos( nView ) )->( Eof() )
 
-         nStkFisico                    := oStock:nTotStockAct( ( D():Articulos( nView ) )->Codigo, , , , , ( D():Articulos( nView ) )->lKitArt, ( D():Articulos( nView ) )->nKitStk )
-         nStkDisponible                := nStkFisico - nReservado( ( D():Articulos( nView ) )->Codigo )
+      nStkFisico                    := oStock:nTotStockAct( ( D():Articulos( nView ) )->Codigo, , , , , ( D():Articulos( nView ) )->lKitArt, ( D():Articulos( nView ) )->nKitStk )
+      nStkDisponible                := nStkFisico - nReservado( ( D():Articulos( nView ) )->Codigo )
+      nStkMinimo                    := nStockMinimo( ( D():Articulos( nView ) )->Codigo, cCodAlm, nView )
+      nStkMaximo                    := nStockMaximo( ( D():Articulos( nView ) )->Codigo, cCodAlm, nView )
 
       if ( D():Articulos( nView ) )->cPrvHab == cProvee .and.;
          ( D():Articulos( nView ) )->Codigo >= cArtOrg  .and.;
@@ -5004,13 +5008,21 @@ Static Function LlenaTemporal( cProvee, cArtOrg, cArtDes, nStockDis, nStockFin, 
 
          do case
             case nStockDis == 1 .and. nStkDisponible < 0
-               AppTemporal( nStockFin, nStkFisico, nStkDisponible )
+               
+               AppTemporal( nStockFin, nStkFisico, nStkDisponible, nStkMinimo, nStkMaximo )
+
             case nStockDis == 2 .and. nStkDisponible <= 0
-               AppTemporal( nStockFin, nStkFisico, nStkDisponible )
-            case nStockDis == 3 .and. nStkDisponible < ( D():Articulos( nView ) )->nMinimo
-               AppTemporal( nStockFin, nStkFisico, nStkDisponible )
+               
+               AppTemporal( nStockFin, nStkFisico, nStkDisponible, nStkMinimo, nStkMaximo )
+
+            case nStockDis == 3 .and. nStkDisponible < nStkMinimo
+               
+               AppTemporal( nStockFin, nStkFisico, nStkDisponible, nStkMinimo, nStkMaximo )
+
             otherwise
-               AppTemporal( nStockFin, nStkFisico, nStkDisponible )
+               
+               AppTemporal( nStockFin, nStkFisico, nStkDisponible, nStkMinimo, nStkMaximo )
+
          end case
 
       end if
@@ -5032,53 +5044,47 @@ Return nil
 Hace el append a la temporal
 */
 
-static function AppTemporal( nStockFin, nStkFisico, nStkDisponible )
+static function AppTemporal( nStockFin, nStkFisico, nStkDisponible, nStkMinimo, nStkMaximo )
 
    ( dbfTmpArt )->( dbAppend() )
 
-   ( dbfTmpArt )->cRef        := ( D():Articulos( nView ) )->Codigo
-   ( dbfTmpArt )->cDetalle    := ( D():Articulos( nView ) )->Nombre
-   ( dbfTmpArt )->nStkFis     := nStkFisico
-   ( dbfTmpArt )->nStkDis     := nStkDisponible
+   ( dbfTmpArt )->cRef                 := ( D():Articulos( nView ) )->Codigo
+   ( dbfTmpArt )->cDetalle             := ( D():Articulos( nView ) )->Nombre
+   ( dbfTmpArt )->nStkFis              := nStkFisico
+   ( dbfTmpArt )->nStkDis              := nStkDisponible
 
    do case
       case nStockFin == 1
-         if ( D():Articulos( nView ) )->nMinimo   != 0
-            ( dbfTmpArt )->nObjUni     := ( D():Articulos( nView ) )->nMinimo
-            ( dbfTmpArt )->nNumUni     := nCalculaUnidades( ( D():Articulos( nView ) )->nMinimo )
-            if nCalculaUnidades( ( D():Articulos( nView ) )->nMinimo ) == 0
-               ( dbfTmpArt )->lSelArt  := .f.
-            else
-               ( dbfTmpArt )->lSelArt  := .t.
-            end if
+
+         if nStkMinimo != 0
+            ( dbfTmpArt )->nObjUni     := nStkMinimo
+            ( dbfTmpArt )->nNumUni     := nCalculaUnidades( nStkMinimo )
+            ( dbfTmpArt )->lSelArt     := nCalculaUnidades( nStkMinimo ) != 0
+         
          else
+
             ( dbfTmpArt )->nObjUni     := 1
             ( dbfTmpArt )->nNumUni     := nCalculaUnidades( 1 )
-            if nCalculaUnidades( 1 ) == 0
-               ( dbfTmpArt )->lSelArt  := .f.
-            else
-               ( dbfTmpArt )->lSelArt  := .t.
-            end if
+            ( dbfTmpArt )->lSelArt     := nCalculaUnidades( 1 ) != 0
+
          end if
       
       case nStockFin == 2
-         if ( D():Articulos( nView ) )->nMaximo   != 0
-            ( dbfTmpArt )->nObjUni     := ( D():Articulos( nView ) )->nMaximo
-            ( dbfTmpArt )->nNumUni     := nCalculaUnidades( ( D():Articulos( nView ) )->nMaximo )
-            if nCalculaUnidades( ( D():Articulos( nView ) )->nMaximo ) == 0
-               ( dbfTmpArt )->lSelArt  := .f.
-            else
-               ( dbfTmpArt )->lSelArt  := .t.
-            end if
+
+         if nStkMaximo != 0
+
+            ( dbfTmpArt )->nObjUni     := nStkMaximo
+            ( dbfTmpArt )->nNumUni     := nCalculaUnidades( nStkMaximo )
+            ( dbfTmpArt )->lSelArt     := nCalculaUnidades( nStkMaximo ) != 0
+
          else
+
             ( dbfTmpArt )->nObjUni     := 1
             ( dbfTmpArt )->nNumUni     := nCalculaUnidades( 1 )
-            if nCalculaUnidades( 1 ) == 0
-               ( dbfTmpArt )->lSelArt  := .f.
-            else
-               ( dbfTmpArt )->lSelArt  := .t.
-            end if
+            ( dbfTmpArt )->lSelArt     := nCalculaUnidades( 1 ) != 0
+
          end if
+
    end case
 
 return ( nil )
@@ -5781,7 +5787,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
       
                   ( dbfTmpLin )->nPvpRec        := ( D():Articulos( nView ) )->PvpRec
                   ( dbfTmpLin )->cUnidad        := ( D():Articulos( nView ) )->cUnidad
-                  ( dbfTmpLin )->nStkMin        := ( D():Articulos( nView ) )->nMinimo
+                  ( dbfTmpLin )->nStkMin        := nStockMinimo( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cAlmLin, nView )
 
                   // Valores del stock-----------------------------------------
 
