@@ -1779,7 +1779,7 @@ RETURN ( Self )
 METHOD AddTicket() CLASS TFastVentasArticulos
 
    local cExpHead
-   local cExpLine
+   local cExpLine 
 
    ::oTikCliT:OrdSetFocus( "dFecTik" )
    ::oTikCliL:OrdSetFocus( "cNumTil" )
@@ -1908,7 +1908,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cPobCli    := ::oTikCliT:cPobCli
                   ::oDbf:cPrvCli    := ::oTikCliT:cPrvCli
                   ::oDbf:cPosCli    := ::oTikCliT:cPosCli
-                  ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCodCli, ::oDbfCli )
+                  ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
 
                   ::oDbf:cCodFam    := ::oTikCliL:cCodFam
                   ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
