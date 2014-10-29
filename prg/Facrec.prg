@@ -717,7 +717,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      nView 			:= D():CreateView()
+      nView             := D():CreateView()
 
       /*
       Atipicas de clientes-----------------------------------------------------
@@ -727,15 +727,14 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():FacturasRectificativas( nView )
 
-	  D():Clientes( nView )
+      D():Clientes( nView )
 
-	  D():GruposClientes( nView )
+      D():GruposClientes( nView )
       
       D():Get( "CliInc", nView )
-/*
-      USE ( cPatEmp() + "FacRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @D():FacturasRectificativas( nView ) ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacRecT.CDX" ) ADDITIVE
-*/
+
+      D():ArticuloStockAlmacenes( nView )
+
       USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
 
@@ -940,16 +939,16 @@ STATIC FUNCTION OpenFiles( lExt )
       	end if 
 
 		if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-   			lOpenFiles     := .f.
+   		lOpenFiles     := .f.
 		end if
 
 		if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-         	lOpenFiles     := .f.
-      	end if
+         lOpenFiles     := .f.
+      end if
 
 	  	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-   			lOpenFiles     := .f.
-   		else
+   		lOpenFiles     := .f.
+   	else
 			( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
 		end if
 
@@ -5060,10 +5059,11 @@ Return ( oDlg:nResult == IDOK )
 
 STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
 
-   local nRec        := ( dbfTmpLin )->( RecNo() )
-   local nNumLin     := ( dbfTmpLin )->nNumLin
-   local nUnidades   := 0
-   local nStkActual  := 0
+   local nRec           := ( dbfTmpLin )->( RecNo() )
+   local nNumLin        := ( dbfTmpLin )->nNumLin
+   local nUnidades      := 0
+   local nStkActual     := 0
+   local nStockMinimo   := 0
 
    if aClo[ _LKITART ] .and. ( dbfKit )->( dbSeek( aClo[ _CREF ] ) )
 
@@ -5168,7 +5168,9 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
             Avisaremos del stock bajo minimo--------------------------------------
             */
 
-            if ( dbfArticulo)->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. ( dbfArticulo)->nMinimo > 0
+            nStockMinimo      := nStockMinimo( aClo[ _CREF ], aClo[ _CALMLIN ], nView )
+
+            if ( dbfArticulo)->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo > 0
 
                nStkActual     := oStock:nStockAlmacen( ( dbfKit )->cRefKit, ( dbfTmpLin )->cAlmLin )
                nUnidades      := aClo[ _NUNICAJA ] * ( dbfKit )->nUndKit
@@ -5180,12 +5182,12 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
                                  "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ),;
                                  "¡Atención!" )
 
-                  case nStkActual - nUnidades < ( dbfArticulo)->nMinimo
+                  case nStkActual - nUnidades < nStockMinimo
 
                         MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
                                  "está bajo minimo." + CRLF + ;
                                  "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
-                                 "Stock minimo : " + AllTrim( Trans( ( dbfArticulo)->nMinimo, MasUnd() ) ) + CRLF + ;
+                                 "Stock minimo : " + AllTrim( Trans( nStockMinimo, MasUnd() ) ) + CRLF + ;
                                  "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
                                  "¡Atención!" )
                end case

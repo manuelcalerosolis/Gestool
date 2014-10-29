@@ -134,6 +134,8 @@ memvar nDouDivDep
 memvar nDorDivDep
 memvar cDbfAlm
 
+static nView
+
 static oWndBrw
 static oInf
 static dbfDepAgeT
@@ -291,6 +293,11 @@ STATIC FUNCTION OpenFiles( cPath )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   nView               := D():CreateView()
+
+   D():ArticuloStockAlmacenes( nView )     
+
+
    USE ( cPath + "DEPAGET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DEPAGET", @dbfDepAgeT ) )
    SET ADSINDEX TO ( cPath + "DEPAGET.CDX" ) ADDITIVE
 
@@ -387,6 +394,8 @@ STATIC FUNCTION CloseFiles()
    if oStock != nil
       oStock:end()
    end if
+
+   D():DeleteView( nView )
 
    dbfDepAgeT     := nil
    dbfDepAgeL     := nil

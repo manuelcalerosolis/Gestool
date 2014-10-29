@@ -1598,33 +1598,25 @@ STATIC FUNCTION OpenFiles( lExt )
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-    DisableAcceso()
+      DisableAcceso()
 
-    /*
-    Apertura de bases de datos de facturas de clientes-------------------------
-	*/
+      /*
+      Apertura de bases de datos de facturas de clientes-------------------------
+	  */
 
-    nView 				:= D():CreateView()
+      nView               := D():CreateView()
 
-    D():FacturasClientes( nView )
+      D():FacturasClientes( nView )
 
-    D():Clientes( nView )
+      D():Clientes( nView )
 
-	D():GruposClientes( nView )
+      D():GruposClientes( nView )
 
-/*
-    if !TDataCenter():OpenFacCliT( @D():FacturasClientes( nView ) )
-        lOpenFiles     := .f.
-    end if
+      D():ArticuloStockAlmacenes( nView )     
 
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-*/
-
-    if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-        lOpenFiles     := .f.
-    end if
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles      := .f.
+      end if
     
     USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
     SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
@@ -14202,7 +14194,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
                   end if
                end if
 
-            case oStkAct:VarGet() - nTotUnd < RetFld( aTmp[ _CREF ], dbfArticulo, "nMinimo"  )
+            case oStkAct:VarGet() - nTotUnd < nStockMinimo( aTmp[ _CREF ], aTmp[ _CALMLIN ], nView )
 
                if aTmp[ _LMSGVTA ]
                   if !ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
@@ -14498,6 +14490,7 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
    local nNumLin     := ( dbfTmpLin )->nNumLin
    local nUnidades   := 0
    local nStkActual  := 0
+   local nStkMinimo  := 0
 
    if aClo[ _LKITART ] .and. ( dbfKit )->( dbSeek( aClo[ _CREF ] ) )
 
@@ -14611,10 +14604,12 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
             Avisaremos del stock bajo minimo--------------------------------------
             */
 
-            if ( dbfArticulo)->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. ( dbfArticulo)->nMinimo > 0
+            nStkMinimo        := nStockMinimo( aClo[ _CREF ], aClo[ _CALMLIN ], nView )
 
-               nStkActual              := oStock:nStockAlmacen( ( dbfKit )->cRefKit, ( dbfTmpLin )->cAlmLin )
-               nUnidades               := aClo[ _NUNICAJA ] * ( dbfKit )->nUndKit
+            if ( dbfArticulo)->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStkMinimo > 0
+
+               nStkActual     := oStock:nStockAlmacen( ( dbfKit )->cRefKit, ( dbfTmpLin )->cAlmLin )
+               nUnidades      := aClo[ _NUNICAJA ] * ( dbfKit )->nUndKit
 
                do case
                   case nStkActual - nUnidades < 0
@@ -14623,12 +14618,12 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
                               "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ),;
                               "¡Atención!" )
 
-                  case nStkActual - nUnidades < ( dbfArticulo)->nMinimo
+                  case nStkActual - nUnidades < nStkMinimo
 
                      MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
                               "está bajo minimo."        + CRLF + ;
                               "Unidades a vender : "     + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
-                              "Stock mínimo : "          + AllTrim( Trans( ( dbfArticulo)->nMinimo, MasUnd() ) ) + CRLF + ;
+                              "Stock mínimo : "          + AllTrim( Trans( nStkMinimo, MasUnd() ) ) + CRLF + ;
                               "Stock actual : "          + AllTrim( Trans( nStkActual, MasUnd() ) ),;
                               "¡Atención!" )
                end case

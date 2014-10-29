@@ -1489,7 +1489,6 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-
       oNewImp           := TNewImp():Create( cPatEmp() )
       if !oNewImp:OpenFiles()
          lOpenFiles     := .f.
@@ -10599,34 +10598,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
          return nil
       end if   
 
-      /*if nTotUnd  != 0
-
-         do case
-            case ( nStkAct - nTotUnd ) < 0
-
-               if aTmp[ _LNOTVTA ]
-                  MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStkAct, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + "en almacén " + aTmp[ _CALMLIN ] + "." )
-                  return nil
-               end if
-
-               if aTmp[ _LMSGVTA ]
-                  if !ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStkAct, MasUnd() ) ) + " unidad(es) disponible(s)," + CRLF + " en almacén " + aTmp[ _CALMLIN ] + ".", "¿Desea continuar?" )
-                     return nil
-                  end if
-               end if
-
-            case ( nStkAct - nTotUnd ) < RetFld( aTmp[ _CREF ], D():Articulos( nView ), "nMinimo"  )
-
-               if aTmp[ _LMSGVTA ]
-                  if !ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
-                     return nil
-                  end if
-               end if
-
-         end case
-
-      end if*/
-
    end if
 
    CursorWait()
@@ -13193,7 +13164,7 @@ Static Function lCompruebaStock( uTmpLin, oStock, nTotalUnidades, nStockActual )
          case ( nStockActual - nTotalUnidades ) < nStockMinimo( cCodigoArticulo, cCodigoAlmacen, nView )
 
             if lMsgVta
-               Return ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
+               Return ApoloMsgNoYes( "El stock está por debajo del mínimo.", "¿Desea continuar?" )
             end if
 
       end case
