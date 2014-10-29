@@ -8151,6 +8151,27 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( ordCondSet( "!Deleted() .and. !Field->lBlqCli", {|| !Deleted() .and. !Field->lBlqCli }  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lBlqCli", "Field->Cod", {|| Field->Cod } ) )
 
+      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisLun", {|| !Deleted() .and. Field->lVisLun }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisLun", "Field->Cod", {|| Field->Cod } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisMar", {|| !Deleted() .and. Field->lVisMar }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisMar", "Field->Cod", {|| Field->Cod } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisMie", {|| !Deleted() .and. Field->lVisMie }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisMie", "Field->Cod", {|| Field->Cod } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisJue", {|| !Deleted() .and. Field->lVisJue }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisJue", "Field->Cod", {|| Field->Cod } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisVie", {|| !Deleted() .and. Field->lVisVie }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisVie", "Field->Cod", {|| Field->Cod } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisSab", {|| !Deleted() .and. Field->lVisSab }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisSab", "Field->Cod", {|| Field->Cod } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisDom", {|| !Deleted() .and. Field->lVisDom }  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisDom", "Field->Cod", {|| Field->Cod } ) )
+
       ( dbfCli )->( dbCloseArea() )
 
    else
