@@ -7638,7 +7638,7 @@ static Function ActualizaStockWeb( cNumDoc )
 
    if uFieldEmpresa( "lRealWeb" )
 
-      with object ( TComercio():Init() )
+      with object ( TComercio():New())
 
          if ( D():FacturasRectificativasProveedoresLineas( nView ) )->( dbSeek( cNumDoc ) )
 
