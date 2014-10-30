@@ -1429,7 +1429,7 @@ Static Function Actualizaweb( cCodFam, lActualizaweb )
 
       if lPubFam()
 
-         with object ( TComercio():GetInstance() )    
+         with object ( TComercio():Init() )    
             :ActualizaCategoriesPrestashop( cCodFam )
          end with  
 

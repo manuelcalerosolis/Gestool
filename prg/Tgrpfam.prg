@@ -376,7 +376,7 @@ METHOD Actualizaweb( cCodWeb, lDel ) Class TGrpFam
    if ::lActualizaWeb .and. uFieldEmpresa( "lRealWeb" )
 
       if ::lPubGrp() .or. lDel
-         with object ( TComercio():GetInstance() )
+         with object ( TComercio():Init() )
             :ActualizaGrupoCategoriesPrestashop( ::oDbf:cCodGrp, lDel, cCodWeb )
          end with
       end if

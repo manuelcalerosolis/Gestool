@@ -2635,7 +2635,7 @@ Static Function Actualizaweb( cCodPrp, lActualizaweb )
 
       if lPubPrp()
 
-         with object ( TComercio():GetInstance() )    
+         with object ( TComercio():Init() )    
             :ActualizaPropiedadesPrestashop( cCodPrp, nTipoActualizacionLineas )
          end with  
 

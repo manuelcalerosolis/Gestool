@@ -183,6 +183,7 @@ CLASS TComercio
    DATA  cPrefijoBaseDatos
 
    Method GetInstance()       CONSTRUCTOR
+   METHOD Init()              CONSTRUCTOR
    Method New()               CONSTRUCTOR
    Method Create()                  INLINE ( Self )
    METHOD lReady()                  INLINE ( !Empty( ::cHost) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
@@ -326,6 +327,18 @@ END CLASS
 METHOD GetInstance() 
 
    MSGaLERT( "GetInstance")
+
+   if Empty( ::oInstance )
+      ::oInstance          := ::New()
+   end if
+
+RETURN ( ::oInstance )
+
+//---------------------------------------------------------------------------//
+
+METHOD Init() 
+
+   MSGaLERT( "Initiate")
 
    if Empty( ::oInstance )
       ::oInstance          := ::New()

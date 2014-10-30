@@ -18649,7 +18649,7 @@ Static Function ActualizaWeb( cCodArt, lChangeImage, lActualizaWeb )
 
       if lPubArt()
 
-         with object ( TComercio():GetInstance() )  
+         with object ( TComercio():Init() )  
             :ActualizaProductsPrestashop( cCodArt, lChangeImage )
          end with
 
@@ -18667,7 +18667,7 @@ Static Function BuildWeb( cCodArt )
 
       msgAlert( cCodArt )
 
-      with object ( TComercio():GetInstance() )  
+      with object ( TComercio():Init() )  
          :BuildProductPrestashop( cCodArt )
       end with
 

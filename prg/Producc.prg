@@ -4765,7 +4765,7 @@ Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
       nRec     := ::oDetProduccion:oDbf:Recno()
       nOrdAnt  := ::oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
 
-      with object ( TComercio():GetInstance() )
+      with object ( TComercio():Init() )
 
          if ::oDetProduccion:oDbf:Seek( cNumDoc )
 
@@ -4795,7 +4795,7 @@ Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
       nRec     := ::oDetMaterial:oDbf:Recno()
       nOrdAnt  := ::oDetMaterial:oDbf:OrdSetFocus( "cNumOrd" )
 
-      with object ( TComercio():GetInstance() )
+      with object ( TComercio():Init() )
 
          if ::oDetMaterial:oDbf:Seek( cNumDoc )
 

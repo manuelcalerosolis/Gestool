@@ -2979,7 +2979,7 @@ Method ActualizaStockWeb( cNumDoc ) CLASS TRemMovAlm
       nRec     := ::oDetMovimientos:oDbf:Recno()
       nOrdAnt  := ::oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
 
-      with object ( TComercio():GetInstance() )
+      with object ( TComercio():Init() )
 
          if ::oDetMovimientos:oDbf:Seek( cNumDoc )
 
