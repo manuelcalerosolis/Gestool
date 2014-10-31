@@ -4525,7 +4525,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda, .t. ) } )
       end if
 
-      //oDlg:AddFastKey( VK_F8,    {|| BuildWeb( aTmp[ ( dbfArticulo )->( fieldpos("Codigo") ) ] ) } )
+      oDlg:AddFastKey( VK_F8,    {|| BuildWeb( aTmp[ ( dbfArticulo )->( fieldpos("Codigo") ) ] ), EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
 
    end if
 
@@ -18663,12 +18663,15 @@ Return .t.
 
 Static Function BuildWeb( cCodArt )
 
+   local oComercio
+
    if lPubArt()
 
       msgAlert( cCodArt )
 
       with object ( TComercio():GetInstance() )  
          :BuildProductPrestashop( cCodArt )
+         //:End()
       end with
 
    end if   
@@ -18676,7 +18679,6 @@ Static Function BuildWeb( cCodArt )
 Return .t.
 
 //---------------------------------------------------------------------------//
-
 
 Static Function lPubArt()
 
