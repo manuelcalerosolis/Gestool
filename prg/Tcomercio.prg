@@ -182,7 +182,7 @@ CLASS TComercio
 
    DATA  cPrefijoBaseDatos
 
-   METHOD Init()              
+   METHOD GetInstance()              
    Method New()               CONSTRUCTOR
    Method Create()                  INLINE ( Self )
    METHOD lReady()                  INLINE ( !Empty( ::cHost) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
@@ -336,11 +336,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
 METHOD GetInstance() 
-=======
-METHOD Init() 
->>>>>>> origin/master
 
    if Empty( ::oInstance )
       ::oInstance          := ::New()

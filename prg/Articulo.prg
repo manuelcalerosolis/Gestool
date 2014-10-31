@@ -18669,7 +18669,7 @@ Static Function BuildWeb( cCodArt )
 
       msgAlert( cCodArt )
 
-      with object ( TComercio():New())  
+      with object ( TComercio():New() )  
          :BuildProductPrestashop( cCodArt )
          //:End()
       end with
