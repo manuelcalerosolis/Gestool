@@ -3,9 +3,9 @@
 #include "Factu.ch" 
 #include "Ini.ch"
 #include "MesDbf.ch"
-
+/*
 #ifdef __XHARBOUR__
-
+*/
 //----------------------------------------------------------------------------//
 
 CLASS TMySql
@@ -36,7 +36,11 @@ Method New( cHost, cUser, cPasswd, cDbName, nPort )
    DEFAULT cDbName   := cDtbSql()
    DEFAULT nPort     := nPrtSql()
 
+   msgAlert("TMSConnect():New()")
+
    ::oConexion       := TMSConnect():New()  // Inicia el objeto Conexion
+
+   msgAlert("Despues de TMSConnect():New()")
 
    ::cHost           := RTrim( cHost )
    ::cUser           := RTrim( cUser )
@@ -55,9 +59,9 @@ Method TestConexion()
    end if
 
    if ::Connect()
-       MsgInfo( "Conectado" )
+      MsgInfo( "Conectado" )
    else
-       MsgInfo( "No hay conexión" )
+      MsgInfo( "No hay conexión" )
    endif
 
    ::Destroy()
@@ -65,7 +69,7 @@ Method TestConexion()
 Return ( Self )
 
 //----------------------------------------------------------------------------//
-
+/*
 #else
 
 CLASS TMySql
@@ -102,6 +106,8 @@ Method New( cHost, cUser, cPasswd, cDbName, nPort )
    ::cDbName         := RTrim( cDbName )
    ::nPort           := nPort
 
+   MSGaLERT( "TDolphinSrv():New( ::cHost, ::cUser, ::cPasswd, ::nPort, , ::cDbName )" )  
+
    ::oConexion       := TDolphinSrv():New( ::cHost, ::cUser, ::cPasswd, ::nPort, , ::cDbName )
 
 Return ( Self )
@@ -127,3 +133,4 @@ Return ( Self )
 //----------------------------------------------------------------------------//
 
 #endif
+*/

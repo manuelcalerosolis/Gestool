@@ -5998,7 +5998,9 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          lChangeImage  := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
       end if   
 
-      Actualizaweb( cCod, lChangeImage, lActualizaWeb )
+      if lActualizaWeb
+         Actualizaweb( cCod, lChangeImage )
+      end if
 
       /*
       Terminamos la transación-------------------------------------------------
@@ -18643,18 +18645,13 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function ActualizaWeb( cCodArt, lChangeImage, lActualizaWeb )
+Static Function ActualizaWeb( cCodArt, lChangeImage )
 
-   if lActualizaWeb .and. uFieldEmpresa( "lRealWeb" )
-
-      if lPubArt()
-
-         with object ( TComercio():New())  
-            :ActualizaProductsPrestashop( cCodArt, lChangeImage )
-         end with
-
-      end if   
-
+   if lPubArt()
+      with object ( TComercio():New() )  
+         msgAlert( :ClassName() )
+         :ActualizaProductsPrestashop( cCodArt, lChangeImage )
+      end with
    end if   
 
 Return .t.
@@ -18665,9 +18662,7 @@ Static Function BuildWeb( cCodArt )
 
    if lPubArt()
 
-      msgAlert( cCodArt )
-
-      with object ( TComercio():New())  
+      with object ( TComercio():New() )  
          :BuildProductPrestashop( cCodArt )
       end with
 

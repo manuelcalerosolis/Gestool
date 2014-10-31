@@ -4,12 +4,17 @@
 #include "Ini.ch"
 #include "MesDbf.ch" 
 
-#ifdef __XHARBOUR__
-
 #define tipoProducto    1
 #define tipoCategoria   2     
 
 //---------------------------------------------------------------------------//
+
+#ifndef __XHARBOUR__
+
+CLASS TComercio
+ENDCLASS
+
+#else 
 
 static oTimer
 static oComercio
@@ -182,9 +187,9 @@ CLASS TComercio
 
    DATA  cPrefijoBaseDatos
 
-   METHOD Init()              
+   METHOD GetInstance()              
    Method New()               CONSTRUCTOR
-   Method Create()                  INLINE ( Self )
+   // Method Create()                  INLINE ( Self )
    METHOD lReady()                  INLINE ( !Empty( ::cHost) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
 
    Method OpenFiles()
@@ -323,16 +328,6 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Init() 
-
-   if Empty( ::oInstance )
-      ::oInstance          := ::New()
-   end if
-
-RETURN ( ::oInstance )
-
-//---------------------------------------------------------------------------//
-
 METHOD New( oMenuItem ) CLASS TComercio
 
    DEFAULT oMenuItem       := "01108"
@@ -363,6 +358,16 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::cPrefijoBaseDatos     := uFieldEmpresa( "cPrefixTbl" )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetInstance() CLASS TComercio
+
+   if Empty( ::oInstance )
+      ::oInstance          := ::New()
+   end if
+
+RETURN ( ::oInstance )
 
 //---------------------------------------------------------------------------//
 
@@ -823,7 +828,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD ChangeSincAll()
+METHOD ChangeSincAll() CLASS TComercio
 
    if ::lSyncAll
 
@@ -1080,7 +1085,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Method ImportarPrestashop()
+Method ImportarPrestashop() CLASS TComercio
 
    local oDb
    local oBlock
@@ -1701,7 +1706,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActualizaCaterogiaPadrePrestashop()
+METHOD ActualizaCaterogiaPadrePrestashop() CLASS TComercio
 
    local lReturn  := .f.
    local cCommand := ""
@@ -3254,7 +3259,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EliminaPropiedadesProductsPrestashop( cCodWeb )
+METHOD EliminaPropiedadesProductsPrestashop( cCodWeb ) CLASS TComercio
 
    local oQuery
    local cCommand    := ""
@@ -3306,7 +3311,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendArticuloPrestashop( oDb )
+METHOD AppendArticuloPrestashop( oDb ) CLASS TComercio
 
    local cCommand    := ""
 
@@ -5067,7 +5072,7 @@ Return ( ::aTipoImagesPrestashop )
 
 //---------------------------------------------------------------------------//
 
-METHOD nDefImagen( cCodArt, cImagen )
+METHOD nDefImagen( cCodArt, cImagen ) CLASS TComercio
 
    local nDef           := 0
 
@@ -5095,7 +5100,7 @@ Return nDef
 
 //---------------------------------------------------------------------------//
 
-METHOD lLimpiaRefImgWeb()
+METHOD lLimpiaRefImgWeb() CLASS TComercio
 
    local nRec     := ::oArtDiv:Recno()
    local nOrdAnt  := ::oArtDiv:OrdSetFocus( "cCodArt" )
@@ -5119,7 +5124,7 @@ return .t.
 
 //-----------------------------------------------------------------------------
 
-METHOD nCodigoWebImagen( cCodArt, cImagen )
+METHOD nCodigoWebImagen( cCodArt, cImagen ) CLASS TComercio
 
    local nCodigo  := 0
    local nRec     := ::oArtDiv:Recno()
@@ -5413,7 +5418,7 @@ return cValPrp
 
 //---------------------------------------------------------------------------//
 
-METHOD AppTipoArticuloPrestashop( cCodTip, IdParent )
+METHOD AppTipoArticuloPrestashop( cCodTip, IdParent ) CLASS TComercio
 
    local nCodigoWeb     := 0
    local nOrdAnt        := ::oTipArt:OrdSetFocus( "cCodTip" )
@@ -5527,7 +5532,7 @@ return nCodigoWeb
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendClientesToPrestashop()
+METHOD AppendClientesToPrestashop() CLASS TComercio
 
    local nCodigoWeb  := 0
    local nSpace      := 0
@@ -5716,7 +5721,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendClientPrestashop()
+METHOD AppendClientPrestashop() CLASS TComercio
 
    local oQueryDirecciones
    local lFirst                  := .t.
@@ -5893,7 +5898,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendPedidoprestashop()
+METHOD AppendPedidoprestashop() CLASS TComercio
 
    local cSerPed                 := ""
    local nNumPed                 := 0
@@ -6502,7 +6507,7 @@ Return nIdProductAttribute
 
 //---------------------------------------------------------------------------//
 
-METHOD cValidDirectoryFtp( cDirectory )
+METHOD cValidDirectoryFtp( cDirectory ) CLASS TComercio
 
    local cResult
 
@@ -6532,7 +6537,7 @@ Return ( cResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateDirectoryImages( cCarpeta )
+METHOD CreateDirectoryImages( cCarpeta ) CLASS TComercio
 
    local n
 
@@ -6545,7 +6550,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD ReturnDirectoryImages( cCarpeta )
+METHOD ReturnDirectoryImages( cCarpeta ) CLASS TComercio
 
    local n
 
@@ -6557,7 +6562,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateDirectoryImagesLocal( cCarpeta )
+METHOD CreateDirectoryImagesLocal( cCarpeta ) CLASS TComercio
 
    local n
    local cResult  := ""
@@ -6865,11 +6870,5 @@ Function KillAutoRecive()
 Return( nil )
 
 //---------------------------------------------------------------------------//
-
-#else
-
-CLASS TComercio
-
-ENDCLASS 
 
 #endif
