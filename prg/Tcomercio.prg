@@ -640,7 +640,7 @@ METHOD Activate( oWnd ) CLASS TComercio
 
    DEFAULT  oWnd        := oWnd()
 
-   ::nLevel             := nLevelUsr( oMenuItem )
+   ::nLevel             := nLevelUsr( "01108" )
 
    if nAnd( ::nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
