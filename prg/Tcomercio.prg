@@ -182,7 +182,7 @@ CLASS TComercio
 
    DATA  cPrefijoBaseDatos
 
-   Method GetInstance()       CONSTRUCTOR
+   METHOD Init()              
    Method New()               CONSTRUCTOR
    Method Create()                  INLINE ( Self )
    METHOD lReady()                  INLINE ( !Empty( ::cHost) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
@@ -336,7 +336,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+<<<<<<< HEAD
 METHOD GetInstance() 
+=======
+METHOD Init() 
+>>>>>>> origin/master
 
    if Empty( ::oInstance )
       ::oInstance          := ::New()
@@ -349,8 +353,6 @@ RETURN ( ::oInstance )
 METHOD New( oMenuItem ) CLASS TComercio
 
    DEFAULT oMenuItem       := "01108"
-
-   ::nLevel                := nLevelUsr( oMenuItem )
 
    ::oIniEmpresa           := TIni():New( cPatEmp() + "Empresa.Ini" )
 
@@ -654,6 +656,8 @@ RETURN ( Self )
 METHOD Activate( oWnd ) CLASS TComercio
 
    DEFAULT  oWnd        := oWnd()
+
+   ::nLevel             := nLevelUsr( "01108" )
 
    if nAnd( ::nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )

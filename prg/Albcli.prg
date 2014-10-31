@@ -12864,7 +12864,7 @@ Static Function ActualizaStockWeb( cNumDoc )
 
    if uFieldEmpresa( "lRealWeb" )
 
-      with object ( TComercio():GetInstance() )
+      with object ( TComercio():New())
 
          if ( D():Get( "AlbCliL", nView ) )->( dbSeek( cNumDoc ) )
 

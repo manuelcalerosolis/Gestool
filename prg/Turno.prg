@@ -1633,9 +1633,6 @@ Cierra el turno
 METHOD lCloseCajaSeleccionada()
 
    local cCurrentTruno  
-   local nTotalCajas    := 0
-   local aCajasCerradas := {}
-   local nCajasCerradas := 0
 
    // Que nadie toque-------------------------------------------------------------
 
@@ -1645,132 +1642,56 @@ METHOD lCloseCajaSeleccionada()
 
    // Cajas deseincronizadas---------------------------------------------------
 
-   cCurrentTruno     := ::cCurTurno 
-
-   /*
-   if .t. // uFieldEmpresa( "lDesCajas" )
-      cCurrentTruno     := ::cCurTurno // + ::GetCurrentCaja()
-      bWhileTruno       := {|| ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur + ::oDbfCaj:cCajTur == cCurrentTruno }
-   else 
-   end if 
-   */
+   cCurrentTruno        := ::GetFullTurno() 
 
    // Guardamos los comentarios---------------------------------------------------
 
-   if !::lArqueoParcial .and. ::oDbf:Seek( cCurrentTruno )
-      ::oDbf:FieldPutByName( "mComTur", ::cComentario )
-   end if
+   if !::lArqueoParcial 
 
-   // Cerramos las cajas una a una------------------------------------------------
+      if ::oDbf:Seek( cCurrentTruno )
+         ::oDbf:FieldPutByName( "mComTur", ::cComentario )
+      end if
 
-   ::oDbfCaj:GetStatus( .t. )
+      // Cerramos las cajas una a una------------------------------------------------
+
+      if ::oDbfCaj:Seek( cCurrentTruno ) 
+         ::lCloseCaja( .t., ::oDbfCaj:cCodCaj )
+      end if
    
-   if ::oDbfCaj:Seek( cCurrentTruno )
-   
-      while ( ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurrentTruno ) .and. !( ::oDbfCaj:Eof() )
-   
-         nTotalCajas++
-   
-         if ( ::oDbfCaj:lCajClo )
-   
-            nCajasCerradas++
-   
-         elseif ( ::lInCajaSelect( ::oDbfCaj:cCodCaj ) )
+      // Si hemos cerrado todas las cajas, cerramos el turno-------------------------
 
-            // Cerramos las cajas----------------------------------------------------
-         
-            if !::lArqueoParcial
-               ::lCloseCaja( .t., ::oDbfCaj:cCodCaj )
-            end if
-         
-            // Una nueva caja cerrada----------------------------------------------
-         
-            aAdd( aCajasCerradas, ::oDbfCaj:cCodCaj )
-         
-            nCajasCerradas++
-         
-         end if
-         
-         // Siguiente caja--------------------------------------------------------
-         
-         ::oDbfCaj:Skip()
-         
-         SysRefresh()
-      
-      end while
-   
-   end if
-   
-   // Si hemos cerrado todas las cajas, cerramos el turno-------------------------
+      ::lAllCloseTurno( cCurrentTruno )
 
-   if !::lArqueoParcial
+   end if 
 
-      if nCajasCerradas >= nTotalCajas
-         ::lAllCloseTurno( cCurrentTruno )
-      else
-         ::lOneCloseTurno( cCurrentTruno )      
-      end if 
+   // Envio del mail--------------------------------------------------------------
 
-   end if
+   if ::lEnviarMail .and. !Empty( ::cEnviarMail )
+      if !Empty( ::oTxt )
+         ::oTxt:SetText( "Enviando mail..." )
+      end if
 
-   // Envio de información e impresion--------------------------------------------
+      ::MailArqueo( cCurrentTruno )      
+   end if 
 
-   if ::oDbfCaj:Seek( cCurrentTruno )
+   // Impresion----------------------------------------------------------------
 
-      while ( ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurrentTruno ) .and. !( ::oDbfCaj:Eof() )
+   if !::lNoImprimirArqueo
+      if !Empty( ::oTxt )
+         ::oTxt:SetText( "Imprimiendo..." )
+      end if
 
-         if aScan( aCajasCerradas, ::oDbfCaj:cCodCaj ) != 0
-
-            // Mensajes para mandar por email----------------------------------------
-
-            if !::lArqueoParcial .and. ::lEnviarMail .and. !Empty( ::cEnviarMail )
-
-               if !Empty( ::oTxt )
-                  ::oTxt:SetText( "Enviando mail..." )
-               end if
-
-               ::MailArqueo( cCurrentTruno )
-
-            end if
-
-            // Imprimir arqueo-------------------------------------------------------
-
-            if !::lNoImprimirArqueo
-
-               if !Empty( ::oTxt )
-                  ::oTxt:SetText( "Imprimiendo..." )
-               end if
-
-               ::PrintArqueo( cCurrentTruno, ::oDbfCaj:cCodCaj, ::cCmbReport, "", ::cPrnArq, ::cWinArq )
-
-            end if
-
-         end if
-
-         // Siguiente caja--------------------------------------------------------
-
-         ::oDbfCaj:Skip()
-
-         SysRefresh()
-
-      end while
-
-   end if
-
-   ::oDbfCaj:SetStatus()
-
-   ::oDbf:SetStatus()
+      ::PrintArqueo( cCurrentTruno, ::oDbfCaj:cCodCaj, ::cCmbReport, "", ::cPrnArq, ::cWinArq )
+   end if 
 
    // Envio de información por internet----------------------------------------
 
-   if ::lEnvioInformacion .and. !::lArqueoParcial
-
+   if !::lArqueoParcial .and. ::lEnvioInformacion
       if !Empty( ::oTxt )
          ::oTxt:SetText( "Enviando información a servidores..." )
       end if
 
       TSndRecInf():New():LoadFromIni():Activate( nil, .t. ) // AutoExecute( .t. )
-
    end if
 
    // Habilitamos el dialogo---------------------------------------------------
@@ -3044,32 +2965,28 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 */
-   ::lCerrado        := ( ::oDbf:nStaTur == cajCerrrada )
-
-   ::cComentario     := ::oDbf:mComTur
 
    ::CreateCajaTurno()
 
-   ::oDbf:GetStatus()
-
-   ::oDbfDet:OrdScope( ::cCurTurno )
-
    // Si estamos con las cajas desincorizadas el scope es por caja-------------
 
-   if .t. // uFieldEmpresa( "lDesCajas" ) 
-      ::oDbfCaj:OrdScope( ::GetFullTurno() )
-   else
-      ::oDbfCaj:OrdScope( ::cCurTurno )
-   end if
+   ::oDbf:GetStatus()
+   ::oDbf:Seek( ::GetFullTurno() )
+
+   ::oDbfDet:OrdScope( ::GetFullTurno() )
+   ::oDbfDet:GoTop()
+
+   ::oDbfCaj:OrdScope( ::GetFullTurno() )
+   ::oDbfCaj:GoTop()
+
+   // Valores para su posterior edición----------------------------------------
+
+   ::lCerrado        := ( ::oDbf:nStaTur == cajCerrrada )
+   ::cComentario     := ::oDbf:mComTur
 
    // Seleccionamos las cajas q se van a cerrar-----------------------------------
 
-   ::oDbfCaj:GoTop()
-   while !::oDbfCaj:Eof()
-      ::SelCajas( ::oDbfCaj:cCodCaj == ::cCurCaja )
-      ::oDbfCaj:Skip()
-   end while       
-   ::oDbfCaj:GoTop()
+   ::SelCajas( .t. )
 
    // Valores de la impresión-----------------------------------------------------
 
@@ -3548,11 +3465,11 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          OF          ::oFldTurno:aDialogs[3]
 
       REDEFINE BUTTONBMP oBtnEfectivo;
-         ID       220 ;
-         OF       ::oFldTurno:aDialogs[ 3 ] ;
-         WHEN     !::lCerrado ;
-         BITMAP   "Money2_32" ;
-         ACTION   ( ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() )
+         ID          220 ;
+         OF          ::oFldTurno:aDialogs[ 3 ] ;
+         WHEN        !::lCerrado ;
+         BITMAP      "Money2_32" ;
+         ACTION      ( ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() )
 
       else
 
@@ -4417,7 +4334,7 @@ Method SelCajas( lSelect, oBrw, lMessage )
 
    if lSelect
 
-      if ::oDbfCaj:FieldGetByName( "lCajClo" ) .and. !oUser():lMaster()
+      if .f. // ::oDbfCaj:lCajClo // .and. !oUser():lMaster()
 
          if lMessage 
             MsgStop( "La caja " + ::oDbfCaj:FieldGetByName( "cCodCaj" ) + " ya está cerrada." )

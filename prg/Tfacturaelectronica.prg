@@ -1449,14 +1449,22 @@ CLASS ItemLine
 
    //------------------------------------------------------------------------//
 
-   METHOD New( oFacturaElectronica )      INLINE ( ::oFacturaElectronica := oFacturaElectronica )
+   METHOD New( oFacturaElectronica )      CONSTRUCTOR
 
    METHOD addDiscount( oDiscount )
    METHOD GrossAmount()
 
-   METHOD addTax( oTax )   INLINE aAdd( ::aTax, oTax )
+   METHOD addTax( oTax )                  INLINE aAdd( ::aTax, oTax )
 
 ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oFacturaElectronica )
+
+   ::oFacturaElectronica               := oFacturaElectronica 
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

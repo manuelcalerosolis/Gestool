@@ -503,6 +503,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Get( "CliInc", nView )
 
+      D():ArticuloStockAlmacenes( nView )           
+
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -7193,6 +7195,7 @@ Static Function AppendKit( uTmpLin, aTmpSat )
    local nRecAct                       := ( dbfKit )->( Recno() )
    local nUnidades                     := 0
    local nStkActual                    := 0
+   local nStockMinimo                  := 0
 
    if ValType( uTmpLin ) == "A"
       cCodArt                          := uTmpLin[ _CREF    ]
@@ -7331,8 +7334,10 @@ Static Function AppendKit( uTmpLin, aTmpSat )
             /*
             Avisaremos del stock bajo minimo--------------------------------------
             */
+            
+            nStockMinimo      := nStockMinimo( ( dbfKit )->cRefKit, cAlmLin, nView )
 
-            if ( dbfArticulo )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. ( dbfArticulo)->nMinimo > 0
+            if ( dbfArticulo )->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo > 0
 
                nStkActual     := oStock:nStockAlmacen( ( dbfKit )->cRefKit, cAlmLin )
                nUnidades      := nUniCaj * ( dbfKit )->nUndKit
@@ -7344,12 +7349,12 @@ Static Function AppendKit( uTmpLin, aTmpSat )
                                  "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ),;
                                  "¡Atención!" )
 
-                  case nStkActual - nUnidades < ( dbfArticulo)->nMinimo
+                  case nStkActual - nUnidades < nStockMinimo
 
                         MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
                                  "está bajo minimo." + CRLF + ;
                                  "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
-                                 "Stock minimo : " + AllTrim( Trans( ( dbfArticulo)->nMinimo, MasUnd() ) ) + CRLF + ;
+                                 "Stock minimo : " + AllTrim( Trans( nStockMinimo, MasUnd() ) ) + CRLF + ;
                                  "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
                                  "¡Atención!" )
 

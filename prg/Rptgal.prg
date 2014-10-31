@@ -2474,6 +2474,11 @@ Function TListViewItem()
 
 Return nil
 
+Function TFacturarLineasAlbaranesProveedor()
+
+Return nil
+
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP
