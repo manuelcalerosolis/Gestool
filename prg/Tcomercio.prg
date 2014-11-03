@@ -341,8 +341,6 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-=======
 METHOD GetInstance() 
 
    if Empty( ::oInstance )
@@ -353,7 +351,6 @@ RETURN ( ::oInstance )
 
 //---------------------------------------------------------------------------//
 
->>>>>>> origin/master
 METHOD New( oMenuItem ) CLASS TComercio
 
    DEFAULT oMenuItem       := "01108"
@@ -384,16 +381,6 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::cPrefijoBaseDatos     := uFieldEmpresa( "cPrefixTbl" )
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetInstance() CLASS TComercio
-
-   if Empty( ::oInstance )
-      ::oInstance          := ::New()
-   end if
-
-RETURN ( ::oInstance )
 
 //---------------------------------------------------------------------------//
 

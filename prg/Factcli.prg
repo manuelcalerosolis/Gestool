@@ -5594,12 +5594,12 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"lPixels"   => .t.,;
                                              		"nClrText"  => Rgb( 0, 0, 0 ),;
                                              		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             		"nWidth"    => {|| GridWidth( 8, oDlg ) },;
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
    	oBtnSalir         := TGridImage():Build(  {  "nTop"      => 5,;
-                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                   "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_del_64",;
@@ -5701,7 +5701,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "nCol"      => {|| GridWidth( 6.5, oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, cSayTextRuta, cSayTextRuta := u ) },;
                                                    "oWnd"      => oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 1, oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 3, oDlg ) },;
                                                    "nHeight"   => nAltoGet,;
                                                    "bWhen"     => {|| .f. },;
                                                    "lPixels"   => .t. } )
@@ -5848,7 +5848,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "oWnd"      => oDlg } )
 
       oBtnDown          := TGridImage():Build(  {  "nTop"      => 175,;
-                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                   "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_down_64",;
@@ -6078,7 +6078,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"lPixels"   => .t.,;
                                              		"nClrText"  => Rgb( 0, 0, 0 ),;
                                              		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             		"nWidth"    => {|| GridWidth( 8, oDlg ) },;
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
@@ -6091,7 +6091,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
                                              		"nWidth"    => 64,;
                                             	 	   "nHeight"   => 64,;
                                              		"cResName"  => "flat_del_64",;
@@ -6391,7 +6391,7 @@ static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
                                              		"lPixels"   => .t.,;
                                              		"nClrText"  => Rgb( 0, 0, 0 ),;
                                              		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             		"nWidth"    => {|| GridWidth( 8, oDlg ) },;
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
@@ -6749,7 +6749,7 @@ Function FacCliTablet()
                                              		"lPixels"   => .t.,;
                                              		"nClrText"  => Rgb( 0, 0, 0 ),;
                                              		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             		"nWidth"    => {|| GridWidth( 8, oDlg ) },;
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
@@ -6832,7 +6832,7 @@ Function FacCliTablet()
                                              		"oWnd"      => oDlg } )
 
    	oBtnDown  			:= TGridImage():Build(  {  "nTop"      => 70,;
-                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_down_64",;
@@ -12159,14 +12159,14 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
          else
 
             if !Empty( ( D():Clientes( nView ) )->Serie )               .and.;
-               aTmp[ _CSERIE ] != ( D():Clientes( nView ) )->Serie      .and.;
-               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               aTmp[ _CSERIE ] != ( D():Clientes( nView ) )->Serie      // .and. ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
                
-               	if !Empty( aGet[ _CSERIE ] )
-               		aGet[ _CSERIE ]:cText( ( D():Clientes( nView ) )->Serie )
-               	else
-               		aTmp[ _CSERIE ]	:= ( D():Clientes( nView ) )->Serie
-               	end if	
+            	if !Empty( aGet[ _CSERIE ] )
+            		aGet[ _CSERIE ]:cText( ( D():Clientes( nView ) )->Serie )
+            	else
+            		aTmp[ _CSERIE ]	:= ( D():Clientes( nView ) )->Serie
+            	end if	
+
             end if
 
          end if

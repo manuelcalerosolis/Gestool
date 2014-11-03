@@ -2267,12 +2267,12 @@ METHOD ActivateTablet() CLASS TSndRecInf
                                                    "lPixels"   => .t.,;
                                                    "nClrText"  => Rgb( 0, 0, 0 ),;
                                                    "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                                   "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 8, oDlg ) },;
                                                    "nHeight"   => 32,;
                                                    "lDesign"   => .f. } )
 
    oBtnAceptar       := TGridImage():Build(  {     "nTop"      => 5,;
-                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                   "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_check_64",;
