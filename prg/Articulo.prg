@@ -4525,7 +4525,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda, .t. ) } )
       end if
 
-      oDlg:AddFastKey( VK_F8,    {|| BuildWeb( aTmp[ ( dbfArticulo )->( fieldpos("Codigo") ) ] ), EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
+      //oDlg:AddFastKey( VK_F8,    {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ), BuildWeb( aTmp[ ( dbfArticulo )->( fieldpos("Codigo") ) ] ) } )
 
    end if
 
@@ -5998,7 +5998,8 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          lChangeImage  := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
       end if   
 
-      Actualizaweb( cCod, lChangeImage, lActualizaWeb )
+      //Actualizaweb( cCod, lChangeImage, lActualizaWeb )
+      BuildWeb( cCod )
 
       /*
       Terminamos la transación-------------------------------------------------
