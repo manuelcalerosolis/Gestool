@@ -5998,8 +5998,14 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          lChangeImage  := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
       end if   
 
+<<<<<<< HEAD
       //Actualizaweb( cCod, lChangeImage, lActualizaWeb )
       BuildWeb( cCod )
+=======
+      if lActualizaWeb
+         Actualizaweb( cCod, lChangeImage )
+      end if
+>>>>>>> origin/master
 
       /*
       Terminamos la transación-------------------------------------------------
@@ -18644,18 +18650,12 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function ActualizaWeb( cCodArt, lChangeImage, lActualizaWeb )
+Static Function ActualizaWeb( cCodArt, lChangeImage )
 
-   if lActualizaWeb .and. uFieldEmpresa( "lRealWeb" )
-
-      if lPubArt()
-
-         with object ( TComercio():New())  
-            :ActualizaProductsPrestashop( cCodArt, lChangeImage )
-         end with
-
-      end if   
-
+   if lPubArt()
+      with object ( TComercio():New() )  
+         :ActualizaProductsPrestashop( cCodArt, lChangeImage )
+      end with
    end if   
 
 Return .t.
@@ -18664,17 +18664,10 @@ Return .t.
 
 Static Function BuildWeb( cCodArt )
 
-   local oComercio
-
    if lPubArt()
-
-      msgAlert( cCodArt )
-
       with object ( TComercio():New() )  
          :BuildProductPrestashop( cCodArt )
-         //:End()
       end with
-
    end if   
 
 Return .t.
@@ -18683,23 +18676,7 @@ Return .t.
 
 Static Function lPubArt()
 
-   local lPub  := .f.
-
-   if ( dbfArticulo )->lPubInt
-
-      lPub     := .t.
-
-   else
-
-      if ( dbfArticulo )->cCodWeb != 0
-
-         lPub  := .t.
-
-      end if
-
-   end if
-
-Return lPub
+Return ( ( dbfArticulo )->lPubInt .or. ( dbfArticulo )->cCodWeb != 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -18912,7 +18889,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "lPixels"   => .t.,;
                                              "nClrText"  => Rgb( 0, 0, 0 ),;
                                              "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             "nWidth"    => {|| GridWidth( 8, oDlg ) },;
                                              "nHeight"   => 32,;
                                              "lDesign"   => .f.,;
                                              "bAction"   => {|| MsgInfo( "action" ) } } )
@@ -18926,7 +18903,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "oWnd"      => oDlg } )
 
    oBtnCancelar   := TGridImage():Build(  {  "nTop"      => 5,;
-                                             "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
                                              "cResName"  => "flat_del_64",;
@@ -18939,7 +18916,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                              "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
                                              "oWnd"      => oDlg,;
-                                             "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                             "nWidth"    => {|| GridWidth( 8, oDlg ) },;
                                              "nHeight"   => 25,;
                                              "bValid"    => {|| OrdClearScope( oBrw, dbfArticulo ) },;
                                              "bChanged"  => {| nKey, nFlags, Self | SpecialSeek( nKey, nFlags, Self, oBrw, oCbxOrd, dbfArticulo, dbfCodebar )  } } )
@@ -18988,7 +18965,7 @@ FUNCTION GridBrwArticulo( uGet, uGetName, lBigStyle )
                                                    "oWnd"      => oDlg } )
 
       oBtnDown          := TGridImage():Build(  {  "nTop"      => 70,;
-                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                                   "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_down_64",;

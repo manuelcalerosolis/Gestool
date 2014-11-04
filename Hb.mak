@@ -1098,7 +1098,7 @@ $(OBJ)\TGridSay.obj
 $<,$*
 $(FWLIB)\FiveH.lib              	+
 $(FWLIB)\FiveHC.lib             	+
-$(FWLIB)\Dolphin.lib            	+
+$(HBLIB)\Eagle1.lib            	+
 $(FWLIB)\libmysql.lib           	+
 $(HBLIB)\hbwin.lib 					+
 $(HBLIB)\gtwin.lib 					+ 
