@@ -5998,15 +5998,9 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          lChangeImage  := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
       end if   
 
-<<<<<<< HEAD
       //Actualizaweb( cCod, lChangeImage, lActualizaWeb )
       BuildWeb( cCod )
-=======
-      if lActualizaWeb
-         Actualizaweb( cCod, lChangeImage )
-      end if
->>>>>>> origin/master
-
+      
       /*
       Terminamos la transación-------------------------------------------------
       */
