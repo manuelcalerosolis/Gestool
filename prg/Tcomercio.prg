@@ -250,6 +250,7 @@ CLASS TComercio
    METHOD InsertPropiedadesProductPrestashop()
    METHOD EliminaPropiedadesProductsPrestashop()
    METHOD GetValPrp( nIdPrp, nProductAttibuteId )
+   METHOD DelIdPropiedadesPrestashop()
 
    METHOD AppendArticuloPrestashop()
    METHOD ActualizaProductsPrestashop()
@@ -316,6 +317,8 @@ CLASS TComercio
    DATA  aFabricantesData     INIT {}
    DATA  aFamiliaData         INIT {}
    DATA  aArticuloData        INIT {}
+   DATA  aPropiedadesCabData  INIT {}
+   DATA  aPropiedadesLinData  INIT {}
 
    // Metodos para la recopilacion de informacion----------------------------
 
@@ -328,6 +331,7 @@ CLASS TComercio
    METHOD buildFamiliaPrestashop( id )
    METHOD buildProductPrestashop( id )
    METHOD buildInformacion()
+   METHOD buildSubirInformacion()
    METHOD buildInsertIvaPrestashop( hIvaData )
    METHOD buildInsertFabricantesPrestashop( hFabricantesData )
    METHOD buildInsertCategoriesPrestashop( hFamiliaData )
@@ -336,6 +340,15 @@ CLASS TComercio
    METHOD buildActualizaCaterogiaPadrePrestashop( hFamiliaData )
    METHOD buildInsertImageProductsPrestashop( hArticuloData )
    METHOD buildRecalculaPosicionesCategoriasPrestashop()
+   METHOD buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb )
+   METHOD buildPropiedadesPrestashop( id )
+   METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData )
+   METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData )
+   METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb )
+
+   METHOD buildExportarPrestashop()
+
+   METHOD buildEliminaTablas()
 
    METHOD buildTextOk( cValue, cTable )      INLINE ( ::SetText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
    METHOD buildTextError( cValue, cTable )   INLINE ( ::SetText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
@@ -752,7 +765,7 @@ METHOD Activate( oWnd ) CLASS TComercio
       REDEFINE BUTTONBMP ::oBtnExportar ;
          ID       510 ;
          OF       ::oDlg;
-         ACTION   ( ::ExportarPrestashop() );
+         ACTION   ( ::buildExportarPrestashop() ); //ExportarPrestashop()
 
       REDEFINE BUTTONBMP ::oBtnImportar ;
          ID       520 ;
@@ -1404,6 +1417,7 @@ METHOD DelIdIvaPrestashop() Class TComercio
 
       ::oIva:Load()
       ::oIva:cCodWeb := 0
+      ::oIva:cGrpWeb := 0
       ::oIva:Save()
 
       ::oIva:Skip()
@@ -2297,8 +2311,6 @@ METHOD RecalculaPosicionesCategoriasPrestashop() CLASS TComercio
    /*
    Pongo posiciones en la categoría raiz e inicio
    */
-
-   MsgAlert( ::nNumeroCategorias, "Número categorías" )
 
    if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='1', nRight='" + AllTrim( Str( ::nNumeroCategorias * 2 ) ) + "' WHERE id_category=1" )
       ::SetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
@@ -4659,6 +4671,7 @@ METHOD DelIdArticuloPrestashop() Class TComercio
       ::oArt:cCodWeb := 0
       ::oArt:Save()
 
+      SysRefresh()
       ::oArt:Skip()
 
    end while
@@ -6664,7 +6677,7 @@ METHOD buildInitData() CLASS TComercio
    ::aFabricantesData   := {}
    ::aFamiliaData       := {}
    ::aArticuloData      := {}
-   ::lSyncAll           := .f.
+   ::lSyncAll           := .t.
 
 Return ( Self )
 
@@ -6748,10 +6761,115 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
                                     "meta_description"      => AllTrim( ::oArt:cDesSeo ) ,;
                                     "meta_keywords"         => AllTrim( ::oArt:cKeySeo ) ,;
                                     "lPubPor"               => ::oArt:lPubPor,;
-                                    "cImagen"               => ::oArt:cImagen } )
+                                    "cImagen"               => ::oArt:cImagen,;
+                                    "lSbrInt"               => ::oArt:lSbrInt,;
+                                    "nDtoInt1"              => ::oArt:nDtoInt1,;
+                                    "nImpInt1"              => ::oArt:nImpInt1 } )
          end if
 
       end if 
+
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildPropiedadesPrestashop( id ) CLASS TComercio
+
+   /*
+   Tratamos las cabeceras de las propiedades-----------------------------------
+   */
+
+   if ::oArt:SeekInOrd( id, "Codigo" ) 
+
+      /*
+      Primera propiedad--------------------------------------------------------
+      */
+
+      if ::oPro:SeekInOrd( ::oArt:cCodPrp1 )
+
+         if ::lSyncAll .or. ::oPro:cCodWeb == 0
+         
+            if aScan( ::aPropiedadesCabData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
+
+               aAdd( ::aPropiedadesCabData, {   "id"          => ::oPro:cCodPro,;
+                                                "name"        => if( Empty( ::oPro:cNomInt ), AllTrim( ::oPro:cDesPro ), AllTrim( ::oPro:cNomInt ) ),;
+                                                "lColor"      => ::oPro:lColor } )
+
+            end if
+
+         end if
+
+      end if
+
+      /*
+      Segunda propiedad--------------------------------------------------------
+      */
+
+      if ::oPro:SeekInOrd( ::oArt:cCodPrp2 )
+
+         if ::lSyncAll .or. ::oPro:cCodWeb == 0
+
+            if aScan( ::aPropiedadesCabData, {|h| hGet( h, "id" ) == ::oPro:cCodPro } ) == 0
+         
+               aAdd( ::aPropiedadesCabData, {   "id"          => ::oPro:cCodPro,;
+                                                "name"        => if( Empty( ::oPro:cNomInt ), AllTrim( ::oPro:cDesPro ), AllTrim( ::oPro:cNomInt ) ),;
+                                                "lColor"      => ::oPro:lColor } )
+
+            end if
+
+         end if
+
+      end if
+
+      /*
+      Líneas de propiedades de un artículo-------------------------------------
+      */
+
+      if ::oArtDiv:Seek( ::oArt:Codigo )
+
+         while ::oArtDiv:cCodArt == ::oArt:Codigo .and. !::oArtDiv:Eof()
+
+            if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1, "cCodPro" )
+
+               if ::lSyncAll .or. ::oTblPro:cCodWeb == 0
+
+                  if aScan( ::aPropiedadesLinData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
+         
+                     aAdd( ::aPropiedadesLinData, {   "id"          => ::oTblPro:cCodTbl,;
+                                                      "idparent"    => ::oTblPro:cCodPro,; 
+                                                      "name"        => AllTrim( ::oTblPro:cDesTbl ),;
+                                                      "color"       => AllTrim( RgbToRgbHex( ::oTblPro:nColor) ) } )
+
+                  end if
+
+               end if
+
+            end if
+
+            if ::oTblPro:SeekInOrd( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2, "cCodPro" )
+
+               if ::lSyncAll .or. ::oTblPro:cCodWeb == 0
+
+                  if aScan( ::aPropiedadesLinData, {|h| hGet( h, "id" ) == ::oTblPro:cCodTbl .and. hGet( h, "idparent" ) == ::oTblPro:cCodPro } ) == 0
+         
+                     aAdd( ::aPropiedadesLinData, {   "id"          => ::oTblPro:cCodTbl,;
+                                                      "idparent"    => ::oTblPro:cCodPro,; 
+                                                      "name"        => AllTrim( ::oTblPro:cDesTbl ),;
+                                                      "color"       => AllTrim( RgbToRgbHex( ::oTblPro:nColor) ) } )
+
+                  end if
+
+               end if
+
+            end if
+
+            ::oArtDiv:Skip()
+
+         end while
+
+      end if
 
    end if
 
@@ -6764,20 +6882,103 @@ METHOD buildInformacion() CLASS TComercio
    ::buildIvaPrestashop( ::oArt:TipoIva )
    ::buildFabricantePrestashop( ::oArt:cCodFab )
    ::buildFamiliaPrestashop( ::oArt:Familia )
+   ::buildPropiedadesPrestashop( ::oArt:Codigo )
    ::buildArticuloPrestashop( ::oArt:Codigo )
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildProductPrestashop( id ) CLASS TComercio
+METHOD buildSubirInformacion() CLASS TComercio
 
    local hIvaData
    local hFabricantesData
    local hFamiliaData
    local hArticuloData
+   local hPropiedadesCabData
+   local hPropiedadesLinData
 
-   ::lShowDialogWait()
+   /*
+   Subimos los tipos de IVA----------------------------------------------
+   */
+
+   for each hIvaData in ::aIvaData
+      ::buildInsertIvaPrestashop( hIvaData )
+   next
+
+   /*
+   Subimos fabricantes---------------------------------------------------
+   */
+
+   for each hFabricantesData in ::aFabricantesData
+      ::buildInsertFabricantesPrestashop( hFabricantesData )
+   next 
+
+   /*
+   Subimos familias------------------------------------------------------
+   */
+
+   for each hFamiliaData in ::aFamiliaData
+      ::buildInsertCategoriesPrestashop( hFamiliaData )
+   next 
+
+   /*
+   Actualizamos padres de las familias-----------------------------------
+   */
+
+   for each hFamiliaData in ::aFamiliaData
+      ::buildActualizaCaterogiaPadrePrestashop( hFamiliaData )
+   next
+
+   /*
+   Recalculamos las posiciones de las categorias-------------------------
+   */
+
+   ::buildRecalculaPosicionesCategoriasPrestashop()
+
+   /*
+   Subimos las cabeceras de propiedades necesarias-----------------------
+   */
+
+   for each hPropiedadesCabData in ::aPropiedadesCabData
+      ::buildInsertPropiedadesPrestashop( hPropiedadesCabData )
+   next
+
+   /*
+   Subimos las Lineas de propiedades necesarias--------------------------
+   */
+
+   for each hPropiedadesLinData in ::aPropiedadesLinData
+      ::buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData )
+   next
+
+   /*
+   Subimos los artículos-------------------------------------------------
+   */
+
+   for each hArticuloData in ::aArticuloData
+      ::buildInsertProductsPrestashop( hArticuloData )
+   next
+
+   /*
+   Pasamos las imágenes de los artículos a prestashop--------------------
+   */
+
+   ::MeterGlobalText( "Subiendo imagenes" )
+
+   ::AppendImagesPrestashop()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
+
+   DEFAULT lShowDialogWait    := .t.
+
+   if lShowDialogWait
+      ::lShowDialogWait()
+   end if   
 
    if ::OpenFiles()
 
@@ -6811,64 +7012,11 @@ METHOD buildProductPrestashop( id ) CLASS TComercio
 
       if ::buildConect()
 
-         /*
-         Subimos los tipos de IVA----------------------------------------------
-         */
+         if ::lSyncAll
+            ::buildEliminaTablas()
+         end if
 
-         for each hIvaData in ::aIvaData
-            ::buildInsertIvaPrestashop( hIvaData )
-         next
-
-         /*
-         Subimos fabricantes---------------------------------------------------
-         */
-
-         for each hFabricantesData in ::aFabricantesData
-            ::buildInsertFabricantesPrestashop( hFabricantesData )
-         next 
-
-         /*
-         Subimos familias------------------------------------------------------
-         */
-
-         for each hFamiliaData in ::aFamiliaData
-            ::buildInsertCategoriesPrestashop( hFamiliaData )
-         next 
-
-         /*
-         Actualizamos padres de las familias-----------------------------------
-         */
-
-         for each hFamiliaData in ::aFamiliaData
-            ::buildActualizaCaterogiaPadrePrestashop( hFamiliaData )
-         next
-
-         /*
-         Recalculamos las posiciones de las categorias-------------------------
-         */
-
-         //::RecalculaPosicionesCategoriasPrestashop()
-         ::buildRecalculaPosicionesCategoriasPrestashop()
-
-         /*
-         Subimos los artículos-------------------------------------------------
-         */
-
-         for each hArticuloData in ::aArticuloData
-            ::buildInsertProductsPrestashop( hArticuloData )
-         next
-
-         /*
-         Pasamos las imágenes de los artículos a prestashop--------------------
-         */
-
-         ::MeterGlobalText( "Subiendo imagenes" )
-
-         ::AppendImagesPrestashop()
-
-         /*
-         Cerramos la conexión--------------------------------------------------
-         */
+         ::buildSubirInformacion()
 
          ::buildDisConect()  
          
@@ -6878,7 +7026,9 @@ METHOD buildProductPrestashop( id ) CLASS TComercio
 
    end if
 
-   ::lHideDialogWait()
+   if lShowDialogWait
+      ::lHideDialogWait()
+   end if   
 
 Return ( Self )
 
@@ -7281,102 +7431,6 @@ METHOD buildRecalculaPosicionesCategoriasPrestashop() CLASS TComercio
 
    end if
 
-   /*
-   Pongo posiciones en la categoría raiz e inicio
-
-   MsgAlert( ::nNumeroCategorias, "Número categorías" )
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='1', nRight='" + AllTrim( Str( ::nNumeroCategorias * 2 ) ) + "' WHERE id_category=1" )
-      ::SetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
-   else
-      ::SetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
-   end if
-
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='2', nRight='" + AllTrim( Str( ( ::nNumeroCategorias * 2 ) -1 ) ) + "' WHERE id_category=2" )
-      ::SetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
-   else
-      ::SetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
-   end if
-
-   /*
-   Calculo las posiciones en un array temporal---------------------------------
-
-   for each oCategoria in aTemporal
-
-      do case
-         case oCategoria:nTipo == 1    //Grupos
-
-            nPos := aScan( ::aCategorias, {|a| a:id == oCategoria:id } )
-
-            if nPos != 0
-               ::aCategorias[ nPos ]:nLeft   := nContador
-               nContador++
-            end if
-
-            for each oCat in ::aCategorias
-
-               if oCat:idParent == oCategoria:id
-
-                  oCat:nLeft   := nContador
-                  nContador++
-
-                  for each oCat2 in ::aCategorias
-
-                     if oCat2:idParent == oCat:id
-                        oCat2:nLeft   := nContador
-                        nContador++
-                        oCat2:nRight  := nContador
-                        nContador++
-                     end if
-
-                  next
-
-                  oCat:nRight  := nContador
-                  nContador++
-
-               end if
-
-            next
-
-            nPos := aScan( ::aCategorias, {|a| a:id == oCategoria:id } )
-
-            if nPos != 0
-               ::aCategorias[ nPos ]:nRight   := nContador
-               nContador++
-            end if
-
-         case oCategoria:nTipo == 2    //Familias
-
-            if oCategoria:idParent == 2
-
-                  nPos := aScan( ::aCategorias, {|a| a:id == oCategoria:id } )
-
-                  if nPos != 0
-                     ::aCategorias[ nPos ]:nLeft   := nContador
-                     nContador++
-                     ::aCategorias[ nPos ]:nRight  := nContador
-                     nContador++
-                  end if
-
-            end if
-
-      end case
-
-   next
-
-   /*
-   Actualizo las posiciones en la tabla de la web en mysql---------------------
-
-   for each oCategoria in ::aCategorias
-
-      if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='" + AllTrim( Str( oCategoria:nLeft ) ) + "', nRight='" + AllTrim( Str( ( oCategoria:nRight ) ) + "' WHERE id_category=" + AllTrim( Str( oCategoria:id ) ) ) )
-         ::SetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
-      else
-         ::SetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
-      end if
-
-   next*/
-
 return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -7591,44 +7645,14 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
       ::oArt:fieldPutByName( "cCodWeb", nCodigoWeb )
    end if
 
-   /*
-   ----------------------------------------------------------------------------
-   Insertamos las imágenes del producto----------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
    ::cTextoWait( "Añadiendo imágenes artículo: " + hGet( hArticuloData, "name" ) )
-
    ::buildInsertImageProductsPrestashop( hArticuloData, nCodigoWeb )
 
-   /*
-   ----------------------------------------------------------------------------
-   Insertamos las propiedades del producto-------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   /*::cTextoWait( "Añadiendo propiedades del artículo: " + AllTrim( ::oArt:Nombre ) )
-
-   ::InsertPropiedadesProductPrestashop( nCodigoWeb )*/
-
-   /*
-   ----------------------------------------------------------------------------
-   Insertamos las ofertas del producto-----------------------------------------
-   ----------------------------------------------------------------------------
-   */
+   ::cTextoWait( "Añadiendo propiedades del artículo: " + hGet( hArticuloData, "name" ) )
+   ::buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb )
 
    ::cTextoWait( "Añadiendo ofertas del artículo: " + hGet( hArticuloData, "name" ) )
-
-   ::InsertOfertasPrestashop( nCodigoWeb )
-
-   /*
-   ----------------------------------------------------------------------------
-   Subimos las imágenes si no es una global------------------------------------
-   ----------------------------------------------------------------------------
-   */
-
-   ::cTextoWait( "Añadiendo imágenes del artículo: " + hGet( hArticuloData, "name" ) )
-   ::AppendImagesPrestashop()
+   ::buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb )
 
 return nCodigoweb
 
@@ -7805,11 +7829,11 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-/*Method InsertOfertasPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
+Method buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
 
    local cCommand          := ""
 
-   if ::oArt:lSbrInt .and. ::oArt:nDtoInt1 != 0
+   if hGet( hArticuloData, "lSbrInt" ) .and. hGet( hArticuloData, "nDtoInt1" ) != 0
 
       cCommand          := "INSERT INTO " + ::cPrefixTable( "specific_price" ) + ; 
                            " ( id_specific_price_rule, " + ;
@@ -7839,23 +7863,1048 @@ Return .t.
                               "'0', " + ;                                              //id_product_attribute
                               "'-1', " + ;                                             //price
                               "'1', " + ;                                              //from_quantity
-                              "'" + AllTrim( Str( ::oArt:nDtoInt1 / 100 ) ) + "', " + ;//reduction
+                              "'" + AllTrim( Str( hGet( hArticuloData, "nDtoInt1" ) / 100 ) ) + "', " + ;//reduction
                               "'percentage' )"                                         //reduction_type
    
       if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-         ::SetText( "He insertado la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "attribute" ), 3 )
+         ::SetText( "He insertado una oferta de " + hGet( hArticuloData, "name" ), 3 )
 
       else
 
-         ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
+         ::SetText( "Error al insertar una oferta de " + hGet( hArticuloData, "name" ), 3 )
 
       end if
 
    end if
 
-return nil*/
+return nil
 
+//---------------------------------------------------------------------------//
+
+Method buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
+
+   local oImagen
+   local nCodigoGrupo      := 0
+   local nCodigoPropiedad  := 0
+   local nParent           := 1
+   local cCommand          := ""
+
+   /*
+   Insertamos una propiedad nueva en las tablas de prestashop-----------------
+   */
+
+   cCommand          := "INSERT INTO " + ::cPrefixTable( "attribute_group" ) + ; 
+                              " ( is_color_group, " + ;
+                                  "group_type )" + ;
+                              " VALUES " + ;
+                                  "('" + if( hGet( hPropiedadesCabData, "lColor" ), "1", "0" ) + "', " + ;        //is_color_group
+                                  "'" + if( hGet( hPropiedadesCabData, "lColor" ), "color", "select" ) + "' )"    //group_type                        
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+      nCodigoGrupo   := ::oCon:GetInsertId()
+
+      ::SetText( "He insertado la propiedad " + hGet( hPropiedadesCabData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
+
+   else
+
+      ::SetText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
+
+   end if
+
+   cCommand          := "INSERT INTO " + ::cPrefixTable( "attribute_group_lang" ) + ; 
+                              " ( id_attribute_group, " + ;
+                                  "id_lang, " + ;
+                                  "name, " + ;
+                                  "public_name )" + ;
+                              " VALUES " + ;
+                                  "('" + AllTrim( Str( nCodigoGrupo ) ) + "', " + ;    //id_attribute_group
+                                  "'" + Str( ::nLanguage ) + "', " + ;                 //id_lang
+                                  "'" + hGet( hPropiedadesCabData, "name" ) + "', " + ;//name
+                                  "'" + hGet( hPropiedadesCabData, "name" ) + "' )"    //public_name
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+      ::SetText( "He insertado la propiedad " + hGet( hPropiedadesCabData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
+
+   else
+
+      ::SetText( "Error al insertar la propiedad " + hGet( hPropiedadesCabData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
+
+   end if
+
+   if ::oPro:SeekInOrd( hGet( hPropiedadesCabData, "id" ), "CCODPRO" )
+      ::oPro:fieldPutByName( "cCodWeb", nCodigoGrupo )
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData ) CLASS TComercio
+
+   local nCodigoPropiedad  := 0
+   local cCommand          := ""
+   local nCodigoGrupo      := oRetFld( hGet( hPropiedadesLinData, "idparent" ), ::oPro, "cCodWeb" )
+
+   /*
+   Introducimos las líneas-----------------------------------------------------
+   */
+
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute" ) + ; 
+                     " ( id_attribute_group, " + ;
+                         "color )" + ;
+                     " VALUES " + ;
+                         "('" + AllTrim( Str( nCodigoGrupo ) ) + "', " + ;
+                         "'" + hGet( hPropiedadesLinData, "color" ) + "' )"
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+      nCodigoPropiedad   := ::oCon:GetInsertId()
+
+      ::SetText( "He insertado la propiedad " + hGet( hPropiedadesLinData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "attribute" ), 3 )
+
+   else
+
+      ::SetText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
+
+   end if
+
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_lang" ) + ;
+                     " ( id_attribute, " + ;
+                        "id_lang, " + ;
+                        "name ) " + ;
+                     "VALUES " + ;
+                        "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_attribute
+                        "'" + Str( ::nLanguage ) + "', " + ;                    //id_lang
+                        "'" + ::oCon:EscapeStr( hGet( hPropiedadesLinData, "name" ) ) + "' )"              //name
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+      ::SetText( "He insertado la propiedad " + hGet( hPropiedadesLinData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
+
+   else
+
+      ::SetText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
+
+   end if
+
+   cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_shop" ) + ;
+                     " ( id_attribute, " + ;
+                        "id_shop ) " + ;
+                     "VALUES " + ;
+                        "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_attribute
+                        "'1' )"                                                 //id_shop
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+      ::SetText( "He insertado la propiedad " + hGet( hPropiedadesLinData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
+
+   else
+
+      ::SetText( "Error al insertar la propiedad " + hGet( hPropiedadesLinData, "name" ) + " en la tabla " + ::cPrefixTable( "attribute_shop" ), 3 )
+
+   end if
+
+   if ::oTblPro:SeekInOrd( hGet( hPropiedadesLinData, "idparent" ) + hGet( hPropiedadesLinData, "id" ), "CCODPRO" )
+      ::oTblPro:fieldPutByName( "cCodWeb", nCodigoPropiedad )
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
+
+   local nCodigoImagen        := 0
+   local oImagen
+   local nPosition            := 1
+   local nCodigoPropiedad     := 0
+   local aPropiedades1        := {}
+   local aPropiedades2        := {}
+   local aPropiedad1
+   local aPropiedad2
+   local nOrdAnt
+   local nPrecio              := 0
+   local nParent              := ::GetParentCategories()
+   local cCommand             := ""
+   local nOrdArtDiv           := ::oArtDiv:OrdSetFocus( "cCodArt" )
+   local lDefault             := .t.
+   local nTotStock            := 0
+
+   /*
+   Comprobamos si el artículo tiene propiedades y metemos las propiedades
+   */
+
+   if ::oArtDiv:Seek( hGet( hArticuloData, "id" ) )
+
+      while ::oArtDiv:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtDiv:Eof()
+
+         do case
+
+            /*
+            -------------------------------------------------------------------
+            Caso de tener una sola propiedad-----------------------------------
+            -------------------------------------------------------------------
+            */
+
+            case !Empty( ::oArtDiv:cValPr1 ) .and. Empty( ::oArtDiv:cValPr2 )
+
+               nOrdAnt        :=   ::oTblPro:OrdSetFocus( "cCodPro" )
+
+               if ::oTblPro:Seek( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1 )
+
+                  nPrecio     := nPrePro( hGet( hArticuloData, "id" ), ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, Space( 20 ), Space( 20 ), 1, .f., ::oArtDiv:cAlias )
+
+                  /*
+                  Metemos la propiedad de éste artículo------------------------
+                  */
+
+                  cCommand    :=    "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( " + ;
+                                       "id_product, " + ;
+                                       "price, " + ;
+                                       "wholesale_price, " + ;
+                                       "quantity, " + ;
+                                       "minimal_quantity )" + ;
+                                    " VALUES " + ;
+                                       "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;                                  //id_product
+                                       "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //price
+                                       "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //wholesale_price
+                                       "'10000', " + ;                                                                  //quantity
+                                       "'1' )"                                                                          //minimal_quantity
+
+                  if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     nCodigoPropiedad           := ::oCon:GetInsertId()
+
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
+
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
+                  end if
+
+                  /*
+                  Metemos la relación de la propiedad con el artículo----------
+                  */
+
+                  cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_combination" ) + " ( " + ;
+                                    "id_attribute, " + ;
+                                    "id_product_attribute )" + ;
+                                 " VALUES " + ;
+                                    "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                    "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
+
+                  if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+                  end if
+
+                  /*
+                  Metemos la relación entre la propiedad y el shop-------------
+                  */
+
+                  cCommand    :=    "INSERT INTO " + ::cPrefixTable( "product_attribute_shop" ) + " ( " + ;
+                                       "id_product_attribute, " + ;
+                                       "id_shop, " + ;
+                                       "wholesale_price, " + ;
+                                       "price, " + ;
+                                       "ecotax, " + ;
+                                       "weight, " + ;
+                                       "unit_price_impact, " + ;
+                                       "default_on, " + ;
+                                       "minimal_quantity )" + ;
+                                    " VALUES " + ;
+                                       "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;
+                                       "'1', " + ;
+                                       "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
+                                       "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
+                                       "'0', " + ;
+                                       "'0', " + ;
+                                       "'0', " + ;
+                                       "'" + if( lDefault, "1", "0" ) + "', " + ;
+                                       "'1' )"
+
+                  if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
+
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
+                  end if
+
+                  /*
+                  Metemos el stock por cada propiedad--------------------------
+                  */
+
+                  nTotStock   := ::oStock:nStockAlmacen( ::oArt:Codigo, , ::oArtDiv:cValPr1 )
+
+                  cCommand    :=    "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
+                                       "id_product, " + ;
+                                       "id_product_attribute, " + ;
+                                       "id_shop, " + ;
+                                       "id_shop_group, " + ;
+                                       "quantity, " + ;
+                                       "depends_on_stock, " + ;
+                                       "out_of_stock )" + ;
+                                    " VALUES " + ;
+                                       "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;
+                                       "'" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   
+                                       "'1', " + ;
+                                       "'0', " + ;
+                                       "'" + AllTrim( Str( nTotStock ) ) + "', " + ;
+                                       "'0', " + ;
+                                       "'2' )"
+
+                  if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+                  end if
+
+                  /*
+                  -------------------------------------------------------------
+                  Imágenes para una sola propiedad-----------------------------
+                  -------------------------------------------------------------
+                  */
+
+                  if !Empty( ::oArtDiv:cImgWeb )
+
+                     if ::oArtImg:SeekInOrd( hGet( hArticuloData, "id" ), "cCodArt" )
+
+                        while ::oArtImg:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtImg:Eof()
+
+                           if AllTrim( ::oArtImg:cImgArt ) == AllTrim( ::oArtDiv:cImgWeb )
+
+                              /*
+                              Añadimos en la tabla product_attribute_image-----------
+                              */
+
+                              cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                                                "id_product_attribute, " + ;
+                                                "id_image )" + ;
+                                             " VALUES " + ;
+                                                "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;    //id_product
+                                                "'" + AllTrim( Str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
+   
+                              if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                                 ::SetText( "He insertado el artículo " + hGet( hArticuloData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+
+                              else
+
+                                 ::SetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+
+                              end if
+
+                           end if   
+
+                           ::oArtImg:Skip()
+
+                        end while   
+
+                     end if
+
+                  end if
+
+               end if
+
+            /*
+            -------------------------------------------------------------------
+            Caso de tener dos propiedades--------------------------------------
+            -------------------------------------------------------------------
+            */
+
+            case !Empty( ::oArtDiv:cValPr1 ) .and. !Empty( ::oArtDiv:cValPr2 )
+
+               nPrecio     := nPrePro( hGet( hArticuloData, "id" ), ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, ::oArtDiv:cCodPr2, ::oArtDiv:cValPr2, 1, .f., ::oArtDiv:cAlias )
+
+               /*
+               Metemos la propiedad de éste artículo---------------------------
+               */
+
+               cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute" ) + " ( " + ;
+                                 "id_product, " + ;
+                                 "price, " + ;
+                                 "wholesale_price, " + ;
+                                 "quantity, " + ;
+                                 "minimal_quantity )" + ;
+                              " VALUES " + ;
+                                 "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;                                  //id_product
+                                 "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //price
+                                 "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ; //wholesale_price
+                                 "'10000', " + ;                                                                  //quantity
+                                 "'1' )"                                                                          //minimal_quantity
+
+               if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                  nCodigoPropiedad           := ::oCon:GetInsertId()
+
+                  ::SetText( "He insertado la propiedad  " + AllTrim( ::oArtDiv:cValPr1 ) + " - " + AllTrim( ::oArtDiv:cValPr2 ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
+
+               else
+                  ::SetText( "Error al insertar la propiedad " + AllTrim( ::oArtDiv:cValPr1 ) + " - " + AllTrim( ::oArtDiv:cValPr2 ) + " en la tabla " + ::cPrefixTable( "product_attribute" ), 3 )
+               end if
+
+               /*
+               Metemos la relación de la propiedad1 con el artículo------------
+               */
+
+               nOrdAnt        := ::oTblPro:OrdSetFocus( "cCodPro" )
+
+               if ::oTblPro:Seek( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1 )
+
+                  cCommand    := "INSERT INTO " +  ::cPrefixtable( "product_attribute_combination" ) + "( " + ;
+                                    "id_attribute, " + ;
+                                    "id_product_attribute )" + ;
+                                 " VALUES " + ;
+                                    "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;  //id_attribute
+                                    "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )"        //id_product_attribute
+
+                  if TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
+
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::PrefixTable( "product_attribute_combination" ), 3 )
+                  end if
+
+               end if
+
+               /*
+               Metemos la relación de la propiedad 2 con el artículo-----------
+               */
+
+               if ::oTblPro:Seek( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2 )
+
+                  cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_combination" ) + " ( " + ;
+                                    "id_attribute, " + ;
+                                    "id_product_attribute )" + ;
+                                 " VALUES " + ;
+                                    "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                    "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )"         //id_product_attribute
+
+                  if TMSCommand():New( ::oCon ):ExecDirect( cCommand ) 
+
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_combination" ), 3 )
+                  end if
+
+               end if
+
+               ::oTblPro:OrdSetFocus( nOrdAnt )
+
+               /*
+               Metemos la relación entre la propiedad y el shop-------------
+               */
+
+               cCommand    :=    "INSERT INTO " + ::cPrefixTable( "product_attribute_shop" ) + " ( " + ;
+                                    "id_product_attribute, " + ;
+                                    "id_shop, " + ;
+                                    "wholesale_price, " + ;
+                                    "price, " + ;
+                                    "ecotax, " + ;
+                                    "weight, " + ;
+                                    "unit_price_impact, " + ;
+                                    "default_on, " + ;
+                                    "minimal_quantity )" + ;
+                                 " VALUES " + ;
+                                    "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;
+                                    "'1', " + ;
+                                    "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
+                                    "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, hGet( hArticuloData, "nImpInt1" ) ) ) ) + "', " + ;
+                                    "'0', " + ;
+                                    "'0', " + ;
+                                    "'0', " + ;
+                                    "'" + if( lDefault, "1", "0" ) + "', " + ;
+                                    "'1' )"
+
+               if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                  ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
+
+               else
+
+                  ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
+
+               end if
+
+               /*
+               Metemos el stock por cada propiedad--------------------------
+               */
+
+               nTotStock   := ::oStock:nStockAlmacen( hGet( hArticuloData, "id" ), , ::oArtDiv:cValPr1, ::oArtDiv:cValPr2 )
+
+               cCommand    :=    "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
+                                    "id_product, " + ;
+                                    "id_product_attribute, " + ;
+                                    "id_shop, " + ;
+                                    "id_shop_group, " + ;
+                                    "quantity, " + ;
+                                    "depends_on_stock, " + ;
+                                    "out_of_stock )" + ;
+                                 " VALUES " + ;
+                                    "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;
+                                    "'" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   
+                                    "'1', " + ;
+                                    "'0', " + ;
+                                    "'" + AllTrim( Str( nTotStock ) ) + "', " + ;
+                                    "'0', " + ;
+                                    "'2' )"
+
+               if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+                  ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+               else
+                  ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+               end if
+
+               /*
+               ----------------------------------------------------------------
+               Imágenes para dos propiedades-----------------------------------
+               ----------------------------------------------------------------
+               */
+
+               if !Empty( ::oArtDiv:cImgWeb )
+
+                  if ::oArtImg:SeekInOrd( hGet( hArticuloData, "id" ), "cCodArt" )
+
+                     while ::oArtImg:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtImg:Eof()
+
+                        if AllTrim( ::oArtImg:cImgArt ) == AllTrim( ::oArtDiv:cImgWeb )
+
+                           /*
+                           Añadimos en la tabla product_attribute_image-----------
+                           */
+
+                           cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                                             "id_product_attribute, " + ;
+                                             "id_image )" + ;
+                                          " VALUES " + ;
+                                             "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;    //id_product
+                                             "'" + AllTrim( Str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
+   
+                           if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                              ::SetText( "He insertado el artículo " + hGet( hArticuloData, "name" ) + " correctamente en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+
+                           else
+
+                              ::SetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+
+                           end if
+
+                        end if   
+
+                        ::oArtImg:Skip()
+
+                     end while   
+
+                  end if
+
+               end if      
+
+         end case
+
+         ::oArtDiv:Skip()
+
+         lDefault    := .f.
+
+      end while
+
+   end if
+
+   ::oArtDiv:OrdSetFocus( nOrdArtDiv )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildEliminaTablas() CLASS TComercio
+
+   local cCommand
+
+   /*
+   Vaciamos las tablas de tipos de Iva-----------------------------------------
+   */
+
+   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax" ) )
+      ::SetText ( 'Tabla ' + ::cPreFixtable( "tax" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPreFixtable( "tax" ), 3  )
+   end if
+
+   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_lang" ) )
+      ::SetText ( 'Tabla ' + ::cPreFixtable( "tax_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_lang" ), 3  )
+   end if
+
+   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rule" ) )
+      ::SetText ( 'Tabla ' + ::cPreFixtable( "tax_rule" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rule" ), 3  )
+   end if
+
+   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rules_group" ) )
+      ::SetText ( 'Tabla ' + ::cPreFixtable( "tax_rules_group" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group" ), 3  )
+   end if
+
+   ::DelIdIvaPrestashop()
+
+   /*
+   Vaciamos las tablas de fabricantes------------------------------------------
+   */
+
+   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer" ) )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "manufacturer" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer" ), 3  )
+   end if
+
+   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer_shop" ) )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "manufacturer_shop" ) + ' borrada correctamente', 3 )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPreFixtable( "manufacturer_shop" ), 3 )
+   end if
+
+   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPrefixTable( "manufacturer_lang" ) )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "manufacturer_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer_lang" ), 3  )
+   end if
+
+   ::DelIdFabricantePrestashop()
+
+   /*
+   Vaciamos las tablas de Categorias-------------------------------------------
+   */
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixtable( "category" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPreFixtable( "category" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPreFixtable( "category" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "category_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "category_lang" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_product" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "category_product" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "category_product" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_group" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "category_group" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "category_group" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "category_shop" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "category_shop" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla '+ ::cPrefixTable( "category_group" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "image" ) + 'borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla' + ::cPrefixTable( "image" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image_shop" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "image_shop" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla '+ ::cPrefixTable( "image_shop" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "image_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "image_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "image_lang" ), 3  )
+   end if
+
+   ::DelIdFamiliasPrestashop()
+
+   /*
+   Cargamos la categoría raiz de la que colgarán todas las demás---------------
+   */
+
+   ::AddCategoriaRaiz()
+
+   /*
+   Vaciamos las tablas de propiedades------------------------------------------
+   */
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_lang" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_shop" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_shop" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_shop" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_impact" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_impact" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_impact" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_group" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_group_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group_lang" ), 3  )
+   end if
+
+   ::DelIdPropiedadesPrestashop()
+
+   /*
+   Vaciamos las tablas de Artículos--------------------------------------------
+   */
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attachment" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_attachment" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attachment" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_attribute" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute_combination" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_attribute_combination" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_combination" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_attribute_shop" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_attribute_shop" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_shop" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPreFixTable( "product_attribute_image" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_attribute_image" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_attribute_image" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_country_tax" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_country_tax" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_country_tax" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_download" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_download" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la table ' + ::cPrefixTable( "product_download" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_group_reduction_cache" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_group_reduction_cache" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_group_reduction_cache" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_shop" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_shop" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_shop" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_lang" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_sale" ) 
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_sale" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_sale" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "product_tag" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "product_tag" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "product_tag" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "specific_price")
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "specific_price" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "specific_price" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla '  + ::cPrefixTable( "feature" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "feature" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "feature_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_lang" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_product" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "feature_product" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_product" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_value" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "feature_value" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "feature_value_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "feature_value_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "feature_value_lang" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "scene " ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "scene" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_category" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "scene_category" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla' + ::cPrefixTable( "scene_category" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "scene_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_lang" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "scene_products" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "scene_products" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_products" ), 3  )
+   end if
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "stock_available" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "stock_available" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "stock_available" ), 3  )
+   end if
+
+   ::DelIdArticuloPrestashop()
+
+   /*
+   limpiamos refencias de imagenes a la web------------------------------------
+   */
+
+   ::lLimpiaRefImgWeb()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DelIdPropiedadesPrestashop() Class TComercio
+
+   local nRec
+
+   /*
+   Cabeceras de propiedades----------------------------------------------------
+   */
+
+   nRec  := ::oPro:Recno()
+   ::oPro:GoTop()
+
+   while !::oPro:Eof()
+
+      ::oPro:Load()
+      ::oPro:cCodWeb := 0
+      ::oPro:Save()
+
+      ::oPro:Skip()
+
+   end while
+
+   ::oPro:GoTo( nRec )
+
+   /*
+   Lineas de propiedades-------------------------------------------------------
+   */
+
+   nRec  := ::oTblPro:Recno()
+   ::oTblPro:GoTop()
+
+   while !::oTblPro:Eof()
+
+      ::oTblPro:Load()
+      ::oTblPro:cCodWeb := 0
+      ::oTblPro:Save()
+
+      ::oTblPro:Skip()
+
+   end while
+
+   ::oTblPro:GoTo( nRec )
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Method buildExportarPrestashop() Class TComercio
+
+   local oBlock
+   local oError
+
+   ::oBtnExportar:Hide()
+   ::oBtnImportar:Hide()
+
+   ::oBtnCancel:Disable()
+
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
+
+   ::SetText ( '.', 1  )
+
+   ::SetText ( 'Comenzamos la exportación', 2  )
+
+   ::lSyncAll        := .t.
+
+   ::BuildProductPrestashop( nil, .f. )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   ::oBtnExportar:Hide()
+   ::oBtnImportar:Hide()
+
+   ::oBtnCancel:Enable()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

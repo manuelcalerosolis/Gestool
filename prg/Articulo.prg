@@ -5999,7 +5999,9 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       end if   
 
       //Actualizaweb( cCod, lChangeImage, lActualizaWeb )
-      BuildWeb( cCod )
+      if lActualizaWeb
+         BuildWeb( cCod )
+      end if
       
       /*
       Terminamos la transación-------------------------------------------------
