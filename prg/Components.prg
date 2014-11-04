@@ -5,10 +5,25 @@
 
 #define FW_BOLD                        700
 
+//---------------------------------------------------------------------------//
+
+CLASS DialogBuilder
+
+   DATA aComponents                    INIT {}
+
+   DATA nView
+
+   DATA oDlg
+
+   METHOD End()                        INLINE ( ::oDlg:end() )
+
+   METHOD AddComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
+
+END CLASS
 
 //---------------------------------------------------------------------------//
 
-CLASS ResourceBuilder
+CLASS ResourceBuilder FROM DialogBuilder
 
    DATA bInit 
    DATA bWhile                         INIT {|| .t. }
@@ -19,12 +34,6 @@ CLASS ResourceBuilder
    DATA bStart 
 
    DATA nTotalPrinted                  INIT 0
-
-   DATA aComponents                    INIT {}
-
-   DATA nView
-
-   DATA oDlg
 
    DATA oSerieInicio       
    DATA oSerieFin           
@@ -60,8 +69,6 @@ CLASS ResourceBuilder
 
    DATA oImageList
 
-   METHOD End()                           INLINE ( ::oDlg:end() )
-
    METHOD Serie( cSerie )                 INLINE ( ::oSerieInicio:cText( cSerie ), ::oSerieFin:cText( cSerie ) )
    METHOD Documento( cDocumento )         INLINE ( ::oDocumentoInicio:cText( cDocumento ), ::oDocumentoFin:cText( cDocumento ) )
    METHOD Sufijo( cSufijo )               INLINE ( ::oSufijoInicio:cText( cSufijo ), ::oSufijoFin:cText( cSufijo ) )
@@ -92,8 +99,6 @@ CLASS PrintSeries FROM ResourceBuilder
 
    METHOD SetCompras()
    METHOD SetVentas()
-
-   METHOD AddComponent( oComponent )      INLINE ( aAdd( ::aComponents, oComponent ) )
 
    METHOD Resource()
       METHOD StartResource()
@@ -534,6 +539,69 @@ METHOD Resource() CLASS ComponentGetSay
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
+CLASS GetCombo FROM Component
+
+   DATA oControl
+
+   DATA idCombo
+
+   DATA uValue                   INIT "Combo" 
+   DATA aValues                  INIT {"Combo"}
+   
+   DATA bChange
+
+   METHOD Build( hBuilder )
+   METHOD New( idGet, uValue, aValues, oContainer )
+
+   METHOD Resource()
+
+   METHOD Value()                INLINE ( Eval( ::oControl:bSetGet ) )
+
+   METHOD Disable()              INLINE ( ::oControl:Disable() )
+   METHOD Enable()               INLINE ( ::oControl:Enable() )
+
+   METHOD SetChange( bChange )   INLINE ( if( isBlock( bChange ), ::bChange := bChange, ) )
+   METHOD Change()               INLINE ( if( isBlock( ::bChange ), eval( ::bChange ), ) )
+
+END CLASS 
+
+//--------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS GetCombo
+
+   local idCombo     := if( hhaskey( hBuilder, "idCombo" ),    hBuilder[ "idCombo"   ], nil )
+   local uValue      := if( hhaskey( hBuilder, "uValue"),      hBuilder[ "uValue"    ], nil )
+   local aValues     := if( hhaskey( hBuilder, "aValues"),     hBuilder[ "aValues"   ], nil )
+   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
+
+   ::New( idCombo, uValue, aValues, oContainer )
+
+Return ( Self )
+
+METHOD New( idCombo, uValue, aValues, oContainer ) CLASS GetCombo
+
+   ::idCombo   := idCombo
+   ::uValue    := uValue
+   ::aValues   := aValues
+
+   ::Super:New( oContainer )
+
+RETURN ( Self )
+
+METHOD Resource() CLASS GetCombo
+
+   REDEFINE COMBOBOX ::oControl ;
+      VAR      ::uValue ;
+      ITEMS    ::aValues ;
+      ID       ::idCombo ;
+      OF       ::oContainer:oDlg
+
+   ::oControl:bChange      := {|| ::Change() }
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -824,6 +892,138 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
+CLASS GetPeriodo FROM ComponentGet
+
+   DATA oComboPeriodo
+
+   DATA oFechaInicio
+   DATA oFechaFin
+
+   DATA cPeriodo                 INIT "Año en curso"
+   DATA aPeriodo                 INIT {}
+
+   METHOD Build( hBuilder )
+   METHOD New( idCombo, idFechaInicio, idFechaFin, oContainer )
+
+   METHOD CambiaPeriodo()
+   METHOD CargaPeriodo()
+
+END CLASS 
+
+METHOD Build( hBuilder ) CLASS GetPeriodo 
+
+   local idCombo        := if( hhaskey( hBuilder, "idCombo" ),       hBuilder[ "idCombo"        ], nil )
+   local idFechaInicio  := if( hhaskey( hBuilder, "idFechaInicio"),  hBuilder[ "idFechaInicio"  ], nil )
+   local idFechaFin     := if( hhaskey( hBuilder, "idFechaFin"),     hBuilder[ "idFechaFin"     ], nil )
+   local oContainer     := if( hhaskey( hBuilder, "oContainer"),     hBuilder[ "oContainer"     ], nil )
+
+   ::New( idCombo, idFechaInicio, idFechaFin, oContainer )
+
+Return ( Self )
+
+METHOD New( idCombo, idFechaInicio, idFechaFin, oContainer ) CLASS GetPeriodo
+
+   ::CargaPeriodo()
+
+   ::oComboPeriodo            := GetCombo():New( 100, ::cPeriodo, ::aPeriodo, oContainer )
+   ::oComboPeriodo:SetChange( {|| ::CambiaPeriodo() } )
+
+   ::oFechaInicio             := GetFecha():New( 110, oContainer )
+   ::oFechaInicio:FirstDayYear()
+
+   ::oFechaFin                := GetFecha():New( 120, oContainer )
+
+Return ( Self )
+
+METHOD CargaPeriodo() CLASS GetPeriodo 
+
+   ::aPeriodo                 := {}
+
+   aAdd( ::aPeriodo, "Hoy" )
+   aAdd( ::aPeriodo, "Ayer" )
+   aAdd( ::aPeriodo, "Mes en curso" )
+   aAdd( ::aPeriodo, "Mes anterior" )
+   aAdd( ::aPeriodo, "Primer trimestre" )
+   aAdd( ::aPeriodo, "Segundo trimestre" )
+   aAdd( ::aPeriodo, "Tercer trimestre" )
+   aAdd( ::aPeriodo, "Cuatro trimestre" )
+   aAdd( ::aPeriodo, "Doce últimos meses" )
+   aAdd( ::aPeriodo, "Año en curso" )
+   aAdd( ::aPeriodo, "Año anterior" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CambiaPeriodo() CLASS GetPeriodo 
+
+   local cPeriodo    := ::oComboPeriodo:Value()
+
+   do case
+      case cPeriodo == "Hoy"
+
+         ::oFechaInicio:cText( GetSysDate() )
+         ::oFechaFin:cText( GetSysDate() )
+
+      case cPeriodo == "Ayer"
+
+         ::oFechaInicio:cText( GetSysDate() -1 )
+         ::oFechaFin:cText( GetSysDate() -1 )
+
+      case cPeriodo == "Mes en curso"
+
+         ::oFechaInicio:cText( CtoD( "01/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFechaFin:cText( GetSysDate() )
+
+      case cPeriodo == "Mes anterior"
+
+         ::oFechaInicio:cText( BoM( addMonth( GetSysDate(), - 1 ) ) )
+         ::oFechaFin:cText( EoM( addMonth( GetSysDate(), - 1 ) ) )
+
+      case cPeriodo == "Primer trimestre"
+
+         ::oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFechaFin:cText( CtoD( "31/03/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Segundo trimestre"
+
+         ::oFechaInicio:cText( CtoD( "01/04/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFechaFin:cText( CtoD( "30/06/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Tercer trimestre"
+
+         ::oFechaInicio:cText( CtoD( "01/07/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFechaFin:cText( CtoD( "30/09/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Cuatro trimestre"
+
+         ::oFechaInicio:cText( CtoD( "01/10/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Doce últimos meses"
+
+         ::oFechaInicio:cText( BoY( GetSysDate() ) )
+         ::oFechaFin:cText( EoY( GetSysDate() ) )
+
+      case cPeriodo == "Año en curso"
+
+         ::oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+
+      case cPeriodo == "Año anterior"
+
+         ::oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
+         ::oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
+
+   end case
+
+RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
 CLASS GetCopias FROM ComponentGet
 
    DATA idCheck 
@@ -924,6 +1124,7 @@ Return ( Ctod( "01/" + cMes + "/" + cAno ) - 1 )
 
 CLASS GetProveedor FROM ComponentGetSay
 
+   METHOD Build( hBuilder ) 
    METHOD New( idGet, idSay, idText, oContainer ) 
 
    METHOD First()    INLINE ( ::cText( Space( RetNumCodPrvEmp() ) ) )
@@ -933,6 +1134,21 @@ CLASS GetProveedor FROM ComponentGetSay
    METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Provee", ::oContainer:nView ) ) )
 
 END CLASS 
+
+//--------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) 
+
+   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
+   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
+   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
+   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
+
+   ::New( idGet, idSay, idText, oContainer )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
 
 METHOD New( idGet, idSay, idText, oContainer ) CLASS GetProveedor
 
@@ -1248,7 +1464,7 @@ CLASS GetRichEdit
          OF       ::oDlg ;
          RESOURCE "Pin_Blue_16" ;
          NOBORDER ;
-         TOOLTIP  "ViÃ±etas" ;
+         TOOLTIP  "Viñetas" ;
 
       ::oBtnBullet:bAction 			:= {|| ::lBullet := !::lBullet, ::oRTF:SetBullet( ::lBullet ), ::oRTF:SetFocus() }
 

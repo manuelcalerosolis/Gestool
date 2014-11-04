@@ -232,15 +232,15 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP            83
 #define _LGASSUP            84
 #define __CNUMPED           85
-#define __DFECFAC			86
-#define _CSUPED				87     
+#define __DFECFAC			    86
+#define _CSUPED             87     
 #define __CNUMSAT           88
-#define _DFECULTCOM 		89
-#define __CCODCLI 			90
-#define _LFROMATP 			91
-#define _NUNIULTCOM  	 	92
-#define __NBULTOS			93
-#define _CFORMATO 			94
+#define _DFECULTCOM 		    89
+#define __CCODCLI 			 90
+#define _LFROMATP 			 91
+#define _NUNIULTCOM  	 	 92
+#define __NBULTOS			    93
+#define _CFORMATO 			 94
 
 /*
 Definici¢n de Array para impuestos
@@ -13153,7 +13153,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local nTarOld          	:= aTmp[ _NTARLIN ]
    local lChgCodArt       	:= ( empty( cOldCodArt ) .or. rtrim( cOldCodArt ) != rtrim( cCodArt ) )
    local lChgPrpArt       	:= ( cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
-   local lChgLotArt			:= ( cOldLotArt != rtrim( aTmp[ _CLOTE ] ) )		
+   local lChgLotArt			:= ( cOldLotArt != rtrim( aTmp[ _CLOTE ] ) )
 
    DEFAULT lFocused       	:= .t.
 
@@ -13212,18 +13212,17 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
    end if
 
-   	if !Empty( aGet[ _NIVA ] )
+	if !Empty( aGet[ _NIVA ] )
 
-	   	if !aTmp[ _LGASSUP ]
-      		if lModIva()
-	         	aGet[ _NIVA ]:bWhen     := {|| .t. }
-      		else
-	         	aGet[ _NIVA ]:bWhen     := {|| .f. }
-	      	end if
-   		
-   		end if
+   	if !aTmp[ _LGASSUP ]
+   		if lModIva()
+         	aGet[ _NIVA ]:bWhen     := {|| .t. }
+   		else
+         	aGet[ _NIVA ]:bWhen     := {|| .f. }
+      	end if
+		end if
 
-   	end if
+	end if
 
    /*
    Buscamos codificacion GS1-128--------------------------------------------
@@ -13854,18 +13853,18 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
             	if hAtipica[ "nComisionAgente" ] != 0
-               		if !Empty( aGet[ _NCOMAGE ] )
-               			aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
-               		end if	
-               	end if	
+            		if !Empty( aGet[ _NCOMAGE ] )
+            			aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
+            		end if	
+            	end if	
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
-               	if hAtipica[ "nDescuentoLineal" ] != 0
-               		if !Empty( aGet[ _NDTODIV ] )
-               			aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
-               		end if
-               	end if
+            	if hAtipica[ "nDescuentoLineal" ] != 0
+            		if !Empty( aGet[ _NDTODIV ] )
+            			aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+            		end if
+            	end if
             end if
 
         end if
@@ -13888,7 +13887,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       Solo si cambia el lote---------------------------------------------------
       */
 
-      if ( lChgCodArt ) .or. ( lChgLotArt )
+      if ( lChgCodArt )
 
       /*
       Lotes---------------------------------------------------------------------
@@ -13908,7 +13907,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
                if Empty( aGet[ _CLOTE ]:VarGet() )
                   aGet[ _CLOTE ]:cText( cLote )
-                  //aGet[ _CLOTE ]:lValid()
                end if
 
             else
@@ -13978,7 +13976,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
       end if
-
 
       /*
       Calculamos el stock del articulo solo si cambian las prop o el lote---

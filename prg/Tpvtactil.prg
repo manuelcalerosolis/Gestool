@@ -478,6 +478,11 @@ CLASS TpvTactil
          METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
          METHOD GuardarAgregarLibre()
 
+   // Agregar lote------------------------------------------------------------
+
+   METHOD AgregarLote() 
+      METHOD ValidarAgregarLote( cLote, oDlg )
+
    // Metodos para los menus---------------------------------------------------
 
    METHOD CargaMenus() 
@@ -2576,6 +2581,9 @@ METHOD StartResource() CLASS TpvTactil
          oBoton               := TDotNetButton():New( 60, ::oGrpSeries, "Up32",                    "Subir",             1, {|| ::CambiaSerie( .t. ) }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, ::oGrpSeries, "Down32",                  "Bajar",             2, {|| ::CambiaSerie( .f. ) }, , , .f., .f., .f. )
 
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Lote", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Barcode_32",                    "Lote",              1, {|| ::AgregarLote() }, , , .f., .f., .f. )
+
       oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cajas", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar",       1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Propiedades",       2, {|| EdtCajas() }, , , .f., .f., .f. )
@@ -3496,6 +3504,62 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD AgregarLote() CLASS TpvTactil
+
+   local oDlg
+   local oLote
+   local cLote    
+
+   if (::oTemporalLinea:OrdKeyCount() == 0)
+      Return ( .t. )
+   end if
+
+   if (!::lEditableDocumento())
+      MsgStop( "El documento ya está cerrado" )
+      Return ( .t. )
+   end if
+
+   cLote          := ::oTemporalLinea:cLote
+
+   DEFINE DIALOG oDlg RESOURCE "Lote_Tct" // FONT ::oFntDlg 
+
+      REDEFINE GET oLote ;
+         VAR      cLote ;
+         ID       100 ;
+         OF       oDlg
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( ::ValidarAgregarLote( cLote, oDlg ) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:End() )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   ::oGetUnidades:SetFocus()
+
+Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD ValidarAgregarLote( cLote, oDlg ) CLASS TpvTactil
+
+   if !empty( cLote )
+      ::oTemporalLinea:FieldPutByName( "cLote", cLote )
+   end if 
+
+   oDlg:End( IDOK )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 METHOD CargaBrowseFamilias() CLASS TpvTactil
 
    if Empty( ::oFamilias )
@@ -4137,6 +4201,11 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
    end if 
 
+   // Preguntamos si el articulo tiene lote------------------------------------
+
+   if ( ::oArticulo:lLote )
+      ::AgregarLote()
+   end if 
 
    // refrescos de pantalla-------------------------------------------------
 

@@ -63,6 +63,8 @@ CLASS IXBrowse FROM TXBrowse
 
    Method SetRDD( lAddColumns, lAutoOrder, aFldNames )
 
+   METHOD ExportToExcel()
+
 /*
    Method Refresh( lComplete )
 */
@@ -325,7 +327,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    MenuAddItem()
 
-   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| CursorWait(), ::ToExcel(), CursorWe() }, , "Text_Sum_16", oMenu )
+   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ExportToExcel() }, , "Text_Sum_16", oMenu )
 
    MenuEnd() 
 
@@ -483,9 +485,36 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
       ::Refresh()
    endif
 
-return nil
+Return nil
 
 //----------------------------------------------------------------------------//
+
+METHOD ExportToExcel()
+
+   local oError
+   local oBlock
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      CursorWait()
+
+      ::ToExcel()
+
+      CursorWe()
+
+   RECOVER USING oError
+      
+      msgStop( "Error exportando a excel." + CRLF + ErrorMessage( oError ) )
+   
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return nil
+
+//----------------------------------------------------------------------------//
+
 
 static function FindTag( cFld, nOrder )
 

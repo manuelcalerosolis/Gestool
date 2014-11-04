@@ -210,7 +210,6 @@ static filClient
 static tmpClient
 
 static dbfClientD
-static dbfCliAtp
 static dbfPro
 static dbfProL
 static dbfArtKit
@@ -640,7 +639,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
          XBROWSE ;
          TITLE    "Clientes" ;
-         PROMPT   "Código cliente",;
+         PROMPT   "Código",;
                   "Nombre",;
                   if( uFieldEmpresa( "nCifRut" ) == 1, "NIF/CIF", "RUT" ),;
                   "Población",;
@@ -717,7 +716,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código cliente"
+         :cHeader          := "Código"
          :cSortOrder       := "Cod"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Cod }
          :nWidth           := 110
@@ -5321,25 +5320,21 @@ STATIC FUNCTION ChgPrc( oWndBrw )
    local dFinPrc           := Ctod( "31/12/" + Str( Year( Date() ), 4 ) )
    local aStaCli           := aGetStatus( D():Get( "Client", nView ), .t. )
 
-   /*
-   Llamada a la funcion que activa la caja de dialogo
-   */
+   // Obtenemos los valores del primer y ultimo codigo-------------------------
+
+   cCliOrg                 := dbFirst( D():Get( "Client", nView ), 1 )
+   cCliDes                 := dbLast ( D():Get( "Client", nView ), 1 )
+   cSayCliOrg              := dbFirst( D():Get( "Client", nView ), 2 )
+   cSayCliDes              := dbLast ( D():Get( "Client", nView ), 2 )
+
+   cArtOrg                 := dbFirst( D():Get( "Articulo", nView ), 1 )
+   cArtDes                 := dbLast ( D():Get( "Articulo", nView ), 1 )
+   cSayArtOrg              := dbFirst( D():Get( "Articulo", nView ), 2 )
+   cSayArtDes              := dbLast ( D():Get( "Articulo", nView ), 2 )
+
+   // Llamada a la funcion que activa la caja de dialogo-----------------------
 
    DEFINE DIALOG oDlg RESOURCE "CHGPRECLI"
-
-   /*
-   Obtenemos los valores del primer y ultimo codigo
-   */
-
-   cCliOrg        := dbFirst( D():Get( "Client", nView ), 1 )
-   cCliDes        := dbLast ( D():Get( "Client", nView ), 1 )
-   cSayCliOrg     := dbFirst( D():Get( "Client", nView ), 2 )
-   cSayCliDes     := dbLast ( D():Get( "Client", nView ), 2 )
-
-   cArtOrg        := dbFirst( D():Get( "Articulo", nView ), 1 )
-   cArtDes        := dbLast ( D():Get( "Articulo", nView ), 1 )
-   cSayArtOrg     := dbFirst( D():Get( "Articulo", nView ), 2 )
-   cSayArtDes     := dbLast ( D():Get( "Articulo", nView ), 2 )
 
    /*
    Monta los clientes
@@ -5549,14 +5544,14 @@ STATIC FUNCTION ChgPrc( oWndBrw )
    REDEFINE BUTTON ;
       ID       IDOK;
       OF       oDlg ;
-      ACTION   (  mkChgPrc( cFam, cTipIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTarifa3, lTarifa4, lTarifa5, lTarifa6, nRad, nPctInc, nUndInc, lRnd, nDec, dbfCliAtp, oComBox, oMtr, oDlg, oWndBrw, cArtOrg, cArtDes, lGenerateTarifa, dIniPrc, dFinPrc, lAppTarifaFecha ) )
+      ACTION   ( mkChgPrc( cFam, cTipIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTarifa3, lTarifa4, lTarifa5, lTarifa6, nRad, nPctInc, nUndInc, lRnd, nDec, oComBox, oMtr, oDlg, oWndBrw, cArtOrg, cArtDes, lGenerateTarifa, dIniPrc, dFinPrc, lAppTarifaFecha ) )
 
    REDEFINE BUTTON ;
       ID       IDCANCEL;
       OF       oDlg ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| mkChgPrc( cFam, cTipIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTarifa3, lTarifa4, lTarifa5, lTarifa6, nRad, nPctInc, nUndInc, lRnd, nDec, dbfCliAtp, oComBox, oMtr, oDlg, oWndBrw, cArtOrg, cArtDes, lGenerateTarifa, dIniPrc, dFinPrc, lAppTarifaFecha ) } )
+   oDlg:AddFastKey( VK_F5, {|| mkChgPrc( cFam, cTipIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTarifa3, lTarifa4, lTarifa5, lTarifa6, nRad, nPctInc, nUndInc, lRnd, nDec, oComBox, oMtr, oDlg, oWndBrw, cArtOrg, cArtDes, lGenerateTarifa, dIniPrc, dFinPrc, lAppTarifaFecha ) } )
 
    oDlg:bStart := {|| oCliOrg:SetFocus() }
 
@@ -5568,7 +5563,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTarifa3, lTarifa4, lTarifa5, lTarifa6, nRad, nPctInc, nUndInc, lRnd, nDec, dbfCliAtp, oComBox, oMtr, oDlg, oWndBrw, cArtOrg, cArtDes, lGenerateTarifa, dIniPre, dFinPre, lAppTarifaFecha )
+STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTarifa3, lTarifa4, lTarifa5, lTarifa6, nRad, nPctInc, nUndInc, lRnd, nDec, oComBox, oMtr, oDlg, oWndBrw, cArtOrg, cArtDes, lGenerateTarifa, dIniPre, dFinPre, lAppTarifaFecha )
 
    local nOrdAct
    local nRecAct
@@ -5745,7 +5740,7 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
             if lGenerateTarifa
                aAdd( aTmpGenerate, aTmpAtp )
             else
-               DBGather( aTmpAtp, dbfCliAtp )
+               dbGather( aTmpAtp, D():Get( "CliAtp", nView ) )
             end if
 
          end if

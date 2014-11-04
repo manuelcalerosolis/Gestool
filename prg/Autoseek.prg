@@ -330,9 +330,6 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
 
          /*   
-         if Empty( nLen )
-            nLen     := len( ( xAlias )->( ordKeyVal() ) ) - 2
-         end if
          */
 
          if ( xAlias )->( dbSeek( xCadena, .t. ) )
@@ -344,7 +341,11 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
          else
 
-            nLen     := 13
+            // nLen     := 10 // 13
+
+            if Empty( nLen )
+               nLen  := len( ( xAlias )->( ordKeyVal() ) ) - 2 
+            end if
 
             if Empty( cPrefij )
 
@@ -352,6 +353,8 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
                cPos  := Padl( Rtrim( SubStr( xCadena, 2, nLen - 1 ) ), nLen - 1 )
 
                for n := 1 to nLen
+
+                  // msgAlert( cPre + cPos, "cPre + cPos" )
 
                   if ( xAlias )->( dbSeek( cPre + cPos, .f. ) )
 

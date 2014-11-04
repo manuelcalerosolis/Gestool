@@ -5,15 +5,17 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TFacturarLineasAlbaranesProveedor
-
-   DATA oDlg
+CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
 
    DATA cPath
 
-   DATA nView
-
    DATA lPrint
+
+   DATA oProveedor
+   DATA oPeriodo
+
+   DATA oFechaInicio
+   DATA oFechaFin
 
    DATA oFecIniPrv
    DATA oFecFinPrv
@@ -26,17 +28,15 @@ CLASS TFacturarLineasAlbaranesProveedor
 
    DATA cNumFac
 
-   METHOD FacturarLineasCompletas( nView )
+   METHOD New( nView )
 
-   METHOD ResourceLineasCompleta()
+   METHOD Resource()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD FacturarLineasCompletas( nView ) CLASS TFacturarLineasAlbaranesProveedor
-
-   ?"Entro por donde debo"
+METHOD New( nView ) CLASS TFacturarLineasAlbaranesProveedor
 
    /*
    Tomamos los valores iniciales-----------------------------------------------
@@ -59,6 +59,10 @@ METHOD FacturarLineasCompletas( nView ) CLASS TFacturarLineasAlbaranesProveedor
    Valores iniciales ----------------------------------------------------------
    */
 
+   ::oProveedor            := GetProveedor():Build( { "idGet" => 130, "idSay" => 140, "oContainer" => Self } )
+
+   ::oPeriodo              := GetPeriodo():Build( { "idCombo" => 100, "idFechaInicio" => 110, "idFechaFin" => 120, "oContainer" => Self } )
+
    /*
    Creamos los temporales necesarios-------------------------------------------
    */
@@ -69,7 +73,7 @@ METHOD FacturarLineasCompletas( nView ) CLASS TFacturarLineasAlbaranesProveedor
    Montamos el recurso---------------------------------------------------------
    */
 
-   ::ResourceLineasCompleta()
+   ::Resource()
 
    /*
    Destruimos las temporales---------------------------------------------------
@@ -81,30 +85,13 @@ Return ( ::lPrint )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceLineasCompleta() CLASS TFacturarLineasAlbaranesProveedor
+METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
-   local oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
+   local oFont       := TFont():New( "Arial", 8, 26, .F., .T. )
 
    DEFINE DIALOG ::oDlg RESOURCE "FacturaLineasCompletasAlbaranes"
 
-      REDEFINE COMBOBOX ::oPeriodoPrv ;
-         VAR         ::cPeriodoPrv ;
-         ID          100 ;
-         ITEMS       ::aPeriodoPrv ;
-         ON CHANGE   ( Msginfo( "cambio" ) ); //lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ), LoadPageClient( aTmp[ _COD ] ) ) ;
-         OF          ::oDlg
-
-      REDEFINE GET ::oFecIniPrv VAR ::dFecIniPrv;
-         ID          110 ;
-         SPINNER ;
-         VALID       ( .t. ); //LoadPageClient( aTmp[ _COD ] ) );
-         OF          ::oDlg
-
-      REDEFINE GET ::oFecFinPrv VAR ::dFecFinPrv;
-         ID          120 ;
-         SPINNER ;
-         VALID       ( .t. ); //LoadPageClient( aTmp[ _COD ] ) );
-         OF          ::oDlg
+      aEval( ::aComponents, {| o | o:Resource() } )
 
       /*
       Botones------------------------------------------------------------------

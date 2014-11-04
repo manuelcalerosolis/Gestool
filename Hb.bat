@@ -6,6 +6,6 @@ taskkill /F /IM gestoolhb.exe
 
 cd \fw195\gestool\bin\
 
-gestoolhb.exe 
+gestoolhb.exe /NOPASSWORD
 
 cd \fw195\gestool\

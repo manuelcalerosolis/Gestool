@@ -358,6 +358,8 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       return .f.
    end if
 
+   TFacturarLineasAlbaranesProveedor():New( nView )
+
    /*
    Anotamos el movimiento para el navegador
    */
@@ -796,7 +798,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( TFacturarLineasAlbaranesProveedor():FacturarLineasCompletas( nView ) );
+         ACTION   ( TFacturarLineasAlbaranesProveedor():New( nView ) );
          TOOLTIP  "Facturas parciales" ;
          FROM     oRotor
 
