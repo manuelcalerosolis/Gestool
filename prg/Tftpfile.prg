@@ -124,12 +124,12 @@ METHOD PutFile( oMeter ) CLASS TFTPFile
    local nBytes
    local hSource
    local lPutFile    := .t.
-   local cBuffer     := Space( 2000 )
+   local cBuffer     := Space( 20000 )
    local nTotalBytes := 0
    local nWriteBytes := 0
 
-   oFile             := TFtpFile():New( ::cSortFileName, ::oFTP )
-   oFile:OpenWrite()
+   // oFile             := TFtpFile():New( ::cSortFileName, ::oFTP )
+   ::OpenWrite()
 
    nTotalBytes       := nGetBytes( ::cFileName )
 
@@ -146,7 +146,7 @@ METHOD PutFile( oMeter ) CLASS TFTPFile
 
          nWriteBytes += nBytes
 
-         oFile:Write( SubStr( cBuffer, 1, nBytes ) )
+         ::Write( SubStr( cBuffer, 1, nBytes ) )
 
          if !Empty( oMeter )
             oMeter:Set( nWriteBytes )
@@ -160,7 +160,7 @@ METHOD PutFile( oMeter ) CLASS TFTPFile
 
    end if
 
-   oFile:End()
+   ::End()
 
    fClose( hSource )
 

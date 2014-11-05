@@ -23469,8 +23469,6 @@ Method ReciveFrq()
    Recibirlo de internet-------------------------------------------------------
    */
 
-   msgAlert( cRutConFrq(), "cRutConFrq()")
-
    ::oSender:setPathComunication( cRutConFrq() )
 
    ::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )

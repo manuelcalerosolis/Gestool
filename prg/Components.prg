@@ -908,6 +908,8 @@ CLASS GetPeriodo FROM ComponentGet
    METHOD CambiaPeriodo()
    METHOD CargaPeriodo()
 
+   METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+
 END CLASS 
 
 METHOD Build( hBuilder ) CLASS GetPeriodo 
