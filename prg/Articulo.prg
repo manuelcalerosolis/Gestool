@@ -4275,60 +4275,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ON CHANGE( ChangePublicar( aTmp ) ) ;
          OF       fldWeb
 
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
-         ID       120 ;
-         WHEN     ( .f. );
-         PICTURE  cPouDiv ;
-         OF       fldWeb
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ] ;
-         ID       121 ;
-         PICTURE  "@E 999.99" ;
-         SPINNER  MIN 0 MAX 100;
-         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lSbrInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
-         ON CHANGE( CalDtoWeb(   aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb"  ) ) ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva"  ) ) ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "lSbrInt" ) ) ] ) );
-         OF       fldWeb
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ] ;
-         ID       122 ;
-         WHEN     ( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
-         VALID    ( CalBnfPts(   .f.,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
-                                 0,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "nImpInt1") ) ],;
-                                 nil,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1") ) ],;
-                                 nDwbDiv,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "cCodImp" ) ) ] ) );
-         PICTURE  cPwbDiv ;
-         OF       fldWeb
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ] ;
-         ID       123 ;
-         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
-         VALID    ( CalBnfIva(   .f.,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
-                                 0,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "nImpIva1") ) ],;
-                                 nil,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1") ) ],;
-                                 nDwbDiv,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "cCodImp" ) ) ] ) );
-         PICTURE  cPwbDiv ;
-         OF       fldWeb
-
-
    REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] ;
          ID       160 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -4342,10 +4288,40 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          MIN      1 ;
          MAX      6 ;
          WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] );
-         VALID    ( ( aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] >= 1 .and. aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] <= 6 ), ChangeTarWeb( aGet, aTmp ) );
+         VALID    ( ( aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] >= 1 .and. aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] <= 6 ) );
          OF       fldWeb
 
-   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:bChange  := {|| ChangeTarWeb( aGet, aTmp ) }
+   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:bChange  := {|| ChangeTarWeb( aGet, aTmp ), CalDtoWeb( aGet, aTmp ) }      
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
+         ID       120 ;
+         WHEN     ( .f. );
+         PICTURE  cPouDiv ;
+         OF       fldWeb
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ] ;
+         ID       121 ;
+         PICTURE  "@E 999.99" ;
+         SPINNER  MIN 0 MAX 100;
+         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lSbrInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         ON CHANGE( CalDtoWeb( aGet, aTmp ) ) ;
+         OF       fldWeb
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ] ;
+         ID       122 ;
+         WHEN     ( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         PICTURE  cPwbDiv ;
+         OF       fldWeb
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ] ;
+         ID       123 ;
+         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         PICTURE  cPwbDiv ;
+         OF       fldWeb
 
    REDEFINE GET aTmp[( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
          ID       210 ;
@@ -4362,7 +4338,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          MEMO ;
          OF       fldWeb
-
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cTitSeo" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cTitSeo" ) ) ] ;
@@ -4517,15 +4492,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       fldImagenes:AddFastKey( VK_F4, {|| WinDelRec( oBrwImg, dbfTmpImg ) } )
 
       oDlg:AddFastKey(  VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
-      //oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
+      oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
 
       oDlg:AddFastKey(  VK_F5, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
 
       if uFieldEmpresa( "lRealWeb" )
          oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda, .t. ) } )
       end if
-
-      //oDlg:AddFastKey( VK_F8,    {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ), BuildWeb( aTmp[ ( dbfArticulo )->( fieldpos("Codigo") ) ] ) } )
 
    end if
 
@@ -5438,10 +5411,10 @@ Static Function BeginTrans( aTmp, nMode )
    local aItmSubCta
    local oError
    local oBlock
-/*
+
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    aItmSubCta        := {}
 
    cCodArt           := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"  ) ) ]
@@ -5636,7 +5609,7 @@ Static Function BeginTrans( aTmp, nMode )
    */
 
    aOldCodeBar    := aDbfToArr( dbfTmpCodebar, 2 )
-/*
+
    RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales " + CRLF + ErrorMessage( oError ) )
@@ -5648,7 +5621,7 @@ Static Function BeginTrans( aTmp, nMode )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 Return ( lErrors )
 
 //--------------------------------------------------------------------------//
@@ -5982,8 +5955,6 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       ChangePublicar( aTmp )
 
-      ChangeTarWeb( aGet, aTmp )
-
       /*
       Grabamos el registro a disco---------------------------------------------
       */
@@ -5998,7 +5969,6 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          lChangeImage  := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
       end if   
 
-      //Actualizaweb( cCod, lChangeImage, lActualizaWeb )
       if lActualizaWeb
          BuildWeb( cCod )
       end if
@@ -8247,16 +8217,24 @@ Return ( nPorcentajeBeneficio )
 
 //----------------------------------------------------------------------------//
 
-Static Function CalDtoWeb( nImpVta, cTipIva, nDtoInt, oImpInt, oImpIva, lSbrInt )
+Static Function CalDtoWeb( aGet, aTmp )
 
    local nImpWeb
 
-   if lSbrInt
+   if aTmp[ ( dbfArticulo )->( fieldpos( "lSbrInt" ) ) ]
 
-      nImpWeb     := nImpVta - ( nImpVta * nDtoInt / 100 )
+      if aTmp[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ] != 0
 
-      oImpInt:cText( nImpWeb )
-      oImpIva:cText( ( nImpWeb * nIva( dbfIva, cTipIva ) / 100 ) + nImpWeb )
+         nImpWeb     := aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb"  ) ) ] - ( aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb"  ) ) ] * aTmp[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ] / 100 )
+
+         aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( nImpWeb )
+         aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( ( nImpWeb * nIva( dbfIva, aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva"  ) ) ] ) / 100 ) + nImpWeb )
+
+      else
+      
+         ChangeTarWeb( aGet, aTmp )
+
+      end if   
 
    end if
 
@@ -15372,7 +15350,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
 
       ( dbfArticulo )->( ordCondSet( "!Deleted() .and. lPubInt", {|| !Deleted() .and. Field->lPubInt }  ) )
-      ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "lPubInt", "lPubInt", {|| Field->lPubInt } ) )
+      ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "lPubInt", "Codigo", {|| Field->Codigo } ) )
 
       ( dbfArticulo )->( dbCloseArea() )
 
@@ -18534,25 +18512,35 @@ Function ChangeTarWeb( aGet, aTmp )
       do case
          case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 1
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] )
 
          case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 2
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA2" ) ) ] )
 
          case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 3
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA3" ) ) ] )
 
          case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 4
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA4" ) ) ] )
 
          case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 5
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA5" ) ) ] )
 
          case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 6
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ] )
+            aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA6" ) ) ] )
 
       end case
-
-      Eval( aGet[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ]:bChange )
 
    end if   
 

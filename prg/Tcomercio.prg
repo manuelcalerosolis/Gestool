@@ -9,13 +9,6 @@
 
 //---------------------------------------------------------------------------//
 
-#ifndef __XHARBOUR__
-
-CLASS TComercio
-ENDCLASS
-
-#else 
-
 static oTimer
 static oComercio
 static oMsgAlarm
@@ -198,8 +191,6 @@ CLASS TComercio
    Method Activate( oWnd )
    Method StartDlg()
 
-   METHOD ChangeSincAll()
-
    Method SetText( cText )
    Method MeterGlobalText( cText )
    Method MeterParticularText( cText )
@@ -226,18 +217,9 @@ CLASS TComercio
    METHOD ActualizaCategoriesPrestashop()
    METHOD DelCascadeCategoriesPrestashop()
    METHOD ActualizaCaterogiaPadrePrestashop()
-
-   //METHOD InsertGrupoCategoriesPrestashop()
-   //METHOD UpdateGrupoCategoriesPrestashop()
-   //METHOD DeleteGrupoCategoriesPrestashop()
-   //METHOD UpdateCascadeCategoriesPrestashop()
-   //METHOD DelCascadeGrupoCategoriesPrestashop()
-   //METHOD ActualizaGrupoCategoriesPrestashop()
    METHOD RecalculaPosicionesCategoriasPrestashop()
    
    METHOD DelIdFamiliasPrestashop()
-   //METHOD DelIdGrupoFamiliasPrestashop()
-   //METHOD DelIdTipoArticuloPrestashop()
 
    METHOD AppendPropiedadesPrestashop()
    METHOD InsertPropiedadesPrestashop()
@@ -308,9 +290,6 @@ CLASS TComercio
 
    METHOD CreateDirectoryImagesLocal( cCarpeta )
 
-   METHOD LoadIniValues()
-   METHOD SaveIniValues()
-
    // Datos para la recopilacion de informacion----------------------------
 
    DATA  aIvaData             INIT {}
@@ -346,9 +325,17 @@ CLASS TComercio
    METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData )
    METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb )
 
+   METHOD buildPrecioArtitulo()
+
+   METHOD buildGetParentCategories()
+
    METHOD buildExportarPrestashop()
 
    METHOD buildEliminaTablas()
+
+   METHOD buildCleanPrestashop()
+
+   METHOD buildCleanTable( oTable )
 
    METHOD buildTextOk( cValue, cTable )      INLINE ( ::SetText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
    METHOD buildTextError( cValue, cTable )   INLINE ( ::SetText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
@@ -414,6 +401,7 @@ METHOD OpenFiles() CLASS TComercio
    BEGIN SEQUENCE
 
    DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   ::oArt:OrdSetFocus( "lPubInt" )
 
    DATABASE NEW ::oPro     PATH ( cPatArt() ) FILE "PRO.DBF"         VIA ( cDriver() ) SHARED INDEX "PRO.CDX"
 
@@ -685,8 +673,6 @@ METHOD Activate( oWnd ) CLASS TComercio
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
-   ::LoadIniValues()
-
    /*
    Apertura del fichero de texto---------------------------------------------//
    */
@@ -698,33 +684,6 @@ METHOD Activate( oWnd ) CLASS TComercio
          RESOURCE "earth2_alpha_48" ;
          TRANSPARENT ;
          OF       ::oDlg
-
-      // Opciones de sincronización--------------------------------------------
-
-      REDEFINE CHECKBOX ::oSyncAll VAR ::lSyncAll;
-         ID       100 ;
-         ON CHANGE( ::ChangeSincAll() );
-         OF       ::oDlg
-
-      REDEFINE CHECKBOX ::oTipIva VAR ::lIva ;
-         ID       110 ;
-         WHEN     ( !::lSyncAll );
-         OF       ::oDlg
-
-      REDEFINE CHECKBOX ::oArticulos VAR ::lArticulos ;
-         ID       120 ;
-         WHEN     ( !::lSyncAll );
-         OF       ::oDlg
-
-      REDEFINE CHECKBOX ::oCliente VAR ::lClientes ;
-         ID       130 ;
-         WHEN     ( !::lSyncAll );
-         OF       ::oDlg 
-
-      REDEFINE CHECKBOX ::oImagenes VAR ::lImagenes ;
-         ID       240 ;
-         WHEN     ( !::lSyncAll );
-         OF       ::oDlg 
 
       // Servidor--------------------------------------------------------------
 
@@ -805,75 +764,17 @@ METHOD Activate( oWnd ) CLASS TComercio
 
 Return Nil
 
-//---------------------------------------------------------------------------//
-
-METHOD LoadIniValues() CLASS TComercio
-
-      ::lArticulos            := ::oIniEmpresa:Get( "Prestashop", "Articulos",   .t., ::lArticulos   )
-      ::lFamilias             := ::oIniEmpresa:Get( "Prestashop", "Familias",    .t., ::lFamilias    )
-      ::lPedidos              := ::oIniEmpresa:Get( "Prestashop", "Pedidos",     .t., ::lPedidos     )
-      ::lFabricantes          := ::oIniEmpresa:Get( "Prestashop", "Fabricantes", .t., ::lFabricantes )
-      ::lIva                  := ::oIniEmpresa:Get( "Prestashop", "Iva",         .t., ::lIva         )
-      ::lClientes             := ::oIniEmpresa:Get( "Prestashop", "Clientes",    .t., ::lClientes    )
-      ::lImagenes             := ::oIniEmpresa:Get( "Prestashop", "Imagenes",    .t., ::lImagenes    )
-
-RETURN ( Self )
-
-//------------------------------------------------------------------------//
-
-METHOD SaveIniValues() CLASS TComercio
-
-      ::oIniEmpresa:Set( "Prestashop", "Articulos",   ::lArticulos   )
-      ::oIniEmpresa:Set( "Prestashop", "Familias",    ::lFamilias    )
-      ::oIniEmpresa:Set( "Prestashop", "Pedidos",     ::lPedidos     )
-      ::oIniEmpresa:Set( "Prestashop", "Fabricantes", ::lFabricantes )
-      ::oIniEmpresa:Set( "Prestashop", "Iva",         ::lIva         )
-      ::oIniEmpresa:Set( "Prestashop", "Clientes",    ::lClientes    )
-      ::oIniEmpresa:Set( "Prestashop", "Imagenes",    ::lImagenes    )
-
-RETURN ( Self )
-
 //------------------------------------------------------------------------//
 
 Method StartDlg() CLASS TComercio
 
    if uFieldEmpresa( "lHExpWeb" )
       ::oBtnExportar:Hide()
-      ::oSyncAll:Hide()
-      ::oTipIva:Hide()
-      ::oArticulos:Hide()
-      ::oCliente:Hide()
-      ::oImagenes:Hide()
    else
       ::oBtnExportar:Show()
-      ::oSyncAll:Show()
-      ::oTipIva:Show()
-      ::oArticulos:Show()
-      ::oCliente:Show()
-      ::oImagenes:Show()
    end if
 
 Return nil
-
-//---------------------------------------------------------------------------//
-
-METHOD ChangeSincAll() CLASS TComercio
-
-   if ::lSyncAll
-
-      ::oArticulos:Disable()
-      ::oTipIva:Disable()
-      ::oCliente:Disable()
-
-   else
-
-      ::oArticulos:Enable()
-      ::oTipIva:Enable()
-      ::oCliente:Enable()
-
-   end if
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -1073,12 +974,6 @@ Method ExportarPrestashop() Class TComercio
       ::oCon:Destroy()
 
       ::SetText( 'Base de datos desconectada.', 1 )
-
-      /*
-      Guardamos la configuración en el INI-------------------------------------
-      */
-
-      ::SaveIniValues()
 
       /*
       Para que al final del proceso quede totalmente llena la barra del meter--
@@ -1420,6 +1315,8 @@ METHOD DelIdIvaPrestashop() Class TComercio
       ::oIva:cGrpWeb := 0
       ::oIva:Save()
 
+      ::SetText ( 'Eliminando código web en el tipo de I.V.A. ' + AllTrim( ::oIva:DescIva ), 3  )
+
       ::oIva:Skip()
 
    end while
@@ -1588,6 +1485,8 @@ METHOD DelIdFabricantePrestashop() Class TComercio
       ::oFab:Load()
       ::oFab:cCodWeb := 0
       ::oFab:Save()
+
+      ::SetText ( 'Eliminando código web en el fabricante ' + AllTrim( ::oFab:cNomFab ), 3  )
 
       ::oFab:Skip()
 
@@ -1777,6 +1676,8 @@ METHOD DelIdFamiliasPrestashop() Class TComercio
       ::oFam:Load()
       ::oFam:cCodWeb := 0
       ::oFam:Save()
+
+      ::SetText ( 'Eliminando código web en la familia ' + AllTrim( ::oFam:cNomFam ), 3  )
 
       ::oFam:Skip()
 
@@ -4671,6 +4572,8 @@ METHOD DelIdArticuloPrestashop() Class TComercio
       ::oArt:cCodWeb := 0
       ::oArt:Save()
 
+      ::SetText ( 'Eliminando código web en el artículo ' + AllTrim( ::oArt:Nombre ), 3  )
+
       SysRefresh()
       ::oArt:Skip()
 
@@ -6627,7 +6530,7 @@ METHOD buildConect()
    local oDb
    local lConect     := .f.
 
-   ::SetText ( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
+   ::SetText ( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 3 )
 
    ::oCon            := TMSConnect():New()
 
@@ -6637,13 +6540,13 @@ METHOD buildConect()
 
    else
 
-      ::SetText ( 'Se ha conectado con éxito a la base de datos.' , 1 )
+      ::SetText ( 'Se ha conectado con éxito a la base de datos.' , 3 )
 
       oDb            := TMSDataBase():New( ::oCon, ::cDbName )
 
       if Empty( oDb )
 
-         ::SetText ( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 1 )
+         ::SetText ( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 3 )
 
       else
 
@@ -6751,7 +6654,7 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
                                     "id_manufacturer"       => ::oArt:cCodFab ,;
                                     "id_tax_rules_group"    => ::oArt:TipoIva ,;
                                     "id_category_default"   => ::oArt:Familia ,;
-                                    "price"                 => if( ::oArtDiv:Seek( ::oArt:Codigo ), 0, ::oArt:pVtaWeb ) ,;
+                                    "price"                 => if( ::oArtDiv:Seek( ::oArt:Codigo ), 0, ::buildPrecioArtitulo() ) ,;
                                     "reference"             => ::oArt:Codigo ,;
                                     "weight"                => ::oArt:nPesoKg ,;
                                     "description"           => if( !Empty( ::oArt:mDesTec ), ::oArt:mDesTec, ::oArt:Nombre ) ,; 
@@ -6764,7 +6667,8 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
                                     "cImagen"               => ::oArt:cImagen,;
                                     "lSbrInt"               => ::oArt:lSbrInt,;
                                     "nDtoInt1"              => ::oArt:nDtoInt1,;
-                                    "nImpInt1"              => ::oArt:nImpInt1 } )
+                                    "nImpInt1"              => ::buildPrecioArtitulo() } )
+
          end if
 
       end if 
@@ -6772,6 +6676,24 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
    end if
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildPrecioArtitulo() CLASS TComercio
+
+   local nPrecio
+
+   if ::oArt:lIvaInc
+
+      nPrecio  := Round( ::oArt:nImpIva1 / ( ( nIva( ::oIva:cAlias, ::oArt:TipoIva ) / 100 ) + 1 ), 6 )
+
+   else
+
+      nPrecio  := ::oArt:pVtaWeb
+
+   end if
+
+Return ( nPrecio )
 
 //---------------------------------------------------------------------------//
 
@@ -6986,9 +6908,7 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
       if Empty( id )
 
-         ::oArt:GetStatus()
-
-         ::oArt:OrdSetFocus( "lPubInt" )
+         ::oArt:GoTop()
 
          while !::oArt:Eof()
 
@@ -6997,8 +6917,6 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
             ::oArt:Skip()
 
          end while
-
-         ::oArt:SetStatus()
 
       else
 
@@ -7108,6 +7026,23 @@ METHOD buildInsertIvaPrestashop( hIvaData ) CLASS TComercio
       ::buildTextOk( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_rule" ) )
    else
       ::buildTextError( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_rule" ) )
+   end if
+
+   /*
+   Insertamos un tipo de IVA nuevo en la tabla tax_rule------------------------
+   */
+
+   cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rules_group_shop" ) + "( " +;
+                  "id_tax_rules_group, " + ;
+                  "id_shop )" + ;
+               " VALUES " + ;
+                  "('" + Str( nCodigoGrupoWeb ) + "', " + ;
+                  "'1' )"
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::buildTextOk( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_rules_group_shop" ) )
+   else
+      ::buildTextError( hGet( hIvaData, "name" ), ::cPrefixTable( "tax_rules_group_shop" ) )
    end if
 
    // Guardo referencia a la web-----------------------------------------------
@@ -7448,7 +7383,7 @@ METHOD BuildInsertProductsPrestashop( hArticuloData ) CLASS TComercio
    local aPropiedad1
    local aPropiedad2
    local nPrecio              := 0
-   local nParent              := ::GetParentCategories()
+   local nParent              := ::buildGetParentCategories( hGet( hArticuloData, "id_category_default" ) )
    local cCommand             := ""
    local nTotStock
    local nOrdArtDiv           := ::oArtDiv:OrdSetFocus( "cCodArt" )
@@ -8027,7 +7962,7 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
    local aPropiedad2
    local nOrdAnt
    local nPrecio              := 0
-   local nParent              := ::GetParentCategories()
+   local nParent              := ::buildGetParentCategories( hGet( hArticuloData, "id_category_default" ) )
    local cCommand             := ""
    local nOrdArtDiv           := ::oArtDiv:OrdSetFocus( "cCodArt" )
    local lDefault             := .t.
@@ -8458,7 +8393,11 @@ METHOD buildEliminaTablas() CLASS TComercio
       ::SetText ( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group" ), 3  )
    end if
 
-   ::DelIdIvaPrestashop()
+   if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + ::cPreFixtable( "tax_rules_group_shop" ) )
+      ::SetText ( 'Tabla ' + ::cPreFixtable( "tax_rules_group_shop" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPreFixtable( "tax_rules_group_shop" ), 3  )
+   end if
 
    /*
    Vaciamos las tablas de fabricantes------------------------------------------
@@ -8481,8 +8420,6 @@ METHOD buildEliminaTablas() CLASS TComercio
    else
       ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "manufacturer_lang" ), 3  )
    end if
-
-   ::DelIdFabricantePrestashop()
 
    /*
    Vaciamos las tablas de Categorias-------------------------------------------
@@ -8552,8 +8489,6 @@ METHOD buildEliminaTablas() CLASS TComercio
       ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "image_lang" ), 3  )
    end if
 
-   ::DelIdFamiliasPrestashop()
-
    /*
    Cargamos la categoría raiz de la que colgarán todas las demás---------------
    */
@@ -8611,8 +8546,6 @@ METHOD buildEliminaTablas() CLASS TComercio
    else
       ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group_lang" ), 3  )
    end if
-
-   ::DelIdPropiedadesPrestashop()
 
    /*
    Vaciamos las tablas de Artículos--------------------------------------------
@@ -8810,7 +8743,11 @@ METHOD buildEliminaTablas() CLASS TComercio
       ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "stock_available" ), 3  )
    end if
 
-   ::DelIdArticuloPrestashop()
+   /*
+   Limpiamos las referencias de las tablas de gestool--------------------------
+   */
+
+   ::buildCleanPrestashop()
 
    /*
    limpiamos refencias de imagenes a la web------------------------------------
@@ -8839,6 +8776,8 @@ METHOD DelIdPropiedadesPrestashop() Class TComercio
       ::oPro:cCodWeb := 0
       ::oPro:Save()
 
+      ::SetText ( 'Eliminando código web en la propiedad ' + AllTrim( ::oPro:cDesPro ), 3  )
+
       ::oPro:Skip()
 
    end while
@@ -8857,6 +8796,8 @@ METHOD DelIdPropiedadesPrestashop() Class TComercio
       ::oTblPro:Load()
       ::oTblPro:cCodWeb := 0
       ::oTblPro:Save()
+
+      ::SetText ( 'Eliminando código web en la propiedad ' + AllTrim( ::oTblPro:cDesTbl ), 3  )
 
       ::oTblPro:Skip()
 
@@ -8878,8 +8819,8 @@ Method buildExportarPrestashop() Class TComercio
 
    ::oBtnCancel:Disable()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE*/
 
    ::SetText ( '.', 1  )
 
@@ -8889,13 +8830,22 @@ Method buildExportarPrestashop() Class TComercio
 
    ::BuildProductPrestashop( nil, .f. )
 
-   RECOVER USING oError
+   /*
+   Para que al final del proceso quede totalmente llena la barra del meter--
+   */
+
+   ::oMeter:Set( 100 )
+   ::oMeterL:Set( 100 )
+
+   ::MeterGlobalText( "Proceso finalizado" )
+
+   /*RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    ::oBtnExportar:Hide()
    ::oBtnImportar:Hide()
@@ -8903,6 +8853,60 @@ Method buildExportarPrestashop() Class TComercio
    ::oBtnCancel:Enable()
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD buildCleanPrestashop() CLASS TComercio
+
+   ::SetText( "Limpiamos las referencias de las tablas de tipos de I.V.A." )
+   ::buildCleanTable( ::oIva )
+
+   ::SetText( "Limpiamos las referencias de las tablas de fabricantes" )
+   ::buildCleanTable( ::oFab )
+
+   ::SetText( "Limpiamos las referencias de las tablas de familias" )
+   ::buildCleanTable( ::oFam )
+
+   ::SetText( "Limpiamos las referencias de las tablas de propiedades" )
+   ::buildCleanTable( ::oPro )
+
+   ::SetText( "Limpiamos las referencias de las tablas de artículos" )
+   ::buildCleanTable( ::oArt )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildCleanTable( oTable ) CLASS TComercio
+
+   oTable:GoTop()
+   while !oTable:Eof()
+
+      if oTable:FieldGetbyName( "cCodWeb" ) != 0
+         oTable:fieldPutByName( "cCodWeb", 0 )
+      endif
+
+      oTable:Skip()
+
+   end while
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method buildGetParentCategories( cCodFam ) CLASS TComercio
+
+   local idCategories := 2
+
+   if !Empty( cCodFam )
+      if ::oFam:Seek( cCodFam )
+         if ::oFam:lPubInt
+            idCategories := ::oFam:cCodWeb
+         end if
+      end if
+   end if   
+
+Return( idCategories )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -8970,15 +8974,15 @@ function cLinkRewrite( cLink )
    for each cCaracter in cLink
 
       do case
-         case ( Abs( cCaracter ) >= 48 .and. Abs( cCaracter ) <= 57 ) .or.;
-              ( Abs( cCaracter ) >= 65 .and. Abs( cCaracter ) <= 90 ) .or.;
-              ( Abs( cCaracter ) >= 97 .and. Abs( cCaracter ) <= 122 )
+         case ( Asc( cCaracter ) >= 48 .and. Asc( cCaracter ) <= 57 ) .or.;
+              ( Asc( cCaracter ) >= 65 .and. Asc( cCaracter ) <= 90 ) .or.;
+              ( Asc( cCaracter ) >= 97 .and. Asc( cCaracter ) <= 122 )
 
             cResult     := cResult + cCaracter
 
-         case Abs( cCaracter ) == 32
+         case Asc( cCaracter ) == 32
 
-            if Abs( cCarAnt ) != 32
+            if Asc( cCarAnt ) != 32
                cResult  := cResult + "-"
             end if   
 
@@ -8993,7 +8997,7 @@ function cLinkRewrite( cLink )
    next
 
    if !Empty( cResult )
-      cResult        := lower( cResult + "-" )
+      cResult        := lower( cResult )
    end if  
 
 Return( cResult )
@@ -9051,5 +9055,3 @@ Function KillAutoRecive()
 Return( nil )
 
 //---------------------------------------------------------------------------//
-
-#endif

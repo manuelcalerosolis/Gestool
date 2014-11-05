@@ -4178,7 +4178,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Actualizamos el stock en la web------------------------------------------
          */
 
-         ActualizaStockWeb( nNumTik )
+         //ActualizaStockWeb( nNumTik )
 
          /*
          Actualizamos el stock-------------------------------------------------------

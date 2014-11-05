@@ -4363,17 +4363,12 @@ STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU
 CAPTION "Asistente para sincronizar la información de su web."
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Sincronización total", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 40, 75, 10
-  CONTROL "IVA", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 66, 52, 25, 10
-  CONTROL "Artículos", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 66, 64, 40, 10
-  CONTROL "Clientes", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 66, 76, 40, 10
-  CONTROL "Imágenes", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 66, 88, 45, 10
-  CONTROL "", 140, "Static", WS_BORDER|WS_GROUP, 234, 38, 230, 10
-  CONTROL "", 150, "Static", WS_BORDER|WS_GROUP, 234, 50, 230, 10
-  CONTROL "", 160, "Static", WS_BORDER|WS_GROUP, 234, 62, 230, 10
-  CONTROL "", 170, "Static", WS_BORDER|WS_GROUP, 234, 74, 230, 10
-  CONTROL "", 180, "Static", WS_BORDER|WS_GROUP, 234, 86, 230, 10
-  CONTROL "", 190, "Static", WS_BORDER|WS_GROUP, 234, 98, 230, 10
+  CONTROL "", 140, "Static", WS_BORDER|WS_GROUP, 136, 38, 328, 10
+  CONTROL "", 150, "Static", WS_BORDER|WS_GROUP, 136, 50, 328, 10
+  CONTROL "", 160, "Static", WS_BORDER|WS_GROUP, 136, 62, 328, 10
+  CONTROL "", 170, "Static", WS_BORDER|WS_GROUP, 136, 74, 328, 10
+  CONTROL "", 180, "Static", WS_BORDER|WS_GROUP, 136, 86, 328, 10
+  CONTROL "", 190, "Static", WS_BORDER|WS_GROUP, 136, 98, 328, 10
   CONTROL "", 200, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|WS_BORDER|WS_TABSTOP|0x00200000, 54, 127, 410, 189
   CONTROL "Importar pedidos", 520, "Button", WS_TABSTOP, 44, 354, 59, 14
   CONTROL "Exportar datos", 510, "Button", WS_TABSTOP, 342, 354, 59, 14
@@ -4383,14 +4378,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 230, "msctls_progress32", 0x00000000, 54, 338, 410, 6
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Comercio electrónico. Este asistente le guiará para enviar y recibir información de su web.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 425, 8
-  CONTROL "Opciones exportación", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 28, 97, 86
-  CONTROL "Datos de conexión", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 146, 28, 324, 85
-  CONTROL "Servidor:", -1, "Static", WS_GROUP, 154, 40, 80, 8
-  CONTROL "Puerto:", -1, "Static", WS_GROUP, 154, 52, 80, 8
-  CONTROL "Nombre de usuario:", -1, "Static", WS_GROUP, 154, 64, 80, 8
-  CONTROL "Base de datos:", -1, "Static", WS_GROUP, 154, 76, 80, 8
-  CONTROL "Usuario FTP ", -1, "Static", WS_GROUP, 154, 88, 80, 8
-  CONTROL "Direcctorio imágenes", -1, "Static", WS_GROUP, 154, 100, 80, 8
+  CONTROL "Datos de conexión", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 28, 426, 85
+  CONTROL "Servidor:", -1, "Static", WS_GROUP, 54, 40, 80, 8
+  CONTROL "Puerto:", -1, "Static", WS_GROUP, 54, 52, 80, 8
+  CONTROL "Nombre de usuario:", -1, "Static", WS_GROUP, 54, 64, 80, 8
+  CONTROL "Base de datos:", -1, "Static", WS_GROUP, 54, 76, 80, 8
+  CONTROL "Usuario FTP ", -1, "Static", WS_GROUP, 54, 88, 80, 8
+  CONTROL "Direcctorio imágenes", -1, "Static", WS_GROUP, 54, 100, 80, 8
   CONTROL "Procesos en curso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 116, 426, 234
 }
 
