@@ -8997,7 +8997,7 @@ function cLinkRewrite( cLink )
    next
 
    if !Empty( cResult )
-      cResult        := lower( cResult )
+      cResult           := lower( cResult )
    end if  
 
 Return( cResult )

@@ -26,7 +26,7 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    METHOD CreaTemporales()
    METHOD CierraTemporales()
 
-   METHOD loadAlbaranes()     INLINE ( msgAlert("loadAlbaranes"))
+   METHOD loadAlbaranes()     
 
 END CLASS
 
@@ -92,7 +92,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
          with object ( :AddCol() )
             :cHeader          := "Albaran"
-            :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( ( ::oBrwEntrada:cAlias ) )->nNumAlb ) ) }
+            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cSerAlb + "/" + Alltrim( Str( ( ::oBrwEntrada:cAlias )->nNumAlb ) ) }
             :nWidth           := 80
          end with
 
@@ -268,11 +268,7 @@ METHOD CreaTemporales()
 
    D():BuildTmp( "AlbProvL", "TmpPrvI", ::nView ) 
 
-   ::tmpEntrada   := D():GetAreaTmp( "TmpPrvI", ::nView )
-
    D():BuildTmp( "AlbProvL", "TmpPrvO", ::nView ) 
-
-   ::tmpSalida    := D():GetAreaTmp( "TmpPrvI", ::nView )
 
 Return ( Self )
 
@@ -287,3 +283,14 @@ METHOD CierraTemporales()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD loadAlbaranes()     
+
+   msgAlert( ::oProveedor:Value() ) 
+   msgAlert( ::oPeriodo:oFechaInicio:Value() )  
+   msgAlert( ::oPeriodo:oFechaFin:Value() )  
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+

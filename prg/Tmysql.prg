@@ -36,11 +36,7 @@ Method New( cHost, cUser, cPasswd, cDbName, nPort )
    DEFAULT cDbName   := cDtbSql()
    DEFAULT nPort     := nPrtSql()
 
-   msgAlert("TMSConnect():New()")
-
    ::oConexion       := TMSConnect():New()  // Inicia el objeto Conexion
-
-   msgAlert("Despues de TMSConnect():New()")
 
    ::cHost           := RTrim( cHost )
    ::cUser           := RTrim( cUser )
