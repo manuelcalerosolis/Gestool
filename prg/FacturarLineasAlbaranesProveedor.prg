@@ -286,9 +286,31 @@ Return ( Self )
 
 METHOD loadAlbaranes()     
 
-   msgAlert( ::oProveedor:Value() ) 
-   msgAlert( ::oPeriodo:oFechaInicio:Value() )  
-   msgAlert( ::oPeriodo:oFechaFin:Value() )  
+   local aStatus
+   local cCodigoProveedor     := ::oProveedor:Value()
+
+   if empty( cCodigoProveedor )
+      msgStop( "Debe cumplimentar un proveedor.")
+      Return .f.
+   end if 
+
+   D():GetStatus( "AlbProvT", ::nView )
+   
+   ( D():AlbaranesProveedores( ::nView ) )->( ordsetfocus( "cCodPrv" ) )
+   
+   if ( D():AlbaranesProveedores( ::nView ) )->( dbSeek( cCodigoProveedor ) ) 
+      while ( D():AlbaranesProveedores( ::nView ) )->cCodPrv == cCodigoProveedor // .and. !( D():Get( "AlbProvL", ::nView ) )->( eof() ) 
+
+         if ::oPeriodo:InRange( D():AlbaranesProveedoresFecha( ::nView ) )
+            msgAlert( D():AlbaranesProveedoresId( ::nView ) )
+         end if
+
+         ( D():AlbaranesProveedores( ::nView ) )->( dbskip() )
+
+      end while
+   end if 
+
+   D():SetStatus( "AlbProvT", ::nView )
 
 Return ( Self )
 

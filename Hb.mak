@@ -148,6 +148,7 @@ Titemgroup.prg          	\
 Ttikstka.prg            	\
 TStockMinimoFamilia.prg 	\
 Xvalalmg.prg            	\
+TFtpFile.prg               \
 Tcobage.prg             	\
 Remcli.prg              	\
 Label.prg               	\
@@ -883,6 +884,7 @@ $(OBJ)\Titemgroup.obj           	+
 $(OBJ)\Ttikstka.obj             	+
 $(OBJ)\TStockMinimoFamilia.obj  	+
 $(OBJ)\Xvalalmg.obj             	+
+$(OBJ)\TFtpFile.obj              +
 $(OBJ)\Tartalb.obj              	+
 $(OBJ)\Tfamtik.obj              	+
 $(OBJ)\Remcli.obj               	+
