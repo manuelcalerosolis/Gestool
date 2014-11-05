@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <Wininet.h>
 #include <hbapi.h>
+#include <hbstack.h>
 
 static HMODULE hModule = NULL;
 
