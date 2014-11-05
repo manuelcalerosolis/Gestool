@@ -137,18 +137,36 @@ METHOD PutFile( oMeter ) CLASS TFTPFile
       oMeter:SetTotal( nTotalBytes )
    end if
 
+   msgAlert( "hSource           := fOpen( ::cFileName )" )
+
    hSource           := fOpen( ::cFileName )
+
+   msgAlert( "if fError() == 0")
 
    if fError() == 0
 
+      msgAlert( "fSeek( hSource, 0, 0 )" )
+
       fSeek( hSource, 0, 0 )
+<<<<<<< HEAD
+=======
+      msgAlert( "while ( nBytes := fRead( hSource, @cBuffer, 2000 ) ) > 0" )
+>>>>>>> 425fc3bb23894c422af8dbce653cabf354c9ae18
       while ( nBytes := fRead( hSource, @cBuffer, 2000 ) ) > 0
 
+         msgAlert( "nWriteBytes += nBytes" )
          nWriteBytes += nBytes
 
+<<<<<<< HEAD
          oFile:Write( SubStr( cBuffer, 1, nBytes ) )
+=======
+         msgAlert( "::Write( SubStr( cBuffer, 1, nBytes ) )" )  
+         ::Write( SubStr( cBuffer, 1, nBytes ) )
+>>>>>>> 425fc3bb23894c422af8dbce653cabf354c9ae18
 
+         msgAlert( "if !Empty( oMeter )" )  
          if !Empty( oMeter )
+            msgAlert( "oMeter:Set( nWriteBytes )")
             oMeter:Set( nWriteBytes )
          end if
 
