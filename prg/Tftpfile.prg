@@ -142,7 +142,7 @@ METHOD PutFile( oMeter ) CLASS TFTPFile
    if fError() == 0
 
       fSeek( hSource, 0, 0 )
-      while ( nBytes := fRead( hSource, @cBuffer, 2000 ) ) > 0
+      while ( nBytes := fRead( hSource, @cBuffer, 20000 ) ) > 0
 
          nWriteBytes += nBytes
 
