@@ -24,6 +24,8 @@ CLASS TDataCenter
    CLASSDATA   aEmpresaTables             INIT {}
    CLASSDATA   aEmpresaObject             INIT {}
 
+   CLASSDATA   aDataTmp                   INIT {}
+
    CLASSDATA   hOperationDescription      INIT { "INSERT" => "Añadido", "UPDATE" => "Modificado", "DELETE" => "Eliminado" }
 
    DATA        aEmpresas                  INIT {}
@@ -177,6 +179,7 @@ CLASS TDataCenter
    //---------------------------------------------------------------------------//
 
    METHOD ScanDataTable()
+   METHOD ScanDataTmp( cDataTable )
    METHOD ScanObject()
 
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
@@ -998,7 +1001,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ScanDataTable( cDataTable ) 
+METHOD ScanDataTable( cDataTable ) CLASS TDataCenter
 
    local nScan
 
@@ -1017,6 +1020,20 @@ METHOD ScanDataTable( cDataTable )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD ScanDataTmp( cDataTable ) CLASS TDataCenter
+
+   local nScan
+
+   nScan    := aScan( ::aDataTmp, {|o| o:cFileName() == ::DataName( cDataTable ) } )   
+   if nScan != 0
+      Return ( ::aDataTmp[ nScan ] )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD ScanObject( cName ) CLASS TDataCenter
 
@@ -2647,6 +2664,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "AlbProvL"
    oDataTable:cDescription := "Albaranes de proveedor lineas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:aStruct      := aColAlbPrv()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbProvL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbProvL.Cdx"
    ::AddEmpresaTable( oDataTable )
@@ -4984,6 +5002,15 @@ CLASS D
       METHOD GetView( cDatabase )
       METHOD OpenDataBase( cDataTable, nView )
 
+   // Temporales---------------------------------------------------------------
+
+   METHOD BuildTmp( cDatabase, cAlias, nView ) 
+      METHOD AddViewTmp( cAlias, cHandle, nView )  
+      METHOD GetTmp( cAlias, nView )   
+      METHOD GetAreaTmp( cAlias, nView )
+      METHOD GetFileTmp( cAlias, nView ) 
+   METHOD CloseTmp( cAlias, nView )
+
    METHOD GetObject( cObject, nView )
 
    // Presupuestos de clientes-------------------------------------------------
@@ -5281,6 +5308,57 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
+   METHOD GetTmp( cAlias, nView ) CLASS D
+
+      local hGet
+      local hView
+
+      if ::AssertView( nView )
+         hView             := hGet( ::hViews, nView )
+         if hb_ishash( hView ) 
+            if hHasKey( hView, Upper( cAlias ) )
+               hGet        := hGet( hView, Upper( cAlias ) )
+            end if 
+         end if 
+      end if 
+
+   RETURN ( hGet )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD GetAreaTmp( cAlias, nView ) CLASS D
+
+      local hGet
+      local cHandle
+
+      hGet           := ::GetTmp( Upper( cAlias ), nView )
+      if hb_ishash( hGet ) 
+         if hHasKey( hGet, "Area" )
+            cHandle  := hGet( hGet, "Area" )
+         end if 
+      end if 
+
+   RETURN ( cHandle )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD GetFileTmp( cAlias, nView ) CLASS D
+
+      local hView
+      local hGet
+      local cFile
+
+      hGet        := ::GetTmp( Upper( cAlias ), nView )
+      if hb_ishash( hGet ) 
+         if hHasKey( hGet, "File" )
+            cFile    := hGet( hGet, "File" )
+         end if 
+      end if 
+
+   RETURN ( cFile )
+
+   //---------------------------------------------------------------------------//
+
    METHOD AddView( cDatabase, cHandle, nView ) CLASS D
 
       local hView
@@ -5290,6 +5368,23 @@ ENDCLASS
          hView    := hGet( ::hViews, nView )
          if hb_ishash( hView )
             hSet( hView, Upper( cDatabase ), cHandle )
+         end if 
+
+      end if  
+
+   RETURN ( Self )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD AddViewTmp( cAlias, cFile, cHandle, nView ) CLASS D
+
+      local hView
+
+      if ::AssertView( nView )
+
+         hView    := hGet( ::hViews, nView )
+         if hb_ishash( hView )
+            hSet( hView, Upper( cAlias ), { "File" => cFile, "Area" => cHandle } )
          end if 
 
       end if  
@@ -5319,10 +5414,79 @@ ENDCLASS
       else 
 
          msgStop( "No puedo encontrar la tabla " + cDataTable )   
-
          Return ( .f. )
 
       end if
+
+   Return ( .t. )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD BuildTmp( cDataTable, cAlias, nView ) CLASS D
+
+      local cArea
+      local cFile
+      local lOpen       := .f.
+      local oDataTable
+
+      cFile             := cGetNewFileName( cPatTmp() + cAlias )
+      oDataTable        := TDataCenter():ScanDataTable( cDataTable )
+
+      if !empty( oDataTable )
+
+         if !empty( oDataTable:aStruct )
+
+            dbCreate( cFile, aSqlStruct( oDataTable:aStruct ), cLocalDriver() )
+            dbUseArea( .t., cLocalDriver(), cFile, cCheckArea( cAlias, @cArea ), .f. )
+
+            lOpen       := !neterr()
+            if lOpen
+            msgAlert( "AddView")
+               ::AddViewTmp( cAlias, cFile, cArea, nView )
+            end if 
+
+         else 
+
+            msgStop( "La tabla " + cDataTable + " no contiene estructura." )   
+            Return ( .f. )
+
+         end if
+
+      else 
+
+         msgStop( "No puedo encontrar la tabla " + cDataTable )   
+         Return ( .f. )
+
+      end if
+
+   Return ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+   METHOD CloseTmp( cAlias, nView ) CLASS D
+
+      local cFile
+      local cArea
+      local hView
+
+      cArea             := ::GetAreaTmp( cAlias, nView )
+      if !empty( cArea )
+         ( cArea )->( dbCloseArea() )
+      end if 
+
+      cFile             := ::GetFileTmp( cAlias, nView )
+      if !empty( cFile )
+         dbfErase( cFile )
+      end if 
+
+      // Sacamos de la lista --------------------------------------------------
+
+      if ::AssertView( nView )
+         hView          := hGet( ::hViews, nView )
+         if hb_ishash( hView ) 
+            hDel( hView, Upper( cAlias ) )
+         end if 
+      end if 
 
    Return ( .t. )
 
@@ -5343,7 +5507,6 @@ ENDCLASS
       else 
 
          msgStop( "No puedo encontrar el objeto " + cObject )   
-
          Return ( .f. )
 
       end if
