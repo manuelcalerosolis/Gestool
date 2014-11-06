@@ -323,6 +323,10 @@ CLASS TComercio
    METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData )
    METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb )
 
+   METHOD BuildDeleteProductPrestashop()
+
+   METHOD buildDeleteImagesProducts( cCodWeb )
+
    METHOD buildPrecioArtitulo()
 
    METHOD buildGetParentCategories()
@@ -6859,8 +6863,6 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
       if ::buildConect()
 
-         msgAlert( ::lSyncAll, "::lSyncAll" )
-
          if ::lSyncAll
             ::buildEliminaTablas()
          end if
@@ -8844,6 +8846,353 @@ Method buildGetParentCategories( cCodFam ) CLASS TComercio
    end if   
 
 Return( idCategories )
+
+//---------------------------------------------------------------------------//
+
+METHOD BuildDeleteProductPrestashop( cCodArt ) CLASS TComercio
+
+   local idDelete    := 0
+   local idDelete2   := 0
+   local cCommand    := ""
+   local oQuery
+   local oQuery2
+   local cCodWeb 
+
+   ::lShowDialogWait()
+
+   if ::OpenFiles()
+
+      if ::oArt:SeekInOrd( cCodArt, "Codigo" ) .and. ::oArt:cCodWeb != 0
+
+         if ::buildConect()
+
+            cCodWeb           := AllTrim( Str( ::oArt:cCodWeb ) )
+
+            ::cTextoWait( "Eliminando artículo de Prestashop" )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando adjuntos de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attachment" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando impuestos de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_country_tax" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando archivos de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_download" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando cache de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_group_reduction_cache" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando multitienda de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_shop" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando descripciones de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_lang" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando ofertas de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_sale" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando etiquetas de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_tag" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando complementos de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_supplier" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando transporte de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "product_carrier" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando atributos de Prestashop"  )
+
+            cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "product_attribute" ) +  ' WHERE id_product=' + cCodWeb
+            oQuery            := TMSQuery():New( ::oCon, cCommand )
+            
+            ::cTextoWait( "Eliminando lineas atributos de Prestashop"  )
+
+            if oQuery:Open()
+            
+               if oQuery:RecCount() > 0
+
+                  oQuery:GoTop()
+
+                  while !oQuery:Eof()
+
+                     idDelete    := oQuery:FieldGet( 1 )
+
+                     if !Empty( idDelete )
+
+                        cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                        cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                        cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                        cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     end if
+
+                     oQuery:Skip()
+
+                     SysRefresh()
+
+                  end while
+            
+               end if
+
+            end if
+
+            ::cTextoWait( "Eliminando precios especificos de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando prioridad de precio de Prestashop"  )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "specific_price_priority" ) + " WHERE id_product=" + cCodWeb
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::cTextoWait( "Eliminando funciones de Prestashop"  )
+
+            cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_product" ) +  ' WHERE id_product=' + cCodWeb
+            oQuery            := TMSQuery():New( ::oCon, cCommand )
+            
+            ::cTextoWait( "Eliminando lineas funciones de Prestashop"  )
+
+            if oQuery:Open()
+            
+               if oQuery:RecCount() > 0
+
+                  oQuery:GoTop()
+
+                  while !oQuery:Eof()
+
+                     idDelete    := oQuery:FieldGet( 1 )
+
+                     if !Empty( idDelete )
+
+                        cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_product" ) + " WHERE id_product=" + cCodWeb
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                        cCommand          := "DELETE FROM " + ::cPrefixTable( "feature" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                        cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_lang" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                        cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_shop" ) + " WHERE id_feature=" + AllTrim( Str( idDelete ) )
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                        cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "feature_value" ) +  ' WHERE id_feature=' + AllTrim( Str( idDelete ) )
+                        oQuery2           := TMSQuery():New( ::oCon, cCommand )
+
+                        if oQuery2:Open()
+                  
+                           if oQuery2:RecCount() > 0
+
+                              oQuery2:GoTop()
+
+                              while !oQuery2:Eof()
+
+                              idDelete2    := oQuery:FieldGet( 1 )
+
+                                 if !Empty( idDelete2 )
+
+                                    cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value" ) + " WHERE id_feature_value=" + AllTrim( Str( idDelete2 ) )
+                                    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                                    cCommand          := "DELETE FROM " + ::cPrefixTable( "feature_value_lang" ) + " WHERE id_feature_value=" + AllTrim( Str( idDelete2 ) )
+                                    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                                 end if
+
+                                 oQuery2:Skip()
+
+                                 SysRefresh()
+
+                              end while      
+
+                           end if
+
+                        end if
+
+                     end if
+
+                     oQuery:Skip()
+
+                     SysRefresh()
+
+                  end while      
+            
+               end if
+
+            end if
+
+            SysRefresh()
+
+            /*
+            Eliminamos las imágenes del artículo---------------------------------------
+            */
+
+            ::cTextoWait( "Eliminando imágenes de prestashop" )
+
+            ::buildDeleteImagesProducts( cCodWeb )
+
+            SysRefresh()
+
+            /*
+            Quitamos la referencia de nuestra tabla-------------------------------------
+            */
+
+            ::oArt:fieldPutByName( "cCodWeb", 0 )
+
+            /*
+            Desconectamos------------------------------------------------------
+            */
+
+            ::buildDisConect()  
+            
+         end if
+
+      end if     
+
+      ::CloseFiles()
+
+   end if
+
+   ::lHideDialogWait()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildDeleteImagesProducts( cCodWeb ) CLASS TComercio 
+
+   local oInt
+   local oFtp
+   local aDirectory
+   local cDirectory
+   local lError
+   local idDelete
+   local oQuery
+   local cCommand    := ""
+   local aDelImages  := {}
+   local cCarpeta
+
+   if !Empty( cCodWeb )
+      
+      /*
+      Limpiamos la refecencia en la base de datos------------------------------
+      */
+
+      cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "image" ) +  ' WHERE id_product=' + cCodWeb
+      oQuery            := TMSQuery():New( ::oCon, cCommand )
+
+      if oQuery:Open() .and. oQuery:RecCount() > 0
+
+         oQuery:GoTop()
+
+         while !oQuery:Eof()
+
+            idDelete    := oQuery:FieldGet( 1 )
+
+            aAdd( aDelImages, idDelete )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "image" ) + " WHERE id_image=" + AllTrim( Str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "image_shop" ) + " WHERE id_image=" + AllTrim( Str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            cCommand          := "DELETE FROM " + ::cPrefixTable( "image_lang" ) + " WHERE id_image=" + AllTrim( Str( idDelete ) )
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         
+            oQuery:Skip()
+
+            SysRefresh()
+
+         end while
+
+      end if
+
+      oQuery:Free()
+
+      if !Empty( ::cHostFtp )
+
+         if !Empty( ::cDirImagen )
+            
+            for each idDelete in aDelImages
+
+               if !::ftpCreateConexion()
+
+                  MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+
+               else
+
+                  cCarpeta    := ::CreateDirectoryImagesLocal( idDelete )
+
+                  ::oFtp:SetCurrentDirectory( ::cDirImagen + "/p" + cCarpeta )
+                  ::oFtp:DeleteMask()
+
+                  ::oFtp:SetCurrentDirectory( ".." )
+
+               end if 
+
+               ::ftpEndConexion()                  
+
+            next
+
+         end if
+
+      else
+
+         if isDirectory( ::cDirImagen )
+            
+            for each idDelete in aDelImages
+
+               cCarpeta       := ::CreateDirectoryImagesLocal( idDelete )
+
+               DeleteFilesToDirectory( ::cDirImagen + "/p" + cCarpeta )
+
+            next
+
+         end if
+      
+      end if   
+
+   end if
+
+   SysRefresh()
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

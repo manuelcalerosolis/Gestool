@@ -18648,11 +18648,17 @@ Return .t.
 
 Static Function BuildWeb( cCodArt )
 
-   if lPubArt()
-      with object ( TComercio():New() )  
+   with object ( TComercio():New() )  
+
+      :BuildDeleteProductPrestashop( cCodArt )
+
+      if lPubArt()
+
          :BuildProductPrestashop( cCodArt )
-      end with
-   end if   
+
+      end if
+
+   end with
 
 Return .t.
 
