@@ -380,7 +380,6 @@ FacturarLineasAlbaranesProveedor.prg\
 C               =       	\
 Img2pdf.c               	\
 Treeview.c 						\
-Wininet.c                  \
 
 OBJS            =       \
 Factu.obj               \
@@ -600,7 +599,6 @@ RcolumnC3.obj           \
 Metafi32.obj            \
 Img2pdf.obj             \
 Treeview.obj 				\
-Wininet.obj             \	
 Ean.obj                 \
 C5Lib.obj               \
 TInfseanum.obj          \
@@ -1041,7 +1039,6 @@ $(OBJ)\TDetPersonal.obj         	+
 $(OBJ)\TDetMaquina.obj          	+
 $(OBJ)\Img2pdf.obj              	+
 $(OBJ)\Treeview.obj             	+
-$(OBJ)\Wininet.obj               +
 $(OBJ)\ReportGallery.obj        	+
 $(OBJ)\PInfMateriales.obj       	+
 $(OBJ)\UnidadMedicion.obj       	+
