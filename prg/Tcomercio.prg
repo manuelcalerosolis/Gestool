@@ -6869,11 +6869,13 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
          ::buildSubirInformacion()
 
+         // Desconectamos mysql------------------------------------------------
+
+         ::buildDisConect()  
+
          // Pasamos las imágenes de los artículos a prestashop-----------------
 
          ::appendImagesPrestashop()
-
-         ::buildDisConect()  
          
       end if  
 
