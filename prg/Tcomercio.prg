@@ -29,6 +29,7 @@ CLASS TComercio
    DATA  cText
    DATA  aSend
    DATA  oInt
+   DATA  oUrl
    DATA  oFtp
    DATA  nTotMeter
 
@@ -285,11 +286,6 @@ CLASS TComercio
 
    METHOD cValidDirectoryFtp( cDirectory )
 
-   METHOD CreateDirectoryImages( cCarpeta )
-   METHOD ReturnDirectoryImages( cCarpeta )
-
-   METHOD CreateFileImages( cImage )
-
    METHOD CreateDirectoryImagesLocal( cCarpeta )
 
    // Datos para la recopilacion de informacion----------------------------
@@ -341,6 +337,13 @@ CLASS TComercio
 
    METHOD buildTextOk( cValue, cTable )      INLINE ( ::SetText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
    METHOD buildTextError( cValue, cTable )   INLINE ( ::SetText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
+
+   METHOD ftpCreateConexion()
+   METHOD ftpEndConexion()
+   METHOD ftpCreateDirectory( cCarpeta )
+   METHOD ftpCreateDirectoryRecursive( cCarpeta )
+   METHOD ftpCreateFile( cFile )
+   METHOD ftpReturnDirectory( cCarpeta )
 
 END CLASS
 
@@ -2171,30 +2174,21 @@ METHOD DeleteImagesCategories( cCodCategorie ) CLASS TComercio
       Conectamos al FTP para eliminar las imagenes de las categorías-----------
       */
 
-      oInt         := TInternet():New()
-      oFtp         := TFtp():New( ::cHostFtp, oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-
-      if Empty( oFtp ) .or. Empty( oFtp:hFtp )
+      if ::ftpCreateConexion()
 
          MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
 
       else
 
          if !Empty( ::cDirImagen )
-            oFtp:SetCurrentDirectory( ::cDirImagen + "/c" )
+            ::oFtp:SetCurrentDirectory( ::cDirImagen + "/c" )
          end if
 
-         oFtp:DeleteMask( AllTrim( Str( cCodCategorie ) ) + "*.*" )
+         ::oFtp:DeleteMask( AllTrim( Str( cCodCategorie ) ) + "*.*" )
 
       end if
 
-      if !Empty( oInt )
-         oInt:end()
-      end if
-
-      if !Empty( oFtp )
-         oFtp:end()
-      end if
+      ::ftpEndConexion()
 
    end if
 
@@ -4241,10 +4235,7 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
             
             for each idDelete in aDelImages
 
-               oInt           := TInternet():New()
-               oFtp           := TFtp():New( ::cHostFtp, oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-
-               if Empty( oFtp ) .or. Empty( oFtp:hFtp )
+               if !::ftpCreateConexion()
 
                   MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
 
@@ -4252,20 +4243,14 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
 
                   cCarpeta    := ::CreateDirectoryImagesLocal( idDelete )
 
-                  oFtp:SetCurrentDirectory( ::cDirImagen + "/p" + cCarpeta )
-                  oFtp:DeleteMask()
+                  ::oFtp:SetCurrentDirectory( ::cDirImagen + "/p" + cCarpeta )
+                  ::oFtp:DeleteMask()
 
-                  oFtp:SetCurrentDirectory( ".." )
+                  ::oFtp:SetCurrentDirectory( ".." )
 
                end if 
-                  
-               if !Empty( oInt )
-                  oInt:end()
-               end if
 
-               if !Empty( oFtp )
-                  oFtp:end()
-               end if  
+               ::ftpEndConexion()                  
 
             next
 
@@ -4711,10 +4696,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
       if !Empty( ::cHostFtp )
 
-         ::oInt         := TInternet():New()
-         ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-
-         if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp )
+         if !::ftpCreateConexion()
 
             MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
 
@@ -4730,7 +4712,7 @@ Method AppendImagesPrestashop() CLASS TComercio
             nCount                     := 1
 
             if !Empty( ::cDirImagen )
-               ::CreateDirectoryImages( ::cDirImagen + "/p" )
+               ::ftpCreateDirectory( ::cDirImagen + "/p" )
             end if
 
             for each oImage in ::aImagesArticulos
@@ -4743,19 +4725,19 @@ Method AppendImagesPrestashop() CLASS TComercio
                Posicionamos en el directorio-----------------------------------
                */
 
-               ::CreateDirectoryImages( oImage:cCarpeta )
+               ::ftpCreateDirectoryRecursive( oImage:cCarpeta )
 
                /*
                Sube el fichero ------------------------------------------------
                */
 
-               ::CreateFileImages( oImage:cNombreImagen )
+               ::ftpCreateFile( oImage:cNombreImagen )
               
                /*
                Volvemos al directorio raiz-------------------------------------
                */
 
-               ::ReturnDirectoryImages( oImage:cCarpeta )
+               ::ftpReturnDirectory( oImage:cCarpeta )
 
                /*
                if !Empty( ::cDirImagen )
@@ -4773,13 +4755,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
          end if
 
-         if !Empty( ::oInt )
-            ::oInt:end()
-         end if
-
-         if !Empty( ::oFtp )
-            ::oFtp:end()
-         end if
+         ::ftpEndConexion()
 
       else  
 
@@ -4825,10 +4801,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
          ::nTotMeter    := 0
 
-         ::oInt         := TInternet():New()
-         ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-
-         if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp )
+         if !::ftpCreateConexion()
 
             MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
 
@@ -4844,7 +4817,7 @@ Method AppendImagesPrestashop() CLASS TComercio
             nCount                     := 1
 
             if !Empty( ::cDirImagen )
-               ::CreateDirectoryImages( ::cDirImagen + "/c" )
+               ::ftpCreateDirectory( ::cDirImagen + "/c" )
             end if
 
             for each oImage in ::aImagesCategories
@@ -4853,7 +4826,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
 
-               ::CreateFileImages( cFileBmpName( oImage:cNombreImagen ) )
+               ::ftpCreateFile( cFileBmpName( oImage:cNombreImagen ) )
 
                nCount                  += 1
 
@@ -4869,13 +4842,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
          end if
 
-         if !Empty( ::oInt )
-            ::oInt:end()
-         end if
-
-         if !Empty( ::oFtp )
-            ::oFtp:end()
-         end if
+         ::ftpEndConexion()
 
       else 
       
@@ -6461,77 +6428,6 @@ METHOD cValidDirectoryFtp( cDirectory ) CLASS TComercio
    end if
 
 Return ( cResult )
-
-//---------------------------------------------------------------------------//
-
-METHOD CreateDirectoryImages( cCarpeta ) CLASS TComercio
-
-   msgalert( alltrim(cCarpeta), "CreateDirectoryImages" )
-
-   ::oFtp:CreateDirectory( alltrim(cCarpeta) )
-   ::oFtp:SetCurrentDirectory( alltrim(cCarpeta) )
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD CreateFileImages( cFile, oMeter )
-   
-   local oFile
-   local nBytes
-   local hSource
-   local lPutFile    := .t.
-   local cBuffer     := Space( 20000 )
-   local nTotalBytes := 0
-   local nWriteBytes := 0
-
-
-   oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
-   oFile:OpenWrite()
-
-   hSource           := fOpen( cFileBmpName( cFile ) ) 
-
-   if fError() == 0
-
-      fSeek( hSource, 0, 0 )
-
-      while ( nBytes := fRead( hSource, @cBuffer, 20000 ) ) > 0 
-
-         nWriteBytes += nBytes
-
-         oFile:Write( SubStr( cBuffer, 1, nBytes ) )
-
-         if !Empty( oMeter )
-            oMeter:Set( nWriteBytes )
-         end if
-
-      end while
-
-   else
-
-      lPutFile       := .f.
-
-   end if
-
-   oFile:End()
-
-   fClose( hSource )
-
-   SysRefresh()
-
-Return ( lPutFile )
-
-//---------------------------------------------------------------------------//
-
-METHOD ReturnDirectoryImages( cCarpeta ) CLASS TComercio
-
-   local n
-
-   for n := 1 to Len( cCarpeta )
-      ::oFtp:SetCurrentDirectory( ".." )
-   next   
-
-Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -8950,6 +8846,174 @@ Return( idCategories )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
+
+#ifdef __XHARBOUR__
+
+METHOD ftpCreateConexion() CLASS TComercio
+
+   ::oInt         := TInternet():New()
+   ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
+
+Return ( if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp ) )
+
+METHOD ftpEndConexion() CLASS TComercio
+
+   if !empty(::oInt)
+      ::oInt:end()
+   end if
+
+   if !empty(::oFtp)
+      ::oFtp:end()
+   end if 
+
+Return( nil )
+
+METHOD ftpCreateDirectory( cCarpeta ) CLASS TComercio
+
+   ::oFtp:CreateDirectory( alltrim(cCarpeta) )
+   ::oFtp:SetCurrentDirectory( alltrim(cCarpeta) )
+
+Return ( .t. )
+
+METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
+
+   local n
+
+   for n := 1 to len( cCarpeta )
+      ::ftpCreateDirectory( substr(cCarpeta,n,1) )
+   next 
+
+Return ( .t. )
+
+METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
+   
+   local oFile
+   local nBytes
+   local hSource
+   local lPutFile    := .t.
+   local cBuffer     := Space( 20000 )
+   local nTotalBytes := 0
+   local nWriteBytes := 0
+
+   oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
+   oFile:OpenWrite()
+
+   hSource           := fOpen( cFileBmpName( cFile ) ) 
+
+   if fError() == 0
+
+      fSeek( hSource, 0, 0 )
+
+      while ( nBytes := fRead( hSource, @cBuffer, 20000 ) ) > 0 
+
+         nWriteBytes += nBytes
+
+         oFile:Write( SubStr( cBuffer, 1, nBytes ) )
+
+         if !Empty( oMeter )
+            oMeter:Set( nWriteBytes )
+         end if
+
+      end while
+
+   else
+
+      lPutFile       := .f.
+
+   end if
+
+   oFile:End()
+
+   fClose( hSource )
+
+   SysRefresh()
+
+Return ( lPutFile )
+
+METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
+
+   local n
+
+   for n := 1 to Len( cCarpeta )
+      ::oFtp:SetCurrentDirectory( ".." )
+   next   
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+#else
+
+METHOD ftpCreateConexion() CLASS TComercio
+
+   local lOpen          := .f.
+   local cStr
+   local cUrl           := "ftp://" + ::cUserFtp + ":" + ::cPasswdFtp + "@" + ::cHostFtp
+
+   ::oUrl               := TUrl():New( cUrl )
+   ::oFTP               := TIPClientFTP():New( ::oUrl, .t. )
+   ::oFTP:nConnTimeout  := 20000
+   ::oFTP:bUsePasv      := ::lPassiveFtp
+
+   lOpen                := ::oFTP:Open( cUrl )
+
+   if !lOpen
+      cStr              := "Could not connect to FTP server " + ::oURL:cServer
+      if empty( ::oFTP:SocketCon )
+         cStr           += hb_eol() + "Connection not initialized"
+      elseif hb_inetErrorCode( ::oFTP:SocketCon ) == 0
+         cStr           += hb_eol() + "Server response:" + " " + ::oFTP:cReply
+      else
+         cStr           += hb_eol() + "Error in connection:" + " " + hb_inetErrorDesc( ::oFTP:SocketCon )
+      endif
+      msgStop( cStr, "Error" )
+   end if
+
+Return ( lOpen )
+
+METHOD ftpEndConexion() CLASS TComercio
+
+   if !empty(::oFTP)
+      ::oFTP:Close()
+   end if 
+
+Return( nil )
+
+METHOD ftpCreateDirectory( cCarpeta ) CLASS TComercio
+   
+   ::oFtp:MKD( alltrim(cCarpeta) )
+   ::oFtp:Cwd( alltrim(cCarpeta) )
+
+Return ( .t. )
+
+METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
+
+   local n
+
+   for n := 1 to len( cCarpeta )
+      ::ftpCreateDirectory( substr(cCarpeta,n,1) )
+   next 
+
+Return ( .t. )
+
+METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
+
+Return ( ::oFtp:UploadFile( cFile ) )
+
+METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
+
+   local n
+
+   for n := 1 to Len( cCarpeta )
+      ::oFtp:Cwd( ".." )
+   next   
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+#endif
+
 //---------------------------------------------------------------------------//
 //ESTRUCTURAS----------------------------------------------------------------//
 //---------------------------------------------------------------------------//

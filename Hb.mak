@@ -1115,6 +1115,7 @@ $(HBLIB)\hbcplr.lib 					+
 $(HBLIB)\hbct.lib 					+ 
 $(HBLIB)\hbpcre.lib 					+
 $(HBLIB)\xhb.lib 						+ 
+$(HBLIB)\hbtip.lib               + 
 $(HBLIB)\hbziparc.lib 				+
 $(HBLIB)\hbmzip.lib 					+
 $(HBLIB)\hbzlib.lib 					+
