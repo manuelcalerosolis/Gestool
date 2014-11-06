@@ -6859,7 +6859,7 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
       if ::buildConect()
 
-         msgAlert( ::lSyncAll, "::lSyncAll" )
+         // msgAlert( ::lSyncAll, "::lSyncAll" )
 
          if ::lSyncAll
             ::buildEliminaTablas()
@@ -6869,13 +6869,13 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
          ::buildSubirInformacion()
 
-         // Desconectamos mysql------------------------------------------------
-
-         ::buildDisConect()  
-
          // Pasamos las imágenes de los artículos a prestashop-----------------
 
          ::appendImagesPrestashop()
+
+         // Desconectamos mysql------------------------------------------------
+
+         ::buildDisConect()  
          
       end if  
 
