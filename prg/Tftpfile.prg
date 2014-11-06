@@ -120,10 +120,6 @@ return FtpCreateDirectory( ::oFtp:hFTP, cDirName )
 
 METHOD PutFile( oMeter ) CLASS TFTPFile
 
-   msgAlert( ::oFTP:hFtp, "hFtp" )
-   msgAlert( ::cFileName, "cFileName" )
-   msgAlert( ::cSortFileName, "cSortFileName" )
-
 Return ( FtpPutFile( ::oFTP:hFtp, ::cFileName, ::cSortFileName, 0, 0 ) )
 /*
    local oFile

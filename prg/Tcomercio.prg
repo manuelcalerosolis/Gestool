@@ -4730,8 +4730,7 @@ Method AppendImagesPrestashop() CLASS TComercio
             nCount                     := 1
 
             if !Empty( ::cDirImagen )
-               ::oFtp:CreateDirectory( ::cDirImagen + "/p" )
-               ::oFtp:SetCurrentDirectory( ::cDirImagen + "/p" )
+               ::CreateDirectoryImages( ::cDirImagen + "/p" )
             end if
 
             for each oImage in ::aImagesArticulos
@@ -4845,8 +4844,7 @@ Method AppendImagesPrestashop() CLASS TComercio
             nCount                     := 1
 
             if !Empty( ::cDirImagen )
-               ::oFtp:CreateDirectory( ::cDirImagen + "/c" )
-               ::oFtp:SetCurrentDirectory( ::cDirImagen + "/c" )
+               ::CreateDirectoryImages( ::cDirImagen + "/c" )
             end if
 
             for each oImage in ::aImagesCategories
@@ -4855,10 +4853,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
 
-               oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
-               if !oFile:PutFile( ::oMeterL )
-                  ::SetText( "Error copiando imagen " + cFileBmpName( oImage:cNombreImagen ), 3 )
-               end if
+               ::CreateFileImages( cFileBmpName( oImage:cNombreImagen ) )
 
                nCount                  += 1
 
@@ -6471,12 +6466,10 @@ Return ( cResult )
 
 METHOD CreateDirectoryImages( cCarpeta ) CLASS TComercio
 
-   local n
+   msgalert( alltrim(cCarpeta), "CreateDirectoryImages" )
 
-   for n := 1 to Len( cCarpeta )
-      ::oFtp:CreateDirectory( SubStr( cCarpeta, n, 1 ) )
-      ::oFtp:SetCurrentDirectory( SubStr( cCarpeta, n, 1 ) )
-   next   
+   ::oFtp:CreateDirectory( alltrim(cCarpeta) )
+   ::oFtp:SetCurrentDirectory( alltrim(cCarpeta) )
 
 Return ( .t. )
 
@@ -6502,7 +6495,7 @@ METHOD CreateFileImages( cFile, oMeter )
 
       fSeek( hSource, 0, 0 )
 
-      while ( nBytes := fRead( hSource, @cBuffer, 20000 ) ) > 0
+      while ( nBytes := fRead( hSource, @cBuffer, 20000 ) ) > 0 
 
          nWriteBytes += nBytes
 
@@ -6553,7 +6546,7 @@ METHOD CreateDirectoryImagesLocal( cCarpeta ) CLASS TComercio
 
    for n := 1 to Len( cCarpeta )
 
-      cResult  += "/" + SubStr( cCarpeta, n, 1 )
+      cResult     += "/" + SubStr( cCarpeta, n, 1 )
          
       if !isDirectory( ::cDirImagen + "/p" + cResult )
          Makedir( ::cDirImagen + "/p" + cResult )
