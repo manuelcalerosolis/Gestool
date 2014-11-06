@@ -1815,8 +1815,7 @@ FUNCTION FtpSndFile( aSource, aTarget, oSender, cDirectory )
 
             else
 
-               oFile             := TFtpFile():New( aSource[ n ], oSender:oFtp )
-
+               oFile             := TFtpFile():New( aSource[ n ], oSender:oFtp ) 
                lRet              := oFile:PutFile()
 
             end if

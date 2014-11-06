@@ -111,7 +111,6 @@ Entsal.prg              	\
 Usuario.prg             	\
 Tuser.prg               	\
 Oferta.prg              	\
-Tinternet.prg           	\
 Internet.prg            	\
 Intitem.prg             	\
 Backup.prg              	\
@@ -148,7 +147,6 @@ Titemgroup.prg          	\
 Ttikstka.prg            	\
 TStockMinimoFamilia.prg 	\
 Xvalalmg.prg            	\
-TFtpFile.prg               \
 Tcobage.prg             	\
 Remcli.prg              	\
 Label.prg               	\
@@ -380,7 +378,6 @@ FacturarLineasAlbaranesProveedor.prg\
 C               =       	\
 Img2pdf.c               	\
 Treeview.c 						\
-Wininet.c                  \
 
 OBJS            =       \
 Factu.obj               \
@@ -461,7 +458,6 @@ Entsal.obj              \
 Usuario.obj             \
 Tuser.obj               \
 Oferta.obj              \
-Tinternet.obj           \
 Internet.obj            \
 Intitem.obj             \
 Backup.obj              \
@@ -488,7 +484,6 @@ Tdeltarifasclientes.obj \
 Ttikstka.obj            \
 TStockMinimoFamilia.obj \
 Xvalalmg.obj            \
-Tftpfile.obj            \
 Printer.obj             \
 Tankes.obj              \
 Grpcli.obj              \
@@ -600,7 +595,6 @@ RcolumnC3.obj           \
 Metafi32.obj            \
 Img2pdf.obj             \
 Treeview.obj 				\
-Wininet.obj             \	
 Ean.obj                 \
 C5Lib.obj               \
 TInfseanum.obj          \
@@ -838,7 +832,6 @@ $(OBJ)\Entsal.obj               +
 $(OBJ)\Usuario.obj              +
 $(OBJ)\Tuser.obj                +
 $(OBJ)\Oferta.obj               +
-$(OBJ)\Tinternet.obj            +
 $(OBJ)\Internet.obj             +
 $(OBJ)\Intitem.obj              +
 $(OBJ)\Backup.obj               +
@@ -885,7 +878,6 @@ $(OBJ)\Titemgroup.obj           	+
 $(OBJ)\Ttikstka.obj             	+
 $(OBJ)\TStockMinimoFamilia.obj  	+
 $(OBJ)\Xvalalmg.obj             	+
-$(OBJ)\TFtpFile.obj              +
 $(OBJ)\Tartalb.obj              	+
 $(OBJ)\Tfamtik.obj              	+
 $(OBJ)\Remcli.obj               	+
@@ -1041,7 +1033,6 @@ $(OBJ)\TDetPersonal.obj         	+
 $(OBJ)\TDetMaquina.obj          	+
 $(OBJ)\Img2pdf.obj              	+
 $(OBJ)\Treeview.obj             	+
-$(OBJ)\Wininet.obj               +
 $(OBJ)\ReportGallery.obj        	+
 $(OBJ)\PInfMateriales.obj       	+
 $(OBJ)\UnidadMedicion.obj       	+

@@ -166,7 +166,7 @@ CLASS TComercio
    DATA  aImagesArticulos
    DATA  aImagesCategories
    DATA  aTipoImagesPrestashop
-   DATA  cDImagen
+   DATA  cDirImagen
    DATA  nLanguage
 
    DATA  nPrecioMinimo        INIT  0
@@ -288,6 +288,8 @@ CLASS TComercio
    METHOD CreateDirectoryImages( cCarpeta )
    METHOD ReturnDirectoryImages( cCarpeta )
 
+   METHOD CreateFileImages( cImage )
+
    METHOD CreateDirectoryImagesLocal( cCarpeta )
 
    // Datos para la recopilacion de informacion----------------------------
@@ -372,7 +374,7 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::cPasswd               := uFieldEmpresa( "cPswSql" )
    ::cDbName               := uFieldEmpresa( "cDtbSql" )
    ::nPort                 := uFieldEmpresa( "nPrtSql", 3306 )
-   ::cDImagen              := ::cValidDirectoryFtp( uFieldEmpresa( "cdImagen" ) )
+   ::cDirImagen            := ::cValidDirectoryFtp( uFieldEmpresa( "cdImagen" ) )
    ::cSeriePed             := uFieldEmpresa( "cSeriePed" )
    ::nSecondTimer          := uFieldEmpresa( "nTiempoPed", 0 ) * 60000
    ::cUserFtp              := uFieldEmpresa( "cUsrFtpImg" )
@@ -713,7 +715,7 @@ METHOD Activate( oWnd ) CLASS TComercio
          ID       180 ;
          OF       ::oDlg
 
-      REDEFINE SAY PROMPT ::cDImagen ;
+      REDEFINE SAY PROMPT ::cDirImagen ;
          ID       190 ;
          OF       ::oDlg
 
@@ -2178,8 +2180,8 @@ METHOD DeleteImagesCategories( cCodCategorie ) CLASS TComercio
 
       else
 
-         if !Empty( ::cDImagen )
-            oFtp:SetCurrentDirectory( ::cDImagen + "/c" )
+         if !Empty( ::cDirImagen )
+            oFtp:SetCurrentDirectory( ::cDirImagen + "/c" )
          end if
 
          oFtp:DeleteMask( AllTrim( Str( cCodCategorie ) ) + "*.*" )
@@ -4235,7 +4237,7 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
 
       if !Empty( ::cHostFtp )
 
-         if !Empty( ::cDImagen )
+         if !Empty( ::cDirImagen )
             
             for each idDelete in aDelImages
 
@@ -4250,7 +4252,7 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
 
                   cCarpeta    := ::CreateDirectoryImagesLocal( idDelete )
 
-                  oFtp:SetCurrentDirectory( ::cDImagen + "/p" + cCarpeta )
+                  oFtp:SetCurrentDirectory( ::cDirImagen + "/p" + cCarpeta )
                   oFtp:DeleteMask()
 
                   oFtp:SetCurrentDirectory( ".." )
@@ -4271,13 +4273,13 @@ METHOD DeleteImagesProducts( cCodWeb ) CLASS TComercio
 
       else
 
-         if isDirectory( ::cDImagen )
+         if isDirectory( ::cDirImagen )
             
             for each idDelete in aDelImages
 
                cCarpeta       := ::CreateDirectoryImagesLocal( idDelete )
 
-               DeleteFilesToDirectory( ::cDImagen + "/p" + cCarpeta )
+               DeleteFilesToDirectory( ::cDirImagen + "/p" + cCarpeta )
 
             next
 
@@ -4727,16 +4729,16 @@ Method AppendImagesPrestashop() CLASS TComercio
             ::nTotMeter                := len( ::aImagesArticulos )
             nCount                     := 1
 
-            if !Empty( ::cDImagen )
-               ::oFtp:CreateDirectory( ::cDImagen + "/p" )
-               ::oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
+            if !Empty( ::cDirImagen )
+               ::oFtp:CreateDirectory( ::cDirImagen + "/p" )
+               ::oFtp:SetCurrentDirectory( ::cDirImagen + "/p" )
             end if
 
             for each oImage in ::aImagesArticulos
 
                ::SetText( "Subiendo imagen " + cNoPath( oImage:cNombreImagen ), 3 )
 
-               ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
+               ::MeterParticularText( "Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
 
                /*
                Posicionamos en el directorio-----------------------------------
@@ -4747,13 +4749,9 @@ Method AppendImagesPrestashop() CLASS TComercio
                /*
                Sube el fichero ------------------------------------------------
                */
-             
-               oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
-               if !oFile:PutFile( ::oMeterL )
-                  ::SetText( "Error copiando imagen " + cFileBmpName( oImage:cNombreImagen ), 3 )
-               end if
-               oFile:End()
 
+               ::CreateFileImages( oImage:cNombreImagen )
+              
                /*
                Volvemos al directorio raiz-------------------------------------
                */
@@ -4761,8 +4759,8 @@ Method AppendImagesPrestashop() CLASS TComercio
                ::ReturnDirectoryImages( oImage:cCarpeta )
 
                /*
-               if !Empty( ::cDImagen )
-                  ::oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
+               if !Empty( ::cDirImagen )
+                  ::oFtp:SetCurrentDirectory( ::cDirImagen + "/p" )
                end if
 
                Siguiente-------------------------------------------------------
@@ -4786,11 +4784,11 @@ Method AppendImagesPrestashop() CLASS TComercio
 
       else  
 
-         if isDirectory( ::cDImagen )
+         if isDirectory( ::cDirImagen )
             
-            if !isDirectory( ::cDImagen + "/p" )
+            if !isDirectory( ::cDirImagen + "/p" )
               
-               Makedir( ::cDImagen + "/p" )
+               Makedir( ::cDirImagen + "/p" )
 
             end if
 
@@ -4802,7 +4800,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                cCarpeta       :=    ::CreateDirectoryImagesLocal( oImage:cCarpeta )
 
-               CopyFile( oImage:cNombreImagen, ::cDImagen + "/p" + cCarpeta + "/" + cNoPath( oImage:cNombreImagen ) )
+               CopyFile( oImage:cNombreImagen, ::cDirImagen + "/p" + cCarpeta + "/" + cNoPath( oImage:cNombreImagen ) )
 
                nCount         += 1
 
@@ -4846,9 +4844,9 @@ Method AppendImagesPrestashop() CLASS TComercio
             ::nTotMeter                := len( ::aImagesCategories )
             nCount                     := 1
 
-            if !Empty( ::cDImagen )
-               ::oFtp:CreateDirectory( ::cDImagen + "/c" )
-               ::oFtp:SetCurrentDirectory( ::cDImagen + "/c" )
+            if !Empty( ::cDirImagen )
+               ::oFtp:CreateDirectory( ::cDirImagen + "/c" )
+               ::oFtp:SetCurrentDirectory( ::cDirImagen + "/c" )
             end if
 
             for each oImage in ::aImagesCategories
@@ -4886,11 +4884,11 @@ Method AppendImagesPrestashop() CLASS TComercio
 
       else 
       
-         if isDirectory( ::cDImagen )
+         if isDirectory( ::cDirImagen )
 
-            if !isDirectory( ::cDImagen + "/c" )
+            if !isDirectory( ::cDirImagen + "/c" )
                
-               Makedir( ::cDImagen + "/c" )
+               Makedir( ::cDirImagen + "/c" )
 
             end if
 
@@ -4900,7 +4898,7 @@ Method AppendImagesPrestashop() CLASS TComercio
 
                ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
 
-               CopyFile( oImage:cNombreImagen, ::cDImagen + "/c/" + cNoPath( oImage:cNombreImagen ) )
+               CopyFile( oImage:cNombreImagen, ::cDirImagen + "/c/" + cNoPath( oImage:cNombreImagen ) )
 
                nCount                  += 1
 
@@ -6484,6 +6482,54 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD CreateFileImages( cFile, oMeter )
+   
+   local oFile
+   local nBytes
+   local hSource
+   local lPutFile    := .t.
+   local cBuffer     := Space( 20000 )
+   local nTotalBytes := 0
+   local nWriteBytes := 0
+
+
+   oFile             := TFtpFile():New( cNoPath( cFile ), ::oFtp )
+   oFile:OpenWrite()
+
+   hSource           := fOpen( cFileBmpName( cFile ) ) 
+
+   if fError() == 0
+
+      fSeek( hSource, 0, 0 )
+
+      while ( nBytes := fRead( hSource, @cBuffer, 20000 ) ) > 0
+
+         nWriteBytes += nBytes
+
+         oFile:Write( SubStr( cBuffer, 1, nBytes ) )
+
+         if !Empty( oMeter )
+            oMeter:Set( nWriteBytes )
+         end if
+
+      end while
+
+   else
+
+      lPutFile       := .f.
+
+   end if
+
+   oFile:End()
+
+   fClose( hSource )
+
+   SysRefresh()
+
+Return ( lPutFile )
+
+//---------------------------------------------------------------------------//
+
 METHOD ReturnDirectoryImages( cCarpeta ) CLASS TComercio
 
    local n
@@ -6509,8 +6555,8 @@ METHOD CreateDirectoryImagesLocal( cCarpeta ) CLASS TComercio
 
       cResult  += "/" + SubStr( cCarpeta, n, 1 )
          
-      if !isDirectory( ::cDImagen + "/p" + cResult )
-         Makedir( ::cDImagen + "/p" + cResult )
+      if !isDirectory( ::cDirImagen + "/p" + cResult )
+         Makedir( ::cDirImagen + "/p" + cResult )
       end if
 
    next

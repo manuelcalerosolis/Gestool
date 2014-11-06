@@ -1,7 +1,6 @@
 #include <Windows.h>
 #include <Wininet.h>
 #include <hbapi.h>
-#include <hbstack.h>
 
 static HMODULE hModule = NULL;
 
@@ -193,7 +192,7 @@ HB_FUNC( INTERNETDIRECTORY )
    {
       iFiles++;
 
-	while( InternetFindNextFileA( hFind, &lpFindFileData ) )
+  while( InternetFindNextFileA( hFind, &lpFindFileData ) )
       {
          iFiles++;
        }
