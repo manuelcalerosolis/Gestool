@@ -667,6 +667,7 @@ METHOD Activate( oWnd ) CLASS TComercio
 
    DEFAULT  oWnd        := oWnd()
 
+   ::lSyncAll           := .t.
    ::nLevel             := nLevelUsr( "01108" )
 
    if nAnd( ::nLevel, 1 ) != 0
@@ -4588,6 +4589,8 @@ Method AppendImagesPrestashop() CLASS TComercio
    ::aImagesCategories     := {}
    ::aImagesArticulos      := {}
 
+   ::MeterGlobalText( "Subiendo imagenes" )
+
    CursorWait()
 
    /*
@@ -6515,7 +6518,6 @@ METHOD buildInitData() CLASS TComercio
    ::aFabricantesData   := {}
    ::aFamiliaData       := {}
    ::aArticuloData      := {}
-   ::lSyncAll           := .t.
 
 Return ( Self )
 
@@ -6817,14 +6819,6 @@ METHOD buildSubirInformacion() CLASS TComercio
       ::buildInsertProductsPrestashop( hArticuloData )
    next
 
-   /*
-   Pasamos las imágenes de los artículos a prestashop--------------------
-   */
-
-   ::MeterGlobalText( "Subiendo imagenes" )
-
-   ::AppendImagesPrestashop()
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -6865,11 +6859,19 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
       if ::buildConect()
 
+         msgAlert( ::lSyncAll, "::lSyncAll" )
+
          if ::lSyncAll
             ::buildEliminaTablas()
          end if
 
+         // Subimos la informacion a mysql-------------------------------------
+
          ::buildSubirInformacion()
+
+         // Pasamos las imágenes de los artículos a prestashop-----------------
+
+         ::appendImagesPrestashop()
 
          ::buildDisConect()  
          
@@ -8761,8 +8763,6 @@ Method buildExportarPrestashop() Class TComercio
 
    ::SetText ( 'Comenzamos la exportación', 2  )
 
-   ::lSyncAll        := .t.
-
    ::BuildProductPrestashop( nil, .f. )
 
    /*
@@ -8854,7 +8854,9 @@ METHOD ftpCreateConexion() CLASS TComercio
    ::oInt         := TInternet():New()
    ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
 
-Return ( if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp ) )
+Return ( Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD ftpEndConexion() CLASS TComercio
 
@@ -8868,12 +8870,16 @@ METHOD ftpEndConexion() CLASS TComercio
 
 Return( nil )
 
+//---------------------------------------------------------------------------//
+
 METHOD ftpCreateDirectory( cCarpeta ) CLASS TComercio
 
    ::oFtp:CreateDirectory( alltrim(cCarpeta) )
    ::oFtp:SetCurrentDirectory( alltrim(cCarpeta) )
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
 
@@ -8884,6 +8890,8 @@ METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
    next 
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
    
@@ -8929,6 +8937,7 @@ METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
    SysRefresh()
 
 Return ( lPutFile )
+//---------------------------------------------------------------------------//
 
 METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
 
@@ -8971,6 +8980,8 @@ METHOD ftpCreateConexion() CLASS TComercio
 
 Return ( lOpen )
 
+//---------------------------------------------------------------------------//
+
 METHOD ftpEndConexion() CLASS TComercio
 
    if !empty(::oFTP)
@@ -8979,12 +8990,16 @@ METHOD ftpEndConexion() CLASS TComercio
 
 Return( nil )
 
+//---------------------------------------------------------------------------//
+
 METHOD ftpCreateDirectory( cCarpeta ) CLASS TComercio
    
    ::oFtp:MKD( alltrim(cCarpeta) )
    ::oFtp:Cwd( alltrim(cCarpeta) )
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
 
@@ -8996,9 +9011,13 @@ METHOD ftpCreateDirectoryRecursive( cCarpeta ) CLASS TComercio
 
 Return ( .t. )
 
+//---------------------------------------------------------------------------//
+
 METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
 
 Return ( ::oFtp:UploadFile( cFile ) )
+
+//---------------------------------------------------------------------------//
 
 METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
 
