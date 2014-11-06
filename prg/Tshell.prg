@@ -178,7 +178,7 @@ CLASS TShell FROM TMdiChild
 
    METHOD ChgIndex( oGet, oIndice )
 
-   METHOD FastSeek( oGet, cText )
+   METHOD FastSeek( oGet, cText, nLen )
 
    METHOD lCloseArea    INLINE ( .t. ) // ::oBrw:lCloseArea() )
 
@@ -1000,13 +1000,15 @@ RETURN .T.
 Realiza busquedas de manera progresiva
 */
 
-METHOD FastSeek( oGet, xCadena ) CLASS TShell
+METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
 
    local nRec
    local cOrd
    local oCol
    local lSeek
    local cAlias
+
+   DEFAULT nLen      := 10
 
    cAlias            := ::xAlias
 
@@ -1044,7 +1046,7 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
 
    if !lSeek
 
-      lSeek          := lMiniSeek( nil, xCadena, cAlias )
+      lSeek          := lMiniSeek( nil, xCadena, cAlias, nLen )
 
       // Si no conseguimos encontrarla en el orden actial nos movemos por todos los posibles ordendenes del browse
 
@@ -1056,7 +1058,7 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
 
                ( cAlias )->( OrdSetFocus( oCol:cSortOrder ) )
 
-               lSeek := lMiniSeek( nil, xCadena, cAlias )
+               lSeek := lMiniSeek( nil, xCadena, cAlias, nLen )
 
                if lSeek
                   ::ClickOnHeader( oCol )
@@ -1897,7 +1899,9 @@ return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddSeaBar() CLASS TShell
+METHOD AddSeaBar( nLen ) CLASS TShell
+
+   DEFAULT nLen   := 10
 
    if !Empty( ::oWndBar )
 
@@ -1910,7 +1914,7 @@ METHOD AddSeaBar() CLASS TShell
       ::oWndBar:SetAddButtonFilter(    {|| ::AddFilter() } )
       ::oWndBar:SetEditButtonFilter(   {|| ::EditFilter() } )
 
-      ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText ) } )
+      ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText, nLen ) } )
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
 
    end if

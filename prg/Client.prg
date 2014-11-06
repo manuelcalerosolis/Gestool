@@ -13167,7 +13167,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "oWnd"      => oDlg } )
 
    oBtnDown          := TGridImage():Build(  {  "nTop"      => 70,;
-                                                "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
+                                                "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                                 "nWidth"    => 64,;
                                                 "nHeight"   => 64,;
                                                 "cResName"  => "flat_down_64",;

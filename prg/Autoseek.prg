@@ -341,11 +341,11 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
          else
 
-            // nLen     := 10 // 13
+            //nLen     := 11 // 13
 
-            if Empty( nLen )
+            /*if Empty( nLen )
                nLen  := len( ( xAlias )->( ordKeyVal() ) ) - 2 
-            end if
+            end if*/
 
             if Empty( cPrefij )
 

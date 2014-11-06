@@ -5848,7 +5848,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "oWnd"      => oDlg } )
 
       oBtnDown          := TGridImage():Build(  {  "nTop"      => 175,;
-                                                   "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
+                                                   "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_down_64",;
@@ -6753,10 +6753,10 @@ Function FacCliTablet()
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
-   	oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
+   	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
-                                            	 	"nHeight"   => 64,;
+                                            	 	   "nHeight"   => 64,;
                                              		"cResName"  => "flat_end_64",;
                                              		"bLClicked" => {|| oDlg:End() },;
                                              		"oWnd"      => oDlg } )
@@ -6832,7 +6832,7 @@ Function FacCliTablet()
                                              		"oWnd"      => oDlg } )
 
    	oBtnDown  			:= TGridImage():Build(  {  "nTop"      => 70,;
-                                             		"nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
+                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_down_64",;

@@ -15662,10 +15662,12 @@ function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cRefPrv, 
    ( cAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
 
    if ( cAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
+      
       while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( cAlbCliL )->( eof() )
          nTot     += nTotNAlbCli( cAlbCliL )
          ( cAlbCliL )->( dbSkip() )
       end while
+
    end if
 
    SetStatus( cAlbCliL, aStaLin )

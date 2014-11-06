@@ -416,7 +416,7 @@ METHOD lGenerate()
 
                   nTotPed        := Round( nTotNPedCli( ::oPedCliL:cAlias ), DecUnd() )
                   dFecRes        := dFecPdtRec(  ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oPedCliR:cAlias )
-                  nTotSer        := Round( nUnidadesRecibidasAlbCli( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oPedCliL:cRefPrv, ::oPedCliL:cDetalle, ::oAlbCliL:cAlias ), DecUnd() )
+                  nTotSer        := Round( nUnidadesRecibidasAlbCli( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, , , ::oPedCliL:cRefPrv, ::oPedCliL:cDetalle, ::oAlbCliL:cAlias ), DecUnd() )
                   nTotPdt        := Round( nTotRPedCli( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cValPr1, ::oPedCliL:cValPr2, ::oPedCliR:cAlias ), DecUnd() )
 
                   if nTotPdt != 0 .and. nTotSer > nTotPdt
