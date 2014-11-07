@@ -358,7 +358,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       return .f.
    end if
 
-   TFacturarLineasAlbaranesProveedor():New( nView )
+   // TFacturarLineasAlbaranesProveedor():New( nView )
 
    /*
    Anotamos el movimiento para el navegador

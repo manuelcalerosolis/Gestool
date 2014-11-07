@@ -9000,7 +9000,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD ftpCreateFile( cFile, oMeterGlobal ) CLASS TComercio
+METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
    
    local oFile
    local nBytes
