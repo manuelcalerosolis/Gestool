@@ -6230,7 +6230,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
                                           			"nWidth"    => {|| GridWidth( 3, oDlg ) },;
-                                          			"cPict" 	=> cPouDiv,;
+                                          			"cPict" 	   => cPouDiv,;
                                           			"lRight" 	=> .t.,;
                                           			"nHeight"   => nAltoGet,;
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
@@ -6257,7 +6257,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
                                           			"nWidth"    => {|| GridWidth( 3, oDlg ) },;
-                                          			"cPict" 	=> "@E 999.99",;
+                                          			"cPict" 	   => "@E 999.99",;
                                           			"lRight" 	=> .t.,;
                                           			"nHeight"   => nAltoGet,;
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
@@ -6311,7 +6311,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"oWnd"      => oDlg,;
                                           			"lPixels" 	=> .t.,;
                                           			"nWidth"    => {|| GridWidth( 3, oDlg ) },;
-                                          			"cPict" 	=> cPouDiv,;
+                                          			"cPict" 	   => cPouDiv,;
                                           			"lRight" 	=> .t.,;
                                           			"nHeight"   => nAltoGet,;
                                           			"bWhen"     => {|| .f. } } )
@@ -6344,6 +6344,7 @@ static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
 	local oNomCliente
 	local cNomCliente 	:= aGet[ _CNOMCLI ]:VarGet()
 	local oBtnAceptar
+   local oBtnAceptarImp
 	local oBtnSalir
 	local oCbxOrd
 	local aCbxOrd 		:= aDocs( "FC", dbfDoc, .t. )
@@ -6391,27 +6392,35 @@ static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
                                              		"lPixels"   => .t.,;
                                              		"nClrText"  => Rgb( 0, 0, 0 ),;
                                              		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 8, oDlg ) },;
+                                             		"nWidth"    => {|| GridWidth( 6.5, oDlg ) },;
                                              		"nHeight"   => 32,;
                                              		"lDesign"   => .f. } )
 
-	oBtnAceptar  		:= TGridImage():Build(  {  	"nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+	oBtnSalir        := TGridImage():Build(  {     "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_del_64",;
+                                                   "bLClicked" => {|| oDlg:End() },;
+                                                   "oWnd"      => oDlg } )
+
+   oBtnAceptar  		:= TGridImage():Build(  {  	"nTop"      => 5,;
+                                             		"nLeft"     => {|| GridWidth( 9, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
-                                             		"cResName"  => "flat_check_64",;
+                                             		"cResName"  => "flat_printer_64",;
                                              		"bLClicked" => {|| if( EndTrans( aTmp, aGet, , , , {}, nMode, oDlg ), ( if( cCbxOrd != "No imprimir", GenFacCli( IS_PRINTER, , Left( cCbxOrd, 3 ) ),  ), oDlgFac:End() ), ) },;
                                              		"oWnd"      => oDlg } )
 
-   oBtnSalir   		:= TGridImage():Build(  {  	"nTop"      => 5,;
-                                             		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
-                                             		"nWidth"    => 64,;
-                                            	 	   "nHeight"   => 64,;
-                                             		"cResName"  => "flat_del_64",;
-                                             		"bLClicked" => {|| oDlg:End() },;
-                                             		"oWnd"      => oDlg } )
+   oBtnAceptarImp    := TGridImage():Build(  {     "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_check_64",;
+                                                   "bLClicked" => {|| if( EndTrans( aTmp, aGet, , , , {}, nMode, oDlg ), oDlgFac:End(), ) },;
+                                                   "oWnd"      => oDlg } )
 
-   	/*
+ 	/*
 	Cliente--------------------------------------------------------------------
   	*/
 
@@ -6730,6 +6739,9 @@ Function FacCliTablet()
     if !OpenFiles( .t. )
     	Return .f.
     end if
+
+   ( D():FacturasClientes( nView ) )->( OrdSetFocus( "dFecDes" ) )
+   ( D():FacturasClientes( nView ) )->( dbGoTop() )
 
     /*
 	Diálogo--------------------------------------------------------------------
@@ -20689,6 +20701,9 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecFac )", {|| Field->cCodCli + dtos( Field->dFecFac ) } ) )
+
+      ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "dFecDes", "dFecFac", {|| Field->dFecFac } ) )
 
       ( cFacCliT )->( dbCloseArea() )
 
