@@ -362,9 +362,11 @@ RETURN ( ::oInstance )
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oMenuItem ) CLASS TComercio
+METHOD New( oMenuItem, oMeterGlobal ) CLASS TComercio
 
    DEFAULT oMenuItem       := "01108"
+
+   ::oMeterGlobal          := oMeterGlobal
 
    ::oIniEmpresa           := TIni():New( cPatEmp() + "Empresa.Ini" )
 
@@ -2101,8 +2103,6 @@ Method ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
       Return .f.
    end if
    
-   ::lShowDialogWait()
-
    if ::filesOpen()
 
       if ::oFam:Seek( cCodigoFamilia )
@@ -2158,8 +2158,6 @@ Method ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
       ::filesClose()
 
    end if
-
-   ::lHideDialogWait()
 
 Return .t.
 
@@ -2542,8 +2540,6 @@ METHOD ActualizaPropiedadesPrestashop( cCodigoPropiedad, nTipoActualizacionLinea
       Return .f.
    end if
    
-   ::lShowDialogWait()
-
    if ::filesOpen()
 
       if ::oPro:Seek( cCodigoPropiedad )
@@ -2601,8 +2597,6 @@ METHOD ActualizaPropiedadesPrestashop( cCodigoPropiedad, nTipoActualizacionLinea
       ::filesClose()
 
    end if
-
-   ::lHideDialogWait()
 
 Return .t.
 
@@ -3496,8 +3490,6 @@ Method ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComer
       Return .f.
    end if
 
-   ::lShowDialogWait()
-
    if ::filesOpen()
 
       if ::oArt:Seek( cCodigoArticulo )
@@ -3562,8 +3554,6 @@ Method ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComer
       ::filesClose()
 
    end if
-
-   ::lHideDialogWait()
 
 Return .t.
 
@@ -6065,8 +6055,6 @@ Method ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
       Return .f.
    end if
    
-   ::lShowDialogWait()
-
    if ::filesOpen()
 
       if !Empty( cCodigoArticulo )
@@ -6170,8 +6158,6 @@ Method ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
       ::filesClose()
 
    end if
-
-   ::lHideDialogWait()
 
 Return .t.
 
@@ -6741,7 +6727,7 @@ Return ( Self )
 
 METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
-   DEFAULT lShowDialogWait    := .t.
+   lShowDialogWait      := .f.
 
    if lShowDialogWait
       ::lShowDialogWait()
@@ -8632,8 +8618,6 @@ METHOD BuildDeleteProductPrestashop( cCodArt ) CLASS TComercio
    local oQuery2
    local cCodWeb 
 
-   ::lShowDialogWait()
-
    if ::filesOpen()
 
       if ::oArt:SeekInOrd( cCodArt, "Codigo" ) .and. ::oArt:cCodWeb != 0
@@ -8857,8 +8841,6 @@ METHOD BuildDeleteProductPrestashop( cCodArt ) CLASS TComercio
       ::filesClose()
 
    end if
-
-   ::lHideDialogWait()
 
 Return ( Self )
 

@@ -18636,7 +18636,7 @@ Return ( .t. )
 
 Static Function BuildWeb( cCodArt )
 
-   with object ( TComercio():New( GetAutoMeterDialog() ) )  
+   with object ( TComercio():New( , GetAutoMeterDialog() ) )  
 
       :BuildDeleteProductPrestashop( cCodArt )
 
