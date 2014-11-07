@@ -9025,7 +9025,7 @@ METHOD ftpCreateFile( cFile, oMeter ) CLASS TComercio
 
          oFile:Write( SubStr( cBuffer, 1, nBytes ) )
 
-         if !Empty( oMeterGlobal)
+         if !Empty( oMeter)
             oMeter:Set( nWriteBytes )
          end if
 
