@@ -703,7 +703,7 @@ METHOD EndDialog() CLASS TReplaceDialog
 
    msgInfo( "Total de registros reemplazados " + Str( nRpl ), "Proceso finalizado." )
 
-   EndAutoMeterDialog()
+   EndAutoMeterDialog( ::oDlg )
 
 RETURN ( nil )
 

@@ -5659,8 +5659,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    end if
 
    DisableAcceso()
-
-   oDlg:Disable()
+   AutoMeterDialog( oDlg )   
 
    oMsgText( "Archivando" )
 
@@ -5995,7 +5994,8 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    oMsgText()
 
-   oDlg:Enable()
+   EndAutoMeterDialog( oDlg )   
+
    oDlg:End( IDOK )
 
    EnableAcceso()
@@ -18634,25 +18634,19 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function ActualizaWeb( cCodArt, lChangeImage )
-
-   if lPubArt()
-      with object ( TComercio():New() )  
-         :ActualizaProductsPrestashop( cCodArt, lChangeImage )
-      end with
-   end if   
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 Static Function BuildWeb( cCodArt )
 
-   if lPubArt()
-      with object ( TComercio():New() )  
+   with object ( TComercio():New( GetAutoMeterDialog() ) )  
+
+      :BuildDeleteProductPrestashop( cCodArt )
+
+      if lPubArt()
+
          :BuildProductPrestashop( cCodArt )
-      end with
-   end if   
+
+      end if
+
+   end with
 
 Return .t.
 

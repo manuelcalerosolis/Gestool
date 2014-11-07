@@ -5827,7 +5827,7 @@ Static Function CargaComprasProveedor( aTmp, oImportaComprasProveedor, oDlg )
       
       end if 
 
-      EndAutoMeterDialog( ( D():Articulos( nView ) )->( LastRec() ) )
+      EndAutoMeterDialog( oDlg )
 
       ( D():Articulos( nView ) )->( ordSetFocus( nOrd ) )
 

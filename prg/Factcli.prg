@@ -17945,7 +17945,7 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin, oDlg )
 
       end while
 
-      EndAutoMeterDialog( ( D():Atipicas( nView ) )->( LastRec() ) )
+      EndAutoMeterDialog( oDlg )
 
    end if
 
@@ -17977,7 +17977,7 @@ Static Function CargaAtipicasCliente( aTmpFac, oBrwLin, oDlg )
    
          end while
 
-         EndAutoMeterDialog( ( D():Atipicas( nView ) )->( LastRec() ) )
+         EndAutoMeterDialog( oDlg )
    
       end if
    

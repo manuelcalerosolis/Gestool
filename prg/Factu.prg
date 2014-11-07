@@ -2653,7 +2653,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Comercio electrónico'
    oItem:cMessage       := 'Comercio electrónico'
-   oItem:bAction        := {|| TComercio():New( "01108", oWnd ):Activate() }
+   oItem:bAction        := {|| TComercio():New( "01108", oWnd ):dialogActivate() }
    oItem:cId            := "01108"
    oItem:cBmp           := "ComercioElectronico_16"
    oItem:cBmpBig        := "ComercioElectronico_32"

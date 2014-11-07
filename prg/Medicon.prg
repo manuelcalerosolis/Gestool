@@ -447,6 +447,8 @@ RETURN ( nil )
 
 Function AutoMeterDialog( oDialog )
 
+   oDialog:Disable()
+
    oMeter   := TMeter():New( 0, 0, {| u | if( pCount() == 0, nMeter, nMeter := u ) }, 100, oDialog, oDialog:nWidth, 4, .t., .t., , "", .t., , ,rgb( 128,255,0 ) )
 
 RETURN ( oMeter )
@@ -455,7 +457,9 @@ RETURN ( oMeter )
 
 Function SetTotalAutoMeterDialog( nSet )
 
-   oMeter:SetTotal( nSet )
+   if !empty(oMeter)
+      oMeter:SetTotal( nSet )  
+   end if 
 
 RETURN ( oMeter )
 
@@ -463,20 +467,33 @@ RETURN ( oMeter )
 
 Function SetAutoMeterDialog( nSet )
 
-   oMeter:Set( nSet )
+   if !empty(oMeter)
+      oMeter:Set( nSet )
+   end if 
 
 RETURN ( oMeter )
 
 //---------------------------------------------------------------------------//
 
-Function EndAutoMeterDialog( nSet )
+Function EndAutoMeterDialog( oDialog )
 
    oMeter:Hide()
    oMeter:End()
 
+   oMeter   := nil
+
+   oDialog:Enable()
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+Function GetAutoMeterDialog( nSet )
+
+RETURN ( oMeter )
+
+//---------------------------------------------------------------------------//
+
 /*
 Function ErrorMessage( e )
 
