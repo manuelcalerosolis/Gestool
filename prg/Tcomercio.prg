@@ -4655,6 +4655,8 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    // Conectamos al FTP y Subimos las imágenes de artículos-----------------------
 
+   ?Len( ::aImagesArticulos )
+
    if Len( ::aImagesArticulos ) > 0
 
       if !::ftpCreateConexion()
