@@ -1209,6 +1209,79 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetPropiedad FROM ComponentGetSay
+
+   METHOD Build( hBuilder ) 
+   METHOD New( idGet, idSay, idText, oContainer ) 
+
+   METHOD First()    INLINE ( ::cText( Space( 20 ) ) )
+   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 20 ) ) )
+
+END CLASS 
+
+//--------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS GetPropiedad
+
+   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
+   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
+   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
+   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
+
+   ::New( idGet, idSay, idText, oContainer )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetPropiedad
+
+   ::Super:New( idGet, idSay, idText, oContainer )
+
+   ::bValid       := {|| cProp( ::oGetControl, ::oSayControl ) }
+   ::bHelp        := {|| brwProp( ::oGetControl, ::oSayControl ) }
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetPropiedadActual FROM GetPropiedad
+
+   DATA cPropiedad
+
+   METHOD New( idGet, idSay, idText, oContainer )
+
+   METHOD PropiedadActual( cPropiedad )   INLINE ( if( !empty( cPropiedad ), ::cPropiedad := cPropiedad, ), msgAlert( ::cPropiedad ), ::cPropiedad )
+
+END CLASS 
+
+//--------------------------------------------------------------------------//
+
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetPropiedadActual
+
+   ::Super:New( idGet, idSay, idText, oContainer )
+
+   ::bValid       := {|| cProp( ::oGetControl, ::oSayControl ) }
+   ::bHelp        := {|| brwPropiedadActual( ::oGetControl, ::oSayControl, ::PropiedadActual() ) }
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
 
 CLASS GetGrupoProveedor FROM ComponentGetSay
 

@@ -29,6 +29,8 @@ local hClass
 
   __clsAddMsg( hClass, "HardDisable", {|Self| Self, ::bOldWhen := ::bWhen, ::bWhen := {|| .f. } }, 3, nil, 1, .f., .f. ) 
 
+  __clsModMsg( hClass, "Click", @CheckBoxClick(), 1 ) 
+
   hClass        := TXBrowse():ClassH
 
   __clsAddMsg( hClass, "SelectOne", {|Self| Self, ::Select( 0 ), ::Select( 1 ) }, 3, nil, 1, .f., .f. ) 
@@ -154,6 +156,28 @@ Static Function BtnBmpReAdjust()
 
    Self:Move( nRow, nLeft, nWidth, nHeight )  
 
-return Self
+Return ( Self )
 
 //----------------------------------------------------------------------------//
+
+Static Function CheckBoxClick( lValue )
+
+   local Self       := HB_QSelf()
+
+   DEFAULT lValue   := !Eval( ::bSetGet )
+
+   if ::bSetGet != nil
+      Eval( ::bSetGet, lValue )
+      ::Refresh()
+   endif
+
+   if ::bChange != nil
+      Eval( ::bChange, Eval( ::bSetGet ), Self )
+   endif
+
+   ::Super:Click()           // keep it here, the latest !!!
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+

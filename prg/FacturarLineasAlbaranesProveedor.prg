@@ -15,6 +15,9 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    DATA oArticulo
    DATA oPeriodo
 
+   DATA oPropiedad1
+   DATA oPropiedad2
+
    DATA oBrwEntrada
    DATA oBrwSalida
 
@@ -57,6 +60,12 @@ METHOD New( nView ) CLASS TFacturarLineasAlbaranesProveedor
    ::oProveedor      := GetProveedor():Build( { "idGet" => 130, "idSay" => 140, "oContainer" => Self } )
 
    ::oArticulo       := GetArticulo():Build( { "idGet" => 160, "idSay" => 161, "oContainer" => Self } )
+   ::oArticulo:oGetControl:bValid   := {||   ::oPropiedad1:PriedadActual( ( D():Articulos( ::oContainer:nView ) )->cCodPr1 ),;
+                                             ::oPropiedad2:PriedadActual( ( D():Articulos( ::oContainer:nView ) )->cCodPr2 ) }
+
+   ::oPropiedad1     := GetPropiedadActual():Build( { "idGet" => 170, "idSay" => 171, "oContainer" => Self } )
+
+   ::oPropiedad2     := GetPropiedadActual():Build( { "idGet" => 180, "idSay" => 181, "oContainer" => Self } )
 
    ::oPeriodo        := GetPeriodo():Build( { "idCombo" => 100, "idFechaInicio" => 110, "idFechaFin" => 120, "oContainer" => Self } )
 
@@ -214,9 +223,15 @@ METHOD loadAlbaran( id )
 
       while D():AlbaranesProveedoresLineasId( ::nView ) == id .and. !( D():AlbaranesProveedoresLineas( ::nView ) )->( eof() )
 
-         if !( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado
+         if !( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado                                                              .and. ;
+            ( empty( ::oArticulo:Value() ) .or. ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef == ::oArticulo:Value() )        .and. ;
+            ( empty( ::oPropiedad1:Value() ) .or. ( D():AlbaranesProveedoresLineas( ::nView ) )->cCodPr1 == ::oPropiedad1:Value() ) .and. ;
+            ( empty( ::oPropiedad2:Value() ) .or. ( D():AlbaranesProveedoresLineas( ::nView ) )->cCodPr2 == ::oPropiedad2:Value() )
+            
             dbPass( D():AlbaranesProveedoresLineas( ::nView ), D():GetAreaTmp( "TmpPrvI", ::nView ), .t. )  
+            
             ::lImported       := .t.
+
          end if 
 
          ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbskip() )
