@@ -888,7 +888,6 @@ STATIC FUNCTION OpenFiles( lExt )
       */
 
       D():Articulos( nView )
-
       D():ArticulosCodigosBarras( nView )
 
       D():ProveedorArticulo( nView )

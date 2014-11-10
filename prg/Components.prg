@@ -1159,7 +1159,6 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetProveedor
    ::bValid       := {|| cProvee( ::oGetControl, D():Proveedores( ::oContainer:nView ), ::oSayControl ) }
    ::bHelp        := {|| BrwProvee( ::oGetControl, ::oSayControl ) }
 
-
 Return ( Self )
 
 //--------------------------------------------------------------------------//
@@ -1202,7 +1201,7 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetArticulo
 
    ::Super:New( idGet, idSay, idText, oContainer )
 
-   ::bValid       := {|| cArticulo( ::oGetControl, D():Get( "Articulo" ), ::oSayControl ) }
+   ::bValid       := {|| cArticulo( ::oGetControl, D():Get( "Articulo", ::oContainer:nView ), ::oSayControl ) }
    ::bHelp        := {|| BrwArticulo( ::oGetControl, ::oSayControl ) }
 
 Return ( Self )
