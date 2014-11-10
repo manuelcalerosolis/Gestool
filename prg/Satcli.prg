@@ -10308,6 +10308,7 @@ Function SynSatCli( cPath )
    local oBlock
    local nOrdAnt
    local aTotSat
+   local dbfArticulo
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -10327,7 +10328,7 @@ Function SynSatCli( cPath )
    USE ( cPatEmp() + "CLIENT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "CLIENT", @dbfClient ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @D():Articulos( nView ) ) ) EXCLUSIVE
+   USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "FAMILIAS.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
@@ -10410,7 +10411,7 @@ Function SynSatCli( cPath )
          end if
 
          if !Empty( ( dbfSatCliL )->cRef ) .and. Empty( ( dbfSatCliL )->cCodFam )
-            ( dbfSatCliL )->cCodFam := RetFamArt( ( dbfSatCliL )->cRef, D():Articulos( nView ) )
+            ( dbfSatCliL )->cCodFam := RetFamArt( ( dbfSatCliL )->cRef, dbfArticulo )
          end if
 
          if !Empty( ( dbfSatCliL )->cRef ) .and. !Empty( ( dbfSatCliL )->cCodFam )
@@ -10483,7 +10484,7 @@ Function SynSatCli( cPath )
    CLOSE ( dbfSatCliL )
    CLOSE ( dbfSatCliI )
    CLOSE ( dbfSatCliS )
-   CLOSE ( D():Articulos( nView ))
+   CLOSE ( dbfArticulo)
    CLOSE ( dbfFamilia )
    CLOSE ( dbfIva     )
    CLOSE ( dbfDiv     )

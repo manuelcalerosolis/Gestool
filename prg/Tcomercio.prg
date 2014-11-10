@@ -6701,6 +6701,8 @@ METHOD buildSubirInformacion() CLASS TComercio
 
    for each hPropiedadesLinData in ::aPropiedadesLinData
 
+      Msginfo( hGet( hPropiedadesLinData, "name" ) )
+
       ::buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData )
 
       ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropiedadesLinData))) )

@@ -13531,6 +13531,7 @@ Function SynPedCli( cPath )
    local oBlock
    local nOrdAnt
    local aTotPed
+   local dbfArticulo
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -13553,7 +13554,7 @@ Function SynPedCli( cPath )
    USE ( cPatEmp() + "PEDCLIP.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIP", @dbfPedCliP ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLIP.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @D():Articulos( nView ) ) ) EXCLUSIVE
+   USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "FAMILIAS.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
@@ -13644,7 +13645,7 @@ Function SynPedCli( cPath )
         end if
 
         if !Empty( ( dbfPedCliL )->cRef ) .and. Empty( ( dbfPedCliL )->cCodFam )
-              ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, D():Articulos( nView ) )
+              ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, dbfArticulo )
         end if
 
         if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cGrpFam )
@@ -13696,7 +13697,7 @@ Function SynPedCli( cPath )
    CLOSE ( dbfPedCliR )
    CLOSE ( dbfPedCliD )
    CLOSE ( dbfPedCliP )
-   CLOSE ( D():Articulos( nView ))
+   CLOSE ( dbfArticulo)
    CLOSE ( dbfFamilia )
    CLOSE ( dbfIva     )
    CLOSE ( dbfDiv     )

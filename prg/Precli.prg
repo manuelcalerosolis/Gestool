@@ -10532,6 +10532,7 @@ Function SynPreCli( cPath )
    local oBlock
    local nOrdAnt
    local aTotPre
+   local dbfArticulo
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -10548,7 +10549,7 @@ Function SynPreCli( cPath )
    USE ( cPatEmp() + "CLIENT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "CLIENT", @dbfClient ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "CLIENT.CDX" ) ADDITIVE
 
-   USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @D():Articulos( nView ) ) ) EXCLUSIVE
+   USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "FAMILIAS.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
@@ -10628,7 +10629,7 @@ Function SynPreCli( cPath )
       end if
 
       if !Empty( ( dbfPreCliL )->cRef ) .and. Empty( ( dbfPreCliL )->cCodFam )
-         ( dbfPreCliL )->cCodFam := RetFamArt( ( dbfPreCliL )->cRef, D():Articulos( nView ) )
+         ( dbfPreCliL )->cCodFam := RetFamArt( ( dbfPreCliL )->cRef, dbfArticulo )
       end if
 
       if Empty( ( dbfPreCliL )->cAlmLin )
@@ -10677,7 +10678,7 @@ Function SynPreCli( cPath )
    CLOSE ( dbfPreCliT )
    CLOSE ( dbfPreCliL )
    CLOSE ( dbfPreCliI )
-   CLOSE ( D():Articulos( nView ))
+   CLOSE ( dbfArticulo)
    CLOSE ( dbfFamilia )
    CLOSE ( dbfIva     )
    CLOSE ( dbfDiv     )

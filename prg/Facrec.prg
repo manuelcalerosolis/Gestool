@@ -13081,6 +13081,7 @@ function SynFacRec( cPath )
    local cCodImp
    local cNumSer
    local aNumSer
+   local dbfArticulo
 
    DEFAULT cPath     := cPatEmp()
 
@@ -13106,7 +13107,7 @@ function SynFacRec( cPath )
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @D():Articulos( nView ) ) ) EXCLUSIVE
+      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIVA", @dbfIva ) ) SHARED
@@ -13169,7 +13170,7 @@ function SynFacRec( cPath )
 	      end if
 	      
 	      if Empty( ( dbfFacRecL )->nValImp )
-	         cCodImp                    := RetFld( ( dbfFacRecL )->cRef, D():Articulos( nView ), "cCodImp" )
+	         cCodImp                    := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
 	        	if !Empty( cCodImp )
 	            ( dbfFacRecL )->nValImp := oNewImp:nValImp( cCodImp )
 	         end if
@@ -13267,7 +13268,7 @@ function SynFacRec( cPath )
    CLOSE ( dbfAntCliT  )
    CLOSE ( dbfFamilia  )
    CLOSE ( dbfIva      )
-   CLOSE ( D():Articulos( nView ) )
+   CLOSE ( dbfArticulo )
    CLOSE ( dbfDiv      )
    CLOSE ( dbfClient   )
 
