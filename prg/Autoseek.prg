@@ -86,7 +86,7 @@ RETURN NIL
 Funciones comunes
 */
 
-FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilter, lNotUser, lNotFecha )
+FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilter, lNotUser, lNotFecha, nLen )
 
    local cType
 	local xCadena
@@ -127,7 +127,7 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
 
    end case
 
-   if lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha ) .or. Empty( xCadena )
+   if lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen ) .or. Empty( xCadena )
 
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
@@ -147,12 +147,11 @@ Return ( lReturn )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha )
+FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
 
    local oCol
    local xVal
    local nRec
-   local nLen
    local lRet        := .f.
    local cSort
    local nSort
@@ -328,10 +327,6 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
       case cType == "C"
 
-
-         /*   
-         */
-
          if ( xAlias )->( dbSeek( xCadena, .t. ) )
 
             ( xAlias )->( OrdScope( 0, xCadena ) )
@@ -353,8 +348,6 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
                cPos  := Padl( Rtrim( SubStr( xCadena, 2, nLen - 1 ) ), nLen - 1 )
 
                for n := 1 to nLen
-
-                  // msgAlert( cPre + cPos, "cPre + cPos" )
 
                   if ( xAlias )->( dbSeek( cPre + cPos, .f. ) )
 

@@ -21,4 +21,4 @@ del *.tds
 
 echo done!
 
-call hx.bat
+call hb.bat

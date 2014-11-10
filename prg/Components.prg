@@ -1159,6 +1159,52 @@ METHOD New( idGet, idSay, idText, oContainer ) CLASS GetProveedor
    ::bValid       := {|| cProvee( ::oGetControl, D():Proveedores( ::oContainer:nView ), ::oSayControl ) }
    ::bHelp        := {|| BrwProvee( ::oGetControl, ::oSayControl ) }
 
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetArticulo FROM ComponentGetSay
+
+   METHOD Build( hBuilder ) 
+   METHOD New( idGet, idSay, idText, oContainer ) 
+
+   METHOD First()    INLINE ( ::cText( Space( 18 ) ) )
+   METHOD Last()     INLINE ( ::cText( Replicate( "Z", 18 ) ) )
+
+   METHOD Top()      INLINE ( ::cText( D():Top( "Articulo", ::oContainer:nView ) ) )
+   METHOD Bottom()   INLINE ( ::cText( D():Bottom( "Articulo", ::oContainer:nView ) ) )
+
+END CLASS 
+
+//--------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS GetArticulo
+
+   local idGet       := if( hhaskey( hBuilder, "idGet" ),      hBuilder[ "idGet"     ], nil )
+   local idSay       := if( hhaskey( hBuilder, "idSay"),       hBuilder[ "idSay"     ], nil )
+   local idText      := if( hhaskey( hBuilder, "idText"),      hBuilder[ "idText"    ], nil )
+   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
+
+   ::New( idGet, idSay, idText, oContainer )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD New( idGet, idSay, idText, oContainer ) CLASS GetArticulo
+
+   ::Super:New( idGet, idSay, idText, oContainer )
+
+   ::bValid       := {|| cArticulo( ::oGetControl, D():Get( "Articulo" ), ::oSayControl ) }
+   ::bHelp        := {|| BrwArticulo( ::oGetControl, ::oSayControl ) }
+
 Return ( Self )
 
 //--------------------------------------------------------------------------//

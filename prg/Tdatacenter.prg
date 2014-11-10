@@ -5445,7 +5445,6 @@ ENDCLASS
 
             lOpen       := !neterr()
             if lOpen
-            msgAlert( "AddView")
                ::AddViewTmp( cAlias, cFile, cArea, nView )
             end if 
 

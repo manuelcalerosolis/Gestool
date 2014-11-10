@@ -3410,8 +3410,6 @@ static function BrwApartados()
    Posicinamiento--------------------------------------------------------------
    */
 
-   ( dbfTikT )->( dbSetFilter( {|| Field->cTipTik == "5" .and. Field->cCcjTik == oUser():cCodigo() .and. Field->cNcjTik == oUser():cCaja() }, "Field->cTipTik == '5' .and. Field->cCcjTik == oUser():cCodigo() .and. Field->cNcjTik == oUser():cCaja()" ) )
-
    ( dbfTikT )->( dbGoTop() )
 
    if ( dbfTikT )->( Eof() )
@@ -3516,7 +3514,7 @@ static function BrwApartados()
          REDEFINE BUTTON ;
             ID       IDOK ;
             OF       oDlg ;
-            ACTION   ( oDlg:end( IDOK ) )
+            ACTION   ( EndBrwApartados( oDlg ) )
 
          REDEFINE BUTTON ;
             ID       IDCANCEL ;
@@ -3526,8 +3524,8 @@ static function BrwApartados()
 
       oDlg:bStart                := {|| oBrw:Load() }
 
-      oDlg:AddFastKey( VK_F5,    {|| oDlg:end( IDOK ) } )
-      oDlg:AddFastKey( VK_RETURN,{|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_F5,    {|| EndBrwApartados( oDlg ) } )
+      oDlg:AddFastKey( VK_RETURN,{|| EndBrwApartados( oDlg ) } )
 
       ACTIVATE DIALOG oDlg CENTER
 
@@ -3544,15 +3542,35 @@ static function BrwApartados()
    end if   
 
    ( dbfTikT )->( OrdSetFocus( nOrd ) )
-   ( dbfTikT )->( dbClearFilter() )
    ( dbfTikT )->( dbGoTo( nRecAnt ) )
 
 RETURN ( cApartadoSeleccionado )
 
 //---------------------------------------------------------------------------//
 
+Static Function EndBrwApartados( oDlg )
+
+   if ( dbfTikT )->cTipTik == "5"
+      msgStop( "El tipo de documento no es un apartado." )
+      Return .f.
+   end if       
+   
+   if ( dbfTikT )->cCcjTik == oUser():cCodigo()
+      msgStop( "El usuario que realizo el docuemnto no coincide." )
+      Return .f.
+   end if       
+
+   if ( dbfTikT )->cNcjTik == oUser():cCaja() 
+      msgStop( "El documento no se realizo en esta caja." )
+      Return .f.
+   end if
+
+   oDlg:end( IDOK )
+
+Return ( .t. )
+
 /*
-Esta funcion graba el tiket despues de pedir el importe por pantalla
+Esta funcion graba el tiket despues de pedir el importe por pantalla-----------
 */
 
 Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
@@ -19113,31 +19131,30 @@ Static Function BrwTikCli( oGet )
 	local oBrw
    local oGet1
 	local cGet1
+   local nRec
    local nOrd           := GetBrwOpt( "BrwTikCli" )
    local oCbxOrd
    local cCbxOrd
    local aCbxOrd        := { "Número", "Fecha", "Código cliente", "Nombre cliente" }
-   local nRecAnt        := ( dbfTikT )->( RecNo() )
-   local nOrdAnt        := ( dbfTikT )->( OrdSetFocus( "cNumTik" ) )
    local cText          := ""
+
+   // Posicinamiento-----------------------------------------------------------
 
    nOrd                 := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrd ]
 
+   nRec                 := ( dbfTikT )->( RecNo() )
    nOrd                 := ( dbfTikT )->( OrdSetFocus( nOrd ) )
 
-   /*
-   Posicinamiento--------------------------------------------------------------
-   */
-
-   ( dbfTikT )->( dbSetFilter( {|| Field->cTipTik == "1" }, "Field->cTipTik == '1'" ) )
    ( dbfTikT )->( dbGoTop() )
+
+   // Dialog-------------------------------------------------------------------
 
    DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE 'Seleccionar tickets'
 
       REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
-         ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfTikT );
+         ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfTikT, , , , , , 11 );
          BITMAP   "FIND" ;
          OF       oDlg
 
@@ -19247,7 +19264,7 @@ Static Function BrwTikCli( oGet )
 		REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
+         ACTION   ( EndBrwTikCli( oGet, oDlg ) )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -19257,28 +19274,14 @@ Static Function BrwTikCli( oGet )
 
    oDlg:bStart                := {|| oBrw:Load() }
 
-   oDlg:AddFastKey( VK_F5,    {|| oDlg:end( IDOK ) } )
-   oDlg:AddFastKey( VK_RETURN,{|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5,    {|| EndBrwTikCli( oGet, oDlg ) } )
+   oDlg:AddFastKey( VK_RETURN,{|| EndBrwTikCli( oGet, oDlg ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   /*
-   Guardamos los vales en el array---------------------------------------------
-   */
-
-   if oDlg:nResult == IDOK
-
-      if !Empty( oGet )
-         oGet:cText( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik )
-      end if
-
-   end if
+   // Guardamos los vales en el array------------------------------------------
 
    SetBrwOpt( "BrwTikCli", ( dbfTikT )->( OrdNumber() ) )
-
-   ( dbfTikT )->( OrdSetFocus( nOrd ) )
-
-   ( dbfTikT )->( dbClearFilter() )
 
    CursorWE()
 
@@ -19288,10 +19291,27 @@ Static Function BrwTikCli( oGet )
    Repos-----------------------------------------------------------------------
    */
 
-   ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfTikT )->( dbGoTo( nRecAnt ) )
+   ( dbfTikT )->( OrdSetFocus( nOrd ) )
+   ( dbfTikT )->( dbGoTo( nRec ) )
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function EndBrwTikCli( oGet, oDlg )
+
+   if ( dbfTikT )->cTipTik != "1"
+      MsgStop( "El tipo de documento seleccionado debe ser un ticket" )
+      Return .f.
+   end if 
+
+   if !Empty( oGet )
+      oGet:cText( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik )
+   end if
+
+   oDlg:end( IDOK )
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 

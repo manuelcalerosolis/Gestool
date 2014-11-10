@@ -20,7 +20,7 @@ SOURCEPRG 			= 	Prg
 SOURCEC 				=	C
 PPO 					= 	Ppo1406
 
-EXE 					= 	Bin\Gestoolhb.exe
+EXE 					= 	Bin\Gestool.exe
 
 .path.prg      		=	.\$(SOURCEPRG)
 .path.c       			=	.\$(SOURCEC)

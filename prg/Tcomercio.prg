@@ -71,7 +71,6 @@ CLASS TComercio
    DATA  lImagenes            INIT .f.
    DATA  lClientes            INIT .f.
 
-   DATA  oSyncAll
    DATA  oArticulos
    DATA  oPedidos
    DATA  oTipIva
@@ -131,6 +130,7 @@ CLASS TComercio
    DATA  cUserFtp
    DATA  cPasswdFtp
    DATA  lPassiveFtp
+
    DATA  Cookiekey
 
    DATA  oInt
@@ -153,18 +153,18 @@ CLASS TComercio
    DATA  cPrefijoBaseDatos
 
    METHOD GetInstance()              
-   Method New()                     CONSTRUCTOR
+   METHOD New()                     CONSTRUCTOR
    METHOD lReady()                  INLINE ( !Empty( ::cHost ) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
 
    // Apertura y cierre de ficheros--------------------------------------------
 
-   Method filesOpen()
-   Method filesClose()
+   METHOD filesOpen()
+   METHOD filesClose()
 
    // Dialogos-----------------------------------------------------------------
 
-   Method dialogActivate( oWnd )
-   Method dialogStart()
+   METHOD dialogActivate( oWnd )
+   METHOD dialogStart()
 
    // Mensajes-----------------------------------------------------------------
 
@@ -179,14 +179,14 @@ CLASS TComercio
    DATA  oMeterProceso
    DATA  nMeterProceso
 
-   Method treeSetText( cText )
-   Method meterGlobalText( cText )
+   METHOD treeSetText( cText )
+   METHOD meterGlobalText( cText )
    METHOD meterGlobalSetTotal( nTotal )
-   Method meterProcesoText( cText )
+   METHOD meterProcesoText( cText )
    METHOD meterProcesoSetTotal( nTotal )
    
-   Method ExportarPrestashop()
-   Method ImportarPrestashop()
+   METHOD ExportarPrestashop()
+   METHOD ImportarPrestashop()
 
    METHOD AppendIvaPrestashop()
    METHOD InsertIvaPrestashop()
@@ -235,7 +235,7 @@ CLASS TComercio
    METHOD InsertImageProductsPrestashop( cCodArt )
    METHOD nIvaProduct( cCodArt )
    METHOD ActualizaPropiedadesProducts( cCodWeb )
-   Method ActualizaStockProductsPrestashop( cCodigoArticulo )
+   METHOD ActualizaStockProductsPrestashop( cCodigoArticulo )
    METHOD nIdProductAttribute( cCodWebArt, cCodWebValPr1, cCodWebValPr2 )
 
    METHOD DelIdArticuloPrestashop()
@@ -261,7 +261,7 @@ CLASS TComercio
    METHOD AutoRecive()
    METHOD GetLanguagePrestashop()
 
-   Method AddImages( cImage )
+   METHOD AddImages( cImage )
 
    METHOD AppendClientesToPrestashop()
 
@@ -352,7 +352,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD GetInstance() 
+METHOD GetInstance() CLASS TComercio
 
    if Empty( ::oInstance )
       ::oInstance          := ::New()
@@ -772,7 +772,7 @@ Return Nil
 
 //------------------------------------------------------------------------//
 
-Method dialogStart() CLASS TComercio
+METHOD dialogStart() CLASS TComercio
 
    if uFieldEmpresa( "lHExpWeb" )
       ::oBtnExportar:Hide()
@@ -869,7 +869,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ExportarPrestashop() Class TComercio
+METHOD ExportarPrestashop() Class TComercio
 
    local oDb
    local oBlock
@@ -1021,7 +1021,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Method ImportarPrestashop() CLASS TComercio
+METHOD ImportarPrestashop() CLASS TComercio
 
    local oDb
    local oBlock
@@ -1401,7 +1401,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method InsertFabricantesPrestashop() CLASS TComercio
+METHOD InsertFabricantesPrestashop() CLASS TComercio
 
    local oImagen
    local cCommand    := ""    
@@ -1510,7 +1510,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method AppendFamiliaPrestashop( oDb ) CLASS TComercio
+METHOD AppendFamiliaPrestashop( oDb ) CLASS TComercio
 
    local n
    local cCommand := ""
@@ -1819,7 +1819,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method InsertCategoriesPrestashop() CLASS TComercio
+METHOD InsertCategoriesPrestashop() CLASS TComercio
 
    local oImagen
    local oCategoria
@@ -1963,7 +1963,7 @@ return nCodigoWeb
 
 //---------------------------------------------------------------------------//
 
-Method UpdateCategoriesPrestashop() CLASS TComercio
+METHOD UpdateCategoriesPrestashop() CLASS TComercio
 
    local lReturn  := .f.
    local cCommand := ""
@@ -2010,7 +2010,7 @@ Return lReturn
 
 //---------------------------------------------------------------------------//
 
-Method DeleteCategoriesPrestashop() CLASS TComercio
+METHOD DeleteCategoriesPrestashop() CLASS TComercio
 
    local lReturn     := .f.
    local cCommand    := ""
@@ -2094,7 +2094,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
+METHOD ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
 
    local oQuery
    local cCommand
@@ -2392,7 +2392,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method InsertPropiedadesPrestashop() CLASS TComercio
+METHOD InsertPropiedadesPrestashop() CLASS TComercio
 
    local oImagen
    local nCodigoGrupo      := 0
@@ -3481,7 +3481,7 @@ return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComercio
+METHOD ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComercio
 
    local oQuery
    local cCommand
@@ -4251,7 +4251,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Method InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
+METHOD InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
 
    local cCommand          := ""
 
@@ -4304,7 +4304,7 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-Method UpdateOfertasPrestashop() CLASS TComercio
+METHOD UpdateOfertasPrestashop() CLASS TComercio
 
    local cCommand          := ""
 
@@ -4543,7 +4543,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method buildImagenes() CLASS TComercio
+METHOD buildImagenes() CLASS TComercio
 
    local oFile
    local oImage
@@ -4807,7 +4807,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method AddImagesArticulos( cImage ) CLASS TComercio
+METHOD AddImagesArticulos( cImage ) CLASS TComercio
 
    if aScan( ::aImagesArticulos, cImage ) == 0
       aAdd( ::aImagesArticulos, cImage )
@@ -4817,7 +4817,7 @@ Return ( ::aImagesArticulos )
 
 //---------------------------------------------------------------------------//
 
-Method AddImagesCategories( cImage ) CLASS TComercio
+METHOD AddImagesCategories( cImage ) CLASS TComercio
 
    if aScan( ::aImagesCategories, cImage ) == 0
       aAdd( ::aImagesCategories, cImage )
@@ -4827,7 +4827,7 @@ Return ( ::aImagesCategories )
 
 //---------------------------------------------------------------------------//
 
-Method AddTipoImagesPrestashop( cImage ) CLASS TComercio
+METHOD AddTipoImagesPrestashop( cImage ) CLASS TComercio
 
    if aScan( ::aTipoImagesPrestashop, cImage ) == 0
       aAdd( ::aTipoImagesPrestashop, cImage )
@@ -4957,7 +4957,7 @@ Return lReturn
 
 //---------------------------------------------------------------------------//
 
-Method DisconectBBDD() Class TComercio
+METHOD DisconectBBDD() Class TComercio
 
    if !Empty( ::oCon )
       ::oCon:Destroy()
@@ -5100,7 +5100,7 @@ Return Nil
 
 //---------------------------------------------------------------------------//
 
-Method GetLanguagePrestashop( oDb ) CLASS TComercio
+METHOD GetLanguagePrestashop( oDb ) CLASS TComercio
 
    local oQuery
    local cCodLanguage
@@ -5928,7 +5928,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method EstadoPedidosPrestashop() Class TComercio
+METHOD EstadoPedidosPrestashop() Class TComercio
 
    local oQuery
 
@@ -6003,7 +6003,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method GetParentCategories() CLASS TComercio
+METHOD GetParentCategories() CLASS TComercio
 
    local idCategories := 2
 
@@ -6019,7 +6019,7 @@ Return( idCategories )
 
 //---------------------------------------------------------------------------//
 
-Method AddImages( cImage ) CLASS TComercio
+METHOD AddImages( cImage ) CLASS TComercio
 
    if aScan( ::aImages, cImage ) == 0
       aAdd( ::aImages, cImage )
@@ -6042,7 +6042,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2 ) CLASS TComercio
+METHOD ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2 ) CLASS TComercio
 
    local oQuery
    local cCommand
@@ -6915,7 +6915,7 @@ Return ( nCodigoweb )
 
 //---------------------------------------------------------------------------//
 
-Method buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
+METHOD buildInsertFabricantesPrestashop( hFabricantesData ) CLASS TComercio
 
    local oImagen
    local cCommand    := ""    
@@ -6976,7 +6976,7 @@ return nCodigoWeb
 
 //---------------------------------------------------------------------------//
 
-Method buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
+METHOD buildInsertCategoriesPrestashop( hFamiliaData ) CLASS TComercio
 
    local oImagen
    local oCategoria
@@ -7559,7 +7559,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Method buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
+METHOD buildInsertOfertasPrestashop( hArticuloData, nCodigoWeb ) CLASS TComercio
 
    local cCommand          := ""
 
@@ -7606,7 +7606,7 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-Method buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
+METHOD buildInsertPropiedadesPrestashop( hPropiedadesCabData ) CLASS TComercio
 
    local oImagen
    local nCodigoGrupo      := 0
@@ -8520,7 +8520,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method buildExportarPrestashop() Class TComercio
+METHOD buildExportarPrestashop() Class TComercio
 
    local oBlock
    local oError
@@ -8593,7 +8593,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method buildGetParentCategories( cCodFam ) CLASS TComercio
+METHOD buildGetParentCategories( cCodFam ) CLASS TComercio
 
    local idCategories := 2
 

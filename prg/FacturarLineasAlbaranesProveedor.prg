@@ -9,12 +9,14 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
 
    DATA cPath
 
-   DATA lPrint
+   DATA lImported
 
    DATA oProveedor
+   DATA oArticulo
    DATA oPeriodo
 
    DATA oBrwEntrada
+   DATA oBrwSalida
 
    DATA tmpEntrada
    DATA tmpSalida
@@ -22,11 +24,18 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    METHOD New( nView )
 
    METHOD Resource()
+   METHOD startResource()
+
+   METHOD buildBrowse( oBrw, id )
 
    METHOD CreaTemporales()
    METHOD CierraTemporales()
 
    METHOD loadAlbaranes()     
+   METHOD loadAlbaran( id )    
+
+   METHOD passLineas()     
+   METHOD passLinea()     
 
 END CLASS
 
@@ -43,13 +52,11 @@ METHOD New( nView ) CLASS TFacturarLineasAlbaranesProveedor
       Return .f.
    end if
 
-   // Tomamos los valores iniciales-----------------------------------------------
-
-   ::lPrint          := .f.
-
    // Valores iniciales ----------------------------------------------------------
 
    ::oProveedor      := GetProveedor():Build( { "idGet" => 130, "idSay" => 140, "oContainer" => Self } )
+
+   ::oArticulo       := GetArticulo():Build( { "idGet" => 160, "idSay" => 161, "oContainer" => Self } )
 
    ::oPeriodo        := GetPeriodo():Build( { "idCombo" => 100, "idFechaInicio" => 110, "idFechaFin" => 120, "oContainer" => Self } )
 
@@ -65,7 +72,7 @@ METHOD New( nView ) CLASS TFacturarLineasAlbaranesProveedor
 
    ::CierraTemporales()
 
-Return ( ::lPrint )
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -79,171 +86,19 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
       // Browse de lineas de entradas------------------------------------------
 
-      with object ( ::oBrwEntrada := IXBrowse():New( ::oDlg ) )
+      ::oBrwEntrada           := IXBrowse():New( ::oDlg )
+      ::oBrwEntrada:cAlias    := D():GetAreaTmp( "TmpPrvI", ::nView )
+      ::oBrwEntrada:cName     := "Lineas de albaranes a proveedor entradas"
 
-         :bClrSel             := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-         :bClrSelFocus        := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      ::buildBrowse( ::oBrwEntrada, 200 )
 
-         :cAlias              := D():GetAreaTmp( "TmpPrvI", ::nView )
+      // Browse de lineas de entradas------------------------------------------
 
-         :nMarqueeStyle       := 6
-         :lFooter             := .t.
-         :cName               := "Lineas de albaranes a proveedor entradas"
+      ::oBrwSalida            := IXBrowse():New( ::oDlg )
+      ::oBrwSalida:cAlias     := D():GetAreaTmp( "TmpPrvO", ::nView )
+      ::oBrwSalida:cName      := "Lineas de albaranes a proveedor salidas"
 
-         with object ( :AddCol() )
-            :cHeader          := "Albaran"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cSerAlb + "/" + Alltrim( Str( ( ::oBrwEntrada:cAlias )->nNumAlb ) ) }
-            :nWidth           := 80
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Número"
-            :bEditValue       := {|| if( ( ::oBrwEntrada:cAlias )->lKitChl, "", Trans( ( ::oBrwEntrada:cAlias )->nNumLin, "9999" ) ) }
-            :nWidth           := 65
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Código"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cRef }
-            :nWidth           := 80
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "C. Barras"
-            :bEditValue       := {|| cCodigoBarrasDefecto( ( ::oBrwEntrada:cAlias )->cRef, D():ArticulosCodigosBarras( ::nView ) ) }
-            :nWidth           := 100
-            :lHide            := .t.
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Código proveedor"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cRefPrv }
-            :nWidth           := 80
-            :lHide            := .t.
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Descripción"
-            :bEditValue       := {|| if( Empty( ( ::oBrwEntrada:cAlias )->cRef ) .and. !Empty( ( ::oBrwEntrada:cAlias )->mLngDes ), ( ::oBrwEntrada:cAlias )->mLngDes, ( ::oBrwEntrada:cAlias )->cDetalle ) }
-            :nWidth           := 305
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Prop. 1"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cValPr1 }
-            :nWidth           := 60
-            :lHide            := .t.
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Prop. 2"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cValPr2 }
-            :nWidth           := 60
-            :lHide            := .t.
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Lote"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cLote }
-            :nWidth           := 80
-            :lHide            := .t.
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Caducidad"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->dFecCad }
-            :nWidth           := 80
-            :lHide            := .t.
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Pedido cliente"
-            :bEditValue       := {|| if( !Empty( ( ::oBrwEntrada:cAlias )->cNumPed ), Trans( ( ::oBrwEntrada:cAlias )->cNumPed, "@R #/#########/##" ), "" ) }
-            :nWidth           := 80
-            :lHide            := .t.
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Cliente"
-            :bEditValue       := {|| if( !Empty( (:cAlias)->cNumPed ), GetCliente( (:cAlias)->cNumPed ), "" ) }
-            :nWidth           := 180
-            :lHide            := .t.
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := cNombreUnidades()
-            :bEditValue       := {|| nTotNAlbPrv( ::oBrwEntrada:cAlias ) }
-            :cEditPicture     := MasUnd()
-            :nWidth           := 60
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-            :nFooterType      := AGGR_SUM
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "UM. Unidad de medición"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cUnidad }
-            :nWidth           := 25
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Almacen"
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->cAlmLin }
-            :nWidth           := 60
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Importe"
-            :bEditValue       := {|| nTotUAlbPrv( :cAlias, nDinDiv() ) }
-            :cEditPicture     := cPinDiv()
-            :nWidth           := 90
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "% Dto."
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->nDtoLin }
-            :cEditPicture     := "@E 999.99"
-            :nWidth           := 50
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "% Prm."
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->nDtoPrm }
-            :cEditPicture     := "@E 999.99"
-            :nWidth           := 40
-            :lHide            := .t.
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "% " + cImp()
-            :bEditValue       := {|| ( ::oBrwEntrada:cAlias )->nIva }
-            :cEditPicture     := "@E 999.99"
-            :nWidth           := 50
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-         end with
-
-         with object ( :AddCol() )
-            :cHeader          := "Total"
-            :bEditValue       := {|| nTotLAlbPrv( :cAlias, nDinDiv(), nRouDiv() ) }
-            :cEditPicture     := cPirDiv()
-            :nWidth           := 80
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
-            :nFooterType      := AGGR_SUM
-         end with
-
-         :CreateFromResource( 200 )
-
-      end with
+      ::buildBrowse( ::oBrwSalida, 300 )
 
       // Botones------------------------------------------------------------------
 
@@ -258,7 +113,20 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
          CANCEL ;
          ACTION   ( ::oDlg:End() )
 
-   ::oDlg:Activate( , , , .t., , , {|| msginfo( "abriendo el recurso" ) } ) //::InitResource() } )
+   ::oDlg:Activate( , , , .t., , , {|| ::StartResource() } ) //::InitResource() } )
+
+   ::oBrwEntrada:Save()
+   ::oBrwSalida:Save()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartResource()
+
+   ::oBrwEntrada:Load()
+
+   ::oBrwSalida:Load()
 
 Return ( Self )
 
@@ -286,13 +154,27 @@ Return ( Self )
 
 METHOD loadAlbaranes()     
 
-   local aStatus
    local cCodigoProveedor     := ::oProveedor:Value()
 
    if empty( cCodigoProveedor )
       msgStop( "Debe cumplimentar un proveedor.")
       Return .f.
    end if 
+
+   if ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( ordkeycount() ) > 0
+      if !msgYesNo(  "Ya hay registros importados," + hb_eol() + ;
+                     "¿desea volver a importar las líneas de albaranes?" )
+         Return .f.
+      end if 
+   end if 
+
+   // Cursor paramos el dialogo------------------------------------------------
+
+   Cursorwait()
+
+   ::lImported                := .f.
+
+   ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( __dbzap() )
 
    D():GetStatus( "AlbProvT", ::nView )
    
@@ -302,7 +184,7 @@ METHOD loadAlbaranes()
       while ( D():AlbaranesProveedores( ::nView ) )->cCodPrv == cCodigoProveedor // .and. !( D():Get( "AlbProvL", ::nView ) )->( eof() ) 
 
          if ::oPeriodo:InRange( D():AlbaranesProveedoresFecha( ::nView ) )
-            msgAlert( D():AlbaranesProveedoresId( ::nView ) )
+            ::loadAlbaran( D():AlbaranesProveedoresId( ::nView ) )
          end if
 
          ( D():AlbaranesProveedores( ::nView ) )->( dbskip() )
@@ -312,7 +194,241 @@ METHOD loadAlbaranes()
 
    D():SetStatus( "AlbProvT", ::nView )
 
+   ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( dbgotop() )
+
+   ::oBrwEntrada:refresh()
+
+   Cursorwe()
+
+   if !::lImported
+      msgStop( "No hay líneas de albaranes en las condiciones solicitadas.")
+   end if 
+
 Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD loadAlbaran( id )     
+
+   if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbSeek( id ) )
+
+      while D():AlbaranesProveedoresLineasId( ::nView ) == id .and. !( D():AlbaranesProveedoresLineas( ::nView ) )->( eof() )
+
+         if !( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado
+            dbPass( D():AlbaranesProveedoresLineas( ::nView ), D():GetAreaTmp( "TmpPrvI", ::nView ), .t. )  
+            ::lImported       := .t.
+         end if 
+
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbskip() )
+
+      end while
+
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildBrowse( oBrw, id )
+
+   with object ( oBrw )
+
+      :bClrSel             := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      :bClrSelFocus        := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      :nMarqueeStyle       := 6
+      :lFooter             := .t.
+
+      with object ( :AddCol() )
+         :cHeader          := "Albarán"
+         :bEditValue       := {|| ( oBrw:cAlias )->cSerAlb + "/" + Alltrim( Str( ( oBrw:cAlias )->nNumAlb ) ) }
+         :nWidth           := 80
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Núm"
+         :bEditValue       := {|| if( ( oBrw:cAlias )->lKitChl, "", Trans( ( oBrw:cAlias )->nNumLin, "9999" ) ) }
+         :nWidth           := 40
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| ( oBrw:cAlias )->cRef }
+         :nWidth           := 80
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "C. Barras"
+         :bEditValue       := {|| cCodigoBarrasDefecto( ( oBrw:cAlias )->cRef, D():ArticulosCodigosBarras( ::nView ) ) }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Código proveedor"
+         :bEditValue       := {|| ( oBrw:cAlias )->cRefPrv }
+         :nWidth           := 80
+         :lHide            := .t.
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Descripción"
+         :bEditValue       := {|| if( Empty( ( oBrw:cAlias )->cRef ) .and. !Empty( ( oBrw:cAlias )->mLngDes ), ( oBrw:cAlias )->mLngDes, ( oBrw:cAlias )->cDetalle ) }
+         :nWidth           := 305
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Prop. 1"
+         :bEditValue       := {|| ( oBrw:cAlias )->cValPr1 }
+         :nWidth           := 60
+         :lHide            := .t.
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Prop. 2"
+         :bEditValue       := {|| ( oBrw:cAlias )->cValPr2 }
+         :nWidth           := 60
+         :lHide            := .t.
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Lote"
+         :bEditValue       := {|| ( oBrw:cAlias )->cLote }
+         :nWidth           := 80
+         :lHide            := .t.
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Caducidad"
+         :bEditValue       := {|| ( oBrw:cAlias )->dFecCad }
+         :nWidth           := 80
+         :lHide            := .t.
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Pedido cliente"
+         :bEditValue       := {|| if( !Empty( ( oBrw:cAlias )->cNumPed ), Trans( ( oBrw:cAlias )->cNumPed, "@R #/#########/##" ), "" ) }
+         :nWidth           := 80
+         :lHide            := .t.
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Cliente"
+         :bEditValue       := {|| if( !Empty( (:cAlias)->cNumPed ), GetCliente( (:cAlias)->cNumPed ), "" ) }
+         :nWidth           := 180
+         :lHide            := .t.
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := cNombreUnidades()
+         :bEditValue       := {|| nTotNAlbPrv( oBrw:cAlias ) }
+         :cEditPicture     := MasUnd()
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nFooterType      := AGGR_SUM
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "UM. Unidad de medición"
+         :bEditValue       := {|| ( oBrw:cAlias )->cUnidad }
+         :nWidth           := 25
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Almacen"
+         :bEditValue       := {|| ( oBrw:cAlias )->cAlmLin }
+         :nWidth           := 60
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Importe"
+         :bEditValue       := {|| nTotUAlbPrv( :cAlias, nDinDiv() ) }
+         :cEditPicture     := cPinDiv()
+         :nWidth           := 90
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "% Dto."
+         :bEditValue       := {|| ( oBrw:cAlias )->nDtoLin }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 50
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "% Prm."
+         :bEditValue       := {|| ( oBrw:cAlias )->nDtoPrm }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 40
+         :lHide            := .t.
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "% " + cImp()
+         :bEditValue       := {|| ( oBrw:cAlias )->nIva }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 50
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( :AddCol() )
+         :cHeader          := "Total"
+         :bEditValue       := {|| nTotLAlbPrv( :cAlias, nDinDiv(), nRouDiv() ) }
+         :cEditPicture     := cPirDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nFooterType      := AGGR_SUM
+      end with
+
+      :CreateFromResource( id )
+
+   end with
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD passLineas()     
+
+   Cursorwait()
+
+   ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( dbgotop() )
+   while ( !( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( eof() ) )
+
+      ::passLinea()
+
+      ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( dbskip() )
+
+   end while
+
+   Cursorwe()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD passLinea()     
+
+   Cursorwait()
+
+   dbpass( D():GetAreaTmp( "TmpPrvI", ::nView ), D():GetAreaTmp( "TmpPrvO", ::nView ), .t. )
+   dbDel(  D():GetAreaTmp( "TmpPrvI", ::nView ) )
+
+   ::oBrwEntrada:refresh()
+   ::oBrwSalida:refresh()
+
+   Cursorwe()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
