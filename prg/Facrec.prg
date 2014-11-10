@@ -359,7 +359,6 @@ static dbfAlm
 static dbfPro
 
 static dbfTblPro
-static dbfArticulo
 static dbfCodebar
 static dbfTarPreL
 static dbfTarPreS
@@ -735,6 +734,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloStockAlmacenes( nView )
 
+      D():Articulos( nView )
+
       USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
 
@@ -779,9 +780,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
       SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
@@ -1156,10 +1154,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfTikCliT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfArticulo )
-      ( dbfArticulo )->( dbCloseArea() )
-   end if
-
    if dbfCodebar != nil
       ( dbfCodebar )->( dbCloseArea() )
    end if
@@ -1391,7 +1385,6 @@ STATIC FUNCTION CloseFiles()
    dbfPreCliT  := nil
    dbfPreCliL  := nil
    dbfTikCliT  := nil
-   dbfArticulo := nil
    dbfCodebar  := nil
    dbfFamilia  := nil
    dbfKit      := nil
@@ -1865,7 +1858,7 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacRec( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, D():Clientes( nView ), dbfDiv, dbfArticulo, dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas rectificativas", .f., "Simular resultados", .f., "Contabilizar recibos", {|| oDiario() }, {|| cDiario() } ) ) ;
+      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacRec( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasRectificativas( nView ), dbfFacRecL, dbfFacCliP, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas rectificativas", .f., "Simular resultados", .f., "Contabilizar recibos", {|| oDiario() }, {|| cDiario() } ) ) ;
       TOOLTIP  "(C)ontabilizar" ;
       HOTKEY   "C";
       LEVEL    ACC_EDIT
@@ -4638,7 +4631,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    Comprobamos si tiene que introducir números de serie------------------------
    */
 
-   if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], dbfArticulo, "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
+   if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], D():Articulos( nView ), "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
       MsgStop( "Tiene que introducir números de serie para este artículo." )
       oBtnSer:Click()
       Return nil
@@ -4701,7 +4694,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    if nMode == APPD_MODE
 
       if aTmp[ _LLOTE ]
-         GraLotArt( aTmp[ _CREF ], dbfArticulo, aTmp[ _CLOTE ] )
+         GraLotArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _CLOTE ] )
       end if
 
       /*
@@ -4739,7 +4732,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
          */
 
          if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "FAMILIA", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 2 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "FAMILIA", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 2 )
             aTmp[ _LLINOFE ]  	:= ( aXbYStr[ 1 ] != 0 )
          end if
 
@@ -4748,7 +4741,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
          */
 
          if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTIP", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 3 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTIP", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 3 )
             aTmp[ _LLINOFE ]  	:= ( aXbYStr[ 1 ] != 0 )
          end if
 
@@ -4757,7 +4750,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
          */
 
          if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODCATE", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 4 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODCATE", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 4 )
             aTmp[ _LLINOFE ]  	:= ( aXbYStr[ 1 ] != 0 )
          end if
 
@@ -4766,7 +4759,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
          */
 
          if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTEMP", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 5 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTEMP", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 5 )
             aTmp[ _LLINOFE ]  	:= ( aXbYStr[ 1 ] != 0 )
          end if
 
@@ -4775,7 +4768,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
          */
 
          if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODFAB", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 6 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODFAB", "CODIGO" ), aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NCANENT ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, 6 )
             aTmp[ _LLINOFE ]  	:= ( aXbYStr[ 1 ] != 0 )
          end if
 
@@ -4806,7 +4799,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
             Guardamos los productos kits---------------------------------------
             */
 
-            AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
+            AppKit( aClo, aTmpFac, dbfTmpLin, dbfKit )
 
             /*
             Cajas a regalar----------------------------------------------------
@@ -4826,7 +4819,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
             Guardamos los productos kits---------------------------------------
             */
 
-            AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
+            AppKit( aClo, aTmpFac, dbfTmpLin, dbfKit )
 
          else
 
@@ -4843,7 +4836,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
             Guardamos los productos kits---------------------------------------
             */
 
-            AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
+            AppKit( aClo, aTmpFac, dbfTmpLin, dbfKit )
 
             /*
             Productos q vamos a regalar----------------------------------------
@@ -4863,7 +4856,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
             Guardamos los productos kits---------------------------------------
             */
 
-            AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
+            AppKit( aClo, aTmpFac, dbfTmpLin, dbfKit )
 
          end if
 
@@ -4879,7 +4872,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
          Guardamos los productos kits
          */
 
-         AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
+         AppKit( aClo, aTmpFac, dbfTmpLin, dbfKit )
 
       end if
 
@@ -5057,7 +5050,7 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
+STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfKit )
 
    local nRec           := ( dbfTmpLin )->( RecNo() )
    local nNumLin        := ( dbfTmpLin )->nNumLin
@@ -5069,11 +5062,11 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
 
       while ( dbfKit )->cCodKit == aClo[ _CREF ] .and. !( dbfKit )->( eof() )
 
-         if ( dbfArticulo )->( dbSeek( ( dbfKit )->cRefKit ) )
+         if ( D():Articulos( nView ) )->( dbSeek( ( dbfKit )->cRefKit ) )
 
             ( dbfTmpLin )->( dbAppend() )
 
-            if lKitAsociado( aClo[ _CREF ], dbfArticulo )
+            if lKitAsociado( aClo[ _CREF ], D():Articulos( nView ) )
                ( dbfTmpLin )->nNumLin  := nLastNum( dbfTmpLin )
                ( dbfTmpLin )->lKitChl  := .f.
             else
@@ -5083,30 +5076,30 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
 
             ( dbfTmpLin )->cRef        := ( dbfKit      )->cRefKit
             ( dbfTmpLin )->nPreUnit    := ( dbfKit      )->nPreKit
-            ( dbfTmpLin )->cDetalle    := ( dbfArticulo )->Nombre
-            ( dbfTmpLin )->nPntVer     := ( dbfArticulo )->nPntVer1
-            ( dbfTmpLin )->nPesokg     := ( dbfArticulo )->nPesoKg
-            ( dbfTmpLin )->cPesokg     := ( dbfArticulo )->cUndDim
-            ( dbfTmpLin )->cUnidad     := ( dbfArticulo )->cUnidad
-            ( dbfTmpLin )->nCtlStk     := ( dbfArticulo )->nCtlStock
-            ( dbfTmpLin )->cCodImp     := ( dbfArticulo )->cCodImp
-            ( dbfTmpLin )->lLote       := ( dbfarticulo )->lLote
-            ( dbfTmpLin )->nLote       := ( dbfarticulo )->nLote
-            ( dbfTmpLin )->cLote       := ( dbfarticulo )->cLote
-            ( dbfTmpLin )->nPvpRec     := ( dbfArticulo )->PvpRec
+            ( dbfTmpLin )->cDetalle    := ( D():Articulos( nView ) )->Nombre
+            ( dbfTmpLin )->nPntVer     := ( D():Articulos( nView ) )->nPntVer1
+            ( dbfTmpLin )->nPesokg     := ( D():Articulos( nView ) )->nPesoKg
+            ( dbfTmpLin )->cPesokg     := ( D():Articulos( nView ) )->cUndDim
+            ( dbfTmpLin )->cUnidad     := ( D():Articulos( nView ) )->cUnidad
+            ( dbfTmpLin )->nCtlStk     := ( D():Articulos( nView ) )->nCtlStock
+            ( dbfTmpLin )->cCodImp     := ( D():Articulos( nView ) )->cCodImp
+            ( dbfTmpLin )->lLote       := ( D():Articulos( nView ) )->lLote
+            ( dbfTmpLin )->nLote       := ( D():Articulos( nView ) )->nLote
+            ( dbfTmpLin )->cLote       := ( D():Articulos( nView ) )->cLote
+            ( dbfTmpLin )->nPvpRec     := ( D():Articulos( nView ) )->PvpRec
 
-            ( dbfTmpLin )->nCosDiv     := nCosto( nil, dbfArticulo, dbfKit )
-            ( dbfTmpLin )->nValImp     := oNewImp:nValImp( ( dbfArticulo )->cCodImp )
+            ( dbfTmpLin )->nCosDiv     := nCosto( nil, D():Articulos( nView ), dbfKit )
+            ( dbfTmpLin )->nValImp     := oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp )
 
-            if ( dbfArticulo )->lFacCnv
-               ( dbfTmpLin )->nFacCnv  := ( dbfArticulo )->nFacCnv
+            if ( D():Articulos( nView ) )->lFacCnv
+               ( dbfTmpLin )->nFacCnv  := ( D():Articulos( nView ) )->nFacCnv
             end if
 
             /*
             Valores q arrastramos----------------------------------------------
             */           
 
-            ( dbfTmpLin )->cCodFam     := ( dbfArticulo )->Familia
+            ( dbfTmpLin )->cCodFam     := ( D():Articulos( nView ) )->Familia
             ( dbfTmpLin )->cGrpFam     := cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
 
             /*
@@ -5130,8 +5123,8 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
             */
 
             if !Empty( aClo[ _NIVA ] )
-               ( dbfTmpLin )->nIva     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
-               ( dbfTmpLin )->nReq     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+               ( dbfTmpLin )->nIva     := nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva )
+               ( dbfTmpLin )->nReq     := nReq( dbfIva, ( D():Articulos( nView ) )->TipoIva )
             else
                ( dbfTmpLin )->nIva     := 0
                ( dbfTmpLin )->nReq     := 0
@@ -5141,15 +5134,15 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
             Propiedades de los kits--------------------------------------------
             */
 
-            ( dbfTmpLin )->lImpLin     := lImprimirComponente( aClo[ _CREF ], dbfArticulo )   // 1 Todos, 2 Compuesto, 3 Componentes
-            ( dbfTmpLin )->lKitPrc     := lPreciosComponentes( aClo[ _CREF ], dbfArticulo )   // 1 Todos, 2 Compuesto, 3 Componentes
+            ( dbfTmpLin )->lImpLin     := lImprimirComponente( aClo[ _CREF ], D():Articulos( nView ) )   // 1 Todos, 2 Compuesto, 3 Componentes
+            ( dbfTmpLin )->lKitPrc     := lPreciosComponentes( aClo[ _CREF ], D():Articulos( nView ) )   // 1 Todos, 2 Compuesto, 3 Componentes
 
             if ( dbfTmpLin )->lKitPrc
-               ( dbfTmpLin )->nPreUnit := nRetPreArt( aClo[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+               ( dbfTmpLin )->nPreUnit := nRetPreArt( aClo[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
             end if
 
-            if lStockComponentes( aClo[ _CREF ], dbfArticulo )
-               ( dbfTmpLin )->nCtlStk  := ( dbfArticulo )->nCtlStock
+            if lStockComponentes( aClo[ _CREF ], D():Articulos( nView ) )
+               ( dbfTmpLin )->nCtlStk  := ( D():Articulos( nView ) )->nCtlStock
             else
                ( dbfTmpLin )->nCtlstk  := STOCK_NO_CONTROLAR // No controlar Stock
             end if
@@ -5170,7 +5163,7 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
 
             nStockMinimo      := nStockMinimo( aClo[ _CREF ], aClo[ _CALMLIN ], nView )
 
-            if ( dbfArticulo)->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo > 0
+            if ( D():Articulos( nView ))->lMsgVta .and. !uFieldEmpresa( "lNStkAct" ) .and. nStockMinimo > 0
 
                nStkActual     := oStock:nStockAlmacen( ( dbfKit )->cRefKit, ( dbfTmpLin )->cAlmLin )
                nUnidades      := aClo[ _NUNICAJA ] * ( dbfKit )->nUndKit
@@ -5179,12 +5172,12 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
                   case nStkActual - nUnidades < 0
 
                         MsgStop( "No hay stock suficiente para realizar la venta" + CRLF + ;
-                                 "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ),;
+                                 "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ),;
                                  "¡Atención!" )
 
                   case nStkActual - nUnidades < nStockMinimo
 
-                        MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
+                        MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + CRLF + ;
                                  "está bajo minimo." + CRLF + ;
                                  "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
                                  "Stock minimo : " + AllTrim( Trans( nStockMinimo, MasUnd() ) ) + CRLF + ;
@@ -5793,30 +5786,30 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
    end if
 
-   cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
+   cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, D():Articulos( nView ) )
 
    /*
    Ahora buscamos por el codigo interno
    */
 
-   if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
+   if ( D():Articulos( nView ) )->( dbSeek( cCodArt ) ) .or. ( D():Articulos( nView ) )->( dbSeek( Upper( cCodArt ) ) )
 
       if ( lChgCodArt )
 
-         if ( dbfArticulo )->lObs
+         if ( D():Articulos( nView ) )->lObs
             MsgStop( "Artículo catalogado como obsoleto" )
             return .f.
          end if
 
          CursorWait()
 
-         cCodArt              := ( dbfArticulo )->Codigo
+         cCodArt              := ( D():Articulos( nView ) )->Codigo
 
          aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
          aTmp[ _CREF ]        := cCodArt
 
-         if ( dbfArticulo )->lMosCom .and. !Empty( ( dbfArticulo )->mComent )
-            MsgStop( Trim( ( dbfArticulo )->mComent ) )
+         if ( D():Articulos( nView ) )->lMosCom .and. !Empty( ( D():Articulos( nView ) )->mComent )
+            MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
          end if
 
          /*
@@ -5824,29 +5817,29 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          if !Empty( aGet[ _CCODPRV ] )
-            aGet[ _CCODPRV ]:cText( ( dbfArticulo )->cPrvHab )
+            aGet[ _CCODPRV ]:cText( ( D():Articulos( nView ) )->cPrvHab )
             aGet[ _CCODPRV ]:lValid()
          else
-            aTmp[ _CCODPRV ]  := ( dbfArticulo )->cPrvHab   
+            aTmp[ _CCODPRV ]  := ( D():Articulos( nView ) )->cPrvHab   
          end if
 
-         aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, (dbfArticulo)->cPrvHab, dbfArtPrv ), 18 )
+         aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, (D():Articulos( nView ))->cPrvHab, dbfArtPrv ), 18 )
 
          aGet[ _CDETALLE ]:show()
          aGet[ _MLNGDES  ]:hide()
 
-         aGet[ _CDETALLE ]:cText( ( dbfArticulo )->Nombre )
-         aGet[ _MLNGDES  ]:cText( ( dbfArticulo )->Nombre )
+         aGet[ _CDETALLE ]:cText( ( D():Articulos( nView ) )->Nombre )
+         aGet[ _MLNGDES  ]:cText( ( D():Articulos( nView ) )->Nombre )
 
          /*
          Descripciones largas--------------------------------------------------
          */
 
-         if !empty( ( dbfArticulo )->Descrip )
+         if !empty( ( D():Articulos( nView ) )->Descrip )
             if !empty( aGet[ _DESCRIP ] )
-               aGet[ _DESCRIP ]:cText( ( dbfArticulo )->Descrip )
+               aGet[ _DESCRIP ]:cText( ( D():Articulos( nView ) )->Descrip )
             else
-               aTmp[ _DESCRIP ]     := ( dbfArticulo )->Descrip
+               aTmp[ _DESCRIP ]     := ( D():Articulos( nView ) )->Descrip
             end if 
          end if
 
@@ -5856,28 +5849,28 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          if !Empty( aGet[ _NPESOKG ] )
-            aGet[ _NPESOKG  ]:cText( ( dbfArticulo )->nPesoKg )
+            aGet[ _NPESOKG  ]:cText( ( D():Articulos( nView ) )->nPesoKg )
          else
-            aGet[ _NPESOKG  ] := ( dbfArticulo )->nPesoKg
+            aGet[ _NPESOKG  ] := ( D():Articulos( nView ) )->nPesoKg
          end if
 
          if !Empty( aGet[ _CPESOKG ] )
-             aGet[ _CPESOKG ]:cText( ( dbfArticulo )->cUndDim )
+             aGet[ _CPESOKG ]:cText( ( D():Articulos( nView ) )->cUndDim )
          else
-             aGet[ _CPESOKG ] := ( dbfArticulo )->cUndDim
+             aGet[ _CPESOKG ] := ( D():Articulos( nView ) )->cUndDim
          end if
 
          if !Empty( aGet[ _CUNIDAD ] )
-             aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
+             aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
              aGet[ _CUNIDAD ]:lValid()
          else
-             aTmp[ _CUNIDAD ] := ( dbfArticulo )->cUnidad
+             aTmp[ _CUNIDAD ] := ( D():Articulos( nView ) )->cUnidad
          end if
 
          if !Empty( aGet[_CCODTIP ] )
-            aGet[ _CCODTIP ]:cText( ( dbfArticulo )->cCodTip )
+            aGet[ _CCODTIP ]:cText( ( D():Articulos( nView ) )->cCodTip )
          else
-            aTmp[ _CCODTIP ]  := ( dbfArticulo )->cCodTip
+            aTmp[ _CCODTIP ]  := ( D():Articulos( nView ) )->cCodTip
          end if
 
          /*
@@ -5885,8 +5878,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          ----------------------------------------------------------------------
          */
 
-         if ( dbfArticulo )->lFacCnv
-            aTmp[ _NFACCNV ]  := ( dbfArticulo )->nFacCnv
+         if ( D():Articulos( nView ) )->lFacCnv
+            aTmp[ _NFACCNV ]  := ( D():Articulos( nView ) )->nFacCnv
          end if
 
          /*
@@ -5894,10 +5887,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          ----------------------------------------------------------------------
          */
 
-         if ( dbfArticulo )->lLote
+         if ( D():Articulos( nView ) )->lLote
 
          	if Empty( cLote )
-         		cLote 			:= ( dbfArticulo )->cLote
+         		cLote 			:= ( D():Articulos( nView ) )->cLote
          	end if 
 
             if !Empty( aGet[ _CLOTE ] )
@@ -5944,7 +5937,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Tomamos el código de la familia y del grupo de familia----------------
          */
 
-         cCodFam              := ( dbfArticulo )->Familia
+         cCodFam              := ( D():Articulos( nView ) )->Familia
          if !Empty( cCodFam )
             aTmp[_CCODFAM]    := cCodFam
             aTmp[_CGRPFAM]    := cGruFam( cCodFam, dbfFamilia )
@@ -5963,18 +5956,18 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Tratamientos kits-----------------------------------------------------
          */
 
-         if ( dbfArticulo )->lKitArt
+         if ( D():Articulos( nView ) )->lKitArt
 
-            aTmp[ _LKITART ]     := ( dbfArticulo )->lKitArt                        // Marcamos como padre del kit
-            aTmp[ _LIMPLIN ]     := lImprimirCompuesto( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
-            aTmp[ _LKITPRC ]     := lPreciosCompuestos( ( dbfArticulo )->Codigo, dbfArticulo ) // 1 Todos, 2 Compuesto
+            aTmp[ _LKITART ]     := ( D():Articulos( nView ) )->lKitArt                        // Marcamos como padre del kit
+            aTmp[ _LIMPLIN ]     := lImprimirCompuesto( ( D():Articulos( nView ) )->Codigo, D():Articulos( nView ) ) // 1 Todos, 2 Compuesto
+            aTmp[ _LKITPRC ]     := lPreciosCompuestos( ( D():Articulos( nView ) )->Codigo, D():Articulos( nView ) ) // 1 Todos, 2 Compuesto
 
-            if lStockCompuestos( ( dbfArticulo )->Codigo, dbfArticulo )
+            if lStockCompuestos( ( D():Articulos( nView ) )->Codigo, D():Articulos( nView ) )
 
                if aGet[ _NCTLSTK ] != nil
-                  aGet[ _NCTLSTK ]:SetOption( ( dbfArticulo )->nCtlStock )
+                  aGet[ _NCTLSTK ]:SetOption( ( D():Articulos( nView ) )->nCtlStock )
                else
-                  aTmp[ _NCTLSTK ]  := ( dbfArticulo )->nCtlStock
+                  aTmp[ _NCTLSTK ]  := ( D():Articulos( nView ) )->nCtlStock
                end if
 
             else
@@ -5992,9 +5985,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             aTmp[ _LIMPLIN ]     := .f.
 
             if aGet[ _NCTLSTK ] != nil
-               aGet[ _NCTLSTK ]:SetOption( ( dbfArticulo )->nCtlStock )
+               aGet[ _NCTLSTK ]:SetOption( ( D():Articulos( nView ) )->nCtlStock )
             else
-               aTmp[ _NCTLSTK ]  := ( dbfArticulo )->nCtlStock
+               aTmp[ _NCTLSTK ]  := ( D():Articulos( nView ) )->nCtlStock
             end if
 
          end if
@@ -6004,19 +5997,19 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          if aTmpFac[_NREGIVA] <= 1
-            aGet[ _NIVA ]:cText( nIva( dbfIva, ( dbfArticulo )->TIPOIVA ) )
-            aTmp[ _NREQ ]        := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+            aGet[ _NIVA ]:cText( nIva( dbfIva, ( D():Articulos( nView ) )->TIPOIVA ) )
+            aTmp[ _NREQ ]        := nReq( dbfIva, ( D():Articulos( nView ) )->TipoIva )
          end if
 
          /*
          Ahora recogemos el impuesto especial si lo hay---------------------------
          */
 
-         if !Empty( ( dbfArticulo )->cCodImp )
-            aTmp[ _CCODIMP ]  	:= ( dbfArticulo )->cCodImp
-            aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpFac[_LIVAINC], aTmp[_NIVA] ) )
+         if !Empty( ( D():Articulos( nView ) )->cCodImp )
+            aTmp[ _CCODIMP ]  	:= ( D():Articulos( nView ) )->cCodImp
+            aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpFac[_LIVAINC], aTmp[_NIVA] ) )
 
-            aTmp[ _LVOLIMP ]     := RetFld( ( dbfArticulo )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
+            aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
 
             if !Empty( aGet[ _LVOLIMP ] )
                aGet[ _LVOLIMP ]:Refresh()
@@ -6024,12 +6017,12 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         if (dbfArticulo)->nCajEnt != 0
-            aGet[_NCANENT ]:cText( (dbfArticulo)->nCajEnt )
+         if (D():Articulos( nView ))->nCajEnt != 0
+            aGet[_NCANENT ]:cText( (D():Articulos( nView ))->nCajEnt )
          end if
 
-         if ( dbfArticulo )->nUniCaja != 0
-            aGet[_NUNICAJA]:cText( ( dbfArticulo )->nUniCaja )
+         if ( D():Articulos( nView ) )->nUniCaja != 0
+            aGet[_NUNICAJA]:cText( ( D():Articulos( nView ) )->nUniCaja )
          end if
 
          /*
@@ -6046,7 +6039,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], , , , aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
          end if
 
-         aTmp[ _LNOTVTA ]     := ( dbfArticulo )->lNotVta
+         aTmp[ _LNOTVTA ]     := ( D():Articulos( nView ) )->lNotVta
 
          /*
          Cargamos los costos------------------------------------------------
@@ -6055,10 +6048,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          if !uFieldEmpresa( "lCosAct" )
             nCosPro              := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp [ _CLOTE ] )
             if nCosPro == 0
-               nCosPro           := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , dbfDiv )
+               nCosPro           := nCosto( aTmp[ _CREF ], D():Articulos( nView ), dbfKit, .f., , dbfDiv )
             end if
          else
-            nCosPro              := nCosto( aTmp[ _CREF ], dbfArticulo, dbfKit, .f., , dbfDiv )
+            nCosPro              := nCosto( aTmp[ _CREF ], D():Articulos( nView ), dbfKit, .f., , dbfDiv )
          end if
 
          if aGet[ _NCOSDIV ] != nil
@@ -6079,55 +6072,55 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                case nNumDto == 1
 
                   if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt1 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt1
+                     aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt1 )
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt1
                   else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt1
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt1
                   end if
 
                case nNumDto == 2
 
                   if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt2 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt2
+                     aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt2 )
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt2
                   else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt2
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt2
                   end if
 
                case nNumDto == 3
 
                   if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO]:cText( ( dbfArticulo )->nDtoArt3 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt3
+                     aGet[ _NDTO]:cText( ( D():Articulos( nView ) )->nDtoArt3 )
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt3
                   else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt3
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt3
                   end if
 
                case nNumDto == 4
 
                   if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt4 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt4
+                     aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt4 )
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt4
                   else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt4
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt4
                   end if
 
                case nNumDto == 5
 
                   if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO ]:cText( ( dbfArticulo )->nDtoArt5 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt5
+                     aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt5 )
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt5
                   else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt5
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt5
                   end if
 
                case nNumDto == 6
 
                   if !Empty( aGet[ _NDTO ] )
-                     aGet[ _NDTO]:cText( ( dbfArticulo )->nDtoArt6 )
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt6
+                     aGet[ _NDTO]:cText( ( D():Articulos( nView ) )->nDtoArt6 )
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt6
                   else
-                     aTmp[ _NDTO ]     := ( dbfArticulo )->nDtoArt6
+                     aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt6
                   end if
 
             end case
@@ -6153,9 +6146,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          */
 
          if !Empty( aGet[ _CIMAGEN ] )
-            aGet[ _CIMAGEN ]:cText( ( dbfArticulo )->cImagen )
+            aGet[ _CIMAGEN ]:cText( ( D():Articulos( nView ) )->cImagen )
          else
-            aTmp[ _CIMAGEN ]     := ( dbfArticulo )->cImagen
+            aTmp[ _CIMAGEN ]     := ( D():Articulos( nView ) )->cImagen
          end if
 
          if !Empty( bmpImage )
@@ -6171,15 +6164,15 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Buscamos la familia del articulo y anotamos las propiedades-----------
          */
 
-         aTmp[ _CCODPR1 ]  := ( dbfArticulo )->cCodPrp1
-         aTmp[ _CCODPR2 ]  := ( dbfArticulo )->cCodPrp2
+         aTmp[ _CCODPR1 ]  := ( D():Articulos( nView ) )->cCodPrp1
+         aTmp[ _CCODPR2 ]  := ( D():Articulos( nView ) )->cCodPrp2
 
          if !Empty( aTmp[ _CCODPR1 ] )
             aGet[ _CVALPR1 ]:Show()
             if lFocused
                aGet[ _CVALPR1 ]:SetFocus()
             end if
-            oSayPr1:SetText( retProp( ( dbfArticulo )->cCodPrp1, dbfPro ) )
+            oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
             oSayPr1:Show()
             oSayVp1:Show()
          else
@@ -6190,7 +6183,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          if !Empty( aTmp[ _CCODPR2 ] )
             aGet[ _CVALPR2 ]:Show()
-            oSayPr2:SetText( retProp( ( dbfArticulo )->cCodPrp2, dbfPro ) )
+            oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
             oSayPr2:Show()
             oSayVp2:Show()
          else
@@ -6212,7 +6205,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          //--guardamos el código de la familia--//
 
          if nMode == APPD_MODE
-            cCodFam        := RetFamArt( cCodArt, dbfArticulo )
+            cCodFam        := RetFamArt( cCodArt, D():Articulos( nView ) )
          else
             cCodFam        := aTmp[_CCODFAM]
          end if
@@ -6221,17 +6214,17 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Cargamos el precio recomendado ,el precio de costo y el punto verde
          */
 
-         aGet[ _NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
-         aTmp[ _NPVPREC ]   := ( dbfArticulo )->PvpRec
+         aGet[ _NPNTVER ]:cText( ( D():Articulos( nView ) )->nPntVer1 )
+         aTmp[ _NPVPREC ]   := ( D():Articulos( nView ) )->PvpRec
 
          /*
          Cargamos el codigo de las unidades---------------------------------
          */
 
          if !Empty( aGet[ _CUNIDAD ] )
-            aGet[ _CUNIDAD ]:cText( ( dbfArticulo )->cUnidad )
+            aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
          else
-            aTmp[ _CUNIDAD ]  := ( dbfArticulo )->cUnidad
+            aTmp[ _CUNIDAD ]  := ( D():Articulos( nView ) )->cUnidad
          end if
 
          //--guardamos el precio del artículo dependiendo de las propiedades--//
@@ -6239,7 +6232,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
 
          if nPrePro == 0
-            aGet[_NPREUNIT]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva ) )
+            aGet[_NPREUNIT]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva ) )
          else
             aGet[_NPREUNIT]:cText( nPrePro )
          end if
@@ -6357,7 +6350,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       Buscamos si hay ofertas-----------------------------------------------
       */
 
-      lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+      lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfDiv, dbfKit, dbfIva  )
 
       /*
       Cargamos los valores para los cambios---------------------------------
@@ -8108,7 +8101,7 @@ static function RecFacRec( aTmpFac )
    nRecno         := ( dbfTmpLin )->( RecNo() )
 
    ( dbfTmpLin )->( dbGotop() )
-   ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
+   ( D():Articulos( nView ) )->( ordSetFocus( "CODIGO" ) )
 
    while !( dbfTmpLin )->( eof() )
 
@@ -8116,12 +8109,12 @@ static function RecFacRec( aTmpFac )
       Ahora buscamos por el codigo interno
       */
 
-      if ( dbfArticulo )->( dbSeek( ( dbfTmpLin )->cRef ) )
+      if ( D():Articulos( nView ) )->( dbSeek( ( dbfTmpLin )->cRef ) )
 
          do case
          	case aTmpFac[ _NREGIVA ] <= 1
-	            ( dbfTmpLin )->nIva     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
-    	        ( dbfTmpLin )->nReq     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
+	            ( dbfTmpLin )->nIva     := nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva )
+    	        ( dbfTmpLin )->nReq     := nReq( dbfIva, ( D():Articulos( nView ) )->TipoIva )
          	case aTmpFac[ _NREGIVA ] == 3
 	            ( dbfTmpLin )->nIva     := 0
     	        ( dbfTmpLin )->nReq     := 0
@@ -8131,30 +8124,30 @@ static function RecFacRec( aTmpFac )
          Ahora recogemos el impuesto especial si lo hay
          */
 
-         if !Empty( ( dbfArticulo )->cCodImp )
-            ( dbfTmpLin )->cCodImp  := ( dbfArticulo )->cCodImp
-            ( dbfTmpLin )->nValImp  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpFac[ _LIVAINC ], ( dbfTmpLin )->nIva )
+         if !Empty( ( D():Articulos( nView ) )->cCodImp )
+            ( dbfTmpLin )->cCodImp  := ( D():Articulos( nView ) )->cCodImp
+            ( dbfTmpLin )->nValImp  := oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpFac[ _LIVAINC ], ( dbfTmpLin )->nIva )
          end if
 
          /*
          Tomamos los precios de la base de datos de articulos
          */
 
-         ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+         ( dbfTmpLin )->nPreUnit    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
 
          /*
          Cargamos simpre los puntos verdes
          */
 
-         ( dbfTmpLin )->nPntVer  := ( dbfArticulo )->nPntVer1
+         ( dbfTmpLin )->nPntVer  := ( D():Articulos( nView ) )->nPntVer1
 
          /*
          Linea por contadores--------------------------------------------------
          */
 
-         ( dbfTmpLin )->nCtlStk     := ( dbfArticulo )->nCtlStock
-         ( dbfTmpLin )->nCosDiv     := nCosto( nil, dbfArticulo, dbfKit )
-         ( dbfTmpLin )->nPvpRec     := ( dbfArticulo )->PvpRec
+         ( dbfTmpLin )->nCtlStk     := ( D():Articulos( nView ) )->nCtlStock
+         ( dbfTmpLin )->nCosDiv     := nCosto( nil, D():Articulos( nView ), dbfKit )
+         ( dbfTmpLin )->nPvpRec     := ( D():Articulos( nView ) )->PvpRec
 
          /*
          Si la comisi¢n del articulo hacia el agente es distinto de cero----------
@@ -8162,7 +8155,7 @@ static function RecFacRec( aTmpFac )
 
          ( dbfTmpLin )->nComAge     := aTmpFac[ _NPCTCOMAGE ]
 
-         cCodFam                    := ( dbfArticulo )->Familia
+         cCodFam                    := ( D():Articulos( nView ) )->Familia
 
          // Chequeamos situaciones especiales----------------------------------
 
@@ -9073,7 +9066,7 @@ Static Function DesgPnt( cCodArt, aTmp, nTarifa, oPreDiv, oCosDiv, nMode )
       ID       500 ;
       OF       oDlg ;
       WHEN     ( nMode != ZOOM_MODE ) ;
-      ACTION   ( EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv ), oDlg:end( IDOK ) )
+      ACTION   ( EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, D():Articulos( nView ), nDouDiv ), oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
       ID       550 ;
@@ -9081,7 +9074,7 @@ Static Function DesgPnt( cCodArt, aTmp, nTarifa, oPreDiv, oCosDiv, nMode )
       ACTION   ( oDlg:end() )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv ), oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_F5, {|| EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, D():Articulos( nView ), nDouDiv ), oDlg:end( IDOK ) } )
    end if
 
    ACTIVATE DIALOG oDlg CENTER
@@ -9732,10 +9725,10 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
          if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
             if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
                aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
                aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]  := ( dbfArticulo )->nLngArt
+               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
             end if
          else
             if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedUno" ) ) ] )
@@ -9749,10 +9742,10 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
          if oUndMedicion:oDbf:nDimension >= 2 .and.!Empty( oUndMedicion:oDbf:cTextoDim2 )
             if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ] )
                aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
                aGet[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]  := ( dbfArticulo )->nAltArt
+               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
             end if
 
          else
@@ -9768,10 +9761,10 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
 
             if !Empty( aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ] )
                aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo ) ->nAncArt )
+               aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
                aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
-               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]  := ( dbfArticulo )->nAncArt
+               aTmp[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
             end if
 
          else
@@ -9819,7 +9812,7 @@ Static Function ChangeTarifa( aTmp, aGet, aTmpFac )
    nPrePro        := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, aTmpFac[ _CCODTAR ] )
 
    if nPrePro == 0
-      nPrePro     := nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+      nPrePro     := nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
    end if
 
    if nPrePro != 0
@@ -9907,7 +9900,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
    oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
 
-   oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
+   oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Tipo de artículo",  oTipArt:Select() )
@@ -10114,13 +10107,13 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfDiv, dbfKit, dbfIva  )
 
    local sOfeArt
    local nTotalLinea    := 0
 
 
-   if ( dbfArticulo )->Codigo == cCodArt .or. ( dbfArticulo )->( dbSeek( cCodArt ) )
+   if ( D():Articulos( nView ) )->Codigo == cCodArt .or. ( D():Articulos( nView ) )->( dbSeek( cCodArt ) )
 
       /*
       Buscamos si existen ofertas por artículo----------------------------
@@ -10128,7 +10121,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticu
 
       nTotalLinea       := lCalcDeta( aTmp, aTmpFac, .t. )
 
-      sOfeArt           := sOfertaArticulo( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVFAC ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANENT ], nTotalLinea )
+      sOfeArt           := sOfertaArticulo( cCodArt, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVFAC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, aTmp[ _NCANENT ], nTotalLinea )
 
       if !Empty( sOfeArt ) 
          if ( sOfeArt:nPrecio != 0 )
@@ -10149,7 +10142,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticu
          Buscamos si existen ofertas por familia----------------------------
          */
 
-         sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+         sOfeArt     := sOfertaFamilia( ( D():Articulos( nView ) )->Familia, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -10169,7 +10162,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticu
          Buscamos si existen ofertas por tipos de articulos--------------
          */
 
-         sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+         sOfeArt     := sOfertaTipoArticulo( ( D():Articulos( nView ) )->cCodTip, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -10189,7 +10182,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticu
          Buscamos si existen ofertas por tipos de articulos--------------
          */
 
-         sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+         sOfeArt     := sOfertaCategoria( ( D():Articulos( nView ) )->cCodCate, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -10209,7 +10202,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticu
          Buscamos si existen ofertas por temporadas----------------------
          */
 
-         sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+         sOfeArt     := sOfertaTemporada( ( D():Articulos( nView ) )->cCodTemp, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -10229,7 +10222,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpFac, dbfOferta, dbfArticu
          Buscamos si existen ofertas por fabricantes---------------------------
          */
 
-         sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
+         sOfeArt     := sOfertaFabricante( ( D():Articulos( nView ) )->cCodFab, aTmpFac[ _CCODCLI ], aTmpFac[ _CCODGRP ], aTmpFac[ _DFECFAC ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -10620,7 +10613,7 @@ static Function ActualizaStockWeb( cNumDoc )
 
       		while ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac == cNumDoc .and. !( dbfFacRecL )->( Eof() )
 
-         		if Retfld( ( dbfFacRecL )->cRef, dbfArticulo, "lPubInt", "Codigo" )
+         		if Retfld( ( dbfFacRecL )->cRef, D():Articulos( nView ), "lPubInt", "Codigo" )
 
          			:ActualizaStockProductsPrestashop( ( dbfFacRecL )->cRef, ( dbfFacRecL )->cCodPr1, ( dbfFacRecL )->cCodPr2, ( dbfFacRecL )->cValPr1, ( dbfFacRecL )->cValPr2 )
 
@@ -13113,7 +13106,7 @@ function SynFacRec( cPath )
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
+      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @D():Articulos( nView ) ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIVA", @dbfIva ) ) SHARED
@@ -13176,14 +13169,14 @@ function SynFacRec( cPath )
 	      end if
 	      
 	      if Empty( ( dbfFacRecL )->nValImp )
-	         cCodImp                    := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
+	         cCodImp                    := RetFld( ( dbfFacRecL )->cRef, D():Articulos( nView ), "cCodImp" )
 	        	if !Empty( cCodImp )
 	            ( dbfFacRecL )->nValImp := oNewImp:nValImp( cCodImp )
 	         end if
 	      end if
 	      
 	      if Empty( ( dbfFacRecL )->nVolumen )
-	         ( dbfFacRecL )->nVolumen   :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
+	         ( dbfFacRecL )->nVolumen   :=  RetFld( ( dbfFacRecL )->cRef, D():Articulos( nView ), "nVolumen" )
 	      end if
 	      
          if Empty( ( dbfFacRecL )->cAlmLin )
@@ -13274,7 +13267,7 @@ function SynFacRec( cPath )
    CLOSE ( dbfAntCliT  )
    CLOSE ( dbfFamilia  )
    CLOSE ( dbfIva      )
-   CLOSE ( dbfArticulo )
+   CLOSE ( D():Articulos( nView ) )
    CLOSE ( dbfDiv      )
    CLOSE ( dbfClient   )
 
