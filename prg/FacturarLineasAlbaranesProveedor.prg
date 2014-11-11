@@ -27,6 +27,7 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    METHOD New( nView )
 
    METHOD Resource()
+   METHOD validArticulo()
    METHOD startResource()
 
    METHOD buildBrowse( oBrw, id )
@@ -60,8 +61,7 @@ METHOD New( nView ) CLASS TFacturarLineasAlbaranesProveedor
    ::oProveedor      := GetProveedor():Build( { "idGet" => 130, "idSay" => 140, "oContainer" => Self } )
 
    ::oArticulo       := GetArticulo():Build( { "idGet" => 160, "idSay" => 161, "oContainer" => Self } )
-   ::oArticulo:oGetControl:bValid   := {||   ::oPropiedad1:PriedadActual( ( D():Articulos( ::oContainer:nView ) )->cCodPr1 ),;
-                                             ::oPropiedad2:PriedadActual( ( D():Articulos( ::oContainer:nView ) )->cCodPr2 ) }
+   ::oArticulo:bValid:= {|| ::ValidArticulo() }
 
    ::oPropiedad1     := GetPropiedadActual():Build( { "idGet" => 170, "idSay" => 171, "oContainer" => Self } )
 
@@ -109,6 +109,28 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
       ::buildBrowse( ::oBrwSalida, 300 )
 
+      // Botones de para lineas------------------------------------------------
+
+      REDEFINE BUTTON ;
+         ID       210 ;
+         OF       ::oDlg ;
+         ACTION   ( ::passLineas( .t. ) )
+
+      REDEFINE BUTTON ;
+         ID       220 ;
+         OF       ::oDlg ;
+         ACTION   ( ::passLineas() )
+
+      REDEFINE BUTTON ;
+         ID       310 ;
+         OF       ::oDlg ;
+         ACTION   ( ::passLineas( .t., ::oBrwSalida, ::oBrwEntrada ) )
+
+      REDEFINE BUTTON ;
+         ID       320 ;
+         OF       ::oDlg ;
+         ACTION   ( ::passLineas( ::oBrwSalida, ::oBrwEntrada ) )
+
       // Botones------------------------------------------------------------------
 
       REDEFINE BUTTON ;
@@ -124,8 +146,16 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
    ::oDlg:Activate( , , , .t., , , {|| ::StartResource() } ) //::InitResource() } )
 
-   ::oBrwEntrada:Save()
-   ::oBrwSalida:Save()
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ValidArticulo()
+
+   if cArticulo( ::oArticulo:oGetControl, D():Get( "Articulo", ::nView ), ::oArticulo:oSayControl )
+      ::oPropiedad1:PropiedadActual( ( D():Articulos( ::nView ) )->cCodPrp1 )
+      ::oPropiedad2:PropiedadActual( ( D():Articulos( ::nView ) )->cCodPrp2 )
+   end if 
 
 Return ( Self )
 
@@ -225,8 +255,8 @@ METHOD loadAlbaran( id )
 
          if !( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado                                                              .and. ;
             ( empty( ::oArticulo:Value() ) .or. ( D():AlbaranesProveedoresLineas( ::nView ) )->cRef == ::oArticulo:Value() )        .and. ;
-            ( empty( ::oPropiedad1:Value() ) .or. ( D():AlbaranesProveedoresLineas( ::nView ) )->cCodPr1 == ::oPropiedad1:Value() ) .and. ;
-            ( empty( ::oPropiedad2:Value() ) .or. ( D():AlbaranesProveedoresLineas( ::nView ) )->cCodPr2 == ::oPropiedad2:Value() )
+            ( empty( ::oPropiedad1:Value() ) .or. ( D():AlbaranesProveedoresLineas( ::nView ) )->cValPr1 == ::oPropiedad1:Value() ) .and. ;
+            ( empty( ::oPropiedad2:Value() ) .or. ( D():AlbaranesProveedoresLineas( ::nView ) )->cValPr2 == ::oPropiedad2:Value() )
             
             dbPass( D():AlbaranesProveedoresLineas( ::nView ), D():GetAreaTmp( "TmpPrvI", ::nView ), .t. )  
             
@@ -413,18 +443,27 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD passLineas()     
+METHOD passLineas( lSelectAll, oBrwOrigen, oBrwDestino )     
+   
+   local nRecno
+
+   DEFAULT lSelectAll   := .f.
+   DEFAULT oBrwOrigen   := ::oBrwEntrada
+   DEFAULT oBrwDestino  := ::oBrwSalida
+
+   if lSelectAll
+      oBrwOrigen:SelectAll()
+   end if 
 
    Cursorwait()
 
-   ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( dbgotop() )
-   while ( !( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( eof() ) )
+   for each nRecno in ( oBrwOrigen:aSelected )
 
-      ::passLinea()
+      ( oBrwOrigen:cAlias )->( dbgoto( nRecno ) )
 
-      ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( dbskip() )
+      ::passLinea( oBrwOrigen, oBrwDestino )
 
-   end while
+   next 
 
    Cursorwe()
 
@@ -432,17 +471,40 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD passLinea()     
+METHOD passLinea( oBrwOrigen, oBrwDestino )     
 
-   Cursorwait()
+   local lFound
+   local nRecno
 
-   dbpass( D():GetAreaTmp( "TmpPrvI", ::nView ), D():GetAreaTmp( "TmpPrvO", ::nView ), .t. )
-   dbDel(  D():GetAreaTmp( "TmpPrvI", ::nView ) )
+   // Buscamos si la linea ya ha sido añadida----------------------------------
 
-   ::oBrwEntrada:refresh()
-   ::oBrwSalida:refresh()
+   nRecno   := ( oBrwDestino:cAlias )->( recno() )
 
-   Cursorwe()
+   ( oBrwDestino:cAlias )->( __dbLocate( {|| ( oBrwOrigen:cAlias )->cSerAlb == ( oBrwDestino:cAlias )->cSerAlb .and.;
+                                             ( oBrwOrigen:cAlias )->nNumAlb == ( oBrwDestino:cAlias )->nNumAlb .and.;
+                                             ( oBrwOrigen:cAlias )->cSufAlb == ( oBrwDestino:cAlias )->cSufAlb .and.;
+                                             ( oBrwOrigen:cAlias )->nNumLin == ( oBrwDestino:cAlias )->nNumLin } ) )
+
+   lFound   := ( oBrwDestino:cAlias )->( found() )
+
+   ( oBrwDestino:cAlias )->( dbgoto( nRecno ) )
+
+   // Pasamos la linea --------------------------------------------------------
+
+   if lFound
+
+      msgStop( "Esta línea ya ha sido agregada a la factura.")
+      Return ( Self )
+
+   else  
+      
+      dbpass( oBrwOrigen:cAlias, oBrwDestino:cAlias, .t. )
+      dbDel(  oBrwOrigen:cAlias )
+
+   end if 
+
+   oBrwOrigen:refresh()
+   oBrwDestino:refresh()
 
 Return ( Self )
 
