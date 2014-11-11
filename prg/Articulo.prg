@@ -969,32 +969,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :lHide            := .t. 
       end with
 
-/*    with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Stocks"
-         :bStrData         := {|| Trans( oStock:nTotStockAct( ( dbfArticulo )->Codigo, , , , , lEscandallo( dbfArticulo ), ( dbfArticulo )->nKitStk, ( dbfArticulo )->nCtlStock ), cPicUnd ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + Space( 1 ) +  cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-      end with
-*/
-
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) 
          :bEditValue       := {|| ( dbfArticulo )->pVenta1 }
@@ -8242,266 +8216,6 @@ return .t.
 
 //----------------------------------------------------------------------------//
 
-//
-// Devuelve si tenemos los precios en los componentes
-//
-/*
-FUNCTION lPrcKit( cCodArt, dbfArticulo )
-
-   local lTmp     := .f.
-   local aSta     := aGetStatus( dbfArticulo, .t. )
-
-   if ( dbfArticulo )->( DbSeek( cCodArt ) )
-      lTmp        := ( dbfArticulo )->lKitArt .and. !( dbfArticulo )->lKitPrc
-   end if
-
-   SetStatus( dbfArticulo, aSta )
-
-RETURN ( !lTmp )
-*/
-//---------------------------------------------------------------------------//
-
-/*FUNCTION BrwArt( oGet, dbfArticulo, dbfDiv, dbfArtKit, dbfIva )
-
-	local oDlg
-   local oFld
-	local oBrw
-   local oBtnAdd
-   local oBtnEdt
-	local oGet1
-	local cGet1
-	local oCbxOrd
-   local cCbxOrd     := 'Nombre'
-   local aCbxOrd     := { 'Código', 'Nombre' }
-   local nRecAnt     := ( dbfArticulo )->( Recno() )
-   local nOrdAnt     := ( dbfArticulo )->( OrdSetFocus( 'Nombre' ) )
-
-#ifndef __PDA__
-   if !OpenFiles( .t. )
-      return nil
-   end if
-#else
-   if !pdaOpenFiles( .t. )
-      return nil
-   end if
-#endif
-
-   ( dbfArticulo )->( dbGoTop() )
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar artículos"
-
-      REDEFINE GET oGet1 VAR cGet1;
-			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfArticulo, .t. ) );
-         VALID    ( OrdClearScope( oBrw, dbfArticulo ) );
-			PICTURE	"@!" ;
-         OF       oDlg
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfArticulo )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-         OF       oDlg
-
-      oBrw                 := IXBrowse():New( oDlg )
-      oBrw:lAutoSort       := .t.
-
-      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrw:cAlias          := dbfArticulo
-      oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Browse.Artículos"
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "Codigo"
-         :bEditValue       := {|| ( dbfArticulo )->Codigo }
-         :nWidth           := 90
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "Nombre"
-         :bEditValue       := {|| ( dbfArticulo )->Nombre }
-         :nWidth           := 260
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Stocks"
-         :bStrData         := {|| Trans( oStock:nTotStockAct( ( dbfArticulo )->Codigo, , , , , lEscandallo( dbfArticulo ), ( dbfArticulo )->nKitStk, ( dbfArticulo )->nCtlStock ), cPicUnd ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + " impuestos inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + " impuestos inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + " impuestos inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + " impuestos inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + " impuestos inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + " impuestos inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      if ( oUser():lCostos() )
-
-      with object ( oBrw:AddCol() )
-         :cHeader          := "Costo"
-         :bStrData         := {|| if( oUser():lNotCostos(), "", nCosto( nil, dbfArticulo, dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) ) }
-         :nWidth           := 80
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      end if
-
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
-      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
-
-      oBrw:CreateFromResource( 105 )
-
-      REDEFINE BUTTON oBtnAdd ;
-			ID 		500 ;
-			OF 		oDlg ;
-         ACTION   ( nil )
-
-      REDEFINE BUTTON oBtnEdt;
-			ID 		501 ;
-			OF 		oDlg ;
-         ACTION   ( nil )
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:end() )
-
-      oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
-      oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
-
-      oDlg:bStart := {|| oBrw:Load() }
-
-   ACTIVATE DIALOG oDlg CENTER ON INIT ( oBtnAdd:Hide(), oBtnEdt:Hide() )
-
-   if oDlg:nResult == IDOK
-      oGet:cText( ( dbfArticulo )->Codigo )
-      oGet:lValid()
-   end if
-
-	( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
-	( dbfArticulo )->( dbGoTo( nRecAnt ) )
-
-Return ( oDlg:nResult == IDOK )*/
-
-//---------------------------------------------------------------------------//
-
 FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
    local oDlg
@@ -8827,75 +8541,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cArticulo( aGet, dbfArticulo, aGet2, lCodeBar )
-
-   local oBlock
-   local oError
-	local nOrdAnt
-	local lClose 		:= .F.
-	local lValid		:= .F.
-	local cCodArt		:= aGet:varGet()
-
-	DEFAULT lCodeBar	:= .F.
-
-	IF Empty( cCodArt ) .or. ( cCodArt == Replicate( "Z", 18 ) )
-		RETURN .T.
-	END IF
-
-   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-	IF dbfArticulo == NIL
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-		lClose := .T.
-	END IF
-
-	IF lCodeBar
-		nOrdAnt	:= ( dbfArticulo )->( ordSetFocus( "CODEBAR" ) )
-   ELSE
-      nOrdAnt  := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) ) 
-	END IF
-
-	IF (dbfArticulo)->( DbSeek( cCodArt ) )
-
-		IF lCodeBar
-			aGet:cText( (dbfArticulo)->CODEBAR )
-		ELSE
-			aGet:cText( (dbfArticulo)->CODIGO )
-		END IF
-
-      IF aGet2 != nil
-			aGet2:cText( (dbfArticulo)->NOMBRE )
-		END IF
-
-      lValid   := .t.
-
-	ELSE
-
-      msgStop( "Artículo no encontrado", "Cadena buscada : " + cCodArt )
-
-	END IF
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos de agentes" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   IF lClose
-		CLOSE( dbfArticulo )
-	END IF
-
-	IF lCodeBar
-		( dbfArticulo )->( ordSetFocus( nOrdAnt ) )
-	END IF
-
-RETURN lValid
-
-//---------------------------------------------------------------------------//
 
 STATIC FUNCTION CheckValid( aGet, dbf, nTag, nMode )
 
@@ -19434,3 +19079,72 @@ Return nStockMaximo
 
 //--------------------------------------------------------------------------//
 
+Function cArticulo( aGet, dbfArticulo, aGet2, lCodeBar )
+
+   local oBlock
+   local oError
+   local nOrdAnt
+   local lClose      := .F.
+   local lValid      := .F.
+   local cCodArt     := aGet:varGet()
+
+   DEFAULT lCodeBar  := .F.
+
+   if Empty( cCodArt ) .or. ( cCodArt == Replicate( "Z", 18 ) )
+      return .T.
+   end if
+
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfArticulo == NIL
+      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+      lClose := .T.
+   end if
+
+   if lCodeBar
+      nOrdAnt  := ( dbfArticulo )->( ordSetFocus( "CODEBAR" ) )
+   else
+      nOrdAnt  := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) ) 
+   end if
+
+   IF (dbfArticulo)->( dbSeek( cCodArt ) )
+
+      IF lCodeBar
+         aGet:cText( (dbfArticulo)->CODEBAR )
+      ELSE
+         aGet:cText( (dbfArticulo)->CODIGO )
+      END IF
+
+      IF aGet2 != nil
+         aGet2:cText( (dbfArticulo)->NOMBRE )
+      END IF
+
+      lValid   := .t.
+
+   ELSE
+
+      msgStop( "Artículo no encontrado", "Cadena buscada : " + cCodArt )
+
+   END IF
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de agentes" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   IF lClose
+      CLOSE( dbfArticulo )
+   END IF
+
+   IF lCodeBar
+      ( dbfArticulo )->( ordSetFocus( nOrdAnt ) )
+   END IF
+
+RETURN lValid
+
+//---------------------------------------------------------------------------//

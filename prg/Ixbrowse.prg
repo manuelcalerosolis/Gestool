@@ -82,6 +82,10 @@ METHOD New( oWnd )
    ::bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
+#ifndef __XHARBOUR__
+   ::lSortDescend    := .f. 
+#endif
+
 Return ( Self )
 
 //----------------------------------------------------------------------------//

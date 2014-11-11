@@ -843,7 +843,7 @@ TGridSay.obj 			\
 FacturarLineasAlbaranesProveedor.obj\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /dXHARBOUR /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )

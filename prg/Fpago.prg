@@ -775,7 +775,7 @@ FUNCTION cCodigoXmlPago( cCodPgo, dbfFormasPago )
 
       case ValType( dbfFormasPago ) == "C"
 
-         if ( dbfFormasPago )->( dbSeekInOrd( cCodPgo, "cCodPago" ) )
+         if dbSeekInOrd( cCodPgo, "cCodPago", dbfFormasPago )
             cCod     := Rtrim( Left( ( dbfFormasPago )->cCodXml, 2 ) )
          end if
 

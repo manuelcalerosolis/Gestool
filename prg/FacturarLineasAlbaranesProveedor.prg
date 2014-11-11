@@ -201,7 +201,7 @@ METHOD loadAlbaranes()
    end if 
 
    if ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->( ordkeycount() ) > 0
-      if !msgYesNo(  "Ya hay registros importados," + hb_eol() + ;
+      if !msgYesNo(  "Ya hay registros importados," + CRLF + ;
                      "¿desea volver a importar las líneas de albaranes?" )
          Return .f.
       end if 

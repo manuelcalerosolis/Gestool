@@ -5268,12 +5268,12 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-   METHOD Get( cDatabase, nView ) CLASS D
+   METHOD Get( cDataTable, nView ) CLASS D
 
-      local cHandle  := ::GetView( cDatabase, nView )
+      local cHandle  := ::GetView( cDataTable, nView )
 
       if empty( cHandle )
-         ::OpenDatabase( cDatabase, nView )
+         cHandle     := ::OpenDatabase( cDataTable, nView )
       end if
 
    RETURN ( cHandle )
@@ -5422,7 +5422,7 @@ ENDCLASS
 
       end if
 
-   Return ( .t. )
+   Return ( ::GetView( cDataTable, nView ) )
 
    //---------------------------------------------------------------------------//
 

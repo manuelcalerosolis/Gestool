@@ -2011,13 +2011,7 @@ METHOD ClickOnHeader( oCol ) CLASS TShell
 
    if !Empty( oCol )
       if aScan( ::aPrompt, oCol:cHeader ) != 0
-
          ::oWndBar:SetComboBoxSet( oCol:cHeader )
-/*
-         msgAlert( oCol:SetOrder(), "SetOrder" )
-         msgAlert( oCol:cHeader, "cHeader")
-         msgAlert( ( ::oBrw:cAlias )->( OrdSetFocus() ) )
-*/
       end if
    end if
 
@@ -2387,6 +2381,10 @@ Method CreateXBrowse() CLASS TShell
       ::oBrw:lRecordSelector  := .f.
       ::oBrw:lAutoSort        := .t.
 
+#ifndef __XHARBOUR__
+      ::oBrw:lSortDescend     := .f.   
+#endif
+
       // Propiedades del control ----------------------------------------------
 
       ::oBrw:nMarqueeStyle    := MARQSTYLE_HIGHLROWMS
@@ -2397,60 +2395,33 @@ Method CreateXBrowse() CLASS TShell
 
       ::oBrw:bRClicked        := {| nRow, nCol, nFlags | ::RButtonDown( nRow, nCol, nFlags ) }
 
-/*
-      if ( ::xAlias )->( Used() )
-
-         ::oBrw:nDataType  := 0 // DATATYPE_RDD
-         ::oBrw:cAlias     := ::xAlias
-         ::oBrw:bGoTop     := {|| ( ::xAlias )->( dbGoTop() ) }
-         ::oBrw:bGoBottom  := {|| ( ::xAlias )->( dbGoBottom() ) }
-         ::oBrw:bSkip      := {| n | iif( n == nil, n := 1, ), ( ( ::xAlias )->( dbSkipper( n ) ), ) }
-         ::oBrw:bBof       := {|| ( ::xAlias )->( Bof() ) }
-         ::oBrw:bEof       := {|| ( ::xAlias )->( Eof() ) }
-         ::oBrw:bBookMark  := {| n | iif( n == nil, ( ::xAlias )->( RecNo() ), ( ( ::xAlias )->( dbGoto( n ) ), ) ) }
-         ::oBrw:bLock      := {|| ( ::xAlias )->( dbrLock() ) }
-         ::oBrw:bUnlock    := {|| ( ::xAlias )->( dbrUnlock() ) }
-
-         if lAIS()
-         ::oBrw:bKeyNo     := {| n | iif( n == nil, Round( ( ::xAlias )->( ADSGetRelKeyPos() ) * ::oBrw:nLen, 0 ), ( ::xAlias )->( ADSSetRelKeyPos( n / ::oBrw:nLen ) ) ) }
-         ::oBrw:bKeyCount  := {|| ( ::xAlias )->( ADSKeyCount(,,1) ) }
-         else
-         ::oBrw:bKeyNo     := {| n | iif( n == nil, ( ::xAlias )->( OrdKeyNo() ), ( ::xAlias )->( OrdKeyGoto( n ) ) ) }
-         ::oBrw:bKeyCount  := {|| ( ::xAlias )->( OrdKeyCount() ) }
-         end if
-
-         ::oBrw:lFastEdit  := .t.
-
-      end if 
-*/
-
-      ::oBrw:nDataType     := 0 // DATATYPE_RDD
-      ::oBrw:cAlias        := ::xAlias
-      ::oBrw:bGoTop        := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoTop() ), ) }
-      ::oBrw:bGoBottom     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoBottom() ), ) }
-      ::oBrw:bBof          := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( Bof() ), ) }
-      ::oBrw:bEof          := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( Eof() ), ) }
-      ::oBrw:bLock         := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbrLock() ), ) }
-      ::oBrw:bUnlock       := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbrUnlock() ), ) }
+      ::oBrw:nDataType        := 0 // DATATYPE_RDD
+      ::oBrw:cAlias           := ::xAlias
+      ::oBrw:bGoTop           := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoTop() ), ) }
+      ::oBrw:bGoBottom        := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoBottom() ), ) }
+      ::oBrw:bBof             := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( Bof() ), ) }
+      ::oBrw:bEof             := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( Eof() ), ) }
+      ::oBrw:bLock            := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbrLock() ), ) }
+      ::oBrw:bUnlock          := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbrUnlock() ), ) }
       
-      ::oBrw:bBookMark     := {| n | iif( n == nil, ( ::xAlias )->( recno() ), ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoto( n ) ), ) ) ) }
-      ::oBrw:bSkip         := {| n | iif( n == nil, n := 1, ), ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbSkipper( n ) ), ) ) }
+      ::oBrw:bBookMark        := {| n | iif( n == nil, ( ::xAlias )->( recno() ), ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbGoto( n ) ), ) ) ) }
+      ::oBrw:bSkip            := {| n | iif( n == nil, n := 1, ), ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( dbSkipper( n ) ), ) ) }
 
       if lAIS()
-      ::oBrw:bKeyNo        := {| n | iif( n == nil,;
+         ::oBrw:bKeyNo        := {| n | iif( n == nil,;
                                        ( if( ( ::xAlias )->( Used() ), Round( ( ::xAlias )->( ADSGetRelKeyPos() ) * ::oBrw:nLen, 0 ), ) ),;
                                        ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( ADSSetRelKeyPos( n / ::oBrw:nLen ) ), ) ) ) }
-      ::oBrw:bKeyCount     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( ADSKeyCount(,,1) ), ) }
+         ::oBrw:bKeyCount     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( ADSKeyCount(,,1) ), ) }
       else
-      ::oBrw:bKeyNo        := {| n | iif( n == nil,;
+         ::oBrw:bKeyNo        := {| n | iif( n == nil,;
                                        ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyNo() ), ) ),;
                                        ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyGoto( n ) ), ) ) ) }
-      ::oBrw:bKeyCount     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyCount() ), 0 ) }
+         ::oBrw:bKeyCount     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( OrdKeyCount() ), 0 ) }
       end if
 
-      ::oBrw:lFastEdit     := .t.
+      ::oBrw:lFastEdit        := .t.
       
-      ::oBrw:bKeyChar      := {|nKey| ::CtrlKey( nKey ) }
+      ::oBrw:bKeyChar         := {|nKey| ::CtrlKey( nKey ) }
 
       // Dimensiones del control -------------------------------------------------
 

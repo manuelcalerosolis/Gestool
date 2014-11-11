@@ -11,6 +11,11 @@
 #define impuestos_DESG            1
 #define impuestos_INCL            2
 
+#define albNoFacturado           1
+#define albParcialmenteFacturado 2
+#define albTotalmenteFacturado   3
+
+
 /*
 Definición de la base de datos de albaranes a CLIENTES-------------------------
 */
@@ -212,7 +217,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CCODFRA                  87
 #define _CTXTFRA                  88
 #define _DESCRIP                  89
-#define _dLFACTURADO              90      //   L      1     0
+#define __LFACTURADO              90      //   L      1     0
 #define _LLINOFE                  91      //   L      1     0
 #define _LVOLIMP                  92
 #define __DFECALB                 93
@@ -586,16 +591,12 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :AddResource( "trafficlight_on_16" )
       end with
 
-      /*with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Facturado"
-         :nHeadBmpNo       := 3
-         :cSortOrder       := "lFacturado"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->lFacturado }
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "NFacturado"
+         :bStrData         := {|| trans( ( D():Get( "AlbCliT", nView ) )->nFacturado, "9" ) }
+         :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->nFacturado }
          :nWidth           := 20
-         :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
-         :AddResource( "trafficlight_on_16" )
-      end with*/
+      end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Envio"
@@ -11849,7 +11850,7 @@ Static Function SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg )
       ( dbfTmpSer )->cRef        := aTmp[ _CREF        ]
       ( dbfTmpSer )->cAlmLin     := aTmp[ _CALMLIN     ]
       ( dbfTmpSer )->nNumLin     := aTmp[ _NNUMLIN     ]
-      ( dbfTmpSer )->lFacturado  := aTmp[ _dLFACTURADO ]
+      ( dbfTmpSer )->lFacturado  := aTmp[ __LFACTURADO ]
       ( dbfTmpSer )->nFacturado  := aTmp[ __NFACTURADO ]
       ( dbfTmpSer )->cNumSer     := cNumSer
 
@@ -14964,26 +14965,9 @@ function SynAlbCli( cPath )
 
          if ( D():Get( "AlbCliT", nView ) )->nFacturado == 0
 
-            if ( D():Get( "AlbCliT", nView ) )->lFacturado
-               
-               if D():Lock( "AlbCliT", nView )
-
-                  ( D():Get( "AlbCliT", nView ) )->nFacturado := 3
-
-                  D():UnLock( "AlbCliT", nView )
-
-               end if
-
-            else
-               
-               if D():Lock( "AlbCliT", nView )
-
-                  ( D():Get( "AlbCliT", nView ) )->nFacturado := 1
-
-                  D():UnLock( "AlbCliT", nView )
-
-               end if
-                  
+            if D():Lock( "AlbCliT", nView )
+               ( D():Get( "AlbCliT", nView ) )->nFacturado := if( ( D():Get( "AlbCliT", nView ) )->lFacturado, 3, 1 )
+               D():UnLock( "AlbCliT", nView )
             end if
 
          end if
@@ -14991,11 +14975,8 @@ function SynAlbCli( cPath )
          if Empty( ( D():Get( "AlbCliT", nView ) )->cSufAlb )
             
             if D():Lock( "AlbCliT", nView )
-
                ( D():Get( "AlbCliT", nView ) )->cSufAlb := "00"
-
                D():UnLock( "AlbCliT", nView )
-            
             end if
 
          end if
@@ -15003,11 +14984,8 @@ function SynAlbCli( cPath )
          if !Empty( ( D():Get( "AlbCliT", nView ) )->cNumPre ) .and. Len( AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumPre ) ) != 12
             
             if D():Lock( "AlbCliT", nView )
-
                ( D():Get( "AlbCliT", nView ) )->cNumPre := AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumPre ) + "00"
-
                D():UnLock( "AlbCliT", nView )
-
             end if   
 
          end if
@@ -15015,11 +14993,8 @@ function SynAlbCli( cPath )
          if !Empty( ( D():Get( "AlbCliT", nView ) )->cNumPed ) .and. Len( AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumPed ) ) != 12
             
             if D():Lock( "AlbCliT", nView )
-               
                ( D():Get( "AlbCliT", nView ) )->cNumPed := AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumPed ) + "00"
-            
                D():UnLock( "AlbCliT", nView )
-
             end if
 
          end if
@@ -15027,11 +15002,8 @@ function SynAlbCli( cPath )
          if !Empty( ( D():Get( "AlbCliT", nView ) )->cNumSat ) .and. Len( AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumSat ) ) != 12
             
             if D():Lock( "AlbCliT", nView )
-
                ( D():Get( "AlbCliT", nView ) )->cNumSat := AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumSat ) + "00"
-
                D():UnLock( "AlbCliT", nView )
-
             end if
 
          end if
@@ -15039,11 +15011,8 @@ function SynAlbCli( cPath )
          if !Empty( ( D():Get( "AlbCliT", nView ) )->cNumFac ) .and. Len( AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumFac ) ) != 12
             
             if D():Lock( "AlbCliT", nView )
-
                ( D():Get( "AlbCliT", nView ) )->cNumFac := AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumFac ) + "00"
-
                D():UnLock( "AlbCliT", nView )
-
             end if   
 
          end if
@@ -15051,11 +15020,8 @@ function SynAlbCli( cPath )
          if !Empty( ( D():Get( "AlbCliT", nView ) )->cNumDoc ) .and. Len( AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumDoc ) ) != 12
             
             if D():Lock( "AlbCliT", nView )
-            
                ( D():Get( "AlbCliT", nView ) )->cNumDoc := AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumDoc ) + "00"
-
                D():UnLock( "AlbCliT", nView )
-
             end if   
 
          end if
@@ -15063,11 +15029,8 @@ function SynAlbCli( cPath )
          if !Empty( ( D():Get( "AlbCliT", nView ) )->cNumTik ) .and. Len( AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumTik ) ) != 13
             
             if D():Lock( "AlbCliT", nView )
-            
                ( D():Get( "AlbCliT", nView ) )->cNumTik := AllTrim( ( D():Get( "AlbCliT", nView ) )->cNumTik ) + "00"
-
                D():UnLock( "AlbCliT", nView )
-
             end if
 
          end if
@@ -15075,11 +15038,8 @@ function SynAlbCli( cPath )
          if Empty( ( D():Get( "AlbCliT", nView ) )->cCodCaj )
             
             if D():Lock( "AlbCliT", nView )
-
                ( D():Get( "AlbCliT", nView ) )->cCodCaj := "000"
-
                D():UnLock( "AlbCliT", nView )
-
             end if   
 
          end if
@@ -15087,11 +15047,8 @@ function SynAlbCli( cPath )
          if Empty( ( D():Get( "AlbCliT", nView ) )->cCodGrp )
             
             if D():Lock( "AlbCliT", nView )
-
                ( D():Get( "AlbCliT", nView ) )->cCodGrp := RetGrpCli( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ) )
-
                D():UnLock( "AlbCliT", nView )
-
             end if   
 
          end if
@@ -15099,11 +15056,8 @@ function SynAlbCli( cPath )
          if Empty( ( D():Get( "AlbCliT", nView ) )->cNomCli ) .and. !Empty ( ( D():Get( "AlbCliT", nView ) )->cCodCli )
             
             if D():Lock( "AlbCliT", nView )
-
                ( D():Get( "AlbCliT", nView ) )->cNomCli    := RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ), "Titulo" )
-
                D():UnLock( "AlbCliT", nView )
-
             end if   
          
          end if
@@ -15232,12 +15186,23 @@ function SynAlbCli( cPath )
             end if
          end if
 
+         // Estado de facturado------------------------------------------------
+
          if ( D():Get( "AlbCliL", nView ) )->lFacturado != RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "lFacturado" )
             if dbLock( D():Get( "AlbCliL", nView ) )
                ( D():Get( "AlbCliL", nView ) )->lFacturado := RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "lFacturado" )
                ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
             end if
          end if
+
+         if ( D():Get( "AlbCliL", nView ) )->nFacturado != RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "nFacturado" )
+            if dbLock( D():Get( "AlbCliL", nView ) )
+               ( D():Get( "AlbCliL", nView ) )->nFacturado := RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "nFacturado" )
+               ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
+            end if
+         end if
+
+         // Fecha ----------------------------------------------------------
 
          if ( D():Get( "AlbCliL", nView ) )->dFecAlb != RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "dFecAlb" )
             if dbLock( D():Get( "AlbCliL", nView ) )
@@ -16299,7 +16264,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. nFacturado == 3", {|| !Deleted() .and. Field->nFacturado == 3 }  ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. nFacturado == 1", {|| !Deleted() .and. Field->nFacturado == albNoFacturado }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
@@ -16357,7 +16322,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( cAlbCliT )->( ordCondSet( "nFacturado == 3 .and. nCtlStk < 2 .and. !Deleted()", {|| Field->nFacturado == 3 .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCondSet( "nFacturado == 1 .and. nCtlStk < 2 .and. !Deleted()", {|| Field->nFacturado == albNoFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbCliT )->( dbCloseArea() )
@@ -16438,10 +16403,10 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
 
-      ( cAlbCliT )->( ordCondSet( "nFacturado == 3 .and. !Deleted()", {|| Field->nFacturado == 3 .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCondSet( "nFacturado == 1 .and. !Deleted()", {|| Field->nFacturado == albNoFacturado .and. !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
 
-      ( cAlbCliT )->( ordCondSet( "nFacturado == 3 .and. !Deleted()", {|| Field->nFacturado == 3 .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCondSet( "nFacturado == 1 .and. !Deleted()", {|| Field->nFacturado == albNoFacturado .and. !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
@@ -17785,20 +17750,9 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
             ( cAlbCliT )->( dbUnLock() )
          end if
 
-         if lFacturado
-
-            if dbLock( cAlbCliT )
-               ( cAlbCliT )->nFacturado := 3
-               ( cAlbCliT )->( dbUnLock() )
-            end if
-
-         else
-
-            if dbLock( cAlbCliT )
-               ( cAlbCliT )->nFacturado := 1
-               ( cAlbCliT )->( dbUnLock() )
-            end if
-
+         if dbLock( cAlbCliT )
+            ( cAlbCliT )->nFacturado := if( lFacturado, 3, 1 )
+            ( cAlbCliT )->( dbUnLock() )
          end if
 
          /*
@@ -17816,20 +17770,9 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
                   ( cAlbCliL )->( dbUnlock() )
                 end if
 
-                if lFacturado
-
-                  if dbLock( cAlbCliL )
-                     ( cAlbCliL )->nFacturado := 3
-                     ( cAlbCliL )->( dbUnLock() )
-                  end if
-
-               else
-
-                  if dbLock( cAlbCliL )
-                     ( cAlbCliL )->nFacturado := 1
-                     ( cAlbCliL )->( dbUnLock() )
-                  end if
-
+               if dbLock( cAlbCliL )
+                  ( cAlbCliL )->nFacturado := if( lFacturado, 3, 1 )
+                  ( cAlbCliL )->( dbUnLock() )
                end if
 
                ( cAlbCliL )->( dbSkip() )
@@ -17853,22 +17796,11 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
                if dbLock( cAlbCliS )
                   ( cAlbCliS )->lFacturado := lFacturado
                   ( cAlbCliS )->( dbUnlock() )
-                end if
+               end if
 
-                if lFacturado
-
-                  if dbLock( cAlbCliS )
-                     ( cAlbCliS )->nFacturado := 3
-                     ( cAlbCliS )->( dbUnLock() )
-                  end if
-
-               else
-
-                  if dbLock( cAlbCliS )
-                     ( cAlbCliS )->nFacturado := 1
-                     ( cAlbCliS )->( dbUnLock() )
-                  end if
-
+               if dbLock( cAlbCliS )
+                  ( cAlbCliS )->nFacturado := if( lFacturado, 3, 1 )
+                  ( cAlbCliS )->( dbUnLock() )
                end if
 
                ( cAlbCliS )->( dbSkip() )
@@ -17893,20 +17825,9 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
          ( cAlbCliT )->( dbUnLock() )
       end if
 
-      if lFacturado
-
-         if dbLock( cAlbCliT )
-            ( cAlbCliT )->nFacturado := 3
-            ( cAlbCliT )->( dbUnLock() )
-         end if
-
-      else
-
-         if dbLock( cAlbCliT )
-            ( cAlbCliT )->nFacturado := 1
-            ( cAlbCliT )->( dbUnLock() )
-         end if
-
+      if dbLock( cAlbCliT )
+         ( cAlbCliT )->nFacturado := if( lFacturado, 3, 1 )
+         ( cAlbCliT )->( dbUnLock() )
       end if
 
       /*
