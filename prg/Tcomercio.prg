@@ -401,9 +401,9 @@ METHOD filesOpen() CLASS TComercio
 
    local oBlock
    local oError
-   local lOpen     := .t.
+   local lOpen       := .t.
 
-   oBlock         := ErrorBlock( { | oError | Break( oError ) } )
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
 
       DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"

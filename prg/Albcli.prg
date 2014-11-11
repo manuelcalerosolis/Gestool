@@ -4803,14 +4803,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
    // Start --------------------------------------------------------------------
 
-   oDlg:bStart    := {||   mSginfo( aTmp[_LCONTROL] ),;
-                           SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb, oRentLin ),;
-                           mSginfo( aTmp[_LCONTROL] ),;
+   oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb, oRentLin ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           mSginfo( aTmp[_LCONTROL] ),;
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ),;
-                           mSginfo( aTmp[_LCONTROL] ),;
-                           aGet[ _CCODPRV ]:lValid(), mSginfo( aTmp[_LCONTROL] ) }
+                           aGet[ _CCODPRV ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -9336,9 +9332,9 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
          aGet[ _CTIPMOV ]:cText( cDefVta() )
       end if
 
-      /*if !Empty( aGet[ _LCONTROL] )
+      if !Empty( aGet[ _LCONTROL] )
          aGet[ _LCONTROL]:Click( .f. )
-      end if*/
+      end if
 
       if !Empty( oStkAct )
 
