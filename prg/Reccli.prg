@@ -2310,7 +2310,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 		REDEFINE GET aGet1 VAR cGet1;
 			ID          104 ;
 			PICTURE     "@!" ;
-         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfFacCliP, .f. ) );
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfFacCliP, .f., , , , , 13 ) );
          VALID       ( OrdClearScope( oBrw, dbfFacCliP ) );
          BITMAP      "FIND" ;
          OF          oDlg
@@ -2361,6 +2361,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
          :cHeader             := "Número"
          :bEditValue          := {|| ( dbfFacCliP )->cSerie + "/" + AllTrim( Str( ( dbfFacCliP )->nNumFac ) ) + "-" + Alltrim( Str( ( dbfFacCliP )->nNumRec ) ) }
          :nWidth              := 95
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
       end with
 
       with object ( oBrw:AddCol() )
@@ -2373,20 +2374,23 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
          :cHeader             := "Código cliente"
          :bEditValue          := {|| ( dbfFacCliP )->cCodCli }
          :nWidth              := 80
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Nombre cliente"
          :bEditValue          := {|| ( dbfFacCliP )->cNomCli }
          :nWidth              := 280
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader             := "Importe " + cDivEmp()
+         :cHeader             := "Importe"
          :bEditValue          := {|| nTotRecCli( dbfFacCliP, dbfDiv, cDivEmp(), .t. ) }
          :nWidth              := 100
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
       end with
 
       with object ( oBrw:AddCol() )
@@ -2409,6 +2413,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
          :bEditValue          := {|| Dtoc( ( dbfFacCliP )->dPreCob ) }
          :nWidth              := 80
          :lHide               := .t.
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
       end with
 
       with object ( oBrw:AddCol() )
@@ -2416,6 +2421,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
          :bEditValue          := {|| Dtoc( ( dbfFacCliP )->dFecVto ) }
          :nWidth              := 80
          :lHide               := .t.
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
       end with
 
       with object ( oBrw:AddCol() )
@@ -2423,6 +2429,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
          :bEditValue          := {|| Dtoc( ( dbfFacCliP )->dEntrada ) }
          :nWidth              := 80
          :lHide               := .t.
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
       end with
 
 		REDEFINE BUTTON ;
@@ -4270,11 +4277,6 @@ Function rxRecCli( cPath, oMeter )
       ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cNomCli", "cNomCli", {|| Field->cNomCli } ) )
 
-      // Codog de clientes no cobrados
-
-      ( dbfFacCliT )->( ordCondSet("!Deleted() .and. !Field->lCobrado", {|| !Deleted() .and. !Field->lCobrado } ) )
-      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "lCodCli", "cCodCli", {|| Field->cCodCli } ) )
-
       // "Expedición",;
 
       ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
@@ -4294,6 +4296,11 @@ Function rxRecCli( cPath, oMeter )
 
       ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , , , .t. ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nImporte", "nImporte", {|| Field->nImporte }, ) )
+
+      // Codigo de clientes no cobrados
+
+      ( dbfFacCliT )->( ordCondSet("!Deleted() .and. !Field->lCobrado", {|| !Deleted() .and. !Field->lCobrado } ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "lCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
       // "Número + no cobrados",;
 

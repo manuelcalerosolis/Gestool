@@ -11655,6 +11655,9 @@ Return .t.
 Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
+   local oOutLook
+   local oMail
+   local oRecipient
    local nOrdAnt        := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
    local cFilePdf       := cPatTmp() + "FacturasCliente" + StrTran( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, " ", "" ) + ".Pdf"
 
@@ -11741,7 +11744,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "Outline",          .t. )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
-
+/*
             if file( cFilePdf )
 
                with object ( TGenMailing():New() )
@@ -11763,6 +11766,51 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                end with
 
             end if
+*/
+            // Nuevo objeto de outlook-----------------------------------------
+
+            sysRefresh()
+
+            oOutLook             := win_oleCreateObject( "Outlook.Application" )
+
+            if !empty( oOutLook )
+
+               oMail             := oOutLook:CreateItem( 0 ) // olMailItem 
+
+               // Destinatario-------------------------------------------------
+
+               oMail:Recipients:Add( RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )   
+
+               // Con copia 
+
+               oRecipient        := oMail:Recipients:Add( uFieldEmpresa( "cCcpMai" ) )  
+               oRecipient:Type   := 2
+
+               // Adjunto 
+
+               oMail:Attachments:Add( cFilePdf ) 
+
+               // Asunto
+
+               oMail:Subject      := "Envío de factura de cliente número " + ( D():FacturasClientesIdTextShort( nView ) )
+
+               // Cuerpo del mensaje
+
+               oMail:BodyFormat  := 2 // olFormatHTML 
+               oMail:HTMLBody    := "<HTML>" + ;
+                                    "Adjunto le remito nuestra factura de cliente " + ( D():FacturasClientesIdTextShort( nView ) ) + ;
+                                    " de fecha " + Dtoc( D():FacturasClientesFecha( nView ) ) + "</HTML>"  
+
+               // Mostarmos el dialogo de envio
+
+               oMail:Display()
+            
+            else
+               
+               msgStop( "Error. MS Outlook not available.", win_oleErrorText() )
+
+            end if 
+
 
       end case
 
