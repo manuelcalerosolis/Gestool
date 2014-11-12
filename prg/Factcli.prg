@@ -5995,7 +5995,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    	oDlg:bResized  				:= {|| GridResize( oDlg ), oBrwLin:Load() }
 
-      oDlg:bStart                := {|| CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta ) }
+      oDlg:bStart                := {|| if( nMode == APPD_MODE, CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta ), ) }
 
    	ACTIVATE DIALOG oDlg CENTER ;
       ON INIT     ( GridMaximize( oDlg ) )
