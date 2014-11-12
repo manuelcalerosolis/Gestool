@@ -853,13 +853,13 @@ Method lCreateMail() CLASS TGenMailing
    oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::oMail                    := CreateObject( "JMail.Message" )
+      ::oMail                    := CreateObject( "JMail.Message" ) /* win_oleCreateObject( "JMail.Message" ) */ 
 
    RECOVER USING oError
 
       WaitRun( "regsvr32 /s " + FullcurDir() + "JMail.Dll" )
 
-      ::oMail                    := CreateObject( "JMail.Message" )
+      ::oMail                    := CreateObject( "JMail.Message" ) /* win_oleCreateObject( "JMail.Message" ) */ 
 
    END SEQUENCE
 

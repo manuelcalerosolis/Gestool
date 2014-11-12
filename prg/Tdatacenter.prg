@@ -5034,8 +5034,11 @@ CLASS D
    // Facturas de clientes-----------------------------------------------------
 
    METHOD FacturasClientes( nView )             INLINE ( ::Get( "FacCliT", nView ) )
+      METHOD FacturasClientesFecha( nView )     INLINE ( ( ::Get( "FacCliT", nView ) )->dFecFac )
       METHOD FacturasClientesId( nView )        INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) + ( ::Get( "FacCliT", nView ) )->cSufFac )
       METHOD FacturasClientesIdText( nView )    INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )
+      METHOD FacturasClientesIdTextShort( nView );
+                                                INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) )
 
    METHOD FacturasClientesLineas( nView )       INLINE ( ::Get( "FacCliL", nView ) )
       METHOD FacturasClientesLineasId( nView )  INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )

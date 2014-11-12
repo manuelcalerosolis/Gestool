@@ -1329,7 +1329,6 @@ STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo facturas a clientes"
    DEFAULT cCodDoc      := cFormatoDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount )
-   //DEFAULT nCopies      := max( nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ), Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ) )
 
    if Empty( nCopies )
    	nCopies 				:= Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
@@ -11655,6 +11654,9 @@ Return .t.
 Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
+   local oOutLook
+   local oMail
+   local oRecipient
    local nOrdAnt        := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
    local cFilePdf       := cPatTmp() + "FacturasCliente" + StrTran( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, " ", "" ) + ".Pdf"
 
@@ -11741,7 +11743,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "Outline",          .t. )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
-
+            /*
             if file( cFilePdf )
 
                with object ( TGenMailing():New() )
@@ -11763,6 +11765,51 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                end with
 
             end if
+            */
+
+            // Nuevo objeto de outlook-----------------------------------------
+
+            sysRefresh()
+
+            oOutLook             := win_oleCreateObject( "Outlook.Application" )
+
+            if !empty( oOutLook )
+
+               oMail             := oOutLook:CreateItem( 0 ) // olMailItem 
+
+               // Destinatario-------------------------------------------------
+
+               oMail:Recipients:Add( RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )   
+
+               // Con copia 
+
+               oRecipient        := oMail:Recipients:Add( uFieldEmpresa( "cCcpMai" ) )  
+               oRecipient:Type   := 2
+
+               // Adjunto 
+
+               oMail:Attachments:Add( cFilePdf )
+
+               // Asunto
+
+               oMail:Subject      := "Envío de factura de cliente número " + ( D():FacturasClientesIdTextShort( nView ) )
+
+               // Cuerpo del mensaje
+
+               oMail:BodyFormat  := 2 // olFormatHTML 
+               oMail:HTMLBody    := "<HTML>" + ;
+                                    "Adjunto le remito nuestra factura de cliente " + ( D():FacturasClientesIdTextShort( nView ) ) + Space( 1 ) + ;
+                                    "de fecha " + Dtoc( D():FacturasClientesFecha( nView ) ) + "</HTML>" 
+
+               // Mostarmoa el dioalogo de envio
+
+               oMail:Display()
+            
+            else
+               
+               msgStop( "Error. MS Outlook not available.", win_oleErrorText() )
+
+            end if 
 
       end case
 
@@ -23613,3 +23660,35 @@ Method ProcessFrq()
 Return Self
 
 //----------------------------------------------------------------------------//
+
+STATIC Function MSOutlook2()
+
+   LOCAL oOL, oLista, oMail
+   LOCAL oRecipient
+
+   msgAlert( "entra")
+
+   oOL   := win_oleCreateObject( "Outlook.Application" )
+
+   IF ( oOL ) != NIL
+      oMail             := oOL:CreateItem( 0 ) // olMailItem 
+
+      oMail:Attachments:Add("c:\test.bmp")
+
+      oMail:Recipients:Add( "mcalero@gestool.es" )   
+
+      oRecipient        := oMail:Recipients:Add( "mcalero@zemtrum.es" )  
+      oRecipient:Type   := 2
+
+      oMail:Subject      := "Test with distribution list"
+
+      oMail:BodyFormat  := 2 // olFormatHTML 
+      oMail:HTMLBody    := "<HTML><H2>The body of this message will appear in HTML.</H2><BODY> Please enter the message text here. </BODY></HTML>" 
+      oMail:Display()
+   ELSE
+      msgAlert( "Error. MS Outlook not available.", win_oleErrorText() )
+   ENDIF
+
+RETURN ( nil )
+
+ 
