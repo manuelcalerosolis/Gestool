@@ -573,6 +573,8 @@ static cFiltroUsuario      := ""
 static oMeter
 static nMeter              := 1
 
+static cUltimoCliente      := ""
+
 static bEdtRec             := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtRec( aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 static bEdtDet             := { |aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 static bEdtInc             := { |aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode, aTmpLin| EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
@@ -6625,9 +6627,30 @@ static function CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta )
       nOrdAnt              := ( D():Clientes( nView ) )->( OrdSetFocus( hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
 
       if ( D():Clientes( nView ) )->( OrdKeyCount() ) != 0 
+         
+         if Empty( cUltimoCliente )
 
-         ( D():Clientes( nView ) )->( dbGoTop() )
-         cCliente             := ( D():Clientes( nView ) )->Cod
+            ( D():Clientes( nView ) )->( dbGoTop() )
+            cCliente             := ( D():Clientes( nView ) )->Cod
+
+         else
+
+            if ( D():Clientes( nView ) )->( dbSeek( cUltimoCliente ) )
+
+               ( D():Clientes( nView ) )->( dbSkip() )
+
+               if !( D():Clientes( nView ) )->( Eof() )
+                  cCliente             := ( D():Clientes( nView ) )->Cod
+               end if   
+
+            else   
+
+               ( D():Clientes( nView ) )->( dbGoTop() )
+               cCliente             := ( D():Clientes( nView ) )->Cod
+
+            end if
+
+         end if   
 
          if !Empty( oSayTextRuta )
             oSayTextRuta:cText( AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyNo() ) ) ) + "/" + AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyCount() ) ) ) )
@@ -15190,6 +15213,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       if !Empty( oMeter )
       	oMeter:Set( 4 )
       end if	
+
+      cUltimoCliente    := aTmp[ _CCODCLI ]
 
       WinGather( aTmp, , D():FacturasClientes( nView ), , nMode )
 

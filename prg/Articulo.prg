@@ -6898,7 +6898,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       end with
 
       if nMode != ZOOM_MODE
-         oBrwImg:bLDblClick   := {|| MsgInfo( "Doble Click" ) }
+         oBrwImg:bLDblClick   := {|| SeleccionaImagen( oBrwImg ) }
       end if
 
       oBrwImg:CreateFromResource( 110 )
@@ -19234,6 +19234,22 @@ static function lCargaImagenes()
    end while   
 
    ( dbfTmpImg )->( dbGoTop() )
+
+return .t.
+
+//---------------------------------------------------------------------------//
+
+Static function SeleccionaImagen( oBrwImg )
+
+   ?hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "lSelect" )
+
+   hSet( aImgsArticulo[ oBrwImg:nArrayAt ], "lSelect", !hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "lSelect" ) )
+
+   oBrwImg:Refresh()
+
+   ?hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "lSelect" )
+
+   MsgInfo( "Selecciono la imagen" )
 
 return .t.
 
