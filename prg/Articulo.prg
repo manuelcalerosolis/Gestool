@@ -25,7 +25,6 @@
 #define DT_NOPREFIX                 0x00000800
 #define DT_INTERNAL                 0x00001000
 
-
 #define fldGeneral                  oFld:aDialogs[1]
 #define fldPrecios                  oFld:aDialogs[2]
 #define fldTactil                   oFld:aDialogs[3]
@@ -103,6 +102,7 @@ static oMenu
 static aBmpTipCat
 
 static aBenefSobre         := { "Costo", "Venta" }
+static aImgsArticulo       := {}
 
 static cCodigoFamilia
 
@@ -4376,7 +4376,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       505 ;
          OF       fldImagenes;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ImportaImagenes( aTmp, oBrwImg ) )   
+         ACTION   ( ImportaImagenes( aTmp, oBrwImg ), lCargaImagenes() )   
 
    oBrwImg                 := IXBrowse():New( fldImagenes )
 
@@ -5537,12 +5537,28 @@ Static Function BeginTrans( aTmp, nMode )
    ( dbfTmpImg )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
    ( dbfTmpImg )->( OrdCreate( filTmpImg, "cImgArt", "cImgArt", {|| Field->cImgArt } ) )
 
+   aImgsArticulo  := {}
+
    if nMode != APPD_MODE .and. ( dbfImg )->( dbSeek( cCodArt ) )
+      
       while ( dbfImg )->cCodArt == cCodArt .and. !( dbfImg )->( eof() )
+         
+         /*
+         Metemos las imágenes en un array para las propiedades-----------------
+         */
+
+         aAdd( aImgsArticulo, {  "lSelect"               => .f.,;
+                                 "ruta"                  => ( dbfImg )->cImgArt,;
+                                 "tooltip"               => ( dbfImg )->cNbrArt } )
+
          dbPass( dbfImg, dbfTmpImg, .t. )
+         
          ( dbfImg )->( dbSkip() )
+
       end while
+
       ( dbfTmpImg )->( dbGoTop() )
+
    end if
 
    /*
@@ -6242,6 +6258,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    local oNingunaPrp1
    local oTodasPrp2
    local oNingunaPrp2
+   local oBrwImg
 
    if nMode == APPD_MODE
       aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ]   := aArt[ ( dbfArticulo )->( fieldpos( "Codigo") ) ]
@@ -6845,13 +6862,46 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       Segunda caja de diálogo--------------------------------------------------
       */
 
-      
+      oBrwImg                 := IXBrowse():New( oFld:aDialogs[2] )
 
+      oBrwImg:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwImg:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
+      oBrwImg:SetArray( aImgsArticulo, , , .f. )
+      oBrwImg:nMarqueeStyle   := 6
+      oBrwImg:cName           := "Artículo.Imagenes.Propiedades"
+      oBrwImg:nRowHeight      := 100
+      oBrwImg:nDataLines      := 2
 
+      with object ( oBrwImg:AddCol() )
+         :cHeader             := "Seleccionada"
+         :bStrData            := {|| "" }
+         :bEditValue          := {|| hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "lselect" ) }
+         :nWidth              := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+      end with
 
+      with object ( oBrwImg:AddCol() )
+         :cHeader             := "Imagen"
+         :bEditValue          := {|| AllTrim( hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "tooltip" ) ) + CRLF + AllTrim( hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "ruta" ) ) }
+         :nWidth              := 400
+      end with
 
+      with object ( oBrwImg:AddCol() )
+         :cHeader             := "Imagen"
+         :nEditType           := TYPE_IMAGE
+         :lBmpStretch         := .f.
+         :lBmpTransparent     := .t.
+         :bStrImage           := {|| hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "ruta" ) }
+         :nDataBmpAlign       := AL_CENTER
+         :nWidth              := 100
+      end with
 
+      if nMode != ZOOM_MODE
+         oBrwImg:bLDblClick   := {|| MsgInfo( "Doble Click" ) }
+      end if
+
+      oBrwImg:CreateFromResource( 110 )
 
       /*
       fin de propiedades
@@ -18138,6 +18188,8 @@ static function EndEdtImg( aTmp, dbfTmpImg, oBrw, nMode, oDlg )
 
    end if
 
+   lCargaImagenes()
+
    if !Empty( oBrw )
       oBrw:Refresh()
    end if
@@ -19158,5 +19210,31 @@ Function cArticulo( aGet, dbfArticulo, aGet2, lCodeBar )
    END IF
 
 RETURN lValid
+
+//---------------------------------------------------------------------------//
+
+static function lCargaImagenes()
+
+   aImgsArticulo      := {}
+
+   ( dbfTmpImg )->( dbGoTop() )
+
+   while !( dbfTmpImg )->( Eof() )
+
+         /*
+         Metemos las imágenes en un array para las propiedades-----------------
+         */
+
+         aAdd( aImgsArticulo, {  "lSelect"               => .f.,;
+                                 "ruta"                  => ( dbfTmpImg )->cImgArt,;
+                                 "tooltip"               => ( dbfTmpImg )->cNbrArt } )
+
+      ( dbfTmpImg )->( dbSkip() )
+
+   end while   
+
+   ( dbfTmpImg )->( dbGoTop() )
+
+return .t.
 
 //---------------------------------------------------------------------------//

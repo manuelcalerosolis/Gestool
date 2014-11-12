@@ -97,6 +97,7 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
    DEFAULT lAllowFilter := .t.
    DEFAULT lNotUser     := .t.
    DEFAULT lNotFecha    := .t.
+   DEFAULT nLen         := 10
 
    if ValType( xAlias ) == "O"
       xAlias            := xAlias:cAlias
@@ -158,6 +159,7 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
 
    DEFAULT lNotUser  := .t.
    DEFAULT lNotFecha := .t.
+   DEFAULT nLen      := 10
 
    if IsObject( xCadena )
       xCadena:Assign()
@@ -279,6 +281,8 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
    local cType
    local oBlock
    local oError
+
+   DEFAULT nLen   := 10
 
    cType          := ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) )
 

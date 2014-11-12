@@ -13092,7 +13092,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "lPixels"   => .t.,;
                                                 "nClrText"  => Rgb( 0, 0, 0 ),;
                                                 "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                                "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                                "nWidth"    => {|| GridWidth( 7, oDlg ) },;
                                                 "nHeight"   => 32,;
                                                 "lDesign"   => .f. } )
 

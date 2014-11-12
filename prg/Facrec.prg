@@ -13177,7 +13177,7 @@ function SynFacRec( cPath )
 	      end if
 	      
 	      if Empty( ( dbfFacRecL )->nVolumen )
-	         ( dbfFacRecL )->nVolumen   :=  RetFld( ( dbfFacRecL )->cRef, D():Articulos( nView ), "nVolumen" )
+	         ( dbfFacRecL )->nVolumen   :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
 	      end if
 	      
          if Empty( ( dbfFacRecL )->cAlmLin )
