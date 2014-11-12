@@ -30,8 +30,8 @@
 #define fldPrecios                  oFld:aDialogs[2]
 #define fldTactil                   oFld:aDialogs[3]
 #define fldDescripciones            oFld:aDialogs[4]
-#define fldPropiedades              oFld:aDialogs[5]
-#define fldImagenes                 oFld:aDialogs[6]
+#define fldImagenes                 oFld:aDialogs[5]
+#define fldPropiedades              oFld:aDialogs[6]
 #define fldLogistica                oFld:aDialogs[7]
 #define fldStocks                   oFld:aDialogs[8]
 #define fldContabilidad             oFld:aDialogs[9]
@@ -1678,8 +1678,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "&Precios",;
                   "&Táctil",;
                   "&Descripciones",;
-                  "P&ropiedades",;
                   "Imagenes",;
+                  "P&ropiedades",;
                   "&Logística",;
                   "&Stocks",;
                   "Co&ntabilidad",;
@@ -1690,8 +1690,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "ART_5",;
                   "ART_Tactil",;
                   "ART_2",;
-                  "ART_20",;
                   "ART_12",;
+                  "ART_20",;
                   "ART_Logistica",;
                   "ART_3",;
                   "ART_15",;
@@ -4386,6 +4386,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    oBrwImg:cAlias          := dbfTmpImg
    oBrwImg:nMarqueeStyle   := 6
    oBrwImg:cName           := "Artículo.Imagenes"
+   oBrwImg:nRowHeight      := 100
+   oBrwImg:nDataLines      := 2
 
    with object ( oBrwImg:AddCol() )
       :cHeader             := "Seleccionada"
@@ -4397,14 +4399,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    with object ( oBrwImg:AddCol() )
       :cHeader             := "Imagen"
-      :bEditValue          := {|| ( dbfTmpImg )->cImgArt }
+      :bEditValue          := {|| AllTrim( ( dbfTmpImg )->cNbrArt ) + CRLF + AllTrim( ( dbfTmpImg )->cImgArt ) }
       :nWidth              := 400
    end with
 
    with object ( oBrwImg:AddCol() )
-      :cHeader             := "Nombre"
-      :bEditValue          := {|| ( dbfTmpImg )->cNbrArt }
-      :nWidth              := 400
+      :cHeader             := "Imagen"
+      :nEditType           := TYPE_IMAGE
+      :lBmpStretch         := .f.
+      :lBmpTransparent     := .t.
+      :bStrImage           := {|| ( dbfTmpImg )->cImgArt }
+      :nDataBmpAlign       := AL_CENTER
+      :nWidth              := 100
    end with
 
    if nMode != ZOOM_MODE
@@ -6210,6 +6216,7 @@ RETURN ( oDlg:nResult == IDOK )
 STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt )
 
 	local oDlg
+   local oFld
    local oBtnOk
    local oBtnCancel
    local oSayPr1
@@ -6270,10 +6277,23 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    DEFINE DIALOG oDlg RESOURCE "PREDIV" TITLE LblTitle( nMode ) + "precios por propiedades"
 
       /*
+      Define de los Folders
+      -------------------------------------------------------------------------
+      */
+
+      REDEFINE FOLDER oFld ;
+         ID       200 ;
+         OF       oDlg ;
+         PROMPT   "Propiedades",;
+                  "Imágenes";
+         DIALOGS  "PREDIV01",;
+                  "PREDIV02"
+
+      /*
       Primer Browse de propiedades--------------------------------------------
       */
 
-      oBrwPrp1                        := IXBrowse():New( oDlg ) 
+      oBrwPrp1                        := IXBrowse():New( oFld:aDialogs[1] ) 
 
       oBrwPrp1:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp1:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -6317,19 +6337,19 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       REDEFINE BUTTON oTodasPrp1 ;
          ID       111 ;
-			OF 		oDlg ;
+			OF 		oFld:aDialogs[1] ;
          ACTION   ( lSelAllPrp( aValPrp1, oBrwPrp1, .t. ) )
 
       REDEFINE BUTTON oNingunaPrp1 ;
          ID       112 ;
-			OF 		oDlg ;
+			OF 		oFld:aDialogs[1] ;
          ACTION   ( lSelAllPrp( aValPrp1, oBrwPrp1, .f. ) )
 
       /*
       Segundo Browse de propiedades----------------------                                                                                                                                             ---------------------
       */
 
-      oBrwPrp2                        := IXBrowse():New( oDlg )
+      oBrwPrp2                        := IXBrowse():New( oFld:aDialogs[1] )
 
       oBrwPrp2:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp2:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -6373,12 +6393,12 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       REDEFINE BUTTON oTodasPrp2 ;
          ID       113 ;
-			OF 		oDlg ;
+			OF 		oFld:aDialogs[1] ;
          ACTION   ( lSelAllPrp( aValPrp2, oBrwPrp2, .t. ) )
 
       REDEFINE BUTTON oNingunaPrp2 ;
          ID       114 ;
-			OF 		oDlg ;
+			OF 		oFld:aDialogs[1] ;
          ACTION   ( lSelAllPrp( aValPrp2, oBrwPrp2, .f. ) )
 
       /*
@@ -6398,7 +6418,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                      .t. );
 			PICTURE 	cPinDiv ;
          SPINNER ;
-         OF       oDlg ;
+         OF       oFld:aDialogs[1] ;
          IDSAY    401 ;
 
    /*
@@ -6409,7 +6429,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1" ) ) ] ;
          ID       300 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef1" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef1" ) ) ] ;
@@ -6426,7 +6446,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                               nDecDiv,;
                               aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) ) ;
          PICTURE  "@E 999.99" ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oSay[ 1 ] VAR cSay[ 1 ] ;
          ITEMS    aBnfSobre ;
@@ -6435,7 +6455,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef1" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta1") )]:lValid() ) );
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta1" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta1" ) ) ] ;
@@ -6452,7 +6472,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva1" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva1" ) ) ] ;
@@ -6469,7 +6489,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
    /*
    Tarifa2 ______________________________________________________________________________
@@ -6479,7 +6499,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ] ;
          ID       350 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ] ;
@@ -6496,7 +6516,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                               nDecDiv,;
                               aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) ) ;
          PICTURE  "@E 999.99" ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oSay[ 2 ] VAR cSay[ 2 ] ;
          ITEMS    aBnfSobre ;
@@ -6505,7 +6525,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta2")) ]:lValid() ) );
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta2" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta2" ) ) ] ;
@@ -6522,7 +6542,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva2" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva2" ) ) ] ;
@@ -6539,7 +6559,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
    /*
    Tarifa3 ______________________________________________________________________________
@@ -6549,7 +6569,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf3" ) ) ] ;
          ID       400 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef3" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef3" ) ) ] ;
@@ -6566,7 +6586,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                               nDecDiv,;
                               aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) ) ;
          PICTURE  "@E 999.99" ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oSay[ 3 ] VAR cSay[ 3 ] ;
          ITEMS    aBnfSobre ;
@@ -6575,7 +6595,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf3"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef3" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta3")) ]:lValid() ) );
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta3" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta3" ) ) ] ;
@@ -6592,7 +6612,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva3" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva3" ) ) ] ;
@@ -6609,7 +6629,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
    /*
    Tarifa4 ______________________________________________________________________________
@@ -6619,7 +6639,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf4" ) ) ] ;
          ID       450 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef4" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef4" ) ) ] ;
@@ -6636,7 +6656,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                               nDecDiv,;
                               aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) ) ;
          PICTURE  "@E 999.99" ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oSay[ 4 ] VAR cSay[ 4 ] ;
          ITEMS    aBnfSobre ;
@@ -6645,7 +6665,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf4"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef4" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta4")) ]:lValid() ) );
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta4" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta4" ) ) ] ;
@@ -6662,7 +6682,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva4" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva4" ) ) ] ;
@@ -6679,7 +6699,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
    /*
    Tarifa5 ______________________________________________________________________________
@@ -6689,7 +6709,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf5" ) ) ] ;
          ID       500 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef5" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef5" ) ) ] ;
@@ -6706,7 +6726,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                               nDecDiv,;
                               aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) ) ;
          PICTURE  "@E 999.99" ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oSay[ 5 ] VAR cSay[ 5 ] ;
          ITEMS    aBnfSobre ;
@@ -6715,7 +6735,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf5"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef5" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta5") )]:lValid() ) );
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta5" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta5" ) ) ] ;
@@ -6732,7 +6752,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva5" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva5" ) ) ] ;
@@ -6749,7 +6769,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
    /*
    Tarifa6 ______________________________________________________________________________
@@ -6759,7 +6779,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf6" ) ) ] ;
          ID       550 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef6" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "Benef6" ) ) ] ;
@@ -6776,7 +6796,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                               nDecDiv,;
                               aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) ) ;
          PICTURE  "@E 999.99" ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oSay[ 6 ] VAR cSay[ 6 ] ;
          ITEMS    aBnfSobre ;
@@ -6785,7 +6805,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf6"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef6" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta6") )]:lValid() ) );
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta6" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreVta6" ) ) ] ;
@@ -6802,7 +6822,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva6" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreIva6" ) ) ] ;
@@ -6819,27 +6839,19 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                                  nDecDiv,;
                                  aArt[ (dbfArticulo)->( fieldpos( "cCodImp" ) ) ] ) );
          PICTURE  cPouDiv ;
-         OF       oDlg
+         OF       oFld:aDialogs[1]
 
       /*
-      Propiedades para la web--------------------------------------------------
+      Segunda caja de diálogo--------------------------------------------------
       */
 
-      REDEFINE GET oImgArt ;
-         VAR      aTmp[ ( dbfTmpVta )->( FieldPos( "cImgWeb" ) ) ] ;
-         ID       210 ;
-         BITMAP   "Lupa" ;
-         ON HELP  ( GetBmp( oImgArt ) ) ;
-         ON CHANGE( ChgBmp( oImgArt ) ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+      
 
-      TBtnBmp():ReDefine( 211, "photo_scenery_16",,,,,{|| ShowImageFile( aTmp[ ( dbfTmpVta )->( FieldPos( "cImgWeb" ) ) ] ) }, oDlg, .f., , .f.,  )
 
-      REDEFINE GET aGet[ ( dbfTmpVta )->( fieldPos( "cToolTip" ) ) ] ;
-         VAR      aTmp[ ( dbfTmpVta )->( fieldPos( "cToolTip" ) ) ] ;
-         ID       220 ;
-         OF       oDlg
+
+
+
+
 
       /*
       fin de propiedades
