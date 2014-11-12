@@ -166,14 +166,6 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
       xCadena        := xCadena:VarGet()
    end if
 
-   xCadena           := StrTran( xCadena, Chr( 8 ), "" )
-
-   if !Empty( cPreFij )
-      xCadena        := cPreFij + xCadena
-   end if
-
-   xCadena           := Alltrim( xCadena )
-
    if IsObject( xAlias )
       xAlias         := xAlias:cAlias
    end if
@@ -182,8 +174,42 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
       return .t.
    end if
 
+   if isChar( xCadena )
+
+      xCadena        := StrTran( xCadena, Chr( 8 ), "" )
+      if !Empty( cPreFij )
+         xCadena     := cPreFij + xCadena
+      end if
+      xCadena        := Alltrim( xCadena )
+
+      // Filtros desde la cabecera---------------------------------------------------
+
+      DestroyFastFilter( xAlias, .f., .f. )
+
+      CreateFastFilter( "", xAlias, .f., , , , lNotUser, lNotFecha )
+
+      if Left( xCadena, 1 ) == "*"
+
+         if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
+
+            CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), xAlias, .t. , , , , lNotUser, lNotFecha )
+
+            return .t.
+
+         else
+
+            CreateFastFilter( "", xAlias, .f., , , , lNotUser, lNotFecha )
+
+            return .t.
+
+         end if
+
+      end if
+
+   end if
+
    /*
-   Probando ordWildSeek--------------------------------------------------------
+   Probando ordWildSeek-------------------------------------------------------- 
 
    if Left( xCadena, 1 ) == "*"
       if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
@@ -197,32 +223,6 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
       end if
    end if
    */
-
-   /*
-   Filtros desde la cabecera---------------------------------------------------
-   */
-
-   DestroyFastFilter( xAlias, .f., .f. )
-
-   CreateFastFilter( "", xAlias, .f., , , , lNotUser, lNotFecha )
-
-   if Left( xCadena, 1 ) == "*"
-
-      if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
-
-         CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), xAlias, .t. , , , , lNotUser, lNotFecha )
-
-         return .t.
-
-      else
-
-         CreateFastFilter( "", xAlias, .f., , , , lNotUser, lNotFecha )
-
-         return .t.
-
-      end if
-
-   end if
 
    /*
    Comprobaciones antes de buscar----------------------------------------------
@@ -323,7 +323,10 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
       case cType == "N"
 
-         if ( xAlias )->( dbSeek( Val( xCadena ), .t. ) )
+         // msgAlert( xCadena, "val(xCaeden)")
+         // if ( xAlias )->( dbSeek( Val( xCadena ), .t. ) )
+
+         if ( xAlias )->( dbSeek( xCadena, .t. ) )
             lRet  := .t.
          else
             lRet  := .t.

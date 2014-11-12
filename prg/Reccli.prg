@@ -2310,7 +2310,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 		REDEFINE GET aGet1 VAR cGet1;
 			ID          104 ;
 			PICTURE     "@!" ;
-         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfFacCliP, .f., , , , , 13 ) );
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfFacCliP, .f., , , , , 10 ) );
          VALID       ( OrdClearScope( oBrw, dbfFacCliP ) );
          BITMAP      "FIND" ;
          OF          oDlg
@@ -2319,7 +2319,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 			VAR         cCbxOrd ;
 			ID          102 ;
          ITEMS       aCbxOrd ;
-         ON CHANGE   ( ( dbfFacCliP )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), aGet1:SetFocus() ) ;
+         ON CHANGE   ( ( dbfFacCliP )->( OrdSetFocus( oCbxOrd:nAt ) ), msgAlert( ( dbfFacCliP )->( ordSetFocus() ) ), oBrw:Refresh(), aGet1:SetFocus() ) ;
          OF          oDlg
 
       oBrw                    := IXBrowse():New( oDlg )
@@ -4302,25 +4302,10 @@ Function rxRecCli( cPath, oMeter )
       ( dbfFacCliT )->( ordCondSet("!Deleted() .and. !Field->lCobrado", {|| !Deleted() .and. !Field->lCobrado } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "lCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
-      // "Número + no cobrados",;
-
-      // ( dbfFacCliT )->( ordCondSet("!Deleted() .and. !lCobrado", {|| !Deleted() .and. !Field->lCobrado } ) )
-      // ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "pNumFac", "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", {|| Field->CSERIE + Str( Field->NNUMFAC ) + Field->CSUFFAC + Str( Field->NNUMREC ) + Field->cTipRec } ) )
-
-      // "Número + cobrados" ;
-
-      // ( dbfFacCliT )->( ordCondSet("!Deleted() .and. lCobrado", {|| !Deleted() .and. Field->lCobrado } ) )
-      // ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "tNumFac", "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", {|| Field->CSERIE + Str( Field->NNUMFAC ) + Field->CSUFFAC + Str( Field->NNUMREC ) + Field->cTipRec } ) )
-
       // Numero de remesas
 
       ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumRem", "Str( nNumRem ) + cSufRem", {|| Str( Field->nNumRem ) + Field->cSufRem } ) )
-
-      // Numero de remesas
-
-      // ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      // ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumCli", "Str( nNumRem ) + cSufRem + cCodCli", {|| Str( Field->nNumRem ) + Field->cSufRem + Field->cCodCli } ) )
 
       // Cuentas de remesas----------------------------------------------------
 

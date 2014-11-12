@@ -11767,7 +11767,9 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "Outline",          .t. )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
-/*
+
+#ifdef __XHARBOUR__
+
             if file( cFilePdf )
 
                with object ( TGenMailing():New() )
@@ -11789,7 +11791,8 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                end with
 
             end if
-*/
+
+#else
             // Nuevo objeto de outlook-----------------------------------------
 
             sysRefresh()
@@ -11834,6 +11837,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
             end if 
 
+#endif
 
       end case
 

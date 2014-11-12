@@ -1659,9 +1659,9 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       oBrw:Select( 0 )
       oBrw:Select( 1 )
 
-//		if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
-//			oBrw:MakeTotals()
-//		end if 
+		if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
+			oBrw:MakeTotals()
+		end if 
 
       oBrw:Refresh()
 
