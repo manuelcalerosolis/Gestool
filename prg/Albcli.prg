@@ -17014,7 +17014,7 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
 
    ( cAlbCliL )->( dbGoto( nRecno ) )
 
-   // Ordenamos los impuestosS de menor a mayor
+   // Ordenamos los impuestos de menor a mayor
 
    aTotIva           := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
 
