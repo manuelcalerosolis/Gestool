@@ -639,7 +639,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
          XBROWSE ;
          TITLE    "Clientes" ;
-         PROMPT   "Código",;
+         PROMPT   "Código cliente",;
                   "Nombre",;
                   if( uFieldEmpresa( "nCifRut" ) == 1, "NIF/CIF", "RUT" ),;
                   "Población",;
@@ -716,7 +716,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
+         :cHeader          := "Código cliente"
          :cSortOrder       := "Cod"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Cod }
          :nWidth           := 110

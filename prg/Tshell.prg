@@ -1045,32 +1045,7 @@ METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
    lSeek             := ::FastFilter( xCadena, cAlias ) // 
 
    if !lSeek
-
       lSeek          := lMiniSeek( nil, xCadena, cAlias, nLen )
-
-      // Si no conseguimos encontrarla en el orden actial nos movemos por todos los posibles ordendenes del browse
-
-      if !lSeek .and. uFieldEmpresa( "lBusCir" )
-
-         for each oCol in ::oBrw:aCols
-
-            if isChar( oCol:cSortOrder ) .and. !Empty( oCol:cSortOrder )
-
-               ( cAlias )->( OrdSetFocus( oCol:cSortOrder ) )
-
-               lSeek := lMiniSeek( nil, xCadena, cAlias, nLen )
-
-               if lSeek
-                  ::ClickOnHeader( oCol )
-                  exit
-               end if
-
-            end if
-
-         next
-
-      end if
-
    end if
 
    if lSeek .or. !Empty( xCadena )
@@ -1873,7 +1848,6 @@ METHOD ChgCombo( nTab ) CLASS TShell
             for each oCol in :aCols
 
                if Equal( cOrd, oCol:cHeader )
-                  oCol:cOrder       := "A"
                   oCol:SetOrder()
                else
                   oCol:cOrder       := " "
