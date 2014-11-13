@@ -4389,7 +4389,8 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             aTmp[_CCODPR2 ]         := ( D():Articulos( nView ) )->cCodPrp2
 
             if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ;
-               ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
+               ( uFieldEmpresa( "lUseTbl" )                                   .and. ;
+               ( nMode == APPD_MODE ) )
 
                nPreCom              := nCosto( nil, D():Articulos( nView ), D():Kit( nView ), .f., aTmpAlb[ _CDIVALB ], D():Divisas( nView ) )
 

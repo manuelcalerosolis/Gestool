@@ -95,11 +95,9 @@ function Main( cParams )
 
    SetHandleCount( 240 )
 
-   /*
-   Test------------------------------------------------------------------------
-   */
+   FwNumFormat( 'E', .t. )
 
-   // AppendFacturaProveedores()
+   // Test---------------------------------------------------------------------
 
    SetResDebug( .t. )
 

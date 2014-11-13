@@ -2456,9 +2456,11 @@ Function nComPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtCom )
 
    local nPreCom  := 0
 
-   if ( dbfArtCom )->( dbSeek( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
-      nPreCom     := ( dbfArtCom )->nPreCom
-   end if
+   if !empty( cValPr1 ) .or. !empty( cValPr2 )
+      if ( dbfArtCom )->( dbSeek( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+         nPreCom     := ( dbfArtCom )->nPreCom
+      end if
+   end if 
 
 Return ( nPreCom )
 
