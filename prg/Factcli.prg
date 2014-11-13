@@ -5677,7 +5677,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "bChange"   => {|| CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta ) } } )
 
       oBtnLeft    := TGridImage():Build(  {        "nTop"      => 63,;
-                                                   "nLeft"     => {|| GridWidth( 4.7, oDlg ) },;
+                                                   "nLeft"     => {|| GridWidth( 4.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_left_64",;
@@ -5685,7 +5685,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "oWnd"      => oDlg } )
 
       oBtnRight   := TGridImage():Build(  {        "nTop"      => 63,;
-                                                   "nLeft"     => {|| GridWidth( 5.5, oDlg ) },;
+                                                   "nLeft"     => {|| GridWidth( 6, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_right_64",;
@@ -5693,7 +5693,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "oWnd"      => oDlg } )
 
       oSayTextRuta   := TGridGet():Build(       {  "nRow"      => 67,;
-                                                   "nCol"      => {|| GridWidth( 6.5, oDlg ) },;
+                                                   "nCol"      => {|| GridWidth( 7, oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, cSayTextRuta, cSayTextRuta := u ) },;
                                                    "oWnd"      => oDlg,;
                                                    "nWidth"    => {|| GridWidth( 3, oDlg ) },;
@@ -5802,7 +5802,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	Botones de las lineas------------------------------------------------------
    	*/
 
-   	oBtnAdd  			:= TGridImage():Build(  {  	"nTop"      => 175,;
+   	oBtnAdd  			:= TGridImage():Build(  {  "nTop"      => 175,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5810,16 +5810,16 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| AppDeta( oBrwLin, bEdtDetTablet, aTmp, .f. ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnEdt  			:= TGridImage():Build(  {  	"nTop"      => 175,;
-                                             		"nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+   	oBtnEdt  			:= TGridImage():Build(  {  "nTop"      => 175,;
+                                             		"nLeft"     => {|| GridWidth( 2, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_edit_64",;
                                              		"bLClicked" => {|| EdtDeta( oBrwLin, bEdtDetTablet, aTmp, .f., nMode ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDel  			:= TGridImage():Build(  {  	"nTop"      => 175,;
-                                             		"nLeft"     => {|| GridWidth( 2.5, oDlg ) },;
+   	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 175,;
+                                             		"nLeft"     => {|| GridWidth( 3.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_minus_64",;
@@ -6682,7 +6682,7 @@ static function CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta )
       aGet[ _CCODOBR ]:cText( Space( 10 ) )
       aGet[ _CCODOBR ]:Refresh()
       aGet[ _CCODOBR ]:lValid()
-   end if   
+   end if 
 
 return cCliente
 
@@ -6793,7 +6793,7 @@ Function FacCliTablet()
    	Texto de busqueda----------------------------------------------------------
    	*/
 
-   	oGetSearch     		:= TGridGet():Build(    { 	"nRow"      => 40,;
+   	oGetSearch     		:= TGridGet():Build(    { 	"nRow"      => 45,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
                                              		"oWnd"      => oDlg,;
@@ -6806,7 +6806,7 @@ Function FacCliTablet()
 	Orden----------------------------------------------------------------------
    	*/
 
-   	oCbxOrd     		:= TGridComboBox():Build({ "nRow"      => 40,;
+   	oCbxOrd     		:= TGridComboBox():Build({ "nRow"      => 45,;
                                              		"nCol"      => {|| GridWidth( 9.5, oDlg ) },;
                                              		"bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
                                              		"oWnd"      => oDlg,;
@@ -6819,7 +6819,7 @@ Function FacCliTablet()
 	Botones de las lineas------------------------------------------------------
    	*/
 
-   	oBtnAdd  			:= TGridImage():Build(  {  "nTop"      => 70,;
+   	oBtnAdd  			:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6827,23 +6827,23 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| WinAppRec( nil, bEdtTablet, D():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnEdt  			:= TGridImage():Build(  {  "nTop"      => 70,;
-                                             		"nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+   	oBtnEdt  			:= TGridImage():Build(  {  "nTop"      => 75,;
+                                             		"nLeft"     => {|| GridWidth( 2, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_edit_64",;
                                              		"bLClicked" => {|| WinEdtRec( nil, bEdtTablet, D():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 70,;
-                                             		"nLeft"     => {|| GridWidth( 2.5, oDlg ) },;
+   	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 75,;
+                                             		"nLeft"     => {|| GridWidth( 3.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_minus_64",;
                                              		"bLClicked" => {|| WinDelRec( oBrw, D():FacturasClientes( nView ), {|| QuiFacCli() }, , , .t. ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnUpPage			:= TGridImage():Build(  {  "nTop"      => 70,;
+   	oBtnUpPage			:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6851,7 +6851,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| oBrw:PageUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnUp  			:= TGridImage():Build(  {  	"nTop"      => 70,;
+   	oBtnUp  			:= TGridImage():Build(  {  	"nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 8.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6859,7 +6859,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| oBrw:GoUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDown  			:= TGridImage():Build(  {  "nTop"      => 70,;
+   	oBtnDown  			:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6867,7 +6867,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| oBrw:GoDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDownPage		:= TGridImage():Build(  {  "nTop"      => 70,;
+   	oBtnDownPage		:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -6881,7 +6881,7 @@ Function FacCliTablet()
 
    	oBrw                 	:= TGridIXBrowse():New( oDlg )
 
-   	oBrw:nTop            	:= oBrw:EvalRow( 110 )
+   	oBrw:nTop            	:= oBrw:EvalRow( 115 )
    	oBrw:nLeft           	:= oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    	oBrw:nWidth          	:= oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    	oBrw:nHeight         	:= oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )

@@ -1675,7 +1675,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                              "oWnd"      => oDlg } )
 
    oBtnCancelar   := TGridImage():Build(  {  "nTop"      => 5,;
-                                             "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
+                                             "nLeft"     => {|| GridWidth( 9, oDlg ) },;
                                              "nWidth"    => 32,;
                                              "nHeight"   => 32,;
                                              "cResName"  => "flat_del_64",;
@@ -1684,7 +1684,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
 
    // Texto de busqueda--------------------------------------------------------
 
-   oGet1       := TGridGet():Build(    {     "nRow"      => 38,;
+   oGet1       := TGridGet():Build(    {     "nRow"      => 45,;
                                              "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              "bSetGet"   => {|u| if( PCount() == 0, cGet1, cGet1 := u ) },;
                                              "oWnd"      => oDlg,;
@@ -1693,7 +1693,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                              "bValid"    => {|| OrdClearScope( oBrw, dbfFormasPago ) },;
                                              "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, dbfFormasPago, .t. ) } } )
 
-   oCbxOrd     := TGridComboBox():Build(  {  "nRow"      => 38,;
+   oCbxOrd     := TGridComboBox():Build(  {  "nRow"      => 45,;
                                              "nCol"      => {|| GridWidth( 9.5, oDlg ) },;
                                              "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
                                              "oWnd"      => oDlg,;
@@ -1702,7 +1702,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                              "aItems"    => aCbxOrd,;
                                              "bChange"   => {|| ( dbfFormasPago )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:refresh() } } )
 
-   oBtnAdd           := TGridImage():Build(  {  "nTop"      => 70,;
+   oBtnAdd           := TGridImage():Build(  {  "nTop"      => 75,;
                                                    "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
@@ -1711,8 +1711,8 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                                    "bWhen"     => {|| .f. },;
                                                    "oWnd"      => oDlg } )
 
-      oBtnEdt           := TGridImage():Build(  {  "nTop"      => 70,;
-                                                   "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+      oBtnEdt           := TGridImage():Build(  {  "nTop"      => 75,;
+                                                   "nLeft"     => {|| GridWidth( 2, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_edit_64",;
@@ -1720,7 +1720,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                                    "bWhen"     => {|| .f. },;
                                                    "oWnd"      => oDlg } )
 
-      oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 70,;
+      oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 75,;
                                                    "nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
@@ -1728,7 +1728,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                                    "bLClicked" => {|| oBrw:PageUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
                                                    "oWnd"      => oDlg } )
 
-      oBtnUp         := TGridImage():Build(  {     "nTop"      => 70,;
+      oBtnUp         := TGridImage():Build(  {     "nTop"      => 75,;
                                                    "nLeft"     => {|| GridWidth( 8.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
@@ -1736,7 +1736,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                                    "bLClicked" => {|| oBrw:GoUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
                                                    "oWnd"      => oDlg } )
 
-      oBtnDown          := TGridImage():Build(  {  "nTop"      => 70,;
+      oBtnDown          := TGridImage():Build(  {  "nTop"      => 75,;
                                                    "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
@@ -1744,7 +1744,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
                                                    "bLClicked" => {|| oBrw:GoDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
                                                    "oWnd"      => oDlg } )
 
-      oBtnDownPage      := TGridImage():Build(  {  "nTop"      => 70,;
+      oBtnDownPage      := TGridImage():Build(  {  "nTop"      => 75,;
                                                    "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
@@ -1758,7 +1758,7 @@ FUNCTION GridBrwfPago( oGet, oGet2 )
 
    oBrw                 := TGridIXBrowse():New( oDlg )
 
-   oBrw:nTop            := oBrw:EvalRow( 110 )
+   oBrw:nTop            := oBrw:EvalRow( 115 )
    oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    oBrw:nHeight         := oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )

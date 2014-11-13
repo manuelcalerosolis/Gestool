@@ -13114,7 +13114,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
 
    // Texto de busqueda--------------------------------------------------------
 
-   oGetSearch     := TGridGet():Build(    {     "nRow"      => 38,;
+   oGetSearch     := TGridGet():Build(    {     "nRow"      => 45,;
                                                 "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                                 "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
                                                 "oWnd"      => oDlg,;
@@ -13123,7 +13123,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "bValid"    => {|| OrdClearScope( oBrw, ( D():Get( "Client", nView ) ) ) },;
                                                 "bChanged"  => {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, ( D():Get( "Client", nView ) ), .t. ) } } )
 
-   oCbxOrd        := TGridComboBox():Build(  {  "nRow"      => 38,;
+   oCbxOrd        := TGridComboBox():Build(  {  "nRow"      => 45,;
                                                 "nCol"      => {|| GridWidth( 9.5, oDlg ) },;
                                                 "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
                                                 "oWnd"      => oDlg,;
@@ -13132,7 +13132,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "aItems"    => aCbxOrd,;
                                                 "bChange"   => {|| ( D():Get( "Client", nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus(), oBrw:Refresh() } } )
 
-   oBtnAdd        := TGridImage():Build(  {     "nTop"      => 70,;
+   oBtnAdd        := TGridImage():Build(  {     "nTop"      => 75,;
                                                 "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                                 "nWidth"    => 64,;
                                                 "nHeight"   => 64,;
@@ -13141,8 +13141,8 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "bWhen"     => {|| .f. },;
                                                 "oWnd"      => oDlg } )
 
-   oBtnEdt           := TGridImage():Build(  {  "nTop"      => 70,;
-                                                "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+   oBtnEdt           := TGridImage():Build(  {  "nTop"      => 75,;
+                                                "nLeft"     => {|| GridWidth( 2, oDlg ) },;
                                                 "nWidth"    => 64,;
                                                 "nHeight"   => 64,;
                                                 "cResName"  => "flat_edit_64",;
@@ -13150,7 +13150,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "bWhen"     => {|| .f. },;
                                                 "oWnd"      => oDlg } )
 
-   oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 70,;
+   oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 75,;
                                                 "nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
                                                 "nWidth"    => 64,;
                                                 "nHeight"   => 64,;
@@ -13158,7 +13158,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "bLClicked" => {|| oBrw:PageUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
                                                 "oWnd"      => oDlg } )
 
-   oBtnUp            := TGridImage():Build(  {  "nTop"      => 70,;
+   oBtnUp            := TGridImage():Build(  {  "nTop"      => 75,;
                                                 "nLeft"     => {|| GridWidth( 8.5, oDlg ) },;
                                                 "nWidth"    => 64,;
                                                 "nHeight"   => 64,;
@@ -13166,7 +13166,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "bLClicked" => {|| oBrw:GoUp(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh()  },;
                                                 "oWnd"      => oDlg } )
 
-   oBtnDown          := TGridImage():Build(  {  "nTop"      => 70,;
+   oBtnDown          := TGridImage():Build(  {  "nTop"      => 75,;
                                                 "nLeft"     => {|| GridWidth( 9.5, oDlg ) },;
                                                 "nWidth"    => 64,;
                                                 "nHeight"   => 64,;
@@ -13174,7 +13174,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
                                                 "bLClicked" => {|| oBrw:GoDown(), oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() },;
                                                 "oWnd"      => oDlg } )
 
-   oBtnDownPage      := TGridImage():Build(  {  "nTop"      => 70,;
+   oBtnDownPage      := TGridImage():Build(  {  "nTop"      => 75,;
                                                 "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                                 "nWidth"    => 64,;
                                                 "nHeight"   => 64,;
@@ -13186,7 +13186,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
 
    oBrw                 := TGridIXBrowse():New( oDlg )
 
-   oBrw:nTop            := oBrw:EvalRow( 110 )
+   oBrw:nTop            := oBrw:EvalRow( 115 )
    oBrw:nLeft           := oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    oBrw:nWidth          := oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    oBrw:nHeight         := oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )
