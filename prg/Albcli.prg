@@ -592,13 +592,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "NFacturado"
-         :bStrData         := {|| trans( ( D():Get( "AlbCliT", nView ) )->nFacturado, "9" ) }
-         :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->nFacturado }
-         :nWidth           := 20
-      end with
-
-      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }

@@ -126,9 +126,11 @@ FUNCTION FullCurDir()
 #else
       cFullCurDir    := hb_curdrive()
 #endif   
-
-      if IsAlpha( cFullCurDir )
+ 
+      if IsAlpha( cFullCurDir ) .and. ( cFullCurDir != "A" )
          cFullCurDir += ":\"
+      else 
+         cFullCurDir := "\"
       end if
 
       cFullCurDir    += CurDir() + If( !Empty( CurDir() ), "\", "" )
