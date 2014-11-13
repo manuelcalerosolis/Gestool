@@ -4129,6 +4129,7 @@ METHOD DefineAuxiliar()
       FIELD NAME "cValPr2"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTmpLabel
       FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::cAreaTmpLabel
       FIELD NAME "cLote"      TYPE "C" LEN  12  DEC 0 COMMENT "Lote"                                     OF ::cAreaTmpLabel
+      FIELD NAME "dFecCad"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha caducidad"                          OF ::cAreaTmpLabel
       FIELD NAME "lLabel"     TYPE "L" LEN   1  DEC 0 COMMENT "Lógico para marca de etiquetas"           OF ::cAreaTmpLabel
       FIELD NAME "nLabel"     TYPE "N" LEN   6  DEC 0 COMMENT "Unidades de etiquetas a imprimir"         OF ::cAreaTmpLabel
 
@@ -4209,6 +4210,7 @@ Method LoadAuxiliar() CLASS TProduccion
             ::cAreaTmpLabel:cValPr2     := ::oDetProduccion:oDbf:cValPr2
             ::cAreaTmpLabel:lLote       := ::oDetProduccion:oDbf:lLote
             ::cAreaTmpLabel:cLote       := ::oDetProduccion:oDbf:cLote
+            ::cAreaTmpLabel:dFecCad     := ::oDetProduccion:oDbf:dFecCad 
             ::cAreaTmpLabel:lLabel      := .t.
 
             if ::nCantidadLabels == 1
@@ -4538,6 +4540,7 @@ Method lPrepareDataReportLbl( lDesign ) CLASS TProduccion
       FIELD NAME "cValPr2"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTemporalLabel
       FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::cAreaTemporalLabel
       FIELD NAME "cLote"      TYPE "C" LEN  12  DEC 0 COMMENT "Lote"                                     OF ::cAreaTemporalLabel
+      FIELD NAME "dFecCad"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha caducidad"                          OF ::cAreaTemporalLabel
       FIELD NAME "lLabel"     TYPE "L" LEN   1  DEC 0 COMMENT "Lógico para marca de etiquetas"           OF ::cAreaTemporalLabel
       FIELD NAME "nLabel"     TYPE "N" LEN   6  DEC 0 COMMENT "Unidades de etiquetas a imprimir"         OF ::cAreaTemporalLabel
 
@@ -4659,18 +4662,24 @@ METHOD DataLabel( oFr, lTemporal ) CLASS TProduccion
 
    oFr:SetWorkArea(     "Operación", ::oOperacion:oDbf:nArea )
    oFr:SetFieldAliases( "Operación", cObjectsToReport( ::oOperacion:oDbf ) )
+
+   oFr:SetWorkArea(     "Artículos", ::oArt:nArea )
+   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )   
    
    oFr:SetMasterDetail( "Lineas de producción", "Producción", {|| ::cAreaTemporalLabel:cSerOrd + Str( ::cAreaTemporalLabel:nNumOrd ) + ::cAreaTemporalLabel:cSufOrd } )
    oFr:SetMasterDetail( "Lineas de producción", "Empresa",    {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Lineas de producción", "Almacenes",  {|| ::cAreaTemporalLabel:cCodAlm } )
    oFr:SetMasterDetail( "Lineas de producción", "Sección",    {|| ::cAreaTemporalLabel:cCodSec } )
    oFr:SetMasterDetail( "Lineas de producción", "Operación",  {|| ::cAreaTemporalLabel:cCodOpe } )
+   oFr:SetMasterDetail( "Lineas de producción", "Artículos",  {|| ::cAreaTemporalLabel:cCodigo } )
+
 
    oFr:SetResyncPair(   "Lineas de producción", "Producción" )
    oFr:SetResyncPair(   "Lineas de producción", "Empresa" )
    oFr:SetResyncPair(   "Lineas de producción", "Almacenes" )
    oFr:SetResyncPair(   "Lineas de producción", "Sección" )
    oFr:SetResyncPair(   "Lineas de producción", "Operación" )
+   oFr:SetResyncPair(   "Lineas de producción", "Artículos" )
 
 Return nil
 
@@ -4729,6 +4738,7 @@ Method LoadAuxiliarDesign() CLASS TProduccion
             ::cAreaTemporalLabel:cValPr2     := ::oDetProduccion:oDbf:cValPr2
             ::cAreaTemporalLabel:lLote       := ::oDetProduccion:oDbf:lLote
             ::cAreaTemporalLabel:cLote       := ::oDetProduccion:oDbf:cLote
+            ::cAreaTemporalLabel:dFecCad     := ::oDetProduccion:oDbf:dFecCad
             ::cAreaTemporalLabel:lLabel      := .t.
             ::cAreaTemporalLabel:nLabel      := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd
 
