@@ -4655,8 +4655,6 @@ METHOD buildSubirImagenes() CLASS TComercio
 
    // Conectamos al FTP y Subimos las imágenes de artículos-----------------------
 
-   ?Len( ::aImagesArticulos )
-
    if Len( ::aImagesArticulos ) > 0
 
       if !::ftpCreateConexion()
@@ -4670,7 +4668,7 @@ METHOD buildSubirImagenes() CLASS TComercio
          ::meterProcesoSetTotal( len( ::aImagesArticulos ) )
 
          if !empty( ::cDirImagen )
-            ::ftpCreateDirectory( ::cDirectoryProduct() )
+            ::ftpCreateDirectory( ::cDirectoryProduct(), .t. )
          end if
 
          for each oImage in ::aImagesArticulos
@@ -4679,13 +4677,21 @@ METHOD buildSubirImagenes() CLASS TComercio
 
             // Posicionamos en el directorio-----------------------------------
 
-            ::ftpCreateDirectoryRecursive( oImage:cCarpeta )
+            Msginfo( oImage:cCarpeta, "oImage:cCarpeta" )
+
+            //::ftpCreateDirectoryRecursive( oImage:cCarpeta )
+            ::ftpCreateDirectory( oImage:cCarpeta )
 
             // Sube el fichero ------------------------------------------------
+
+            Msginfo( oImage:cNombreImagen, "oImage:cNombreImagen" )
+            Msginfo( ::cDirectoryProduct() + "/" + oImage:cCarpeta, "::cDirectoryProduct() oImage:cCarpeta" )
 
             ::ftpCreateFile( oImage:cNombreImagen, ::cDirectoryProduct() + "/" + oImage:cCarpeta )
            
             //Volvemos al directorio raiz--------------------------------------
+
+            Msginfo( oImage:cCarpeta, "carpeta raiz" )
 
             ::ftpReturnDirectory( oImage:cCarpeta )
 
@@ -4716,7 +4722,7 @@ METHOD buildSubirImagenes() CLASS TComercio
          ::meterProcesoSetTotal( len( ::aImagesCategories ) )
 
          if !empty( ::cDirImagen )
-            ::ftpCreateDirectory( ::cDirectoryCategories() )
+            ::ftpCreateDirectory( ::cDirectoryCategories(), .t. )
          end if
 
          for each oImage in ::aImagesCategories
@@ -6703,8 +6709,6 @@ METHOD buildSubirInformacion() CLASS TComercio
 
    for each hPropiedadesLinData in ::aPropiedadesLinData
 
-      Msginfo( hGet( hPropiedadesLinData, "name" ) )
-
       ::buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData )
 
       ::meterProcesoText( "Subiendo propiedad " + alltrim(str(hb_enumindex())) + " de " + alltrim(str(len(::aPropiedadesLinData))) )
@@ -7730,6 +7734,8 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
    local nOrdArtDiv           := ::oArtDiv:OrdSetFocus( "cCodArt" )
    local lDefault             := .t.
    local nTotStock            := 0
+   local aImages
+   local cImage
 
    /*
    Comprobamos si el artículo tiene propiedades y metemos las propiedades
@@ -7855,36 +7861,38 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                   -------------------------------------------------------------
                   */
 
-                  if !Empty( ::oArtDiv:cImgWeb )
+                  if !Empty( ::oArtDiv:mImgWeb )
 
-                     if ::oArtImg:SeekInOrd( hGet( hArticuloData, "id" ), "cCodArt" )
+                     aImages  := hb_aTokens( ::oArtDiv:mImgWeb, "," )
 
-                        while ::oArtImg:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtImg:Eof()
+                     for each cImage in aImages
 
-                           if AllTrim( ::oArtImg:cImgArt ) == AllTrim( ::oArtDiv:cImgWeb )
+                        if ::oArtImg:SeekInOrd( hGet( hArticuloData, "id" ), "cCodArt" )
 
-                              /*
-                              Añadimos en la tabla product_attribute_image-----------
-                              */
+                           while ::oArtImg:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtImg:Eof()
 
-                              cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
-                                                "id_product_attribute, " + ;
-                                                "id_image )" + ;
-                                             " VALUES " + ;
-                                                "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;    //id_product
-                                                "'" + AllTrim( Str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
-   
-                              if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                                 ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
-                              end if
+                              if AllTrim( ::oArtImg:cImgArt ) == AllTrim( cImage )
 
-                           end if   
+                                 cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                                                   "id_product_attribute, " + ;
+                                                   "id_image )" + ;
+                                                " VALUES " + ;
+                                                   "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;    //id_product
+                                                   "'" + AllTrim( Str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
+         
+                                 if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+                                    ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+                                 end if
 
-                           ::oArtImg:Skip()
+                              end if   
 
-                        end while   
+                              ::oArtImg:Skip()
 
-                     end if
+                           end while   
+
+                        end if
+
+                     next   
 
                   end if
 
@@ -8027,38 +8035,40 @@ METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb ) CLAS
                ----------------------------------------------------------------
                */
 
-               if !Empty( ::oArtDiv:cImgWeb )
+               if !Empty( ::oArtDiv:mImgWeb )
 
-                  if ::oArtImg:SeekInOrd( hGet( hArticuloData, "id" ), "cCodArt" )
+                  aImages  := hb_aTokens( ::oArtDiv:mImgWeb, "," )
 
-                     while ::oArtImg:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtImg:Eof()
+                  for each cImage in aImages
 
-                        if AllTrim( ::oArtImg:cImgArt ) == AllTrim( ::oArtDiv:cImgWeb )
+                     if ::oArtImg:SeekInOrd( hGet( hArticuloData, "id" ), "cCodArt" )
 
-                           /*
-                           Añadimos en la tabla product_attribute_image-----------
-                           */
+                        while ::oArtImg:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtImg:Eof()
 
-                           cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
-                                             "id_product_attribute, " + ;
-                                             "id_image )" + ;
-                                          " VALUES " + ;
-                                             "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;    //id_product
-                                             "'" + AllTrim( Str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
-   
-                           if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-                              ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
-                           end if
+                           if AllTrim( ::oArtImg:cImgArt ) == AllTrim( cImage )
 
-                        end if   
+                              cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                                                "id_product_attribute, " + ;
+                                                "id_image )" + ;
+                                             " VALUES " + ;
+                                                "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;    //id_product
+                                                "'" + AllTrim( Str( ::oArtImg:cCodWeb ) ) + "' )"        //cover
+      
+                              if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+                                 ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "product_attribute_image" ), 3 )
+                              end if
 
-                        ::oArtImg:Skip()
+                           end if   
 
-                     end while   
+                           ::oArtImg:Skip()
 
-                  end if
+                        end while   
 
-               end if      
+                     end if
+
+                  next   
+
+               end if
 
          end case
 
@@ -9091,13 +9101,16 @@ Return( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD ftpCreateDirectory( cCarpeta ) CLASS TComercio
-   
+METHOD ftpCreateDirectory( cCarpeta, lPos ) CLASS TComercio
+
+   DEFAULT lPos   := .f.
+
    if !empty( ::cHostFtp )   
       ::oFtp:MKD( cCarpeta )
       ::oFtp:Cwd( cCarpeta )
    else
       makedir( cCarpeta )
+      dirchange( cCarpeta )
    end if 
 
 Return ( .t. )
@@ -9137,7 +9150,9 @@ METHOD ftpReturnDirectory( cCarpeta ) CLASS TComercio
    if !empty( ::cHostFtp )   
       for n := 1 to Len( cCarpeta )
          ::oFtp:Cwd( ".." )
-      next   
+      next
+   else
+      DirChange( ".." )   
    end if
 
 Return ( .t. )

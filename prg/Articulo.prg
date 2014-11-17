@@ -1931,7 +1931,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       WHEN     ( nMode != ZOOM_MODE ) ;
       OF       fldGeneral
 
-
    /*
    REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lTerminado" ) ) ];
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "lTerminado" ) ) ];
@@ -3037,19 +3036,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       oBrwDiv:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
       oBrwDiv:cAlias          := dbfTmpVta
-      oBrwDiv:nMarqueeStyle   := 5
+      oBrwDiv:nMarqueeStyle   := 6
       oBrwDiv:cName           := "Articulos.Propiedades"
 
          with object ( oBrwDiv:AddCol() )
             :cHeader          := "Prop. 1"
+            :cSortOrder       := "cValPr1"
             :bEditValue       := {|| ( dbfTmpVta )->cValPr1 }
             :nWidth           := 160
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          end with
 
          with object ( oBrwDiv:AddCol() )
             :cHeader          := "Prop. 2"
+            :cSortOrder       := "cValPr2"
             :bEditValue       := {|| ( dbfTmpVta )->cValPr2 }
             :nWidth           := 160
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          end with
 
          with object ( oBrwDiv:AddCol() )
@@ -5391,6 +5394,7 @@ Static Function BeginTrans( aTmp, nMode )
    local aItmSubCta
    local oError
    local oBlock
+   local oTemporal
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -5473,9 +5477,16 @@ Static Function BeginTrans( aTmp, nMode )
 
    dbCreate( filTmpVta, aSqlStruct( aItmVta() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), filTmpVta, cCheckArea( "VtaArt", @dbfTmpVta ), .f. )
+
    ( dbfTmpVta )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
    ( dbfTmpVta )->( OrdCreate( filTmpVta, "cCodArt", "cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2", {|| Field->cCodArt + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 } ) )
 
+   ( dbfTmpVta )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr1", "CCODART + CVALPR1", {|| Field->CCODART + Field->CVALPR1 } ) )
+
+   ( dbfTmpVta )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+   ( dbfTmpVta )->( ordCreate( filTmpVta, "cValPr2", "CCODART + CVALPR2", {|| Field->CCODART + Field->CVALPR2 } ) )
+   
    if nMode != APPD_MODE .and. ( dbfArtVta )->( dbSeek( cCodArt ) )
       while ( dbfArtVta )->cCodArt == cCodArt .and. !( dbfArtVta )->( eof() )
          dbPass( dbfArtVta, dbfTmpVta, .t. )
@@ -5547,9 +5558,12 @@ Static Function BeginTrans( aTmp, nMode )
          Metemos las imágenes en un array para las propiedades-----------------
          */
 
-         aAdd( aImgsArticulo, {  "lSelect"               => .f.,;
-                                 "ruta"                  => ( dbfImg )->cImgArt,;
-                                 "tooltip"               => ( dbfImg )->cNbrArt } )
+         oTemporal                     := SImagenes()
+         oTemporal:lSelect             := .f.
+         oTemporal:Ruta                := ( dbfImg )->cImgArt
+         oTemporal:ToolTip             := ( dbfImg )->cNbrArt
+
+         aAdd( aImgsArticulo, oTemporal )
 
          dbPass( dbfImg, dbfTmpImg, .t. )
          
@@ -6270,8 +6284,8 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    Llenamos los arrays con las posibles propiedades----------------------------
    */
 
-   aValPrp1                := aLlenaPropiedades( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ], aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ], nMode )
-   aValPrp2                := aLlenaPropiedades( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ], aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ], nMode )
+   aValPrp1                := aLlenaPropiedades( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ], aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ], nMode, oBrw, dbfTmpVta )
+   aValPrp2                := aLlenaPropiedades( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ], aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ], nMode, oBrw, dbfTmpVta )
 
    /*
    Preguntamos si la propiedad es de tipo color o no---------------------------
@@ -6279,6 +6293,48 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
    lColorPrp1              := retFld( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ], dbfPro, "lColor" )
    lColorPrp2              := retFld( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ], dbfPro, "lColor" )
+
+   /*
+   Limpiamos vaores en el caso de ser multiple selección-----------------------
+   */
+
+   if Len( oBrw:aSelected ) > 1 .and. nMode != APPD_MODE
+
+      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr1" ) ) ] := "" 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "cValPr2" ) ) ] := "" 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreCom" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf1" ) ) ] := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf2" ) ) ] := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf3" ) ) ] := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf4" ) ) ] := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf5" ) ) ] := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "lBnf6" ) ) ] := .f. 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef1" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef2" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef3" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef4" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef5" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "Benef6" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr1" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr2" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr3" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr4" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr5" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nBnfSbr6" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta1" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta2" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta3" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta4" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta5" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreVta6" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva1" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva2" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva3" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva4" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva5" ) ) ] := 0 
+      aTmp[ ( dbfTmpVta )->( FieldPos( "nPreIva6" ) ) ] := 0 
+
+   end if
 
    /*
    Tomamos algunos valores por defecto-----------------------------------------
@@ -6291,6 +6347,16 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    cSay[5]                 := aBnfSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr5" ) ) ], 1 ) ]
    cSay[6]                 := aBnfSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr6" ) ) ], 1 ) ]
 
+   /*
+   Seleccionamos las Imágenes--------------------------------------------------
+   */
+
+   lCargaImagenes()
+
+   if Len( oBrw:aSelected ) == 1
+      SelectImagen( aTmp )
+   end if
+
    DEFINE DIALOG oDlg RESOURCE "PREDIV" TITLE LblTitle( nMode ) + "precios por propiedades"
 
       /*
@@ -6301,7 +6367,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE FOLDER oFld ;
          ID       200 ;
          OF       oDlg ;
-         PROMPT   "Propiedades",;
+         PROMPT   "Precios",;
                   "Imágenes";
          DIALOGS  "PREDIV01",;
                   "PREDIV02"
@@ -6310,7 +6376,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       Primer Browse de propiedades--------------------------------------------
       */
 
-      oBrwPrp1                        := IXBrowse():New( oFld:aDialogs[1] ) 
+      oBrwPrp1                        := IXBrowse():New( oDlg ) 
 
       oBrwPrp1:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp1:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -6354,19 +6420,19 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       REDEFINE BUTTON oTodasPrp1 ;
          ID       111 ;
-			OF 		oFld:aDialogs[1] ;
+			OF 		oDlg ;
          ACTION   ( lSelAllPrp( aValPrp1, oBrwPrp1, .t. ) )
 
       REDEFINE BUTTON oNingunaPrp1 ;
          ID       112 ;
-			OF 		oFld:aDialogs[1] ;
+			OF 		oDlg ;
          ACTION   ( lSelAllPrp( aValPrp1, oBrwPrp1, .f. ) )
 
       /*
       Segundo Browse de propiedades----------------------                                                                                                                                             ---------------------
       */
 
-      oBrwPrp2                        := IXBrowse():New( oFld:aDialogs[1] )
+      oBrwPrp2                        := IXBrowse():New( oDlg )
 
       oBrwPrp2:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp2:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -6410,12 +6476,12 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       REDEFINE BUTTON oTodasPrp2 ;
          ID       113 ;
-			OF 		oFld:aDialogs[1] ;
+			OF 		oDlg ;
          ACTION   ( lSelAllPrp( aValPrp2, oBrwPrp2, .t. ) )
 
       REDEFINE BUTTON oNingunaPrp2 ;
          ID       114 ;
-			OF 		oFld:aDialogs[1] ;
+			OF 		oDlg ;
          ACTION   ( lSelAllPrp( aValPrp2, oBrwPrp2, .f. ) )
 
       /*
@@ -6876,15 +6942,9 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       with object ( oBrwImg:AddCol() )
          :cHeader             := "Seleccionada"
          :bStrData            := {|| "" }
-         :bEditValue          := {|| hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "lselect" ) }
+         :bEditValue          := {|| aImgsArticulo[ oBrwImg:nArrayAt ]:lselect }
          :nWidth              := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-      end with
-
-      with object ( oBrwImg:AddCol() )
-         :cHeader             := "Imagen"
-         :bEditValue          := {|| AllTrim( hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "tooltip" ) ) + CRLF + AllTrim( hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "ruta" ) ) }
-         :nWidth              := 400
+         :SetCheck( { "BSEL", "Nil16" } )
       end with
 
       with object ( oBrwImg:AddCol() )
@@ -6892,9 +6952,15 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          :nEditType           := TYPE_IMAGE
          :lBmpStretch         := .f.
          :lBmpTransparent     := .t.
-         :bStrImage           := {|| hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "ruta" ) }
+         :bStrImage           := {|| aImgsArticulo[ oBrwImg:nArrayAt ]:ruta }
          :nDataBmpAlign       := AL_CENTER
          :nWidth              := 100
+      end with
+
+      with object ( oBrwImg:AddCol() )
+         :cHeader             := "Imagen"
+         :bEditValue          := {|| AllTrim( aImgsArticulo[ oBrwImg:nArrayAt ]:tooltip ) + CRLF + AllTrim( aImgsArticulo[ oBrwImg:nArrayAt ]:ruta ) }
+         :nWidth              := 350
       end with
 
       if nMode != ZOOM_MODE
@@ -6919,7 +6985,11 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-      oDlg:bStart := {|| StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel )  }
+      oDlg:bStart := {|| StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel ) }
+
+      if nMode != APPD_MODE
+         oDlg:AddFastKey( VK_F5, {|| EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDlg, dbfTmpVta, nMode, oBrwPrp1, oBrwPrp2 ) } )
+      end if
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -6927,38 +6997,102 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-static function aLlenaPropiedades( cCodigoPropiedad, nValPrp, nMode )
+static function aLlenaPropiedades( cCodigoPropiedad, nValPrp, nMode, oBrw )
 
    local aValores    := {}
-   local nRec        := ( dbfTblPro )->( Recno() )
-   local nOrdAnt     := ( dbfTblPro )->( OrdSetFocus( "cPro" ) )
+   local nRec
+   local nOrdAnt
    local oTemporal
+   local a
 
-   if ( dbfTblPro )->( dbSeek( cCodigoPropiedad ) )
+   if Len( oBrw:aSelected ) > 1 .and.  nMode != APPD_MODE
 
-      while ( dbfTblPro )->cCodPro == cCodigoPropiedad .and. !( dbfTblPro )->( Eof() )
+      nRec              := ( dbfTblPro )->( Recno() )
+      nOrdAnt           := ( dbfTblPro )->( OrdSetFocus( "cCodPro" ) )
 
-         if ( nMode != EDIT_MODE ) .or. ( ( nMode == EDIT_MODE ) .and. ( ( dbfTblPro )->cCodTbl == nValPrp ) )
+      for each a in oBrw:aSelected
+         
+         ( dbfTmpVta )->( dbGoTo( a ) )
 
-            oTemporal                     := SValorPropiedades()
-            oTemporal:cCodPrp             := cCodigoPropiedad
-            oTemporal:cValPrp             := ( dbfTblPro )->cCodTbl
-            oTemporal:cDesPrp             := ( dbfTblPro )->cDesTbl
-            oTemporal:nColor              := ( dbfTblPro )->nColor
-            oTemporal:lSel                := ( ( dbfTblPro )->cCodTbl == nValPrp )
+         if ( dbfTmpVta )->cCodPr1 == cCodigoPropiedad
 
-            aAdd( aValores, oTemporal )
+            if aScan( aValores, {|a| a:cCodPrp == cCodigoPropiedad .and. a:cValPrp == ( dbfTmpVta )->cValPr1 } ) == 0
+
+               if ( dbfTblPro )->( dbSeek( ( dbfTmpVta )->cCodPr1 + ( dbfTmpVta )->cValPr1 ) ) 
+
+                  oTemporal                     := SValorPropiedades()
+                  oTemporal:cCodPrp             := cCodigoPropiedad
+                  oTemporal:cValPrp             := ( dbfTmpVta )->cValPr1
+                  oTemporal:cDesPrp             := ( dbfTblPro )->cDesTbl
+                  oTemporal:nColor              := ( dbfTblPro )->nColor
+                  oTemporal:lSel                := .t.
+
+                  aAdd( aValores, oTemporal )
+
+               end if
+
+            end if
 
          end if
 
-         ( dbfTblPro )->( dbSkip() )
+         if ( dbfTmpVta )->cCodPr2 == cCodigoPropiedad
 
-      end while
+            if aScan( aValores, {|a| a:cCodPrp == cCodigoPropiedad .and. a:cValPrp == ( dbfTmpVta )->cValPr2 } ) == 0
+
+               if ( dbfTblPro )->( dbSeek( ( dbfTmpVta )->cCodPr2 + ( dbfTmpVta )->cValPr2 ) ) 
+
+                  oTemporal                     := SValorPropiedades()
+                  oTemporal:cCodPrp             := cCodigoPropiedad
+                  oTemporal:cValPrp             := ( dbfTmpVta )->cValPr2
+                  oTemporal:cDesPrp             := ( dbfTblPro )->cDesTbl
+                  oTemporal:nColor              := ( dbfTblPro )->nColor
+                  oTemporal:lSel                := .t.
+
+                  aAdd( aValores, oTemporal )
+
+               end if
+
+            end if
+
+         end if
+
+      next
+
+      ( dbfTblPro )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfTblPro )->( dbGoTo( nRec ) )
+   
+   else
+
+      nRec              := ( dbfTblPro )->( Recno() )
+      nOrdAnt           := ( dbfTblPro )->( OrdSetFocus( "cPro" ) )
+
+      if ( dbfTblPro )->( dbSeek( cCodigoPropiedad ) )
+
+         while ( dbfTblPro )->cCodPro == cCodigoPropiedad .and. !( dbfTblPro )->( Eof() )
+
+            if ( nMode != EDIT_MODE ) .or. ( ( nMode == EDIT_MODE ) .and. ( ( dbfTblPro )->cCodTbl == nValPrp ) )
+
+               oTemporal                     := SValorPropiedades()
+               oTemporal:cCodPrp             := cCodigoPropiedad
+               oTemporal:cValPrp             := ( dbfTblPro )->cCodTbl
+               oTemporal:cDesPrp             := ( dbfTblPro )->cDesTbl
+               oTemporal:nColor              := ( dbfTblPro )->nColor
+               oTemporal:lSel                := ( ( dbfTblPro )->cCodTbl == nValPrp )
+
+               aAdd( aValores, oTemporal )
+
+            end if
+
+            ( dbfTblPro )->( dbSkip() )
+
+         end while
+
+      end if
+
+      ( dbfTblPro )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfTblPro )->( dbGoTo( nRec ) )
 
    end if
-
-   ( dbfTblPro )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfTblPro )->( dbGoTo( nRec ) )
 
 return aValores
 
@@ -7000,8 +7134,9 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
    local nContEdt    := 0
    local lSelPr1     := .f.
    local lSelPr2     := .f.
+   local nOrdAnt     := ( dbfTmpVta )->( OrdSetFocus( "cCodArt" ) )
 
-   if nMode == APPD_MODE
+   if nMode == APPD_MODE .or. Len( oBrw:aSelected ) > 1
 
       do case
          case Len( aValPrp1 ) != 0 .and. Len( aValPrp2 ) == 0
@@ -7026,6 +7161,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                        aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                         WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
 
@@ -7035,6 +7171,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                        aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ] := mSer2Mem()
 
                         WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
 
@@ -7052,6 +7189,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                   WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
 
@@ -7061,6 +7199,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                   WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
 
@@ -7107,6 +7246,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                               WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
 
@@ -7118,6 +7258,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
                               aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                               WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
 
@@ -7147,6 +7288,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                            WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
 
@@ -7158,6 +7300,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                            WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
 
@@ -7185,6 +7328,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                            WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
 
@@ -7196,6 +7340,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
                            aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                            WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
 
@@ -7219,6 +7364,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                      WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
 
@@ -7230,6 +7376,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
                      aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
                      WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
 
@@ -7253,12 +7400,17 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
       aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr4") ) ]   := oSay[ 4 ]:nAt
       aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr5") ) ]   := oSay[ 5 ]:nAt
       aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr6") ) ]   := oSay[ 6 ]:nAt
+      aTmp[ ( dbfTmpVta )->( FieldPos( "MIMGWEB" ) ) ]   := mSer2Mem()
 
       WinGather( aTmp, aGet, dbfTmpVta, oBrw, nMode )
 
-      oDlg:End( IDOK )
-
    end if
+
+   if nMode != APPD_MODE
+      oDlg:End( IDOK )
+   end if
+
+   ( dbfTmpVta )->( OrdSetFocus( nOrdAnt ) )
 
    if !Empty( oBrw )
       oBrw:Refresh()
@@ -7516,7 +7668,7 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
    else
 
       if !Empty( oBtnOk )
-         SetWindowText( oBtnOk:hWnd, "Aceptar" )
+         SetWindowText( oBtnOk:hWnd, "Aceptar [F5]" )
       end if
 
       if !Empty( oBtnCancel )
@@ -15579,6 +15731,7 @@ Function aItmVta()
    aAdd( aBase, { "cImgWeb",   "C",250, 0, "Imagen para la web de estas propiedades" , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cToolTip",  "C",250, 0, "Tooltip para las imagenes de la web"     , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodImgWeb","N", 11, 0, "Código de la imagen para la web"         , "",                  "", "( cDbfArt )", 0 } )
+   aAdd( aBase, { "mImgWeb",   "M", 10, 0, "Imágenes por propiedad"                  , "",                  "", "( cDbfArt )", 0 } )
 
 Return ( aBase )
 
@@ -19213,6 +19366,8 @@ RETURN lValid
 
 static function lCargaImagenes()
 
+   local oTemporal
+
    aImgsArticulo      := {}
 
    ( dbfTmpImg )->( dbGoTop() )
@@ -19223,9 +19378,12 @@ static function lCargaImagenes()
          Metemos las imágenes en un array para las propiedades-----------------
          */
 
-         aAdd( aImgsArticulo, {  "lSelect"               => .f.,;
-                                 "ruta"                  => ( dbfTmpImg )->cImgArt,;
-                                 "tooltip"               => ( dbfTmpImg )->cNbrArt } )
+         oTemporal                     := SImagenes()
+         oTemporal:lSelect             := .f.
+         oTemporal:Ruta                := ( dbfTmpImg )->cImgArt
+         oTemporal:ToolTip             := ( dbfTmpImg )->cNbrArt
+
+         aAdd( aImgsArticulo, oTemporal )
 
       ( dbfTmpImg )->( dbSkip() )
 
@@ -19239,15 +19397,56 @@ return .t.
 
 Static function SeleccionaImagen( oBrwImg )
 
-   //hSet( aImgsArticulo[ oBrwImg:nArrayAt ], "lSelect", !hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "lSelect" ) )
-
-   oBrwImg:Select(3)
+   aImgsArticulo[ oBrwImg:nArrayAt ]:lSelect    := !aImgsArticulo[ oBrwImg:nArrayAt ]:lSelect
    oBrwImg:Refresh()
 
-   //?hGet( aImgsArticulo[ oBrwImg:nArrayAt ], "lSelect" )
-
-   //MsgInfo( "Selecciono la imagen" )
-
 return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function mSer2Mem()
+
+   local sImage
+   local mNumSer     := ""
+
+   for each sImage in aImgsArticulo
+      if sImage:lSelect
+         mNumSer        += AllTrim( sImage:ruta ) + ","
+      end if   
+   next
+
+Return ( mNumSer )
+
+//---------------------------------------------------------------------------//
+
+Static Function SelectImagen( aTmp )
+
+   local cImagen
+   local aNumSer
+   local nPos
+
+   aNumSer        := hb_aTokens( aTmp[ ( dbfTmpVta )->( fieldpos( "mImgWeb" ) ) ], "," )
+
+   for each cImagen in aNumSer
+
+      nPos        := aScan( aImgsArticulo, {|x| AllTrim( x:ruta ) == AllTrim( cImagen ) }  )
+
+      if nPos != 0
+         aImgsArticulo[ nPos ]:lSelect    := .t.
+      end if
+
+   next
+
+Return ( nil )
+
+//---------------------------------------------------------------------------
+
+CLASS SImagenes
+
+   DATA lSelect      INIT .f.
+   DATA ruta         INIT Space( 250 )
+   DATA tooltip      INIT Space( 250 )
+
+END CLASS
 
 //---------------------------------------------------------------------------//
