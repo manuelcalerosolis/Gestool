@@ -35,6 +35,8 @@ local hClass
 
   __clsAddMsg( hClass, "SelectOne", {|Self| Self, ::Select( 0 ), ::Select( 1 ) }, 3, nil, 1, .f., .f. ) 
 
+  __clsModMsg( hClass, "ToExcel", @TXBrowseToExcel(), 1 )
+
   hClass        := TWBrowse():ClassH
 
   __clsAddMsg( hClass, "_lDrawHeaders", __cls_IncData( hClass ), 9, .f., 1, .f., .f. )
@@ -180,4 +182,265 @@ Static Function CheckBoxClick( lValue )
 Return ( Self )
 
 //----------------------------------------------------------------------------//
+
+Static Function TXBrowseToExcel( bProgress, nGroupBy, aCols )
+
+   local oExcel, oBook, oSheet, oWin
+   local nCol, nXCol, oCol, cType, uValue, nAt, cxlAggr
+   local uBookMark, nRow
+   local nDataRows
+   local oClip, cText, nPasteRow, nStep, cFormat
+   local aTotals     := {}
+   local lAnyTotals  := .f.
+   local aWidths     := {}
+   local lContinue   := .t.
+   local oBlock
+   local oError
+
+   local Self        := HB_QSelf()
+
+   nDataRows   := EVAL( ::bKeyCount )
+   if nDataRows == 0
+      return Self
+   endif
+
+   DEFAULT aCols         := ::GetVisibleCols()
+
+   if Empty( aCols )
+      return Self
+   endif
+
+   if ( oExcel := ExcelObj() ) == nil
+      msgStop( "Excel not installed" )
+      return Self
+   endif
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   oExcel:ScreenUpdating := .f.
+
+   oBook    := oExcel:WorkBooks:Add()
+   oSheet   := oExcel:ActiveSheet
+
+   uBookMark   := EVAL( ::bBookMark )
+
+   nRow     := 1
+   nCol     := 0
+   aWidths  := Array( Len( aCols ) )
+
+   for nXCol := 1 TO Len( aCols )
+      oCol   := aCols[ nXCol ]
+
+      nCol ++
+
+      oSheet:Cells( nRow, nCol ):Value   := oCol:cHeader
+      cType      := oCol:cDataType
+
+      if ::nDataType != DATATYPE_ARRAY
+         DO CASE
+         CASE Empty( cType )
+            // no action
+         CASE cType == 'N'
+            cFormat                                      := Clp2xlNumPic( oCol:cEditPicture )
+            oSheet:Columns( nCol ):NumberFormat          := cFormat
+            oSheet:Columns( nCol ):HorizontalAlignment   := - 4152 //xlRight
+
+         CASE cType == 'D'
+              if ValType( oCol:cEditPicture ) == 'C' .and. Left( oCol:cEditPicture, 1 ) != '@'
+                 oSheet:Columns( nCol ):NumberFormat := Lower( oCol:cEditPicture )
+              else
+                 oSheet:Columns( nCol ):NumberFormat := Lower( Set( _SET_DATEFORMAT ) )
+              endif
+              oSheet:Columns( nCol ):HorizontalAlignment := - 4152 //xlRight
+         CASE cType $ 'LPFM'
+            // leave as general format
+         OTHERWISE
+            oSheet:Columns( nCol ):NumberFormat := "@"
+            if ! Empty( oCol:nDataStrAlign )
+               oSheet:Columns( nCol ):HorizontalAlignment := If( oCol:nDataStrAlign == AL_CENTER, -4108, -4152 )
+            endif
+         ENDCASE
+      endif
+
+      if cType != nil .and. cType $ 'PFM' // Picture or memo
+         aWidths[ nCol ]                     := oCol:nWidth / 7.5
+         oSheet:Columns( nCol ):ColumnWidth  := aWidths[ nCol ]
+         oSheet:Rows( "2:" + LTrim(Str( ::nLen + 1 )) ):RowHeight := ::nRowHeight
+         if cType == 'M'
+            oSheet:Columns( nCol ):WrapText  := .t.
+         endif
+      endif
+
+   next nXCol
+
+   oSheet:Range( oSheet:Cells( 1, 1 ), oSheet:Cells( 1, Len( aCols ) ) ):Select()
+   oExcel:Selection:Borders(9):LineStyle := 1   // xlContinuous = 1
+   oExcel:Selection:Borders(9):Weight    := -4138   // xlThin = 2, xlHairLine = 1, xlThick = 4, xlMedium = -4138
+
+   if Empty( ::aSelected ) .or. Len( ::aSelected ) == 1
+
+      Eval( ::bGoTop )
+      if ::oRs != nil .AND. Len( aCols ) == ::oRs:Fields:Count()
+            ::oRs:MoveFirst()
+            nRow   := oSheet:Cells( 2, 1 ):CopyFromRecordSet( ::oRs )
+            ::oRs:MoveFirst()
+         nRow   += 2
+      else
+
+         if bProgress == nil
+            if ::oWnd:oMsgBar == nil
+               bProgress := { || nil }
+            else
+               bProgress := { | n, t | ::oWnd:SetMsg( "To Excel : " + Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
+            endif
+         endif
+
+         nRow      := 2
+         nStep     := Max( 1, Min( 100, Int( nDataRows / 100 ) ) )
+
+         if .t. // ::lExcelCellWise
+            do while nRow <= ( nDataRows + 1 ) .and. lContinue
+
+               nCol        := 0
+               for nxCol   := 1 to Len( aCols )
+                  oCol     := aCols[ nXCol ]
+                  nCol++
+                  oCol:ToExcel( oSheet, nRow, nCol )
+               next nCol
+
+               lContinue := ( ::Skip( 1 ) == 1 )
+               nRow ++
+               If ( nRow - 2 ) % nStep == 0
+                  if Eval( bProgress, nRow - 2, nDataRows ) == .f.
+                     Exit
+                  endif
+                  SysRefresh()
+               endif
+
+            enddo
+         else
+
+            nPasteRow := 2
+            cText     := ""
+            oClip := TClipBoard():New( 1, ::oWnd )
+            if oClip:Open()
+
+               Eval( bProgress, 0, nDataRows )
+
+               do while nRow <= ( nDataRows + 1 ) .and. lContinue
+                  if ! Empty( cText )
+                     cText += CRLF
+                  endif
+                  cText    += ::ClpRow( .t., aCols )
+
+                  lContinue := ( ::Skip( 1 ) == 1 )            // Eval( ::bSkip, 1 )
+                  nRow ++
+
+                  if Len( cText ) > 16000
+                     oClip:SetText( cText )
+                     oSheet:Cells( nPasteRow, 1 ):Select()
+                     oSheet:Paste()
+                     oClip:Clear()
+                     cText       := ""
+                     nPasteRow   := nRow
+                  endif
+
+                  If ( nRow - 2 ) % nStep == 0
+                     if Eval( bProgress, nRow - 2, nDataRows ) == .f.
+                        Exit
+                     endif
+                     SysRefresh()
+                  endif
+
+               enddo
+               if ! Empty( cText )
+                  oClip:SetText( cText )
+                  oSheet:Cells( nPasteRow, 1 ):Select()
+                  oSheet:Paste()
+                  oClip:Clear()
+                  cText    := ""
+               endif
+               oClip:Close()
+
+               Eval( bProgress, nDataRows, nDataRows )
+               SysRefresh()
+
+            endif
+            oClip:End()
+         endif // ::lExcelCellWise
+      endif
+   else
+      ::Copy()
+      oSheet:Cells( 2, 1 ):Select()
+      oSheet:Paste()
+      nRow := Len( ::aSelected ) + 2
+   endif
+   oSheet:Cells( 1, 1 ):Select()
+
+   // Totals, if needed
+
+   oSheet:Rows(    1 ):Font:Bold   := .T.
+   oSheet:Rows( nRow ):Font:Bold   := .T.
+
+   if ValType( nGroupBy ) == 'N'
+      for nxCol := 1 TO Len( aCols )
+         if aCols[ nxCol ]:lTotal
+            AAdd( aTotals, nxCol )
+         endif
+      next
+      if ! Empty( aTotals )
+         oSheet:Activate()
+         oExcel:Selection:Subtotal( nGroupBy , -4157,  ;    // xlSum = -4157
+                                    aTotals, ;
+                                    .t., ;    // Replace .t. or .f.
+                                    .f., ;    // PageBreaks
+                                    .t. )       // SummaryBelowData
+
+      endif
+   else
+      nCol   := 0
+      oSheet:Range( oSheet:Cells( nRow, 1 ), oSheet:Cells( nRow, Len( aCols ) ) ):Select()
+      oExcel:Selection:Borders(8):LineStyle := 1   // xlContinuous = 1
+      oExcel:Selection:Borders(8):Weight    := -4138   // xlThin = 2, xlHairLine = 1, xlThick = 4, xlMedium = -4138
+
+      for nXCol := 1 TO Len ( aCols )
+         oCol   := aCols[ nXCol ]
+         nCol ++
+      next nXCol
+   endif
+
+   for nCol := 1 to Len( aCols )
+      if aWidths[ nCol ] == nil
+         oSheet:Columns( nCol ):AutoFit()
+      endif
+      oSheet:Columns( nCol ):VerticalAlignment := -4108  // xlCenter
+   next
+
+   oSheet:Cells(1,1):Select()
+   oWin   := oExcel:ActiveWindow
+   oWin:SplitRow := 1
+   oWin:FreezePanes := .t.
+
+   Eval( ::bBookMark, uBookMark )
+   ::Refresh()
+   ::SetFocus()
+
+   oExcel:ScreenUpdating   := .t.
+   oExcel:visible          := .T.
+   ShowWindow( oExcel:hWnd, 3 )
+   BringWindowToTop( oExcel:hWnd )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible establecer lenguaje de Excel" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+return oSheet
+
+//----------------------------------------------------------------------------//
+
 

@@ -95,6 +95,8 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
       // Browse de lineas de entradas------------------------------------------
 
+      msgAlert( D():GetAreaTmp( "TmpPrvI", ::nView ), "GetAreaTmp" )
+
       ::oBrwEntrada           := IXBrowse():New( ::oDlg )
       ::oBrwEntrada:cAlias    := D():GetAreaTmp( "TmpPrvI", ::nView )
       ::oBrwEntrada:cName     := "Lineas de albaranes a proveedor entradas"
@@ -173,9 +175,20 @@ Return ( Self )
 
 METHOD CreaTemporales()
 
-   D():BuildTmp( "AlbProvL", "TmpPrvI", ::nView ) 
+   D():BuildTmp(  "AlbProvL",;
+                  "TmpPrvI",;
+                  {  {  "tagName" => "nNumAlb" ,;
+                        "tagExpresion" => "cSerAlb + str( nNumAlb ) + cSufAlb + str( nNumLin )",;
+                        "tagBlock" => {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb + str( Field->nNumLin ) } } },;
+                  ::nView ) 
 
-   D():BuildTmp( "AlbProvL", "TmpPrvO", ::nView ) 
+
+   D():BuildTmp(  "AlbProvL",;
+                  "TmpPrvO",;
+                  {  {  "tagName" => "nNumAlb" ,;
+                        "tagExpresion" => "cSerAlb + str( nNumAlb ) + cSufAlb + str( nNumLin )",;
+                        "tagBlock" => {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb + str( Field->nNumLin ) } } },;
+                  ::nView ) 
 
 Return ( Self )
 
@@ -443,25 +456,23 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD passLineas( lSelectAll, oBrwOrigen, oBrwDestino )     
+METHOD passLineas( lSelectAll )     
    
    local nRecno
 
    DEFAULT lSelectAll   := .f.
-   DEFAULT oBrwOrigen   := ::oBrwEntrada
-   DEFAULT oBrwDestino  := ::oBrwSalida
 
    if lSelectAll
-      oBrwOrigen:SelectAll()
+      ::oBrwEntrada:SelectAll()
    end if 
 
    Cursorwait()
 
-   for each nRecno in ( oBrwOrigen:aSelected )
+   for each nRecno in ( ::oBrwEntrada:aSelected )
 
-      ( oBrwOrigen:cAlias )->( dbgoto( nRecno ) )
+      ( ::oBrwEntrada:cAlias )->( dbgoto( nRecno ) )
 
-      ::passLinea( oBrwOrigen, oBrwDestino )
+      ::passLinea()
 
    next 
 
@@ -471,40 +482,22 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD passLinea( oBrwOrigen, oBrwDestino )     
+METHOD passLinea()     
 
-   local lFound
-   local nRecno
-
-   // Buscamos si la linea ya ha sido añadida----------------------------------
-
-   nRecno   := ( oBrwDestino:cAlias )->( recno() )
-
-   ( oBrwDestino:cAlias )->( __dbLocate( {|| ( oBrwOrigen:cAlias )->cSerAlb == ( oBrwDestino:cAlias )->cSerAlb .and.;
-                                             ( oBrwOrigen:cAlias )->nNumAlb == ( oBrwDestino:cAlias )->nNumAlb .and.;
-                                             ( oBrwOrigen:cAlias )->cSufAlb == ( oBrwDestino:cAlias )->cSufAlb .and.;
-                                             ( oBrwOrigen:cAlias )->nNumLin == ( oBrwDestino:cAlias )->nNumLin } ) )
-
-   lFound   := ( oBrwDestino:cAlias )->( found() )
-
-   ( oBrwDestino:cAlias )->( dbgoto( nRecno ) )
-
-   // Pasamos la linea --------------------------------------------------------
-
-   if lFound
+   if ( ::oBrwSalida:cAlias )->( dbSeek( ( ::oBrwEntrada:cAlias )->cSerAlb + str( ( ::oBrwEntrada:cAlias )->nNumAlb ) + ( ::oBrwEntrada:cAlias )->cSufAlb + str( ( ::oBrwEntrada:cAlias )->nNumLin ) ) )
 
       msgStop( "Esta línea ya ha sido agregada a la factura.")
       Return ( Self )
 
    else  
       
-      dbpass( oBrwOrigen:cAlias, oBrwDestino:cAlias, .t. )
-      dbDel(  oBrwOrigen:cAlias )
+      dbpass( ::oBrwEntrada:cAlias, ::oBrwSalida:cAlias, .t. )
+      dbDel(  ::oBrwEntrada:cAlias )
 
    end if 
 
-   oBrwOrigen:refresh()
-   oBrwDestino:refresh()
+   ::oBrwEntrada:refresh()
+   ::oBrwSalida:refresh()
 
 Return ( Self )
 

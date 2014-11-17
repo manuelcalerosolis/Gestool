@@ -5429,41 +5429,45 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
-   METHOD BuildTmp( cDataTable, cAlias, nView ) CLASS D
+   METHOD BuildTmp( cDataTable, cAlias, aIndex, nView ) CLASS D
 
       local cArea
       local cFile
+      local hIndex
       local lOpen       := .f.
       local oDataTable
 
       cFile             := cGetNewFileName( cPatTmp() + cAlias )
       oDataTable        := TDataCenter():ScanDataTable( cDataTable )
 
-      if !empty( oDataTable )
-
-         if !empty( oDataTable:aStruct )
-
-            dbCreate( cFile, aSqlStruct( oDataTable:aStruct ), cLocalDriver() )
-            dbUseArea( .t., cLocalDriver(), cFile, cCheckArea( cAlias, @cArea ), .f. )
-
-            lOpen       := !neterr()
-            if lOpen
-               ::AddViewTmp( cAlias, cFile, cArea, nView )
-            end if 
-
-         else 
-
-            msgStop( "La tabla " + cDataTable + " no contiene estructura." )   
-            Return ( .f. )
-
-         end if
-
-      else 
-
+      if empty( oDataTable )
          msgStop( "No puedo encontrar la tabla " + cDataTable )   
          Return ( .f. )
+      end if 
 
-      end if
+      if empty( oDataTable:aStruct )
+         msgStop( "La tabla " + cDataTable + " no contiene estructura." )   
+         Return ( .f. )
+      end if 
+
+      dbCreate( cFile, aSqlStruct( oDataTable:aStruct ), cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), cFile, cCheckArea( cAlias, @cArea ), .f. )
+
+      lOpen       := !neterr()
+      if lOpen
+
+         if !empty(aIndex)
+
+            for each hIndex in aIndex
+               ( cAlias )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+               ( cAlias )->( OrdCreate( cFile, hGet( hIndex, "tagName" ), hGet( hIndex, "tagExpresion" ), hGet( hIndex, "tagBlock" ) ) )
+            next
+         
+         end if
+
+         ::AddViewTmp( cAlias, cFile, cArea, nView )
+
+      end if 
 
    Return ( lOpen )
 

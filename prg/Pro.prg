@@ -2462,7 +2462,7 @@ Function nComPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtCom )
       end if
    end if 
 
-Return ( nPreCom )
+Return ( nPreCom ) 
 
 //---------------------------------------------------------------------------//
 
@@ -2472,7 +2472,7 @@ FUNCTION brwSelectPropiedad( cPrp, cVal )
 
    local oDlg
    local oBrw
-   local aVal
+   local aVal 
    local aData       := {}
    local oBlock
    local oError
