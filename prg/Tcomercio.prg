@@ -5132,9 +5132,6 @@ METHOD GetValPrp( nIdPrp, nProductAttibuteId ) CLASS TComercio
    local nIdAttributeGroup
    local cValPrp                 := ""
 
-   msginfo( nIdPrp, "nIdPrp" )
-   msginfo( nProductAttibuteId, "nProductAttibuteId" )
-
    oQuery1                       := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "product_attribute_combination" ) + ' where id_product_attribute=' + AllTrim( Str( nProductAttibuteId ) ) )
 
    if oQuery1:Open()
@@ -5150,8 +5147,6 @@ METHOD GetValPrp( nIdPrp, nProductAttibuteId ) CLASS TComercio
          while !oQuery1:Eof()
 
          nIdAttribute            := oQuery1:FieldGet( 1 )
-
-         msginfo( nIdAttribute, "nIdAttribute" )
 
          oQuery2                 := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "attribute" ) + ' where id_attribute=' + AllTrim( Str( nIdAttribute ) ) )
 
@@ -5184,8 +5179,6 @@ METHOD GetValPrp( nIdPrp, nProductAttibuteId ) CLASS TComercio
    end if
 
    oQuery1:Free()
-
-   ?cValPrp
 
 return cValPrp
 
@@ -5822,11 +5815,6 @@ METHOD AppendPedidoprestashop() CLASS TComercio
                            ::oPedCliL:cGrpFam     := RetFld( ::oArt:Familia, ::oFam:cAlias, "cCodGrp" )
                            ::oPedCliL:cCodPr1     := ::oArt:cCodPrp1
                            ::oPedCliL:cCodPr2     := ::oArt:cCodPrp2
-                           
-
-                           Msginfo( oRetFld( ::oArt:cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), "antes" )
-                           
-
                            ::oPedCliL:cValPr1     := ::GetValPrp( oRetFld( ::oArt:cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
                            ::oPedCliL:cValPr2     := ::GetValPrp( oRetFld( ::oArt:cCodPrp2, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
                            ::oPedCliL:lLote       := ::oArt:lLote 
