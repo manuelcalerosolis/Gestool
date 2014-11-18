@@ -41,6 +41,11 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    METHOD passLineas()     
    METHOD passLinea()     
 
+   METHOD lPassedLinea()      INLINE ( D():GetAreaTmp( "TmpPrvO", ::nView ) )->( dbSeek( ( D():GetAreaTmp( "TmpPrvI", ::nView ) )->cSerAlb + str( (  D():GetAreaTmp( "TmpPrvI", ::nView ) )->nNumAlb ) + (  D():GetAreaTmp( "TmpPrvI", ::nView ) )->cSufAlb + str( (  D():GetAreaTmp( "TmpPrvI", ::nView ) )->nNumLin ) ) )
+
+   METHOD deleteLineas( lSelectAll )     
+   METHOD deleteLinea()       INLINE ( ( ::oBrwSalida:cAlias )->( dbdelete() ), ::oBrwSalida:refresh() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -95,11 +100,18 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
       // Browse de lineas de entradas------------------------------------------
 
-      msgAlert( D():GetAreaTmp( "TmpPrvI", ::nView ), "GetAreaTmp" )
-
       ::oBrwEntrada           := IXBrowse():New( ::oDlg )
       ::oBrwEntrada:cAlias    := D():GetAreaTmp( "TmpPrvI", ::nView )
       ::oBrwEntrada:cName     := "Lineas de albaranes a proveedor entradas"
+
+      with object ( ::oBrwEntrada:AddCol() )
+         :cHeader             := "Pasado"
+         :nHeadBmpNo          := 1
+         :bStrData            := {|| "" }
+         :bEditValue          := {|| ::lPassedLinea() }
+         :nWidth              := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+      end with
 
       ::buildBrowse( ::oBrwEntrada, 200 )
 
@@ -126,12 +138,12 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
       REDEFINE BUTTON ;
          ID       310 ;
          OF       ::oDlg ;
-         ACTION   ( ::passLineas( .t., ::oBrwSalida, ::oBrwEntrada ) )
+         ACTION   ( ::deleteLineas( .t. ) )
 
       REDEFINE BUTTON ;
          ID       320 ;
          OF       ::oDlg ;
-         ACTION   ( ::passLineas( ::oBrwSalida, ::oBrwEntrada ) )
+         ACTION   ( ::deleteLinea() )
 
       // Botones------------------------------------------------------------------
 
@@ -287,15 +299,11 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildBrowse( oBrw, id )
+METHOD buildBrowse( oBrw, id, lPassed )
+
+   DEFAULT lPassed         := .f.
 
    with object ( oBrw )
-
-      :bClrSel             := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      :bClrSelFocus        := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      :nMarqueeStyle       := 6
-      :lFooter             := .t.
 
       with object ( :AddCol() )
          :cHeader          := "Albarán"
@@ -448,6 +456,12 @@ METHOD buildBrowse( oBrw, id )
          :nFooterType      := AGGR_SUM
       end with
 
+      :bClrSel             := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      :bClrSelFocus        := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      :nMarqueeStyle       := 6
+      :lFooter             := .t.
+
       :CreateFromResource( id )
 
    end with
@@ -484,7 +498,7 @@ Return ( Self )
 
 METHOD passLinea()     
 
-   if ( ::oBrwSalida:cAlias )->( dbSeek( ( ::oBrwEntrada:cAlias )->cSerAlb + str( ( ::oBrwEntrada:cAlias )->nNumAlb ) + ( ::oBrwEntrada:cAlias )->cSufAlb + str( ( ::oBrwEntrada:cAlias )->nNumLin ) ) )
+   if ::lPassedLinea()
 
       msgStop( "Esta línea ya ha sido agregada a la factura.")
       Return ( Self )
@@ -492,7 +506,6 @@ METHOD passLinea()
    else  
       
       dbpass( ::oBrwEntrada:cAlias, ::oBrwSalida:cAlias, .t. )
-      dbDel(  ::oBrwEntrada:cAlias )
 
    end if 
 
@@ -502,3 +515,27 @@ METHOD passLinea()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD deleteLineas( lSelectAll )     
+   
+   local nRecno
+
+   DEFAULT lSelectAll   := .f.
+
+   if lSelectAll
+      ::oBrwSalida:SelectAll()
+   end if 
+
+   Cursorwait()
+
+   for each nRecno in ( ::oBrwSalida:aSelected )
+      ( ::oBrwSalida:cAlias )->( dbgoto( nRecno ) )
+      ::deleLineas()
+   next 
+
+   Cursorwe()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
