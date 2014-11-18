@@ -530,7 +530,7 @@ METHOD deleteLineas( lSelectAll )
 
    for each nRecno in ( ::oBrwSalida:aSelected )
       ( ::oBrwSalida:cAlias )->( dbgoto( nRecno ) )
-      ::deleLineas()
+      ::deleteLinea()
    next 
 
    Cursorwe()
