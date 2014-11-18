@@ -1087,7 +1087,7 @@ METHOD ImportarPrestashop() CLASS TComercio
       Para que al final del proceso quede totalmente llena la barra del meter--
       */
 
-      ::oMeter:Set( 100 )
+      ::oMeterGlobal:Set( 100 )
       ::oMeterProceso:Set( 100 )
 
    else
