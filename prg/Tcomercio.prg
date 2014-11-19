@@ -57,6 +57,7 @@ CLASS TComercio
    DATA  oBtnCancel
    DATA  oBtnExportar
    DATA  oBtnImportar
+   DATA  oBtnStock
 
    DATA  cPath
 
@@ -284,6 +285,7 @@ CLASS TComercio
    DATA  aArticuloData        INIT {}
    DATA  aPropiedadesCabData  INIT {}
    DATA  aPropiedadesLinData  INIT {}
+   DATA  aStockArticuloData   INIT {}
 
    // Metodos para la recopilacion de informacion----------------------------
 
@@ -333,6 +335,11 @@ CLASS TComercio
 
    METHOD buildTextOk( cValue, cTable )      INLINE ( ::treeSetText( "Insertado correctamente " + cValue + ", en la tabla " + cTable, 3 ) )
    METHOD buildTextError( cValue, cTable )   INLINE ( ::treeSetText( "Error insertado " + cValue + ", en la tabla " + cTable, 3 ) )
+
+   METHOD buildActualizaStock()
+   METHOD buildActualizaStockProductPrestashop()
+   METHOD buildInformacionStockProductPrestashop()
+   METHOD buildSubirStockPrestashop()
 
    // ftp y movimientos de ficheros
 
@@ -751,6 +758,11 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
          OF       ::oDlg;
          ACTION   ( ::ImportarPrestashop() );
 
+      REDEFINE BUTTONBMP ::oBtnStock ;
+         ID       530 ;
+         OF       ::oDlg;
+         ACTION   ( ::buildActualizaStock() );
+
       REDEFINE BUTTON ::oBtnCancel ;
          ID       IDCANCEL ;
          OF       ::oDlg ;
@@ -1029,6 +1041,7 @@ METHOD ImportarPrestashop() CLASS TComercio
 
    ::oBtnExportar:Hide()
    ::oBtnImportar:Hide()
+   ::oBtnStock:Hide()
 
    ::oBtnCancel:Disable()
 
@@ -8536,6 +8549,7 @@ METHOD buildExportarPrestashop() Class TComercio
 
    ::oBtnExportar:Hide()
    ::oBtnImportar:Hide()
+   ::oBtnStock:Hide()
 
    ::oBtnCancel:Disable()
 
@@ -8926,9 +8940,205 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
+METHOD buildActualizaStock() Class TComercio
+
+   local oBlock
+   local oError
+
+   ::oDlg:bValid     := {|| .f. }
+
+   ::oBtnExportar:Hide()
+   ::oBtnImportar:Hide()
+   ::oBtnStock:Hide()
+
+   ::oBtnCancel:Disable()
+
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
+
+      ::treeSetText( 'Comenzamos la actualización', 1  )
+
+      ::buildActualizaStockProductPrestashop()
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Error al actualizar stock a prestashop." )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   ::oDlg:bValid     := {|| .t. }
+
+   ::oBtnCancel:Enable()
+
+Return .t.
 
 //---------------------------------------------------------------------------//
+
+METHOD buildInformacionStockProductPrestashop() CLASS TComercio
+
+   local aStockArticulo
+   local nTotalStock          := 0
+   local sStock
+
+   ::meterProcesoSetTotal( ::oArt:OrdKeyCount() )
+
+   while !::oArt:Eof()
+
+      if ::oArt:cCodWeb != 0
+
+         ::treeSetText( "Recopilando información de " + AllTrim( ::oArt:Nombre ) )
+
+         /*
+         Recopilamos la información del Stock-------------------------------
+         */
+
+         aStockArticulo   := ::oStock:aStockArticulo( ::oArt:Codigo )
+         aEval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
+         
+         /*
+         Metemos el Stock global del artículo-------------------------------
+         */
+
+         aAdd( ::aStockArticuloData, { "cCodArt"      => ::oArt:Codigo ,;
+                                       "cNomArt"      => ::oArt:Nombre ,;
+                                       "cCodPrp1"     => "" ,;
+                                       "cCodPrp2"     => "" ,;
+                                       "cValPrp1"     => "" ,;
+                                       "cValPrp2"     => "" ,;
+                                       "nStock"       => AllTrim( Str( nTotalStock ) ) ,;
+                                       "cCodWebArt"   => ::oArt:cCodWeb,;
+                                       "cCodWebVal1"  => 0 ,;
+                                       "cCodWebVal2"  => 0 } )
+
+
+         /*
+         Recorremos el array con los stocks---------------------------------
+         */
+
+         for each sStock in aStockArticulo
+
+            if aScan( ::aStockArticuloData, {|h|   hGet( h, "cCodArt" ) == ::oArt:Codigo .and.;
+                                                   hGet( h, "cCodPrp1" ) == sStock:cCodigoPropiedad1 .and.;
+                                                   hGet( h, "cCodPrp2" ) == sStock:cCodigoPropiedad2 .and.;
+                                                   hGet( h, "cValPrp1" ) == sStock:cValorPropiedad1 .and.;
+                                                   hGet( h, "cValPrp2" ) == sStock:cValorPropiedad2  } ) == 0
+            
+               aAdd( ::aStockArticuloData, { "cCodArt"      => ::oArt:Codigo ,;
+                                             "cNomArt"      => ::oArt:Nombre ,;
+                                             "cCodPrp1"     => sStock:cCodigoPropiedad1 ,;
+                                             "cCodPrp2"     => sStock:cCodigoPropiedad2 ,;
+                                             "cValPrp1"     => sStock:cValorPropiedad1 ,;
+                                             "cValPrp2"     => sStock:cValorPropiedad2 ,;
+                                             "nStock"       => AllTrim( Str( sStock:nUnidades ) ),;
+                                             "cCodWebArt"   => ::oArt:cCodWeb,;
+                                             "cCodWebVal1"  => oRetFld( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::oTblPro, "cCodWeb" ),;
+                                             "cCodWebVal2"  => oRetFld( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::oTblPro, "cCodWeb" ) } )
+
+            end if   
+
+         next
+
+      end if
+
+      ::oArt:Skip()
+
+   end while   
+
+return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD buildSubirStockPrestashop() CLASS TComercio
+
+   local oQuery
+   local cCommand
+   local nIdProductAttribute
+   local aStock
+
+   if ::buildConect()
+
+      for each aStock in ::aStockArticuloData
+
+         if hGet( aStock, "cCodWebVal1" ) == 0 .and.;
+            hGet( aStock, "cCodWebVal2" ) == 0
+
+            ::treeSetText( "Actualizando stock de " + AllTrim( hGet( aStock, "cNomArt" ) ) )        
+
+            cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                              "quantity='" + hGet( aStock, "nStock" ) + "' " + ;
+                           "WHERE id_product=" + AllTrim( Str( hGet( aStock, "cCodWebArt" ) ) ) + " AND id_product_attribute=0 "
+
+            TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         else
+
+            nIdProductAttribute := Str( ::nIdProductAttribute( hGet( aStock, "cCodWebArt" ), hGet( aStock, "cCodWebVal1" ), hGet( aStock, "cCodWebVal2" ) ) )
+
+            if !Empty( nIdProductAttribute )
+
+               cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                 "quantity='" + hGet( aStock, "nStock" ) + "' " + ;
+                              "WHERE id_product=" + AllTrim( Str( hGet( aStock, "cCodWebArt" ) ) ) + " AND id_product_attribute=" + AllTrim( nIdProductAttribute )
+
+               TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            end if
+
+         end if
+      
+      next
+
+      ::buildDisConect()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD buildActualizaStockProductPrestashop() CLASS TComercio
+
+   /*
+   Compruebo que podamos conectarnos-------------------------------------------
+   */
+
+   if !::lReady()
+      Return .f.
+   end if
+   
+   if ::filesOpen()
+
+      /*
+      Recopilamos información necesaria----------------------------------------
+      */
+
+      ::MeterGlobalText( "Recopialando información de stocks" )
+      ::buildInformacionStockProductPrestashop()
+
+      /*
+      Subimos la información recopilada----------------------------------------
+      */
+
+      ::treeSetText( "Actualizando stocks" )
+      ::meterProcesoSetTotal( len(::aStockArticuloData) )
+      ::buildSubirStockPrestashop()
+
+      ::MeterGlobalText( "Proceso finalizado" )
+
+      ::filesClose()
+
+   end if
+
+   ::oMeterGlobal:Set( 100 )
+   ::oMeterProceso:Set( 100 )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//-------------------------FTP-----------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
