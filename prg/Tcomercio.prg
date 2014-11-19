@@ -9107,7 +9107,7 @@ METHOD buildActualizaStockProductPrestashop() CLASS TComercio
    if !::lReady()
       Return .f.
    end if
-   
+
    if ::filesOpen()
 
       /*
@@ -9131,8 +9131,13 @@ METHOD buildActualizaStockProductPrestashop() CLASS TComercio
 
    end if
 
-   ::oMeterGlobal:Set( 100 )
-   ::oMeterProceso:Set( 100 )
+   if !Empty( ::oMeterGlobal )
+      ::oMeterGlobal:Set( 100 )
+   end if
+
+   if !Empty( ::oMeterProceso )
+      ::oMeterProceso:Set( 100 )
+   end if
 
 Return .t.
 

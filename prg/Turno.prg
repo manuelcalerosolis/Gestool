@@ -323,6 +323,9 @@ CLASS TTurno FROM TMasDet
    DATA  oEnvioInformacion                         AS OBJECT
    DATA  oImprimirEnvio                            AS OBJECT
    DATA  oChkEnviarMail                            AS OBJECT
+   DATA  oChkActualizaStockWeb                     AS OBJECT
+   DATA  lChkActualizaStockWeb                     AS LOGIC    INIT .f.
+
    DATA  oGetEnviarMail
    DATA  oGrpNotificacion
    DATA  oGrpOpcionesEnvioInformacion
@@ -632,6 +635,8 @@ CLASS TTurno FROM TMasDet
 
    Method MailArqueo()
 
+   Method ActualizaStockWeb()
+
    Method SetFastReport( oFastReport ) Inline ( if( !Empty( oFastReport ), ::oFastReport := oFastReport, ) )
 
    Method lInCajaSelect( cCodigoCaja ) Inline ( aScan( ::aCajaSelect, cCodigoCaja ) != 0 )
@@ -688,47 +693,48 @@ METHOD New( cPath, oWndParent, oMenuItem )
       Return ( nil )
    end if
 
-   ::cPath              := cPath
-   ::oWndParent         := oWndParent
+   ::cPath                    := cPath
+   ::oWndParent               := oWndParent
 
-   ::oDbf               := nil
+   ::oDbf                     := nil
 
-   ::cCurCaja           := Space( 3 )
-   ::cOldCaj            := Space( 3 )
+   ::cCurCaja                 := Space( 3 )
+   ::cOldCaj                  := Space( 3 )
 
-   ::lAutoButtons       := .t.
-   ::lCreateShell       := .f.
-   ::lChkSimula         := .f.
-   ::lNoImprimirArqueo  := .f.
-   ::lEnviarMail        := .f.
-   ::lAllSesions        := .f.
+   ::lAutoButtons             := .t.
+   ::lCreateShell             := .f.
+   ::lChkSimula               := .f.
+   ::lNoImprimirArqueo        := .f.
+   ::lEnviarMail              := .f.
+   ::lChkActualizaStockWeb    := .f.
+   ::lAllSesions              := .f.
 
-   ::aTipIva            := {}
+   ::aTipIva                  := {}
 
-   ::cMru               := "Stopwatch_16"
+   ::cMru                     := "Stopwatch_16"
 
-   ::cIniFile           := cPatEmp() + "Empresa.Ini"
-   ::oIniArqueo         := TIni():New( cPatEmp() + "Empresa.Ini" )
-   ::oTotales           := TTotalTurno():New( Self )
+   ::cIniFile                 := cPatEmp() + "Empresa.Ini"
+   ::oIniArqueo               := TIni():New( cPatEmp() + "Empresa.Ini" )
+   ::oTotales                 := TTotalTurno():New( Self )
 
-   ::nScreenHorzRes     := GetSysMetrics( 0 )
-   ::nScreenVertRes     := GetSysMetrics( 1 )
+   ::nScreenHorzRes           := GetSysMetrics( 0 )
+   ::nScreenVertRes           := GetSysMetrics( 1 )
 
    /*
    Chequa la concordancia entre estructuras------------------------------------
    */
 
-   ::cNumDocKey         := "cNumTur"
-   ::cSufDocKey         := "cSufTur"
+   ::cNumDocKey               := "cNumTur"
+   ::cSufDocKey               := "cSufTur"
 
-   ::lCreated           := .t.
+   ::lCreated                 := .t.
 
-   ::cBitmap            := clrTopArchivos
+   ::cBitmap                  := clrTopArchivos
 
-   ::lDefaultPrinter    := .t.
-   ::cPrinter           := PrnGetName()
+   ::lDefaultPrinter          := .t.
+   ::cPrinter                 := PrnGetName()
 
-   ::lArqueoCiego       := oUser():lArqueoCiego() 
+   ::lArqueoCiego             := oUser():lArqueoCiego() 
 
 RETURN ( Self )
 
@@ -1673,6 +1679,16 @@ METHOD lCloseCajaSeleccionada()
 
       ::MailArqueo( cCurrentTruno )      
    end if 
+
+   // Envio del mail--------------------------------------------------------------
+
+   if ::lChkActualizaStockWeb
+      if !Empty( ::oTxt )
+         ::oTxt:SetText( "Actualizando stocks en web..." )
+      end if
+
+      ::ActualizaStockWeb()
+   end if
 
    // Impresion----------------------------------------------------------------
 
@@ -2960,11 +2976,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    // Cominenza el proceso de calculo---------------------------------------------
 
-
-/*
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
 
    ::CreateCajaTurno()
 
@@ -2992,33 +3005,35 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    do case
       case ::lArqueoCiego
-         ::cWinArq      := cPrinterArqueoCiego(          ::cCurCaja, ::oCaja:cAlias )
-         ::cPrnArq      := cFormatoArqueoCiegoEnCaja(    ::cCurCaja, ::oCaja:cAlias )
+         ::cWinArq         := cPrinterArqueoCiego(          ::cCurCaja, ::oCaja:cAlias )
+         ::cPrnArq         := cFormatoArqueoCiegoEnCaja(    ::cCurCaja, ::oCaja:cAlias )
       
       case !::lArqueoCiego .and. !::lArqueoParcial
-         ::cWinArq      := cPrinterArqueo(               ::cCurCaja, ::oCaja:cAlias )
-         ::cPrnArq      := cFormatoArqueoEnCaja(         ::cCurCaja, ::oCaja:cAlias )
+         ::cWinArq         := cPrinterArqueo(               ::cCurCaja, ::oCaja:cAlias )
+         ::cPrnArq         := cFormatoArqueoEnCaja(         ::cCurCaja, ::oCaja:cAlias )
       
       case !::lArqueoCiego .and. ::lArqueoParcial
-         ::cWinArq      := cPrinterArqueoParcial(        ::cCurCaja, ::oCaja:cAlias )
-         ::cPrnArq      := cFormatoArqueoParcialEnCaja(  ::cCurCaja, ::oCaja:cAlias )
+         ::cWinArq         := cPrinterArqueoParcial(        ::cCurCaja, ::oCaja:cAlias )
+         ::cPrnArq         := cFormatoArqueoParcialEnCaja(  ::cCurCaja, ::oCaja:cAlias )
    end case 
 
    // Opciones de empresa------------------------------------------------------
 
-   ::lEnvioInformacion  := ::oIniArqueo:Get( "Arqueo", "EnvioInformacion", .t.,           ::lEnvioInformacion )
+   ::lEnvioInformacion     := ::oIniArqueo:Get( "Arqueo", "EnvioInformacion", .t.,           ::lEnvioInformacion )
 
-   ::lNoImprimirArqueo  := ::oIniArqueo:Get( "Arqueo", "ImprimirArqueo",   .t.,           ::lNoImprimirArqueo )
-   ::cCmbReport         := ::oIniArqueo:Get( "Arqueo", "SalidaArqueo",     "Visualizar",  ::cCmbReport )
+   ::lNoImprimirArqueo     := ::oIniArqueo:Get( "Arqueo", "ImprimirArqueo",   .t.,           ::lNoImprimirArqueo )
+   ::cCmbReport            := ::oIniArqueo:Get( "Arqueo", "SalidaArqueo",     "Visualizar",  ::cCmbReport )
 
-   ::lImprimirEnvio     := ::oIniArqueo:Get( "Arqueo", "ImprimirEnvio",    .t.,           ::lImprimirEnvio )
+   ::lImprimirEnvio        := ::oIniArqueo:Get( "Arqueo", "ImprimirEnvio",    .t.,           ::lImprimirEnvio )
 
-   ::lEnviarMail        := uFieldEmpresa( "lMailTrno" )
-   ::cEnviarMail        := uFieldEmpresa( "cMailTrno" )
-   ::cEnviarMail        := Padr( ::cEnviarMail, 200 )
+   ::lChkActualizaStockWeb := ::oIniArqueo:Get( "Arqueo", "ActualizaStock",   .t.,           ::lChkActualizaStockWeb )
 
-   ::oMoneyEfectivo     := TVirtualMoney():New()
-   ::oMoneyRetirado     := TVirtualMoney():New()
+   ::lEnviarMail           := uFieldEmpresa( "lMailTrno" )
+   ::cEnviarMail           := uFieldEmpresa( "cMailTrno" )
+   ::cEnviarMail           := Padr( ::cEnviarMail, 200 )
+
+   ::oMoneyEfectivo        := TVirtualMoney():New()
+   ::oMoneyRetirado        := TVirtualMoney():New()
 
    // Refresh------------------------------------------------------------------
 
@@ -3696,6 +3711,11 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ID       730 ;
          OF       ::oFldTurno:aDialogs[ 4 ]
 
+      REDEFINE CHECKBOX ::oChkActualizaStockWeb VAR ::lChkActualizaStockWeb ;
+         WHEN     lUsrMaster() .and. !::lArqueoParcial ;
+         ID       740 ;
+         OF       ::oFldTurno:aDialogs[ 4 ]   
+
       // Botones generales--------------------------------------------------------
 
       ::oMeter    := TApoloMeter():ReDefine( 130, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 10, ::oDlgTurno, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
@@ -3758,10 +3778,11 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       Guardamos las opciones---------------------------------------------------
       */
 
-      ::oIniArqueo:Set( "Arqueo", "EnvioInformacion", ::lEnvioInformacion  )
-      ::oIniArqueo:Set( "Arqueo", "ImprimirArqueo",   ::lNoImprimirArqueo  )
-      ::oIniArqueo:Set( "Arqueo", "SalidaArqueo",     ::cCmbReport         )
-      ::oIniArqueo:Set( "Arqueo", "ImprimirEnvio",    ::lImprimirEnvio     )
+      ::oIniArqueo:Set( "Arqueo", "EnvioInformacion", ::lEnvioInformacion     )
+      ::oIniArqueo:Set( "Arqueo", "ImprimirArqueo",   ::lNoImprimirArqueo     )
+      ::oIniArqueo:Set( "Arqueo", "SalidaArqueo",     ::cCmbReport            )
+      ::oIniArqueo:Set( "Arqueo", "ImprimirEnvio",    ::lImprimirEnvio        )
+      ::oIniArqueo:Set( "Arqueo", "ActualizaStock",   ::lChkActualizaStockWeb )
 
       /*
       Comprueba si hay sesiones para trabajar----------------------------------
@@ -3770,7 +3791,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::lNowOpen()
 
    end if
-/*
+
    RECOVER USING oError
 
       if !Empty( ::oDlgTurno )
@@ -3782,7 +3803,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    /*
    Limpiamos las estáticas-----------------------------------------------------
    */
@@ -4019,6 +4040,7 @@ Method StartArqueoTurno( oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario )
       ::lEnvioInformacion     := .f.
       ::lImprimirEnvio        := .f.
       ::lEnviarMail           := .f.
+      ::lChkActualizaStockWeb := .f.
    end if
 
    SysRefresh()
@@ -11092,6 +11114,16 @@ METHOD MailArqueo( cCurrentTruno )
    end if
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method ActualizaStockWeb()
+
+   with object ( TComercio():New() )
+      :buildActualizaStockProductPrestashop()        
+   end with
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
