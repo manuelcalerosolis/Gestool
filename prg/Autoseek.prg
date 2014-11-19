@@ -188,21 +188,11 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
 
       CreateFastFilter( "", xAlias, .f., , , , lNotUser, lNotFecha )
 
-      if Left( xCadena, 1 ) == "*"
+      if Left( xCadena, 1 ) == "*" .and. Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
 
-         if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
+         CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), xAlias, .t. , , , , lNotUser, lNotFecha )
 
-            CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), xAlias, .t. , , , , lNotUser, lNotFecha )
-
-            return .t.
-
-         else
-
-            CreateFastFilter( "", xAlias, .f., , , , lNotUser, lNotFecha )
-
-            return .t.
-
-         end if
+         return .t.
 
       end if
 
@@ -231,37 +221,6 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
    cSort       := ( xAlias )->( OrdSetFocus() )
 
    lRet        := lMiniSeek( cPrefij, xCadena, xAlias, nLen )
-
-   if uFieldEmpresa( "lBusCir", .f. )
-
-      if !lRet .and. !Empty( oBrw )
-
-         for each oCol in oBrw:aCols
-
-            if isChar( oCol:cSortOrder ) .and. !Empty( oCol:cSortOrder )
-
-               ( xAlias )->( OrdSetFocus( oCol:cSortOrder ) )
-
-               lRet  := lMiniSeek( cPrefij, xCadena, xAlias, nLen )
-
-               if lRet
-                  oCol:SetOrder()
-                  if !Empty( oCol:bLClickHeader )
-                     Eval( oCol:bLClickHeader, nil, nil, nil, oCol )
-                  end if
-                  oBrw:Select( 0 )
-                  oBrw:Select( 1 )
-                  oBrw:Refresh()
-                  exit
-               end if
-
-            end if
-
-         next
-
-      end if
-
-   end if
 
    if !lRet
       ( xAlias )->( OrdSetFocus( cSort ) )
@@ -324,9 +283,9 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
       case cType == "N"
 
          // msgAlert( xCadena, "val(xCaeden)")
-         // if ( xAlias )->( dbSeek( Val( xCadena ), .t. ) )
+         // msgAlert( ( xAlias )->( dbSeek( Val( xCadena ), .t. ) ) )
 
-         if ( xAlias )->( dbSeek( xCadena, .t. ) )
+         if ( xAlias )->( dbSeek( val( xCadena ), .t. ) )
             lRet  := .t.
          else
             lRet  := .t.

@@ -23596,9 +23596,6 @@ Method ProcessFrq()
 
    local aFiles      := Directory( cPatInFrq() + "FacCli*.*" )
 
-   msgAlert( "ProcessFrq" )
-   msgAlert( len( aFiles), "len(aFiles)")
-
    if len( aFiles ) == 0
       Return .f.
    end if 

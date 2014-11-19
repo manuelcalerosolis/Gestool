@@ -822,7 +822,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                   "Fabricante" ,;
                   "Posición táctil" ,;
                   "Publicar" ,;
-                  "Código web" ;
+                  "Web" ;
          MRU      "Cube_Yellow_16";
          BITMAP   clrTopArchivos ;
          ALIAS    ( dbfArticulo ) ;
@@ -1144,7 +1144,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código web"
+         :cHeader          := "Web"
          :cSortOrder       := "cCodWeb"
          :bStrData         := {|| ( dbfArticulo )->cCodWeb }
          :nWidth           := 80

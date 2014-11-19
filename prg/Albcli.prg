@@ -16257,7 +16257,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
-      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. nFacturado == 1", {|| !Deleted() .and. Field->nFacturado == albNoFacturado }  ) )
+      // Albaranes no facturado------------------------------------------------
+
+      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. nFacturado <= 1", {|| !Deleted() .and. Field->nFacturado <= 1 }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
@@ -16315,7 +16317,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
-      ( cAlbCliT )->( ordCondSet( "nFacturado == 1 .and. nCtlStk < 2 .and. !Deleted()", {|| Field->nFacturado == albNoFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      // Albaranes no facturados-----------------------------------------------
+
+      ( cAlbCliT )->( ordCondSet( "nFacturado <= 1 .and. nCtlStk < 2 .and. !Deleted()", {|| Field->nFacturado <= 1 .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbCliT )->( dbCloseArea() )

@@ -281,101 +281,47 @@ Static Function TXBrowseToExcel( bProgress, nGroupBy, aCols )
    if Empty( ::aSelected ) .or. Len( ::aSelected ) == 1
 
       Eval( ::bGoTop )
-      if ::oRs != nil .AND. Len( aCols ) == ::oRs:Fields:Count()
-            ::oRs:MoveFirst()
-            nRow   := oSheet:Cells( 2, 1 ):CopyFromRecordSet( ::oRs )
-            ::oRs:MoveFirst()
-         nRow   += 2
-      else
 
-         if bProgress == nil
-            if ::oWnd:oMsgBar == nil
-               bProgress := { || nil }
-            else
-               bProgress := { | n, t | ::oWnd:SetMsg( "To Excel : " + Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
+      if bProgress == nil
+         if ::oWnd:oMsgBar == nil
+            bProgress := { || nil }
+         else
+            bProgress := { | n, t | ::oWnd:SetMsg( "To Excel : " + Ltrim( Str( n ) ) + "/" + Ltrim( Str( t ) ) ) }
+         endif
+      endif
+
+      nRow      := 2
+      nStep     := Max( 1, Min( 100, Int( nDataRows / 100 ) ) )
+
+      while nRow <= ( nDataRows + 1 ) .and. lContinue
+
+         nCol        := 0
+         for nxCol   := 1 to Len( aCols )
+            oCol     := aCols[ nXCol ]
+            nCol++
+            oCol:ToExcel( oSheet, nRow, nCol )
+         next nCol
+
+         lContinue := ( ::Skip( 1 ) == 1 )
+         nRow ++
+         If ( nRow - 2 ) % nStep == 0
+            if Eval( bProgress, nRow - 2, nDataRows ) == .f.
+               Exit
             endif
+            SysRefresh()
          endif
 
-         nRow      := 2
-         nStep     := Max( 1, Min( 100, Int( nDataRows / 100 ) ) )
+      enddo
 
-         if .t. // ::lExcelCellWise
-            do while nRow <= ( nDataRows + 1 ) .and. lContinue
-
-               nCol        := 0
-               for nxCol   := 1 to Len( aCols )
-                  oCol     := aCols[ nXCol ]
-                  nCol++
-                  oCol:ToExcel( oSheet, nRow, nCol )
-               next nCol
-
-               lContinue := ( ::Skip( 1 ) == 1 )
-               nRow ++
-               If ( nRow - 2 ) % nStep == 0
-                  if Eval( bProgress, nRow - 2, nDataRows ) == .f.
-                     Exit
-                  endif
-                  SysRefresh()
-               endif
-
-            enddo
-         else
-
-            nPasteRow := 2
-            cText     := ""
-            oClip := TClipBoard():New( 1, ::oWnd )
-            if oClip:Open()
-
-               Eval( bProgress, 0, nDataRows )
-
-               do while nRow <= ( nDataRows + 1 ) .and. lContinue
-                  if ! Empty( cText )
-                     cText += CRLF
-                  endif
-                  cText    += ::ClpRow( .t., aCols )
-
-                  lContinue := ( ::Skip( 1 ) == 1 )            // Eval( ::bSkip, 1 )
-                  nRow ++
-
-                  if Len( cText ) > 16000
-                     oClip:SetText( cText )
-                     oSheet:Cells( nPasteRow, 1 ):Select()
-                     oSheet:Paste()
-                     oClip:Clear()
-                     cText       := ""
-                     nPasteRow   := nRow
-                  endif
-
-                  If ( nRow - 2 ) % nStep == 0
-                     if Eval( bProgress, nRow - 2, nDataRows ) == .f.
-                        Exit
-                     endif
-                     SysRefresh()
-                  endif
-
-               enddo
-               if ! Empty( cText )
-                  oClip:SetText( cText )
-                  oSheet:Cells( nPasteRow, 1 ):Select()
-                  oSheet:Paste()
-                  oClip:Clear()
-                  cText    := ""
-               endif
-               oClip:Close()
-
-               Eval( bProgress, nDataRows, nDataRows )
-               SysRefresh()
-
-            endif
-            oClip:End()
-         endif // ::lExcelCellWise
-      endif
    else
+      
       ::Copy()
       oSheet:Cells( 2, 1 ):Select()
       oSheet:Paste()
       nRow := Len( ::aSelected ) + 2
+   
    endif
+
    oSheet:Cells( 1, 1 ):Select()
 
    // Totals, if needed

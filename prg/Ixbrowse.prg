@@ -31,6 +31,8 @@ CLASS IXBrowse FROM TXBrowse
 
    CLASSDATA nToolTip      AS NUMERIC     INIT 900
 
+   ASSIGN BookMark(u)      INLINE ( Eval( ::bBookMark, u ) )
+
    METHOD New( oWnd )
 
    Method GetOriginal()    INLINE ( ::cOriginal := ::SaveState() )
@@ -64,6 +66,8 @@ CLASS IXBrowse FROM TXBrowse
    Method SetRDD( lAddColumns, lAutoOrder, aFldNames )
 
    METHOD ExportToExcel()
+
+   METHOD MakeTotals( aCols )
 
 /*
    Method Refresh( lComplete )
@@ -466,11 +470,20 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames ) CLASS IXBrowse
 
    ::bGoTop                := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbGoTop() ), ) }
    ::bGoBottom             := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbGoBottom() ), ) }
-   ::bSkip                 := {| n | iif( n == nil, n := 1, ), if( ( cAlias )->( Used() ), ( cAlias )->( DbSkipper( n ) ), 0 ) }
+   ::bSkip                 := {| n | iif( n == nil, n := 1, ),;
+                                       iif( ( cAlias )->( Used() ),;
+                                          ( cAlias )->( DbSkipper( n ) ),;
+                                          0 ) }
    ::bBof                  := {|| if( ( cAlias )->( Used() ), ( cAlias )->( Bof() ), .t. ) }
    ::bEof                  := {|| if( ( cAlias )->( Used() ), ( cAlias )->( Eof() ), .t. ) }
-   ::bBookMark             := {| n | iif( n == nil, if( ( cAlias )->( Used() ), ( cAlias )->( RecNo() ), 0 ), if( ( cAlias )->( Used() ), ( cAlias )->( DbGoto( n ) ), 0 ) ) }
-   ::bKeyNo                := {| n | iif( n == nil, if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyNo() ), 0 ), if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyGoto( n ) ), 0 ) ) }
+   ::bBookMark             := {| n | iif( ( cAlias )->( Used() ),;
+                                          iif( n == nil,;
+                                             ( cAlias )->( RecNo() ),;
+                                             ( cAlias )->( DbGoto( n ) ) ), ) }
+   ::bKeyNo                := {| n | iif( ( cAlias )->( Used() ),;
+                                          iif( n == nil,;
+                                             ( cAlias )->( OrdKeyNo() ),;
+                                             ( cAlias )->( OrdKeyGoto( n ) ) ), ) }
    ::bKeyCount             := {|| if( ( cAlias )->( Used() ), ( cAlias )->( OrdKeyCount() ), 0 ) }
    ::bLock                 := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbrLock() ), .f. ) }
    ::bUnlock               := {|| if( ( cAlias )->( Used() ), ( cAlias )->( DbrUnlock() ), .f. ) }
@@ -517,6 +530,82 @@ METHOD ExportToExcel()
    ErrorBlock( oBlock )
 
 Return nil
+
+//----------------------------------------------------------------------------//
+
+METHOD MakeTotals( aCols ) CLASS IXBrowse
+
+   local uBm, n, nCols, oCol, nValue
+   local bCond    := { |u,o| u != nil }
+
+   if aCols == nil
+      aCols    := {}
+      for each oCol in ::aCols
+         WITH OBJECT oCol
+            if ValType( :nTotal ) == 'N' .or. ! Empty( :nFooterType )
+               AAdd( aCols, oCol )
+            endif
+         END
+      next
+   else
+      if ValType( aCols ) == 'O'
+         aCols := { aCols }
+      endif
+      for n := 1 to Len( aCols )
+         if Empty( aCols[ n ]:nFooterType )
+            ADel( aCols, n )
+            ASize( aCols, Len( aCols ) - 1 )
+         endif
+      next
+   endif
+
+   if ! Empty( aCols )
+
+      for each oCol in aCols
+         WITH OBJECT oCol
+            DEFAULT :nFooterType := AGGR_SUM
+            :nTotal := :nTotalSq := 0.0
+            :nCount := 0
+            if :nFooterType == AGGR_MIN .or. :nFooterType == AGGR_MAX
+               :nTotal := nil
+            endif
+         END
+      next
+
+      nCols    := Len( aCols )
+      uBm      := ::BookMark()
+
+      Eval( ::bGoTop )
+      do
+         for each oCol in aCols
+            WITH OBJECT oCol
+               nValue   := :Value
+               if Eval( IfNil( :bSumCondition, bCond ), nValue, oCol )
+                  if :nFooterType == AGGR_COUNT
+                     :nCount++
+                  elseif ValType( nValue ) == 'N'
+                     if :nFooterType == AGGR_MIN
+                        :nTotal  := If( :nTotal == nil, nValue, Min( nValue, :nTotal ) )
+                     elseif :nFooterType == AGGR_MAX
+                        :nTotal  := If( :nTotal == nil, nvalue, Max( nValue, :nTotal ) )
+                     else
+                        :nTotal  += nValue
+                        :nCount++
+                        if lAnd( :nFooterType, AGGR_STD )
+                           :nTotalSq   += ( nValue * nValue )
+                        endif
+                     endif
+                  endif
+               endif
+            END
+         next n
+      until ( ::Skip( 1 ) < 1 )
+
+      ::BookMark( uBm )
+
+   endif
+
+return Self
 
 //----------------------------------------------------------------------------//
 

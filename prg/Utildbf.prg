@@ -1515,15 +1515,14 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    if !Empty( oBrw ) .and. ( oBrw:lActive )
 
+      if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
+         oBrw:MakeTotals()
+      end if 
+
       oBrw:Select( 0 )
       oBrw:Select( 1 )
-
-		if oBrw:lFooter .and. !empty( oBrw:nFooterHeight )
-			oBrw:MakeTotals()
-		end if 
-
       oBrw:Refresh()
-   
+
    end if
 
 RETURN lReturn
@@ -1628,6 +1627,7 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    local aGet
    local lResult     := .f.
    local nOrd        := 0
+   local nRec 
 
    DEFAULT cAlias    := Alias()
    DEFAULT bWhen     := "" //{ || .t. }
@@ -1641,6 +1641,8 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       nOrd           := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
+   nRec              := ( cAlias )->( Recno() )
+
    if !( cAlias )->( eof() )
       if dbDialogLock( cAlias )
          aTmp        := dbScatter( cAlias )
@@ -1650,7 +1652,7 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       end if
    end if
 
-   if ValType( nOrd ) == "N" .and. nOrd != 0
+   if isNum( nOrd ) .and. nOrd != 0
       ( cAlias )->( OrdSetFocus( nOrd ) )
    end if
 
@@ -1667,6 +1669,9 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    end if
 
+   if isNum( nRec )
+      ( cAlias )->( dbGoto( nRec ) )
+   end if
 
 RETURN lResult
 

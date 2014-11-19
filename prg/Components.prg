@@ -439,7 +439,9 @@ METHOD New( oContainer )
 
 Return ( Self )
    
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
 
 CLASS ComponentGet FROM Component
 
@@ -488,6 +490,81 @@ METHOD Resource() CLASS ComponentGet
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS ComponentSay FROM Component
+
+   DATA idSay
+
+   DATA oSayControl
+   DATA uSayValue                INIT Space( 12 )
+   
+   METHOD New( idSay, oContainer )
+
+   METHOD Resource()
+
+   METHOD cText( uSayValue )     INLINE ( if( !empty( ::oSayControl ), ::oSayControl:SetText( uSayValue ), ::uSayValue := uSayValue ) )
+   METHOD Value()                INLINE ( ::uSayValue )
+
+   METHOD Disable()              INLINE ( ::oSayControl:Disable() )
+   METHOD Enable()               INLINE ( ::oSayControl:Enable() )
+
+END CLASS 
+
+METHOD New( idSay, oContainer ) CLASS ComponentSay
+
+   ::idSay        := idSay
+
+   ::Super:New( oContainer )
+
+RETURN ( Self )
+
+METHOD Resource() CLASS ComponentSay
+
+   REDEFINE SAY   ::oSayControl ;
+      PROMPT      ::uSayValue ;
+      ID          ::idSay ;
+      OF          ::oContainer:oDlg
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS SayCompras FROM ComponentSay
+
+   METHOD New( idSay, oContainer )
+
+   METHOD Resource()
+
+END CLASS 
+
+METHOD New( idSay, oContainer ) CLASS SayCompras
+
+   ::Super:New( idSay, oContainer )
+
+   ::uSayValue    := 0
+
+RETURN ( Self )
+
+METHOD Resource() CLASS SayCompras
+
+   REDEFINE SAY   ::oSayControl ;
+      PROMPT      ::uSayValue ;
+      ID          ::idSay ;
+      PICTURE     ( cPorDiv() ) ;
+      OF          ::oContainer:oDlg
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
 
 CLASS ComponentGetSay FROM ComponentGet
 
@@ -508,14 +585,18 @@ CLASS ComponentGetSay FROM ComponentGet
 
 END CLASS 
 
+//--------------------------------------------------------------------------//
+
 METHOD New( idGet, idSay, idText, oContainer ) CLASS ComponentGetSay
 
-   ::idSay  := idSay
-   ::idText := idText
+   ::idSay        := idSay
+   ::idText       := idText
 
    ::Super:New( idGet, oContainer )
 
 RETURN ( Self )
+
+//--------------------------------------------------------------------------//
 
 METHOD Resource() CLASS ComponentGetSay
 
@@ -539,6 +620,11 @@ METHOD Resource() CLASS ComponentGetSay
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
 
 CLASS GetCombo FROM Component
 
@@ -1260,7 +1346,7 @@ CLASS GetPropiedadActual FROM GetPropiedad
 
    METHOD New( idGet, idSay, idText, oContainer )
 
-   METHOD PropiedadActual( cPropiedad )   INLINE ( if( !empty( cPropiedad ), ::cPropiedad := cPropiedad, ), msgAlert( ::cPropiedad ), ::cPropiedad )
+   METHOD PropiedadActual( cPropiedad )   INLINE ( iif( cPropiedad != nil, ::cPropiedad := cPropiedad, ::cPropiedad ) )
 
 END CLASS 
 

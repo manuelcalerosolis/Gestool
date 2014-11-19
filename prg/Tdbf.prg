@@ -2156,8 +2156,6 @@ METHOD CreateFromHash( hDefinition, cDriver, cPath )
         oDbf:New( FullDatabase( hDefinition ), hDefinition[ "Table" ], ( cDriver ), hDefinition[ "Comment" ], ( cPath ) )
 */
 
-        msgAlert( valtoprg( hDefinition[ "Fields" ] ) )
-
         for each hField in hDefinition[ "Fields" ]
             msgStop( valtoprg( hField ) )
             // oDbf:AddField( hField[  ], "C", 01, 0,,,,, "Serie", .F.,, .F., {} )            

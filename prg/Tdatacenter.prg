@@ -5007,7 +5007,7 @@ CLASS D
    METHOD BuildTmp( cDatabase, cAlias, nView ) 
       METHOD AddViewTmp( cAlias, cHandle, nView )  
       METHOD GetTmp( cAlias, nView )   
-      METHOD GetAreaTmp( cAlias, nView )
+      METHOD Tmp( cAlias, nView )
       METHOD GetFileTmp( cAlias, nView ) 
    METHOD CloseTmp( cAlias, nView )
 
@@ -5200,6 +5200,10 @@ CLASS D
    METHOD SetStatus( cDatabase, nView )      INLINE ( SetStatus( ::Get( cDatabase, nView ), ::aStatus ) ) 
    METHOD GetInitStatus( cDatabase, nView )  INLINE ( ::aStatus := aGetStatus( ::Get( cDatabase, nView ), .t. ) )
 
+   METHOD GetStatusTmp( cDatabase, nView )      INLINE ( ::aStatus := aGetStatus( ::Tmp( cDatabase, nView ) ) )
+   METHOD SetStatusTmp( cDatabase, nView )      INLINE ( SetStatus( ::Tmp( cDatabase, nView ), ::aStatus ) ) 
+   METHOD GetInitStatusTmp( cDatabase, nView )  INLINE ( ::aStatus := aGetStatus( ::Tmp( cDatabase, nView ), .t. ) )
+
    METHOD Seek( cDatabase, nView, uValue )   INLINE ( ( ::Get( cDatabase, nView ) )->( dbSeek( uValue ) ) ) 
 
    METHOD SeekInOrd( cDatabase, nView, uValue, cOrder ) ;
@@ -5333,12 +5337,12 @@ ENDCLASS
 
    //---------------------------------------------------------------------------//
 
-   METHOD GetAreaTmp( cAlias, nView ) CLASS D
+   METHOD Tmp( cAlias, nView ) CLASS D
 
       local hGet
       local cHandle
 
-      hGet           := ::GetTmp( Upper( cAlias ), nView )
+      hGet           :=  ::GetTmp( Upper( cAlias ), nView )
       if hb_ishash( hGet ) 
          if hHasKey( hGet, "Area" )
             cHandle  := hGet( hGet, "Area" )
@@ -5479,7 +5483,7 @@ ENDCLASS
       local cArea
       local hView
 
-      cArea             := ::GetAreaTmp( cAlias, nView )
+      cArea             := ::Tmp( cAlias, nView )
       if !empty( cArea )
          ( cArea )->( dbCloseArea() )
       end if 
