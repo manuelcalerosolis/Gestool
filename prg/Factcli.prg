@@ -7444,6 +7444,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aGet[ _NMANOBR  ]:cText( ( dbfAlbCliT )->nManObr )
          aGet[ _NBULTOS  ]:cText( ( dbfAlbCliT )->nBultos )
          aGet[ _CRETPOR  ]:cText( ( dbfAlbCliT )->cRetPor )
+         aGet[ _CRETMAT	 ]:cText( ( dbfAlbCliT )->cRetMat )
 
          aTmp[ _CCODGRP ]              := ( dbfAlbCliT )->cCodGrp
          aTmp[ _LMODCLI ]              := ( dbfAlbCliT )->lModCli
