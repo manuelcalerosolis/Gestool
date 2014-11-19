@@ -4677,8 +4677,8 @@ METHOD buildSubirImagenes() CLASS TComercio
 
             // Posicionamos en el directorio-----------------------------------
 
-            //::ftpCreateDirectoryRecursive( oImage:cCarpeta )
-            ::ftpCreateDirectory( oImage:cCarpeta )
+            ::ftpCreateDirectoryRecursive( oImage:cCarpeta )
+            //::ftpCreateDirectory( oImage:cCarpeta )
 
             // Sube el fichero ------------------------------------------------
 

@@ -357,8 +357,8 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::oFabricante           := TFabricantes():Create( cPatArt() )
 
-   ::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
-   ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
+   /*::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
+   ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }*/
 
    oThis                   := Self 
 

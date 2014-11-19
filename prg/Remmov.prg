@@ -276,8 +276,8 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::oDetSeriesMovimientos:bOnPreSaveDetail  := {|| ::oDetSeriesMovimientos:SaveDetails() }
 
-   ::bOnPostAppend         := {|| ::ActualizaStockWeb( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem ) }
-   ::bOnPostEdit           := {|| ::ActualizaStockWeb( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem ) }
+   /*::bOnPostAppend         := {|| ::ActualizaStockWeb( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem ) }
+   ::bOnPostEdit           := {|| ::ActualizaStockWeb( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem ) }*/
 
 RETURN ( Self )
 

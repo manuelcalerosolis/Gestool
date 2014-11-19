@@ -5292,7 +5292,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       Actualizamos el stock en la web------------------------------------------
       */
 
-      ActualizaStockWeb( cSerAlb + Str( nNumAlb ) + cSufAlb )
+      //ActualizaStockWeb( cSerAlb + Str( nNumAlb ) + cSufAlb )
 
       /*
       Ponemos el estado al pedido----------------------------------------------
