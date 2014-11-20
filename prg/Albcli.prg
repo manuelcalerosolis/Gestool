@@ -12937,33 +12937,37 @@ Static Function CargaAtipicasCliente( aTmpAlb, oBrwLin, oDlg )
 
    if !lSearch
 
-      ( D():Atipicas( nView ) )->( OrdSetFocus( "cCodGrp" ) )
-   
-      if ( D():Atipicas( nView ) )->( dbSeek( aTmpAlb[ _CCODGRP ] ) )
+      if !Empty( aTmpAlb[ _CCODGRP ] )
 
-         AutoMeterDialog( oDlg )
+         ( D():Atipicas( nView ) )->( OrdSetFocus( "cCodGrp" ) )
+      
+         if ( D():Atipicas( nView ) )->( dbSeek( aTmpAlb[ _CCODGRP ] ) )
 
-         SetTotalAutoMeterDialog( ( D():Atipicas( nView ) )->( LastRec() ) )
-   
-         while ( D():Atipicas( nView ) )->cCodGrp == aTmpAlb[ _CCODGRP ] .and. !( D():Atipicas( nView ) )->( Eof() )
-   
-            if lConditionAtipica( nil, D():Atipicas( nView ) ) .and. ( D():Atipicas( nView ) )->lAplAlb
-   
-               AppendDatosAtipicas( aTmpAlb )
-   
-            end if
+            AutoMeterDialog( oDlg )
 
-            SetAutoMeterDialog( ( D():Atipicas( nView ) )->( Recno() ) )
-   
-            ( D():Atipicas( nView ) )->( dbSkip() )
-   
-         end while
+            SetTotalAutoMeterDialog( ( D():Atipicas( nView ) )->( LastRec() ) )
+      
+            while ( D():Atipicas( nView ) )->cCodGrp == aTmpAlb[ _CCODGRP ] .and. !( D():Atipicas( nView ) )->( Eof() )
+      
+               if lConditionAtipica( nil, D():Atipicas( nView ) ) .and. ( D():Atipicas( nView ) )->lAplAlb
+      
+                  AppendDatosAtipicas( aTmpAlb )
+      
+               end if
 
-         EndAutoMeterDialog( oDlg )
-   
+               SetAutoMeterDialog( ( D():Atipicas( nView ) )->( Recno() ) )
+      
+               ( D():Atipicas( nView ) )->( dbSkip() )
+      
+            end while
+
+            EndAutoMeterDialog( oDlg )
+      
+         end if
+      
+         ( D():Atipicas( nView ) )->( OrdSetFocus( nOrder ) )
+
       end if
-   
-      ( D():Atipicas( nView ) )->( OrdSetFocus( nOrder ) )
 
    end if 
 
