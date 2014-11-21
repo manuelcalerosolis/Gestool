@@ -1,34 +1,34 @@
-HB 				= 		\xHarbour
+HB                   =  \harbour_bcc582\
 
-HBINCLUDE 		= 		\xHarbour\Include
-FWINCLUDE 		= 		\Fwh1204\Include
-GTINCLUDE 		= 		.\Include
+HBINCLUDE            =  \harbour_bcc582\Include
+FWINCLUDE            =  \Fwh1406\Include
+GTINCLUDE            =  .\Include
 
-HBLIB 			= 		\xHarbour\Lib
-FWLIB 			= 		\Fwh102\Lib
+HBLIB                =  \harbour_bcc582\Lib
+FWLIB                =  \Fwh1406\lib
 
-RESOURCE 		= 		.\Resource
+RESOURCE             =  .\Resource
 
-BORLAND 			= 		\Bcc55
-BORLANDLIB 		= 		\Bcc55\Lib\Psdk
+BORLAND              =  \Bcc582
+BORLANDLIB           =  \Bcc582\lib
 
-IMG2PDFLIB 		= 		\Img2Pdf
+IMG2PDFLIB           =  \Img2Pdf
 
-OBJ 				= 		Obj
-SOURCEPRG 		= 		Prg
-SOURCEC 			= 		C
-PPO 				= 		Ppo
+OBJ                  =  Obj1406
+SOURCEPRG            =  Prg
+SOURCEC              =  C
+PPO                  =  Ppo1406
 
-EXE 				= 		Bin\RptApolo.exe
+EXE                  =  Bin\RptApolo.exe
 
-.path.prg      = 		.\$(SOURCEPRG)
-.path.c       	= 		.\$(SOURCEC)
-.path.obj      = 		.\$(OBJ)
+.path.prg            = 	.\$(SOURCEPRG)
+.path.c       	      = 	.\$(SOURCEC)
+.path.obj            = 	.\$(OBJ)
 
-PRG            =       	\
+PRG                  = 	\
 RptGal.prg              \
+DialogExtend.prg        \ 
 Brush.prg               \
-Rect.prg                \
 Agenda.prg              \
 Agentes.prg             \
 Albcli.prg              \
@@ -50,7 +50,6 @@ Catalogo.prg            \
 Categoria.prg           \
 Cccheck.prg             \
 Cfaccli.prg             \
-Checkbox.prg            \
 Client.prg              \
 Contactos.prg           \
 TGenMail.prg            \
@@ -63,11 +62,9 @@ Costes.prg              \
 Count.prg               \
 Ctarem.prg              \
 Depage.prg              \
-DialogHb.prg            \
 Digit.prg               \
 Divisas.prg             \
 Dlgtools.prg            \
-Dsay.prg                \
 Dummy.prg               \
 Ean.prg                 \
 Edm.prg                 \
@@ -92,9 +89,6 @@ Horas.prg               \
 IEntSal.prg             \
 IGrpVen.prg             \
 IMovAlm.prg             \
-Ibrowse.prg             \
-Icon.prg                \
-Image.prg               \
 Impditer.prg            \
 Impfactu.prg            \
 InfAge.prg              \
@@ -140,6 +134,7 @@ Oferta.prg              \
 Operaci.prg             \
 Operarios.prg           \
 Ordcar.prg              \
+Tpanelex.prg            \
 Pais.prg                \
 Pdlabel.prg             \
 Pdreport.prg            \
@@ -151,7 +146,6 @@ Pro.prg                 \
 Producc.prg             \
 Promo.prg               \
 Provee.prg              \
-Rasdial.prg             \
 Rccs.prg                \
 RcolumnC3.prg           \
 Reccli.prg              \
@@ -167,7 +161,6 @@ Ritems.prg              \
 RocolumnC3.prg          \
 RpreviewC3.prg          \
 Ruta.prg                \
-Rxml.prg                \
 Seccion.prg             \
 Situaciones.prg         \
 Stock.prg               \
@@ -193,7 +186,6 @@ TPrvPgo.prg             \
 TRnkGFRVta.prg          \
 TStkMinArt.prg          \
 TStockMinimoFamilia.prg \
-Tabs.prg                \
 Talbtip.prg             \
 Tankes.prg              \
 Tarifa.prg              \
@@ -227,8 +219,6 @@ Tfamtik.prg             \
 Tfield.prg              \
 Tfilter.prg             \
 Tfpgrec.prg             \
-TftpC3.prg              \
-Tftpfile.prg            \
 Tgesped.prg             \
 Tgethlp.prg             \
 Tgfdalb.prg             \
@@ -323,9 +313,7 @@ Tvta.prg                \
 Ubicacion.prg           \
 Usuario.prg             \
 Utildbf.prg             \
-Wbrowse.prg             \
 IXBrowse.prg            \
-XBrowse.prg             \
 Webbar.prg              \
 Webbtn.prg              \
 TPrnTik.prg             \
@@ -1047,7 +1035,6 @@ TFastReportInfGen.prg   \
 TFastVentasArticulos.prg\
 TFastVentasClientes.prg \
 TipoImpresora.prg       \
-TCalenda.prg            \
 TDataCenter.prg         \
 Valtostr.prg            \
 OrdenComanda.prg 			\
@@ -1058,25 +1045,19 @@ TpvMenuOrdenes.prg 		\
 ApoloMeter.prg 			\
 Components.prg 			\
 TGridSay.prg 				\
+Bitmap.prg              \
 
 C               =       \
 Metafi32.c              \
 Img2pdf.c               \
-Wbrwline.c              \
 Enumfonts.c             \
-Pwebbtn.c               \
 Stretchblt.c            \
-Wininet.c               \
-Winmapihb.c             \
-Rasapi.c                \
-Attrib.c                \
 Treeview.c              \
-Comm.c                  \
 
 OBJS            =       \
 RptGal.obj              \
+DialogExtend.obj        \
 Brush.obj               \
-Rect.obj                \
 Agenda.obj              \
 Agentes.obj             \
 Albcli.obj              \
@@ -1087,8 +1068,6 @@ ArtCodeBar.obj          \
 Articulo.obj            \
 Autoseek.obj            \
 Avifile.obj             \
-Attrib.obj              \
-Comm.obj                \
 Backup.obj              \
 Bandera.obj             \
 BrwCli.obj              \
@@ -1100,7 +1079,6 @@ Catalogo.obj            \
 Categoria.obj           \
 Cccheck.obj             \
 Cfaccli.obj             \
-Checkbox.obj            \
 Client.obj              \
 Contactos.obj           \
 TGenMail.obj            \
@@ -1113,11 +1091,9 @@ Costes.obj              \
 Count.obj               \
 Ctarem.obj              \
 Depage.obj              \
-DialogHb.obj            \
 Digit.obj               \
 Divisas.obj             \
 Dlgtools.obj            \
-Dsay.obj                \
 Dummy.obj               \
 Ean.obj                 \
 Edm.obj                 \
@@ -1143,9 +1119,6 @@ Horas.obj               \
 IEntSal.obj             \
 IGrpVen.obj             \
 IMovAlm.obj             \
-Ibrowse.obj             \
-Icon.obj                \
-Image.obj               \
 Img2pdf.obj             \
 Impditer.obj            \
 Impfactu.obj            \
@@ -1193,6 +1166,7 @@ Oferta.obj              \
 Operaci.obj             \
 Operarios.obj           \
 Ordcar.obj              \
+Tpanelex.obj            \
 Pais.obj                \
 Pdlabel.obj             \
 Pdreport.obj            \
@@ -1204,9 +1178,6 @@ Pro.obj                 \
 Producc.obj             \
 Promo.obj               \
 Provee.obj              \
-Pwebbtn.obj             \
-Rasapi.obj              \
-Rasdial.obj             \
 Rccs.obj                \
 RcolumnC3.obj           \
 Reccli.obj              \
@@ -1222,7 +1193,6 @@ Ritems.obj              \
 RocolumnC3.obj          \
 RpreviewC3.obj          \
 Ruta.obj                \
-Rxml.obj                \
 Seccion.obj             \
 Situaciones.obj         \
 Stock.obj               \
@@ -1249,7 +1219,6 @@ TPrvPgo.obj             \
 TRnkGFRVta.obj          \
 TStkMinArt.obj          \
 TStockMinimoFamilia.obj \
-Tabs.obj                \
 Talbtip.obj             \
 Tankes.obj              \
 Tarifa.obj              \
@@ -1284,8 +1253,6 @@ Tfamtik.obj             \
 Tfield.obj              \
 Tfilter.obj             \
 Tfpgrec.obj             \
-TftpC3.obj              \
-Tftpfile.obj            \
 Tgesped.obj             \
 Tgethlp.obj             \
 Tgfdalb.obj             \
@@ -1381,14 +1348,9 @@ Ubicacion.obj           \
 Usuario.obj             \
 Utildbf.obj             \
 Img2pdf.obj             \
-Wbrowse.obj             \
 IXBrowse.obj            \
-XBrowse.obj             \
-Wbrwline.obj            \
 Webbar.obj              \
 Webbtn.obj              \
-Wininet.obj             \
-Winmapihb.obj           \
 TPrnTik.obj             \
 PInfDiaParte.obj        \
 PAcuDiaParte.obj        \
@@ -2109,7 +2071,6 @@ TFastReportInfGen.obj   \
 TFastVentasArticulos.obj\
 TFastVentasClientes.obj \
 TipoImpresora.obj       \
-TCalenda.obj            \
 TDataCenter.obj         \
 Valtostr.obj            \
 OrdenComanda.obj 			\
@@ -2120,10 +2081,11 @@ TpvMenuOrdenes.obj 		\
 ApoloMeter.obj 			\
 Components.obj 			\
 TGridSay.obj 				\
+Bitmap.obj              \
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
-  	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
+   $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+   $(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
 
@@ -2137,8 +2099,8 @@ $(EXE) 					: $(RESOURCE)\RptApolo.Res $(OBJS)
   	-Gn -aa -Tpe -s -r -m -V4.0 +
 (BORLAND)\bin\c0w32.obj         +
 $(OBJ)\RptGal.obj               +
+$(OBJ)\DialogExtend.obj         +
 $(OBJ)\Brush.obj                +
-$(OBJ)\Rect.obj                 +
 $(OBJ)\Agenda.obj               +
 $(OBJ)\Agentes.obj              +
 $(OBJ)\Albcli.obj               +
@@ -2149,8 +2111,6 @@ $(OBJ)\ArtCodeBar.obj           +
 $(OBJ)\Articulo.obj             +
 $(OBJ)\Autoseek.obj             +
 $(OBJ)\Avifile.obj              +
-$(OBJ)\Attrib.obj               +
-$(OBJ)\Comm.obj                 +
 $(OBJ)\Backup.obj               +
 $(OBJ)\Bandera.obj              +
 $(OBJ)\BrwCli.obj               +
@@ -2162,7 +2122,6 @@ $(OBJ)\Catalogo.obj             +
 $(OBJ)\Categoria.obj            +
 $(OBJ)\Cccheck.obj              +
 $(OBJ)\Cfaccli.obj              +
-$(OBJ)\Checkbox.obj             +
 $(OBJ)\Client.obj               +
 $(OBJ)\Contactos.obj            +
 $(OBJ)\TGenMail.obj             +
@@ -2175,11 +2134,9 @@ $(OBJ)\Costes.obj               +
 $(OBJ)\Count.obj                +
 $(OBJ)\Ctarem.obj               +
 $(OBJ)\Depage.obj               +
-$(OBJ)\DialogHb.obj             +
 $(OBJ)\Digit.obj                +
 $(OBJ)\Divisas.obj              +
 $(OBJ)\Dlgtools.obj             +
-$(OBJ)\Dsay.obj                 +
 $(OBJ)\Dummy.obj                +
 $(OBJ)\Ean.obj                  +
 $(OBJ)\Edm.obj                  +
@@ -2205,9 +2162,6 @@ $(OBJ)\Horas.obj                +
 $(OBJ)\IEntSal.obj              +
 $(OBJ)\IGrpVen.obj              +
 $(OBJ)\IMovAlm.obj              +
-$(OBJ)\Ibrowse.obj              +
-$(OBJ)\Icon.obj                 +
-$(OBJ)\Image.obj                +
 $(OBJ)\Img2pdf.obj              +
 $(OBJ)\Impditer.obj             +
 $(OBJ)\Impfactu.obj             +
@@ -2255,6 +2209,7 @@ $(OBJ)\Oferta.obj               +
 $(OBJ)\Operaci.obj              +
 $(OBJ)\Operarios.obj            +
 $(OBJ)\Ordcar.obj               +
+$(OBJ)\Tpanelex.obj             +
 $(OBJ)\Pais.obj                 +
 $(OBJ)\Pdlabel.obj              +
 $(OBJ)\Pdreport.obj             +
@@ -2266,9 +2221,6 @@ $(OBJ)\Pro.obj                  +
 $(OBJ)\Producc.obj              +
 $(OBJ)\Promo.obj                +
 $(OBJ)\Provee.obj               +
-$(OBJ)\Pwebbtn.obj              +
-$(OBJ)\Rasapi.obj               +
-$(OBJ)\Rasdial.obj              +
 $(OBJ)\Rccs.obj                 +
 $(OBJ)\RcolumnC3.obj            +
 $(OBJ)\Reccli.obj               +
@@ -2284,7 +2236,6 @@ $(OBJ)\Ritems.obj               +
 $(OBJ)\RocolumnC3.obj           +
 $(OBJ)\RpreviewC3.obj           +
 $(OBJ)\Ruta.obj                 +
-$(OBJ)\Rxml.obj                 +
 $(OBJ)\Seccion.obj              +
 $(OBJ)\Situaciones.obj          +
 $(OBJ)\Stock.obj                +
@@ -2311,7 +2262,6 @@ $(OBJ)\TPrvPgo.obj              +
 $(OBJ)\TRnkGFRVta.obj           +
 $(OBJ)\TStkMinArt.obj           +
 $(OBJ)\TStockMinimoFamilia.obj  +
-$(OBJ)\Tabs.obj                 +
 $(OBJ)\Talbtip.obj              +
 $(OBJ)\Tankes.obj               +
 $(OBJ)\Tarifa.obj               +
@@ -2346,8 +2296,6 @@ $(OBJ)\Tfamtik.obj              +
 $(OBJ)\Tfield.obj               +
 $(OBJ)\Tfilter.obj              +
 $(OBJ)\Tfpgrec.obj              +
-$(OBJ)\TftpC3.obj               +
-$(OBJ)\Tftpfile.obj             +
 $(OBJ)\Tgesped.obj              +
 $(OBJ)\Tgethlp.obj              +
 $(OBJ)\Tgfdalb.obj              +
@@ -2443,14 +2391,9 @@ $(OBJ)\Ubicacion.obj            +
 $(OBJ)\Usuario.obj              +
 $(OBJ)\Utildbf.obj              +
 $(OBJ)\Img2pdf.obj              +
-$(OBJ)\Wbrowse.obj              +
 $(OBJ)\IXBrowse.obj             +
-$(OBJ)\XBrowse.obj              +
-$(OBJ)\Wbrwline.obj             +
 $(OBJ)\Webbar.obj               +
 $(OBJ)\Webbtn.obj               +
-$(OBJ)\Wininet.obj              +
-$(OBJ)\Winmapihb.obj            +
 $(OBJ)\TPrnTik.obj              +
 $(OBJ)\PInfDiaParte.obj         +
 $(OBJ)\PAcuDiaParte.obj         +
@@ -3171,7 +3114,6 @@ $(OBJ)\TFastReportInfGen.obj    	+
 $(OBJ)\TFastVentasArticulos.obj 	+
 $(OBJ)\TFastVentasClientes.obj  	+
 $(OBJ)\TipoImpresora.obj        	+
-$(OBJ)\TCalenda.obj             	+
 $(OBJ)\TDataCenter.obj          	+
 $(OBJ)\Valtostr.obj             	+
 $(OBJ)\OrdenComanda.obj 			+
@@ -3181,47 +3123,68 @@ $(OBJ)\TpvMenuArticulo.obj 		+
 $(OBJ)\TpvMenuOrdenes.obj 			+
 $(OBJ)\ApoloMeter.obj 				+
 $(OBJ)\Components.obj 				+
-$(OBJ)\TGridSay.obj 					+
-(HBLIB)\Mapi32.obj
+$(OBJ)\TGridSay.obj 				   +	
+$(OBJ)\Bitmap.obj              
 $<,$*
-$(FWLIB)\xc5h.lib               +
-$(FWLIB)\FiveHX.lib             +
-$(FWLIB)\FiveHC.lib             +
-$(HBLIB)\rtl.lib                +
-$(HBLIB)\vm.lib                 +
-$(HBLIB)\gtgui.lib              +
-$(HBLIB)\lang.lib               +
-$(HBLIB)\macro.lib              +
-$(HBLIB)\rdd.lib                +
-$(HBLIB)\dbfntx.lib             +
-$(HBLIB)\dbfcdx.lib             +
-$(HBLIB)\dbffpt.lib             +
-$(HBLIB)\hbsix.lib              +
-$(HBLIB)\b32\rddads.lib         +
-$(HBLIB)\b32\ace32.lib          +
-$(HBLIB)\common.lib             +
-$(HBLIB)\pp.lib                 +
-$(HBLIB)\ct.lib                 +
-$(HBLIB)\codepage.lib           +
-$(HBLIB)\pcrepos.lib            +
-$(HBLIB)\hbzip.lib              +
-$(HBLIB)\zlib.lib               +
-$(IMG2PDFLIB)\Image2pdf.lib     +
-$(BORLANDLIB)\msimg32.lib       +
-$(BORLANDLIB)\cw32.lib          +
-$(BORLANDLIB)\import32.lib      +
-$(BORLANDLIB)\psdk\wininet.lib,
-$(RESOURCE)\RptApolo.Res        +
-$(RESOURCE)\GstTactil.Res       +
-$(RESOURCE)\GstImage1.Res       +
-$(RESOURCE)\GstImage2.Res       +
-$(RESOURCE)\GstImage3.Res       +
-$(RESOURCE)\GstImage4.Res       +
-$(RESOURCE)\GstImage5.Res       +
-$(RESOURCE)\GstImage6.Res       +
-$(RESOURCE)\GstImage7.Res       +
-$(RESOURCE)\GstImage8.Res       +
-$(RESOURCE)\GstImage9.Res       +
-$(RESOURCE)\GstImage10.Res      +
-$(RESOURCE)\GstImage11.Res      +
+$(FWLIB)\FiveH.lib               +
+$(FWLIB)\FiveHC.lib              +
+$(HBLIB)\Eagle1.lib              +
+$(FWLIB)\libmysql.lib            +
+$(HBLIB)\hbwin.lib               +
+$(HBLIB)\gtwin.lib               + 
+$(HBLIB)\gtgui.lib               + 
+$(HBLIB)\hbrtl.lib               + 
+$(HBLIB)\hbvm.lib                + 
+$(HBLIB)\hblang.lib              +
+$(HBLIB)\hbmacro.lib             +
+$(HBLIB)\hbrdd.lib               + 
+$(HBLIB)\rddntx.lib              +
+$(HBLIB)\rddcdx.lib              +
+$(HBLIB)\rddfpt.lib              +
+$(HBLIB)\hbsix.lib               + 
+$(HBLIB)\hbdebug.lib             +
+$(HBLIB)\hbcommon.lib            +
+$(HBLIB)\hbpp.lib                + 
+$(HBLIB)\hbcpage.lib             +
+$(HBLIB)\hbcplr.lib              +
+$(HBLIB)\hbct.lib                + 
+$(HBLIB)\hbpcre.lib              +
+$(HBLIB)\xhb.lib                 + 
+$(HBLIB)\hbtip.lib               + 
+$(HBLIB)\hbziparc.lib            +
+$(HBLIB)\hbmzip.lib              +
+$(HBLIB)\hbzlib.lib              +
+$(HBLIB)\minizip.lib             +
+$(HBLIB)\png.lib                 + 
+$(HBLIB)\hbcurl.lib              +
+$(HBLIB)\hbusrrdd.lib            +
+$(HBLIB)\libcurl.lib             +
+$(IMG2PDFLIB)\Image2pdf.lib      +
+$(HBLIB)\b32\rddads.lib          +
+$(HBLIB)\ace32.lib               +
+$(BORLANDLIB)\cw32.lib           + 
+$(BORLANDLIB)\uuid.lib           + 
+$(BORLANDLIB)\import32.lib       + 
+$(BORLANDLIB)\ws2_32.lib         + 
+$(BORLANDLIB)\psdk\odbc32.lib    +
+$(BORLANDLIB)\psdk\nddeapi.lib   +
+$(BORLANDLIB)\psdk\iphlpapi.lib  +
+$(BORLANDLIB)\psdk\msimg32.lib   +
+$(BORLANDLIB)\psdk\psapi.lib     + 
+$(BORLANDLIB)\psdk\rasapi32.lib  +
+$(BORLANDLIB)\psdk\gdiplus.lib   +
+$(BORLANDLIB)\psdk\shell32.lib,
+$(RESOURCE)\RptApolo.Res         +
+$(RESOURCE)\GstImage1.Res        +
+$(RESOURCE)\GstImage2.Res        +
+$(RESOURCE)\GstImage3.Res        +
+$(RESOURCE)\GstImage4.Res        +
+$(RESOURCE)\GstImage5.Res        +
+$(RESOURCE)\GstImage6.Res        +
+$(RESOURCE)\GstImage7.Res        +
+$(RESOURCE)\GstImage8.Res        +
+$(RESOURCE)\GstImage9.Res        +
+$(RESOURCE)\GstImage10.Res       +
+$(RESOURCE)\GstImage11.Res       +
+$(RESOURCE)\GstImage12.Res       +
 |

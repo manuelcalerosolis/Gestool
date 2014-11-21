@@ -5669,9 +5669,11 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    end if
 
    DisableAcceso()
-   AutoMeterDialog( oDlg )   
 
-   oMsgText( "Archivando" )
+   AutoMeterDialog( oDlg )
+   AutoTextDialog( oDlg )   
+
+   SetAutoTextDialog( "Archivando")
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -6403,6 +6405,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          :cHeader          := retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro )
          :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cDesPrp }
          :nWidth           := if( lColorPrp1, 103, 119 )
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCol:SortArrayData() }
       end with
 
       if lColorPrp1
@@ -6459,6 +6462,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          :cHeader          := if( Len( aValPrp2 ) != 0, retFld( aValPrp2[ oBrwPrp2:nArrayAt ]:cCodPrp, dbfPro ), "" )
          :bStrData         := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:cDesPrp, "" ) }
          :nWidth           := if( lColorPrp2, 103, 119 )
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCol:SortArrayData() }
       end with
 
       if lColorPrp2
@@ -18498,7 +18502,7 @@ Return ( .t. )
 
 Static Function BuildWeb( cCodArt )
 
-   with object ( TComercio():New( , GetAutoMeterDialog() ) )  
+   with object ( TComercio():New( , GetAutoMeterDialog(), GetAutoTextDialog() ) )  
 
       :BuildDeleteProductPrestashop( cCodArt )
 

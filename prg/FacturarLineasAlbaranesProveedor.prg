@@ -537,8 +537,6 @@ METHOD loadAlbaranes()
       end if 
    end if 
 
-   msgAlert( "loadAlbaranes") 
-
    // Cursor paramos el dialogo------------------------------------------------
 
    Cursorwait()

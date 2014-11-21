@@ -169,13 +169,18 @@ CLASS TComercio
 
    // Mensajes-----------------------------------------------------------------
 
-   DATA  oText
-   DATA  cText
 
    DATA  oTree
 
    DATA  oMeterGlobal
    DATA  nMeterGlobal
+
+   METHOD MeterGlobal( oMeterGlobal)   INLINE ( iif( oMeterGlobal != nil, ::oMeterGlobal := oMeterGlobal, ::oMeterGlobal ) )
+
+   DATA  oTextGlobal
+   DATA  cTextGlobal
+
+   METHOD TextGlobal( oTextGlobal)     INLINE ( iif( oTextGlobal != nil, ::oTextGlobal := oTextGlobal, ::oTextGlobal ) )
 
    DATA  oMeterProceso
    DATA  nMeterProceso
@@ -369,11 +374,12 @@ RETURN ( ::oInstance )
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oMenuItem, oMeterGlobal ) CLASS TComercio
+METHOD New( oMenuItem, oMeterGlobal, oTextGlobal ) CLASS TComercio
 
    DEFAULT oMenuItem       := "01108"
 
    ::oMeterGlobal          := oMeterGlobal
+   ::oTextGlobal           := oTextGlobal
 
    ::oIniEmpresa           := TIni():New( cPatEmp() + "Empresa.Ini" )
 
@@ -738,7 +744,7 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
 
       ::oTree           := TTreeView():Redefine( 200, ::oDlg )
 
-      REDEFINE SAY ::oText PROMPT ::cText ID 210 OF ::oDlg
+      REDEFINE SAY ::oTextGlobal PROMPT ::cTextGlobal ID 210 OF ::oDlg
 
       ::oMeterGlobal    := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nMeterGlobal, ::nMeterGlobal := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
@@ -829,8 +835,8 @@ METHOD meterGlobalText( cText ) Class TComercio
 
    DEFAULT cText  := ""
 
-   if !Empty( ::oText )
-      ::oText:SetText( cText )
+   if !Empty( ::oTextGlobal )
+      ::oTextGlobal:SetText( cText )
    end if
 
    if !Empty( ::oMeterGlobal )
@@ -857,8 +863,8 @@ METHOD meterProcesoText( cText ) Class TComercio
 
    DEFAULT cText  := ""
 
-   if !Empty( ::oText )
-      ::oText:SetText( cText )
+   if !Empty( ::oTextGlobal )
+      ::oTextGlobal:SetText( cText )
    end if
 
    if !Empty( ::oMeterProceso )
@@ -5019,8 +5025,8 @@ METHOD cTextoWait( cText ) CLASS TComercio
       cText    := "Actualizando web espere por favor..."
    end if   
 
-   if !Empty( ::oSayWait )
-      ::oSayWait:SetText( cText )
+   if !Empty( ::oTextGlobal )
+      ::oTextGlobal:SetText( cText )
    end if
 
 Return nil

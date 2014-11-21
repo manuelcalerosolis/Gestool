@@ -1,26 +1,25 @@
-HB 					= 	\harbour_bcc582\
+HB                   = 	\harbour_bcc582\
 
-HBINCLUDE 			= 	\harbour_bcc582\Include
-FWINCLUDE 			= 	\Fwh1406\Include
-GTINCLUDE 			= 	.\Include
+HBINCLUDE            = 	\harbour_bcc582\Include
+FWINCLUDE            = 	\Fwh1406\Include
+GTINCLUDE            = 	.\Include
 
-HBLIB 				= 	\harbour_bcc582\Lib
-FWLIB 				= 	\Fwh1406\lib
+HBLIB                = 	\harbour_bcc582\Lib
+FWLIB                = 	\Fwh1406\lib
 
-RESOURCE 			= 	.\Resource
+RESOURCE             = 	.\Resource
 
-BORLAND 				= 	\Bcc582
-BORLANDLIB 			= 	\Bcc582\lib
+BORLAND              = 	\Bcc582
+BORLANDLIB           = 	\Bcc582\lib
 
-IMG2PDFLIB 			= 	\Img2Pdf
+IMG2PDFLIB           = 	\Img2Pdf
 
-OBJ 					= 	Obj1406
-SOURCEPRG 			= 	Prg
+OBJ                  = 	Obj1406
+SOURCEPRG            = 	Prg
+SOURCEC 				   =	C
+PPO 					   = 	Ppo1406
 
-SOURCEC 				=	C
-PPO 					= 	Ppo1406
-
-EXE 					= 	Bin\Gestool.exe
+EXE 					   = 	Bin\Gestool.exe
 
 .path.prg      		=	.\$(SOURCEPRG)
 .path.c       			=	.\$(SOURCEC)
@@ -753,7 +752,7 @@ $(EXE)                  : $( C:.C=.OBJ )
 
 $(EXE) : $(RESOURCE)\GstDialog.Res $(OBJS)
   	$(BORLAND)\Bin\iLink32 @&&|
-  	-Gn -aa -Tpe -s -r -m -V4.0 +
+  	-Gn -aa -Tpe -s -r -m -V4.0  +
 (BORLAND)\lib\c0w32.obj         +
 $(OBJ)\Factu.obj                +
 $(OBJ)\Tinitshell.obj           +
@@ -1091,66 +1090,66 @@ $(OBJ)\Xbrowse1406.Obj            	+
 $(OBJ)\FacturarLineasAlbaranesProveedor.obj+
 $(OBJ)\TGridSay.obj 						
 $<,$*
-$(FWLIB)\FiveH.lib              	+
-$(FWLIB)\FiveHC.lib             	+
-$(HBLIB)\Eagle1.lib            	+
-$(FWLIB)\libmysql.lib           	+
-$(HBLIB)\hbwin.lib 					+
-$(HBLIB)\gtwin.lib 					+ 
-$(HBLIB)\gtgui.lib 					+ 
-$(HBLIB)\hbrtl.lib 					+ 
-$(HBLIB)\hbvm.lib 					+ 
-$(HBLIB)\hblang.lib 					+
-$(HBLIB)\hbmacro.lib 				+
-$(HBLIB)\hbrdd.lib 					+ 
-$(HBLIB)\rddntx.lib 					+
-$(HBLIB)\rddcdx.lib 					+
-$(HBLIB)\rddfpt.lib 					+
-$(HBLIB)\hbsix.lib 					+ 
-$(HBLIB)\hbdebug.lib 				+
-$(HBLIB)\hbcommon.lib 				+
-$(HBLIB)\hbpp.lib 					+ 
-$(HBLIB)\hbcpage.lib 				+
-$(HBLIB)\hbcplr.lib 					+
-$(HBLIB)\hbct.lib 					+ 
-$(HBLIB)\hbpcre.lib 					+
-$(HBLIB)\xhb.lib 						+ 
+$(FWLIB)\FiveH.lib               +
+$(FWLIB)\FiveHC.lib              +
+$(HBLIB)\Eagle1.lib              +
+$(FWLIB)\libmysql.lib            +
+$(HBLIB)\hbwin.lib               +
+$(HBLIB)\gtwin.lib               + 
+$(HBLIB)\gtgui.lib               + 
+$(HBLIB)\hbrtl.lib               + 
+$(HBLIB)\hbvm.lib                + 
+$(HBLIB)\hblang.lib              +
+$(HBLIB)\hbmacro.lib             +
+$(HBLIB)\hbrdd.lib               + 
+$(HBLIB)\rddntx.lib              +
+$(HBLIB)\rddcdx.lib              +
+$(HBLIB)\rddfpt.lib              +
+$(HBLIB)\hbsix.lib               + 
+$(HBLIB)\hbdebug.lib             +
+$(HBLIB)\hbcommon.lib            +
+$(HBLIB)\hbpp.lib                + 
+$(HBLIB)\hbcpage.lib             +
+$(HBLIB)\hbcplr.lib              +
+$(HBLIB)\hbct.lib                + 
+$(HBLIB)\hbpcre.lib              +
+$(HBLIB)\xhb.lib                 + 
 $(HBLIB)\hbtip.lib               + 
-$(HBLIB)\hbziparc.lib 				+
-$(HBLIB)\hbmzip.lib 					+
-$(HBLIB)\hbzlib.lib 					+
-$(HBLIB)\minizip.lib 				+
-$(HBLIB)\png.lib 						+ 
-$(HBLIB)\hbcurl.lib 					+
-$(HBLIB)\hbusrrdd.lib 				+
-$(HBLIB)\libcurl.lib 				+
-$(IMG2PDFLIB)\Image2pdf.lib     	+
-$(HBLIB)\b32\rddads.lib				+
-$(HBLIB)\ace32.lib 					+
-$(BORLANDLIB)\cw32.lib 				+ 
-$(BORLANDLIB)\uuid.lib 				+ 
-$(BORLANDLIB)\import32.lib 		+ 
-$(BORLANDLIB)\ws2_32.lib 			+ 
-$(BORLANDLIB)\psdk\odbc32.lib 	+
-$(BORLANDLIB)\psdk\nddeapi.lib 	+
-$(BORLANDLIB)\psdk\iphlpapi.lib 	+
-$(BORLANDLIB)\psdk\msimg32.lib 	+
-$(BORLANDLIB)\psdk\psapi.lib 		+ 
-$(BORLANDLIB)\psdk\rasapi32.lib 	+
-$(BORLANDLIB)\psdk\gdiplus.lib 	+
+$(HBLIB)\hbziparc.lib            +
+$(HBLIB)\hbmzip.lib              +
+$(HBLIB)\hbzlib.lib              +
+$(HBLIB)\minizip.lib             +
+$(HBLIB)\png.lib                 + 
+$(HBLIB)\hbcurl.lib              +
+$(HBLIB)\hbusrrdd.lib            +
+$(HBLIB)\libcurl.lib             +
+$(IMG2PDFLIB)\Image2pdf.lib      +
+$(HBLIB)\b32\rddads.lib          +
+$(HBLIB)\ace32.lib               +
+$(BORLANDLIB)\cw32.lib           + 
+$(BORLANDLIB)\uuid.lib           + 
+$(BORLANDLIB)\import32.lib       + 
+$(BORLANDLIB)\ws2_32.lib         + 
+$(BORLANDLIB)\psdk\odbc32.lib    +
+$(BORLANDLIB)\psdk\nddeapi.lib   +
+$(BORLANDLIB)\psdk\iphlpapi.lib  +
+$(BORLANDLIB)\psdk\msimg32.lib   +
+$(BORLANDLIB)\psdk\psapi.lib     + 
+$(BORLANDLIB)\psdk\rasapi32.lib  +
+$(BORLANDLIB)\psdk\gdiplus.lib   +
 $(BORLANDLIB)\psdk\shell32.lib,
-$(RESOURCE)\GstDialog.Res       	+
-$(RESOURCE)\GstTactil.Res       	+
-$(RESOURCE)\GstImage1.Res       	+
-$(RESOURCE)\GstImage2.Res       	+
-$(RESOURCE)\GstImage3.Res       	+
-$(RESOURCE)\GstImage4.Res       	+
-$(RESOURCE)\GstImage5.Res       	+
-$(RESOURCE)\GstImage6.Res       	+
-$(RESOURCE)\GstImage7.Res       	+
-$(RESOURCE)\GstImage8.Res       	+
-$(RESOURCE)\GstImage9.Res       	+
-$(RESOURCE)\GstImage10.Res      	+
-$(RESOURCE)\GstImage11.Res      	+
-$(RESOURCE)\GstImage12.Res      	+
+$(RESOURCE)\GstDialog.Res        +
+$(RESOURCE)\GstTactil.Res        +
+$(RESOURCE)\GstImage1.Res        +
+$(RESOURCE)\GstImage2.Res        +
+$(RESOURCE)\GstImage3.Res        +
+$(RESOURCE)\GstImage4.Res        +
+$(RESOURCE)\GstImage5.Res        +
+$(RESOURCE)\GstImage6.Res        +
+$(RESOURCE)\GstImage7.Res        +
+$(RESOURCE)\GstImage8.Res        +
+$(RESOURCE)\GstImage9.Res        +
+$(RESOURCE)\GstImage10.Res       +
+$(RESOURCE)\GstImage11.Res       +
+$(RESOURCE)\GstImage12.Res       +
 |

@@ -474,7 +474,7 @@ METHOD lGenerate() CLASS TDiaCFac
             ::oDbf:cCodCli := ::oFacRecT:cCodCli
             ::oDbf:cNomCli := ::oFacRecT:cNomCli
             ::oDbf:dFecMov := ::oFacRecT:dFecFac
-            ::oDbf:cDocMov := ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFacç
+            ::oDbf:cDocMov := ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac
             ::oDbf:cCodObr := ::oFacRecT:cCodObr
             ::oDbf:cNomObr := oRetFld( ::oFacCliT:cCodCli + ::oFacRecT:cCodObr, ::oDbfObr, "cNomObr" )
 

@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TInfDetFac FROM TInfAlm
+CLASS TInfDetFac FROM TInfAlm 
 
    DATA  lResumen    AS LOGIC    INIT .f.
    DATA  lExcCero    AS LOGIC    INIT .f.

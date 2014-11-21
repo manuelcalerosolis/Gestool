@@ -17,7 +17,7 @@
 #define SRCCOPY       13369376
 
 #ifdef __XPP__
-   #define Super ::TControl
+   #define ::Super ::TControl
    #define New _New
 #endif
 
@@ -29,8 +29,8 @@
 CLASS TBitmap FROM TControl
 
    CLASSDATA lRegistered AS LOGICAL
-   CLASSDATA aProperties INIT { "cBmpFile", "lStretch", "nTop", "nLeft",;
-      "nWidth", "nHeight", "nZoom" }
+   CLASSDATA aProperties INIT { "cVarName", "cBmpFile", "lStretch", "nTop",;
+                                  "nLeft", "nWidth", "nHeight", "nZoom" }
 
    DATA   nX, nY, nOldX, nOldY
    DATA   hBitmap, hPalette
@@ -50,7 +50,7 @@ CLASS TBitmap FROM TControl
                oCursor, cMsg, lUpdate, bWhen, lPixel, bValid,;
                lDesign ) CONSTRUCTOR
 
-   METHOD Define( cResName, cBmpFile, oWnd ) CONSTRUCTOR
+   METHOD Define( cResName, cBmpFile, oWnd, hBitmap ) CONSTRUCTOR
 
    METHOD ReDefine( nId, cResName, cBmpFile, oWnd, bLClicked, bRClicked,;
                     lScroll, lStretch, oCursor, cMsg, lUpdate,;
@@ -73,7 +73,7 @@ CLASS TBitmap FROM TControl
 
    METHOD Default()
 
-   METHOD GotFocus() INLINE Super:GotFocus(), ::SetFore()
+   METHOD GotFocus() INLINE ::Super:GotFocus(), ::SetFore()
 
    METHOD Inspect( cData )
 
@@ -81,7 +81,7 @@ CLASS TBitmap FROM TControl
 
    METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
 
-   METHOD End() INLINE If( ::hWnd == 0, ::Destroy(), Super:End() )
+   METHOD End() INLINE If( ::hWnd == 0, ::Destroy(), ::Super:End() )
 
    METHOD HandleEvent( nMsg, nWParam, nLParam )
 
@@ -102,7 +102,7 @@ CLASS TBitmap FROM TControl
 
    METHOD ReSize( nType, nWidth, nHeight ) INLINE ;
                              ::ScrollAdjust(),;
-                             Super:ReSize( nType, nWidth, nHeight )
+                             ::Super:ReSize( nType, nWidth, nHeight )
 
    METHOD SetBMP( cResName )  INLINE ::ReLoad( cResName )
 
@@ -112,15 +112,15 @@ CLASS TBitmap FROM TControl
 
    METHOD ScrollAdjust()
 
-   METHOD Initiate( hDlg ) INLINE  Super:Initiate( hDlg ), ::Default()
+   METHOD Initiate( hDlg ) INLINE  ::Super:Initiate( hDlg ), ::Default()
 
    METHOD nHeight() INLINE If( ::lDrag == nil, ::lDrag := .f.,),; // Xbase++ requirement
-                           If( ::lDrag, Super:nHeight(),;
+                           If( ::lDrag, ::Super:nHeight(),;
                            If( ! Empty( ::hBitmap ),;
                                nBmpHeight( ::hBitmap ) * ::nZoom, 0 ) )
 
    METHOD nWidth() INLINE  If( ::lDrag == nil, ::lDrag := .f.,),; // Xbase++ requirement
-                           If( ::lDrag, Super:nWidth(),;
+                           If( ::lDrag, ::Super:nWidth(),;
                            If( ! Empty( ::hBitmap ),;
                                nBmpWidth( ::hBitmap ) * ::nZoom, 0 ) )
    METHOD ScrollUp()
@@ -130,21 +130,23 @@ CLASS TBitmap FROM TControl
 
    METHOD ScrollRight()
 
-   METHOD nXExtra() INLINE ::nHeight() - ( Super:nHeight() ) + 1
-   METHOD nYExtra() INLINE ::nWidth()  - ( Super:nWidth() ) + 1
+   METHOD nXExtra() INLINE ::nHeight() - ( ::Super:nHeight() ) + 1
+   METHOD nYExtra() INLINE ::nWidth()  - ( ::Super:nWidth() ) + 1
 
    METHOD VScroll( nWParam, nLParam )
    METHOD HScroll( nWParam, nLParam )
 
-   METHOD HasAlpha() INLINE ::lHasAlpha := HasAlpha( ::hBitmap )
+   METHOD HasAlpha() INLINE ::lHasAlpha := .f. // HasAlpha( ::hBitmap )
    METHOD nAlphaLevel( nLevel ) SETGET
 
    METHOD MouseLeave( nRow, nCol, nFlags )
 
+   METHOD Clear()
+
    /*
    METHOD Disable() INLINE ;   It paints on the desktop cause hDC is not ready!
                                Also users may not want to see their bitmaps in gray!
-      DrawGray( ::GetDC(), ::hBitmap ), ::ReleaseDC(), Super:Disable() */
+      DrawGray( ::GetDC(), ::hBitmap ), ::ReleaseDC(), ::Super:Disable() */
 
 ENDCLASS
 
@@ -247,7 +249,7 @@ return Self
 // This method does not create a control, it just creates a bitmap object to
 // be used somewhere else.
 
-METHOD Define( cResName, cBmpFile, oWnd ) CLASS TBitmap
+METHOD Define( cResName, cBmpFile, oWnd, hBitmap ) CLASS TBitmap 
 
    local aBmpPal
 
@@ -276,12 +278,16 @@ METHOD Define( cResName, cBmpFile, oWnd ) CLASS TBitmap
    endif
 
    if ! Empty( cBmpFile ) .and. File( cBmpFile )
-      ::cBmpFile  = cBmpFile
-      aBmpPal     = PalBmpRead( If( oWnd != nil, oWnd:GetDC(), 0 ), cBmpFile )
-      ::hBitmap   = aBmpPal[ 1 ]
-      ::hPalette  = aBmpPal[ 2 ]
+      ::cBmpFile = cBmpFile
+      aBmpPal = PalBmpRead( If( oWnd != nil, oWnd:GetDC(), 0 ), cBmpFile )
+      ::hBitmap  = aBmpPal[ 1 ]
+      ::hPalette = aBmpPal[ 2 ]
       If( oWnd != nil, oWnd:ReleaseDC(),)
    endif
+
+   if ! Empty( hBitmap )
+      ::hBitmap = hBitmap
+   endif   
 
    if ::hBitmap != 0
       PalBmpNew( 0, ::hBitmap, ::hPalette )
@@ -454,7 +460,7 @@ METHOD Destroy() CLASS TBitmap
    endif
 
    if ::hWnd != 0
-      Super:Destroy()
+      ::Super:Destroy()
    else
       if ::oBrush != nil
          ::oBrush:End()
@@ -518,7 +524,7 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TBitmap
       return DefWindowProc( ::hWnd, nMsg, nWParam, nLParam )
    endif
 
-return Super:HandleEvent( nMsg, nWParam, nLParam )
+return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 //----------------------------------------------------------------------------//
 
@@ -552,10 +558,10 @@ METHOD KeyDown( nKey, nFlags ) CLASS TBitmap
               ::PageDown()
 
          otherwise
-              return Super:KeyDown( nKey, nFlags )
+              return ::Super:KeyDown( nKey, nFlags )
       endcase
    else
-      return Super:KeyDown( nKey, nFlags )
+      return ::Super:KeyDown( nKey, nFlags )
    endif
 
 return 0
@@ -578,7 +584,7 @@ return ::hAlphaLevel
 
 METHOD PageUp() CLASS TBitmap
 
-   local nVisible := Super:nHeight() - If( ::oHScroll:nMax != 0, GetSysMetrics( 3 ), 0 ) - 1
+   local nVisible := ::Super:nHeight() - If( ::oHScroll:nMax != 0, GetSysMetrics( 3 ), 0 ) - 1
 
    ::nOldX = ::nX
    if ::nX < -nVisible
@@ -597,7 +603,7 @@ return nil
 
 METHOD PageDown() CLASS TBitmap
 
-   local nVisible := Super:nHeight() - If( ::oHScroll:nMax != 0, GetSysMetrics( 3 ), 0 ) - 1
+   local nVisible := ::Super:nHeight() - If( ::oHScroll:nMax != 0, GetSysMetrics( 3 ), 0 ) - 1
 
    ::nOldX = ::nX
    ::nX -= Min( nVisible, ::nHeight() + ::nX - nVisible )
@@ -612,7 +618,7 @@ return nil
 
 METHOD PageLeft() CLASS TBitmap
 
-   local nVisible := Super:nWidth() - If( ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 ) - 1
+   local nVisible := ::Super:nWidth() - If( ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 ) - 1
 
    ::nOldY = ::nY
    if ::nY < -nVisible
@@ -631,7 +637,7 @@ return nil
 
 METHOD PageRight() CLASS TBitmap
 
-   local nVisible := Super:nWidth() - If( ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 ) - 1
+   local nVisible := ::Super:nWidth() - If( ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 ) - 1
 
    ::nOldY = ::nY
    ::nY -= Min( nVisible, ::nWidth() + ::nY - nVisible )
@@ -656,7 +662,11 @@ METHOD Paint() CLASS TBitmap
          FillRect( ::hDC, GetClientRect( ::hWnd ), ::oWnd:oBrush:hBrush )
       endif
    else
-      SetBrushOrgEx( ::hDC, nBmpWidth( ::oBrush:hBitmap ) - ::nLeft, nBmpHeight( ::oBrush:hBitmap ) - ::nTop )
+      #ifdef __CLIPPER__
+         SetBrushOrgEx( ::hDC, 8 - ::nLeft() % 8, 8 - ::nTop() % 8 )
+      #else
+         SetBrushOrgEx( ::hDC, nBmpWidth( ::oBrush:hBitmap ) - ::nLeft, nBmpHeight( ::oBrush:hBitmap ) - ::nTop )
+      #endif
       FillRect( ::hDC, GetClientRect( ::hWnd ), ::oWnd:oBrush:hBrush )
    endif
 
@@ -667,25 +677,24 @@ METHOD Paint() CLASS TBitmap
    if ! Empty( ::hBitmap )
       if ::lStretch
          if SetAlpha() .and. ::lHasAlpha
-            hBitmap := resizebmp( ::hBitmap, Super:nWidth(), Super:nHeight )
+            hBitmap := resizebmp( ::hBitmap, ::Super:nWidth(), ::Super:nHeight )
             ABPaint( ::hDC, ::nX, ::nY, hBitmap, ::nAlphaLevel() )
          else
             if ! ::lTransparent
                PalBmpDraw( ::hDC, ::nX, ::nY, ::hBitmap, ::hPalette,;
-                           Super:nWidth(), Super:nHeight(),, ::lTransparent, ::nClrPane )
+                           ::Super:nWidth(), ::Super:nHeight(),, ::lTransparent, ::nClrPane )
             else
                hBmpOld = SelectObject( ::hDC, ::hBitmap )
                nZeroZeroClr = GetPixel( ::hDC, 0, 0 )
                SelectObject( ::hDC, hBmpOld )
                nOldClr = SetBkColor( ::hDC, nRGB( 255, 255, 255 ) )
                TransBmp( ::hBitmap, ::nWidth(), ::nHeight(), nZeroZeroClr, ::hDC,;
-                         ::nY, ::nX, Super:nWidth(), Super:nHeight() )
+                         ::nY, ::nX, ::Super:nWidth(), ::Super:nHeight() )
                SetBkColor( ::hDC, nOldClr )
             endif
          endif
       else
          if ::nZoom > 0
-
             if SetAlpha() .and. ::lHasAlpha
                hBitmap := resizebmp( ::hBitmap, ::nWidth, ::nHeight )
                ABPaint( ::hDC, ::nX, ::nY, hBitmap, ::nAlphaLevel() )
@@ -698,7 +707,8 @@ METHOD Paint() CLASS TBitmap
                   nZeroZeroClr = GetPixel( ::hDC, 0, 0 )
                   SelectObject( ::hDC, hBmpOld )
                   nOldClr = SetBkColor( ::hDC, nRGB( 255, 255, 255 ) )
-                  TransBmp( ::hBitmap, ::nWidth(), ::nHeight(), nZeroZeroClr, ::hDC, ::nY, ::nX, ::nWidth(), ::nHeight() )
+                  TransBmp( ::hBitmap, ::nWidth(), ::nHeight(), nZeroZeroClr, ::hDC,;
+                            ::nY, ::nX, ::nWidth(), ::nHeight() )
                   SetBkColor( ::hDC, nOldClr )
                endif
             endif
@@ -744,17 +754,21 @@ METHOD LoadImage( cResName, cBmpFile ) CLASS TBitmap
        aBmpPal    = PalBmpLoad( cResName )
        ::hBitmap  = aBmpPal[ 1 ]
        ::hPalette = aBmpPal[ 2 ]
-       lChanged  := .t.
-       cBmpFile  := nil
+       lChanged   = .T.
+       cBmpFile   = nil
 
-   elseif File( cBmpFile )
-       aBmpPal = PalBmpRead( ::GetDC(), AllTrim( cBmpFile ) )
-       ::hBitmap = aBmpPal[ 1 ]
-       ::hPalette = aBmpPal[ 2 ]
-       ::ReleaseDC()
-       lChanged  := .t.
-       cResName  := nil
-
+    elseif File( cBmpFile )
+       if Upper( Right( cBmpFile, 3 ) ) == "PNG"
+          ::hBitmap  = FWOpenPngFile( cBmpFile )
+          ::hPalette = 0
+       else
+         aBmpPal = PalBmpRead( ::GetDC(), AllTrim( cBmpFile ) )
+         ::hBitmap  = aBmpPal[ 1 ]
+         ::hPalette = aBmpPal[ 2 ]
+         ::ReleaseDC()
+         lChanged   = .T.
+         cResName   = nil
+      endif
    endif
 
    if lChanged
@@ -766,11 +780,9 @@ METHOD LoadImage( cResName, cBmpFile ) CLASS TBitmap
          PalBmpFree( hBmpOld, hPalOld )
       endif
 
-      PalBmpNew( ::hWnd, ::hBitmap, ::hPalette )
-
    endif
 
-   ::HasAlpha()
+  ::HasAlpha()
 
 return lChanged
 
@@ -778,7 +790,7 @@ return lChanged
 
 METHOD ScrollUp() CLASS TBitmap
 
-   local nVisible := Super:nHeight() - If( ::oHScroll:nMax != 0, GetSysMetrics( 3 ), 0 )
+   local nVisible := ::Super:nHeight() - If( ::oHScroll:nMax != 0, GetSysMetrics( 3 ), 0 )
    local nStep
 
    ::nOldX = ::nX
@@ -815,7 +827,7 @@ return nil
 
 METHOD ScrollLeft() CLASS TBitmap
 
-   local nVisible := Super:nWidth() - If( ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 ) - 1
+   local nVisible := ::Super:nWidth() - If( ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 ) - 1
    local nStep, n
 
    nStep := ( ::nWidth() + ::nY ) - nVisible
@@ -841,7 +853,7 @@ return nil
 
 METHOD ScrollRight() CLASS TBitmap
 
-   local nVisible := Super:nWidth() - If( ::oVScroll != nil .and. ;
+   local nVisible := ::Super:nWidth() - If( ::oVScroll != nil .and. ;
                      ::oVScroll:nMax != 0, GetSysMetrics( 2 ), 0 ) - 1
    local n
 
@@ -959,8 +971,8 @@ METHOD ScrollAdjust() CLASS TBitmap
    local nVisHeight, nVisWidth
    local lHor := .f., lVer := .f.
 
-   nVisHeight = Super:nHeight()
-   nVisWidth  = Super:nWidth()
+   nVisHeight = ::Super:nHeight()
+   nVisWidth  = ::Super:nWidth()
 
    if ::lScroll .and. ! Empty( ::hBitmap ) .and. ::oVScroll != nil
       if ::nHeight() <= nVisHeight .or. ::lStretch
@@ -1023,13 +1035,16 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-#ifdef __CLIPPER__
+METHOD Clear() CLASS TBitmap
 
-function IsAppThemed() ; return .f.
+   if ! Empty( ::hBitmap )
+      PalBmpFree( ::hBitmap, ::hPalette )
+      ::hBitmap := ::hPalette := 0
+      ::cBmpFile := ::cResName := nil
+      ::Refresh()
+   endif
 
-function DrawPBack() ; return nil
-
-#endif
+return nil
 
 //----------------------------------------------------------------------------//
 
@@ -1041,3 +1056,4 @@ function PalBmpFree( hBmp, hPal )
 return nil
 
 //------------------------------------------------------------------//
+

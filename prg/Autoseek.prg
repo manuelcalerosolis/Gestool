@@ -285,7 +285,7 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
          // msgAlert( xCadena, "val(xCaeden)")
          // msgAlert( ( xAlias )->( dbSeek( Val( xCadena ), .t. ) ) )
 
-         if ( xAlias )->( dbSeek( val( xCadena ), .t. ) )
+         if ( xAlias )->( dbSeek( val( xCadena ), .t. ) ) 
             lRet  := .t.
          else
             lRet  := .t.

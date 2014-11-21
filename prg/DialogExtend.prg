@@ -1,7 +1,7 @@
 #include "HbClass.ch"
 #include "Fivewin.ch"
 
-FUNCTION DialogExtend()
+FUNCTION DialogExtend() 
 
 local hClass
 

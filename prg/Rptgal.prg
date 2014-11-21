@@ -82,9 +82,11 @@ Function Main( cCodEmp, cCodUsr, cIp )
    SET OPTIMIZE      ON
    SET EXACT         ON
 
-   /*
-   Chequeamos la existencia del fichero de configuracion-----------------------
-   */
+   // Modificaciones de las clases de fw---------------------------------------
+
+   DialogExtend() 
+
+   // Chequeamos la existencia del fichero de configuracion--------------------
 
    if !File( FullCurDir() + "GstApolo.Ini" ) .and. File( FullCurDir() + "Gestion.Ini" )
       fRename( FullCurDir() + "Gestion.Ini", FullCurDir() + "GstApolo.Ini" )
@@ -2109,7 +2111,7 @@ function ReportBar()
 
    local oIconApp
 
-   local nScreenHorzRes       := Round( ( ScreenHorzRes() - 720 ) / 2, 0 )
+   local nScreenHorzRes       := Round( ( GetSysMetrics( 0 ) - 720 ) / 2, 0 )
 
    DEFINE ICON oIconApp RESOURCE "Gestool"
 
@@ -2450,17 +2452,9 @@ Function TFacturarLineasAlbaranes()
 
 Return nil
 
-Function PrintSeries()
-
-Return nil
-
 Function TLabelGenerator()
 
 RETURN nil
-
-Function ImportarProductosProveedor()
-
-Return nil
 
 Function PageIniClient()
 

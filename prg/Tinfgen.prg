@@ -1,4 +1,4 @@
-#include "FiveWin.Ch"
+#include "FiveWin.Ch" 
 #include "Factu.ch" 
 #include "Report.ch"
 #include "MesDbf.ch"
@@ -2004,18 +2004,17 @@ METHOD oDefDivInf( nId, nIdBmp, oDlg ) CLASS TInfGen
    ::oBandera     := TBandera():New()
 
    REDEFINE GET ::oDivInf VAR ::cDivInf ;
-		PICTURE  "@!";
-      ID       nId ;
-		COLOR 	CLR_GET ;
-      BITMAP   "LUPA" ;
-      VALID    ( ::lLoadDivisa() ) ;
-      ON HELP  ( BrwDiv( This:oDivInf, This:oBmpDiv, nil, This:oDbfDiv:cAlias, This:oBandera ), This:lLoadDivisa() );
-      OF       oDlg
+		PICTURE     "@!";
+      ID          nId ;
+      BITMAP      "LUPA" ;
+      VALID       ( ::lLoadDivisa() ) ;
+      ON HELP     ( BrwDiv( This:oDivInf, This:oBmpDiv, nil, This:oDbfDiv:cAlias, This:oBandera ), This:lLoadDivisa() );
+      OF          oDlg
 
    REDEFINE BITMAP ::oBmpDiv ;
-      RESOURCE "BAN_EURO" ;
-      ID       nIdBmp ;
-      OF       oDlg
+      RESOURCE    "BAN_EURO" ;
+      ID          nIdBmp ;
+      OF          oDlg
 
    ::lLoadDivisa()
 

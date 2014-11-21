@@ -47,113 +47,13 @@ CLASS TRenVta FROM TInfPArt
 
    METHOD lGenerate()
 
-   //---------------------------------------------------------------------------//
+   METHOD ValidAlbaranCliente()
 
-   INLINE METHOD ValidAlbaranCliente()
+   METHOD ValidFacturaCliente()
 
-      do case
-         case ::cEstado == "Todos"
+   METHOD ValidRectifiactivaCliente()
 
-            Return ( .t. )
-
-         case ::cEstado == "Cobrados"
-
-            Return ( ::oAlbCliT:nTotPag >= ::oAlbCliT:nTotAlb )
-
-         case ::cEstado == "Parcialmente"
-
-            Return ( ::oAlbCliT:nTotPag > 0 .and. ::oAlbCliT:nTotPag < ::oAlbCliT:nTotAlb )
-
-         case ::cEstado == "Pendientes"
-
-            Return ( ::oAlbCliT:nTotPag == 0 )
-
-      end case
-
-   ENDMETHOD
-
-   //---------------------------------------------------------------------------//
-
-   INLINE METHOD ValidFacturaCliente()
-
-      local nTotPag  := nPagFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliP:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
-
-      do case
-         case ::cEstado == "Todos"
-
-            Return ( .t. )
-
-         case ::cEstado == "Cobrados"
-
-            Return ( ::oFacCliT:lLiquidada )
-
-         case ::cEstado == "Parcialmente"
-
-            Return ( nTotPag > 0 .and. nTotPag < ::oFacCliT:nTotFac )
-
-         case ::cEstado == "Pendientes"
-
-            Return ( nTotPag == 0 )
-
-      end case
-
-   ENDMETHOD
-
-   //---------------------------------------------------------------------------//
-
-   INLINE METHOD ValidRectifiactivaCliente()
-
-      local nTotPag  := nPagFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecP:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
-
-      do case
-         case ::cEstado == "Todos"
-
-            Return ( .t. )
-
-         case ::cEstado == "Cobrados"
-
-            Return ( ::oFacRecT:lLiquidada )
-
-         case ::cEstado == "Parcialmente"
-
-            Return ( nTotPag > 0 .and. nTotPag < ::oFacRecT:nTotFac )
-
-         case ::cEstado == "Pendientes"
-
-            Return ( nTotPag == 0 )
-
-      end case
-
-   ENDMETHOD
-
-   //---------------------------------------------------------------------------//
-
-   INLINE METHOD ValidTicketCliente()
-
-      local nTotPag  := nTotCobTik( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik, ::oTikCliP:cAlias, ::oDivisas:cAlias )
-
-      do case
-         case ::cEstado == "Todos"
-
-            Return ( .t. )
-
-         case ::cEstado == "Cobrados"
-
-            Return ( nTotPag >= ::oTikCliT:nTotTik )
-
-         case ::cEstado == "Parcialmente"
-
-            Return ( nTotPag > 0 .and. nTotPag < ::oTikCliT:nTotTik )
-
-         case ::cEstado == "Pendientes"
-
-            Return ( nTotPag == 0 )
-
-      end case
-
-   ENDMETHOD
-
-   //---------------------------------------------------------------------------//
+   METHOD ValidTicketCliente()
 
 END CLASS
 
@@ -858,3 +758,109 @@ METHOD lGenerate()
 RETURN ( ::oDbf:LastRec() > 0 )
 
 //---------------------------------------------------------------------------//
+
+   METHOD ValidAlbaranCliente()
+
+      do case
+         case ::cEstado == "Todos"
+
+            Return ( .t. )
+
+         case ::cEstado == "Cobrados"
+
+            Return ( ::oAlbCliT:nTotPag >= ::oAlbCliT:nTotAlb )
+
+         case ::cEstado == "Parcialmente"
+
+            Return ( ::oAlbCliT:nTotPag > 0 .and. ::oAlbCliT:nTotPag < ::oAlbCliT:nTotAlb )
+
+         case ::cEstado == "Pendientes"
+
+            Return ( ::oAlbCliT:nTotPag == 0 )
+
+      end case
+
+   RETURN ( Self )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD ValidFacturaCliente()
+
+      local nTotPag  := nPagFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliP:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
+
+      do case
+         case ::cEstado == "Todos"
+
+            Return ( .t. )
+
+         case ::cEstado == "Cobrados"
+
+            Return ( ::oFacCliT:lLiquidada )
+
+         case ::cEstado == "Parcialmente"
+
+            Return ( nTotPag > 0 .and. nTotPag < ::oFacCliT:nTotFac )
+
+         case ::cEstado == "Pendientes"
+
+            Return ( nTotPag == 0 )
+
+      end case
+
+   RETURN ( Self )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD ValidRectifiactivaCliente()
+
+      local nTotPag  := nPagFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecP:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
+
+      do case
+         case ::cEstado == "Todos"
+
+            Return ( .t. )
+
+         case ::cEstado == "Cobrados"
+
+            Return ( ::oFacRecT:lLiquidada )
+
+         case ::cEstado == "Parcialmente"
+
+            Return ( nTotPag > 0 .and. nTotPag < ::oFacRecT:nTotFac )
+
+         case ::cEstado == "Pendientes"
+
+            Return ( nTotPag == 0 )
+
+      end case
+
+   RETURN ( Self )
+
+   //---------------------------------------------------------------------------//
+
+   METHOD ValidTicketCliente()
+
+      local nTotPag  := nTotCobTik( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik, ::oTikCliP:cAlias, ::oDivisas:cAlias )
+
+      do case
+         case ::cEstado == "Todos"
+
+            Return ( .t. )
+
+         case ::cEstado == "Cobrados"
+
+            Return ( nTotPag >= ::oTikCliT:nTotTik )
+
+         case ::cEstado == "Parcialmente"
+
+            Return ( nTotPag > 0 .and. nTotPag < ::oTikCliT:nTotTik )
+
+         case ::cEstado == "Pendientes"
+
+            Return ( nTotPag == 0 )
+
+      end case
+
+   RETURN ( Self )
+
+   //---------------------------------------------------------------------------//

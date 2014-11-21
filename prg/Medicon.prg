@@ -11,6 +11,9 @@ static cFullCurDir
 static oMeter
 static nMeter  := 0
 
+static oText
+static cText   := ""
+
 //--------------------------------------------------------------------------//
 
 #ifndef __PDA__
@@ -493,6 +496,41 @@ RETURN ( nil )
 Function GetAutoMeterDialog( nSet )
 
 RETURN ( oMeter )
+
+//---------------------------------------------------------------------------//
+
+Function AutoTextDialog( oDialog )
+
+   oText   := TSay():New( 5, 0, {||cText}, oDialog, , , .t., .f., .f., .t., rgb(0,0,0), rgb(239,228,176), oDialog:nWidth, 18, .f., .t., .f., .f., .f. )
+
+RETURN ( oText )
+
+//---------------------------------------------------------------------------//
+
+Function SetAutoTextDialog( cText )
+
+   if !empty(oText)
+      oText:SetText( cText )  
+   end if 
+
+RETURN ( oText )
+
+//---------------------------------------------------------------------------//
+
+Function EndAutoTextDialog( oDialog )
+
+   oText:Hide()
+   oText:End()
+
+   oText   := nil
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function GetAutoTextDialog()
+
+RETURN ( oText )
 
 //---------------------------------------------------------------------------//
 

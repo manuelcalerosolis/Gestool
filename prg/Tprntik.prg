@@ -118,15 +118,6 @@ METHOD New( cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad, lMessage )
 
    if ::nHComm > 0
 
-      if ( "COM" $ ::cPort )
-         fDCB           := fDCB( ::nHComm, ::nBitsSec, ::nBitsDatos, ::nBitsParada, ::nBitsParidad )
-         if fDCB == nil
-            ::nHComm    := -1
-         end if
-      end if
-
-   else
-
       ::OpenCommError()
 
       msgStop( "Puerto  : " + cValToChar( ::cPort )          + CRLF +;
