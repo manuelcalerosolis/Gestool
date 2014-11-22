@@ -293,15 +293,7 @@ METHOD lGenerate() CLASS TInfArtPre
       ::oDbf:cNomArt := ::oDbfArt:Nombre
       ::oDbf:nIvaArt := nIva( ::oIva:cAlias, ::oDbfArt:TipoIva )
       ::oDbf:cCodFam := ::oDbfArt:Familia
-
-
-
       ::oDbf:nCosArt := nCosto( nil, ::oDbfArt:cAlias, ::oKit:cAlias, .f., ::cDivInf, ::oDbfDiv:cAlias )
-
-
-
-
-
       ::oDbf:nBnf1   := ::oDbfArt:Benef1
       ::oDbf:nImp1   := nRetPreArt( 1, ::cDivInf, .f., ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oKit:cAlias, ::oIva:cAlias )
       ::oDbf:nIva1   := nRetPreArt( 1, ::cDivInf, .t., ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oKit:cAlias, ::oIva:cAlias )

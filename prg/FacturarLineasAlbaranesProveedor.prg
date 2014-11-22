@@ -494,7 +494,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
          CANCEL ;
          ACTION   ( ::oDlg:End() )
 
-   ::oDlg:Activate( , , , .t., , , {|| ::StartResource() } ) //::InitResource() } )
+   ::oDlg:Activate( , , , .t., , , {|| ::StartResource() } ) 
 
 Return ( Self )
 

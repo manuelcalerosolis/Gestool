@@ -7584,10 +7584,10 @@ function aItmPedPrv()
                      { "cCodPrv",   "C", 12,   0, "Codigo del proveedor",        "",                   "", "( cDbf )"},;
                      { "cCodAlm",   "C", 16,   0, "Código de almacen",           "",                   "", "( cDbf )"},;
                      { "cCodCaj",   "C",  3,   0, "Código de caja",              "",                   "", "( cDbf )"},;
-                     { "cNomPrv",   "C", 35,   0, "Nombre del proveedor",        "'@!'",               "", "( cDbf )"},;
-                     { "cDirPrv",   "C", 35,   0, "Domicilio del proveedor",     "'@!'",               "", "( cDbf )"},;
-                     { "cPobPrv",   "C", 25,   0, "Población del proveedor",     "'@!'",               "", "( cDbf )"},;
-                     { "cProPrv",   "C", 20,   0, "Provincia del proveedor",     "'@!'",               "", "( cDbf )"},;
+                     { "cNomPrv",   "C", 30,   0, "Nombre del proveedor",        "'@!'",               "", "( cDbf )"},;
+                     { "cDirPrv",   "C",200,   0, "Domicilio del proveedor",     "'@!'",               "", "( cDbf )"},;
+                     { "cPobPrv",   "C",200,   0, "Población del proveedor",     "'@!'",               "", "( cDbf )"},;
+                     { "cProPrv",   "C",100,   0, "Provincia del proveedor",     "'@!'",               "", "( cDbf )"},;
                      { "cPosPrv",   "C",  5,   0, "Código postal del proveedor", "",                   "", "( cDbf )"},;
                      { "cDniPrv",   "C", 30,   0, "D.N.I. del proveedor",        "",                   "", "( cDbf )"},;
                      { "dFecEnt",   "D",  8,   0, "Fecha de entrada",            "",                   "", "( cDbf )"},;
