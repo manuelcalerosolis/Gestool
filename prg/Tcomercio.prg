@@ -154,8 +154,12 @@ CLASS TComercio
    DATA  cPrefijoBaseDatos
 
    METHOD GetInstance()              
-   METHOD New()                     CONSTRUCTOR
-   METHOD lReady()                  INLINE ( !Empty( ::cHost ) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
+   METHOD New()                        CONSTRUCTOR
+
+   METHOD MeterTotal( oMeterTotal )    INLINE ( iif( oMeterTotal == nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
+   METHOD TextTotal( oTextTotal )      INLINE ( iif( oTextTotal == nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
+
+   METHOD lReady()                     INLINE ( !Empty( ::cHost ) .and. !Empty( ::cUser ) .and. !Empty( ::cDbName ) )
 
    // Apertura y cierre de ficheros--------------------------------------------
 
@@ -172,22 +176,22 @@ CLASS TComercio
 
    DATA  oTree
 
-   DATA  oMeterGlobal
-   DATA  nMeterGlobal
+   DATA  oMeterTotal
+   DATA  nMeterTotal
 
-   METHOD MeterGlobal( oMeterGlobal)   INLINE ( iif( oMeterGlobal != nil, ::oMeterGlobal := oMeterGlobal, ::oMeterGlobal ) )
+   METHOD MeterTotal( oMeterTotal)   INLINE ( iif( oMeterTotal != nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
 
-   DATA  oTextGlobal
-   DATA  cTextGlobal
+   DATA  oTextTotal
+   DATA  cTextTotal
 
-   METHOD TextGlobal( oTextGlobal)     INLINE ( iif( oTextGlobal != nil, ::oTextGlobal := oTextGlobal, ::oTextGlobal ) )
+   METHOD TextTotal( oTextTotal)     INLINE ( iif( oTextTotal != nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
 
    DATA  oMeterProceso
    DATA  nMeterProceso
 
    METHOD treeSetText( cText )
-   METHOD meterGlobalText( cText )
-   METHOD meterGlobalSetTotal( nTotal )
+   METHOD MeterTotalText( cText )
+   METHOD MeterTotalSetTotal( nTotal )
    METHOD meterProcesoText( cText )
    METHOD meterProcesoSetTotal( nTotal )
    
@@ -376,12 +380,12 @@ RETURN ( ::oInstance )
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oMenuItem, oMeterGlobal, oTextGlobal ) CLASS TComercio
+METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
 
    DEFAULT oMenuItem       := "01108"
 
-   ::oMeterGlobal          := oMeterGlobal
-   ::oTextGlobal           := oTextGlobal
+   ::oMeterTotal          := oMeterTotal
+   ::oTextTotal           := oTextTotal
 
    ::oIniEmpresa           := TIni():New( cPatEmp() + "Empresa.Ini" )
 
@@ -746,9 +750,9 @@ METHOD dialogActivate( oWnd ) CLASS TComercio
 
       ::oTree           := TTreeView():Redefine( 200, ::oDlg )
 
-      REDEFINE SAY ::oTextGlobal PROMPT ::cTextGlobal ID 210 OF ::oDlg
+      REDEFINE SAY ::oTextTotal PROMPT ::cTextTotal ID 210 OF ::oDlg
 
-      ::oMeterGlobal    := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nMeterGlobal, ::nMeterGlobal := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMeterTotal    := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nMeterTotal, ::nMeterTotal := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       ::oMeterProceso   := TApoloMeter():ReDefine( 230, { | u | if( pCount() == 0, ::nMeterProceso, ::nMeterProceso := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
@@ -833,29 +837,29 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD meterGlobalText( cText ) Class TComercio
+METHOD MeterTotalText( cText ) Class TComercio
 
    DEFAULT cText  := ""
 
-   if !Empty( ::oTextGlobal )
-      ::oTextGlobal:SetText( cText )
+   if !Empty( ::oTextTotal )
+      ::oTextTotal:SetText( cText )
    end if
 
-   if !Empty( ::oMeterGlobal )
-      ::oMeterGlobal:Set( ++::nMeterGlobal )
+   if !Empty( ::oMeterTotal )
+      ::oMeterTotal:Set( ++::nMeterTotal )
    end if
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD meterGlobalSetTotal( nTotal ) Class TComercio
+METHOD MeterTotalSetTotal( nTotal ) Class TComercio
 
-   if !Empty( ::oMeterGlobal )
-      ::oMeterGlobal:SetTotal( nTotal )
+   if !Empty( ::oMeterTotal )
+      ::oMeterTotal:SetTotal( nTotal )
    end if
 
-   ::nMeterGlobal := 1
+   ::nMeterTotal := 1
 
 RETURN ( Self )
 
@@ -865,8 +869,8 @@ METHOD meterProcesoText( cText ) Class TComercio
 
    DEFAULT cText  := ""
 
-   if !Empty( ::oTextGlobal )
-      ::oTextGlobal:SetText( cText )
+   if !Empty( ::oTextTotal )
+      ::oTextTotal:SetText( cText )
    end if
 
    if !Empty( ::oMeterProceso )
@@ -941,7 +945,7 @@ METHOD ExportarPrestashop() Class TComercio
             */
 
             if ::lIva .or. ::lSyncAll
-               ::MeterGlobalText( "Actualizando tipos de " + cImp() )
+               ::MeterTotalText( "Actualizando tipos de " + cImp() )
                ::treeSetText( 'Exportando tablas de tipos de ' + cImp(), 2 )
                ::AppendIvaPrestashop( odb )
                sysRefresh()
@@ -953,17 +957,17 @@ METHOD ExportarPrestashop() Class TComercio
 
             if ::lArticulos .or. ::lSyncAll
 
-               ::MeterGlobalText( "Actualizando fabricantes" )
+               ::MeterTotalText( "Actualizando fabricantes" )
                ::treeSetText( 'Exportando tablas de fabricantes', 2 )
                ::AppendFabricantesPrestashop()
                sysRefresh()
 
-               ::MeterGlobalText( "Actualizando familias" )
+               ::MeterTotalText( "Actualizando familias" )
                ::treeSetText( 'Exportando tablas de familias de artículos', 2 )
                ::AppendFamiliaPrestashop( odb )
                sysRefresh()
 
-               ::MeterGlobalText( "Actualizando artículos" )
+               ::MeterTotalText( "Actualizando artículos" )
                ::treeSetText( 'Exportando tablas de propiedades de artículos', 2 )
                ::AppendPropiedadesPrestashop()
                sysRefresh()
@@ -982,7 +986,7 @@ METHOD ExportarPrestashop() Class TComercio
 
             if ::lClientes .or. ::lSyncAll
 
-               ::MeterGlobalText( "Actualizando estado de los pedidos" )
+               ::MeterTotalText( "Actualizando estado de los pedidos" )
                ::AppendClientesToPrestashop()
                sysRefresh()
 
@@ -993,7 +997,7 @@ METHOD ExportarPrestashop() Class TComercio
             Pasamos las imágenes de los artículos a prestashop--------------
             */
 
-            ::MeterGlobalText( "Subiendo imagenes" )
+            ::MeterTotalText( "Subiendo imagenes" )
 
             if ::lImagenes .or. ::lSyncAll
                ::buildImagenes()
@@ -1014,7 +1018,7 @@ METHOD ExportarPrestashop() Class TComercio
       ::oMeter:Set( 100 )
       ::oMeterProceso:Set( 100 )
 
-      ::MeterGlobalText( "Proceso finalizado" )
+      ::MeterTotalText( "Proceso finalizado" )
 
    else
 
@@ -1082,15 +1086,15 @@ METHOD ImportarPrestashop() CLASS TComercio
             Nos traemos los clientes y pedidos hacia nuestras bases de datos y actualizamos el estado de los pedidos de arriba
             */
 
-            ::MeterGlobalText( "Descargando clientes" )
+            ::MeterTotalText( "Descargando clientes" )
             ::AppendClientPrestashop()
             sysRefresh()
 
-            ::MeterGlobalText( "Descargando pedidos" )
+            ::MeterTotalText( "Descargando pedidos" )
             ::AppendPedidoprestashop()
             sysRefresh()
 
-            ::MeterGlobalText( "Actualizando estado de los pedidos" )
+            ::MeterTotalText( "Actualizando estado de los pedidos" )
             ::EstadoPedidosPrestashop()
             sysRefresh()
 
@@ -1102,13 +1106,13 @@ METHOD ImportarPrestashop() CLASS TComercio
 
       ::treeSetText( 'Base de datos desconectada.', 1 )
 
-      ::MeterGlobalText( "Proceso finalizado" )
+      ::MeterTotalText( "Proceso finalizado" )
 
       /*
       Para que al final del proceso quede totalmente llena la barra del meter--
       */
 
-      ::oMeterGlobal:Set( 100 )
+      ::oMeterTotal:Set( 100 )
       ::oMeterProceso:Set( 100 )
 
    else
@@ -5027,8 +5031,8 @@ METHOD cTextoWait( cText ) CLASS TComercio
       cText    := "Actualizando web espere por favor..."
    end if   
 
-   if !Empty( ::oTextGlobal )
-      ::oTextGlobal:SetText( cText )
+   if !Empty( ::oTextTotal )
+      ::oTextTotal:SetText( cText )
    end if
 
 Return nil
@@ -6853,11 +6857,11 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
       ::lShowDialogWait()
    end if   
 
-   ::meterGlobalSetTotal( 8 )
+   ::MeterTotalSetTotal( 8 )
 
    if ::filesOpen()
 
-      ::meterGlobalText( "Elaborando información de artículos." )
+      ::MeterTotalText( "Elaborando información de artículos." )
 
       ::buildInitData()
 
@@ -6881,13 +6885,13 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
       // Conectamos con la bases de datos de prestaShop------------------------
 
-      ::meterGlobalText( "Conectando con la base de datos." )
+      ::MeterTotalText( "Conectando con la base de datos." )
 
       if ::buildConect()
 
          // Eliminamos las bases de datos--------------------------------------
 
-         ::meterGlobalText( "Eliminando la bases de datos." )
+         ::MeterTotalText( "Eliminando la bases de datos." )
 
          if ::lSyncAll
             ::buildEliminaTablas()
@@ -6895,25 +6899,25 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
 
          // Subimos la informacion a mysql-------------------------------------
 
-         ::meterGlobalText( "Subiendo la información." )
+         ::MeterTotalText( "Subiendo la información." )
 
          ::buildSubirInformacion()
 
          // Pasamos las imágenes de los artículos a prestashop-----------------
 
-         ::meterGlobalText( "Generando imagenes." )
+         ::MeterTotalText( "Generando imagenes." )
 
          ::buildImagenes()
 
          // Pasamos las imágenes de los artículos a prestashop-----------------
 
-         ::meterGlobalText( "Subiendo imagenes." )
+         ::MeterTotalText( "Subiendo imagenes." )
 
          ::buildSubirImagenes()
 
          // Desconectamos mysql------------------------------------------------
 
-         ::meterGlobalText( "Desconectando bases de datos." )
+         ::MeterTotalText( "Desconectando bases de datos." )
 
          ::buildDisConect()  
          
@@ -6927,7 +6931,7 @@ METHOD buildProductPrestashop( id, lShowDialogWait ) CLASS TComercio
       ::lHideDialogWait()
    end if   
 
-   ::meterGlobalText( "Proceso finalizado." )
+   ::MeterTotalText( "Proceso finalizado." )
 
 Return ( Self )
 
@@ -9161,7 +9165,7 @@ METHOD buildActualizaStockProductPrestashop() CLASS TComercio
       Recopilamos información necesaria----------------------------------------
       */
 
-      ::MeterGlobalText( "Recopialando información de stocks" )
+      ::MeterTotalText( "Recopialando información de stocks" )
       ::buildInformacionStockProductPrestashop()
 
       /*
@@ -9172,14 +9176,14 @@ METHOD buildActualizaStockProductPrestashop() CLASS TComercio
       ::meterProcesoSetTotal( len(::aStockArticuloData) )
       ::buildSubirStockPrestashop()
 
-      ::MeterGlobalText( "Proceso finalizado" )
+      ::MeterTotalText( "Proceso finalizado" )
 
       ::filesClose()
 
    end if
 
-   if !Empty( ::oMeterGlobal )
-      ::oMeterGlobal:Set( 100 )
+   if !Empty( ::oMeterTotal )
+      ::oMeterTotal:Set( 100 )
    end if
 
    if !Empty( ::oMeterProceso )
