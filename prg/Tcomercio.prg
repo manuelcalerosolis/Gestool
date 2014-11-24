@@ -318,6 +318,8 @@ CLASS TComercio
    METHOD buildInsertLineasPropiedadesPrestashop( hPropiedadesLinData )
    METHOD buildInsertPropiedadesProductPrestashop( hArticuloData, nCodigoWeb )
 
+   METHOD buildImagesArticuloPrestashop( id )
+
    METHOD buildDeleteProductPrestashop()
 
    METHOD buildDeleteImagesProducts( cCodWeb )
@@ -6464,11 +6466,23 @@ Return ( Self )
 
 METHOD buildArticuloPrestashop( id ) CLASS TComercio
 
+   local hImagesArticulos     := {}
+
    if aScan( ::aArticuloData, {|h| hGet( h, "id" ) == id } ) == 0
 
       if ::oArt:SeekInOrd( id, "Codigo" ) 
 
          if ::lSyncAll .or. ::oArt:cCodWeb == 0
+
+            /*
+            Recopilar info de imagenes-----------------------------------------
+            */
+
+            hImagesArticulos  := ::buildImagesArticuloPrestashop( id )
+
+            /*
+            Rellenamos el Hash-------------------------------------------------
+            */
 
             aAdd( ::aArticuloData, { "id"                   => id,;
                                     "name"                  => AllTrim( ::oArt:Nombre ),;
@@ -6488,7 +6502,8 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
                                     "cImagen"               => ::oArt:cImagen,;
                                     "lSbrInt"               => ::oArt:lSbrInt,;
                                     "nDtoInt1"              => ::oArt:nDtoInt1,;
-                                    "nImpInt1"              => ::buildPrecioArtitulo() } )
+                                    "nImpInt1"              => ::buildPrecioArtitulo(),;
+                                    "aImages"               => hImagesArticulos } )
 
          end if
 
@@ -6497,6 +6512,91 @@ METHOD buildArticuloPrestashop( id ) CLASS TComercio
    end if
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildImagesArticuloPrestashop( id ) CLASS TComercio
+
+   local aImgToken      := {}
+   local cImgToken      := ""
+   local aImages        := {}
+   local nOrdAntImg
+   local nOrdAntDiv     := ::oArtDiv:OrdSetFocus( "cCodigo" )
+
+   /*
+   Pasamos las imágenes de los artículos por propiedades-----------------------
+   */
+
+   if ::oArtDiv:Seek( id )
+
+      while ::oArtDiv:cCodArt == id .and. !::oArtDiv:Eof()
+
+         if !Empty( ::oArtDiv:mImgWeb )
+
+            aImgToken   := hb_aTokens( ::oArtDiv:mImgWeb, "," )
+
+            for each cImgToken in aImgToken
+
+               if !Empty( cImgToken )           .and.;
+                  aScan( aImages, {|a| hGet( a, "name" ) == cImgToken } ) == 0
+
+                  aAdd( aImages, {  "name"                   => cImgToken,;
+                                    "lDefault"               => oRetFld( cImgToken, ::oArtImg, "lDefImg", "cImgArt" ) } )
+
+               end if
+
+            next
+
+         end if
+
+         ::oArtDiv:Skip()
+
+      end while
+
+   end if
+
+   /*
+   Pasamos las imágenes de la tabla de artículos-------------------------------
+   */
+
+   if Len( aImages ) == 0
+
+      nOrdAntImg     := ::oArtImg:OrdSetFocus( "cCodArt" )
+
+      if ::oArtImg:Seek( id )
+
+         while ::oArtImg:cCodArt == id .and. !::oArtImg:Eof()
+
+            if aScan( aImages, {|a| hGet( a, "name" ) == ::oArtImg:cImgArt } ) == 0
+
+               aAdd( aImages, {  "name"                   => ::oArtImg:cImgArt,;
+                                 "lDefault"               => ::oArtImg:lDefImg } )
+
+            end if   
+
+         ::oArtImg:Skip()
+
+         end while
+
+      end if 
+
+      ::oArtImg:OrdSetFocus( nOrdAntImg )
+
+   end if
+
+   ::oArtDiv:OrdSetFocus( nOrdAntDiv )
+
+   /*
+   Nos aseguramos de que por lo menos una imágen sea por defecto---------------
+   */
+
+   if Len( aImages ) != 0
+      if aScan( aImages, {|a| hGet( a, "lDefault" ) == .t. } ) == 0
+         hSet( aImages[1], "lDefault", .t. )
+      end if   
+   end if   
+
+Return ( aImages )
 
 //---------------------------------------------------------------------------//
 
@@ -7436,6 +7536,7 @@ METHOD buildInsertImageProductsPrestashop( hArticuloData, cCodWeb ) CLASS TComer
    local oImagen
    local nOrdAnt
    local nPosition         := 1
+   local aImage
 
    /*
    ----------------------------------------------------------------------------
@@ -7443,67 +7544,11 @@ METHOD buildInsertImageProductsPrestashop( hArticuloData, cCodWeb ) CLASS TComer
    ----------------------------------------------------------------------------
    */
 
-   nOrdAnt        := ::oArtImg:OrdSetFocus( "cCodArt" )
+   nOrdAnt        := ::oArtImg:OrdSetFocus( "cImgArt" )
 
-   if !::oArtImg:Seek( hGet( hArticuloData, "id" ) )
-
-      /*
-      Tiene una sola imagen seleccionada---------------------------------------
-      */
-
-      if !Empty( hGet( hArticuloData, "cImagen" ) )
-
-         cCommand := "INSERT INTO " + ::cPrefixTable( "image" ) + ;
-                        " ( id_product, " + ;
-                        "position, " + ;
-                        "cover )" + ;
-                     " VALUES " + ;
-                        "('" + AllTrim( Str( cCodWeb ) ) + "', " + ; //id_product
-                        "'" + Str( nPosition ) + "', " + ;              //position
-                        "'1' )"
-
-         if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-            nCodigoImagen           := ::oCon:GetInsertId()
-         else
-            ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPreFixTable( "image" ), 3 )
-         end if
-
-         cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + ;
-                        " (  id_image, " + ;
-                        "id_shop, " + ;
-                        "cover )" + ;
-                     " VALUES " + ;
-                        "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;
-                        "'1', " + ;
-                        "'1' )"
-
-         if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-            ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
-         end if
-
-         /*
-         Añadimos la imagen al array para pasarla a prestashop--------------
-         */
-
-         oImagen                       := SImagen()
-         oImagen:cNombreImagen         := hGet( hArticuloData, "cImagen" )
-         oImagen:nTipoImagen           := tipoProducto
-         oImagen:cCarpeta              := AllTrim( Str( nCodigoImagen ) )
-         oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoImagen ) )
-
-         ::AddImages( oImagen )
-
-         nPosition++
-
-      end if
-
-   else
-
-      /*
-      Metemos las imágenes desde la tabla de imágenes del programa-------
-      */
-
-      while ::oArtImg:cCodArt == hGet( hArticuloData, "id" ) .and. !::oArtImg:Eof()
+   for each aImage in hGet( hArticuloData, "aImages" )
+   
+      if ::oArtImg:Seek( hGet( aImage, "name" ) )
 
          cCommand := "INSERT INTO " + ::cPrefixTable( "image" ) + ;
                         " ( id_product, " + ;
@@ -7512,7 +7557,7 @@ METHOD buildInsertImageProductsPrestashop( hArticuloData, cCodWeb ) CLASS TComer
                      " VALUES " + ;
                         "('" + AllTrim( Str( cCodWeb ) ) + "', " + ;
                         "'" + Str( nPosition ) + "', " + ;
-                        "'" + if( ::oArtImg:lDefImg, "1", "0" ) + "' )"
+                        "'" + if( hGet( aImage, "lDefault" ), "1", "0" ) + "' )"
 
          if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
             nCodigoImagen           := ::oCon:GetInsertId()
@@ -7545,7 +7590,7 @@ METHOD buildInsertImageProductsPrestashop( hArticuloData, cCodWeb ) CLASS TComer
                      "VALUES " + ;
                         "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;
                            "'1', " + ;
-                           "'" + if( ::oArtImg:lDefImg, "1", "0" ) + "' )"
+                           "'" + if( hGet( aImage, "lDefault" ), "1", "0" ) + "' )"
 
          if !TMSCommand():New( ::oCon ):ExecDirect( cCommand )
             ::treeSetText( "Error al insertar el artículo " + hGet( hArticuloData, "name" ) + " en la tabla " + ::cPreFixTable( "image_shop" ), 3 )
@@ -7563,15 +7608,11 @@ METHOD buildInsertImageProductsPrestashop( hArticuloData, cCodWeb ) CLASS TComer
 
          ::AddImages( oImagen )
 
-         ::oArtImg:Skip()
-
          nPosition++
 
-         SysRefresh()
+      end if
 
-      end while
-
-   end if
+   next
 
    ::oArtImg:OrdSetFocus( nOrdAnt )
 

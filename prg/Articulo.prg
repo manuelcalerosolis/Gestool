@@ -4401,6 +4401,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwImg:AddCol() )
+      :cHeader             := "cCodWeb"
+      :bEditValue          := {|| AllTrim( Str( ( dbfTmpImg )->cCodWeb ) ) }
+      :lHide               := .t.
+      :nWidth              := 50
+   end with
+
+   with object ( oBrwImg:AddCol() )
       :cHeader             := "Imagen"
       :bEditValue          := {|| AllTrim( ( dbfTmpImg )->cNbrArt ) + CRLF + AllTrim( ( dbfTmpImg )->cImgArt ) }
       :nWidth              := 400
