@@ -7964,6 +7964,9 @@ METHOD SetAliasDocumento( cTexto ) CLASS TpvTactil
 
    DEFAULT cTexto                   := "Asignar nombre"
 
+   ?::oTiketCabecera:cAliasTik
+   ?Len( ::oTiketCabecera:cAliasTik )
+
    cNombreUbicacion                 := VirtualKey( .f., ::oTiketCabecera:cAliasTik, cTexto )
 
    if !Empty( cNombreUbicacion )

@@ -119,8 +119,8 @@ METHOD lGenerate()
 
          ::oDbf:cCodPago  := ::oDbfFpg:cCodPago
          ::oDbf:cDesPago  := ::oDbfFpg:cDesPago
-         ::oDbf:cCodBnc   := ::oDbfFpg:cCodBnc
-         ::oDbf:cNomBnc   := oRetFld( ::oDbfFpg:cCodBnc, ::oDbfBnc, "cNomBnc" )
+         ::oDbf:cCodBnc   := ::oDbfFpg:cBanco
+         ::oDbf:cNomBnc   := oRetFld( ::oDbfFpg:cBanco, ::oDbfBnc, "cNomBnc" )
 
          if ::oDbfFpg:nTipPgo <= 1
             ::oDbf:cTipPgo   := "Efectivo"
