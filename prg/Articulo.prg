@@ -1896,7 +1896,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
-   bmpImage             := TImage():ReDefine( 500,, cFileBmpName( cImgArticulo ( aTmp ) ), oDlg,,, .F., .T.,,, .F.,, )
+   REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "cDesUbi" ) ) ] ;
+         ID       220 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         OF       fldGeneral
+
+   bmpImage             := TImage():ReDefine( 500,, cFileBmpName( cImgArticulo ( aTmp ) ), oDlg, , , .f., .t., , , .f. )
 
    bmpImage:SetColor( , GetSysColor( 15 ) )
    bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
@@ -2030,75 +2035,75 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldPrecios
 
-      REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ] ;
-         ID       820 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldPrecios
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ] ;
+      ID       820 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      OF       fldPrecios
 
-      REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
-         ID       800;
-         PICTURE  "@!" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ], dbfIva, oSay[2] ),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta1" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta2" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta3" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta4" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta5" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta6" ) ) ]:lValid(), .t. ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ], nil , oSay[2] ) ) ;
-         OF       fldPrecios
+   REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
+      ID       800;
+      PICTURE  "@!" ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ], dbfIva, oSay[2] ),;
+                           aGet[ ( dbfArticulo )->( fieldpos( "pVenta1" ) ) ]:lValid(),;
+                           aGet[ ( dbfArticulo )->( fieldpos( "pVenta2" ) ) ]:lValid(),;
+                           aGet[ ( dbfArticulo )->( fieldpos( "pVenta3" ) ) ]:lValid(),;
+                           aGet[ ( dbfArticulo )->( fieldpos( "pVenta4" ) ) ]:lValid(),;
+                           aGet[ ( dbfArticulo )->( fieldpos( "pVenta5" ) ) ]:lValid(),;
+                           aGet[ ( dbfArticulo )->( fieldpos( "pVenta6" ) ) ]:lValid(), .t. ) ;
+      BITMAP   "LUPA" ;
+      ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ], nil , oSay[2] ) ) ;
+      OF       fldPrecios
 
-      REDEFINE GET oSay[2] VAR cSay[2] ;
-         WHEN     ( .F. );
-         ID       801 ;
-         OF       fldPrecios
+   REDEFINE GET oSay[2] VAR cSay[2] ;
+      WHEN     ( .F. );
+      ID       801 ;
+      OF       fldPrecios
 
-      REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] ;
-         ID       810;
-         PICTURE  "@!" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oNewImp:Existe( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], oSay[ 10 ], "cNomImp", .t., .t., "0" ) );
-         ON HELP  ( oNewImp:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], "cCodImp" ) ) ;
-         BITMAP   "LUPA" ;
-         OF       fldPrecios
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] ;
+      ID       810;
+      PICTURE  "@!" ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      VALID    ( oNewImp:Existe( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], oSay[ 10 ], "cNomImp", .t., .t., "0" ) );
+      ON HELP  ( oNewImp:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], "cCodImp" ) ) ;
+      BITMAP   "LUPA" ;
+      OF       fldPrecios
 
-      REDEFINE GET oSay[10] VAR cSay[10] ;
-         WHEN     ( .F. );
-         ID       811 ;
-         OF       fldPrecios
+   REDEFINE GET oSay[10] VAR cSay[10] ;
+      WHEN     ( .F. );
+      ID       811 ;
+      OF       fldPrecios
 
-      REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
-         VAR         aTmp[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
-         ID          110 ;
-         WHEN        ( !lEscandallo( aTmp ) .and. nMode != ZOOM_MODE ) ;
-         VALID       ( ValidPrecioCosto( aGet, oSayWeb ) ) ;
-         SPINNER ;
-         PICTURE     cPinDiv ;
-         OF          fldPrecios ;
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
+      VAR         aTmp[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
+      ID          110 ;
+      WHEN        ( !lEscandallo( aTmp ) .and. nMode != ZOOM_MODE ) ;
+      VALID       ( ValidPrecioCosto( aGet, oSayWeb ) ) ;
+      SPINNER ;
+      PICTURE     cPinDiv ;
+      OF          fldPrecios ;
 
-      REDEFINE SAY oCosto ;
-         PROMPT   nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ;
-         ID       111 ;
-         PICTURE  cPinDiv ;
-         OF       fldPrecios
+   REDEFINE SAY oCosto ;
+      PROMPT   nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ;
+      ID       111 ;
+      PICTURE  cPinDiv ;
+      OF       fldPrecios
 
-      /*
-      Codificacion de proveedores----------------------------------------------
-      */
+   /*
+   Codificacion de proveedores----------------------------------------------
+   */
 
-      REDEFINE BUTTON aBtnDiv[ 5 ]; 
-         ID       510 ;
-         OF       fldPrecios;
-         ACTION   ( CodificacionProveedor( aTmp, aGet, nMode ) )
+   REDEFINE BUTTON aBtnDiv[ 5 ]; 
+      ID       510 ;
+      OF       fldPrecios;
+      ACTION   ( CodificacionProveedor( aTmp, aGet, nMode ) )
 
-      REDEFINE COMBOBOX oCbxPrecio VAR cCbxPrecio ;
-         ITEMS    { "Ventas", "Alquiler" } ;
-         ID       610 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldPrecios
+   REDEFINE COMBOBOX oCbxPrecio VAR cCbxPrecio ;
+      ITEMS    { "Ventas", "Alquiler" } ;
+      ID       610 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      OF       fldPrecios
 
          // ON CHANGE( StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage ) ) ;
    /*
@@ -2106,116 +2111,116 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    */
 
    REDEFINE SAY oSay[ 18 ] VAR cSay[ 18 ] ;
-       ID       171 ;
-       OF       fldPrecios ;
+      ID       171 ;
+      OF       fldPrecios ;
 
    REDEFINE SAY oSay[ 19 ] VAR cSay[ 19 ] ;
-       ID       211 ;
-       OF       fldPrecios ;
+      ID       211 ;
+      OF       fldPrecios ;
 
    REDEFINE SAY oSay[ 20 ] VAR cSay[ 20 ];
-       ID       251 ;
-       OF       fldPrecios ;
+      ID       251 ;
+      OF       fldPrecios ;
 
    REDEFINE SAY oSay[ 21 ] VAR cSay[ 21 ] ;
-       ID       291 ;
-       OF       fldPrecios ;
+      ID       291 ;
+      OF       fldPrecios ;
 
    REDEFINE SAY oSay[ 22 ] VAR cSay[ 22 ] ;
-       ID       331 ;
-       OF       fldPrecios ;
+      ID       331 ;
+      OF       fldPrecios ;
 
    REDEFINE SAY oSay[ 23 ] VAR cSay[ 23 ] ;
-       ID       371 ;
-       OF       fldPrecios ;
+      ID       371 ;
+      OF       fldPrecios ;
 
    /*
    Tarifa1 ______________________________________________________________________________
    */
 
-      REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] ;
-         VAR            aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] ;
-         ID       150 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldPrecios
+   REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] ;
+      VAR            aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] ;
+      ID       150 ;
+		WHEN 		( nMode != ZOOM_MODE ) ;
+      OF       fldPrecios
 
-      REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ] ;
-         VAR         aTmp[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ] ;
-         ID       160 ;
-			SPINNER ;
-         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] .AND. nMode != ZOOM_MODE ) ;
-         VALID    ( lCalPre(   oSay[ 11 ]:nAt <= 1,;
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ] ;
+      VAR         aTmp[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ] ;
+      ID       160 ;
+		SPINNER ;
+      WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1" ) ) ] .AND. nMode != ZOOM_MODE ) ;
+      VALID    ( lCalPre(   oSay[ 11 ]:nAt <= 1,;
+                           if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                           aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1"   ) ) ],;
+                           aTmp[ ( dbfArticulo )->( fieldpos( "Benef1"  ) ) ],;
+                           aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ],;
+                           aGet[ ( dbfArticulo )->( fieldpos( "pVenta1" ) ) ],;
+                           aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva1") ) ],;
+                           nDecDiv,;
+                           aTmp[ ( dbfArticulo )->( fieldpos( "cCodImp" ) ) ],;
+                           oSayWeb[ 1 ] ) ) ;
+      PICTURE  "@E 999.99" ;
+      OF       fldPrecios
+
+   REDEFINE COMBOBOX oSay[ 11 ] VAR cSay[ 11 ] ;
+      ITEMS    aBnfSobre ;
+      ID       165 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      ON CHANGE(  if (  aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1"  ) ) ],;
+                        aGet[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ]:lValid(),;
+                     ),;
+                  if (  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
+                        aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva1") ) ]:lValid(),;
+                        aGet[ ( dbfArticulo )->( fieldpos( "pVenta1" ) ) ]:lValid() ) );
+      OF       fldPrecios
+
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] ;
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] ;
+      ID       170 ;
+      WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
+      VALID    ( CalBnfPts(   oSay[ 11 ]:nAt <= 1,;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ],;
                               if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                              aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1"   ) ) ],;
-                              aTmp[ ( dbfArticulo )->( fieldpos( "Benef1"  ) ) ],;
-                              aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ],;
-                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta1" ) ) ],;
-                              aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva1") ) ],;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ],;
+                              aGet[ ( dbfArticulo )->( fieldpos( "BENEF1"  ) ) ],;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1") ) ],;
                               nDecDiv,;
-                              aTmp[ ( dbfArticulo )->( fieldpos( "cCodImp" ) ) ],;
-                              oSayWeb[ 1 ] ) ) ;
-         PICTURE  "@E 999.99" ;
-         OF       fldPrecios
+                              aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
+                              oSayWeb[ 1 ],;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
+      PICTURE  cPouDiv ;
+      OF       fldPrecios
 
-      REDEFINE COMBOBOX oSay[ 11 ] VAR cSay[ 11 ] ;
-         ITEMS    aBnfSobre ;
-         ID       165 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE(  if (  aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1"  ) ) ],;
-                           aGet[ ( dbfArticulo )->( fieldpos( "Benef1" ) ) ]:lValid(),;
-                        ),;
-                     if (  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
-                           aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva1") ) ]:lValid(),;
-                           aGet[ ( dbfArticulo )->( fieldpos( "pVenta1" ) ) ]:lValid() ) );
-         OF       fldPrecios
-
-      REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] ;
-         ID       170 ;
-         WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
-         VALID    ( CalBnfPts(   oSay[ 11 ]:nAt <= 1,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "BENEF1"  ) ) ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1") ) ],;
-                                 nDecDiv,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
-                                 oSayWeb[ 1 ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
-         PICTURE  cPouDiv ;
-         OF       fldPrecios
-
-      REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
-         ID       180 ;
-         WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
-         VALID    ( CalBnfIva(   oSay[ 11 ]:nAt <= 1,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
-                                 if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1") ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "BENEF1"  ) ) ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ],;
-                                 nDecDiv,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
-                                 oSayWeb[ 1 ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
-         PICTURE  cPouDiv ;
-         OF       fldPrecios
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
+      ID       180 ;
+      WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
+      VALID    ( CalBnfIva(   oSay[ 11 ]:nAt <= 1,;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
+                              if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoEscandallo( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1") ) ],;
+                              aGet[ ( dbfArticulo )->( fieldpos( "BENEF1"  ) ) ],;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ],;
+                              nDecDiv,;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
+                              oSayWeb[ 1 ],;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                              aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
+      PICTURE  cPouDiv ;
+      OF       fldPrecios
 
    /*
    TARIFA2 ______________________________________________________________________________
 	*/
 
-      REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "LBNF2" ) ) ] ;
-         VAR            aTmp[ ( dbfArticulo )->( fieldpos( "LBNF2" ) ) ] ;
-         ID       190 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldPrecios
+   REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "LBNF2" ) ) ] ;
+      VAR            aTmp[ ( dbfArticulo )->( fieldpos( "LBNF2" ) ) ] ;
+      ID       190 ;
+		WHEN 		( nMode != ZOOM_MODE ) ;
+      OF       fldPrecios
 
    REDEFINE COMBOBOX oSay[ 12 ] VAR cSay[ 12 ] ;
          ITEMS    aBnfSobre ;
@@ -15627,12 +15632,7 @@ function aItmArt()
    aAdd( aBase, { "lMsgMov",   "L",  1, 0, "Lógico para avisar en movimientos sin stock","",                "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cImagenWeb","C",250, 0, "Imagen para la web",                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cChgBar",   "D",  8, 0, "Fecha de cambio de código de barras",      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodUbi1",  "C",  5, 0, "Código primera ubicación",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodUbi2",  "C",  5, 0, "Código segunda ubicación",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodUbi3",  "C",  5, 0, "Código tercera ubicación",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValUbi1",  "C",  5, 0, "Valor primera ubicación",                  "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValUbi2",  "C",  5, 0, "Valor segunda ubicación",                  "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cValUbi3",  "C",  5, 0, "Valor tercera ubicación",                  "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesUbi",   "C",200, 0, "Ubicación",                                "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFecVta",   "D",  8, 0, "Fecha de puesta a la venta",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFinVta",   "D",  8, 0, "Fecha de fin de la venta",                 "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lMsgSer",   "L",  1, 0, "Avisar en ventas por series sin stock",    "",                  "", "( cDbfArt )", nil } )
