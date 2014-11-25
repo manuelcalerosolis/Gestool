@@ -3,6 +3,10 @@
 #include "MesDbf.ch"
 #include "Xbrowse.ch"
 
+#define albNoFacturado              1
+#define albParcialmenteFacturado    2
+#define albTotalmenteFacturado      3
+
 //---------------------------------------------------------------------------//
 
 CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
@@ -21,6 +25,8 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    DATA oBrwEntrada
    DATA oBrwSalida
 
+   DATA oBase
+   DATA oIva
    DATA oTotal
 
    DATA tmpEntrada
@@ -37,6 +43,11 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
 
    METHOD loadAlbaranes()     
    METHOD loadAlbaran( id )    
+   
+   METHOD saveAlbaran()    
+      METHOD setLineasFacturadas()
+      METHOD setLineaFacturada()
+      METHOD addAlbaranFacturado( id )      
 
    METHOD passLineas()     
    METHOD passLinea()     
@@ -75,6 +86,10 @@ METHOD New( nView ) CLASS TFacturarLineasAlbaranesProveedor
    ::oPropiedad2     := GetPropiedadActual():Build( { "idGet" => 180, "idSay" => 181, "oContainer" => Self } )
 
    ::oPeriodo        := GetPeriodo():Build( { "idCombo" => 100, "idFechaInicio" => 110, "idFechaFin" => 120, "oContainer" => Self } )
+
+   ::oBase           := SayCompras():New( 400, Self )
+
+   ::oIva            := SayCompras():New( 410, Self )
 
    ::oTotal          := SayCompras():New( 420, Self )
 
@@ -486,7 +501,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       ::oDlg ;
-         ACTION   ( ::oDlg:End() )
+         ACTION   ( ::saveAlbaran() )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -669,6 +684,8 @@ Return ( lPassedLinea )
 
 METHOD recalculaTotal()    
 
+   local nBase    := 0
+   local nIva     := 0
    local nTotal   := 0
 
    D():GetStatusTmp( "TmpPrvO", ::nView )
@@ -677,16 +694,83 @@ METHOD recalculaTotal()
 
    while ( !( D():Tmp( "TmpPrvO", ::nView ) )->( eof() ) )
 
-      nTotal      += nTotLAlbPrv( D():Tmp( "TmpPrvO", ::nView ), nDinDiv(), nRouDiv() )
+      nBase       += nTotLAlbPrv( D():Tmp( "TmpPrvO", ::nView ), nDinDiv(), nRouDiv() )
+      nIva        += nIvaLAlbPrv( D():Tmp( "TmpPrvO", ::nView ), nDinDiv(), nRouDiv() )
 
       ( D():Tmp( "TmpPrvO", ::nView ) )->( dbskip() )
 
    end while
 
+   nTotal         := nBase + nIva 
+
+   ::oBase:cText( nBase )
+   ::oIva:cText( nIva )
    ::oTotal:cText( nTotal )
 
    D():SetStatusTmp( "TmpPrvO", ::nView )
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveAlbaran()
+
+   // Ponemos las lineas traspasadas como facturadas---------------------------
+
+   ::setLineasFacturadas()
+
+   // Albaranes para actualizar el estado--------------------------------------
+
+   // Creamos nueva factura----------------------------------------------------
+
+   ::oDlg:End()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setLineasFacturadas()
+
+   ( D():Tmp( "TmpPrvO", ::nView ) )->( dbgotop() )
+   while ( !( D():Tmp( "TmpPrvO", ::nView ) )->( eof() ) )
+
+      ::setLineaFacturada( ( D():Tmp( "TmpPrvO", ::nView ) )->cSerAlb + str( (  D():Tmp( "TmpPrvO", ::nView ) )->nNumAlb ) + (  D():Tmp( "TmpPrvO", ::nView ) )->cSufAlb + str( (  D():Tmp( "TmpPrvO", ::nView ) )->nNumLin ) )
+
+      ::addAlbaranFacturado( ( D():Tmp( "TmpPrvO", ::nView ) )->cSerAlb + str( (  D():Tmp( "TmpPrvO", ::nView ) )->nNumAlb ) + (  D():Tmp( "TmpPrvO", ::nView ) )->cSufAlb )
+
+      ( D():Tmp( "TmpPrvO", ::nView ) )->( dbskip() )
+
+   end while
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD setLineaFacturada( id )
+
+   local ordSetFocus
+
+   ordSetFocus    := ( D():AlbaranesProveedoresLineas( ::nView ) )->( ordsetfocus( "nNumLin" ) )
+   
+   if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbSeek( id ) )
+   
+      if D():Lock( "AlbProvL", ::nView ) 
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado   := .t.
+         D():UnLock( "AlbProvL", ::nView ) 
+      end if 
+
+   end if 
+
+   ( D():AlbaranesProveedoresLineas( ::nView ) )->( ordsetfocus( ordSetFocus ) )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD addAlbaranFacturado( id )
+
+   ::addAlbaranFacturado( ( D():Tmp( "TmpPrvO", ::nView ) )->cSerAlb + str( (  D():Tmp( "TmpPrvO", ::nView ) )->nNumAlb ) + (  D():Tmp( "TmpPrvO", ::nView ) )->cSufAlb )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//

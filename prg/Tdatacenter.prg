@@ -348,23 +348,23 @@ METHOD OpenAlbCliT( dbf ) CLASS TDataCenter
 
 METHOD oPedCliT() CLASS TDataCenter
 
-      local cFilter
-      local oPedCliT
+   local cFilter
+   local oPedCliT
 
-      DATABASE NEW oPedCliT PATH ( cPatEmp() ) FILE "PedCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliT.Cdx"
+   DATABASE NEW oPedCliT PATH ( cPatEmp() ) FILE "PedCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliT.Cdx"
 
-         if lAIS() .and. !oUser():lAdministrador()
-      
-            cFilter     := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-            if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
+   if lAIS() .and. !oUser():lAdministrador()
 
-            ( oPedCliT:cAlias )->( AdsSetAOF( cFilter ) )
+      cFilter     := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      if oUser():lFiltroVentas()         
+         cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+      end if 
 
-         end if
+      ( oPedCliT:cAlias )->( AdsSetAOF( cFilter ) )
 
-      Return ( oPedCliT )   
+   end if
+
+Return ( oPedCliT )   
 
 //---------------------------------------------------------------------------//
 
@@ -602,17 +602,17 @@ METHOD OpenFacCliT( dbf )
       // Limitaciones de cajero y cajas----------------------------------------
 
       if lAIS() .and. !oUser():lAdministrador()
-      
+   
          cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
          if oUser():lFiltroVentas()         
-               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-            end if 
+            cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
 
-            ( dbf )->( AdsSetAOF( cFilter ) )
+         ( dbf )->( AdsSetAOF( cFilter ) )
 
-         end if
+      end if
 
-      end if 
+   end if 
 
 Return ( lOpen )   
 

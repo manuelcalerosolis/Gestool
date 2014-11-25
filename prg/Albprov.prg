@@ -1382,6 +1382,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       oBrwLin:cName           := "Lineas de albaranes a proveedor"
 
          with object ( oBrwLin:AddCol() )
+            :cHeader          := "Facturado"
+            :bEditValue       := {|| ( dbfTmp )->lFacturado }
+            :nWidth           := 65
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwLin:AddCol() )
             :cHeader          := "Número"
             :bEditValue       := {|| if( ( dbfTmp )->lKitChl, "", Trans( ( dbfTmp )->nNumLin, "9999" ) ) }
             :nWidth           := 65
@@ -8226,6 +8234,9 @@ FUNCTION rxAlbPrv( cPath, oMeter )
 
       ( cAlbPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb", {|| Field->cSerAlb + STR( Field->nNumAlb ) + Field->cSufAlb } ) )
+
+      ( cAlbPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "nNumLin", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
 
       ( cAlbPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cRef", "cRef + cValPr1 + cValPr2", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )

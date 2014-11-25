@@ -384,8 +384,8 @@ METHOD New( oMenuItem, oMeterTotal, oTextTotal ) CLASS TComercio
 
    DEFAULT oMenuItem       := "01108"
 
-   ::oMeterTotal          := oMeterTotal
-   ::oTextTotal           := oTextTotal
+   ::oMeterTotal           := oMeterTotal
+   ::oTextTotal            := oTextTotal
 
    ::oIniEmpresa           := TIni():New( cPatEmp() + "Empresa.Ini" )
 
