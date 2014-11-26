@@ -1246,9 +1246,6 @@ METHOD Enviar()
 
    with object ( TGenMailing():New() )
 
-      :SetTypeDocument( "nFacCli" )
-      :SetDe(           uFieldEmpresa( "cNombre" ) )
-      :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
       :SetAdjunto(      ::cFicheroDestino )
       :SetPara(         "mcalero@gestool.es" )
       :SetAsunto(       "Envio de factura de cliente" )
@@ -1257,61 +1254,9 @@ METHOD Enviar()
       :SetMensaje(      CRLF )
       :SetMensaje(      "Reciba un cordial saludo." )
 
-      :lExternalSendMail()
+      :lExternalSend()
 
    end with
-
-/*
-   if !File( FullCurDir() + "\JMail.dll")
-      ::oTree:Add( "No existe el componente JMail.Dll" )
-      Return ( Self )
-   end if
-
-   oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ::oMail                    := CreateObject( "JMail.Message" )
-
-   RECOVER USING oError
-
-      WaitRun( "regsvr32 /s " + FullcurDir() + "JMail.Dll" )
-
-      ::oMail                    := CreateObject( "JMail.Message" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !Empty( ::oMail )
-
-      ::oMail:Logging            := .t.
-      ::oMail:Silent             := .t.
-
-      ::oMail:MailServerUserName := ::cMailServerUserName
-      ::oMail:MailServerPassword := ::cMailServerPassword
-
-      ::oMail:From               := ::cMailServerUserName
-      ::oMail:FromName           := ::oSellerParty:cName
-      ::oMail:Subject            := ::cMailSubject
-
-      ::oMail:Body               := ::cMailBody
-
-      ::oMail:AddAttachment( ::cFicheroDestino )
-
-      ::oMail:AddRecipient( ::cMailRecipient )
-
-      lSendMail                  := ::oMail:Send( ::MailServerSend() )
-
-      if lSendMail
-         ::oTree:Add( "Fichero " + Lower( ::cFicheroDestino ) + " enviado satisfactoriamente.", 1 )
-      else
-         ::oTree:Add( "Error al enviar factura " + ::oMail:ErrorMessage, 0 )
-      end if
-
-      ::oMail:Close()
-
-   end if
-*/
 
 Return ( lSendMail )
 

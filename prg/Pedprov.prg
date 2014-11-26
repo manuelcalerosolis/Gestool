@@ -9124,8 +9124,8 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nPedPrv" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        D():PedidosProveedores( nView ) )
+                  :SetItems(        aItmFacRec() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():PedidosProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de pedido de proveedor número " + ( D():PedidosProveedores( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosProveedores( nView ) )->nNumPed ) ) )
@@ -9135,7 +9135,7 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():PedidosProveedores( nView ), aItmFacRec() )
+                  :lSend()
 
                end with
 

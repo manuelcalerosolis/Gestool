@@ -11426,8 +11426,8 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nSatCli" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        D():SatClientes( nView ) )
+                  :SetItems(        aItmSatCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de S.A.T. de cliente número " + ( D():SatClientes( nView ) )->cSerSat + "/" + Alltrim( Str( ( D():SatClientes( nView ) )->nNumSat ) ) )
@@ -11437,7 +11437,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():SatClientes( nView ), aItmSatCli() )
+                  :lSend()
 
                end with
 

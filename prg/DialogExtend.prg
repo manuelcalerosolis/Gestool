@@ -1,5 +1,6 @@
 #include "HbClass.ch"
 #include "Fivewin.ch"
+#include "Xbrowse.ch"
 
 FUNCTION DialogExtend() 
 
@@ -220,10 +221,10 @@ Static Function TXBrowseToExcel( bProgress, nGroupBy, aCols )
 
    oExcel:ScreenUpdating := .f.
 
-   oBook    := oExcel:WorkBooks:Add()
-   oSheet   := oExcel:ActiveSheet
+   oBook          := oExcel:WorkBooks:Add()
+   oSheet         := oExcel:ActiveSheet
 
-   uBookMark   := EVAL( ::bBookMark )
+   uBookMark      := EVAL( ::bBookMark )
 
    nRow     := 1
    nCol     := 0

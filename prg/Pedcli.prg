@@ -14907,8 +14907,8 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nPedCli" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        D():PedidosClientes( nView ) )
+                  :SetItems(        aItmPedCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de pedido de cliente número " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) )
@@ -14918,7 +14918,7 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():PedidosClientes( nView ), aItmPedCli() )
+                  :lSend()
 
                end with
 

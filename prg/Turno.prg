@@ -11099,7 +11099,7 @@ METHOD MailArqueo( cCurrentTruno )
          :cGetMensaje   := Rtrim( cMensajeMail )
       end if
 
-      :lExternalSendMail()
+      :lExternalSend()
 
    end with
 

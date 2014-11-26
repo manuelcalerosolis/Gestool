@@ -13796,10 +13796,9 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
 
                with object ( TGenMailing():New() )
 
-                  :SetTypeDocument( "nFacCli" )
-
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetTypeDocument( "nFacRec" )
+                  :SetAlias(         D():FacturasRectificativas( nView ) )
+                  :SetItems(        aItmFacRec() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():FacturasRectificativas( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de factura rectificativa de cliente número " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) )
@@ -13809,7 +13808,7 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():FacturasRectificativas( nView ), aItmFacRec() )
+                  :lSend()
 
                end with
 

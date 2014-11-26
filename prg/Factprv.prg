@@ -13057,8 +13057,8 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nFacPrv" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        D():FacturasProveedores( nView ) )
+                  :SetItems(        aItmFacPrv() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():FacturasProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de factura de proveedor número " + ( D():FacturasProveedores( nView ) )->cSerFac + "/" + Alltrim( Str( ( D():FacturasProveedores( nView ) )->nNumFac ) ) )
@@ -13068,7 +13068,7 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():FacturasProveedores( nView ), aItmFacPrv() )
+                  :lSend()
 
                end with
 

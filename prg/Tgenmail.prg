@@ -30,18 +30,18 @@ CLASS TGenMailing
    DATA oGetAdjunto
    DATA oGetHtml
    DATA oGetMensaje
-   DATA oGetDe
-   DATA oGetPara
-   DATA oGetCopia
+   DATA oGetDe                         
+   DATA oGetCopia                      
 
+   DATA oGetPara
    DATA cGetAsunto
    DATA cGetAdjunto
    DATA cGetHtml
    DATA cGetCSS
    DATA cGetMensaje
-   DATA cGetDe                         INIT Space( 250 )
+   DATA cGetDe                         INIT Padr( uFieldEmpresa( "cNombre" ), 250 )
    DATA cGetPara                       INIT Space( 250 )
-   DATA cGetCopia                      INIT Space( 250 )
+   DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
    DATA aAdjuntos                      INIT {}
 
@@ -63,10 +63,13 @@ CLASS TGenMailing
    Method SetDe( cText )               INLINE ( ::cGetDe       := Padr( cText, 250 ) )
    Method SetPara( cText )             INLINE ( ::cGetPara     := Padr( cText, 250 ) )
    Method SetCopia( cText )            INLINE ( ::cGetCopia    := Padr( cText, 250 ) )
+   Method SetItems( aItems )           INLINE ( ::aItems       := aItems )
+   Method SetAlias( cAlias )           INLINE ( ::dbfAlias     := cAlias )
 
    Method AddAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
 
    Method SetMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
+   Method GetMensajeHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
 
    Method SetTypeDocument( cText )     INLINE ( ::cTypeDocument   := cText )
 
@@ -122,7 +125,11 @@ CLASS TGenMailing
 
    Method ExpresionReplace( cDocumentHTML, cExpresion )
 
+   Method lSend()             INLINE ( iif( ::IsMailServer(), ::Resource(), ::lOutlookSendMail() ) )
+   Method lExternalSend()     INLINE ( iif( ::IsMailServer(), ::lExternalSendMail(), ::lOutlookSendMail() ) )
+
    Method lExternalSendMail()
+   Method lOutlookSendMail()
 
    Method lSendMail()
 
@@ -136,7 +143,7 @@ CLASS TGenMailing
 
    Method SelectColumn( oCombo )
 
-   Method GeneralResource()
+   Method Resource()
 
    Method InsertField()       INLINE ( ::oActiveX:oClp:SetText( "{" + ( Alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
 
@@ -148,7 +155,7 @@ CLASS TGenMailing
 
    Method WaitSeconds( nTime )
 
-   METHOD IsMailServer()
+   METHOD IsMailServer()      INLINE ( Empty( ::MailServer ) .or. Empty( ::MailServerUserName ) .or. Empty( ::MailServerPassword ) )
 
 END CLASS
 
@@ -222,9 +229,9 @@ Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
 
    ::Init()
 
-   if Empty( ::MailServer ) .or. Empty( ::MailServerUserName ) .or. Empty( ::MailServerPassword )
+   if !::IsMailServer()
       MsgStop( "Debe cumplimentar servidor y cuenta de correos," + CRLF + "en configurar empresa." )
-      ConfEmpresa( oWnd(), , 7 )
+      Return .f.
    end if
 
    ::lCancel         := .f.
@@ -1027,12 +1034,6 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
 
    DEFAULT lMessage        := .f.
 
-   if Empty( ::MailServer ) .or. Empty( ::MailServerUserName ) .or. Empty( ::MailServerPassword )
-      MsgStop( "Debe cumplimentar servidor y cuenta de correos," + CRLF + ;
-               "en configurar empresa." )
-      Return ( .f. )
-   end if
-
    if Empty( ::cGetPara ) .and. Empty( ::cDireccion )
       MsgStop( "Debe incluir al menos una dirección de correo electrónico." )
       Return ( .f. )
@@ -1091,6 +1092,57 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
    CursorWE()
 
 Return ( lSendMail )
+
+//--------------------------------------------------------------------------//
+
+Method lOutlookSendMail()
+   
+   local oMail
+   local lSend          := .f.
+   local oRecipient
+   local oOutLook
+
+   oOutLook             := win_oleCreateObject( "Outlook.Application" )
+
+   if !empty( oOutLook )
+
+      oMail             := oOutLook:CreateItem( 0 ) // olMailItem 
+
+      // Destinatario----------------------------------------------------------
+
+      oMail:Recipients:Add( ::cGetPara )   
+
+      // Con copia------------------------------------------------------------- 
+
+      oRecipient        := oMail:Recipients:Add( ::cGetCopia )  
+      oRecipient:Type   := 2
+
+      // Adjunto--------------------------------------------------------------- 
+
+      oMail:Attachments:Add( ::cGetAdjunto ) 
+
+      // Asunto
+
+      oMail:Subject      := ::cGetAsunto
+
+      // Cuerpo del mensaje
+
+      oMail:BodyFormat  := 2 // olFormatHTML 
+      oMail:HTMLBody    := ::GetMensajeHTML()
+
+      // Mostarmos el dialogo de envio
+
+      oMail:Display()
+
+      lSend             := .t.
+   
+   else
+      
+      msgStop( "Error. MS Outlook not available.", win_oleErrorText() )
+
+   end if 
+
+Return ( lSend )
 
 //--------------------------------------------------------------------------//
 
@@ -1211,30 +1263,28 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
+Method Resource() CLASS TGenMailing
 
    local cTag
    local nRecno
    local oBmpGeneral
 
-   if Empty( ::MailServer ) .or. Empty( ::MailServerUserName ) .or. Empty( ::MailServerPassword )
-      MsgStop( "Debe cumplimentar servidor y cuenta de correos," + CRLF + "en configurar empresa." )
-      ConfEmpresa( oWnd(), , 7 )
+   if Empty( ::aItems )
+      MsgStop( "Campos de la base de datos no pasados." )
+      Return .f.
    end if
 
-   if !Empty( aItems )
-      ::aItems    := aItems
+   if Empty( ::dbfAlias )
+      MsgStop( "Base de datos no pasada." )
+      Return .f.
    end if
 
-   if !Empty( dbfAlias )
-      ::dbfAlias  := dbfAlias
-      cTag        := ( ::dbfAlias )->( OrdSetFocus() )
-      nRecno      := ( ::dbfAlias )->( RecNo() )
-   end if
+   cTag           := ( ::dbfAlias )->( OrdSetFocus() )
+   nRecno         := ( ::dbfAlias )->( RecNo() )
 
-   if !Empty( aItems ) .and. !Empty( dbfAlias )
-      ::aFields   := GetSubArray( aItems, 5 ) //aArray, nPos )::oFlt:aTblMask
-   end if
+   ::aFields      := GetSubArray( ::aItems, 5 ) //aArray, nPos )::oFlt:aTblMask
+
+   // Mostramos el dialogo-----------------------------------------------------
 
    DEFINE DIALOG ::oDlg RESOURCE "SendDocumentoMail" OF oWnd()
 
@@ -1319,9 +1369,9 @@ Method GeneralResource( dbfAlias, aItems ) CLASS TGenMailing
 
    ACTIVATE DIALOG ::oDlg CENTER 
 
-   if !Empty( dbfAlias )
-      ( dbfAlias )->( dbGoTo( nRecno ) )
-      ( dbfAlias )->( OrdSetFocus( cTag ) )
+   if !Empty( ::dbfAlias )
+      ( ::dbfAlias )->( dbGoTo( nRecno ) )
+      ( ::dbfAlias )->( OrdSetFocus( cTag ) )
    end if
 
    if !Empty( oBmpGeneral )
@@ -1447,17 +1497,6 @@ Method WaitSeconds( nTime )
 	next
 
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD IsMailServer()
-
-   if Empty( ::MailServer ) .or. Empty( ::MailServerUserName ) .or. Empty( ::MailServerPassword )
-      MsgStop( "Debe cumplimentar servidor y cuenta de correos," + CRLF + "en configurar empresa." )
-      RETURN .f.
-   end if
-
-RETURN .t.
 
 //---------------------------------------------------------------------------//
 

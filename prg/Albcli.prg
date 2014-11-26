@@ -13310,23 +13310,19 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter )
 
                with object ( TGenMailing():New() )
 
-                  if :IsMailServer()
+                  :SetTypeDocument( "nAlbCli" )
+                  :SetAlias(        D():Get( "AlbCliT", nView ) )
+                  :SetItems(        aItmAlbCli() )
+                  :SetAdjunto(      cFilePdf )
+                  :SetPara(         RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ), "cMeiInt" ) )
+                  :SetAsunto(       "Envio de albaran de cliente número " + ( D():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( D():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( D():Get( "AlbCliT", nView ) )->dFecAlb ) + Space( 1 ) )
+                  :SetMensaje(      CRLF )
+                  :SetMensaje(      CRLF )
+                  :SetMensaje(      "Reciba un cordial saludo." )
 
-                     :SetTypeDocument( "nAlbCli" )
-                     :SetDe(           uFieldEmpresa( "cNombre" ) )
-                     :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
-                     :SetAdjunto(      cFilePdf )
-                     :SetPara(         RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ), "cMeiInt" ) )
-                     :SetAsunto(       "Envio de albaran de cliente número " + ( D():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) ) )
-                     :SetMensaje(      "Adjunto le remito nuestro albaran de cliente " + ( D():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) ) + Space( 1 ) )
-                     :SetMensaje(      "de fecha " + Dtoc( ( D():Get( "AlbCliT", nView ) )->dFecAlb ) + Space( 1 ) )
-                     :SetMensaje(      CRLF )
-                     :SetMensaje(      CRLF )
-                     :SetMensaje(      "Reciba un cordial saludo." )
-
-                     :GeneralResource( D():Get( "AlbCliT", nView ), aItmAlbCli() )
-
-                  end if 
+                  :lSend()
 
                end with
 

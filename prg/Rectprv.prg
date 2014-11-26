@@ -11848,8 +11848,8 @@ Function PrintReportRctPrv( nDevice, nCopies, cPrinter, cDoc )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nRctPrv" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        D():FacturasRectificativasProveedores( nView ) )
+                  :SetItems(        aItmRctPrv() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():AlbaranesProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de factura rectificativa de proveedor número " + ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + "/" + Alltrim( Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) ) )
@@ -11859,7 +11859,7 @@ Function PrintReportRctPrv( nDevice, nCopies, cPrinter, cDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():FacturasRectificativasProveedores( nView ), aItmRctPrv() )
+                  :lSend()
 
                end with
 

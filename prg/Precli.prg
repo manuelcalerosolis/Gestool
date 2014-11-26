@@ -11790,8 +11790,8 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nPreCli" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        D():PresupuestosClientes( nView ) )
+                  :SetItems(        aItmPreCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de presupuesto de cliente número " + ( D():PresupuestosClientes( nView ) )->cSerPre + "/" + Alltrim( Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) ) )
@@ -11801,7 +11801,7 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():PresupuestosClientes( nView ), aItmPreCli() )
+                  :lSend()
 
                end with
 

@@ -4900,9 +4900,8 @@ Function PrintReportAntCli( nDevice, nCopies, cPrinter, dbfDoc )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nFacAnt" )
-
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        dbfAntCliT )
+                  :SetItems(        aItmAntCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( dbfAntCliT )->cCodCli, dbfCli, "cMeiInt" ) )
                   :SetAsunto(       "Envio de factura de anticipo de cliente número " + ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) )
@@ -4912,7 +4911,7 @@ Function PrintReportAntCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( dbfAntCliT, aItmAntCli() )
+                  :lSend()
 
                end with
 

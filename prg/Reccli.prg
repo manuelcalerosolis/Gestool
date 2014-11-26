@@ -3845,8 +3845,8 @@ Function PrintReportRecCli( nDevice, nCopies, cPrinter, dbfDoc )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nRecCli" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        dbfFacCliP )
+                  :SetItems(        aItmRecCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( dbfFacCliP )->cCodCli, dbfClient, "cMeiInt" ) )
                   :SetAsunto(       "Envio de recibo de cliente número " + StrTran( ( dbfFacCliP )->cSerie + "/" + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + "-" + Str( ( dbfFacCliP )->nNumRec ), " ", "" ) )
@@ -3856,7 +3856,7 @@ Function PrintReportRecCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( dbfFacCliP, aItmRecCli() )
+                  :lSend()
 
                end with
 

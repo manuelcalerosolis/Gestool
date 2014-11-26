@@ -421,10 +421,10 @@ METHOD filesOpen() CLASS TComercio
    local oBlock
    local oError
    local lOpen       := .t.
-
+/*
    oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
-
+*/
       DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
       ::oArt:OrdSetFocus( "lPubInt" )
 
@@ -496,7 +496,7 @@ METHOD filesOpen() CLASS TComercio
       if !::oStock:lOpenFiles()
          lOpen                := .f.
       end if
-
+/*
    RECOVER USING oError
 
       lOpen                   := .f.
@@ -508,7 +508,7 @@ METHOD filesOpen() CLASS TComercio
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//

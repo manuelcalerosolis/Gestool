@@ -708,7 +708,7 @@ Function lEnviarCorreoWatchdog( cSay, oDlg )
       Mandamos el Mail---------------------------------------------------------
       */
 
-      :lExternalSendMail()
+      :lExternalSend()
 
    end with
 
@@ -753,7 +753,7 @@ Function lEnviarCorreoCliente( cSay, oDlg )
       Mandamos el Mail---------------------------------------------------------
       */
 
-      :lExternalSendMail()
+      :lExternalSend()
 
    end with
 

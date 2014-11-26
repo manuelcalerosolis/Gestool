@@ -6926,8 +6926,8 @@ static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter )
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nAlbPrv" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        D():AlbaranesProveedores( nView ) )
+                  :SetItems(        aItmAlbPrv() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():AlbaranesProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de albaran de proveedor número " + ( D():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) ) )
@@ -6937,7 +6937,7 @@ static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():AlbaranesProveedores( nView ), aItmAlbPrv() )
+                  :lSend()
 
                end with
 
@@ -7183,7 +7183,7 @@ STATIC FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
          :cDireccion       := "josecarlos@icgmotor.com"
          :cGetMensaje      := Rtrim( cInforme )
 
-         :lExternalSendMail()
+         :lExternalSend()
 
       end with
 

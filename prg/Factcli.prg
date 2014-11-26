@@ -11769,15 +11769,13 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-#ifdef __XHARBOUR__
-
             if file( cFilePdf )
 
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nFacCli" )
-                  :SetDe(           uFieldEmpresa( "cNombre" ) )
-                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAlias(        D():FacturasClientes( nView ) )
+                  :SetItems(        aItmFacCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
                   :SetAsunto(       "Envio de factura de cliente número " + ( D():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) )
@@ -11787,58 +11785,11 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( D():FacturasClientes( nView ), aItmFacCli() )
+                  :lSend()
 
                end with
 
             end if
-
-#else
-            // Nuevo objeto de outlook-----------------------------------------
-
-            sysRefresh()
-
-            oOutLook             := win_oleCreateObject( "Outlook.Application" )
-
-            if !empty( oOutLook )
-
-               oMail             := oOutLook:CreateItem( 0 ) // olMailItem 
-
-               // Destinatario-------------------------------------------------
-
-               oMail:Recipients:Add( RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )   
-
-               // Con copia 
-
-               oRecipient        := oMail:Recipients:Add( uFieldEmpresa( "cCcpMai" ) )  
-               oRecipient:Type   := 2
-
-               // Adjunto 
-
-               oMail:Attachments:Add( cFilePdf ) 
-
-               // Asunto
-
-               oMail:Subject      := "Envío de factura de cliente número " + ( D():FacturasClientesIdTextShort( nView ) )
-
-               // Cuerpo del mensaje
-
-               oMail:BodyFormat  := 2 // olFormatHTML 
-               oMail:HTMLBody    := "<HTML>" + ;
-                                    "Adjunto le remito nuestra factura de cliente " + ( D():FacturasClientesIdTextShort( nView ) ) + ;
-                                    " de fecha " + Dtoc( D():FacturasClientesFecha( nView ) ) + "</HTML>"  
-
-               // Mostarmos el dialogo de envio
-
-               oMail:Display()
-            
-            else
-               
-               msgStop( "Error. MS Outlook not available.", win_oleErrorText() )
-
-            end if 
-
-#endif
 
       end case
 
