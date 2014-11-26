@@ -97,6 +97,8 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _LGARANTIA                82
 #define _CCODOPE                  83
 #define _CCODCAT                  84
+#define _CHORINI                  85
+#define _CHORFIN                  86
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -182,6 +184,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CFORMATO                 81
 #define __CCODCLI                 82
 #define __DFECSAT                 83
+#define _NCNTACT                  84
+#define _CDESUBI                  85
 
 /*
 Array para impuestos
@@ -2771,6 +2775,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
          ID       122 ;
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CHORINI ] VAR aTmp[ _CHORINI ] ;
+         ID       590 ;
+         PICTURE  "@R 99:99";
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CHORFIN ] VAR aTmp[ _CHORFIN ] ;
+         ID       591 ;
+         PICTURE  "@R 99:99";
          WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[2]
 
@@ -10089,6 +10105,8 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "lGarantia", "L",  1,  0, "Lógico de reparación en garantía" ,                 "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "cCodOpe",   "C",  5,  0, "Código operario" ,                                  "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "cCodCat",   "C",  3,  0, "Código categoría" ,                                 "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cHorIni",   "C",  5,  0, "Hora de inicio" ,                                   "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cHorFin",   "C",  5,  0, "Hora de fin" ,                                      "", "", "( cDbf )"} )
 
 return ( aItmSatCli )
 
@@ -10234,6 +10252,8 @@ function aColSatCli()
    aAdd( aColSatCli, { "cFormato" ,"C", 100,  0, "Formato de venta",                 "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "cCodCli"  ,"C",  12,  0, "Código del cliente",               "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "dFecSat"  ,"D",   8,  0, "Fecha del SAT",                    "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NCNTACT"  ,"N",  15,  6, "Contador actual",                  "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CDESUBI"  ,"C", 200,  0, "Descripción de la ubicación",      "",                   "", "( cDbfCol )" } )
 
 return ( aColSatCli )
 
