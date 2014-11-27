@@ -1071,48 +1071,44 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
          ( dbfSatCliL )->cCodCli == cCodCli  .and.;
          if( cCmbAnio == "Todos", .t., ( Year( ( dbfSatCliL )->dFecSat ) == Val( cCmbAnio ) ) )
 
-         if ( dbfSatCliS )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat + ( dbfSatCliL )->cRef + Str( ( dbfSatCliL )->nNumLin ) ) )
+         if !oDbfTmpMaq:Seek( ( dbfSatCliL )->cRef )
 
-            if !oDbfTmpMaq:Seek( ( dbfSatCliL )->cRef + ( dbfSatCliS )->cNumSer )
+            oDbfTmpMaq:Append()
 
-               oDbfTmpMaq:Append()
+            oDbfTmpMaq:cCodCli      := cCodCli
+            oDbfTmpMaq:cRef         := ( dbfSatCliL )->cRef
+            oDbfTmpMaq:cDetalle     := ( dbfSatCliL )->cDetalle
+            oDbfTmpMaq:cNumSer      := ( dbfSatCliS )->cNumSer
 
-               oDbfTmpMaq:cCodCli      := cCodCli
-               oDbfTmpMaq:cRef         := ( dbfSatCliL )->cRef
-               oDbfTmpMaq:cDetalle     := ( dbfSatCliL )->cDetalle
-               oDbfTmpMaq:cNumSer      := ( dbfSatCliS )->cNumSer
+            if ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
 
-               if ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
-
-                  oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
-                  oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
-                  oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
-                  oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
-
-               end if   
-
-               oDbfTmpMaq:Save()
-
-            else
-            
-               if ( dbfSatCliL )->dFecSat > oDbfTmpMaq:dFecSat .and.;
-                  ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
-                  
-                  oDbfTmpMaq:Load()
-
-                  oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
-                  oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
-                  oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
-                  oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
-
-                  oDbfTmpMaq:Save()
-
-               end if
+               oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
+               oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
+               oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
+               oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
 
             end if   
 
-         end if   
+            oDbfTmpMaq:Save()
+
+         else
          
+            if ( dbfSatCliL )->dFecSat > oDbfTmpMaq:dFecSat .and.;
+               ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
+               
+               oDbfTmpMaq:Load()
+
+               oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
+               oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
+               oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
+               oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
+
+               oDbfTmpMaq:Save()
+
+            end if
+
+         end if   
+
       end if
 
       ( dbfSatCliL )->( dbSkip() )
@@ -1138,6 +1134,16 @@ Static function LoadLineasMaquinas( cCmbAnio, oBrwMaqL )
    local nOrdAntT  := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
 
    oDbfTmpMaqL:Zap()
+
+
+
+
+
+
+
+
+
+   
 
    ( dbfSatCliS )->( dbGoTop() )
 

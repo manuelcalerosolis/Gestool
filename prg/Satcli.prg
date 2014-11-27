@@ -3250,9 +3250,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PROMPT   "&General",;
                   "Da&tos",;
                   "&Observaciones" ;
-         DIALOGS  "LFACCLI_1",;
-                  "LALBCLI_2",;
-                  "LFACCLI_3"
+         DIALOGS  "LSATCLI_1",;
+                  "LSATCLI_2",;
+                  "LSATCLI_3"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt;
          ID       100 ;
@@ -3360,6 +3360,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       fin de propiedades
       -------------------------------------------------------------------------
       */
+
+      REDEFINE GET aGet[ _NCNTACT ] VAR aTmp[ _NCNTACT ];
+         ID       256 ;
+         IDSAY    257 ;
+         SPINNER;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CUNIDAD ] VAR aTmp[ _CUNIDAD ] ;
          ID       170 ;
@@ -3697,6 +3704,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aGet[ _CDESUBI ] VAR aTmp[ _CDESUBI ];
+         ID       310 ;
+         SPINNER;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
       REDEFINE GET aGet[ _CIMAGEN ] ;
          VAR      aTmp[ _CIMAGEN ] ;
          BITMAP   "LUPA" ;
@@ -3898,6 +3911,20 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    if aTmp[ __LALQUILER ]
       aGet[ _NPREDIV ]:Hide()
       aGet[ _NPREALQ ]:Show()
+   end if
+
+   if aTmp[ _NCTLSTK ] == 2
+
+      if !Empty( aGet[ _NCNTACT ] )
+         aGet[ _NCNTACT ]:Show()
+      end if
+
+   else
+
+      if !Empty( aGet[ _NCNTACT ] )
+         aGet[ _NCNTACT ]:Hide()
+      end if
+
    end if
 
    do case
@@ -5202,6 +5229,16 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             end if
 
             /*
+            Ubicación----------------------------------------------------------
+            */
+
+            if !Empty( aGet[ _CDESUBI ] )
+               aGet[ _CDESUBI ]:cText( ( D():Articulos( nView ) )->cDesUbi )
+            else
+               aTmp[ _CDESUBI ]     := ( D():Articulos( nView ) )->cDesUbi
+            end if
+
+            /*
             Unidades e impuestos--------------------------------------------------------
             */
 
@@ -5280,6 +5317,23 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
                   aGet[ _NCTLSTK ]:SetOption( ( D():Articulos( nView ) )->nCtlStock )
                else
                   aTmp[ _NCTLSTK ]     := ( D():Articulos( nView ) )->nCtlStock
+               end if
+
+            end if
+
+            if aTmp[ _NCTLSTK ] == 2
+
+               if !Empty( aGet[ _NCNTACT ] )
+                  aGet[ _NCNTACT ]:cText( ( D():Articulos( nView ) )->nCntAct )
+                  aGet[ _NCNTACT ]:Show()
+               else
+                  aTmp[ _NCNTACT ]     := ( D():Articulos( nView ) )->nCntAct
+               end if
+
+            else
+
+               if !Empty( aGet[ _NCNTACT ] )
+                  aGet[ _NCNTACT ]:Hide()
                end if
 
             end if

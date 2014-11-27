@@ -32,6 +32,7 @@ END CLASS
 METHOD Create()
 
    ::AddField( "cCodRut", "C",  4, 0, {|| "@!" },          "Ruta",      .f.,       "Código ruta",                4  )
+   ::AddField( "cNomRut", "C", 30, 0, {|| "@!" },          "Nom. Ruta", .f.,       "Nombre ruta",               40  )
    ::AddField( "cCodCli", "C", 12, 0, {|| "@!" },          "Cli.",      .f.,       "Código cliente",             8  )
    ::AddField( "cCodFam", "C", 16, 0, {|| "@!" },          "Cod.",      .t.,       "Código familia",             5  )
    ::AddField( "cNomFam", "C", 35, 0, {|| "@!" },          "Familia",   .t.,       "Nombre familia",            25  )
@@ -243,6 +244,7 @@ METHOD lGenerate()
                               ::oDbf:Blank()
 
                               ::oDbf:cCodRut := ::oFacCliT:cCodRut
+                              ::oDbf:cNomRut := oRetFld( ::oFacCliT:cCodRut, ::oDbfRut )
                               ::oDbf:cCodCli := ::oFacCliT:cCodCli
                               ::oDbf:cCodFam := ::oFacCliL:cCodFam
                               ::oDbf:cNomFam := cNomFam( ::oFacCliL:cCodFam, ::oDbfFam )
