@@ -16253,6 +16253,27 @@ function GraLotArt( cCodArt, dbfArticulo, cLote )
 RETURN NIL
 //---------------------------------------------------------------------------//
 
+function GraCntArt( cCodArt, dbfArticulo, nCntAct )
+
+   local nOrdSetFocus   := ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
+
+   /*
+   Actualizar NLOTE en el Fichero de artículos
+   ----------------------------------------------------------------------------
+   */
+
+   if ( dbfArticulo )->( dbSeek( cCodArt ) )
+      if ( dbfArticulo )->( dbRLock() )
+         ( dbfArticulo )->nCntAct  := nCntAct
+         ( dbfArticulo )->( dbRUnLock() )
+      end if
+   end if
+
+   ( dbfArticulo )->( ordSetFocus( nOrdSetFocus ) )
+
+RETURN NIL
+//---------------------------------------------------------------------------//
+
 function lAccArticulo()
 
 return ( nAnd( nLevelUsr( "01014" ), 1 ) == 0 )

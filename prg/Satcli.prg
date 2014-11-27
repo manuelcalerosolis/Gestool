@@ -3365,6 +3365,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       256 ;
          IDSAY    257 ;
          SPINNER;
+         PICTURE  "@E 999999999999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
@@ -4251,6 +4252,19 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       return nil
    end if 
 
+   /*
+   Comprobamos, si estamos por contadores, que no sea 0
+   */
+
+   if aTmp[ _NCTLSTK ] == 2 .and. aTmp[ _NCNTACT ] == 0
+
+      if !ApoloMsgNoYes( "¿Está seguro de dejar el contador del producto a 0?", "Elija una opción" )
+         aGet[ _NCNTACT ]:SetFocus()
+         Return nil
+      end if
+
+   end if
+
    // Situaciones atipicas-----------------------------------------------------
 
    if nMode == APPD_MODE
@@ -4259,6 +4273,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
       if aTmp[ _LLOTE ]
          GraLotArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _CLOTE ] )
+      end if
+
+      if aTmp[ _NCTLSTK ] == 2
+         GraCntArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _NCNTACT ] )
       end if
 
       /*

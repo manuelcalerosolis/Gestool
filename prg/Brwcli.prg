@@ -687,7 +687,7 @@ function BrwVtaCli( cCodCli, cNomCli )
    Cuarta pestaña para CZ------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpMaquina ID 500 RESOURCE "Chart_area_48_alpha" TRANSPARENT OF oFld:aDialogs[ 4 ]
+   REDEFINE BITMAP oBmpMaquina ID 500 RESOURCE "control_panel2_48" TRANSPARENT OF oFld:aDialogs[ 4 ]
 
    oBrwMaq                       := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
@@ -704,7 +704,9 @@ function BrwVtaCli( cCodCli, cNomCli )
 
    with object ( oBrwMaq:addCol() )
       :cHeader          := "Artículo"
-      :bEditValue       := {|| AllTrim( oDbfTmpMaq:cRef ) + " - " + AllTrim( oDbfTmpMaq:cDetalle ) + " [" + AllTrim( oDbfTmpMaq:cNumSer )  + "]" }
+      :cSortOrder       := "cRefSer"
+      :bEditValue       := {|| AllTrim( oDbfTmpMaq:cRef ) + " - " + AllTrim( oDbfTmpMaq:cDetalle ) }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
       :nWidth           := 260
    end with
 
@@ -718,22 +720,28 @@ function BrwVtaCli( cCodCli, cNomCli )
       
    with object ( oBrwMaq:addCol() )
       :cHeader          := "Operario"
+      :cSortOrder       := "cCodOpe"
       :bEditValue       := {|| AllTrim( oDbfTmpMaq:cCodOpe ) + if( !Empty( oDbfTmpMaq:cCodOpe ), " - ", "" ) + oRetFld( oDbfTmpMaq:cCodOpe, oOperario:oDbf, "cNomTra", "cCodTra" ) }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
       :nWidth           := 200
    end with
 
    with object ( oBrwMaq:addCol() )
       :cHeader          := "Categoría"
+      :cSortOrder       := "cCodCat"
       :bEditValue       := {|| AllTrim( oDbfTmpMaq:cCodCat ) }
       :bStrData         := {|| AllTrim( oDbfTmpMaq:cCodCat ) + if( !Empty( oDbfTmpMaq:cCodCat ), " - ", "" ) + RetFld( oDbfTmpMaq:cCodCat, dbfCategoria, "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoCategoria( RetFld( oDbfTmpMaq:cCodCat, dbfCategoria, "cTipo" ) ) }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
       :nWidth           := 200
       AddResourceTipoCategoria( hb_QWith() )
    end with
 
    with object ( oBrwMaq:addCol() )
       :cHeader          := "Situación"
+      :cSortOrder       := "cSituac"
       :bEditValue       := {|| oDbfTmpMaq:cSituac }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
       :nWidth           := 130
    end with
 
@@ -1078,7 +1086,6 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
             oDbfTmpMaq:cCodCli      := cCodCli
             oDbfTmpMaq:cRef         := ( dbfSatCliL )->cRef
             oDbfTmpMaq:cDetalle     := ( dbfSatCliL )->cDetalle
-            oDbfTmpMaq:cNumSer      := ( dbfSatCliS )->cNumSer
 
             if ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
 
@@ -1086,6 +1093,7 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
                oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
                oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
                oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
+               oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
 
             end if   
 
@@ -1102,6 +1110,7 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
                oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
                oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
                oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
+               oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
 
                oDbfTmpMaq:Save()
 
@@ -1130,42 +1139,32 @@ Return nil
 
 Static function LoadLineasMaquinas( cCmbAnio, oBrwMaqL )
 
-   local nOrdAntS  := ( dbfSatCliS )->( OrdSetFocus( "cRef" ) )
+   local nOrdAntL  := ( dbfSatCliL )->( OrdSetFocus( "cRef" ) )
    local nOrdAntT  := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
 
    oDbfTmpMaqL:Zap()
 
+   ( dbfSatCliL )->( dbGoTop() )
 
+   if ( dbfSatCliL )->( dbSeek( oDbfTmpMaq:cRef ) )
 
+      while ( dbfSatCliL )->cRef == oDbfTmpMaq:cRef .and. !( dbfSatCliL )->( Eof() )
 
-
-
-
-
-
-   
-
-   ( dbfSatCliS )->( dbGoTop() )
-
-   if ( dbfSatCliS )->( dbSeek( oDbfTmpMaq:cRef + oDbfTmpMaq:cNumSer ) )
-
-      while ( dbfSatCliS )->cRef + ( dbfSatCliS )->cNumSer == oDbfTmpMaq:cRef + oDbfTmpMaq:cNumSer .and. !( dbfSatCliS )->( Eof() )
-
-         if ( dbfSatCliT )->( dbSeek( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat ) )
+         if ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
 
             oDbfTmpMaqL:Append()
 
-            oDbfTmpMaqL:cSerSat      := ( dbfSatCliT )->cSerSat
-            oDbfTmpMaqL:nNumSat      := ( dbfSatCliT )->nNumSat
-            oDbfTmpMaqL:cSufSat      := ( dbfSatCliT )->cSufSat
-            oDbfTmpMaqL:dFecSat      := ( dbfSatCliT )->dFecSat
-            oDbfTmpMaqL:cCodCli      := oDbfTmpMaq:cCodCli
-            oDbfTmpMaqL:cRef         := oDbfTmpMaq:cRef
-            oDbfTmpMaqL:cDetalle     := oDbfTmpMaq:cDetalle
-            oDbfTmpMaqL:cNumSer      := oDbfTmpMaq:cNumSer
-            oDbfTmpMaqL:cSituac      := ( dbfSatCliT )->cSituac
-            oDbfTmpMaqL:cCodOpe      := ( dbfSatCliT )->cCodOpe
-            oDbfTmpMaqL:cCodCat      := ( dbfSatCliT )->cCodCat
+            oDbfTmpMaqL:cSerSat        := ( dbfSatCliT )->cSerSat
+            oDbfTmpMaqL:nNumSat        := ( dbfSatCliT )->nNumSat
+            oDbfTmpMaqL:cSufSat        := ( dbfSatCliT )->cSufSat
+            oDbfTmpMaqL:dFecSat        := ( dbfSatCliT )->dFecSat
+            oDbfTmpMaqL:cCodCli        := oDbfTmpMaq:cCodCli
+            oDbfTmpMaqL:cRef           := oDbfTmpMaq:cRef
+            oDbfTmpMaqL:cDetalle       := oDbfTmpMaq:cDetalle
+            oDbfTmpMaqL:cSituac        := ( dbfSatCliT )->cSituac
+            oDbfTmpMaqL:cCodOpe        := ( dbfSatCliT )->cCodOpe
+            oDbfTmpMaqL:cCodCat        := ( dbfSatCliT )->cCodCat
+            oDbfTmpMaqL:cNomCli        := oDbfTmpMaq:cNomCli
 
             oDbfTmpMaqL:Save()
 
@@ -1173,13 +1172,13 @@ Static function LoadLineasMaquinas( cCmbAnio, oBrwMaqL )
 
          oDbfTmpMaqL:Save()
 
-         ( dbfSatCliS )->( dbSkip() )
+         ( dbfSatCliL )->( dbSkip() )
 
       end while
 
    end if
    
-   ( dbfSatCliS )->( OrdSetFocus( nOrdAntS ) )
+   ( dbfSatCliL )->( OrdSetFocus( nOrdAntL ) )
    ( dbfSatCliT )->( OrdSetFocus( nOrdAntT ) )
 
    if !Empty( oBrwMaqL )
@@ -1201,19 +1200,15 @@ Static Function HistoriaMaquina( cCmbAnio )
 
    DEFINE DIALOG oDlg RESOURCE "LHISMAQ" TITLE "Histórico de S.A.T de clientes"
 
-      REDEFINE BITMAP oBmp ID 500 RESOURCE "Businessman2_Alpha_48" TRANSPARENT OF oDlg
+      REDEFINE BITMAP oBmp ID 500 RESOURCE "Control_Panel2_48" TRANSPARENT OF oDlg
 
-      REDEFINE SAY oCliente PROMPT "Cliente: " + AllTrim( oDbfTmpMaq:cCodCli ) ;
+      REDEFINE SAY oCliente PROMPT "Cliente: " + AllTrim( oDbfTmpMaq:cCodCli ) + " - " + AllTrim( oDbfTmpMaq:cNomCli ) ;
          ID       110 ;
          OF       oDlg
 
       REDEFINE SAY oMaquina PROMPT "Artículo: " + AllTrim( oDbfTmpMaq:cRef ) + " - " + AllTrim( oDbfTmpMaq:cDetalle ) ;
          ID       120 ;
          OF       oDlg 
-
-      REDEFINE SAY oSerie PROMPT "Número de serie: " + AllTrim( oDbfTmpMaq:cNumSer ) ;
-         ID       130 ;
-         OF       oDlg     
 
       oBrwMaqL                       := IXBrowse():New( oDlg )
 
@@ -1230,8 +1225,10 @@ Static Function HistoriaMaquina( cCmbAnio )
 
       with object ( oBrwMaqL:addCol() )
          :cHeader          := "Número"
+         :cSortOrder       := "cNumSat"
          :bEditValue       := {|| oDbfTmpMaqL:cSerSat + "/" + AllTrim( Str( oDbfTmpMaqL:nNumSat ) ) + "/" + oDbfTmpMaqL:cSufSat }
          :nWidth           := 70
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
       end with
 
       with object ( oBrwMaqL:addCol() )
@@ -1244,24 +1241,32 @@ Static Function HistoriaMaquina( cCmbAnio )
       
       with object ( oBrwMaqL:addCol() )
          :cHeader          := "Operario"
+         :cSortOrder       := "cCodOpe"
          :bEditValue       := {|| AllTrim( oDbfTmpMaqL:cCodOpe ) + if( !Empty( oDbfTmpMaqL:cCodOpe ), " - ", "" ) + oRetFld( oDbfTmpMaqL:cCodOpe, oOperario:oDbf, "cNomTra", "cCodTra" ) } 
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :nWidth           := 200
       end with
 
       with object ( oBrwMaqL:addCol() )
          :cHeader          := "Categoría"
+         :cSortOrder       := "cCodCat"
          :bEditValue       := {|| AllTrim( oDbfTmpMaqL:cCodCat ) }
          :bStrData         := {|| AllTrim( oDbfTmpMaqL:cCodCat ) + if( !Empty( oDbfTmpMaqL:cCodCat ), " - ", "" ) + RetFld( oDbfTmpMaqL:cCodCat, dbfCategoria, "cNombre" ) }
          :bBmpData         := {|| nBitmapTipoCategoria( RetFld( oDbfTmpMaqL:cCodCat, dbfCategoria, "cTipo" ) ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :nWidth           := 200
          AddResourceTipoCategoria( hb_QWith() )
       end with
 
       with object ( oBrwMaqL:addCol() )
          :cHeader          := "Situación"
+         :cSortOrder       := "cSituac"
          :bEditValue       := {|| AllTrim( oDbfTmpMaqL:cSituac ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :nWidth           := 130
       end with
+
+      oBrwMaqL:bLDblClick   := {|| EdtSatCli( oDbfTmpMaqL:cSerSat + Str( oDbfTmpMaqL:nNumSat ) + oDbfTmpMaqL:cSufSat ) }
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -1706,15 +1711,18 @@ Static Function DefineTemporalMaquinas( cPath, lUniqueName, cFileName )
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS "InfMaq" ALIAS ( cFileName ) PATH ( cPath ) VIA ( cLocalDriver() )
 
       FIELD NAME "CCODCLI"  TYPE "C" LEN  12 DEC 0 COMMENT "Código del cliente"        OF oDbf
+      FIELD NAME "CNOMCLI"  TYPE "C" LEN  80 DEC 0 COMMENT "Nombre del cliente"        OF oDbf
       FIELD NAME "CREF"     TYPE "C" LEN  18 DEC 0 COMMENT "Referencia del artículo"   OF oDbf
       FIELD NAME "CDETALLE" TYPE "C" LEN 250 DEC 0 COMMENT "Descripción de artículo"   OF oDbf
-      FIELD NAME "CNUMSER"  TYPE "C" LEN  30 DEC 0 COMMENT "Número de serie"           OF oDbf
       FIELD NAME "DFECSAT"  TYPE "D" LEN   8 DEC 0 COMMENT "Fecha del SAT"             OF oDbf
       FIELD NAME "CSITUAC"  TYPE "C" LEN  20 DEC 0 COMMENT "Situación del SAT"         OF oDbf
       FIELD NAME "CCODOPE"  TYPE "C" LEN   5 DEC 0 COMMENT "Código operario"           OF oDbf
       FIELD NAME "CCODCAT"  TYPE "C" LEN   3 DEC 0 COMMENT "Código categoría"          OF oDbf
 
-      INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef + cNumSer"                         OF oDbf
+      INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef"                                   OF oDbf
+      INDEX TO ( cFileName ) TAG "cSituac" ON "cSituac"                                OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodOpe" ON "cCodOpe"                                OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodCat" ON "cCodCat"                                OF oDbf
 
    END DATABASE oDbf
 
@@ -1741,14 +1749,18 @@ Static Function DefineTemporalMaquinasLineas( cPath, lUniqueName, cFileName )
       FIELD NAME "CSUFSAT"  TYPE "C" LEN   2 DEC 0 COMMENT "Sufijo del SAT"            OF oDbf
       FIELD NAME "DFECSAT"  TYPE "D" LEN   8 DEC 0 COMMENT "Fecha del SAT"             OF oDbf
       FIELD NAME "CCODCLI"  TYPE "C" LEN  12 DEC 0 COMMENT "Código del cliente"        OF oDbf
+      FIELD NAME "CNOMCLI"  TYPE "C" LEN  80 DEC 0 COMMENT "Nombre del cliente"        OF oDbf
       FIELD NAME "CREF"     TYPE "C" LEN  18 DEC 0 COMMENT "Referencia del artículo"   OF oDbf
       FIELD NAME "CDETALLE" TYPE "C" LEN 250 DEC 0 COMMENT "Descripción de artículo"   OF oDbf
-      FIELD NAME "CNUMSER"  TYPE "C" LEN  30 DEC 0 COMMENT "Número de serie"           OF oDbf
       FIELD NAME "CSITUAC"  TYPE "C" LEN  20 DEC 0 COMMENT "Situación del SAT"         OF oDbf
       FIELD NAME "CCODOPE"  TYPE "C" LEN   5 DEC 0 COMMENT "Código operario"           OF oDbf
       FIELD NAME "CCODCAT"  TYPE "C" LEN   3 DEC 0 COMMENT "Código categoría"          OF oDbf
 
-      INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef + cNumSer"                         OF oDbf
+      INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef"                                   OF oDbf
+      INDEX TO ( cFileName ) TAG "cNumSat" ON "cSerSat + Str( nNumSat ) + cSufSat"     OF oDbf
+      INDEX TO ( cFileName ) TAG "cSituac" ON "cSituac"                                OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodOpe" ON "cCodOpe"                                OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodCat" ON "cCodCat"                                OF oDbf
 
    END DATABASE oDbf
 
