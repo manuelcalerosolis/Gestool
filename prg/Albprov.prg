@@ -6930,7 +6930,7 @@ static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter )
                   :SetItems(        aItmAlbPrv() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():AlbaranesProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envio de albaran de proveedor número " + ( D():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) ) )
+                  :SetAsunto(       "Envío de  albaran de proveedor número " + ( D():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) ) )
                   :SetMensaje(      "Adjunto le remito nuestro albaran de proveedor " + ( D():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) ) + Space( 1 ) )
                   :SetMensaje(      "de fecha " + Dtoc( ( D():AlbaranesProveedores( nView ) )->dfecAlb ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
@@ -7172,7 +7172,7 @@ STATIC FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
    if lIncidencia
 
       /*
-      Envio de mail al usuario----------------------------------------------
+      Envío de  mail al usuario----------------------------------------------
       */
 
       with object TGenMailing():New()

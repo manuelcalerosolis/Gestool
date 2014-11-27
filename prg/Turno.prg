@@ -1670,7 +1670,7 @@ METHOD lCloseCajaSeleccionada()
 
    end if 
 
-   // Envio del mail--------------------------------------------------------------
+   // Envío de l mail--------------------------------------------------------------
 
    if ::lEnviarMail .and. !Empty( ::cEnviarMail )
       if !Empty( ::oTxt )
@@ -1680,7 +1680,7 @@ METHOD lCloseCajaSeleccionada()
       ::MailArqueo( cCurrentTruno )      
    end if 
 
-   // Envio del mail--------------------------------------------------------------
+   // Envío de l mail--------------------------------------------------------------
 
    if ::lChkActualizaStockWeb
       if !Empty( ::oTxt )
@@ -1700,7 +1700,7 @@ METHOD lCloseCajaSeleccionada()
       ::PrintArqueo( cCurrentTruno, ::oDbfCaj:cCodCaj, ::cCmbReport, "", ::cPrnArq, ::cWinArq )
    end if 
 
-   // Envio de información por internet----------------------------------------
+   // Envío de  información por internet----------------------------------------
 
    if !::lArqueoParcial .and. ::lEnvioInformacion
       if !Empty( ::oTxt )
@@ -11083,7 +11083,7 @@ METHOD MailArqueo( cCurrentTruno )
    ::lPdfShowDialog     := .t.
 
    /*
-   Envio de mail al usuario----------------------------------------------
+   Envío de  mail al usuario----------------------------------------------
    */
 
    with object TGenMailing():New()

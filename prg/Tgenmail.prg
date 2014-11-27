@@ -125,6 +125,8 @@ CLASS TGenMailing
 
    Method ExpresionReplace( cDocumentHTML, cExpresion )
 
+   METHOD IsMailServer()      INLINE ( !Empty( ::MailServer ) .and. !Empty( ::MailServerUserName ) .and. !Empty( ::MailServerPassword ) )
+
    Method lSend()             INLINE ( iif( ::IsMailServer(), ::Resource(), ::lOutlookSendMail() ) )
    Method lExternalSend()     INLINE ( iif( ::IsMailServer(), ::lExternalSendMail(), ::lOutlookSendMail() ) )
 
@@ -154,8 +156,6 @@ CLASS TGenMailing
    Method lCheckActiveX()
 
    Method WaitSeconds( nTime )
-
-   METHOD IsMailServer()      INLINE ( Empty( ::MailServer ) .or. Empty( ::MailServerUserName ) .or. Empty( ::MailServerPassword ) )
 
 END CLASS
 
@@ -904,7 +904,7 @@ Method lCreateMail() CLASS TGenMailing
 
    else
 
-      msgStop( "Error al crear objeto para envio de correo electrónico." )
+      msgStop( "Error al crear objeto para Envío de  correo electrónico." )
 
    end if
 

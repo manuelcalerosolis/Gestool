@@ -1108,7 +1108,7 @@ Method AutoExecute( lForced, lDialog, lImprimirEnvio )
 
       ::lInProcess   := .t.
 
-      // Envio de información
+      // Envío de  información
 
       if lForced .or. ( ::lPlanificarEnvio .and. !::lEnviado .and. cTime >= ::cHoraEnvio )
 

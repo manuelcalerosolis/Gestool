@@ -11778,7 +11778,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetItems(        aItmFacCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envio de factura de cliente número " + ( D():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) )
+                  :SetAsunto(       "Envío de  factura de cliente número " + ( D():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) )
                   :SetMensaje(      "Adjunto le remito nuestra factura de cliente " + ( D():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + Space( 1 ) )
                   :SetMensaje(      "de fecha " + Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
@@ -15828,7 +15828,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       :cFicheroDestino           := cPatXml() + cNumero + ".xml"
 
       /*
-      Datos para el envio de la factura por mail-------------------------------
+      Datos para el Envío de  la factura por mail-------------------------------
       */
 
       :cMailServer               := Rtrim( uFieldEmpresa( "cSrvMai" ) )

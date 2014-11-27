@@ -215,7 +215,7 @@ METHOD New( oTree )
    ::cMailServerUserName            := Rtrim( uFieldEmpresa( "cCtaMai" ) )
    ::cMailServerPassword            := Rtrim( uFieldEmpresa( "cPssMai" ) )
 
-   ::cMailSubject                   := "Envio de factura electrónica."
+   ::cMailSubject                   := "Envío de  factura electrónica."
    ::cMailBody                      := ""
    ::cMailRecipient                 := ""
 
@@ -1248,7 +1248,7 @@ METHOD Enviar()
 
       :SetAdjunto(      ::cFicheroDestino )
       :SetPara(         "mcalero@gestool.es" )
-      :SetAsunto(       "Envio de factura de cliente" )
+      :SetAsunto(       "Envío de  factura de cliente" )
       :SetMensaje(      "Adjunto le remito nuestra factura de cliente" )
       :SetMensaje(      CRLF )
       :SetMensaje(      CRLF )

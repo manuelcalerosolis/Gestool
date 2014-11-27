@@ -2428,7 +2428,7 @@ RETURN cText
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve el codigo de envio del proveedor
+Devuelve el codigo de Envío de l proveedor
 */
 
 FUNCTION cPrvCodSnd( cCodPrv, dbfProvee )

@@ -1112,7 +1112,7 @@ Function Ejecutascript()
    end if
 
    /*
-   Anotamos la fecha del último envio de script--------------------------------
+   Anotamos la fecha del último Envío de  script--------------------------------
    */
 
    WritePProString( "SCRIPT", "Fecha", Dtoc( GetSysDate() ), FullCurDir() + "GstApolo.Ini" )
