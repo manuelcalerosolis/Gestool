@@ -3048,9 +3048,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:cAlias          := dbfTmpLin
 
       oBrwLin:nMarqueeStyle   := 6
-      oBrwLin:lFooter 		  	:= .t.	
+      oBrwLin:lFooter         := .t.   
       oBrwLin:cName           := "Factura de cliente.Detalle"
 
+      oBrwLin:SetRdd()
       oBrwLin:CreateFromResource( IDOK )
 
       with object ( oBrwLin:AddCol() )
@@ -4527,8 +4528,8 @@ Static Function InitDialog( aTmp, oDlg, oBrwLin, oBrwInc, oBrwPgo, oBrwAnt )
    EdtRecMenu( aTmp, oDlg )
 
    oBrwLin:MakeTotals()
-   oBrwLin:Load()
    
+   oBrwLin:Load()
    oBrwInc:Load()
    oBrwPgo:Load()
    oBrwAnt:Load()

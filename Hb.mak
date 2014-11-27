@@ -1106,6 +1106,7 @@ $(HBLIB)\rddntx.lib              +
 $(HBLIB)\rddcdx.lib              +
 $(HBLIB)\rddfpt.lib              +
 $(HBLIB)\hbsix.lib               + 
+$(HBLIB)\hbusrrdd.lib            + 
 $(HBLIB)\hbdebug.lib             +
 $(HBLIB)\hbcommon.lib            +
 $(HBLIB)\hbpp.lib                + 
