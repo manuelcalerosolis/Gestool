@@ -2269,6 +2269,8 @@ RETURN ( lDup )
 
       local nUnidades         := nTotNMaterial( ::cProducM )
 
+      ? "insert stock"
+
       with object ( SStock():New() )
 
          :cTipoDocumento      := PRO_MAT
@@ -6371,8 +6373,10 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
    local cCodigoArticulo   := ""
    local nOrdProL          := ( ::cProducL )->( ordSetFocus( "cStkFast" ) )
    local nOrdProS          := ( ::cProducS )->( ordSetFocus( "cNumOrd" ) )
-
+   ? "metod stock materia"
    if ( ::cProducM )->( dbSeek( cCodArt + cCodAlm ) )
+
+   ? "codart +codalm"
 
       while ( ::cProducM )->cCodArt == cCodArt .and. ( ::cProducM )->cAlmOrd == cCodAlm .and. !( ::cProducM )->( Eof() )
 
