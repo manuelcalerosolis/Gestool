@@ -6371,14 +6371,12 @@ RETURN ( nil )
 METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin )
 
    local cCodigoArticulo   := ""
-   local nOrdProL          := ( ::cProducL )->( ordSetFocus( "cStkFast" ) )
-   local nOrdProS          := ( ::cProducS )->( ordSetFocus( "cNumOrd" ) )
-   ? "metod stock materia"
+   local nOrdProM          := ( ::cProducM )->( ordSetFocus( "cStkFast" ) )
+   local nOrdProP          := ( ::cProducP )->( ordSetFocus( "cNumOrd" ) )
+
    if ( ::cProducM )->( dbSeek( cCodArt + cCodAlm ) )
 
-   ? "codart +codalm"
-
-      while ( ::cProducM )->cCodArt == cCodArt .and. ( ::cProducM )->cAlmOrd == cCodAlm .and. !( ::cProducM )->( Eof() )
+      while ( ::cProducM )->cCodArt == cCodArt .and. ( ::cProducM )->cAlmOrd == cCodAlm .and. !( ::cProducM )->( eof() )
 
          if cCodigoArticulo != ( ::cProducM )->cCodArt + ( ::cProducM )->cAlmOrd + ( ::cProducM )->cCodPr1 + ( ::cProducM )->cCodPr2 + ( ::cProducM )->cValPr1 + ( ::cProducM )->cValPr2 + ( ::cProducM )->cLote
 
@@ -6416,10 +6414,14 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
 
       end while
 
+   else 
+
+      msgAlert( cCodArt + cCodAlm, "No Encontrado" )
+
    end if
 
-   ( ::cProducL )->( ordSetFocus( nOrdProL ) )  
-   ( ::cProducS )->( ordSetFocus( nOrdProS ) ) 
+   ( ::cProducM )->( ordSetFocus( nOrdProM ) )  
+   ( ::cProducP )->( ordSetFocus( nOrdProP ) ) 
 
 RETURN ( nil )
 

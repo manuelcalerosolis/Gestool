@@ -501,6 +501,7 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          OF       oDlg ;
          ACTION   ( if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) )
 
+
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;

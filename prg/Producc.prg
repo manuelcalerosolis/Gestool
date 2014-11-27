@@ -1752,7 +1752,7 @@ METHOD Resource( nMode, aDatosAnterior )
          oFld:aDialogs[4]:AddFastKey( VK_F3, {|| ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() } )
          oFld:aDialogs[4]:AddFastKey( VK_F4, {|| ::oDetMaquina:Del( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() } )
 
-         oDlg:AddFastKey( VK_F5, {|| ::Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg ) } )
+         oDlg:AddFastKey( VK_F5, {|| ::Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld ) } )
       end if
 
       oDlg:AddFastKey( VK_F7, {|| oBtnAtras:Click() } )
