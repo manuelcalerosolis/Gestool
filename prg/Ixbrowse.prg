@@ -31,7 +31,8 @@ CLASS IXBrowse FROM TXBrowse
 
    CLASSDATA nToolTip      AS NUMERIC     INIT 900
 
-   ASSIGN BookMark(u)      INLINE ( Eval( ::bBookMark, u ) )
+   ACCESS BookMark         INLINE Eval( ::bBookMark )
+   ASSIGN BookMark(u)      INLINE Eval( ::bBookMark, u )
 
    METHOD New( oWnd )
 
@@ -573,7 +574,12 @@ METHOD MakeTotals( aCols ) CLASS IXBrowse
       next
 
       nCols    := Len( aCols )
-      uBm      := ::BookMark()
+
+      // msgAlert( (::cAlias)->(Recno()), "recno antes de MakeTotals")
+
+      uBm      := (::cAlias)->(Recno()) // ::BookMark()
+
+      // msgAlert( uBm, "valor q devuelve uBm")
 
       Eval( ::bGoTop )
       do
@@ -601,7 +607,9 @@ METHOD MakeTotals( aCols ) CLASS IXBrowse
          next n
       until ( ::Skip( 1 ) < 1 )
 
-      ::BookMark( uBm )
+      (::cAlias)->(dbGoTo( uBm )) // ::BookMark( uBm )
+
+      // msgAlert( (::cAlias)->(Recno()), "recno despues de MakeTotals")
 
    endif
 
@@ -644,3 +652,4 @@ static function FindTag( cFld, nOrder )
 return cTag
 
 //------------------------------------------------------------------//
+   

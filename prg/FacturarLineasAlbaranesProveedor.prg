@@ -32,6 +32,8 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    DATA tmpEntrada
    DATA tmpSalida
 
+   DATA aAlbaranesProcesados  INIT {}
+
    METHOD New( nView )
 
    METHOD Resource()
@@ -48,6 +50,7 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
       METHOD setLineasFacturadas()
       METHOD setLineaFacturada()
       METHOD addAlbaranFacturado( id )      
+      METHOD setAlbaranesFacturados()
 
    METHOD passLineas()     
    METHOD passLinea()     
@@ -715,11 +718,15 @@ Return ( .t. )
 
 METHOD saveAlbaran()
 
+   ::aAlbaranesProcesados  := {}
+
    // Ponemos las lineas traspasadas como facturadas---------------------------
 
    ::setLineasFacturadas()
 
    // Albaranes para actualizar el estado--------------------------------------
+
+   ::setAlbaranesFacturados()
 
    // Creamos nueva factura----------------------------------------------------
 
@@ -769,7 +776,21 @@ Return ( nil )
 
 METHOD addAlbaranFacturado( id )
 
-   ::addAlbaranFacturado( ( D():Tmp( "TmpPrvO", ::nView ) )->cSerAlb + str( (  D():Tmp( "TmpPrvO", ::nView ) )->nNumAlb ) + (  D():Tmp( "TmpPrvO", ::nView ) )->cSufAlb )
+   if aScan( ::aAlbaranesProcesados, id ) == 0
+      aAdd( ::aAlbaranesProcesados, id )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setAlbaranesFacturados()
+
+   local id
+
+   for each id in ::aAlbaranesProcesados
+      msgAlert( getFacturadoAlbaranProveedor(id), id )
+   next 
 
 Return ( nil )
 

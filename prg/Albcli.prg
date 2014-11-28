@@ -3823,8 +3823,6 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
    end if 
 
-   oBrwLin:Load()
-
    /*
    Muestra y oculta las rentabilidades-----------------------------------------
    */
@@ -3865,6 +3863,8 @@ Static Function InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oBrwPgo, hH
    EdtRecMenu( aGet, aTmp, oBrwLin, oDlg )
                         
    SetDialog( aGet, oSayDias, oSayTxtDias )
+
+   oBrwLin:MakeTotals()
 
    oBrwLin:Load()
    oBrwInc:Load()
