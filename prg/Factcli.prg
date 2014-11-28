@@ -23651,7 +23651,6 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-<<<<<<< HEAD
 FUNCTION EdmFacCli( cCodRut, cPathTo, oStru, aSucces )
 
    local n           := 0
@@ -23986,7 +23985,7 @@ N§ PO  LC  Descripci¢n       Observaciones
 RETURN ( aSucces )
 
 //-------------------------------------------------------------------------//
-=======
+
 static function myBookMark(n)
 
    msgAlert( ( dbfTmpLin )->( RecNo() ), "Llego")
@@ -24001,4 +24000,5 @@ static function myBookMark(n)
    end if 
 
 Return nil 
->>>>>>> 88f03a60152f8d4c977b6983f6303905dcdb7f54
+
+//---------------------------------------------------------------------------//
