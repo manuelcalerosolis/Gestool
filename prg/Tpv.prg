@@ -3319,8 +3319,8 @@ Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet, o
       if !Empty( cSelApartado )                 .and.;
          ( dbfTikT )->( dbSeek( cSelApartado ) )
 
-         oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-         BEGIN SEQUENCE
+         /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+         BEGIN SEQUENCE*/
 
          /*
          Abrimos el ticket seleccionado-------------------------------------------
@@ -3365,13 +3365,13 @@ Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet, o
             aGet[ _CCLITIK ]:lValid()
          end if
 
-         RECOVER USING oError
+         /*RECOVER USING oError
    
          msgStop( ErrorMessage( oError ), "Error al cambiar de ticket" )
    
          END SEQUENCE
    
-         ErrorBlock( oBlock )
+         ErrorBlock( oBlock )*/
 
       end if 
 
@@ -3568,8 +3568,6 @@ Static Function EndBrwApartados( oDlg )
    oDlg:end( IDOK )
 
 Return ( .t. )
-
-//---------------------------------------------------------------------------//
 
 /*
 Esta funcion graba el tiket despues de pedir el importe por pantalla-----------
@@ -3901,8 +3899,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       CursorWait()
 
-      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
+      /*oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE*/
 
          oDlgTpv:Disable()
 
@@ -4198,15 +4196,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Actualizamos el stock en la web------------------------------------------
          */
 
-         AutoMeterDialog( oDlgTpv )
-         AutoTextDialog( oDlgTpv )   
-
-         SetAutoTextDialog( "Archivando")
-
-         ActualizaStockWeb( nNumTik )
-
-         EndAutoMeterDialog( oDlgTpv )
-         EndAutoTextDialog( oDlgTpv )
+         //ActualizaStockWeb( nNumTik )
 
          /*
          Actualizamos el stock-------------------------------------------------------
@@ -4462,7 +4452,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Cerrando el control de errores-------------------------------------------
          */
 
-      RECOVER USING oError
+      /*RECOVER USING oError
 
          RollBackTransaction()
 
@@ -4470,7 +4460,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       END SEQUENCE
 
-      ErrorBlock( oBlock )
+      ErrorBlock( oBlock )*/
 
       CursorWE()
 
@@ -19945,44 +19935,35 @@ Return .t.
 
 static Function ActualizaStockWeb( cNumDoc )
 
-   local nRec        := ( dbfTikL )->( Recno() )
-   local nOrdAnt     := ( dbfTikL )->( OrdSetFocus( "CNUMTIL" ) )
-   local aArticulos  := {}
-   local c
+   local nRec     := ( dbfTikL )->( Recno() )
+   local nOrdAnt  := ( dbfTikL )->( OrdSetFocus( "CNUMTIL" ) )
 
    if uFieldEmpresa( "lRealWeb" )
 
-      if ( dbfTikL )->( dbSeek( cNumDoc ) )
+      with object ( TComercio():New())
 
-         while ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil == cNumDoc .and. !( dbfTikL )->( Eof() )
+         if ( dbfTikL )->( dbSeek( cNumDoc ) )
 
-            if aScan( aArticulos, ( dbfTikL )->cCbaTil ) == 0
-               aAdd( aArticulos, ( dbfTikL )->cCbaTil )
-            end if
+            while ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil == cNumDoc .and. !( dbfTikL )->( Eof() )
 
-            ( dbfTikL )->( dbSkip() )
+               if Retfld( ( dbfTikL )->cCbaTil, dbfArticulo, "lPubInt", "Codigo" )
 
-         end while
+                  :ActualizaStockProductsPrestashop( ( dbfTikL )->cCbaTil, ( dbfTikL )->cCodPr1, ( dbfTikL )->cCodPr2, ( dbfTikL )->cValPr1, ( dbfTikL )->cValPr2 )
 
-     end if
-      
+               end if
+
+               ( dbfTikL )->( dbSkip() )
+
+            end while
+
+        end if
+        
+      end with
+
    end if 
 
    ( dbfTikL )->( OrdSetFocus( nOrdAnt ) )
    ( dbfTikL )->( dbGoTo( nRec ) )  
-
-   if Len( aArticulos ) != 0
-
-      with object ( TComercio():New() )
-
-         :MeterTotal( GetAutoMeterDialog() )
-         :TextTotal( GetAutoTextDialog() )
-
-         :buildActualizaStockProductPrestashop( aArticulos )
-
-      end with
-
-   end if   
 
 Return .t.
 
