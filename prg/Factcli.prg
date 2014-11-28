@@ -3051,8 +3051,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:lFooter         := .t.   
       oBrwLin:cName           := "Factura de cliente.Detalle"
 
-      oBrwLin:SetRdd()
-      oBrwLin:CreateFromResource( IDOK )
+      // oBrwLin:SetRdd()
+
+
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Oferta"
@@ -3332,9 +3333,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) }
       end if
 
-     /*
-     Descuentos________________________________________________________________
-     */
+      oBrwLin:CreateFromResource( IDOK )
+      
+      /*
+      Descuentos________________________________________________________________
+      */
 
       REDEFINE GET aGet[ _CDTOESP ] VAR aTmp[ _CDTOESP ] ;
          ID       299 ;
@@ -3718,7 +3721,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          PICTURE  "@R #/#########/##" ;
          OF       oFld:aDialogs[1]
 
-     REDEFINE GET aGet[ _NENTINI ] ;
+      /*
+      REDEFINE GET aGet[ _NENTINI ] ;
          VAR      aTmp[ _NENTINI ] ;
          ID       550 ;
          IDSAY    552 ;
@@ -3733,7 +3737,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
 
-     REDEFINE GET aGet[ _NPCTDTO ] ;
+      REDEFINE GET aGet[ _NPCTDTO ] ;
          VAR      aTmp[ _NPCTDTO ] ;
          ID       560 ;
          IDSAY    562 ;
@@ -3747,6 +3751,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       561 ;
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
+
+      */
 
       /*
       Segunda caja de diálogo--------------------------------------------------
@@ -23644,3 +23650,18 @@ Method ProcessFrq()
 Return Self
 
 //----------------------------------------------------------------------------//
+
+static function myBookMark(n)
+
+   msgAlert( ( dbfTmpLin )->( RecNo() ), "Llego")
+
+   if n == nil
+      msgAlert( ( dbfTmpLin )->( RecNo() ), "Devuelvo recno")
+      ( dbfTmpLin )->( RecNo() )
+   else 
+      msgAlert( n, "Parametro q recibo")
+      ( dbfTmpLin )->( DbGoto( n ) )
+      msgAlert( ( dbfTmpLin )->( RecNo() ), "Donde lo dejo")
+   end if 
+
+Return nil 

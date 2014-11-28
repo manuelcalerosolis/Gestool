@@ -7,9 +7,13 @@
 #include "Xbrowse.ch"
 #include "FastRepH.ch" 
 
-#define _MENUITEM_               "01047"
+#define albNoFacturado              1
+#define albParcialmenteFacturado    2
+#define albTotalmenteFacturado      3
 
-#define _ICG_LINE_LEN_           211
+#define _MENUITEM_                  "01047"
+
+#define _ICG_LINE_LEN_              211
 
 /*
 Definici¢n de la base de datos de albaranes a proveedores
@@ -1382,11 +1386,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       oBrwLin:cName           := "Lineas de albaranes a proveedor"
 
          with object ( oBrwLin:AddCol() )
-            :cHeader          := "Facturado"
-            :bEditValue       := {|| ( dbfTmp )->lFacturado }
-            :nWidth           := 65
-            :nDataStrAlign    := 1
-            :nHeadStrAlign    := 1
+            :cHeader             := "Facturado"
+            :bStrData            := {|| "" }
+            :bEditValue          := {|| ( dbfTmp )->lFacturado }
+            :nWidth              := 20
+            :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -9797,6 +9801,55 @@ FUNCTION SetFacturadoAlbaranProveedor( lFacturado, oStock, oBrw, cAlbPrvT, cAlbP
    end if
 
 RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+FUNCTION getFacturadoAlbaranProveedor( id, nView )
+
+   local nOrd
+   local nEstado        := 0
+
+   CursorWait()
+
+   // Cambiamos el estado en las lineas-------------------------------------------
+
+   nOrd                 := ( D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( "nNumAlb" ) )
+
+   if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( id ) )
+
+      while ( D():AlbaranesProveedoresLineasId( nView ) == id ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
+
+         if ( D():AlbaranesProveedoresLineas( nView ) )->lFacturado 
+            
+            do case
+            case nEstado <= albNoFacturado
+               nEstado  := albTotalmenteFacturado
+            case nEstado == albTotalmenteFacturado
+               nEstado  := albParcialmenteFacturado
+            end case                
+
+         else 
+
+            do case
+            case nEstado <= albNoFacturado
+               nEstado  := albNoFacturado
+            case nEstado == albTotalmenteFacturado
+               nEstado  := albParcialmenteFacturado
+            end case                
+
+         end if 
+
+         (  D():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
+
+      end while
+
+   end if
+
+   (  D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( nOrd ) )
+
+   CursorWE()
+
+RETURN ( nEstado )
 
 //---------------------------------------------------------------------------//
 

@@ -10,6 +10,8 @@ local hClass
 
   __clsAddMsg( hClass, "aFastKeys", __cls_IncData( hClass ), 9, {}, 1, .f., .f. )
 
+  __clsAddMsg( hClass, "lShowAgain", __cls_IncData( hClass ), 9, .f., 1, .f., .f. )
+
   __clsAddMsg( hClass, "bTmpValid", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
 
   __clsAddMsg( hClass, "AddFastKey", {|Self, nKey, bAction| Self, aAdd( ::aFastKeys, { nKey, bAction } ) }, 3, nil, 1, .f., .f. )

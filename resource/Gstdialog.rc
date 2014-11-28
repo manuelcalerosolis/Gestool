@@ -6708,12 +6708,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 408, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 89, 357, 100, 11
   CONTROL "Fecha salida", 112, "Static", WS_GROUP, 44, 81, 48, 8
   CONTROL "Fecha entrada", 114, "Static", WS_GROUP, 44, 92, 51, 8
-  CONTROL "", 551, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 350, 348, 130, 11
-  CONTROL "", 550, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 288, 348, 60, 11
-  CONTROL "Entrega inicial %", 552, "Static", WS_GROUP, 202, 351, 84, 8
-  CONTROL "", 561, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 350, 360, 130, 11
-  CONTROL "", 560, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 288, 360, 60, 11
-  CONTROL "Descuento por entrega %", 562, "Static", WS_GROUP, 202, 363, 84, 8
   CONTROL "Banco", -1, "Static", WS_GROUP, 465, 57, 29, 8
   CONTROL "Cuenta", -1, "Static", WS_GROUP, 465, 69, 29, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
