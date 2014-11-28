@@ -23644,3 +23644,338 @@ Method ProcessFrq()
 Return Self
 
 //----------------------------------------------------------------------------//
+
+FUNCTION EdmFacCli( cCodRut, cPathTo, oStru, aSucces )
+
+   local n           := 0
+   local cSerie
+   local cFilEdm
+   local oFilEdm
+   local dFecFac
+   local nDtoEsp     := 0
+   local nDtoPp      := 0
+   local nImpCob     := 0
+   local cCodCli
+   local cCodAge
+   local cNumDoc
+   local nNumDoc
+   local nCanEnt     := 0
+   local cTipDoc
+   local aHeadLine   := {}
+   local aLotes      := {}
+
+   DEFAULT cCodRut   := "001"
+   DEFAULT cPathTo   := "C:\INTERS~1\"
+
+   /*
+   Obtenemos la fecha del albaran----------------------------------------------
+   */
+
+   cCodRut           := SubStr( cCodRut, -3 )
+
+   cFilEdm           := cPathTo + "TALBA" + cCodRut + ".PSI"
+
+   if !file( cFilEdm )
+      msgWait( "No existe el fichero " + cFilEdm, "Atención", 1 )
+      return nil
+   end if
+
+   oFilEdm           := TTxtFile():New( cFilEdm )
+
+   /*
+   Abrimos las bases de datos--------------------------------------------------
+   */
+
+   while ! oFilEdm:lEoF()
+
+      cTipDoc        := SubStr( oFilEdm:cLine, 18,  1 )
+
+      if ( cTipDoc == "1" .or. cTipDoc == "2" )
+         aAdd( aHeadLine, {   SubStr( oFilEdm:cLine, 8, 10 ),;                // Num. nota
+                              Ctod( SubStr( oFilEdm:cLine, 127, 10 ) ),;      // Fecha nota
+                              Val( SubStr( oFilEdm:cLine, 93, 5 ) ),;         // Dto. concertado
+                              Val( SubStr( oFilEdm:cLine, 98, 5 ) ),;         // Dto. p.p.
+                              Val( SubStr( oFilEdm:cLine,119, 8 ) ) } )       // Importe pagado
+      end if
+
+      oFilEdm:Skip()
+
+   end while
+
+   oFilEdm:Close()
+
+   /*
+   Nuevo fichero con los lotes-------------------------------------------------
+   */
+
+   cFilEdm           := cPathTo + "LALBA" + cCodRut + ".PSI"
+
+   if !file( cFilEdm )
+      msgWait( "No existe el fichero " + cFilEdm, "Atención", 1 )
+   else
+
+      oFilEdm           := TTxtFile():New( cFilEdm )
+
+      /*
+      Abrimos las bases de datos--------------------------------------------------
+      */
+
+      while ! oFilEdm:lEoF()
+
+         cTipDoc        := SubStr( oFilEdm:cLine, 18,  1 )
+
+         if ( cTipDoc == "1" .or. cTipDoc == "2" )
+            aAdd( aLotes, { SubStr( oFilEdm:cLine, 8, 10 ),;                // Num. nota
+                            LTrim( SubStr( oFilEdm:cLine, 19, 13 ) ),;      // Código del artículo
+                            RTrim( SubStr( oFilEdm:cLine, 43, 21 ) ) } )    // Num. lote
+         end if
+
+         oFilEdm:Skip()
+
+      end while
+
+      oFilEdm:Close()
+
+   end if
+
+/*
+-------------------------------------------------------------------------------
+NOMBRE FICHERO      : EALBAxxx.PSI   (xxx = Agente)
+DESCRIPCION         : LINEAS DE  ALBARAN
+TIPO DE FICHERO     : SECUENCIAL SIN SEPARADOR DE CAMPOS
+NUM. DE CAMPOS      : 13
+LONG. DEL REGISTRO  : 70
+
+N§ PO  LC  Descripci¢n       Observaciones
+1  1   7   CODIGO CLIENTE
+2  8   10  NUM. NOTA         aaa/nnnnnn   (agente/numeronota)
+3  18  1   TIPO NOTA         (1)
+4  19  13  COD. ARTICULO
+5  32  7   PRECIO            Precio de venta sin descuentos
+6  39  5   DESC.             Descuento por unidad en euros o ptas
+7  44  5   DESC. PORCENTUAL  Descuento por unidad en %
+8  49  4   UNID. VALORA. 1   cajas
+9  53  7   UNID. VALORA  2   kilos/unidades
+10 60  1   TIPO LINEA        (2)
+11 61  1   tipo IGIC          1, 2 ¢ 3
+12 62  1   EUROS S/N         Indica si se hizo en euros o en pts (3)
+13 63  7   PVERDE            Cargo unitario por Punto Verde
+14 70  2   FINAL REGISTRO    CR LF  ( chr$(13) y chr$(10) )
+
+  (1) Tipos de nota:  1- Factura Contado     2- Factura Credito
+                      3- Albaran Contado     4- Albaran Credito
+                      5- Adicional Contado   6- Adicional Credito
+                      7- Indirecto Contado   8- Indirecto Credito
+
+  (2) Tipos de linea: 0- Venta      1- Devoluci¢n      2- Defectuoso
+                      3- Caducado   4- Abono  7- Regalo mercancia Automat.
+
+  (3) Si el cliente est  en euros, los campos precio y desc. vendran en
+      euros, y si estaba en ptas, vendr n en ptas.
+-------------------------------------------------------------------------------
+*/
+
+   cFilEdm           := cPathTo + "EALBA" + cCodRut + ".PSI"
+
+   /*
+   Creamos el fichero destino
+   */
+
+   if !file( cFilEdm )
+      msgStop( cFilEdm, "No existe" )
+      return nil
+   end if
+
+   oFilEdm           := TTxtFile():New( cFilEdm )
+
+   /*
+   Abrimos las bases de datos
+   */
+
+   OpenFiles()
+
+   oStru:oMetDos:cText   := "Fac. clientes"
+   oStru:oMetDos:SetTotal( oFilEdm:nTLines )
+
+   /*
+   Mientras no estemos en el final del archivo
+   */
+
+   while !oFilEdm:lEoF()
+
+      /*
+      Tomamos el codigo del cliente
+      */
+
+      cCodCli        := SubStr( oFilEdm:cLine,  1,  7 )
+      cCodAge        := SubStr( oFilEdm:cLine,  8,  3 )
+      cNumDoc        := SubStr( oFilEdm:cLine,  8, 10 )
+      nNumDoc        := Val( StrTran( cNumDoc, "/", "" ) )
+      cTipDoc        := SubStr( oFilEdm:cLine, 18,  1 )
+
+      if ( cTipDoc == "1" .or. cTipDoc == "2" )
+
+         if dbSeekInOrd( cCodCli, "Cod", D():Clientes( nView ) )
+
+            if Empty( ( D():Clientes( nView ) )->Serie )
+               cSerie                        := "A"
+            else
+               cSerie                        := ( D():Clientes( nView ) )->Serie
+            end if
+
+            if !( D():FacturasClientes( nView ) )->( dbSeek( cSerie + Str( nNumDoc, 9 ) + RetSufEmp() ) )
+
+               n     := aScan( aHeadLine, {|a| a[1] == cNumDoc } )
+               if n  != 0
+
+                  dFecFac                    := aHeadLine[n,2]
+                  nDtoEsp                    := aHeadLine[n,3]
+                  nDtoPp                     := aHeadLine[n,4]
+                  nImpCob                    := aHeadLine[n,5]
+
+                  ( D():FacturasClientes( nView ) )->( dbAppend() )
+                  ( D():FacturasClientes( nView ) )->cSerie     := cSerie
+                  ( D():FacturasClientes( nView ) )->nNumFac    := nNumDoc
+                  ( D():FacturasClientes( nView ) )->cSufFac    := RetSufEmp()
+                  ( D():FacturasClientes( nView ) )->cDocOrg    := cNumDoc
+                  ( D():FacturasClientes( nView ) )->dFecFac    := dFecFac
+                  ( D():FacturasClientes( nView ) )->cCodAlm    := oUser():cAlmacen()
+                  ( D():FacturasClientes( nView ) )->cCodCaj    := oUser():cCaja()
+                  ( D():FacturasClientes( nView ) )->cDivFac    := cDivEmp()
+                  ( D():FacturasClientes( nView ) )->nVdvFac    := nChgDiv( ( D():FacturasClientes( nView ) )->cDivFac, dbfDiv )
+                  ( D():FacturasClientes( nView ) )->cCodCli    := ( D():Clientes( nView ) )->Cod
+                  ( D():FacturasClientes( nView ) )->cNomCli    := ( D():Clientes( nView ) )->Titulo
+                  ( D():FacturasClientes( nView ) )->cDirCli    := ( D():Clientes( nView ) )->Domicilio
+                  ( D():FacturasClientes( nView ) )->cPobCli    := ( D():Clientes( nView ) )->Poblacion
+                  ( D():FacturasClientes( nView ) )->cPrvCli    := ( D():Clientes( nView ) )->Provincia
+                  ( D():FacturasClientes( nView ) )->cPosCli    := ( D():Clientes( nView ) )->CodPostal
+                  ( D():FacturasClientes( nView ) )->cDniCli    := ( D():Clientes( nView ) )->Nif
+                  ( D():FacturasClientes( nView ) )->cCodTar    := ( D():Clientes( nView ) )->cCodTar
+                  ( D():FacturasClientes( nView ) )->cCodPago   := if( Empty( ( D():Clientes( nView ) )->CodPago ), oStru:cCodPgo, ( D():Clientes( nView ) )->CodPago )
+                  ( D():FacturasClientes( nView ) )->cCodAge    := cCodAge
+                  ( D():FacturasClientes( nView ) )->cCodRut    := ( D():Clientes( nView ) )->cCodRut
+                  ( D():FacturasClientes( nView ) )->nTarifa    := ( D():Clientes( nView ) )->nTarifa
+                  ( D():FacturasClientes( nView ) )->lRecargo   := ( D():Clientes( nView ) )->lReq
+                  ( D():FacturasClientes( nView ) )->lOperPv    := ( D():Clientes( nView ) )->lPntVer
+                  ( D():FacturasClientes( nView ) )->nDtoEsp    := nDtoEsp
+                  ( D():FacturasClientes( nView ) )->nDpp       := nDtoPp
+                  ( D():FacturasClientes( nView ) )->( dbUnLock() )
+
+                  aAdd( aSucces, { .t., "Nueva factura de clientes " + ( D():FacturasClientes( nView ) )->cSerie + "/" + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + "/" + ( D():FacturasClientes( nView ) )->cSufFac } )
+
+                  /*
+                  Añadimos los pagos-------------------------------------------------------
+                  */
+
+                  if nImpCob != 0
+
+                     ( dbfFacCliP )->( dbAppend() )
+                     ( dbfFacCliP )->cSerie     := cSerie
+                     ( dbfFacCliP )->nNumFac    := nNumDoc
+                     ( dbfFacCliP )->cSufFac    := RetSufEmp()
+                     ( dbfFacCliP )->nNumRec    := 1
+                     ( dbfFacCliP )->cCodCli    := cCodCli
+                     ( dbfFacCliP )->cCodCaj    := oUser():cCaja()
+                     ( dbfFacCliP )->nImporte   := nImpCob
+                     ( dbfFacCliP )->cDescrip   := "Recibo nº1 de factura " + ( dbfFacCliP )->cSerie  + '/' + allTrim( Str( ( dbfFacCliP )->nNumFac ) ) + '/' + ( dbfFacCliP )->cSufFac
+                     ( dbfFacCliP )->cDivPgo    := cDivEmp()
+                     ( dbfFacCliP )->nVdvPgo    := nChgDiv( ( D():FacturasClientes( nView ) )->cDivFac, dbfDiv )
+                     ( dbfFacCliP )->lCobrado   := .t.
+                     ( dbfFacCliP )->cTurRec    := cCurSesion()
+                     ( dbfFacCliP )->dPreCob    := dFecFac
+                     ( dbfFacCliP )->dEntrada   := dFecFac
+                     ( dbfFacCliP )->( dbUnLock() )
+
+                  end if
+
+                  /*
+                  Mientras estemos en la misma factura----------------------------
+                  */
+
+                  while cNumDoc == SubStr( oFilEdm:cLine,  8, 10 ) .and. ! oFilEdm:lEoF()
+
+                     if cTipDoc == "1" .or. cTipDoc == "2"
+
+                        if ( D():FacturasClientes( nView ) )->( dbSeek( cSerie + Str( nNumDoc, 9 ) + RetSufEmp() ) )
+
+                           /*
+                           Capturamos las lineas de detalle-----------------------
+                           */
+
+                           ( dbfFacCliL )->( dbAppend() )
+                           ( dbfFacCliL )->cSerie     := ( D():FacturasClientes( nView ) )->cSerie
+                           ( dbfFacCliL )->nNumFac    := ( D():FacturasClientes( nView ) )->nNumFac
+                           ( dbfFacCliL )->cSufFac    := ( D():FacturasClientes( nView ) )->cSufFac
+                           ( dbfFacCliL )->cRef       := Ltrim( SubStr( oFilEdm:cLine, 19, 13 ) )
+                           ( dbfFacCliL )->cDetalle   := RetFld( ( dbfFacCliL )->cRef, D():Articulos( nView ) )
+                           ( dbfFacCliL )->nPreUnit   := Val( SubStr( oFilEdm:cLine, 32,  7 ) )
+                           ( dbfFacCliL )->nDtoDiv    := Val( SubStr( oFilEdm:cLine, 39,  5 ) )
+                           ( dbfFacCliL )->nDto       := Val( SubStr( oFilEdm:cLine, 44,  5 ) )
+                           ( dbfFacCliL )->nIva       := nIvaCodTer( SubStr( oFilEdm:cLine, 61, 1 ), dbfIva )
+                           ( dbfFacCliL )->nReq       := nReqCodTer( SubStr( oFilEdm:cLine, 61, 1 ), dbfIva )
+                           ( dbfFacCliL )->nPntVer    := Val( SubStr( oFilEdm:cLine, 63, 7 ) )
+                           ( dbfFacCliL )->nCanEnt    := 1
+                           ( dbfFacCliL )->nUniCaja   := Val( SubStr( oFilEdm:cLine, 53,  7 ) )
+
+                           /*
+                           Buscamos en el array l numero de lote---------------
+                           */
+
+                           if ( n  := aScan( aLotes, {|a| a[1] == cNumDoc .and. a[2] == Ltrim( SubStr( oFilEdm:cLine, 19, 13 ) ) } ) ) != 0
+                              ( dbfFacCliL )->lLote   := .t.
+                              ( dbfFacCliL )->cLote   := aLotes[ n, 3 ]
+                           end if
+
+                           ( dbfFacCliL )->( dbUnLock() )
+
+                        end if
+
+                     end if
+
+                     oFilEdm:Skip()
+                     oStru:oMetDos:SetTotal( oFilEdm:nLine )
+
+                  end do
+
+                  /*
+                  Comprobamos el estado de la factura-----------------------------------------
+                  */
+
+                  ChkLqdFacCli( nil, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
+
+               else
+
+                  aAdd( aSucces, { .f., "Lineas de facturas huerfanas, cliente " + cCodCli + ", documento " + cNumDoc } )
+                  oFilEdm:Skip()
+
+               end if
+
+            else
+
+               aAdd( aSucces, { .f., "Factura de clientes ya existe " + ( D():FacturasClientes( nView ) )->cSerie + "/" + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + "/" + ( D():FacturasClientes( nView ) )->cSufFac } )
+               oFilEdm:Skip()
+
+            end if
+
+         else
+
+            aAdd( aSucces, { .f., "No existe cliente " + cCodCli + " de factura " + cNumDoc } )
+            oFilEdm:Skip()
+
+         end if
+
+      else // no es una factura
+
+         oFilEdm:Skip()
+
+      end if
+
+   end do
+
+   oFilEdm:Close()
+
+   CloseFiles()
+
+RETURN ( aSucces )
+
+//-------------------------------------------------------------------------//

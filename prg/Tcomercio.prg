@@ -177,7 +177,7 @@ CLASS TComercio
    DATA  oTree
 
    DATA  oMeterTotal
-   DATA  nMeterTotal
+   DATA  nMeterTotal    INIT 0
 
    METHOD MeterTotal( oMeterTotal)   INLINE ( iif( oMeterTotal != nil, ::oMeterTotal := oMeterTotal, ::oMeterTotal ) )
 
@@ -187,7 +187,7 @@ CLASS TComercio
    METHOD TextTotal( oTextTotal)     INLINE ( iif( oTextTotal != nil, ::oTextTotal := oTextTotal, ::oTextTotal ) )
 
    DATA  oMeterProceso
-   DATA  nMeterProceso
+   DATA  nMeterProceso  INIT 0
 
    METHOD treeSetText( cText )
    METHOD MeterTotalText( cText )
@@ -351,6 +351,7 @@ CLASS TComercio
    METHOD buildActualizaStockProductPrestashop()
    METHOD buildInformacionStockProductPrestashop()
    METHOD buildSubirStockPrestashop()
+   METHOD buildAddInformacionStockProductPrestashop()
 
    // ftp y movimientos de ficheros
 
@@ -421,10 +422,10 @@ METHOD filesOpen() CLASS TComercio
    local oBlock
    local oError
    local lOpen       := .t.
-/*
+
    oBlock            := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
-*/
+
       DATABASE NEW ::oArt     PATH ( cPatArt() ) FILE "ARTICULO.DBF"    VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
       ::oArt:OrdSetFocus( "lPubInt" )
 
@@ -496,7 +497,7 @@ METHOD filesOpen() CLASS TComercio
       if !::oStock:lOpenFiles()
          lOpen                := .f.
       end if
-/*
+
    RECOVER USING oError
 
       lOpen                   := .f.
@@ -508,7 +509,7 @@ METHOD filesOpen() CLASS TComercio
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
@@ -9027,75 +9028,101 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildInformacionStockProductPrestashop() CLASS TComercio
+METHOD buildAddInformacionStockProductPrestashop() CLASS tComercio
 
    local aStockArticulo
    local nTotalStock          := 0
    local sStock
 
-   ::meterProcesoSetTotal( ::oArt:OrdKeyCount() )
+   ::treeSetText( "Recopilando información de " + AllTrim( ::oArt:Nombre ) )
 
-   while !::oArt:Eof()
+   /*
+   Recopilamos la información del Stock-------------------------------
+   */
 
-      if ::oArt:cCodWeb != 0
+   aStockArticulo   := ::oStock:aStockArticulo( ::oArt:Codigo )
+   aEval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
 
-         ::treeSetText( "Recopilando información de " + AllTrim( ::oArt:Nombre ) )
+   /*
+   Metemos el Stock global del artículo-------------------------------
+   */
 
-         /*
-         Recopilamos la información del Stock-------------------------------
-         */
+   aAdd( ::aStockArticuloData, { "cCodArt"      => ::oArt:Codigo ,;
+                                 "cNomArt"      => ::oArt:Nombre ,;
+                                 "cCodPrp1"     => "" ,;
+                                 "cCodPrp2"     => "" ,;
+                                 "cValPrp1"     => "" ,;
+                                 "cValPrp2"     => "" ,;
+                                 "nStock"       => AllTrim( Str( nTotalStock ) ) ,;
+                                 "cCodWebArt"   => ::oArt:cCodWeb,;
+                                 "cCodWebVal1"  => 0 ,;
+                                 "cCodWebVal2"  => 0 } )
 
-         aStockArticulo   := ::oStock:aStockArticulo( ::oArt:Codigo )
-         aEval( aStockArticulo, {|o| nTotalStock += o:nUnidades } )
-         
-         /*
-         Metemos el Stock global del artículo-------------------------------
-         */
 
+   /*
+   Recorremos el array con los stocks---------------------------------
+   */
+
+   for each sStock in aStockArticulo
+
+      if aScan( ::aStockArticuloData, {|h|   hGet( h, "cCodArt" ) == ::oArt:Codigo .and.;
+                                             hGet( h, "cCodPrp1" ) == sStock:cCodigoPropiedad1 .and.;
+                                             hGet( h, "cCodPrp2" ) == sStock:cCodigoPropiedad2 .and.;
+                                             hGet( h, "cValPrp1" ) == sStock:cValorPropiedad1 .and.;
+                                             hGet( h, "cValPrp2" ) == sStock:cValorPropiedad2  } ) == 0
+      
          aAdd( ::aStockArticuloData, { "cCodArt"      => ::oArt:Codigo ,;
                                        "cNomArt"      => ::oArt:Nombre ,;
-                                       "cCodPrp1"     => "" ,;
-                                       "cCodPrp2"     => "" ,;
-                                       "cValPrp1"     => "" ,;
-                                       "cValPrp2"     => "" ,;
-                                       "nStock"       => AllTrim( Str( nTotalStock ) ) ,;
+                                       "cCodPrp1"     => sStock:cCodigoPropiedad1 ,;
+                                       "cCodPrp2"     => sStock:cCodigoPropiedad2 ,;
+                                       "cValPrp1"     => sStock:cValorPropiedad1 ,;
+                                       "cValPrp2"     => sStock:cValorPropiedad2 ,;
+                                       "nStock"       => AllTrim( Str( sStock:nUnidades ) ),;
                                        "cCodWebArt"   => ::oArt:cCodWeb,;
-                                       "cCodWebVal1"  => 0 ,;
-                                       "cCodWebVal2"  => 0 } )
+                                       "cCodWebVal1"  => oRetFld( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::oTblPro, "cCodWeb" ),;
+                                       "cCodWebVal2"  => oRetFld( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::oTblPro, "cCodWeb" ) } )
 
+      end if   
 
-         /*
-         Recorremos el array con los stocks---------------------------------
-         */
+   next
 
-         for each sStock in aStockArticulo
+Return .t.
 
-            if aScan( ::aStockArticuloData, {|h|   hGet( h, "cCodArt" ) == ::oArt:Codigo .and.;
-                                                   hGet( h, "cCodPrp1" ) == sStock:cCodigoPropiedad1 .and.;
-                                                   hGet( h, "cCodPrp2" ) == sStock:cCodigoPropiedad2 .and.;
-                                                   hGet( h, "cValPrp1" ) == sStock:cValorPropiedad1 .and.;
-                                                   hGet( h, "cValPrp2" ) == sStock:cValorPropiedad2  } ) == 0
-            
-               aAdd( ::aStockArticuloData, { "cCodArt"      => ::oArt:Codigo ,;
-                                             "cNomArt"      => ::oArt:Nombre ,;
-                                             "cCodPrp1"     => sStock:cCodigoPropiedad1 ,;
-                                             "cCodPrp2"     => sStock:cCodigoPropiedad2 ,;
-                                             "cValPrp1"     => sStock:cValorPropiedad1 ,;
-                                             "cValPrp2"     => sStock:cValorPropiedad2 ,;
-                                             "nStock"       => AllTrim( Str( sStock:nUnidades ) ),;
-                                             "cCodWebArt"   => ::oArt:cCodWeb,;
-                                             "cCodWebVal1"  => oRetFld( sStock:cCodigoPropiedad1 + sStock:cValorPropiedad1, ::oTblPro, "cCodWeb" ),;
-                                             "cCodWebVal2"  => oRetFld( sStock:cCodigoPropiedad2 + sStock:cValorPropiedad2, ::oTblPro, "cCodWeb" ) } )
+//---------------------------------------------------------------------------//
 
-            end if   
+METHOD buildInformacionStockProductPrestashop( aCodArt ) CLASS TComercio
 
-         next
+   local cCodArt
 
-      end if
+   ::meterProcesoSetTotal( ::oArt:OrdKeyCount() )
 
-      ::oArt:Skip()
+   if isArray( aCodArt )
 
-   end while   
+      for each cCodArt in aCodArt
+
+         if ::oArt:Seek( cCodArt ) .and. ::oArt:cCodWeb != 0
+
+            ::buildAddInformacionStockProductPrestashop()
+
+         end if
+
+      next   
+
+   else
+
+      while !::oArt:Eof()
+
+         if ::oArt:cCodWeb != 0
+
+            ::buildAddInformacionStockProductPrestashop()   
+
+         end if
+
+         ::oArt:Skip()
+
+      end while
+
+   end if   
 
 return .t.
 
@@ -9149,7 +9176,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildActualizaStockProductPrestashop() CLASS TComercio
+METHOD buildActualizaStockProductPrestashop( aCodArt ) CLASS TComercio
 
    /*
    Compruebo que podamos conectarnos-------------------------------------------
@@ -9166,7 +9193,8 @@ METHOD buildActualizaStockProductPrestashop() CLASS TComercio
       */
 
       ::MeterTotalText( "Recopialando información de stocks" )
-      ::buildInformacionStockProductPrestashop()
+      
+      ::buildInformacionStockProductPrestashop( aCodArt )
 
       /*
       Subimos la información recopilada----------------------------------------
