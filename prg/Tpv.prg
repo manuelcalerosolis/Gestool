@@ -12325,6 +12325,8 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
    Guardamos el tipo como tiket---------------------------------------
    */
 
+   aArticulosWeb           := {}
+
    if !Empty( oMetMsg )
       oMetMsg:cText        := 'Archivando lineas'
       oMetMsg:Refresh()
@@ -19954,9 +19956,9 @@ Return .t.
 
 static Function ActualizaStockWeb()
 
-   if isArray( aArticulosWeb )
+   if isArray( aArticulosWeb ) .and. Len( aArticulosWeb ) > 0
 
-      with object ( TComercio():New())     
+      with object ( TComercio():New() )     
          
          :MeterTotal( GetAutoMeterDialog() )
 
@@ -19964,7 +19966,7 @@ static Function ActualizaStockWeb()
 
          :buildActualizaStockProductPrestashop( aArticulosWeb )
 
-      end with   
+      end with
 
    end if
 
