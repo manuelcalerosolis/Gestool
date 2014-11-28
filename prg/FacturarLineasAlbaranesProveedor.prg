@@ -597,8 +597,6 @@ Return ( Self )
 
 METHOD loadAlbaran( id )     
 
-   msgAlert( "loadAlbaran")
-
    if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbSeek( id ) )
 
       while D():AlbaranesProveedoresLineasId( ::nView ) == id .and. !( D():AlbaranesProveedoresLineas( ::nView ) )->( eof() )
