@@ -574,6 +574,7 @@ static oMeter
 static nMeter              := 1
 
 static cUltimoCliente      := ""
+static cSerieAnterior      := ""
 
 static bEdtRec             := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtRec( aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 static bEdtDet             := { |aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
@@ -5553,6 +5554,10 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       		aTmp[ _NPCTDTO    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nPctDto" )
       		aTmp[ _LRECC      ]	:= lRECCEmpresa()
 
+         case nMode == EDIT_MODE
+
+            cSerieAnterior      := aTmp[ _CSERIE ]
+
     end case  		
 
    	/*
@@ -5609,14 +5614,37 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| EndTransTablet( aTmp, aGet, nMode, oDlg ) },;
+                                             		"bLClicked" => {|| EdtResumenTablet( aTmp, aGet, nMode, oDlg ) },;
                                              		"oWnd"      => oDlg } )
 
  	/*
 	Serie de la factura--------------------------------------------------------
    	*/
 
-   	//if nMode == APPD_MODE
+   	if nMode == EDIT_MODE .and. !aTmp[ _LSNDDOC ]
+
+         oSaySerie      := TGridSay():Build(    {  "nRow"      => 40,;
+                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "bText"     => {|| "Serie" },;
+                                                   "oWnd"      => oDlg,;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 1, oDlg ) },;
+                                                   "nHeight"   => nAltoGet,;
+                                                   "lDesign"   => .f. } )
+         
+         aGet[ _CSERIE ]   := TGridGet():Build(    {  "nRow"      => 40,;
+                                                   "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CSERIE ], aTmp[ _CSERIE ] := u ) },;
+                                                   "oWnd"      => oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                                   "nHeight"   => nAltoGet,;
+                                                   "bWhen"     => {|| .f. } ,;
+                                                   "lPixels"   => .t. } )
+
+      else
 
    		oSaySerie  		:= TGridUrllink():Build({ 	"nTop"      => 40,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -5628,31 +5656,17 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"nClrOver" 	=> nGridColor(),;
 													            "nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| ChangeSerieTablet( aGet ) } } )
-   	/*else
 
-   		oSaySerie    	:= TGridSay():Build(    { 	"nRow"      => 40,;
-                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             		"bText"     => {|| "Serie" },;
-                                             		"oWnd"      => oDlg,;
-                                             		"oFont"     => oGridFont(),;
-                                             		"lPixels"   => .t.,;
-                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
-                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 1, oDlg ) },;
-                                             		"nHeight"   => nAltoGet,;
-                                             		"lDesign"   => .f. } )
+         aGet[ _CSERIE ]   := TGridGet():Build(    {  "nRow"      => 40,;
+                                                   "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CSERIE ], aTmp[ _CSERIE ] := u ) },;
+                                                   "oWnd"      => oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 2, oDlg ) },;
+                                                   "nHeight"   => nAltoGet,;
+                                                   "lPixels"   => .t. } )   
 
-   	end if*/
+   	end if
 
-
-   	aGet[ _CSERIE ]  	:= TGridGet():Build( 	{ 	"nRow"      => 40,;
-                                          			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
-                                          			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CSERIE ], aTmp[ _CSERIE ] := u ) },;
-                                          			"oWnd"      => oDlg,;
-                                          			"nWidth"    => {|| GridWidth( 2, oDlg ) },;
-                                          			"nHeight"   => nAltoGet,;
-                                          			"bWhen" 	   => {|| nMode == APPD_MODE },;
-                                          			"lPixels" 	=> .t. } )
 
  	/*
    Combo de rutas-------------------------------------------------------------
@@ -6295,7 +6309,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
+static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
 
 	local oDlg
 	local oBrwIva
@@ -6383,7 +6397,7 @@ static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_printer_64",;
-                                             		"bLClicked" => {|| if( EndTrans( aTmp, aGet, , , , {}, nMode, oDlg ), ( if( cCbxOrd != "No imprimir", GenFacCli( IS_PRINTER, , Left( cCbxOrd, 3 ) ),  ), oDlgFac:End() ), ) },;
+                                             		"bLClicked" => {|| if( EndTransTablet( aTmp, aGet, , , , {}, nMode, oDlg ), ( if( cCbxOrd != "No imprimir", GenFacCli( IS_PRINTER, , Left( cCbxOrd, 3 ) ),  ), oDlgFac:End() ), ) },;
                                              		"oWnd"      => oDlg } )
 
    oBtnAceptarImp    := TGridImage():Build(  {     "nTop"      => 5,;
@@ -6391,7 +6405,7 @@ static function EndTransTablet( aTmp, aGet, nMode, oDlgFac )
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_check_64",;
-                                                   "bLClicked" => {|| if( EndTrans( aTmp, aGet, , , , {}, nMode, oDlg ), oDlgFac:End(), ) },;
+                                                   "bLClicked" => {|| if( EndTransTablet( aTmp, aGet, , , , {}, nMode, oDlg ), oDlgFac:End(), ) },;
                                                    "oWnd"      => oDlg } )
 
  	/*
@@ -12107,6 +12121,10 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 
       aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
 
+      if lClienteBloqueado( aGet, ( D():Clientes( nView ) )->Cod )
+         Return .f.
+      end if
+
       if oTlfCli != nil
          oTlfCli:SetText( ( D():Clientes( nView ) )->Telefono )
       end if
@@ -14795,13 +14813,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    cNumPed              := aTmp[ _CNUMPED ]
    cNumAlb              := aTmp[ _CNUMALB ]
    dFecFac              := aTmp[ _DFECFAC ]
-   cCodCli 				:= aTmp[ _CCODCLI ]
-
-   if ( "TABLET" $ cParamsMain() )
-      ?"estamos en la tablet"
-   else
-      ?"No estamos en la tablet"
-   end if
+   cCodCli 				   := aTmp[ _CCODCLI ]
 
    /*
    Comprobamos la fecha del documento------------------------------------------
@@ -14815,20 +14827,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    Estos campos no pueden estar vacios-----------------------------------------
    */
 
-   if lCliBlq( aTmp[ _CCODCLI ], D():Clientes( nView ) )
-      msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
-      if !Empty( aGet[ _CCODCLI ] )
-      	aGet[ _CCODCLI ]:SetFocus()
-      end if	
-      return .f.
+   if lClienteBloqueado( aGet, aTmp[ _CCODCLI ] )
+      Return .f.
    end if
 
-   if Empty( aTmp[ _CNOMCLI ] )
-      msgStop( "Nombre de cliente no puede estar vacío." )
-      if !Empty( aGet[ _CNOMCLI ] )
-      	aGet[ _CNOMCLI ]:SetFocus()
-      end if	
-      return .f.
+   if lNombreVacio( aGet, aTmp[ _CNOMCLI ] )
+      Return .f.
    end if
 
    if Empty( aTmp[ _CDIRCLI ] )
@@ -14847,28 +14851,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       return .f.
    end if
 
-   if Empty( aTmp[ _CCODALM ] )
-      msgStop( "Almacén no puede estar vacío.", "Imposible archivar como factura" )
-      if !Empty( aGet[ _CCODALM ] )
-      	aGet[ _CCODALM ]:SetFocus()
-      end if	
-      return .f.
+   if lAlmacenVacio( aGet, aTmp[ _CCODALM ] )
+      Return .f.
    end if
 
-   if Empty( aTmp[ _CCODPAGO ] )
-      msgStop( "Forma de pago no puede estar vacía.", "Imposible archivar como factura" )
-      if !Empty( aGet[ _CCODPAGO ] )
-      	aGet[ _CCODPAGO ]:SetFocus()
-      end if	
-      return .f.
+   if lFormaPagoVacia( aGet, aTmp[ _CCODPAGO ] )
+      Return .f.
    end if
 
-   if Empty( aTmp[ _CDIVFAC ] )
-      MsgStop( "No puede almacenar documento sin código de divisa.", "Imposible archivar como factura" )
-      if !Empty( aGet[ _CDIVFAC ] )
-      	aGet[ _CDIVFAC ]:SetFocus()
-      end if	
-      return .f.
+   if lDivisaVacia( aGet, aTmp[ _CDIVFAC ] )
+      Return .f.
    end if
 
    if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, D():Clientes( nView ) )
@@ -14895,8 +14887,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       return .f.
    end if
 
-   if ( dbfTmpLin )->( eof() )
-      MsgStop( "No puede almacenar un documento sin lineas." )
+   if lLineasVacias()
       return .f.
    end if
 
@@ -14981,107 +14972,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       case nMode == EDIT_MODE
 
-         oMsgText( "Eliminando detalles anteriores" )
-         if !Empty( oMeter )
-         	oMeter:Set( 2 )
-         end if	
-
-         /*
-         Rollback de todos los articulos si la factura no se importo de albaranes-
-         */
-
-         /*
-         ADSExecuteSQLScript( "DELETE FROM " + cPatEmp() + "FACCLIL" + " WHERE cSerie = " + Quoted( cSerFac ) + " AND nNumFac = " + Alltrim( str( nNumFac ) ) + " AND cSufFac = " + Quoted( cSufFac ) )
-         */
-
-         while ( dbfFacCliL )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliL )->( eof() ) 
-            if dbLock( dbfFacCliL )
-               ( dbfFacCliL )->( dbDelete() )
-               ( dbfFacCliL )->( dbUnLock() )
-            end if
-            SysRefresh()
-         end while
-         
-         /*
-         Eliminamos las incidencias anteriores------------------------------------
-         */
-
-         oMsgText( "Eliminando incidencias anteriores" )
-
-         while ( ( dbfFacCliI )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliI )->( eof() ) )
-            if dbLock( dbfFacCliI )
-               ( dbfFacCliI )->( dbDelete() )
-               ( dbfFacCliI )->( dbUnLock() )
-            end if
-            SysRefresh()
-         end while
-
-         /*
-         Eliminamos las incidencias anteriores------------------------------------
-         */
-
-         oMsgText( "Eliminando documentos anteriores" )
-
-         while ( ( dbfFacCliD )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliD )->( eof() ) )
-            if dbLock( dbfFacCliD )
-               ( dbfFacCliD )->( dbDelete() )
-               ( dbfFacCliD )->( dbUnLock() )
-            end if
-            SysRefresh()
-         end while
-
-         /*
-         Eliminamos los pagos anteriores------------------------------------------
-         */
-
-         oMsgText( "Eliminando pagos anteriores" )
-
-         while ( ( dbfFacCliP )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliP )->( eof() ) )
-            if dbLock( dbfFacCliP )
-               ( dbfFacCliP )->( dbDelete() )
-               ( dbfFacCliP )->( dbUnLock() )
-            end if
-            SysRefresh()
-         end while
-
-         /*
-         Eliminamos las series anteriores------------------------------------------
-         */
-
-         oMsgText( "Eliminando series anteriores" )
-
-         while ( ( dbfFacCliS )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliS )->( eof() ) )
-            if dbLock( dbfFacCliS )
-               ( dbfFacCliS )->( dbDelete() )
-               ( dbfFacCliS )->( dbUnLock() )
-            end if
-            SysRefresh()
-         end while
-
-         /*
-         Eliminamos los anticipos anteriores--------------------------------------
-         */
-
-         oMsgText( "Eliminando anticipos anteriores" )
-
-         nOrd                             := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
-         while ( ( dbfAntCliT )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( dbfAntCliT )->( eof() ) )
-            if dbLock( dbfAntCliT )
-               ( dbfAntCliT )->lLiquidada := .f.
-               ( dbfAntCliT )->cNumDoc    := ""
-               ( dbfAntCliT )->( dbUnLock() )
-            end if
-            SysRefresh()
-         end while
-         ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+         RollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
 
       end case
-
-      oMsgText( "Almancenando datos" )
-      
-      if !Empty( oMeter )
-      	oMeter:Set( 3 )
-      end if	
 
       /*
       Ahora escribimos en el fichero definitivo-----------------------------------
@@ -15089,123 +14982,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       de la importacion de las atipicas-------------------------------------------
       */
 
-      ( dbfTmpLin )->( dbGoTop() )
-
-      while ( dbfTmpLin )->( !eof() )
-
-         if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
-         	
-       		( dbfTmpLin )->dFecFac  := if( !empty( ( dbfTmpLin )->dFecAlb ), ( dbfTmpLin )->dFecAlb, dFecFac )
-       	   ( dbfTmpLin )->cCodCli 	:= cCodCli
-
-         	dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
-
-         end if 	
-
-         ( dbfTmpLin )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-      /*
-      Ahora escribimos en el fichero definitivo de inicdencias--------------------
-      */
-
-      oMsgText( "Almacenando incidencias" )
-
-      ( dbfTmpInc )->( dbGoTop() )
-      while ( dbfTmpInc )->( !eof() )
-         dbPass( dbfTmpInc, dbfFacCliI, .t., cSerFac, nNumFac, cSufFac )
-         ( dbfTmpInc )->( dbSkip() )
-         SysRefresh()
-      end while
-
-      /*
-      Ahora escribimos en el fichero definitivo de documentos--------------------
-      */
-
-      oMsgText( "Almacenando documentos" )
-
-      ( dbfTmpDoc )->( dbGoTop() )
-      while ( dbfTmpDoc )->( !eof() )
-         dbPass( dbfTmpDoc, dbfFacCliD, .t., cSerFac, nNumFac, cSufFac )
-         ( dbfTmpDoc )->( dbSkip() )
-         SysRefresh()
-      end while
-
-      /*
-      Ahora escribimos en el fichero definitivo de series----------------------
-      */
-
-      oMsgText( "Almacenando series" )
-
-      ( dbfTmpSer )->( dbGoTop() )
-      while ( dbfTmpSer )->( !eof() )
-         dbPass( dbfTmpSer, dbfFacCliS, .t., cSerFac, nNumFac, cSufFac, dFecFac )
-         ( dbfTmpSer )->( dbSkip() )
-         SysRefresh()
-      end while
-
-      /*
-      Ahora escribimos en el fichero definitivo de anticipos----------------------
-      */
-
-      oMsgText( "Almacenando anticipos" )
-
-      ( dbfTmpAnt )->( dbGoTop() )
-      while ( dbfTmpAnt )->( !eof() )
-         if ( dbfAntCliT )->( dbSeek( ( dbfTmpAnt )->cSerAnt + str( ( dbfTmpAnt )->nNumAnt ) + ( dbfTmpAnt )->cSufAnt ) )
-            if dbLock( dbfAntCliT )
-               ( dbfAntCliT )->lLiquidada := .t.
-               ( dbfAntCliT )->lSndDoc    := .t.
-               ( dbfAntCliT )->cNumDoc    := cSerFac + str( nNumFac ) + cSufFac
-               ( dbfAntCliT )->dLiquidada := GetSysDate()
-               ( dbfAntCliT )->cTurLiq    := cCurSesion()
-               ( dbfAntCliT )->cCajLiq    := oUser():cCaja()
-               ( dbfAntCliT )->( dbUnLock() )
-            end if
-         end if
-         ( dbfTmpAnt )->( dbSkip() )
-         SysRefresh()
-      end while
-
-      /*
-      Si cambia el cliente en la factura, lo cambiamos en los recibos-------------
-      */
-
-      oMsgText( "Clientes en recibos" )
-
-      ( dbfTmpPgo )->( dbGoTop() )
-
-      while ( dbfTmpPgo )->( !eof() )
-
-         if ( dbfTmpPgo )-> cCodCli != aTmp[ _CCODCLI ]
-            ( dbfTmpPgo )-> cCodCli := aTmp[ _CCODCLI ]
-         end if
-
-         if ( dbfTmpPgo )-> cNomCli != aTmp[ _CNOMCLI ]
-            ( dbfTmpPgo )-> cNomCli := aTmp[ _CNOMCLI ]
-         end if
-
-         ( dbfTmpPgo )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-      /*
-      Ahora escribimos en el fichero definitivo de pagos--------------------------
-      */
-
-      oMsgText( "Almacenando pagos" )
-
-      ( dbfTmpPgo )->( dbGoTop() )
-      while ( dbfTmpPgo )->( !eof() )
-         dbPass( dbfTmpPgo, dbfFacCliP, .t., cSerFac, nNumFac, cSufFac )
-         ( dbfTmpPgo )->( dbSkip() )
-         SysRefresh()
-      end while
+      GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCodCli, aTmp )
 
       /*
       Rellenamos los campos de totales--------------------------------------------
@@ -24010,5 +23787,575 @@ static function myBookMark(n)
    end if 
 
 Return nil 
+
+//---------------------------------------------------------------------------//
+
+/*
+Finaliza la transacción de datos
+*/
+
+STATIC FUNCTION EndTransTablet( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oDlg )
+
+   local n
+   local nOrd
+   local oError
+   local oBlock
+   local cSerFac
+   local nNumFac
+   local nNumNFC
+   local cSufFac
+   local cNumPed
+   local cNumAlb
+   local dFecFac
+   local cCodCli
+
+   /*
+   Tomamos valores-------------------------------------------------------------
+   */
+
+   if Empty( aTmp[ _CSERIE ] )
+      aTmp[ _CSERIE ]   := "A"
+   end if
+
+   cSerFac              := aTmp[ _CSERIE  ]
+   nNumFac              := aTmp[ _NNUMFAC ]
+   cSufFac              := aTmp[ _CSUFFAC ]
+   cNumPed              := aTmp[ _CNUMPED ]
+   cNumAlb              := aTmp[ _CNUMALB ]
+   dFecFac              := aTmp[ _DFECFAC ]
+   cCodCli              := aTmp[ _CCODCLI ]
+
+   /*
+   Comprobamos campos del documento--------------------------------------------
+   */
+
+   if !lComprobacionesFactCli( aGet, aTmp )
+      return .f.
+   end if
+
+   /*
+   Para q nadie toque mientras grabamos----------------------------------------
+   */
+
+   oDlg:Disable()
+
+   oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      BeginTransaction()
+
+      /*
+      Quitamos los filtros--------------------------------------------------------
+      */
+
+      ( dbfTmpLin )->( dbClearFilter() )
+
+      /*
+      Primero hacer el RollBack---------------------------------------------------
+      */
+
+      aTmp[ _DFECCRE ]        := GetSysDate()
+      aTmp[ _CTIMCRE ]        := Time()
+      aTmp[ _LALQUILER ]   := .f.
+
+      do case
+      case nMode == APPD_MODE .or. nMode == DUPL_MODE
+
+         /*
+         Obtenemos el nuevo numero de la factura----------------------------------
+         */
+
+         nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , dbfCount )
+         aTmp[ _NNUMFAC ]     := nNumFac
+
+      case nMode == EDIT_MODE
+
+         if lCambioSerie( aTmp )
+            
+            /*
+            Guardo el contador anterior puesto que vamos a cambiar la serie de la factura
+            */
+
+            GuardaContadorAnterior( nNumFac, cSufFac )
+
+            RollBackFacCli( cSerieAnterior + str( nNumFac ) + cSufFac )
+            
+            /*
+            Obtenemos el nuevo número para la serie-------------------------------
+            */
+
+            nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , dbfCount )
+            aTmp[ _NNUMFAC ]     := nNumFac
+
+         else
+
+            RollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
+
+         end if 
+
+         /*
+         Marcamos para que podamos volver a enviarlo---------------------------
+         */
+
+         aTmp[ _LSNDDOC ]        := .t.
+
+      end case
+
+      /*
+      Ahora escribimos en el fichero definitivo--------------------------------
+      Controlando que no metan lineas con unidades a 0 por el tema-------------
+      de la importacion de las atipicas----------------------------------------
+      */
+
+      GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCodCli, aTmp )
+
+      /*
+      Rellenamos los campos de totales--------------------------------------------
+      */
+
+      aTmp[ _NTOTNET ]  := nTotNet
+      aTmp[ _NTOTIVA ]  := nTotIva
+      aTmp[ _NTOTREQ ]  := nTotReq
+      aTmp[ _NTOTFAC ]  := nTotFac
+      aTmp[ _NTOTSUP ]  := nTotSup
+      aTmp[ _NTOTLIQ ]  := nTotCob
+      aTmp[ _NTOTPDT ]  := nTotFac - nTotCob
+
+      /*
+      Grabamos el registro-----------------------------------------------------
+      */
+
+      cUltimoCliente    := aTmp[ _CCODCLI ]
+
+      WinGather( aTmp, , D():FacturasClientes( nView ), , nMode )
+
+      /*
+      Escribe los datos pendientes------------------------------------------------
+      */
+
+      dbCommitAll()
+
+      CommitTransaction()
+
+      /*
+      Generar los pagos de las facturas-------------------------------------------
+      */
+
+      GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, D():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
+
+      /*
+      Comprobamos el estado de la factura-----------------------------------------
+      */
+
+      ChkLqdFacCli( nil, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+
+      msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+   /*
+   Cerramos el dialogo---------------------------------------------------------
+   */
+
+   oDlg:Enable()
+   oDlg:End( IDOK )
+
+Return .t.
+
+//------------------------------------------------------------------------//
+
+Static Function lComprobacionesFactCli( aGet, aTmp )
+
+   local lReturn  := .t.
+
+   if !lValidaOperacion( aTmp[ _DFECFAC ] )
+      lReturn     := .f.
+   end if
+
+   if lClienteBloqueado( aGet, aTmp[ _CCODCLI ] )
+      lReturn     := .f.
+   end if
+
+   if lNombreVacio( aGet, aTmp[ _CNOMCLI ] )
+      lReturn     := .f.
+   end if
+
+   if lAlmacenVacio( aGet, aTmp[ _CCODALM ] )
+      lReturn     := .f.
+   end if
+
+   if lFormaPagoVacia( aGet, aTmp[ _CCODPAGO ] )
+      lReturn     := .f.
+   end if
+
+   if lDivisaVacia( aGet, aTmp[ _CDIVFAC ] )
+      lReturn     := .f.
+   end if
+
+   if lLineasVacias()
+      lReturn     := .f.
+   end if
+
+Return ( lReturn )
+
+//------------------------------------------------------------------------//
+
+Static Function lClienteBloqueado( aGet, cCliente )
+
+   local lReturn  := .f.
+
+   if lCliBlq( cCliente, D():Clientes( nView ) )
+         
+      if ( "TABLET" $ cParamsMain() )
+         apoloMsgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta")
+      else
+         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
+      end if
+
+      if !Empty( aGet[ _CCODCLI ] )
+         aGet[ _CCODCLI ]:SetFocus()
+      end if   
+
+      lReturn := .t.
+         
+   end if
+
+Return ( lReturn )
+
+//------------------------------------------------------------------------//
+
+Static Function lNombreVacio( aGet, cNomCli )
+
+   local lReturn  := .f.
+
+   if Empty( cNomCli )
+
+      if ( "TABLET" $ cParamsMain() )
+         apoloMsgStop( "Nombre de cliente no puede estar vacío.")
+      else
+         msgStop( "Nombre de cliente no puede estar vacío." )
+      end if
+
+      if !Empty( aGet[ _CNOMCLI ] )
+         aGet[ _CNOMCLI ]:SetFocus()
+      end if   
+
+      lReturn := .t.
+
+   end if
+
+Return ( lReturn )
+
+//---------------------------------------------------------------------------//
+
+Static Function lAlmacenVacio( aGet, cCodAlm )
+
+   local lReturn  := .f.
+
+   if Empty( cCodAlm )
+
+      if ( "TABLET" $ cParamsMain() )
+         apoloMsgStop( "Almacén no puede estar vacío.")
+      else
+         msgStop( "Almacén no puede estar vacío." )
+      end if
+
+      if !Empty( aGet[ _CCODALM ] )
+         aGet[ _CCODALM ]:SetFocus()
+      end if   
+
+      lReturn := .t.
+
+   end if
+
+Return ( lReturn )
+
+//---------------------------------------------------------------------------//
+
+Static Function lFormaPagoVacia( aGet, cCodPago )
+
+   local lReturn  := .f.
+
+   if Empty( cCodPago )
+
+      if ( "TABLET" $ cParamsMain() )
+         apoloMsgStop( "Forma de pago no puede estar vacía.")
+      else
+         msgStop( "Forma de pago no puede estar vacía." )
+      end if
+
+      if !Empty( aGet[ _CCODPAGO ] )
+         aGet[ _CCODPAGO ]:SetFocus()
+      end if   
+
+      lReturn := .t.
+
+   end if
+
+Return ( lReturn )
+
+//---------------------------------------------------------------------------//
+
+Static Function lDivisaVacia( aGet, cCodDiv )
+
+   local lReturn  := .f.
+
+   if Empty( cCodDiv )
+
+      if ( "TABLET" $ cParamsMain() )
+         apoloMsgStop( "No puede almacenar documento sin código de divisa.")
+      else
+         msgStop( "No puede almacenar documento sin código de divisa." )
+      end if
+
+      if !Empty( aGet[ _CDIVFAC ] )
+         aGet[ _CDIVFAC ]:SetFocus()
+      end if   
+
+      lReturn := .t.
+
+   end if
+
+Return ( lReturn )
+
+//---------------------------------------------------------------------------//
+
+Static Function lLineasVacias()
+
+   local lReturn  := .f.
+
+   if ( dbfTmpLin )->( eof() )
+
+      if ( "TABLET" $ cParamsMain() )
+         apoloMsgStop( "No puede almacenar un documento sin lineas.")
+      else
+         msgStop( "No puede almacenar un documento sin lineas." )
+      end if
+
+      lReturn     := .t.
+
+   end if
+
+return ( lReturn )
+
+//---------------------------------------------------------------------------//
+
+Static Function lCambioSerie( aTmp )
+
+   if cSerieAnterior != aTmp[ _CSERIE ]
+      Return .t.
+   end if
+
+return .f.
+
+//---------------------------------------------------------------------------//   
+
+Static Function GuardaContadorAnterior( nNumFac, cSufFac )
+
+   if uFieldEmpresa( "LRECNUMFAC" )
+      nPutDoc( cSerieAnterior, nNumFac, cSufFac, D():FacturasClientes( nView ), "nFacCli", , dbfCount )
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function RollBackFacCli( cNumeroDocumento )
+
+   local nOrd
+
+   /*
+   Rollback de todos los articulos si la factura no se importo de albaranes----
+   */
+
+   while ( dbfFacCliL )->( dbSeek( cNumeroDocumento ) ) .and. !( dbfFacCliL )->( eof() ) 
+      if dbLock( dbfFacCliL )
+         ( dbfFacCliL )->( dbDelete() )
+         ( dbfFacCliL )->( dbUnLock() )
+      end if
+      SysRefresh()
+   end while
+   
+   /*
+   Eliminamos las incidencias anteriores---------------------------------------
+   */
+
+   while ( ( dbfFacCliI )->( dbSeek( cNumeroDocumento ) ) .and. !( dbfFacCliI )->( eof() ) )
+      if dbLock( dbfFacCliI )
+         ( dbfFacCliI )->( dbDelete() )
+         ( dbfFacCliI )->( dbUnLock() )
+      end if
+      SysRefresh()
+   end while
+
+   /*
+   Eliminamos las incidencias anteriores---------------------------------------
+   */
+
+   while ( ( dbfFacCliD )->( dbSeek( cNumeroDocumento ) ) .and. !( dbfFacCliD )->( eof() ) )
+      if dbLock( dbfFacCliD )
+         ( dbfFacCliD )->( dbDelete() )
+         ( dbfFacCliD )->( dbUnLock() )
+      end if
+      SysRefresh()
+   end while
+
+   /*
+   Eliminamos los pagos anteriores---------------------------------------------
+   */
+
+   while ( ( dbfFacCliP )->( dbSeek( cNumeroDocumento ) ) .and. !( dbfFacCliP )->( eof() ) )
+      if dbLock( dbfFacCliP )
+         ( dbfFacCliP )->( dbDelete() )
+         ( dbfFacCliP )->( dbUnLock() )
+      end if
+      SysRefresh()
+   end while
+
+   /*
+   Eliminamos las series anteriores---------------------------------------------
+   */
+
+   while ( ( dbfFacCliS )->( dbSeek( cNumeroDocumento ) ) .and. !( dbfFacCliS )->( eof() ) )
+      if dbLock( dbfFacCliS )
+         ( dbfFacCliS )->( dbDelete() )
+         ( dbfFacCliS )->( dbUnLock() )
+      end if
+      SysRefresh()
+   end while
+
+   /*
+   Eliminamos los anticipos anteriores-----------------------------------------
+   */
+
+   nOrd                             := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+   while ( ( dbfAntCliT )->( dbSeek( cNumeroDocumento ) ) .and. !( dbfAntCliT )->( eof() ) )
+      if dbLock( dbfAntCliT )
+         ( dbfAntCliT )->lLiquidada := .f.
+         ( dbfAntCliT )->cNumDoc    := ""
+         ( dbfAntCliT )->( dbUnLock() )
+      end if
+      SysRefresh()
+   end while
+   ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCodCli, aTmp )
+
+   ( dbfTmpLin )->( dbGoTop() )
+
+   while ( dbfTmpLin )->( !eof() )
+
+      if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
+         
+         ( dbfTmpLin )->dFecFac  := if( !empty( ( dbfTmpLin )->dFecAlb ), ( dbfTmpLin )->dFecAlb, dFecFac )
+         ( dbfTmpLin )->cCodCli  := cCodCli
+
+         dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
+
+      end if   
+
+      ( dbfTmpLin )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de inicdencias--------------------
+   */
+
+   ( dbfTmpInc )->( dbGoTop() )
+   while ( dbfTmpInc )->( !eof() )
+      dbPass( dbfTmpInc, dbfFacCliI, .t., cSerFac, nNumFac, cSufFac )
+      ( dbfTmpInc )->( dbSkip() )
+      SysRefresh()
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de documentos--------------------
+   */
+
+   ( dbfTmpDoc )->( dbGoTop() )
+   while ( dbfTmpDoc )->( !eof() )
+      dbPass( dbfTmpDoc, dbfFacCliD, .t., cSerFac, nNumFac, cSufFac )
+      ( dbfTmpDoc )->( dbSkip() )
+      SysRefresh()
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de series----------------------
+   */
+
+   ( dbfTmpSer )->( dbGoTop() )
+   while ( dbfTmpSer )->( !eof() )
+      dbPass( dbfTmpSer, dbfFacCliS, .t., cSerFac, nNumFac, cSufFac, dFecFac )
+      ( dbfTmpSer )->( dbSkip() )
+      SysRefresh()
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de anticipos----------------------
+   */
+
+   ( dbfTmpAnt )->( dbGoTop() )
+   while ( dbfTmpAnt )->( !eof() )
+      if ( dbfAntCliT )->( dbSeek( ( dbfTmpAnt )->cSerAnt + str( ( dbfTmpAnt )->nNumAnt ) + ( dbfTmpAnt )->cSufAnt ) )
+         if dbLock( dbfAntCliT )
+            ( dbfAntCliT )->lLiquidada := .t.
+            ( dbfAntCliT )->lSndDoc    := .t.
+            ( dbfAntCliT )->cNumDoc    := cSerFac + str( nNumFac ) + cSufFac
+            ( dbfAntCliT )->dLiquidada := GetSysDate()
+            ( dbfAntCliT )->cTurLiq    := cCurSesion()
+            ( dbfAntCliT )->cCajLiq    := oUser():cCaja()
+            ( dbfAntCliT )->( dbUnLock() )
+         end if
+      end if
+      ( dbfTmpAnt )->( dbSkip() )
+      SysRefresh()
+   end while
+
+   /*
+   Si cambia el cliente en la factura, lo cambiamos en los recibos-------------
+   */
+
+   ( dbfTmpPgo )->( dbGoTop() )
+
+   while ( dbfTmpPgo )->( !eof() )
+
+      if ( dbfTmpPgo )-> cCodCli != aTmp[ _CCODCLI ]
+         ( dbfTmpPgo )-> cCodCli := aTmp[ _CCODCLI ]
+      end if
+
+      if ( dbfTmpPgo )-> cNomCli != aTmp[ _CNOMCLI ]
+         ( dbfTmpPgo )-> cNomCli := aTmp[ _CNOMCLI ]
+      end if
+
+      ( dbfTmpPgo )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de pagos--------------------------
+   */
+
+   ( dbfTmpPgo )->( dbGoTop() )
+   while ( dbfTmpPgo )->( !eof() )
+      dbPass( dbfTmpPgo, dbfFacCliP, .t., cSerFac, nNumFac, cSufFac )
+      ( dbfTmpPgo )->( dbSkip() )
+      SysRefresh()
+   end while
+
+Return .t.
 
 //---------------------------------------------------------------------------//

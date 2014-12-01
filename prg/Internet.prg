@@ -1530,40 +1530,11 @@ METHOD SendFile( aSource, aTarget, cDirectory )
 
       for n := 1 to Len( aSource )
 
-         hSource           := fOpen( aSource[ n ] )
-         hTarget           := fCreate( ::getPathComunication() + aTarget[ n ] )
-
-         if !Empty( ::oMtr )
-            ::oMtr:Set( 0 )
-            ::oMtr:nTotal  := nTotSize
-         end if
-
-         /*
-         Nos vamos al principio del fichero------------------------------------
-         */
-
-         fSeek( hSource, 0, 0 )
-
-         SysRefresh()
-
-         while ( nBytes := fRead( hSource, @cBuffer, nBuffer ) ) > 0
-
-            fWrite( hTarget, cBuffer, nBytes )
-
-            if !Empty( ::oMtr )
-               ::oMtr:Set( nFile += nBytes )
-            end if
-
-            SysRefresh()
-
-         end while
-
-         fClose( hSource )
-         fClose( hTarget )
+         __CopyFile( aSource[ n ], ::getPathComunication() + aTarget[ n ] )
 
       next
 
-      lRet  := nTotSize == nFile
+      lRet  := .t.
 
    else
 
