@@ -6878,7 +6878,7 @@ static function QuiRctPrv( lDetail, lSetCnt )
    nOrdAnt        := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "cNumFac" ) )
 
    while ( D():AlbaranesProveedores( nView ) )->( dbSeek( ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac ) )
-      SetFacturadoAlbaranProveedor( .f., , , D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ) )
+      SetFacturadoAlbaranProveedor( .f., nView ) 
    end while
 
    ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )
@@ -6954,7 +6954,7 @@ STATIC FUNCTION DelDetalle( cFactura )
 
       while ( D():AlbaranesProveedores( nView ) )->cNumFac == cFactura .and. !( D():AlbaranesProveedores( nView ) )->( eof() )
 
-         SetFacturadoAlbaranProveedor( .f., oStock, , D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ) )
+         SetFacturadoAlbaranProveedor( .f., nView )
 
          ( D():AlbaranesProveedores( nView ) )->( dbSkip() )
 

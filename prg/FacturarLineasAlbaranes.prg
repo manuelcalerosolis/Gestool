@@ -1249,7 +1249,7 @@ METHOD GuardaAlbaranModa() CLASS TFacturarLineasAlbaranes
 
    while !( ::cTemporalLineaAlbaran )->( eof() )
 
-      appendPass( ::cTemporalLineaAlbaran,;
+      appendRegisterByHash(::cTemporalLineaAlbaran,;
                   D():Get( "AlbCliL", ::nView ),;
                   {  "nIva" => 0,;
                      "nReq" => 0 } )
@@ -1302,7 +1302,7 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
    Pasamos los datos de la cabecera--------------------------------------------
    */
 
-   appendPass( D():Get( "AlbCliT", ::nView ),;
+   appendRegisterByHash(D():Get( "AlbCliT", ::nView ),;
                D():Get( "FacCliT", ::nView ),;
                {  "cSerie"    => ::cSerieFactura,;
                   "nNumFac"   => ::nNumeroFactura,;
@@ -1319,7 +1319,7 @@ METHOD GeneraFactura() CLASS TFacturarLineasAlbaranes
 
    while !( ::cTemporalLineaFactura )->( Eof() )
 
-      appendPass( ::cTemporalLineaFactura,;
+      appendRegisterByHash(::cTemporalLineaFactura,;
                   D():Get( "FacCliL", ::nView ),;
                   {  "cSerie"    => ::cSerieFactura,;
                      "nNumFac"   => ::nNumeroFactura,;

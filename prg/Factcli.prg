@@ -16101,6 +16101,8 @@ CLASS sTotal
    DATA nTotalDescuentoUno             INIT 0
    DATA nTotalDescuentoDos             INIT 0
 
+   DATA nTotalSuplidos                 INIT 0
+
    DATA nTotalCobrado                  INIT 0
 
    DATA nPromocion                     INIT 0

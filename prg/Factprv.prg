@@ -2512,7 +2512,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       if len( aNumAlb ) > 0
          for n := 1 to len( aNumAlb )
             if ( D():AlbaranesProveedores( nView ) )->( dbSeek( aNumAlb[ n ] ) )
-               SetFacturadoAlbaranProveedor( .f., , , D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ), D():AlbaranesProveedoresSeries( nView ) )
+               SetFacturadoAlbaranProveedor( .f., nView )
             end if
          next
       end if
@@ -6384,7 +6384,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
             aAdd( aNumAlb, aAlbaranes[ nItem, 2 ] )
 
             if ( D():AlbaranesProveedores( nView ) )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
-               SetFacturadoAlbaranProveedor( !( D():AlbaranesProveedores( nView ) )->lFacturado, , , D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ), D():AlbaranesProveedoresSeries( nView ) )
+               SetFacturadoAlbaranProveedor( !( D():AlbaranesProveedores( nView ) )->lFacturado, nView )
             end if
 
             if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
@@ -6504,7 +6504,7 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
          Actualizamos el estado------------------------------------------------
          */
 
-         SetFacturadoAlbaranProveedor( .t., , , D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ), D():AlbaranesProveedoresSeries( nView ) )
+         SetFacturadoAlbaranProveedor( .t., nView )
 
       end if
 
@@ -7004,7 +7004,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
                Ponemos el albaran como facturado-------------------------------
                */
 
-               SetFacturadoAlbaranProveedor( .t., , , D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ), D():AlbaranesProveedoresSeries( nView ), cSerFac + Str( nNumFac ) + cSufFac )
+               SetFacturadoAlbaranProveedor( .t., nView, cSerFac + Str( nNumFac ) + cSufFac )
 
                /*
                Rollback de los stocks------------------------------------------
@@ -7540,7 +7540,7 @@ Static Function QuiFacPrv( lDetail )
 
       while ( D():AlbaranesProveedores( nView ) )->cNumFac == cFactura .and. !( D():AlbaranesProveedores( nView ) )->( eof() )
 
-         SetFacturadoAlbaranProveedor( .f., oStock, , D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ), D():AlbaranesProveedoresSeries( nView ) )
+         SetFacturadoAlbaranProveedor( .f., nView )
 
          ( D():AlbaranesProveedores( nView ) )->( dbSkip() )
 
@@ -8759,12 +8759,12 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
    local aPIvGas     := { 0, 0, 0 }
    local aPReGas     := { 0, 0, 0 }
 
+   DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
    DEFAULT cFacPrvT  := D():FacturasProveedores( nView )
    DEFAULT cFacPrvL  := D():FacturasProveedoresLineas( nView )
    DEFAULT cIva      := D():TiposIva( nView )
    DEFAULT cDiv      := D():Divisas( nView )
    DEFAULT cFacPrvP  := D():FacturasProveedoresPagos( nView )
-   DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
    DEFAULT lPic      := .f.
 
    public nTotBrt    := 0
@@ -9091,7 +9091,7 @@ function nVtaFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvL, cIva, cDiv, nY
             ( dHasta == nil .or. ( cFacPrvT )->dFecFac <= dHasta )    .and.;
             ( nYear == nil .or. Year( ( cFacPrvT )->dFecFac ) == nYear )
 
-            nCon  += nTotFacPrv( ( cFacPrvT )->cSerFac + Str( (cFacPrvT)->nNumFac ) + (cFacPrvT)->cSufFac, cFacPrvT, cFacPrvL, cIva, cDiv, nil, nil, cDivEmp(), .f. )
+            nCon  += nTotFacPrv( ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac, cFacPrvT, cFacPrvL, cIva, cDiv, nil, nil, cDivEmp(), .f. )
 
          end if
 
@@ -9878,6 +9878,7 @@ Function sTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, cDivRet
 
    sTotal                                 := sTotal()
    sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalSuplidos                  := nTotSup
    sTotal:nTotalNeto                      := nTotNet
    sTotal:nTotalIva                       := nTotIva
    sTotal:aTotalIva                       := aTotIva
@@ -13495,6 +13496,14 @@ Function lIntelliArtciculoSearch( cCodArt, cCodPrv, cArticulo, cArtPrv, cCodebar
    end case
 
 Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION structTotalFacturaProveedoresVista( id, nView )
+
+   local structTotal := sTotFacPrv( id, D():FacturasProveedores( nView ), D():FacturasProveedoresLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), D():FacturasProveedoresPagos( nView ) )
+
+Return ( structTotal )   
 
 //---------------------------------------------------------------------------//
 

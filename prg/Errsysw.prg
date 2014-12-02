@@ -266,7 +266,7 @@ static function ErrorDialog( e ) // -> logical or quits App.
    ErrorBlock( oOldError )
 
    DEFINE DIALOG oDlg ;
-      SIZE 300, 200 + If( lIsWinNT, 50, 0 ) ;
+      SIZE 300, 300 + If( lIsWinNT, 50, 0 ) ;
       TITLE DLG_TITLE
 
    @ 0, 0 SAY oSay PROMPT OemToAnsi( cMessage ) ;

@@ -2834,17 +2834,17 @@ Return ( lPass )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION AppendPass( cAliOrigen, cAliDestino, hHash )
+FUNCTION appendRegisterByHash( cAliOrigen, cAliDestino, hHash )
 
    local lPass    := .f.
 
-   ( cAliDestino )->( dbAppend() )
+   ( cAliDestino )->( dbAppend(.t.) )
 
-   if ( cAliDestino )->( !NetErr() )
+   if !( cAliDestino )->( NetErr() )
 
-         PassField( cAliOrigen, cAliDestino )
+      PassField( cAliOrigen, cAliDestino )
 
-         PassHash( cAliDestino, hHash )
+      PassHash( cAliDestino, hHash )
 
       ( cAliDestino )->( dbUnLock() )
 

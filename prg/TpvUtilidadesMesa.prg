@@ -586,7 +586,7 @@ METHOD GuardaLineasTicketDestino( cNumeroTicket )
 		::oNuevo():GoTop()
       	while !::oNuevo():Eof()
 
-         	appendPass( ::oNuevo():cAlias,;
+         	appendRegisterByHash(::oNuevo():cAlias,;
                      	::oSender:oTiketLinea:cAlias,;
 						{ 	"cSerTil" => ::oSender:oTiketCabecera:FieldGetByName( "cSerTik" ),;
                         	"cNumTil" => ::oSender:oTiketCabecera:FieldGetByName( "cNumTik" ),;
@@ -636,7 +636,7 @@ METHOD CreaNuevoTicket() Class TpvUtilidadesMesa
 
 	while !::oNuevo():Eof()
 
-		appendPass( ::oNuevo():cAlias,;
+		appendRegisterByHash(::oNuevo():cAlias,;
 		         ::oSender:oTiketLinea:cAlias,;
 		         {  "cSerTil" => ::oSender:oTiketCabecera:cSerTik,;
 		            "cNumTil" => ::oSender:oTiketCabecera:cNumTik,;

@@ -860,13 +860,13 @@ Method lCreateMail() CLASS TGenMailing
    oBlock                        := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::oMail                    := CreateObject( "JMail.Message" )
+      ::oMail                    := win_oleCreateObject( "JMail.Message" )
 
    RECOVER USING oError
 
       WaitRun( "regsvr32 /s " + FullcurDir() + "JMail.Dll" )
 
-      ::oMail                    := CreateObject( "JMail.Message" )
+      ::oMail                    := win_oleCreateObject( "JMail.Message" )
 
    END SEQUENCE
 
@@ -903,6 +903,8 @@ Method lCreateMail() CLASS TGenMailing
       end if
 
    else
+
+      lCreateMail                := .f.
 
       msgStop( "Error al crear objeto para Envío de  correo electrónico." )
 
@@ -1039,37 +1041,39 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
       Return ( .f. )
    end if
 
-   CursorWait()
+? "lExternalSendMail"
 
+   CursorWait()
+/*
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    if ::lCreateMail()
-
+? 1
       if !Empty( ::cDireccion )
          for each cDireccion in hb_aTokens( ::cDireccion, ";" )
             ::oMail:AddRecipient( cDireccion )
          next
       end if
-
+? 1
       if !Empty( ::cGetPara )
          for each cDireccion in hb_aTokens( ::cGetPara, ";" )
             ::oMail:AddRecipient( cDireccion )
          next
       end if
-
+? 1
       if !Empty( ::cGetCopia )
          for each cDireccion in hb_aTokens( ::cGetCopia, ";" )
             ::oMail:AddRecipientBCC( cDireccion )
          next
       end if
-
+? 1
       if File( Rtrim( ::cGetAdjunto ) )
          ::oMail:AddAttachment( Rtrim( ::cGetAdjunto ) )
       end if
-
+? 1
       lSendMail            := ::oMail:Send( ::MailServerSend() )
-
+? 1
       if !lSendMail
          MsgStop( "Error al enviar correo electrónico." + CRLF + CRLF + ::oMail:ErrorMessage )
       else
@@ -1079,7 +1083,7 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
       end if
 
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( "Error al enviar correo electrónico." + CRLF + CRLF + ErrorMessage( oError ) )
@@ -1088,7 +1092,7 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
 
    END SEQUENCE
    ErrorBlock( oBlock )
-
+*/
    CursorWE()
 
 Return ( lSendMail )
@@ -1514,7 +1518,7 @@ Function lInitHTMEditor()
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      oActiveX             := CreateObject( "RmpHTML.HTMLed" )
+      oActiveX             := win_oleCreateObject( "RmpHTML.HTMLed" )
 
    RECOVER USING oError
 
@@ -1522,7 +1526,7 @@ Function lInitHTMEditor()
       WaitRun( "regsvr32 /s " + FullCurDir() + "RmpHTML.dll" )
       WaitRun( "regsvr32 /s " + FullCurDir() + "AxrmpHTML.dll" )
 
-      oActiveX             := CreateObject( "RmpHTML.HTMLed" )
+      oActiveX             := win_oleCreateObject( "RmpHTML.HTMLed" )
 
    END SEQUENCE
 

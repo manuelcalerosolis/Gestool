@@ -32,7 +32,9 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    DATA tmpEntrada
    DATA tmpSalida
 
+   DATA cSerieFactura
    DATA nNumeroFactura 
+   DATA cSufijoFactura
 
    DATA aAlbaranesProcesados              INIT {}
 
@@ -46,7 +48,10 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    METHOD CierraTemporales()
 
    METHOD loadAlbaranes()     
-   METHOD loadAlbaran( id )    
+      METHOD loadAlbaran( id )    
+
+   METHOD setIdFacturaProveedor()
+   METHOD getIdFacturaProveedor()         INLINE ( ::cSerieFactura + str( ::nNumeroFactura ) + ::cSufijoFactura )
    
    METHOD saveAlbaran()    
       METHOD setLineasFacturadas()
@@ -70,6 +75,7 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
          METHOD cargaProveedor()
       METHOD genLineasFacturaProveedor()
          METHOD insertLineaFacturaProveedor()
+      METHOD guardaTotalesFacturaProveedor()
 
 END CLASS
 
@@ -760,7 +766,7 @@ METHOD setLineasFacturadas()
 
    end while
 
-Return ( .t. )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -773,7 +779,7 @@ METHOD setLineaFacturada( id )
    if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbSeek( id ) )
    
       if D():Lock( "AlbProvL", ::nView ) 
-         ( D():AlbaranesProveedoresLineas( ::nView ) )->cNumFac      := ::nNumeroFactura
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->cNumFac      := id
          ( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado   := .t.
          D():UnLock( "AlbProvL", ::nView ) 
       end if 
@@ -800,13 +806,25 @@ Return ( nil )
 
 METHOD genNuevaFacturaProveedor()
 
-   ::nNumeroFactura        := nNewDoc( "A", D():FacturasProveedores( ::nView ), "nFacPrv", , D():Contadores( ::nView ) )
+   ::setIdFacturaProveedor()
 
    ::genCabeceraFacturaProveedor()
 
    ::genLineasFacturaProveedor()
 
-   msgStop( ::nNumeroFactura, "nNumeroFactura" )
+   ::guardaTotalesFacturaProveedor()
+
+   msgStop( ::getIdFacturaProveedor(), "nNumeroFactura" )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD setIdFacturaProveedor()
+
+   ::cSerieFactura         := "A"
+   ::nNumeroFactura        := nNewDoc( ::cSerieFactura, D():FacturasProveedores( ::nView ), "nFacPrv", , D():Contadores( ::nView ) )
+   ::cSufijoFactura        := retSufEmp()
 
 Return ( nil )
 
@@ -816,9 +834,9 @@ METHOD genCabeceraFacturaProveedor()
 
    if ( D():FacturasProveedores( ::nView ) )->( dbappend( .t. ) ) 
 
-      ( D():FacturasProveedores( ::nView ) )->cSerFac    := "A"
+      ( D():FacturasProveedores( ::nView ) )->cSerFac    := ::cSerieFactura
       ( D():FacturasProveedores( ::nView ) )->nNumFac    := ::nNumeroFactura
-      ( D():FacturasProveedores( ::nView ) )->cSufFac    := retSufEmp()
+      ( D():FacturasProveedores( ::nView ) )->cSufFac    := ::cSufijoFactura
       ( D():FacturasProveedores( ::nView ) )->dFecFac    := getSysDate()
       ( D():FacturasProveedores( ::nView ) )->cTurFac    := cCurSesion()
       ( D():FacturasProveedores( ::nView ) )->cDivFac    := cDivEmp()
@@ -876,9 +894,9 @@ METHOD insertLineaFacturaProveedor()
 
    if ( D():FacturasProveedoresLineas( ::nView ) )->( dbappend( .t. ) ) 
 
-      ( D():FacturasProveedoresLineas( ::nView ) )->cSerFac    := "A"
+      ( D():FacturasProveedoresLineas( ::nView ) )->cSerFac    := ::cSerieFactura
       ( D():FacturasProveedoresLineas( ::nView ) )->nNumFac    := ::nNumeroFactura
-      ( D():FacturasProveedoresLineas( ::nView ) )->cSufFac    := retSufEmp()
+      ( D():FacturasProveedoresLineas( ::nView ) )->cSufFac    := ::cSufijoFactura
       ( D():FacturasProveedoresLineas( ::nView ) )->nNumLin    := nNumeroLinea++
       ( D():FacturasProveedoresLineas( ::nView ) )->cRef       := ( D():Tmp( "TmpPrvO", ::nView ) )->cRef
       ( D():FacturasProveedoresLineas( ::nView ) )->cDetalle   := ( D():Tmp( "TmpPrvO", ::nView ) )->cDetalle
@@ -899,10 +917,10 @@ METHOD insertLineaFacturaProveedor()
       ( D():FacturasProveedoresLineas( ::nView ) )->lKitArt    := ( D():Tmp( "TmpPrvO", ::nView ) )->lKitArt
       ( D():FacturasProveedoresLineas( ::nView ) )->lKitPrc    := ( D():Tmp( "TmpPrvO", ::nView ) )->lKitPrc
       ( D():FacturasProveedoresLineas( ::nView ) )->lIvaLin    := ( D():Tmp( "TmpPrvO", ::nView ) )->lIvaLin
-      ( D():FacturasProveedoresLineas( ::nView ) )->cCodPr1    := ( D():Tmp( "TmpPrvO", ::nView ) )->cCodPr1                           // Cod. prop. 1
-      ( D():FacturasProveedoresLineas( ::nView ) )->cCodPr2    := ( D():Tmp( "TmpPrvO", ::nView ) )->cCodPr2                           // Cod. prop. 2
-      ( D():FacturasProveedoresLineas( ::nView ) )->cValPr1    := ( D():Tmp( "TmpPrvO", ::nView ) )->cValPr1                           // Val. prop. 1
-      ( D():FacturasProveedoresLineas( ::nView ) )->cValPr2    := ( D():Tmp( "TmpPrvO", ::nView ) )->cValPr2                           // Val. prop. 2
+      ( D():FacturasProveedoresLineas( ::nView ) )->cCodPr1    := ( D():Tmp( "TmpPrvO", ::nView ) )->cCodPr1                           
+      ( D():FacturasProveedoresLineas( ::nView ) )->cCodPr2    := ( D():Tmp( "TmpPrvO", ::nView ) )->cCodPr2                           
+      ( D():FacturasProveedoresLineas( ::nView ) )->cValPr1    := ( D():Tmp( "TmpPrvO", ::nView ) )->cValPr1                           
+      ( D():FacturasProveedoresLineas( ::nView ) )->cValPr2    := ( D():Tmp( "TmpPrvO", ::nView ) )->cValPr2                           
       ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin1   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin1
       ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin2   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin2
       ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin3   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin3
@@ -948,4 +966,25 @@ METHOD insertLineaFacturaProveedor()
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD guardaTotalesFacturaProveedor()
+
+   local structTotal    := structTotalFacturaProveedoresVista( ::getIdFacturaProveedor(), ::nView )
+
+   if ( D():FacturasProveedores( ::nView ) )->( dbseek( ::getIdFacturaProveedor() ) ) .and. ( D():FacturasProveedores( ::nView ) )->( dbrlock() ) 
+
+      ( D():FacturasProveedores( ::nView ) )->nTotNet  := structTotal:nTotalNeto
+      ( D():FacturasProveedores( ::nView ) )->nTotSup  := structTotal:nTotalSuplidos
+      ( D():FacturasProveedores( ::nView ) )->nTotIva  := structTotal:nTotalIva
+      ( D():FacturasProveedores( ::nView ) )->nTotReq  := structTotal:nTotalRecargoEquivalencia
+      ( D():FacturasProveedores( ::nView ) )->nTotFac  := structTotal:nTotalDocumento
+      
+      ( D():FacturasProveedores( ::nView ) )->( dbunlock() ) 
+
+   end if       
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 

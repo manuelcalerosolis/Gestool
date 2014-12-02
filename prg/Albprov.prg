@@ -711,7 +711,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       DEFINE BTNSHELL RESOURCE "ChgState" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( SetFacturadoAlbaranProveedor( !lFacturado( D():AlbaranesProveedores( nView ) ), oStock, oWndBrw:oBrw ) );
+         ACTION   ( SetFacturadoAlbaranProveedor( !lFacturado( D():AlbaranesProveedores( nView ) ), nView ), oWndBrw:refresh() );
          TOOLTIP  "Cambiar es(t)ado" ;
          HOTKEY   "T";
          LEVEL    ACC_EDIT
@@ -9186,6 +9186,7 @@ Function SynAlbPrv( cPath )
             aAdd( aPedPrv, ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed )
 
             ( cPedPrvT )->( dbSkip() )
+
          end while
 
       end if
@@ -9245,23 +9246,27 @@ Function SynAlbPrv( cPath )
       end if
 
       if ( cAlbPrvL )->dFecAlb != RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
-         ( cAlbPrvL )->dFecAlb    := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
+         ( cAlbPrvL )->dFecAlb   := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "dFecAlb" )
       end if
+
+      if empty( ( cAlbPrvL )->cNumFac )
+         ( cAlbPrvL )->cNumFac   := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cNumFac" )
+      end if 
 
       if !Empty( ( cAlbPrvL )->mNumSer )
          aNumSer                       := hb_aTokens( ( cAlbPrvL )->mNumSer, "," )
          for each cNumSer in aNumSer
             ( cAlbPrvS )->( dbAppend() )
-            ( cAlbPrvS )->cSerAlb    := ( cAlbPrvL )->cSerAlb
-            ( cAlbPrvS )->nNumAlb    := ( cAlbPrvL )->nNumAlb
-            ( cAlbPrvS )->cSufAlb    := ( cAlbPrvL )->cSufAlb
-            ( cAlbPrvS )->cRef       := ( cAlbPrvL )->cRef
-            ( cAlbPrvS )->cAlmLin    := ( cAlbPrvL )->cAlmLin
-            ( cAlbPrvS )->nNumLin    := ( cAlbPrvL )->nNumLin
-            ( cAlbPrvS )->lFacturado := ( cAlbPrvL )->lFacturado
-            ( cAlbPrvS )->cNumSer    := cNumSer
+            ( cAlbPrvS )->cSerAlb      := ( cAlbPrvL )->cSerAlb
+            ( cAlbPrvS )->nNumAlb      := ( cAlbPrvL )->nNumAlb
+            ( cAlbPrvS )->cSufAlb      := ( cAlbPrvL )->cSufAlb
+            ( cAlbPrvS )->cRef         := ( cAlbPrvL )->cRef
+            ( cAlbPrvS )->cAlmLin      := ( cAlbPrvL )->cAlmLin
+            ( cAlbPrvS )->nNumLin      := ( cAlbPrvL )->nNumLin
+            ( cAlbPrvS )->lFacturado   := ( cAlbPrvL )->lFacturado
+            ( cAlbPrvS )->cNumSer      := cNumSer
          next
-         ( cAlbPrvL )->mNumSer       := ""
+         ( cAlbPrvL )->mNumSer         := ""
       end if
 
       /*
@@ -9700,7 +9705,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-FUNCTION SetFacturadoAlbaranProveedor( lFacturado, oStock, oBrw, cAlbPrvT, cAlbPrvL, cAlbPrvS, cNumFac )
+FUNCTION SetFacturadoAlbaranProveedor( lFacturado, nView, )
 
    local nRec
    local nOrd
@@ -9717,90 +9722,64 @@ FUNCTION SetFacturadoAlbaranProveedor( lFacturado, oStock, oBrw, cAlbPrvT, cAlbP
    Cambiamos las cabeceras-----------------------------------------------------
    */
 
-   if dbDialogLock( cAlbPrvT )
-
-      ( cAlbPrvT )->lFacturado := lFacturado
-      ( cAlbPrvT )->cNumFac    := cNumFac
-      ( cAlbPrvT )->( dbUnlock() )
-
-   end if
-
-   if lFacturado
-
-      if dbDialogLock( cAlbPrvT )
-         ( cAlbPrvT )->nFacturado := 3
-         ( cAlbPrvT )->( dbUnlock() )
-      end if
-
-   else
-
-      if dbDialogLock( cAlbPrvT )
-         ( cAlbPrvT )->nFacturado := 1
-         ( cAlbPrvT )->( dbUnlock() )
-      end if
-
+   if dbDialogLock( D():AlbaranesProveedores( nView ) )
+      ( D():AlbaranesProveedores( nView ) )->lFacturado := lFacturado
+      ( D():AlbaranesProveedores( nView ) )->cNumFac    := cNumFac
+      ( D():AlbaranesProveedores( nView ) )->nFacturado := if( lFacturado, 3, 1 )
+      ( D():AlbaranesProveedores( nView ) )->( dbUnlock() )
    end if
 
    /*
    Cambiamos el estado en las lineas-------------------------------------------
    */
 
-   nRec                 := ( cAlbPrvL )->( Recno() )
-   nOrd                 := ( cAlbPrvL )->( OrdSetFocus( "nNumAlb" ) )
+   D():getStatusAlbaranesProveedoresLineas( nView )
+   oD():ordsetfocusAlbaranesProveedores( "nNumAlb", nView )
 
-   if ( cAlbPrvL )->( dbSeek( ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb ) )
+   if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( D():AlbaranesProveedoresId( nView ) ) )
 
-      while ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb == ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb .and. !( cAlbPrvL )->( Eof() )
+      while D():AlbaranesProveedoresLineasId( nView ) == D():AlbaranesProveedoresId( nView ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
 
-         if dbDialogLock( cAlbPrvL )
-            ( cAlbPrvL )->lFacturado := lFacturado
-            ( cAlbPrvL )->( dbUnlock() )
+         if dbDialogLock( D():AlbaranesProveedoresLineas( nView ) )
+            ( D():AlbaranesProveedoresLineas( nView ) )->lFacturado := lFacturado
+            ( D():AlbaranesProveedoresLineas( nView ) )->( dbUnlock() )
           end if
 
-         ( cAlbPrvL )->( dbSkip() )
+         ( D():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
 
       end while
 
    end if
 
-   ( cAlbPrvL )->( OrdSetFocus( nOrd ) )
-   ( cAlbPrvL )->( dbGoTo( nRec ) )
+   ( D():AlbaranesProveedoresLineas( nView ) )->( ordSetFocus( nOrd ) )
+   D():setStatusAlbaranesProveedoresLineas( nView )
 
    /*
    Cambiamos el estado de las series-------------------------------------------
    */
 
-   nRec                 := ( cAlbPrvS )->( Recno() )
-   nOrd                 := ( cAlbPrvS )->( OrdSetFocus( "nNumAlb" ) )
+   nRec                 := ( D():AlbaranesProveedoresSeries( nView ) )->( Recno() )
+   nOrd                 := ( D():AlbaranesProveedoresSeries( nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
-   if ( cAlbPrvS )->( dbSeek( ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb ) )
+   if ( D():AlbaranesProveedoresSeries( nView ) )->( dbSeek( D():AlbaranesProveedoresId( nView ) ) )
 
-      while ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb == ( cAlbPrvS )->cSerAlb + Str( ( cAlbPrvS )->nNumAlb ) + ( cAlbPrvS )->cSufAlb .and. !( cAlbPrvS )->( Eof() )
+      while D():AlbaranesProveedoresSeriesId( nView ) == D():AlbaranesProveedoresId( nView ) .and. !( D():AlbaranesProveedoresSeries( nView ) )->( eof() )
 
-         if dbDialogLock( cAlbPrvS )
-            ( cAlbPrvS )->lFacturado := lFacturado
-            ( cAlbPrvS )->( dbUnlock() )
+         if dbDialogLock( D():AlbaranesProveedoresSeries( nView ) )
+            ( D():AlbaranesProveedoresSeries( nView ) )->lFacturado := lFacturado
+            ( D():AlbaranesProveedoresSeries( nView ) )->( dbUnlock() )
           end if
 
-         ( cAlbPrvS )->( dbSkip() )
+         ( D():AlbaranesProveedoresSeries( nView ) )->( dbSkip() )
 
       end while
 
    end if
 
-   ( cAlbPrvS )->( OrdSetFocus( nOrd ) )
-   ( cAlbPrvS )->( dbGoTo( nRec ) )
+   ( D():AlbaranesProveedoresSeries( nView ) )->( OrdSetFocus( nOrd ) )
+   ( D():AlbaranesProveedoresSeries( nView ) )->( dbGoTo( nRec ) )
 
    CursorWE()
-
-   /*
-   Refrescamos el browse si lo hubiese-----------------------------------------
-   */
-
-   if oBrw != nil
-      oBrw:Refresh()
-      oBrw:SetFocus()
-   end if
 
 RETURN NIL
 

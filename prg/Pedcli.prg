@@ -105,8 +105,8 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _CNUMALB                  90
 #define _LOPERPV                  91
 #define _CBANCO                   92
-#define _CPAISIBAN 				  93
-#define _CCTRLIBAN 				  94
+#define _CPAISIBAN 				    93
+#define _CCTRLIBAN 				    94
 #define _CENTBNC                  95
 #define _CSUCBNC                  96
 #define _CDIGBNC                  97
@@ -15680,10 +15680,10 @@ function aColPedCli()
    aAdd( aColPedCli, { "nProduc",   "N",    1,  0, "Lógico de producido",              "",                  "", "( cDbfCol )", .f. } )
    aAdd( aColPedCli, { "dFecCad",   "D",    8,  0, "Fecha de caducidad",               "",                  "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "dFecUltCom","D",    8,  0, "Fecha ultima venta",               "",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "lFromAtp"  ,"L",    1,  0, "", 								   "",          		"", "( cDbfCol )", .f. } )
-   aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades última compra",		   "",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nBultos",   "N",   16,  6, "Numero de bultos en líneas", 	   "",              	"", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cFormato",  "C",  100,  0, "Formato de venta",                 "",              	"", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lFromAtp"  ,"L",    1,  0, "", 								         "",          		   "", "( cDbfCol )", .f. } )
+   aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades última compra",		      "",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nBultos",   "N",   16,  6, "Numero de bultos en líneas", 	   "",              	   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cFormato",  "C",  100,  0, "Formato de venta",                 "",              	   "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 
