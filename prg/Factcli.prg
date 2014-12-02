@@ -575,6 +575,7 @@ static nMeter              := 1
 
 static cUltimoCliente      := ""
 static cSerieAnterior      := ""
+static cCodPagoAnterior    := ""
 
 static bEdtRec             := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtRec( aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 static bEdtDet             := { |aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
@@ -5541,6 +5542,8 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             cSerieAnterior      := aTmp[ _CSERIE ]
 
     end case  		
+
+      cCodPagoAnterior           := aTmp[ _CCODPAGO ]
 
    	/*
    	Comineza la transaccion----------------------------------------------------
@@ -12561,10 +12564,14 @@ STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt, aNumDoc )
 					 
    DEFAULT lTot   := .f.
 
-   if lRecibosPagadosTmp( dbfTmpPgo )
-      MsgStop( "No se pueden añadir registros a una factura con recibos cobrados" )
-      return .f.
-   end if
+   if !( "TABLET" $ cParamsMain() )
+
+      if lRecibosPagadosTmp( dbfTmpPgo )
+         MsgStop( "No se pueden añadir registros a una factura con recibos cobrados" )
+         return .f.
+      end if
+
+   end if   
 
    if ( Empty( aNumDoc ) ) .or. lTot // .and. !aTmp[ _LIMPALB ] )
 
@@ -23754,24 +23761,6 @@ N§ PO  LC  Descripci¢n       Observaciones
 RETURN ( aSucces )
 
 //-------------------------------------------------------------------------//
-
-static function myBookMark(n)
-
-   msgAlert( ( dbfTmpLin )->( RecNo() ), "Llego")
-
-   if n == nil
-      msgAlert( ( dbfTmpLin )->( RecNo() ), "Devuelvo recno")
-      ( dbfTmpLin )->( RecNo() )
-   else 
-      msgAlert( n, "Parametro q recibo")
-      ( dbfTmpLin )->( DbGoto( n ) )
-      msgAlert( ( dbfTmpLin )->( RecNo() ), "Donde lo dejo")
-   end if 
-
-Return nil 
-
-//---------------------------------------------------------------------------//
-
 /*
 Finaliza la transacción de datos
 */
@@ -24331,12 +24320,16 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCod
    Ahora escribimos en el fichero definitivo de pagos--------------------------
    */
 
-   ( dbfTmpPgo )->( dbGoTop() )
-   while ( dbfTmpPgo )->( !eof() )
-      dbPass( dbfTmpPgo, dbfFacCliP, .t., cSerFac, nNumFac, cSufFac )
-      ( dbfTmpPgo )->( dbSkip() )
-      SysRefresh()
-   end while
+   /*if cCodPagoAnterior == aTmp[ _CCODPAGO ]
+
+      ( dbfTmpPgo )->( dbGoTop() )
+      while ( dbfTmpPgo )->( !eof() )
+         dbPass( dbfTmpPgo, dbfFacCliP, .t., cSerFac, nNumFac, cSufFac )
+         ( dbfTmpPgo )->( dbSkip() )
+         SysRefresh()
+      end while
+
+   end if   */
 
 Return .t.
 

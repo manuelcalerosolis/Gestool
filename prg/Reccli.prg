@@ -4674,10 +4674,22 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
             ( dbfFacCliP )->cCodAge       := cCodAge
             ( dbfFacCliP )->lEsperaDoc    := ( dbfFPago )->lEsperaDoc
 
-            if ( dbfFPago )->nCobRec == 1 .and. nMode == APPD_MODE
-               ( dbfFacCliP )->cTurRec    := cCurSesion()
-               ( dbfFacCliP )->lCobrado   := .t.
-               ( dbfFacCliP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+            if !( "TABLET" $ cParamsMain() )
+
+               if ( dbfFPago )->nCobRec == 1 .and. nMode == APPD_MODE
+                  ( dbfFacCliP )->cTurRec    := cCurSesion()
+                  ( dbfFacCliP )->lCobrado   := .t.
+                  ( dbfFacCliP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+               end if
+
+            else
+            
+               if ( dbfFPago )->nCobRec == 1
+                  ( dbfFacCliP )->cTurRec    := cCurSesion()
+                  ( dbfFacCliP )->lCobrado   := .t.
+                  ( dbfFacCliP )->dEntrada   := dNexDay( dFecFac + ( dbfFPago )->nPlaUno + ( ( dbfFPago )->nDiaPla * ( n - 1 ) ), dbfCli )
+               end if
+
             end if
 
             ( dbfFacCliP )->dFecCre       := GetSysDate()
