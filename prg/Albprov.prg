@@ -194,6 +194,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define __CALMORIGEN             109
 #define __NBULTOS                110
 #define _CFORMATO                111
+#define __CNUMFAC                112
 
 /*
 Definici¢n de Array para impuestos
@@ -8974,6 +8975,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía" , "",             "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "nBultos",      "N", 16,  6, "Numero de bultos en líneas", "",                     "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cFormato",     "C",100,  0, "Formato de compra", "",                              "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cNumFac",      "C", 12,  0, "Número de la factura de cliente" , "",               "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 
@@ -9804,39 +9806,27 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-FUNCTION getFacturadoAlbaranProveedor( id, nView )
+FUNCTION getEstadoAlbaranProveedor( id, nView )
 
    local nOrd
-   local nEstado        := 0
+   local nLineasProcesadas := 0
+   local nLineasFacturadas := 0
+   local nEstadoAlbaran    := 0
 
    CursorWait()
 
-   // Cambiamos el estado en las lineas-------------------------------------------
+   // Comprobamos las lineas de albaran----------------------------------------
 
-   nOrd                 := ( D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( "nNumAlb" ) )
+   nOrd                    := ( D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
    if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( id ) )
 
       while ( D():AlbaranesProveedoresLineasId( nView ) == id ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
 
+         nLineasProcesadas++
+
          if ( D():AlbaranesProveedoresLineas( nView ) )->lFacturado 
-            
-            do case
-            case nEstado <= albNoFacturado
-               nEstado  := albTotalmenteFacturado
-            case nEstado == albTotalmenteFacturado
-               nEstado  := albParcialmenteFacturado
-            end case                
-
-         else 
-
-            do case
-            case nEstado <= albNoFacturado
-               nEstado  := albNoFacturado
-            case nEstado == albTotalmenteFacturado
-               nEstado  := albParcialmenteFacturado
-            end case                
-
+            nLineasFacturadas++
          end if 
 
          (  D():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
@@ -9847,9 +9837,43 @@ FUNCTION getFacturadoAlbaranProveedor( id, nView )
 
    (  D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( nOrd ) )
 
+   // Comprobamos las lineas q se han procesado--------------------------------
+
+   do case
+      case nLineasFacturadas == 0
+         nEstadoAlbaran    := albNoFacturado
+      case nLineasFacturadas > 0 .and. nLineasFacturadas < nLineasProcesadas
+         nEstadoAlbaran    := albParcialmenteFacturado
+      otherwise
+         nEstadoAlbaran    := albTotalmenteFacturado
+   end case
+
    CursorWE()
 
-RETURN ( nEstado )
+RETURN ( nEstadoAlbaran )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setEstadoAlbaranProveedor( id, nView )
+
+   local nOrd
+   local nFacturado     := 0
+
+   nOrd                 := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "nNumAlb" ) )
+
+   if ( D():AlbaranesProveedores( nView ) )->( dbSeek( id ) )
+      nFacturado        := getEstadoAlbaranProveedor( id, nView )
+      if ( D():AlbaranesProveedores( nView ) )->nFacturado != nFacturado
+         if ( D():AlbaranesProveedores( nView ) )->( dbrlock() )
+            ( D():AlbaranesProveedores( nView ) )->nFacturado  := nFacturado
+            ( D():AlbaranesProveedores( nView ) )->( dbrunlock() )
+         end if 
+      end if 
+   end if 
+
+   (  D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( nOrd ) )
+
+RETURN ( nFacturado )
 
 //---------------------------------------------------------------------------//
 

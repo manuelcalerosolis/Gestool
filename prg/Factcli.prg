@@ -976,54 +976,54 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    oWndBrw:AddSeaBar()
 
-   DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:RecAdd() );
-      ON DROP  ( oWndBrw:RecDup() );
-      TOOLTIP  "(A)ñadir";
-      BEGIN GROUP;
-      HOTKEY   "A";
-      LEVEL    ACC_APPD
-
-   DEFINE BTNSHELL oDup RESOURCE "DUP" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:RecDup() );
-      MENU     This:Toggle() ;
-      TOOLTIP  "(D)uplicar";
-      HOTKEY   "D";
-      LEVEL    ACC_APPD
-
-      DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( DupSerie( oWndBrw ) );
-         TOOLTIP  "Series" ;
-         FROM     oDup ;
-         CLOSED ;
+         ACTION   ( oWndBrw:RecAdd() );
+         ON DROP  ( oWndBrw:RecDup() );
+         TOOLTIP  "(A)ñadir";
+         BEGIN GROUP;
+         HOTKEY   "A";
          LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:RecEdit() );
-      TOOLTIP  "(M)odificar";
-      HOTKEY   "M" ;
-      MRU;
-      LEVEL    ACC_EDIT
+      DEFINE BTNSHELL oDup RESOURCE "DUP" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecDup() );
+         MENU     This:Toggle() ;
+         TOOLTIP  "(D)uplicar";
+         HOTKEY   "D";
+         LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oWndBrw:RecZoom() );
-      TOOLTIP  "(Z)oom";
-      HOTKEY   "Z" ;
-      MRU;
-      LEVEL    ACC_ZOOM
+         DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( DupSerie( oWndBrw ) );
+            TOOLTIP  "Series" ;
+            FROM     oDup ;
+            CLOSED ;
+            LEVEL    ACC_APPD
 
-   DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( WinDelRec( oWndBrw:oBrw, D():FacturasClientes( nView ), {|| QuiFacCli() } ) );
-      MENU     This:Toggle() ;
-      TOOLTIP  "(E)liminar";
-      HOTKEY   "E";
-      LEVEL    ACC_DELE
+      DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecEdit() );
+         TOOLTIP  "(M)odificar";
+         HOTKEY   "M" ;
+         MRU;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oWndBrw:RecZoom() );
+         TOOLTIP  "(Z)oom";
+         HOTKEY   "Z" ;
+         MRU;
+         LEVEL    ACC_ZOOM
+
+      DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( WinDelRec( oWndBrw:oBrw, D():FacturasClientes( nView ), {|| QuiFacCli() } ) );
+         MENU     This:Toggle() ;
+         TOOLTIP  "(E)liminar";
+         HOTKEY   "E";
+         LEVEL    ACC_DELE
 
       DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
          NOBORDER ;
@@ -1033,57 +1033,57 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          CLOSED ;
          LEVEL    ACC_DELE
 
-   DEFINE BTNSHELL oImp RESOURCE "IMP" GROUP OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenFacCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
-      TOOLTIP  "(I)mprimir";
-      HOTKEY   "I";
-      LEVEL    ACC_IMPR
+      DEFINE BTNSHELL oImp RESOURCE "IMP" GROUP OF oWndBrw ;
+         NOBORDER ;
+         MENU     This:Toggle() ;
+         ACTION   ( GenFacCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
+         TOOLTIP  "(I)mprimir";
+         HOTKEY   "I";
+         LEVEL    ACC_IMPR
 
-      lGenFacCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
+         lGenFacCli( oWndBrw:oBrw, oImp, IS_PRINTER ) ;
 
-   DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( ImprimirSeriesFacturas() );
-      TOOLTIP  "Imp(r)imir series";
-      HOTKEY   "R";
-      LEVEL    ACC_IMPR
+      DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ImprimirSeriesFacturas() );
+         TOOLTIP  "Imp(r)imir series";
+         HOTKEY   "R";
+         LEVEL    ACC_IMPR
 
-   DEFINE BTNSHELL oPrv RESOURCE "PREV1" OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenFacCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
-      TOOLTIP  "(P)revisualizar";
-      HOTKEY   "P";
-      LEVEL    ACC_IMPR
+      DEFINE BTNSHELL oPrv RESOURCE "PREV1" OF oWndBrw ;
+         NOBORDER ;
+         MENU     This:Toggle() ;
+         ACTION   ( GenFacCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
+         TOOLTIP  "(P)revisualizar";
+         HOTKEY   "P";
+         LEVEL    ACC_IMPR
 
-      lGenFacCli( oWndBrw:oBrw, oPrv, IS_SCREEN ) ;
+         lGenFacCli( oWndBrw:oBrw, oPrv, IS_SCREEN ) ;
 
-   DEFINE BTNSHELL oPdf RESOURCE "DOCLOCK" OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenFacCli( IS_PDF ) ) ;
-      TOOLTIP  "Pd(f)";
-      HOTKEY   "F";
-      LEVEL    ACC_IMPR
+      DEFINE BTNSHELL oPdf RESOURCE "DOCLOCK" OF oWndBrw ;
+         NOBORDER ;
+         MENU     This:Toggle() ;
+         ACTION   ( GenFacCli( IS_PDF ) ) ;
+         TOOLTIP  "Pd(f)";
+         HOTKEY   "F";
+         LEVEL    ACC_IMPR
 
-      lGenFacCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
+         lGenFacCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenFacCli( IS_MAIL ) ) ;
-      TOOLTIP  "Correo electrónico";
-      LEVEL    ACC_IMPR
+      DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+         NOBORDER ;
+         MENU     This:Toggle() ;
+         ACTION   ( GenFacCli( IS_MAIL ) ) ;
+         TOOLTIP  "Correo electrónico";
+         LEVEL    ACC_IMPR
 
-      lGenFacCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
+         lGenFacCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
-   DEFINE BTNSHELL oLiq RESOURCE "Money2_" OF oWndBrw GROUP ;
-      NOBORDER ;
-      ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
-      TOOLTIP  "Cobrar" ;
-      LEVEL    ACC_APPD
+      DEFINE BTNSHELL oLiq RESOURCE "Money2_" OF oWndBrw GROUP ;
+         NOBORDER ;
+         ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
+         TOOLTIP  "Cobrar" ;
+         LEVEL    ACC_APPD
 
       DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
          NOBORDER ;
@@ -1093,12 +1093,12 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), EnlaceA3():GetInstance():WriteASCII(), ) } ) ) ;
-      TOOLTIP  "(C)ontabilizar" ;
-      HOTKEY   "C";
-      LEVEL    ACC_EDIT
+      DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CntFacCli( lChk1, lChk2, nil, .t., oTree, nil, nil, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfAlbCliT, D():Clientes( nView ), dbfDiv, D():Articulos( nView ), dbfFPago, dbfIva, oNewImp ) }, "Contabilizar facturas", lAplicacionA3(), "Simular resultados", .f., "Contabilizar recibos", , {|| if( lAplicacionA3(), EnlaceA3():GetInstance():WriteASCII(), ) } ) ) ;
+         TOOLTIP  "(C)ontabilizar" ;
+         HOTKEY   "C";
+         LEVEL    ACC_EDIT
 
    if oUser():lAdministrador()
 
@@ -1111,14 +1111,14 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    end if
 
-   DEFINE BTNSHELL oSnd RESOURCE "LBL" GROUP OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      TOOLTIP  "En(v)iar" ;
-      MESSAGE  "Seleccionar albaranes para ser enviados" ;
-      ACTION   lSnd( oWndBrw, D():FacturasClientes( nView ) ) ;
-      HOTKEY   "V";
-      LEVEL    ACC_EDIT
+      DEFINE BTNSHELL oSnd RESOURCE "LBL" GROUP OF oWndBrw ;
+         NOBORDER ;
+         MENU     This:Toggle() ;
+         TOOLTIP  "En(v)iar" ;
+         MESSAGE  "Seleccionar albaranes para ser enviados" ;
+         ACTION   lSnd( oWndBrw, D():FacturasClientes( nView ) ) ;
+         HOTKEY   "V";
+         LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
@@ -1144,42 +1144,24 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          CLOSED ;
          LEVEL    ACC_EDIT
 
-if lBancas()
+      DEFINE BTNSHELL RESOURCE "Document_plain_earth_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.1", .f., "Firmar digitalmente (necesita runtime de Java)", .f., "Enviar por correo electrónico" ) ) ;
+         TOOLTIP  "Exportar a Facturae" ;
+         LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( FacCliExcelImport( oWndBrw ) );
-      TOOLTIP  "Importar facturación diaria" ;
-      LEVEL    ACC_APPD
+      DEFINE BTNSHELL RESOURCE "Text_Code_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| ExportarEDI( lChk1, oTree ) }, "Exportar facturas a EDI", .f., "Solo las no exportadas", .t., "Segunda opcion", {|| CreateFileEDI() }, {|| CloseFileEDI() } ) ) ;
+         TOOLTIP  "Exportar a EDI" ;
+         LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( FacCliExcelNovotecno( oWndBrw ) );
-      TOOLTIP  "Importar facturación de Novotecno" ;
-      LEVEL    ACC_APPD
-
-else
-
-   DEFINE BTNSHELL RESOURCE "Document_plain_earth_" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.1", .f., "Firmar digitalmente (necesita runtime de Java)", .f., "Enviar por correo electrónico" ) ) ;
-      TOOLTIP  "Exportar a Facturae" ;
-      LEVEL    ACC_EDIT
-
-   DEFINE BTNSHELL RESOURCE "Text_Code_" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| ExportarEDI( lChk1, oTree ) }, "Exportar facturas a EDI", .f., "Solo las no exportadas", .t., "Segunda opcion", {|| CreateFileEDI() }, {|| CloseFileEDI() } ) ) ;
-      TOOLTIP  "Exportar a EDI" ;
-      LEVEL    ACC_EDIT
-
-end if
-
-   DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
-      TOOLTIP  "M(o)neda";
-      HOTKEY   "O";
-      LEVEL    ACC_ZOOM
+      DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( lEuro := !lEuro, oWndBrw:Refresh() ) ;
+         TOOLTIP  "M(o)neda";
+         HOTKEY   "O";
+         LEVEL    ACC_ZOOM
 
    if oUser():lAdministrador()
 
@@ -1190,35 +1172,35 @@ end if
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-            NOBORDER ;
-	       	ACTION   ( ReplaceCreator( oWndBrw, dbfFacCliL, aColFacCli() ) ) ;
-            TOOLTIP  "Lineas" ;
-            FROM     oRpl ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
+      DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
+         NOBORDER ;
+       	ACTION   ( ReplaceCreator( oWndBrw, dbfFacCliL, aColFacCli() ) ) ;
+         TOOLTIP  "Lineas" ;
+         FROM     oRpl ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
 
    end if
 
-   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( TTrazaDocumento():Activate( FAC_CLI, ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac ) ) ;
-      TOOLTIP  "I(n)forme documento" ;
-      HOTKEY   "N" ;
-      LEVEL    ACC_EDIT
+      DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TTrazaDocumento():Activate( FAC_CLI, ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac ) ) ;
+         TOOLTIP  "I(n)forme documento" ;
+         HOTKEY   "N" ;
+         LEVEL    ACC_EDIT
 
-   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( oScript:Expand() ) ;
-      TOOLTIP  "Scripts" ;
+      DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oScript:Expand() ) ;
+         TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "FacturasClientes" )  
+         ImportScript( oWndBrw, oScript, "FacturasClientes" )  
 
-   DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( oRotor:Expand() ) ;
-      TOOLTIP  "Rotor" ;
+      DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
+         NOBORDER ;
+         MENU     This:Toggle() ;
+         ACTION   ( oRotor:Expand() ) ;
+         TOOLTIP  "Rotor" ;
 
       DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
          NOBORDER ;

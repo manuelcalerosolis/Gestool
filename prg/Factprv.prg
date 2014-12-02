@@ -4525,9 +4525,9 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
    if Empty( cNewCodCli )
       Return .t.
    elseif At( ".", cNewCodCli ) != 0
-      cNewCodCli := PntReplace( aGet[_CCODPRV], "0", RetNumCodPrvEmp() )
+      cNewCodCli     := PntReplace( aGet[ _CCODPRV ], "0", RetNumCodPrvEmp() )
    else
-      cNewCodCli := Rjust( cNewCodCli, "0", RetNumCodPrvEmp() )
+      cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodPrvEmp() )
    end if
 
    if ( D():Proveedores( nView ) )->( dbSeek( cNewCodCli ) )
@@ -4537,7 +4537,7 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbf, nMode, oSay, oTlfPrv )
          return .f.
       end if
 
-      aGet[_CCODPRV ]:cText( ( D():Proveedores( nView ) )->Cod )
+      aGet[ _CCODPRV ]:cText( ( D():Proveedores( nView ) )->Cod )
 
       if Empty( aGet[_CNOMPRV]:varGet() ) .or. lChgCodCli
          aGet[_CNOMPRV]:cText( ( D():Proveedores( nView ) )->Titulo )

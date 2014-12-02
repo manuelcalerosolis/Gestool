@@ -32,7 +32,9 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    DATA tmpEntrada
    DATA tmpSalida
 
-   DATA aAlbaranesProcesados  INIT {}
+   DATA nNumeroFactura 
+
+   DATA aAlbaranesProcesados              INIT {}
 
    METHOD New( nView )
 
@@ -49,18 +51,25 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    METHOD saveAlbaran()    
       METHOD setLineasFacturadas()
       METHOD setLineaFacturada()
-      METHOD addAlbaranFacturado( id )      
       METHOD setAlbaranesFacturados()
+      METHOD addAlbaranFacturado( id )    INLINE   ( iif(  aScan( ::aAlbaranesProcesados, id ) == 0,;
+                                                      aAdd( ::aAlbaranesProcesados, id ), ) )
 
    METHOD passLineas()     
-   METHOD passLinea()     
+      METHOD passLinea()     
 
    METHOD lPassedLinea()      
 
-   METHOD deleteLineas()      INLINE ( ::oBrwSalida:SelectAll(), ::deleteLinea() )
-   METHOD deleteLinea()       INLINE ( dbdel( D():Tmp( "TmpPrvO", ::nView ) ), ::oBrwSalida:refresh(), ::oBrwEntrada:refresh() )
+   METHOD deleteLineas()                  INLINE   ( ::oBrwSalida:SelectAll(), ::deleteLinea() )
+   METHOD deleteLinea()                   INLINE   ( dbdel( D():Tmp( "TmpPrvO", ::nView ) ), ::oBrwSalida:refresh(), ::oBrwEntrada:refresh() )
 
    METHOD recalculaTotal()    
+
+   METHOD genNuevaFacturaProveedor()
+      METHOD genCabeceraFacturaProveedor()
+         METHOD cargaProveedor()
+      METHOD genLineasFacturaProveedor()
+         METHOD insertLineaFacturaProveedor()
 
 END CLASS
 
@@ -718,6 +727,10 @@ METHOD saveAlbaran()
 
    ::aAlbaranesProcesados  := {}
 
+   // Creamos la nueva factura-------------------------------------------------
+
+   ::genNuevaFacturaProveedor()
+
    // Ponemos las lineas traspasadas como facturadas---------------------------
 
    ::setLineasFacturadas()
@@ -760,6 +773,7 @@ METHOD setLineaFacturada( id )
    if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbSeek( id ) )
    
       if D():Lock( "AlbProvL", ::nView ) 
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->cNumFac      := ::nNumeroFactura
          ( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado   := .t.
          D():UnLock( "AlbProvL", ::nView ) 
       end if 
@@ -772,24 +786,166 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD addAlbaranFacturado( id )
+METHOD setAlbaranesFacturados()
 
-   if aScan( ::aAlbaranesProcesados, id ) == 0
-      aAdd( ::aAlbaranesProcesados, id )
+   local id
+
+   for each id in ::aAlbaranesProcesados
+      setEstadoAlbaranProveedor( id, ::nView )
+   next 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD genNuevaFacturaProveedor()
+
+   ::nNumeroFactura        := nNewDoc( "A", D():FacturasProveedores( ::nView ), "nFacPrv", , D():Contadores( ::nView ) )
+
+   ::genCabeceraFacturaProveedor()
+
+   ::genLineasFacturaProveedor()
+
+   msgStop( ::nNumeroFactura, "nNumeroFactura" )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD genCabeceraFacturaProveedor()
+
+   if ( D():FacturasProveedores( ::nView ) )->( dbappend( .t. ) ) 
+
+      ( D():FacturasProveedores( ::nView ) )->cSerFac    := "A"
+      ( D():FacturasProveedores( ::nView ) )->nNumFac    := ::nNumeroFactura
+      ( D():FacturasProveedores( ::nView ) )->cSufFac    := retSufEmp()
+      ( D():FacturasProveedores( ::nView ) )->dFecFac    := getSysDate()
+      ( D():FacturasProveedores( ::nView ) )->cTurFac    := cCurSesion()
+      ( D():FacturasProveedores( ::nView ) )->cDivFac    := cDivEmp()
+      ( D():FacturasProveedores( ::nView ) )->nVdvFac    := nChgDiv( cDivEmp(), D():Divisas( ::nView ) )
+      ( D():FacturasProveedores( ::nView ) )->cCodAlm    := oUser():cAlmacen()
+      ( D():FacturasProveedores( ::nView ) )->cCodCaj    := oUser():cCaja()
+      ( D():FacturasProveedores( ::nView ) )->cCodPro    := cProCnt()
+      ( D():FacturasProveedores( ::nView ) )->cCodUsr    := cCurUsr()
+      ( D():FacturasProveedores( ::nView ) )->cCodDlg    := oUser():cDelegacion()
+      ( D():FacturasProveedores( ::nView ) )->cCodPrv    := ::oProveedor:Value()
+
+      ::cargaProveedor()
+
+      ( D():FacturasProveedores( ::nView ) )->( dbUnLock() )
+
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD cargaProveedor()
+
+   if ( D():Proveedores( ::nView ) )->( dbSeek( ( D():FacturasProveedores( ::nView ) )->cCodPrv ) )
+      ( D():FacturasProveedores( ::nView ) )->cNomPrv    := ( D():Proveedores( ::nView ) )->Titulo 
+      ( D():FacturasProveedores( ::nView ) )->cDirPrv    := ( D():Proveedores( ::nView ) )->Domicilio 
+      ( D():FacturasProveedores( ::nView ) )->cPobPrv    := ( D():Proveedores( ::nView ) )->Poblacion 
+      ( D():FacturasProveedores( ::nView ) )->cProvProv  := ( D():Proveedores( ::nView ) )->Provincia
+      ( D():FacturasProveedores( ::nView ) )->cPosPrv    := ( D():Proveedores( ::nView ) )->CodPostal
+      ( D():FacturasProveedores( ::nView ) )->cDniPrv    := ( D():Proveedores( ::nView ) )->Nif
    end if 
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD setAlbaranesFacturados()
+METHOD genLineasFacturaProveedor()
 
-   local id
+   ( D():Tmp( "TmpPrvO", ::nView ) )->( dbgotop() )
+   while ( !( D():Tmp( "TmpPrvO", ::nView ) )->( eof() ) )
 
-   for each id in ::aAlbaranesProcesados
-      msgAlert( getFacturadoAlbaranProveedor(id), id )
-   next 
+      ::insertLineaFacturaProveedor()
+
+      ( D():Tmp( "TmpPrvO", ::nView ) )->( dbskip() )
+
+   end while
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD insertLineaFacturaProveedor()
+
+   local nNumeroLinea                                          := 1
+
+   if ( D():FacturasProveedoresLineas( ::nView ) )->( dbappend( .t. ) ) 
+
+      ( D():FacturasProveedoresLineas( ::nView ) )->cSerFac    := "A"
+      ( D():FacturasProveedoresLineas( ::nView ) )->nNumFac    := ::nNumeroFactura
+      ( D():FacturasProveedoresLineas( ::nView ) )->cSufFac    := retSufEmp()
+      ( D():FacturasProveedoresLineas( ::nView ) )->nNumLin    := nNumeroLinea++
+      ( D():FacturasProveedoresLineas( ::nView ) )->cRef       := ( D():Tmp( "TmpPrvO", ::nView ) )->cRef
+      ( D():FacturasProveedoresLineas( ::nView ) )->cDetalle   := ( D():Tmp( "TmpPrvO", ::nView ) )->cDetalle
+      ( D():FacturasProveedoresLineas( ::nView ) )->mLngDes    := ( D():Tmp( "TmpPrvO", ::nView ) )->mLngDes
+      ( D():FacturasProveedoresLineas( ::nView ) )->mNumSer    := ( D():Tmp( "TmpPrvO", ::nView ) )->mNumSer
+      ( D():FacturasProveedoresLineas( ::nView ) )->nIva       := ( D():Tmp( "TmpPrvO", ::nView ) )->nIva
+      ( D():FacturasProveedoresLineas( ::nView ) )->nReq       := ( D():Tmp( "TmpPrvO", ::nView ) )->nReq
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPreUnit   := ( D():Tmp( "TmpPrvO", ::nView ) )->nPreDiv
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPreCom    := ( D():Tmp( "TmpPrvO", ::nView ) )->nPreCom
+      ( D():FacturasProveedoresLineas( ::nView ) )->nUniCaja   := ( D():Tmp( "TmpPrvO", ::nView ) )->nUniCaja
+      ( D():FacturasProveedoresLineas( ::nView ) )->nCanEnt    := ( D():Tmp( "TmpPrvO", ::nView ) )->nCanEnt
+      ( D():FacturasProveedoresLineas( ::nView ) )->nDtoLin    := ( D():Tmp( "TmpPrvO", ::nView ) )->nDtoLin
+      ( D():FacturasProveedoresLineas( ::nView ) )->nDtoPrm    := ( D():Tmp( "TmpPrvO", ::nView ) )->nDtoPrm
+      ( D():FacturasProveedoresLineas( ::nView ) )->nDtoRap    := ( D():Tmp( "TmpPrvO", ::nView ) )->nDtoRap
+      ( D():FacturasProveedoresLineas( ::nView ) )->cAlmLin    := ( D():Tmp( "TmpPrvO", ::nView ) )->cAlmLin
+      ( D():FacturasProveedoresLineas( ::nView ) )->nUndKit    := ( D():Tmp( "TmpPrvO", ::nView ) )->nUndKit
+      ( D():FacturasProveedoresLineas( ::nView ) )->lKitChl    := ( D():Tmp( "TmpPrvO", ::nView ) )->lKitChl
+      ( D():FacturasProveedoresLineas( ::nView ) )->lKitArt    := ( D():Tmp( "TmpPrvO", ::nView ) )->lKitArt
+      ( D():FacturasProveedoresLineas( ::nView ) )->lKitPrc    := ( D():Tmp( "TmpPrvO", ::nView ) )->lKitPrc
+      ( D():FacturasProveedoresLineas( ::nView ) )->lIvaLin    := ( D():Tmp( "TmpPrvO", ::nView ) )->lIvaLin
+      ( D():FacturasProveedoresLineas( ::nView ) )->cCodPr1    := ( D():Tmp( "TmpPrvO", ::nView ) )->cCodPr1                           // Cod. prop. 1
+      ( D():FacturasProveedoresLineas( ::nView ) )->cCodPr2    := ( D():Tmp( "TmpPrvO", ::nView ) )->cCodPr2                           // Cod. prop. 2
+      ( D():FacturasProveedoresLineas( ::nView ) )->cValPr1    := ( D():Tmp( "TmpPrvO", ::nView ) )->cValPr1                           // Val. prop. 1
+      ( D():FacturasProveedoresLineas( ::nView ) )->cValPr2    := ( D():Tmp( "TmpPrvO", ::nView ) )->cValPr2                           // Val. prop. 2
+      ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin1   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin1
+      ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin2   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin2
+      ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin3   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin3
+      ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin4   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin4
+      ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin5   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin5
+      ( D():FacturasProveedoresLineas( ::nView ) )->nBnfLin6   := ( D():Tmp( "TmpPrvO", ::nView ) )->nBnfLin6
+      ( D():FacturasProveedoresLineas( ::nView ) )->lBnfLin1   := ( D():Tmp( "TmpPrvO", ::nView ) )->lBnfLin1
+      ( D():FacturasProveedoresLineas( ::nView ) )->lBnfLin2   := ( D():Tmp( "TmpPrvO", ::nView ) )->lBnfLin2
+      ( D():FacturasProveedoresLineas( ::nView ) )->lBnfLin3   := ( D():Tmp( "TmpPrvO", ::nView ) )->lBnfLin3
+      ( D():FacturasProveedoresLineas( ::nView ) )->lBnfLin4   := ( D():Tmp( "TmpPrvO", ::nView ) )->lBnfLin4
+      ( D():FacturasProveedoresLineas( ::nView ) )->lBnfLin5   := ( D():Tmp( "TmpPrvO", ::nView ) )->lBnfLin5
+      ( D():FacturasProveedoresLineas( ::nView ) )->lBnfLin6   := ( D():Tmp( "TmpPrvO", ::nView ) )->lBnfLin6
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPvpLin1   := ( D():Tmp( "TmpPrvO", ::nView ) )->nPvpLin1
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPvpLin2   := ( D():Tmp( "TmpPrvO", ::nView ) )->nPvpLin2
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPvpLin3   := ( D():Tmp( "TmpPrvO", ::nView ) )->nPvpLin3
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPvpLin4   := ( D():Tmp( "TmpPrvO", ::nView ) )->nPvpLin4
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPvpLin5   := ( D():Tmp( "TmpPrvO", ::nView ) )->nPvpLin5
+      ( D():FacturasProveedoresLineas( ::nView ) )->nPvpLin6   := ( D():Tmp( "TmpPrvO", ::nView ) )->nPvpLin6
+      ( D():FacturasProveedoresLineas( ::nView ) )->nIvaLin1   := ( D():Tmp( "TmpPrvO", ::nView ) )->nIvaLin1
+      ( D():FacturasProveedoresLineas( ::nView ) )->nIvaLin2   := ( D():Tmp( "TmpPrvO", ::nView ) )->nIvaLin2
+      ( D():FacturasProveedoresLineas( ::nView ) )->nIvaLin3   := ( D():Tmp( "TmpPrvO", ::nView ) )->nIvaLin3
+      ( D():FacturasProveedoresLineas( ::nView ) )->nIvaLin4   := ( D():Tmp( "TmpPrvO", ::nView ) )->nIvaLin4
+      ( D():FacturasProveedoresLineas( ::nView ) )->nIvaLin5   := ( D():Tmp( "TmpPrvO", ::nView ) )->nIvaLin5
+      ( D():FacturasProveedoresLineas( ::nView ) )->nIvaLin6   := ( D():Tmp( "TmpPrvO", ::nView ) )->nIvaLin6
+      ( D():FacturasProveedoresLineas( ::nView ) )->lLote      := ( D():Tmp( "TmpPrvO", ::nView ) )->lLote
+      ( D():FacturasProveedoresLineas( ::nView ) )->nLote      := ( D():Tmp( "TmpPrvO", ::nView ) )->nLote
+      ( D():FacturasProveedoresLineas( ::nView ) )->cLote      := ( D():Tmp( "TmpPrvO", ::nView ) )->cLote
+      ( D():FacturasProveedoresLineas( ::nView ) )->mObsLin    := ( D():Tmp( "TmpPrvO", ::nView ) )->mObsLin
+      ( D():FacturasProveedoresLineas( ::nView ) )->cRefPrv    := ( D():Tmp( "TmpPrvO", ::nView ) )->cRefPrv
+      ( D():FacturasProveedoresLineas( ::nView ) )->cUnidad    := ( D():Tmp( "TmpPrvO", ::nView ) )->cUnidad
+      ( D():FacturasProveedoresLineas( ::nView ) )->nNumMed    := ( D():Tmp( "TmpPrvO", ::nView ) )->nNumMed
+      ( D():FacturasProveedoresLineas( ::nView ) )->nMedUno    := ( D():Tmp( "TmpPrvO", ::nView ) )->nMedUno
+      ( D():FacturasProveedoresLineas( ::nView ) )->nMedDos    := ( D():Tmp( "TmpPrvO", ::nView ) )->nMedDos
+      ( D():FacturasProveedoresLineas( ::nView ) )->nMedTre    := ( D():Tmp( "TmpPrvO", ::nView ) )->nMedTre
+      ( D():FacturasProveedoresLineas( ::nView ) )->dFecCad    := ( D():Tmp( "TmpPrvO", ::nView ) )->dFecCad
+      ( D():FacturasProveedoresLineas( ::nView ) )->nBultos    := ( D():Tmp( "TmpPrvO", ::nView ) )->nBultos
+      ( D():FacturasProveedoresLineas( ::nView ) )->cFormato   := ( D():Tmp( "TmpPrvO", ::nView ) )->cFormato
+
+      ( D():FacturasProveedoresLineas( ::nView ) )->( dbUnLock() )
+
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
