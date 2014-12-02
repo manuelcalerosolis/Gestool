@@ -1548,7 +1548,7 @@ METHOD SendFile( aSource, aTarget, cDirectory )
 
             oFile             := TFtpFile():New( aSource[ n ], ::oFtp )
 
-            lRet              := oFile:PutFile()
+            lRet              := oFile:CopyFtpFile( aSource[ n ], aTarget[ n ], ::oFtp )
 
          end if
 
@@ -1787,7 +1787,7 @@ FUNCTION FtpSndFile( aSource, aTarget, oSender, cDirectory )
             else
 
                oFile             := TFtpFile():New( aSource[ n ], oSender:oFtp ) 
-               lRet              := oFile:PutFile()
+               lRet              := oFile:CopyFtpFile( aSource[ n ], aTarget[ n ], oSender:oFtp )
 
             end if
 

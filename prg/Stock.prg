@@ -6061,7 +6061,7 @@ METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
    if ( ::cAlbCliL )->( dbSeek( cCodArt + cCodAlm ) )
 
-      while ( ::cAlbCliL )->cRef == cCodArt .and. ( ::cAlbCliL )->cAlmLin == cCodAlm .and. !( ::cAlbCliL )->( eof() )
+      while ( ::cAlbCliL )->cRef == cCodArt .and. ( ::cAlbCliL )->cAlmLin == cCodAlm .and. !( ::cAlbCliL )->lFacturado .and.  !( ::cAlbCliL )->( eof() )
 
          if cCodigoArticulo   != ( ::cAlbCliL )->cRef + ( ::cAlbCliL )->cAlmLin + ( ::cAlbCliL )->cCodPr1 + ( ::cAlbCliL )->cCodPr2 + ( ::cAlbCliL )->cValPr1 + ( ::cAlbCliL )->cValPr2 + ( ::cAlbCliL )->cLote
 
