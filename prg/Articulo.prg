@@ -1779,13 +1779,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ACTION   ( WinDelRec( oBrwCodebar, dbfTmpCodebar ) )
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ] ;
-			ID 		160 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( ExpFamilia( aTmp[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ], oSay[ 3 ], aGet ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwFamilia( aGet[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ], oSay[ 3 ] ) );
-         OF       fldGeneral
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ] ;
+	   ID 		160 ;
+      VALID    ( ExpFamilia( aTmp[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ], oSay[ 3 ], aGet ) );
+      BITMAP   "LUPA" ;
+      ON HELP  ( BrwFamilia( aGet[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ], oSay[ 3 ] ) );
+      OF       fldGeneral
+
+   if ( "RISI" $ cParamsMain() )
+      aGet[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ]:bWhen    := {|| nMode == APPD_MODE .or. nMode == DUPL_MODE }
+   else
+      aGet[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ]:bWhen    := {|| nMode != ZOOM_MODE }
+   end if      
 
    REDEFINE GET   oSay[3];
          VAR      cSay[3];
