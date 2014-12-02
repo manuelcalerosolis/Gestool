@@ -308,6 +308,7 @@ static oBandera
 static oStock
 static oCaptura
 static oFideliza
+static oComercio
 
 static oMetMsg
 static nMetMsg
@@ -804,6 +805,12 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          lOpenFiles        := .f.
       end if
 
+      if uFieldEmpresa( "lRealWeb" )
+
+         oComercio            := TComercio():New()
+
+      end if
+
       /*
       Creamos los botones para las formas de pago---------------------------------
       */
@@ -1069,6 +1076,7 @@ STATIC FUNCTION CloseFiles()
    oInvitacion       := nil
    oTipArt           := nil
    oFabricante       := nil
+   oComercio         := nil
 
    oFideliza         := nil
 
@@ -1844,6 +1852,14 @@ FUNCTION TpvDelRec()
    CursorWait()
 
    /*
+   Limpiamos el array de articulos a actualizar--------------------------------
+   */
+
+   if uFieldEmpresa( "lRealWeb" )
+      oComercio:buildInitData()
+   end if
+
+   /*
    Cambiamos el estado del albarán del que proviene----------------------------
    */
 
@@ -1946,6 +1962,7 @@ FUNCTION TpvDelRec()
    */
 
    while ( dbfTikL )->( dbSeek( cNumTik ) )
+      AddArticuloComercio( ( dbfTikL )->cCbaTil )
       dbDel( dbfTikL )
    end while
 
@@ -2050,6 +2067,14 @@ FUNCTION TpvDelRec()
 
    end if
 
+   /*
+   Actualizamos los stocks en la web-------------------------------------------
+   */
+
+   if uFieldEmpresa( "lRealWeb" )
+      oComercio:buildActualizaStockProductPrestashop()
+   end if   
+
    CursorWE()
 
 Return ( .t. )
@@ -2066,6 +2091,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
    aGetTxt                 := Array( 10 )
    oGetTxt                 := Array( 10 )
+
+   /*
+   Inicializamos las variables para actualizar en la web
+   */
+
+   if uFieldEmpresa( "lRealWeb" )
+      oComercio:buildInitData()
+   end if   
 
    if ( nMode == EDIT_MODE ) .and. ( ( aTmp[ _CTIPTIK ] == SAVDEV ) .or. ( aTmp[ _CTIPTIK ] == SAVVAL ) )
       MsgStop( "No se pueden modificar vales, devoluciones o cheques regalos." )
@@ -3901,8 +3934,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       CursorWait()
 
-      /*oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE*/
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
 
          oDlgTpv:Disable()
 
@@ -3959,6 +3992,9 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             end if
 
             while ( dbfTikL )->( dbSeek( nNumTik ) )
+               
+               AddArticuloComercio( ( dbfTikL )->cCbaTil )
+
                if dbLock( dbfTikL )
                   ( dbfTikL )->( dbDelete() )
                   ( dbfTikL )->( dbUnLock() )
@@ -4463,7 +4499,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Cerrando el control de errores-------------------------------------------
          */
 
-      /*RECOVER USING oError
+      RECOVER USING oError
 
          RollBackTransaction()
 
@@ -4471,7 +4507,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       END SEQUENCE
 
-      ErrorBlock( oBlock )*/
+      ErrorBlock( oBlock )
 
       CursorWE()
 
@@ -4489,6 +4525,10 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          if BeginTrans( aTmp, aGet, nMode, .t. )
             lSaveNewTik    := .f.
             Return nil
+         end if
+
+         if uFieldEmpresa( "lRealWeb" )
+            oComercio:buildInitData()
          end if
 
          /*
@@ -11675,6 +11715,8 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliL )->lIvaLin    := .t.
       ( dbfAlbCliL )->( dbUnLock() )
 
+      AddArticuloComercio( ( dbfTmpL )->cCbaTil )
+
       ( dbfTmpL )->( dbSkip() )
 
    end while
@@ -12147,6 +12189,8 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
       ( dbfFacCliL )->( dbUnLock() )
 
+      AddArticuloComercio( ( dbfTmpL )->cCbaTil )
+
       ( dbfTmpL )->( dbSkip() )
 
    end while
@@ -12341,13 +12385,7 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
          ( dbfTmpL )->dFecTik := aTmp[ _DFECTIK ]
       end if
 
-      if uFieldEmpresa( "lRealWeb" )
-
-         if aScan( aArticulosWeb, ( dbfTmpL )->cCbaTil ) == 0
-            aAdd( aArticulosWeb, ( dbfTmpL )->cCbaTil )
-         end if
-
-      end if
+      AddArticuloComercio( ( dbfTmpL )->cCbaTil )
 
       dbPass( dbfTmpL, dbfTikL, .t., aTmp[ _CSERTIK ], aTmp[ _CNUMTIK ], aTmp[ _CSUFTIK ], aTmp[ _CTIPTIK ] )
 
@@ -19956,19 +19994,11 @@ Return .t.
 
 static Function ActualizaStockWeb()
 
-   if isArray( aArticulosWeb ) .and. Len( aArticulosWeb ) > 0
+   oComercio:MeterTotal( GetAutoMeterDialog() )
+      
+   oComercio:TextTotal( GetAutoTextDialog() )
 
-      with object ( TComercio():New() )     
-         
-         :MeterTotal( GetAutoMeterDialog() )
-
-         :TextTotal( GetAutoTextDialog() )
-
-         :buildActualizaStockProductPrestashop( aArticulosWeb )
-
-      end with
-
-   end if
+   oComercio:buildActualizaStockProductPrestashop()
 
 Return .t.
 
@@ -19997,5 +20027,15 @@ Static Function hValue( aTmp, aTmpTik )
    hValue[ "nView"             ] := nView
 
 Return ( hValue )
+
+//---------------------------------------------------------------------------//
+
+Static Function AddArticuloComercio( cCodArt )
+
+   if uFieldEmpresa( "lRealWeb" )
+      oComercio:BuildAddArticuloActualizar( cCodArt )
+   end if
+
+Return nil
 
 //---------------------------------------------------------------------------//

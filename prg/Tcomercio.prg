@@ -151,6 +151,8 @@ CLASS TComercio
    DATA  nNumeroCategorias    INIT 0
    DATA  aCategorias          INIT {}
 
+   DATA  aArticulosActualizar INIT {}
+
    DATA  cPrefijoBaseDatos
 
    METHOD GetInstance()              
@@ -352,6 +354,7 @@ CLASS TComercio
    METHOD buildInformacionStockProductPrestashop()
    METHOD buildSubirStockPrestashop()
    METHOD buildAddInformacionStockProductPrestashop()
+   METHOD BuildAddArticuloActualizar( cCodArt )
 
    // ftp y movimientos de ficheros
 
@@ -6405,10 +6408,11 @@ return .t.
 
 METHOD buildInitData() CLASS TComercio
 
-   ::aIvaData           := {}
-   ::aFabricantesData   := {}
-   ::aFamiliaData       := {}
-   ::aArticuloData      := {}
+   ::aIvaData              := {}
+   ::aFabricantesData      := {}
+   ::aFamiliaData          := {}
+   ::aArticuloData         := {}
+   ::aArticulosActualizar  := {}
 
 Return ( Self )
 
@@ -9090,15 +9094,15 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildInformacionStockProductPrestashop( aCodArt ) CLASS TComercio
+METHOD buildInformacionStockProductPrestashop() CLASS TComercio
 
    local cCodArt
 
    ::meterProcesoSetTotal( ::oArt:OrdKeyCount() )
 
-   if isArray( aCodArt )
+   if isArray( ::aArticulosActualizar ) .and. Len( ::aArticulosActualizar ) > 0
 
-      for each cCodArt in aCodArt
+      for each cCodArt in ::aArticulosActualizar
 
          if ::oArt:Seek( cCodArt ) .and. ::oArt:cCodWeb != 0
 
@@ -9176,7 +9180,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD buildActualizaStockProductPrestashop( aCodArt ) CLASS TComercio
+METHOD buildActualizaStockProductPrestashop() CLASS TComercio
 
    /*
    Compruebo que podamos conectarnos-------------------------------------------
@@ -9194,7 +9198,7 @@ METHOD buildActualizaStockProductPrestashop( aCodArt ) CLASS TComercio
 
       ::MeterTotalText( "Recopialando información de stocks" )
       
-      ::buildInformacionStockProductPrestashop( aCodArt )
+      ::buildInformacionStockProductPrestashop()
 
       /*
       Subimos la información recopilada----------------------------------------
@@ -9219,6 +9223,17 @@ METHOD buildActualizaStockProductPrestashop( aCodArt ) CLASS TComercio
    end if
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD BuildAddArticuloActualizar( cCodArt ) CLASS tComercio
+
+   if !Empty( cCodArt )             .and.;
+      aScan( ::aArticulosActualizar, cCodArt ) == 0
+      aAdd( ::aArticulosActualizar, cCodArt )
+   end if
+
+Return .t.   
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
