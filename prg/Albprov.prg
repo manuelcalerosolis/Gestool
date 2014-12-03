@@ -9705,16 +9705,13 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-FUNCTION SetFacturadoAlbaranProveedor( lFacturado, nView, )
+FUNCTION SetFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
 
    local nRec
    local nOrd
 
    DEFAULT lFacturado   := .f.
    DEFAULT cNumFac      := Space( 12 )
-   DEFAULT cAlbPrvT     := D():AlbaranesProveedores( nView )
-   DEFAULT cAlbPrvL     := D():AlbaranesProveedoresLineas( nView )
-   DEFAULT cAlbPrvS     := D():AlbaranesProveedoresSeries( nView )
 
    CursorWait()
 
@@ -9734,7 +9731,7 @@ FUNCTION SetFacturadoAlbaranProveedor( lFacturado, nView, )
    */
 
    D():getStatusAlbaranesProveedoresLineas( nView )
-   oD():ordsetfocusAlbaranesProveedores( "nNumAlb", nView )
+   D():ordsetfocusAlbaranesProveedores( "nNumAlb", nView )
 
    if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( D():AlbaranesProveedoresId( nView ) ) )
 
