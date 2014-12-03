@@ -15,7 +15,6 @@
 #define albParcialmenteFacturado 2
 #define albTotalmenteFacturado   3
 
-
 /*
 Definición de la base de datos de albaranes a CLIENTES-------------------------
 */
@@ -16385,10 +16384,10 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "nNumAlb", "cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumLin )", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumLin ) } ) )
 
-      ( cAlbCliT )->( ordCondSet( "nFacturado <= 1 .and. !Deleted()", {|| Field->nFacturado <= albNoFacturado .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
 
-      ( cAlbCliT )->( ordCondSet( "nFacturado <= 1 .and. !Deleted()", {|| Field->nFacturado <= albNoFacturado .and. !Deleted() } ) )
+      ( cAlbCliT )->( ordCondSet( "lFacturado .and. !Deleted()", {|| Field->lFacturado .and. !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
@@ -16694,7 +16693,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cDigBnc"  , "C",  2, 0, "Dígito de control de la cuenta bancaria del cliente",   "",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                           "",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nDtoTarifa","N",  6, 2, "Descuento de tarifa de cliente",                        "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albarán",                                    "",                   "", "( cDbf )", 1} )
+   aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albaran" ,                                   "",                   "", "( cDbf )", 1   } )
 
 Return ( aItmAlbCli )
 
