@@ -9705,7 +9705,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-FUNCTION SetFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
+FUNCTION setFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
 
    local nRec
    local nOrd

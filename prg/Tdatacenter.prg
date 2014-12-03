@@ -5092,7 +5092,7 @@ CLASS D
 
       METHOD ordSetFocusAlbaranesProveedores( cTag, nView );
                                                          INLINE ( ::cTag   := ( ::Get( "AlbProvT", nView ) )->( ordSetFocus( cTag ) ) )
-      METHOD ordRestoreFocusAlbaranesProveedores( cTag, nView );
+      METHOD ordRestoreFocusAlbaranesProveedores( nView );
                                                          INLINE ( ( ::Get( "AlbProvT", nView ) )->( ordSetFocus( ::cTag ) ) )
 
       METHOD AlbaranesProveedoresLineas( nView )         INLINE ( ::Get( "AlbProvL", nView ) )
@@ -5105,21 +5105,21 @@ CLASS D
 
       METHOD setFocusAlbaranesProveedoresLineas( cTag, nView );
                                                          INLINE ( ::cTag   := ( ::Get( "AlbProvL", nView ) )->( ordSetFocus( cTag ) ) )
-      METHOD restoreFocusAlbaranesProveedoresLineas( cTag, nView );
+      METHOD restoreFocusAlbaranesProveedoresLineas( nView );
                                                          INLINE ( ( ::Get( "AlbProvL", nView ) )->( ordSetFocus( ::cTag ) ) )
 
       METHOD AlbaranesProveedoresSeries( nView )         INLINE ( ::Get( "AlbPrvS", nView ) )
          METHOD AlbaranesProveedoresSeriesId( nView )    INLINE ( ( ::Get( "AlbPrvS", nView ) )->cSerAlb + str( ( ::Get( "AlbPrvS", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbPrvS", nView ) )->cSufAlb )
 
       METHOD getStatusAlbaranesProveedoresSeries( nView );
-                                                         INLINE ( ::aStatus := aGetStatus( ::Get( "AlbProvS", nView ) ) )
+                                                         INLINE ( ::aStatus := aGetStatus( ::Get( "AlbPrvS", nView ) ) )
       METHOD setStatusAlbaranesProveedoresSeries( nView );
-                                                         INLINE ( SetStatus( ::Get( "AlbProvS", nView ), ::aStatus ) ) 
+                                                         INLINE ( SetStatus( ::Get( "AlbPrvS", nView ), ::aStatus ) ) 
 
       METHOD setFocusAlbaranesProveedoresSeries( cTag, nView );
-                                                         INLINE ( ::cTag   := ( ::Get( "AlbProvS", nView ) )->( ordSetFocus( cTag ) ) )
-      METHOD restoreFocusAlbaranesProveedoresSeries( cTag, nView );
-                                                         INLINE ( ( ::Get( "AlbProvS", nView ) )->( ordSetFocus( ::cTag ) ) )
+                                                         INLINE ( ::cTag   := ( ::Get( "AlbPrvS", nView ) )->( ordSetFocus( cTag ) ) )
+      METHOD restoreFocusAlbaranesProveedoresSeries( nView );
+                                                         INLINE ( ( ::Get( "AlbPrvS", nView ) )->( ordSetFocus( ::cTag ) ) )
 
       METHOD AlbaranesProveedoresIncidencias( nView )    INLINE ( ::Get( "AlbPrvI", nView ) )
       METHOD AlbaranesProveedoresDocumentos( nView )     INLINE ( ::Get( "AlbPrvD", nView ) )
