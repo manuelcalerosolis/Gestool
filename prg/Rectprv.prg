@@ -6951,15 +6951,12 @@ STATIC FUNCTION DelDetalle( cFactura )
    nOrdAnt           := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "cNumFac" ) )
 
    if ( D():AlbaranesProveedores( nView ) )->( dbSeek( cFactura ) )
-
       while ( D():AlbaranesProveedores( nView ) )->cNumFac == cFactura .and. !( D():AlbaranesProveedores( nView ) )->( eof() )
 
          SetFacturadoAlbaranProveedor( .f., nView )
 
          ( D():AlbaranesProveedores( nView ) )->( dbSkip() )
-
       end while
-
    end if
 
    ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )

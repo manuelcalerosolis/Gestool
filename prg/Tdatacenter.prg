@@ -5090,13 +5090,15 @@ CLASS D
       METHOD getStatusAlbaranesProveedores( nView )      INLINE ( ::aStatus := aGetStatus( ::Get( "AlbProvT", nView ) ) )
       METHOD setStatusAlbaranesProveedores( nView )      INLINE ( SetStatus( ::Get( "AlbProvT", nView ), ::aStatus ) ) 
 
-      METHOD ordSetFocusAlbaranesProveedores( cTag, nView );
+      METHOD setFocusAlbaranesProveedores( cTag, nView );
                                                          INLINE ( ::cTag   := ( ::Get( "AlbProvT", nView ) )->( ordSetFocus( cTag ) ) )
-      METHOD ordRestoreFocusAlbaranesProveedores( nView );
+      METHOD restoreFocusAlbaranesProveedores( nView );
                                                          INLINE ( ( ::Get( "AlbProvT", nView ) )->( ordSetFocus( ::cTag ) ) )
 
       METHOD AlbaranesProveedoresLineas( nView )         INLINE ( ::Get( "AlbProvL", nView ) )
          METHOD AlbaranesProveedoresLineasId( nView )    INLINE ( ( ::Get( "AlbProvL", nView ) )->cSerAlb + str( ( ::Get( "AlbProvL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbProvL", nView ) )->cSufAlb )
+         METHOD AlbaranesProveedoresLineasNumero( nView );
+                                                         INLINE ( ( ::Get( "AlbProvL", nView ) )->cSerAlb + str( ( ::Get( "AlbProvL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbProvL", nView ) )->cSufAlb + str( ( ::Get( "AlbProvL", nView ) )->nNumLin, 4 ) )
 
       METHOD getStatusAlbaranesProveedoresLineas( nView );
                                                          INLINE ( ::aStatus := aGetStatus( ::Get( "AlbProvL", nView ) ) )
@@ -5561,6 +5563,8 @@ ENDCLASS
    Return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+
 /*
    METHOD OpenTDbf( cDataTable, nView ) CLASS D
 

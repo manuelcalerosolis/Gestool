@@ -5,6 +5,7 @@
 #include "Inkey.ch"
 #include "Ads.ch"
 #include "Xbrowse.ch"
+#include "dbInfo.ch" 
 
 #define GR_GDIOBJECTS         0      /* Count of GDI objects */
 #define GR_USEROBJECTS        1      /* Count of USER objects */

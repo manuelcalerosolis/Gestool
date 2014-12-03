@@ -51,14 +51,14 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
       METHOD loadAlbaran( id )    
 
    METHOD setIdFacturaProveedor()
-   METHOD getIdFacturaProveedor()         INLINE ( ::cSerieFactura + str( ::nNumeroFactura ) + ::cSufijoFactura )
+   METHOD getIdFacturaProveedor()         INLINE   ( ::cSerieFactura + str( ::nNumeroFactura ) + ::cSufijoFactura )
    
    METHOD saveAlbaran()    
       METHOD setLineasFacturadas()
       METHOD setLineaFacturada()
       METHOD setAlbaranesFacturados()
-      METHOD addAlbaranFacturado( id )    INLINE   ( iif(  aScan( ::aAlbaranesProcesados, id ) == 0,;
-                                                      aAdd( ::aAlbaranesProcesados, id ), ) )
+      METHOD addAlbaranFacturado( id )    INLINE   (  iif(  aScan( ::aAlbaranesProcesados, id ) == 0,;
+                                                            aAdd( ::aAlbaranesProcesados, id ), ) )
 
    METHOD passLineas()     
       METHOD passLinea()     
@@ -958,6 +958,7 @@ METHOD insertLineaFacturaProveedor()
       ( D():FacturasProveedoresLineas( ::nView ) )->dFecCad    := ( D():Tmp( "TmpPrvO", ::nView ) )->dFecCad
       ( D():FacturasProveedoresLineas( ::nView ) )->nBultos    := ( D():Tmp( "TmpPrvO", ::nView ) )->nBultos
       ( D():FacturasProveedoresLineas( ::nView ) )->cFormato   := ( D():Tmp( "TmpPrvO", ::nView ) )->cFormato
+      ( D():FacturasProveedoresLineas( ::nView ) )->iNumAlb    := ( D():Tmp( "TmpPrvO", ::nView ) )->cSerAlb + str( ( D():Tmp( "TmpPrvO", ::nView ) )->nNumAlb, 9 ) + ( D():Tmp( "TmpPrvO", ::nView ) )->cSufFac + str( ( D():Tmp( "TmpPrvO", ::nView ) )->nNumLin, 4 )
 
       ( D():FacturasProveedoresLineas( ::nView ) )->( dbUnLock() )
 

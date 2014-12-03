@@ -1271,19 +1271,7 @@ Function aSqlStruct( aStruct )
    local aSqlStruct  := {}
 
    for each a in aStruct
-      if a[2] == "+"
-
-         ? a[1]
-         ? "N"
-         ? a[3]
-         ? a[4]
-         ? HB_FF_AUTOINC
-         ? 1
-
-         aAdd( aSqlStruct, { a[1], "N", a[3], a[4], HB_FF_AUTOINC, 1 } )
-      else
-         aAdd( aSqlStruct, { a[1], a[2], a[3], a[4] } )
-      end if
+      aAdd( aSqlStruct, { a[1], a[2], a[3], a[4] } )
    next
 
 Return ( aSqlStruct )

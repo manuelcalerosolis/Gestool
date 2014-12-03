@@ -192,6 +192,7 @@ Lineas de Detalle
 #define _LAUTSER                 96
 #define __NBULTOS                97
 #define _CFORMATO                98 
+#define _INUMALB                 99 
 
 /*
 Definici¢n de Array para impuestos--------------------------------------------------
@@ -2587,7 +2588,7 @@ Static Function RecalculaFacturaProveedores( aTmp, oDlg )
    local nRecNum
    local nPreCom
 
-   if !ApoloMsgNoYes( "¡Atención!,"                                      + CRLF + ;
+   if !ApoloMsgNoYes( "¡Atención!,"                                  + CRLF + ;
                   "todos los precios se recalcularán en función de"  + CRLF + ;
                   "los valores en las bases de datos.",;
                   "¿ Desea proceder ?" )
@@ -6492,7 +6493,7 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
          Añadimos las lineas---------------------------------------------------
          */
 
-         AddLineasAlbaranProveedor( cAlbaran )
+         addLineasAlbaranProveedor( cAlbaran )
 
          /*
          Refrescamos-----------------------------------------------------------
@@ -8249,6 +8250,8 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
          ( dbfTmp )->dFecCad     := ( D():AlbaranesProveedoresLineas( nView ) )->dFecCad
          ( dbfTmp )->nBultos     := ( D():AlbaranesProveedoresLineas( nView ) )->nBultos
          ( dbfTmp )->cFormato    := ( D():AlbaranesProveedoresLineas( nView ) )->cFormato
+
+         ( dbfTmp )->iNumAlb     := D():AlbaranesProveedoresLineasNumero( nView )
 
          /*
          Pasamos series de pedidos---------------------------------------------------
@@ -10182,6 +10185,7 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "lAutSer"    ,"L",  1, 0, "Lógico de autoserializar",     "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "nBultos"    ,"N", 16, 6, "Numero de bultos en líneas",   "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cFormato"   ,"C",100, 0, "Formato de compra",            "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "iNumAlb"    ,"C", 16, 0, "Identificador del albarán",    "",                   "", "( cDbfCol )", nil } )
 
 return ( aColFacPrv )
 

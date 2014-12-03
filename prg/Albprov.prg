@@ -6,6 +6,7 @@
 #include "Menu.ch"
 #include "Xbrowse.ch"
 #include "FastRepH.ch" 
+#include "dbInfo.ch" 
 
 #define albNoFacturado              1
 #define albParcialmenteFacturado    2
@@ -3171,6 +3172,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       REDEFINE CHECKBOX aGet[ _LCHGLIN ] VAR aTmp[ _LCHGLIN ];
          ID       420 ;
          WHEN     ( nMode != ZOOM_MODE .and. lActCos() );
+         OF       oFld:aDialogs[2]
+
+      REDEFINE CHECKBOX aGet[ __LFACTURADO ] VAR aTmp[ _LIVALIN ] ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ID       360 ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
@@ -9863,6 +9869,8 @@ Function IsAlbPrv( cPath )
 
    if !lExistTable( cPath + "AlbProvL.Dbf" )
       dbCreate( cPath + "AlbProvL.Dbf", aSqlStruct( aColAlbPrv() ), cDriver() )
+      dbFieldInfo( DBS_COUNTER, 1, 10 ) 
+      dbFieldInfo( DBS_STEP, 1, 5 ) 
    end if
 
    if !lExistTable( cPath + "AlbPrvI.Dbf" )

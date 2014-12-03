@@ -3,6 +3,7 @@
 #include "Empresa.ch"
 #include "Image.ch"
 #include "Xbrowse.ch"
+#include "dbInfo.ch" 
 
 #define _MENUITEM_            "01003" 
 
@@ -5085,12 +5086,13 @@ Comprueba los cambios de estructura y añade registros
 FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
 
    local i
+   local cField 
    local dbfOld
    local dbfTmp
-   local dbfNamOld   := cEmpOld + cFile
-   local dbfNamTmp   := cEmpTmp + cFile
-   local lCopy       := .f.
-   local nField      := 0
+   local dbfNamOld            := cEmpOld + cFile
+   local dbfNamTmp            := cEmpTmp + cFile
+   local lCopy                := .f.
+   local nField               := 0
    local aField
 
    SysRefresh()
@@ -5119,28 +5121,16 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
       return .f.
    end if
 
-   /*
-   Comprobamos q hay cambios en las estructuras--------------------------------
+   // Numero de campos------------------------------------------------------------
 
-   if !IsChgStru( dbfOld, dbfTmp )
-      return .f.
-   end if
-   */
-
-   /*
-   Numero de campos------------------------------------------------------------
-   */
-
-   nField            := ( dbfTmp )->( fCount() )
-   aField            := Array( nField )
+   nField                     := ( dbfTmp )->( fCount() )
+   aField                     := array( nField )
 
    for i := 1 to nField
-      aField[ i ]    := ( dbfTmp )->( FieldPos( ( dbfOld )->( FieldName( i ) ) ) )
+      aField[ i ]             := ( dbfTmp )->( fieldPos( ( dbfOld )->( fieldName( i ) ) ) )
    next
 
-   /*
-   Proceso de cambios----------------------------------------------------------
-   */
+   // Proceso de cambios----------------------------------------------------------
 
    ( dbfOld )->( dbGoTop() )
    while !( dbfOld )->( eof() )
@@ -5155,14 +5145,12 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
 
    end while
 
-   lCopy             := ( dbfOld )->( eof() )
+   lCopy                      := ( dbfOld )->( eof() )
 
    CLOSE ( dbfOld )
    CLOSE ( dbfTmp )
 
-   /*
-   Si hay copia satisfactoria cambiamos los ficheros
-   */
+   // Si hay copia satisfactoria cambiamos los ficheros
 
    if lCopy
 
@@ -5202,7 +5190,7 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
 
    end if
 
-return ( lCopy )
+Return ( lCopy )
 
 //-----------------------------------------------------------------------//
 
