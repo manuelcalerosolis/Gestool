@@ -9731,7 +9731,7 @@ FUNCTION SetFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
    */
 
    D():getStatusAlbaranesProveedoresLineas( nView )
-   D():ordsetfocusAlbaranesProveedores( "nNumAlb", nView )
+   D():setFocusAlbaranesProveedoresLineas( "nNumAlb", nView )
 
    if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( D():AlbaranesProveedoresId( nView ) ) )
 
@@ -9748,15 +9748,15 @@ FUNCTION SetFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
 
    end if
 
-   ( D():AlbaranesProveedoresLineas( nView ) )->( ordSetFocus( nOrd ) )
+   D():restoreFocusAlbaranesProveedoresLineas( nView )
    D():setStatusAlbaranesProveedoresLineas( nView )
 
    /*
    Cambiamos el estado de las series-------------------------------------------
    */
 
-   nRec                 := ( D():AlbaranesProveedoresSeries( nView ) )->( Recno() )
-   nOrd                 := ( D():AlbaranesProveedoresSeries( nView ) )->( OrdSetFocus( "nNumAlb" ) )
+   D():getStatusAlbaranesProveedoresSeries( nView )
+   D():setFocusAlbaranesProveedoresSeries( "nNumAlb", nView )
 
    if ( D():AlbaranesProveedoresSeries( nView ) )->( dbSeek( D():AlbaranesProveedoresId( nView ) ) )
 
@@ -9773,8 +9773,8 @@ FUNCTION SetFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
 
    end if
 
-   ( D():AlbaranesProveedoresSeries( nView ) )->( OrdSetFocus( nOrd ) )
-   ( D():AlbaranesProveedoresSeries( nView ) )->( dbGoTo( nRec ) )
+   D():restoreFocusAlbaranesProveedoresSeries( nView )
+   D():setStatusAlbaranesProveedoresSeries( nView )
 
    CursorWE()
 

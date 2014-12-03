@@ -4990,6 +4990,8 @@ CLASS D
    CLASSDATA   hViews                        INIT {=>}
    CLASSDATA   nView                         INIT 0
 
+   CLASSDATA   cTag
+
    METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ), ::nView )
    METHOD DeleteView( nView )
 
@@ -5085,24 +5087,55 @@ CLASS D
       METHOD AlbaranesProveedoresId( nView )             INLINE ( ( ::Get( "AlbProvT", nView ) )->cSerAlb + str( ( ::Get( "AlbProvT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbProvT", nView ) )->cSufAlb )
       METHOD AlbaranesProveedoresFecha( nView )          INLINE ( ( ::Get( "AlbProvT", nView ) )->dFecAlb )
 
+      METHOD getStatusAlbaranesProveedores( nView )      INLINE ( ::aStatus := aGetStatus( ::Get( "AlbProvT", nView ) ) )
+      METHOD setStatusAlbaranesProveedores( nView )      INLINE ( SetStatus( ::Get( "AlbProvT", nView ), ::aStatus ) ) 
+
+      METHOD ordSetFocusAlbaranesProveedores( cTag, nView );
+                                                         INLINE ( ::cTag   := ( ::Get( "AlbProvT", nView ) )->( ordSetFocus( cTag ) ) )
+      METHOD ordRestoreFocusAlbaranesProveedores( cTag, nView );
+                                                         INLINE ( ( ::Get( "AlbProvT", nView ) )->( ordSetFocus( ::cTag ) ) )
+
       METHOD AlbaranesProveedoresLineas( nView )         INLINE ( ::Get( "AlbProvL", nView ) )
          METHOD AlbaranesProveedoresLineasId( nView )    INLINE ( ( ::Get( "AlbProvL", nView ) )->cSerAlb + str( ( ::Get( "AlbProvL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbProvL", nView ) )->cSufAlb )
 
+      METHOD getStatusAlbaranesProveedoresLineas( nView );
+                                                         INLINE ( ::aStatus := aGetStatus( ::Get( "AlbProvL", nView ) ) )
+      METHOD setStatusAlbaranesProveedoresLineas( nView );
+                                                         INLINE ( SetStatus( ::Get( "AlbProvL", nView ), ::aStatus ) ) 
+
+      METHOD setFocusAlbaranesProveedoresLineas( cTag, nView );
+                                                         INLINE ( ::cTag   := ( ::Get( "AlbProvL", nView ) )->( ordSetFocus( cTag ) ) )
+      METHOD restoreFocusAlbaranesProveedoresLineas( cTag, nView );
+                                                         INLINE ( ( ::Get( "AlbProvL", nView ) )->( ordSetFocus( ::cTag ) ) )
+
+      METHOD AlbaranesProveedoresSeries( nView )         INLINE ( ::Get( "AlbPrvS", nView ) )
+         METHOD AlbaranesProveedoresSeriesId( nView )    INLINE ( ( ::Get( "AlbPrvS", nView ) )->cSerAlb + str( ( ::Get( "AlbPrvS", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbPrvS", nView ) )->cSufAlb )
+
+      METHOD getStatusAlbaranesProveedoresSeries( nView );
+                                                         INLINE ( ::aStatus := aGetStatus( ::Get( "AlbProvS", nView ) ) )
+      METHOD setStatusAlbaranesProveedoresSeries( nView );
+                                                         INLINE ( SetStatus( ::Get( "AlbProvS", nView ), ::aStatus ) ) 
+
+      METHOD setFocusAlbaranesProveedoresSeries( cTag, nView );
+                                                         INLINE ( ::cTag   := ( ::Get( "AlbProvS", nView ) )->( ordSetFocus( cTag ) ) )
+      METHOD restoreFocusAlbaranesProveedoresSeries( cTag, nView );
+                                                         INLINE ( ( ::Get( "AlbProvS", nView ) )->( ordSetFocus( ::cTag ) ) )
+
       METHOD AlbaranesProveedoresIncidencias( nView )    INLINE ( ::Get( "AlbPrvI", nView ) )
       METHOD AlbaranesProveedoresDocumentos( nView )     INLINE ( ::Get( "AlbPrvD", nView ) )
-      METHOD AlbaranesProveedoresSeries( nView )         INLINE ( ::Get( "AlbPrvS", nView ) )
+
 
    // Facturas proveedores-----------------------------------------------------
 
-   METHOD FacturasProveedores( nView )             INLINE ( ::Get( "FacPrvT", nView ) ) 
-      METHOD FacturasProveedoresId( nView )        INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvT", nView ) )->cSufFac )
-      METHOD FacturasProveedoresIdText( nView )    INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + "/" + alltrim( str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) ) + "/" + ( ::Get( "FacPrvT", nView ) )->cSufFac )
+   METHOD FacturasProveedores( nView )                   INLINE ( ::Get( "FacPrvT", nView ) ) 
+      METHOD FacturasProveedoresId( nView )              INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvT", nView ) )->cSufFac )
+      METHOD FacturasProveedoresIdText( nView )          INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + "/" + alltrim( str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) ) + "/" + ( ::Get( "FacPrvT", nView ) )->cSufFac )
 
-      METHOD FacturasProveedoresCobros( nView )    INLINE ( ::Get( "FacPrvP", nView ) )
-      METHOD FacturasProveedoresCobrosId( nView )  INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumFac ) +  ( ::Get( "FacPrvP", nView ) )->cSufFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumRec ) )
+      METHOD FacturasProveedoresCobros( nView )          INLINE ( ::Get( "FacPrvP", nView ) )
+      METHOD FacturasProveedoresCobrosId( nView )        INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumFac ) +  ( ::Get( "FacPrvP", nView ) )->cSufFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumRec ) )
 
-   METHOD FacturasProveedoresLineas( nView )       INLINE ( ::Get( "FacPrvL", nView ) )
-      METHOD FacturasProveedoresLineasId( nView )  INLINE ( ( ::Get( "FacPrvL", nView ) )->cSerFac + str( ( ::Get( "FacPrvL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvL", nView ) )->cSufFac )
+   METHOD FacturasProveedoresLineas( nView )             INLINE ( ::Get( "FacPrvL", nView ) )
+      METHOD FacturasProveedoresLineasId( nView )        INLINE ( ( ::Get( "FacPrvL", nView ) )->cSerFac + str( ( ::Get( "FacPrvL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvL", nView ) )->cSufFac )
 
    METHOD FacturasProveedoresIncidencias( nView )        INLINE ( ::Get( "FacPrvI", nView ) )
       METHOD FacturasProveedoresIncidenciasId ( nView )  INLINE ( ( ::Get( "FacPrvI", nView ) )->cSerFac + str( ( ::Get( "FacPrvI", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvI", nView ) )->cSufFac )
