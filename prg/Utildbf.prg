@@ -2089,6 +2089,18 @@ Function dbDel( cAlias )
 Return nil
 
 //---------------------------------------------------------------------------//
+
+Function dbLockDelete( cAlias )
+
+   if ( cAlias )->( dbRLock() ) //dbLock( cAlias )
+      ( cAlias )->( dbDelete() )
+      ( cAlias )->( dbUnLock() )
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
 // Esta marcado el registro?
 
 function lMarked( cMark, nRec )
@@ -3428,4 +3440,16 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+CLASS excluyentArray
+
+   CLASSDATA  aArray       INIT {}
+
+   Method Init()           INLINE ( ::aArray := {} )
+   Method Add(uValue)      INLINE ( if( aScan( ::aArray, uValue ) == 0, aAdd( ::aArray, uValue ), ) )
+   Method Get(n)           INLINE ( if( empty(n), ::aArray, ::aArray[ n ] ) )
+   Method Empty()          INLINE ( empty( ::aArray ) )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
 

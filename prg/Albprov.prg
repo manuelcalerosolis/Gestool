@@ -8420,7 +8420,7 @@ FUNCTION lFacAlbPrv( cAlbPrv, cAlbPrvT )
    local lFacAlb  := .f.
 
    if ( cAlbPrvT )->( dbSeek( cAlbPrv ) )
-      lFacAlb     := ( ( cAlbPrvT )->lFacturado == 3 )
+      lFacAlb     := ( ( cAlbPrvT )->nFacturado == 3 )
    end if
 
 RETURN ( lFacAlb )
@@ -9711,6 +9711,47 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
+FUNCTION setNoFacturadoAlbaranProveedorLinea( nView )
+
+   local id := ( D():FacturasProveedoresLineas( nView ) )->iNumAlb
+
+   msgAlert("setNoFacturadoAlbaranProveedorLinea")
+
+Return ( setEstadoFacturadoAlbaranProveedorLinea( .f., id, nView ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setFacturadoAlbaranProveedorLinea( nView )
+
+   local id := ( D():FacturasProveedoresLineas( nView ) )->iNumAlb
+
+Return ( setEstadoFacturadoAlbaranProveedorLinea( .t., id, nView ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setEstadoFacturadoAlbaranProveedorLinea( lFacturado, id, nView )
+
+   DEFAULT lFacturado := .f.
+
+   msgAlert( id, "cambiando el estado.")
+
+   D():getStatusAlbaranesProveedoresLineas( nView )
+   D():setFocusAlbaranesProveedoresLineas( "nNumLin", nView )
+
+   if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( id ) )
+      if dbDialogLock( D():AlbaranesProveedoresLineas( nView ) )
+         ( D():AlbaranesProveedoresLineas( nView ) )->lFacturado := lFacturado
+         ( D():AlbaranesProveedoresLineas( nView ) )->( dbUnlock() )
+      end if
+   end if
+
+   D():restoreFocusAlbaranesProveedoresLineas( nView )
+   D():setStatusAlbaranesProveedoresLineas( nView )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION setFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
 
    local nRec
@@ -9840,6 +9881,10 @@ FUNCTION setEstadoAlbaranProveedor( id, nView )
 
    local nOrd
    local nFacturado     := 0
+
+   if empty( id )
+      return ( nFacturado )
+   end if 
 
    nOrd                 := ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( "nNumAlb" ) )
 
@@ -11575,6 +11620,12 @@ Method SelectColumn( oCombo ) CLASS TAlbaranProveedoresLabelGenerator
    end if
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Function getNumeroAlbaranProveedorLinea( nView )
+
+Return ( substr( ( D():FacturasProveedoresLineas( nView ) )->iNumAlb, 1, 12 ) )
 
 //---------------------------------------------------------------------------//
 

@@ -336,7 +336,7 @@ static oFntTot
 static oMnuPgo
 static oMnuRec
 
-static aNumAlb          := {}
+static aNumAlb          
 static nGetNeto         := 0
 static nGetIva          := 0
 static nGetReq          := 0
@@ -380,6 +380,8 @@ STATIC FUNCTION OpenFiles( lExt )
    BEGIN SEQUENCE
 
       DisableAcceso()
+
+      aNumAlb           := excluyentArray()
 
       lOpenFiles        := .t.
 
@@ -1978,13 +1980,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          FONT     oFntTot ;
          OF       oFld:aDialogs[1]
 
-/*
-      REDEFINE SAY oGet[4] VAR cGet[4];
-         ID       420 ;
-         FONT     oFont ;
-         OF       oFld:aDialogs[1]
-*/
-
       REDEFINE GET aGet[ _CSERFAC ] VAR aTmp[ _CSERFAC ] ;
          ID       100 ;
          PICTURE  "@!" ;
@@ -2510,13 +2505,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    */
 
    if oDlg:nResult != IDOK
-      if len( aNumAlb ) > 0
-         for n := 1 to len( aNumAlb )
-            if ( D():AlbaranesProveedores( nView ) )->( dbSeek( aNumAlb[ n ] ) )
-               SetFacturadoAlbaranProveedor( .f., nView )
-            end if
-         next
-      end if
+      for each cNumAlb in aNumAlb:Get()
+         if ( D():AlbaranesProveedores( nView ) )->( dbSeek( cNumAlb ) )
+            SetFacturadoAlbaranProveedor( .f., nView )
+         end if
+      next
    end if
 
    ( D():FacturasProveedores( nView ) )->( OrdSetFocus( nOrd ) )
@@ -3841,14 +3834,6 @@ Funcion Auxiliar para A¤adir lineas de detalle a una Factura
 */
 
 STATIC FUNCTION AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt )
-
-   /*
-   if !Empty( aNumAlb ) .or. aTmp[ _LIMPALB ]
-      MsgStop( "No se pueden modificar registros a una factura que" + CRLF + ;
-               "proviene de albaranes." )
-      return .f.
-   end if
-   */
 
    if lRecibosPagadosTmp( dbfTmpPgo )
       MsgStop( "No se pueden modificar registros de una factura con pagos" )
@@ -6382,7 +6367,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
 
          if aAlbaranes[ nItem, 1 ]
 
-            aAdd( aNumAlb, aAlbaranes[ nItem, 2 ] )
+            aNumAlb:Add( aAlbaranes[ nItem, 2 ] )
 
             if ( D():AlbaranesProveedores( nView ) )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
                SetFacturadoAlbaranProveedor( !( D():AlbaranesProveedores( nView ) )->lFacturado, nView )
@@ -6515,9 +6500,7 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
       Guardamos el numero del Albaran pos si no guardamos la factura
       */
 
-      if aScan( aNumAlb, cAlbaran ) == 0
-         aAdd( aNumAlb, cAlbaran )
-      end if
+      aNumAlb:Add( cAlbaran )
 
    else
 
@@ -6548,7 +6531,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       CursorWait()
 
-      aNumAlb     := {}
+      aNumAlb:Init()
 
       cNewFile    := cGetNewFileName( cPatTmp() + cDbf )
       cTmpInc     := cGetNewFileName( cPatTmp() + cDbfInc )
@@ -6717,6 +6700,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    local nNumFac
    local cSufFac
    local dFecFac
+   local cNumAlb
    local oError
    local oBlock
 
@@ -6810,43 +6794,30 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       nNumNFC           := nNewNFC( cSerFac, D():FacturasProveedores( nView ), "NFACPRV", D():Contadores( nView ) )
       aTmp[ _CNFC    ]  := nNumNFC
 
-      aTmp[ _LIMPALB ]  := !Empty( aNumAlb ) .or. !Empty( aTmp[ _CNUMALB ] )
+      aTmp[ _LIMPALB ]  := !aNumAlb:Empty() .or. !Empty( aTmp[ _CNUMALB ] )
 
    case nMode == EDIT_MODE
 
       while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() ) )
-         if dbLock( D():FacturasProveedoresLineas( nView ) )
-            ( D():FacturasProveedoresLineas( nView ) )->( dbDelete() )
-            ( D():FacturasProveedoresLineas( nView ) )->( dbUnLock() )
-         end if
+         aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
+         setNoFacturadoAlbaranProveedorLinea( nView )
+         dbLockDelete( D():FacturasProveedoresLineas( nView ) )
       end while
 
       while ( D():FacturasProveedoresIncidencias( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasProveedoresIncidencias( nView ) )->( eof() ) )
-         if dbLock( D():FacturasProveedoresIncidencias( nView ) )
-            ( D():FacturasProveedoresIncidencias( nView ) )->( dbDelete() )
-            ( D():FacturasProveedoresIncidencias( nView ) )->( dbUnLock() )
-         end if
+         dbLockDelete( D():FacturasProveedoresIncidencias( nView ) )
       end while
 
       while ( D():FacturasProveedoresDocumentos( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasProveedoresDocumentos( nView ) )->( eof() ) )
-         if dbLock( D():FacturasProveedoresDocumentos( nView ) )
-            ( D():FacturasProveedoresDocumentos( nView ) )->( dbDelete() )
-            ( D():FacturasProveedoresDocumentos( nView ) )->( dbUnLock() )
-         end if
+         dbLockDelete( D():FacturasProveedoresDocumentos( nView ) )
       end while
 
       while ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasProveedoresPagos( nView ) )->( eof() ) )
-         if dbLock( D():FacturasProveedoresPagos( nView ) )
-            ( D():FacturasProveedoresPagos( nView ) )->( dbDelete() )
-            ( D():FacturasProveedoresPagos( nView ) )->( dbUnLock() )
-         end if
+         dbLockDelete( D():FacturasProveedoresPagos( nView ) )
       end while
 
       while ( D():FacturasProveedoresSeries( nView ) )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) )
-         if dbLock( D():FacturasProveedoresSeries( nView ) )
-            ( D():FacturasProveedoresSeries( nView ) )->( dbDelete() )
-            ( D():FacturasProveedoresSeries( nView ) )->( dbUnLock() )
-         end if
+         dbLockDelete( D():FacturasProveedoresSeries( nView ) )
       end while
 
    end case
@@ -6892,6 +6863,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       end if
 
       dbGather( aTbl, D():FacturasProveedoresLineas( nView ), .t. )
+
+      setFacturadoAlbaranProveedorLinea( nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -6959,9 +6932,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       ( dbfTmpPgo )->( dbSkip() )
    end while
 
-   /*
-   Rellenamos los campos de los totales----------------------------------------
-   */
+   // Rellenamos los campos de los totales-------------------------------------
 
    aTmp[ _NTOTNET ]  := nTotNet
    aTmp[ _NTOTSUP ]  := nTotSup
@@ -6969,57 +6940,21 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    aTmp[ _NTOTREQ ]  := nTotReq
    aTmp[ _NTOTFAC ]  := nTotFac
 
-   /*
-   Grabamos las cabeceras de los albaranes-------------------------------------
-   */
+   // Grabamos las cabeceras de los albaranes----------------------------------
 
    WinGather( aTmp, , D():FacturasProveedores( nView ), , nMode )
 
-   /*
-   Actualizamos el stock en la web------------------------------------------
-   */
-
-   /*ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )*/
-
-   /*
-   Escribe los datos pendientes------------------------------------------------
-   */
+   //Escribe los datos pendientes----------------------------------------------
 
    CommitTransaction()
 
-   /*
-   Generar los pagos de las facturas-------------------------------------------
-   */
+   // Generar los pagos de las facturas----------------------------------------
 
    GenPgoFacPrv( cSerFac + Str( nNumFac ) + cSufFac, D():FacturasProveedores( nView ), D():FacturasProveedoresLineas( nView ), D():FacturasProveedoresPagos( nView ), D():Proveedores( nView ), D():TiposIva( nView ), D():FormasPago( nView ), D():Divisas( nView ) )
 
-   if nMode == APPD_MODE
+   // Actualiza el estado de los albaranes-------------------------------------
 
-      if Len( aNumAlb ) > 0
-
-         for nItem := 1 to Len( aNumAlb )
-
-            if ( D():AlbaranesProveedores( nView ) )->( dbSeek( aNumAlb[ nItem ] ) )
-
-               /*
-               Ponemos el albaran como facturado-------------------------------
-               */
-
-               SetFacturadoAlbaranProveedor( .t., nView, cSerFac + Str( nNumFac ) + cSufFac )
-
-               /*
-               Rollback de los stocks------------------------------------------
-               */
-
-               //oStock:AlbPrv( aNumAlb[ nItem ], ( D():AlbaranesProveedores( nView ) )->cCodAlm, ( D():AlbaranesProveedores( nView ) )->cNumPed, .f., .f., .t., .f. )
-
-            end if
-
-         next
-
-      end if
-
-   end if
+   aEval( aNumAlb:Get(), {|cNumAlb| setEstadoAlbaranProveedor( cNumAlb, nView ) } )
 
    RECOVER USING oError
 
@@ -7080,13 +7015,11 @@ STATIC FUNCTION KillTrans( oBrwLin )
    dbfErase( cTmpPgo  )
    dbfErase( cTmpSer  )
 
-   aNumAlb           := {}
+   aNumAlb:Init()
 
    if !Empty( oMnuRec )
       oMnuRec:End()
    end if
-
-   memory( -1 )
 
    if oBrwLin != nil
       oBrwLin:CloseData()
@@ -7525,7 +7458,7 @@ Static Function QuiFacPrv( lDetail )
 
    CursorWait()
 
-   cFactura          := ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac
+   cFactura          := D():FacturasProveedoresId( nView )
 
    if lDetail
       DelDetalle( cFactura )
@@ -7551,7 +7484,7 @@ Static Function QuiFacPrv( lDetail )
 
    ( D():AlbaranesProveedores( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
-   if uFieldEmpresa( "LRECNUMFAC" )
+   if uFieldEmpresa( "lRecNumFac" )
       nPutDoc( ( D():FacturasProveedores( nView ) )->cSerFac, ( D():FacturasProveedores( nView ) )->nNumFac, ( D():FacturasProveedores( nView ) )->cSufFac, D():FacturasProveedores( nView ), "nFacPrv" )
    end if
 
@@ -7561,56 +7494,39 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Static Function DelDetalle( cFactura )
+Static Function delDetalle( cFactura )
 
    local nOrdAnt
 
-   DEFAULT cFactura  := ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac
+   DEFAULT cFactura  := D():FacturasProveedoresId( nView )
 
    CursorWait()
 
-   /*
-   Eliminamos los apuntes de stocks--------------------------------------------
-   */
-
    nOrdAnt           := ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( "nNumFac" ) )
-
    while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() )
-      if dbDialogLock( D():FacturasProveedoresLineas( nView ) )
-         ( D():FacturasProveedoresLineas( nView ) )->( dbDelete() )
-         ( D():FacturasProveedoresLineas( nView ) )->( dbUnLock() )
-      end if
+      aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
+      setNoFacturadoAlbaranProveedorLinea( nView )
+      dbLockDelete( D():FacturasProveedoresLineas( nView ) )
    end do
-
    ( D():FacturasProveedoresLineas( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    while ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( cFactura ) ) .and. !( D():FacturasProveedoresPagos( nView ) )->( eof() )
-      if dbLock( D():FacturasProveedoresPagos( nView ) )
-         ( D():FacturasProveedoresPagos( nView ) )->( dbDelete() )
-         ( D():FacturasProveedoresPagos( nView ) )->( dbUnLock() )
-      end if
+      dbLockDelete( D():FacturasProveedoresPagos( nView ) )
    end do
 
    while ( D():FacturasProveedoresIncidencias( nView ) )->( dbSeek( cFactura ) .and. !( D():FacturasProveedoresIncidencias( nView ) )->( eof() ) )
-      if dbLock( D():FacturasProveedoresIncidencias( nView ) )
-         ( D():FacturasProveedoresIncidencias( nView ) )->( dbDelete() )
-         ( D():FacturasProveedoresIncidencias( nView ) )->( dbUnLock() )
-      end if
+      dbLockDelete( D():FacturasProveedoresIncidencias( nView ) )
    end while
 
    while ( D():FacturasProveedoresDocumentos( nView ) )->( dbSeek( cFactura ) .and. !( D():FacturasProveedoresDocumentos( nView ) )->( eof() ) )
-      if dbLock( D():FacturasProveedoresDocumentos( nView ) )
-         ( D():FacturasProveedoresDocumentos( nView ) )->( dbDelete() )
-         ( D():FacturasProveedoresDocumentos( nView ) )->( dbUnLock() )
-      end if
+      dbLockDelete( D():FacturasProveedoresDocumentos( nView ) )
    end while
 
    while ( D():FacturasProveedoresSeries( nView ) )->( dbSeek( cFactura ) .and. !( D():FacturasProveedoresSeries( nView ) )->( eof() ) )
-      if dbLock( D():FacturasProveedoresSeries( nView ) )
-         ( D():FacturasProveedoresSeries( nView ) )->( dbDelete() )
-         ( D():FacturasProveedoresSeries( nView ) )->( dbUnLock() )
-      end if
+      dbLockDelete( D():FacturasProveedoresSeries( nView ) )
    end while
+
+   aEval( aNumAlb:Get(), {|cNumAlb| setEstadoAlbaranProveedor( cNumAlb, nView ) } )
 
    CursorWe()
 
@@ -8177,7 +8093,7 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
 
    if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( cAlbaran ) )
 
-      while ( ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb == cAlbaran ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
+      while ( D():AlbaranesProveedoresLineasId( nView ) == cAlbaran ) .and. !( D():AlbaranesProveedoresLineas( nView ) )->( eof() )
 
          nNumLin                 := ( D():AlbaranesProveedoresLineas( nView ) )->nNumLin
 
@@ -8427,11 +8343,11 @@ Static Function ImprimirSeriesFacturasProveedores( nDevice, lExt )
 
    oPrinter:bInit    := {||   ( D():FacturasProveedores( nView ) )->( dbSeek( oPrinter:DocumentoInicio(), .t. ) ) }
 
-   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( D():FacturasProveedoresId( nView ) )                  .and. ;
+   oPrinter:bWhile   := {||   oPrinter:InRangeDocumento( D():FacturasProveedoresId( nView ) ) .and. ;
                               ( D():FacturasProveedores( nView ) )->( !eof() ) }
 
-   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():FacturasProveedores( nView ) )->dFecFac )           .and. ;
-                              oPrinter:InRangeProveedor( ( D():FacturasProveedores( nView ) )->cCodPrv )         .and. ;
+   oPrinter:bFor     := {||   oPrinter:InRangeFecha( ( D():FacturasProveedores( nView ) )->dFecFac ) .and. ;
+                              oPrinter:InRangeProveedor( ( D():FacturasProveedores( nView ) )->cCodPrv ) .and. ;
                               oPrinter:InRangeGrupoProveedor( RetFld( ( D():FacturasProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cCodGrp" ) ) }
 
    oPrinter:bSkip    := {||   ( D():FacturasProveedores( nView ) )->( dbSkip() ) }

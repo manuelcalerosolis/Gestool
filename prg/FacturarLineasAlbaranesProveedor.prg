@@ -66,7 +66,7 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
    METHOD lPassedLinea()      
 
    METHOD deleteLineas()                  INLINE   ( ::oBrwSalida:SelectAll(), ::deleteLinea() )
-   METHOD deleteLinea()                   INLINE   ( dbdel( D():Tmp( "TmpPrvO", ::nView ) ), ::oBrwSalida:refresh(), ::oBrwEntrada:refresh() )
+      METHOD deleteLinea()                INLINE   ( dbdel( D():Tmp( "TmpPrvO", ::nView ) ), ::oBrwSalida:refresh(), ::oBrwEntrada:refresh() )
 
    METHOD recalculaTotal()    
 
