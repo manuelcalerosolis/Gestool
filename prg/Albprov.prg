@@ -10435,7 +10435,7 @@ Method SendData()
 
    if file( cPatOut() + ::cFileName )
 
-      if ftpSndFile( cPatOut() + ::cFileName, ::cFileName, ::oSender )
+      if ::oSender:SendFiles( cPatOut() + ::cFileName, ::cFileName )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + ::cFileName  )
@@ -10471,7 +10471,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo albaranes de proveedores" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "AlbPrv*." + aExt[ n ], cPatIn(), ::oSender )
+      ::oSender:GetFiles( "AlbPrv*." + aExt[ n ], cPatIn() )
    next
 
    ::oSender:SetText( "Albaranes de proveedores recibidos" )

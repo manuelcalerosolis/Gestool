@@ -10935,7 +10935,7 @@ Method SendData()
       Enviarlos a internet
       */
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
+      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -10961,7 +10961,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo presupuestos de clientes" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "PreCli*." + aExt[ n ], cPatIn(), ::oSender )
+      ::oSender:GetFiles( "PreCli*." + aExt[ n ], cPatIn() )
    next
 
    ::oSender:SetText( "Presupuestos de clientes recibidos" )

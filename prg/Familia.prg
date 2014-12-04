@@ -2009,7 +2009,7 @@ Method SendData()
 
    if File( cPatOut() + cFileName )
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
+      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
          ::IncNumberToSend()
          ::lSuccesfullSend := .t.
          ::oSender:SetText( "Ficheros de familias enviados " + cFileName )
@@ -2038,7 +2038,7 @@ Method ReciveData()
 
    for n := 1 to len( aExt )
       if IsChar( aExt[ n ] )
-         FtpGetFiles( "Fam*." + aExt[ n ], cPatIn(), ::oSender )
+         ::oSender:GetFiles( "Fam*." + aExt[ n ], cPatIn() )
       end if
    next
 

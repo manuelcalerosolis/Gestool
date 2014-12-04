@@ -22943,7 +22943,7 @@ Method SendData()
 
    if File( cPatOut() + cFileNameFacturas )
 
-      if ::oSender:SendFile( cPatOut() + cFileNameFacturas, cDirectory + cFileNameFacturas, cDirectory )
+      if ::oSender:SendFiles( cPatOut() + cFileNameFacturas, cDirectory + cFileNameFacturas, cDirectory )
          ::lSuccesfullSendFacturas  := .t.
          ::oSender:SetText( "Fichero facturas de clientes enviados " + cFileNameFacturas )
       else
@@ -22958,7 +22958,7 @@ Method SendData()
 
    if File( cPatOut() + cFileNameAnticipos )
 
-      if ::oSender:SendFile( cPatOut() + cFileNameAnticipos, cFileNameAnticipos, cDirectory )
+      if ::oSender:SendFiles( cPatOut() + cFileNameAnticipos, cFileNameAnticipos, cDirectory )
          ::lSuccesfullSendAnticipos := .t.
          ::oSender:SetText( "Fichero anticipos de clientes enviados " + cFileNameAnticipos )
       else
@@ -22997,8 +22997,8 @@ Method ReciveData()
 	::oSender:SetText( "Recibiendo facturas y anticipos de clientes" )
 
 	for n := 1 to len( aExt )
-      ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), ::oSender )
-      ftpGetFiles( "AntCli*." + aExt[ n ], cPatIn(), ::oSender )
+      ::oSender:GetFiles( "FacCli*." + aExt[ n ], cPatIn() )
+      ::oSender:GetFiles( "AntCli*." + aExt[ n ], cPatIn() )
 	next
 
 	::oSender:SetText( "Facturas y anticipos de clientes recibidos" )

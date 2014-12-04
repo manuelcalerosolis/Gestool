@@ -2005,7 +2005,7 @@ Method SendData()
 
    if File( cPatOut() + cFileName )
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
+      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
          ::IncNumberToSend()
          ::lSuccesfullSend := .t.
          ::oSender:SetText( "Ficheros de historico de movimientos enviados " + cFileName )
@@ -2033,7 +2033,7 @@ Method ReciveData()
    ::oSender:SetText( "Recibiendo historico de movimientos" )
 
    for n := 1 to len( aExt )
-      FtpGetFiles( "HisMov*." + aExt[ n ], cPatIn(), ::oSender )
+      ::oSender:GetFiles( "HisMov*." + aExt[ n ], cPatIn() )
    next
 
    ::oSender:SetText( "Historico de movimientos recibidos" )

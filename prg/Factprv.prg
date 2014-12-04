@@ -10617,7 +10617,7 @@ Method SendData() CLASS TFacturasProveedorSenderReciver
       Enviarlos a internet
       */
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
+      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -10651,13 +10651,13 @@ Method ReciveData() CLASS TFacturasProveedorSenderReciver
    if !::oSender:lFranquiciado
 
       for n := 1 to len( aExt )
-         ftpGetFiles( "FacPrv*." + aExt[ n ], cPatIn(), ::oSender )
+         ::oSender:GetFiles( "FacPrv*." + aExt[ n ], cPatIn() )
       next
 
    else
 
       for n := 1 to len( aExt )
-         ftpGetFiles( "FacCli*." + aExt[ n ], cPatIn(), ::oSender )
+         ::oSender:GetFiles( "FacCli*." + aExt[ n ], cPatIn() )
       next
    
    end if   

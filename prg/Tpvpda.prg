@@ -12644,7 +12644,7 @@ Method SendData() CLASS TTiketsClientesSenderReciver
 
    if file( cPatOut() + cFileName )
 
-      if ftpSndFile( cPatOut() + cFileName, cFileName, ::oSender )
+      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
          ::oSender:SetText( "Fichero enviado " + cFileName )
@@ -12670,7 +12670,7 @@ Method ReciveData() CLASS TTiketsClientesSenderReciver
    ::oSender:SetText( "Recibiendo tikets de clientes" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "TikCli*." + aExt[ n ], cPatIn(), ::oSender )
+      ::oSender:GetFiles( "TikCli*." + aExt[ n ], cPatIn() )
    next
 
    ::oSender:SetText( "Tickets de clientes recibidos" )

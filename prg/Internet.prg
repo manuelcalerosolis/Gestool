@@ -88,8 +88,6 @@ CLASS TSndRecInf
 
    Method Activate( oWnd )
 
-   Method CatalogarTrasmision()
-
    Method DefineFiles()
    Method OpenFiles()
    Method CloseFiles()
@@ -111,7 +109,6 @@ CLASS TSndRecInf
    Method lPriorFileRecive( cFile )
 
    Method AppendFileRecive( cFile )
-   Method SetProcedFileRecive( cFile, lProced )
 
    Method ZoomHistorial()
 
@@ -127,15 +124,20 @@ CLASS TSndRecInf
 
    Method lFileRecive( cFile )
    Method lFileProcesed( cFile )
-   Method SendFile()
-   Method GetFile()
+   Method SendFiles()
+   Method GetFiles()
 
    Method SyncAllDbf()
    METHOD ActivateTablet()
 
-
    METHOD setPathComunication( cPathComunication ) INLINE ( ::cPathComunication := cPathComunication )
    METHOD getPathComunication()                    INLINE ( ::cPathComunication )
+
+   METHOD lLocalGetFiles( aSource, cTarget )
+   METHOD lFtpGetFiles( aSource, cTarget )
+
+   METHOD lLocalSendFiles( aSource, cTarget )
+   METHOD lFtpSendFiles( aSource, cTarget )
 
 END CLASS
 
@@ -192,7 +194,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method LoadFromIni()
+Method LoadFromIni() CLASS TSndRecInf
 
    if !Empty( ::aSend )
       aSend( ::aSend, "Load" )
@@ -228,7 +230,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method StartTimer()
+Method StartTimer() CLASS TSndRecInf
 
    if ::lPlanificarEnvio .or. ::lPlanificarRecepcion
       ::oTimer             := TTimer():New( 60000, {|| ::AutoExecute() }, oWnd() )
@@ -239,7 +241,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method StopTimer()
+Method StopTimer() CLASS TSndRecInf
 
    if ::oTimer != nil .and. ::oTimer:lActive
       ::oTimer:DeActivate()
@@ -249,7 +251,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SaveToIni( lMessage )
+Method SaveToIni( lMessage ) CLASS TSndRecInf
 
    DEFAULT lMessage  := .f.
 
@@ -274,7 +276,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SaveMessageToFile()
+Method SaveMessageToFile() CLASS TSndRecInf
 
    if !Empty( ::hFilTxt )
       fClose( ::hFilTxt )
@@ -286,7 +288,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD DefineFiles( cPath, cDriver )
+METHOD DefineFiles( cPath, cDriver ) CLASS TSndRecInf
 
    DEFAULT cPath        := cPatEmp()
    DEFAULT cDriver      := cDriver()
@@ -323,7 +325,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method OpenFiles( lExclusive, cPath )
+Method OpenFiles( lExclusive, cPath ) CLASS TSndRecInf
 
    local lOpen          := .t.
    local oError
@@ -356,7 +358,7 @@ Return ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-Method CloseFiles()
+Method CloseFiles() CLASS TSndRecInf
 
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    local lOpen    := .t.
@@ -388,7 +390,7 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
-METHOD Activate( oWnd, lAuto )
+METHOD Activate( oWnd, lAuto ) CLASS TSndRecInf
 
    local oBmp
    local oBrwSnd
@@ -767,7 +769,7 @@ Return nil
 
 //----------------------------------------------------------------------------//
 
-Method BotonSiguiente()
+Method BotonSiguiente() CLASS TSndRecInf
 
 
    do case
@@ -801,7 +803,7 @@ return ( Self )
 //procesos a realizar al pulsar sobre anterior de la ventana principal
 //
 
-Method BotonAnterior()
+Method BotonAnterior() CLASS TSndRecInf
 
    do case
       case ::oFld:nOption == 2
@@ -826,7 +828,7 @@ return ( Self )
 
 //-----------------------------------------------------------------------//
 
-METHOD Execute( lSend, lRecive, lImprimirEnvio )
+METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
 
    local n
    local nZip
@@ -921,10 +923,6 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
          if lRecive
             aEval( ::aSend, {|o| if ( o:lSelectRecive,;
                                     ( ::SetText( o:cText, 2 ), o:ReciveData(), Self ), ) } )
-/*
-            aEval( ::aSend, {|o| if ( o:lSelectRecive .and. __ObjHasMethod( o, "RECIVEFRQ" ),;
-                                    ( ::SetText( o:cText, 2 ), o:ReciveFrq(), Self ), ) } )
-*/
          end if
 
          /*
@@ -936,9 +934,6 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
          if lRecive
             aEval( ::aSend, {|o| if ( o:lSelectRecive,;
                                     ( ::SetText( o:cText, 2 ), o:Process(), Self ), ) } )
-/*          aEval( ::aSend, {|o| if ( o:lSelectRecive .and. __ObjHasMethod( o, "PROCESSFRQ" ),;
-                                    ( ::SetText( o:cText, 2 ), o:ProcessFrq(), Self ), ) } )
-*/                                 
          end if
 
          /*
@@ -1083,82 +1078,75 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
 
 RETURN ( Self )
 
-//----------------------------------------------------------------------------//
-/*
-Method AutoExecute( lForced, lDialog, lImprimirEnvio )
+//---------------------------------------------------------------------------//
 
-   local oBmp
-   local oDlg
-   local cTime       := Time()
+Method FtpConexion() CLASS TSndRecInf
 
-   cTime             := SubStr( cTime, 1, 2 ) + SubStr( cTime, 4, 2 )
+   local nRetry            := 0
+   local ftpSit            := cFirstPath( Rtrim( cSitFtp() ) )
+   local ftpDir            := cNoPathLeft( Rtrim( cSitFtp() ) )
+   local nbrUsr            := Rtrim( cUsrFtp() )
+   local accUsr            := Rtrim( cPswFtp() )
+   local pasInt            := uFieldEmpresa( "lPasEnvio" )
+   local cUrl
 
-   DEFAULT lForced   := .f.
-   DEFAULT lDialog   := .t.
+   if nTipConInt() == 2
 
-   // Vamos a mirar antes q no estemos en un proceso abierto
+      while !::lFtpValido .and. nRetry < 3
 
-   if !::lInProcess // .and. nAreas() == 0
+         ::SetText( '> Conectando con el sitio ' + Rtrim( ftpSit ) + '...', 1 )
 
-      if !::OpenFiles()
-         return ( Self )
-      end if
+         cUrl           := "ftp://" + nbrUsr + ":" + accUsr + "@" + ftpSit
 
-      // Flag pra no volver a entrar
+         ::oInt               := TUrl():New( cUrl )
+         ::oFTP               := TIPClientFTP():New( ::oInt, .t. )
+         ::oFTP:nConnTimeout  := 20000
+         ::oFTP:bUsePasv      := pasInt
 
-      ::lInProcess   := .t.
+         if !::oFTP:Open( cUrl )
 
-      // Envío de  información
+            ::SetText( "Imposible conectar con el sitio ftp " + Alltrim( ftpSit ), 1 )
 
-      if lForced .or. ( ::lPlanificarEnvio .and. !::lEnviado .and. cTime >= ::cHoraEnvio )
+            ::lFtpValido   := .f.
 
-         if lDialog
+            ++nRetry
+            ::SetText( "Reintento " + Alltrim( Str( nRetry ) ) + " de 3, en 10 segundos", 1 )
 
-            DEFINE DIALOG oDlg NAME "SNDRECINF" TITLE "Proceso planificado"
-
-               REDEFINE BITMAP oBmp;
-                  RESOURCE "WEBTOP" ;
-                  ID       600 ;
-                  OF       oDlg
-
-               REDEFINE SAY ::oPro ;
-                  PROMPT   "Enviando información" ;
-                  ID       110 ;
-                  OF       oDlg
-
-               oDlg:bStart := {|| ::Execute(), oDlg:bValid := {|| .t. }, oDlg:End() }
-
-            ACTIVATE DIALOG oDlg CENTER VALID ( .f. )
-
-            oBmp:End()
+            DlgWait( 10 )
 
          else
 
-            ::Execute( .t., .t., lImprimirEnvio )
+            if !Empty( ftpDir )
+               ::oFtp:Cwd( ftpDir )
+            end if
+
+            ::lFtpValido   := .t.
 
          end if
 
-         ::lEnviado  := .t.
-
-         ::SaveMessageToFile()
-
-      end if
-
-      ::CloseFiles()
-
-      ::lInProcess   := .f.
+      end while
 
    else
 
-      MsgStop( 'Proceso ya abierto' )
+      ::lFtpValido           := .t.
 
    end if
 
 Return ( Self )
-*/
-//----------------------------------------------------------------------------//
 
-METHOD SetText( cText, nLevel )
+//---------------------------------------------------------------------------//
+
+Method CloseConexion() CLASS TSndRecInf
+
+   if !Empty( ::oFtp )
+      ::oFtp:Close()
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetText( cText, nLevel ) CLASS TSndRecInf
 
    DEFAULT nLevel    := 3
 
@@ -1207,23 +1195,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method CatalogarTrasmision()
-
-   local nUltimoEnvio            := nUltimoEnvioInformacion()
-
-   ::oDbfSenderReciver:Append()
-   ::oDbfSenderReciver:nEnvio    := ++nUltimoEnvio
-   ::oDbfSenderReciver:dFecha    := GetSysDate()
-   ::oDbfSenderReciver:cArchivo  := ::cFilTxt
-   ::oDbfSenderReciver:Save()
-
-   nUltimoEnvioInformacion( nUltimoEnvio )
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method AppendFileRecive( cFile )
+Method AppendFileRecive( cFile ) CLASS TSndRecInf
 
    local oBlock
    local oError
@@ -1257,21 +1229,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SetProcedFileRecive( cFile, lProced )
-
-   DEFAULT lProced   := .t.
-
-   if ::oDbfFilesReciver:Seek( cFile )
-      ::oDbfFilesReciver:Load()
-      ::oDbfFilesReciver:lProced := lProced
-      ::oDbfFilesReciver:Save()
-   end if
-
-Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method lPriorFileRecive( cFile )
+Method lPriorFileRecive( cFile ) CLASS TSndRecInf
 
    local lResult     := .f.
    local cFileExt    := GetFileExt( cFile )
@@ -1290,7 +1248,7 @@ Return ( lResult )
 
 //----------------------------------------------------------------------------//
 
-Method ZoomHistorial()
+Method ZoomHistorial() CLASS TSndRecInf
 
    local oMemo
    local cMemo
@@ -1329,144 +1287,105 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method FtpConexion()
+METHOD GetFiles( aSource, cTarget, lDisco ) CLASS TSndRecInf
 
-   local nRetry            := 0
-   local ftpSit            := cFirstPath( Rtrim( cSitFtp() ) )
-   local ftpDir            := cNoPathLeft( Rtrim( cSitFtp() ) )
-   local nbrUsr            := Rtrim( cUsrFtp() )
-   local accUsr            := Rtrim( cPswFtp() )
-   local pasInt            := uFieldEmpresa( "lPasEnvio" )
+   local lSuccess       := .f.
 
-   if nTipConInt() == 2
+   DEFAULT lDisco       := ( nTipConInt() == 1 )
 
-      while !::lFtpValido .and. nRetry < 3
+   if ValType( aSource ) != "A"
+      aSource           := { aSource }
+   end if
 
-         ::SetText( '> Conectando con el sitio ' + Rtrim( ftpSit ) + '...', 1 )
+   if lDisco
+      lSuccess          := ::lLocalGetFiles( aSource, cTarget )
+   else
+      lSuccess          := ::lFtpGetFiles( aSource, cTarget )
+   end if
 
-         ::oInt         := TInternet():New()
-         ::oFtp         := TFtp():New( ftpSit, ::oInt, nbrUsr, accUsr, pasInt )
+return ( lSuccess )
 
-         if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp )
+//---------------------------------------------------------------------------//
 
-            ::SetText( "Imposible conectar con el sitio ftp " + Alltrim( ftpSit ), 1 )
+METHOD lLocalGetFiles( aSource, cTarget )
 
-            ::lFtpValido   := .f.
+   local n 
+   local i
+   local aFiles      := {}
+   local lResult     := .t.
 
-            ++nRetry
-            ::SetText( "Reintento " + Alltrim( Str( nRetry ) ) + " de 3, en 10 segundos", 1 )
+   for n := 1 to Len( aSource )
 
-            DlgWait( 10 )
+      aFiles         := Directory( ::getPathComunication() + aSource[ n ] )
 
-         else
+      for i := 1 to Len( aFiles )
 
-            if !Empty( ftpDir )
-               ::oFtp:SetCurrentDirectory( ftpDir )
+         if ::lFileProcesed( aFiles[ i, 1 ] )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " ya procesado." )
+            if !::lGetProcesados
+               loop
             end if
-
-            ::lFtpValido   := .t.
-
          end if
 
-      end while
-
-   else
-
-      ::lFtpValido           := .t.
-
-   end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-/*
-Method FtpConexion()
-
-   local oUrl
-   local nRetry                     := 0
-   local ftpSit                     := cFirstPath( Rtrim( cSitFtp() ) )
-   local ftpDir                     := cNoPath( Rtrim( cSitFtp() ) )
-   local nbrUsr                     := Rtrim( cUsrFtp() )
-   local accUsr                     := Rtrim( cPswFtp() )
-   local cUrl                       := "ftp://" + nbrUsr + ":" + accUsr + "@" + ftpSit
-
-   if nTipConInt() == 2
-
-      while !::lFtpValido .and. nRetry < 3
-
-         ? cUrl
-
-         ::SetText( '> Conectando con el sitio ' + Rtrim( ftpSit ) + '...', 1 )
-
-         oUrl                       := tUrl():New( cUrl )
-         ::oFtp                     := tIPClientFtp():New( oUrl, .t. )
-         ::oFtp:nConnTimeout        := 20000
-         ::oFtp:bUsePasv            := .t.
-
-         if At( "@", nbrUsr ) > 0
-            ::oFtp:oUrl:cServer     := ftpSit
-            ::oFtp:oUrl:cUserID     := nbrUsr
-            ::oFtp:oUrl:cPassword   := accUsr
-         endif
-
-         if !::oFtp:Open()
-
-            ::SetText( "Imposible conectar con el sitio FTP " + oURL:cServer, 1 )
-
-            ::lFtpValido            := .f.
-
-            if ::oFTP:SocketCon == nil
-               ::SetText( "Conexión no inicializada", 1 )
-            elseif InetErrorCode( ::oFTP:SocketCon ) == 0
-               ::SetText( "Respuesta del servidor: " + ::oFTP:cReply, 1 )
-            else
-               ::SetText( "Error en la conexión:" + " " + InetErrorDesc( ::oFTP:SocketCon ), 1 )
+         if !::lFileRecive( aFiles[ i, 1 ] ) .and. !::lPriorFileRecive( aFiles[ i, 1 ] )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " fuera de secuencia." )
+            if !::lGetFueraSecuencia
+               loop
             end if
-
-            ++nRetry
-            ::SetText( "Reintento" + Str( nRetry ) + " de 3, en 10 segundos", 1 )
-
-            DlgWait( 10 )
-
-            ::oFtp:Close()
-
-         else
-
-            if !Empty( ftpDir )
-               ::oFtp:CWD( ftpDir )
-            end if
-
-            ::lFtpValido            := .t.
-
          end if
 
-      end while
+         if isFalse( __CopyFile( ::getPathComunication() + aFiles[ i, 1 ], cTarget + aFiles[ i, 1 ] ) )
+            lResult  := .f.
+         end if
 
-   else
+      next
 
-      ::lFtpValido                  := .t.
+   next
 
-   end if
-
-Return ( Self )
-*/
-//---------------------------------------------------------------------------//
-
-Method CloseConexion()
-
-   if !Empty( ::oInt )
-      ::oInt:end()
-   end if
-
-   if !Empty( ::oFtp )
-      ::oFtp:end()
-   end if
-
-Return ( Self )
+return ( lResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD SendFile( aSource, aTarget, cDirectory )
+METHOD lFtpGetFiles( aSource, cTarget )
+
+   local n 
+   local i
+   local aFiles      := {}
+   local lResult     := .t.
+
+   for n := 1 to Len( aSource )
+
+      aFiles         := TrimFileName( ::oFTP:listFiles( aSource[ n ] ) )
+
+      for i := 1 to Len( aFiles )
+
+         if ::lFileProcesed( aFiles[ i, 1 ] )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " ya procesado." )
+            if !::lGetProcesados
+               loop
+            end if
+         end if
+
+         if !::lFileRecive( aFiles[ i, 1 ] ) .and. !::lPriorFileRecive( aFiles[ i, 1 ] )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " fuera de secuencia." )
+            if !::lGetFueraSecuencia
+               loop
+            end if
+         end if
+
+         if isFalse( ::oFtp:DownLoadFile( cTarget + aFiles[ i, 1 ] ) )
+            lResult  := .f.
+         end if
+
+      next
+
+   next
+
+return ( lResult )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD SendFile( aSource, aTarget, cDirectory ) CLASS TSndRecInf
 
    local n
    local oFile
@@ -1506,7 +1425,6 @@ METHOD SendFile( aSource, aTarget, cDirectory )
 
    /*
    Tamaño cero salida----------------------------------------------------------
-   */
 
    if nTotSize == 0
       Return .f.
@@ -1520,7 +1438,6 @@ METHOD SendFile( aSource, aTarget, cDirectory )
 
    /*
    Esto es para un disco-------------------------------------------------------
-   */
 
    if lDisco
 
@@ -1546,11 +1463,7 @@ METHOD SendFile( aSource, aTarget, cDirectory )
 
          else
 
-            oFile             := TFtpFile():New( aSource[ n ], ::oFtp )
-
-         //   lRet              := oFile:CopyFtpFile( aSource[ n ], aTarget[ n ], ::oFtp )
-            CopyFtpFile( aSource[ n ], aTarget[ n ], ::oFtp )
-            lRet := .t.
+            lRet  := ::oFtp:UploadFile( aSource[ n ] )
 
          end if
 
@@ -1564,8 +1477,6 @@ METHOD SendFile( aSource, aTarget, cDirectory )
 
          end if
 
-         oFile:End()
-
       next
 
    end if
@@ -1576,102 +1487,396 @@ METHOD SendFile( aSource, aTarget, cDirectory )
 
    SysRefresh()
 
-Return ( lRet )
+Return ( lRet )*/
 
 //---------------------------------------------------------------------------//
 
-METHOD GetFile( aSource, cTarget )
+METHOD SendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
 
-   local nBytes
-   local cSource
+   local n
+   local oFile
+   local hSource
    local hTarget
    local cBuffer
    local nBuffer        := 2000
-   local cFile
-   local oFile
-   local aFiles
+   local nBytes         := 0
+   local nFile          := 0
+   local nTotSize       := 0
+   local lRet           := .f.
    local lDisco         := ( nTipConInt() == 1 )
-   local cFileName
-   local nFileSize
+
+   DEFAULT aTarget      := aSource
 
    if ValType( aSource ) != "A"
       aSource           := { aSource }
    end if
 
-   cBuffer              := Space( nBuffer )
+   if ValType( aTarget ) != "A"
+      aTarget           := { aTarget }
+   end if
 
-   /*
-   Comenzemos a bajar el fichero-----------------------------------------------
-   */
+   if ( nTipConInt() == 1 )
+      lRet              := ::lLocalSendFiles( aSource, aTarget, cDirectory )
+   else
+      lRet              := ::lFtpSendFiles( aSource, aTarget, cDirectory )
+   end if
 
-   for each cSource in aSource 
+return ( lRet )
 
-      if lDisco
-         aFiles         := Directory( ::getPathComunication() + cSource )
-      else
-         aFiles         := ::oFTP:Directory( cSource )
+//----------------------------------------------------------------------------//
+
+METHOD lLocalSendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
+
+   local n
+   local lRet  := .t.
+
+   if !empty( cDirectory ) .and. !lIsDir( ::getPathComunication() + cDirectory )
+      makeDir( cNamePath( ::getPathComunication() + cDirectory ) )
+   end if 
+
+   for n := 1 to Len( aSource )
+
+      if isFalse( __CopyFile( aSource[ n ], ::getPathComunication() + aTarget[ n ] ) )
+         lRet  := .f.
       end if
-
-      for each cFile in aFiles
-
-         cFileName      := cValToChar( cFile[ 1 ] )
-         nFileSize      := cFile[ 2 ] 
-
-         ::SetText( "Ficheros en el servidor : " + cFileName )
-
-         if ::lFileProcesed( cFileName )
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( cFileName ) + " ya procesado." )
-            if !::lGetProcesados
-               loop
-            end if
-         end if
-
-         if !::lFileRecive( cFileName ) .and. !::lPriorFileRecive( cFileName )
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( cFileName ) + " fuera de secuencia." )
-            if !::lGetFueraSecuencia
-               loop
-            end if
-         end if
-
-         // Comprueba q el tamaño del fichero sea distinto de cero ------------
-
-         if nFileSize != 0
-
-            if IsChar( cFileName )
-
-               if lDisco
-
-                  __CopyFile( ::getPathComunication() + cFileName, cTarget + cFileName )
-
-               else 
-                  
-                  CopyFtpFile( cFileName, cTarget + cFileName, ::oFTP )
-
-               end if 
-
-               ::SetText( "Fichero recibido : " + cValToChar( cFileName ) )
-
-               ::AppendFileRecive( cFileName )
-
-            end if
-
-         else
-
-            ::SetText( "INFORMACIÓN, fichero " + cValToChar( cFileName ) + " está vacio." )
-
-         end if
-
-      next
 
    next
 
-   if ::oMtr != nil
-      ::oMtr:Set( 0 )
+Return ( lRet )
+
+//---------------------------------------------------------------------------//
+
+METHOD lFtpSendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
+
+   local n 
+   local lRet  := .t.
+
+   for n := 1 to Len( aSource )
+
+      if isFalse( ::oFtp:UploadFile( aSource[ n ] ) )
+         lRet  := .f.
+      end if
+
+   next
+
+Return ( lRet )
+
+//---------------------------------------------------------------------------//
+
+METHOD PrintLog() CLASS TSndRecInf
+
+   local oFont
+   local oReport
+   local oColumn
+
+   oFont       := TFont():New("Courier New", 9, -12 )
+
+   oReport     := TReport():New( {  { || AllTrim( cCodEmp() + " - " + cNbrEmp() ) }, { || "Informe de envío y recepción" } },;
+                                 {  { || "Fecha: " + Dtoc( Date() ) + " - " + Time() } },;
+                                 {  { || "Página: " + Str( oReport:nPage, 3 ) } },;
+                                 { oFont },;
+                                 {},;
+                                 .f.,;
+                                 ,;
+                                 ,;
+                                 .f.,;
+                                 .t.,;
+                                 ,;
+                                 ,;
+                                 "Imprimiendo Log" )
+
+   if !Empty( oReport ) .and. oReport:lCreated
+
+      oColumn  := TRColumn():New( {}, 1, { {|| "" } }, 76, {}, , .f., , , .f., .f., , oReport )
+
+      oReport:AddColumn( oColumn )
+
+      oReport:nTitleUpLine := RPT_NOLINE
+      oReport:nTitleDnLine := RPT_NOLINE
+
+      oReport:Margin( .25, RPT_LEFT, RPT_INCHES)
+      oReport:Margin( .25, RPT_TOP, RPT_INCHES)
+      oReport:Margin( .25, RPT_BOTTOM, RPT_INCHES)
+
+   else
+
+      msgStop( "No se ha podido crear informe, revise la configuración de sus impresoras." )
+
    end if
 
-Return ( nil )
+   if !Empty( oReport )
+      oReport:Activate( , , {|| ::SayMemo( oReport ) } )
+   end if
+
+   oFont:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SayMemo( oReport ) CLASS TSndRecInf
+
+   local cText
+   local cLine
+   local nFor
+   local nLines
+   local nPageln
+
+   cText    := MemoRead( ::cFilTxt )
+
+   nLines   := MlCount( cText, 76 )
+   nPageln  := 0
+
+   for nFor := 1 to nLines
+
+      cLine := MemoLine( cText, 76, nFor)
+
+      oReport:StartLine()
+      oReport:Say( 1, cLine )
+      oReport:EndLine()
+
+      nPageln     := nPageln + 1
+
+      if nPageln == 60
+
+         nFor     := GetTop( cText, nFor, nLines)
+         nPageln  := 0
+
+      endif
+
+   next
+
+return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method lZipData( cFileName ) CLASS TSndRecInf
+
+   local lZip     := .t.
+   local aDir     := Directory( cLastPath( cPatSnd() ) + "\*.*" )
+   local aName
+
+   hb_SetDiskZip( {|| nil } )
+   
+   for each aName in aDir
+
+      SysRefresh()
+
+      lZip        := hb_ZipFile( cPatOut() + cFileName, cLastPath( cPatSnd() ) + aName[ 1 ], 9 )
+      if !lZip
+         exit
+      end if
+
+   next
+
+   hb_gcAll()
+
+Return ( lZip )
 
 //----------------------------------------------------------------------------//
+
+Method lUnZipData( cFileName ) CLASS TSndRecInf
+
+   local aDir
+   local nZip
+   local lUnZip   := .t.
+
+   aDir           := Hb_GetFilesInZip( cFileName )
+   lUnZip         := Hb_UnZipFile( cFileName, { | cName, nPos | ::SetText( "Descomprimiendo " + cName ) }, , , cPatSnd(), aDir )
+   hb_gcAll()
+
+Return ( lUnZip )
+
+//----------------------------------------------------------------------------//
+
+METHOD Reindexa( cPath ) CLASS TSndRecInf
+
+   ::DefineFiles( cPath )
+
+   if !Empty( ::oDbfSenderReciver )
+      ::oDbfSenderReciver:IdxFDel()
+      ::oDbfSenderReciver:Activate( .f., .t., .f. )
+      ::oDbfSenderReciver:Pack()
+      ::oDbfSenderReciver:End()
+   end if
+
+   if !Empty( ::oDbfFilesReciver )
+      ::oDbfFilesReciver:IdxFDel()
+      ::oDbfFilesReciver:Activate( .f., .t., .f. )
+      ::oDbfFilesReciver:Pack()
+      ::oDbfFilesReciver:End()
+   end if
+
+RETURN ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method lFileRecive( cFile ) CLASS TSndRecInf
+
+   local lFileRecive    := .f.
+
+   if !Empty( cFile ) .and. IsChar( cFile )
+      lFileRecive    := ::oDbfFilesReciver:Seek( Rtrim( cFile ) )
+   end if
+
+Return ( lFileRecive )
+
+//---------------------------------------------------------------------------//
+
+Method lFileProcesed( cFile ) CLASS TSndRecInf
+
+   local lFileProcesed  := .f.
+
+   if !Empty( cFile ) .and. IsChar( cFile )
+      lFileProcesed     := ::oDbfFilesReciver:Seek( Rtrim( cFile ) ) .and. ::oDbfFilesReciver:lProced
+   end if
+
+Return ( lFileProcesed )
+
+//---------------------------------------------------------------------------//
+
+Method SyncAllDbf() CLASS TSndRecInf
+
+   if Empty( ::oDbfSenderReciver ) .or. Empty( ::oDbfFilesReciver )
+      ::DefineFiles()
+   end if
+
+   lCheckDbf( ::oDbfSenderReciver )
+   lCheckDbf( ::oDbfFilesReciver )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ActivateTablet() CLASS TSndRecInf
+
+   local oDlg
+   local oSayGeneral
+   local oBtnAceptar
+   local oBtnSalir
+
+   if !::OpenFiles()
+      return ( Self )
+   end if
+
+   ::lInProcess   := .t.
+
+   ::LoadFromIni()
+
+   /*
+   Diálogo--------------------------------------------------------------------
+   */
+
+   oDlg              := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+
+   /*
+   Cabeceras------------------------------------------------------------------
+   */
+
+   oSayGeneral       := TGridSay():Build(    {     "nRow"      => 0,;
+                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "bText"     => {|| "Envío y recepción de información" },;
+                                                   "oWnd"      => oDlg,;
+                                                   "oFont"     => oGridFontBold(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 8, oDlg ) },;
+                                                   "nHeight"   => 32,;
+                                                   "lDesign"   => .f. } )
+
+   oBtnAceptar       := TGridImage():Build(  {     "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_check_64",;
+                                                   "bLClicked" => {|| oBtnAceptar:Hide(), oBtnSalir:Disable(), ::Execute(), oBtnSalir:Enable() },;
+                                                   "oWnd"      => oDlg } )
+
+   oBtnSalir         := TGridImage():Build(  {     "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_del_64",;
+                                                   "bLClicked" => {|| oDlg:End() },;
+                                                   "oWnd"      => oDlg } )
+
+   /*
+   Montamos el treeview--------------------------------------------------------
+   */
+
+   ::oTree           := TGridTreeView():Build(  {  "nTop"      => 50 ,;
+                                                   "nLeft"     => GridWidth( 0.5, oDlg ),;
+                                                   "oWnd"      => oDlg,;
+                                                   "lPixel"    => .t.,;
+                                                   "nWidth"    => GridWidth( 9, oDlg ),;
+                                                   "nHeight"   => GridWidth( 6.75, oDlg ) } ) 
+
+   /*
+   Redimensionamos y activamos el diálogo-------------------------------------
+   */
+
+   oDlg:bResized     := {|| GridResize( oDlg ) }
+
+   ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
+
+   /*
+   Grabamos el fichero---------------------------------------------------------
+   */
+
+   ::SaveMessageToFile()
+
+   /*
+   Saliendo--------------------------------------------------------------------
+   */
+
+   ::CloseFiles()
+
+   ::lInProcess   := .f.
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//--------------------------FUNCIONES----------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+Function CopyFtpFile( cOrigen, cDestino, oFTP )
+
+   local oFile
+   local nBytes
+   local cBytes
+   local hTarget
+
+   hTarget        := fCreate( cDestino )
+
+   if fError() != 0
+
+      oFile       := TFtpFile():New( cOrigen, oFTP )
+      oFile:OpenRead()
+
+      while ( nBytes := Len( cBytes := oFile:Read( 2000 ) ) ) > 0
+         fWrite( hTarget, cBytes, nBytes )
+      end while
+
+      fClose( hTarget )
+
+      oFile:end()
+
+      Return .t.
+
+   end if 
+
+Return .f.
+
+//---------------------------------------------------------------------------//
 
 FUNCTION FtpSndFile( aSource, aTarget, oSender, cDirectory )
 
@@ -1789,9 +1994,11 @@ FUNCTION FtpSndFile( aSource, aTarget, oSender, cDirectory )
             else
 
                oFile             := TFtpFile():New( aSource[ n ], oSender:oFtp ) 
-             //  lRet              := oFile:CopyFtpFile( aSource[ n ], aTarget[ n ], oSender:oFtp )
-              //lRet              := CopyFtpFile( aSource[ n ], aTarget[ n ], oSender:oFtp )    
-               CopyFtpFile( aSource[ n ], aTarget[ n ], oSender:oFtp )
+               lRet              := oFile:CopyFtpFile( aSource[ n ], aTarget[ n ], oSender:oFtp )
+               lRet              := CopyFtpFile( aSource[ n ], aTarget[ n ], oSender:oFtp )    
+               
+
+               //CopyFtpFile( aSource[ n ], aTarget[ n ], oSender:oFtp )
 
             end if
 
@@ -1842,6 +2049,8 @@ function ftpGetFiles( aSource, cTarget, oSender, lDisco )
    local oMeter         := oSender:oMtr
    local lSuccess       := .f.
 
+   ?"Entro a bajar el fichero"
+
    DEFAULT lDisco       := ( nTipConInt() == 1 )
 
    if ValType( aSource ) != "A"
@@ -1859,8 +2068,11 @@ function ftpGetFiles( aSource, cTarget, oSender, lDisco )
       if lDisco
          aFiles         := Directory( oSender:getPathComunication() + aSource[ n ] )
       else
-         aFiles         := oFTP:Directory( aSource[ n ] )
+         aFiles         := TrimFileName( oFTP:listFiles( aSource[ n ] ) )
       end if
+
+      Msginfo( ValToPrg( aFiles ) )
+      TraceLog( ValToPrg( aFiles ) )
 
       for i := 1 to Len( aFiles )
 
@@ -1892,22 +2104,62 @@ function ftpGetFiles( aSource, cTarget, oSender, lDisco )
             end if
          end if
 
+         
+         if lDisco
+
+            //__CopyFile( ::getPathComunication() + cFileName, cTarget + cFileName )
+
+            //oFile    := TTxtFile():New( oSender:getPathComunication() + aFiles[ i, 1 ] )
+
+         else
+
+            ?cTarget + aFiles[ i, 1 ]
+
+            oFtp:DownLoadFile( cTarget + aFiles[ i, 1 ] )
+
+            /*oFile    := TFtpFile():New( aFiles[ i, 1 ], oFTP )
+            oFile:OpenRead()*/
+
+         end if
+
+
          // Comprueba q el tamaño del fichero sea distinto de cero ------------
 
-         if aFiles[ i, 2 ] != 0
+         
+
+
+
+
+         /*if aFiles[ i, 2 ] != 0
 
             if IsChar( aFiles[ i, 1 ] )
 
-               hTarget     := fCreate( cTarget + aFiles[ i, 1 ] )
+               //hTarget     := fCreate( cTarget + aFiles[ i, 1 ] )
+
+               Msginfo( ValToPrg( aFiles ) )
 
                if lDisco
-                  oFile    := TTxtFile():New( oSender:getPathComunication() + aFiles[ i, 1 ] )
-               else
-                  oFile    := TFtpFile():New( aFiles[ i, 1 ], oFTP )
-                  oFile:OpenRead()
-               end if
 
-               while ( nBytes := Len( cBuffer := if( lDisco, oFile:cGetStr( nBuffer ), oFile:Read( nBuffer ) ) ) ) > 0
+                  //__CopyFile( ::getPathComunication() + cFileName, cTarget + cFileName )
+
+
+                  //oFile    := TTxtFile():New( oSender:getPathComunication() + aFiles[ i, 1 ] )
+
+               else
+
+                  ?cTarget + aFiles[ i, 1 ]
+
+                  objinspect(aFiles)
+
+                  //oFtp:DownLoadFile( cLocalFile, cRemoteFile )
+
+
+                  /*oFile    := TFtpFile():New( aFiles[ i, 1 ], oFTP )
+                  oFile:OpenRead()*/
+
+               //end if
+
+               /*while ( nBytes := Len( cBuffer := if( lDisco, oFile:cGetStr( nBuffer ), oFile:Read( nBuffer ) ) ) ) > 0
 
                   fWrite( hTarget, cBuffer, nBytes )
 
@@ -1919,21 +2171,21 @@ function ftpGetFiles( aSource, cTarget, oSender, lDisco )
 
                end while
 
-               fClose( hTarget )
+               fClose( hTarget )*/
 
-               oFile:end()
+               //oFile:end()
 
-               oSender:SetText( "Fichero recibido : " + cValToChar( aFiles[ i, 1 ] ) )
+               /*oSender:SetText( "Fichero recibido : " + cValToChar( aFiles[ i, 1 ] ) )
 
                oSender:AppendFileRecive( aFiles[ i, 1 ] )
 
-            end if
+            end if*/
 
-         else
+         /*else
 
             oSender:SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " está vacio." )
 
-         end if
+         end if*/
 
       next
 
@@ -1946,6 +2198,20 @@ function ftpGetFiles( aSource, cTarget, oSender, lDisco )
    end if
 
 return ( lSuccess )
+
+//----------------------------------------------------------------------------//
+
+Function TrimFileName( aFiles )
+
+   local cFile
+
+   for each cFile in aFiles
+
+      cFile[1]    :=  SubStr( cFile[1], 40 )
+
+   next
+
+Return ( aFiles )
 
 //----------------------------------------------------------------------------//
 
@@ -1977,7 +2243,7 @@ Function ftpEraseFile( cFile, oSender, lDisco )
       fErase( oSender:getPathComunication() + cFile )
    else
       if oFtp != nil
-         oFtp:DeleteFile( cFile )
+         oFtp:Dele( cFile )
       end if
    end if
 
@@ -1999,93 +2265,6 @@ Function nAreas()
 return ( nAreas )
 
 //----------------------------------------------------------------------------//
-
-METHOD PrintLog()
-
-   local oFont
-   local oReport
-   local oColumn
-
-   oFont       := TFont():New("Courier New", 9, -12 )
-
-   oReport     := TReport():New( {  { || AllTrim( cCodEmp() + " - " + cNbrEmp() ) }, { || "Informe de envío y recepción" } },;
-                                 {  { || "Fecha: " + Dtoc( Date() ) + " - " + Time() } },;
-                                 {  { || "Página: " + Str( oReport:nPage, 3 ) } },;
-                                 { oFont },;
-                                 {},;
-                                 .f.,;
-                                 ,;
-                                 ,;
-                                 .f.,;
-                                 .t.,;
-                                 ,;
-                                 ,;
-                                 "Imprimiendo Log" )
-
-   if !Empty( oReport ) .and. oReport:lCreated
-
-      oColumn  := TRColumn():New( {}, 1, { {|| "" } }, 76, {}, , .f., , , .f., .f., , oReport )
-
-      oReport:AddColumn( oColumn )
-
-      oReport:nTitleUpLine := RPT_NOLINE
-      oReport:nTitleDnLine := RPT_NOLINE
-
-      oReport:Margin( .25, RPT_LEFT, RPT_INCHES)
-      oReport:Margin( .25, RPT_TOP, RPT_INCHES)
-      oReport:Margin( .25, RPT_BOTTOM, RPT_INCHES)
-
-   else
-
-      msgStop( "No se ha podido crear informe, revise la configuración de sus impresoras." )
-
-   end if
-
-   if !Empty( oReport )
-      oReport:Activate( , , {|| ::SayMemo( oReport ) } )
-   end if
-
-   oFont:End()
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SayMemo( oReport )
-
-   local cText
-   local cLine
-   local nFor
-   local nLines
-   local nPageln
-
-   cText    := MemoRead( ::cFilTxt )
-
-   nLines   := MlCount( cText, 76 )
-   nPageln  := 0
-
-   for nFor := 1 to nLines
-
-      cLine := MemoLine( cText, 76, nFor)
-
-      oReport:StartLine()
-      oReport:Say( 1, cLine )
-      oReport:EndLine()
-
-      nPageln     := nPageln + 1
-
-      if nPageln == 60
-
-         nFor     := GetTop( cText, nFor, nLines)
-         nPageln  := 0
-
-      endif
-
-   next
-
-return ( Self )
-
-//---------------------------------------------------------------------------//
 
 Static Function GetTop( cText, nFor, nLines )
 
@@ -2109,223 +2288,3 @@ Static Function GetTop( cText, nFor, nLines )
 Return nFor
 
 //----------------------------------------------------------------------------//
-
-Method lZipData( cFileName )
-
-   local lZip     := .t.
-   local aDir     := Directory( cLastPath( cPatSnd() ) + "\*.*" )
-   local aName
-
-   hb_SetDiskZip( {|| nil } )
-   
-   for each aName in aDir
-
-      SysRefresh()
-
-      lZip        := hb_ZipFile( cPatOut() + cFileName, cLastPath( cPatSnd() ) + aName[ 1 ], 9 )
-      if !lZip
-         exit
-      end if
-
-   next
-
-   hb_gcAll()
-
-Return ( lZip )
-
-//----------------------------------------------------------------------------//
-
-Method lUnZipData( cFileName )
-
-   local aDir
-   local nZip
-   local lUnZip   := .t.
-
-   aDir           := Hb_GetFilesInZip( cFileName )
-   lUnZip         := Hb_UnZipFile( cFileName, { | cName, nPos | ::SetText( "Descomprimiendo " + cName ) }, , , cPatSnd(), aDir )
-   hb_gcAll()
-
-Return ( lUnZip )
-
-//----------------------------------------------------------------------------//
-
-METHOD Reindexa( cPath )
-
-   ::DefineFiles( cPath )
-
-   if !Empty( ::oDbfSenderReciver )
-      ::oDbfSenderReciver:IdxFDel()
-      ::oDbfSenderReciver:Activate( .f., .t., .f. )
-      ::oDbfSenderReciver:Pack()
-      ::oDbfSenderReciver:End()
-   end if
-
-   if !Empty( ::oDbfFilesReciver )
-      ::oDbfFilesReciver:IdxFDel()
-      ::oDbfFilesReciver:Activate( .f., .t., .f. )
-      ::oDbfFilesReciver:Pack()
-      ::oDbfFilesReciver:End()
-   end if
-
-RETURN ( Self )
-
-//--------------------------------------------------------------------------//
-
-Method lFileRecive( cFile )
-
-   local lFileRecive    := .f.
-
-   if !Empty( cFile ) .and. IsChar( cFile )
-      lFileRecive    := ::oDbfFilesReciver:Seek( Rtrim( cFile ) )
-   end if
-
-Return ( lFileRecive )
-
-//---------------------------------------------------------------------------//
-
-Method lFileProcesed( cFile )
-
-   local lFileProcesed  := .f.
-
-   if !Empty( cFile ) .and. IsChar( cFile )
-      lFileProcesed     := ::oDbfFilesReciver:Seek( Rtrim( cFile ) ) .and. ::oDbfFilesReciver:lProced
-   end if
-
-Return ( lFileProcesed )
-
-//---------------------------------------------------------------------------//
-
-Method SyncAllDbf()
-
-   if Empty( ::oDbfSenderReciver ) .or. Empty( ::oDbfFilesReciver )
-      ::DefineFiles()
-   end if
-
-   lCheckDbf( ::oDbfSenderReciver )
-   lCheckDbf( ::oDbfFilesReciver )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ActivateTablet() CLASS TSndRecInf
-
-   local oDlg
-   local oSayGeneral
-   local oBtnAceptar
-   local oBtnSalir
-
-   if !::OpenFiles()
-      return ( Self )
-   end if
-
-   ::lInProcess   := .t.
-
-   ::LoadFromIni()
-
-   /*
-   Diálogo--------------------------------------------------------------------
-   */
-
-   oDlg              := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
-
-   /*
-   Cabeceras------------------------------------------------------------------
-   */
-
-   oSayGeneral       := TGridSay():Build(    {     "nRow"      => 0,;
-                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                                   "bText"     => {|| "Envío y recepción de información" },;
-                                                   "oWnd"      => oDlg,;
-                                                   "oFont"     => oGridFontBold(),;
-                                                   "lPixels"   => .t.,;
-                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
-                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                                   "nWidth"    => {|| GridWidth( 8, oDlg ) },;
-                                                   "nHeight"   => 32,;
-                                                   "lDesign"   => .f. } )
-
-   oBtnAceptar       := TGridImage():Build(  {     "nTop"      => 5,;
-                                                   "nLeft"     => {|| GridWidth( 9.0, oDlg ) },;
-                                                   "nWidth"    => 64,;
-                                                   "nHeight"   => 64,;
-                                                   "cResName"  => "flat_check_64",;
-                                                   "bLClicked" => {|| oBtnAceptar:Hide(), oBtnSalir:Disable(), ::Execute(), oBtnSalir:Enable() },;
-                                                   "oWnd"      => oDlg } )
-
-   oBtnSalir         := TGridImage():Build(  {     "nTop"      => 5,;
-                                                   "nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
-                                                   "nWidth"    => 64,;
-                                                   "nHeight"   => 64,;
-                                                   "cResName"  => "flat_del_64",;
-                                                   "bLClicked" => {|| oDlg:End() },;
-                                                   "oWnd"      => oDlg } )
-
-   /*
-   Montamos el treeview--------------------------------------------------------
-   */
-
-   ::oTree           := TGridTreeView():Build(  {  "nTop"      => 50 ,;
-                                                   "nLeft"     => GridWidth( 0.5, oDlg ),;
-                                                   "oWnd"      => oDlg,;
-                                                   "lPixel"    => .t.,;
-                                                   "nWidth"    => GridWidth( 9, oDlg ),;
-                                                   "nHeight"   => GridWidth( 6.75, oDlg ) } ) 
-
-   /*
-   Redimensionamos y activamos el diálogo-------------------------------------
-   */
-
-   oDlg:bResized     := {|| GridResize( oDlg ) }
-
-   ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
-
-   /*
-   Grabamos el fichero---------------------------------------------------------
-   */
-
-   ::SaveMessageToFile()
-
-   /*
-   Saliendo--------------------------------------------------------------------
-   */
-
-   ::CloseFiles()
-
-   ::lInProcess   := .f.
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Function CopyFtpFile( cOrigen, cDestino, oFTP )
-
-   local oFile
-   local nBytes
-   local cBytes
-   local hTarget
-
-   hTarget        := fCreate( cDestino )
-
-   if fError() != 0
-
-      oFile       := TFtpFile():New( cOrigen, oFTP )
-      oFile:OpenRead()
-
-
-      while ( nBytes := Len( cBytes := oFile:Read( 2000 ) ) ) > 0
-         fWrite( hTarget, cBytes, nBytes )
-      end while
-
-      fClose( hTarget )
-
-      oFile:end()
-
-      Return .t.
-
-   end if 
-
-Return .f.
-
-//---------------------------------------------------------------------------//
-
