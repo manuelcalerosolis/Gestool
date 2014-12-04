@@ -6372,13 +6372,31 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
 
       while ( ::cProducM )->cCodArt == cCodArt .and. ( ::cProducM )->cAlmOrd == cCodAlm .and. !( ::cProducM )->( eof() )
 
+         msgALert( ( ::cProducM )-> nNumOrd, "parte" )
+         ? cCodigoArticulo
+         ? ( ::cProducM )->cCodArt + ( ::cProducM )->cAlmOrd + ( ::cProducM )->cCodPr1 + ( ::cProducM )->cCodPr2 + ( ::cProducM )->cValPr1 + ( ::cProducM )->cValPr2 + ( ::cProducM )->cLote
+         ? cCodigoArticulo != ( ::cProducM )->cCodArt + ( ::cProducM )->cAlmOrd + ( ::cProducM )->cCodPr1 + ( ::cProducM )->cCodPr2 + ( ::cProducM )->cValPr1 + ( ::cProducM )->cValPr2 + ( ::cProducM )->cLote
+
+
          if cCodigoArticulo != ( ::cProducM )->cCodArt + ( ::cProducM )->cAlmOrd + ( ::cProducM )->cCodPr1 + ( ::cProducM )->cCodPr2 + ( ::cProducM )->cValPr1 + ( ::cProducM )->cValPr2 + ( ::cProducM )->cLote
+
+         msgALert( "1")
+         ? ( ::cProducM )->cCodArt
+         ? ( ::cProducM )->cAlmOrd
+         ? ( ::cProducM )->cLote
+         ? ( ::cProducM )->dFecOrd
 
             if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd ) 
 
+            msgALert( "2")
+
                if ( Empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )
 
+               msgALert( "3")
+
                   if lNumeroSerie .and. ( ::cProducP )->( dbSeek( ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) ) )
+
+                  msgALert( "4")
 
                      while ( ::cProducP )->cSerOrd + Str( ( ::cProducP )->nNumOrd ) + ( ::cProducP )->cSufOrd + Str( ( ::cProducP )->nNumLin ) == ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) .and. !( ::cProducP )->( eof() )
 
@@ -6389,7 +6407,7 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
                      end while
 
                   else 
-
+                     msgALert( ( ::cProducM )-> nNumOrd,"insert parte" )
                      ::InsertStockMateriasPrimas()
 
                   end if 
