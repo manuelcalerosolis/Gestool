@@ -76,6 +76,7 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
       METHOD genLineasFacturaProveedor()
          METHOD insertLineaFacturaProveedor()
       METHOD guardaTotalesFacturaProveedor()
+      METHOD genPagosFacturaProveedor()
 
 END CLASS
 
@@ -814,7 +815,7 @@ METHOD genNuevaFacturaProveedor()
 
    ::guardaTotalesFacturaProveedor()
 
-   msgStop( ::getIdFacturaProveedor(), "nNumeroFactura" )
+   ::genPagosFacturaProveedor()
 
 Return ( nil )
 
@@ -958,7 +959,7 @@ METHOD insertLineaFacturaProveedor()
       ( D():FacturasProveedoresLineas( ::nView ) )->dFecCad    := ( D():Tmp( "TmpPrvO", ::nView ) )->dFecCad
       ( D():FacturasProveedoresLineas( ::nView ) )->nBultos    := ( D():Tmp( "TmpPrvO", ::nView ) )->nBultos
       ( D():FacturasProveedoresLineas( ::nView ) )->cFormato   := ( D():Tmp( "TmpPrvO", ::nView ) )->cFormato
-      ( D():FacturasProveedoresLineas( ::nView ) )->iNumAlb    := ( D():Tmp( "TmpPrvO", ::nView ) )->cSerAlb + str( ( D():Tmp( "TmpPrvO", ::nView ) )->nNumAlb, 9 ) + ( D():Tmp( "TmpPrvO", ::nView ) )->cSufFac + str( ( D():Tmp( "TmpPrvO", ::nView ) )->nNumLin, 4 )
+      ( D():FacturasProveedoresLineas( ::nView ) )->iNumAlb    := ( D():Tmp( "TmpPrvO", ::nView ) )->cSerAlb + str( ( D():Tmp( "TmpPrvO", ::nView ) )->nNumAlb, 9 ) + ( D():Tmp( "TmpPrvO", ::nView ) )->cSufAlb + str( ( D():Tmp( "TmpPrvO", ::nView ) )->nNumLin, 4 )
 
       ( D():FacturasProveedoresLineas( ::nView ) )->( dbUnLock() )
 
@@ -987,5 +988,15 @@ METHOD guardaTotalesFacturaProveedor()
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD genPagosFacturaProveedor()
+
+   genPgoFacPrv( ::getIdFacturaProveedor(), D():FacturasProveedores( ::nView ), D():FacturasProveedoresLineas( ::nView ), D():FacturasProveedoresPagos( ::nView ), D():Proveedores( ::nView ), D():TiposIva( ::nView ), D():FormasPago( ::nView ), D():Divisas( ::nView ) )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+
 
 

@@ -482,7 +482,7 @@ CLASS Deudor FROM Acreedor
 
    DATA cReferencia                       INIT space( 35 )
    DATA cReferenciaMandato                INIT space( 35 )
-   DATA cTipoAdeudo                       INIT 'OOFF'
+   DATA cTipoAdeudo                       INIT 'RCUR'
    DATA cCategoria                        INIT space( 4 )
    DATA nImporte                          INIT 0
    DATA cImporte                          INIT '0'

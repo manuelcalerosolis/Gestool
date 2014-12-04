@@ -9715,8 +9715,6 @@ FUNCTION setNoFacturadoAlbaranProveedorLinea( nView )
 
    local id := ( D():FacturasProveedoresLineas( nView ) )->iNumAlb
 
-   msgAlert("setNoFacturadoAlbaranProveedorLinea")
-
 Return ( setEstadoFacturadoAlbaranProveedorLinea( .f., id, nView ) )
 
 //---------------------------------------------------------------------------//
@@ -9732,8 +9730,6 @@ Return ( setEstadoFacturadoAlbaranProveedorLinea( .t., id, nView ) )
 FUNCTION setEstadoFacturadoAlbaranProveedorLinea( lFacturado, id, nView )
 
    DEFAULT lFacturado := .f.
-
-   msgAlert( id, "cambiando el estado.")
 
    D():getStatusAlbaranesProveedoresLineas( nView )
    D():setFocusAlbaranesProveedoresLineas( "nNumLin", nView )
