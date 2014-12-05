@@ -2842,9 +2842,9 @@ FUNCTION appendRegisterByHash( cAliOrigen, cAliDestino, hHash )
 
    if !( cAliDestino )->( NetErr() )
 
-      PassField( cAliOrigen, cAliDestino )
+      passField( cAliOrigen, cAliDestino )
 
-      PassHash( cAliDestino, hHash )
+      passHash( cAliDestino, hHash )
 
       ( cAliDestino )->( dbUnLock() )
 
@@ -2882,11 +2882,11 @@ FUNCTION PassField( cAliOrigen, cAliDestino )
 
    for i = 1 to nField
 
-      cNom     := ( cAliDestino )->( FieldName( i ) )
-      nPos     := ( cAliOrigen  )->( FieldPos( cNom ) )
+      cNom        := ( cAliDestino )->( FieldName( i ) )
+      nPos        := ( cAliOrigen  )->( FieldPos( cNom ) )
 
       if nPos != 0
-         xVal  := ( cAliOrigen )->( FieldGet( nPos ) )
+         xVal     := ( cAliOrigen )->( FieldGet( nPos ) )
          ( cAliDestino )->( FieldPut( i, xVal ) )
       end if
 

@@ -7507,7 +7507,10 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
             while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. !( dbfAlbCliL )->( eof() ) )
 
+               // appendRegisterByHash( dbfAlbCliL, dbfTmpLin, { "cSerie" => Space(1), "nNumFac" => 0, "cSuPed" => cSuPed, "dFecFac" => ( dbfAlbCliL )->dFecAlb } )
+
                (dbfTmpLin)->( dbAppend() )
+
                (dbfTmpLin)->CSERIE     := " "
                (dbfTmpLin)->NNUMFAC    := 0
                (dbfTmpLin)->nNumLin    := (dbfAlbCliL)->nNumLin
@@ -7580,9 +7583,9 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->nFacCnv    := (dbfAlbCliL)->nFacCnv
                (dbfTmpLin)->lLinOfe    := (dbfAlbCliL)->lLinOfe
                (dbfTmpLin)->cNumSat 	:= (dbfAlbCliL)->cNumSat
-               (dbfTmpLin)->cSuPed     := cSuPed
                (dbfTmpLin)->nBultos 	:= (dbfAlbCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfAlbCliL)->cFormato
+               (dbfTmpLin)->cSuPed     := cSuPed
 
                ( dbfAlbCliL )->( dbSkip() )
 
@@ -19782,14 +19785,14 @@ function SynFacCli( cPath )
                ( dbfFacCliL )->( dbUnLock() )
          	end if
          end if
-
+/*
          if !Empty( ( dbfFacCliL )->dFecAlb ) .and. ( dbfFacCliL )->dFecFac != ( dbfFacCliL )->dFecAlb
             if ( dbfFacCliL )->( dbRLock() )
                ( dbfFacCliL )->dFecFac    := ( dbfFacCliL )->dFecAlb
                ( dbfFacCliL )->( dbUnLock() )
          	end if
          end if
-
+*/
          if Empty( ( dbfFacCliL )->cCodCli )
             if ( dbfFacCliL )->( dbRLock() )
                ( dbfFacCliL )->cCodCli    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, D():FacturasClientes( nView ), "cCodCli" )
@@ -20671,13 +20674,13 @@ function aColFacCli()
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					 , "'@!'",          "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			 , "",         		"", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"			 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"						 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						     , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					     , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					     , "'@!'",          "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			           , "",         		"", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				     , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"			     , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"						     , "",              "", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
