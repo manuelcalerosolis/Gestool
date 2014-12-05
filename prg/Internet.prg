@@ -1359,7 +1359,7 @@ METHOD lFtpGetFiles( aSource, cTarget )
 
       for i := 1 to Len( aFiles )
 
-         if ::lFileProcesed( aFiles[ i, 1 ] )
+         if ::lValidGetFile( aFiles[ i, 1 ] )
             ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " ya procesado." )
             if !::lGetProcesados
                loop

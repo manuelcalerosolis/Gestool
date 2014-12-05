@@ -597,9 +597,6 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       :nFootStrAlign             := 1
    end with
 
-
-   // Cajas
-
    /*
    Desglose de almacen---------------------------------------------------------
    */
@@ -639,7 +636,6 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       :cHeader                   := "Lote"
       :nWidth                    := 70
       :bEditValue                := {|| nTotalTree( oBrwStk, "cLote" ) }
-      // :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:cLote, "" ) }
       :lHide                     := .t.
    end with
 

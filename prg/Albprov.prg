@@ -885,7 +885,9 @@ STATIC FUNCTION OpenFiles( lExt )
       D():PedidosProveedores( nView )
       D():PedidosProveedoresLineas( nView )
 
+      D():FacturasProveedores( nView )
       D():FacturasProveedoresLineas( nView )
+      D():FacturasProveedoresPagos( nView )
 
       D():PartesProduccionMaterialProducido( nView )
 
@@ -11439,8 +11441,8 @@ Method LoadAuxiliar() CLASS TAlbaranProveedoresLabelGenerator
 
    if ( D():AlbaranesProveedores( nView ) )->( dbSeek( ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio, .t. ) )
 
-      while ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb >= ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio .and. ;
-            ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb <= ::cSerieFin + Str( ::nDocumentoFin, 9 ) + ::cSufijoFin          .and. ;
+      while D():AlbaranesProveedoresId( nView ) >= ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio .and. ;
+            D():AlbaranesProveedoresId( nView ) <= ::cSerieFin + Str( ::nDocumentoFin, 9 ) + ::cSufijoFin          .and. ;
             !( D():AlbaranesProveedores( nView ) )->( eof() )
 
          if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) )
