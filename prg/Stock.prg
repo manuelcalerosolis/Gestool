@@ -5699,9 +5699,6 @@ METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cVal
 
    local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-   logwrite( dConsolidacion, "consolidacion")
-   logwrite( Empty( dConsolidacion ) .or. dFecha >= dConsolidacion, "Empty( dConsolidacion ) .or. dFecha >= dConsolidacion")
-
 Return ( Empty( dConsolidacion ) .or. dFecha >= dConsolidacion )
 
 //---------------------------------------------------------------------------//
@@ -6365,26 +6362,13 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
 
       while ( ::cProducM )->cCodArt == cCodArt .and. ( ::cProducM )->cAlmOrd == cCodAlm .and. !( ::cProducM )->( eof() )
 
-         logwrite( "parte " + cValToChar( ( ::cProducM )->nNumOrd ) )
-         logwrite( "cCodigoArticulo " + cCodigoArticulo )
-         logwrite( "Cadena completa " + ( ::cProducM )->cCodArt + ( ::cProducM )->cAlmOrd + ( ::cProducM )->cCodPr1 + ( ::cProducM )->cCodPr2 + ( ::cProducM )->cValPr1 + ( ::cProducM )->cValPr2 + ( ::cProducM )->cLote )
-         logwrite( if( cCodigoArticulo != ( ::cProducM )->cCodArt + ( ::cProducM )->cAlmOrd + ( ::cProducM )->cCodPr1 + ( ::cProducM )->cCodPr2 + ( ::cProducM )->cValPr1 + ( ::cProducM )->cValPr2 + ( ::cProducM )->cLote, "distinto", "iguales" ) )
-
          if cCodigoArticulo != ( ::cProducM )->cCodArt + ( ::cProducM )->cAlmOrd + ( ::cProducM )->cCodPr1 + ( ::cProducM )->cCodPr2 + ( ::cProducM )->cValPr1 + ( ::cProducM )->cValPr2 + ( ::cProducM )->cLote
-
-         logwrite( "1")
 
             if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd ) 
 
-            logwrite( "2") 
-
                if ( Empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )
 
-               logwrite( "3")
-
                   if lNumeroSerie .and. ( ::cProducP )->( dbSeek( ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) ) )
-
-                  logwrite( "4")
 
                      while ( ::cProducP )->cSerOrd + Str( ( ::cProducP )->nNumOrd ) + ( ::cProducP )->cSufOrd + Str( ( ::cProducP )->nNumLin ) == ( ::cProducM )->cSerOrd + Str( ( ::cProducM )->nNumOrd ) + ( ::cProducM )->cSufOrd + Str( ( ::cProducM )->nNumLin ) .and. !( ::cProducP )->( eof() )
 
@@ -6395,8 +6379,6 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
                      end while
 
                   else 
-                     
-                     logwrite( "insert parte " + cValToChar( ( ::cProducM )-> nNumOrd ) )
                      
                      ::InsertStockMateriasPrimas()
 
