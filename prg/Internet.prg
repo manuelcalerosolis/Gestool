@@ -1118,6 +1118,7 @@ Method FtpConexion() CLASS TSndRecInf
 
             if !Empty( ftpDir )
                ::oFtp:Cwd( ftpDir )
+               ::oFtp:Pwd()
             end if
 
             ::lFtpValido   := .t.
@@ -1355,7 +1356,11 @@ METHOD lFtpGetFiles( aSource, cTarget )
 
    for n := 1 to Len( aSource )
 
-      aFiles         := TrimFileName( ::oFTP:listFiles( aSource[ n ] ) )
+      //aFiles         := TrimFileName( ::oFTP:listFiles( aSource[ n ] ) )
+
+      aFiles         := ::oFTP:listFiles( aSource[ n ] )
+
+      ::oFtp:oUrl:cPath := "."
 
       for i := 1 to Len( aFiles )
 
@@ -1373,7 +1378,7 @@ METHOD lFtpGetFiles( aSource, cTarget )
             end if
          end if
 
-         if isFalse( ::oFtp:DownLoadFile( cTarget + aFiles[ i, 1 ] ) )
+         if isFalse( ::oFtp:DownLoadFile( cTarget + aFiles[ i, 1 ], aFiles[ i, 1 ] ) )
             lResult  := .f.
          end if
 
