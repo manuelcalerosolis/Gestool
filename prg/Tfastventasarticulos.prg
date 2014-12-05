@@ -774,9 +774,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    Relaciones entre tablas-----------------------------------------------------
    */
 
-   //::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cAlmacen } )
+   ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cAlmacen } )
 
-   ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oDbfArt:Codigo } )
+   //::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oDbfArt:Codigo } )
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
