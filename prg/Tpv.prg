@@ -12052,7 +12052,6 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       ( dbfFacCliT )->nDtoEsp    := aTik[ _NDTOESP ]
       ( dbfFacCliT )->cDpp       := aTik[ _CDPP ]
       ( dbfFacCliT )->nDpp       := aTik[ _NDPP ]
-
       ( dbfFacCliT )->( dbUnLock() )
 
       /*
@@ -12076,16 +12075,6 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
          cSerFacCli              := ( dbfFacCliT )->cSerie
          nNewFacCli              := ( dbfFacCliT )->nNumFac
          cSufFacCli              := ( dbfFacCliT )->cSufFac
-
-         /*
-         Rollback de los stocks------------------------------------------------
-         */
-
-         /*if dbLock( dbfFacCliT )
-            oStock:FacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, ( dbfFacCliT )->cCodAlm, .t., .t., .t. )
-            ( dbfFacCliT )->( dbUnLock() )
-         end if*/
-
 
          /*
          Eliminamos las lineas antiguas del albarán-------------------------------
@@ -12162,25 +12151,25 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       ( dbfFacCliL )->nNumFac    := nNewFacCli
       ( dbfFacCliL )->cSufFac    := cSufFacCli
       ( dbfFacCliL )->dFecFac    := dFecFacCli
-      ( dbfFacCliL )->cRef       := ( dbfTmpL    )->cCbaTil
-      ( dbfFacCliL )->cDetalle   := ( dbfTmpL    )->cNomTil
-      ( dbfFacCliL )->nPreUnit   := ( dbfTmpL    )->nPvpTil // Round( ( dbfTmpL )->NPVPTIL / ( 1 + ( ( dbfTmpL )->NIVATIL / 100 ) ), nDouDiv )
-      ( dbfFacCliL )->nDto       := ( dbfTmpL    )->nDtoLin
-      ( dbfFacCliL )->nIva       := ( dbfTmpL    )->nIvaTil
-      ( dbfFacCliL )->nUniCaja   := ( dbfTmpL    )->nUntTil
-      ( dbfFacCliL )->cCodPr1    := ( dbfTmpL    )->cCodPr1
-      ( dbfFacCliL )->cCodPr2    := ( dbfTmpL    )->cCodPr2
-      ( dbfFacCliL )->cValPr1    := ( dbfTmpL    )->cValPr1
-      ( dbfFacCliL )->cValPr2    := ( dbfTmpL    )->cValPr2
-      ( dbfFacCliL )->nFacCnv    := ( dbfTmpL    )->nFacCnv
-      ( dbfFacCliL )->nDtoDiv    := ( dbfTmpL    )->nDtoDiv
-      ( dbfFacCliL )->nCtlStk    := ( dbfTmpL    )->nCtlStk
-      ( dbfFacCliL )->nValImp    := ( dbfTmpL    )->nValImp
-      ( dbfFacCliL )->cCodImp    := ( dbfTmpL    )->cCodImp
-      ( dbfFacCliL )->lKitPrc    := ( dbfTmpL    )->lKitPrc
-      ( dbfFacCliL )->lKitArt    := ( dbfTmpL    )->lKitArt
-      ( dbfFacCliL )->lKitChl    := ( dbfTmpL    )->lKitChl
-      ( dbfFacCliL )->mNumSer    := ( dbfTmpL    )->mNumSer
+      ( dbfFacCliL )->cRef       := ( dbfTmpL )->cCbaTil
+      ( dbfFacCliL )->cDetalle   := ( dbfTmpL )->cNomTil
+      ( dbfFacCliL )->nPreUnit   := ( dbfTmpL )->nPvpTil // Round( ( dbfTmpL )->NPVPTIL / ( 1 + ( ( dbfTmpL )->NIVATIL / 100 ) ), nDouDiv )
+      ( dbfFacCliL )->nDto       := ( dbfTmpL )->nDtoLin
+      ( dbfFacCliL )->nIva       := ( dbfTmpL )->nIvaTil
+      ( dbfFacCliL )->nUniCaja   := ( dbfTmpL )->nUntTil
+      ( dbfFacCliL )->cCodPr1    := ( dbfTmpL )->cCodPr1
+      ( dbfFacCliL )->cCodPr2    := ( dbfTmpL )->cCodPr2
+      ( dbfFacCliL )->cValPr1    := ( dbfTmpL )->cValPr1
+      ( dbfFacCliL )->cValPr2    := ( dbfTmpL )->cValPr2
+      ( dbfFacCliL )->nFacCnv    := ( dbfTmpL )->nFacCnv
+      ( dbfFacCliL )->nDtoDiv    := ( dbfTmpL )->nDtoDiv
+      ( dbfFacCliL )->nCtlStk    := ( dbfTmpL )->nCtlStk
+      ( dbfFacCliL )->nValImp    := ( dbfTmpL )->nValImp
+      ( dbfFacCliL )->cCodImp    := ( dbfTmpL )->cCodImp
+      ( dbfFacCliL )->lKitPrc    := ( dbfTmpL )->lKitPrc
+      ( dbfFacCliL )->lKitArt    := ( dbfTmpL )->lKitArt
+      ( dbfFacCliL )->lKitChl    := ( dbfTmpL )->lKitChl
+      ( dbfFacCliL )->mNumSer    := ( dbfTmpL )->mNumSer
       ( dbfFacCliL )->cAlmLin    := aTik[ _CALMTIK ]
       ( dbfFacCliL )->lIvaLin    := .t.
       cCodFam                    := RetFamArt( ( dbfTmpL )->cCbaTil, dbfArticulo )
@@ -12243,8 +12232,6 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       ( dbfFacCliP )->( dbUnLock() )
 
       ( dbfTmpP )->( dbSkip() )
-
-      // delRiesgo( ( dbfFacCliP )->nImporte, cCliTik, dbfClient )
 
       nTotal                     -= ( dbfFacCliP )->nImporte
 

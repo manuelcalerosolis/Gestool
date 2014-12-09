@@ -10005,77 +10005,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                                                                "dFecFac" => ( dbfAlbCliT )->dFecAlb,;
                                                                "cSuPed"  => cSuPed } )
 
-/*
-               ( dbfTmpLin )->( dbAppend() )
-               ( dbfTmpLin )->nNumLin  := nOffSet
-               ( dbfTmpLin )->cRef     := ( dbfAlbCliL )->cRef
-               ( dbfTmpLin )->cDetalle := ( dbfAlbCliL )->cDetalle
-               ( dbfTmpLin )->mLngDes  := ( dbfAlbCliL )->mLngDes
-               ( dbfTmpLin )->mNumSer  := ( dbfAlbCliL )->mNumSer
-               ( dbfTmpLin )->nPreUnit := ( dbfAlbCliL )->nPreUnit
-               ( dbfTmpLin )->NCANENT  := ( dbfAlbCliL )->nCanEnt
-               ( dbfTmpLin )->CUNIDAD  := ( dbfAlbCliL )->cUnidad
-               ( dbfTmpLin )->NUNICAJA := ( dbfAlbCliL )->nUniCaja
-               ( dbfTmpLin )->nUndKit  := ( dbfAlbCliL )->nUndKit
-               ( dbfTmpLin )->NPESOKG  := ( dbfAlbCliL )->nPesOkg
-               ( dbfTmpLin )->NVOLUMEN := ( dbfAlbCliL )->nVolumen
-               ( dbfTmpLin )->CVOLUMEN := ( dbfAlbCliL )->cVolumen
-               ( dbfTmpLin )->NIVA     := ( dbfAlbCliL )->nIva
-               ( dbfTmpLin )->nReq     := ( dbfAlbCliL )->nReq
-               ( dbfTmpLin )->NDTO     := ( dbfAlbCliL )->nDto
-               ( dbfTmpLin )->NDTODIV  := ( dbfAlbCliL )->nDtoDiv
-               ( dbfTmpLin )->NPNTVER  := ( dbfAlbCliL )->nPntVer
-               ( dbfTmpLin )->NDTOPRM  := ( dbfAlbCliL )->nDtoPrm
-               ( dbfTmpLin )->NCOMAGE  := ( dbfAlbCliL )->nComAge
-               ( dbfTmpLin )->DFECHA   := ( dbfAlbCliL )->dFecha
-               ( dbfTmpLin )->CTIPMOV  := ( dbfAlbCliL )->cTipMov
-               ( dbfTmpLin )->LTOTLIN  := ( dbfAlbCliL )->lTotLin
-               ( dbfTmpLin )->cCodAlb  := ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-               ( dbfTmpLin )->dFecAlb  := ( dbfAlbCliT )->dFecAlb
-               ( dbfTmpLin )->cAlmLin  := ( dbfAlbCliL )->cAlmLin
-               ( dbfTmpLin )->lIvaLin  := ( dbfAlbCliL )->lIvaLin
-               ( dbfTmpLin )->nValImp  := ( dbfAlbCliL )->nValImp
-               ( dbfTmpLin )->cCodPr1  := ( dbfAlbCliL )->cCodPr1
-               ( dbfTmpLin )->cCodPr2  := ( dbfAlbCliL )->cCodPr2
-               ( dbfTmpLin )->cValPr1  := ( dbfAlbCliL )->cValPr1
-               ( dbfTmpLin )->cValPr2  := ( dbfAlbCliL )->cValPr2
-               ( dbfTmpLin )->nCosDiv  := ( dbfAlbCliL )->nCosDiv
-               ( dbfTmpLin )->lKitArt  := ( dbfAlbCliL )->lKitArt
-               ( dbfTmpLin )->lKitChl  := ( dbfAlbCliL )->lKitChl
-               ( dbfTmpLin )->lKitPrc  := ( dbfAlbCliL )->lKitPrc
-               ( dbfTmpLin )->nUndKit  := ( dbfAlbCliL )->nUndKit
-               ( dbfTmpLin )->lLote    := ( dbfAlbCliL )->lLote
-               ( dbfTmpLin )->nLote    := ( dbfAlbCliL )->nLote
-               ( dbfTmpLin )->cLote    := ( dbfAlbCliL )->cLote
-               ( dbfTmpLin )->dFecCad  := ( dbfAlbCliL )->dFecCad
-               ( dbfTmpLin )->lControl := ( dbfAlbCliL )->lControl
-               ( dbfTmpLin )->lNotVta  := ( dbfAlbCliL )->lNotVta
-               ( dbfTmpLin )->lImpLin  := ( dbfAlbCliL )->lImpLin
-               ( dbfTmpLin )->mObsLin  := ( dbfAlbCliL )->mObsLin
-               ( dbfTmpLin )->Descrip  := ( dbfAlbCliL )->Descrip
-               ( dbfTmpLin )->cCodPrv  := ( dbfAlbCliL )->cCodPrv
-               ( dbfTmpLin )->cImagen  := ( dbfAlbCliL )->cImagen
-               ( dbfTmpLin )->cCodFam  := ( dbfAlbCliL )->cCodFam
-               ( dbfTmpLin )->cGrpFam  := ( dbfAlbCliL )->cGrpFam
-               ( dbfTmpLin )->cRefPrv  := ( dbfAlbCliL )->cRefPrv
-               ( dbfTmpLin )->dFecEnt  := ( dbfAlbCliL )->dFecEnt
-               ( dbfTmpLin )->dFecSal  := ( dbfAlbCliL )->dFecSal
-               ( dbfTmpLin )->lAlquiler:= ( dbfAlbCliL )->lAlquiler
-               ( dbfTmpLin )->nPreAlq  := ( dbfAlbCliL )->nPreAlq
-               ( dbfTmpLin )->cUnidad  := ( dbfAlbCliL )->cUnidad
-               ( dbfTmpLin )->nNumMed  := ( dbfAlbCliL )->nNumMed
-               ( dbfTmpLin )->nMedUno  := ( dbfAlbCliL )->nMedUno
-               ( dbfTmpLin )->nMedDos  := ( dbfAlbCliL )->nMedDos
-               ( dbfTmpLin )->nMedTre  := ( dbfAlbCliL )->nMedTre
-               ( dbfTmpLin )->nPuntos  := ( dbfAlbCliL )->nPuntos
-               ( dbfTmpLin )->nValPnt  := ( dbfAlbCliL )->nValPnt
-               ( dbfTmpLin )->nDtoPnt  := ( dbfAlbCliL )->nDtoPnt
-               ( dbfTmpLin )->nIncPnt  := ( dbfAlbCliL )->nIncPnt
-               ( dbfTmpLin )->nFacCnv  := ( dbfAlbCliL )->nFacCnv
-               ( dbfTmpLin )->lLinOfe  := ( dbfAlbCliL )->lLinOfe
-               ( dbfTmpLin )->cNumSat  := ( dbfAlbCliL )->cNumSat
-               ( dbfTmpLin )->cSuPed   := cSuPed
-*/
                /*
                Pasamos series de albaranes-------------------------------------
                */
@@ -10101,26 +10030,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfAlbCliL )->( dbSkip() )
 
             end while
-
-            /*
-            Pasamos todas las series----------------------------------------------
-
-            if ( dbfAlbCliS )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
-
-               while ( dbfAlbCliS )->cSerAlb + str( ( dbfAlbCliS )->nNumAlb ) + ( dbfAlbCliS )->cSufAlb == aAlbaranes[ nItem, 2 ] .and. !( dbfAlbCliS )->( Eof() )
-
-                  ( dbfTmpSer )->( dbAppend() )
-                  ( dbfTmpSer )->nNumLin  := ( dbfAlbCliS )->nNumLin
-                  ( dbfTmpSer )->cRef     := ( dbfAlbCliS )->cRef
-                  ( dbfTmpSer )->cAlmLin  := ( dbfAlbCliS )->cAlmLin
-                  ( dbfTmpSer )->cNumSer  := ( dbfAlbCliS )->cNumSer
-
-                  ( dbfAlbCliS )->( dbSkip() )
-
-               end while
-
-            end if
-            */
 
             /*
             Lineas de descuento------------------------------------------------
@@ -19758,14 +19667,18 @@ function SynFacCli( cPath )
                ( dbfFacCliL )->( dbUnLock() )
          	end if
          end if
-/*
-         if !Empty( ( dbfFacCliL )->dFecAlb ) .and. ( dbfFacCliL )->dFecFac != ( dbfFacCliL )->dFecAlb
-            if ( dbfFacCliL )->( dbRLock() )
-               ( dbfFacCliL )->dFecFac    := ( dbfFacCliL )->dFecAlb
-               ( dbfFacCliL )->( dbUnLock() )
-         	end if
+
+         // Valor de stock toma la fecha de los albaranes----------------------
+
+         if !Empty( ( dbfFacCliL )->cCodAlb )
+            if ( dbfFacCliL )->dFecFac != retFld( ( dbfFacCliL )->cCodAlb, dbfAlbCliL, "dFecAlb" ) 
+               if ( dbfFacCliL )->( dbRLock() )
+                  ( dbfFacCliL )->dFecFac    := retFld( ( dbfFacCliL )->cCodAlb, dbfAlbCliL, "dFecAlb" )
+                  ( dbfFacCliL )->( dbUnLock() )
+            	end if
+            end if
          end if
-*/
+
          if Empty( ( dbfFacCliL )->cCodCli )
             if ( dbfFacCliL )->( dbRLock() )
                ( dbfFacCliL )->cCodCli    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, D():FacturasClientes( nView ), "cCodCli" )
@@ -21122,7 +21035,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    ( cFacCliL )->( dbGoTo( nRec ) )
 
    /*
-   Ordenamos los impuestosS de menor a mayor
+   Ordenamos los impuestos de menor a mayor
    */
 
    aTotIva           := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
@@ -21147,7 +21060,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
    end if
 
-   IF nDtoEsp  != 0
+   if nDtoEsp  != 0
 
       aTotalDto[1]   := Round( _NBASIVA1 * nDtoEsp / 100, nRouDiv )
       aTotalDto[2]   := Round( _NBASIVA2 * nDtoEsp / 100, nRouDiv )
@@ -21159,7 +21072,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       _NBASIVA2      -= aTotalDto[2]
       _NBASIVA3      -= aTotalDto[3]
 
-   END IF
+   end if
 
    /*
    Descuentos atipicos sobre Dto General
@@ -21432,7 +21345,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
       end if
 
-      nTotBrt 				:= Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
+      nTotBrt 				   := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
 
    else
 

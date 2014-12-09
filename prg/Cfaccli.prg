@@ -60,6 +60,11 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local lOpenDiario := lOpenDiario()
    local nTotDebe    := 0
    local nTotHaber   := 0
+   local nDtoEsp     := 0
+   local nDpp        := 0
+   local nDtoUno     := 0
+   local nDtoDos     := 0
+   local nPctDto     := 0
 
 	DEFAULT lSimula	:= .t.
    DEFAULT nAsiento  := 0
@@ -72,18 +77,18 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    nDpvDiv           := nDpvDiv( ( dbfFacCliT )->cDivFac, dbfDiv )
 
    dFecha            := ( dbfFacCliT )->dFecFac
+   nDtoEsp           := ( dbfFacCliT )->nDtoEsp
+   nDpp              := ( dbfFacCliT )->nDpp
+   nDtoUno           := ( dbfFacCliT )->nDtoUno
+   nDtoDos           := ( dbfFacCliT )->nDtoDos
+   nPctDto           := ( dbfFacCliT )->nPctDto
+
    a                 := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f., lExcCnt  )
    ptaDebe           := a[ 4 ]
    ptaRet            := a[ 12 ]
 
    cProyecto         := Left( cCodPro, 3 )
    cClave            := Right( cCodPro, 6 )
-
-   /*
-   if Empty( ptaDebe )
-      Return nil
-   end if
-   */
 
    /*
    Seleccionamos las empresa dependiendo de la serie de factura
@@ -263,26 +268,11 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    for n := 1 to Len( aVentas )
 
-      if ( dbfFacCliT )->nDtoEsp != 0
-         aVentas[ n, 3 ] -= Round( aVentas[ n, 3 ] * ( dbfFacCliT )->nDtoEsp / 100, nRouDiv )
-      end if
-
-      if ( dbfFacCliT )->nDpp != 0
-         aVentas[ n, 3 ] -= Round( aVentas[ n, 3 ] * ( dbfFacCliT )->nDpp / 100, nRouDiv )
-      end if
-
-      if ( dbfFacCliT )->nDtoUno != 0
-         aVentas[ n, 3 ] -= Round( aVentas[ n, 3 ] * ( dbfFacCliT )->nDtoUno / 100, nRouDiv )
-      end if
-
-      if ( dbfFacCliT )->nDtoDos != 0
-         aVentas[ n, 3 ] -= Round( aVentas[ n, 3 ] * ( dbfFacCliT )->nDtoDos / 100, nRouDiv )
-      end if
-
-      if ( dbfFacCliT )->nPctDto != 0
-         aVentas[ n, 3 ] -= Round( aVentas[ n, 3 ] * ( dbfFacCliT )->nPctDto / 100, nRouDiv )
-      end if
-
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoEsp )
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nDpp )
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoUno )
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoDos )
+      nRestaDescuentoVenta( @aVentas[ n, 3 ], nPctDto )
    next
 
    /*
@@ -316,27 +306,11 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	*/
 
    for n := 1 to Len( aIva )
-
-      if ( dbfFacCliT )->nDtoEsp != 0
-         aIva[ n, 4 ] -= Round( aIva[ n, 4 ] * ( dbfFacCliT )->nDtoEsp / 100, nRouDiv )
-      end if
-
-      if ( dbfFacCliT )->nDpp != 0
-         aIva[ n, 4 ] -= Round( aIva[ n, 4 ] * ( dbfFacCliT )->nDpp / 100, nRouDiv )
-      end if
-
-      if ( dbfFacCliT )->nDtoUno != 0
-         aIva[ n, 4 ] -= Round( aIva[ n, 4 ] * ( dbfFacCliT )->nDtoUno / 100, nRouDiv )
-      end if
-
-      if ( dbfFacCliT )->nDtoDos != 0
-         aIva[ n, 4 ] -= Round( aIva[ n, 4 ] * ( dbfFacCliT )->nDtoDos / 100, nRouDiv )
-      end if
-
-      if ( dbfFacCliT )->nPctDto != 0
-         aIva[ n, 4 ] -= Round( aIva[ n, 4 ] * ( dbfFacCliT )->nPctDto / 100, nRouDiv )
-      end if
-
+      nRestaDescuentoVenta( @aIva[ n, 4 ], nDtoEsp )
+      nRestaDescuentoVenta( @aIva[ n, 4 ], nDpp )
+      nRestaDescuentoVenta( @aIva[ n, 4 ], nDtoUno )      
+      nRestaDescuentoVenta( @aIva[ n, 4 ], nDtoDos )
+      nRestaDescuentoVenta( @aIva[ n, 4 ], nPctDto )
    next
 
    /*
@@ -4886,7 +4860,6 @@ Function lCntRecPrv( cRecibo, nAsiento, lFromFactura, oTree, dbfFacPrvP )
    if dbLock( dbfFacPrvP )
       ( dbfFacPrvP )->lConPgo  := .t.
       ( dbfFacPrvP )->( dbUnLock() )
-
       lReturn     := .t.
    end if
 

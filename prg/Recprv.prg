@@ -1624,7 +1624,6 @@ RETURN NIL
 
 STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw, oDlg, oTree, oMtrInf, oBtnCancel )
 
-
    local aPos
    local lWhile      := .t.
    local bWhile
@@ -1650,10 +1649,6 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
 
    oTree:Enable()
    oTree:DeleteAll()
-
-   if !lChgState
-      OpenDiario()
-   end if
 
    if nRad == 1
 
@@ -1709,10 +1704,6 @@ STATIC FUNCTION PasRec( cDocIni, cDocFin, nRad, cTipo, lSimula, lChgState, oBrw,
 
    ( D():FacturasProveedoresPagos( nView ) )->( OrdSetFocus( nOrden ) )
    ( D():FacturasProveedoresPagos( nView ) )->( dbGoTo( nRecno ) )
-
-   if !lChgState
-      CloseDiario()
-   end if
 
    oBtnCancel:bAction   := {|| oDlg:End() }
 

@@ -3440,6 +3440,34 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
+Function nRedondeaVenta( nValor )
+
+Return ( Round( nValor, nRouDiv() ) )
+
+//---------------------------------------------------------------------------//
+
+Function nCalculaDescuentoVenta( nValor, nDescuento )
+
+   local nTotalDescuento   := 0
+
+   if nDescuento != 0
+      nValor               := nRedondeaVenta( nValor )
+      nTotalDescuento      := nValor * nDescuento / 100
+      nTotalDescuento      := nRedondeaVenta( nTotalDescuento )
+   end if 
+
+Return ( nTotalDescuento )
+
+//---------------------------------------------------------------------------//
+
+Function nRestaDescuentoVenta( nValor, nDescuento )
+
+   nValor -= nCalculaDescuentoVenta( nValor, nDescuento )
+
+Return ( nValor )
+
+//---------------------------------------------------------------------------//
+   
 CLASS excluyentArray
 
    CLASSDATA  aArray       INIT {}
