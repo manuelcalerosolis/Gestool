@@ -2902,9 +2902,9 @@ FUNCTION PassHash( cAliDestino, hHash )
    local nPos
 
    for each h in hHash
-      nPos     := ( cAliDestino )->( FieldPos( h:key ) )
+      nPos     := ( cAliDestino )->( FieldPos( h:__enumKey() ) )
       if nPos != 0
-         ( cAliDestino )->( FieldPut( nPos, h:value ) )
+         ( cAliDestino )->( FieldPut( nPos, h:__enumValue() ) )
       end if
    next
 

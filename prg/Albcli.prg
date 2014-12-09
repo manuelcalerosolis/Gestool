@@ -13996,7 +13996,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
          :cHeader          := "Número"
          :cSortOrder       := "nNumAlb"
          :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) ) + "/" + ( D():Get( "AlbCliT", nView ) )->cSufAlb }
-         :nWidth           := 60
+         :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
@@ -14012,7 +14012,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
          :cHeader          := "Cliente"
          :cSortOrder       := "cCodCli"
          :bEditValue       := {|| AllTrim( ( D():Get( "AlbCliT", nView ) )->cCodCli ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
@@ -14020,7 +14020,7 @@ FUNCTION BrwAlbCli( oGet, oIva )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
          :bEditValue       := {|| AllTrim( ( D():Get( "AlbCliT", nView ) )->cNomCli ) }
-         :nWidth           := 200
+         :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 

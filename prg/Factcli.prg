@@ -3705,40 +3705,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          PICTURE  "@R #/#########/##" ;
          OF       oFld:aDialogs[1]
 
-      /*
-      REDEFINE GET aGet[ _NENTINI ] ;
-         VAR      aTmp[ _NENTINI ] ;
-         ID       550 ;
-         IDSAY    552 ;
-         PICTURE  "@E 999.99" ;
-         ON CHANGE( RecalculaTotal( aTmp ) );
-         SPINNER;
-         WHEN     ( lWhen ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oGetEnt VAR nTotEnt ;
-         ID       551 ;
-         WHEN     .f. ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _NPCTDTO ] ;
-         VAR      aTmp[ _NPCTDTO ] ;
-         ID       560 ;
-         IDSAY    562 ;
-         PICTURE  "@E 999.99" ;
-         ON CHANGE( RecalculaTotal( aTmp ) );
-         SPINNER;
-         WHEN     ( lWhen ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oGetDtoEnt VAR nTotDtoEnt ;
-         ID       561 ;
-         WHEN     .f. ;
-         OF       oFld:aDialogs[1]
-
-      */
-
-      /*
+     /*
       Segunda caja de diálogo--------------------------------------------------
       */
 
@@ -7507,8 +7474,8 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
             while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. !( dbfAlbCliL )->( eof() ) )
 
-               // appendRegisterByHash( dbfAlbCliL, dbfTmpLin, { "cSerie" => Space(1), "nNumFac" => 0, "cSuPed" => cSuPed, "dFecFac" => ( dbfAlbCliL )->dFecAlb } )
-
+               appendRegisterByHash( dbfAlbCliL, dbfTmpLin, { "cSerie" => Space(1), "nNumFac" => 0, "cSuPed" => cSuPed, "dFecFac" => ( dbfAlbCliL )->dFecAlb } )
+/*
                (dbfTmpLin)->( dbAppend() )
 
                (dbfTmpLin)->CSERIE     := " "
@@ -7586,7 +7553,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->nBultos 	:= (dbfAlbCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfAlbCliL)->cFormato
                (dbfTmpLin)->cSuPed     := cSuPed
-
+*/
                ( dbfAlbCliL )->( dbSkip() )
 
             end while
@@ -10033,6 +10000,12 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                   nNumLin              := ( dbfAlbCliL )->nNumLin
                end if
 
+               appendRegisterByHash( dbfAlbCliL, dbfTmpLin, {  "nNumLin" => nOffSet,;
+                                                               "cCodAlb" => ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb,;
+                                                               "dFecFac" => ( dbfAlbCliT )->dFecAlb,;
+                                                               "cSuPed"  => cSuPed } )
+
+/*
                ( dbfTmpLin )->( dbAppend() )
                ( dbfTmpLin )->nNumLin  := nOffSet
                ( dbfTmpLin )->cRef     := ( dbfAlbCliL )->cRef
@@ -10102,7 +10075,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->lLinOfe  := ( dbfAlbCliL )->lLinOfe
                ( dbfTmpLin )->cNumSat  := ( dbfAlbCliL )->cNumSat
                ( dbfTmpLin )->cSuPed   := cSuPed
-
+*/
                /*
                Pasamos series de albaranes-------------------------------------
                */
