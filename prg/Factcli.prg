@@ -141,7 +141,7 @@
 #define _LOPERPV           120
 #define _LRECC             121
 #define _CCODPRY           122
-#define _NDTOTARIFA 	   123
+#define _NDTOTARIFA 	      123
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -3417,7 +3417,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      Cajas Bases de los impuestosS____________________________________________________________
+      Cajas Bases de los impuestos____________________________________________________________
       */
 
       oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
@@ -3435,10 +3435,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwIva:AddCol() )
          :cHeader          := "Base"
-         if uFieldEmpresa( "lIvaImpEsp" )
-            :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( ( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 6 ] ), cPorDiv ), "" ) }
-         else
+         if uFieldEmpresa( "lIvaImpEsp" ) 
             :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
+         else
+            :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( ( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 6 ] ), cPorDiv ), "" ) }
          end if
          :nWidth           := 95
          :nDataStrAlign    := 1
@@ -3446,17 +3446,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       with object ( oBrwIva:AddCol() )
-         :cHeader       := "%" + cImp()
-         :bStrData      := {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), aTotIva[ oBrwIva:nArrayAt, 3 ], "" ) }
-         :bEditValue    := {|| aTotIva[ oBrwIva:nArrayAt, 3 ] }
-         :nWidth        := 78
-         :cEditPicture  := "@E 999.99"
-         :nDataStrAlign := 1
-         :nHeadStrAlign := 1
-         :nFootStrAlign := 1
-         :nEditType     := 1
-         :bEditWhen     := {|| !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ) }
-         :bOnPostEdit   := {|o,x| EdtIva( o, x, aTotIva[ oBrwIva:nArrayAt, 3 ], dbfTmpLin, dbfIva, oBrwLin ), RecalculaTotal( aTmp ) }
+         :cHeader          := "%" + cImp()
+         :bStrData         := {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), aTotIva[ oBrwIva:nArrayAt, 3 ], "" ) }
+         :bEditValue       := {|| aTotIva[ oBrwIva:nArrayAt, 3 ] }
+         :nWidth           := 78
+         :cEditPicture     := "@E 999.99"
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nFootStrAlign    := 1
+         :nEditType        := 1
+         :bEditWhen        := {|| !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ) }
+         :bOnPostEdit      := {|o,x| EdtIva( o, x, aTotIva[ oBrwIva:nArrayAt, 3 ], dbfTmpLin, dbfIva, oBrwLin ), RecalculaTotal( aTmp ) }
       end with
 
       with object ( oBrwIva:AddCol() )
@@ -3477,7 +3477,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwIva:AddCol() )
          :cHeader          := "R.E."
-         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ),    "" ) }
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
          :nWidth           := 71
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -12639,17 +12639,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 
       end if
 
-   /*else
-
-      if !Empty( aGet[ _NCANENT ] )
-      	aGet[ _NCANENT ]:SetText( cNombreCajas() )
-      end if*/
-
    end if
-
-   	/*if !Empty( aGet[ _NUNICAJA ] )
-   		aGet[ _NUNICAJA ]:SetText( cNombreUnidades() )
-   	end if	*/
 
    if !Empty( aGet[ _LGASSUP ] )
       aGet[ _LGASSUP ]:Show()
@@ -12751,7 +12741,9 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
    do case
    case nMode == APPD_MODE
 
-      aGet[ _CREF    ]:cText( Space( 200 ) )
+      if empty( aGet[ _CREF ]:varGet() )
+         aGet[ _CREF    ]:cText( Space( 200 ) )
+      end if 
 
       aTmp[ _LIVALIN ]  := aTmpFac[ _LIVAINC ]
       aTmp[ _DFECCAD ]  := Ctod( "" )
@@ -20925,6 +20917,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
                nTotTrn           := nTrnLFacCli( cFacCliL, nDouDiv )
                nTotIvm           := nTotIFacCli( cFacCliL, nDouDiv, nRouDiv )
+
                nTotPnt           := if( lPntVer, nPntLFacCli( cFacCliL, nDpvDiv ), 0 )
                nTotCos           += nCosLFacCli( cFacCliL, nDouDiv, nRouDiv )
                nTotPes           += nPesLFacCli( cFacCliL )
@@ -21367,6 +21360,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
    nTotNet           	:= Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
 
+
    /*
    Total entregas--------------------------------------------------------------
    */
@@ -21429,7 +21423,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    Total rentabilidad----------------------------------------------------------
    */
 
-   nTotRnt           := Round(         nTotNet - nManObr - nTotAge - nTotPnt - nTotAtp - nTotCos, nRouDiv )
+   nTotRnt           := Round( nTotNet - nManObr - nTotAge - nTotPnt - nTotAtp - nTotCos, nRouDiv )
 
    nTotPctRnt        := nRentabilidad( nTotNet - nManObr - nTotAge - nTotPnt, nTotAtp, nTotCos )
 
@@ -23241,10 +23235,6 @@ Method ProcessFrq()
 
    for m := 1 to len( aFiles )
 
-      msgAlert( "Procesando fichero franquicia : " + aFiles[ m, 1 ] )
-      msgAlert( cPatInFrq() + aFiles[ m, 1 ], "cPatInFrq() + aFiles[ m, 1 ]" )
-      msgAlert( file( cPatInFrq() + aFiles[ m, 1 ] ), "file( cPatInFrq() + aFiles[ m, 1 ] )" )
-
       // Descomprimimos el fichero---------------------------------------------
 
       if ::oSender:lUnZipData( cPatInFrq() + aFiles[ m, 1 ] )
@@ -23262,21 +23252,15 @@ Method ProcessFrq()
             USE ( cPatSnd() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
             SET ADSINDEX TO ( cPatSnd() + "FacCliP.Cdx" ) ADDITIVE
 
-            msgAlert( ( tmpFacCliT )->( OrdKeyCount() ) )
-
             while ( tmpFacCliT )->( !eof() )
 
                AppendFacturaProveedores()
 
                if rtrim( ( tmpFacCliT )->cCodCli ) == rtrim( uFieldempresa( "cCodCliFrq" ) )
 
-                  msgAlert( "Procesando factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
-
                   ::oSender:SetText( "Procesando factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
                else 
-
-                  msgAlert( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
                   ::oSender:SetText( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
@@ -23291,8 +23275,6 @@ Method ProcessFrq()
             CLOSE ( dbfFacCliP )
 
          else
-
-            msgAlert( "Faltan ficheros" )
 
             ::oSender:SetText( "Faltan ficheros" )
 
