@@ -10448,7 +10448,13 @@ Method CreateData() CLASS TFacturasProveedorSenderReciver
    local cFacPrvL
    local cFacPrvI
    local cFacPrvP
-   local cFileName   := "FacPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "FacPrv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "FacPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    ::oSender:SetText( "Enviando facturas a proveedores" )
 
@@ -10609,7 +10615,13 @@ Return ( Self )
 
 Method SendData() CLASS TFacturasProveedorSenderReciver
 
-   local cFileName         := "FacPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "FacPrv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "FacPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    if File( cPatOut() + cFileName )
 

@@ -13741,7 +13741,13 @@ Method CreateData() CLASS TPedidosClientesSenderReciver
    local tmpPedCliT
    local tmpPedCliL
    local tmpPedCliI
-   local cFileName         := "PedCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "PedCli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "PedCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    ::oSender:SetText( "Enviando pedidos de clientes" )
 
@@ -13847,6 +13853,7 @@ Method RestoreData() CLASS TPedidosClientesSenderReciver
       Retorna el valor anterior
       */
 
+      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @cPedCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "PedCliT.Cdx" ) ADDITIVE
       ( cPedCliT )->( OrdSetFocus( "lSndDoc" ) )
 
@@ -13867,7 +13874,13 @@ Return ( Self )
 
 Method SendData() CLASS TPedidosClientesSenderReciver
 
-   local cFileName         := "PedCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "PedCli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "PedCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    if File( cPatOut() + cFileName )
 
@@ -13892,7 +13905,13 @@ Return ( Self )
 Method ReciveData() CLASS TPedidosClientesSenderReciver
 
    	local n
-   	local aExt        := aRetDlgEmp()
+   	local aExt
+
+      if ::oSender:lServer
+         aExt        := aRetDlgEmp()
+      else
+         aExt        := { "All" }
+      end if
 
    	/*
    	Recibirlo de internet

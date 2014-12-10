@@ -1367,16 +1367,16 @@ METHOD lFtpGetFiles( aSource, cTarget )
 
          if ::lFileProcesed( aFiles[ i, 1 ] )
             ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " ya procesado." )
+            lValido     := .f.
             if !::lGetProcesados
-               lValido     := .f.
                loop
             end if
          end if
 
          if !::lFileRecive( aFiles[ i, 1 ] ) .and. !::lPriorFileRecive( aFiles[ i, 1 ] )
             ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " fuera de secuencia." )
+            lValido     := .f.
             if !::lGetFueraSecuencia
-               lValido     := .f.
                loop
             end if
          end if
@@ -2145,13 +2145,13 @@ Function ftpEraseFile( cFile, oSender, lDisco )
 
    DEFAULT lDisco          := ( nTipConInt() == 1 )
 
-   /*if lDisco
+   if lDisco
       fErase( oSender:getPathComunication() + cFile )
    else
       if oFtp != nil
          oFtp:Dele( cFile )
       end if
-   end if*/
+   end if
 
 Return nil
 

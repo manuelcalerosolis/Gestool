@@ -8151,7 +8151,13 @@ Method CreateData()
    local dbfPedPrvL
    local tmpPedPrvT
    local tmpPedPrvL
-   local cFileName   := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    ::oSender:SetText( "Enviando pedidos a proveedores" )
 
@@ -8288,7 +8294,13 @@ Return ( Self )
 
 Method SendData()
 
-   local cFileName         := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "PedPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    if File( cPatOut() + cFileName )
 
@@ -8309,7 +8321,13 @@ Return ( Self )
 Method ReciveData()
 
    local n
-   local aExt        := aRetDlgEmp()
+   local aExt
+
+   if ::oSender:lServer
+      aExt        := aRetDlgEmp()
+   else
+      aExt        := { "All" }
+   end if
 
    /*
    Recibirlo de internet

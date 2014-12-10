@@ -10775,7 +10775,13 @@ Method CreateData()
    local tmpPreCliT
    local tmpPreCliL
    local tmpPreCliI
-   local cFileName   := "PreCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "PreCli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "PreCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    ::oSender:SetText( "Enviando presupuestos de clientes" )
 
@@ -10927,7 +10933,13 @@ Return ( Self )
 
 Method SendData()
 
-   local cFileName         := "PreCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "PreCli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "PreCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    if File( cPatOut() + cFileName )
 
@@ -10952,7 +10964,13 @@ Return ( Self )
 Method ReciveData()
 
    local n
-   local aExt        := aRetDlgEmp()
+   local aExt
+
+   if ::oSender:lServer
+      aExt        := aRetDlgEmp()
+   else
+      aExt        := { "All" }
+   end if
 
    /*
    Recibirlo de internet

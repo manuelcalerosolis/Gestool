@@ -13761,7 +13761,13 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
    local tmpTikT
    local tmpTikL
    local tmpTikP
-   local cFileName   := "TikCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "TikCli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "TikCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    ::oSender:SetText( "Enviando tikets de clientes" )
 
@@ -13897,7 +13903,13 @@ Return ( Self )
 
 Method SendData() CLASS TTiketsClientesSenderReciver
 
-   local cFileName   := "TikCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "TikCli" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "TikCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
 
    if file( cPatOut() + cFileName )
 
@@ -13918,7 +13930,13 @@ Return ( Self )
 Method ReciveData() CLASS TTiketsClientesSenderReciver
 
    local n
-   local aExt        := aRetDlgEmp()
+   local aExt
+
+   if ::oSender:lServer
+      aExt        := aRetDlgEmp()
+   else
+      aExt        := { "All" }
+   end if
 
    /*
    Recibirlo de internet
