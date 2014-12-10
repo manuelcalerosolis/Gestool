@@ -1041,39 +1041,38 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
       Return ( .f. )
    end if
 
-? "lExternalSendMail"
 
    CursorWait()
-/*
+
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    if ::lCreateMail()
-? 1
+
       if !Empty( ::cDireccion )
          for each cDireccion in hb_aTokens( ::cDireccion, ";" )
             ::oMail:AddRecipient( cDireccion )
          next
       end if
-? 1
+
       if !Empty( ::cGetPara )
          for each cDireccion in hb_aTokens( ::cGetPara, ";" )
             ::oMail:AddRecipient( cDireccion )
          next
       end if
-? 1
+
       if !Empty( ::cGetCopia )
          for each cDireccion in hb_aTokens( ::cGetCopia, ";" )
             ::oMail:AddRecipientBCC( cDireccion )
          next
       end if
-? 1
+
       if File( Rtrim( ::cGetAdjunto ) )
          ::oMail:AddAttachment( Rtrim( ::cGetAdjunto ) )
       end if
-? 1
+
       lSendMail            := ::oMail:Send( ::MailServerSend() )
-? 1
+
       if !lSendMail
          MsgStop( "Error al enviar correo electrónico." + CRLF + CRLF + ::oMail:ErrorMessage )
       else
@@ -1083,7 +1082,7 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
       end if
 
    end if
-/*
+
    RECOVER USING oError
 
       msgStop( "Error al enviar correo electrónico." + CRLF + CRLF + ErrorMessage( oError ) )
@@ -1092,7 +1091,7 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
 
    END SEQUENCE
    ErrorBlock( oBlock )
-*/
+
    CursorWE()
 
 Return ( lSendMail )

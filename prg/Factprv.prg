@@ -8678,13 +8678,13 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
    local aPIvGas     := { 0, 0, 0 }
    local aPReGas     := { 0, 0, 0 }
 
-   DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
    DEFAULT cFacPrvT  := D():FacturasProveedores( nView )
    DEFAULT cFacPrvL  := D():FacturasProveedoresLineas( nView )
    DEFAULT cIva      := D():TiposIva( nView )
    DEFAULT cDiv      := D():Divisas( nView )
    DEFAULT cFacPrvP  := D():FacturasProveedoresPagos( nView )
    DEFAULT lPic      := .f.
+   DEFAULT cFactura  := ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac
 
    public nTotBrt    := 0
    public nTotNet    := 0
@@ -8993,7 +8993,7 @@ RETURN ( if( lPic, Trans( nTotFac, cPirDiv ), nTotFac ) )
 
 //--------------------------------------------------------------------------//
 
-function nVtaFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvL, cIva, cDiv, nYear )
+function nVtaFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvL, cFacPrvP, cIva, cDiv, nYear )
 
    local nCon     := 0
    local nRec     := ( cFacPrvT )->( Recno() )
@@ -9010,7 +9010,7 @@ function nVtaFacPrv( cCodPrv, dDesde, dHasta, cFacPrvT, cFacPrvL, cIva, cDiv, nY
             ( dHasta == nil .or. ( cFacPrvT )->dFecFac <= dHasta )    .and.;
             ( nYear == nil .or. Year( ( cFacPrvT )->dFecFac ) == nYear )
 
-            nCon  += nTotFacPrv( ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac, cFacPrvT, cFacPrvL, cIva, cDiv, nil, nil, cDivEmp(), .f. )
+            nCon  += nTotFacPrv( ( cFacPrvT )->cSerFac + Str( ( cFacPrvT )->nNumFac ) + ( cFacPrvT )->cSufFac, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, nil, cDivEmp(), .f. )
 
          end if
 

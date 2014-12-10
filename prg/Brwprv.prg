@@ -665,7 +665,7 @@ Static Function LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, nYear, oBrwCom )
 
    oText:SetText( "Calculando de totales" )
 
-   nComFac           := nTotComFac( cCodPrv, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, if( nYear == "Todos", nil, Val( nYear ) ) )
+   nComFac           := nTotComFac( cCodPrv, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv, if( nYear == "Todos", nil, Val( nYear ) ) )
    nCobFac           := nTotCobFac( cCodPrv, dbfFacPrvT, dbfFacPrvP, dbfIva, dbfDiv, if( nYear == "Todos", nil, Val( nYear ) ) )
 
    oTotFac:SetText( nComFac )
@@ -1163,64 +1163,11 @@ Return( .t. )
 
 static function nTotCajCom( cCodPrv, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, dbfRctPrvT, dbfRctPrvL, nMes, nYear )
 
-   local cCodEmp
-   local dbfAlbEmpT
-   local dbfAlbEmpL
-   local dbfFacEmpT
-   local dbfFacEmpL
-   local dbfRctEmpT
-   local dbfRctEmpL
    local nTotCajCom  := 0
 
-   if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()
-
-            nTotCajCom           += nCajComAlb( cCodPrv, nMes, dbfAlbPrvT, dbfAlbPrvL, nYear )
-            nTotCajCom           += nCajComFac( cCodPrv, nMes, dbfFacPrvT, dbfFacPrvL, nYear )
-            nTotCajCom           += nCajComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, nYear )
-
-         else
-
-            USE ( cPatStk( cCodEmp ) + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbfAlbEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvL.CDX" ) ADDITIVE
-
-            nTotCajCom           += nCajComAlb( cCodPrv, nMes, dbfAlbEmpT, dbfAlbEmpL, nYear )
-            nTotCajCom           += nCajComFac( cCodPrv, nMes, dbfFacEmpT, dbfFacEmpL, nYear )
-            nTotCajCom           += nCajComRct( cCodPrv, nMes, dbfRctEmpT, dbfRctEmpL, nYear )
-
-            CLOSE( dbfAlbEmpT )
-            CLOSE( dbfAlbEmpL )
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-            CLOSE( dbfRctEmpT )
-            CLOSE( dbfRctEmpL )
-
-         end if
-
-      next
-
-   end if
+   nTotCajCom        += nCajComAlb( cCodPrv, nMes, dbfAlbPrvT, dbfAlbPrvL, nYear )
+   nTotCajCom        += nCajComFac( cCodPrv, nMes, dbfFacPrvT, dbfFacPrvL, nYear )
+   nTotCajCom        += nCajComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, nYear )
 
 return nTotCajCom
 
@@ -1228,64 +1175,11 @@ return nTotCajCom
 
 static function nTotUndCom( cCodPrv, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, dbfRctPrvT, dbfRctPrvL, nMes, nYear )
 
-   local cCodEmp
-   local dbfAlbEmpT
-   local dbfAlbEmpL
-   local dbfFacEmpT
-   local dbfFacEmpL
-   local dbfRctEmpT
-   local dbfRctEmpL
    local nTotUndCom  := 0
 
-   if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()
-
-            nTotUndCom           += nUndComAlb( cCodPrv, nMes, dbfAlbPrvT, dbfAlbPrvL, nYear )
-            nTotUndCom           += nUndComFac( cCodPrv, nMes, dbfFacPrvT, dbfFacPrvL, nYear )
-            nTotUndCom           += nUndComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, nYear )
-
-         else
-
-            USE ( cPatStk( cCodEmp ) + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbfAlbEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvL.CDX" ) ADDITIVE
-
-            nTotUndCom           += nUndComAlb( cCodPrv, nMes, dbfAlbEmpT, dbfAlbEmpL, nYear )
-            nTotUndCom           += nUndComFac( cCodPrv, nMes, dbfFacEmpT, dbfFacEmpL, nYear )
-            nTotUndCom           += nUndComRct( cCodPrv, nMes, dbfRctEmpT, dbfRctEmpL, nYear )
-
-            CLOSE( dbfAlbEmpT )
-            CLOSE( dbfAlbEmpL )
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-            CLOSE( dbfRctEmpT )
-            CLOSE( dbfRctEmpL )
-
-         end if
-
-      next
-
-   end if
+   nTotUndCom        += nUndComAlb( cCodPrv, nMes, dbfAlbPrvT, dbfAlbPrvL, nYear )
+   nTotUndCom        += nUndComFac( cCodPrv, nMes, dbfFacPrvT, dbfFacPrvL, nYear )
+   nTotUndCom        += nUndComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, nYear )
 
 return nTotUndCom
 
@@ -1293,64 +1187,11 @@ return nTotUndCom
 
 static function nTotImpCom( cCodPrv, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, nMes, nYear )
 
-   local cCodEmp
-   local dbfAlbEmpT
-   local dbfAlbEmpL
-   local dbfFacEmpT
-   local dbfFacEmpL
-   local dbfRctEmpT
-   local dbfRctEmpL
    local nTotImpCom  := 0
 
-   if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()
-
-            nTotImpCom           += nImpComAlb( cCodPrv, nMes, dbfAlbPrvT, dbfAlbPrvL, dbfIva, dbfDiv, nYear )
-            nTotImpCom           += nImpComFac( cCodPrv, nMes, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, nYear )
-            nTotImpCom           += nImpComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, dbfFacPrvP, dbfIva, dbfDiv, nYear )
-
-         else
-
-            USE ( cPatStk( cCodEmp ) + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbfAlbEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ADDITIVE
-
-            USE ( cPatStk( cCodEmp ) + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvL", @dbfRctEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "RctPrvL.CDX" ) ADDITIVE
-
-            nTotImpCom           += nImpComAlb( cCodPrv, nMes, dbfAlbEmpT, dbfAlbEmpL, dbfIva, dbfDiv, nYear )
-            nTotImpCom           += nImpComFac( cCodPrv, nMes, dbfFacEmpT, dbfFacEmpL, dbfIva, dbfDiv, nYear )
-            nTotImpCom           += nImpComRct( cCodPrv, nMes, dbfRctEmpT, dbfRctEmpL, dbfFacPrvP, dbfIva, dbfDiv, nYear )
-
-            CLOSE( dbfAlbEmpT )
-            CLOSE( dbfAlbEmpL )
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-            CLOSE( dbfRctEmpT )
-            CLOSE( dbfRctEmpL )
-
-         end if
-
-      next
-
-   end if
+   nTotImpCom        += nImpComAlb( cCodPrv, nMes, dbfAlbPrvT, dbfAlbPrvL, dbfIva, dbfDiv, nYear )
+   nTotImpCom        += nImpComFac( cCodPrv, nMes, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, nYear )
+   nTotImpCom        += nImpComRct( cCodPrv, nMes, dbfRctPrvT, dbfRctPrvL, dbfFacPrvP, dbfIva, dbfDiv, nYear )
 
 return nTotImpCom
 
@@ -1397,7 +1238,7 @@ static function nImpComFac( cCodPrv, nMes, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDi
          if ( nYear == nil .or. Year( ( dbfFacPrvT )->dFecFac ) == nYear ) .and.;
             ( nMes == 0 .or. Month( ( dbfFacPrvT )->dFecFac ) == nMes )
 
-            nCon     += nTotFacPrv( ( dbfFacPrvT )->cSerFac + Str( (dbfFacPrvT)->nNumFac ) + (dbfFacPrvT)->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, nil, nil, cDivEmp(), .f. )
+            nCon     += nTotFacPrv( ( dbfFacPrvT )->cSerFac + Str( (dbfFacPrvT)->nNumFac ) + (dbfFacPrvT)->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, nil, cDivEmp(), .f. )
 
          end if
 
@@ -1573,40 +1414,11 @@ return ( nCon )
 
 //---------------------------------------------------------------------------//
 
-static function nTotComFac( cCodPrv, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, nYear )
+static function nTotComFac( cCodPrv, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv, nYear )
 
-   local cCodEmp
-   local dbfFacEmpT
-   local dbfFacEmpL
    local nTotComFac  := 0
 
-   if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()
-
-            nTotComFac           += nVtaFacPrv( cCodPrv, nil, nil, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, nYear )
-
-         else
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacEmpL ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ADDITIVE
-
-            nTotComFac           += nVtaFacPrv( cCodPrv, nil, nil, dbfFacEmpT, dbfFacEmpL, dbfIva, dbfDiv, nYear )
-
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpL )
-
-         end if
-
-      next
-
-   end if
+   nTotComFac        += nVtaFacPrv( cCodPrv, nil, nil, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv, nYear )
 
 return nTotComFac
 
@@ -1614,39 +1426,9 @@ return nTotComFac
 
 static function nTotCobFac( cCodPrv, dbfFacPrvT, dbfFacPrvP, dbfIva, dbfDiv, nYear )
 
-   local cCodEmp
-   local dbfFacEmpT
-   local dbfFacEmpP
    local nTotCobFac  := 0
 
-   if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-         if cCodEmp == cCodEmp()
-
-            nTotCobFac           += nCobFacPrv( cCodPrv, nil, nil, dbfFacPrvT, dbfFacPrvP, dbfIva, dbfDiv, .t., nYear )
-
-         else
-
-            USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacEmpT ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            USE ( cPatStk( cCodEmp ) + "FacPrvP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvP", @dbfFacEmpP ) )
-            SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FacPrvP.CDX" ) ADDITIVE
-            SET TAG TO "cCodPrv"
-
-            nTotCobFac           += nCobFacPrv( cCodPrv, nil, nil, dbfFacEmpT, dbfFacEmpP, dbfIva, dbfDiv, .t., nYear )
-
-            CLOSE( dbfFacEmpT )
-            CLOSE( dbfFacEmpP )
-
-         end if
-
-      next
-
-   end if
+   nTotCobFac        += nCobFacPrv( cCodPrv, nil, nil, dbfFacPrvT, dbfFacPrvP, dbfIva, dbfDiv, .t., nYear )
 
 return nTotCobFac
 
