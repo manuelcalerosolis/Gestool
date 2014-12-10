@@ -24211,8 +24211,16 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCod
    Ahora escribimos en el fichero definitivo de pagos--------------------------
    */
 
-   /*if cCodPagoAnterior == aTmp[ _CCODPAGO ]
+   EscribeTemporalPagos( cSerFac, nNumFac, cSufFac )
 
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function EscribeTemporalPagos( cSerFac, nNumFac, cSufFac )
+
+   if !( "TABLET" $ cParamsMain() )
+      
       ( dbfTmpPgo )->( dbGoTop() )
       while ( dbfTmpPgo )->( !eof() )
          dbPass( dbfTmpPgo, dbfFacCliP, .t., cSerFac, nNumFac, cSufFac )
@@ -24220,8 +24228,8 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCod
          SysRefresh()
       end while
 
-   end if   */
+   end if
 
 Return .t.
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//   

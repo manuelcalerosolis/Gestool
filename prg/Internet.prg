@@ -1351,35 +1351,42 @@ METHOD lFtpGetFiles( aSource, cTarget )
 
    local n 
    local i
-   local aFiles      := {}
-   local lResult     := .t.
+   local aFiles            := {}
+   local lResult           := .t.
+   local lValido           := .t.
 
    for n := 1 to Len( aSource )
 
-      //aFiles         := TrimFileName( ::oFTP:listFiles( aSource[ n ] ) )
+      //aFiles             := TrimFileName( ::oFTP:listFiles( aSource[ n ] ) )
 
-      aFiles         := ::oFTP:listFiles( aSource[ n ] )
+      aFiles               := ::oFTP:listFiles( aSource[ n ] )
 
-      ::oFtp:oUrl:cPath := "."
+      ::oFtp:oUrl:cPath    := "."
 
       for i := 1 to Len( aFiles )
 
-         /*if ::lValidGetFile( aFiles[ i, 1 ] )
+         if ::lFileProcesed( aFiles[ i, 1 ] )
             ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " ya procesado." )
             if !::lGetProcesados
-               loop
-            end if
-         end if*/
-
-         if !::lFileRecive( aFiles[ i, 1 ] ) .and. !::lPriorFileRecive( aFiles[ i, 1 ] )
-            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " fuera de secuencia." )
-            if !::lGetFueraSecuencia
+               lValido     := .f.
                loop
             end if
          end if
 
+         if !::lFileRecive( aFiles[ i, 1 ] ) .and. !::lPriorFileRecive( aFiles[ i, 1 ] )
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " fuera de secuencia." )
+            if !::lGetFueraSecuencia
+               lValido     := .f.
+               loop
+            end if
+         end if
+
+         if lValido 
+            ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " para procesar." )
+         end if
+
          if isFalse( ::oFtp:DownLoadFile( cTarget + aFiles[ i, 1 ], aFiles[ i, 1 ] ) )
-            lResult  := .f.
+            lResult        := .f.
          end if
 
       next
@@ -1387,112 +1394,6 @@ METHOD lFtpGetFiles( aSource, cTarget )
    next
 
 return ( lResult )
-
-//---------------------------------------------------------------------------//
-
-/*METHOD SendFile( aSource, aTarget, cDirectory ) CLASS TSndRecInf
-
-   local n
-   local oFile
-   local hSource
-   local hTarget
-   local cBuffer
-   local nBuffer        := 2000
-   local nBytes         := 0
-   local nFile          := 0
-   local nTotSize       := 0
-   local lRet           := .f.
-   local lDisco         := ( nTipConInt() == 1 )
-
-   DEFAULT aTarget      := aSource
-
-   IF ValType( aSource ) != "A"
-      aSource           := { aSource }
-   END IF
-
-   IF ValType( aTarget ) != "A"
-      aTarget           := { aTarget }
-   END IF
-
-   cBuffer              := Space( nBuffer )
-
-   for n := 1 to Len( aSource )
-
-      if file( aSource[ n ] )
-         hSource        := fOpen( aSource[ n ] )
-         nTotSize       += fSeek( hSource, 0, 2 )
-         fClose( hSource )
-      end if
-
-      SysRefresh()
-
-   next
-
-   /*
-   Tamaño cero salida----------------------------------------------------------
-
-   if nTotSize == 0
-      Return .f.
-   end if
-
-   if !Empty( ::oMtr )
-      ::oMtr:nTotal     := nTotSize
-   end if   
-
-   ::SetText( "Tamaño fichero " + Alltrim( Str( nTotSize ) ) )
-
-   /*
-   Esto es para un disco-------------------------------------------------------
-
-   if lDisco
-
-      if !empty( cDirectory ) .and. !lIsDir( ::getPathComunication() + cDirectory )
-         makeDir( cNamePath( ::getPathComunication() + cDirectory ) )
-      end if 
-
-      for n := 1 to Len( aSource )
-
-         __CopyFile( aSource[ n ], ::getPathComunication() + aTarget[ n ] )
-
-      next
-
-      lRet  := .t.
-
-   else
-
-      for n := 1 to Len( aSource )
-
-         if Empty( ::oFtp )
-
-            msgInfo( "No hay conexiones de internet disponibles." )
-
-         else
-
-            lRet  := ::oFtp:UploadFile( aSource[ n ] )
-
-         end if
-
-         ::SetText( "Procesando fichero " + aTarget[ n ] )
-
-
-         if !lRet
-
-            ::SetText( "Error procesando fichero " + aTarget[ n ] )
-            ::SetText( GetErrMsg() )
-
-         end if
-
-      next
-
-   end if
-
-   if !Empty( ::oMtr )
-      ::oMtr:Set( 0 )
-   end if
-
-   SysRefresh()
-
-Return ( lRet )*/
 
 //---------------------------------------------------------------------------//
 
@@ -2244,13 +2145,13 @@ Function ftpEraseFile( cFile, oSender, lDisco )
 
    DEFAULT lDisco          := ( nTipConInt() == 1 )
 
-   if lDisco
+   /*if lDisco
       fErase( oSender:getPathComunication() + cFile )
    else
       if oFtp != nil
          oFtp:Dele( cFile )
       end if
-   end if
+   end if*/
 
 Return nil
 
