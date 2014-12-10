@@ -1364,12 +1364,12 @@ METHOD lFtpGetFiles( aSource, cTarget )
 
       for i := 1 to Len( aFiles )
 
-         if ::lValidGetFile( aFiles[ i, 1 ] )
+         /*if ::lValidGetFile( aFiles[ i, 1 ] )
             ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " ya procesado." )
             if !::lGetProcesados
                loop
             end if
-         end if
+         end if*/
 
          if !::lFileRecive( aFiles[ i, 1 ] ) .and. !::lPriorFileRecive( aFiles[ i, 1 ] )
             ::SetText( "INFORMACIÓN fichero " + cValToChar( aFiles[ i, 1 ] ) + " fuera de secuencia." )
