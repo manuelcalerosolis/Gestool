@@ -8715,9 +8715,11 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    Una vez echos los descuentos le sumamos el IVMH-----------------------------
    */
 
-   _NBASIVA1         += _NIVMIVA1
-   _NBASIVA2         += _NIVMIVA2
-   _NBASIVA3         += _NIVMIVA3
+   if uFieldEmpresa( "lIvaImpEsp" )
+      _NBASIVA1      += _NIVMIVA1
+      _NBASIVA2      += _NIVMIVA2
+      _NBASIVA3      += _NIVMIVA3
+   end if
 
    if !lIvaInc
 
@@ -8738,10 +8740,6 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
          _NIMSATQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
          _NIMSATQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
       end if
-
-      _NBASIVA1      -= _NIVMIVA1
-      _NBASIVA2      -= _NIVMIVA2
-      _NBASIVA3      -= _NIVMIVA3
 
    else
 
@@ -8827,7 +8825,10 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    Total de impuestos
    */
 
-   nTotImp           := nTotIva + nTotReq + nTotIvm
+   nTotImp           := Round( nTotIva + nTotReq , nRouDiv )
+   if !uFieldEmpresa( "lIvaImpEsp" )
+      nTotImp        += Round( nTotIvm , nRouDiv )
+   end if 
 
    /*
    Total rentabilidad
@@ -8848,29 +8849,6 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    */
 
    nTotalDto         := nDescuentosLineas + nTotDto + nTotDpp + nTotUno + nTotDos + nTotAtp
-
-   /*
-   Estudio de la Forma de Pago
-   */
-
-   /*if cFPago != nil                                      .and. ;
-      ( cFPago )->( dbSeek( ( cSatCliT )->cCodPgo ) )
-
-      nTotAcu        := nTotSat
-
-      for n := 1 to ( cFPago )->nPlazos
-
-         if n != ( cFPago )->nPlazos
-            nTotAcu  -= Round( nTotSat / ( cFPago )->nPlazos, nRouDiv )
-         end if
-
-         aAdd( aImpVto, if( n != ( cFPago )->nPlazos, Round( nTotSat / ( cFPago )->nPlazos, nRouDiv ), Round( nTotAcu, nRouDiv ) ) )
-
-         aAdd( aDatVto, dNexDay( dFecFac + ( cFPago )->nPlaUno + ( ( cFPago )->nDiaPla * ( n - 1 ) ), cDbfClient ) )
-
-      next
-
-   end if*/
 
    ( cSatCliL )->( dbGoTo( nRecno) )
 

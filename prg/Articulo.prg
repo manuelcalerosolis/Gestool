@@ -8241,6 +8241,7 @@ Esta funci¢n calcula el beneficio que se esta aplicando a un articulo sin impues
 
 Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIvaPts, nDecDiv, cCodImp, oSay, lMargenAjuste, cMargenAjuste )
 
+   local nIvm     := 0
 	local nNewBnf
    local nIvaPct
    local nNewIva  := nPrePts
@@ -8254,16 +8255,6 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
       nPrePts     := Round( nPrePts, nDecDiv )
 
       nNewBnf     := nPorcentajeBeneficio( lSobreCoste, nPrePts, nCosto )
-
-		/*
-		Solo procedemos si el % de beneficio es != 0
-
-      if lSobreCoste
-         nNewBnf  := ( Div( nPrePts, nCosto ) - 1 ) * 100
-      else
-         nNewBnf  := ( 1 - Div( nCosto, nPrePts ) ) * 100
-      end if
-      */
 
       /*
 		Proteccion contra limites
@@ -8292,14 +8283,22 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
    */
 
    if !Empty( cCodImp ) .and. !Empty( oNewImp )
-      nNewIva     += oNewImp:nValImp( cCodImp, .t., nIvaPct )
+      nIvm        += oNewImp:nValImp( cCodImp, .t., nIvaPct )
    end if
 
 	/*
-   Calculo del impuestos
+   Calculo del impuestos-------------------------------------------------------
 	*/
 
+   if uFieldEmpresa( "lIvaImpEsp" )
+      nNewIva     += nIvm
+   end if 
+
    nNewIva        += ( nNewIva * nIvaPct / 100 )
+
+   if !uFieldEmpresa( "lIvaImpEsp" )
+      nNewIva     += nIvm
+   end if 
 
    /*
    if IsLogic( lMargenAjuste )

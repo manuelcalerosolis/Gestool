@@ -11494,7 +11494,10 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
 	Total de impuestos
 	*/
 
-   nTotImp           := Round( nTotIva + nTotReq + nTotIvm, nRouDiv )
+   nTotImp           := Round( nTotIva + nTotReq , nRouDiv )
+   if !uFieldEmpresa( "lIvaImpEsp" )
+      nTotImp        += Round( nTotIvm , nRouDiv )
+   end if 
 
    /*
    Total retenciones

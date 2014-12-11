@@ -7,7 +7,6 @@
 #include "Factu.ch" 
 
 #define CLR_BAR                    14197607
-#define CLR_BAR                    14197607
 #define _MENUITEM_                 "01056"
 
 /*
