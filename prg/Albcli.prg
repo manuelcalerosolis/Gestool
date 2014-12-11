@@ -17253,7 +17253,10 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
 
    //Total de impuestos
 
-   nTotImp           := nTotIva + nTotReq // + nTotIvm
+   nTotImp           := Round( nTotIva + nTotReq , nRouDiv )
+   if !uFieldEmpresa( "lIvaImpEsp" )
+      nTotImp        += Round( nTotIvm , nRouDiv )
+   end if 
 
    /*
    Total rentabilidad----------------------------------------------------------

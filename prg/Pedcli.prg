@@ -7,6 +7,7 @@
 #include "Factu.ch" 
 
 #define CLR_BAR                    14197607
+#define CLR_BAR                    14197607
 #define _MENUITEM_                 "01056"
 
 /*
@@ -15915,60 +15916,60 @@ Calcula el Total del pedido
 
 FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDivRet, lPic, cClient )
 
-   	local nRecno
-   	local cCodDiv
-   	local cPouDiv
-   	local dFecPed
-   	local bCondition
-   	local nDtoEsp
-   	local nDtoPP
-   	local nDtoUno
-   	local nDtoDos
-   	local lIvaInc
-   	local nIvaMan
-   	local nManObr
-   	local nSbrAtp
-   	local nDtoAtp
-   	local nKgsTrn
-   	local nTotLin           := 0
-   	local nTotUnd           := 0
-   	local aTotalDto         := { 0, 0, 0 }
-   	local aTotalDPP         := { 0, 0, 0 }
-   	local aTotalUno         := { 0, 0, 0 }
-   	local aTotalDos         := { 0, 0, 0 }
-   	local aTotalAtp         := { 0, 0, 0 }
-   	local lRecargo
-   	local nTotAcu           := 0
-   	local n
-   	local nDescuentosLineas := 0
-   	local lPntVer           := .f.
+   local nRecno
+   local cCodDiv
+   local cPouDiv
+   local dFecPed
+   local bCondition
+   local nDtoEsp
+   local nDtoPP
+   local nDtoUno
+   local nDtoDos
+   local lIvaInc
+   local nIvaMan
+   local nManObr
+   local nSbrAtp
+   local nDtoAtp
+   local nKgsTrn
+   local nTotLin           := 0
+   local nTotUnd           := 0
+   local aTotalDto         := { 0, 0, 0 }
+   local aTotalDPP         := { 0, 0, 0 }
+   local aTotalUno         := { 0, 0, 0 }
+   local aTotalDos         := { 0, 0, 0 }
+   local aTotalAtp         := { 0, 0, 0 }
+   local lRecargo
+   local nTotAcu           := 0
+   local n
+   local nDescuentosLineas := 0
+   local lPntVer           := .f.
 
-   	if !Empty( nView )
-   		DEFAULT cPedCliT   	:= D():PedidosClientes( nView )
-		DEFAULT cClient   	:= D():Clientes( nView )
-	end if	
+	if !Empty( nView )
+		DEFAULT cPedCliT   	:= D():PedidosClientes( nView )
+      DEFAULT cClient   	:= D():Clientes( nView )
+   end if	
    	
-   	DEFAULT cPedCliL        := dbfPedCliL
-   	DEFAULT cIva            := dbfIva
-   	DEFAULT cDiv            := dbfDiv
-   	DEFAULT cFPago          := dbfFPago
-   	DEFAULT cPedido         := ( cPedCliT )->cSerPed + Str( ( cPedCliT )->nNumPed ) + ( cPedCliT )->cSufPed
-   	DEFAULT lPic            := .f.
+	DEFAULT cPedCliL        := dbfPedCliL
+	DEFAULT cIva            := dbfIva
+	DEFAULT cDiv            := dbfDiv
+	DEFAULT cFPago          := dbfFPago
+	DEFAULT cPedido         := ( cPedCliT )->cSerPed + Str( ( cPedCliT )->nNumPed ) + ( cPedCliT )->cSufPed
+	DEFAULT lPic            := .f.
 
-   	if Empty( Select( cPedCliT ) )
-      	Return ( 0 )
-   	end if
+	if Empty( Select( cPedCliT ) )
+   	Return ( 0 )
+	end if
 
-   	if Empty( Select( cPedCliL ) )
-      	Return ( 0 )
-   	end if
+	if Empty( Select( cPedCliL ) )
+   	Return ( 0 )
+	end if
 
-   	if Empty( Select( cIva ) )
-      	Return ( 0 )
-   	end if
+	if Empty( Select( cIva ) )
+   	Return ( 0 )
+	end if
 
-   	if Empty( Select( cDiv ) )
-      	Return ( 0 )
+	if Empty( Select( cDiv ) )
+   	Return ( 0 )
    end if
 
    public nTotPed       := 0
@@ -16379,9 +16380,11 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    Una vez echos los descuentos le sumamos el IVMH-----------------------------
 	*/
 
-   _NBASIVA1         += _NIVMIVA1
-   _NBASIVA2         += _NIVMIVA2
-   _NBASIVA3         += _NIVMIVA3
+   if uFieldEmpresa( "lIvaImpEsp" )
+      _NBASIVA1      += _NIVMIVA1
+      _NBASIVA2      += _NIVMIVA2
+      _NBASIVA3      += _NIVMIVA3
+   end if
 
    if !lIvaInc
 
@@ -16402,10 +16405,6 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
          _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
          _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
       end if
-
-      _NBASIVA1      -= _NIVMIVA1
-      _NBASIVA2      -= _NIVMIVA2
-      _NBASIVA3      -= _NIVMIVA3
 
    else
 
@@ -16481,8 +16480,10 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 	Total de impuestos
 	*/
 
-   nTotImp           := nTotIva + nTotReq + nTotIvm
-
+   nTotImp           := Round( nTotIva + nTotReq , nRouDiv )
+   if !uFieldEmpresa( "lIvaImpEsp" )
+      nTotImp        += Round( nTotIvm , nRouDiv )
+   end if 
 
    /*
    Total rentabilidad----------------------------------------------------------

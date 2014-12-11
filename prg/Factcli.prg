@@ -3435,11 +3435,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwIva:AddCol() )
          :cHeader          := "Base"
-         if uFieldEmpresa( "lIvaImpEsp" ) 
-            :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
-         else
-            :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( ( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 6 ] ), cPorDiv ), "" ) }
-         end if
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
          :nWidth           := 95
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -6469,11 +6465,7 @@ static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
 
    with object ( oBrwIva:AddCol() )
       :cHeader          	:= "Base"
-       	if uFieldEmpresa( "lIvaImpEsp" )
-        	   :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( ( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 6 ] ), cPorDiv ), "" ) }
-         else
-           	:bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
-         end if
+     	:bStrData            := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
       :nWidth           	:= 170
       :nDataStrAlign    	:= 1
       :nHeadStrAlign    	:= 1
@@ -6501,11 +6493,7 @@ static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
 
    with object ( oBrwIva:AddCol() )
       :cHeader          	:= "Factura"
-      if uFieldEmpresa( "lIvaImpEsp" )
-            :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( ( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 6 ] + aTotIva[ oBrwIva:nArrayAt, 8 ] + aTotIva[ oBrwIva:nArrayAt, 9 ] ), cPorDiv ), "" ) }
-         else
-            :bStrData      := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 8 ] + aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
-         end if
+      :bStrData            := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 8 ] + aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
       :nWidth           	:= 170
       :nDataStrAlign    	:= 1
       :nHeadStrAlign    	:= 1
@@ -21407,7 +21395,10 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    Total de impuestos
    */
 
-   nTotImp           := Round( nTotIva + nTotReq , nRouDiv ) // + nTotIvm
+   nTotImp           := Round( nTotIva + nTotReq , nRouDiv )
+   if !uFieldEmpresa( "lIvaImpEsp" )
+      nTotImp        += Round( nTotIvm , nRouDiv )
+   end if 
 
    /*
    Total retenciones
