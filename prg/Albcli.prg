@@ -15173,10 +15173,10 @@ function SynAlbCli( cPath )
 
          // Estado de facturado------------------------------------------------
 
-         if ( D():Get( "AlbCliL", nView ) )->lFacturado != RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "lFacturado" )
-            if dbLock( D():Get( "AlbCliL", nView ) )
-               ( D():Get( "AlbCliL", nView ) )->lFacturado := RetFld( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb, D():Get( "AlbCliT", nView ), "lFacturado" )
-               ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
+         if ( D():AlbaranesClientesLineas( nView ) )->lFacturado != RetFld( D():AlbaranesClientesLineasId( nView ), D():AlbaranesClientes( nView ), "lFacturado" )
+            if dbLock( D():AlbaranesClientesLineas( nView ) )
+               ( D():AlbaranesClientesLineas( nView ) )->lFacturado := RetFld( D():AlbaranesClientesLineasId( nView ), D():AlbaranesClientes( nView ), "lFacturado" )
+               ( D():AlbaranesClientesLineas( nView ) )->( dbUnlock() )
             end if
          end if
 

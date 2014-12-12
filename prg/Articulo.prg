@@ -8324,10 +8324,13 @@ Esta funci¢n calcula el beneficio que se esta aplicando a un articulo con impues
 
 Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGetBas, nDecDiv, cCodImp, oSay, lMargenAjuste, cMargenAjuste )
 
+   local nIvm     := 0
 	local nNewBnf
 	local nNewPre
 	local nIvaPct
    local nPreIva
+
+   //return .t.
 
    if !lIvaInc
       Return .t.
@@ -8345,9 +8348,11 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
       nPreIva     := Round( uPrecioIva, nDecDiv )
    end if
 
-   /*
-   Margen de ajuste
-   */
+   if ( nPreIva <= 0 )
+      Return .t.
+   end if 
+
+   // Margen de ajuste
 
    if IsTrue( lMargenAjuste )
       
@@ -8359,41 +8364,33 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
 
    end if
 
-	/*
-   Primero es quitar el impuestos
-	*/
+   // Impuesto especial
+
+   if !Empty( cCodImp ) .and. !Empty( oNewImp )
+      nIvm        := oNewImp:nValImp( cCodImp, lIvaInc, nIvaPct )
+   end if 
+	
+   // Primero es quitar el impuestos
+
+   if !uFieldEmpresa( "lIvaImpEsp" )
+      nPreIva     -= nIvm
+   end if 
 
    nNewPre        := Round( nPreIva / ( 1 + nIvaPct / 100 ), nDecDiv )
 
-   /*
-   Despues si tiene impuesto especial qitarlo
-   */
+   if uFieldEmpresa( "lIvaImpEsp" ) 
+      nNewPre     -= nIvm
+   end if 
 
-   if !Empty( cCodImp ) .and. !Empty( oNewImp )
-      nNewPre     -= oNewImp:nValImp( cCodImp, lIvaInc , nIvaPct )
-   end if
-
-	/*
-	Actualizamos la base
-	*/
+	// Actualizamos la base
 
    oGetBas:cText( nNewPre )
 
-	/*
-	Solo procedemos si el % de beneficio es != 0
-	*/
+	// Solo procedemos si el % de beneficio es != 0
 
    if nCosto != 0
 
       nNewBnf     := nPorcentajeBeneficio( lSobreCoste, nNewPre, nCosto )
-
-      /*
-      if lSobreCoste
-         nNewBnf  := ( Div( nNewPre, nCosto ) - 1 ) * 100
-      else
-         nNewBnf  := ( 1 - Div( nCosto, nNewPre ) ) * 100
-      end if
-      */
 
       if nNewBnf > 0 .and. nNewBnf < 999
 			oBnf:cText( nNewBnf )

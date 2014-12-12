@@ -4242,28 +4242,13 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          ActualizaStockWeb()
 
          EndAutoMeterDialog( oDlgTpv )
-
          EndAutoTextDialog( oDlgTpv )
-
-         /*
-         Actualizamos el stock-------------------------------------------------------
-         */
-
-         if !Empty( oMetMsg )
-            oMetMsg:cText              := 'Actualizando stocks'
-            oMetMsg:Refresh()
-         end if
-
-         //oStock:TpvCli( nNumTik, aTmp[ _CALMTIK ], .f., aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVDEV )
 
          /*
          Anotamos los vales ------------------------------------------------------
          */
 
-         if !Empty( oMetMsg )
-            oMetMsg:cText              := 'Archivando vales'
-            oMetMsg:Refresh()
-         end if
+         SetAutoTextDialog( 'Archivando vales' )
 
          nRec                          := ( dbfTikT )->( Recno() )
 
@@ -4287,10 +4272,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Ahora escribimos en el fichero definitivo los anticipos------------------
          */
 
-         if !Empty( oMetMsg )
-            oMetMsg:cText                    := 'Archivando anticipos'
-            oMetMsg:Refresh()
-         end if
+         SetAutoTextDialog( 'Archivando anticipos' )
 
          ( dbfTmpA )->( dbGoTop() )
          while !( dbfTmpA )->( eof() )
@@ -4342,10 +4324,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Apertura de la caja---------------------------------------------------
          */
 
-         if !Empty( oMetMsg )
-            oMetMsg:cText        := 'Abriendo la caja'
-            oMetMsg:Refresh()
-         end if
+         SetAutoTextDialog( 'Abriendo la caja' )
 
          if ( dbfTikT )->cTipTik != SAVALB
             oUser():OpenCajon( nView )
@@ -4367,10 +4346,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
             if ( nSave != SAVVAL ) .or. ( nSave != SAVDEV  )
 
-               if !Empty( oMetMsg )
-                  oMetMsg:cText     := 'Generando vales'
-                  oMetMsg:Refresh()
-               end if
+               SetAutoTextDialog( 'Generando vales' )
 
                /*
                Obtenemos el nuevo numero del vale---------------------------------
@@ -4422,10 +4398,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if ( lValePromocion ) .and. ( nValePromocion > 0 ) .and. ( nMode == APPD_MODE ) .and. ( nSave != SAVVAL )
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Generando vales'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Generando vales' )
 
             /*
             Obtenemos el nuevo numero del vale------------------------------
@@ -4517,10 +4490,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       if ( lBig ) .or. ( lEntCon() .and. ( nMode == APPD_MODE ) .and. ( Empty( cAlbTik ) .and. Empty( cPedTik ) .and. Empty( cPreTik ) ) )
 
-         if !Empty( oMetMsg )
-            oMetMsg:cText  := 'Inicializado entorno'
-            oMetMsg:Refresh()
-         end if
+         SetAutoTextDialog( 'Inicializado entorno' )
 
          if BeginTrans( aTmp, aGet, nMode, .t. )
             lSaveNewTik    := .f.
@@ -8655,9 +8625,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
 
          if !Empty( ( dbfArticulo )->cCodImp )
             aTmp[ _CCODIMP ]  := ( dbfArticulo )->cCodImp
-            if aTik[ _NREGIVA ] <= 1
-               aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, .t., aTmp[ _NIVATIL ] )
-            end if
+            aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, .t., aTmp[ _NIVATIL ] )
          end if
 
          /*
@@ -19999,11 +19967,15 @@ Return .t.
 
 static Function ActualizaStockWeb()
 
-   oComercio:MeterTotal( GetAutoMeterDialog() )
-      
-   oComercio:TextTotal( GetAutoTextDialog() )
+   if !empty( oComercio )
 
-   oComercio:buildActualizaStockProductPrestashop()
+      oComercio:MeterTotal( GetAutoMeterDialog() )
+      
+      oComercio:TextTotal( GetAutoTextDialog() )
+
+      oComercio:buildActualizaStockProductPrestashop()
+
+   end if 
 
 Return .t.
 

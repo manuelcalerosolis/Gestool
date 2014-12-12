@@ -3167,7 +3167,7 @@ RETURN ( nTotUnd )
 
 //---------------------------------------------------------------------------//
 /*
-STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, oSay )
+STATIC FUNCTION loadArticulo( cCodArt, aTmp, aGet, oSay )
 
    local lChgCodArt  := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
 
@@ -3530,7 +3530,7 @@ CLASS TDetMovimientos FROM TDet
 
    METHOD RollBack()
 
-   METHOD LoaArt( oDlg, lValidDetalle, nMode )
+   METHOD loadArticulo( oDlg, lValidDetalle, nMode )
 
    METHOD Save()
    METHOD Asigna()
@@ -3713,7 +3713,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          BITMAP   "LUPA" ;
          OF       oDlg
 
-      ::oRefMov:bValid     := {|| if( !Empty( ::oDbfVir:cRefMov ), ::LoaArt( oDlg, .f., nMode ), .t. ) }
+      ::oRefMov:bValid     := {|| if( !Empty( ::oDbfVir:cRefMov ), ::loadArticulo( oDlg, .f., nMode ), .t. ) }
       ::oRefMov:bHelp      := {|| BrwArticulo( ::oRefMov, ::oGetDetalle , , , , ::oGetLote, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oValPr1, ::oValPr2  ) }
 
       REDEFINE GET ::oGetDetalle VAR ::oDbfVir:cNomMov ;
@@ -3757,7 +3757,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oGetLote:bValid    := {|| if( !Empty( ::oDbfVir:cLote ), ::LoaArt( oDlg, .f., nMode ), .t. ) }
+      ::oGetLote:bValid    := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( oDlg, .f., nMode ), .t. ) }
 
       REDEFINE GET ::oValPr1 VAR ::oDbfVir:cValPr1;
          ID       120 ;
@@ -3765,7 +3765,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::LoaArt( oDlg, .f., nMode ), .f. ) }
+      ::oValPr1:bValid     := {|| if( lPrpAct( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ), ::loadArticulo( oDlg, .f., nMode ), .f. ) }
       ::oValPr1:bHelp      := {|| brwPropiedadActual( ::oValPr1, ::oSayVp1, ::oDbfVir:cCodPr1 ) }
 
       REDEFINE GET ::oSayVp1 VAR ::cSayVp1;
@@ -3783,7 +3783,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::LoaArt( oDlg, .f., nMode ), .f. ) }
+      ::oValPr2:bValid     := {|| if( lPrpAct( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ), ::loadArticulo( oDlg, .f., nMode ), .f. ) }
       ::oValPr2:bHelp      := {|| brwPropiedadActual( ::oValPr2, ::oSayVp2, ::oDbfVir:cCodPr2 ) }
 
       REDEFINE GET ::oSayVp2 VAR ::cSayVp2 ;
@@ -4040,7 +4040,7 @@ METHOD ValidResource( nMode, oDlg, oBtn ) CLASS TDetMovimientos
 
    oBtn:SetFocus()
 
-   if nMode == APPD_MODE .and. !::LoaArt( nil, .t., nMode )
+   if nMode == APPD_MODE .and. !::loadArticulo( nil, .t., nMode )
       ::oRefMov:SetFocus()
       Return .f.
    end if
@@ -4261,7 +4261,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD LoaArt( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
+METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    local a
    local nPos
@@ -4272,6 +4272,8 @@ METHOD LoaArt( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
    local lChgCodArt        := .f.
 
    DEFAULT lValidDetalle   := .f.
+
+   lValidDetalle           := .f.
 
    if Empty( ::oDbfVir:cRefMov )
       if !Empty( ::oBrwPrp )
@@ -4300,13 +4302,13 @@ METHOD LoaArt( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    // Ahora buscamos por el codigo interno----------------------------------------
 
-   if aSeekProp( @cCodArt, @cValPr1, @cValPr2, ::oParent:oArt:cAlias, ::oParent:oTblPro:cAlias )// ::oArt:Seek( xVal ) .OR. ::oArt:Seek( Upper( xVal ) )
+   if aSeekProp( @cCodArt, @cValPr1, @cValPr2, ::oParent:oArt:cAlias, ::oParent:oTblPro:cAlias ) // ::oArt:Seek( xVal ) .OR. ::oArt:Seek( Upper( xVal ) )
 
       if !lValidDetalle
 
          CursorWait()
 
-         if ( lChgCodArt )
+         if .t. // ( lChgCodArt )
 
             ::oRefMov:cText( ::oParent:oArt:Codigo )
 
