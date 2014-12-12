@@ -404,20 +404,20 @@ METHOD EjecutarFicheroScript() CLASS TScripts
 
    ::DeActivateAllTimer()
 
-   /*oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       // Ejecutamos el script compilado----------------------------------------
 
       ::RunScript( ::cFicheroHbr )
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Error de ejecución." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    // Activamos todos los scripts----------------------------------------------
 
