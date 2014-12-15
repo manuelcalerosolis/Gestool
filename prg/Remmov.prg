@@ -4273,6 +4273,8 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
    DEFAULT lValidDetalle   := .f.
 
+   lValidDetalle           := .f.
+
    if Empty( ::oDbfVir:cRefMov )
       if !Empty( ::oBrwPrp )
          ::oBrwPrp:Hide()
@@ -4306,7 +4308,7 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
          CursorWait()
 
-         if ( lChgCodArt )
+         if .t. // ( lChgCodArt )
 
             ::oRefMov:cText( ::oParent:oArt:Codigo )
 

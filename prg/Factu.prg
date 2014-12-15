@@ -14,8 +14,6 @@
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
-#define FONT_NAME                "Segoe UI" // "Arial" //  
-
 ANNOUNCE RDDSYS
 
 REQUEST ADS
@@ -104,13 +102,13 @@ function Main( cParams )
 
    // Test---------------------------------------------------------------------
 
-   Test()
-
    SetResDebug( .t. )
 
    DialogExtend() 
 
-   // Chequeamos la existencia del fichero de configuracion-----------------------
+   /*
+   Chequeamos la existencia del fichero de configuracion-----------------------
+   */
 
    if !File( FullCurDir() + "GstApolo.Ini" ) .and. File( FullCurDir() + "Gestion.Ini" )
       fRename( FullCurDir() + "Gestion.Ini", FullCurDir() + "GstApolo.Ini" )
@@ -5903,25 +5901,3 @@ Function MainTablet()
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-Function Test()
-/*
-   local oDlg
-   local oCombo
-   local cCombo   := "uno"
- 
-   DEFINE DIALOG oDlg RESOURCE "Libre"
-
-      REDEFINE COMBOBOX oCombo ;
-         VAR      cCombo ;
-         ITEMS    { "uno", "dos" };
-         ID       180 ;
-         OF       oDlg
- 
-   ACTIVATE DIALOG oDlg CENTER
-*/
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-
