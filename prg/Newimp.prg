@@ -333,21 +333,17 @@ RETURN nil
 
 //----------------------------------------------------------------------------//
 
-METHOD setCodeAndValue( cCodImp, uCode, uValue )
+METHOD setCodeAndValue( cCodImp, uValue )
 
-   if !empty( cCodImp )
-
-      if isChar( uCode )   
-         uCode          := cCodImp
-      end if
-
-      if isObject( uValue )
-         uValue:cText( ::nValImp( cCodImp ) )
-      end if
-
+   if empty( cCodImp )
+      Return nil 
    end if 
+   
+   if isObject( uValue )
+      uValue:cText( ::nValImp( cCodImp ) )
+   end if
 
-RETURN nil
+Return nil
 
 //----------------------------------------------------------------------------//
 
@@ -361,12 +357,6 @@ FUNCTION NewImp( uMenuItem, oWnd )
 
    oNewImp              := TNewImp():New( cPatEmp(), oWnd, uMenuItem )
    oNewImp:Activate()
-
-   /*
-   Anotamos el movimiento para el navegador
-
-   AddMnuNext( "Grupos de clientes", ProcName() )
-   */
 
 RETURN oNewImp
 

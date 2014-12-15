@@ -122,8 +122,7 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _LFROMIMP                 57
 #define __NBULTOS                 58
 #define _CFORMATO                 59  
-#define _CCODIMP                  60
-#define _NVALIMP                  61
+#define _NVALIMP                  60
 
 /*
 Definici¢n de Array para impuestos
@@ -3100,15 +3099,11 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
                MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
             end if
 
-            /*
-            Ahora recogemos el impuesto especial si lo hay---------------------
-            */
+            // Ahora recogemos el impuesto especial si lo hay---------------------
 
-            D():ImpuestosEspeciales( nView ):setCodeAndValue( ( D():Articulos( nView ) )->cCodImp, @aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
+            D():ImpuestosEspeciales( nView ):setCodeAndValue( ( D():Articulos( nView ) )->cCodImp, aGet[ _NVALIMP ] )
 
-            /*
-            Preguntamos si el regimen de " + cImp() + " es distinto de Exento-------------
-            */
+            // Preguntamos si el regimen de " + cImp() + " es distinto de Exento-------------
 
             if aTmpPed[ _NREGIVA ] <= 1
                   aGet[ _NIVA ]:cText( nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) )
@@ -3400,7 +3395,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrwPrp, oFld, oDlg, oBrw, nMode, oTotal, 
 
    local n, i
 
-   if !lMoreIva( aTmp[_NIVA] )
+   if !lMoreIva( aTmp[ _NIVA ] )
       Return nil
    end if
 
@@ -6176,9 +6171,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
 
    ( cPedPrvL )->( dbGoTo( nRec ) )
 
-      /*
-   Obtenemos el total bruto----------------------------------------------------
-      */
+   // Obtenemos el total bruto----------------------------------------------------
 
    nTotBrt           := _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
 
@@ -6250,11 +6243,17 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
 
    END IF
 
+   if uFieldEmpresa( "lIvaImpEsp" )
+      _NBASIVA1      += _NIVMIVA1
+      _NBASIVA2      += _NIVMIVA2
+      _NBASIVA3      += _NIVMIVA3
+   end if
+
+   // Total neto
+
    nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nDirDiv )
 
-      /*
-   Calculos de impuestos
-      */
+   // Calculos de impuestos
 
    if nRegIva <= 1
 
@@ -6262,9 +6261,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
       _NIMPIVA2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nDirDiv ), 0 )
       _NIMPIVA3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nDirDiv ), 0 )
 
-      /*
-      Calculo de recargo
-      */
+      // Calculo de recargo
 
       if lRecargo
          _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nDirDiv ), 0 )
@@ -6274,15 +6271,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
 
    end if
 
-   if uFieldEmpresa( "lIvaImpEsp" )
-      _NBASIVA1      += _NIVMIVA1
-      _NBASIVA2      += _NIVMIVA2
-      _NBASIVA3      += _NIVMIVA3
-   end if
-
-   /*
-   Total impuestos
-   */
+   // Total impuestos
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nDirDiv )
 
@@ -7739,7 +7728,6 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "lFromImp","L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nBultos", "N", 16,   6, "Numero de bultos en líneas",       "",                  "", "(cDbfCol )"} )
    aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de compra",                "",                  "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "cCodImp", "C",  3,   0, "Código del IVMH",                  "",                  "", "( cDbfCol )" } )
    aAdd( aColPedPrv,  { "nValImp", "N", 16,   6, "Importe de impuesto",              "",                  "", "( cDbfCol )" } )
 
 Return ( aColPedPrv )
