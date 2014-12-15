@@ -8415,15 +8415,11 @@ STATIC FUNCTION lCodigoArticulo( aGet, aTmp, lMessage, oDlg )
       return ( !lRetCodArt() )
    end if
 
-   /*
-   Primero buscamos por codigos de barra---------------------------------------
-   */
+   // Primero buscamos por codigos de barra---------------------------------------
 
    cCodArt              := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
 
-   /*
-   Ahora buscamos por el codigo interno----------------------------------------
-   */
+   // Ahora buscamos por el codigo interno----------------------------------------
 
    if !aSeekProp( cCodArt, cValPr1, cValPr2, dbfArticulo, dbfTblPro )
 

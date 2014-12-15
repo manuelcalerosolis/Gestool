@@ -3661,6 +3661,9 @@ METHOD BuildEmpresa()
    oDataTable              := TBancos():Create()
    ::AddEmpresaObject( oDataTable )
 
+   oDataTable              := TNewImp():Create()   
+   ::AddEmpresaObject( oDataTable )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -5226,7 +5229,8 @@ CLASS D
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
 
    METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
-   METHOD Documentos( nView )                INLINE ( ::Get( "RDocumen", nView ) )
+
+   METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 
