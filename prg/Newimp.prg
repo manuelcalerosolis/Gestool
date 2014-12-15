@@ -7,9 +7,13 @@
 
 CLASS TNewImp FROM TMant
 
+   DATA  cName          INIT "ImpuestosEspeciales"  
+
    DATA  cPouDiv
 
    DATA  cMru           INIT "Moneybag_Dollar_16"
+
+   METHOD Create( cPath )
 
    METHOD New( cPath, oWndParent, oMenuItem )
 
@@ -28,7 +32,20 @@ CLASS TNewImp FROM TMant
 
    METHOD lPreSave()
 
+   METHOD setCodeAndValue( cCodImp, uCode, uValue )
+
 END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Create( cPath )
+
+   DEFAULT cPath        := cPatEmp()
+
+   ::cPath              := cPath
+   ::oDbf               := nil
+
+RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
@@ -311,6 +328,24 @@ METHOD nBrwImp( oGet ) CLASS TNewImp
       oGet:lValid()
 
    end if
+
+RETURN nil
+
+//----------------------------------------------------------------------------//
+
+METHOD setCodeAndValue( cCodImp, uCode, uValue )
+
+   if !empty( cCodImp )
+
+      if isChar( uCode )   
+         uCode          := cCodImp
+      end if
+
+      if isObject( uValue )
+         uValue:cText( ::nValImp( cCodImp ) )
+      end if
+
+   end if 
 
 RETURN nil
 

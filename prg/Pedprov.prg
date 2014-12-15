@@ -122,6 +122,8 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _LFROMIMP                 57
 #define __NBULTOS                 58
 #define _CFORMATO                 59  
+#define _CCODIMP                  60
+#define _NVALIMP                  61
 
 /*
 Definici¢n de Array para impuestos
@@ -133,18 +135,21 @@ Definici¢n de Array para impuestos
 #define _NPCTREQ1                aTotIva[ 1, 4 ]
 #define _NIMPIVA1                aTotIva[ 1, 5 ]
 #define _NIMPREQ1                aTotIva[ 1, 6 ]
+#define _NIVMIVA1                aTotIva[ 1, 7 ]
 #define _NBRTIVA2                aTotIva[ 2, 1 ]
 #define _NBASIVA2                aTotIva[ 2, 2 ]
 #define _NPCTIVA2                aTotIva[ 2, 3 ]
 #define _NPCTREQ2                aTotIva[ 2, 4 ]
 #define _NIMPIVA2                aTotIva[ 2, 5 ]
 #define _NIMPREQ2                aTotIva[ 2, 6 ]
+#define _NIVMIVA2                aTotIva[ 2, 7 ]
 #define _NBRTIVA3                aTotIva[ 3, 1 ]
 #define _NBASIVA3                aTotIva[ 3, 2 ]
 #define _NPCTIVA3                aTotIva[ 3, 3 ]
 #define _NPCTREQ3                aTotIva[ 3, 4 ]
 #define _NIMPIVA3                aTotIva[ 3, 5 ]
 #define _NIMPREQ3                aTotIva[ 3, 6 ]
+#define _NIVMIVA3                aTotIva[ 3, 7 ]
 
 memvar cDbf
 memvar cDbfCol
@@ -168,11 +173,11 @@ memvar nTotDpp
 memvar nTotNet
 memvar nTotIva
 memvar nTotReq
+memvar nTotIvm
 memvar nTotPed
 memvar nTotImp
 memvar nTotUno
 memvar nTotDos
-
 
 memvar cPicUndPed
 memvar cPinDivPed
@@ -215,6 +220,7 @@ static dbfClient
 static oStock
 static oGetNet
 static oGetIva
+static oGetIvm
 static oGetReq
 static oGetTotal
 static oUsr
@@ -244,6 +250,28 @@ static bEdtInc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpL
 static bEdtDoc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 
 static nView
+
+//----------------------------------------------------------------------------//
+
+static Function initPublics()
+
+   public nTotPed    := 0
+   public nTotBrt    := 0
+   public nTotDto    := 0
+   public nTotDPP    := 0
+   public nTotNet    := 0
+   public nTotIva    := 0
+   public nTotReq    := 0
+   public nTotImp    := 0
+   public nTotIvm    := 0
+   public aTotIva    := { { 0,0,nil,0,0,0,0 }, { 0,0,nil,0,0,0,0 }, { 0,0,nil,0,0,0,0 } }
+   public aIvaUno    := aTotIva[ 1 ]
+   public aIvaDos    := aTotIva[ 2 ]
+   public aIvaTre    := aTotIva[ 3 ]
+   public nTotUno    := 0
+   public nTotDos    := 0
+
+Return ( nil )
 
 //----------------------------------------------------------------------------//
 
@@ -330,9 +358,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Empresa( nView )
 
-      // Unidades de medicion
-
       D():GetObject( "UnidadMedicion", nView )
+
+      D():ImpuestosEspeciales( nView )
 
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
@@ -347,22 +375,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
 
-      /*
-      Definimos las públicas---------------------------------------------------
-      */
-
-      public nTotPed    := 0
-      public nTotBrt    := 0
-      public nTotDto    := 0
-      public nTotDPP    := 0
-      public nTotNet    := 0
-      public nTotIva    := 0
-      public nTotReq    := 0
-      public nTotImp    := 0
-      public aTotIva    := { { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 } }
-      public aIvaUno    := aTotIva[ 1 ]
-      public aIvaDos    := aTotIva[ 2 ]
-      public aIvaTre    := aTotIva[ 3 ]
+      initPublics()
 
    RECOVER USING oError
 
@@ -1679,6 +1692,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			ID 		390 ;
 			OF 		oFld:aDialogs[1]
 
+      REDEFINE SAY oGetIvm VAR nTotIvm;
+         ID       403 ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE CHECKBOX aGet[ _LRECARGO ] VAR aTmp[ _LRECARGO ] ;
 			ID 		400 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
@@ -2454,12 +2471,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       RESOURCE    "LPEDPRV" ;
       TITLE       LblTitle( nMode ) + "líneas a pedidos de proveedores"
 
-	REDEFINE FOLDER oFld ID 400 OF oDlg ;
+	  REDEFINE FOLDER oFld ID 400 OF oDlg ;
          PROMPT   "&General"  , "Da&tos",    "&Anular",     "&Observaciones" ;
          DIALOGS  "LPEDPRV_1" , "LPEDPRV_2", "LFACPRV_4",   "LFACPRV_6"
 
       REDEFINE GET aGet[ _CREF ] VAR aTmp[ _CREF ];
-	   ID       110 ;
+         ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayLote, oBrwPrp, oDlg, oBmp, oGetStk ) );
          ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ], .f., .t., oBtn, aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ] ) ) ;
@@ -2473,15 +2490,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 
       REDEFINE SAY oSayLote;
          ID       111 ;
-	   OF 	oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CLOTE ] VAR aTmp[ _CLOTE ];
          ID       112 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-	   OF 	oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CDETALLE] VAR aTmp[_CDETALLE] ;
-	     ID 		120 ;
+         ID 		120 ;
          WHEN     ( ( lModDes() .or. Empty( aTmp[ _CDETALLE ] ) ) .AND. nMode != ZOOM_MODE ) ;
 			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
@@ -2596,7 +2613,19 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
          BITMAP   "LUPA" ;
 			OF 		oFld:aDialogs[1]
 
-      //Bultos y cajas---------------------------------------------------------
+      // IVMH------------------------------------------------------------------
+
+      REDEFINE GET aGet[ _NVALIMP ] VAR aTmp[ _NVALIMP ] ;
+         ID       125 ;
+         IDSAY    126 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  cPinDiv ;
+         ON CHANGE( lCalcDeta( aTmp, oTotal ) );
+         ON HELP  ( D():ImpuestosEspeciales( nView ):nBrwImp( aGet[ _NVALIMP ] ) );
+         OF       oFld:aDialogs[1]
+
+      // Bultos y cajas---------------------------------------------------------
       
       REDEFINE GET aGet[ __NBULTOS ] ;
          VAR      aTmp[ __NBULTOS ] ;
@@ -2659,7 +2688,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
 			SPINNER ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			ON CHANGE( lCalcDeta( aTmp, oTotal ) );
-			COLOR 	CLR_GET ;
 			PICTURE 	cPicUnd ;
          OF       oFld:aDialogs[1] ;
          IDSAY    151
@@ -3071,6 +3099,12 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
             if ( D():Articulos( nView ) )->lMosCom .and. !Empty( ( D():Articulos( nView ) )->mComent )
                MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
             end if
+
+            /*
+            Ahora recogemos el impuesto especial si lo hay---------------------
+            */
+
+            D():ImpuestosEspeciales( nView ):setCodeAndValue( ( D():Articulos( nView ) )->cCodImp, @aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             /*
             Preguntamos si el regimen de " + cImp() + " es distinto de Exento-------------
@@ -3940,6 +3974,8 @@ Static Function RecalculaTotal( aTmp )
 
    oGetIva:SetText( Trans( nTotIva, cPirDiv ) )
 
+   oGetIvm:SetText( Trans( nTotIvm, cPirDiv ) )
+
    oGetReq:SetText( Trans( nTotReq, cPirDiv ) )
 
    oGetTotal:SetText( Trans( nTotPed, cPirDiv ) )
@@ -4260,17 +4296,13 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    cSufPed              := aTmp[ _CSUFPED ]
    cNumPedCli           := aTmp[ _CNUMPEDCLI ]
 
-   /*
-   Comprobamos la fecha del documento
-   */
+   // Comprobamos la fecha del documento
 
    if !lValidaOperacion( aTmp[ _DFECPED ] )
       Return .f.
    end if
 
-   /*
-   Estos campos no pueden estar vacios
-   */
+   // Estos campos no pueden estar vacios
 
    if Empty( aTmp[ _CCODPRV ] )
       msgStop( "Proveedor no puede estar vacío." )
@@ -4337,9 +4369,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    end case
 
-   /*
-   Guardamos los totales-------------------------------------------------------
-   */
+   // Guardamos los totales-------------------------------------------------------
 
    aTmp[ _NTOTNET ]     := nTotNet
    aTmp[ _NTOTIVA ]     := nTotIva
@@ -4351,44 +4381,25 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    BeginTransaction()
 
-   /*
-   Quitamos los filtros--------------------------------------------------------
-   */
+   // Quitamos los filtros--------------------------------------------------------
 
    ( dbfTmpLin )->( dbClearFilter() )
 
    oMsgProgress()
    oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
 
-   /*
-   Ahora escribimos en el fichero definitivo-----------------------------------
-   */
-
-   /*( dbfTmpLin )->( dbGoTop() )
-   while !( dbfTmpLin )->( eof() )
-      dbPass( dbfTmpLin, D():PedidosProveedoresLineas( nView ), .t., cSerie, nPedido, cSufPed )
-      ( dbfTmpLin )->( dbSkip() )
-      oMsgProgress():Deltapos(1)
-   end while*/
+   // Ahora escribimos en el fichero definitivo-----------------------------------
 
    ( dbfTmpLin )->( dbGoTop() )
    while !( dbfTmpLin )->( eof() )
-
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromImp )
-
          dbPass( dbfTmpLin, D():PedidosProveedoresLineas( nView ), .t., cSerie, nPedido, cSufPed )
-
       end if   
-
       ( dbfTmpLin )->( dbSkip() )
-
       oMsgProgress():Deltapos(1)
-
    end while
 
-   /*
-   Ahora escribimos en el fichero definitivo de incidencias
-	*/
+   // Ahora escribimos en el fichero definitivo de incidencias
 
    ( dbfTmpInc )->( dbGoTop() )
    while ( dbfTmpInc )->( !eof() )
@@ -4396,9 +4407,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
       ( dbfTmpInc )->( dbSkip() )
    end while
 
-   /*
-   Ahora escribimos en el fichero definitivo de documentos
-	*/
+   // Ahora escribimos en el fichero definitivo de documentos
 
    ( dbfTmpDoc )->( dbGoTop() )
    while ( dbfTmpDoc )->( !eof() )
@@ -4406,15 +4415,11 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
       ( dbfTmpDoc )->( dbSkip() )
    end while
 
-   /*
-   Salvamos el registro del pedido
-   */
+   // Salvamos el registro del pedido
 
    WinGather( aTmp, , D():PedidosProveedores( nView ), oBrw, nMode )
 
-   /*
-   Ponemos el pedido en su estado
-   */
+   // Ponemos el pedido en su estado
 
    oStock:SetPedPrv( cSerie + str( nPedido ) + cSufPed )
 
@@ -4458,7 +4463,6 @@ STATIC FUNCTION KillTrans( oBrwLin )
       ( dbfTmpDoc )->( dbCloseArea() )
    end if
 
-
    dbfErase( cNewFile )
    dbfErase( cTmpInc )
    dbfErase( cTmpDoc )
@@ -4470,7 +4474,6 @@ STATIC FUNCTION KillTrans( oBrwLin )
    if oBrwLin != nil
       oBrwLin:CloseData()
    end if
-
 
 RETURN .T.
 
@@ -4517,18 +4520,6 @@ STATIC FUNCTION ChgState( oBrw )
       /*
       Cambia el estado del pedido----------------------------------------------
       */
-
-      /*if dbLock( D():PedidosProveedores( nView ) )
-
-         if ( D():PedidosProveedores( nView ) )->nEstado == 1
-            ( D():PedidosProveedores( nView ) )->nEstado := 3
-         else
-            ( D():PedidosProveedores( nView ) )->nEstado := 1
-         end if
-
-         ( D():PedidosProveedores( nView ) )->( dbUnlock() )
-
-      end if*/
 
       for each nRec in ( oBrw:aSelected )
 
@@ -5558,6 +5549,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
    oFr:AddVariable(     "Pedidos",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
    oFr:AddVariable(     "Pedidos",             "Total " + cImp(),                     "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "Pedidos",             "Total impuestos especiales",          "GetHbVar('nTotIvm')" )
    oFr:AddVariable(     "Pedidos",             "Total RE",                            "GetHbVar('nTotReq')" )
    oFr:AddVariable(     "Pedidos",             "Total retención",                     "GetHbVar('nTotRet')" )
    oFr:AddVariable(     "Pedidos",             "Bruto primer tipo de " + cImp(),      "GetHbArrayVar('aIvaUno',1)" )
@@ -6073,14 +6065,15 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
 
    local nRec
    local nTotArt
-      local dFecFac
-      local lRecargo
-      local nDtoEsp
-      local nDtoPP
+   local nImpuestoEspecial
+   local dFecFac
+   local lRecargo
+   local nDtoEsp
+   local nDtoPP
    local nDtoUno
-      local nDtoDos
-      local nPorte
-      local cCodDiv
+   local nDtoDos
+   local nPorte
+   local cCodDiv
    local nRegIva
    local aTotDto     := { 0, 0, 0 }
    local aTotDPP     := { 0, 0, 0 }
@@ -6095,33 +6088,22 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    DEFAULT lPic      := .f.
    DEFAULT cPedido   := ( cPedPrvT )->cSerPed + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed
 
-   public nTotPed    := 0
-   public nTotBrt    := 0
-   public nTotDto    := 0
-   public nTotDPP    := 0
-   public nTotNet    := 0
-   public nTotIva    := 0
-   public nTotReq    := 0
-   public nTotImp    := 0
-   public aTotIva    := { { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 }, { 0,0,nil,0,0,0 } }
-   public aIvaUno    := aTotIva[ 1 ]
-   public aIvaDos    := aTotIva[ 2 ]
-   public aIvaTre    := aTotIva[ 3 ]
-   public nTotUno    := 0
-   public nTotDos    := 0
-    
+   // variables publicas
+
+   initPublics()
+
 
    nRec              := ( cPedPrvL )->( Recno() )
 
    if aTmp != nil
-            dFecFac                 := aTmp[ _DFECPED ]
-            lRecargo                := aTmp[ _LRECARGO]
-            nDtoEsp                 := aTmp[ _NDTOESP ]
-            nDtoPP                  := aTmp[ _NDPP    ]
+      dFecFac        := aTmp[ _DFECPED ]
+      lRecargo       := aTmp[ _LRECARGO]
+      nDtoEsp        := aTmp[ _NDTOESP ]
+      nDtoPP         := aTmp[ _NDPP    ]
       nDtoUno        := aTmp[ _NDTOUNO ]
       nDtoDos        := aTmp[ _NDTODOS ]
-            nPorte                  := aTmp[ _NPORTES ]
-            cCodDiv                 := aTmp[ _CDIVPED ]
+      nPorte         := aTmp[ _NPORTES ]
+      cCodDiv        := aTmp[ _CDIVPED ]
       nVdvDiv        := aTmp[ _NVDVPED ]
       nRegIva        := aTmp[ _NREGIVA ]
       bCondition     := {|| ( cPedPrvL )->( !eof() ) }
@@ -6155,6 +6137,8 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
          */
 
          nTotArt           := nTotLPedPrv( cPedPrvL, nDinDiv, nDirDiv )
+         nImpuestoEspecial := nTotIPedPrv( cPedPrvL, nDinDiv, nDirDiv )
+         
          if nTotArt != 0
 
             /*
@@ -6166,16 +6150,20 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
                _NPCTIVA1   := (cPedPrvL)->NIVA
                _NPCTREQ1   := (cPedPrvL)->NREQ
                _NBRTIVA1   += nTotArt
+               _NIVMIVA1   += nImpuestoEspecial
 
             case _NPCTIVA2 == NIL .OR. _NPCTIVA2 == ( cPedPrvL )->nIva
                _NPCTIVA2   := (cPedPrvL)->NIVA
                _NPCTREQ2   := (cPedPrvL)->NREQ
                _NBRTIVA2   += nTotArt
+               _NIVMIVA2   += nImpuestoEspecial
 
             case _NPCTIVA3 == NIL .OR. _NPCTIVA3 == ( cPedPrvL )->nIva
                _NPCTIVA3   := (cPedPrvL)->NIVA
                _NPCTREQ3   := (cPedPrvL)->NREQ
                _NBRTIVA3   += nTotArt
+               _NIVMIVA3   += nImpuestoEspecial
+
             end case
 
          end if
@@ -6194,9 +6182,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
 
    nTotBrt           := _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
 
-      /*
-   Portes de la Factura--------------------------------------------------------
-      */
+   // Portes de la Factura--------------------------------------------------------
 
    nTotBrt           += nPorte
 
@@ -6204,11 +6190,11 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    _NBASIVA2         := _NBRTIVA2
    _NBASIVA3         := _NBRTIVA3
 
-      /*
-      Descuentos de la Facturas
-      */
+   /*
+   Descuentos de la Facturas
+   */
 
-      IF nDtoEsp != 0
+   IF nDtoEsp != 0
 
       aTotDto[1]     := Round( _NBASIVA1 * nDtoEsp / 100, nDirDiv )
       aTotDto[2]     := Round( _NBASIVA2 * nDtoEsp / 100, nDirDiv )
@@ -6222,7 +6208,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
 
    END IF
 
-      IF nDtoPP != 0
+   IF nDtoPP != 0
 
       aTotDPP[1]     := Round( _NBASIVA1 * nDtoPP / 100, nDirDiv )
       aTotDPP[2]     := Round( _NBASIVA2 * nDtoPP / 100, nDirDiv )
@@ -6248,9 +6234,9 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
       _NBASIVA2      -= aTotUno[2]
       _NBASIVA3      -= aTotUno[3]
 
-      END IF
+   END IF
 
-      IF nDtoDos != 0
+   IF nDtoDos != 0
 
       aTotDos[1]     := Round( _NBASIVA1 * nDtoDos / 100, nDirDiv )
       aTotDos[2]     := Round( _NBASIVA2 * nDtoDos / 100, nDirDiv )
@@ -6262,7 +6248,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
       _NBASIVA2      -= aTotDos[2]
       _NBASIVA3      -= aTotDos[3]
 
-      END IF
+   END IF
 
    nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nDirDiv )
 
@@ -6288,39 +6274,42 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
 
    end if
 
+   if uFieldEmpresa( "lIvaImpEsp" )
+      _NBASIVA1      += _NIVMIVA1
+      _NBASIVA2      += _NIVMIVA2
+      _NBASIVA3      += _NIVMIVA3
+   end if
+
    /*
    Total impuestos
    */
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nDirDiv )
 
-      /*
-   Total de R.E.
-      */
+   // Total de R.E.
 
    nTotReq           := Round( _NIMPREQ1 + _NIMPREQ2 + _NIMPREQ3, nDirDiv )
 
-   /*
-      Total de impuestos
-      */
+   // Total impuesto
 
-   nTotImp           := Round( nTotIva + nTotReq, nDirDiv )
+   nTotIvm           := Round( _NIVMIVA1 + _NIVMIVA2 + _NIVMIVA3, nDirDiv )
 
-      /*
-      Total facturas
-      */
+   // Total de impuestos
+
+   nTotImp           := Round( nTotIva + nTotReq , nDirDiv )
+   if !uFieldEmpresa( "lIvaImpEsp" )
+      nTotImp        += Round( nTotIvm , nDirDiv )
+   end if 
+
+   // Total facturas
 
    nTotPed           := nTotNet + nTotImp
 
-      /*
-      Refrescos en Pantalla______________________________________________________
-      */
+   // Refrescos en Pantalla______________________________________________________
 
    aTotIva           := aSort( aTotIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
 
-   /*
-   Solicitan una divisa distinta a la q se hizo originalmente la factura
-   */
+   // Solicitan una divisa distinta a la q se hizo originalmente la factura
 
    if cDivRet != nil .and. cDivRet != cCodDiv
       nTotNet        := nCnv2Div( nTotNet, cCodDiv, cDivRet )
@@ -6747,6 +6736,24 @@ FUNCTION nTotLPedPrv( uTmp, nDec, nRec, nVdv, cPouDiv )
 RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION nTotIPedPrv( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
+
+   local nCalculo    := 0
+
+   DEFAULT dbfLin    := D():Get( "PedPrvL", nView )
+   DEFAULT nDec      := 0
+   DEFAULT nRouDec   := 0
+   DEFAULT nVdv      := 1
+
+   nCalculo          := Round( ( dbfLin )->nValImp, nDec )
+   nCalculo          *= nTotNPedPrv( dbfLin )
+   nCalculo          := Round( nCalculo / nVdv, nRouDec )
+
+RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//----------------------------------------------------------------------------//
+
 /*
 Devuelve el importe de descuento porcentual por cada linea---------------------
 */
@@ -7731,9 +7738,11 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "nEstado", "N",  1,   0, "Estado del pedido",                "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "lFromImp","L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nBultos", "N", 16,   6, "Numero de bultos en líneas",       "",                  "", "(cDbfCol )"} )
-   aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de compra",                 "",                  "", "(cDbfCol )"} )
+   aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de compra",                "",                  "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "cCodImp", "C",  3,   0, "Código del IVMH",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "nValImp", "N", 16,   6, "Importe de impuesto",              "",                  "", "( cDbfCol )" } )
 
-return ( aColPedPrv )
+Return ( aColPedPrv )
 
 //---------------------------------------------------------------------------//
 
