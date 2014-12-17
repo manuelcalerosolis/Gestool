@@ -196,7 +196,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define __NBULTOS                110
 #define _CFORMATO                111
 #define __CNUMFAC                112
-#define _NVALIMP                 113
+#define _CCODIMP                 112
+#define _NVALIMP                 114
 
 /*
 Definici¢n de Array para impuestos
@@ -4317,7 +4318,9 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
             // Ahora recogemos el impuesto especial si lo hay---------------------
 
-            D():ImpuestosEspeciales( nView ):setCodeAndValue( ( D():Articulos( nView ) )->cCodImp, aGet[ _NVALIMP ] )
+            aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
+
+            D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             if ( D():Articulos( nView ) )->nCajEnt != 0
                aGet[ _NCANENT ]:cText( ( D():Articulos( nView ) )->nCajEnt )
@@ -4327,10 +4330,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
                aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
             end if
 
-            /*
-            Lotes
-            ---------------------------------------------------------------------
-            */
+            // Lotes
 
             aTmp[ _LLOTE ]       := ( D():Articulos( nView ) )->lLote
 
@@ -4812,6 +4812,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->nMedTre    := ( D():PedidosProveedoresLineas( nView ) )->nMedTre
                   (dbfTmp)->nBultos    := ( D():PedidosProveedoresLineas( nView ) )->nBultos
                   (dbfTmp)->cFormato   := ( D():PedidosProveedoresLineas( nView ) )->cFormato
+                  (dbfTmp)->cCodImp    := ( D():PedidosProveedoresLineas( nView ) )->cCodImp
                   (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
 
                   /*
@@ -6463,18 +6464,23 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Unidades de medición",  D():GetObject( "UnidadMedicion", nView ):Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():GetObject( "UnidadMedicion", nView ):oDbf ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
+
    if lTemporal
       oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                {|| ( tmpAlbPrvL )->cRef } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Precios por propiedades",  {|| ( tmpAlbPrvL )->cRef + ( tmpAlbPrvL )->cCodPr1 + ( tmpAlbPrvL )->cCodPr2 + ( tmpAlbPrvL )->cValPr1 + ( tmpAlbPrvL )->cValPr2 } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Incidencias de albaranes", {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Documentos de albaranes",  {|| ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->cSufAlb } )
+      oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",     {|| ( tmpAlbPrvL )->cCodImp } )
    else
       oFr:SetMasterDetail( "Lineas de albaranes", "Albaranes",                {|| ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",                {|| ( D():AlbaranesProveedoresLineas( nView ) )->cRef } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Precios por propiedades",  {|| ( D():AlbaranesProveedoresLineas( nView ) )->cRef + ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr1 + ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr2 + ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1 + ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2 } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Incidencias de albaranes", {|| ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
       oFr:SetMasterDetail( "Lineas de albaranes", "Documentos de albaranes",  {|| ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb } )
+      oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",     {|| ( D():AlbaranesProveedoresLineas( nView ) )->cCodImp } )
    end if
 
    oFr:SetMasterDetail(    "Albaranes", "Proveedores",                        {|| ( D():AlbaranesProveedores( nView ) )->cCodPrv } )
@@ -6486,6 +6492,7 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetResyncPair(      "Lineas de albaranes", "Precios por propiedades" )
    oFr:SetResyncPair(      "Lineas de albaranes", "Incidencias de albaranes" )
    oFr:SetResyncPair(      "Lineas de albaranes", "Documentos de albaranes" )
+   oFr:SetResyncPair(      "Lineas de albaranes", "Impuestos especiales" )   
 
    oFr:SetResyncPair(      "Albaranes", "Proveedores" )
    oFr:SetResyncPair(      "Albaranes", "Almacenes" )
@@ -9044,7 +9051,8 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "nBultos",      "N", 16,  6, "Numero de bultos en líneas", "",                     "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cFormato",     "C",100,  0, "Formato de compra", "",                              "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cNumFac",      "C", 12,  0, "Número de la factura de cliente" , "",               "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "nValImp",      "N", 16,  6, "Importe de impuesto",              "",               "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cCodImp",      "C",  3,  0, "Código de impuesto especial",      "",               "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "nValImp",      "N", 16,  6, "Importe de impuesto especial",     "",               "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 

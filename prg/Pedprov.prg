@@ -121,8 +121,9 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _aNESTADO                 56  
 #define _LFROMIMP                 57
 #define __NBULTOS                 58
-#define _CFORMATO                 59  
-#define _NVALIMP                  60
+#define _CFORMATO                 59
+#define _CCODIMP                  60  
+#define _NVALIMP                  61
 
 /*
 Definici¢n de Array para impuestos
@@ -3101,13 +3102,15 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
             // Ahora recogemos el impuesto especial si lo hay---------------------
 
-            D():ImpuestosEspeciales( nView ):setCodeAndValue( ( D():Articulos( nView ) )->cCodImp, aGet[ _NVALIMP ] )
+            aTmp[ _CCODIMP ]  := ( D():Articulos( nView ) )->cCodImp
+
+            D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             // Preguntamos si el regimen de " + cImp() + " es distinto de Exento-------------
 
             if aTmpPed[ _NREGIVA ] <= 1
-                  aGet[ _NIVA ]:cText( nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) )
-                  aTmp[ _NREQ ]     := nReq( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva )
+               aGet[ _NIVA ]:cText( nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) )
+               aTmp[ _NREQ ]     := nReq( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva )
             end if
 
             if ( D():Articulos( nView ) )->nCajEnt != 0
@@ -5493,6 +5496,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Clientes", ( D():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
+
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",        {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",   {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",    {|| ( D():PedidosProveedores( nView ) )->cSerPed + Str( ( D():PedidosProveedores( nView ) )->nNumPed ) + ( D():PedidosProveedores( nView ) )->cSufPed } )
@@ -5506,6 +5512,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( D():PedidosProveedoresLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Código de proveedores",   {|| ( D():PedidosProveedores( nView ) )->cCodPrv + ( D():PedidosProveedoresLineas( nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Unidades de medición",    {|| ( D():PedidosProveedoresLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",    {|| ( D():PedidosProveedoresLineas( nView ) )->cCodImp } )
 
    oFr:SetResyncPair(   "Pedidos", "Lineas de pedidos" )
    oFr:SetResyncPair(   "Pedidos", "Incidencias de pedidos" )
@@ -5520,6 +5527,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de pedidos", "Artículos" )
    oFr:SetResyncPair(   "Lineas de pedidos", "Código de proveedores" )
    oFr:SetResyncPair(   "Lineas de pedidos", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de pedidos", "Impuestos especiales" )
 
 Return nil
 
@@ -7728,7 +7736,8 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "lFromImp","L",  1,   0, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "nBultos", "N", 16,   6, "Numero de bultos en líneas",       "",                  "", "(cDbfCol )"} )
    aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de compra",                "",                  "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "nValImp", "N", 16,   6, "Importe de impuesto",              "",                  "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "cCodImp", "C",  3,   0, "Código de impuesto especial",      "",                  "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "nValImp", "N", 16,   6, "Importe de impuesto especial",     "",                  "", "( cDbfCol )" } )
 
 Return ( aColPedPrv )
 

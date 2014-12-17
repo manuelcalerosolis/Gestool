@@ -1953,14 +1953,6 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | TNewImp():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
 
-   oDataTable              := TDataTable()
-   oDataTable:cName        := cPatEmp() + "HisMov"
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "HisMov.Dbf"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "HisMov.Cdx"
-   oDataTable:cDescription := "Movimientos de almacén"
-   // oDataTable:bCreateFile  := {| cPath | mkHisMov( cPath ) }
-   // oDataTable:bCreateIndex := {| cPath | rxHisMov( cPath ) }
-   ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "UbiCat"
@@ -1995,6 +1987,13 @@ METHOD BuildEmpresa()
    oDataTable:cDescription := "Remesas de movimientos"
    oDataTable:bCreateFile  := {| cPath | TRemMovAlm():BuildFiles( .t., cPath ) }
    oDataTable:bSyncFile    := {|| SynRemMov( cPatEmp() ) }
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "HisMov"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "HisMov.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "HisMov.Cdx"
+   oDataTable:cDescription := "Movimientos de almacén"
    ::AddEmpresaTable( oDataTable )
 
    /*

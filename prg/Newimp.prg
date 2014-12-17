@@ -123,9 +123,9 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TNewImp
       FIELD NAME "cSubCta" TYPE "C" LEN 12  DEC 0 COMMENT "Subcuenta contabilidad"        HIDE                                            OF ::oDbf
       FIELD NAME "lIvaVol" TYPE "L" LEN 1   DEC 0 COMMENT "Aplicar impuesto por volumen"  HIDE                                            OF ::oDbf
 
-      INDEX TO "NewImp.Cdx" TAG "cCodImp" ON "cCodImp"               COMMENT "Código"    NODELETED OF ::oDbf
-      INDEX TO "NewImp.Cdx" TAG "cNomImp" ON "cNomImp"               COMMENT "Nombre"    NODELETED OF ::oDbf
-      INDEX TO "NewImp.Cdx" TAG "nValImp" ON "Str( nValImp, 16, 6 )" COMMENT "Importe"   NODELETED OF ::oDbf
+      INDEX TO "NewImp.Cdx" TAG "cCodImp" ON "cCodImp"   COMMENT "Código"    NODELETED OF ::oDbf
+      INDEX TO "NewImp.Cdx" TAG "cNomImp" ON "cNomImp"   COMMENT "Nombre"    NODELETED OF ::oDbf
+      INDEX TO "NewImp.Cdx" TAG "nValImp" ON "nValImp"   COMMENT "Importe"   NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 

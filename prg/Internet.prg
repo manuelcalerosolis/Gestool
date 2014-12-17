@@ -185,7 +185,6 @@ METHOD New( oMenuItem, oWnd )
    aAdd( ::aSend, TTiketsClientesSenderReciver():New(       "Tickets clientes",         Self ) )
    aAdd( ::aSend, TTurno():Initiate(                        "Sesiones",                 Self ) )
    aAdd( ::aSend, TRemMovAlm():Initiate(                    "Movimientos de almacen",   Self ) )
-   aAdd( ::aSend, THisMovSenderReciver():New(               "Historico de movimientos", Self ) )
    aAdd( ::aSend, TUsuarioSenderReciver():New(              "Usuarios",                 Self ) )
 
    ::DefineFiles()
@@ -298,7 +297,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TSndRecInf
    ::oDbfSenderReciver  := nil
    ::oDbfFilesReciver   := nil
 
-   DEFINE TABLE ::oDbfSenderReciver FILE "SndLog.Dbf" CLASS "SndLog" ALIAS "SndLog" PATH ( ::cPath ) VIA ( cDriver )COMMENT "Registro de los envios"
+   DEFINE TABLE ::oDbfSenderReciver FILE "SndLog.Dbf" CLASS "SndLog" ALIAS "SndLog" PATH ( ::cPath ) VIA ( cDriver ) COMMENT "Registro de los envios"
 
       FIELD NAME "lSelect"    TYPE "L" LEN   1 DEC 0  COMMENT "Seleccionado para envío"   OF ::oDbfSenderReciver
       FIELD NAME "lTipo"      TYPE "L" LEN   1 DEC 0  COMMENT "Tipo envío o recepción"    OF ::oDbfSenderReciver

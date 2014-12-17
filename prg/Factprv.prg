@@ -193,7 +193,8 @@ Lineas de Detalle
 #define __NBULTOS                97
 #define _CFORMATO                98 
 #define _INUMALB                 99 
-#define _NVALIMP                 100
+#define _CCODIMP                 100
+#define _NVALIMP                 101
 
 /*
 Definici¢n de Array para impuestos--------------------------------------------------
@@ -4897,7 +4898,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             // Ahora recogemos el impuesto especial si lo hay---------------------
 
-            D():ImpuestosEspeciales( nView ):setCodeAndValue( ( D():Articulos( nView ) )->cCodImp, aGet[ _NVALIMP ] )
+            aTmp[ _CCODIMP ]  := ( D():Articulos( nView ) )->cCodImp
+
+            D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             // cantidades------------------------------------------------------
 
@@ -7924,18 +7927,23 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Bancos", ( D():BancosProveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
+
    if lTemporal
       oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                  {|| ( tmpFacPrvL )->cSerFac + Str( ( tmpFacPrvL )->nNumFac ) + ( tmpFacPrvL )->cSufFac } )
       oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                 {|| ( tmpFacPrvL )->cRef } )
       oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",   {|| ( tmpFacPrvL )->cRef + ( tmpFacPrvL )->cCodPr1 + ( tmpFacPrvL )->cCodPr2 + ( tmpFacPrvL )->cValPr1 + ( tmpFacPrvL )->cValPr2 } )
       oFr:SetMasterDetail( "Lineas de facturas", "Incidencias de facturas",   {|| ( tmpFacPrvL )->cSerFac + Str( ( tmpFacPrvL )->nNumFac ) + ( tmpFacPrvL )->cSufFac } )
       oFr:SetMasterDetail( "Lineas de facturas", "Documentos de facturas",    {|| ( tmpFacPrvL )->cSerFac + Str( ( tmpFacPrvL )->nNumFac ) + ( tmpFacPrvL )->cSufFac } )
+      oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",      {|| ( tmpFacPrvL )->cCodImp } )
    else
       oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                  {|| ( D():FacturasProveedoresLineas( nView ) )->cSerFac + Str( ( D():FacturasProveedoresLineas( nView ) )->nNumFac ) + ( D():FacturasProveedoresLineas( nView ) )->cSufFac } )
       oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                 {|| ( D():FacturasProveedoresLineas( nView ) )->cRef } )
       oFr:SetMasterDetail( "Lineas de facturas", "Precios por propiedades",   {|| ( D():FacturasProveedoresLineas( nView ) )->cRef + ( D():FacturasProveedoresLineas( nView ) )->cCodPr1 + ( D():FacturasProveedoresLineas( nView ) )->cCodPr2 + ( D():FacturasProveedoresLineas( nView ) )->cValPr1 + ( D():FacturasProveedoresLineas( nView ) )->cValPr2 } )
       oFr:SetMasterDetail( "Lineas de facturas", "Incidencias de facturas",   {|| ( D():FacturasProveedoresLineas( nView ) )->cSerFac + Str( ( D():FacturasProveedoresLineas( nView ) )->nNumFac ) + ( D():FacturasProveedoresLineas( nView ) )->cSufFac } )
       oFr:SetMasterDetail( "Lineas de facturas", "Documentos de facturas",    {|| ( D():FacturasProveedoresLineas( nView ) )->cSerFac + Str( ( D():FacturasProveedoresLineas( nView ) )->nNumFac ) + ( D():FacturasProveedoresLineas( nView ) )->cSufFac } )
+      oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",      {|| ( D():FacturasProveedoresLineas( nView ) )->cCodImp } )
    end if
 
    oFr:SetMasterDetail(    "Facturas", "Proveedores",                         {|| ( D():FacturasProveedores( nView ) )->cCodPrv } )
@@ -7949,6 +7957,7 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetResyncPair(      "Lineas de facturas", "Precios por propiedades" )
    oFr:SetResyncPair(      "Lineas de facturas", "Incidencias de facturas" )
    oFr:SetResyncPair(      "Lineas de facturas", "Documentos de facturas" )
+   oFr:SetResyncPair(      "Lineas de facturas", "Impuestos especiales" )   
 
    oFr:SetResyncPair(      "Facturas", "Proveedores" )
    oFr:SetResyncPair(      "Facturas", "Almacenes" )
@@ -8196,6 +8205,7 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
          ( dbfTmp )->dFecCad     := ( D():AlbaranesProveedoresLineas( nView ) )->dFecCad
          ( dbfTmp )->nBultos     := ( D():AlbaranesProveedoresLineas( nView ) )->nBultos
          ( dbfTmp )->cFormato    := ( D():AlbaranesProveedoresLineas( nView ) )->cFormato
+         ( dbfTmp )->cCodImp     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodImp
          ( dbfTmp )->nValImp     := ( D():AlbaranesProveedoresLineas( nView ) )->nValImp
 
          ( dbfTmp )->iNumAlb     := D():AlbaranesProveedoresLineasNumero( nView )
@@ -10132,7 +10142,8 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "nBultos"    ,"N", 16, 6, "Numero de bultos en líneas",   "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cFormato"   ,"C",100, 0, "Formato de compra",            "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "iNumAlb"    ,"C", 16, 0, "Identificador del albarán",    "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto",          "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "cCodImp"    ,"C",  3, 0, "Código de impuesto especial",  "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto especial", "",                   "", "( cDbfCol )" } )
 
 return ( aColFacPrv )
 

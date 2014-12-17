@@ -183,7 +183,8 @@ Lineas de Detalle
 #define __DFECFAC                  89 
 #define __NBULTOS                  90  
 #define _CFORMATO                  91
-#define _NVALIMP                   92
+#define _CCODIMP                   92
+#define _NVALIMP                   93
 
 /*
 Definici¢n de Array para impuestos
@@ -4646,7 +4647,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
 
             // Ahora recogemos el impuesto especial si lo hay---------------------
 
-            D():ImpuestosEspeciales( nView ):setCodeAndValue( ( D():Articulos( nView ) )->cCodImp, aGet[ _NVALIMP ] )
+            aTmp[ _CCODIMP ]  := ( D():Articulos( nView ) )->cCodImp
+
+            D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
             // Comentarios
 
@@ -5963,6 +5966,7 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
             ( dbfTmp )->lGasSup  := ( D():FacturasProveedoresLineas( nView ) )->lGasSup
             ( dbfTmp )->nBultos  := ( D():FacturasProveedoresLineas( nView ) )->nBultos
             ( dbfTmp )->cFormato := ( D():FacturasProveedoresLineas( nView ) )->cFormato   
+            ( dbfTmp )->cCodImp  := ( D():FacturasProveedoresLineas( nView ) )->cCodImp    
             ( dbfTmp )->nValImp  := ( D():FacturasProveedoresLineas( nView ) )->nValImp    
 
             ( D():FacturasProveedoresLineas( nView ) )->( dbSkip() )
@@ -7371,6 +7375,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Bancos", ( D():BancosProveedores( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( nView ):Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( nView ):oDbf ) )
+
    oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",      {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas", {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Documentos de facturas rectificativas",  {|| ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac } )
@@ -7381,6 +7388,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas rectificativas", "Bancos",                                 {|| ( D():FacturasRectificativasProveedores( nView ) )->cCodPrv } )
 
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",         {|| ( D():FacturasRectificativasProveedoresLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",         {|| ( D():FacturasRectificativasProveedoresLineas( nView ) )->cCodImp } )
 
    oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Incidencias de facturas rectificativas" )
@@ -7391,6 +7399,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas rectificativas", "Bancos" )
 
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Impuestos especiales" )
 
 Return nil
 
@@ -10810,7 +10819,8 @@ function aColRctPrv()
    aAdd( aColFacPrv, { "dFecFac"    ,"D",  8, 0, "Fecha de la factura",          "",                    "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "nBultos"    ,"N", 16, 6, "Numero de bultos en líneas",   "",                    "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "cFormato"   ,"C",100, 0, "Formato de compra",            "",                    "", "( cDbfCol )" } )
-   aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto",          "",                    "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "cCodImp"    ,"C",  3, 0, "Código de impuesto especial",  "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto especial", "",                   "", "( cDbfCol )" } )
 
 Return ( aColFacPrv )
 
