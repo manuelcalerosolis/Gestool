@@ -51,7 +51,7 @@ Checkbox.prg            	\
 RpreviewC3.prg          	\
 ReportC3.prg            	\
 RocolumnC3.prg          	\
-Ttreevie.prg 				\
+Ttreevie.prg 				   \
 Treeitem.prg            	\
 Buttonb.prg             	\
 TlistVie.prg            	\
@@ -141,7 +141,6 @@ Intitem.prg             	\
 Backup.prg              	\
 Divisas.prg             	\
 Tips.prg                	\
-Movalm.prg              	\
 Edm.prg                 	\
 Pro.prg                 	\
 Reccli.prg              	\
@@ -244,6 +243,7 @@ Toolbar.prg             	\
 Medicon.prg             	\
 Utildbf.prg             	\
 Remmov.prg              	\
+TDetSeriesMovimientos.prg  \
 Dummy.prg               	\
 Rccs.prg                	\
 Rxml.prg                	\
@@ -539,7 +539,6 @@ Intitem.obj             \
 Backup.obj              \
 Divisas.obj             \
 Tips.obj                \
-Movalm.obj              \
 Edm.obj                 \
 Pro.obj                 \
 Reccli.obj              \
@@ -636,7 +635,7 @@ Impfaccom.obj           \
 InfoArticulo.obj        \
 TAuditor.obj            \
 Linklist.obj            \
-Ttreevie.obj 			\
+Ttreevie.obj 			     \
 Treeitem.obj            \
 Ttvitem.obj             \
 Tur2ses.obj             \
@@ -670,6 +669,7 @@ Toolbar.obj             \
 Medicon.obj             \
 Utildbf.obj             \
 Remmov.obj              \
+TDetSeriesMovimientos.obj  \
 Dummy.obj               \
 Rccs.obj                \
 Rxml.obj                \
@@ -843,7 +843,7 @@ TGridSay.obj 			\
 FacturarLineasAlbaranesProveedor.obj\
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /dXHARBOUR /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /dXHARBOUR /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
@@ -962,7 +962,6 @@ $(OBJ)\Intitem.obj              +
 $(OBJ)\Backup.obj               +
 $(OBJ)\Divisas.obj              +
 $(OBJ)\Tips.obj                 +
-$(OBJ)\Movalm.obj               +
 $(OBJ)\Edm.obj                  +
 $(OBJ)\Pro.obj                  +
 $(OBJ)\Reccli.obj               +
@@ -1050,7 +1049,7 @@ $(OBJ)\Impfactu.obj             +
 $(OBJ)\ImpfacCom.obj            +
 $(OBJ)\InfoArticulo.obj         +
 $(OBJ)\TAuditor.obj             +
-$(OBJ)\Ttreevie.obj 			+
+$(OBJ)\Ttreevie.obj 			     +
 $(OBJ)\Treeitem.obj             +
 $(OBJ)\Ttvitem.obj              +
 $(OBJ)\Tur2ses.obj              +
@@ -1061,6 +1060,7 @@ $(OBJ)\TDetCaptura.obj          +
 $(OBJ)\Tiordcar.obj             +
 $(OBJ)\TICobAge.obj             +
 $(OBJ)\TiRemMov.obj             +
+$(OBJ)\TDetSeriesMovimientos.prg    +
 $(OBJ)\Tchgtar.obj              +
 $(OBJ)\Tchgdia.obj              +
 $(OBJ)\Tdbf.obj                 +

@@ -246,7 +246,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, oWndParent, oMenuItem ) CLASS TRemMovAlm
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := oWnd()
@@ -283,7 +283,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Initiate( cText, oSender )
+METHOD Initiate( cText, oSender ) CLASS TRemMovAlm
 
    ::cText              := cText
    ::oSender            := oSender
@@ -294,7 +294,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD GetNewCount()
+METHOD GetNewCount() CLASS TRemMovAlm
 
    ::oDbf:nNumRem    := nNewDoc( nil, ::oDbf:nArea, "nMovAlm", nil, ::oDbfCnt:nArea )
 
@@ -302,7 +302,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD DefineFiles( cPath, cDriver )
+METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
 
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
@@ -346,7 +346,7 @@ RETURN ( ::oDbf )
 // Campos calculados
 //
 
-Method DefineCalculate()
+Method DefineCalculate() CLASS TRemMovAlm 
 
    ::aCal  := {}
 
@@ -358,7 +358,7 @@ RETURN ( ::aCal )
 
 //---------------------------------------------------------------------------//
 
-METHOD Activate()
+METHOD Activate() CLASS TRemMovAlm 
 
    local oSnd
    local oDel
@@ -509,7 +509,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm 
 
    local oError
    local oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -665,7 +665,7 @@ RETURN ( ::lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
-METHOD CloseFiles()
+METHOD CloseFiles() CLASS TRemMovAlm 
 
    ::CloseDetails()
 
@@ -912,7 +912,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive, cPath )
+METHOD OpenService( lExclusive, cPath ) CLASS TRemMovAlm 
 
    local lOpen          := .t.
    local oError
@@ -920,7 +920,6 @@ METHOD OpenService( lExclusive, cPath )
 
    DEFAULT lExclusive   := .f.
    DEFAULT cPath        := ::cPath
-
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -937,19 +936,19 @@ METHOD OpenService( lExclusive, cPath )
 
       lOpen             := .f.
 
-      ::CloseFiles()
-
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de remesas de movimientos" )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
+   ::CloseFiles()
+
 RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
-METHOD CloseService()
+METHOD CloseService() CLASS TRemMovAlm
 
    if !Empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:End()
@@ -961,7 +960,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD CloseIndex()
+METHOD CloseIndex() CLASS TRemMovAlm  
 
    if !Empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:OrdListClear()
@@ -971,7 +970,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( nMode )
+METHOD Resource( nMode ) CLASS TRemMovAlm
 
    local oDlg
    local oSay        := Array( 7 )
@@ -1371,7 +1370,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD Search()
+METHOD Search() CLASS TRemMovAlm
 
 	local oDlg
 	local oIndice
@@ -1413,7 +1412,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-METHOD lSave( nMode )
+METHOD lSave( nMode ) CLASS TRemMovAlm
 
    if Empty( ::oDbf:cCodAge ) .and. lRecogerAgentes()
       MsgStop( "Código de agente no puede estar vacío." )
@@ -1466,7 +1465,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Method GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies )
+Method GenRemMov( lPrinter, cCaption, cCodDoc, cPrinter, nCopies ) CLASS TRemMovAlm
 
    local oInf
    local oDevice
@@ -1574,7 +1573,7 @@ Return Nil
 
 //----------------------------------------------------------------------------//
 
-Method EPage( oInf, cCodDoc )
+Method EPage( oInf, cCodDoc ) CLASS TRemMovAlm 
 
 	private nPagina		:= oInf:nPage
 	private lEnd			:= oInf:lFinish
@@ -1601,7 +1600,7 @@ RETURN ( aDoc )
 
 //---------------------------------------------------------------------------//
 
-METHOD lSelAll( lSel )
+METHOD lSelAll( lSel ) CLASS TRemMovAlm 
 
    local nOrdAnt        := ::oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
 
@@ -1659,7 +1658,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Method lSelMov()
+Method lSelMov() CLASS TRemMovAlm 
 
    local nOrdAnt  := ::oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
 
@@ -1693,7 +1692,7 @@ Return( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method CreateData()
+Method CreateData() CLASS TRemMovAlm 
 
    local lSnd        := .t.
    local oRemMov
@@ -1785,7 +1784,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method RestoreData()
+Method RestoreData() CLASS TRemMovAlm 
 
    local oRemMov
 
@@ -1818,7 +1817,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method SendData()
+Method SendData() CLASS TRemMovAlm 
 
    local cFileName
 
@@ -1844,7 +1843,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method ReciveData()
+Method ReciveData() CLASS TRemMovAlm 
 
    local n
    local aExt
@@ -1871,7 +1870,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method Process()
+Method Process() CLASS TRemMovAlm
 
    local m
    local oAlm
@@ -2083,7 +2082,7 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Method nGetNumberToSend()
+Method nGetNumberToSend() CLASS TRemMovAlm
 
    ::nNumberSend     := GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile )
 
@@ -2091,7 +2090,7 @@ Return ( ::nNumberSend )
 
 //----------------------------------------------------------------------------//
 
-METHOD Save()
+METHOD Save() CLASS TRemMovAlm
 
    WritePProString( "Envio",     ::cText, cValToChar( ::lSelectSend ), ::cIniFile )
    WritePProString( "Recepcion", ::cText, cValToChar( ::lSelectRecive ), ::cIniFile )
@@ -2100,7 +2099,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Load()
+METHOD Load() CLASS TRemMovAlm
 
    ::lSelectSend     := ( Upper( GetPvProfString( "Envio",     ::cText, cValToChar( ::lSelectSend ),   ::cIniFile ) ) == ".T." )
    ::lSelectRecive   := ( Upper( GetPvProfString( "Recepcion", ::cText, cValToChar( ::lSelectRecive ), ::cIniFile ) ) == ".T." )
@@ -2109,7 +2108,7 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD lGenRemMov( oBrw, oBtn, lImp )
+METHOD lGenRemMov( oBrw, oBtn, lImp ) CLASS TRemMovAlm
 
    local bAction
 
@@ -2144,7 +2143,7 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
-METHOD bGenRemMov( lImprimir, cTitle, cCodDoc )
+METHOD bGenRemMov( lImprimir, cTitle, cCodDoc ) CLASS TRemMovAlm
 
    local bGen
    local lImp  := by( lImprimir )
@@ -2157,7 +2156,7 @@ RETURN ( bGen )
 
 //---------------------------------------------------------------------------//
 
-METHOD Reindexa()
+METHOD Reindexa() CLASS TRemMovAlm
 
    if Empty( ::oDbf )
       ::oDbf      := ::DefineFiles()
@@ -2175,7 +2174,7 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD CheckFiles( cFileAppendFrom )
+METHOD CheckFiles( cFileAppendFrom ) CLASS TRemMovAlm 
 
    if ::OpenService()
       if !Empty( cFileAppendFrom )
@@ -2188,7 +2187,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendDet( oDlg )
+METHOD AppendDet( oDlg ) CLASS TRemMovAlm 
 
    local nDetalle
 
@@ -2245,7 +2244,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EditDet()
+METHOD EditDet() CLASS TRemMovAlm 
 
    if ::oDetMovimientos:oDbfVir:OrdKeyCount() == 0
       Return ( Self )
@@ -2265,7 +2264,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DeleteDet()
+METHOD DeleteDet() CLASS TRemMovAlm 
 
    local nNum
    local nNumLin
@@ -2330,7 +2329,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ImportAlmacen( nMode, oDlg )
+Method ImportAlmacen( nMode, oDlg ) CLASS TRemMovAlm 
 
    // oDlg:Disable()
 
@@ -2443,7 +2442,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD loadAlmacen( nMode )
+METHOD loadAlmacen( nMode ) CLASS TRemMovAlm 
 
    local nPreMed
    local cCodFam
@@ -2577,7 +2576,7 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD nClrText()
+METHOD nClrText() CLASS TRemMovAlm 
 
    local cClr
 
@@ -2591,7 +2590,7 @@ RETURN cClr
 
 //---------------------------------------------------------------------------//
 
-METHOD ShowKit( lSet )
+METHOD ShowKit( lSet ) CLASS TRemMovAlm 
 
    local lShwKit     := lShwKit()
 
@@ -2617,7 +2616,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ShwAlm( oSay, oBtnImp )
+METHOD ShwAlm( oSay, oBtnImp ) CLASS TRemMovAlm 
 
    if ::oDbf:nTipMov >= 2
       oSay[ 1 ]:Hide()
@@ -2644,7 +2643,7 @@ return .t.
 Total de la remesa
 */
 
-METHOD nTotRemMov( lPic )
+METHOD nTotRemMov( lPic ) CLASS TRemMovAlm 
 
    local nTot     := 0
 
@@ -2663,7 +2662,7 @@ RETURN ( if( IsTrue( lPic ), Trans( nTot, ::cPirDiv ), nTot ) )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION RemMovAlm( oMenuItem, oWnd )
+FUNCTION RemMovAlm( oMenuItem, oWnd ) 
 
    DEFAULT  oMenuItem   := "01050"
    DEFAULT  oWnd        := oWnd()
@@ -2697,7 +2696,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-METHOD lSelAllDoc( lSel )
+METHOD lSelAllDoc( lSel ) CLASS TRemMovAlm 
 
    DEFAULT lSel         := .t.
 
@@ -2717,7 +2716,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-METHOD lSelDoc()
+METHOD lSelDoc() CLASS TRemMovAlm 
 
    ::oDbfVir:Load()
    ::oDbfVir:lSelDoc := !::oDbfVir:lSelDoc
@@ -2727,10 +2726,9 @@ METHOD lSelDoc()
 
 RETURN nil
 
-
 //--------------------------------------------------------------------------//
 
-METHOD DataReport( oFr )
+METHOD DataReport( oFr ) CLASS TRemMovAlm 
 
    /*
    Zona de datos------------------------------------------------------------
@@ -2780,7 +2778,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD VariableReport( oFr )
+METHOD VariableReport( oFr ) CLASS TRemMovAlm 
 
    oFr:DeleteCategory(  "Movimiento" )
    oFr:DeleteCategory(  "Lineas de movimientos" )
@@ -2800,7 +2798,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD DesignReportRemMov( oFr, dbfDoc )
+METHOD DesignReportRemMov( oFr, dbfDoc ) CLASS TRemMovAlm 
 
    if ::OpenFiles()
 
@@ -2883,7 +2881,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc )
+METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc ) CLASS TRemMovAlm 
 
    local oFr
 
@@ -3010,6 +3008,105 @@ Return .f.
 
 //---------------------------------------------------------------------------//
 
+METHOD cMostrarSerie() CLASS TRemMovAlm
+
+   local nNumRec     := ::oDetSeriesMovimientos:oDbfVir:Recno()
+   local nOrdAnt     := ::oDetSeriesMovimientos:oDbfVir:OrdSetFocus( "cNumOrd" )
+   local cResultado  := ""
+   local i           := 0
+
+   if ::oDetSeriesMovimientos:oDbfVir:Seek( str(::oDetMovimientos:oDbfVir:nNumRem) + ::oDetMovimientos:oDbfVir:cSufRem + str( ::oDetMovimientos:oDbfVir:nNumLin ) )
+
+      while (str(::oDetSeriesMovimientos:oDbfVir:nNumRem) + ::oDetSeriesMovimientos:oDbfVir:cSufRem + str( ::oDetSeriesMovimientos:oDbfVir:nNumLin ) ) == (str( ::oDetMovimientos:oDbfVir:nNumRem ) + ::oDetMovimientos:oDbfVir:cSufRem + str (::oDetMovimientos:oDbfVir:nNumLin ) ) .and. !::oDetSeriesMovimientos:oDbfVir:Eof() .and. i <= 1
+
+         if i == 0
+            cResultado  = "[" + AllTrim( ::oDetSeriesMovimientos:oDbfVir:cNumSer ) + "] "
+         else
+            cResultado  = "[...]"
+
+         end if
+
+         i  += 1
+
+         ::oDetSeriesMovimientos:oDbfVir:Skip()
+
+      end while
+
+   end if
+
+   ::oDetSeriesMovimientos:oDbfVir:OrdSetFocus( nOrdAnt )
+   ::oDetSeriesMovimientos:oDbfVir:Goto( nNumRec )
+
+RETURN ( cResultado )
+
+//---------------------------------------------------------------------------//
+
+METHOD GenerarEtiquetas CLASS TRemMovAlm
+
+   local oLabelGenetator
+
+   /*
+   Tomamos el estado de la tabla-----------------------------------------------
+   */
+
+   ::oDbf:GetStatus()
+
+   /*
+   Instanciamos la clase-------------------------------------------------------
+   */
+
+   oLabelGenetator      := TLabelGenerator():Create( Self )
+
+   /*
+   Le damos valores por defecto------------------------------------------------
+   */
+
+   oLabelGenetator:DocumentoInicio( ::oDbf:nNumRem )
+   oLabelGenetator:DocumentoFin( ::oDbf:nNumRem )      
+   oLabelGenetator:SufijoInicio( ::oDbf:cSufRem )      
+   oLabelGenetator:SufijoFin( ::oDbf:cSufRem )            
+   oLabelGenetator:TipoFormato( "FC" )
+   oLabelGenetator:lMovimientoAlmacen := .t.
+
+   /*
+   Bases de datos--------------------------------------------------------------
+   */
+
+   oLabelGenetator:cDbfCabecera( ::oDbf:cAlias )
+   oLabelGenetator:cDbfLinea( ::oDetMovimientos:oDbf:cAlias )
+   oLabelGenetator:cDbfDocumento( ::oDbfDoc:cAlias )
+   oLabelGenetator:cDbfArticulo( ::oArt:cAlias )
+
+   /*
+   Lanzamos el recurso---------------------------------------------------------
+   */
+   
+   if oLabelGenetator:lCreateAuxiliarArticulo()
+
+      //?"llego"
+
+      /*
+      Llenamos la tabla auxiliar-----------------------------------------------
+      */
+
+      //oLabelGenetator:LoadAuxiliarMovimientoAlmacen()
+
+      //?"Paso"
+
+      oLabelGenetator:Resource( .t. )
+
+   end if   
+
+   /*
+   Dejamos la tabla como estaba------------------------------------------------
+   */
+
+   ::oDbf:SetStatus()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 
 function cNombreArticuloMovimiento()
@@ -3119,7 +3216,7 @@ Function aItmRemMov()
 Return ( aBase )
 
 //---------------------------------------------------------------------------//
-
+/*
 FUNCTION IsRemMov( cPath )
 
    DEFAULT cPath  := cPatEmp()
@@ -3141,7 +3238,7 @@ FUNCTION IsRemMov( cPath )
    end if
 
 Return ( .t. )
-
+*/
 //---------------------------------------------------------------------------//
 
 function nTotNRemMov( uDbf )
@@ -3164,126 +3261,6 @@ function nTotNRemMov( uDbf )
    end case
 
 RETURN ( nTotUnd )
-
-//---------------------------------------------------------------------------//
-/*
-STATIC FUNCTION loadArticulo( cCodArt, aTmp, aGet, oSay )
-
-   local lChgCodArt  := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
-
-   if Empty( cCodArt )
-      MsgStop( "No se pueden añadir líneas sin codificar" )
-      return .f.
-   end if
-
-   if aSeekProp( @aTmp[ ( dbfTmpLin )->( FieldPos( "cRefMov" ) ) ], @aTmp[ ( dbfTmpLin )->( FieldPos( "cValPr1" ) ) ], @aTmp[ ( dbfTmpLin )->( FieldPos( "cValPr2" ) ) ], dbfArticulo, dbfTblPro )
-
-      if ( dbfArticulo )->lObs
-         MsgStop( "Artículo catalogado como obsoleto" )
-         return .f.
-      end if
-
-
-      if ( lChgCodArt )
-
-         aGet[ ( dbfTmpLin )->( FieldPos( "cRefMov" ) ) ]:cText( ( dbfArticulo )->Codigo )
-
-         oSay[ 1 ]:cText( ( dbfArticulo )->Nombre )
-
-         aTmp[ ( dbfTmpLin )->( FieldPos( "LLOTE" ) ) ]     := ( dbfArticulo )->lLote
-
-         if ( dbfArticulo )->lLote
-            oSay[2]:Show()
-            aGet[ ( dbfTmpLin )->( FieldPos( "CLOTE" ) ) ]:Show()
-            aGet[ ( dbfTmpLin )->( FieldPos( "CLOTE" ) ) ]:cText( ( dbfArticulo )->cLote )
-         else
-            if !Empty( oSay[2] ) .and. !Empty( aGet[ ( dbfTmpLin )->( FieldPos( "CLOTE" ) ) ] )
-               oSay[2]:Hide()
-               aGet[ ( dbfTmpLin )->( FieldPos( "CLOTE" ) ) ]:Hide()
-            end if
-         end if
-
-         aTmp[ ( dbfTmpLin )->( FieldPos( "CCODPR1" ) ) ]   := ( dbfArticulo )->cCodPrp1
-         aTmp[ ( dbfTmpLin )->( FieldPos( "CCODPR2" ) ) ]   := ( dbfArticulo )->cCodPrp2
-
-         if !Empty( aTmp[ ( dbfTmpLin )->( FieldPos( "CCODPR1" ) ) ] )
-
-            if aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR1" ) ) ] != nil
-               aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR1" ) ) ]:Show()
-               aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR1" ) ) ]:SetFocus()
-            end if
-
-            if oSay[3] != nil
-               oSay[3]:SetText( retProp( ( dbfArticulo )->cCodPrp1, dbfPro ) )
-               oSay[3]:show()
-            end if
-
-            if oSay[4] != nil
-               oSay[4]:SetText( "" )
-               oSay[4]:Show()
-            end if
-
-         else
-
-            if !Empty( aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR1" ) ) ] )
-               aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR1" ) ) ]:Hide()
-            end if
-
-            if !Empty( oSay[3] )
-               oSay[3]:Hide()
-            end if
-
-            if !Empty( oSay[4] )
-               oSay[4]:Hide()
-            end if
-
-         end if
-
-         if !Empty( aTmp[ ( dbfTmpLin )->( FieldPos( "CCODPR2" ) ) ] )
-
-            if aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR2" ) ) ] != nil
-               aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR2" ) ) ]:show()
-            end if
-
-            if oSay[5] != nil
-               oSay[5]:SetText( retProp( ( dbfArticulo )->cCodPrp2, dbfPro ) )
-               oSay[5]:show()
-            end if
-
-            if oSay[6] != nil
-               oSay[6]:SetText( "" )
-               oSay[6]:Show()
-            end if
-
-         else
-
-            if !Empty( aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR2" ) ) ] )
-               aGet[ ( dbfTmpLin )->( FieldPos( "CVALPR2" ) ) ]:Hide()
-            end if
-
-            if !Empty( oSay[5] )
-               oSay[5]:Hide()
-            end if
-
-            if !Empty( oSay[6] )
-               oSay[6]:Hide()
-            end if
-
-         end if
-
-      end if
-
-      cOldCodArt     := cCodArt
-
-   else
-
-      MsgStop( "Artículo no encontrado" )
-      Return ( .f. )
-
-   end if
-
-RETURN ( .t. )
-*/
 
 //---------------------------------------------------------------------------//
 
@@ -3525,6 +3502,8 @@ CLASS TDetMovimientos FROM TDet
 
    MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
+   METHOD Reindexa()
+
    METHOD Resource( nMode, lLiteral )
    METHOD ValidResource( nMode, oDlg, oBtn )
 
@@ -3568,51 +3547,51 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
 
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS "HisMov" ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia )
 
-      FIELD NAME "dFecMov"             TYPE "D" LEN   8 DEC 0 COMMENT "Fecha movimiento"                    OF oDbf
-      FIELD NAME "cTimMov"             TYPE "C" LEN   5 DEC 0 COMMENT "Hora movimiento"                     OF oDbf
-      FIELD NAME "nTipMov"             TYPE "N" LEN   1 DEC 0 COMMENT "Tipo movimiento"                     OF oDbf
-      FIELD NAME "cAliMov"             TYPE "C" LEN  16 DEC 0 COMMENT "Alm. ent."                           OF oDbf
-      FIELD NAME "cAloMov"             TYPE "C" LEN  16 DEC 0 COMMENT "Alm. sal."                           OF oDbf
-      FIELD NAME "cRefMov"             TYPE "C" LEN  18 DEC 0 COMMENT "Código"                              OF oDbf
-      FIELD NAME "cNomMov"             TYPE "C" LEN 200 DEC 0 COMMENT "Nombre"                              OF oDbf
-      FIELD NAME "cCodMov"             TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
-      FIELD NAME "cCodPr1"             TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 1"                  OF oDbf
-      FIELD NAME "cCodPr2"             TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 2"                  OF oDbf
-      FIELD NAME "cValPr1"             TYPE "C" LEN  40 DEC 0 COMMENT "Valor porpiedad 1"                   OF oDbf
-      FIELD NAME "cValPr2"             TYPE "C" LEN  40 DEC 0 COMMENT "Valor porpiedad 2"                   OF oDbf
-      FIELD NAME "cCodUsr"             TYPE "C" LEN   3 DEC 0 COMMENT "Código usuario"                      OF oDbf
-      FIELD NAME "cCodDlg"             TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
-      FIELD NAME "lLote"               TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf
-      FIELD NAME "nLote"               TYPE "N" LEN   9 DEC 0 COMMENT "Número de lote"                      OF oDbf
-      FIELD NAME "cLote"               TYPE "C" LEN  12 DEC 0 COMMENT "Lote"                                OF oDbf
-      FIELD NAME "nCajMov"             TYPE "N" LEN  19 DEC 6 PICTURE {|| MasUnd() } COMMENT "Caj."         OF oDbf
-      FIELD NAME "nUndMov"             TYPE "N" LEN  19 DEC 6 PICTURE {|| MasUnd() } COMMENT "Und."         OF oDbf
-      FIELD NAME "nCajAnt"             TYPE "N" LEN  19 DEC 6 COMMENT "Caj. ant."                           OF oDbf
-      FIELD NAME "nUndAnt"             TYPE "N" LEN  19 DEC 6 COMMENT "Und. ant."                           OF oDbf
-      FIELD NAME "nPreDiv"             TYPE "N" LEN  19 DEC 6 PICTURE {|| PicOut() } COMMENT "Precio"       OF oDbf
-      FIELD NAME "lSndDoc"             TYPE "L" LEN   1 DEC 0 COMMENT "Lógico enviar"                       OF oDbf
-      FIELD NAME "nNumRem"             TYPE "N" LEN   9 DEC 0 COMMENT "Número remesa"                       OF oDbf
-      FIELD NAME "cSufRem"             TYPE "C" LEN   2 DEC 0 COMMENT "Sufijo remesa"                       OF oDbf
-      FIELD NAME "lSelDoc"             TYPE "L" LEN   1 DEC 0 COMMENT "Lógico selecionar"                   OF oDbf
-      FIELD NAME "lNoStk"              TYPE "L" LEN   1 DEC 0 COMMENT "Lógico no stock"                     OF oDbf
-      FIELD NAME "lKitArt"             TYPE "L" LEN   1 DEC 0 COMMENT "Línea con escandallo"                OF oDbf
-      FIELD NAME "lKitEsc"             TYPE "L" LEN   1 DEC 0 COMMENT "Línea perteneciente a escandallo"    OF oDbf
-      FIELD NAME "lImpLin"             TYPE "L" LEN   1 DEC 0 COMMENT "Lógico imprimir linea"               OF oDbf
-      FIELD NAME "lKitPrc"             TYPE "L" LEN   1 DEC 0 COMMENT "Lógico precio escandallo"            OF oDbf
-      FIELD NAME "nNumLin"             TYPE "N" LEN   4 DEC 0 COMMENT "Número de linea"                     OF oDbf
-      FIELD NAME "mNumSer"             TYPE "M" LEN  10 DEC 0 COMMENT "Numeros de serie"                    OF oDbf
-      FIELD NAME "nVolumen"            TYPE "N" LEN  16 DEC 6 COMMENT "Volumen del producto"                OF oDbf
-      FIELD NAME "cVolumen"            TYPE "C" LEN   2 DEC 0 COMMENT "Unidad del volumen"                  OF oDbf
-      FIELD NAME "nPesoKg"             TYPE "N" LEN  16 DEC 6 COMMENT "Peso del producto"                   OF oDbf
-      FIELD NAME "cPesoKg"             TYPE "C" LEN   2 DEC 0 COMMENT "Unidad de peso del producto"         OF oDbf
-      FIELD NAME "nBultos"             TYPE "N" LEN  16 DEC 0 COMMENT "Número de bultos en líneas"          OF oDbf
-      FIELD NAME "cFormato"            TYPE "C" LEN 100 DEC 0 COMMENT "Formato de compra/venta"             OF oDbf
+      FIELD NAME "dFecMov"    TYPE "D" LEN   8 DEC 0 COMMENT "Fecha movimiento"                    OF oDbf
+      FIELD NAME "cTimMov"    TYPE "C" LEN   5 DEC 0 COMMENT "Hora movimiento"                     OF oDbf
+      FIELD NAME "nTipMov"    TYPE "N" LEN   1 DEC 0 COMMENT "Tipo movimiento"                     OF oDbf
+      FIELD NAME "cAliMov"    TYPE "C" LEN  16 DEC 0 COMMENT "Alm. ent."                           OF oDbf
+      FIELD NAME "cAloMov"    TYPE "C" LEN  16 DEC 0 COMMENT "Alm. sal."                           OF oDbf
+      FIELD NAME "cRefMov"    TYPE "C" LEN  18 DEC 0 COMMENT "Código"                              OF oDbf
+      FIELD NAME "cNomMov"    TYPE "C" LEN  50 DEC 0 COMMENT "Nombre"                              OF oDbf
+      FIELD NAME "cCodMov"    TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
+      FIELD NAME "cCodPr1"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 1"                  OF oDbf
+      FIELD NAME "cCodPr2"    TYPE "C" LEN  20 DEC 0 COMMENT "Código propiedad 2"                  OF oDbf
+      FIELD NAME "cValPr1"    TYPE "C" LEN  40 DEC 0 COMMENT "Valor porpiedad 1"                   OF oDbf
+      FIELD NAME "cValPr2"    TYPE "C" LEN  40 DEC 0 COMMENT "Valor porpiedad 2"                   OF oDbf
+      FIELD NAME "cCodUsr"    TYPE "C" LEN   3 DEC 0 COMMENT "Código usuario"                      OF oDbf
+      FIELD NAME "cCodDlg"    TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
+      FIELD NAME "lLote"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf
+      FIELD NAME "nLote"      TYPE "N" LEN   9 DEC 0 COMMENT "Número de lote"                      OF oDbf
+      FIELD NAME "cLote"      TYPE "C" LEN  12 DEC 0 COMMENT "Lote"                                OF oDbf
+      FIELD NAME "nCajMov"    TYPE "N" LEN  19 DEC 6 PICTURE {|| MasUnd() } COMMENT "Caj."         OF oDbf
+      FIELD NAME "nUndMov"    TYPE "N" LEN  19 DEC 6 PICTURE {|| MasUnd() } COMMENT "Und."         OF oDbf
+      FIELD NAME "nCajAnt"    TYPE "N" LEN  19 DEC 6 COMMENT "Caj. ant."                           OF oDbf
+      FIELD NAME "nUndAnt"    TYPE "N" LEN  19 DEC 6 COMMENT "Und. ant."                           OF oDbf
+      FIELD NAME "nPreDiv"    TYPE "N" LEN  19 DEC 6 PICTURE {|| PicOut() } COMMENT "Precio"       OF oDbf
+      FIELD NAME "lSndDoc"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico enviar"                       OF oDbf
+      FIELD NAME "nNumRem"    TYPE "N" LEN   9 DEC 0 COMMENT "Número remesa"                       OF oDbf
+      FIELD NAME "cSufRem"    TYPE "C" LEN   2 DEC 0 COMMENT "Sufijo remesa"                       OF oDbf
+      FIELD NAME "lSelDoc"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico selecionar"                   OF oDbf
+      FIELD NAME "lNoStk"     TYPE "L" LEN   1 DEC 0 COMMENT "Lógico no stock"                     OF oDbf
+      FIELD NAME "lKitArt"    TYPE "L" LEN   1 DEC 0 COMMENT "Línea con escandallo"                OF oDbf
+      FIELD NAME "lKitEsc"    TYPE "L" LEN   1 DEC 0 COMMENT "Línea perteneciente a escandallo"    OF oDbf
+      FIELD NAME "lImpLin"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico imprimir linea"               OF oDbf
+      FIELD NAME "lKitPrc"    TYPE "L" LEN   1 DEC 0 COMMENT "Lógico precio escandallo"            OF oDbf
+      FIELD NAME "nNumLin"    TYPE "N" LEN   4 DEC 0 COMMENT "Número de linea"                     OF oDbf
+      FIELD NAME "mNumSer"    TYPE "M" LEN  10 DEC 0 COMMENT "Numeros de serie"                    OF oDbf
+      FIELD NAME "nVolumen"   TYPE "N" LEN  16 DEC 6 COMMENT "Volumen del producto"                OF oDbf
+      FIELD NAME "cVolumen"   TYPE "C" LEN   2 DEC 0 COMMENT "Unidad del volumen"                  OF oDbf
+      FIELD NAME "nPesoKg"    TYPE "N" LEN  16 DEC 6 COMMENT "Peso del producto"                   OF oDbf
+      FIELD NAME "cPesoKg"    TYPE "C" LEN   2 DEC 0 COMMENT "Unidad de peso del producto"         OF oDbf
+      FIELD NAME "nBultos"    TYPE "N" LEN  16 DEC 0 COMMENT "Número de bultos en líneas"          OF oDbf
+      FIELD NAME "cFormato"   TYPE "C" LEN 100 DEC 0 COMMENT "Formato de compra/venta"             OF oDbf
 
       INDEX TO ( cFileName ) TAG "nNumRem"      ON "Str( nNumRem ) + cSufRem"               NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "dFecMov"      ON "Dtoc( dFecMov ) + cTimMov"              NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRefMov"      ON "cRefMov + cValPr1 + cValPr2 + cLote"    NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "cNomMov"      ON "cNomMov"                                NODELETED                     OF oDbf
-      INDEX TO ( cFileName ) TAG "cAloMov"      ON "cAloMov"                                NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cNomMov"      ON "cNomMov"                                NODELETED                     OF oDbf 
+      INDEX TO ( cFileName ) TAG "cAloMov"      ON "cAloMov"                                NODELETED                     OF oDbf 
       INDEX TO ( cFileName ) TAG "cAliMov"      ON "cAliMov"                                NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cRefAlm"      ON "cRefMov + cValPr1 + cValPr2 + cAliMov"  NODELETED                     OF oDbf
       INDEX TO ( cFileName ) TAG "cLote"        ON "cLote"                                  NODELETED                     OF oDbf
@@ -3621,7 +3600,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       INDEX TO ( cFileName ) TAG "nTipMov"      ON "cRefMov + Dtos( dFecMov )"              NODELETED                              FOR "nTipMov == 4"   OF oDbf
       INDEX TO ( cFileName ) TAG "cStock"       ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  FOR "nTipMov == 4"   OF oDbf
       INDEX TO ( cFileName ) TAG "cStkFastIn"   ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
-      INDEX TO ( cFileName ) TAG "cStkFastOu"  	ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
+      INDEX TO ( cFileName ) TAG "cStkFastOu"   ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
 
    END DATABASE oDbf
 
@@ -3647,7 +3626,7 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TDetMovimientos
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+      msgStop( "Imposible abrir todas las bases de datos movimientos de almacen" )
       lOpen                := .f.
 
    END SEQUENCE
@@ -3666,12 +3645,34 @@ METHOD CloseFiles() CLASS TDetMovimientos
 
    if ::oDbf != nil .and. ::oDbf:Used()
       ::oDbf:End()
-      ::oDbf         := nil
    end if
+
+   ::oDbf         := nil
 
 RETURN .t.
 
 //---------------------------------------------------------------------------//
+
+METHOD Reindexa() CLASS TDetMovimientos
+
+   if Empty( ::oDbf )
+      ::oDbf   := ::DefineFiles()
+   end if
+
+   ::oDbf:IdxFDel()
+
+   if ::OpenService( .t. )
+      ::oDbf:IdxFCheck()
+      ::oDbf:Pack()
+   end if
+
+   ::CloseFiles()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+
 /*
 Edita las lineas de Detalle
 */
@@ -5047,11 +5048,6 @@ RETURN ( if( lPic, Trans( nVolumen, MasUnd() ), nVolumen ) )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 CLASS TDetSeriesMovimientos FROM TDet
 
@@ -5254,105 +5250,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD cMostrarSerie() CLASS TRemMovAlm
-
-   local nNumRec     := ::oDetSeriesMovimientos:oDbfVir:Recno()
-   local nOrdAnt     := ::oDetSeriesMovimientos:oDbfVir:OrdSetFocus( "cNumOrd" )
-   local cResultado  := ""
-   local i           := 0
-
-   if ::oDetSeriesMovimientos:oDbfVir:Seek( str(::oDetMovimientos:oDbfVir:nNumRem) + ::oDetMovimientos:oDbfVir:cSufRem + str( ::oDetMovimientos:oDbfVir:nNumLin ) )
-
-      while (str(::oDetSeriesMovimientos:oDbfVir:nNumRem) + ::oDetSeriesMovimientos:oDbfVir:cSufRem + str( ::oDetSeriesMovimientos:oDbfVir:nNumLin ) ) == (str( ::oDetMovimientos:oDbfVir:nNumRem ) + ::oDetMovimientos:oDbfVir:cSufRem + str (::oDetMovimientos:oDbfVir:nNumLin ) ) .and. !::oDetSeriesMovimientos:oDbfVir:Eof() .and. i <= 1
-
-         if i == 0
-            cResultado  = "[" + AllTrim( ::oDetSeriesMovimientos:oDbfVir:cNumSer ) + "] "
-         else
-            cResultado  = "[...]"
-
-         end if
-
-         i  += 1
-
-         ::oDetSeriesMovimientos:oDbfVir:Skip()
-
-      end while
-
-   end if
-
-   ::oDetSeriesMovimientos:oDbfVir:OrdSetFocus( nOrdAnt )
-   ::oDetSeriesMovimientos:oDbfVir:Goto( nNumRec )
-
-RETURN ( cResultado )
-
-//---------------------------------------------------------------------------//
-
-METHOD GenerarEtiquetas CLASS TRemMovAlm
-
-   local oLabelGenetator
-
-   /*
-   Tomamos el estado de la tabla-----------------------------------------------
-   */
-
-   ::oDbf:GetStatus()
-
-   /*
-   Instanciamos la clase-------------------------------------------------------
-   */
-
-   oLabelGenetator      := TLabelGenerator():Create( Self )
-
-   /*
-   Le damos valores por defecto------------------------------------------------
-   */
-
-   oLabelGenetator:DocumentoInicio( ::oDbf:nNumRem )
-   oLabelGenetator:DocumentoFin( ::oDbf:nNumRem )      
-   oLabelGenetator:SufijoInicio( ::oDbf:cSufRem )      
-   oLabelGenetator:SufijoFin( ::oDbf:cSufRem )            
-   oLabelGenetator:TipoFormato( "FC" )
-   oLabelGenetator:lMovimientoAlmacen := .t.
-
-   /*
-   Bases de datos--------------------------------------------------------------
-   */
-
-   oLabelGenetator:cDbfCabecera( ::oDbf:cAlias )
-   oLabelGenetator:cDbfLinea( ::oDetMovimientos:oDbf:cAlias )
-   oLabelGenetator:cDbfDocumento( ::oDbfDoc:cAlias )
-   oLabelGenetator:cDbfArticulo( ::oArt:cAlias )
-
-   /*
-   Lanzamos el recurso---------------------------------------------------------
-   */
-   
-   if oLabelGenetator:lCreateAuxiliarArticulo()
-
-      //?"llego"
-
-      /*
-      Llenamos la tabla auxiliar-----------------------------------------------
-      */
-
-      //oLabelGenetator:LoadAuxiliarMovimientoAlmacen()
-
-      //?"Paso"
-
-      oLabelGenetator:Resource( .t. )
-
-   end if   
-
-   /*
-   Dejamos la tabla como estaba------------------------------------------------
-   */
-
-   ::oDbf:SetStatus()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
 Function AppMovimientosAlmacen()
 
    local oRemMovAlm
@@ -5512,3 +5409,416 @@ function VisMovimientosAlmacen( cNumParte )
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
+
+Function nTotNMovOld( uDbf )
+
+   local nTotUnd  := 0
+
+   do case
+   case ValType( uDbf ) == "C"
+      nTotUnd     := NotCaja( ( uDbf )->nCajAnt ) * ( uDbf )->nUndAnt
+   case ValType( uDbf ) == "O"
+      nTotUnd     := NotCaja( uDbf:nCajAnt ) * uDbf:nUndAnt
+   end case
+
+RETURN ( nTotUnd )
+
+//-------------------------------------------------------------------------//
+
+Function nTotLMovAlm( uDbf )
+
+   local nTotUnd  := nTotNMovAlm( uDbf )
+
+   do case
+   case ValType( uDbf ) == "C"
+      nTotUnd     := NotCaja( ( uDbf )->nCajMov ) * ( uDbf )->nUndMov * ( uDbf )->nPreDiv
+   case ValType( uDbf ) == "O"
+      nTotUnd     := NotCaja( uDbf:nCajMov ) * uDbf:nUndMov * uDbf:nPreDiv
+      // nTotUnd     := NotCaja( uDbf:FieldGetByName( "nCajMov" ) ) * uDbf:FieldGetByName( "nUndMov" ) * uDbf:FieldGetByName( "nPreDiv" )
+   end case
+
+RETURN ( nTotUnd )
+
+//---------------------------------------------------------------------------//
+
+Function nTotNMovAlm( uDbf )
+
+   local nTotUnd  := 0
+
+   do case
+   case ValType( uDbf ) == "C"
+      nTotUnd     := NotCaja( ( uDbf )->nCajMov ) * ( uDbf )->nUndMov
+   case ValType( uDbf ) == "O"
+      nTotUnd     := NotCaja( uDbf:nCajMov ) * uDbf:nUndMov
+   end case
+
+RETURN ( nTotUnd )
+
+//-------------------------------------------------------------------------//
+
+function nTotVMovAlm( cCodArt, dbfMovAlm, cCodAlm )
+
+   local nTotVta  := 0
+   local nOrd     := ( dbfMovAlm )->( OrdSetFocus( "cRefMov" ) )
+   local nRec     := ( dbfMovAlm )->( Recno() )
+
+   if ( dbfMovAlm )->( dbSeek( cCodArt ) )
+
+      while ( dbfMovAlm )->cRefMov == cCodArt .and. !( dbfMovAlm )->( eof() )
+
+         if !( dbfMovAlm )->lNoStk
+
+            if cCodAlm != nil
+
+               if cCodAlm == ( dbfMovAlm )->cAliMov
+                  nTotVta  += nTotNMovAlm( dbfMovAlm )
+               end if
+
+               if cCodAlm == ( dbfMovAlm )->cAloMov
+                  nTotVta  -= nTotNMovAlm( dbfMovAlm )
+               end if
+
+            else
+
+               if !Empty( ( dbfMovAlm )->cAliMov )
+                  nTotVta  += nTotNMovAlm( dbfMovAlm )
+               end if
+
+               if !Empty( ( dbfMovAlm )->cAloMov )
+                  nTotVta  -= nTotNMovAlm( dbfMovAlm )
+               end if
+
+            end if
+
+         end if
+
+         ( dbfMovAlm )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( dbfMovAlm )->( dbGoTo( nRec ) )
+   ( dbfMovAlm )->( OrdSetFocus( nOrd ) )
+
+return ( nTotVta )
+
+//---------------------------------------------------------------------------//
+
+Function cTextoMovimiento( dbfHisMov )
+
+Return ( { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ Min( Max( ( dbfHisMov )->nTipMov, 1 ), 4 ) ] )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION ZooMovAlm( nNumRec, oBrw )
+
+RETURN NIL
+
+//----------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
+//-------------------------------------------------------------------------//
+
+CLASS THisMovSenderReciver FROM TSenderReciverItem
+
+   Method CreateData()
+
+   Method RestoreData()
+
+   Method SendData()
+
+   Method ReciveData()
+
+   Method Process()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+Method CreateData()
+
+   local oBlock
+   local oError
+   local tmpHisMov
+   local lSnd        := .f.
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "HisMov" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "HisMov" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   If !OpenFiles( .f. )
+      Return Nil
+   End If
+
+   ::oSender:SetText( 'Seleccionando historico de movimientos' )
+
+   /*
+   Creamos todas las bases de datos relacionadas con historicos de movimientos-
+   */
+
+   // mkHisMov( cPatSnd() )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatSnd() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @tmpHisMov ) )
+   SET ADSINDEX TO ( cPatSnd() + "HISMOV.CDX" ) ADDITIVE
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( dbfHisMov )->( Lastrec() )
+   end if
+
+   ( dbfHisMov )->( OrdSetFocus( "SndCod" ) )
+   ( dbfHisMov )->( dbGoTop() )
+
+   while !( dbfHisMov )->( eof() )
+
+      if ( dbfHisMov )->lSndDoc
+
+         ::oSender:SetText( "Añadido un movimiento de almacén al artículo: " + AllTrim( ( dbfHisMov )->cRefMov ) + AllTrim( RetFld( ( dbfHisMov )->cRefMov, dbfArticulo, "Nombre" ) ) )
+
+         lSnd     := .t.
+
+         dbPass( dbfHisMov, tmpHisMov, .t. )
+
+      end if
+
+      ( dbfHisMov )->( dbSkip() )
+
+      if !Empty( ::oSender:oMtr )
+         ::oSender:oMtr:Set( ( dbfHisMov )->( OrdKeyNo() ) )
+      end if
+
+      SysRefresh()
+
+   end while
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de historico de movimientos" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( tmpHisMov )
+
+   // CloseFiles()
+
+   /*
+   Comprimir los archivos------------------------------------------------------
+   */
+
+   if lSnd
+
+      ::oSender:SetText( "Comprimiendo historico de movimientos" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end if
+
+   else
+
+      ::oSender:SetText( "No hay historico de movimientos para enviar" )
+
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method RestoreData()
+
+   local oBlock
+   local oError
+   local dbfHisMov
+
+   if ::lSuccesfullSend
+
+      /*
+      Sintuacion despues del envio---------------------------------------------
+      */
+
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+         USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
+         SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
+         ( dbfHisMov )->( ordSetFocus( "SndCod" ) )
+
+         while !( dbfHisMov )->( Eof() )
+
+            if ( dbfHisMov )->( dbRLock() )
+               ( dbfHisMov )->lSndDoc   := .f.
+               ( dbfHisMov )->( dbRUnlock() )
+            end if
+
+            ( dbfHisMov )->( dbSkip() )
+
+         end while
+
+      RECOVER USING oError
+
+         msgStop( "Imposible abrir todas las bases de datos de historico de movimientos" + CRLF + ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+      CLOSE ( dbfHisMov )
+
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method SendData()
+
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "HisMov" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "HisMov" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end if
+
+   if File( cPatOut() + cFileName )
+
+      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
+         ::IncNumberToSend()
+         ::lSuccesfullSend := .t.
+         ::oSender:SetText( "Ficheros de historico de movimientos enviados " + cFileName )
+      else
+         ::oSender:SetText( "ERROR fichero de historico de movimientos no enviado" )
+      end if
+
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method ReciveData()
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt              := RetSufEmp()
+   else
+      aExt              := { "All" }
+   end if
+
+   ::oSender:SetText( "Recibiendo historico de movimientos" )
+
+   for n := 1 to len( aExt )
+      ::oSender:GetFiles( "HisMov*." + aExt[ n ], cPatIn() )
+   next
+
+   ::oSender:SetText( "Historico de movimientos recibidos" )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method Process()
+
+   local m
+   local aFiles
+   local tmpMov
+   local tmpHisMov
+   local oBlock
+   local oError
+
+   /*
+   Procesamos los ficheros recibidos-------------------------------------------
+   */
+
+   aFiles                     := Directory( cPatIn() + "HisMov*.*" )
+
+   for m := 1 to len( aFiles )
+
+      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+      BEGIN SEQUENCE
+
+      /*
+      Descomprimimos el fichero recibido------------------------------------
+      */
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+         if lExistTable( cPatSnd() + "HisMov.Dbf" )     .and.;
+            OpenFiles( .f. )
+
+            USE ( cPatSnd() + "HISMOV.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "HISMOV", @tmpHisMov ) )
+            SET ADSINDEX TO ( cPatSnd() + "HISMOV.CDX" ) ADDITIVE
+
+            if !Empty( ::oSender:oMtr )
+               ::oSender:oMtr:nTotal := ( tmpHisMov )->( lastrec() )
+            end if
+
+            while !( tmpHisMov )->( eof() )
+
+               dbPass( tmpHisMov, dbfHisMov, .t. )
+               ::oSender:SetText( "Añadido un movimiento de almacén al artículo: " + AllTrim( ( tmpHisMov )->cRefMov ) + AllTrim( RetFld( ( tmpHisMov )->cRefMov, dbfArticulo, "Nombre" ) ) )
+
+               ( tmpHisMov )->( dbSkip() )
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:Set( ( tmpHisMov )->( OrdKeyNo() ) )
+               end if
+
+               SysRefresh()
+
+            end while
+
+            CLOSE ( tmpHisMov )
+
+            //CloseFiles()
+
+            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+         else
+
+            ::oSender:SetText( "Falta el fichero HisMov.dbf" )
+
+         end if
+
+      else
+
+         ::oSender:SetText( "Error en el fichero comprimido" )
+
+      end if
+
+      RECOVER USING oError
+
+         CLOSE ( tmpHisMov )
+         // CloseFiles()
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+

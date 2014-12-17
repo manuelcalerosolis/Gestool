@@ -1958,8 +1958,8 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "HisMov.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "HisMov.Cdx"
    oDataTable:cDescription := "Movimientos de almacén"
-   oDataTable:bCreateFile  := {| cPath | mkHisMov( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxHisMov( cPath ) }
+   // oDataTable:bCreateFile  := {| cPath | mkHisMov( cPath ) }
+   // oDataTable:bCreateIndex := {| cPath | rxHisMov( cPath ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()

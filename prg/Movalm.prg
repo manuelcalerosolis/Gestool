@@ -1683,7 +1683,7 @@ Static Function aStkArticulo( cCodArt, nCtlStock )
 Return .t.
 
 //---------------------------------------------------------------------------//
-
+/*
 Function aItmMov()
 
    local aBase := {}
@@ -1726,7 +1726,7 @@ Function aItmMov()
    aAdd( aBase, { "cPesoKg",   "C",     2,    0, "Unidad de peso del producto" }       )
 
 Return ( aBase )
-
+*/
 //---------------------------------------------------------------------------//
 
 FUNCTION rxHisMov( cPath, oMeter )

@@ -2190,18 +2190,6 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "Pencil_Package_32"
    oItem:lShow          := .f.
 
-   /*
-   oItem                := oItemAlmacen:Add()
-   oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Historico movimientos'
-   oItem:cMessage       := 'Acceso a los movimientos historicos de almacén'
-   oItem:bAction        := {|| HisMovAlm( "01051", oWnd ) }
-   oItem:cId            := "01051"
-   oItem:cBmp           := "Package_book_red_16"
-   oItem:cBmpBig        := "Package_book_red_32"
-   oItem:lShow          := .f.
-   */
-
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 3
    oGrupo:cPrompt       := 'Depósitos'

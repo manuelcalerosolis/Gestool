@@ -836,7 +836,6 @@ $(OBJ)\Intitem.obj              +
 $(OBJ)\Backup.obj               +
 $(OBJ)\Divisas.obj              +
 $(OBJ)\Tips.obj                 +
-$(OBJ)\Movalm.obj               +
 $(OBJ)\Edm.obj                  +
 $(OBJ)\Pro.obj                  +
 $(OBJ)\Reccli.obj               +

@@ -129,8 +129,8 @@ METHOD GenIndices( oMsg )
       dbCloseAll()
    end if
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    if !Empty( oMsg )
       ::oMsg         := oMsg
@@ -288,7 +288,7 @@ METHOD GenIndices( oMsg )
             ::SetText( "Generando índices : Documentos", ::aProgress[ 2 ] )            ; rxDocs(     ::cPathEmp )
             ::SetText( "Generando índices : Tarifas de precios", ::aProgress[ 2 ] )    ; rxTarifa(   ::cPatArt )
             ::SetText( "Generando índices : Promociones", ::aProgress[ 2 ] )           ; rxPromo(    ::cPatArt )
-            ::SetText( "Generando índices : Movimientos", ::aProgress[ 2 ] )           ; rxHisMov(   ::cPathEmp )
+            // ::SetText( "Generando índices : Movimientos", ::aProgress[ 2 ] )           ; rxHisMov(   ::cPathEmp )
             ::SetText( "Generando índices : Grupos de venta", ::aProgress[ 2 ] )       ; rxGrpVenta( ::cPathEmp )
             ::SetText( "Generando índices : Ubicaciones", ::aProgress[ 2 ] )           ; rxUbi(      ::cPatAlm )
             ::SetText( "Generando índices : Tipos de incidencias", ::aProgress[ 2 ] )  ; rxInci(     ::cPathEmp )
@@ -531,27 +531,23 @@ METHOD GenIndices( oMsg )
       MsgInfo( "Proceso finalizado con éxito, tiempo empleado : " + AllTrim( Str( Seconds() - nSeconds ) ) + " seg.", "Información" )
    end if
 
+//   RECOVER USING oError
+//
+//      msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
+//
+//
+//   END SEQUENCE
+//
+//   ErrorBlock( oBlock )
+
    if ::oDlg != nil
       ::oDlg:Enable()
       ::oDlg:End()
    end if
 
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
-
-      if ::oDlg != nil
-         ::oDlg:Enable()
-         ::oDlg:End()
-      end if
-
-      if ::lCloseAll
-         dbCloseAll()
-      end if
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+   if ::lCloseAll
+      dbCloseAll()
+   end if
 
    StartAutoImp()
 

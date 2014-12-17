@@ -440,7 +440,7 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
       ::cProducS        := cCheckArea( "ProducS" ) 
       ::cProducP        := cCheckArea( "ProducP" ) 
 
-      ::cHisMovT        := cCheckArea( "HisMovT" ) 
+      ::cHisMovT        := cCheckArea( "HisMovT" )  
       ::cHisMovS        := cCheckArea( "HisMovS" ) 
 
       ::cArticulo       := cCheckArea( "Articulo") 

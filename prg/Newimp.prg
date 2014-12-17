@@ -339,6 +339,9 @@ METHOD setCodeAndValue( cCodImp, uValue )
       Return nil 
    end if 
    
+   sysRefresh()
+   // msgAlert( ::nValImp( cCodImp ), "::nValImp( cCodImp )" )
+
    if isObject( uValue )
       uValue:cText( ::nValImp( cCodImp ) )
    end if

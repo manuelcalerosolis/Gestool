@@ -472,7 +472,7 @@ Static Function WinAppEmp()
 
       dbCloseAll()
 
-      mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .f., nSemillaContadores )
+      mkPathEmp( cCodigoEmpresa, cNombreEmpresa, cOldCodigoEmpresa, aImportacion, .t., .t., nSemillaContadores )
 
       /*
       Establecemos la empresa como la seleccionada-----------------------------
@@ -3561,8 +3561,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local cPathGrp       := ""
    local lAIS           := lAIS()
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
    if lAIS
       lAIS( .f. ) 
@@ -3570,12 +3570,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    end if
 
    SysRefresh()
-
-   /*
-   msgAlert( ( cPath ), "cNamePath" )
-   msgAlert( lChDir( cNamePath( cPath ) ), "lChDir" )
-   msgAlert( MakeDir( cNamePath( cPath ) ) != -1, "makedir" )
-   */
 
    if lChDir( cNamePath( cPath ) ) .or. MakeDir( cNamePath( cPath ) ) != -1
 
@@ -3921,7 +3915,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando historico de movimientos" )
       end if
-      mkHisMov( cPath, .f., cPathOld ) ; SysRefresh()
+      // mkHisMov( cPath, .f., cPathOld ) ; SysRefresh()
 
       /*
       Documentos de proveedores
@@ -4151,6 +4145,13 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkDocs( cPath, aImportacion:lDocument, cPathOld ) ; sysrefresh()
 
       /*
+      Cerramos todas las tablas------------------------------------------------
+      */
+
+      SysRefresh()
+
+
+      /*
       Calculo de stocks--------------------------------------------------------
       */
 
@@ -4163,17 +4164,11 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       /*
-      Cerramos todas las tablas------------------------------------------------
-      */
-
-      SysRefresh()
-
-      /*
       Si hay nueva empresa calculamos stocks y regeneramos indices-------------
       */
 
       if lNewEmp
-         ReindexaEmp( cPath, cCodEmpNew, oMsg )
+         reindexaEmp( cPath, cCodEmpNew, oMsg )
       end if
 
       /*
@@ -4202,13 +4197,13 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    end if
 
-   RECOVER USING oError
-
-      msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+//   RECOVER USING oError
+//
+//      msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
+//
+//   END SEQUENCE
+//
+//   ErrorBlock( oBlock )
 
 RETURN .t.
 
