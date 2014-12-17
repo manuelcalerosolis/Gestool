@@ -135,6 +135,8 @@ STATIC FUNCTION OpenFiles( cPatEmp )
 
       D():Cajas( nView )
 
+      
+
       oBandera          := TBandera():New
 
       /*

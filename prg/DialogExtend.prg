@@ -43,6 +43,11 @@ local hClass
   hClass        := TWBrowse():ClassH
 
   __clsAddMsg( hClass, "_lDrawHeaders", __cls_IncData( hClass ), 9, .f., 1, .f., .f. )
+
+  hClass        := TComboBox():ClassH
+
+  __clsAddMsg( hClass, "GetFont", {|| nil }, 3, nil, 1, .f., .f. )
+
 /*
   hClass        := TBtnBmp():ClassH
 

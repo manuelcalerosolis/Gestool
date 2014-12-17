@@ -13091,6 +13091,7 @@ Function BrwFacPrv( oGet, nView )
 
    local oDlg
    local oBrw
+   local cPriorFocus
    local nOrd
    local oGet1
    local cGet1
@@ -13098,30 +13099,29 @@ Function BrwFacPrv( oGet, nView )
    local cCbxOrd
    local aCbxOrd
 
-   /*if !OpenFiles()
-      Return .f.
-   end if*/
-
    aCbxOrd           := { "Número", "Fecha", "Proveedor", "Nombre" }
    nOrd              := GetBrwOpt( "BrwFacPrv" )
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
+   cPriorFocus       := ( D():FacturasProveedores( nView ) )->( OrdSetFocus( nOrd ) )
+
    DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE "Facturas rectificativas de clientes"
 
-      REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, D():FacturasProveedores( nView ), nil, nil, .f. ) );
-         VALID    ( OrdClearScope( oBrw, D():FacturasProveedores( nView ) ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
+      REDEFINE GET   oGet1 ;
+         VAR         cGet1 ;
+         ID          104 ;
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, D():FacturasProveedores( nView ), nil, nil, .f. ) );
+         VALID       ( OrdClearScope( oBrw, D():FacturasProveedores( nView ) ) );
+         BITMAP      "Find" ;
+         OF          oDlg
 
       REDEFINE COMBOBOX oCbxOrd ;
-         VAR      cCbxOrd ;
-         ID       102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( D():FacturasProveedores( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-         OF       oDlg
+         VAR         cCbxOrd ;
+         ID          102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   ( ( D():FacturasProveedores( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+         OF          oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -13209,9 +13209,7 @@ Function BrwFacPrv( oGet, nView )
 
    SetBrwOpt( "BrwFacPrv", ( D():FacturasProveedores( nView ) )->( OrdNumber() ) )
 
-   ( D():FacturasProveedores( nView ) )->( dbClearFilter() )
-
-   //CloseFiles()
+   ( D():FacturasProveedores( nView ) )->( OrdSetFocus( cPriorFocus ) )
 
    /*
    Guardamos los datos del browse-------------------------------------------
