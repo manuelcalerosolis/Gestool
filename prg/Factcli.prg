@@ -23309,6 +23309,7 @@ FUNCTION EdmFacCli( cCodRut, cPathTo, oStru, aSucces )
    local cTipDoc
    local aHeadLine   := {}
    local aLotes      := {}
+   local nOrdAnt
 
    DEFAULT cCodRut   := "001"
    DEFAULT cPathTo   := "C:\INTERS~1\"
@@ -23317,7 +23318,8 @@ FUNCTION EdmFacCli( cCodRut, cPathTo, oStru, aSucces )
    Obtenemos la fecha del albaran----------------------------------------------
    */
 
-   cCodRut           := SubStr( cCodRut, -3 )
+   //cCodRut           := SubStr( cCodRut, -3 )
+   cCodRut           := AllTrim( cCodRut )
 
    cFilEdm           := cPathTo + "TALBA" + cCodRut + ".PSI"
 
@@ -23432,7 +23434,7 @@ N§ PO  LC  Descripci¢n       Observaciones
       return nil
    end if
 
-   oFilEdm           := TTxtFile():New( cFilEdm )
+   oFilEdm              := TTxtFile():New( cFilEdm )
 
    /*
    Abrimos las bases de datos
@@ -23440,8 +23442,10 @@ N§ PO  LC  Descripci¢n       Observaciones
 
    OpenFiles()
 
-   oStru:oMetDos:cText   := "Fac. clientes"
+   oStru:oMetDos:cText  := "Fac. clientes"
    oStru:oMetDos:SetTotal( oFilEdm:nTLines )
+
+   nOrdAnt              := ( D():FacturasClientes( nView ) )->( OrdSetFocus( "nNumFac" ) )
 
    /*
    Mientras no estemos en el final del archivo
@@ -23619,6 +23623,8 @@ N§ PO  LC  Descripci¢n       Observaciones
    end do
 
    oFilEdm:Close()
+
+   ( D():FacturasClientes( nView ) )->( OrdSetFocus( nOrdAnt ) )
 
    CloseFiles()
 

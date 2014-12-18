@@ -14594,7 +14594,8 @@ FUNCTION EdmAlbCli( cCodRut, cPathTo, oStru, aSucces )
    Obtenemos la fecha del albaran----------------------------------------------
    */
 
-   cCodRut           := SubStr( cCodRut, -3 )
+   //cCodRut           := SubStr( cCodRut, -3 )
+   cCodRut           := AllTrim( cCodRut )
 
    cFilEdm           := cPathTo + "TALBA" + cCodRut + ".PSI"
 
