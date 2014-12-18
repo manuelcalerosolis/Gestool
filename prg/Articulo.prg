@@ -1007,7 +1007,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
       end with
 
-
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + Space( 1 ) +  cImp()
          :bEditValue       := {|| ( dbfArticulo )->pVtaIva2 }
@@ -1165,15 +1164,17 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       end if
 
-      /*
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "btn"
-         :nEdittype        := EDIT_BUTTON
-         :nWidth           := 20
-         :bEditBlock       := { || MsgYesNo( "Please select" ) }
+         :cHeader          := "Precio mínimo"
+         :bEditValue       := {|| ( dbfArticulo )->PvpRec }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :lHide            := .t.
       end with
-      */
-      
+
       oWndBrw:cHtmlHelp    := "Articulos"
       oWndBrw:bToolTip     := {|| dlgTooltip( ( dbfArticulo )->Codigo, oWndBrw:oBrw ) }
 

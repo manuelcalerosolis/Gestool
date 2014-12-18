@@ -11290,6 +11290,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ) )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",               {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Series de lineas de facturas",     {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Incidencias de facturas",          {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
@@ -11315,6 +11318,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de facturas", "Ofertas",                {|| ( dbfFacCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",   {|| ( dbfFacCliL )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de facturas", "SAT",                   	{|| ( dbfFacCliL )->cNumSat } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",   {|| ( dbfFacCliL )->cCodImp } )
 
    oFr:SetResyncPair(   "Facturas", "Lineas de facturas" )
    oFr:SetResyncPair(   "Facturas", "Series de lineas de facturas" )

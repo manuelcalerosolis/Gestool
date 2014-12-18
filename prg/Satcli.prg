@@ -5361,15 +5361,16 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             */
 
             if !Empty( ( D():Articulos( nView ) )->cCodImp )
+            
                aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
 
                if aGet[ _NVALIMP ] != nil
-                  aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpSat[ _LIVAINC ], aTmp[ _NIVA ] ) )
+                  aGet[ _NVALIMP ]:cText( oNewImp:nValImp( aTmp[ _CCODIMP ], aTmpSat[ _LIVAINC ], aTmp[ _NIVA ] ) )
                else
-                  aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpSat[ _LIVAINC ], aTmp[ _NIVA ] )
+                  aTmp[ _NVALIMP ]  := oNewImp:nValImp( aTmp[ _CCODIMP ], aTmpSat[ _LIVAINC ], aTmp[ _NIVA ] )
                end if
 
-               aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
+               aTmp[ _LVOLIMP ]     := RetFld( aTmp[ _CCODIMP ], oNewImp:oDbf:cAlias, "lIvaVol" )
 
             end if
 
@@ -7998,6 +7999,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+
    oFr:SetMasterDetail( "SAT", "Lineas de SAT",                   {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Series de lineas de SAT",         {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Incidencias de SAT",              {|| ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat } )
@@ -8015,6 +8019,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( dbfSatCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Unidades de medición",  {|| ( dbfSatCliL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",  {|| ( dbfSatCliL )->cCodImp } )
 
    oFr:SetResyncPair(   "SAT", "Lineas de SAT" )
    oFr:SetResyncPair(   "SAT", "Series de lineas de SAT" )
@@ -8033,6 +8038,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de SAT", "Artículos" )
    oFr:SetResyncPair(   "Lineas de SAT", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de SAT", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de SAT", "Impuestos especiales" )
 
 Return nil
 

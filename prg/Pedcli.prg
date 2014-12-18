@@ -8277,6 +8277,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",             {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
@@ -8293,6 +8296,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( dbfPedCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Ofertas",                 {|| ( dbfPedCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Unidades de medición",    {|| ( dbfPedCliL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",    {|| ( dbfPedCliL )->cCodImp } )
 
    oFr:SetResyncPair( "Pedidos", "Lineas de pedidos" )
    oFr:SetResyncPair( "Pedidos", "Incidencias de pedidos" )
@@ -8310,7 +8314,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair( "Lineas de pedidos", "Artículos" )
    oFr:SetResyncPair( "Lineas de pedidos", "Ofertas" )
    oFr:SetResyncPair( "Lineas de pedidos", "Unidades de medición" )
-
+   oFr:SetResyncPair( "Lineas de pedidos", "Impuestos especiales" )
 
 Return nil
 
