@@ -125,7 +125,6 @@ Litem.prg               \
 Lqdalm.prg              \
 Maquina.prg             \
 Medicon.prg             \
-Movalm.prg              \
 Movilges.prg            \
 Newimp.prg              \
 Notas.prg               \
@@ -1157,7 +1156,6 @@ Lqdalm.obj              \
 Maquina.obj             \
 Medicon.obj             \
 Metafi32.obj            \
-Movalm.obj              \
 Movilges.obj            \
 Newimp.obj              \
 Notas.obj               \
@@ -2200,7 +2198,6 @@ $(OBJ)\Lqdalm.obj               +
 $(OBJ)\Maquina.obj              +
 $(OBJ)\Medicon.obj              +
 $(OBJ)\Metafi32.obj             +
-$(OBJ)\Movalm.obj               +
 $(OBJ)\Movilges.obj             +
 $(OBJ)\Newimp.obj               +
 $(OBJ)\Notas.obj                +

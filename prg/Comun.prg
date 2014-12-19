@@ -2935,7 +2935,6 @@ Return ( value )
 
 //----------------------------------------------------------------------------//
 
-
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 
