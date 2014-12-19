@@ -2895,7 +2895,11 @@ Function readHashDictionary( hashTable, dbf )
 
   local hash   := {=>}
 
-  hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldname( value ) ) ) ) ) } )
+  //hEval( hashTable, {|key,value| MsgInfo( ( dbf )->( fieldPos( value ) ), value ) } )
+
+  hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
+
+  msginfo( ValType( hash ), Len( hash ) )
 
 Return ( hash )
 
