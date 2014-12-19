@@ -1408,9 +1408,13 @@ Static Function FinishAplication() //  Static Function
       PostMessage( nHndReport, WM_CLOSE )
    end if
 
+   CursorWE()
+
+   ferase( "chekres.txt" )
+
    CheckRes()
 
-   CursorWE()
+   // winExec( "notepad checkres.txt" )
 
 Return nil
 

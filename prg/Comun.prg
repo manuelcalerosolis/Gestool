@@ -2891,6 +2891,47 @@ Return ( hHash )
 
 //----------------------------------------------------------------------------//
 
+Function readHashDictionary( hashTable, dbf )
+
+  local hash   := {=>}
+
+  hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldname( value ) ) ) ) ) } )
+
+Return ( hash )
+
+//----------------------------------------------------------------------------//
+
+Function writeHashDictionary( hashValue, hashTable, dbf )
+
+   local h
+   local value
+
+   for each h in hashValue
+      value     := getValueHashDictionary( h:__enumKey(), hashTable )
+      if value != nil
+         ( dbf )->( fieldput( ( dbf )->( fieldname( value ) ),  h:__enumValue() ) )
+      end if
+   next
+
+Return ( nil )
+
+//----------------------------------------------------------------------------//
+
+Function getValueHashDictionary( key, hashTable )
+
+   local n
+   local value
+
+   n  := hScan( hashTable, {|k,v,i| k == key } ) 
+   if n != 0
+      value   := haaGetValueAt( hashTable, n )
+   end if 
+
+Return ( value )
+
+//----------------------------------------------------------------------------//
+
+
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 

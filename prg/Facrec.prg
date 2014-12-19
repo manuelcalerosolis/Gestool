@@ -9915,6 +9915,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+
    oFr:SetMasterDetail( "Facturas rectificativas", "Lineas de facturas rectificativas",            {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Series de lineas de facturas rectificativas",  {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas rectificativas", "Incidencias de facturas rectificativas",       {|| ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac } )
@@ -9933,6 +9936,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Tipo de artículo",                   {|| ( dbfFacRecL )->cCodTip } )
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Ofertas",                            {|| ( dbfFacRecL )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Unidades de medición",               {|| ( dbfFacRecL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas rectificativas", "Impuestos especiales",               {|| ( dbfFacRecL )->cCodImp } )
 
    oFr:SetResyncPair(   "Facturas rectificativas", "Lineas de facturas rectificativas" )
    oFr:SetResyncPair(   "Facturas rectificativas", "Series de lineas de facturas rectificativas" )
@@ -9952,6 +9956,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Tipo de artículo" )
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de facturas rectificativas", "Impuestos especiales" )
 
 Return nil
 

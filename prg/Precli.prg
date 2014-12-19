@@ -5351,15 +5351,16 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
             */
 
             if !Empty( ( D():Articulos( nView ) )->cCodImp )
+
                aTmp[ _CCODIMP ]     := ( D():Articulos( nView ) )->cCodImp
 
                if aGet[ _NVALIMP ] != nil
-                  aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpPre[ _LIVAINC ], aTmp[ _NIVA ] ) )
+                  aGet[ _NVALIMP ]:cText( oNewImp:nValImp( aTmp[ _CCODIMP ], aTmpPre[ _LIVAINC ], aTmp[ _NIVA ] ) )
                else
-                  aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpPre[ _LIVAINC ], aTmp[ _NIVA ] )
+                  aTmp[ _NVALIMP ]  := oNewImp:nValImp( aTmp[ _CCODIMP ], aTmpPre[ _LIVAINC ], aTmp[ _NIVA ] )
                end if
 
-               aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
+               aTmp[ _LVOLIMP ]     := RetFld( aTmp[ _CCODIMP ], oNewImp:oDbf:cAlias, "lIvaVol" )
 
             end if
 
@@ -7933,6 +7934,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+
    oFr:SetMasterDetail( "Presupuestos", "Lineas de presupuestos",          {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
    oFr:SetMasterDetail( "Presupuestos", "Incidencias de presupuestos",     {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
    oFr:SetMasterDetail( "Presupuestos", "Documentos de presupuestos",      {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
@@ -7949,6 +7953,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",             {|| ( dbfPreCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de presupuestos", "Ofertas",               {|| ( dbfPreCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de presupuestos", "Unidades de medición",  {|| ( dbfPreCliL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",  {|| ( dbfPreCliL )->cCodImp } )
 
    oFr:SetResyncPair(   "Presupuestos", "Lineas de presupuestos" )
    oFr:SetResyncPair(   "Presupuestos", "Incidencias de presupuestos" )
@@ -7966,6 +7971,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de presupuestos", "Artículos" )
    oFr:SetResyncPair(   "Lineas de presupuestos", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de presupuestos", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de presupuestos", "Impuestos especiales" )
 
 Return nil
 

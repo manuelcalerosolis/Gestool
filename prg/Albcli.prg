@@ -8289,6 +8289,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ) )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+
    oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",             {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",   {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",        {|| ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb } )
@@ -8310,6 +8313,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",         {|| ( D():Get( "AlbCliL", nView ) )->cTipMov } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Ofertas",               {|| ( D():Get( "AlbCliL", nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",  {|| ( D():Get( "AlbCliL", nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",  {|| ( D():Get( "AlbCliL", nView ) )->cCodImp } )
 
    oFr:SetMasterDetail( "Lineas de albaranes", "SAT",                   {|| ( D():Get( "AlbCliL", nView ) )->cNumSat } )
 
@@ -8332,6 +8336,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de albaranes", "Tipo de venta" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de albaranes", "Impuestos especiales" )
 
    oFr:SetResyncPair(   "Lineas de albaranes", "SAT" )
 
