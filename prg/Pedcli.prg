@@ -17594,3 +17594,4 @@ Function sTotPedCli( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet )
 Return ( sTotal )
 
 //--------------------------------------------------------------------------//
+
