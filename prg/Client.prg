@@ -13319,6 +13319,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    if oDlg:nResult == IDOK
 
       if IsObject( uGet )
+         MsgInfo( ( D():Get( "Client", nView ) )->Cod, "uGet" )
          uGet:cText( ( D():Get( "Client", nView ) )->Cod )
          uGet:lValid()
       else
@@ -13326,8 +13327,12 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
       end if
 
       if IsObject( uGetName ) 
+         MsgInfo( ( D():Get( "Client", nView ) )->Titulo, "uGetName" )
          uGetName:cText( ( D():Get( "Client", nView ) )->Titulo )
       end if
+
+      msginfo( uGet:VarGet(), "uGet" )
+      msginfo( uGetName:VarGet(), "uGetName" )
 
    end if
 
