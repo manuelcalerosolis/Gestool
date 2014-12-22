@@ -5102,6 +5102,9 @@ CLASS D
 
    METHOD PedidosClientes( nView )              INLINE ( ::Get( "PedCliT", nView ) )
       METHOD PedidosClientesId( nView )         INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
+      METHOD hashPedidosClientesId( id, nView ) INLINE ( ::getHashRecordById( id, ::PedidosClientes( nView ), nView ) )
+      METHOD hashPedidosClientesBlank( id, nView ) ;
+                                                INLINE ( ::getHashRecordBlank( id, ::PedidosClientes( nView ), nView ) )
 
    METHOD PedidosClientesReservas( nView )      INLINE ( ::Get( "PedCliR", nView ) )
 
@@ -5625,6 +5628,25 @@ METHOD getHashRecordById( id, cDatabase, nView ) CLASS D
 RETURN ( hash ) 
 
 //---------------------------------------------------------------------------//
+
+METHOD getHashRecordBlank( id, cDatabase, nView ) CLASS D
+
+   local hash
+
+   ::GetStatus( cDatabase, nView )
+   
+   if ( ::Get( cDatabase, nView ) )->( dbgobottom() )      
+      ::Get( cDatabase, nView ) )->( dbskip() )
+      hash  := ::getHashRecord( cDatabase, nView )
+   end if 
+   
+   ::SetStatus( cDatabase, nView )
+
+RETURN ( hash ) 
+
+//---------------------------------------------------------------------------//
+
+
 
 METHOD getArrayRecordById( id, cDatabase, nView ) CLASS D
 
