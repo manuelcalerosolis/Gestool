@@ -182,6 +182,9 @@ CLASS TDataCenter
    METHOD ScanDataTmp( cDataTable )
    METHOD ScanObject()
 
+   METHOD getIdBlock( cDataTable )
+   METHOD getDictionary( cDataTable )   
+
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
    METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
 
@@ -1034,6 +1037,33 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
+METHOD getIdBlock( cDataTable )
+
+   local bId
+   local oTable
+
+   oTable         := ::ScanDataTable( cDataTable )
+   if !empty( oTable )
+      bId         := oTable:bId 
+   end if 
+
+Return ( bId )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDictionary( cDataTable )
+
+   local aDictionary
+   local oTable
+
+   oTable            := ::ScanDataTable( cDataTable )
+   if !empty( oTable )
+      aDictionary    := oTable:aDictionary 
+   end if 
+
+Return ( aDictionary )
+
+//---------------------------------------------------------------------------//
 
 METHOD ScanObject( cName ) CLASS TDataCenter
 
@@ -2910,6 +2940,8 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | mkPedCli( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxPedCli( cPath ) }
    oDataTable:bSyncFile    := {|| SynPedCli( cPatEmp() ) }
+   oDatatable:aDictionary  := hashDictionary( aItmPedCli() )
+   oDatatable:bId          := {|| Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2918,6 +2950,8 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliL.Cdx"
    oDataTable:cDescription := "Líneas de pedidos de clientes"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDatatable:aDictionary  := hashDictionary( aColPedCli() )
+   oDatatable:bId          := {|| Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -4765,6 +4799,8 @@ CLASS TDataTable
    DATA  bSyncFile   
    DATA  bCreateFile
    DATA  bCreateIndex   
+   DATA  aDictionary
+   DATA  bId
 
    METHOD Name()        INLINE ( ::cPath + ::cArea )
    METHOD NameTable()   INLINE ( ::cArea + ".Dbf" )
@@ -5016,6 +5052,13 @@ CLASS D
    METHOD CloseTmp( cAlias, nView )
 
    METHOD GetObject( cObject, nView )
+
+   METHOD getHashRecord( cDatabase, nView )
+   METHOD getHashRecordById( id, cDatabase, nView )
+   METHOD getArrayRecordById( id, cDatabase, nView )
+
+   METHOD getId( cDatabase, nView )          INLINE ( ( ::Get( cDatabase, nView ) )->( eval( TDataCenter():getIdBlock( cDatabase ) ) ) )
+   METHOD getDictionary( cDatabase )         INLINE ( TDataCenter():getDictionary( cDatabase ) )  
 
    // Presupuestos de clientes-------------------------------------------------
 
@@ -5567,6 +5610,54 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD getHashRecordById( id, cDatabase, nView ) CLASS D
+
+   local hash
+
+   ::GetStatus( cDatabase, nView )
+   
+   if ( ::Get( cDatabase, nView ) )->( dbSeekInOrd( id, 1 ) )      
+      hash  := ::getHashRecord( cDatabase, nView )
+   end if 
+   
+   ::SetStatus( cDatabase, nView )
+
+RETURN ( hash ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD getArrayRecordById( id, cDatabase, nView ) CLASS D
+
+   local array    := {}
+
+   ::GetStatus( cDatabase, nView )
+
+   ( ::Get( cDatabase, nView ) )->( ordSetFocus( 1 ) )
+
+   if ( ::Get( cDatabase, nView ) )->( dbSeek( id ) )  
+      while ( ::getId( cDatabase, nView ) == id ) .and. !( ::Get( cDatabase, nView ) )->( eof() )  
+         aAdd( array, ::getHashRecord( cDatabase, nView ) )
+         ( ::Get( cDatabase, nView ) )->( dbSkip() ) 
+      end while
+   end if 
+   
+   ::SetStatus( cDatabase, nView )
+
+RETURN ( array ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashRecord( cDataTable, nView ) CLASS D
+
+   local hash        := {=>}
+   local dbf         := ::Get( cDataTable, nView )   
+   local aDictionary := TDataCenter():getDictionary( cDataTable )
+
+   if !empty(aDictionary) .and. !empty(dbf)
+      hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
+   end if 
+
+RETURN ( hash )
 
 /*
    METHOD OpenTDbf( cDataTable, nView ) CLASS D

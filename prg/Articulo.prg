@@ -16828,7 +16828,7 @@ RETURN ( cReturn )
 
 static function lPresaveBrwSelArticulo( oBrwStock, lMsgVta )
 
-   if lMsgVta .and. oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nUnidades < 0
+   if lMsgVta .and. ( oBrwStock:nArrayAt > 0 ) .and. ( len( oBrwStock:aArrayData ) > oBrwStock:nArrayAt ) .and. oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:nUnidades < 0
       msginfo( "No hay stock suficiente para realizar la venta" )
       return .f.
    end if

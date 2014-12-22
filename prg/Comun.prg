@@ -2891,39 +2891,11 @@ Return ( hHash )
 
 //----------------------------------------------------------------------------//
 
-Function readHashDictionary( hashTable, dbf, Clave )
+Function readHashDictionary( hashTable, dbf )
 
   local hash      := {=>}
-  local hashLinea := {=>}
-  local nOrdAnt
 
-  //hEval( hashTable, {|key,value| MsgInfo( value, key ) } )
-
-  if Empty( Clave )
-
-    hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
-
-  else
-
-    nOrdAnt       := ( dbf )->( OrdSetFocus( 1 ) )
-
-    if ( dbf )->( dbSeek( Clave ) )
-
-      while Clave == ( dbf )->cSerPed + str( ( dbf )->nNumPed ) + ( dbf )->cSufPed .and. !( dbf )->( Eof() )
-
-        ?"Paso por aqui"
-
-        hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )      
-
-        ( dbf )->( dbSkip() )
-
-      end while
-
-    end if
-
-    ( dbf )->( OrdSetFocus( nOrdAnt ) )
-
-  end if  
+  hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
 
 Return ( hash )
 
@@ -2958,6 +2930,21 @@ Function getValueHashDictionary( key, hashTable )
 Return ( value )
 
 //----------------------------------------------------------------------------//
+
+function hashDictionary( aItems )
+
+   local aItem
+   local hash        := {=>}
+
+   for each aItem in aItems
+      if !Empty( aItem[6] )
+         hSet( hash, aItem[6], aItem[1] )      
+      end if   
+   next
+
+return ( hash )
+
+//---------------------------------------------------------------------------//
 
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
