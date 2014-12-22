@@ -2937,9 +2937,11 @@ function hashDictionary( aItems )
    local hash        := {=>}
 
    for each aItem in aItems
+      if aItem[2] != "M"
       if !Empty( aItem[6] )
          hSet( hash, aItem[6], aItem[1] )      
       end if   
+      end if
    next
 
 return ( hash )

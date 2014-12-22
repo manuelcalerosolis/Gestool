@@ -10,7 +10,7 @@
 #define _MENUITEM_                 "01056"
 
 /*
-Definici¢n de la base de datos de pedidos a clientes
+DefiniciÂ¢n de la base de datos de pedidos a clientes
 */
 
 #define _CSERPED                   1      //"CSERPED"
@@ -115,7 +115,7 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _NDTOTARIFA              100
 
 /*
-Definici¢n de la base de datos de lineas de detalle
+DefiniciÂ¢n de la base de datos de lineas de detalle
 */
 
 #define _CREF                      4      //   C     14     0
@@ -317,7 +317,7 @@ memvar nNumArt
 memvar nNumCaj
 
 static bEdtRec       := { |aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, cCodPre | EdtRec( aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, cCodPre ) }
-static bEdtDet       := { |aTmp, aGet, dbfPedCliL, oBrw, bWhen, bValid, nMode, aTmpPed | EdtDet( aTmp, aGet, dbfPedCliL, oBrw, bWhen, bValid, nMode, aTmpPed ) }
+static bEdtDet       := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpPed | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpPed ) }
 static bEdtRes       := { |aTmp, aGet, dbfPedCliR, oBrw, bWhen, bValid, nMode, aTmpLin | EdtRes( aTmp, aGet, dbfPedCliR, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc       := { |aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo       := { |aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed | EdtEnt( aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed ) }
@@ -466,10 +466,10 @@ static oMsgAlarm
 
 static bEdtInc             := { |aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 
-static aEstadoProduccion   := { "Producido", "En producción", "Pendiente de producción" }
+static aEstadoProduccion   := { "Producido", "En producciÃ³n", "Pendiente de producciÃ³n" }
 
 //---------------------------------------------------------------------------//
-//Comenzamos la parte de código que se compila para el ejecutable normal
+//Comenzamos la parte de cÃ³digo que se compila para el ejecutable normal
 //---------------------------------------------------------------------------//
 
 FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
@@ -519,10 +519,10 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    else
 
-      nTotPedCli( nNumPed, D():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp() )
+      nTotPedCli( nNumPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), dbfIva, dbfDiv, dbfFPago, nil, cDivEmp() )
       nPagPedCli( nNumPed, dbfPedCliP, dbfDiv, cDivEmp() )
 
-      ( dbfPedCliL )->( dbSeek( nNumPed ) )
+      ( D():PedidosClientesLineas( nView ) )->( dbSeek( nNumPed ) )
       ( dbfPedCliP )->( dbSeek( nNumPed ) )
       ( D():Clientes( nView )  )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODCLI ) )
       ( dbfAgent   )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODAGE ) )
@@ -532,7 +532,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       oTrans:oDbf:Seek( ( D():PedidosClientes( nView ) )->cCodTrn )
 
       private cDbf         := D():PedidosClientes( nView )
-      private cDbfCol      := dbfPedCliL
+      private cDbfCol      := D():PedidosClientesLineas( nView )
       private cDbfPag      := dbfPedCliP
       private cCliente     := D():Clientes( nView )
       private cDbfCli      := D():Clientes( nView )
@@ -553,7 +553,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       private cDbfPro      := dbfPro
       private cDbfTblPro   := dbfTblPro
 
-      private nTotPage     := nTotLPedCli( dbfPedCliL )
+      private nTotPage     := nTotLPedCli( D():PedidosClientesLineas( nView ) )
       private nVdv         := nVdvDiv
       private nVdvDivPed   := nVdvDiv
       private cPicUndPed   := cPicUnd
@@ -578,7 +578,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
          oInf:lAutoland    := .f.
          oInf:lFinish      := .f.
          oInf:lNoCancel    := .t.
-         oInf:bSkip        := {|| PedCliReportSkipper( dbfPedCliL ) }
+         oInf:bSkip        := {|| PedCliReportSkipper( D():PedidosClientesLineas( nView ) ) }
 
          oInf:oDevice:lPrvModal  := .t.
 
@@ -606,8 +606,8 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       if !Empty( oInf )
 
          ACTIVATE REPORT oInf ;
-            WHILE       ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == nNumPed .and. !( dbfPedCliL )->( Eof() ) );
-            FOR         ( !( dbfPedCliL )->lImpLin ) ;
+            WHILE       ( ( D():PedidosClientesLineas( nView ) )->cSerPed + Str( ( D():PedidosClientesLineas( nView ) )->nNumPed ) + ( D():PedidosClientesLineas( nView ) )->cSufPed == nNumPed .and. !( D():PedidosClientesLineas( nView ) )->( Eof() ) );
+            FOR         ( !( D():PedidosClientesLineas( nView ) )->lImpLin ) ;
             ON ENDPAGE  ( ePage( oInf, cCodDoc ) )
 
          if nDevice == IS_PRINTER
@@ -626,11 +626,11 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Static Function PedCliReportSkipper( dbfPedCliL )
+Static Function PedCliReportSkipper( cPedCliL )
 
-   ( dbfPedCliL )->( dbSkip() )
+   ( cPedCliL )->( dbSkip() )
 
-   nTotPage              += nTotLPedCli( dbfPedCliL )
+   nTotPage              += nTotLPedCli( cPedCliL )
 
 Return nil
 
@@ -698,8 +698,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Articulos( nView )
 
-      USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
+      D():PedidosClientesLineas( nView )
+
+      /*USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
+      SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE*/
 
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
@@ -742,10 +744,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-/*
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-*/
+
       USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
       SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
 
@@ -1060,14 +1059,14 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
       TITLE    "Pedidos de clientes" ;
-      PROMPT   "Número",;
+      PROMPT   "NÃºmero",;
                "Fecha",;
-               "Código",;
+               "CÃ³digo",;
                "Nombre",;
-               "Dirección",;
+               "DirecciÃ³n",;
                "Agente",;
                "Entrada",;
-               "Comercio electrónico";
+               "Comercio electrÃ³nico";
       MRU      "Clipboard_empty_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():PedidosClientes( nView ) );
@@ -1084,7 +1083,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión cerrada"
+         :cHeader          := "SesiÃ³n cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lCloPed }
@@ -1129,7 +1128,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Producción"
+         :cHeader          := "ProducciÃ³n"
          :nHeadBmpNo       := 4
          :bStrData         := {|| cEstadoProduccion( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) }
          :bBmpData         := {|| nEstadoProduccion( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) }
@@ -1153,7 +1152,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Comercio electrónico"
+         :cHeader          := "Comercio electrÃ³nico"
          :cSortOrder       := "lInternet"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
@@ -1206,7 +1205,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :cSortOrder       := "nNumPed"
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cSerPed + "/" + AllTrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) }
          :nWidth           := 80
@@ -1214,14 +1213,14 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Delegación"
+         :cHeader          := "DelegaciÃ³n"
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cSufPed }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Sesión"
+         :cHeader          := "SesiÃ³n"
          :bEditValue       := {|| Trans( ( D():PedidosClientes( nView ) )->cTurPed, "######" ) }
          :nWidth           := 40
          :lHide            := .t.
@@ -1252,14 +1251,14 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Situación"
+         :cHeader          := "SituaciÃ³n"
          :bEditValue       := {|| AllTrim( ( D():PedidosClientes( nView ) )->cSituac ) }
          :nWidth           := 80
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :cSortOrder       := "cCodCli"
          :bEditValue       := {|| AllTrim( ( D():PedidosClientes( nView ) )->cCodCli ) }
          :nWidth           := 70
@@ -1296,13 +1295,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Almacén"
+         :cHeader          := "AlmacÃ©n"
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodAlm }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Dirección"
+         :cHeader          := "DirecciÃ³n"
          :cSortOrder       := "cCodObr"
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodObr }
          :nWidth           := 50
@@ -1367,7 +1366,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Pendiente"
-         :bEditValue       := {|| ( nTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, nil, .f. ) - nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfPedCliP, dbfDiv, nil, .f. ) ) }
+         :bEditValue       := {|| ( nTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), dbfIva, dbfDiv, dbfFPago, nil, nil, .f. ) - nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfPedCliP, dbfDiv, nil, .f. ) ) }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1376,8 +1375,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Comisión agente"
-         :bEditValue       := {|| sTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), dbfPedCliL, dbfIva, dbfDiv ):nTotalAgente }
+         :cHeader          := "ComisiÃ³n agente"
+         :bEditValue       := {|| sTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), dbfIva, dbfDiv ):nTotalAgente }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1410,7 +1409,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Condición"
+         :cHeader          := "CondiciÃ³n"
          :bEditValue       := {|| AllTrim( ( D():PedidosClientes( nView ) )->cCondEnt ) }
          :nWidth           := 200
          :lHide            := .t.
@@ -1430,7 +1429,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       NOBORDER ;
       ACTION   ( oWndBrw:RecAdd() );
       ON DROP  ( oWndBrw:RecDup() );
-      TOOLTIP  "(A)ñadir";
+      TOOLTIP  "(A)Ã±adir";
       HOTKEY   "A";
       LEVEL    ACC_APPD
 
@@ -1513,7 +1512,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       NOBORDER ;
       MENU     This:Toggle() ;
       ACTION   ( GenPedCli( IS_MAIL ) ) ;
-      TOOLTIP  "Correo electrónico";
+      TOOLTIP  "Correo electrÃ³nico";
       LEVEL    ACC_IMPR
 
       lGenPedCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
@@ -1593,7 +1592,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-         	ACTION   ( ReplaceCreator( oWndBrw, dbfPedCliL, aColPedCli() ) ) ;
+         	ACTION   ( ReplaceCreator( oWndBrw, D():PedidosClientesLineas( nView ), aColPedCli() ) ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;
@@ -1637,7 +1636,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
             ACTION   ( EdtObras( ( D():PedidosClientes( nView ) )->cCodCli, ( D():PedidosClientes( nView ) )->cCodObr, dbfObrasT ) );
-            TOOLTIP  "Modificar dirección" ;
+            TOOLTIP  "Modificar direcciÃ³n" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "NOTEBOOK_USER1_" OF oWndBrw ;
@@ -1648,13 +1647,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( ( D():PedidosClientes( nView ) )->nEstado != 3, AlbCli( nil, nil, { "Pedido" => ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
-            TOOLTIP  "Generar albarán" ;
+            TOOLTIP  "Generar albarÃ¡n" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( Ped2AlbCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfAlbCliT ) );
-            TOOLTIP  "Modificar albarán" ;
+            TOOLTIP  "Modificar albarÃ¡n" ;
             FROM     oRotor ;
             CLOSED ;
 
@@ -1762,7 +1761,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       case nMode == APPD_MODE
 
          if !lCurSesion()
-            MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+            MsgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
             Return .f.
          end if
 
@@ -1792,7 +1791,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       case nMode == DUPL_MODE
 
          if !lCurSesion()
-            MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+            MsgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
             Return .f.
          end if
 
@@ -1809,7 +1808,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       case nMode == EDIT_MODE
 
          if aTmp[ _LCLOPED ] .and. !oUser():lAdministrador()
-            MsgStop( "El pedido está cerrado." )
+            MsgStop( "El pedido estÃ¡ cerrado." )
             Return .f.
          end if
 
@@ -2257,7 +2256,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Pr. Estado producción"
+         :cHeader             := "Pr. Estado producciÃ³n"
          :bStrData            := {|| "" }
          :bBmpData            := {|| Min( Max( ( dbfTmpLin )->nProduc + 1, 1 ), 3 ) }
          :nWidth              := 20
@@ -2267,7 +2266,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Número"
+         :cHeader             := "NÃºmero"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
          :cEditPicture        := "9999"
          :nWidth              := 54
@@ -2276,7 +2275,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Código"
+         :cHeader             := "CÃ³digo"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
          :nWidth              := 60
       end with
@@ -2289,20 +2288,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Descripción"
+         :cHeader             := "DescripciÃ³n"
          :bEditValue          := {|| if( Empty( ( dbfTmpLin )->cRef ), ( dbfTmpLin )->mLngDes, ( dbfTmpLin )->cDetalle ) }
          :nWidth              := 250
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Última venta"
+         :cHeader             := "Ãšltima venta"
          :bEditValue          := {|| Dtoc( ( dbfTmpLin )->dFecUltCom ) }
          :nWidth              := 80
          :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Última unidades"
+         :cHeader             := "Ãšltima unidades"
          :bEditValue          := {|| ( dbfTmpLin )->nUniUltCom }
          :cEditPicture        := MasUnd()
          :nWidth              := 60
@@ -2396,7 +2395,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Unidad de medición"
+         :cHeader             := "Unidad de mediciÃ³n"
          :bEditValue          := {|| ( dbfTmpLin )->cUnidad }
          :nWidth              := 24
       end with
@@ -3030,7 +3029,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ACTION   ( PrnEntregas( .t., dbfTmpPgo ) )
 
       /*
-      Impresión ( informa de si está imprimido o no y de cuando se imprimió )--
+      ImpresiÃ³n ( informa de si estÃ¡ imprimido o no y de cuando se imprimiÃ³ )--
       */
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
@@ -3049,7 +3048,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          OF       oFld:aDialogs[2]
 
       /*
-      Cancelado ( informa de si está cancelado o no, la fecha y el motivo de cancelación )
+      Cancelado ( informa de si estÃ¡ cancelado o no, la fecha y el motivo de cancelaciÃ³n )
       */
 
       REDEFINE CHECKBOX aGet[ _LCANCEL ] VAR aTmp[ _LCANCEL ] ;
@@ -3087,7 +3086,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       oBrwPgo:CreateFromResource( 530 )
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "Sesión cerrada"
+         :cHeader             := "SesiÃ³n cerrada"
          :bStrData            := {|| "" }
          :bEditValue          := {|| ( dbfTmpPgo )->lCloPgo }
          :nWidth              := 20
@@ -3101,7 +3100,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       end with
 
       with object ( oBrwPgo:AddCol() )
-         :cHeader             := "Sesión"
+         :cHeader             := "SesiÃ³n"
          :bEditValue          := {|| ( dbfTmpPgo )->cTurRec }
          :nWidth              := 60
          :lHide               := .t.
@@ -3198,7 +3197,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Código"
+            :cHeader          := "CÃ³digo"
             :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
             :nWidth           := 80
          end with
@@ -3216,7 +3215,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          end with
 
          with object ( oBrwInc:AddCol() )
-            :cHeader          := "Descripción"
+            :cHeader          := "DescripciÃ³n"
             :bEditValue       := {|| ( dbfTmpInc )->mDesInc }
             :nWidth           := 470
          end with
@@ -3476,7 +3475,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin,
 
       	while !( dbfTmpInc )->( Eof() )
          	if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
-            	MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
+            	MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "Â¡Incidencia!" )
          	end if
          	( dbfTmpInc )->( dbSkip() )
       	end while
@@ -3678,7 +3677,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
          WHEN     .f.;
          OF       oFld:aDialogs[ 1 ]
 
-      //Descripción
+      //DescripciÃ³n
 
       REDEFINE GET aGet[ ( dbfTmpPgo )->( FieldPos( "cDescrip" ) ) ] ;
          VAR      aTmp[ ( dbfTmpPgo )->( FieldPos( "cDescrip" ) ) ] ;
@@ -3711,7 +3710,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
          OF       oFld:aDialogs[ 1 ]
 
       /*
-      Pestaña de bancos--------------------------------------------------------
+      PestaÃ±a de bancos--------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpBancos ;
@@ -3875,17 +3874,17 @@ Static Function CreateMenuEntrega( aTmp, oDlg )
             MENUITEM    "&1. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), EdtCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), MsgStop( "Código de cliente vacío" ) ) )
+               ACTION   ( if( !Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), EdtCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
 
             MENUITEM    "&2. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), EdtCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
+               ACTION   ( if( !Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), EdtCli( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ], , 5 ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
 
             MENUITEM    "&3. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
-               ACTION   ( if( !Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), InfCliente( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), MsgStop( "Código de cliente vacío" ) ) );
+               ACTION   ( if( !Empty( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), InfCliente( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCli" ) ) ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) );
 
          ENDMENU
 
@@ -3938,22 +3937,22 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&3. Modificar cliente";
                MESSAGE  "Modificar la ficha del cliente" ;
                RESOURCE "User1_16";
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
 
             MENUITEM    "&4. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) )
 
             MENUITEM    "&5. Informe de cliente";
                MESSAGE  "Abrir el informe del cliente" ;
                RESOURCE "Info16";
-               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "CÃ³digo de cliente vacÃ­o" ) ) );
 
-            MENUITEM    "&6. Modificar dirección";
+            MENUITEM    "&6. Modificar direcciÃ³n";
                MESSAGE  "Modifica la obra del documento" ;
                RESOURCE "Worker16";
-               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
+               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "CÃ³digo de obra vacÃ­o" ) ) );
 
             SEPARATOR
 
@@ -3978,7 +3977,7 @@ Return ( oMenu )
 Edita las lineas de Detalle
 */
 
-STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode, aTmpPed )
+STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpPed )
 
    local oDlg
    local oFld
@@ -4109,7 +4108,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
    ( dbfAlbCliL )->( dbGoTop() )
 
    /*
-   Hacemos un Scope para saber qué facturas están vinculadas con este pedido---
+   Hacemos un Scope para saber quÃ© facturas estÃ¡n vinculadas con este pedido---
    */
 
    nOrdFacCliL          	:= ( dbfFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
@@ -4276,10 +4275,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      // Campos de las descripciones de la unidad de medición
+      // Campos de las descripciones de la unidad de mediciÃ³n
 
-      REDEFINE GET aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ] ;
-         VAR      aTmp[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ] ;
+      REDEFINE GET aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
+         VAR      aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
          ID       520 ;
          IDSAY    521 ;
          SPINNER ;
@@ -4288,10 +4287,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ] ;
-         VAR      aTmp[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ] ;
+      REDEFINE GET aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
+         VAR      aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
          ID       530 ;
          IDSAY    531 ;
          SPINNER ;
@@ -4300,10 +4299,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ] ;
-         VAR      aTmp[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ] ;
+      REDEFINE GET aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
+         VAR      aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
          ID       540 ;
          IDSAY    541 ;
          SPINNER ;
@@ -4312,7 +4311,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
 
       /*
       Tipo de impuestos
@@ -4679,7 +4678,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[ 2 ]
 
       /*
-      Definición de familias y grupos de familias------------------------------
+      DefiniciÃ³n de familias y grupos de familias------------------------------
       */
 
       REDEFINE GET aGet[ _CGRPFAM ] VAR aTmp[ _CGRPFAM ] ;
@@ -4747,7 +4746,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[ 2 ]
 
       /*
-      Tercera caja de diálogo--------------------------------------------------
+      Tercera caja de diÃ¡logo--------------------------------------------------
       */
 
       REDEFINE SAY oTotUni PROMPT nTotNPedCli( aTmp ) ;
@@ -4787,7 +4786,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       end with
 
       with object ( oBrwAlbPrv:AddCol() )
-         :cHeader             := "Albarán"
+         :cHeader             := "AlbarÃ¡n"
          :bEditValue          := {|| AllTrim( ( dbfAlbPrvL )->cSerAlb ) + "/" + AllTrim( Str( ( dbfAlbPrvL )->nNumAlb ) ) + "/" + AllTrim( ( dbfAlbPrvL )->cSufAlb ) }
          :nWidth              := 80
       end with
@@ -4830,7 +4829,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       end with
 
       with object ( oBrwAlbPrv:AddCol() )
-         :cHeader             := "UM. Unidad de medición"
+         :cHeader             := "UM. Unidad de mediciÃ³n"
          :bEditValue          := {|| ( dbfAlbPrvL )->cUnidad }
          :nWidth              := 25
          :lHide               := .t.
@@ -4845,7 +4844,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       oBrwAlbPrv:bLDblClick     := {|| EdtAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ), oBrwAlbPrv:Refresh(), oTotEnt:Refresh(), oTotPdt:Refresh() }
 
       /*
-      Cuarta caja de diálogo---------------------------------------------------
+      Cuarta caja de diÃ¡logo---------------------------------------------------
       */
 
       REDEFINE SAY oTot[ 4 ] PROMPT nTotRPedCli( , aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) ;
@@ -4934,7 +4933,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       end if
 
       /*
-      Quinta caja de diálogo---------------------------------------------------
+      Quinta caja de diÃ¡logo---------------------------------------------------
       */
 
       REDEFINE SAY oTot[ 1 ] PROMPT nTotNPedCli( aTmp ) ;
@@ -4974,7 +4973,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       end with
 
       with object ( oBrwAlbCli:AddCol() )
-         :cHeader             := "Albarán"
+         :cHeader             := "AlbarÃ¡n"
          :bEditValue          := {|| ( dbfAlbCliL )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliL )->nNumAlb ) ) + "/" + ( dbfAlbCliL )->cSufAlb }
          :nWidth              := 80
       end with
@@ -5016,7 +5015,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       end with
 
       with object ( oBrwAlbCli:AddCol() )
-         :cHeader             := "UM. Unidad de medición"
+         :cHeader             := "UM. Unidad de mediciÃ³n"
          :bEditValue          := {|| ( dbfAlbCliL )->cUnidad }
          :nWidth              := 25
          :lHide               := .t.
@@ -5031,7 +5030,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       oBrwAlbCli:bLDblClick     := {|| ZooAlbCli( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb ), oBrwAlbCli:Refresh() }
 
       /*
-      Relación de facturas-----------------------------------------------------
+      RelaciÃ³n de facturas-----------------------------------------------------
       */
 
       oBrwFacCli                 := IXBrowse():New( oFld:aDialogs[5] )
@@ -5095,7 +5094,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       end with
 
       with object ( oBrwFacCli:AddCol() )
-         :cHeader             := "UM. Unidad de medición"
+         :cHeader             := "UM. Unidad de mediciÃ³n"
          :bEditValue          := {|| ( dbfFacCliL )->cUnidad }
          :nWidth              := 25
          :lHide               := .t.
@@ -5110,7 +5109,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       oBrwFacCli:bLDblClick   := {|| ZooFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ), oBrwFacCli:Refresh() }
 
       /*
-      Sexta caja de diálogo----------------------------------------------------
+      Sexta caja de diÃ¡logo----------------------------------------------------
       */
 
       REDEFINE CHECKBOX aGet[_LANULADO] VAR aTmp[_LANULADO] ;
@@ -5134,7 +5133,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[6]
 
       /*
-      Septima caja de diálogo--------------------------------------------------
+      Septima caja de diÃ¡logo--------------------------------------------------
       */
 
       REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
@@ -5181,7 +5180,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE BUTTON ;
          ID       9 ;
          OF       oDlg ;
-         ACTION   ( ChmHelp( "Añadir_v" ) )
+         ACTION   ( ChmHelp( "AÃ±adir_v" ) )
 
       if nMode != ZOOM_MODE
 
@@ -5197,7 +5196,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       end if
 
-      oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Añadir_v" ) } )
+      oDlg:AddFastKey( VK_F1, {|| ChmHelp( "AÃ±adir_v" ) } )
 
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli ),;
                            if( !Empty( oBtnSer ), oBtnSer:Hide(), ),;
@@ -5674,13 +5673,13 @@ STATIC FUNCTION DelDetalle( cNumPed )
 
    // Lineas ------------------------------------------------------------------
 
-   if ( dbfPedCliL )->( dbSeek( cNumPed ) )
-      while ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cNumPed
-         if dbLock( dbfPedCliL )
-            ( dbfPedCliL )->( dbDelete() )
-            ( dbfPedCliL )->( dbUnLock() )
+   if ( D():PedidosClientesLineas( nView ) )->( dbSeek( cNumPed ) )
+      while ( D():PedidosClientesLineas( nView ) )->cSerPed + Str( ( D():PedidosClientesLineas( nView ) )->nNumPed ) + ( D():PedidosClientesLineas( nView ) )->cSufPed == cNumPed
+         if dbLock( D():PedidosClientesLineas( nView ) )
+            ( D():PedidosClientesLineas( nView ) )->( dbDelete() )
+            ( D():PedidosClientesLineas( nView ) )->( dbUnLock() )
          end if
-         ( dbfPedCliL )->( dbSkip() )
+         ( D():PedidosClientesLineas( nView ) )->( dbSkip() )
       end while
    end if
 
@@ -5720,7 +5719,7 @@ STATIC FUNCTION ChgSta( oBrw )
    local lQuit
    local nOrdAnt
 
-   if ApoloMsgNoYes( "Al cambiar el estado perderá la referencia a cualquier documento que esté asociado.", "¿Desea cambiarlo?" )
+   if ApoloMsgNoYes( "Al cambiar el estado perderÃ¡ la referencia a cualquier documento que estÃ© asociado.", "Â¿Desea cambiarlo?" )
 
       for each nRec in ( oBrw:aSelected )
 
@@ -5750,7 +5749,7 @@ STATIC FUNCTION ChgSta( oBrw )
          if lQuit
 
             /*
-            Borramos la referencia a cualquier cabecera de albarán asociado-------
+            Borramos la referencia a cualquier cabecera de albarÃ¡n asociado-------
             */
 
             nRecAlb  := ( dbfAlbCliT )->( RecNo() )
@@ -5769,7 +5768,7 @@ STATIC FUNCTION ChgSta( oBrw )
             ( dbfAlbCliT )->( dbGoTo( nRecAlb ) )
 
             /*
-            Borramos la referencia a cualquier linea de albarán asociado-------
+            Borramos la referencia a cualquier linea de albarÃ¡n asociado-------
             */
 
             nRecAlb  := ( dbfAlbCliL )->( RecNo() )
@@ -5807,7 +5806,7 @@ STATIC FUNCTION ChgSta( oBrw )
             ( dbfFacCliT )->( dbGoTo( nRecAlb ) )
 
             /*
-            Borramos la referencia a cualquier linea de albarán asociado-------
+            Borramos la referencia a cualquier linea de albarÃ¡n asociado-------
             */
 
             nRecAlb  := ( dbfFacCliL )->( RecNo() )
@@ -5895,144 +5894,6 @@ return ( bGen )
 
 //----------------------------------------------------------------------------//
 
-/*
-static function ImpRec()
-
-   local oDlg
-   local oPag
-   local oBrwEmp
-   local oBrwPed
-   local oBtnPev
-   local oBtnNxt
-   local oBtnPrv
-   local dbfEmp
-   local cPatEmp
-   local cCodEmp  := "02"
-
-   MsgGet( "Seleccione", "Empresa origen :", @cCodEmp )
-
-   cPatEmp        := "EMP" + cCodEmp
-
-   USE ( cPatEmp + "\PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedT ) )
-   SET ADSINDEX TO ( cPatEmp + "\PEDCLIT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp + "\PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedL ) )
-   SET ADSINDEX TO ( cPatEmp + "\PEDCLIL.CDX" ) ADDITIVE
-
-   DEFINE DIALOG oDlg RESOURCE "ASS_LIQAGE" TITLE "Asistente para importar pedidos"
-
-   REDEFINE PAGES oPag ID 110 OF oDlg DIALOGS "IMPREC_1"
-
-   REDEFINE LISTBOX oBrwPed ;
-         FIELDS      (dbfPedT)->CSERPED + "/" + Str( (dbfPedT)->NNUMPED ) + "/" + (dbfPedT)->CSUFPED,;
-                     Trans( (dbfPedT)->cTurPed, "######" ),;
-                     Dtoc( (dbfPedT)->DFECPED ),;
-                     (dbfPedT)->CCODCLI + Space(1) + (dbfPedT)->CNOMCLI,;
-                     (dbfPedT)->cCodAge,;
-                     (dbfPedT)->cCodRut,;
-                     (dbfPedT)->cCodAlm,;
-                     (dbfPedT)->cCodObr,;
-                     hBmpDiv( (dbfPedT)->CDIVPED, dbfDiv, oBandera ),;
-                     nTotPedCli( (dbfPedT)->CSERPED + Str( (dbfPedT)->NNUMPED ) + (dbfPedT)->CSUFPED, dbfPedT, dbfPedL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) ;
-         HEAD        "Número",;
-                     "Sesión",;
-                     "Fecha",;
-                     "Cliente",;
-                     "Agente" ,;
-                     "Ruta" ,;
-                     "Almacen",;
-                     "Dirección" ,;
-                     "Div.",;
-                     "Importe " + cDivEmp();
-         FIELDSIZES  80,;
-                     40,;
-                     80,;
-                     220,;
-                     80,;
-                     80,;
-                     80,;
-                     80,;
-                     25,;
-                     100 ;
-         ID          100 ;
-         ALIAS       ( dbfPedT ) ;
-         OF          oPag:aDialogs[ 1 ]
-
-         oBrwPed:aJustify  := {  .f., .t., .f., .f., .f., .f., .f., .f., .f., .t. }
-
-
-   REDEFINE BUTTON oBtnPrv ;                          // Boton de Anterior
-         ID          401 ;
-         OF          oDlg ;
-         ACTION      ( IntBtnPrv( oPag, oBtnPrv, oBtnNxt, oDlg, oBrwPed, dbfEmp ) )
-
-   REDEFINE BUTTON oBtnNxt ;                          // Boton de Siguiente
-         ID          402 ;
-         OF          oDlg ;
-         ACTION      ( IntBtnNxt( oPag, oBtnPrv, oBtnNxt, oDlg, oBrwPed, dbfEmp ) )
-
-   REDEFINE BUTTON ;                                  // Boton de salida
-         ID          403 ;
-         OF          oDlg ;
-         ACTION      ( oDlg:end() )
-
-   ACTIVATE DIALOG oDlg CENTER ON INIT ( oBtnPrv:Hide() )
-
-   CLOSE ( dbfPedT )
-   CLOSE ( dbfPedL )
-
-RETURN ( oDlg:nResult == IDOK )
-
-//--------------------------------------------------------------------------//
-
-static function IntBtnPrv( oPag, oBtnPrv, oBtnNxt, oDlg, oBrw, dbfEmp )
-
-return nil
-
-//---------------------------------------------------------------------------//
-
-static function IntBtnNxt( oPag, oBtnPrv, oBtnNxt, oDlg, oBrw, dbfEmp )
-
-   local nNumPed
-   local cSerPed     := "A"
-   local aTabla
-
-   MsgGet( "Seleccione", "Serie destino :", @cSerPed )
-
-   nNumPed           := nNewDoc( cSerPed, D():PedidosClientes( nView ), "NPEDCLI" )
-
-   aTabla            := DBScatter( dbfPedT )
-   aTabla[_CSERPED]  := cSerPed
-   aTabla[_NNUMPED]  := nNumPed
-   ( D():PedidosClientes( nView ) )->( dbAppend() )
-   dbGather( aTabla, D():PedidosClientes( nView ) )
-
-   if ( dbfPedL )->( dbSeek( ( dbfPedT )->CSERPED + Str( ( dbfPedT )->NNUMPED ) + ( dbfPedT )->CSUFPED ) )
-
-      while ( dbfPedL )->CSERPED + Str( ( dbfPedL )->NNUMPED ) + ( dbfPedL )->CSUFPED == ( dbfPedT )->CSERPED + Str( ( dbfPedT )->NNUMPED ) + ( dbfPedT )->CSUFPED .and. !( dbfPedL )->( eof() )
-
-         aTabla            := DBScatter( dbfPedL )
-         aTabla[_CSERPED]  := cSerPed
-         aTabla[_NNUMPED]  := nNumPed
-
-         ( dbfPedCliL )->( dbAppend() )
-         dbGather( aTabla, dbfPedCliL )
-
-         ( dbfPedL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   msginfo( nNumPed, "Nuevo pedido importado" )
-
-   oDlg:End()
-
-return nil
-
-//---------------------------------------------------------------------------//
-*/
-
 STATIC FUNCTION RecPedCli( aTmpPed )
 
    local nDtoAge
@@ -6042,10 +5903,10 @@ STATIC FUNCTION RecPedCli( aTmpPed )
    local cCodFam
    local hAtipica
 
-   if !ApoloMsgNoYes(   "¡Atención!,"                                      + CRLF + ;
-                        "todos los precios se recalcularán en función de"  + CRLF + ;
+   if !ApoloMsgNoYes(   "Â¡AtenciÃ³n!,"                                      + CRLF + ;
+                        "todos los precios se recalcularÃ¡n en funciÃ³n de"  + CRLF + ;
                         "los valores en las bases de datos.",;
-                        "¿Desea proceder?" )
+                        "Â¿Desea proceder?" )
       return nil
    end if
 
@@ -6133,8 +5994,8 @@ STATIC FUNCTION RecPedCli( aTmpPed )
             end if
 
             /*
-            Descuento de promoci¢n, esta funci¢n comprueba si existe y si es
-            asi devuelve el descunto de la promoci¢n.
+            Descuento de promociÂ¢n, esta funciÂ¢n comprueba si existe y si es
+            asi devuelve el descunto de la promociÂ¢n.
             */
 
             nImpOfe     := RetDtoPrm( ( dbfTmpLin )->cRef, cCodFam, aTmpPed[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpPed[ _DFECPED ], dbfTarPreL )
@@ -6322,11 +6183,11 @@ Static Function DesgPnt( cCodArt, aTmp, nTarifa, oPreDiv, oCosDiv, nMode )
    local nIncPnt     := 0
 
    /*
-   Comprobamos que no esté vacío el artículo
+   Comprobamos que no estÃ© vacÃ­o el artÃ­culo
    */
 
    if Empty( cCodArt )
-      MsgInfo( "Debe seleccinar un artículo", "Código vacío" )
+      MsgInfo( "Debe seleccinar un artÃ­culo", "CÃ³digo vacÃ­o" )
       return .f.
    end if
 
@@ -6434,11 +6295,11 @@ Static Function PedCliNotas()
       end if
 
       if !Empty( ( D():Clientes( nView ) )->Telefono )
-         cObserv  += "Télefono : " + Rtrim( ( D():Clientes( nView ) )->Telefono ) + Space( 1 )
+         cObserv  += "TÃ©lefono : " + Rtrim( ( D():Clientes( nView ) )->Telefono ) + Space( 1 )
       end if
 
       if !Empty( ( D():Clientes( nView ) )->Movil )
-         cObserv  += "Móvil : " + Rtrim( ( D():Clientes( nView ) )->Movil ) + Space( 1 )
+         cObserv  += "MÃ³vil : " + Rtrim( ( D():Clientes( nView ) )->Movil ) + Space( 1 )
       end if
 
       if !Empty( ( D():Clientes( nView ) )->Fax )
@@ -6454,7 +6315,7 @@ Static Function PedCliNotas()
 Return ( nil )
 
 //---------------------------------------------------------------------------//
-/*Esta funcion se usa para lanzar el diálogo para imprimir o visualizar las entregas a cuenta*/
+/*Esta funcion se usa para lanzar el diÃ¡logo para imprimir o visualizar las entregas a cuenta*/
 
 STATIC FUNCTION PrnEntregas( lPrint, dbfPedCliP )
 
@@ -6889,14 +6750,14 @@ STATIC FUNCTION DupPedido( cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfPedCliL )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) )
+   if ( D():PedidosClientesLineas( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) )
 
-      while ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed == ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed .and. ;
-            !( dbfPedCliL )->( Eof() )
+      while D():PedidosClientesId( nView ) == D():PedidosClientesLineasId( nView ) .and. ;
+            !( D():PedidosClientesLineas( nView ) )->( Eof() )
 
-            PedRecDup( dbfPedCliL, ( D():PedidosClientes( nView ) )->cSerPed, nNewNumPed, ( D():PedidosClientes( nView ) )->cSufPed, .f. )
+            PedRecDup( D():PedidosClientesLineas( nView ), ( D():PedidosClientes( nView ) )->cSerPed, nNewNumPed, ( D():PedidosClientes( nView ) )->cSufPed, .f. )
 
-         ( dbfPedCliL )->( dbSkip() )
+         ( D():PedidosClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -6972,72 +6833,72 @@ STATIC FUNCTION ValidaMedicion( aTmp, aGet )
       if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
          if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-            if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+            if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
-               aTmp[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
+               aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
             end if
          else
-            if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
-               aTmp[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]  := 0
+               aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-            if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+            if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
-               aTmp[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
+               aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
             end if
 
          else
-            if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
-                 aTmp[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]  := 0
+                 aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-            if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+            if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
-               aTmp[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
+               aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
             end if
          else
-            if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
-               aTmp[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]  := 0
+               aTmp[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := 0
             end if
          end if
 
       else
 
-         if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ] )
-            aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-            aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+            aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ] )
-            aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-            aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+            aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ] )
-            aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-            aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+            aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
          end if
 
       end if
@@ -7325,7 +7186,7 @@ Method Dialog() CLASS TPedidosClientes2PedidosProveedor
       end with
 
       with object ( ::oBrw:AddCol() )
-         :cHeader          := "Código"
+         :cHeader          := "CÃ³digo"
          :bEditValue       := {|| ( dbfTmpPedLin )->cRef }
          :nWidth           := 70
       end with
@@ -7369,7 +7230,7 @@ Method Dialog() CLASS TPedidosClientes2PedidosProveedor
       end with
 
       with object ( ::oBrw:AddCol() )
-         :cHeader          := "Stk. físico"
+         :cHeader          := "Stk. fÃ­sico"
          :bEditValue       := {|| ( dbfTmpPedLin )->nStkFis }
          :cEditPicture     := MasUnd()
          :nWidth           := 60
@@ -7550,46 +7411,46 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
 
    if !lErrors
 
-      ( dbfPedCliL )->( dbGoTop() )
-      while !( dbfPedCliL )->( Eof() )
+      ( D():PedidosClientesLineas( nView ) )->( dbGoTop() )
+      while !( D():PedidosClientesLineas( nView ) )->( Eof() )
 
-         if ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == ::cSerie + Str( ::nNumero ) + ::cSufijo .and. nTotNPedCli( dbfPedCliL ) != 0
+         if ( D():PedidosClientesLineas( nView ) )->cSerPed + Str( ( D():PedidosClientesLineas( nView ) )->nNumPed ) + ( D():PedidosClientesLineas( nView ) )->cSufPed == ::cSerie + Str( ::nNumero ) + ::cSufijo .and. nTotNPedCli( D():PedidosClientesLineas( nView ) ) != 0
 
             ( dbfTmpPedLin )->( dbAppend() )
 
             ( dbfTmpPedLin )->lShow    	:= .t.
             ( dbfTmpPedLin )->lSelArt  	:= .t.
-            ( dbfTmpPedLin )->cRef     	:= ( dbfPedCliL )->cRef
-            ( dbfTmpPedLin )->cDetalle 	:= ( dbfPedCliL )->cDetalle
-            ( dbfTmpPedLin )->mLngDes 		:= ( dbfPedCliL )->mLngDes
-            ( dbfTmpPedLin )->cCodPrv  	:= ( dbfPedCliL )->cCodPrv
-            ( dbfTmpPedLin )->cCodPr1  	:= ( dbfPedCliL )->cCodPr1
-            ( dbfTmpPedLin )->cCodPr2  	:= ( dbfPedCliL )->cCodPr2
-            ( dbfTmpPedLin )->cValPr1  	:= ( dbfPedCliL )->cValPr1
-            ( dbfTmpPedLin )->cValPr2  	:= ( dbfPedCliL )->cValPr2
-            ( dbfTmpPedLin )->nNumUni  	:= ( dbfPedCliL )->nUniCaja
-            ( dbfTmpPedLin )->nNumCaj  	:= ( dbfPedCliL )->nCanPed
-            ( dbfTmpPedLin )->nStkFis  	:= oStock:nTotStockAct( ( dbfPedCliL )->cRef, , , , , RetFld( ( dbfPedCliL )->cRef, D():Articulos( nView ), "lKitArt" ), RetFld( ( dbfPedCliL )->cRef, D():Articulos( nView ), "nKitStk" ) )
-            ( dbfTmpPedLin )->nStkDis  	:= oStock:nTotStockAct( ( dbfPedCliL )->cRef, , , , , RetFld( ( dbfPedCliL )->cRef, D():Articulos( nView ), "lKitArt" ), RetFld( ( dbfPedCliL )->cRef, D():Articulos( nView ), "nKitStk" ) ) - nTotReserva( ( dbfPedCliL )->cRef )
-            ( dbfTmpPedLin )->nIva     	:= ( dbfPedCliL )->nIva
-            ( dbfTmpPedLin )->nReq     	:= ( dbfPedCliL )->nReq
-            ( dbfTmpPedLin )->nDto     	:= ( dbfPedCliL )->nDto
-            ( dbfTmpPedLin )->nDtoPrm  	:= ( dbfPedCliL )->nDtoPrm
-            ( dbfTmpPedLin )->cUniDad  	:= ( dbfPedCliL )->cUniDad
-            ( dbfTmpPedLin )->lLote    	:= ( dbfPedCliL )->lLote
-            ( dbfTmpPedLin )->nLote    	:= ( dbfPedCliL )->nLote
-            ( dbfTmpPedLin )->cLote    	:= ( dbfPedCliL )->cLote
-            ( dbfTmpPedLin )->mObsLin  	:= ( dbfPedCliL )->mObsLin
-            ( dbfTmpPedLin )->cRefPrv  	:= ( dbfPedCliL )->cRefPrv
-            ( dbfTmpPedLin )->cUnidad  	:= ( dbfPedCliL )->cUnidad
-            ( dbfTmpPedLin )->nMedUno  	:= ( dbfPedCliL )->nMedUno
-            ( dbfTmpPedLin )->nMedDos  	:= ( dbfPedCliL )->nMedDos
-            ( dbfTmpPedLin )->nMedTre  	:= ( dbfPedCliL )->nMedTre
-            ( dbfTmpPedLin )->nPreDiv  	:= nCosto( ( dbfPedCliL )->cRef, D():Articulos( nView ), dbfKit, .f., , dbfDiv )
+            ( dbfTmpPedLin )->cRef     	:= ( D():PedidosClientesLineas( nView ) )->cRef
+            ( dbfTmpPedLin )->cDetalle 	:= ( D():PedidosClientesLineas( nView ) )->cDetalle
+            ( dbfTmpPedLin )->mLngDes 		:= ( D():PedidosClientesLineas( nView ) )->mLngDes
+            ( dbfTmpPedLin )->cCodPrv  	:= ( D():PedidosClientesLineas( nView ) )->cCodPrv
+            ( dbfTmpPedLin )->cCodPr1  	:= ( D():PedidosClientesLineas( nView ) )->cCodPr1
+            ( dbfTmpPedLin )->cCodPr2  	:= ( D():PedidosClientesLineas( nView ) )->cCodPr2
+            ( dbfTmpPedLin )->cValPr1  	:= ( D():PedidosClientesLineas( nView ) )->cValPr1
+            ( dbfTmpPedLin )->cValPr2  	:= ( D():PedidosClientesLineas( nView ) )->cValPr2
+            ( dbfTmpPedLin )->nNumUni  	:= ( D():PedidosClientesLineas( nView ) )->nUniCaja
+            ( dbfTmpPedLin )->nNumCaj  	:= ( D():PedidosClientesLineas( nView ) )->nCanPed
+            ( dbfTmpPedLin )->nStkFis  	:= oStock:nTotStockAct( ( D():PedidosClientesLineas( nView ) )->cRef, , , , , RetFld( ( D():PedidosClientesLineas( nView ) )->cRef, D():Articulos( nView ), "lKitArt" ), RetFld( ( D():PedidosClientesLineas( nView ) )->cRef, D():Articulos( nView ), "nKitStk" ) )
+            ( dbfTmpPedLin )->nStkDis  	:= oStock:nTotStockAct( ( D():PedidosClientesLineas( nView ) )->cRef, , , , , RetFld( ( D():PedidosClientesLineas( nView ) )->cRef, D():Articulos( nView ), "lKitArt" ), RetFld( ( D():PedidosClientesLineas( nView ) )->cRef, D():Articulos( nView ), "nKitStk" ) ) - nTotReserva( ( D():PedidosClientesLineas( nView ) )->cRef )
+            ( dbfTmpPedLin )->nIva     	:= ( D():PedidosClientesLineas( nView ) )->nIva
+            ( dbfTmpPedLin )->nReq     	:= ( D():PedidosClientesLineas( nView ) )->nReq
+            ( dbfTmpPedLin )->nDto     	:= ( D():PedidosClientesLineas( nView ) )->nDto
+            ( dbfTmpPedLin )->nDtoPrm  	:= ( D():PedidosClientesLineas( nView ) )->nDtoPrm
+            ( dbfTmpPedLin )->cUniDad  	:= ( D():PedidosClientesLineas( nView ) )->cUniDad
+            ( dbfTmpPedLin )->lLote    	:= ( D():PedidosClientesLineas( nView ) )->lLote
+            ( dbfTmpPedLin )->nLote    	:= ( D():PedidosClientesLineas( nView ) )->nLote
+            ( dbfTmpPedLin )->cLote    	:= ( D():PedidosClientesLineas( nView ) )->cLote
+            ( dbfTmpPedLin )->mObsLin  	:= ( D():PedidosClientesLineas( nView ) )->mObsLin
+            ( dbfTmpPedLin )->cRefPrv  	:= ( D():PedidosClientesLineas( nView ) )->cRefPrv
+            ( dbfTmpPedLin )->cUnidad  	:= ( D():PedidosClientesLineas( nView ) )->cUnidad
+            ( dbfTmpPedLin )->nMedUno  	:= ( D():PedidosClientesLineas( nView ) )->nMedUno
+            ( dbfTmpPedLin )->nMedDos  	:= ( D():PedidosClientesLineas( nView ) )->nMedDos
+            ( dbfTmpPedLin )->nMedTre  	:= ( D():PedidosClientesLineas( nView ) )->nMedTre
+            ( dbfTmpPedLin )->nPreDiv  	:= nCosto( ( D():PedidosClientesLineas( nView ) )->cRef, D():Articulos( nView ), dbfKit, .f., , dbfDiv )
 
          end if
 
-         ( dbfPedCliL )->( dbSkip() )
+         ( D():PedidosClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -7922,7 +7783,7 @@ Method DestroyLines( lPrint ) CLASS TPedidosClientes2PedidosProveedor
    DEFAULT lPrint    := .f.
 
    /*
-   Impresión de pedidos de proveedor-------------------------------------------
+   ImpresiÃ³n de pedidos de proveedor-------------------------------------------
 	*/
 
    if lPrint
@@ -8208,7 +8069,7 @@ Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
          oSayTrn:cText( oTrans:oDbf:cNomTrn )
          oGetKgs:cText( oTrans:oDbf:nKgsTrn )
       else
-         msgStop( "Código de transportista no encontrado." )
+         msgStop( "CÃ³digo de transportista no encontrado." )
          Return .f.
       end if
 
@@ -8233,7 +8094,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Pedidos", ( D():PedidosClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Pedidos", cItemsToReport( aItmPedCli() ) )
 
-   oFr:SetWorkArea(     "Lineas de pedidos", ( dbfPedCliL )->( Select() ) )
+   oFr:SetWorkArea(     "Lineas de pedidos", ( D():PedidosClientesLineas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de pedidos", cItemsToReport( aColPedCli() ) )
 
    oFr:SetWorkArea(     "Incidencias de pedidos", ( dbfPedCliI )->( Select() ) )
@@ -8266,14 +8127,14 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
    oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
 
-   oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
+   oFr:SetWorkArea(     "ArtÃ­culos", ( D():Articulos( nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "ArtÃ­culos", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidades de mediciÃ³n",  oUndMedicion:Select() )
+   oFr:SetFieldAliases( "Unidades de mediciÃ³n",  cObjectsToReport( oUndMedicion:oDbf ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
@@ -8294,10 +8155,10 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Pedidos", "Transportistas",                    {|| ( D():PedidosClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Pedidos", "Usuarios",                        	{|| ( D():PedidosClientes( nView ) )->cCodUsr } )
 
-   oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( dbfPedCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de pedidos", "Ofertas",                 {|| ( dbfPedCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de pedidos", "Unidades de medición",    {|| ( dbfPedCliL )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",    {|| ( dbfPedCliL )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "ArtÃ­culos",               {|| ( D():PedidosClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Ofertas",                 {|| ( D():PedidosClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Unidades de mediciÃ³n",    {|| ( D():PedidosClientesLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",    {|| ( D():PedidosClientesLineas( nView ) )->cCodImp } )
 
    oFr:SetResyncPair( "Pedidos", "Lineas de pedidos" )
    oFr:SetResyncPair( "Pedidos", "Incidencias de pedidos" )
@@ -8312,9 +8173,9 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair( "Pedidos", "Transportistas" )
    oFr:SetResyncPair( "Pedidos", "Usuarios" )
 
-   oFr:SetResyncPair( "Lineas de pedidos", "Artículos" )
+   oFr:SetResyncPair( "Lineas de pedidos", "ArtÃ­culos" )
    oFr:SetResyncPair( "Lineas de pedidos", "Ofertas" )
-   oFr:SetResyncPair( "Lineas de pedidos", "Unidades de medición" )
+   oFr:SetResyncPair( "Lineas de pedidos", "Unidades de mediciÃ³n" )
    oFr:SetResyncPair( "Lineas de pedidos", "Impuestos especiales" )
 
 Return nil
@@ -8327,7 +8188,7 @@ Static Function VariableReport( oFr )
    oFr:DeleteCategory(  "Lineas de Pedidos" )
 
    /*
-   Creación de variables----------------------------------------------------
+   CreaciÃ³n de variables----------------------------------------------------
    */
 
    oFr:AddVariable(     "Pedidos",             "Total bruto",                         "GetHbVar('nTotBrt')" )
@@ -8340,10 +8201,10 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
    oFr:AddVariable(     "Pedidos",             "Total " + cImp(),                           "GetHbVar('nTotIva')" )
    oFr:AddVariable(     "Pedidos",             "Total RE",                            "GetHbVar('nTotReq')" )
-   oFr:AddVariable(     "Pedidos",             "Total página",                        "GetHbVar('nTotPag')" )
+   oFr:AddVariable(     "Pedidos",             "Total pÃ¡gina",                        "GetHbVar('nTotPag')" )
    oFr:AddVariable(     "Pedidos",             "Total peso",                          "GetHbVar('nTotPes')" )
    oFr:AddVariable(     "Pedidos",             "Total costo",                         "GetHbVar('nTotCos')" )
-   oFr:AddVariable(     "Pedidos",             "Total artículos",                     "GetHbVar('nTotArt')" )
+   oFr:AddVariable(     "Pedidos",             "Total artÃ­culos",                     "GetHbVar('nTotArt')" )
    oFr:AddVariable(     "Pedidos",             "Total cajas",                         "GetHbVar('nTotCaj')" )
    oFr:AddVariable(     "Pedidos",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
 
@@ -8388,12 +8249,12 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
    oFr:AddVariable(     "Pedidos",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
-   oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo",                "CallHbFunc('cDesPedCli')"  )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Total unidades artículo",             "CallHbFunc('nTotNPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Total línea de pedido",               "CallHbFunc('nTotLPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Total peso por línea",                "CallHbFunc('nPesLPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Total final línea del pedido",        "CallHbFunc('nTotFPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artÃ­culo",                "CallHbFunc('cDesPedCli')"  )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Total unidades artÃ­culo",             "CallHbFunc('nTotNPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Precio unitario del artÃ­culo",        "CallHbFunc('nTotUPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Total lÃ­nea de pedido",               "CallHbFunc('nTotLPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Total peso por lÃ­nea",                "CallHbFunc('nPesLPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Total final lÃ­nea del pedido",        "CallHbFunc('nTotFPedCli')" )
 
 Return nil
 
@@ -8450,7 +8311,7 @@ Return nil
 Static Function VariableReportEntPedCli( oFr )
 
    /*
-   Creación de variables----------------------------------------------------
+   CreaciÃ³n de variables----------------------------------------------------
    */
 
    oFr:AddVariable( "Pedido de cliente",     "Total bruto",                         "GetHbVar('nTotBrt')" )
@@ -8465,10 +8326,10 @@ Static Function VariableReportEntPedCli( oFr )
    oFr:AddVariable( "Pedido de cliente",     "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
    oFr:AddVariable( "Pedido de cliente",     "Total " + cImp(),                           "GetHbVar('nTotIva')" )
    oFr:AddVariable( "Pedido de cliente",     "Total RE",                            "GetHbVar('nTotReq')" )
-   oFr:AddVariable( "Pedido de cliente",     "Total página",                        "GetHbVar('nTotPag')" )
+   oFr:AddVariable( "Pedido de cliente",     "Total pÃ¡gina",                        "GetHbVar('nTotPag')" )
    oFr:AddVariable( "Pedido de cliente",     "Total peso",                          "GetHbVar('nTotPes')" )
    oFr:AddVariable( "Pedido de cliente",     "Total costo",                         "GetHbVar('nTotCos')" )
-   oFr:AddVariable( "Pedido de cliente",     "Total artículos",                     "GetHbVar('nTotArt')" )
+   oFr:AddVariable( "Pedido de cliente",     "Total artÃ­culos",                     "GetHbVar('nTotArt')" )
    oFr:AddVariable( "Pedido de cliente",     "Total cajas",                         "GetHbVar('nTotCaj')" )
    oFr:AddVariable( "Pedido de cliente",     "Bruto primer tipo de " + cImp(),            "GetHbArrayVar('aIvaUno',1)" )
    oFr:AddVariable( "Pedido de cliente",     "Bruto segundo tipo de " + cImp(),           "GetHbArrayVar('aIvaDos',1)" )
@@ -8540,16 +8401,16 @@ Static Function aPedCliRes()
    aAdd( aPedCliRes, { "cSerPed", "C",    1,  0, "",                                "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "nNumPed", "N",    9,  0, "",                                "'999999999'",        "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "cSufPed", "C",    2,  0, "",                                "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliRes, { "cRef",    "C",   18,  0, "Referencia del artículo",         "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliRes, { "cCodPr1", "C",   20,  0, "Código de la primera propiedad",  "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliRes, { "cCodPr2", "C",   20,  0, "Código de la segunda propiedad",  "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliRes, { "cRef",    "C",   18,  0, "Referencia del artÃ­culo",         "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliRes, { "cCodPr1", "C",   20,  0, "CÃ³digo de la primera propiedad",  "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliRes, { "cCodPr2", "C",   20,  0, "CÃ³digo de la segunda propiedad",  "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "cValPr1", "C",   40,  0, "Valor de la primera propiedad",   "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "cValPr2", "C",   40,  0, "Valor de la segunda propiedad",   "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "dFecRes", "D",    8,  0, "Fecha de la reserva",             "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "nCajRes", "N",   16,  6, "Cajas reservadas",                "MasUnd()",           "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "nUndRes", "N",   16,  6, "Unidades reservadas",             "MasUnd()",           "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "nLote",   "N",    9,  0, "",                                "'999999999'",        "", "( cDbfCol )", nil } )
-   aAdd( aPedCliRes, { "cLote",   "C",   12,  0, "Número del lote",                 "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliRes, { "cLote",   "C",   12,  0, "NÃºmero del lote",                 "",                   "", "( cDbfCol )", nil } )
 
 return ( aPedCliRes )
 
@@ -8567,7 +8428,6 @@ STATIC FUNCTION CloseFiles()
       oFont:end()
    end if
 
-   if( !Empty( dbfPedCliL ), ( dbfPedCliL )->( dbCloseArea() ), )
    if( !Empty( dbfPedCliR ), ( dbfPedCliR )->( dbCloseArea() ), )
    if( !Empty( dbfPedCliI ), ( dbfPedCliI )->( dbCloseArea() ), )
    if( !Empty( dbfPedCliD ), ( dbfPedCliD )->( dbCloseArea() ), )
@@ -8644,7 +8504,6 @@ STATIC FUNCTION CloseFiles()
 
    D():DeleteView( nView )
 
-   dbfPedCliL     := nil
    dbfPedCliI     := nil
    dbfPedCliD     := nil
    dbfPedCliP     := nil
@@ -8797,37 +8656,37 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    end if
 
    if Empty( aTmp[ _CCODCLI ] )
-      msgStop( "Código de cliente no puede estar vacío." )
+      msgStop( "CÃ³digo de cliente no puede estar vacÃ­o." )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODALM ] )
-      msgStop( "Almacén no puede estar vacío." )
+      msgStop( "AlmacÃ©n no puede estar vacÃ­o." )
       aGet[ _CCODALM ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODCAJ ] )
-      msgStop( "Caja no puede estar vacía." )
+      msgStop( "Caja no puede estar vacÃ­a." )
       aGet[ _CCODCAJ ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CDIVPED ] )
-      MsgStop( "No puede almacenar documento sin código de divisa." )
+      MsgStop( "No puede almacenar documento sin cÃ³digo de divisa." )
       aGet[ _CDIVPED ]:SetFocus()
       return .f.
    end if
 
    if Empty( aTmp[ _CCODAGE ] ) .and. lRecogerAgentes()
-      msgStop( "Agente no puede estar vacío." )
+      msgStop( "Agente no puede estar vacÃ­o." )
       aGet[ _CCODAGE ]:SetFocus()
       return .f.
    end if
 
    if ( dbfTmpLin )->( eof() )
-      MsgStop( "No puede almacenar un documento sin líneas." )
+      MsgStop( "No puede almacenar un documento sin lÃ­neas." )
       return .f.
    end if
 
@@ -8878,10 +8737,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
 
          if nNumPed != 0
 
-            while ( dbfPedCliL )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
-               if dbLock( dbfPedCliL )
-                  ( dbfPedCliL )->( dbDelete() )
-                  ( dbfPedCliL )->( dbUnLock() )
+            while ( D():PedidosClientesLineas( nView ) )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
+               if dbLock( D():PedidosClientesLineas( nView ) )
+                  ( D():PedidosClientesLineas( nView ) )->( dbDelete() )
+                  ( D():PedidosClientesLineas( nView ) )->( dbUnLock() )
                end if
             end while
 
@@ -8937,7 +8796,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
 
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
 
-      	dbPass( dbfTmpLin, dbfPedCliL, .t., cSerPed, nNumPed, cSufPed )
+      	dbPass( dbfTmpLin, D():PedidosClientesLineas( nView ), .t., cSerPed, nNumPed, cSufPed )
 
       end if
 
@@ -8996,7 +8855,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    end if*/
 
    /*
-   Si el pedido está cancelado ponemos el estado a 3---------------------------
+   Si el pedido estÃ¡ cancelado ponemos el estado a 3---------------------------
    */
 
    if aTmp[ _LCANCEL ]
@@ -9161,7 +9020,7 @@ RETURN ( .t. )
 //--------------------------------------------------------------------------//
 
 /*
-Funcion Auxiliar para A¤adir lineas de detalle a un pedido
+Funcion Auxiliar para AÂ¤adir lineas de detalle a un pedido
 */
 
 STATIC FUNCTION AppDeta( oBrwLin, bEdtDet, aTmp, lTot, cCodArt )
@@ -9175,7 +9034,7 @@ RETURN RecalculaTotal( aTmp )
 //--------------------------------------------------------------------------//
 
 /*
-Funcion Auxiliar para la Edici¢n de Lineas de Detalle en un pedido
+Funcion Auxiliar para la EdiciÂ¢n de Lineas de Detalle en un pedido
 */
 STATIC FUNCTION EdtDeta( oBrwLin, bEdtDet, aTmp )
 
@@ -9305,7 +9164,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          aTmp[_NREGIVA ]      := ( D():Clientes( nView ) )->nRegIva
 
          /*
-         Si estamos a¤adiendo cargamos todos los datos del cliente
+         Si estamos aÂ¤adiendo cargamos todos los datos del cliente
          */
 
          if Empty( aTmp[ _CSERPED ] )
@@ -9318,7 +9177,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
             if !Empty( ( D():Clientes( nView ) )->Serie )                .and.;
                aTmp[ _CSERPED ] != ( D():Clientes( nView ) )->Serie      .and.;
-               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "Â¿Desea cambiar la serie?" )
                aGet[ _CSERPED ]:cText( ( D():Clientes( nView ) )->Serie )
             end if
 
@@ -9589,21 +9448,21 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    end if
 
 	/*
-	A¤adimos desde el fichero de lineas
+	AÂ¤adimos desde el fichero de lineas
 	*/
 
-   if ( dbfPedCliL )->( dbSeek( cPedido ) )
+   if ( D():PedidosClientesLineas( nView ) )->( dbSeek( cPedido ) )
 
-      while ( ( dbfPedCliL )->CSERPED + Str( ( dbfPedCliL )->NNUMPED ) + ( dbfPedCliL )->CSUFPED == cPedido ) .AND. ( dbfPedCliL )->( !eof() )
+      while ( D():PedidosClientesLineasId( nView ) == cPedido ) .AND. ( D():PedidosClientesLineas( nView ) )->( !eof() )
 
          ( dbfTmpLin )->( dbAppend() )
-         if ( dbfPedCliL )->nNumLin == 0 .and. dbLock( dbfPedCliL )
-            ( dbfPedCliL )->nNumLin := ( dbfTmpLin )->( Recno() )
-            ( dbfPedCliL )->( dbRUnLock() )
+         if ( D():PedidosClientesLineas( nView ) )->nNumLin == 0 .and. dbLock( D():PedidosClientesLineas( nView ) )
+            ( D():PedidosClientesLineas( nView ) )->nNumLin := ( dbfTmpLin )->( Recno() )
+            ( D():PedidosClientesLineas( nView ) )->( dbRUnLock() )
          end if
-         dbPass( dbfPedCliL, dbfTmpLin )
+         dbPass( D():PedidosClientesLineas( nView ), dbfTmpLin )
 
-			( dbfPedCliL )->( dbSkip() )
+			( D():PedidosClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -9613,7 +9472,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpLin )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de incidencias
+   AÂ¤adimos desde el fichero de incidencias
 	*/
 
    if ( dbfPedCliI )->( dbSeek( cPedido ) )
@@ -9630,7 +9489,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpInc )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de documentos
+   AÂ¤adimos desde el fichero de documentos
 	*/
 
    if ( dbfPedCliD )->( dbSeek( cPedido ) )
@@ -9647,7 +9506,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpDoc )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de entregas a cuenta
+   AÂ¤adimos desde el fichero de entregas a cuenta
 	*/
 
    if ( dbfPedCliP )->( dbSeek( cPedido ) )
@@ -9664,7 +9523,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpPgo )->( dbGoTop() )
 
 	/*
-	A¤adimos desde el fichero de lineas
+	AÂ¤adimos desde el fichero de lineas
 	*/
 
    if ( dbfPedCliR )->( DbSeek( cPedido ) )
@@ -10003,7 +9862,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    end if
 
    /*
-   Mostramos u ocultamos las tarifas por líneas--------------------------------
+   Mostramos u ocultamos las tarifas por lÃ­neas--------------------------------
    */
 
    if Empty( aTmp[ _NTARLIN ] )
@@ -10023,7 +9882,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    end if
 
    /*
-   Focus y validación----------------------------------------------------------
+   Focus y validaciÃ³n----------------------------------------------------------
    */
    if !Empty( aGet[ _CTIPMOV ] )
       aGet[ _CTIPMOV ]:lValid()
@@ -10083,33 +9942,33 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    // Ocultamos o mostramos las tres unidades de medicion----------------------
 
-   if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ] )
-      aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+      aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
    end if
 
-   if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ] )
-      aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+      aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    end if
 
-   if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ] )
-      aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+      aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
    end if
 
    if oUndMedicion:oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+      if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+      if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if !Empty( aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+      if !Empty( aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():PedidosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
@@ -10161,12 +10020,12 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    end if
 
    if !lMoreIva( aTmp[ _NIVA ] )
-      msgStop( "Demasiados tipos de " + cImp() + " en un mismo documento.", "Atención" )
+      msgStop( "Demasiados tipos de " + cImp() + " en un mismo documento.", "AtenciÃ³n" )
       return nil
    end if
 
    if Empty( aTmp[ _CALMLIN ] ) .and. !Empty( aTmp[ _CREF ] )
-      msgStop( "Código de almacén no puede estar vacío", "Atención" )
+      msgStop( "CÃ³digo de almacÃ©n no puede estar vacÃ­o", "AtenciÃ³n" )
       return nil
    end if
 
@@ -10177,7 +10036,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    // control de precios minimos-----------------------------------------------
 
    if lPrecioMinimo( aTmp[ _CREF ], aTmp[ _NPREDIV ], nMode, D():Articulos( nView ) )
-      msgStop( "El precio de venta es inferior al precio mínimo.")
+      msgStop( "El precio de venta es inferior al precio mÃ­nimo.")
       return nil
    end if 
    
@@ -10224,7 +10083,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       if aXbYStr[ 1 ] == 0
 
          /*
-         Chequeamos las ofertas por artículos X  *  Y--------------------------
+         Chequeamos las ofertas por artÃ­culos X  *  Y--------------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -10242,7 +10101,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
          end if
 
          /*
-         Chequeamos las ofertas por tipo de artículos X  *  Y------------------
+         Chequeamos las ofertas por tipo de artÃ­culos X  *  Y------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -10377,7 +10236,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
       /*
-      Añadimos los kits--------------------------------------------------------
+      AÃ±adimos los kits--------------------------------------------------------
       */
 
       if aClo[ _LKITART ]
@@ -10389,7 +10248,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    ( dbfTmpLin )->( dbGoTo( nRec ) )
 
    /*
-	Si estamos a¤adiendo y hay entradas continuas-------------------------------
+	Si estamos aÂ¤adiendo y hay entradas continuas-------------------------------
 	*/
 
    cOldCodArt                          := ""
@@ -10409,7 +10268,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    end if
 
 	/*
-   Si estamos a¤adiendo y hay entradas continuas-------------------------------
+   Si estamos aÂ¤adiendo y hay entradas continuas-------------------------------
 	*/
 
    if nMode == APPD_MODE .AND. lEntCon()
@@ -10619,16 +10478,16 @@ Static Function AppendKit( uTmpLin, aTmpPed )
 
                        MsgStop( 	"No hay stock suficiente para realizar la venta" + CRLF + ;
                                  "del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ),;
-                                 "¡Atención!" )
+                                 "Â¡AtenciÃ³n!" )
 
                   case nStkActual - nUnidades < nStockMinimo
 
                        MsgStop( 	"El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( D():Articulos( nView ) )->Nombre ) + CRLF + ;
-                                 "está bajo minimo." + CRLF + ;
+                                 "estÃ¡ bajo minimo." + CRLF + ;
                                  "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
                                  "Stock minimo : " + AllTrim( Trans( nStockMinimo, MasUnd() ) ) + CRLF + ;
                                  "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
-                                 "¡Atención!" )
+                                 "Â¡AtenciÃ³n!" )
 
                end case
 
@@ -10810,7 +10669,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
    if Empty( cCodArt )
 
       if lRetCodArt()
-         MsgStop( "No se pueden añadir líneas sin codificar" )
+         MsgStop( "No se pueden aÃ±adir lÃ­neas sin codificar" )
          return .f.
       end if
 
@@ -10873,11 +10732,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
       if ( D():Articulos( nView ) )->( dbSeek( cCodArt ) ) .or. ( D():Articulos( nView ) )->( dbSeek( Upper( cCodArt ) ) )
 
          if ( D():Articulos( nView ) )->lObs
-            MsgStop( "Artículo catalogado como obsoleto" )
+            MsgStop( "ArtÃ­culo catalogado como obsoleto" )
             return .f.
          end if
 
-         // Entramos siempre que cambie el código del artículo-----------------
+         // Entramos siempre que cambie el cÃ³digo del artÃ­culo-----------------
 
          if ( lChgCodArt )
 
@@ -10891,7 +10750,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-			Proveedor del artículo---------------------------------------------
+			Proveedor del artÃ­culo---------------------------------------------
             */
 
             if !Empty( aGet[ _CCODPRV ] )
@@ -11129,7 +10988,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-            Si la comisi¢n del articulo hacia el agente es distinto de cero----
+            Si la comisiÂ¢n del articulo hacia el agente es distinto de cero----
             */
 
             aGet[ _NCOMAGE ]:cText( aTmpPed[ _NPCTCOMAGE ] )
@@ -11231,7 +11090,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
          end if
 
          /*
-         He terminado de meter todo lo que no son precios ahora es cuando meteré los precios con todas las opciones posibles
+         He terminado de meter todo lo que no son precios ahora es cuando meterÃ© los precios con todas las opciones posibles
          */
 
          cPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
@@ -11276,7 +11135,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-            Descuento de artículo----------------------------------------------
+            Descuento de artÃ­culo----------------------------------------------
             */
 
             nNumDto              := RetFld( aTmpPed[ _CCODCLI ], D():Clientes( nView ), "nDtoArt" )
@@ -11366,7 +11225,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _CUNIDAD ]  := ( D():Articulos( nView ) )->cUnidad
             end if
 
-            //Cargamos el precio del artículo
+            //Cargamos el precio del artÃ­culo
 
             nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPed[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPed[_CCODTAR] )
 
@@ -11411,7 +11270,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                   aGet[_NCOMAGE ]:cText( nImpOfe )
                end if
 
-               //--Descuento de promoci¢n--//
+               //--Descuento de promociÂ¢n--//
 
                nImpOfe  := RetDtoPrm( aTmp[ _CREF ], cCodFam, aTmpPed[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dFecPed, dbfTarPreL )
                if nImpOfe  != 0
@@ -11548,7 +11407,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
       else
 
-         MsgStop( "Artículo no encontrado" )
+         MsgStop( "ArtÃ­culo no encontrado" )
          Return .f.
 
       end if
@@ -11598,30 +11457,30 @@ Static Function nEstadoProduccion( cNumPed )
 
    local nEstado        		:= 1
 
-   if ( dbfPedCliL )->( dbSeek( cNumPed ) )
+   if ( D():PedidosClientesLineas( nView ) )->( dbSeek( cNumPed ) )
 
-      while ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cNumPed .and. !( dbfPedCliL )->( Eof() )
+      while D():PedidosClientesLineasId( nView ) == cNumPed .and. !( D():PedidosClientesLineas( nView ) )->( Eof() )
 
       	/*
       	Las lineas hijas no pintan nada---------------------------------------
       	*/
 
-   		if !( dbfPedCliL )->lKitChl
+   		if !( D():PedidosClientesLineas( nView ) )->lKitChl
 
 	         do case
-   	         case ( dbfPedCliL )->nProduc == 0 	// No se ha producido nada
+   	         case ( D():PedidosClientesLineas( nView ) )->nProduc == 0 	// No se ha producido nada
 
    	         	if nEstado == 3
     	         		nEstado  := 2
     	         		exit 
     	         	end if 
 
-   	         case ( dbfPedCliL )->nProduc == 1 	// Producido parcialmente
+   	         case ( D():PedidosClientesLineas( nView ) )->nProduc == 1 	// Producido parcialmente
 
     	         	nEstado  	:= 2
     	         	exit 
 
-	            case ( dbfPedCliL )->nProduc == 2 	// Linea producida
+	            case ( D():PedidosClientesLineas( nView ) )->nProduc == 2 	// Linea producida
 
    	            nEstado  	:= 3
 
@@ -11629,7 +11488,7 @@ Static Function nEstadoProduccion( cNumPed )
 
          end if 
 
-         ( dbfPedCliL )->( dbSkip() )
+         ( D():PedidosClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -11649,18 +11508,18 @@ Return ( aEstadoProduccion[ Max( Min( nEstadoProduccion( cNumPed ), 3 ), 1 ) ] )
 Static Function ChangePedidosWeb()
 
    /*
-   Añadimos desde el fichero de lineas-----------------------------------------
+   AÃ±adimos desde el fichero de lineas-----------------------------------------
 	*/
 
    ( dbfTmpLin )->( __dbZap() )
 
-   if ( dbfPedCliL )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) )
+   if ( D():PedidosClientesLineas( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) )
 
-      while ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) .AND. ( dbfPedCliL )->( !eof() )
+      while ( D():PedidosClientesLineasId( nView ) == D():PedidosClientesId( nView ) ) .AND. ( D():PedidosClientesLineas( nView ) )->( !eof() )
 
-         dbPass( dbfPedCliL, dbfTmpLin, .t. )
+         dbPass( D():PedidosClientesLineas( nView ), dbfTmpLin, .t. )
 
-         ( dbfPedCliL )->( dbSkip() )
+         ( D():PedidosClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -11771,7 +11630,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfDiv, d
    if ( D():Articulos( nView ) )->Codigo == cCodArt .or. ( D():Articulos( nView ) )->( dbSeek( cCodArt ) )
 
       /*
-      Buscamos si existen ofertas por artículo----------------------------
+      Buscamos si existen ofertas por artÃ­culo----------------------------
       */
 
       nTotalLinea := RecalculaLinea( aTmp, aTmpPed, nDouDiv, , , , aTmpPed[ _CDIVPED ], .t. )
@@ -11935,11 +11794,11 @@ Static Function CargaAtipicasCliente( aTmpPed, oBrwLin, oDlg )
    local lSearch     := .f.
 
    /*
-   Controlamos que no nos pase código de cliente vacío------------------------
+   Controlamos que no nos pase cÃ³digo de cliente vacÃ­o------------------------
    */
 
    if Empty( aTmpPed[ _CCODCLI ] )
-      MsgStop( "Código de cliente no puede estar vacío para utilizar el asistente." )
+      MsgStop( "CÃ³digo de cliente no puede estar vacÃ­o para utilizar el asistente." )
       Return .f.
    end if
 
@@ -12052,7 +11911,7 @@ Static Function AppendDatosAtipicas( aTmpPed )
          ( dbfTmpLin )->nUniCaja       := 0
          ( dbfTmpLin )->lFromAtp       := .t.
    
-         //Datos de la tabla de artículo------------------------------------
+         //Datos de la tabla de artÃ­culo------------------------------------
 
          ( dbfTmpLin )->cDetalle       := ( D():Articulos( nView ) )->Nombre
          
@@ -12356,7 +12215,7 @@ Return .t.
 //---------------------------------------------------------------------------//
 
 /*
-Función creada para ejecutar el modo pedidos web desde la web de fondo del rograma
+FunciÃ³n creada para ejecutar el modo pedidos web desde la web de fondo del rograma
 */
 
 FUNCTION PedCliWeb()
@@ -12367,15 +12226,15 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION aTotPedCli( cPed, cPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, cDivRet )
+FUNCTION aTotPedCli( cPed, cPedCliT, cPedCliL, dbfIva, dbfDiv, dbfFPago, cDivRet )
 
-   nTotPedCli( cPed, cPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivRet, .f. )
+   nTotPedCli( cPed, cPedCliT, cPedCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivRet, .f. )
 
 RETURN ( { nTotNet, nTotIva, nTotReq, nTotPed, nTotPnt, nTotTrn, nTotAge, nTotCos } )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION BrwPedCli( oGet, cPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, oIva )
+FUNCTION BrwPedCli( oGet, cPedCliT, cPedCliL, dbfIva, dbfDiv, dbfFPago, oIva )
 
 	local oDlg
 	local oBrw
@@ -12385,7 +12244,7 @@ FUNCTION BrwPedCli( oGet, cPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, oIva )
 	local nOrdAnt
 	local nRecAnt
 	local oCbxOrd
-	local aCbxOrd  := { "Número", "Fecha", "Cliente", "Nombre" }
+	local aCbxOrd  := { "NÃºmero", "Fecha", "Cliente", "Nombre" }
 	local cCbxOrd
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -12442,7 +12301,7 @@ FUNCTION BrwPedCli( oGet, cPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, oIva )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :cSortOrder       := "nNumPed"
          :bEditValue       := {|| ( cPedCliT )->cSerPed + "/" + Alltrim( Str( ( cPedCliT )->nNumPed ) ) + "/" + ( cPedCliT )->cSufPed }
          :nWidth           := 60
@@ -12527,7 +12386,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nImpUPedCli( uPedCliT, dbfPedCliL, nDec, nVdv, cPouDiv )
+FUNCTION nImpUPedCli( uPedCliT, cPedCliL, nDec, nVdv, cPouDiv )
 
    local nCalculo
    local lIvaInc
@@ -12535,7 +12394,7 @@ FUNCTION nImpUPedCli( uPedCliT, dbfPedCliL, nDec, nVdv, cPouDiv )
    DEFAULT nDec      := 0
    DEFAULT nVdv      := 1
 
-   nCalculo          := nTotUPedCli( dbfPedCliL, nDec, nVdv )
+   nCalculo          := nTotUPedCli( cPedCliL, nDec, nVdv )
 
    if IsArray( uPedCliT )
 
@@ -12557,8 +12416,8 @@ FUNCTION nImpUPedCli( uPedCliT, dbfPedCliL, nDec, nVdv, cPouDiv )
       
    end if
 
-   if ( dbfPedCliL )->nIva != 0 .and. !lIvaInc
-      nCalculo    	 += Round( nCalculo * ( dbfPedCliL )->nIva / 100, nDec )
+   if ( cPedCliL )->nIva != 0 .and. !lIvaInc
+      nCalculo    	 += Round( nCalculo * ( cPedCliL )->nIva / 100, nDec )
    end if
 
 RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
@@ -12601,7 +12460,7 @@ RETURN ( Round( nCalculo, nDec ) )
 
 FUNCTION cDesPedCli( cPedCliL )
 
-   DEFAULT cPedCliL  := dbfPedCliL
+   DEFAULT cPedCliL  := cPedCliL
 
 RETURN ( Descrip( cPedCliL ) )
 
@@ -12728,7 +12587,7 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
          aGet[ _NBULTOS ]:cText( ( dbfPreCliT )->nBultos )
 
          /*
-         Código de grupo-------------------------------------------------------
+         CÃ³digo de grupo-------------------------------------------------------
          */
 
          aTmp[ _CCODGRP ]     := ( dbfPreCliT )->cCodGrp
@@ -12911,7 +12770,7 @@ FUNCTION EdmPedCli( cCodRut, cPathTo, oStru, aSucces )
    */
 
    if !file( cFilEdm )
-      msgWait( "No existe el fichero " + cFilEdm, "Atención", 1 )
+      msgWait( "No existe el fichero " + cFilEdm, "AtenciÃ³n", 1 )
       return nil
    end if
 
@@ -12996,17 +12855,17 @@ FUNCTION EdmPedCli( cCodRut, cPathTo, oStru, aSucces )
          Capturamos las lineas de detalle
          */
 
-         ( dbfPedCliL )->( dbAppend() )
-         ( dbfPedCliL )->cSerPed := ( D():PedidosClientes( nView ) )->cSerPed
-         ( dbfPedCliL )->nNumPed := ( D():PedidosClientes( nView ) )->nNumPed
-         ( dbfPedCliL )->cSufPed := ( D():PedidosClientes( nView ) )->cSufPed
-         ( dbfPedCliL )->cRef    := Ltrim( SubStr( cLine, 18, 13 ) )
-         ( dbfPedCliL )->cDetalle:= RetFld( ( dbfPedCliL )->cRef, D():Articulos( nView ) )
-         ( dbfPedCliL )->nPreDiv := Val( SubStr( cLine, 31,  7 ) )
-         ( dbfPedClil )->nDtoDiv := Val( SubStr( cLine, 38,  4 ) )
-         ( dbfPedClil )->nDto    := Val( SubStr( cLine, 42,  5 ) )
-         ( dbfPedClil )->nCanPed := Val( SubStr( cLine, 47,  4 ) )
-         ( dbfPedClil )->nUniCaja:= Val( SubStr( cLine, 51,  7 ) )
+         ( D():PedidosClientesLineas( nView ) )->( dbAppend() )
+         ( D():PedidosClientesLineas( nView ) )->cSerPed := ( D():PedidosClientes( nView ) )->cSerPed
+         ( D():PedidosClientesLineas( nView ) )->nNumPed := ( D():PedidosClientes( nView ) )->nNumPed
+         ( D():PedidosClientesLineas( nView ) )->cSufPed := ( D():PedidosClientes( nView ) )->cSufPed
+         ( D():PedidosClientesLineas( nView ) )->cRef    := Ltrim( SubStr( cLine, 18, 13 ) )
+         ( D():PedidosClientesLineas( nView ) )->cDetalle:= RetFld( ( D():PedidosClientesLineas( nView ) )->cRef, D():Articulos( nView ) )
+         ( D():PedidosClientesLineas( nView ) )->nPreDiv := Val( SubStr( cLine, 31,  7 ) )
+         ( D():PedidosClientesLineas( nView ) )->nDtoDiv := Val( SubStr( cLine, 38,  4 ) )
+         ( D():PedidosClientesLineas( nView ) )->nDto    := Val( SubStr( cLine, 42,  5 ) )
+         ( D():PedidosClientesLineas( nView ) )->nCanPed := Val( SubStr( cLine, 47,  4 ) )
+         ( D():PedidosClientesLineas( nView ) )->nUniCaja:= Val( SubStr( cLine, 51,  7 ) )
 
          oFilEdm:Skip()
 
@@ -13030,7 +12889,7 @@ RETURN ( aSucces )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nDtoAtpPedCli( uPedCliT, dbfPedCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
+FUNCTION nDtoAtpPedCli( uPedCliT, cPedCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
 
    local nCalculo
    local nDtoAtp     := 0
@@ -13041,7 +12900,7 @@ FUNCTION nDtoAtpPedCli( uPedCliT, dbfPedCliL, nDec, nRou, nVdv, lPntVer, lImpTrn
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLPedCli( dbfPedCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
+   nCalculo          := nTotLPedCli( cPedCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
 
    if ( uPedCliT )->nSbrAtp <= 1 .and. ( uPedCliT )->nDtoAtp != 0
       nDtoAtp     += Round( nCalculo * ( uPedCliT )->nDtoAtp / 100, nRou )
@@ -13170,18 +13029,6 @@ RETURN ( dFecPed )
 
 //---------------------------------------------------------------------------//
 
-/*FUNCTION nEstPedCli( cPedCli, cPedCliT )
-
-   local nEstPed  := 1
-
-   IF ( cPedCliT )->( dbSeek( cPedCli ) )
-      nEstPed     := ( cPedCliT )->nEstado
-   END IF
-
-RETURN ( nEstPed )*/
-
-//---------------------------------------------------------------------------//
-
 FUNCTION cNbrPedCli( cPedCli, cPedCliT )
 
    local cNomCli  := ""
@@ -13192,161 +13039,31 @@ FUNCTION cNbrPedCli( cPedCli, cPedCliT )
 
 RETURN ( cNomCli )
 
-//----------------------------------------------------------------------------//
-
-/*
-Actualiza pedido a clientes
-*/
-
-/*FUNCTION ActPedCli( nAlbCli, oStock, cPedCliT, dbfPedCliL, dbfAlbCliT, dbfAlbCliL, lInc )
-
-   local nEstPed  := 2
-   local aPedCliT := aGetStatus( cPedCliT, 1 )
-   local aPedCliL := aGetStatus( dbfPedCliL, 1 )
-   local aAlbCliT := aGetStatus( dbfAlbCliT, 1 )
-   local aAlbCliL := aGetStatus( dbfAlbCliL, 1 )
-
-   DEFAULT lInc   := .t.
-
-   //Nos posicionamos en el albaran de Proveedor
-
-   IF ( dbfAlbCliT )->( dbSeek( nAlbCli ) )                 .and. ;     // posicionamos en albaran proveedores
-      ( dbfAlbCliL )->( dbSeek( nAlbCli ) )                 .and. ;     // posicionamos en lineas de albaran proveedores
-      ( cPedCliT )->( dbSeek( ( dbfAlbCliT )->cNumPed ) )             // posicionamos en pedidos de proveedores
-
-      //Mientras tengamos lineas de albaran a procesar
-
-      WHILE ( ( dbfAlbCliL )->CSERALB + Str( ( dbfAlbCliL )->NNUMALB ) + ( dbfAlbCliL )->CSUFALB == nAlbCli ) .AND. !( dbfAlbCliL )->( eof() )
-
-         //Mientras sea el mismo pedido
-
-         if ( dbfPedCliL )->( dbSeek( ( dbfAlbCliT )->cNumPed ) )             // posicionamos en lineas de pedidos a proveedores
-
-            WHILE ( dbfPedCliL )->CSERPED + Str( ( dbfPedCliL )->NNUMPED ) + ( dbfPedCliL )->CSUFPED == ( dbfAlbCliT )->cNumPed
-
-               IF ( dbfPedCliL )->CREF == ( dbfAlbCliL )->CREF
-
-                  if dbLock( dbfPedCliL )
-
-                     IF lInc
-                        ( dbfPedCliL )->nUniEnt += nTotUnt( dbfAlbCliL )
-                     ELSE
-                        ( dbfPedCliL )->nUniEnt -= nTotUnt( dbfAlbCliL )
-                     END IF
-
-                     ( dbfPedCliL )->( dbrUnLock() )
-
-                  end if
-
-               END IF
-
-               ( dbfPedCliL )->( dbSkip() )
-
-            END DO
-
-      end if
-
-      ( dbfAlbCliL )->( dbSkip() )
-
-      END DO
-
-      //Ahora comprobamos el estado de todos los pedidos procesados--------------
-
-      IF ( dbfPedCliL )->( dbSeek( ( dbfAlbCliT )->CNUMPED ) )
-
-         WHILE ( dbfPedCliL )->CSERPED + Str( ( dbfPedCliL )->NNUMPED ) + ( dbfPedCliL )->CSUFPED == ( dbfAlbCliT )->CNUMPED .AND. !( dbfPedCliL )->( eof() )
-
-            IF nTotNPedCli( dbfPedCliL ) > nTotUnt( dbfPedCliL )
-
-               //Parcialmente recibido
-
-               nEstPed := 2
-               EXIT
-
-            ELSE
-
-               //Recibido completo
-
-               nEstPed := 3
-
-            END IF
-
-            ( dbfPedCliL )->( dbSkip() )
-
-         END DO
-
-         if dbLock( cPedCliT )
-            ( cPedCliT )->nEstado := nEstPed
-            ( cPedCliT )->( dbRUnlock() )
-         end if
-
-      END IF
-
-   END IF
-
-   //Reposicionamos todas las bases de datos utilizadas
-
-   SetStatus( cPedCliT, aPedCliT )
-   SetStatus( dbfPedCliL, aPedCliL )
-   SetStatus( dbfAlbCliT, aAlbCliT )
-   SetStatus( dbfAlbCliL, aAlbCliL )
-
-RETURN NIL*/
-
-//-------------------------------------------------------------------------//
-
-//
-// Devuelve el total de la compra en albaranes de clientes de un articulo
-//
-
-/*function nTotDPedCli( cCodArt, dbfPedCliL )
-
-   local nTotVta  := 0
-   local nRecno   := ( dbfPedCliL )->( Recno() )
-
-   if ( dbfPedCliL )->( dbSeek( cCodArt ) )
-
-      while ( dbfPedCliL )->CREF == cCodArt .and. !( dbfPedCliL )->( eof() )
-
-         If !( dbfPedCliL )->LTOTLIN
-            nTotVta += nTotNPedCli( dbfPedCliL )
-         end if
-
-         ( dbfPedCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfPedCliL )->( dbGoTo( nRecno ) )
-
-return ( nTotVta )*/
-
 //---------------------------------------------------------------------------//
 //
 // Devuelve el total de la venta en albaranes de clientes de un articulo
 //
 
-function nTotVPedCli( cCodArt, dbfPedCliL, nDec, nDor )
+function nTotVPedCli( cCodArt, cPedCliL, nDec, nDor )
 
    local nTotVta  := 0
-   local nRecno   := ( dbfPedCliL )->( Recno() )
+   local nRecno   := ( cPedCliL )->( Recno() )
 
-   if ( dbfPedCliL )->( dbSeek( cCodArt ) )
+   if ( cPedCliL )->( dbSeek( cCodArt ) )
 
-      while ( dbfPedCliL )->CREF == cCodArt .and. !( dbfPedCliL )->( eof() )
+      while ( cPedCliL )->CREF == cCodArt .and. !( cPedCliL )->( eof() )
 
-         if !( dbfPedCliL )->LTOTLIN
-            nTotVta += nTotLPedCli( dbfPedCliL, nDec, nDor )
+         if !( cPedCliL )->LTOTLIN
+            nTotVta += nTotLPedCli( cPedCliL, nDec, nDor )
          end if
 
-         ( dbfPedCliL )->( dbSkip() )
+         ( cPedCliL )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfPedCliL )->( dbGoTo( nRecno ) )
+   ( cPedCliL )->( dbGoTo( nRecno ) )
 
 return ( nTotVta )
 
@@ -13384,7 +13101,7 @@ RETURN ( aDoc )
 
 function aCalPedCli()
 
-   local aCalPedCli :=  {{"nTotArt",                                                   "N", 16,  6, "Total artículos",             "cPicUndPed",  "" },;
+   local aCalPedCli :=  {{"nTotArt",                                                   "N", 16,  6, "Total artÃ­culos",             "cPicUndPed",  "" },;
                         { "nTotCaj",                                                   "N", 16,  6, "Total cajas",                 "cPicUndPed",  "" },;
                         { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPorDivPed",  "aTotIva[1,1] != 0" },;
                         { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPorDivPed",  "aTotIva[2,1] != 0" },;
@@ -13415,10 +13132,10 @@ function aCalPedCli()
                         { "nTotPag",                                                   "N", 16,  6, "Total entregas a cuenta",     "cPorDivPed",  "lEnd" },;
                         { "nTotCos",                                                   "N", 16,  6, "Total costo",                 "cPorDivPed",  "lEnd" },;
                         { "nTotPes",                                                   "N", 16,  6, "Total peso",                  "'@E 99,999.99'","lEnd" },;
-                        { "nTotPage",                                                  "N", 16,  6, "Total página",                "'cPorDivPed'", "!lEnd" },;
+                        { "nTotPage",                                                  "N", 16,  6, "Total pÃ¡gina",                "'cPorDivPed'", "!lEnd" },;
                         { "nImpEuros( nTotPed, (cDbf)->cDivPed, cDbfDiv )",            "N", 16,  6, "Total pedido (Euros)",        "",            "lEnd" },;
                         { "nImpPesetas( nTotPed, (cDbf)->cDivPed, cDbfDiv )",          "N", 16,  6, "Total pedido (Pesetas)",      "",            "lEnd" },;
-                        { "nPagina",                                                   "N",  2,  0, "Numero de página",            "'99'",        "" },;
+                        { "nPagina",                                                   "N",  2,  0, "Numero de pÃ¡gina",            "'99'",        "" },;
                         { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",            "" } }
 
 return ( aCalPedCli )
@@ -13427,11 +13144,11 @@ return ( aCalPedCli )
 
 function aCocPedCli()
 
-   local aCocPedCli  := {{"Descrip( cDbfCol )",                                         "C", 50, 0, "Detalle del artículo",       "",            "Descripción", "" },;
+   local aCocPedCli  := {{"Descrip( cDbfCol )",                                         "C", 50, 0, "Detalle del artÃ­culo",       "",            "DescripciÃ³n", "" },;
                         { "nTotNPedCli( cDbfCol ) )",                                   "N", 16, 6, "Total unidades",             "cPicUndPed",  "Unds.",       "" },;
                         { "nTotUPedCli( cDbfCol, nRouDivPed, nVdvDivPed )",             "N", 16, 6, "Precio unitario de pedido",  "cPouDivPed",  "Importe",     "" },;
-                        { "nTotLPedCli( cDbfCol, nDouDivPed, nRouDivPed )",             "N", 16, 6, "Total línea de pedido",      "cPorDivPed",  "Total",       "" },;
-                        { "nTotFPedCli( cDbfCol, nDouDivPed, nRouDivPed )",             "N", 16, 6, "Total final línea de pedido","cPorDivPed",  "Total",       "" },;
+                        { "nTotLPedCli( cDbfCol, nDouDivPed, nRouDivPed )",             "N", 16, 6, "Total lÃ­nea de pedido",      "cPorDivPed",  "Total",       "" },;
+                        { "nTotFPedCli( cDbfCol, nDouDivPed, nRouDivPed )",             "N", 16, 6, "Total final lÃ­nea de pedido","cPorDivPed",  "Total",       "" },;
                         { "cFrasePublicitaria( cDbfCol )",                              "C", 50, 0, "Texto de frase publicitaria","",            "Publicidad",  "" } }
 
 
@@ -13452,7 +13169,7 @@ FUNCTION QuiPedCli()
       Return .f.
    end if
 
-   nOrdDet        := ( dbfPedCliL )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdDet        := ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( "NNUMPED" ) )
    nOrdPgo        := ( dbfPedCliP )->( OrdSetFocus( "NNUMPED" ) )
    nOrdRes        := ( dbfPedCliR )->( OrdSetFocus( "NNUMPED" ) )
    nOrdInc        := ( dbfPedCliI )->( OrdSetFocus( "NNUMPED" ) )
@@ -13473,10 +13190,10 @@ FUNCTION QuiPedCli()
    Lineas--------------------------------------------------------------------
    */
 
-   while ( dbfPedCliL )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliL )->( eof() )
-      if dbLock( dbfPedCliL )
-         ( dbfPedCliL )->( dbDelete() )
-         ( dbfPedCliL )->( dbUnLock() )
+   while ( D():PedidosClientesLineas( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( D():PedidosClientesLineas( nView ) )->( eof() )
+      if dbLock( D():PedidosClientesLineas( nView ) )
+         ( D():PedidosClientesLineas( nView ) )->( dbDelete() )
+         ( D():PedidosClientesLineas( nView ) )->( dbUnLock() )
       end if
    end while
 
@@ -13524,7 +13241,7 @@ FUNCTION QuiPedCli()
       end if
    end while
 
-   ( dbfPedCliL )->( OrdSetFocus( nOrdDet ) )
+   ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( nOrdDet ) )
    ( dbfPedCliP )->( OrdSetFocus( nOrdPgo ) )
    ( dbfPedCliR )->( OrdSetFocus( nOrdRes ) )
    ( dbfPedCliI )->( OrdSetFocus( nOrdInc ) )
@@ -14009,7 +13726,7 @@ Method Process() CLASS TPedidosClientesSenderReciver
                   		!( cPedCliT )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
 
                   		dbPass( tmpPedCliT, cPedCliT, .t. )
-                  		::oSender:SetText( "Añadido     : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
+                  		::oSender:SetText( "AÃ±adido     : " + ( tmpPedCliL )->cSerPed + "/" + AllTrim( Str( ( tmpPedCliL )->nNumPed ) ) + "/" + AllTrim( ( tmpPedCliL )->cSufPed ) + "; " + Dtoc( ( tmpPedCliT )->dFecPed ) + "; " + AllTrim( ( tmpPedCliT )->cCodCli ) + "; " + ( tmpPedCliT )->cNomCli )
 
                   		if ( tmpPedCliL )->( dbSeek( ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed ) )
                      		do while ( tmpPedCliL )->cSerPed + Str( ( tmpPedCliL )->nNumPed ) + ( tmpPedCliL )->cSufPed == ( tmpPedCliT )->cSerPed + Str( ( tmpPedCliT )->nNumPed ) + ( tmpPedCliT )->cSufPed .and. !( tmpPedCliL )->( eof() )
@@ -14142,7 +13859,7 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
                    		( cPedCliT )->( dbUnLock() )
 
-                   		::oSender:SetText( "Añadido pedido     : " + cSerie + "/" + AllTrim( Str( nNumero ) ) + "/" +  AllTrim( cSufijo ) )
+                   		::oSender:SetText( "AÃ±adido pedido     : " + cSerie + "/" + AllTrim( Str( nNumero ) ) + "/" +  AllTrim( cSufijo ) )
 
                     		/*
    							Pasamos las lineas de los pedidos------------------
@@ -14262,36 +13979,36 @@ function aColTmpLin()
 
    local aColTmpLin  := {}
 
-   aAdd( aColTmpLin, { "cRef",    "C",   18,  0, "Referencia del artículo",         "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cDetalle","C",  250,  0, "Nombre del artículo",             "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cRef",    "C",   18,  0, "Referencia del artÃ­culo",         "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cDetalle","C",  250,  0, "Nombre del artÃ­culo",             "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "mLngDes", "M",   10,  0, "Descripciones largas",            "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "lSelArt", "L",    1,  0, "Lógico de selección de artículo", "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cCodPrv", "C",   12,  0, "Código de proveedor",             "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cCodPr1", "C",   20,  0, "Código propiedad 1",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cCodPr2", "C",   20,  0, "Código propiedad 2",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "lSelArt", "L",    1,  0, "LÃ³gico de selecciÃ³n de artÃ­culo", "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cCodPrv", "C",   12,  0, "CÃ³digo de proveedor",             "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cCodPr1", "C",   20,  0, "CÃ³digo propiedad 1",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cCodPr2", "C",   20,  0, "CÃ³digo propiedad 2",              "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "cValPr1", "C",   40,  0, "Valor propiedad 1",               "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "cValPr2", "C",   40,  0, "Valor propiedad 2",               "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nNumUni", "N",   16,  6, "Unidades pedidas",                "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nNumCaj", "N",   16,  6, "Cajas pedidas",                   "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nStkFis", "N",   16,  6, "Stock fisico",                    "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nStkDis", "N",   16,  6, "Stock disponible",                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "lShow",   "L",    1,  0, "Lógico de mostrar",               "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "lShow",   "L",    1,  0, "LÃ³gico de mostrar",               "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nIva",    "N",    6,  2, "Porcentaje de " + cImp(),         "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nReq",    "N",    6,  2, "Porcentaje de recargo",           "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nPreDiv", "N",   16,  6, "Precio del artículo",             "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nPreDiv", "N",   16,  6, "Precio del artÃ­culo",             "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nDto",    "N",    6,  2, "Descuento del producto",          "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nDtoPrm", "N",    6,  2, "Descuento de promoción",          "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cUnidad", "C",    2,  0, "Unidad de medición",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nDtoPrm", "N",    6,  2, "Descuento de promociÃ³n",          "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cUnidad", "C",    2,  0, "Unidad de mediciÃ³n",              "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "lLote",   "L",    1,  0, "",                                "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nLote",   "N",    9,  0, "",                                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cLote",   "C",   12,  0, "Número de lote",                  "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cLote",   "C",   12,  0, "NÃºmero de lote",                  "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "mObsLin", "M",   10,  0, "Observaciones de lineas",         "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "cRefPrv", "C",   18,  0, "Referencia proveedor",            "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cUnidad", "C",    2,  0, "Unidad de medición",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nMedUno", "N",   16,  6, "Primera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nMedDos", "N",   16,  6, "Segunda unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nMedTre", "N",   16,  6, "Tercera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nNumLin", "N",    4,  0, "Nímero de línea",      			"", 		"", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cUnidad", "C",    2,  0, "Unidad de mediciÃ³n",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nMedUno", "N",   16,  6, "Primera unidad de mediciÃ³n",      "MasUnd()", "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nMedDos", "N",   16,  6, "Segunda unidad de mediciÃ³n",      "MasUnd()", "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nMedTre", "N",   16,  6, "Tercera unidad de mediciÃ³n",      "MasUnd()", "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nNumLin", "N",    4,  0, "NÃ­mero de lÃ­nea",      			"", 		"", "( cDbfCol )" } )
 
 return ( aColTmpLin )
 
@@ -14302,10 +14019,10 @@ function aColTmpFin()
    local aColTmpFin  := {}
 
    aAdd( aColTmpFin, { "cSerie",  "C",    1,  0, "Serie del documento",             "",  "", "( cDbfCol )" } )
-   aAdd( aColTmpFin, { "nNumero", "N",    9,  0, "Número del documento",            "",  "", "( cDbfCol )" } )
+   aAdd( aColTmpFin, { "nNumero", "N",    9,  0, "NÃºmero del documento",            "",  "", "( cDbfCol )" } )
    aAdd( aColTmpFin, { "cSufijo", "C",    2,  0, "Sufijo del documento",            "",  "", "( cDbfCol )" } )
    aAdd( aColTmpFin, { "dFecDoc", "D",    8,  0, "Fecha del documento",             "",  "", "( cDbfCol )" } )
-   aAdd( aColTmpFin, { "cCodPrv", "C",   12,  0, "Código de proveedor",             "",  "", "( cDbfCol )" } )
+   aAdd( aColTmpFin, { "cCodPrv", "C",   12,  0, "CÃ³digo de proveedor",             "",  "", "( cDbfCol )" } )
    aAdd( aColTmpFin, { "cNomPrv", "C",   30,  0, "Nombre de proveedor",             "",  "", "( cDbfCol )" } )
 
 return ( aColTmpFin )
@@ -14319,14 +14036,14 @@ FUNCTION BrwArtPed( aGet, dbfTmpPedLin, dbfDiv, dbfIva )
 	local oGet1
 	local cGet1
 	local oCbxOrd
-   local cCbxOrd     := "Código"
-   local aCbxOrd     := { "Código", "Nombre" }
+   local cCbxOrd     := "CÃ³digo"
+   local aCbxOrd     := { "CÃ³digo", "Nombre" }
    local nRecAnt     := ( dbfTmpPedLin )->( recno() )
    local nOrdAnt     := ( dbfTmpPedLin )->( OrdSetFocus( 1 ) )
 
    ( dbfTmpPedLin )->( DbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Artículos"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "ArtÃ­culos"
 
       REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
@@ -14348,7 +14065,7 @@ FUNCTION BrwArtPed( aGet, dbfTmpPedLin, dbfDiv, dbfIva )
                   (dbfTmpPedLin)->cRef,;
                   (dbfTmpPedLin)->cDetalle;
          HEAD;
-                  "Código" ,;
+                  "CÃ³digo" ,;
                   "Nombre";
          FIELDSIZES ;
                   90 ,;
@@ -14811,13 +14528,13 @@ Function DesignReportPedCli( oFr, dbfDoc )
       VariableReport( oFr )
 
       /*
-      Diseño de report---------------------------------------------------------
+      DiseÃ±o de report---------------------------------------------------------
       */
 
       oFr:DesignReport()
 
       /*
-      Destruye el diseñador----------------------------------------------------
+      Destruye el diseÃ±ador----------------------------------------------------
       */
 
       oFr:DestroyFr()
@@ -14857,7 +14574,7 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle(        "DiseÃ±ador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -14935,7 +14652,7 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :SetItems(        aItmPedCli() )
                   :SetAdjunto(      cFilePdf )
                   :SetPara(         RetFld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  pedido de cliente número " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) )
+                  :SetAsunto(       "EnvÃ­o de  pedido de cliente nÃºmero " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) )
                   :SetMensaje(      "Adjunto le remito nuestro pedido de cliente " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) + Space( 1 ) )
                   :SetMensaje(      "de fecha " + Dtoc( ( D():PedidosClientes( nView ) )->dfecPed ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
@@ -14953,7 +14670,7 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
    end if
 
    /*
-   Destruye el diseñador-------------------------------------------------------
+   Destruye el diseÃ±ador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -15015,13 +14732,13 @@ Function DesignReportEntPedCli( oFr, dbfDoc )
       VariableReportEntPedCli( oFr )
 
       /*
-      Diseño de report---------------------------------------------------------
+      DiseÃ±o de report---------------------------------------------------------
       */
 
       oFr:DesignReport()
 
       /*
-      Destruye el diseñador----------------------------------------------------
+      Destruye el diseÃ±ador----------------------------------------------------
       */
 
       oFr:DestroyFr()
@@ -15058,7 +14775,7 @@ Function PrintReportEntPedCli( nDevice, nCopies, cPrinter, dbfDoc, cPedCliP )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle(        "DiseÃ±ador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -15114,7 +14831,7 @@ Function PrintReportEntPedCli( nDevice, nCopies, cPrinter, dbfDoc, cPedCliP )
    end if
 
    /*
-   Destruye el diseñador-------------------------------------------------------
+   Destruye el diseÃ±ador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -15509,25 +15226,25 @@ function aItmPedCli()
    local aItmPedCli := {}
 
    aAdd( aItmPedCli, { "CSERPED", "C",    1,  0, "Serie del pedido",                                        "Serie",                   "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "NNUMPED", "N",    9,  0, "Número del pedido",                                       "Numero",                  "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "NNUMPED", "N",    9,  0, "NÃºmero del pedido",                                       "Numero",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CSUFPED", "C",    2,  0, "Sufijo de pedido",                                        "Sufijo",                  "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CTURPED", "C",    6,  0, "Sesión del pedido",                                       "Turno",                   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CTURPED", "C",    6,  0, "SesiÃ³n del pedido",                                       "Turno",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "DFECPED", "D",    8,  0, "Fecha del pedido",                                        "Fecha",                   "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODCLI", "C",   12,  0, "Código del cliente",                                      "Cliente",                 "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODCLI", "C",   12,  0, "CÃ³digo del cliente",                                      "Cliente",                 "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CNOMCLI", "C",   80,  0, "Nombre del cliente",                                      "NombreCliente",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CDIRCLI", "C",  200,  0, "Domicilio del cliente",                                   "DireccionCliente",        "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CPOBCLI", "C",  200,  0, "Población del cliente",                                   "PoblacionCliente",        "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CPOBCLI", "C",  200,  0, "PoblaciÃ³n del cliente",                                   "PoblacionCliente",        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CPRVCLI", "C",  100,  0, "Provincia del cliente",                                   "ProvinciaCliente",        "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CPOSCLI", "C",   15,  0, "Código postal del cliente",                               "CodigoPostalCliente",     "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CPOSCLI", "C",   15,  0, "CÃ³digo postal del cliente",                               "CodigoPostalCliente",     "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CDNICLI", "C",   30,  0, "DNI del cliente",                                         "DniCliente",              "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LMODCLI", "L",    1,  0, "Modificar datos del cliente",                             "ModificarDatosCliente",   "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODAGE", "C",    3,  0, "Código del agente",                                       "Agente",                  "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODOBR", "C",   10,  0, "Código de dirección",                                     "Obra",                    "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODTAR", "C",    5,  0, "Código de tarifa",                                        "Tarifa",                  "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODALM", "C",   16,  0, "Código del almacen",                                      "Almacen",                 "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODCAJ", "C",    3,  0, "Código de caja",                                          "Caja",                    "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODPGO", "C",    2,  0, "Código de pago",                                          "Pago",                    "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODRUT", "C",    4,  0, "Código de la ruta",                                       "Ruta",                    "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODAGE", "C",    3,  0, "CÃ³digo del agente",                                       "Agente",                  "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODOBR", "C",   10,  0, "CÃ³digo de direcciÃ³n",                                     "Obra",                    "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODTAR", "C",    5,  0, "CÃ³digo de tarifa",                                        "Tarifa",                  "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODALM", "C",   16,  0, "CÃ³digo del almacen",                                      "Almacen",                 "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODCAJ", "C",    3,  0, "CÃ³digo de caja",                                          "Caja",                    "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODPGO", "C",    2,  0, "CÃ³digo de pago",                                          "Pago",                    "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODRUT", "C",    4,  0, "CÃ³digo de la ruta",                                       "Ruta",                    "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "DFECENT", "D",    8,  0, "Fecha de salida",                                         "FechaSalida",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NESTADO", "N",    1,  0, "Estado del pedido",                                       "Estado",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CSUPED",  "C",   35,  0, "Su pedido",                                               "DocumentoOrigen",         "", "( cDbf )", nil } )
@@ -15536,9 +15253,9 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "MOBSERV", "M",   10,  0, "Observaciones",                                           "Observaciones",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LMAYOR",  "L",    1,  0, "",                                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NTARIFA", "N",    1,  0, "Tarifa de precio aplicada",                               "TarifaAplicar",           "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CDTOESP", "C",   50,  0, "Descripción de porcentaje de descuento",                  "DescripcionDescuento1",   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CDTOESP", "C",   50,  0, "DescripciÃ³n de porcentaje de descuento",                  "DescripcionDescuento1",   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NDTOESP", "N",    5,  2, "Porcentaje de descuento",                                 "PorcentajeDescuento1",    "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CDPP",    "C",   50,  0, "Descripción porcentaje de descuento por pronto pago",     "DescripcionDescuento2",   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CDPP",    "C",   50,  0, "DescripciÃ³n porcentaje de descuento por pronto pago",     "DescripcionDescuento2",   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NDPP",    "N",    5,  2, "Pct. de dto. por pronto pago",                            "PorcentajeDescuento2",    "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CDTOUNO", "C",   25,  0, "Desc. del primer descuento pers.",                        "DescripcionDescuento3",   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NDTOUNO", "N",    5,  2, "Pct. del primer descuento pers.",                         "PorcentajeDescuento3",    "", "( cDbf )", nil } )
@@ -15550,63 +15267,63 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "NDTOPGO", "N",    5,  2, "Pct. de dto. por pago centralizado",                      "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NDTOPTF", "N",    7,  2, "",                                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LRECARGO","L",    1,  0, "Aplicar recargo de equivalencia",                         "RecargoEquivalencia",     "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "NPCTCOMAGE","N",  5,  2, "Pct. de comisión del agente",                             "ComisionAgente",          "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "NBULTOS", "N",    3,  0, "Número de bultos",                                        "Bultos",                  "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "NPCTCOMAGE","N",  5,  2, "Pct. de comisiÃ³n del agente",                             "ComisionAgente",          "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "NBULTOS", "N",    3,  0, "NÃºmero de bultos",                                        "Bultos",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CNUMPRE", "C",   12,  0, "",                                                        "NumeroPresupuesto",       "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CDIVPED", "C",    3,  0, "Código de divisa",                                        "Divisa",                  "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CDIVPED", "C",    3,  0, "CÃ³digo de divisa",                                        "Divisa",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NVDVPED", "N",   10,  4, "Valor del cambio de la divisa",                           "ValorDivisa",             "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "LSNDDOC", "L",    1,  0, "Valor lógico documento enviado",                          "Envio",                   "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "LPDTCRG", "L",    1,  0, "Lógico para ser entregado",                               "",                        "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "LSNDDOC", "L",    1,  0, "Valor lÃ³gico documento enviado",                          "Envio",                   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "LPDTCRG", "L",    1,  0, "LÃ³gico para ser entregado",                               "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NREGIVA", "N",    1,  0, "Regimen de " + cImp() ,                                   "TipoImpuesto",            "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LIVAINC", "L",    1,  0, "impuestos incluido" ,                                     "ImpuestosIncluidos",      "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NIVAMAN", "N",    6,  2, "Porcentaje de " + cImp() + " del gasto" ,                 "ImpuestoGastos",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NMANOBR", "N",   16,  6, "Gastos" ,                                                 "Gastos",                  "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODTRN", "C",    9,  0, "Código de transportista" ,                                "Transportista",           "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODTRN", "C",    9,  0, "CÃ³digo de transportista" ,                                "Transportista",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nKgsTrn", "N",   16,  6, "TARA del transportista" ,                                 "TaraTransPortista",       "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "LCLOPED", "L",    1,  0, "Lógico de pedido cerrado" ,                               "DocumentoCerrado",        "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODUSR", "C",    3,  0, "Código de usuario",                                       "Usuario",                 "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "DFECCRE", "D",    8,  0, "Fecha de creación del documento",                         "FechaCreacion",           "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CTIMCRE", "C",    5,  0, "Hora de creación del documento",                          "HoraCreacion",            "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "LCLOPED", "L",    1,  0, "LÃ³gico de pedido cerrado" ,                               "DocumentoCerrado",        "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODUSR", "C",    3,  0, "CÃ³digo de usuario",                                       "Usuario",                 "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "DFECCRE", "D",    8,  0, "Fecha de creaciÃ³n del documento",                         "FechaCreacion",           "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CTIMCRE", "C",    5,  0, "Hora de creaciÃ³n del documento",                          "HoraCreacion",            "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CRETMAT", "C",   20,  0, "Matricula",                                               "Matricula",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CRETPOR", "C",   20,  0, "Retirado por",                                            "RetiradoPor",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NPEDPROV","N",    1,  0, "",                                                        "NumeroPedidoProveedor",   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NMONTAJE","N",    6 , 2, "Horas de montaje",                                        "Montaje",                 "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCODGRP", "C",    4,  0, "Código de grupo de cliente",                              "GrupoCliente",            "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "LIMPRIMIDO","L",  1,  0, "Lógico de imprimido",                                     "Imprimido",               "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "DFECIMP", "D",    8,  0, "Última fecha de impresión",                               "FechaImprecion",          "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CHORIMP", "C",    5,  0, "Hora de la última impresión",                             "HoraImpresion",           "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cCodDlg", "C",    2,  0, "Código delegación" ,                                      "Delegacion",              "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "nDtoAtp", "N",    6,  2, "Porcentaje de descuento atípico",                         "DescuentoAtipico",        "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "nSbrAtp", "N",    1,  0, "Lugar donde aplicar dto atípico",                         "LugarAplicarDescuentoAtipico","", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cSituac", "C",   20,  0, "Situación del documento",                                 "Situacion",               "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "lWeb",    "L",    1,  0, "Lógico de recibido por web",                              "",                        "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "lAlquiler","L",   1,  0, "Lógico de alquiler",                                      "Alquiler",                "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCODGRP", "C",    4,  0, "CÃ³digo de grupo de cliente",                              "GrupoCliente",            "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "LIMPRIMIDO","L",  1,  0, "LÃ³gico de imprimido",                                     "Imprimido",               "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "DFECIMP", "D",    8,  0, "Ãšltima fecha de impresiÃ³n",                               "FechaImprecion",          "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CHORIMP", "C",    5,  0, "Hora de la Ãºltima impresiÃ³n",                             "HoraImpresion",           "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "cCodDlg", "C",    2,  0, "CÃ³digo delegaciÃ³n" ,                                      "Delegacion",              "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "nDtoAtp", "N",    6,  2, "Porcentaje de descuento atÃ­pico",                         "DescuentoAtipico",        "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "nSbrAtp", "N",    1,  0, "Lugar donde aplicar dto atÃ­pico",                         "LugarAplicarDescuentoAtipico","", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "cSituac", "C",   20,  0, "SituaciÃ³n del documento",                                 "Situacion",               "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "lWeb",    "L",    1,  0, "LÃ³gico de recibido por web",                              "",                        "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "lAlquiler","L",   1,  0, "LÃ³gico de alquiler",                                      "Alquiler",                "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "DFECENTR","D",    8,  0, "Fecha de entrada de alquiler",                            "EntradaAlquiler",         "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "DFECSAL", "D",    8,  0, "Fecha de salida de alquiler",                             "SalidaAlquiler",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CMANOBR", "C",  250,  0, "Literal de gastos" ,                                      "LiteralGastos",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NGENERADO","N",   1,  0, "Estado generado" ,                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NRECIBIDO","N",   1,  0, "Estado recibido" ,                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LINTERNET","L",   1,  0, "Pedido desde internet" ,                                  "",                        "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CNUMTIK",  "C",  13,  0, "Número del ticket generado" ,                             "NumeroTicket",            "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "LCANCEL",  "L",   1,  0, "Lógico pedido cancelado" ,                                "Cancelado",               "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "DCANCEL",  "D",   8,  0, "Fecha cancelación" ,                                      "FechaCancelado",          "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CCANCEL",  "C", 100,  0, "Motivo cancelación" ,                                     "MotivoCancelado",         "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CNUMTIK",  "C",  13,  0, "NÃºmero del ticket generado" ,                             "NumeroTicket",            "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "LCANCEL",  "L",   1,  0, "LÃ³gico pedido cancelado" ,                                "Cancelado",               "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "DCANCEL",  "D",   8,  0, "Fecha cancelaciÃ³n" ,                                      "FechaCancelado",          "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CCANCEL",  "C", 100,  0, "Motivo cancelaciÃ³n" ,                                     "MotivoCancelado",         "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODWEB",  "N",  11,  0, "Codigo del pedido en la web" ,                            "CodigoWeb",               "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "CTLFCLI",  "C",  20,  0, "Teléfono del cliente" ,                                   "TelefonoCliente",         "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "CTLFCLI",  "C",  20,  0, "TelÃ©fono del cliente" ,                                   "TelefonoCliente",         "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nTotNet",  "N",  16,  6, "Total neto" ,                                             "TotalNeto",               "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nTotIva",  "N",  16,  6, "Total " + cImp() ,                                        "TotalImpuesto",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nTotReq",  "N",  16,  6, "Total recago" ,                                           "TotalRecargo",            "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nTotPed",  "N",  16,  6, "Total pedido" ,                                           "TotalDocumento",          "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cNumAlb",  "C",  12,  0, "Número del albarán donde se agrupa" ,                     "NumeroAlbaran",           "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "lOperPV",  "L",   1,  0, "Lógico para operar con punto verde" ,                     "OperarPuntoVerde",        "", "( cDbf )", .t. } )
+   aAdd( aItmPedCli, { "cNumAlb",  "C",  12,  0, "NÃºmero del albarÃ¡n donde se agrupa" ,                     "NumeroAlbaran",           "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "lOperPV",  "L",   1,  0, "LÃ³gico para operar con punto verde" ,                     "OperarPuntoVerde",        "", "( cDbf )", .t. } )
    aAdd( aItmPedCli, { "cBanco",   "C",  50,  0, "Nombre del banco del cliente",                            "NombreBanco",             "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cPaisIBAN","C",   2,  0, "País IBAN de la cuenta bancaria del cliente",             "IbanCuenta",              "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cCtrlIBAN","C",   2,  0, "Dígito de control IBAN de la cuenta bancaria del cliente","DigitoControlIban",       "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "cPaisIBAN","C",   2,  0, "PaÃ­s IBAN de la cuenta bancaria del cliente",             "IbanCuenta",              "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "cCtrlIBAN","C",   2,  0, "DÃ­gito de control IBAN de la cuenta bancaria del cliente","DigitoControlIban",       "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cEntBnc",  "C",   4,  0, "Entidad de la cuenta bancaria del cliente",               "EntidadCuenta",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cSucBnc",  "C",   4,  0, "Sucursal de la cuenta bancaria del cliente",              "SucursalCuenta",          "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "cDigBnc",  "C",   2,  0, "Dígito de control de la cuenta bancaria del cliente",     "DigitoControlCuenta",     "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "cDigBnc",  "C",   2,  0, "DÃ­gito de control de la cuenta bancaria del cliente",     "DigitoControlCuenta",     "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCtaBnc",  "C",  10,  0, "Cuenta bancaria del cliente",                             "CuentaBancaria",          "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "lProduc",  "L",   1,  0, "Lógico para incluir en producción" ,                      "IncluirEnProduccion",     "", "( cDbf )", .t. } )
+   aAdd( aItmPedCli, { "lProduc",  "L",   1,  0, "LÃ³gico para incluir en producciÃ³n" ,                      "IncluirEnProduccion",     "", "( cDbf )", .t. } )
    aAdd( aItmPedCli, { "nDtoTarifa","N",  6,  2, "Descuentos de tarifa", 			                           "DescuentoTarifa", 	      "", "( cDbf )", nil } )
 
 return ( aItmPedCli )
@@ -15618,99 +15335,99 @@ function aColPedCli()
    local aColPedCli  := {}
 
    aAdd( aColPedCli, { "cSerPed",   "C",    1,  0, "",                                                "Serie",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nNumPed",   "N",    9,  0, "",                                                "Numero",        "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cSufPed",   "C",    2,  0, "",                                                "Sufijo",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cRef",      "C",   18,  0, "Referencia del artículo",                         "Articulo",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cCodPr1",   "C",   20,  0, "Código de la primera propiedad",                  "CodigoPropiedad1",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cCodPr2",   "C",   20,  0, "Código de la segunda propiedad",                  "CodigoPropiedad2",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cValPr1",   "C",   40,  0, "Valor de la primera propiedad",                   "ValorPropiedad1",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cValPr2",   "C",   40,  0, "Valor de la segunda propiedad",                   "ValorPropiedad2",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cDetalle",  "C",  250,  0, "Descripción de artículo",                         "DescripcionArticulo",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nIva"    ,  "N",    6,  2, "Porcentaje de impuesto",                          "PorcentajeImpuesto",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nCanPed" ,  "N",   16,  6, "Cantidad pedida",                                 "Cajas",           "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nUniCaja",  "N",   16,  6, "Unidades por caja",                               "Unidades",           "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nUndKit",   "N",   16,  6, "Unidades del producto kit",                       "UnidadesKit",           "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nPreDiv" ,  "N",   16,  6, "Precio del artículo",                             "PrecioVenta",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nPntVer",   "N",   16,  6, "Importe punto verde",                             "PuntoVerde",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nImpTrn",   "N",   16,  6, "Importe de portes",                               "Portes",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NDTO",      "N",    6,  2, "Descuento del producto",                          "DescuentoPorcentual",          "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NDTOPRM",   "N",    6,  2, "Descuento de la promoción",                       "DescuentoPromocion",          "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NCOMAGE",   "N",    6,  2, "Comisión del agente",                             "ComisionAgente",          "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NCANENT",   "N",   16,  6, "",                                                "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NUNIENT",   "N",   16,  6, "",                                                "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CUNIDAD",   "C",    2,  0, "Unidad de medición",                              "UnidadMedicion",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NPESOKG",   "N",   16,  6, "Peso del producto",                               "Peso",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CPESOKG",   "C",    2,  0, "Unidad de peso del producto",                     "UnidadMedicionPeso",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "DFECHA",    "D",    8,  0, "Fecha de entrega",                                "FechaEntrega",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CTIPMOV",   "C",    2,  0, "Tipo de movimiento",                              "TipoMovimiento",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "MLNGDES",   "M",   10,  0, "Descripción de artículo sin codificar",           "DescripcionAmpliada",             "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LTOTLIN",   "L",    1,  0, "Línea de total",                                  "LineaTotal",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LIMPLIN",   "L",    1,  0, "Línea no imprimible",                             "LineaNoImprimible",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NFACCNV",   "N",   13,  4, "",                                                "FactorConversion",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nNumPed",   "N",    9,  0, "",                                                "Numero",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cSufPed",   "C",    2,  0, "",                                                "Sufijo",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cRef",      "C",   18,  0, "Referencia del artÃ­culo",                         "Articulo",                "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cCodPr1",   "C",   20,  0, "CÃ³digo de la primera propiedad",                  "CodigoPropiedad1",        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cCodPr2",   "C",   20,  0, "CÃ³digo de la segunda propiedad",                  "CodigoPropiedad2",        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cValPr1",   "C",   40,  0, "Valor de la primera propiedad",                   "ValorPropiedad1",         "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cValPr2",   "C",   40,  0, "Valor de la segunda propiedad",                   "ValorPropiedad2",         "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cDetalle",  "C",  250,  0, "DescripciÃ³n de artÃ­culo",                         "DescripcionArticulo",     "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nIva"    ,  "N",    6,  2, "Porcentaje de impuesto",                          "PorcentajeImpuesto",      "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nCanPed" ,  "N",   16,  6, "Cantidad pedida",                                 "Cajas",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nUniCaja",  "N",   16,  6, "Unidades por caja",                               "Unidades",                "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nUndKit",   "N",   16,  6, "Unidades del producto kit",                       "UnidadesKit",             "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nPreDiv" ,  "N",   16,  6, "Precio del artÃ­culo",                             "PrecioVenta",             "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nPntVer",   "N",   16,  6, "Importe punto verde",                             "PuntoVerde",              "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nImpTrn",   "N",   16,  6, "Importe de portes",                               "Portes",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NDTO",      "N",    6,  2, "Descuento del producto",                          "DescuentoPorcentual",     "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NDTOPRM",   "N",    6,  2, "Descuento de la promociÃ³n",                       "DescuentoPromocion",      "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NCOMAGE",   "N",    6,  2, "ComisiÃ³n del agente",                             "ComisionAgente",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NCANENT",   "N",   16,  6, "",                                                "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NUNIENT",   "N",   16,  6, "",                                                "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CUNIDAD",   "C",    2,  0, "Unidad de mediciÃ³n",                              "UnidadMedicion",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NPESOKG",   "N",   16,  6, "Peso del producto",                               "Peso",                    "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CPESOKG",   "C",    2,  0, "Unidad de peso del producto",                     "UnidadMedicionPeso",      "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "DFECHA",    "D",    8,  0, "Fecha de entrega",                                "FechaEntrega",            "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CTIPMOV",   "C",    2,  0, "Tipo de movimiento",                              "TipoMovimiento",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "MLNGDES",   "M",   10,  0, "DescripciÃ³n de artÃ­culo sin codificar",           "DescripcionAmpliada",     "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LTOTLIN",   "L",    1,  0, "LÃ­nea de total",                                  "LineaTotal",              "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LIMPLIN",   "L",    1,  0, "LÃ­nea no imprimible",                             "LineaNoImprimible",       "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NFACCNV",   "N",   13,  4, "",                                                "FactorConversion",        "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NDTODIV",   "N",   16,  6, "Descuento lineal de la compra",                   "DescuentoLineal",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LRESUND",   "L",    1,  0, "Reservar unidades del stock",                     "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NRESUND",   "N",   16,  6, "Unidades reservadas de del stock",                "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NRETUND",   "N",   16,  6, "Und. entregadas de las reservadas",               "",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NNUMLIN",   "N",    4,  0, "Numero de la línea",                              "NumeroLinea",             "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NCTLSTK",   "N",    1,  0, "Tipo de stock de la linea",                       "TipoStock",                "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NCOSDIV",   "N",   16,  6, "Costo del producto" ,                             "PrecioCosto",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NPVPREC",   "N",   16,  6, "Precio de venta recomendado" ,                    "PrecioVentaRecomendado",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CALMLIN",   "C",   16,  0, "Código de almacén" ,                              "Almacen",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CCODIMP",   "C",    3,  0, "Código del IVMH",                                 "ImpuestoEspecial",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NVALIMP",   "N",   16,  6, "Importe de impuesto",                             "ImporteImpuestoEspecial",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LIVALIN",   "L",    1,  0, "Línea con impuesto incluido",                     "LineaImpuestoIncluido",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LLOTE",     "L",    1,  0, "",                                                "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NLOTE",     "N",    9,  0, "",                                                "",        "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CLOTE",     "C",   12,  0, "Número de lote",                                  "Lote",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LKITART",   "L",    1,  0, "Línea con escandallo",                            "LineaEscandallo",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LKITCHL",   "L",    1,  0, "Línea pertenciente a escandallo",                 "LineaPerteneceEscandallo",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LKITPRC",   "L",    1,  0, "Línea de escandallos con precio",                 "LineaEscandalloPrecio",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NMESGRT",   "N",    2,  0, "Meses de garantía",                               "MesesGarantia",               "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LMSGVTA",   "L",    1,  0, "Avisar en venta sin stocks",                      "AvisarSinStock",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LNOTVTA",   "L",    1,  0, "No permitir venta sin stocks",                    "NoPermitirSinStock",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LCONTROL",  "L",    1,  0, "" ,                                               "LineaControl",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "MNUMSER",   "M",   10,  0, "" ,                                               "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cCodTip",   "C",    3,  0, "Código del tipo de artículo",                     "TipoArticulo",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "LANULADO",  "L",    1,  0, "Anular linea",                                    "AnularLinea",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "DANULADO",  "D",    8,  0, "Fecha de anulacion",                              "FechaAnulacion",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "MANULADO",  "M",  100,  0, "Motivo anulacion",                                "MotivoAnulacion",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CCODFAM",   "C",   16,  0, "Código de familia",                               "Familia",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CGRPFAM",   "C",    3,  0, "Código de grupo de familia",                      "GrupoFamilia",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NREQ",      "N",   16,  6, "Recargo de equivalencia",                         "RecargoEquivalencia",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "MOBSLIN",   "M",   10,  0, "Observaciones de linea",                          "Observaciones",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NRECIBIDA", "N",    1,  0, "Estado si recibido del artículo",                 "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CCODPRV",   "C",   12,  0, "Código del proveedor",                            "Proveedor",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CNOMPRV",   "C",   30,  0, "Nombre del proveedor",                            "NombreProveedor",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CIMAGEN",   "C",  250,  0, "Fichero de imagen" ,                              "Imagen",                   "", "( cDbfCol )", .t. } )
-   aAdd( aColPedCli, { "NPUNTOS",   "N",   15,  6, "Puntos del artículo",                             "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NVALPNT",   "N",   16,  6, "Valor del punto",                                 "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NDTOPNT",   "N",    6,  2, "Descuento puntos",                                "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NINCPNT",   "N",    6,  2, "Incremento porcentual",                           "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CREFPRV",   "C",   18,  0, "Referencia proveedor",                            "ReferenciaProveedor",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "NVOLUMEN",  "N",   16,  6, "Volumen del producto" ,                           "Volumen",      "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CVOLUMEN",  "C",    2,  0, "Unidad del volumen" ,                             "UnidadMedicionVolumen",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "DFECENT" ,  "D",    8,  0, "Fecha de entrada del alquiler",                   "FechaEntradaAlquiler",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "dFecSal" ,  "D",    8,  0, "Fecha de salida del alquiler",                    "FechaSalidaAlquiler",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "lAlquiler" ,"L",    1,  0, "Lógico de alquiler",                              "Alquiler",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nPreAlq",   "N",   16,  6, "Precio de alquiler",                              "PrecioAlquiler",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nNumMed",   "N",    1,  0, "Número de mediciones",                            "NumeroMedidiones",           "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nMedUno",   "N",   16,  6, "Primera unidad de medición",                      "Medicion1",           "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nMedDos",   "N",   16,  6, "Segunda unidad de medición",                      "Medicion2",           "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nMedTre",   "N",   16,  6, "Tercera unidad de medición",                      "Medicion3",           "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nTarLin",   "N",    1,  0, "Tarifa de precio aplicada" ,                      "Tarifa",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "lImpFra",   "L",    1,  0, "Lógico de imprimir frase publicitaria",           "",             "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cCodFra",   "C",    3,  0, "Código de frase publicitaria",                    "",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cTxtFra",   "C",  250,  0, "",                                                "",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "Descrip",   "M",   10,  0, "Descripción larga",                               "DescripcionTecnica",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "lLinOfe",   "L",    1,  0, "Linea con oferta",                                "lineaOferta",                  "", "( cDbfCol )", .f. } )
-   aAdd( aColPedCli, { "lVolImp",   "L",    1,  0, "Lógico aplicar volumen con impuestos especiales", "",  "", "( cDbfCol )", .f. } )
-   aAdd( aColPedCli, { "nProduc",   "N",    1,  0, "Lógico de producido",                             "EstadoProducido",                  "", "( cDbfCol )", .f. } )
-   aAdd( aColPedCli, { "dFecCad",   "D",    8,  0, "Fecha de caducidad",                              "FechaCaducidad",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "dFecUltCom","D",    8,  0, "Fecha ultima venta",                              "FechaUltinaVenta",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "lFromAtp"  ,"L",    1,  0, "", 								                        "",          		   "", "( cDbfCol )", .f. } )
-   aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades última compra",		                     "",                  "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nBultos",   "N",   16,  6, "Numero de bultos en líneas", 	                  "",              	   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "cFormato",  "C",  100,  0, "Formato de venta",                                "",              	   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LRESUND",   "L",    1,  0, "Reservar unidades del stock",                     "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NRESUND",   "N",   16,  6, "Unidades reservadas de del stock",                "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NRETUND",   "N",   16,  6, "Und. entregadas de las reservadas",               "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NNUMLIN",   "N",    4,  0, "Numero de la lÃ­nea",                              "NumeroLinea",             "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NCTLSTK",   "N",    1,  0, "Tipo de stock de la linea",                       "TipoStock",               "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NCOSDIV",   "N",   16,  6, "Costo del producto" ,                             "PrecioCosto",             "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NPVPREC",   "N",   16,  6, "Precio de venta recomendado" ,                    "PrecioVentaRecomendado",  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CALMLIN",   "C",   16,  0, "CÃ³digo de almacÃ©n" ,                              "Almacen",                 "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CCODIMP",   "C",    3,  0, "CÃ³digo del IVMH",                                 "ImpuestoEspecial",        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NVALIMP",   "N",   16,  6, "Importe de impuesto",                             "ImporteImpuestoEspecial", "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LIVALIN",   "L",    1,  0, "LÃ­nea con impuesto incluido",                     "LineaImpuestoIncluido",   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LLOTE",     "L",    1,  0, "",                                                "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NLOTE",     "N",    9,  0, "",                                                "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CLOTE",     "C",   12,  0, "NÃºmero de lote",                                  "Lote",                    "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LKITART",   "L",    1,  0, "LÃ­nea con escandallo",                            "LineaEscandallo",         "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LKITCHL",   "L",    1,  0, "LÃ­nea pertenciente a escandallo",                 "LineaPerteneceEscandallo","", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LKITPRC",   "L",    1,  0, "LÃ­nea de escandallos con precio",                 "LineaEscandalloPrecio",   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NMESGRT",   "N",    2,  0, "Meses de garantÃ­a",                               "MesesGarantia",           "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LMSGVTA",   "L",    1,  0, "Avisar en venta sin stocks",                      "AvisarSinStock",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LNOTVTA",   "L",    1,  0, "No permitir venta sin stocks",                    "NoPermitirSinStock",      "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LCONTROL",  "L",    1,  0, "" ,                                               "LineaControl",            "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "MNUMSER",   "M",   10,  0, "" ,                                               "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cCodTip",   "C",    3,  0, "CÃ³digo del tipo de artÃ­culo",                     "TipoArticulo",            "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "LANULADO",  "L",    1,  0, "Anular linea",                                    "AnularLinea",             "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "DANULADO",  "D",    8,  0, "Fecha de anulacion",                              "FechaAnulacion",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "MANULADO",  "M",  100,  0, "Motivo anulacion",                                "MotivoAnulacion",         "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CCODFAM",   "C",   16,  0, "CÃ³digo de familia",                               "Familia",                 "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CGRPFAM",   "C",    3,  0, "CÃ³digo de grupo de familia",                      "GrupoFamilia",            "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NREQ",      "N",   16,  6, "Recargo de equivalencia",                         "RecargoEquivalencia",     "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "MOBSLIN",   "M",   10,  0, "Observaciones de linea",                          "Observaciones",           "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NRECIBIDA", "N",    1,  0, "Estado si recibido del artÃ­culo",                 "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CCODPRV",   "C",   12,  0, "CÃ³digo del proveedor",                            "Proveedor",               "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CNOMPRV",   "C",   30,  0, "Nombre del proveedor",                            "NombreProveedor",         "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CIMAGEN",   "C",  250,  0, "Fichero de imagen" ,                              "Imagen",                  "", "( cDbfCol )", .t. } )
+   aAdd( aColPedCli, { "NPUNTOS",   "N",   15,  6, "Puntos del artÃ­culo",                             "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NVALPNT",   "N",   16,  6, "Valor del punto",                                 "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NDTOPNT",   "N",    6,  2, "Descuento puntos",                                "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NINCPNT",   "N",    6,  2, "Incremento porcentual",                           "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CREFPRV",   "C",   18,  0, "Referencia proveedor",                            "ReferenciaProveedor",     "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "NVOLUMEN",  "N",   16,  6, "Volumen del producto" ,                           "Volumen",                 "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CVOLUMEN",  "C",    2,  0, "Unidad del volumen" ,                             "UnidadMedicionVolumen",   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "DFECENT" ,  "D",    8,  0, "Fecha de entrada del alquiler",                   "FechaEntradaAlquiler",    "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "dFecSal" ,  "D",    8,  0, "Fecha de salida del alquiler",                    "FechaSalidaAlquiler",     "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lAlquiler" ,"L",    1,  0, "LÃ³gico de alquiler",                              "Alquiler",                "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nPreAlq",   "N",   16,  6, "Precio de alquiler",                              "PrecioAlquiler",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nNumMed",   "N",    1,  0, "NÃºmero de mediciones",                            "NumeroMedidiones",        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nMedUno",   "N",   16,  6, "Primera unidad de mediciÃ³n",                      "Medicion1",               "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nMedDos",   "N",   16,  6, "Segunda unidad de mediciÃ³n",                      "Medicion2",               "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nMedTre",   "N",   16,  6, "Tercera unidad de mediciÃ³n",                      "Medicion3",               "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nTarLin",   "N",    1,  0, "Tarifa de precio aplicada" ,                      "Tarifa",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lImpFra",   "L",    1,  0, "LÃ³gico de imprimir frase publicitaria",           "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cCodFra",   "C",    3,  0, "CÃ³digo de frase publicitaria",                    "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cTxtFra",   "C",  250,  0, "",                                                "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "Descrip",   "M",   10,  0, "DescripciÃ³n larga",                               "DescripcionTecnica",      "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lLinOfe",   "L",    1,  0, "Linea con oferta",                                "lineaOferta",             "", "( cDbfCol )", .f. } )
+   aAdd( aColPedCli, { "lVolImp",   "L",    1,  0, "LÃ³gico aplicar volumen con impuestos especiales", "",                        "", "( cDbfCol )", .f. } )
+   aAdd( aColPedCli, { "nProduc",   "N",    1,  0, "LÃ³gico de producido",                             "EstadoProducido",         "", "( cDbfCol )", .f. } )
+   aAdd( aColPedCli, { "dFecCad",   "D",    8,  0, "Fecha de caducidad",                              "FechaCaducidad",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "dFecUltCom","D",    8,  0, "Fecha ultima venta",                              "FechaUltinaVenta",        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lFromAtp"  ,"L",    1,  0, "", 								                        "",          		         "", "( cDbfCol )", .f. } )
+   aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades Ãºltima compra",		                     "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nBultos",   "N",   16,  6, "Numero de bultos en lÃ­neas", 	                  "",              	         "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cFormato",  "C",  100,  0, "Formato de venta",                                "",              	         "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 
@@ -15721,14 +15438,14 @@ function aIncPedCli()
    local aIncPedCli  := {}
 
    aAdd( aIncPedCli, { "cSerPed", "C",    1,  0, "Serie de pedido" ,                      "",                   "", "( cDbfCol )", nil } )
-   aAdd( aIncPedCli, { "nNumPed", "N",    9,  0, "Número de pedido" ,                     "'999999999'",        "", "( cDbfCol )", nil } )
+   aAdd( aIncPedCli, { "nNumPed", "N",    9,  0, "NÃºmero de pedido" ,                     "'999999999'",        "", "( cDbfCol )", nil } )
    aAdd( aIncPedCli, { "cSufPed", "C",    2,  0, "Sufijo de pedido" ,                     "",                   "", "( cDbfCol )", nil } )
    aAdd( aIncPedCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,                   "",                   "", "( cDbfCol )", nil } )
    aAdd( aIncPedCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,               "",                   "", "( cDbfCol )", nil } )
-   aAdd( aIncPedCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,         "",                   "", "( cDbfCol )", nil } )
-   aAdd( aIncPedCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                      "",                   "", "( cDbfCol )", nil } )
-   aAdd( aIncPedCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                      "",                   "", "( cDbfCol )", nil } )
-   aAdd( aIncPedCli, { "lSndWeb", "L",    1,  0, "Lógico de incidencia subia a la web" ,  "",                   "", "( cDbfCol )", nil } )
+   aAdd( aIncPedCli, { "mDesInc", "M",   10,  0, "DescripciÃ³n de la incidencia" ,         "",                   "", "( cDbfCol )", nil } )
+   aAdd( aIncPedCli, { "lListo",  "L",    1,  0, "LÃ³gico de listo" ,                      "",                   "", "( cDbfCol )", nil } )
+   aAdd( aIncPedCli, { "lAviso",  "L",    1,  0, "LÃ³gico de aviso" ,                      "",                   "", "( cDbfCol )", nil } )
+   aAdd( aIncPedCli, { "lSndWeb", "L",    1,  0, "LÃ³gico de incidencia subia a la web" ,  "",                   "", "( cDbfCol )", nil } )
 
 return ( aIncPedCli )
 
@@ -15757,33 +15474,33 @@ function aPedCliPgo()
    aAdd( aPedCliPgo, {"nNumPed"     ,"N",  9, 0, "Numero de pedido" ,           "'999999999'",        "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cSufPed"     ,"C",  2, 0, "Sufijo de pedido" ,           "",                   "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"nNumRec"     ,"N",  2, 0, "Numero del recibo",           "",                   "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cCodCaj"     ,"C",  3, 0, "Código de caja",              "",                   "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cTurRec"     ,"C",  6, 0, "Sesión del recibo",           "######",             "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cCodCli"     ,"C", 12, 0, "Código de cliente",           "",                   "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cCodCaj"     ,"C",  3, 0, "CÃ³digo de caja",              "",                   "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cTurRec"     ,"C",  6, 0, "SesiÃ³n del recibo",           "######",             "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cCodCli"     ,"C", 12, 0, "CÃ³digo de cliente",           "",                   "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"dEntrega"    ,"D",  8, 0, "Fecha de cobro",              "",                   "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"nImporte"    ,"N", 16, 6, "Importe",                     "cPorDivEnt",         "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cDescrip"    ,"C",100, 0, "Concepto del pago",           "",                   "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cPgdoPor"    ,"C", 50, 0, "Pagado por",                  "",                   "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cDocPgo"     ,"C", 50, 0, "Documento de pago",           "",                   "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cDivPgo"     ,"C",  3, 0, "Código de la divisa",         "",                   "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cDivPgo"     ,"C",  3, 0, "CÃ³digo de la divisa",         "",                   "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"nVdvPgo"     ,"N", 10, 6, "Valor de la divisa",          "",                   "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cCodAge"     ,"C",  3, 0, "Código del agente",           "",                   "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cCodPgo"     ,"C",  2, 0, "Código de pago",              "",                   "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"lCloPgo"     ,"L",  1, 0, "Lógico cerrado turno",        "",                   "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"lPasado"     ,"L",  1, 0, "Lógico pasado albarán",       "",                   "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cCodAge"     ,"C",  3, 0, "CÃ³digo del agente",           "",                   "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cCodPgo"     ,"C",  2, 0, "CÃ³digo de pago",              "",                   "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"lCloPgo"     ,"L",  1, 0, "LÃ³gico cerrado turno",        "",                   "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"lPasado"     ,"L",  1, 0, "LÃ³gico pasado albarÃ¡n",       "",                   "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cBncEmp"     ,"C", 50, 0, "Banco de la empresa para el recibo" ,"",            "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cBncCli"     ,"C", 50, 0, "Banco del cliente para el recibo" ,"",              "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cEPaisIBAN"  ,"C",  2, 0, "País IBAN de la cuenta de la empresa",  "",        	"", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cEPaisIBAN"  ,"C",  2, 0, "PaÃ­s IBAN de la cuenta de la empresa",  "",        	"", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cECtrlIBAN"  ,"C",  2, 0, "Digito de control IBAN de la cuenta de la empresa", "", "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cEntEmp"     ,"C",  4, 0, "Entidad de la cuenta de la empresa",  "",           "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cSucEmp"     ,"C",  4, 0, "Sucursal de la cuenta de la empresa",  "",          "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cDigEmp"     ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",  "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cDigEmp"     ,"C",  2, 0, "DÃ­gito de control de la cuenta de la empresa", "",  "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cCtaEmp"     ,"C", 10, 0, "Cuenta bancaria de la empresa",  "",                "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN de la cuenta del cliente",  "",        	"", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cPaisIBAN"   ,"C",  2, 0, "PaÃ­s IBAN de la cuenta del cliente",  "",        	"", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cCtrlIBAN"   ,"C",  2, 0, "Digito de control IBAN de la cuenta del cliente", "", "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cEntCli"     ,"C",  4, 0, "Entidad de la cuenta del cliente",  "",             "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cSucCli"     ,"C",  4, 0, "Sucursal de la cuenta del cliente",  "",            "", "( cDbfEnt )", nil } )
-   aAdd( aPedCliPgo, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",    "", "( cDbfEnt )", nil } )
+   aAdd( aPedCliPgo, {"cDigCli"     ,"C",  2, 0, "DÃ­gito de control de la cuenta del cliente", "",    "", "( cDbfEnt )", nil } )
    aAdd( aPedCliPgo, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",  "",                  "", "( cDbfEnt )", nil } )
 
 return ( aPedCliPgo )
@@ -15798,7 +15515,7 @@ function nTotNPedCli( uDbf )
 
    local nTotUnd
 
-   DEFAULT uDbf   := dbfPedCliL
+   DEFAULT uDbf   := D():PedidosClientesLineas( nView )
 
    do case
    case ValType( uDbf ) == "A"
@@ -15954,9 +15671,9 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 	if !Empty( nView )
 		DEFAULT cPedCliT   	:= D():PedidosClientes( nView )
       DEFAULT cClient   	:= D():Clientes( nView )
+      DEFAULT cPedCliL     := D():PedidosClientesLineas( nView )
    end if	
-   	
-	DEFAULT cPedCliL        := dbfPedCliL
+	
 	DEFAULT cIva            := dbfIva
 	DEFAULT cDiv            := dbfDiv
 	DEFAULT cFPago          := dbfFPago
@@ -16628,7 +16345,10 @@ FUNCTION nTotUPedCli( uTmpLin, nDec, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT uTmpLin      := dbfPedCliL
+   if !Empty( nView )
+      DEFAULT uTmpLin   := D():PedidosClientesLineas( nView )
+   end if
+
    DEFAULT nDec         := nDouDiv()
    DEFAULT nVdv         := 1
 
@@ -16761,19 +16481,19 @@ RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )
 
 //------------------------------------------------------------------------//
 
-FUNCTION nComLPedCli( uPedCliT, dbfPedCliL, nDecOut, nDerOut )
+FUNCTION nComLPedCli( uPedCliT, cPedCliL, nDecOut, nDerOut )
 
-   local nImpLPedCli  := nImpLPedCli( uPedCliT, dbfPedCliL, nDecOut, nDerOut, , .f., .t., .f. )
+   local nImpLPedCli  := nImpLPedCli( uPedCliT, cPedCliL, nDecOut, nDerOut, , .f., .t., .f. )
 
-RETURN ( nImpLPedCli * ( dbfPedCliL )->nComAge / 100 )
+RETURN ( nImpLPedCli * ( cPedCliL )->nComAge / 100 )
 
 //--------------------------------------------------------------------------//
 
 /*
- Cálculo del neto, sin descuentos para las comisiones de los agentes
+ CÃ¡lculo del neto, sin descuentos para las comisiones de los agentes
 */
 
-FUNCTION nImpLPedCli( uPedCliT, dbfPedCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nImpLPedCli( uPedCliT, cPedCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
    local lIvaInc
@@ -16786,7 +16506,7 @@ FUNCTION nImpLPedCli( uPedCliT, dbfPedCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLPedCli( dbfPedCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
+   nCalculo          := nTotLPedCli( cPedCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
 
    if IsArray( uPedCliT )
 
@@ -16808,14 +16528,14 @@ FUNCTION nImpLPedCli( uPedCliT, dbfPedCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
 
    end if
 
-   if ( dbfPedCliL )->nIva != 0
+   if ( cPedCliL )->nIva != 0
       if lIva  // lo quermos con impuestos
          if !lIvaInc
-            nCalculo += Round( nCalculo * ( dbfPedCliL )->nIva / 100, nRou )
+            nCalculo += Round( nCalculo * ( cPedCliL )->nIva / 100, nRou )
          end if
       else     // lo queremos sin impuestos
          if lIvaInc
-            nCalculo -= Round( nCalculo / ( 100 / ( dbfPedCliL )->nIva  + 1 ), nRou )
+            nCalculo -= Round( nCalculo / ( 100 / ( cPedCliL )->nIva  + 1 ), nRou )
          end if
       end if
    end if
@@ -16828,7 +16548,9 @@ FUNCTION nPesLPedCli( cPedCliL )
 
 	local nCalculo
 
-   DEFAULT cPedCliL  := dbfPedCliL
+   if !Empty( nView )
+      DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
+   end if   
 
    if !( cPedCliL )->lTotLin
       nCalculo       := Abs( nTotNPedCli( cPedCliL ) ) * ( cPedCliL )->nPesoKg
@@ -16863,12 +16585,15 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 FUNCTION nTotIPedCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
 
-   local nCalculo    := 0
+   local nCalculo       := 0
 
-   DEFAULT dbfLin    := dbfPedCliL
-   DEFAULT nDec      := 0
-   DEFAULT nRouDec   := 0
-   DEFAULT nVdv      := 1
+   if !Empty( nView )
+      DEFAULT dbfLin    := D():PedidosClientesLineas( nView )
+   end if
+
+   DEFAULT nDec         := 0
+   DEFAULT nRouDec      := 0
+   DEFAULT nVdv         := 1
 
    IF !( dbfLin )->lTotLin
 
@@ -16900,10 +16625,13 @@ FUNCTION nTrnLPedCli( dbfLin, nDec, nRou, nVdv )
 
    local nImpTrn
 
-   DEFAULT dbfLin    := dbfPedCliL
-   DEFAULT nDec      := 2
-   DEFAULT nRou      := 2
-   DEFAULT nVdv      := 1
+   if !Empty( nView )
+      DEFAULT dbfLin    := D():PedidosClientesLineas( nView )
+   end if
+
+   DEFAULT nDec         := 2
+   DEFAULT nRou         := 2
+   DEFAULT nVdv         := 1
 
    /*
    Punto Verde
@@ -16923,16 +16651,19 @@ FUNCTION nPntLPedCli( dbfLin, nDec, nVdv )
 
    local nPntVer
 
-   DEFAULT dbfLin    := dbfPedCliL
-   DEFAULT nDec      := 2
-   DEFAULT nVdv      := 1
+   if !Empty( nView )
+      DEFAULT dbfLin    := D():PedidosClientesLineas( nView )
+   end if
+
+   DEFAULT nDec         := 2
+   DEFAULT nVdv         := 1
 
    /*
    Punto Verde
    */
 
-   nPntVer           := ( dbfLin )->nPntVer / nVdv
-   nPntVer           *= nTotNPedCli( dbfLin )
+   nPntVer              := ( dbfLin )->nPntVer / nVdv
+   nPntVer              *= nTotNPedCli( dbfLin )
 
 RETURN ( Round( nPntVer, nDec ) )
 
@@ -16942,7 +16673,10 @@ FUNCTION nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
 
    local nCalculo
 
-   DEFAULT cPedCliL  := dbfPedCliL
+   if !Empty( nView )
+      DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
+   end if
+
    DEFAULT nDec      := nDouDiv()
    DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
@@ -17016,7 +16750,10 @@ FUNCTION nDtoLPedCli( cPedCliL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cPedCliL     := dbfPedCliL
+   if !Empty( nView )
+      DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
+   end if
+
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -17055,7 +16792,10 @@ FUNCTION nPrmLPedCli( cPedCliL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cPedCliL     := dbfPedCliL
+   if !Empty( nView )
+      DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
+   end if
+
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -17094,7 +16834,10 @@ Function nTotDtoLPedCli( dbfLin, nDec, nVdv, cPorDiv )
 
    local nCalculo
 
-   DEFAULT dbfLin    := dbfPedCliL
+   if !Empty( nView )
+      DEFAULT dbfLin := D():PedidosClientesLineas( nView )
+   end if
+
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
@@ -17216,7 +16959,7 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
       end with
 
       with object ( oBrwPedidosWeb:AddCol() )
-         :cHeader          := "Número"
+         :cHeader          := "NÃºmero"
          :cSortOrder       := "nNumPed"
          :bEditValue       := {|| ( dbfPedCliT )->cSerPed + "/" + Alltrim( Str( ( dbfPedCliT )->nNumPed ) ) + "/" + ( dbfPedCliT )->cSufPed }
          :nWidth           := 60
@@ -17293,13 +17036,13 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
       end with
 
       with object ( oBrwDetallesPedidos:AddCol() )
-         :cHeader             := "Código"
+         :cHeader             := "CÃ³digo"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
          :nWidth              := 70
       end with
 
       with object ( oBrwDetallesPedidos:AddCol() )
-         :cHeader             := "Descripción"
+         :cHeader             := "DescripciÃ³n"
          :bEditValue          := {|| if( Empty( ( dbfTmpLin )->cRef ), ( dbfTmpLin )->mLngDes, ( dbfTmpLin )->cDetalle ) }
          :nWidth              := 215
       end with
@@ -17335,7 +17078,7 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
       end with
 
       with object ( oBrwDetallesPedidos:AddCol() )
-         :cHeader             := "UM. Unidad de medición"
+         :cHeader             := "UM. Unidad de mediciÃ³n"
          :bEditValue          := {|| ( dbfTmpLin )->cUnidad }
          :nWidth              := 25
       end with
@@ -17559,13 +17302,15 @@ Cambia el importe unitario de la linea
 
 FUNCTION SetUPedCli( dbfLin, nNewVal )
 
-   	DEFAULT dbfLin    			:= dbfPedCliL
+   if !Empty( nView )
+      DEFAULT dbfLin    := D():PedidosClientesLineas( nView )
+   end if	
 
-    if ( dbfLin )->lAlquiler
-       ( dbfLin )->nPreAlq 		:= nNewVal
-    else
-       ( dbfLin )->nPreDiv  	:= nNewVal
-    end if
+   if ( dbfLin )->lAlquiler
+      ( dbfLin )->nPreAlq 		:= nNewVal
+   else
+      ( dbfLin )->nPreDiv  	:= nNewVal
+   end if
 
 RETURN ( nil )
 
@@ -17613,8 +17358,8 @@ Function PedCliTablet()
    local oGetSearch
    local cGetSearch     := Space( 100 )
    local oCbxOrd
-   local aCbxOrd     := { "Número", "Fecha", "Código", "Nombre" }
-   local cCbxOrd     := "Número"
+   local aCbxOrd     := { "NÃºmero", "Fecha", "CÃ³digo", "Nombre" }
+   local cCbxOrd     := "NÃºmero"
    local oBtnAdd
    local oBtnEdt
    local oBtnDel
@@ -17635,7 +17380,7 @@ Function PedCliTablet()
    //( D():FacturasClientes( nView ) )->( dbGoTop() )
 
    /*
-   Diálogo---------------------------------------------------------------------
+   DiÃ¡logo---------------------------------------------------------------------
    */
 
    oDlg              := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
@@ -17826,7 +17571,7 @@ Function PedCliTablet()
    oBrw:CreateFromCode( 105 )
 
    /*
-   Redimensionamos y activamos el diálogo--------------------------------------
+   Redimensionamos y activamos el diÃ¡logo--------------------------------------
    */
 
    oDlg:bResized         := {|| GridResize( oDlg ) }
@@ -17868,7 +17613,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oBtnUpPage
    local oBtnDownPage
    local oCbxRuta
-   local aCbxRuta       := { "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Todos" }
+   local aCbxRuta       := { "Domingo", "Lunes", "Martes", "MiÃ©rcoles", "Jueves", "Viernes", "SÃ¡bado", "Todos" }
    local cCbxRuta       := aCbxRuta[ Dow( GetSysDate() ) ]
    local oBtnLeft
    local oBtnRight
@@ -17879,7 +17624,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       case nMode == APPD_MODE
 
          if !lCurSesion()
-            MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+            MsgStop( "No hay sesiones activas, imposible aÃ±adir documentos" )
             Return .f.
          end if
 
@@ -18086,7 +17831,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       /*oSayDireccion        := TGridUrllink():Build({ "nTop"      => 120,;
                                                    "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
-                                                   "cURL"      => "Dirección",;
+                                                   "cURL"      => "DirecciÃ³n",;
                                                    "oWnd"      => oDlg,;
                                                    "oFont"     => oGridFont(),;
                                                    "lPixel"    => .t.,;
@@ -18173,7 +17918,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "oWnd"      => oDlg } ) 
 
    /*
-   Browse se las líneas-------------------------------------------------------
+   Browse se las lÃ­neas-------------------------------------------------------
    */
 
    /*oBrwLin                    := TGridIXBrowse():New( oDlg )
@@ -18189,7 +17934,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    oBrwLin:cName              := "Grid lineas facturas"
 
     with object ( oBrwLin:AddCol() )
-         :cHeader             := "Número"
+         :cHeader             := "NÃºmero"
         :bEditValue           := {|| ( dbfTmpLin )->nNumLin }
         :cEditPicture         := "9999"
         :nWidth               := 55
@@ -18199,7 +17944,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
     end with
 
     with object ( oBrwLin:AddCol() )
-        :cHeader             := "Cód"
+        :cHeader             := "CÃ³d"
         :bEditValue          := {|| ( dbfTmpLin )->cRef }
         :nWidth              := 80
     end with
@@ -18212,7 +17957,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
     end with
 
     with object ( oBrwLin:AddCol() )
-        :cHeader             := "Descripción"
+        :cHeader             := "DescripciÃ³n"
         :bEditValue          := {|| Descrip( dbfTmpLin ) }
         :bFooter            := {|| "Total..." }
         :nWidth              := 310
@@ -18308,7 +18053,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:CreateFromCode( 105 )
 
    /*
-   Redimensionamos y activamos el diálogo------------------------------------- 
+   Redimensionamos y activamos el diÃ¡logo------------------------------------- 
    */
 
       oDlg:bResized              := {|| GridResize( oDlg ) }
@@ -18433,7 +18178,21 @@ function Prueba()
    local hashDictionaryCabecera
    local hashDictionaryLineas
    
+   
+
+
    hashDictionaryCabecera     := D():hashPedidosClientes( nView )
+   
+   MsgInfo( hashDictionaryCabecera, ValType( hashDictionaryCabecera ) )
+
+   MsgInfo( Len( hashDictionaryCabecera ) )
+
+   MsgInfo( ValToPrg( hashDictionaryCabecera ), Len( hashDictionaryCabecera ) )
+
+   
+
+   
+   hashDictionaryCabecera     := D():hashPedidosClientesBlank( nView )
    
    MsgInfo( hashDictionaryCabecera, ValType( hashDictionaryCabecera ) )
 

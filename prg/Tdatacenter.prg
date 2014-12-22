@@ -2945,6 +2945,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedCliL"
    oDataTable:cName        := cPatEmp() + "PedCliL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliL.Cdx"
@@ -5104,10 +5105,14 @@ CLASS D
    METHOD PedidosClientes( nView )              INLINE ( ::Get( "PedCliT", nView ) )
       METHOD PedidosClientesId( nView )         INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
       METHOD hashPedidosClientes( nView )       INLINE ( ::getHashRecordById( ::PedidosClientesId( nView ), ::PedidosClientes( nView ), nView ) )
-      METHOD hashPedidosClientesBlank( nView ) ;
-                                                INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )
+      METHOD hashPedidosClientesBlank( nView )  INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )
 
    METHOD PedidosClientesReservas( nView )      INLINE ( ::Get( "PedCliR", nView ) )
+
+   //Lineas de pedidos de clientes---------------------------------------------
+
+   METHOD PedidosClientesLineas( nView )        INLINE ( ::Get( "PedCliL", nView ) )
+      METHOD PedidosClientesLineasId( nView )   INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
 
    // Clientes-----------------------------------------------------------------
 
@@ -5618,14 +5623,9 @@ METHOD getHashRecordById( id, cDatabase, nView ) CLASS D
 
    local hash  
 
-   Msgalert( id, "id" )
-   Msgalert( cDatabase, "cDatabase" )
-   Msgalert( nView, "nView" )
-
    ::GetStatus( cDatabase, nView )
    
    if dbSeekInOrd( id, 1, ::Get( cDatabase, nView ) )
-      MsgAlert( "Entro en el Seek" )
       hash  := ::getHashRecord( cDatabase, nView )
    end if 
    
@@ -5641,10 +5641,9 @@ METHOD getHashRecordBlank( cDatabase, nView ) CLASS D
 
    ::GetStatus( cDatabase, nView )
    
-   if ( ::Get( cDatabase, nView ) )->( dbgobottom() )      
-      ( ::Get( cDatabase, nView ) )->( dbskip() )
-      hash  := ::getHashRecord( cDatabase, nView )
-   end if 
+   ( ::Get( cDatabase, nView ) )->( dbgobottom() )      
+   ( ::Get( cDatabase, nView ) )->( dbskip() )
+   hash  := ::getHashRecord( cDatabase, nView )
    
    ::SetStatus( cDatabase, nView )
 
@@ -5684,6 +5683,8 @@ METHOD getHashRecord( cDataTable, nView ) CLASS D
    end if 
 
 RETURN ( hash )
+
+//---------------------------------------------------------------------------//
 
 /*
    METHOD OpenTDbf( cDataTable, nView ) CLASS D
