@@ -5055,6 +5055,7 @@ CLASS D
 
    METHOD getHashRecord( cDatabase, nView )
    METHOD getHashRecordById( id, cDatabase, nView )
+   METHOD getHashRecordBlank( id, cDatabase, nView )
    METHOD getArrayRecordById( id, cDatabase, nView )
 
    METHOD getId( cDatabase, nView )          INLINE ( ( ::Get( cDatabase, nView ) )->( eval( TDataCenter():getIdBlock( cDatabase ) ) ) )
@@ -5102,9 +5103,9 @@ CLASS D
 
    METHOD PedidosClientes( nView )              INLINE ( ::Get( "PedCliT", nView ) )
       METHOD PedidosClientesId( nView )         INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
-      METHOD hashPedidosClientesId( id, nView ) INLINE ( ::getHashRecordById( id, ::PedidosClientes( nView ), nView ) )
-      METHOD hashPedidosClientesBlank( id, nView ) ;
-                                                INLINE ( ::getHashRecordBlank( id, ::PedidosClientes( nView ), nView ) )
+      METHOD hashPedidosClientes( nView )       INLINE ( ::getHashRecordById( ::PedidosClientesId( nView ), ::PedidosClientes( nView ), nView ) )
+      METHOD hashPedidosClientesBlank( nView ) ;
+                                                INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )
 
    METHOD PedidosClientesReservas( nView )      INLINE ( ::Get( "PedCliR", nView ) )
 
@@ -5615,11 +5616,16 @@ ENDCLASS
 
 METHOD getHashRecordById( id, cDatabase, nView ) CLASS D
 
-   local hash
+   local hash  
+
+   Msgalert( id, "id" )
+   Msgalert( cDatabase, "cDatabase" )
+   Msgalert( nView, "nView" )
 
    ::GetStatus( cDatabase, nView )
    
-   if ( ::Get( cDatabase, nView ) )->( dbSeekInOrd( id, 1 ) )      
+   if dbSeekInOrd( id, 1, ::Get( cDatabase, nView ) )
+      MsgAlert( "Entro en el Seek" )
       hash  := ::getHashRecord( cDatabase, nView )
    end if 
    
@@ -5629,14 +5635,14 @@ RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
-METHOD getHashRecordBlank( id, cDatabase, nView ) CLASS D
+METHOD getHashRecordBlank( cDatabase, nView ) CLASS D
 
    local hash
 
    ::GetStatus( cDatabase, nView )
    
    if ( ::Get( cDatabase, nView ) )->( dbgobottom() )      
-      ::Get( cDatabase, nView ) )->( dbskip() )
+      ( ::Get( cDatabase, nView ) )->( dbskip() )
       hash  := ::getHashRecord( cDatabase, nView )
    end if 
    
@@ -5645,8 +5651,6 @@ METHOD getHashRecordBlank( id, cDatabase, nView ) CLASS D
 RETURN ( hash ) 
 
 //---------------------------------------------------------------------------//
-
-
 
 METHOD getArrayRecordById( id, cDatabase, nView ) CLASS D
 

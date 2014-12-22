@@ -18433,13 +18433,23 @@ function Prueba()
    local hashDictionaryCabecera
    local hashDictionaryLineas
    
+   hashDictionaryCabecera     := D():hashPedidosClientes( nView )
+   
+   MsgInfo( hashDictionaryCabecera, ValType( hashDictionaryCabecera ) )
+
+   MsgInfo( Len( hashDictionaryCabecera ) )
+
+   MsgInfo( ValToPrg( hashDictionaryCabecera ), Len( hashDictionaryCabecera ) )
+
+   /*D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed
+
    hashDictionaryCabecera     := readHashDictionary( hashPedidoClientes( aItmPedCli() ), D():PedidosClientes( nView ) )
 
    MsgInfo( ValToPrg( hashDictionaryCabecera ), Len( hashDictionaryCabecera ) )
 
    hashDictionaryLineas       := readHashDictionary( hashPedidoClientes( aColPedCli() ), dbfPedCliL, ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed )
 
-   MsgInfo( ValToPrg( hashDictionaryLineas ), Len( hashDictionaryLineas ) )
+   MsgInfo( ValToPrg( hashDictionaryLineas ), Len( hashDictionaryLineas ) )*/
 
 Return ( nil )
 
