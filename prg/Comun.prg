@@ -2891,15 +2891,39 @@ Return ( hHash )
 
 //----------------------------------------------------------------------------//
 
-Function readHashDictionary( hashTable, dbf )
+Function readHashDictionary( hashTable, dbf, Clave )
 
-  local hash   := {=>}
+  local hash      := {=>}
+  local hashLinea := {=>}
+  local nOrdAnt
 
-  //hEval( hashTable, {|key,value| MsgInfo( ( dbf )->( fieldPos( value ) ), value ) } )
+  //hEval( hashTable, {|key,value| MsgInfo( value, key ) } )
 
-  hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
+  if Empty( Clave )
 
-  msginfo( ValType( hash ), Len( hash ) )
+    hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
+
+  else
+
+    nOrdAnt       := ( dbf )->( OrdSetFocus( 1 ) )
+
+    if ( dbf )->( dbSeek( Clave ) )
+
+      while Clave == ( dbf )->cSerPed + str( ( dbf )->nNumPed ) + ( dbf )->cSufPed .and. !( dbf )->( Eof() )
+
+        ?"Paso por aqui"
+
+        hEval( hashTable, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )      
+
+        ( dbf )->( dbSkip() )
+
+      end while
+
+    end if
+
+    ( dbf )->( OrdSetFocus( nOrdAnt ) )
+
+  end if  
 
 Return ( hash )
 
