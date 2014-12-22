@@ -628,10 +628,6 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
    DisableAcceso()
 
-   /*
-   AddMnuNext( "Facturas de clientes", ProcName() )
-   */
-
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
       TITLE    "Facturas de clientes" ;
