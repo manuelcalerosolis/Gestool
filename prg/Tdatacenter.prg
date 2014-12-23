@@ -5102,26 +5102,29 @@ CLASS D
 
    // Pedidos de clientes------------------------------------------------------
 
-   METHOD PedidosClientes( nView )              INLINE ( ::Get( "PedCliT", nView ) )
-      METHOD PedidosClientesId( nView )         INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
-      METHOD hashPedidosClientes( nView )       INLINE ( ::getHashRecordById( ::PedidosClientesId( nView ), ::PedidosClientes( nView ), nView ) )
-      METHOD hashPedidosClientesBlank( nView )  INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )
+   METHOD PedidosClientes( nView )                    INLINE ( ::Get( "PedCliT", nView ) )
+      METHOD PedidosClientesId( nView )               INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
+      METHOD GetPedidoCliente( nView )                INLINE ( ::getHashRecordById( ::PedidosClientesId( nView ), ::PedidosClientes( nView ), nView ) )
+      METHOD GetPedidoClienteById( id, nView )        INLINE ( ::getHashRecordById( id, ::PedidosClientes( nView ), nView ) )
+      METHOD GetPedidoClienteBlank( nView )           INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )
 
-   METHOD PedidosClientesReservas( nView )      INLINE ( ::Get( "PedCliR", nView ) )
+   METHOD PedidosClientesReservas( nView )            INLINE ( ::Get( "PedCliR", nView ) )
 
    //Lineas de pedidos de clientes---------------------------------------------
 
-   METHOD PedidosClientesLineas( nView )        INLINE ( ::Get( "PedCliL", nView ) )
-      METHOD PedidosClientesLineasId( nView )   INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
+   METHOD PedidosClientesLineas( nView )              INLINE ( ::Get( "PedCliL", nView ) )
+      METHOD PedidosClientesLineasId( nView )         INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
+      METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesLineasId( nView ), ::PedidosClientesLineas( nView ), nView ) )
+      METHOD GetPedidoClienteLineaBlank( nView )      INLINE ( ::getHashRecordBlank( ::PedidosClientesLineas( nView ), nView ) )
 
    // Clientes-----------------------------------------------------------------
 
-   METHOD Clientes( nView )                     INLINE ( ::Get( "Client", nView ) )
-      METHOD ClientesId( nView )                INLINE ( ( ::Get( "Client", nView ) )->Cod )
-      METHOD ClientesDirecciones( nView )       INLINE ( ::Get( "ObrasT", nView ) )
-      METHOD ClientesDireccionesId( nView )     INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
+   METHOD Clientes( nView )                           INLINE ( ::Get( "Client", nView ) )
+      METHOD ClientesId( nView )                      INLINE ( ( ::Get( "Client", nView ) )->Cod )
+      METHOD ClientesDirecciones( nView )             INLINE ( ::Get( "ObrasT", nView ) )
+      METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
 
-      METHOD GruposClientes( nView )            INLINE ( ::GetObject( "GruposClientes", nView ) )
+      METHOD GruposClientes( nView )                  INLINE ( ::GetObject( "GruposClientes", nView ) )
 
    // Pedidos de proveedores---------------------------------------------------
 
@@ -5623,14 +5626,12 @@ METHOD getHashRecordById( id, cDatabase, nView ) CLASS D
 
    local hash  
 
-   ::GetStatus( cDatabase, nView )
-   
-   if dbSeekInOrd( id, 1, ::Get( cDatabase, nView ) )
+   ( ::Get( cDatabase, nView ) )->( OrdSetFocus( 1 ) )
+
+   if ( ::Get( cDatabase, nView ) )->( dbSeek( id ) )
       hash  := ::getHashRecord( cDatabase, nView )
    end if 
    
-   ::SetStatus( cDatabase, nView )
-
 RETURN ( hash ) 
 
 //---------------------------------------------------------------------------//
