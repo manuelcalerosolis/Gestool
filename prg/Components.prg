@@ -1461,39 +1461,42 @@ CLASS GetRichEdit
    METHOD Blod()           INLINE ( ::oClp:Clear(), ::oClp:SetText( "<b></b>" ), ::oRTF:Paste() )
 
    METHOD SetHTML()        INLINE ( ::oBtnBold:Hide() ,;
-      								::oBtnItalics:Hide() ,;
-      								::oBtnUnderLine:Hide() ,;
-      								::oBtnTextAlignLeft:Hide() ,;
-      								::oBtnTextAlignCenter :Hide() ,;
-      								::oBtnTextAlignRight:Hide() ,;
-      								::oBtnTextJustify:Hide() ,;
-      								::oBtnBullet:Hide() ,;
-      								::oBtnDateTime:Hide() )
+            								::oBtnItalics:Hide() ,;
+            								::oBtnUnderLine:Hide() ,;
+            								::oBtnTextAlignLeft:Hide() ,;
+            								::oBtnTextAlignCenter :Hide() ,;
+            								::oBtnTextAlignRight:Hide() ,;
+            								::oBtnTextJustify:Hide() ,;
+            								::oBtnBullet:Hide() ,;
+            								::oBtnDateTime:Hide() )
 
    METHOD SetRTF()         INLINE ( ::oBtnBold:Show() ,;
-      								::oBtnItalics:Show() ,;
-      								::oBtnUnderLine:Show() ,;
-      								::oBtnTextAlignLeft:Show() ,;
-      								::oBtnTextAlignCenter :Show() ,;
-      								::oBtnTextAlignRight:Show() ,;
-      								::oBtnTextJustify:Show() ,;
-      								::oBtnBullet:Show() ,;
-      								::oBtnDateTime:Show() )
+            								::oBtnItalics:Show() ,;
+            								::oBtnUnderLine:Show() ,;
+            								::oBtnTextAlignLeft:Show() ,;
+            								::oBtnTextAlignCenter :Show() ,;
+            								::oBtnTextAlignRight:Show() ,;
+            								::oBtnTextJustify:Show() ,;
+            								::oBtnBullet:Show() ,;
+            								::oBtnDateTime:Show() )
+
+   METHOD end()            INLINE ( ::oRTF:end(), ::oRTF := nil )
    
-   END CLASS
+END CLASS
 
 //--------------------------------------------------------------------------//
 
    METHOD Redefine( id, oDlg ) CLASS GetRichEdit 
 
-      DEFAULT id  := 600
+      DEFAULT id     := 600
+      DEFAULT oDlg   := ::oDlg 
 
-      DEFINE CLIPBOARD ::oClp OF ::oDlg FORMAT TEXT
+      DEFINE CLIPBOARD ::oClp OF oDlg FORMAT TEXT
 
       REDEFINE BTNBMP ::oBtnPrint ;
          ID       ( id ) ;
          WHEN     ( .t. ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "IMP16" ;
          NOBORDER ;
          TOOLTIP  "Imprimir" ;
@@ -1503,7 +1506,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnPreview ;
          ID       ( id + 1 ) ;
          WHEN     ( .t. ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "PREV116" ;
          NOBORDER ;
          TOOLTIP  "Previsualizar" ;
@@ -1513,7 +1516,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnSearch ;
          ID       ( id + 2 ) ;
          WHEN     ( .t. ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Bus16" ;
          NOBORDER ;
          TOOLTIP  "Buscar" ;
@@ -1523,7 +1526,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnCut ;
          ID       ( id + 3 ) ;
          WHEN     ( ! Empty( ::oRTF:GetSel() ) .and. ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Cut_16" ;
          NOBORDER ;
          TOOLTIP  "Cortar" ;
@@ -1533,7 +1536,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnCopy ;
          ID       ( id + 4 ) ;
          WHEN     ( ! Empty( ::oRTF:GetSel() ) ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Copy16" ;
          NOBORDER ;
          TOOLTIP  "Copiar" ;
@@ -1543,7 +1546,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnPaste ;
          ID       ( id + 5 ) ;
          WHEN     ( ! Empty( ::oClp:GetText() ) .and. ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Paste_16" ;
          NOBORDER ;
          TOOLTIP  "Pegar" ;
@@ -1553,7 +1556,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnUndo ;
          ID       ( id + 6 ) ;
          WHEN     ( ::oRTF:SendMsg( EM_CANUNDO ) != 0 ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Undo1_16" ;
          NOBORDER ;
          TOOLTIP  "Deshacer" ;
@@ -1563,7 +1566,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnRedo ;
          ID       ( id + 7 ) ;
          WHEN     ( ::oRTF:SendMsg( EM_CANREDO ) != 0 ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Redo_16" ;
          NOBORDER ;
          TOOLTIP  "Rehacer" ;
@@ -1574,7 +1577,7 @@ CLASS GetRichEdit
          VAR      ::cZoom ;
          ITEMS    ::aZoom ;
          ID       ( id + 8 ) ;
-         OF       ::oDlg
+         OF       oDlg
 
       ::oZoom:bChange      := {|| ::oRTF:SetZoom( ::aRatio[ ::oZoom:nAt, 1 ], ::aRatio[ ::oZoom:nAt, 2 ] ), ::oRTF:SetFocus()  }
    
@@ -1582,7 +1585,7 @@ CLASS GetRichEdit
          VAR      ::cFuente ;
          ITEMS    ::aFuente ;
          ID       ( id + 9 ) ;
-         OF       ::oDlg
+         OF       oDlg
 
       ::oFuente:bChange    := {|| ::oRTF:SetFontName( ::oFuente:VarGet() ), ::oRTF:SetFocus() }
 
@@ -1590,14 +1593,14 @@ CLASS GetRichEdit
          VAR      ::cSize ;
          ITEMS    ::aSize ;
          ID       ( id + 10 ) ;
-         OF       ::oDlg
+         OF       oDlg
 
       ::oSize:bChange      := {|| ::oRTF:SetFontSize( Val( ::oSize:VarGet() ) ), ::oRTF:SetFocus() }
 
       REDEFINE BTNBMP ::oBtnBold ;
          ID       ( id + 11 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Text_Bold" ;
          NOBORDER ;
          TOOLTIP  "Negrita" ;
@@ -1607,7 +1610,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnItalics ;
          ID       ( id + 12 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Text_Italics_16" ;
          NOBORDER ;
          TOOLTIP  "Cursiva" ;
@@ -1617,7 +1620,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnUnderLine;
          ID       ( id + 13 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Text_Underlined_16" ;
          NOBORDER ;
          TOOLTIP  "Subrayado" ;
@@ -1627,7 +1630,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnTextAlignLeft ;
          ID       ( id + 14 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Text_Align_Left_16" ;
          NOBORDER ;
          TOOLTIP  "Izquierda" ;
@@ -1637,7 +1640,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnTextAlignCenter  ;
          ID       ( id + 15 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Text_Center" ;
          NOBORDER ;
          TOOLTIP  "Centro" ;
@@ -1647,7 +1650,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnTextAlignRight ;
          ID       ( id + 16 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Text_Align_Right_16" ;
          NOBORDER ;
          TOOLTIP  "Derecha" ;
@@ -1657,7 +1660,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnTextJustify ;
          ID       ( id + 17 ) ;
          WHEN     ( ! ::oRTF:lReadOnly ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Text_Justified_16" ;
          NOBORDER ;
          TOOLTIP  "Justificado" ;
@@ -1667,7 +1670,7 @@ CLASS GetRichEdit
       REDEFINE BTNBMP ::oBtnBullet ;
          ID       ( id + 18 ) ;
          WHEN     ( ! ::oRTF:lReadOnly .and. ! ::oRTF:GetNumbering() ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Pin_Blue_16" ;
          NOBORDER ;
          TOOLTIP  "Viñetas" ;
@@ -1676,7 +1679,7 @@ CLASS GetRichEdit
 
       REDEFINE BTNBMP ::oBtnDateTime ;
          ID       ( id + 19 ) ;
-         OF       ::oDlg ;
+         OF       oDlg ;
          RESOURCE "Calendar_16" ;
          NOBORDER ;
          TOOLTIP  "Fecha/Hora" ;
@@ -1686,7 +1689,7 @@ CLASS GetRichEdit
       REDEFINE RICHEDIT ::oRTF ;
          VAR      ::cRTF ;
          ID       ( id + 20 ) ;
-         OF       ::oDlg
+         OF       oDlg
 
       ::oRTF:lHighLight 			:= .f.
       ::oRTF:bChange    			:= { || ::RTFRefreshButtons() }

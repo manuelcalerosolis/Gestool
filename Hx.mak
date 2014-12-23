@@ -126,7 +126,7 @@ Tarifa.prg              	\
 Promo.prg               	\
 Obras.prg               	\
 Contactos.prg           	\
-Avifile.prg             	\
+TSendmail.prg             	\
 Tpv.prg                 	\
 Tactil.prg              	\
 Cajero.prg              	\
@@ -524,7 +524,7 @@ Tarifa.obj              \
 Promo.obj               \
 Obras.obj               \
 Contactos.obj           \
-Avifile.obj             \
+TSendmail.obj             \
 Tpv.obj                 \
 Tactil.obj              \
 Trentfam.obj            \
@@ -949,7 +949,7 @@ $(OBJ)\Tarifa.obj               +
 $(OBJ)\Promo.obj                +
 $(OBJ)\Obras.obj                +
 $(OBJ)\Contactos.obj            +
-$(OBJ)\Avifile.obj              +
+$(OBJ)\TSendmail.obj              +
 $(OBJ)\Tpv.obj                  +
 $(OBJ)\Tactil.obj               +
 $(OBJ)\Cajero.obj               +

@@ -772,7 +772,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "IMP16" )
+         :AddResource( "Imp16" )
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
@@ -1992,11 +1992,7 @@ STATIC FUNCTION CloseFiles()
    DisableAcceso()
 
    DestroyFastFilter( D():FacturasClientes( nView ), .t., .t. )
-/*
-   if !Empty( oFont )
-      oFont:end()
-   end if
-*/
+
    if !Empty( dbfIva )
       ( dbfIva     )->( dbCloseArea() )
    end if
@@ -2436,7 +2432,11 @@ STATIC FUNCTION CloseFiles()
 
    EnableAcceso()
 
-//   SysRefresh()
+   if !Empty( oFont )
+      oFont:end()
+   end if
+
+   SysRefresh()
 
 Return ( !lOpenFiles )
 
@@ -4329,9 +4329,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:end()
    end if
 
-   if !Empty( oBrwInc )
-      oBrwInc:CloseData()
-      oBrwInc:end()
+   if !Empty( oBrwIva )
+      oBrwIva:end()
    end if
 
    if !Empty( oBrwPgo )
@@ -4344,8 +4343,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwAnt:end()
    end if
 
-   if !Empty( oBrwIva )
-      oBrwIva:end()
+   if !Empty( oBrwInc )
+      oBrwInc:CloseData()
+      oBrwInc:end()
    end if
 
    if !Empty( oBrwDoc )

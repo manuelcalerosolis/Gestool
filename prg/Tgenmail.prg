@@ -10,6 +10,8 @@ CLASS TGenMailing
 
    DATA oMenu
 
+   DATA nView
+
    DATA oBrwClient
    DATA oTree
    DATA oPro
@@ -57,22 +59,6 @@ CLASS TGenMailing
 
    DATA cTypeDocument
 
-   Method SetAsunto( cText )           INLINE ( ::cGetAsunto   := Padr( cText, 250 ) )
-   Method SetAdjunto( cText )          INLINE ( ::cGetAdjunto  := Padr( cText, 250 ) )
-   Method SetHtml( cText )             INLINE ( ::cGetHtml     := Padr( cText, 250 ) )
-   Method SetDe( cText )               INLINE ( ::cGetDe       := Padr( cText, 250 ) )
-   Method SetPara( cText )             INLINE ( ::cGetPara     := Padr( cText, 250 ) )
-   Method SetCopia( cText )            INLINE ( ::cGetCopia    := Padr( cText, 250 ) )
-   Method SetItems( aItems )           INLINE ( ::aItems       := aItems )
-   Method SetAlias( cAlias )           INLINE ( ::dbfAlias     := cAlias )
-
-   Method AddAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
-
-   Method SetMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
-   Method GetMensajeHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
-
-   Method SetTypeDocument( cText )     INLINE ( ::cTypeDocument   := cText )
-
    DATA oCmbMensaje
    DATA cCmbMensaje
 
@@ -94,81 +80,104 @@ CLASS TGenMailing
 
    DATA lCancel
 
-   DATA nPaquetes                      INIT 1
+   DATA nPaquetesTotales               INIT 1
+   DATA nPaqueteActual                 INIT 1
+
+   DATA nTime
 
    DATA cTiempo                        INIT "0 seg."
    DATA aTiempo                        INIT { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
 
-   Method New()
+   DATA oBmpClient
+   DATA oBmpGeneral
+   DATA oBmpProcess
 
-   Method Create()
+   METHOD New()
+   METHOD Create()
+   METHOD Init()
 
-   Method Init()
+   METHOD SetAsunto( cText )           INLINE ( ::cGetAsunto   := Padr( cText, 250 ) )
+   METHOD SetAdjunto( cText )          INLINE ( ::cGetAdjunto  := Padr( cText, 250 ) )
+   METHOD SetHtml( cText )             INLINE ( ::cGetHtml     := Padr( cText, 250 ) )
+   METHOD SetDe( cText )               INLINE ( ::cGetDe       := Padr( cText, 250 ) )
+   METHOD SetPara( cText )             INLINE ( ::cGetPara     := Padr( cText, 250 ) )
+   METHOD SetCopia( cText )            INLINE ( ::cGetCopia    := Padr( cText, 250 ) )
+   METHOD SetItems( aItems )           INLINE ( ::aItems       := aItems )
 
-   Method ClientResource( dbfAlias )
+   METHOD AddAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
 
-   Method InitClientResource()
+   METHOD SetMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
+   METHOD GetMensajeHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
 
-   Method BotonAnterior()
+   METHOD SetTypeDocument( cText )     INLINE ( ::cTypeDocument   := cText )
 
-   Method BotonSiguiente()
+   // Recursos-----------------------------------------------------------------
 
-   Method SelMailing()
+   METHOD ClientResource()
+      METHOD BotonAnterior()
+      METHOD BotonSiguiente()
 
-   Method SelAllMailing( lValue )
+   METHOD Resource()
+      METHOD buildPageRedectar( oDlg )
+      METHOD buildPageCliente( oDlg )
+      METHOD buildPageProceso( oDlg )
+      METHOD buildButtonsGeneral()
 
-   Method IniciarEnvio()
+   METHOD startDialog()
 
-   Method lCreateMail()
+   METHOD freeResources()
 
-   Method MailMerge()
+   METHOD lCargaHTML()
+   METHOD lSalvaHTML()
+   METHOD lDefectoHTML()
 
-   Method ExpresionReplace( cDocumentHTML, cExpresion )
+   METHOD SelMailing()
+      METHOD SelAllMailing( lValue )
 
-   METHOD IsMailServer()      INLINE ( !Empty( ::MailServer ) .and. !Empty( ::MailServerUserName ) .and. !Empty( ::MailServerPassword ) )
+   METHOD IniciarEnvio()
 
-   Method lSend()             INLINE ( iif( ::IsMailServer(), ::Resource(), ::lOutlookSendMail() ) )
-   Method lExternalSend()     INLINE ( iif( ::IsMailServer(), ::lExternalSendMail(), ::lOutlookSendMail() ) )
+   METHOD lBuildMail()                 INLINE ( iff( ::lCreateMail(), ( ::waitMail(), ::lSendMail(), ::oMail := nil ), ) )
 
-   Method lExternalSendMail()
-   Method lOutlookSendMail()
+   METHOD lCreateMail()
 
-   Method lSendMail()
+   METHOD MailMerge()
 
-   Method lCargaHTML()
-   Method lSalvaHTML()
-   Method lDefectoHTML()
+   METHOD ExpresionReplace( cDocumentHTML, cExpresion )
 
-   Method lEditaCSS()
+   METHOD IsMailServer()               INLINE ( !Empty( ::MailServer ) .and. !Empty( ::MailServerUserName ) .and. !Empty( ::MailServerPassword ) )
 
-   Method MailServerSend()    INLINE ( ::MailServer + if( !Empty( ::MailServerPort ), ":" + Alltrim( Str( ::MailServerPort ) ), "" ) )
+   METHOD lSend()                      INLINE ( iif( ::IsMailServer(), ::Resource(), ::outlookDisplayMail() ) )
+   METHOD lExternalSend()              INLINE ( iif( ::IsMailServer(), ::lExternalSendMail(), ::outlookSendMail() ) )
 
-   Method SelectColumn( oCombo )
+   METHOD lExternalSendMail()
+   METHOD buildOutlookMail()
+   METHOD outlookSendMail()
+   METHOD outlookDisplayMail()
 
-   Method Resource()
+   METHOD lSendMail()
 
-   Method InsertField()       INLINE ( ::oActiveX:oClp:SetText( "{" + ( Alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
+   METHOD lEditaCSS()
 
-   Method GetAdjunto()
+   METHOD MailServerSend()             INLINE ( ::MailServer + if( !Empty( ::MailServerPort ), ":" + Alltrim( Str( ::MailServerPort ) ), "" ) )
 
-   Method HTMLMenu()
+   METHOD SelectColumn( oCombo )
 
-   Method lCheckActiveX()
+   METHOD InsertField()                INLINE ( ::oActiveX:oClp:SetText( "{" + ( Alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
 
-   Method WaitSeconds( nTime )
+   METHOD GetAdjunto()
+
+   METHOD buildMenuDialog()
+
+   METHOD waitMail()
+   METHOD waitSeconds( nTime )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-Method New() CLASS TGenMailing
+METHOD New() CLASS TGenMailing
 
-   ::cGetAsunto            := Space( 254 )
-   ::cGetAdjunto           := Space( 254 )
-   ::cGetHtml              := Space( 254 )
-
-   ::cGetMensaje           := ""
-   ::cCmbMensaje           := "Sin formato"
+   ::Create()
 
    ::MailServer            := Rtrim( uFieldEmpresa( "cSrvMai" ) )
    ::MailServerPort        := uFieldEmpresa( "nPrtMai" )
@@ -180,7 +189,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Create() CLASS TGenMailing
+METHOD Create() CLASS TGenMailing
 
    ::cGetAsunto            := Space( 254 )
    ::cGetAdjunto           := Space( 254 )
@@ -193,20 +202,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method Init() CLASS TGenMailing
+METHOD Init() CLASS TGenMailing
 
-   ::cGetAsunto            := Space( 254 )
-   ::cGetAdjunto           := Space( 254 )
-   ::cGetHtml              := Space( 254 )
-
-   ::cGetMensaje           := ""
-   ::cCmbMensaje           := "Sin formato"
-
-   ::MailServer            := Rtrim( uFieldEmpresa( "cSrvMai" ) )
-   ::MailServerPort        := uFieldEmpresa( "nPrtMai" )
-   ::MailServerUserName    := Rtrim( uFieldEmpresa( "cCtaMai" ) )
-   ::MailServerPassword    := Rtrim( uFieldEmpresa( "cPssMai" ) )
-   ::MailServerConCopia    := Rtrim( uFieldEmpresa( "cCcpMai" ) )
+   ::New()
 
    ::SetDe( uFieldEmpresa( "cNombre" ) )
 
@@ -214,275 +212,54 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ClientResource( dbfAlias, aItems, oWndBrw ) CLASS TGenMailing
+METHOD ClientResource( aItems, nView ) CLASS TGenMailing
 
    local cTag
    local nRecno
-   local oGetOrd
-   local oCbxOrd
-   local cGetOrd           := Space( 100 )
-   local cCbxOrd           := "Código"
-   local aCbxOrd           := { "Código", "Nombre", "Correo electrónico" }
-   local oBmpGeneral
-   local oBmpClient
-   local oBmpProcess
 
    ::Init()
 
-   if !::IsMailServer()
-      MsgStop( "Debe cumplimentar servidor y cuenta de correos," + CRLF + "en configurar empresa." )
-      Return .f.
-   end if
-
    ::lCancel         := .f.
    ::aItems          := aItems
-   ::dbfAlias        := dbfAlias
+   ::nView           := nView
 
    if !Empty( ::oFlt )
       ::aFields      := ::oFlt:aTblMask
    end if 
 
-   cTag              := ( ::dbfAlias )->( OrdSetFocus() )
-   nRecno            := ( ::dbfAlias )->( RecNo() )
+   D():getStatusClientes( nView )
+   ( D():Clientes( nView ) )->( dbGoTop() )
 
-   ( ::dbfAlias )->( dbGoTop() )
-
-   DEFINE DIALOG ::oDlg RESOURCE "SelectMail_0" OF oWnd()
+   DEFINE DIALOG ::oDlg RESOURCE "Select_Mail_Container" OF oWnd()
 
       REDEFINE PAGES ::oFld ;
-         ID       10;
-         OF       ::oDlg ;
-         DIALOGS  "SelectMail_2",;
-                  "SelectMail_1",;
-                  "Internet_4"
+         ID          10;
+         OF          ::oDlg ;
+         DIALOGS     "Select_Mail_Redactar",;
+                     "Select_Mail_Registros",;
+                     "Internet_4"
 
-      /*
-      Bitmap-------------------------------------------------------------------
-		*/
+         ::buildPageRedectar( ::oFld:aDialogs[ 1 ] )
 
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       500 ;
-         RESOURCE "Mail_earth_48_alpha" ;
-         TRANSPARENT ;
-         OF       ::oFld:aDialogs[ 1 ]
+         ::buildPageCliente( ::oFld:aDialogs[ 2 ] )
 
-      /*
-      Segunda caja de dialogo--------------------------------------------------
-      */
+         ::buildPageProceso( ::oFld:aDialogs[ 3 ] )
 
-      REDEFINE GET ::oGetDe VAR ::cGetDe ;
-         ID       90 ;
-         OF       ::oFld:aDialogs[ 1 ]
+         ::buildButtonsGeneral()
 
-      REDEFINE GET ::oGetAsunto VAR ::cGetAsunto ;
-         ID       100 ;
-         OF       ::oFld:aDialogs[ 1 ]
-
-      REDEFINE GET ::oGetAdjunto VAR ::cGetAdjunto ;
-         ID       110 ;
-         OF       ::oFld:aDialogs[ 1 ]
-
-      ::oGetAdjunto:cBmp   := "Folder"
-      ::oGetAdjunto:bHelp  := {|| ::GetAdjunto() }
-
-      REDEFINE ACTIVEX ::oActiveX ;
-         ID       130 ;
-         OF       ::oFld:aDialogs[ 1 ] ;
-         PROGID   "rmpHTML.HTMLed"
-
-      REDEFINE COMBOBOX ::oField ;
-         VAR      ::cField ;
-         ITEMS    ::aFields ;
-         ID       160 ;
-         OF       ::oFld:aDialogs[ 1 ]
-
-      TBtnBmp():ReDefine( 170, "Down16", , , , , {|| ::InsertField() }, ::oFld:aDialogs[ 1 ], .f., , .f., "Insertar campo" )
-
-      /*
-      Segunda caja de dialogo--------------------------------------------------
-      */
-
-      REDEFINE BITMAP oBmpClient ;
-         ID       500 ;
-         RESOURCE "Businessman2_Alpha_48" ;
-         TRANSPARENT ;
-         OF       ::oFld:aDialogs[ 2 ]
-
-      REDEFINE GET oGetOrd ;
-         VAR      cGetOrd;
-         ID       100 ;
-         BITMAP   "FIND" ;
-         OF       ::oFld:aDialogs[ 2 ]
-
-      oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwClient, ::dbfAlias ) }
-
-      REDEFINE COMBOBOX oCbxOrd ;
-         VAR      cCbxOrd ;
-         ID       110 ;
-         ITEMS    aCbxOrd ;
-         OF       ::oFld:aDialogs[ 2 ]
-
-      oCbxOrd:bChange   := {|| ::SelectColumn( oCbxOrd ) }
-
-      REDEFINE BUTTON ::oBtnFilter ;
-         ID       120 ;
-         OF       ::oFld:aDialogs[ 2 ] ;
-         ACTION   ( ::oBrwClient:Refresh() )
-
-      REDEFINE BUTTON ;
-         ID       130 ;
-         OF       ::oFld:aDialogs[ 2 ] ;
-         ACTION   ( ::SelMailing( ::dbfAlias ) )
-
-      REDEFINE BUTTON ;
-         ID       140 ;
-         OF       ::oFld:aDialogs[ 2 ] ;
-         ACTION   ( ::SelAllMailing( .t. ) )
-
-      REDEFINE BUTTON ;
-         ID       150 ;
-         OF       ::oFld:aDialogs[ 2 ] ;
-         ACTION   ( ::SelAllMailing( .f. ) )
-
-      ::oBrwClient                 := IXBrowse():New( ::oFld:aDialogs[ 2 ] )
-
-      ::oBrwClient:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      ::oBrwClient:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      ::oBrwClient:cAlias          := ::dbfAlias
-
-      ::oBrwClient:nMarqueeStyle   := 5
-
-      ::oBrwClient:CreateFromResource( 160 )
-
-      ::oBrwClient:bLDblClick      := {|| ::SelMailing() }
-
-      with object ( ::oBrwClient:AddCol() )
-         :cHeader          := "Se. seleccionado"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( ::dbfAlias )->lMail }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-      end with
-
-      with object ( ::oBrwClient:AddCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "Cod"
-         :bEditValue       := {|| ( ::dbfAlias )->Cod }
-         :nWidth           := 70
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( ::oBrwClient:AddCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "Titulo"
-         :bEditValue       := {|| ( ::dbfAlias )->Titulo }
-         :nWidth           := 300
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      with object ( ::oBrwClient:AddCol() )
-         :cHeader          := "Correo electrónico"
-         :cSortOrder       := "cMeiInt"
-         :bEditValue       := {|| ( ::dbfAlias )->cMeiInt }
-         :nWidth           := 260
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-      end with
-
-      REDEFINE GET ::nPaquetes ;
-         ID       180 ;
-         SPINNER ;
-         PICTURE  "@E 999" ;
-         OF       ::oFld:aDialogs[ 2 ]
-
-      REDEFINE COMBOBOX ::cTiempo ;
-         ITEMS    ::aTiempo ;
-         ID       170 ;
-         OF       ::oFld:aDialogs[ 2 ]
-
-      /*
-      Tercera caja de dialogo--------------------------------------------------
-      */
-
-      REDEFINE BITMAP oBmpProcess ;
-         ID       500 ;
-         RESOURCE "Gears_48_alpha" ;
-         TRANSPARENT ;
-         OF       ::oFld:aDialogs[ 3 ]
-
-      ::oTree     := TTreeView():Redefine( 100, ::oFld:aDialogs[ 3 ] )
-
-      REDEFINE SAY ::oPro ;
-         PROMPT   ::cPro ;
-         ID       110 ;
-         OF       ::oFld:aDialogs[ 3 ]
-
-      REDEFINE APOLOMETER ::oMtr ;
-         VAR      ::nMtr ;
-         ID       120 ;
-         OF       ::oFld:aDialogs[ 3 ]
-
-      /*
-      Botones generales--------------------------------------------------------
-      */
-
-      REDEFINE BUTTON ::oBtnCargarHTML ;          // Boton anterior
-         ID       40 ;
-         OF       ::oDlg ;
-         ACTION   ( ::lCargaHTML() )
-
-      REDEFINE BUTTON ::oBtnSalvarHTML ;          // Boton anterior
-         ID       50 ;
-         OF       ::oDlg ;
-         ACTION   ( ::lSalvaHTML() )
-
-      REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
-         ID       20 ;
-         OF       ::oDlg ;
-         ACTION   ( ::BotonAnterior() )
-
-      REDEFINE BUTTON ::oBtnSiguiente ;         // Boton de Siguiente
-         ID       30 ;
-         OF       ::oDlg ;
-         ACTION   ( ::BotonSiguiente() )
-
-      REDEFINE BUTTON ::oBtnCancel ;            // Boton de Siguiente
-         ID       IDCANCEL ;
-         OF       ::oDlg ;
-         ACTION   ( ::oDlg:End() )
-
-   ::oDlg:bStart  := {|| ::InitClientResource(), ::oBtnAnterior:Hide() }
+      ::oDlg:bStart  := {|| ::startDialog() }
 
    ACTIVATE DIALOG ::oDlg CENTER 
 
-   ( ::dbfAlias )->( dbGoTo( nRecno ) )
-   ( ::dbfAlias )->( OrdSetFocus( cTag ) )
+   ::freeResources()
 
-   oWndBrw:Refresh()
-
-   if !Empty( oBmpGeneral )
-      oBmpGeneral:End()
-   end if
-
-   if !Empty( oBmpGeneral )
-      oBmpGeneral:End()
-   end if
-
-   if !Empty( oBmpClient )
-      oBmpClient:End()
-   end if
-
-   if !Empty( oBmpProcess )
-      oBmpProcess:End()
-   end if
-
-   ::oActiveX     := nil
+   D():setStatusClientes( nView )
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method InitClientResource() CLASS TGenMailing
+METHOD startDialog() CLASS TGenMailing
 
    if Empty( ::oActiveX )
       MsgStop( "No se ha podido instanciar el control." )
@@ -491,11 +268,246 @@ Method InitClientResource() CLASS TGenMailing
       ::oActiveX:SetHTML()
    end if
 
+   if !empty(::oBtnAnterior)
+      ::oBtnAnterior:Hide()
+   end if 
+
+   ::buildMenuDialog()
+
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lSalvaHtml() CLASS TGenMailing
+METHOD buildPageRedectar( oDlg )
+
+   REDEFINE GET ::oGetDe VAR ::cGetDe ;
+      ID       90 ;
+      OF       oDlg
+
+   REDEFINE GET ::oGetPara VAR ::cGetPara ;
+      ID       120 ;
+      OF       oDlg
+
+   REDEFINE GET ::oGetAsunto VAR ::cGetAsunto ;
+      ID       100 ;
+      OF       oDlg
+
+   REDEFINE GET ::oGetAdjunto VAR ::cGetAdjunto ;
+      ID       110 ;
+      OF       oDlg
+
+   REDEFINE GET ::oGetCopia VAR ::cGetCopia ;
+      ID       150 ;
+      OF       oDlg
+
+   ::oGetAdjunto:cBmp   := "Folder"
+   ::oGetAdjunto:bHelp  := {|| ::oGetAdjunto:cText( cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' ) ) }
+
+   TBtnBmp():ReDefine( 140, "Document_16",,,,,{|| ShellExecute( oDlg:hWnd, "open", Rtrim( ::cGetAdjunto ) ) }, oDlg, .f., , .f.,  )
+
+   REDEFINE COMBOBOX ::oField ;
+      VAR      ::cField ;
+      ITEMS    ::aFields ;
+      ID       160 ;
+      OF       oDlg
+
+   TBtnBmp():ReDefine( 170, "Down16", , , , , {|| ::InsertField() }, oDlg, .f., , .f., "Insertar campo" )
+
+   // Componentes-----------------------------------------------------------
+
+   ::oActiveX  := GetRichEdit():ReDefine( 600, oDlg )
+
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD buildPageCliente( oDlg )
+
+   local oGetOrd
+   local oCbxOrd
+   local cGetOrd           := Space( 100 )
+   local cCbxOrd           := "Código"
+   local aCbxOrd           := { "Código", "Nombre", "Correo electrónico" }
+
+   REDEFINE BITMAP ::oBmpClient ;
+      ID       500 ;
+      RESOURCE "Businessman2_Alpha_48" ;
+      TRANSPARENT ;
+      OF       oDlg
+
+   REDEFINE GET oGetOrd ;
+      VAR      cGetOrd;
+      ID       100 ;
+      BITMAP   "FIND" ;
+      OF       oDlg
+
+   oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwClient, D():Clientes( ::nView ) ) }
+
+   REDEFINE COMBOBOX oCbxOrd ;
+      VAR      cCbxOrd ;
+      ID       110 ;
+      ITEMS    aCbxOrd ;
+      OF       oDlg
+
+   oCbxOrd:bChange   := {|| ::SelectColumn( oCbxOrd ) }
+
+   REDEFINE BUTTON ;
+      ID       130 ;
+      OF       oDlg ;
+      ACTION   ( ::SelMailing( D():Clientes( ::nView ) ) )
+
+   REDEFINE BUTTON ;
+      ID       140 ;
+      OF       oDlg ;
+      ACTION   ( ::SelAllMailing( .t. ) )
+
+   REDEFINE BUTTON ;
+      ID       150 ;
+      OF       oDlg ;
+      ACTION   ( ::SelAllMailing( .f. ) )
+
+   ::oBrwClient                 := IXBrowse():New( oDlg )
+
+   ::oBrwClient:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrwClient:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrwClient:cAlias          := D():Clientes( ::nView )
+
+   ::oBrwClient:nMarqueeStyle   := 5
+
+   ::oBrwClient:CreateFromResource( 160 )
+
+   ::oBrwClient:bLDblClick      := {|| ::SelMailing() }
+
+   with object ( ::oBrwClient:AddCol() )
+      :cHeader          := "Se. seleccionado"
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( D():Clientes( ::nView ) )->lMail }
+      :nWidth           := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end with
+
+   with object ( ::oBrwClient:AddCol() )
+      :cHeader          := "Código"
+      :cSortOrder       := "Cod"
+      :bEditValue       := {|| ( D():Clientes( ::nView ) )->Cod }
+      :nWidth           := 70
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( ::oBrwClient:AddCol() )
+      :cHeader          := "Nombre"
+      :cSortOrder       := "Titulo"
+      :bEditValue       := {|| ( D():Clientes( ::nView ) )->Titulo }
+      :nWidth           := 300
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   with object ( ::oBrwClient:AddCol() )
+      :cHeader          := "Correo electrónico"
+      :cSortOrder       := "cMeiInt"
+      :bEditValue       := {|| ( D():Clientes( ::nView ) )->cMeiInt }
+      :nWidth           := 260
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+   end with
+
+   REDEFINE GET ::nPaquetesTotales ;
+      ID       180 ;
+      SPINNER ;
+      PICTURE  "@E 999" ;
+      OF       oDlg
+
+   REDEFINE COMBOBOX ::cTiempo ;
+      ITEMS    ::aTiempo ;
+      ID       170 ;
+      OF       oDlg
+
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD buildPageProceso( oDlg )
+
+   REDEFINE BITMAP ::oBmpProcess ;
+      ID       500 ;
+      RESOURCE "Gears_48_alpha" ;
+      TRANSPARENT ;
+      OF       oDlg
+
+   ::oTree     := TTreeView():Redefine( 100, oDlg )
+
+   REDEFINE SAY ::oPro ;
+      PROMPT   ::cPro ;
+      ID       110 ;
+      OF       oDlg
+
+   REDEFINE APOLOMETER ::oMtr ;
+      VAR      ::nMtr ;
+      ID       120 ;
+      OF       oDlg
+
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD buildButtonsGeneral()
+
+   REDEFINE BUTTON ::oBtnCargarHTML ;          // Boton anterior
+      ID       40 ;
+      OF       ::oDlg ;
+      ACTION   ( ::lCargaHTML() )
+
+   REDEFINE BUTTON ::oBtnSalvarHTML ;          // Boton anterior
+      ID       50 ;
+      OF       ::oDlg ;
+      ACTION   ( ::lSalvaHTML() )
+
+   REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
+      ID       20 ;
+      OF       ::oDlg ;
+      ACTION   ( ::BotonAnterior() )
+
+   REDEFINE BUTTON ::oBtnSiguiente ;         // Boton de Siguiente
+      ID       30 ;
+      OF       ::oDlg ;
+      ACTION   ( ::BotonSiguiente() )
+
+   REDEFINE BUTTON ::oBtnCancel ;            // Boton de Siguiente
+      ID       IDCANCEL ;
+      OF       ::oDlg ;
+      ACTION   ( ::oDlg:End() )
+
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD freeResources()
+
+   if !Empty( ::oBmpGeneral )
+      ::oBmpGeneral:End()
+   end if
+
+   if !Empty( ::oBmpProcess )
+      ::oBmpProcess:End()
+   end if
+
+   if !empty(::oBmpClient)
+      ::oBmpClient:end()
+   end if 
+
+   if !empty(::oMenu)
+      ::oMenu:end()
+   end if
+
+   if !empty(::oActiveX)
+      ::oActiveX:end()
+   end if 
+
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD lSalvaHtml() CLASS TGenMailing
 
    local cHtmlFile   := cGetFile( 'Html ( *.Html ) | *.Html', 'Seleccione el nombre del fichero' )
 
@@ -515,7 +527,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method GetAdjunto() CLASS TGenMailing
+METHOD GetAdjunto() CLASS TGenMailing
 
    local cFile                         := cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' )
 
@@ -533,7 +545,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method SelectColumn( oCombo ) CLASS TGenMailing
+METHOD SelectColumn( oCombo ) CLASS TGenMailing
 
    local oCol
    local cOrd                    := oCombo:VarGet()
@@ -563,7 +575,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method BotonAnterior() CLASS TGenMailing
+METHOD BotonAnterior() CLASS TGenMailing
 
    do case
       case ::oFld:nOption == 2
@@ -587,7 +599,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method BotonSiguiente() CLASS TGenMailing
+METHOD BotonSiguiente() CLASS TGenMailing
 
    do case
       case ::oFld:nOption == 1
@@ -629,11 +641,13 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method SelMailing() CLASS TGenMailing
+METHOD SelMailing( lValue ) CLASS TGenMailing
 
-   if dbDialogLock( ::dbfAlias )
-      ( ::dbfAlias )->lMail := !( ::dbfAlias )->lMail
-      ( ::dbfAlias )->( dbUnlock() )
+   DEFAULT lValue := !( D():Clientes( ::nView ) )->lMail
+
+   if dbDialogLock( D():Clientes( ::nView ) )
+      ( D():Clientes( ::nView ) )->lMail   := lValue
+      ( D():Clientes( ::nView ) )->( dbUnlock() )
    end if
 
    ::oBrwClient:Refresh()
@@ -643,114 +657,60 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method SelAllMailing( lValue ) CLASS TGenMailing
+METHOD SelAllMailing( lValue ) CLASS TGenMailing
 
-   local nRecno
+   local nRecord
 
    DEFAULT lValue := .t.
 
 	CursorWait()
 
-   nRecno         := ( ::dbfAlias )->( RecNo() )
-
-   ( ::dbfAlias )->( dbGoTop() )
-
-   while !( ::dbfAlias )->( eof() )
-
-      if dbDialogLock( ::dbfAlias )
-         ( ::dbfAlias )->lMail := lValue
-         ( ::dbfAlias )->( dbUnlock() )
-      end if
-
-      ( ::dbfAlias )->( dbSkip() )
-
-   end do
-
-   ( ::dbfAlias )->( dbGoTo( nRecno ) )
+   nRecord         := ( D():Clientes( ::nView ) )->( recno() )
+   ( D():Clientes( ::nView ) )->( dbeval( {|| ::selMailing( lValue ) } ) )
+   ( D():Clientes( ::nView ) )->( dbgoto(nRecord) )
 
 	CursorArrow()
-
-   ::oBrwClient:Refresh()
-   ::oBrwClient:SetFocus()
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method IniciarEnvio() CLASS TGenMailing
+METHOD IniciarEnvio() CLASS TGenMailing
 
-   local nTime
-   local lFirst
-   local nPaquetes      := 1
-   local nRecno         := ( ::dbfAlias )->( RecNo() )
+   local nRecno         := ( D():Clientes( ::nView ) )->( RecNo() )
 
-   nTime                := Val( ::cTiempo )
-   lFirst               := .t.
+   ::nTime              := Val( ::cTiempo )
+
+   ::oBtnCancel:bAction := {|| ::lCancel := .t. }
 
    /*
    Información por pantalla----------------------------------------------------
    */
 
+   CursorWait()
+
    ::oTree:Add( "Se ha iniciado el proceso de envio" )
-
-   ::oBtnCancel:bAction := {|| ::lCancel := .t. }
-
-	CursorWait()
 
    /*
    Actualizamos el meter-------------------------------------------------------
    */
 
-   ::oMtr:nTotal        := ( ::dbfAlias )->( OrdKeyCount() )
+   ::oMtr:nTotal        := ( D():Clientes( ::nView ) )->( OrdKeyCount() )
 
-   ( ::dbfAlias )->( dbGoTop() )
-   while !::lCancel .and. !( ::dbfAlias )->( eof() )
+   ( D():Clientes( ::nView ) )->( dbGoTop() )
+   while !::lCancel .and. !( D():Clientes( ::nView ) )->( eof() )
 
-      if ( ::dbfAlias )->lMail .and. !Empty( ( ::dbfAlias )->cMeiInt )
-
-         if ::lCreateMail()
-
-            /*
-            Esperamos para q el servidor no se agobie--------------------------
-            */
-
-            if ( !lFirst ) .and. ( nTime != 0 ) .and. ( !( ::dbfAlias )->( eof() ) )
-
-               ::oTree:Select( ::oTree:Add( "Envio " + Alltrim( Str( ( ::dbfAlias )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ::oMtr:nTotal ) ) ) )
-
-               if nPaquetes >= ::nPaquetes
-
-                  ::oTree:Select( ::oTree:Add( "Esperando " + ::cTiempo + "para proximo envio" ) )
-
-                  ::WaitSeconds( nTime )
-
-                  nPaquetes   := 1
-
-               else
-
-                  nPaquetes++
-
-               end if
-
-            end if
-
-            ::lSendMail()
-
-            ::oMail     := nil
-
-            lFirst      := .f.
-
-         end if
-
+      if ( D():Clientes( ::nView ) )->lMail .and. !Empty( ( D():Clientes( ::nView ) )->cMeiInt )
+         ::lBuildMail()
       end if
 
-      ( ::dbfAlias )->( dbSkip() )
+      ( D():Clientes( ::nView ) )->( dbSkip() )
 
-      ::oMtr:Set( ( ::dbfAlias )->( OrdKeyNo() ) )
+      ::oMtr:Set( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) )
 
    end do
 
-   ( ::dbfAlias )->( dbGoTo( nRecno ) )
+   ( D():Clientes( ::nView ) )->( dbGoTo( nRecno ) )
 
    CursorArrow()
 
@@ -766,7 +726,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lCargaHtml( cFile ) CLASS TGenMailing
+METHOD lCargaHtml( cFile ) CLASS TGenMailing
 
    local hFile
    local oBlock
@@ -818,7 +778,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lDefectoHtml( cFile ) CLASS TGenMailing
+METHOD lDefectoHtml( cFile ) CLASS TGenMailing
 
    if !Empty( ::cGetHtml )
       if ApoloMsgNoYes( "¿Desea establecer el documento " + Rtrim( ::cGetHtml ) + " como documento por defecto?", "Confirme" )
@@ -832,7 +792,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lEditaCSS() CLASS TGenMailing
+METHOD lEditaCSS() CLASS TGenMailing
 
    local oBlock
 
@@ -851,7 +811,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lCreateMail() CLASS TGenMailing
+METHOD lCreateMail() CLASS TGenMailing
 
    local oError
    local oBlock
@@ -864,7 +824,7 @@ Method lCreateMail() CLASS TGenMailing
 
    RECOVER USING oError
 
-      WaitRun( "regsvr32 /s " + FullcurDir() + "JMail.Dll" )
+      WaitRun( "regsvr32 /s " + fullcurDir() + "JMail.Dll" )
 
       ::oMail                    := win_oleCreateObject( "JMail.Message" )
 
@@ -906,7 +866,7 @@ Method lCreateMail() CLASS TGenMailing
 
       lCreateMail                := .f.
 
-      msgStop( "Error al crear objeto para Envío de  correo electrónico." )
+      msgStop( "Error al crear objeto para envío de correo electrónico." )
 
    end if
 
@@ -914,7 +874,7 @@ Return ( lCreateMail )
 
 //--------------------------------------------------------------------------//
 
-Method MailMerge()  CLASS TGenMailing
+METHOD MailMerge()  CLASS TGenMailing
 
    local nScan
    local nAtInit           := 0
@@ -956,7 +916,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method ExpresionReplace( cDocumentHTML, cExpresion ) CLASS TGenMailing
+METHOD ExpresionReplace( cDocumentHTML, cExpresion ) CLASS TGenMailing
 
    local nScan
    local cExpresionToSearch
@@ -971,7 +931,7 @@ Method ExpresionReplace( cDocumentHTML, cExpresion ) CLASS TGenMailing
 
       nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
       if nScan != 0
-         cDocumentHTML     := StrTran( cDocumentHTML, cExpresion, cValToChar( ( ::dbfAlias )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) )
+         cDocumentHTML     := StrTran( cDocumentHTML, cExpresion, cValToChar( ( D():Clientes( ::nView ) )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) )
       else
          cDocumentHTML     := StrTran( cDocumentHTML, cExpresion, "" )
       end if
@@ -982,7 +942,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lSendMail() CLASS TGenMailing
+METHOD lSendMail() CLASS TGenMailing
 
    local oError
    local oBlock
@@ -995,7 +955,7 @@ Method lSendMail() CLASS TGenMailing
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::oMail:AddRecipient( Rtrim( ( ::dbfAlias )->cMeiInt ) )
+      ::oMail:AddRecipient( Rtrim( ( D():Clientes( ::nView ) )->cMeiInt ) )
 
       if File( Rtrim( ::cGetAdjunto ) )
          ::oMail:AddAttachment( Rtrim( ::cGetAdjunto ) )
@@ -1004,9 +964,9 @@ Method lSendMail() CLASS TGenMailing
       lSendMail            := ::oMail:Send( ::MailServerSend() )
 
       if lSendMail
-         ::oTree:Select( ::oTree:Add( "Cliente " + Rtrim( ( ::dbfAlias )->Titulo ) + "<" + Rtrim( ( ::dbfAlias )->cMeiInt ) + "> enviado satisfactoriamente" ) )
+         ::oTree:Select( ::oTree:Add( "Cliente " + Rtrim( ( D():Clientes( ::nView ) )->Titulo ) + "<" + Rtrim( ( D():Clientes( ::nView ) )->cMeiInt ) + "> enviado satisfactoriamente" ) )
       else
-         ::oTree:Select( ::oTree:Add( "Cliente " + Rtrim( ( ::dbfAlias )->Titulo ) + "<" + Rtrim( ( ::dbfAlias )->cMeiInt ) + "> no enviado" ) )
+         ::oTree:Select( ::oTree:Add( "Cliente " + Rtrim( ( D():Clientes( ::nView ) )->Titulo ) + "<" + Rtrim( ( D():Clientes( ::nView ) )->cMeiInt ) + "> no enviado" ) )
          ::oTree:Select( ::oTree:Add( "Error : " + ::oMail:ErrorMessage ) )
          ::oTree:Select( ::oTree:Add( "Error : " + ::oMail:ErrorSource ) )
       end if
@@ -1027,7 +987,7 @@ Return ( lSendMail )
 
 //--------------------------------------------------------------------------//
 
-Method lExternalSendMail( lMessage )  CLASS TGenMailing
+METHOD lExternalSendMail( lMessage )  CLASS TGenMailing
 
    local oError
    local oBlock
@@ -1040,7 +1000,6 @@ Method lExternalSendMail( lMessage )  CLASS TGenMailing
       MsgStop( "Debe incluir al menos una dirección de correo electrónico." )
       Return ( .f. )
    end if
-
 
    CursorWait()
 
@@ -1098,8 +1057,8 @@ Return ( lSendMail )
 
 //--------------------------------------------------------------------------//
 
-Method lOutlookSendMail()
-   
+METHOD buildOutlookMail()
+
    local oMail
    local lSend          := .f.
    local oRecipient
@@ -1145,128 +1104,35 @@ Method lOutlookSendMail()
 
    end if 
 
-Return ( lSend )
+RETURN ( oMail )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION SelLabel( oFlt, oBtnFilter )
+METHOD outlookSendMail()
+   
+   local oMail    := ::buildOutlookMail()
 
-   oFlt:Resource()
+   if !empty( oMail )
+      oMail:Send()
+   end if 
 
-   if oFlt:cExpresionFilter != nil .and. oBtnFilter != nil
-      SetWindowText( oBtnFilter:hWnd, "Filtro activo" )
-   else
-      SetWindowText( oBtnFilter:hWnd, "Filtrar" )
-   end if
-
-RETURN NIL
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION PutLabel( dbfArticulo, oBrw )
+METHOD outlookDisplayMail()
+   
+   local oMail    := ::buildOutlookMail()
 
-   if dbDialogLock( dbfArticulo )
-      ( dbfArticulo )->lLabel := !( dbfArticulo )->lLabel
-      ( dbfArticulo )->( dbUnlock() )
-   end if
+   if !empty( oMail )
+      oMail:Display()
+   end if 
 
-   oBrw:Refresh()
-	oBrw:SetFocus()
-
-RETURN NIL
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION AddLabel( dbfArticulo, oBrw )
-
-   IF ( dbDialogLock( dbfArticulo ) )
-      ( dbfArticulo )->nLabel++
-		( dbfArticulo )->( dbUnlock() )
-	END IF
-
-   oBrw:Refresh()
-	oBrw:SetFocus()
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
-FUNCTION DelLabel( dbfArticulo, oBrw )
-
-   if ( dbDialogLock( dbfArticulo ) ) .and. ( dbfArticulo )->nLabel > 1
-      ( dbfArticulo )->nLabel--
-		( dbfArticulo )->( dbUnlock() )
-   end if
-
-   oBrw:Refresh()
-	oBrw:SetFocus()
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
-FUNCTION ResLabel( dbfArticulo, oBrw, oMtr )
-
-	local n			:= 0
-	local nRecno 	:= (dbfArticulo)->( RecNo() )
-
-	CursorWait()
-
-   ( dbfArticulo )->( dbGoTop() )
-
-   while !( dbfArticulo )->( eof() )
-
-      if ( ( dbfArticulo )->lLabel .or. ( dbfArticulo )->nLabel != 2 ) .AND. dbDialogLock( dbfArticulo )
-         ( dbfArticulo )->lLabel := .f.
-         ( dbfArticulo )->nLabel := 1
-			( dbfArticulo )->( dbUnlock() )
-      end if
-
-      ( dbfArticulo )->( dbSkip() )
-
-      if oMtr != nil
-         oMtr:Set( ++n )
-      end if
-
-   end do
-
-   ( dbfArticulo )->( dbGoTo( nRecno ) )
-
-	oBrw:refresh()
-
-   if oMtr != NIL
-		oMtr:Set( 0 )
-		oMtr:refresh()
-   end if
-
-	CursorArrow()
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
-FUNCTION EdtLabel( dbfArticulo, oLbx )
-
-   local cPic     := "999"
-   local uVar     := ( dbfArticulo )->nLabel
-   local bValid   := { || .T. }
-
-   if oLbx:lEditCol( 4, @uVar, cPic, bValid )
-
-      if dbDialogLock( dbfArticulo )
-         ( dbfArticulo )->nLabel := uVar
-         ( dbfArticulo )->( dbUnlock() )
-      end if
-
-      oLbx:DrawSelect()
-
-   end if
-
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
-Method Resource() CLASS TGenMailing
+METHOD Resource() CLASS TGenMailing
 
    local cTag
    local nRecno
@@ -1277,66 +1143,21 @@ Method Resource() CLASS TGenMailing
       Return .f.
    end if
 
-   if Empty( ::dbfAlias )
+   if Empty( D():Clientes( ::nView ) )
       MsgStop( "Base de datos no pasada." )
       Return .f.
    end if
 
-   cTag           := ( ::dbfAlias )->( OrdSetFocus() )
-   nRecno         := ( ::dbfAlias )->( RecNo() )
+   cTag           := ( D():Clientes( ::nView ) )->( OrdSetFocus() )
+   nRecno         := ( D():Clientes( ::nView ) )->( RecNo() )
 
-   ::aFields      := GetSubArray( ::aItems, 5 ) //aArray, nPos )::oFlt:aTblMask
+   ::aFields      := GetSubArray( ::aItems, 5 )
 
    // Mostramos el dialogo-----------------------------------------------------
 
    DEFINE DIALOG ::oDlg RESOURCE "SendDocumentoMail" OF oWnd()
 
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       500 ;
-         RESOURCE "Mail_earth_48_alpha" ;
-         TRANSPARENT ;
-         OF       ::oDlg
-
-      /*
-      Segunda caja de dialogo--------------------------------------------------
-      */
-
-      REDEFINE GET ::oGetDe VAR ::cGetDe ;
-         ID       90 ;
-         OF       ::oDlg
-
-      REDEFINE GET ::oGetPara VAR ::cGetPara ;
-         ID       120 ;
-         OF       ::oDlg
-
-      REDEFINE GET ::oGetAsunto VAR ::cGetAsunto ;
-         ID       100 ;
-         OF       ::oDlg
-
-      REDEFINE GET ::oGetAdjunto VAR ::cGetAdjunto ;
-         ID       110 ;
-         OF       ::oDlg
-
-      REDEFINE GET ::oGetCopia VAR ::cGetCopia ;
-         ID       150 ;
-         OF       ::oDlg
-
-      ::oGetAdjunto:cBmp   := "Folder"
-      ::oGetAdjunto:bHelp  := {|| ::oGetAdjunto:cText( cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' ) ) }
-
-      TBtnBmp():ReDefine( 140, "Document_16",,,,,{|| ShellExecute( ::oDlg:hWnd, "open", Rtrim( ::cGetAdjunto ) ) }, ::oDlg, .f., , .f.,  )
-
-      REDEFINE COMBOBOX ::oField ;
-         VAR      ::cField ;
-         ITEMS    ::aFields ;
-         ID       160 ;
-         OF       ::oDlg
-
-      TBtnBmp():ReDefine( 170, "Down16", , , , , {|| ::InsertField() }, ::oDlg, .f., , .f., "Insertar campo" )
-
-      // Componentes-----------------------------------------------------------
-
-      ::oActiveX  := GetRichEdit():ReDefine( 600, ::oDlg )
+      ::buildPageRedectar( ::oDlg )
 
       // Botones generales-----------------------------------------------------
 
@@ -1368,24 +1189,20 @@ Method Resource() CLASS TGenMailing
 
    ::oDlg:AddFastKey( VK_F5, {|| if( ::lExternalSendMail( .t. ), ::oDlg:End(), ) } )
 
-   ::oDlg:bStart  := {|| ::InitClientResource() }
+   ::oDlg:bStart  := {|| ::startDialog() }
 
    ACTIVATE DIALOG ::oDlg CENTER 
 
-   if !Empty( ::dbfAlias )
-      ( ::dbfAlias )->( dbGoTo( nRecno ) )
-      ( ::dbfAlias )->( OrdSetFocus( cTag ) )
-   end if
-
-   if !Empty( oBmpGeneral )
-      oBmpGeneral:end()
+   if !Empty( D():Clientes( ::nView ) )
+      ( D():Clientes( ::nView ) )->( dbGoTo( nRecno ) )
+      ( D():Clientes( ::nView ) )->( OrdSetFocus( cTag ) )
    end if
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method HTMLMenu() CLASS TGenMailing
+METHOD buildMenuDialog() CLASS TGenMailing
 
    MENU ::oMenu
 
@@ -1396,29 +1213,12 @@ Method HTMLMenu() CLASS TGenMailing
             MENUITEM    "&Abrir HTML";
                MESSAGE  "Abrir un fichero HTML para incorporarlo al editor" ;
                RESOURCE "Folder16" ;
-               ACTION   ( ::oActiveX:Open_document() )
+               ACTION   ( ::lCargaHTML() )
 
             MENUITEM    "&Guardar como ...";
                RESOURCE "BmpExptar16" ;
                MESSAGE  "Guardar fichero HTML" ;
-               ACTION   ( ::oActiveX:Save_document() )
-
-            MENUITEM    "Guardar en servidor &web ...";
-               MESSAGE  "Guardar fichero HTML en servidor web" ;
-               RESOURCE "SndInt16" ;
-               ACTION   ( ::lSalvaHtml() )
-
-            SEPARATOR
-
-            MENUITEM    "Editar hoja de estilos CSS ...";
-               MESSAGE  "Editar la hoja de estilos CSS para incorporarlo al editor" ;
-               RESOURCE "Document_16" ;
-               ACTION   ( ::lEditaCSS() )
-
-            MENUITEM    "&Insertar imagen...";
-               RESOURCE "BmpExptar16" ;
-               MESSAGE  "Insertar imagen" ;
-               ACTION   ( ::oActiveX:Insert_Image_NoFTP() )
+               ACTION   ( ::lSalvaHTML() )
 
          ENDMENU
 
@@ -1445,45 +1245,7 @@ Return ( ::oMenu )
 
 //---------------------------------------------------------------------------//
 
-Method lCheckActiveX() CLASS TGenMailing
-
-   local oBlock
-   local oError
-   local lCheck         := .t.
-   local oActiveX
-
-   if !File( FullCurDir() + "RmpHTML.ocx" ) .or. !File( FullCurDir() + "RmpHTML.dll" ) .or. !File( FullCurDir() + "AxrmpHTML.dll" )
-      Return ( .f. )
-   end if
-
-   if !isActiveX( "rmpHTML.HTMLed" )
-
-      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
-
-         WaitRun( "regsvr32 /s " + FullCurDir() + "RmpHTML.ocx" )
-         WaitRun( "regsvr32 /s " + FullCurDir() + "RmpHTML.dll" )
-         WaitRun( "regsvr32 /s " + FullCurDir() + "AxrmpHTML.dll" )
-
-      RECOVER USING oError
-
-         msgStop( 'Imposible registrar el editor HTML', ErrorMessage( oError ) )
-
-         lCheck         := .f.
-
-      END SEQUENCE
-
-      ErrorBlock( oBlock )
-
-      lCheck            := isActiveX( "rmpHTML.HTMLed" )
-
-   end if
-
-Return ( lCheck )
-
-//---------------------------------------------------------------------------//
-
-Method WaitSeconds( nTime )
+METHOD WaitSeconds( nTime )
 
 	local n
 
@@ -1503,39 +1265,26 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-Function lInitHTMEditor()
 
-   local oBlock
-   local oError
-   local oActiveX
+METHOD waitMail()
 
-   if !File( FullCurDir() + "RmpHTML.ocx" ) .or. !File( FullCurDir() + "RmpHTML.dll" ) .or. !File( FullCurDir() + "AxrmpHTML.dll" )
-      MsgStop( "No existe el componente RmpHTML.Ocx" )
-      Return ( .f. )
+   ::oTree:Select( ::oTree:Add( "Envio " + Alltrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ::oMtr:nTotal ) ) ) )
+
+   if ::nPaqueteActual >= ::nPaquetesTotales
+
+      ::oTree:Select( ::oTree:Add( "Esperando " + ::cTiempo + "para proximo envio" ) )
+
+      ::WaitSeconds( ::nTime )
+
+      ::nPaqueteActual := 1
+
+   else
+
+      ::nPaqueteActual++
+
    end if
 
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      oActiveX             := win_oleCreateObject( "RmpHTML.HTMLed" )
-
-   RECOVER USING oError
-
-      WaitRun( "regsvr32 /s " + FullcurDir() + "RmpHTML.ocx" )
-      WaitRun( "regsvr32 /s " + FullCurDir() + "RmpHTML.dll" )
-      WaitRun( "regsvr32 /s " + FullCurDir() + "AxrmpHTML.dll" )
-
-      oActiveX             := win_oleCreateObject( "RmpHTML.HTMLed" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !Empty( oActiveX )
-      oActiveX             := nil
-   end if
-
-Return ( .t. )
+Return ( Self )   
 
 //---------------------------------------------------------------------------//
 
