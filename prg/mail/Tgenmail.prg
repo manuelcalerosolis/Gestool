@@ -47,6 +47,9 @@ CLASS TGenMailing
    DATA cGetPara                       INIT Space( 250 )
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
+   DATA lHidePara                      INIT .t.
+   DATA lHideCopia                     INIT .t.
+
    DATA aAdjuntos                      INIT {}
 
    DATA oActiveX
@@ -99,6 +102,8 @@ CLASS TGenMailing
    METHOD New()
    METHOD Create()
    METHOD Init()
+
+   METHOD getWorkArea()                INLINE ( D():Clientes( ::nView ) )
 
    METHOD SetAsunto( cText )           INLINE ( ::cGetAsunto   := Padr( cText, 250 ) )
    METHOD SetAdjunto( cText )          INLINE ( ::cGetAdjunto  := Padr( cText, 250 ) )
@@ -176,7 +181,7 @@ CLASS TGenMailing
    METHOD waitSeconds( nTime )
 
    METHOD getClientList()              
-   METHOD addClientList()              INLINE ( iif(  ( D():Clientes( ::nView ) )->lMail .and. !empty( ( D():Clientes( ::nView ) )->cMeiInt ),;
+   METHOD addClientList()              INLINE ( iif(  ( ::getWorkArea() )->lMail .and. !empty( ( ::getWorkArea() )->cMeiInt ),;
                                                       aAdd( ::aMailingList, ::hashClientList() ),;
                                                    ) )
    METHOD hashClientList()        
@@ -228,22 +233,18 @@ Return ( Self )
 
 METHOD ClientResource( aItems, nView ) CLASS TGenMailing
 
-   local cTag
-   local nRecno
-
    ::Init()
 
    ::lCancel         := .f.
    ::aItems          := aItems
+   ::aFields         := getSubArray( aItems, 5 )
    ::nView           := nView
 
+/*
    if !Empty( ::oFlt )
       ::aFields      := ::oFlt:aTblMask
    end if 
-
-   D():getStatusClientes( nView )
-   ( D():Clientes( nView ) )->( dbGoTop() )
-
+*/
    DEFINE DIALOG ::oDlg RESOURCE "Select_Mail_Container" OF oWnd()
 
       REDEFINE PAGES ::oFld ;
@@ -267,13 +268,19 @@ METHOD ClientResource( aItems, nView ) CLASS TGenMailing
 
    ::freeResources()
 
-   D():setStatusClientes( nView )
-
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
 METHOD startResource() CLASS TGenMailing
+
+   if ::lHidePara
+      ::oGetPara:Hide()
+   end if 
+
+   if ::lHideCopia
+      ::oGetCopia:Hide()
+   end if 
 
    if Empty( ::oActiveX )
       MsgStop( "No se ha podido instanciar el control." )
@@ -292,7 +299,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD buildPagectar( oDlg )
+METHOD buildPageRedactar( oDlg )
 
    REDEFINE GET ::oGetDe VAR ::cGetDe ;
       ID       90 ;
@@ -357,7 +364,7 @@ METHOD buildPageCliente( oDlg )
       BITMAP   "FIND" ;
       OF       oDlg
 
-   oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwClient, D():Clientes( ::nView ) ) }
+   oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwClient, ::getWorkArea() ) }
 
    REDEFINE COMBOBOX oCbxOrd ;
       VAR      cCbxOrd ;
@@ -370,7 +377,7 @@ METHOD buildPageCliente( oDlg )
    REDEFINE BUTTON ;
       ID       130 ;
       OF       oDlg ;
-      ACTION   ( ::SelMailing( D():Clientes( ::nView ) ) )
+      ACTION   ( ::SelMailing( ::getWorkArea() ) )
 
    REDEFINE BUTTON ;
       ID       140 ;
@@ -387,7 +394,7 @@ METHOD buildPageCliente( oDlg )
    ::oBrwClient:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwClient:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   ::oBrwClient:cAlias          := D():Clientes( ::nView )
+   ::oBrwClient:cAlias          := ::getWorkArea()
 
    ::oBrwClient:nMarqueeStyle   := 5
 
@@ -398,7 +405,7 @@ METHOD buildPageCliente( oDlg )
    with object ( ::oBrwClient:AddCol() )
       :cHeader          := "Se. seleccionado"
       :bStrData         := {|| "" }
-      :bEditValue       := {|| ( D():Clientes( ::nView ) )->lMail }
+      :bEditValue       := {|| ( ::getWorkArea() )->lMail }
       :nWidth           := 20
       :SetCheck( { "Sel16", "Nil16" } )
    end with
@@ -406,7 +413,7 @@ METHOD buildPageCliente( oDlg )
    with object ( ::oBrwClient:AddCol() )
       :cHeader          := "Código"
       :cSortOrder       := "Cod"
-      :bEditValue       := {|| ( D():Clientes( ::nView ) )->Cod }
+      :bEditValue       := {|| ( ::getWorkArea() )->Cod }
       :nWidth           := 70
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
    end with
@@ -414,7 +421,7 @@ METHOD buildPageCliente( oDlg )
    with object ( ::oBrwClient:AddCol() )
       :cHeader          := "Nombre"
       :cSortOrder       := "Titulo"
-      :bEditValue       := {|| ( D():Clientes( ::nView ) )->Titulo }
+      :bEditValue       := {|| ( ::getWorkArea() )->Titulo }
       :nWidth           := 300
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
    end with
@@ -422,7 +429,7 @@ METHOD buildPageCliente( oDlg )
    with object ( ::oBrwClient:AddCol() )
       :cHeader          := "Correo electrónico"
       :cSortOrder       := "cMeiInt"
-      :bEditValue       := {|| ( D():Clientes( ::nView ) )->cMeiInt }
+      :bEditValue       := {|| ( ::getWorkArea() )->cMeiInt }
       :nWidth           := 260
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
    end with
@@ -659,11 +666,11 @@ Return ( Self )
 
 METHOD SelMailing( lValue ) CLASS TGenMailing
 
-   DEFAULT lValue := !( D():Clientes( ::nView ) )->lMail
+   DEFAULT lValue := !( ::getWorkArea() )->lMail
 
-   if dbDialogLock( D():Clientes( ::nView ) )
-      ( D():Clientes( ::nView ) )->lMail   := lValue
-      ( D():Clientes( ::nView ) )->( dbUnlock() )
+   if dbDialogLock( ::getWorkArea() )
+      ( ::getWorkArea() )->lMail   := lValue
+      ( ::getWorkArea() )->( dbUnlock() )
    end if
 
    ::oBrwClient:Refresh()
@@ -681,9 +688,9 @@ METHOD SelAllMailing( lValue ) CLASS TGenMailing
 
 	CursorWait()
 
-   nRecord         := ( D():Clientes( ::nView ) )->( recno() )
-   ( D():Clientes( ::nView ) )->( dbeval( {|| ::selMailing( lValue ) } ) )
-   ( D():Clientes( ::nView ) )->( dbgoto( nRecord ) )
+   nRecord         := ( ::getWorkArea() )->( recno() )
+   ( ::getWorkArea() )->( dbeval( {|| ::selMailing( lValue ) } ) )
+   ( ::getWorkArea() )->( dbgoto( nRecord ) )
 
 	CursorArrow()
 
@@ -699,9 +706,9 @@ METHOD getClientList()
 
    ::aMailingList := {}
    
-   nRecord         := ( D():Clientes( ::nView ) )->( recno() )
-   ( D():Clientes( ::nView ) )->( dbeval( {|| ::addClientList() } ) )
-   ( D():Clientes( ::nView ) )->( dbgoto( nRecord ) )
+   nRecord         := ( ::getWorkArea() )->( recno() )
+   ( ::getWorkArea() )->( dbeval( {|| ::addClientList() } ) )
+   ( ::getWorkArea() )->( dbgoto( nRecord ) )
 
    CursorArrow()
 
@@ -731,18 +738,18 @@ METHOD IniciarEnvio() CLASS TGenMailing
    Actualizamos el meter-------------------------------------------------------
    */
 
-   ::oMtr:nTotal        := ( D():Clientes( ::nView ) )->( OrdKeyCount() )
+   ::oMtr:nTotal        := ( ::getWorkArea() )->( OrdKeyCount() )
 
-   ( D():Clientes( ::nView ) )->( dbGoTop() )
-   while !::lCancel .and. !( D():Clientes( ::nView ) )->( eof() )
+   ( ::getWorkArea() )->( dbGoTop() )
+   while !::lCancel .and. !( ::getWorkArea() )->( eof() )
 
-      if ( D():Clientes( ::nView ) )->lMail .and. !Empty( ( D():Clientes( ::nView ) )->cMeiInt )
+      if ( ::getWorkArea() )->lMail .and. !Empty( ( ::getWorkArea() )->cMeiInt )
          ::lBuildMail()
       end if
 
-      ( D():Clientes( ::nView ) )->( dbSkip() )
+      ( ::getWorkArea() )->( dbSkip() )
 
-      ::oMtr:Set( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) )
+      ::oMtr:Set( ( ::getWorkArea() )->( OrdKeyNo() ) )
 
    end do
 
@@ -892,42 +899,6 @@ Return ( lCreateMail )
 
 METHOD MailMerge()  CLASS TGenMailing
 
-   local nScan
-   local nAtInit           := 0
-   local nAtEnd            := 0
-   local cExpresion        := ""
-   local cDocumentHTML     := ::oActiveX:GetText()
-
-   while .t.
-
-      nAtInit              := At( "{", cDocumentHTML )
-
-      if nAtInit != 0
-
-         nAtEnd            := At( "}", cDocumentHTML )
-
-         if nAtEnd != 0
-
-            cExpresion     := SubStr( cDocumentHTML, nAtInit, ( nAtEnd - nAtInit ) + 1 )
-
-            ::replaceExpresion( @cDocumentHTML, cExpresion )
-
-         else
-
-            exit
-
-         end if
-
-      else
-
-         exit
-
-      end if
-
-   end while
-
-   ::oMail:AppendHTML( cDocumentHTML )
-
 Return ( Self )
 
 //--------------------------------------------------------------------------//
@@ -945,7 +916,7 @@ METHOD lSendMail() CLASS TGenMailing
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::oMail:AddRecipient( Rtrim( ( D():Clientes( ::nView ) )->cMeiInt ) )
+      ::oMail:AddRecipient( Rtrim( ( ::getWorkArea() )->cMeiInt ) )
 
       if File( Rtrim( ::cGetAdjunto ) )
          ::oMail:AddAttachment( Rtrim( ::cGetAdjunto ) )
@@ -954,9 +925,9 @@ METHOD lSendMail() CLASS TGenMailing
       lSendMail            := ::oMail:Send( ::MailServerSend() )
 
       if lSendMail
-         ::oTree:Select( ::oTree:Add( "Cliente " + Rtrim( ( D():Clientes( ::nView ) )->Titulo ) + "<" + Rtrim( ( D():Clientes( ::nView ) )->cMeiInt ) + "> enviado satisfactoriamente" ) )
+         ::oTree:Select( ::oTree:Add( "Cliente " + Rtrim( ( ::getWorkArea() )->Titulo ) + "<" + Rtrim( ( ::getWorkArea() )->cMeiInt ) + "> enviado satisfactoriamente" ) )
       else
-         ::oTree:Select( ::oTree:Add( "Cliente " + Rtrim( ( D():Clientes( ::nView ) )->Titulo ) + "<" + Rtrim( ( D():Clientes( ::nView ) )->cMeiInt ) + "> no enviado" ) )
+         ::oTree:Select( ::oTree:Add( "Cliente " + Rtrim( ( ::getWorkArea() )->Titulo ) + "<" + Rtrim( ( ::getWorkArea() )->cMeiInt ) + "> no enviado" ) )
          ::oTree:Select( ::oTree:Add( "Error : " + ::oMail:ErrorMessage ) )
          ::oTree:Select( ::oTree:Add( "Error : " + ::oMail:ErrorSource ) )
       end if
@@ -1133,15 +1104,17 @@ METHOD Resource() CLASS TGenMailing
       Return .f.
    end if
 
-   if Empty( D():Clientes( ::nView ) )
+   if Empty( ::getWorkArea() )
       MsgStop( "Base de datos no pasada." )
       Return .f.
    end if
 
-   cTag           := ( D():Clientes( ::nView ) )->( OrdSetFocus() )
-   nRecno         := ( D():Clientes( ::nView ) )->( RecNo() )
+   cTag           := ( ::getWorkArea() )->( OrdSetFocus() )
+   nRecno         := ( ::getWorkArea() )->( RecNo() )
 
    ::aFields      := GetSubArray( ::aItems, 5 )
+
+   msgAlert( valtoprg(::aFields))
 
    // Mostramos el dialogo-----------------------------------------------------
 
@@ -1183,9 +1156,9 @@ METHOD Resource() CLASS TGenMailing
 
    ACTIVATE DIALOG ::oDlg CENTER 
 
-   if !Empty( D():Clientes( ::nView ) )
-      ( D():Clientes( ::nView ) )->( dbGoTo( nRecno ) )
-      ( D():Clientes( ::nView ) )->( OrdSetFocus( cTag ) )
+   if !Empty( ::getWorkArea() )
+      ( ::getWorkArea() )->( dbGoTo( nRecno ) )
+      ( ::getWorkArea() )->( OrdSetFocus( cTag ) )
    end if
 
 Return ( Self )
@@ -1257,7 +1230,7 @@ RETURN ( Self )
 
 METHOD waitMail()
 
-   ::oTree:Select( ::oTree:Add( "Envio " + Alltrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ::oMtr:nTotal ) ) ) )
+   ::oTree:Select( ::oTree:Add( "Envio " + Alltrim( Str( ( ::getWorkArea() )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ::oMtr:nTotal ) ) ) )
 
    if ::nPaqueteActual >= ::nPaquetesTotales
 
@@ -1281,7 +1254,7 @@ METHOD hashClientList()
 
    local hashClientList := {=>}
 
-   hSet( hashClientList, "mail", alltrim( ( D():Clientes( ::nView ) )->cMeiInt ) )
+   hSet( hashClientList, "mail", alltrim( ( ::getWorkArea() )->cMeiInt ) )
    hSet( hashClientList, "message", ::getMessage() )
 
 Return ( hashClientList )
@@ -1341,7 +1314,7 @@ METHOD replaceExpresion( cDocument, cExpresion )
 
       nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
       if nScan != 0
-         cDocument         := StrTran( cDocument, cExpresion, cValToChar( ( D():Clientes( ::nView ) )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) )
+         cDocument         := StrTran( cDocument, cExpresion, alltrim( cValToChar( ( ::getWorkArea() )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) ) )
       else
          cDocument         := StrTran( cDocument, cExpresion, "" )
       end if

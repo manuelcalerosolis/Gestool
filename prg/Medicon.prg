@@ -362,7 +362,9 @@ Function GetSubArray( aArray, nPos )
    local aKeys    := {}
 
    for each a in aArray
-      aAdd( aKeys, a[ nPos ] )
+      if !empty(a[ nPos ])
+         aAdd( aKeys, a[ nPos ] )
+      end if 
    next 
 
 RETURN ( aKeys )
