@@ -3,7 +3,7 @@
 CLASS Documento FROM Editable
 
    METHOD NumeroDocumento()
-   METHOD FechaDocumento() 
+   METHOD FechaDocumento()
    METHOD AlmacenDocumento()
 
 END CLASS

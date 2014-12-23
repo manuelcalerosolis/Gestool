@@ -8,7 +8,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD SerieDocumento() CLASS Documento
+METHOD SerieDocumento() CLASS DocumentoSerializable
 
    MsgAlert( "Metemos el serie" )
 

@@ -7,8 +7,9 @@ CLASS Editable
    METHOD Append()   Virtual
    METHOD Edit()     Virtual
    METHOD Zoom()     Virtual
-   METHOD Delete()   Virtual
+   METHOD Delete()   Virtual 
 
+<<<<<<< HEAD
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -20,3 +21,5 @@ CLASS Documento FROM Editable
 END CLASS
 
 //---------------------------------------------------------------------------//
+=======
+>>>>>>> 158a6c780a14fd54c3da72139401aebad28c5dc5
