@@ -379,6 +379,7 @@ Editable.prg               \
 Documento.prg              \
 Ventas.prg                 \
 PedidoCliente.prg          \
+DocumentoSerializable.prg  \
 
 C               =       	\
 Img2pdf.c               	\
@@ -748,6 +749,7 @@ Editable.obj               \
 Documento.obj              \
 Ventas.obj                 \
 PedidoCliente.obj          \
+DocumentoSerializable.obj  \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1101,6 +1103,7 @@ $(OBJ)\TGridSay.obj              +
 $(OBJ)\Editable.obj              +
 $(OBJ)\Documento.obj             +
 $(OBJ)\PedidoCliente.obj         +
+$(OBJ)\DocumentoSerializable.obj +
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +

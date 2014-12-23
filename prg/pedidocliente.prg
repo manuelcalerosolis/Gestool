@@ -1,7 +1,7 @@
 
 #include "FiveWin.Ch"
 
-CLASS PedidoCliente FROM DocumentoSerializable
+CLASS PedidoCliente FROM DocumentoSerializable 
 
    METHOD Resource()
  
