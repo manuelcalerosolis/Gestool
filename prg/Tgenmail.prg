@@ -181,7 +181,9 @@ CLASS TGenMailing
    METHOD addClientList()              INLINE ( iif(  ( D():Clientes( ::nView ) )->lMail .and. !empty( ( D():Clientes( ::nView ) )->cMeiInt ),;
                                                       aAdd( ::aClientMailList, ::hashClientList() ),;
                                                    ) )
-   METHOD hashClientList()             
+   METHOD hashClientList()        
+   METHOD getMessage()
+   METHOD getExpression()
 
 END CLASS
 
@@ -1277,8 +1279,8 @@ METHOD hashClientList()
 
    local hashClientList := {=>}
 
-   hSet( hashClientList, "mail" => ( D():Clientes( ::nView ) )->cMeiInt ) )
-   hSet( hashClientList, "message" => ::getMessage() )
+   hSet( hashClientList, "mail", ( D():Clientes( ::nView ) )->cMeiInt ) 
+   hSet( hashClientList, "message", ::getMessage() )
 
 Return ( hashClientList )
 
