@@ -375,9 +375,6 @@ TTreevie.prg            	\
 ApoloMeter.prg 				\
 TGridSay.prg 					\
 FacturarLineasAlbaranesProveedor.prg\
-<<<<<<< HEAD
-Tablet\Editable.prg        \
-=======
 Editable.prg               \
 Documento.prg              \
 DocumentoSerializable.prg  \
@@ -385,7 +382,6 @@ Ventas.prg                 \
 PedidoCliente.prg          \
 
 PRGTABLET       =          \
->>>>>>> 158a6c780a14fd54c3da72139401aebad28c5dc5
 
 C               =       	\
 Img2pdf.c               	\
