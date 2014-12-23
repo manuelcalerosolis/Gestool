@@ -145,7 +145,7 @@ CLASS TGenMailing
 
    METHOD MailMerge()
 
-   METHOD ExpresionReplace( cDocumentHTML, cExpresion )
+   METHOD replaceExpresion( cDocumentHTML, cExpresion )
 
    METHOD IsMailServer()               INLINE ( !Empty( ::MailServer ) .and. !Empty( ::MailServerUserName ) .and. !Empty( ::MailServerPassword ) )
 
@@ -908,7 +908,7 @@ METHOD MailMerge()  CLASS TGenMailing
 
             cExpresion     := SubStr( cDocumentHTML, nAtInit, ( nAtEnd - nAtInit ) + 1 )
 
-            ::ExpresionReplace( @cDocumentHTML, cExpresion )
+            ::replaceExpresion( @cDocumentHTML, cExpresion )
 
          else
 
@@ -1300,7 +1300,7 @@ METHOD getMessage()
          exit
       end if
 
-      ::ExpresionReplace( @cDocument, cExpresion )
+      ::replaceExpresion( @cDocument, cExpresion )
 
    end while
 
@@ -1324,7 +1324,7 @@ Return ( cExpresion )
 
 //--------------------------------------------------------------------------//
 
-METHOD ExpresionReplace( cDocument, cExpresion )
+METHOD replaceExpresion( cDocument, cExpresion )
 
    local nScan
    local cExpresionToSearch
@@ -1333,15 +1333,15 @@ METHOD ExpresionReplace( cDocument, cExpresion )
 
    if ( "()" $ cExpresionToSearch )
 
-      cDocument        := StrTran( cDocument, cExpresion, cValToText( Eval( bChar2Block( cExpresionToSearch ) ) ) )
+      cDocument            := StrTran( cDocument, cExpresion, cValToText( Eval( bChar2Block( cExpresionToSearch ) ) ) )
 
    else
 
       nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
       if nScan != 0
-         cDocument     := StrTran( cDocument, cExpresion, cValToChar( ( D():Clientes( ::nView ) )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) )
+         cDocument         := StrTran( cDocument, cExpresion, cValToChar( ( D():Clientes( ::nView ) )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) )
       else
-         cDocument     := StrTran( cDocument, cExpresion, "" )
+         cDocument         := StrTran( cDocument, cExpresion, "" )
       end if
 
    end if
