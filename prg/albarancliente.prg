@@ -1,9 +1,9 @@
 #include "FiveWin.Ch"
 #include "Factu.ch"
 
-CLASS PedidoCliente FROM Ventas 
+CLASS AlbaranCliente FROM Ventas 
 
-   METHOD cTextoTipoDocumento() INLINE ( "Pedidos de cliente" )
+   METHOD cTextoTipoDocumento() INLINE ( "Albaranes de cliente" )
  
 END CLASS
 

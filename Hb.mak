@@ -378,6 +378,7 @@ Editable.prg               \
 Documento.prg              \
 Ventas.prg                 \
 PedidoCliente.prg          \
+AlbaranCliente.prg         \
 DocumentoSerializable.prg  \
 
 C               =       	\
@@ -748,6 +749,7 @@ Editable.obj               \
 Documento.obj              \
 Ventas.obj                 \
 PedidoCliente.obj          \
+AlbaranCliente.obj         \
 DocumentoSerializable.obj  \
 
 .PRG.OBJ:
@@ -1102,6 +1104,7 @@ $(OBJ)\TGridSay.obj              +
 $(OBJ)\Editable.obj              +
 $(OBJ)\Documento.obj             +
 $(OBJ)\PedidoCliente.obj         +
+$(OBJ)\AlbaranCliente.obj        +
 $(OBJ)\DocumentoSerializable.obj +
 $(OBJ)\Ventas.obj
 $<,$*

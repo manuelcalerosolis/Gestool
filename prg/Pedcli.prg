@@ -17345,8 +17345,6 @@ Return ( sTotal )
 
 Function PedCliTablet()
 
-   PedidoCliente():ResourceBrowse()
-
    /*local oDlg
    local oBrw
    local oSayGeneral

@@ -5819,7 +5819,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| PedCliTablet() },;
+                           "bLClicked" => {|| PedidoCliente():New():ResourceBrowse() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 2 ) },;
@@ -5831,9 +5831,28 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| PedCliTablet() } } )
+                           "bAction"   => {|| PedidoCliente():New():ResourceBrowse() } } )
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 5 ) },;
+                           "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_clipboard_empty_user1_64",;
+                           "bLClicked" => {|| AlbaranCliente():New():ResourceBrowse() },;
+                           "oWnd"      => oDlg } )
+
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 5 ) },;
+                           "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                           "cURL"      => "Albaranes de clientes",;
+                           "oWnd"      => oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| AlbaranCliente():New():ResourceBrowse() } } )
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 8 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
@@ -5841,7 +5860,7 @@ Function MainTablet()
                      		"bLClicked" => {|| FacCliTablet() },;
                      		"oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 5 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 8 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Facturas de clientes",;
                            "oWnd"      => oDlg,;
@@ -5852,7 +5871,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| FacCliTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 8 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 11 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5860,7 +5879,7 @@ Function MainTablet()
                            "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 8 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 11 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Envío y recepción",;
                            "oWnd"      => oDlg,;
@@ -5871,7 +5890,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 11 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 14 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5879,7 +5898,7 @@ Function MainTablet()
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 11 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 14 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Salir",;
                            "oWnd"      => oDlg,;
@@ -5895,7 +5914,7 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "oWnd"      => oDlg,;
                            "lPixel"    => .t.,;
-                           "nWidth"    => {|| GridWidth( 14, oDlg ) },;
+                           "nWidth"    => {|| GridWidth( 17, oDlg ) },;
                            "nHeight"   => {|| GridRow( 8, oDlg ) } } )
 
 	// Redimensionamos y activamos el diálogo----------------------------------- 
