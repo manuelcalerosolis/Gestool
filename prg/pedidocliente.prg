@@ -4,7 +4,7 @@
 CLASS PedidoCliente FROM DocumentoSerializable
 
    METHOD Resource()
-
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//

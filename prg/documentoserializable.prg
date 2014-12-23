@@ -3,7 +3,7 @@
 CLASS DocumentoSerializable FROM Documento
 
    METHOD SerieDocumento()
-
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//

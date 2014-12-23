@@ -1087,7 +1087,7 @@ $(OBJ)\Dotnetbu.obj             	+
 $(OBJ)\Dotnetco.obj             	+
 $(OBJ)\Dotnetgr.obj             	+
 $(OBJ)\ExportaCompras.obj       	+
-$(OBJ)\SincronizaPreventa.obj   	+
+$(OBJ)\SincronizaPreventa.obj   	+ 
 $(OBJ)\TipoImpresora.obj        	+
 $(OBJ)\PageIni.obj              	+
 $(OBJ)\TpvTactil.obj            	+

@@ -3,7 +3,7 @@
 
 CLASS Ventas FROM DocumentoSerializable
 
-   METHOD ClienteDocumento()
+   METHOD ClienteDocumento() 
 
 END CLASS
 
