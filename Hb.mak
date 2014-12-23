@@ -16,12 +16,14 @@ IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1406
 SOURCEPRG            = 	Prg
+SOURCEPRGTABLET      =  Prg\Tablet
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1406
 
 EXE 					   = 	Bin\Gestool.exe
 
 .path.prg      		=	.\$(SOURCEPRG)
+.path.prgtablet      =  .\$(SOURCEPRGTABLET)
 .path.c       			=	.\$(SOURCEC)
 .path.obj      		=	.\$(OBJ)
 
@@ -373,7 +375,9 @@ TTreevie.prg            	\
 ApoloMeter.prg 				\
 TGridSay.prg 					\
 FacturarLineasAlbaranesProveedor.prg\
-tablet\editable.prg       \
+
+PRGTABLET       =          \
+Editable.prg               \
 
 C               =       	\
 Img2pdf.c               	\
@@ -739,13 +743,19 @@ TTreevie.obj 				\
 ApoloMeter.obj 			\
 TGridSay.obj				\
 FacturarLineasAlbaranesProveedor.obj\
-editable.obj            \
+Editable.obj            \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
+
+.PRGTABLET.OBJ:
+   $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+   $(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
+
+$(EXE)                  : $( PRGTABLET:.PRG=.OBJ )
 
 .C.OBJ:
   	$(BORLAND)\Bin\Bcc32 -c -tWM -DHB_API_MACROS -I$(HBINCLUDE);$(FWINCLUDE) -o$(OBJ)\$& $<

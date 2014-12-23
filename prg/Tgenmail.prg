@@ -134,9 +134,12 @@ CLASS TGenMailing
    METHOD SelMailing()
       METHOD SelAllMailing( lValue )
 
+   METHOD setMeterTotal( nTotal )      INLINE ( ::oMtr:nTotal := nTotal )
+   METHOD setMeter( nSet )             INLINE ( ::oMtr:Set( nSet ) )
+
    METHOD IniciarEnvio()
 
-   METHOD lBuildMail()                 INLINE ( iff( ::lCreateMail(), ( ::waitMail(), ::lSendMail(), ::oMail := nil ), ) )
+   METHOD lBuildMail()                 INLINE ( iif( ::lCreateMail(), ( ::waitMail(), ::lSendMail(), ::oMail := nil ), ) )
 
    METHOD lCreateMail()
 

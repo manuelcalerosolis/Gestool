@@ -5119,20 +5119,13 @@ CLASS D
 
    // Clientes-----------------------------------------------------------------
 
-<<<<<<< HEAD
    METHOD Clientes( nView )                           INLINE ( ::Get( "Client", nView ) )
       METHOD ClientesId( nView )                      INLINE ( ( ::Get( "Client", nView ) )->Cod )
+      METHOD getStatusClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::Get( "Client", nView ) ) )
+      METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
+      
       METHOD ClientesDirecciones( nView )             INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
-=======
-   METHOD Clientes( nView )                     INLINE ( ::Get( "Client", nView ) )
-      METHOD ClientesId( nView )                INLINE ( ( ::Get( "Client", nView ) )->Cod )
-      METHOD getStatusClientes( nView )         INLINE ( ::aStatus := aGetStatus( ::Get( "Client", nView ) ) )
-      METHOD setStatusClientes( nView )         INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
-      
-      METHOD ClientesDirecciones( nView )       INLINE ( ::Get( "ObrasT", nView ) )
-      METHOD ClientesDireccionesId( nView )     INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
->>>>>>> e0d72e24592df9763bba647112f9310ef0120078
 
       METHOD GruposClientes( nView )                  INLINE ( ::GetObject( "GruposClientes", nView ) )
 
