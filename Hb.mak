@@ -375,9 +375,7 @@ TTreevie.prg            	\
 ApoloMeter.prg 				\
 TGridSay.prg 					\
 FacturarLineasAlbaranesProveedor.prg\
-
-PRGTABLET       =          \
-Editable.prg               \
+Tablet\Editable.prg        \
 
 C               =       	\
 Img2pdf.c               	\
@@ -746,16 +744,10 @@ FacturarLineasAlbaranesProveedor.obj\
 Editable.obj            \
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )
-
-.PRGTABLET.OBJ:
-   $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
-   $(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
-
-$(EXE)                  : $( PRGTABLET:.PRG=.OBJ )
 
 .C.OBJ:
   	$(BORLAND)\Bin\Bcc32 -c -tWM -DHB_API_MACROS -I$(HBINCLUDE);$(FWINCLUDE) -o$(OBJ)\$& $<
