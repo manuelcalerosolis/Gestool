@@ -42,8 +42,6 @@ METHOD ResourceBrowse() CLASS Documento
 
    local oDlg
 
-   MsgAlert( "Monto el browse general" )
-
    oDlg  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
    TGridSay():Build(    {  "nRow"      => 0,;
@@ -58,7 +56,7 @@ METHOD ResourceBrowse() CLASS Documento
                            "nHeight"   => 32,;
                            "lDesign"   => .f. } )
 
-   oDlg:bResized         := {|Self| GridResize( oDlg ) }
+   oDlg:bResized         := {|| GridResize( oDlg ) }
 
    ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
 
