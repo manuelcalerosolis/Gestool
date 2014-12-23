@@ -380,11 +380,8 @@ Documento.prg              \
 Ventas.prg                 \
 PedidoCliente.prg          \
 
-<<<<<<< HEAD
 PRGTABLET       =          \
 
-=======
->>>>>>> origin/master
 C               =       	\
 Img2pdf.c               	\
 Treeview.c 						\
