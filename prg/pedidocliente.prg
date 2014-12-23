@@ -11,7 +11,7 @@ END CLASS
 
 METHOD Resource() CLASS PedidoCliente
 
-   MsgAlert( "Metemos el cliente" )
+   MsgAlert( "Resource de pedidos de clientes" )
 
 Return ( self )
 
