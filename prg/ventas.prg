@@ -9,7 +9,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD ClienteDocumento() CLASS Documento
+METHOD ClienteDocumento() CLASS Ventas
 
    MsgAlert( "Metemos el cliente" )
 

@@ -375,9 +375,13 @@ TTreevie.prg            	\
 ApoloMeter.prg 				\
 TGridSay.prg 					\
 FacturarLineasAlbaranesProveedor.prg\
+Editable.prg               \
+Documento.prg              \
+DocumentoSerializable.prg  \
+Ventas.prg                 \
+PedidoCliente.prg          \
 
 PRGTABLET       =          \
-Editable.prg               \
 
 C               =       	\
 Img2pdf.c               	\
@@ -743,7 +747,11 @@ TTreevie.obj 				\
 ApoloMeter.obj 			\
 TGridSay.obj				\
 FacturarLineasAlbaranesProveedor.obj\
-Editable.obj            \
+Editable.obj               \
+Documento.obj              \
+DocumentoSerializable.obj  \
+Ventas.obj                 \
+PedidoCliente.obj          \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1100,7 +1108,11 @@ $(OBJ)\ApoloMeter.obj 					+
 $(OBJ)\Xbrowse1406.Obj            	+
 $(OBJ)\FacturarLineasAlbaranesProveedor.obj+
 $(OBJ)\TGridSay.obj              +
-$(OBJ)\editable.obj						
+$(OBJ)\Editable.obj              +
+$(OBJ)\Documento.obj             +
+$(OBJ)\DocumentoSerializable.obj +
+$(OBJ)\PedidoCliente.obj         +
+$(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +

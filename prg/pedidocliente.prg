@@ -1,16 +1,17 @@
+
 #include "FiveWin.Ch"
 
-CLASS DocumentoSerializable FROM Documento
+CLASS PedidoCliente FROM DocumentoSerializable
 
-   METHOD SerieDocumento()
+   METHOD Resource()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD SerieDocumento() CLASS DocumentoSerializable
+METHOD Resource() CLASS PedidoCliente
 
-   MsgAlert( "Metemos el serie" )
+   MsgAlert( "Metemos el cliente" )
 
 Return ( self )
 

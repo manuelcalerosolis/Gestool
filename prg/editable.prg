@@ -9,3 +9,4 @@ CLASS Editable
    METHOD Zoom()     Virtual
    METHOD Delete()   Virtual 
 
+ENDCLASS

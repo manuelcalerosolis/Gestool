@@ -413,7 +413,6 @@ Components.prg 				\
 TLabelGenerator.prg 			\
 TGridSay.prg 					\
 FacturarLineasAlbaranesProveedor.prg\
-tablet\editable.prg\
 
 C               =       \
 Metafi32.c              \
@@ -842,7 +841,6 @@ Components.obj 			\
 TLabelGenerator.obj 	\
 TGridSay.obj 			\
 FacturarLineasAlbaranesProveedor.obj\
-editable.obj\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /dXHARBOUR /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1241,7 +1239,6 @@ $(OBJ)\FacturarLineasAlbaranesProveedor.obj+
 $(OBJ)\Components.obj 			  +
 $(OBJ)\TLabelGenerator.obj 	  +	
 $(OBJ)\TGridSay.obj 				  +
-$(OBJ)\editable.obj             +
 $(OBJ)\MsTable.obj
 $<,$*
 $(FWLIB)\xc5h.lib               +
