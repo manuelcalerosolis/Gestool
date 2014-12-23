@@ -19478,6 +19478,109 @@ Return ( nil )
 
 //---------------------------------------------------------------------------
 
+FUNCTION PutLabel( dbfArticulo, oBrw )
+
+   if dbDialogLock( dbfArticulo )
+      ( dbfArticulo )->lLabel := !( dbfArticulo )->lLabel
+      ( dbfArticulo )->( dbUnlock() )
+   end if
+
+   oBrw:Refresh()
+   oBrw:SetFocus()
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+FUNCTION AddLabel( dbfArticulo, oBrw )
+
+   IF ( dbDialogLock( dbfArticulo ) )
+      ( dbfArticulo )->nLabel++
+      ( dbfArticulo )->( dbUnlock() )
+   END IF
+
+   oBrw:Refresh()
+   oBrw:SetFocus()
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+FUNCTION DelLabel( dbfArticulo, oBrw )
+
+   if ( dbDialogLock( dbfArticulo ) ) .and. ( dbfArticulo )->nLabel > 1
+      ( dbfArticulo )->nLabel--
+      ( dbfArticulo )->( dbUnlock() )
+   end if
+
+   oBrw:Refresh()
+   oBrw:SetFocus()
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+FUNCTION ResLabel( dbfArticulo, oBrw, oMtr )
+
+   local n        := 0
+   local nRecno   := (dbfArticulo)->( RecNo() )
+
+   CursorWait()
+
+   ( dbfArticulo )->( dbGoTop() )
+
+   while !( dbfArticulo )->( eof() )
+
+      if ( ( dbfArticulo )->lLabel .or. ( dbfArticulo )->nLabel != 2 ) .AND. dbDialogLock( dbfArticulo )
+         ( dbfArticulo )->lLabel := .f.
+         ( dbfArticulo )->nLabel := 1
+         ( dbfArticulo )->( dbUnlock() )
+      end if
+
+      ( dbfArticulo )->( dbSkip() )
+
+      if oMtr != nil
+         oMtr:Set( ++n )
+      end if
+
+   end do
+
+   ( dbfArticulo )->( dbGoTo( nRecno ) )
+
+   oBrw:refresh()
+
+   if oMtr != NIL
+      oMtr:Set( 0 )
+      oMtr:refresh()
+   end if
+
+   CursorArrow()
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+FUNCTION EdtLabel( dbfArticulo, oLbx )
+
+   local cPic     := "999"
+   local uVar     := ( dbfArticulo )->nLabel
+   local bValid   := { || .T. }
+
+   if oLbx:lEditCol( 4, @uVar, cPic, bValid )
+
+      if dbDialogLock( dbfArticulo )
+         ( dbfArticulo )->nLabel := uVar
+         ( dbfArticulo )->( dbUnlock() )
+      end if
+
+      oLbx:DrawSelect()
+
+   end if
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
 CLASS SImagenes
 
    DATA lSelect      INIT .f.

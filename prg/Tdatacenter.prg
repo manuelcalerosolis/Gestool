@@ -5118,6 +5118,9 @@ CLASS D
 
    METHOD Clientes( nView )                     INLINE ( ::Get( "Client", nView ) )
       METHOD ClientesId( nView )                INLINE ( ( ::Get( "Client", nView ) )->Cod )
+      METHOD getStatusClientes( nView )         INLINE ( ::aStatus := aGetStatus( ::Get( "Client", nView ) ) )
+      METHOD setStatusClientes( nView )         INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
+      
       METHOD ClientesDirecciones( nView )       INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )     INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
 
