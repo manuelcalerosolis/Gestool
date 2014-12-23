@@ -18100,16 +18100,16 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 110, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 106, 77, 294, 11
   CONTROL "", 620, "RichEdit20A", WS_TABSTOP|0x00a01004, 48, 119, 563, 194
   CONTROL "Asunto", -1, "Static", WS_GROUP, 44, 68, 27, 8
-  CONTROL "Adjuntar archivo", 4001, "Static", WS_GROUP, 44, 80, 57, 8
-  CONTROL "De", 4002, "Static", WS_GROUP, 44, 31, 15, 8
-  CONTROL "Para", 4003, "Static", WS_GROUP, 44, 43, 20, 8
+  CONTROL "Adjuntar archivo", -1, "Static", WS_GROUP, 44, 80, 57, 8
+  CONTROL "De", -1, "Static", WS_GROUP, 44, 31, 15, 8
+  CONTROL "Para", 121, "Static", WS_GROUP, 44, 43, 20, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 4, 34, 30
   CONTROL "Envio de documento por correo electónico", 4004, "Static", SS_LEFTNOWORDWRAP, 44, 3, 379, 8
   CONTROL "", 140, "TBtnBmp", 0x00000000, 402, 77, 12, 11
   CONTROL "", 160, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 450, 77, 149, 193
   CONTROL "", 170, "TBtnBmp", 0x00000000, 600, 77, 12, 13
-  CONTROL "Campos", 4005, "Static", WS_GROUP, 417, 80, 31, 8
-  CONTROL "Con copia", 4006, "Static", WS_GROUP, 44, 56, 37, 8
+  CONTROL "Campos", -1, "Static", WS_GROUP, 417, 80, 31, 8
+  CONTROL "Con copia", 151, "Static", WS_GROUP, 44, 56, 37, 8
   CONTROL "", 600, "TBtnBmp", 0x00000000, 48, 104, 12, 12
   CONTROL "", 601, "TBtnBmp", 0x00000000, 61, 104, 12, 12
   CONTROL "", 602, "TBtnBmp", 0x00000000, 77, 104, 12, 12

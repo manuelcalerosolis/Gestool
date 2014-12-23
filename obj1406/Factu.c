@@ -1,7 +1,7 @@
 /*
  * Harbour 3.2.0dev (r1307082134)
  * Borland C++ 5.8.2 (32-bit)
- * Generated C source from ".\Prg\Factu.prg"
+ * Generated C source from ".\.\Prg\Factu.prg"
  */
 
 #include "hbvmpub.h"
@@ -1083,7 +1083,7 @@ HB_INIT_SYMBOLS_BEGIN( hb_vm_SymbolInit_FACTU )
 { "HB_CODEPAGE_ESWIN", {HB_FS_PUBLIC}, {HB_FUNCNAME( HB_CODEPAGE_ESWIN )}, NULL },
 { "(_INITSTATICS00021)", {HB_FS_INITEXIT | HB_FS_LOCAL}, {hb_INITSTATICS}, NULL },
 { "RDDSYS", {HB_FS_PUBLIC | HB_FS_LOCAL}, {HB_FUNCNAME( RDDSYS )}, NULL }
-HB_INIT_SYMBOLS_EX_END( hb_vm_SymbolInit_FACTU, ".\\Prg\\Factu.prg", 0x0, 0x0003 )
+HB_INIT_SYMBOLS_EX_END( hb_vm_SymbolInit_FACTU, ".\\.\\Prg\\Factu.prg", 0x0, 0x0003 )
 
 #if defined( HB_PRAGMA_STARTUP )
    #pragma startup hb_vm_SymbolInit_FACTU
@@ -7584,7 +7584,7 @@ HB_FUNC( RDDSYS )
 	hb_vmExecute( pcode, symbols );
 }
 
-#line 5273 ".\\Prg\\Factu.prg"
+#line 5273 ".\\.\\Prg\\Factu.prg"
 
 #include "windows.h"
 #include "shlobj.h"

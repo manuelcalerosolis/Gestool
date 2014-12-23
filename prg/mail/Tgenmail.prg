@@ -122,13 +122,12 @@ CLASS TGenMailing
       METHOD BotonSiguiente()
 
    METHOD Resource()
-      METHOD buildPageRedectar( oDlg )
+      METHOD buildPageRedactar( oDlg )
       METHOD buildPageCliente( oDlg )
       METHOD buildPageProceso( oDlg )
       METHOD buildButtonsGeneral()
 
-   METHOD startDialog()
-
+   METHOD startResource()
    METHOD freeResources()
 
    METHOD lCargaHTML()
@@ -162,8 +161,6 @@ CLASS TGenMailing
    METHOD outlookDisplayMail()
 
    METHOD lSendMail()
-
-   METHOD lEditaCSS()
 
    METHOD MailServerSend()             INLINE ( ::MailServer + if( !Empty( ::MailServerPort ), ":" + Alltrim( Str( ::MailServerPort ) ), "" ) )
 
@@ -256,7 +253,7 @@ METHOD ClientResource( aItems, nView ) CLASS TGenMailing
                      "Select_Mail_Registros",;
                      "Internet_4"
 
-         ::buildPageRedectar( ::oFld:aDialogs[ 1 ] )
+         ::buildPageRedactar( ::oFld:aDialogs[ 1 ] )
 
          ::buildPageCliente( ::oFld:aDialogs[ 2 ] )
 
@@ -264,7 +261,7 @@ METHOD ClientResource( aItems, nView ) CLASS TGenMailing
 
          ::buildButtonsGeneral()
 
-      ::oDlg:bStart  := {|| ::startDialog() }
+      ::oDlg:bStart  := {|| ::startResource() }
 
    ACTIVATE DIALOG ::oDlg CENTER 
 
@@ -276,7 +273,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD startDialog() CLASS TGenMailing
+METHOD startResource() CLASS TGenMailing
 
    if Empty( ::oActiveX )
       MsgStop( "No se ha podido instanciar el control." )
@@ -295,13 +292,14 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD buildPageRedectar( oDlg )
+METHOD buildPagectar( oDlg )
 
    REDEFINE GET ::oGetDe VAR ::cGetDe ;
       ID       90 ;
       OF       oDlg
 
    REDEFINE GET ::oGetPara VAR ::cGetPara ;
+      IDSAY    121 ;
       ID       120 ;
       OF       oDlg
 
@@ -314,6 +312,7 @@ METHOD buildPageRedectar( oDlg )
       OF       oDlg
 
    REDEFINE GET ::oGetCopia VAR ::cGetCopia ;
+      IDSAY    151 ;
       ID       150 ;
       OF       oDlg
 
@@ -827,24 +826,6 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD lEditaCSS() CLASS TGenMailing
-
-   local oBlock
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ShellExecute( ::oDlg:hWnd, "open", fullcurdir() + "Styles.css" )
-
-   RECOVER
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
 
 METHOD lCreateMail() CLASS TGenMailing
 
@@ -1166,7 +1147,7 @@ METHOD Resource() CLASS TGenMailing
 
    DEFINE DIALOG ::oDlg RESOURCE "SendDocumentoMail" OF oWnd()
 
-      ::buildPageRedectar( ::oDlg )
+      ::buildPageRedactar( ::oDlg )
 
       // Botones generales-----------------------------------------------------
 
@@ -1198,7 +1179,7 @@ METHOD Resource() CLASS TGenMailing
 
    ::oDlg:AddFastKey( VK_F5, {|| if( ::lExternalSendMail( .t. ), ::oDlg:End(), ) } )
 
-   ::oDlg:bStart  := {|| ::startDialog() }
+   ::oDlg:bStart  := {|| ::startResource() }
 
    ACTIVATE DIALOG ::oDlg CENTER 
 
