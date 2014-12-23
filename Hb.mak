@@ -15,8 +15,7 @@ BORLANDLIB           = 	\Bcc582\lib
 IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1406
-SOURCEPRG            = 	Prg
-SOURCEPRGTABLET      =  Prg\Tablet
+SOURCEPRG            = 	.\Prg;.\Prg\mail;\Prg\tablet
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1406
 

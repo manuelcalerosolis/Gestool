@@ -1,9 +1,11 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-//---------------------------------------------------------------------------//
+//--------------------------------*-------------------------------------------//
 
-CLASS TGenMailing
+CLASS TGenMailing 
+
+   DATA this
 
    DATA oDlg
    DATA oFld
@@ -92,6 +94,8 @@ CLASS TGenMailing
    DATA oBmpGeneral
    DATA oBmpProcess
 
+   DATA aMailingList                   INIT {}
+
    METHOD New()
    METHOD Create()
    METHOD Init()
@@ -174,12 +178,9 @@ CLASS TGenMailing
    METHOD waitMail()
    METHOD waitSeconds( nTime )
 
-   METHOD getClientList()              INLINE ( ::aClientMailList := {},;
-                                                ( D():Clientes( ::nView ) )->( dbeval( ::addClientList() ) ),;
-                                                ::aClientMailList )
-
+   METHOD getClientList()              
    METHOD addClientList()              INLINE ( iif(  ( D():Clientes( ::nView ) )->lMail .and. !empty( ( D():Clientes( ::nView ) )->cMeiInt ),;
-                                                      aAdd( ::aClientMailList, ::hashClientList() ),;
+                                                      aAdd( ::aMailingList, ::hashClientList() ),;
                                                    ) )
    METHOD hashClientList()        
    METHOD getMessage()
@@ -198,6 +199,8 @@ METHOD New() CLASS TGenMailing
    ::MailServerUserName    := Rtrim( uFieldEmpresa( "cCtaMai" ) )
    ::MailServerPassword    := Rtrim( uFieldEmpresa( "cPssMai" ) )
    ::MailServerConCopia    := Rtrim( uFieldEmpresa( "cCcpMai" ) )
+
+   ::this                  := self
 
 Return ( Self )
 
@@ -286,7 +289,7 @@ METHOD startDialog() CLASS TGenMailing
       ::oBtnAnterior:Hide()
    end if 
 
-   ::buildMenuDialog()
+   // ::buildMenuDialog()
 
 Return ( Self )
 
@@ -675,17 +678,35 @@ METHOD SelAllMailing( lValue ) CLASS TGenMailing
 
    local nRecord
 
-   DEFAULT lValue := .t.
+   DEFAULT lValue  := .t.
 
 	CursorWait()
 
    nRecord         := ( D():Clientes( ::nView ) )->( recno() )
    ( D():Clientes( ::nView ) )->( dbeval( {|| ::selMailing( lValue ) } ) )
-   ( D():Clientes( ::nView ) )->( dbgoto(nRecord) )
+   ( D():Clientes( ::nView ) )->( dbgoto( nRecord ) )
 
 	CursorArrow()
 
 Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD getClientList()
+
+   local nRecord
+
+   CursorWait()
+
+   ::aMailingList := {}
+   
+   nRecord         := ( D():Clientes( ::nView ) )->( recno() )
+   ( D():Clientes( ::nView ) )->( dbeval( {|| ::addClientList() } ) )
+   ( D():Clientes( ::nView ) )->( dbgoto( nRecord ) )
+
+   CursorArrow()
+
+Return ( ::aMailingList )
 
 //--------------------------------------------------------------------------//
 
@@ -1279,7 +1300,7 @@ METHOD hashClientList()
 
    local hashClientList := {=>}
 
-   hSet( hashClientList, "mail", ( D():Clientes( ::nView ) )->cMeiInt ) 
+   hSet( hashClientList, "mail", alltrim( ( D():Clientes( ::nView ) )->cMeiInt ) )
    hSet( hashClientList, "message", ::getMessage() )
 
 Return ( hashClientList )
