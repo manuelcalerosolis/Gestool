@@ -375,17 +375,10 @@ TTreevie.prg            	\
 ApoloMeter.prg 				\
 TGridSay.prg 					\
 FacturarLineasAlbaranesProveedor.prg\
-<<<<<<< HEAD
-Tablet\Editable.prg        \
-=======
 Editable.prg               \
 Documento.prg              \
-DocumentoSerializable.prg  \
 Ventas.prg                 \
 PedidoCliente.prg          \
-
-PRGTABLET       =          \
->>>>>>> 158a6c780a14fd54c3da72139401aebad28c5dc5
 
 C               =       	\
 Img2pdf.c               	\
@@ -753,7 +746,6 @@ TGridSay.obj				\
 FacturarLineasAlbaranesProveedor.obj\
 Editable.obj               \
 Documento.obj              \
-DocumentoSerializable.obj  \
 Ventas.obj                 \
 PedidoCliente.obj          \
 
@@ -1108,7 +1100,6 @@ $(OBJ)\FacturarLineasAlbaranesProveedor.obj+
 $(OBJ)\TGridSay.obj              +
 $(OBJ)\Editable.obj              +
 $(OBJ)\Documento.obj             +
-$(OBJ)\DocumentoSerializable.obj +
 $(OBJ)\PedidoCliente.obj         +
 $(OBJ)\Ventas.obj
 $<,$*

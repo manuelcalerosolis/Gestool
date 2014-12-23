@@ -179,8 +179,9 @@ CLASS TGenMailing
                                                 ::aClientMailList )
 
    METHOD addClientList()              INLINE ( iif(  ( D():Clientes( ::nView ) )->lMail .and. !empty( ( D():Clientes( ::nView ) )->cMeiInt ),;
-                                                      aAdd( ::aClientMailList, ( D():Clientes( ::nView ) )->cMeiInt ),;
+                                                      aAdd( ::aClientMailList, ::hashClientList() ),;
                                                    ) )
+   METHOD hashClientList()             
 
 END CLASS
 
@@ -927,32 +928,6 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD ExpresionReplace( cDocumentHTML, cExpresion ) CLASS TGenMailing
-
-   local nScan
-   local cExpresionToSearch
-
-   cExpresionToSearch      := Alltrim( SubStr( cExpresion, 2, len( cExpresion ) - 2 ) )
-
-   if ( "()" $ cExpresionToSearch )
-
-      cDocumentHTML        := StrTran( cDocumentHTML, cExpresion, cValToText( Eval( bChar2Block( cExpresionToSearch ) ) ) )
-
-   else
-
-      nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
-      if nScan != 0
-         cDocumentHTML     := StrTran( cDocumentHTML, cExpresion, cValToChar( ( D():Clientes( ::nView ) )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) )
-      else
-         cDocumentHTML     := StrTran( cDocumentHTML, cExpresion, "" )
-      end if
-
-   end if
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
 METHOD lSendMail() CLASS TGenMailing
 
    local oError
@@ -1276,7 +1251,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD waitMail()
 
    ::oTree:Select( ::oTree:Add( "Envio " + Alltrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ::oMtr:nTotal ) ) ) )
@@ -1299,44 +1273,77 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD hashClientList()
 
-FUNCTION HtmlConvertChars( cString, cQuote_style, aTranslations )
+   local hashClientList := {=>}
 
-   DEFAULT cQuote_style := "ENT_COMPAT"
+   hSet( hashClientList, "mail" => ( D():Clientes( ::nView ) )->cMeiInt ) )
+   hSet( hashClientList, "message" => ::getMessage() )
 
-   do case
-      case cQuote_style == "ENT_COMPAT"
-         aAdd( aTranslations, { '"', '&quot;'  } )
-      case cQuote_style == "ENT_QUOTES"
-         aAdd( aTranslations, { '"', '&quot;'  } )
-         aAdd( aTranslations, { "'", '&#039;'  } )
-      case cQuote_style == "ENT_NOQUOTES"
-   end case
-
-RETURN TranslateStrings( cString, aTranslations )
-
-FUNCTION TranslateStrings( cString, aTranslate )
-
-   local aTran
-
-   for each aTran in aTranslate
-      if aTran[ 2 ] $ cString
-         cString  := StrTran( cString, aTran[ 2 ], aTran[ 1 ] )
-      endif
-   next
-
-RETURN cString
-
-FUNCTION HtmlEntities( cString, cQuote_style )
-
-   local i
-   local aTranslations := {}
-
-   for i := 160 TO 255
-      aAdd( aTranslations, { Chr( i ), "&#" + Str( i, 3 ) + ";" } )
-   next
-
-RETURN HtmlConvertChars( cString, cQuote_style, aTranslations )
+Return ( hashClientList )
 
 //---------------------------------------------------------------------------//
 
+METHOD getMessage()
+
+   local cExpresion
+   local cDocument     := ::oActiveX:GetText()
+
+   msgAlert( cDocument, "entrda en getMessage")
+
+   while .t. 
+
+      cExpresion       := ::getExpression( cDocument ) 
+      if empty(cExpresion)
+         exit
+      end if
+
+      ::ExpresionReplace( @cDocument, cExpresion )
+
+   end while
+
+   msgAlert( cDocument, "salida en getMessage")
+
+Return ( cDocument )
+
+//--------------------------------------------------------------------------//
+
+METHOD getExpression( cDocument )
+
+   local nAtEnd         := At( "}", cDocument )
+   local nAtInit        := At( "{", cDocument )
+   local cExpresion     := ""
+
+   if ( nAtInit != 0 .and. nAtEnd != 0 )
+      cExpresion     := SubStr( cDocument, nAtInit, ( nAtEnd - nAtInit ) + 1 )
+   end if 
+
+Return ( cExpresion )
+
+//--------------------------------------------------------------------------//
+
+METHOD ExpresionReplace( cDocument, cExpresion )
+
+   local nScan
+   local cExpresionToSearch
+
+   cExpresionToSearch      := Alltrim( SubStr( cExpresion, 2, len( cExpresion ) - 2 ) )
+
+   if ( "()" $ cExpresionToSearch )
+
+      cDocument        := StrTran( cDocument, cExpresion, cValToText( Eval( bChar2Block( cExpresionToSearch ) ) ) )
+
+   else
+
+      nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
+      if nScan != 0
+         cDocument     := StrTran( cDocument, cExpresion, cValToChar( ( D():Clientes( ::nView ) )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) )
+      else
+         cDocument     := StrTran( cDocument, cExpresion, "" )
+      end if
+
+   end if
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
