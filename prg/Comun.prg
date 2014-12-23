@@ -2948,6 +2948,47 @@ return ( hash )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION HtmlConvertChars( cString, cQuote_style, aTranslations )
+
+   DEFAULT cQuote_style := "ENT_COMPAT"
+
+   do case
+      case cQuote_style == "ENT_COMPAT"
+         aAdd( aTranslations, { '"', '&quot;'  } )
+      case cQuote_style == "ENT_QUOTES"
+         aAdd( aTranslations, { '"', '&quot;'  } )
+         aAdd( aTranslations, { "'", '&#039;'  } )
+      case cQuote_style == "ENT_NOQUOTES"
+   end case
+
+RETURN TranslateStrings( cString, aTranslations )
+
+FUNCTION TranslateStrings( cString, aTranslate )
+
+   local aTran
+
+   for each aTran in aTranslate
+      if aTran[ 2 ] $ cString
+         cString  := StrTran( cString, aTran[ 2 ], aTran[ 1 ] )
+      endif
+   next
+
+RETURN cString
+
+FUNCTION HtmlEntities( cString, cQuote_style )
+
+   local i
+   local aTranslations := {}
+
+   for i := 160 TO 255
+      aAdd( aTranslations, { Chr( i ), "&#" + Str( i, 3 ) + ";" } )
+   next
+
+RETURN HtmlConvertChars( cString, cQuote_style, aTranslations )
+
+//---------------------------------------------------------------------------//
+
+
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 

@@ -377,12 +377,14 @@ TGridSay.prg 					\
 FacturarLineasAlbaranesProveedor.prg\
 Editable.prg               \
 Documento.prg              \
-DocumentoSerializable.prg  \
 Ventas.prg                 \
 PedidoCliente.prg          \
 
+<<<<<<< HEAD
 PRGTABLET       =          \
 
+=======
+>>>>>>> origin/master
 C               =       	\
 Img2pdf.c               	\
 Treeview.c 						\
@@ -749,7 +751,6 @@ TGridSay.obj				\
 FacturarLineasAlbaranesProveedor.obj\
 Editable.obj               \
 Documento.obj              \
-DocumentoSerializable.obj  \
 Ventas.obj                 \
 PedidoCliente.obj          \
 
@@ -1104,7 +1105,6 @@ $(OBJ)\FacturarLineasAlbaranesProveedor.obj+
 $(OBJ)\TGridSay.obj              +
 $(OBJ)\Editable.obj              +
 $(OBJ)\Documento.obj             +
-$(OBJ)\DocumentoSerializable.obj +
 $(OBJ)\PedidoCliente.obj         +
 $(OBJ)\Ventas.obj
 $<,$*
