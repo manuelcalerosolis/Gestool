@@ -174,6 +174,14 @@ CLASS TGenMailing
    METHOD waitMail()
    METHOD waitSeconds( nTime )
 
+   METHOD getClientList()              INLINE ( ::aClientMailList := {},;
+                                                ( D():Clientes( ::nView ) )->( dbeval( ::addClientList() ) ),;
+                                                ::aClientMailList )
+
+   METHOD addClientList()              INLINE ( iif(  ( D():Clientes( ::nView ) )->lMail .and. !empty( ( D():Clientes( ::nView ) )->cMeiInt ),;
+                                                      aAdd( ::aClientMailList, ( D():Clientes( ::nView ) )->cMeiInt ),;
+                                                   ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -680,7 +688,9 @@ Return ( Self )
 
 METHOD IniciarEnvio() CLASS TGenMailing
 
-   local nRecno         := ( D():Clientes( ::nView ) )->( RecNo() )
+   msgAlert( valtoprg( ::getClientList() ) )
+
+   return ( self )
 
    ::nTime              := Val( ::cTiempo )
 
@@ -712,8 +722,6 @@ METHOD IniciarEnvio() CLASS TGenMailing
       ::oMtr:Set( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) )
 
    end do
-
-   ( D():Clientes( ::nView ) )->( dbGoTo( nRecno ) )
 
    CursorArrow()
 
@@ -1290,6 +1298,7 @@ METHOD waitMail()
 Return ( Self )   
 
 //---------------------------------------------------------------------------//
+
 
 FUNCTION HtmlConvertChars( cString, cQuote_style, aTranslations )
 
