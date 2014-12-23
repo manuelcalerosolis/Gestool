@@ -4,7 +4,7 @@ CLASS Documento FROM Editable
 
    METHOD NumeroDocumento()
    METHOD FechaDocumento()
-   METHOD CajaDocumento()
+   METHOD AlmacenDocumento()
 
 END CLASS
 
@@ -26,10 +26,10 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD CajaDocumento() CLASS Documento
+METHOD AlmacenDocumento() CLASS Documento
 
-   MsgAlert( "Metemos el caja" )
+   MsgAlert( "Metemos el Almacén" )
 
-Return ( self )
+Return ( self )   
 
 //---------------------------------------------------------------------------//
