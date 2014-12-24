@@ -5,19 +5,16 @@
 
 CLASS TGenMailing 
 
-   DATA this
-
    DATA oDlg
    DATA oFld
-
    DATA oMenu
+
+   DATA oSendMail
 
    DATA nView
 
    DATA oBrwClient
    DATA oTree
-   DATA oPro
-   DATA cPro
    DATA oMtr
    DATA nMtr
    DATA oFlt
@@ -94,8 +91,8 @@ CLASS TGenMailing
    DATA aTiempo                        INIT { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
 
    DATA oBmpClient
-   DATA oBmpGeneral
-   DATA oBmpProcess
+   DATA oBmpRedactar
+   DATA oBmpProceso
 
    DATA aMailingList                   INIT {}
 
@@ -123,8 +120,8 @@ CLASS TGenMailing
    // Recursos-----------------------------------------------------------------
 
    METHOD ClientResource()
-      METHOD BotonAnterior()
-      METHOD BotonSiguiente()
+      METHOD botonAnterior()
+      METHOD botonSiguiente()
 
    METHOD Resource()
       METHOD buildPageRedactar( oDlg )
@@ -196,13 +193,13 @@ METHOD New() CLASS TGenMailing
 
    ::Create()
 
+   ::oSendMail             := TSendMail():New( Self )
+
    ::MailServer            := Rtrim( uFieldEmpresa( "cSrvMai" ) )
    ::MailServerPort        := uFieldEmpresa( "nPrtMai" )
    ::MailServerUserName    := Rtrim( uFieldEmpresa( "cCtaMai" ) )
    ::MailServerPassword    := Rtrim( uFieldEmpresa( "cPssMai" ) )
    ::MailServerConCopia    := Rtrim( uFieldEmpresa( "cCcpMai" ) )
-
-   ::this                  := self
 
 Return ( Self )
 
@@ -245,14 +242,16 @@ METHOD ClientResource( aItems, nView ) CLASS TGenMailing
       ::aFields      := ::oFlt:aTblMask
    end if 
 */
-   DEFINE DIALOG ::oDlg RESOURCE "Select_Mail_Container" OF oWnd()
+   DEFINE DIALOG     ::oDlg ;
+      RESOURCE       "Select_Mail_Container";
+       OF            oWnd()
 
       REDEFINE PAGES ::oFld ;
          ID          10;
          OF          ::oDlg ;
          DIALOGS     "Select_Mail_Redactar",;
                      "Select_Mail_Registros",;
-                     "Internet_4"
+                     "Select_Mail_Proceso"
 
          ::buildPageRedactar( ::oFld:aDialogs[ 1 ] )
 
@@ -300,6 +299,12 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 
 METHOD buildPageRedactar( oDlg )
+
+   REDEFINE BITMAP ::oBmpRedactar ;
+      ID       500 ;
+      RESOURCE "Businessman2_Alpha_48" ;
+      TRANSPARENT ;
+      OF       oDlg
 
    REDEFINE GET ::oGetDe VAR ::cGetDe ;
       ID       90 ;
@@ -434,6 +439,18 @@ METHOD buildPageCliente( oDlg )
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
    end with
 
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD buildPageProceso( oDlg )
+
+   REDEFINE BITMAP ::oBmpProceso ;
+      ID       500 ;
+      RESOURCE "Gears_48_alpha" ;
+      TRANSPARENT ;
+      OF       oDlg
+
    REDEFINE GET ::nPaquetesTotales ;
       ID       180 ;
       SPINNER ;
@@ -445,24 +462,7 @@ METHOD buildPageCliente( oDlg )
       ID       170 ;
       OF       oDlg
 
-Return ( Self )   
-
-//---------------------------------------------------------------------------//
-
-METHOD buildPageProceso( oDlg )
-
-   REDEFINE BITMAP ::oBmpProcess ;
-      ID       500 ;
-      RESOURCE "Gears_48_alpha" ;
-      TRANSPARENT ;
-      OF       oDlg
-
    ::oTree     := TTreeView():Redefine( 100, oDlg )
-
-   REDEFINE SAY ::oPro ;
-      PROMPT   ::cPro ;
-      ID       110 ;
-      OF       oDlg
 
    REDEFINE APOLOMETER ::oMtr ;
       VAR      ::nMtr ;
@@ -498,7 +498,7 @@ METHOD buildButtonsGeneral()
    REDEFINE BUTTON ::oBtnCancel ;            // Boton de Siguiente
       ID       IDCANCEL ;
       OF       ::oDlg ;
-      ACTION   ( ::oDlg:End() )
+      ACTION   ( ::oDlg:end() )
 
 Return ( Self )   
 
@@ -506,12 +506,12 @@ Return ( Self )
 
 METHOD freeResources()
 
-   if !Empty( ::oBmpGeneral )
-      ::oBmpGeneral:End()
+   if !Empty( ::oBmpRedactar )
+      ::oBmpRedactar:end()
    end if
 
-   if !Empty( ::oBmpProcess )
-      ::oBmpProcess:End()
+   if !Empty( ::oBmpProceso )
+      ::oBmpProceso:end()
    end if
 
    if !empty(::oBmpClient)
@@ -600,23 +600,18 @@ Return ( Self )
 
 METHOD BotonAnterior() CLASS TGenMailing
 
-   do case
-      case ::oFld:nOption == 2
+   if ::oFld:nOption == 2
 
-         ::oBtnAnterior:Hide()
+      ::oBtnAnterior:Hide()
 
-         ::oBtnCargarHTML:Show()
-         ::oBtnSalvarHTML:Show()
+      ::oBtnCargarHTML:Show()
+      ::oBtnSalvarHTML:Show()
 
-         ::oFld:GoPrev()
+      SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
 
-         SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
+   end if
 
-      case ::oFld:nOption == 3
-
-         ::oFld:GoPrev()
-
-   end case
+   ::oFld:GoPrev()
 
 Return ( Self )
 
@@ -629,36 +624,23 @@ METHOD BotonSiguiente() CLASS TGenMailing
 
          ::oBtnCargarHTML:Hide()
          ::oBtnSalvarHTML:Hide()
-
-         ::oFld:GoNext()
-
          ::oBtnAnterior:Show()
-
-         SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
       case ::oFld:nOption == 2
 
-         ::oFld:GoNext()
-
          ::oBtnAnterior:Show()
+         
+         SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
-         ::oBtnCargarHTML:Disable()
-         ::oBtnSalvarHTML:Disable()
-
-         ::oBtnAnterior:Disable()
-         ::oBtnSiguiente:Disable()
+      case ::oFld:nOption == 3
 
          ::IniciarEnvio()
-
-         ::oBtnCargarHTML:Enable()
-         ::oBtnSalvarHTML:Enable()
-
-         ::oBtnAnterior:Enable()
-         ::oBtnSiguiente:Enable()
 
          SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
 
    end case
+
+   ::oFld:GoNext()
 
 Return ( Self )
 
@@ -718,7 +700,14 @@ Return ( ::aMailingList )
 
 METHOD IniciarEnvio() CLASS TGenMailing
 
-   msgAlert( valtoprg( ::getClientList() ) )
+   local aClientList    
+
+   aClientList          := ::getClientList()
+   if !empty(aClientList)
+      ::oSendMail:sendList( aClientList )
+   else
+      msgStop( "No hay direcciones de correos para mandar.")
+   end if 
 
    return ( self )
 
@@ -761,7 +750,7 @@ METHOD IniciarEnvio() CLASS TGenMailing
       ::oTree:Select( ::oTree:Add( "El proceso de envio ha finalizado" ) )
    end if
 
-   ::oBtnCancel:bAction := {|| ::oDlg:End() }
+   ::oBtnCancel:bAction := {|| ::oDlg:end() }
 
 Return ( Self )
 
@@ -1097,7 +1086,7 @@ METHOD Resource() CLASS TGenMailing
 
    local cTag
    local nRecno
-   local oBmpGeneral
+   local oBmpRedactar
 
    if Empty( ::aItems )
       MsgStop( "Campos de la base de datos no pasados." )
@@ -1143,14 +1132,14 @@ METHOD Resource() CLASS TGenMailing
       REDEFINE BUTTON ;          // Boton anterior
          ID       900 ;
          OF       ::oDlg ;
-         ACTION   ( if( ::lExternalSendMail( .t. ), ::oDlg:End(), ) )
+         ACTION   ( if( ::lExternalSendMail( .t. ), ::oDlg:end(), ) )
 
       REDEFINE BUTTON ;            // Boton de Siguiente
          ID       IDCANCEL ;
          OF       ::oDlg ;
-         ACTION   ( ::oDlg:End() )
+         ACTION   ( ::oDlg:end() )
 
-   ::oDlg:AddFastKey( VK_F5, {|| if( ::lExternalSendMail( .t. ), ::oDlg:End(), ) } )
+   ::oDlg:AddFastKey( VK_F5, {|| if( ::lExternalSendMail( .t. ), ::oDlg:end(), ) } )
 
    ::oDlg:bStart  := {|| ::startResource() }
 
@@ -1266,8 +1255,6 @@ METHOD getMessage()
    local cExpresion
    local cDocument     := ::oActiveX:GetText()
 
-   msgAlert( cDocument, "entrda en getMessage")
-
    while .t. 
 
       cExpresion       := ::getExpression( cDocument ) 
@@ -1278,8 +1265,6 @@ METHOD getMessage()
       ::replaceExpresion( @cDocument, cExpresion )
 
    end while
-
-   msgAlert( cDocument, "salida en getMessage")
 
 Return ( cDocument )
 
@@ -1314,7 +1299,7 @@ METHOD replaceExpresion( cDocument, cExpresion )
 
       nScan                := aScan( ::aItems, {|a| alltrim( a[ 5 ] ) == cExpresionToSearch .or. alltrim( a[ 5 ] ) == HtmlEntities( cExpresionToSearch ) } )
       if nScan != 0
-         cDocument         := StrTran( cDocument, cExpresion, alltrim( cValToChar( ( ::getWorkArea() )->( Eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) ) )
+         cDocument         := StrTran( cDocument, cExpresion, alltrim( cValToChar( ( ::getWorkArea() )->( eval( Compile( ::aItems[ nScan, 1 ] ) ) ) ) ) )
       else
          cDocument         := StrTran( cDocument, cExpresion, "" )
       end if

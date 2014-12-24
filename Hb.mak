@@ -57,6 +57,7 @@ ArtCodeBar.prg          	\
 Brwvta.prg              	\
 Client.prg              	\
 TGenMail.prg            	\
+TSendMail.prg              \
 Tiva.prg                	\
 Fpago.prg               	\
 Pedprov.prg             	\
@@ -409,6 +410,7 @@ Brwvta.obj              \
 Provee.obj              \
 Client.obj              \
 TGenMail.obj            \
+TSendMail.obj           \
 Tiva.obj                \
 Fpago.obj               \
 Pedprov.obj             \
@@ -789,6 +791,7 @@ $(OBJ)\Brwvta.obj               +
 $(OBJ)\Provee.obj               +
 $(OBJ)\Client.obj               +
 $(OBJ)\TGenMail.obj             +
+$(OBJ)\TSendMail.obj            +
 $(OBJ)\Tiva.obj                 +
 $(OBJ)\Fpago.obj                +
 $(OBJ)\Pedprov.obj              +
