@@ -16264,6 +16264,11 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecAlb )", {|| Field->cCodCli + dtos( Field->dFecAlb ) } ) )
 
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "dFecDes", "dFecAlb", {|| Field->dFecAlb } ) )
+
+
+
       ( cAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )

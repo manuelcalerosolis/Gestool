@@ -1,25 +1,19 @@
 #include "FiveWin.Ch"
+#include "Factu.ch" 
 
 CLASS Editable
-
+ 
+   DATA oThis
    DATA oDlg
-
+   DATA nView
+   DATA cArea
+ 
    METHOD Append()   Virtual
    METHOD Edit()     Virtual
    METHOD Zoom()     Virtual
    METHOD Delete()   Virtual 
 
-<<<<<<< HEAD
+   METHOD setWorkArea( cArea )    INLINE ( ::cArea  := cArea )
+   METHOD getWorkArea()           INLINE ( ::cArea )
+
 ENDCLASS
-
-//---------------------------------------------------------------------------//
-
-CLASS Documento FROM Editable
-
-   METHOD NumeroDocumento()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-=======
->>>>>>> 158a6c780a14fd54c3da72139401aebad28c5dc5

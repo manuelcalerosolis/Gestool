@@ -1,9 +1,10 @@
 #include "FiveWin.Ch"
-
+#include "Factu.ch" 
+ 
 CLASS DocumentoSerializable FROM Documento
 
    METHOD SerieDocumento()
-
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//

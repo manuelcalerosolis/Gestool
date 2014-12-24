@@ -6774,7 +6774,7 @@ Function FacCliTablet()
                                              		"nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                              		"nHeight"   => 25,;
                                              		"aItems"    => aCbxOrd,;
-                                             		"bChanged"  => {| nKey, nFlags, Self | ( D():FacturasClientes( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
+                                             		"bChange"   => {| nKey, nFlags, Self | ( D():FacturasClientes( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ), oGetSearch:SetFocus() } } )
 	
 	/*
 	Botones de las lineas------------------------------------------------------

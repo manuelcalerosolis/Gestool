@@ -5075,6 +5075,7 @@ CLASS D
    // Albaranes de clientes----------------------------------------------------
 
    METHOD AlbaranesClientes( nView )            INLINE ( ::Get( "AlbCliT", nView ) )
+      METHOD AlbaranesClientesIdText( nView )   INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
       METHOD AlbaranesClientesId( nView )       INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
 
    METHOD AlbaranesClientesLineas( nView )      INLINE ( ::Get( "AlbCliL", nView ) )
@@ -5104,6 +5105,7 @@ CLASS D
 
    METHOD PedidosClientes( nView )                    INLINE ( ::Get( "PedCliT", nView ) )
       METHOD PedidosClientesId( nView )               INLINE ( ( ::Get( "PedCliT", nView ) )->cSerPed + str( ( ::Get( "PedCliT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliT", nView ) )->cSufPed )
+      METHOD PedidosClientesIdText( nView )           INLINE ( ::Get( "PedCliT", nView ) )->cSerPed + "/" + Alltrim( Str( ( ::Get( "PedCliT", nView ) )->nNumPed ) )
       METHOD GetPedidoCliente( nView )                INLINE ( ::getHashRecordById( ::PedidosClientesId( nView ), ::PedidosClientes( nView ), nView ) )
       METHOD GetPedidoClienteById( id, nView )        INLINE ( ::getHashRecordById( id, ::PedidosClientes( nView ), nView ) )
       METHOD GetPedidoClienteBlank( nView )           INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )

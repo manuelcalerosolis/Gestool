@@ -5819,7 +5819,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| PedidoCliente():New():ResourceBrowse() },;
+                           "bLClicked" => {|| PedidoCliente():New() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 2 ) },;
@@ -5831,14 +5831,14 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| PedidoCliente():New():ResourceBrowse() } } )
+                           "bAction"   => {|| PedidoCliente():New() } } )
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 5 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| AlbaranCliente():New():ResourceBrowse() },;
+                           "bLClicked" => {|| AlbaranCliente():New() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 5 ) },;
@@ -5850,7 +5850,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| AlbaranCliente():New():ResourceBrowse() } } )
+                           "bAction"   => {|| AlbaranCliente():New() } } )
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 8 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
