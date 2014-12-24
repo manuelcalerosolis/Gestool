@@ -19799,7 +19799,7 @@ function SynFacCli( cPath )
          if !( D():FacturasClientes( nView ) )->( dbSeek( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ) )
          	if ( dbfFacCliL )->( dbRLock() )
                ( dbfFacCliL )->( dbDelete() )
-			   ( dbfFacCliL )->( dbRUnLock() )
+   			   ( dbfFacCliL )->( dbRUnLock() )
             end if 
          end if
 

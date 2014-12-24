@@ -1414,7 +1414,7 @@ Static Function FinishAplication() //  Static Function
 
    CheckRes()
 
-   winExec( "notepad checkres.txt" )
+   // winExec( "notepad checkres.txt" )
 
 Return nil
 

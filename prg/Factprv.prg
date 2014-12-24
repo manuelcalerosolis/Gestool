@@ -10404,6 +10404,52 @@ Function SynFacPrv( cPath )
 
    end while
 
+   ( dbfFacPrvT )->( OrdSetFocus( 1 ) )
+
+   // Purgamos los datos----------------------------------------------------
+
+   ( dbfFacPrvL )->( dbGoTop() )
+   while !( dbfFacPrvL )->( eof() )
+
+      if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvL )->cSerFac + str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac ) )
+         if ( dbfFacPrvL )->( dbRLock() )
+            ( dbfFacPrvL )->( dbDelete() )
+            ( dbfFacPrvL )->( dbRUnLock() )
+         end if 
+      end if
+
+      ( dbfFacPrvL )->( dbSkip() )
+
+   end while 
+
+   ( dbfFacPrvS )->( dbGoTop() )
+   while !( dbfFacPrvS )->( eof() )
+
+      if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvS )->cSerFac + str( ( dbfFacPrvS )->nNumFac ) + ( dbfFacPrvS )->cSufFac ) )
+         if ( dbfFacPrvS )->( dbRLock() )
+            ( dbfFacPrvS )->( dbDelete() )
+            ( dbfFacPrvS )->( dbRUnLock() )
+         end if 
+      end if
+
+      ( dbfFacPrvS )->( dbSkip() )
+
+   end while 
+
+   ( dbfFacPrvI )->( dbGoTop() )
+   while !( dbfFacPrvI )->( eof() )
+
+      if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvI )->cSerFac + str( ( dbfFacPrvI )->nNumFac ) + ( dbfFacPrvI )->cSufFac ) )
+         if ( dbfFacPrvI )->( dbRLock() )
+            ( dbfFacPrvI )->( dbDelete() )
+            ( dbfFacPrvI )->( dbRUnLock() )
+         end if 
+      end if
+
+      ( dbfFacPrvI )->( dbSkip() )
+
+   end while 
+
    RECOVER USING oError
 
       msgStop( "Imposible sincronizar factura de proveedores" + CRLF + ErrorMessage( oError ) )
@@ -10869,14 +10915,14 @@ Method Process() CLASS TFacturasProveedorSenderReciver
             */
 
             if file( cPatSnd() + "FacCliT.Dbf" ) .and.;
-               file( cPatSnd() + "FacCliL.Dbf" ) .and.;
+               file( cPatSnd() + "FacPrvL.Dbf" ) .and.;
                file( cPatSnd() + "FacCliP.Dbf" )
 
                USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacPrvT ) )
                SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacPrvL ) )
-               SET ADSINDEX TO ( cPatSnd() + "FacCliL.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "FacPrvL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacPrvL", @tmpFacPrvL ) )
+               SET ADSINDEX TO ( cPatSnd() + "FacPrvL.CDX" ) ADDITIVE
 
                USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacPrvP ) )
                SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
@@ -11101,8 +11147,8 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                ::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
                end if
 
-               if !file( cPatSnd() + "FacCliL.Dbf" )
-                     ::oSender:SetText( "Falta" + cPatSnd() + "FacCliL.Dbf" )
+               if !file( cPatSnd() + "FacPrvL.Dbf" )
+                     ::oSender:SetText( "Falta" + cPatSnd() + "FacPrvL.Dbf" )
                end if
 
                if !file( cPatSnd() + "FacCliP.Dbf" )
