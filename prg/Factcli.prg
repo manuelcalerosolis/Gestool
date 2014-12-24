@@ -11341,6 +11341,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" )
    oFr:SetResyncPair( 	"Lineas de facturas", "SAT" )
+   oFr:SetResyncPair( 	"Lineas de facturas", "Impuestos especiales" )
 
 Return nil
 
