@@ -14310,6 +14310,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Temporadas", ( dbfTemporada )->( Select() ) )
    oFr:SetFieldAliases( "Temporadas", cItemsToReport( aItmTemporada() ) )
 
+   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+
 Return nil 
 
 //------------------------------------------------------------------------//
@@ -14342,6 +14345,7 @@ Static Function BuildRelationReport( oFr )
    oFr:SetMasterDetail( "Lineas de tickets", "Temporadas",           {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTemp" ) } )
 
    oFr:SetMasterDetail( "Pagos de tickets",  "Formas de pago",       {|| ( dbfTikP )->cFpgPgo } )
+   oFr:SetMasterDetail( "Lineas de tickets", "Impuestos especiales", {|| ( dbfTikL )->cCodImp } )
 
    //------------------------------------------------------------------------//
 
@@ -14369,6 +14373,7 @@ Static Function BuildRelationReport( oFr )
    oFr:SetResyncPair(   "Lineas de tickets", "Temporadas" )
 
    oFr:SetResyncPair(   "Pagos de tickets", "Formas de pago" )
+   oFr:SetResyncPair(   "Lineas de tickets", "Impuestos especiales" )
 
 Return nil
 
@@ -14400,6 +14405,8 @@ Static Function ClearRelationReport( oFr )
    oFr:ClearMasterDetail( "Temporadas" )
 
    oFr:ClearMasterDetail( "Formas de pago" )
+   oFr:ClearMasterDetail( "Impuestos especiales" )
+
 
    //------------------------------------------------------------------------//
 
@@ -14427,6 +14434,7 @@ Static Function ClearRelationReport( oFr )
    oFr:ClearResyncPair(   "Lineas de tickets", "Temporadas" )
 
    oFr:ClearResyncPair(   "Pagos de tickets", "Formas de pago" )
+   oFr:ClearResyncPair(   "Lineas de tickets", "Impuestos especiales" )
 
 Return nil
 
