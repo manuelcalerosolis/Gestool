@@ -11610,6 +11610,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
    if dbLock( dbfAlbCliT )
 
       ( dbfAlbCliT )->lFacturado    := .f.
+      ( dbfAlbCliT )->nFacturado    := 1
       ( dbfAlbCliT )->lSndDoc       := .t.
       ( dbfAlbCliT )->lIvaInc       := .t.
       ( dbfAlbCliT )->cCodCli       := aTik[ _CCLITIK ]
