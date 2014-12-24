@@ -18,6 +18,7 @@ METHOD New() CLASS PedidoCliente
    if ::OpenFiles()
 
       ::setWorkArea( D():PedidosClientes( ::nView ) )
+      ::setDetailArea( D():PedidosClientesLineas( ::nView ) )
 
       ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
 
@@ -35,7 +36,7 @@ METHOD PropiedadesBrowse() CLASS PedidoCliente
 
    ::oBrowse:cName            := "Grid pedidos"
 
-   ::oBrowse:bLDblClick       := {|| MsgInfo( "DobleClick" ) }
+   ::oBrowse:bLDblClick       := {|| ::Edit() }
 
    with object ( ::oBrowse:AddCol() )
       :cHeader           := "Pedido"

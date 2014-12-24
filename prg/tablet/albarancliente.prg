@@ -18,6 +18,7 @@ METHOD New() CLASS AlbaranCliente
    if ::OpenFiles()
 
       ::setWorkArea( D():AlbaranesClientes( ::nView ) )
+      ::setDetailArea( D():AlbaranesClientesLineas( ::nView ) )
 
       ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
 
@@ -35,7 +36,7 @@ METHOD PropiedadesBrowse() CLASS AlbaranCliente
 
    ::oBrowse:cName       := "Grid albaranes"
 
-   ::oBrowse:bLDblClick  := {|| MsgInfo( "DobleClick" ) }
+   ::oBrowse:bLDblClick  := {|| ::Edit() }
 
    with object ( ::oBrowse:AddCol() )
       :cHeader           := "Albarán"

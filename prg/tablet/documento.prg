@@ -120,7 +120,7 @@ METHOD BotonesAcciones() CLASS Documento
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_add_64",;
-                           "bLClicked" => {|| msginfo( "Añadir" ) },;
+                           "bLClicked" => {|| ::Append() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -128,7 +128,7 @@ METHOD BotonesAcciones() CLASS Documento
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_edit_64",;
-                           "bLClicked" => {|| msginfo( "Editar" ) },;
+                           "bLClicked" => {|| ::Edit() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -136,7 +136,7 @@ METHOD BotonesAcciones() CLASS Documento
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_minus_64",;
-                           "bLClicked" => {|| msginfo( "Eliminar" ) },;
+                           "bLClicked" => {|| ::Delete() },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -176,7 +176,6 @@ METHOD BotonesMovimientoBrowse() CLASS Documento
                            "cResName"  => "flat_page_down_64",;
                            "bLClicked" => {|| ::oBrowse:PageDown(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() },;
                            "oWnd"      => ::oDlg } )
-
 
 Return ( self )
 

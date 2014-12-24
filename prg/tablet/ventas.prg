@@ -6,6 +6,8 @@ CLASS Ventas FROM DocumentoSerializable
    METHOD OpenFiles()
    METHOD CloseFiles()
 
+   METHOD Resource()
+
    METHOD aItemsBusqueda() INLINE ( { "Número", "Fecha", "Código", "Nombre" } )
 
 END CLASS
@@ -25,7 +27,11 @@ METHOD OpenFiles() CLASS Ventas
 
    D():PedidosClientes( ::nView )
 
+   D():PedidosClientesLineas( ::nView )
+
    D():AlbaranesClientes( ::nView )
+
+   D():AlbaranesClientesLineas( ::nView )
 
    RECOVER USING oError
 
@@ -50,5 +56,13 @@ METHOD CloseFiles() CLASS Ventas
    D():DeleteView( ::nView )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Resource() CLASS Ventas
+
+   msgInfo( "resource" )
+
+Return ( .t. )   
 
 //---------------------------------------------------------------------------//
