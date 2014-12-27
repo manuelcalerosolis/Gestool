@@ -427,9 +427,9 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
    */
 
    if IsNum( cBitmap )
-   ::oBtnTop            := TWebBar():New( 0, 0, 400, dfnSplitterHeight,,,, Rgb( 255, 255, 255 ), ( cBitmap ),,,,,, Self )
+      ::oBtnTop         := TWebBar():New( 0, 0, 400, dfnSplitterHeight,,,, Rgb( 255, 255, 255 ), ( cBitmap ),,,,,, Self )
    else
-   ::oBtnTop            := TWebBar():New( 0, 0, 400, dfnSplitterHeight,,,, Rgb( 255, 255, 255 ), clrTopArchivos,,,,,, Self )
+      ::oBtnTop         := TWebBar():New( 0, 0, 400, dfnSplitterHeight,,,, Rgb( 255, 255, 255 ), clrTopArchivos,,,,,, Self )
    end if
 
    ::oBtnTop:Say( -14, dfnTreeViewWidth, ::cTitle ) // antes primera coordenada en 6
@@ -904,7 +904,7 @@ METHOD AddSearch() CLASS TShell
 
    CursorWait()
 
-   ::oWndBar:CleanGet()
+   // ::oWndBar:CleanGet()
 
    if ( ::xAlias )->( Used() )
 
@@ -1002,17 +1002,12 @@ Realiza busquedas de manera progresiva
 
 METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
 
-   local nRec
-   local cOrd
-   local oCol
    local lSeek
    local cAlias
 
    DEFAULT nLen      := 10
 
-   cAlias            := ::xAlias
-
-   if Empty( cAlias ) .or. !( cAlias )->( Used() )
+   if Empty( ::xAlias ) .or. !( ::xAlias )->( Used() )
       Return .f.
    end if
 
@@ -1024,19 +1019,6 @@ METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
 
    xCadena           := Alltrim( Upper( cValToChar( xCadena ) ) )
    xCadena           := StrTran( xCadena, Chr( 8 ), "" )
-
-/*
-   if Empty( xCadena )
-      Return .f.
-   end if
-*/
-
-   /*
-   Guradamos valores iniciales-------------------------------------------------
-   */
-
-   nRec              := ( cAlias )->( RecNo() )
-   cOrd              := ( cAlias )->( OrdSetFocus() )
 
    /*
    Comenzamos la busqueda------------------------------------------------------
@@ -1068,37 +1050,47 @@ Return ( lSeek )
 
 //--------------------------------------------------------------------------//
 
-METHOD FastFilter( xCadena, cAlias )
+METHOD FastFilter( xCadena )
 
-   DestroyFastFilter( cAlias, .f., .f. )
+   local cFilterExpresion
 
-   CreateFastFilter( "", cAlias, .f. )
+   // DestroyFastFilter( cAlias, .f., .f. )
+   // CreateFastFilter( "", cAlias, .f. )
 
-   if Left( xCadena, 1 ) == "*"
+   ( ::xAlias )->( dbClearFilter() )
 
+   if Left( xCadena, 1 ) == "*" 
+      
       if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
 
-         CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), cAlias, .t. )
+         cFilterExpresion  := SubStr( xCadena, 2, len( xCadena ) - 2 )
 
-         ::SetKillFilter( {|| DestroyFastFilter( cAlias ), ::HideButtonFilter() } )
+         // CreateFastFilter( cFilterExpresion, cAlias, .t. )
+         // ::SetKillFilter( {|| DestroyFastFilter( cAlias ), ::HideButtonFilter() } )
+         
+         ::oBrw:lSeekWild     := .t.
+         ::oBrw:lIncrFilter   := .t.
+         ::oBrw:Seek( cFilterExpresion )
 
          ::ShowButtonFilter()
          ::ShowAddButtonFilter()
          ::ShowEditButtonFilter()
 
-      else
-
-         ::HideButtonFilter()
-         ::HideAddButtonFilter()
-         ::HideEditButtonFilter()
-
       end if
 
-      Return .t.
+   else
+
+      ::oBrw:lSeekWild     := .f.
+      ::oBrw:lIncrFilter   := .f.
+      ::oBrw:Seek( xCadena )
+
+      ::HideButtonFilter()
+      ::HideAddButtonFilter()
+      ::HideEditButtonFilter()
 
    end if
 
-Return .f.
+Return .t.
 
 //----------------------------------------------------------------------------//
 
@@ -1882,12 +1874,12 @@ METHOD AddSeaBar( nLen ) CLASS TShell
       ::oWndBar:SetComboBoxChange(     {|| ::ChgCombo() } )
       ::oWndBar:SetComboFilterChange(  {|| ::ChgFilter() } )
 
-      ::oWndBar:SetGetLostFocus(       {|| ::AddSearch() } )
       ::oWndBar:SetKillFilter(         {|| ::KillFilter() } )
 
       ::oWndBar:SetAddButtonFilter(    {|| ::AddFilter() } )
       ::oWndBar:SetEditButtonFilter(   {|| ::EditFilter() } )
 
+      ::oWndBar:SetGetLostFocus(       {|| ::AddSearch() } )
       ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText, nLen ) } )
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
 

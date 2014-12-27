@@ -104,7 +104,6 @@ FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilt
    end if
 
    oGet:Assign()
-
    xCadena              := oGet:VarGet()
 
    if isChar( xCadena )
@@ -161,12 +160,12 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
    DEFAULT lNotFecha := .t.
    DEFAULT nLen      := 10
 
-   if IsObject( xCadena )
+   if isObject( xCadena )
       xCadena:Assign()
       xCadena        := xCadena:VarGet()
    end if
 
-   if IsObject( xAlias )
+   if isObject( xAlias )
       xAlias         := xAlias:cAlias
    end if
 

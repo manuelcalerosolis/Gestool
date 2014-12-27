@@ -2296,7 +2296,9 @@ Return ( .t. )
 
 Static Function ActTitle( nKey, nFlags, oGet, nMode, oDlg )
 
-   oDlg:cTitle( LblTitle( nMode ) + " Proveedor : " + Rtrim( oGet:VarGet() ) + Chr( nKey ) )
+   oGet:Assign()
+
+   oDlg:cTitle( LblTitle( nMode ) + " Proveedor : " + Rtrim( oGet:VarGet() ) )
 
 RETURN NIL
 
