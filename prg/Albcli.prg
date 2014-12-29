@@ -13833,8 +13833,47 @@ FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
 
       if AlbCli()
          if dbSeekInOrd( cNumAlb, "nNumAlb", D():Get( "AlbCliT", nView ) )
+            GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
+         else
+            MsgStop( "No se encuentra albarán" )
+         end if
+      end if
+
+   else
+
+      if OpenFiles()
+
+         if dbSeekInOrd( cNumAlb, "nNumAlb", D():Get( "AlbCliT", nView ) )
+            nTotAlbCli()
+            GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
+         end if
+
+         CloseFiles()
+
+      end if
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+FUNCTION PrnSerieAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   DEFAULT lOpenBrowse  := .f.
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if lOpenBrowse
+
+      if AlbCli()
+         if dbSeekInOrd( cNumAlb, "nNumAlb", D():Get( "AlbCliT", nView ) )
             ImprimirSeriesAlbaranes( IS_PRINTER, .t. )
-            //GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
          else
             MsgStop( "No se encuentra albarán" )
          end if
@@ -13847,7 +13886,6 @@ FUNCTION PrnAlbCli( cNumAlb, lOpenBrowse, cCaption, cFormato, cPrinter )
          if dbSeekInOrd( cNumAlb, "nNumAlb", D():Get( "AlbCliT", nView ) )
             nTotAlbCli()
             ImprimirSeriesAlbaranes( IS_PRINTER, .t. )
-            //GenAlbCli( IS_PRINTER, cCaption, cFormato, cPrinter )
          end if
 
          CloseFiles()

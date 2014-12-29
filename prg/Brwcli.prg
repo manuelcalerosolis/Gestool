@@ -1631,7 +1631,7 @@ Static Function PrintDocument( oBrwTmp )
          PrnPedCli( oDbfTmp:cNumDoc )
 
       case oDbfTmp:nTypDoc == ALB_CLI
-         PrnAlbCli( oDbfTmp:cNumDoc )
+         PrnSerieAlbCli( oDbfTmp:cNumDoc )
 
       case oDbfTmp:nTypDoc == FAC_CLI
          PrnFacCli( oDbfTmp:cNumDoc )

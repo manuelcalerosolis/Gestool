@@ -402,6 +402,8 @@ CLASS TpvTactil
 
    DATA nTipoDocumento     			INIT documentoTicket 
 
+   DATA cNumeroAlbaran              INIT ""
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -6868,6 +6870,8 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    nNumAlb                                := nNewDoc( cSerAlb, ::oAlbaranClienteCabecera:cAlias, "nAlbCli", , ::oContadores:cAlias )
    cSufAlb                                := RetSufEmp()
 
+   ::cNumeroAlbaran                       := cSerAlb + Str( nNumAlb ) + cSufAlb
+
    oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -8035,26 +8039,25 @@ RETURN ( Self )
 
 METHOD ImprimeTicket()
 
-  if ::lEmptyDocumento()
-     MsgStop( "El documento no contiene líneas." )
-     Return ( .t. )
-  end if
+   do case
+      case ::nTipoDocumento == documentoAlbaran
 
-  do case
-  case ::nTipoDocumento == documentoAlbaran
+         ::cFormato     := ::oFormatosImpresion:cFmtAlb
+         ::cImpresora   := ::oFormatosImpresion:cPrinterAlb
+         ::nCopias      := Max( ::oFormatosImpresion:nCopiasAlb, 1 )
+
+   otherwise
      
-     ::cFormato     := ::oFormatosImpresion:cFmtAlb
-     ::cImpresora   := ::oFormatosImpresion:cPrinterAlb
-     ::nCopias      := Max( ::oFormatosImpresion:nCopiasAlb, 1 )
+         if ::lEmptyDocumento()
+            MsgStop( "El documento no contiene líneas." )
+            Return ( .t. )
+         end if
 
-  otherwise
-     
-     ::cFormato     := ::oFormatosImpresion:cFormatoTiket
-     ::cImpresora   := ::oFormatosImpresion:cPrinterTik
-     ::nCopias      := Max( ::oFormatosImpresion:nCopiasTik, 1 )
+         ::cFormato     := ::oFormatosImpresion:cFormatoTiket
+         ::cImpresora   := ::oFormatosImpresion:cPrinterTik
+         ::nCopias      := Max( ::oFormatosImpresion:nCopiasTik, 1 )
 
-  end case
-
+   end case
   
   ::nDispositivo    := IS_PRINTER
   ::lComanda        := .f.
@@ -8140,30 +8143,23 @@ RETURN ( Self )
 
 METHOD ImprimeDocumento() CLASS TpvTactil
 
-/*
-   local oDlg
-   local oBmpPrinter
-
    CursorWait()
 
-   DEFINE DIALOG oDlg RESOURCE "Printing"
+   if ::nTipoDocumento == documentoAlbaran
 
-      REDEFINE BITMAP oBmpPrinter ID 500 RESOURCE "Printer_48" TRANSPARENT OF oDlg
+      ::DestroyFastReport()
 
-      oDlg:bStart       := {|| ::BuildReport(), oDlg:end() }
+      PrnAlbCli( ::cNumeroAlbaran, .f., "Imprimiendo albaranes", ::cFormato, ::cImpresora )
 
-   ACTIVATE DIALOG oDlg CENTER
+      ::InstanceFastReport()
 
-   CursorWE()
+   else
 
-   oBmpPrinter:End()
-*/
+      if !empty( ::cImpresora )
+         ::BuildReport()   
+      end if 
 
-   CursorWait()
-
-   if !empty( ::cImpresora )
-      ::BuildReport()   
-   end if 
+   end if
 
    CursorWE()
 
