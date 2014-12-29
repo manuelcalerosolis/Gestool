@@ -30,8 +30,6 @@ ENDCLASS
 
 METHOD Append() CLASS Editable
 
-   msgInfo( "añadimos" )
-
    ::GetDocumento()
 
    if ::Resource( APPD_MODE )
@@ -43,8 +41,6 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD Edit() CLASS Editable
-
-   msgInfo( "modificamos" )
 
    ::GetDocumento()
 

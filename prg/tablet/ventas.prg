@@ -3,14 +3,12 @@
 
 CLASS Ventas FROM DocumentoSerializable
    
+   DATA oViewEdit
+
    METHOD OpenFiles()
    METHOD CloseFiles()
 
    METHOD Resource()
-
-   METHOD DialogResize()
-
-   METHOD InitDialog()
 
 END CLASS
 
@@ -63,34 +61,16 @@ Return ( self )
 
 METHOD Resource( nMode ) CLASS Ventas
 
-   msgInfo( "resource" )
+   ::oViewEdit       := ViewEdit():New( self )
 
-   ::oDlg           := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+   if !Empty( ::oViewEdit )
 
-   Msginfo( nMode, "nMode" )
+      ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "pedido" )
+      
+      ::oViewEdit:ResourceViewEdit()
 
-   ::oDlg:bResized  := {|| ::DialogResize() }
-
-   ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
-
-   msgInfo( "fin resource" )
+   end if
 
 Return ( .t. )   
-
-//---------------------------------------------------------------------------//
-
-METHOD DialogResize() CLASS Ventas
-
-   GridResize( ::oDlg )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD InitDialog() CLASS Ventas
-
-   GridMaximize( ::oDlg )
-
-Return ( self )
 
 //---------------------------------------------------------------------------//

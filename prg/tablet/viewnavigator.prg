@@ -1,29 +1,19 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS ViewNavigator
+CLASS ViewNavigator FROM ViewBase
 
    DATA oDlg
-   DATA Style           INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
    DATA oBrowse
    DATA oSender
 
    DATA aItemsBusqueda
-   DATA cTextoTipoDocumento
    DATA WorkArea
    
    METHOD New()
 
    METHOD ResourceViewNavigator()
-   METHOD DialogResize()
-   METHOD InitDialog()
-
-   METHOD TituloBrowse()
-
-   METHOD SetTextoTipoDocuento( cTexto ) INLINE ( ::cTextoTipoDocumento := cTexto ) 
-
-   METHOD BotonSalirBrowse()
-
+   
    METHOD BarraBusqueda()
    METHOD SetItemsBusqueda( aItems ) INLINE ( ::aItemsBusqueda := aItems )
 
@@ -69,54 +59,6 @@ METHOD ResourceViewNavigator() CLASS ViewNavigator
    ::oDlg:bResized         := {|| ::DialogResize() }
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD DialogResize() CLASS ViewNavigator
-
-   GridResize( ::oDlg )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD InitDialog() CLASS ViewNavigator
-
-   GridMaximize( ::oDlg )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD TituloBrowse() CLASS ViewNavigator 
-
-   TGridSay():Build(    {  "nRow"      => 0,;
-                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                           "bText"     => {|| ::cTextoTipoDocumento },;
-                           "oWnd"      => ::oDlg,;
-                           "oFont"     => oGridFontBold(),;
-                           "lPixels"   => .t.,;
-                           "nClrText"  => Rgb( 0, 0, 0 ),;
-                           "nClrBack"  => Rgb( 255, 255, 255 ),;
-                           "nWidth"    => {|| GridWidth( 8, ::oDlg ) },;
-                           "nHeight"   => 32,;
-                           "lDesign"   => .f. } )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD BotonSalirBrowse() CLASS ViewNavigator
-
-   TGridImage():Build(  {  "nTop"      => 5,;
-                           "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_end_64",;
-                           "bLClicked" => {|| ::oDlg:End() },;
-                           "oWnd"      => ::oDlg } )
 
 Return ( self )
 

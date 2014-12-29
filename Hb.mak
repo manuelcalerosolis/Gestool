@@ -376,11 +376,13 @@ ApoloMeter.prg 				\
 TGridSay.prg 					\
 FacturarLineasAlbaranesProveedor.prg\
 Editable.prg               \
-Documento.prg              \
+ViewNavigator.prg          \
 Ventas.prg                 \
 PedidoCliente.prg          \
 AlbaranCliente.prg         \
 DocumentoSerializable.prg  \
+ViewBase.prg               \
+ViewEdit.prg               \
 
 C               =       	\
 Img2pdf.c               	\
@@ -748,11 +750,13 @@ ApoloMeter.obj 			\
 TGridSay.obj				\
 FacturarLineasAlbaranesProveedor.obj\
 Editable.obj               \
-Documento.obj              \
+ViewNavigator.obj          \
 Ventas.obj                 \
 PedidoCliente.obj          \
 AlbaranCliente.obj         \
 DocumentoSerializable.obj  \
+ViewBase.obj               \
+ViewEdit.obj               \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1105,10 +1109,12 @@ $(OBJ)\Xbrowse1406.Obj            	+
 $(OBJ)\FacturarLineasAlbaranesProveedor.obj+
 $(OBJ)\TGridSay.obj              +
 $(OBJ)\Editable.obj              +
-$(OBJ)\Documento.obj             +
+$(OBJ)\ViewNavigator.obj         +
 $(OBJ)\PedidoCliente.obj         +
 $(OBJ)\AlbaranCliente.obj        +
 $(OBJ)\DocumentoSerializable.obj +
+$(OBJ)\ViewBase.obj              +
+$(OBJ)\ViewEdit.obj              +
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +
