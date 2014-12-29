@@ -3561,8 +3561,8 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local cPathGrp       := ""
    local lAIS           := lAIS()
 
-   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    if lAIS
       lAIS( .f. ) 
@@ -3658,7 +3658,14 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          oMsg:SetText( "Creando movimientos de almacén" )
       end if
       
-      TRemMovAlm():Create( cPath ):CheckFiles()                            ; sysrefresh()
+      TRemMovAlm():Create( cPath ):CheckFiles()                                     ; sysrefresh()
+
+      if oMsg != nil
+         oMsg:SetText( "Creando lineas de movimientos de almacén" )
+      end if
+
+      TDetMovimientos():Create( cPath ):CheckFiles()                                ; sysrefresh()
+
 
       if oMsg != nil
          oMsg:SetText( "Creando catálogos" )
@@ -3907,15 +3914,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          TSalaVenta():Create( cPath ):CheckFiles()                               ; SysRefresh()
          TDetSalaVta():Create( cPath ):CheckFiles()                              ; SysRefresh()
       end if
-
-      /*
-      Movimientos entre almacenes
-		*/
-
-      if oMsg != nil
-         oMsg:SetText( "Creando historico de movimientos" )
-      end if
-      // mkHisMov( cPath, .f., cPathOld ) ; SysRefresh()
 
       /*
       Documentos de proveedores
@@ -4197,13 +4195,13 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    end if
 
-//   RECOVER USING oError
-//
-//      msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
-//
-//   END SEQUENCE
-//
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+
+      msgStop( "Error creando estructura de directorios" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN .t.
 

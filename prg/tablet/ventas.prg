@@ -59,9 +59,19 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource() CLASS Ventas
+METHOD Resource( nMode ) CLASS Ventas
 
    msgInfo( "resource" )
+
+   ::oDlg           := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+
+   Msginfo( nMode, "nMode" )
+
+   ::oDlg:bResized  := {|| ::DialogResize() }
+
+   ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
+
+   msgInfo( "fin resource" )
 
 Return ( .t. )   
 

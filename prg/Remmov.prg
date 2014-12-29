@@ -202,8 +202,6 @@ CLASS TRemMovAlm FROM TMasDet
 
    Method cTextoMovimiento()  INLINE   { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ Min( Max( ( ::oDbf:nArea )->nTipMov, 1 ), 4 ) ]
 
-   Method CheckFiles()
-
    Method LoadAlmacen( nMode )
    Method ImportAlmacen( nMode, oDlg )
 
@@ -2173,19 +2171,6 @@ METHOD Reindexa() CLASS TRemMovAlm
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
-
-METHOD CheckFiles( cFileAppendFrom ) CLASS TRemMovAlm 
-
-   if ::OpenService()
-      if !Empty( cFileAppendFrom )
-         ::AppendFrom( cFileAppendFrom )
-      end if
-      ::CloseService()
-   end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 METHOD AppendDet( oDlg ) CLASS TRemMovAlm 
 

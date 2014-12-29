@@ -2348,7 +2348,7 @@ RETURN ( lDup )
 
    RETURN ( nStockArticulo )
 
-   //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
    METHOD nPendientesRecibirInStock()  
       
@@ -2361,7 +2361,7 @@ RETURN ( lDup )
 
    RETURN ( nStockArticulo )
 
-   //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
    METHOD nPendientesEntregarInStock()  
       
@@ -2374,37 +2374,6 @@ RETURN ( lDup )
 
    RETURN ( nStockArticulo )
 
-   //---------------------------------------------------------------------------//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, nCalcCosto ) CLASS TStock
@@ -3697,7 +3666,7 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
    local nImpAnt        := 0
    local aMov           := {}
    local aMovimientos   := {}
-   local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast") )
+   local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFastin") )
    local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef"    ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef"    ) )
    local cHisMovT       := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )

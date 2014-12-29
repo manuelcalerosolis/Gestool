@@ -33,7 +33,7 @@ METHOD Append() CLASS Editable
 
    ::GetDocumento()
 
-   if ::Resource()
+   if ::Resource( APPD_MODE )
       ::SaveDocumento()
    end if
 
@@ -47,7 +47,7 @@ METHOD Edit() CLASS Editable
 
    ::GetDocumento()
 
-   if ::Resource()
+   if ::Resource( EDIT_MODE )
       ::SaveDocumento()
    end if
 
