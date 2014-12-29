@@ -312,18 +312,19 @@ FUNCTION BrwEmpresaContaplus( cRuta, oGetEmp )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Empresas de contaplus ®"
 
-   REDEFINE GET oGet1 VAR cGet1;
-      ID       104 ;
-      ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, cEmpresa ) );
-      VALID    ( OrdClearScope( oBrw, cEmpresa ) );
-      BITMAP   "Find" ;
-      OF       oDlg
+   REDEFINE GET         oGet1 ;
+      VAR               cGet1 ;
+      ID                104 ;
+      ON CHANGE         ( AutoSeek( nKey, nFlags, Self, oBrw, cEmpresa ) );
+      VALID             ( OrdClearScope( oBrw, cEmpresa ) );
+      BITMAP            "Find" ;
+      OF                oDlg
 
-   REDEFINE COMBOBOX oCbxOrd ;
-      VAR      cCbxOrd ;
-      ID       102 ;
-      ITEMS    aCbxOrd ;
-      OF       oDlg
+   REDEFINE COMBOBOX    oCbxOrd ;
+      VAR               cCbxOrd ;
+      ID                102 ;
+      ITEMS             aCbxOrd ;
+      OF                oDlg
 
    oBrw                 := IXBrowse():New( oDlg )
 

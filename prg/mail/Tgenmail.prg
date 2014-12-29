@@ -112,8 +112,8 @@ CLASS TGenMailing
 
    METHOD AddAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
 
-   METHOD SetMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
-   METHOD GetMensajeHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
+   METHOD setMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
+   METHOD getMensajeHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
 
    METHOD SetTypeDocument( cText )     INLINE ( ::cTypeDocument   := cText )
 
@@ -152,7 +152,7 @@ CLASS TGenMailing
 
    METHOD replaceExpresion( cDocumentHTML, cExpresion )
 
-   METHOD IsMailServer()               INLINE ( !Empty( ::MailServer ) .and. !Empty( ::MailServerUserName ) .and. !Empty( ::MailServerPassword ) )
+   METHOD isMailServer()               INLINE ( !Empty( ::MailServer ) .and. !Empty( ::MailServerUserName ) .and. !Empty( ::MailServerPassword ) )
 
    METHOD lSend()                      INLINE ( iif( ::IsMailServer(), ::Resource(), ::outlookDisplayMail() ) )
    METHOD lExternalSend()              INLINE ( iif( ::IsMailServer(), ::lExternalSendMail(), ::outlookSendMail() ) )
@@ -195,12 +195,6 @@ METHOD New() CLASS TGenMailing
 
    ::oSendMail             := TSendMail():New( Self )
 
-   ::MailServer            := Rtrim( uFieldEmpresa( "cSrvMai" ) )
-   ::MailServerPort        := uFieldEmpresa( "nPrtMai" )
-   ::MailServerUserName    := Rtrim( uFieldEmpresa( "cCtaMai" ) )
-   ::MailServerPassword    := Rtrim( uFieldEmpresa( "cPssMai" ) )
-   ::MailServerConCopia    := Rtrim( uFieldEmpresa( "cCcpMai" ) )
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
@@ -237,11 +231,6 @@ METHOD ClientResource( aItems, nView ) CLASS TGenMailing
    ::aFields         := getSubArray( aItems, 5 )
    ::nView           := nView
 
-/*
-   if !Empty( ::oFlt )
-      ::aFields      := ::oFlt:aTblMask
-   end if 
-*/
    DEFINE DIALOG     ::oDlg ;
       RESOURCE       "Select_Mail_Container";
        OF            oWnd()
@@ -1245,6 +1234,7 @@ METHOD hashClientList()
 
    hSet( hashClientList, "mail", alltrim( ( ::getWorkArea() )->cMeiInt ) )
    hSet( hashClientList, "message", ::getMessage() )
+   hSet( hashClientList, "attachments", ::cGetAdjunto )
 
 Return ( hashClientList )
 
