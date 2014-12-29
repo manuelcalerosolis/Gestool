@@ -8,7 +8,9 @@ CLASS Ventas FROM DocumentoSerializable
 
    METHOD Resource()
 
-   METHOD aItemsBusqueda() INLINE ( { "Número", "Fecha", "Código", "Nombre" } )
+   METHOD DialogResize()
+
+   METHOD InitDialog()
 
 END CLASS
 
@@ -74,5 +76,21 @@ METHOD Resource( nMode ) CLASS Ventas
    msgInfo( "fin resource" )
 
 Return ( .t. )   
+
+//---------------------------------------------------------------------------//
+
+METHOD DialogResize() CLASS Ventas
+
+   GridResize( ::oDlg )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD InitDialog() CLASS Ventas
+
+   GridMaximize( ::oDlg )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

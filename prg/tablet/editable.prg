@@ -8,6 +8,7 @@ CLASS Editable
    DATA nView
    DATA cWorkArea
    DATA cDetailArea
+   DATA Style           INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
  
    METHOD Append()
    METHOD Edit()

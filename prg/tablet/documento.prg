@@ -1,47 +1,56 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS Documento FROM Editable
+CLASS ViewNavigator
 
+   DATA oDlg
    DATA Style           INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
    DATA oBrowse
+   DATA oSender
+
+   DATA aItemsBusqueda
+   DATA cTextoTipoDocumento
+   DATA WorkArea
    
    METHOD New()
 
-   METHOD ResourceBrowse()
+   METHOD ResourceViewNavigator()
    METHOD DialogResize()
    METHOD InitDialog()
 
    METHOD TituloBrowse()
-   METHOD cTextoTipoDocumento()  VIRTUAL
+
+   METHOD SetTextoTipoDocuento( cTexto ) INLINE ( ::cTextoTipoDocumento := cTexto ) 
 
    METHOD BotonSalirBrowse()
 
    METHOD BarraBusqueda()
-   METHOD aItemsBusqueda()       VIRTUAL
+   METHOD SetItemsBusqueda( aItems ) INLINE ( ::aItemsBusqueda := aItems )
+
    METHOD getComboboxOrden()
    METHOD ChangeComboboxOrden()
+
+   METHOD setWorkArea( WorkArea ) INLINE ( ::WorkArea := WorkArea )
 
    METHOD BotonesAcciones()
 
    METHOD BotonesMovimientoBrowse()
 
    METHOD BrowseGeneral()
-   METHOD PropiedadesBrowse()    VIRTUAL
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( oSender ) CLASS ViewNavigator
 
-   ::oThis  := self
+   ::oSender   := oSender
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceBrowse() CLASS Documento
+METHOD ResourceViewNavigator() CLASS ViewNavigator
 
    ::oDlg  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
@@ -65,7 +74,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DialogResize() CLASS Documento
+METHOD DialogResize() CLASS ViewNavigator
 
    GridResize( ::oDlg )
 
@@ -73,7 +82,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD InitDialog() CLASS Documento
+METHOD InitDialog() CLASS ViewNavigator
 
    GridMaximize( ::oDlg )
 
@@ -81,11 +90,11 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD TituloBrowse() CLASS Documento 
+METHOD TituloBrowse() CLASS ViewNavigator 
 
    TGridSay():Build(    {  "nRow"      => 0,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                           "bText"     => {|| ::cTextoTipoDocumento() },;
+                           "bText"     => {|| ::cTextoTipoDocumento },;
                            "oWnd"      => ::oDlg,;
                            "oFont"     => oGridFontBold(),;
                            "lPixels"   => .t.,;
@@ -99,7 +108,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BotonSalirBrowse() CLASS Documento
+METHOD BotonSalirBrowse() CLASS ViewNavigator
 
    TGridImage():Build(  {  "nTop"      => 5,;
                            "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
@@ -113,14 +122,14 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BotonesAcciones() CLASS Documento
+METHOD BotonesAcciones() CLASS ViewNavigator
 
    TGridImage():Build(  {  "nTop"      => 75,;
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_add_64",;
-                           "bLClicked" => {|| ::Append() },;
+                           "bLClicked" => {|| ::oSender:Append() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -128,7 +137,7 @@ METHOD BotonesAcciones() CLASS Documento
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_edit_64",;
-                           "bLClicked" => {|| ::Edit() },;
+                           "bLClicked" => {|| ::oSender:Edit() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -136,14 +145,14 @@ METHOD BotonesAcciones() CLASS Documento
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_minus_64",;
-                           "bLClicked" => {|| ::Delete() },;
+                           "bLClicked" => {|| ::oSender:Delete() },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BotonesMovimientoBrowse() CLASS Documento
+METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
 
    TGridImage():Build(  {  "nTop"      => 75,;
                            "nLeft"     => {|| GridWidth( 7.5, ::oDlg ) },;
@@ -181,7 +190,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BarraBusqueda() CLASS Documento
+METHOD BarraBusqueda() CLASS ViewNavigator
 
    local cGetSearch        := Space( 100 )
    local oGetSearch
@@ -194,8 +203,8 @@ METHOD BarraBusqueda() CLASS Documento
                                                    "oWnd"      => ::oDlg,;
                                                    "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                                                    "nHeight"   => 25,;
-                                                   "bValid"    => {|| OrdClearScope( ::oBrowse, ::getWorkArea() ) },;
-                                                   "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetSearch, ::oBrowse, ::getWorkArea(), .t. ) } } )
+                                                   "bValid"    => {|| OrdClearScope( ::oBrowse, ::WorkArea ) },;
+                                                   "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetSearch, ::oBrowse, ::WorkArea, .t. ) } } )
 
    oComboboxOrden    := TGridComboBox():Build(  {  "nRow"      => 45,;
                                                    "nCol"      => {|| GridWidth( 9.5, ::oDlg ) },;
@@ -203,20 +212,20 @@ METHOD BarraBusqueda() CLASS Documento
                                                    "oWnd"      => ::oDlg,;
                                                    "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                    "nHeight"   => 25,;
-                                                   "aItems"    => ::aItemsBusqueda(),;
+                                                   "aItems"    => ::aItemsBusqueda,;
                                                    "bChange"   => {|| ::ChangeComboboxOrden( oComboboxOrden, oGetSearch ) } } )
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getComboboxOrden() CLASS Documento
+METHOD getComboboxOrden() CLASS ViewNavigator
 
    local cOrden   := ""
 
-   if isArray( ::aItemsBusqueda() ) .and. len( ::aItemsBusqueda() ) > 1
+   if isArray( ::aItemsBusqueda ) .and. len( ::aItemsBusqueda ) > 1
 
-      cOrden      := ::aItemsBusqueda()[1]
+      cOrden      := ::aItemsBusqueda[1]
 
    end if
 
@@ -224,9 +233,9 @@ Return ( cOrden )
 
 //---------------------------------------------------------------------------//
 
-METHOD ChangeComboboxOrden( oComboboxOrden, oGetSearch ) CLASS Documento
+METHOD ChangeComboboxOrden( oComboboxOrden, oGetSearch ) CLASS ViewNavigator
 
-   ( ::getWorkArea )->( OrdSetFocus( oComboboxOrden:nAt ) )
+   ( ::WorkArea )->( OrdSetFocus( oComboboxOrden:nAt ) )
    
    oGetSearch:SetFocus()
 
@@ -236,7 +245,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BrowseGeneral() CLASS Documento
+METHOD BrowseGeneral() CLASS ViewNavigator
 
    ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
 
@@ -251,9 +260,11 @@ METHOD BrowseGeneral() CLASS Documento
    ::oBrowse:nRowHeight       := 96
    ::oBrowse:nDataLines       := 2
 
-   ::oBrowse:cAlias           := ::getWorkArea()
+   ::oBrowse:cAlias           := ::WorkArea
 
-   ::PropiedadesBrowse()
+   ::oSender:PropiedadesBrowse()
+
+   ::oBrowse:bLDblClick       := {|| ::oSender:Edit() }
 
    ::oBrowse:CreateFromCode()
 
