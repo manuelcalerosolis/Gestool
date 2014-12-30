@@ -92,7 +92,7 @@ METHOD BotonAceptarCancelarBrowse() CLASS ViewBase
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oDlg:End() },;
+                           "bLClicked" => {|| Msginfo( "Botón Aceptar" ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
