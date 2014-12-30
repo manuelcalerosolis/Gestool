@@ -35,7 +35,7 @@ CLASS TGenMailing
    DATA oGetCopia                      
 
    DATA oGetPara
-   DATA cGetAsunto
+   DATA cSubject
    DATA cGetAdjunto
    DATA cGetHtml
    DATA cGetCSS
@@ -45,7 +45,7 @@ CLASS TGenMailing
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
    DATA lHidePara                      INIT .t.
-   DATA lHideCopia                     INIT .t.
+   DATA lHideCopia                     INIT .f.
 
    DATA aAdjuntos                      INIT {}
 
@@ -102,7 +102,7 @@ CLASS TGenMailing
 
    METHOD getWorkArea()                INLINE ( D():Clientes( ::nView ) )
 
-   METHOD SetAsunto( cText )           INLINE ( ::cGetAsunto   := Padr( cText, 250 ) )
+   METHOD SetAsunto( cText )           INLINE ( ::cSubject   := Padr( cText, 250 ) )
    METHOD SetAdjunto( cText )          INLINE ( ::cGetAdjunto  := Padr( cText, 250 ) )
    METHOD SetHtml( cText )             INLINE ( ::cGetHtml     := Padr( cText, 250 ) )
    METHOD SetDe( cText )               INLINE ( ::cGetDe       := Padr( cText, 250 ) )
@@ -113,7 +113,6 @@ CLASS TGenMailing
    METHOD AddAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
 
    METHOD setMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
-   METHOD getMensajeHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
 
    METHOD SetTypeDocument( cText )     INLINE ( ::cTypeDocument   := cText )
 
@@ -142,7 +141,7 @@ CLASS TGenMailing
    METHOD setMeterTotal( nTotal )      INLINE ( ::oMtr:nTotal := nTotal )
    METHOD setMeter( nSet )             INLINE ( ::oMtr:Set( nSet ) )
 
-   METHOD IniciarEnvio()
+   METHOD IniciarProceso()
 
    METHOD lBuildMail()                 INLINE ( iif( ::lCreateMail(), ( ::waitMail(), ::lSendMail(), ::oMail := nil ), ) )
 
@@ -183,6 +182,7 @@ CLASS TGenMailing
                                                    ) )
    METHOD hashClientList()        
    METHOD getMessage()
+   METHOD getMessageHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
    METHOD getExpression()
 
 END CLASS
@@ -201,7 +201,7 @@ Return ( Self )
 
 METHOD Create() CLASS TGenMailing
 
-   ::cGetAsunto            := Space( 254 )
+   ::cSubject            := Space( 254 )
    ::cGetAdjunto           := Space( 254 )
    ::cGetHtml              := Space( 254 )
 
@@ -304,7 +304,7 @@ METHOD buildPageRedactar( oDlg )
       ID       120 ;
       OF       oDlg
 
-   REDEFINE GET ::oGetAsunto VAR ::cGetAsunto ;
+   REDEFINE GET ::oGetAsunto VAR ::cSubject ;
       ID       100 ;
       OF       oDlg
 
@@ -589,16 +589,19 @@ Return ( Self )
 
 METHOD BotonAnterior() CLASS TGenMailing
 
-   if ::oFld:nOption == 2
+   do case
+      case ::oFld:nOption == 2
 
-      ::oBtnAnterior:Hide()
+         ::oBtnAnterior:Hide()
 
-      ::oBtnCargarHTML:Show()
-      ::oBtnSalvarHTML:Show()
+         ::oBtnCargarHTML:Show()
+         ::oBtnSalvarHTML:Show()
 
-      SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
+      case ::oFld:nOption == 3
 
-   end if
+         SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
+
+   end case 
 
    ::oFld:GoPrev()
 
@@ -623,7 +626,7 @@ METHOD BotonSiguiente() CLASS TGenMailing
 
       case ::oFld:nOption == 3
 
-         ::IniciarEnvio()
+         ::IniciarProceso()
 
          SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
 
@@ -687,7 +690,7 @@ Return ( ::aMailingList )
 
 //--------------------------------------------------------------------------//
 
-METHOD IniciarEnvio() CLASS TGenMailing
+METHOD IniciarProceso() CLASS TGenMailing
 
    local aClientList    
 
@@ -811,7 +814,6 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-
 METHOD lCreateMail() CLASS TGenMailing
 
    local oError
@@ -843,7 +845,7 @@ METHOD lCreateMail() CLASS TGenMailing
 
       ::oMail:From               := ::MailServerUserName
       ::oMail:FromName           := Rtrim( ::cGetDe )
-      ::oMail:Subject            := Rtrim( ::cGetAsunto )
+      ::oMail:Subject            := Rtrim( ::cSubject )
 
       if ::lHtml
 
@@ -1024,7 +1026,7 @@ METHOD buildOutlookMail()
 
       // Asunto
 
-      oMail:Subject      := ::cGetAsunto
+      oMail:Subject      := ::cSubject
 
       // Cuerpo del mensaje
 
@@ -1233,8 +1235,10 @@ METHOD hashClientList()
    local hashClientList := {=>}
 
    hSet( hashClientList, "mail", alltrim( ( ::getWorkArea() )->cMeiInt ) )
-   hSet( hashClientList, "message", ::getMessage() )
+   hSet( hashClientList, "mailcc", ::cGetCopia )
+   hSet( hashClientList, "subject", ::cSubject )
    hSet( hashClientList, "attachments", ::cGetAdjunto )
+   hSet( hashClientList, "message", ::getMessageHTML() )
 
 Return ( hashClientList )
 
@@ -1243,7 +1247,7 @@ Return ( hashClientList )
 METHOD getMessage()
 
    local cExpresion
-   local cDocument     := ::oActiveX:GetText()
+   local cDocument     := ::oActiveX:getText()
 
    while .t. 
 

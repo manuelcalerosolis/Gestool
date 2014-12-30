@@ -20,52 +20,61 @@ CLASS TSendMail
    
    METHOD New( oSender )
 
+   // Metodos para controlar la vista
+
    METHOD setView( nView )    INLINE ( ::nView  := nView )
    METHOD getView()           INLINE ( ::nView )
    METHOD getTime()           INLINE ( val( ::oSender:cTiempo ) )
    METHOD setButtonCancel()   
    METHOD setButtonEnd()      
+
+   // Metodos para manejar el metter
+
    METHOD setMeterTotal( nTotal );
                               INLINE ( ::oSender:setMeterTotal( nTotal ) )
    METHOD setMeter( nSet )    INLINE ( ::oSender:setMeter( nSet ) )
+
+   // Metodos para mostrar la informacion
 
    METHOD messenger( cText )  INLINE ( iif(  !empty(::oSender:oTree),;
                                              ::oSender:oTree:Select( ::oSender:oTree:Add( cText) ),;
                                              ) )
 
    METHOD initMessage()       INLINE ( ::messenger( "Se ha iniciado el proceso de envio" ) )
+   METHOD sendMessage( hMail) INLINE ( ::messenger( "Se ha enviado el correo electrónico " + ::getMailsFromHash( hMail ) ) )
    METHOD endMessage()        INLINE ( iif(  ::lCancel,;
                                              ::messenger( "El envio ha sido cancelado por el usuario" ),;
                                              ::messenger( "El proceso de envio ha finalizado" ) ) )
 
+   // Envios de los mails
+
    METHOD sendList( aMails )
    METHOD sendMail( hMail )
       METHOD sendJMailServer( hMail )
+
       METHOD sendOutlookServer( hMail ) 
          METHOD setRecipientsOutlookServer( oMail, hMail )
          METHOD setRecipientsCCOutlookServer( oMail, cRecipients )
          METHOD setAttachmentOutlookServer( oMail, hMail )
+         METHOD setMessageOutlookServer( oMail, hMail )
+         METHOD setSubjectOutlookServer( oMail, hMail )
 
-   METHOD isMailServer()      INLINE ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
-   
-   METHOD getMensajeHTML()    INLINE ( "<HTML>" + strtran( alltrim( ::oSender:cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
-
-/*
-   METHOD isMailServer()      INLINE ( msgAlert( !empty( ::mailServer ), "!empty( ::mailServer )" ),;
-                                       msgAlert( ::mailServer, "::mailServer" ),; 
-                                       msgAlert( !empty( ::mailServerUserName ), "!empty( ::mailServerUserName )" ),;
-                                       msgAlert( ::mailServerUserName, "::mailServerUserName" ),; 
-                                       msgAlert( !empty( ::mailServerPassword ), "!empty( ::mailServerPassword )" ),;
-                                       msgAlert( ::mailServerPassword, "::mailServerPassword" ),;
-                                       !empty( ::mailServer ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) ) 
-*/
-
-   METHOD mailServerString()  INLINE ( ::mailServer + if( !empty( ::mailServerPort ), ":" + alltrim( str( ::mailServerPort ) ), "" ) )
+   // Construir objetos para envio de mails
 
    METHOD buildMailerObject()
       METHOD buildOutlookServer()
       METHOD buildJMailServer()
    METHOD endMailerObject()   INLINE ( iif( !empty( ::mailServer ), ::mailServer:end(), ) )
+
+   // Utilidades
+
+   METHOD isMailServer()      INLINE ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
+   METHOD mailServerString()  INLINE ( ::mailServer + if( !empty( ::mailServerPort ), ":" + alltrim( str( ::mailServerPort ) ), "" ) )
+
+   METHOD getMailsFromHash( hMail ) ;
+                              INLINE ( iif( hhaskey( hMail, "mail" ), hGet( hMail, "mail" ), nil ) )      
+   
+   METHOD getMensajeHTML()    INLINE ( "<HTML>" + strtran( alltrim( ::oSender:cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
 
 END CLASS
 
@@ -101,7 +110,9 @@ METHOD sendList( aMails ) CLASS TSendMail
    if ::buildMailerObject()
 
       for each hMail in aMails
-         ::sendMail( hMail )
+         if ::sendMail( hMail )
+            ::sendMessage( hMail )
+         end if
          ::setMeter( hb_EnumIndex() ) 
       next 
 
@@ -118,13 +129,15 @@ Return ( Self )
 
 METHOD sendMail( hMail ) CLASS TSendMail
 
+   local lSendMail   := .f.
+
    if ::isMailServer()
-      ::sendJMailServer( hMail )
+      lSendMail      := ::sendJMailServer( hMail )
    else
-      ::sendOutlookServer( hMail )
+      lSendMail      := ::sendOutlookServer( hMail )
    end if
 
-Return ( Self )
+Return ( lSendMail )
 
 //--------------------------------------------------------------------------//
 
@@ -141,7 +154,7 @@ METHOD sendJMailServer( hMail ) CLASS TSendMail
    local lNoAuth
    local nTimeOut
    local cReplyTo
-   local lTLS, cSMTPPass, cCharset, cEncoding, cClientHost
+   local lTLS, cSMTPPass, cCharset, cEncoding, cClientHost, xCC, xBCC
 
    if hhaskey( hMail, "mail" )
       cMails                  := hGet( hMail, "mail" )      
@@ -155,18 +168,41 @@ METHOD sendJMailServer( hMail ) CLASS TSendMail
       cAttachment             := hGet( hMail, "attachments" )      
    end if 
 
+   msgAlert( hb_SendMail(  "smpt.zemtrum.es",;
+                           587,;
+                           "mcalero@zemtrum.es",;
+                           "mcalero@zemtrum.es",;
+                           xCC,;
+                           xBCC,;
+                           "cBody",;
+                           "cSubject",;
+                           aFiles,;
+                           "mcalero@zemtrum.es",;
+                           "123456Zx",;
+                           "pop3.zemtrum.es",;
+                           nPriority,;
+                           .t.,;
+                           .f.,;
+                           .t.,;
+                           lNoAuth,;
+                           nTimeOut,;
+                           cReplyTo,;
+                           lTLS,;
+                           cSMTPPass,;
+                           cCharset,;
+                           cEncoding,;
+                           cClientHost ),;
+                           "resultado de envio" )
+
+   return .t.
+
 /*
    msgAlert( cMails )
    msgAlert( cMessage )
    msgAlert( cAttachment )
-
-   msgAlert( hb_SendMail(  "localhost", 587, "mcalero@zemtrum.es", "mcalero@zemtrum.es", , , "cBody", "cSubject", ;
-                           aFiles, "mcalero@zemtrum.es", "123456Zx", "pop3.zemtrum.es", nPriority, .t., ;
-                           .f., .t., lNoAuth, nTimeOut, cReplyTo, ;
-                           lTLS, cSMTPPass, cCharset, cEncoding, cClientHost ), "resultado de envio" )
+*/
 
    msgAlert( hb_SendMail( ::mailServerHost, ::mailServerPort, ::oSender:cGetDe, cMails, , , , ::oSender:cGetAsunto, , ::mailServerUserName, ::mailServerPassword ) )
-*/
 
    if !empty( ::mailServer )
 
@@ -226,7 +262,6 @@ METHOD sendOutlookServer( hMail)
    local oMail
    local oError
    local oBlock
-   local oRecipient
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -237,12 +272,11 @@ METHOD sendOutlookServer( hMail)
 
       ::setAttachmentOutlookServer( oMail, hMail )
 
-      ::setRecipientsCCOutlookServer( oMail, ::oSender:cGetCopia )
+      ::setRecipientsCCOutlookServer( oMail, hMail )
 
-      oMail:Subject     := ::oSender:cGetAsunto
+      ::setMessageOutlookServer( oMail, hMail )
 
-      oMail:BodyFormat  := 2 // olFormatHTML 
-      oMail:HTMLBody    := ::GetMensajeHTML()
+      ::setSubjectOutlookServer( oMail, hMail )
 
       oMail:Display()
 
@@ -262,15 +296,11 @@ METHOD setRecipientsOutlookServer( oMail, hMail )
 
    local cItem
    local cMails
-   local oRecipient
 
-   if hhaskey( hMail, "mail" )
-      cMails               := hGet( hMail, "mail" )      
-   end if 
-
+   cMails                  := ::getMailsFromHash( hMail )
    if !empty( cMails )
       for each cItem in hb_aTokens( cMails, ";" )
-         oRecipient        := oMail:Recipients:Add( cItem )  
+         oMail:Recipients:Add( cItem )  
       next
    end if
 
@@ -299,16 +329,55 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setRecipientsCCOutlookServer( oMail, cRecipients )
+METHOD setRecipientsCCOutlookServer( oMail, hMail )
 
    local cItem
+   local cMailsCC
    local oRecipient
 
-   if !empty( cRecipients )
-      for each cItem in hb_aTokens( cRecipients, ";" )
+   if hhaskey( hMail, "mailcc" )
+      cMailsCC             := hGet( hMail, "mailcc" )      
+   end if 
+
+   if !empty( cMailsCC )
+      for each cItem in hb_aTokens( cMailsCC, ";" )
          oRecipient        := oMail:Recipients:Add( cItem ) 
          oRecipient:Type   := 2 
       next
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+METHOD setMessageOutlookServer( oMail, hMail )
+
+   local cMessage
+
+   if hhaskey( hMail, "message" )
+      cMessage             := hGet( hMail, "message" )      
+   end if 
+
+   if !empty( cMessage )
+      oMail:BodyFormat     := 2 // olFormatHTML 
+      oMail:HTMLBody       := cMessage
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+METHOD setSubjectOutlookServer( oMail, hMail )
+
+   local cItem
+   local cSubject
+
+   if hhaskey( hMail, "subject" )
+      cSubject             := hGet( hMail, "subject" )      
+   end if 
+
+   if !empty( cSubject )
+      oMail:Subject        := cSubject
    end if
 
 Return ( nil )

@@ -243,7 +243,7 @@ CLASS TTurno FROM TMasDet
 
    DATA  oAni
    DATA  oTxt
-   DATA  aSimula                                   AS ARRAY    INIT {}
+   DATA  aSimula                                   
    DATA  nAsiento                                  AS NUMERIC  INIT 0
    DATA  aFac                                      AS ARRAY    INIT {}
    DATA  aMsg
@@ -861,6 +861,7 @@ METHOD OpenFiles( lExclusive )
       DATABASE NEW ::oFacCliL    PATH ( cPatEmp() ) FILE "FACCLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
       ::oFacCliP := TDataCenter():oFacCliP()
+      ::oFacCliP:OrdSetFocus( "cTurRec" )
 
       DATABASE NEW ::oRctCliT    PATH ( cPatEmp() ) FILE "FacRecT.DBF"     VIA ( cDriver() ) SHARED INDEX "FacRecT.CDX"
       ::oRctCliT:OrdSetFocus( "cTurFac" )
@@ -6190,7 +6191,7 @@ METHOD Contabiliza()
    */
 
    if OpenDiario( cRutCnt(), ::cGetEmpresaContaplus )
-      ::nAsiento  := RetLastAsi()
+      ::nAsiento     := RetLastAsi()
       CloseDiario()
    else
       ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " imposible abrir ficheros de contaplus", 0 )
@@ -6413,7 +6414,7 @@ METHOD Contabiliza()
 
             if ::oFacCliT:dFecFac >= ::dFechaInicio .and. ::oFacCliT:dFecFac <= ::dFechaFin .and. lChkSer( ::oFacCliT:cSerie, ::aSer )
 
-               CntFacCli( ::lChkSimula, .t., nil, .f., ::oTreeSelect, nil, ::aSimula, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, ::oAlbCliT:cAlias, ::oClient:cAlias, ::oDbfDiv:cAlias, ::oArticulo:cAlias, ::oFPago:cAlias, ::oIvaImp:cAlias, ::oNewImp )
+               CntFacCli( ::lChkSimula, .f., nil, .f., ::oTreeSelect, nil, ::aSimula, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, ::oAlbCliT:cAlias, ::oClient:cAlias, ::oDbfDiv:cAlias, ::oArticulo:cAlias, ::oFPago:cAlias, ::oIvaImp:cAlias, ::oNewImp )
 
             end if 
 
@@ -6428,6 +6429,43 @@ METHOD Contabiliza()
       ::oMtrProcess:Set( ::oFacCliT:OrdKeyCount() )
 
    end if
+
+   /*
+   Contabilizar pagos
+   ----------------------------------------------------------------------------
+   */
+
+   if ::lChkContabilizarFactura
+
+      ::oTreeSelect:Add( "Contabilizando pagos de clientes", 1 )
+
+      ::oMtrProcess:SetTotal( ::oFacCliP:OrdKeyCount() )
+
+      ::oFacCliP:GoTop()
+
+      if ::lAllSesions .or. ::oFacCliP:Seek( ::oDbf:cNumTur + ::oDbf:cSufTur )
+
+         while ( ::lAllSesions .or. ::oFacCliP:cTurFac + ::oFacCliP:cSufFac == ::oDbf:cNumTur + ::oDbf:cSufTur ) .and. !::lBreak .and. !::oFacCliP:eof()
+
+            if ::oFacCliP:dFecFac >= ::dFechaInicio .and. ::oFacCliP:dFecFac <= ::dFechaFin .and. lChkSer( ::oFacCliP:cSerie, ::aSer )
+
+               ContabilizaReciboCliente( nil, ::oTreeSelect, ::lChkSimula, ::aSimula, ::oFacCliT:cAlias, ::oFacCliP:cAlias, ::oFPago:cAlias, ::oClient:cAlias, ::oDbfDiv:cAlias, .f. )
+
+               // ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, dbfFacCliP, dbfFPago, dbfCli, dbfDiv, lFromFactura, nAsiento )
+
+            end if 
+
+            ::oFacCliP:Skip()
+
+            ::oMtrProcess:Set( ::oFacCliP:OrdKeyNo() )
+
+         end while
+
+      end if
+
+      ::oMtrProcess:Set( ::oFacCliP:OrdKeyCount() )
+
+   end if 
 
    /*
    Contabilizar facturas rectificativas

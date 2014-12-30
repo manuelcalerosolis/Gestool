@@ -5933,21 +5933,62 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function Test()
-/*
-   local oDlg
-   local oCombo
-   local cCombo   := "uno"
- 
-   DEFINE DIALOG oDlg RESOURCE "Libre"
+Function Test() 
+/*   
+   LOCAL nRet
+   LOCAL oBlat := HBBlat():New()
 
-      REDEFINE COMBOBOX oCombo ;
-         VAR      cCombo ;
-         ITEMS    { "uno", "dos" };
-         ID       180 ;
-         OF       oDlg
- 
-   ACTIVATE DIALOG oDlg CENTER
+   ?
+   ? "HBBlat test"
+
+   oBlat:cFrom                   := "mcalero@zemtrum.es"
+   oBlat:cTo                     := "mcalero@zemtrum.es"
+// oBlat:cUserAUTH               := "myaccount@mydomain.org"
+// oBlat:cPasswordAUTH           := "mypassword"
+// oBlat:cHostname               := "mail.anydomain.com"
+// oBlat:cCC                     := ADDRESS_CC
+// oBlat:cCCFile                 := "f_cc.txt"
+// oBlat:cBCC                    := "info@fsgiudice.com"
+// oBlat:cBCCFile                := "f_bcc.txt"
+// oBlat:cBodyFile               := "c.bin"
+   oBlat:cBody                   := e"Body part\n\rEnd Body"
+   oBlat:cServerSMTP             := "smtp.zemtrum.es"
+   oBlat:cSubject                := "Test from Blat"
+// oBlat:lSuppressSubject        := .T.
+// oBlat:cSubjectFile            := "f_subjct.txt"
+// oBlat:lToUndiscloseRecipients := .T.
+   oBlat:cPostScriptumFile       := "f_ps.txt"
+   oBlat:lRequestDisposition     := .T.          // does not work ???
+   oBlat:lRequestReturnReceipt   := .T.
+
+// oBlat:cAttachTextFiles        := "f_subjct.txt"
+// oBlat:aAttachTextFiles        := { __FILE__, "blatcmd.prg", "f_ps.txt" }
+// oBlat:cAttachListTextFile     := "f_listtx.txt"
+
+   oBlat:cLogFile                := "log.txt"
+   oBlat:lLogTimestamp           := .T.
+   oBlat:lDebug                  := .T.
+   oBlat:lLogOverwrite           := .T.
+
+// oBlat:lSuperDebug             := .T.     // This display internal checking
+
+   ? "Checking options ..."
+// oBlat:Check()
+   ?
+   ? "Command .........: ", oBlat:GetCommand()  // Not necessary - this show complete command line sent to blat
+
+   ? "Sending mail ..."
+   ? "Return Value ....: ", nRet := oBlat:Send()
+
+   ? "Error String ....: ", oBlat:ErrorString()
+
+   // Blat error
+   ? "Blat Error ......: ", oBlat:BlatError()
+   ? "Blat Error String: ", oBlat:BlatErrorString()
+
+   ?
+   ? iif( nRet == 0, "mail sent correctly!", "mail NOT sent" )
+   ?
 */
 Return ( nil )
 
