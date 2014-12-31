@@ -8183,7 +8183,7 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
 
    rxAlbPrv( cPath, oMeter )
 
-   IF lAppend .and. lIsDir( cPathOld )
+   if lAppend .and. lIsDir( cPathOld )
 
       oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
@@ -8211,6 +8211,43 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
 
       dbUseArea( .t., cDriver(), cPathOld + "ALBPRVD.Dbf", cCheckArea( "ALBPRVD", @oldAlbPrvD ), .f. )
       ( oldAlbPrvD )->( ordListAdd( cPathOld + "ALBPRVD.Cdx"  ) )
+
+      /*
+      Pasamos los datos
+      */
+
+      while !( oldAlbPrvT )->( eof() )
+
+         if eval( bFor, oldAlbPrvT )
+
+            dbCopy( oldAlbPrvT, cAlbPrvT, .t. )
+
+            if ( oldAlbPrvL )->( dbSeek( (oldAlbPrvT)->CSERALB + Str( (oldAlbPrvT)->NNUMALB ) + (oldAlbPrvT)->CSUFALB ) )
+               while ( oldAlbPrvL )->CSERALB + Str( ( oldAlbPrvL )->NNUMALB ) + ( oldAlbPrvL )->CSUFALB == (oldAlbPrvT)->CSERALB + Str( (cAlbPrvT)->NNUMALB ) + (cAlbPrvT)->CSUFALB .and. !(oldAlbPrvL)->( eof() )
+                  dbCopy( oldAlbPrvL, cAlbPrvL, .t. )
+                  ( oldAlbPrvL )->( dbSkip() )
+               end while
+            end if
+
+            if ( oldAlbPrvI )->( dbSeek( (oldAlbPrvT)->CSERALB + Str( (oldAlbPrvT)->NNUMALB ) + (oldAlbPrvT)->CSUFALB ) )
+               while ( oldAlbPrvI )->CSERALB + Str( ( oldAlbPrvI )->NNUMALB ) + ( oldAlbPrvI )->CSUFALB == ( oldAlbPrvT )->CSERALB + Str( ( cAlbPrvT )->NNUMALB ) + ( cAlbPrvT )->CSUFALB .and. !( oldAlbPrvI )->( eof() )
+                  dbCopy( oldAlbPrvI, cAlbPrvI, .t. )
+                  ( oldAlbPrvI )->( dbSkip() )
+               end while
+            end if
+
+            if ( oldAlbPrvD )->( dbSeek( (oldAlbPrvT)->CSERALB + Str( (oldAlbPrvT)->NNUMALB ) + (oldAlbPrvT)->CSUFALB ) )
+               while ( oldAlbPrvD )->CSERALB + Str( ( oldAlbPrvD )->NNUMALB ) + ( oldAlbPrvD )->CSUFALB == ( oldAlbPrvT )->CSERALB + Str( ( cAlbPrvT )->NNUMALB ) + ( cAlbPrvT )->CSUFALB .and. !( oldAlbPrvI )->( eof() )
+                  dbCopy( oldAlbPrvD, cAlbPrvD, .t. )
+                  ( oldAlbPrvD )->( dbSkip() )
+               end while
+            end if
+
+         end if
+
+         ( oldAlbPrvT )->( dbSkip() )
+
+      end while
 
       /*
       Cerramos las bases de datos----------------------------------------------

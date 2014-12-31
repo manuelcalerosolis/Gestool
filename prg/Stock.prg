@@ -17,6 +17,8 @@ CLASS TStock
 
    DATA lExclusive
 
+   DATA lStockInit                  INIT .f.
+
    DATA uCodigoAlmacen  
 
    DATA cAlm
@@ -2409,6 +2411,8 @@ METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
 
    if ::lOpenFiles( cPath, .t. )
 
+      ::lStockInit   := .t.
+
       ::lAlbPrv      := .t.
       ::lAlbCli      := .t.
 
@@ -4218,8 +4222,15 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
       for each oStocks in ::aStocks
 
-         if !Empty( oStocks ) .and. ( ( Round( oStocks:nUnidades, 6 ) != 0.000000 ) .or. ( Round( oStocks:nPendientesRecibir, 6 ) != 0.000000 ) .or. ( Round( oStocks:nPendientesEntregar, 6 ) != 0.000000 ) )
-            aAdd( oBrw:aArrayData, oStocks )
+         if !Empty( oStocks ) 
+         
+            if ( ::lStockInit ) .or. ;
+               ( ( ( Round( oStocks:nUnidades, 6 ) != 0.000000 ) .or. ( Round( oStocks:nPendientesRecibir, 6 ) != 0.000000 ) .or. ( Round( oStocks:nPendientesEntregar, 6 ) != 0.000000 ) ) )
+
+               aAdd( oBrw:aArrayData, oStocks )
+
+            end if
+
          end if
 
       next
