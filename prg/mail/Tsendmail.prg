@@ -39,8 +39,11 @@ CLASS TSendMail
    METHOD messenger( cText )  INLINE ( iif(  !empty(::oSender:oTree),;
                                              ::oSender:oTree:Select( ::oSender:oTree:Add( cText) ),;
                                              ) )
+   METHOD deleteMessenger( cText );
+                              INLINE ( iif( !empty(::oSender:oTree), ::oSender:oTree:deleteAll(), ) )
 
-   METHOD initMessage()       INLINE ( ::messenger( "Se ha iniciado el proceso de envio" ) )
+   METHOD initMessage()       INLINE ( ::deleteMessenger(),;
+                                       ::messenger( "Se ha iniciado el proceso de envio" ) )
    METHOD sendMessage( hMail) INLINE ( ::messenger( "Se ha enviado el correo electrónico " + ::getMailsFromHash( hMail ) ) )
    METHOD endMessage()        INLINE ( iif(  ::lCancel,;
                                              ::messenger( "El envio ha sido cancelado por el usuario" ),;

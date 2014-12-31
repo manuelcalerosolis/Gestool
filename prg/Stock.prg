@@ -168,7 +168,7 @@ CLASS TStock
 
    METHOD Duplicados( oMeter, aMsg, cPath )
 
-   METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, lGrupo )
+   METHOD StockInit( cPath, cPathOld, oMsg, lGrupo )
 
    METHOD nStockReservado( cCodArt, cValPr1, cValPr2 )
 
@@ -2376,7 +2376,7 @@ RETURN ( lDup )
 
 //---------------------------------------------------------------------------//
 
-METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, nCalcCosto ) CLASS TStock
+METHOD StockInit( cPath, cPathOld, oMsg, nCalcCosto ) CLASS TStock
 
    local aAlm
    local sStk
@@ -2400,9 +2400,6 @@ METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, nCalcCosto ) CLASS TS
    local oldFacCliL
    local oldFacRecL
 
-   DEFAULT lAlbPrv   := .t.
-   DEFAULT lAlbCli   := .t.
-
    if Empty( cPathOld )
       Return nil
    end if
@@ -2412,8 +2409,8 @@ METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, nCalcCosto ) CLASS TS
 
    if ::lOpenFiles( cPath, .t. )
 
-      ::lAlbPrv      := lAlbPrv
-      ::lAlbCli      := lAlbCli
+      ::lAlbPrv      := .t.
+      ::lAlbCli      := .t.
 
       USE ( cPath + "HisMov.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
       SET ADSINDEX TO ( cPath + "HisMov.Cdx" ) ADDITIVE
@@ -2506,7 +2503,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, nCalcCosto ) CLASS TS
                nNumDoc                       := nNewDoc( nil, dbfHisMov, "nMovAlm", nil, dbfCnt )
                ( dbfRemMov )->nNumRem        := nNumDoc
                ( dbfRemMov )->cSufRem        := RetSufEmp()
-               ( dbfRemMov )->nTipMov        := 4
+               ( dbfRemMov )->nTipMov        := 4 // Consolidación
                ( dbfRemMov )->cCodUsr        := cCurUsr()
                ( dbfRemMov )->cCodDlg        := ""
                ( dbfRemMov )->cCodAge        := ""

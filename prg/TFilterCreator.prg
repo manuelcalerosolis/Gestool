@@ -180,6 +180,8 @@ METHOD ScanStructure( cDescription, nPos )
    local n
    local cValue   := ""
 
+   cDescription   := alltrim( cDescription )
+
    n              := aScan( ::aStructure, {|a| a[ posDescription ] == cDescription } )
    if n != 0
       cValue      := ::aStructure[ n, nPos ]
@@ -639,7 +641,7 @@ METHOD ValidDialog()
       RETURN ( .f. )
    end if
 
-   if Empty( ::DbfReplace() )
+   if Empty( ::dbfReplace() )
       msgStop( "No hay bases de datos para reemplazar")
       RETURN ( .f. )
    end if          
@@ -666,40 +668,40 @@ METHOD EndDialog() CLASS TReplaceDialog
 
    AutoMeterDialog( ::oDlg )
    
-   SetTotalAutoMeterDialog( ( ::DbfReplace() )->( LastRec() ) )
+   SetTotalAutoMeterDialog( ( ::dbfReplace() )->( LastRec() ) )
 
-   nDbfRec        := ( ::DbfReplace() )->( Recno() )
-   nOrdAnt        := ( ::DbfReplace() )->( OrdSetFocus( 0 ) )
-   nFldPos        := ( ::DbfReplace() )->( FieldPos( ::oFilterCreator:GetField( ::cReplace ) ) )
+   nDbfRec        := ( ::dbfReplace() )->( Recno() )
+   nOrdAnt        := ( ::dbfReplace() )->( OrdSetFocus( 0 ) )
+   nFldPos        := ( ::dbfReplace() )->( FieldPos( ::oFilterCreator:GetField( ::cReplace ) ) )
 
    if nFldPos != 0
 
-      ( ::DbfReplace() )->( dbGoTop() )
-      while !( ::DbfReplace() )->( eof() )
+      ( ::dbfReplace() )->( dbGoTop() )
+      while !( ::dbfReplace() )->( eof() )
 
-         cGetVal  := ( ::DbfReplace() )->( Eval( Compile( cGetValue( ::cExpReplace, ValType( ( ::DbfReplace() )->( FieldGet( nFldPos ) ) ) ) ) ) )
+         cGetVal  := ( ::dbfReplace() )->( Eval( Compile( cGetValue( ::cExpReplace, ValType( ( ::dbfReplace() )->( FieldGet( nFldPos ) ) ) ) ) ) )
 
-         if ::lAllRecno .or. ( ::DbfReplace() )->( Eval( ::ExpresionFilter() ) )
+         if ::lAllRecno .or. ( ::dbfReplace() )->( Eval( ::ExpresionFilter() ) )
             
-            if ( ::DbfReplace() )->( dbRLock() )
-               ( ::DbfReplace() )->( FieldPut( nFldPos, cGetVal ) )
-               ( ::DbfReplace() )->( dbUnLock() )
+            if ( ::dbfReplace() )->( dbRLock() )
+               ( ::dbfReplace() )->( FieldPut( nFldPos, cGetVal ) )
+               ( ::dbfReplace() )->( dbUnLock() )
             end if
             
             ++nRpl
 
          end if
 
-         SetAutoMeterDialog( ( ::DbfReplace() )->( Recno() ) )
+         SetAutoMeterDialog( ( ::dbfReplace() )->( Recno() ) )
 
-         ( ::DbfReplace() )->( dbSkip() )
+         ( ::dbfReplace() )->( dbSkip() )
 
       end while
 
    end if
 
-   ( ::DbfReplace() )->( OrdSetFocus( nOrdAnt ) )
-   ( ::DbfReplace() )->( dbGoTo( nDbfRec ) )
+   ( ::dbfReplace() )->( OrdSetFocus( nOrdAnt ) )
+   ( ::dbfReplace() )->( dbGoTo( nDbfRec ) )
 
    msgInfo( "Total de registros reemplazados " + Str( nRpl ), "Proceso finalizado." )
 
