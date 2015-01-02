@@ -58,6 +58,7 @@ Brwvta.prg              	\
 Client.prg              	\
 TGenMail.prg            	\
 TSendMail.prg              \
+TSendMailOutlook.prg       \
 Tiva.prg                	\
 Fpago.prg               	\
 Pedprov.prg             	\
@@ -413,6 +414,7 @@ Provee.obj              \
 Client.obj              \
 TGenMail.obj            \
 TSendMail.obj           \
+TSendMailOutlook.obj    \
 Tiva.obj                \
 Fpago.obj               \
 Pedprov.obj             \
@@ -796,6 +798,7 @@ $(OBJ)\Provee.obj               +
 $(OBJ)\Client.obj               +
 $(OBJ)\TGenMail.obj             +
 $(OBJ)\TSendMail.obj            +
+$(OBJ)\TSendMailOutlook.obj     +
 $(OBJ)\Tiva.obj                 +
 $(OBJ)\Fpago.obj                +
 $(OBJ)\Pedprov.obj              +
