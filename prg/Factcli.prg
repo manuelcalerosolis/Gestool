@@ -11564,7 +11564,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
    local oOutLook
-   local oMail
+   local aMail
    local oRecipient
    local nOrdAnt        := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
    local cFilePdf       := cPatTmp() + "FacturasCliente" + StrTran( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, " ", "" ) + ".Pdf"
@@ -11655,6 +11655,20 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
             if file( cFilePdf )
 
+               aMail    := {  {  "mail" => alltrim( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ),;
+                                 "subject" => "Envío de  factura de cliente número " + D():FacturasClientesIdTextShort( nView ),;
+                                 "attachments" => cFilePdf,;
+                                 "message" => "Adjunto le remito nuestra factura de cliente " + D():FacturasClientesIdTextShort( nView ) + space( 1 ) + ;
+                                             "de fecha " + dtoc( D():FacturasClientesFecha( nView ) ) + space( 1 ) + ;
+                                             CRLF + ;
+                                             CRLF + ;
+                                             "Reciba un cordial saludo." } }
+
+               with object TSendMail():New()
+                  :sendList( aMail )
+               end with
+
+/*
                with object ( TGenMailing():New() )
 
                   :SetTypeDocument( "nFacCli" )
@@ -11672,7 +11686,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :lSend()
 
                end with
-
+*/
             end if
 
       end case

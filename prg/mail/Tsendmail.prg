@@ -17,6 +17,7 @@ CLASS TSendMail
    DATA mailServerUserName
    DATA mailServerPassword
    DATA mailServerConCopia
+   DATA mailServerAuthenticate
    
    METHOD New( oSender )
 
@@ -31,16 +32,16 @@ CLASS TSendMail
    // Metodos para manejar el metter
 
    METHOD setMeterTotal( nTotal );
-                              INLINE ( ::oSender:setMeterTotal( nTotal ) )
-   METHOD setMeter( nSet )    INLINE ( ::oSender:setMeter( nSet ) )
+                              INLINE ( iif( !empty( ::oSender ), ::oSender:setMeterTotal( nTotal ), ) )
+   METHOD setMeter( nSet )    INLINE ( iif( !empty( ::oSender ), ::oSender:setMeter( nSet ), ) )
 
    // Metodos para mostrar la informacion
 
-   METHOD messenger( cText )  INLINE ( iif(  !empty(::oSender:oTree),;
+   METHOD messenger( cText )  INLINE ( iif(  !empty( ::oSender ),;
                                              ::oSender:oTree:Select( ::oSender:oTree:Add( cText) ),;
                                              ) )
    METHOD deleteMessenger( cText );
-                              INLINE ( iif( !empty(::oSender:oTree), ::oSender:oTree:deleteAll(), ) )
+                              INLINE ( iif( !empty( ::oSender ), ::oSender:oTree:deleteAll(), ) )
 
    METHOD initMessage()       INLINE ( ::deleteMessenger(),;
                                        ::messenger( "Se ha iniciado el proceso de envio" ) )
@@ -52,8 +53,11 @@ CLASS TSendMail
    // Envios de los mails
 
    METHOD sendList( aMails )
+
    METHOD sendMail( hMail )
       METHOD sendJMailServer( hMail )
+      METHOD setRecipientsJMailServer( oMail, hMail )
+      METHOD setAttachmentJmailServer( oMail, hMail )
 
       METHOD sendOutlookServer( hMail ) 
          METHOD setRecipientsOutlookServer( oMail, hMail )
@@ -85,15 +89,17 @@ END CLASS
 
 METHOD New( oSender ) CLASS TSendMail
 
-   ::oSender               := oSender
+   ::mailServerHost           := Rtrim( uFieldEmpresa( "cSrvMai" ) )
+   ::mailServerPort           := uFieldEmpresa( "nPrtMai" )
+   ::mailServerUserName       := Rtrim( uFieldEmpresa( "cCtaMai" ) )
+   ::mailServerPassword       := Rtrim( uFieldEmpresa( "cPssMai" ) )
+   ::mailServerConCopia       := Rtrim( uFieldEmpresa( "cCcpMai" ) )
+   ::mailServerAuthenticate   := uFieldEmpresa( "lAutMai")
 
-   ::mailServerHost        := Rtrim( uFieldEmpresa( "cSrvMai" ) )
-   ::mailServerPort        := uFieldEmpresa( "nPrtMai" )
-   ::mailServerUserName    := Rtrim( uFieldEmpresa( "cCtaMai" ) )
-   ::mailServerPassword    := Rtrim( uFieldEmpresa( "cPssMai" ) )
-   ::mailServerConCopia    := Rtrim( uFieldEmpresa( "cCcpMai" ) )
-
-   ::setView( oSender:nView )
+   if !empty( oSender )
+      ::oSender               := oSender
+      ::setView( oSender:nView )
+   end if 
 
 Return ( Self )
 
@@ -146,6 +152,7 @@ Return ( lSendMail )
 
 METHOD sendJMailServer( hMail ) CLASS TSendMail
 
+   local oMail
    local cItem
    local cMails     
    local cMessage             
@@ -159,112 +166,76 @@ METHOD sendJMailServer( hMail ) CLASS TSendMail
    local cReplyTo
    local lTLS, cSMTPPass, cCharset, cEncoding, cClientHost, xCC, xBCC
 
-   if hhaskey( hMail, "mail" )
-      cMails                  := hGet( hMail, "mail" )      
-   end if 
-
-   if hhaskey( hMail, "message" )
-      cMessage                := hGet( hMail, "message" )      
-   end if 
-
-   if hhaskey( hMail, "attachments" )
-      cAttachment             := hGet( hMail, "attachments" )      
-   end if 
-
-   msgAlert( hb_SendMail(  "smpt.zemtrum.es",;
-                           587,;
-                           "mcalero@zemtrum.es",;
-                           "mcalero@zemtrum.es",;
-                           xCC,;
-                           xBCC,;
-                           "cBody",;
-                           "cSubject",;
-                           aFiles,;
-                           "mcalero@zemtrum.es",;
-                           "123456Zx",;
-                           "pop3.zemtrum.es",;
-                           nPriority,;
-                           .t.,;
-                           .f.,;
-                           .t.,;
-                           lNoAuth,;
-                           nTimeOut,;
-                           cReplyTo,;
-                           lTLS,;
-                           cSMTPPass,;
-                           cCharset,;
-                           cEncoding,;
-                           cClientHost ),;
-                           "resultado de envio" )
-
-   return .t.
+   oMail                := win_oleCreateObject( "CDO.Message" )
+   oMail:Configuration  := ::mailServer 
+   oMail:From           := "mcalero@zemtrum.es"
 
 /*
-   msgAlert( cMails )
-   msgAlert( cMessage )
-   msgAlert( cAttachment )
+   ::setRecipientsJMailServer( oMail, hMail )
+
+   oMail:Subject        := "Test"
+   oMail:MDNRequested   := .t.
+   oMail:TextBody       := "cMensaje"
 */
+      ::setRecipientsJMailServer( oMail, hMail )
 
-   msgAlert( hb_SendMail( ::mailServerHost, ::mailServerPort, ::oSender:cGetDe, cMails, , , , ::oSender:cGetAsunto, , ::mailServerUserName, ::mailServerPassword ) )
+      ::setAttachmentJmailServer( oMail, hMail )
 
-   if !empty( ::mailServer )
+      //::setRecipientsCCOutlookServer( oMail, hMail )
 
-      // ::mailServer:FromName   := rtrim( ::oSender:cGetDe )
-      ::mailServer:Subject    := rtrim( ::oSender:cGetAsunto )
+      //::setMessageOutlookServer( oMail, hMail )
 
-      ::mailServer:appendHTML( cMessage )
+      ::setSubjectOutlookServer( oMail, hMail )
 
-      if !empty( cMails )
-         for each cItem in hb_aTokens( cMails, ";" )
-            ::mailServer:AddRecipient( cItem )
-         next
-      end if
+   oMail:Send()
 
-      if !empty( ::cGetPara )
-         for each cItem in hb_aTokens( ::cGetPara, ";" )
-            ::mailServer:AddRecipient( cItem )
-         next
-      end if
-
-      if !empty( ::cGetCopia )
-         for each cItem in hb_aTokens( ::cGetCopia, ";" )
-            ::mailServer:AddRecipientBCC( cItem )
-         next
-      end if
-
-      if !empty( ::cGetCopia )
-         for each cItem in hb_aTokens( ::cGetCopia, ";" )
-            ::mailServer:AddRecipientBCC( cItem )
-         next
-      end if
-
-      if !empty( cAttachment )
-         for each cItem in hb_aTokens( cAttachment, ";" )
-            if file( rtrim( cItem ) )
-               ::mailServer:AddAttachment( rtrim( cItem ) )
-            end if 
-         next
-      end if
-
-      lSendMail            := ::mailServer:Send( ::mailServerString() )
-
-      if !lSendMail
-         ::messenger( "Error al enviar correo electrónico." + CRLF + ::mailServer:ErrorMessage )
-      else
-         ::messenger( "Correo electrónico a " + cMails + " enviado." )
-      end if
-
-   end if
-
-Return ( lSendMail )
+Return .t.
 
 //--------------------------------------------------------------------------//
+
+METHOD setRecipientsJMailServer( oMail, hMail )
+
+   local cMails
+
+   cMails                  := ::getMailsFromHash( hMail )
+   if !empty( cMails )
+      oMail:To             := cMails
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+METHOD setAttachmentJmailServer( oMail, hMail )
+
+   local cItem
+   local cAttachments
+
+   if hhaskey( hMail, "attachments" )
+      cAttachments         := hGet( hMail, "attachments" )      
+   end if 
+
+   if !empty( cAttachments )
+      for each cItem in hb_aTokens( cAttachments, ";" )
+         if file( rtrim( cItem ) )
+            msgAlert( rtrim( cItem ) )
+            oMail:AddAttachment( rtrim( cItem ) )
+         end if 
+      next
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+
 
 METHOD sendOutlookServer( hMail)
 
    local oMail
    local oError
    local oBlock
+   local lSend          := .t.
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -285,13 +256,15 @@ METHOD sendOutlookServer( hMail)
 
    RECOVER USING oError
 
+      lSend             := .f.
+
       msgStop( "Error al enviar el objeto de correo electrónico." + CRLF + ErrorMessage( oError ) )   
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
-Return ( self )
+Return ( lSend )
 
 //--------------------------------------------------------------------------//
 
@@ -389,7 +362,9 @@ Return ( nil )
 
 METHOD setButtonCancel() CLASS TSendMail
 
-   ::oSender:oBtnCancel:bAction := {|| ::lCancel := .t. }
+   if !empty( ::oSender )
+      ::oSender:oBtnCancel:bAction := {|| ::lCancel := .t. }
+   end if 
 
 Return ( self )
 
@@ -397,7 +372,9 @@ Return ( self )
 
 METHOD setButtonEnd() CLASS TSendMail
 
-   ::oSender:oBtnCancel:bAction := {|| ::oSender:oDlg:End() } 
+   if !empty( ::oSender )
+      ::oSender:oBtnCancel:bAction := {|| ::oSender:oDlg:End() } 
+   end if 
 
 Return ( self )
 
@@ -405,13 +382,15 @@ Return ( self )
 
 METHOD buildMailerObject() CLASS TSendMail
 
+   local lBuild
+
    if ::isMailServer()
-      ::buildJMailServer()
+      lBuild   := ::buildJMailServer()
    else
-      ::buildOutlookServer()
+      lBuild   := ::buildOutlookServer()
    end if 
 
-Return ( .t. )
+Return ( lBuild )
 
 //--------------------------------------------------------------------------//
 
@@ -446,28 +425,24 @@ METHOD buildJMailServer() CLASS TSendMail
    local oError
    local oBlock
 
-   return .t. 
-
    oBlock                              := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::mailServer                     := win_oleCreateObject( "JMail.Message" )
-      ::mailServer:Logging             := .t.
-      ::mailServer:Silent              := .t.
+      ::mailServer                     := win_oleCreateObject( "CDO.Configuration" )
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserver" ):Value      := ::mailServerHost
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserverport" ):Value  := ::mailServerPort
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusing" ):Value       := 2
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpauthenticate" ):Value := ::mailServerAuthenticate
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpusessl" ):Value      := .f.
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusername" ):Value    := ::mailServerUserName
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendpassword" ):Value    := ::mailServerPassword
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout"):Value := 30
 
-      ::mailServer:MailServerUserName  := ::mailServerUserName
-      ::mailServer:MailServerPassword  := ::mailServerPassword
-      ::mailServer:From                := ::mailServerUserName
-
-      msgAlert(::mailServerUserName, "::mailServerUserName" )
+      ::mailServer:Fields:Update()
 
    RECOVER USING oError
 
       msgStop( "Error al crear el objeto de correo electrónico." + CRLF + ErrorMessage( oError ) )   
-
-      WaitRun( "regsvr32 /s " + fullcurDir() + "JMail.Dll" )
-
-      // ::mailServer                     := win_oleCreateObject( "JMail.Message" )
 
    END SEQUENCE
 

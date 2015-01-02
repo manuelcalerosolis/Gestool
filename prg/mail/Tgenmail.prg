@@ -102,13 +102,14 @@ CLASS TGenMailing
 
    METHOD getWorkArea()                INLINE ( D():Clientes( ::nView ) )
 
-   METHOD SetAsunto( cText )           INLINE ( ::cSubject   := Padr( cText, 250 ) )
+   METHOD SetAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
    METHOD SetAdjunto( cText )          INLINE ( ::cGetAdjunto  := Padr( cText, 250 ) )
    METHOD SetHtml( cText )             INLINE ( ::cGetHtml     := Padr( cText, 250 ) )
    METHOD SetDe( cText )               INLINE ( ::cGetDe       := Padr( cText, 250 ) )
    METHOD SetPara( cText )             INLINE ( ::cGetPara     := Padr( cText, 250 ) )
    METHOD SetCopia( cText )            INLINE ( ::cGetCopia    := Padr( cText, 250 ) )
    METHOD SetItems( aItems )           INLINE ( ::aItems       := aItems )
+   METHOD setAlias( cAlias )           INLINE ( nil )
 
    METHOD AddAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
 
