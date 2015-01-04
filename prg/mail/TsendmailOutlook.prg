@@ -33,9 +33,7 @@ END CLASS
 
 METHOD New( oSender ) 
 
-   if !empty( oSender )
-      ::oSender               := oSender
-   end if 
+   ::oSender         := oSender
 
    ::buildServer()
 
@@ -96,8 +94,8 @@ Return ( lSend )
 METHOD setRecipientsServer( oMail, hMail )
 
    local cItem
-   local cMails            := ::oSender:getMailsFromHash( hMail )
-   
+   local cMails            := ::oSender:getFromHash( hMail, "mail" )
+
    if !empty( cMails )
       for each cItem in hb_aTokens( cMails, ";" )
          oMail:Recipients:Add( cItem )  
@@ -111,11 +109,7 @@ Return ( nil )
 METHOD setAttachmentServer( oMail, hMail )
 
    local cItem
-   local cAttachments
-
-   if hhaskey( hMail, "attachments" )
-      cAttachments         := hGet( hMail, "attachments" )      
-   end if 
+   local cAttachments      := ::oSender:getFromHash( hMail, "attachments" )      
 
    if !empty( cAttachments )
       for each cItem in hb_aTokens( cAttachments, ";" )
@@ -132,12 +126,8 @@ Return ( nil )
 METHOD setRecipientsCCServer( oMail, hMail )
 
    local cItem
-   local cMailsCC
    local oRecipient
-
-   if hhaskey( hMail, "mailcc" )
-      cMailsCC             := hGet( hMail, "mailcc" )      
-   end if 
+   local cMailsCC          := ::oSender:getFromHash( hMail, "mailcc" )      
 
    if !empty( cMailsCC )
       for each cItem in hb_aTokens( cMailsCC, ";" )
@@ -152,11 +142,7 @@ Return ( nil )
 
 METHOD setMessageServer( oMail, hMail )
 
-   local cMessage
-
-   if hhaskey( hMail, "message" )
-      cMessage             := hGet( hMail, "message" )      
-   end if 
+   local cMessage          := ::oSender:getFromHash( hMail, "message" )      
 
    if !empty( cMessage )
       oMail:BodyFormat     := 2 // olFormatHTML 
@@ -170,11 +156,7 @@ Return ( nil )
 METHOD setSubjectServer( oMail, hMail )
 
    local cItem
-   local cSubject
-
-   if hhaskey( hMail, "subject" )
-      cSubject             := hGet( hMail, "subject" )      
-   end if 
+   local cSubject          := ::oSender:getFromHash( hMail, "subject" )      
 
    if !empty( cSubject )
       oMail:Subject        := cSubject

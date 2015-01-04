@@ -6,7 +6,6 @@
 CLASS TSendMail
 
    DATA oSender
-   DATA nView
 
    DATA lCancel               INIT .f.
 
@@ -23,8 +22,6 @@ CLASS TSendMail
 
    // Metodos para controlar la vista
 
-   METHOD setView( nView )    INLINE ( ::nView  := nView )
-   METHOD getView()           INLINE ( ::nView )
    METHOD getTime()           INLINE ( val( ::oSender:cTiempo ) )
    METHOD setButtonCancel()   
    METHOD setButtonEnd()      
@@ -58,7 +55,6 @@ CLASS TSendMail
    // Construir objetos para envio de mails
 
    METHOD buildMailerObject()
-   METHOD endMailerObject()   INLINE ( iif( !empty( ::mailServer ), ::mailServer:end(), ) )
 
    // Utilidades
 
@@ -80,17 +76,14 @@ END CLASS
 
 METHOD New( oSender ) CLASS TSendMail
 
+   ::oSender                  := oSender
+   
    ::mailServerHost           := Rtrim( uFieldEmpresa( "cSrvMai" ) )
    ::mailServerPort           := uFieldEmpresa( "nPrtMai" )
    ::mailServerUserName       := Rtrim( uFieldEmpresa( "cCtaMai" ) )
    ::mailServerPassword       := Rtrim( uFieldEmpresa( "cPssMai" ) )
    ::mailServerConCopia       := Rtrim( uFieldEmpresa( "cCcpMai" ) )
    ::mailServerAuthenticate   := uFieldEmpresa( "lAutMai")
-
-   if !empty( oSender )
-      ::oSender               := oSender
-      ::setView( oSender:nView )
-   end if 
 
 Return ( Self )
 
@@ -115,8 +108,6 @@ METHOD sendList( aMails ) CLASS TSendMail
          end if
          ::setMeter( hb_EnumIndex() ) 
       next 
-
-      ::endMailerObject()
 
    end if 
 
@@ -160,7 +151,3 @@ METHOD buildMailerObject() CLASS TSendMail
 Return ( !empty( ::mailServer ) )
 
 //--------------------------------------------------------------------------//
-
-
-
-
