@@ -561,22 +561,22 @@ CLASS TTurno FROM TMasDet
    Method DesignReport( dbfDoc )
 
    Method cTxtAlbaranCliente()  Inline ( ::oAlbCliT:cSerAlb + "/" + Alltrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + Alltrim( ::oAlbCliT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliT:dFecAlb ) + Space( 1 ) + ( ::oAlbCliT:cTimCre ) + Space( 1 ) + ::oAlbCliT:cCodCaj + Space( 1 ) + Rtrim( ::oAlbCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAlbCliT:cNomCli ) )
-   Method nTotAlbaranCliente()  Inline ( nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias(), nil, cDivEmp(), .f., .t. ) )
+   Method nTotAlbaranCliente()  Inline ( ::oAlbCliT:nTotAlb )
    Method nCntAlbaranCliente()  Inline ( nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias(), nil, cDivEmp(), .f., .f. ) )
    Method bEdtAlbaranCliente()
 
    Method cTxtFacturaCliente()  Inline ( ::oFacCliT:cSerie + "/" + Alltrim( Str( ::oFacCliT:nNumFac ) ) + "/" + Alltrim( ::oFacCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliT:dFecFac ) + Space( 1 ) + ( ::oFacCliT:cTimCre ) + Space( 1 ) + ::oFacCliT:cCodCaj + Space( 1 ) + Rtrim( ::oFacCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oFacCliT:cNomCli ) )
-   Method nTotFacturaCliente()  Inline ( nTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, nil, cDivEmp(), .f., .t. ) )
+   Method nTotFacturaCliente()  Inline ( ::oFacCliT:nTotFac )
    Method nCntFacturaCliente()  Inline ( nTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, nil, cDivEmp(), .f., .f. ) )
    Method bEdtFacturaCliente()
 
    Method cTxtFacturaRectificativaCliente()  Inline ( ::oRctCliT:cSerie + "/" + Alltrim( Str( ::oRctCliT:nNumFac ) ) + "/" + Alltrim( ::oRctCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctCliT:dFecFac ) + Space( 1 ) + ( ::oRctCliT:cTimCre ) + Space( 1 ) + ::oRctCliT:cCodCaj + Space( 1 ) + Rtrim( ::oRctCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oRctCliT:cNomCli ) )
-   Method nTotFacturaRectificativaCliente()  Inline ( nTotFacRec( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
+   Method nTotFacturaRectificativaCliente()  Inline ( ::oRctCliT:nTotFac )
    Method nCntFacturaRectificativaCliente()  Inline ( nTotFacRec( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .f. ) )
    Method bEdtFacturaRectificativaCliente()
 
    Method cTxtTiketCliente()    Inline ( ::oTikT:cSerTik + "/" + Alltrim( ::oTikT:cNumTik ) + "/" + Alltrim( ::oTikT:cSufTik ) + Space( 1 ) + Dtoc( ::oTikT:dFecTik ) + Space( 1 ) + ( ::oTikT:cHorTik ) + Space( 1 ) + ::oTikT:cNcjTik + Space( 1 ) + Rtrim( ::oTikT:cCliTik ) + Space( 1 ) + Rtrim( ::oTikT:cNomTik ) )
-   Method nTotTiketCliente()    Inline (  nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
+   Method nTotTiketCliente()    Inline ( ::oTikT:nTotTik )
    Method nCntTiketCliente()    Inline ( nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .f. ) )
 
    Method bEdtTiketCliente()
