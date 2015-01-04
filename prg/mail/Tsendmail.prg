@@ -77,7 +77,7 @@ END CLASS
 METHOD New( oSender ) CLASS TSendMail
 
    ::oSender                  := oSender
-   
+
    ::mailServerHost           := Rtrim( uFieldEmpresa( "cSrvMai" ) )
    ::mailServerPort           := uFieldEmpresa( "nPrtMai" )
    ::mailServerUserName       := Rtrim( uFieldEmpresa( "cCtaMai" ) )
@@ -143,7 +143,7 @@ Return ( self )
 METHOD buildMailerObject() CLASS TSendMail
 
    if ::isMailServer()
-      // lBuild   := ::buildJMailServer()
+      ::mailServer   := TSendMailCDO():New( self )
    else
       ::mailServer   := TSendMailOutlook():New( self )
    end if 

@@ -59,6 +59,7 @@ Client.prg              	\
 TGenMail.prg            	\
 TSendMail.prg              \
 TSendMailOutlook.prg       \
+TSendMailCDO.prg           \
 Tiva.prg                	\
 Fpago.prg               	\
 Pedprov.prg             	\
@@ -415,6 +416,7 @@ Client.obj              \
 TGenMail.obj            \
 TSendMail.obj           \
 TSendMailOutlook.obj    \
+TSendMailCDO.obj        \
 Tiva.obj                \
 Fpago.obj               \
 Pedprov.obj             \
@@ -799,6 +801,7 @@ $(OBJ)\Client.obj               +
 $(OBJ)\TGenMail.obj             +
 $(OBJ)\TSendMail.obj            +
 $(OBJ)\TSendMailOutlook.obj     +
+$(OBJ)\TSendMailCDO.obj         +
 $(OBJ)\Tiva.obj                 +
 $(OBJ)\Fpago.obj                +
 $(OBJ)\Pedprov.obj              +

@@ -587,11 +587,11 @@ CLASS TTurno FROM TMasDet
    Method bEdtAnticipoCliente()
 
    Method cTxtAlbaranProveedor() Inline ( ::oAlbPrvT:cSerAlb + "/" + Alltrim( Str( ::oAlbPrvT:nNumAlb ) ) + "/" + Alltrim( ::oAlbPrvT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbPrvT:dFecAlb ) + Space( 1 ) + ( ::oAlbPrvT:cTimChg ) + Space( 1 ) + ::oAlbPrvT:cCodCaj + Space( 1 ) + Rtrim( ::oAlbPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oAlbPrvT:cNomPrv ) )
-   Method nTotAlbaranProveedor() Inline ( nTotAlbPrv( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias ) )
+   Method nTotAlbaranProveedor() Inline ( ::oAlbPrvT:nTotAlb )
    Method bEdtAlbaranProveedor()
 
    Method cTxtFacturaProveedor() Inline ( ::oFacPrvT:cSerFac + "/" + Alltrim( Str( ::oFacPrvT:nNumFac ) ) + "/" + Alltrim( ::oFacPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvT:dFecFac ) + Space( 1 ) + ( ::oFacPrvT:cTimChg ) + Space( 1 ) + ::oFacPrvT:cCodCaj + Space( 1 ) + Rtrim( ::oFacPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oFacPrvT:cNomPrv ) )
-   Method nTotFacturaProveedor() Inline ( nTotFacPrv( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias ) )
+   Method nTotFacturaProveedor() Inline ( ::oFacPrvT:nTotFac )
    Method bEdtFacturaProveedor()
 
    Method cTxtFacturaRectificativaProveedor() Inline ( ::oRctPrvT:cSerFac + "/" + Alltrim( Str( ::oRctPrvT:nNumFac ) ) + "/" + Alltrim( ::oRctPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctPrvT:dFecFac ) + Space( 1 ) + ( ::oRctPrvT:cTimChg ) + Space( 1 ) + ::oRctPrvT:cCodCaj + Space( 1 ) +Rtrim( ::oRctPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oRctPrvT:cNomPrv ) )
@@ -5274,7 +5274,7 @@ METHOD TotCompra( cTurno, cCaja )
    end if
 
    if !Empty( ::oTxt )
-      ::oTxt:SetText( 'Calculando compras' )
+      ::oTxt:SetText( 'Calculando albaran de proveedores' )
    end if
 
    if ::oAlbPrvT:Seek( cTurno + cCaja )
@@ -5303,6 +5303,10 @@ METHOD TotCompra( cTurno, cCaja )
       ::oMeter:SetTotal( ::oFacPrvT:LastRec() )
    end if
 
+   if !Empty( ::oTxt )
+      ::oTxt:SetText( 'Calculando facturas de proveedores' )
+   end if
+
    if ::oFacPrvT:Seek( cTurno + cCaja )
 
       while ::oFacPrvT:cTurFac + ::oFacPrvT:cSufFac + ::oFacPrvT:cCodCaj == cTurno + cCaja .and. !::oFacPrvT:Eof()
@@ -5325,6 +5329,10 @@ METHOD TotCompra( cTurno, cCaja )
 
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oRctPrvT:LastRec() )
+   end if
+
+   if !Empty( ::oTxt )
+      ::oTxt:SetText( 'Calculando facturas rectificativas de proveedores' )
    end if
 
    if ::oRctPrvT:Seek( cTurno + cCaja )

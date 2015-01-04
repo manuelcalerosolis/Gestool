@@ -10,7 +10,6 @@ CLASS TSendMailOutlook
    DATA mailServer
 
    METHOD New( oSender )
-   METHOD end()               INLINE ( iif( !empty( ::mailServer ), ::mailServer:end(), ) )
 
    // Construir objetos para envio de mails
 
