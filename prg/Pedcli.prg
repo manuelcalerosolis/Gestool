@@ -12455,7 +12455,7 @@ RETURN ( Round( nCalculo, nDec ) )
 
 FUNCTION cDesPedCli( cPedCliL )
 
-   DEFAULT cPedCliL  := cPedCliL
+   DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
 
 RETURN ( Descrip( cPedCliL ) )
 
@@ -14609,6 +14609,7 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
 
       do case
          case nDevice == IS_SCREEN
+
             oFr:ShowPreparedReport()
 
          case nDevice == IS_PRINTER

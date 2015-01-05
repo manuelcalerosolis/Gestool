@@ -881,7 +881,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := if( Empty( AllTrim( aIniCli[3] ) ), "Campo definido 3", AllTrim( aIniCli[3] ) )
          :cSortOrder       := "cUsrDef03"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->cUsrDef03 }
-         :nWidth           := 120
+         :nWidth           := 120 
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
       end with
@@ -889,6 +889,13 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :bEditValue       := {|| if( !Empty( ( D():Get( "Client", nView ) )->cAgente ), ( D():Get( "Client", nView ) )->cAgente + " - " + RetNbrAge( ( D():Get( "Client", nView ) )->cAgente, cAgente ), "" ) }
+         :nWidth           := 200
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Cod. Web"
+          :bEditValue       := {|| AllTrim( Str( ( D():Get( "Client", nView ) )->cCodWeb ) ) }
          :nWidth           := 200
          :lHide            := .t.
       end with

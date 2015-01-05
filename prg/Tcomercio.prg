@@ -5746,136 +5746,140 @@ METHOD AppendPedidoprestashop() CLASS TComercio
                dFecha                  := Ctod( Left( oQuery:FieldGetByName( "date_add" ), 10 ) )
                SET DATE FORMAT "dd/mm/yyyy"
 
-               ::oPedCliT:Append()
-               ::oPedCliT:Blank()
+               if dFecha >= uFieldEmpresa( "dIniOpe" ) .and. dFecha <= uFieldEmpresa( "dFinOpe" )
 
-               ::oPedCliT:cSerPed      := cSerPed
-               ::oPedCliT:nNumPed      := nNumPed
-               ::oPedCliT:cSufPed      := cSufPed
-               ::oPedCliT:cSuPed       := oQuery:FieldGetByName( "reference" )
-               ::oPedCliT:cTurPed      := cCurSesion()
-               ::oPedCliT:dFecPed      := dFecha
-               ::oPedCliT:cCodAlm      := oUser():cAlmacen()
-               ::oPedCliT:cCodCaj      := oUser():cCaja()
-               ::oPedCliT:cCodObr      := "@" + AllTrim( Str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
-               ::oPedCliT:cCodPgo      := cFPagoWeb( AllTrim( oQuery:FieldGetByName( "module" ) ), ::oFPago:cAlias )
-               ::oPedCliT:nEstado      := 1
-               ::oPedCliT:nTarifa      := 1
-               ::oPedCliT:cDivPed      := cDivEmp()
-               ::oPedCliT:nVdvPed      := nChgDiv( cDivEmp(), ::oDivisas:cAlias )
-               ::oPedCliT:lSndDoc      := .t.
-               ::oPedCliT:lIvaInc      := uFieldEmpresa( "lIvaInc" )
-               ::oPedCliT:cManObr      := Padr( "Gastos envio", 250 )
-               ::oPedCliT:nManObr      := oQuery:FieldGetByName( "total_shipping_tax_excl" )
-               ::oPedCliT:nIvaMan      := oQuery:FieldGetByName( "carrier_tax_rate" )
-               ::oPedCliT:lCloPed      := .f.
-               ::oPedCliT:cCodUsr      := cCurUsr()
-               ::oPedCliT:dFecCre      := GetSysDate()
-               ::oPedCliT:cTimCre      := Time()
-               ::oPedCliT:cCodDlg      := oUser():cDelegacion()
-               ::oPedCliT:lWeb         := .t.
-               ::oPedCliT:lInternet    := .t.
-               ::oPedCliT:cCodWeb      := oQuery:FieldGet( 1 )
-               cCodWeb                 := oQuery:FieldGet( 1 )
-               ::oPedCliT:nTotNet      := oQuery:FieldGetByName( "total_products" )
-               ::oPedCliT:nTotIva      := oQuery:FieldGetByName( "total_paid_tax_incl" ) - ( oQuery:FieldGetByName( "total_products" ) + oQuery:FieldGetByName( "total_shipping_tax_incl" ) )
-               ::oPedCliT:nTotPed      := oQuery:FieldGetByName( "total_paid_tax_incl" )
+                  ::oPedCliT:Append()
+                  ::oPedCliT:Blank()
 
-               if ::oCli:SeekInOrd( Str( oQuery:FieldGetByName( "id_customer" ), 11 ) , "cCodWeb" )
+                  ::oPedCliT:cSerPed      := cSerPed
+                  ::oPedCliT:nNumPed      := nNumPed
+                  ::oPedCliT:cSufPed      := cSufPed
+                  ::oPedCliT:cSuPed       := oQuery:FieldGetByName( "reference" )
+                  ::oPedCliT:cTurPed      := cCurSesion()
+                  ::oPedCliT:dFecPed      := dFecha
+                  ::oPedCliT:cCodAlm      := oUser():cAlmacen()
+                  ::oPedCliT:cCodCaj      := oUser():cCaja()
+                  ::oPedCliT:cCodObr      := "@" + AllTrim( Str( oQuery:FieldGetByName( "id_address_delivery" ) ) )
+                  ::oPedCliT:cCodPgo      := cFPagoWeb( AllTrim( oQuery:FieldGetByName( "module" ) ), ::oFPago:cAlias )
+                  ::oPedCliT:nEstado      := 1
+                  ::oPedCliT:nTarifa      := 1
+                  ::oPedCliT:cDivPed      := cDivEmp()
+                  ::oPedCliT:nVdvPed      := nChgDiv( cDivEmp(), ::oDivisas:cAlias )
+                  ::oPedCliT:lSndDoc      := .t.
+                  ::oPedCliT:lIvaInc      := uFieldEmpresa( "lIvaInc" )
+                  ::oPedCliT:cManObr      := Padr( "Gastos envio", 250 )
+                  ::oPedCliT:nManObr      := oQuery:FieldGetByName( "total_shipping_tax_excl" )
+                  ::oPedCliT:nIvaMan      := oQuery:FieldGetByName( "carrier_tax_rate" )
+                  ::oPedCliT:lCloPed      := .f.
+                  ::oPedCliT:cCodUsr      := cCurUsr()
+                  ::oPedCliT:dFecCre      := GetSysDate()
+                  ::oPedCliT:cTimCre      := Time()
+                  ::oPedCliT:cCodDlg      := oUser():cDelegacion()
+                  ::oPedCliT:lWeb         := .t.
+                  ::oPedCliT:lInternet    := .t.
+                  ::oPedCliT:cCodWeb      := oQuery:FieldGet( 1 )
+                  cCodWeb                 := oQuery:FieldGet( 1 )
+                  ::oPedCliT:nTotNet      := oQuery:FieldGetByName( "total_products" )
+                  ::oPedCliT:nTotIva      := oQuery:FieldGetByName( "total_paid_tax_incl" ) - ( oQuery:FieldGetByName( "total_products" ) + oQuery:FieldGetByName( "total_shipping_tax_incl" ) )
+                  ::oPedCliT:nTotPed      := oQuery:FieldGetByName( "total_paid_tax_incl" )
 
-                  ::oPedCliT:cCodCli   := ::oCli:Cod
-                  ::oPedCliT:cNomCli   := ::oCli:Titulo
-                  ::oPedCliT:cDirCli   := ::oCli:Domicilio
-                  ::oPedCliT:cPobCli   := ::oCli:Poblacion
-                  ::oPedCliT:cPrvCli   := ::oCli:Provincia
-                  ::oPedCliT:cPosCli   := ::oCli:CodPostal
-                  ::oPedCliT:cDniCli   := ::oCli:Nif
-                  ::oPedCliT:lModCli   := .t.
-                  ::oPedCliT:cTlfCli   := ::oCli:Telefono
-                  ::oPedCliT:cCodGrp   := ::oCli:cCodGrp
-                  ::oPedCliT:nRegIva   := ::oCli:nRegIva
-                  
-               end if
+                  if ::oCli:SeekInOrd( Str( oQuery:FieldGetByName( "id_customer" ), 11 ) , "cCodWeb" )
 
-               /*
-               Introducimos las lineas del pedido------------------------------
-               */
+                     ::oPedCliT:cCodCli   := ::oCli:Cod
+                     ::oPedCliT:cNomCli   := ::oCli:Titulo
+                     ::oPedCliT:cDirCli   := ::oCli:Domicilio
+                     ::oPedCliT:cPobCli   := ::oCli:Poblacion
+                     ::oPedCliT:cPrvCli   := ::oCli:Provincia
+                     ::oPedCliT:cPosCli   := ::oCli:CodPostal
+                     ::oPedCliT:cDniCli   := ::oCli:Nif
+                     ::oPedCliT:lModCli   := .t.
+                     ::oPedCliT:cTlfCli   := ::oCli:Telefono
+                     ::oPedCliT:cCodGrp   := ::oCli:cCodGrp
+                     ::oPedCliT:nRegIva   := ::oCli:nRegIva
+                     
+                  end if
 
-               oQueryL            := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_detail" ) + " WHERE id_order=" + AllTrim( Str( cCodWeb ) ) )
+                  /*
+                  Introducimos las lineas del pedido------------------------------
+                  */
 
-               if oQueryL:Open()
+                  oQueryL            := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_detail" ) + " WHERE id_order=" + AllTrim( Str( cCodWeb ) ) )
 
-                  if oQueryL:RecCount() > 0
+                  if oQueryL:Open()
 
-                     oQueryL:GoTop()
+                     if oQueryL:RecCount() > 0
 
-                     while !oQueryL:Eof()
+                        oQueryL:GoTop()
 
-                        ::oPedCliL:Append()
-                        ::oPedCliL:Blank()
-                        ::oPedCliL:cSerPed        := cSerPed
-                        ::oPedCliL:nNumPed        := nNumPed
-                        ::oPedCliL:cSufPed        := cSufPed
-                        ::oPedCliL:cDetalle       := oQueryL:FieldGetByName( "product_name" )
-                        ::oPedCliL:mLngDes        := oQueryL:FieldGetByName( "product_name" )
-                        ::oPedCliL:nCanPed        := 1
-                        ::oPedCliL:nUniCaja       := oQueryL:FieldGetByName( "product_quantity" )
-                        ::oPedCliL:nPreDiv        := oQueryL:FieldGetByName( "product_price" )
-                        ::oPedCliL:dFecha         := dFecha
-                        ::oPedCliL:nNumLin        := nNumLin
-                        ::oPedCliL:cAlmLin        := cDefAlm()
-                        ::oPedCliL:nTarLin        := 1
-                        ::oPedCliL:nDto           := oQueryL:FieldGetByName( "reduction_percent" )
-                        ::oPedCliL:nDtoDiv        := oQueryL:FieldGetByName( "reduction_amount" )
-                        ::oPedCliL:nIva           := ::nIvaProduct( oQueryL:FieldGetByName( "product_id" ) )
+                        while !oQueryL:Eof()
 
-                        if ::oArt:SeekInOrd( Str( oQueryL:FieldGetByName( "product_id" ), 11 ) , "cCodWeb" )
+                           ::oPedCliL:Append()
+                           ::oPedCliL:Blank()
+                           ::oPedCliL:cSerPed        := cSerPed
+                           ::oPedCliL:nNumPed        := nNumPed
+                           ::oPedCliL:cSufPed        := cSufPed
+                           ::oPedCliL:cDetalle       := oQueryL:FieldGetByName( "product_name" )
+                           ::oPedCliL:mLngDes        := oQueryL:FieldGetByName( "product_name" )
+                           ::oPedCliL:nCanPed        := 1
+                           ::oPedCliL:nUniCaja       := oQueryL:FieldGetByName( "product_quantity" )
+                           ::oPedCliL:nPreDiv        := oQueryL:FieldGetByName( "product_price" )
+                           ::oPedCliL:dFecha         := dFecha
+                           ::oPedCliL:nNumLin        := nNumLin
+                           ::oPedCliL:cAlmLin        := cDefAlm()
+                           ::oPedCliL:nTarLin        := 1
+                           ::oPedCliL:nDto           := oQueryL:FieldGetByName( "reduction_percent" )
+                           ::oPedCliL:nDtoDiv        := oQueryL:FieldGetByName( "reduction_amount" )
+                           ::oPedCliL:nIva           := ::nIvaProduct( oQueryL:FieldGetByName( "product_id" ) )
 
-                           ::oPedCliL:cRef        := ::oArt:Codigo
-                           ::oPedCliL:cUnidad     := ::oArt:cUnidad
-                           ::oPedCliL:nPesoKg     := ::oArt:nPesoKg
-                           ::oPedCliL:cPesoKg     := ::oArt:cUnidad
-                           ::oPedCliL:nVolumen    := ::oArt:nVolumen
-                           ::oPedCliL:cVolumen    := ::oArt:cVolumen
-                           ::oPedCliL:nCtlStk     := ::oArt:nCtlStock
-                           ::oPedCliL:nCosDiv     := nCosto( ::oArt:Codigo, ::oArt:cAlias, ::oKit:cAlias )
-                           ::oPedCliL:cCodTip     := ::oArt:cCodTip
-                           ::oPedCliL:cCodFam     := ::oArt:Familia
-                           ::oPedCliL:cGrpFam     := RetFld( ::oArt:Familia, ::oFam:cAlias, "cCodGrp" )
-                           ::oPedCliL:cCodPr1     := ::oArt:cCodPrp1
-                           ::oPedCliL:cCodPr2     := ::oArt:cCodPrp2
-                           ::oPedCliL:cValPr1     := ::GetValPrp( oRetFld( ::oArt:cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
-                           ::oPedCliL:cValPr2     := ::GetValPrp( oRetFld( ::oArt:cCodPrp2, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
-                           ::oPedCliL:lLote       := ::oArt:lLote 
-                           ::oPedCliL:cLote       := ::oArt:cLote 
+                           if ::oArt:SeekInOrd( Str( oQueryL:FieldGetByName( "product_id" ), 11 ) , "cCodWeb" )
 
-                        end if
+                              ::oPedCliL:cRef        := ::oArt:Codigo
+                              ::oPedCliL:cUnidad     := ::oArt:cUnidad
+                              ::oPedCliL:nPesoKg     := ::oArt:nPesoKg
+                              ::oPedCliL:cPesoKg     := ::oArt:cUnidad
+                              ::oPedCliL:nVolumen    := ::oArt:nVolumen
+                              ::oPedCliL:cVolumen    := ::oArt:cVolumen
+                              ::oPedCliL:nCtlStk     := ::oArt:nCtlStock
+                              ::oPedCliL:nCosDiv     := nCosto( ::oArt:Codigo, ::oArt:cAlias, ::oKit:cAlias )
+                              ::oPedCliL:cCodTip     := ::oArt:cCodTip
+                              ::oPedCliL:cCodFam     := ::oArt:Familia
+                              ::oPedCliL:cGrpFam     := RetFld( ::oArt:Familia, ::oFam:cAlias, "cCodGrp" )
+                              ::oPedCliL:cCodPr1     := ::oArt:cCodPrp1
+                              ::oPedCliL:cCodPr2     := ::oArt:cCodPrp2
+                              ::oPedCliL:cValPr1     := ::GetValPrp( oRetFld( ::oArt:cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
+                              ::oPedCliL:cValPr2     := ::GetValPrp( oRetFld( ::oArt:cCodPrp2, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
+                              ::oPedCliL:lLote       := ::oArt:lLote 
+                              ::oPedCliL:cLote       := ::oArt:cLote 
 
-                        if !::oPedCliL:Save()
-                           ::treeSetText( "Error al descargar las lineas el pedido: " + cSerPed + "/" + AllTrim( Str( nNumPed ) ) + "/" + cSufPed, 3 )
-                        end if
+                           end if
 
-                     oQueryL:Skip()
+                           if !::oPedCliL:Save()
+                              ::treeSetText( "Error al descargar las lineas el pedido: " + cSerPed + "/" + AllTrim( Str( nNumPed ) ) + "/" + cSufPed, 3 )
+                           end if
 
-                     nNumLin++
+                        oQueryL:Skip()
 
-                     end while
+                        nNumLin++
+
+                        end while
+
+                     end if
 
                   end if
 
-               end if
+                  if ::oPedCliT:Save()
+                     ::treeSetText( "Pedido " + cSerPed + "/" + AllTrim( Str( nNumPed ) ) + "/" + cSufPed + " introducido correctamente.", 3 )
+                  else
+                     ::treeSetText( "Error al descargar el pedido: " + cSerPed + "/" + AllTrim( Str( nNumPed ) ) + "/" + cSufPed, 3 )
+                  end if
 
-               if ::oPedCliT:Save()
-                  ::treeSetText( "Pedido " + cSerPed + "/" + AllTrim( Str( nNumPed ) ) + "/" + cSufPed + " introducido correctamente.", 3 )
-               else
-                  ::treeSetText( "Error al descargar el pedido: " + cSerPed + "/" + AllTrim( Str( nNumPed ) ) + "/" + cSufPed, 3 )
-               end if
+                  /*
+                  Metemos los comentarios del cliente como incidencias------------
+                  */
 
-               /*
-               Metemos los comentarios del cliente como incidencias------------
-               */
+                  ::AppendMessagePedido( cCodWeb, cSerPed, nNumPed, cSufPed, dFecha )
 
-               ::AppendMessagePedido( cCodWeb, cSerPed, nNumPed, cSufPed, dFecha )
+               end if   
 
             else
 
