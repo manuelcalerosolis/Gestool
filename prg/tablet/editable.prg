@@ -14,7 +14,8 @@ CLASS Editable
    METHOD Edit()
    METHOD Delete()
 
-   METHOD GetDocumento()
+   METHOD GetAppendDocumento()
+   METHOD GetEditDocumento()
    METHOD Resource()                      VIRTUAL
    METHOD SaveDocumento()
 
@@ -30,7 +31,7 @@ ENDCLASS
 
 METHOD Append() CLASS Editable
 
-   ::GetDocumento()
+   ::GetAppendDocumento()
 
    if ::Resource( APPD_MODE )
       ::SaveDocumento()
@@ -42,7 +43,7 @@ Return ( self )
 
 METHOD Edit() CLASS Editable
 
-   ::GetDocumento()
+   ::GetEditDocumento()
 
    if ::Resource( EDIT_MODE )
       ::SaveDocumento()
@@ -60,9 +61,23 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetDocumento() CLASS Editable
+METHOD GetAppendDocumento() CLASS Editable
 
-   msgInfo( "getdocumento" )
+   msgInfo( "getAppendDocumento" )
+
+   ?::getWorkArea()
+   ?::getDetailArea()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEditDocumento() CLASS Editable
+
+   msgInfo( "getEditDocumento" )
+
+   ?::getWorkArea()
+   ?::getDetailArea()
 
 Return ( self )
 
