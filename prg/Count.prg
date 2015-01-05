@@ -97,30 +97,63 @@ Function synCount( cPath, nSemilla )
                   ( dbf )->lDoc  := cDoc[ 4 ]
                   ( dbf )->lCon  := cDoc[ 5 ]
                   ( dbf )->lNFC  := cDoc[ 6 ]
-                  ( dbf )->A     := nSemilla
-                  ( dbf )->B     := nSemilla
-                  ( dbf )->C     := nSemilla
-                  ( dbf )->D     := nSemilla
-                  ( dbf )->E     := nSemilla
-                  ( dbf )->H     := nSemilla
-                  ( dbf )->I     := nSemilla
-                  ( dbf )->J     := nSemilla
-                  ( dbf )->K     := nSemilla
-                  ( dbf )->L     := nSemilla
-                  ( dbf )->M     := nSemilla
-                  ( dbf )->N     := nSemilla
-                  ( dbf )->O     := nSemilla
-                  ( dbf )->P     := nSemilla
-                  ( dbf )->Q     := nSemilla
-                  ( dbf )->R     := nSemilla
-                  ( dbf )->S     := nSemilla
-                  ( dbf )->T     := nSemilla
-                  ( dbf )->U     := nSemilla
-                  ( dbf )->V     := nSemilla
-                  ( dbf )->W     := nSemilla
-                  ( dbf )->X     := nSemilla
-                  ( dbf )->Y     := nSemilla
-                  ( dbf )->Z     := nSemilla
+
+                  if cDoc[ 1 ] == "NSESION"
+                  
+                     ( dbf )->A     := 1
+                     ( dbf )->B     := 1
+                     ( dbf )->C     := 1
+                     ( dbf )->D     := 1
+                     ( dbf )->E     := 1
+                     ( dbf )->H     := 1
+                     ( dbf )->I     := 1
+                     ( dbf )->J     := 1
+                     ( dbf )->K     := 1
+                     ( dbf )->L     := 1
+                     ( dbf )->M     := 1
+                     ( dbf )->N     := 1
+                     ( dbf )->O     := 1
+                     ( dbf )->P     := 1
+                     ( dbf )->Q     := 1
+                     ( dbf )->R     := 1
+                     ( dbf )->S     := 1
+                     ( dbf )->T     := 1
+                     ( dbf )->U     := 1
+                     ( dbf )->V     := 1
+                     ( dbf )->W     := 1
+                     ( dbf )->X     := 1
+                     ( dbf )->Y     := 1
+                     ( dbf )->Z     := 1
+                  
+                  else
+
+                     ( dbf )->A     := nSemilla
+                     ( dbf )->B     := nSemilla
+                     ( dbf )->C     := nSemilla
+                     ( dbf )->D     := nSemilla
+                     ( dbf )->E     := nSemilla
+                     ( dbf )->H     := nSemilla
+                     ( dbf )->I     := nSemilla
+                     ( dbf )->J     := nSemilla
+                     ( dbf )->K     := nSemilla
+                     ( dbf )->L     := nSemilla
+                     ( dbf )->M     := nSemilla
+                     ( dbf )->N     := nSemilla
+                     ( dbf )->O     := nSemilla
+                     ( dbf )->P     := nSemilla
+                     ( dbf )->Q     := nSemilla
+                     ( dbf )->R     := nSemilla
+                     ( dbf )->S     := nSemilla
+                     ( dbf )->T     := nSemilla
+                     ( dbf )->U     := nSemilla
+                     ( dbf )->V     := nSemilla
+                     ( dbf )->W     := nSemilla
+                     ( dbf )->X     := nSemilla
+                     ( dbf )->Y     := nSemilla
+                     ( dbf )->Z     := nSemilla
+
+                  end if
+
                   ( dbf )->( dbUnLock() )
                end if
 
