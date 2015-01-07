@@ -575,9 +575,6 @@ Return ( Self )
 
 METHOD BotonAnterior() CLASS TGenMailing
 
-   // msgAlert( ::oFld:nOption, "::oFld:nOption")
-   // msgAlert( len( ::oFld:aDialogs), "len(aDialogs)" )
-
    if ::oFld:nOption == 2
       ::oBtnAnterior:Hide()
       ::oBtnSiguiente:Show() 
@@ -586,6 +583,7 @@ METHOD BotonAnterior() CLASS TGenMailing
    end if
 
    if ::oFld:nOption <= len( ::oFld:aDialogs ) 
+      ::oBtnSiguiente:Show() 
       SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
    end if 
 
@@ -597,27 +595,24 @@ Return ( Self )
 
 METHOD BotonSiguiente() CLASS TGenMailing
 
-   // msgAlert( ::oFld:nOption, "::oFld:nOption")
-   // msgAlert( len( ::oFld:aDialogs), "len(aDialogs)" )
+   ::oFld:GoNext()
 
-   if ::oFld:nOption == 1
+   if ::oFld:nOption == 2
       ::oBtnCargarHTML:Hide()
       ::oBtnSalvarHTML:Hide()
       ::oBtnAnterior:Show()
    end if 
 
-   if ::oFld:nOption == len( ::oFld:aDialogs ) - 2
+   if ::oFld:nOption == len( ::oFld:aDialogs ) - 1
       ::oBtnAnterior:Show()
       ::oBtnSiguiente:Show() 
       SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
    end if 
 
-   if ::oFld:nOption == len( ::oFld:aDialogs ) - 1
+   if ::oFld:nOption == len( ::oFld:aDialogs ) 
       ::oBtnSiguiente:Hide() 
       ::IniciarProceso()
    end if 
-
-   ::oFld:GoNext()
 
 Return ( Self )
 

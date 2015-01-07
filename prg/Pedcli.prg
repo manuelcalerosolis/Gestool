@@ -2408,7 +2408,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Entregado"
-         :bEditValue          := {|| nUnidadesRecibidasAlbCli( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed, ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cRefPrv, ( dbfTmpLin )->cDetalle, dbfAlbCliL ) }
+         :bEditValue          := {|| nUnidadesRecibidasAlbCli( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed, ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, dbfAlbCliL ) }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
          :nDataStrAlign       := 1
@@ -4078,7 +4078,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    nOrdPedPrv           	:= ( dbfPedPrvL )->( OrdSetFocus( "cPedCliRef" ) )
 
    dFecRes              	:= dTmpPdtRec( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes )
-   nTotRes              	:= nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CREFPRV ], aTmp[ _CDETALLE ], dbfAlbCliL )
+   nTotRes              	:= nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfAlbCliL )
    nTotRes              	+= nUnidadesRecibidasFacCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfFacCliL )
 
    if nTotRes > nTotNPedCli( aTmp )
@@ -4853,13 +4853,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[4]
 
-      REDEFINE SAY oTot[ 5 ] PROMPT nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CREFPRV ], aTmp[ _CDETALLE ], dbfAlbCliL ) ;
+      REDEFINE SAY oTot[ 5 ] PROMPT nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfAlbCliL ) ;
          ID       200 ;
          COLOR    "G/W*" ;
 			PICTURE 	cPicUnd ;
          OF       oFld:aDialogs[4]
 
-      REDEFINE SAY oTot[ 6 ] PROMPT NotMinus( nTotRPedCli( , aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) - nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CREFPRV ], aTmp[ _CDETALLE ], dbfAlbCliL ) ) ;
+      REDEFINE SAY oTot[ 6 ] PROMPT NotMinus( nTotRPedCli( , aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes ) - nUnidadesRecibidasAlbCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfAlbCliL ) ) ;
          ID       210 ;
          COLOR    "R/W*" ;
 			PICTURE 	cPicUnd ;
@@ -14940,6 +14940,8 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
       dbUseArea( .t., cDriver(), cPathOld + "AlbCliL.DBF", cCheckArea( "AlbCliL", @oldAlbCliL ), .f. )
       ( oldAlbCliL )->( ordListAdd( cPathOld + "AlbCliL.CDX" ) )
 
+      msgAlert( cPathOld + "AlbCliL.Dbf" )
+
       while !( oldPedCliT )->( eof() )
 
          if eval( bFor, oldPedCliT )
@@ -14957,7 +14959,17 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
                   //if nTotNPedCli( oldPedCliL ) > 0
                   dbCopy( oldPedCliL, dbfPedCliL, .t. )
                   ( dbfPedCliL )->nUniCaja   := nTotNPedCli( oldPedCliL )
-                  ( dbfPedCliL )->nUniCaja   -= nUnidadesRecibidasAlbCli( ( oldPedCliT )->cSerPed + Str( ( oldPedCliT )->nNumPed ) + ( oldPedCliT )->cSufPed, ( oldPedCliL )->cRef, ( oldPedCliL )->cValPr1, ( oldPedCliL )->cValPr2, ( oldPedCliL )->cRefPrv, ( oldPedCliL )->cDetalle, oldAlbCliL )
+                  msgAlert( ( dbfPedCliL )->nUniCaja, "nUnicaja antes")
+
+                  msgAlert( ( oldPedCliL )->cSerPed + Str( ( oldPedCliL )->nNumPed ) + ( oldPedCliL )->cSufPed + ( oldPedCliL )->cRef + ( oldPedCliL )->cValPr1 + ( oldPedCliL )->cValPr2, "cadena" )
+
+                  ( dbfPedCliL )->nUniCaja   -= nUnidadesRecibidasAlbCli( ( oldPedCliL )->cSerPed + Str( ( oldPedCliL )->nNumPed ) + ( oldPedCliL )->cSufPed, ( oldPedCliL )->cRef, ( oldPedCliL )->cValPr1, ( oldPedCliL )->cValPr2, oldAlbCliL )
+                  msgAlert( ( dbfPedCliL )->nUniCaja, "nUnicaja despues")
+                  
+                  msgAlert( len( ( oldPedCliL )->cRef ), "cRef" )  
+                  msgAlert( len( ( oldPedCliL )->cValPr1 ), "cValPr1" ) 
+                  msgAlert( len( ( oldPedCliL )->cValPr2 ), "cValPr2" )  
+
                   ( dbfPedCliL )->nUniEnt    := 0
                   //end if
 

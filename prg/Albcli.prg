@@ -5269,7 +5269,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             while ( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == cPedido )
 
                nTotRet                 := ( dbfPedCliL )->nUniCaja
-               nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, ( dbfPedCliL )->cRefPrv, ( dbfPedCliL )->cDetalle, D():Get( "AlbCliL", nView ) )
+               nTotRet                 -= nUnidadesRecibidasAlbCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():Get( "AlbCliL", nView ) )
                nTotRet                 -= nUnidadesRecibidasFacCli( cPedido, ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():Get( "FacCliL", nView ) )
 
                //if ( nTotNPedCli( dbfPedCliL ) == 0 .or. nTotRet > 0 ) para meter lineas en negativo
@@ -5875,7 +5875,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                if aPedidos[ nItem, 2 ] == 2
 
                   nTotPed              := nTotNPedCli( dbfPedCliL )
-                  nTotRec              := nUnidadesRecibidasAlbCli( aPedidos[ nItem, 3 ], ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, ( dbfPedCliL )->cRefPrv, ( dbfPedCliL )->cDetalle, D():Get( "AlbCliL", nView ) )
+                  nTotRec              := nUnidadesRecibidasAlbCli( aPedidos[ nItem, 3 ], ( dbfPedCliL )->cRef, ( dbfPedCliL )->cCodPr1, ( dbfPedCliL )->cCodPr2, D():Get( "AlbCliL", nView ) )
                   nTotPdt              := nTotPed - nTotRec
 
                   if nTotPdt > 0
@@ -15635,22 +15635,22 @@ Return .t.
 // Devuelve el numero de unidades recibidas en albaranes a clientes
 //
 
-function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cRefPrv, cDetalle, cAlbCliL )
+function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cAlbCliL )
 
    local nTot        := 0
    local aStaLin     := aGetStatus( cAlbCliL, .f. )
 
    DEFAULT cCodPr1   := Space( 20 )
    DEFAULT cCodPr2   := Space( 20 )
-   DEFAULT cRefPrv   := Space( 18 )
-   DEFAULT cDetalle  := Space( 250 )
 
    ( cAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
+
+   msgAlert( cNumPed + cCodArt + cCodPr1 + cCodPr2, str( len( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) ) )
 
    if ( cAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
       
       while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( cAlbCliL )->( eof() )
-         nTot     += nTotNAlbCli( cAlbCliL )
+         nTot        += nTotNAlbCli( cAlbCliL )
          ( cAlbCliL )->( dbSkip() )
       end while
 
