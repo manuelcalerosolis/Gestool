@@ -3933,10 +3933,10 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       */
 
       CursorWait()
-
+/*
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
-
+*/
          oDlgTpv:Disable()
 
          BeginTransaction()
@@ -4146,7 +4146,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
                   if dbLock( dbfAlbCliL )
                      ( dbfAlbCliL )->lFacturado := .t.
-                     ( dbfAlbCliL )->nFacturado := 3
+                     //( dbfAlbCliL )->nFacturado := 3
                      ( dbfAlbCliL )->( dbUnLock() )
                   end if
 
@@ -4471,7 +4471,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          /*
          Cerrando el control de errores-------------------------------------------
          */
-
+/*
       RECOVER USING oError
 
          RollBackTransaction()
@@ -4481,7 +4481,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       END SEQUENCE
 
       ErrorBlock( oBlock )
-
+*/
       CursorWE()
 
       /*
