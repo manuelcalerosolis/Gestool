@@ -44,7 +44,7 @@ CLASS TGenMailing
    DATA cGetPara                       INIT Space( 250 )
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
-   DATA lHidePara                      INIT .t.
+   DATA lHidePara                      INIT .f.
    DATA lHideCopia                     INIT .f.
 
    DATA aAdjuntos                      INIT {}
@@ -102,24 +102,31 @@ CLASS TGenMailing
 
    METHOD getWorkArea()                INLINE ( D():Clientes( ::nView ) )
 
-   METHOD SetAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
-   METHOD SetAdjunto( cText )          INLINE ( ::cGetAdjunto  := Padr( cText, 250 ) )
-   METHOD SetHtml( cText )             INLINE ( ::cGetHtml     := Padr( cText, 250 ) )
-   METHOD SetDe( cText )               INLINE ( ::cGetDe       := Padr( cText, 250 ) )
-   METHOD SetPara( cText )             INLINE ( ::cGetPara     := Padr( cText, 250 ) )
-   METHOD SetCopia( cText )            INLINE ( ::cGetCopia    := Padr( cText, 250 ) )
-   METHOD SetItems( aItems )           INLINE ( ::aItems       := aItems )
+   METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
+   METHOD setAdjunto( cText )          INLINE ( ::cGetAdjunto  := Padr( cText, 250 ) )
+   METHOD setHtml( cText )             INLINE ( ::cGetHtml     := Padr( cText, 250 ) )
+   METHOD setDe( cText )               INLINE ( ::cGetDe       := Padr( cText, 250 ) )
+   
+   METHOD setPara( cText )             INLINE ( ::cGetPara     := Padr( cText, 250 ) )
+      METHOD HidePara()                INLINE ( ::lHidePara := .t., if ( !empty( ::oGetPara ), ::oGetPara:Hide(), ) )
+      METHOD ShowPara()                INLINE ( ::lHidePara := .f., if ( !empty( ::oGetPara ), ::oGetPara:Show(), ) )
+
+   METHOD setCopia( cText )            INLINE ( ::cGetCopia    := Padr( cText, 250 ) )
+      METHOD HideCopia()               INLINE ( ::lHideCopia := .t., if ( !empty( ::oGetCopia ), ::oGetCopia:Hide(), ) )
+      METHOD ShowCopia()               INLINE ( ::lHideCopia := .f., if ( !empty( ::oGetCopia ), ::oGetCopia:Show(), ) )
+
+   METHOD setItems( aItems )           INLINE ( ::aItems       := aItems )
    METHOD setAlias( cAlias )           INLINE ( nil )
 
-   METHOD AddAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
+   METHOD addAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
 
    METHOD setMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
 
-   METHOD SetTypeDocument( cText )     INLINE ( ::cTypeDocument   := cText )
+   METHOD setTypeDocument( cText )     INLINE ( ::cTypeDocument   := cText )
 
    // Recursos-----------------------------------------------------------------
 
-   METHOD ClientResource()
+   METHOD Resource()
 
       METHOD botonAnterior()
       METHOD botonSiguiente()
@@ -185,7 +192,7 @@ Return ( Self )
 
 METHOD Create() CLASS TGenMailing
 
-   ::cSubject            := Space( 254 )
+   ::cSubject              := Space( 254 )
    ::cGetAdjunto           := Space( 254 )
    ::cGetHtml              := Space( 254 )
 
@@ -206,7 +213,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ClientResource( aItems, nView ) CLASS TGenMailing
+METHOD Resource( aItems, nView ) CLASS TGenMailing
 
    ::Init()
 
@@ -214,6 +221,8 @@ METHOD ClientResource( aItems, nView ) CLASS TGenMailing
    ::aItems          := aItems
    ::aFields         := getSubArray( aItems, 5 )
    ::nView           := nView
+
+   ::HidePara()
 
    DEFINE DIALOG     ::oDlg ;
       RESOURCE       "Select_Mail_Container";

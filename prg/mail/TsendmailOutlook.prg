@@ -13,18 +13,17 @@ CLASS TSendMailOutlook
 
    // Construir objetos para envio de mails
 
-   METHOD buildServer()
+   METHOD build()
 
    // Envios de los mails
 
    METHOD sendMail( hMail )
 
-      METHOD sendServer( hMail ) 
-         METHOD setRecipientsServer( oMail, hMail )
-         METHOD setRecipientsCCServer( oMail, cRecipients )
-         METHOD setAttachmentServer( oMail, hMail )
-         METHOD setMessageServer( oMail, hMail )
-         METHOD setSubjectServer( oMail, hMail )
+      METHOD setRecipients( oMail, hMail )
+      METHOD setRecipientsCC( oMail, cRecipients )
+      METHOD setAttachment( oMail, hMail )
+      METHOD setMessage( oMail, hMail )
+      METHOD setSubject( oMail, hMail )
 
 END CLASS
 
@@ -34,7 +33,7 @@ METHOD New( oSender )
 
    ::oSender         := oSender
 
-   ::buildServer()
+   ::build()
 
 Return ( Self )
 
@@ -42,37 +41,30 @@ Return ( Self )
 
 METHOD sendMail( hMail ) 
 
-   local lSendMail   := .f.
-
-   if !empty( ::mailServer )
-      lSendMail      := ::sendServer( hMail )
-   end if
-
-Return ( lSendMail )
-
-//--------------------------------------------------------------------------//
-
-METHOD sendServer( hMail)
-
    local oMail
    local oError
    local oBlock
    local lSend          := .t.
+
+   if empty( ::mailServer )
+      return .f. 
+   end if
+
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       oMail             := ::mailServer:CreateItem( 0 ) // olMailItem 
 
-      ::setRecipientsServer( oMail, hMail )
+      ::setRecipients( oMail, hMail )
 
-      ::setAttachmentServer( oMail, hMail )
+      ::setAttachment( oMail, hMail )
 
-      ::setRecipientsCCServer( oMail, hMail )
+      ::setRecipientsCC( oMail, hMail )
 
-      ::setMessageServer( oMail, hMail )
+      ::setMessage( oMail, hMail )
 
-      ::setSubjectServer( oMail, hMail )
+      ::setSubject( oMail, hMail )
 
       oMail:Display()
 
@@ -86,11 +78,12 @@ METHOD sendServer( hMail)
 
    ErrorBlock( oBlock )
 
+
 Return ( lSend )
 
 //--------------------------------------------------------------------------//
 
-METHOD setRecipientsServer( oMail, hMail )
+METHOD setRecipients( oMail, hMail )
 
    local cItem
    local cMails            := ::oSender:getFromHash( hMail, "mail" )
@@ -105,7 +98,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setAttachmentServer( oMail, hMail )
+METHOD setAttachment( oMail, hMail )
 
    local cItem
    local cAttachments      := ::oSender:getFromHash( hMail, "attachments" )      
@@ -122,7 +115,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setRecipientsCCServer( oMail, hMail )
+METHOD setRecipientsCC( oMail, hMail )
 
    local cItem
    local oRecipient
@@ -139,7 +132,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setMessageServer( oMail, hMail )
+METHOD setMessage( oMail, hMail )
 
    local cMessage          := ::oSender:getFromHash( hMail, "message" )      
 
@@ -152,7 +145,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setSubjectServer( oMail, hMail )
+METHOD setSubject( oMail, hMail )
 
    local cItem
    local cSubject          := ::oSender:getFromHash( hMail, "subject" )      
@@ -165,7 +158,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD buildServer() 
+METHOD build() 
 
    local oBlock
    local oError

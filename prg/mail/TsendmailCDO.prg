@@ -15,18 +15,17 @@ CLASS TSendMailCDO
 
    // Construir objetos para envio de mails
 
-   METHOD buildServer()
+   METHOD build()
 
    // Envios de los mails
 
    METHOD sendMail( hMail )
 
-      METHOD sendServer( hMail ) 
-         METHOD setRecipientsServer( oMail, hMail )
-         METHOD setRecipientsCCServer( oMail, cRecipients )
-         METHOD setAttachmentServer( oMail, hMail )
-         METHOD setMessageServer( oMail, hMail )
-         METHOD setSubjectServer( oMail, hMail )
+      METHOD setRecipients( oMail, hMail )
+      METHOD setRecipientsCC( oMail, cRecipients )
+      METHOD setAttachment( oMail, hMail )
+      METHOD setMessage( oMail, hMail )
+      METHOD setSubject( oMail, hMail )
 
 END CLASS
 
@@ -36,7 +35,7 @@ METHOD New( oSender )
 
    ::oSender         := oSender
 
-   ::buildServer()
+   ::build()
 
 Return ( Self )
 
@@ -44,43 +43,37 @@ Return ( Self )
 
 METHOD sendMail( hMail ) 
 
-   local lSendMail   := .f.
-
-   if !empty( ::mailServer )
-      lSendMail      := ::sendServer( hMail )
-   end if
-
-Return ( lSendMail )
-
-//--------------------------------------------------------------------------//
-
-METHOD sendServer( hMail)
-
-   local oMail
    local oError
    local oBlock
-   local lSend          := .t.
+   local oMail
+   local lSend             := .t.
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   if empty( ::mailServer )
+      return .f.
+   end if
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      oMail             := ::mailServer:CreateItem( 0 ) // olMailItem 
+      oMail                := win_oleCreateObject( "CDO.Message" )
+      oMail:Configuration  := ::mailServer
+      oMail:From           := ::oSender:mailServerUserName
 
-      ::setRecipientsServer( oMail, hMail )
+      ::setRecipients( oMail, hMail )
 
-      ::setAttachmentServer( oMail, hMail )
+      ::setAttachment( oMail, hMail )
 
-      ::setRecipientsCCServer( oMail, hMail )
+      ::setRecipientsCC( oMail, hMail )
 
-      ::setMessageServer( oMail, hMail )
+      ::setMessage( oMail, hMail )
 
-      ::setSubjectServer( oMail, hMail )
+      ::setSubject( oMail, hMail )
 
-      oMail:Display()
+      oMail:Send()
 
    RECOVER USING oError
 
-      lSend             := .f.
+      lSend                := .f.
 
       msgStop( "Error al enviar el objeto de correo electrónico." + CRLF + ErrorMessage( oError ) )   
 
@@ -92,7 +85,7 @@ Return ( lSend )
 
 //--------------------------------------------------------------------------//
 
-METHOD setRecipientsServer( oMail, hMail )
+METHOD setRecipients( oMail, hMail )
 
    local cItem
    local cMails            := ::oSender:getFromHash( hMail, "mail" )
@@ -105,7 +98,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setAttachmentServer( oMail, hMail )
+METHOD setAttachment( oMail, hMail )
 
    local cItem
    local cAttachments      := ::oSender:getFromHash( hMail, "attachments" )      
@@ -113,7 +106,7 @@ METHOD setAttachmentServer( oMail, hMail )
    if !empty( cAttachments )
       for each cItem in hb_aTokens( cAttachments, ";" )
          if file( rtrim( cItem ) )
-            oMail:AddAttachments( rtrim( cItem ) )
+            oMail:AddAttachment( rtrim( cItem ) )
          end if 
       next
    end if
@@ -122,39 +115,32 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setRecipientsCCServer( oMail, hMail )
+METHOD setRecipientsCC( oMail, hMail )
 
-   local cItem
-   local oRecipient
    local cMailsCC          := ::oSender:getFromHash( hMail, "mailcc" )      
 
    if !empty( cMailsCC )
-      for each cItem in hb_aTokens( cMailsCC, ";" )
-         oRecipient        := oMail:Recipients:Add( cItem ) 
-         oRecipient:Type   := 2 
-      next
+      oMail:Bcc            := cMailsCC
    end if
 
 Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setMessageServer( oMail, hMail )
+METHOD setMessage( oMail, hMail )
 
    local cMessage          := ::oSender:getFromHash( hMail, "message" )      
 
    if !empty( cMessage )
-      oMail:BodyFormat     := 2 // olFormatHTML 
-      oMail:HTMLBody       := cMessage
+      oMail:HTMLBody       := cMessage // CreateMHTMLBody( cMessage )
    end if
 
 Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD setSubjectServer( oMail, hMail )
+METHOD setSubject( oMail, hMail )
 
-   local cItem
    local cSubject          := ::oSender:getFromHash( hMail, "subject" )      
 
    if !empty( cSubject )
@@ -165,7 +151,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD buildServer() 
+METHOD build() 
 
    local oError
    local oBlock
@@ -174,15 +160,14 @@ METHOD buildServer()
    BEGIN SEQUENCE
 
       ::mailServer                     := win_oleCreateObject( "CDO.Configuration" )
-      ::mailServer:Fields:Item( schemas + "smtpserver" ):Value             := ::oSender:mailServerHost
-      ::mailServer:Fields:Item( schemas + "smtpserverport" ):Value         := ::oSender:mailServerPort
-      ::mailServer:Fields:Item( schemas + "sendusing" ):Value              := 2
-      ::mailServer:Fields:Item( schemas + "smtpauthenticate" ):Value       := ::oSender:mailServerAuthenticate
-      ::mailServer:Fields:Item( schemas + "smtpusessl" ):Value             := .f.
-      ::mailServer:Fields:Item( schemas + "sendusername" ):Value           := ::oSender:mailServerUserName
-      ::mailServer:Fields:Item( schemas + "sendpassword" ):Value           := ::oSender:mailServerPassword
-      ::mailServer:Fields:Item( schemas + "smtpconnectiontimeout"):Value   := 30
-
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserver" ):Value             := ::oSender:mailServerHost
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpserverport" ):Value         := ::oSender:mailServerPort
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusing" ):Value              := 2
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpauthenticate" ):Value       := ::oSender:mailServerAuthenticate
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpusessl" ):Value             := .f.
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendusername" ):Value           := ::oSender:mailServerUserName
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/sendpassword" ):Value           := ::oSender:mailServerPassword
+      ::mailServer:Fields:Item( "http://schemas.microsoft.com/cdo/configuration/smtpconnectiontimeout"):Value   := 30
       ::mailServer:Fields:Update()
 
    RECOVER USING oError

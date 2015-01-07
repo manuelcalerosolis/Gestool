@@ -541,7 +541,7 @@ FUNCTION Provee( oMenuItem, oWnd )
 
       DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( TGenMailing():ClientResource( dbfProvee, aItmPrv(), oWndBrw ) ) ;
+         ACTION   ( TGenMailing():Resource( dbfProvee, aItmPrv(), oWndBrw ) ) ;
          TOOLTIP  "Enviar correos" ;
          HOTKEY   "V" ;
          LEVEL    ACC_IMPR

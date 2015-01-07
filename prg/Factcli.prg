@@ -573,7 +573,9 @@ static cFiltroUsuario      := ""
 static oMeter
 static nMeter              := 1
 
-static cUltimoCliente      := ""
+static oCbxRuta
+
+static nUltimoCliente      := 0
 static cSerieAnterior      := ""
 static cCodPagoAnterior    := ""
 
@@ -5453,7 +5455,6 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	local nAltoGet 		:= 23
       local oBtnUpPage
       local oBtnDownPage
-      local oCbxRuta
       local aCbxRuta       := { "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Todos" }
       local cCbxRuta       := aCbxRuta[ Dow( GetSysDate() ) ]
       local oBtnLeft
@@ -5635,14 +5636,14 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                                    "nHeight"   => 25,;
                                                    "aItems"    => aCbxRuta,;
-                                                   "bChange"   => {|| CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta ) } } )
+                                                   "bChange"   => {|| CambioRutaTablet( aGet, oSayTextRuta ) } } )
 
       oBtnLeft    := TGridImage():Build(  {        "nTop"      => 63,;
                                                    "nLeft"     => {|| GridWidth( 4.5, oDlg ) },;
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_left_64",;
-                                                   "bLClicked" => {|| NextClient( aGet, oCbxRuta, .t., oSayTextRuta ) },;
+                                                   "bLClicked" => {|| priorClient( aGet, oSayTextRuta ) },;
                                                    "oWnd"      => oDlg } )
 
       oBtnRight   := TGridImage():Build(  {        "nTop"      => 63,;
@@ -5650,7 +5651,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_right_64",;
-                                                   "bLClicked" => {|| NextClient( aGet, oCbxRuta, .f., oSayTextRuta ) },;
+                                                   "bLClicked" => {|| nextClient( aGet, oSayTextRuta ) },;
                                                    "oWnd"      => oDlg } )
 
       oSayTextRuta   := TGridGet():Build(       {  "nRow"      => 67,;
@@ -5925,10 +5926,10 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    	oDlg:bResized  				:= {|| GridResize( oDlg ), oBrwLin:Load() }
 
-      oDlg:bStart                := {|| if( nMode == APPD_MODE, CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta ), ) }
+      oDlg:bStart                := {|| startEdtTablet( nMode, aGet, oSayTextRuta ) }
 
    	ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT     ( GridMaximize( oDlg ) )
+         ON INIT                 ( GridMaximize( oDlg ) )
 
    	/*
    	Salimos --------------------------------------------------------------------
@@ -5944,6 +5945,20 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
 RETURN ( oDlg:nResult == IDOK )
 
+//---------------------------------------------------------------------------//
+
+Static function startEdtTablet( nMode, aGet, oSayTextRuta )
+
+   gotoUltimoCliente()
+
+   if ( nMode == APPD_MODE ) .and. ( nUltimoCliente != 0 )
+      nextClient( aGet, oSayTextRuta )
+   else
+      moveClient( aGet, oSayTextRuta )
+   end if
+
+Return ( nil )
+       
 //---------------------------------------------------------------------------//
 
 STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, aTmpFac )
@@ -6281,9 +6296,9 @@ static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
 	*/
 
 	if Empty( aGet[ _CCODCLI ]:VarGet() )
-      	ApoloMsgStop( "Tiene que elegir un cliente para hacer una factura.", "¡Atención!" )
-      	return .f.
-   	end if
+   	ApoloMsgStop( "Tiene que elegir un cliente para hacer una factura.", "¡Atención!" )
+   	return .f.
+	end if
 
 	/*
 	Comprobamos que el documento tenga líneas----------------------------------
@@ -6341,7 +6356,7 @@ static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_printer_64",;
-                                             		"bLClicked" => {|| if( EndTransTablet( aTmp, aGet, , , , {}, nMode, oDlg ), ( if( cCbxOrd != "No imprimir", GenFacCli( IS_PRINTER, , Left( cCbxOrd, 3 ) ),  ), oDlgFac:End() ), ) },;
+                                             		"bLClicked" => {|| if( EndTransTablet( aTmp, aGet, nMode, oDlg ), ( if( cCbxOrd != "No imprimir", GenFacCli( IS_PRINTER, , Left( cCbxOrd, 3 ) ),  ), oDlgFac:End() ), ) },;
                                              		"oWnd"      => oDlg } )
 
    oBtnAceptarImp    := TGridImage():Build(  {     "nTop"      => 5,;
@@ -6349,7 +6364,7 @@ static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
                                                    "nWidth"    => 64,;
                                                    "nHeight"   => 64,;
                                                    "cResName"  => "flat_check_64",;
-                                                   "bLClicked" => {|| if( EndTransTablet( aTmp, aGet, , , , {}, nMode, oDlg ), oDlgFac:End(), ) },;
+                                                   "bLClicked" => {|| if( EndTransTablet( aTmp, aGet, nMode, oDlg ), oDlgFac:End(), ) },;
                                                    "oWnd"      => oDlg } )
 
  	/*
@@ -6517,60 +6532,61 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function NextClient( aGet, oCbxRuta, lAnterior, oSayTextRuta )
+Static Function priorClient( aGet, oSayTextRuta )
+
+return ( moveClient( aGet, oSayTextRuta, .t. ) )
+
+Static Function nextClient( aGet, oSayTextRuta )
+
+return ( moveClient( aGet, oSayTextRuta, .f. ) )
+
+Static Function moveClient( aGet, oSayTextRuta, lAnterior )
 
    local lSet              := .f.
-   local cCodCli           := aGet[ _CCODCLI ]:VarGet()
    local nOrdAnt
-
-   DEFAULT lAnterior       := .f.
 
    if hhaskey( hOrdenRutas, AllTrim( Str( oCbxRuta:nAt ) ) )
       
       nOrdAnt              := ( D():Clientes( nView ) )->( OrdSetFocus( hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
 
-      if ( D():Clientes( nView ) )->( dbSeek( cCodCli ) ) 
+      if isTrue( lAnterior )
 
-         if lAnterior
+         if ( D():Clientes( nView ) )->( OrdKeyNo() ) != 1
+            ( D():Clientes( nView ) )->( dbSkip( -1 ) )
+            lSet           := .t.
+         end if
 
-            if ( D():Clientes( nView ) )->( OrdKeyNo() ) != 1
-               ( D():Clientes( nView ) )->( dbSkip( -1 ) )
-               lSet           := .t.
-            end if
+      end if 
 
-            if !Empty( oSayTextRuta )
-               oSayTextRuta:cText( AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyNo() ) ) ) + "/" + AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyCount() ) ) ) )
-               oSayTextRuta:Refresh()
-            end if
+      if isFalse( lAnterior )
 
-         else
+         if ( D():Clientes( nView ) )->( OrdKeyNo() ) != ( D():Clientes( nView ) )->( OrdKeyCount() )
+            ( D():Clientes( nView ) )->( dbSkip() )
+            lSet           := .t.
+         end if
 
-            if ( D():Clientes( nView ) )->( OrdKeyNo() ) != ( D():Clientes( nView ) )->( OrdKeyCount() )
-               ( D():Clientes( nView ) )->( dbSkip() )
-               lSet           := .t.
-            end if
+      end if   
 
-            if !Empty( oSayTextRuta )
-               oSayTextRuta:cText( AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyNo() ) ) ) + "/" + AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyCount() ) ) ) )
-               oSayTextRuta:Refresh()
-            end if
+      if isNil( lAnterior )
+         lSet              := .t.
+      end if 
 
-         end if   
-
-         if lSet
-            
-            aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
-            aGet[ _CCODCLI ]:Refresh()
-            aGet[ _CCODCLI ]:lValid()
-            aGet[ _CCODOBR ]:cText( Space( 10 ) )
-            aGet[ _CCODOBR ]:Refresh()
-            aGet[ _CCODOBR ]:lValid()
-
-         end if               
-
+      if !empty( oSayTextRuta )
+         oSayTextRuta:cText( alltrim( str( ( D():Clientes( nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( nView ) )->( OrdKeyCount() ) ) ) )
+         oSayTextRuta:Refresh()
       end if
 
       ( D():Clientes( nView ) )->( OrdSetFocus( nOrdAnt ) )   
+
+      if lSet
+
+         aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
+         aGet[ _CCODCLI ]:lValid()
+
+         aGet[ _CCODOBR ]:cText( Space( 10 ) )
+         aGet[ _CCODOBR ]:lValid()
+
+      end if               
 
    end if
 
@@ -6578,7 +6594,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta )
+static function CambioRutaTablet( aGet, oSayTextRuta )
 
    local cCliente          := ""
    local nOrdAnt           := ( D():Clientes( nView ) )->( OrdSetFocus() )
@@ -6589,28 +6605,9 @@ static function CambioRutaTablet( aGet, oCbxRuta, oSayTextRuta )
 
       if ( D():Clientes( nView ) )->( OrdKeyCount() ) != 0 
          
-         if Empty( cUltimoCliente )
-
-            ( D():Clientes( nView ) )->( dbGoTop() )
-            cCliente             := ( D():Clientes( nView ) )->Cod
-
-         else
-
-            if ( D():Clientes( nView ) )->( dbSeek( cUltimoCliente ) )
-
-               ( D():Clientes( nView ) )->( dbSkip() )
-
-               if !( D():Clientes( nView ) )->( Eof() )
-                  cCliente             := ( D():Clientes( nView ) )->Cod
-               end if   
-
-            else   
-
-               ( D():Clientes( nView ) )->( dbGoTop() )
-               cCliente             := ( D():Clientes( nView ) )->Cod
-
-            end if
-
+         ( D():Clientes( nView ) )->( dbGoTop() )
+         if !( D():Clientes( nView ) )->( Eof() )
+            cCliente       := ( D():Clientes( nView ) )->Cod
          end if   
 
          if !Empty( oSayTextRuta )
@@ -6649,6 +6646,34 @@ return cCliente
 
 //---------------------------------------------------------------------------//
 
+static function gotoUltimoCliente()
+
+   local nOrdAnt     := ( D():Clientes( nView ) )->( OrdSetFocus( hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
+
+   if empty( nUltimoCliente )
+      ( D():Clientes( nView ) )->( dbGoTop() )
+   else
+      ( D():Clientes( nView ) )->( OrdKeyGoto( nUltimoCliente ) )
+   end if 
+
+   ( D():Clientes( nView ) )->( OrdSetFocus( nOrdAnt ) ) 
+         
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static function setUltimoCliente()
+
+   local nOrdAnt     := ( D():Clientes( nView ) )->( OrdSetFocus( hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
+
+   nUltimoCliente    := ( D():Clientes( nView ) )->( OrdKeyNo() )
+
+   ( D():Clientes( nView ) )->( OrdSetFocus( nOrdAnt ) ) 
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
 static function ChangeSerieTablet( aGet )
 
 	local cSerie 	:= aGet[ _CSERIE ]:VarGet()
@@ -6662,9 +6687,15 @@ static function ChangeSerieTablet( aGet )
 
 			case cSerie == "B"
 				if !Empty( aGet[ _CSERIE ] )
-					aGet[ _CSERIE ]:cText( "A" )
+					aGet[ _CSERIE ]:cText( "C" )
 					aGet[ _CSERIE ]:Refresh()
 				end if	
+
+         case cSerie == "C"
+            if !Empty( aGet[ _CSERIE ] )
+               aGet[ _CSERIE ]:cText( "A" )
+               aGet[ _CSERIE ]:Refresh()
+            end if   
 
 			otherwise
 				if !Empty( aGet[ _CSERIE ] )
@@ -11655,36 +11686,39 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
             if file( cFilePdf )
 
-               aMail    := {  {  "mail" => alltrim( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ),;
-                                 "subject" => "Envío de  factura de cliente número " + D():FacturasClientesIdTextShort( nView ),;
-                                 "attachments" => cFilePdf,;
-                                 "message" => "Adjunto le remito nuestra factura de cliente " + D():FacturasClientesIdTextShort( nView ) + space( 1 ) + ;
-                                             "de fecha " + dtoc( D():FacturasClientesFecha( nView ) ) + space( 1 ) + ;
-                                             CRLF + ;
-                                             CRLF + ;
-                                             "Reciba un cordial saludo." } }
+               with object ( TGenMailingDocuments():Init() )
 
-               with object TSendMail():New()
-                  :sendList( aMail )
+                  :setAsunto( "Envío de factura de cliente número " + D():FacturasClientesIdTextShort( nView ) )
+                  :setPara( alltrim( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ) )
+                  :setAdjunto( cFilePdf )
+                  :setHTML(   "<p>" +;
+                              "Adjunto le remito nuestra factura de cliente " + D():FacturasClientesIdTextShort( nView ) + space( 1 ) + ;
+                              "de fecha " + dtoc( D():FacturasClientesFecha( nView ) ) + space( 1 ) + ;
+                              "</p>" + ;
+                              "<p>" + ;
+                              "</p>" + ;
+                              "<p>" + ;
+                              "Reciba un cordial saludo." + ;
+                              "</p>" )
+                  :Resource( aItmFacCli(), nView )
                end with
 
 /*
-               with object ( TGenMailing():New() )
+               aMail    := {  {  "mail" => alltrim( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ),;
+                                 "subject" => "Envío de  factura de cliente número " + D():FacturasClientesIdTextShort( nView ),;
+                                 "attachments" => cFilePdf,;
+                                 "message" =>   "<p>" +;
+                                                "Adjunto le remito nuestra factura de cliente " + D():FacturasClientesIdTextShort( nView ) + space( 1 ) + ;
+                                                "de fecha " + dtoc( D():FacturasClientesFecha( nView ) ) + space( 1 ) + ;
+                                                "</p>" + ;
+                                                "<p>" + ;
+                                                "</p>" + ;
+                                                "<p>" + ;
+                                                "Reciba un cordial saludo." + ;
+                                                "</p>" } }
 
-                  :SetTypeDocument( "nFacCli" )
-                  :SetAlias(        D():FacturasClientes( nView ) )
-                  :SetItems(        aItmFacCli() )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  factura de cliente número " + ( D():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestra factura de cliente " + ( D():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :lSend()
-
+               with object TSendMail():New()
+                  :sendList( aMail )
                end with
 */
             end if
@@ -14881,15 +14915,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       	oMeter:Set( 4 )
       end if	
 
-      cUltimoCliente    := aTmp[ _CCODCLI ]
+      // nUltimoCliente    := aTmp[ _CCODCLI ]
 
       WinGather( aTmp, , D():FacturasClientes( nView ), , nMode )
-
-      /*
-	  Actualizamos el stock en la web------------------------------------------
-      */
-
-      //ActualizaStockWeb( cSerFac + str( nNumFac ) + cSufFac )
 
       /*
       Actualizamos el estado de los albaranes de clientes----------------------
@@ -23650,7 +23678,7 @@ RETURN ( aSucces )
 Finaliza la transacción de datos
 */
 
-STATIC FUNCTION EndTransTablet( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oDlg )
+STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
 
    local n
    local nOrd
@@ -23777,11 +23805,11 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMo
       aTmp[ _NTOTLIQ ]  := nTotCob
       aTmp[ _NTOTPDT ]  := nTotFac - nTotCob
 
-      /*
-      Grabamos el registro-----------------------------------------------------
-      */
+      // set de ultimo registro------------------------------------------------
 
-      cUltimoCliente    := aTmp[ _CCODCLI ]
+      setUltimoCliente() 
+
+      // Grabamos el registro--------------------------------------------------
 
       WinGather( aTmp, , D():FacturasClientes( nView ), , nMode )
 
