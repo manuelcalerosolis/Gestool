@@ -1078,6 +1078,14 @@ METHOD TrazaAlbaranCliente( cNumDoc )
          end if
       end if
 
+      /*
+      Buscamos si se ha pasado a tiket
+      */
+
+      if ::oTikCliT:SeekInOrd( ::oAlbCliT:cNumTik, 'cNumTik' )
+         ::AddTicketCliente( .f., oItm3)
+      end if
+
    end if
 
    ::oTree:ExpandAll()
@@ -1191,6 +1199,16 @@ METHOD TrazaTicketCliente( cNumDoc, lVale )
          RETURN ( ::TrazaTicketCliente( ::oTikCliT:cTikVal, .t. ) )
       end if
 
+      /*
+      Buscamos si un albaran se a pasado a tiket      
+      */
+
+      if ::oAlbCliT:SeekInOrd( cNumDoc, "CNUMTIK" )
+
+         oItm1 := ::AddAlbaranCliente( .f., if( !Empty( oItm3 ), oItm3, if( !Empty( oItm2 ), oItm2, if( !Empty( oItm1 ), oItm1, ::oTree ) ) ) )
+
+      end if   
+
       // if ::oTikCliT:Seek( cNumDoc )
 
       oItm1          := ::AddTicketCliente( !lVale, if( !Empty( oItm3 ), oItm3, if( !Empty( oItm2 ), oItm2, if( !Empty( oItm1 ), oItm1, ::oTree ) ) ) )
@@ -1199,7 +1217,6 @@ METHOD TrazaTicketCliente( cNumDoc, lVale )
       if ::oTikCliT:Seek( cNumDoc )
 
          oItm2       := ::AddTicketCliente( lVale, if( !Empty( oItm3 ), oItm3, if( !Empty( oItm2 ), oItm2, if( !Empty( oItm1 ), oItm1, ::oTree ) ) ) )
-
 
          if ::oTikCliT:lLiqTik
 
@@ -1214,9 +1231,9 @@ METHOD TrazaTicketCliente( cNumDoc, lVale )
 
          end if
 
-      end if
+         ::oTikCliT:OrdSetFocus( "cNumTik" )
 
-      ::oTikCliT:OrdSetFocus( "cNumTik" )
+      end if
 
    end if
 

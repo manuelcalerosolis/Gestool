@@ -16285,6 +16285,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMTIK", "CNUMTIK", {|| Field->CNUMTIK } ) )
+
       // Albaranes no facturado------------------------------------------------
 
       ( cAlbCliT )->( ordCondSet( "!Deleted() .and. lFacturado", {|| !Deleted() .and. Field->lFacturado }  ) )
@@ -16304,8 +16307,6 @@ FUNCTION rxAlbCli( cPath, oMeter )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "dFecDes", "dFecAlb", {|| Field->dFecAlb } ) )
-
-
 
       ( cAlbCliT )->( dbCloseArea() )
    else
