@@ -314,9 +314,7 @@ Method EditButtonBar( oWnd, oMenuItem )
 
    nLevel            := nLevelUsr( oMenuItem )
 
-   /*
-   Obtenemos el nivel de acceso
-   */
+   // Obtenemos el nivel de acceso
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )

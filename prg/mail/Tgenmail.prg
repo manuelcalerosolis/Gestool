@@ -39,7 +39,7 @@ CLASS TGenMailing
    DATA cGetAdjunto
    DATA cGetHtml
    DATA cGetCSS
-   DATA cGetMensaje
+   DATA cGetMensaje                    INIT ""
    DATA cGetDe                         INIT Padr( uFieldEmpresa( "cNombre" ), 250 )
    DATA cGetPara                       INIT Space( 250 )
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
@@ -61,9 +61,6 @@ CLASS TGenMailing
 
    DATA cTypeDocument
 
-   DATA oCmbMensaje
-   DATA cCmbMensaje
-
    DATA cNombre
    DATA cDireccion
 
@@ -82,6 +79,7 @@ CLASS TGenMailing
 
    DATA lCancel
 
+   DATA oPaquetesTotales
    DATA nPaquetesTotales               INIT 1
    DATA nPaqueteActual                 INIT 1
 
@@ -98,27 +96,32 @@ CLASS TGenMailing
 
    METHOD New()
    METHOD Create()
-   METHOD Init()
 
    METHOD getWorkArea()                INLINE ( D():Clientes( ::nView ) )
 
    METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
-   METHOD setAdjunto( cText )          INLINE ( ::cGetAdjunto  := Padr( cText, 250 ) )
-   METHOD setHtml( cText )             INLINE ( ::cGetHtml     := Padr( cText, 250 ) )
-   METHOD setDe( cText )               INLINE ( ::cGetDe       := Padr( cText, 250 ) )
+   METHOD getAsunto()                  INLINE ( alltrim( ::cSubject ) )
+
+   METHOD setHtml( cText )             INLINE ( ::cGetHtml := padr( cText, 250 ) )
+   METHOD setDe( cText )               INLINE ( ::cGetDe := padr( cText, 250 ) )
    
-   METHOD setPara( cText )             INLINE ( ::cGetPara     := Padr( cText, 250 ) )
+   METHOD setPara( cText )             INLINE ( ::cGetPara := padr( cText, 250 ) )
+   METHOD getPara()                    INLINE ( alltrim( ::cGetPara ) )
       METHOD HidePara()                INLINE ( ::lHidePara := .t., if ( !empty( ::oGetPara ), ::oGetPara:Hide(), ) )
       METHOD ShowPara()                INLINE ( ::lHidePara := .f., if ( !empty( ::oGetPara ), ::oGetPara:Show(), ) )
 
-   METHOD setCopia( cText )            INLINE ( ::cGetCopia    := Padr( cText, 250 ) )
+   METHOD setCopia( cText )            INLINE ( ::cGetCopia := padr( cText, 250 ) )
+   METHOD getCopia()                   INLINE ( alltrim(::cGetCopia) )
       METHOD HideCopia()               INLINE ( ::lHideCopia := .t., if ( !empty( ::oGetCopia ), ::oGetCopia:Hide(), ) )
       METHOD ShowCopia()               INLINE ( ::lHideCopia := .f., if ( !empty( ::oGetCopia ), ::oGetCopia:Show(), ) )
 
-   METHOD setItems( aItems )           INLINE ( ::aItems       := aItems )
+   METHOD setItems( aItems )           INLINE ( ::aItems := aItems )
    METHOD setAlias( cAlias )           INLINE ( nil )
 
+   METHOD setAdjunto( cText )          INLINE ( ::cGetAdjunto := padr( cText, 250 ) )
+   METHOD getAdjunto()                 INLINE ( alltrim( ::cGetAdjunto ) )
    METHOD addAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
+   METHOD addFileAdjunto()
 
    METHOD setMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
 
@@ -162,7 +165,6 @@ CLASS TGenMailing
 
    METHOD InsertField()                INLINE ( ::oActiveX:oClp:SetText( "{" + ( Alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
 
-   METHOD GetAdjunto()
 
    METHOD waitMail()
    METHOD waitSeconds( nTime )
@@ -196,17 +198,6 @@ METHOD Create() CLASS TGenMailing
    ::cGetAdjunto           := Space( 254 )
    ::cGetHtml              := Space( 254 )
 
-   ::cGetMensaje           := ""
-   ::cCmbMensaje           := "Sin formato"
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Init() CLASS TGenMailing
-
-   ::New()
-
    ::SetDe( uFieldEmpresa( "cNombre" ) )
 
 Return ( Self )
@@ -214,8 +205,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD Resource( aItems, nView ) CLASS TGenMailing
-
-   ::Init()
 
    ::lCancel         := .f.
    ::aItems          := aItems
@@ -327,6 +316,8 @@ METHOD buildPageRedactar( oDlg )
 
    ::oActiveX  := GetRichEdit():ReDefine( 600, oDlg )
 
+   ::oActiveX:oRTF:SetText( ::cGetMensaje )
+
 Return ( Self )   
 
 //---------------------------------------------------------------------------//
@@ -433,7 +424,9 @@ METHOD buildPageProceso( oDlg )
       TRANSPARENT ;
       OF       oDlg
 
-   REDEFINE GET ::nPaquetesTotales ;
+   REDEFINE GET ::oPaquetesTotales ;
+      VAR      ::nPaquetesTotales ;
+      IDSAY    181 ;
       ID       180 ;
       SPINNER ;
       PICTURE  "@E 999" ;
@@ -532,7 +525,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD GetAdjunto() CLASS TGenMailing
+METHOD addFileAdjunto() CLASS TGenMailing
 
    local cFile                         := cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' )
 
@@ -582,19 +575,19 @@ Return ( Self )
 
 METHOD BotonAnterior() CLASS TGenMailing
 
-   do case
-      case ::oFld:nOption == 2
+   // msgAlert( ::oFld:nOption, "::oFld:nOption")
+   // msgAlert( len( ::oFld:aDialogs), "len(aDialogs)" )
 
-         ::oBtnAnterior:Hide()
+   if ::oFld:nOption == 2
+      ::oBtnAnterior:Hide()
+      ::oBtnSiguiente:Show() 
+      ::oBtnCargarHTML:Show()
+      ::oBtnSalvarHTML:Show()
+   end if
 
-         ::oBtnCargarHTML:Show()
-         ::oBtnSalvarHTML:Show()
-
-      case ::oFld:nOption == 3
-
-         SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
-
-   end case 
+   if ::oFld:nOption <= len( ::oFld:aDialogs ) 
+      SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
+   end if 
 
    ::oFld:GoPrev()
 
@@ -604,26 +597,25 @@ Return ( Self )
 
 METHOD BotonSiguiente() CLASS TGenMailing
 
-   do case
-      case ::oFld:nOption == 1
+   // msgAlert( ::oFld:nOption, "::oFld:nOption")
+   // msgAlert( len( ::oFld:aDialogs), "len(aDialogs)" )
 
-         ::oBtnCargarHTML:Hide()
-         ::oBtnSalvarHTML:Hide()
-         ::oBtnAnterior:Show()
+   if ::oFld:nOption == 1
+      ::oBtnCargarHTML:Hide()
+      ::oBtnSalvarHTML:Hide()
+      ::oBtnAnterior:Show()
+   end if 
 
-      case ::oFld:nOption == 2
+   if ::oFld:nOption == len( ::oFld:aDialogs ) - 2
+      ::oBtnAnterior:Show()
+      ::oBtnSiguiente:Show() 
+      SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
+   end if 
 
-         ::oBtnAnterior:Show()
-         
-         SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
-
-      case ::oFld:nOption == 3
-
-         ::IniciarProceso()
-
-         SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
-
-   end case
+   if ::oFld:nOption == len( ::oFld:aDialogs ) - 1
+      ::oBtnSiguiente:Hide() 
+      ::IniciarProceso()
+   end if 
 
    ::oFld:GoNext()
 
@@ -694,50 +686,7 @@ METHOD IniciarProceso() CLASS TGenMailing
       msgStop( "No hay direcciones de correos para mandar.")
    end if 
 
-   return ( self )
-
-   ::nTime              := Val( ::cTiempo )
-
-   ::oBtnCancel:bAction := {|| ::lCancel := .t. }
-
-   /*
-   Información por pantalla----------------------------------------------------
-   */
-
-   CursorWait()
-
-   ::oTree:Add( "Se ha iniciado el proceso de envio" )
-
-   /*
-   Actualizamos el meter-------------------------------------------------------
-   */
-
-   ::oMtr:nTotal        := ( ::getWorkArea() )->( OrdKeyCount() )
-
-   ( ::getWorkArea() )->( dbGoTop() )
-   while !::lCancel .and. !( ::getWorkArea() )->( eof() )
-
-      if ( ::getWorkArea() )->lMail .and. !Empty( ( ::getWorkArea() )->cMeiInt )
-         ::lBuildMail()
-      end if
-
-      ( ::getWorkArea() )->( dbSkip() )
-
-      ::oMtr:Set( ( ::getWorkArea() )->( OrdKeyNo() ) )
-
-   end do
-
-   CursorArrow()
-
-   if ::lCancel
-      ::oTree:Select( ::oTree:Add( "El envio ha sido cancelado por el usuario" ) )
-   else
-      ::oTree:Select( ::oTree:Add( "El proceso de envio ha finalizado" ) )
-   end if
-
-   ::oBtnCancel:bAction := {|| ::oDlg:end() }
-
-Return ( Self )
+Return ( self )
 
 //--------------------------------------------------------------------------//
 

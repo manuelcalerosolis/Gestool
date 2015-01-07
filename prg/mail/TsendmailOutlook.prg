@@ -50,9 +50,8 @@ METHOD sendMail( hMail )
       return .f. 
    end if
 
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   // oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   // BEGIN SEQUENCE
 
       oMail             := ::mailServer:CreateItem( 0 ) // olMailItem 
 
@@ -68,15 +67,15 @@ METHOD sendMail( hMail )
 
       oMail:Display()
 
-   RECOVER USING oError
+   // RECOVER USING oError
 
-      lSend             := .f.
+   //    lSend             := .f.
 
-      msgStop( "Error al enviar el objeto de correo electrónico." + CRLF + ErrorMessage( oError ) )   
+   //    msgStop( "Error al enviar el objeto de correo electrónico." + CRLF + ErrorMessage( oError ) )   
 
-   END SEQUENCE
+   // END SEQUENCE
 
-   ErrorBlock( oBlock )
+   // ErrorBlock( oBlock )
 
 
 Return ( lSend )

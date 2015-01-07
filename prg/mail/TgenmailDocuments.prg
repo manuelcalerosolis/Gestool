@@ -7,13 +7,13 @@ CLASS TGenMailingDocuments FROM TGenMailing
 
    METHOD Resource()
 
+   METHOD IniciarProceso()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD Resource( aItems, nView ) CLASS TGenMailingDocuments
-
-   ::Init()
 
    ::lCancel         := .f.
    ::aItems          := aItems
@@ -46,3 +46,23 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
+METHOD IniciarProceso() CLASS TGenMailingDocuments
+
+   local hashMail := {=>}
+
+   if empty( ::getPara() )
+      msgStop( "No hay dirección de correo para mandar." )
+      Return ( Self )
+   end if 
+
+   hSet( hashMail, "mail", ::getPara() )
+   hSet( hashMail, "mailcc", ::getCopia() )
+   hSet( hashMail, "subject", ::getAsunto() )
+   hSet( hashMail, "attachments", ::getAdjunto() )
+   hSet( hashMail, "message", ::getMessageHTML() )
+
+   ::oSendMail:sendList( { hashMail } )
+
+Return ( self )
+
+//--------------------------------------------------------------------------//

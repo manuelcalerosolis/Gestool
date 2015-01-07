@@ -996,48 +996,49 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
 RETURN .T.
 
 //--------------------------------------------------------------------------//
-/*
-Realiza busquedas de manera progresiva
-*/
+//
+// Realiza busquedas de manera progresiva
+//
 
 METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
 
+   local nRec
+   local cOrd
+   local oCol
    local lSeek
    local cAlias
 
    DEFAULT nLen      := 10
 
-   if Empty( ::xAlias ) .or. !( ::xAlias )->( Used() )
+   cAlias            := ::xAlias
+
+   if Empty( cAlias ) .or. !( cAlias )->( Used() )
       Return .f.
    end if
 
    CursorWait()
 
-   /*
-   Estudiamos la cadena de busqueda
-   */
+   // Estudiamos la cadena de busqueda
 
    xCadena           := Alltrim( Upper( cValToChar( xCadena ) ) )
    xCadena           := StrTran( xCadena, Chr( 8 ), "" )
 
-   /*
-   Comenzamos la busqueda------------------------------------------------------
-   */
+   // Guradamos valores iniciales-------------------------------------------------
+
+   nRec              := ( cAlias )->( RecNo() )
+   cOrd              := ( cAlias )->( OrdSetFocus() )
+
+   // Comenzamos la busqueda------------------------------------------------------
 
    lSeek             := ::FastFilter( xCadena, cAlias ) // 
-
    if !lSeek
       lSeek          := lMiniSeek( nil, xCadena, cAlias, nLen )
    end if
 
-   if lSeek .or. !Empty( xCadena )
-
+   if lSeek .or. empty( xCadena )
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-
    else
-
       oGet:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
-
    end if
 
    ::oBrw:Select( 0 )
@@ -1050,47 +1051,37 @@ Return ( lSeek )
 
 //--------------------------------------------------------------------------//
 
-METHOD FastFilter( xCadena )
+METHOD FastFilter( xCadena, cAlias )
 
-   local cFilterExpresion
+   DestroyFastFilter( cAlias, .f., .f. )
 
-   // DestroyFastFilter( cAlias, .f., .f. )
-   // CreateFastFilter( "", cAlias, .f. )
+   CreateFastFilter( "", cAlias, .f. )
 
-   ( ::xAlias )->( dbClearFilter() )
+   if Left( xCadena, 1 ) == "*"
 
-   if Left( xCadena, 1 ) == "*" 
-      
       if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
 
-         cFilterExpresion  := SubStr( xCadena, 2, len( xCadena ) - 2 )
+         CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), cAlias, .t. )
 
-         // CreateFastFilter( cFilterExpresion, cAlias, .t. )
-         // ::SetKillFilter( {|| DestroyFastFilter( cAlias ), ::HideButtonFilter() } )
-         
-         ::oBrw:lSeekWild     := .t.
-         ::oBrw:lIncrFilter   := .t.
-         ::oBrw:Seek( cFilterExpresion )
+         ::SetKillFilter( {|| DestroyFastFilter( cAlias ), ::HideButtonFilter() } )
 
          ::ShowButtonFilter()
          ::ShowAddButtonFilter()
          ::ShowEditButtonFilter()
 
+      else
+
+         ::HideButtonFilter()
+         ::HideAddButtonFilter()
+         ::HideEditButtonFilter()
+
       end if
 
-   else
-
-      ::oBrw:lSeekWild     := .f.
-      ::oBrw:lIncrFilter   := .f.
-      ::oBrw:Seek( xCadena )
-
-      ::HideButtonFilter()
-      ::HideAddButtonFilter()
-      ::HideEditButtonFilter()
+      Return .t.
 
    end if
 
-Return .t.
+Return .f.
 
 //----------------------------------------------------------------------------//
 

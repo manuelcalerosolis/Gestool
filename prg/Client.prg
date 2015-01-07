@@ -1001,7 +1001,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TGenMailing():Resource( aItmCli(), nView ) ) ;
+         ACTION   ( TGenMailing():New():Resource( aItmCli(), nView ) ) ;
          TOOLTIP  "Enviar correos" ;
          HOTKEY   "V" ;
          LEVEL    ACC_IMPR
