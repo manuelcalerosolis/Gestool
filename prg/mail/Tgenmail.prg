@@ -44,8 +44,6 @@ CLASS TGenMailing
    DATA cGetPara                       INIT Space( 250 )
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
-   DATA cWorkArea                      INIT ""
-
    DATA lHidePara                      INIT .f.
    DATA lHideCopia                     INIT .f.
 
@@ -99,8 +97,7 @@ CLASS TGenMailing
    METHOD New()
    METHOD Create()
 
-   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea )
-   METHOD getWorkArea()                INLINE ( ::cWorkArea )
+   METHOD getWorkArea()                INLINE ( D():Clientes( ::nView ) )
 
    METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
    METHOD getAsunto()                  INLINE ( alltrim( ::cSubject ) )
@@ -118,6 +115,7 @@ CLASS TGenMailing
       METHOD HideCopia()               INLINE ( ::lHideCopia := .t., if ( !empty( ::oGetCopia ), ::oGetCopia:Hide(), ) )
       METHOD ShowCopia()               INLINE ( ::lHideCopia := .f., if ( !empty( ::oGetCopia ), ::oGetCopia:Show(), ) )
 
+   METHOD setItems( aItems )           INLINE ( ::aItems := aItems )
    METHOD setAlias( cAlias )           INLINE ( nil )
 
    METHOD setAdjunto( cText )          INLINE ( ::cGetAdjunto := padr( cText, 250 ) )
@@ -125,13 +123,9 @@ CLASS TGenMailing
    METHOD addAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
    METHOD addFileAdjunto()
 
-   METHOD setMensaje( cText )          INLINE ( ::cGetMensaje += cText )
+   METHOD setMensaje( cText )          INLINE ( ::cGetMensaje  += cText )
 
-   METHOD setTypeDocument( cText )     INLINE ( ::cTypeDocument := cText )
-
-   METHOD setItems( aItems )           INLINE ( if( !empty(aItems),;
-                                                ( ::aItems := aItems, ::aFields := getSubArray( aItems, 5 ) ), ) )
-   METHOD getItems()                   INLINE ( ::aItems )
+   METHOD setTypeDocument( cText )     INLINE ( ::cTypeDocument   := cText )
 
    // Recursos-----------------------------------------------------------------
 
@@ -188,14 +182,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( aItems, cWorkArea, nView ) CLASS TGenMailing
+METHOD New() CLASS TGenMailing
 
    ::Create()
-
-   ::aItems                := aItems
-   ::aFields               := getSubArray( aItems, 5 )
-   ::nView                 := nView
-   ::setWorkArea( cWorkArea )
 
    ::oSendMail             := TSendMail():New( Self )
 
@@ -215,9 +204,12 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource() CLASS TGenMailing
+METHOD Resource( aItems, nView ) CLASS TGenMailing
 
    ::lCancel         := .f.
+   ::aItems          := aItems
+   ::aFields         := getSubArray( aItems, 5 )
+   ::nView           := nView
 
    ::HidePara()
 
