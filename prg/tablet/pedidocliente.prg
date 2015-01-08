@@ -23,8 +23,6 @@ CLASS PedidoCliente FROM Ventas
 
    METHOD GuardaDocumento()
 
-   METHOD ValoresDefectoMaster()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -153,9 +151,6 @@ Return ( .t. )
 METHOD GetAppendDocumento() CLASS PedidoCliente
 
    ::hDictionaryMaster      := D():GetPedidoClienteBlank( ::nView )
-
-   ::ValoresDefectoMaster()
-
    ::hDictionaryDetail      := {}
 
 Return ( self )
@@ -164,16 +159,7 @@ Return ( self )
 
 METHOD GetEditDocumento() CLASS PedidoCliente
 
-   /*
-   Tomamos los datos de la cabecera--------------------------------------------
-   */
-
    ::hDictionaryMaster      := D():GetPedidoClienteById( D():PedidosClientesId( ::nView ), ::nView ) 
-
-   /*
-   Tomamos los datos de las lineas de pedidos----------------------------------
-   */
-
    ::hDictionaryDetail      := D():GetPedidoClienteLineas( ::nView )
 
 Return ( self )
@@ -182,23 +168,13 @@ Return ( self )
 
 METHOD ValoresDefectoMaster()
 
-   hSet( ::hDictionaryMaster, "Serie", "A" )
-   hSet( ::hDictionaryMaster, "Turno", cCurSesion() )
-   hSet( ::hDictionaryMaster, "Almacen", oUser():cAlmacen() )
-   hSet( ::hDictionaryMaster, "Caja", oUser():cCaja() )
-   hSet( ::hDictionaryMaster, "Divisa", cDivEmp() )
-   hSet( ::hDictionaryMaster, "Pa0go", cDefFpg() )
-   hSet( ::hDictionaryMaster, "ValorDivisa", nChgDiv( cDivEmp(), D():Divisas( ::nView ) ) )
-   hSet( ::hDictionaryMaster, "Sufijo", RetSufEmp() )
-   hSet( ::hDictionaryMaster, "Estado", 1 )
-   hSet( ::hDictionaryMaster, "Usuario", cCurUsr() )
-   hSet( ::hDictionaryMaster, "Delegacion", oUser():cDelegacion() )
-   hSet( ::hDictionaryMaster, "ImpuestosIncluidos", uFieldEmpresa( "lIvaInc" ) )
-   hSet( ::hDictionaryMaster, "LiteralGastos", Padr( "Gastos", 250 ) )
    hSet( ::hDictionaryMaster, "ImpuestoGastos", nIva( D():TiposIva( ::nView ), cDefIva() ) )
 
+<<<<<<< HEAD
       //aTmp[ _LSNDDOC    ]  := .t.
 
+=======
+>>>>>>> origin/master
 Return ( self )
 
 //---------------------------------------------------------------------------//
