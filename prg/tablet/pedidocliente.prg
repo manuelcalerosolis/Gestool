@@ -197,7 +197,7 @@ METHOD ValoresDefectoMaster()
    hSet( ::hDictionaryMaster, "LiteralGastos", Padr( "Gastos", 250 ) )
    hSet( ::hDictionaryMaster, "ImpuestoGastos", nIva( D():TiposIva( ::nView ), cDefIva() ) )
 
-      aTmp[ _LSNDDOC    ]  := .t.
+      //aTmp[ _LSNDDOC    ]  := .t.
 
 Return ( self )
 
