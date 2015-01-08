@@ -5085,19 +5085,32 @@ CLASS D
 
    // Presupuestos de clientes-------------------------------------------------
 
-   METHOD PresupuestosClientes( nView )      INLINE ( ::Get( "PreCliT", nView ) )
-      METHOD PresupuestosClientesId( nView ) INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliT", nView ) )->cSufPre )
+   METHOD PresupuestosClientes( nView )         INLINE ( ::Get( "PreCliT", nView ) )
+      METHOD PresupuestosClientesFecha( nView ) INLINE ( ( ::Get( "PreCliT", nView ) )->dFecPre )
+      METHOD PresupuestosClientesId( nView )    INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliT", nView ) )->cSufPre )
+      METHOD PresupuestosClientesIdTextShort( nView ) ;
+                                                INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + "/" + alltrim( str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) ) )
+      METHOD PresupuestosClientesIdText( nView ) ;
+                                                INLINE ( ::PresupuestosClientesIdTextShort( nView ) + "/" + ( ::Get( "PreCliT", nView ) )->cSufPre )
 
    // Pedidos de clientes------------------------------------------------------
 
-   METHOD SatClientes( nView )               INLINE ( ::Get( "SatCliT", nView ) )
-      METHOD SatClientesId( nView )          INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
+   METHOD SatClientes( nView )                  INLINE ( ::Get( "SatCliT", nView ) )
+      METHOD SatClientesId( nView )             INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
+      METHOD SatClientesFecha( nView )          INLINE ( ( ::Get( "SatCliT", nView ) )->dFecSat )
+      METHOD SatClientesId( nView )             INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
+      METHOD SatClientesIdTextShort( nView ) ;
+                                                INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + "/" + alltrim( str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) ) )
+      METHOD SatClientesIdText( nView ) ;
+                                                INLINE ( ::SatClientesIdTextShort( nView ) + "/" + ( ::Get( "SatCliT", nView ) )->cSufSat )
 
    // Albaranes de clientes----------------------------------------------------
 
    METHOD AlbaranesClientes( nView )            INLINE ( ::Get( "AlbCliT", nView ) )
-      METHOD AlbaranesClientesIdText( nView )   INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
       METHOD AlbaranesClientesId( nView )       INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
+      METHOD AlbaranesClientesIdTextShort( nView );
+                                                INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
+      METHOD AlbaranesClientesIdText( nView )   INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
 
    METHOD AlbaranesClientesLineas( nView )      INLINE ( ::Get( "AlbCliL", nView ) )
       METHOD AlbaranesClientesLineasId( nView ) INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
@@ -5107,9 +5120,9 @@ CLASS D
    METHOD FacturasClientes( nView )             INLINE ( ::Get( "FacCliT", nView ) )
       METHOD FacturasClientesFecha( nView )     INLINE ( ( ::Get( "FacCliT", nView ) )->dFecFac )
       METHOD FacturasClientesId( nView )        INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) + ( ::Get( "FacCliT", nView ) )->cSufFac )
-      METHOD FacturasClientesIdText( nView )    INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )
       METHOD FacturasClientesIdTextShort( nView );
                                                 INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) )
+      METHOD FacturasClientesIdText( nView )    INLINE ( ::FacturasClientesIdTextShort( nView ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )
 
    METHOD FacturasClientesLineas( nView )       INLINE ( ::Get( "FacCliL", nView ) )
       METHOD FacturasClientesLineasId( nView )  INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )

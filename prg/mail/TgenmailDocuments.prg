@@ -16,7 +16,6 @@ END CLASS
 METHOD Resource() CLASS TGenMailingDocuments
 
    ::lCancel         := .f.
-   ::aFields         := getSubArray( ::aItems, 5 )
 
    DEFINE DIALOG     ::oDlg ;
       RESOURCE       "Select_Mail_Container";
@@ -33,6 +32,8 @@ METHOD Resource() CLASS TGenMailingDocuments
          ::buildPageProceso( ::oFld:aDialogs[ 2 ] )
 
          ::buildButtonsGeneral()
+
+         SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
 
       ::oDlg:bStart  := {|| ::startResource() }
 

@@ -1275,7 +1275,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
                   "EMPRESA_10",;
                   "EMPRESA_CONTABILIDAD",;
                   "EMPRESA_6",;
-                  "EMPRESA_0"
+                  "EMPRESA_COMUNICACIONES"
 
       /*
       Page 1 Comportamientos---------------------------------------------------
@@ -2393,6 +2393,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
       REDEFINE CHECKBOX aTmp[ _LAUTMAI ] ;
             ID       175;
+            OF       fldComunicaciones
+
+      REDEFINE CHECKBOX aTmp[ _LSSLMAI ] ;
+            ID       177;
             OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CCCPMAI ] ;
@@ -6630,6 +6634,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cCodCliFrq", "C", 12, 0, "Código de cliente para franquicia",                     "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodPrvFrq", "C", 12, 0, "Código de proveedor para franquicia",                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lStkAlm",    "L",  1, 0, "Lógico de usar stock por almacenes",                    "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lSSLMai",    "L",  1, 0, "Lógico de uso de protocolo SSL del servidor de correo", "", "", "aEmp()", nil } )
 
 Return ( aDbf )
 

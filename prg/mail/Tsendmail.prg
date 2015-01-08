@@ -17,6 +17,7 @@ CLASS TSendMail
    DATA mailServerPassword
    DATA mailServerConCopia
    DATA mailServerAuthenticate
+   DATA mailServerSSL
    
    METHOD New( oSender )
 
@@ -83,6 +84,7 @@ METHOD New( oSender ) CLASS TSendMail
    ::mailServerPassword       := Rtrim( uFieldEmpresa( "cPssMai" ) )
    ::mailServerConCopia       := Rtrim( uFieldEmpresa( "cCcpMai" ) )
    ::mailServerAuthenticate   := uFieldEmpresa( "lAutMai")
+   ::mailServerSSL            := uFieldEmpresa( "lSSLMai")
 
 Return ( Self )
 

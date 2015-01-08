@@ -127,9 +127,10 @@ CLASS TGenMailing
 
    METHOD setMensaje( cText )          INLINE ( ::cGetMensaje += cText )
 
-   METHOD setTypeDocument( cText )     INLINE ( ::cTypeDocument := cText )
+   METHOD setTypeDocument( cText )     INLINE ( ::cTypeDocument := cText,;
+                                                if( !empty( ::cTypeDocument ), ::loadDefaultHtmlFile(), ) )
 
-   METHOD setItems( aItems )           INLINE ( if( !empty(aItems),;
+   METHOD setItems( aItems )           INLINE ( if( !empty( aItems ),;
                                                 ( ::aItems := aItems, ::aFields := getSubArray( aItems, 5 ) ), ) )
    METHOD getItems()                   INLINE ( ::aItems )
 
@@ -149,6 +150,8 @@ CLASS TGenMailing
    METHOD freeResources()
 
    METHOD lCargaHTML()
+      METHOD loadDefaultHtmlFile()
+      METHOD loadHtmlFile( cFile )   
    METHOD lSalvaHTML()
    METHOD lDefectoHTML()
 
@@ -178,6 +181,7 @@ CLASS TGenMailing
                                                       aAdd( ::aMailingList, ::hashClientList() ),;
                                                    ) )
    METHOD hashClientList()        
+
    METHOD getMessage()
    METHOD getMessageHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
    METHOD getExpression()
@@ -513,12 +517,16 @@ METHOD lSalvaHtml() CLASS TGenMailing
 
    local cHtmlFile   := cGetFile( 'Html ( *.Html ) | *.Html', 'Seleccione el nombre del fichero' )
 
-   if !( Lower( cFileExt( cHtmlFile ) ) $ "html" )
+   if empty( cHtmlFile )
+      Return ( Self )
+   end if 
+
+   if !( lower( cFileExt( cHtmlFile ) ) $ "html" )
       cHtmlFile      := cFilePath( cHtmlFile ) + cFileNoExt( cHtmlFile ) + ".Html"
    endif
 
    if file( cHtmlFile ) .and. ApoloMsgNoYes( "El fichero " + cHtmlFile + " ya existe. ¿Desea sobreescribir el fichero?", "Guardar fichero" )
-      fErase( cHtmlFile )
+      ferase( cHtmlFile )
    else 
       Return ( Self )
    end if
@@ -531,12 +539,12 @@ Return ( Self )
 
 METHOD addFileAdjunto() CLASS TGenMailing
 
-   local cFile                         := cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' )
+   local cFile       := cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' )
 
    if !Empty( cFile )
 
       if !Empty( ::cGetAdjunto )
-         cFile                         := Alltrim( ::cGetAdjunto ) + "; " + cFile
+         cFile       := alltrim( ::cGetAdjunto ) + "; " + cFile
       end if
 
       ::oGetAdjunto:cText( cFile )
@@ -609,13 +617,15 @@ METHOD BotonSiguiente() CLASS TGenMailing
 
    if ::oFld:nOption == len( ::oFld:aDialogs ) - 1
       ::oBtnAnterior:Show()
-      ::oBtnSiguiente:Show() 
       SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
+      ::oBtnSiguiente:Show() 
    end if 
 
    if ::oFld:nOption == len( ::oFld:aDialogs ) 
+      ::oBtnAnterior:Hide()
       ::oBtnSiguiente:Hide() 
       ::IniciarProceso()
+      ::oBtnAnterior:Show()
    end if 
 
 Return ( Self )
@@ -689,35 +699,36 @@ Return ( self )
 
 //--------------------------------------------------------------------------//
 
-METHOD lCargaHtml( cFile ) CLASS TGenMailing
+METHOD lCargaHtml() CLASS TGenMailing
 
-   local hFile
+   ::cGetHtml        := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML' )
+   ::loadHtmlFile( ::cGetHtml )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD loadDefaultHtmlFile()
+
+   local cFile       := cGetHtmlDocumento( ::cTypeDocument )
+   if !empty( cFile )
+      ::loadHtmlFile( cFile )
+   end if 
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD loadHtmlFile( cFile )
+
    local oBlock
-   local nBytes
-   local nStart
-   local cMensaje    := ""
-   local nBufSize    := 4096
-   local cRead       := Space( nBufSize )
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if File( cFile )
+   ::cGetHtml        := alltrim( cFile )
 
-      ::cGetHtml     := Rtrim( cFile )
-
-   else
-
-      if Empty( cFile )
-
-         ::cGetHtml  := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML' )
-         ::cGetHtml  := Rtrim( ::cGetHtml )
-
-      end if
-
-   end if
-
-   if File( ::cGetHtml )  // !Empty( ::oActiveX )
+   if file( ::cGetHtml )  // !Empty( ::oActiveX )
 
       ::cGetMensaje  := memoread( ::cGetHtml )
 
@@ -727,7 +738,7 @@ METHOD lCargaHtml( cFile ) CLASS TGenMailing
 
    else 
 
-      msgStop( "El fichero " + alltrim( ::cGetHtml ) + " no existe." )
+      msgStop( "El fichero " + ::cGetHtml + " no existe." )
 
    end if
 
@@ -740,6 +751,7 @@ METHOD lCargaHtml( cFile ) CLASS TGenMailing
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
 
 METHOD lDefectoHtml( cFile ) CLASS TGenMailing
 

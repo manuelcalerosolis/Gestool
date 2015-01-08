@@ -14641,22 +14641,20 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
 
             if file( cFilePdf )
 
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nPedCli" )
-                  :SetAlias(        D():PedidosClientes( nView ) )
-                  :SetItems(        aItmPedCli() )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  pedido de cliente número " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro pedido de cliente " + ( D():PedidosClientes( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosClientes( nView ) )->nNumPed ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( D():PedidosClientes( nView ) )->dfecPed ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :lSend()
-
+               with object ( TGenMailingDocuments():New( aItmPedCli(), D():PedidosClientes( nView ) ) )
+                  :setAsunto( "Envío de pedido de cliente número " + D():PedidosClientesIdTextShort( nView ) )
+                  :setPara( retFld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
+                  :setAdjunto( cFilePdf )
+                  :setMensaje(   "<p>" +;
+                                 "Adjunto le remito nuestro pedido de cliente " + D():PedidosClientesIdTextShort( nView ) + space( 1 ) + ;
+                                 "de fecha " + dtoc( D():PedidosClientesFecha( nView ) ) + ;
+                                 "</p>" + CRLF + ;
+                                 "<p>" + ;
+                                 "</p>" + CRLF + ;
+                                 "<p>" + ;
+                                 "Reciba un cordial saludo." + ;
+                                 "</p>" + CRLF )
+                  :Resource()
                end with
 
             end if

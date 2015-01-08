@@ -11688,8 +11688,9 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
                with object ( TGenMailingDocuments():New( aItmFacCli(), D():FacturasClientes( nView ) ) )
                   :setAsunto( "Envío de factura de cliente número " + D():FacturasClientesIdTextShort( nView ) )
-                  :setPara( alltrim( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ) )
+                  :setPara( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
                   :setAdjunto( cFilePdf )
+//                  :setTypeDocument( "nFacCli" )
                   :setMensaje(   "<p>" +;
                                  "Adjunto le remito nuestra factura de cliente " + D():FacturasClientesIdTextShort( nView ) + space( 1 ) + ;
                                  "de fecha " + dtoc( D():FacturasClientesFecha( nView ) ) + ;
