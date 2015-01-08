@@ -5116,7 +5116,7 @@ CLASS D
 
    METHOD PedidosClientesLineas( nView )              INLINE ( ::Get( "PedCliL", nView ) )
       METHOD PedidosClientesLineasId( nView )         INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
-      METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesLineasId( nView ), ::PedidosClientesLineas( nView ), nView ) )
+      METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
       METHOD GetPedidoClienteLineaBlank( nView )      INLINE ( ::getHashRecordBlank( ::PedidosClientesLineas( nView ), nView ) )
 
    // Clientes-----------------------------------------------------------------

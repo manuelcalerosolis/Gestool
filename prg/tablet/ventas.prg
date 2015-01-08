@@ -8,7 +8,7 @@ CLASS Ventas FROM DocumentoSerializable
    METHOD OpenFiles()
    METHOD CloseFiles()
 
-   METHOD Resource()
+   METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
 END CLASS
 
@@ -33,6 +33,10 @@ METHOD OpenFiles() CLASS Ventas
 
    D():AlbaranesClientesLineas( ::nView )
 
+   D():TiposIva( ::nView )
+
+   D():Divisas( ::nView )
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -56,21 +60,5 @@ METHOD CloseFiles() CLASS Ventas
    D():DeleteView( ::nView )
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Resource( nMode ) CLASS Ventas
-
-   ::oViewEdit       := ViewEdit():New( self )
-
-   if !Empty( ::oViewEdit )
-
-      ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "pedido" )
-      
-      ::oViewEdit:ResourceViewEdit()
-
-   end if
-
-Return ( .t. )   
 
 //---------------------------------------------------------------------------//

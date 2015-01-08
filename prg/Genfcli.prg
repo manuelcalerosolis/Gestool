@@ -1140,6 +1140,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
 
                ( dbfFacCliL )->cCodAlb    := oDbfTmp:cNumAlb
                ( dbfFacCliL )->dFecAlb    := oDbfTmp:dFecAlb
+               ( dbfFacCliL )->dFecFac    := oDbfTmp:dFecAlb
 
                if lNotImp
                   ( dbfFacCliL )->lImpLin := lNotImp
