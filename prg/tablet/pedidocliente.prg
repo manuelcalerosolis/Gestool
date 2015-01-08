@@ -166,22 +166,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-<<<<<<< HEAD
-=======
-METHOD ValoresDefectoMaster()
-
-   hSet( ::hDictionaryMaster, "ImpuestoGastos", nIva( D():TiposIva( ::nView ), cDefIva() ) )
-
-<<<<<<< HEAD
-      //aTmp[ _LSNDDOC    ]  := .t.
-
-=======
->>>>>>> origin/master
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
->>>>>>> origin/master
 METHOD PropiedadesBrowseDetail() CLASS PedidoCliente
 
    ::oViewEdit:oBrowse:cName            := "Grid pedidos lineas"
