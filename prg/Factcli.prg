@@ -11686,7 +11686,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
             if file( cFilePdf )
 
-               with object ( TGenMailingDocuments():New() )
+               with object ( TGenMailingDocuments():New( aItmFacCli(), D():FacturasClientes( nView ) ) )
                   :setAsunto( "Envío de factura de cliente número " + D():FacturasClientesIdTextShort( nView ) )
                   :setPara( alltrim( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ) )
                   :setAdjunto( cFilePdf )
@@ -11699,7 +11699,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                                  "<p>" + ;
                                  "Reciba un cordial saludo." + ;
                                  "</p>" + CRLF )
-                  :Resource( aItmFacCli(), nView )
+                  :Resource()
                end with
 
             end if

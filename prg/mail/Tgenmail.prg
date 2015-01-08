@@ -114,7 +114,7 @@ CLASS TGenMailing
       METHOD ShowPara()                INLINE ( ::lHidePara := .f., if ( !empty( ::oGetPara ), ::oGetPara:Show(), ) )
 
    METHOD setCopia( cText )            INLINE ( ::cGetCopia := padr( cText, 250 ) )
-   METHOD getCopia()                   INLINE ( alltrim(::cGetCopia) )
+   METHOD getCopia()                   INLINE ( alltrim( ::cGetCopia ) )
       METHOD HideCopia()               INLINE ( ::lHideCopia := .t., if ( !empty( ::oGetCopia ), ::oGetCopia:Hide(), ) )
       METHOD ShowCopia()               INLINE ( ::lHideCopia := .f., if ( !empty( ::oGetCopia ), ::oGetCopia:Show(), ) )
 
@@ -162,15 +162,13 @@ CLASS TGenMailing
 
    METHOD replaceExpresion( cDocumentHTML, cExpresion )
 
-   METHOD isMailServer()               INLINE ( !Empty( ::MailServer ) .and. !Empty( ::MailServerUserName ) .and. !Empty( ::MailServerPassword ) )
+   METHOD isMailServer()               INLINE ( !empty( ::MailServer ) .and. !empty( ::MailServerUserName ) .and. !empty( ::MailServerPassword ) )
 
-
-   METHOD MailServerSend()             INLINE ( ::MailServer + if( !Empty( ::MailServerPort ), ":" + Alltrim( Str( ::MailServerPort ) ), "" ) )
+   METHOD MailServerSend()             INLINE ( ::MailServer + if( !empty( ::MailServerPort ), ":" + alltrim( Str( ::MailServerPort ) ), "" ) )
 
    METHOD SelectColumn( oCombo )
 
-   METHOD InsertField()                INLINE ( ::oActiveX:oClp:SetText( "{" + ( Alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
-
+   METHOD InsertField()                INLINE ( ::oActiveX:oClp:SetText( "{" + ( alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
 
    METHOD waitMail()
    METHOD waitSeconds( nTime )
@@ -188,16 +186,14 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( aItems, cWorkArea, nView ) CLASS TGenMailing
+METHOD New( aItems, cWorkArea ) CLASS TGenMailing
 
    ::Create()
 
-   ::aItems                := aItems
-   ::aFields               := getSubArray( aItems, 5 )
-   ::nView                 := nView
+   ::setItems( aItems )
    ::setWorkArea( cWorkArea )
 
-   ::oSendMail             := TSendMail():New( Self )
+   ::oSendMail       := TSendMail():New( Self )
 
 Return ( Self )
 
@@ -205,9 +201,9 @@ Return ( Self )
 
 METHOD Create() CLASS TGenMailing
 
-   ::cSubject              := Space( 254 )
-   ::cGetAdjunto           := Space( 254 )
-   ::cGetHtml              := Space( 254 )
+   ::cSubject        := Space( 254 )
+   ::cGetAdjunto     := Space( 254 )
+   ::cGetHtml        := Space( 254 )
 
    ::SetDe( uFieldEmpresa( "cNombre" ) )
 
