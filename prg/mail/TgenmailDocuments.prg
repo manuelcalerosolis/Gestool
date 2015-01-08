@@ -13,12 +13,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( aItems, nView ) CLASS TGenMailingDocuments
+METHOD Resource() CLASS TGenMailingDocuments
 
    ::lCancel         := .f.
-   ::aItems          := aItems
-   ::aFields         := getSubArray( aItems, 5 )
-   ::nView           := nView
+   ::aFields         := getSubArray( ::aItems, 5 )
 
    DEFINE DIALOG     ::oDlg ;
       RESOURCE       "Select_Mail_Container";

@@ -2319,7 +2319,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 			VAR         cCbxOrd ;
 			ID          102 ;
          ITEMS       aCbxOrd ;
-         ON CHANGE   ( ( dbfFacCliP )->( OrdSetFocus( oCbxOrd:nAt ) ), msgAlert( ( dbfFacCliP )->( ordSetFocus() ) ), oBrw:Refresh(), aGet1:SetFocus() ) ;
+         ON CHANGE   ( ( dbfFacCliP )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), aGet1:SetFocus() ) ;
          OF          oDlg
 
       oBrw                    := IXBrowse():New( oDlg )

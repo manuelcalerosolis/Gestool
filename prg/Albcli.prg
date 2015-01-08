@@ -15645,8 +15645,6 @@ function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cAlbCliL 
 
    ( cAlbCliL )->( OrdSetFocus( "cNumPedRef" ) )
 
-   msgAlert( cNumPed + cCodArt + cCodPr1 + cCodPr2, str( len( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) ) )
-
    if ( cAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
       
       while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( cAlbCliL )->( eof() )

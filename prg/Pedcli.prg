@@ -14940,8 +14940,6 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
       dbUseArea( .t., cDriver(), cPathOld + "AlbCliL.DBF", cCheckArea( "AlbCliL", @oldAlbCliL ), .f. )
       ( oldAlbCliL )->( ordListAdd( cPathOld + "AlbCliL.CDX" ) )
 
-      msgAlert( cPathOld + "AlbCliL.Dbf" )
-
       while !( oldPedCliT )->( eof() )
 
          if eval( bFor, oldPedCliT )
@@ -14959,17 +14957,7 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
                   //if nTotNPedCli( oldPedCliL ) > 0
                   dbCopy( oldPedCliL, dbfPedCliL, .t. )
                   ( dbfPedCliL )->nUniCaja   := nTotNPedCli( oldPedCliL )
-                  msgAlert( ( dbfPedCliL )->nUniCaja, "nUnicaja antes")
-
-                  msgAlert( ( oldPedCliL )->cSerPed + Str( ( oldPedCliL )->nNumPed ) + ( oldPedCliL )->cSufPed + ( oldPedCliL )->cRef + ( oldPedCliL )->cValPr1 + ( oldPedCliL )->cValPr2, "cadena" )
-
-                  ( dbfPedCliL )->nUniCaja   -= nUnidadesRecibidasAlbCli( ( oldPedCliL )->cSerPed + Str( ( oldPedCliL )->nNumPed ) + ( oldPedCliL )->cSufPed, ( oldPedCliL )->cRef, ( oldPedCliL )->cValPr1, ( oldPedCliL )->cValPr2, oldAlbCliL )
-                  msgAlert( ( dbfPedCliL )->nUniCaja, "nUnicaja despues")
-                  
-                  msgAlert( len( ( oldPedCliL )->cRef ), "cRef" )  
-                  msgAlert( len( ( oldPedCliL )->cValPr1 ), "cValPr1" ) 
-                  msgAlert( len( ( oldPedCliL )->cValPr2 ), "cValPr2" )  
-
+                  ( dbfPedCliL )->nUniCaja   -= nUnidadesRecibidasAlbCli( ( oldPedCliL )->cSerPed + Str( ( oldPedCliL )->nNumPed ) + ( oldPedCliL )->cSufPed, ( oldPedCliL )->cRef, ( oldPedCliL )->cCodPr1, ( oldPedCliL )->cCodPr2, oldAlbCliL )
                   ( dbfPedCliL )->nUniEnt    := 0
                   //end if
 
