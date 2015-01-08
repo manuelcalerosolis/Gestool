@@ -2948,6 +2948,21 @@ return ( hash )
 
 //---------------------------------------------------------------------------//
 
+function hashDefaultValue( aItems )
+
+  local aItem
+  local hash        := {=>}
+
+  for each aItem in aItems
+    if !Empty( aItem[6] ) .and. isBlock( aItem[9] )
+      hSet( hash, aItem[6], aItem[9] )
+    end if
+  next
+
+return ( hash )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION HtmlConvertChars( cString, cQuote_style, aTranslations )
 
    DEFAULT cQuote_style := "ENT_COMPAT"

@@ -150,7 +150,7 @@ Return ( .t. )
 
 METHOD GetAppendDocumento() CLASS PedidoCliente
 
-   ::hDictionaryMaster      := D():GetPedidoClienteBlank( ::nView )
+   ::hDictionaryMaster      := D():GetPedidoClienteDefaultValue( ::nView )
    ::hDictionaryDetail      := {}
 
 Return ( self )
