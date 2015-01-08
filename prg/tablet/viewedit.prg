@@ -22,8 +22,6 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD BotonesAcciones()
 
-   METHOD BrowseLineas()
-
    METHOD BotonesMovimientoBrowse()
 
    METHOD setWorkArea( WorkArea ) INLINE ( ::WorkArea := WorkArea )
@@ -42,8 +40,6 @@ Return ( self )
 
 METHOD ResourceViewEdit() CLASS ViewEdit
 
-   MsgInfo( ValtoPrg( ::oSender:hDictionaryMaster ) )
-
    ::oDlg  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
    ::TituloBrowse()
@@ -61,8 +57,6 @@ METHOD ResourceViewEdit() CLASS ViewEdit
    ::BotonesAcciones()
 
    ::BotonesMovimientoBrowse()
-
-   ::BrowseLineas()
 
    ::oDlg:bResized         := {|| ::DialogResize() }
 
@@ -302,11 +296,11 @@ Return ( self )
 
 //---------------------------------------------------------------------------//   
 
-METHOD BrowseLineas() CLASS ViewEdit
+/*METHOD BrowseGeneral() CLASS ViewNavigator
 
    ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
 
-   ::oBrowse:nTop             := ::oBrowse:EvalRow( 180 )
+   ::oBrowse:nTop             := ::oBrowse:EvalRow( 115 )
    ::oBrowse:nLeft            := ::oBrowse:EvalCol( {|| GridWidth( 0.5, ::oDlg ) } )
    ::oBrowse:nWidth           := ::oBrowse:EvalWidth( {|| GridWidth( 11, ::oDlg ) } )
    ::oBrowse:nHeight          := ::oBrowse:EvalHeight( {|| GridHeigth( ::oDlg ) - ::oBrowse:nTop - 10 } )
@@ -317,14 +311,14 @@ METHOD BrowseLineas() CLASS ViewEdit
    ::oBrowse:nRowHeight       := 96
    ::oBrowse:nDataLines       := 2
 
-   ::oBrowse:SetArray( ::oSender:hDictionaryDetail, , , .f. )
+   ::oBrowse:cAlias           := ::WorkArea
 
-   ::oSender:PropiedadesBrowseDetail()
+   //::oSender:PropiedadesBrowse()
 
    ::oBrowse:bLDblClick       := {|| MsgInfo( "DobleClick" ) }
 
    ::oBrowse:CreateFromCode()
 
-Return ( self )
+Return ( self )*/
 
 //---------------------------------------------------------------------------//

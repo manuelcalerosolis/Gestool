@@ -13,16 +13,6 @@ CLASS AlbaranCliente FROM Ventas
 
    METHOD PropiedadesBrowse()
 
-   METHOD PropiedadesBrowseDetail()
-
-   METHOD Resource( nMode )
-
-   METHOD GetAppendDocumento()
-
-   METHOD GetEditDocumento()
-
-   METHOD GuardaDocumento()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -126,70 +116,6 @@ METHOD PropiedadesBrowse() CLASS AlbaranCliente
       :nDataStrAlign     := 1
       :nHeadStrAlign     := 1
    end with
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Resource( nMode ) CLASS AlbaranCliente
-
-   ::oViewEdit       := ViewEdit():New( self )
-
-   if !Empty( ::oViewEdit )
-
-      ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "albarán" )
-      
-      ::oViewEdit:ResourceViewEdit()
-
-   end if
-
-Return ( .t. )   
-
-//---------------------------------------------------------------------------//
-
-METHOD GetAppendDocumento() CLASS AlbaranCliente
-
-   /*
-   Dejamos el diccionario en blanco, ya que vamos a añadir un nuevo pedido-----
-   */
-
-   ::hDictionaryMaster      := {}
-   ::hDictionaryDetail      := {}
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetEditDocumento() CLASS AlbaranCliente
-
-   /*
-   Tomamos los datos de las lineas de pedidos----------------------------------
-   */
-
-   ::hDictionaryMaster      := {} //D():GetAlbaranesClienteById( D():AlbaranesClientesId( ::nView ), ::nView ) 
-   ::hDictionaryDetail      := {} //D():GetAlbaranesClienteLineas( ::nView )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD PropiedadesBrowseDetail() CLASS AlbaranCliente
-
-   ::oViewEdit:oBrowse:cName            := "Grid albaranes lineas"
-
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader             := "Cód"
-      :bEditValue          := {|| ::getDataBrowse( "Articulo" ) }
-      :nWidth              := 80
-   end with
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GuardaDocumento() CLASS AlbaranCliente
-
-   MsgInfo( "Guardamos el documento" )
 
 Return ( self )
 

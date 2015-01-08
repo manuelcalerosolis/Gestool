@@ -5803,7 +5803,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    oBrwLin:lFooter 		  	   := .t.
    oBrwLin:cName           	:= "Grid lineas facturas"
 
-   with object ( oBrwLin:AddCol() )
+    with object ( oBrwLin:AddCol() )
        	:cHeader             := "Número"
         :bEditValue           := {|| ( dbfTmpLin )->nNumLin }
         :cEditPicture         := "9999"

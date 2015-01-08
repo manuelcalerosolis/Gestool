@@ -9,15 +9,13 @@ CLASS Editable
    DATA cWorkArea
    DATA cDetailArea
    DATA Style           INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
-   DATA hDictionaryMaster
-   DATA hDictionaryDetail
  
    METHOD Append()
    METHOD Edit()
    METHOD Delete()
 
-   METHOD GetAppendDocumento()            VIRTUAL
-   METHOD GetEditDocumento()              VIRTUAL
+   METHOD GetAppendDocumento()
+   METHOD GetEditDocumento()
    METHOD Resource()                      VIRTUAL
    METHOD SaveDocumento()
 
@@ -58,6 +56,28 @@ Return ( self )
 METHOD Delete() CLASS Editable
 
    msgInfo( "eliminamos" )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetAppendDocumento() CLASS Editable
+
+   msgInfo( "getAppendDocumento" )
+
+   ?::getWorkArea()
+   ?::getDetailArea()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEditDocumento() CLASS Editable
+
+   msgInfo( "getEditDocumento" )
+
+   ?::getWorkArea()
+   ?::getDetailArea()
 
 Return ( self )
 

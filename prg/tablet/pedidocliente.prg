@@ -13,18 +13,6 @@ CLASS PedidoCliente FROM Ventas
 
    METHOD PropiedadesBrowse()
 
-   METHOD PropiedadesBrowseDetail()
-
-   METHOD Resource( nMode )
-
-   METHOD GetAppendDocumento()
-
-   METHOD GetEditDocumento()
-
-   METHOD GuardaDocumento()
-
-   METHOD ValoresDefectoMaster()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -129,97 +117,6 @@ METHOD PropiedadesBrowse() CLASS PedidoCliente
       :nDataStrAlign     := 1
       :nHeadStrAlign     := 1
    end with
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD Resource( nMode ) CLASS PedidoCliente
-
-   ::oViewEdit       := ViewEdit():New( self )
-
-   if !Empty( ::oViewEdit )
-
-      ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "pedido" )
-      
-      ::oViewEdit:ResourceViewEdit()
-
-   end if
-
-Return ( .t. )   
-
-//---------------------------------------------------------------------------//
-
-METHOD GetAppendDocumento() CLASS PedidoCliente
-
-   ::hDictionaryMaster      := D():GetPedidoClienteBlank( ::nView )
-
-   ::ValoresDefectoMaster()
-
-   ::hDictionaryDetail      := {}
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetEditDocumento() CLASS PedidoCliente
-
-   /*
-   Tomamos los datos de la cabecera--------------------------------------------
-   */
-
-   ::hDictionaryMaster      := D():GetPedidoClienteById( D():PedidosClientesId( ::nView ), ::nView ) 
-
-   /*
-   Tomamos los datos de las lineas de pedidos----------------------------------
-   */
-
-   ::hDictionaryDetail      := D():GetPedidoClienteLineas( ::nView )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD ValoresDefectoMaster()
-
-   hSet( ::hDictionaryMaster, "Serie", "A" )
-   hSet( ::hDictionaryMaster, "Turno", cCurSesion() )
-   hSet( ::hDictionaryMaster, "Almacen", oUser():cAlmacen() )
-   hSet( ::hDictionaryMaster, "Caja", oUser():cCaja() )
-   hSet( ::hDictionaryMaster, "Divisa", cDivEmp() )
-   hSet( ::hDictionaryMaster, "Pa0go", cDefFpg() )
-   hSet( ::hDictionaryMaster, "ValorDivisa", nChgDiv( cDivEmp(), D():Divisas( ::nView ) ) )
-   hSet( ::hDictionaryMaster, "Sufijo", RetSufEmp() )
-   hSet( ::hDictionaryMaster, "Estado", 1 )
-   hSet( ::hDictionaryMaster, "Usuario", cCurUsr() )
-   hSet( ::hDictionaryMaster, "Delegacion", oUser():cDelegacion() )
-   hSet( ::hDictionaryMaster, "ImpuestosIncluidos", uFieldEmpresa( "lIvaInc" ) )
-   hSet( ::hDictionaryMaster, "LiteralGastos", Padr( "Gastos", 250 ) )
-   hSet( ::hDictionaryMaster, "ImpuestoGastos", nIva( D():TiposIva( ::nView ), cDefIva() ) )
-
-      aTmp[ _LSNDDOC    ]  := .t.
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD PropiedadesBrowseDetail() CLASS PedidoCliente
-
-   ::oViewEdit:oBrowse:cName            := "Grid pedidos lineas"
-
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader             := "Cód"
-      :bEditValue          := {|| ::getDataBrowse( "Articulo" ) }
-      :nWidth              := 80
-   end with
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GuardaDocumento() CLASS PedidoCliente
-
-   MsgInfo( "Guardamos el documento" )
 
 Return ( self )
 
