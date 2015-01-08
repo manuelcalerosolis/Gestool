@@ -11702,24 +11702,6 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
                   :Resource( aItmFacCli(), nView )
                end with
 
-/*
-               aMail    := {  {  "mail" => alltrim( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ),;
-                                 "subject" => "Envío de  factura de cliente número " + D():FacturasClientesIdTextShort( nView ),;
-                                 "attachments" => cFilePdf,;
-                                 "message" =>   "<p>" +;
-                                                "Adjunto le remito nuestra factura de cliente " + D():FacturasClientesIdTextShort( nView ) + space( 1 ) + ;
-                                                "de fecha " + dtoc( D():FacturasClientesFecha( nView ) ) + space( 1 ) + ;
-                                                "</p>" + ;
-                                                "<p>" + ;
-                                                "</p>" + ;
-                                                "<p>" + ;
-                                                "Reciba un cordial saludo." + ;
-                                                "</p>" } }
-
-               with object TSendMail():New()
-                  :sendList( aMail )
-               end with
-*/
             end if
 
       end case
