@@ -2519,7 +2519,7 @@ PROCEDURE xmlIterator( cFileName, cNode, cAttrib, cValue, cData )
 
    oNode := oDoc:CurNode
 
-if ! lFind
+if ! lFind 
 
    DO WHILE oNode != NIL
       cXml := oNode:Path()

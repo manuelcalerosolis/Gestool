@@ -5738,7 +5738,7 @@ METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
 
    /*if !empty(aDictionary) .and. !empty( dbf )
       hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
-   end if */
+   end if*/
 
 RETURN ( hash )
 
