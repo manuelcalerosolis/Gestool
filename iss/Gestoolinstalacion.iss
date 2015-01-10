@@ -74,7 +74,7 @@ Name: "{app}\Bmp";      Permissions: everyone-full
 Name: "{app}\In";       Permissions: everyone-full
 Name: "{app}\Out";      Permissions: everyone-full
 Name: "{app}\Log";      Permissions: everyone-full
-Name: "{app}\Htm";      Permissions: everyone-full
+Name: "{app}\Html";     Permissions: everyone-full
 Name: "{app}\Tmp";      Permissions: everyone-full
 Name: "{app}\Safe";     Permissions: everyone-full
 Name: "{app}\Emptmp";   Permissions: everyone-full
@@ -122,12 +122,6 @@ Source: "c:\fw195\gestool\bin\aicu32.dll";             DestDir: "{app}"; Flags: 
 Source: "c:\fw195\gestool\bin\axcws32.dll";            DestDir: "{app}"; Flags: ignoreversion
 ; Source: "c:\fw195\gestool\bin\adsloc32.dll";           DestDir: "{app}"; Flags: ignoreversion
 
-Source: "c:\fw195\gestool\bin\rmphtml.ocx";            DestDir: "{app}"; Flags: ignoreversion regserver
-Source: "c:\fw195\gestool\bin\rmphtml.dll";            DestDir: "{app}"; Flags: ignoreversion 
-Source: "c:\fw195\gestool\bin\axrmphtml.dll";          DestDir: "{app}"; Flags: ignoreversion 
-Source: "c:\fw195\gestool\bin\spanish.xml";            DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\rhtmleditor.lic";        DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\styles.css";             DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\mscomctl.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\gestool\bin\richtx32.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
@@ -165,7 +159,7 @@ Source: "c:\fw195\actualiza\reporting\*.*";           DestDir: "{app}\Reporting"
 Source: "c:\fw195\actualiza\in\*.*";                  DestDir: "{app}\In";        Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\out\*.*";                 DestDir: "{app}\Out";       Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\log\*.*";                 DestDir: "{app}\Log";       Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\htm\*.*";                 DestDir: "{app}\Htm";       Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\actualiza\html\*.*";                DestDir: "{app}\Html";      Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\tmp\*.*";                 DestDir: "{app}\Tmp";       Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\emptmp\*.*";              DestDir: "{app}\Emptmp";    Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\safe\*.*";                DestDir: "{app}\Safe";      Flags: ignoreversion onlyifdoesntexist

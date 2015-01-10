@@ -567,7 +567,7 @@ RETURN ( cDoc )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cSetHtmlDocumento( cTipDoc, cHtmlDocumento, dbfCount )
+FUNCTION setHtmlDocumento( cTipDoc, cHtmlDocumento, dbfCount )
 
    local oBlock
    local oError

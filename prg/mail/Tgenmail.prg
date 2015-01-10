@@ -25,21 +25,21 @@ CLASS TGenMailing
    DATA oBtnFilter
    DATA oBtnCargarHTML
    DATA oBtnSalvarHTML
+   DATA oBtnSalvarAsHTML
    DATA oBtnDefectoHTML
 
    DATA oGetAsunto
    DATA oGetAdjunto
-   DATA oGetHtml
-   DATA oGetMensaje
+   DATA cGetAdjunto
+
+   DATA cMensaje                       INIT ""
+   METHOD setMensaje( cMensaje )       INLINE ( ::cMensaje := cMensaje, if( !empty( ::oActiveX ), ::oActiveX:oRTF:SetText( cMensaje ), ) )
+
    DATA oGetDe                         
    DATA oGetCopia                      
 
    DATA oGetPara
    DATA cSubject
-   DATA cGetAdjunto
-   DATA cGetHtml
-   DATA cGetCSS
-   DATA cGetMensaje                    INIT ""
    DATA cGetDe                         INIT Padr( uFieldEmpresa( "cNombre" ), 250 )
    DATA cGetPara                       INIT Space( 250 )
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
@@ -61,7 +61,7 @@ CLASS TGenMailing
    DATA aField
    DATA cField
 
-   DATA cTypeDocument
+   DATA oTemplateHtml
 
    DATA cNombre
    DATA cDireccion
@@ -105,7 +105,6 @@ CLASS TGenMailing
    METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
    METHOD getAsunto()                  INLINE ( alltrim( ::cSubject ) )
 
-   METHOD setHtml( cText )             INLINE ( ::cGetHtml := padr( cText, 250 ) )
    METHOD setDe( cText )               INLINE ( ::cGetDe := padr( cText, 250 ) )
    
    METHOD setPara( cText )             INLINE ( ::cGetPara := padr( cText, 250 ) )
@@ -125,14 +124,12 @@ CLASS TGenMailing
    METHOD addAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
    METHOD addFileAdjunto()
 
-   METHOD setMensaje( cText )          INLINE ( ::cGetMensaje += cText )
-
-   METHOD setTypeDocument( cText )     INLINE ( ::cTypeDocument := cText,;
-                                                if( !empty( ::cTypeDocument ), ::loadDefaultHtmlFile(), ) )
-
    METHOD setItems( aItems )           INLINE ( if( !empty( aItems ),;
                                                 ( ::aItems := aItems, ::aFields := getSubArray( aItems, 5 ) ), ) )
    METHOD getItems()                   INLINE ( ::aItems )
+
+   METHOD setTypeDocument( cTypeDocument ) ;
+                                       INLINE ( ::oTemplateHtml:setTypeDocument( cTypeDocument ) )
 
    // Recursos-----------------------------------------------------------------
 
@@ -149,12 +146,6 @@ CLASS TGenMailing
    METHOD startResource()
    METHOD freeResources()
 
-   METHOD lCargaHTML()
-      METHOD loadDefaultHtmlFile()
-      METHOD loadHtmlFile( cFile )   
-   METHOD lSalvaHTML()
-   METHOD lDefectoHTML()
-
    METHOD SelMailing()
       METHOD SelAllMailing( lValue )
 
@@ -163,11 +154,7 @@ CLASS TGenMailing
 
    METHOD IniciarProceso()
 
-   METHOD replaceExpresion( cDocumentHTML, cExpresion )
-
    METHOD isMailServer()               INLINE ( !empty( ::MailServer ) .and. !empty( ::MailServerUserName ) .and. !empty( ::MailServerPassword ) )
-
-   METHOD MailServerSend()             INLINE ( ::MailServer + if( !empty( ::MailServerPort ), ":" + alltrim( Str( ::MailServerPort ) ), "" ) )
 
    METHOD SelectColumn( oCombo )
 
@@ -182,6 +169,7 @@ CLASS TGenMailing
                                                    ) )
    METHOD hashClientList()        
 
+   METHOD replaceExpresion( cDocumentHTML, cExpresion )
    METHOD getMessage()
    METHOD getMessageHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
    METHOD getExpression()
@@ -198,6 +186,7 @@ METHOD New( aItems, cWorkArea ) CLASS TGenMailing
    ::setWorkArea( cWorkArea )
 
    ::oSendMail       := TSendMail():New( Self )
+   ::oTemplateHtml   := TTemplatesHtml():New( Self )
 
 Return ( Self )
 
@@ -207,7 +196,6 @@ METHOD Create() CLASS TGenMailing
 
    ::cSubject        := Space( 254 )
    ::cGetAdjunto     := Space( 254 )
-   ::cGetHtml        := Space( 254 )
 
    ::SetDe( uFieldEmpresa( "cNombre" ) )
 
@@ -324,7 +312,7 @@ METHOD buildPageRedactar( oDlg )
 
    ::oActiveX  := GetRichEdit():ReDefine( 600, oDlg )
 
-   ::oActiveX:oRTF:SetText( ::cGetMensaje )
+   ::oActiveX:oRTF:SetText( ::cMensaje )
 
 Return ( Self )   
 
@@ -461,12 +449,17 @@ METHOD buildButtonsGeneral()
    REDEFINE BUTTON ::oBtnCargarHTML ;          // Boton anterior
       ID       40 ;
       OF       ::oDlg ;
-      ACTION   ( ::lCargaHTML() )
+      ACTION   ( ::oTemplateHtml:selectHtmlFile() )
 
    REDEFINE BUTTON ::oBtnSalvarHTML ;          // Boton anterior
       ID       50 ;
       OF       ::oDlg ;
-      ACTION   ( ::lSalvaHTML() )
+      ACTION   ( ::oTemplateHtml:saveHtml() )
+
+   REDEFINE BUTTON ::oBtnSalvarAsHTML ;          // Boton anterior
+      ID       60 ;
+      OF       ::oDlg ;
+      ACTION   ( ::oTemplateHtml:saveAsHtml() )
 
    REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
       ID       20 ;
@@ -512,30 +505,6 @@ METHOD freeResources()
 Return ( Self )   
 
 //---------------------------------------------------------------------------//
-
-METHOD lSalvaHtml() CLASS TGenMailing
-
-   local cHtmlFile   := cGetFile( 'Html ( *.Html ) | *.Html', 'Seleccione el nombre del fichero' )
-
-   if empty( cHtmlFile )
-      Return ( Self )
-   end if 
-
-   if !( lower( cFileExt( cHtmlFile ) ) $ "html" )
-      cHtmlFile      := cFilePath( cHtmlFile ) + cFileNoExt( cHtmlFile ) + ".Html"
-   endif
-
-   if file( cHtmlFile ) .and. ApoloMsgNoYes( "El fichero " + cHtmlFile + " ya existe. ¿Desea sobreescribir el fichero?", "Guardar fichero" )
-      ferase( cHtmlFile )
-   else 
-      Return ( Self )
-   end if
-
-   ::oActiveX:SaveToFile( cHtmlFile )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
 
 METHOD addFileAdjunto() CLASS TGenMailing
 
@@ -592,6 +561,7 @@ METHOD BotonAnterior() CLASS TGenMailing
       ::oBtnSiguiente:Show() 
       ::oBtnCargarHTML:Show()
       ::oBtnSalvarHTML:Show()
+      ::oBtnSalvarAsHTML:Show()
    end if
 
    if ::oFld:nOption <= len( ::oFld:aDialogs ) 
@@ -612,6 +582,7 @@ METHOD BotonSiguiente() CLASS TGenMailing
    if ::oFld:nOption == 2
       ::oBtnCargarHTML:Hide()
       ::oBtnSalvarHTML:Hide()
+      ::oBtnSalvarAsHTML:Hide()
       ::oBtnAnterior:Show()
    end if 
 
@@ -698,74 +669,6 @@ METHOD IniciarProceso() CLASS TGenMailing
 Return ( self )
 
 //--------------------------------------------------------------------------//
-
-METHOD lCargaHtml() CLASS TGenMailing
-
-   ::cGetHtml        := cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML' )
-   ::loadHtmlFile( ::cGetHtml )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD loadDefaultHtmlFile()
-
-   local cFile       := cGetHtmlDocumento( ::cTypeDocument )
-   if !empty( cFile )
-      ::loadHtmlFile( cFile )
-   end if 
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD loadHtmlFile( cFile )
-
-   local oBlock
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   ::cGetHtml        := alltrim( cFile )
-
-   if file( ::cGetHtml )  // !Empty( ::oActiveX )
-
-      ::cGetMensaje  := memoread( ::cGetHtml )
-
-      if !Empty( ::oActiveX )
-         ::oActiveX:oRTF:SetText( ::cGetMensaje )
-      end if
-
-   else 
-
-      msgStop( "El fichero " + ::cGetHtml + " no existe." )
-
-   end if
-
-   RECOVER
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-
-METHOD lDefectoHtml( cFile ) CLASS TGenMailing
-
-   if !Empty( ::cGetHtml )
-      if ApoloMsgNoYes( "¿Desea establecer el documento " + Rtrim( ::cGetHtml ) + " como documento por defecto?", "Confirme" )
-         cSetHtmlDocumento( ::cTypeDocument, ::cGetHtml )
-      end if
-   else
-      MsgInfo( "No ha documentos para establecer por defecto" )
-   end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 METHOD WaitSeconds( nTime )
 

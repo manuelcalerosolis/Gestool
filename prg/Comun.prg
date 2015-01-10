@@ -542,11 +542,11 @@ Return ( if( !lShort, FullCurDir(), "" ) + "Psion\" )
 
 //----------------------------------------------------------------------------//
 
-Function cPatHtm( lShort )
+Function cPatHtml( lShort )
 
    DEFAULT lShort  := .f.
 
-Return ( if( !lShort, FullCurDir(), "" ) + "Htm\" )
+Return ( if( !lShort, FullCurDir(), "" ) + "Html\" )
 
 //----------------------------------------------------------------------------//
 

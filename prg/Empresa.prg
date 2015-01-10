@@ -49,7 +49,7 @@ static oBanco
 static oPais
 
 static cTmpCon
-static tmpDlgCon
+static tmpCount
 
 static bEdit                  := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
 static bEdtC                  := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtCnf( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
@@ -2068,11 +2068,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             IDSAY    171 ;
             OF       fldContadores 
 
-
       REDEFINE GET oGetPlantillaDefecto VAR cGetPlantillaDefecto ;
             ID       190 ;
             BITMAP   "Folder" ;
-            ON HELP  ( oGetPlantillaDefecto:cText( cGetFile( 'Html ( *.Html ) | *.Html', 'Seleccione el nombre del fichero' ) ) ) ;
+            ON HELP  ( oGetPlantillaDefecto:cText( cGetFile( 'Html (*.html, *.htm) |*.html;*.htm|', 'Seleccione el fichero HTML', , cPatHtml() ) ) ) ;
             OF       fldContadores 
 
       /*
@@ -2639,9 +2638,9 @@ Static Function KillTrans()
 
    dbfErase( cNewDlg )
 
-   if !Empty( tmpDlgCon ) .and. ( tmpDlgCon )->( Used() )
-      ( tmpDlgCon )->( dbCloseArea() )
-      tmpDlgCon      := nil
+   if !Empty( tmpCount ) .and. ( tmpCount )->( Used() )
+      ( tmpCount )->( dbCloseArea() )
+      tmpCount      := nil
    end if
 
    dbfErase( cTmpCon )
@@ -2685,11 +2684,11 @@ Static Function CmbDocumentosChanged( lCmbSerieSaved )
    Nuevo tipo de documento-----------------------------------------------------
    */
 
-   if dbSeekInOrd( cItemText, "Des", tmpDlgCon )
+   if dbSeekInOrd( cItemText, "Des", tmpCount )
 
       cOldSerie         := nil
 
-      if ( tmpDlgCon )->lSerie
+      if ( tmpCount )->lSerie
          oCmbSerie:Show()
          oCmbSerie:Select( 1 )
          oGetSerie:Show()
@@ -2698,7 +2697,7 @@ Static Function CmbDocumentosChanged( lCmbSerieSaved )
          oGetSerie:Hide()
       end if
 
-      if ( tmpDlgCon )->lDoc
+      if ( tmpCount )->lDoc
          oGetFormato:Show()
          oGetCopias:Show()
       else
@@ -2706,17 +2705,17 @@ Static Function CmbDocumentosChanged( lCmbSerieSaved )
          oGetCopias:Hide()
       end if
 
-      if ( tmpDlgCon )->lCon
+      if ( tmpCount )->lCon
          oGetContador:Show()
       else
          oGetContador:Hide()
       end if
 
-      oGetSerie:cText( ( tmpDlgCon )->cSerie )
+      oGetSerie:cText( ( tmpCount )->cSerie )
 
-      oGetPlantillaDefecto:cText( ( tmpDlgCon )->cPltDfl )
+      oGetPlantillaDefecto:cText( ( tmpCount )->cPltDfl )
 
-      if ( tmpDlgCon )->lNFC
+      if ( tmpCount )->lNFC
          oGetNFCPrefijo:Show()
          oGetNFCContador:Show()
       else
@@ -2759,14 +2758,15 @@ Static Function CmbSerieSave( uSerie )
             "nGetNFCPrefijo : " + cGetNFCPrefijo   + CRLF + ;
             "cGetNFCContador : " + cGetNFCContador, "CmbSerieSave" ) */
 
-   if !Empty( cSerie ) .and. dbDialogLock( tmpDlgCon )
-      ( tmpDlgCon )->( FieldPut( FieldPos( cSerie ),              nGetContador      ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "Doc"    + cSerie ),   cGetFormato       ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "Copias" + cSerie ),   nGetCopias        ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "cNCF"   + cSerie ),   cGetNFCPrefijo    ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "nCNF"   + cSerie ),   cGetNFCContador   ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "cSerie"  ),           cGetSerie         ) )
-      ( tmpDlgCon )->( dbUnLock() )
+   if !Empty( cSerie ) .and. dbDialogLock( tmpCount )
+      ( tmpCount )->( FieldPut( FieldPos( cSerie ),              nGetContador      ) )
+      ( tmpCount )->( FieldPut( FieldPos( "Doc"    + cSerie ),   cGetFormato       ) )
+      ( tmpCount )->( FieldPut( FieldPos( "Copias" + cSerie ),   nGetCopias        ) )
+      ( tmpCount )->( FieldPut( FieldPos( "cNCF"   + cSerie ),   cGetNFCPrefijo    ) )
+      ( tmpCount )->( FieldPut( FieldPos( "nCNF"   + cSerie ),   cGetNFCContador   ) )
+      ( tmpCount )->cSerie                                       := cGetSerie         
+      ( tmpCount )->cPltDfl                                      := cGetPlantillaDefecto
+      ( tmpCount )->( dbUnLock() )
    end if
 
 Return ( .t. )
@@ -2781,12 +2781,14 @@ Static Function CmbSerieChanged()
       CmbSerieSave( cOldSerie )
    end if
 
-   oGetContador:cText(     ( tmpDlgCon )->( FieldGet( FieldPos( cSerie ) ) ) )
-   oGetCopias:cText(       Max( ( tmpDlgCon )->( FieldGet( FieldPos( "Copias" + cSerie ) ) ), 0 ) )
-   oGetFormato:cText(      ( tmpDlgCon )->( FieldGet( FieldPos( "Doc" + cSerie ) ) ) )
+   oGetContador:cText( ( tmpCount )->( FieldGet( FieldPos( cSerie ) ) ) )
+   oGetCopias:cText( Max( ( tmpCount )->( FieldGet( FieldPos( "Copias" + cSerie ) ) ), 0 ) )
+   oGetFormato:cText( ( tmpCount )->( FieldGet( FieldPos( "Doc" + cSerie ) ) ) )
 
-   oGetNFCPrefijo:cText(  ( tmpDlgCon )->( FieldGet( FieldPos( "cNFC" + cSerie ) ) ) )
-   oGetNFCContador:cText( ( tmpDlgCon )->( FieldGet( FieldPos( "nNFC" + cSerie ) ) ) )
+   oGetNFCPrefijo:cText( ( tmpCount )->( FieldGet( FieldPos( "cNFC" + cSerie ) ) ) )
+   oGetNFCContador:cText( ( tmpCount )->( FieldGet( FieldPos( "nNFC" + cSerie ) ) ) )
+
+   oGetPlantillaDefecto:cText( ( tmpCount )->cPltDfl )
 
    oGetFormato:lValid()
 
@@ -2869,7 +2871,7 @@ STATIC FUNCTION EdtCon( oBrwCon )
 
    local cPic
    local nCol     := oBrwCon:nColAct
-   local uVar     := ( tmpDlgCon )->( fieldGet( nCol + 1 ) )
+   local uVar     := ( tmpCount )->( fieldGet( nCol + 1 ) )
    local bValid
 
    if nCol <= 1
@@ -2886,9 +2888,9 @@ STATIC FUNCTION EdtCon( oBrwCon )
 
    if oBrwCon:lEditCol( nCol, @uVar, cPic, bValid )
 
-      if dbDialogLock( tmpDlgCon )
-         ( tmpDlgCon )->( fieldPut( nCol + 1, uVar ) )
-         ( tmpDlgCon )->( dbUnlock() )
+      if dbDialogLock( tmpCount )
+         ( tmpCount )->( fieldPut( nCol + 1, uVar ) )
+         ( tmpCount )->( dbUnlock() )
       end if
 
       oBrwCon:DrawSelect()
@@ -5014,15 +5016,15 @@ Static Function BeginEdtCnf( aTmp )
    cTmpCon        := cGetNewFileName( cPatTmp() + "CON" )
 
    dbCreate( cTmpCon, aSqlStruct( aItmCount() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cTmpCon, cCheckArea( "CON", @tmpDlgCon ), .f. )
+   dbUseArea( .t., cLocalDriver(), cTmpCon, cCheckArea( "CON", @tmpCount ), .f. )
 
-   if !NetErr() .and. ( tmpDlgCon )->( Used() )
+   if !NetErr() .and. ( tmpCount )->( Used() )
 
-      ( tmpDlgCon )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( tmpDlgCon )->( ordCreate( cTmpCon, "Doc", "Upper( Doc )", {|| Upper( Field->Doc ) } ) )
+      ( tmpCount )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( tmpCount )->( ordCreate( cTmpCon, "Doc", "Upper( Doc )", {|| Upper( Field->Doc ) } ) )
 
-      ( tmpDlgCon )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( tmpDlgCon )->( ordCreate( cTmpCon, "Des", "Upper( Des )", {|| Upper( Field->Des ) } ) )
+      ( tmpCount )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( tmpCount )->( ordCreate( cTmpCon, "Des", "Upper( Des )", {|| Upper( Field->Des ) } ) )
 
    else
 
@@ -5038,11 +5040,11 @@ Static Function BeginEdtCnf( aTmp )
 
       ( dbfCount )->( dbGoTop() )
       while !( dbfCount )->( eof() )
-         dbPass( dbfCount, tmpDlgCon, .t. )
+         dbPass( dbfCount, tmpCount, .t. )
          ( dbfCount )->( dbSkip() )
       end while
 
-      ( tmpDlgCon )->( dbGoTop() )
+      ( tmpCount )->( dbGoTop() )
 
    end if
 
@@ -5685,14 +5687,14 @@ Static Function SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode )
 
    // Pasamos los contadores---------------------------------------------------
 
-   ( tmpDlgCon )->( dbGoTop() )
-   while !( tmpDlgCon )->( eof() )
+   ( tmpCount )->( dbGoTop() )
+   while !( tmpCount )->( eof() )
 
-      if dbSeekInOrd( ( tmpDlgCon )->Doc, "Doc", dbfCount )
-         dbPass( tmpDlgCon, dbfCount )
+      if dbSeekInOrd( ( tmpCount )->Doc, "Doc", dbfCount )
+         dbPass( tmpCount, dbfCount )
       end if
 
-      ( tmpDlgCon )->( dbSkip() )
+      ( tmpCount )->( dbSkip() )
 
    end while
 

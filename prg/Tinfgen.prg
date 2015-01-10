@@ -1477,7 +1477,7 @@ METHOD Print( nDevice ) CLASS TInfGen
 
    case nDevice == 4
 
-      oDevice     := TRCcs():New( cPatHtm() + "Rep" )
+      oDevice     := TRCcs():New( cPatHtml() + "Rep" )
 
       ::oReport   := RptBegin({ {|| Rtrim( ::cTitle ) }, {|| Rtrim( ::cAliasTitle ) } },;            //aTitle   ,;
                               ::aHeader ,;                                                         //aHead    ,;
@@ -5373,11 +5373,11 @@ RETURN ( Self )
 
 METHOD MakeVisor()
 
-   if file( cPatHtm() + "Visor.htm" )
-      fErase( cPatHtm() + "Visor.htm" )
+   if file( cPatHtml() + "Visor.htm" )
+      fErase( cPatHtml() + "Visor.htm" )
    end if
 
-   ::hFile    := fCreate( cPatHtm() + "Visor.htm" )
+   ::hFile    := fCreate( cPatHtml() + "Visor.htm" )
 
    fWrite( ::hFile,  "<HTML>"                                              + CRLF )
    fWrite( ::hFile,  "<HEAD>"                                              + CRLF )
@@ -5620,8 +5620,8 @@ METHOD MakeVisor()
 
    ::hFile := 0
 
-   if File( cPatHtm() + "Visor.Htm" )
-      GoWeb( cPatHtm() + "Visor.Htm" )
+   if File( cPatHtml() + "Visor.Htm" )
+      GoWeb( cPatHtml() + "Visor.Htm" )
    end if
 
 RETURN ( Self )

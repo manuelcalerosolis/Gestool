@@ -61,6 +61,7 @@ TGenMailDocuments.prg      \
 TSendMail.prg              \
 TSendMailOutlook.prg       \
 TSendMailCDO.prg           \
+TTemplatesHTML.prg         \
 Tiva.prg                	\
 Fpago.prg               	\
 Pedprov.prg             	\
@@ -419,6 +420,7 @@ TGenMailDocuments.obj   \
 TSendMail.obj           \
 TSendMailOutlook.obj    \
 TSendMailCDO.obj        \
+TTemplatesHTML.obj      \
 Tiva.obj                \
 Fpago.obj               \
 Pedprov.obj             \
@@ -805,6 +807,7 @@ $(OBJ)\TGenMailDocuments.obj     +
 $(OBJ)\TSendMail.obj             +
 $(OBJ)\TSendMailOutlook.obj      +
 $(OBJ)\TSendMailCDO.obj          +
+$(OBJ)\TTemplatesHTML.obj        +
 $(OBJ)\Tiva.obj                  +
 $(OBJ)\Fpago.obj                 +
 $(OBJ)\Pedprov.obj               +
