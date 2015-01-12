@@ -5744,24 +5744,14 @@ METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
    local dbf
    local aDefaultValue
 
-   ?"188"
-
    if !isHash( hash )
       Return .f.
    end if
 
-   ?"288"
-
    dbf            := ::Get( cDataTable, nView )   
    aDefaultValue  := TDataCenter():getDeFaultValue( cDataTable )
 
-   ?"388"
-
-   ?aDefaultValue
-
    hEval( aDefaultValue, {|key,value| hSet( hash, key, Eval( Value ) ) } )
-
-   ?"488"
 
 RETURN ( hash )
 

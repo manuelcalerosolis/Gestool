@@ -14,6 +14,14 @@ CLASS Ventas FROM DocumentoSerializable
    
    METHOD ChangeSerieTablet( getSerie )
 
+   METHOD lValidCliente()
+
+   METHOD lValidDireccion()
+
+   METHOD ChangeRuta()
+
+   METHOD NextClient()
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -92,6 +100,34 @@ METHOD ChangeSerieTablet( getSerie ) CLASS Ventas
          getSerie:cText( "A" )
 
    end case
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD lValidCliente() CLASS Ventas
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD lValidDireccion() CLASS Ventas
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangeRuta() CLASS Ventas
+
+   ?"Cambio las rutas"
+
+Return ( self )
+
+//--------------------------------------------------------------------------------
+
+METHOD NextClient() CLASS Ventas
+
+   ?"Cambio los clientes"
 
 Return ( self )
 
