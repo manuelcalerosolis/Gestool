@@ -159,7 +159,7 @@ Return ( self )
 METHOD GetEditDocumento() CLASS AlbaranCliente
 
    ::hDictionaryMaster      := D():GetAlbaranClienteById( D():AlbaranesClientesId( ::nView ), ::nView ) 
-   ::hDictionaryDetail      := {} //D():GetAlbaranClienteLineas( ::nView )
+   ::hDictionaryDetail      := D():GetAlbaranClienteLineas( ::nView )
 
 Return ( self )
 

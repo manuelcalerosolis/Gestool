@@ -3030,6 +3030,9 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliL.Cdx"
    oDataTable:cDescription := "Albaranes de clientes"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDatatable:aDictionary  := hashDictionary( aColAlbCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aColAlbCli() )
+   oDatatable:bId          := {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
