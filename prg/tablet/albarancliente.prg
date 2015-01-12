@@ -149,11 +149,7 @@ Return ( .t. )
 
 METHOD GetAppendDocumento() CLASS AlbaranCliente
 
-   /*
-   Dejamos el diccionario en blanco, ya que vamos a añadir un nuevo pedido-----
-   */
-
-   ::hDictionaryMaster      := {}
+   ::hDictionaryMaster      := D():GetAlbaranClienteDefaultValue( ::nView )
    ::hDictionaryDetail      := {}
 
 Return ( self )
@@ -162,12 +158,8 @@ Return ( self )
 
 METHOD GetEditDocumento() CLASS AlbaranCliente
 
-   /*
-   Tomamos los datos de las lineas de pedidos----------------------------------
-   */
-
-   ::hDictionaryMaster      := {} //D():GetAlbaranesClienteById( D():AlbaranesClientesId( ::nView ), ::nView ) 
-   ::hDictionaryDetail      := {} //D():GetAlbaranesClienteLineas( ::nView )
+   ::hDictionaryMaster      := D():GetAlbaranClienteById( D():AlbaranesClientesId( ::nView ), ::nView ) 
+   ::hDictionaryDetail      := {} //D():GetAlbaranClienteLineas( ::nView )
 
 Return ( self )
 

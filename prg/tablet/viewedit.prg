@@ -26,7 +26,11 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD BotonesMovimientoBrowse()
 
-   METHOD setWorkArea( WorkArea ) INLINE ( ::WorkArea := WorkArea )
+   METHOD setWorkArea( WorkArea )      INLINE ( ::WorkArea := WorkArea )
+
+   METHOD SetGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
+                                                      hGet( ::oSender:hDictionaryMaster, cName ),;
+                                                      hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
 
 END CLASS
 
@@ -75,7 +79,6 @@ Return ( self )
 METHOD DefineSerie() CLASS ViewEdit
 
    local getSerie
-   local cSerDoc     := "A"
 
    TGridUrllink():Build(            {  "nTop"      => 40,;
                                        "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -86,11 +89,11 @@ METHOD DefineSerie() CLASS ViewEdit
                                        "nClrInit"  => nGridColor(),;
                                        "nClrOver"  => nGridColor(),;
                                        "nClrVisit" => nGridColor(),;
-                                       "bAction"   => {|| msgInfo( "Serieee" ) } } ) //isChangeSerieTablet( lSndDoc, getSerie ) } } )
+                                       "bAction"   => {|| ::oSender:isChangeSerieTablet( getSerie ) } } )
 
    getSerie    := TGridGet():Build( {  "nRow"      => 40,;
                                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                       "bSetGet"   => {|u| if( PCount() == 0, cSerDoc, cSerDoc := u ) },;
+                                       "bSetGet"   => {|u| ::SetGetValue( u, "Serie" ) },;
                                        "oWnd"      => ::oDlg,;
                                        "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                        "nHeight"   => 23,;

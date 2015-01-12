@@ -2423,7 +2423,6 @@ static function TotalAlbaranesClientes( cCodCli, dbfAlbCliT, dbfAlbCliL, dbfDiv,
    local nRec     := ( dbfAlbCliT )->( Recno() )
    local nMes
 
-
    if Empty( cCodCli ) .or. ( dbfAlbCliT )->( dbSeek( cCodCli ) )
 
       while ( Empty( cCodCli ) .or. ( dbfAlbCliT )->cCodCli == cCodCli ) .and. !( dbfAlbCliT )->( Eof() )

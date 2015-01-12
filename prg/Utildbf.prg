@@ -692,7 +692,7 @@ Return ( Valtype( u ) == "A" )
 
 Function IsHash( u )
 
-Return ( Valtype( u ) == "H" )
+Return ( HB_isHash( u ) )
 
 //---------------------------------------------------------------------------//
 

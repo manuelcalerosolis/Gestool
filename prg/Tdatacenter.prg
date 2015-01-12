@@ -3018,6 +3018,9 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | mkAlbCli( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxAlbCli( cPath ) }
    oDataTable:bSyncFile    := {|| SynAlbCli( cPatEmp() ) }
+   oDatatable:aDictionary  := hashDictionary( aItmAlbCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aItmAlbCli() )
+   oDatatable:bId          := {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -5106,14 +5109,20 @@ CLASS D
 
    // Albaranes de clientes----------------------------------------------------
 
-   METHOD AlbaranesClientes( nView )            INLINE ( ::Get( "AlbCliT", nView ) )
-      METHOD AlbaranesClientesId( nView )       INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
+   METHOD AlbaranesClientes( nView )                  INLINE ( ::Get( "AlbCliT", nView ) )
+      METHOD AlbaranesClientesId( nView )             INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
       METHOD AlbaranesClientesIdTextShort( nView );
-                                                INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
-      METHOD AlbaranesClientesIdText( nView )   INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
+                                                      INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
+      METHOD AlbaranesClientesIdText( nView )         INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
+      METHOD GetAlbaranCliente( nView )               INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
+      METHOD GetAlbaranClienteById( id, nView )       INLINE ( ::getHashRecordById( id, ::AlbaranesClientes( nView ), nView ) )
+      METHOD GetAlbaranClienteBlank( nView )          INLINE ( ::getHashRecordBlank( ::AlbaranesClientes( nView ), nView ) )
+      METHOD GetAlbaranClienteDefaultValue( nView )   INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
-   METHOD AlbaranesClientesLineas( nView )      INLINE ( ::Get( "AlbCliL", nView ) )
-      METHOD AlbaranesClientesLineasId( nView ) INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
+   METHOD AlbaranesClientesLineas( nView )            INLINE ( ::Get( "AlbCliL", nView ) )
+      METHOD AlbaranesClientesLineasId( nView )       INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
+      METHOD GetAlbaranClienteLineas( nView )         INLINE ( ::getArrayRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientesLineas( nView ), nView ) )
+      METHOD GetAlbaranClienteLineaBlank( nView )     INLINE ( ::getHashRecordBlank( ::AlbaranesClientesLineas( nView ), nView ) )
 
    // Facturas de clientes-----------------------------------------------------
 
@@ -5719,7 +5728,7 @@ METHOD getHashRecord( cDataTable, nView ) CLASS D
    local dbf         := ::Get( cDataTable, nView )   
    local aDictionary := TDataCenter():getDictionary( cDataTable )
 
-   if !empty(aDictionary) .and. !empty( dbf )
+   if isHash( aDictionary ) .and. !empty( dbf )
       hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
    end if 
 
@@ -5729,16 +5738,27 @@ RETURN ( hash )
 
 METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
 
-   local dbf            := ::Get( cDataTable, nView )   
-   local aDefaultValue  := TDataCenter():getDeFaultValue( cDataTable )
+   local dbf
+   local aDefaultValue
 
-   if ValType( hash ) != "H"
+   ?"188"
+
+   if !isHash( hash )
       Return .f.
    end if
 
-   /*if !empty(aDictionary) .and. !empty( dbf )
-      hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
-   end if*/
+   ?"288"
+
+   dbf            := ::Get( cDataTable, nView )   
+   aDefaultValue  := TDataCenter():getDeFaultValue( cDataTable )
+
+   ?"388"
+
+   ?aDefaultValue
+
+   hEval( aDefaultValue, {|key,value| hSet( hash, key, Eval( Value ) ) } )
+
+   ?"488"
 
 RETURN ( hash )
 

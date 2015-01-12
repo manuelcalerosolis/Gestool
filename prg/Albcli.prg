@@ -420,7 +420,6 @@ static dbfOferta
 static dbfObrasT
 static dbfFamilia
 static dbfArtDiv
-static dbfUbicaL
 static dbfAgeCom
 static oGetTotal
 static oGetIvm
@@ -1403,9 +1402,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
       
-      USE ( cPatAlm() + "UBICAL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "UBICAL", @dbfUbicaL ) )
-      SET ADSINDEX TO ( cPatAlm() + "UBICAL.CDX" ) ADDITIVE
-
       USE ( cPatGrp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
       SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
 
@@ -1718,9 +1714,6 @@ STATIC FUNCTION CloseFiles()
    if dbfDelega != nil
       ( dbfDelega )->( dbCloseArea() )
    end if
-   if dbfUbicaL != nil
-      ( dbfUbicaL )->( dbCloseArea() )
-   end if
    if dbfAgeCom != nil
       ( dbfAgeCom )->( dbCloseArea() )
    end if
@@ -1847,7 +1840,6 @@ STATIC FUNCTION CloseFiles()
    dbfInci        := nil
    dbfArtPrv      := nil
    dbfDelega      := nil
-   dbfUbicaL      := nil
    dbfAgeCom      := nil
    dbfFacRecT     := nil
    dbfFacRecL     := nil
@@ -4556,62 +4548,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-//VALID    ( cNomUbica( aTmp, aGet, dbfAlm ), cAlmacen( aGet[ _CALMLIN ], , oSayAlm ), if( !uFieldEmpresa( "lNStkAct" ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) ) ;
-
       REDEFINE GET oSayAlm VAR cSayAlm ;
          WHEN     .f. ;
          ID       301 ;
          OF       oFld:aDialogs[1]
-
-/*
-      REDEFINE SAY aGet[_CCODUBI1] VAR aTmp[_CCODUBI1];
-         ID       612 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI1] VAR aTmp[_CVALUBI1] ;
-         ID       610 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI1], aGet[_CNOMUBI1], aTmp[_CCODUBI1], dbfUbicaL ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI1] VAR aTmp[_CNOMUBI1];
-         WHEN     .F. ;
-         ID       611 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI2] VAR aTmp[_CCODUBI2];
-         ID       622 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI2] VAR aTmp[_CVALUBI2] ;
-         ID       620 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI2], aGet[_CNOMUBI2], aTmp[_CCODUBI2], dbfUbicaL ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI2] VAR aTmp[_CNOMUBI2];
-         WHEN     .F. ;
-         ID       621 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY aGet[_CCODUBI3] VAR aTmp[_CCODUBI3];
-         ID       632 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CVALUBI3] VAR aTmp[_CVALUBI3] ;
-         ID       630 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ON HELP  ( BrwUbiLin( aGet[_CVALUBI3], aGet[_CNOMUBI3], aTmp[_CCODUBI3], dbfUbicaL ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_CNOMUBI3] VAR aTmp[_CNOMUBI3];
-         WHEN     .F. ;
-         ID       631 ;
-         OF       oFld:aDialogs[1]
-*/
 
       REDEFINE GET oStkAct VAR nStkAct ;
          ID       310 ;
@@ -5345,24 +5285,6 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
                   (dbfTmpLin)->nBultos    := (dbfPedCliL)->nBultos
                   (dbfTmpLin)->cFormato   := (dbfPedCliL)->cFormato
-
-                  /*
-                  Pasamos las ubicaciones de la mercancía
-                  */
-
-                  if dbSeekInOrd( cPedido + ( dbfPedCliL )->cRef + ( dbfPedCliL )->cValPr1 + ( dbfPedCliL )->cValPr2 + ( dbfPedCliL )->cLote + ( dbfPedCliL )->cDetalle, "cPCliDet", dbfAlbPrvL )
-
-                     ( dbfTmpLin )->cCodUbi1 := ( dbfAlbPrvL )->cCodUbi1
-                     ( dbfTmpLin )->cCodUbi2 := ( dbfAlbPrvL )->cCodUbi2
-                     ( dbfTmpLin )->cCodUbi3 := ( dbfAlbPrvL )->cCodUbi3
-                     ( dbfTmpLin )->cValUbi1 := ( dbfAlbPrvL )->cValUbi1
-                     ( dbfTmpLin )->cValUbi2 := ( dbfAlbPrvL )->cValUbi2
-                     ( dbfTmpLin )->cValUbi3 := ( dbfAlbPrvL )->cValUbi3
-                     ( dbfTmpLin )->cNomUbi1 := ( dbfAlbPrvL )->cNomUbi1
-                     ( dbfTmpLin )->cNomUbi2 := ( dbfAlbPrvL )->cNomUbi2
-                     ( dbfTmpLin )->cNomUbi3 := ( dbfAlbPrvL )->cNomUbi3
-
-                  end if
 
                   if !( dbfPedCliL )->lKitArt
 
@@ -8156,56 +8078,6 @@ Static Function ChangeTarifa( aTmp, aGet, aTmpAlb )
       aGet[ _NPREALQ  ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], D():Articulos( nView ) ) )
 
    end if
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-static Function cNomUbica( aTmp, aGet, dbfAlm )
-
-   aTmp[_CCODUBI1]      := cGetUbica( aTmp[_CALMLIN], dbfAlm, 1 )
-   aTmp[_CCODUBI2]      := cGetUbica( aTmp[_CALMLIN], dbfAlm, 2 )
-   aTmp[_CCODUBI3]      := cGetUbica( aTmp[_CALMLIN], dbfAlm, 3 )
-
-   if Empty( aTmp[_CCODUBI1] )
-      aGet[_CCODUBI1]:Hide()
-      aGet[_CVALUBI1]:Hide()
-      aGet[_CNOMUBI1]:Hide()
-   else
-      aGet[_CCODUBI1]:Show()
-      aGet[_CVALUBI1]:Show()
-      aGet[_CNOMUBI1]:Show()
-   end if
-
-   if Empty( aTmp[_CCODUBI2] )
-      aGet[_CCODUBI2]:Hide()
-      aGet[_CVALUBI2]:Hide()
-      aGet[_CNOMUBI2]:Hide()
-   else
-      aGet[_CCODUBI2]:Show()
-      aGet[_CVALUBI2]:Show()
-      aGet[_CNOMUBI2]:Show()
-   end if
-
-   if Empty( aTmp[_CCODUBI3] )
-      aGet[_CCODUBI3]:Hide()
-      aGet[_CVALUBI3]:Hide()
-      aGet[_CNOMUBI3]:Hide()
-   else
-      aGet[_CCODUBI3]:Show()
-      aGet[_CVALUBI3]:Show()
-      aGet[_CNOMUBI3]:Show()
-   end if
-
-   aGet[_CCODUBI1]:Refresh()
-   aGet[_CVALUBI1]:Refresh()
-   aGet[_CNOMUBI1]:Refresh()
-   aGet[_CCODUBI2]:Refresh()
-   aGet[_CVALUBI2]:Refresh()
-   aGet[_CNOMUBI3]:Refresh()
-   aGet[_CCODUBI3]:Refresh()
-   aGet[_CVALUBI3]:Refresh()
-   aGet[_CNOMUBI3]:Refresh()
 
 return .t.
 
@@ -16637,109 +16509,109 @@ Function aItmAlbCli()
 
    local aItmAlbCli := {}
 
-   aAdd( aItmAlbCli, { "CSERALB"   ,"C",  1, 0, "Serie del albarán" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NNUMALB"   ,"N",  9, 0, "Número del albarán" ,                                   "'999999999'",        "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CSUFALB"   ,"C",  2, 0, "Sufijo del albarán" ,                                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CTURALB"   ,"C",  6, 0, "Sesión del albarán",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "DFECALB"   ,"D",  8, 0, "Fecha del albarán" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODCLI"   ,"C", 12, 0, "Código del cliente" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODALM"   ,"C", 16, 0, "Código de almacén" ,                                    "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODCAJ"   ,"C",  3, 0, "Código de caja" ,                                       "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNOMCLI"   ,"C", 80, 0, "Nombre del cliente" ,                                   "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDIRCLI"   ,"C",200, 0, "Domicilio del cliente" ,                                "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CPOBCLI"   ,"C",200, 0, "Población del cliente" ,                                "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CPRVCLI"   ,"C",100, 0, "Provincia del cliente" ,                                "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CPOSCLI"   ,"C", 15, 0, "Código postal del cliente" ,                            "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDNICLI"   ,"C", 30, 0, "DNI/CIF del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LMODCLI"   ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LFACTURADO","L",  1, 0, "Lógico de facturado" ,                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lEntregado","L",  1, 0, "Lógico albarán enviado" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "DFECENT"   ,"D",  8, 0, "Fecha de entrada del albarán" ,                         "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODSUALB" ,"C", 25, 0, "Referencia a su albarán" ,                              "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCONDENT"  ,"C",100, 0, "Condición de entrada" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "MCOMENT"   ,"M", 10, 0, "Cometarios del albarán" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "MOBSERV"   ,"M", 10, 0, "Observaciones" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODPAGO"  ,"C",  2, 0, "Código de la forma de pago" ,                           "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NBULTOS"   ,"N",  3, 0, "Número de bultos" ,                                     "'999'",              "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NPORTES"   ,"N", 16, 6, "Importe de los portes" ,                                "cPouDivAlb",         "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODAGE"   ,"C",  3, 0, "Código del agente" ,                                    "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODOBR"   ,"C", 10, 0, "Código de dirección" ,                                       "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODTAR"   ,"C",  5, 0, "Código de tarifa" ,                                     "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CCODRUT"   ,"C",  4, 0, "Código de ruta" ,                                       "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNUMPED"   ,"C", 12, 0, "Número del pedido" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cNumPre"   ,"C", 12, 0, "Número del presupuesto" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cNumSat"   ,"C", 12, 0, "Número del SAT" ,                                       "",                   "", "( cDbf )" } )
-   aAdd( aItmAlbCli, { "NTIPOALB"  ,"N",  1, 0, "Tipo de albarán" ,                                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNUMFAC"   ,"C", 12, 0, "Número del documento facturado" ,                       "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LMAYOR"    ,"L",  1, 0, "" ,                                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NTARIFA"   ,"N",  1, 0, "Tarifa de precio aplicada" ,                            "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDTOESP"   ,"C", 50, 0, "Descripción porcentaje de descuento",                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOESP"   ,"N",  6, 2, "Porcentaje de descuento",                               "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDPP"      ,"C", 50, 0, "Descripción pct. de dto. por pronto pago",              "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDPP"      ,"N",  6, 2, "Porcentaje de dto. por pronto pago",                    "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDTOUNO"   ,"C", 25, 0, "Descripción del primer descuento personalizado",        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOUNO"   ,"N",  4, 1, "Porcentaje del primer descuento pers.",                 "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDTODOS"   ,"C", 25, 0, "Descripción del segundo descuento pers.",               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTODOS"   ,"N",  4, 1, "Descripción del segundo descuento pers.",               "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOCNT"   ,"N",  6, 2, "Pct. de dto. por pago contado",                         "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTORAP"   ,"N",  6, 2, "Pct. de dto. por rappel",                               "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOPUB"   ,"N",  6, 2, "Pct. de dto. por publicidad",                           "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOPGO"   ,"N",  6, 2, "Pct. de dto. por pago centralizado",                    "'@EZ 999.99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NDTOPTF"   ,"N",  7, 2, ""                                 ,                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LRECARGO"  ,"L",  1, 0, "Lógico recargo de equivalencia",                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NPCTCOMAGE","N",  6, 2, "Pct. de comisión del agente",                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LSNDDOC"   ,"L",  1, 0, "Lógico de documento a enviar",                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CDIVALB"   ,"C",  3, 0, "Código de divisa",                                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NVDVALB"   ,"N", 10, 4, "Valor del cambio de la divisa",                         "'@EZ 999,999.9999'", "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CRETPOR"   ,"C",100, 0, "Retirado por" ,                                         "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CRETMAT"   ,"C", 20, 0, "Matrícula" ,                                            "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CNUMDOC"   ,"C", 12, 0, "",                                                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CSUPED"    ,"C", 50, 0, "Su pedido",                                             "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LIVAINC"   ,"L",  1, 0, cImp() + " incluido",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NREGIVA"   ,"N",  1, 0, "Regimen de " + cImp(),                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "LGENLQD"   ,"L",  1, 0, "Generado por liquidación",                              "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NNUMORD"   ,"N",  9, 0, "Número de la orden de carga" ,                          "'999999999'",        "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "CSUFORD"   ,"C",  2, 0, "Sufijo de la orden de carga" ,                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "DFECORD"   ,"D",  8, 0, "Fecha de la orden de carga" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NIVAMAN"   ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,               "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "NMANOBR"   ,"N", 16, 6, "Gastos" ,                                               "cPorDivAlb",         "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cCodTrn"   ,"C",  9, 0, "Código del transportista" ,                             "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nKgsTrn"   ,"N", 16, 6, "TARA del transportista" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lCloAlb"   ,"L",  1, 0, "" ,                                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cCodUsr"   ,"C",  3, 0, "Código de usuario",                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecCre"   ,"D",  8, 0, "Fecha de creación/modificación del documento",          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cTimCre"   ,"C",  5, 0, "Hora de creación/modificación del documento",           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecEnv"   ,"D",  8, 0, "Fecha de envio",                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cCodGrp"   ,"C",  4, 0, "Código de grupo de cliente" ,                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lImprimido","L",  1, 0, "Lógico de imprimido" ,                                  "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecImp"   ,"D",  8, 0, "Última fecha de impresión" ,                            "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cHorImp"   ,"C",  5, 0, "Hora de la última impresión" ,                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nDtoAtp"   ,"N",  6, 2, "Porcentaje de descuento atípico",                       "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nSbrAtp"   ,"N",  1, 0, "Lugar donde aplicar dto atípico",                       "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nMontaje"  ,"N",  6, 2, "Horas de montaje",                                      "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecEntr",  "D",  8, 0, "Fecha de entrada de alquiler",                          "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "dFecSal",   "D",  8, 0, "Fecha de salida de alquiler",                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lOrdCar",   "L",  1, 0, "Lógico de pertenecer a un orden de carga" ,             "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cNumTik",   "C", 13, 0, "Número del ticket" ,                                    "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cTlfCli",   "C", 20, 0, "Teléfono del cliente" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotNet",   "N", 16, 6, "Total neto" ,                                           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotIva",   "N", 16, 6, "Total " + cImp() ,                                      "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotReq",   "N", 16, 6, "Total recargo" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotAlb",   "N", 16, 6, "Total albarán" ,                                        "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "nTotPag",   "N", 16, 6, "Total anticipado" ,                                     "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "lOperPV",   "L",  1, 0, "Lógico para operar con punto verde" ,                   "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbCli, { "cBanco"   , "C", 50, 0, "Nombre del banco del cliente",                          "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cPaisIBAN", "C",  2, 0, "País IBAN de la cuenta bancaria del cliente",           "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cCtrlIBAN", "C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",                "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cEntBnc"  , "C",  4, 0, "Entidad de la cuenta bancaria del cliente",             "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cSucBnc"  , "C",  4, 0, "Sucursal de la cuenta bancaria del cliente",            "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cDigBnc"  , "C",  2, 0, "Dígito de control de la cuenta bancaria del cliente",   "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                           "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "nDtoTarifa","N",  6, 2, "Descuento de tarifa de cliente",                        "",                   "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albaran" ,                                   "",                   "", "( cDbf )", 1   } )
+   aAdd( aItmAlbCli, { "CSERALB"   ,"C",  1, 0, "Serie del albarán" ,                                       "Serie",                         "", "( cDbf )", {|| "A" } } )
+   aAdd( aItmAlbCli, { "NNUMALB"   ,"N",  9, 0, "Número del albarán" ,                                      "Numero",                        "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CSUFALB"   ,"C",  2, 0, "Sufijo del albarán" ,                                      "Sufijo",                        "", "( cDbf )", {|| RetSufEmp() } } )
+   aAdd( aItmAlbCli, { "CTURALB"   ,"C",  6, 0, "Sesión del albarán",                                       "Turno",                         "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )
+   aAdd( aItmAlbCli, { "DFECALB"   ,"D",  8, 0, "Fecha del albarán" ,                                       "Fecha",                         "", "( cDbf )", {|| GetSysDate() } } )
+   aAdd( aItmAlbCli, { "CCODCLI"   ,"C", 12, 0, "Código del cliente" ,                                      "Cliente",                       "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CCODALM"   ,"C", 16, 0, "Código de almacén" ,                                       "Almacen",                       "", "( cDbf )", {|| oUser():cAlmacen() } } )
+   aAdd( aItmAlbCli, { "CCODCAJ"   ,"C",  3, 0, "Código de caja" ,                                          "Caja",                          "", "( cDbf )", {|| oUser():cCaja() } } )
+   aAdd( aItmAlbCli, { "CNOMCLI"   ,"C", 80, 0, "Nombre del cliente" ,                                      "NombreCliente",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CDIRCLI"   ,"C",200, 0, "Domicilio del cliente" ,                                   "DomicilioCliente",              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CPOBCLI"   ,"C",200, 0, "Población del cliente" ,                                   "PoblacionCliente",              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CPRVCLI"   ,"C",100, 0, "Provincia del cliente" ,                                   "ProvinciaCliente",              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CPOSCLI"   ,"C", 15, 0, "Código postal del cliente" ,                               "CodigoPostalCliente",           "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CDNICLI"   ,"C", 30, 0, "DNI/CIF del cliente" ,                                     "DniCliente",                    "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "LMODCLI"   ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                   "ModificarDatosCliente",         "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "LFACTURADO","L",  1, 0, "Lógico de facturado" ,                                     "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "lEntregado","L",  1, 0, "Lógico albarán enviado" ,                                  "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "DFECENT"   ,"D",  8, 0, "Fecha de entrada del albarán" ,                            "FechaSalida",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CCODSUALB" ,"C", 25, 0, "Referencia a su albarán" ,                                 "DocumentoOrigen",               "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CCONDENT"  ,"C",100, 0, "Condición de entrada" ,                                    "Condiciones",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "MCOMENT"   ,"M", 10, 0, "Cometarios del albarán" ,                                  "Comentarios",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "MOBSERV"   ,"M", 10, 0, "Observaciones" ,                                           "Observaciones",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CCODPAGO"  ,"C",  2, 0, "Código de la forma de pago" ,                              "Pago",                          "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NBULTOS"   ,"N",  3, 0, "Número de bultos" ,                                        "Bultos",                        "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NPORTES"   ,"N", 16, 6, "Importe de los portes" ,                                   "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CCODAGE"   ,"C",  3, 0, "Código del agente" ,                                       "Agente",                        "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CCODOBR"   ,"C", 10, 0, "Código de dirección" ,                                     "Direccion",                     "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CCODTAR"   ,"C",  5, 0, "Código de tarifa" ,                                        "Tarifa",                        "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CCODRUT"   ,"C",  4, 0, "Código de ruta" ,                                          "Ruta",                          "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CNUMPED"   ,"C", 12, 0, "Número del pedido" ,                                       "NumeroPedido",                  "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cNumPre"   ,"C", 12, 0, "Número del presupuesto" ,                                  "NumeroPresupuesto",             "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cNumSat"   ,"C", 12, 0, "Número del SAT" ,                                          "NumeroSat",                     "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NTIPOALB"  ,"N",  1, 0, "Tipo de albarán" ,                                         "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CNUMFAC"   ,"C", 12, 0, "Número del documento facturado" ,                          "NumeroFactura",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "LMAYOR"    ,"L",  1, 0, "" ,                                                        "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NTARIFA"   ,"N",  1, 0, "Tarifa de precio aplicada" ,                               "TarifaAplicar",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CDTOESP"   ,"C", 50, 0, "Descripción porcentaje de descuento",                      "DescripcionDescuento1",         "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDTOESP"   ,"N",  6, 2, "Porcentaje de descuento",                                  "PorcentajeDescuento1",          "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CDPP"      ,"C", 50, 0, "Descripción pct. de dto. por pronto pago",                 "DescripcionDescuento2",         "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDPP"      ,"N",  6, 2, "Porcentaje de dto. por pronto pago",                       "PorcentajeDescuento2",          "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CDTOUNO"   ,"C", 25, 0, "Descripción del primer descuento personalizado",           "DescripcionDescuento3",         "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDTOUNO"   ,"N",  4, 1, "Porcentaje del primer descuento pers.",                    "PorcentajeDescuento3",          "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CDTODOS"   ,"C", 25, 0, "Descripción del segundo descuento pers.",                  "DescripcionDescuento4",         "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDTODOS"   ,"N",  4, 1, "Descripción del segundo descuento pers.",                  "PorcentajeDescuento4",          "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDTOCNT"   ,"N",  6, 2, "Pct. de dto. por pago contado",                            "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDTORAP"   ,"N",  6, 2, "Pct. de dto. por rappel",                                  "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDTOPUB"   ,"N",  6, 2, "Pct. de dto. por publicidad",                              "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDTOPGO"   ,"N",  6, 2, "Pct. de dto. por pago centralizado",                       "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NDTOPTF"   ,"N",  7, 2, ""                                 ,                        "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "LRECARGO"  ,"L",  1, 0, "Lógico recargo de equivalencia",                           "RecargoEquivalencia",           "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NPCTCOMAGE","N",  6, 2, "Pct. de comisión del agente",                              "ComisionAgente",                "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "LSNDDOC"   ,"L",  1, 0, "Lógico de documento a enviar",                             "Envio",                         "", "( cDbf )", {|| .t. } } )
+   aAdd( aItmAlbCli, { "CDIVALB"   ,"C",  3, 0, "Código de divisa",                                         "Divisa",                        "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NVDVALB"   ,"N", 10, 4, "Valor del cambio de la divisa",                            "ValorDivisa",                   "", "( cDbf )", {|| nChgDiv() } } )
+   aAdd( aItmAlbCli, { "CRETPOR"   ,"C",100, 0, "Retirado por" ,                                            "RetiradoPor",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CRETMAT"   ,"C", 20, 0, "Matrícula" ,                                               "Matricula",                     "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CNUMDOC"   ,"C", 12, 0, "",                                                         "NumeroDocumento",               "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CSUPED"    ,"C", 50, 0, "Su pedido",                                                "NumeroSuPedido",                "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "LIVAINC"   ,"L",  1, 0, cImp() + " incluido",                                       "ImpuestosIncluidos",            "", "( cDbf )", {|| uFieldEmpresa( "lIvaInc" ) } } )
+   aAdd( aItmAlbCli, { "NREGIVA"   ,"N",  1, 0, "Regimen de " + cImp(),                                     "TipoImpuesto",                  "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "LGENLQD"   ,"L",  1, 0, "Generado por liquidación",                                 "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NNUMORD"   ,"N",  9, 0, "Número de la orden de carga" ,                             "NumeroOrdenCarga",              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "CSUFORD"   ,"C",  2, 0, "Sufijo de la orden de carga" ,                             "SufijoOrdenCarga",              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "DFECORD"   ,"D",  8, 0, "Fecha de la orden de carga" ,                              "FechaOrdenCarga",               "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NIVAMAN"   ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,                  "ImpuestoGastos",                "", "( cDbf )", {|| nIva( nil, cDefIva() ) } } )
+   aAdd( aItmAlbCli, { "NMANOBR"   ,"N", 16, 6, "Gastos" ,                                                  "Gastos",                        "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cCodTrn"   ,"C",  9, 0, "Código del transportista" ,                                "Transportista",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nKgsTrn"   ,"N", 16, 6, "TARA del transportista" ,                                  "TaraTransportista",             "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "lCloAlb"   ,"L",  1, 0, "" ,                                                        "DocumentoCerrado",              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cCodUsr"   ,"C",  3, 0, "Código de usuario",                                        "Usuario",                       "", "( cDbf )", {|| cCurUsr() } } )
+   aAdd( aItmAlbCli, { "dFecCre"   ,"D",  8, 0, "Fecha de creación/modificación del documento",             "FechaCreacion",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cTimCre"   ,"C",  5, 0, "Hora de creación/modificación del documento",              "HoraCreacion",                  "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "dFecEnv"   ,"D",  8, 0, "Fecha de envio",                                           "FechaEnvio",                    "", "( cDbf )", {|| cTod( "" ) } } )
+   aAdd( aItmAlbCli, { "cCodGrp"   ,"C",  4, 0, "Código de grupo de cliente" ,                              "GrupoCliente",                  "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "lImprimido","L",  1, 0, "Lógico de imprimido" ,                                     "Imprimido",                     "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "dFecImp"   ,"D",  8, 0, "Última fecha de impresión" ,                               "FechaImpresion",                "", "( cDbf )", {|| cTod( "" ) } } )
+   aAdd( aItmAlbCli, { "cHorImp"   ,"C",  5, 0, "Hora de la última impresión" ,                             "HoraImpresion",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cCodDlg"   ,"C",  2, 0, "Código delegación" ,                                       "Delegacion",                    "", "( cDbf )", {|| oUser():cDelegacion() } } )
+   aAdd( aItmAlbCli, { "nDtoAtp"   ,"N",  6, 2, "Porcentaje de descuento atípico",                          "DescuentoAtipico",              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nSbrAtp"   ,"N",  1, 0, "Lugar donde aplicar dto atípico",                          "LugasAplicarDescuentoAtipico",  "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nMontaje"  ,"N",  6, 2, "Horas de montaje",                                         "Montaje",                       "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "dFecEntr",  "D",  8, 0, "Fecha de entrada de alquiler",                             "EntradaAlquiler",               "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "dFecSal",   "D",  8, 0, "Fecha de salida de alquiler",                              "SalidaAlquiler",                "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "lAlquiler", "L",  1, 0, "Lógico de alquiler",                                       "Alquiler",                      "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cManObr",   "C",250, 0, "" ,                                                        "LiteralGastos",                 "", "( cDbf )", {|| Padr( "Gastos", 250 ) } } )
+   aAdd( aItmAlbCli, { "lOrdCar",   "L",  1, 0, "Lógico de pertenecer a un orden de carga" ,                "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cNumTik",   "C", 13, 0, "Número del ticket" ,                                       "NumeroTicket",                  "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cTlfCli",   "C", 20, 0, "Teléfono del cliente" ,                                    "TelefonoCliente",               "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nTotNet",   "N", 16, 6, "Total neto" ,                                              "TotalNeto",                     "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nTotIva",   "N", 16, 6, "Total " + cImp() ,                                         "TotalImpuesto",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nTotReq",   "N", 16, 6, "Total recargo" ,                                           "TotalRecargo",                  "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nTotAlb",   "N", 16, 6, "Total albarán" ,                                           "TotalDocumento",                "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nTotPag",   "N", 16, 6, "Total anticipado" ,                                        "",                              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "lOperPV",   "L",  1, 0, "Lógico para operar con punto verde" ,                      "OperarPuntoVerde",              "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cBanco"   , "C", 50, 0, "Nombre del banco del cliente",                             "NombreBanco",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cPaisIBAN", "C",  2, 0, "País IBAN de la cuenta bancaria del cliente",              "IbanCuenta",                    "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cCtrlIBAN", "C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "DigitoControlIban",             "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cEntBnc"  , "C",  4, 0, "Entidad de la cuenta bancaria del cliente",                "EntidadCuenta",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cSucBnc"  , "C",  4, 0, "Sucursal de la cuenta bancaria del cliente",               "Sucursal Cuenta",               "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cDigBnc"  , "C",  2, 0, "Dígito de control de la cuenta bancaria del cliente",      "DigitoControlCuenta",           "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                              "CuentaBancaria",                "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nDtoTarifa","N",  6, 2, "Descuento de tarifa de cliente",                           "DescuentoTarifa",               "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albaran" ,                                      "Estado",                        "", "( cDbf )", {|| 1 } } )
 
 Return ( aItmAlbCli )
 

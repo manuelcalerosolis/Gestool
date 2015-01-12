@@ -10,6 +10,10 @@ CLASS Ventas FROM DocumentoSerializable
 
    METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
+   METHOD isChangeSerieTablet( lReadyToSend, getSerie )
+   
+   METHOD ChangeSerieTablet( getSerie )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -58,6 +62,36 @@ Return ( lOpenFiles )
 METHOD CloseFiles() CLASS Ventas
 
    D():DeleteView( ::nView )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isChangeSerieTablet( getSerie ) CLASS Ventas
+   
+   if hGet( ::hDictionaryMaster, "Envio" )
+      ::ChangeSerieTablet( getSerie )
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ChangeSerieTablet( getSerie ) CLASS Ventas
+
+   local cSerie   := getSerie:VarGet()
+
+   do case
+      case cSerie == "A"
+         getSerie:cText( "B" )
+
+      case cSerie == "B"
+         getSerie:cText( "A" )
+
+      otherwise
+         getSerie:cText( "A" )
+
+   end case
 
 Return ( self )
 
