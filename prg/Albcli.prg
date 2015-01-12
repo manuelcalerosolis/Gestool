@@ -13307,18 +13307,19 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter )
             if file( cFilePdf )
 
                with object ( TGenMailingDocuments():New( aItmAlbCli(), D():AlbaranesClientes( nView ) ) )
-                  :setAsunto( "Envío de S.A.T. de cliente número " + D():AlbaranesClientesIdTextShort( nView ) )
+                  :setAsunto( "Envío de albarán de cliente número " + D():AlbaranesClientesIdTextShort( nView ) )
                   :setPara( retFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
                   :setAdjunto( cFilePdf )
-                  :setMensaje(   "<p>" +;
-                                 "Adjunto le remito nuestro S.A.T. de cliente " + D():AlbaranesClientesIdTextShort( nView ) + space( 1 ) + ;
-                                 "de fecha " + dtoc( D():AlbaranesClientesFecha( nView ) ) + ;
-                                 "</p>" + CRLF + ;
-                                 "<p>" + ;
-                                 "</p>" + CRLF + ;
-                                 "<p>" + ;
-                                 "Reciba un cordial saludo." + ;
-                                 "</p>" + CRLF )
+                  :setTypeDocument( "nAlbCli" )
+//                  :setMensaje(   "<p>" +;
+//                                 "Adjunto le remito nuestro S.A.T. de cliente " + D():AlbaranesClientesIdTextShort( nView ) + space( 1 ) + ;
+//                                 "de fecha " + dtoc( D():AlbaranesClientesFecha( nView ) ) + ;
+//                                 "</p>" + CRLF + ;
+//                                 "<p>" + ;
+//                                 "</p>" + CRLF + ;
+//                                 "<p>" + ;
+//                                 "Reciba un cordial saludo." + ;
+//                                 "</p>" + CRLF )
                   :Resource()
                end with
 

@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-//--------------------------------*-------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS TGenMailing 
 
@@ -13,7 +13,6 @@ CLASS TGenMailing
 
    DATA nView
 
-   DATA oBrwClient
    DATA oTree
    DATA oMtr
    DATA nMtr
@@ -90,7 +89,6 @@ CLASS TGenMailing
    DATA cTiempo                        INIT "0 seg."
    DATA aTiempo                        INIT { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
 
-   DATA oBmpClient
    DATA oBmpRedactar
    DATA oBmpProceso
 
@@ -139,7 +137,7 @@ CLASS TGenMailing
       METHOD botonSiguiente()
 
       METHOD buildPageRedactar( oDlg )
-      METHOD buildPageCliente( oDlg )
+      METHOD buildPageDatabase( oDlg ) VIRTUAL
       METHOD buildPageProceso( oDlg )
       METHOD buildButtonsGeneral()
 
@@ -156,18 +154,10 @@ CLASS TGenMailing
 
    METHOD isMailServer()               INLINE ( !empty( ::MailServer ) .and. !empty( ::MailServerUserName ) .and. !empty( ::MailServerPassword ) )
 
-   METHOD SelectColumn( oCombo )
-
    METHOD InsertField()                INLINE ( ::oActiveX:oClp:SetText( "{" + ( alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
 
    METHOD waitMail()
    METHOD waitSeconds( nTime )
-
-   METHOD getClientList()              
-   METHOD addClientList()              INLINE ( iif(  ( ::getWorkArea() )->lMail .and. !empty( ( ::getWorkArea() )->cMeiInt ),;
-                                                      aAdd( ::aMailingList, ::hashClientList() ),;
-                                                   ) )
-   METHOD hashClientList()        
 
    METHOD replaceExpresion( cDocumentHTML, cExpresion )
    METHOD getMessage()
@@ -222,7 +212,7 @@ METHOD Resource() CLASS TGenMailing
 
          ::buildPageRedactar( ::oFld:aDialogs[ 1 ] )
 
-         ::buildPageCliente( ::oFld:aDialogs[ 2 ] )
+         ::buildPageDatabase( ::oFld:aDialogs[ 2 ] )
 
          ::buildPageProceso( ::oFld:aDialogs[ 3 ] )
 
@@ -318,100 +308,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildPageCliente( oDlg )
-
-   local oGetOrd
-   local oCbxOrd
-   local cGetOrd           := Space( 100 )
-   local cCbxOrd           := "Código"
-   local aCbxOrd           := { "Código", "Nombre", "Correo electrónico" }
-
-   REDEFINE BITMAP ::oBmpClient ;
-      ID       500 ;
-      RESOURCE "Businessman2_Alpha_48" ;
-      TRANSPARENT ;
-      OF       oDlg
-
-   REDEFINE GET oGetOrd ;
-      VAR      cGetOrd;
-      ID       100 ;
-      BITMAP   "FIND" ;
-      OF       oDlg
-
-   oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwClient, ::getWorkArea() ) }
-
-   REDEFINE COMBOBOX oCbxOrd ;
-      VAR      cCbxOrd ;
-      ID       110 ;
-      ITEMS    aCbxOrd ;
-      OF       oDlg
-
-   oCbxOrd:bChange   := {|| ::SelectColumn( oCbxOrd ) }
-
-   REDEFINE BUTTON ;
-      ID       130 ;
-      OF       oDlg ;
-      ACTION   ( ::SelMailing( ::getWorkArea() ) )
-
-   REDEFINE BUTTON ;
-      ID       140 ;
-      OF       oDlg ;
-      ACTION   ( ::SelAllMailing( .t. ) )
-
-   REDEFINE BUTTON ;
-      ID       150 ;
-      OF       oDlg ;
-      ACTION   ( ::SelAllMailing( .f. ) )
-
-   ::oBrwClient                 := IXBrowse():New( oDlg )
-
-   ::oBrwClient:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwClient:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   ::oBrwClient:cAlias          := ::getWorkArea()
-
-   ::oBrwClient:nMarqueeStyle   := 5
-
-   ::oBrwClient:CreateFromResource( 160 )
-
-   ::oBrwClient:bLDblClick      := {|| ::SelMailing() }
-
-   with object ( ::oBrwClient:AddCol() )
-      :cHeader          := "Se. seleccionado"
-      :bStrData         := {|| "" }
-      :bEditValue       := {|| ( ::getWorkArea() )->lMail }
-      :nWidth           := 20
-      :SetCheck( { "Sel16", "Nil16" } )
-   end with
-
-   with object ( ::oBrwClient:AddCol() )
-      :cHeader          := "Código"
-      :cSortOrder       := "Cod"
-      :bEditValue       := {|| ( ::getWorkArea() )->Cod }
-      :nWidth           := 70
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-   end with
-
-   with object ( ::oBrwClient:AddCol() )
-      :cHeader          := "Nombre"
-      :cSortOrder       := "Titulo"
-      :bEditValue       := {|| ( ::getWorkArea() )->Titulo }
-      :nWidth           := 300
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-   end with
-
-   with object ( ::oBrwClient:AddCol() )
-      :cHeader          := "Correo electrónico"
-      :cSortOrder       := "cMeiInt"
-      :bEditValue       := {|| ( ::getWorkArea() )->cMeiInt }
-      :nWidth           := 260
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
-   end with
-
-Return ( Self )   
-
-//---------------------------------------------------------------------------//
-
 METHOD buildPageProceso( oDlg )
 
    REDEFINE BITMAP ::oBmpProceso ;
@@ -480,7 +376,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD freeResources()
+METHOD freeResources() CLASS TGenMailing
 
    if !Empty( ::oBmpRedactar )
       ::oBmpRedactar:end()
@@ -490,15 +386,11 @@ METHOD freeResources()
       ::oBmpProceso:end()
    end if
 
-   if !empty(::oBmpClient)
-      ::oBmpClient:end()
-   end if 
-
-   if !empty(::oMenu)
+   if !empty( ::oMenu )
       ::oMenu:end()
    end if
 
-   if !empty(::oActiveX)
+   if !empty( ::oActiveX )
       ::oActiveX:end()
    end if 
 
@@ -523,36 +415,6 @@ METHOD addFileAdjunto() CLASS TGenMailing
 Return ( Self )
 
 //--------------------------------------------------------------------------//
-
-METHOD SelectColumn( oCombo ) CLASS TGenMailing
-
-   local oCol
-   local cOrd                    := oCombo:VarGet()
-
-   if ::oBrwClient != nil
-
-      with object ::oBrwClient
-
-         for each oCol in :aCols
-
-            if Equal( cOrd, oCol:cHeader )
-               oCol:cOrder       := "A"
-               oCol:SetOrder()
-            else
-               oCol:cOrder       := " "
-            end if
-
-         next
-
-      end with
-
-      ::oBrwClient:Refresh()
-
-   end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 METHOD BotonAnterior() CLASS TGenMailing
 
@@ -637,24 +499,6 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD getClientList()
-
-   local nRecord
-
-   CursorWait()
-
-   ::aMailingList := {}
-   
-   nRecord         := ( ::getWorkArea() )->( recno() )
-   ( ::getWorkArea() )->( dbeval( {|| ::addClientList() } ) )
-   ( ::getWorkArea() )->( dbgoto( nRecord ) )
-
-   CursorArrow()
-
-Return ( ::aMailingList )
-
-//--------------------------------------------------------------------------//
-
 METHOD IniciarProceso() CLASS TGenMailing
 
    local aClientList    
@@ -709,20 +553,6 @@ METHOD waitMail()
    end if
 
 Return ( Self )   
-
-//---------------------------------------------------------------------------//
-
-METHOD hashClientList()
-
-   local hashClientList := {=>}
-
-   hSet( hashClientList, "mail", alltrim( ( ::getWorkArea() )->cMeiInt ) )
-   hSet( hashClientList, "mailcc", ::cGetCopia )
-   hSet( hashClientList, "subject", ::cSubject )
-   hSet( hashClientList, "attachments", ::cGetAdjunto )
-   hSet( hashClientList, "message", ::getMessageHTML() )
-
-Return ( hashClientList )
 
 //---------------------------------------------------------------------------//
 

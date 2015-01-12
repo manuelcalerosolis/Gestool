@@ -5107,6 +5107,7 @@ CLASS D
    // Albaranes de clientes----------------------------------------------------
 
    METHOD AlbaranesClientes( nView )            INLINE ( ::Get( "AlbCliT", nView ) )
+      METHOD AlbaranesClientesFecha( nView )    INLINE ( ( ::Get( "AlbCliT", nView ) )->dFecAlb )
       METHOD AlbaranesClientesId( nView )       INLINE ( ( ::Get( "AlbCliT", nView ) )->cSerAlb + str( ( ::Get( "AlbCliT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliT", nView ) )->cSufAlb )
       METHOD AlbaranesClientesIdTextShort( nView );
                                                 INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )

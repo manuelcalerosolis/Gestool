@@ -18081,7 +18081,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "S&eleccionar", 130, "Button", WS_TABSTOP, 43, 42, 50, 14
   CONTROL "&Todos", 140, "Button", WS_TABSTOP, 95, 42, 50, 14
   CONTROL "N&inguno", 150, "Button", WS_TABSTOP, 147, 42, 50, 14
-  CONTROL "&Filtrar", 170, "Button", WS_TABSTOP, 536, 41, 78, 14
+  CONTROL "&Filtrar", 170, "Button", WS_TABSTOP, 536, 41, 66, 14
+  CONTROL "", 180, "TBtnBmp", NOT WS_VISIBLE, 602, 42, 12, 12
   CONTROL "", 160, "TXBrowse", WS_TABSTOP|0x00300000, 44, 57, 570, 259
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 4, 3, 34, 30
   CONTROL "Selección de registros a los que enviar el correo electrónico", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8

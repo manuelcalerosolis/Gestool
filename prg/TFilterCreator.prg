@@ -19,7 +19,7 @@
 
 CLASS TFilterCreator
 
-   DATA oTShell
+   DATA oSender
 
    DATA aFiltersName                         INIT {}
 
@@ -51,7 +51,7 @@ CLASS TFilterCreator
                                                       "Contenga"     => " $ " }
 
 	METHOD New()
-   METHOD Init( oTShell )
+   METHOD Init( oSender )
 
    METHOD AddFilter()                        INLINE ( ::oFilterDialog:Dialog() )
    METHOD EditFilter( cFilterName )          INLINE ( ::oFilterDialog:Dialog( cFilterName ) ) 
@@ -126,9 +126,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Init( oTShell ) CLASS TFilterCreator
+METHOD Init( oSender ) CLASS TFilterCreator
 
-   ::oTShell            := oTShell
+   ::oSender            := oSender
 
    ::oFilterDatabase    := TFilterDatabase():New( Self )
    ::oFilterDatabase:OpenFiles()
@@ -301,9 +301,9 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Init( oTShell ) CLASS TReplaceCreator
+METHOD Init( oSender ) CLASS TReplaceCreator
 
-   ::oTShell            := oTShell
+   ::oSender            := oSender
 
    ::oFilterDatabase    := TFilterDatabase():New( Self )
 
