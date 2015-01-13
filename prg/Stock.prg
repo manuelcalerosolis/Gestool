@@ -5627,11 +5627,12 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    cLote                := if ( len( cLote )    != 12, Padr( cLote, 12 ), cLote )
 
    // Si el criterio de la peticion no cambia devolvemos la fecha de consolidacion
-   
+   /*
    if ::cCodigoConsolidacion == cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote .and. !empty( ::dConsolidacion )
+      msgAlert( ::dConsolidacion, "salida pq no ha cambios" )
       Return ( ::dConsolidacion )
    end if 
-   
+   */
    // Entramos en el calculo real de la consolidacion--------------------------
 
    ::dConsolidacion     := nil
@@ -5663,10 +5664,12 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
    // Guardamos el criterio de busqueda para la proxima-----------------------
 
-   ::cCodigoConsolidacion        := cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote
+   //::cCodigoConsolidacion        := cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote
 
    ( ::cHisMovT )->( ordSetFocus( nOrd ) )
    ( ::cHisMovT )->( dbGoTo( nRec ) )
+
+   // msgAlert( ::dConsolidacion, "dConsolidacion" )
 
 Return ( ::dConsolidacion )
 

@@ -57,8 +57,10 @@ ArtCodeBar.prg          	\
 Brwvta.prg              	\
 Client.prg              	\
 TGenMail.prg            	\
+TGenMailDatabase.prg       \
 TGenMailClientes.prg       \
 TGenMailDocuments.prg      \
+TGenMailSerialDocuments.prg      \
 TSendMail.prg              \
 TSendMailOutlook.prg       \
 TSendMailCDO.prg           \
@@ -417,8 +419,10 @@ Brwvta.obj              \
 Provee.obj              \
 Client.obj              \
 TGenMail.obj            \
+TGenMailDatabase.obj    \
 TGenMailClientes.obj    \
 TGenMailDocuments.obj   \
+TGenMailSerialDocuments.obj      \
 TSendMail.obj           \
 TSendMailOutlook.obj    \
 TSendMailCDO.obj        \
@@ -805,8 +809,10 @@ $(OBJ)\Brwvta.obj                +
 $(OBJ)\Provee.obj                +
 $(OBJ)\Client.obj                +
 $(OBJ)\TGenMail.obj              +
+$(OBJ)\TGenMailDatabase.obj      +
 $(OBJ)\TGenMailClientes.obj      +
 $(OBJ)\TGenMailDocuments.obj     +
+$(OBJ)\TGenMailSerialDocuments.obj     +
 $(OBJ)\TSendMail.obj             +
 $(OBJ)\TSendMailOutlook.obj      +
 $(OBJ)\TSendMailCDO.obj          +

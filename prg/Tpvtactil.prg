@@ -9168,7 +9168,7 @@ METHOD GetPesoBalanza() CLASS TpvTactil
          
       else  
          
-         MsgAlert( "El puerto de la balanza no se ha creado correctamente" )
+         msgStop( "El puerto de la balanza no se ha creado correctamente" )
 
       end if 
 

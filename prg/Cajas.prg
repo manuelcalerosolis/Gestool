@@ -1964,13 +1964,14 @@ RETURN NIL
 
 Static Function ValidCajaPadre( aGet, aTmp )
 
+   local hStatus
    local lValid   := .t.
 
    if empty( aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ] )
       Return ( lValid )
    end if 
 
-   hGetStatus( dbfCajT )
+   hStatus        := hGetStatus( dbfCajT )
 
    if ( dbfCajT )->( dbSeekInOrd( aTmp[ ( dbfCajT )->( FieldPos( "cCajPrt" ) ) ], "cCodCaj", dbfCajT ) )  
 
@@ -1992,7 +1993,7 @@ Static Function ValidCajaPadre( aGet, aTmp )
 
    end if 
 
-   hSetStatus()
+   hSetStatus( hStatus )
 
 Return ( lValid )
 

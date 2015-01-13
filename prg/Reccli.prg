@@ -1473,9 +1473,10 @@ RETURN NIL
 
 Static Function GetReciboCliente( aTmp, oBrwRec )
 
+   local hStatus
    local cNumRec  := ""
 
-   hGetStatus( dbfFacCliP )
+   hStatus        := hGetStatus( dbfFacCliP )
 
    if BrwRecCli( @cNumRec, dbfFacCliP, dbfClient, dbfDiv )
 
@@ -1509,7 +1510,7 @@ Static Function GetReciboCliente( aTmp, oBrwRec )
        
    end if
 
-   hSetStatus()
+   hSetStatus( hStatus )
 
 Return nil
 

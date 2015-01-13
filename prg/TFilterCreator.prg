@@ -117,7 +117,7 @@ METHOD New() CLASS TFilterCreator
    ::oFilterDatabase:OpenFiles()
    ::oFilterDatabase:SetScope( ::GetFilterType() )
 
-   ::oFilterDialog       := TFilterDialog():New( Self )
+   ::oFilterDialog      := TFilterDialog():New( Self )
    ::oFilterDialog:Dialog()
 
    ::oFilterDatabase:End()
@@ -319,7 +319,7 @@ RETURN ( Self )
 
 CLASS TFilterDialog
 
-	CLASSDATA oDlg 
+	DATA oDlg // classdata
 
 	DATA oFld
    DATA oBmp
@@ -346,8 +346,8 @@ CLASS TFilterDialog
    METHOD ActivateDialog( cFilterName )
 
    METHOD InitDialog( cFilterName )
-   METHOD QuitDialog()
-   METHOD EndDialog()
+   METHOD okDialog()
+   METHOD endDialog()
 
    METHOD Save()     
    METHOD Load()          
@@ -488,14 +488,15 @@ METHOD ActivateDialog() CLASS TFilterDialog
       REDEFINE BUTTON ;
          ID          IDOK ;
          OF          ( ::oDlg );
-         ACTION      ( ::EndDialog() )
+         ACTION      ( ::okDialog() )
 
       REDEFINE BUTTON ;
+         CANCEL ;
          ID          IDCANCEL ;
          OF          ( ::oDlg );
-         ACTION      ( ::oDlg:End() )
+         ACTION      ( ::endDialog() )
 
-      ::oDlg:AddFastKey( VK_F5, {|| ::EndDialog() } )
+      ::oDlg:AddFastKey( VK_F5, {|| ::okDialog() } )
 
    ::oDlg:Activate( , , , .t., , .t., {|| ::InitDialog() } )
 
@@ -521,7 +522,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD QuitDialog() CLASS TFilterDialog
+METHOD endDialog() CLASS TFilterDialog
 
    ::oFilterCreator:QuitExpresion()
    
@@ -531,7 +532,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EndDialog() CLASS TFilterDialog
+METHOD okDialog() CLASS TFilterDialog
 
    if ::oFilterCreator:BuildFilter( ::oBrwFilter:aFilter )
       ::oDlg:End( IDOK )
@@ -715,7 +716,7 @@ RETURN ( nil )
 
 CLASS TBrowseFilter
 
-   CLASSDATA aFilter                         INIT {}
+   DATA aFilter                              INIT {} //classdata
 
    DATA oFilterDialog
 

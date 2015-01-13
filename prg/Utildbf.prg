@@ -14,8 +14,6 @@
 #define MODE_RECORD           2
 #define MODE_APPEND           3
 
-static hStatus        
-
 static aResources             := {}
 static aAdsDirectory          := {}
 
@@ -26,7 +24,7 @@ static hTraslations           := {=>}
 //
 //--------------------------------------------------------------------------//
 
-FUNCTION DbSwapUp( cAlias, oBrw )
+FUNCTION dbSwapUp( cAlias, oBrw )
 
 	local aRecNew
    local aRecOld  := dbScatter( cAlias )
@@ -2234,7 +2232,7 @@ return ( aStatus )
 
 Function hGetStatus( cAlias, lInit )
 
-   hStatus        := { "Alias" => cAlias, "Recno" => ( cAlias )->( Recno() ), "Order" => ( cAlias )->( OrdSetFocus() ) }
+   local hStatus  := { "Alias" => cAlias, "Recno" => ( cAlias )->( Recno() ), "Order" => ( cAlias )->( OrdSetFocus() ) }
 
    DEFAULT lInit  := .f.
 
@@ -2247,7 +2245,7 @@ Return ( hStatus )
 
 //--------------------------------------------------------------------------//
 
-Function hSetStatus()
+Function hSetStatus( hStatus )
 
    ( HGet( hStatus, "Alias" ) )->( OrdSetFocus( HGet( hStatus, "Order" ) ) )
    ( HGet( hStatus, "Alias" ) )->( dbGoTo(      HGet( hStatus, "Recno" ) ) )

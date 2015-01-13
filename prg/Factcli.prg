@@ -142,6 +142,8 @@
 #define _LRECC             121
 #define _CCODPRY           122
 #define _NDTOTARIFA 	      123
+#define _LMAIL             124
+#define _TMAIL             125
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -789,7 +791,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( D():FacturasClientes( nView ) )->cSerie + "/" + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) }
+         :bEditValue       := {|| D():FacturasClientesIdTextShort( nView ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :bLDClickData     := {|| oWndBrw:RecEdit() }
@@ -1068,6 +1070,12 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          LEVEL    ACC_IMPR
 
          lGenFacCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
+
+      DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TGenMailingSerialDocuments():New( nView ):Resource() ) ;
+         TOOLTIP  "Correo electrónico series";
+         LEVEL    ACC_IMPR 
 
       DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
          NOBORDER ;
@@ -2541,6 +2549,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _LIMPALB    ]  := .f.
       aTmp[ _LCLOFAC    ]  := .f.
       aTmp[ _LSNDDOC    ]  := .t.
+      aTmp[ _LMAIL      ]  := .t.
       aTmp[ _CNFC       ]  := Space( 20 )
       aTmp[ _NENTINI    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nEntIni" )
       aTmp[ _NPCTDTO    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nPctDto" )
@@ -13465,11 +13474,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
          if ( D():Articulos( nView ) )->nCajEnt != 0
-            aGet[_NCANENT ]:cText( (D():Articulos( nView ))->nCajEnt )
+            aGet[ _NCANENT ]:cText(  (D():Articulos( nView ) )->nCajEnt )
          end if
 
          if ( D():Articulos( nView ) )->nUniCaja != 0
-            aGet[_NUNICAJA]:cText( ( D():Articulos( nView ) )->nUniCaja )
+            aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
          end if
 
          /*
@@ -20411,6 +20420,9 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "dFecDes", "dFecFac", {|| Field->dFecFac } ) )
 
+      ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "lMail", "lMail", {|| Field->lMail } ) )
+
       ( cFacCliT )->( dbCloseArea() )
 
    else
@@ -20693,7 +20705,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cNFC"        ,"C", 20,  0, "Código NFC" ,                                         "'@!",                "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cFacPrv"     ,"C", 12,  0, "Factura de proveedor" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cBanco"      ,"C", 50,  0, "Nombre del banco del cliente" ,                       "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "País IBAN de la cuenta bancaria del cliente",         "", 					"", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "País IBAN de la cuenta bancaria del cliente",         "", 					    "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cCtrlIBAN"   ,"C",  2,  0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",              "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cEntBnc"     ,"C",  4,  0, "Entidad de la cuenta bancaria del cliente" ,          "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cSucBnc"     ,"C",  4,  0, "Sucursal de la cuenta bancaria del cliente" ,         "",                   "", "( cDbf )"} )
@@ -20702,9 +20714,11 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"nTotLiq"     ,"N", 16,  6, "Total liquidado" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nTotPdt"     ,"N", 16,  6, "Total pendiente" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja", 	"",					 	"", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cCodPry" 	,"C", 4,   0, "Código del proyecto", 								"", 				 	"", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 								"", 				 	"", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja", 	"",					 	 "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCodPry" 	   ,"C", 4,   0, "Código del proyecto", 								         "", 				  	    "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 								         "", 				 	    "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                            "",                   "", "( cDbf )" } )
+   aAdd( aItmFacCli, {"tMail"       ,"T", 8,   0, "Fecha y hora mail enviado" ,                          "",                   "", "( cDbf )" } )
 
 RETURN ( aItmFacCli )
 

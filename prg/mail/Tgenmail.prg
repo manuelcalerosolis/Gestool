@@ -44,6 +44,7 @@ CLASS TGenMailing
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
    DATA cWorkArea                      INIT ""
+   DATA hWorkAreaStatus
 
    DATA lHidePara                      INIT .f.
    DATA lHideCopia                     INIT .f.
@@ -91,14 +92,16 @@ CLASS TGenMailing
 
    DATA oBmpRedactar
    DATA oBmpProceso
+   DATA oBmpDatabase
 
    DATA aMailingList                   INIT {}
 
    METHOD New()
    METHOD Create()
 
-   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea )
+   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea, ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
    METHOD getWorkArea()                INLINE ( ::cWorkArea )
+   METHOD quitWorkArea()               INLINE ( hSetStatus( ::hWorkAreaStatus ) )
 
    METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
    METHOD getAsunto()                  INLINE ( alltrim( ::cSubject ) )
@@ -122,8 +125,10 @@ CLASS TGenMailing
    METHOD addAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
    METHOD addFileAdjunto()
 
-   METHOD setItems( aItems )           INLINE ( if( !empty( aItems ),;
-                                                ( ::aItems := aItems, ::aFields := getSubArray( aItems, 5 ) ), ) )
+   METHOD setItems( aItems )           INLINE ( iif(  !empty( aItems ),;
+                                                   (  ::aItems    := aItems,;
+                                                      ::aFields   := getSubArray( aItems, 5 ),;
+                                                      iif( !empty( ::oFilter ), ::oFilter:setFields( aItems ), ) ), ) )
    METHOD getItems()                   INLINE ( ::aItems )
 
    METHOD setTypeDocument( cTypeDocument ) ;
@@ -172,11 +177,15 @@ METHOD New( aItems, cWorkArea ) CLASS TGenMailing
 
    ::Create()
 
-   ::setItems( aItems )
-   ::setWorkArea( cWorkArea )
-
    ::oSendMail       := TSendMail():New( Self )
+
    ::oTemplateHtml   := TTemplatesHtml():New( Self )
+
+   ::oFilter         := TFilterCreator():Init( Self )   
+
+   ::setItems( aItems )
+   
+   ::setWorkArea( cWorkArea )
 
 Return ( Self )
 
@@ -377,6 +386,8 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD freeResources() CLASS TGenMailing
+
+   ::quitWorkArea()
 
    if !Empty( ::oBmpRedactar )
       ::oBmpRedactar:end()

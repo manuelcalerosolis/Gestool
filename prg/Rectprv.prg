@@ -10098,9 +10098,6 @@ FUNCTION nEstRctPrv( cFacPrv, cRctPrvT, cRctPrvP )
 
    local nBitmap  := 3
 
-   ? cRctPrvT
-   ? cRctPrvP
-
    if ( cRctPrvT )->( dbSeek( cFacPrv ) )
       nBitmap     := ChkPagRctPrv( cRctPrvT, cRctPrvP )
    end if
