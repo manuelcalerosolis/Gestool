@@ -275,6 +275,7 @@ Return ( Self )
 
 METHOD dialogFilter() CLASS TGenMailingClientes
 
+   ::oFilter:setFilter({})
    ::oFilter:Dialog()
 
    if !empty( ::oFilter:cExpresionFilter )
@@ -291,7 +292,7 @@ METHOD buildFilter()
 
    createFastFilter( ::oFilter:cExpresionFilter, ::getWorkArea(), .f. )
 
-   SetWindowText( ::oBntCreateFilter:hWnd, "&Filtro activo" )
+   ::oBntCreateFilter:setText( "&Filtro activo" )
 
    ::oBntQuitFilter:Show()
 
@@ -305,7 +306,7 @@ METHOD quitFilter() CLASS TGenMailingClientes
 
    destroyFastFilter( ::getWorkArea() )
 
-   SetWindowText( ::oBntCreateFilter:hWnd, "&Filtro" )
+   ::oBntCreateFilter:setText( "&Filtro" )
 
    ::oBntQuitFilter:Hide()
 

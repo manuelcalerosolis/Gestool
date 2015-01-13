@@ -48,6 +48,10 @@ local hClass
 
   __clsAddMsg( hClass, "GetFont", {|| nil }, 3, nil, 1, .f., .f. )
 
+  hClass        := TButton():ClassH
+
+  __clsAddMsg( hClass, "setText", {|Self, cText| Self, SetWindowText( ::hWnd, cText ) }, 3, nil, 1, .f., .f. )
+
 /*
   hClass        := TBtnBmp():ClassH
 
