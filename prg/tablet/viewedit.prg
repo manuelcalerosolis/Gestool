@@ -7,10 +7,18 @@ CLASS ViewEdit FROM ViewBase
    DATA oBrowse
    DATA oSender
    DATA WorkArea
+   DATA nMode
+   
+   DATA oGetCliente
+   DATA oNombreCliente
+
+   DATA oGetDireccion
 
    METHOD New()
 
    METHOD ResourceViewEdit()
+
+   METHOD StartResourceViewEdit()
 
    METHOD DefineSerie()
 
@@ -44,12 +52,11 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceViewEdit() CLASS ViewEdit
+METHOD ResourceViewEdit( nMode ) CLASS ViewEdit
 
-   MsgInfo( ValtoPrg( ::oSender:hDictionaryMaster ) )
-   MsgInfo( ValtoPrg( ::oSender:hDictionaryDetail ) )
+   ::nMode  := nMode
 
-   ::oDlg  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+   ::oDlg   := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
    ::TituloBrowse()
 
@@ -71,9 +78,19 @@ METHOD ResourceViewEdit() CLASS ViewEdit
 
    ::oDlg:bResized         := {|| ::DialogResize() }
 
+   ::oDlg:bStart           := {|| ::StartResourceViewEdit() }
+
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartResourceViewEdit() CLASS ViewEdit
+
+   ::oGetDireccion:lValid()
+
+Return Self
 
 //---------------------------------------------------------------------------//
 
@@ -165,9 +182,6 @@ Return ( self )
 
 METHOD DefineCliente() CLASS ViewEdit
 
-   local oGetCliente
-   local oNombreCliente
-
    TGridUrllink():Build({  "nTop"      => 95,;
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                            "cURL"      => "Cliente",;
@@ -177,18 +191,18 @@ METHOD DefineCliente() CLASS ViewEdit
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| GridBrwClient( oGetCliente, oNombreCliente ) } } )
+                           "bAction"   => {|| GridBrwClient( ::oGetCliente, ::oNombreCliente ) } } )
 
-   oGetCliente       := TGridGet():Build( {  "nRow"      => 95,;
+   ::oGetCliente     := TGridGet():Build( {  "nRow"      => 95,;
                                              "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                              "bSetGet"   => {|u| ::SetGetValue( u, "Cliente" ) },;
                                              "oWnd"      => ::oDlg,;
                                              "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                              "nHeight"   => 23,;
                                              "lPixels"   => .t.,;
-                                             "bValid"    => {|| ::oSender:lValidCliente() } } )
+                                             "bValid"    => {|| ::oSender:lValidCliente( ::oGetCliente, ::oNombreCliente, ::nMode ) } } )
    
-   oNombreCliente    := TGridGet():Build( {  "nRow"      => 95,;
+   ::oNombreCliente    := TGridGet():Build( {  "nRow"      => 95,;
                                              "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
                                              "bSetGet"   => {|u| ::SetGetValue( u, "NombreCliente" ) },;
                                              "oWnd"      => ::oDlg,;
@@ -203,7 +217,6 @@ Return ( self )
 METHOD DefineDireccion() CLASS ViewEdit
 
    local cTextoNombreDireccion  := Space( 200 )
-   local oGetDireccion
    local oGetNombreDireccion
 
    TGridUrllink():Build(   {  "nTop"      => 120,;
@@ -215,16 +228,16 @@ METHOD DefineDireccion() CLASS ViewEdit
                               "nClrInit"  => nGridColor(),;
                               "nClrOver"  => nGridColor(),;
                               "nClrVisit" => nGridColor(),;
-                              "bAction"   => {|| GridBrwObras( oGetDireccion, oGetNombreDireccion, hGet( ::oSender:hDictionaryMaster, "Cliente" ) ) } } )
+                              "bAction"   => {|| GridBrwObras( ::oGetDireccion, oGetNombreDireccion, hGet( ::oSender:hDictionaryMaster, "Cliente" ) ) } } )
 
-   oGetDireccion        := TGridGet():Build( {  "nRow"      => 120,;
+   ::oGetDireccion      := TGridGet():Build( {  "nRow"      => 120,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                                 "bSetGet"   => {|u| ::SetGetValue( u, "Direccion" ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lPixels"   => .t.,;
-                                                "bValid"    => {|| ::oSender:lValidDireccion() } } )
+                                                "bValid"    => {|| ::oSender:lValidDireccion( ::oGetDireccion, oGetNombreDireccion, hGet( ::oSender:hDictionaryMaster, "Cliente" ) ) } } )
 
    oGetNombreDireccion  := TGridGet():Build( {  "nRow"      => 120,;
                                                 "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;

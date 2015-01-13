@@ -140,7 +140,7 @@ METHOD Resource( nMode ) CLASS PedidoCliente
 
       ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "pedido" )
       
-      ::oViewEdit:ResourceViewEdit()
+      ::oViewEdit:ResourceViewEdit( nMode )
 
    end if
 

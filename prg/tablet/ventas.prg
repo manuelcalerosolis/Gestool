@@ -49,6 +49,10 @@ METHOD OpenFiles() CLASS Ventas
 
    D():Divisas( ::nView )
 
+   D():Clientes( ::nView )
+
+   D():ClientesDirecciones( ::nView )
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -105,15 +109,125 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidCliente() CLASS Ventas
+METHOD lValidCliente( oGet, oGet2, nMode ) CLASS Ventas
 
-Return ( .t. )
+   local lValid      := .t.
+   local cNewCodCli  := hGet( ::hDictionaryMaster, "Cliente" )
+
+   if Empty( cNewCodCli )
+      Return .t.
+   else
+      cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
+   end if
+
+   if ( D():Clientes( ::nView ) )->( dbSeek( cNewCodCli ) )
+
+      hSet( ::hDictionaryMaster, "Cliente", cNewCodCli )
+      hSet( ::hDictionaryMaster, "NombreCliente", ( D():Clientes( ::nView ) )->Titulo )
+      hSet( ::hDictionaryMaster, "DomicilioCliente", ( D():Clientes( ::nView ) )->Domicilio )
+      hSet( ::hDictionaryMaster, "PoblacionCliente", ( D():Clientes( ::nView ) )->Poblacion )
+      hSet( ::hDictionaryMaster, "ProvinciaCliente", ( D():Clientes( ::nView ) )->Provincia )
+      hSet( ::hDictionaryMaster, "CodigoPostalCliente", ( D():Clientes( ::nView ) )->CodPostal )
+      hSet( ::hDictionaryMaster, "TelefonoCliente", ( D():Clientes( ::nView ) )->Telefono )
+      hSet( ::hDictionaryMaster, "DniCliente", ( D():Clientes( ::nView ) )->Nif )
+      hSet( ::hDictionaryMaster, "GrupoCliente", ( D():Clientes( ::nView ) )->Nif )
+      hSet( ::hDictionaryMaster, "ModificarDatOperarPuntoVerdeGrupoCliente", ( D():Clientes( ::nView ) )->lPntVer )
+
+      if nMode == APPD_MODE
+
+         hSet( ::hDictionaryMaster, "TipoImpuesto", ( D():Clientes( ::nView ) )->nRegIva )
+         hSet( ::hDictionaryMaster, "Serie", ( D():Clientes( ::nView ) )->Serie )
+         hSet( ::hDictionaryMaster, "Almacen", ( D():Clientes( ::nView ) )->cCodAlm )
+         hSet( ::hDictionaryMaster, "Tarifa", ( D():Clientes( ::nView ) )->cCodTar )
+         hSet( ::hDictionaryMaster, "Pago", ( D():Clientes( ::nView ) )->CodPago )
+         hSet( ::hDictionaryMaster, "Agente", ( D():Clientes( ::nView ) )->cAgente )
+         hSet( ::hDictionaryMaster, "Ruta", ( D():Clientes( ::nView ) )->cCodRut )
+         hSet( ::hDictionaryMaster, "TarifaAplicar", ( D():Clientes( ::nView ) )->nTarifa )
+         hSet( ::hDictionaryMaster, "DescuentoTarifa", ( D():Clientes( ::nView ) )->nDtoArt )
+         hSet( ::hDictionaryMaster, "Transportista", ( D():Clientes( ::nView ) )->cCodTrn )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento1", ( D():Clientes( ::nView ) )->cDtoEsp )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento1", ( D():Clientes( ::nView ) )->nDtoEsp )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento2", ( D():Clientes( ::nView ) )->cDpp )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento2", ( D():Clientes( ::nView ) )->nDpp )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento3", ( D():Clientes( ::nView ) )->cDtoUno )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento3", ( D():Clientes( ::nView ) )->nDtoCnt )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento4", ( D():Clientes( ::nView ) )->cDtoDos )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento4", ( D():Clientes( ::nView ) )->nDtoRap )
+         hSet( ::hDictionaryMaster, "DescuentoAtipico", ( D():Clientes( ::nView ) )->nDtoAtp )
+         hSet( ::hDictionaryMaster, "LugarAplicarDescuentoAtipico", ( D():Clientes( ::nView ) )->nSbrAtp )
+
+      end if
+
+      if !Empty( oGet )
+         oGet:Refresh()
+      end if
+
+      if !Empty( oGet2 )
+         oGet2:Refresh()
+      end if
+
+      lValid      := .t.
+
+   else
+
+      msgStop( "Cliente no encontrado" )
+      lValid := .f.
+
+   end if
+
+RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidDireccion() CLASS Ventas
+METHOD lValidDireccion( oGet, oGet2, cCodCli ) CLASS Ventas
 
-Return ( .t. )
+   local lValid   := .f.
+   local xValor   := oGet:VarGet()
+   local nOrdAnt
+
+   if Empty( xValor )
+      if !Empty( oGet2 )
+         oGet2:cText( "" )
+      end if
+      return .t.
+   end if
+
+   if Empty( cCodCli )
+      MsgStop( "Es necesario codificar un cliente" )
+      return .t.
+   end if
+
+   nOrdAnt        := ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
+
+   xValor         := Padr( cCodCli, 12 ) + xValor
+
+   if ( D():ClientesDirecciones( ::nView ) )->( dbSeek( xValor ) )
+
+      oGet:cText( ( D():ClientesDirecciones( ::nView ) )->cCodObr )
+
+      if !Empty( oGet2 )
+         oGet2:cText( ( D():ClientesDirecciones( ::nView ) )->cNomObr )
+      end if
+
+      lValid      := .t.
+
+   else
+
+      msgStop( "Dirección no encontrada" )
+      
+      if !Empty( oGet )
+         oGet:SetFocus()
+      end if
+
+      if !Empty( oGet2 )
+         oGet2:cText( Space( 50 ) )
+      end if
+
+   end if
+
+   ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+Return lValid
 
 //---------------------------------------------------------------------------//
 
