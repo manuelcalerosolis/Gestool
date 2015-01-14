@@ -101,7 +101,10 @@ Return ( self )
 
 METHOD defineArticulo() CLASS ViewDetail
 
-   /*TGridUrllink():Build({  "nTop"      => 40,;
+   local cArticulo            := ""
+   local cTextoArticulo       := ""
+
+   TGridUrllink():Build({  "nTop"      => 40,;
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                            "cURL"      => "Artículo",;
                            "oWnd"      => ::oDlg,;
@@ -113,8 +116,8 @@ METHOD defineArticulo() CLASS ViewDetail
                            "bAction"   => {|| Msginfo( "Browse de artículos" ) } } ) //GridBrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) } } )
 
    TGridGet():Build( {     "nRow"      => 40,;
-                           "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
-                           "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CREF ], aTmp[ _CREF ] := u ) },;
+                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "bSetGet"   => {|u| if( PCount() == 0, cArticulo, cArticulo := u ) },;
                            "oWnd"      => ::oDlg,;
                            "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                            "nHeight"   => 23,;
@@ -123,11 +126,11 @@ METHOD defineArticulo() CLASS ViewDetail
    
    TGridGet():Build( {     "nRow"      => 40,;
                            "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CDETALLE ], aTmp[ _CDETALLE ] := u ) },;
+                           "bSetGet"   => {|u| if( PCount() == 0, cTextoArticulo, cTextoArticulo := u ) },;
                            "oWnd"      => ::oDlg,;
                            "lPixels"   => .t.,;
                            "nWidth"    => {|| GridWidth( 6, ::oDlg ) },;
-                           "nHeight"   => 23 } )*/
+                           "nHeight"   => 23 } )
 
 Return ( self )
 
@@ -135,11 +138,58 @@ Return ( self )
 
 METHOD defineLote() CLASS ViewDetail
 
+   local cLote
+
+   TGridSay():Build(    {  "nRow"      => 65,;
+                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "bText"     => {|| "Lote" },;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixels"   => .t.,;
+                           "nClrText"  => Rgb( 0, 0, 0 ),;
+                           "nClrBack"  => Rgb( 255, 255, 255 ),;
+                           "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lDesign"   => .f. } )
+
+   TGridGet():Build( {     "nRow"      => 65,;
+                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "bSetGet"   => {|u| if( PCount() == 0, cLote, cLote := u ) },;
+                           "oWnd"      => ::oDlg,;
+                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lPixels"   => .t. } )
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD defineCajas() CLASS ViewDetail
+
+   local cCajas := 0
+
+   TGridSay():Build(    {  "nRow"      => 90,;
+                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "bText"     => {|| "Cajas" },;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixels"   => .t.,;
+                           "nClrText"  => Rgb( 0, 0, 0 ),;
+                           "nClrBack"  => Rgb( 255, 255, 255 ),;
+                           "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lDesign"   => .f. } )
+
+   TGridGet():Build( {     "nRow"      => 90,;
+                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "bSetGet"   => {|u| if( PCount() == 0, cCajas, cCajas := u ) },;
+                           "oWnd"      => ::oDlg,;
+                           "lPixels"   => .t.,;
+                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                           "cPict"     => MasUnd(),;
+                           "lRight"    => .t.,;
+                           "nHeight"   => 23,;
+                           "bValid"    => {|| .t. } } ) //lCalcDeta( aTmp, aTmpFac ) } } )
 
 Return ( self )
 
