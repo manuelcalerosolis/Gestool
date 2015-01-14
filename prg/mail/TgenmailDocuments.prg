@@ -7,7 +7,7 @@ CLASS TGenMailingDocuments FROM TGenMailing
 
    METHOD Resource()
 
-   METHOD IniciarProceso()
+   METHOD getDatabaseList()
 
 END CLASS
 
@@ -45,6 +45,21 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
+METHOD getDatabaseList() CLASS TGenMailingDocuments
+
+   CursorWait()
+
+   ::aMailingList    := {}
+   
+   ::addDatabaseList()
+
+   CursorArrow()
+
+Return ( ::aMailingList )
+
+//--------------------------------------------------------------------------//
+
+/*
 METHOD IniciarProceso() CLASS TGenMailingDocuments
 
    local hashMail := {=>}
@@ -63,5 +78,5 @@ METHOD IniciarProceso() CLASS TGenMailingDocuments
    ::oSendMail:sendList( { hashMail } )
 
 Return ( self )
-
+*/
 //--------------------------------------------------------------------------//

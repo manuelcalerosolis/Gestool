@@ -9,6 +9,8 @@ CLASS TGenMailing
    DATA oFld
    DATA oMenu
 
+   DATA nView 
+
    DATA oSendMail
 
    DATA nView
@@ -99,9 +101,9 @@ CLASS TGenMailing
    METHOD New()
    METHOD Create()
 
-   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea, ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
+   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea )
    METHOD getWorkArea()                INLINE ( ::cWorkArea )
-   METHOD quitWorkArea()               INLINE ( hSetStatus( ::hWorkAreaStatus ) )
+   METHOD quitWorkArea()               VIRTUAL
 
    METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
    METHOD getAsunto()                  INLINE ( alltrim( ::cSubject ) )
@@ -127,8 +129,8 @@ CLASS TGenMailing
 
    METHOD setItems( aItems )           INLINE ( iif(  !empty( aItems ),;
                                                    (  ::aItems    := aItems,;
-                                                      ::aFields   := getSubArray( aItems, 5 ),;
-                                                      iif( !empty( ::oFilter ), ::oFilter:setFields( aItems ), ) ), ) )
+                                                      ::aFields   := getSubArray( aItems, 5 ) ), ) )
+                                                      
    METHOD getItems()                   INLINE ( ::aItems )
 
    METHOD setTypeDocument( cTypeDocument ) ;
@@ -149,9 +151,6 @@ CLASS TGenMailing
    METHOD startResource()
    METHOD freeResources()
 
-   METHOD SelMailing()
-      METHOD SelAllMailing( lValue )
-
    METHOD setMeterTotal( nTotal )      INLINE ( ::oMtr:nTotal := nTotal )
    METHOD setMeter( nSet )             INLINE ( ::oMtr:Set( nSet ) )
 
@@ -169,23 +168,22 @@ CLASS TGenMailing
    METHOD getMessageHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
    METHOD getExpression()
 
+   METHOD addDatabaseList()
+      METHOD hashDatabaseList()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( aItems, cWorkArea ) CLASS TGenMailing
+METHOD New( nView ) CLASS TGenMailing
 
    ::Create()
+
+   ::nView           := nView
 
    ::oSendMail       := TSendMail():New( Self )
 
    ::oTemplateHtml   := TTemplatesHtml():New( Self )
-
-   ::oFilter         := TFilterCreator():Init( Self )   
-
-   ::setItems( aItems )
-   
-   ::setWorkArea( cWorkArea )
 
 Return ( Self )
 
@@ -476,47 +474,13 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD SelMailing( lValue ) CLASS TGenMailing
-
-   DEFAULT lValue := !( ::getWorkArea() )->lMail
-
-   if dbDialogLock( ::getWorkArea() )
-      ( ::getWorkArea() )->lMail   := lValue
-      ( ::getWorkArea() )->( dbUnlock() )
-   end if
-
-   ::oBrwClient:Refresh()
-   ::oBrwClient:SetFocus()
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD SelAllMailing( lValue ) CLASS TGenMailing
-
-   local nRecord
-
-   DEFAULT lValue  := .t.
-
-	CursorWait()
-
-   nRecord         := ( ::getWorkArea() )->( recno() )
-   ( ::getWorkArea() )->( dbeval( {|| ::selMailing( lValue ) } ) )
-   ( ::getWorkArea() )->( dbgoto( nRecord ) )
-
-	CursorArrow()
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
 METHOD IniciarProceso() CLASS TGenMailing
 
-   local aClientList    
+   local aDatabaseList    
 
-   aClientList          := ::getClientList()
-   if !empty(aClientList)
-      ::oSendMail:sendList( aClientList )
+   aDatabaseList          := ::getDatabaseList()
+   if !empty( aDatabaseList )
+      ::oSendMail:sendList( aDatabaseList )
    else
       msgStop( "No hay direcciones de correos para mandar.")
    end if 
@@ -525,7 +489,7 @@ Return ( self )
 
 //--------------------------------------------------------------------------//
 
-METHOD WaitSeconds( nTime )
+METHOD WaitSeconds( nTime ) CLASS TGenMailing
 
 	local n
 
@@ -535,7 +499,7 @@ METHOD WaitSeconds( nTime )
 			exit
 		end if
 
-	 	WaitSeconds( 1 )
+	 	waitSeconds( 1 )
 
 	 	SysRefresh()
 
@@ -545,7 +509,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD waitMail()
+METHOD waitMail() CLASS TGenMailing
 
    ::oTree:Select( ::oTree:Add( "Envio " + Alltrim( Str( ( ::getWorkArea() )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ::oMtr:nTotal ) ) ) )
 
@@ -567,7 +531,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getMessage()
+METHOD getMessage() CLASS TGenMailing
 
    local cExpresion
    local cDocument     := ::oActiveX:getText()
@@ -587,7 +551,7 @@ Return ( cDocument )
 
 //--------------------------------------------------------------------------//
 
-METHOD getExpression( cDocument )
+METHOD getExpression( cDocument ) CLASS TGenMailing
 
    local nAtEnd         := At( "}", cDocument )
    local nAtInit        := At( "{", cDocument )
@@ -601,7 +565,7 @@ Return ( cExpresion )
 
 //--------------------------------------------------------------------------//
 
-METHOD replaceExpresion( cDocument, cExpresion )
+METHOD replaceExpresion( cDocument, cExpresion ) CLASS TGenMailing
 
    local nScan
    local cExpresionToSearch
@@ -626,3 +590,27 @@ METHOD replaceExpresion( cDocument, cExpresion )
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
+METHOD addDatabaseList() CLASS TGenMailing
+
+   if ( ::getWorkArea() )->lMail 
+      aAdd( ::aMailingList, ::hashDatabaseList() )
+   end if 
+
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD hashDatabaseList() CLASS TGenMailing
+
+   local hashDatabaseList := {=>}
+
+   hSet( hashDatabaseList, "mail", ::getPara() )
+   hSet( hashDatabaseList, "mailcc", ::getCopia() )
+   hSet( hashDatabaseList, "subject", ::getAsunto() )
+   hSet( hashDatabaseList, "attachments", ::getAdjunto() )
+   hSet( hashDatabaseList, "message", ::getMessageHTML() )
+
+Return ( hashDatabaseList )
+
+//---------------------------------------------------------------------------//

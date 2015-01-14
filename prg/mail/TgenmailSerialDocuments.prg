@@ -8,7 +8,12 @@ CLASS TGenMailingSerialDocuments FROM TGenMailingDatabase
    METHOD New( nView )
 
    METHOD columnPageDatabase( oDlg )   
-   
+
+   //METHOD iniciarProceso()
+
+   METHOD getPara()              INLINE ( alltrim( retFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cMeiInt" ) ) )
+   METHOD getAdjunto()           INLINE ( mailReportFacCli() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -17,9 +22,13 @@ METHOD New( nView ) CLASS TGenMailingSerialDocuments
 
    ::Create()
 
-   ::Super:New( aItmFacCli(), D():FacturasClientes( nView ) )
+   ::Super:New( nView )
 
-   ::setOrderDatabase( { "Número", "Fecha", "Código", "Nombre", "Población", "Dirección" } )
+   ::setItems( aItmFacCli() )
+
+   ::setWorkArea( D():FacturasClientes( nView ) )
+
+   ::setOrderDatabase( { "Número", "Fecha", "Código", "Nombre" } )
 
    ::setTypeDocument( "nFacCli" )
 
@@ -87,3 +96,19 @@ METHOD columnPageDatabase( oDlg ) CLASS TGenMailingSerialDocuments
 Return ( Self )   
 
 //---------------------------------------------------------------------------//
+/*
+METHOD IniciarProceso() CLASS TGenMailingSerialDocuments
+
+   local aDatabaseList    
+
+   aDatabaseList          := ::getDatabaseList()
+   if !empty( aDatabaseList )
+      msgAlert( valtoprg( aDatabaseList ) )
+   else
+      msgStop( "No hay direcciones de correos para mandar.")
+   end if 
+
+Return ( self )
+*/
+//---------------------------------------------------------------------------//
+

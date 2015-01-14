@@ -12,6 +12,10 @@ CLASS TGenMailingDatabase FROM TGenMailing
    DATA oBntCreateFilter
    DATA oBntQuitFilter
 
+
+   METHOD setWorkArea( cWorkArea )        INLINE   ( ::Super:setWorkArea( cWorkArea ), ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
+   METHOD quitWorkArea()                  INLINE   ( hSetStatus( ::hWorkAreaStatus ) )
+
    DATA cBmpDatabase
    METHOD setBmpDatabase( cBmpDatabase )  INLINE   ( ::cBmpDatabase := cBmpDatabase )
 
@@ -24,14 +28,16 @@ CLASS TGenMailingDatabase FROM TGenMailing
    METHOD selectColumn( oCombo )
    METHOD freeResources() 
 
-   METHOD selMailing()
-   METHOD selAllMailing()
+   METHOD SelMailing()
+      METHOD SelAllMailing( lValue )
 
    METHOD getDatabaseList()              
-   METHOD addDatabaseList()               INLINE   ( iif( ( ::getWorkArea() )->lMail .and. !empty( ( ::getWorkArea() )->cMeiInt ),;
+      METHOD addDatabaseList()            INLINE   ( iif( ( ::getWorkArea() )->lMail,;
                                                       aAdd( ::aMailingList, ::hashDatabaseList() ),;
                                                    ) )
-   METHOD hashDatabaseList()        
+
+   METHOD setItems( aItems )              INLINE   ( ::Super:setItems( aItems ),;
+                                                   iif( !empty( ::oFilter ), ::oFilter:setFields( aItems ), ) )
 
    METHOD dialogFilter()
       METHOD buildFilter()
@@ -60,7 +66,7 @@ METHOD buildPageDatabase( oDlg, aCbxOrd ) CLASS TGenMailingDatabase
       OF             oDlg
 
    REDEFINE GET      oGetOrd ;
-      VAR            cGetOrd;
+      VAR            cGetOrd ;
       ID             100 ;
       BITMAP         "FIND" ;
       OF             oDlg
@@ -190,40 +196,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD selMailing( lValue ) CLASS TGenMailingDatabase
-
-   DEFAULT lValue       := !( ::getWorkArea() )->lMail
-
-   if dbDialogLock( ::getWorkArea() )
-      ( ::getWorkArea() )->lMail   := lValue
-      ( ::getWorkArea() )->( dbUnlock() )
-   end if
-
-   ::oBrwDatabase:Refresh()
-   ::oBrwDatabase:SetFocus()
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
-METHOD selAllMailing( lValue ) CLASS TGenMailingDatabase
-
-   local nRecord
-
-   DEFAULT lValue  := .t.
-
-	CursorWait()
-
-   nRecord         := ( ::getWorkArea() )->( recno() )
-   ( ::getWorkArea() )->( dbeval( {|| ::selMailing( lValue ) } ) )
-   ( ::getWorkArea() )->( dbgoto( nRecord ) )
-
-	CursorArrow()
-
-Return ( Self )
-
-//--------------------------------------------------------------------------//
-
 METHOD getDatabaseList() CLASS TGenMailingDatabase
 
    local nRecord
@@ -241,20 +213,6 @@ METHOD getDatabaseList() CLASS TGenMailingDatabase
 Return ( ::aMailingList )
 
 //--------------------------------------------------------------------------//
-
-METHOD hashDatabaseList() CLASS TGenMailingDatabase
-
-   local hashDatabaseList := {=>}
-
-   hSet( hashDatabaseList, "mail", alltrim( ( ::getWorkArea() )->cMeiInt ) )
-   hSet( hashDatabaseList, "mailcc", ::cGetCopia )
-   hSet( hashDatabaseList, "subject", ::cSubject )
-   hSet( hashDatabaseList, "attachments", ::cGetAdjunto )
-   hSet( hashDatabaseList, "message", ::getMessageHTML() )
-
-Return ( hashDatabaseList )
-
-//---------------------------------------------------------------------------//
 
 METHOD freeResources() CLASS TGenMailingDatabase
 
@@ -309,6 +267,39 @@ METHOD quitFilter() CLASS TGenMailingDatabase
    ::oBntQuitFilter:Hide()
 
    ::oBrwDatabase:Refresh()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD SelMailing( lValue ) CLASS TGenMailingDatabase
+
+   DEFAULT lValue    := !( ::getWorkArea() )->lMail
+
+   if dbDialogLock( ::getWorkArea() )
+      ( ::getWorkArea() )->lMail   := lValue
+      ( ::getWorkArea() )->( dbUnlock() )
+   end if
+
+   ::oBrwDatabase:Refresh()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD SelAllMailing( lValue ) CLASS TGenMailingDatabase
+
+   local hStatus
+
+   DEFAULT lValue := .t.
+
+   CursorWait()
+
+   hStatus        := hGetStatus( ::getWorkArea(), 0 )
+   ( ::getWorkArea() )->( dbeval( {|| ::selMailing( lValue ) } ) )
+   hSetStatus( hStatus )
+
+   CursorArrow()
 
 Return ( Self )
 

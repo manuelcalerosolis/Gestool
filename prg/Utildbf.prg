@@ -2230,14 +2230,12 @@ return ( aStatus )
 
 //--------------------------------------------------------------------------//
 
-Function hGetStatus( cAlias, lInit )
+Function hGetStatus( cAlias, uOrder )
 
    local hStatus  := { "Alias" => cAlias, "Recno" => ( cAlias )->( Recno() ), "Order" => ( cAlias )->( OrdSetFocus() ) }
 
-   DEFAULT lInit  := .f.
-
-   if lInit
-      ( cAlias )->( OrdSetFocus( 1 ) )
+   if !isNil( uOrder )
+      ( cAlias )->( OrdSetFocus( uOrder ) )
       ( cAlias )->( dbGoTop() )
    end if
 
@@ -2247,8 +2245,8 @@ Return ( hStatus )
 
 Function hSetStatus( hStatus )
 
-   ( HGet( hStatus, "Alias" ) )->( OrdSetFocus( HGet( hStatus, "Order" ) ) )
-   ( HGet( hStatus, "Alias" ) )->( dbGoTo(      HGet( hStatus, "Recno" ) ) )
+   ( HGet( hStatus, "Alias" ) )->( ordsetfocus( HGet( hStatus, "Order" ) ) )
+   ( HGet( hStatus, "Alias" ) )->( dbgoto(      HGet( hStatus, "Recno" ) ) )
 
 Return nil
 

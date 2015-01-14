@@ -3206,6 +3206,22 @@ Return ( lVisualDocumento )
 
 //---------------------------------------------------------------------------//
 
+Function lMemoDocumento( cCodigoDocumento, dbfDoc )
+
+   local lMemoDocumento    := .t.
+   local nOrd              := ( dbfDoc )->( OrdSetFocus( "Codigo" ) )
+
+   if ( dbfDoc )->( dbSeek( cCodigoDocumento ) )
+      lMemoDocumento       := !empty( ( dbfDoc )->mReport )
+   else
+      MsgStop( "Código de documento " + cCodigoDocumento + " no existe." )
+   end if
+
+   ( dbfDoc )->( OrdSetFocus( nOrd ) )
+
+Return ( lMemoDocumento )
+
+//---------------------------------------------------------------------------//
 
 /*Static Function BeginTrans( aTmp, nMode )
 

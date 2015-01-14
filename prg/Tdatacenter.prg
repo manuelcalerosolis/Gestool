@@ -5335,8 +5335,6 @@ CLASS D
 
    METHOD Atipicas( nView )                  INLINE ( ::Get( "CliAtp", nView ) )
 
-   METHOD Contadores( nView )                INLINE ( ::Get( "NCount", nView ) )
-
    METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )

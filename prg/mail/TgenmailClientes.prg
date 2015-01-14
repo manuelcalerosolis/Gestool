@@ -1,11 +1,13 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-//--------------------------------*-------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS TGenMailingClientes FROM TGenMailingDatabase 
 
    METHOD New( nView )
+
+   METHOD getPara()        INLINE ( ( ::getWorkArea )->cMeiInt )
    
 END CLASS
 
@@ -16,6 +18,7 @@ METHOD New( nView ) CLASS TGenMailingClientes
    ::Create()
 
    ::setItems( aItmCli() )
+
    ::setWorkArea( D():Clientes( nView ) )
 
    ::oSendMail       := TSendMail():New( Self )

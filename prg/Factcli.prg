@@ -430,7 +430,6 @@ static oTlfCli
 static cTlfCli
 
 static dbfIva
-static dbfCount
 static dbfClient
 static dbfCliBnc
 static dbfArtPrv
@@ -1073,14 +1072,14 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TGenMailingSerialDocuments():New( nView ):Resource() ) ;
+         ACTION   ( TGenMailingSerialDocuments():New( nView ):Resource() );
          TOOLTIP  "Correo electrónico series";
          LEVEL    ACC_IMPR 
 
       DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( GenFacCli( IS_MAIL ) ) ;
+         ACTION   ( mailingFacCli()  ) ;
          TOOLTIP  "Correo electrónico";
          LEVEL    ACC_IMPR
 
@@ -1305,229 +1304,209 @@ Return .t.
 
 STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
-   local nOrd
-   local oDevice
-   local cNumFac
-
-   public aImpVto       := {}
-   public aDatVto       := {}
-
-   if ( D():FacturasClientes( nView ) )->( Lastrec() ) == 0
+   if ( D():FacturasClientes( nView ) )->( lastrec() ) == 0
       return nil
    end if
 
-   cNumFac              := ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
-
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo facturas a clientes"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount )
-   //DEFAULT nCopies      := max( nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ), Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ) )
+   DEFAULT cCodDoc      := cFormatoFacturasClientes()
 
    if Empty( nCopies )
-   	nCopies 				:= Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
+   	nCopies 				:= retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
    end if
 
    if nCopies == 0
-   	nCopies 				:= nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount )
+   	nCopies 				:= nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", D():Contadores( nView ) )
    end if
 
    if nCopies == 0
    	nCopies 				:= 1
    end if 
 
-   /*
-   DEFAULT cPrinter     := PrnGetName()
-   */
-
-   if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "FC", dbfDoc )
-   end if
-
    if !lExisteDocumento( cCodDoc, dbfDoc )
       return nil
    end if
 
-   /*
-   Informacion al Auditor------------------------------------------------------
-   */
-
-   if !Empty( oAuditor() )
-      if nDevice == IS_PRINTER
-         oAuditor():AddEvent( PRINT_FACTURA_CLIENTES,    cNumFac, FAC_CLI )
-      else
-         oAuditor():AddEvent( PREVIEW_FACTURA_CLIENTES,  cNumFac, FAC_CLI )
-      end if
-   end if
-
-   /*
-   Si el documento es de tipo visual-------------------------------------------
-   */
+   // Si el documento es de tipo visual-------------------------------------------
 
    if lVisualDocumento( cCodDoc, dbfDoc )
-
-      PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
-
+      printReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
    else
+      oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
+   end if
+
+   // Funcion para marcar el documento como imprimido-----------------------------
+
+   lChgImpDoc( D():FacturasClientes( nView ) )
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Static Function oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
+
+   local nOrd
+   local oDevice
+   local cNumFac
+   local cCaption       := "Imprimiendo facturas de clientes"
+
+   cNumFac              := D():FacturasClientesId( nView )
+
+   public aImpVto       := {}
+   public aDatVto       := {}
+
+   /*
+   Recalculamos la factura
+   */
+
+   nTotFacCli( cNumFac, D():FacturasClientes( nView ), dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .t. )
+
+   /*
+   Pasamos los parametros
+   */
+
+   private oInf
+   private cDbf         := D():FacturasClientes( nView )
+   private cDbfCol      := dbfFacCliL
+   private cDbfCob      := dbfFacCliP
+   private cCliente     := D():Clientes( nView )
+   private cDbfCli      := D():Clientes( nView )
+   private cDivisa      := dbfDiv
+   private cDbfDiv      := dbfDiv
+   private cFPago       := dbfFPago
+   private cDbfPgo      := dbfFPago
+   private cIva         := dbfIva
+   private cDbfIva      := dbfIva
+   private cAgente      := dbfAgent
+   private cDbfAge      := dbfAgent
+   private cTvta        := dbfTVta
+   private cDbfTvt      := dbfTVta
+   private cObras       := dbfObrasT
+   private cDbfUsr      := dbfUsr
+   private cDbfObr      := dbfObrasT
+   private cDbfPedT     := dbfPedCliT
+   private cDbfPedL     := dbfPedCliL
+   private cDbfAlbT     := dbfAlbCliT
+   private cDbfAlbL     := dbfAlbCliL
+   private cDbfAlbP     := dbfAlbCliP
+   private cDbfAntT     := dbfAntCliT
+   private cDbfTrn      := oTrans:GetAlias()
+   private cDbfRut      := dbfRuta
+   private cDbfCajT     := dbfCajT
+   private nTotPag      := 0
+   private nVdv         := nVdvDiv
+   private nVdvDivFac   := nVdvDiv
+   private cPicUndFac   := cPicUnd
+   private cPouDivFac   := cPouDiv
+   private cPorDivFac   := cPorDiv
+   private cPpvDivFac   := cPpvDiv
+   private nDouDivFac   := nDouDiv
+   private nRouDivFac   := nRouDiv
+   private nDpvDivFac   := nDpvDiv
+   private cCodPgo      := ( D():FacturasClientes( nView ) )->cCodPago
+   private nTotCob      := nPagFacCli( cNumFac, D():FacturasClientes( nView ), dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
+
+   private lFacCli      := .t.
+   private lAntCli      := .f.
+
+   private oStk         := oStock
+
+   /*
+   Posicionamos en ficheros auxiliares
+   */
+
+   ( D():Clientes( nView ) )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodCli ) )
+   ( dbfAgent  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodAge ) )
+   ( dbfFPago  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodPago) )
+   ( dbfDiv    )->( dbSeek( ( D():FacturasClientes( nView ) )->cDivFac ) )
+   ( dbfUsr    )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodUsr ) )
+   ( dbfRuta   )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodRut ) )
+   ( dbfCajT   )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodCaj ) )
+   ( dbfObrasT )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodCli + ( D():FacturasClientes( nView ) )->cCodObr ) )
+
+   oTrans:oDbf:Seek( ( D():FacturasClientes( nView ) )->cCodTrn )
+
+   if ( dbfAlbCliT )->( dbSeek( ( D():FacturasClientes( nView ) )->cNumAlb ) )
+      ( dbfPedCliT )->( dbSeek( ( dbfAlbCliT )->cNumPed ) )
+   end if
+
+   nOrd                    := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+   ( dbfAntCliT )->( dbSeek( cNumFac ) )
+
+   /*
+   Buscamos la primera linea de detalle----------------------------------------
+   */
+
+   if ( dbfFacCliL )->( dbSeek( cNumFac ) )
 
       /*
-      Recalculamos la factura
+      Creacion del informe--------------------------------------------------------
       */
 
-      nTotFacCli( cNumFac, D():FacturasClientes( nView ), dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .t. )
-
-      /*
-      Pasamos los parametros
-      */
-
-      private oInf
-      private cDbf         := D():FacturasClientes( nView )
-      private cDbfCol      := dbfFacCliL
-      private cDbfCob      := dbfFacCliP
-      private cCliente     := D():Clientes( nView )
-      private cDbfCli      := D():Clientes( nView )
-      private cDivisa      := dbfDiv
-      private cDbfDiv      := dbfDiv
-      private cFPago       := dbfFPago
-      private cDbfPgo      := dbfFPago
-      private cIva         := dbfIva
-      private cDbfIva      := dbfIva
-      private cAgente      := dbfAgent
-      private cDbfAge      := dbfAgent
-      private cTvta        := dbfTVta
-      private cDbfTvt      := dbfTVta
-      private cObras       := dbfObrasT
-      private cDbfUsr      := dbfUsr
-      private cDbfObr      := dbfObrasT
-      private cDbfPedT     := dbfPedCliT
-      private cDbfPedL     := dbfPedCliL
-      private cDbfAlbT     := dbfAlbCliT
-      private cDbfAlbL     := dbfAlbCliL
-      private cDbfAlbP     := dbfAlbCliP
-      private cDbfAntT     := dbfAntCliT
-      private cDbfTrn      := oTrans:GetAlias()
-      private cDbfRut      := dbfRuta
-      private cDbfCajT     := dbfCajT
-      private nTotPag      := 0
-      private nVdv         := nVdvDiv
-      private nVdvDivFac   := nVdvDiv
-      private cPicUndFac   := cPicUnd
-      private cPouDivFac   := cPouDiv
-      private cPorDivFac   := cPorDiv
-      private cPpvDivFac   := cPpvDiv
-      private nDouDivFac   := nDouDiv
-      private nRouDivFac   := nRouDiv
-      private nDpvDivFac   := nDpvDiv
-      private cCodPgo      := ( D():FacturasClientes( nView ) )->cCodPago
-      private nTotCob      := nPagFacCli( cNumFac, D():FacturasClientes( nView ), dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
-
-      private lFacCli      := .t.
-      private lAntCli      := .f.
-
-      private oStk         := oStock
-
-      /*
-      Posicionamos en ficheros auxiliares
-      */
-
-      ( D():Clientes( nView ) )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodCli ) )
-      ( dbfAgent  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodAge ) )
-      ( dbfFPago  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodPago) )
-      ( dbfDiv    )->( dbSeek( ( D():FacturasClientes( nView ) )->cDivFac ) )
-      ( dbfUsr    )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodUsr ) )
-      ( dbfRuta   )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodRut ) )
-      ( dbfCajT   )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodCaj ) )
-      ( dbfObrasT )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodCli + ( D():FacturasClientes( nView ) )->cCodObr ) )
-
-      oTrans:oDbf:Seek( ( D():FacturasClientes( nView ) )->cCodTrn )
-
-      if ( dbfAlbCliT )->( dbSeek( ( D():FacturasClientes( nView ) )->cNumAlb ) )
-         ( dbfPedCliT )->( dbSeek( ( dbfAlbCliT )->cNumPed ) )
+      if !Empty( cPrinter ) // .and. lPrinter
+         oDevice           := TPrinter():New( cCaption, .f., .t., cPrinter )
+         REPORT oInf CAPTION cCaption TO DEVICE oDevice
+      else
+         REPORT oInf CAPTION cCaption PREVIEW
       end if
 
-      nOrd                    := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
-      ( dbfAntCliT )->( dbSeek( cNumFac ) )
-
       /*
-      Buscamos la primera linea de detalle----------------------------------------
+      Cabeceras del listado-------------------------------------------------------
       */
 
-      if ( dbfFacCliL )->( dbSeek( cNumFac ) )
+      if !Empty( oInf ) .and. oInf:lCreated
 
-         /*
-         Creacion del informe--------------------------------------------------------
-         */
+         oInf:lAutoland          := .f.
+         oInf:lFinish            := .f.
+         oInf:lNoCancel          := .t.
+         oInf:bSkip              := {|| FacCliReportSkipper( cNumFac, dbfFacCliL, dbfAntCliT ) }
 
-         if !Empty( cPrinter ) // .and. lPrinter
-            oDevice           := TPrinter():New( cCaption, .f., .t., cPrinter )
-            REPORT oInf CAPTION cCaption TO DEVICE oDevice
-         else
-            REPORT oInf CAPTION cCaption PREVIEW
-         end if
+         oInf:oDevice:lPrvModal  := .t.
 
-         /*
-         Cabeceras del listado-------------------------------------------------------
-         */
+         do case
+            case nDevice == IS_PRINTER
 
-         if !Empty( oInf ) .and. oInf:lCreated
+               oInf:oDevice:SetCopies( nCopies )
 
-            oInf:lAutoland          := .f.
-            oInf:lFinish            := .f.
-            oInf:lNoCancel          := .t.
-            oInf:bSkip              := {|| FacCliReportSkipper( cNumFac, dbfFacCliL, dbfAntCliT ) }
+               oInf:bPreview        := {| o | PrintPreview( o ) }
 
-            oInf:oDevice:lPrvModal  := .t.
+            case nDevice == IS_PDF
 
-            do case
-               case nDevice == IS_PRINTER
+               oInf:bPreview        := {| o | PrintPdf( o ) }
 
-                  oInf:oDevice:SetCopies( nCopies )
+         end case
 
-                  oInf:bPreview        := {| o | PrintPreview( o ) }
-
-               case nDevice == IS_PDF
-
-                  oInf:bPreview        := {| o | PrintPdf( o ) }
-
-            end case
-
-            SetMargin( cCodDoc, oInf )
-            PrintColum( cCodDoc, oInf )
-
-         end if
-
-         END REPORT
-
-         if !Empty( oInf )
-
-            private oReport   := oInf
-
-            if nDevice == IS_PRINTER
-            end if
-
-            ACTIVATE REPORT oInf ;
-               WHILE       ( ( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac = cNumFac .and. !( dbfFacCliL )->( eof() ) ) .or. ( ( dbfAntCliT )->cNumDoc = cNumFac .and. !( dbfAntCliT )->( eof() ) ) );
-               FOR         ( !( dbfFacCliL )->lImpLin ) ;
-               ON ENDPAGE  ( ePage( oInf, cCodDoc ) )
-
-            if nDevice == IS_PRINTER
-               oInf:oDevice:end()
-            end if
-
-         end if
-
-         oInf                 := nil
+         SetMargin( cCodDoc, oInf )
+         PrintColum( cCodDoc, oInf )
 
       end if
 
-      ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+      END REPORT
+
+      if !Empty( oInf )
+
+         private oReport   := oInf
+
+         if nDevice == IS_PRINTER
+         end if
+
+         ACTIVATE REPORT oInf ;
+            WHILE       ( ( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac = cNumFac .and. !( dbfFacCliL )->( eof() ) ) .or. ( ( dbfAntCliT )->cNumDoc = cNumFac .and. !( dbfAntCliT )->( eof() ) ) );
+            FOR         ( !( dbfFacCliL )->lImpLin ) ;
+            ON ENDPAGE  ( ePage( oInf, cCodDoc ) )
+
+         if nDevice == IS_PRINTER
+            oInf:oDevice:end()
+         end if
+
+      end if
+
+      oInf                 := nil
 
    end if
 
-   /*
-   Funcion para marcar el documento como imprimido-----------------------------
-   */
-
-   lChgImpDoc( D():FacturasClientes( nView ) )
+   ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
 
 Return ( nil )
 
@@ -1606,6 +1585,8 @@ STATIC FUNCTION OpenFiles( lExt )
       D():ArticuloStockAlmacenes( nView )   
 
       D():Articulos( nView )
+
+      D():Contadores( nView )
 
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles      := .f.
@@ -1801,9 +1782,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
       SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
@@ -2213,10 +2191,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfUsr     )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfCount )
-      ( dbfCount   )->( dbCloseArea() )
-   end if
-
    if dbfInci != nil
       ( dbfInci )->( dbCloseArea() )
    end if
@@ -2473,7 +2447,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oGetMasDiv
    local cGetMasDiv        := ""
    local cGetPctRet
-   local cSerie            := cNewSer( "nFacCli", dbfCount )
+   local cSerie            := cNewSer( "nFacCli", D():Contadores( nView ) )
    local lWhen             := if( oUser():lAdministrador(), nMode != ZOOM_MODE, if( nMode == EDIT_MODE, !aTmp[ _LCLOFAC ], nMode != ZOOM_MODE ) )
    local oSayGetRnt
    local cTipFac
@@ -6721,7 +6695,7 @@ Return ( .t. )
 static function cDocumentoDefecto( cSerie, aCbxOrd )
 
 	local cDocumento     := ""
-	local cFormato       := cFormatoDocumento( cSerie, "nFacCli", dbfCount )
+	local cFormato       := cFormatoFacturasClientes( cSerie ) 
    local nFormato       := aScan( aCbxOrd, {|x| Left( x, 3 ) == cFormato } )
    nFormato             := Max(Min(nFormato,len(aCbxOrd)),1)
 
@@ -6973,7 +6947,7 @@ STATIC FUNCTION PrnSerie()
 
    local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount )
+   local cFmtDoc     := cFormatoFacturasClientes()
    local oRango
    local nRango      := 1
    local oSayFmt
@@ -6995,11 +6969,7 @@ STATIC FUNCTION PrnSerie()
    local dFecDesde   := CtoD( "01/01/" + str( Year( Date() ) ) )
    local dFecHasta   := Date()
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( (D():FacturasClientes( nView ))->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( (D():FacturasClientes( nView ))->cSerie, "nFacCli", dbfCount ) )
-
-   if Empty( cFmtDoc )
-      cFmtDoc        := cSelPrimerDoc( "FC" )
-   end if
+   local nNumCop     := if( nCopiasDocumento( (D():FacturasClientes( nView ))->cSerie, "nFacCli", D():Contadores( nView ) ) == 0, Max( Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( (D():FacturasClientes( nView ))->cSerie, "nFacCli", D():Contadores( nView ) ) )
 
    cSayFmt           := cNombreDoc( cFmtDoc )
 
@@ -7158,7 +7128,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               nCopyClient := if( nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
+               nCopyClient := if( nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", D():Contadores( nView ) ) == 0, Max( Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", D():Contadores( nView ) ) )
 
                GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter,  )
 
@@ -7184,9 +7154,6 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
             if lCopiasPre
 
-               //nCopyClient := if( nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
-
-               //GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
                GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter )
 
             else
@@ -7218,7 +7185,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  nCopyClient := if( nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", D():Contadores( nView ) ) == 0, Max( Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", D():Contadores( nView ) ) )
 
                   GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter  )
 
@@ -7246,9 +7213,6 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
                if lCopiasPre
 
-                  //nCopyClient := if( nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) == 0, Max( Retfld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", dbfCount ) )
-
-                  //GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
                   GenFacCli( IS_PRINTER, "Imprimiendo documento : " + ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, cFmtDoc, cPrinter  )
 
                else
@@ -7974,8 +7938,8 @@ static function bGenFacCli( nDevice, cTitle, cCodDoc )
    local cTit  := by( cTitle  )
    local cCod  := by( cCodDoc )
 
-   if nDev == IS_PRINTER
-      bGen     := {|| GenFacCli( nDevice, cTit, cCod ) }
+   if nDev == IS_MAIL
+      bGen     := {|| mailingFacCli( cCod ) }
    else
       bGen     := {|| GenFacCli( nDevice, cTit, cCod ) }
    end if
@@ -8016,12 +7980,14 @@ static function QuiFacCli()
    nOrdAnt           := ( dbfFacCliL )->( OrdSetFocus( "nNumFac" ) )
 
    while ( dbfFacCliL )->( dbSeek( cSerDoc + str( nNumDoc ) + cSufDoc ) ) .and. !( dbfFacCliL )->( eof() )
+      
       if dbLock( dbfFacCliL )
          ( dbfFacCliL )->( dbDelete() )
          ( dbfFacCliL )->( dbUnLock() )
       end if
 
       ( dbfFacCliL )->( dbSkip() )
+
    end do
 
    ( dbfFacCliL )->( OrdSetFocus( nOrdAnt ) )
@@ -8240,7 +8206,7 @@ static function QuiFacCli()
    */
 
    if uFieldEmpresa( "LRECNUMFAC" )
-      nPutDoc( cSerDoc, nNumDoc, cSufDoc, D():FacturasClientes( nView ), "nFacCli", , dbfCount )
+      nPutDoc( cSerDoc, nNumDoc, cSufDoc, D():FacturasClientes( nView ), "nFacCli", , D():Contadores( nView ) )
    end if
 
 return .t.
@@ -11000,7 +10966,7 @@ STATIC FUNCTION DupFactura( lActual, cFecDoc )
 
    //Recogemos el nuevo numero de factura--------------------------------------
 
-   nNewNumFac  := nNewDoc( ( D():FacturasClientes( nView ) )->cSerie, D():FacturasClientes( nView ), "NFACCLI", , dbfCount )
+   nNewNumFac  := nNewDoc( ( D():FacturasClientes( nView ) )->cSerie, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
 
    //Duplicamos las cabeceras--------------------------------------------------
 
@@ -11600,64 +11566,89 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
+Static Function mailingFacCli( cCodigoDocumento )
+
+   local cFilePdf    
+
+   cFilePdf          := mailReportFacCli( cCodigoDocumento )
+
+   if file( cFilePdf )
+
+      with object ( TGenMailingDocuments():New( nView ) )
+         :setItems( aItmFacCli() )
+         :setWorkArea( D():FacturasClientes( nView ) )
+         :setAsunto( "Envío de factura de cliente número " + D():FacturasClientesIdTextShort( nView ) )
+         :setPara( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
+         :setAdjunto( cFilePdf )
+         :setTypeDocument( "nFacCli" )
+         :Resource()
+      end with
+
+   else 
+
+      msgStop( "El fichero " + cFilePdf + " no existe." )
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function mailReportFacCli( cCodigoDocumento )
+
+Return ( printReportFacCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+Function printReportFacCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
-   local oOutLook
-   local aMail
-   local oRecipient
-   local nOrdAnt        := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
-   local cFilePdf       := cPatTmp() + "FacturasCliente" + StrTran( ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac, " ", "" ) + ".Pdf"
+   local nOrdAnt              
+   local cFilePdf             
 
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
+   DEFAULT nDevice            := IS_SCREEN
+   DEFAULT nCopies            := 1
+   DEFAULT cPrinter           := PrnGetName()
+   DEFAULT cCodigoDocumento   := cFormatoFacturasClientes()
+
+   if empty( cCodigoDocumento )
+      msgStop( "El código del documento esta vacio" )
+      Return ( nil )
+   end if 
 
    SysRefresh()
 
-   oFr                  := frReportManager():New()
+   nOrdAnt                    := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+   cFilePdf                   := cPatTmp() + "FacturasCliente" + StrTran( D():FacturasClientesId( nView ), " ", "" ) + ".Pdf"
 
-   oFr:LoadLangRes(     "Spanish.Xml" )
-
+   oFr                        := frReportManager():New()
+   oFr:LoadLangRes( "Spanish.Xml" )
    oFr:SetIcon( 1 )
+   oFr:SetTitle( "Diseñador de documentos" )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
+   // Manejador de eventos-----------------------------------------------------
 
    oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
 
-   /*
-   Zona de datos------------------------------------------------------------
-   */
+   // Zona de datos------------------------------------------------------------
 
-   DataReport( oFr )
+   dataReport( oFr )
 
-   /*
-   Cargar el informe-----------------------------------------------------------
-   */
+   // Cargar el informe--------------------------------------------------------
 
-   if !Empty( ( dbfDoc )->mReport )
+   if lMemoDocumento( cCodigoDocumento, dbfDoc )
 
       oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
-      /*
-      Zona de variables--------------------------------------------------------
-      */
+      // Zona de variables--------------------------------------------------------
       
-      VariableReport( oFr )
+      variableReport( oFr )
 
-      /*
-      Preparar el report-------------------------------------------------------
-      */
+      // Preparar el report-------------------------------------------------------
 
       oFr:PrepareReport()
 
-      /*
-      Imprimir el informe------------------------------------------------------
-      */
+      // Imprimir el informe------------------------------------------------------
 
       do case
          case nDevice == IS_SCREEN
@@ -11693,28 +11684,6 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailingDocuments():New( aItmFacCli(), D():FacturasClientes( nView ) ) )
-                  :setAsunto( "Envío de factura de cliente número " + D():FacturasClientesIdTextShort( nView ) )
-                  :setPara( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :setAdjunto( cFilePdf )
-                  :setTypeDocument( "nFacCli" )
-                  
-//                  :setMensaje(   "<p>" +;
-//                                 "Adjunto le remito nuestra factura de cliente " + D():FacturasClientesIdTextShort( nView ) + space( 1 ) + ;
-//                                 "de fecha " + dtoc( D():FacturasClientesFecha( nView ) ) + ;
-//                                 "</p>" + CRLF + ;
-//                                 "<p>" + ;
-//                                 "</p>" + CRLF + ;
-//                                 "<p>" + ;
-//                                 "Reciba un cordial saludo." + ;
-//                                 "</p>" + CRLF )
-                  :Resource()
-               end with
-
-            end if
-
       end case
 
    end if
@@ -11727,7 +11696,7 @@ Function PrintReportFacCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) )
 
-Return .t.
+Return ( cFilePdf )
 
 //---------------------------------------------------------------------------//
 
@@ -14857,8 +14826,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          Obtenemos el nuevo numero de la factura----------------------------------
          */
 
-         nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , dbfCount )
-         nNumNFC              := nNewNFC( cSerFac, D():FacturasClientes( nView ), "NFACCLI", dbfCount )
+         nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
+         nNumNFC              := nNewNFC( cSerFac, D():FacturasClientes( nView ), "NFACCLI", D():Contadores( nView ) )
 
          aTmp[ _NNUMFAC ]     := nNumFac
          aTmp[ _CNFC    ]     := nNumNFC
@@ -16473,7 +16442,7 @@ static function FacturaImportacion( oTreeImportacion )
       if dbSeekInOrd( s:cCodigoCliente, "Cod", D():Clientes( nView ) )
 
          cSerieFactura                 := if( !Empty( ( D():Clientes( nView ) )->Serie ), ( D():Clientes( nView ) )->Serie, "A" )
-         nNumeroFactura                := nNewDoc( cSerieFactura, D():FacturasClientes( nView ), "nFacCli", , dbfCount )
+         nNumeroFactura                := nNewDoc( cSerieFactura, D():FacturasClientes( nView ), "nFacCli", , D():Contadores( nView ) )
          cSufijoFactura                := RetSufEmp()
 
          ( D():FacturasClientes( nView ) )->( dbAppend() )
@@ -17970,7 +17939,6 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    local aStatus
    local oPrinter   
-   local cFormato 
 
    DEFAULT nDevice   := IS_PRINTER
    DEFAULT lExt      := .f.
@@ -17996,11 +17964,7 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    // Formato de documento-----------------------------------------------------
 
-   cFormato          := cFormatoDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", D():Contadores( nView ) )
-   if empty( cFormato )
-      cFormato       := cFirstDoc( "FC", D():Documentos( nView ) )
-   end if
-   oPrinter:oFormatoDocumento:cText( cFormato )
+   oPrinter:oFormatoDocumento:cText( cFormatoFacturasClientes() )
 
    // Codeblocks para que trabaje----------------------------------------------
 
@@ -23746,7 +23710,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
          Obtenemos el nuevo numero de la factura----------------------------------
          */
 
-         nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , dbfCount )
+         nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
          aTmp[ _NNUMFAC ]     := nNumFac
 
       case nMode == EDIT_MODE
@@ -23765,7 +23729,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
             Obtenemos el nuevo número para la serie-------------------------------
             */
 
-            nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , dbfCount )
+            nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
             aTmp[ _NNUMFAC ]     := nNumFac
 
          else
@@ -24039,7 +24003,7 @@ return .f.
 Static Function GuardaContadorAnterior( nNumFac, cSufFac )
 
    if uFieldEmpresa( "LRECNUMFAC" )
-      nPutDoc( cSerieAnterior, nNumFac, cSufFac, D():FacturasClientes( nView ), "nFacCli", , dbfCount )
+      nPutDoc( cSerieAnterior, nNumFac, cSufFac, D():FacturasClientes( nView ), "nFacCli", , D():Contadores( nView ) )
    end if
 
 Return .t.
@@ -24250,5 +24214,21 @@ Static Function EscribeTemporalPagos( cSerFac, nNumFac, cSufFac )
    end if
 
 Return .t.
+
+//---------------------------------------------------------------------------//   
+
+Static Function cFormatoFacturasClientes( cSerie )
+
+   local cFormato
+
+   DEFAULT cSerie    := ( D():FacturasClientes( nView ) )->cSerie
+
+   cFormato          := cFormatoDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", D():Contadores( nView ) )
+
+   if Empty( cFormato )
+      cFormato       := cFirstDoc( "FC", dbfDoc )
+   end if
+
+Return ( cFormato )
 
 //---------------------------------------------------------------------------//   
