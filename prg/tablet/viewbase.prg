@@ -13,8 +13,6 @@ CLASS ViewBase
 
    METHOD BotonSalirBrowse()
 
-   METHOD BotonAceptarCancelarBrowse()
-
    METHOD DialogResize()
    METHOD InitDialog()
 
@@ -71,29 +69,6 @@ Return ( self )
 METHOD InitDialog() CLASS ViewBase
 
    GridMaximize( ::oDlg )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD BotonAceptarCancelarBrowse() CLASS ViewBase
-
-
-   TGridImage():Build(  {  "nTop"      => 5,;
-                           "nLeft"     => {|| GridWidth( 9.0, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_del_64",;
-                           "bLClicked" => {|| ::oDlg:End() },;
-                           "oWnd"      => ::oDlg } )
-
-   TGridImage():Build(  {  "nTop"      => 5,;
-                           "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oSender:GuardaDocumento() },;
-                           "oWnd"      => ::oDlg } )
 
 Return ( self )
 

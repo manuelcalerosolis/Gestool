@@ -27,6 +27,11 @@ CLASS Editable
    METHOD setDetailArea( cDetailArea )    INLINE ( ::cDetailArea  := cDetailArea )
    METHOD getDetailArea()                 INLINE ( ::cDetailArea )
 
+   METHOD AppendDetail()
+   METHOD EditDetail()
+   METHOD DeleteDetail()
+   METHOD ResourceDetail()                VIRTUAL
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -68,5 +73,29 @@ METHOD SaveDocumento() CLASS Editable
    msgInfo( "savedocumento" )
 
 Return ( self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD AppendDetail() CLASS Editable
+
+   ::ResourceDetail( APPD_MODE )
+  
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD EditDetail() CLASS Editable
+
+   ::ResourceDetail( EDIT_MODE )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DeleteDetail() CLASS Editable
+
+   MsgInfo( "Elimino una linea" )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

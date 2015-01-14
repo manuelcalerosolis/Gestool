@@ -15585,6 +15585,14 @@ function nTotNAlbCli( uDbf )
 
          end if
 
+      case ValType( uDbf ) == "H"
+
+         nTotUnd  := NotCaja( hGet( uDbf, "Cajas" ) )
+         nTotUnd  *= hGet( uDbf, "Unidades" )
+         nTotUnd  *= NotCero( hGet( uDbf, "UnidadesKit" ) )
+         nTotUnd  *= NotCero( hGet( uDbf, "Medicion1" ) )
+         nTotUnd  *= NotCero( hGet( uDbf, "Medicion2" ) )
+         nTotUnd  *= NotCero( hGet( uDbf, "Medicion3" ) )
 
       otherwise
 
@@ -15857,6 +15865,10 @@ FUNCTION nTotUAlbCli( uTmpLin, nDec, nVdv )
          else
             nCalculo    := uTmpLin[ _NPREUNIT ]
          end if
+
+      case IsHash( uTmpLin )
+
+         nCalculo       := hGet( uTmpLin, "PrecioVenta" )
 
    end case
 
@@ -17893,5 +17905,82 @@ function lFacturado( cAlbCliT )
    end case
 
 Return ( lReturn )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotalLineaAlbaranCliente( hHash, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+   local nCalculo
+
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   if hGet( hHash, "LineaTotal" )
+
+      nCalculo       := nTotUAlbCli( hHash )
+
+   else
+
+      /*
+      Tomamos los valores redondeados------------------------------------------
+      */
+
+      nCalculo       := nTotUAlbCli( hHash )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      if lDto
+
+         nCalculo    -= Round( hGet( hHash, "DescuentoLineal" ) , nDec )
+
+         if hGet( hHash, "DescuentoPorcentual" ) != 0
+            nCalculo -= nCalculo * hGet( hHash, "DescuentoPorcentual" ) / 100
+         end if
+
+         if hGet( hHash, "DescuentoPromocion" ) != 0
+            nCalculo -= nCalculo * hGet( hHash, "DescuentoPromocion" ) / 100
+         end if
+
+      end if
+
+      /*
+      Punto Verde--------------------------------------------------------------
+      */
+
+      if lPntVer
+         nCalculo    += hGet( hHash, "PuntoVerde" )
+      end if
+
+      /*
+      Transporte---------------------------------------------------------------
+      */
+
+      if lImpTrn 
+         nCalculo    += hGet( hHash, "Portes" ) 
+      end if
+
+      /*
+      Unidades-----------------------------------------------------------------
+      */
+
+      nCalculo       *= nTotNAlbCli( hHash )
+
+      /*
+      Redondeo-----------------------------------------------------------------
+      */
+
+      if nRou != nil
+         nCalculo    := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//

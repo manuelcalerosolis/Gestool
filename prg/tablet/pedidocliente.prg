@@ -17,11 +17,15 @@ CLASS PedidoCliente FROM Ventas
 
    METHOD Resource( nMode )
 
+   METHOD ResourceDetail( nMode )
+
    METHOD GetAppendDocumento()
 
    METHOD GetEditDocumento()
 
    METHOD GuardaDocumento()
+
+   METHOD GuardaLinea()
 
 END CLASS
 
@@ -148,6 +152,22 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD ResourceDetail( nMode ) CLASS PedidoCliente
+
+   ::oViewEditDetail       := ViewDetail():New( self )
+
+   if !Empty( ::oViewEditDetail )
+
+      ::oViewEditDetail:setTextoTipoDocuento( LblTitle( nMode ) + " linea de pedido" )
+      
+      ::oViewEditDetail:ResourceViewEditDetail( nMode )
+
+   end if
+
+Return ( .t. )   
+
+//---------------------------------------------------------------------------//
+
 METHOD GetAppendDocumento() CLASS PedidoCliente
 
    ::hDictionaryMaster      := D():GetPedidoClienteDefaultValue( ::nView )
@@ -168,21 +188,119 @@ Return ( self )
 
 METHOD PropiedadesBrowseDetail() CLASS PedidoCliente
 
-   ::oViewEdit:oBrowse:cName            := "Grid pedidos lineas"
+   ::oViewEdit:oBrowse:cName  := "Grid pedidos lineas"
 
    with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader             := "Cód"
-      :bEditValue          := {|| ::getDataBrowse( "Articulo" ) }
-      :nWidth              := 80
+      :cHeader                := "Número"
+      :bEditValue             := {|| ::getDataBrowse( "NumeroLinea" ) }
+      :cEditPicture           := "9999"
+      :nWidth                 := 55
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.   
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Cód"
+      :bEditValue             := {|| ::getDataBrowse( "Articulo" ) }
+      :nWidth                 := 80
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Descripción"
+      :bEditValue             := {|| ::getDataBrowse( "DescripcionArticulo" ) }
+      :bFooter                := {|| "Total..." }
+      :nWidth                 := 310
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := cNombreCajas()
+      :bEditValue             := {|| ::getDataBrowse( "Cajas" ) }
+      :cEditPicture           := MasUnd()
+      :nWidth                 := 60
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+      :nFooterType            := AGGR_SUM
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := cNombreUnidades()
+      :bEditValue             := {|| ::getDataBrowse( "Unidades" ) }
+      :cEditPicture           := MasUnd()
+      :nWidth                 := 60
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+      :nFooterType            := AGGR_SUM
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Und"
+      :bEditValue             := {|| nTotNPedCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
+      :cEditPicture           := MasUnd()
+      :nWidth                 := 90
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :nFooterType            := AGGR_SUM
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Precio"
+      :bEditValue             := {|| nTotUPedCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
+      :cEditPicture           := cPouDiv( hGet( ::hDictionaryMaster, "Divisa" ), D():Divisas( ::nView ) )
+      :nWidth                 := 90
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "% Dto."
+      :bEditValue             := {|| ::getDataBrowse( "Descuento" ) }
+      :cEditPicture           := "@E 999.99"
+      :nWidth                 := 55
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "% " + cImp()
+      :bEditValue             := {|| ::getDataBrowse( "PorcentajeImpuesto" ) }
+      :cEditPicture           := "@E 999.99"
+      :nWidth                 := 45
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Total"
+      :bEditValue             := {|| nTotalLineaPedidoCliente( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], , , , .t., hGet( ::hDictionaryMaster, "OperarPuntoVerde" ), .t. ) }
+      :cEditPicture           := cPouDiv( hGet( ::hDictionaryMaster, "Divisa" ), D():Divisas( ::nView ) )
+      :nWidth                 := 94
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :nFooterType            := AGGR_SUM
    end with
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GuardaDocumento() CLASS PedidoCliente
+METHOD GuardaDocumento( oCbxRuta ) CLASS PedidoCliente
 
-   MsgInfo( "Guardamos el documento" )
+   MsgInfo( "Guardamos el documento Pedidos" )
+
+   ::setUltimoCliente( oCbxRuta )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GuardaLinea() CLASS PedidoCliente
+
+   MsgInfo( "Guardamos la linea del pedido" )
 
 Return ( self )
 

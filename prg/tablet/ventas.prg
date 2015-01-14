@@ -4,6 +4,16 @@
 CLASS Ventas FROM DocumentoSerializable
    
    DATA oViewEdit
+   DATA oViewEditDetail
+   DATA nUltimoCliente
+   DATA hOrdenRutas                 INIT {   "1" => "lVisDom",;
+                                             "2" => "lVisLun",;
+                                             "3" => "lVisMar",;
+                                             "4" => "lVisMie",;
+                                             "5" => "lVisJue",;
+                                             "6" => "lVisVie",;
+                                             "7" => "lVisSab",;
+                                             "8" => "Cod" }
 
    METHOD OpenFiles()
    METHOD CloseFiles()
@@ -20,8 +30,15 @@ CLASS Ventas FROM DocumentoSerializable
 
    METHOD ChangeRuta()
 
-   METHOD NextClient()
- 
+   METHOD priorClient()
+   METHOD nextClient()
+   METHOD moveClient()
+
+   METHOD CargaSiguienteCliente()
+
+   METHOD gotoUltimoCliente( oCbxRuta )
+   METHOD setUltimoCliente( oCbxRuta )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -135,8 +152,11 @@ METHOD lValidCliente( oGet, oGet2, nMode ) CLASS Ventas
 
       if nMode == APPD_MODE
 
+         if !Empty( ( D():Clientes( ::nView ) )->Serie )
+            hSet( ::hDictionaryMaster, "Serie", ( D():Clientes( ::nView ) )->Serie )
+         end if
+
          hSet( ::hDictionaryMaster, "TipoImpuesto", ( D():Clientes( ::nView ) )->nRegIva )
-         hSet( ::hDictionaryMaster, "Serie", ( D():Clientes( ::nView ) )->Serie )
          hSet( ::hDictionaryMaster, "Almacen", ( D():Clientes( ::nView ) )->cCodAlm )
          hSet( ::hDictionaryMaster, "Tarifa", ( D():Clientes( ::nView ) )->cCodTar )
          hSet( ::hDictionaryMaster, "Pago", ( D():Clientes( ::nView ) )->CodPago )
@@ -231,18 +251,165 @@ Return lValid
 
 //---------------------------------------------------------------------------//
 
-METHOD ChangeRuta() CLASS Ventas
+METHOD ChangeRuta( oCbxRuta, oGetCliente, oGetDireccion, oSayTextRuta ) CLASS Ventas
 
-   ?"Cambio las rutas"
+   local cCliente          := ""
+   local nOrdAnt           := ( D():Clientes( ::nView ) )->( OrdSetFocus() )
+
+   if hhaskey( ::hOrdenRutas, AllTrim( Str( oCbxRuta:nAt ) ) )
+
+      nOrdAnt              := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
+
+      if ( D():Clientes( ::nView ) )->( OrdKeyCount() ) != 0 
+         
+         ( D():Clientes( ::nView ) )->( dbGoTop() )
+         if !( D():Clientes( ::nView ) )->( Eof() )
+            cCliente       := ( D():Clientes( ::nView ) )->Cod
+         end if   
+
+         if !Empty( oSayTextRuta )
+            oSayTextRuta:cText( AllTrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + "/" + AllTrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyCount() ) ) ) )
+            oSayTextRuta:Refresh()
+         end if
+
+      else
+
+         ( D():Clientes( ::nView ) )->( OrdSetFocus( "Cod" ) )
+         ( D():Clientes( ::nView ) )->( dbGoTop() )
+
+         cCliente             := ( D():Clientes( ::nView ) )->Cod
+
+         if !Empty( oSayTextRuta )
+            oSayTextRuta:cText( "1/1" )
+            oSayTextRuta:Refresh()
+         end if
+      
+      end if   
+
+      ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+   end if
+
+   if !Empty( oGetCliente )
+      oGetCliente:cText( cCliente )
+      oGetCliente:Refresh()
+      oGetCliente:lValid()
+   end if 
+
+   if !Empty( oGetDireccion )
+      oGetDireccion:cText( Space( 10 ) )
+      oGetDireccion:Refresh()
+      oGetDireccion:lValid()
+   end if   
+
+return cCliente
+
+//---------------------------------------------------------------------------//
+
+METHOD priorClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion ) CLASS Ventas
+
+return ( ::moveClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, .t. ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD nextClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion ) CLASS Ventas
+
+return ( ::moveClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, .f. ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD moveClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, lAnterior ) CLASS Ventas
+
+   local lSet              := .f.
+   local nOrdAnt
+
+   if hhaskey( ::hOrdenRutas, AllTrim( Str( oCbxRuta:nAt ) ) )
+      
+      nOrdAnt              := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
+
+      if isTrue( lAnterior )
+
+         if ( D():Clientes( ::nView ) )->( OrdKeyNo() ) != 1
+            ( D():Clientes( ::nView ) )->( dbSkip( -1 ) )
+            lSet           := .t.
+         end if
+
+      end if 
+
+      if isFalse( lAnterior )
+
+         if ( D():Clientes( ::nView ) )->( OrdKeyNo() ) != ( D():Clientes( ::nView ) )->( OrdKeyCount() )
+            ( D():Clientes( ::nView ) )->( dbSkip() )
+            lSet           := .t.
+         end if
+
+      end if   
+
+      if isNil( lAnterior )
+         lSet              := .t.
+      end if 
+
+      if !empty( oSayTextRuta )
+         oSayTextRuta:cText( alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyCount() ) ) ) )
+         oSayTextRuta:Refresh()
+      end if
+
+      ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )   
+
+      if lSet
+
+         oGetCliente:cText( ( D():Clientes( ::nView ) )->Cod )
+         oGetCliente:lValid()
+
+         hSet( ::hDictionaryMaster, "Direccion", Space( 10 ) )
+         oGetDireccion:lValid()
+
+      end if
+
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD CargaSiguienteCliente( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, nMode ) CLASS Ventas
+
+   ::gotoUltimoCliente( oCbxRuta )
+
+   if ( nMode == APPD_MODE ) .and. ( ::nUltimoCliente != 0 )
+      ::nextClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion )
+   else
+      ::moveClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion )
+   end if
 
 Return ( self )
 
-//--------------------------------------------------------------------------------
+//---------------------------------------------------------------------------//
 
-METHOD NextClient() CLASS Ventas
+METHOD gotoUltimoCliente( oCbxRuta ) CLASS Ventas
 
-   ?"Cambio los clientes"
+   local nOrdAnt     := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
 
-Return ( self )
+   if empty( ::nUltimoCliente )
+      ( D():Clientes( ::nView ) )->( dbGoTop() )
+   else
+      ( D():Clientes( ::nView ) )->( OrdKeyGoto( ::nUltimoCliente ) )
+   end if 
+
+   ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) ) 
+         
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD setUltimoCliente( oCbxRuta ) CLASS Ventas
+
+   local nOrdAnt     := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
+
+   ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( OrdKeyNo() )
+
+   ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) ) 
+
+Return nil
 
 //---------------------------------------------------------------------------//

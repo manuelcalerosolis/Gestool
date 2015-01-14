@@ -15558,6 +15558,19 @@ function nTotNPedCli( uDbf )
 
       end if
 
+   case ValType( uDbf ) == "H"
+
+      if !hGet( uDbf, "Alquiler" )
+
+         nTotUnd  := NotCaja( hGet( uDbf, "Cajas" ) )
+         nTotUnd  *= hGet( uDbf, "Unidades" )
+         nTotUnd  *= NotCero( hGet( uDbf, "UnidadesKit" ) )
+         nTotUnd  *= NotCero( hGet( uDbf, "Medicion1" ) )
+         nTotUnd  *= NotCero( hGet( uDbf, "Medicion2" ) )
+         nTotUnd  *= NotCero( hGet( uDbf, "Medicion3" ) )
+
+      end if   
+
    otherwise
 
       if ( uDbf )->lAlquiler
@@ -16363,6 +16376,9 @@ FUNCTION nTotUPedCli( uTmpLin, nDec, nVdv )
             nCalculo    := uTmpLin:nPreDiv
          end if
 
+      case Valtype( uTmpLin ) == "H"
+         nCalculo       := hGet( uTmpLin, "PrecioVenta" )
+
    end case 
 
    if nVdv != 0
@@ -16735,7 +16751,6 @@ FUNCTION nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
-
 /*
 Devuelve el importe de descuento porcentual por cada linea---------------------
 */
@@ -17724,5 +17739,74 @@ function Prueba()
    MsgInfo( ValToPrg( hashDictionaryLineas ), Len( hashDictionaryLineas ) )
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function nTotalLineaPedidoCliente( hHash, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+
+   local nCalculo
+
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   if hGet( hHash, "LineaTotal" )
+
+      nCalculo       := nTotUPedCli( hHash )
+      
+   else
+
+      nCalculo       := nTotUPedCli( hHash )
+
+      /*
+      Descuentos lineales------------------------------------------------------
+      */
+
+      if lDto
+
+         nCalculo    -= Round( hGet( hHash, "DescuentoLineal" ) / nVdv , nDec )
+      
+         if hGet( hHash, "DescuentoPorcentual" ) != 0
+            nCalculo -= nCalculo * hGet( hHash, "DescuentoPorcentual" )    / 100
+         end if
+
+         if hGet( hHash, "DescuentoPromocion" ) != 0
+            nCalculo -= nCalculo * hGet( hHash, "DescuentoPromocion" ) / 100
+         end if
+
+      end if 
+
+      /*
+      Punto Verde--------------------------------------------------------------
+      */
+
+      if lPntVer
+         nCalculo    += hGet( hHash, "PuntoVerde" )
+      end if
+
+      /*
+      Transporte---------------------------------------------------------------
+      */
+
+      if lImpTrn 
+         nCalculo    += hGet( hHash, "Portes" )
+      end if
+
+      /* 
+      Unidades-----------------------------------------------------------------
+      */
+
+      nCalculo       *= nTotNPedCli( hHash )
+
+   end if
+
+   if nRou != nil
+      nCalculo       := Round( Div( nCalculo, nVdv ), nRou )
+   end if
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//

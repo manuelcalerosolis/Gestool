@@ -390,6 +390,7 @@ AlbaranCliente.prg         \
 DocumentoSerializable.prg  \
 ViewBase.prg               \
 ViewEdit.prg               \
+ViewEditDetail.prg         \
 
 C               =       	\
 Img2pdf.c               	\
@@ -771,6 +772,7 @@ AlbaranCliente.obj         \
 DocumentoSerializable.obj  \
 ViewBase.obj               \
 ViewEdit.obj               \
+ViewEditDetail.obj         \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1136,6 +1138,7 @@ $(OBJ)\AlbaranCliente.obj        +
 $(OBJ)\DocumentoSerializable.obj +
 $(OBJ)\ViewBase.obj              +
 $(OBJ)\ViewEdit.obj              +
+$(OBJ)\ViewEditDetail.obj        +
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +

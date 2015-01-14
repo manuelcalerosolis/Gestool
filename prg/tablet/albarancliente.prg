@@ -1,5 +1,6 @@
 #include "FiveWin.Ch"
 #include "Factu.ch"
+#include "Xbrowse.ch"
 
 CLASS AlbaranCliente FROM Ventas  
 
@@ -17,11 +18,15 @@ CLASS AlbaranCliente FROM Ventas
 
    METHOD Resource( nMode )
 
+   METHOD ResourceDetail( nMode )
+
    METHOD GetAppendDocumento()
 
    METHOD GetEditDocumento()
 
    METHOD GuardaDocumento()
+
+   METHOD GuardaLinea()
 
 END CLASS
 
@@ -139,7 +144,23 @@ METHOD Resource( nMode ) CLASS AlbaranCliente
 
       ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "albarán" )
       
-      ::oViewEdit:ResourceViewEdit()
+      ::oViewEdit:ResourceViewEdit( nMode )
+
+   end if
+
+Return ( .t. )   
+
+//---------------------------------------------------------------------------//
+
+METHOD ResourceDetail( nMode ) CLASS AlbaranCliente
+
+   ::oViewEditDetail       := ViewDetail():New( self )
+
+   if !Empty( ::oViewEditDetail )
+
+      ::oViewEditDetail:setTextoTipoDocuento( LblTitle( nMode ) + " linea de albarán" )
+      
+      ::oViewEditDetail:ResourceViewEditDetail( nMode )
 
    end if
 
@@ -170,18 +191,116 @@ METHOD PropiedadesBrowseDetail() CLASS AlbaranCliente
    ::oViewEdit:oBrowse:cName            := "Grid albaranes lineas"
 
    with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader             := "Cód"
-      :bEditValue          := {|| ::getDataBrowse( "Articulo" ) }
-      :nWidth              := 80
+      :cHeader                := "Número"
+      :bEditValue             := {|| ::getDataBrowse( "NumeroLinea" ) }
+      :cEditPicture           := "9999"
+      :nWidth                 := 55
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.   
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Cód"
+      :bEditValue             := {|| ::getDataBrowse( "Articulo" ) }
+      :nWidth                 := 80
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Descripción"
+      :bEditValue             := {|| ::getDataBrowse( "DescripcionArticulo" ) }
+      :bFooter                := {|| "Total..." }
+      :nWidth                 := 310
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := cNombreCajas()
+      :bEditValue             := {|| ::getDataBrowse( "Cajas" ) }
+      :cEditPicture           := MasUnd()
+      :nWidth                 := 60
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+      :nFooterType            := AGGR_SUM
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := cNombreUnidades()
+      :bEditValue             := {|| ::getDataBrowse( "Unidades" ) }
+      :cEditPicture           := MasUnd()
+      :nWidth                 := 60
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+      :nFooterType            := AGGR_SUM
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Und"
+      :bEditValue             := {|| nTotNAlbCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
+      :cEditPicture           := MasUnd()
+      :nWidth                 := 90
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :nFooterType            := AGGR_SUM
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Precio"
+      :bEditValue             := {|| nTotUAlbCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
+      :cEditPicture           := cPouDiv( hGet( ::hDictionaryMaster, "Divisa" ), D():Divisas( ::nView ) )
+      :nWidth                 := 90
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "% Dto."
+      :bEditValue             := {|| ::getDataBrowse( "Descuento" ) }
+      :cEditPicture           := "@E 999.99"
+      :nWidth                 := 55
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "% " + cImp()
+      :bEditValue             := {|| ::getDataBrowse( "PorcentajeImpuesto" ) }
+      :cEditPicture           := "@E 999.99"
+      :nWidth                 := 45
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :lHide                  := .t.
+   end with
+
+   with object ( ::oViewEdit:oBrowse:AddCol() )
+      :cHeader                := "Total"
+      :bEditValue             := {|| nTotalLineaAlbaranCliente( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], , , , .t., hGet( ::hDictionaryMaster, "OperarPuntoVerde" ), .t. ) }
+      :cEditPicture           := cPouDiv( hGet( ::hDictionaryMaster, "Divisa" ), D():Divisas( ::nView ) )
+      :nWidth                 := 94
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+      :nFooterType            := AGGR_SUM
    end with
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GuardaDocumento() CLASS AlbaranCliente
+METHOD GuardaDocumento( oCbxRuta ) CLASS AlbaranCliente
 
-   MsgInfo( "Guardamos el documento" )
+   MsgInfo( "Guardamos el documento Albaranes" )
+
+   ::setUltimoCliente( oCbxRuta )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GuardaLinea() CLASS AlbaranCliente
+
+   MsgInfo( "Guardamos la linea del albarán" )
 
 Return ( self )
 
