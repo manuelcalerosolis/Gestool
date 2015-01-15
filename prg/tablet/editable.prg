@@ -8,9 +8,11 @@ CLASS Editable
    DATA nView
    DATA cWorkArea
    DATA cDetailArea
+   DATA nPosDetail      INIT 0
    DATA Style           INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
    DATA hDictionaryMaster
    DATA hDictionaryDetail
+   DATA hDictionaryDetailTemporal
  
    METHOD Append()
    METHOD Edit()
@@ -19,7 +21,7 @@ CLASS Editable
    METHOD GetAppendDocumento()            VIRTUAL
    METHOD GetEditDocumento()              VIRTUAL
    METHOD Resource()                      VIRTUAL
-   METHOD SaveDocumento()
+   METHOD SaveDocumento()        
 
    METHOD setWorkArea( cWorkArea )        INLINE ( ::cWorkArea  := cWorkArea )
    METHOD getWorkArea()                   INLINE ( ::cWorkArea )
@@ -31,6 +33,8 @@ CLASS Editable
    METHOD EditDetail()
    METHOD DeleteDetail()
    METHOD ResourceDetail()                VIRTUAL
+   METHOD GetAppendDetail()               VIRTUAL
+   METHOD GetEditDetail()                 VIRTUAL
 
 ENDCLASS
 
@@ -78,23 +82,37 @@ Return ( self )
 
 METHOD AppendDetail() CLASS Editable
 
-   ::ResourceDetail( APPD_MODE )
+   ::GetAppendDetail()
+
+   if ::ResourceDetail( APPD_MODE )
+      ::AppendGuardaLinea()
+   end if   
   
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EditDetail() CLASS Editable
+METHOD EditDetail( nPos ) CLASS Editable
 
-   ::ResourceDetail( EDIT_MODE )
+   ::nPosDetail   := nPos
+
+   ::GetEditDetail()
+
+   if ::ResourceDetail( EDIT_MODE )
+      ::EditGuardaLinea()
+   end if   
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DeleteDetail() CLASS Editable
+METHOD DeleteDetail( nPos ) CLASS Editable
 
-   MsgInfo( "Elimino una linea" )
+   aDel( ::hDictionaryDetail, nPos, .t. )
+
+   if !Empty( ::oViewEdit:oBrowse )
+      ::oViewEdit:oBrowse:Refresh()
+   end if
 
 Return ( self )
 

@@ -39,6 +39,11 @@ CLASS Ventas FROM DocumentoSerializable
    METHOD gotoUltimoCliente( oCbxRuta )
    METHOD setUltimoCliente( oCbxRuta )
 
+   METHOD RecalculaLinea( oTotal )
+
+   METHOD AppendGuardaLinea()
+   METHOD EditGuardaLinea()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -411,5 +416,96 @@ METHOD setUltimoCliente( oCbxRuta ) CLASS Ventas
    ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) ) 
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD RecalculaLinea( oTotal ) CLASS Ventas
+
+   local nCalculo
+   local nUnidades
+   local nMargen
+   local nCosto
+   local nRentabilidad
+   local nBase       := 0
+
+   nUnidades         := nTotNPedCli( ::hDictionaryDetailTemporal )
+
+   nCalculo          := hGet( ::hDictionaryDetailTemporal, "PrecioVenta" )
+
+   nCalculo          -= hGet( ::hDictionaryDetailTemporal, "DescuentoLineal" )
+
+   /*
+   IVMH------------------------------------------------------------------------
+   */
+
+   if !hGet( ::hDictionaryDetailTemporal, "LineaImpuestoIncluido" )
+
+      if hGet( ::hDictionaryDetailTemporal, "VolumenImpuestosEspeciales" )
+         nCalculo += hGet( ::hDictionaryDetailTemporal, "ImporteImpuestoEspecial" ) * NotCero( hGet( ::hDictionaryDetailTemporal, "Volumen" ) )
+      else
+         nCalculo += hGet( ::hDictionaryDetailTemporal, "ImporteImpuestoEspecial" )
+      end if
+
+   end if
+
+   nCalculo          *= nUnidades
+
+   /*
+   Transporte------------------------------------------------------------------
+   */
+
+   if hGet( ::hDictionaryDetailTemporal, "Portes" ) != 0
+      nCalculo       += hGet( ::hDictionaryDetailTemporal, "Portes" ) * nUnidades
+   end if
+
+   /*
+   Descuentos------------------------------------------------------------------
+   */
+
+   if hGet( ::hDictionaryDetailTemporal, "DescuentoPorcentual" ) != 0
+      nCalculo       -= nCalculo * hGet( ::hDictionaryDetailTemporal, "DescuentoPorcentual" ) / 100
+   end if
+
+   if hGet( ::hDictionaryDetailTemporal, "DescuentoPromocion" ) != 0
+      nCalculo       -= nCalculo * hGet( ::hDictionaryDetailTemporal, "DescuentoPromocion" ) / 100
+   end if
+
+   /*
+   Punto Verde-----------------------------------------------------------------
+   */
+
+   if hGet( ::hDictionaryMaster, "OperarPuntoVerde" )
+      nCalculo       += hGet( ::hDictionaryDetailTemporal, "PuntoVerde" ) * nUnidades
+   end if
+
+   if !Empty( oTotal )
+      oTotal:cText( nCalculo )
+   end if
+
+RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AppendGuardaLinea() CLASS Ventas
+
+   aAdd( ::hDictionaryDetail, ::hDictionaryDetailTemporal )
+
+   if !Empty( ::oViewEdit:oBrowse )
+      ::oViewEdit:oBrowse:Refresh()
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD EditGuardaLinea() CLASS Ventas
+
+   ::hDictionaryDetail[ ::nPosDetail ] := ::hDictionaryDetailTemporal
+
+   if !Empty( ::oViewEdit:oBrowse )
+      ::oViewEdit:oBrowse:Refresh()
+   end if
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

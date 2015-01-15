@@ -296,7 +296,7 @@ METHOD BotonesAcciones() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_edit_64",;
-                           "bLClicked" => {|| ::oSender:EditDetail() },;
+                           "bLClicked" => {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ) },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 145,;
@@ -304,7 +304,7 @@ METHOD BotonesAcciones() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_minus_64",;
-                           "bLClicked" => {|| ::oSender:DeleteDetail() },;
+                           "bLClicked" => {|| ::oSender:DeleteDetail( ::oBrowse:nArrayAt ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -370,7 +370,7 @@ METHOD BrowseLineas() CLASS ViewEdit
 
    ::oSender:PropiedadesBrowseDetail()
 
-   ::oBrowse:bLDblClick       := {|| ::oSender:EditDetail() }
+   ::oBrowse:bLDblClick       := {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ) }
 
    ::oBrowse:CreateFromCode()
 

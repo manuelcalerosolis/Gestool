@@ -26,7 +26,8 @@ CLASS AlbaranCliente FROM Ventas
 
    METHOD GuardaDocumento()
 
-   METHOD GuardaLinea()
+   METHOD GetAppendDetail()
+   METHOD GetEditDetail()
 
 END CLASS
 
@@ -154,17 +155,19 @@ Return ( .t. )
 
 METHOD ResourceDetail( nMode ) CLASS AlbaranCliente
 
-   ::oViewEditDetail       := ViewDetail():New( self )
+   local lResult     := .f.
+
+   ::oViewEditDetail := ViewDetail():New( self )
 
    if !Empty( ::oViewEditDetail )
 
       ::oViewEditDetail:setTextoTipoDocuento( LblTitle( nMode ) + " linea de albarán" )
       
-      ::oViewEditDetail:ResourceViewEditDetail( nMode )
+      lResult        := ::oViewEditDetail:ResourceViewEditDetail( nMode )
 
    end if
 
-Return ( .t. )   
+Return ( lResult )   
 
 //---------------------------------------------------------------------------//
 
@@ -298,9 +301,17 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GuardaLinea() CLASS AlbaranCliente
+METHOD GetAppendDetail() CLASS AlbaranCliente
 
-   MsgInfo( "Guardamos la linea del albarán" )
+   ::hDictionaryDetailTemporal      := D():GetAlbaranClienteLineaBlank( ::nView )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEditDetail() CLASS AlbaranCliente
+
+   ::hDictionaryDetailTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
 
 Return ( self )
 

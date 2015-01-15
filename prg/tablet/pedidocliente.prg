@@ -25,7 +25,8 @@ CLASS PedidoCliente FROM Ventas
 
    METHOD GuardaDocumento()
 
-   METHOD GuardaLinea()
+   METHOD GetAppendDetail()
+   METHOD GetEditDetail()
 
 END CLASS
 
@@ -154,17 +155,19 @@ Return ( .t. )
 
 METHOD ResourceDetail( nMode ) CLASS PedidoCliente
 
-   ::oViewEditDetail       := ViewDetail():New( self )
+   local lResult     := .f.
+
+   ::oViewEditDetail := ViewDetail():New( self )
 
    if !Empty( ::oViewEditDetail )
 
       ::oViewEditDetail:setTextoTipoDocuento( LblTitle( nMode ) + " linea de pedido" )
       
-      ::oViewEditDetail:ResourceViewEditDetail( nMode )
+      lResult        := ::oViewEditDetail:ResourceViewEditDetail( nMode )
 
    end if
 
-Return ( .t. )   
+Return ( lResult )   
 
 //---------------------------------------------------------------------------//
 
@@ -298,9 +301,17 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GuardaLinea() CLASS PedidoCliente
+METHOD GetAppendDetail() CLASS PedidoCliente
 
-   MsgInfo( "Guardamos la linea del pedido" )
+   ::hDictionaryDetailTemporal      := D():GetPedidoClienteLineaBlank( ::nView )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEditDetail() CLASS PedidoCliente
+
+   ::hDictionaryDetailTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
 
 Return ( self )
 
