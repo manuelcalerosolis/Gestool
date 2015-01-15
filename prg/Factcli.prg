@@ -3837,6 +3837,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen .and. lUsrMaster() ) ;
          OF       oFld:aDialogs[2]
 
+      // Envio por mail
+
+      REDEFINE CHECKBOX aGet[ _LMAIL ] VAR aTmp[ _LMAIL ] ;
+         ID       135 ;
+         WHEN     ( lWhen .and. lUsrMaster() ) ;
+         ON CHANGE( iif( aTmp[ _LMAIL ], aGet[ _TMAIL ]:Hide(), aGet[ _TMAIL ]:Show() ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _TMAIL ] VAR aTmp[ _TMAIL ] ;
+         ID       136 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[2]
+
       REDEFINE GET aGet[ _CHOREDI ] VAR aTmp[ _CHOREDI ] ;
          ID       132 ;
          WHEN     ( lWhen .and. lUsrMaster() ) ;

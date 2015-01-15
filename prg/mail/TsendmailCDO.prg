@@ -88,7 +88,7 @@ Return ( lSend )
 METHOD setRecipients( oMail, hMail )
 
    local cItem
-   local cMails            := ::oSender:getFromHash( hMail, "mail" )
+   local cMails            := ::oSender:getMailsFromHash( hMail )
 
    if !empty( cMails )
       oMail:To             := cMails
@@ -141,7 +141,7 @@ Return ( nil )
 
 METHOD setSubject( oMail, hMail )
 
-   local cSubject          := ::oSender:getFromHash( hMail, "subject" )      
+   local cSubject          := ::oSender:getSubjectFromHash( hMail )      
 
    if !empty( cSubject )
       oMail:Subject        := cSubject

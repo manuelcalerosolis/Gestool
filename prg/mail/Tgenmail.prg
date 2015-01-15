@@ -29,21 +29,30 @@ CLASS TGenMailing
    DATA oBtnSalvarAsHTML
    DATA oBtnDefectoHTML
 
+   // Asunto-------------------------------------------------------------------
+
    DATA oGetAsunto
+   DATA cSubject
+
+   METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
+   METHOD getAsunto()                  
+
+   // Adjunto------------------------------------------------------------------
+   
    DATA oGetAdjunto
    DATA cGetAdjunto
 
    DATA cMensaje                       INIT ""
    METHOD setMensaje( cMensaje )       INLINE ( ::cMensaje := cMensaje, if( !empty( ::oActiveX ), ::oActiveX:oRTF:SetText( cMensaje ), ) )
 
-   DATA oGetDe                         
    DATA oGetCopia                      
+   DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
    DATA oGetPara
-   DATA cSubject
-   DATA cGetDe                         INIT Padr( uFieldEmpresa( "cNombre" ), 250 )
    DATA cGetPara                       INIT Space( 250 )
-   DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
+   
+   DATA oGetDe                         
+   DATA cGetDe                         INIT Padr( uFieldEmpresa( "cNombre" ), 250 )
 
    DATA cWorkArea                      INIT ""
    DATA hWorkAreaStatus
@@ -105,9 +114,6 @@ CLASS TGenMailing
    METHOD getWorkArea()                INLINE ( ::cWorkArea )
    METHOD quitWorkArea()               VIRTUAL
 
-   METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
-   METHOD getAsunto()                  INLINE ( alltrim( ::cSubject ) )
-
    METHOD setDe( cText )               INLINE ( ::cGetDe := padr( cText, 250 ) )
    
    METHOD setPara( cText )             INLINE ( ::cGetPara := padr( cText, 250 ) )
@@ -120,7 +126,28 @@ CLASS TGenMailing
       METHOD HideCopia()               INLINE ( ::lHideCopia := .t., if ( !empty( ::oGetCopia ), ::oGetCopia:Hide(), ) )
       METHOD ShowCopia()               INLINE ( ::lHideCopia := .f., if ( !empty( ::oGetCopia ), ::oGetCopia:Show(), ) )
 
-   METHOD setAlias( cAlias )           INLINE ( nil )
+   METHOD getMessage()
+   METHOD getMessageHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
+      METHOD getExpression()
+      METHOD replaceExpresion( cDocumentHTML, cExpresion )
+
+   // Post send mail
+
+   DATA bPostSend           
+   METHOD setPostSend( bPostSend )     INLINE ( ::bPostSend := bPostSend )
+   METHOD getPostSend                  INLINE ( ::bPostSend )
+
+   // Post send mail
+
+   DATA bPostError           
+   METHOD setPostError( bPostError )   INLINE ( ::bPostError := bPostError )
+   METHOD getPostError                 INLINE ( ::bPostError )
+
+   // Cargo
+
+   DATA bCargo           
+   METHOD setCargo( bCargo )           INLINE ( ::bCargo := bCargo )
+   METHOD getCargo()                   INLINE ( if( !empty( ::bCargo ), eval( ::bCargo ), ) )
 
    METHOD setAdjunto( cText )          INLINE ( ::cGetAdjunto := padr( cText, 250 ) )
    METHOD getAdjunto()                 INLINE ( alltrim( ::cGetAdjunto ) )
@@ -162,11 +189,6 @@ CLASS TGenMailing
 
    METHOD waitMail()
    METHOD waitSeconds( nTime )
-
-   METHOD replaceExpresion( cDocumentHTML, cExpresion )
-   METHOD getMessage()
-   METHOD getMessageHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
-   METHOD getExpression()
 
    METHOD addDatabaseList()
       METHOD hashDatabaseList()
@@ -531,6 +553,26 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getAsunto() CLASS TGenMailing
+
+   local cExpresion
+   local cDocument     := alltrim( ::cSubject )
+
+   while .t. 
+
+      cExpresion       := ::getExpression( cDocument ) 
+      if empty( cExpresion )
+         exit
+      end if
+
+      ::replaceExpresion( @cDocument, cExpresion )
+
+   end while
+
+Return ( cDocument )
+
+//--------------------------------------------------------------------------//
+
 METHOD getMessage() CLASS TGenMailing
 
    local cExpresion
@@ -610,6 +652,9 @@ METHOD hashDatabaseList() CLASS TGenMailing
    hSet( hashDatabaseList, "subject", ::getAsunto() )
    hSet( hashDatabaseList, "attachments", ::getAdjunto() )
    hSet( hashDatabaseList, "message", ::getMessageHTML() )
+   hSet( hashDatabaseList, "postSend", ::getPostSend() )
+   hSet( hashDatabaseList, "postError", ::getPostError() )
+   hSet( hashDatabaseList, "cargo", ::getCargo() )
 
 Return ( hashDatabaseList )
 

@@ -59,24 +59,3 @@ Return ( ::aMailingList )
 
 //--------------------------------------------------------------------------//
 
-/*
-METHOD IniciarProceso() CLASS TGenMailingDocuments
-
-   local hashMail := {=>}
-
-   if empty( ::getPara() )
-      msgStop( "No hay dirección de correo para mandar." )
-      Return ( Self )
-   end if 
-
-   hSet( hashMail, "mail", ::getPara() )
-   hSet( hashMail, "mailcc", ::getCopia() )
-   hSet( hashMail, "subject", ::getAsunto() )
-   hSet( hashMail, "attachments", ::getAdjunto() )
-   hSet( hashMail, "message", ::getMessageHTML() )
-
-   ::oSendMail:sendList( { hashMail } )
-
-Return ( self )
-*/
-//--------------------------------------------------------------------------//

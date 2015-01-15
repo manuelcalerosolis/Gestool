@@ -594,17 +594,18 @@ CLASS TReplaceDialog FROM TFilterDialog
 
    DATA lAllRecno                      INIT .f.
 
-   METHOD GetField( cDescription )     INLINE ( ::oFilterCreator:GetField( cDescription ) )
+   METHOD getField( cDescription )     INLINE ( ::oFilterCreator:GetField( cDescription ) )
 
-   METHOD SetDatabaseToReplace( cDbf ) INLINE ( ::cDbfReplace := cDbf )
+   METHOD setDatabaseToReplace( cDbf ) INLINE ( ::cDbfReplace := cDbf )
 
-   METHOD ReplaceDialog()              
+   // Dialogos
 
-   METHOD ValidDialog()
-   METHOD EndDialog()
+   METHOD replaceDialog()              
+      METHOD validDialog()
+      METHOD okDialog()
 
-   METHOD DbfReplace()                 INLINE ( ::oFilterCreator:cDbfReplace )
-   METHOD ExpresionFilter()            INLINE ( ::oFilterCreator:bExpresionFilter )
+   METHOD dbfReplace()                 INLINE ( ::oFilterCreator:cDbfReplace )
+   METHOD expresionFilter()            INLINE ( ::oFilterCreator:bExpresionFilter )
 
 END CLASS
 
@@ -612,12 +613,14 @@ END CLASS
 
 METHOD ReplaceDialog() CLASS TReplaceDialog
 
-   REDEFINE COMBOBOX ::oReplace VAR ::cReplace ;
+   REDEFINE COMBOBOX ::oReplace ;
+      VAR      ::cReplace ;
       ITEMS    ::oFilterCreator:GetDescriptions();
       ID       80 ;
       OF       ::oDlg
 
-   REDEFINE GET ::oExpReplace VAR ::cExpReplace ;
+   REDEFINE GET ::oExpReplace ;
+      VAR      ::cExpReplace ;
       ID       90 ;
       OF       ::oDlg
 
@@ -655,7 +658,7 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD EndDialog() CLASS TReplaceDialog
+METHOD okDialog() CLASS TReplaceDialog
 
    local nRpl     := 0
    local cGetVal
@@ -664,7 +667,10 @@ METHOD EndDialog() CLASS TReplaceDialog
    local nFldPos
 
    if !::ValidDialog()
-      RETURN .f.
+
+      msgAlert( "salida por dialog invalido" )
+
+      Return .f.
    end if
 
    AutoMeterDialog( ::oDlg )

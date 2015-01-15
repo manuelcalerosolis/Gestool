@@ -9,6 +9,8 @@ CLASS TSendMail
 
    DATA lCancel               INIT .f.
 
+   DATA bPostSendMail         
+
    DATA mailServer
 
    DATA mailServerHost        
@@ -33,9 +35,20 @@ CLASS TSendMail
                               INLINE ( iif( !empty( ::oSender ), ::oSender:setMeterTotal( nTotal ), ) )
    METHOD setMeter( nSet )    INLINE ( iif( !empty( ::oSender ), ::oSender:setMeter( nSet ), ) )
 
+   // Log de información
+
+   DATA cLogFile              
+   DATA hLogFile              INIT  -1 
+   METHOD initLogFile()       INLINE ( ::cLogFile := cPatLog() + "Mail" + Dtos( Date() ) + StrTran( Time(), ":", "" ) + ".log",;
+                                       ::hLogFile := fCreate( ::cLogFile ) )
+   METHOD writeLogFile( cText ) ;
+                              INLINE ( if( ::hLogFile != -1, fWrite( ::hLogFile, cText + CRLF ), ) )
+   METHOD endLogFile()        INLINE ( fClose( ::hLogFile ) )
+
    // Metodos para mostrar la informacion
 
-   METHOD messenger( cText )  INLINE ( iif(  !empty( ::oSender ),;
+   METHOD messenger( cText )  INLINE ( ::writeLogFile( cText ),;
+                                       iif(  !empty( ::oSender ),;
                                              ::oSender:oTree:Select( ::oSender:oTree:Add( cText) ),;
                                              ) )
    METHOD deleteMessenger( cText );
@@ -43,15 +56,19 @@ CLASS TSendMail
 
    METHOD initMessage()       INLINE ( ::deleteMessenger(),;
                                        ::messenger( "Se ha iniciado el proceso de envio" ) )
-   METHOD sendMessage( hMail) INLINE ( ::messenger( "Se ha enviado el correo electrónico " + ::getMailsFromHash( hMail ) ) )
+   METHOD sendMessage( hMail );
+                              INLINE ( ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' se ha enviado con exito." ) )
+   METHOD errorMessage( hMail );
+                              INLINE ( ::messenger( "Error al enviar el correo electrónico " + ::getMailsFromHash( hMail ) ) )
    METHOD endMessage()        INLINE ( iif(  ::lCancel,;
                                              ::messenger( "El envio ha sido cancelado por el usuario" ),;
-                                             ::messenger( "El proceso de envio ha finalizado" ) ) )
+                                             ::messenger( "El proceso de envio ha finalizado" ) ),;
+                                       ::messenger( "Fichero log : " + ::cLogFile ) )
 
    // Envios de los mails
 
    METHOD sendList( aMails )
-   METHOD sendMail( hMail )   INLINE ( iif( !empty( ::mailServer ), ::mailServer:sendMail( hMail ), ) )   
+   METHOD sendMail( hMail )   
 
    // Construir objetos para envio de mails
 
@@ -69,6 +86,16 @@ CLASS TSendMail
 
    METHOD getMailsFromHash( hMail ) ;
                               INLINE ( ::getFromHash( hMail, "mail" ) )      
+
+   METHOD getSubjectFromHash( hMail ) ;
+                              INLINE ( ::getFromHash( hMail, "subject" ) )
+
+   METHOD getPostSendFromHash( hMail ) ;
+                              INLINE ( ::getFromHash( hMail, "postSend" ) )
+
+   METHOD evalPostSendMail( hMail ) ;
+                              INLINE ( iif(  !empty( ::getPostSendFromHash( hMail ) ),;
+                                             eval( ::getPostSendFromHash( hMail ), hMail ), ) )
 
 END CLASS
 
@@ -97,22 +124,33 @@ METHOD sendList( aMails ) CLASS TSendMail
    CursorWait()
 
    ::setButtonCancel()
+
+   ::setMeter( 0 ) 
    ::setMeterTotal( len( aMails ) )
+
+   ::initLogFile()
 
    ::initMessage()
 
    if ::buildMailerObject()
 
       for each hMail in aMails
+
          if ::sendMail( hMail )
             ::sendMessage( hMail )
+            ::evalPostSendMail( hMail )
          end if
+      
          ::setMeter( hb_EnumIndex() ) 
+      
       next 
 
    end if 
 
    ::endMessage()
+
+   ::endLogFile()
+
    ::setButtonEnd()
 
    CursorArrow()
@@ -150,5 +188,23 @@ METHOD buildMailerObject() CLASS TSendMail
    end if 
 
 Return ( !empty( ::mailServer ) )
+
+//--------------------------------------------------------------------------//
+
+METHOD sendMail( hMail ) 
+   
+   local cMail    := ::getMailsFromHash( hMail )
+
+   if empty( cMail )
+      ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' esta vacio." )
+      Return .f.
+   end if 
+
+   if empty( ::mailServer )
+      ::messenger( "No se ha creado el objeto para los envios" )
+      Return .f.
+   end if
+
+Return ( ::mailServer:sendMail( hMail ) )
 
 //--------------------------------------------------------------------------//

@@ -146,7 +146,7 @@ Return ( nil )
 METHOD setSubject( oMail, hMail )
 
    local cItem
-   local cSubject          := ::oSender:getFromHash( hMail, "subject" )      
+   local cSubject          := ::oSender:getSubjectFromHash( hMail )      
 
    if !empty( cSubject )
       oMail:Subject        := cSubject

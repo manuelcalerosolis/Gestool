@@ -9,10 +9,11 @@ CLASS TGenMailingSerialDocuments FROM TGenMailingDatabase
 
    METHOD columnPageDatabase( oDlg )   
 
-   //METHOD iniciarProceso()
-
    METHOD getPara()              INLINE ( alltrim( retFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cMeiInt" ) ) )
    METHOD getAdjunto()           INLINE ( mailReportFacCli() )
+
+   METHOD setFacturasCleintesSend( hMail )
+
 
 END CLASS
 
@@ -33,6 +34,12 @@ METHOD New( nView ) CLASS TGenMailingSerialDocuments
    ::setTypeDocument( "nFacCli" )
 
    ::setBmpDatabase( "Factura_cliente_48_alpha" )
+
+   ::setAsunto( "Envio de nuestra factura de cliente {Serie de la factura}/{Número de la factura}" )
+
+   ::setPostSend( {|hMail| ::setFacturasCleintesSend( hMail ) } )
+
+   ::setCargo( {|| D():FacturasClientesId( nView ) } )
 
    ( ::getWorkArea() )->( ordsetfocus( "lMail" ) )
    ( ::getWorkArea() )->( dbgotop() )
@@ -96,19 +103,27 @@ METHOD columnPageDatabase( oDlg ) CLASS TGenMailingSerialDocuments
 Return ( Self )   
 
 //---------------------------------------------------------------------------//
-/*
-METHOD IniciarProceso() CLASS TGenMailingSerialDocuments
 
-   local aDatabaseList    
+METHOD setFacturasCleintesSend( hMail ) CLASS TGenMailingSerialDocuments
 
-   aDatabaseList          := ::getDatabaseList()
-   if !empty( aDatabaseList )
-      msgAlert( valtoprg( aDatabaseList ) )
-   else
-      msgStop( "No hay direcciones de correos para mandar.")
+   local idFactura
+
+   if !hhaskey( hMail, "cargo" )
+      Return .f.
    end if 
 
-Return ( self )
-*/
-//---------------------------------------------------------------------------//
+   idFactura         := hGet( hMail, "cargo" )
 
+   if dbSeekInOrd( idFactura, "nNumFac", D():FacturasClientes( ::nView ) ) 
+
+      if ( D():FacturasClientes( ::nView ) )->( dbrlock() )
+         ( D():FacturasClientes( ::nView ) )->lMail   := .f.
+         ( D():FacturasClientes( ::nView ) )->tMail   := DateTime()
+         ( D():FacturasClientes( ::nView ) )->( dbunlock() )
+      end if
+
+   end if 
+
+Return ( .t. )   
+
+//---------------------------------------------------------------------------//
