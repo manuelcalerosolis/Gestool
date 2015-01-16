@@ -50,7 +50,7 @@ local hClass
 
   hClass        := TButton():ClassH
 
-  __clsAddMsg( hClass, "setText", {|Self, cText| Self, SetWindowText( ::hWnd, cText ) }, 3, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "setText", {|Self, cCaption| Self, ::cCaption := cCaption, SetWindowText( ::hWnd, cCaption ) }, 3, nil, 1, .f., .f. )
 
 /*
   hClass        := TBtnBmp():ClassH

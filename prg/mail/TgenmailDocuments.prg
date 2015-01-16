@@ -1,13 +1,14 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-//--------------------------------*-------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS TGenMailingDocuments FROM TGenMailing
 
    METHOD Resource()
 
-   METHOD getDatabaseList()
+   METHOD addDatabaseList()
+      METHOD getDatabaseList()
 
 END CLASS
 
@@ -33,7 +34,7 @@ METHOD Resource() CLASS TGenMailingDocuments
 
          ::buildButtonsGeneral()
 
-         SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
+         ::oBtnSiguiente:setText( "&Enviar" )
 
       ::oDlg:bStart  := {|| ::startResource() }
 
@@ -44,6 +45,14 @@ METHOD Resource() CLASS TGenMailingDocuments
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
+METHOD addDatabaseList() CLASS TGenMailingDocuments
+
+   aAdd( ::aMailingList, ::hashDatabaseList() )
+
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
 
 METHOD getDatabaseList() CLASS TGenMailingDocuments
 

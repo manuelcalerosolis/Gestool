@@ -11581,27 +11581,30 @@ Return .t.
 
 Static Function mailingFacCli( cCodigoDocumento )
 
+   local cMail
    local cFilePdf    
 
+   cMail             := retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" )
+   if empty( cMail )
+      msgStop( "El correo electrónico del cliente, está vacio." )
+      Return .f.
+   end if 
+
    cFilePdf          := mailReportFacCli( cCodigoDocumento )
-
-   if file( cFilePdf )
-
-      with object ( TGenMailingDocuments():New( nView ) )
-         :setItems( aItmFacCli() )
-         :setWorkArea( D():FacturasClientes( nView ) )
-         :setAsunto( "Envío de factura de cliente número " + D():FacturasClientesIdTextShort( nView ) )
-         :setPara( retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-         :setAdjunto( cFilePdf )
-         :setTypeDocument( "nFacCli" )
-         :Resource()
-      end with
-
-   else 
-
+   if !file( cFilePdf )
       msgStop( "El fichero " + cFilePdf + " no existe." )
+      Return .f.
+   end if 
 
-   end if
+   with object ( TGenMailingDocuments():New( nView ) )
+      :setItems( aItmFacCli() )
+      :setWorkArea( D():FacturasClientes( nView ) )
+      :setAsunto( "Envio de nuestra factura de cliente {Serie de la factura}/{Número de la factura}" )
+      :setPara( cMail )
+      :setAdjunto( cFilePdf )
+      :setTypeDocument( "nFacCli" )
+      :Resource()
+   end with
 
 Return .t.
 

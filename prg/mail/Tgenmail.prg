@@ -449,7 +449,9 @@ Return ( Self )
 
 METHOD BotonAnterior() CLASS TGenMailing
 
-   if ::oFld:nOption == 2
+   ::oFld:GoPrev()
+
+   if ::oFld:nOption = 1
       ::oBtnAnterior:Hide()
       ::oBtnSiguiente:Show() 
       ::oBtnCargarHTML:Show()
@@ -457,12 +459,11 @@ METHOD BotonAnterior() CLASS TGenMailing
       ::oBtnSalvarAsHTML:Show()
    end if
 
-   if ::oFld:nOption <= len( ::oFld:aDialogs ) 
+   if ::oFld:nOption == len( ::oFld:aDialogs ) - 1
+      ::oBtnAnterior:Show()
+      ::oBtnSiguiente:setText( "&Enviar" )
       ::oBtnSiguiente:Show() 
-      SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
    end if 
-
-   ::oFld:GoPrev()
 
 Return ( Self )
 
@@ -472,16 +473,16 @@ METHOD BotonSiguiente() CLASS TGenMailing
 
    ::oFld:GoNext()
 
-   if ::oFld:nOption == 2
+   if ::oFld:nOption > 1
       ::oBtnCargarHTML:Hide()
       ::oBtnSalvarHTML:Hide()
       ::oBtnSalvarAsHTML:Hide()
       ::oBtnAnterior:Show()
    end if 
 
-   if ::oFld:nOption == len( ::oFld:aDialogs ) - 1
+   if ::oFld:nOption == ( len( ::oFld:aDialogs ) - 1 )
       ::oBtnAnterior:Show()
-      SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
+      ::oBtnSiguiente:setText( "&Enviar" )
       ::oBtnSiguiente:Show() 
    end if 
 
@@ -655,6 +656,8 @@ METHOD hashDatabaseList() CLASS TGenMailing
    hSet( hashDatabaseList, "postSend", ::getPostSend() )
    hSet( hashDatabaseList, "postError", ::getPostError() )
    hSet( hashDatabaseList, "cargo", ::getCargo() )
+
+   // msgAlert( hb_valtoexp( hashDatabaseList ) )
 
 Return ( hashDatabaseList )
 
