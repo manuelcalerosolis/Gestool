@@ -1196,6 +1196,18 @@ RETURN cAlias
 
 //---------------------------------------------------------------------------//
 
+Function dbSeekUpperLower( uVal, nView )
+
+   local lReturn
+
+   lReturn     := ( ( D():Articulos( nView ) )->( dbSeek( uVal ) ) )           .or.;
+                  ( ( D():Articulos( nView ) )->( dbSeek( Lower( uVal ) ) ) )  .or.;
+                  ( ( D():Articulos( nView ) )->( dbSeek( Upper( uVal ) ) ) )
+
+Return ( lReturn )
+
+//---------------------------------------------------------------------------//
+
 Function dbSeekInOrd( uVal, cOrd, cAlias, lSoft, lLast )
 
    local nOrd

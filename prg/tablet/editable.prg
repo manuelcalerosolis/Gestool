@@ -66,7 +66,7 @@ Return ( self )
 
 METHOD Delete() CLASS Editable
 
-   msgInfo( "eliminamos" )
+   ApoloMsgStop( "eliminamos" )
 
 Return ( self )
 
@@ -74,7 +74,7 @@ Return ( self )
 
 METHOD SaveDocumento() CLASS Editable
 
-   msgInfo( "savedocumento" )
+   ApoloMsgStop( "savedocumento" )
 
 Return ( self )   
 

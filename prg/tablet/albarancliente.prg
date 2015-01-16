@@ -29,6 +29,8 @@ CLASS AlbaranCliente FROM Ventas
    METHOD GetAppendDetail()
    METHOD GetEditDetail()
 
+   METHOD CargaArticulo()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -293,7 +295,7 @@ Return ( self )
 
 METHOD GuardaDocumento( oCbxRuta ) CLASS AlbaranCliente
 
-   MsgInfo( "Guardamos el documento Albaranes" )
+   ApoloMsgStop( "Guardamos el documento Albaranes" )
 
    ::setUltimoCliente( oCbxRuta )
 
@@ -314,5 +316,15 @@ METHOD GetEditDetail() CLASS AlbaranCliente
    ::hDictionaryDetailTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CargaArticulo( cCodArt ) CLASS AlbaranCliente
+
+   ApoloMsgStop( "Entro en el Loaart en Albaranes" )
+
+   ApoloMsgStop( cCodArt, "Código Articulo" )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//

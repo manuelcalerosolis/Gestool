@@ -11,7 +11,7 @@ END CLASS
 
 METHOD SerieDocumento() CLASS DocumentoSerializable
 
-   MsgAlert( "Metemos el serie" )
+   ApoloMsgStop( "Metemos el serie" )
 
 Return ( self )
 

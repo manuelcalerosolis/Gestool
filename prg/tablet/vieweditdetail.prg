@@ -10,6 +10,9 @@ CLASS ViewDetail FROM ViewBase
 
    DATA oGetArticulo
    DATA oGetDescripcionArticulo
+   
+   DATA oGetLote
+   DATA oSayLote
 
    DATA oTotalLinea
    
@@ -38,6 +41,10 @@ CLASS ViewDetail FROM ViewBase
    METHOD defineDescuentoLineal()
 
    METHOD defineTotal()
+
+   METHOD ShowLote()    INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
+   METHOD HideLote()    INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
+   METHOD RefreshLote() INLINE ( ::oGetLote:Refresh() )
 
 END CLASS
 
@@ -130,7 +137,7 @@ METHOD defineArticulo() CLASS ViewDetail
                                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                                                       "nHeight"   => 23,;
                                                       "lPixels"   => .t.,;
-                                                      "bValid"    => {|| .t. } } ) //LoaArt( aTmp[ _CREF ], aGet, aTmp, aTmpFac,,,,,,, nMode, , oSayLote ), lCalcDeta( aTmp, aTmpFac ) } } )
+                                                      "bValid"    => {|| ::oSender:CargaArticulo(), ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
    
    ::oGetDescripcionArticulo  := TGridGet():Build( {  "nRow"      => 40,;
                                                       "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
@@ -146,25 +153,25 @@ Return ( self )
 
 METHOD defineLote() CLASS ViewDetail
 
-   TGridSay():Build(    {  "nRow"      => 65,;
-                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                           "bText"     => {|| "Lote" },;
-                           "oWnd"      => ::oDlg,;
-                           "oFont"     => oGridFont(),;
-                           "lPixels"   => .t.,;
-                           "nClrText"  => Rgb( 0, 0, 0 ),;
-                           "nClrBack"  => Rgb( 255, 255, 255 ),;
-                           "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                           "nHeight"   => 23,;
-                           "lDesign"   => .f. } )
+   ::oSayLote  :=TGridSay():Build( {   "nRow"      => 65,;
+                                       "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                       "bText"     => {|| "Lote" },;
+                                       "oWnd"      => ::oDlg,;
+                                       "oFont"     => oGridFont(),;
+                                       "lPixels"   => .t.,;
+                                       "nClrText"  => Rgb( 0, 0, 0 ),;
+                                       "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                       "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                       "nHeight"   => 23,;
+                                       "lDesign"   => .f. } )
 
-   TGridGet():Build( {     "nRow"      => 65,;
-                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| ::SetGetValue( u, "Lote" ) },;
-                           "oWnd"      => ::oDlg,;
-                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                           "nHeight"   => 23,;
-                           "lPixels"   => .t. } )
+   ::oGetLote  := TGridGet():Build( {  "nRow"      => 65,;
+                                       "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                       "bSetGet"   => {|u| ::SetGetValue( u, "Lote" ) },;
+                                       "oWnd"      => ::oDlg,;
+                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                       "nHeight"   => 23,;
+                                       "lPixels"   => .t. } )
 
 Return ( self )
 

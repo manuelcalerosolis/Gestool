@@ -44,6 +44,42 @@ CLASS Ventas FROM DocumentoSerializable
    METHOD AppendGuardaLinea()
    METHOD EditGuardaLinea()
 
+   METHOD lSeekArticulo()
+
+   METHOD setCodigoArticulo();
+            INLINE ( hSet( ::hDictionaryDetailTemporal, "Articulo", ( D():Articulos( ::nView ) )->Codigo ),;
+                     ::oViewEditDetail:oGetArticulo:Refresh() )
+
+   METHOD lArticuloObsoleto()
+
+   METHOD setDetalleArticulo();    
+            INLINE ( hSet( ::hDictionaryDetailTemporal, "DescripcionArticulo", ( D():Articulos( ::nView ) )->Nombre ),;
+                     hSet( ::hDictionaryDetailTemporal, "DescripcionAmpliada", ( D():Articulos( ::nView ) )->Descrip ),;
+                     ::oViewEditDetail:oGetDescripcionArticulo:Refresh() )
+
+   METHOD setProveedorArticulo()
+
+   METHOD setLote()
+
+   METHOD setTipoVenta();
+            INLINE ( hSet( ::hDictionaryDetailTemporal, "AvisarSinStock", ( D():Articulos( ::nView ) )->lMsgVta ),;
+                     hSet( ::hDictionaryDetailTemporal, "NoPermitirSinStock", ( D():Articulos( ::nView ) )->lNotVta ) )
+
+   METHOD setFamilia();
+            INLINE ( hSet( ::hDictionaryDetailTemporal, "Familia", ( D():Articulos( ::nView ) )->Familia ),;
+                     hSet( ::hDictionaryDetailTemporal, "GrupoFamilia", cGruFam( ( D():Articulos( ::nView ) )->Familia, D():Familias( ::nView ) ) ) )
+
+   METHOD setPeso();
+            INLINE ( hSet( ::hDictionaryDetailTemporal, "Peso", ( D():Articulos( ::nView ) )->nPesoKg ),;
+                     hSet( ::hDictionaryDetailTemporal, "UnidadMedicionPeso", ( D():Articulos( ::nView ) )->cUndDim ) )
+
+   METHOD setVolumen();
+            INLINE ( hSet( ::hDictionaryDetailTemporal, "Volumen", ( D():Articulos( ::nView ) )->nVolumen ),;
+                     hSet( ::hDictionaryDetailTemporal, "UnidadMedicionVolumen", ( D():Articulos( ::nView ) )->cVolumen ) )
+
+   METHOD setUnidadesMedicion();
+            INLINE ( hSet( ::hDictionaryDetailTemporal, "UnidadMedicion", ( D():Articulos( ::nView ) )->cUnidad ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -75,11 +111,21 @@ METHOD OpenFiles() CLASS Ventas
 
    D():ClientesDirecciones( ::nView )
 
+   D():Articulos( ::nView )
+
+   D():ArticulosCodigosBarras( ::nView )
+
+   D():ProveedorArticulo( ::nView )
+
+   D():Proveedores( ::nView )
+
+   D():Familias( ::nView )
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+      ApoloMsgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -195,7 +241,7 @@ METHOD lValidCliente( oGet, oGet2, nMode ) CLASS Ventas
 
    else
 
-      msgStop( "Cliente no encontrado" )
+      ApoloMsgStop( "Cliente no encontrado" )
       lValid := .f.
 
    end if
@@ -218,7 +264,7 @@ METHOD lValidDireccion( oGet, oGet2, cCodCli ) CLASS Ventas
    end if
 
    if Empty( cCodCli )
-      MsgStop( "Es necesario codificar un cliente" )
+      ApoloMsgStop( "Es necesario codificar un cliente" )
       return .t.
    end if
 
@@ -238,7 +284,7 @@ METHOD lValidDireccion( oGet, oGet2, cCodCli ) CLASS Ventas
 
    else
 
-      msgStop( "Dirección no encontrada" )
+      ApoloMsgStop( "Dirección no encontrada" )
       
       if !Empty( oGet )
          oGet:SetFocus()
@@ -505,6 +551,69 @@ METHOD EditGuardaLinea() CLASS Ventas
    if !Empty( ::oViewEdit:oBrowse )
       ::oViewEdit:oBrowse:Refresh()
    end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD lSeekArticulo() CLASS Ventas
+
+   local cCodArt     := hGet( ::hDictionaryDetailTemporal, "Articulo" )
+
+   if Empty( cCodArt )
+      Return .f.
+   end if
+
+   cCodArt           := cSeekCodebarView( cCodArt, ::nView )
+
+Return ( dbSeekUpperLower( cCodArt, ::nView ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD lArticuloObsoleto() CLASS Ventas
+
+   if !( D():Articulos( ::nView ) )->lObs
+      Return .f.
+   end if
+
+   ApoloMsgStop( "Artículo catalogado como obsoleto" )
+
+   ::oViewEditDetail:oGetArticulo:SetFocus()
+
+Return .t.
+
+//---------------------------------------------------------------------------//   
+
+METHOD setProveedorArticulo() CLASS Ventas
+
+   local cRefProveedor
+   
+   cRefProveedor     := Padr( cRefPrvArt( ( D():Articulos( ::nView ) )->Codigo, ( D():Articulos( ::nView ) )->cPrvHab , D():ProveedorArticulo( ::nView ) ) , 18 )
+
+   hSet( ::hDictionaryDetailTemporal, "Proveedor", ( D():Articulos( ::nView ) )->cPrvHab )
+   hSet( ::hDictionaryDetailTemporal, "NombreProveedor", RetFld( ( D():Articulos( ::nView ) )->cPrvHab, D():Proveedores( ::nView ) ) )
+   hSet( ::hDictionaryDetailTemporal, "ReferenciaProveedor", cRefProveedor )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setLote() CLASS Ventas
+
+   if ( D():Articulos( ::nView ) )->lLote
+
+      hSet( ::hDictionaryDetailTemporal, "LogicoLote", ( D():Articulos( ::nView ) )->lLote )
+      hSet( ::hDictionaryDetailTemporal, "Lote", ( D():Articulos( ::nView ) )->cLote )
+
+      ::oViewEditDetail:ShowLote()
+
+   else
+
+      ::oViewEditDetail:HideLote()
+
+   end if
+
+   ::oViewEditDetail:RefreshLote()
 
 Return ( self )
 

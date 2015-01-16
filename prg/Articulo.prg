@@ -17184,6 +17184,12 @@ RETURN ( lTmp )
 // Devuelve el codigo interno pasandole el codigo de barras
 //
 
+Function cSeekCodebarView( cCodBar, nView )
+
+Return ( cSeekCodebar( cCodBar, D():ArticulosCodigosBarras( nView ), D():Articulos( nView ) ) )
+
+//---------------------------------------------------------------------------//
+
 Function cSeekCodebar( cCodBar, dbfCodebar, dbfArticulo )
 
    local n
