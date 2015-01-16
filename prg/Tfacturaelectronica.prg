@@ -243,6 +243,34 @@ METHOD GeneraXml()
                                                        'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',;
                                                        'xsi:schemaLocation' => 'http://www.facturae.es/Facturae/2007/v3.1/Facturae http://www.facturae.es/NR/rdonlyres/56F4132E-2AF9-41DD-AADC-CB412AE3F79C/0/1Facturaev31.xsd' } )
 
+   /*
+   Facturae 3.2
+
+   ::oXmlNode     := TXmlNode():new( , 'namespace:Facturae',;
+                                       {  'xmlns:namespace' => 'http://www.facturae.es/Facturae/2009/v3.2/Facturae',;
+                                          'xmlns:namespace2' => 'http://www.w3.org/2001/XMLSchema',;
+                                          'xmlns:namespace3' => 'http://www.w3.org/2000/09/xmldsig#' } )
+   */
+
+/*
+<xs:schema 
+xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+xmlns="http://www.facturae.es/Facturae/2007/v3.1/Facturae" 
+targetNamespace="http://www.facturae.es/Facturae/2007/v3.1/Facturae" version="3.1">
+<xs:import 
+namespace="http://www.w3.org/2000/09/xmldsig#" 
+schemaLocation="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
+*/
+
+/*
+<xs:schema xmlns:ds="http://www.w3.org/2000/09/xmldsig#",;
+xmlns:xs="http://www.w3.org/2001/XMLSchema",;
+xmlns="http://www.facturae.es/Facturae/2014/v3.2.1/Facturae",;
+targetNamespace="http://www.facturae.es/Facturae/2014/v3.2.1/Facturae" version="3.2.1">
+<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd"/>
+*/
+
    ::HeaderXml()
 
    ::PartiesXml()
@@ -300,7 +328,6 @@ METHOD HeaderXml()
       ::oXmlHeader:addBelow( TXmlNode():new( , 'SchemaVersion', ,       SchemaVersion ) )
       ::oXmlHeader:addBelow( TXmlNode():new( , 'Modality', ,            Modality ) )
       ::oXmlHeader:addBelow( TXmlNode():new( , 'InvoiceIssuerType', ,   InvoiceIssuerType ) )
-
 
       /*
       Comienza el nodo batch------------------------------------------------
@@ -1482,3 +1509,203 @@ CLASS Account
 ENDCLASS
 
 //---------------------------------------------------------------------------//
+
+/*
+<namespace:Facturae xmlns:namespace="http://www.facturae.es/Facturae/2009/v3.2/Facturae" xmlns:namespace2="http://www.w3.org/2001/XMLSchema" xmlns:namespace3="http://www.w3.org/2000/09/xmldsig#">
+<FileHeader>
+<SchemaVersion>3.2</SchemaVersion>
+<Modality>I</Modality>
+<InvoiceIssuerType>EM</InvoiceIssuerType>
+<Batch>
+<BatchIdentifier>99999999R_F00010</BatchIdentifier>
+<InvoicesCount>1</InvoicesCount>
+<TotalInvoicesAmount>
+<TotalAmount>672.35</TotalAmount>
+</TotalInvoicesAmount>
+<TotalOutstandingAmount>
+<TotalAmount>672.35</TotalAmount>
+</TotalOutstandingAmount>
+<TotalExecutableAmount>
+<TotalAmount>672.35</TotalAmount>
+</TotalExecutableAmount>
+<InvoiceCurrencyCode>EUR</InvoiceCurrencyCode>
+</Batch>
+</FileHeader>
+<Parties>
+<SellerParty>
+<TaxIdentification>
+<PersonTypeCode>F</PersonTypeCode>
+<ResidenceTypeCode>R</ResidenceTypeCode>
+<TaxIdentificationNumber>99999999R</TaxIdentificationNumber>
+</TaxIdentification>
+<Individual>
+<Name>JUAN ESPAÑOL ESPAÑOL</Name>
+<FirstSurname/>
+<SecondSurname/>
+<AddressInSpain>
+<Address>Domicilio</Address>
+<PostCode>30000</PostCode>
+<Town>Poblacion</Town>
+<Province>Provincia</Province>
+<CountryCode>ESP</CountryCode>
+</AddressInSpain>
+<ContactDetails>
+<Telephone>968112233</Telephone>
+<TeleFax>968223300</TeleFax>
+<WebAddress>www.paginaweb.es</WebAddress>
+<ElectronicMail>email@ncs.es</ElectronicMail>
+<ContactPersons>Persona de Contacto</ContactPersons>
+</ContactDetails>
+</Individual>
+</SellerParty>
+<BuyerParty>
+<TaxIdentification>
+<PersonTypeCode>J</PersonTypeCode>
+<ResidenceTypeCode>R</ResidenceTypeCode>
+<TaxIdentificationNumber>Q2826000H</TaxIdentificationNumber>
+</TaxIdentification>
+<LegalEntity>
+<CorporateName>AEAT</CorporateName>
+<TradeName>AEAT</TradeName>
+<AddressInSpain>
+<Address>Calle Sta Maria Magdalena</Address>
+<PostCode>28016</PostCode>
+<Town>Madrid</Town>
+<Province>Madrid</Province>
+<CountryCode>ESP</CountryCode>
+</AddressInSpain>
+<ContactDetails>
+<Telephone></Telephone>
+<TeleFax/>
+<WebAddress/>
+<ElectronicMail>email@email.es</ElectronicMail>
+<ContactPersons/>
+</ContactDetails>
+</LegalEntity>
+</BuyerParty>
+</Parties>
+<Invoices>
+<Invoice>
+<InvoiceHeader>
+<InvoiceNumber>00010</InvoiceNumber>
+<InvoiceSeriesCode>F</InvoiceSeriesCode>
+<InvoiceDocumentType>FC</InvoiceDocumentType>
+<InvoiceClass>OO</InvoiceClass>
+</InvoiceHeader>
+<InvoiceIssueData>
+<IssueDate>2009-10-02</IssueDate>
+<InvoiceCurrencyCode>EUR</InvoiceCurrencyCode>
+<TaxCurrencyCode>EUR</TaxCurrencyCode>
+<LanguageName>es</LanguageName>
+</InvoiceIssueData>
+<TaxesOutputs>
+<Tax>
+<TaxTypeCode>01</TaxTypeCode>
+<TaxRate>16.00</TaxRate>
+<TaxableBase>
+<TotalAmount>301.50</TotalAmount>
+</TaxableBase>
+<TaxAmount>
+<TotalAmount>48.24</TotalAmount>
+</TaxAmount>
+</Tax>
+<Tax>
+<TaxTypeCode>01</TaxTypeCode>
+<TaxRate>7.00</TaxRate>
+<TaxableBase>
+<TotalAmount>301.50</TotalAmount>
+</TaxableBase>
+<TaxAmount>
+<TotalAmount>21.11</TotalAmount>
+</TaxAmount>
+</Tax>
+</TaxesOutputs>
+<InvoiceTotals>
+<TotalGrossAmount>603.00</TotalGrossAmount>
+<TotalGeneralDiscounts>0.00</TotalGeneralDiscounts>
+<TotalGeneralSurcharges>0.00</TotalGeneralSurcharges>
+<TotalGrossAmountBeforeTaxes>603.00</TotalGrossAmountBeforeTaxes>
+<TotalTaxOutputs>69.35</TotalTaxOutputs>
+<TotalTaxesWithheld>0.00</TotalTaxesWithheld>
+<InvoiceTotal>672.35</InvoiceTotal>
+<TotalOutstandingAmount>672.35</TotalOutstandingAmount>
+<TotalExecutableAmount>672.35</TotalExecutableAmount>
+<TotalReimbursableExpenses>0.00</TotalReimbursableExpenses>
+</InvoiceTotals>
+<Items>
+<InvoiceLine>
+<ItemDescription>ARTICULO 0101</ItemDescription>
+<Quantity>1</Quantity>
+<UnitOfMeasure>01</UnitOfMeasure>
+<UnitPriceWithoutTax>100.500000</UnitPriceWithoutTax>
+<TotalCost>100.500000</TotalCost>
+<GrossAmount>100.500000</GrossAmount>
+<TaxesOutputs>
+<Tax>
+<TaxTypeCode>01</TaxTypeCode>
+<TaxRate>16.00</TaxRate>
+<TaxableBase>
+<TotalAmount>100.50</TotalAmount>
+</TaxableBase>
+<TaxAmount>
+<TotalAmount>16.08</TotalAmount>
+</TaxAmount>
+</Tax>
+</TaxesOutputs>
+<AdditionalLineItemInformation/>
+</InvoiceLine>
+<InvoiceLine>
+<ItemDescription>ARTICULO 0102</ItemDescription>
+<Quantity>2</Quantity>
+<UnitOfMeasure>01</UnitOfMeasure>
+<UnitPriceWithoutTax>100.500000</UnitPriceWithoutTax>
+<TotalCost>201.000000</TotalCost>
+<GrossAmount>201.000000</GrossAmount>
+<TaxesOutputs>
+<Tax>
+<TaxTypeCode>01</TaxTypeCode>
+<TaxRate>16.00</TaxRate>
+<TaxableBase>
+<TotalAmount>201.00</TotalAmount>
+</TaxableBase>
+<TaxAmount>
+<TotalAmount>32.16</TotalAmount>
+</TaxAmount>
+</Tax>
+</TaxesOutputs>
+<AdditionalLineItemInformation/>
+</InvoiceLine>
+<InvoiceLine>
+<ItemDescription>ARTICULO 0103</ItemDescription>
+<Quantity>3</Quantity>
+<UnitOfMeasure>01</UnitOfMeasure>
+<UnitPriceWithoutTax>100.500000</UnitPriceWithoutTax>
+<TotalCost>301.500000</TotalCost>
+<GrossAmount>301.500000</GrossAmount>
+<TaxesOutputs>
+<Tax>
+<TaxTypeCode>01</TaxTypeCode>
+<TaxRate>7.00</TaxRate>
+<TaxableBase>
+<TotalAmount>301.50</TotalAmount>
+</TaxableBase>
+<TaxAmount>
+<TotalAmount>21.11</TotalAmount>
+</TaxAmount>
+</Tax>
+</TaxesOutputs>
+<AdditionalLineItemInformation/>
+</InvoiceLine>
+</Items>
+<PaymentDetails>
+<Installment>
+<InstallmentDueDate>2009-10-02</InstallmentDueDate>
+<InstallmentAmount>672.35</InstallmentAmount>
+<PaymentMeans>01</PaymentMeans>
+<CollectionAdditionalInformation>Contado</CollectionAdditionalInformation>
+</Installment>
+</PaymentDetails>
+</Invoice>
+</Invoices>
+</namespace:Facturae>
+*/

@@ -1787,16 +1787,18 @@ Function dbBlankRec( cAlias )
    for i = 1 to ( cAlias )->( fCount() )
 
       do case
-         Case aStruct[ i, DBS_TYPE ] == "C"
+         case aStruct[ i, DBS_TYPE ] == "C"
             AAdd( aBlank, Space( aStruct[ i, DBS_LEN ] ) )
-         Case aStruct[ i, DBS_TYPE ] == "M"
+         case aStruct[ i, DBS_TYPE ] == "M"
             AAdd( aBlank, "" )            // Space( aStruct[ i, DBS_LEN ] )
-         Case aStruct[ i, DBS_TYPE ] == "N"
+         case aStruct[ i, DBS_TYPE ] == "N"
             AAdd( aBlank, Val( "0." + Replicate( "0", aStruct[ i, DBS_DEC ] ) ) )
-         Case aStruct[ i, DBS_TYPE ] == "L"
+         case aStruct[ i, DBS_TYPE ] == "L"
             AAdd( aBlank, .F. )
-         Case aStruct[ i, DBS_TYPE ] == "D"
+         case aStruct[ i, DBS_TYPE ] == "D"
             AAdd( aBlank, GetSysDate() )  // CtoD( "" ) )
+         case aStruct[ i, DBS_TYPE ] == "@"
+            AAdd( aBlank, DateTime() )  
       end case
 
    next

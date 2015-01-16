@@ -2491,6 +2491,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _CSUFFAC    ]  := RetSufEmp()
       aTmp[ _LLIQUIDADA ]  := .f.
       aTmp[ _LSNDDOC    ]  := .t.
+      aTmp[ _LMAIL      ]  := .t.
       aTmp[ _CCODPRO    ]  := cProCnt()
       aTmp[ _CCODUSR    ]  := cCurUsr()
       aTmp[ _DFECIMP    ]  := Ctod("")
@@ -3017,8 +3018,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwLin:cName           := "Factura de cliente.Detalle"
 
       // oBrwLin:SetRdd()
-
-
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Oferta"

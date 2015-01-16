@@ -12,6 +12,7 @@ CLASS TGenMailingDatabase FROM TGenMailing
    DATA oBntCreateFilter
    DATA oBntQuitFilter
 
+   METHOD New()
 
    METHOD setWorkArea( cWorkArea )        INLINE   ( ::Super:setWorkArea( cWorkArea ), ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
    METHOD quitWorkArea()                  INLINE   ( hSetStatus( ::hWorkAreaStatus ) )
@@ -47,6 +48,16 @@ CLASS TGenMailingDatabase FROM TGenMailing
                                           INLINE   ( ::aOrderDatabase := aOrderDatabase )
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New()
+
+   ::Super:New()
+
+   ::oFilter         := TFilterCreator():Init( Self )   
+
+Return ( Self )   
 
 //---------------------------------------------------------------------------//
 
