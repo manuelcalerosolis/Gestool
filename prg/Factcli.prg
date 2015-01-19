@@ -11595,6 +11595,10 @@ Static Function mailingFacCli( cCodigoDocumento )
       Return .f.
    end if 
 
+   if !Empty( oWndBrw ) .and. ( len( oWndBrw:oBrw:aSelected ) > 1 )
+      msgAlert( hb_valToExp( oWndBrw:oBrw:aSelected ), "aSelected" )
+   end if 
+
    with object ( TGenMailingDocuments():New( nView ) )
       :setItems( aItmFacCli() )
       :setWorkArea( D():FacturasClientes( nView ) )

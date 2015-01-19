@@ -14,7 +14,6 @@ CLASS TGenMailingSerialDocuments FROM TGenMailingDatabase
 
    METHOD setFacturasCleintesSend( hMail )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//

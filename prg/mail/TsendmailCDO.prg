@@ -23,6 +23,7 @@ CLASS TSendMailCDO
 
       METHOD setRecipients( oMail, hMail )
       METHOD setRecipientsCC( oMail, cRecipients )
+      METHOD setRecipientsCCO( oMail, cRecipients )
       METHOD setAttachment( oMail, hMail )
       METHOD setMessage( oMail, hMail )
       METHOD setSubject( oMail, hMail )
@@ -64,6 +65,8 @@ METHOD sendMail( hMail )
       ::setAttachment( oMail, hMail )
 
       ::setRecipientsCC( oMail, hMail )
+   
+      ::setRecipientsCCO( oMail, hMail )
 
       ::setMessage( oMail, hMail )
 
@@ -120,7 +123,19 @@ METHOD setRecipientsCC( oMail, hMail )
    local cMailsCC          := ::oSender:getFromHash( hMail, "mailcc" )      
 
    if !empty( cMailsCC )
-      oMail:Bcc            := cMailsCC
+      oMail:Cc             := cMailsCC
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+METHOD setRecipientsCCO( oMail, hMail )
+
+   local cMailsCCO         := ::oSender:getFromHash( hMail, "mailcco" )      
+
+   if !empty( cMailsCCO )
+      oMail:Bcc            := cMailsCCO
    end if
 
 Return ( nil )

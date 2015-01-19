@@ -2402,6 +2402,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       180;
             OF       fldComunicaciones
 
+      REDEFINE GET aTmp[ _CCCOMAI ] ;
+            ID       185;
+            OF       fldComunicaciones
+
       REDEFINE GET aTmp[ _CSITSQL ] ;
             ID       100;
             OF       fldComunicaciones
@@ -6516,7 +6520,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cSrvMai",    "C",250, 0, "Servidor de correo",                                    "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCtaMai",    "C",250, 0, "Cuenta de correo",                                      "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cPssMai",    "C",250, 0, "Clave de cuenta de correo",                             "", "", "aEmp()", "" } )
-   aAdd( aDbf, {"cCcpMai",    "C",250, 0, "Enviar copoas de mail a cuenta de correo",              "", "", "aEmp()", "" } )
+   aAdd( aDbf, {"cCcpMai",    "C",250, 0, "Enviar copias de mail a cuenta de correo",              "", "", "aEmp()", "" } )
    aAdd( aDbf, {"nNumPgo",    "N",  9, 0, "Contador para pago de clientes",                        "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lSelCaj",    "L",  1, 0, "Lógico seleccionar cajas",                              "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lSelAlm",    "L",  1, 0, "Lógico seleccionar almacenes",                          "", "", "aEmp()", .f. } )
@@ -6637,6 +6641,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cCodPrvFrq", "C", 12, 0, "Código de proveedor para franquicia",                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lStkAlm",    "L",  1, 0, "Lógico de usar stock por almacenes",                    "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lSSLMai",    "L",  1, 0, "Lógico de uso de protocolo SSL del servidor de correo", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCcoMai",    "C",250, 0, "Enviar con copia oculta de mail a cuenta de correo",    "", "", "aEmp()", "" } )
 
 Return ( aDbf )
 

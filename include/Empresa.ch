@@ -305,3 +305,4 @@
 #define _CCODPRVFRQ           305
 #define _LSTKALM              306
 #define _LSSLMAI              307
+#define _CCCOMAI              308

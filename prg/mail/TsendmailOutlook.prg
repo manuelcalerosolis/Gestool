@@ -21,6 +21,7 @@ CLASS TSendMailOutlook
 
       METHOD setRecipients( oMail, hMail )
       METHOD setRecipientsCC( oMail, cRecipients )
+      METHOD setRecipientsCCO( oMail, cRecipients )
       METHOD setAttachment( oMail, hMail )
       METHOD setMessage( oMail, hMail )
       METHOD setSubject( oMail, hMail )
@@ -60,6 +61,8 @@ METHOD sendMail( hMail )
       ::setAttachment( oMail, hMail )
 
       ::setRecipientsCC( oMail, hMail )
+
+      ::setRecipientsCCO( oMail, hMail )
 
       ::setMessage( oMail, hMail )
 
@@ -123,6 +126,23 @@ METHOD setRecipientsCC( oMail, hMail )
       for each cItem in hb_aTokens( cMailsCC, ";" )
          oRecipient        := oMail:Recipients:Add( cItem ) 
          oRecipient:Type   := 2 
+      next
+   end if
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+METHOD setRecipientsCCO( oMail, hMail )
+
+   local cItem
+   local oRecipient
+   local cMailsCCO         := ::oSender:getFromHash( hMail, "mailcco" )      
+
+   if !empty( cMailsCCO )
+      for each cItem in hb_aTokens( cMailsCCO, ";" )
+         oRecipient        := oMail:Recipients:Add( cItem ) 
+         oRecipient:Type   := 3
       next
    end if
 

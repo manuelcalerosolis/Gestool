@@ -48,6 +48,9 @@ CLASS TGenMailing
    DATA oGetCopia                      
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
+   DATA oGetCopiaOculta                
+   DATA cGetCopiaOculta                INIT Padr( uFieldEmpresa( "cCcoMai" ), 250 )
+
    DATA oGetPara
    DATA cGetPara                       INIT Space( 250 )
    
@@ -59,6 +62,7 @@ CLASS TGenMailing
 
    DATA lHidePara                      INIT .f.
    DATA lHideCopia                     INIT .f.
+   DATA lHideCopiaOculta               INIT .f.
 
    DATA aAdjuntos                      INIT {}
 
@@ -125,6 +129,11 @@ CLASS TGenMailing
    METHOD getCopia()                   INLINE ( alltrim( ::cGetCopia ) )
       METHOD HideCopia()               INLINE ( ::lHideCopia := .t., if ( !empty( ::oGetCopia ), ::oGetCopia:Hide(), ) )
       METHOD ShowCopia()               INLINE ( ::lHideCopia := .f., if ( !empty( ::oGetCopia ), ::oGetCopia:Show(), ) )
+
+   METHOD setCopiaOculta( cText )      INLINE ( ::cGetCopiaOculta := padr( cText, 250 ) )
+   METHOD getCopiaOculta()             INLINE ( alltrim( ::cGetCopiaOculta ) )
+      METHOD HideCopiaOculta()         INLINE ( ::lHideCopiaOculta := .t., if ( !empty( ::oGetCopiaOculta ), ::oGetCopiaOculta:Hide(), ) )
+      METHOD ShowCopiaOculta()         INLINE ( ::lHideCopiaOculta := .f., if ( !empty( ::oGetCopiaOculta ), ::oGetCopiaOculta:Show(), ) )
 
    METHOD getMessage()
    METHOD getMessageHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
@@ -267,6 +276,10 @@ METHOD startResource() CLASS TGenMailing
       ::oGetCopia:Hide()
    end if 
 
+   if ::lHideCopiaOculta
+      ::oGetCopiaOculta:Hide()
+   end if 
+
    if Empty( ::oActiveX )
       MsgStop( "No se ha podido instanciar el control." )
       Return ( Self )
@@ -312,6 +325,11 @@ METHOD buildPageRedactar( oDlg )
    REDEFINE GET ::oGetCopia VAR ::cGetCopia ;
       IDSAY    151 ;
       ID       150 ;
+      OF       oDlg
+
+   REDEFINE GET ::oGetCopiaOculta VAR ::cGetCopiaOculta ;
+      IDSAY    156 ;
+      ID       155 ;
       OF       oDlg
 
    ::oGetAdjunto:cBmp   := "Folder"
@@ -650,6 +668,7 @@ METHOD hashDatabaseList() CLASS TGenMailing
 
    hSet( hashDatabaseList, "mail", ::getPara() )
    hSet( hashDatabaseList, "mailcc", ::getCopia() )
+   hSet( hashDatabaseList, "mailcco", ::getCopiaOculta() )
    hSet( hashDatabaseList, "subject", ::getAsunto() )
    hSet( hashDatabaseList, "attachments", ::getAdjunto() )
    hSet( hashDatabaseList, "message", ::getMessageHTML() )

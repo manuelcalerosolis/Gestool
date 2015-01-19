@@ -51,9 +51,9 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New()
+METHOD New( nView )
 
-   ::Super:New()
+   ::Super:New( nView )
 
    ::oFilter         := TFilterCreator():Init( Self )   
 

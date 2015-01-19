@@ -7,7 +7,7 @@ CLASS TGenMailingClientes FROM TGenMailingDatabase
 
    METHOD New( nView )
 
-   METHOD getPara()        INLINE ( ( ::getWorkArea )->cMeiInt )
+   METHOD getPara()        INLINE ( ( ::getWorkArea() )->cMeiInt )
    
 END CLASS
 
