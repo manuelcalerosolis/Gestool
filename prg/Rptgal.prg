@@ -2472,6 +2472,39 @@ Function TFacturarLineasAlbaranesProveedor()
 
 Return nil
 
+Function TGenMailing()
+
+Return nil
+
+Function TGenMailingClientes()
+Return nil
+
+Function TGenMailingProveedores()
+Return nil
+
+Function TGenMailingDatabase()
+Return nil
+
+Function TGenMailingDocuments()
+Return nil
+
+Function TGenMailingSelection()
+Return nil
+
+Function TGenMailingSerialDocuments()
+Return nil
+
+Function TSendMailCDO()
+Return nil
+
+Function TSendMailOutlook()
+Return nil
+
+Function TTemplatesHtml()
+Return nil
+
+Function PedidoCliente()
+Return nil
 
 //------------------------------------------------------------------//
 

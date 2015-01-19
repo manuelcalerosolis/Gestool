@@ -13586,7 +13586,6 @@ Method RestoreData() CLASS TPedidosClientesSenderReciver
    end if
 
 Return ( Self )
-
 //----------------------------------------------------------------------------//
 
 Method SendData() CLASS TPedidosClientesSenderReciver

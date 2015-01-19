@@ -52,7 +52,6 @@ Cccheck.prg             \
 Cfaccli.prg             \
 Client.prg              \
 Contactos.prg           \
-TGenMail.prg            \
 Comun.prg               \
 ConfCajPorta.prg        \
 ConfImpTiket.prg        \
@@ -1080,7 +1079,6 @@ Cccheck.obj             \
 Cfaccli.obj             \
 Client.obj              \
 Contactos.obj           \
-TGenMail.obj            \
 Comun.obj               \
 ConfCajPorta.obj        \
 ConfImpTiket.obj        \
@@ -2122,7 +2120,6 @@ $(OBJ)\Cccheck.obj              +
 $(OBJ)\Cfaccli.obj              +
 $(OBJ)\Client.obj               +
 $(OBJ)\Contactos.obj            +
-$(OBJ)\TGenMail.obj             +
 $(OBJ)\Comun.obj                +
 $(OBJ)\ConfCajPorta.obj         +
 $(OBJ)\ConfImpTiket.obj         +

@@ -130,7 +130,9 @@ METHOD lResource( cFld ) CLASS TDiaCRec
 
    ::StdResource( "INFDIAREC" )
 
-   ::oBtnFilter:Disable()
+   ::CreateFilter( , ::oDbf, .t. )
+
+   //::oBtnFilter:Disable()
 
    /*
    Monta los obras de manera automatica
