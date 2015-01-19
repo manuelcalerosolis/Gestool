@@ -34,6 +34,12 @@
 #define _CTAGAS                  20      //   C     12,  0, "Código subcuenta gasto",    "",            "", "( cDbfAge )" } }
 #define _CCODPRV                 21      //   C     12,  0
 #define _CCODART                 22      //   C     12,  0
+#define _NCOMTAR1                23      //   N      5     2
+#define _NCOMTAR2                24      //   N      5     2
+#define _NCOMTAR3                25      //   N      5     2
+#define _NCOMTAR4                26      //   N      5     2
+#define _NCOMTAR5                27      //   N      5     2
+#define _NCOMTAR6                28      //   N      5     2
 
 static cTmpCom
 static cTmpRel
@@ -349,6 +355,8 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       oFld:aDialogs[2]
 
+      // Comisiones genereales
+
       REDEFINE GET aTemp[ _NCOM1 ] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@E 999.99" ;
@@ -356,9 +364,61 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
          ID       120 ;
          OF       oFld:aDialogs[2]
 
-      /*
-		Detalle________________________________________________________________
-		*/
+      // Comisiones por tarifa 1
+
+      REDEFINE GET aTemp[ _NCOMTAR1 ] ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "@E 999.99" ;
+         SPINNER;
+         ID       100 ;
+         OF       oFld:aDialogs[2]
+
+      // Comisiones por tarifa 2
+
+      REDEFINE GET aTemp[ _NCOMTAR2 ] ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "@E 999.99" ;
+         SPINNER;
+         ID       101 ;
+         OF       oFld:aDialogs[2]
+
+      // Comisiones por tarifa 3
+
+      REDEFINE GET aTemp[ _NCOMTAR3 ] ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "@E 999.99" ;
+         SPINNER;
+         ID       102 ;
+         OF       oFld:aDialogs[2]
+
+      // Comisiones por tarifa 4
+
+      REDEFINE GET aTemp[ _NCOMTAR4 ] ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "@E 999.99" ;
+         SPINNER;
+         ID       103 ;
+         OF       oFld:aDialogs[2]
+
+      // Comisiones por tarifa 5
+
+      REDEFINE GET aTemp[ _NCOMTAR5 ] ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "@E 999.99" ;
+         SPINNER;
+         ID       104 ;
+         OF       oFld:aDialogs[2]
+
+      // Comisiones por tarifa 6
+
+      REDEFINE GET aTemp[ _NCOMTAR6 ] ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "@E 999.99" ;
+         SPINNER;
+         ID       105 ;
+         OF       oFld:aDialogs[2]
+
+		// Detalle________________________________________________________________
 
       oBrwLin                 := IXBrowse():New( oFld:aDialogs[2] )
 
@@ -1524,14 +1584,20 @@ FUNCTION aItmAge()
                      { "nIrpfAge",  "N",  5,  2, "IRPF del agente" ,          "'@E 99.99'",  "", "( cDbfAge )" },;
                      { "mComEnt",   "M", 10,  0, "Comentarios" ,              "",            "", "( cDbfAge )" },;
                      { "lSelAge",   "L",  1,  0, "Seleccionar el agente" ,    "",            "", "( cDbfAge )" },;
-                     { "nCom1",     "N",  5,  2, "Comisión del agente" ,      "'@E 99.99'",  "", "( cDbfAge )" },;
+                     { "nCom1",     "N",  6,  2, "Comisión del agente" ,      "'@E 99.99'",  "", "( cDbfAge )" },;
                      { "cMailAge",  "C",120,  0, "Email del agente" ,         "",            "", "( cDbfAge )" },;
                      { "cAgeRel",   "C",  3,  0, "Código del agente relacionado" ,     "",   "", "( cDbfAge )" },;
                      { "nComRel",   "N",  6,  2, "Comisión del agente relacionado" ,   "",   "", "( cDbfAge )" },;
                      { "CtaAge",    "C", 12,  0, "Código subcuenta agente",   "",            "", "( cDbfAge )" },;
                      { "CtaGas",    "C", 12,  0, "Código subcuenta gasto",    "",            "", "( cDbfAge )" },;
                      { "cCodPrv",   "C", 12,  0, "Código de proveedor",       "",            "", "( cDbfAge )" },;
-                     { "cCodArt",   "C", 18,  0, "Código de artículo",        "",            "", "( cDbfAge )" } }
+                     { "cCodArt",   "C", 18,  0, "Código de artículo",        "",            "", "( cDbfAge )" },;
+                     { "nComTar1",  "N",  6,  2, "Comisión de la tarifa 1" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
+                     { "nComTar2",  "N",  6,  2, "Comisión de la tarifa 2" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
+                     { "nComTar3",  "N",  6,  2, "Comisión de la tarifa 3" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
+                     { "nComTar4",  "N",  6,  2, "Comisión de la tarifa 4" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
+                     { "nComTar5",  "N",  6,  2, "Comisión de la tarifa 5" ,  "'@E 99.99'",  "", "( cDbfAge )" },;
+                     { "nComTar6",  "N",  6,  2, "Comisión de la tarifa 6" ,  "'@E 99.99'",  "", "( cDbfAge )" } }
 
 RETURN ( aBase )
 
@@ -1557,24 +1623,22 @@ RETURN ( aBase )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct, dbfAgeCom )
+FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct )
 
    local nRec
    local oBlock
    local oError
    local xValor
    local lClose      := .f.
-   local lCloseCom   := .f.
-   local lCloseRel   := .f.
    local lValid      := .f.
 
    if Empty( oGet:varGet() ) .or. ( oGet:varGet() == "ZZZ" )
 
-      if ValType( oGet2 ) == "O"
+      if isObject( oGet2 )
 			oGet2:cText( "" )
       end if
 
-      if ValType( oGetPct ) == "O"
+      if isObject( oGetPct )
 			oGetPct:cText( 0 )
       end if
 
@@ -1597,25 +1661,13 @@ FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct, dbfAgeCom )
       nRec           := ( dbfAge )->( Recno() )
    end if
 
-   if Empty( dbfAgeCom )
-      USE ( cPatCli() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
-      SET ADSINDEX TO ( cPatCli() + "AGECOM.CDX" ) ADDITIVE
-      lCloseCom      := .t.
-   end if
-
-   if Empty( dbfAgeRel )
-      USE ( cPatCli() + "AGERel.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGERel", @dbfAgeRel ) )
-      SET ADSINDEX TO ( cPatCli() + "AGERel.CDX" ) ADDITIVE
-      lCloseRel      := .t.
-   end if
-
    if dbSeekInOrd( xValor, "cCodAge", dbfAge )
 
-      if IsObject( oGet2 )
+      if isObject( oGet2 )
          oGet2:cText( RTrim( ( dbfAge )->cApeAge ) + ", " + ( dbfAge )->cNbrAge )
       end if
 
-      if IsObject( oGetPct )
+      if isObject( oGetPct )
          oGetPct:cText( ( dbfAge )->nCom1 )
       end if
 
@@ -1639,14 +1691,6 @@ FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct, dbfAgeCom )
       CLOSE( dbfAge )
    else
       ( dbfAge )->( dbGoTo( nRec ) )
-   end if
-
-   if lCloseCom
-      CLOSE( dbfAgeCom )
-   end if
-
-   if lCloseRel
-      CLOSE( dbfAgeRel )
    end if
 
 RETURN lValid
@@ -1734,6 +1778,37 @@ FUNCTION cNombreAgente( uAge )
 Return ( Alltrim( xValRet ) )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION nComisionAgenteTarifa( cCodigoAgente, nTarifaPrecio, nView )
+
+   local nComisionAgente   := 0
+
+   msgAlert( cCodigoAgente, "cCodigoAgente" )
+   msgAlert( nTarifaPrecio, "nTarifaPrecio" )
+   msgAlert( nView , "nView " )
+
+   if empty( cCodigoAgente )
+      Return ( nComisionAgente )
+   end if
+
+   D():getStatus( "Agentes", nView )
+
+   if dbSeekInOrd( cCodigoAgente, "cCodAge", D():Agentes( nView ) )
+
+      nComisionAgente      := ( D():Agentes( nView ) )->( fieldGet( fieldpos( "nComTar" + str( nTarifaPrecio, 1 ) ) ) )
+
+   else
+
+      msgStop( "Agente no encontrado", "Código " + cCodigoAgente )
+
+   end if
+
+   D():setStatus( "Agentes", nView )
+
+RETURN ( nComisionAgente )
+
+//---------------------------------------------------------------------------//
+
 
 /*
 Funcion para editar un agente desde cualquier parte del programa

@@ -5337,6 +5337,8 @@ CLASS D
 
    METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
+   METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )
+
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 
 

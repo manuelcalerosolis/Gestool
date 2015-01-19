@@ -267,42 +267,42 @@ STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 105, 39, 24, 12
-  CONTROL "", 102, "Edit", WS_BORDER|WS_TABSTOP, 105, 51, 270, 12
-  CONTROL "", 101, "Edit", WS_BORDER|WS_TABSTOP, 105, 63, 270, 12
-  CONTROL "", 103, "Edit", WS_BORDER|WS_TABSTOP, 105, 75, 100, 12
-  CONTROL "", 104, "Edit", WS_BORDER|WS_TABSTOP, 105, 101, 270, 12
-  CONTROL "", 107, "Edit", WS_BORDER|WS_TABSTOP, 105, 113, 66, 12
-  CONTROL "", 106, "Edit", WS_BORDER|WS_TABSTOP, 105, 125, 270, 12
-  CONTROL "", 108, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 105, 155, 70, 12
-  CONTROL "", 109, "Edit", WS_BORDER|WS_TABSTOP, 305, 155, 70, 12
-  CONTROL "", 113, "Edit", WS_BORDER|WS_TABSTOP, 208, 155, 70, 12
-  CONTROL "", 114, "Edit", WS_BORDER|WS_TABSTOP, 105, 168, 270, 12
-  CONTROL "", 112, "Edit", ES_MULTILINE|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 105, 181, 270, 33
-  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 105, 233, 80, 12
-  CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 187, 233, 188, 12
-  CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 44, 29, 337, 62
+  CONTROL "", 102, "Edit", WS_BORDER|WS_TABSTOP, 105, 52, 270, 12
+  CONTROL "", 101, "Edit", WS_BORDER|WS_TABSTOP, 105, 65, 270, 12
+  CONTROL "", 103, "Edit", WS_BORDER|WS_TABSTOP, 105, 78, 100, 12
+  CONTROL "", 104, "Edit", WS_BORDER|WS_TABSTOP, 105, 105, 270, 12
+  CONTROL "", 107, "Edit", WS_BORDER|WS_TABSTOP, 105, 118, 66, 12
+  CONTROL "", 106, "Edit", WS_BORDER|WS_TABSTOP, 105, 131, 270, 12
+  CONTROL "", 108, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 105, 160, 70, 12
+  CONTROL "", 109, "Edit", WS_BORDER|WS_TABSTOP, 305, 160, 70, 12
+  CONTROL "", 113, "Edit", WS_BORDER|WS_TABSTOP, 208, 160, 70, 12
+  CONTROL "", 114, "Edit", WS_BORDER|WS_TABSTOP, 105, 173, 270, 12
+  CONTROL "", 112, "Edit", ES_MULTILINE|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 105, 186, 270, 33
+  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 105, 235, 80, 12
+  CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 187, 235, 188, 12
+  CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 44, 29, 337, 64
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales del agente", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 337, 8
-  CONTROL "", 105, "Edit", WS_BORDER|WS_TABSTOP, 173, 113, 202, 12
-  CONTROL "Localización", -1, "Button", BS_GROUPBOX, 44, 92, 337, 50
+  CONTROL "", 105, "Edit", WS_BORDER|WS_TABSTOP, 173, 118, 202, 12
+  CONTROL "Localización", -1, "Button", BS_GROUPBOX, 44, 96, 337, 50
   CONTROL "Código", -1, "Static", WS_GROUP, 50, 42, 27, 8
-  CONTROL "Apellidos", -1, "Static", WS_GROUP, 50, 67, 33, 8
-  CONTROL "Nombre", -1, "Static", WS_GROUP, 50, 55, 30, 8
-  CONTROL "DNI / CIF", -1, "Static", WS_GROUP, 50, 78, 36, 8
-  CONTROL "Domicilio", -1, "Static", WS_GROUP, 50, 104, 33, 8
-  CONTROL "C.P./Población", -1, "Static", WS_GROUP, 50, 116, 53, 8
-  CONTROL "Provincia", -1, "Static", WS_GROUP, 50, 128, 35, 8
-  CONTROL "Teléfono", -1, "Static", WS_GROUP, 50, 158, 33, 8
-  CONTROL "Fax", -1, "Static", WS_GROUP, 283, 157, 16, 8
-  CONTROL "Móvil", -1, "Static", WS_GROUP, 179, 157, 22, 8
-  CONTROL "Comunicaciones", -1, "Button", BS_GROUPBOX, 44, 144, 337, 75
-  CONTROL "Email", -1, "Static", WS_GROUP, 50, 171, 22, 8
-  CONTROL "Comantarios", -1, "Static", WS_GROUP, 50, 184, 44, 8
-  CONTROL "Facturación", -1, "Button", BS_GROUPBOX, 44, 222, 337, 41
-  CONTROL "Proveedor", -1, "Static", WS_GROUP, 50, 236, 38, 8
-  CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 105, 246, 80, 12
-  CONTROL "", 350, "Edit", WS_BORDER|WS_TABSTOP, 188, 246, 187, 12
-  CONTROL "Artículo", -1, "Static", WS_GROUP, 50, 249, 30, 8
+  CONTROL "Apellidos", -1, "Static", WS_GROUP, 50, 69, 33, 8
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 50, 56, 30, 8
+  CONTROL "DNI / CIF", -1, "Static", WS_GROUP, 50, 81, 36, 8
+  CONTROL "Domicilio", -1, "Static", WS_GROUP, 50, 108, 33, 8
+  CONTROL "C.P./Población", -1, "Static", WS_GROUP, 50, 121, 53, 8
+  CONTROL "Provincia", -1, "Static", WS_GROUP, 50, 134, 35, 8
+  CONTROL "Teléfono", -1, "Static", WS_GROUP, 50, 163, 33, 8
+  CONTROL "Fax", -1, "Static", WS_GROUP, 283, 162, 16, 8
+  CONTROL "Móvil", -1, "Static", WS_GROUP, 179, 162, 22, 8
+  CONTROL "Comunicaciones", -1, "Button", BS_GROUPBOX, 44, 149, 337, 75
+  CONTROL "Email", -1, "Static", WS_GROUP, 50, 176, 22, 8
+  CONTROL "Comantarios", -1, "Static", WS_GROUP, 50, 189, 44, 8
+  CONTROL "Facturación", -1, "Button", BS_GROUPBOX, 44, 226, 337, 39
+  CONTROL "Proveedor", -1, "Static", WS_GROUP, 50, 238, 38, 8
+  CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 105, 248, 80, 12
+  CONTROL "", 350, "Edit", WS_BORDER|WS_TABSTOP, 188, 248, 187, 12
+  CONTROL "Artículo", -1, "Static", WS_GROUP, 50, 251, 30, 8
 }
 
 AGENTES_2 DIALOG DISCARDABLE 35, -50, 388, 270
@@ -310,22 +310,35 @@ STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 105, 38, 50, 12
-  CONTROL "&Añadir [F2]", 501, "Button", WS_TABSTOP, 50, 70, 50, 14
-  CONTROL "&Modificar [F3]", 502, "Button", WS_TABSTOP, 50, 85, 50, 14
-  CONTROL "&Eliminar [F4]", 503, "Button", WS_TABSTOP, 50, 100, 50, 14
-  CONTROL "", 310, "TXBrowse", WS_TABSTOP|0x00300000, 105, 70, 272, 152
-  CONTROL "", 350, "Edit", WS_BORDER|WS_TABSTOP, 105, 239, 70, 12
-  CONTROL "", 351, "Edit", WS_BORDER|WS_TABSTOP, 176, 239, 201, 12
-  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 105, 252, 70, 12
-  CONTROL "", 361, "Edit", WS_BORDER|WS_TABSTOP, 176, 252, 201, 12
-  CONTROL "Comisión por defecto", -1, "Button", BS_GROUPBOX, 44, 29, 337, 27
+  CONTROL "", 100, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 291, 38, 50, 12
+  CONTROL "", 101, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 291, 52, 50, 12
+  CONTROL "", 102, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 291, 66, 50, 12
+  CONTROL "", 103, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 291, 80, 50, 12
+  CONTROL "", 104, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 291, 94, 50, 12
+  CONTROL "", 105, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 291, 108, 50, 12
+  CONTROL "&Añadir [F2]", 501, "Button", WS_TABSTOP, 50, 140, 50, 14
+  CONTROL "&Modificar [F3]", 502, "Button", WS_TABSTOP, 50, 155, 50, 14
+  CONTROL "&Eliminar [F4]", 503, "Button", WS_TABSTOP, 50, 170, 50, 14
+  CONTROL "", 310, "TXBrowse", WS_TABSTOP|0x00300000, 104, 140, 272, 83
+  CONTROL "", 350, "Edit", WS_BORDER|WS_TABSTOP, 104, 239, 70, 12
+  CONTROL "", 351, "Edit", WS_BORDER|WS_TABSTOP, 175, 239, 201, 12
+  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 104, 252, 70, 12
+  CONTROL "", 361, "Edit", WS_BORDER|WS_TABSTOP, 175, 252, 201, 12
+  CONTROL "Comisiones", -1, "Button", BS_GROUPBOX, 44, 29, 167, 97
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Comisiones del agente", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 337, 8
-  CONTROL "Porcentaje", -1, "Static", WS_GROUP, 50, 41, 42, 8
-  CONTROL "Comisiones escaladas", -1, "Button", BS_GROUPBOX, 44, 58, 337, 168
-  CONTROL "Contabilidad", -1, "Button", BS_GROUPBOX, 44, 228, 337, 40
+  CONTROL "% General", -1, "Static", WS_GROUP, 50, 41, 37, 8
+  CONTROL "Comisiones escaladas", -1, "Button", BS_GROUPBOX, 44, 129, 338, 97
+  CONTROL "Contabilidad", -1, "Button", BS_GROUPBOX, 44, 228, 338, 40
   CONTROL "Cta. agente", -1, "Static", WS_GROUP, 50, 242, 42, 8
   CONTROL "Cta. gasto", -1, "Static", WS_GROUP, 50, 255, 37, 8
+  CONTROL "% Comisión tarifa 1", -1, "Static", WS_GROUP, 221, 42, 64, 8
+  CONTROL "% Comisión tarifa 2", -1, "Static", WS_GROUP, 221, 56, 64, 8
+  CONTROL "% Comisión tarifa 3", -1, "Static", WS_GROUP, 221, 70, 64, 8
+  CONTROL "% Comisión tarifa 4", -1, "Static", WS_GROUP, 221, 84, 64, 8
+  CONTROL "% Comisión tarifa 5", -1, "Static", WS_GROUP, 221, 98, 64, 8
+  CONTROL "% Comisión tarifa 6", -1, "Static", WS_GROUP, 221, 112, 64, 8
+  CONTROL "Comisiones por tarifas", -1, "Button", BS_GROUPBOX, 215, 29, 167, 97
 }
 
 AGENTES_3 DIALOG DISCARDABLE 35, -50, 388, 270

@@ -434,7 +434,6 @@ static dbfClient
 static dbfCliBnc
 static dbfArtPrv
 static dbfFPago
-static dbfAgent
 static dbfTVta
 static dbfPromoT
 static dbfPromoL
@@ -1378,8 +1377,8 @@ Static Function oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
    private cDbfPgo      := dbfFPago
    private cIva         := dbfIva
    private cDbfIva      := dbfIva
-   private cAgente      := dbfAgent
-   private cDbfAge      := dbfAgent
+   private cAgente      := D():Agentes( nView )
+   private cDbfAge      := D():Agentes( nView )
    private cTvta        := dbfTVta
    private cDbfTvt      := dbfTVta
    private cObras       := dbfObrasT
@@ -1417,7 +1416,7 @@ Static Function oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
    */
 
    ( D():Clientes( nView ) )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodCli ) )
-   ( dbfAgent  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodAge ) )
+   ( D():Agentes( nView )  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodAge ) )
    ( dbfFPago  )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodPago) )
    ( dbfDiv    )->( dbSeek( ( D():FacturasClientes( nView ) )->cDivFac ) )
    ( dbfUsr    )->( dbSeek( ( D():FacturasClientes( nView ) )->cCodUsr ) )
@@ -1588,6 +1587,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Contadores( nView )
 
+      D():Agentes( nView )
+
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles      := .f.
       end if
@@ -1706,9 +1707,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) ) 
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
@@ -1987,10 +1985,6 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( dbfFPago )
       ( dbfFPago   )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAgent )
-      ( dbfAgent   )->( dbCloseArea() )
    end if
 
    if !Empty( dbfFacCliP )
@@ -2331,7 +2325,6 @@ STATIC FUNCTION CloseFiles()
 
    dbfIva      := nil
    dbfFPago    := nil
-   dbfAgent    := nil
    dbfFacCliP  := nil
    dbfFacCliL  := nil
    dbfFacCliD  := nil
@@ -2609,7 +2602,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    cSay[ 2 ]               := RetFld( aTmp[ _CCODALM ], dbfAlm )
    cSay[ 4 ]               := RetFld( aTmp[ _CCODPAGO], dbfFPago )
    cSay[ 8 ]               := RetFld( aTmp[ _CCODRUT ], dbfRuta )
-   cSay[ 3 ]               := RetFld( aTmp[ _CCODAGE ], dbfAgent )
+   cSay[ 3 ]               := RetFld( aTmp[ _CCODAGE ], D():Agentes( nView ) )
    cSay[ 5 ]               := RetFld( aTmp[ _CCODTAR ], dbfTarPreT )
    cSay[ 7 ]               := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr" )
    cSay[ 9 ]               := oTrans:cNombre( aTmp[ _CCODTRN ] )
@@ -2905,7 +2898,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
          ID       250 ;
          WHEN     ( lWhen ) ;
-         VALID    ( cAgentes( aGet[ _CCODAGE ], dbfAgent, oSay[ 3 ], aGet[ _NPCTCOMAGE ], dbfAgeCom ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAgentes( aGet[ _CCODAGE ], oSay[ 3 ] ) );
          OF       oFld:aDialogs[1]
@@ -3963,14 +3955,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       if nMode == EDIT_MODE
-         oBrwPgo:bLDblClick   := {|| ExtEdtRecCli( dbfTmpPgo, D():FacturasClientes( nView ), dbfFacCliL, dbfAntCliT, dbfFPago, dbfAgent, dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
       end if
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[2];
          WHEN     ( nMode == EDIT_MODE ) ;
-         ACTION   ( ExtEdtRecCli( dbfTmpPgo, D():FacturasClientes( nView ), dbfFacCliL, dbfAntCliT, dbfFPago, dbfAgent, dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
@@ -4918,7 +4908,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpFac ), lCalcDeta( aTmp, aTmpFac ) );
+         ON CHANGE(  changeTarifa( aTmp, aGet, aTmpFac ),;
+                     loadComisionAgente( aTmp, aGet, aTmpFac ),;
+                     lCalcDeta( aTmp, aTmpFac ) );
          OF       oFld:aDialogs[1]
 
       if aTmp[ __LALQUILER ]
@@ -11193,6 +11185,25 @@ return .t.
 
 //-----------------------------------------------------------------------------
 
+static function loadComisionAgente( aTmp, aGet, aTmpFac, nView )
+
+   local nComisionAgenteTarifa   
+
+   if !Empty( aGet[ _NCOMAGE ] )
+
+      aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
+
+      nComisionAgenteTarifa   := nComisionAgenteTarifa( aTmpFac[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) )
+      if nComisionAgenteTarifa != 0
+         aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
+      end if 
+
+   end if
+
+return .t.
+
+//-----------------------------------------------------------------------------
+
 Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
 
    local uValor   := oGetCod:VarGet()
@@ -11259,7 +11270,6 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Rutas", ( dbfRuta )->( Select() ) )
    oFr:SetFieldAliases( "Rutas", cItemsToReport( aItmRut() ) )
 
-   oFr:SetWorkArea(     "Agentes", ( dbfAgent )->( Select() ) )
    oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
 
    oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
@@ -13098,6 +13108,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local lChgCodArt       	:= ( empty( cOldCodArt ) .or. rtrim( cOldCodArt ) != rtrim( cCodArt ) )
    local lChgPrpArt       	:= ( cOldPrpArt != aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] )
    local lChgLotArt			:= ( cOldLotArt != rtrim( aTmp[ _CLOTE ] ) )
+   local nComisionAgenteTarifa
 
    DEFAULT lFocused       	:= .t.
 
@@ -13473,9 +13484,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Si la comisi¢n del articulo hacia el agente es distinto de cero-------
          */
 
-         if !Empty( aGet[ _NCOMAGE ] )
-         	aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
-         end if
+         loadComisionAgente( aTmp, aGet, aTmpFac, nView )
 
          /*
          Código de la frase publicitaria---------------------------------------
