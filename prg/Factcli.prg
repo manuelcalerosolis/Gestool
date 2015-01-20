@@ -11193,7 +11193,7 @@ static function loadComisionAgente( aTmp, aGet, aTmpFac, nView )
 
       aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
 
-      nComisionAgenteTarifa   := nComisionAgenteTarifa( aTmpFac[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) )
+      nComisionAgenteTarifa   := nComisionAgenteTarifa( aTmpFac[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
       if nComisionAgenteTarifa != 0
          aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
       end if 
