@@ -7670,10 +7670,10 @@ static function ShowKitFacPrv( dbfMaster, oBrw, cCodPrv, dbfTmpInc, aGet, aTmp, 
 
    if !Empty( aGet )
 
-      if lUsrMaster() .or. oUser():lCambiarPrecio()
-         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardEnable()
+      if lUsrMaster() .or. oUser():lCambiarPrecio() 
+         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:Enable()
       else
-         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardDisable()
+         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:Disable()
       end if
 
       if !Empty( cCodPrv )
