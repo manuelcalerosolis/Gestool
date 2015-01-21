@@ -80,6 +80,7 @@ Articulo.prg            	\
 ArtCodeBar.prg          	\
 Brwvta.prg              	\
 Client.prg              	\
+Cliente.prg                \
 TGenMail.prg            	\
 TGenMailDocuments.prg      \
 Tiva.prg                	\
@@ -478,6 +479,7 @@ ArtCodeBar.obj          \
 Brwvta.obj              \
 Provee.obj              \
 Client.obj              \
+Cliente.obj             \
 TGenMail.obj            \
 TGenMailDocuments.obj   \
 Tiva.obj                \
@@ -902,6 +904,7 @@ $(OBJ)\ArtCodeBar.obj            +
 $(OBJ)\Brwvta.obj                +
 $(OBJ)\Provee.obj                +
 $(OBJ)\Client.obj                +
+$(OBJ)\Cliente.obj               +
 $(OBJ)\TGenMail.obj              +
 $(OBJ)\TGenMailDocuments.obj     +
 $(OBJ)\Tiva.obj                  +

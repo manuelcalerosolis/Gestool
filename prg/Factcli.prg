@@ -554,6 +554,8 @@ static cOldUndMed          := ""
 static lOpenFiles          := .f.
 static lExternal           := .f.
 
+static oClienteRutaNavigator
+
 static hOrdenRutas         := { "1" => "lVisDom", "2" => "lVisLun", "3" => "lVisMar", "4" => "lVisMie", "5" => "lVisJue", "6" => "lVisVie", "7" => "lVisSab", "8" => "Cod" }
 
 static oTipFac
@@ -1903,7 +1905,9 @@ STATIC FUNCTION OpenFiles( lExt )
       	lOpenFiles		:= .f.
       end if
 
-      oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
+      oFont                         := TFont():New( "Arial", 8, 26, .F., .T. )
+
+      oClienteRutaNavigator         := ClienteRutaNavigator():New( nView )
 
       /*
       Declaramos variables públicas--------------------------------------------
@@ -2899,7 +2903,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       250 ;
          WHEN     ( lWhen ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAgentes( aGet[ _CCODAGE ], oSay[ 3 ] ) );
+         ON HELP  ( brwAgentes( aGet[ _CCODAGE ], oSay[ 3 ] ) );
+         VALID    ( cAgentes( aGet[ _CCODAGE ], D():Agentes( nView ), oSay[ 3 ], aGet[ _NPCTCOMAGE ], dbfAgeCom ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 3 ] VAR cSay[ 3 ] ;
@@ -5665,7 +5670,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 																	"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ) } } )
 
-   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 		"nRow"      => 95,;
+   	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 	"nRow"      => 95,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CCODCLI ], aTmp[ _CCODCLI ] := u ) },;
                                           			"oWnd"      => oDlg,;
@@ -5936,12 +5941,12 @@ RETURN ( oDlg:nResult == IDOK )
 
 Static function startEdtTablet( nMode, aGet, oSayTextRuta )
 
-   gotoUltimoCliente()
+   local cOrder   := hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ]
 
-   if ( nMode == APPD_MODE ) .and. ( nUltimoCliente != 0 )
-      nextClient( aGet, oSayTextRuta )
-   else
-      moveClient( aGet, oSayTextRuta )
+   oClienteRutaNavigator:getClientesRutas( cOrder ) 
+
+   if ( nMode == APPD_MODE )
+      currentClient( aGet )
    end if
 
 Return ( nil )
@@ -6519,65 +6524,42 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function priorClient( aGet, oSayTextRuta )
+Static Function currentClient( aGet )
 
-return ( moveClient( aGet, oSayTextRuta, .t. ) )
+   oClienteRutaNavigator:gotoLastProcesed()
 
-Static Function nextClient( aGet, oSayTextRuta )
+Return ( moveClient( aGet ) )
 
-return ( moveClient( aGet, oSayTextRuta, .f. ) )
+//---------------------------------------------------------------------------//
 
-Static Function moveClient( aGet, oSayTextRuta, lAnterior )
+Static Function priorClient( aGet )
 
-   local lSet              := .f.
-   local nOrdAnt
+   oClienteRutaNavigator:gotoPrior()
 
-   if hhaskey( hOrdenRutas, AllTrim( Str( oCbxRuta:nAt ) ) )
-      
-      nOrdAnt              := ( D():Clientes( nView ) )->( OrdSetFocus( hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
+Return ( moveClient( aGet ) )
 
-      if isTrue( lAnterior )
+//---------------------------------------------------------------------------//
 
-         if ( D():Clientes( nView ) )->( OrdKeyNo() ) != 1
-            ( D():Clientes( nView ) )->( dbSkip( -1 ) )
-            lSet           := .t.
-         end if
+Static Function nextClient( aGet )
 
-      end if 
+   oClienteRutaNavigator:gotoNext()
 
-      if isFalse( lAnterior )
+Return ( moveClient( aGet ) )
 
-         if ( D():Clientes( nView ) )->( OrdKeyNo() ) != ( D():Clientes( nView ) )->( OrdKeyCount() )
-            ( D():Clientes( nView ) )->( dbSkip() )
-            lSet           := .t.
-         end if
+//---------------------------------------------------------------------------//
 
-      end if   
+Static Function moveClient( aGet )
 
-      if isNil( lAnterior )
-         lSet              := .t.
-      end if 
+   if !empty( aGet[ _CCODCLI ] )
+      aGet[ _CCODCLI ]:cText( oClienteRutaNavigator:getSelected() )
+      aGet[ _CCODCLI ]:Refresh()
+      aGet[ _CCODCLI ]:lValid()
+      aGet[ _CCODOBR ]:cText( Space( 10 ) )
+      aGet[ _CCODOBR ]:Refresh()
+      aGet[ _CCODOBR ]:lValid()
+   end if 
 
-      if !empty( oSayTextRuta )
-         oSayTextRuta:cText( alltrim( str( ( D():Clientes( nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( nView ) )->( OrdKeyCount() ) ) ) )
-         oSayTextRuta:Refresh()
-      end if
-
-      ( D():Clientes( nView ) )->( OrdSetFocus( nOrdAnt ) )   
-
-      if lSet
-
-         aGet[ _CCODCLI ]:cText( ( D():Clientes( nView ) )->Cod )
-         aGet[ _CCODCLI ]:lValid()
-
-         aGet[ _CCODOBR ]:cText( Space( 10 ) )
-         aGet[ _CCODOBR ]:lValid()
-
-      end if               
-
-   end if
-
-Return ( .t. )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -11185,17 +11167,17 @@ return .t.
 
 //-----------------------------------------------------------------------------
 
-static function loadComisionAgente( aTmp, aGet, aTmpFac, nView )
+static function loadComisionAgente( aTmp, aGet, aTmpFac )
 
    local nComisionAgenteTarifa   
 
-   if !Empty( aGet[ _NCOMAGE ] )
+   if !empty( aGet[ _NCOMAGE ] )
 
       aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
 
       nComisionAgenteTarifa   := nComisionAgenteTarifa( aTmpFac[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
       if nComisionAgenteTarifa != 0
-         aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
+         aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
       end if 
 
    end if
@@ -12209,8 +12191,8 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 
          end if
 
-         if aGet[_CCODAGE] != nil
-            if ( Empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cAgente )
+         if aGet[ _CCODAGE ] != nil
+            if ( empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !empty( ( D():Clientes( nView ) )->cAgente )
                aGet[ _CCODAGE ]:cText( ( D():Clientes( nView ) )->cAgente )
                aGet[ _CCODAGE ]:lValid()
             end if
@@ -13484,7 +13466,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Si la comisi¢n del articulo hacia el agente es distinto de cero-------
          */
 
-         loadComisionAgente( aTmp, aGet, aTmpFac, nView )
+         loadComisionAgente( aTmp, aGet, aTmpFac )
 
          /*
          Código de la frase publicitaria---------------------------------------
@@ -13744,12 +13726,13 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                	end if	
             end if
 
-            //--Comision de agente--//
-            nImpOfe  := RetComTar( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
+            // Comision de agente
+
+            nImpOfe  := retComTar( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
             if nImpOfe != 0
-               	if !Empty( aGet[_NCOMAGE] )
-               		aGet[_NCOMAGE]:cText( nImpOfe )
-               	end if	
+            	if !Empty( aGet[ _NCOMAGE ] )
+            		aGet[ _NCOMAGE ]:cText( nImpOfe )
+            	end if	
             end if
 
             //--Descuento de promoci¢n--//
@@ -13765,9 +13748,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             nDtoAge  := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
             if nDtoAge  != 0
-               	if !Empty( aGet[_NCOMAGE] )
-               		aGet[_NCOMAGE]:cText( nDtoAge )
-               	end if	
+            	if !Empty( aGet[_NCOMAGE] )
+            		aGet[_NCOMAGE]:cText( nDtoAge )
+            	end if	
             end if
 
         end if

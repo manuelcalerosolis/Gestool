@@ -56,6 +56,7 @@ Articulo.prg            	\
 ArtCodeBar.prg          	\
 Brwvta.prg              	\
 Client.prg              	\
+ClienteRutaNavigator.prg   \
 TGenMail.prg            	\
 TGenMailDatabase.prg       \
 TGenMailClientes.prg       \
@@ -419,6 +420,7 @@ ArtCodeBar.obj          \
 Brwvta.obj              \
 Provee.obj              \
 Client.obj              \
+ClienteRutaNavigator.obj             \
 TGenMail.obj            \
 TGenMailDatabase.obj    \
 TGenMailClientes.obj    \
@@ -810,6 +812,7 @@ $(OBJ)\ArtCodeBar.obj            +
 $(OBJ)\Brwvta.obj                +
 $(OBJ)\Provee.obj                +
 $(OBJ)\Client.obj                +
+$(OBJ)\ClienteRutaNavigator.obj               +
 $(OBJ)\TGenMail.obj              +
 $(OBJ)\TGenMailDatabase.obj      +
 $(OBJ)\TGenMailClientes.obj      +
@@ -1129,7 +1132,7 @@ $(OBJ)\TLabelGenerator.obj 			+
 $(OBJ)\TTreevie.obj 						+
 $(OBJ)\ApoloMeter.obj 					+
 $(OBJ)\Xbrowse1406.Obj            	+
-$(OBJ)\FacturarLineasAlbaranesProveedor.obj+
+$(OBJ)\FacturarLineasAlbaranesProveedor.obj  +
 $(OBJ)\TGridSay.obj              +
 $(OBJ)\Editable.obj              +
 $(OBJ)\ViewNavigator.obj         +

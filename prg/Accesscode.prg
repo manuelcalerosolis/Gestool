@@ -11,6 +11,8 @@
 
 CLASS AccessCode
 
+   CLASSDATA  cAgente
+   
    DATA  oDlg
    DATA  oDlgConnect
    DATA  oBrwUser 
@@ -250,10 +252,13 @@ RETURN ( nil )
 
 METHOD FileResource( oDlg ) CLASS AccessCode
 
+   local cCodigoAgente
+
    SysRefresh()
 
    ::cGetUser        := GetPvProfString(  "Tablet", "User",       "",   FullCurDir() + "GstApolo.Ini" )
    ::cGetPassword    := GetPvProfString(  "Tablet", "Password",   "",   FullCurDir() + "GstApolo.Ini" )
+   ::cAgente         := GetPvProfString(  "Tablet", "Agente",     "",   FullCurDir() + "GstApolo.Ini" )
 
    if empty( ::cGetUser ) 
       apoloMsgStop( "Código de usuario esta vacio")

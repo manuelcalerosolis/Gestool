@@ -33,6 +33,7 @@ static cIp              := ""
 static cData            := ""
 static nAdsServer       := 7
 static cAdsLocal        := ""
+static cCodigoAgente    := ""
 
 static dSysDate
 
@@ -276,6 +277,16 @@ Function lCdx( lSetCdx )
 Return ( lCdx )
 
 //---------------------------------------------------------------------------//
+
+Function cCodigoAgente( cAgente )
+
+   if IsChar( cAgente )
+      cCodigoAgente    := cAgente
+   end if
+
+Return ( cCodigoAgente )
+
+//----------------------------------------------------------------------------//
 
 Function lPda()
 

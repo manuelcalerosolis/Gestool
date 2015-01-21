@@ -2506,9 +2506,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
          ID       220 ;
          WHEN     ( lWhen ) ;
-         VALID    ( cAgentes( aGet[_CCODAGE], dbfAgent, oSay[ 4 ], aGet[ _NPCTCOMAGE ], dbfAgeCom ) ) ;
+         VALID    ( cAgentes( aGet[ _CCODAGE ], dbfAgent, oSay[ 4 ], aGet[ _NPCTCOMAGE ], dbfAgeCom ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAgentes( aGet[_CCODAGE], oSay[ 4 ] ) ) ;
+         ON HELP  ( BrwAgentes( aGet[ _CCODAGE ], oSay[ 4 ] ) ) ;
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 

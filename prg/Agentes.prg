@@ -1783,10 +1783,6 @@ FUNCTION nComisionAgenteTarifa( cCodigoAgente, nTarifaPrecio, nView )
 
    local nComisionAgente   := 0
 
-   msgAlert( cCodigoAgente, "cCodigoAgente" )
-   msgAlert( nTarifaPrecio, "nTarifaPrecio" )
-   msgAlert( nView , "nView " )
-
    if empty( cCodigoAgente )
       Return ( nComisionAgente )
    end if
@@ -1794,13 +1790,9 @@ FUNCTION nComisionAgenteTarifa( cCodigoAgente, nTarifaPrecio, nView )
    D():getStatus( "Agentes", nView )
 
    if dbSeekInOrd( cCodigoAgente, "cCodAge", D():Agentes( nView ) )
-
       nComisionAgente      := ( D():Agentes( nView ) )->( fieldGet( fieldpos( "nComTar" + str( nTarifaPrecio, 1 ) ) ) )
-
    else
-
       msgStop( "Agente no encontrado", "Código " + cCodigoAgente )
-
    end if
 
    D():setStatus( "Agentes", nView )
@@ -1808,8 +1800,6 @@ FUNCTION nComisionAgenteTarifa( cCodigoAgente, nTarifaPrecio, nView )
 RETURN ( nComisionAgente )
 
 //---------------------------------------------------------------------------//
-
-
 /*
 Funcion para editar un agente desde cualquier parte del programa
 */
