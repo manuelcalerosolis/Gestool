@@ -3961,12 +3961,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       if nMode == EDIT_MODE
+         oBrwPgo:bLDblClick   := {|| EdtRecCli( ( dbfTmpPgo )->cSerie + str( ( dbfTmpPgo )->nNumFac ) + ( dbfTmpPgo )->cSufFac + str( ( dbfTmpPgo )->nNumRec ) + ( dbfTmpPgo )->cTipRec ) }
       end if
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[2];
          WHEN     ( nMode == EDIT_MODE ) ;
+         ACTION   ( EdtRecCli( ( dbfTmpPgo )->cSerie + str( ( dbfTmpPgo )->nNumFac ) + ( dbfTmpPgo )->cSufFac + str( ( dbfTmpPgo )->nNumRec ) + ( dbfTmpPgo )->cTipRec ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
