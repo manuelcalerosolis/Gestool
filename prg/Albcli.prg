@@ -6943,6 +6943,11 @@ Method Process()
                         ( cAlbCliT )->( dbUnLock() )
                      end if
 
+                     if uFieldempresa( "lRecEnt" ) .and. dbLock( cAlbCliT )
+                        ( cAlbCliT )->lEntregado := .t.
+                        ( cAlbCliT )->( dbUnLock() )
+                     end if
+
                      ::oSender:SetText( "Añadido     : " + ( tmpAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbCliT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbCliT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbCliT )->dFecAlb ) + "; " + AllTrim( ( tmpAlbCliT )->cCodCli ) + "; " + ( tmpAlbCliT )->cNomCli )
 
                      if ( tmpAlbCliL )->( dbSeek( ( tmpAlbCliT )->cSerAlb + Str( ( tmpAlbCliT )->nNumAlb ) + ( tmpAlbCliT )->cSufAlb ) )

@@ -10,6 +10,8 @@ static   nAcumulaDescuento2   := 0
 static   nAcumulaDescuento3   := 0
 static   nAcumulaDescuento4   := 0
 static   cAnteriorAlbaran     := 0
+static   nTotalAlbaranes      := 0
+static   nTotalFacturas       := 0
 
 //---------------------------------------------------------------------------//
 
@@ -37,25 +39,32 @@ Function GenFCli( oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClien
    local oBtnPrv
    local oBtnNxt
    local oBrwAlb
-   local lAllCli        := .t.
-   local lAllGrp        := .t.
+   local lAllCli           := .t.
+   local lAllGrp           := .t.
    local oMetMsg
-   local nMetMsg        := 0
-   local lGrpCli        := .t.
-   local nGrpObr        := 1
-   local lTotAlb        := .f.
-   local lUniPgo        := .f.
-   local lNotImp        := .f.
+   local nMetMsg           := 0
+   local lGrpCli           := .t.
+   local nGrpObr           := 1
+   local lTotAlb           := .f.
+   local lUniPgo           := .f.
+   local lNotImp           := .f.
+   local lSoloEntregados   := .f.
+   local oSerieFactura
+   local cSerieFactura     := cNewSer( "nFacCli", dbfCount )
+   local nTipoSerie        := 1
 
-   local nRadFec        := 1
-   local dFecFac        := GetSysDate()
-   local dDesAlb        := ctoD( "01/" + Str( Month( GetSysDate() ), 2 ) + "/" + Str( Year( GetSysDate() ) ) )
-   local dHasAlb        := GetSysDate()
-   local oSer           := Array( 26 )
-   local aSer           := { .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t. }
+   local nRadFec           := 1
+   local dFecFac           := GetSysDate()
+   local dDesAlb           := ctoD( "01/" + Str( Month( GetSysDate() ), 2 ) + "/" + Str( Year( GetSysDate() ) ) )
+   local dHasAlb           := GetSysDate()
+   local oSer              := Array( 26 )
+   local aSer              := { .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t. }
    local oDbfTmp
-   local nRec           := ( dbfAlbCliT )->( Recno() )
-   local nOrd           := ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )
+   local nRec              := ( dbfAlbCliT )->( Recno() )
+   local nOrd              := ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )
+
+   nTotalAlbaranes         := 0
+   nTotalFacturas          := 0
 
    if File( cPatTmp() + "GenFac.Dbf" ) .and. fErase( cPatTmp() + "GenFac.Dbf" ) == -1
       MsgStop( "Esta opción esta en uso por otro usuario" )
@@ -209,6 +218,10 @@ Function GenFCli( oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClien
       ID       180, 181, 182 ;
       OF       oPag:aDialogs[ 1 ]
 
+   REDEFINE CHECKBOX lSoloEntregados;
+      ID       188 ;
+      OF       oPag:aDialogs[ 1 ]
+
    REDEFINE CHECKBOX lTotAlb;
       ID       185 ;
       OF       oPag:aDialogs[ 1 ]
@@ -230,6 +243,22 @@ Function GenFCli( oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClien
       SPINNER ;
       ID       150 ;
       OF       oPag:aDialogs[ 1 ]
+
+   REDEFINE RADIO nTipoSerie ;
+      ID       201, 202 ;
+      OF       oPag:aDialogs[ 1 ]
+
+   REDEFINE GET oSerieFactura VAR cSerieFactura;
+      ID       200 ;
+      PICTURE  "@!" ;
+      UPDATE ;
+      SPINNER ;
+      ON UP    ( UpSerie( oSerieFactura ) );
+      ON DOWN  ( DwSerie( oSerieFactura ) );
+      VALID    ( cSerieFactura >= "A" .and. cSerieFactura <= "Z"  );
+      OF       oPag:aDialogs[ 1 ]      
+
+      oSerieFactura:bWhen := {|| ( nTipoSerie == 2 ) }
 
    TWebBtn():Redefine(310,,,,, {|This| ( aEval( oSer, {|o| Eval( o:bSetGet, .T. ), o:refresh() } ) ) }, oPag:aDialogs[ 1 ],,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ),,,, "Seleccionar todas las series",,,, )
 
@@ -377,7 +406,7 @@ Function GenFCli( oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClien
       ACTION   ( GoNext(   cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb,;
                            nRadFec, dFecFac, aSer, oDbfTmp, oBrwAlb, oDlg, oPag, lGrpCli, nGrpObr,;
                            lTotAlb, lUniPgo, lNotImp, oBtnPrv, oBtnNxt, oMetMsg, dbfAlbCliT, dbfAlbCliL, dbfAlbCliS, dbfAlbCliP,;
-                           dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfUsr, dbfFPago, dbfCount, oStock ) )
+                           dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfUsr, dbfFPago, dbfCount, oStock, nTipoSerie, cSerieFactura, lSoloEntregados ) )
 
    REDEFINE BUTTON ;
       ID       IDCANCEL ;
@@ -508,14 +537,14 @@ return nil
 static function GoNext( cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb,;
                         nRadFec, dFecFac, aSer, oDbfTmp, oBrwAlb, oDlg, oPag, lGrpCli, nGrpObr,;
                         lTotAlb, lUniPgo, lNotImp, oBtnPrv, oBtnNxt, oMetMsg, dbfAlbCliT, dbfAlbCliL, dbfAlbCliS, dbfAlbCliP,;
-                        dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfUsr, dbfFPago, dbfCount, oStock )
+                        dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfUsr, dbfFPago, dbfCount, oStock, nTipoSerie, cSerieFactura, lSoloEntregados )
 
    do case
    case oPag:nOption == 1
 
       LoaAlbFac(  cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb, lGrpCli, nGrpObr,;
                   lTotAlb, lUniPgo, lNotImp, aSer, oDbfTmp, oBrwAlb, oDlg, oMetMsg, dbfAlbCliT, dbfAlbCliL,;
-                  dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfAlbCliP )
+                  dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfAlbCliP, lSoloEntregados )
 
       oBtnPrv:Show()
    
@@ -527,7 +556,7 @@ static function GoNext( cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lA
 
       MakFacCli(  oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, nRadFec, oBrwAlb, oMetMsg,;
                   dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv,;
-                  dbfFPago, dbfUsr, dbfCount, oStock, oDlg )
+                  dbfFPago, dbfUsr, dbfCount, oStock, oDlg, nTipoSerie, cSerieFactura )
 
       oDlg:End()
 
@@ -539,7 +568,7 @@ return nil
 
 STATIC FUNCTION loaAlbFac( cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb, lGrpCli, nGrpObr,;
                            lTotAlb, lUniPgo, lNotImp, aSer, oDbfTmp, oBrwAlb, oDlg, oMetMsg, dbfAlbCliT, dbfAlbCliL,;
-                           dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfAlbCliP )
+                           dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfAlbCliP, lSoloEntregados )
 
    local lNuevo   := .t.
    local nOrdAnt
@@ -592,6 +621,11 @@ STATIC FUNCTION loaAlbFac( cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp,
    // Creamos los indices para que esto vaya mucho mas rápido y informamos el meter
 
    cExpHead       := '!Field->lFacturado'
+
+   if lSoloEntregados
+      cExpHead    += ' .and. Field->lEntregado'
+   end if
+
    if !lAllGrp
       cExpHead    += ' .and. Field->cCodGrp >= "' + Rtrim( cGrpDes ) + '" .and. Field->cCodGrp <= "' + Rtrim( cGrpHas ) + '"'
    end if
@@ -734,6 +768,8 @@ Static Function AgregaAlbaran( nNumero, lNuevo, oDbfTmp, dbfAlbCliT, dbfAlbCliL,
 
       aTotAlb           := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT)->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv )
 
+      nTotalAlbaranes   += aTotAlb[4]
+
       if lNuevo
 
          if !Empty( cAnteriorAlbaran ) .and. cAnteriorAlbaran != ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
@@ -836,7 +872,7 @@ Return nil
 
 Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, nRadFec, oBrw, oMetMsg,;
                            dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv,;
-                           dbfFPago, dbfUsr, dbfCount, oStock, oDlg )
+                           dbfFPago, dbfUsr, dbfCount, oStock, oDlg, nTipoSerie, cSerieFactura )
 
    local oBlock
    local oError
@@ -924,7 +960,12 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             Nueva factura______________________________________________________
             */
 
-            cSerAlb                    := ( dbfAlbCliT )->cSerAlb
+            if nTipoSerie <= 1
+               cSerAlb                 := ( dbfAlbCliT )->cSerAlb
+            else
+               cSerAlb                 := cSerieFactura
+            end if
+
             nNewFac                    := nNewDoc( ( dbfAlbCliT )->cSerAlb, dbfFacCliT, "NFACCLI", , dbfCount )
             nNumLin                    := 0
             cLinObr                    := Space( 1 )
@@ -1312,6 +1353,8 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
 
             aTotFac                       := aTotFacCli( cSerAlb + Str( nNewFac ) + cSufEmp, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
 
+            nTotalFacturas                += aTotFac[4]
+
             if dbLock( dbfFacCliT )
 
                if !empty( oDbfTmp:nPctDto1 ) .and. empty( ( dbfFacCliT )->cDtoEsp )
@@ -1374,6 +1417,8 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
       MsgStop( "No se generaron facturas." )
    else
       Visor( aMsg )
+      msgInfo( nTotalAlbaranes, "Total Albaranes" )
+      msgInfo( nTotalFacturas, "Total Facturas" )
    end if
 
 RETURN NIL

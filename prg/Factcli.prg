@@ -3307,7 +3307,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
      REDEFINE GET aGet[_NDTOESP ] VAR aTmp[ _NDTOESP ] ;
          ID       300 ;
-         PICTURE  "@ER 999.99%" ;
+         PICTURE  "@ER 999.999999%" ;
          VALID    ( RecalculaTotal( aTmp ) );
          SPINNER;
          WHEN     ( lWhen .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
@@ -3320,7 +3320,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _NDPP ] VAR aTmp[ _NDPP ];
          ID       310 ;
-         PICTURE  "@ER 999.99%" ;
+         PICTURE  "@ER 999.999999%" ;
          VALID    ( RecalculaTotal( aTmp ) );
          SPINNER;
          WHEN     ( lWhen .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
@@ -3337,7 +3337,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _NDTOUNO ] VAR aTmp[ _NDTOUNO ];
          ID       330 ;
-         PICTURE  "@ER 999.99%" ;
+         PICTURE  "@ER 999.999999%" ;
          VALID    ( RecalculaTotal( aTmp ) ) ;
          SPINNER;
          WHEN     ( lWhen .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
@@ -3350,7 +3350,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _NDTODOS ] VAR aTmp[ _NDTODOS ];
          ID       350 ;
-         PICTURE  "@ER 999.99%" ;
+         PICTURE  "@ER 999.999999%" ;
          VALID    ( RecalculaTotal( aTmp ) ) ;
          SPINNER;
          WHEN     ( lWhen .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
@@ -20591,13 +20591,13 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"CNUMSAT"     ,"C", 12, 0, "Número de S.A.T." ,                                    "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NTIPOFAC"    ,"N",  1, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cDtoEsp"     ,"C", 50, 0, "Descripción de porcentaje de descuento especial" ,     "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nDtoEsp"     ,"N",  6, 2, "Porcentaje de descuento especial" ,                    "'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nDtoEsp"     ,"N", 10, 6, "Porcentaje de descuento especial" ,                    "'@EZ 999,999999'",       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cDpp"        ,"C", 50, 0, "Descripción de porcentaje de descuento por pronto pago","",                  "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nDpp"        ,"N",  6, 2, "Porcentaje de descuento por pronto pago" ,             "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CDTOUNO"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado", "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NDTOUNO"     ,"N",  6, 2, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CDTODOS"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado" ,"'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NDTODOS"     ,"N",  4, 1, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nDpp"        ,"N", 10, 6, "Porcentaje de descuento por pronto pago" ,             "'@EZ 999,999999'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CDTOUNO"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado", "'@EZ 999,999999'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NDTOUNO"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,999999'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CDTODOS"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado" ,"'@EZ 999,999999'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NDTODOS"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,999999'",       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTOCNT"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTORAP"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTOPUB"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )

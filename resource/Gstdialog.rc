@@ -5868,23 +5868,24 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 180, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 134, 120, 11
   CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 251, 133, 55, 11
   CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 154, 124, 11
-  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 121, 167, 120, 11
-  CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 121, 179, 120, 11
-  CONTROL "Enviar cierre de turnos por correo electrónico", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 208, 155, 12
-  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 119, 223, 306, 12
+  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 121, 176, 120, 11
+  CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 121, 188, 120, 11
+  CONTROL "Enviar cierre de turnos por correo electrónico", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 218, 155, 12
+  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 119, 233, 306, 12
   CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 58, 125, 55, 8
   CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 58, 113, 51, 8
   CONTROL "Clave de acceso", -1, "Static", WS_GROUP, 58, 137, 59, 8
   CONTROL "Tipo de envío", -1, "Static", WS_GROUP, 47, 43, 66, 8
   CONTROL "Ruta", -1, "Static", WS_GROUP, 58, 84, 21, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 47, 148, 378, 4
-  CONTROL "Envío de información", -1, "Button", BS_GROUPBOX, 44, 29, 386, 165
+  CONTROL "Envío de información", -1, "Button", BS_GROUPBOX, 44, 29, 386, 176
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Configuración para el envio de datos entre delegaciones", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
-  CONTROL "Turnos", -1, "Button", BS_GROUPBOX, 44, 197, 386, 43
-  CONTROL "Correo electrónico", -1, "Static", WS_GROUP, 46, 226, 63, 8
-  CONTROL "Código cliente", -1, "Static", WS_GROUP, 47, 170, 55, 8
-  CONTROL "Código proveedor", -1, "Static", WS_GROUP, 47, 182, 59, 8
+  CONTROL "Turnos", -1, "Button", BS_GROUPBOX, 44, 207, 386, 43
+  CONTROL "Correo electrónico", -1, "Static", WS_GROUP, 46, 236, 63, 8
+  CONTROL "Código cliente", -1, "Static", WS_GROUP, 47, 179, 55, 8
+  CONTROL "Código proveedor", -1, "Static", WS_GROUP, 47, 191, 59, 8
+  CONTROL "Recibir albaranes como entregados", 191, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 164, 124, 11
 }
 
 EMPRESA_7 DIALOG DISCARDABLE 31, 32, 397, 297
@@ -7613,16 +7614,16 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 121, "Edit", WS_BORDER|WS_TABSTOP, 128, 122, 200, 12
   CONTROL "", 130, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 51, 12, 60, 12
   CONTROL "", 140, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 51, 24, 60, 12
-  CONTROL "Factura", 190, "Button", BS_AUTORADIOBUTTON, 8, 152, 37, 10
-  CONTROL "", 150, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 51, 152, 60, 12
-  CONTROL "Albarán", 191, "Button", BS_AUTORADIOBUTTON, 8, 164, 37, 10
+  CONTROL "Factura", 190, "Button", BS_AUTORADIOBUTTON, 8, 153, 37, 10
+  CONTROL "", 150, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 51, 150, 60, 12
+  CONTROL "Albarán", 191, "Button", BS_AUTORADIOBUTTON, 8, 165, 37, 10
   CONTROL "Agrupar por clientes", 175, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 191, 76, 12
   CONTROL "No ordenar por obra", 180, "Button", BS_AUTORADIOBUTTON, 20, 205, 86, 10
   CONTROL "Ordenar por obra", 181, "Button", BS_AUTORADIOBUTTON, 20, 217, 86, 10
   CONTROL "Facturar por cada obra", 182, "Button", BS_AUTORADIOBUTTON, 20, 229, 86, 10
-  CONTROL "Unificar formas de pago", 186, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 164, 193, 88, 10
-  CONTROL "Totalizar por albaranes", 185, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 164, 205, 88, 10
-  CONTROL "No imprimir líneas de datalle", 187, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 164, 217, 105, 10
+  CONTROL "Unificar formas de pago", 186, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 205, 88, 10
+  CONTROL "Totalizar por albaranes", 185, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 217, 88, 10
+  CONTROL "No imprimir líneas de datalle", 187, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 229, 105, 10
   CONTROL "Todas", 310, "TWebBtn", 0x00000000, 345, 12, 42, 12
   CONTROL "Ninguna", 320, "TWebBtn", 0x00000000, 394, 12, 42, 12
   CONTROL "Serie A", 370, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 345, 29, 40, 10
@@ -7659,9 +7660,14 @@ FONT 8, "MS Sans Serif"
   CONTROL "Hasta ", -1, "Static", WS_GROUP, 20, 125, 30, 8
   CONTROL "Todos los grupos de clientes", 90, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 50, 105, 9
   CONTROL "Todos los clientes", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 98, 70, 9
-  CONTROL "Fechas de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 140, 332, 39
+  CONTROL "Fechas de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 140, 164, 39
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 8, 93, 320, 1
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 8, 41, 320, 1
+  CONTROL "Solo albaranes entregados", 188, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 193, 100, 10
+  CONTROL "", 200, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 257, 163, 40, 12
+  CONTROL "Series de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 169, 140, 165, 39
+  CONTROL "Generar sobre serie", 202, "Button", BS_AUTORADIOBUTTON, 178, 165, 72, 10
+  CONTROL "Generar sobre serie de albarán", 201, "Button", BS_AUTORADIOBUTTON, 178, 153, 120, 10
 }
 
 GENFAC_02 DIALOG DISCARDABLE 23, 9, 449, 250

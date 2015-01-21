@@ -2344,6 +2344,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       190 ;
             OF       fldEnvios
 
+      REDEFINE CHECKBOX aGet[ _LRECENT ] VAR aTmp[ _LRECENT ] ;
+            ID       191 ;
+            OF       fldEnvios
+
       REDEFINE CHECKBOX aTmp[ _LMAILTRNO ] ;
             ID       300;
             WHEN     ( lUsrMaster() ) ;
@@ -6642,6 +6646,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lStkAlm",    "L",  1, 0, "Lógico de usar stock por almacenes",                    "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lSSLMai",    "L",  1, 0, "Lógico de uso de protocolo SSL del servidor de correo", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCcoMai",    "C",250, 0, "Enviar con copia oculta de mail a cuenta de correo",    "", "", "aEmp()", "" } )
+   aAdd( aDbf, {"lRecEnt",    "L",  1, 0, "Lógico para recibir albaranes como entregados",         "", "", "aEmp()", .f. } )
 
 Return ( aDbf )
 
