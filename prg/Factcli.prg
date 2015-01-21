@@ -732,7 +732,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Exportado a Facturae 3.1 [Factura electrónica]"
+         :cHeader          := "Exportado a Facturae 3.2 [Factura electrónica]"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lExpFac }
@@ -1153,8 +1153,8 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "Document_plain_earth_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.1", .f., "Firmar digitalmente (necesita runtime de Java)", .f., "Enviar por correo electrónico" ) ) ;
-         TOOLTIP  "Exportar a Facturae" ;
+         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.2", .f., "Firmar digitalmente (necesita runtime de Java)", .f., "Enviar por correo electrónico" ) ) ;
+         TOOLTIP  "Exportar a Facturae 3.2" ;
          LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "Text_Code_" OF oWndBrw ;
@@ -15484,9 +15484,9 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       :cNif                      := uFieldEmpresa( "cNif" )
 
       :cInvoiceSeriesCode        := ( D():FacturasClientes( nView ) )->cSerie
-      :cInvoiceNumber            := alltrim( str( Year( ( D():FacturasClientes( nView ) )->dFecFac ) ) + "/" 
+      :cInvoiceNumber            := alltrim( str( Year( ( D():FacturasClientes( nView ) )->dFecFac ) ) ) + "/" 
       :cInvoiceNumber            += ( D():FacturasClientes( nView ) )->cSerie + Rtrim( ( D():FacturasClientes( nView ) )->cSufFac ) + "/" 
-      cInvoiceNumber             += alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) )
+      :cInvoiceNumber            += alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) )
       :cInvoiceCurrencyCode      := ( D():FacturasClientes( nView ) )->cDivFac
       :cTaxCurrencyCode          := ( D():FacturasClientes( nView ) )->cDivFac
       :nInvoiceTotalAmount       := nTotal
