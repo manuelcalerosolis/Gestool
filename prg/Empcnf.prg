@@ -1158,6 +1158,10 @@ FUNCTION cNewSer( cTipDoc, dbfCount )
       cSerie         := ( dbfCount )->cSerie
    end if
 
+   if !Empty( oUser():SerieDefecto() )
+      cSerie         := oUser():SerieDefecto()
+   end if
+
    /*
    Cerramos las bases de datos
    */
@@ -1186,11 +1190,19 @@ FUNCTION cDefSer()
 
    local cDefSer  := "A"
 
-   if !Empty( aEmp() ) // !Empty( aEmp()[ _CDEFSER ] )
+   if !Empty( oUser():SerieDefecto() )
 
-      cDefSer     := Upper( aEmp()[ _CDEFSER ] )
+      cDefSer     := oUser():SerieDefecto()
 
-   end if
+   else
+      
+      if !Empty( aEmp() ) // !Empty( aEmp()[ _CDEFSER ] )
+
+         cDefSer     := Upper( aEmp()[ _CDEFSER ] )
+
+      end if
+
+   end if   
 
 RETURN ( cDefSer )
 

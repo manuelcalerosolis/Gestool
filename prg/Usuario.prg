@@ -45,6 +45,7 @@ REQUEST DBFCDX
 #define _LARQCIE                 34      //   L      1      0
 #define _CTIPINCI                35      //   C      3      0 
 #define _CCODSALA                36      
+#define _CSERDEF                 37      //   C      1      0
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -526,6 +527,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
          ID       161 ;
          WHEN     .f. ;
          OF       oDlg
+
+      REDEFINE GET aGet[ _CSERDEF ] VAR aTmp[ _CSERDEF ];
+         ID       370 ;
+         PICTURE  "@!" ;
+         SPINNER ;
+         ON UP    ( UpSerie( aGet[ _CSERDEF ] ) );
+         ON DOWN  ( DwSerie( aGet[ _CSERDEF ] ) ); 
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( Empty( aTmp[ _CSERDEF ] ) .or. ( aTmp[ _CSERDEF ] >= "A" .AND. aTmp[ _CSERDEF ] <= "Z" ) ) ;
+         OF       oDlg   
 
       REDEFINE GET aGet[ _CCODTRA ] VAR aTmp[ _CCODTRA ];
          ID       340 ;
@@ -2799,7 +2810,8 @@ Function aItmUsuario()
                      { "lNoOpCaj",  "L",  1,  0, "Lógico abrir cajón portamonedas" },;
                      { "lArqCie",   "L",  1,  0, "Lógico arqueo ciego para este usuario" },;
                      { "cTipInci",  "C",  3,  0, "Tipo de incidencia por defecto" },;
-                     { "cCodSala",  "C",  3,  0, "Código de sala por defecto para este usuario" } }
+                     { "cCodSala",  "C",  3,  0, "Código de sala por defecto para este usuario" },;
+                     { "cSerDef",   "C",  1,  0, "Serie de facturación por defecto" } }
 
 
 Return ( aBase )

@@ -80,6 +80,9 @@ CLASS TUser
    Data     _NotRentabilidadGrupo
    Method   lNotRentabilidadGrupo( lNewVal ) INLINE if( isLogic( lNewVal ), ::_NotRentabilidadGrupo := lNewVal, ::_NotRentabilidadGrupo )
 
+   Data     _SerieDefecto
+   Method   SerieDefecto( cNewVal )    INLINE if( !Empty( cNewVal ), ::_SerieDefecto := cNewVal, ::_SerieDefecto )
+
    Data     _NotInicio                 INIT .f.
    Method   lNotInicio( lNewVal )
 
@@ -284,6 +287,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::MixPermisosGrupo(  ( ::oDbf )->cCodGrp )
          ::SalaVenta(         ( ::oDbf )->cCodSala )
          ::DelegacionUsuario( ( ::oDbf )->cCodDlg )
+         ::SerieDefecto(      ( ::oDbf )->cSerDef )
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
