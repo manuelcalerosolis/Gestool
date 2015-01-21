@@ -4419,7 +4419,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       REDEFINE GET aGet[ _NPREDIV ] VAR aTmp[ _NPREDIV ] ;
 			ID 		150 ;
 			SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
          VALID    ( RecalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ) );
          ON CHANGE( RecalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ) );
 			PICTURE 	cPouDiv ;
@@ -4431,9 +4431,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          MIN      1 ;
          MAX      6 ;
          PICTURE  "9" ;
-         VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
+         VALID    ( aTmp[ _NTARLIN ] >= 1 .and. aTmp[ _NTARLIN ] <= 6 );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpPed ), RecalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ) );
+         ON CHANGE(  changeTarifa( aTmp, aGet, aTmpPed ),;
+                     loadComisionAgente( aTmp, aGet, aTmpPed ),;
+                     recalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
       /*
@@ -8053,6 +8055,25 @@ RETURN NIL
 
 //-------------------------------------------------------------------------//
 
+Static Function loadComisionAgente( aTmp, aGet, aTmpPed )
+
+   local nComisionAgenteTarifa   
+
+   nComisionAgenteTarifa         := nComisionAgenteTarifa( aTmpPed[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
+   if nComisionAgenteTarifa == 0
+      nComisionAgenteTarifa      := aTmpPed[ _NPCTCOMAGE ]
+   end if 
+
+   if !empty( aGet[ _NCOMAGE ] )
+      aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
+   else 
+      aTmp[ _NCOMAGE ]        := nComisionAgenteTarifa
+   end if
+
+return .t.
+
+//-----------------------------------------------------------------------------
+
 Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
 
    local uValor   := oGetCod:VarGet()
@@ -10982,15 +11003,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _NFACCNV ]     := ( D():Articulos( nView ) )->nFacCnv
             end if
 
-            /*
-            Si la comisi¢n del articulo hacia el agente es distinto de cero----
-            */
+            // Si la comisi¢n del articulo hacia el agente es distinto de cero----
 
-            aGet[ _NCOMAGE ]:cText( aTmpPed[ _NPCTCOMAGE ] )
+            loadComisionAgente( aTmp, aGet, aTmpPed )
 
-            /*
-            Imagen del producto---------------------------------------------------
-            */
+            // Imagen del producto---------------------------------------------------
 
             if !Empty( aGet[ _CIMAGEN ] )
                aGet[ _CIMAGEN ]:cText( ( D():Articulos( nView ) )->cImagen )

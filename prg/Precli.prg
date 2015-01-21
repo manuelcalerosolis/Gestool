@@ -3591,7 +3591,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpPre ), RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE(  changeTarifa( aTmp, aGet, aTmpPre ),;
+                     loadComisionAgente( aTmp, aGet, aTmpPre ),;
+                     recalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
       /*
@@ -5438,16 +5440,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
-            /*
-            Si la comisi¢n del articulo hacia el agente es distinto de cero----
-            */
+            // Si la comisi¢n del articulo hacia el agente es distinto de cero----
 
-            aGet[ _NCOMAGE ]:cText( aTmpPre[ _NPCTCOMAGE ] )
+            loadComisionAgente( aTmp, aGet, aTmpPre )
 
-            /*
-            Peso y volumen
-            -------------------------------------------------------------------
-            */
+            // Peso y volumen
 
             if !Empty( aGet[ _NPESOKG ] )
                aGet[ _NPESOKG  ]:cText( ( D():Articulos( nView ) )->nPesoKg )
@@ -7847,6 +7844,25 @@ Static Function ValidaMedicion( aTmp, aGet )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Static Function loadComisionAgente( aTmp, aGet, aTmpPre )
+
+   local nComisionAgenteTarifa   
+
+   nComisionAgenteTarifa      := nComisionAgenteTarifa( aTmpPre[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
+   if nComisionAgenteTarifa == 0
+      nComisionAgenteTarifa   := aTmpPre[ _NPCTCOMAGE ]
+   end if 
+
+   if !empty( aGet[ _NCOMAGE ] )
+      aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
+   else 
+      aTmp[ _NCOMAGE ]        := nComisionAgenteTarifa
+   end if
+
+return .t.
+
+//-----------------------------------------------------------------------------
 
 Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
 

@@ -6,7 +6,7 @@
 
 #include "Factu.ch" 
 
-#define SchemaVersion            '3.1'
+#define SchemaVersion            '3.2'
 #define Modality                 'I'   // "individual" (I)
 #define InvoiceIssuerType        'EM'
 #define InvoicesCount            '1'
@@ -230,27 +230,31 @@ METHOD GeneraXml()
    local oError
    local oBlock
 
-   ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="ISO-8859-1" ?> ' )
+   ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="ISO-8859-1" ?>' )
+
+   // ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8" ?> ' )
 
    /*
    Comienza el nodo principal--------------------------------------------------
    */
-
-   ::oXmlNode     := TXmlNode():new( , 'm:Facturae', { 'xmlns:m' => 'http://www.facturae.es/Facturae/2007/v3.1/Facturae',;
-                                                       'xmlns:n1' => 'http://www.facturae.es/Facturae/2007/v3.1/Facturae',;
-                                                       'xmlns:tns' => 'http://schemas.xmlsoap.org/soap/envelope/',;
-                                                       'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',;
-                                                       'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',;
-                                                       'xsi:schemaLocation' => 'http://www.facturae.es/Facturae/2007/v3.1/Facturae http://www.facturae.es/NR/rdonlyres/56F4132E-2AF9-41DD-AADC-CB412AE3F79C/0/1Facturaev31.xsd' } )
-
+   
+//   ::oXmlNode     := TXmlNode():new( , 'm:Facturae', { 'xmlns:m' => 'http://www.facturae.es/Facturae/2007/v3.1/Facturae',;
+//                                                       'xmlns:n1' => 'http://www.facturae.es/Facturae/2007/v3.1/Facturae',;
+//                                                       'xmlns:tns' => 'http://schemas.xmlsoap.org/soap/envelope/',;
+//                                                       'xmlns:ds' => 'http://www.w3.org/2000/09/xmldsig#',;
+//                                                       'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',;
+//                                                       'xsi:schemaLocation' => 'http://www.facturae.es/Facturae/2007/v3.1/Facturae http://www.facturae.es/NR/rdonlyres/56F4132E-2AF9-41DD-AADC-CB412AE3F79C/0/1Facturaev31.xsd' } )
+   
    /*
    Facturae 3.2
-
-   ::oXmlNode     := TXmlNode():new( , 'namespace:Facturae',;
-                                       {  'xmlns:namespace' => 'http://www.facturae.es/Facturae/2009/v3.2/Facturae',;
-                                          'xmlns:namespace2' => 'http://www.w3.org/2001/XMLSchema',;
-                                          'xmlns:namespace3' => 'http://www.w3.org/2000/09/xmldsig#' } )
    */
+
+   ::oXmlNode     := TXmlNode():new( , "fe:Facturae",;
+                                       {  "xmlns:fe" => "http://www.facturae.es/Facturae/2009/v3.2/Facturae",;
+                                          "xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",;
+                                          "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",;
+                                          "xsi:schemaLocation" => "http://www.facturae.es/Facturae/2009/v3.2/Facturae" } )
+
 
 /*
 <xs:schema 
@@ -1417,7 +1421,7 @@ CLASS ItemLine
    ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
    ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                          DoubleTwoDecimalPicture ) ) )
    ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,               DoubleSixDecimalPicture ) ) )
-   ACCESS   TotalCost                     INLINE ( Alltrim( Trans( ::nQuantity * ::nUnitPriceWithoutTax, DoubleTwoDecimalPicture ) ) )
+   ACCESS   TotalCost                     INLINE ( Alltrim( Trans( ::nQuantity * ::nUnitPriceWithoutTax, DoubleSixDecimalPicture ) ) )
 
    //------------------------------------------------------------------------//
 
@@ -1464,7 +1468,7 @@ METHOD GrossAmount()
       ::nGrossAmount    -= oDiscount:nDiscountAmount
    next
 
-RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleTwoDecimalPicture ) ) )
+RETURN ( Alltrim( Trans( ::nGrossAmount, DoubleSixDecimalPicture ) ) )
 
 //---------------------------------------------------------------------------//
 

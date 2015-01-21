@@ -3489,7 +3489,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpSat ), RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE(  changeTarifa( aTmp, aGet, aTmpSat ),;
+                     loadComisionAgente( aTmp, aGet, aTmpSat ),;
+                     recalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
       /*
@@ -5448,11 +5450,9 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
 
             end if
 
-            /*
-            Si la comisi¢n del articulo hacia el agente es distinto de cero----
-            */
+            // Si la comisi¢n del articulo hacia el agente es distinto de cero----
 
-            aGet[ _NCOMAGE ]:cText( aTmpSat[ _NPCTCOMAGE ] )
+            loadComisionAgente( aTmp, aGet, aTmpSat )
 
             /*
             Peso y volumen
@@ -7909,6 +7909,25 @@ Static Function ValidaMedicion( aTmp, aGet )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+Static Function loadComisionAgente( aTmp, aGet, aTmpSat )
+
+   local nComisionAgenteTarifa   
+
+   nComisionAgenteTarifa      := nComisionAgenteTarifa( aTmpSat[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
+   if nComisionAgenteTarifa == 0
+      nComisionAgenteTarifa   := aTmpSat[ _NPCTCOMAGE ]
+   end if 
+
+   if !empty( aGet[ _NCOMAGE ] )
+      aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
+   else 
+      aTmp[ _NCOMAGE ]        := nComisionAgenteTarifa
+   end if
+
+return .t.
+
+//-----------------------------------------------------------------------------
 
 Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
 

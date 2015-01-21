@@ -3950,7 +3950,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpFac ), lCalcDeta( aTmp, aTmpFac ) );
+         ON CHANGE(  changeTarifa( aTmp, aGet, aTmpFac ),;
+                     loadComisionAgente( aTmp, aGet, aTmpFac ),;
+                     lCalcDeta( aTmp, aTmpFac ) );
          OF       oFld:aDialogs[1]
 
       aGet[ _NPREUNIT ]:bHelp := {|| DesgPnt( cCodArt, aTmp, aTmp[ _NTARLIN ], aGet[ _NPREUNIT ], aGet[ _NCOSDIV ], nMode ), lCalcDeta( aTmp, aTmpFac ) }
@@ -6029,7 +6031,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Si la comisi¢n del articulo hacia el agente es distinto de cero----------
          */
 
-         aGet[_NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
+         loadComisionAgente( aTmp, aGet, aTmpFac )
 
          /*
          Tomamos el valor del stock y anotamos si nos dejan vender sin stock
@@ -8149,19 +8151,13 @@ static function RecFacRec( aTmpFac )
          ( dbfTmpLin )->nCosDiv     := nCosto( nil, D():Articulos( nView ), dbfKit )
          ( dbfTmpLin )->nPvpRec     := ( D():Articulos( nView ) )->PvpRec
 
-         /*
-         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
-         */
-
-         ( dbfTmpLin )->nComAge     := aTmpFac[ _NPCTCOMAGE ]
+         // Chequeamos situaciones especiales----------------------------------
 
          cCodFam                    := ( D():Articulos( nView ) )->Familia
 
-         // Chequeamos situaciones especiales----------------------------------
-
-         do case
          // Precios en tarifas-------------------------------------------------
 
+         do case
          case !Empty( aTmpFac[ _CCODTAR ] )
 
             nImpOfe     := RetPrcTar( ( dbfTmpLin )->cRef, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
@@ -9817,6 +9813,25 @@ Static Function ChangeTarifa( aTmp, aGet, aTmpFac )
 
    if nPrePro != 0
       aGet[ _NPREUNIT ]:cText( nPrePro )
+   end if
+
+return .t.
+
+//-----------------------------------------------------------------------------
+
+Static Function loadComisionAgente( aTmp, aGet, aTmpFac )
+
+   local nComisionAgenteTarifa   
+
+   nComisionAgenteTarifa      := nComisionAgenteTarifa( aTmpFac[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
+   if nComisionAgenteTarifa == 0
+      nComisionAgenteTarifa   := aTmpFac[ _NPCTCOMAGE ]
+   end if 
+
+   if !empty( aGet[ _NCOMAGE ] )
+      aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
+   else 
+      aTmp[ _NCOMAGE ]        := nComisionAgenteTarifa
    end if
 
 return .t.

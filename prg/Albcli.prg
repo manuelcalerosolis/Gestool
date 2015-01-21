@@ -4337,7 +4337,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpAlb ), lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE(  ChangeTarifa( aTmp, aGet, aTmpAlb ),;
+                     loadComisionAgente( aTmp, aGet, aTmpAlb ),;
+                     lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CUNIDAD ] VAR aTmp[ _CUNIDAD ] ;
@@ -7937,6 +7939,23 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+Static Function loadComisionAgente( aTmp, aGet, aTmpAlb )
+
+   local nComisionAgenteTarifa   
+
+   nComisionAgenteTarifa         := nComisionAgenteTarifa( aTmpAlb[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
+   if nComisionAgenteTarifa == 0
+      nComisionAgenteTarifa      := aTmpAlb[ _NPCTCOMAGE ]
+   end if 
+
+   if !empty( aGet[ _NCOMAGE ] )
+      aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
+   end if
+
+return .t.
+
+//-----------------------------------------------------------------------------
+
 Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
 
    local uValor   := oGetCod:VarGet()
@@ -9896,15 +9915,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
             end if
 
-            /*
-            Si la comisi¢n del articulo hacia el agente es distinto de cero----
-            */
+            // Si la comisi¢n del articulo hacia el agente es distinto de cero----
 
-            aGet[ _NCOMAGE ]:cText( aTmpAlb[ _NPCTCOMAGE ] )
+            loadComisionAgente( aTmp, aGet, aTmpAlb )
 
-            /*
-            No permitir venta sin stock----------------------------------------
-            */
+            // No permitir venta sin stock----------------------------------------
 
             aTmp[ _LMSGVTA ]     := ( D():Articulos( nView ) )->lMsgVta
             aTmp[ _LNOTVTA ]     := ( D():Articulos( nView ) )->lNotVta

@@ -9429,12 +9429,11 @@ static function RecFacCli( aTmpFac, lMessage )
 
    end if
 
-   nRecno         := ( dbfTmpLin )->( RecNo() )
-
-   ( dbfTmpLin )->( dbGotop() )
+   nRecno            := ( dbfTmpLin )->( RecNo() )
    
    ( D():Articulos( nView ) )->( ordSetFocus( "Codigo" ) )
 
+   ( dbfTmpLin )->( dbGotop() )
    while !( dbfTmpLin )->( eof() )
 
       /*
@@ -9446,10 +9445,10 @@ static function RecFacCli( aTmpFac, lMessage )
          do case
          	case aTmpFac[ _NREGIVA ] <= 1
 	            ( dbfTmpLin )->nIva     := nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva )
-    	        ( dbfTmpLin )->nReq     := nReq( dbfIva, ( D():Articulos( nView ) )->TipoIva )
+               ( dbfTmpLin )->nReq     := nReq( dbfIva, ( D():Articulos( nView ) )->TipoIva )
          	case aTmpFac[ _NREGIVA ] == 3
 	            ( dbfTmpLin )->nIva     := 0
-    	        ( dbfTmpLin )->nReq     := 0
+               ( dbfTmpLin )->nReq     := 0
          end case 
 
          /*
@@ -9481,24 +9480,13 @@ static function RecFacCli( aTmpFac, lMessage )
          ( dbfTmpLin )->nCosDiv  := nCosto( nil, D():Articulos( nView ), dbfKit )
          ( dbfTmpLin )->nPvpRec  := (D():Articulos( nView ))->PvpRec
 
-         /*
-         Si la comisi¢n del articulo hacia el agente es distinto de cero----------
-         */
-
-         ( dbfTmpLin )->nComAge  := aTmpFac[ _NPCTCOMAGE ]
-
-         /*
-         Chequeamos situaciones especiales
-         */
+         // Chequeamos situaciones especiales
 
          cCodFam                 := ( dbfTmpLin )->cCodFam
 
+         // Precios en tarifas
+
          do case
-
-         /*
-         Precios en tarifas
-         */
-
          case !Empty( aTmpFac[_CCODTAR] )
 
             nImpOfe     := RetPrcTar( ( dbfTmpLin )->cRef, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
@@ -9546,32 +9534,32 @@ static function RecFacCli( aTmpFac, lMessage )
          if !Empty( hAtipica )
             if hhaskey( hAtipica, "nImporte" )
             	if hAtipica[ "nImporte" ] != 0
-               		( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
-               	end if
+            		( dbfTmpLin )->nPreUnit := hAtipica[ "nImporte" ]
+            	end if
             end if
 
             if hhaskey( hAtipica, "nDescuentoPorcentual" )
             	if hAtipica[ "nDescuentoPorcentual" ] != 0
-               		( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
-               	end if	
+            		( dbfTmpLin )->nDto     := hAtipica[ "nDescuentoPorcentual" ]
+            	end if	
             end if
 
             if hhaskey( hAtipica, "nDescuentoPromocional" )
             	if hAtipica[ "nDescuentoPromocional" ] != 0
-               		( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
-               	end if	
+            		( dbfTmpLin )->nDtoPrm  := hAtipica[ "nDescuentoPromocional" ]
+            	end if	
             end if
 
             if hhaskey( hAtipica, "nDescuentoLineal" )
             	if hAtipica[ "nDescuentoLineal" ] != 0
-               		( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
-               	end if	
+            		( dbfTmpLin )->nDtoDiv  := hAtipica[ "nDescuentoLineal" ]
+            	end if	
             end if
 
             if hhaskey( hAtipica, "nComisionAgente" )
             	if hAtipica[ "nComisionAgente" ] != 0
-               		( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
-               	end if	
+            		( dbfTmpLin )->nComAge  := hAtipica[ "nComisionAgente" ]
+            	end if	
             end if
 
          end if
@@ -11171,15 +11159,13 @@ static function loadComisionAgente( aTmp, aGet, aTmpFac )
 
    local nComisionAgenteTarifa   
 
+   nComisionAgenteTarifa         := nComisionAgenteTarifa( aTmpFac[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
+   if nComisionAgenteTarifa == 0
+      nComisionAgenteTarifa      := aTmpFac[ _NPCTCOMAGE ]
+   end if 
+
    if !empty( aGet[ _NCOMAGE ] )
-
-      aGet[ _NCOMAGE ]:cText( aTmpFac[ _NPCTCOMAGE ] )
-
-      nComisionAgenteTarifa   := nComisionAgenteTarifa( aTmpFac[ _CCODAGE ], aTmp[ _NTARLIN ], nView ) 
-      if nComisionAgenteTarifa != 0
-         aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
-      end if 
-
+      aGet[ _NCOMAGE ]:cText( nComisionAgenteTarifa )
    end if
 
 return .t.
@@ -12504,13 +12490,11 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, lTotal )
       nCalculo    := aTmp[ _NPREUNIT ]
    end if
 
-   nCalculo       -= aTmp[ _NDTODIV  ]
+   nCalculo       -= aTmp[ _NDTODIV ]
 
    nUnidades      := nTotNFacCli( aTmp )
 
-   /*
-   IVMH
-   */
+   // IVMH
 
    if !aTmp[ _LIVALIN ]
       if aTmp[ _LVOLIMP ]
@@ -12522,17 +12506,13 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, lTotal )
 
    nCalculo       *= nUnidades
 
-   /*
-   Transporte
-   */
+   // Transporte
 
    if aTmp[ _NIMPTRN ] != 0
       nCalculo    += nUnidades * aTmp[ _NIMPTRN ]
    end if
 
-   /*
-   Descuentos
-   */
+   // Descuentos
 
    if aTmp[ _NDTO    ] != 0
       nCalculo    -= nCalculo * aTmp[ _NDTO    ] / 100
@@ -12543,7 +12523,7 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, lTotal )
    end if
 
    /*
-   Calculo del margen y rentabilidad-------------------------------------------
+   // Calculo del margen y rentabilidad-------------------------------------------
    */
 
    nCosto            := nUnidades * aTmp[ _NCOSDIV ]
@@ -13462,9 +13442,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
          end if
 
-         /*
-         Si la comisi¢n del articulo hacia el agente es distinto de cero-------
-         */
+         // Si la comisi¢n del articulo hacia el agente es distinto de cero-------
 
          loadComisionAgente( aTmp, aGet, aTmpFac )
 
@@ -15506,7 +15484,9 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       :cNif                      := uFieldEmpresa( "cNif" )
 
       :cInvoiceSeriesCode        := ( D():FacturasClientes( nView ) )->cSerie
-      :cInvoiceNumber            := str( Year( ( D():FacturasClientes( nView ) )->dFecFac ) ) + "/" + ( D():FacturasClientes( nView ) )->cSerie + Rtrim( ( D():FacturasClientes( nView ) )->cSufFac ) + "/" + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) )
+      :cInvoiceNumber            := alltrim( str( Year( ( D():FacturasClientes( nView ) )->dFecFac ) ) + "/" 
+      :cInvoiceNumber            += ( D():FacturasClientes( nView ) )->cSerie + Rtrim( ( D():FacturasClientes( nView ) )->cSufFac ) + "/" 
+      cInvoiceNumber             += alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) )
       :cInvoiceCurrencyCode      := ( D():FacturasClientes( nView ) )->cDivFac
       :cTaxCurrencyCode          := ( D():FacturasClientes( nView ) )->cDivFac
       :nInvoiceTotalAmount       := nTotal
