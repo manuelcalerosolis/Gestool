@@ -1394,11 +1394,11 @@ CLASS Discount
 
    DATA     cDiscountReason               INIT '-'
    DATA     nDiscountRate                 INIT 0.00
-   DATA     nDiscountAmount               INIT 0.00
+   DATA     nDiscountAmount               INIT 0.000000
 
    ACCESS   DiscountReason                INLINE ( ::cDiscountReason )
    ACCESS   DiscountRate                  INLINE ( Alltrim( Trans( ::nDiscountRate,    DoubleFourDecimalPicture ) ) )
-   ACCESS   DiscountAmount                INLINE ( Alltrim( Trans( ::nDiscountAmount,  DoubleTwoDecimalPicture  ) ) )
+   ACCESS   DiscountAmount                INLINE ( Alltrim( Trans( ::nDiscountAmount,  DoubleSixDecimalPicture  ) ) )
 
 ENDCLASS
 

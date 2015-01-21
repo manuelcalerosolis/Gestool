@@ -5631,7 +5631,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                                    "nHeight"   => 25,;
                                                    "aItems"    => aCbxRuta,;
-                                                   "bChange"   => {|| CambioRutaTablet( aGet, oSayTextRuta ) } } )
+                                                   "bChange"   => {|| changeRutaTablet( aGet ) } } )
 
       oBtnLeft    := TGridImage():Build(  {        "nTop"      => 63,;
                                                    "nLeft"     => {|| GridWidth( 4.5, oDlg ) },;
@@ -5944,12 +5944,8 @@ RETURN ( oDlg:nResult == IDOK )
 
 Static function startEdtTablet( nMode, aGet, oSayTextRuta )
 
-   local cOrder   := hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ]
-
-   oClienteRutaNavigator:getClientesRutas( cOrder ) 
-
    if ( nMode == APPD_MODE )
-      currentClient( aGet )
+      changeRutaTablet( aGet )
    end if
 
 Return ( nil )
@@ -6566,83 +6562,21 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-static function CambioRutaTablet( aGet, oSayTextRuta )
+static function changeRutaTablet( aGet )
 
-   local cCliente          := ""
-   local nOrdAnt           := ( D():Clientes( nView ) )->( OrdSetFocus() )
+   local cOrder  
 
    if hhaskey( hOrdenRutas, AllTrim( Str( oCbxRuta:nAt ) ) )
 
-      nOrdAnt              := ( D():Clientes( nView ) )->( OrdSetFocus( hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
+      cOrder      := hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ]
 
-      if ( D():Clientes( nView ) )->( OrdKeyCount() ) != 0 
-         
-         ( D():Clientes( nView ) )->( dbGoTop() )
-         if !( D():Clientes( nView ) )->( Eof() )
-            cCliente       := ( D():Clientes( nView ) )->Cod
-         end if   
+      oClienteRutaNavigator:getClientesRutas( cOrder ) 
 
-         if !Empty( oSayTextRuta )
-            oSayTextRuta:cText( AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyNo() ) ) ) + "/" + AllTrim( Str( ( D():Clientes( nView ) )->( OrdKeyCount() ) ) ) )
-            oSayTextRuta:Refresh()
-         end if
+      currentClient( aGet )
 
-      else
-
-         ( D():Clientes( nView ) )->( OrdSetFocus( "Cod" ) )
-         ( D():Clientes( nView ) )->( dbGoTop() )
-
-         cCliente             := ( D():Clientes( nView ) )->Cod
-
-         if !Empty( oSayTextRuta )
-            oSayTextRuta:cText( "1/1" )
-            oSayTextRuta:Refresh()
-         end if
-      
-      end if   
-
-      ( D():Clientes( nView ) )->( OrdSetFocus( nOrdAnt ) )
-
-   end if
-
-   if !Empty( aGet[ _CCODCLI ] )
-      aGet[ _CCODCLI ]:cText( cCliente )
-      aGet[ _CCODCLI ]:Refresh()
-      aGet[ _CCODCLI ]:lValid()
-      aGet[ _CCODOBR ]:cText( Space( 10 ) )
-      aGet[ _CCODOBR ]:Refresh()
-      aGet[ _CCODOBR ]:lValid()
    end if 
 
-return cCliente
-
-//---------------------------------------------------------------------------//
-
-static function gotoUltimoCliente()
-
-   local nOrdAnt     := ( D():Clientes( nView ) )->( OrdSetFocus( hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
-
-   if empty( nUltimoCliente )
-      ( D():Clientes( nView ) )->( dbGoTop() )
-   else
-      ( D():Clientes( nView ) )->( OrdKeyGoto( nUltimoCliente ) )
-   end if 
-
-   ( D():Clientes( nView ) )->( OrdSetFocus( nOrdAnt ) ) 
-         
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Static function setUltimoCliente()
-
-   local nOrdAnt     := ( D():Clientes( nView ) )->( OrdSetFocus( hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
-
-   nUltimoCliente    := ( D():Clientes( nView ) )->( OrdKeyNo() )
-
-   ( D():Clientes( nView ) )->( OrdSetFocus( nOrdAnt ) ) 
-
-Return nil
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -6650,32 +6584,30 @@ static function ChangeSerieTablet( aGet )
 
 	local cSerie 	:= aGet[ _CSERIE ]:VarGet()
 
-		do case
-			case cSerie == "A"
-				if !Empty( aGet[ _CSERIE ] )
-					aGet[ _CSERIE ]:cText( "B" )
-					aGet[ _CSERIE ]:Refresh()
-				end if	
+	do case
+		case cSerie == "A"
+			if !Empty( aGet[ _CSERIE ] )
+				aGet[ _CSERIE ]:cText( "B" )
+			end if	
 
-			case cSerie == "B"
-				if !Empty( aGet[ _CSERIE ] )
-					aGet[ _CSERIE ]:cText( "C" )
-					aGet[ _CSERIE ]:Refresh()
-				end if	
+		case cSerie == "B"
+			if !Empty( aGet[ _CSERIE ] )
+				aGet[ _CSERIE ]:cText( "C" )
+			end if	
 
-         case cSerie == "C"
-            if !Empty( aGet[ _CSERIE ] )
-               aGet[ _CSERIE ]:cText( "A" )
-               aGet[ _CSERIE ]:Refresh()
-            end if   
+      case cSerie == "C"
+         if !Empty( aGet[ _CSERIE ] )
+            aGet[ _CSERIE ]:cText( "A" )
+         end if   
 
-			otherwise
-				if !Empty( aGet[ _CSERIE ] )
-					aGet[ _CSERIE ]:cText( "A" )
-					aGet[ _CSERIE ]:Refresh()
-				end if	
+		otherwise
+			if !Empty( aGet[ _CSERIE ] )
+				aGet[ _CSERIE ]:cText( "A" )
+			end if	
 
-		end case
+	end case
+
+   aGet[ _CSERIE ]:Refresh()
 
 Return ( .t. )
 
@@ -15561,9 +15493,9 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       Totales------------------------------------------------------------------
       */
 
-      :nInvoiceTotal                               	:= nTotal
-      :nTotalGrossAmount                           	:= nTotBrt
-      :nTotalGrossAmountBeforeTaxes 				:= nTotNet
+      :nInvoiceTotal                                  := nTotal
+      :nTotalGrossAmount                              := nTotBrt
+      :nTotalGrossAmountBeforeTaxes                   := nTotNet
 
       /*
       Impuestos----------------------------------------------------------------
@@ -15653,7 +15585,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
          while ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == nNumero .and. !( dbfFacCliL )->( Eof() )
 
-            if lValLine( dbfFacCliL ) .and. !( dbfFacCliL )->lTotLin
+            if lValidLineForFacturae( dbfFacCliL )
 
                oItemLine                           := ItemLine():New( oFactura )
 
@@ -15792,6 +15724,12 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    oFactura:ShowInWeb()
 
 return nil
+
+//---------------------------------------------------------------------------//
+
+static function lValidLineForFacturae( dbfFacCliL )
+
+Return ( lValLine( dbfFacCliL ) .and. !( dbfFacCliL )->lTotLin .and. nTotNFacCli( dbfFacCliL ) != 0 )
 
 //---------------------------------------------------------------------------//
 
@@ -23759,10 +23697,6 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
       aTmp[ _NTOTSUP ]  := nTotSup
       aTmp[ _NTOTLIQ ]  := nTotCob
       aTmp[ _NTOTPDT ]  := nTotFac - nTotCob
-
-      // set de ultimo registro------------------------------------------------
-
-      setUltimoCliente() 
 
       // Grabamos el registro--------------------------------------------------
 
