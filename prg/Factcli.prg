@@ -555,6 +555,7 @@ static lOpenFiles          := .f.
 static lExternal           := .f.
 
 static oClienteRutaNavigator
+static oMailingFacturasClientes
 
 static hOrdenRutas         := { "1" => "lVisDom", "2" => "lVisLun", "3" => "lVisMar", "4" => "lVisMie", "5" => "lVisJue", "6" => "lVisVie", "7" => "lVisSab", "8" => "Cod" }
 
@@ -1073,7 +1074,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TGenMailingSerialDocuments():New( nView ):Resource() );
+         ACTION   ( oMailingFacturasClientes:databaseDialog() );
          TOOLTIP  "Correo electrónico series";
          LEVEL    ACC_IMPR 
 
@@ -1908,6 +1909,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oFont                         := TFont():New( "Arial", 8, 26, .F., .T. )
 
       oClienteRutaNavigator         := ClienteRutaNavigator():New( nView )
+
+      oMailingFacturasClientes      := TGenmailingDatabaseFacturasClientes():New( nView )
 
       /*
       Declaramos variables públicas--------------------------------------------

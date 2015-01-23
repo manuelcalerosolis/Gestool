@@ -14,6 +14,8 @@ CLASS TGenMailingDatabase FROM TGenMailing
 
    METHOD New()
 
+   METHOD databaseDialog()
+
    METHOD setWorkArea( cWorkArea )        INLINE   ( ::Super:setWorkArea( cWorkArea ), ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
    METHOD quitWorkArea()                  INLINE   ( hSetStatus( ::hWorkAreaStatus ) )
 
@@ -58,6 +60,16 @@ METHOD New( nView )
    ::oFilter         := TFilterCreator():Init( Self )   
 
 Return ( Self )   
+
+//---------------------------------------------------------------------------//
+
+METHOD databaseDialog() CLASS TGenMailingDatabase
+
+   ::aPages          := { "Select_Mail_Redactar", "Select_Mail_Registros", "Select_Mail_Proceso" }
+
+   ::Resource()
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 

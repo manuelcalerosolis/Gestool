@@ -29,6 +29,8 @@ CLASS TGenMailing
    DATA oBtnSalvarAsHTML
    DATA oBtnDefectoHTML
 
+   DATA aPages
+
    // Asunto-------------------------------------------------------------------
 
    DATA oGetAsunto
@@ -184,11 +186,13 @@ CLASS TGenMailing
       METHOD buildPageProceso( oDlg )
       METHOD buildButtonsGeneral()
 
-   METHOD startResource()
-   METHOD freeResources()
+      METHOD startResource()
+      METHOD freeResources()
 
-   METHOD setMeterTotal( nTotal )      INLINE ( ::oMtr:nTotal := nTotal )
-   METHOD setMeter( nSet )             INLINE ( ::oMtr:Set( nSet ) )
+      METHOD setMeterTotal( nTotal )      INLINE ( ::oMtr:nTotal := nTotal )
+      METHOD setMeter( nSet )             INLINE ( ::oMtr:Set( nSet ) )
+
+   // Inicio del proceso-------------------------------------------------------
 
    METHOD IniciarProceso()
 
@@ -241,12 +245,7 @@ METHOD Resource() CLASS TGenMailing
       RESOURCE       "Select_Mail_Container";
        OF            oWnd()
 
-      REDEFINE PAGES ::oFld ;
-         ID          10;
-         OF          ::oDlg ;
-         DIALOGS     "Select_Mail_Redactar",;
-                     "Select_Mail_Registros",;
-                     "Select_Mail_Proceso"
+      ::oFld         := TPages():Redefine( 10, ::oDlg, ::aPages )
 
          ::buildPageRedactar( ::oFld:aDialogs[ 1 ] )
 

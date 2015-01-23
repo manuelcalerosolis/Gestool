@@ -61,7 +61,7 @@ TGenMail.prg            	\
 TGenMailDatabase.prg       \
 TGenMailClientes.prg       \
 TGenMailDocuments.prg      \
-TGenMailSerialDocuments.prg      \
+TGenMailDatabaseFacturasClientes.prg      \
 TSendMail.prg              \
 TSendMailOutlook.prg       \
 TSendMailCDO.prg           \
@@ -425,7 +425,7 @@ TGenMail.obj            \
 TGenMailDatabase.obj    \
 TGenMailClientes.obj    \
 TGenMailDocuments.obj   \
-TGenMailSerialDocuments.obj      \
+TGenMailDatabaseFacturasClientes.obj      \
 TSendMail.obj           \
 TSendMailOutlook.obj    \
 TSendMailCDO.obj        \
@@ -817,7 +817,7 @@ $(OBJ)\TGenMail.obj              +
 $(OBJ)\TGenMailDatabase.obj      +
 $(OBJ)\TGenMailClientes.obj      +
 $(OBJ)\TGenMailDocuments.obj     +
-$(OBJ)\TGenMailSerialDocuments.obj     +
+$(OBJ)\TGenMailDatabaseFacturasClientes.obj     +
 $(OBJ)\TSendMail.obj             +
 $(OBJ)\TSendMailOutlook.obj      +
 $(OBJ)\TSendMailCDO.obj          +
