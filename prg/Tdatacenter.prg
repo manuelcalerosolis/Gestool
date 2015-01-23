@@ -1991,13 +1991,13 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "NewCli"
    oDataTable:cName        := cPatEmp() + "NewImp"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "NewImp.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "NewImp.Cdx"
    oDataTable:cDescription := "Impuestos"
    oDataTable:bCreateFile  := {| cPath | TNewImp():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
-
 
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "UbiCat"

@@ -345,7 +345,15 @@ METHOD CargaArticulo() CLASS PedidoCliente
 
          ::setVolumen()
 
-         ::setUnidadesMedicion()
+         ::setUnidadMedicion()
+
+         ::setTipoArticulo()
+
+         ::SetCajas()
+
+         ::SetUnidades()
+
+         ::SetImpuestoEspecial()
 
       else
 
@@ -397,47 +405,6 @@ Return ( .t. )
                else
                   aTmp[ _NCTLSTK ]  := ( D():Articulos( nView ) )->nCtlStock
                end if
-
-            end if
-
-
-            /*
-            Tipo de articulo---------------------------------------------------
-
-            if !Empty( aGet[ _CCODTIP ] )
-               aGet[ _CCODTIP ]:cText( ( D():Articulos( nView ) )->cCodTip )
-            else
-               aTmp[ _CCODTIP ] := ( D():Articulos( nView ) )->cCodTip
-            end if
-
-            if (D():Articulos( nView ))->nCajEnt != 0
-               aGet[ _NCANPED ]:cText( (D():Articulos( nView ))->nCajEnt )
-            end if
-
-            if ( D():Articulos( nView ) )->nUniCaja != 0
-               aGet[ _NUNICAJA ]:cText( ( D():Articulos( nView ) )->nUniCaja )
-            end if
-
-            /*
-            Preguntamos si el regimen de " + cImp() + " es distinto de Exento
-
-            if aTmpPed[ _NREGIVA ] <= 1
-               aGet[ _NIVA ]:cText( nIva( dbfIva, ( D():Articulos( nView ) )->TipoIva ) )
-               aTmp[ _NREQ ]     := nReq( dbfIva, ( D():Articulos( nView ) )->TipoIva )
-            end if
-
-            /*
-            Ahora recogemos el impuesto especial si lo hay
-
-            if !Empty( ( D():Articulos( nView ) )->cCodImp )
-               aTmp[ _CCODIMP ]  := ( D():Articulos( nView ) )->cCodImp
-               if !Empty( aGet[ _NVALIMP ] )
-                  aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpPed[ _LIVAINC ], aTmp[ _NIVA ] ) )
-               else
-                  aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( D():Articulos( nView ) )->cCodImp, aTmpPed[ _LIVAINC ], aTmp[ _NIVA ] )
-               end if
-
-               aTmp[ _LVOLIMP ]     := RetFld( ( D():Articulos( nView ) )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
 
             end if
 

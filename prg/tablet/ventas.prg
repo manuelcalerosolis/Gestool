@@ -46,15 +46,19 @@ CLASS Ventas FROM DocumentoSerializable
 
    METHOD lSeekArticulo()
 
+   METHOD hSetDetail( cField, uValue );
+            INLINE ( hSet( ::hDictionaryDetailTemporal, cField, uValue ) )
+
+
    METHOD setCodigoArticulo();
-            INLINE ( hSet( ::hDictionaryDetailTemporal, "Articulo", ( D():Articulos( ::nView ) )->Codigo ),;
+            INLINE ( ::hSetDetail( "Articulo", ( D():Articulos( ::nView ) )->Codigo ),;
                      ::oViewEditDetail:oGetArticulo:Refresh() )
 
    METHOD lArticuloObsoleto()
 
    METHOD setDetalleArticulo();    
-            INLINE ( hSet( ::hDictionaryDetailTemporal, "DescripcionArticulo", ( D():Articulos( ::nView ) )->Nombre ),;
-                     hSet( ::hDictionaryDetailTemporal, "DescripcionAmpliada", ( D():Articulos( ::nView ) )->Descrip ),;
+            INLINE ( ::hSetDetail( "DescripcionArticulo", ( D():Articulos( ::nView ) )->Nombre ),;
+                     ::hSetDetail( "DescripcionAmpliada", ( D():Articulos( ::nView ) )->Descrip ),;
                      ::oViewEditDetail:oGetDescripcionArticulo:Refresh() )
 
    METHOD setProveedorArticulo()
@@ -62,23 +66,41 @@ CLASS Ventas FROM DocumentoSerializable
    METHOD setLote()
 
    METHOD setTipoVenta();
-            INLINE ( hSet( ::hDictionaryDetailTemporal, "AvisarSinStock", ( D():Articulos( ::nView ) )->lMsgVta ),;
-                     hSet( ::hDictionaryDetailTemporal, "NoPermitirSinStock", ( D():Articulos( ::nView ) )->lNotVta ) )
+            INLINE ( ::hSetDetail( "AvisarSinStock", ( D():Articulos( ::nView ) )->lMsgVta ),;
+                     ::hSetDetail( "NoPermitirSinStock", ( D():Articulos( ::nView ) )->lNotVta ) )
 
    METHOD setFamilia();
-            INLINE ( hSet( ::hDictionaryDetailTemporal, "Familia", ( D():Articulos( ::nView ) )->Familia ),;
-                     hSet( ::hDictionaryDetailTemporal, "GrupoFamilia", cGruFam( ( D():Articulos( ::nView ) )->Familia, D():Familias( ::nView ) ) ) )
+            INLINE ( ::hSetDetail( "Familia", ( D():Articulos( ::nView ) )->Familia ),;
+                     ::hSetDetail( "GrupoFamilia", cGruFam( ( D():Articulos( ::nView ) )->Familia, D():Familias( ::nView ) ) ) )
 
    METHOD setPeso();
-            INLINE ( hSet( ::hDictionaryDetailTemporal, "Peso", ( D():Articulos( ::nView ) )->nPesoKg ),;
-                     hSet( ::hDictionaryDetailTemporal, "UnidadMedicionPeso", ( D():Articulos( ::nView ) )->cUndDim ) )
+            INLINE ( ::hSetDetail( "Peso", ( D():Articulos( ::nView ) )->nPesoKg ),;
+                     ::hSetDetail( "UnidadMedicionPeso", ( D():Articulos( ::nView ) )->cUndDim ) )
 
    METHOD setVolumen();
-            INLINE ( hSet( ::hDictionaryDetailTemporal, "Volumen", ( D():Articulos( ::nView ) )->nVolumen ),;
-                     hSet( ::hDictionaryDetailTemporal, "UnidadMedicionVolumen", ( D():Articulos( ::nView ) )->cVolumen ) )
+            INLINE ( ::hSetDetail( "Volumen", ( D():Articulos( ::nView ) )->nVolumen ),;
+                     ::hSetDetail( "UnidadMedicionVolumen", ( D():Articulos( ::nView ) )->cVolumen ) )
 
-   METHOD setUnidadesMedicion();
-            INLINE ( hSet( ::hDictionaryDetailTemporal, "UnidadMedicion", ( D():Articulos( ::nView ) )->cUnidad ) )
+   METHOD setUnidadMedicion();
+            INLINE ( ::hSetDetail( "UnidadMedicion", ( D():Articulos( ::nView ) )->cUnidad ) )
+
+   METHOD setTipoArticulo();
+            INLINE ( ::hSetDetail( "TipoArticulo", ( D():Articulos( ::nView ) )->cCodTip ) )
+
+   METHOD setCajas();
+            INLINE ( ::hSetDetail( "Cajas", ( D():Articulos( ::nView ) )->nCajEnt ) )
+
+   METHOD setUnidades();
+            INLINE ( ::hSetDetail( "Unidades", ( D():Articulos( ::nView ) )->nUniCaja ) )
+
+   METHOD getValorImpuestoEspecial();
+            INLINE ( D():ImpuestosEspeciales( ::nView ):nValImp( ( D():Articulos( ::nView ) )->cCodImp,;
+                     hGet( ::hDictionaryMaster, "ImpuestosIncluidos" ),;
+                     hGet( ::hDictionaryDetailTemporal, "TipoImpuesto" ) ) )
+
+   METHOD SetImpuestoEspecial()
+
+   METHOD SetTipoImpuesto()
 
 END CLASS
 
@@ -120,6 +142,8 @@ METHOD OpenFiles() CLASS Ventas
    D():Proveedores( ::nView )
 
    D():Familias( ::nView )
+
+   D():ImpuestosEspeciales( ::nView )
 
    RECOVER USING oError
 
@@ -590,9 +614,9 @@ METHOD setProveedorArticulo() CLASS Ventas
    
    cRefProveedor     := Padr( cRefPrvArt( ( D():Articulos( ::nView ) )->Codigo, ( D():Articulos( ::nView ) )->cPrvHab , D():ProveedorArticulo( ::nView ) ) , 18 )
 
-   hSet( ::hDictionaryDetailTemporal, "Proveedor", ( D():Articulos( ::nView ) )->cPrvHab )
-   hSet( ::hDictionaryDetailTemporal, "NombreProveedor", RetFld( ( D():Articulos( ::nView ) )->cPrvHab, D():Proveedores( ::nView ) ) )
-   hSet( ::hDictionaryDetailTemporal, "ReferenciaProveedor", cRefProveedor )
+   ::hSetDetail( "Proveedor", ( D():Articulos( ::nView ) )->cPrvHab )
+   ::hSetDetail( "NombreProveedor", RetFld( ( D():Articulos( ::nView ) )->cPrvHab, D():Proveedores( ::nView ) ) )
+   ::hSetDetail( "ReferenciaProveedor", cRefProveedor )
 
 Return ( self )
 
@@ -602,8 +626,8 @@ METHOD setLote() CLASS Ventas
 
    if ( D():Articulos( ::nView ) )->lLote
 
-      hSet( ::hDictionaryDetailTemporal, "LogicoLote", ( D():Articulos( ::nView ) )->lLote )
-      hSet( ::hDictionaryDetailTemporal, "Lote", ( D():Articulos( ::nView ) )->cLote )
+      ::hSetDetail( "LogicoLote", ( D():Articulos( ::nView ) )->lLote )
+      ::hSetDetail( "Lote", ( D():Articulos( ::nView ) )->cLote )
 
       ::oViewEditDetail:ShowLote()
 
@@ -614,6 +638,31 @@ METHOD setLote() CLASS Ventas
    end if
 
    ::oViewEditDetail:RefreshLote()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetTipoImpuesto() CLASS Ventas
+
+   if hGet( ::hDictionaryMaster, "TipoImpuesto" ) <= 1
+      ::hSetDetail( "PorcentajeImpuesto", nIva( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva ) )
+      ::hSetDetail( "RecargoEquivalencia", nReq( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva ) )
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetImpuestoEspecial() CLASS Ventas
+
+   if !Empty( ( D():Articulos( ::nView ) )->cCodImp )
+
+      ::hSetDetail( "ImpuestoEspecial", ( D():Articulos( ::nView ) )->cCodImp )
+      ::hSetDetail( "ImporteImpuestoEspecial", ::getValorImpuestoEspecial() )
+      ::hSetDetail( "VolumenImpuestosEspeciales", RetFld( ( D():Articulos( ::nView ) )->cCodImp, D():ImpuestosEspeciales( ::nView ):cAlias, "lIvaVol" ) )
+
+   end if
 
 Return ( self )
 
