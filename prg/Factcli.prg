@@ -24160,6 +24160,6 @@ Static Function cFormatoFacturasClientes( cSerie )
       cFormato       := cFirstDoc( "FC", dbfDoc )
    end if
 
-Return ( cFormato )
+Return ( cFormato ) 
 
 //---------------------------------------------------------------------------//   
