@@ -5634,7 +5634,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "nWidth"    => {|| GridWidth( 2, oDlg ) },;
                                                    "nHeight"   => 25,;
                                                    "aItems"    => aCbxRuta,;
-                                                   "bChange"   => {|| changeRutaTablet( aGet ) } } )
+                                                   "bChange"   => {|| changeRutaTablet( aGet, oSayTextRuta ) } } )
 
       oBtnLeft    := TGridImage():Build(  {        "nTop"      => 63,;
                                                    "nLeft"     => {|| GridWidth( 4.5, oDlg ) },;
@@ -5948,7 +5948,7 @@ RETURN ( oDlg:nResult == IDOK )
 Static function startEdtTablet( nMode, aGet, oSayTextRuta )
 
    if ( nMode == APPD_MODE )
-      changeRutaTablet( aGet )
+      changeRutaTablet( aGet, oSayTextRuta )
    end if
 
 Return ( nil )
@@ -6526,25 +6526,17 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function currentClient( aGet )
+Static Function priorClient( aGet, oSayTextRuta )
 
-   oClienteRutaNavigator:gotoLastProcesed()
-
-Return ( moveClient( aGet ) )
-
-//---------------------------------------------------------------------------//
-
-Static Function priorClient( aGet )
-
-   oClienteRutaNavigator:gotoPrior()
+   oClienteRutaNavigator:gotoPrior( oSayTextRuta )
 
 Return ( moveClient( aGet ) )
 
 //---------------------------------------------------------------------------//
 
-Static Function nextClient( aGet )
+Static Function nextClient( aGet, oSayTextRuta )
 
-   oClienteRutaNavigator:gotoNext()
+   oClienteRutaNavigator:gotoNext( oSayTextRuta )
 
 Return ( moveClient( aGet ) )
 
@@ -6565,7 +6557,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-static function changeRutaTablet( aGet )
+static function changeRutaTablet( aGet, oSayTextRuta )
 
    local cOrder  
 
@@ -6573,9 +6565,11 @@ static function changeRutaTablet( aGet )
 
       cOrder      := hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ]
 
-      oClienteRutaNavigator:getClientesRutas( cOrder ) 
+      oClienteRutaNavigator:getClientesRutas( cOrder, oSayTextRuta ) 
 
-      currentClient( aGet )
+      oClienteRutaNavigator:gotoLastProcesed( oSayTextRuta )
+
+      moveClient( aGet )
 
    end if 
 
@@ -23724,6 +23718,10 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
       */
 
       ChkLqdFacCli( nil, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
+
+      // avanzamos al siguiente ruta------------------------------------------- 
+
+      oClienteRutaNavigator:gotoNext()
 
    RECOVER USING oError
 

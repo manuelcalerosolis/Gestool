@@ -2,6 +2,8 @@
 #include "Factu.ch" 
 
 CLASS ClienteRutaNavigator
+
+   DATA cOrder
  
    DATA nProcesado
    DATA aClientesRuta                  INIT {}
@@ -18,9 +20,9 @@ CLASS ClienteRutaNavigator
    METHOD getCondition()               INLINE ( ::bCondition )
    METHOD evalCondition()              INLINE ( iif( !empty( ::bCondition ), eval( ::bCondition ), .t. )  )
 
-   METHOD goto( n )                    
-   METHOD gotoNext()                   INLINE ( ::goto( ::nProcesado + 1 ) )
-   METHOD gotoPrior()                  INLINE ( ::goto( ::nProcesado - 1 ) )
+   METHOD goto( n, oSayPosition )                    
+   METHOD gotoNext( oSayPosition )     INLINE ( ::goto( ::nProcesado + 1, oSayPosition ) )
+   METHOD gotoPrior( oSayPosition )    INLINE ( ::goto( ::nProcesado - 1, oSayPosition ) )
 
    METHOD gotoLastProcesed()
 
@@ -28,7 +30,7 @@ CLASS ClienteRutaNavigator
                                                 ::aClientesRuta[ ::nProcesado ],;
                                                 "" ) )
 
-   METHOD msgClient()                  INLINE ( msgAlert( ( D():Clientes( ::nView ) )->Cod + "-" + ( D():Clientes( ::nView ) )->Titulo ) )
+   METHOD msgClient()                  INLINE ( msgInfo( ( D():Clientes( ::nView ) )->Cod + "-" + ( D():Clientes( ::nView ) )->Titulo ) )
    METHOD test()
 
 ENDCLASS
@@ -47,12 +49,18 @@ METHOD getClientesRutas( cOrder ) CLASS ClienteRutaNavigator
 
    local cCodigoAgente              := AccessCode():cAgente
 
+   if cOrder == ::cOrder
+      return ( ::aClientesRuta )
+   end if 
+
+   ::cOrder                         := cOrder
    ::aClientesRuta                  := {}
    ::nProcesado                     := 1
 
    D():getStatusClientes( ::nView )
    ( D():Clientes( ::nView ) )->( OrdSetFocus( cOrder ) )
 
+   ( D():Clientes( ::nView ) )->( dbgotop() ) 
    while !( D():Clientes( ::nView ) )->( eof() ) 
       if empty( cCodigoAgente ) .or. ( D():Clientes( ::nView ) )->cAgente == cCodigoAgente
          aAdd( ::aClientesRuta, D():ClientesId( ::nView ) )
@@ -66,7 +74,7 @@ Return ( ::aClientesRuta )
 
 //---------------------------------------------------------------------------//
 
-METHOD goto( n )
+METHOD goto( n, oSayPosition )
 
    local idCliente
 
@@ -82,20 +90,24 @@ METHOD goto( n )
       
    ::nProcesado   := n
 
+   if !empty( oSayPosition )
+      oSayPosition:setText( alltrim( str( n ) ) + "/" + alltrim( str( len( ::aClientesRuta ) ) ) )
+   end if 
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD gotoLastProcesed()  CLASS ClienteRutaNavigator
+METHOD gotoLastProcesed( oSayPosition )  CLASS ClienteRutaNavigator
 
    if empty( ::aClientesRuta )
       return .f.
    end if 
 
    if empty( ::nProcesado )
-      ::goto( 1 )
+      ::goto( 1, oSayPosition )
    else 
-      ::goto( ::nProcesado )
+      ::goto( ::nProcesado, oSayPosition )
    end if 
 
 Return ( Self )   
@@ -105,8 +117,6 @@ Return ( Self )
 METHOD test()
 
    ::getClientesRutas("lVisMar")
-
-   msgAlert( hb_valtoexp( ::aClientesRuta ) )
 
    ::gotoLastProcesed()
    ::msgClient()
