@@ -65,6 +65,10 @@ Return ( Self )
 
 METHOD databaseDialog() CLASS TGenMailingDatabase
 
+   ::lHidePara       := .t.
+
+   ::lPageDatabase   := .t.
+
    ::aPages          := { "Select_Mail_Redactar", "Select_Mail_Registros", "Select_Mail_Proceso" }
 
    ::Resource()
@@ -73,12 +77,15 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildPageDatabase( oDlg, aCbxOrd ) CLASS TGenMailingDatabase
+METHOD buildPageDatabase() CLASS TGenMailingDatabase
 
+   local oDlg        
    local oGetOrd
    local cGetOrd     := Space( 100 )
    local oCbxOrd
    local cCbxOrd  
+
+   oDlg              := ::oFld:aDialogs[ 2 ]
 
    ::cOrderDatabase  := ::aOrderDatabase[ 1 ]
 

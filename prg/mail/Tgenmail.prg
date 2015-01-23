@@ -20,6 +20,8 @@ CLASS TGenMailing
    DATA nMtr
    DATA oFlt
 
+   DATA lPageDatabase                  INIT .f.
+
    DATA oBtnSiguiente
    DATA oBtnAnterior
    DATA oBtnCancel
@@ -174,6 +176,8 @@ CLASS TGenMailing
    METHOD setTypeDocument( cTypeDocument ) ;
                                        INLINE ( ::oTemplateHtml:setTypeDocument( cTypeDocument ) )
 
+   METHOD documentsDialog( aSelected )
+
    // Recursos-----------------------------------------------------------------
 
    METHOD Resource()
@@ -181,8 +185,8 @@ CLASS TGenMailing
       METHOD botonAnterior()
       METHOD botonSiguiente()
 
-      METHOD buildPageRedactar( oDlg )
-      METHOD buildPageDatabase( oDlg ) VIRTUAL
+      METHOD buildPageRedactar()
+      METHOD buildPageDatabase( oDlg )    VIRTUAL
       METHOD buildPageProceso( oDlg )
       METHOD buildButtonsGeneral()
 
@@ -235,11 +239,27 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD documentsDialog( aSelected ) CLASS TGenMailing
+
+   ::lPageDatabase   := .f.
+
+   ::aPages          := { "Select_Mail_Redactar", "Select_Mail_Proceso" }
+
+   if !empty( aSelected ) .and. ( len( aSelected ) > 1 )
+      ::HidePara()
+   else
+      ::ShowPara()
+   end if 
+
+   ::Resource()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD Resource() CLASS TGenMailing
 
    ::lCancel         := .f.
-
-   ::HidePara()
 
    DEFINE DIALOG     ::oDlg ;
       RESOURCE       "Select_Mail_Container";
@@ -247,11 +267,13 @@ METHOD Resource() CLASS TGenMailing
 
       ::oFld         := TPages():Redefine( 10, ::oDlg, ::aPages )
 
-         ::buildPageRedactar( ::oFld:aDialogs[ 1 ] )
+         ::buildPageRedactar()
 
-         ::buildPageDatabase( ::oFld:aDialogs[ 2 ] )
+         if ::lPageDatabase
+            ::buildPageDatabase()
+         end if
 
-         ::buildPageProceso( ::oFld:aDialogs[ 3 ] )
+         ::buildPageProceso()
 
          ::buildButtonsGeneral()
 
@@ -296,7 +318,9 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD buildPageRedactar( oDlg )
+METHOD buildPageRedactar()
+
+   local oDlg  := ::oFld:aDialogs[ 1 ]
 
    REDEFINE BITMAP ::oBmpRedactar ;
       ID       500 ;
@@ -354,7 +378,9 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildPageProceso( oDlg )
+METHOD buildPageProceso()
+
+   local oDlg  := atail( ::oFld:aDialogs )
 
    REDEFINE BITMAP ::oBmpProceso ;
       ID       500 ;

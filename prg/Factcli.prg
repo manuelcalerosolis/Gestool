@@ -1081,7 +1081,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( mailingFacCli()  ) ;
+         ACTION   ( oMailingFacturasClientes:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
          TOOLTIP  "Correo electrónico";
          LEVEL    ACC_IMPR
 

@@ -3184,7 +3184,7 @@ return ( aColAntCli )
 Static Function nRecTot( aTmp, aGet )
 
    if !Empty( aGet )
-      if .t. // ( lUsrMaster() .or. oUser():lCambiarPrecio() )
+      if ( lUsrMaster() .or. oUser():lCambiarPrecio() )
          aGet[ _LRECARGO ]:HardEnable()
       else
          aGet[ _LRECARGO ]:HardDisable()
