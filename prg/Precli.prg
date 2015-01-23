@@ -7953,6 +7953,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
+   oFr:SetWorkArea(     "Familias", ( dbfFamilia )->( Select() ) )
+   oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
+
    oFr:SetMasterDetail( "Presupuestos", "Lineas de presupuestos",          {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
    oFr:SetMasterDetail( "Presupuestos", "Incidencias de presupuestos",     {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
    oFr:SetMasterDetail( "Presupuestos", "Documentos de presupuestos",      {|| ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre } )
@@ -7970,6 +7973,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de presupuestos", "Ofertas",               {|| ( dbfPreCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de presupuestos", "Unidades de medición",  {|| ( dbfPreCliL )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",  {|| ( dbfPreCliL )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Familias",               {|| ( dbfPreCliL )->cCodFam } )
 
    oFr:SetResyncPair(   "Presupuestos", "Lineas de presupuestos" )
    oFr:SetResyncPair(   "Presupuestos", "Incidencias de presupuestos" )
@@ -7988,6 +7992,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de presupuestos", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de presupuestos", "Unidades de medición" )
    oFr:SetResyncPair(   "Lineas de presupuestos", "Impuestos especiales" )
+   oFr:SetResyncPair(   "Lineas de presupuestos", "Familias" )
 
 Return nil
 
@@ -9695,6 +9700,9 @@ FUNCTION rxPreCli( cPath, oMeter )
 
       ( cPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "nNumLin", "Str( NNUMPRE ) + Str( nNumLin )", {|| Str( Field->nNumPre ) + Str( Field->nNumLin ) }, ) )
+
+      ( cPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "cCodFam", "CSERPRE + STR( NNUMPRE ) + CSUFPRE + ccodFam", {|| Field->CSERPRE + STR( Field->NNUMPRE ) + Field->CSUFPRE + Field->cCodFam }, ) )
 
       ( cPreCliT )->( dbCloseArea() )
    else
