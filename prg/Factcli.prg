@@ -24154,7 +24154,7 @@ Static Function cFormatoFacturasClientes( cSerie )
 
    DEFAULT cSerie    := ( D():FacturasClientes( nView ) )->cSerie
 
-   cFormato          := cFormatoDocumento( ( D():FacturasClientes( nView ) )->cSerie, "nFacCli", D():Contadores( nView ) )
+   cFormato          := cFormatoDocumento( cSerie, "nFacCli", D():Contadores( nView ) )
 
    if Empty( cFormato )
       cFormato       := cFirstDoc( "FC", dbfDoc )
