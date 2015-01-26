@@ -13,8 +13,6 @@ CLASS TGenMailing
 
    DATA oSendMail
 
-   DATA nView
-
    DATA oTree
    DATA oMtr
    DATA nMtr
@@ -45,6 +43,9 @@ CLASS TGenMailing
    
    DATA oGetAdjunto
    DATA cGetAdjunto
+
+   DATA aSelected                      INIT {}
+   METHOD setSelected( aSelected )     INLINE ( ::aSelected := aSelected, msgAlert( hb_valtoexp( ::aSelected ) ) )
 
    DATA cMensaje                       INIT ""
    METHOD setMensaje( cMensaje )       INLINE ( ::cMensaje := cMensaje, if( !empty( ::oActiveX ), ::oActiveX:oRTF:SetText( cMensaje ), ) )
@@ -118,9 +119,8 @@ CLASS TGenMailing
    METHOD New()
    METHOD Create()
 
-   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea )
-   METHOD getWorkArea()                INLINE ( ::cWorkArea )
-   METHOD quitWorkArea()               VIRTUAL
+   METHOD setWorkArea( cWorkArea )     INLINE ( ::Super:setWorkArea( cWorkArea ), ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
+   METHOD quitWorkArea()               INLINE ( hSetStatus( ::hWorkAreaStatus ) )
 
    METHOD setDe( cText )               INLINE ( ::cGetDe := padr( cText, 250 ) )
    
@@ -200,12 +200,15 @@ CLASS TGenMailing
 
    METHOD IniciarProceso()
 
-   METHOD isMailServer()               INLINE ( !empty( ::MailServer ) .and. !empty( ::MailServerUserName ) .and. !empty( ::MailServerPassword ) )
+   METHOD isMailServer()                  INLINE ( !empty( ::MailServer ) .and. !empty( ::MailServerUserName ) .and. !empty( ::MailServerPassword ) )
 
-   METHOD InsertField()                INLINE ( ::oActiveX:oClp:SetText( "{" + ( alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
+   METHOD InsertField()                   INLINE ( ::oActiveX:oClp:SetText( "{" + ( alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
 
    METHOD waitMail()
    METHOD waitSeconds( nTime )
+
+   METHOD getDatabaseList()               VIRTUAL
+   METHOD getSelectedList()
 
    METHOD addDatabaseList()
       METHOD hashDatabaseList()
@@ -244,6 +247,8 @@ METHOD documentsDialog( aSelected ) CLASS TGenMailing
    ::lPageDatabase   := .f.
 
    ::aPages          := { "Select_Mail_Redactar", "Select_Mail_Proceso" }
+
+   ::setSelected( aSelected )
 
    if !empty( aSelected ) .and. ( len( aSelected ) > 1 )
       ::HidePara()
@@ -544,7 +549,16 @@ METHOD IniciarProceso() CLASS TGenMailing
 
    local aDatabaseList    
 
-   aDatabaseList          := ::getDatabaseList()
+   if ::lPageDatabase 
+      msgAlert( "lPageDatabase")
+      aDatabaseList           := ::getDatabaseList()
+   else 
+      msgAlert( "lPageSelected")
+      aDatabaseList           := ::getSelectedList()
+   end if 
+
+   msgAlert( hb_valtoexp( aDatabaseList ) )
+
    if !empty( aDatabaseList )
       ::oSendMail:sendList( aDatabaseList )
    else
@@ -706,3 +720,23 @@ METHOD hashDatabaseList() CLASS TGenMailing
 Return ( hashDatabaseList )
 
 //---------------------------------------------------------------------------//
+
+METHOD getSelectedList() CLASS TGenMailing
+
+   local nSelect
+
+   CursorWait()
+
+   ::aMailingList    := {}
+   
+   for each nSelect in ::aSelected 
+      ::gotoRecno( nSelect )
+      ::addSelectedList()
+   next 
+
+   CursorArrow()
+
+Return ( ::aMailingList )
+
+//--------------------------------------------------------------------------//
+

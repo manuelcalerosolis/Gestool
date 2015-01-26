@@ -16,9 +16,6 @@ CLASS TGenMailingDatabase FROM TGenMailing
 
    METHOD databaseDialog()
 
-   METHOD setWorkArea( cWorkArea )        INLINE   ( ::Super:setWorkArea( cWorkArea ), ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
-   METHOD quitWorkArea()                  INLINE   ( hSetStatus( ::hWorkAreaStatus ) )
-
    DATA cBmpDatabase
    METHOD setBmpDatabase( cBmpDatabase )  INLINE   ( ::cBmpDatabase := cBmpDatabase )
 

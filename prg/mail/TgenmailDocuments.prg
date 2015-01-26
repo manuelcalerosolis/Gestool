@@ -7,8 +7,8 @@ CLASS TGenMailingDocuments FROM TGenMailing
 
    METHOD Resource()
 
-   METHOD addDatabaseList()
-      METHOD getDatabaseList()
+   METHOD getSelectedList()
+      METHOD addSelectedList()      INLINE ( aAdd( ::aMailingList, ::hashDatabaseList() ) )
 
 END CLASS
 
@@ -46,21 +46,18 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD addDatabaseList() CLASS TGenMailingDocuments
+METHOD getSelectedList() CLASS TGenMailingDocuments
 
-   aAdd( ::aMailingList, ::hashDatabaseList() )
-
-Return ( Self )   
-
-//---------------------------------------------------------------------------//
-
-METHOD getDatabaseList() CLASS TGenMailingDocuments
+   local nSelect
 
    CursorWait()
 
    ::aMailingList    := {}
    
-   ::addDatabaseList()
+   for each nSelect in ::aSelected 
+      ::gotoRecno( nSelect )
+      ::addSelectedList()
+   next 
 
    CursorArrow()
 

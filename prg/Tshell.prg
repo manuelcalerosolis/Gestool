@@ -126,7 +126,7 @@ CLASS TShell FROM TMdiChild
    DATA  oFilter
 
    DATA  bToolTip
-   DATA  oToolTip
+   DATA  oDialogTip
    DATA  oTimer
 
    DATA  bChgIndex
@@ -768,8 +768,8 @@ METHOD End( lForceExit ) CLASS TShell
 
    CursorWait()
 
-   if !Empty( ::oToolTip )
-      ::oToolTip:End()
+   if !Empty( ::oDialogTip )
+      ::oDialogTip:End()
    end if
 
    // Matamos los filtros por si los hubiera-----------------------------------
@@ -2476,9 +2476,9 @@ Method CheckExtendInfo()
       Return ( Self )
    endif
 
-   if !Empty( ::oToolTip )
-      ::oToolTip:End()
-      ::oToolTip  := nil
+   if !Empty( ::oDialogTip )
+      ::oDialogTip:End()
+      ::oDialogTip  := nil
    endif
 
    if !Empty( ::oTimer )
@@ -2506,22 +2506,22 @@ METHOD ShowExtendInfo()
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if ::oToolTip == nil
+   if ::oDialogTip == nil
 
-      ::oToolTip     := CheckEval( ::bToolTip )
+      ::oDialogTip   := CheckEval( ::bToolTip )
 
-      if Valtype( ::oToolTip ) == "O"
+      if isObject( ::oDialogTip )
 
          nRow        := ( ::oBrw:nRowSel * ::oBrw:DataHeight ) + ::oBrw:HeaderHeight()
 
-         if ( nRow + ::oToolTip:nHeight() ) >= ( ::oBrw:BrwHeight() - 100 )
-            nRow     -= ( ::oToolTip:nHeight() + ::oBrw:DataHeight + 108 ) // + 100
+         if ( nRow + ::oDialogTip:nHeight() ) >= ( ::oBrw:BrwHeight() - 100 )
+            nRow     -= ( ::oDialogTip:nHeight() + ::oBrw:DataHeight + 108 ) // + 100
             nRow     := Max( nRow, 0 )
          else
             nRow     += 4
          end if
 
-         ::oToolTip:Activate( , , , .f., , .f., {|o| o:Move( nRow, ( ::oBrw:BrwWidth() - ::oToolTip:nWidth() - 4 ), ::oToolTip:nWidth(), ::oToolTip:nHeight() ) } )
+         ::oDialogTip:Activate( , , , .f., , .f., {|o| o:Move( nRow, ( ::oBrw:BrwWidth() - ::oDialogTip:nWidth() - 4 ), ::oDialogTip:nWidth(), ::oDialogTip:nHeight() ) } )
 
          ::oBrw:SetFocus()
          ::oBrw:Select()
@@ -2547,10 +2547,10 @@ return nil
 
 METHOD DestroyToolTip()
 
-  if !Empty( ::oToolTip )
+  if !Empty( ::oDialogTip )
 
-     ::oToolTip:End()
-     ::oToolTip  	:= nil
+     ::oDialogTip:End()
+     ::oDialogTip  	:= nil
 
   	 ::oBrw:SetFocus()
 
