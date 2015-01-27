@@ -451,7 +451,6 @@ static dbfObrasT
 static dbfFamilia
 static dbfProvee
 static dbfKit
-static dbfDoc
 
 static dbfArtDiv
 static dbfCajT
@@ -1085,8 +1084,6 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Correo electrónico";
          LEVEL    ACC_IMPR
 
-         lGenFacCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
-
       DEFINE BTNSHELL oLiq RESOURCE "Money2_" OF oWndBrw GROUP ;
          NOBORDER ;
          ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
@@ -1326,13 +1323,13 @@ STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    	nCopies 				:= 1
    end if 
 
-   if !lExisteDocumento( cCodDoc, dbfDoc )
+   if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
       return nil
    end if
 
    // Si el documento es de tipo visual-------------------------------------------
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
       printReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
    else
       oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
@@ -1592,9 +1589,13 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Agentes( nView )
 
+      D():Documentos( nView )
+      ( D():Documentos( nView ) )->( ordSetFocus( "cTipo" ) )
+
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles      := .f.
       end if
+
     
     USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
     SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
@@ -1756,9 +1757,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
-      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
-      SET TAG TO "CTIPO"
 
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
@@ -2160,10 +2158,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfOferta  )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfDoc )
-      ( dbfDoc     )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfPro )
       ( dbfPro     )->( dbCloseArea() )
    end if
@@ -2371,7 +2365,6 @@ STATIC FUNCTION CloseFiles()
    dbfDiv      := nil
    oBandera    := nil
    dbfObrasT   := nil
-   dbfDoc      := nil
    dbfOferta   := nil
    dbfPro      := nil
    dbfTblPro   := nil
@@ -6279,7 +6272,7 @@ static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
    local oBtnAceptarImp
 	local oBtnSalir
 	local oCbxOrd
-	local aCbxOrd 		       := aDocs( "FC", dbfDoc, .t. )
+	local aCbxOrd 		       := aDocs( "FC", D():Documentos( nView ), .t. )
 	local cCbxOrd 		       := cDocumentoDefecto( aTmp[ _CSERIE ], aCbxOrd )
    local oGetNombrePago
    local cGetNombrePago     := ""
@@ -6977,7 +6970,7 @@ STATIC FUNCTION PrnSerie()
 
    REDEFINE GET oFmtDoc VAR cFmtDoc ;
       ID       90 ;
-      VALID    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      VALID    ( cDocumento( oFmtDoc, oSayFmt, D():Documentos( nView ) ) ) ;
       BITMAP   "LUPA" ;
       ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "FC" ) ) ;
       OF       oDlg
@@ -7818,7 +7811,7 @@ static function lGenFacCli( oBrw, oBtn, nDevice )
       return nil
    end if
 
-   if !( dbfDoc )->( dbSeek( "FC" ) )
+   if !( D():Documentos( nView ) )->( dbSeek( "FC" ) )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
             NOBORDER ;
@@ -7831,13 +7824,13 @@ static function lGenFacCli( oBrw, oBtn, nDevice )
 
    else
 
-      while ( dbfDoc )->cTipo == "FC" .AND. !( dbfDoc )->( eof() )
+      while ( D():Documentos( nView ) )->cTipo == "FC" .AND. !( D():Documentos( nView ) )->( eof() )
 
-         bAction  := bGenFacCli( nDevice, "Imprimiendo facturas de clientes", ( dbfDoc )->Codigo )
+         bAction  := bGenFacCli( nDevice, "Imprimiendo facturas de clientes", ( D():Documentos( nView ) )->Codigo )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
-         ( dbfDoc )->( dbSkip() )
+         ( D():Documentos( nView ) )->( dbSkip() )
 
       end do
 
@@ -7851,16 +7844,10 @@ return nil
 
 static function bGenFacCli( nDevice, cTitle, cCodDoc )
 
-   local bGen
    local nDev  := by( nDevice )
    local cTit  := by( cTitle  )
    local cCod  := by( cCodDoc )
-
-   if nDev == IS_MAIL
-      bGen     := {|| mailingFacCli( cCod ) }
-   else
-      bGen     := {|| GenFacCli( nDevice, cTit, cCod ) }
-   end if
+   local bGen  := {|| GenFacCli( nDevice, cTit, cCod ) }
 
 return ( bGen )
 
@@ -11557,7 +11544,7 @@ Function printReportFacCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    // Manejador de eventos-----------------------------------------------------
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    // Zona de datos------------------------------------------------------------
 
@@ -11565,9 +11552,9 @@ Function printReportFacCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    // Cargar el informe--------------------------------------------------------
 
-   if lMemoDocumento( cCodigoDocumento, dbfDoc )
+   if lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
 
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
       // Zona de variables--------------------------------------------------------
       
@@ -24155,7 +24142,7 @@ Static Function cFormatoFacturasClientes( cSerie )
    cFormato          := cFormatoDocumento( cSerie, "nFacCli", D():Contadores( nView ) )
 
    if Empty( cFormato )
-      cFormato       := cFirstDoc( "FC", dbfDoc )
+      cFormato       := cFirstDoc( "FC", D():Documentos( nView ) )
    end if
 
 Return ( cFormato ) 

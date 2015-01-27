@@ -16,9 +16,6 @@ CLASS TGenMailingDatabase FROM TGenMailing
 
    METHOD databaseDialog()
 
-   DATA cBmpDatabase
-   METHOD setBmpDatabase( cBmpDatabase )  INLINE   ( ::cBmpDatabase := cBmpDatabase )
-
    DATA oOrderDatabase 
    DATA cOrderDatabase 
    DATA aOrderDatabase                    INIT     { "Código", "Nombre", "Correo electrónico" }
@@ -32,9 +29,7 @@ CLASS TGenMailingDatabase FROM TGenMailing
       METHOD SelAllMailing( lValue )
 
    METHOD getDatabaseList()              
-      METHOD addDatabaseList()            INLINE   ( iif( ( ::getWorkArea() )->lMail,;
-                                                      aAdd( ::aMailingList, ::hashDatabaseList() ),;
-                                                   ) )
+      METHOD addDatabaseList()            INLINE   ( iif( ( ::getWorkArea() )->lMail, ::addSelectedList() ), ) 
 
    METHOD setItems( aItems )              INLINE   ( ::Super:setItems( aItems ),;
                                                    iif( !empty( ::oFilter ), ::oFilter:setFields( aItems ), ) )
@@ -63,7 +58,6 @@ Return ( Self )
 METHOD databaseDialog() CLASS TGenMailingDatabase
 
    ::lHidePara       := .t.
-
    ::lPageDatabase   := .t.
 
    ::aPages          := { "Select_Mail_Redactar", "Select_Mail_Registros", "Select_Mail_Proceso" }

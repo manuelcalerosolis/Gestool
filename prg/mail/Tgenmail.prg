@@ -44,8 +44,26 @@ CLASS TGenMailing
    DATA oGetAdjunto
    DATA cGetAdjunto
 
+   // Formato------------------------------------------------------------------
+
+   DATA oFormatoDocumento
+   DATA cFormatoDocumento 
+   DATA oEditDocumento
+
+   // Tipos de documentos------------------------------------------------------
+
+   DATA cTypeDocument
+   DATA cTypeFormat
+
+   // Seleccion de registros---------------------------------------------------
+
    DATA aSelected                      INIT {}
    METHOD setSelected( aSelected )     INLINE ( ::aSelected := aSelected, msgAlert( hb_valtoexp( ::aSelected ) ) )
+
+   DATA cBmpDatabase
+   METHOD setBmpDatabase( cBmpDatabase ) ;
+                                       INLINE   ( ::cBmpDatabase := cBmpDatabase )
+
 
    DATA cMensaje                       INIT ""
    METHOD setMensaje( cMensaje )       INLINE ( ::cMensaje := cMensaje, if( !empty( ::oActiveX ), ::oActiveX:oRTF:SetText( cMensaje ), ) )
@@ -68,6 +86,7 @@ CLASS TGenMailing
    DATA lHidePara                      INIT .f.
    DATA lHideCopia                     INIT .f.
    DATA lHideCopiaOculta               INIT .f.
+   DATA lHideFormato                   INIT .f.
 
    DATA aAdjuntos                      INIT {}
 
@@ -82,17 +101,6 @@ CLASS TGenMailing
    DATA cField
 
    DATA oTemplateHtml
-
-   DATA cNombre
-   DATA cDireccion
-
-   DATA MailServer
-   DATA MailServerPort
-   DATA MailServerUserName
-   DATA MailServerPassword
-   DATA MailServerConCopia
-
-   DATA dbfAlias
 
    DATA cHtml
    DATA lHtml                          INIT .t.
@@ -119,9 +127,11 @@ CLASS TGenMailing
    METHOD New()
    METHOD Create()
 
-   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea, ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
+   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea )
    METHOD getWorkArea()                INLINE ( ::cWorkArea )
-   METHOD quitWorkArea()               INLINE ( hSetStatus( ::hWorkAreaStatus ) )
+   METHOD getStatusWorkArea()          INLINE ( ::hWorkAreaStatus := hGetStatus( ::cWorkArea, .t. ) )
+   METHOD setStatusWorkArea()          INLINE ( hSetStatus( ::hWorkAreaStatus ) )
+   METHOD gotoRecord( nRecord )        INLINE ( ( ::getWorkArea() )->( dbgoto( nRecord ) ) )
 
    METHOD setDe( cText )               INLINE ( ::cGetDe := padr( cText, 250 ) )
    
@@ -177,6 +187,11 @@ CLASS TGenMailing
    METHOD setTypeDocument( cTypeDocument ) ;
                                        INLINE ( ::oTemplateHtml:setTypeDocument( cTypeDocument ) )
 
+   METHOD setTypeFormat( cTypeFormat ) INLINE ( ::cTypeFormat := cTypeFormat )
+
+   METHOD setFormatoDocumento( cFormatoDocumento ) ;
+                                       INLINE ( ::cFormatoDocumento := cFormatoDocumento )
+
    METHOD documentsDialog( aSelected )
 
    // Recursos-----------------------------------------------------------------
@@ -192,7 +207,7 @@ CLASS TGenMailing
       METHOD buildButtonsGeneral()
 
       METHOD startResource()
-      METHOD freeResources()
+      METHOD endResources()
 
       METHOD setMeterTotal( nTotal )      INLINE ( ::oMtr:nTotal := nTotal )
       METHOD setMeter( nSet )             INLINE ( ::oMtr:Set( nSet ) )
@@ -200,8 +215,6 @@ CLASS TGenMailing
    // Inicio del proceso-------------------------------------------------------
 
    METHOD IniciarProceso()
-
-   METHOD isMailServer()                  INLINE ( !empty( ::MailServer ) .and. !empty( ::MailServerUserName ) .and. !empty( ::MailServerPassword ) )
 
    METHOD InsertField()                   INLINE ( ::oActiveX:oClp:SetText( "{" + ( alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
 
@@ -213,6 +226,7 @@ CLASS TGenMailing
 
    METHOD addDatabaseList()
       METHOD hashDatabaseList()
+      METHOD addSelectedList()            INLINE ( aAdd( ::aMailingList, ::hashDatabaseList() ) )
 
 END CLASS
 
@@ -253,8 +267,6 @@ METHOD documentsDialog( aSelected ) CLASS TGenMailing
 
    if !empty( aSelected ) .and. ( len( aSelected ) > 1 )
       ::HidePara()
-   else
-      ::ShowPara()
    end if 
 
    ::Resource()
@@ -287,13 +299,15 @@ METHOD Resource() CLASS TGenMailing
 
    ACTIVATE DIALOG ::oDlg CENTER 
 
-   ::freeResources()
+   ::endResources()
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
 
 METHOD startResource() CLASS TGenMailing
+
+   ::getStatusWorkArea()
 
    if ::lHidePara
       ::oGetPara:Hide()
@@ -307,22 +321,50 @@ METHOD startResource() CLASS TGenMailing
       ::oGetCopiaOculta:Hide()
    end if 
 
-   if Empty( ::oActiveX )
-      MsgStop( "No se ha podido instanciar el control." )
-      Return ( Self )
-   else 
-      ::oActiveX:SetHTML()
-   end if
+   if ::lHideFormato
+      ::oFormatoDocumento:Hide()
+      ::oEditDocumento:Hide()
+   end if 
 
    if !empty(::oBtnAnterior)
       ::oBtnAnterior:Hide()
    end if 
 
-   // ::buildMenuDialog()
+   if !empty( ::cFormatoDocumento )
+      ::oFormatoDocumento:lValid()
+   end if 
+
+   if !empty( ::oActiveX )
+      ::oActiveX:SetHTML()
+   end if
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
+METHOD endResources() CLASS TGenMailing
+
+   ::setStatusWorkArea()
+
+   if !Empty( ::oBmpRedactar )
+      ::oBmpRedactar:end()
+   end if
+
+   if !Empty( ::oBmpProceso )
+      ::oBmpProceso:end()
+   end if
+
+   if !empty( ::oMenu )
+      ::oMenu:end()
+   end if
+
+   if !empty( ::oActiveX )
+      ::oActiveX:end()
+   end if 
+
+Return ( Self )   
+
+//---------------------------------------------------------------------------//
 
 METHOD buildPageRedactar()
 
@@ -361,13 +403,30 @@ METHOD buildPageRedactar()
       ID       155 ;
       OF       oDlg
 
+   // Formato------------------------------------------------------------------
+
+   REDEFINE GET ::oFormatoDocumento VAR ::cFormatoDocumento ;
+      IDSAY    191 ;
+      ID       190 ;
+      IDTEXT   192 ;
+      BITMAP   "Lupa" ;
+      OF       oDlg
+
+   ::oFormatoDocumento:bValid    := {|| cDocumento( ::oFormatoDocumento, ::oFormatoDocumento:oHelpText, D():Documentos( ::nView ) ) }
+   ::oFormatoDocumento:bHelp     := {|| brwDocumento( ::oFormatoDocumento, ::oFormatoDocumento:oHelpText, ::cTypeFormat ) }
+
+   ::oEditDocumento     := TBtnBmp():ReDefine( 193, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoDocumento ) }, oDlg, .f., , .f.,  )
+
+   // Adjunto------------------------------------------------------------------
+
    ::oGetAdjunto:cBmp   := "Folder"
    ::oGetAdjunto:bHelp  := {|| ::oGetAdjunto:cText( cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' ) ) }
 
    TBtnBmp():ReDefine( 140, "Document_16",,,,,{|| ShellExecute( oDlg:hWnd, "open", Rtrim( ::cGetAdjunto ) ) }, oDlg, .f., , .f.,  )
 
-   REDEFINE COMBOBOX ::oField ;
-      VAR      ::cField ;
+   // Campos-------------------------------------------------------------------
+
+   REDEFINE COMBOBOX ::oField VAR ::cField ;
       ITEMS    ::aFields ;
       ID       160 ;
       OF       oDlg
@@ -454,29 +513,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD freeResources() CLASS TGenMailing
-
-   ::quitWorkArea()
-
-   if !Empty( ::oBmpRedactar )
-      ::oBmpRedactar:end()
-   end if
-
-   if !Empty( ::oBmpProceso )
-      ::oBmpProceso:end()
-   end if
-
-   if !empty( ::oMenu )
-      ::oMenu:end()
-   end if
-
-   if !empty( ::oActiveX )
-      ::oActiveX:end()
-   end if 
-
-Return ( Self )   
-
-//---------------------------------------------------------------------------//
 
 METHOD addFileAdjunto() CLASS TGenMailing
 
@@ -731,7 +767,7 @@ METHOD getSelectedList() CLASS TGenMailing
    ::aMailingList    := {}
    
    for each nSelect in ::aSelected 
-      ::gotoRecno( nSelect )
+      ::gotoRecord( nSelect )
       ::addSelectedList()
    next 
 
