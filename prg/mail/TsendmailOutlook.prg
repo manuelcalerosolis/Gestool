@@ -68,7 +68,7 @@ METHOD sendMail( hMail )
 
       ::setSubject( oMail, hMail )
 
-      oMail:Display()
+      oMail:Send()
 
    RECOVER USING oError
 

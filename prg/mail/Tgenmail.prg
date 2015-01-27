@@ -119,7 +119,8 @@ CLASS TGenMailing
    METHOD New()
    METHOD Create()
 
-   METHOD setWorkArea( cWorkArea )     INLINE ( ::Super:setWorkArea( cWorkArea ), ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
+   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea, ::hWorkAreaStatus := hGetStatus( cWorkArea, .t. ) )
+   METHOD getWorkArea()                INLINE ( ::cWorkArea )
    METHOD quitWorkArea()               INLINE ( hSetStatus( ::hWorkAreaStatus ) )
 
    METHOD setDe( cText )               INLINE ( ::cGetDe := padr( cText, 250 ) )
