@@ -2506,6 +2506,12 @@ Return nil
 Function PedidoCliente()
 Return nil
 
+Function ClienteRutaNavigator()
+Return nil
+
+Function TGenMailingDatabaseFacturasClientes()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

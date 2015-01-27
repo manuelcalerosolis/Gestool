@@ -36,20 +36,21 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField( "CCODRUT", "C",  4, 0, {|| "@!" },          "Ruta",      .f.,        "Código ruta",                4  )
-   ::AddField( "CCODCLI", "C", 12, 0, {|| "@!" },          "Cli.",      .f.,        "Código cliente",             8  )
-   ::AddField( "CCODFAM", "C", 16, 0, {|| "@!" },          "Cod.",      .t.,        "Código grupo de familia",    5  )
-   ::AddField( "CNOMGRF", "C", 35, 0, {|| "@!" },          "Gru. Fam.", .t.,        "Nombre grupo de familia",   25  )
-   ::AddField( "CNOMCLI", "C", 50, 0, {|| "@!" },          "Nombre",    .f.,        "Nombre cliente",            25  )
-   ::AddField( "NNUMCAJ", "N", 19, 6, {|| MasUnd() },      "Caj.",      lUseCaj(),  "Cajas",                     12  )
-   ::AddField( "NNUMUND", "N", 19, 6, {|| MasUnd() },      "Und.",      .t.,        "Unidades",                  12  )
-   ::AddField( "NUNDCAJ", "N", 19, 6, {|| MasUnd() },      "Tot. Und.", lUseCaj(),  "Unidades por caja",         12  )
-   ::AddField( "NCOMAGE", "N", 19, 6, {|| ::cPicOut },     "Com. Age.", .f.,        "Comisión agente",           12  )
-   ::AddField( "NACUIMP", "N", 19, 6, {|| ::cPicOut },     "Imp.",      .t.,        "Importe",                   12  )
-   ::AddField( "NACUCAJ", "N", 19, 6, {|| MasUnd() },      "Caj. Acu.", lUseCaj(),  "Cajas acumuladas" ,         12  )
-   ::AddField( "NACUUND", "N", 19, 6, {|| MasUnd() },      "Und. Acu.", .t.,        "Unidades acumuladas" ,      12  )
-   ::AddField( "NACUUXC", "N", 19, 6, {|| MasUnd() },      "Tot. Acu.", lUseCaj(),  "Acumulado cajas x unidades",12  )
-   ::AddField( "NTOTMOV", "N", 19, 6, {|| ::cPicOut },     "Imp. Acu.", .t.,        "Importe" ,                  12  )
+   ::AddField( "CCODRUT", "C",  4, 0, {|| "@!" },          "Ruta",         .f.,        "Código ruta",                4  )
+   ::AddField( "CNOMRUT", "C", 30, 0, {|| "@!" },          "Nombre ruta",  .f.,        "Nombre ruta",               30  )
+   ::AddField( "CCODCLI", "C", 12, 0, {|| "@!" },          "Cli.",         .f.,        "Código cliente",             8  )
+   ::AddField( "CCODFAM", "C", 16, 0, {|| "@!" },          "Cod.",         .t.,        "Código grupo de familia",    5  )
+   ::AddField( "CNOMGRF", "C", 35, 0, {|| "@!" },          "Gru. Fam.",    .t.,        "Nombre grupo de familia",   25  )
+   ::AddField( "CNOMCLI", "C", 50, 0, {|| "@!" },          "Nombre",       .f.,        "Nombre cliente",            25  )
+   ::AddField( "NNUMCAJ", "N", 19, 6, {|| MasUnd() },      "Caj.",         lUseCaj(),  "Cajas",                     12  )
+   ::AddField( "NNUMUND", "N", 19, 6, {|| MasUnd() },      "Und.",         .t.,        "Unidades",                  12  )
+   ::AddField( "NUNDCAJ", "N", 19, 6, {|| MasUnd() },      "Tot. Und.",    lUseCaj(),  "Unidades por caja",         12  )
+   ::AddField( "NCOMAGE", "N", 19, 6, {|| ::cPicOut },     "Com. Age.",    .f.,        "Comisión agente",           12  )
+   ::AddField( "NACUIMP", "N", 19, 6, {|| ::cPicOut },     "Imp.",         .t.,        "Importe",                   12  )
+   ::AddField( "NACUCAJ", "N", 19, 6, {|| MasUnd() },      "Caj. Acu.",    lUseCaj(),  "Cajas acumuladas" ,         12  )
+   ::AddField( "NACUUND", "N", 19, 6, {|| MasUnd() },      "Und. Acu.",    .t.,        "Unidades acumuladas" ,      12  )
+   ::AddField( "NACUUXC", "N", 19, 6, {|| MasUnd() },      "Tot. Acu.",    lUseCaj(),  "Acumulado cajas x unidades",12  )
+   ::AddField( "NTOTMOV", "N", 19, 6, {|| ::cPicOut },     "Imp. Acu.",    .t.,        "Importe" ,                  12  )
 
    ::AddTmpIndex( "CCODRUT", "CCODRUT + CCODCLI + CCODFAM" )
 
@@ -263,6 +264,7 @@ METHOD lGenerate()
                         ::oDbf:Blank()
 
                         ::oDbf:cCodRut := ::oFacCliT:cCodRut
+                        ::oDbf:cNomRut := oRetFld( ::oFacCliT:cCodRut, ::oDbfRut )
                         ::oDbf:cCodCli := ::oFacCliT:cCodCli
                         ::oDbf:cCodFam := cGruFam( cCodFam( ::oFacCliL:cRef, ::oDbfArt ), ::oDbfFam )
                         ::oDbf:cNomGrF := retGruFam( cGruFam( cCodFam( ::oFacCliL:cRef, ::oDbfArt ), ::oDbfFam ), ::oGruFam )
