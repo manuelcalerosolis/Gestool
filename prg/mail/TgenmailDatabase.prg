@@ -29,7 +29,7 @@ CLASS TGenMailingDatabase FROM TGenMailing
       METHOD SelAllMailing( lValue )
 
    METHOD getDatabaseList()              
-      METHOD addDatabaseList()            INLINE   ( iif( ( ::getWorkArea() )->lMail, ::addSelectedList() ), ) 
+      METHOD addDatabaseList()            INLINE   ( iif( ( ::getWorkArea() )->lMail, ::addSelectedList(), ) ) 
 
    METHOD setItems( aItems )              INLINE   ( ::Super:setItems( aItems ),;
                                                    iif( !empty( ::oFilter ), ::oFilter:setFields( aItems ), ) )
