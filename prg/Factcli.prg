@@ -1571,7 +1571,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       /*
       Apertura de bases de datos de facturas de clientes-------------------------
-	  */
+      */
 
       nView               := D():CreateView()
 

@@ -18,7 +18,7 @@ CLASS TGenMailing
    DATA nMtr
    DATA oFlt
 
-   DATA lPageDatabase                  INIT .f.
+   DATA lPageDatabase                     INIT .f.
 
    DATA oBtnSiguiente
    DATA oBtnAnterior
@@ -31,12 +31,29 @@ CLASS TGenMailing
 
    DATA aPages
 
+   // Para---------------------------------------------------------------------
+
+   DATA oRecipients
+
+   DATA bRecipients
+      METHOD setBlockRecipients( bRecipients ) ;
+                                          INLINE ( ::bRecipients := bRecipients )
+      METHOD evalBlockRecipients()        INLINE ( iif( !empty( ::bRecipients ), eval( ::bRecipients ), "" ) )
+
+   DATA cRecipients                       INIT Space( 250 )
+
+   METHOD setRecipients( cText )          INLINE ( ::cRecipients := padr( cText, 250 ) )
+   METHOD getRecipients()                 INLINE ( iif( !empty( ::cRecipients ), alltrim( ::cRecipients ), ::evalBlockRecipients() ) )
+
+      METHOD hideRecipients()             INLINE ( ::lHideRecipients := .t., if ( !empty( ::oRecipients ), ::oRecipients:Hide(), ) )
+      METHOD showRecipients()             INLINE ( ::lHideRecipients := .f., if ( !empty( ::oRecipients ), ::oRecipients:Show(), ) )
+
    // Asunto-------------------------------------------------------------------
 
    DATA oGetAsunto
    DATA cSubject
 
-   METHOD setAsunto( cText )           INLINE ( ::cSubject := padr( cText, 250 ) )
+   METHOD setAsunto( cText )              INLINE ( ::cSubject := padr( cText, 250 ) )
    METHOD getAsunto()                  
 
    // Adjunto------------------------------------------------------------------
@@ -57,16 +74,20 @@ CLASS TGenMailing
 
    // Seleccion de registros---------------------------------------------------
 
-   DATA aSelected                      INIT {}
-   METHOD setSelected( aSelected )     INLINE ( ::aSelected := aSelected, msgAlert( hb_valtoexp( ::aSelected ) ) )
+   DATA aSelected                         INIT {}
+   METHOD setSelected( aSelected )        INLINE ( ::aSelected := aSelected )
+
+   METHOD setMultiSelectMode( lMode )     INLINE ( iif(  ( len( ::aSelected ) > 1 ),;
+                                                         ( ::setRecipients( "" ), ::HideRecipients() ),;
+                                                         ( ::setRecipients( ::evalBlockRecipients() ), ::ShowRecipients() ) ) )
 
    DATA cBmpDatabase
    METHOD setBmpDatabase( cBmpDatabase ) ;
-                                       INLINE   ( ::cBmpDatabase := cBmpDatabase )
+                                          INLINE   ( ::cBmpDatabase := cBmpDatabase )
 
 
-   DATA cMensaje                       INIT ""
-   METHOD setMensaje( cMensaje )       INLINE ( ::cMensaje := cMensaje, if( !empty( ::oActiveX ), ::oActiveX:oRTF:SetText( cMensaje ), ) )
+   DATA cMensaje                          INIT ""
+   METHOD setMensaje( cMensaje )          INLINE ( ::cMensaje := cMensaje, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMensaje ), ) )
 
    DATA oGetCopia                      
    DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
@@ -74,8 +95,6 @@ CLASS TGenMailing
    DATA oGetCopiaOculta                
    DATA cGetCopiaOculta                INIT Padr( uFieldEmpresa( "cCcoMai" ), 250 )
 
-   DATA oGetPara
-   DATA cGetPara                       INIT Space( 250 )
    
    DATA oGetDe                         
    DATA cGetDe                         INIT Padr( uFieldEmpresa( "cNombre" ), 250 )
@@ -83,14 +102,14 @@ CLASS TGenMailing
    DATA cWorkArea                      INIT ""
    DATA hWorkAreaStatus
 
-   DATA lHidePara                      INIT .f.
+   DATA lHideRecipients                      INIT .f.
    DATA lHideCopia                     INIT .f.
    DATA lHideCopiaOculta               INIT .f.
    DATA lHideFormato                   INIT .f.
 
    DATA aAdjuntos                      INIT {}
 
-   DATA oActiveX
+   DATA oRichEdit
    DATA cActiveX
 
    DATA aItems
@@ -127,70 +146,66 @@ CLASS TGenMailing
    METHOD New()
    METHOD Create()
 
-   METHOD setWorkArea( cWorkArea )     INLINE ( ::cWorkArea := cWorkArea )
-   METHOD getWorkArea()                INLINE ( ::cWorkArea )
-   METHOD getStatusWorkArea()          INLINE ( ::hWorkAreaStatus := hGetStatus( ::cWorkArea, .t. ) )
-   METHOD setStatusWorkArea()          INLINE ( hSetStatus( ::hWorkAreaStatus ) )
-   METHOD gotoRecord( nRecord )        INLINE ( ( ::getWorkArea() )->( dbgoto( nRecord ) ) )
+   METHOD setWorkArea( cWorkArea )        INLINE ( ::cWorkArea := cWorkArea )
+   METHOD getWorkArea()                   INLINE ( ::cWorkArea )
+   METHOD getStatusWorkArea()             INLINE ( ::hWorkAreaStatus := hGetStatus( ::cWorkArea, .t. ) )
+   METHOD setStatusWorkArea()             INLINE ( hSetStatus( ::hWorkAreaStatus ) )
+   METHOD gotoRecord( nRecord )           INLINE ( ( ::getWorkArea() )->( dbgoto( nRecord ) ) )
 
-   METHOD setDe( cText )               INLINE ( ::cGetDe := padr( cText, 250 ) )
+   METHOD setDe( cText )                  INLINE ( ::cGetDe := padr( cText, 250 ) )
    
-   METHOD setPara( cText )             INLINE ( ::cGetPara := padr( cText, 250 ) )
-   METHOD getPara()                    INLINE ( alltrim( ::cGetPara ) )
-      METHOD HidePara()                INLINE ( ::lHidePara := .t., if ( !empty( ::oGetPara ), ::oGetPara:Hide(), ) )
-      METHOD ShowPara()                INLINE ( ::lHidePara := .f., if ( !empty( ::oGetPara ), ::oGetPara:Show(), ) )
 
-   METHOD setCopia( cText )            INLINE ( ::cGetCopia := padr( cText, 250 ) )
-   METHOD getCopia()                   INLINE ( alltrim( ::cGetCopia ) )
-      METHOD HideCopia()               INLINE ( ::lHideCopia := .t., if ( !empty( ::oGetCopia ), ::oGetCopia:Hide(), ) )
-      METHOD ShowCopia()               INLINE ( ::lHideCopia := .f., if ( !empty( ::oGetCopia ), ::oGetCopia:Show(), ) )
+   METHOD setCopia( cText )               INLINE ( ::cGetCopia := padr( cText, 250 ) )
+   METHOD getCopia()                      INLINE ( alltrim( ::cGetCopia ) )
+      METHOD HideCopia()                  INLINE ( ::lHideCopia := .t., if ( !empty( ::oGetCopia ), ::oGetCopia:Hide(), ) )
+      METHOD ShowCopia()                  INLINE ( ::lHideCopia := .f., if ( !empty( ::oGetCopia ), ::oGetCopia:Show(), ) )
 
-   METHOD setCopiaOculta( cText )      INLINE ( ::cGetCopiaOculta := padr( cText, 250 ) )
-   METHOD getCopiaOculta()             INLINE ( alltrim( ::cGetCopiaOculta ) )
-      METHOD HideCopiaOculta()         INLINE ( ::lHideCopiaOculta := .t., if ( !empty( ::oGetCopiaOculta ), ::oGetCopiaOculta:Hide(), ) )
-      METHOD ShowCopiaOculta()         INLINE ( ::lHideCopiaOculta := .f., if ( !empty( ::oGetCopiaOculta ), ::oGetCopiaOculta:Show(), ) )
+   METHOD setCopiaOculta( cText )         INLINE ( ::cGetCopiaOculta := padr( cText, 250 ) )
+   METHOD getCopiaOculta()                INLINE ( alltrim( ::cGetCopiaOculta ) )
+      METHOD HideCopiaOculta()            INLINE ( ::lHideCopiaOculta := .t., if ( !empty( ::oGetCopiaOculta ), ::oGetCopiaOculta:Hide(), ) )
+      METHOD ShowCopiaOculta()            INLINE ( ::lHideCopiaOculta := .f., if ( !empty( ::oGetCopiaOculta ), ::oGetCopiaOculta:Show(), ) )
 
    METHOD getMessage()
-   METHOD getMessageHTML()             INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
+   METHOD getMessageHTML()                INLINE ( "<HTML>" + strtran( alltrim( ::getMessage() ), CRLF, "<p>" ) + "</HTML>" )   
       METHOD getExpression()
       METHOD replaceExpresion( cDocumentHTML, cExpresion )
 
    // Post send mail
 
    DATA bPostSend           
-   METHOD setPostSend( bPostSend )     INLINE ( ::bPostSend := bPostSend )
-   METHOD getPostSend                  INLINE ( ::bPostSend )
+   METHOD setPostSend( bPostSend )        INLINE ( ::bPostSend := bPostSend )
+   METHOD getPostSend                     INLINE ( ::bPostSend )
 
    // Post send mail
 
    DATA bPostError           
-   METHOD setPostError( bPostError )   INLINE ( ::bPostError := bPostError )
-   METHOD getPostError                 INLINE ( ::bPostError )
+   METHOD setPostError( bPostError )      INLINE ( ::bPostError := bPostError )
+   METHOD getPostError                    INLINE ( ::bPostError )
 
    // Cargo
 
    DATA bCargo           
-   METHOD setCargo( bCargo )           INLINE ( ::bCargo := bCargo )
-   METHOD getCargo()                   INLINE ( if( !empty( ::bCargo ), eval( ::bCargo ), ) )
+   METHOD setCargo( bCargo )              INLINE ( ::bCargo := bCargo )
+   METHOD getCargo()                      INLINE ( if( !empty( ::bCargo ), eval( ::bCargo ), ) )
 
-   METHOD setAdjunto( cText )          INLINE ( ::cGetAdjunto := padr( cText, 250 ) )
-   METHOD getAdjunto()                 INLINE ( alltrim( ::cGetAdjunto ) )
-   METHOD addAdjunto( cText )          INLINE ( aAdd( ::aAdjuntos, cText ) )
+   METHOD setAdjunto( cText )             INLINE ( ::cGetAdjunto := padr( cText, 250 ) )
+   METHOD getAdjunto()                    INLINE ( alltrim( ::cGetAdjunto ) )
+   METHOD addAdjunto( cText )             INLINE ( aAdd( ::aAdjuntos, cText ) )
    METHOD addFileAdjunto()
 
-   METHOD setItems( aItems )           INLINE ( iif(  !empty( aItems ),;
-                                                   (  ::aItems    := aItems,;
-                                                      ::aFields   := getSubArray( aItems, 5 ) ), ) )
+   METHOD setItems( aItems )              INLINE ( iif(  !empty( aItems ),;
+                                                      (  ::aItems    := aItems,;
+                                                         ::aFields   := getSubArray( aItems, 5 ) ), ) )
                                                       
-   METHOD getItems()                   INLINE ( ::aItems )
+   METHOD getItems()                      INLINE ( ::aItems )
 
    METHOD setTypeDocument( cTypeDocument ) ;
-                                       INLINE ( ::oTemplateHtml:setTypeDocument( cTypeDocument ) )
+                                          INLINE ( ::oTemplateHtml:setTypeDocument( cTypeDocument ) )
 
-   METHOD setTypeFormat( cTypeFormat ) INLINE ( ::cTypeFormat := cTypeFormat )
+   METHOD setTypeFormat( cTypeFormat )    INLINE ( ::cTypeFormat := cTypeFormat )
 
    METHOD setFormatoDocumento( cFormatoDocumento ) ;
-                                       INLINE ( ::cFormatoDocumento := cFormatoDocumento )
+                                          INLINE ( ::cFormatoDocumento := cFormatoDocumento )
 
    METHOD documentsDialog( aSelected )
 
@@ -216,7 +231,7 @@ CLASS TGenMailing
 
    METHOD IniciarProceso()
 
-   METHOD InsertField()                   INLINE ( ::oActiveX:oClp:SetText( "{" + ( alltrim( ::cField ) ) + "}" ), ::oActiveX:oRTF:Paste() )
+   METHOD InsertField()                   INLINE ( ::oRichEdit:oClp:SetText( "{" + ( alltrim( ::cField ) ) + "}" ), ::oRichEdit:oRTF:Paste() )
 
    METHOD waitMail()
    METHOD waitSeconds( nTime )
@@ -265,9 +280,7 @@ METHOD documentsDialog( aSelected ) CLASS TGenMailing
 
    ::setSelected( aSelected )
 
-   if !empty( aSelected ) .and. ( len( aSelected ) > 1 )
-      ::HidePara()
-   end if 
+   ::setMultiSelectMode()
 
    ::Resource()
 
@@ -309,8 +322,8 @@ METHOD startResource() CLASS TGenMailing
 
    ::getStatusWorkArea()
 
-   if ::lHidePara
-      ::oGetPara:Hide()
+   if ::lHideRecipients
+      ::oRecipients:Hide()
    end if 
 
    if ::lHideCopia
@@ -334,8 +347,8 @@ METHOD startResource() CLASS TGenMailing
       ::oFormatoDocumento:lValid()
    end if 
 
-   if !empty( ::oActiveX )
-      ::oActiveX:SetHTML()
+   if !empty( ::oRichEdit )
+      ::oRichEdit:SetHTML()
    end if
 
 Return ( Self )
@@ -358,8 +371,8 @@ METHOD endResources() CLASS TGenMailing
       ::oMenu:end()
    end if
 
-   if !empty( ::oActiveX )
-      ::oActiveX:end()
+   if !empty( ::oRichEdit )
+      ::oRichEdit:end()
    end if 
 
 Return ( Self )   
@@ -380,7 +393,7 @@ METHOD buildPageRedactar()
       ID       90 ;
       OF       oDlg
 
-   REDEFINE GET ::oGetPara VAR ::cGetPara ;
+   REDEFINE GET ::oRecipients VAR ::cRecipients ;
       IDSAY    121 ;
       ID       120 ;
       OF       oDlg
@@ -435,9 +448,9 @@ METHOD buildPageRedactar()
 
    // Componentes-----------------------------------------------------------
 
-   ::oActiveX  := GetRichEdit():ReDefine( 600, oDlg )
+   ::oRichEdit := GetRichEdit():ReDefine( 600, oDlg )
 
-   ::oActiveX:oRTF:SetText( ::cMensaje )
+   ::oRichEdit:oRTF:SetText( ::cMensaje )
 
 Return ( Self )   
 
@@ -587,14 +600,10 @@ METHOD IniciarProceso() CLASS TGenMailing
    local aDatabaseList    
 
    if ::lPageDatabase 
-      msgAlert( "lPageDatabase")
       aDatabaseList           := ::getDatabaseList()
    else 
-      msgAlert( "lPageSelected")
       aDatabaseList           := ::getSelectedList()
    end if 
-
-   msgAlert( hb_valtoexp( aDatabaseList ) )
 
    if !empty( aDatabaseList )
       ::oSendMail:sendList( aDatabaseList )
@@ -671,7 +680,7 @@ Return ( cDocument )
 METHOD getMessage() CLASS TGenMailing
 
    local cExpresion
-   local cDocument     := ::oActiveX:getText()
+   local cDocument     := ::oRichEdit:getText()
 
    while .t. 
 
@@ -731,7 +740,7 @@ Return ( Self )
 METHOD addDatabaseList() CLASS TGenMailing
 
    if ( ::getWorkArea() )->lMail 
-      aAdd( ::aMailingList, ::hashDatabaseList() )
+      ::addSelectedList()
    end if 
 
 Return ( Self )   
@@ -742,7 +751,7 @@ METHOD hashDatabaseList() CLASS TGenMailing
 
    local hashDatabaseList := {=>}
 
-   hSet( hashDatabaseList, "mail", ::getPara() )
+   hSet( hashDatabaseList, "mail", ::getRecipients() )
    hSet( hashDatabaseList, "mailcc", ::getCopia() )
    hSet( hashDatabaseList, "mailcco", ::getCopiaOculta() )
    hSet( hashDatabaseList, "subject", ::getAsunto() )

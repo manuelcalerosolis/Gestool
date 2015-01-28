@@ -31,8 +31,8 @@ CLASS TGenMailingDatabase FROM TGenMailing
    METHOD getDatabaseList()              
       METHOD addDatabaseList()            INLINE   ( iif( ( ::getWorkArea() )->lMail, ::addSelectedList(), ) ) 
 
-   METHOD setItems( aItems )              INLINE   ( ::Super:setItems( aItems ),;
-                                                   iif( !empty( ::oFilter ), ::oFilter:setFields( aItems ), ) )
+   METHOD setItems( aItems )              INLINE   (  ::Super:setItems( aItems ),;
+                                                      iif( !empty( ::oFilter ), ::oFilter:setFields( aItems ), ) )
 
    METHOD dialogFilter()
       METHOD buildFilter()
@@ -57,11 +57,10 @@ Return ( Self )
 
 METHOD databaseDialog() CLASS TGenMailingDatabase
 
-   ::lHidePara       := .t.
    ::lPageDatabase   := .t.
-
    ::aPages          := { "Select_Mail_Redactar", "Select_Mail_Registros", "Select_Mail_Proceso" }
 
+   ::hideRecipients()
    ::Resource()
 
 Return ( Self )

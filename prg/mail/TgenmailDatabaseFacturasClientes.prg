@@ -9,8 +9,7 @@ CLASS TGenMailingDatabaseFacturasClientes FROM TGenMailingDatabase
 
    METHOD columnPageDatabase( oDlg )   
 
-   METHOD getPara()              INLINE ( alltrim( retFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cMeiInt" ) ) )
-   METHOD getAdjunto()           INLINE ( msgAlert( ::cFormatoDocumento, "getAdjunto"), mailReportFacCli( ::cFormatoDocumento ) )
+   METHOD getAdjunto()           INLINE ( mailReportFacCli( ::cFormatoDocumento ) )
 
    METHOD setFacturasClientesSend( hMail )
 
@@ -39,6 +38,8 @@ METHOD New( nView ) CLASS TGenMailingDatabaseFacturasClientes
    ::setBmpDatabase( "Factura_cliente_48_alpha" )
 
    ::setAsunto( "Envio de nuestra factura de cliente {Serie de la factura}/{Número de la factura}" )
+
+   ::setBlockRecipients( {|| alltrim( retFld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cMeiInt" ) ) } )
 
    ::setPostSend( {|hMail| ::setFacturasClientesSend( hMail ) } )
 

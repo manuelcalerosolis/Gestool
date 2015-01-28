@@ -57,7 +57,7 @@ CLASS TSendMail
    METHOD initMessage()       INLINE ( ::deleteMessenger(),;
                                        ::messenger( "Se ha iniciado el proceso de envio" ) )
    METHOD sendMessage( hMail );
-                              INLINE ( ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' se ha enviado con exito." ) )
+                              INLINE ( ::messenger( "El correo electrónico con el asunto '" + ::getSubjectFromHash( hMail ) + "' se ha enviado con exito, al correo " + ::getMailsFromHash( hMail ) ) )
    METHOD errorMessage( hMail );
                               INLINE ( ::messenger( "Error al enviar el correo electrónico " + ::getMailsFromHash( hMail ) ) )
    METHOD endMessage()        INLINE ( iif(  ::lCancel,;
