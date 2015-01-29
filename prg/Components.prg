@@ -1480,7 +1480,7 @@ CLASS GetRichEdit
             								::oBtnBullet:Show() ,;
             								::oBtnDateTime:Show() )
 
-   METHOD end()            INLINE ( ::oRTF:end(), ::oRTF := nil )
+   METHOD end()            INLINE ( ::oRTF:oFont:end(), ::oRTF:end(), ::oRTF := nil )
    
 END CLASS
 

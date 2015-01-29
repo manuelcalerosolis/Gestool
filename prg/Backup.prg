@@ -812,7 +812,11 @@ Method ZipFiles()
          ::oProgreso:cText    := "Comprimiendo " + ::aEmp[ n, 2 ] + "-" + Rtrim( ::aEmp[ n, 3 ] )
 
          hb_SetDiskZip( {|| nil } )
-         aEval( aDir, { | cName, nIndex | hb_ZipFile( cZip, FullCurDir() + "Emp" + ::aEmp[ n, 2 ] + "\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+         if !empty( ::cPassword1 )
+            aEval( aDir, { | cName, nIndex | hb_ZipFile( cZip, FullCurDir() + "Emp" + ::aEmp[ n, 2 ] + "\" + cName[ 1 ], 9, , , rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+         else
+            aEval( aDir, { | cName, nIndex | hb_ZipFile( cZip, FullCurDir() + "Emp" + ::aEmp[ n, 2 ] + "\" + cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
+         end if 
          hb_gcAll()
 
          aAdd( aFil, cZip )
@@ -846,7 +850,11 @@ Method ZipFiles()
       ::oProgreso:cText    := "Comprimiendo directorio de datos generales"
 
       hb_SetDiskZip( {|| nil } )
-      aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Datos\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+      if !empty( ::cPassword1 )
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Datos\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+      else
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Datos\" + cName[ 1 ], 9 ), ::oProgreso:Set( nIndex ) } )
+      end if 
       hb_gcAll()
 
       aAdd( aFil, cDat )

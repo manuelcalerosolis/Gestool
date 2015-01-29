@@ -1479,6 +1479,8 @@ CLASS GetRichEdit
       								::oBtnTextJustify:Show() ,;
       								::oBtnBullet:Show() ,;
       								::oBtnDateTime:Show() )
+
+   METHOD End()            INLINE ( MSGaLERT( "END()" ), ::oRTF:end() )
    
    END CLASS
 

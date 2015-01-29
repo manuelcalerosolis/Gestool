@@ -11813,26 +11813,6 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailingDocuments():New( aItmPreCli(), D():PresupuestosClientes( nView ) ) )
-                  :setAsunto( "Envío de presupuesto de cliente número " + D():PresupuestosClientesIdTextShort( nView ) )
-                  :setPara( retFld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :setAdjunto( cFilePdf )
-                  :setMensaje(   "<p>" +;
-                                 "Adjunto le remito nuestro presupuesto de cliente " + D():PresupuestosClientesIdTextShort( nView ) + space( 1 ) + ;
-                                 "de fecha " + dtoc( D():PresupuestosClientesFecha( nView ) ) + ;
-                                 "</p>" + CRLF + ;
-                                 "<p>" + ;
-                                 "</p>" + CRLF + ;
-                                 "<p>" + ;
-                                 "Reciba un cordial saludo." + ;
-                                 "</p>" + CRLF )
-                  :Resource()
-               end with
-
-            end if
-
       end case
 
    end if

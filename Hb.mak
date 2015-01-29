@@ -60,8 +60,8 @@ ClienteRutaNavigator.prg   \
 TGenMail.prg            	\
 TGenMailDatabase.prg       \
 TGenMailClientes.prg       \
-TGenMailDocuments.prg      \
 TGenMailDatabaseFacturasClientes.prg      \
+TGenMailDatabaseAlbaranesClientes.prg     \
 TSendMail.prg              \
 TSendMailOutlook.prg       \
 TSendMailCDO.prg           \
@@ -208,8 +208,8 @@ Tutil.prg               	\
 Tidxutil.prg            	\
 Tindex.prg              	\
 Stock.prg               	\
+Xbrowse.prg                \
 IXbrowse.prg            	\
-Xbrowse1406.prg            \
 Autoseek.prg            	\
 Cccheck.prg             	\
 Digit.prg               	\
@@ -420,12 +420,12 @@ ArtCodeBar.obj          \
 Brwvta.obj              \
 Provee.obj              \
 Client.obj              \
-ClienteRutaNavigator.obj             \
+ClienteRutaNavigator.obj                  \
 TGenMail.obj            \
 TGenMailDatabase.obj    \
 TGenMailClientes.obj    \
-TGenMailDocuments.obj   \
 TGenMailDatabaseFacturasClientes.obj      \
+TGenMailDatabaseAlbaranesClientes.obj     \
 TSendMail.obj           \
 TSendMailOutlook.obj    \
 TSendMailCDO.obj        \
@@ -600,8 +600,8 @@ Tutil.obj               \
 Tidxutil.obj            \
 Tindex.obj              \
 Stock.obj               \
+Xbrowse.obj             \
 IXbrowse.obj            \
-XBrowse1406.obj 			\
 Autoseek.obj            \
 Cccheck.obj             \
 Digit.obj               \
@@ -812,12 +812,12 @@ $(OBJ)\ArtCodeBar.obj            +
 $(OBJ)\Brwvta.obj                +
 $(OBJ)\Provee.obj                +
 $(OBJ)\Client.obj                +
-$(OBJ)\ClienteRutaNavigator.obj               +
+$(OBJ)\ClienteRutaNavigator.obj                 +
 $(OBJ)\TGenMail.obj              +
 $(OBJ)\TGenMailDatabase.obj      +
 $(OBJ)\TGenMailClientes.obj      +
-$(OBJ)\TGenMailDocuments.obj     +
 $(OBJ)\TGenMailDatabaseFacturasClientes.obj     +
+$(OBJ)\TGenMailDatabaseAlbaranesClientes.obj    +
 $(OBJ)\TSendMail.obj             +
 $(OBJ)\TSendMailOutlook.obj      +
 $(OBJ)\TSendMailCDO.obj          +
@@ -978,6 +978,7 @@ $(OBJ)\Tutil.obj                	+
 $(OBJ)\Tidxutil.obj             	+
 $(OBJ)\Tindex.obj               	+
 $(OBJ)\Stock.obj                	+
+$(OBJ)\Xbrowse.obj               +
 $(OBJ)\IXbrowse.obj             	+
 $(OBJ)\Autoseek.obj             	+
 $(OBJ)\Cccheck.obj              	+
@@ -1131,7 +1132,6 @@ $(OBJ)\Components.obj 					+
 $(OBJ)\TLabelGenerator.obj 			+
 $(OBJ)\TTreevie.obj 						+
 $(OBJ)\ApoloMeter.obj 					+
-$(OBJ)\Xbrowse1406.Obj            	+
 $(OBJ)\FacturarLineasAlbaranesProveedor.obj  +
 $(OBJ)\TGridSay.obj              +
 $(OBJ)\Editable.obj              +

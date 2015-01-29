@@ -353,7 +353,7 @@ c:\xharbour\bin>harbour c:\test.prg /gh /n
 
 METHOD CompilarFicheroScript() CLASS TScripts
 
-   if !File( FullCurDir() + "harbour.exe" )
+   if !File( FullCurDir() + "harbour\harbour.exe" )
       msgStop( "No existe compilador" )
       Return .t.
    end if 
@@ -368,19 +368,16 @@ METHOD CompilarFicheroScript() CLASS TScripts
    if GetFileDateTime( ::cFicheroPrg ) > GetFileDateTime( ::cFicheroHbr )
 
       ferase( ::cFicheroHbr )
-      
 
 #ifdef __XHARBOUR__
 
       msginfo( FullCurDir() + "xharbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " )      
-
       waitRun( FullCurDir() + "xharbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
 
 #else
 
       msginfo( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log" ) 
       tracelog( FullCurDir() + "harbour\harbour.exe " + valtoprg( ::cFicheroPrg ) + " /i" + FullCurDir() + "include /gh /n /p /o" + valtoprg( ::cFicheroHbr ) + " > " )     
-
       waitRun( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
 
 #endif

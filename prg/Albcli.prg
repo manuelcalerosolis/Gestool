@@ -500,6 +500,8 @@ static bEdtInc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmp
 static bEdtDoc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb | EdtEnt( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb ) }
 
+static oMailingAlbaranesClientes
+
 //--------------------------------------------------------------------------//
 
 FUNCTION AlbCli( oMenuItem, oWnd, hHash )
@@ -961,11 +963,9 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenAlbCli( IS_MAIL ) ) ;
+      ACTION   ( oMailingAlbaranesClientes:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
-
-      lGenAlbCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
       NOBORDER ;
@@ -1511,6 +1511,8 @@ STATIC FUNCTION OpenFiles()
       if !oPais:OpenFiles()
          lOpenFiles     := .f.
       end if
+
+      oMailingAlbaranesClientes     := TGenmailingDatabaseAlbaranesClientes():New( nView )
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -13107,14 +13109,26 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter )
+Function mailReportAlbCli( cCodigoDocumento )
+
+Return ( printReportAlbCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
-   local cFilePdf       := cPatTmp() + "AlbaranesCliente" + StrTran( ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb, " ", "" ) + ".Pdf"
+   local cFilePdf             := cPatTmp() + "AlbaranesCliente" + StrTran( ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb, " ", "" ) + ".Pdf"
 
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
+   DEFAULT nDevice            := IS_SCREEN
+   DEFAULT nCopies            := 1
+   DEFAULT cPrinter           := PrnGetName()
+   DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
+
+   if empty( cCodigoDocumento )
+      msgStop( "El código del documento esta vacio" )
+      Return ( nil )
+   end if 
 
    SysRefresh()
 
@@ -13126,41 +13140,29 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter )
 
    oFr:SetTitle(        "Diseñador de documentos" )
 
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
+   // Manejador de eventos--------------------------------------------------------
 
    oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
-   /*
-   Zona de datos------------------------------------------------------------
-   */
+   // Zona de datos------------------------------------------------------------
 
    DataReport( oFr )
 
-   /*
-   Cargar el informe-----------------------------------------------------------
-   */
+   // Cargar el informe-----------------------------------------------------------
 
-   if !Empty( ( D():Documentos( nView ) )->mReport )
+   if lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
 
       oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
-      /*
-      Zona de variables--------------------------------------------------------
-      */
+      // Zona de variables--------------------------------------------------------
 
       VariableReport( oFr )
 
-      /*
-      Preparar el report-------------------------------------------------------
-      */
+      // Preparar el report-------------------------------------------------------
 
       oFr:PrepareReport()
 
-      /*
-      Imprimir el informe------------------------------------------------------
-      */
+      // Imprimir el informe------------------------------------------------------
 
       do case
          case nDevice == IS_SCREEN 
@@ -13196,38 +13198,15 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailingDocuments():New( aItmAlbCli(), D():AlbaranesClientes( nView ) ) )
-                  :setAsunto( "Envío de albarán de cliente número " + D():AlbaranesClientesIdTextShort( nView ) )
-                  :setPara( retFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :setAdjunto( cFilePdf )
-                  :setTypeDocument( "nAlbCli" )
-//                  :setMensaje(   "<p>" +;
-//                                 "Adjunto le remito nuestro S.A.T. de cliente " + D():AlbaranesClientesIdTextShort( nView ) + space( 1 ) + ;
-//                                 "de fecha " + dtoc( D():AlbaranesClientesFecha( nView ) ) + ;
-//                                 "</p>" + CRLF + ;
-//                                 "<p>" + ;
-//                                 "</p>" + CRLF + ;
-//                                 "<p>" + ;
-//                                 "Reciba un cordial saludo." + ;
-//                                 "</p>" + CRLF )
-                  :Resource()
-               end with
-
-            end if
-
       end case
 
    end if
 
-   /*
-   Destruye el diseñador-------------------------------------------------------
-   */
+   // Destruye el diseñador-------------------------------------------------------
 
    oFr:DestroyFr()
 
-Return .t.
+Return ( cFilePdf )
 
 //---------------------------------------------------------------------------//
 
@@ -18004,3 +17983,19 @@ FUNCTION nTotalLineaAlbaranCliente( hHash, nDec, nRou, nVdv, lDto, lPntVer, lImp
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+
+Static Function cFormatoAlbaranesClientes( cSerie )
+
+   local cFormato
+
+   DEFAULT cSerie    := ( D():AlbaranesClientes( nView ) )->cSerie
+
+   cFormato          := cFormatoDocumento( cSerie, "nAlbCli", D():Contadores( nView ) )
+
+   if Empty( cFormato )
+      cFormato       := cFirstDoc( "AC", D():Documentos( nView ) )
+   end if
+
+Return ( cFormato ) 
+
+//---------------------------------------------------------------------------//   

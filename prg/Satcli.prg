@@ -11496,26 +11496,6 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailingDocuments():New( aItmSatCli(), D():SatClientes( nView ) ) )
-                  :setAsunto( "Envío de S.A.T. de cliente número " + D():SatClientesIdTextShort( nView ) )
-                  :setPara( retFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :setAdjunto( cFilePdf )
-                  :setMensaje(   "<p>" +;
-                                 "Adjunto le remito nuestro S.A.T. de cliente " + D():SatClientesIdTextShort( nView ) + space( 1 ) + ;
-                                 "de fecha " + dtoc( D():SatClientesFecha( nView ) ) + ;
-                                 "</p>" + CRLF + ;
-                                 "<p>" + ;
-                                 "</p>" + CRLF + ;
-                                 "<p>" + ;
-                                 "Reciba un cordial saludo." + ;
-                                 "</p>" + CRLF )
-                  :Resource()
-               end with
-
-            end if
-
       end case
 
    end if

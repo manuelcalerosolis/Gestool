@@ -14655,26 +14655,6 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailingDocuments():New( aItmPedCli(), D():PedidosClientes( nView ) ) )
-                  :setAsunto( "Envío de pedido de cliente número " + D():PedidosClientesIdTextShort( nView ) )
-                  :setPara( retFld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :setAdjunto( cFilePdf )
-                  :setMensaje(   "<p>" +;
-                                 "Adjunto le remito nuestro pedido de cliente " + D():PedidosClientesIdTextShort( nView ) + space( 1 ) + ;
-                                 "de fecha " + dtoc( D():PedidosClientesFecha( nView ) ) + ;
-                                 "</p>" + CRLF + ;
-                                 "<p>" + ;
-                                 "</p>" + CRLF + ;
-                                 "<p>" + ;
-                                 "Reciba un cordial saludo." + ;
-                                 "</p>" + CRLF )
-                  :Resource()
-               end with
-
-            end if
-
       end case
 
    end if

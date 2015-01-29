@@ -11475,41 +11475,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function mailingFacCli( cCodigoDocumento )
-
-   local cMail
-   local cFilePdf    
-
-   cMail             := retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" )
-   if empty( cMail )
-      msgStop( "El correo electrónico del cliente, está vacio." )
-      Return .f.
-   end if 
-
-   cFilePdf          := mailReportFacCli( cCodigoDocumento )
-   if !file( cFilePdf )
-      msgStop( "El fichero " + cFilePdf + " no existe." )
-      Return .f.
-   end if 
-
-   if !Empty( oWndBrw ) .and. ( len( oWndBrw:oBrw:aSelected ) > 1 )
-      msgAlert( hb_valToExp( oWndBrw:oBrw:aSelected ), "aSelected" )
-   end if 
-
-   with object ( TGenMailingDocuments():New( nView ) )
-      :setItems( aItmFacCli() )
-      :setWorkArea( D():FacturasClientes( nView ) )
-      :setAsunto( "Envio de nuestra factura de cliente {Serie de la factura}/{Número de la factura}" )
-      :setPara( cMail )
-      :setAdjunto( cFilePdf )
-      :setTypeDocument( "nFacCli" )
-      :Resource()
-   end with
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
 Function mailReportFacCli( cCodigoDocumento )
 
 Return ( printReportFacCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
@@ -15385,7 +15350,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    with object ( oFactura )
 
       :cFicheroOrigen            := cPatXml() + cNumero + ".xml"
-      :cFicheroDestino           := cPatXml() + cNumero + ".xml"
+      :cFicheroDestino           := cPatXml() + cNumero + ".xsig"
 
       /*
       Datos para el Envío de  la factura por mail-------------------------------
@@ -15680,9 +15645,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
    end with
 
-   /*
-   Genera la factura-----------------------------------------------------------
-   */
+   // Genera la factura-----------------------------------------------------------
 
    oFactura:GeneraXml()
 
@@ -15693,9 +15656,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       end if
    end if
 
-   /*
-   Firma la factura------------------------------------------------------------
-   */
+   // Firma la factura------------------------------------------------------------
 
    if lFirmar
       oFactura:FirmaJava()
@@ -15706,6 +15667,8 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    end if
 
    oFactura:ShowInWeb()
+
+   hb_gcall( .f. )    
 
 return nil
 

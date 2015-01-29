@@ -90,24 +90,24 @@ CLASS TGenMailing
    METHOD setMensaje( cMensaje )          INLINE ( ::cMensaje := cMensaje, if( !empty( ::oRichEdit ), ::oRichEdit:oRTF:SetText( cMensaje ), ) )
 
    DATA oGetCopia                      
-   DATA cGetCopia                      INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
+   DATA cGetCopia                         INIT Padr( uFieldEmpresa( "cCcpMai" ), 250 )
 
    DATA oGetCopiaOculta                
-   DATA cGetCopiaOculta                INIT Padr( uFieldEmpresa( "cCcoMai" ), 250 )
+   DATA cGetCopiaOculta                   INIT Padr( uFieldEmpresa( "cCcoMai" ), 250 )
 
    
    DATA oGetDe                         
-   DATA cGetDe                         INIT Padr( uFieldEmpresa( "cNombre" ), 250 )
+   DATA cGetDe                            INIT Padr( uFieldEmpresa( "cNombre" ), 250 )
 
-   DATA cWorkArea                      INIT ""
+   DATA cWorkArea                         INIT ""
    DATA hWorkAreaStatus
 
-   DATA lHideRecipients                      INIT .f.
-   DATA lHideCopia                     INIT .f.
-   DATA lHideCopiaOculta               INIT .f.
-   DATA lHideFormato                   INIT .f.
+   DATA lHideRecipients                   INIT .f.
+   DATA lHideCopia                        INIT .f.
+   DATA lHideCopiaOculta                  INIT .f.
+   DATA lHideFormato                      INIT .f.
 
-   DATA aAdjuntos                      INIT {}
+   DATA aAdjuntos                         INIT {}
 
    DATA oRichEdit
    DATA cActiveX
@@ -122,7 +122,7 @@ CLASS TGenMailing
    DATA oTemplateHtml
 
    DATA cHtml
-   DATA lHtml                          INIT .t.
+   DATA lHtml                             INIT .t.
 
    DATA oMail
 
@@ -193,9 +193,7 @@ CLASS TGenMailing
    METHOD addAdjunto( cText )             INLINE ( aAdd( ::aAdjuntos, cText ) )
    METHOD addFileAdjunto()
 
-   METHOD setItems( aItems )              INLINE ( iif(  !empty( aItems ),;
-                                                      (  ::aItems    := aItems,;
-                                                         ::aFields   := getSubArray( aItems, 5 ) ), ) )
+   METHOD setItems( aItems )              INLINE ( iif( !empty( aItems ), ( ::aItems := aItems, ::aFields := getSubArray( aItems, 5 ) ), ) )
                                                       
    METHOD getItems()                      INLINE ( ::aItems )
 
@@ -662,6 +660,8 @@ METHOD getAsunto() CLASS TGenMailing
    local cExpresion
    local cDocument     := alltrim( ::cSubject )
 
+   msgAlert( cDocument, "antes")
+
    while .t. 
 
       cExpresion       := ::getExpression( cDocument ) 
@@ -672,6 +672,8 @@ METHOD getAsunto() CLASS TGenMailing
       ::replaceExpresion( @cDocument, cExpresion )
 
    end while
+
+   msgAlert( cDocument, "despues")
 
 Return ( cDocument )
 
