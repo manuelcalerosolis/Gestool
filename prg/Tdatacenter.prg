@@ -2154,6 +2154,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TipArt"
    oDataTable:cName        := cPatEmp() + "TipArt"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TipArt.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TipArt.Cdx"
@@ -5110,6 +5111,8 @@ CLASS D
       METHOD SatClientesIdText( nView ) ;
                                                 INLINE ( ::SatClientesIdTextShort( nView ) + "/" + ( ::Get( "SatCliT", nView ) )->cSufSat )
 
+   METHOD SatClientesLineas( nView )            INLINE ( ::Get( "SatCliL", nView ) )                                                
+
    // Albaranes de clientes----------------------------------------------------
 
    METHOD AlbaranesClientes( nView )            INLINE ( ::Get( "AlbCliT", nView ) )
@@ -5304,6 +5307,8 @@ CLASS D
       METHOD ArticuloPrecioPropiedades( nView )                   INLINE ( ::Get( "ArtDiv", nView ) )
       METHOD ArticuloStockAlmacenes( nView )                      INLINE ( ::Get( "ArtAlm", nView ) )
       METHOD ArticuloStockAlmacenesId( nView )                    INLINE ( ( ::Get( "ArtAlm", nView ) )->cCodArt ) 
+
+   METHOD TipoArticulos( nView )                                  INLINE ( ::Get( "TipArt", nView ) )
 
    METHOD Familias( nView )                  INLINE ( ::Get( "Familias", nView ) )
 

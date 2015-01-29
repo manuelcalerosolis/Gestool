@@ -18438,8 +18438,8 @@ CAPTION "Situaciones"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 50, 9, 226, 12
-  CONTROL "&Aceptar [F5]", 500, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 171, 27, 50, 14
-  CONTROL "&Cancelar", 550, "Button", WS_TABSTOP, 226, 27, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 171, 27, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 226, 27, 50, 14
   CONTROL "Descripción", -1, "Static", WS_GROUP, 4, 12, 39, 8
 }
 

@@ -89,7 +89,7 @@ METHOD Resource( nMode )
 
    REDEFINE GET   ::oDbf:cSitua ;
       ID          100 ;
-      WHEN        ( nMode != ZOOM_MODE ) ;
+      WHEN        ( nMode != ZOOM_MODE ) ; 
       OF          oDlg
 
    REDEFINE BUTTON ;
