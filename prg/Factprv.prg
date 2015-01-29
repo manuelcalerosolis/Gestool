@@ -10439,7 +10439,7 @@ Function SynFacPrv( cPath )
    ( dbfFacPrvI )->( dbGoTop() )
    while !( dbfFacPrvI )->( eof() )
 
-      if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvI )->cSerFac + str( ( dbfFacPrvI )->nNumFac ) + ( dbfFacPrvI )->cSufFac ) )
+      if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvI )->cSerie + str( ( dbfFacPrvI )->nNumFac ) + ( dbfFacPrvI )->cSufFac ) )
          if ( dbfFacPrvI )->( dbRLock() )
             ( dbfFacPrvI )->( dbDelete() )
             ( dbfFacPrvI )->( dbRUnLock() )

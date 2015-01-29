@@ -1412,9 +1412,9 @@ Static Function FinishAplication() //  Static Function
 
    ferase( "chekres.txt" )
 
-   CheckRes()
+   //CheckRes()
 
-   winExec( "notepad checkres.txt" )
+   //winExec( "notepad checkres.txt" )
 
 Return nil
 
