@@ -2399,6 +2399,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          :nFooterType         := AGGR_SUM
       end with
 
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Familia"
+         :bEditValue          := {|| ( dbfTmpLin )->cCodFam }
+         :nWidth              := 35
+         :lHide               := .t.
+      end with
+
       if nMode != ZOOM_MODE
          oBrwLin:bLDblClick  := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
       end if
