@@ -3166,7 +3166,7 @@ Function lExisteDocumento( cCodigoDocumento, dbfDoc )
          nOrd                    := ( dbfDoc )->( OrdSetFocus( "Codigo" ) )
 
          if !( dbfDoc )->( dbSeek( cCodigoDocumento ) )
-            MsgStop( "Código de documento " + cCodigoDocumento + " no existe." )
+            MsgStop( "Código de documento " + cCodigoDocumento + " no encontrado." )
             lExisteDocumento     := .f.
          end if
 
@@ -3177,7 +3177,7 @@ Function lExisteDocumento( cCodigoDocumento, dbfDoc )
          nOrd                    := dbfDoc:OrdSetFocus( "Codigo" )
 
          if ! dbfDoc:Seek( cCodigoDocumento )
-            MsgStop( "Código de documento " + cCodigoDocumento + " no existe." )
+            MsgStop( "Código de documento " + cCodigoDocumento + 2 + " no encontrado." )
             lExisteDocumento     := .f.
          end if
 
@@ -3214,7 +3214,7 @@ Function lMemoDocumento( cCodigoDocumento, dbfDoc )
    if ( dbfDoc )->( dbSeek( cCodigoDocumento ) )
       lMemoDocumento       := !empty( ( dbfDoc )->mReport )
    else
-      MsgStop( "Código de documento " + cCodigoDocumento + " no existe." )
+      MsgStop( "Código de documento " + cCodigoDocumento + " no encontrado." )
    end if
 
    ( dbfDoc )->( OrdSetFocus( nOrd ) )

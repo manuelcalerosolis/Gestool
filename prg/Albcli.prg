@@ -500,7 +500,7 @@ static bEdtInc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmp
 static bEdtDoc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb | EdtEnt( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb ) }
 
-static oMailingAlbaranesClientes
+static oMailing
 
 //--------------------------------------------------------------------------//
 
@@ -963,7 +963,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( oMailingAlbaranesClientes:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
@@ -1512,7 +1512,7 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
-      oMailingAlbaranesClientes     := TGenmailingDatabaseAlbaranesClientes():New( nView )
+      oMailing          := TGenmailingDatabaseAlbaranesClientes():New( nView )
 
       /*
       Declaración de variables públicas----------------------------------------
@@ -1875,24 +1875,29 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
+STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopies )
 
    local oDevice
    local cAlbaran
 
-   if ( D():Get( "AlbCliT", nView ) )->( Lastrec() ) == 0
-      Return nil
+   if ( D():AlbaranesClientes( nView ) )->( Lastrec() ) == 0
+      return nil
    end if
 
-   cAlbaran             := ( D():Get( "AlbCliT", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliT", nView ) )->nNumAlb ) + ( D():Get( "AlbCliT", nView ) )->cSufAlb
+   DEFAULT nDevice            := IS_PRINTER
+   DEFAULT cCaption           := "Imprimiendo albaranes a clientes"
+   DEFAULT cCodigoDocumento   := cFormatoAlbaranesClientes()
 
-   DEFAULT nDevice      := IS_PRINTER
-   DEFAULT cCaption     := "Imprimiendo albaranes a clientes"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( D():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", D():Get( "NCount", nView ) )
-   //DEFAULT nCopies      := if( nCopiasDocumento( ( D():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", D():Get( "NCount", nView ) ) == 0, Max( Retfld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():Get( "AlbCliT", nView ) )->cSerAlb, "nAlbCli", D():Get( "NCount", nView ) ) )
+   // Existe
+
+   if !lExisteDocumento( cCodigoDocumento, D():Documentos( nView ) )
+      return nil
+   end if
+
+   // Numero de copias---------------------------------------------------------
 
    if Empty( nCopies )
-      nCopies           := Retfld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Get( "Client", nView ), "CopiasF" ) 
+      nCopies           := retfld( ( D():AlbaranesClientes( nView ) )->cCodCli, D():Get( "Client", nView ), "CopiasF" ) 
    end if
 
    if nCopies == 0 
@@ -1903,41 +1908,29 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       nCopies           := 1
    end if  
 
-   if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "AC", D():Documentos( nView ) )
-   end if
+   // Numero de albaran
 
-   if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
-      return nil
-   end if
+   cAlbaran             := D():AlbaranesClientesId( nView )
 
-   /*
-   Si el documento es de tipo visual-------------------------------------------
-   */
+   // Si el documento es de tipo visual-------------------------------------------
 
-   if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
+   if lVisualDocumento( cCodigoDocumento, D():Documentos( nView ) )
 
-      PrintReportAlbCli( nDevice, nCopies, cPrinter, D():Documentos( nView ) )
+      PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    else
 
-      /*
-      Recalculamos el albaran
-      */
+      // Recalculamos el albaran
 
       nTotAlbCli( cAlbaran, D():Get( "AlbCliT", nView ), D():Get( "AlbCliL", nView ), D():Get( "TIva", nView ), D():Get( "Divisas", nView ) )
       nPagAlbCli( cAlbaran, D():Get( "AlbCliP", nView ), D():Get( "Divisas", nView ) )
 
-      /*
-      Buscamos el primer registro
-      */
+      // Buscamos el primer registro
 
       ( D():Get( "AlbCliL", nView ) )->( dbSeek( cAlbaran ) )
       ( D():Get( "AlbCliP", nView ) )->( dbSeek( cAlbaran ) )
 
-      /*
-      Posicionamos en ficheros auxiliares
-      */
+      // Posicionamos en ficheros auxiliares
 
       ( D():Get( "Client", nView ))->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodCli ) )
       ( D():Get( "FPago", nView ) )->( dbSeek( ( D():Get( "AlbCliT", nView ) )->cCodPago ) )
@@ -2020,12 +2013,12 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
          end case
 
-         SetMargin( cCodDoc, oInf )
-         PrintColum( cCodDoc, oInf )
+         SetMargin( cCodigoDocumento, oInf )
+         PrintColum( cCodigoDocumento, oInf )
 
       else
 
-         MsgStop( "No se ha podido crear el documento " + cCodDoc )
+         MsgStop( "No se ha podido crear el documento " + cCodigoDocumento )
 
       end if
 
@@ -2038,7 +2031,7 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
          ACTIVATE REPORT oInf ;
             WHILE       ( ( D():Get( "AlbCliL", nView ) )->cSerAlb + Str( ( D():Get( "AlbCliL", nView ) )->nNumAlb ) + ( D():Get( "AlbCliL", nView ) )->cSufAlb == cAlbaran .and. !( D():Get( "AlbCliL", nView ) )->( Eof() ) ) ;
             FOR         ( !( D():Get( "AlbCliL", nView ) )->lImpLin ) ;
-            ON ENDPAGE  ( ePage( oInf, cCodDoc ) )
+            ON ENDPAGE  ( ePage( oInf, cCodigoDocumento ) )
 
             if nDevice == IS_PRINTER
                oInf:oDevice:end()
@@ -2070,13 +2063,13 @@ Return nil
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EPage( oInf, cCodDoc )
+STATIC FUNCTION EPage( oInf, cCodigoDocumento )
 
    private nPagina      := oInf:nPage
    private lEnd         := oInf:lFinish
    private nRow         := oInf:nRow
 
-   PrintItems( cCodDoc, oInf )
+   PrintItems( cCodigoDocumento, oInf )
 
 RETURN NIL
 
@@ -13132,13 +13125,13 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    SysRefresh()
 
-   oFr                  := frReportManager():New()
+   oFr                        := frReportManager():New()
 
-   oFr:LoadLangRes(     "Spanish.Xml" )
+   oFr:LoadLangRes( "Spanish.Xml" )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle( "Diseñador de documentos" )
 
    // Manejador de eventos--------------------------------------------------------
 
@@ -13364,7 +13357,6 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
 
    oPrinter:bSkip    := {||   ( D():AlbaranesClientes( nView ) )->( dbSkip() ) }
 
-   //oPrinter:bAction  := {||   GenAlbCli( nDevice, "Imprimiendo documento : " + D():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
    oPrinter:bAction  := {||   GenAlbCli( nDevice, "Imprimiendo documento : " + D():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue ) }
 
    oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ) }
@@ -17988,7 +17980,7 @@ Static Function cFormatoAlbaranesClientes( cSerie )
 
    local cFormato
 
-   DEFAULT cSerie    := ( D():AlbaranesClientes( nView ) )->cSerie
+   DEFAULT cSerie    := ( D():AlbaranesClientes( nView ) )->cSerAlb
 
    cFormato          := cFormatoDocumento( cSerie, "nAlbCli", D():Contadores( nView ) )
 

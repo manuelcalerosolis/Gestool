@@ -660,8 +660,6 @@ METHOD getAsunto() CLASS TGenMailing
    local cExpresion
    local cDocument     := alltrim( ::cSubject )
 
-   msgAlert( cDocument, "antes")
-
    while .t. 
 
       cExpresion       := ::getExpression( cDocument ) 
@@ -672,8 +670,6 @@ METHOD getAsunto() CLASS TGenMailing
       ::replaceExpresion( @cDocument, cExpresion )
 
    end while
-
-   msgAlert( cDocument, "despues")
 
 Return ( cDocument )
 

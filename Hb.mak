@@ -62,6 +62,7 @@ TGenMailDatabase.prg       \
 TGenMailClientes.prg       \
 TGenMailDatabaseFacturasClientes.prg      \
 TGenMailDatabaseAlbaranesClientes.prg     \
+TGenMailDatabasePedidosClientes.prg       \
 TSendMail.prg              \
 TSendMailOutlook.prg       \
 TSendMailCDO.prg           \
@@ -426,6 +427,7 @@ TGenMailDatabase.obj    \
 TGenMailClientes.obj    \
 TGenMailDatabaseFacturasClientes.obj      \
 TGenMailDatabaseAlbaranesClientes.obj     \
+TGenMailDatabasePedidosClientes.obj       \
 TSendMail.obj           \
 TSendMailOutlook.obj    \
 TSendMailCDO.obj        \
@@ -818,6 +820,7 @@ $(OBJ)\TGenMailDatabase.obj      +
 $(OBJ)\TGenMailClientes.obj      +
 $(OBJ)\TGenMailDatabaseFacturasClientes.obj     +
 $(OBJ)\TGenMailDatabaseAlbaranesClientes.obj    +
+$(OBJ)\TGenMailDatabasePedidosClientes.obj      +
 $(OBJ)\TSendMail.obj             +
 $(OBJ)\TSendMailOutlook.obj      +
 $(OBJ)\TSendMailCDO.obj          +

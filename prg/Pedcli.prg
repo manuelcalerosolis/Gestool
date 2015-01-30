@@ -468,6 +468,8 @@ static bEdtInc             := { |aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nM
 
 static aEstadoProduccion   := { "Producido", "En producción", "Pendiente de producción" }
 
+static oMailing
+
 //---------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
 //---------------------------------------------------------------------------//
@@ -486,36 +488,33 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo pedido"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) == 0, Max( Retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PedidosClientes( nView ) )->cSerPed, "nPedCli", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoPedidosClientes()
 
-   if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "PC", dbfDoc )
-   end if
-
-   if !lExisteDocumento( cCodDoc, dbfDoc )
+   if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
       return nil
    end if
 
-   /*
-   Informacion al Auditor------------------------------------------------------
-   */
+   // Numero de copias---------------------------------------------------------
 
-   if !Empty( oAuditor() )
-      if nDevice == IS_PRINTER
-         oAuditor():AddEvent( PRINT_PEDIDO_CLIENTES,    nNumPed, PED_CLI )
-      else
-         oAuditor():AddEvent( PREVIEW_PEDIDO_CLIENTES,  nNumPed, PED_CLI )
-      end if
+   if Empty( nCopies )
+      nCopies           := retfld( ( D():PedidosClientes( nView ) )->cCodCli, D():Get( "Client", nView ), "CopiasF" ) 
    end if
+
+   if nCopies == 0 
+      nCopies           := nCopiasDocumento( ( D():Get( "PedCliT", nView ) )->cSerPed, "nPedCli", D():Get( "NCount", nView ) )
+   end if 
+
+   if nCopies == 0
+      nCopies           := 1
+   end if  
 
    /*
    Si el documento es de tipo visual-------------------------------------------
    */
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
 
-      PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
+      PrintReportPedCli( nDevice, nCopies, cPrinter, cCodDoc )
 
    else
 
@@ -700,8 +699,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():PedidosClientesLineas( nView )
 
-      /*USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE*/
+      D():Documentos( nView )
+      ( D():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
@@ -780,10 +779,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "TVTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TVTA", @dbfTVta ) )
       SET ADSINDEX TO ( cPatDat() + "TVTA.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
-      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
-      SET TAG TO "CTIPO"
 
       USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
@@ -878,20 +873,20 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
 
    	if !TDataCenter():OpenPreCliT( @dbfPreCliT )
-		lOpenFiles     := .f.
-	end if 
-
-    if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
    		lOpenFiles     := .f.
-	end if
+   	end if 
 
-    if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-       lOpenFiles     	:= .f.
-    end if
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+  		  lOpenFiles     := .f.
+	  end if
 
-	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-	   lOpenFiles     	:= .f.
-	end if
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles    := .f.
+      end if
+
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+	     lOpenFiles     	:= .f.
+      end if
 
       // Unidades de medicion
 
@@ -931,6 +926,8 @@ STATIC FUNCTION OpenFiles( lExt )
       if !oFraPub:OpenFiles()
          lOpenFiles     := .f.
       end if
+
+      oMailing          := TGenmailingDatabasePedidosClientes():New( nView )
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -1442,12 +1439,12 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       LEVEL    ACC_APPD
 
 	DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
-	 NOBORDER ;
-	 ACTION   ( DupSerie( oWndBrw ) );
-	 TOOLTIP  "Series" ;
-	 FROM     oDup ;
-	 CLOSED ;
-	 LEVEL    ACC_APPD
+      NOBORDER ;
+      ACTION   ( DupSerie( oWndBrw ) );
+      TOOLTIP  "Series" ;
+      FROM     oDup ;
+      CLOSED ;
+      LEVEL    ACC_APPD
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
       NOBORDER ;
@@ -1511,11 +1508,9 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenPedCli( IS_MAIL ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
-
-      lGenPedCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
       NOBORDER ;
@@ -5477,7 +5472,7 @@ Static Function PrnSerie()
    	REDEFINE GET oFmtDoc VAR cFmtDoc ;
       	ID       90 ;
       	COLOR    CLR_GET ;
-      	VALID    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      	VALID    ( cDocumento( oFmtDoc, oSayFmt, D():Documentos( nView ) ) ) ;
       	BITMAP   "LUPA" ;
      	ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "PC" ) ) ;
       	OF       oDlg
@@ -5849,7 +5844,7 @@ static function lGenPedCli( oBrw, oBtn, nDevice )
       return nil
    end if
 
-   IF !( dbfDoc )->( dbSeek( "PC" ) )
+   IF !( D():Documentos( nView ) )->( dbSeek( "PC" ) )
 
          DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
             NOBORDER ;
@@ -5861,13 +5856,13 @@ static function lGenPedCli( oBrw, oBtn, nDevice )
 
    ELSE
 
-      WHILE ( dbfDoc )->CTIPO == "PC" .AND. !( dbfDoc )->( eof() )
+      WHILE ( D():Documentos( nView ) )->cTipo == "PC" .AND. !( D():Documentos( nView ) )->( eof() )
 
-         bAction  := bGenFac( nDevice, "Imprimiendo pedidos de clientes", ( dbfDoc )->CODIGO )
+         bAction  := bGenFac( nDevice, "Imprimiendo pedidos de clientes", ( D():Documentos( nView ) )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
-         ( dbfDoc )->( dbSkip() )
+         ( D():Documentos( nView ) )->( dbSkip() )
 
       END DO
 
@@ -6404,13 +6399,13 @@ static function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies, dbfPedCliP )
       return nil
    end if
 
-   if !lExisteDocumento( cFmtEnt, dbfDoc )
+   if !lExisteDocumento( cFmtEnt, D():Documentos( nView ) )
       return nil
    end if
 
-   if lVisualDocumento( cFmtEnt, dbfDoc )
+   if lVisualDocumento( cFmtEnt, D():Documentos( nView ) )
 
-      PrintReportEntPedCli( if( lPrint, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, dbfDoc, dbfPedCliP )
+      PrintReportEntPedCli( if( lPrint, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, D():Documentos( nView ), dbfPedCliP )
 
    else
 
@@ -8478,7 +8473,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfDiv     ), ( dbfDiv     )->( dbCloseArea() ), )
    if( !Empty( dbfObrasT  ), ( dbfObrasT  )->( dbCloseArea() ), )
    if( !Empty( dbfTVta    ), ( dbfTVta    )->( dbCloseArea() ), )
-   if( !Empty( dbfDoc     ), ( dbfDoc     )->( dbCloseArea() ), )
    if( !Empty( dbfOferta  ), ( dbfOferta  )->( dbCloseArea() ), )
    if( !Empty( dbfPro     ), ( dbfPro     )->( dbCloseArea() ), )
    if( !Empty( dbfTblPro  ), ( dbfTblPro  )->( dbCloseArea() ), )
@@ -8554,7 +8548,6 @@ STATIC FUNCTION CloseFiles()
    dbfDiv         := nil
    dbfObrasT      := nil
    dbfTVta        := nil
-   dbfDoc         := nil
    dbfOferta      := nil
    dbfPro         := nil
    dbfTblPro      := nil
@@ -14568,24 +14561,36 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
+Function mailReportPedCli( cCodigoDocumento )
+
+Return ( printReportPedCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+Static Function printReportPedCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
-   local cFilePdf       := cPatTmp() + "PedidoCliente" + StrTran( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, " ", "" ) + ".Pdf"
+   local cFilePdf             := cPatTmp() + "PedidoCliente" + StrTran( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, " ", "" ) + ".Pdf"
 
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
+   DEFAULT nDevice            := IS_SCREEN
+   DEFAULT nCopies            := 1
+   DEFAULT cPrinter           := PrnGetName()
+   DEFAULT cCodigoDocumento   := cFormatoPedidosClientes()   
+
+   if empty( cCodigoDocumento )
+      msgStop( "El código del documento esta vacio" )
+      Return ( nil )
+   end if 
 
    SysRefresh()
 
-   oFr                  := frReportManager():New()
+   oFr                        := frReportManager():New()
 
-   oFr:LoadLangRes(     "Spanish.Xml" )
+   oFr:LoadLangRes( "Spanish.Xml" )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle( "Diseñador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -14603,7 +14608,7 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
 
       oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -14665,7 +14670,7 @@ Function PrintReportPedCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:DestroyFr()
 
-Return .t.
+Return ( cFilePdf )
 
 //---------------------------------------------------------------------------//
 
@@ -17806,3 +17811,19 @@ Function nTotalLineaPedidoCliente( hHash, nDec, nRou, nVdv, lDto, lPntVer, lImpT
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+
+Static Function cFormatoPedidosClientes( cSerie )
+
+   local cFormato
+
+   DEFAULT cSerie    := ( D():PedidosClientes( nView ) )->cSerPed
+
+   cFormato          := cFormatoDocumento( cSerie, "nPedCli", D():Contadores( nView ) )
+
+   if Empty( cFormato )
+      cFormato       := cFirstDoc( "PC", D():Documentos( nView ) )
+   end if
+
+Return ( cFormato ) 
+
+//---------------------------------------------------------------------------//   
