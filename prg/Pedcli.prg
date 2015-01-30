@@ -14610,7 +14610,7 @@ Static Function printReportPedCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    if lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
 
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
