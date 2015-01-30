@@ -70,23 +70,22 @@ METHOD loadHtmlFile( cFile ) CLASS TTemplatesHtml
 
    local oBlock
    local cMensaje
+   local lLoadHtmlFile  := .f.
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::cHtmlFile       := alltrim( cFile )
+   ::cHtmlFile          := alltrim( cFile )
 
    if file( ::cHtmlFile )  // !Empty( ::oActiveX )
 
-      cMensaje       := memoread( ::cHtmlFile )
+      cMensaje          := memoread( ::cHtmlFile )
 
       if !empty( cMensaje )
          ::oSender:setMensaje( cMensaje )
       end if
 
-   else 
-
-      msgStop( "El fichero " + ::cHtmlFile + " no existe." )
+      lLoadHtmlFile     := .t.
 
    end if
 
@@ -96,7 +95,7 @@ METHOD loadHtmlFile( cFile ) CLASS TTemplatesHtml
 
    ErrorBlock( oBlock )
 
-Return ( Self )
+Return ( lLoadHtmlFile )
 
 //--------------------------------------------------------------------------//
 

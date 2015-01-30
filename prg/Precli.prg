@@ -320,7 +320,6 @@ static dbfAlm
 static dbfAgent
 static dbfFamilia
 static dbfProvee
-static dbfDoc
 static dbfOferta
 static dbfTVta
 static dbfTblPro
@@ -397,6 +396,8 @@ static nTarifaPrecio    := 0
 static oComisionLinea
 static nComisionLinea   := 0
 
+static oMailing
+
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
@@ -415,36 +416,33 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo presupuesto"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", dbfCount ) )
+   DEFAULT cCodDoc      := cFormatoPresupuestosClientes()
 
-   if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "RC", dbfDoc )
-   end if
-
-   if !lExisteDocumento( cCodDoc, dbfDoc )
+   if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
       return nil
    end if
 
-   /*
-   Informacion al Auditor------------------------------------------------------
-   */
+   // Numero de copias---------------------------------------------------------
 
-   if !Empty( oAuditor() )
-      if nDevice == IS_PRINTER
-         oAuditor():AddEvent( PRINT_PRESUPUESTO_CLIENTES,    nNumPre, PRE_CLI )
-      else
-         oAuditor():AddEvent( PREVIEW_PRESUPUESTO_CLIENTES,  nNumPre, PRE_CLI )
-      end if
+   if Empty( nCopies )
+      nCopies           := retfld( ( D():PresupuestosClientes( nView ) )->cCodCli, D():Get( "Client", nView ), "CopiasF" ) 
    end if
+
+   if nCopies == 0 
+      nCopies           := nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPedCli", D():Get( "NCount", nView ) )
+   end if 
+
+   if nCopies == 0
+      nCopies           := 1
+   end if  
 
    /*
    Si el documento es de tipo visual-------------------------------------------
    */
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
 
-      PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
+      printReportPreCli( nDevice, nCopies, cPrinter, cCodDoc )
 
    else
 
@@ -625,7 +623,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloStockAlmacenes( nView )    
 
-      D():Articulos( nView )       
+      D():Articulos( nView )      
+
+      D():Documentos( nView )
+      ( D():Documentos( nView ) )->( ordSetFocus( "cTipo" ) )
 
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
@@ -638,10 +639,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-/*
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-*/
+
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
 
@@ -671,10 +669,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
-      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
-      SET TAG TO "CTIPO"
 
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
       SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
@@ -832,15 +826,13 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
-      /*
-      Recursos y fuente--------------------------------------------------------
-      */
+      oMailing          := TGenmailingDatabasePresupuestosClientes():New( nView )
+
+      // Recursos y fuente--------------------------------------------------------
 
       oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
 
-      /*
-      Declaración variables públicas-------------------------------------------
-      */
+      // Declaración variables públicas-------------------------------------------
 
       public nTotPre    := 0
       public nTotDto    := 0
@@ -979,10 +971,6 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( dbfDiv )
       ( dbfDiv       )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfDoc )
-      ( dbfDoc       )->( dbCloseArea() )
    end if
 
    if !Empty( dbfFamilia )
@@ -1177,7 +1165,6 @@ STATIC FUNCTION CloseFiles()
    dbfCodebar     := nil
    dbfFpago       := nil
    dbfDiv         := nil
-   dbfDoc         := nil
    dbfFamilia     := nil
    dbfOferta      := nil
    dbfKit         := nil
@@ -4821,7 +4808,7 @@ STATIC FUNCTION PrnSerie()
    REDEFINE GET oFmtDoc VAR cFmtDoc ;
       ID       90 ;
       COLOR    CLR_GET ;
-      VALID    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      VALID    ( cDocumento( oFmtDoc, oSayFmt, D():Documentos( nView ) ) ) ;
       BITMAP   "LUPA" ;
       ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "RC" ) ) ;
       OF       oDlg
@@ -6840,35 +6827,6 @@ RETURN .F.
 
 //---------------------------------------------------------------------------//
 
-/*FUNCTION DocPreCli( dbfDocFld, dbfDocCol )
-
-   local aCalc1
-
-   /*
-   Itmes-----------------------------------------------------------------------
-   */
-
-/*   AppDocItm( dbfDocFld, "RC", aItmPreCli() )   // Campos
-   AppDocCal( dbfDocFld, "RC", aCalc1 )         // Datos calculados
-   AppDocItm( dbfDocFld, "RC", aItmCli() )      // Clientes
-   AppDocItm( dbfDocFld, "RC", aItmObr() )      // Obras
-   AppDocItm( dbfDocFld, "RC", aItmAge() )      // Agentes
-   AppDocItm( dbfDocFld, "RC", aItmAlm() )      // Almacen
-   AppDocItm( dbfDocFld, "RC", aItmRut() )      // Ruta
-   AppDocItm( dbfDocFld, "RC", aItmDiv() )      // Divisas
-   AppDocItm( dbfDocFld, "RC", aItmFPago() )    // Formas de pago
-
-   /*
-   Columnas--------------------------------------------------------------------
-   */
-
-/*   AppDocItm( dbfDocCol, "RC", aColPreCli() )   // Detalle
-   AppDocCal( dbfDocCol, "RC", aCocPreCli() )   // Datos calculados del detalle
-
-RETURN NIL*/
-
-//---------------------------------------------------------------------------//
-
 static function lGenPreCli( oBrw, oBtn, nDevice )
 
    local bAction
@@ -6879,7 +6837,7 @@ static function lGenPreCli( oBrw, oBtn, nDevice )
       return nil
    end if
 
-   IF !( dbfDoc )->( dbSeek( "RC" ) )
+   IF !( D():Documentos( nView ) )->( dbSeek( "RC" ) )
 
          DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
             NOBORDER ;
@@ -6892,13 +6850,13 @@ static function lGenPreCli( oBrw, oBtn, nDevice )
 
    ELSE
 
-      WHILE ( dbfDoc )->CTIPO == "RC" .AND. !( dbfDoc )->( eof() )
+      WHILE ( D():Documentos( nView ) )->cTipo == "RC" .AND. !( D():Documentos( nView ) )->( eof() )
 
-         bAction  := bGenPreCli( nDevice, "Imprimiendo presupuestos a clientes", ( dbfDoc )->CODIGO )
+         bAction  := bGenPreCli( nDevice, "Imprimiendo presupuestos a clientes", ( D():Documentos( nView ) )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
-         ( dbfDoc )->( dbSkip() )
+         ( D():Documentos( nView ) )->( dbSkip() )
 
       END DO
 
@@ -6914,8 +6872,8 @@ static function bGenPreCli( nDevice, cTitle, cCodDoc )
 
    local bGen
    local nDev  := by( nDevice )
-   local cTit  := by( cTitle    )
-   local cCod  := by( cCodDoc   )
+   local cTit  := by( cTitle )
+   local cCod  := by( cCodDoc )
 
    if nDev == IS_PRINTER
       bGen     := {|| nGenPreCli( nDev, cTit, cCod ) }
@@ -11730,15 +11688,27 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
+Function mailReportPreCli( cCodigoDocumento )
+
+Return ( printReportPreCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+Static Function printReportPreCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
 
-  local cFilePdf       := cPatTmp() + "PresupuestoCliente" + StrTran( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, " ", "" ) + ".Pdf"
+  local cFilePdf              := cPatTmp() + "PresupuestoCliente" + StrTran( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre, " ", "" ) + ".Pdf"
 
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
+   DEFAULT nDevice            := IS_SCREEN
+   DEFAULT nCopies            := 1
+   DEFAULT cPrinter           := PrnGetName()
+   DEFAULT cCodigoDocumento   := cFormatoPresupuestosClientes()   
+
+   if empty( cCodigoDocumento )
+      msgStop( "El código del documento esta vacio" )
+      Return ( nil )
+   end if 
 
    SysRefresh()
 
@@ -11754,7 +11724,7 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -11766,9 +11736,9 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
 
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
@@ -11830,7 +11800,7 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:DestroyFr()
 
-Return .t.
+Return ( cFilePdf )
 
 //---------------------------------------------------------------------------//
 
@@ -12034,3 +12004,19 @@ Function sTotPreCli( cPresupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, 
 Return ( sTotal )
 
 //---------------------------------------------------------------------------//
+
+Static Function cFormatoPresupuestosClientes( cSerie )
+
+   local cFormato
+
+   DEFAULT cSerie    := ( D():PresupuestosClientes( nView ) )->cSerPre
+
+   cFormato          := cFormatoDocumento( cSerie, "nPreCli", D():Contadores( nView ) )
+
+   if Empty( cFormato )
+      cFormato       := cFirstDoc( "RC", D():Documentos( nView ) )
+   end if
+
+Return ( cFormato ) 
+
+//---------------------------------------------------------------------------//   

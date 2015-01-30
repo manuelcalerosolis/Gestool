@@ -409,7 +409,6 @@ static dbfTVta
 static dbfPro
 
 static dbfTblPro
-static dbfDoc
 static dbfAgeCom
 static dbfCajT
 static oStock
@@ -1507,7 +1506,6 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
-      MENU     This:Toggle() ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
@@ -14596,7 +14594,7 @@ Static Function printReportPedCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
