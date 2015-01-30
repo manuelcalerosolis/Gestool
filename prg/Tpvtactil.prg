@@ -5643,6 +5643,12 @@ METHOD SelecionaCliente() CLASS TpvTactil
       ::oTiketCabecera:cDniCli      := oRetFld( cCliente, ::oCliente, "Nif" )
       ::oTiketCabecera:nTarifa      := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 )
 
+      //Serie del cliente------------------------------------------------------
+
+      if !Empty( oRetFld( cCliente, ::oCliente, "Serie" ) ) 
+         ::oTiketCabecera:cSerTik   := oRetFld( cCliente, ::oCliente, "Serie" )
+      end if
+
       // Formas de pago--------------------------------------------------------
 
       if Empty( oRetFld( cCliente, ::oCliente, "CodPago" ) )
