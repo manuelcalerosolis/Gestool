@@ -6836,7 +6836,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
             end if
          end if
 
-         aTmp[ _CNUMTIK ]              := 0
+         aTmp[ _CNUMTIK ]              := ""
          aTmp[ _CTURTIK ]              := cCurSesion()
 
       end if
