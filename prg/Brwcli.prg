@@ -33,6 +33,7 @@ static dbfSatCliT
 static dbfSatCliL
 static dbfSatCliS
 static dbfCategoria
+static dbfArticulo
 
 static oDbfTmp
 static oDbfTmpMaq
@@ -193,6 +194,9 @@ Static Function OpenFiles( lMessage )
       USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
       SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
 
+      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+
       if !TDataCenter():OpenPreCliT( @dbfPreCliT )
          lOpenFiles     := .f.
       else
@@ -287,6 +291,7 @@ Static Function CloseFiles()
    ( dbfIva       )->( dbCloseArea() )
    ( dbfFPago     )->( dbCloseArea() )
    ( dbfCategoria )->( dbCloseArea() )
+   ( dbfArticulo  )->( dbCloseArea() )
 
    if !Empty( oOperario )
       oOperario:End()
@@ -727,7 +732,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       :cSortOrder       := "cCodOpe"
       :bEditValue       := {|| AllTrim( oDbfTmpMaq:cCodOpe ) + if( !Empty( oDbfTmpMaq:cCodOpe ), " - ", "" ) + oRetFld( oDbfTmpMaq:cCodOpe, oOperario:oDbf, "cNomTra", "cCodTra" ) }
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 200
+      :nWidth           := 170
    end with
 
    with object ( oBrwMaq:addCol() )
@@ -737,7 +742,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       :bStrData         := {|| AllTrim( oDbfTmpMaq:cCodCat ) + if( !Empty( oDbfTmpMaq:cCodCat ), " - ", "" ) + RetFld( oDbfTmpMaq:cCodCat, dbfCategoria, "cNombre" ) }
       :bBmpData         := {|| nBitmapTipoCategoria( RetFld( oDbfTmpMaq:cCodCat, dbfCategoria, "cTipo" ) ) }
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 200
+      :nWidth           := 170
       AddResourceTipoCategoria( hb_QWith() )
    end with
 
@@ -746,6 +751,12 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       :cSortOrder       := "cSituac"
       :bEditValue       := {|| oDbfTmpMaq:cSituac }
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      :nWidth           := 100
+   end with
+
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Ubicación"
+      :bEditValue       := {|| oDbfTmpMaq:cDesUbi }
       :nWidth           := 130
    end with
 
@@ -791,7 +802,10 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
 
    oFld:aDialogs[2]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ) } )
    oFld:aDialogs[2]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ) } )
-   oDlg:AddFastKey( VK_F5, {|| EndDialog( oDlg ) } )
+   
+   if lSatCli
+      oDlg:AddFastKey( VK_F5, {|| EndDialog( oDlg ) } )
+   end if   
 
    oDlg:bStart := {|| StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oBrwMaq, oBrwTmp, oGraph, oBtnAceptar ) }
 
@@ -1145,7 +1159,11 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
                oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
                oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
 
-            end if   
+            end if
+
+            if ( dbfArticulo )->( dbSeek( ( dbfSatCliL )->cRef ) )
+               oDbfTmpMaq:cDesUbi   := ( dbfArticulo )->cDesUbi
+            end if
 
             oDbfTmpMaq:Save()
 
@@ -1768,6 +1786,7 @@ Static Function DefineTemporalMaquinas( cPath, lUniqueName, cFileName )
       FIELD NAME "CSITUAC"  TYPE "C" LEN  20 DEC 0 COMMENT "Situación del SAT"         OF oDbf
       FIELD NAME "CCODOPE"  TYPE "C" LEN   5 DEC 0 COMMENT "Código operario"           OF oDbf
       FIELD NAME "CCODCAT"  TYPE "C" LEN   3 DEC 0 COMMENT "Código categoría"          OF oDbf
+      FIELD NAME "CDESUBI"  TYPE "C" LEN 200 DEC 0 COMMENT "Ubicación de máquina"      OF oDbf
 
       INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef"                                   OF oDbf
       INDEX TO ( cFileName ) TAG "cSituac" ON "cSituac"                                OF oDbf

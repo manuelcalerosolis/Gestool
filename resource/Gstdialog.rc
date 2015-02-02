@@ -1626,7 +1626,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 300, "SysTabControl32", WS_TABSTOP, 1, 1, 670, 340
   CONTROL "", 310, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 36, 349, 43, 43
   CONTROL "&Actualizar", 306, "Button", WS_TABSTOP, 82, 349, 50, 14
-  CONTROL "&Aceptar", IDOK, "Button", WS_TABSTOP, 566, 349, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 566, 349, 50, 14
   CONTROL "&Cerrar", 501, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 620, 349, 50, 14
   CONTROL "Ejercicio", -1, "Static", WS_GROUP, 2, 353, 32, 8
   CONTROL "", 200, "msctls_progress32", 0x00000000, 1, 342, 670, 6
