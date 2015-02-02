@@ -39,6 +39,8 @@ static oDbfTmpMaq
 static oDbfTmpMaqL
 static oOperario
 
+static cMaquina
+
 static oBtnFiltro
 
 static oMeter
@@ -304,7 +306,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-function BrwVtaCli( cCodCli, cNomCli )
+function BrwVtaCli( cCodCli, cNomCli, lSatCli )
 
    local oDlg
    local oFld
@@ -318,6 +320,8 @@ function BrwVtaCli( cCodCli, cNomCli )
    local oBmpDocumentos
    local oBmpGraficos
    local oBmpMaquina
+   local oBtnAceptar
+   local uResultado
 
    if !OpenFiles( .f. )
       Return nil
@@ -771,10 +775,15 @@ function BrwVtaCli( cCodCli, cNomCli )
       OF       oDlg ;
       ACTION   ( LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq ), oBrwTmp:Refresh(), oGraph:Refresh() )
 
+   REDEFINE BUTTON oBtnAceptar;
+      ID       IDOK ;
+      OF       oDlg ;
+      ACTION   ( EndDialog( oDlg ) )
+
    REDEFINE BUTTON ;
       ID       501 ;
       OF       oDlg ;
-      ACTION   ( oDlg:end( IDOK ) )
+      ACTION   ( oDlg:end() )
 
    /*
    Teclas rápidas para los botones---------------------------------------------
@@ -782,12 +791,19 @@ function BrwVtaCli( cCodCli, cNomCli )
 
    oFld:aDialogs[2]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ) } )
    oFld:aDialogs[2]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ) } )
+   oDlg:AddFastKey( VK_F5, {|| EndDialog( oDlg ) } )
 
-   oDlg:bStart := {|| LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq ), oBrwTmp:Refresh(), oGraph:Refresh(), oBrwMaq:Load() }
+   oDlg:bStart := {|| StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oBrwMaq, oBrwTmp, oGraph, oBtnAceptar ) }
 
    ACTIVATE DIALOG oDlg CENTER ;
          ON INIT  ( InitBrwVtaCli( cCodCli, oBrwTmp, oTree, oDlg ), SysRefresh() ) ;
          VALID    ( CloseFiles() )
+
+   if oDlg:nResult == IDOK
+      uResultado  := cMaquina
+   else
+      uResultado  := nil
+   end if
 
    if !Empty( oBmpGeneral )
       oBmpGeneral:End()
@@ -805,7 +821,41 @@ function BrwVtaCli( cCodCli, cNomCli )
 
    oBrwMaq:CloseData()
 
-return nil
+return uResultado
+
+//---------------------------------------------------------------------------//
+
+static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oBrwMaq, oBrwTmp, oGraph, oBtnAceptar )
+
+   LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta )
+
+   LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
+
+   oBrwTmp:Refresh()
+
+   oGraph:Refresh()
+
+   oBrwMaq:Load()
+
+   if lSatCli   
+      oBtnAceptar:Show()
+      oFld:SetOption( 4 )
+   else
+      oBtnAceptar:Hide()
+      oFld:SetOption( 1 )   
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function EndDialog( oDlg )
+
+   cMaquina := oDbfTmpMaq:cRef
+
+   oDlg:end( IDOK )
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 

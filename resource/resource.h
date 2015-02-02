@@ -4,3 +4,4 @@
 
 #define IDR_MENU1                               167
 #define F  181
+#define IDOX  4001

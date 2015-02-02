@@ -406,6 +406,8 @@ static nTarifaPrecio    := 0
 static oComisionLinea
 static nComisionLinea   := 0
 
+static cMaquina         := ""
+
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
@@ -1886,6 +1888,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ON HELP  ( BrwClient( aGet[_CCODCLI] ) ) ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE BTNBMP ;
+         ID       341 ;
+         OF       oFld:aDialogs[1] ;
+         RESOURCE "Info16" ;
+         NOBORDER ;
+         TOOLTIP  "" ;
+         ACTION   ( CargaMaquinas( aTmp, oBrwLin ) )
+
       REDEFINE GET aGet[_CNOMCLI] VAR aTmp[_CNOMCLI] ;
          ID       131 ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
@@ -3033,6 +3043,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    oBrwInc:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+static function CargaMaquinas( aTmp, oBrwLin )
+
+   if !Empty( aTmp[ _CCODCLI ] )
+      cMaquina    := InfCliente( aTmp[ _CCODCLI ], nil, .t. )
+   end if
+   
+   if !Empty( cMaquina )
+      AppDeta( oBrwLin, bEdtDet, aTmp, , cMaquina  )
+   end if
+
+return .t.
 
 //---------------------------------------------------------------------------//
 
