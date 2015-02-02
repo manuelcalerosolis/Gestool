@@ -6724,7 +6724,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 349, 152, 24
   CONTROL "0", 402, "Static", SS_RIGHT|WS_GROUP, 583, 296, 80, 8
   CONTROL "Transporte", 712, "Static", WS_GROUP, 486, 296, 53, 8
-  CONTROL "", 408, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 89, 357, 100, 11
+  CONTROL "", 408, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 89, 357, 100, 11
   CONTROL "Fecha salida", 112, "Static", WS_GROUP, 44, 81, 48, 8
   CONTROL "Fecha entrada", 114, "Static", WS_GROUP, 44, 92, 51, 8
   CONTROL "Banco", -1, "Static", WS_GROUP, 465, 57, 29, 8

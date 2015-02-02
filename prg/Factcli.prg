@@ -1573,7 +1573,7 @@ STATIC FUNCTION OpenFiles( lExt )
       Apertura de bases de datos de facturas de clientes-------------------------
       */
 
-      nView               := D():CreateView()
+      nView             := D():CreateView()
 
       D():FacturasClientes( nView )
 
@@ -1595,7 +1595,6 @@ STATIC FUNCTION OpenFiles( lExt )
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles      := .f.
       end if
-
     
     USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
     SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
@@ -1626,7 +1625,7 @@ STATIC FUNCTION OpenFiles( lExt )
     USE ( cPatEmp() + "FACRECS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECS", @dbfFacRecS ) )
     SET ADSINDEX TO ( cPatEmp() + "FACRECS.CDX" ) ADDITIVE
 
-     if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
          lOpenFiles     := .f.
       end if
 
@@ -3957,14 +3956,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end with
 
       if nMode == EDIT_MODE
-         oBrwPgo:bLDblClick   := {|| EdtRecCli( ( dbfTmpPgo )->cSerie + str( ( dbfTmpPgo )->nNumFac ) + ( dbfTmpPgo )->cSufFac + str( ( dbfTmpPgo )->nNumRec ) + ( dbfTmpPgo )->cTipRec ) }
+         oBrwPgo:bLDblClick   := {|| ExtEdtRecCli( dbfTmpPgo,  D():FacturasClientes( nView ), dbfFacCliL, dbfAntCliT, dbfFPago, D():Agentes( nView ), dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco, .t. ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
       end if
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[2];
          WHEN     ( nMode == EDIT_MODE ) ;
-         ACTION   ( EdtRecCli( ( dbfTmpPgo )->cSerie + str( ( dbfTmpPgo )->nNumFac ) + ( dbfTmpPgo )->cSufFac + str( ( dbfTmpPgo )->nNumRec ) + ( dbfTmpPgo )->cTipRec ) )
+         ACTION   ( ExtEdtRecCli( dbfTmpPgo,  D():FacturasClientes( nView ), dbfFacCliL, dbfAntCliT, dbfFPago, D():Agentes( nView ), dbfCajT, dbfIva, dbfDiv, oCtaRem, oBanco, .t. ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
@@ -7374,85 +7373,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. !( dbfAlbCliL )->( eof() ) )
 
                appendRegisterByHash( dbfAlbCliL, dbfTmpLin, { "cSerie" => Space(1), "nNumFac" => 0, "cSuPed" => cSuPed, "dFecFac" => ( dbfAlbCliL )->dFecAlb } )
-/*
-               (dbfTmpLin)->( dbAppend() )
 
-               (dbfTmpLin)->CSERIE     := " "
-               (dbfTmpLin)->NNUMFAC    := 0
-               (dbfTmpLin)->nNumLin    := (dbfAlbCliL)->nNumLin
-               (dbfTmpLin)->CREF       := (dbfAlbCliL)->cRef
-               (dbfTmpLin)->CDETALLE   := (dbfAlbCliL)->cDetalle
-               (dbfTmpLin)->MLNGDES    := (dbfAlbCliL)->mLngDes
-               (dbfTmpLin)->mNumSer    := (dbfAlbCliL)->mNumSer
-               (dbfTmpLin)->NPREUNIT   := (dbfAlbCliL)->nPreUnit
-               (dbfTmpLin)->NPNTVER    := (dbfAlbCliL)->nPntVer
-               (dbfTmpLin)->nImpTrn    := (dbfAlbCliL)->nImpTrn
-               (dbfTmpLin)->NCANENT    := (dbfAlbCliL)->nCanEnt
-               (dbfTmpLin)->CUNIDAD    := (dbfAlbCliL)->cUnidad
-               (dbfTmpLin)->NUNICAJA   := (dbfAlbCliL)->nUniCaja
-               (dbfTmpLin)->NDTO       := (dbfAlbCliL)->nDto
-               (dbfTmpLin)->NDTOPRM    := (dbfAlbCliL)->nDtoPrm
-               (dbfTmpLin)->NIVA       := (dbfAlbCliL)->NIVA
-               (dbfTmpLin)->nReq       := (dbfAlbCliL)->nReq
-               (dbfTmpLin)->NPESOKG    := (dbfAlbCliL)->NPESOKG
-               (dbfTmpLin)->cPESOKG    := (dbfAlbCliL)->cPESOKG
-               (dbfTmpLin)->NVOLUMEN   := (dbfAlbCliL)->NVOLUMEN
-               (dbfTmpLin)->CVOLUMEN   := (dbfAlbCliL)->CVOLUMEN
-               (dbfTmpLin)->NCOMAGE    := (dbfAlbCliL)->NCOMAGE
-               (dbfTmpLin)->DFECHA     := (dbfAlbCliL)->DFECHA
-               (dbfTmpLin)->CTIPMOV    := (dbfAlbCliL)->CTIPMOV
-               (dbfTmpLin)->CCODALB    := (dbfAlbCliL)->CSERALB + str( (dbfAlbCliL)->NNUMALB ) + (dbfAlbCliL)->CSUFALB
-               (dbfTmpLin)->LTOTLIN    := (dbfAlbCliL)->LTOTLIN
-               (dbfTmpLin)->nDtoDiv    := (dbfAlbCliL)->nDtoDiv
-               (dbfTmpLin)->nCtlStk    := (dbfAlbCliL)->nCtlStk
-               (dbfTmpLin)->cAlmLin    := (dbfAlbCliL)->cAlmLin
-               (dbfTmpLin)->cTipMov    := (dbfAlbCliL)->cTipMov
-               (dbfTmpLin)->lIvaLin    := (dbfAlbCliL)->lIvaLin
-               (dbfTmpLin)->lImpLin    := (dbfAlbCliL)->lImpLin
-               (dbfTmpLin)->nValImp    := (dbfAlbCliL)->nValImp
-               (dbfTmpLin)->cCodImp    := (dbfAlbCliL)->cCodImp
-               (dbfTmpLin)->CCODPR1    := (dbfAlbCliL)->CCODPR1
-               (dbfTmpLin)->CCODPR2    := (dbfAlbCliL)->CCODPR2
-               (dbfTmpLin)->CVALPR1    := (dbfAlbCliL)->CVALPR1
-               (dbfTmpLin)->CVALPR2    := (dbfAlbCliL)->CVALPR2
-               (dbfTmpLin)->nCosDiv    := (dbfAlbCliL)->nCosDiv
-               (dbfTmpLin)->lKitArt    := (dbfAlbCliL)->lKitArt
-               (dbfTmpLin)->lKitChl    := (dbfAlbCliL)->lKitChl
-               (dbfTmpLin)->lKitPrc    := (dbfAlbCliL)->lKitPrc
-               (dbfTmpLin)->lLote      := (dbfAlbCliL)->lLote
-               (dbfTmpLin)->nLote      := (dbfAlbCliL)->nLote
-               (dbfTmpLin)->cLote      := (dbfAlbCliL)->cLote
-               (dbfTmpLin)->dFecCad    := (dbfAlbCliL)->dFecCad
-               (dbfTmpLin)->lControl   := (dbfAlbCliL)->lControl
-               (dbfTmpLin)->lMsgVta    := (dbfAlbCliL)->lMsgVta
-               (dbfTmpLin)->lNotVta    := (dbfAlbCliL)->lNotVta
-               (dbfTmpLin)->cCodTip    := (dbfAlbCliL)->cCodTip
-               (dbfTmpLin)->mObsLin    := (dbfAlbCliL)->mObsLin
-               (dbfTmpLin)->Descrip    := (dbfAlbCliL)->Descrip
-               (dbfTmpLin)->cCodPrv    := (dbfAlbCliL)->cCodPrv
-               (dbfTmpLin)->cImagen    := (dbfAlbCliL)->cImagen
-               (dbfTmpLin)->cCodFam    := (dbfAlbCliL)->cCodFam
-               (dbfTmpLin)->cGrpFam    := (dbfAlbCliL)->cGrpFam
-               (dbfTmpLin)->cRefPrv    := (dbfAlbCliL)->cRefPrv
-               (dbfTmpLin)->dFecEnt    := (dbfAlbCliL)->dFecEnt
-               (dbfTmpLin)->dFecSal    := (dbfAlbCliL)->dFecSal
-               (dbfTmpLin)->nPreAlq    := (dbfAlbCliL)->nPreAlq
-               (dbfTmpLin)->lAlquiler  := (dbfAlbCliL)->lAlquiler
-               (dbfTmpLin)->nNumMed    := (dbfAlbCliL)->nNumMed
-               (dbfTmpLin)->nMedUno    := (dbfAlbCliL)->nMedUno
-               (dbfTmpLin)->nMedDos    := (dbfAlbCliL)->nMedDos
-               (dbfTmpLin)->nMedTre    := (dbfAlbCliL)->nMedTre
-               (dbfTmpLin)->nPuntos    := (dbfAlbCliL)->nPuntos
-               (dbfTmpLin)->nValPnt    := (dbfAlbCliL)->nValPnt
-               (dbfTmpLin)->nDtoPnt    := (dbfAlbCliL)->nDtoPnt
-               (dbfTmpLin)->nIncPnt    := (dbfAlbCliL)->nIncPnt
-               (dbfTmpLin)->nFacCnv    := (dbfAlbCliL)->nFacCnv
-               (dbfTmpLin)->lLinOfe    := (dbfAlbCliL)->lLinOfe
-               (dbfTmpLin)->cNumSat 	:= (dbfAlbCliL)->cNumSat
-               (dbfTmpLin)->nBultos 	:= (dbfAlbCliL)->nBultos
-               (dbfTmpLin)->cFormato 	:= (dbfAlbCliL)->cFormato
-               (dbfTmpLin)->cSuPed     := cSuPed
-*/
                ( dbfAlbCliL )->( dbSkip() )
 
             end while
@@ -15779,14 +15700,6 @@ Static Function EndPgo( aTmp, aGet, lPgdOld, nImpOld, dbfTmpPgo, oBrw, oDlg, nMo
       ( dbfTmpPgo )->lConPgo     := .f.
       ( dbfTmpPgo )->cTurRec     := cCurSesion()
       ( dbfTmpPgo )->( dbUnLock() )
-
-      /*
-      Informacion al Auditor------------------------------------------------
-      */
-
-      if !Empty( oAuditor() )
-         oAuditor():AddEvent( GENERATE_RECIBO_FACTURA_CLIENTES, ( dbfTmpPgo )->cSerie + str( ( dbfTmpPgo )->nNumFac ) + ( dbfTmpPgo )->cSufFac + str( ( dbfTmpPgo )->nNumRec ), REC_CLI )
-      end if
 
    end if
 

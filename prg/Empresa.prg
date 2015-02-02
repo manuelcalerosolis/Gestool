@@ -372,14 +372,13 @@ if oUser():lCambiarEmpresa
          ACTION   ( Eval( oWndBrw:oBrw:bLDblClick ) ) ;
          TOOLTIP  "Sele(c)cionar";
          HOTKEY   "C" ;
-         LEVEL    ACC_EDIT
+         LEVEL    ACC_ZOOM
 
       DEFINE BTNSHELL RESOURCE "NEW" GROUP OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
          TOOLTIP  "(A)ñadir";
          HOTKEY   "A" ;
-         BEGIN GROUP ;
          LEVEL    ACC_APPD
 
       DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;

@@ -830,7 +830,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       // Recursos y fuente--------------------------------------------------------
 
-      oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
+      oFont             := TFont():New( "Arial", 8, 26, .f., .t. )
 
       // Declaración variables públicas-------------------------------------------
 
@@ -1587,15 +1587,6 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       LEVEL    ACC_IMPR
 
       lGenPreCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
-
-   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
-      NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenPreCli( IS_MAIL ) ) ;
-      TOOLTIP  "Correo electrónico";
-      LEVEL    ACC_IMPR
-
-      lGenPreCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    if oUser():lAdministrador()
 
@@ -11714,11 +11705,11 @@ Static Function printReportPreCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    oFr                  := frReportManager():New()
 
-   oFr:LoadLangRes(     "Spanish.Xml" )
+   oFr:LoadLangRes( "Spanish.Xml" )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle( "Diseñador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------

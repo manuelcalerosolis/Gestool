@@ -337,7 +337,6 @@ static dbfCategoria
 static dbfArtDiv
 static dbfDelega
 static dbfAgeCom
-static dbfCount
 static dbfEmp
 static dbfPedPrvL
 static dbfAlbPrvL
@@ -406,6 +405,8 @@ static nTarifaPrecio    := 0
 static oComisionLinea
 static nComisionLinea   := 0
 
+static oMailing
+
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
@@ -424,16 +425,25 @@ FUNCTION GenSatCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    DEFAULT nDevice      := IS_PRINTER
    DEFAULT cCaption     := "Imprimiendo S.A.T."
-   DEFAULT cCodDoc      := cFormatoDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
-
-   if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "SC", dbfDoc )
-   end if
+   DEFAULT cCodDoc      := cFormatoSATClientes()
 
    if !lExisteDocumento( cCodDoc, dbfDoc )
       return nil
    end if
+
+   // Numero de copias---------------------------------------------------------
+
+   if Empty( nCopies )
+      nCopies           := retfld( ( D():SatClientes( nView ) )->cCodCli, D():Get( "Client", nView ), "CopiasF" ) 
+   end if
+
+   if nCopies == 0 
+      nCopies           := nCopiasDocumento( ( D():SatClientes( nView ) )->cSerPre, "nPedCli", D():Get( "NCount", nView ) )
+   end if 
+
+   if nCopies == 0
+      nCopies           := 1
+   end if  
 
    /*
    Si el documento es de tipo visual-------------------------------------------
@@ -510,6 +520,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Articulos( nView )         
 
+      D():Documentos( nView )
+
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -524,10 +536,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-/*
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-*/
+
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
 
@@ -609,9 +618,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatGrp() + "AGECOM.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
       SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "Empresa.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "Empresa", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "Empresa.CDX" ) ADDITIVE
@@ -725,6 +731,8 @@ STATIC FUNCTION OpenFiles( lExt )
       if !oOperario:OpenFiles()
          lOpenFiles     := .f.
       end if   
+
+      oMailing          := TGenmailingDatabaseSATClientes():New( nView )
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -952,10 +960,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfAgeCom )->( dbCloseArea() )
    end if
 
-   if dbfCount != nil
-      ( dbfCount )->( dbCloseArea() )
-   end if
-
    if dbfEmp != nil
       ( dbfEmp )->( dbCloseArea() )
    end if
@@ -1086,7 +1090,6 @@ STATIC FUNCTION CloseFiles()
    dbfCajT        := nil
    dbfUsr         := nil
    dbfDelega      := nil
-   dbfCount       := nil
    oBandera       := nil
    oNewImp        := nil
    oTrans         := nil
@@ -1518,12 +1521,9 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
-      MENU     This:Toggle() ;
-      ACTION   ( GenSatCli( IS_MAIL ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
-
-      lGenSatCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    if oUser():lAdministrador()
 
@@ -1686,7 +1686,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    local nRieCli
    local oTlfCli
    local cTlfCli
-   local cSerie         := cNewSer( "nSatCli", dbfCount )
+   local cSerie         := cNewSer( "nSatCli", D():Documentos( nView ) )
    local oAprovado
    local cAprovado
    local oSayGetRnt
@@ -4691,7 +4691,7 @@ STATIC FUNCTION PrnSerie()
 
    local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) )
    local oSayFmt
    local cSayFmt
    local oSerIni
@@ -4707,7 +4707,7 @@ STATIC FUNCTION PrnSerie()
    local lCopiasSat  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) )
    local oRango
    local nRango      := 1
    local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
@@ -4875,7 +4875,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSa
 
                if lCopiasSat
 
-                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) )
 
                   GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
@@ -4903,7 +4903,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSa
 
                if lCopiasSat
 
-                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) )
 
                   GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
@@ -4938,7 +4938,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSa
 
                if lCopiasSat
 
-                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) )
 
                   GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
@@ -4966,7 +4966,7 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSa
 
                if lCopiasSat
 
-                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+                  nCopyClient := if( nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) == 0, Max( Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) )
 
                   GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
@@ -6416,7 +6416,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , dbfCount )
+      nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , D():Documentos( nView ) )
       aTmp[ _NNUMSAT ]     := nNumSat
 
    case nMode == EDIT_MODE
@@ -6927,7 +6927,7 @@ static function nGenSatCli( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
    local nCopyClient := Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
 
    DEFAULT nDevice   := IS_PRINTER
-   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", dbfCount ) )
+   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) )
 
    nCopy             := Max( nCopy, 1 )
 
@@ -11406,25 +11406,32 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
+Function mailReportSATCli( cCodigoDocumento )
+
+Return ( printReportSATCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
 
-  local cFilePdf       := cPatTmp() + "SATCliente" + StrTran( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
+  local cFilePdf              := cPatTmp() + "SATCliente" + StrTran( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
 
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
+   DEFAULT nDevice            := IS_SCREEN
+   DEFAULT nCopies            := 1
+   DEFAULT cPrinter           := PrnGetName()
+   DEFAULT cCodigoDocumento   := cFormatoSATClientes()   
 
    SysRefresh()
 
-   oFr                  := frReportManager():New()
+   oFr                        := frReportManager():New()
 
-   oFr:LoadLangRes(     "Spanish.Xml" )
+   oFr:LoadLangRes( "Spanish.Xml" )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Diseñador de documentos" )
+   oFr:SetTitle( "Diseñador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -11579,3 +11586,19 @@ Function sTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt 
 Return ( sTotal )
 
 //---------------------------------------------------------------------------//
+
+Static Function cFormatoSATClientes( cSerie )
+
+   local cFormato
+
+   DEFAULT cSerie    := ( D():PresupuestosClientes( nView ) )->cSerPre
+
+   cFormato          := cFormatoDocumento( cSerie, "nSatCli", D():Contadores( nView ) )
+
+   if Empty( cFormato )
+      cFormato       := cFirstDoc( "SC", D():Documentos( nView ) )
+   end if
+
+Return ( cFormato ) 
+
+//---------------------------------------------------------------------------//   
