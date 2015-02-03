@@ -5883,9 +5883,12 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-Function InfCliente( cCodCli, oBrw )
+Function InfCliente( cCodCli, oBrw, lSatCli )
 
-   local nLevel   := nLevelUsr( "01032" )
+   local nLevel      := nLevelUsr( "01032" )
+   local cArticulo   := ""
+
+   DEFAULT lSatCli   := .f.
 
    if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_EDIT ) == 0
       msgStop( 'Acceso no permitido.' )
@@ -5900,7 +5903,7 @@ Function InfCliente( cCodCli, oBrw )
    #ifndef __TACTIL__
 
    if ( D():Get( "Client", nView ) )->( dbSeek( cCodCli ) )
-      BrwVtaCli( cCodCli, ( D():Get( "Client", nView ) )->Titulo )
+      cArticulo   := BrwVtaCli( cCodCli, ( D():Get( "Client", nView ) )->Titulo, lSatCli )
    else
       MsgStop( "No se encuentra cliente" )
    end if
@@ -5913,7 +5916,7 @@ Function InfCliente( cCodCli, oBrw )
 
    CloseFiles()
 
-RETURN .t.
+RETURN ( iif( lSatCli, cArticulo, .t. ) )
 
 //---------------------------------------------------------------------------//
 

@@ -805,10 +805,10 @@ CLASS TCommPort
    DATA  lCreated       AS LOGIC    INIT .t.
    DATA  nHComm         AS NUMERIC
    DATA  cLastError
-   DATA  nBitsSec       AS NUMERIC
-   DATA  nBitsParada    AS NUMERIC
-   DATA  nBitsDatos     AS NUMERIC
-   DATA  nBitsParidad   AS NUMERIC
+   DATA  nBitsSec
+   DATA  nBitsParada
+   DATA  nBitsDatos
+   DATA  nBitsParidad
    DATA  lOpenToRead    AS LOGIC    INIT .f.
 
    DATA  cBuffer
