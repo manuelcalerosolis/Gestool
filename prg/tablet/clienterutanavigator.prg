@@ -5,7 +5,7 @@ CLASS ClienteRutaNavigator
 
    DATA cOrder
  
-   DATA nProcesado
+   DATA nProcesado                     INIT 0
    DATA aClientesRuta                  INIT {}
 
    DATA nView
