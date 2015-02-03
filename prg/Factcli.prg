@@ -527,6 +527,7 @@ static aNumAlb             := {}
 static aNumSat             := {}
 
 static oGetRnt
+static cGetRnt             := ""
 static oGetEnt
 static oGetTrn
 static cCodDiv
@@ -3504,7 +3505,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       800 ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET oGetRnt VAR nTotRnt ;
+      REDEFINE GET oGetRnt VAR cGetRnt ;
          ID       408 ;
          OF       oFld:aDialogs[1]
 
@@ -12170,7 +12171,7 @@ STATIC FUNCTION RecalculaTotal( aTmp )
    end if
 
    if oGetRnt != nil
-      oGetRnt:SetText( AllTrim( Trans( nTotRnt, cPorDiv ) + Space( 1 ) + AllTrim( cSimDiv( cCodDiv, dbfDiv ) ) + " : " + AllTrim( Trans( nTotPctRnt, "999.99" ) ) + "%" ) )
+      oGetRnt:SetText( alltrim( Trans( nTotRnt, cPorDiv ) ) + space( 1 ) + cSimDiv( cCodDiv, dbfDiv ) + " : " + alltrim( Trans( nTotPctRnt, "999.99" ) ) + "%" ) 
    end if
 
    if oGetEnt != nil

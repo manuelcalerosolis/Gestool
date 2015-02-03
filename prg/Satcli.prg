@@ -405,11 +405,9 @@ static nTarifaPrecio    := 0
 static oComisionLinea
 static nComisionLinea   := 0
 
-<<<<<<< HEAD
 static oMailing
-=======
+
 static cMaquina         := ""
->>>>>>> origin/master
 
 //----------------------------------------------------------------------------//
 //Funciones del programa
