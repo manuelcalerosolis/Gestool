@@ -10855,6 +10855,7 @@ Method Process()
    local tmpSatCliI
    local tmpSatCliD
    local aFiles      := Directory( cPatIn() + "SatCli*.*" )
+   local cOperario   := GetPvProfString(  "Envioyrecepcion", "Operario",     "",   FullCurDir() + "GstApolo.Ini" )
 
    for m := 1 to len( aFiles )
 
@@ -10900,7 +10901,8 @@ Method Process()
 
                while !( tmpSatCliT )->( eof() )
 
-                  if lValidaOperacion( ( tmpSatCliT )->dFecSat, .f. ) .and. ;
+                  if ( Empty( cOperario ) .or. ( tmpSatCliT )->cCodOpe == cOperario )  .and.;
+                     lValidaOperacion( ( tmpSatCliT )->dFecSat, .f. )                  .and. ;
                      !( cSatCliT )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
 
                      dbPass( tmpSatCliT, cSatCliT, .t. )
@@ -10957,6 +10959,7 @@ Method Process()
                if !lExistTable( cPatSnd() + "SatCliL.DBF" )
                   ::oSender:SetText( "Falta " + cPatSnd() + "SatCliL.DBF" )
                end if
+
 
                if !lExistTable( cPatSnd() + "SatCliI.DBF" )
                   ::oSender:SetText( "Falta " + cPatSnd() + "SatCliL.DBF" )
