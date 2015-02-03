@@ -1588,6 +1588,13 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       lGenPreCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
+   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
+      TOOLTIP  "Correo electrónico";
+      LEVEL    ACC_IMPR
+
    if oUser():lAdministrador()
 
       DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;

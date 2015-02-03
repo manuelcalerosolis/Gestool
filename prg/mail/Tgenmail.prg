@@ -595,7 +595,9 @@ Return ( Self )
 
 METHOD IniciarProceso() CLASS TGenMailing
 
-   local aDatabaseList    
+   local aDatabaseList   
+
+   ::oSendMail:initMessage()
 
    if ::lPageDatabase 
       aDatabaseList           := ::getDatabaseList()
@@ -759,7 +761,7 @@ METHOD hashDatabaseList() CLASS TGenMailing
    hSet( hashDatabaseList, "postError", ::getPostError() )
    hSet( hashDatabaseList, "cargo", ::getCargo() )
 
-   // msgAlert( hb_valtoexp( hashDatabaseList ) )
+   ::oSendMail:readyMessage( hashDatabaseList )
 
 Return ( hashDatabaseList )
 

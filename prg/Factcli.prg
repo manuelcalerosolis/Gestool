@@ -24010,16 +24010,16 @@ Return .t.
 
 //---------------------------------------------------------------------------//   
 
-Static Function cFormatoFacturasClientes( cSerie )
+Function cFormatoFacturasClientes( cSerie )
 
    local cFormato
 
-   DEFAULT cSerie    := ( D():FacturasClientes( nView ) )->cSerie
+   DEFAULT cSerie          := ( D():FacturasClientes( nView ) )->cSerie
 
-   cFormato          := cFormatoDocumento( cSerie, "nFacCli", D():Contadores( nView ) )
+   cFormato                := cFormatoDocumento( cSerie, "nFacCli", D():Contadores( nView ) )
 
    if Empty( cFormato )
-      cFormato       := cFirstDoc( "FC", D():Documentos( nView ) )
+      cFormato             := cFirstDoc( "FC", D():Documentos( nView ) )
    end if
 
 Return ( cFormato ) 

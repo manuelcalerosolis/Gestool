@@ -8,8 +8,8 @@ CLASS Editable
    DATA nView
    DATA cWorkArea
    DATA cDetailArea
-   DATA nPosDetail      INIT 0
-   DATA Style           INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
+   DATA nPosDetail                        INIT 0
+   DATA Style                             INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
    DATA hDictionaryMaster
    DATA hDictionaryDetail
    DATA hDictionaryDetailTemporal

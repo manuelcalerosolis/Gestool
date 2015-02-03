@@ -31,7 +31,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseFacturasClientes
 
    ::setTypeFormat( "FC" )
 
-   ::setFormatoDocumento( cFirstDoc( "FC", D():Documentos( nView ) ) )
+   ::setFormatoDocumento( cFormatoFacturasClientes( ( D():FacturasClientes( ::nView ) )->cSerie ) )
 
    ::setOrderDatabase( { "Número", "Fecha", "Código", "Nombre" } )
 

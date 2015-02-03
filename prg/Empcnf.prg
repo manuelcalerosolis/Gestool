@@ -436,27 +436,23 @@ FUNCTION cFormatoDocumento( cSerie, cTipDoc, dbfCount )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfCount )
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-      lClo           := .t.
-   end if
+      if Empty( dbfCount )
+         USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
+         SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
+         lClo        := .t.
+      end if
 
-   nPos              := ( dbfCount )->( fieldPos( "Doc" + cSerie ) )
+      nPos           := ( dbfCount )->( fieldPos( "Doc" + cSerie ) )
 
-   /*
-   Hasta q no encuentre un numero valido se pone a dar vueltas
-   */
+      /*
+      Hasta q no encuentre un numero valido se pone a dar vueltas
+      */
 
-   if ( dbfCount )->( dbSeek( Upper( cTipDoc ) ) )
-      cDoc           := ( dbfCount )->( fieldGet( nPos ) )
-   else
-      msgStop( "No encuentro el tipo de documento " + cTipDoc )
-   end if
-
-   /*
-   Cerramos las bases de datos
-   */
+      if ( dbfCount )->( dbSeek( Upper( cTipDoc ) ) )
+         cDoc           := ( dbfCount )->( fieldGet( nPos ) )
+      else
+         msgStop( "No encuentro el tipo de documento " + cTipDoc )
+      end if
 
    RECOVER USING oError
 
