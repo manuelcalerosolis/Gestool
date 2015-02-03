@@ -198,25 +198,16 @@ METHOD selectColumn() CLASS TGenMailingDatabase
    with object ::oBrwDatabase
 
       for each oCol in :aCols
-
-         // msgAlert( cOrd, "cOrd" )
-         // msgAlert( oCol:cHeader, "oCol:cHeader" )
-         // msgAlert( Equal( cOrd, oCol:cHeader ), "Equal" )
-
          if Equal( cOrd, oCol:cHeader )
-            oCol:cOrder       := "A"
             oCol:SetOrder()
          else
             oCol:cOrder       := " "
          end if
-
       next
 
    end with
 
    ::oBrwDatabase:Refresh()
-
-   // msgAlert( ( ::getWorkArea() )->( ordsetfocus() ), "focus" )
 
 Return ( Self )
 
