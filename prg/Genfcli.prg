@@ -966,7 +966,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                cSerAlb                 := cSerieFactura
             end if
 
-            nNewFac                    := nNewDoc( ( dbfAlbCliT )->cSerAlb, dbfFacCliT, "NFACCLI", , dbfCount )
+            nNewFac                    := nNewDoc( cSerAlb, dbfFacCliT, "NFACCLI", , dbfCount )
             nNumLin                    := 0
             cLinObr                    := Space( 1 )
             cCodCaj                    := oUser():cCaja()
@@ -1417,8 +1417,6 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
       MsgStop( "No se generaron facturas." )
    else
       Visor( aMsg )
-      msgInfo( nTotalAlbaranes, "Total Albaranes" )
-      msgInfo( nTotalFacturas, "Total Facturas" )
    end if
 
 RETURN NIL
