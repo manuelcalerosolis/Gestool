@@ -1258,7 +1258,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Código proveedor"
+            :cSortOrder       := "cRefPrv"
             :bEditValue       := {|| ( dbfTmpLin )->cRefPrv }
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
             :nWidth           := 80
             :lHide            := .t.
          end with
@@ -4178,6 +4180,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
          ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
          ( dbfTmpLin )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+
+         ( dbfTmpLin )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+         ( dbfTmpLin )->( OrdCreate( cNewFile, "cRefPrv", "cRefPrv", {|| Field->cRefPrv } ) )
 
       end if
 
