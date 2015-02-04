@@ -45,6 +45,13 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddTicket()
 
    METHOD AddArticulo()
+      METHOD appendStockArticulo()
+      METHOD appendBlankAlmacenes()
+      METHOD appendBlankArticulo()   
+      METHOD existeArticuloInforme()
+   
+   METHOD listadoArticulo()
+
 
    METHOD AddParteProduccion()
 
@@ -65,12 +72,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD aStockArticulo()                INLINE ( ::oStock:aStockArticulo( ::oDbf:cCodArt ) )
 
    METHOD SetUnidadesNegativo( lValue )   INLINE ( ::lUnidadesNegativo := lValue )
-
-   METHOD SetStockDataReport()
-
-   METHOD SetInformeDataReport()
-
-   METHOD lStocks()                       INLINE ( ::cReportType == "Por stocks" )
 
    METHOD AddVariableStock() 
 
@@ -459,6 +460,9 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "nUniArt",     "N", 16, 6, {|| "" },   "Unidades artículo"                       )
    ::AddField( "nPreArt",     "N", 16, 6, {|| "" },   "Precio unitario artículo"                ) 
 
+   ::AddField( "nPdtRec",     "N", 16, 6, {|| "" },   "Unidades pendientes de recibir"          )
+   ::AddField( "nPdtEnt",     "N", 16, 6, {|| "" },   "Unidades pendientes de entregar"         )
+
    ::AddField( "nDtoArt",     "N",  6, 2, {|| "" },   "Descuento porcentual artículo"           ) 
    ::AddField( "nLinArt",     "N", 16, 6, {|| "" },   "Descuento lineal artículo"               ) 
    ::AddField( "nPrmArt",     "N",  6, 2, {|| "" },   "Descuento promocional artículo"          )
@@ -482,6 +486,9 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cLote",       "C", 12, 0, {|| "" },   "Número de lote"                          )
    ::AddField( "dFecCad",     "D",  8, 0, {|| "" },   "Fecha de caducidad"                      )
+
+   ::AddField( "cNumSer",     "C", 30, 0, {|| "" },   "Número de serie"                         )
+
 
    ::AddField( "cClsDoc",     "C",  2, 0, {|| "" },   "Clase de documento"                      )
    ::AddField( "cTipDoc",     "C", 30, 0, {|| "" },   "Tipo de documento"                       )
@@ -508,9 +515,14 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
+      *::oDbf:nPdtRec    := sStock:nPendientesRecibir    
+      *::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
+
+
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
    ::AddTmpIndex( "cPrvHab", "cPrvHab")
+   ::AddTmpIndex( "cCodAlm", "cCodArt + cCodAlm" )
 
 RETURN ( Self )
 
@@ -518,7 +530,7 @@ RETURN ( Self )
 
 METHOD BuildReportCorrespondences()
    
-   ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::AddArticulo( .f. ) } ,;
+   ::hReport   := {  "Listado" =>                     {  "Generate" =>  {||   ::listadoArticulo() } ,;
                                                          "Variable" =>  {||   nil },;
                                                          "Data" =>      {||   nil } },;
                      "SAT de clientes" =>             {  "Generate" =>  {||   ::AddSATClientes() },;
@@ -607,10 +619,7 @@ METHOD BuildReportCorrespondences()
                                                                               ::FastReportAlbaranProveedor(),;
                                                                               ::FastReportFacturaProveedor(),;
                                                                               ::FastReportRectificativaProveedor() } },;
-                     "Por artículo" =>                {  "Generate" =>  {||   ::AddArticulo( .t., .t. ) },;
-                                                         "Variable" =>  {||   ::AddVariableStock() },;
-                                                         "Data" =>      {||   nil } },;
-                     "Por stocks" =>                  {  "Generate" =>  {||   ::AddArticulo( .t. ) },;
+                     "Stocks" =>                      {  "Generate" =>  {||   ::AddArticulo() },;
                                                          "Variable" =>  {||   ::AddVariableStock() },;
                                                          "Data" =>      {||   nil } } }
 
@@ -635,7 +644,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde() .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:getHasta() ) .and.;
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:getHasta() )       .and.;
       ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()     .and. ::oDbf:cPrvHab   <= ::oGrupoProveedor:Cargo:getHasta() )     .and.;
-      ( ::lStocks() .or. ( ::oDbf:cCodAlm >= ::oGrupoAlmacen:Cargo:Desde .and. ::oDbf:cCodAlm <= ::oGrupoAlmacen:Cargo:Hasta ) )
+      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()       .and. ::oDbf:cCodAlm   <= ::oGrupoAlmacen:Cargo:getHasta() ) 
 
       Return .t.
 
@@ -814,47 +823,17 @@ METHOD DataReport() CLASS TFastVentasArticulos
    Relacion en funcion del tipo de informe-------------------------------------
    */
 
-   if ::lStocks()
-      ::SetStockDataReport()
-   else
-      ::SetInformeDataReport()
-   end if
-
-   ::SetDataReport()
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method SetStockDataReport()
-
-   ::oFastReport:SetMasterDetail(   "Stock", "Artículos.Informe",    {|| ::oStock:oDbfStock:cCodigo } )
-   ::oFastReport:SetMasterDetail(   "Stock", "Imagenes",             {|| ::oStock:oDbfStock:cCodigo } )
-   ::oFastReport:SetMasterDetail(   "Stock", "Escandallos",          {|| ::oStock:oDbfStock:cCodigo } )
-   ::oFastReport:SetMasterDetail(   "Stock", "Códigos de barras",    {|| ::oStock:oDbfStock:cCodigo } )
-
-   ::oFastReport:SetResyncPair(     "Stock", "Artículos.Informe" )
-   ::oFastReport:SetResyncPair(     "Stock", "Imagenes" )
-   ::oFastReport:SetResyncPair(     "Stock", "Escandallos" )
-   ::oFastReport:SetResyncPair(     "Stock", "Códigos de barras" )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-Method SetInformeDataReport()
-
    ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",  {|| ::oDbf:cCodArt } )  
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",        {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",  {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Stock",              {|| ::oDbf:cCodArt } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
    ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
    ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
-   ::oFastReport:SetResyncPair(     "Informe", "Stock" )
+
+   ::SetDataReport()
 
 Return ( Self )
 
@@ -1990,10 +1969,55 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddArticulo( lStock, lCeroUnd ) CLASS TFastVentasArticulos
+METHOD listadoArticulo() CLASS TFastVentasArticulos
 
-   DEFAULT lStock          := .f.
-   DEFAULT lCeroUnd        := .f.
+   local aStockArticulo
+
+   ::oDbfArt:OrdClearScope()   
+
+   ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
+   ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
+
+   ::oMtrInf:cText         := "Procesando artículos"
+
+   /*
+   Recorremos artículos--------------------------------------------------------
+   */
+
+   ::oDbfArt:goTop() 
+   while !::oDbfArt:eof() .and. !::lBreak
+
+      ::oDbf:Blank()
+
+      ::oDbf:cCodArt  := ::oDbfArt:cCodArt
+      ::oDbf:cCodCli  := ::oDbfArt:cPrvHab
+      ::oDbf:cPrvHab  := ::oDbfArt:cPrvHab
+      ::oDbf:cNomArt  := ::oDbfArt:Nombre
+      ::oDbf:cCodFam  := ::oDbfArt:Familia
+      ::oDbf:TipoIva  := ::oDbfArt:TipoIva
+      ::oDbf:cCodTip  := ::oDbfArt:cCodTip
+      ::oDbf:cCodCate := ::oDbfArt:cCodCate
+      ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
+      ::oDbf:cCodFab  := ::oDbfArt:cCodFab
+      ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+
+      ::InsertIfValid()
+
+      ::oDbfArt:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end while
+
+   ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddArticulo() CLASS TFastVentasArticulos
+
+   local aStockArticulo
 
    ::oDbfArt:OrdClearScope()   
 
@@ -2003,45 +2027,19 @@ METHOD AddArticulo( lStock, lCeroUnd ) CLASS TFastVentasArticulos
    ::oMtrInf:cText         := "Procesando artículos"
 
    /*
-   Vaciamos los stocks anteriores----------------------------------------------
-   */
-
-   if lStock
-      ::oStock:ZapStockArticulo()   
-   end if 
-
-   /*
    Recorremos artículos--------------------------------------------------------
    */
 
-   ::oDbfArt:GoTop() 
-   while !::oDbfArt:Eof() .and. !::lBreak
+   ::oDbfArt:goTop() 
+   while !::oDbfArt:eof() .and. !::lBreak
 
-      ::oDbf:Blank()
+      aStockArticulo    := ::oStock:aStockArticulo( ::oDbfArt:Codigo, , , , , , ::dFinInf )
 
-      ::oDbf:cCodArt  := ::oDbfArt:Codigo
-      ::oDbf:cCodCli  := ::oDbfArt:cPrvHab
-      ::oDbf:cNomArt  := ::oDbfArt:Nombre
-      ::oDbf:cCodFam  := ::oDbfArt:Familia
-      ::oDbf:TipoIva  := ::oDbfArt:TipoIva
-      ::oDbf:cCodTip  := ::oDbfArt:cCodTip
-      ::oDbf:cCodCate := ::oDbfArt:cCodCate
-      ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
-      ::oDbf:cCodFab  := ::oDbfArt:cCodFab
-      ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
-      ::oDbf:cPrvHab  := ::oDbfArt:cPrvHab
+      if !empty( aStockArticulo )
+         ::appendStockArticulo( aStockArticulo )
+      end if 
 
-      // Añadimos los stocks---------------------------------------------------
-
-      if ::InsertIfValid() .and. lStock
-         if lCeroUnd
-            ::oStock:SaveAllStockArticulo( ::oDbfArt:Codigo, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
-         else
-            ::oStock:SaveStockArticulo( ::oDbfArt:Codigo, ::oGrupoAlmacen:Cargo:getDesde(), ::oGrupoAlmacen:Cargo:getHasta(), , ::dFinInf )
-         end if
-      end if
-
-      // Siguiente-------------------------------------------------------------
+      ::appendBlankAlmacenes( ::oDbf:cCodArt )
 
       ::oDbfArt:Skip()
 
@@ -2050,6 +2048,83 @@ METHOD AddArticulo( lStock, lCeroUnd ) CLASS TFastVentasArticulos
    end while
 
    ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyCount() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendStockArticulo( aStockArticulo )
+   
+   local sStock
+
+   for each sStock in aStockArticulo
+
+      ::oDbf:Blank()
+
+      ::oDbf:cCodArt    := sStock:cCodigo
+      ::oDbf:cSufDoc    := sStock:cDelegacion
+      ::oDbf:dFecDoc    := sStock:dFechaDocumento
+      ::oDbf:cCodAlm    := sStock:cCodigoAlmacen
+      ::oDbf:cCodPrp1   := sStock:cCodigoPropiedad1     
+      ::oDbf:cCodPrp2   := sStock:cCodigoPropiedad2     
+      ::oDbf:cValPrp1   := sStock:cValorPropiedad1      
+      ::oDbf:cValPrp2   := sStock:cValorPropiedad2      
+      ::oDbf:cLote      := sStock:cLote                 
+      ::oDbf:dFecCad    := sStock:dFechaCaducidad       
+      ::oDbf:cNumSer    := sStock:cNumeroSerie  
+      ::oDbf:nUniArt    := sStock:nUnidades             
+      ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
+      ::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
+      ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
+      ::oDbf:cTipDoc    := sStock:cTipoDocumento        
+
+      ::InsertIfValid()
+
+   next 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendBlankAlmacenes( cCodigoArticulo )
+
+   if ::oDbfAlm:Seek( ::oGrupoAlmacen:Cargo:getDesde() )
+      while ::oDbfAlm:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() .and. !::oDbfAlm:eof()
+         if !::existeArticuloInforme( cCodigoArticulo, ::oDbfAlm:cCodAlm )
+            ::appendBlankArticulo( cCodigoArticulo, ::oDbfAlm:cCodAlm )
+         end if 
+         ::oDbfAlm:skip()
+      end while
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD existeArticuloInforme( cCodigoArticulo, cCodigoAlmacen )
+
+Return ( ::oDbf:SeekInOrd( cCodigoArticulo + cCodigoAlmacen, "cCodAlm" ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendBlankArticulo( cCodigoArticulo, cCodigoAlmacen )
+
+   ::oDbf:Blank()
+
+   ::oDbf:cCodArt  := cCodigoArticulo
+   ::oDbf:cCodAlm  := cCodigoAlmacen
+   ::oDbf:cCodCli  := ::oDbfArt:cPrvHab
+   ::oDbf:cNomArt  := ::oDbfArt:Nombre
+   ::oDbf:cCodFam  := ::oDbfArt:Familia
+   ::oDbf:TipoIva  := ::oDbfArt:TipoIva
+   ::oDbf:cCodTip  := ::oDbfArt:cCodTip
+   ::oDbf:cCodCate := ::oDbfArt:cCodCate
+   ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
+   ::oDbf:cCodFab  := ::oDbfArt:cCodFab
+   ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+   ::oDbf:cPrvHab  := ::oDbfArt:cPrvHab
+
+   ::InsertIfValid()
 
 RETURN ( Self )
 
