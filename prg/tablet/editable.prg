@@ -94,6 +94,10 @@ Return ( self )
 
 METHOD EditDetail( nPos ) CLASS Editable
 
+   if Empty( nPos )
+      Return nil
+   end if
+
    ::nPosDetail   := nPos
 
    ::GetEditDetail()
@@ -107,6 +111,10 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD DeleteDetail( nPos ) CLASS Editable
+
+   if Empty( nPos )
+      Return nil
+   end if
 
    aDel( ::hDictionaryDetail, nPos, .t. )
 

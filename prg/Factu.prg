@@ -5814,7 +5814,7 @@ Function MainTablet()
                            "cResName"  => "Gestool",;
                            "oWnd"      => oDlg } )
 
-   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 2 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 2 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5831,9 +5831,9 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| PedidoCliente():New() } } )*/
+                           "bAction"   => {|| PedidoCliente():New() } } )
 
-   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 5 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 5 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5850,9 +5850,9 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| AlbaranCliente():New() } } )*/
+                           "bAction"   => {|| AlbaranCliente():New() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 2 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 8 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
@@ -5860,7 +5860,7 @@ Function MainTablet()
                      		"bLClicked" => {|| FacCliTablet() },;
                      		"oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 2 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 8 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Facturas de clientes",;
                            "oWnd"      => oDlg,;
@@ -5871,7 +5871,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| FacCliTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 5 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 11 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5879,7 +5879,7 @@ Function MainTablet()
                            "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 5 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 11 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Envío y recepción",;
                            "oWnd"      => oDlg,;
@@ -5890,7 +5890,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 8 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 14 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5898,7 +5898,7 @@ Function MainTablet()
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 8 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 14 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Salir",;
                            "oWnd"      => oDlg,;
@@ -5910,7 +5910,7 @@ Function MainTablet()
                            "bAction"   => {|| oDlg:End() } } )
 
    oGridTree   := TGridTreeView():Build( ;
-                        {  "nTop"      => {|| GridRow( 7 ) },;
+                        {  "nTop"      => {|| GridRow( 8 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "oWnd"      => oDlg,;
                            "lPixel"    => .t.,;

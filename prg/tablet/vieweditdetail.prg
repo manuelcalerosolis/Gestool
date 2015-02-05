@@ -14,6 +14,12 @@ CLASS ViewDetail FROM ViewBase
    DATA oGetLote
    DATA oSayLote
 
+   DATA oGetCajas
+   DATA oGetUnidades
+   DATA oGetPrecio
+   DATA oGetDescuento
+   DATA oGetDescuentoLineal
+
    DATA oTotalLinea
    
    METHOD New()
@@ -45,6 +51,19 @@ CLASS ViewDetail FROM ViewBase
    METHOD ShowLote()    INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
    METHOD HideLote()    INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
    METHOD RefreshLote() INLINE ( ::oGetLote:Refresh() )
+
+   METHOD RefreshGetArticulo()         INLINE ( ::oGetArticulo:Refresh() )
+   METHOD RefreshGetDescripcion()      INLINE ( ::oGetDescripcionArticulo:Refresh() )
+   METHOD RefreshGetLote()             INLINE ( ::oGetLote:Refresh() )
+   METHOD RefreshGetCajas()            INLINE ( ::oGetCajas:Refresh() )
+   METHOD RefreshGetUnidades()         INLINE ( ::oGetUnidades:Refresh() )
+   METHOD RefreshGetPrecio()           INLINE ( ::oGetPrecio:Refresh() )
+   METHOD RefreshGetDescuento()        INLINE ( ::oGetDescuento:Refresh() )
+   METHOD RefreshGetDescuentoLineal()  INLINE ( ::oGetDescuentoLineal:Refresh() )
+
+   METHOD RefreshDialog()
+
+   METHOD StartResource()
 
 END CLASS
 
@@ -86,7 +105,7 @@ METHOD ResourceViewEditDetail( nMode ) CLASS ViewDetail
 
    ::oDlg:bResized         := {|| ::DialogResize() }
 
-   ::oDlg:bStart           := {|| ::oSender:RecalculaLinea( ::oTotalLinea ) }
+   ::oDlg:bStart           := {|| ::StartResource() }
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
@@ -191,16 +210,16 @@ METHOD defineCajas() CLASS ViewDetail
                            "nHeight"   => 23,;
                            "lDesign"   => .f. } )
 
-   TGridGet():Build( {     "nRow"      => 90,;
-                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| ::SetGetValue( u, "Cajas" ) },;
-                           "oWnd"      => ::oDlg,;
-                           "lPixels"   => .t.,;
-                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                           "cPict"     => MasUnd(),;
-                           "lRight"    => .t.,;
-                           "nHeight"   => 23,;
-                           "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+   ::oGetCajas    :=    TGridGet():Build( {  "nRow"      => 90,;
+                                             "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "bSetGet"   => {|u| ::SetGetValue( u, "Cajas" ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "lPixels"   => .t.,;
+                                             "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                             "cPict"     => MasUnd(),;
+                                             "lRight"    => .t.,;
+                                             "nHeight"   => 23,;
+                                             "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -220,16 +239,16 @@ METHOD defineUnidades() CLASS ViewDetail
                            "nHeight"   => 23,;
                            "lDesign"   => .f. } )
 
-   TGridGet():Build( {     "nRow"      => 115,;
-                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| ::SetGetValue( u, "Unidades" ) },;
-                           "oWnd"      => ::oDlg,;
-                           "lPixels"   => .t.,;
-                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                           "cPict"     => MasUnd(),;
-                           "lRight"    => .t.,;
-                           "nHeight"   => 23,;
-                           "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+   ::oGetUnidades := TGridGet():Build( {  "nRow"      => 115,;
+                                          "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                          "bSetGet"   => {|u| ::SetGetValue( u, "Unidades" ) },;
+                                          "oWnd"      => ::oDlg,;
+                                          "lPixels"   => .t.,;
+                                          "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                          "cPict"     => MasUnd(),;
+                                          "lRight"    => .t.,;
+                                          "nHeight"   => 23,;
+                                          "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -249,16 +268,16 @@ METHOD definePrecio() CLASS ViewDetail
                            "nHeight"   => 23,;
                            "lDesign"   => .f. } )
 
-   TGridGet():Build( {     "nRow"      => 140,;
-                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| ::SetGetValue( u, "PrecioVenta" ) },;
-                           "oWnd"      => ::oDlg,;
-                           "lPixels"   => .t.,;
-                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                           "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
-                           "lRight"    => .t.,;
-                           "nHeight"   => 23,;
-                           "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+   ::oGetPrecio   := TGridGet():Build( {  "nRow"      => 140,;
+                                          "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                          "bSetGet"   => {|u| ::SetGetValue( u, "PrecioVenta" ) },;
+                                          "oWnd"      => ::oDlg,;
+                                          "lPixels"   => .t.,;
+                                          "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                          "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
+                                          "lRight"    => .t.,;
+                                          "nHeight"   => 23,;
+                                          "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -278,16 +297,16 @@ METHOD defineDescuentoPorcentual() CLASS ViewDetail
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 165,;
-                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::SetGetValue( u, "DescuentoPorcentual" ) },;
-                        "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                        "cPict"     => "@E 999.99",;
-                        "lRight"    => .t.,;
-                        "nHeight"   => 23,;
-                        "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+   ::oGetDescuento   := TGridGet():Build( {  "nRow"      => 165,;
+                                             "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "bSetGet"   => {|u| ::SetGetValue( u, "DescuentoPorcentual" ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "lPixels"   => .t.,;
+                                             "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                             "cPict"     => "@E 999.99",;
+                                             "lRight"    => .t.,;
+                                             "nHeight"   => 23,;
+                                             "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -307,16 +326,16 @@ METHOD defineDescuentoLineal() CLASS ViewDetail
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 190,;
-                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::SetGetValue( u, "DescuentoLineal" ) },;
-                        "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                        "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
-                        "lRight"    => .t.,;
-                        "nHeight"   => 23,;
-                        "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+   ::oGetDescuentoLineal   := TGridGet():Build( {  "nRow"      => 190,;
+                                                   "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "DescuentoLineal" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "lPixels"   => .t.,;
+                                                   "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                                   "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
+                                                   "lRight"    => .t.,;
+                                                   "nHeight"   => 23,;
+                                                   "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -350,5 +369,36 @@ METHOD defineTotal() CLASS ViewDetail
                                           "bWhen"     => {|| .f. } } )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD RefreshDialog() CLASS ViewDetail
+
+   ::RefreshGetArticulo()
+   ::RefreshGetDescripcion()
+   ::RefreshGetLote()
+   ::RefreshGetCajas()
+   ::RefreshGetUnidades()
+   ::RefreshGetPrecio()
+   ::RefreshGetDescuento()
+   ::RefreshGetDescuentoLineal()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartResource() CLASS ViewDetail
+
+   ::HideLote()
+
+   if ::nMode == EDIT_MODE .and. ::oSender:lShowLote()
+      ::ShowLote()
+   end if 
+
+   ::RefreshLote()  
+
+   ::oSender:RecalculaLinea()
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//

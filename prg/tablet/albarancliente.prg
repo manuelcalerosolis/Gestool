@@ -24,12 +24,8 @@ CLASS AlbaranCliente FROM Ventas
 
    METHOD GetEditDocumento()
 
-   METHOD GuardaDocumento()
-
    METHOD GetAppendDetail()
    METHOD GetEditDetail()
-
-   METHOD CargaArticulo()
 
 END CLASS
 
@@ -293,16 +289,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GuardaDocumento( oCbxRuta ) CLASS AlbaranCliente
-
-   ApoloMsgStop( "Guardamos el documento Albaranes" )
-
-   ::setUltimoCliente( oCbxRuta )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD GetAppendDetail() CLASS AlbaranCliente
 
    ::hDictionaryDetailTemporal      := D():GetAlbaranClienteLineaBlank( ::nView )
@@ -316,15 +302,5 @@ METHOD GetEditDetail() CLASS AlbaranCliente
    ::hDictionaryDetailTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD CargaArticulo( cCodArt ) CLASS AlbaranCliente
-
-   ApoloMsgStop( "Entro en el Loaart en Albaranes" )
-
-   ApoloMsgStop( cCodArt, "Código Articulo" )
-
-Return ( .t. )
 
 //---------------------------------------------------------------------------//
