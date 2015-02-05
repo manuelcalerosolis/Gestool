@@ -3613,7 +3613,7 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD InsertIfValid()
+METHOD insertIfValid()
 
    local lValidRegister := ::lValidRegister()
 

@@ -10976,7 +10976,9 @@ return nil
 METHOD ChangeBitmap( ) CLASS TXBrwColumn // BtnGet
 
    if ::nBtnBmp > 0 .and. len( ::aBitmaps ) >= ::nBtnBmp
+      DeleteObject( ::oBtnElip:hBitmap1 )
       ::oBtnElip:hBitmap1 := ::aBitMaps[::nBtnBmp, BITMAP_HANDLE ]
+      DeleteObject( ::oBtnList:hBitmap1 )
       ::oBtnList:hBitmap1 := ::aBitMaps[::nBtnBmp, BITMAP_HANDLE ]
       ::oBtnElip:cCaption := ""
   else

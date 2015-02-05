@@ -49,9 +49,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
       METHOD appendBlankAlmacenes()
       METHOD appendBlankArticulo()   
       METHOD existeArticuloInforme()
+      METHOD fillFromArticulo()
    
    METHOD listadoArticulo()
-
 
    METHOD AddParteProduccion()
 
@@ -2016,7 +2016,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
    ::oMtrInf:SetTotal(  ::oDbfArt:OrdKeyCount() )
    ::oMtrInf:AutoInc(   ::oDbfArt:OrdKeyCount() )
 
-   ::oMtrInf:cText         := "Procesando artículos"
+   ::oMtrInf:cText      := "Procesando artículos"
 
    /*
    Recorremos artículos--------------------------------------------------------
@@ -2051,6 +2051,8 @@ METHOD appendStockArticulo( aStockArticulo )
 
    for each sStock in aStockArticulo
 
+      msgAlert( sStock:cCodigo, "appendStockArticulo" )
+
       ::oDbf:Blank()
 
       ::oDbf:cCodArt    := sStock:cCodigo
@@ -2068,9 +2070,9 @@ METHOD appendStockArticulo( aStockArticulo )
       ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
       ::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
       ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
-      ::oDbf:cTipDoc    := sStock:cTipoDocumento        
+      ::oDbf:cTipDoc    := sStock:cTipoDocumento
 
-      ::InsertIfValid()
+      ::fillFromArticulo()
 
    next 
 
@@ -2102,24 +2104,33 @@ RETURN ( ::oDbf:SeekInOrdBack( cCodigoArticulo + cCodigoAlmacen, "cCodAlm" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD appendBlankArticulo( cCodigoArticulo, cCodigoAlmacen )
+METHOD appendBlankArticulo( cCodigoArticulo, cCodigoAlmacen ) CLASS TFastVentasArticulos
 
    ::oDbf:Blank()
 
    ::oDbf:cCodArt  := cCodigoArticulo
    ::oDbf:cCodAlm  := cCodigoAlmacen
-   ::oDbf:cCodCli  := ::oDbfArt:cPrvHab
-   ::oDbf:cNomArt  := ::oDbfArt:Nombre
-   ::oDbf:cCodFam  := ::oDbfArt:Familia
-   ::oDbf:TipoIva  := ::oDbfArt:TipoIva
-   ::oDbf:cCodTip  := ::oDbfArt:cCodTip
-   ::oDbf:cCodCate := ::oDbfArt:cCodCate
-   ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
-   ::oDbf:cCodFab  := ::oDbfArt:cCodFab
-   ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
-   ::oDbf:cPrvHab  := ::oDbfArt:cPrvHab
+
+   ::fillFromArticulo()
 
    ::InsertIfValid()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD fillFromArticulo() CLASS TFastVentasArticulos
+
+   ::oDbf:cCodCli    := ::oDbfArt:cPrvHab
+   ::oDbf:cNomArt    := ::oDbfArt:Nombre
+   ::oDbf:cCodFam    := ::oDbfArt:Familia
+   ::oDbf:TipoIva    := ::oDbfArt:TipoIva
+   ::oDbf:cCodTip    := ::oDbfArt:cCodTip
+   ::oDbf:cCodCate   := ::oDbfArt:cCodCate
+   ::oDbf:cCodTemp   := ::oDbfArt:cCodTemp
+   ::oDbf:cCodFab    := ::oDbfArt:cCodFab
+   ::oDbf:nCosArt    := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+   ::oDbf:cPrvHab    := ::oDbfArt:cPrvHab
 
 RETURN ( Self )
 
