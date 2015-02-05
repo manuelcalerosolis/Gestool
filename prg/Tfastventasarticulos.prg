@@ -515,10 +515,6 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
-      *::oDbf:nPdtRec    := sStock:nPendientesRecibir    
-      *::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
-
-
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
    ::AddTmpIndex( "cPrvHab", "cPrvHab")
@@ -695,8 +691,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   },; 
                   {  "Title" => "Existencias",                    "Image" => 16, "Subnode" =>;
                   { ;
-                     { "Title" => "Por artículo",                 "Image" => 16, "Type" => "Por artículo",                 "Directory" => "Articulos\Existencias\Por artículo",              "File" => "Existencias por articulo.fr3" },;
-                     { "Title" => "Por stocks",                   "Image" => 16, "Type" => "Por stocks",                   "Directory" => "Articulos\Existencias\Por stocks",                "File" => "Existencias por stock.fr3" },;
+                     { "Title" => "Stocks",                       "Image" => 16, "Type" => "Stocks",                       "Directory" => "Articulos\Existencias\Stocks",                "File" => "Existencias por stock.fr3" },;
                   } ;
                   } }
 
@@ -746,8 +741,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Escandallos",                ::oArtKit:nArea )
    ::oFastReport:SetFieldAliases(   "Escandallos",                cItemsToReport( aItmKit() ) )
 
-   ::oFastReport:SetWorkArea(       "Stock",                      ::oStock:Select() )
-   ::oFastReport:SetFieldAliases(   "Stock",                      cObjectsToReport( ::oStock:oDbfStock ) )
+   //::oFastReport:SetWorkArea(       "Stock",                      ::oStock:Select() )
+   //::oFastReport:SetFieldAliases(   "Stock",                      cObjectsToReport( ::oStock:oDbfStock ) )
 
    ::oFastReport:SetWorkArea(       "Familias",                   ::oDbfFam:nArea )
    ::oFastReport:SetFieldAliases(   "Familias",                   cItemsToReport( aItmFam() ) )
@@ -783,7 +778,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    Relaciones entre tablas-----------------------------------------------------
    */
 
-   ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cAlmacen } )
+   // ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cAlmacen } )
 
    //::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oDbfArt:Codigo } )
 
@@ -800,6 +795,11 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",                          {|| ::oDbf:cCodUsr } )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",  {|| ::oDbf:cCodArt } )  
+   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",        {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",  {|| ::oDbf:cCodArt } )
 
    /*
    Resincronizar con los movimientos-------------------------------------------
@@ -818,15 +818,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
-
-   /*
-   Relacion en funcion del tipo de informe-------------------------------------
-   */
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",  {|| ::oDbf:cCodArt } )  
-   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",        {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",  {|| ::oDbf:cCodArt } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
@@ -2065,10 +2056,10 @@ METHOD appendStockArticulo( aStockArticulo )
       ::oDbf:cSufDoc    := sStock:cDelegacion
       ::oDbf:dFecDoc    := sStock:dFechaDocumento
       ::oDbf:cCodAlm    := sStock:cCodigoAlmacen
-      ::oDbf:cCodPrp1   := sStock:cCodigoPropiedad1     
-      ::oDbf:cCodPrp2   := sStock:cCodigoPropiedad2     
-      ::oDbf:cValPrp1   := sStock:cValorPropiedad1      
-      ::oDbf:cValPrp2   := sStock:cValorPropiedad2      
+      ::oDbf:cCodPr1    := sStock:cCodigoPropiedad1     
+      ::oDbf:cCodPr2    := sStock:cCodigoPropiedad2     
+      ::oDbf:cValPr1   := sStock:cValorPropiedad1      
+      ::oDbf:cValPr2   := sStock:cValorPropiedad1      
       ::oDbf:cLote      := sStock:cLote                 
       ::oDbf:dFecCad    := sStock:dFechaCaducidad       
       ::oDbf:cNumSer    := sStock:cNumeroSerie  
