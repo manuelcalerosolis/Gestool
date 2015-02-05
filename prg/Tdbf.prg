@@ -73,6 +73,7 @@ CLASS TDbf
 
     METHOD  Seek( uVal, lSoft, lLast )
     METHOD  SeekInOrd( uVal, cOrd, lSoft, lLast )
+    METHOD  SeekInOrdBack( uVal, cOrd, lSoft, lLast )
     METHOD  SeekBack( uVal, cOrd, lSoft, lLast )
 
     MESSAGE Skip( n )   METHOD _Skip( nSkip )
@@ -543,6 +544,20 @@ METHOD SeekInOrd( uVal, cOrd, lSoft, lLast ) CLASS TDbf
 return( lRet )
 
 //----------------------------------------------------------------------------//
+
+METHOD SeekInOrdBack( uVal, cOrd, lSoft, lLast ) CLASS TDbf
+
+    local lRet := .f.
+    local nRec := ( ::nArea )->( Recno() )
+
+    lRet       := ::SeekInOrd( uVal, cOrd, lSoft, lLast )
+
+    ( ::nArea )->( dbGoTo( nRec ) )
+
+return ( lRet )
+
+//----------------------------------------------------------------------------//
+
 
 METHOD SeekBack( uVal, cOrd, lSoft, lLast ) CLASS TDbf
 

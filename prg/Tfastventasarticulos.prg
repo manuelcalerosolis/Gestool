@@ -2010,6 +2010,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
 
    local aStockArticulo
 
+   ::oDbf:Zap()
    ::oDbfArt:OrdClearScope()   
 
    ::oMtrInf:SetTotal(  ::oDbfArt:OrdKeyCount() )
@@ -2030,7 +2031,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
          ::appendStockArticulo( aStockArticulo )
       end if 
 
-      ::appendBlankAlmacenes( ::oDbf:cCodArt )
+      ::appendBlankAlmacenes( ::oDbfArt:Codigo )
 
       ::oDbfArt:Skip()
 
@@ -2058,8 +2059,8 @@ METHOD appendStockArticulo( aStockArticulo )
       ::oDbf:cCodAlm    := sStock:cCodigoAlmacen
       ::oDbf:cCodPr1    := sStock:cCodigoPropiedad1     
       ::oDbf:cCodPr2    := sStock:cCodigoPropiedad2     
-      ::oDbf:cValPr1   := sStock:cValorPropiedad1      
-      ::oDbf:cValPr2   := sStock:cValorPropiedad1      
+      ::oDbf:cValPr1    := sStock:cValorPropiedad1      
+      ::oDbf:cValPr2    := sStock:cValorPropiedad1      
       ::oDbf:cLote      := sStock:cLote                 
       ::oDbf:dFecCad    := sStock:dFechaCaducidad       
       ::oDbf:cNumSer    := sStock:cNumeroSerie  
@@ -2081,10 +2082,13 @@ METHOD appendBlankAlmacenes( cCodigoArticulo )
 
    if ::oDbfAlm:Seek( ::oGrupoAlmacen:Cargo:getDesde() )
       while ::oDbfAlm:cCodAlm <= ::oGrupoAlmacen:Cargo:getHasta() .and. !::oDbfAlm:eof()
+
          if !::existeArticuloInforme( cCodigoArticulo, ::oDbfAlm:cCodAlm )
             ::appendBlankArticulo( cCodigoArticulo, ::oDbfAlm:cCodAlm )
          end if 
+
          ::oDbfAlm:skip()
+
       end while
    end if 
 
@@ -2094,7 +2098,7 @@ RETURN ( Self )
 
 METHOD existeArticuloInforme( cCodigoArticulo, cCodigoAlmacen )
 
-Return ( ::oDbf:SeekInOrd( cCodigoArticulo + cCodigoAlmacen, "cCodAlm" ) )
+RETURN ( ::oDbf:SeekInOrdBack( cCodigoArticulo + cCodigoAlmacen, "cCodAlm" ) )
 
 //---------------------------------------------------------------------------//
 
