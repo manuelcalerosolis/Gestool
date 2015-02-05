@@ -3185,9 +3185,9 @@ Static Function nRecTot( aTmp, aGet )
 
    if !Empty( aGet )
       if ( lUsrMaster() .or. oUser():lCambiarPrecio() )
-         aGet[ _LRECARGO ]:HardEnable()
+         aGet[ _LRECARGO ]:Enable()
       else
-         aGet[ _LRECARGO ]:HardDisable()
+         aGet[ _LRECARGO ]:Disable()
       end if
    end if
 
