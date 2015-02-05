@@ -26,11 +26,9 @@ local hClass
 
   hClass        := TCheckBox():ClassH
 
-  __clsAddMsg( hClass, "bOldWhen", __cls_IncData( hClass ), 9, nil, 1, .f., .f. )
+  __clsAddMsg( hClass, "HardEnable", {|Self| Self, ::bWhen := ::Cargo, ::Enable() }, 3, nil, 1, .f., .f. ) 
 
-  __clsAddMsg( hClass, "HardEnable", {|Self| Self, ::bWhen := ::bOldWhen, ::Enable() }, 3, nil, 1, .f., .f. ) 
-
-  __clsAddMsg( hClass, "HardDisable", {|Self| Self, ::bOldWhen := ::bWhen, ::bWhen := {|| .f. } }, 3, nil, 1, .f., .f. ) 
+  __clsAddMsg( hClass, "HardDisable", {|Self| Self, ::Cargo := ::bWhen, ::bWhen := {|| .f. } }, 3, nil, 1, .f., .f. ) 
 
   __clsModMsg( hClass, "Click", @CheckBoxClick(), 1 ) 
 
