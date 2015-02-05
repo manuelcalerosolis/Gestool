@@ -2051,8 +2051,6 @@ METHOD appendStockArticulo( aStockArticulo )
 
    for each sStock in aStockArticulo
 
-      msgAlert( sStock:cCodigo, "appendStockArticulo" )
-
       ::oDbf:Blank()
 
       ::oDbf:cCodArt    := sStock:cCodigo
@@ -2073,6 +2071,8 @@ METHOD appendStockArticulo( aStockArticulo )
       ::oDbf:cTipDoc    := sStock:cTipoDocumento
 
       ::fillFromArticulo()
+
+      ::InsertIfValid()
 
    next 
 

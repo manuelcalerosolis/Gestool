@@ -10961,7 +10961,7 @@ METHOD CreateButtons() CLASS TXBrwColumn
          if ::nBtnBmp > len( ::aBitMaps )
             ::nBtnBmp := len( ::aBitMaps )
          endif
-            // ::ChangeBitMap( )
+            ::ChangeBitMap()
       endif
 
       ::oBtnList:Hide()
@@ -10973,7 +10973,7 @@ return nil
 
 //------------------------------------------------------------------------------
 
-METHOD ChangeBitmap( ) CLASS TXBrwColumn // BtnGet
+METHOD ChangeBitmap() CLASS TXBrwColumn // BtnGet
 
    if ::nBtnBmp > 0 .and. len( ::aBitmaps ) >= ::nBtnBmp
       DeleteObject( ::oBtnElip:hBitmap1 )
