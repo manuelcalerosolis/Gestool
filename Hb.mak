@@ -395,6 +395,7 @@ DocumentoSerializable.prg  \
 ViewBase.prg               \
 ViewEdit.prg               \
 ViewEditDetail.prg         \
+ViewEditResumen.prg        \
 
 C               =       	\
 Img2pdf.c               	\
@@ -781,6 +782,7 @@ DocumentoSerializable.obj  \
 ViewBase.obj               \
 ViewEdit.obj               \
 ViewEditDetail.obj         \
+ViewEditResumen.obj        \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1151,6 +1153,7 @@ $(OBJ)\DocumentoSerializable.obj +
 $(OBJ)\ViewBase.obj              +
 $(OBJ)\ViewEdit.obj              +
 $(OBJ)\ViewEditDetail.obj        +
+$(OBJ)\ViewEditResumen.obj       +
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +

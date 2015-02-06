@@ -27,6 +27,8 @@ CLASS PedidoCliente FROM Ventas
    
    METHOD GetEditDetail()
 
+   METHOD StartResourceDetail()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -156,6 +158,8 @@ METHOD ResourceDetail( nMode ) CLASS PedidoCliente
 
    local lResult     := .f.
 
+   ::nMode           := nMode
+
    ::oViewEditDetail := ViewDetail():New( self )
 
    if !Empty( ::oViewEditDetail )
@@ -167,6 +171,16 @@ METHOD ResourceDetail( nMode ) CLASS PedidoCliente
    end if
 
 Return ( lResult )   
+
+//---------------------------------------------------------------------------//
+
+METHOD StartResourceDetail() CLASS PedidoCliente
+
+   ::CargaArticulo()
+
+   ::RecalculaLinea()
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 

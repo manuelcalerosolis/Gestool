@@ -3,8 +3,10 @@
 
 CLASS Ventas FROM DocumentoSerializable
    
+   DATA nMode
    DATA oViewEdit
    DATA oViewEditDetail
+   DATA oViewEditResumen
    DATA nUltimoCliente
    DATA cOldCodidoArticulo          INIT ""
    DATA hOrdenRutas                 INIT {   "1" => "lVisDom",;
@@ -900,6 +902,19 @@ METHOD ResumenVenta( oCbxRuta ) CLASS Ventas
    ApoloMsgStop( "Abrimos el RESUMEN de la venta" )
 
    ::setUltimoCliente( oCbxRuta )
+
+   Msginfo( ::nMode, "nMode" )
+
+
+   ::oViewResumen       := ViewEditResumen():New( self )
+
+   if !Empty( ::oViewResumen )
+
+      ::oViewResumen:setTextoTipoDocuento( "Resumen" )
+      
+      ::oViewResumen:ResourceViewEdit( ::nMode )
+
+   end if
 
 Return ( self )
 

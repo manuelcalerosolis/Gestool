@@ -63,8 +63,6 @@ CLASS ViewDetail FROM ViewBase
 
    METHOD RefreshDialog()
 
-   METHOD StartResource()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -105,7 +103,7 @@ METHOD ResourceViewEditDetail( nMode ) CLASS ViewDetail
 
    ::oDlg:bResized         := {|| ::DialogResize() }
 
-   ::oDlg:bStart           := {|| ::StartResource() }
+   ::oDlg:bStart           := {|| ::HideLote(), ::oSender:StartResourceDetail() }
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
@@ -172,25 +170,25 @@ Return ( self )
 
 METHOD defineLote() CLASS ViewDetail
 
-   ::oSayLote  :=TGridSay():Build( {   "nRow"      => 65,;
-                                       "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                                       "bText"     => {|| "Lote" },;
-                                       "oWnd"      => ::oDlg,;
-                                       "oFont"     => oGridFont(),;
-                                       "lPixels"   => .t.,;
-                                       "nClrText"  => Rgb( 0, 0, 0 ),;
-                                       "nClrBack"  => Rgb( 255, 255, 255 ),;
-                                       "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                                       "nHeight"   => 23,;
-                                       "lDesign"   => .f. } )
+   ::oSayLote                 := TGridSay():Build( {  "nRow"      => 65,;
+                                                      "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                      "bText"     => {|| "Lote" },;
+                                                      "oWnd"      => ::oDlg,;
+                                                      "oFont"     => oGridFont(),;
+                                                      "lPixels"   => .t.,;
+                                                      "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                      "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                      "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                                      "nHeight"   => 23,;
+                                                      "lDesign"   => .f. } )
 
-   ::oGetLote  := TGridGet():Build( {  "nRow"      => 65,;
-                                       "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                       "bSetGet"   => {|u| ::SetGetValue( u, "Lote" ) },;
-                                       "oWnd"      => ::oDlg,;
-                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                       "nHeight"   => 23,;
-                                       "lPixels"   => .t. } )
+   ::oGetLote                 := TGridGet():Build( {  "nRow"      => 65,;
+                                                      "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                      "bSetGet"   => {|u| ::SetGetValue( u, "Lote" ) },;
+                                                      "oWnd"      => ::oDlg,;
+                                                      "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                                                      "nHeight"   => 23,;
+                                                      "lPixels"   => .t. } )
 
 Return ( self )
 
@@ -384,21 +382,5 @@ METHOD RefreshDialog() CLASS ViewDetail
    ::RefreshGetDescuentoLineal()
 
 Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD StartResource() CLASS ViewDetail
-
-   ::HideLote()
-
-   if ::nMode == EDIT_MODE .and. ::oSender:lShowLote()
-      ::ShowLote()
-   end if 
-
-   ::RefreshLote()  
-
-   ::oSender:RecalculaLinea()
-
-Return ( .t. )
 
 //---------------------------------------------------------------------------//
