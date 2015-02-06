@@ -15,6 +15,10 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD defineCliente()
 
+   METHOD defineFormaPago()
+
+   METHOD defineComboImpresion()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -36,6 +40,10 @@ METHOD ResourceViewEditResumen( oDlgMaster ) CLASS ViewEditResumen
    ::defineBotonesGenerales()
 
    ::defineCliente()
+
+   ::defineFormaPago()
+
+   ::defineComboImpresion()
 
    ::oDlg:bResized         := {|| ::DialogResize() }
 
@@ -110,6 +118,69 @@ METHOD defineCliente() CLASS ViewEditResumen
                         "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
                         "bWhen"     => {|| .f.},;
                         "nHeight"   => 23 } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineFormaPago() CLASS ViewEditResumen
+
+   local cCodFPago      := ""
+   local cNomFPago      := ""
+
+   TGridUrllink():Build({  "nTop"      => 65,;
+                           "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "cURL"      => "F. pago",;
+                           "oWnd"      => ::oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| MsgInfo( "Browse de formas de pago" )  } } ) // GridBrwfPago( aGet[ _CCODPAGO ], oGetNombrePago ) } } )
+
+   TGridGet():Build( {     "nRow"      => 65,;
+                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "bSetGet"   => {|u| if( PCount() == 0, cCodFPago, cCodFPago := u ) },;
+                           "oWnd"      => ::oDlg,;
+                           "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                           "nHeight"   => 23,;
+                           "lPixels"   => .t.,;
+                           "bValid"    => {|| .t. } } )  //cFpago( aGet[ _CCODPAGO ], dbfFPago, oGetNombrePago ) } } )
+
+   TGridGet():Build(  {    "nRow"      => 65,;
+                           "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
+                           "bSetGet"   => {|u| if( PCount() == 0, cNomFPago, cNomFPago := u ) },;
+                           "oWnd"      => ::oDlg,;
+                           "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
+                           "lPixels"   => .t.,;
+                           "nHeight"   => 23 } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineComboImpresion() CLASS ViewEditResumen
+
+   TGridSay():Build(    {     "nRow"      => 90,;
+                              "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                              "bText"     => {|| "Impresión:" },;
+                              "oWnd"      => ::oDlg,;
+                              "oFont"     => oGridFont(),;
+                              "lPixels"   => .t.,;
+                              "nClrText"  => Rgb( 0, 0, 0 ),;
+                              "nClrBack"  => Rgb( 255, 255, 255 ),;
+                              "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                              "nHeight"   => 25,;
+                              "lDesign"   => .f. } )
+
+   /*TGridComboBox():Build(  {  "nRow"      => 90,;
+                              "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
+                              "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
+                              "oWnd"      => oDlg,;
+                              "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                              "nHeight"   => 25,;
+                              "aItems"    => aCbxOrd } )*/
 
 Return ( self )
 
