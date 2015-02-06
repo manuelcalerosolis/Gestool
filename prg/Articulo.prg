@@ -15935,7 +15935,7 @@ RETURN ( lTmp )
 
 //--------------------------------------------------------------------------//
 
-Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, dbfIva, lBuscaImportes, oTarifa )
+Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, dbfIva, lBuscaImportes, oTarifa, oNewImp )
 
    local nIva
    local nPre              := 0
@@ -16069,6 +16069,14 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, 
       end if
 
    end while
+
+   // Restar el importe del impuesto especial si nos los piden con iva includio
+
+   if lIvaInc
+      if !empty(oNewImp)
+         nPreIva  -= oNewImp:nValImp( ( dbfArticulo )->cCodImp )
+      end if 
+   end if 
 
    if oTarifa != nil
       oTarifa:cText( nTarifa )
