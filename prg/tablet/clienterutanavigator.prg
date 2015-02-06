@@ -48,6 +48,7 @@ Return ( Self )
 METHOD getClientesRutas( cOrder ) CLASS ClienteRutaNavigator
 
    local cCodigoAgente              := AccessCode():cAgente
+   local cCodigoRuta                := AccessCode():cRuta
 
    if cOrder == ::cOrder
       return ( ::aClientesRuta )
@@ -62,7 +63,8 @@ METHOD getClientesRutas( cOrder ) CLASS ClienteRutaNavigator
 
    ( D():Clientes( ::nView ) )->( dbgotop() ) 
    while !( D():Clientes( ::nView ) )->( eof() ) 
-      if empty( cCodigoAgente ) .or. ( D():Clientes( ::nView ) )->cAgente == cCodigoAgente
+      if ( empty( cCodigoAgente ) .or. alltrim( ( D():Clientes( ::nView ) )->cAgente ) == cCodigoAgente ) .and.;
+         ( empty( cCodigoRuta ) .or. alltrim( ( D():Clientes( ::nView ) )->cCodRut ) == cCodigoRuta ) 
          aAdd( ::aClientesRuta, D():ClientesId( ::nView ) )
       end if 
       ( D():Clientes( ::nView ) )->( dbSkip() )
