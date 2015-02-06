@@ -15,12 +15,15 @@ CLASS ViewNavigator FROM ViewBase
    METHOD ResourceViewNavigator()
    
    METHOD BarraBusqueda()
-   METHOD SetItemsBusqueda( aItems ) INLINE ( ::aItemsBusqueda := aItems )
+   METHOD SetItemsBusqueda( aItems )   INLINE ( ::aItemsBusqueda := aItems )
 
    METHOD getComboboxOrden()
    METHOD ChangeComboboxOrden()
 
-   METHOD setWorkArea( WorkArea ) INLINE ( ::WorkArea := WorkArea )
+   METHOD setBrowseConfigurationName( cName ) ;
+                                       INLINE ( if( !empty( ::oViewNavigator ) .and. !empty( ::oViewNavigator:oBrowse ), ::oViewNavigator:oBrowse:cName := cName, ) )
+
+   METHOD setWorkArea( WorkArea )      INLINE ( ::WorkArea := WorkArea )
 
    METHOD BotonesAcciones()
 
@@ -42,7 +45,7 @@ Return ( self )
 
 METHOD ResourceViewNavigator() CLASS ViewNavigator
 
-   ::oDlg  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+   ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
    ::TituloBrowse()
 

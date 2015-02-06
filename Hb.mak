@@ -389,6 +389,7 @@ FacturarLineasAlbaranesProveedor.prg\
 Editable.prg               \
 ViewNavigator.prg          \
 Ventas.prg                 \
+Cliente.prg                \
 PedidoCliente.prg          \
 AlbaranCliente.prg         \
 DocumentosVentas.prg       \
@@ -776,9 +777,10 @@ FacturarLineasAlbaranesProveedor.obj\
 Editable.obj               \
 ViewNavigator.obj          \
 Ventas.obj                 \
+Cliente.obj                \
 PedidoCliente.obj          \
 AlbaranCliente.obj         \
-DocumentosVentas.obj  \
+DocumentosVentas.obj       \
 ViewBase.obj               \
 ViewEdit.obj               \
 ViewEditDetail.obj         \
@@ -1147,9 +1149,10 @@ $(OBJ)\FacturarLineasAlbaranesProveedor.obj  +
 $(OBJ)\TGridSay.obj              +
 $(OBJ)\Editable.obj              +
 $(OBJ)\ViewNavigator.obj         +
+$(OBJ)\Cliente.obj               +
 $(OBJ)\PedidoCliente.obj         +
 $(OBJ)\AlbaranCliente.obj        +
-$(OBJ)\DocumentosVentas.obj +
+$(OBJ)\DocumentosVentas.obj      +
 $(OBJ)\ViewBase.obj              +
 $(OBJ)\ViewEdit.obj              +
 $(OBJ)\ViewEditDetail.obj        +

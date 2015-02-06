@@ -5787,15 +5787,17 @@ Return ( nil )
 Function MainTablet()
 
 	local oDlg
+   local nRow           
    local oGridTree
 
+   nRow                 := 0
    oDlg                 := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
 	/*
 	Cabeceras------------------------------------------------------------------
    */
 
-   TGridSay():Build(    { 	"nRow"      => 0,;
+   TGridSay():Build(    { 	"nRow"      => nRow,;
                      		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                      		"bText"     => {|| "Gestool tablet" },;
                      		"oWnd"      => oDlg,;
@@ -5814,7 +5816,26 @@ Function MainTablet()
                            "cResName"  => "Gestool",;
                            "oWnd"      => oDlg } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 2 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
+                           "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_clipboard_empty_user1_64",;
+                           "bLClicked" => {|| Cliente():New() },;
+                           "oWnd"      => oDlg } )
+
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 3 ) },;
+                           "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
+                           "cURL"      => "Clientes",;
+                           "oWnd"      => oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| Cliente():New() } } )
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5822,7 +5843,7 @@ Function MainTablet()
                            "bLClicked" => {|| PedidoCliente():New() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 2 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Pedidos de clientes",;
                            "oWnd"      => oDlg,;
@@ -5833,7 +5854,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| PedidoCliente():New() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 5 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5841,7 +5862,7 @@ Function MainTablet()
                            "bLClicked" => {|| AlbaranCliente():New() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 5 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Albaranes de clientes",;
                            "oWnd"      => oDlg,;
@@ -5852,7 +5873,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| AlbaranCliente():New() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 8 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
@@ -5860,7 +5881,7 @@ Function MainTablet()
                      		"bLClicked" => {|| FacCliTablet() },;
                      		"oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 8 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Facturas de clientes",;
                            "oWnd"      => oDlg,;
@@ -5871,7 +5892,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| FacCliTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 11 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5879,7 +5900,7 @@ Function MainTablet()
                            "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 11 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Envío y recepción",;
                            "oWnd"      => oDlg,;
@@ -5890,7 +5911,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 14 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 18 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5898,7 +5919,7 @@ Function MainTablet()
                            "bLClicked" => {|| oDlg:End() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 14 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 18 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Salir",;
                            "oWnd"      => oDlg,;
@@ -5933,63 +5954,18 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
+Function nextRow( nRow )
+
+   nRow := nRow + 3
+
+   msgalert( nRow )
+
+Return ( by( nRow ) )
+
+//---------------------------------------------------------------------------//
+
 Function Test() 
-/*   
-   LOCAL nRet
-   LOCAL oBlat := HBBlat():New()
 
-   ?
-   ? "HBBlat test"
-
-   oBlat:cFrom                   := "mcalero@zemtrum.es"
-   oBlat:cTo                     := "mcalero@zemtrum.es"
-// oBlat:cUserAUTH               := "myaccount@mydomain.org"
-// oBlat:cPasswordAUTH           := "mypassword"
-// oBlat:cHostname               := "mail.anydomain.com"
-// oBlat:cCC                     := ADDRESS_CC
-// oBlat:cCCFile                 := "f_cc.txt"
-// oBlat:cBCC                    := "info@fsgiudice.com"
-// oBlat:cBCCFile                := "f_bcc.txt"
-// oBlat:cBodyFile               := "c.bin"
-   oBlat:cBody                   := e"Body part\n\rEnd Body"
-   oBlat:cServerSMTP             := "smtp.zemtrum.es"
-   oBlat:cSubject                := "Test from Blat"
-// oBlat:lSuppressSubject        := .T.
-// oBlat:cSubjectFile            := "f_subjct.txt"
-// oBlat:lToUndiscloseRecipients := .T.
-   oBlat:cPostScriptumFile       := "f_ps.txt"
-   oBlat:lRequestDisposition     := .T.          // does not work ???
-   oBlat:lRequestReturnReceipt   := .T.
-
-// oBlat:cAttachTextFiles        := "f_subjct.txt"
-// oBlat:aAttachTextFiles        := { __FILE__, "blatcmd.prg", "f_ps.txt" }
-// oBlat:cAttachListTextFile     := "f_listtx.txt"
-
-   oBlat:cLogFile                := "log.txt"
-   oBlat:lLogTimestamp           := .T.
-   oBlat:lDebug                  := .T.
-   oBlat:lLogOverwrite           := .T.
-
-// oBlat:lSuperDebug             := .T.     // This display internal checking
-
-   ? "Checking options ..."
-// oBlat:Check()
-   ?
-   ? "Command .........: ", oBlat:GetCommand()  // Not necessary - this show complete command line sent to blat
-
-   ? "Sending mail ..."
-   ? "Return Value ....: ", nRet := oBlat:Send()
-
-   ? "Error String ....: ", oBlat:ErrorString()
-
-   // Blat error
-   ? "Blat Error ......: ", oBlat:BlatError()
-   ? "Blat Error String: ", oBlat:BlatErrorString()
-
-   ?
-   ? iif( nRet == 0, "mail sent correctly!", "mail NOT sent" )
-   ?
-*/
 Return ( nil )
 
 //---------------------------------------------------------------------------//

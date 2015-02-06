@@ -81,7 +81,7 @@ return ( self )
 
 METHOD PropiedadesBrowse() CLASS PedidoCliente
 
-   ::oViewNavigator:oBrowse:cName            := "Grid pedidos"
+   ::oViewNavigator:oBrowse:cName   := "Grid pedidos"
 
    with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "Pedido"
