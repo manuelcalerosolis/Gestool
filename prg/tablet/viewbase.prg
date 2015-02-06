@@ -36,7 +36,7 @@ METHOD TituloBrowse() CLASS ViewBase
                            "lPixels"   => .t.,;
                            "nClrText"  => Rgb( 0, 0, 0 ),;
                            "nClrBack"  => Rgb( 255, 255, 255 ),;
-                           "nWidth"    => {|| GridWidth( 8, ::oDlg ) },;
+                           "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
                            "nHeight"   => 32,;
                            "lDesign"   => .f. } )
 

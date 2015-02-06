@@ -4,8 +4,6 @@
 
 CLASS AlbaranCliente FROM DocumentosVentas  
 
-   DATA oViewNavigator
-
    METHOD New()
    
    METHOD setAeras()

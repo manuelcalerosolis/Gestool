@@ -118,7 +118,7 @@ METHOD BotonAceptarCancelarBrowse() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oSender:ResumenVenta( ::oCbxRuta ), ::oDlg:End() },;
+                           "bLClicked" => {|| ::oSender:ResumenVenta( ::oCbxRuta, ::oDlg ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )

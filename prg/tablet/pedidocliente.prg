@@ -3,8 +3,6 @@
 
 CLASS PedidoCliente FROM DocumentosVentas  
 
-   DATA oViewNavigator
-
    METHOD New()
 
    METHOD setAeras()

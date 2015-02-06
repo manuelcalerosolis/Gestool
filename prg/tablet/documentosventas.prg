@@ -158,6 +158,8 @@ CLASS DocumentosVentas FROM Ventas
 
    METHOD ResumenVenta( oCbxRuta )
 
+   METHOD lValidResumenVenta()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -828,24 +830,51 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResumenVenta( oCbxRuta ) CLASS DocumentosVentas
+METHOD lValidResumenVenta() CLASS DocumentosVentas
 
-   ApoloMsgStop( "Abrimos el RESUMEN de la venta" )
+   local lReturn  := .t.
+   
+   /*
+   Comprobamos que el cliente no esté vacío-----------------------------------
+   */
+
+   if Empty( hGet( ::hDictionaryMaster, "Cliente" ) )
+      ApoloMsgStop( "Cliente no puede estar vacío.", "¡Atención!" )
+      return .f.
+   end if
+
+   /*
+   Comprobamos que el documento tenga líneas----------------------------------
+   */
+
+   if len( ::hDictionaryDetail ) <= 0
+      ApoloMsgStop( "No puede almacenar un documento sin lineas.", "¡Atención!" )
+      return .f.
+   end if
+
+Return lReturn
+
+//---------------------------------------------------------------------------//
+
+METHOD ResumenVenta( oCbxRuta, oDlg ) CLASS DocumentosVentas
+
+   if !::lValidResumenVenta()
+      Return .f.
+   end if
 
    ::setUltimoCliente( oCbxRuta )
 
-   Msginfo( ::nMode, "nMode" )
+   ::oViewEditResumen       := ViewEditResumen():New( self )
 
+   if !Empty( ::oViewEditResumen )
 
-   ::oViewResumen       := ViewEditResumen():New( self )
-
-   if !Empty( ::oViewResumen )
-
-      ::oViewResumen:setTextoTipoDocuento( "Resumen" )
+      ::oViewEditResumen:setTextoTipoDocuento( "Resumen documento" )
       
-      ::oViewResumen:ResourceViewEdit( ::nMode )
+      ::oViewEditResumen:ResourceViewEditResumen( oDlg )
 
    end if
+
+   oDlg:End()
 
 Return ( self )
 
