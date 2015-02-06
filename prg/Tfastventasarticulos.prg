@@ -18,6 +18,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oProMat
    DATA  oHisMov
    DATA  oArtPrv
+   DATA  oArtAlm
 
    DATA  oStock
 
@@ -245,6 +246,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oArtPrv  PATH ( cPatEmp() ) CLASS "ArtPrv"      FILE "ProvArt.Dbf"   VIA ( cDriver() ) SHARED INDEX "ProvArt.Cdx"
 
+      DATABASE NEW ::oArtAlm  PATH ( cPatEmp() ) CLASS "ArtAlm"      FILE "ArtAlm.Dbf"   VIA ( cDriver() ) SHARED INDEX "ArtAlm.Cdx"
+
       ::oProCab   := TDataCenter():oProCab()
 
       ::oProLin   := TDataCenter():oProLin()
@@ -403,6 +406,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !Empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
          ::oArtPrv:end()
+      end if
+
+      if !Empty( ::oArtAlm ) .and. ( ::oArtAlm:Used() )
+         ::oArtAlm:end()
       end if
 
       if !Empty( ::oProCab ) .and. ( ::oProCab:Used() )
@@ -741,9 +748,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Escandallos",                ::oArtKit:nArea )
    ::oFastReport:SetFieldAliases(   "Escandallos",                cItemsToReport( aItmKit() ) )
 
-   //::oFastReport:SetWorkArea(       "Stock",                      ::oStock:Select() )
-   //::oFastReport:SetFieldAliases(   "Stock",                      cObjectsToReport( ::oStock:oDbfStock ) )
-
    ::oFastReport:SetWorkArea(       "Familias",                   ::oDbfFam:nArea )
    ::oFastReport:SetFieldAliases(   "Familias",                   cItemsToReport( aItmFam() ) )
 
@@ -774,13 +778,12 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Usuarios",                   ::oDbfUsr:nArea ) 
    ::oFastReport:SetFieldAliases(   "Usuarios",                   cItemsToReport( aItmUsuario() ) )
 
+   ::oFastReport:SetWorkArea(       "Stock por almacén",          ::oArtAlm:nArea )
+   ::oFastReport:SetFieldAliases(   "Stock por almacén",          cItemsToReport( aItmStockaAlmacenes() ) )
+
    /*
    Relaciones entre tablas-----------------------------------------------------
    */
-
-   // ::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oStock:oDbfStock:cAlmacen } )
-
-   //::oFastReport:SetMasterDetail(   "Stock", "Almacenes",                           {|| ::oDbfArt:Codigo } )
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
@@ -800,6 +803,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",        {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",  {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacén",  {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )  
 
    /*
    Resincronizar con los movimientos-------------------------------------------
@@ -823,6 +827,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
    ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
    ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
+   ::oFastReport:SetResyncPair(     "Informe", "Stock por almacén" )  
 
    ::SetDataReport()
 

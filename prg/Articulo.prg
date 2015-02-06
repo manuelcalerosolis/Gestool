@@ -5470,7 +5470,7 @@ Static Function BeginTrans( aTmp, nMode )
 
    // base de datos stocks por almacenes------------------------------------------
 
-   dbCreate( filTmpAlm, aSqlStruct( aItmAlm() ), cLocalDriver() )
+   dbCreate( filTmpAlm, aSqlStruct( aItmStockaAlmacenes() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), filTmpAlm, cCheckArea( "ArtAlm", @dbfTmpAlm ), .f. )
 
    if !NetErr()
@@ -15091,7 +15091,7 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
    end if
 
    if !lExistTable( cPath + "ArtAlm.Dbf" )
-      dbCreate( cPath + "ArtAlm.Dbf",     aSqlStruct( aItmAlm() ),      cDriver() )
+      dbCreate( cPath + "ArtAlm.Dbf",     aSqlStruct( aItmStockaAlmacenes() ),      cDriver() )
    end if
 
    /*
@@ -15815,7 +15815,7 @@ Return ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Static Function aItmAlm()
+Function aItmStockaAlmacenes()
 
    local aBase := {}
 
