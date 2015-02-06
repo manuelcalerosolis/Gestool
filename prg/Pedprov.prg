@@ -8874,9 +8874,9 @@ function ShowKitCom( dbfMaster, dbfTmpLin, oBrw, cCodPrv, dbfTmpInc, aGet )
    if !Empty( aGet )
 
       if lUsrMaster() .or. oUser():lCambiarPrecio()
-         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:Enable()
+         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardEnable()
       else
-         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:Disable()
+         aGet[ ( dbfMaster )->( FieldPos( "lRecargo" ) ) ]:HardDisable()
       end if
 
       if !Empty( cCodPrv )

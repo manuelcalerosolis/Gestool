@@ -13474,8 +13474,6 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
         if !Empty( aGet[_NPREUNIT] )
 
-        msgalert( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ), "nRetPreArt")
-
         	if nPrePro == 0
 	           	aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
        		else
