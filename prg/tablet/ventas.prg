@@ -4,10 +4,7 @@
 CLASS Ventas FROM Editable
 
    METHOD OpenFiles()
-<<<<<<< HEAD
-   
-=======
->>>>>>> origin/master
+
    METHOD CloseFiles()
 
 END CLASS
