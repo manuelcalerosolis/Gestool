@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS Cliente FROM Editable
+CLASS Cliente FROM Ventas
  
 
 ENDCLASS

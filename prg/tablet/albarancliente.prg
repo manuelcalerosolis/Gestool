@@ -2,7 +2,7 @@
 #include "Factu.ch"
 #include "Xbrowse.ch"
 
-CLASS AlbaranCliente FROM Ventas  
+CLASS AlbaranCliente FROM DocumentosVentas  
 
    DATA oViewNavigator
 

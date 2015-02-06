@@ -391,7 +391,7 @@ ViewNavigator.prg          \
 Ventas.prg                 \
 PedidoCliente.prg          \
 AlbaranCliente.prg         \
-DocumentoSerializable.prg  \
+DocumentosVentas.prg       \
 ViewBase.prg               \
 ViewEdit.prg               \
 ViewEditDetail.prg         \
@@ -778,7 +778,7 @@ ViewNavigator.obj          \
 Ventas.obj                 \
 PedidoCliente.obj          \
 AlbaranCliente.obj         \
-DocumentoSerializable.obj  \
+DocumentosVentas.obj  \
 ViewBase.obj               \
 ViewEdit.obj               \
 ViewEditDetail.obj         \
@@ -1149,7 +1149,7 @@ $(OBJ)\Editable.obj              +
 $(OBJ)\ViewNavigator.obj         +
 $(OBJ)\PedidoCliente.obj         +
 $(OBJ)\AlbaranCliente.obj        +
-$(OBJ)\DocumentoSerializable.obj +
+$(OBJ)\DocumentosVentas.obj +
 $(OBJ)\ViewBase.obj              +
 $(OBJ)\ViewEdit.obj              +
 $(OBJ)\ViewEditDetail.obj        +
