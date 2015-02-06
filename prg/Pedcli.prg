@@ -5945,7 +5945,7 @@ STATIC FUNCTION RecPedCli( aTmpPed )
          Tomamos los precios de la base de datos de articulos---------------------
          */
 
-         ( dbfTmpLin )->nPreDiv  := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
+         ( dbfTmpLin )->nPreDiv  := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp )
 
          /*
          Linea por contadores-----------------------------------------------------
@@ -6915,7 +6915,7 @@ Static Function ChangeTarifa( aTmp, aGet, aTmpPed )
       nPrePro     := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPed[ _LIVAINC ], dbfArtDiv, aTmpPed[ _CCODTAR ] )
 
       if nPrePro == 0
-         nPrePro  := nRetPreArt( aTmp[ _NTARLIN ], aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
+         nPrePro  := nRetPreArt( aTmp[ _NTARLIN ], aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp )
       end if
 
       if nPrePro != 0
@@ -10446,7 +10446,7 @@ Static Function AppendKit( uTmpLin, aTmpPed )
             ( dbfTmpLin )->nUniCaja    := nUniCaj * ( dbfKit )->nUndKit
 
             if ( dbfTmpLin )->lKitPrc
-               ( dbfTmpLin )->nPreDiv  := nRetPreArt( nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
+               ( dbfTmpLin )->nPreDiv  := nRetPreArt( nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp )
             end if
 
             if lStockComponentes( cCodArt, D():Articulos( nView ) )
@@ -11233,7 +11233,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPed[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPed[_CCODTAR] )
 
             if nPrePro == 0
-               aGet[_NPREDIV]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva ) )
+               aGet[_NPREDIV]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp ) )
             else
                aGet[_NPREDIV]:cText( nPrePro )
             end if
@@ -11946,7 +11946,7 @@ Static Function AppendDatosAtipicas( aTmpPed )
                if hAtipica[ "nImporte" ] != 0
                   ( dbfTmpLin )->nPreDiv    := hAtipica[ "nImporte" ]
                else 
-                  ( dbfTmpLin )->nPreDiv    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
+                  ( dbfTmpLin )->nPreDiv    := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp )
                end if
             end if
 
@@ -11984,7 +11984,7 @@ Static Function AppendDatosAtipicas( aTmpPed )
             if hAtipica[ "nImporte" ] != 0
             	( dbfTmpLin )->nPreDiv  := hAtipica[ "nImporte" ]
             else
-            	nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
+            	nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp )
             end if
          end if
 

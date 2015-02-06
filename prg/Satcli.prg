@@ -524,6 +524,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Documentos( nView )
 
+      D():Contadores( nView )
+
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -5711,7 +5713,7 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
                nPrePro        := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpSat[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpSat[_CCODTAR] )
 
                if nPrePro == 0
-                  aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpSat[ _CDIVSAT ], aTmpSat[_LIVAINC], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva ) )
+                  aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpSat[ _CDIVSAT ], aTmpSat[_LIVAINC], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp ) )
                else
                   aGet[ _NPREDIV ]:cText( nPrePro )
                end if
@@ -6440,7 +6442,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , D():Documentos( nView ) )
+      nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , D():Contadores( nView ) )
       aTmp[ _NNUMSAT ]     := nNumSat
 
    case nMode == EDIT_MODE
@@ -7043,7 +7045,7 @@ STATIC FUNCTION RecSatCli( aTmpSat )
          Tomamos los precios de la base de datos de articulos---------------------
          */
 
-         ( dbfTmpLin )->nPreDiv     := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
+         ( dbfTmpLin )->nPreDiv     := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp )
 
          /*
          Linea por contadores-----------------------------------------------------
@@ -7402,7 +7404,7 @@ Static Function AppendKit( uTmpLin, aTmpSat )
             ( dbfTmpLin )->nUniCaja    := nUniCaj * ( dbfKit )->nUndKit
 
             if ( dbfTmpLin )->lKitPrc
-               ( dbfTmpLin )->nPreDiv  := nRetPreArt( nTarLin, aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
+               ( dbfTmpLin )->nPreDiv  := nRetPreArt( nTarLin, aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp )
             end if
 
             /*
@@ -7819,7 +7821,7 @@ STATIC FUNCTION ChangeTarifa( aTmp, aGet, aTmpSat )
       nPrePro     := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpSat[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpSat[ _CCODTAR ] )
 
       if nPrePro == 0
-         nPrePro  := nRetPreArt( aTmp[ _NTARLIN ], aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva )
+         nPrePro  := nRetPreArt( aTmp[ _NTARLIN ], aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp )
       end if
 
       if nPrePro != 0
