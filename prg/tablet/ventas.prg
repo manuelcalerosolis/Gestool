@@ -6,8 +6,6 @@ CLASS Ventas FROM Editable
    METHOD OpenFiles()
    METHOD CloseFiles()
 
-   
-
 END CLASS
 
 //---------------------------------------------------------------------------//

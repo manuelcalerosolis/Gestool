@@ -524,6 +524,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Documentos( nView )
 
+      D():Contadores( nView )
+
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -6440,7 +6442,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , D():Documentos( nView ) )
+      nNumSat              := nNewDoc( cSerSat, D():SatClientes( nView ), "nSatCli", , D():Contadores( nView ) )
       aTmp[ _NNUMSAT ]     := nNumSat
 
    case nMode == EDIT_MODE
