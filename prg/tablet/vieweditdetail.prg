@@ -30,7 +30,7 @@ CLASS ViewDetail FROM ViewBase
                                                       hGet( ::oSender:hDictionaryDetailTemporal, cName ),;
                                                       hSet( ::oSender:hDictionaryDetailTemporal, cName, uValue ) ) )
 
-   METHOD BotonAceptarCancelarBrowse()
+   METHOD defineAceptarCancelar()
 
    METHOD defineArticulo()
 
@@ -99,7 +99,7 @@ METHOD ResourceViewEditDetail( nMode ) CLASS ViewDetail
 
    ::defineTotal()
 
-   ::BotonAceptarCancelarBrowse()
+   ::defineAceptarCancelar()
 
    ::oDlg:bResized         := {|| ::DialogResize() }
 
@@ -111,7 +111,7 @@ Return ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD BotonAceptarCancelarBrowse() CLASS ViewDetail
+METHOD defineAceptarCancelar() CLASS ViewDetail
 
 
    TGridImage():Build(  {  "nTop"      => 5,;

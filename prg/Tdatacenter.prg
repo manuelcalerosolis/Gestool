@@ -1009,15 +1009,15 @@ METHOD ScanDataTable( cDataTable ) CLASS TDataCenter
 
    local nScan
 
-   nScan    := aScan( TDataCenter():aDataTables, {|o| o:cFileName() == ::DataName( cDataTable ) } )   
+   nScan    := aScan( ::aDataTables, {|o| o:cFileName() == ::DataName( cDataTable ) } )   
    if nScan != 0
-      Return ( TDataCenter():aDataTables[ nScan ] )
+      Return ( ::aDataTables[ nScan ] )
    end if 
 
    if nScan == 0
-      nScan    := aScan( TDataCenter():aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDataTable ) } )   
+      nScan    := aScan( ::aEmpresaTables, {|o| o:cFileName() == ::EmpresaName( cDataTable ) } )   
       if nScan != 0
-         Return ( TDataCenter():aEmpresaTables[ nScan ] )
+         Return ( ::aEmpresaTables[ nScan ] )
       end if 
    end if
  
@@ -2341,6 +2341,8 @@ METHOD BuildEmpresa()
    oDataTable:bCreateIndex := {| cPath | rxClient( cPath ) }
    oDataTable:bSyncFile    := {|| SynClient( cPatEmp() ) }
    oDataTable:cDescription := "Clientes"
+   oDatatable:aDictionary  := hashDictionary( aItmCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aItmCli() )
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -5121,10 +5123,8 @@ CLASS D
       METHOD AlbaranesClientesIdTextShort( nView );
                                                       INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
       METHOD AlbaranesClientesIdText( nView )         INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
-      METHOD GetAlbaranCliente( nView )               INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
-      METHOD GetAlbaranClienteById( id, nView )       INLINE ( ::getHashRecordById( id, ::AlbaranesClientes( nView ), nView ) )
-      METHOD GetAlbaranClienteBlank( nView )          INLINE ( ::getHashRecordBlank( ::AlbaranesClientes( nView ), nView ) )
-      METHOD GetAlbaranClienteDefaultValue( nView )   INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
+      METHOD getCurrentHashAlbaranCliente( nView )    INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
+      METHOD getDefaultHashAlbaranCliente( nView )    INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
    METHOD AlbaranesClientesLineas( nView )            INLINE ( ::Get( "AlbCliL", nView ) )
       METHOD AlbaranesClientesLineasId( nView )       INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
@@ -5178,6 +5178,8 @@ CLASS D
       METHOD gotoIdClientes( id, nView )              INLINE ( ::SeekInOrd( ::Clientes( nView ), nView, id, "Cod" ) ) 
       METHOD getStatusClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::Get( "Client", nView ) ) )
       METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
+      METHOD getCurrentHashClientes( nView )          INLINE ( ::getHashRecordById( ::ClientesId( nView ), ::Clientes( nView ), nView ) )
+      METHOD getDefaultHashClientes( nView )          INLINE ( ::getHashRecordDefaultValues( ::Clientes( nView ), nView ) )
       
       METHOD ClientesDirecciones( nView )             INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )

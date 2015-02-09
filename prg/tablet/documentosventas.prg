@@ -4,9 +4,11 @@
 CLASS DocumentosVentas FROM Ventas
 
    DATA nMode
+
    DATA oViewEdit
    DATA oViewEditDetail
    DATA oViewEditResumen
+   
    DATA nUltimoCliente
    DATA cOldCodidoArticulo          INIT ""
    DATA hOrdenRutas                 INIT {   "1" => "lVisDom",;

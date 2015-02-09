@@ -11,6 +11,12 @@ CLASS Cliente FROM Ventas
    
    METHOD propiedadesBrowse()
 
+   METHOD getAppendDocumento() 
+
+   METHOD getEditDocumento() 
+
+   METHOD Resource()
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -70,3 +76,41 @@ METHOD propiedadesBrowse() CLASS Cliente
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD GetAppendDocumento() CLASS Cliente
+
+   ::hDictionaryMaster      := D():getDefaultHashClientes( ::nView )
+
+   msgAlert( hb_valtoexp( ::hDictionaryMaster ) )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEditDocumento() CLASS Cliente
+
+   ::hDictionaryMaster      := D():getCurrentHashClientes( ::nView ) 
+
+   msgAlert( hb_valtoexp( ::hDictionaryMaster ) )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Resource( nMode ) CLASS Cliente
+
+   ::oViewEdit       := ViewCliente():New( self )
+
+   if !Empty( ::oViewEdit )
+
+      ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "cliente" )
+      
+      ::oViewEdit:ResourceViewEdit( nMode )
+
+   end if
+
+Return ( .t. )   
+
+//---------------------------------------------------------------------------//
+
+

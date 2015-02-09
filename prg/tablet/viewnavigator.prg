@@ -21,7 +21,7 @@ CLASS ViewNavigator FROM ViewBase
    METHOD ChangeComboboxOrden()
 
    METHOD setBrowseConfigurationName( cName ) ;
-                                       INLINE ( if( !empty( ::oViewNavigator ) .and. !empty( ::oViewNavigator:oBrowse ), ::oViewNavigator:oBrowse:cName := cName, ) )
+                                       INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
 
    METHOD setWorkArea( WorkArea )      INLINE ( ::WorkArea := WorkArea )
 

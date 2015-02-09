@@ -7,7 +7,6 @@ CLASS ViewEdit FROM ViewBase
    DATA oDlg
    DATA oBrowse
    DATA oSender
-   DATA WorkArea
    DATA nMode
    
    DATA oGetCliente
@@ -21,10 +20,9 @@ CLASS ViewEdit FROM ViewBase
    METHOD New()
 
    METHOD ResourceViewEdit()
+      METHOD startResourceViewEdit()
 
-   METHOD StartResourceViewEdit()
-
-   METHOD BotonAceptarCancelarBrowse()
+   METHOD defineAceptarCancelar()
 
    METHOD DefineSerie()
 
@@ -39,12 +37,6 @@ CLASS ViewEdit FROM ViewBase
    METHOD BrowseLineas()
 
    METHOD BotonesMovimientoBrowse()
-
-   METHOD setWorkArea( WorkArea )      INLINE ( ::WorkArea := WorkArea )
-
-   METHOD SetGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
-                                                      hGet( ::oSender:hDictionaryMaster, cName ),;
-                                                      hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
 
 END CLASS
 
@@ -66,7 +58,7 @@ METHOD ResourceViewEdit( nMode ) CLASS ViewEdit
 
    ::TituloBrowse()
 
-   ::BotonAceptarCancelarBrowse()
+   ::defineAceptarCancelar()
 
    ::DefineSerie()
 
@@ -102,7 +94,7 @@ Return Self
 
 //---------------------------------------------------------------------------//
 
-METHOD BotonAceptarCancelarBrowse() CLASS ViewEdit
+METHOD defineAceptarCancelar() CLASS ViewEdit
 
 
    TGridImage():Build(  {  "nTop"      => 5,;
