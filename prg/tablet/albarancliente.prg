@@ -169,7 +169,7 @@ Return ( lResult )
 
 METHOD GetAppendDocumento() CLASS AlbaranCliente
 
-   ::hDictionaryMaster      := D():GetAlbaranClienteDefaultValue( ::nView )
+   ::hDictionaryMaster      := D():getDefaultHashAlbaranCliente( ::nView )
    ::hDictionaryDetail      := {}
 
 Return ( self )
@@ -178,7 +178,7 @@ Return ( self )
 
 METHOD GetEditDocumento() CLASS AlbaranCliente
 
-   ::hDictionaryMaster      := D():GetAlbaranClienteById( D():AlbaranesClientesId( ::nView ), ::nView ) 
+   ::hDictionaryMaster      := D():getCurrentHashAlbaranCliente( ::nView ) 
    ::hDictionaryDetail      := D():GetAlbaranClienteLineas( ::nView )
 
 Return ( self )

@@ -395,6 +395,7 @@ AlbaranCliente.prg         \
 DocumentosVentas.prg       \
 ViewBase.prg               \
 ViewEdit.prg               \
+ViewCliente.prg            \
 ViewEditDetail.prg         \
 ViewEditResumen.prg        \
 
@@ -783,6 +784,7 @@ AlbaranCliente.obj         \
 DocumentosVentas.obj       \
 ViewBase.obj               \
 ViewEdit.obj               \
+ViewCliente.obj            \
 ViewEditDetail.obj         \
 ViewEditResumen.obj        \
 
@@ -1155,6 +1157,7 @@ $(OBJ)\AlbaranCliente.obj        +
 $(OBJ)\DocumentosVentas.obj      +
 $(OBJ)\ViewBase.obj              +
 $(OBJ)\ViewEdit.obj              +
+$(OBJ)\ViewCliente.obj           +
 $(OBJ)\ViewEditDetail.obj        +
 $(OBJ)\ViewEditResumen.obj       +
 $(OBJ)\Ventas.obj

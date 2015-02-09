@@ -9,10 +9,12 @@ CLASS Editable
    DATA cWorkArea
 
    DATA oViewNavigator
+   DATA oViewEdit
 
    DATA cDetailArea
    DATA nPosDetail                        INIT 0
    DATA Style                             INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
+   
    DATA hDictionaryMaster
    DATA hDictionaryDetail
    DATA hDictionaryDetailTemporal
@@ -21,10 +23,13 @@ CLASS Editable
    METHOD Edit()
    METHOD Delete()
 
-   METHOD GetAppendDocumento()            VIRTUAL
-   METHOD GetEditDocumento()              VIRTUAL
-   METHOD Resource()                      VIRTUAL
-   METHOD SaveDocumento()        
+   METHOD getAppendDocumento()            VIRTUAL
+   METHOD getEditDocumento()              VIRTUAL
+      METHOD Resource()                   VIRTUAL
+
+   METHOD setAppendDocumento()            INLINE ( msgalert( hb_valtoexp( ::hDictionaryMaster ) ) )           
+   METHOD setEditDocumento()              INLINE ( msgalert( hb_valtoexp( ::hDictionaryMaster ) ) )
+      METHOD saveDocumento()        
 
    METHOD setWorkArea( cWorkArea )        INLINE ( ::cWorkArea  := cWorkArea )
    METHOD getWorkArea()                   INLINE ( ::cWorkArea )
@@ -45,10 +50,10 @@ ENDCLASS
 
 METHOD Append() CLASS Editable
 
-   ::GetAppendDocumento()
+   ::getAppendDocumento()
 
    if ::Resource( APPD_MODE )
-      ::SaveDocumento()
+      ::setAppendDocumento()
    end if
 
 Return ( self )
@@ -57,10 +62,10 @@ Return ( self )
 
 METHOD Edit() CLASS Editable
 
-   ::GetEditDocumento()
+   ::getEditDocumento()
 
    if ::Resource( EDIT_MODE )
-      ::SaveDocumento()
+      ::setEditDocumento()
    end if
 
 Return ( self )
