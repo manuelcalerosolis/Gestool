@@ -5089,6 +5089,12 @@ CLASS D
    METHOD getArrayRecordById( id, cDatabase, nView )
    METHOD setDefaultValue( hash, cDataTable, nView )
 
+   METHOD appendHashRecord( hTable, cDataTable, nView )   
+
+   METHOD setHashRecord( cDatabase, nView )
+   METHOD saveFieldsToRecord()
+   METHOD getFieldFromDictionary()
+
    METHOD getId( cDatabase, nView )          INLINE ( ( ::Get( cDatabase, nView ) )->( eval( TDataCenter():getIdBlock( cDatabase ) ) ) )
    METHOD getDictionary( cDatabase )         INLINE ( TDataCenter():getDictionary( cDatabase ) )  
 
@@ -5176,7 +5182,7 @@ CLASS D
       METHOD ClientesId( nView )                      INLINE ( ( ::Get( "Client", nView ) )->Cod )
       METHOD ClientesNombre( nView )                  INLINE ( ( ::Get( "Client", nView ) )->Titulo )
       METHOD gotoIdClientes( id, nView )              INLINE ( ::SeekInOrd( ::Clientes( nView ), nView, id, "Cod" ) ) 
-      METHOD getStatusClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::Get( "Client", nView ) ) )
+      METHOD getStatusClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::Clientes( nView ) ) )
       METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
       METHOD getCurrentHashClientes( nView )          INLINE ( ::getHashRecordById( ::ClientesId( nView ), ::Clientes( nView ), nView ) )
       METHOD getDefaultHashClientes( nView )          INLINE ( ::getHashRecordDefaultValues( ::Clientes( nView ), nView ) )
@@ -5742,6 +5748,9 @@ METHOD getHashRecord( cDataTable, nView ) CLASS D
    local aDictionary := TDataCenter():getDictionary( cDataTable )
 
    if isHash( aDictionary ) .and. !empty( dbf )
+
+      //hEval( aDictionary, {|key,value| msgAlert(key, "key"), msgAlert(value,"value") } )
+
       hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
    end if 
 
@@ -5749,16 +5758,91 @@ RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
+METHOD appendHashRecord( hTable, cDataTable, nView ) CLASS D
+
+   local workArea    := ::Get( cDataTable, nView )   
+   local hDictionary := TDataCenter():getDictionary( cDataTable )
+
+   if empty( workArea )
+      return ( nil )
+   end if
+      
+   ( workArea )->( dbAppend() )
+   if !( workArea )->( neterr() )
+      ::setHashRecord( hTable, workArea, hDictionary )
+      ( workArea )->( dbUnLock() )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
+
+   local workArea    := ::Get( cDataTable, nView )   
+   local hDictionary := TDataCenter():getDictionary( cDataTable )
+
+   if empty( workArea )
+      return ( nil )
+   end if
+      
+   if !( workArea )->( dblock() )
+      ::setHashRecord( hTable, workArea, hDictionary )
+      ( workArea )->( dbUnLock() )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+
+METHOD setHashRecord( hTable, workArea, hDictionary ) CLASS D
+
+   if isHash( hDictionary ) .and. !empty( workArea )
+      hEval( hTable, {|cKeyDictionary, uValueDictionary| ::saveFieldsToRecord( cKeyDictionary, uValueDictionary, workArea, hDictionary ) } )
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveFieldsToRecord( cKeyDictionary, uValueDictionary, workArea, hDictionary ) CLASS D
+
+   local cField
+
+   cField   := ::getFieldFromDictionary( cKeyDictionary, hDictionary )
+   if !empty( cField )
+      ( workArea )->( fieldput( ( workArea )->( fieldPos( cField ) ), uValueDictionary ) )
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFieldFromDictionary( cKeyDictionary, hDictionary ) CLASS D
+
+   local nScan
+   local cField
+
+   nScan       := hScan( hDictionary, {|k,v,i| k == cKeyDictionary } )   
+   if nScan != 0 
+      cField   := hgetValueAt( hDictionary, nScan )
+   end if 
+
+Return ( cField )
+
+//---------------------------------------------------------------------------//
+
 METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
 
-   local dbf
+   local workArea
    local aDefaultValue
 
    if !isHash( hash )
       Return .f.
    end if
 
-   dbf            := ::Get( cDataTable, nView )   
+   workArea            := ::Get( cDataTable, nView )   
    aDefaultValue  := TDataCenter():getDeFaultValue( cDataTable )
 
    hEval( aDefaultValue, {|key,value| hSet( hash, key, Eval( Value ) ) } )

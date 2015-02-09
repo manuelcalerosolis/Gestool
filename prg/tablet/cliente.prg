@@ -15,6 +15,10 @@ CLASS Cliente FROM Ventas
 
    METHOD getEditDocumento() 
 
+   METHOD setAppendDocumento()
+
+   METHOD setEditDocumento()
+
    METHOD Resource()
 
 ENDCLASS
@@ -92,6 +96,22 @@ METHOD GetEditDocumento() CLASS Cliente
    ::hDictionaryMaster      := D():getCurrentHashClientes( ::nView ) 
 
    msgAlert( hb_valtoexp( ::hDictionaryMaster ) )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setAppendDocumento() CLASS Cliente
+
+   D():appendHashRecord( ::hDictionaryMaster, ::getWorkArea(), ::nView )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setEditDocumento() CLASS Cliente
+
+   D():editHashRecord( ::hDictionaryMaster, ::getWorkArea(), ::nView )
 
 Return ( self )
 

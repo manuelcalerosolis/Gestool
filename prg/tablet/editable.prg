@@ -27,8 +27,8 @@ CLASS Editable
    METHOD getEditDocumento()              VIRTUAL
       METHOD Resource()                   VIRTUAL
 
-   METHOD setAppendDocumento()            INLINE ( msgalert( hb_valtoexp( ::hDictionaryMaster ) ) )           
-   METHOD setEditDocumento()              INLINE ( msgalert( hb_valtoexp( ::hDictionaryMaster ) ) )
+   METHOD setAppendDocumento()            VIRTUAL
+   METHOD setEditDocumento()              VIRTUAL
       METHOD saveDocumento()        
 
    METHOD setWorkArea( cWorkArea )        INLINE ( ::cWorkArea  := cWorkArea )
