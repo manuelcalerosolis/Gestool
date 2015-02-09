@@ -160,6 +160,8 @@ CLASS DocumentosVentas FROM Ventas
 
    METHOD lValidResumenVenta()
 
+   METHOD SetDocumentosFacturas()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -864,18 +866,53 @@ METHOD ResumenVenta( oCbxRuta, oDlg ) CLASS DocumentosVentas
 
    ::setUltimoCliente( oCbxRuta )
 
-   ::oViewEditResumen       := ViewEditResumen():New( self )
+   ::oViewEditResumen            := ViewEditResumen():New( self )
 
    if !Empty( ::oViewEditResumen )
 
       ::oViewEditResumen:setTextoTipoDocuento( "Resumen documento" )
       
-      ::oViewEditResumen:ResourceViewEditResumen( oDlg )
+      ::SetDocumentosFacturas()
+
+      ::oViewEditResumen:ResourceViewEditResumen( ::oDlg )
 
    end if
 
    oDlg:End()
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetDocumentosFacturas() CLASS DocumentosVentas
+
+   local cSerie         := hGet( ::hDictionaryMaster, "Serie" )
+   local cDocumento     := ""
+   local cFormato
+   local nFormato
+   local aFormatos      := aDocs( "FC", D():Documentos( ::nView ), .t. )
+
+   ?"1"
+   cFormato             := cFormatoDocumento( cSerie, "nFacCli", D():Contadores( ::nView ) )
+
+   ?"2"
+
+   if Empty( cFormato )
+      cFormato          := cFirstDoc( "FC", D():Documentos( ::nView ) )
+   end if
+
+   ?"3"
+
+   nFormato             := aScan( aFormatos, {|x| Left( x, 3 ) == cFormato } )
+   nFormato             := Max( Min( nFormato, len( aFormatos ) ), 1 )
+
+   ?"4"
+
+   ::oViewEditResumen:SetImpresoras( aFormatos )
+   ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
+
+   ?"5"
+
+return ( .t. )
 
 //---------------------------------------------------------------------------//

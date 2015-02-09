@@ -52,6 +52,10 @@ METHOD OpenFiles() CLASS Ventas
 
    D():Kit( ::nView )
 
+   D():Contadores( ::nView )
+
+   D():Documentos( ::nView )
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -63,7 +67,7 @@ METHOD OpenFiles() CLASS Ventas
    ErrorBlock( oBlock )
 
    if !lOpenFiles
-      ::CloseFiles()
+      ::CloseFiles( "" )
    end if
 
 Return ( lOpenFiles )

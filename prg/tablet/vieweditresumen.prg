@@ -6,18 +6,26 @@ CLASS ViewEditResumen FROM ViewBase
 
    DATA oDlg
    DATA oSender
+   DATA oCbxImpresora
+   DATA aCbxImpresora      INIT {}
+   DATA cCbxImpresora
 
    METHOD New()
 
    METHOD ResourceViewEditResumen()
 
    METHOD defineBotonesGenerales()
-
+   
    METHOD defineCliente()
 
    METHOD defineFormaPago()
 
+   METHOD SetImpresoras( aImpresoras )          INLINE ( if ( !Empty( aImpresoras ), ::aCbxImpresora := aImpresoras, ::aCbxImpresora := {} ) )
+   METHOD SetImpresoraDefecto( cImpresora )     INLINE ( if ( !Empty( cImpresora ), ::cCbxImpresora := cImpresora, ::cCbxImpresora := {} ) )
+   
    METHOD defineComboImpresion()
+
+   METHOD defineBrowseIva()
 
 END CLASS
 
@@ -45,6 +53,8 @@ METHOD ResourceViewEditResumen( oDlgMaster ) CLASS ViewEditResumen
 
    ::defineComboImpresion()
 
+   ::defineBrowseIva()
+
    ::oDlg:bResized         := {|| ::DialogResize() }
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
@@ -52,7 +62,7 @@ METHOD ResourceViewEditResumen( oDlgMaster ) CLASS ViewEditResumen
 Return ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
-
+                  
 METHOD defineBotonesGenerales() CLASS ViewEditResumen
 
 
@@ -174,13 +184,41 @@ METHOD defineComboImpresion() CLASS ViewEditResumen
                               "nHeight"   => 25,;
                               "lDesign"   => .f. } )
 
-   /*TGridComboBox():Build(  {  "nRow"      => 90,;
-                              "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
-                              "bSetGet"   => {|u| if( PCount() == 0, cCbxOrd, cCbxOrd := u ) },;
-                              "oWnd"      => oDlg,;
-                              "nWidth"    => {|| GridWidth( 9, oDlg ) },;
-                              "nHeight"   => 25,;
-                              "aItems"    => aCbxOrd } )*/
+   ::oCbxImpresora  := TGridComboBox():Build(  {   "nRow"      => 90,;
+                                                   "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, ::cCbxImpresora, ::cCbxImpresora := u ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "aItems"    => ::aCbxImpresora } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineBrowseIva() CLASS ViewEditResumen
+
+   /*::oBrowse                  := TGridIXBrowse():New( ::oDlg )
+
+   ::oBrowse:nTop             := ::oBrowse:EvalRow( 125 )
+   ::oBrowse:nLeft            := ::oBrowse:EvalCol( {|| GridWidth( 0.5, ::oDlg ) } )
+   ::oBrowse:nWidth           := ::oBrowse:EvalWidth( {|| GridWidth( 11, ::oDlg ) } )
+   ::oBrowse:nHeight          := ::oBrowse:EvalHeight( {|| GridHeigth( ::oDlg ) - ::oBrowse:nTop - 10 } )
+   ::oBrowse:lFooter          := .t.
+   ::oBrowse:nMarqueeStyle    := 6
+
+   ::oBrowse:nHeaderHeight    := 48
+   ::oBrowse:nFooterHeight    := 48
+   ::oBrowse:nRowHeight       := 96
+   ::oBrowse:nDataLines       := 2
+
+   ::oBrowse:SetArray( ::oSender:hDictionaryDetail, , , .f. )
+
+   ::oSender:PropiedadesBrowseDetail()
+
+   ::oBrowse:bLDblClick       := {|| MsgInfo( "DobleClick" ) }
+
+   ::oBrowse:CreateFromCode()*/
 
 Return ( self )
 
