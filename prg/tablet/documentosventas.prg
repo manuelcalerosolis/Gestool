@@ -873,6 +873,9 @@ METHOD ResumenVenta( oCbxRuta, oDlg ) CLASS DocumentosVentas
    if !Empty( ::oViewEditResumen )
 
       ::oViewEditResumen:setTextoTipoDocuento( "Resumen documento" )
+
+      ::oViewEditResumen:SetCodigoCliente( hGet( ::hDictionaryMaster, "Cliente" ) )
+      ::oViewEditResumen:SetNombreCliente( hGet( ::hDictionaryMaster, "NombreCliente" ) )
       
       ::SetDocumentosFacturas()
 

@@ -5854,7 +5854,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| PedidoCliente():New() } } )
 
-   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5871,7 +5871,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| AlbaranCliente():New() } } )*/
+                           "bAction"   => {|| AlbaranCliente():New() } } )
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;

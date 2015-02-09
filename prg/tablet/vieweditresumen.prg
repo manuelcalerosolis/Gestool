@@ -9,6 +9,8 @@ CLASS ViewEditResumen FROM ViewBase
    DATA oCbxImpresora
    DATA aCbxImpresora      INIT {}
    DATA cCbxImpresora
+   DATA cCodigoCliente     INIT ""
+   DATA cNombreCliente     INIT ""
 
    METHOD New()
 
@@ -16,6 +18,9 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD defineBotonesGenerales()
    
+   METHOD SetCodigoCliente( cCodCli )           INLINE ( if ( !Empty( cCodCli ), ::cCodigoCliente := cCodCli, ::cCodigoCliente := "" ) )
+   METHOD SetNombreCliente( cNomCli )           INLINE ( if ( !Empty( cNomCli ), ::cNombreCliente := cNomCli, ::cNombreCliente := "" ) )
+
    METHOD defineCliente()
 
    METHOD defineFormaPago()
@@ -96,9 +101,6 @@ Return ( self )
 
 METHOD defineCliente() CLASS ViewEditResumen
 
-   local cCodCliente    := ""
-   local cNomCliente    := ""
-
    TGridSay():Build( {  "nRow"      => 40,;
                         "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                         "bText"     => {|| "Cliente: " },;
@@ -114,7 +116,7 @@ METHOD defineCliente() CLASS ViewEditResumen
    TGridGet():Build( {  "nRow"      => 40,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "oWnd"      => ::oDlg,;
-                        "bSetGet"   => {|u| if( PCount() == 0, cCodCliente, cCodCliente := u ) },;
+                        "bSetGet"   => {|u| if( PCount() == 0, ::cCodigoCliente, ::cCodigoCliente := u ) },;
                         "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "bWhen"     => {|| .f. },;
@@ -123,7 +125,7 @@ METHOD defineCliente() CLASS ViewEditResumen
    TGridGet():Build( {  "nRow"      => 40,;
                         "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
                         "oWnd"      => ::oDlg,;
-                        "bSetGet"   => {|u| if( PCount() == 0, cNomCliente, cNomCliente := u ) },;
+                        "bSetGet"   => {|u| if( PCount() == 0, ::cNombreCliente, ::cNombreCliente := u ) },;
                         "lPixels"   => .t.,;
                         "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
                         "bWhen"     => {|| .f.},;
@@ -198,7 +200,7 @@ Return ( self )
 
 METHOD defineBrowseIva() CLASS ViewEditResumen
 
-   /*::oBrowse                  := TGridIXBrowse():New( ::oDlg )
+   ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
 
    ::oBrowse:nTop             := ::oBrowse:EvalRow( 125 )
    ::oBrowse:nLeft            := ::oBrowse:EvalCol( {|| GridWidth( 0.5, ::oDlg ) } )
@@ -218,7 +220,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
 
    ::oBrowse:bLDblClick       := {|| MsgInfo( "DobleClick" ) }
 
-   ::oBrowse:CreateFromCode()*/
+   ::oBrowse:CreateFromCode()
 
 Return ( self )
 
