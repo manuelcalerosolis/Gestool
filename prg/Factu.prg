@@ -5833,9 +5833,9 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| Cliente():New() } } )*/
+                           "bAction"   => {|| Cliente():New() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5843,7 +5843,7 @@ Function MainTablet()
                            "bLClicked" => {|| PedidoCliente():New() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Pedidos de clientes",;
                            "oWnd"      => oDlg,;
@@ -5871,7 +5871,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| AlbaranCliente():New() } } )
+                           "bAction"   => {|| AlbaranCliente():New() } } )*/
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;

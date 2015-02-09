@@ -894,26 +894,17 @@ METHOD SetDocumentosFacturas() CLASS DocumentosVentas
    local nFormato
    local aFormatos      := aDocs( "FC", D():Documentos( ::nView ), .t. )
 
-   ?"1"
    cFormato             := cFormatoDocumento( cSerie, "nFacCli", D():Contadores( ::nView ) )
-
-   ?"2"
 
    if Empty( cFormato )
       cFormato          := cFirstDoc( "FC", D():Documentos( ::nView ) )
    end if
 
-   ?"3"
-
    nFormato             := aScan( aFormatos, {|x| Left( x, 3 ) == cFormato } )
    nFormato             := Max( Min( nFormato, len( aFormatos ) ), 1 )
 
-   ?"4"
-
    ::oViewEditResumen:SetImpresoras( aFormatos )
    ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
-
-   ?"5"
 
 return ( .t. )
 
