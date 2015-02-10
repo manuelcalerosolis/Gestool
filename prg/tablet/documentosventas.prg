@@ -20,6 +20,21 @@ CLASS DocumentosVentas FROM Ventas
                                              "7" => "lVisSab",;
                                              "8" => "Cod" }
 
+   DATA hTotalIva                   INIT  {  { "Base" => 100,;
+                                               "PorcentajeIva" => 21,;
+                                               "ImporteIva" => 121,;
+                                               "PorcentajeRe" => 1,;
+                                               "ImporteRe" => 1 },;
+                                             { "Base" => 100,;
+                                               "PorcentajeIva" => 21,;
+                                               "ImporteIva" => 121,;
+                                               "PorcentajeRe" => 1,;
+                                               "ImporteRe" => 1 },;
+                                             { "Base" => 100,;
+                                               "PorcentajeIva" => 21,;
+                                               "ImporteIva" => 121,;
+                                               "PorcentajeRe" => 1,;
+                                               "ImporteRe" => 1 } }  
 
    METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
@@ -876,7 +891,12 @@ METHOD ResumenVenta( oCbxRuta, oDlg ) CLASS DocumentosVentas
 
       ::oViewEditResumen:SetCodigoCliente( hGet( ::hDictionaryMaster, "Cliente" ) )
       ::oViewEditResumen:SetNombreCliente( hGet( ::hDictionaryMaster, "NombreCliente" ) )
-      
+
+      ::oViewEditResumen:SetCodigoFormaPago( hGet( ::hDictionaryMaster, "Pago" ) )
+      ::oViewEditResumen:SetNombreFormaPago( cNbrFPago( hGet( ::hDictionaryMaster, "Pago" ), D():FormasPago( ::nView ) ) )
+
+      ::oViewEditResumen:SetArrayBrowseIva( ::hTotalIva )
+
       ::SetDocumentosFacturas()
 
       ::oViewEditResumen:ResourceViewEditResumen( ::oDlg )

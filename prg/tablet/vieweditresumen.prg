@@ -6,11 +6,17 @@ CLASS ViewEditResumen FROM ViewBase
 
    DATA oDlg
    DATA oSender
+   DATA oBrowse
    DATA oCbxImpresora
-   DATA aCbxImpresora      INIT {}
+   DATA aCbxImpresora         INIT {}
    DATA cCbxImpresora
-   DATA cCodigoCliente     INIT ""
-   DATA cNombreCliente     INIT ""
+   DATA cCodigoCliente        INIT ""
+   DATA cNombreCliente        INIT ""
+   DATA oCodigoFormaPago
+   DATA cCodigoFormaPago      INIT ""
+   DATA oNombreFormaPago
+   DATA cNombreFormaPago      INIT ""
+   DATA hTotalIva             INIT {=>}
 
    METHOD New()
 
@@ -23,14 +29,19 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD defineCliente()
 
+   METHOD SetCodigoFormaPago( cCodPgo )         INLINE ( if ( !Empty( cCodPgo ), ::cCodigoFormaPago := cCodPgo, ::cCodigoFormaPago := "" ) )
+   METHOD SetNombreFormaPago( cNomPgo )         INLINE ( if ( !Empty( cNomPgo ), ::cNombreFormaPago := cNomPgo, ::cNombreFormaPago := "" ) )
+
    METHOD defineFormaPago()
 
    METHOD SetImpresoras( aImpresoras )          INLINE ( if ( !Empty( aImpresoras ), ::aCbxImpresora := aImpresoras, ::aCbxImpresora := {} ) )
    METHOD SetImpresoraDefecto( cImpresora )     INLINE ( if ( !Empty( cImpresora ), ::cCbxImpresora := cImpresora, ::cCbxImpresora := {} ) )
-   
-   METHOD defineComboImpresion()
+
+   METHOD SetArrayBrowseIva( hTotalIva )        INLINE ( if ( !Empty( hTotalIva ), ::hTotalIva := hTotalIva, ::hTotalIva := {=>} ) )
 
    METHOD defineBrowseIva()
+
+   METHOD defineComboImpresion()
 
 END CLASS
 
@@ -137,9 +148,6 @@ Return ( self )
 
 METHOD defineFormaPago() CLASS ViewEditResumen
 
-   local cCodFPago      := ""
-   local cNomFPago      := ""
-
    TGridUrllink():Build({  "nTop"      => 65,;
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                            "cURL"      => "F. pago",;
@@ -149,24 +157,24 @@ METHOD defineFormaPago() CLASS ViewEditResumen
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| MsgInfo( "Browse de formas de pago" )  } } ) // GridBrwfPago( aGet[ _CCODPAGO ], oGetNombrePago ) } } )
+                           "bAction"   => {|| GridBrwfPago( ::oCodigoFormaPago, ::oNombreFormaPago ) } } )
 
-   TGridGet():Build( {     "nRow"      => 65,;
-                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| if( PCount() == 0, cCodFPago, cCodFPago := u ) },;
-                           "oWnd"      => ::oDlg,;
-                           "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                           "nHeight"   => 23,;
-                           "lPixels"   => .t.,;
-                           "bValid"    => {|| .t. } } )  //cFpago( aGet[ _CCODPAGO ], dbfFPago, oGetNombrePago ) } } )
+   ::oCodigoFormaPago  := TGridGet():Build( {   "nRow"      => 65,;
+                                                "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::cCodigoFormaPago, ::cCodigoFormaPago := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lPixels"   => .t.,;
+                                                "bValid"    => {|| cFpago( ::oCodigoFormaPago, D():FormasPago( ::oSender:nView ), ::oNombreFormaPago ) } } )
 
-   TGridGet():Build(  {    "nRow"      => 65,;
-                           "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
-                           "bSetGet"   => {|u| if( PCount() == 0, cNomFPago, cNomFPago := u ) },;
-                           "oWnd"      => ::oDlg,;
-                           "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
-                           "lPixels"   => .t.,;
-                           "nHeight"   => 23 } )
+   ::oNombreFormaPago  := TGridGet():Build(  {  "nRow"      => 65,;
+                                                "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::cNombreFormaPago, ::cNombreFormaPago := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
+                                                "lPixels"   => .t.,;
+                                                "nHeight"   => 23 } )
 
 Return ( self )
 
@@ -209,16 +217,50 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
    ::oBrowse:lFooter          := .t.
    ::oBrowse:nMarqueeStyle    := 6
 
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := "Base"
+      :bStrData            := {|| if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "Base" ) ), Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "Base" ), cPorDiv() ), "" ) }
+      :nWidth              := 170
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :nFootStrAlign       := 1
+      :bFooter             := {|| 0 }
+   end with
+
+   with object ( ::oBrowse:AddCol() )
+      :cHeader             := "%" + cImp() + " - % RE"
+      :bStrData            := {|| if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "PorcentajeIva" ) ), Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "PorcentajeIva" ), "@E 999.99" ), "" ) + CRLF + if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "PorcentajeRe" ) ) != nil ,  Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "PorcentajeRe" ), "@E 999.99"), "" ) }
+      :nWidth              := 160
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+   end with
+
+   /*with object ( oBrwIva:AddCol() )
+      :cHeader             := cImp() + " - RE"
+      :bStrData            := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 8 ], cPorDiv ), "" ) + CRLF + if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
+      :nWidth              := 160
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :nFootStrAlign       := 1
+      :bFooter             := {|| 0 }
+   end with
+
+   with object ( oBrwIva:AddCol() )
+      :cHeader             := "Total"
+      :bStrData            := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 8 ] + aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
+      :nWidth              := 170
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+      :nFootStrAlign       := 1
+      :bFooter             := {|| 0 }
+   end with*/
+
    ::oBrowse:nHeaderHeight    := 48
    ::oBrowse:nFooterHeight    := 48
    ::oBrowse:nRowHeight       := 96
    ::oBrowse:nDataLines       := 2
 
-   ::oBrowse:SetArray( ::oSender:hDictionaryDetail, , , .f. )
-
-   ::oSender:PropiedadesBrowseDetail()
-
-   ::oBrowse:bLDblClick       := {|| MsgInfo( "DobleClick" ) }
+   ::oBrowse:SetArray( ::hTotalIva, , , .f. )
 
    ::oBrowse:CreateFromCode()
 
