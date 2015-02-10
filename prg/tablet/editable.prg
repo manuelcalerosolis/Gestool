@@ -18,6 +18,8 @@ CLASS Editable
    DATA hDictionaryMaster
    DATA hDictionaryDetail
    DATA hDictionaryDetailTemporal
+
+   DATA aDetails                          INIT {}
  
    METHOD Append()
    METHOD Edit()
@@ -35,6 +37,10 @@ CLASS Editable
       METHOD saveDocumento()        
 
    METHOD getWorkArea()                   INLINE ( D():Get( ::cDataTable, ::nView ) )
+
+   //
+
+   METHOD addDetail( oDetail )            INLINE ( aAdd( ::aDetails, oDetail ) )
 
    METHOD setDetailArea( cDetailArea )    INLINE ( ::cDetailArea  := cDetailArea )
    METHOD getDetailArea()                 INLINE ( ::cDetailArea )

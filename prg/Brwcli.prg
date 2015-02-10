@@ -803,7 +803,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    oFld:aDialogs[2]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ) } )
    oFld:aDialogs[2]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ) } )
    
-   if lSatCli
+   if isTrue( lSatCli )
       oDlg:AddFastKey( VK_F5, {|| EndDialog( oDlg ) } )
    end if   
 

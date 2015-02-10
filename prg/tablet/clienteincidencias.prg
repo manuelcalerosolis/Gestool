@@ -1,13 +1,11 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS Cliente FROM Ventas
+CLASS ClienteIncidencia FROM Editable
 
-   DATA oClienteIncidencia
+   METHOD New( oSender )
 
-   METHOD New()
-
-   METHOD setEnviroment()        INLINE ( ::setDataTable( "Client" ) ) 
+   METHOD setEnviroment()        INLINE ( ::setDataTable( "CliInc" ) ) 
    
    METHOD setNavigator() 
    
@@ -19,25 +17,19 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS Cliente
+METHOD New( oSender ) CLASS ClienteIncidencia
 
-   if ::OpenFiles()
+   ::oSender   := oSender
 
-      ::oClienteIncidencia    := ClienteIncidencia():New( Self )
-      
-      ::setEnviroment()
+   ::setEnviroment()
 
-      ::setNavigator()
-
-      ::CloseFiles()
-
-   end if   
+   ::setNavigator()
 
 return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setNavigator() CLASS Cliente
+METHOD setNavigator() CLASS ClienteIncidencia
 
    ::oViewNavigator       := ViewNavigator():New( self )
 
@@ -55,7 +47,7 @@ return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD propiedadesBrowse() CLASS Cliente
+METHOD propiedadesBrowse() CLASS ClienteIncidencia
 
    ::oViewNavigator:setBrowseConfigurationName( "Grid clientes" )
 
@@ -75,7 +67,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( nMode ) CLASS Cliente
+METHOD Resource( nMode ) CLASS ClienteIncidencia
 
    ::oViewEdit       := ViewCliente():New( self )
 

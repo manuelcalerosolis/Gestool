@@ -2512,6 +2512,18 @@ Return nil
 Function TGenMailingDatabaseFacturasClientes()
 Return nil
 
+Function TGENMAILINGDATABASEPRESUPUESTOSCLIENTES()
+Return nil
+
+Function TGENMAILINGDATABASEPEDIDOSCLIENTES() 
+Return nil
+
+Function TGENMAILINGDATABASESATCLIENTES()
+Return nil
+
+Function TGENMAILINGDATABASEALBARANESCLIENTES()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP
