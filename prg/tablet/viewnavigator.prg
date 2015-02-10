@@ -8,7 +8,6 @@ CLASS ViewNavigator FROM ViewBase
    DATA oSender
 
    DATA aItemsBusqueda
-   DATA WorkArea
    
    METHOD New()
 
@@ -23,7 +22,7 @@ CLASS ViewNavigator FROM ViewBase
    METHOD setBrowseConfigurationName( cName ) ;
                                        INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
 
-   METHOD setWorkArea( WorkArea )      INLINE ( ::WorkArea := WorkArea )
+   METHOD getWorkArea()                INLINE ( ::oSender:getWorkArea() )
 
    METHOD BotonesAcciones()
 
@@ -148,8 +147,8 @@ METHOD BarraBusqueda() CLASS ViewNavigator
                                                    "oWnd"      => ::oDlg,;
                                                    "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                                                    "nHeight"   => 25,;
-                                                   "bValid"    => {|| OrdClearScope( ::oBrowse, ::WorkArea ) },;
-                                                   "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetSearch, ::oBrowse, ::WorkArea, .t. ) } } )
+                                                   "bValid"    => {|| OrdClearScope( ::oBrowse, ::getWorkArea() ) },;
+                                                   "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetSearch, ::oBrowse, ::getWorkArea(), .t. ) } } )
 
    oComboboxOrden    := TGridComboBox():Build(  {  "nRow"      => 45,;
                                                    "nCol"      => {|| GridWidth( 9.5, ::oDlg ) },;
@@ -180,7 +179,7 @@ Return ( cOrden )
 
 METHOD ChangeComboboxOrden( oComboboxOrden, oGetSearch ) CLASS ViewNavigator
 
-   ( ::WorkArea )->( OrdSetFocus( oComboboxOrden:nAt ) )
+   ( ::getWorkArea() )->( OrdSetFocus( oComboboxOrden:nAt ) )
    
    oGetSearch:SetFocus()
 
@@ -205,7 +204,7 @@ METHOD BrowseGeneral() CLASS ViewNavigator
    ::oBrowse:nRowHeight       := 96
    ::oBrowse:nDataLines       := 2
 
-   ::oBrowse:cAlias           := ::WorkArea
+   ::oBrowse:cAlias           := ::getWorkArea()
 
    ::oSender:PropiedadesBrowse()
 

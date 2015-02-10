@@ -20,45 +20,45 @@ METHOD OpenFiles() CLASS Ventas
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::nView              := D():CreateView()
+      ::nView           := D():CreateView()
 
-   D():PedidosClientes( ::nView )
+      D():PedidosClientes( ::nView )
 
-   D():PedidosClientesLineas( ::nView )
+      D():PedidosClientesLineas( ::nView )
 
-   D():AlbaranesClientes( ::nView )
+      D():AlbaranesClientes( ::nView )
 
-   D():AlbaranesClientesLineas( ::nView )
+      D():AlbaranesClientesLineas( ::nView )
 
-   D():TiposIva( ::nView )
+      D():TiposIva( ::nView )
 
-   D():Divisas( ::nView )
+      D():Divisas( ::nView )
 
-   D():Clientes( ::nView )
+      D():Clientes( ::nView )
 
-   D():ClientesDirecciones( ::nView )
+      D():ClientesDirecciones( ::nView )
 
-   D():Articulos( ::nView )
+      D():Articulos( ::nView )
 
-   D():ArticulosCodigosBarras( ::nView )
+      D():ArticulosCodigosBarras( ::nView )
 
-   D():ProveedorArticulo( ::nView )
+      D():ProveedorArticulo( ::nView )
 
-   D():Proveedores( ::nView )
+      D():Proveedores( ::nView )
 
-   D():Familias( ::nView )
+      D():Familias( ::nView )
 
-   D():ImpuestosEspeciales( ::nView )
+      D():ImpuestosEspeciales( ::nView )
 
-   D():Kit( ::nView )
+      D():Kit( ::nView )
 
-   D():Contadores( ::nView )
+      D():Contadores( ::nView )
 
-   D():Documentos( ::nView )
+      D():Documentos( ::nView )
 
    RECOVER USING oError
 
-      lOpenFiles        := .f.
+      lOpenFiles     := .f.
 
       ApoloMsgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 

@@ -5749,9 +5749,6 @@ METHOD getHashRecord( cDataTable, nView ) CLASS D
    local aDictionary := TDataCenter():getDictionary( cDataTable )
 
    if isHash( aDictionary ) .and. !empty( dbf )
-
-      //hEval( aDictionary, {|key,value| msgAlert(key, "key"), msgAlert(value,"value") } )
-
       hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
    end if 
 
@@ -5767,7 +5764,11 @@ METHOD appendHashRecord( hTable, cDataTable, nView ) CLASS D
    if empty( workArea )
       return ( nil )
    end if
-      
+
+   if empty( hDictionary )
+      return ( nil )
+   end if
+
    ( workArea )->( dbAppend() )
    if !( workArea )->( neterr() )
       ::setHashRecord( hTable, workArea, hDictionary )
@@ -5787,7 +5788,11 @@ METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
       return ( nil )
    end if
       
-   if !( workArea )->( dblock() )
+   if empty( hDictionary )
+      return ( nil )
+   end if
+
+   if ( workArea )->( dbrlock() )
       ::setHashRecord( hTable, workArea, hDictionary )
       ( workArea )->( dbUnLock() )
    end if 
@@ -5795,7 +5800,6 @@ METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD setHashRecord( hTable, workArea, hDictionary ) CLASS D
 

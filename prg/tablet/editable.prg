@@ -6,14 +6,14 @@ CLASS Editable
    DATA oThis
    DATA oDlg
    DATA nView
-   DATA cWorkArea
+
+   DATA cDataTable
 
    DATA oViewNavigator
    DATA oViewEdit
 
    DATA cDetailArea
    DATA nPosDetail                        INIT 0
-   DATA Style                             INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
    
    DATA hDictionaryMaster
    DATA hDictionaryDetail
@@ -23,16 +23,18 @@ CLASS Editable
    METHOD Edit()
    METHOD Delete()
 
-   METHOD getAppendDocumento()            VIRTUAL
-   METHOD getEditDocumento()              VIRTUAL
+   METHOD setDataTable( cDataTable )      INLINE ( ::cDataTable := cDataTable )
+   METHOD getDataTable()                  INLINE ( ::cDataTable )
+
+   METHOD getAppendDocumento()            INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
+   METHOD getEditDocumento()              INLINE ( ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView ) )
       METHOD Resource()                   VIRTUAL
 
-   METHOD setAppendDocumento()            VIRTUAL
-   METHOD setEditDocumento()              VIRTUAL
+   METHOD saveAppendDocumento()           INLINE ( D():appendHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
+   METHOD saveEditDocumento()             INLINE ( D():editHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
       METHOD saveDocumento()        
 
-   METHOD setWorkArea( cWorkArea )        INLINE ( ::cWorkArea  := cWorkArea )
-   METHOD getWorkArea()                   INLINE ( ::cWorkArea )
+   METHOD getWorkArea()                   INLINE ( D():Get( ::cDataTable, ::nView ) )
 
    METHOD setDetailArea( cDetailArea )    INLINE ( ::cDetailArea  := cDetailArea )
    METHOD getDetailArea()                 INLINE ( ::cDetailArea )
@@ -53,7 +55,7 @@ METHOD Append() CLASS Editable
    ::getAppendDocumento()
 
    if ::Resource( APPD_MODE )
-      ::setAppendDocumento()
+      ::saveAppendDocumento()
    end if
 
 Return ( self )
@@ -65,7 +67,7 @@ METHOD Edit() CLASS Editable
    ::getEditDocumento()
 
    if ::Resource( EDIT_MODE )
-      ::setEditDocumento()
+      ::saveEditDocumento()
    end if
 
 Return ( self )

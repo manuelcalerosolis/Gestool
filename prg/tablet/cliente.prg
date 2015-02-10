@@ -5,12 +5,12 @@ CLASS Cliente FROM Ventas
 
    METHOD New()
 
-   METHOD setAreas()          INLINE ( ::setWorkArea( D():Clientes( ::nView ) ) )
+   METHOD setEnviroment()        INLINE ( ::setDataTable( "Client" ) ) 
    
    METHOD setNavigator() 
    
    METHOD propiedadesBrowse()
-
+/*
    METHOD getAppendDocumento() 
 
    METHOD getEditDocumento() 
@@ -18,7 +18,7 @@ CLASS Cliente FROM Ventas
    METHOD setAppendDocumento()
 
    METHOD setEditDocumento()
-
+*/
    METHOD Resource()
 
 ENDCLASS
@@ -29,7 +29,7 @@ METHOD New() CLASS Cliente
 
    if ::OpenFiles()
       
-      ::setAreas()
+      ::setEnviroment()
 
       ::setNavigator()
 
@@ -51,8 +51,6 @@ METHOD setNavigator() CLASS Cliente
 
       ::oViewNavigator:setItemsBusqueda( { "Código", "Nombre" } )
       
-      ::oViewNavigator:setWorkArea( ::getWorkArea() )
-
       ::oViewNavigator:ResourceViewNavigator()
 
    end if
@@ -80,12 +78,10 @@ METHOD propiedadesBrowse() CLASS Cliente
 Return ( self )
 
 //---------------------------------------------------------------------------//
-
+/*
 METHOD GetAppendDocumento() CLASS Cliente
 
-   ::hDictionaryMaster      := D():getDefaultHashClientes( ::nView )
-
-   msgAlert( hb_valtoexp( ::hDictionaryMaster ) )
+   ::hDictionaryMaster      := D():getHashRecordDefaultValues( ::getWorkArea(), ::nView )
 
 Return ( self )
 
@@ -93,9 +89,7 @@ Return ( self )
 
 METHOD GetEditDocumento() CLASS Cliente
 
-   ::hDictionaryMaster      := D():getCurrentHashClientes( ::nView ) 
-
-   msgAlert( hb_valtoexp( ::hDictionaryMaster ) )
+   ::hDictionaryMaster      := D():getHashRecord( ::getWorkArea(), ::nView ) 
 
 Return ( self )
 
@@ -114,7 +108,7 @@ METHOD setEditDocumento() CLASS Cliente
    D():editHashRecord( ::hDictionaryMaster, ::getWorkArea(), ::nView )
 
 Return ( self )
-
+*/
 //---------------------------------------------------------------------------//
 
 METHOD Resource( nMode ) CLASS Cliente
