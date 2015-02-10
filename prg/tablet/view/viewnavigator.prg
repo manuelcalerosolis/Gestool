@@ -24,7 +24,7 @@ CLASS ViewNavigator FROM ViewBase
 
    METHOD BrowseGeneral()
 
-   METHOD setColumns()
+   METHOD setColumns()                 VIRTUAL
       METHOD addColumn()               INLINE ( ::oBrowse:addCol() )
 
 END CLASS
