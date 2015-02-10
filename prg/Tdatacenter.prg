@@ -5089,7 +5089,8 @@ CLASS D
    METHOD getArrayRecordById( id, cDatabase, nView )
    METHOD setDefaultValue( hash, cDataTable, nView )
 
-   METHOD appendHashRecord( hTable, cDataTable, nView )   
+   METHOD appendHashRecord( hTable, cDataTable, nView )  
+   METHOD editHashRecord( hTable, cDataTable, nView ) 
 
    METHOD setHashRecord( cDatabase, nView )
    METHOD saveFieldsToRecord()
