@@ -1,11 +1,11 @@
 #include "FiveWin.Ch"
 #include "Factu.ch"
 
-CLASS PedidoCliente FROM DocumentosVentas  
+CLASS LineasPedidoCliente FROM LineasDocumentosVentas  
 
    METHOD New()
 
-   METHOD setAeras()
+   /*METHOD setAeras()
 
    METHOD setNavigator()
 
@@ -25,15 +25,15 @@ CLASS PedidoCliente FROM DocumentosVentas
    
    METHOD GetEditDetail()
 
-   METHOD StartResourceDetail()
+   METHOD StartResourceDetail()*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS PedidoCliente
+METHOD New() CLASS LineasPedidoCliente
 
-   if ::OpenFiles()
+   /*if ::OpenFiles()
       
       ::setAeras()
 
@@ -41,15 +41,17 @@ METHOD New() CLASS PedidoCliente
 
       ::CloseFiles()
 
-   end if   
+   end if   */
 
 return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setAeras() CLASS PedidoCliente
+/*METHOD setAeras() CLASS PedidoCliente
    
    ::setDataTable( "PedCliT" )
+   //::setWorkArea( D():PedidosClientes( ::nView ) )
+   //::setDetailArea( D():PedidosClientesLineas( ::nView ) )
 
    ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
 
@@ -59,14 +61,16 @@ return ( self )
 
 METHOD setNavigator() CLASS PedidoCliente
 
-   ::oViewSearchNavigator       := ViewSearchNavigator():New( self )
+   ::oViewNavigator       := ViewNavigator():New( self )
 
-   if !Empty( ::oViewSearchNavigator )
+   if !Empty( ::oViewNavigator )
 
-      ::oViewSearchNavigator:setTextoTipoDocuento( "Pedidos de cliente" )
-      ::oViewSearchNavigator:setItemsBusqueda( { "Número", "Fecha", "Código", "Nombre" } )
+      ::oViewNavigator:setTextoTipoDocuento( "Pedidos de cliente" )
+      ::oViewNavigator:setItemsBusqueda( { "Número", "Fecha", "Código", "Nombre" } )
       
-      ::oViewSearchNavigator:Resource()
+      ::oViewNavigator:setWorkArea( ::getWorkArea() )
+
+      ::oViewNavigator:ResourceViewNavigator()
 
    end if
 
@@ -76,21 +80,21 @@ return ( self )
 
 METHOD PropiedadesBrowse() CLASS PedidoCliente
 
-   ::oViewSearchNavigator:oBrowse:cName   := "Grid pedidos"
+   ::oViewNavigator:oBrowse:cName   := "Grid pedidos"
 
-   with object ( ::oViewSearchNavigator:oBrowse:AddCol() )
+   with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "Pedido"
       :bEditValue        := {|| D():PedidosClientesIdText( ::nView ) + CRLF + Dtoc( ( D():PedidosClientes( ::nView ) )->dFecPed ) }
       :nWidth            := 160
    end with
 
-   with object ( ::oViewSearchNavigator:oBrowse:AddCol() )
+   with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "Cliente"
       :bEditValue        := {|| AllTrim( ( D():PedidosClientes( ::nView ) )->cCodCli ) + CRLF + AllTrim( ( D():PedidosClientes( ::nView ) )->cNomCli )  }
       :nWidth            := 320
    end with
 
-   with object ( ::oViewSearchNavigator:oBrowse:AddCol() )
+   with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "Base"
       :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotNet  }
       :cEditPicture      := cPorDiv()
@@ -100,7 +104,7 @@ METHOD PropiedadesBrowse() CLASS PedidoCliente
       :lHide             := .t.
    end with
 
-   with object ( ::oViewSearchNavigator:oBrowse:AddCol() )
+   with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := cImp()
       :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotIva  }
       :cEditPicture      := cPorDiv()
@@ -110,7 +114,7 @@ METHOD PropiedadesBrowse() CLASS PedidoCliente
       :lHide             := .t.
    end with
 
-   with object ( ::oViewSearchNavigator:oBrowse:AddCol() )
+   with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "R.E."
       :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotReq  }
       :cEditPicture      := cPorDiv()
@@ -120,7 +124,7 @@ METHOD PropiedadesBrowse() CLASS PedidoCliente
       :lHide             := .t.
    end with
 
-   with object ( ::oViewSearchNavigator:oBrowse:AddCol() )
+   with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "Total"
       :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotPed }
       :cEditPicture      := cPorDiv()
@@ -313,6 +317,6 @@ METHOD GetEditDetail() CLASS PedidoCliente
       ::hDictionaryDetailTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
    end if
 
-Return ( self )
+Return ( self )*/
 
 //---------------------------------------------------------------------------//

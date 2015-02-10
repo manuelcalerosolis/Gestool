@@ -1,9 +1,9 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
  
-CLASS DocumentosVentas FROM Ventas
+CLASS LineasDocumentosVentas FROM Ventas
 
-   DATA nMode
+   /*DATA nMode
 
    DATA oViewEdit
    DATA oViewEditDetail
@@ -34,9 +34,11 @@ CLASS DocumentosVentas FROM Ventas
                                                "PorcentajeIva" => 21,;
                                                "ImporteIva" => 121,;
                                                "PorcentajeRe" => 1,;
-                                               "ImporteRe" => 1 } }  
+                                               "ImporteRe" => 1 } } */ 
 
-   METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
+   METHOD New()
+
+   /*METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
    METHOD isChangeSerieTablet( lReadyToSend, getSerie )
    
@@ -177,13 +179,20 @@ CLASS DocumentosVentas FROM Ventas
 
    METHOD lValidResumenVenta()
 
-   METHOD SetDocumentosFacturas()
+   METHOD SetDocumentosFacturas()*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD isChangeSerieTablet( getSerie ) CLASS DocumentosVentas
+METHOD New() CLASS LineasDocumentosVentas
+
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD isChangeSerieTablet( getSerie ) CLASS DocumentosVentas
    
    if hGet( ::hDictionaryMaster, "Envio" )
       ::ChangeSerieTablet( getSerie )
@@ -518,7 +527,6 @@ METHOD RecalculaLinea() CLASS DocumentosVentas
 
    /*
    IVMH------------------------------------------------------------------------
-   */
 
    if !hGet( ::hDictionaryDetailTemporal, "LineaImpuestoIncluido" )
 
@@ -534,7 +542,6 @@ METHOD RecalculaLinea() CLASS DocumentosVentas
 
    /*
    Transporte------------------------------------------------------------------
-   */
 
    if hGet( ::hDictionaryDetailTemporal, "Portes" ) != 0
       nCalculo       += hGet( ::hDictionaryDetailTemporal, "Portes" ) * nUnidades
@@ -542,7 +549,6 @@ METHOD RecalculaLinea() CLASS DocumentosVentas
 
    /*
    Descuentos------------------------------------------------------------------
-   */
 
    if hGet( ::hDictionaryDetailTemporal, "DescuentoPorcentual" ) != 0
       nCalculo       -= nCalculo * hGet( ::hDictionaryDetailTemporal, "DescuentoPorcentual" ) / 100
@@ -554,7 +560,6 @@ METHOD RecalculaLinea() CLASS DocumentosVentas
 
    /*
    Punto Verde-----------------------------------------------------------------
-   */
 
    if hGet( ::hDictionaryMaster, "OperarPuntoVerde" )
       nCalculo       += hGet( ::hDictionaryDetailTemporal, "PuntoVerde" ) * nUnidades
@@ -839,10 +844,6 @@ METHOD CargaArticulo() CLASS DocumentosVentas
 
    ::cOldCodidoArticulo    := hGet( ::hDictionaryDetailTemporal, "Articulo" )
 
-   /*
-   Refrescamos el diálogo, una vez insertado los datos-------------------------
-   */
-
    ::oViewEditDetail:RefreshDialog()
 
 Return ( .t. )
@@ -855,7 +856,6 @@ METHOD lValidResumenVenta() CLASS DocumentosVentas
    
    /*
    Comprobamos que el cliente no esté vacío-----------------------------------
-   */
 
    if Empty( hGet( ::hDictionaryMaster, "Cliente" ) )
       ApoloMsgStop( "Cliente no puede estar vacío.", "¡Atención!" )
@@ -864,7 +864,6 @@ METHOD lValidResumenVenta() CLASS DocumentosVentas
 
    /*
    Comprobamos que el documento tenga líneas----------------------------------
-   */
 
    if len( ::hDictionaryDetail ) <= 0
       ApoloMsgStop( "No puede almacenar un documento sin lineas.", "¡Atención!" )
@@ -929,6 +928,6 @@ METHOD SetDocumentosFacturas() CLASS DocumentosVentas
    ::oViewEditResumen:SetImpresoras( aFormatos )
    ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
 
-return ( .t. )
+return ( .t. )*/
 
 //---------------------------------------------------------------------------//
