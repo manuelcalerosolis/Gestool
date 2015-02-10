@@ -3,20 +3,34 @@
 
 CLASS ViewSearchNavigator FROM ViewNavigator
 
+   METHOD New( oSender )
+
+   DATA cTextoTipoDocumento
+   METHOD setTextoTipoDocumento()      VIRTUAL
+
    DATA aItemsBusqueda
-   
+   METHOD setItemsBusqueda()           VIRTUAL
+
    METHOD Resource()
    
    METHOD BarraBusqueda()
-   METHOD SetItemsBusqueda( aItems )   INLINE ( ::aItemsBusqueda := aItems )
 
    METHOD getComboboxOrden()
-   METHOD ChangeComboboxOrden()
-
-   METHOD setBrowseConfigurationName( cName ) ;
-                                       INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
+   METHOD changeComboboxOrden()
 
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( oSender ) CLASS ViewSearchNavigator
+
+   ::oSender   := oSender
+
+   ::setTextoTipoDocumento()
+
+   ::setItemsBusqueda()
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 

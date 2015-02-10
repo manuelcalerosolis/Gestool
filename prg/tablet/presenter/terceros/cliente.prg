@@ -1,11 +1,13 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS ClienteIncidencia FROM Editable
+CLASS Cliente FROM Ventas
 
-   METHOD New( oSender )
+   DATA oClienteIncidencia
 
-   METHOD setEnviroment()        INLINE ( ::setDataTable( "CliInc" ) ) 
+   METHOD New()
+
+   METHOD setEnviroment()        INLINE ( ::setDataTable( "Client" ) ) 
    
    METHOD setNavigator() 
    
@@ -17,25 +19,31 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS ClienteIncidencia
+METHOD New() CLASS Cliente
 
-   ::oSender   := oSender
+   if ::OpenFiles()
 
-   ::setEnviroment()
+      // ::oClienteIncidencia    := ClienteIncidencia():New( Self )
+      
+      ::setEnviroment()
 
-   ::setNavigator()
+      ::setNavigator()
+
+      ::CloseFiles()
+
+   end if   
 
 return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setNavigator() CLASS ClienteIncidencia
+METHOD setNavigator() CLASS Cliente
 
    ::oViewNavigator       := ViewNavigator():New( self )
 
    if !Empty( ::oViewNavigator )
 
-      ::oViewNavigator:setTextoTipoDocuento( "Clientes" )
+      ::oViewNavigator:SetTextoTipoDocumento( "Clientes" )
 
       ::oViewNavigator:setItemsBusqueda( { "Código", "Nombre" } )
       
@@ -47,7 +55,7 @@ return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD propiedadesBrowse() CLASS ClienteIncidencia
+METHOD propiedadesBrowse() CLASS Cliente
 
    ::oViewNavigator:setBrowseConfigurationName( "Grid clientes" )
 
@@ -67,13 +75,13 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( nMode ) CLASS ClienteIncidencia
+METHOD Resource( nMode ) CLASS Cliente
 
    ::oViewEdit       := ViewCliente():New( self )
 
    if !Empty( ::oViewEdit )
 
-      ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "cliente" )
+      ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "cliente" )
       
       ::oViewEdit:ResourceViewEdit( nMode )
 

@@ -23,7 +23,7 @@ METHOD New() CLASS Cliente
 
    if ::OpenFiles()
 
-      ::oClienteIncidencia    := ClienteIncidencia():New( Self )
+      // ::oClienteIncidencia    := ClienteIncidencia():New( Self )
       
       ::setEnviroment()
 
@@ -43,7 +43,7 @@ METHOD setNavigator() CLASS Cliente
 
    if !Empty( ::oViewNavigator )
 
-      ::oViewNavigator:setTextoTipoDocuento( "Clientes" )
+      ::oViewNavigator:SetTextoTipoDocumento( "Clientes" )
 
       ::oViewNavigator:setItemsBusqueda( { "Código", "Nombre" } )
       
@@ -81,7 +81,7 @@ METHOD Resource( nMode ) CLASS Cliente
 
    if !Empty( ::oViewEdit )
 
-      ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "cliente" )
+      ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "cliente" )
       
       ::oViewEdit:ResourceViewEdit( nMode )
 

@@ -1,11 +1,12 @@
 #include "FiveWin.Ch"
 #include "Factu.ch"
+#include "Xbrowse.ch"
 
-CLASS LineasPedidoCliente FROM LineasDocumentosVentas  
+CLASS AlbaranCliente FROM DocumentosVentas  
 
    METHOD New()
-
-   /*METHOD setAeras()
+   
+   METHOD setAeras()
 
    METHOD setNavigator()
 
@@ -22,81 +23,76 @@ CLASS LineasPedidoCliente FROM LineasDocumentosVentas
    METHOD GetEditDocumento()
 
    METHOD GetAppendDetail()
-   
    METHOD GetEditDetail()
-
-   METHOD StartResourceDetail()*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS LineasPedidoCliente
+METHOD New() CLASS AlbaranCliente
 
-   /*if ::OpenFiles()
-      
+   if ::OpenFiles()
+
       ::setAeras()
 
       ::setNavigator()
 
       ::CloseFiles()
 
-   end if   */
+   end if   
 
 return ( self )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD setAeras() CLASS PedidoCliente
-   
-   ::setDataTable( "PedCliT" )
-   //::setWorkArea( D():PedidosClientes( ::nView ) )
-   //::setDetailArea( D():PedidosClientesLineas( ::nView ) )
+METHOD setAeras() CLASS AlbaranCliente
+
+   ::setWorkArea( D():AlbaranesClientes( ::nView ) )  
+   ::setDetailArea( D():AlbaranesClientesLineas( ::nView ) )
 
    ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
 
-return ( self )
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setNavigator() CLASS PedidoCliente
+METHOD setNavigator() CLASS AlbaranCliente
 
    ::oViewNavigator       := ViewNavigator():New( self )
 
    if !Empty( ::oViewNavigator )
 
-      ::oViewNavigator:setTextoTipoDocuento( "Pedidos de cliente" )
-      ::oViewNavigator:setItemsBusqueda( { "Número", "Fecha", "Código", "Nombre" } )
-      
+      ::oViewNavigator:SetTextoTipoDocumento( "Albaranes de cliente" )
+      ::oViewNavigator:SetItemsBusqueda( { "Número", "Fecha", "Código", "Nombre" } )
       ::oViewNavigator:setWorkArea( ::getWorkArea() )
 
       ::oViewNavigator:ResourceViewNavigator()
 
    end if
 
-return ( self )
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD PropiedadesBrowse() CLASS PedidoCliente
+METHOD PropiedadesBrowse() CLASS AlbaranCliente
 
-   ::oViewNavigator:oBrowse:cName   := "Grid pedidos"
+   ::oViewNavigator:oBrowse:cName       := "Grid albaranes"
 
    with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := "Pedido"
-      :bEditValue        := {|| D():PedidosClientesIdText( ::nView ) + CRLF + Dtoc( ( D():PedidosClientes( ::nView ) )->dFecPed ) }
+      :cHeader           := "Albarán"
+      :bEditValue        := {|| D():AlbaranesClientesIdText( ::nView ) + CRLF + Dtoc( ( D():AlbaranesClientes( ::nView ) )->dFecAlb ) }
       :nWidth            := 160
    end with
 
    with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "Cliente"
-      :bEditValue        := {|| AllTrim( ( D():PedidosClientes( ::nView ) )->cCodCli ) + CRLF + AllTrim( ( D():PedidosClientes( ::nView ) )->cNomCli )  }
+      :bEditValue        := {|| AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) + CRLF + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cNomCli )  }
       :nWidth            := 320
    end with
 
    with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "Base"
-      :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotNet  }
+      :bEditValue        := {|| ( D():AlbaranesClientes( ::nView ) )->nTotNet  }
       :cEditPicture      := cPorDiv()
       :nWidth            := 80
       :nDataStrAlign     := 1
@@ -106,7 +102,7 @@ METHOD PropiedadesBrowse() CLASS PedidoCliente
 
    with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := cImp()
-      :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotIva  }
+      :bEditValue        := {|| ( D():AlbaranesClientes( ::nView ) )->nTotIva  }
       :cEditPicture      := cPorDiv()
       :nWidth            := 80
       :nDataStrAlign     := 1
@@ -116,7 +112,7 @@ METHOD PropiedadesBrowse() CLASS PedidoCliente
 
    with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "R.E."
-      :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotReq  }
+      :bEditValue        := {|| ( D():AlbaranesClientes( ::nView ) )->nTotReq  }
       :cEditPicture      := cPorDiv()
       :nWidth            := 80
       :nDataStrAlign     := 1
@@ -126,7 +122,7 @@ METHOD PropiedadesBrowse() CLASS PedidoCliente
 
    with object ( ::oViewNavigator:oBrowse:AddCol() )
       :cHeader           := "Total"
-      :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotPed }
+      :bEditValue        := {|| ( D():AlbaranesClientes( ::nView ) )->nTotAlb }
       :cEditPicture      := cPorDiv()
       :nWidth            := 190
       :nDataStrAlign     := 1
@@ -137,13 +133,13 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( nMode ) CLASS PedidoCliente
+METHOD Resource( nMode ) CLASS AlbaranCliente
 
    ::oViewEdit       := ViewEdit():New( self )
 
    if !Empty( ::oViewEdit )
 
-      ::oViewEdit:setTextoTipoDocuento( LblTitle( nMode ) + "pedido" )
+      ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "albarán" )
       
       ::oViewEdit:ResourceViewEdit( nMode )
 
@@ -153,17 +149,15 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceDetail( nMode ) CLASS PedidoCliente
+METHOD ResourceDetail( nMode ) CLASS AlbaranCliente
 
    local lResult     := .f.
-
-   ::nMode           := nMode
 
    ::oViewEditDetail := ViewDetail():New( self )
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:setTextoTipoDocuento( LblTitle( nMode ) + " linea de pedido" )
+      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + " linea de albarán" )
       
       lResult        := ::oViewEditDetail:ResourceViewEditDetail( nMode )
 
@@ -173,37 +167,27 @@ Return ( lResult )
 
 //---------------------------------------------------------------------------//
 
-METHOD StartResourceDetail() CLASS PedidoCliente
+METHOD GetAppendDocumento() CLASS AlbaranCliente
 
-   ::CargaArticulo()
-
-   ::RecalculaLinea()
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetAppendDocumento() CLASS PedidoCliente
-
-   ::hDictionaryMaster      := D():GetPedidoClienteDefaultValue( ::nView )
+   ::hDictionaryMaster      := D():getDefaultHashAlbaranCliente( ::nView )
    ::hDictionaryDetail      := {}
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetEditDocumento() CLASS PedidoCliente
+METHOD GetEditDocumento() CLASS AlbaranCliente
 
-   ::hDictionaryMaster      := D():GetPedidoClienteById( D():PedidosClientesId( ::nView ), ::nView ) 
-   ::hDictionaryDetail      := D():GetPedidoClienteLineas( ::nView )
+   ::hDictionaryMaster      := D():getCurrentHashAlbaranCliente( ::nView ) 
+   ::hDictionaryDetail      := D():GetAlbaranClienteLineas( ::nView )
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD PropiedadesBrowseDetail() CLASS PedidoCliente
+METHOD PropiedadesBrowseDetail() CLASS AlbaranCliente
 
-   ::oViewEdit:oBrowse:cName  := "Grid pedidos lineas"
+   ::oViewEdit:oBrowse:cName            := "Grid albaranes lineas"
 
    with object ( ::oViewEdit:oBrowse:AddCol() )
       :cHeader                := "Número"
@@ -252,7 +236,7 @@ METHOD PropiedadesBrowseDetail() CLASS PedidoCliente
 
    with object ( ::oViewEdit:oBrowse:AddCol() )
       :cHeader                := "Und"
-      :bEditValue             := {|| nTotNPedCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
+      :bEditValue             := {|| nTotNAlbCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
       :cEditPicture           := MasUnd()
       :nWidth                 := 90
       :nDataStrAlign          := 1
@@ -262,7 +246,7 @@ METHOD PropiedadesBrowseDetail() CLASS PedidoCliente
 
    with object ( ::oViewEdit:oBrowse:AddCol() )
       :cHeader                := "Precio"
-      :bEditValue             := {|| nTotUPedCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
+      :bEditValue             := {|| nTotUAlbCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
       :cEditPicture           := cPouDiv( hGet( ::hDictionaryMaster, "Divisa" ), D():Divisas( ::nView ) )
       :nWidth                 := 90
       :nDataStrAlign          := 1
@@ -291,7 +275,7 @@ METHOD PropiedadesBrowseDetail() CLASS PedidoCliente
 
    with object ( ::oViewEdit:oBrowse:AddCol() )
       :cHeader                := "Total"
-      :bEditValue             := {|| nTotalLineaPedidoCliente( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], , , , .t., hGet( ::hDictionaryMaster, "OperarPuntoVerde" ), .t. ) }
+      :bEditValue             := {|| nTotalLineaAlbaranCliente( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], , , , .t., hGet( ::hDictionaryMaster, "OperarPuntoVerde" ), .t. ) }
       :cEditPicture           := cPouDiv( hGet( ::hDictionaryMaster, "Divisa" ), D():Divisas( ::nView ) )
       :nWidth                 := 94
       :nDataStrAlign          := 1
@@ -303,20 +287,18 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetAppendDetail() CLASS PedidoCliente
+METHOD GetAppendDetail() CLASS AlbaranCliente
 
-   ::hDictionaryDetailTemporal      := D():GetPedidoClienteLineaBlank( ::nView )
+   ::hDictionaryDetailTemporal      := D():GetAlbaranClienteLineaBlank( ::nView )
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetEditDetail() CLASS PedidoCliente
+METHOD GetEditDetail() CLASS AlbaranCliente
 
-   if !Empty( ::nPosDetail )
-      ::hDictionaryDetailTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
-   end if
+   ::hDictionaryDetailTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
 
-Return ( self )*/
+Return ( self )
 
 //---------------------------------------------------------------------------//
