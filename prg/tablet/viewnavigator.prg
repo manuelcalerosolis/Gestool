@@ -7,21 +7,12 @@ CLASS ViewNavigator FROM ViewBase
    DATA oBrowse
    DATA oSender
 
-   DATA aItemsBusqueda
-   
    METHOD New()
 
-   METHOD ResourceViewNavigator()
+   METHOD Resource()
+
+   METHOD SetDialog( oDlg )            INLINE ( ::oDlg := oDlg )
    
-   METHOD BarraBusqueda()
-   METHOD SetItemsBusqueda( aItems )   INLINE ( ::aItemsBusqueda := aItems )
-
-   METHOD getComboboxOrden()
-   METHOD ChangeComboboxOrden()
-
-   METHOD setBrowseConfigurationName( cName ) ;
-                                       INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
-
    METHOD getWorkArea()                INLINE ( ::oSender:getWorkArea() )
 
    METHOD BotonesAcciones()
@@ -42,25 +33,13 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceViewNavigator() CLASS ViewNavigator
-
-   ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
-
-   ::TituloBrowse()
-
-   ::BotonSalirBrowse()
-
-   ::BarraBusqueda()
+METHOD Resource() CLASS ViewNavigator
 
    ::BotonesAcciones()
 
    ::BotonesMovimientoBrowse()
 
    ::BrowseGeneral()
-
-   ::oDlg:bResized         := {|| ::DialogResize() }
-
-   ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
 Return ( self )
 
@@ -129,61 +108,6 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "cResName"  => "flat_page_down_64",;
                            "bLClicked" => {|| ::oBrowse:PageDown(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() },;
                            "oWnd"      => ::oDlg } )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD BarraBusqueda() CLASS ViewNavigator
-
-   local cGetSearch        := Space( 100 )
-   local oGetSearch
-   local oComboboxOrden
-   local cComboboxOrden    := ::getComboboxOrden()
-
-   oGetSearch        := TGridGet():Build(       {  "nRow"      => 45,;
-                                                   "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                                                   "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
-                                                   "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
-                                                   "nHeight"   => 25,;
-                                                   "bValid"    => {|| OrdClearScope( ::oBrowse, ::getWorkArea() ) },;
-                                                   "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetSearch, ::oBrowse, ::getWorkArea(), .t. ) } } )
-
-   oComboboxOrden    := TGridComboBox():Build(  {  "nRow"      => 45,;
-                                                   "nCol"      => {|| GridWidth( 9.5, ::oDlg ) },;
-                                                   "bSetGet"   => {|u| if( PCount() == 0, cComboboxOrden, cComboboxOrden := u ) },;
-                                                   "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                                                   "nHeight"   => 25,;
-                                                   "aItems"    => ::aItemsBusqueda,;
-                                                   "bChange"   => {|| ::ChangeComboboxOrden( oComboboxOrden, oGetSearch ) } } )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD getComboboxOrden() CLASS ViewNavigator
-
-   local cOrden   := ""
-
-   if isArray( ::aItemsBusqueda ) .and. len( ::aItemsBusqueda ) > 1
-
-      cOrden      := ::aItemsBusqueda[1]
-
-   end if
-
-Return ( cOrden )
-
-//---------------------------------------------------------------------------//
-
-METHOD ChangeComboboxOrden( oComboboxOrden, oGetSearch ) CLASS ViewNavigator
-
-   ( ::getWorkArea() )->( OrdSetFocus( oComboboxOrden:nAt ) )
-   
-   oGetSearch:SetFocus()
-
-   ::oBrowse:Refresh()
 
 Return ( self )
 

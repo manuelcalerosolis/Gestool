@@ -10,6 +10,7 @@ CLASS Editable
    DATA cDataTable
 
    DATA oViewNavigator
+   DATA oViewSearchNavigator
    DATA oViewEdit
 
    DATA cDetailArea
