@@ -11903,14 +11903,14 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 
          end if
 
-         if !Empty( aGet[ _CCODALM ] )
+         /*if !Empty( aGet[ _CCODALM ] )
             if ( Empty( aGet[ _CCODALM ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodAlm )
                aGet[ _CCODALM ]:cText( ( D():Clientes( nView ) )->cCodAlm )
                aGet[ _CCODALM ]:lValid()
             end if
          else
          	aTmp[ _CCODALM ] 	:= ( D():Clientes( nView ) )->cCodAlm
-         end if
+         end if*/
 
          if !Empty( aGet[ _CCODTAR ] )
             if ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTar )
