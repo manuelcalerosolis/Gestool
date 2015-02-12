@@ -841,6 +841,8 @@ return uResultado
 
 static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oBrwMaq, oBrwTmp, oGraph, oBtnAceptar )
 
+   DEFAULT lSatCli   := .f.
+
    LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta )
 
    LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
