@@ -31,23 +31,25 @@ END CLASS
 
 METHOD New() CLASS PedidoCliente
 
+   ::oViewSearchNavigator  := PedidoClienteViewSearchNavigator():New( self )
+
+   ::oViewEdit             := PedidoClienteViewEdit():New( self )
+
    if ::OpenFiles()
-      
+
       ::setEnviroment()
 
       ::setNavigator()
 
       ::CloseFiles()
 
-   end if   
+   end if
 
 return ( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD setNavigator() CLASS PedidoCliente
-
-   ::oViewSearchNavigator       := PedidoClienteViewSearchNavigator():New( self )
 
    if !Empty( ::oViewSearchNavigator )
       ::oViewSearchNavigator:Resource()
@@ -59,17 +61,20 @@ return ( self )
 
 METHOD Resource( nMode ) CLASS PedidoCliente
 
-   ::oViewEdit       := ViewEdit():New( self )
+   local lResource   := .f.
+
+
+   ?"Entro por el resource de pedido cliente.prg"
 
    if !Empty( ::oViewEdit )
 
       ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "pedido" )
       
-      ::oViewEdit:ResourceViewEdit( nMode )
+      lResource            := ::oViewEdit:Resource( nMode )
 
    end if
 
-Return ( .t. )   
+Return ( lResource )   
 
 //---------------------------------------------------------------------------//
 

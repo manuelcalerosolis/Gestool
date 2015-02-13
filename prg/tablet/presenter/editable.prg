@@ -40,8 +40,6 @@ CLASS Editable
 
    METHOD getWorkArea()                   INLINE ( D():Get( ::cDataTable, ::nView ) )
 
-   //
-
    METHOD addDetail( oDetail )            INLINE ( aAdd( ::aDetails, oDetail ) )
 
    METHOD setDetailArea( cDetailArea )    INLINE ( ::cDetailArea  := cDetailArea )
@@ -66,13 +64,9 @@ METHOD Append() CLASS Editable
 
    lAppend  := ::Resource( APPD_MODE )
 
-   msgAlert( lAppend, "dentro del metodo Append")
-
    if lAppend
       lAppend     := ::saveAppendDocumento()
    end if
-
-   msgAlert( lAppend, "Append")
 
 Return ( lAppend )
 
@@ -96,7 +90,7 @@ METHOD Delete() CLASS Editable
 
    local lDelete  := .f.
 
-   if msgNoYes( "¿Desea eliminar el registro?", "Seleccione")
+   if ApoloMsgNoYes( "¿Desea eliminar el registro?", "Seleccione", .t. )
       lDelete     := ::deleteDocumento()
    end if 
 
