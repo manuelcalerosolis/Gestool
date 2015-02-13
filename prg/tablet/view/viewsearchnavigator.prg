@@ -5,15 +5,12 @@ CLASS ViewSearchNavigator FROM ViewNavigator
 
    METHOD New( oSender )
 
-   DATA cTextoTipoDocumento
-   METHOD setTextoTipoDocumento()      VIRTUAL
-
    DATA aItemsBusqueda
    METHOD setItemsBusqueda()           VIRTUAL
 
    METHOD Resource()
    
-   METHOD BarraBusqueda()
+   METHOD defineBarraBusqueda()
 
    METHOD getComboboxOrden()
    METHOD changeComboboxOrden()
@@ -38,15 +35,15 @@ METHOD Resource() CLASS ViewSearchNavigator
 
    ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
-   ::TituloBrowse()
+   ::defineTitulo()
 
-   ::BotonSalirBrowse()
+   ::defineSalir()
 
-   ::BarraBusqueda()
+   ::defineBarraBusqueda()
 
    ::Super:Resource()
 
-   ::oDlg:bResized         := {|| ::DialogResize() }
+   ::oDlg:bResized         := {|| ::resizeDialog() }
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
@@ -54,7 +51,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BarraBusqueda() CLASS ViewSearchNavigator
+METHOD defineBarraBusqueda() CLASS ViewSearchNavigator
 
    local cGetSearch        := Space( 100 )
    local oGetSearch
@@ -88,9 +85,7 @@ METHOD getComboboxOrden() CLASS ViewSearchNavigator
    local cOrden   := ""
 
    if isArray( ::aItemsBusqueda ) .and. len( ::aItemsBusqueda ) > 1
-
       cOrden      := ::aItemsBusqueda[1]
-
    end if
 
 Return ( cOrden )
@@ -101,6 +96,8 @@ METHOD ChangeComboboxOrden( oComboboxOrden, oGetSearch ) CLASS ViewSearchNavigat
 
    ( ::getWorkArea() )->( OrdSetFocus( oComboboxOrden:nAt ) )
    
+   // msgAlert( ( ::getWorkArea() )->( OrdSetFocus() ), "OrdSetFocus" )
+
    oGetSearch:SetFocus()
 
    ::oBrowse:Refresh()

@@ -4,28 +4,29 @@
 CLASS ViewBase
 
    DATA oDlg
+
    DATA oBrowse
 
    DATA oSender
 
    DATA nMode
 
-   DATA WorkArea
-
    DATA Style                          INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
 
-   METHOD New()
+   DATA cTextoTipoDocumento
+   METHOD setTextoTipoDocumento( cTextoTipoDocumento );
+                                       INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
 
-   METHOD TituloBrowse()
+   METHOD Resource( nMode )
+      METHOD insertControls()          VIRTUAL
 
+   METHOD defineTitulo()
    METHOD defineAceptarCancelar()
-   METHOD BotonSalirBrowse()
+   METHOD defineSalir()
 
-   METHOD DialogResize()
-   METHOD InitDialog()
-
-   METHOD setWorkArea( WorkArea )      INLINE ( ::WorkArea := WorkArea )
-   METHOD getWorkArea( WorkArea )      INLINE ( ::WorkArea )
+   METHOD resizeDialog()
+   METHOD initDialog()
+   METHOD startDialog()                VIRTUAL
 
    METHOD setGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
                                                       hGet( ::oSender:hDictionaryMaster, cName ),;
@@ -36,13 +37,29 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS ViewBase
+METHOD Resource( nMode ) CLASS ViewBase
 
-Return ( self )
+   ::nMode                 := nMode
+
+   ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+
+   ::defineTitulo()
+
+   ::defineAceptarCancelar()
+
+   ::insertControls()
+
+   ::oDlg:bResized         := {|| ::resizeDialog() }
+
+   ::oDlg:bStart           := {|| ::startDialog() }
+
+   ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
+
+Return ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD TituloBrowse() CLASS ViewBase 
+METHOD defineTitulo() CLASS ViewBase 
 
    TGridSay():Build(    {  "nRow"      => 0,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -60,7 +77,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BotonSalirBrowse() CLASS ViewBase
+METHOD defineSalir() CLASS ViewBase
 
    TGridImage():Build(  {  "nTop"      => 5,;
                            "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
@@ -96,7 +113,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DialogResize() CLASS ViewBase
+METHOD resizeDialog() CLASS ViewBase
 
    GridResize( ::oDlg )
 
@@ -104,7 +121,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD InitDialog() CLASS ViewBase
+METHOD initDialog() CLASS ViewBase
 
    GridMaximize( ::oDlg )
 

@@ -11,8 +11,6 @@ CLASS Cliente FROM Ventas
    
    METHOD setNavigator() 
    
-   METHOD propiedadesBrowse()
-
    METHOD Resource()
 
 ENDCLASS
@@ -20,6 +18,10 @@ ENDCLASS
 //---------------------------------------------------------------------------//
 
 METHOD New() CLASS Cliente
+
+   ::oViewNavigator       := ClienteViewSearchNavigator():New( self )
+
+   ::oViewEdit            := ClienteView():New( self )
 
    if ::OpenFiles()
 
@@ -39,55 +41,31 @@ return ( self )
 
 METHOD setNavigator() CLASS Cliente
 
-   ::oViewNavigator       := ViewNavigator():New( self )
+   // ::oViewNavigator       := ClienteViewSearchNavigator():New( self )
 
    if !Empty( ::oViewNavigator )
-
-      ::oViewNavigator:SetTextoTipoDocumento( "Clientes" )
-
-      ::oViewNavigator:setItemsBusqueda( { "Código", "Nombre" } )
-      
-      ::oViewNavigator:ResourceViewNavigator()
-
+      ::oViewNavigator:Resource()
    end if
 
 return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD propiedadesBrowse() CLASS Cliente
-
-   ::oViewNavigator:setBrowseConfigurationName( "Grid clientes" )
-
-   with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := "Código"
-      :bEditValue        := {|| D():ClientesId( ::nView ) }
-      :nWidth            := 160
-   end with
-
-   with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := "Cliente"
-      :bEditValue        := {|| D():ClientesNombre( ::nView )  }
-      :nWidth            := 320
-   end with
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD Resource( nMode ) CLASS Cliente
 
-   ::oViewEdit       := ViewCliente():New( self )
+   local lResource         := .f.
+
+   // ::oViewEdit             := ClienteView():New( self )
 
    if !Empty( ::oViewEdit )
 
       ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "cliente" )
       
-      ::oViewEdit:ResourceViewEdit( nMode )
+      lResource            := ::oViewEdit:Resource( nMode )
 
    end if
 
-Return ( .t. )   
+Return ( lResource )   
 
 //---------------------------------------------------------------------------//
 

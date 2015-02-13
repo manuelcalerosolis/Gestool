@@ -15,7 +15,7 @@ BORLANDLIB           = 	\Bcc582\lib
 IMG2PDFLIB           = 	\Img2Pdf
 
 OBJ                  = 	Obj1406
-SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
+SOURCEPRG            = 	.\Prg;.\Prg\mail;.\Prg\tablet;.\Prg\tablet\view;.\Prg\tablet\view\documentos;.\Prg\tablet\view\terceros;.\Prg\tablet\view\documentos\ventas;.\Prg\tablet\view\documentos\terceros;.\Prg\tablet\utils;.\Prg\tablet\presenter;.\Prg\tablet\presenter\terceros;.\Prg\tablet\presenter\documentos;.\Prg\tablet\presenter\documentos\ventas;
 SOURCEC 				   =	C
 PPO 					   = 	Ppo1406
 
@@ -394,13 +394,14 @@ AlbaranCliente.prg         \
 DocumentosVentas.prg       \
 ViewBase.prg               \
 ViewEdit.prg               \
-ViewCliente.prg            \
+ClienteView.prg            \
 ViewEditDetail.prg         \
 ViewEditResumen.prg        \
 LineasPedidoCliente.prg    \
 LineasDocumentosVentas.prg \
 ViewSearchNavigator.prg    \
-PedidoClienteViewSearchNavigator.prg    \
+PedidoClienteViewSearchNavigator.prg   \
+ClienteViewSearchNavigator.prg         \
 
 C               =       	\
 Img2pdf.c               	\
@@ -787,13 +788,14 @@ AlbaranCliente.obj         \
 DocumentosVentas.obj       \
 ViewBase.obj               \
 ViewEdit.obj               \
-ViewCliente.obj            \
+ClienteView.obj            \
 ViewEditDetail.obj         \
 ViewEditResumen.obj        \
 LineasPedidoCliente.obj    \
 LineasDocumentosVentas.obj \
 ViewSearchNavigator.obj    \
-PedidoClienteViewSearchNavigator.obj    \
+PedidoClienteViewSearchNavigator.obj   \
+ClienteViewSearchNavigator.obj         \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1155,22 +1157,23 @@ $(OBJ)\TLabelGenerator.obj 			+
 $(OBJ)\TTreevie.obj 						+
 $(OBJ)\ApoloMeter.obj 					+
 $(OBJ)\FacturarLineasAlbaranesProveedor.obj  +
-$(OBJ)\TGridSay.obj              +
-$(OBJ)\Editable.obj              +
-$(OBJ)\ViewNavigator.obj         +
-$(OBJ)\Cliente.obj               +
-$(OBJ)\PedidoCliente.obj         +
-$(OBJ)\AlbaranCliente.obj        +
-$(OBJ)\DocumentosVentas.obj      +
-$(OBJ)\ViewBase.obj              +
-$(OBJ)\ViewEdit.obj              +
-$(OBJ)\ViewCliente.obj           +
-$(OBJ)\ViewEditDetail.obj        +
-$(OBJ)\ViewEditResumen.obj       +
-$(OBJ)\LineasPedidoCliente.obj   +
-$(OBJ)\LineasDocumentosVentas.obj+
+$(OBJ)\TGridSay.obj                          +
+$(OBJ)\Editable.obj                          +
+$(OBJ)\ViewNavigator.obj                     +
+$(OBJ)\Cliente.obj                           +
+$(OBJ)\PedidoCliente.obj                     +
+$(OBJ)\AlbaranCliente.obj                    +
+$(OBJ)\DocumentosVentas.obj                  +
+$(OBJ)\ViewBase.obj                          +
+$(OBJ)\ViewEdit.obj                          +
+$(OBJ)\ClienteView.obj                       +
+$(OBJ)\ViewEditDetail.obj                    +
+$(OBJ)\ViewEditResumen.obj                   +
+$(OBJ)\LineasPedidoCliente.obj               +
+$(OBJ)\LineasDocumentosVentas.obj            +
 $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\PedidoClienteViewSearchNavigator.obj  +
+$(OBJ)\ClienteViewSearchNavigator.obj        +
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +

@@ -5,7 +5,7 @@ CLASS Ventas FROM Editable
 
    METHOD OpenFiles()
 
-   METHOD CloseFiles()
+   METHOD CloseFiles()  INLINE ( D():DeleteView( ::nView ) )
 
 END CLASS
 
@@ -73,14 +73,6 @@ METHOD OpenFiles() CLASS Ventas
    end if
 
 Return ( lOpenFiles )
-
-//---------------------------------------------------------------------------//
-
-METHOD CloseFiles() CLASS Ventas
-
-   D():DeleteView( ::nView )
-
-Return ( self )
 
 //---------------------------------------------------------------------------//
 

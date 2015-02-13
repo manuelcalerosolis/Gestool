@@ -31,6 +31,7 @@ CLASS Editable
 
    METHOD getAppendDocumento()            INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
    METHOD getEditDocumento()              INLINE ( ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView ) )
+   METHOD deleteDocumento()               INLINE ( D():deleteRecord( ::getDataTable(), ::nView ) )
       METHOD Resource()                   VIRTUAL
 
    METHOD saveAppendDocumento()           INLINE ( D():appendHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
@@ -59,33 +60,47 @@ ENDCLASS
 
 METHOD Append() CLASS Editable
 
+   local lAppend  := .f.
+
    ::getAppendDocumento()
 
-   if ::Resource( APPD_MODE )
-      ::saveAppendDocumento()
+   lAppend  := ::Resource( APPD_MODE )
+
+   msgAlert( lAppend, "dentro del metodo Append")
+
+   if lAppend
+      lAppend     := ::saveAppendDocumento()
    end if
 
-Return ( self )
+   msgAlert( lAppend, "Append")
+
+Return ( lAppend )
 
 //---------------------------------------------------------------------------//
 
 METHOD Edit() CLASS Editable
 
+   local lEdit    := .f.
+
    ::getEditDocumento()
 
    if ::Resource( EDIT_MODE )
-      ::saveEditDocumento()
+      lEdit       := ::saveEditDocumento()
    end if
 
-Return ( self )
+Return ( lEdit )
 
 //---------------------------------------------------------------------------//
 
 METHOD Delete() CLASS Editable
 
-   ApoloMsgStop( "eliminamos" )
+   local lDelete  := .f.
 
-Return ( self )
+   if msgNoYes( "¿Desea eliminar el registro?", "Seleccione")
+      lDelete     := ::deleteDocumento()
+   end if 
+
+Return ( lDelete )
 
 //---------------------------------------------------------------------------//
 

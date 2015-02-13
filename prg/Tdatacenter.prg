@@ -5086,6 +5086,8 @@ CLASS D
    METHOD getHashRecordBlank( cDatabase, nView )
    METHOD getHashRecordDefaultValues( cDatabase, nView ) ;
                                              INLINE ( ::setDefaultValue( ::getHashRecordBlank( cDatabase, nView ), cDatabase, nView ) )
+   METHOD deleteRecord( cDataTable, nView )  
+
    METHOD getArrayRecordById( id, cDatabase, nView )
    METHOD setDefaultValue( hash, cDataTable, nView )
 
@@ -5758,46 +5760,50 @@ RETURN ( hash )
 
 METHOD appendHashRecord( hTable, cDataTable, nView ) CLASS D
 
+   local lAppend     := .f.
    local workArea    := ::Get( cDataTable, nView )   
    local hDictionary := TDataCenter():getDictionary( cDataTable )
 
    if empty( workArea )
-      return ( nil )
+      return ( lAppend )
    end if
 
    if empty( hDictionary )
-      return ( nil )
+      return ( lAppend )
    end if
 
    ( workArea )->( dbAppend() )
    if !( workArea )->( neterr() )
       ::setHashRecord( hTable, workArea, hDictionary )
+      lAppend        := .t.
       ( workArea )->( dbUnLock() )
    end if 
 
-RETURN ( nil )
+RETURN ( lAppend )
 
 //---------------------------------------------------------------------------//
 
 METHOD editHashRecord( hTable, cDataTable, nView ) CLASS D
 
+   local lEdit       := .f.
    local workArea    := ::Get( cDataTable, nView )   
    local hDictionary := TDataCenter():getDictionary( cDataTable )
 
    if empty( workArea )
-      return ( nil )
+      return ( lEdit )
    end if
       
    if empty( hDictionary )
-      return ( nil )
+      return ( lEdit )
    end if
 
    if ( workArea )->( dbrlock() )
       ::setHashRecord( hTable, workArea, hDictionary )
+      lEdit          := .t.
       ( workArea )->( dbUnLock() )
    end if 
 
-RETURN ( nil )
+RETURN ( lEdit )
 
 //---------------------------------------------------------------------------//
 
@@ -5853,5 +5859,38 @@ METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
    hEval( aDefaultValue, {|key,value| hSet( hash, key, Eval( Value ) ) } )
 
 RETURN ( hash )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteRecord( cDataTable, nView )
+
+   local nNext
+   local nRecord           
+   local lDelete     := .f.
+   local workArea    := ::Get( cDataTable, nView )   
+
+   if empty( workArea )
+      return ( lDelete )
+   end if
+
+   nRecord           := ( workArea )->( ordKeyNo() )
+   ( workArea )->( dbSkip() )
+   nNext             := ( workArea )->( ordKeyNo() )
+   ( workArea )->( ordKeyGoTo( nRecord ) )
+      
+   if ( workArea )->( dbrlock() )
+      ( workArea )->( dbDelete() )
+      ( workArea )->( dbUnLock() )
+      lDelete        := .t.
+   end if 
+
+   if lDelete
+      ( workArea )->( ordKeyGoTo( nRecord ) )
+      if ( ( workArea )->( eof() ) .or. nNext == nRecord )
+         ( workArea )->( dbGoBottom() )
+      end if
+   end if 
+
+RETURN ( lDelete )
 
 //---------------------------------------------------------------------------//

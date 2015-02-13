@@ -2,24 +2,21 @@
 #include "Factu.ch" 
 #include "Xbrowse.ch"
 
-CLASS ViewCliente FROM ViewBase
+CLASS ClienteView FROM ViewBase
   
-   DATA oGetCliente
-   DATA oNombreCliente
-
    METHOD New()
 
-   METHOD ResourceViewEdit()
-
-   METHOD StartResourceViewEdit()
+   METHOD insertControls()
 
    METHOD defineCodigo()
+
+   METHOD defineNombre()
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS ViewCliente
+METHOD New( oSender ) CLASS ClienteView
 
    ::oSender   := oSender
 
@@ -27,35 +24,17 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceViewEdit( nMode ) CLASS ViewCliente
-
-   ::nMode  := nMode
-
-   ::oDlg   := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
-
-   ::TituloBrowse()
-
-   ::defineAceptarCancelar()
+METHOD insertControls( nMode ) CLASS ClienteView
 
    ::defineCodigo()
 
-   ::oDlg:bResized         := {|| ::DialogResize() }
-
-   ::oDlg:bStart           := {|| ::StartResourceViewEdit() }
-
-   ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
+   ::defineNombre()
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD StartResourceViewEdit() CLASS ViewCliente
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD defineCodigo() CLASS ViewCliente
+METHOD defineCodigo() CLASS ClienteView
 
    local getCodigo
 
@@ -83,4 +62,30 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD defineNombre() CLASS ClienteView
+
+   local getCodigo
+
+   TGridUrllink():Build(            {  "nTop"      => 70,;
+                                       "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
+                                       "cURL"      => "Nombre",;
+                                       "oWnd"      => ::oDlg,;
+                                       "oFont"     => oGridFont(),;
+                                       "lPixel"    => .t.,;
+                                       "nClrInit"  => nGridColor(),;
+                                       "nClrOver"  => nGridColor(),;
+                                       "nClrVisit" => nGridColor() } )
+
+   getCodigo   := TGridGet():Build( {  "nRow"      => 70,;
+                                       "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                       "bSetGet"   => {|u| ::SetGetValue( u, "Nombre" ) },;
+                                       "oWnd"      => ::oDlg,;
+                                       "nWidth"    => {|| GridWidth( 4, ::oDlg ) },;
+                                       "nHeight"   => 23,;
+                                       "cPict"     => "@!",;
+                                       "lPixels"   => .t. } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
 
