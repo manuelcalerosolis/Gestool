@@ -979,7 +979,7 @@ METHOD DescriptionsOnPostEdit( o, uNewValue, nKey ) CLASS TBrowseFilter
 
    if IsNum( nKey ) .and. ( nKey != VK_ESCAPE )
 
-      if !IsNil( uNewValue )
+      if !IsNil( uNewValue ) .and. ValType( uNewValue ) == "C"
          
          if ::GetFilterLineBrowse( fldDescription ) != uNewValue
 
