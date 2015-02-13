@@ -402,9 +402,13 @@ LineasDocumentosVentas.prg \
 ViewSearchNavigator.prg    \
 PedidoClienteViewSearchNavigator.prg   \
 ClienteViewSearchNavigator.prg         \
+<<<<<<< HEAD
 ClienteIncidencia.prg                  \
 ClienteIncidenciaViewNavigator.prg     \
 
+=======
+PedidoClienteViewEdit.prg  \
+>>>>>>> origin/master
 
 C               =       	\
 Img2pdf.c               	\
@@ -799,8 +803,12 @@ LineasDocumentosVentas.obj \
 ViewSearchNavigator.obj    \
 PedidoClienteViewSearchNavigator.obj   \
 ClienteViewSearchNavigator.obj         \
+<<<<<<< HEAD
 ClienteIncidencia.obj                  \
 ClienteIncidenciaViewNavigator.obj     \
+=======
+PedidoClienteViewEdit.obj  \
+>>>>>>> origin/master
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1179,8 +1187,12 @@ $(OBJ)\LineasDocumentosVentas.obj            +
 $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\PedidoClienteViewSearchNavigator.obj  +
 $(OBJ)\ClienteViewSearchNavigator.obj        +
+<<<<<<< HEAD
 $(OBJ)\ClienteIncidencia.obj                 +
 $(OBJ)\ClienteIncidenciaViewNavigator.obj    +
+=======
+$(OBJ)\PedidoClienteViewEdit.obj             +
+>>>>>>> origin/master
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +

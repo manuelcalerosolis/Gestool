@@ -5189,6 +5189,9 @@ CLASS D
       METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
       METHOD getCurrentHashClientes( nView )          INLINE ( ::getHashRecordById( ::ClientesId( nView ), ::Clientes( nView ), nView ) )
       METHOD getDefaultHashClientes( nView )          INLINE ( ::getHashRecordDefaultValues( ::Clientes( nView ), nView ) )
+      METHOD setScopeClientes( id, nView )            INLINE ( getStatusClientes( nView ),;
+                                                               ( ::Clientes( nView ) )->( ordScope( 0, id ) ),;
+                                                               ( ::Clientes( nView ) )->( ordScope( 1, id ) ) )  
       
    METHOD ClientesDirecciones( nView )                INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
