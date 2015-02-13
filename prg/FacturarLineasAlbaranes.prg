@@ -118,7 +118,7 @@ CLASS TFacturarLineasAlbaranes
 
    METHOD lPorcentajeAlcanzado() INLINE ( ( Round( ::nPorcentajeFactura, 0 ) < ::nPorcentajePropuestoFactura ) )
 
-   METHOD SaltoReistro()
+   METHOD SaltoRegistro()
 
    METHOD FacturarLineasCompletas( nView )
 
@@ -171,7 +171,7 @@ METHOD FacturarLineas( nView ) CLASS TFacturarLineasAlbaranes
    else
       ::nPorcentajePropuestoAlbaran := 100
       ::nPorcentajePropuestoFactura := 0
-   end if   
+   end if 
 
    ::nSayNeto                       := 0
    ::nSayIva                        := 0
@@ -755,7 +755,6 @@ METHOD Resource() CLASS TFacturarLineasAlbaranes
          ::oDlg:bStart  := {|| ::ActualizaPantalla() }
       end if   
 
-
       ::oDlg:Activate( , , , .t., , , {|| ::InitResource() } )
 
       ::oBrwLineasAlbaran:CloseData()
@@ -1082,10 +1081,12 @@ METHOD ActualizaPantalla() CLASS TFacturarLineasAlbaranes
    */
 
    if !Empty( ::oBrwLineasAlbaran )
+      ::oBrwLineasAlbaran:MakeTotals()
       ::oBrwLineasAlbaran:Refresh()
    end if
 
    if !Empty( ::oBrwLineasFactura )
+      ::oBrwLineasFactura:MakeTotals()
       ::oBrwLineasFactura:Refresh()
    end if
 
@@ -1108,6 +1109,9 @@ Return ( Self )
 METHOD CalculaPorcentajes() CLASS TFacturarLineasAlbaranes
 
    local nTotal
+
+   ::oBrwLineasAlbaran:MakeTotals()
+   ::oBrwLineasFactura:MakeTotals()
 
    nTotal                  := ::oColTotalAlbaran:nTotal + ::oColTotalFactura:nTotal
 
@@ -1497,7 +1501,7 @@ METHOD RecalculaPorcentajes() CLASS TFacturarLineasAlbaranes
 
       ::PasaUnidadAlbaran()
 
-      ::SaltoReistro()
+      ::SaltoRegistro()
 
    end while
 
@@ -1545,7 +1549,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SaltoReistro() CLASS TFacturarLineasAlbaranes
+METHOD SaltoRegistro() CLASS TFacturarLineasAlbaranes
 
    ( ::cTemporalLineaAlbaran )->( dbSkip() )
 

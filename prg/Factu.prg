@@ -5816,7 +5816,11 @@ Function MainTablet()
                            "cResName"  => "Gestool",;
                            "oWnd"      => oDlg } )
 
+<<<<<<< HEAD
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
+=======
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
+>>>>>>> origin/master
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5824,7 +5828,7 @@ Function MainTablet()
                            "bLClicked" => {|| Cliente():New() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 3 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Clientes",;
                            "oWnd"      => oDlg,;
@@ -5835,7 +5839,11 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| Cliente():New() } } )
 
+<<<<<<< HEAD
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
+=======
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
+>>>>>>> origin/master
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5843,7 +5851,7 @@ Function MainTablet()
                            "bLClicked" => {|| PedidoCliente():New() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Pedidos de clientes",;
                            "oWnd"      => oDlg,;
@@ -5934,7 +5942,7 @@ Function MainTablet()
                            "bAction"   => {|| oDlg:End() } } )
 
    oGridTree   := TGridTreeView():Build( ;
-                        {  "nTop"      => {|| GridRow( 7 ) },;
+                        {  "nTop"      => {|| GridRow( 12 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "oWnd"      => oDlg,;
                            "lPixel"    => .t.,;

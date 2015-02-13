@@ -130,7 +130,7 @@ METHOD OpenFiles()
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de detalle de lÃ­neas", ::cPathFac + "CONTENI1.DBF" )
+      msgStop( "No existe fichero de detalle de líneas", ::cPathFac + "CONTENI1.DBF" )
    else
 
       DATABASE NEW ::oDbfAlbLFac PATH ( ::cPathFac ) FILE "CONTENI1.DBF"   VIA ( cDriver() )CLASS "ALBLFAC"
@@ -1313,6 +1313,8 @@ RETURN ( Self )
 
 METHOD ImportaClientes()
 
+   local cCuenta
+
    ::aMtrIndices[ 2 ]:SetTotal( ::oDbfCliFac:LastRec() )
 
    ::oDbfCliFac:GoTop()
@@ -1355,22 +1357,31 @@ METHOD ImportaClientes()
       ::oDbfCliGst:cDtoAtp    := Padr( "Atipico", 50 )
       ::oDbfCliGst:nDtoEsp    := ::oDbfCliFac:Descuento
       ::oDbfCliGst:lChgPre    := .t.
+      ::oDbfCliGst:cUsrDef01  := ::oDbfCliFac:Libre1
+      ::oDbfCliGst:cUsrDef02  := ::oDbfCliFac:Libre2
+      ::oDbfCliGst:cUsrDef03  := ::oDbfCliFac:Libre3
 
       //LLenamos la tabla de bancos de clientes
 
       if !Empty( ::oDbfCliFac:Ccc )
 
+         cCuenta                 := StrTran(Alltrim(::oDbfCliFac:Ccc), ' ','')
 
-         ::oDbfCliGst:Banco   := ::oDbfCliFac:Domicilia
-         ::oDbfCliGst:Cuenta  := ::oDbfCliFac:Ccc
+         ::oDbfCliGst:Banco      := ::oDbfCliFac:Domicilia
+         ::oDbfCliGst:Cuenta     := Substr(cCuenta, 14 )
 
          ::oDbfCliBnc:Append()
 
-         ::oDbfCliBnc:cCodCli := ::oDbfCliFac:Codigo
-         ::oDbfCliBnc:cCtaBnc := ::oDbfCliFac:Ccc
-         ::oDbfCliBnc:lBncDef := .t.
-         ::oDbfCliBnc:cCodBnc := ::oDbfCliFac:Domicilia
-
+         ::oDbfCliBnc:cCodCli    := ::oDbfCliFac:Codigo
+         ::oDbfCliBnc:lBncDef    := .t.
+         ::oDbfCliBnc:cCodBnc    := ::oDbfCliFac:Domicilia
+         ::oDbfCliBnc:cPaiBnc    := Substr(cCuenta, 1, 2 )
+         ::oDbfCliBnc:cCtrlIBAN  := Substr(cCuenta, 3, 2 )
+         ::oDbfCliBnc:cEntBnc    := Substr(cCuenta, 5, 4 )
+         ::oDbfCliBnc:cSucBnc    := Substr(cCuenta, 7, 4 )
+         ::oDbfCliBnc:cDigBnc    := Substr(cCuenta, 9, 2 )
+         ::oDbfCliBnc:cCtaBnc    := Substr(cCuenta, 14 )     
+         
          ::oDbfCliBnc:Save()
 
       end if
