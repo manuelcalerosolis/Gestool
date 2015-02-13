@@ -3,16 +3,11 @@
 
 CLASS ViewNavigator FROM ViewBase
 
-   DATA oDlg
-   DATA oBrowse
-   DATA oSender
-
    METHOD New()
 
    METHOD Resource()
 
-   METHOD SetDialog( oDlg )            INLINE ( ::oDlg := oDlg )
-   
+   METHOD getView()                    INLINE ( ::oSender:nView )
    METHOD getWorkArea()                INLINE ( ::oSender:getWorkArea() )
 
    METHOD setBrowseConfigurationName( cName ) ;
@@ -26,6 +21,8 @@ CLASS ViewNavigator FROM ViewBase
 
    METHOD setColumns()                 VIRTUAL
       METHOD addColumn()               INLINE ( ::oBrowse:addCol() )
+
+   METHOD refreshBrowse()              INLINE ( if( !empty( ::oBrowse), ::oBrowse:Refresh(), ) )
 
 END CLASS
 
@@ -58,7 +55,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_add_64",;
-                           "bLClicked" => {|| ::oSender:Append() },;
+                           "bLClicked" => {|| if( ::oSender:Append(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -66,7 +63,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_edit_64",;
-                           "bLClicked" => {|| ::oSender:Edit() },;
+                           "bLClicked" => {|| if( ::oSender:Edit(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -74,7 +71,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_minus_64",;
-                           "bLClicked" => {|| ::oSender:Delete() },;
+                           "bLClicked" => {|| if( ::oSender:Delete(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )

@@ -101,7 +101,7 @@ METHOD ResourceViewEditDetail( nMode ) CLASS ViewDetail
 
    ::defineAceptarCancelar()
 
-   ::oDlg:bResized         := {|| ::DialogResize() }
+   ::oDlg:bResized         := {|| ::resizeDialog() }
 
    ::oDlg:bStart           := {|| ::HideLote(), ::oSender:StartResourceDetail() }
 

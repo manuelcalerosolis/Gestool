@@ -15,23 +15,23 @@ END CLASS
 
 METHOD setColumns() CLASS PedidoClienteViewSearchNavigator
 
-   ::setBrowseConfigurationName( "Grid pedidos" )
+   ::setBrowseConfigurationName( "Grid pedidos cliente" )
 
    with object ( ::addColumn() )
       :cHeader           := "Pedido"
-      :bEditValue        := {|| D():PedidosClientesIdText( ::nView ) + CRLF + Dtoc( ( D():PedidosClientes( ::nView ) )->dFecPed ) }
+      :bEditValue        := {|| D():PedidosClientesIdText( ::getView() ) + CRLF + Dtoc( ( D():PedidosClientes( ::getView() ) )->dFecPed ) }
       :nWidth            := 160
    end with
 
    with object ( ::addColumn() )
       :cHeader           := "Cliente"
-      :bEditValue        := {|| AllTrim( ( D():PedidosClientes( ::nView ) )->cCodCli ) + CRLF + AllTrim( ( D():PedidosClientes( ::nView ) )->cNomCli )  }
+      :bEditValue        := {|| AllTrim( ( D():PedidosClientes( ::getView() ) )->cCodCli ) + CRLF + AllTrim( ( D():PedidosClientes( ::getView() ) )->cNomCli )  }
       :nWidth            := 320
    end with
 
    with object ( ::addColumn() )
       :cHeader           := "Base"
-      :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotNet  }
+      :bEditValue        := {|| ( D():PedidosClientes( ::getView() ) )->nTotNet  }
       :cEditPicture      := cPorDiv()
       :nWidth            := 80
       :nDataStrAlign     := 1
@@ -41,7 +41,7 @@ METHOD setColumns() CLASS PedidoClienteViewSearchNavigator
 
    with object ( ::addColumn() )
       :cHeader           := cImp()
-      :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotIva  }
+      :bEditValue        := {|| ( D():PedidosClientes( ::getView() ) )->nTotIva  }
       :cEditPicture      := cPorDiv()
       :nWidth            := 80
       :nDataStrAlign     := 1
@@ -51,7 +51,7 @@ METHOD setColumns() CLASS PedidoClienteViewSearchNavigator
 
    with object ( ::addColumn() )
       :cHeader           := "R.E."
-      :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotReq  }
+      :bEditValue        := {|| ( D():PedidosClientes( ::getView() ) )->nTotReq  }
       :cEditPicture      := cPorDiv()
       :nWidth            := 80
       :nDataStrAlign     := 1
@@ -61,7 +61,7 @@ METHOD setColumns() CLASS PedidoClienteViewSearchNavigator
 
    with object ( ::addColumn() )
       :cHeader           := "Total"
-      :bEditValue        := {|| ( D():PedidosClientes( ::nView ) )->nTotPed }
+      :bEditValue        := {|| ( D():PedidosClientes( ::getView() ) )->nTotPed }
       :cEditPicture      := cPorDiv()
       :nWidth            := 190
       :nDataStrAlign     := 1

@@ -4,9 +4,6 @@
 
 CLASS ViewEdit FROM ViewBase
 
-   DATA oDlg
-   DATA oBrowse
-   DATA oSender
    DATA nMode
    
    DATA oGetCliente
@@ -74,7 +71,7 @@ METHOD ResourceViewEdit( nMode ) CLASS ViewEdit
 
    ::BrowseLineas()
 
-   ::oDlg:bResized         := {|| ::DialogResize() }
+   ::oDlg:bResized         := {|| ::resizeDialog() }
 
    ::oDlg:bStart           := {|| ::StartResourceViewEdit() }
 

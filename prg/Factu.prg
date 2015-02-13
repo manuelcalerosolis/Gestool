@@ -5816,7 +5816,7 @@ Function MainTablet()
                            "cResName"  => "Gestool",;
                            "oWnd"      => oDlg } )
 
-   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5833,9 +5833,9 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| Cliente():New() } } )*/
+                           "bAction"   => {|| Cliente():New() } } )
 
-   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5852,9 +5852,10 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| PedidoCliente():New() } } )*/
+                           "bAction"   => {|| PedidoCliente():New() } } )
 
-   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
+   /*
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5871,8 +5872,9 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| AlbaranCliente():New() } } )*/
-
+                           "bAction"   => {|| AlbaranCliente():New() } } )
+   */
+   /*
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                      		"nWidth"    => 64,;
@@ -5910,6 +5912,7 @@ Function MainTablet()
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
+   */
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;

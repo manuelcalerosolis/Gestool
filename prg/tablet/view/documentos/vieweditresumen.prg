@@ -71,7 +71,7 @@ METHOD ResourceViewEditResumen( oDlgMaster ) CLASS ViewEditResumen
 
    ::defineBrowseIva()
 
-   ::oDlg:bResized         := {|| ::DialogResize() }
+   ::oDlg:bResized         := {|| ::resizeDialog() }
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
