@@ -3,14 +3,17 @@
 
 CLASS Cliente FROM Ventas
 
-   DATA oClienteIncidencia
+   DATA oViewIncidencia
 
    METHOD New()
 
    METHOD setEnviroment()        INLINE ( ::setDataTable( "Client" ) ) 
    
-   METHOD setNavigator() 
+   METHOD showNavigator()        INLINE ( ::oViewNavigator:Resource() ) 
    
+   METHOD showIncidencia()       INLINE ( ::oViewIncidencia:setTextoTipoDocumento( "Incidencias : " + alltrim( D():ClientesNombre( ::nView ) ) ),;
+                                          ::oViewIncidencia:Resource() )
+
    METHOD Resource()
 
 ENDCLASS
@@ -19,17 +22,17 @@ ENDCLASS
 
 METHOD New() CLASS Cliente
 
-   ::oViewNavigator       := ClienteViewSearchNavigator():New( self )
+   ::oViewNavigator        := ClienteViewSearchNavigator():New( self )
 
-   ::oViewEdit            := ClienteView():New( self )
+   ::oViewEdit             := ClienteView():New( self )
+
+   ::oViewIncidencia       := ClienteIncidenciaViewNavigator():New( self )
 
    if ::OpenFiles()
-
-      // ::oClienteIncidencia    := ClienteIncidencia():New( Self )
       
       ::setEnviroment()
 
-      ::setNavigator()
+      ::showNavigator()
 
       ::CloseFiles()
 
@@ -39,33 +42,11 @@ return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setNavigator() CLASS Cliente
-
-   // ::oViewNavigator       := ClienteViewSearchNavigator():New( self )
-
-   if !Empty( ::oViewNavigator )
-      ::oViewNavigator:Resource()
-   end if
-
-return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD Resource( nMode ) CLASS Cliente
 
-   local lResource         := .f.
-
-   // ::oViewEdit             := ClienteView():New( self )
-
-   if !Empty( ::oViewEdit )
-
-      ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "cliente" )
-      
-      lResource            := ::oViewEdit:Resource( nMode )
-
-   end if
-
-Return ( lResource )   
+   ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "cliente" )
+   
+Return ( ::oViewEdit:Resource( nMode ) )   
 
 //---------------------------------------------------------------------------//
 

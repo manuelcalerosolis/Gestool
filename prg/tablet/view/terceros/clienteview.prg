@@ -4,6 +4,8 @@
 
 CLASS ClienteView FROM ViewBase
   
+   DATA oClienteIncidencia
+
    METHOD New()
 
    METHOD insertControls()
@@ -12,13 +14,15 @@ CLASS ClienteView FROM ViewBase
 
    METHOD defineNombre()
 
+   METHOD defineBrowseIncidencia()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New( oSender ) CLASS ClienteView
 
-   ::oSender   := oSender
+   ::oSender               := oSender
 
 Return ( self )
 
@@ -29,6 +33,8 @@ METHOD insertControls( nMode ) CLASS ClienteView
    ::defineCodigo()
 
    ::defineNombre()
+
+   ::defineBrowseIncidencia()
 
 Return ( self )
 
@@ -84,6 +90,41 @@ METHOD defineNombre() CLASS ClienteView
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
                                        "lPixels"   => .t. } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineBrowseIncidencia() CLASS ClienteView
+
+   local oBrowseIncidencia
+
+   oBrowseIncidencia                   := TGridIXBrowse():New( ::oDlg )
+
+   oBrowseIncidencia:nTop              := oBrowseIncidencia:EvalRow( 100 )
+   oBrowseIncidencia:nLeft             := oBrowseIncidencia:EvalCol( {|| GridWidth( 0.5, ::oDlg ) } )
+   oBrowseIncidencia:nWidth            := oBrowseIncidencia:EvalWidth( {|| GridWidth( 11, ::oDlg ) } )
+   oBrowseIncidencia:nHeight           := oBrowseIncidencia:EvalHeight( {|| GridHeigth( ::oDlg ) - oBrowseIncidencia:nTop - 10 } )
+   oBrowseIncidencia:nMarqueeStyle     := 6
+
+   oBrowseIncidencia:nHeaderHeight     := 48
+   oBrowseIncidencia:nFooterHeight     := 48
+   oBrowseIncidencia:nRowHeight        := 96
+   oBrowseIncidencia:nDataLines        := 2
+
+   oBrowseIncidencia:cAlias            := D():ClientesIncidencias( ::getView() )
+
+   oBrowseIncidencia:cName             := "Grid clientes incidencias" 
+
+   with object ( oBrowseIncidencia:addCol() )
+      :cHeader           := "Nombre"
+      :bEditValue        := {|| D():ClientesIncidenciasId( ::getView() ) + CRLF + D():ClientesIncidenciasNombre( ::getView() ) }
+      :nWidth            := 320
+   end with
+
+   oBrowseIncidencia:bLDblClick       := {|| msgAlert("Edit!") }
+
+   oBrowseIncidencia:CreateFromCode()
 
 Return ( self )
 

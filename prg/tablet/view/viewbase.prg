@@ -20,6 +20,8 @@ CLASS ViewBase
    METHOD Resource( nMode )
       METHOD insertControls()          VIRTUAL
 
+   METHOD getView()                    INLINE ( ::oSender:nView )
+
    METHOD defineTitulo()
    METHOD defineAceptarCancelar()
    METHOD defineSalir()
@@ -27,6 +29,8 @@ CLASS ViewBase
    METHOD resizeDialog()
    METHOD initDialog()
    METHOD startDialog()                VIRTUAL
+
+   METHOD setDialog( oDlg )            INLINE ( ::oDlg := oDlg )
 
    METHOD setGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
                                                       hGet( ::oSender:hDictionaryMaster, cName ),;

@@ -8348,12 +8348,12 @@ function aCliInc()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodCli",     "C", 12, 0, "Código del cliente",               "",                   "", "( cDbfInc )" } )
-   aAdd( aBase, { "cCodTip",     "C",  3, 0, "Tipo de incidencia" ,              "",                   "", "( cDbfInc )" } )
-   aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "",                   "", "( cDbfInc )" } )
-   aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripción de la incidencia" ,    "",                   "", "( cDbfInc )" } )
-   aAdd( aBase, { "lListo",      "L",  1, 0, "Lógico de listo" ,                 "",                   "", "( cDbfInc )" } )
-   aAdd( aBase, { "lAviso",      "L",  1, 0, "Lógico de aviso" ,                 "",                   "", "( cDbfInc )" } )
+   aAdd( aBase, { "cCodCli",     "C", 12, 0, "Código del cliente",               "Código",            "", "( cDbfInc )" } )
+   aAdd( aBase, { "cCodTip",     "C",  3, 0, "Tipo de incidencia" ,              "",                  "", "( cDbfInc )" } )
+   aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "Fecha",             "", "( cDbfInc )" } )
+   aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripción de la incidencia" ,    "Nombre",            "", "( cDbfInc )" } )
+   aAdd( aBase, { "lListo",      "L",  1, 0, "Lógico de listo" ,                 "",                  "", "( cDbfInc )" } )
+   aAdd( aBase, { "lAviso",      "L",  1, 0, "Lógico de aviso" ,                 "",                  "", "( cDbfInc )" } )
 
 return ( aBase )
 

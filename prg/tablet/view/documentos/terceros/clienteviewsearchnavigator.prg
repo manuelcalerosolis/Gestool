@@ -9,7 +9,25 @@ CLASS ClienteViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD setColumns()
 
+   METHOD botonesAcciones()
+
 END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD botonesAcciones() CLASS ClienteViewSearchNavigator
+
+   ::Super:botonesAcciones()
+
+   TGridImage():Build(  {  "nTop"      => 75,;
+                           "nLeft"     => {|| GridWidth( 5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_edit_64",;
+                           "bLClicked" => {|| ::oSender:showIncidencia() },;
+                           "oWnd"      => ::oDlg } )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 

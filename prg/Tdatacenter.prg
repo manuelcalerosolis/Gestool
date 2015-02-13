@@ -5190,10 +5190,14 @@ CLASS D
       METHOD getCurrentHashClientes( nView )          INLINE ( ::getHashRecordById( ::ClientesId( nView ), ::Clientes( nView ), nView ) )
       METHOD getDefaultHashClientes( nView )          INLINE ( ::getHashRecordDefaultValues( ::Clientes( nView ), nView ) )
       
-      METHOD ClientesDirecciones( nView )             INLINE ( ::Get( "ObrasT", nView ) )
+   METHOD ClientesDirecciones( nView )                INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
 
-      METHOD GruposClientes( nView )                  INLINE ( ::GetObject( "GruposClientes", nView ) )
+   METHOD ClientesIncidencias( nView )                INLINE ( ::Get( "CliInc", nView ) )
+      METHOD ClientesIncidenciasId( nView )           INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
+      METHOD ClientesIncidenciasNombre( nView )       INLINE ( ( ::Get( "CliInc", nView ) )->mDesInc )
+
+   METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )
 
    // Pedidos de proveedores---------------------------------------------------
 
@@ -5853,8 +5857,8 @@ METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
       Return .f.
    end if
 
-   workArea            := ::Get( cDataTable, nView )   
-   aDefaultValue  := TDataCenter():getDeFaultValue( cDataTable )
+   workArea          := ::Get( cDataTable, nView )   
+   aDefaultValue     := TDataCenter():getDeFaultValue( cDataTable )
 
    hEval( aDefaultValue, {|key,value| hSet( hash, key, Eval( Value ) ) } )
 

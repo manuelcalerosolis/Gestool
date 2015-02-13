@@ -66,13 +66,9 @@ METHOD Append() CLASS Editable
 
    lAppend  := ::Resource( APPD_MODE )
 
-   msgAlert( lAppend, "dentro del metodo Append")
-
    if lAppend
       lAppend     := ::saveAppendDocumento()
    end if
-
-   msgAlert( lAppend, "Append")
 
 Return ( lAppend )
 

@@ -7,7 +7,6 @@ CLASS ViewNavigator FROM ViewBase
 
    METHOD Resource()
 
-   METHOD getView()                    INLINE ( ::oSender:nView )
    METHOD getWorkArea()                INLINE ( ::oSender:getWorkArea() )
 
    METHOD setBrowseConfigurationName( cName ) ;
@@ -18,6 +17,8 @@ CLASS ViewNavigator FROM ViewBase
    METHOD BotonesMovimientoBrowse()
 
    METHOD BrowseGeneral()
+
+   METHOD insertControls()             INLINE ( ::BrowseGeneral() )
 
    METHOD setColumns()                 VIRTUAL
       METHOD addColumn()               INLINE ( ::oBrowse:addCol() )
@@ -38,11 +39,21 @@ Return ( self )
 
 METHOD Resource() CLASS ViewNavigator
 
+   ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+
+   ::defineTitulo()
+
+   ::defineSalir()
+
    ::BotonesAcciones()
 
    ::BotonesMovimientoBrowse()
 
    ::BrowseGeneral()
+
+   ::oDlg:bResized         := {|| ::resizeDialog() }
+
+   ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
 Return ( self )
 
@@ -116,14 +127,16 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BrowseGeneral() CLASS ViewNavigator
+METHOD BrowseGeneral( oDlg ) CLASS ViewNavigator
 
-   ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
+   DEFAULT oDlg               := ::oDlg
+
+   ::oBrowse                  := TGridIXBrowse():New( oDlg )
 
    ::oBrowse:nTop             := ::oBrowse:EvalRow( 115 )
-   ::oBrowse:nLeft            := ::oBrowse:EvalCol( {|| GridWidth( 0.5, ::oDlg ) } )
-   ::oBrowse:nWidth           := ::oBrowse:EvalWidth( {|| GridWidth( 11, ::oDlg ) } )
-   ::oBrowse:nHeight          := ::oBrowse:EvalHeight( {|| GridHeigth( ::oDlg ) - ::oBrowse:nTop - 10 } )
+   ::oBrowse:nLeft            := ::oBrowse:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+   ::oBrowse:nWidth           := ::oBrowse:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+   ::oBrowse:nHeight          := ::oBrowse:EvalHeight( {|| GridHeigth( oDlg ) - ::oBrowse:nTop - 10 } )
    ::oBrowse:nMarqueeStyle    := 6
 
    ::oBrowse:nHeaderHeight    := 48

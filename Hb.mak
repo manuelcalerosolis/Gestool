@@ -402,6 +402,9 @@ LineasDocumentosVentas.prg \
 ViewSearchNavigator.prg    \
 PedidoClienteViewSearchNavigator.prg   \
 ClienteViewSearchNavigator.prg         \
+ClienteIncidencia.prg                  \
+ClienteIncidenciaViewNavigator.prg     \
+
 
 C               =       	\
 Img2pdf.c               	\
@@ -796,6 +799,8 @@ LineasDocumentosVentas.obj \
 ViewSearchNavigator.obj    \
 PedidoClienteViewSearchNavigator.obj   \
 ClienteViewSearchNavigator.obj         \
+ClienteIncidencia.obj                  \
+ClienteIncidenciaViewNavigator.obj     \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1174,6 +1179,8 @@ $(OBJ)\LineasDocumentosVentas.obj            +
 $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\PedidoClienteViewSearchNavigator.obj  +
 $(OBJ)\ClienteViewSearchNavigator.obj        +
+$(OBJ)\ClienteIncidencia.obj                 +
+$(OBJ)\ClienteIncidenciaViewNavigator.obj    +
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +
