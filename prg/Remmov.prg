@@ -3938,7 +3938,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       if nMode != ZOOM_MODE
 
          if uFieldEmpresa( "lGetLot")
-            oDlg:AddFastKey( VK_RETURN,   {|| oBtn:SetFocus(), oBtn:Click() } )
+            oDlg:AddFastKey( VK_RETURN,   {|| ::oRefMov:lValid(), oBtn:SetFocus(), oBtn:Click() } )
          end if 
 
          oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
