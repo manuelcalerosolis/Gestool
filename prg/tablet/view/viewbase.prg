@@ -55,7 +55,7 @@ METHOD Resource( nMode ) CLASS ViewBase
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
 
-Return ( self )
+Return ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 

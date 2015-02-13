@@ -19,6 +19,10 @@ ENDCLASS
 
 METHOD New() CLASS Cliente
 
+   ::oViewNavigator       := ClienteViewSearchNavigator():New( self )
+
+   ::oViewEdit            := ClienteView():New( self )
+
    if ::OpenFiles()
 
       // ::oClienteIncidencia    := ClienteIncidencia():New( Self )
@@ -37,7 +41,7 @@ return ( self )
 
 METHOD setNavigator() CLASS Cliente
 
-   ::oViewNavigator       := ClienteViewSearchNavigator():New( self )
+   // ::oViewNavigator       := ClienteViewSearchNavigator():New( self )
 
    if !Empty( ::oViewNavigator )
       ::oViewNavigator:Resource()
@@ -49,17 +53,19 @@ return ( self )
 
 METHOD Resource( nMode ) CLASS Cliente
 
-   ::oViewEdit             := ClienteView():New( self )
+   local lResource         := .f.
+
+   // ::oViewEdit             := ClienteView():New( self )
 
    if !Empty( ::oViewEdit )
 
       ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "cliente" )
       
-      ::oViewEdit:Resource( nMode )
+      lResource            := ::oViewEdit:Resource( nMode )
 
    end if
 
-Return ( .t. )   
+Return ( lResource )   
 
 //---------------------------------------------------------------------------//
 

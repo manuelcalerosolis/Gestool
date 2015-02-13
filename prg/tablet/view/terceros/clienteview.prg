@@ -10,6 +10,8 @@ CLASS ClienteView FROM ViewBase
 
    METHOD defineCodigo()
 
+   METHOD defineNombre()
+
 END CLASS
 
 //---------------------------------------------------------------------------//

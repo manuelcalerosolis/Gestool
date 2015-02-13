@@ -5,9 +5,6 @@ CLASS ViewSearchNavigator FROM ViewNavigator
 
    METHOD New( oSender )
 
-   DATA cTextoTipoDocumento
-   METHOD setTextoTipoDocumento()      VIRTUAL
-
    DATA aItemsBusqueda
    METHOD setItemsBusqueda()           VIRTUAL
 

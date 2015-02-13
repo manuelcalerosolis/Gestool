@@ -64,23 +64,31 @@ METHOD Append() CLASS Editable
 
    ::getAppendDocumento()
 
-   if ::Resource( APPD_MODE )
-      ::saveAppendDocumento()
+   lAppend  := ::Resource( APPD_MODE )
+
+   msgAlert( lAppend, "dentro del metodo Append")
+
+   if lAppend
+      lAppend     := ::saveAppendDocumento()
    end if
 
-Return ( self )
+   msgAlert( lAppend, "Append")
+
+Return ( lAppend )
 
 //---------------------------------------------------------------------------//
 
 METHOD Edit() CLASS Editable
 
+   local lEdit    := .f.
+
    ::getEditDocumento()
 
    if ::Resource( EDIT_MODE )
-      ::saveEditDocumento()
+      lEdit       := ::saveEditDocumento()
    end if
 
-Return ( self )
+Return ( lEdit )
 
 //---------------------------------------------------------------------------//
 
