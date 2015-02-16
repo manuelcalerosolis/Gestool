@@ -53,10 +53,13 @@ Return ( self )
 
 METHOD defineBarraBusqueda() CLASS ViewSearchNavigator
 
-   local cGetSearch        := Space( 100 )
+   local cGetSearch
    local oGetSearch
    local oComboboxOrden
-   local cComboboxOrden    := ::getComboboxOrden()
+   local cComboboxOrden
+
+   cGetSearch        := Space( 100 )
+   cComboboxOrden    := ::getComboboxOrden()
 
    oGetSearch        := TGridGet():Build(       {  "nRow"      => 45,;
                                                    "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -96,8 +99,6 @@ METHOD ChangeComboboxOrden( oComboboxOrden, oGetSearch ) CLASS ViewSearchNavigat
 
    ( ::getWorkArea() )->( OrdSetFocus( oComboboxOrden:nAt ) )
    
-   // msgAlert( ( ::getWorkArea() )->( OrdSetFocus() ), "OrdSetFocus" )
-
    oGetSearch:SetFocus()
 
    ::oBrowse:Refresh()

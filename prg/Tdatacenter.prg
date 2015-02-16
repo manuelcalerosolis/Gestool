@@ -5189,7 +5189,8 @@ CLASS D
       METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
       METHOD getCurrentHashClientes( nView )          INLINE ( ::getHashRecordById( ::ClientesId( nView ), ::Clientes( nView ), nView ) )
       METHOD getDefaultHashClientes( nView )          INLINE ( ::getHashRecordDefaultValues( ::Clientes( nView ), nView ) )
-      METHOD setScopeClientes( id, nView )            INLINE ( ::getStatusClientes( nView ),;
+      METHOD setScopeClientes( id, nView )            INLINE ( if( empty( id ), id := ::ClientesId( nView ), ),;
+                                                               ::getStatusClientes( nView ),;
                                                                ( ::Clientes( nView ) )->( ordScope( 0, id ) ),;
                                                                ( ::Clientes( nView ) )->( ordScope( 1, id ) ),;
                                                                ( ::Clientes( nView ) )->( dbgotop() ) )  
@@ -5203,6 +5204,16 @@ CLASS D
    METHOD ClientesIncidencias( nView )                INLINE ( ::Get( "CliInc", nView ) )
       METHOD ClientesIncidenciasId( nView )           INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
       METHOD ClientesIncidenciasNombre( nView )       INLINE ( ( ::Get( "CliInc", nView ) )->mDesInc )
+      METHOD getStatusClientesIncidencias( nView )    INLINE ( ::aStatus := aGetStatus( ::ClientesIncidencias( nView ) ) )
+      METHOD setStatusClientesIncidencias( nView )    INLINE ( SetStatus( ::ClientesIncidencias( nView ), ::aStatus ) ) 
+      METHOD setScopeClientesIncidencias( id, nView ) INLINE ( if( empty( id ), id := ::ClientesId( nView ), ),;
+                                                               ::getStatusClientesIncidencias( nView ),;
+                                                               ( ::ClientesIncidencias( nView ) )->( ordScope( 0, id ) ),;
+                                                               ( ::ClientesIncidencias( nView ) )->( ordScope( 1, id ) ),;
+                                                               ( ::ClientesIncidencias( nView ) )->( dbgotop() ) )  
+      METHOD quitScopeClientesIncidencias( nView )    INLINE ( ( ::ClientesIncidencias( nView ) )->( ordScope( 0, nil ) ),;
+                                                               ( ::ClientesIncidencias( nView ) )->( ordScope( 1, nil ) ),;
+                                                               ::setStatusClientesIncidencias( nView ) )  
 
    METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )
 

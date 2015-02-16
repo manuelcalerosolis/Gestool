@@ -17,12 +17,17 @@ CLASS ViewBase
    METHOD setTextoTipoDocumento( cTextoTipoDocumento );
                                        INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
 
-   DATA bPreResource
-   METHOD evalPreResource( nMode )     INLINE ( if( !empty(::bPreResource), eval( ::bPreResource), ) )
+   DATA bPreShowDialog
+   METHOD setPreShowDialog( bPreShowDialog );
+                                       INLINE ( ::bPreShowDialog := bPreShowDialog )
+   METHOD evalPreShowDialog( nMode )   INLINE ( if( !empty( ::bPreShowDialog ), eval( ::bPreShowDialog, self ), ) )
    
-   DATA bPostResource 
-   METHOD evalPostResource( nMode )    INLINE ( if( !empty(::bPostResource), eval( ::bPostResource), ) )
+   DATA bPostDialog 
+   METHOD setPostShowDialog( bPostShowDialog );
+                                       INLINE ( ::bPostShowDialog := bPostShowDialog )
+   METHOD evalPostDialog( nMode )      INLINE ( if( !empty( ::bPostDialog ), eval( ::bPostDialog, self ), ) )
 
+   METHOD showView( nMode )            
 
    METHOD Resource( nMode )
       METHOD insertControls()          VIRTUAL
@@ -48,9 +53,21 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( nMode ) CLASS ViewBase
+METHOD showView( nMode ) CLASS ViewBase
 
-   ::nMode                 := nMode
+   ::nMode                             := nMode
+
+   ::evalPreShowDialog()
+
+   ::Resource( nMode )
+
+   ::evalPostDialog()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Resource( nMode ) CLASS ViewBase
 
    ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 

@@ -34,8 +34,6 @@ METHOD insertControls( nMode ) CLASS ClienteView
 
    ::defineNombre()
 
-   ::defineBrowseIncidencia()
-
 Return ( self )
 
 //---------------------------------------------------------------------------//
