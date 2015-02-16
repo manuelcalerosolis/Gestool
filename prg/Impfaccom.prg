@@ -399,7 +399,7 @@ METHOD CloseFiles()
 RETURN .T.
 
 // ----------------------------------------------------------------------------- //
-/*Constructor para el método*/
+/*Constructor para el metodo*/
 
 METHOD New()
 
@@ -1271,14 +1271,16 @@ METHOD ImportaProveedores()
 
    //Empezamos el trasbase de proveedores
 
-   ::aMtrIndices[ 1 ]:SetTotal( ::oDbfPrvFac:LastRec() )
+   local nOrdAnt
+
+   ::aMtrIndices[ 1 ]:SetTotal( ::oDbfPrvFac:LastRec() )  
 
    ::oDbfPrvFac:GoTop()
    while !( ::oDbfPrvFac:eof() )
 
       while ::oDbfPrvGst:Seek( ::oDbfPrvFac:Codigo )
          ::oDbfPrvGst:Delete( .f. )
-      end while
+      end while      
 
       ::oDbfPrvGst:Append()
 
@@ -1297,7 +1299,19 @@ METHOD ImportaProveedores()
       ::oDbfPrvGst:cCodUsr     := cCurUsr()
       ::oDbfPrvGst:dFecChg     := GetSysDate()
       ::oDbfPrvGst:cTimChg     := Time()
-      ::oDbfPrvGst:lBlqPrv     := .f.
+      ::oDbfPrvGst:lBlqPrv     := .f.     
+
+      nOrdAnt := ::oDbfPgo:OrdSetFocus( "CDESPAGO" ) 
+
+      ::oDbfPgo:GoTop()
+
+      if !Empty( ::oDbfPrvFac:Formapago ) .and. ::oDbfPgo:Seek( Alltrim(::oDbfPrvFac:Formapago ))
+         ::oDbfPrvGst:fPago := ::oDbfPgo:CCODPAGO
+      else 
+         ::oDbfPrvGst:fPago := ''
+      end if      
+
+      ::oDbfPgo:OrdSetFocus( nOrdAnt )
 
       ::oDbfPrvGst:Save()
 
@@ -1314,6 +1328,7 @@ RETURN ( Self )
 METHOD ImportaClientes()
 
    local cCuenta
+   local nOrdAnt
 
    ::aMtrIndices[ 2 ]:SetTotal( ::oDbfCliFac:LastRec() )
 
@@ -1348,7 +1363,7 @@ METHOD ImportaClientes()
       ::oDbfCliGst:cMeiInt    := ::oDbfCliFac:Correoe
       ::oDbfCliGst:cWebInt    := ::oDbfCliFac:Url
       ::oDbfCliGst:cPerCto    := ::oDbfCliFac:Contacto
-      ::oDbfCliGst:cCodAlm    := oUser():cAlmacen()
+      //::oDbfCliGst:cCodAlm    := oUser():cAlmacen()
       ::oDbfCliGst:cCodUsr    := cCurUsr()
       ::oDbfCliGst:dFecChg    := GetSysDate()
       ::oDbfCliGst:cTimChg    := Time()
@@ -1360,6 +1375,14 @@ METHOD ImportaClientes()
       ::oDbfCliGst:cUsrDef01  := ::oDbfCliFac:Libre1
       ::oDbfCliGst:cUsrDef02  := ::oDbfCliFac:Libre2
       ::oDbfCliGst:cUsrDef03  := ::oDbfCliFac:Libre3
+
+      nOrdAnt := ::oDbfPgo:OrdSetFocus( "CDESPAGO" )
+
+      if !Empty( ::oDbfCliFac:Formapago ) .and. ::oDbfPgo:Seek( ::oDbfCliFac:Formapago )
+         ::oDbfCliGst:CodPago := ::oDbfPgo:CCODPAGO
+      else
+         ::oDbfCliGst:CodPago := ''
+      end if
 
       //LLenamos la tabla de bancos de clientes
 
@@ -1385,6 +1408,8 @@ METHOD ImportaClientes()
          ::oDbfCliBnc:Save()
 
       end if
+
+      ::oDbfPgo:OrdSetFocus( nOrdAnt )
 
       ::oDbfCliGst:Save()
 
