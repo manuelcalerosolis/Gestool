@@ -17,6 +17,13 @@ CLASS ViewBase
    METHOD setTextoTipoDocumento( cTextoTipoDocumento );
                                        INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
 
+   DATA bPreResource
+   METHOD evalPreResource( nMode )     INLINE ( if( !empty(::bPreResource), eval( ::bPreResource), ) )
+   
+   DATA bPostResource 
+   METHOD evalPostResource( nMode )    INLINE ( if( !empty(::bPostResource), eval( ::bPostResource), ) )
+
+
    METHOD Resource( nMode )
       METHOD insertControls()          VIRTUAL
 

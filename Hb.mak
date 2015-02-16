@@ -1157,11 +1157,11 @@ $(OBJ)\TpvMesa.obj              	+
 $(OBJ)\TpvSalon.obj             	+
 $(OBJ)\TScripts.obj             	+
 $(OBJ)\Cuaderno.obj 		  			+
-$(OBJ)\FacturarLineasAlbaranes.obj 	+
-$(OBJ)\Components.obj 					+
-$(OBJ)\TLabelGenerator.obj 			+
-$(OBJ)\TTreevie.obj 						+
-$(OBJ)\ApoloMeter.obj 					+
+$(OBJ)\FacturarLineasAlbaranes.obj 	         +
+$(OBJ)\Components.obj 					         +
+$(OBJ)\TLabelGenerator.obj 			         +
+$(OBJ)\TTreevie.obj                          +
+$(OBJ)\ApoloMeter.obj 					         +
 $(OBJ)\FacturarLineasAlbaranesProveedor.obj  +
 $(OBJ)\TGridSay.obj                          +
 $(OBJ)\Editable.obj                          +
