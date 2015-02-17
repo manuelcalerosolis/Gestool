@@ -486,11 +486,6 @@ RETURN ( Self )
 
 METHOD Importar()
 
-   //local nCount  := 0
-   //local nOrdAnt
-   //local cSerie := ""
-   //local nNumero := ""
-
    if !::OpenFiles()
       MsgStop( "Error al abrir los ficheros" )
       RETURN ( Self )
@@ -1572,13 +1567,13 @@ METHOD ImportaAlbaranesClientes()
 
       //comprobamos si estan utilizando series de albaranes
 
-      cSerie                        := Left( ::oDbfAlbTFac:Numero, 1 ) 
+      cSerie                        := Left( Alltrim( ::oDbfAlbTFac:Numero), 1 )
 
       if Empty( cSerie )
          cSerie                     := "A"
       end if
 
-      nNumero                       := Val( Alltrim( SubStr( ::oDbfAlbTFac:Numero, 2 ) ))
+      nNumero                       := Val( SubStr( Alltrim( ::oDbfAlbTFac:Numero ), 2 ) )
 
       while ::oDbfAlbTGst:Seek( cSerie + str( nNumero, 9 ) + "00" )
          ::oDbfAlbTGst:Delete( .f. )
@@ -1678,16 +1673,16 @@ METHOD ImportaAlbaranesClientes()
 
       if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "A"
 
-      cSerie                           := SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 2, 1  ) 
+      cSerie                           := SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 5, 1  ) 
       
       if Empty( cSerie )
          cSerie                        := "A"
       end if
 
-      nNumero                          := Val( SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 3, 9 ) )
+      nNumero                          := Val( SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 6, 6 ) )
 
-         //cSerie                        := SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 1 )
-         //nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 6, 6 ) )
+         //cSerie                        := SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 2, 1 )
+         //nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 3, 9 ) )
 
          ::oDbfAlbLGst:Append()
 
@@ -2228,78 +2223,86 @@ METHOD ImportaPedidosProveedores()
          ::oDbfPedPrvLGst:Delete( .f. )
       end while
 */
-      ::oDbfPedPrvTGst:Append()
-      ::oDbfPedPrvTGst:Blank()
 
-      ::oDbfPedPrvTGst:cSerPed      := "A"
-      ::oDbfPedPrvTGst:nNumPed      := Val( ::oDbfPedPrvTFac:Numero )
-      ::oDbfPedPrvTGst:cSufPed      := "00"
-      ::oDbfPedPrvTGst:cTurPed      := cCurSesion()
-      ::oDbfPedPrvTGst:dFecPed      := ::oDbfPedPrvTFac:Fecha
-      ::oDbfPedPrvTGst:cNomPrv      := ::oDbfPedPrvTFac:NombreF
+      //if Val( ::oDbfPedPrvTFac:Numero ) != 0
 
-      if ::oDbfPrvGst:SeekInOrd( Upper( rtrim( ::oDbfPedPrvTFac:NombreF ) ), "Titulo" )
-         ::oDbfPedPrvTGst:cCodPrv   := ::oDbfPrvGst:Cod
-         ::oDbfPedPrvTGst:cDirPrv   := ::oDbfPrvGst:Domicilio
-         ::oDbfPedPrvTGst:cPobPrv   := ::oDbfPrvGst:Poblacion
-         ::oDbfPedPrvTGst:cProPrv   := ::oDbfPrvGst:Provincia
-         ::oDbfPedPrvTGst:cDniPrv   := ::oDbfPrvGst:Nif
-         ::oDbfPedPrvTGst:cPosPrv   := ::oDbfPrvGst:CodPostal
-      end if
+      //si el número del pedido empieza por una letra no lo añadimos
 
-      ::oDbfPedPrvTGst:cCodAlm      := oUser():cAlmacen()
-      ::oDbfPedPrvTGst:cCodCaj      := cDefCaj()
-      ::oDbfPedPrvTGst:dFecEnt      := ::oDbfPedPrvTFac:Fecha
-      ::oDbfPedPrvTGst:cCodPgo      := cDefFpg()
-      ::oDbfPedPrvTGst:cDtoEsp      := Padr( "General", 50 )
-      ::oDbfPedPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
-      ::oDbfPedPrvTGst:cCodUsr      := cCurUsr()
-      ::oDbfFacPrvTGst:dFecChg      := GetSysDate()
-      ::oDbfFacPrvTGst:cTimChg      := Time()
+         ::oDbfPedPrvTGst:Append()
+         ::oDbfPedPrvTGst:Blank()
 
-      if ::oDbfPedPrvTFac:Facturado
-         ::oDbfPedPrvTGst:nEstado      := 3
-      else
-         ::oDbfPedPrvTGst:nEstado      := 1
-      end if
+         ::oDbfPedPrvTGst:cSerPed      := "A"
+         ::oDbfPedPrvTGst:nNumPed      := Val( ::oDbfPedPrvTFac:Numero )
+         ::oDbfPedPrvTGst:cSufPed      := "00"
+         ::oDbfPedPrvTGst:cTurPed      := cCurSesion()
+         ::oDbfPedPrvTGst:dFecPed      := ::oDbfPedPrvTFac:Fecha
+         ::oDbfPedPrvTGst:cNomPrv      := ::oDbfPedPrvTFac:NombreF
 
+         if ::oDbfPrvGst:SeekInOrd( Upper( rtrim( ::oDbfPedPrvTFac:NombreF ) ), "Titulo" )
+            ::oDbfPedPrvTGst:cCodPrv   := ::oDbfPrvGst:Cod
+            ::oDbfPedPrvTGst:cDirPrv   := ::oDbfPrvGst:Domicilio
+            ::oDbfPedPrvTGst:cPobPrv   := ::oDbfPrvGst:Poblacion
+            ::oDbfPedPrvTGst:cProPrv   := ::oDbfPrvGst:Provincia
+            ::oDbfPedPrvTGst:cDniPrv   := ::oDbfPrvGst:Nif
+            ::oDbfPedPrvTGst:cPosPrv   := ::oDbfPrvGst:CodPostal
+         end if
 
-      //Calculamos los Importes de Pedidos----------------------------------------
+         ::oDbfPedPrvTGst:cCodAlm      := oUser():cAlmacen()
+         ::oDbfPedPrvTGst:cCodCaj      := cDefCaj()
+         ::oDbfPedPrvTGst:dFecEnt      := ::oDbfPedPrvTFac:Fecha
+         ::oDbfPedPrvTGst:cCodPgo      := cDefFpg()
+         ::oDbfPedPrvTGst:cDtoEsp      := Padr( "General", 50 )
+         ::oDbfPedPrvTGst:cDpp         := Padr( "Pronto pago", 50 )
+         ::oDbfPedPrvTGst:cCodUsr      := cCurUsr()
+         ::oDbfFacPrvTGst:dFecChg      := GetSysDate()
+         ::oDbfFacPrvTGst:cTimChg      := Time()
 
-      nTotIva     := 0
-
-      nTotBase    := ::oDbfPedPrvTFac:Base1 + ::oDbfPedPrvTFac:Base2 + ::oDbfPedPrvTFac:Base3
-
-      if ::oDbfPedPrvTFac:Iva1 != 0
-         nTotIva  += Round( ::oDbfPedPrvTFac:Base1 * ::oDbfPedPrvTFac:Iva1 / 100, 2 )
-      end if
-
-      nTotIva     += ::oDbfPedPrvTFac:Base2 
-
-      if ::oDbfPedPrvTFac:Iva2 != 0
-         nTotIva  += Round( ::oDbfPedPrvTFac:Base2 * ::oDbfPedPrvTFac:Iva2 / 100, 2 )
-      end if
-
-      nTotIva     += ::oDbfPedPrvTFac:Base3 
-
-      if ::oDbfPedPrvTFac:Iva3 != 0
-         nTotIva  += Round( ::oDbfPedPrvTFac:Base3 * ::oDbfPedPrvTFac:Iva3 / 100, 2 )
-      end if
-
-      nTotIva     := Round( nTotIva, 2 )
-
-      ::oDbfPedPrvTGst:nTotNet      := nTotBase
-      ::oDbfPedPrvTGst:nTotIva      := nTotIva
-      ::oDbfPedPrvTGst:nTotPed      := nTotBase + nTotIva
+         if ::oDbfPedPrvTFac:Facturado
+            ::oDbfPedPrvTGst:nEstado      := 3
+         else
+            ::oDbfPedPrvTGst:nEstado      := 1
+         end if
 
 
-      ::oDbfPedPrvTGst:Save()
+         //Calculamos los Importes de Pedidos----------------------------------------
 
-      // Siguiente registro----------------------------------------------------------------------
+         nTotIva     := 0
 
-      ::aMtrIndices[ 7 ]:Set( ::oDbfPedPrvTFac:Recno() )
+         nTotBase    := ::oDbfPedPrvTFac:Base1 + ::oDbfPedPrvTFac:Base2 + ::oDbfPedPrvTFac:Base3
 
-      ::oDbfPedPrvTFac:skip()
+         if ::oDbfPedPrvTFac:Iva1 != 0
+            nTotIva  += Round( ::oDbfPedPrvTFac:Base1 * ::oDbfPedPrvTFac:Iva1 / 100, 2 )
+         end if
+
+         nTotIva     += ::oDbfPedPrvTFac:Base2 
+
+         if ::oDbfPedPrvTFac:Iva2 != 0
+            nTotIva  += Round( ::oDbfPedPrvTFac:Base2 * ::oDbfPedPrvTFac:Iva2 / 100, 2 )
+         end if
+
+         nTotIva     += ::oDbfPedPrvTFac:Base3 
+
+         if ::oDbfPedPrvTFac:Iva3 != 0
+            nTotIva  += Round( ::oDbfPedPrvTFac:Base3 * ::oDbfPedPrvTFac:Iva3 / 100, 2 )
+         end if
+
+         nTotIva     := Round( nTotIva, 2 )
+
+         ::oDbfPedPrvTGst:nTotNet      := nTotBase
+         ::oDbfPedPrvTGst:nTotIva      := nTotIva
+         ::oDbfPedPrvTGst:nTotPed      := nTotBase + nTotIva
+
+         if ::oDbfPedPrvTGst:nNumPed != 0         
+            ::oDbfPedPrvTGst:Save()
+         end if
+
+         // Siguiente registro----------------------------------------------------------------------
+
+         ::aMtrIndices[ 7 ]:Set( ::oDbfPedPrvTFac:Recno() )
+
+         ::oDbfPedPrvTFac:skip()
+
+      //end if
 
    end while 
 
@@ -2313,9 +2316,9 @@ METHOD ImportaPedidosProveedores()
    ::oDbfAlbLFac:GoTop() 
    while !( ::oDbfAlbLFac:eof() )
 
-      if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "D"
+      nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 7 ) )
 
-         nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 7 ) )
+      if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "D" .and.  nNumero != 0        
 
          ::oDbfPedPrvLGst:Append()
          ::oDbfPedPrvLGst:Blank()
