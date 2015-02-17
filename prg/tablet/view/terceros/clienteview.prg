@@ -4,8 +4,6 @@
 
 CLASS ClienteView FROM ViewBase
   
-   DATA oClienteIncidencia
-
    METHOD New()
 
    METHOD insertControls()
@@ -94,7 +92,7 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD defineBrowseIncidencia() CLASS ClienteView
-
+/*
    local oBrowseIncidencia
 
    oBrowseIncidencia                   := TGridIXBrowse():New( ::oDlg )
@@ -123,7 +121,7 @@ METHOD defineBrowseIncidencia() CLASS ClienteView
    oBrowseIncidencia:bLDblClick       := {|| msgAlert("Edit!") }
 
    oBrowseIncidencia:CreateFromCode()
-
+*/
 Return ( self )
 
 //---------------------------------------------------------------------------//

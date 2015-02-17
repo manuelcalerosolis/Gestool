@@ -8,8 +8,11 @@ CLASS ClienteIncidencia FROM Editable
    METHOD New( oSender )
 
    METHOD setEnviroment()        INLINE ( ::setDataTable( "CliInc" ) ) 
-   
-   METHOD showNavigator()        INLINE ( ::oViewNavigator:browseGeneral( ::oSender:oViewEdit:oDlg ) ) 
+
+   METHOD setScope( id )         INLINE ( D():setScopeClientesIncidencias( id, ::nView ) )
+   METHOD quitsetScope()         INLINE ( D():quitScopeClientesIncidencias( ::nView ) )
+
+   METHOD showNavigator()
    
    METHOD Resource()
 
@@ -21,11 +24,13 @@ METHOD New( oSender ) CLASS ClienteIncidencia
 
    ::oSender               := oSender
 
+   ::nView                 := oSender:nView
+
    ::oViewNavigator        := ClienteIncidenciaViewNavigator():New( self )
 
    ::setEnviroment()
 
-return ( self )
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -37,4 +42,14 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD showNavigator()
 
+   ::setScope( D():ClientesId( ::nView ) )
+
+   ::oViewNavigator:showView()
+
+   ::quitsetScope()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//

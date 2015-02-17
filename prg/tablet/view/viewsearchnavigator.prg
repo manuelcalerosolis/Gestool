@@ -13,7 +13,7 @@ CLASS ViewSearchNavigator FROM ViewNavigator
    METHOD defineBarraBusqueda()
 
    METHOD getComboboxOrden()
-   METHOD changeComboboxOrden()
+      METHOD changeComboboxOrden()
 
 END CLASS
 
@@ -41,7 +41,11 @@ METHOD Resource() CLASS ViewSearchNavigator
 
    ::defineBarraBusqueda()
 
-   ::Super:Resource()
+   ::botonesAcciones()
+
+   ::botonesMovimientoBrowse()
+
+   ::browseGeneral()
 
    ::oDlg:bResized         := {|| ::resizeDialog() }
 

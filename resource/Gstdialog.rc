@@ -20159,3 +20159,19 @@ FONT 8, "MS Sans Serif"
   CONTROL "Enviar paquetes de ", F, "Static", NOT WS_VISIBLE|WS_GROUP, 44, 32, 69, 8
 }
 
+LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
+
+CLIENT_FACTURAE DIALOG DISCARDABLE 26, 26, 496, 254
+STYLE WS_CHILD|DS_3DLOOK
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 48, 40, 50, 14
+  CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 102, 40, 50, 14
+  CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 156, 40, 50, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 210, 40, 50, 14
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 188
+  CONTROL "Organismos", -1, "Button", BS_GROUPBOX, 44, 29, 448, 220
+  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Directorio de organismos para emisión de facturas electronicas con facturae.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
+}
+

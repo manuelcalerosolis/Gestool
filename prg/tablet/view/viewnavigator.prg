@@ -146,8 +146,6 @@ METHOD BrowseGeneral( oDlg ) CLASS ViewNavigator
 
    ::oBrowse:cAlias           := ::getWorkArea()
 
-   msgAlert( ::oBrowse:cAlias, "BrowseGeneral" )
-
    ::setColumns()
 
    ::oBrowse:bLDblClick       := {|| ::oSender:Edit() }

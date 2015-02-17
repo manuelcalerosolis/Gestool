@@ -256,25 +256,6 @@ METHOD GeneraXml()
                                           "xsi:schemaLocation" => "http://www.facturae.es/Facturae/2009/v3.2/Facturae" } )
 
 
-/*
-<xs:schema 
-xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
-xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-xmlns="http://www.facturae.es/Facturae/2007/v3.1/Facturae" 
-targetNamespace="http://www.facturae.es/Facturae/2007/v3.1/Facturae" version="3.1">
-<xs:import 
-namespace="http://www.w3.org/2000/09/xmldsig#" 
-schemaLocation="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
-*/
-
-/*
-<xs:schema xmlns:ds="http://www.w3.org/2000/09/xmldsig#",;
-xmlns:xs="http://www.w3.org/2001/XMLSchema",;
-xmlns="http://www.facturae.es/Facturae/2014/v3.2.1/Facturae",;
-targetNamespace="http://www.facturae.es/Facturae/2014/v3.2.1/Facturae" version="3.2.1">
-<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="http://www.w3.org/TR/xmldsig-core/xmldsig-core-schema.xsd"/>
-*/
-
    ::HeaderXml()
 
    ::PartiesXml()

@@ -3,13 +3,13 @@
 
 CLASS Cliente FROM Ventas
 
+   DATA oClienteIncidencia
+
    DATA oViewIncidencia
 
    METHOD New()
 
    METHOD setEnviroment()        INLINE ( ::setDataTable( "Client" ) ) 
-   
-   METHOD showNavigator()        INLINE ( ::oViewNavigator:showView() ) 
    
    METHOD showIncidencia()
 
@@ -21,17 +21,21 @@ ENDCLASS
 
 METHOD New() CLASS Cliente
 
-   ::oViewNavigator        := ClienteViewSearchNavigator():New( self )
-
-   ::oViewEdit             := ClienteView():New( self )
-
-   ::oViewIncidencia       := ClienteIncidenciaViewNavigator():New( self )
-
    if ::OpenFiles()
-      
+
+      ::oViewNavigator        := ClienteViewSearchNavigator():New( self )
+
+      ::oViewEdit             := ClienteView():New( self )
+
+      ::oClienteIncidencia    := ClienteIncidencia():New( self )
+
+      // ::oViewIncidencia       := ClienteIncidenciaViewNavigator():New( self )
+
       ::setEnviroment()
 
-      ::showNavigator()
+      ::oViewNavigator:showView()
+
+      msgAlert( "salida de show showNavigator")
 
       ::CloseFiles()
 
@@ -50,14 +54,19 @@ Return ( ::oViewEdit:Resource( nMode ) )
 //---------------------------------------------------------------------------//
 
 METHOD showIncidencia() CLASS Cliente
+   
+   ::oClienteIncidencia:showNavigator()
+
+Return ( self )
+
 
    ::oViewIncidencia:setTextoTipoDocumento( "Incidencias : " + alltrim( D():ClientesNombre( ::nView ) ) )
 
-   D():setScopeClientesIncidencias( nil, ::nView )
+   ::oClienteIncidencia:setScope( D():ClientesId( ::nView ) )
                                           
    ::oViewIncidencia:Resource()
 
-   D():quitScopeClientesIncidencias( ::nView )
+   ::oClienteIncidencia:quitScope()
 
 Return ( self )
 

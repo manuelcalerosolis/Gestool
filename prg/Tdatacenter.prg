@@ -2373,9 +2373,20 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDatatable:cArea        := "CliContactos"
    oDataTable:cName        := cPatCli() + "CliContactos"
    oDataTable:cDataFile    := cPatCli( , .t. ) + "CliContactos.Dbf"
    oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliContactos.Cdx"
+   oDataTable:cDescription := "Clientes contactos"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddEmpresaTable( oDataTable )
+
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "CliFacturae"
+   oDataTable:cName        := cPatCli() + "CliFacturae"
+   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliFacturae.Dbf"
+   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliFacturae.Cdx"
    oDataTable:cDescription := "Clientes contactos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
@@ -5201,6 +5212,8 @@ CLASS D
    METHOD ClientesDirecciones( nView )                INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
 
+
+
    METHOD ClientesIncidencias( nView )                INLINE ( ::Get( "CliInc", nView ) )
       METHOD ClientesIncidenciasId( nView )           INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
       METHOD ClientesIncidenciasNombre( nView )       INLINE ( ( ::Get( "CliInc", nView ) )->mDesInc )
@@ -5214,6 +5227,10 @@ CLASS D
       METHOD quitScopeClientesIncidencias( nView )    INLINE ( ( ::ClientesIncidencias( nView ) )->( ordScope( 0, nil ) ),;
                                                                ( ::ClientesIncidencias( nView ) )->( ordScope( 1, nil ) ),;
                                                                ::setStatusClientesIncidencias( nView ) )  
+
+   METHOD ClientesFacturae( nView )                   INLINE ( ::Get( "CliFacturae", nView ) )
+      METHOD ClientesFacturaeId( nView )              INLINE ( ( ::Get( "CliFacturae", nView ) )->cCodCli )
+      METHOD gotoIdClientesFacturae( id, nView )      INLINE ( ::seek( ::ClientesFacturae( nView ), nView, id ) ) 
 
    METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )
 

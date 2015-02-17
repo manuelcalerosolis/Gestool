@@ -190,7 +190,8 @@
 #define fldIncidencias            oFld:aDialogs[10]
 #define fldObservaciones          oFld:aDialogs[11]
 #define fldContactos              oFld:aDialogs[12]
-#define fldRecibos                oFld:aDialogs[13]
+#define fldFacturae               oFld:aDialogs[13]
+#define fldRecibos                oFld:aDialogs[14]
 
 #define FW_BOLD                   700
 
@@ -224,6 +225,7 @@ static dbfBanco
 static dbfAlmT
 static dbfRuta
 static dbfTmpDoc
+static dbfTmpFacturae
 static dbfTmpObr
 static dbfTmpBnc
 static dbfTmpAtp
@@ -234,6 +236,7 @@ static dbfArtDiv
 static dbfOfe
 static oTrans
 static cTmpDoc
+static cTmpFacturae
 static cTmpObr
 static cTmpBnc
 static cTmpAtp
@@ -329,7 +332,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      D():Get( "Client", nView )
+      D():Clientes( nView )
 
       D():Get( "TIva", nView )
 
@@ -352,25 +355,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Get( "CliInc", nView )
 
-      // USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      // SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      /*
-      Documentos asociados al cliente---------------------------------------------
-      */
-
-      // USE ( cPatCli() + "ClientD.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENTD", @dbfClientD ) )
-      // SET ADSINDEX TO ( cPatCli() + "ClientD.Cdx" ) ADDITIVE
-
-      /*
-      Tarifas personalizadas------------------------------------------------------
-      */
-
-      //USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfCliAtp ) )
-      //SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
-
-      // USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      // SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+      D():ClientesFacturae( nView )
 
       /*
       Apertura de fichero de Obras------------------------------------------------
@@ -1304,6 +1289,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local oBrwBnc
    local oBrwInc
    local oBrwCon
+   local oBrwFacturae
    local oBrwFacAut
    local oBmpDiv
    local oGet
@@ -1455,6 +1441,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "&Incidencias",;
                   "Ob&servaciones",;
                   "C&ontactos",;
+                  "Facturae",;
                   "&Recibos" ;
          DIALOGS  "CLIENT_0"  ,;
                   "CLIENT_1"  ,;
@@ -1468,6 +1455,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "CLIENT_12" ,;
                   "CLIENT_14" ,;
                   "CLIENT_16" ,;
+                  "CLIENT_FACTURAE" ,;
                   "CLIENT_18"
       /*
       Primera pestaña----------------------------------------------------------
@@ -2496,6 +2484,62 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end if
 
       oBrwCon:CreateFromResource( 400 )
+
+      /*
+      Pestaña de facturae-----------------------------------------------------
+      */
+      
+      REDEFINE BITMAP oBmpContactos ;
+         ID       600 ;
+         RESOURCE "User_mobilephone_Alpha_48" ;
+         TRANSPARENT ;
+         OF       fldFacturae
+
+      REDEFINE BUTTON  ;
+         ID       500 ;
+         OF       fldFacturae ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( msgAlert( "dploy") )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       fldFacturae ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( msgAlert( "dploy") )
+
+      REDEFINE BUTTON ;
+         ID       502 ;
+         OF       fldFacturae ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( msgAlert( "dploy") )
+
+      REDEFINE BUTTON ;
+         ID       503 ;
+         OF       fldFacturae ;
+         ACTION   ( msgAlert( "dploy") )
+
+      oBrwFacturae                  := IXBrowse():New( fldFacturae )
+
+      oBrwFacturae:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwFacturae:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwFacturae:cAlias           := dbfTmpFacturae
+      oBrwFacturae:nMarqueeStyle    := 5
+      oBrwFacturae:cName            := "Clientes.Facturae"
+
+      with object ( oBrwFacturae:AddCol() )
+         :cHeader                   := "Oficina contable"
+         :bEditValue                := {|| ( dbfTmpFacturae )->cOfiCnt }
+         :nWidth                    := 120
+      end with
+
+      oBrwFacturae:bRClicked        := {| nRow, nCol, nFlags | oBrwFacturae:RButtonDown( nRow, nCol, nFlags ) }
+
+      if nMode != ZOOM_MODE
+         oBrwFacturae:bLDblClick    := {|| EdtContactos( dbfTmpCon, oBrwFacturae ) }
+      end if
+
+      oBrwFacturae:CreateFromResource( 400 )
 
       /*
       Tercera pestaña----------------------------------------------------------
@@ -3678,28 +3722,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          fldIncidencias:AddFastKey( VK_F3, {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
          fldIncidencias:AddFastKey( VK_F4, {|| DbDelRec( oBrwInc, dbfTmpInc, nil, nil, .t. ) } )
 
-         oDlg:AddFastKey(  VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
-         oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
+         oDlg:AddFastKey( VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
+         oDlg:AddFastKey( VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
 
-         oDlg:AddFastKey(             VK_F5, {|| SavClient( aTmp, aGet, oDlg, oBrw, nMode ) } )
+         oDlg:AddFastKey( VK_F5, {|| SavClient( aTmp, aGet, oDlg, oBrw, nMode ) } )
 
       end if
 
-   oDlg:bStart := {||   ShowComentario( aTmp ),;
-                        ShowIncidenciaCliente( aTmp[ _COD ], nView ),;
-                        ShowFld( aTmp, aGet ),;
-                        FiltroAtipica( oFiltroAtp, dbfTmpAtp, oBrwAtp ),;
-                        oGet:SetFocus(),;
-                        oBrwBnc:Load(),;
-                        oBrwObr:Load(),;
-                        oBrwCta:Load(),;
-                        oBrwAtp:Load(),;
-                        oBrwCon:Load(),;
-                        oBrwRecCli:Load(),;
-                        aGet[ _CTIPINCI ]:lValid(),;
-                        if( !empty( nTab ), oFld:setOption( nTab ), ),;
-                        lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ),;
-                        LoadPageClient( aTmp[ _COD ] ) }
+      oDlg:bStart := {||   ShowComentario( aTmp ),;
+                           ShowIncidenciaCliente( aTmp[ _COD ], nView ),;
+                           ShowFld( aTmp, aGet ),;
+                           FiltroAtipica( oFiltroAtp, dbfTmpAtp, oBrwAtp ),;
+                           oGet:SetFocus(),;
+                           oBrwBnc:Load(),;
+                           oBrwObr:Load(),;
+                           oBrwCta:Load(),;
+                           oBrwAtp:Load(),;
+                           oBrwCon:Load(),;
+                           oBrwRecCli:Load(),;
+                           aGet[ _CTIPINCI ]:lValid(),;
+                           if( !empty( nTab ), oFld:setOption( nTab ), ),;
+                           lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ),;
+                           LoadPageClient( aTmp[ _COD ] ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT  ( EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode ) ) ;
@@ -8048,6 +8092,10 @@ FUNCTION AssertClient( cPath )
       dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "CliFacturae.Dbf" )
+      dbCreate( cPath + "CliFacturae.Dbf", aSqlStruct( aCliFacturae() ), cDriver() )
+   end if
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -8073,6 +8121,7 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
       AppDbf( cPathOld, cPath, "CliInc"         )
       AppDbf( cPathOld, cPath, "CliContactos"   )
       AppDbf( cPathOld, cPath, "ClientD"        )
+      AppDbf( cPathOld, cPath, "CliFacturae"    )
    end if
 
 RETURN NIL
@@ -8306,6 +8355,24 @@ FUNCTION rxClient( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de contactos de clientes." )
    end if
 
+   // Tabla de contactos-------------------------------------------------------
+
+   fEraseIndex( cPath + "CliFacturae.Cdx" )
+
+   dbUseArea( .t., cDriver(), cPath + "CliFacturae.Dbf", cCheckArea( "CliFacturae", @dbfCli ), .f. )
+
+   if !( dbfCli )->( neterr() )
+      ( dbfCli )->( __dbPack() )
+
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliFacturae.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
+
+      ( dbfCli )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de facturae de clientes." )
+   end if
+
+
 RETURN NIL
 
 //--------------------------------------------------------------------------//
@@ -8339,6 +8406,11 @@ STATIC FUNCTION CreateFiles( cPath )
    if !lExistTable( cPath + "CLICONTACTOS.Dbf" )
       dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
    end if
+
+   if !lExistTable( cPath + "CliFacturae.Dbf" )
+      dbCreate( cPath + "CliFacturae.Dbf", aSqlStruct( aCliFacturae() ), cDriver() )
+   end if
+
 
 RETURN NIL
 
@@ -8396,6 +8468,19 @@ function aCliDoc()
    aAdd( aCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,    "",                   "", "( cDbfCol )" } )
 
 return ( aCliDoc )
+
+//--------------------------------------------------------------------------//
+
+function aCliFacturae()
+
+   local aCliFacturae  := {}
+
+   aAdd( aCliFacturae, { "cCodCli", "C",   12,  0, "Código del cliente" ,        "",                   "", "( cDbfCol )" } )
+   aAdd( aCliFacturae, { "cOfiCnt", "C",   14,  0, "Oficina contable" ,          "",                   "", "( cDbfCol )" } )
+   aAdd( aCliFacturae, { "cOrgGes", "C",   14,  0, "Organo gestor" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aCliFacturae, { "cUniTrm", "C",   14,  0, "Unidad tramitadora" ,        "",                   "", "( cDbfCol )" } )
+
+return ( aCliFacturae )
 
 //--------------------------------------------------------------------------//
 
@@ -9276,6 +9361,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    cTmpCta           := cGetNewFileName( cPatTmp() + "TmpCta" )
    cTmpInc           := cGetNewFileName( cPatTmp() + "TmpInc" )
    cTmpCon           := cGetNewFileName( cPatTmp() + "TmpCon" )
+   cTmpFacturae      := cGetNewFileName( cPatTmp() + "TmpFacturae" )
 
    dbCreate( cTmpCta, aSqlStruct( aItmSubcuenta() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpCta, cCheckArea( "TmpCta", @dbfTmpSubCta ), .f. )
@@ -9292,6 +9378,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
    ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
+
+   dbCreate( cTmpFacturae, aSqlStruct( aCliFacturae() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cTmpFacturae, cCheckArea( "TmpFacturae", @dbfTmpFacturae ), .f. )
+
+   ( dbfTmpFacturae )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+   ( dbfTmpFacturae )->( ordCreate( cTmpFacturae, "Recno", "Recno()", {|| Recno() } ) )
 
    dbCreate( cTmpObr, aSqlStruct( aItmObr() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpObr, cCheckArea( "TmpObr", @dbfTmpObr ), .f. )
@@ -9372,7 +9464,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpAtp )->( dbGoTop() )
 
       /*
-      Añadimos desde el fichero de documentos
+      Añadimos desde el fichero de documentos----------------------------------
       */
 
       if ( D():Get( "ClientD", nView ) )->( dbSeek( cCodCli ) )
@@ -9383,6 +9475,20 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       end if
 
       ( dbfTmpDoc )->( dbGoTop() )
+
+
+      /*
+      Añadimos desde el fichero de documentos----------------------------------
+      */
+
+      if D():gotoIdClientesFacturae( cCodCli, nView ) 
+         while ( D():ClientesFacturaeId( nView ) == cCodCli .and. ( D():ClientesFacturae( nView ) )->( !eof() ) )
+            dbPass( ( D():ClientesFacturae( nView ) ), dbfTmpFacturae, .t. )
+            ( D():ClientesFacturae( nView ) )->( dbSkip() )
+         end while
+      end if
+
+      ( dbfTmpFacturae )->( dbGoTop() )
 
       /*
       A¤adimos desde el fichero de Obras
@@ -9466,6 +9572,9 @@ Static Function KillTrans( oBmpDiv, oBrwBnc, oBrwObr, oBrwCta, oBrwAtp, oBrwInc,
    if !Empty( dbfTmpDoc ) .and. ( dbfTmpDoc )->( Used() )
       ( dbfTmpDoc )->( dbCloseArea() )
    end if
+   if !Empty( dbfTmpFacturae ) .and. ( dbfTmpFacturae )->( Used() )
+      ( dbfTmpFacturae )->( dbCloseArea() )
+   end if
    if !Empty( dbfTmpObr ) .and. ( dbfTmpObr )->( Used() )
       ( dbfTmpObr )->( dbCloseArea() )
    end if
@@ -9484,6 +9593,7 @@ Static Function KillTrans( oBmpDiv, oBrwBnc, oBrwObr, oBrwCta, oBrwAtp, oBrwInc,
 
    dbfTmpSubCta   := nil
    dbfTmpDoc      := nil
+   dbfTmpFacturae := nil
    dbfTmpObr      := nil
    dbfTmpBnc      := nil
    dbfTmpAtp      := nil
@@ -9497,6 +9607,7 @@ Static Function KillTrans( oBmpDiv, oBrwBnc, oBrwObr, oBrwCta, oBrwAtp, oBrwInc,
    dbfErase( cTmpAtp )
    dbfErase( cTmpInc )
    dbfErase( cTmpCon )
+   dbfErase( cTmpFacturae )
 
    if oBrwBnc != nil
       oBrwBnc:CloseData()
@@ -9828,6 +9939,32 @@ if !Empty( dbfTmpDoc )
    end while
 
 end if
+
+   /*
+   Limpiamos la tabla de documentos--------------------------------------------
+   */
+
+   if !Empty( dbfTmpFacturae )
+
+      oMsgText( "Eliminando documentos anteriores cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpFacturae )->( LastRec() ) )
+
+      while ( D():gotoIdClientesFacturae( aTmp[ _COD ], nView ) )
+         dbDel( D():ClientesFacturae( nView ) )
+         oMsgProgress():DeltaPos( 1 )
+      end while
+
+      oMsgText( "Archivando documentos cliente" )
+      oMsgProgress():SetRange( 0, ( dbfTmpFacturae )->( LastRec() ) )
+
+      ( dbfTmpFacturae )->( dbGoTop() )
+      while ( dbfTmpFacturae )->( !eof() )
+         dbPass( dbfTmpFacturae, ( D():ClientesFacturae( nView ) ), .t., aTmp[ _COD ] )
+         ( dbfTmpFacturae )->( dbSkip() )
+         oMsgProgress():DeltaPos( 1 )
+      end while
+
+   end if
 
    /*
    Limpiamos la tabla de obras-------------------------------------------------
