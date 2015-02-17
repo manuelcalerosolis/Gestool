@@ -1881,6 +1881,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
       REDEFINE GET oGetNbr VAR cGetNbr ;
          ID       	104 ;
          ON CHANGE 	AutoSeek( nKey, nFlags, Self, oBrw, dbfProL, nil, cPrp ) ;
+         VALID       ( ( dbfProL )->( ordScope( 0, cPrp ) ), ( dbfProL )->( ordScope( 1, cPrp ) ) ) ;
          BITMAP   	"FIND" ;
          OF       	oDlg
 
@@ -1923,7 +1924,8 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
       REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
-         ACTION   ( WinAppRec( oBrw, bEdit, dbfProT ) )
+         WHEN     ( .f. ) ;
+         ACTION   ( nil )
 
       REDEFINE BUTTON ;
          ID       501 ;
@@ -1940,7 +1942,6 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
          OF       oDlg ;
          ACTION   ( oDlg:end() )
 
-      oDlg:AddFastKey( VK_F2,       {|| WinAppRec( oBrw, bEdit, dbfProT ) } )
       oDlg:AddFastKey( VK_F3,       {|| WinEdtRec( oBrw, bEdit, dbfProT ) } )
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )

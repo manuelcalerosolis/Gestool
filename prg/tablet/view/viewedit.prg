@@ -16,8 +16,9 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD New()
 
-   METHOD ResourceViewEdit()
-      METHOD startResourceViewEdit()
+   //METHOD ResourceViewEdit()
+   
+   METHOD StartDialog()
 
    METHOD defineAceptarCancelar()
 
@@ -29,11 +30,11 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD DefineDireccion()
 
-   METHOD BotonesAcciones()
+   /*METHOD BotonesAcciones()
 
    METHOD BrowseLineas()
 
-   METHOD BotonesMovimientoBrowse()
+   METHOD BotonesMovimientoBrowse()*/
 
 END CLASS
 
@@ -47,7 +48,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceViewEdit( nMode ) CLASS ViewEdit
+/*METHOD ResourceViewEdit( nMode ) CLASS ViewEdit
 
    ::nMode  := nMode
 
@@ -77,11 +78,11 @@ METHOD ResourceViewEdit( nMode ) CLASS ViewEdit
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
-Return ( self )
+Return ( self )*/
 
 //---------------------------------------------------------------------------//
 
-METHOD StartResourceViewEdit() CLASS ViewEdit
+METHOD StartDialog() CLASS ViewEdit
 
    ::oGetDireccion:lValid()
 
@@ -270,7 +271,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BotonesAcciones() CLASS ViewEdit
+/*METHOD BotonesAcciones() CLASS ViewEdit
 
    TGridImage():Build(  {  "nTop"      => 145,;
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -296,11 +297,11 @@ METHOD BotonesAcciones() CLASS ViewEdit
                            "bLClicked" => {|| ::oSender:DeleteDetail( ::oBrowse:nArrayAt ) },;
                            "oWnd"      => ::oDlg } )
 
-Return ( self )
+Return ( self )*/
 
 //---------------------------------------------------------------------------//
 
-METHOD BotonesMovimientoBrowse() CLASS ViewEdit
+/*METHOD BotonesMovimientoBrowse() CLASS ViewEdit
 
    TGridImage():Build(  {  "nTop"      => 145,;
                            "nLeft"     => {|| GridWidth( 7.5, ::oDlg ) },;
@@ -335,11 +336,11 @@ METHOD BotonesMovimientoBrowse() CLASS ViewEdit
                            "oWnd"      => ::oDlg } )
 
 
-Return ( self )   
+Return ( self ) */  
 
 //---------------------------------------------------------------------------//   
 
-METHOD BrowseLineas() CLASS ViewEdit
+/*METHOD BrowseLineas() CLASS ViewEdit
 
    ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
 
@@ -363,6 +364,6 @@ METHOD BrowseLineas() CLASS ViewEdit
 
    ::oBrowse:CreateFromCode()
 
-Return ( self )
+Return ( self )*/
 
 //---------------------------------------------------------------------------//

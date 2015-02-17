@@ -2,7 +2,7 @@
 #include "Factu.ch" 
 #include "Xbrowse.ch"
 
-CLASS PedidoClienteViewEdit FROM ViewBase
+CLASS PedidoClienteViewEdit FROM ViewEdit
   
    METHOD New()
 
@@ -22,11 +22,13 @@ Return ( self )
 
 METHOD insertControls( nMode ) CLASS PedidoClienteViewEdit
 
-   //::defineCodigo()
+   ::DefineSerie()
 
-   //::defineNombre()
+   ::DefineRuta()
 
-   ?"Inserto los controles"
+   ::DefineCliente()
+
+   ::DefineDireccion()
 
 Return ( self )
 

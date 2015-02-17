@@ -63,9 +63,6 @@ METHOD Resource( nMode ) CLASS PedidoCliente
 
    local lResource   := .f.
 
-
-   ?"Entro por el resource de pedido cliente.prg"
-
    if !Empty( ::oViewEdit )
 
       ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "pedido" )

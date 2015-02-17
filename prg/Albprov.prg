@@ -1485,8 +1485,34 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
             :lHide            := .t.
          end with
 
+         
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := cNombreCajas()
+            :bEditValue       := {|| ( dbfTmp )->nCanPed }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :lHide            := .t.
+            :nEditType        := 1
+            :bOnPostEdit      := {|o,x,n| ChangeCajas( o, x, n, aTmp ) }
+         end with
+
          with object ( oBrwLin:AddCol() )
             :cHeader          := cNombreUnidades()
+            :bEditValue       := {|| ( dbfTmp )->nUniCaja }
+            :cEditPicture     := cPicUnd
+            :nWidth           := 60
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :nFooterType      := AGGR_SUM
+            :lHide            := .t.
+            :nEditType        := 1
+            :bOnPostEdit      := {|o,x,n| ChangeUnidades( o, x, n, aTmp ) }
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Tot. " + cNombreUnidades()
             :bEditValue       := {|| nTotNAlbPrv( dbfTmp ) }
             :cEditPicture     := cPicUnd
             :nWidth           := 60
@@ -1514,6 +1540,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
             :nWidth           := 90
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
+            :nEditType        := 1
+            :bOnPostEdit      := {|o,x,n| ChangePrecio( o, x, n, aTmp ) }
          end with
 
          with object ( oBrwLin:AddCol() )
@@ -2184,6 +2212,60 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    dbCommitAll()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//----------------------------------------------------------------------------//
+
+Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp )
+
+   /*
+   Cambiamos el valor de las unidades de la linea de la factura---------------
+   */
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      ( dbfTmp )->nPreDiv       := uNewValue
+
+      RecalculaTotal( aTmp )
+
+   end if
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+
+Static Function ChangeCajas( oCol, uNewValue, nKey, aTmp )
+
+   /*
+   Cambiamos el valor de las unidades de la linea de la factura---------------
+   */
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      ( dbfTmp )->nCanPed       := uNewValue
+
+      RecalculaTotal( aTmp )
+
+   end if
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+
+Static Function ChangeUnidades( oCol, uNewValue, nKey, aTmp )
+
+   /*
+   Cambiamos el valor de las unidades de la linea de la factura---------------
+   */
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      ( dbfTmp )->nUniCaja       := uNewValue
+
+      RecalculaTotal( aTmp )
+
+   end if
+
+Return .t.
 
 //----------------------------------------------------------------------------//
 

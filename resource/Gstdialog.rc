@@ -18311,8 +18311,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Agrupando albaranes", 501, "Static", SS_LEFTNOWORDWRAP, 92, 3, 546, 8
   CONTROL "Agrupando albaranes", 502, "Static", SS_LEFTNOWORDWRAP, 92, 13, 546, 8
   CONTROL "Agrupando albaranes", 503, "Static", SS_LEFTNOWORDWRAP, 92, 23, 546, 8
-  CONTROL "Dirección :", -1, "Static", SS_LEFTNOWORDWRAP, 44, 13, 47, 8
-  CONTROL "Cliente :", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 47, 8
+  CONTROL "Dirección :", 110, "Static", SS_LEFTNOWORDWRAP, 44, 13, 47, 8
+  CONTROL "Cliente :", 100, "Static", SS_LEFTNOWORDWRAP, 44, 3, 47, 8
   CONTROL "Impuesto :", 504, "Static", SS_LEFTNOWORDWRAP, 43, 23, 47, 8
 }
 

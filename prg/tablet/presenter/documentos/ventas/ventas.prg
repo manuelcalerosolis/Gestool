@@ -56,7 +56,7 @@ METHOD OpenFiles() CLASS Ventas
 
       D():Documentos( ::nView )
 
-   D():FormasPago( ::nView )
+      D():FormasPago( ::nView )
 
    RECOVER USING oError
 

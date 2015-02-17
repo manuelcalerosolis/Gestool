@@ -1522,7 +1522,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       REDEFINE BUTTON ;
          ID       512 ;
          OF       oFld:aDialogs[1] ;
-         WHEN     ( nMode == APPD_MODE .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
+         WHEN     ( nMode != ZOOM_MODE .AND. !lRecibosPagadosTmp( dbfTmpPgo ) ) ;
          ACTION   ( GrpAlb( aGet[ _CCODPRV ], aTmp, oBrwLin ), RecalculaTotal( aTmp ) )
 
       REDEFINE BUTTON aControl[5] ;
@@ -6236,6 +6236,13 @@ existentes
 STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
 
    local oDlg
+   local oBmp
+   local oTitle
+   local oTitle1
+   local oTitle2
+   local oTitle3
+   local oTitle4
+   local oTitle5
    local oBrwLin
    local cDetalle    := ""
    local aAlbaranes  := {}
@@ -6261,7 +6268,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
 
    while ( ( D():AlbaranesProveedores( nView ) )->cCodPrv = cCodPrv .and. !( D():AlbaranesProveedores( nView ) )->(Eof()) )
 
-      if !( D():AlbaranesProveedores( nView ) )->lFacturado
+      if ( D():AlbaranesProveedores( nView ) )->nFacturado == 1
          aAdd( aAlbaranes, {  ( D():AlbaranesProveedores( nView ) )->lFacturado ,;
                               ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ,;
                               ( D():AlbaranesProveedores( nView ) )->cSuAlb  ,;
@@ -6272,7 +6279,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
 
       endif
 
-      (D():AlbaranesProveedores( nView ))->( DbSkip(1) )
+      (D():AlbaranesProveedores( nView ) )->( DbSkip(1) )
 
    end do
 
@@ -6292,6 +6299,36 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
 
    DEFINE DIALOG oDlg RESOURCE "SET_ALBARAN"
 
+   REDEFINE BITMAP oBmp ;
+      ID       500 ;
+      RESOURCE "plantillas_automaticas_48_alpha" ;
+      TRANSPARENT ;
+      OF       oDlg
+
+   REDEFINE SAY oTitle PROMPT "Proveedor: ";
+      ID       100 ;
+      OF       oDlg
+
+   REDEFINE SAY oTitle1 PROMPT "";
+      ID       110 ;
+      OF       oDlg
+   
+   REDEFINE SAY oTitle2 PROMPT "";
+      ID       504 ;
+      OF       oDlg
+
+   REDEFINE SAY oTitle3 PROMPT RTrim( aTmp[ _CNOMPRV ] );
+      ID       501 ;
+      OF       oDlg
+
+   REDEFINE SAY oTitle4 PROMPT "";
+      ID       502 ; 
+      OF       oDlg
+
+   REDEFINE SAY oTitle5 PROMPT "";
+      ID       503 ;
+      OF       oDlg
+   
    oBrwLin                       := IXBrowse():New( oDlg )
 
    oBrwLin:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -6354,6 +6391,8 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
          :nDataStrAlign := 1
          :nHeadStrAlign := 1
       end with
+
+      oBrwLin:bLDblClick      := {|| aAlbaranes[ oBrwLin:nArrayAt, 1 ] := !aAlbaranes[ oBrwLin:nArrayAt, 1 ], oBrwLin:Refresh() }
 
       REDEFINE BUTTON ;
          ID       514 ;
@@ -8765,6 +8804,7 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cIva, cDiv, cFacPrvP, aTmp, c
       aPIvGas        := { aTmp[ _NIVAGAS1 ], aTmp[ _NIVAGAS2 ], aTmp[ _NIVAGAS3 ] }
       aPReGas        := { aTmp[ _NREGAS1  ], aTmp[ _NREGAS2  ], aTmp[ _NREGAS3  ] }
       bCondition     := {|| ( cFacPrvL )->( !eof() ) }
+
       ( cFacPrvL )->( dbGoTop() )
    else
       dFecFac        := ( cFacPrvT )->dFecFac
