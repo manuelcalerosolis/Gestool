@@ -30,6 +30,10 @@ METHOD insertControls( nMode ) CLASS PedidoClienteViewEdit
 
    ::DefineDireccion()
 
+   msginfo( "Hay que meter la vista con las lineas del pedido" )
+
+   
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
