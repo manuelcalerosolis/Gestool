@@ -62,8 +62,23 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE TABLE oDbf FILE "Entidades.Dbf" CLASS "Entidades" ALIAS "Entidades" PATH ( cPath ) VIA ( cDriver ) COMMENT "Entidades"
 
-      FIELD NAME "cCodEnt"    TYPE "C" LEN  3  DEC 0 COMMENT "Código"      COLSIZE 100          OF oDbf
-      FIELD NAME "cDesEnt"    TYPE "C" LEN 35  DEC 0 COMMENT "Nombre"      COLSIZE 400          OF oDbf
+      FIELD NAME "cCodEnt"       TYPE "C" LEN 14  DEC 0 COMMENT "Código"                     COLSIZE 100    OF oDbf
+      FIELD NAME "cDesEnt"       TYPE "C" LEN 60  DEC 0 COMMENT "Descripción"                COLSIZE 400    OF oDbf
+      FIELD NAME "cNombre"       TYPE "C" LEN 60  DEC 0 COMMENT "Nombre"                     COLSIZE 400    OF oDbf
+      FIELD NAME "cGLNFisico"    TYPE "C" LEN 60  DEC 0 COMMENT "GLN físico"                 COLSIZE 400    OF oDbf
+      FIELD NAME "cPuntoLogico"  TYPE "C" LEN 60  DEC 0 COMMENT "Punto lógico operacional"   COLSIZE 400    OF oDbf
+      FIELD NAME "cDireccion"    TYPE "C" LEN 160 DEC 0 COMMENT "Dirección"                  COLSIZE 400    OF oDbf
+      FIELD NAME "cCodigoPostal" TYPE "C" LEN 15  DEC 0 COMMENT "Código postal"              COLSIZE 400    OF oDbf
+      FIELD NAME "cPoblacion"    TYPE "C" LEN 100 DEC 0 COMMENT "Población"                  COLSIZE 400    OF oDbf
+      FIELD NAME "cProvincia"    TYPE "C" LEN 100 DEC 0 COMMENT "Provincia"                  COLSIZE 400    OF oDbf
+      FIELD NAME "cPais"         TYPE "C" LEN 100 DEC 0 COMMENT "País"                       COLSIZE 400    OF oDbf
+      FIELD NAME "cTelefono"     TYPE "C" LEN 20  DEC 0 COMMENT "Teléfono"                   COLSIZE 400    OF oDbf
+      FIELD NAME "cWeb"          TYPE "C" LEN 200 DEC 0 COMMENT "Web"                        COLSIZE 400    OF oDbf
+      FIELD NAME "cMail"         TYPE "C" LEN 100 DEC 0 COMMENT "Correo electrónico"         COLSIZE 400    OF oDbf
+      FIELD NAME "cContacto"     TYPE "C" LEN 200 DEC 0 COMMENT "Contacto"                   COLSIZE 400    OF oDbf
+      FIELD NAME "cCodigoINE"    TYPE "C" LEN 20  DEC 0 COMMENT "Código INE"                 COLSIZE 400    OF oDbf
+      FIELD NAME "cCNOCNAE"      TYPE "C" LEN 20  DEC 0 COMMENT "CNO/CNAE"                   COLSIZE 400    OF oDbf
+      FIELD NAME "cOtros"        TYPE "C" LEN 200 DEC 0 COMMENT "Otros"                      COLSIZE 400    OF oDbf
 
       INDEX TO "Entidades.Cdx" TAG "cCodEnt" ON "cCodEnt" COMMENT "Código" NODELETED OF oDbf
       INDEX TO "Entidades.Cdx" TAG "cDesEnt" ON "cDesEnt" COMMENT "Nombre" NODELETED OF oDbf
@@ -84,7 +99,7 @@ METHOD Resource( nMode )
       REDEFINE GET oGet VAR ::oDbf:cCodEnt ;
          ID       110 ;
          WHEN     ( nMode == APPD_MODE ) ;
-         VALID    NotValid( oGet, ::oDbf:cAlias, .t., "0" ) ;
+         VALID    NotValid( oGet, ::oDbf:cAlias ) ;
 			PICTURE 	"@!" ;
 			OF 		oDlg
 

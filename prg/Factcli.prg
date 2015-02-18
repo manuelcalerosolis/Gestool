@@ -1582,6 +1582,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():GruposClientes( nView )
 
+      D():ClientesFacturae( nView )
+
       D():ArticuloStockAlmacenes( nView )   
 
       D():Articulos( nView )

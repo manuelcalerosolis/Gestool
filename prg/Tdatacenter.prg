@@ -5230,6 +5230,7 @@ CLASS D
 
    METHOD ClientesFacturae( nView )                   INLINE ( ::Get( "CliFacturae", nView ) )
       METHOD ClientesFacturaeId( nView )              INLINE ( ( ::Get( "CliFacturae", nView ) )->cCodCli )
+      METHOD eofClientesFacturae( nView )             INLINE ( ( ::Get( "CliFacturae", nView ) )->( eof() ) )
       METHOD gotoIdClientesFacturae( id, nView )      INLINE ( ::seek( ::ClientesFacturae( nView ), nView, id ) ) 
 
    METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )

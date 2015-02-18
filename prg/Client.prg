@@ -2530,8 +2530,26 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oBrwFacturae:cName            := "Clientes.Facturae"
 
       with object ( oBrwFacturae:AddCol() )
+         :cHeader                   := "Descripción del organismo"
+         :bEditValue                := {|| ( dbfTmpFacturae )->cDesFac }
+         :nWidth                    := 260
+      end with
+
+      with object ( oBrwFacturae:AddCol() )
          :cHeader                   := "Oficina contable"
          :bEditValue                := {|| ( dbfTmpFacturae )->cOfiCnt }
+         :nWidth                    := 120
+      end with
+
+      with object ( oBrwFacturae:AddCol() )
+         :cHeader                   := "Organo gestor"
+         :bEditValue                := {|| ( dbfTmpFacturae )->cOrgGes }
+         :nWidth                    := 120
+      end with
+
+      with object ( oBrwFacturae:AddCol() )
+         :cHeader                   := "Unidad tramitadora"
+         :bEditValue                := {|| ( dbfTmpFacturae )->cUniTrm }
          :nWidth                    := 120
       end with
 
@@ -3944,6 +3962,11 @@ Static Function EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLi
 
    DEFINE DIALOG oDlg RESOURCE "Clientes_Facturae" TITLE LblTitle( nMode ) + "organismos de emisión"
 
+      REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ] ;
+         ID       90 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
       REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOfiCnt" ) ) ] ;
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -3987,22 +4010,45 @@ Return ( oDlg:nResult == IDOK )
 
 Static function validEdtFacturae( aTmp )
 
+   if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ] )
+      msgStop( "Descripción del organismo no puede estar vacio" )
+      return .f.
+   end if
+
    if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOfiCnt" ) ) ] )
-      msgAlert( "Oficina contable no puede estar vacia" )
+      msgStop( "Oficina contable no puede estar vacia" )
       return .f.
    end if
 
    if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOrgGes" ) ) ] )
-      msgAlert( "Organo gestor no puede estar vacio" )
+      msgStop( "Organo gestor no puede estar vacio" )
       return .f.
    end if
 
    if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cUniTrm" ) ) ] )
-      msgAlert( "Unidad tramitadora no puede estar vacia" )
+      msgStop( "Unidad tramitadora no puede estar vacia" )
       return .f.
    end if
 
 Return .t.
+
+//--------------------------------------------------------------------------//
+
+Function getOrganismosFacturae( cCodigoCliente, nView )
+
+   local aOrganismos := {}
+
+   if D():gotoIdClientesFacturae( cCodigoCliente, nView ) 
+      while D():ClientesFacturaeId( nView ) == cCodigoCliente .and. !D():eofClientesFacturae( nView )
+         aAdd( aOrganismos,   alltrim( ( D():ClientesFacturae( nView ) )->cDesFac ) + "," + ;
+                              alltrim( ( D():ClientesFacturae( nView ) )->cOfiCnt ) + "," + ;
+                              alltrim( ( D():ClientesFacturae( nView ) )->cOrgGes ) + "," + ;
+                              alltrim( ( D():ClientesFacturae( nView ) )->cUniTrm ) )
+         ( D():ClientesFacturae( nView ) )->( dbSkip() ) 
+      end while
+   end if 
+
+Return ( aOrganismos )
 
 //--------------------------------------------------------------------------//
 
@@ -8547,6 +8593,7 @@ function aCliFacturae()
    local aCliFacturae  := {}
 
    aAdd( aCliFacturae, { "cCodCli", "C",   12,  0, "Código del cliente" ,        "",                   "", "( cDbfCol )" } )
+   aAdd( aCliFacturae, { "cDesFac", "C",   60,  0, "Descripción del organismo" , "",                   "", "( cDbfCol )" } )
    aAdd( aCliFacturae, { "cOfiCnt", "C",   14,  0, "Oficina contable" ,          "",                   "", "( cDbfCol )" } )
    aAdd( aCliFacturae, { "cOrgGes", "C",   14,  0, "Organo gestor" ,             "",                   "", "( cDbfCol )" } )
    aAdd( aCliFacturae, { "cUniTrm", "C",   14,  0, "Unidad tramitadora" ,        "",                   "", "( cDbfCol )" } )
