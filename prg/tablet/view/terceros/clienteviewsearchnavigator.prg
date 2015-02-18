@@ -23,7 +23,7 @@ METHOD botonesAcciones() CLASS ClienteViewSearchNavigator
                            "nLeft"     => {|| GridWidth( 5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_edit_64",;
+                           "cResName"  => "flat_about_64",;
                            "bLClicked" => {|| ::oSender:showIncidencia() },;
                            "oWnd"      => ::oDlg } )
 
