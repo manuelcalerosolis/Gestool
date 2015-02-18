@@ -304,6 +304,7 @@ static bEdtAtp          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | Edt
 static bEdtDoc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli ) }
 static bEdtBnc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli | EdtBnc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli ) }
 static bEdtInc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtFacturae     := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli | EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodCli ) }
 
 static oReporting
 
@@ -1345,6 +1346,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local oBmpObservaciones
    local oBmpAutomaticas
    local oBmpRecibos
+   local oBmpFacturae
 
    aFacAut              := hb_aTokens( aTmp[ _MFACAUT ], "," )
 
@@ -2489,7 +2491,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       Pestaña de facturae-----------------------------------------------------
       */
       
-      REDEFINE BITMAP oBmpContactos ;
+      REDEFINE BITMAP oBmpFacturae ;
          ID       600 ;
          RESOURCE "User_mobilephone_Alpha_48" ;
          TRANSPARENT ;
@@ -2499,19 +2501,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       500 ;
          OF       fldFacturae ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( msgAlert( "dploy") )
+         ACTION   ( WinAppRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       fldFacturae ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( msgAlert( "dploy") )
+         ACTION   ( WinEdtRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
          OF       fldFacturae ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( msgAlert( "dploy") )
+         ACTION   ( WinZooRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae ) )
 
       REDEFINE BUTTON ;
          ID       503 ;
@@ -3767,6 +3769,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    oBmpObservaciones:End()
    oBmpAutomaticas:End()
    oBmpRecibos:End()
+   oBmpFacturae:End()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -3935,11 +3938,79 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
+Static Function EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
+
+   local oDlg
+
+   DEFINE DIALOG oDlg RESOURCE "Clientes_Facturae" TITLE LblTitle( nMode ) + "organismos de emisión"
+
+      REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOfiCnt" ) ) ] ;
+         ID       100 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOrgGes" ) ) ] ;
+         ID       110 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cUniTrm" ) ) ] ;
+         ID       120 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         WHEN     (  nMode != ZOOM_MODE ) ;
+         ACTION   (  if(   validEdtFacturae( aTmp ),;
+                           ( WinGather( aTmp, nil, dbfTmpFacturae, oBrw, nMode ), oDlg:end( IDOK ) ),; 
+                           ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+      if nMode != ZOOM_MODE
+         oDlg:AddFastKey( VK_F5, {|| if(  validEdtFacturae( aTmp ),;
+                                          ( WinGather( aTmp, nil, dbfTmpFacturae, oBrw, nMode ), oDlg:end( IDOK ) ),;
+                                          ) } )
+      end if
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static function validEdtFacturae( aTmp )
+
+   if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOfiCnt" ) ) ] )
+      msgAlert( "Oficina contable no puede estar vacia" )
+      return .f.
+   end if
+
+   if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOrgGes" ) ) ] )
+      msgAlert( "Organo gestor no puede estar vacio" )
+      return .f.
+   end if
+
+   if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cUniTrm" ) ) ] )
+      msgAlert( "Unidad tramitadora no puede estar vacia" )
+      return .f.
+   end if
+
+Return .t.
+
+//--------------------------------------------------------------------------//
+
 Static Function ShowFld( aTmp, aGet )
 
    local n
 
-   for n := 1 TO 10
+   for n := 1 to 10
       if Empty( Rtrim( aIniCli[ n ] ) )
          aGet[ ( D():Get( "Client", nView ) )->( fieldpos( "cUsrDef" + Rjust( str( n ), "0", 2 ) ) ) ]:hide()
       end if
