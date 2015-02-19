@@ -509,7 +509,11 @@ RETURN ( oText )
 
 //---------------------------------------------------------------------------//
 
-Function SetAutoTextDialog( cText )
+Function SetAutoTextDialog( cText, oDialog )
+
+   if empty(oText) .and. !empty(oDialog)
+      AutoTextDialog( oDialog )
+   end if 
 
    if !empty(oText)
       oText:SetText( cText )  
@@ -519,12 +523,24 @@ RETURN ( oText )
 
 //---------------------------------------------------------------------------//
 
-Function EndAutoTextDialog( oDialog )
+Function HideAutoTextDialog()
 
-   oText:Hide()
-   oText:End()
+   if !empty(oText)
+      oText:Hide()
+   end if
 
-   oText   := nil
+RETURN ( oText )
+
+//---------------------------------------------------------------------------//
+
+Function EndAutoTextDialog()
+
+   HideAutoTextDialog()
+
+   if !empty(oText)
+      oText:End()
+      oText   := nil
+   end if 
 
 RETURN ( nil )
 

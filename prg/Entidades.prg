@@ -108,6 +108,81 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
+      REDEFINE GET ::oDbf:cNombre ;
+         ID       130 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cGLNFisico ;
+         ID       140 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cPuntoLogico ;
+         ID       150 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cDireccion ;
+         ID       160 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cCodigoPostal ;
+         ID       170 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cPoblacion ;
+         ID       180 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cProvincia ;
+         ID       190 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cPais ;
+         ID       200 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cTelefono ;
+         ID       210 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cWeb ;
+         ID       220 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cMail ;
+         ID       230 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cContacto ;
+         ID       240 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cCodigoINE ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cCNOCNAE ;
+         ID       260 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET ::oDbf:cOtros ;
+         ID       270 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
       REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
