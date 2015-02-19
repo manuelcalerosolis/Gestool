@@ -3155,6 +3155,15 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacCliE"
+   oDataTable:cName        := cPatEmp() + "FacCliE"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliE.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliE.Cdx"
+   oDataTable:cDescription := "Facturas de clientes"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
    oDataTable:cArea        := "FacRecT"
    oDataTable:cName        := cPatEmp() + "FacRecT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacRecT.Dbf"
@@ -5154,7 +5163,7 @@ CLASS D
    // Facturas de clientes-----------------------------------------------------
 
    METHOD FacturasClientes( nView )             INLINE ( ::Get( "FacCliT", nView ) )
-      METHOD FacturasClientesFecha( nView )     INLINE ( ( ::Get( "FacCliT", nView ) )->dFecFac )
+      METHOD FacturasClientesFecha( nView )     INLINE ( ( ::FacturasClientes( nView ) )->dFecFac )
       METHOD FacturasClientesId( nView )        INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) + ( ::Get( "FacCliT", nView ) )->cSufFac )
       METHOD FacturasClientesIdTextShort( nView );
                                                 INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) )
@@ -5165,6 +5174,12 @@ CLASS D
 
    METHOD FacturasClientesCobros( nView )       INLINE ( ::Get( "FacCliP", nView ) )
       METHOD FacturasClientesCobrosId( nView )  INLINE ( ( ::Get( "FacCliP", nView ) )->cSerie + Str( ( ::Get( "FacCliP", nView ) )->nNumFac ) +  ( ::Get( "FacCliP", nView ) )->cSufFac + Str( ( ::Get( "FacCliP", nView ) )->nNumRec ) )
+
+   METHOD FacturasClientesEntidades( nView )       INLINE ( ::Get( "FacCliE", nView ) )
+      METHOD FacturasClientesEntidadesId( nView )  INLINE ( ( ::FacturasClientesEntidades(nView) ) )->cSerFac + Str( ( ::FacturasClientesEntidades(nView) )->nNumFac ) + ( ( ::FacturasClientesEntidades(nView) )->cSufFac )
+      METHOD gotoIdFacturasClientesEntidades( id, nView ) ;
+                                                   INLINE ( ::seek( ::FacturasClientesEntidades( nView ), id ) ) 
+      METHOD eofFacturasClientesEntidades( nView ) INLINE ( ( ::FacturasClientesEntidades( nView ) )->( eof() ) )
 
    // Facturas rectificativas--------------------------------------------------
 
@@ -5195,7 +5210,7 @@ CLASS D
    METHOD Clientes( nView )                           INLINE ( ::Get( "Client", nView ) )
       METHOD ClientesId( nView )                      INLINE ( ( ::Get( "Client", nView ) )->Cod )
       METHOD ClientesNombre( nView )                  INLINE ( ( ::Get( "Client", nView ) )->Titulo )
-      METHOD gotoIdClientes( id, nView )              INLINE ( ::SeekInOrd( ::Clientes( nView ), nView, id, "Cod" ) ) 
+      METHOD gotoIdClientes( id, nView )              INLINE ( ::SeekInOrd( ::Clientes( nView ), id, "Cod" ) ) 
       METHOD getStatusClientes( nView )               INLINE ( ::aStatus := aGetStatus( ::Clientes( nView ) ) )
       METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
       METHOD getCurrentHashClientes( nView )          INLINE ( ::getHashRecordById( ::ClientesId( nView ), ::Clientes( nView ), nView ) )
@@ -5231,7 +5246,7 @@ CLASS D
    METHOD ClientesFacturae( nView )                   INLINE ( ::Get( "CliFacturae", nView ) )
       METHOD ClientesFacturaeId( nView )              INLINE ( ( ::Get( "CliFacturae", nView ) )->cCodCli )
       METHOD eofClientesFacturae( nView )             INLINE ( ( ::Get( "CliFacturae", nView ) )->( eof() ) )
-      METHOD gotoIdClientesFacturae( id, nView )      INLINE ( ::seek( ::ClientesFacturae( nView ), nView, id ) ) 
+      METHOD gotoIdClientesFacturae( id, nView )      INLINE ( ::seek( ::ClientesFacturae( nView ), id ) ) 
 
    METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )
 
@@ -5410,11 +5425,11 @@ CLASS D
    METHOD SetStatusTmp( cDatabase, nView )      INLINE ( SetStatus( ::Tmp( cDatabase, nView ), ::aStatus ) ) 
    METHOD GetInitStatusTmp( cDatabase, nView )  INLINE ( ::aStatus := aGetStatus( ::Tmp( cDatabase, nView ), .t. ) )
 
-   METHOD Seek( cDatabase, nView, uValue )   INLINE ( ( ::Get( cDatabase, nView ) )->( dbSeek( uValue ) ) ) 
+   METHOD Seek( cWorkArea, uValue )   INLINE ( ( cWorkArea )->( dbSeek( uValue ) ) ) 
 
-   METHOD SeekInOrd( cDatabase, nView, uValue, cOrder ) ;
-                                             INLINE ( dbSeekInOrd( uValue, cOrder, ::Get( cDatabase, nView ) ) )
-   METHOD Eof( cDatabase, nView )            INLINE ( ( ::Get( cDatabase, nView ) )->( eof() ) )
+   METHOD SeekInOrd( cWorkArea, uValue, cOrder ) ;
+                                             INLINE ( dbSeekInOrd( uValue, cOrder, cWorkArea ) )
+   METHOD Eof( cWorkArea, nView )            INLINE ( ( cWorkArea )->( eof() ) )
 
    METHOD Top( cDatabase, nView )            INLINE ( dbFirst( ::Get( cDatabase, nView ) ) )
    METHOD Bottom( cDatabase, nView )         INLINE ( dbLast( ::Get( cDatabase, nView ) ) )

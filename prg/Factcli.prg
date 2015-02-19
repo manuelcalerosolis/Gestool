@@ -423,6 +423,7 @@ static dbfTmpDoc
 static dbfTmpAnt
 static dbfTmpPgo
 static dbfTmpSer
+Static dbfTmpEntidades
 
 static oRieCli
 static nRieCli
@@ -480,6 +481,7 @@ static cTmpDoc
 static cTmpAnt
 static cTmpPgo
 static cTmpSer
+static cTmpEnt
 static oGetTotal
 static oTotFacLin
 static oGetNet
@@ -506,13 +508,13 @@ static nVdvDiv
 static nDouDiv
 static nRouDiv
 static nDpvDiv
-static aDbfBmp
 static oNewImp
 static oTipArt
 static oGrpFam
 static oFraPub
 static oBanco
 static oPais
+static oEntidades
 
 static oTotalLinea
 static nTotalLinea         := 0
@@ -586,6 +588,7 @@ static bEdtRec             := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMod
 static bEdtDet             := { |aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 static bEdtInc             := { |aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode, aTmpLin| EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc             := { |aTmp, aGet, dbfFacCliD, oBrw, bWhen, bValid, nMode, aTmpLin| EdtDoc( aTmp, aGet, dbfFacCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
+static bEdtEntidades       := { |aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, nMode| EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, nMode ) }
 static bEdtTablet          := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtTablet( aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 static bEdtDetTablet       := { |aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 
@@ -1578,6 +1581,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():FacturasClientes( nView )
 
+      D():FacturasClientesEntidades( nView )
+
       D():Clientes( nView )
 
       D():GruposClientes( nView )
@@ -1599,34 +1604,34 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles      := .f.
       end if
     
-    USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-    SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
 
-    USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
-    SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
+      SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "FACCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLID", @dbfFacCliD ) )
-    SET ADSINDEX TO ( cPatEmp() + "FACCLID.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FACCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLID", @dbfFacCliD ) )
+      SET ADSINDEX TO ( cPatEmp() + "FACCLID.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "FACCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIS", @dbfFacCliS ) )
-    SET ADSINDEX TO ( cPatEmp() + "FACCLIS.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FACCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIS", @dbfFacCliS ) )
+      SET ADSINDEX TO ( cPatEmp() + "FACCLIS.CDX" ) ADDITIVE
 
-	/*
-    Atipicas de clientes-----------------------------------------------------
-    */
+      /*
+      Atipicas de clientes-----------------------------------------------------
+      */
 
-    D():Atipicas( nView )
+      D():Atipicas( nView )
 
-    D():Get( "CliInc", nView )
+      D():Get( "CliInc", nView )
 
-    USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
-    SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
+      SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfFacRecL ) )
-    SET ADSINDEX TO ( cPatEmp() + "FACRECL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfFacRecL ) )
+      SET ADSINDEX TO ( cPatEmp() + "FACRECL.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "FACRECS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECS", @dbfFacRecS ) )
-    SET ADSINDEX TO ( cPatEmp() + "FACRECS.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FACRECS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECS", @dbfFacRecS ) )
+      SET ADSINDEX TO ( cPatEmp() + "FACRECS.CDX" ) ADDITIVE
 
       if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
          lOpenFiles     := .f.
@@ -1904,6 +1909,11 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if !TProyecto():GetInstance():Openfiles()
       	lOpenFiles		:= .f.
+      end if
+
+      oEntidades        := TEntidades():Create()
+      if !oEntidades:OpenFiles()
+         lOpenFiles     := .f.
       end if
 
       oFont                         := TFont():New( "Arial", 8, 26, .F., .T. )
@@ -2324,6 +2334,10 @@ STATIC FUNCTION CloseFiles()
       oPais:End()
    end if
 
+   if empty(oEntidades)
+      oEntidades:End()
+   end if 
+
    TProyecto():GetInstance():CloseFiles()
 
    dbfIva      := nil
@@ -2431,6 +2445,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oBrwDoc
    local oBrwAnt
    local oBrwPgo
+   local oBrwEntidades
    local oSay              := Array( 12 )
    local cSay              := Array( 12 )
    local oSayLabels        := Array(  5 )
@@ -2451,7 +2466,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local hBmpGeneral			:= { 	{ "Resource" => "Factura_cliente_48_alpha", 	"Dialog" => 1 },;
    										{ "Resource" => "Folder2_red_alpha_48", 		"Dialog" => 2 },;
    										{ "Resource" => "Information_48_alpha", 		"Dialog" => 3 },;
-   										{ "Resource" => "Address_book2_alpha_48", 	"Dialog" => 4 } }
+   										{ "Resource" => "Address_book2_alpha_48", 	"Dialog" => 4 },;
+                                 { "Resource" => "Address_book2_alpha_48",    "Dialog" => 5 } }
 
    
    /*
@@ -2636,11 +2652,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          PROMPT   "&Factura",;
                   "Da&tos",;
                   "&Incidencias",;
-                  "D&ocumentos" ;
+                  "D&ocumentos",;
+                  "&Entidades";
          DIALOGS  "FACCLI_1",;
                   "FACCLI_2",;
                   "PEDCLI_3",;
-                  "PEDCLI_4"
+                  "PEDCLI_4",;
+                  "VIEW_FACTURAS_ENTIDADES"
 
       /*
       Datos del cliente--------------------------------------------------------
@@ -4226,6 +4244,58 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[ 4 ] ;
          ACTION   ( ShellExecute( oDlg:hWnd, "open", rTrim( ( dbfTmpDoc )->cRuta ) ) )
 
+      //Caja de entidades-----------------------------------------------------
+
+      oBrwEntidades                 := IXBrowse():New( oFld:aDialogs[ 5 ] )
+
+      oBrwEntidades:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwEntidades:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwEntidades:cAlias          := dbfTmpEntidades
+
+      oBrwEntidades:nMarqueeStyle   := 6
+
+      with object ( oBrwEntidades:AddCol() )
+         :cHeader          := "Entidades"
+         :bEditValue       := {|| ( dbfTmpEntidades )->cCodEnt }
+         :nWidth           := 200
+      end with
+
+      with object ( oBrwEntidades:AddCol() )
+         :cHeader          := "Rol"
+         :bEditValue       := {|| ( dbfTmpEntidades )->cRol }
+         :nWidth           := 200
+      end with
+
+      if nMode != ZOOM_MODE
+         oBrwEntidades:bLDblClick   := {|| WinEdtRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) }
+      end if
+
+      oBrwEntidades:CreateFromResource( 210 )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oFld:aDialogs[ 5 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( WinAppRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oFld:aDialogs[ 5 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( WinEdtRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) )
+
+      REDEFINE BUTTON ;
+         ID       502 ;
+         OF       oFld:aDialogs[ 5 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( WinDelRec( oBrwEntidades, dbfTmpEntidades ) )
+
+      REDEFINE BUTTON ;
+         ID       503 ;
+         OF       oFld:aDialogs[ 5 ] ;
+         ACTION   ( WinZooRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) )
+
       /*
       Fin de los Folders
       -----------------------------------------------------------------------
@@ -5423,6 +5493,55 @@ Static Function EdtDoc( aTmp, aGet, dbfFacCliD, oBrw, bWhen, bValid, nMode, aTmp
 Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
+
+Static Function EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, nMode, aTmpLin )
+
+   local oDlg
+   local oCodigo
+
+   DEFINE DIALOG oDlg RESOURCE "Facturas_Entidades" TITLE LblTitle( nMode ) + "entidades"
+
+      REDEFINE GET oCodigo ;
+         VAR      aTmp[ ( dbfTmpEntidades )->( FieldPos( "cCodEnt" ) ) ] ;
+         ID       100 ;
+         IDTEXT   101 ;
+         PICTURE  "@!" ;
+         BITMAP   "LUPA" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      oCodigo:bHelp     := {|| oEntidades:Buscar( oCodigo ) }
+      oCodigo:bValid    := {|| iif( !empty( oCodigo:varGet() ), oEntidades:Existe( oCodigo, oCodigo:oHelpText, "cDesEnt" ), .t. ) }
+
+      REDEFINE COMBOBOX aTmp[ ( dbfTmpEntidades )->( FieldPos( "cRol" ) ) ] ;
+         ITEMS    aRolesValues();
+         ID       110 ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( WinGather( aTmp, nil, dbfTmpEntidades, oBrw, nMode ), oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+   if nMode != ZOOM_MODE
+      oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpEntidades, oBrw, nMode ), oDlg:end( IDOK ) } )
+   end if
+
+   oDlg:bStart    := {|| oCodigo:lValid() }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
 
 STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
@@ -11060,6 +11179,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Series de lineas de facturas", ( dbfFacCliS )->( Select() ) )
    oFr:SetFieldAliases( "Series de lineas de facturas", cItemsToReport( aSerFacCli() ) )
 
+   oFr:SetWorkArea(     "Entidades de la factura", ( D():FacturasClientesEntidades( nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Entidades de la factura", cItemsToReport( aEntidadesFacCli() ) )
+
    oFr:SetWorkArea(     "Incidencias de facturas", ( dbfFacCliI )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias de facturas", cItemsToReport( aIncFacCli() ) )
 
@@ -11540,6 +11662,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local cDbfAnt  := "FCliA"
    local cDbfPgo  := "FCliP"
    local cDbfSer  := "FCliS"
+   local cDbfEnt  := "FCliE"
 
    CursorWait()
 
@@ -11575,6 +11698,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    cTmpAnt        := cGetNewFileName( cPatTmp() + cDbfAnt )
    cTmpPgo        := cGetNewFileName( cPatTmp() + cDbfPgo )
    cTmpSer        := cGetNewFileName( cPatTmp() + cDbfSer )
+   cTmpEnt        := cGetNewFileName( cPatTmp() + cDbfEnt )
 
    /*
    Primero crear la base de datos local----------------------------------------
@@ -11741,6 +11865,33 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpSer )->( dbGoTop() )
 
       oStock:SetTmpFacCliS( dbfTmpSer )
+
+   else
+
+      lErrors     := .t.
+
+   end if
+
+   /*
+   Creamos el fichero de entidades------------------------------------------------
+   */
+
+   dbCreate( cTmpEnt, aSqlStruct( aEntidadesFacCli() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), cTmpEnt, cCheckArea( cDbfSer, @dbfTmpEntidades ), .f. )
+
+   if !( dbfTmpEntidades )->( NetErr() )
+
+      ( dbfTmpEntidades )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpEntidades )->( OrdCreate( cTmpEnt, "nRecno", "str( recno() )", {|| str( recno() ) } ) )
+
+      if D():gotoIdFacturasClientesEntidades( cFac, nView )
+         while ( D():FacturasClientesEntidadesId( nView ) == cFac .and. !D():eofFacturasClientesEntidades( nView ) )
+            dbPass( D():FacturasClientesEntidades( nView ), dbfTmpEntidades, .t. )
+            ( D():FacturasClientesEntidades( nView ) )->( dbSkip() )
+         end while
+      end if
+
+      ( dbfTmpEntidades )->( dbGoTop() )
 
    else
 
@@ -14740,7 +14891,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       
       if !Empty( oMeter )
 	      oMeter:Set( 7 )
-	  end if    
+      end if    
 
       if !Empty( cNumAlb )
 
@@ -19986,6 +20137,10 @@ FUNCTION mkFacCli( cPath, oMeter, lReindex )
       dbCreate( cPath + "FACCLIS.DBF", aSqlStruct( aSerFacCli() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "FACCLIE.DBF" )
+      dbCreate( cPath + "FACCLIE.DBF", aSqlStruct( aEntidadesFacCli() ), cDriver() )
+   end if
+
    if lReindex
       rxFacCli( cPath )
    end if
@@ -20014,7 +20169,8 @@ FUNCTION rxFacCli( cPath, oMeter )
       !lExistTable( cPath + "FacCliL.Dbf" )   .or.;
       !lExistTable( cPath + "FacCliI.Dbf" )   .or.;
       !lExistTable( cPath + "FacCliD.Dbf" )   .or.;
-      !lExistTable( cPath + "FacCliS.Dbf" )
+      !lExistTable( cPath + "FacCliS.Dbf" )   .or.;
+      !lExistTable( cPath + "FacCliE.Dbf" )  
       mkFacCli( cPath, nil, .f. )
    end if
 
@@ -20023,6 +20179,7 @@ FUNCTION rxFacCli( cPath, oMeter )
    fEraseIndex( cPath + "FacCliI.Cdx" )
    fEraseIndex( cPath + "FacCliD.Cdx" )
    fEraseIndex( cPath + "FacCliS.Cdx" )
+   fEraseIndex( cPath + "FacCliE.Cdx" )
 
    dbUseArea( .t., cDriver(), cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @dbfFacCliL ), .f. )
    if !( dbfFacCliL )->( neterr() )
@@ -20208,6 +20365,19 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( cFacCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de números de series de facturas de clientes" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "FacCliE.Dbf", cCheckArea( "FacCliE", @cFacCliT ), .f. )
+
+   if !( cFacCliT )->( neterr() )
+      ( cFacCliT )->( __dbPack() )
+
+      ( cFacCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliE.Cdx", "nNumFac", "cSerFac + str( nNumFac ) + cSufFac", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac } ) )
+
+      ( cFacCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de entidades de facturas de clientes" )
    end if
 
 Return nil
@@ -20496,6 +20666,20 @@ Function aSerFacCli()
    aAdd( aColFacCli,  { "cAlmLin",     "C", 16,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
    aAdd( aColfacCli,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "( cDbfCol )" } )
    aAdd( aColFacCli,  { "cNumSer",     "C", 30,   0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
+
+Return ( aColFacCli )
+
+//---------------------------------------------------------------------------//
+
+Function aEntidadesFacCli()
+
+   local aColFacCli  := {}
+
+   aAdd( aColFacCli,  { "cSerFac",     "C",  1,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "nNumFac",     "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cSufFac",     "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cCodEnt",     "C", 14,   0, "Código de la entidad",             "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cRol",        "C", 18,   0, "Rol",                              "",                  "", "( cDbfCol )" } )
 
 Return ( aColFacCli )
 
@@ -23891,7 +24075,6 @@ Return .t.
 Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCodCli, aTmp )
 
    ( dbfTmpLin )->( dbGoTop() )
-
    while ( dbfTmpLin )->( !eof() )
 
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
@@ -23939,6 +24122,17 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCod
    while ( dbfTmpSer )->( !eof() )
       dbPass( dbfTmpSer, dbfFacCliS, .t., cSerFac, nNumFac, cSufFac, dFecFac )
       ( dbfTmpSer )->( dbSkip() )
+      SysRefresh()
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo de entidades---------------------
+   */
+
+   ( dbfTmpEntidades )->( dbGoTop() )
+   while ( dbfTmpEntidades )->( !eof() )
+      dbPass( dbfTmpEntidades, D():FacturasClientesEntidades( nView ), .t., cSerFac, nNumFac, cSufFac )
+      ( dbfTmpEntidades )->( dbSkip() )
       SysRefresh()
    end while
 

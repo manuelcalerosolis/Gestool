@@ -65,23 +65,23 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cCodEnt"       TYPE "C" LEN 14  DEC 0 COMMENT "Código"                     COLSIZE 100    OF oDbf
       FIELD NAME "cDesEnt"       TYPE "C" LEN 60  DEC 0 COMMENT "Descripción"                COLSIZE 400    OF oDbf
       FIELD NAME "cNombre"       TYPE "C" LEN 60  DEC 0 COMMENT "Nombre"                     COLSIZE 400    OF oDbf
-      FIELD NAME "cGLNFisico"    TYPE "C" LEN 60  DEC 0 COMMENT "GLN físico"                 COLSIZE 400    OF oDbf
-      FIELD NAME "cPuntoLogico"  TYPE "C" LEN 60  DEC 0 COMMENT "Punto lógico operacional"   COLSIZE 400    OF oDbf
+      FIELD NAME "cGLNFisico"    TYPE "C" LEN 60  DEC 0 COMMENT "GLN físico"                 HIDE           OF oDbf
+      FIELD NAME "cPntLogico"    TYPE "C" LEN 60  DEC 0 COMMENT "Punto lógico operacional"   HIDE           OF oDbf
       FIELD NAME "cDireccion"    TYPE "C" LEN 160 DEC 0 COMMENT "Dirección"                  COLSIZE 400    OF oDbf
-      FIELD NAME "cCodigoPostal" TYPE "C" LEN 15  DEC 0 COMMENT "Código postal"              COLSIZE 400    OF oDbf
-      FIELD NAME "cPoblacion"    TYPE "C" LEN 100 DEC 0 COMMENT "Población"                  COLSIZE 400    OF oDbf
-      FIELD NAME "cProvincia"    TYPE "C" LEN 100 DEC 0 COMMENT "Provincia"                  COLSIZE 400    OF oDbf
-      FIELD NAME "cPais"         TYPE "C" LEN 100 DEC 0 COMMENT "País"                       COLSIZE 400    OF oDbf
-      FIELD NAME "cTelefono"     TYPE "C" LEN 20  DEC 0 COMMENT "Teléfono"                   COLSIZE 400    OF oDbf
-      FIELD NAME "cWeb"          TYPE "C" LEN 200 DEC 0 COMMENT "Web"                        COLSIZE 400    OF oDbf
-      FIELD NAME "cMail"         TYPE "C" LEN 100 DEC 0 COMMENT "Correo electrónico"         COLSIZE 400    OF oDbf
-      FIELD NAME "cContacto"     TYPE "C" LEN 200 DEC 0 COMMENT "Contacto"                   COLSIZE 400    OF oDbf
-      FIELD NAME "cCodigoINE"    TYPE "C" LEN 20  DEC 0 COMMENT "Código INE"                 COLSIZE 400    OF oDbf
-      FIELD NAME "cCNOCNAE"      TYPE "C" LEN 20  DEC 0 COMMENT "CNO/CNAE"                   COLSIZE 400    OF oDbf
-      FIELD NAME "cOtros"        TYPE "C" LEN 200 DEC 0 COMMENT "Otros"                      COLSIZE 400    OF oDbf
+      FIELD NAME "cCodPostal"    TYPE "C" LEN 15  DEC 0 COMMENT "Código postal"              COLSIZE 100    OF oDbf
+      FIELD NAME "cPoblacion"    TYPE "C" LEN 100 DEC 0 COMMENT "Población"                  COLSIZE 200    OF oDbf
+      FIELD NAME "cProvincia"    TYPE "C" LEN 100 DEC 0 COMMENT "Provincia"                  COLSIZE 200    OF oDbf
+      FIELD NAME "cPais"         TYPE "C" LEN 100 DEC 0 COMMENT "País"                       COLSIZE 200    OF oDbf
+      FIELD NAME "cTelefono"     TYPE "C" LEN 20  DEC 0 COMMENT "Teléfono"                   HIDE           OF oDbf
+      FIELD NAME "cWeb"          TYPE "C" LEN 200 DEC 0 COMMENT "Web"                        HIDE           OF oDbf
+      FIELD NAME "cMail"         TYPE "C" LEN 100 DEC 0 COMMENT "Correo electrónico"         HIDE           OF oDbf
+      FIELD NAME "cContacto"     TYPE "C" LEN 200 DEC 0 COMMENT "Contacto"                   HIDE           OF oDbf
+      FIELD NAME "cCodigoINE"    TYPE "C" LEN 20  DEC 0 COMMENT "Código INE"                 HIDE           OF oDbf
+      FIELD NAME "cCNOCNAE"      TYPE "C" LEN 20  DEC 0 COMMENT "CNO/CNAE"                   HIDE           OF oDbf
+      FIELD NAME "cOtros"        TYPE "C" LEN 200 DEC 0 COMMENT "Otros"                      HIDE           OF oDbf
 
-      INDEX TO "Entidades.Cdx" TAG "cCodEnt" ON "cCodEnt" COMMENT "Código" NODELETED OF oDbf
-      INDEX TO "Entidades.Cdx" TAG "cDesEnt" ON "cDesEnt" COMMENT "Nombre" NODELETED OF oDbf
+      INDEX TO "Entidades.Cdx" TAG "cCodEnt" ON "cCodEnt" COMMENT "Código"       NODELETED OF oDbf
+      INDEX TO "Entidades.Cdx" TAG "cDesEnt" ON "cDesEnt" COMMENT "Descripción"  NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -94,7 +94,7 @@ METHOD Resource( nMode )
    local oDlg
    local oGet
 
-   DEFINE DIALOG oDlg RESOURCE "Horas" TITLE LblTitle( nMode ) + "entidades"
+   DEFINE DIALOG oDlg RESOURCE "Entidades" TITLE LblTitle( nMode ) + "entidades"
 
       REDEFINE GET oGet VAR ::oDbf:cCodEnt ;
          ID       110 ;
@@ -118,7 +118,7 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET ::oDbf:cPuntoLogico ;
+      REDEFINE GET ::oDbf:cPntLogico ;
          ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
@@ -128,7 +128,7 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET ::oDbf:cCodigoPostal ;
+      REDEFINE GET ::oDbf:cCodPostal ;
          ID       170 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
@@ -195,12 +195,6 @@ METHOD Resource( nMode )
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-      REDEFINE BUTTON ;
-         ID       559 ;
-			OF 		oDlg ;
-         CANCEL ;
-         ACTION   ( MsgInfo( "Ayuda no definida" ) )
-
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| if( ::lPreSave( nMode ), oDlg:end( IDOK ), ) } )
    end if
@@ -215,20 +209,43 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD lPreSave( nMode )
 
-   if nMode == APPD_MODE .or. nMode == DUPL_MODE
+   local cErrors  := ""
 
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       if ::oDbf:SeekInOrd( ::oDbf:cCodEnt, "cCodEnt" )
-         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodEnt ) )
-         Return .f.
+         cErrors  += "Código ya existe " + Rtrim( ::oDbf:cCodEnt ) + CRLF
       end if
-
    end if
 
    if Empty( ::oDbf:cDesEnt )
-      MsgStop( "La descripción de la entidad no puede estar vacía." )
-      Return .f.
+      cErrors  += "La descripción de la entidad no puede estar vacía." + CRLF
    end if
 
-RETURN .t.
+   if Empty( ::oDbf:cDireccion )
+      cErrors  += "La dirección de la entidad no puede estar vacía." + CRLF
+   end if
+   
+   if Empty( ::oDbf:cCodPostal )
+      cErrors  += "El código postal de la entidad no puede estar vacío." + CRLF
+   end if
+
+   if Empty( ::oDbf:cPoblacion )
+      cErrors  += "La población de la entidad no puede estar vacío." + CRLF
+   end if
+
+   if Empty( ::oDbf:cProvincia )
+      cErrors  += "La provincia de la entidad no puede estar vacía." + CRLF
+   end if
+
+   if Empty( ::oDbf:cPais )
+      cErrors  += "El país de la entidad no puede estar vacío." + CRLF
+   end if
+
+   if !empty(cErrors)
+      msgStop( cErrors )
+      Return .f.
+   end if 
+
+Return .t.
 
 //--------------------------------------------------------------------------//

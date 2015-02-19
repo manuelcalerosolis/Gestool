@@ -4,7 +4,7 @@
 
 #define  HKEY_LOCAL_MACHINE      2147483650
 
-#define NTRIM(n)                 ( LTrim( Str( n ) ) )
+#define NTRIM(n)                 ( ltrim( str( n ) ) )
 
 static cFullCurDir
 
@@ -13,6 +13,22 @@ static nMeter  := 0
 
 static oText
 static cText   := ""
+
+static hRoles  := { "Fiscal" => "01",;
+                    "Receptor" => "02",;
+                    "Pagador" => "03",;
+                    "Comprador" => "04",;
+                    "Cobrador" => "05",;
+                    "Vendedor" => "06",;
+                    "Receptor del pago" => "07",;
+                    "Receptor del cobro" => "08",;
+                    "Emisor" => "09"}
+
+//--------------------------------------------------------------------------//
+
+Function aRolesValues()           
+
+Return hGetKeys( hRoles )         
 
 //--------------------------------------------------------------------------//
 
@@ -551,6 +567,8 @@ Function GetAutoTextDialog()
 RETURN ( oText )
 
 //---------------------------------------------------------------------------//
+
+
 
 /*
 Function ErrorMessage( e )

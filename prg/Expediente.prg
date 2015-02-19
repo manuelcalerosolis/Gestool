@@ -757,7 +757,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"                                                                     OF oDbf
       FIELD NAME "cCodCol" TYPE "C" LEN 03  DEC 0 COMMENT "Colaborador"                                                                 OF oDbf
       FIELD NAME "cCodTra" TYPE "C" LEN 05  DEC 0 COMMENT "Operario"                                                                    OF oDbf
-      FIELD NAME "cCodEnt" TYPE "C" LEN 03  DEC 0 COMMENT "Entidad"                                                                     OF oDbf
+      FIELD NAME "cCodEnt" TYPE "C" LEN 14  DEC 0 COMMENT "Entidad"                                                                     OF oDbf
       FIELD NAME "dFecAsg" TYPE "D" LEN 08  DEC 0 COMMENT "Fecha de asignación"                                                         OF oDbf
 
       INDEX TO "ExpCab.Cdx" TAG "cNumExp" ON "cSerExp + Str( nNumExp, 9 ) + cSufExp"   COMMENT "Número"           NODELETED             OF oDbf

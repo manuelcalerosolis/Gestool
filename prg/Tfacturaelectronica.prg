@@ -63,6 +63,9 @@ CLASS TFacturaElectronica
    DATA  oXmlAccountToBeCredited
    DATA  oXmlAccountToBeDebited
 
+   DATA  oXmlAdministrativeCentres
+   DATA  oXmlAddressInSpain
+
    DATA  hDC
 
    DATA  cFicheroOrigen
@@ -553,6 +556,25 @@ METHOD PartiesXml()
             ::oXmlTaxIdentification:addBelow( TXmlNode():new( , 'TaxIdentificationNumber', , ::oBuyerParty:TaxIdentificationNumber() ) )
 
          ::oXmlBuyerParty:addBelow( ::oXmlTaxIdentification )
+
+         /*
+         Comienza el nodo AdministrativeCentres-------------------------------
+         */
+
+         ::oXmlAdministrativeCentres  := TXmlNode():new( , 'AdministrativeCentres' )
+            ::oXmlAdministrativeCentres:addBelow( TXmlNode():new( , 'CentreCode', ,           "GE0002021" ) )
+            ::oXmlAdministrativeCentres:addBelow( TXmlNode():new( , 'RoleTypeCode', ,         "01" ) )
+
+            ::oXmlAddressInSpain       := TXmlNode():new( , 'AddressInSpain' )
+               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', , "PLAZA DE LA CONSTITUCION, 1" ) )
+               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', , "21001" ) )
+               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', , "HUELVA" ) )
+               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', , "HUELVA" ) )
+               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , "ESP" ) )
+
+            ::oXmlAdministrativeCentres:addBelow( ::oXmlAddressInSpain )
+
+         ::oXmlBuyerParty:addBelow( ::oXmlAdministrativeCentres )
 
          /*
          Comienza el nodo LegalEntity------------------------------------------
