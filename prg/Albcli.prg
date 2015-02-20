@@ -2778,6 +2778,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nWidth              := 80
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
+         :nEditType           := 1
+         :bOnPostEdit         := {|o,x,n| ChangePrecio( o, x, n, aTmp ) }
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -17990,4 +17992,22 @@ Static Function cFormatoAlbaranesClientes( cSerie )
 
 Return ( cFormato ) 
 
-//---------------------------------------------------------------------------//   
+//---------------------------------------------------------------------------// 
+
+Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp )
+
+   /*
+   Cambiamos el valor de las unidades de la linea de la factura---------------
+   */
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      ( dbfTmpLin )->nPreUnit       := uNewValue
+
+      RecalculaTotal( aTmp )
+
+   end if
+
+Return .t.  
+
+//---------------------------------------------------------------------------//

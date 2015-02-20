@@ -20,7 +20,7 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD New()
 
-   METHOD ResourceViewEditResumen()
+   METHOD Resource()
 
    METHOD defineBotonesGenerales()
    
@@ -55,11 +55,11 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceViewEditResumen( oDlgMaster ) CLASS ViewEditResumen
+METHOD Resource( oDlgMaster ) CLASS ViewEditResumen
 
    ::oDlg   := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
-   ::TituloBrowse()
+   ::defineTitulo()
 
    ::defineBotonesGenerales()
 
@@ -224,7 +224,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 0 }
+      :bFooter             := {|| 300 }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -235,25 +235,25 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
       :nHeadStrAlign       := 1
    end with
 
-   /*with object ( oBrwIva:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cHeader             := cImp() + " - RE"
-      :bStrData            := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 8 ], cPorDiv ), "" ) + CRLF + if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
+      :bStrData            := {|| if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "ImporteIva" ) ), Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "ImporteIva" ), cPorDiv() ), "" ) + CRLF + if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "ImporteRe" ) ) != nil ,  Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "ImporteRe" ), cPorDiv() ), "" ) }
       :nWidth              := 160
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 0 }
+      :bFooter             := {|| 63 }
    end with
 
-   with object ( oBrwIva:AddCol() )
+   with object ( ::oBrowse:AddCol() )
       :cHeader             := "Total"
-      :bStrData            := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ] + aTotIva[ oBrwIva:nArrayAt, 8 ] + aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
+      :bStrData            := {|| if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "Total" ) ), Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "Total" ), cPorDiv() ), "" ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 0 }
-   end with*/
+      :bFooter             := {|| 363 }
+   end with
 
    ::oBrowse:nHeaderHeight    := 48
    ::oBrowse:nFooterHeight    := 48

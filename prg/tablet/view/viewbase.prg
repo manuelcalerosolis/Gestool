@@ -73,6 +73,8 @@ METHOD Resource( nMode ) CLASS ViewBase
 
    ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
+   ::nMode                 := nMode
+
    ::defineTitulo()
 
    ::defineAceptarCancelar()

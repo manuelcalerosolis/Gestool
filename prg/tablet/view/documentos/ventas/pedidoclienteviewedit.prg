@@ -20,19 +20,17 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertControls( nMode ) CLASS PedidoClienteViewEdit
+METHOD insertControls() CLASS PedidoClienteViewEdit
 
-   ::DefineSerie()
+   ::defineSerie()
 
-   ::DefineRuta()
+   ::defineRuta()
 
-   ::DefineCliente()
+   ::defineCliente()
 
-   ::DefineDireccion()
+   ::defineDireccion()
 
-   msginfo( "Hay que meter la vista con las lineas del pedido" )
-
-   
+   ::defineBrowseLineas()
 
 Return ( self )
 

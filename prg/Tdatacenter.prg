@@ -5397,6 +5397,8 @@ CLASS D
 
    METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )
 
+   METHOD Operarios( nView )                 INLINE ( ::Get( "OpeT", nView ) )
+
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 
 

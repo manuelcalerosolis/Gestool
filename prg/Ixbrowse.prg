@@ -607,7 +607,9 @@ METHOD MakeTotals( aCols ) CLASS IXBrowse
          next n
       until ( ::Skip( 1 ) < 1 )
 
-      (::cAlias)->(dbGoTo( uBm )) // ::BookMark( uBm )
+      if !Empty( ::cAlias )
+         (::cAlias)->(dbGoTo( uBm )) // ::BookMark( uBm )
+      end if
 
       // msgAlert( (::cAlias)->(Recno()), "recno despues de MakeTotals")
 

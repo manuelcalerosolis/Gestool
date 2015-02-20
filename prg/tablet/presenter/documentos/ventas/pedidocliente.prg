@@ -85,7 +85,9 @@ METHOD ResourceDetail( nMode ) CLASS PedidoCliente
 
    if !Empty( ::oViewEditDetail )
 
-      lResult        := ::oViewEditDetail:ResourceViewEditDetail( nMode )
+      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de pedido" )
+
+      lResult        := ::oViewEditDetail:Resource( nMode )
 
    end if
 

@@ -22,19 +22,22 @@ CLASS DocumentosVentas FROM Ventas
 
    DATA hTotalIva                   INIT  {  { "Base" => 100,;
                                                "PorcentajeIva" => 21,;
-                                               "ImporteIva" => 121,;
+                                               "ImporteIva" => 21,;
                                                "PorcentajeRe" => 1,;
-                                               "ImporteRe" => 1 },;
+                                               "ImporteRe" => 1,;
+                                               "Total" => 121 },;
                                              { "Base" => 100,;
                                                "PorcentajeIva" => 21,;
-                                               "ImporteIva" => 121,;
+                                               "ImporteIva" => 21,;
                                                "PorcentajeRe" => 1,;
-                                               "ImporteRe" => 1 },;
+                                               "ImporteRe" => 1,;
+                                               "Total" => 121 },;
                                              { "Base" => 100,;
                                                "PorcentajeIva" => 21,;
-                                               "ImporteIva" => 121,;
+                                               "ImporteIva" => 21,;
                                                "PorcentajeRe" => 1,;
-                                               "ImporteRe" => 1 } }  
+                                               "ImporteRe" => 1,;
+                                               "Total" => 121 } }  
 
    METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
@@ -899,7 +902,7 @@ METHOD ResumenVenta( oCbxRuta, oDlg ) CLASS DocumentosVentas
 
       ::SetDocumentosFacturas()
 
-      ::oViewEditResumen:ResourceViewEditResumen( ::oDlg )
+      ::oViewEditResumen:Resource( ::oDlg )
 
    end if
 

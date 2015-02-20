@@ -24,7 +24,7 @@ CLASS ViewDetail FROM ViewBase
    
    METHOD New()
 
-   METHOD ResourceViewEditDetail()
+   METHOD Resource()
 
    METHOD SetGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
                                                       hGet( ::oSender:hDictionaryDetailTemporal, cName ),;
@@ -75,13 +75,13 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceViewEditDetail( nMode ) CLASS ViewDetail
+METHOD Resource( nMode ) CLASS ViewDetail
 
    ::nMode  := nMode
 
    ::oDlg   := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
-   ::TituloBrowse()
+   ::defineTitulo()
 
    ::defineArticulo()
 
