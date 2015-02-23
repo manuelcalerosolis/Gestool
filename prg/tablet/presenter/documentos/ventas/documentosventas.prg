@@ -20,24 +20,24 @@ CLASS DocumentosVentas FROM Ventas
                                              "7" => "lVisSab",;
                                              "8" => "Cod" }
 
-   DATA hTotalIva                   INIT  {  { "Base" => 100,;
-                                               "PorcentajeIva" => 21,;
-                                               "ImporteIva" => 21,;
-                                               "PorcentajeRe" => 1,;
-                                               "ImporteRe" => 1,;
-                                               "Total" => 121 },;
-                                             { "Base" => 100,;
-                                               "PorcentajeIva" => 21,;
-                                               "ImporteIva" => 21,;
-                                               "PorcentajeRe" => 1,;
-                                               "ImporteRe" => 1,;
-                                               "Total" => 121 },;
-                                             { "Base" => 100,;
-                                               "PorcentajeIva" => 21,;
-                                               "ImporteIva" => 21,;
-                                               "PorcentajeRe" => 1,;
-                                               "ImporteRe" => 1,;
-                                               "Total" => 121 } }  
+   DATA hTotalIva                   INIT  {  { "Base" => 0,;
+                                               "PorcentajeIva" => 0,;
+                                               "ImporteIva" => 0,;
+                                               "PorcentajeRe" => 0,;
+                                               "ImporteRe" => 0,;
+                                               "Total" => 0 },;
+                                             { "Base" => 0,;
+                                               "PorcentajeIva" => 0,;
+                                               "ImporteIva" => 0,;
+                                               "PorcentajeRe" => 0,;
+                                               "ImporteRe" => 0,;
+                                               "Total" => 0 },;
+                                             { "Base" => 0,;
+                                               "PorcentajeIva" => 0,;
+                                               "ImporteIva" => 0,;
+                                               "PorcentajeRe" => 0,;
+                                               "ImporteRe" => 0,;
+                                               "Total" => 0 } }  
 
    METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 

@@ -224,7 +224,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 300 }
+      :bFooter             := {|| 0 }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -242,7 +242,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 63 }
+      :bFooter             := {|| 0 }
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -252,7 +252,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 363 }
+      :bFooter             := {|| 0 }
    end with
 
    ::oBrowse:nHeaderHeight    := 48
