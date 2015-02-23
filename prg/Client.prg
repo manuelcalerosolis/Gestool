@@ -3855,25 +3855,20 @@ Return ( .t. )
 
 function ShowIncidenciaCliente( cCodigoCliente, nView )
 
-   D():GetStatus( "CliInc", nView )
+   D():getStatusClientesIncidencias( nView )
 
-   if D():SeekInOrd( "CliInc", nView, cCodigoCliente, "cCodCli" )
+   if D():gotoIdClientesIncidencias( cCodigoCliente, nView )
 
-      while ( D():Get( "CliInc", nView ) )->cCodCli == cCodigoCliente .and. !D():Eof( "CliInc", nView ) 
-
-         if ( D():Get( "CliInc", nView ) )->lAviso .and. !( D():Get( "CliInc", nView ) )->lListo
-
-            MsgInfo( AllTrim( ( D():Get( "CliInc", nView ) )->mDesInc ), "Incidencia de cliente" )
-
+      while ( D():ClientesIncidenciasId( nView ) == cCodigoCliente .and. !D():eofClientesIncidecias( nView ) )
+         if ( D():ClientesIncidencias( nView ) )->lAviso .and. !( D():ClientesIncidencias( nView ) )->lListo
+            msgInfo( AllTrim( ( D():ClientesIncidencias( nView ) )->mDesInc ), "Incidencia de cliente" )
          end if
-
-         ( D():Get( "CliInc", nView ) )->( dbSkip() )
-
+         ( D():ClientesIncidencias( nView ) )->( dbSkip() )
       end while
 
    end if
 
-   D():SetStatus( "CliInc", nView )
+   D():setStatusClientesIncidencias( nView )
 
 Return ( .t. )
 

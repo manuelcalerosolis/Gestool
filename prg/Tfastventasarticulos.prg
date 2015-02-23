@@ -632,7 +632,8 @@ Return ( Self )
 
 Method lValidRegister() CLASS TFastVentasArticulos
 
-   if ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()      .and. ::oDbf:cCodArt   <= ::oGrupoArticulo:Cargo:getHasta() )      .and.;
+   if !empty( ::oDbf:cCodArt )                                                                                                          .and.;
+      ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()      .and. ::oDbf:cCodArt   <= ::oGrupoArticulo:Cargo:getHasta() )      .and.;
       ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:getDesde()       .and. ::oDbf:cCodFam   <= ::oGrupoFamilia:Cargo:getHasta() )       .and.;
       ( ::oDbf:cCodTip     >= ::oGrupoTArticulo:Cargo:getDesde()     .and. ::oDbf:cCodTip   <= ::oGrupoTArticulo:Cargo:getHasta() )     .and.;
       ( ::oDbf:TipoIva     >= ::oGrupoIva:Cargo:getDesde()           .and. ::oDbf:TipoIva   <= ::oGrupoIva:Cargo:getHasta() )           .and.;
@@ -2058,28 +2059,32 @@ METHOD appendStockArticulo( aStockArticulo )
 
    for each sStock in aStockArticulo
 
-      ::oDbf:Blank()
+      if !empty(sStock:cCodigo)
 
-      ::oDbf:cCodArt    := sStock:cCodigo
-      ::oDbf:cSufDoc    := sStock:cDelegacion
-      ::oDbf:dFecDoc    := sStock:dFechaDocumento
-      ::oDbf:cCodAlm    := sStock:cCodigoAlmacen
-      ::oDbf:cCodPr1    := sStock:cCodigoPropiedad1     
-      ::oDbf:cCodPr2    := sStock:cCodigoPropiedad2     
-      ::oDbf:cValPr1    := sStock:cValorPropiedad1      
-      ::oDbf:cValPr2    := sStock:cValorPropiedad1      
-      ::oDbf:cLote      := sStock:cLote                 
-      ::oDbf:dFecCad    := sStock:dFechaCaducidad       
-      ::oDbf:cNumSer    := sStock:cNumeroSerie  
-      ::oDbf:nUniArt    := sStock:nUnidades             
-      ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
-      ::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
-      ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
-      ::oDbf:cTipDoc    := sStock:cTipoDocumento
+         ::oDbf:Blank()
 
-      ::fillFromArticulo()
+         ::oDbf:cCodArt    := sStock:cCodigo
+         ::oDbf:cSufDoc    := sStock:cDelegacion
+         ::oDbf:dFecDoc    := sStock:dFechaDocumento
+         ::oDbf:cCodAlm    := sStock:cCodigoAlmacen
+         ::oDbf:cCodPr1    := sStock:cCodigoPropiedad1     
+         ::oDbf:cCodPr2    := sStock:cCodigoPropiedad2     
+         ::oDbf:cValPr1    := sStock:cValorPropiedad1      
+         ::oDbf:cValPr2    := sStock:cValorPropiedad1      
+         ::oDbf:cLote      := sStock:cLote                 
+         ::oDbf:dFecCad    := sStock:dFechaCaducidad       
+         ::oDbf:cNumSer    := sStock:cNumeroSerie  
+         ::oDbf:nUniArt    := sStock:nUnidades             
+         ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
+         ::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
+         ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
+         ::oDbf:cTipDoc    := sStock:cTipoDocumento
 
-      ::InsertIfValid()
+         ::fillFromArticulo()
+
+         ::InsertIfValid()
+
+      end if 
 
    next 
 
@@ -2120,7 +2125,7 @@ METHOD appendBlankArticulo( cCodigoArticulo, cCodigoAlmacen ) CLASS TFastVentasA
 
    ::fillFromArticulo()
 
-   ::InsertIfValid()
+   ::insertIfValid()
 
 RETURN ( Self )
 

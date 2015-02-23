@@ -17,6 +17,25 @@ CLASS TEntidades FROM TMant
 
    METHOD lPreSave( nMode )
 
+   METHOD getDireccion( id )     INLINE ( oRetFld( id, ::oDbf, "cDireccion" ) )
+   METHOD getDescripcion( id )   INLINE ( oRetFld( id, ::oDbf, "cDesEnt"    ) )
+   METHOD getNombre( id )        INLINE ( oRetFld( id, ::oDbf, "cNombre"    ) )
+   METHOD getGLNFisico( id )     INLINE ( oRetFld( id, ::oDbf, "cGLNFisico" ) )
+   METHOD getPntLogico( id )     INLINE ( oRetFld( id, ::oDbf, "cPntLogico" ) )
+   METHOD getDireccion( id )     INLINE ( oRetFld( id, ::oDbf, "cDireccion" ) )
+   METHOD getCodigoPostal( id )  INLINE ( oRetFld( id, ::oDbf, "cCodPostal" ) )
+   METHOD getPoblacion( id )     INLINE ( oRetFld( id, ::oDbf, "cPoblacion" ) )
+   METHOD getProvincia( id )     INLINE ( oRetFld( id, ::oDbf, "cProvincia" ) )
+   METHOD getPais( id )          INLINE ( oRetFld( id, ::oDbf, "cPais"      ) )
+   METHOD getCodigoPais( id )    INLINE ( getPaisCode( oRetFld( id, ::oDbf, "cPais" ) ) )
+   METHOD getTelefono( id )      INLINE ( oRetFld( id, ::oDbf, "cTelefono"  ) )
+   METHOD getWeb( id )           INLINE ( oRetFld( id, ::oDbf, "cWeb"       ) )
+   METHOD getMail( id )          INLINE ( oRetFld( id, ::oDbf, "cMail"      ) )
+   METHOD getContacto( id )      INLINE ( oRetFld( id, ::oDbf, "cContacto"  ) )
+   METHOD getCodigoINE( id )     INLINE ( oRetFld( id, ::oDbf, "cCodigoINE" ) )
+   METHOD getCNOCNAE( id )       INLINE ( oRetFld( id, ::oDbf, "cCNOCNAE"   ) )
+   METHOD getOtros( id )         INLINE ( oRetFld( id, ::oDbf, "cOtros"     ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -143,7 +162,8 @@ METHOD Resource( nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET ::oDbf:cPais ;
+      REDEFINE COMBOBOX ::oDbf:cPais ;
+         ITEMS    aPaisesValues();
          ID       200 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg

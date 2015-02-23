@@ -64,7 +64,7 @@ CLASS TFacturaElectronica
    DATA  oXmlAccountToBeDebited
 
    DATA  oXmlAdministrativeCentres
-   DATA  oXmlAddressInSpain
+   DATA  oXmlAdministrativeCentre
 
    DATA  hDC
 
@@ -142,6 +142,7 @@ CLASS TFacturaElectronica
    DATA     aDiscount
    DATA     aItemLine
    DATA     aInstallment
+   DATA     aAdministrativeCentres
 
    DATA     lError
 
@@ -165,6 +166,7 @@ CLASS TFacturaElectronica
    METHOD DiscountXml()
    METHOD ItemsXml()
    METHOD InstallmentXml()
+   METHOD AdministrativeCentresXml( oAdministrativeCentre )
 
    METHOD ShowInWeb()
 
@@ -177,6 +179,8 @@ CLASS TFacturaElectronica
 
    METHOD addItemLine( oItemLine )        INLINE ( aAdd( ::aItemLine, oItemLine ) )
    METHOD addInstallment( oInstallment )  INLINE ( aAdd( ::aInstallment, oInstallment ) )
+   METHOD addAdministrativeCentres( aAdministrativeCentres ) ;
+                                          INLINE ( aAdd( ::aAdministrativeCentres, aAdministrativeCentres ) )
    METHOD addTax( oTax )                  INLINE ( ::nTotalTaxOutputs += oTax:nTaxAmount, aAdd( ::aTax, oTax ), ::aTax )
    METHOD addDiscount( oDiscount )        INLINE ( ::nTotalGeneralDiscounts += oDiscount:nDiscountAmount, aAdd( ::aDiscount, oDiscount ), ::aDiscount )
 
@@ -212,6 +216,7 @@ METHOD New( oTree )
    ::aDiscount                      := {}
    ::aItemLine                      := {}
    ::aInstallment                   := {}
+   ::aAdministrativeCentres         := {}
 
    ::cMailServer                    := Rtrim( uFieldEmpresa( "cSrvMai" ) )
    ::cMailServerPort                := uFieldEmpresa( "nPrtMai" )
@@ -370,6 +375,8 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD PartiesXml()
+
+   local oAdministrativeCentre
 
    /*
    Comienza el nodo parties----------------------------------------------------
@@ -561,20 +568,17 @@ METHOD PartiesXml()
          Comienza el nodo AdministrativeCentres-------------------------------
          */
 
-         ::oXmlAdministrativeCentres  := TXmlNode():new( , 'AdministrativeCentres' )
-            ::oXmlAdministrativeCentres:addBelow( TXmlNode():new( , 'CentreCode', ,           "GE0002021" ) )
-            ::oXmlAdministrativeCentres:addBelow( TXmlNode():new( , 'RoleTypeCode', ,         "01" ) )
+         if !empty( ::aAdministrativeCentres )
 
-            ::oXmlAddressInSpain       := TXmlNode():new( , 'AddressInSpain' )
-               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', , "PLAZA DE LA CONSTITUCION, 1" ) )
-               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', , "21001" ) )
-               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', , "HUELVA" ) )
-               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', , "HUELVA" ) )
-               ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , "ESP" ) )
+            ::oXmlAdministrativeCentres      := TXmlNode():new( , 'AdministrativeCentres' )
 
-            ::oXmlAdministrativeCentres:addBelow( ::oXmlAddressInSpain )
+            for each oAdministrativeCentre in ::aAdministrativeCentres
+               ::AdministrativeCentresXml( oAdministrativeCentre )
+            next 
 
-         ::oXmlBuyerParty:addBelow( ::oXmlAdministrativeCentres )
+            ::oXmlBuyerParty:addBelow( ::oXmlAdministrativeCentres )
+
+         end if
 
          /*
          Comienza el nodo LegalEntity------------------------------------------
@@ -935,6 +939,33 @@ METHOD TaxesXml( oTax )
    end if
 
 Return ( ::oXmlTax )
+
+//---------------------------------------------------------------------------//
+
+METHOD AdministrativeCentresXml( oAdministrativeCentre )
+
+   local oXmlCentreDescription
+
+   ::oXmlAdministrativeCentre    := TXmlNode():new( , 'AdministrativeCentre' )
+
+      ::oXmlAdministrativeCentre:addBelow( TXmlNode():new( , 'CentreCode', ,     oAdministrativeCentre:CentreCode() ) )
+      ::oXmlAdministrativeCentre:addBelow( TXmlNode():new( , 'RoleTypeCode', ,   oAdministrativeCentre:RoleTypeCode() ) )
+
+      ::oXmlAddressInSpain       := TXmlNode():new( , 'AddressInSpain' )
+         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Address', ,     oAdministrativeCentre:Address() ) )
+         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'PostCode', ,    oAdministrativeCentre:PostCode() ) )
+         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Town', ,        oAdministrativeCentre:Town() ) )
+         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'Province', ,    oAdministrativeCentre:Province() ) )
+         ::oXmlAddressInSpain:addBelow( TXmlNode():new( , 'CountryCode', , oAdministrativeCentre:CountryCode() ) )
+
+      ::oXmlAdministrativeCentre:addBelow( ::oXmlAddressInSpain )
+
+      oXmlCentreDescription      := TXmlNode():new( , 'CentreDescription', , oAdministrativeCentre:CentreDescription() )
+      ::oXmlAdministrativeCentre:addBelow( oXmlCentreDescription )
+
+   ::oXmlAdministrativeCentres:addBelow( ::oXmlAdministrativeCentre )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -1319,10 +1350,9 @@ return nil
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-CLASS Party
+CLASS Party FROM Address
 
    DATA     cTaxIdentificationNumber      INIT ''
-   DATA     cCountryCode                  INIT 'ESP'
    DATA     cCorporateName                INIT ''
    DATA     cTradeName                    INIT ''
    DATA     cRegistrationData             INIT ''
@@ -1333,10 +1363,6 @@ CLASS Party
    DATA     cSection                      INIT ''
    DATA     nVolume                       INIT ''
    DATA     cAditionalRegistrationData    INIT ''
-   DATA     cAddress                      INIT ''
-   DATA     cPostCode                     INIT ''
-   DATA     cTown                         INIT ''
-   DATA     cProvince                     INIT ''
    DATA     cTelephone                    INIT ''
    DATA     cTelFax                       INIT ''
    DATA     cWebAddress                   INIT ''
@@ -1359,11 +1385,6 @@ CLASS Party
 
    ACCESS   CorporateName                 INLINE ( Rtrim( Left( ::cCorporateName, 80 ) ) )
    ACCESS   TradeName                     INLINE ( Rtrim( Left( ::cTradeName, 40 ) ) )
-   ACCESS   Address                       INLINE ( Rtrim( Left( ::cAddress, 80 ) ) )
-   ACCESS   PostCode                      INLINE ( Rtrim( Left( ::cPostCode, 9 ) ) )
-   ACCESS   Town                          INLINE ( Rtrim( Left( ::cTown, 50 ) ) )
-   ACCESS   Province                      INLINE ( Rtrim( Left( ::cProvince, 20 ) ) )
-   ACCESS   CountryCode                   INLINE ( Rtrim( Left( ::cCountryCode, 3 ) ) )
 
    ACCESS   Name                          INLINE ( Rtrim( Left( ::cName, 40 ) ) )
    ACCESS   FirstSurname                  INLINE ( Rtrim( Left( ::cFirstSurname, 40 ) ) )
@@ -1438,7 +1459,7 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oFacturaElectronica )
+METHOD New( oFacturaElectronica ) CLASS ItemLine
 
    ::oFacturaElectronica               := oFacturaElectronica 
 
@@ -1446,7 +1467,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addDiscount( oDiscount )
+METHOD addDiscount( oDiscount ) CLASS ItemLine
 
    if Empty( ::nTotalCost )
       ::nTotalCost                     := ::nQuantity * ::nUnitPriceWithoutTax
@@ -1460,7 +1481,7 @@ RETURN ( oDiscount )
 
 //------------------------------------------------------------------------//
 
-METHOD GrossAmount()
+METHOD GrossAmount() CLASS ItemLine
 
    local oDiscount
 
@@ -1483,18 +1504,14 @@ CLASS Installment
    DATA     oAccountToBeCredited
    DATA     oAccountToBeDebited
 
-   ACCESS   InstallmentDueDate      INLINE ( dToIso( ::dInstallmentDueDate ) )
-   ACCESS   InstallmentAmount       INLINE ( Alltrim( Trans( ::nInstallmentAmount,  DoubleTwoDecimalPicture ) ) )
+   ACCESS   InstallmentDueDate      INLINE ( dtoiso( ::dInstallmentDueDate ) )
+   ACCESS   InstallmentAmount       INLINE ( alltrim( Trans( ::nInstallmentAmount,  DoubleTwoDecimalPicture ) ) )
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-CLASS Account
-
-   DATA     cIBAN                   INIT ''
-   DATA     cBankCode               INIT ''
-   DATA     cBranchCode             INIT ''
+CLASS Address
 
    DATA     cAddress                INIT ''
    DATA     cPostCode               INIT ''
@@ -1502,216 +1519,41 @@ CLASS Account
    DATA     cProvince               INIT ''
    DATA     cCountryCode            INIT 'ESP'
 
-   ACCESS   IBAN                    INLINE ( 'ES88' + Rtrim( Left( ::cIBAN, 30 ) ) )
-   ACCESS   BankCode                INLINE ( Rtrim( Left( ::cBankCode, 60 ) ) )
-   ACCESS   BranchCode              INLINE ( Rtrim( Left( ::cBranchCode, 60 ) ) )
-
-   ACCESS   Address                 INLINE ( Rtrim( Left( ::cAddress, 80 ) ) )
-   ACCESS   PostCode                INLINE ( Rtrim( Left( ::cPostCode, 9 ) ) )
-   ACCESS   Town                    INLINE ( Rtrim( Left( ::cTown, 50 ) ) )
-   ACCESS   Province                INLINE ( Rtrim( Left( ::cProvince, 20 ) ) )
-   ACCESS   CountryCode             INLINE ( Rtrim( Left( ::cCountryCode, 3 ) ) )
+   ACCESS   Address                 INLINE ( alltrim( left( ::cAddress, 80 ) ) )
+   ACCESS   PostCode                INLINE ( alltrim( left( ::cPostCode, 9 ) ) )
+   ACCESS   Town                    INLINE ( alltrim( left( ::cTown, 50 ) ) )
+   ACCESS   Province                INLINE ( alltrim( left( ::cProvince, 20 ) ) )
+   ACCESS   CountryCode             INLINE ( alltrim( left( ::cCountryCode, 3 ) ) )
 
 ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-/*
-<namespace:Facturae xmlns:namespace="http://www.facturae.es/Facturae/2009/v3.2/Facturae" xmlns:namespace2="http://www.w3.org/2001/XMLSchema" xmlns:namespace3="http://www.w3.org/2000/09/xmldsig#">
-<FileHeader>
-<SchemaVersion>3.2</SchemaVersion>
-<Modality>I</Modality>
-<InvoiceIssuerType>EM</InvoiceIssuerType>
-<Batch>
-<BatchIdentifier>99999999R_F00010</BatchIdentifier>
-<InvoicesCount>1</InvoicesCount>
-<TotalInvoicesAmount>
-<TotalAmount>672.35</TotalAmount>
-</TotalInvoicesAmount>
-<TotalOutstandingAmount>
-<TotalAmount>672.35</TotalAmount>
-</TotalOutstandingAmount>
-<TotalExecutableAmount>
-<TotalAmount>672.35</TotalAmount>
-</TotalExecutableAmount>
-<InvoiceCurrencyCode>EUR</InvoiceCurrencyCode>
-</Batch>
-</FileHeader>
-<Parties>
-<SellerParty>
-<TaxIdentification>
-<PersonTypeCode>F</PersonTypeCode>
-<ResidenceTypeCode>R</ResidenceTypeCode>
-<TaxIdentificationNumber>99999999R</TaxIdentificationNumber>
-</TaxIdentification>
-<Individual>
-<Name>JUAN ESPAÑOL ESPAÑOL</Name>
-<FirstSurname/>
-<SecondSurname/>
-<AddressInSpain>
-<Address>Domicilio</Address>
-<PostCode>30000</PostCode>
-<Town>Poblacion</Town>
-<Province>Provincia</Province>
-<CountryCode>ESP</CountryCode>
-</AddressInSpain>
-<ContactDetails>
-<Telephone>968112233</Telephone>
-<TeleFax>968223300</TeleFax>
-<WebAddress>www.paginaweb.es</WebAddress>
-<ElectronicMail>email@ncs.es</ElectronicMail>
-<ContactPersons>Persona de Contacto</ContactPersons>
-</ContactDetails>
-</Individual>
-</SellerParty>
-<BuyerParty>
-<TaxIdentification>
-<PersonTypeCode>J</PersonTypeCode>
-<ResidenceTypeCode>R</ResidenceTypeCode>
-<TaxIdentificationNumber>Q2826000H</TaxIdentificationNumber>
-</TaxIdentification>
-<LegalEntity>
-<CorporateName>AEAT</CorporateName>
-<TradeName>AEAT</TradeName>
-<AddressInSpain>
-<Address>Calle Sta Maria Magdalena</Address>
-<PostCode>28016</PostCode>
-<Town>Madrid</Town>
-<Province>Madrid</Province>
-<CountryCode>ESP</CountryCode>
-</AddressInSpain>
-<ContactDetails>
-<Telephone></Telephone>
-<TeleFax/>
-<WebAddress/>
-<ElectronicMail>email@email.es</ElectronicMail>
-<ContactPersons/>
-</ContactDetails>
-</LegalEntity>
-</BuyerParty>
-</Parties>
-<Invoices>
-<Invoice>
-<InvoiceHeader>
-<InvoiceNumber>00010</InvoiceNumber>
-<InvoiceSeriesCode>F</InvoiceSeriesCode>
-<InvoiceDocumentType>FC</InvoiceDocumentType>
-<InvoiceClass>OO</InvoiceClass>
-</InvoiceHeader>
-<InvoiceIssueData>
-<IssueDate>2009-10-02</IssueDate>
-<InvoiceCurrencyCode>EUR</InvoiceCurrencyCode>
-<TaxCurrencyCode>EUR</TaxCurrencyCode>
-<LanguageName>es</LanguageName>
-</InvoiceIssueData>
-<TaxesOutputs>
-<Tax>
-<TaxTypeCode>01</TaxTypeCode>
-<TaxRate>16.00</TaxRate>
-<TaxableBase>
-<TotalAmount>301.50</TotalAmount>
-</TaxableBase>
-<TaxAmount>
-<TotalAmount>48.24</TotalAmount>
-</TaxAmount>
-</Tax>
-<Tax>
-<TaxTypeCode>01</TaxTypeCode>
-<TaxRate>7.00</TaxRate>
-<TaxableBase>
-<TotalAmount>301.50</TotalAmount>
-</TaxableBase>
-<TaxAmount>
-<TotalAmount>21.11</TotalAmount>
-</TaxAmount>
-</Tax>
-</TaxesOutputs>
-<InvoiceTotals>
-<TotalGrossAmount>603.00</TotalGrossAmount>
-<TotalGeneralDiscounts>0.00</TotalGeneralDiscounts>
-<TotalGeneralSurcharges>0.00</TotalGeneralSurcharges>
-<TotalGrossAmountBeforeTaxes>603.00</TotalGrossAmountBeforeTaxes>
-<TotalTaxOutputs>69.35</TotalTaxOutputs>
-<TotalTaxesWithheld>0.00</TotalTaxesWithheld>
-<InvoiceTotal>672.35</InvoiceTotal>
-<TotalOutstandingAmount>672.35</TotalOutstandingAmount>
-<TotalExecutableAmount>672.35</TotalExecutableAmount>
-<TotalReimbursableExpenses>0.00</TotalReimbursableExpenses>
-</InvoiceTotals>
-<Items>
-<InvoiceLine>
-<ItemDescription>ARTICULO 0101</ItemDescription>
-<Quantity>1</Quantity>
-<UnitOfMeasure>01</UnitOfMeasure>
-<UnitPriceWithoutTax>100.500000</UnitPriceWithoutTax>
-<TotalCost>100.500000</TotalCost>
-<GrossAmount>100.500000</GrossAmount>
-<TaxesOutputs>
-<Tax>
-<TaxTypeCode>01</TaxTypeCode>
-<TaxRate>16.00</TaxRate>
-<TaxableBase>
-<TotalAmount>100.50</TotalAmount>
-</TaxableBase>
-<TaxAmount>
-<TotalAmount>16.08</TotalAmount>
-</TaxAmount>
-</Tax>
-</TaxesOutputs>
-<AdditionalLineItemInformation/>
-</InvoiceLine>
-<InvoiceLine>
-<ItemDescription>ARTICULO 0102</ItemDescription>
-<Quantity>2</Quantity>
-<UnitOfMeasure>01</UnitOfMeasure>
-<UnitPriceWithoutTax>100.500000</UnitPriceWithoutTax>
-<TotalCost>201.000000</TotalCost>
-<GrossAmount>201.000000</GrossAmount>
-<TaxesOutputs>
-<Tax>
-<TaxTypeCode>01</TaxTypeCode>
-<TaxRate>16.00</TaxRate>
-<TaxableBase>
-<TotalAmount>201.00</TotalAmount>
-</TaxableBase>
-<TaxAmount>
-<TotalAmount>32.16</TotalAmount>
-</TaxAmount>
-</Tax>
-</TaxesOutputs>
-<AdditionalLineItemInformation/>
-</InvoiceLine>
-<InvoiceLine>
-<ItemDescription>ARTICULO 0103</ItemDescription>
-<Quantity>3</Quantity>
-<UnitOfMeasure>01</UnitOfMeasure>
-<UnitPriceWithoutTax>100.500000</UnitPriceWithoutTax>
-<TotalCost>301.500000</TotalCost>
-<GrossAmount>301.500000</GrossAmount>
-<TaxesOutputs>
-<Tax>
-<TaxTypeCode>01</TaxTypeCode>
-<TaxRate>7.00</TaxRate>
-<TaxableBase>
-<TotalAmount>301.50</TotalAmount>
-</TaxableBase>
-<TaxAmount>
-<TotalAmount>21.11</TotalAmount>
-</TaxAmount>
-</Tax>
-</TaxesOutputs>
-<AdditionalLineItemInformation/>
-</InvoiceLine>
-</Items>
-<PaymentDetails>
-<Installment>
-<InstallmentDueDate>2009-10-02</InstallmentDueDate>
-<InstallmentAmount>672.35</InstallmentAmount>
-<PaymentMeans>01</PaymentMeans>
-<CollectionAdditionalInformation>Contado</CollectionAdditionalInformation>
-</Installment>
-</PaymentDetails>
-</Invoice>
-</Invoices>
-</namespace:Facturae>
-*/
+CLASS Account FROM Address
+
+   DATA     cIBAN                   INIT ''
+   DATA     cBankCode               INIT ''
+   DATA     cBranchCode             INIT ''
+
+   ACCESS   IBAN                    INLINE ( 'ES88' + alltrim( Left( ::cIBAN, 30 ) ) )
+   ACCESS   BankCode                INLINE ( alltrim( Left( ::cBankCode, 60 ) ) )
+   ACCESS   BranchCode              INLINE ( alltrim( Left( ::cBranchCode, 60 ) ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS AdministrativeCentres FROM Address
+
+   DATA     cCentreCode             INIT ''
+   DATA     cRoleTypeCode           INIT ''
+   DATA     cCentreDescription      INIT ''
+
+   ACCESS   CentreCode              INLINE ( alltrim( ::cCentreCode   ) )
+   ACCESS   RoleTypeCode            INLINE ( alltrim( ::cRoleTypeCode ) )
+   ACCESS   CentreDescription       INLINE ( alltrim( ::cCentreDescription ) )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+

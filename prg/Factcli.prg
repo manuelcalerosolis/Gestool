@@ -866,7 +866,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
          :bEditValue       := {|| AllTrim( ( D():FacturasClientes( nView ) )->cNomCli ) }
-         :nWidth           := 180
+         :nWidth           := 280
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
@@ -1155,7 +1155,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "Document_plain_earth_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.2", .f., "Firmar digitalmente (necesita runtime de Java)", .f., "Enviar por correo electrónico" ) ) ;
+         ACTION   ( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| CreateFileFacturae( oTree, lChk1, lChk2 ) }, "Exportar facturas electrónicas a Facturae v 3.2", .f., "Firmar digitalmente (necesita runtime de Java)", .t., "Enviar por correo electrónico" ) ) ;
          TOOLTIP  "Exportar a Facturae 3.2" ;
          LEVEL    ACC_EDIT
 
@@ -11400,7 +11400,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
    oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             				"CallHbFunc('nStockLineaFasCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             					   "CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             					         "CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
 
 Return nil
 
@@ -15412,6 +15412,8 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
    local nAnticipo
    local oItemLine
    local oInstallment
+   local cCodigoEntidad
+   local oAdministrativeCentres
 
    nNumero              := ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
    cNumero              := ( D():FacturasClientes( nView ) )->cSerie + Alltrim( str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + Rtrim( ( D():FacturasClientes( nView ) )->cSufFac )
@@ -15717,6 +15719,32 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
          end do
 
       end if
+
+      // Entidades----------------------------------------------------------------
+
+      if D():gotoIdFacturasClientesEntidades( nNumero, nView ) 
+
+         while ( D():FacturasClientesEntidadesId( nView ) == nNumero .and. !D():eofFacturasClientesEntidades( nView ) )
+
+            cCodigoEntidad                               := ( D():FacturasClientesEntidades( nView ) )->cCodEnt
+
+            oAdministrativeCentres                       := AdministrativeCentres()
+            oAdministrativeCentres:cCentreCode           := cCodigoEntidad
+            oAdministrativeCentres:cRoleTypeCode         := getRolCode( ( D():FacturasClientesEntidades( nView ) )->cRol )
+            oAdministrativeCentres:cAddress              := oEntidades:getDireccion( cCodigoEntidad )    
+            oAdministrativeCentres:cPostCode             := oEntidades:getCodigoPostal( cCodigoEntidad )    
+            oAdministrativeCentres:cTown                 := oEntidades:getPoblacion( cCodigoEntidad )    
+            oAdministrativeCentres:cProvince             := oEntidades:getProvincia( cCodigoEntidad )    
+            oAdministrativeCentres:cCountryCode          := oEntidades:getCodigoPais( cCodigoEntidad ) 
+            oAdministrativeCentres:cCentreDescription    := oEntidades:getDescripcion( cCodigoEntidad )    
+
+            :addAdministrativeCentres( oAdministrativeCentres )
+
+            ( D():FacturasClientesEntidades( nView ) )->( dbSkip() )
+
+         end while
+
+      end if 
 
    end with
 
@@ -24050,6 +24078,15 @@ Static Function RollBackFacCli( cNumeroDocumento )
          ( dbfFacCliS )->( dbDelete() )
          ( dbfFacCliS )->( dbUnLock() )
       end if
+      SysRefresh()
+   end while
+
+   /*
+   Eliminamos las series anteriores---------------------------------------------
+   */
+
+   while D():gotoIdFacturasClientesEntidades( cNumeroDocumento, nView ) .and. !D():eofFacturasClientesEntidades( nView )
+      D():deleteFacturasClientesEntidades( nView )
       SysRefresh()
    end while
 

@@ -3550,15 +3550,15 @@ RETURN ( Self )
 
 METHOD TreeReportingChanged() 
 
-      local cTitle   := ::oTreeReporting:GetSelText()
-   
-      if cTitle == "Listado"
-         ::lHideFecha()
-      else
-         ::lShowFecha()
-      end if
+   local cTitle   := ::oTreeReporting:GetSelText()
 
-      ::oDlg:cTitle( ::cSubTitle + " : " + cTitle )
+   if cTitle == "Listado"
+      ::lHideFecha()
+   else
+      ::lShowFecha()
+   end if
+
+   ::oDlg:cTitle( ::cSubTitle + " : " + cTitle )
    
 Return ( Self )
 

@@ -5179,6 +5179,10 @@ CLASS D
       METHOD FacturasClientesEntidadesId( nView )  INLINE ( ( ::FacturasClientesEntidades(nView) ) )->cSerFac + Str( ( ::FacturasClientesEntidades(nView) )->nNumFac ) + ( ( ::FacturasClientesEntidades(nView) )->cSufFac )
       METHOD gotoIdFacturasClientesEntidades( id, nView ) ;
                                                    INLINE ( ::seek( ::FacturasClientesEntidades( nView ), id ) ) 
+      METHOD deleteFacturasClientesEntidades( nView ) ;
+                                                   INLINE ( iif( dbLock( ( ::FacturasClientesEntidades( nView ) ) ),;
+                                                               ( ( ::FacturasClientesEntidades( nView ) )->( dbDelete() ), ( ::FacturasClientesEntidades( nView ) )->( dbUnLock() ) ),;
+                                                               ) )  
       METHOD eofFacturasClientesEntidades( nView ) INLINE ( ( ::FacturasClientesEntidades( nView ) )->( eof() ) )
 
    // Facturas rectificativas--------------------------------------------------
@@ -5232,6 +5236,8 @@ CLASS D
    METHOD ClientesIncidencias( nView )                INLINE ( ::Get( "CliInc", nView ) )
       METHOD ClientesIncidenciasId( nView )           INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
       METHOD ClientesIncidenciasNombre( nView )       INLINE ( ( ::Get( "CliInc", nView ) )->mDesInc )
+      METHOD gotoIdClientesIncidencias( id, nView )   INLINE ( ::SeekInOrd( ::ClientesIncidencias( nView ), id, "cCodCli" ) ) 
+      METHOD eofClientesIncidecias( nView )           INLINE ( ( ::ClientesIncidencias( nView ) )->( eof() ) )
       METHOD getStatusClientesIncidencias( nView )    INLINE ( ::aStatus := aGetStatus( ::ClientesIncidencias( nView ) ) )
       METHOD setStatusClientesIncidencias( nView )    INLINE ( SetStatus( ::ClientesIncidencias( nView ), ::aStatus ) ) 
       METHOD setScopeClientesIncidencias( id, nView ) INLINE ( if( empty( id ), id := ::ClientesId( nView ), ),;
