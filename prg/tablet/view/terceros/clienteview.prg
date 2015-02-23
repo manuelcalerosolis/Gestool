@@ -12,6 +12,8 @@ CLASS ClienteView FROM ViewBase
 
    METHOD defineNombre()
 
+   METHOD defineNIF()
+
    METHOD defineBrowseIncidencia()
 
 END CLASS
@@ -31,6 +33,8 @@ METHOD insertControls( nMode ) CLASS ClienteView
    ::defineCodigo()
 
    ::defineNombre()
+
+   ::defineNIF()
 
 Return ( self )
 
@@ -56,6 +60,7 @@ METHOD defineCodigo() CLASS ClienteView
                                        "bSetGet"   => {|u| ::SetGetValue( u, "Codigo" ) },;
                                        "oWnd"      => ::oDlg,;
                                        "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                       "bWhen"     => {|| ::nMode == APPD_MODE .or. ::nMode == DUPL_MODE },;
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
                                        "lPixels"   => .t. } )
@@ -68,7 +73,7 @@ METHOD defineNombre() CLASS ClienteView
 
    local getCodigo
 
-   TGridUrllink():Build(            {  "nTop"      => 70,;
+   TGridUrllink():Build(            {  "nTop"      => 100,;
                                        "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                                        "cURL"      => "Nombre",;
                                        "oWnd"      => ::oDlg,;
@@ -78,11 +83,11 @@ METHOD defineNombre() CLASS ClienteView
                                        "nClrOver"  => nGridColor(),;
                                        "nClrVisit" => nGridColor() } )
 
-   getCodigo   := TGridGet():Build( {  "nRow"      => 70,;
+   getCodigo   := TGridGet():Build( {  "nRow"      => 100,;
                                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                        "bSetGet"   => {|u| ::SetGetValue( u, "Nombre" ) },;
                                        "oWnd"      => ::oDlg,;
-                                       "nWidth"    => {|| GridWidth( 4, ::oDlg ) },;
+                                       "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
                                        "lPixels"   => .t. } )
@@ -90,6 +95,35 @@ METHOD defineNombre() CLASS ClienteView
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD defineNIF() CLASS ClienteView
+
+   local getCodigo
+
+   TGridUrllink():Build(            {  "nTop"      => 70,;
+                                       "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
+                                       "cURL"      => "NIF",;
+                                       "oWnd"      => ::oDlg,;
+                                       "oFont"     => oGridFont(),;
+                                       "lPixel"    => .t.,;
+                                       "nClrInit"  => nGridColor(),;
+                                       "nClrOver"  => nGridColor(),;
+                                       "nClrVisit" => nGridColor() } )
+
+   getCodigo   := TGridGet():Build( {  "nRow"      => 70,;
+                                       "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                       "bSetGet"   => {|u| ::SetGetValue( u, "NIF" ) },;
+                                       "oWnd"      => ::oDlg,;
+                                       "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
+                                       "nHeight"   => 23,;
+                                       "cPict"     => "@!",;
+                                       "lPixels"   => .t. } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+
 
 METHOD defineBrowseIncidencia() CLASS ClienteView
 /*
