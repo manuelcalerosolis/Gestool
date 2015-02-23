@@ -10,11 +10,13 @@ CLASS ClienteIncidencia FROM Editable
    METHOD setEnviroment()        INLINE ( ::setDataTable( "CliInc" ) ) 
 
    METHOD setScope( id )         INLINE ( D():setScopeClientesIncidencias( id, ::nView ) )
-   METHOD quitsetScope()         INLINE ( D():quitScopeClientesIncidencias( ::nView ) )
+   METHOD quitScope()            INLINE ( D():quitScopeClientesIncidencias( ::nView ) )
 
    METHOD showNavigator()
    
    METHOD Resource()
+
+   METHOD saveAppendDocumento()
 
 ENDCLASS
 
@@ -26,6 +28,8 @@ METHOD New( oSender ) CLASS ClienteIncidencia
 
    ::nView                 := oSender:nView
 
+   ::oViewEdit             := ClienteIncidenciaView():New( self )   
+
    ::oViewNavigator        := ClienteIncidenciaViewNavigator():New( self )
 
    ::setEnviroment()
@@ -36,20 +40,28 @@ Return ( self )
 
 METHOD Resource( nMode ) CLASS ClienteIncidencia
 
-   msgAlert( "Resource not defined yet!")
-
-Return ( .t. )   
+   ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "incidencia : " + alltrim( D():ClientesNombre( ::nView ) ) )
+   
+Return ( ::oViewEdit:Resource( nMode ) )   
 
 //---------------------------------------------------------------------------//
 
-METHOD showNavigator()
+METHOD showNavigator() CLASS ClienteIncidencia
 
    ::setScope( D():ClientesId( ::nView ) )
 
    ::oViewNavigator:showView()
 
-   ::quitsetScope()
+   ::quitScope()
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveAppendDocumento() CLASS ClienteIncidencia
+
+   hSet( ::hDictionaryMaster, "Código", D():ClientesId( ::nView ) )
+
+Return ( ::Super:saveAppendDocumento() )
 
 //---------------------------------------------------------------------------//

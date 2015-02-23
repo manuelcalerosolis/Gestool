@@ -8532,12 +8532,12 @@ function aCliInc()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodCli",     "C", 12, 0, "Código del cliente",               "Código",            "", "( cDbfInc )" } )
-   aAdd( aBase, { "cCodTip",     "C",  3, 0, "Tipo de incidencia" ,              "",                  "", "( cDbfInc )" } )
-   aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "Fecha",             "", "( cDbfInc )" } )
-   aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripción de la incidencia" ,    "Nombre",            "", "( cDbfInc )" } )
-   aAdd( aBase, { "lListo",      "L",  1, 0, "Lógico de listo" ,                 "",                  "", "( cDbfInc )" } )
-   aAdd( aBase, { "lAviso",      "L",  1, 0, "Lógico de aviso" ,                 "",                  "", "( cDbfInc )" } )
+   aAdd( aBase, { "cCodCli",     "C", 12, 0, "Código del cliente",               "Código",            "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "cCodTip",     "C",  3, 0, "Tipo de incidencia" ,              "Tipo",              "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "Fecha",             "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripción de la incidencia" ,    "Nombre",            "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "lListo",      "L",  1, 0, "Lógico de listo" ,                 "",                  "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "lAviso",      "L",  1, 0, "Lógico de aviso" ,                 "",                  "", "( cDbfInc )", nil } )
 
 return ( aBase )
 
@@ -8557,7 +8557,7 @@ FUNCTION aCliBnc()
    aAdd( aBase, { "cTlfBnc",     "C", 20, 0, "Teléfono",                                  "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cFaxBnc",     "C", 20, 0, "Fax",                                       "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cPContBnc",   "C", 35, 0, "Persona de contacto",                       "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cPaiBnc",     "C",  4, 0, "Pais",                                      "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPaiBnc",     "C",  4, 0, "País",                                      "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cPaisIBAN",   "C",  2, 0, "País IBAN",                                 "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cCtrlIBAN",   "C",  2, 0, "Dígito de control IBAN",                    "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cEntBnc",     "C",  4, 0, "Entidad de la cuenta bancaria",             "",                   "", "( cDbfBnc )" } )

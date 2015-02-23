@@ -29,13 +29,9 @@ METHOD New() CLASS Cliente
 
       ::oClienteIncidencia    := ClienteIncidencia():New( self )
 
-      // ::oViewIncidencia       := ClienteIncidenciaViewNavigator():New( self )
-
       ::setEnviroment()
 
       ::oViewNavigator:showView()
-
-      msgAlert( "salida de show showNavigator")
 
       ::CloseFiles()
 
@@ -56,17 +52,6 @@ Return ( ::oViewEdit:Resource( nMode ) )
 METHOD showIncidencia() CLASS Cliente
    
    ::oClienteIncidencia:showNavigator()
-
-Return ( self )
-
-
-   ::oViewIncidencia:setTextoTipoDocumento( "Incidencias : " + alltrim( D():ClientesNombre( ::nView ) ) )
-
-   ::oClienteIncidencia:setScope( D():ClientesId( ::nView ) )
-                                          
-   ::oViewIncidencia:Resource()
-
-   ::oClienteIncidencia:quitScope()
 
 Return ( self )
 

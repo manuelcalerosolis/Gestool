@@ -1068,8 +1068,8 @@ Return ( aDictionary )
 
 METHOD getDefaultValue( cDataTable )
 
-   local aDefaultValue
    local oTable
+   local aDefaultValue
 
    oTable            := ::ScanDataTable( cDataTable )
    if !empty( oTable )
@@ -2405,6 +2405,8 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatCli( , .t. ) + "CliInc.Dbf"
    oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliInc.Cdx"
    oDataTable:cDescription := "Clientes incidencias"
+   oDatatable:aDictionary  := hashDictionary( aCliInc() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aCliInc() )
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -5078,6 +5080,8 @@ CLASS D
 
    CLASSDATA   cTag
 
+   CLASSDATA   hashTiposIncidencias          INIT {=>}
+
    METHOD CreateView()                       INLINE   ( HSet( ::hViews, ++::nView, {=>} ), ::nView )
    METHOD DeleteView( nView )
 
@@ -5219,7 +5223,7 @@ CLASS D
       METHOD setStatusClientes( nView )               INLINE ( SetStatus( ::Get( "Client", nView ), ::aStatus ) ) 
       METHOD getCurrentHashClientes( nView )          INLINE ( ::getHashRecordById( ::ClientesId( nView ), ::Clientes( nView ), nView ) )
       METHOD getDefaultHashClientes( nView )          INLINE ( ::getHashRecordDefaultValues( ::Clientes( nView ), nView ) )
-      METHOD setScopeClientes( id, nView )            INLINE ( if( empty( id ), id := ::ClientesId( nView ), ),;
+      METHOD setScopeClientes( id, nView )            INLINE ( iif( empty( id ), id := ::ClientesId( nView ), ),;
                                                                ::getStatusClientes( nView ),;
                                                                ( ::Clientes( nView ) )->( ordScope( 0, id ) ),;
                                                                ( ::Clientes( nView ) )->( ordScope( 1, id ) ),;
@@ -5231,7 +5235,11 @@ CLASS D
    METHOD ClientesDirecciones( nView )                INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
 
-
+   METHOD TiposIncidencias( nView )                   INLINE ( ::Get( "TipInci", nView ) )
+      METHOD TiposIncidenciasId( nView )              INLINE ( ( ::Get( "TipInci", nView ) )->cCodInci )
+      METHOD TiposIncidenciasNombre( nView )          INLINE ( ( ::Get( "TipInci", nView ) )->cNomInci )
+      METHOD getHashTiposIncidencias( nView )
+      METHOD getTiposIncicencias( nView )                     
 
    METHOD ClientesIncidencias( nView )                INLINE ( ::Get( "CliInc", nView ) )
       METHOD ClientesIncidenciasId( nView )           INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
@@ -5248,6 +5256,7 @@ CLASS D
       METHOD quitScopeClientesIncidencias( nView )    INLINE ( ( ::ClientesIncidencias( nView ) )->( ordScope( 0, nil ) ),;
                                                                ( ::ClientesIncidencias( nView ) )->( ordScope( 1, nil ) ),;
                                                                ::setStatusClientesIncidencias( nView ) )  
+
 
    METHOD ClientesFacturae( nView )                   INLINE ( ::Get( "CliFacturae", nView ) )
       METHOD ClientesFacturaeId( nView )              INLINE ( ( ::Get( "CliFacturae", nView ) )->cCodCli )
@@ -5392,8 +5401,6 @@ CLASS D
    METHOD Divisas( nView )                   INLINE ( ::Get( "Divisas", nView ) )
 
    METHOD Cajas( nView )                     INLINE ( ::Get( "Cajas", nView ) )
-
-   METHOD TipoIncidencia( nView )            INLINE ( ::Get( "TipInci", nView ) )
 
    METHOD Propiedades( nView )               INLINE ( ::Get( "Pro", nView ) )
       METHOD PropiedadesLineas( nView )      INLINE ( ::Get( "TblPro", nView ) )
@@ -5917,7 +5924,7 @@ METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
    end if
 
    workArea          := ::Get( cDataTable, nView )   
-   aDefaultValue     := TDataCenter():getDeFaultValue( cDataTable )
+   aDefaultValue     := TDataCenter():getDefaultValue( cDataTable )
 
    hEval( aDefaultValue, {|key,value| hSet( hash, key, Eval( Value ) ) } )
 
@@ -5925,7 +5932,31 @@ RETURN ( hash )
 
 //---------------------------------------------------------------------------//
 
-METHOD deleteRecord( cDataTable, nView )
+METHOD getHashTiposIncidencias( nView ) CLASS D
+
+   if !empty( ::hashTiposIncidencias )
+      Return ( ::hashTiposIncidencias )
+   end if 
+
+   msgAlert( ::TiposIncidencias( nView ) )
+
+   ( ::TiposIncidencias( nView ) )->( dbgotop() )
+   while !( ::TiposIncidencias( nView ) )->( eof() )
+      hSet( ::hashTiposIncidencias, ::TiposIncidenciasId( nView ), ::TiposIncidenciasNombre( nView ) )
+      ( ::TiposIncidencias( nView ) )->( dbskip() )
+   end while
+
+RETURN ( ::hashTiposIncidencias )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTiposIncicencias( nView ) CLASS D
+
+RETURN ( hGetValues( ::getHashTiposIncidencias( nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteRecord( cDataTable, nView ) CLASS D
 
    local nNext
    local nRecord           

@@ -71,7 +71,7 @@ Return ( self )
 
 METHOD defineNombre() CLASS ClienteView
 
-   local getCodigo
+   local getNombre
 
    TGridUrllink():Build(            {  "nTop"      => 100,;
                                        "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -83,7 +83,7 @@ METHOD defineNombre() CLASS ClienteView
                                        "nClrOver"  => nGridColor(),;
                                        "nClrVisit" => nGridColor() } )
 
-   getCodigo   := TGridGet():Build( {  "nRow"      => 100,;
+   getNombre   := TGridGet():Build( {  "nRow"      => 100,;
                                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                        "bSetGet"   => {|u| ::SetGetValue( u, "Nombre" ) },;
                                        "oWnd"      => ::oDlg,;
@@ -98,7 +98,7 @@ Return ( self )
 
 METHOD defineNIF() CLASS ClienteView
 
-   local getCodigo
+   local getNIF
 
    TGridUrllink():Build(            {  "nTop"      => 70,;
                                        "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -110,7 +110,7 @@ METHOD defineNIF() CLASS ClienteView
                                        "nClrOver"  => nGridColor(),;
                                        "nClrVisit" => nGridColor() } )
 
-   getCodigo   := TGridGet():Build( {  "nRow"      => 70,;
+   getNIF      := TGridGet():Build( {  "nRow"      => 70,;
                                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                        "bSetGet"   => {|u| ::SetGetValue( u, "NIF" ) },;
                                        "oWnd"      => ::oDlg,;

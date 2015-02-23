@@ -58,6 +58,8 @@ METHOD OpenFiles() CLASS Ventas
 
       D():FormasPago( ::nView )
 
+      D():TiposIncidencias( ::nView )
+
    RECOVER USING oError
 
       lOpenFiles     := .f.

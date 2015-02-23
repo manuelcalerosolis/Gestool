@@ -403,6 +403,7 @@ ViewSearchNavigator.prg    \
 PedidoClienteViewSearchNavigator.prg   \
 ClienteViewSearchNavigator.prg         \
 ClienteIncidencia.prg                  \
+ClienteIncidenciaView.prg              \
 ClienteIncidenciaViewNavigator.prg     \
 PedidoClienteViewEdit.prg              \
 
@@ -800,6 +801,7 @@ ViewSearchNavigator.obj    \
 PedidoClienteViewSearchNavigator.obj   \
 ClienteViewSearchNavigator.obj         \
 ClienteIncidencia.obj                  \
+ClienteIncidenciaView.obj              \
 ClienteIncidenciaViewNavigator.obj     \
 PedidoClienteViewEdit.obj              
 
@@ -1181,6 +1183,7 @@ $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\PedidoClienteViewSearchNavigator.obj  +
 $(OBJ)\ClienteViewSearchNavigator.obj        +
 $(OBJ)\ClienteIncidencia.obj                 +
+$(OBJ)\ClienteIncidenciaView.obj             +
 $(OBJ)\ClienteIncidenciaViewNavigator.obj    +
 $(OBJ)\PedidoClienteViewEdit.obj             +
 $(OBJ)\Ventas.obj
