@@ -2203,6 +2203,7 @@ METHOD ImportaPedidosProveedores()
    local nNumero
    local nTotIva
    local nTotBase
+   local cSerie := ""
 
 
    //Traspaso de Pedidos de Proveedores-------------------------------------------------------
@@ -2214,25 +2215,22 @@ METHOD ImportaPedidosProveedores()
 
    ::oDbfPedPrvTFac:GoTop()
    while !( ::oDbfPedPrvTFac:eof() )
-/*
-      while ::oDbfPedPrvTGst:Seek( "A" + Str( Val( ::oDbfPedPrvTFac:Numero ), 9 ) + "00" )
-         ::oDbfPedPrvTGst:Delete( .f. )
-      end while
 
-      while ::oDbfPedPrvLGst:Seek( "A" + Str( Val( ::oDbfPedPrvTFac:Numero ), 9 ) + "00" )
-         ::oDbfPedPrvLGst:Delete( .f. )
-      end while
-*/
+   //comprobamos si estan utilizando series de pedidos
 
-      //if Val( ::oDbfPedPrvTFac:Numero ) != 0
+      cSerie                        := Left( ::oDbfPedPrvTFac:Numero, 1 )
+      nNumero                       := Val( SubStr( Alltrim( ::oDbfPedPrvTFac:Numero ), 3, 9 ) )
 
-      //si el número del pedido empieza por una letra no lo añadimos
+      if Empty( cSerie )
+         cSerie                     := "A"
+         nNumero                    := Val( ::oDbfPedPrvTFac:Numero )         
+      end if
 
          ::oDbfPedPrvTGst:Append()
          ::oDbfPedPrvTGst:Blank()
 
-         ::oDbfPedPrvTGst:cSerPed      := "A"
-         ::oDbfPedPrvTGst:nNumPed      := Val( ::oDbfPedPrvTFac:Numero )
+         ::oDbfPedPrvTGst:cSerPed      := cSerie
+         ::oDbfPedPrvTGst:nNumPed      := nNumero
          ::oDbfPedPrvTGst:cSufPed      := "00"
          ::oDbfPedPrvTGst:cTurPed      := cCurSesion()
          ::oDbfPedPrvTGst:dFecPed      := ::oDbfPedPrvTFac:Fecha
@@ -2316,14 +2314,24 @@ METHOD ImportaPedidosProveedores()
    ::oDbfAlbLFac:GoTop() 
    while !( ::oDbfAlbLFac:eof() )
 
-      nNumero                       := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 5, 7 ) )
+      if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "D" .and.  nNumero != 0   
 
-      if Left( ::oDbfAlbLFac:RfaLin, 1 ) == "D" .and.  nNumero != 0        
+      //comprobamos si utilizan series de pedidos
+
+         cSerie                           := SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 2, 1  )
+         nNumero                          := Val( SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 5, 7 ) ) 
+      
+         if Empty( cSerie )
+            cSerie                        := "A"
+            //nNumero                       := Val( SubStr( Alltrim( ::oDbfAlbLFac:RfaLin ), 5, 7 ) )
+         end if
+
+         
 
          ::oDbfPedPrvLGst:Append()
          ::oDbfPedPrvLGst:Blank()
 
-         ::oDbfPedPrvLGst:cSerPed      := "A"
+         ::oDbfPedPrvLGst:cSerPed      := cSerie
          ::oDbfPedPrvLGst:nNumPed      := nNumero
          ::oDbfPedPrvLGst:cSufPed      := "00"
          ::oDbfPedPrvLGst:cRef         := ::oDbfAlbLFac:Codigo
