@@ -104,13 +104,17 @@ METHOD setAttachment( oMail, hMail )
    local cItem
    local cAttachments      := ::oSender:getFromHash( hMail, "attachments" )      
 
-   if !empty( cAttachments )
-      for each cItem in hb_aTokens( cAttachments, ";" )
-         if file( rtrim( cItem ) )
-            oMail:Attachments:Add( rtrim( cItem ) )
-         end if 
-      next
+   if empty( cAttachments )
+      return nil
    end if
+
+   for each cItem in hb_aTokens( cAttachments, ";" )
+      if file( rtrim( cItem ) )
+         oMail:Attachments:Add( rtrim( cItem ) )
+      else
+         msgAlert( "File to attachment " + rtrim( cItem ) + " not found" )         
+      end if 
+   next
 
 Return ( nil )
 

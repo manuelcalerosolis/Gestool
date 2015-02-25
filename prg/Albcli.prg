@@ -13125,18 +13125,18 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
       Return ( nil )
    end if 
 
+   if !lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
+      msgStop( "El formato " + cCodigoDocumento + " no se encuentra, o no es un formato visual." )
+      Return ( nil )
+   end if 
+
    SysRefresh()
 
    oFr                        := frReportManager():New()
 
    oFr:LoadLangRes( "Spanish.Xml" )
-
    oFr:SetIcon( 1 )
-
    oFr:SetTitle( "Diseñador de documentos" )
-
-   // Manejador de eventos--------------------------------------------------------
-
    oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    // Zona de datos------------------------------------------------------------
@@ -13145,57 +13145,53 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    // Cargar el informe-----------------------------------------------------------
 
-   if lMemoDocumento( cCodigoDocumento, D():Documentos( nView ) )
+   oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
-      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
+   // Zona de variables--------------------------------------------------------
 
-      // Zona de variables--------------------------------------------------------
+   VariableReport( oFr )
 
-      VariableReport( oFr )
+   // Preparar el report-------------------------------------------------------
 
-      // Preparar el report-------------------------------------------------------
+   oFr:PrepareReport()
 
-      oFr:PrepareReport()
+   // Imprimir el informe------------------------------------------------------
 
-      // Imprimir el informe------------------------------------------------------
+   do case
+      case nDevice == IS_SCREEN 
 
-      do case
-         case nDevice == IS_SCREEN 
+         oFr:ShowPreparedReport()
 
-            oFr:ShowPreparedReport()
+      case nDevice == IS_PRINTER
 
-         case nDevice == IS_PRINTER
+         oFr:PrintOptions:SetCopies( nCopies )
+         oFr:PrintOptions:SetPrinter( cPrinter )
+         oFr:PrintOptions:SetShowDialog( .f. ) 
+         oFr:Print()
 
-            oFr:PrintOptions:SetCopies( nCopies )
-            oFr:PrintOptions:SetPrinter( cPrinter )
-            oFr:PrintOptions:SetShowDialog( .f. ) 
-            oFr:Print()
+      case nDevice == IS_PDF
 
-         case nDevice == IS_PDF
+         oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+         oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+         oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+         oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+         oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+         oFr:SetProperty(  "PDFExport", "Outline",          .t. )
+         oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
+         oFr:DoExport(     "PDFExport" )
 
-            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
-            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
-            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
-            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
-            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .t. )
-            oFr:DoExport(     "PDFExport" )
+      case nDevice == IS_MAIL
 
-         case nDevice == IS_MAIL
+         oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
+         oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+         oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+         oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
+         oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
+         oFr:SetProperty(  "PDFExport", "Outline",          .t. )
+         oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
+         oFr:DoExport(     "PDFExport" )
 
-            oFr:SetProperty(  "PDFExport", "ShowDialog",       .f. )
-            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
-            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
-            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .t. )
-            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .t. )
-            oFr:SetProperty(  "PDFExport", "Outline",          .t. )
-            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
-            oFr:DoExport(     "PDFExport" )
-
-      end case
-
-   end if
+   end case
 
    // Destruye el diseñador-------------------------------------------------------
 

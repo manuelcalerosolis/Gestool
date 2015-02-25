@@ -49,7 +49,6 @@ CLASS ViewBase
                                                       hGet( ::oSender:hDictionaryMaster, cName ),;
                                                       hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//

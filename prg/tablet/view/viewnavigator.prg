@@ -23,7 +23,9 @@ CLASS ViewNavigator FROM ViewBase
    METHOD setColumns()                 VIRTUAL
       METHOD addColumn()               INLINE ( ::oBrowse:addCol() )
 
-   METHOD refreshBrowse()              INLINE ( if( !empty( ::oBrowse), ::oBrowse:Refresh(), ) )
+   METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowse),;
+                                                      ( ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() ),;
+                                                      ) )
 
 END CLASS
 
@@ -96,7 +98,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_page_up_64",;
-                           "bLClicked" => {|| ::oBrowse:PageUp(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh()  },;
+                           "bLClicked" => {|| ::oBrowse:PageUp(), ::refreshBrowse()  },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -104,7 +106,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_up_64",;
-                           "bLClicked" => {|| ::oBrowse:GoUp(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh()  },;
+                           "bLClicked" => {|| ::oBrowse:GoUp(), ::refreshBrowse()  },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -112,7 +114,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_down_64",;
-                           "bLClicked" => {|| ::oBrowse:GoDown(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() },;
+                           "bLClicked" => {|| ::oBrowse:GoDown(), ::refreshBrowse() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -120,7 +122,7 @@ METHOD BotonesMovimientoBrowse() CLASS ViewNavigator
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_page_down_64",;
-                           "bLClicked" => {|| ::oBrowse:PageDown(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() },;
+                           "bLClicked" => {|| ::oBrowse:PageDown(), ::refreshBrowse() },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -148,7 +150,7 @@ METHOD BrowseGeneral( oDlg ) CLASS ViewNavigator
 
    ::setColumns()
 
-   ::oBrowse:bLDblClick       := {|| ::oSender:Edit() }
+   ::oBrowse:bLDblClick       := {|| ::oSender:Edit(), ::refreshBrowse() }
 
    ::oBrowse:CreateFromCode()
 

@@ -11,9 +11,9 @@ CLASS Cliente FROM Ventas
 
    METHOD setEnviroment()        INLINE ( ::setDataTable( "Client" ) ) 
    
-   METHOD showIncidencia()
+   METHOD showIncidencia()       INLINE ( ::oClienteIncidencia:showNavigator() )
 
-   METHOD Resource()
+   METHOD Resource()             INLINE ( ::oViewEdit:Resource() )   
 
 ENDCLASS
 
@@ -41,21 +41,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource() CLASS Cliente
-
-   ::oViewEdit:SetTextoTipoDocumento( LblTitle( ::nMode ) + "cliente" )
-   
-Return ( ::oViewEdit:Resource() )   
-
-//---------------------------------------------------------------------------//
-
-METHOD showIncidencia() CLASS Cliente
-   
-   ::oClienteIncidencia:showNavigator()
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
 
 
 
