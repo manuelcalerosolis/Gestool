@@ -38,7 +38,19 @@ METHOD setColumns() CLASS ClienteViewSearchNavigator
    with object ( ::addColumn() )
       :cHeader           := "Cliente"
       :bEditValue        := {|| ( D():ClientesId( ::getView() ) + CRLF + D():ClientesNombre( ::getView() ) )  }
-      :nWidth            := 320
+      :nWidth            := 420
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader           := "Dirección/Tlf."
+      :bEditValue        := {|| ( D():Clientes( ::getView() ) )->Domicilio + CRLF + ( D():Clientes( ::getView() ) )->Telefono }
+      :nWidth            := 420
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader           := "Población/Código postal"
+      :bEditValue        := {|| ( D():Clientes( ::getView() ) )->Poblacion + CRLF + ( D():Clientes( ::getView() ) )->CodPostal }
+      :nWidth            := 420
    end with
 
 Return ( self )

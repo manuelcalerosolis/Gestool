@@ -344,7 +344,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Usuarios( nView )
 
-      D():TipoIncidencia( nView )
+      D():TiposIncidencias( nView )
 
       D():PedidosClientesReservas( nView )
 
@@ -1884,7 +1884,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
          with object ( oBrwInc:AddCol() )
             :cHeader          := "Incidencia"
-            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, D():TipoIncidencia( nView ) ) }
+            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, D():TiposIncidencias( nView ) ) }
             :nWidth           := 250
          end with
 
@@ -1911,7 +1911,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			FIELDS ;
                   If( !(dbfTmpInc)->lListo, aDbfBmp[ 7 ], aDbfBmp[ 6 ] ),;
                   ( dbfTmpInc )->cCodTip ,;
-                  cNomInci( ( dbfTmpInc )->cCodTip, D():TipoIncidencia( nView ) ) ,;
+                  cNomInci( ( dbfTmpInc )->cCodTip, D():TiposIncidencias( nView ) ) ,;
                   Dtoc( ( dbfTmpInc )->dFecInc ),;
                   ( dbfTmpInc )->mDesInc ;
 			FIELDSIZES ;
@@ -2283,7 +2283,7 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
    local cNomInci
 
    if !Empty( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] )
-      cNomInci          := cNomInci( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TipoIncidencia( nView ) )
+      cNomInci          := cNomInci( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ) )
    end if
 
    if nMode == APPD_MODE
@@ -2301,9 +2301,9 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE );
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TipoIncidencia( nView ), oNomInci ) ) ;
+         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], D():TiposIncidencias( nView ), oNomInci ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( D():TipoIncidencia( nView ), aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
+         ON HELP  ( BrwIncidencia( D():TiposIncidencias( nView ), aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
          OF       oDlg
 
       REDEFINE GET oNomInci VAR cNomInci;

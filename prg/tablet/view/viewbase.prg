@@ -9,8 +9,6 @@ CLASS ViewBase
 
    DATA oSender
 
-   DATA nMode
-
    DATA Style                          INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
 
    DATA cTextoTipoDocumento
@@ -22,19 +20,20 @@ CLASS ViewBase
    DATA bPreShowDialog
    METHOD setPreShowDialog( bPreShowDialog );
                                        INLINE ( ::bPreShowDialog := bPreShowDialog )
-   METHOD evalPreShowDialog( nMode )   INLINE ( if( !empty( ::bPreShowDialog ), eval( ::bPreShowDialog, self ), ) )
+   METHOD evalPreShowDialog()          INLINE ( if( !empty( ::bPreShowDialog ), eval( ::bPreShowDialog, self ), ) )
    
    DATA bPostDialog 
    METHOD setPostShowDialog( bPostShowDialog );
                                        INLINE ( ::bPostShowDialog := bPostShowDialog )
-   METHOD evalPostDialog( nMode )      INLINE ( if( !empty( ::bPostDialog ), eval( ::bPostDialog, self ), ) )
+   METHOD evalPostDialog()             INLINE ( if( !empty( ::bPostDialog ), eval( ::bPostDialog, self ), ) )
 
-   METHOD showView( nMode )            
+   METHOD showView()            
 
-   METHOD Resource( nMode )
+   METHOD Resource()
       METHOD insertControls()          VIRTUAL
 
    METHOD getView()                    INLINE ( ::oSender:nView )
+   METHOD getMode()                    INLINE ( ::oSender:nMode )
 
    METHOD defineTitulo()
    METHOD defineAceptarCancelar()
@@ -46,7 +45,7 @@ CLASS ViewBase
 
    METHOD setDialog( oDlg )            INLINE ( ::oDlg := oDlg )
 
-   METHOD setGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
+   METHOD setGetValue( uValue, cName ) INLINE ( iif(  empty( uValue ),;
                                                       hGet( ::oSender:hDictionaryMaster, cName ),;
                                                       hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
 
@@ -55,13 +54,11 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD showView( nMode ) CLASS ViewBase
-
-   ::nMode                             := nMode
+METHOD showView() CLASS ViewBase
 
    ::evalPreShowDialog()
 
-   ::Resource( nMode )
+   ::Resource()
 
    ::evalPostDialog()
 
@@ -69,11 +66,9 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( nMode ) CLASS ViewBase
+METHOD Resource() CLASS ViewBase
 
    ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
-
-   ::nMode                 := nMode
 
    ::defineTitulo()
 

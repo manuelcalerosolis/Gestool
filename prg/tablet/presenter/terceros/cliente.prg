@@ -41,11 +41,11 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( nMode ) CLASS Cliente
+METHOD Resource() CLASS Cliente
 
-   ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "cliente" )
+   ::oViewEdit:SetTextoTipoDocumento( LblTitle( ::nMode ) + "cliente" )
    
-Return ( ::oViewEdit:Resource( nMode ) )   
+Return ( ::oViewEdit:Resource() )   
 
 //---------------------------------------------------------------------------//
 

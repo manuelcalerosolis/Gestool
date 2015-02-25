@@ -3,9 +3,11 @@
 
 CLASS Editable
  
-   DATA oThis
    DATA oDlg
+
    DATA nView
+
+   DATA nMode
 
    DATA cDataTable
 
@@ -29,10 +31,14 @@ CLASS Editable
    METHOD setDataTable( cDataTable )      INLINE ( ::cDataTable := cDataTable )
    METHOD getDataTable()                  INLINE ( ::cDataTable )
 
+   METHOD onPostGetDocumento()            INLINE ( .t. )
+   METHOD onPreSaveDocumento()            INLINE ( .t. )
+   METHOD onPostSaveDocumento()           INLINE ( .t. )
+
    METHOD getAppendDocumento()            INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
    METHOD getEditDocumento()              INLINE ( ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView ) )
    METHOD deleteDocumento()               INLINE ( D():deleteRecord( ::getDataTable(), ::nView ) )
-      METHOD Resource()                   VIRTUAL
+      METHOD Resource()                   INLINE ( msgStop( "Resource method must be redefined" ) )
 
    METHOD saveAppendDocumento()           INLINE ( D():appendHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
    METHOD saveEditDocumento()             INLINE ( D():editHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
@@ -60,12 +66,22 @@ METHOD Append() CLASS Editable
 
    local lAppend  := .f.
 
+   ::nMode        := APPD_MODE
+
    ::getAppendDocumento()
 
-   lAppend  := ::Resource( APPD_MODE )
+   ::onPostGetDocumento()
+
+   lAppend        := ::Resource()
 
    if lAppend
+
+      ::onPreSaveDocumento()
+
       lAppend     := ::saveAppendDocumento()
+
+      ::onPostSaveDocumento()
+   
    end if
 
 Return ( lAppend )
@@ -76,10 +92,22 @@ METHOD Edit() CLASS Editable
 
    local lEdit    := .f.
 
+   ::nMode        := EDIT_MODE
+
    ::getEditDocumento()
 
-   if ::Resource( EDIT_MODE )
+   ::onPostGetDocumento()
+
+   lEdit          := ::Resource()
+
+   if lEdit
+
+      ::onPreSaveDocumento()
+
       lEdit       := ::saveEditDocumento()
+
+      ::onPostSaveDocumento()
+
    end if
 
 Return ( lEdit )

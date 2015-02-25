@@ -16,6 +16,8 @@ CLASS ClienteIncidenciaView FROM ViewBase
 
    METHOD defineCombo()
 
+   METHOD getTextoTipoDocumento()      INLINE ( lblTitle( ::getMode() ) + "cliente" )    
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -46,7 +48,7 @@ METHOD defineCombo() CLASS ClienteIncidenciaView
 
    oCombo   := TGridComboBox():Build(  {  "nRow"      => 70,;
                                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                          "bSetGet"   => {|u| ::SetGetValue( u, "Tipo" ) },;
+                                          "bSetGet"   => {|u| iif( empty( u ), ::oSender:cNombreIncidencia, ::oSender:cNombreIncidencia := u ) },;
                                           "oWnd"      => ::oDlg,;
                                           "nWidth"    => {|| GridWidth( 6, ::oDlg ) },;
                                           "nHeight"   => 25,;
@@ -57,7 +59,7 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD defineTipo() CLASS ClienteIncidenciaView
-
+/*
    local getCodigo
 
    TGridUrllink():Build(            {  "nTop"      => 40,;
@@ -76,11 +78,11 @@ METHOD defineTipo() CLASS ClienteIncidenciaView
                                        "bSetGet"   => {|u| ::SetGetValue( u, "Tipo" ) },;
                                        "oWnd"      => ::oDlg,;
                                        "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                                       "bWhen"     => {|| ::nMode == APPD_MODE .or. ::nMode == DUPL_MODE },;
+                                       "bWhen"     => {|| ::getMode() == APPD_MODE },;
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
                                        "lPixels"   => .t. } )
-
+*/
 Return ( self )
 
 //---------------------------------------------------------------------------//

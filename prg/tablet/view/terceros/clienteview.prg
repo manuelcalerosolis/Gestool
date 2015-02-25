@@ -16,6 +16,11 @@ CLASS ClienteView FROM ViewBase
 
    METHOD defineBrowseIncidencia()
 
+   METHOD setGetTipo( uValue, cName ) INLINE ( iif(  empty( uValue ),;
+                                                      hGet( ::oSender:hDictionaryMaster, cName ),;
+                                                      hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -28,7 +33,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertControls( nMode ) CLASS ClienteView
+METHOD insertControls() CLASS ClienteView
 
    ::defineCodigo()
 
@@ -60,7 +65,7 @@ METHOD defineCodigo() CLASS ClienteView
                                        "bSetGet"   => {|u| ::SetGetValue( u, "Codigo" ) },;
                                        "oWnd"      => ::oDlg,;
                                        "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                                       "bWhen"     => {|| ::nMode == APPD_MODE .or. ::nMode == DUPL_MODE },;
+                                       "bWhen"     => {|| ::getMode() == APPD_MODE .or. ::getMode() == DUPL_MODE },;
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
                                        "lPixels"   => .t. } )

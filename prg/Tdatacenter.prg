@@ -5239,7 +5239,10 @@ CLASS D
       METHOD TiposIncidenciasId( nView )              INLINE ( ( ::Get( "TipInci", nView ) )->cCodInci )
       METHOD TiposIncidenciasNombre( nView )          INLINE ( ( ::Get( "TipInci", nView ) )->cNomInci )
       METHOD getHashTiposIncidencias( nView )
-      METHOD getTiposIncicencias( nView )                     
+      METHOD getTiposIncicencias( nView )      
+      METHOD getCodigoTipoIncicencias( cNombreIncidencia, nView )
+      METHOD getNombreTipoIncicencias( cCodigoIncidencia, nView )
+
 
    METHOD ClientesIncidencias( nView )                INLINE ( ::Get( "CliInc", nView ) )
       METHOD ClientesIncidenciasId( nView )           INLINE ( ( ::Get( "CliInc", nView ) )->cCodCli )
@@ -5938,11 +5941,9 @@ METHOD getHashTiposIncidencias( nView ) CLASS D
       Return ( ::hashTiposIncidencias )
    end if 
 
-   msgAlert( ::TiposIncidencias( nView ) )
-
    ( ::TiposIncidencias( nView ) )->( dbgotop() )
    while !( ::TiposIncidencias( nView ) )->( eof() )
-      hSet( ::hashTiposIncidencias, ::TiposIncidenciasId( nView ), ::TiposIncidenciasNombre( nView ) )
+      hSet( ::hashTiposIncidencias, ::TiposIncidenciasNombre( nView ), ::TiposIncidenciasId( nView ) )
       ( ::TiposIncidencias( nView ) )->( dbskip() )
    end while
 
@@ -5952,7 +5953,35 @@ RETURN ( ::hashTiposIncidencias )
 
 METHOD getTiposIncicencias( nView ) CLASS D
 
-RETURN ( hGetValues( ::getHashTiposIncidencias( nView ) ) )
+RETURN ( hGetKeys( ::getHashTiposIncidencias( nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD getCodigoTipoIncicencias( cNombreIncidencia, nView ) CLASS D
+
+   local cCodigo              := ""
+   local hashTiposIncidencias := ::getHashTiposIncidencias( nView )
+
+   if hHasKey( hashTiposIncidencias, cNombreIncidencia )
+      cCodigo                 := hGet( hashTiposIncidencias, cNombreIncidencia )   
+   end if 
+
+RETURN ( cCodigo )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNombreTipoIncicencias( cCodigoIncidencia, nView ) CLASS D
+
+   local nScan
+   local cNombreIncidencia    := ""
+   local hashTiposIncidencias := ::getHashTiposIncidencias( nView )
+
+   nScan                      := hScan( hashTiposIncidencias, {|k,v,i| v == cCodigoIncidencia } )   
+   if nScan != 0 
+      cNombreIncidencia       := hGetKeyAt( hashTiposIncidencias, nScan )
+   end if 
+
+RETURN ( cNombreIncidencia )
 
 //---------------------------------------------------------------------------//
 
