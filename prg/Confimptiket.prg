@@ -533,7 +533,54 @@ Test de la impresora de tickets
 
 Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto, lOpenToRead )
 
-  local oPrn
+   //LOCAL cString := "ATE0" + Chr( 13 ) + "ATI3" + Chr( 13 )
+   LOCAL cString := "98000001" + Chr( 13 ) + Chr( 10 ) + Chr( 13 ) + Chr( 10 )
+   LOCAL nTimeOut := 3000 // 3000 miliseconds = 3 sec.
+   LOCAL nResult
+   LOCAL nPort := 1
+
+   /*
+   Empezamos a hacer el test con harbour---------------------------------------
+   */
+
+   //IF ! Empty( cPuerto )
+      hb_comSetDevice( nPort, "COM3" )
+      ?nPort
+   //ENDIF
+   IF ! hb_comOpen( nPort )
+      ? "Cannot open port:", nPort, hb_comGetDevice( nPort ), ;
+        "error: " + hb_ntos( hb_comGetError( nPort ) )
+   ELSE
+      ? "port:", hb_comGetDevice( nPort ), "opened"
+      IF ! hb_comInit( nPort, 9600, "N", 8, 1 )
+         ? "Cannot initialize port to: 9600:N:8:1", ;
+           "error: " + hb_ntos( hb_comGetError( nPort ) )
+      ELSE
+         nResult := hb_comSend( nPort, cString )//, hb_BLen( cString ), nTimeOut )
+         IF nResult != hb_BLen( cString )
+            ? "SEND() failed,", nResult, "bytes sent in", nTimeOut / 1000, ;
+              "sec., expected:", hb_BLen( cString ), "bytes."
+            ? "error: " + hb_ntos( hb_comGetError( nPort ) )
+         ELSE
+            ? "SEND() succeeded."
+         ENDIF
+
+         //WAIT "Press any key to begin reading..."
+         cString := Space( 250 )
+         //nTimeOut := 1000 // 500 milliseconds = 0.5 sec.
+         nResult := hb_comRecv( nPort, @cString )//, hb_BLen( cString ), nTimeOut )
+         msginfo( nResult, "nResult" )
+         IF nResult == -1
+            ? "RECV() failed,", ;
+              "error: " + hb_ntos( hb_comGetError( nPort ) )
+         ELSE
+            ? nResult, "bytes read in", nTimeOut / 1000, "sec."
+         ENDIF
+      ENDIF
+      ? "CLOSE:", hb_comClose( nPort )
+   ENDIF
+
+  /*
 
   // Creamos el puerto---------------------------------------------------------
 
@@ -570,7 +617,7 @@ Static Function TestBalanza( cBitsSec, cBitsDatos, cBitsPara, cBitsPari, cPuerto
               "Handle  : " + AllTrim( Str( oPrn:nHComm ) ),;
               "Puerto no creado" )
 
-   end if
+   end if*/
 
 Return .t.
 
@@ -1083,8 +1130,11 @@ METHOD Read( nRetardo ) CLASS TCommPort
 
    nRead             := ReadComm( ::nHComm, @cBuffer )
 
+   msginfo( nRead, "nRead" )
+
    if nRead != BUFFER
       cBuffer        := SubStr( cBuffer, 1, nRead )
+      ?cBuffer
    end if
 
    ::cBuffer         := cBuffer
@@ -1226,7 +1276,12 @@ METHOD cPeso()
 
    local cPeso       := "0.000"
 
+   ?"Entro en cPeso"
+
    ::Read()
+
+   ?"Despues de leer"
+   Msginfo( ::cBuffer, "cBuffer" )
 
    if !Empty( ::cBuffer )
       cPeso          := Substr( ::cBuffer, 4, 2 ) + "." + Substr( ::cBuffer, 6, 3 )
