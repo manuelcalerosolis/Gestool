@@ -53,6 +53,13 @@ METHOD setColumns() CLASS ClienteViewSearchNavigator
       :nWidth            := 420
    end with
 
+   with object ( ::addColumn() )
+      :cHeader           := "Establecimiento/Contacto"
+      :bEditValue        := {|| ( D():Clientes( ::getView() ) )->NbrEst + CRLF + ( D():Clientes( ::getView() ) )->cPerCto }
+      :nWidth            := 420
+   end with
+
+
 Return ( self )
 
 //---------------------------------------------------------------------------//

@@ -189,9 +189,7 @@ CLASS TGridGet FROM TGet, TGridable
    METHOD HardEnable()
 
    METHOD HardDisable()
-/*
-   METHOD LButtonDown( nRow, nCol, nFlags )
-*/
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -263,16 +261,6 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
 Return Self
 
 //---------------------------------------------------------------------------//
-/*
-METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TGridGet
-
-   ::Super:LButtonDown( nRow, nCol, nFlags )
-
-   ::SelectAll()
-
-Return .t.
-*/
-//---------------------------------------------------------------------------//
 
 Method HardEnable() CLASS TGridGet
 
@@ -290,6 +278,73 @@ Method HardDisable() CLASS TGridGet
 return ( ::Disable() )
 
 //----------------------------------------------------------------------------//
+
+CLASS TGridMultiGet FROM TMultiGet, TGridable
+
+   METHOD Build( hBuilder ) 
+
+   METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, oFont, lHScroll,;
+            nClrFore, nClrBack, oCursor, lPixel, cMsg, lUpdate,;
+            bWhen, lCenter, lRight, lReadOnly, bValid, bChanged,;
+            lDesign, lNoBorder, lNoVScroll )
+
+   METHOD GotFocus( hCtlLost )   INLINE ( ShowKeyboard(), ::Super:GotFocus( hCtlLost ) )
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS TGridMultiGet
+   
+   local nRow        := if( hhaskey( hBuilder, "nRow" ),       hBuilder[ "nRow"     ], nil )
+   local nCol        := if( hhaskey( hBuilder, "nCol" ),       hBuilder[ "nCol"     ], nil )
+   local bSetGet     := if( hhaskey( hBuilder, "bSetGet" ),    hBuilder[ "bSetGet"  ], nil )
+   local oWnd        := if( hhaskey( hBuilder, "oWnd" ),       hBuilder[ "oWnd"     ], nil )
+   local nWidth      := if( hhaskey( hBuilder, "nWidth" ),     hBuilder[ "nWidth"   ], nil )
+   local nHeight     := if( hhaskey( hBuilder, "nHeight" ),    hBuilder[ "nHeight"  ], nil )
+   local oFont       := if( hhaskey( hBuilder, "oFont" ),      hBuilder[ "oFont"    ], nil )
+   local lHScroll    := if( hhaskey( hBuilder, "lHScroll" ),   hBuilder[ "lHScroll" ], nil )
+   local nClrFore    := if( hhaskey( hBuilder, "nClrFore" ),   hBuilder[ "nClrFore" ], nil )
+   local nClrBack    := if( hhaskey( hBuilder, "nClrBack" ),   hBuilder[ "nClrBack" ], nil )
+   local oCursor     := if( hhaskey( hBuilder, "oCursor" ),    hBuilder[ "oCursor"  ], nil )
+   local lPixel      := if( hhaskey( hBuilder, "lPixel" ),     hBuilder[ "lPixel"   ], .t. )
+   local cMsg        := if( hhaskey( hBuilder, "cMsg" ),       hBuilder[ "cMsg"     ], nil )
+   local lUpdate     := if( hhaskey( hBuilder, "lUpdate" ),    hBuilder[ "lUpdate"  ], nil )
+   local bWhen       := if( hhaskey( hBuilder, "bWhen" ),      hBuilder[ "bWhen"    ], nil )
+   local lCenter     := if( hhaskey( hBuilder, "lCenter" ),    hBuilder[ "lCenter"  ], nil )
+   local lRight      := if( hhaskey( hBuilder, "lRight" ),     hBuilder[ "lRight"   ], nil )
+   local lReadOnly   := if( hhaskey( hBuilder, "lReadOnly" ),  hBuilder[ "lReadOnly"], nil )
+   local bValid      := if( hhaskey( hBuilder, "bValid" ),     hBuilder[ "bValid"   ], nil )
+   local bChanged    := if( hhaskey( hBuilder, "bChanged" ),   hBuilder[ "bChanged" ], nil )
+   local lDesign     := if( hhaskey( hBuilder, "lDesign" ),    hBuilder[ "lDesign"  ], nil )
+   local lNoBorder   := if( hhaskey( hBuilder, "lNoBorder" ),  hBuilder[ "lNoBorder"], nil )
+   local lNoVScroll  := if( hhaskey( hBuilder, "lNoVScroll" ), hBuilder[ "lNoVScroll"], nil )
+   
+Return ( ::New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, oFont, lHScroll,;
+         nClrFore, nClrBack, oCursor, lPixel, cMsg, lUpdate,;
+         bWhen, lCenter, lRight, lReadOnly, bValid, bChanged,;
+         lDesign, lNoBorder, lNoVScroll ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, oFont, lHScroll,;
+            nClrFore, nClrBack, oCursor, lPixel, cMsg, lUpdate,;
+            bWhen, lCenter, lRight, lReadOnly, bValid, bChanged,;
+            lDesign, lNoBorder, lNoVScroll ) CLASS TGridMultiGet
+
+   nRow     := ::EvalRow( nRow )
+   nCol     := ::EvalCol( nCol )
+   nWidth   := ::EvalWidth( nWidth )
+   nHeight  := ::EvalHeight( nHeight )
+
+   ::Super:New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, oFont, lHScroll,;
+            nClrFore, nClrBack, oCursor, lPixel, cMsg, lUpdate,;
+            bWhen, lCenter, lRight, lReadOnly, bValid, bChanged,;
+            lDesign, lNoBorder, lNoVScroll ) 
+
+Return Self
+
+//---------------------------------------------------------------------------//
 
 CLASS TGridButton FROM TButton
 

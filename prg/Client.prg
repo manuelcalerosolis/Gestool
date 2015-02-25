@@ -8534,8 +8534,8 @@ function aCliInc()
 
    aAdd( aBase, { "cCodCli",     "C", 12, 0, "Código del cliente",               "Código",            "", "( cDbfInc )", nil } )
    aAdd( aBase, { "cCodTip",     "C",  3, 0, "Tipo de incidencia" ,              "Tipo",              "", "( cDbfInc )", nil } )
-   aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "Fecha",             "", "( cDbfInc )", nil } )
-   aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripción de la incidencia" ,    "Nombre",            "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "Fecha",             "", "( cDbfInc )", {|| GetSysDate() } } )
+   aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripción de la incidencia" ,    "Nombre",            "", "( cDbfInc )", "" } )
    aAdd( aBase, { "lListo",      "L",  1, 0, "Lógico de listo" ,                 "",                  "", "( cDbfInc )", nil } )
    aAdd( aBase, { "lAviso",      "L",  1, 0, "Lógico de aviso" ,                 "",                  "", "( cDbfInc )", nil } )
 

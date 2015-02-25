@@ -8,7 +8,7 @@ CLASS ClienteIncidenciaView FROM ViewBase
 
    METHOD insertControls()
 
-   METHOD defineTipo()
+   METHOD defineNombre()
 
    METHOD defineFecha()
 
@@ -32,7 +32,7 @@ Return ( self )
 
 METHOD insertControls( nMode ) CLASS ClienteIncidenciaView
 
-   ::defineTipo()
+   ::defineNombre()
 
    ::defineCombo()
 
@@ -58,13 +58,13 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineTipo() CLASS ClienteIncidenciaView
-/*
-   local getCodigo
+METHOD defineNombre() CLASS ClienteIncidenciaView
+
+   local getNombre
 
    TGridUrllink():Build(            {  "nTop"      => 40,;
                                        "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
-                                       "cURL"      => "Tipo",;
+                                       "cURL"      => "Incidencia",;
                                        "oWnd"      => ::oDlg,;
                                        "oFont"     => oGridFont(),;
                                        "lPixel"    => .t.,;
@@ -73,16 +73,15 @@ METHOD defineTipo() CLASS ClienteIncidenciaView
                                        "nClrVisit" => nGridColor(),;
                                        "bAction"   => {|| msgAlert("getLastNum") } } )
 
-   getCodigo   := TGridGet():Build( {  "nRow"      => 40,;
+   getNombre   := TGridMultiGet():Build( {  "nRow"      => 40,;
                                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                       "bSetGet"   => {|u| ::SetGetValue( u, "Tipo" ) },;
+                                       "bSetGet"   => {|u| ::SetGetValue( u, "Nombre" ) },;
                                        "oWnd"      => ::oDlg,;
-                                       "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                                       "bWhen"     => {|| ::getMode() == APPD_MODE },;
+                                       "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
                                        "lPixels"   => .t. } )
-*/
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -105,7 +104,7 @@ METHOD defineFecha() CLASS ClienteIncidenciaView
                                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                        "bSetGet"   => {|u| ::SetGetValue( u, "Fecha" ) },;
                                        "oWnd"      => ::oDlg,;
-                                       "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
+                                       "nWidth"    => {|| GridWidth( 2.0, ::oDlg ) },;
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
                                        "lPixels"   => .t. } )

@@ -19,8 +19,15 @@ METHOD setColumns() CLASS ClienteIncidenciaViewNavigator
    ::setBrowseConfigurationName( "Grid clientes incidencias" )
 
    with object ( ::addColumn() )
-      :cHeader             := "Incidencia"
-      :bEditValue          := {|| D():ClientesIncidenciasId( ::getView() ) + CRLF + D():ClientesIncidenciasNombre( ::getView() ) }
+      :cHeader             := "Incidencia/Fecha"
+      :bEditValue          := {|| alltrim( ( D():ClientesIncidencias( ::getView() ) )->mDesInc ) + CRLF + dtoc( ( D():ClientesIncidenciasNombre( ::getView() ) )->dFecInc ) }   // 
+      :nWidth              := 600
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader             := "Tipo"
+      :bEditValue          := {|| D():getNombreTipoIncicencias( ( D():ClientesIncidencias( ::getView() ) )->cCodTip, ::getView() ) }
+//      :bEditValue          := {|| ( D():ClientesIncidencias( ::getView() ) )->cCodTip }
       :nWidth              := 600
    end with
 
