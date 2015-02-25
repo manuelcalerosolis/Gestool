@@ -20,14 +20,19 @@ METHOD setColumns() CLASS ClienteIncidenciaViewNavigator
 
    with object ( ::addColumn() )
       :cHeader             := "Incidencia/Fecha"
-      :bEditValue          := {|| alltrim( ( D():ClientesIncidencias( ::getView() ) )->mDesInc ) + CRLF + dtoc( ( D():ClientesIncidenciasNombre( ::getView() ) )->dFecInc ) }   // 
+      :bEditValue          := {|| alltrim( ( D():ClientesIncidencias( ::getView() ) )->mDesInc ) }   // + CRLF + dtoc( ( D():ClientesIncidenciasNombre( ::getView() ) )->dFecInc )
       :nWidth              := 600
+   end with
+
+   with object ( ::addColumn() )
+      :cHeader             := "Fecha"
+      :bEditValue          := {|| dtos( ( D():ClientesIncidenciasNombre( ::getView() ) )->dFecInc ) }
+      :nWidth              := 200
    end with
 
    with object ( ::addColumn() )
       :cHeader             := "Tipo"
       :bEditValue          := {|| D():getNombreTipoIncicencias( ( D():ClientesIncidencias( ::getView() ) )->cCodTip, ::getView() ) }
-//      :bEditValue          := {|| ( D():ClientesIncidencias( ::getView() ) )->cCodTip }
       :nWidth              := 600
    end with
 
