@@ -19614,21 +19614,30 @@ function SynFacCli( cPath )
          	end if
          end if
 
-         if Empty( ( dbfFacCliL )->dFecFac )
-            if ( dbfFacCliL )->( dbRLock() )
-               ( dbfFacCliL )->dFecFac    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, D():FacturasClientes( nView ), "dFecFac" )
-               ( dbfFacCliL )->( dbUnLock() )
-         	end if
-         end if
-
          // Valor de stock toma la fecha de los albaranes----------------------
 
          if !Empty( ( dbfFacCliL )->cCodAlb )
-            if ( dbfFacCliL )->dFecFac != retFld( ( dbfFacCliL )->cCodAlb, dbfAlbCliL, "dFecAlb" ) 
+            if Empty( ( dbfFacCliL )->dFecFac )
                if ( dbfFacCliL )->( dbRLock() )
                   ( dbfFacCliL )->dFecFac    := retFld( ( dbfFacCliL )->cCodAlb, dbfAlbCliL, "dFecAlb" )
                   ( dbfFacCliL )->( dbUnLock() )
             	end if
+            end if
+         end if
+
+         /*if !Empty( ( dbfFacCliL )->cCodAlb )
+            if ( dbfFacCliL )->dFecFac != retFld( ( dbfFacCliL )->cCodAlb, dbfAlbCliL, "dFecAlb" ) 
+               if ( dbfFacCliL )->( dbRLock() )
+                  ( dbfFacCliL )->dFecFac    := retFld( ( dbfFacCliL )->cCodAlb, dbfAlbCliL, "dFecAlb" )
+                  ( dbfFacCliL )->( dbUnLock() )
+               end if
+            end if
+         end if*/
+
+         if Empty( ( dbfFacCliL )->dFecFac )
+            if ( dbfFacCliL )->( dbRLock() )
+               ( dbfFacCliL )->dFecFac    := RetFld( ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, D():FacturasClientes( nView ), "dFecFac" )
+               ( dbfFacCliL )->( dbUnLock() )
             end if
          end if
 
