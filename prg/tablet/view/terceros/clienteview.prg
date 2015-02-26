@@ -24,6 +24,14 @@ CLASS ClienteView FROM ViewBase
 
    METHOD defineProvincia()
 
+   METHOD defineEstablecimiento()
+
+   METHOD defineTipoCliente()
+
+   METHOD defineTelefono()
+
+   METHOD defineEmail()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -38,44 +46,51 @@ Return ( self )
 
 METHOD insertControls() CLASS ClienteView
 
-   ::defineCodigo()
+   ::defineCodigo(40)
 
-   ::defineNombre()
+   ::defineTipoCliente(70)
+   
+   ::defineNombre(100)
 
-   ::defineNIF()
+   ::defineNIF(130)
 
-   ::defineDomicilio()
+   ::defineDomicilio(160)
 
-   ::definePoblacion()
+   ::definePoblacion(190)
 
-   ::defineCodigoPostal()
+   ::defineCodigoPostal(220)
 
-   ::defineProvincia()
+   ::defineProvincia(250)
+   
+   ::defineTelefono(280)
+
+   ::defineEmail(310)
+
+   ::defineEstablecimiento(340)
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineCodigo() CLASS ClienteView
+METHOD defineCodigo(nRow) CLASS ClienteView
 
-   TGridSay():Build( {  "nRow"      => 40,;
-                        "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
                         "bText"     => {|| "Código" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
                         "nClrText"  => Rgb( 0, 0, 0 ),;
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
-                        "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
-                        "nHeight"   => 23,;
-                        "lDesign"   => .f. } )
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23 } )
 
-   TGridGet():Build( {  "nRow"      => 40,;
+   TGridGet():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::SetGetValue( u, "Codigo" ) },;
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                        "bWhen"     => {|| ::getMode() == APPD_MODE .or. ::getMode() == DUPL_MODE },;
+                        "bWhen"     => {|| ::getMode() == APPD_MODE },;
                         "nHeight"   => 23,;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
@@ -84,21 +99,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineNIF() CLASS ClienteView
+METHOD defineNIF(nRow) CLASS ClienteView
 
-   TGridSay():Build( {  "nRow"      => 70,;
-                        "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
                         "bText"     => {|| "NIF" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
                         "nClrText"  => Rgb( 0, 0, 0 ),;
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
-                        "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 70,;
+   TGridGet():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::SetGetValue( u, "NIF" ) },;
                         "oWnd"      => ::oDlg,;
@@ -111,21 +126,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineNombre() CLASS ClienteView
+METHOD defineNombre(nRow) CLASS ClienteView
 
-   TGridSay():Build( {  "nRow"      => 100,;
-                        "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
                         "bText"     => {|| "Nombre" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
                         "nClrText"  => Rgb( 0, 0, 0 ),;
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
-                        "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 100,;
+   TGridGet():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::SetGetValue( u, "Nombre" ) },;
                         "oWnd"      => ::oDlg,;
@@ -138,21 +153,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineDomicilio() CLASS ClienteView
+METHOD defineDomicilio(nRow) CLASS ClienteView
 
-   TGridSay():Build( {  "nRow"      => 130,;
-                        "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
                         "bText"     => {|| "Domicilio" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
                         "nClrText"  => Rgb( 0, 0, 0 ),;
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
-                        "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 130,;
+   TGridGet():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::SetGetValue( u, "Domicilio" ) },;
                         "oWnd"      => ::oDlg,;
@@ -165,21 +180,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineCodigoPostal() CLASS ClienteView
+METHOD defineCodigoPostal(nRow) CLASS ClienteView
 
-   TGridSay():Build( {  "nRow"      => 160,;
-                        "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                        "bText"     => {|| "Código postal" },;
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "Cod postal" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
                         "nClrText"  => Rgb( 0, 0, 0 ),;
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
-                        "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 160,;
+   TGridGet():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::SetGetValue( u, "CodigoPostal" ) },;
                         "oWnd"      => ::oDlg,;
@@ -192,21 +207,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD definePoblacion() CLASS ClienteView
+METHOD definePoblacion(nRow) CLASS ClienteView
 
-   TGridSay():Build( {  "nRow"      => 190,;
-                        "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
                         "bText"     => {|| "Población" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
                         "nClrText"  => Rgb( 0, 0, 0 ),;
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
-                        "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 190,;
+   TGridGet():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::SetGetValue( u, "Poblacion" ) },;
                         "oWnd"      => ::oDlg,;
@@ -219,27 +234,134 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineProvincia() CLASS ClienteView
+METHOD defineProvincia(nRow) CLASS ClienteView
 
-   TGridSay():Build( {  "nRow"      => 210,;
-                        "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
                         "bText"     => {|| "Provincia" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
                         "nClrText"  => Rgb( 0, 0, 0 ),;
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
-                        "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 210,;
+   TGridGet():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::SetGetValue( u, "Provincia" ) },;
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "cPict"     => "@!",;
+                        "lPixels"   => .t. } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineEstablecimiento(nRow) CLASS ClienteView
+
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "Establec." },;
+                        "oWnd"      => ::oDlg,;
+                        "oFont"     => oGridFont(),;
+                        "lPixels"   => .t.,;
+                        "nClrText"  => Rgb( 0, 0, 0 ),;
+                        "nClrBack"  => Rgb( 255, 255, 255 ),;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23,;
+                        "lDesign"   => .f. } )
+
+   TGridGet():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                        "bSetGet"   => {|u| ::SetGetValue( u, "NombreEstablecimiento" ) },;
+                        "oWnd"      => ::oDlg,;
+                        "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
+                        "nHeight"   => 23,;
+                        "cPict"     => "@!",;
+                        "lPixels"   => .t. } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineTipoCliente( nRow ) CLASS ClienteView
+
+   TGridSay():Build( {  "nRow"      =>  nRow ,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "Tipo" },;
+                        "oWnd"      => ::oDlg,;
+                        "oFont"     => oGridFont(),;
+                        "lPixels"   => .t.,;
+                        "nClrText"  => Rgb( 0, 0, 0 ),;
+                        "nClrBack"  => Rgb( 255, 255, 255 ),;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23,;
+                        "lDesign"   => .f. } )
+
+
+   TGridComboBox():Build(  {  "nRow"      =>  nRow ,;
+                              "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                              "bSetGet"   => {|u| iif( empty( u ), ::oSender:cTipoCliente, ::oSender:cTipoCliente := u ) },;
+                              "oWnd"      => ::oDlg,;
+                              "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
+                              "nHeight"   => 25,;
+                              "aItems"    => hGetValues( ::oSender:hTipoCliente ) } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineTelefono(nRow) CLASS ClienteView
+
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "Teléfono" },;
+                        "oWnd"      => ::oDlg,;
+                        "oFont"     => oGridFont(),;
+                        "lPixels"   => .t.,;
+                        "nClrText"  => Rgb( 0, 0, 0 ),;
+                        "nClrBack"  => Rgb( 255, 255, 255 ),;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23,;
+                        "lDesign"   => .f. } )
+
+   TGridGet():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                        "bSetGet"   => {|u| ::SetGetValue( u, "Telefono" ) },;
+                        "oWnd"      => ::oDlg,;
+                        "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
+                        "nHeight"   => 23,;
+                        "cPict"     => "@!",;
+                        "lPixels"   => .t. } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineEmail(nRow) CLASS ClienteView
+
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "email" },;
+                        "oWnd"      => ::oDlg,;
+                        "oFont"     => oGridFont(),;
+                        "lPixels"   => .t.,;
+                        "nClrText"  => Rgb( 0, 0, 0 ),;
+                        "nClrBack"  => Rgb( 255, 255, 255 ),;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23,;
+                        "lDesign"   => .f. } )
+
+   TGridGet():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                        "bSetGet"   => {|u| ::SetGetValue( u, "Email" ) },;
+                        "oWnd"      => ::oDlg,;
+                        "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
+                        "nHeight"   => 23,;
                         "lPixels"   => .t. } )
 
 Return ( self )

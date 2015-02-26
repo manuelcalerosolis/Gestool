@@ -8523,12 +8523,11 @@ STATIC FUNCTION CreateFiles( cPath )
       dbCreate( cPath + "CliFacturae.Dbf", aSqlStruct( aCliFacturae() ), cDriver() )
    end if
 
-
 RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-function aCliInc()
+FUNCTION aCliInc()
 
    local aBase := {}
 
@@ -8538,8 +8537,9 @@ function aCliInc()
    aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripción de la incidencia" ,    "Nombre",            "", "( cDbfInc )", "" } )
    aAdd( aBase, { "lListo",      "L",  1, 0, "Lógico de listo" ,                 "",                  "", "( cDbfInc )", nil } )
    aAdd( aBase, { "lAviso",      "L",  1, 0, "Lógico de aviso" ,                 "",                  "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "tIncid",      "T",  8, 0, "Fecha y hora de la incidencia" ,   "FechaHora",         "", "( cDbfInc )", {|| DateTime() } } )
 
-return ( aBase )
+RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
 
@@ -8667,7 +8667,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "Telefono",  "C", 20, 0, "Teléfono",                                      "Telefono",           "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Fax",       "C", 20, 0, "Fax",                                           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Movil",     "C", 20, 0, "Móvil",                                         "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "NbrEst",    "C", 35, 0, "Nombre del establecimiento" ,                   "NombreEstablacimiento", "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "NbrEst",    "C", 35, 0, "Nombre del establecimiento" ,                   "NombreEstablecimiento", "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Direst",    "C", 35, 0, "Domicilio del servicio" ,                       "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "DiaPago",   "N",  2, 0, "Primer día de pago",                            "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "DiaPago2",  "N",  2, 0, "Segundo día de pago",                           "",                   "", "( cDbfCli )", nil } )
@@ -8676,7 +8676,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "PobBanco",  "C", 25, 0, "Población del banco",                           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cProBanco", "C", 20, 0, "Provincia del banco",                           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Cuenta",    "C", 20, 0, "",                                              "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "nTipCli",   "N",  1, 0, "Tipo",                                          "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "nTipCli",   "N",  1, 0, "Tipo",                                          "TipoCliente",        "", "( cDbfCli )", nil } )
    aAdd( aBase, { "CodPago",   "C",  2, 0, "Código del tipo de pago",                       "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cDtoEsp",   "C", 50, 0, "Descripción del descuento por factura" ,        "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nDtoEsp",   "N",  6, 2, "Porcentaje de descuento por factura" ,          "",                   "", "( cDbfCli )", nil } )
@@ -8694,7 +8694,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "lReq",      "L",  1, 0, "Lógico para recargo de equivalencia (S/N)",     "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Subcta",    "C", 12, 0, "Subcuenta cliente enlace contaplus",            "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "CtaVenta",  "C",  3, 0, "Cuenta venta cliente contaplus",                "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgente",   "C",  3, 0, "Código agente comercial",                       "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgente",   "C",  3, 0, "Código agente comercial",                       "CodigoAgente",       "", "( cDbfCli )", nil } )
    aAdd( aBase, { "lMayorista","L",  1, 0, "Utilizar precio de mayorista (S/N)" ,           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nTarifa",   "N",  1, 0, "Tarifa a aplicar" ,                             "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "lLabel",    "L",  1, 0, "Lógico para etiquetado (S/N)" ,                 "",                   "", "( cDbfCli )", nil } )
@@ -8706,7 +8706,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "cCodPai",   "C",  4, 0, "Código de país" ,                               "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cCodGrp",   "C",  4, 0, "Código de grupo de cliente" ,                   "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cCodRem",   "C",  3, 0, "Código de remesa" ,                             "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cMeiInt",   "C", 65, 0, "Correo electrónico" ,                           "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cMeiInt",   "C", 65, 0, "Correo electrónico" ,                           "Email",              "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cWebInt",   "C", 65, 0, "Página web" ,                                   "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "lChgPre",   "L",  1, 0, "Lógico para autorización de venta de crédito" , "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "lCreSol",   "L",  1, 0, "Lógico para bloquear con riesgo alcanzado" ,    "",                   "", "( cDbfCli )", nil } )

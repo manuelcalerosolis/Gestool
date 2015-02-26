@@ -198,6 +198,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define __CNUMFAC                112
 #define _CCODIMP                 112
 #define _NVALIMP                 114
+#define _DAPERTURA               115
+#define _DCIERRE                 116
 
 /*
 Definici¢n de Array para impuestos
@@ -9172,6 +9174,8 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "cNumFac",      "C", 12,  0, "Número de la factura de cliente" , "",               "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cCodImp",      "C",  3,  0, "Código de impuesto especial",      "",               "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "nValImp",      "N", 16,  6, "Importe de impuesto especial",     "",               "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "dApertura",    "D",  8,  0, "Fecha apertura de lote",       "",                   "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "dCierre",      "D",  8,  0, "Fecha fin de lote",            "",                   "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 

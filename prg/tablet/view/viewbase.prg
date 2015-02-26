@@ -3,6 +3,10 @@
 
 CLASS ViewBase
 
+   DATA columnLabel                    INIT 0.2
+
+   DATA widthLabel                     INIT 1.8
+
    DATA oDlg
 
    DATA oBrowse
@@ -88,7 +92,7 @@ Return ( ::oDlg:nResult == IDOK )
 METHOD defineTitulo() CLASS ViewBase 
 
    TGridSay():Build(    {  "nRow"      => 0,;
-                           "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
                            "bText"     => {|| ::getTextoTipoDocumento() },;
                            "oWnd"      => ::oDlg,;
                            "oFont"     => oGridFontBold(),;

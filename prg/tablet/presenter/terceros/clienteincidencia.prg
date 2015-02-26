@@ -16,12 +16,12 @@ CLASS ClienteIncidencia FROM Editable
    METHOD setScope( id )         INLINE ( D():setScopeClientesIncidencias( id, ::nView ) )
    METHOD quitScope()            INLINE ( D():quitScopeClientesIncidencias( ::nView ) )
 
-   METHOD onPostGetDocumento()
-   METHOD onPreSaveDocumento()   
-
    METHOD showNavigator()
 
    METHOD Resource()             INLINE ( ::oViewEdit:Resource() )   
+
+   METHOD onPostGetDocumento()
+   METHOD onPreSaveDocumento()   
 
 ENDCLASS
 

@@ -12,6 +12,8 @@ CLASS ClienteIncidenciaView FROM ViewBase
 
    METHOD defineFecha()
 
+   METHOD defineFechaHora()
+
    METHOD defineIncidencia()
 
    METHOD defineCombo()
@@ -36,7 +38,7 @@ METHOD insertControls( nMode ) CLASS ClienteIncidenciaView
 
    ::defineCombo()
 
-   ::defineFecha()
+   ::defineFechaHora()
 
 Return ( self )
 
@@ -44,15 +46,24 @@ Return ( self )
 
 METHOD defineCombo() CLASS ClienteIncidenciaView
 
-   local oCombo
+   TGridSay():Build( {  "nRow"      => 130,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "Tipo" },;
+                        "oWnd"      => ::oDlg,;
+                        "oFont"     => oGridFont(),;
+                        "lPixels"   => .t.,;
+                        "nClrText"  => Rgb( 0, 0, 0 ),;
+                        "nClrBack"  => Rgb( 255, 255, 255 ),;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23 } )
 
-   oCombo   := TGridComboBox():Build(  {  "nRow"      => 130,;
-                                          "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                          "bSetGet"   => {|u| iif( empty( u ), ::oSender:cNombreIncidencia, ::oSender:cNombreIncidencia := u ) },;
-                                          "oWnd"      => ::oDlg,;
-                                          "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
-                                          "nHeight"   => 25,;
-                                          "aItems"    => D():getTiposIncicencias( ::getView() ) } )
+   TGridComboBox():Build(  {  "nRow"      => 130,;
+                              "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                              "bSetGet"   => {|u| iif( empty( u ), ::oSender:cNombreIncidencia, ::oSender:cNombreIncidencia := u ) },;
+                              "oWnd"      => ::oDlg,;
+                              "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
+                              "nHeight"   => 25,;
+                              "aItems"    => D():getTiposIncicencias( ::getView() ) } )
 
 Return ( self )
 
@@ -60,16 +71,16 @@ Return ( self )
 
 METHOD defineNombre() CLASS ClienteIncidenciaView
 
-   TGridUrllink():Build(   {  "nTop"      => 40,;
-                              "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
-                              "cURL"      => "Incidencia",;
-                              "oWnd"      => ::oDlg,;
-                              "oFont"     => oGridFont(),;
-                              "lPixel"    => .t.,;
-                              "nClrInit"  => nGridColor(),;
-                              "nClrOver"  => nGridColor(),;
-                              "nClrVisit" => nGridColor(),;
-                              "bAction"   => {|| msgAlert("getLastNum") } } )
+   TGridSay():Build( {  "nRow"      => 40,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "Incidencia" },;
+                        "oWnd"      => ::oDlg,;
+                        "oFont"     => oGridFont(),;
+                        "lPixels"   => .t.,;
+                        "nClrText"  => Rgb( 0, 0, 0 ),;
+                        "nClrBack"  => Rgb( 255, 255, 255 ),;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23 } )
 
    TGridMultiGet():Build(  {  "nRow"      => 40,;
                               "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
@@ -86,26 +97,49 @@ Return ( self )
 
 METHOD defineFecha() CLASS ClienteIncidenciaView
 
-   local getFecha
+   TGridUrllink():Build(   {  "nTop"      => 100,;
+                              "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                              "cURL"      => "Fecha",;
+                              "oWnd"      => ::oDlg,;
+                              "oFont"     => oGridFont(),;
+                              "lPixel"    => .t.,;
+                              "nClrInit"  => nGridColor(),;
+                              "nClrOver"  => nGridColor(),;
+                              "nClrVisit" => nGridColor() } )
 
-   TGridUrllink():Build(            {  "nTop"      => 100,;
-                                       "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
-                                       "cURL"      => "Fecha",;
-                                       "oWnd"      => ::oDlg,;
-                                       "oFont"     => oGridFont(),;
-                                       "lPixel"    => .t.,;
-                                       "nClrInit"  => nGridColor(),;
-                                       "nClrOver"  => nGridColor(),;
-                                       "nClrVisit" => nGridColor() } )
+   TGridGet():Build(    {  "nRow"      => 100,;
+                           "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                           "bSetGet"   => {|u| ::SetGetValue( u, "Fecha" ) },;
+                           "oWnd"      => ::oDlg,;
+                           "nWidth"    => {|| GridWidth( 2.0, ::oDlg ) },;
+                           "nHeight"   => 25,;
+                           "lPixels"   => .t. } )
 
-   getFecha   := TGridGet():Build( {  "nRow"      => 100,;
-                                       "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                       "bSetGet"   => {|u| ::SetGetValue( u, "Fecha" ) },;
-                                       "oWnd"      => ::oDlg,;
-                                       "nWidth"    => {|| GridWidth( 2.0, ::oDlg ) },;
-                                       "nHeight"   => 25,;
-                                       "cPict"     => "@!",;
-                                       "lPixels"   => .t. } )
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD defineFechaHora() CLASS ClienteIncidenciaView
+
+   TGridSay():Build( {  "nRow"      => 100,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "Fecha" },;
+                        "oWnd"      => ::oDlg,;
+                        "oFont"     => oGridFont(),;
+                        "lPixels"   => .t.,;
+                        "nClrText"  => Rgb( 0, 0, 0 ),;
+                        "nClrBack"  => Rgb( 255, 255, 255 ),;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23 } )
+
+   TGridGet():Build( {  "nRow"      => 100,;
+                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                        "bSetGet"   => {|u| ::SetGetValue( u, "FechaHora" ) },;
+                        "bWhen"     => {|| .f. },;
+                        "oWnd"      => ::oDlg,;
+                        "nWidth"    => {|| GridWidth( 3.0, ::oDlg ) },;
+                        "nHeight"   => 25,;
+                        "lPixels"   => .t. } )
 
 Return ( self )
 
@@ -116,7 +150,7 @@ METHOD defineIncidencia() CLASS ClienteIncidenciaView
    local getIncidencia
 
    TGridUrllink():Build(               {  "nTop"      => 70,;
-                                          "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
+                                          "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
                                           "cURL"      => "Nombre",;
                                           "oWnd"      => ::oDlg,;
                                           "oFont"     => oGridFont(),;
