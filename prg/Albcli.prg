@@ -13143,7 +13143,7 @@ Static Function PrintReportAlbCli( nDevice, nCopies, cPrinter, cCodigoDocumento 
 
    DataReport( oFr )
 
-   // Cargar el informe-----------------------------------------------------------
+   // Cargar el informe--------------------------------------------------------
 
    oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
