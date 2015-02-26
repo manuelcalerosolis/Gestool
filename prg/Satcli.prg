@@ -2171,6 +2171,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
+         :cHeader             := "Observaciones"
+         :bEditValue          := {|| ( dbfTmpLin )->mObsLin }
+         :nWidth              := 300
+         :lHide               := .t.
+         :nEditType           := 1
+         :bOnPostEdit         := {|o,x,n| ChangeComentario( o, x, n, aTmp ) }
+      end with
+
+      with object ( oBrwLin:AddCol() )
          :cHeader             := "Código proveedor"
          :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cCodPrv ) }
          :nWidth              := 50
@@ -11631,3 +11640,22 @@ Static Function cFormatoSATClientes( cSerie )
 Return ( cFormato ) 
 
 //---------------------------------------------------------------------------//   
+
+static function ChangeComentario( oCol, uNewValue, nKey, aTmp )
+
+   /*
+   Cambiamos el valor de las unidades de la linea de la factura---------------
+   */
+
+   if IsNum( nKey ) .and. ( nKey != VK_ESCAPE ) .and. !IsNil( uNewValue )
+
+      ( dbfTmpLin )->mObsLin       := uNewValue
+
+      RecalculaTotal( aTmp )
+
+   end if
+
+Return .t.  
+
+//---------------------------------------------------------------------------//
+
