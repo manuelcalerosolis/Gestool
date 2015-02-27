@@ -74,9 +74,11 @@ Return ( self )
 
 METHOD defineCodigo(nRow) CLASS ClienteView
 
+   local oCodigo
+
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
-                        "bText"     => {|| "Código" },;
+                        "bText"     => {|| "Código *" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
@@ -84,16 +86,19 @@ METHOD defineCodigo(nRow) CLASS ClienteView
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
                         "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23 } )
-
-   TGridGet():Build( {  "nRow"      => nRow,;
-                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::SetGetValue( u, "Codigo" ) },;
-                        "oWnd"      => ::oDlg,;
-                        "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                        "bWhen"     => {|| ::getMode() == APPD_MODE },;
-                        "nHeight"   => 23,;
-                        "cPict"     => "@!",;
-                        "lPixels"   => .t. } )
+   
+   oCodigo  := TGridGet():Build( {  "nRow"      => nRow,;
+                                    "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                    "bSetGet"   => {|u| ::SetGetValue( u, "Codigo" ) },;
+                                    "oWnd"      => ::oDlg,;
+                                    "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                                    "bWhen"     => {|| ::getMode() == APPD_MODE },;
+                                    "bValid"    => {|| iif( !validKey( oCodigo, ( D():Clientes( ::getView() ) ), .t., "0", 1, RetNumCodCliEmp() ),;
+                                                            ::setErrorValidator( "El código ya existe" ),;
+                                                            .t. ) },;
+                                    "nHeight"   => 23,;
+                                    "cPict"     => Replicate( "X", RetNumCodCliEmp() ),;
+                                    "lPixels"   => .t. } )
 
 Return ( self )
 
@@ -103,7 +108,7 @@ METHOD defineNIF(nRow) CLASS ClienteView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
-                        "bText"     => {|| "NIF" },;
+                        "bText"     => {|| "NIF *" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
@@ -118,6 +123,9 @@ METHOD defineNIF(nRow) CLASS ClienteView
                         "bSetGet"   => {|u| ::SetGetValue( u, "NIF" ) },;
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
+                        "bValid"    => {|| iif( empty( hGet( ::oSender:hDictionaryMaster, "NIF" ) ),;
+                                                ::setErrorValidator( "El campo NIF es un dato obligatorio" ),;
+                                                .t. ) },;
                         "nHeight"   => 23,;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
@@ -130,7 +138,7 @@ METHOD defineNombre(nRow) CLASS ClienteView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
-                        "bText"     => {|| "Nombre" },;
+                        "bText"     => {|| "Nombre *" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
@@ -145,6 +153,9 @@ METHOD defineNombre(nRow) CLASS ClienteView
                         "bSetGet"   => {|u| ::SetGetValue( u, "Nombre" ) },;
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
+                        "bValid"    => {|| iif( empty( hGet( ::oSender:hDictionaryMaster, "Nombre" ) ),;
+                                                ::setErrorValidator( "El nombre es un dato obligatorio" ),;
+                                                .t. ) },;
                         "nHeight"   => 23,;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )

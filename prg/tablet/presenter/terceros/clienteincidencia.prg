@@ -33,8 +33,6 @@ METHOD New( oSender ) CLASS ClienteIncidencia
 
    ::nView                 := oSender:nView
 
-   ::idClient              := D():ClientesId( ::nView )
-
    ::oViewEdit             := ClienteIncidenciaView():New( self )   
 
    ::oViewNavigator        := ClienteIncidenciaViewNavigator():New( self )
@@ -46,6 +44,8 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD showNavigator() CLASS ClienteIncidencia
+
+   ::idClient              := D():ClientesId( ::nView )
 
    ::setScope( ::idClient )
 

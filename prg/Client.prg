@@ -3275,10 +3275,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwInc:AddCol() )
-         :cHeader          := "Fecha"
-         :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| Dtoc( ( dbfTmpInc )->dFecInc ) }
-         :nWidth           := 80
+         :cHeader       := iif( !empty( ( dbfTmpInc )->tIncid ), "Fecha/Hora", "Fecha" )
+         :bEditValue    := {|| iif( !empty( ( dbfTmpInc )->tIncid ), hb_ttoc( ( dbfTmpInc )->tIncid ), dtoc( ( dbfTmpInc )->dFecInc ) ) }
+         :nWidth        := 120
       end with
 
       with object ( oBrwInc:AddCol() )
@@ -6795,6 +6794,8 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
          aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ]  := oUser():cTipoIncidencia()
       end if
 
+      aTmp[ ( dbfFacCliI )->( FieldPos( "tIncid" ) ) ]      := DateTime()
+
    end if
 
    if !Empty( aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ] )
@@ -6817,7 +6818,7 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
          ID       130 ;
          OF       oDlg
 
-      REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "dFecInc" ) ) ] ;
+      REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "tIncid" ) ) ] ;
          ID       100 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;

@@ -13,6 +13,8 @@ CLASS ViewBase
 
    DATA oSender
 
+   DATA cErrorValidator                INIT ""
+
    DATA Style                          INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
 
    DATA cTextoTipoDocumento
@@ -52,6 +54,13 @@ CLASS ViewBase
    METHOD setGetValue( uValue, cName ) INLINE ( iif(  empty( uValue ),;
                                                       hGet( ::oSender:hDictionaryMaster, cName ),;
                                                       hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
+
+   METHOD setErrorValidator( cErrorText )
+
+   METHOD errorValidator() 
+
+   METHOD endView()                    INLINE ( iif( ::errorValidator(), msgStop( ::cErrorValidator ), ::oDlg:End( IDOK ) ) )
+   METHOD cancelView()                 INLINE ( ::oDlg:End() )
 
 END CLASS
 
@@ -100,7 +109,7 @@ METHOD defineTitulo() CLASS ViewBase
                            "nClrText"  => Rgb( 0, 0, 0 ),;
                            "nClrBack"  => Rgb( 255, 255, 255 ),;
                            "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
-                           "nHeight"   => 32,;
+                           "nHeight"   => 42,;
                            "lDesign"   => .f. } )
 
 Return ( self )
@@ -128,7 +137,7 @@ METHOD defineAceptarCancelar() CLASS ViewBase
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_del_64",;
-                           "bLClicked" => {|| ::oDlg:End() },;
+                           "bLClicked" => {|| ::cancelView() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;
@@ -136,7 +145,7 @@ METHOD defineAceptarCancelar() CLASS ViewBase
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oDlg:End( IDOK ) },;
+                           "bLClicked" => {|| ::endView() },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -156,5 +165,23 @@ METHOD initDialog() CLASS ViewBase
    GridMaximize( ::oDlg )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setErrorValidator( cErrorText ) CLASS ViewBase
+
+   ::cErrorValidator    += cErrorText + CRLF
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD errorValidator() CLASS ViewBase
+
+   ::cErrorValidator    := ""
+
+   ::oDlg:aEvalValid()
+
+Return ( !empty( ::cErrorValidator ) )   
 
 //---------------------------------------------------------------------------//

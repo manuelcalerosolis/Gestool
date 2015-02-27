@@ -47,7 +47,7 @@ static hDLLRich
 
 static oWnd
 static oBmp
-static lDemoMode     := .t. 
+static lDemoMode        := .t. 
 
 static lStandard
 static lProfesional
@@ -55,7 +55,7 @@ static lOsCommerce
 
 static cNameVersion
 static cBmpVersion
-static cTypeVersion  := ""
+static cTypeVersion     := ""
 
 //---------------------------------------------------------------------------//
 /*
@@ -64,7 +64,7 @@ static cTypeVersion  := ""
 -------------------------------------------------------------------------------
 */
 
-function Main( cParams )
+function Main( ParamsMain, ParamsSecond )
 
    local nError
    local cError
@@ -85,18 +85,19 @@ function Main( cParams )
    local cSqlQuery
    local lSqlQuery
 
-   DEFAULT cParams   := ""
+   DEFAULT ParamsMain   := ""
 
-   cParamsMain       := Upper( cParams )
+   cParamsMain          := Upper( ParamsMain )
 
-   SET DATE FORMAT   "dd/mm/yyyy"
-   SET DELETED       ON
-   SET EXCLUSIVE     OFF
-   SET EPOCH         TO 2000
-   SET OPTIMIZE      ON
-   SET EXACT         ON
-   SET AUTOPEN       ON
-   SET AUTORDER      TO 1
+   SET DATE FORMAT "dd/mm/yyyy"
+   SET TIME FORMAT TO "hh:mm:ss"
+   SET DELETED ON
+   SET EXCLUSIVE OFF
+   SET EPOCH TO 2000
+   SET OPTIMIZE ON
+   SET EXACT ON
+   SET AUTOPEN ON
+   SET AUTORDER TO 1
 
    SetHandleCount( 240 )
 
@@ -110,7 +111,7 @@ function Main( cParams )
 
    DialogExtend() 
 
-   // Chequeamos la existencia del fichero de configuracion-----------------------
+   // Chequeamos la existencia del fichero de configuracion--------------------
 
    if !File( FullCurDir() + "GstApolo.Ini" ) .and. File( FullCurDir() + "Gestion.Ini" )
       fRename( FullCurDir() + "Gestion.Ini", FullCurDir() + "GstApolo.Ini" )
@@ -284,6 +285,12 @@ function Main( cParams )
 Return Nil
 
 //----------------------------------------------------------------------------//
+
+Function cParamsMain()
+
+Return ( cParamsMain )
+
+//---------------------------------------------------------------------------//
 
 Function HelpTopic()
 
@@ -5561,12 +5568,6 @@ Return lStandard
 
 //---------------------------------------------------------------------------//
 
-Function cParamsMain()
-
-Return ( cParamsMain )
-
-//---------------------------------------------------------------------------//
-
 Function lCheckPerpetuoMode( nSerialUSR )
 
    local n 
@@ -5960,8 +5961,6 @@ RETURN ( .t. )
 Function nextRow( nRow )
 
    nRow := nRow + 3
-
-   msgalert( nRow )
 
 Return ( by( nRow ) )
 

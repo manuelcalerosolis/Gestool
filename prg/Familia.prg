@@ -744,7 +744,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
             ON HELP  ( aGet[ _CCODFAM ]:cText( NextKey( aTmp[ _CCODFAM ], dbfFamilia ) ) ) ; // dbLast( dbfFamilia, 1, nil, nil, 1 ) ) ) ) ;
             BITMAP   "BOT" ;
-            VALID    ( ValidKey( aGet[ _CCODFAM ], dbfFamilia ) ) ;
+            VALID    ( notValid( aGet[ _CCODFAM ], dbfFamilia ) ) ;
             PICTURE  "@!" ;
             OF       oFld:aDialogs[1]
 
