@@ -9791,6 +9791,9 @@ FUNCTION rxSatCli( cPath, oMeter )
       ( cSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "nNumLin", "Str( NNUMSAT ) + Str( nNumLin )", {|| Str( Field->nNumSat ) + Str( Field->nNumLin ) }, ) )
 
+      ( cSatCliT )->( ordCondSet("!Deleted() .and. nCtrlStk == 2", {||!Deleted() .and. Field->nCtrlStk == 2 }  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli }, ) )
+
       ( cSatCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
