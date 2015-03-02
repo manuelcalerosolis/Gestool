@@ -59,8 +59,11 @@ CLASS ViewBase
 
    METHOD errorValidator() 
 
-   METHOD endView()                    INLINE ( iif( ::errorValidator(), msgStop( ::cErrorValidator ), ::oDlg:End( IDOK ) ) )
+   METHOD endView()                    INLINE ( ::oDlg:GoNextCtrl( GetFocus() ),;
+                                                iif( ::errorValidator(), msgStop( ::cErrorValidator ), ::oDlg:End( IDOK ) ) )
    METHOD cancelView()                 INLINE ( ::oDlg:End() )
+
+   METHOD evalDialog()
 
 END CLASS
 
@@ -185,3 +188,36 @@ METHOD errorValidator() CLASS ViewBase
 Return ( !empty( ::cErrorValidator ) )   
 
 //---------------------------------------------------------------------------//
+
+METHOD evalDialog() CLASS ViewBase
+
+   local oControl
+   local lValid      := .t.
+   local aControls   := ::oDlg:aControls
+
+   if empty( aControls )
+      Return ( lValid )
+   end if 
+
+   for each oControl in aControls
+
+      // msgAlert( hb_valtoexp( oControl ), "control" )
+      
+      msgAlert( empty( oControl:bWhen ) .or. eval( oControl:bWhen ), "bWhen" )
+
+      if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
+
+         msgAlert( !empty( oControl:bValid ) .and. !eval( oControl:bValid ), "bValid" )            
+
+         if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
+
+            lValid   := .f.
+            oControl:SetFocus()
+
+         endif
+      end if 
+   next
+
+return ( lValid )
+
+//----------------------------------------------------------------------------//

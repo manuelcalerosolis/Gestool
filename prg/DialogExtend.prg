@@ -96,6 +96,7 @@ RETURN ( nil )
 
 STATIC FUNCTION DialogEvalValid() 
 
+/*
    local n
    local lValid     := .t.
    local Self       := HB_QSelf()
@@ -111,6 +112,28 @@ STATIC FUNCTION DialogEvalValid()
          endif
       next
    endif
+*/
+
+   local oControl
+   local lValid      := .t.
+   local Self        := HB_QSelf()
+   local aControls   := Self:aControls
+
+   if empty( aControls )
+      Return ( lValid )
+   end if 
+
+   for each oControl in aControls
+      if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
+         if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
+
+            msgAlert( !empty( oControl:bValid ) .and. !eval( oControl:bValid ), "aEvalValid" )
+            
+            lValid   := .f.
+            oControl:SetFocus()
+         endif
+      end if 
+   next
 
 return ( lValid )
 
