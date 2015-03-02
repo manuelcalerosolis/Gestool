@@ -1131,72 +1131,74 @@ return nil
 
 Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
 
-   local nOrdAntS  := ( dbfSatCliS )->( OrdSetFocus( "nNumRef" ) )
+   local nOrdAntL  := ( dbfSatCliL )->( OrdSetFocus( "cCodCli" ) )
    local nOrdAntT  := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
 
    oDbfTmpMaq:Zap()
 
    ( dbfSatCliL )->( dbGoTop() )
 
-   while !( dbfSatCliL )->( Eof() )
+   if ( dbfSatCliL )->( dbSeek( cCodCli ) )
 
-      if !Empty( ( dbfSatCliL )->cRef )      .and.;
-         ( dbfSatCliL )->nCtlStk == 2        .and.;
-         ( dbfSatCliL )->cCodCli == cCodCli  .and.;
-         if( cCmbAnio == "Todos", .t., ( Year( ( dbfSatCliL )->dFecSat ) == Val( cCmbAnio ) ) )
+      while ( dbfSatCliL )->cCodCli == cCodCli .and. !( dbfSatCliL )->( Eof() )
 
-         if !oDbfTmpMaq:Seek( ( dbfSatCliL )->cRef )
+         if !Empty( ( dbfSatCliL )->cRef )      .and.;
+            if( cCmbAnio == "Todos", .t., ( Year( ( dbfSatCliL )->dFecSat ) == Val( cCmbAnio ) ) )
 
-            oDbfTmpMaq:Append()
+            if !oDbfTmpMaq:Seek( ( dbfSatCliL )->cRef )
 
-            oDbfTmpMaq:cCodCli      := cCodCli
-            oDbfTmpMaq:cRef         := ( dbfSatCliL )->cRef
-            oDbfTmpMaq:cDetalle     := ( dbfSatCliL )->cDetalle
+               oDbfTmpMaq:Append()
 
-            if ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
+               oDbfTmpMaq:cCodCli      := cCodCli
+               oDbfTmpMaq:cRef         := ( dbfSatCliL )->cRef
+               oDbfTmpMaq:cDetalle     := ( dbfSatCliL )->cDetalle
 
-               oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
-               oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
-               oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
-               oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
-               oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
+               if ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
 
-            end if
+                  oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
+                  oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
+                  oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
+                  oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
+                  oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
 
-            if ( dbfArticulo )->( dbSeek( ( dbfSatCliL )->cRef ) )
-               oDbfTmpMaq:cDesUbi   := ( dbfArticulo )->cDesUbi
-            end if
+               end if
 
-            oDbfTmpMaq:Save()
-
-         else
-         
-            if ( dbfSatCliL )->dFecSat > oDbfTmpMaq:dFecSat .and.;
-               ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
-               
-               oDbfTmpMaq:Load()
-
-               oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
-               oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
-               oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
-               oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
-               oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
+               if ( dbfArticulo )->( dbSeek( ( dbfSatCliL )->cRef ) )
+                  oDbfTmpMaq:cDesUbi   := ( dbfArticulo )->cDesUbi
+               end if
 
                oDbfTmpMaq:Save()
 
-            end if
+            else
+            
+               if ( dbfSatCliL )->dFecSat > oDbfTmpMaq:dFecSat .and.;
+                  ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
+                  
+                  oDbfTmpMaq:Load()
 
-         end if   
+                  oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
+                  oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
+                  oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
+                  oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
+                  oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
 
-      end if
+                  oDbfTmpMaq:Save()
 
-      ( dbfSatCliL )->( dbSkip() )
+               end if
 
-   end while
+            end if   
+
+         end if
+
+         ( dbfSatCliL )->( dbSkip() )
+
+      end while
+
+   end if
 
    oDbfTmpMaq:GoTop()
 
-   ( dbfSatCliS )->( OrdSetFocus( nOrdAntS ) )
+   ( dbfSatCliL )->( OrdSetFocus( nOrdAntL ) )
    ( dbfSatCliT )->( OrdSetFocus( nOrdAntT ) )
 
    if !Empty( oBrwMaq )
