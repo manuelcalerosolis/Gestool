@@ -15520,6 +15520,31 @@ return ( nTot )
 
 //---------------------------------------------------------------------------//
 
+function nUnidadesRecibidasAlbCliNoFacturados( cNumPed, cCodArt, cCodPr1, cCodPr2, cAlbCliL )
+
+   local nTot        := 0
+   local aStaLin     := aGetStatus( cAlbCliL, .f. )
+
+   DEFAULT cCodPr1   := Space( 20 )
+   DEFAULT cCodPr2   := Space( 20 )
+
+   ( cAlbCliL )->( OrdSetFocus( "cRefNoFac" ) )
+
+   if ( cAlbCliL )->( dbSeek( cNumPed + cCodArt + cCodPr1 + cCodPr2 ) )
+      
+      while ( cAlbCliL )->cNumPed + ( cAlbCliL )->cRef + ( cAlbCliL )->cCodPr1 + ( cAlbCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( cAlbCliL )->( eof() )
+         nTot        += nTotNAlbCli( cAlbCliL )
+         ( cAlbCliL )->( dbSkip() )
+      end while
+
+   end if
+
+   SetStatus( cAlbCliL, aStaLin )
+
+return ( nTot )
+
+//---------------------------------------------------------------------------//
+
 function nTotNAlbCli( uDbf )
 
    local nTotUnd
@@ -16205,6 +16230,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedRef", "cNumPed + cRef + cCodPr1 + cCodPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 } ) )
+      
+      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cRefNoFac", "cNumPed + cRef + cCodPr1 + cCodPr2", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPedDet", "cNumPed + cRef + cCodPr1 + cCodPr2 + cRefPrv", {|| Field->cNumPed + Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cRefPrv } ) ) // + cDetalle

@@ -1142,7 +1142,7 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
 
       while ( dbfSatCliL )->cCodCli == cCodCli .and. !( dbfSatCliL )->( Eof() )
 
-         if !Empty( ( dbfSatCliL )->cRef )      .and.;
+          if !Empty( ( dbfSatCliL )->cRef )      .and.;
             if( cCmbAnio == "Todos", .t., ( Year( ( dbfSatCliL )->dFecSat ) == Val( cCmbAnio ) ) )
 
             if !oDbfTmpMaq:Seek( ( dbfSatCliL )->cRef )
