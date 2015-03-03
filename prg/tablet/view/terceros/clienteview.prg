@@ -123,12 +123,14 @@ METHOD defineNIF(nRow) CLASS ClienteView
                         "bSetGet"   => {|u| ::SetGetValue( u, "NIF" ) },;
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
-                        "bValid"    => {|| iif( empty( hGet( ::oSender:hDictionaryMaster, "NIF" ) ),;
-                                                ::setErrorValidator( "El campo NIF es un dato obligatorio" ),;
-                                                .t. ) },;
                         "nHeight"   => 23,;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
+/*
+                        "bValid"    => {|| iif( empty( hGet( ::oSender:hDictionaryMaster, "NIF" ) ),;
+                                                ::setErrorValidator( "El campo NIF es un dato obligatorio" ),;
+                                                .t. ) },;
+*/
 
 Return ( self )
 

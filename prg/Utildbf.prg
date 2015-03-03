@@ -2269,7 +2269,7 @@ Return nil
 Comprueba si existe una clave
 */
 
-FUNCTION NotValid( oGet, uAlias, lRjust, cChar, nTag, nLen )
+FUNCTION notValid( oGet, uAlias, lRjust, cChar, nTag, nLen )
 
    local lReturn  := .t.
 
