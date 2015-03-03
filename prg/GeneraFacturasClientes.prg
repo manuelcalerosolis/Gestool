@@ -31,6 +31,8 @@ ENDCLASS
 
 METHOD New() CLASS GeneraFacturasClientes
 
+   ::oPeriodo     := GetPeriodo():Build( { "idCombo" => 110, "idFechaInicio" => 120, "idFechaFin" => 130, "oContainer" => Self } )
+
    ::Resource()
 
 Return ( self )
@@ -52,9 +54,8 @@ METHOD Resource() CLASS GeneraFacturasClientes
       TRANSPARENT ;
       OF       ::oDlg 
 
-   
+   ::oPeriodo:Resource( ::oPag:aDialogs[1] )   
 
-   //::oPeriodo     := GetPeriodo():Build( { "idCombo" => 110, "idFechaInicio" => 120, "idFechaFin" => 130, "oContainer" => Self } )
 
    // Clientes-----------------------------------------------------------------
 

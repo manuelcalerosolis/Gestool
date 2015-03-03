@@ -13322,7 +13322,13 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
 
    // Cremaos el dialogo-------------------------------------------------------
 
-   oPrinter          := PrintSeries():New( nView ):SetVentas()
+   oPrinter          := PrintSeries():New( nView )
+
+   if empty(oPrinter)
+      return .f.
+   end if       
+
+   oPrinter:SetVentas()
 
    // Establecemos sus valores-------------------------------------------------
 
@@ -13331,10 +13337,8 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
    oPrinter:Sufijo(     ( D():AlbaranesClientes( nView ) )->cSufAlb )
 
    if lExternal
-
       oPrinter:oFechaInicio:cText( ( D():AlbaranesClientes( nView ) )->dFecAlb )
       oPrinter:oFechaFin:cText( ( D():AlbaranesClientes( nView ) )->dFecAlb )
-
    end if
 
    oPrinter:oFormatoDocumento:TypeDocumento( "AC" )   
