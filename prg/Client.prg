@@ -3275,9 +3275,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwInc:AddCol() )
-         :cHeader       := iif( !empty( ( dbfTmpInc )->tIncid ), "Fecha/Hora", "Fecha" )
-         :bEditValue    := {|| iif( !empty( ( dbfTmpInc )->tIncid ), hb_ttoc( ( dbfTmpInc )->tIncid ), dtoc( ( dbfTmpInc )->dFecInc ) ) }
-         :nWidth        := 120
+         :cHeader          := "Fecha/Hora"
+         :bEditValue       := {|| dateTimeToString( ( dbfTmpInc )->dFecInc, ( dbfTmpInc )->tTimInc ) }
+         :nWidth           := 120
       end with
 
       with object ( oBrwInc:AddCol() )
@@ -6794,7 +6794,8 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
          aTmp[ ( dbfFacCliI )->( FieldPos( "cCodTip" ) ) ]  := oUser():cTipoIncidencia()
       end if
 
-      aTmp[ ( dbfFacCliI )->( FieldPos( "tIncid" ) ) ]      := DateTime()
+      aTmp[ ( dbfFacCliI )->( FieldPos( "dFecInc" ) ) ]     := getSysDate()
+      aTmp[ ( dbfFacCliI )->( FieldPos( "tTimInc" ) ) ]     := getSysTime()
 
    end if
 
@@ -6818,10 +6819,19 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, cCodCli, bValid, nMode )
          ID       130 ;
          OF       oDlg
 
-      REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "tIncid" ) ) ] ;
+      REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "dFecInc" ) ) ] ;
          ID       100 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "tTimInc" ) ) ] ;
+         ID       101 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif (  !validTime( aTmp[ ( dbfFacCliI )->( FieldPos( "tTimInc" ) ) ] ),;
+                           msgStop( "El formato de la hora no es correcto" ),;
+                           .t. ) );
          OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfFacCliI )->( FieldPos( "mDesInc" ) ) ] ;
@@ -8534,11 +8544,11 @@ FUNCTION aCliInc()
 
    aAdd( aBase, { "cCodCli",     "C", 12, 0, "Código del cliente",               "Código",            "", "( cDbfInc )", nil } )
    aAdd( aBase, { "cCodTip",     "C",  3, 0, "Tipo de incidencia" ,              "Tipo",              "", "( cDbfInc )", nil } )
-   aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "Fecha",             "", "( cDbfInc )", {|| GetSysDate() } } )
+   aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "Fecha",             "", "( cDbfInc )", {|| getSysDate() } } )
+   aAdd( aBase, { "tTimInc",     "C",  6, 0, "Hora de la incidencia" ,           "Hora",              "", "( cDbfInc )", {|| getSysTime() } } )
    aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripción de la incidencia" ,    "Nombre",            "", "( cDbfInc )", "" } )
    aAdd( aBase, { "lListo",      "L",  1, 0, "Lógico de listo" ,                 "",                  "", "( cDbfInc )", nil } )
    aAdd( aBase, { "lAviso",      "L",  1, 0, "Lógico de aviso" ,                 "",                  "", "( cDbfInc )", nil } )
-   aAdd( aBase, { "tIncid",      "T",  8, 0, "Fecha y hora de la incidencia" ,   "FechaHora",         "", "( cDbfInc )", {|| DateTime() } } )
 
 RETURN ( aBase )
 

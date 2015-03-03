@@ -12,7 +12,7 @@ CLASS ClienteIncidenciaView FROM ViewBase
 
    METHOD defineFecha()
 
-   METHOD defineFechaHora()
+   METHOD defineHora()
 
    METHOD defineIncidencia()
 
@@ -38,7 +38,9 @@ METHOD insertControls( nMode ) CLASS ClienteIncidenciaView
 
    ::defineCombo()
 
-   ::defineFechaHora()
+   ::defineFecha()
+
+   ::defineHora()
 
 Return ( self )
 
@@ -112,7 +114,7 @@ METHOD defineFecha() CLASS ClienteIncidenciaView
                            "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                            "bSetGet"   => {|u| ::SetGetValue( u, "Fecha" ) },;
                            "oWnd"      => ::oDlg,;
-                           "nWidth"    => {|| GridWidth( 2.0, ::oDlg ) },;
+                           "nWidth"    => {|| GridWidth( 4.0, ::oDlg ) },;
                            "nHeight"   => 25,;
                            "lPixels"   => .t. } )
 
@@ -120,25 +122,17 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineFechaHora() CLASS ClienteIncidenciaView
-
-   TGridSay():Build( {  "nRow"      => 100,;
-                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
-                        "bText"     => {|| "Fecha" },;
-                        "oWnd"      => ::oDlg,;
-                        "oFont"     => oGridFont(),;
-                        "lPixels"   => .t.,;
-                        "nClrText"  => Rgb( 0, 0, 0 ),;
-                        "nClrBack"  => Rgb( 255, 255, 255 ),;
-                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
-                        "nHeight"   => 23 } )
+METHOD defineHora() CLASS ClienteIncidenciaView
 
    TGridGet():Build( {  "nRow"      => 100,;
-                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::SetGetValue( u, "FechaHora" ) },;
-                        "bWhen"     => {|| .f. },;
+                        "nCol"      => {|| GridWidth( 7, ::oDlg ) },;
+                        "bSetGet"   => {|u| ::SetGetValue( u, "Hora" ) },;
+                        "bValid"    => {|| iif( !validTime( hGet( ::oSender:hDictionaryMaster, "Hora" ) ),;
+                                                ::setErrorValidator( "El formato de la hora no es correcto" ),;
+                                                .t. ) },;
                         "oWnd"      => ::oDlg,;
-                        "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( 4.0, ::oDlg ) },;
+                        "cPict"     => "@R 99:99:99" ,;
                         "nHeight"   => 25,;
                         "lPixels"   => .t. } )
 

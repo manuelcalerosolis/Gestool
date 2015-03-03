@@ -218,6 +218,12 @@ Return ( lAds() .or. lAIS() )
 
 //----------------------------------------------------------------------------//
 
+Function cFieldTimeStamp()
+
+Return ( if( lAdsRdd(), "Timestamp", "T" ) )
+
+//----------------------------------------------------------------------------//
+
 Function cIp( cSetIp )
 
    if IsChar( cSetIp )
@@ -315,11 +321,11 @@ Return nil
 Function cDriver()
 
    if lAds()
-      Return ( 'ADSCDX' )
+      Return ( 'ADS' )
    end if
 
    if lAIS()
-      Return ( 'ADSCDX' )
+      Return ( 'ADS' )
    end if
 
 Return ( 'DBFCDX' )
@@ -3012,6 +3018,48 @@ RETURN HtmlConvertChars( cString, cQuote_style, aTranslations )
 
 //---------------------------------------------------------------------------//
 
+Function dateTimeToString( dDate, cTime )
+
+Return ( dtoc( dDate ) + space( 1 ) + trans( cTime, "@R 99:99:99" ) )
+
+//---------------------------------------------------------------------------//
+
+Function validTime( cTime )
+
+   local nHour    := val( substr( cTime, 1, 2 ) )
+   local nMinutes := val( substr( cTime, 3, 2 ) )
+   local nSeconds := val( substr( cTime, 5, 2 ) )
+
+   if !validHour( nHour )
+      // msgStop( "La hora debe estar comprendida entre las 0h y 23h" )
+      Return .f.
+   end if 
+
+   if !validMinutesSeconds( nMinutes )
+      // msgStop( "Los minutos deben estar comprendidos entre las 0min y 59min" )
+      Return .f.
+   end if 
+
+   if !validMinutesSeconds( nSeconds )
+      // msgStop( "Los segundos deben estar comprendidos entre las 0seg y 59seg" )
+      Return .f.
+   end if 
+
+Return ( .t. )
+
+Function validHour( nHour )
+
+Return ( nHour >= 0 .and. nHour <= 23 )
+
+Function validMinutesSeconds( nMinutes )
+
+Return ( nMinutes >= 0 .and. nMinutes <= 59 )
+
+//---------------------------------------------------------------------------//
+
+Function getSysTime()
+
+Return ( strtran( time(), ":", "" ) )
 
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )

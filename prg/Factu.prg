@@ -133,8 +133,8 @@ function Main( ParamsMain, ParamsSecond )
       nAdsServer( nAdsServer )
       cAdsLocal( cAdsLocal )
 
-      RddRegister(   'ADS', 1 )
-      RddSetDefault( 'ADSCDX' )
+      rddRegister(   'ADS', 1 )
+      rddSetDefault( 'ADSCDX' )
 
       AdsSetServerType( nAdsServer() )    // TODOS
       AdsSetFileType( 2 )                 // ADS_CDX

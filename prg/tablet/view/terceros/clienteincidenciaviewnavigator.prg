@@ -26,7 +26,8 @@ METHOD setColumns() CLASS ClienteIncidenciaViewNavigator
 
    with object ( ::addColumn() )
       :cHeader             := "Tipo/Fecha"
-      :bEditValue          := {|| D():getNombreTipoIncicencias( ( D():ClientesIncidencias( ::getView() ) )->cCodTip, ::getView() ) + CRLF + dtoc( ( D():ClientesIncidencias( ::getView() ) )->dFecInc ) }
+      :bEditValue          := {||   D():getNombreTipoIncicencias( ( D():ClientesIncidencias( ::getView() ) )->cCodTip, ::getView() ) + CRLF + ;
+                                    dateTimeToString( ( D():ClientesIncidencias( ::getView() ) )->dFecInc, ( D():ClientesIncidencias( ::getView() ) )->tTimInc ) }
       :nWidth              := 500
    end with
 

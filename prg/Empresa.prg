@@ -3728,22 +3728,22 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando clientes" )
       end if
-      mkClient(   cPath, aImportacion:lClientes, cPathGrp )             ; sysrefresh()
+      mkClient( cPath, aImportacion:lClientes, cPathGrp )             ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando proveedores" )
       end if
-      mkProvee(   cPath, aImportacion:lProveedor, cPathGrp )            ; sysrefresh()
+      mkProvee( cPath, aImportacion:lProveedor, cPathGrp )            ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando agentes" )
       end if
-      mkAgentes(  cPath, aImportacion:lAgente, cPathGrp, nil )          ; sysrefresh()
+      mkAgentes( cPath, aImportacion:lAgente, cPathGrp, nil )          ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando rutas" )
       end if
-      mkRuta(     cPath, aImportacion:lRuta, cPathGrp, nil )            ; sysrefresh()
+      mkRuta( cPath, aImportacion:lRuta, cPathGrp, nil )            ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando almacén" )
@@ -4479,6 +4479,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "ClientD",      "documentos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "CliAtp",       "atipicas de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "CliBnc",       "bancos de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "CliInc",       "incidencias de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "CliContactos", "contactos de clientes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Provee",    "proveedores", oMet, oMsg, aMsg )

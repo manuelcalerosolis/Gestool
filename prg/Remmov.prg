@@ -318,7 +318,6 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
       FIELD NAME "cCodAge"             TYPE "C" LEN  3  DEC 0                                                                                COMMENT "Código agente"                   HIDE  OF ::oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Tipo de movimiento"              HIDE  OF ::oDbf
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"            COLSIZE 80           OF ::oDbf
-      FIELD NAME "tFecRem"             TYPE "T" LEN  8  DEC 0                             DEFAULT  DateTime()                                COMMENT ""                                HIDE  OF ::oDbf
       FIELD NAME "cTimRem"             TYPE "C" LEN  5  DEC 0                             DEFAULT  Time()                                    COMMENT "Hora"                            HIDE  OF ::oDbf
       FIELD NAME "cAlmOrg"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. org."        COLSIZE 60           OF ::oDbf
       FIELD CALCULATE NAME "cNomAlmOrg"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmOrg, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
@@ -331,7 +330,6 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
 
       INDEX TO "RemMovT.Cdx" TAG "cNumRem"   ON "Str( nNumRem ) + cSufRem"   COMMENT "Número"   NODELETED OF ::oDbf
       INDEX TO "RemMovT.Cdx" TAG "dFecRem"   ON "Dtos( dFecRem ) + cTimRem"  COMMENT "Fecha"    NODELETED OF ::oDbf
-      INDEX TO "RemMovT.Cdx" TAG "TimeStmp"  ON "tFecRem"                    COMMENT ""         NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 

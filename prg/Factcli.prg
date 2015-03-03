@@ -20684,7 +20684,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cCodPry" 	   ,"C", 4,   0, "Código del proyecto", 								         "", 				  	    "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 								         "", 				 	    "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                            "",                   "", "( cDbf )" } )
-   aAdd( aItmFacCli, {"tMail"       ,"T", 8,   0, "Fecha y hora mail enviado" ,                          "",                   "", "( cDbf )" } )
+   aAdd( aItmFacCli, {"tMail"       ,cFieldTimeStamp(), 8, 0, "Fecha y hora mail enviado" ,              "",                   "", "( cDbf )" } )
 
 RETURN ( aItmFacCli )
 
