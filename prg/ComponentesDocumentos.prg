@@ -681,7 +681,7 @@ METHOD Resource() CLASS GetCombo
       VAR      ::uValue ;
       ITEMS    ::aValues ;
       ID       ::idCombo ;
-      OF       ::oContainer:oDlg
+      OF       ::oContainer:oDlg 
 
    ::oControl:bChange      := {|| ::Change() }
 

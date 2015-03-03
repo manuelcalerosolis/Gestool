@@ -20181,8 +20181,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 51, 98, 74, 12
   CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 51, 110, 74, 12
   CONTROL "", 191, "Edit", WS_BORDER|WS_TABSTOP, 127, 110, 200, 12
-  CONTROL "Desde", -1, "Static", WS_GROUP, 20, 54, 30, 8
-  CONTROL "Hasta ", -1, "Static", WS_GROUP, 20, 66, 30, 8
+  CONTROL "Desde", 152, "Static", WS_GROUP, 20, 54, 30, 8
+  CONTROL "Hasta ", 162, "Static", WS_GROUP, 20, 66, 30, 8
   CONTROL "Desde", -1, "Static", WS_GROUP, 20, 101, 30, 8
   CONTROL "Hasta ", -1, "Static", WS_GROUP, 20, 113, 30, 8
   CONTROL "Todos los grupos de clientes", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 39, 105, 9
@@ -20190,6 +20190,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 9, 33, 320, 1
   CONTROL "", 110, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 9, 13, 125, 134
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 9, 81, 320, 1
-  CONTROL "", 182, "Edit", WS_BORDER|WS_TABSTOP, 127, 98, 200, 12
+  CONTROL "", 181, "Edit", WS_BORDER|WS_TABSTOP, 127, 98, 200, 12
 }
 
