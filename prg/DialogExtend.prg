@@ -126,9 +126,6 @@ STATIC FUNCTION DialogEvalValid()
    for each oControl in aControls
       if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
          if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
-
-            msgAlert( !empty( oControl:bValid ) .and. !eval( oControl:bValid ), "aEvalValid" )
-            
             lValid   := .f.
             oControl:SetFocus()
          endif
