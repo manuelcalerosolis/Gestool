@@ -113,35 +113,11 @@ METHOD New( nView ) CLASS PrintSeries
 
    ::nView                 := nView
 
-   ::oSerieInicio          := GetSerie():New( 100, Self )
-   ::oSerieFin             := GetSerie():New( 110, Self )
-
-   ::oDocumentoInicio      := GetNumero():New( 120, Self )
-   ::oDocumentoFin         := GetNumero():New( 130, Self )
-
-   ::oSufijoInicio         := GetSufijo():New( 140, Self )
-   ::oSufijoFin            := GetSufijo():New( 150, Self )
-
-   ::oFechaInicio          := GetFecha():New( 210, Self )
-   ::oFechaInicio:FirstDayYear()
-
-   ::oFechaFin             := GetFecha():New( 220, Self )
-
-   ::oFormatoDocumento     := GetDocumento():New( 90, 91, 92, Self )
-
-   ::oImpresora            := GetPrinter():New( 160, 161, Self )
-
-   ::oCopias               := GetCopias():New( 170, 180, Self )
-
-   ::oImageList            := TImageList():New( 16, 16 )
-   ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
-   ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetCompras()
+METHOD SetCompras() CLASS PrintSeries
 
    // Proveedores-----------------------------------------------------------------
 
@@ -167,7 +143,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetVentas()
+METHOD SetVentas() CLASS PrintSeries
 
    // Clientes-----------------------------------------------------------------
 
@@ -199,29 +175,51 @@ METHOD Resource() CLASS PrintSeries
 
    DEFINE DIALOG ::oDlg RESOURCE "ImprimirSeries" TITLE "Imprimir series de documentos"
 
-   REDEFINE BITMAP oBmp ;
-      ID          500 ;
-      RESOURCE    "Printer_alpha_48" ;
+   REDEFINE BITMAP         oBmp ;
+      ID                   500 ;
+      RESOURCE             "Printer_alpha_48" ;
       TRANSPARENT ;
-      OF          ::oDlg
+      OF                   ::oDlg
 
-   aEval( ::aComponents, {| o | o:Resource() } )
+   ::oSerieInicio          := GetSerie():New( 100, ::oDlg )
+   ::oSerieFin             := GetSerie():New( 110, ::oDlg )
 
-   ::oInforme     := TTreeView():Redefine( 400, ::oDlg )
+   ::oDocumentoInicio      := GetNumero():New( 120, ::oDlg )
+   ::oDocumentoFin         := GetNumero():New( 130, ::oDlg )
+
+   ::oSufijoInicio         := GetSufijo():New( 140, ::oDlg )
+   ::oSufijoFin            := GetSufijo():New( 150, ::oDlg )
+
+   ::oFechaInicio          := GetFecha():New( 210, ::oDlg )
+   ::oFechaInicio:FirstDayYear()
+
+   ::oFechaFin             := GetFecha():New( 220, ::oDlg )
+
+   ::oFormatoDocumento     := GetDocumento():New( 90, 91, 92, ::oDlg )
+
+   ::oImpresora            := GetPrinter():New( 160, 161, ::oDlg )
+
+   ::oCopias               := GetCopias():New( 170, 180, ::oDlg )
+
+   ::oImageList            := TImageList():New( 16, 16 )
+   ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    Rgb( 255, 0, 255 ) )
+   ::oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  Rgb( 255, 0, 255 ) )
+
+   ::oInforme              := TTreeView():Redefine( 400, ::oDlg )
 
    REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDlg ;
-      ACTION      ( ::ActionResource() )
+      ID                   IDOK ;
+      OF                   ::oDlg ;
+      ACTION               ( ::ActionResource() )
 
    REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDlg ;
-      ACTION      ( ::oDlg:end() )
+      ID                   IDCANCEL ;
+      OF                   ::oDlg ;
+      ACTION               ( ::oDlg:end() )
 
    ::oDlg:AddFastKey( VK_F5, {|| ::ActionResource() } )
 
-   ::oDlg:bStart  := {|| ::StartResource() }
+   ::oDlg:bStart           := {|| ::StartResource() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -368,16 +366,6 @@ METHOD New( nView ) CLASS ImportarProductosProveedor
 
    ::nView                 := nView
 
-   ::oFechaInicio          := GetFecha():New( 100, Self )
-   ::oFechaInicio:FirstDayPreviusMonth()
-
-   ::oFechaFin             := GetFecha():New( 110, Self )
-   ::oFechaFin:LastDayPreviusMonth()
-
-   ::oPorcentaje           := GetPorcentaje():New( 120, Self )
-
-   ::oProceso              := nil
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -386,17 +374,23 @@ METHOD Resource() CLASS ImportarProductosProveedor
 
    DEFINE DIALOG ::oDlg RESOURCE "ImportarProductosProveedor"
 
-   aEval( ::aComponents, {| o | o:Resource() } )
+   ::oFechaInicio    := GetFecha():New( 100, ::oDlg )
+   ::oFechaInicio:FirstDayPreviusMonth()
+
+   ::oFechaFin       := GetFecha():New( 110, ::oDlg )
+   ::oFechaFin:LastDayPreviusMonth()
+
+   ::oPorcentaje     := GetPorcentaje():New( 120, ::oDlg )
 
    REDEFINE BUTTON ;
-      ID          IDOK ;
-      OF          ::oDlg ;
-      ACTION      ( ::ActionResource() )
+      ID             IDOK ;
+      OF             ::oDlg ;
+      ACTION         ( ::ActionResource() )
 
    REDEFINE BUTTON ;
-      ID          IDCANCEL ;
-      OF          ::oDlg ;
-      ACTION      ( ::oDlg:end() )
+      ID             IDCANCEL ;
+      OF             ::oDlg ;
+      ACTION         ( ::oDlg:end() )
 
    ::oDlg:AddFastKey( VK_F5, {|| ::ActionResource() } )
 
@@ -482,7 +476,7 @@ METHOD Resource() CLASS ComponentGet
       VAR         ::uGetValue ;
       ID          ::idGet ;
       BITMAP      "LUPA" ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
    ::oGetControl:bValid    := ::bValid
    ::oGetControl:bHelp     := ::bHelp
@@ -526,7 +520,7 @@ METHOD Resource() CLASS ComponentSay
    REDEFINE SAY   ::oSayControl ;
       PROMPT      ::uSayValue ;
       ID          ::idSay ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
 Return ( Self )
 
@@ -557,7 +551,7 @@ METHOD Resource() CLASS SayCompras
       PROMPT      ::uSayValue ;
       ID          ::idSay ;
       PICTURE     ( cPorDiv() ) ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
 Return ( Self )
 
@@ -606,14 +600,14 @@ METHOD Resource() CLASS ComponentGetSay
       VAR         ::cSayValue ;
       ID          ::idSay ;
       WHEN        ( .f. ) ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
    if !Empty( ::idText )
 
    REDEFINE SAY   ::oTextControl ;
       PROMPT      ::cTextValue ;
       ID          ::idText ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
    end if 
 
@@ -681,7 +675,7 @@ METHOD Resource() CLASS GetCombo
       VAR      ::uValue ;
       ITEMS    ::aValues ;
       ID       ::idCombo ;
-      OF       ::oContainer:oDlg 
+      OF       ::oContainer 
 
    ::oControl:bChange      := {|| ::Change() }
 
@@ -776,7 +770,7 @@ METHOD Resource() CLASS GetDocumento
 
    ::Super:Resource()
 
-   TBtnBmp():ReDefine( ::idBtn, "Printer_pencil_16",,,,,{|| EdtDocumento( ::uGetValue ) }, ::oContainer:oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( ::idBtn, "Printer_pencil_16",,,,,{|| EdtDocumento( ::uGetValue ) }, ::oContainer, .f., , .f.,  )
 
 Return ( Self )
 
@@ -814,9 +808,9 @@ METHOD Resource() CLASS GetPrinter
       VAR         ::uGetValue ;
       ID          ::idGet ;
       WHEN        ( .f. ) ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
-   TBtnBmp():ReDefine( ::idBtn, "Printer_preferences_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, ::oContainer:oDlg, .f., , .f. )
+   TBtnBmp():ReDefine( ::idBtn, "Printer_preferences_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, ::oContainer, .f., , .f. )
 
 Return ( Self )
 
@@ -853,7 +847,7 @@ METHOD Resource() CLASS GetSerie
       ON UP       ( UpSerie( ::oGetControl ) );
       ON DOWN     ( DwSerie( ::oGetControl ) );
       VALID       ( ::bValid );
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
 Return ( Self )
 
@@ -890,7 +884,7 @@ METHOD Resource() CLASS GetNumero
       PICTURE     "999999999" ;
       SPINNER ;
       VALID       ::bValid ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
 Return ( Self )
 
@@ -929,7 +923,7 @@ METHOD Resource() CLASS GetSufijo
       VAR         ::uGetValue ;
       ID          ::idGet ;
       PICTURE     "@!" ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
 Return ( Self )
 
@@ -969,7 +963,7 @@ METHOD Resource() CLASS GetFecha
       VAR         ::uGetValue ;
       ID          ::idGet ;
       SPINNER ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
 Return ( Self )
 
@@ -1140,7 +1134,7 @@ METHOD Resource() CLASS GetCopias
 
    REDEFINE CHECKBOX ::lCopiasPredeterminadas ;
       ID          ::idCheck ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
@@ -1149,7 +1143,7 @@ METHOD Resource() CLASS GetCopias
       SPINNER ;
       WHEN        !::lCopiasPredeterminadas ;
       VALID       ::bValid ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
 Return ( Self )
 
@@ -1183,7 +1177,7 @@ METHOD Resource() CLASS GetPorcentaje
       PICTURE     "999" ;
       SPINNER ;
       VALID       ::bValid ;
-      OF          ::oContainer:oDlg
+      OF          ::oContainer
 
 Return ( Self )
 

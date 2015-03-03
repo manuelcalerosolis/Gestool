@@ -205,7 +205,7 @@ METHOD Resource() CLASS PrintSeries
       TRANSPARENT ;
       OF          ::oDlg
 
-   aEval( ::aComponents, {| o | o:Resource() } )
+   aEval( ::aComponents, {| o | o:Resource(::oDlg) } )
 
    ::oInforme     := TTreeView():Redefine( 400, ::oDlg )
 
@@ -386,7 +386,7 @@ METHOD Resource() CLASS ImportarProductosProveedor
 
    DEFINE DIALOG ::oDlg RESOURCE "ImportarProductosProveedor"
 
-   aEval( ::aComponents, {| o | o:Resource() } )
+   aEval( ::aComponents, {| o | o:Resource(::oDlg) } )
 
    REDEFINE BUTTON ;
       ID          IDOK ;
@@ -456,7 +456,7 @@ CLASS ComponentGet FROM Component
    
    METHOD New( idGet, oContainer )
 
-   METHOD Resource()
+   METHOD Resource( oDlg )
 
    METHOD cText( uGetValue )     INLINE ( if( !empty( ::oGetControl ), ::oGetControl:cText( uGetValue ), ::uGetValue := uGetValue ) )
    METHOD Value()                INLINE ( ::uGetValue )
@@ -476,13 +476,13 @@ METHOD New( idGet, oContainer ) CLASS ComponentGet
 
 RETURN ( Self )
 
-METHOD Resource() CLASS ComponentGet
+METHOD Resource( oDlg ) CLASS ComponentGet
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
       ID          ::idGet ;
       BITMAP      "LUPA" ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
    ::oGetControl:bValid    := ::bValid
    ::oGetControl:bHelp     := ::bHelp
@@ -503,7 +503,7 @@ CLASS ComponentSay FROM Component
    
    METHOD New( idSay, oContainer )
 
-   METHOD Resource()
+   METHOD Resource( oDlg )
 
    METHOD cText( uSayValue )     INLINE ( if( !empty( ::oSayControl ), ::oSayControl:SetText( uSayValue ), ::uSayValue := uSayValue ) )
    METHOD Value()                INLINE ( ::uSayValue )
@@ -521,12 +521,12 @@ METHOD New( idSay, oContainer ) CLASS ComponentSay
 
 RETURN ( Self )
 
-METHOD Resource() CLASS ComponentSay
+METHOD Resource( oDlg ) CLASS ComponentSay
 
    REDEFINE SAY   ::oSayControl ;
       PROMPT      ::uSayValue ;
       ID          ::idSay ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
 Return ( Self )
 
@@ -539,7 +539,7 @@ CLASS SayCompras FROM ComponentSay
 
    METHOD New( idSay, oContainer )
 
-   METHOD Resource()
+   METHOD Resource( oDlg )
 
 END CLASS 
 
@@ -551,13 +551,13 @@ METHOD New( idSay, oContainer ) CLASS SayCompras
 
 RETURN ( Self )
 
-METHOD Resource() CLASS SayCompras
+METHOD Resource( oDlg ) CLASS SayCompras
 
    REDEFINE SAY   ::oSayControl ;
       PROMPT      ::uSayValue ;
       ID          ::idSay ;
       PICTURE     ( cPorDiv() ) ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
 Return ( Self )
 
@@ -579,7 +579,7 @@ CLASS ComponentGetSay FROM ComponentGet
 
    METHOD New( idGet, idSay, idText, oContainer )
 
-   METHOD Resource()
+   METHOD Resource(oDlg)
 
    METHOD SetText( cText )       INLINE ( if( !empty( ::oTextControl ), ::oTextControl:SetText( cText ), ::cTextValue := cText ) )
 
@@ -598,7 +598,7 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD Resource() CLASS ComponentGetSay
+METHOD Resource(oDlg) CLASS ComponentGetSay
 
    ::Super:Resource()
 
@@ -606,14 +606,14 @@ METHOD Resource() CLASS ComponentGetSay
       VAR         ::cSayValue ;
       ID          ::idSay ;
       WHEN        ( .f. ) ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
    if !Empty( ::idText )
 
    REDEFINE SAY   ::oTextControl ;
       PROMPT      ::cTextValue ;
       ID          ::idText ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
    end if 
 
@@ -640,7 +640,7 @@ CLASS GetCombo FROM Component
    METHOD Build( hBuilder )
    METHOD New( idGet, uValue, aValues, oContainer )
 
-   METHOD Resource()
+   METHOD Resource(oDlg)
 
    METHOD Value()                INLINE ( Eval( ::oControl:bSetGet ) )
 
@@ -675,13 +675,13 @@ METHOD New( idCombo, uValue, aValues, oContainer ) CLASS GetCombo
 
 RETURN ( Self )
 
-METHOD Resource() CLASS GetCombo
+METHOD Resource( oDlg ) CLASS GetCombo
 
    REDEFINE COMBOBOX ::oControl ;
       VAR      ::uValue ;
       ITEMS    ::aValues ;
       ID       ::idCombo ;
-      OF       ::oContainer:oDlg
+      OF       oDlg
 
    ::oControl:bChange      := {|| ::Change() }
 
@@ -753,7 +753,7 @@ CLASS GetDocumento FROM ComponentGetSay
 
    METHOD New( idGet, idSay, idBtn, oContainer )
 
-   METHOD Resource()
+   METHOD Resource(oDlg)
 
    METHOD TypeDocumento( cType )    INLINE ( if( !empty( cType ), ::cTypeDocumento := cType, ::cTypeDocumento ) )
 
@@ -772,11 +772,11 @@ METHOD New( idGet, idSay, idBtn, oContainer ) CLASS GetDocumento
 
 Return ( Self )
 
-METHOD Resource() CLASS GetDocumento
+METHOD Resource(oDlg) CLASS GetDocumento
 
-   ::Super:Resource()
+   ::Super:Resource(oDlg)
 
-   TBtnBmp():ReDefine( ::idBtn, "Printer_pencil_16",,,,,{|| EdtDocumento( ::uGetValue ) }, ::oContainer:oDlg, .f., , .f.,  )
+   TBtnBmp():ReDefine( ::idBtn, "Printer_pencil_16",,,,,{|| EdtDocumento( ::uGetValue ) }, oDlg, .f., , .f.,  )
 
 Return ( Self )
 
@@ -792,7 +792,7 @@ CLASS GetPrinter FROM ComponentGet
 
    METHOD New( idGet, oContainer )
 
-   METHOD Resource()
+   METHOD Resource(oDlg)
 
    METHOD TypeDocumento( cType )    INLINE ( if( !empty( cType ), ::cTypeDocumento := cType, ::cTypeDocumento ) )
 
@@ -808,15 +808,15 @@ METHOD New( idGet, idBtn, oContainer ) CLASS GetPrinter
 
 Return ( Self )
 
-METHOD Resource() CLASS GetPrinter
+METHOD Resource(oDlg) CLASS GetPrinter
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
       ID          ::idGet ;
       WHEN        ( .f. ) ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
-   TBtnBmp():ReDefine( ::idBtn, "Printer_preferences_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, ::oContainer:oDlg, .f., , .f. )
+   TBtnBmp():ReDefine( ::idBtn, "Printer_preferences_16",,,,, {|| PrinterPreferences( ::oGetControl ) }, oDlg, .f., , .f. )
 
 Return ( Self )
 
@@ -828,7 +828,7 @@ CLASS GetSerie FROM ComponentGet
 
    METHOD New( idGet, oContainer )
 
-   METHOD Resource()
+   METHOD Resource(oDlg)
 
 END CLASS 
 
@@ -842,7 +842,7 @@ METHOD New( idGet, oContainer ) CLASS GetSerie
 
 Return ( Self )
 
-METHOD Resource() CLASS GetSerie
+METHOD Resource(oDlg) CLASS GetSerie
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
@@ -853,7 +853,7 @@ METHOD Resource() CLASS GetSerie
       ON UP       ( UpSerie( ::oGetControl ) );
       ON DOWN     ( DwSerie( ::oGetControl ) );
       VALID       ( ::bValid );
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
 Return ( Self )
 
@@ -866,7 +866,7 @@ CLASS GetNumero FROM ComponentGet
 
    METHOD New( idGet, oContainer )
 
-   METHOD Resource()
+   METHOD Resource(oDlg)
 
    METHOD SetPicture()
 
@@ -882,7 +882,7 @@ METHOD New( idGet, oContainer ) CLASS GetNumero
 
 Return ( Self )
 
-METHOD Resource() CLASS GetNumero
+METHOD Resource(oDlg) CLASS GetNumero
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
@@ -890,7 +890,7 @@ METHOD Resource() CLASS GetNumero
       PICTURE     "999999999" ;
       SPINNER ;
       VALID       ::bValid ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
 Return ( Self )
 
@@ -911,7 +911,7 @@ CLASS GetSufijo FROM ComponentGet
 
    METHOD New( idGet, oContainer )
 
-   METHOD Resource()
+   METHOD Resource(oDlg)
 
 END CLASS 
 
@@ -923,13 +923,13 @@ METHOD New( idGet, oContainer ) CLASS GetSufijo
 
 Return ( Self )
 
-METHOD Resource() CLASS GetSufijo
+METHOD Resource(oDlg) CLASS GetSufijo
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
       ID          ::idGet ;
       PICTURE     "@!" ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
 Return ( Self )
 
@@ -963,13 +963,13 @@ METHOD New( idGet, oContainer ) CLASS GetFecha
    
 Return ( Self )
 
-METHOD Resource() CLASS GetFecha
+METHOD Resource(oDlg) CLASS GetFecha
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
       ID          ::idGet ;
       SPINNER ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
 Return ( Self )
 
@@ -1136,11 +1136,11 @@ METHOD New( idCheck, idGet, oContainer ) CLASS GetCopias
 
 Return ( Self )
 
-METHOD Resource() CLASS GetCopias
+METHOD Resource(oDlg) CLASS GetCopias
 
    REDEFINE CHECKBOX ::lCopiasPredeterminadas ;
       ID          ::idCheck ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
@@ -1149,7 +1149,7 @@ METHOD Resource() CLASS GetCopias
       SPINNER ;
       WHEN        !::lCopiasPredeterminadas ;
       VALID       ::bValid ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
 Return ( Self )
 
@@ -1175,7 +1175,7 @@ METHOD New( idGet, oContainer ) CLASS GetPorcentaje
 
 Return ( Self )
 
-METHOD Resource() CLASS GetPorcentaje
+METHOD Resource(oDlg) CLASS GetPorcentaje
 
    REDEFINE GET   ::oGetControl ;
       VAR         ::uGetValue ;
@@ -1183,7 +1183,7 @@ METHOD Resource() CLASS GetPorcentaje
       PICTURE     "999" ;
       SPINNER ;
       VALID       ::bValid ;
-      OF          ::oContainer:oDlg
+      OF          oDlg
 
 Return ( Self )
 

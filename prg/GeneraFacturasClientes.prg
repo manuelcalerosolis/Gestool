@@ -97,7 +97,7 @@ METHOD Resource() CLASS GeneraFacturasClientes
       CANCEL ;
       ACTION   ( ::oDlg:End() )
 
-   ::oDlg:bStart  := {|| aEval( ::aComponents, {| o | o:Resource() } ) } 
+   ::oDlg:bStart  := {|| aEval( ::aComponents, {|o| o:Resource(::oDlg) } ) } 
 
    ACTIVATE DIALOG ::oDlg CENTER
 

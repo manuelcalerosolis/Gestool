@@ -163,7 +163,7 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
    DEFINE DIALOG ::oDlg RESOURCE "FacturaLineasCompletasAlbaranes"
 
-      aEval( ::aComponents, {| o | o:Resource() } )
+      aEval( ::aComponents, {| o | o:Resource(::oDlg) } )
 
       TBtnBmp():ReDefine( 150, "Recycle_16",,,,, {|| ::loadAlbaranes() }, ::oDlg, .f., , .f. )
 
