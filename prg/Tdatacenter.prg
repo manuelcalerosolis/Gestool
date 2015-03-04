@@ -11,8 +11,8 @@ CLASS TDataCenter
 
    CLASSDATA   oInstance
 
-   CLASSDATA   cDataDictionaryFile        INIT cAdsUNC() + "GstApolo.Add"
-   CLASSDATA   cDataDictionaryComment     INIT "GstApolo ADS data dictionary"
+   CLASSDATA   cDataDictionaryFile        INIT cPatADS(.t.) + "Gestool.Add"
+   CLASSDATA   cDataDictionaryComment     INIT "Gestool ADS data dictionary"
 
    CLASSDATA   aDDTables                  INIT {}
    CLASSDATA   aDDTriggers                INIT {}
@@ -2383,10 +2383,10 @@ METHOD BuildEmpresa()
 
 
    oDataTable              := TDataTable()
-   oDataTable:cArea        := "CliFacturae"
-   oDataTable:cName        := cPatCli() + "CliFacturae"
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliFacturae.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliFacturae.Cdx"
+   oDataTable:cArea        := "CliEntidad"
+   oDataTable:cName        := cPatCli() + "CliEntidad"
+   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliEntidad.Dbf"
+   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliEntidad.Cdx"
    oDataTable:cDescription := "Clientes contactos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
@@ -3764,17 +3764,17 @@ METHOD CreateOperationLogTable()
 
    local cTable
 
-   if File( "Datos\SqlOperationLog.adt" )
-      fErase( "Datos\SqlOperationLog.adt" )
+   if File( cPatADS(.t.) + "\SqlOperationLog.adt" )
+      fErase( cPatADS(.t.) + "\SqlOperationLog.adt" )
    end if
 
-   cTable         := 'CREATE TABLE Datos\SqlOperationLog ('          + CRLF
-   cTable         +=    'ID AUTOINC CONSTRAINT NOT NULL,'            + CRLF
-   cTable         +=    'DATETIME TIMESTAMP CONSTRAINT NOT NULL,'    + CRLF
-   cTable         +=    'USERNAME CHAR(50) CONSTRAINT NOT NULL,'     + CRLF
-   cTable         +=    'APPNAME CHAR(50),'                          + CRLF
-   cTable         +=    'TABLENAME CHAR(150) CONSTRAINT NOT NULL,'   + CRLF
-   cTable         +=    'OPERATION CHAR(6) CONSTRAINT NOT NULL )'    + CRLF
+   cTable         := 'CREATE TABLE SqlOperationLog (' + CRLF
+   cTable         +=    'ID AUTOINC CONSTRAINT NOT NULL,'               + CRLF
+   cTable         +=    'DATETIME TIMESTAMP CONSTRAINT NOT NULL,'       + CRLF
+   cTable         +=    'USERNAME CHAR(50) CONSTRAINT NOT NULL,'        + CRLF
+   cTable         +=    'APPNAME CHAR(50),'                             + CRLF
+   cTable         +=    'TABLENAME CHAR(150) CONSTRAINT NOT NULL,'      + CRLF
+   cTable         +=    'OPERATION CHAR(6) CONSTRAINT NOT NULL )'       + CRLF
    cTable         +=    'IN DATABASE;' + CRLF
 
 Return ( ::ExecuteSqlStatement( cTable, "OperationLog" ) )
@@ -3785,11 +3785,11 @@ METHOD CreateColumnLogTable()
 
    local cTable
 
-   if File( "Datos\SqlColumnLog.adt" )
-      fErase( "Datos\SqlColumnLog.adt" )
+   if File( cPatADS(.t.) + "\SqlColumnLog.adt" )
+      fErase( cPatADS(.t.) + "\SqlColumnLog.adt" )
    end if
 
-   cTable         := 'CREATE TABLE Datos\SqlColumnLog ('             + CRLF
+   cTable         := 'CREATE TABLE SqlColumnLog (' + CRLF
    cTable         +=    'ID AUTOINC CONSTRAINT NOT NULL,'            + CRLF
    cTable         +=    'OPERATIONID INTEGER CONSTRAINT NOT NULL,'   + CRLF
    cTable         +=    'COLUMNNAME CHAR(50) CONSTRAINT NOT NULL,'   + CRLF
@@ -5261,9 +5261,9 @@ CLASS D
                                                                ::setStatusClientesIncidencias( nView ) )  
 
 
-   METHOD ClientesFacturae( nView )                   INLINE ( ::Get( "CliFacturae", nView ) )
-      METHOD ClientesFacturaeId( nView )              INLINE ( ( ::Get( "CliFacturae", nView ) )->cCodCli )
-      METHOD eofClientesFacturae( nView )             INLINE ( ( ::Get( "CliFacturae", nView ) )->( eof() ) )
+   METHOD ClientesFacturae( nView )                   INLINE ( ::Get( "CliEntidad", nView ) )
+      METHOD ClientesFacturaeId( nView )              INLINE ( ( ::Get( "CliEntidad", nView ) )->cCodCli )
+      METHOD eofClientesFacturae( nView )             INLINE ( ( ::Get( "CliEntidad", nView ) )->( eof() ) )
       METHOD gotoIdClientesFacturae( id, nView )      INLINE ( ::seek( ::ClientesFacturae( nView ), id ) ) 
 
    METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )

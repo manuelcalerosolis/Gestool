@@ -67,7 +67,7 @@ METHOD Resource( nMode ) CLASS PedidoCliente
 
       ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "pedido" )
       
-      lResource            := ::oViewEdit:Resource( nMode )
+      lResource      := ::oViewEdit:Resource( nMode )
 
    end if
 
@@ -236,7 +236,7 @@ Return ( self )
 METHOD GetEditDetail() CLASS PedidoCliente
 
    if !Empty( ::nPosDetail )
-      ::hDictionaryDetailTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
+      ::hDictionaryDetailTemporal   := ::hDictionaryDetail[ ::nPosDetail ]
    end if
 
 Return ( self )

@@ -8215,8 +8215,8 @@ FUNCTION AssertClient( cPath )
       dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "CliFacturae.Dbf" )
-      dbCreate( cPath + "CliFacturae.Dbf", aSqlStruct( aCliFacturae() ), cDriver() )
+   if !lExistTable( cPath + "CliEntidad.Dbf" )
+      dbCreate( cPath + "CliEntidad.Dbf", aSqlStruct( aCliEntidad() ), cDriver() )
    end if
 
 RETURN ( nil )
@@ -8244,7 +8244,7 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
       AppDbf( cPathOld, cPath, "CliInc"         )
       AppDbf( cPathOld, cPath, "CliContactos"   )
       AppDbf( cPathOld, cPath, "ClientD"        )
-      AppDbf( cPathOld, cPath, "CliFacturae"    )
+      AppDbf( cPathOld, cPath, "CliEntidad"    )
    end if
 
 RETURN NIL
@@ -8480,15 +8480,15 @@ FUNCTION rxClient( cPath, oMeter )
 
    // Tabla de contactos-------------------------------------------------------
 
-   fEraseIndex( cPath + "CliFacturae.Cdx" )
+   fEraseIndex( cPath + "CliEntidad.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliFacturae.Dbf", cCheckArea( "CliFacturae", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "CliEntidad.Dbf", cCheckArea( "CliEntidad", @dbfCli ), .f. )
 
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliFacturae.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliEntidad.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfCli )->( dbCloseArea() )
    else
@@ -8530,8 +8530,8 @@ STATIC FUNCTION CreateFiles( cPath )
       dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "CliFacturae.Dbf" )
-      dbCreate( cPath + "CliFacturae.Dbf", aSqlStruct( aCliFacturae() ), cDriver() )
+   if !lExistTable( cPath + "CliEntidad.Dbf" )
+      dbCreate( cPath + "CliEntidad.Dbf", aSqlStruct( aCliEntidad() ), cDriver() )
    end if
 
 RETURN NIL
@@ -8594,17 +8594,17 @@ return ( aCliDoc )
 
 //--------------------------------------------------------------------------//
 
-function aCliFacturae()
+function aCliEntidad()
 
-   local aCliFacturae  := {}
+   local aCliEntidad  := {}
 
-   aAdd( aCliFacturae, { "cCodCli", "C",   12,  0, "Código del cliente" ,        "",                   "", "( cDbfCol )" } )
-   aAdd( aCliFacturae, { "cDesFac", "C",   60,  0, "Descripción del organismo" , "",                   "", "( cDbfCol )" } )
-   aAdd( aCliFacturae, { "cOfiCnt", "C",   14,  0, "Oficina contable" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aCliFacturae, { "cOrgGes", "C",   14,  0, "Organo gestor" ,             "",                   "", "( cDbfCol )" } )
-   aAdd( aCliFacturae, { "cUniTrm", "C",   14,  0, "Unidad tramitadora" ,        "",                   "", "( cDbfCol )" } )
+   aAdd( aCliEntidad, { "cCodCli", "C",   12,  0, "Código del cliente" ,        "",                   "", "( cDbfCol )" } )
+   aAdd( aCliEntidad, { "cDesFac", "C",   60,  0, "Descripción del organismo" , "",                   "", "( cDbfCol )" } )
+   aAdd( aCliEntidad, { "cOfiCnt", "C",   14,  0, "Oficina contable" ,          "",                   "", "( cDbfCol )" } )
+   aAdd( aCliEntidad, { "cOrgGes", "C",   14,  0, "Organo gestor" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aCliEntidad, { "cUniTrm", "C",   14,  0, "Unidad tramitadora" ,        "",                   "", "( cDbfCol )" } )
 
-return ( aCliFacturae )
+return ( aCliEntidad )
 
 //--------------------------------------------------------------------------//
 
@@ -9503,7 +9503,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
    ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
 
-   dbCreate( cTmpFacturae, aSqlStruct( aCliFacturae() ), cLocalDriver() )
+   dbCreate( cTmpFacturae, aSqlStruct( aCliEntidad() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpFacturae, cCheckArea( "TmpFacturae", @dbfTmpFacturae ), .f. )
 
    ( dbfTmpFacturae )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )

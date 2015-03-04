@@ -118,6 +118,11 @@ METHOD Delete() CLASS Editable
 
    local lDelete  := .f.
 
+   if !oUser():lMaster()
+      apoloMsgStop( "Solo el usuario administrador puede eliminar registros", "Atención" )
+      Return ( lDelete )
+   end if 
+
    if ApoloMsgNoYes( "¿Desea eliminar el registro?", "Seleccione", .t. )
       lDelete     := ::deleteDocumento()
    end if 

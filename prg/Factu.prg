@@ -130,6 +130,7 @@ function Main( ParamsMain, ParamsSecond )
       lAIS( .t. )
       cIp( cAdsIp )
       cData( cAdsData )
+
       nAdsServer( nAdsServer )
       cAdsLocal( cAdsLocal )
 
@@ -144,9 +145,6 @@ function Main( ParamsMain, ParamsSecond )
       AdsCacheOpenTables( 250 )
 
       with object ( TDataCenter() )
-
-         :cDataDictionaryFile       := cAdsUNC() + "GstApolo.Add"
-         :cDataDictionaryComment    := "GstApolo ADS data dictionary"
 
          if ( "ADMINISTRADOR" $ cParamsMain )
 

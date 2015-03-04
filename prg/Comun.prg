@@ -3031,17 +3031,14 @@ Function validTime( cTime )
    local nSeconds := val( substr( cTime, 5, 2 ) )
 
    if !validHour( nHour )
-      // msgStop( "La hora debe estar comprendida entre las 0h y 23h" )
       Return .f.
    end if 
 
    if !validMinutesSeconds( nMinutes )
-      // msgStop( "Los minutos deben estar comprendidos entre las 0min y 59min" )
       Return .f.
    end if 
 
    if !validMinutesSeconds( nSeconds )
-      // msgStop( "Los segundos deben estar comprendidos entre las 0seg y 59seg" )
       Return .f.
    end if 
 

@@ -143,7 +143,8 @@
 #define _CCODPRY           122
 #define _NDTOTARIFA 	      123
 #define _LMAIL             124
-#define _TMAIL             125
+#define _DMAIL             125
+#define _TMAIL             126
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -1763,7 +1764,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
-
 
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
@@ -3855,10 +3855,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE CHECKBOX aGet[ _LMAIL ] VAR aTmp[ _LMAIL ] ;
          ID       135 ;
          WHEN     ( lWhen .and. lUsrMaster() ) ;
-         ON CHANGE( iif( aTmp[ _LMAIL ], aGet[ _TMAIL ]:Hide(), aGet[ _TMAIL ]:Show() ) ) ;
+         ON CHANGE( iif( aTmp[ _LMAIL ], aGet[ _DMAIL ]:Hide(), aGet[ _DMAIL ]:Show() ) ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ _TMAIL ] VAR aTmp[ _TMAIL ] ;
+      REDEFINE GET aGet[ _DMAIL ] VAR aTmp[ _DMAIL ] ;
          ID       136 ;
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
@@ -6740,13 +6740,13 @@ Function FacCliTablet()
 	local oDlg
 	local oBrw
 	local oSayGeneral
-	local nAltoGet 		:= 23
+	local nAltoGet 	    := 23
 	local oBtnSalir
 	local oGetSearch
-	local cGetSearch 	   := Space( 100 )
+	local cGetSearch 	    := Space( 100 )
 	local oCbxOrd
-	local aCbxOrd 		:= { "Número", "Fecha", "Código", "Nombre" }
-	local cCbxOrd 		:= "Número"
+	local aCbxOrd 		    := { "Número", "Fecha", "Código", "Nombre" }
+	local cCbxOrd 		    := "Número"
 	local oBtnAdd
 	local oBtnEdt
 	local oBtnDel
@@ -6754,19 +6754,23 @@ Function FacCliTablet()
 	local oBtnDown
 	local oBtnUpPage
 	local oBtnDownPage
+   local cCodigoAgente     := AccessCode():cAgente
 
-    /*
-	Abrimos los ficheros-------------------------------------------------------
-    */
+   // Abrimos los ficheros-------------------------------------------------------
 
-    if !OpenFiles( .t. )
-    	Return .f.
-    end if
+   if !OpenFiles( .t. )
+      Return .f.
+   end if
 
    ( D():FacturasClientes( nView ) )->( OrdSetFocus( "dFecDes" ) )
    ( D():FacturasClientes( nView ) )->( dbGoTop() )
 
-    /*
+   if !empty(cCodigoAgente)
+      ( D():FacturasClientes( nView ) )->( dbsetfilter( {|| Field->cCodAge == cCodigoAgente }, "cCodAge == cCodigoAgente" ) )
+      ( D():FacturasClientes( nView ) )->( dbgotop() )
+   end if 
+
+   /*
 	Diálogo--------------------------------------------------------------------
 	*/
 
@@ -19853,15 +19857,6 @@ Return nil
 
 Function mailing( cTo,cSubject )
 
-   local lSend
-
-   WITH OBJECT ( frReportManager():New() )
-      lSend := :SendMail( "smtp.telefonica.net", 25, "watchdog$telefonica.net" , "watch01", "watchdog@telefonica.net", "manuel_calero_solis@hotmail.com", "Test mailing", "Company" )
-      if lSend != ""
-         MsgStop( lSend )
-      end if
-   END OBJECT
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -20683,8 +20678,9 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja", 	"",					 	 "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cCodPry" 	   ,"C", 4,   0, "Código del proyecto", 								         "", 				  	    "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 								         "", 				 	    "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                            "",                   "", "( cDbf )" } )
-   aAdd( aItmFacCli, {"tMail"       ,cFieldTimeStamp(), 8, 0, "Fecha y hora mail enviado" ,              "",                   "", "( cDbf )" } )
+   aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                            "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"dMail"       ,"D", 8,   0, "Fecha mail enviado" ,                                 "",                   "", "( cDbf )"} )
+   // aAdd( aItmFacCli, {"tMail"       ,"C", 6,   0, "Hora mail enviado" ,                                  "",                   "", "( cDbf )"} )
 
 RETURN ( aItmFacCli )
 

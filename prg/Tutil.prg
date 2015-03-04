@@ -279,7 +279,7 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Function ValidTime( oGet )
+Function validHoursMinutes( oGet )
 
    local cTime       := oGet:VarGet()
    local cHora       := SubStr( cTime, 1, 2 )

@@ -318,7 +318,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
       FIELD NAME "cCodAge"             TYPE "C" LEN  3  DEC 0                                                                                COMMENT "Código agente"                   HIDE  OF ::oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Tipo de movimiento"              HIDE  OF ::oDbf
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"            COLSIZE 80           OF ::oDbf
-      FIELD NAME "cTimRem"             TYPE "C" LEN  5  DEC 0                             DEFAULT  Time()                                    COMMENT "Hora"                            HIDE  OF ::oDbf
+      FIELD NAME "cTimRem"             TYPE "C" LEN  6  DEC 0                             DEFAULT  Time()                                    COMMENT "Hora"                            HIDE  OF ::oDbf
       FIELD NAME "cAlmOrg"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. org."        COLSIZE 60           OF ::oDbf
       FIELD CALCULATE NAME "cNomAlmOrg"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmOrg, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
       FIELD NAME "cAlmDes"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. des."        COLSIZE 60           OF ::oDbf
@@ -3189,7 +3189,7 @@ Function aItmRemMov()
    aAdd( aBase, { "cCodAge",   "C",   3,  0, "Código agente"        } )
    aAdd( aBase, { "cCodMov",   "C",   2,  0, "Tipo de movimiento"   } )
    aAdd( aBase, { "dFecRem",   "D",   8,  0, "Fecha"                } )
-   aAdd( aBase, { "cTimRem",   "C",   5,  0, "Hora"                 } )
+   aAdd( aBase, { "cTimRem",   "C",   6,  0, "Hora"                 } )
    aAdd( aBase, { "cAlmOrg",   "C",  16,  0, "Alm. org."            } )
    aAdd( aBase, { "cAlmDes",   "C",  16,  0, "Alm. des."            } )
    aAdd( aBase, { "cCodDiv",   "C",   3,  0, "Div."                 } )
