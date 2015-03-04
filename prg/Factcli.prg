@@ -11207,6 +11207,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Rutas", ( dbfRuta )->( Select() ) )
    oFr:SetFieldAliases( "Rutas", cItemsToReport( aItmRut() ) )
 
+   oFr:SetWorkArea(     "Agentes", ( D():Agentes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
 
    oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
