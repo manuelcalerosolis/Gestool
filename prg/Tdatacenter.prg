@@ -1297,7 +1297,7 @@ METHOD CreateColumnTriggerUpdate( oTable, cTrigger )
       if Table->( FieldType( n ) ) != "M" // nField < 150 .and.
 
          cTrigger += 'IF ( @co."' + Table->( FieldName( n ) ) + '" <> @cn."' + Table->( FieldName( n ) ) + '" )' + CRLF
-         cTrigger +=     'THEN' + CRLF
+         cTrigger +=  'THEN' + CRLF
          cTrigger += 'INSERT INTO SqlColumnLog ( OPERATIONID, COLUMNNAME, USERNAME, APPNAME, TABLENAME, OLDVALUE, NEWVALUE )' + CRLF
          cTrigger += 'VALUES ( @id, ' + "'" + Table->( FieldName( n ) ) + "'" + ", @userName, @appName, " + "'" + Alltrim( oTable:cName ) + "'" + ", cast( @co." + '"' + Table->( FieldName( n ) ) + '"' + " as sql_varchar ), " + "cast( @cn." + '"' + Table->( FieldName( n ) ) + '"' + " as sql_varchar ) );" + CRLF
          cTrigger += 'END IF;' + CRLF
@@ -3764,8 +3764,8 @@ METHOD CreateOperationLogTable()
 
    local cTable
 
-   if File( cPatADS(.t.) + "\SqlOperationLog.adt" )
-      fErase( cPatADS(.t.) + "\SqlOperationLog.adt" )
+   if File( cPatADS(.t.) + "SqlOperationLog.adt" )
+      fErase( cPatADS(.t.) + "SqlOperationLog.adt" )
    end if
 
    cTable         := 'CREATE TABLE SqlOperationLog (' + CRLF
@@ -3785,8 +3785,8 @@ METHOD CreateColumnLogTable()
 
    local cTable
 
-   if File( cPatADS(.t.) + "\SqlColumnLog.adt" )
-      fErase( cPatADS(.t.) + "\SqlColumnLog.adt" )
+   if File( cPatADS(.t.) + "SqlColumnLog.adt" )
+      fErase( cPatADS(.t.) + "SqlColumnLog.adt" )
    end if
 
    cTable         := 'CREATE TABLE SqlColumnLog (' + CRLF
