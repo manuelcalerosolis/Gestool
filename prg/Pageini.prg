@@ -569,8 +569,8 @@ Static Function PageIniPagos()
       REDEFINE BUTTON oBtnModificarRecibo ;
          ID          180 ;
          OF          oFld:aDialogs[ nFolder ] ;
-         ACTION      (  if ( !Empty( ( D():FacturasProveedoresCobros( nView ) )->cSerFac ),;
-                           EdtRecPrv( D():FacturasProveedoresCobrosId( nView ), .f., !Empty( ( D():FacturasProveedoresCobros( nView ) )->cTipRec ) ), ),;
+         ACTION      (  if ( !Empty( ( D():FacturasProveedoresPagos( nView ) )->cSerFac ),;
+                           EdtRecPrv( D():FacturasProveedoresPagosId( nView ), .f., !Empty( ( D():FacturasProveedoresPagos( nView ) )->cTipRec ) ), ),;
                            oBrwRecPrv:Refresh() )
 
       oBrwRecPrv                 := IXBrowse():New( oFld:aDialogs[ nFolder ] )

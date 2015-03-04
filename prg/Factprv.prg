@@ -6836,7 +6836,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    oMsgText( "Archivando" )
 
-   oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    BeginTransaction()
@@ -6855,9 +6855,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      /*
-      Obtenemos el nuevo numero de la factura----------------------------------
-      */
+      oMsgText( "Obteniendo contadores" )
 
       nNumFac           := nNewDoc( cSerFac, D():FacturasProveedores( nView ), "NFACPRV", , D():Contadores( nView ) )
       aTmp[ _NNUMFAC ]  := nNumFac
@@ -6869,42 +6867,49 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    case nMode == EDIT_MODE
 
-      while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() ) )
+      oMsgText( "Eliminando información anterior" )
+
+      while ( D():FacturasProveedoresLineas( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( D():FacturasProveedoresLineas( nView ) )->( eof() ) 
          aNumAlb:Add( getNumeroAlbaranProveedorLinea( nView ) )
          setNoFacturadoAlbaranProveedorLinea( nView )
          dbLockDelete( D():FacturasProveedoresLineas( nView ) )
       end while
 
-      while ( D():FacturasProveedoresIncidencias( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasProveedoresIncidencias( nView ) )->( eof() ) )
+      oMsgText( "Eliminando incidencias anteriores" )
+
+      while ( D():FacturasProveedoresIncidencias( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( D():FacturasProveedoresIncidencias( nView ) )->( eof() ) 
          dbLockDelete( D():FacturasProveedoresIncidencias( nView ) )
       end while
 
-      while ( D():FacturasProveedoresDocumentos( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasProveedoresDocumentos( nView ) )->( eof() ) )
+      oMsgText( "Eliminando documentos anterior" )
+
+      while ( D():FacturasProveedoresDocumentos( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( D():FacturasProveedoresDocumentos( nView ) )->( eof() ) 
          dbLockDelete( D():FacturasProveedoresDocumentos( nView ) )
       end while
 
-      while ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( D():FacturasProveedoresPagos( nView ) )->( eof() ) )
+      oMsgText( "Eliminando pagos anterior" )
+
+      while ( D():FacturasProveedoresPagos( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( D():FacturasProveedoresPagos( nView ) )->( eof() ) 
          dbLockDelete( D():FacturasProveedoresPagos( nView ) )
       end while
 
-      while ( D():FacturasProveedoresSeries( nView ) )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) )
+      oMsgText( "Eliminando series anterior" )
+
+      while ( D():FacturasProveedoresSeries( nView ) )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( D():FacturasProveedoresSeries( nView ) )->( eof() )
          dbLockDelete( D():FacturasProveedoresSeries( nView ) )
       end while
 
    end case
 
-   /*
-   Quitamos los filtros
-   */
+   // Quitamos los filtros-----------------------------------------------------
 
    ( dbfTmp )->( dbClearFilter() )
 
+   oMsgText( "Escribiendo cabecera de documento" )
    oMsgProgress()
    oMsgProgress():SetRange( 0, ( dbfTmp )->( LastRec() ) )
 
-   /*
-   Ahora escribimos en el fichero definitivo
-   */
+   // Ahora escribimos en el fichero definitivo
 
    ( dbfTmp )->( dbGoTop() )
    while !( dbfTmp )->( eof() )
@@ -6947,6 +6952,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    Ahora escribimos en el fichero definitivo de incidencias--------------------
    */
 
+   oMsgText( "Escribiendo incidencias")
+
    ( dbfTmpInc )->( dbGoTop() )
    while ( dbfTmpInc )->( !eof() )
       dbPass( dbfTmpInc, D():FacturasProveedoresIncidencias( nView ), .t., cSerFac, nNumFac, cSufFac )
@@ -6956,6 +6963,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    /*
    Ahora escribimos en el fichero definitivo de documentos--------------------
    */
+
+   oMsgText( "Escribiendo documentos")
 
    ( dbfTmpDoc )->( dbGoTop() )
    while ( dbfTmpDoc )->( !eof() )
@@ -6967,6 +6976,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    Escribimos el fichero definitivo de series---------------------------------
    */
 
+   oMsgText( "Escribiendo series")
+
    ( dbfTmpSer )->( dbGoTop() )
    while ( dbfTmpSer )->( !eof() )
       dbPass( dbfTmpSer, D():FacturasProveedoresSeries( nView ), .t., cSerFac, nNumFac, cSufFac, dFecFac )
@@ -6977,8 +6988,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    Si cambia el cliente en la factura, lo cambiamos en los recibos-------------
    */
 
-   ( dbfTmpPgo )->( dbGoTop() )
+   oMsgText( "Escribiendo pagos" ) 
 
+   ( dbfTmpPgo )->( dbGoTop() )
    while ( dbfTmpPgo )->( !eof() )
 
       if ( dbfTmpPgo )->cCodPrv != aTmp[ _CCODPRV ]
@@ -7013,6 +7025,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    // Grabamos las cabeceras de los albaranes----------------------------------
 
+   oMsgText( "Escribiendo cabecera de documento" ) 
+
    WinGather( aTmp, , D():FacturasProveedores( nView ), , nMode )
 
    //Escribe los datos pendientes----------------------------------------------
@@ -7021,9 +7035,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    // Generar los pagos de las facturas----------------------------------------
 
+   oMsgText( "Generando pagos" ) 
+
    GenPgoFacPrv( cSerFac + Str( nNumFac ) + cSufFac, D():FacturasProveedores( nView ), D():FacturasProveedoresLineas( nView ), D():FacturasProveedoresPagos( nView ), D():Proveedores( nView ), D():TiposIva( nView ), D():FormasPago( nView ), D():Divisas( nView ) )
 
    // Actualiza el estado de los albaranes-------------------------------------
+
+   oMsgText( "Actualiza estado de albaranes" ) 
 
    aEval( aNumAlb:Get(), {|cNumAlb| setEstadoAlbaranProveedor( cNumAlb, nView ) } )
 

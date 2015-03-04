@@ -47,7 +47,7 @@ CLASS TDataCenter
    DATA        nMtrDiccionario            INIT 0
 
    DATA        oMsg
-   DATA        cMsg                INIT ""
+   DATA        cMsg                       INIT ""
 
    DATA        oBtnOk
    DATA        oBntCancel
@@ -901,7 +901,7 @@ METHOD StartAdministratorTask()
 
       ::CreateColumnLogTable()
 
-      ::CreateAllLocksTablesUsers()
+      // ::CreateAllLocksTablesUsers() da error
 
       if !empty(::oMtrDiccionario)
 	      ::oMtrDiccionario:Set( 3 )
@@ -2804,6 +2804,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvP.Cdx"
    oDataTable:cDescription := "Pagos de facturas de proveedor"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:bSyncFile    := {|| SynRecPrv( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
@@ -4814,7 +4815,9 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
       endif
 
    RECOVER USING oError
-      msgStop( ErrorMessage( oError ), "ExecuteSqlStatement" )
+
+      msgStop( ErrorMessage( oError ), "ExecuteSqlStatement : " + cSqlStatement )
+   
    END SEQUENCE
 
    ErrorBlock( oBlock )
@@ -5331,9 +5334,6 @@ CLASS D
    METHOD FacturasProveedores( nView )                   INLINE ( ::Get( "FacPrvT", nView ) ) 
       METHOD FacturasProveedoresId( nView )              INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvT", nView ) )->cSufFac )
       METHOD FacturasProveedoresIdText( nView )          INLINE ( ( ::Get( "FacPrvT", nView ) )->cSerFac + "/" + alltrim( str( ( ::Get( "FacPrvT", nView ) )->nNumFac, 9 ) ) + "/" + ( ::Get( "FacPrvT", nView ) )->cSufFac )
-
-      METHOD FacturasProveedoresCobros( nView )          INLINE ( ::Get( "FacPrvP", nView ) )
-      METHOD FacturasProveedoresCobrosId( nView )        INLINE ( ( ::Get( "FacPrvP", nView ) )->cSerFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumFac ) +  ( ::Get( "FacPrvP", nView ) )->cSufFac + Str( ( ::Get( "FacPrvP", nView ) )->nNumRec ) )
 
    METHOD FacturasProveedoresLineas( nView )             INLINE ( ::Get( "FacPrvL", nView ) )
       METHOD FacturasProveedoresLineasId( nView )        INLINE ( ( ::Get( "FacPrvL", nView ) )->cSerFac + str( ( ::Get( "FacPrvL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacPrvL", nView ) )->cSufFac )

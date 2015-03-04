@@ -2092,24 +2092,20 @@ Function dbDel( cAlias )
 
    ( cAlias )->( dbSkip( 0 ) )
 
-   /*
-   if ( cAlias )->( Eof() )
-      ( cAlias )->( dbGoBottom() )
-   end if
-   */
-
 Return nil
 
 //---------------------------------------------------------------------------//
 
 Function dbLockDelete( cAlias )
 
-   if ( cAlias )->( dbRLock() ) //dbLock( cAlias )
+   if dbLock( cAlias )
       ( cAlias )->( dbDelete() )
       ( cAlias )->( dbUnLock() )
+   else 
+      Return .f.
    end if
 
-Return nil
+Return .t.
 
 //---------------------------------------------------------------------------//
 

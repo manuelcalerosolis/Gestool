@@ -20304,7 +20304,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CNOMCLI", "Upper( CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CPOBCLI", "CPOBCLI + CNOMCLI", {|| Field->CPOBCLI + Field->CNOMCLI } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CPOBCLI", "CPOBCLI", {|| Field->CPOBCLI } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CCODOBR", "cCodObr + Dtos( dFecFac )", {|| Field->cCodObr + Dtos( Field->dFecFac ) } ) )
@@ -20314,9 +20314,6 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CTURFAC", "CTURFAC + CSUFFAC + CCODCAJ", {|| Field->CTURFAC + Field->CSUFFAC + Field->CCODCAJ } ) )
-
-      ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "cNfc", "Upper( cNfc )", {|| Upper( Field->cNfc ) } ) )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCodPago", "cCodPago", {|| Field->cCodPago } ) )
@@ -20356,9 +20353,6 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cNfc", "cNfc", {|| Field->cNfc } ) )
 
       ( cFacCliT)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "iNumFac", "'11' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )

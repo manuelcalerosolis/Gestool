@@ -2555,26 +2555,26 @@ FUNCTION rxRecPrv( cPath, oMeter )
       ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "dFecVto", "dFecVto", {|| Field->dFecVto } ) )
 
-      ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) ) // , , , , , , , , , , , .t.
+      ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) ) 
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "nImporte", "nImporte", {|| Field->nImporte } ) )
 
-      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .AND. !lCobrado", {|| !Deleted() .AND. !Field->lCobrado } ) )
+      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .AND. !Field->lCobrado", {|| !Deleted() .and. !Field->lCobrado } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "lCobrado", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumRec )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) }, ) )
 
       ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "cTurRec", "cTurRec + cSufFac + cCodCaj", {|| Field->cTurRec + Field->cSufFac + Field->cCodCaj } ) )
 
-      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. !Empty( cTipRec )", {|| !Deleted() .and. !Empty( Field->cTipRec ) } ) )
+      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. !Empty( Field->cTipRec )", {|| !Deleted() .and. !Empty( Field->cTipRec ) } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "rNumFac", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumRec )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) }, ) )
 
-      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. Empty( cTipRec )", {|| !Deleted() .and. Empty( Field->cTipRec ) } ) )
+      ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. Empty( Field->cTipRec )", {|| !Deleted() .and. Empty( Field->cTipRec ) } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "fNumFac", "cSerFac + Str( nNumFac ) + cSufFac + Str( nNumRec )", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) }, ) )
 
       ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "cRecDev", "cRecDev", {|| Field->cRecDev } ) )
 
       ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. Field->lCobrado", {|| !Deleted() .and. Field->lCobrado } ) )
-      ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.Cdx", "lCtaBnc", "Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
+      ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.Cdx", "lCtaBnc", "Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
 
       ( dbfFacPrvP )->( dbCloseArea() )
 
