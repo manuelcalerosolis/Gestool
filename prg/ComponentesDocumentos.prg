@@ -988,6 +988,8 @@ CLASS GetPeriodo FROM ComponentGet
    METHOD CambiaPeriodo()
    METHOD CargaPeriodo()
 
+   METHOD Resource()
+
    METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
 
 END CLASS 
@@ -1007,13 +1009,26 @@ METHOD New( idCombo, idFechaInicio, idFechaFin, oContainer ) CLASS GetPeriodo
 
    ::CargaPeriodo()
 
-   ::oComboPeriodo            := GetCombo():New( 100, ::cPeriodo, ::aPeriodo, oContainer )
+   msgInfo( "Entro en el New" )
+   msginfo( idCombo, "idCombo" )
+   msginfo( idFechaInicio, "idFechaInicio" )
+   msginfo( idFechaFin, "idFechaFin" )
+
+   ::oComboPeriodo            := GetCombo():New( idCombo, ::cPeriodo, ::aPeriodo, oContainer )
    ::oComboPeriodo:SetChange( {|| ::CambiaPeriodo() } )
 
-   ::oFechaInicio             := GetFecha():New( 110, oContainer )
+   ::oFechaInicio             := GetFecha():New( idFechaInicio, oContainer )
    ::oFechaInicio:FirstDayYear()
 
-   ::oFechaFin                := GetFecha():New( 120, oContainer )
+   ::oFechaFin                := GetFecha():New( idFechaFin, oContainer )
+
+Return ( Self )
+
+METHOD Resource( oContainer ) CLASS GetPeriodo  
+
+   ::oComboPeriodo:Resource( oContainer )
+   ::oFechaInicio:Resource( oContainer )
+   ::oFechaFin:Resource( oContainer )
 
 Return ( Self )
 

@@ -450,6 +450,7 @@ CLASS ComponentGet FROM Component
 
    DATA bValid                   INIT {|| .t. }
    DATA bHelp                    INIT {|| .t. }
+   DATA bWhen                    INIT {|| .t. }
 
    DATA oGetControl
    DATA uGetValue                INIT Space( 12 )
@@ -486,6 +487,7 @@ METHOD Resource( oDlg ) CLASS ComponentGet
 
    ::oGetControl:bValid    := ::bValid
    ::oGetControl:bHelp     := ::bHelp
+   ::oGetControl:bWhen     := ::bWhen
 
 Return ( Self )
 
@@ -534,6 +536,93 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
+
+CLASS ComponentCheck FROM Component
+
+   DATA idCheck
+
+   DATA oCheckControl
+   DATA uCheckValue
+
+   DATA bWhen                    INIT {|| .t. }
+   
+   METHOD New( idCheck, lDefault, oContainer )
+
+   METHOD Resource( oDlg )
+
+   METHOD Value()                INLINE ( ::uCheckValue )
+
+   METHOD Disable()              INLINE ( ::oCheckControl:Disable() )
+   METHOD Enable()               INLINE ( ::oCheckControl:Enable() )
+
+END CLASS 
+
+METHOD New( idCheck, lDefault, oContainer ) CLASS ComponentCheck
+
+   DEFAULT lDefault  := .t.
+
+   ::idCheck         := idCheck
+
+   ::uCheckValue     := lDefault
+
+   ::Super:New( oContainer )
+
+RETURN ( Self )
+
+METHOD Resource( oDlg ) CLASS ComponentCheck
+
+   REDEFINE CHECKBOX ::oCheckControl ;
+      VAR            ::uCheckValue ;
+      ID             ::idCheck ;
+      OF             oDlg
+
+   ::oCheckControl:bWhen     := ::bWhen
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS ComponentUrlLink FROM Component
+
+   DATA idUrlLink
+   DATA bAction
+   DATA cCaption
+
+   DATA oUrlLinkControl
+   
+   METHOD New( idCheck, oContainer )
+
+   METHOD Resource( oDlg )
+
+   METHOD Disable()              INLINE ( ::oUrlLinkControl:Disable() )
+   METHOD Enable()               INLINE ( ::oUrlLinkControl:Enable() )
+
+END CLASS 
+
+METHOD New( idUrlLink, bAction, cCaption, oContainer ) CLASS ComponentUrlLink
+
+   ::idUrlLink    := idUrlLink
+   ::bAction      := bAction
+   ::cCaption     := cCaption
+
+   ::Super:New( oContainer )
+
+RETURN ( Self )
+
+METHOD Resource( oDlg ) CLASS ComponentUrlLink
+
+   ::oUrlLinkControl          := TURLLink():ReDefine( ::idUrlLink, oDlg, , ::cCaption, ::cCaption ) 
+   ::oUrlLinkControl:bAction  := ::bAction
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 CLASS SayCompras FROM ComponentSay
 
@@ -598,9 +687,9 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD Resource(oDlg) CLASS ComponentGetSay
+METHOD Resource( oDlg ) CLASS ComponentGetSay
 
-   ::Super:Resource()
+   ::Super:Resource( oDlg )
 
    REDEFINE GET   ::oSayControl ;
       VAR         ::cSayValue ;
@@ -994,6 +1083,8 @@ CLASS GetPeriodo FROM ComponentGet
    METHOD CambiaPeriodo()
    METHOD CargaPeriodo()
 
+   METHOD Resource( oContainer )
+
    METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
 
 END CLASS 
@@ -1013,13 +1104,21 @@ METHOD New( idCombo, idFechaInicio, idFechaFin, oContainer ) CLASS GetPeriodo
 
    ::CargaPeriodo()
 
-   ::oComboPeriodo            := GetCombo():New( 100, ::cPeriodo, ::aPeriodo, oContainer )
+   ::oComboPeriodo            := GetCombo():New( idCombo, ::cPeriodo, ::aPeriodo, oContainer )
    ::oComboPeriodo:SetChange( {|| ::CambiaPeriodo() } )
 
-   ::oFechaInicio             := GetFecha():New( 110, oContainer )
+   ::oFechaInicio             := GetFecha():New( idFechaInicio, oContainer )
    ::oFechaInicio:FirstDayYear()
 
-   ::oFechaFin                := GetFecha():New( 120, oContainer )
+   ::oFechaFin                := GetFecha():New( idFechaFin, oContainer )
+
+Return ( Self )
+
+METHOD Resource( oContainer ) CLASS GetPeriodo
+
+   ::oComboPeriodo:Resource( oContainer )
+   ::oFechaInicio:Resource( oContainer )
+   ::oFechaFin:Resource( oContainer )
 
 Return ( Self )
 
@@ -1106,6 +1205,208 @@ METHOD CambiaPeriodo() CLASS GetPeriodo
    end case
 
 RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetRangoCliente FROM Component
+
+   DATA oAll
+   DATA oInicio
+   DATA oFin
+
+   METHOD Build( hBuilder )
+   METHOD New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer )
+
+   METHOD Resource( oContainer )
+
+   //METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+
+END CLASS 
+
+METHOD Build( hBuilder ) CLASS GetRangoCliente 
+
+   local idAll          := if( hhaskey( hBuilder, "idAll" ),         hBuilder[ "idAll"        ], nil )
+   local idGetInicio    := if( hhaskey( hBuilder, "idGetInicio" ),   hBuilder[ "idGetInicio"  ], nil )
+   local idSayInicio    := if( hhaskey( hBuilder, "idSayInicio" ),   hBuilder[ "idSayInicio"  ], nil )
+   local idTextInicio   := if( hhaskey( hBuilder, "idTextInicio" ),  hBuilder[ "idTextInicio" ], nil )
+   local idGetFin       := if( hhaskey( hBuilder, "idGetFin" ),      hBuilder[ "idGetFin"     ], nil )
+   local idSayFin       := if( hhaskey( hBuilder, "idSayFin" ),      hBuilder[ "idSayFin"     ], nil )
+   local idTextFin      := if( hhaskey( hBuilder, "idTextFin" ),     hBuilder[ "idTextFin"    ], nil )
+   local oContainer     := if( hhaskey( hBuilder, "oContainer" ),    hBuilder[ "oContainer"   ], nil )
+
+   ::New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer )
+
+Return ( Self )
+
+METHOD New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer ) CLASS GetRangoCliente
+
+   ::oAll           := ComponentCheck():New( idAll, .t., oContainer )
+
+   ::oInicio        := GetCliente():New( idGetInicio, idSayInicio, idTextInicio, oContainer )
+   ::oInicio:SetText( "Desde" )
+   ::oInicio:First()
+   ::oInicio:bWhen  := {|| !::oAll:Value() }
+
+   ::oFin           := GetCliente():New( idGetFin, idSayFin, idTextFin, oContainer )
+   ::oFin:SetText( "Hasta" )
+   ::oFin:Last()
+   ::oFin:bWhen     := {|| !::oAll:Value() }
+
+Return ( Self )
+
+METHOD Resource( oDialog ) CLASS GetRangoCliente
+
+   ::oAll:Resource( oDialog )
+   ::oInicio:Resource( oDialog )
+   ::oFin:Resource( oDialog )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetRangoGrupoCliente FROM Component
+
+   DATA oAll
+   DATA oInicio
+   DATA oFin
+
+   METHOD Build( hBuilder )
+   METHOD New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer )
+
+   METHOD Resource( oContainer )
+
+   //METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+
+END CLASS 
+
+METHOD Build( hBuilder ) CLASS GetRangoGrupoCliente 
+
+   local idAll          := if( hhaskey( hBuilder, "idAll" ),         hBuilder[ "idAll"        ], nil )
+   local idGetInicio    := if( hhaskey( hBuilder, "idGetInicio" ),   hBuilder[ "idGetInicio"  ], nil )
+   local idSayInicio    := if( hhaskey( hBuilder, "idSayInicio" ),   hBuilder[ "idSayInicio"  ], nil )
+   local idTextInicio   := if( hhaskey( hBuilder, "idTextInicio" ),  hBuilder[ "idTextInicio" ], nil )
+   local idGetFin       := if( hhaskey( hBuilder, "idGetFin" ),      hBuilder[ "idGetFin"     ], nil )
+   local idSayFin       := if( hhaskey( hBuilder, "idSayFin" ),      hBuilder[ "idSayFin"     ], nil )
+   local idTextFin      := if( hhaskey( hBuilder, "idTextFin" ),     hBuilder[ "idTextFin"    ], nil )
+   local oContainer     := if( hhaskey( hBuilder, "oContainer" ),    hBuilder[ "oContainer"   ], nil )
+
+   ::New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer )
+
+Return ( Self )
+
+METHOD New( idAll, idGetInicio, idSayInicio, idTextInicio, idGetFin, idSayFin, idTextFin, oContainer ) CLASS GetRangoGrupoCliente
+
+   ::oAll           := ComponentCheck():New( idAll, .t., oContainer )
+
+   ::oInicio        := GetGrupoCliente():New( idGetInicio, idSayInicio, idTextInicio, oContainer )
+   ::oInicio:SetText( "Desde" )
+   ::oInicio:First()
+   ::oInicio:bWhen  := {|| !::oAll:Value() }
+
+   ::oFin           := GetGrupoCliente():New( idGetFin, idSayFin, idTextFin, oContainer )
+   ::oFin:SetText( "Hasta" )
+   ::oFin:Last()
+   ::oFin:bWhen     := {|| !::oAll:Value() }
+
+Return ( Self )
+
+METHOD Resource( oDialog ) CLASS GetRangoGrupoCliente
+
+   ::oAll:Resource( oDialog )
+   ::oInicio:Resource( oDialog )
+   ::oFin:Resource( oDialog )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetRangoSeries FROM Component
+
+   DATA oTodas
+   DATA oNinguna
+   DATA hObjectSerie
+
+   METHOD Build( hBuilder )
+   METHOD New( idTodas, idNinguna, idInicio, oContainer )
+
+   METHOD Resource( oDialog )
+
+   METHOD SelectAll()         INLINE ( if( !Empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .t., o:oCheckControl:Refresh() } ), ) )
+
+   METHOD UnselectAll()       INLINE ( if( !Empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .f., o:oCheckControl:Refresh() } ), ) )
+
+   //METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+
+END CLASS 
+
+METHOD Build( hBuilder ) CLASS GetRangoSeries 
+
+   local idTodas        := if( hhaskey( hBuilder, "idTodas" ),          hBuilder[ "idTodas"        ], nil )
+   local idNinguna      := if( hhaskey( hBuilder, "idNinguna" ),        hBuilder[ "idNinguna"      ], nil )
+   local idInicio       := if( hhaskey( hBuilder, "idInicio" ),         hBuilder[ "idInicio"       ], nil )
+   local bActionTodas   := if( hhaskey( hBuilder, "bActionTodas" ),     hBuilder[ "bActionTodas"   ], nil )
+   local bActionNinguna := if( hhaskey( hBuilder, "bActionNinguna" ),   hBuilder[ "bActionNinguna" ], nil )
+   local oContainer     := if( hhaskey( hBuilder, "oContainer" ),       hBuilder[ "oContainer"     ], nil )
+
+   ::New( idTodas, idNinguna, idInicio, oContainer )
+
+Return ( Self )
+
+METHOD New( idTodas, idNinguna, idInicio, oContainer ) CLASS GetRangoSeries
+
+   ::oTodas          := ComponentUrlLink():New( idTodas, {|| ::SelectAll() }, "Todas", oContainer )
+   ::oNinguna        := ComponentUrlLink():New( idNinguna, {|| ::UnselectAll() }, "Ninguna", oContainer )
+
+   ::hObjectSerie    := { "SerieA"  =>  ComponentCheck():New( idInicio, .t., oContainer ),;
+                          "SerieB"  =>  ComponentCheck():New( idInicio + 1, .t., oContainer ),;
+                          "SerieC"  =>  ComponentCheck():New( idInicio + 2, .t., oContainer ),;
+                          "SerieD"  =>  ComponentCheck():New( idInicio + 3, .t., oContainer ),;
+                          "SerieE"  =>  ComponentCheck():New( idInicio + 4, .t., oContainer ),;
+                          "SerieF"  =>  ComponentCheck():New( idInicio + 5, .t., oContainer ),;
+                          "SerieG"  =>  ComponentCheck():New( idInicio + 6, .t., oContainer ),;
+                          "SerieH"  =>  ComponentCheck():New( idInicio + 7, .t., oContainer ),;
+                          "SerieI"  =>  ComponentCheck():New( idInicio + 8, .t., oContainer ),;
+                          "SerieJ"  =>  ComponentCheck():New( idInicio + 9, .t., oContainer ),;
+                          "SerieK"  =>  ComponentCheck():New( idInicio + 10, .t., oContainer ),;
+                          "SerieL"  =>  ComponentCheck():New( idInicio + 11, .t., oContainer ),;
+                          "SerieM"  =>  ComponentCheck():New( idInicio + 12, .t., oContainer ),;
+                          "SerieN"  =>  ComponentCheck():New( idInicio + 13, .t., oContainer ),;
+                          "SerieO"  =>  ComponentCheck():New( idInicio + 14, .t., oContainer ),;
+                          "SerieP"  =>  ComponentCheck():New( idInicio + 15, .t., oContainer ),;
+                          "SerieQ"  =>  ComponentCheck():New( idInicio + 16, .t., oContainer ),;
+                          "SerieR"  =>  ComponentCheck():New( idInicio + 17, .t., oContainer ),; 
+                          "SerieS"  =>  ComponentCheck():New( idInicio + 18, .t., oContainer ),; 
+                          "SerieT"  =>  ComponentCheck():New( idInicio + 19, .t., oContainer ),; 
+                          "SerieU"  =>  ComponentCheck():New( idInicio + 20, .t., oContainer ),; 
+                          "SerieV"  =>  ComponentCheck():New( idInicio + 21, .t., oContainer ),; 
+                          "SerieW"  =>  ComponentCheck():New( idInicio + 22, .t., oContainer ),; 
+                          "SerieX"  =>  ComponentCheck():New( idInicio + 23, .t., oContainer ),; 
+                          "SerieY"  =>  ComponentCheck():New( idInicio + 24, .t., oContainer ),; 
+                          "SerieZ"  =>  ComponentCheck():New( idInicio + 25, .t., oContainer ) }
+
+Return ( Self )
+
+METHOD Resource( oDialog ) CLASS GetRangoSeries
+
+   ::oTodas:Resource( oDialog )
+   ::oNinguna:Resource( oDialog )
+
+   if !Empty( ::hObjectSerie )
+
+      hEval( ::hObjectSerie, {| h, o, i | o:Resource( oDialog ) } )
+
+   end if   
+
+Return ( Self )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
