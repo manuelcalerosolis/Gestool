@@ -1663,12 +1663,7 @@ function cCodigoGrupo( cCodEmp, dbfEmpresa )
    BEGIN SEQUENCE
 
    if Empty( dbfEmpresa )
-
-      msgAlert(cPatDat() + "Empresa.Dbf", "name")
-      msgAlert(file(cPatDat() + "Empresa.Dbf"),"file")
-
       dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Empresa.Dbf" ), ( cCheckArea( "Empresa", @dbfEmpresa ) ), .t. )
-      msgAlert("indice")
       if !lAIS() ; ( dbfEmpresa )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ) ; else ; ordSetFocus( 1 ) ; end
 
       lClose      := .t.

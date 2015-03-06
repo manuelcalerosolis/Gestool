@@ -2668,7 +2668,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
                   "&Observaciones" ;
          DIALOGS  "LALBPRV_1",;
                   "LALBPRV_2",;
-                  "LFACPRV_5"  
+                  "LALBPRV_4"  
 
       oFld:aEnable         := { .t., !Empty( aTmp[ _CREF ] ), .t. }
 
@@ -3294,6 +3294,20 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          ID       360 ;
          OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _DAPERTURA ] ;
+         VAR      aTmp[ _DAPERTURA ];
+         ID       370 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[3]
+
+      REDEFINE GET aGet[ _DCIERRE ] ;
+         VAR      aTmp[ _DCIERRE ];
+         ID       380 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[3]
 
       REDEFINE GET aGet[ _MOBSLIN ] ;
          VAR      aTmp[ _MOBSLIN ] ;

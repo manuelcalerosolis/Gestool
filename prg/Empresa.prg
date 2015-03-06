@@ -3574,6 +3574,11 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local cPathGrp       := ""
    local lAIS           := lAIS()
 
+   if lAIS()
+      msgStop( "Esta opción no esta permitida para motor de bases de datos ADS.")
+      Return ( nil )
+   end if
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
