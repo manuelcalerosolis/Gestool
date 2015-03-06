@@ -305,6 +305,8 @@ Function SetIndexToAIS()
    lCdx( .f. )
    lAIS( .t. )
 
+   RddSetDefault( "ADSCDX" )
+
 Return nil 
 
 //---------------------------------------------------------------------------//
@@ -313,6 +315,8 @@ Function SetIndexToCDX()
 
    lCdx( .t. )
    lAIS( .f. )
+   
+   RddSetDefault( "DBFCDX" )
 
 Return nil 
 
@@ -1659,8 +1663,14 @@ function cCodigoGrupo( cCodEmp, dbfEmpresa )
    BEGIN SEQUENCE
 
    if Empty( dbfEmpresa )
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmpresa ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
+
+      msgAlert(cPatDat() + "Empresa.Dbf", "name")
+      msgAlert(file(cPatDat() + "Empresa.Dbf"),"file")
+
+      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Empresa.Dbf" ), ( cCheckArea( "Empresa", @dbfEmpresa ) ), .t. )
+      msgAlert("indice")
+      if !lAIS() ; ( dbfEmpresa )->( ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ) ; else ; ordSetFocus( 1 ) ; end
+
       lClose      := .t.
    else
       nRec        := ( dbfEmpresa )->( Recno() )

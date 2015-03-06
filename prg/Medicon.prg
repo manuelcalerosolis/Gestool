@@ -808,7 +808,7 @@ RETURN ( oMeter )
 
 Function AutoTextDialog( oDialog )
 
-   oText   := TSay():New( 5, 0, {||cText}, oDialog, , , .t., .f., .f., .t., rgb(0,0,0), rgb(239,228,176), oDialog:nWidth, 18, .f., .t., .f., .f., .f. )
+   oText   := TSay():New( 6, 0, {||cText}, oDialog, , , .t., .f., .f., .t., rgb(0,0,0), rgb(239,228,176), oDialog:nWidth, 18, .f., .t., .f., .f., .f. )
 
 RETURN ( oText )
 
@@ -823,6 +823,8 @@ Function SetAutoTextDialog( cText, oDialog )
    if !empty(oText)
       oText:SetText( cText )  
    end if 
+
+   sysRefresh()
 
 RETURN ( oText )
 

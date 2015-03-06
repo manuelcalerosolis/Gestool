@@ -3933,11 +3933,13 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       */
 
       CursorWait()
-/*
+
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
-*/
+
          oDlgTpv:Disable()
+         AutoMeterDialog( oDlgTpv )
+         AutoTextDialog( oDlgTpv )   
 
          BeginTransaction()
 
@@ -3961,10 +3963,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Obtenemos el nuevo numero del Tiket-----------------------------------
             */
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Obtenemos el nuevo número'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Obtenemos el nuevo número' )
 
             aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
             aTmp[ _CSUFTIK ]  := RetSufEmp()
@@ -3986,10 +3985,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Eliminamos las lineas----------------------------------------------
             */
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Eliminando lineas'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Eliminando lineas' )
 
             while ( dbfTikL )->( dbSeek( nNumTik ) )
                
@@ -4005,10 +4001,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Eliminamos los pagos-----------------------------------------------
             */
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Eliminando pagos'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Eliminando pagos' )
 
             while ( dbfTikP )->( dbSeek( nNumTik ) )
 
@@ -4023,10 +4016,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Eliminamos los vales ----------------------------------------------
             */
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Eliminando vales'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Eliminando vales' )
 
             nOrd  := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
             nRec  := ( dbfTikT )->( Recno() )
@@ -4048,10 +4038,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Quitamos las marcas desde el fichero de Tiket----------------------
             */
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Eliminando anticipos'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Eliminando anticipos' )
 
             if !Empty( cNumDoc )
 
@@ -4080,10 +4067,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Anotamos los pagos-------------------------------------------------------
          */
 
-         if !Empty( oMetMsg )
-            oMetMsg:cText        := 'Anotando los pagos'
-            oMetMsg:Refresh()
-         end if
+         SetAutoTextDialog( 'Anotando los pagos' )
 
          if ( oTotDiv:lValeMayorTotal() )
 
@@ -4122,10 +4106,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if !Empty( aTmp[ _CALBTIK ] )
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Estado albarán'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Estado albarán' )
 
             if dbSeekInOrd( aTmp[ _CALBTIK ], "nNumAlb", dbfAlbCliT )
 
@@ -4166,10 +4147,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if !Empty( aTmp[ _CPEDTIK ] )
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Estado pedido'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Estado pedido' )
 
             if dbSeekInOrd( aTmp[ _CPEDTIK ], "nNumPed", dbfPedCliT )
 
@@ -4189,10 +4167,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if !Empty( aTmp[ _CPRETIK ] )
 
-            if !Empty( oMetMsg )
-               oMetMsg:cText     := 'Estado presupuesto'
-               oMetMsg:Refresh()
-            end if
+            SetAutoTextDialog( 'Estado presupuesto' )
 
             if dbSeekInOrd( aTmp[ _CPRETIK ], "nNumPre", dbfPreCliT )
 
@@ -4234,15 +4209,9 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Actualizamos el stock en la web------------------------------------------
          */
 
-         AutoMeterDialog( oDlgTpv )
-         AutoTextDialog( oDlgTpv )   
-
          SetAutoTextDialog( "Archivando")
 
          ActualizaStockWeb()
-
-         EndAutoMeterDialog( oDlgTpv )
-         EndAutoTextDialog( oDlgTpv )
 
          /*
          Anotamos los vales ------------------------------------------------------
@@ -4465,13 +4434,12 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          CommitTransaction()
 
+         EndAutoMeterDialog( oDlgTpv )
+         EndAutoTextDialog( oDlgTpv )
+
          oDlgTpv:Enable()
          oDlgTpv:AEvalWhen()
 
-         /*
-         Cerrando el control de errores-------------------------------------------
-         */
-/*
       RECOVER USING oError
 
          RollBackTransaction()
@@ -4481,7 +4449,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       END SEQUENCE
 
       ErrorBlock( oBlock )
-*/
+
       CursorWE()
 
       /*

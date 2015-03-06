@@ -4384,6 +4384,7 @@ RETURN ( Self )
 METHOD StartResource()
 
    ::oDlg:Disable()
+   ::oDlg:bValid  := {|| .f. }
 
    CursorWait()
 
@@ -4399,6 +4400,7 @@ METHOD StartResource()
 
    msgInfo( "Proceso finalizado con exito.")
 
+   ::oDlg:bValid  := {|| .t. }
    ::oDlg:Enable()
    ::oDlg:End()
 
@@ -4410,6 +4412,8 @@ METHOD Reindex()
 
    local oTable
    local cAlias
+
+   dbCloseAll()
 
    ::DisableTriggers()
 

@@ -2274,8 +2274,13 @@ RETURN NIL
 Function SynRecPrv( cPatEmp )
 
    local nCon
+   local oError
+   local oBlock      
    local nTotFac
    local nTotRec
+
+   BEGIN SEQUENCE
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )  
 
    USE ( cPatEmp + "FACPRVP.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVP", @dbfFacPrvP ) )
    SET ADSINDEX TO ( cPatEmp + "FACPRVP.CDX" ) ADDITIVE
@@ -2374,6 +2379,14 @@ Function SynRecPrv( cPatEmp )
       SysRefresh()
 
    end while
+
+   RECOVER USING oError
+
+      msgStop( "Imposible sincronizar recibos de proveedores" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
    if !Empty( dbfFacPrvP )
       ( dbfFacPrvP )->( dbCloseArea() )

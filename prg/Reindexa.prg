@@ -115,7 +115,6 @@ METHOD GenIndices( oMsg )
    local oBlock
    local oObject
    local nSeconds    := Seconds()
-   local cCodGrp     := Space(2)
 
    /*
    Cerramos todas las bases de datos-------------------------------------------
@@ -138,6 +137,7 @@ METHOD GenIndices( oMsg )
 
    if ::oDlg != nil
       ::oDlg:Disable()
+      ::oDlg:bValid  := {|| .f. }
    end if
 
    /*
@@ -541,6 +541,7 @@ METHOD GenIndices( oMsg )
 //   ErrorBlock( oBlock )
 
    if ::oDlg != nil
+      ::oDlg:bValid  := {|| .t. }
       ::oDlg:Enable()
       ::oDlg:End()
    end if

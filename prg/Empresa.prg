@@ -3578,13 +3578,14 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    BEGIN SEQUENCE
 
    if lAIS
-      lAIS( .f. ) 
-      lCdx( .t. )
+      setIndexToCDX()
    end if
+
+   dbCloseAll()
 
    SysRefresh()
 
-   if lChDir( cNamePath( cPath ) ) .or. MakeDir( cNamePath( cPath ) ) != -1
+   if lChDir( cNamePath( cPath ) ) .or. makeDir( cNamePath( cPath ) ) != -1
 
       if cCodEmpOld != nil
          cCodGrp        := cCodigoGrupo( cCodEmpOld )
@@ -4182,26 +4183,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
          reindexaEmp( cPath, cCodEmpNew, oMsg )
       end if
 
-      /*
-      Tipo de driver q usamos--------------------------------------------------
-      */
-
-      if lAIS
-
-         msgStop( "Tenemos q meter esta empresa en el diccionario de datos")
-
-         with object ( TDataCenter() )
-            :CreateEmpresaTable()
-            :BuildEmpresa()     
-         end with
-
-         lCdx( .f. )
-         lAIS( .t. )
-
-         msgStop( "Proceso finalizado")
-
-      end if
-
    else
 
       MsgStop( "Imposible crear el directorio " + cPath )
@@ -4215,6 +4196,25 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   /*
+   Tipo de driver q usamos--------------------------------------------------
+   */
+
+   if lAIS
+
+      msgStop( "Tenemos q meter esta empresa en el diccionario de datos")
+
+      with object ( TDataCenter() )
+         :CreateEmpresaTable()
+         :BuildEmpresa()     
+      end with
+
+      setIndexToAIS()
+
+      msgStop( "Proceso finalizado")
+
+   end if
 
 RETURN .t.
 

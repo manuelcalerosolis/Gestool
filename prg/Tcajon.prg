@@ -130,17 +130,16 @@ return .t.
 
 Function PrintEscCode( cEscCode, cPrinter )
 
-   local nHandle
+   local nResult
    local cFile    := "EscFile.txt"
 
-   nHandle        := fCreate( cFile, 0 )
-
-   fWrite( nHandle, AllTrim( RetChr( cEscCode ) ) )
-   fClose( nHandle )
-
-   PrintFileRaw( AllTrim( cPrinter ), cFile )
-
-   fErase( cFile )
+   if memowrit( cFile, alltrim( retChr( cEscCode ) ) )
+      nResult     := win_printFileRaw( alltrim( cPrinter ), cFile )
+      if nResult != 0
+         msgStop( "Error enviando codigos de escape a impresora." )
+      end if 
+      fErase( cFile )
+   end if 
 
 Return ( nil )
 
