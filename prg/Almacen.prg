@@ -1146,7 +1146,7 @@ FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
    local lValid   := .f.
    local xValor   := oGet:VarGet()
 
-   if Empty( xValor ) .or. ( xValor == Replicate( "Z", 12 ) )
+   if Empty( xValor ) .or. ( xValor == Replicate( "Z", 16 ) )
       if( oGet2 != nil, oGet2:cText( "" ), )
       return .t.
    end if
