@@ -5542,7 +5542,6 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-
 STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    	local oDlg
@@ -6845,14 +6844,18 @@ Function FacCliTablet()
                                              		"cResName"  => "flat_edit_64",;
                                              		"bLClicked" => {|| WinEdtRec( nil, bEdtTablet, D():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
+      if lUsrMaster()
 
-   	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 75,;
+         oBtnDel        := TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 3.5, oDlg ) },;
                                              		"nWidth"    => 64,;
+                                                   "bWhen"     => {|| , msgStop( "Solo puede eliminar factua.f. },; // 
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_minus_64",;
                                              		"bLClicked" => {|| WinDelRec( oBrw, D():FacturasClientes( nView ), {|| QuiFacCli() }, , , .t. ) },;
                                              		"oWnd"      => oDlg } )
+
+      end if 
 
    	oBtnUpPage			:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 7.5, oDlg ) },;

@@ -1829,7 +1829,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    end if
 
    /*
-   tipo de presupuesto
+   tipo de presupuesto---------------------------------------------------------
    */
 
    cTipPed                 := aTipPed[ if( aTmp[ _LALQUILER ], 2, 1 ) ]
@@ -1867,14 +1867,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    cPicEur              := cPouDiv( "EUR", dbfDiv )            // Picture del euro
    cPicUnd              := MasUnd()
 
-   DO CASE
-      CASE  aTmp[ _NESTADO ] == 1
+   do case
+      case  aTmp[ _NESTADO ] == 1
          cEstPed        := "Pendiente"
-      CASE  aTmp[ _NESTADO ] == 2
+      case  aTmp[ _NESTADO ] == 2
          cEstPed        := "Parcial"
-      CASE  aTmp[ _NESTADO ] == 3
+      case  aTmp[ _NESTADO ] == 3
          cEstPed        := "Entregado"
-   END CASE
+   end case
 
    /*
    Etiquetas-------------------------------------------------------------------
@@ -8728,58 +8728,49 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    Guardamos el tipo para alquileres
    */
 
-   if !Empty( oTipPed ) .and. oTipPed:nAt == 2
-      aTmp[ _LALQUILER ]   := .t.
-   else
-      aTmp[ _LALQUILER ]   := .f.
-   end if
+   aTmp[ _LALQUILER ]   := !empty( oTipPed ) .and. oTipPed:nAt == 2
 
    do case
+   case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-       case nMode == APPD_MODE .or. nMode == DUPL_MODE
+      nNumPed           := nNewDoc( cSerPed, D():PedidosClientes( nView ), "NPEDCLI", , dbfCount )
+      aTmp[ _NNUMPED ]  := nNumPed
 
-         nNumPed           := nNewDoc( cSerPed, D():PedidosClientes( nView ), "NPEDCLI", , dbfCount )
-         aTmp[ _NNUMPED ]  := nNumPed
+   case nMode == EDIT_MODE
 
-       case nMode == EDIT_MODE
+      if nNumPed != 0
 
-   /*if !Empty( oStock )
-         oStock:PedCli( cSerPed + Str( nNumPed ) + cSufPed, ( D():PedidosClientes( nView ) )->cCodAlm, .t., .f. )
-   end if*/
+         while ( D():PedidosClientesLineas( nView ) )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
+            if dbLock( D():PedidosClientesLineas( nView ) )
+               ( D():PedidosClientesLineas( nView ) )->( dbDelete() )
+               ( D():PedidosClientesLineas( nView ) )->( dbUnLock() )
+            end if
+         end while
 
-         if nNumPed != 0
+         while ( dbfPedCliI )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
+            if dbLock( dbfPedCliI )
+               ( dbfPedCliI )->( dbDelete() )
+               ( dbfPedCliI )->( dbUnLock() )
+            end if
+         end while
 
-            while ( D():PedidosClientesLineas( nView ) )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
-               if dbLock( D():PedidosClientesLineas( nView ) )
-                  ( D():PedidosClientesLineas( nView ) )->( dbDelete() )
-                  ( D():PedidosClientesLineas( nView ) )->( dbUnLock() )
+         while ( dbfPedCliD )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
+               if dbLock( dbfPedCliD )
+                  ( dbfPedCliD )->( dbDelete() )
+                  ( dbfPedCliD )->( dbUnLock() )
                end if
-            end while
+         end while
 
-            while ( dbfPedCliI )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
-               if dbLock( dbfPedCliI )
-                  ( dbfPedCliI )->( dbDelete() )
-                  ( dbfPedCliI )->( dbUnLock() )
-               end if
-            end while
+         while ( dbfPedCliP )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
+            if dbLock( dbfPedCliP )
+               ( dbfPedCliP )->( dbDelete() )
+               ( dbfPedCliP )->( dbUnLock() )
+            end if
+         end while
 
-            while ( dbfPedCliD )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
-                  if dbLock( dbfPedCliD )
-                     ( dbfPedCliD )->( dbDelete() )
-                     ( dbfPedCliD )->( dbUnLock() )
-                  end if
-            end while
+      end if
 
-            while ( dbfPedCliP )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
-               if dbLock( dbfPedCliP )
-                  ( dbfPedCliP )->( dbDelete() )
-                  ( dbfPedCliP )->( dbUnLock() )
-               end if
-            end while
-
-         end if
-
-       end case
+   end case
 
    if !( "PDA" $ cParamsMain() )
       oMsgProgress()
@@ -8857,14 +8848,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
       dbPass( dbfTmpRes, dbfPedCliR, .t., cSerPed, nNumPed, cSufPed )
       ( dbfTmpRes )->( dbSkip() )
    end while
-
-   /*
-   Acualizamos las cantidades pendientes de entregar---------------------------
-   */
-
-   /*if !Empty( oStock )
-      oStock:PedCli( cSerPed + Str( nNumPed ) + cSufPed, aTmp[ _CCODALM ], .f., .t. )
-   end if*/
 
    /*
    Si el pedido está cancelado ponemos el estado a 3---------------------------
@@ -15046,58 +15029,58 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( cPedCliT )->( __dbPack() )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->NNUMPED ) + Field->CSUFPED } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "NNUMPED", "Field->CSERPED + STR( Field->NNUMPED ) + Field->CSUFPED", {|| Field->CSERPED + STR( Field->NNUMPED ) + Field->CSUFPED } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "DFECPED", "DFECPED", {|| Field->DFECPED } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "DFECPED", "Field->DFECPED", {|| Field->DFECPED } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CCODCLI", "Field->CCODCLI", {|| Field->CCODCLI } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CNOMCLI", "Upper( CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CNOMCLI", "Upper( Field->CNOMCLI )", {|| Upper( Field->CNOMCLI ) } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "cCodObr", "cCodObr + Dtos( dFecPed )", {|| Field->cCodObr + Dtos( Field->dFecPed ) } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "cCodObr", "Field->cCodObr + Dtos( Field->dFecPed )", {|| Field->cCodObr + Dtos( Field->dFecPed ) } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "cCodAge", "cCodAge + Dtos( dFecPed )", {|| Field->cCodAge + Dtos( Field->dFecPed ) } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "cCodAge", "Field->cCodAge + Dtos( Field->dFecPed )", {|| Field->cCodAge + Dtos( Field->dFecPed ) } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "dFecEnt", "Dtos( dFecEnt )", {|| Dtos( Field->dFecEnt ) } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "dFecEnt", "Dtos( Field->dFecEnt )", {|| Dtos( Field->dFecEnt ) } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted() .and. lInternet", {||!Deleted() .and. Field->lInternet } ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "lInternet", "Dtos( dFecCre ) + cTimCre", {|| Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "lInternet", "Dtos( Field->dFecCre ) + Field->cTimCre", {|| Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CTURPED", "CTURPED + CSUFPED + CCODCAJ", {|| Field->CTURPED + Field->CSUFPED + Field->CCODCAJ} ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CTURPED", "Field->CTURPED + Field->CSUFPED + Field->CCODCAJ", {|| Field->CTURPED + Field->CSUFPED + Field->CCODCAJ} ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "cNumPre", "cNumPre", {|| Field->cNumPre } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "cNumPre", "Field->cNumPre", {|| Field->cNumPre } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ))
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "lSndDoc", "Field->lSndDoc", {|| Field->lSndDoc } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted() .and. lInternet .and. nEstado != 3", {|| !Deleted() .and. Field->lInternet .and. Field->nEstado != 3 } ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "lIntPedCli", "dFecPed", {|| Field->dFecPed } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "lIntPedCli", "Dtos( Field->dFecPed )", {|| Dtos( Field->dFecPed ) } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cNumAlb", "Field->cNumAlb", {|| Field->cNumAlb } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cCodWeb", "Str( cCodWeb )", {|| Str( Field->cCodWeb ) } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cCodWeb", "Str( Field->cCodWeb )", {|| Str( Field->cCodWeb ) } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "iNumPed", "'09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CSUPED", "CSUPED", {|| Field->CSUPED } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CSUPED", "Field->CSUPED", {|| Field->CSUPED } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "dFecDes", "dFecPed", {|| Field->dFecPed } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "dFecDes", "Field->dFecPed", {|| Field->dFecPed } ) )
 
       ( cPedCliT )->( dbCloseArea() )
    else
@@ -17210,7 +17193,6 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
          oBtnPedidos:Refresh()
       end if
 
-
    RECOVER USING oError
 
       msgStop( 'Imposible abrir ficheros de pedidos de clientes' + CRLF + ErrorMessage( oError ) )
@@ -17241,31 +17223,24 @@ Return ( cNumPed )
 
 //---------------------------------------------------------------------------//
 
-Function lPedidosWeb( cPedCliT )
+Function lPedidosWeb()
 
    local nRec
    local oBlock
    local oError
-   local lClose               := .f.
+   local dbfPedCliT
 
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if Empty( cPedCliT )
-	    USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @cPedCliT ) )
-    	SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-        lClose               := .t.
-      else
-         nRec                := ( cPedCliT )->( Recno() )
-      end if
+      USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "PedCliT.Cdx" ) ADDITIVE
 
-      if dbSeekInOrd( .t., "lIntPedCli", cPedCliT )
-
+      if dbSeekInOrd( .t., "lIntPedCli", dbfPedCliT )
+   
          lStartAvisoPedidos()
 
-         /*
-         Muestro un aviso en la barra de estado-----------------------------------
-         */
+         // Muestro un aviso en la barra de estado-----------------------------------
 
          if Empty( oMsgAlarm )
             oMsgAlarm         := TMsgItem():New( oWnd():oMsgBar,,24,,,,.t.,, "Sndint16",, "Nuevos pedidos recibidos"  )
@@ -17276,9 +17251,7 @@ Function lPedidosWeb( cPedCliT )
 
          lStopAvisoPedidos()
 
-         /*
-         Elimino aviso en la barra de estado--------------------------------------
-         */
+         // Elimino aviso en la barra de estado--------------------------------------
 
          if !Empty( oMsgAlarm )
             oWnd():oMsgBar:DelItem( oMsgAlarm )
@@ -17288,16 +17261,14 @@ Function lPedidosWeb( cPedCliT )
 
    RECOVER USING oError
 
+      msgStop( 'Imposible comprobar los pedidos recibidos por internet' + CRLF + ErrorMessage( oError ) )
+
    END SEQUENCE
 
    ErrorBlock( oBlock )
 
-   if ( cPedCliT )->( Used() )
-      if lClose
-         ( cPedCliT )->( dbCloseArea() )
-      else
-         ( cPedCliT )->( dbGoTo( nRec ) )
-      end if
+   if ( dbfPedCliT )->( Used() )
+      ( dbfPedCliT )->( dbCloseArea() )
    end if
 
 Return nil

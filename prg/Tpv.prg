@@ -15650,11 +15650,9 @@ return nil
 Function lStartAvisoPedidos()
 
    if !Empty( oBtnPedidos )
-
       lStopAvisoPedidos()
       oTimerBtn               := TTimer():New( 900, {|| lSelectedButton() }, )
       oTimerBtn:Activate()
-
    end if
 
 return .t.
@@ -15664,10 +15662,8 @@ return .t.
 Function lStopAvisoPedidos()
 
    if !Empty( oTimerBtn )
-
       oTimerBtn:End()
       oTimerBtn               := nil
-
    endif
 
 return .t.

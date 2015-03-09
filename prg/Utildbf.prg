@@ -1213,10 +1213,10 @@ Function dbSeekInOrd( uVal, cOrd, cAlias, lSoft, lLast )
    local nOrd
    local lRet  := .f.
 
-   if ( cAlias )->( Used() )
-      nOrd     := ( cAlias )->( OrdSetFocus( cOrd ) )
+   if ( cAlias )->( used() )
+      nOrd     := ( cAlias )->( ordSetFocus( cOrd ) )
       lRet     := ( cAlias )->( dbSeek( uVal, lSoft, lLast ) )
-      ( cAlias )->( OrdSetFocus( nOrd ) )
+      ( cAlias )->( ordSetFocus( nOrd ) )
    end if
 
 Return ( lRet )

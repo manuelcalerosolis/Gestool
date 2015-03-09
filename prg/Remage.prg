@@ -606,8 +606,6 @@ METHOD LoaRec( cNumRec )
       return ( .f. )
    end if
 
-   msgStop( ::oDbfDet:OrdSetFocus(), "antes" )
-
    ::oDbfDet:GetStatus()
    ::oDbfDet:OrdSetFocus( "nNumFac" )
 
