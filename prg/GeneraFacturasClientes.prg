@@ -47,6 +47,8 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
 
    METHOD CreaFacturas()
 
+   METHOD TestCreateTree()
+
    METHOD CreateTree()
 
    METHOD GetItemTree()
@@ -351,7 +353,7 @@ METHOD LoadAlbaranes() CLASS GeneraFacturasClientes
 
    MsgInfo( "Cargamos los albaranes dependiendo de las condiciones" )
 
-   ::CreateTree()
+   ::TestCreateTree()
 
    ::SetTreeBrowse()
 
@@ -384,6 +386,14 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD CreateTree() CLASS GeneraFacturasClientes
+
+   //*******EMPEZAR POR AQUI*******\\
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD TestCreateTree() CLASS GeneraFacturasClientes
 
    TreeInit()
 
