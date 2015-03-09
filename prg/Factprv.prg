@@ -6860,8 +6860,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       nNumFac           := nNewDoc( cSerFac, D():FacturasProveedores( nView ), "NFACPRV", , D():Contadores( nView ) )
       aTmp[ _NNUMFAC ]  := nNumFac
 
+      /*
       nNumNFC           := nNewNFC( cSerFac, D():FacturasProveedores( nView ), "NFACPRV", D():Contadores( nView ) )
       aTmp[ _CNFC    ]  := nNumNFC
+      */
 
       aTmp[ _LIMPALB ]  := !aNumAlb:Empty() .or. !Empty( aTmp[ _CNUMALB ] )
 

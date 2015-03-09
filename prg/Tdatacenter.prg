@@ -2383,10 +2383,10 @@ METHOD BuildEmpresa()
 
 
    oDataTable              := TDataTable()
-   oDataTable:cArea        := "CliEntidad"
-   oDataTable:cName        := cPatCli() + "CliEntidad"
-   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliEntidad.Dbf"
-   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliEntidad.Cdx"
+   oDataTable:cArea        := "CliDad"
+   oDataTable:cName        := cPatCli() + "CliDad"
+   oDataTable:cDataFile    := cPatCli( , .t. ) + "CliDad.Dbf"
+   oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliDad.Cdx"
    oDataTable:cDescription := "Clientes contactos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
@@ -5268,10 +5268,10 @@ CLASS D
                                                                ::setStatusClientesIncidencias( nView ) )  
 
 
-   METHOD ClientesFacturae( nView )                   INLINE ( ::Get( "CliEntidad", nView ) )
-      METHOD ClientesFacturaeId( nView )              INLINE ( ( ::Get( "CliEntidad", nView ) )->cCodCli )
-      METHOD eofClientesFacturae( nView )             INLINE ( ( ::Get( "CliEntidad", nView ) )->( eof() ) )
-      METHOD gotoIdClientesFacturae( id, nView )      INLINE ( ::seek( ::ClientesFacturae( nView ), id ) ) 
+   METHOD ClientesEntidad( nView )                    INLINE ( ::Get( "CliDad", nView ) )
+      METHOD ClientesEntidadId( nView )               INLINE ( ( ::Get( "CliDad", nView ) )->cCodCli )
+      METHOD eofClientesEntidad( nView )              INLINE ( ( ::Get( "CliDad", nView ) )->( eof() ) )
+      METHOD gotoIdClientesEntidad( id, nView )       INLINE ( ::seek( ::ClientesEntidad( nView ), id ) ) 
 
    METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )
 

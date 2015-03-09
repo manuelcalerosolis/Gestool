@@ -356,7 +356,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Get( "CliInc", nView )
 
-      D():ClientesFacturae( nView )
+      D():ClientesEntidad( nView )
 
       /*
       Apertura de fichero de Obras------------------------------------------------
@@ -4032,13 +4032,13 @@ Function getOrganismosFacturae( cCodigoCliente, nView )
 
    local aOrganismos := {}
 
-   if D():gotoIdClientesFacturae( cCodigoCliente, nView ) 
-      while D():ClientesFacturaeId( nView ) == cCodigoCliente .and. !D():eofClientesFacturae( nView )
-         aAdd( aOrganismos,   alltrim( ( D():ClientesFacturae( nView ) )->cDesFac ) + "," + ;
-                              alltrim( ( D():ClientesFacturae( nView ) )->cOfiCnt ) + "," + ;
-                              alltrim( ( D():ClientesFacturae( nView ) )->cOrgGes ) + "," + ;
-                              alltrim( ( D():ClientesFacturae( nView ) )->cUniTrm ) )
-         ( D():ClientesFacturae( nView ) )->( dbSkip() ) 
+   if D():gotoIdClientesEntidad( cCodigoCliente, nView ) 
+      while D():ClientesEntidadId( nView ) == cCodigoCliente .and. !D():eofClientesEntidad( nView )
+         aAdd( aOrganismos,   alltrim( ( D():ClientesEntidad( nView ) )->cDesFac ) + "," + ;
+                              alltrim( ( D():ClientesEntidad( nView ) )->cOfiCnt ) + "," + ;
+                              alltrim( ( D():ClientesEntidad( nView ) )->cOrgGes ) + "," + ;
+                              alltrim( ( D():ClientesEntidad( nView ) )->cUniTrm ) )
+         ( D():ClientesEntidad( nView ) )->( dbSkip() ) 
       end while
    end if 
 
@@ -8215,8 +8215,8 @@ FUNCTION AssertClient( cPath )
       dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "CliEntidad.Dbf" )
-      dbCreate( cPath + "CliEntidad.Dbf", aSqlStruct( aCliEntidad() ), cDriver() )
+   if !lExistTable( cPath + "CliDad.Dbf" )
+      dbCreate( cPath + "CliDad.Dbf", aSqlStruct( aCliDad() ), cDriver() )
    end if
 
 RETURN ( nil )
@@ -8244,7 +8244,7 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
       AppDbf( cPathOld, cPath, "CliInc"         )
       AppDbf( cPathOld, cPath, "CliContactos"   )
       AppDbf( cPathOld, cPath, "ClientD"        )
-      AppDbf( cPathOld, cPath, "CliEntidad"    )
+      AppDbf( cPathOld, cPath, "CliDad"    )
    end if
 
 RETURN NIL
@@ -8480,15 +8480,15 @@ FUNCTION rxClient( cPath, oMeter )
 
    // Tabla de contactos-------------------------------------------------------
 
-   fEraseIndex( cPath + "CliEntidad.Cdx" )
+   fEraseIndex( cPath + "CliDad.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliEntidad.Dbf", cCheckArea( "CliEntidad", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver(), cPath + "CliDad.Dbf", cCheckArea( "CliDad", @dbfCli ), .f. )
 
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliEntidad.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliDad.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfCli )->( dbCloseArea() )
    else
@@ -8530,8 +8530,8 @@ STATIC FUNCTION CreateFiles( cPath )
       dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "CliEntidad.Dbf" )
-      dbCreate( cPath + "CliEntidad.Dbf", aSqlStruct( aCliEntidad() ), cDriver() )
+   if !lExistTable( cPath + "CliDad.Dbf" )
+      dbCreate( cPath + "CliDad.Dbf", aSqlStruct( aCliDad() ), cDriver() )
    end if
 
 RETURN NIL
@@ -8594,17 +8594,17 @@ return ( aCliDoc )
 
 //--------------------------------------------------------------------------//
 
-function aCliEntidad()
+function aCliDad()
 
-   local aCliEntidad  := {}
+   local aCliDad  := {}
 
-   aAdd( aCliEntidad, { "cCodCli", "C",   12,  0, "Código del cliente" ,        "",                   "", "( cDbfCol )" } )
-   aAdd( aCliEntidad, { "cDesFac", "C",   60,  0, "Descripción del organismo" , "",                   "", "( cDbfCol )" } )
-   aAdd( aCliEntidad, { "cOfiCnt", "C",   14,  0, "Oficina contable" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aCliEntidad, { "cOrgGes", "C",   14,  0, "Organo gestor" ,             "",                   "", "( cDbfCol )" } )
-   aAdd( aCliEntidad, { "cUniTrm", "C",   14,  0, "Unidad tramitadora" ,        "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDad, { "cCodCli", "C",   12,  0, "Código del cliente" ,        "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDad, { "cDesFac", "C",   60,  0, "Descripción del organismo" , "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDad, { "cOfiCnt", "C",   14,  0, "Oficina contable" ,          "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDad, { "cOrgGes", "C",   14,  0, "Organo gestor" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDad, { "cUniTrm", "C",   14,  0, "Unidad tramitadora" ,        "",                   "", "( cDbfCol )" } )
 
-return ( aCliEntidad )
+return ( aCliDad )
 
 //--------------------------------------------------------------------------//
 
@@ -9503,7 +9503,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
    ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
 
-   dbCreate( cTmpFacturae, aSqlStruct( aCliEntidad() ), cLocalDriver() )
+   dbCreate( cTmpFacturae, aSqlStruct( aCliDad() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpFacturae, cCheckArea( "TmpFacturae", @dbfTmpFacturae ), .f. )
 
    ( dbfTmpFacturae )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
@@ -9605,10 +9605,10 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       Añadimos desde el fichero de documentos----------------------------------
       */
 
-      if D():gotoIdClientesFacturae( cCodCli, nView ) 
-         while ( D():ClientesFacturaeId( nView ) == cCodCli .and. ( D():ClientesFacturae( nView ) )->( !eof() ) )
-            dbPass( ( D():ClientesFacturae( nView ) ), dbfTmpFacturae, .t. )
-            ( D():ClientesFacturae( nView ) )->( dbSkip() )
+      if D():gotoIdClientesEntidad( cCodCli, nView ) 
+         while ( D():ClientesEntidadId( nView ) == cCodCli .and. ( D():ClientesEntidad( nView ) )->( !eof() ) )
+            dbPass( ( D():ClientesEntidad( nView ) ), dbfTmpFacturae, .t. )
+            ( D():ClientesEntidad( nView ) )->( dbSkip() )
          end while
       end if
 
@@ -10073,8 +10073,8 @@ end if
       oMsgText( "Eliminando documentos anteriores cliente" )
       oMsgProgress():SetRange( 0, ( dbfTmpFacturae )->( LastRec() ) )
 
-      while ( D():gotoIdClientesFacturae( aTmp[ _COD ], nView ) )
-         dbDel( D():ClientesFacturae( nView ) )
+      while ( D():gotoIdClientesEntidad( aTmp[ _COD ], nView ) )
+         dbDel( D():ClientesEntidad( nView ) )
          oMsgProgress():DeltaPos( 1 )
       end while
 
@@ -10083,7 +10083,7 @@ end if
 
       ( dbfTmpFacturae )->( dbGoTop() )
       while ( dbfTmpFacturae )->( !eof() )
-         dbPass( dbfTmpFacturae, ( D():ClientesFacturae( nView ) ), .t., aTmp[ _COD ] )
+         dbPass( dbfTmpFacturae, ( D():ClientesEntidad( nView ) ), .t., aTmp[ _COD ] )
          ( dbfTmpFacturae )->( dbSkip() )
          oMsgProgress():DeltaPos( 1 )
       end while

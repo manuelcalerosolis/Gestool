@@ -1588,7 +1588,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():GruposClientes( nView )
 
-      D():ClientesFacturae( nView )
+      D():ClientesEntidad( nView )
 
       D():ArticuloStockAlmacenes( nView )   
 
@@ -14780,7 +14780,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          */
 
          nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
+         /*
          nNumNFC              := nNewNFC( cSerFac, D():FacturasClientes( nView ), "NFACCLI", D():Contadores( nView ) )
+         */
 
          aTmp[ _NNUMFAC ]     := nNumFac
          aTmp[ _CNFC    ]     := nNumNFC
@@ -18892,7 +18894,7 @@ function nUnidadesRecibidasFacCli( cNumPed, cCodArt, cCodPr1, cCodPr2, dbfFacCli
 
    if ( dbfFacCliL )->( dbSeek( cNumPed + cCodArt ) )
       while ( dbfFacCliL )->cNumPed + ( dbfFacCliL )->cRef + ( dbfFacCliL )->cCodPr1 + ( dbfFacCliL )->cCodPr2 == cNumPed + cCodArt + cCodPr1 + cCodPr2 .and. !( dbfFacCliL )->( eof() )
-         nTot     += nTotNFacCli( dbfFacCliL )
+         nTot        += nTotNFacCli( dbfFacCliL )
          ( dbfFacCliL )->( dbSkip() )
       end while
    end if
