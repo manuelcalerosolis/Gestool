@@ -53,7 +53,21 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
 
    METHOD GetImporteTree()
 
+   METHOD GetItemCheck()
+
    METHOD SetTreeBrowse()
+
+   METHOD ChangeBrowse()
+
+   METHOD SetValueCheck()
+
+   METHOD UpdatePadre()
+
+   METHOD AppendFactura( oItem )
+
+   METHOD AppendFacturaCabecera( oItem )
+
+   METHOD AppendFacturaLineas( oItem )
 
 ENDCLASS
 
@@ -231,31 +245,40 @@ METHOD Resource() CLASS GeneraFacturasClientes
    Segunda caja de diálogo-----------------------------------------------------
    */
 
-   ::oBrwAlbaranes                 := IXBrowse():New( ::oPag:aDialogs[ 2 ] )
+   ::oBrwAlbaranes                  := IXBrowse():New( ::oPag:aDialogs[ 2 ] )
 
-   ::oBrwAlbaranes:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwAlbaranes:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrwAlbaranes:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrwAlbaranes:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   ::oBrwAlbaranes:lVScroll        := .t.
-   ::oBrwAlbaranes:lHScroll        := .t.
-   ::oBrwAlbaranes:nMarqueeStyle   := 5
+   ::oBrwAlbaranes:lVScroll         := .t.
+   ::oBrwAlbaranes:lHScroll         := .t.
+   ::oBrwAlbaranes:nMarqueeStyle    := 5
 
    with object ( ::oBrwAlbaranes:AddCol() )
-      :cHeader                   := ""
-      :nWidth                    := 440
-      :bStrData                  := {|| ::GetItemTree() }
-      :lHide                     := .f.
+      :cHeader                      := ""
+      :bStrData                     := {|| "" }
+      :bEditValue                   := {|| ::GetItemCheck() }
+      :nWidth                       := 20
+      :SetCheck( { "Sel16", "Nil16" } )
    end with
 
    with object ( ::oBrwAlbaranes:AddCol() )
-      :cHeader                   := "Importes"
-      :nWidth                    := 140
-      :bStrData                  := {|| ::GetImporteTree() }
-      :lHide                     := .f.
-      :nDataStrAlign             := 1
-      :nHeadStrAlign             := 1
-      :nFootStrAlign             := 1
+      :cHeader                      := ""
+      :nWidth                       := 420
+      :bStrData                     := {|| ::GetItemTree() }
    end with
+
+   with object ( ::oBrwAlbaranes:AddCol() )
+      :cHeader                      := "Importes"
+      :nWidth                       := 140
+      :bStrData                     := {|| ::GetImporteTree() }
+      :lHide                        := .f.
+      :nDataStrAlign                := 1
+      :nHeadStrAlign                := 1
+      :nFootStrAlign                := 1
+   end with
+
+   ::oBrwAlbaranes:bLDblClick       := {|| ::ChangeBrowse() }
 
    ::oBrwAlbaranes:CreateFromResource( 100 )
 
@@ -366,35 +389,29 @@ METHOD CreateTree() CLASS GeneraFacturasClientes
 
    ::oTreeTotales                := TreeBegin( "Navigate_Minus_16", "Navigate_Plus_16" )
    
-   TreeAddItem( "Cliente 0000000" ):Cargo := { "Cliente 0000000 (2 Docs.)", "" }
+   /*
+   Primer registro-------------------------------------------------------------
+   */
+
+   TreeAddItem( "Cliente 0000000" ):Cargo := { "0000000", "Cliente 0000000 (2 Docs.)", "", .t., "" }
 
    TreeBegin()
 
-   TreeAddItem( "A/1", "Detalles", , , , .f. ):Cargo := { "A/1  28/01/2015", 250 }
-   TreeAddItem( "A/2", "Detalles", , , , .f. ):Cargo := { "A/2  31/01/2015", 350 }
-
-   /*for each aItem in ::aDatAlbCliVentas
-      if ( Empty( cCaja ) .or. aItem[ 1 ] == cCaja )
-         TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .f. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
-      end if
-   next*/
+   TreeAddItem( "A/1", "Detalles", , , , .f. ):Cargo := { "A        1  ", "A/1 28/01/2015", 250, .t., "000" }
+   TreeAddItem( "A/2", "Detalles", , , , .f. ):Cargo := { "A        2  ", "A/2 31/01/2015", 350, .t., "000" }
 
    TreeEnd()
 
+   /*
+   Segundo registro------------------------------------------------------------
+   */
 
-
-   TreeAddItem( "Cliente 0000001" ):Cargo := { "Cliente 0000001 (2 Docs.)", "" }
+   TreeAddItem( "Cliente 0000001" ):Cargo := { "0000001", "Cliente 0000001 (2 Docs.)", "", .t., "" }
 
    TreeBegin()
 
-   TreeAddItem( "A/3", "Detalles", , , , .f. ):Cargo := { "A/3  03/02/2015", 250 }
-   TreeAddItem( "A/4", "Detalles", , , , .f. ):Cargo := { "A/4  04/02/2015", 350 }
-
-   /*for each aItem in ::aDatAlbCliVentas
-      if ( Empty( cCaja ) .or. aItem[ 1 ] == cCaja )
-         TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .f. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
-      end if
-   next*/
+   TreeAddItem( "A/3", "Detalles", , , , .f. ):Cargo := { "A        3  ", "A/3 03/02/2015", 250, .t., "000" }
+   TreeAddItem( "A/4", "Detalles", , , , .f. ):Cargo := { "A        4  ", "A/4 04/02/2015", 350, .t., "000" }
 
    TreeEnd()
 
@@ -407,7 +424,19 @@ METHOD GetItemTree() CLASS GeneraFacturasClientes
    local cItem    := ""
 
    if !Empty( ::oBrwAlbaranes:oTreeItem ) 
-      cItem       := ::oBrwAlbaranes:oTreeItem:Cargo[ 1 ]
+      cItem       := ::oBrwAlbaranes:oTreeItem:Cargo[ 2 ]
+   end if
+
+Return ( cItem )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetItemCheck() CLASS GeneraFacturasClientes
+
+   local cItem    := .f.
+
+   if !Empty( ::oBrwAlbaranes:oTreeItem ) 
+      cItem       := ::oBrwAlbaranes:oTreeItem:Cargo[ 4 ]
    end if
 
 Return ( cItem )
@@ -419,18 +448,119 @@ METHOD GetImporteTree() CLASS GeneraFacturasClientes
    local cItem    := ""
 
    if !Empty( ::oBrwAlbaranes:oTreeItem ) 
-      if ::oBrwAlbaranes:oTreeItem:cPrompt != "Espacio"
-         cItem    := Trans( ::oBrwAlbaranes:oTreeItem:Cargo[ 2 ], cPorDiv( cDivEmp(), D():Divisas( ::nView ) ) )
-      end if 
+      cItem    := Trans( ::oBrwAlbaranes:oTreeItem:Cargo[ 3 ], cPorDiv( cDivEmp(), D():Divisas( ::nView ) ) )
    end if
 
 Return ( cItem )
 
 //---------------------------------------------------------------------------//
 
+METHOD ChangeBrowse() CLASS GeneraFacturasClientes
+
+   local nLevel
+
+   if !Empty( ::oBrwAlbaranes:oTreeItem )
+
+      if Empty( ::oBrwAlbaranes:oTreeItem:oTree )
+
+         /*
+         Es un nodo hijo-------------------------------------------------------
+         */
+
+         ::SetValueCheck( ::oBrwAlbaranes:oTreeItem, !::oBrwAlbaranes:oTreeItem:Cargo[ 4 ] )
+
+         ::UpdatePadre( ::oBrwAlbaranes:oTreeItem )
+
+      else
+
+         /*
+         Es un nodo padre------------------------------------------------------
+         */
+
+         nLevel := ::oBrwAlbaranes:oTreeItem:oTree:oFirst:nLevel
+
+         ::oBrwAlbaranes:oTreeItem:oTree:Eval( { | oItem | If( oItem:nLevel >= nLevel, ::SetValueCheck( oItem, !::oBrwAlbaranes:oTreeItem:Cargo[ 4 ] ), ) } )
+
+         ::SetValueCheck( ::oBrwAlbaranes:oTreeItem, !::oBrwAlbaranes:oTreeItem:Cargo[ 4 ] )
+
+      end if
+
+   end if 
+
+   ::oBrwAlbaranes:Refresh()  
+   
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetValueCheck( oItem, lValue ) CLASS GeneraFacturasClientes
+
+   oItem:Cargo[ 4 ] := lValue
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD UpdatePadre( oHijo ) CLASS GeneraFacturasClientes
+
+   local lSel     := .f.
+   local oParent  := oHijo:Parent( oHijo:nLevel )
+
+   oParent:oTree:Eval( { | oItem | If( oItem:nLevel >= oParent:nLevel, iif( oItem:Cargo[ 4 ], lSel := .t., ), ) } )
+
+   ::SetValueCheck( oParent, lSel )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD CreaFacturas() CLASS GeneraFacturasClientes
 
-   MsgInfo( "Creamos las facturas tirando de los albaranes" )  
+   local oItem
+
+   if !Empty( ::oBrwAlbaranes:oTree )
+
+      oItem := ::oBrwAlbaranes:oTree:oFirst
+
+      while oItem != nil
+         
+         if !Empty( oItem:oTree ) .and. oItem:Cargo[ 4 ]
+
+            ::AppendFactura( oItem )
+
+         end if   
+
+         oItem = oItem:GetNext()
+
+      end while
+
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AppendFactura( oItem ) CLASS GeneraFacturasClientes
+
+   ::AppendFacturaCabecera( oItem )
+
+   oItem:oTree:Eval( { | o | If( o:nLevel >= oItem:nLevel, iif( o:Cargo[ 4 ], ::AppendFacturaLineas( o ), ), ) } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
+
+   MsgInfo( "Añado cabecera facturas para " + oItem:Cargo[ 1 ] )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AppendFacturaLineas( oItem ) CLASS GeneraFacturasClientes
+
+   MsgInfo( "Añado lineas facturas para " + oItem:Cargo[ 1 ] )
 
 Return ( self )
 

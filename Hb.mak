@@ -596,7 +596,6 @@ Impfactu.obj            \
 Impfaccom.obj           \
 InfoArticulo.obj        \
 TAuditor.obj            \
-Linklist.obj            \
 Treeitem.obj            \
 Ttvitem.obj             \
 Tur2ses.obj             \
