@@ -17387,11 +17387,11 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
                nDescuentoPp   := 0
             end if
 
-            nBasLin           := nTotLin - nDescuentoEsp - nDescuentoPp
             nIvmLin           := nIvmLTpv( cTikL, nDouDiv, nDorDiv )
+            nBasLin           := nTotLin - nDescuentoEsp - nDescuentoPp  
 
             if ( cTikL )->nIvaTil != 0
-               nBasLin        := nTotLin / ( 1 + ( ( cTikL )->nIvaTil / 100 ) )
+               nBasLin        := ( nTotLin - nIvmLin ) / ( 1 + ( ( cTikL )->nIvaTil / 100 ) )
             else
                nBasLin        := nTotLin
             end if
@@ -17402,7 +17402,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
                aIvaTik[ 1 ]   := ( cTikL )->nIvaTil
                aBrtTik[ 1 ]   += nTotLin
                aBasTik[ 1 ]   += nBasLin
-               aImpTik[ 1 ]   += ( nTotLin - nBasLin )
+               aImpTik[ 1 ]   += ( nTotLin - nIvmLin - nBasLin )
                aIvmTik[ 1 ]   += nIvmLin
 
             case aIvaTik[ 2 ] == nil .or. aIvaTik[ 2 ] == ( cTikL )->nIvaTil
@@ -17410,7 +17410,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
                aIvaTik[ 2 ]   := ( cTikL )->nIvaTil
                aBrtTik[ 2 ]   += nTotLin
                aBasTik[ 2 ]   += nBasLin
-               aImpTik[ 2 ]   += ( nTotLin - nBasLin )
+               aImpTik[ 2 ]   += ( nTotLin - nIvmLin - nBasLin )
                aIvmTik[ 2 ]   += nIvmLin
 
             case aIvaTik[ 3 ] == nil .or. aIvaTik[ 3 ] == ( cTikL )->nIvaTil
@@ -17418,7 +17418,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
                aIvaTik[ 3 ]   := ( cTikL )->nIvaTil
                aBrtTik[ 3 ]   += nTotLin
                aBasTik[ 3 ]   += nBasLin
-               aImpTik[ 3 ]   += ( nTotLin - nBasLin )
+               aImpTik[ 3 ]   += ( nTotLin - nIvmLin - nBasLin )
                aIvmTik[ 3 ]   += nIvmLin
 
             end case
