@@ -6844,12 +6844,12 @@ Function FacCliTablet()
                                              		"cResName"  => "flat_edit_64",;
                                              		"bLClicked" => {|| WinEdtRec( nil, bEdtTablet, D():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
+
       if lUsrMaster()
 
          oBtnDel        := TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 3.5, oDlg ) },;
                                              		"nWidth"    => 64,;
-                                                   "bWhen"     => {|| , msgStop( "Solo puede eliminar factua.f. },; // 
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_minus_64",;
                                              		"bLClicked" => {|| WinDelRec( oBrw, D():FacturasClientes( nView ), {|| QuiFacCli() }, , , .t. ) },;
@@ -6893,67 +6893,67 @@ Function FacCliTablet()
 	Browse de facturas-------------------------------------------------------
    */
 
-   	oBrw                 	:= TGridIXBrowse():New( oDlg )
+      oBrw                 	:= TGridIXBrowse():New( oDlg )
 
-   	oBrw:nTop            	:= oBrw:EvalRow( 115 )
-   	oBrw:nLeft           	:= oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
-   	oBrw:nWidth          	:= oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
-   	oBrw:nHeight         	:= oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )
+      oBrw:nTop            	:= oBrw:EvalRow( 115 )
+      oBrw:nLeft           	:= oBrw:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
+      oBrw:nWidth          	:= oBrw:EvalWidth( {|| GridWidth( 11, oDlg ) } )
+      oBrw:nHeight         	:= oBrw:EvalHeight( {|| GridHeigth( oDlg ) - oBrw:nTop - 10 } )
 
-   	oBrw:cAlias          	:= D():FacturasClientes( nView )
-   	oBrw:nMarqueeStyle   	:= 6
-   	oBrw:cName           	:= "Grid facturas"
+      oBrw:cAlias          	:= D():FacturasClientes( nView )
+      oBrw:nMarqueeStyle   	:= 6
+      oBrw:cName           	:= "Grid facturas"
 
-    with object ( oBrw:AddCol() )
-       	:cHeader            := "Factura"
-        :bEditValue         := {|| ( D():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + CRLF + Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) }
-        :nWidth             := 160
-    end with
+      with object ( oBrw:AddCol() )
+         :cHeader            := "Factura"
+         :bEditValue         := {|| ( D():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + CRLF + Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) }
+         :nWidth             := 160
+      end with
 
-    with object ( oBrw:AddCol() )
+      with object ( oBrw:AddCol() )
        	:cHeader            := "Cliente"
-        :bEditValue         := {|| AllTrim( ( D():FacturasClientes( nView ) )->cCodCli ) + CRLF + AllTrim( ( D():FacturasClientes( nView ) )->cNomCli )  }
-        :nWidth             := 320
-    end with
+         :bEditValue         := {|| AllTrim( ( D():FacturasClientes( nView ) )->cCodCli ) + CRLF + AllTrim( ( D():FacturasClientes( nView ) )->cNomCli )  }
+         :nWidth             := 320
+      end with
 
-    with object ( oBrw:AddCol() )
+      with object ( oBrw:AddCol() )
        	:cHeader            := "Base"
-        :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotNet  }
-        :cEditPicture     	:= cPorDiv()
-        :nWidth             := 80
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :lHide            	:= .t.
-    end with
+         :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotNet  }
+         :cEditPicture     	:= cPorDiv()
+         :nWidth             := 80
+         :nDataStrAlign    	:= 1
+         :nHeadStrAlign    	:= 1
+         :lHide            	:= .t.
+      end with
 
-    with object ( oBrw:AddCol() )
+      with object ( oBrw:AddCol() )
        	:cHeader            := cImp()
-        :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotIva  }
-        :cEditPicture     	:= cPorDiv()
-        :nWidth             := 80
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :lHide            	:= .t.
-    end with
+         :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotIva  }
+         :cEditPicture     	:= cPorDiv()
+         :nWidth             := 80
+         :nDataStrAlign    	:= 1
+         :nHeadStrAlign    	:= 1
+         :lHide            	:= .t.
+      end with
 
-    with object ( oBrw:AddCol() )
+      with object ( oBrw:AddCol() )
        	:cHeader            := "R.E."
-        :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotReq  }
-        :cEditPicture     	:= cPorDiv()
-        :nWidth             := 80
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :lHide            	:= .t.
-    end with
+         :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotReq  }
+         :cEditPicture     	:= cPorDiv()
+         :nWidth             := 80
+         :nDataStrAlign    	:= 1
+         :nHeadStrAlign    	:= 1
+         :lHide            	:= .t.
+      end with
 
-    with object ( oBrw:AddCol() )
+      with object ( oBrw:AddCol() )
        	:cHeader            := "Total"
-        :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotFac }
-        :cEditPicture     	:= cPorDiv()
-        :nWidth             := 190
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-    end with
+         :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotFac }
+         :cEditPicture     	:= cPorDiv()
+         :nWidth             := 190
+         :nDataStrAlign    	:= 1
+         :nHeadStrAlign    	:= 1
+      end with
 
    	oBrw:nHeaderHeight   	:= 48
    	oBrw:nFooterHeight   	:= 48
@@ -6964,19 +6964,19 @@ Function FacCliTablet()
 
    	oBrw:CreateFromCode( 105 )
 
-   	/*
-	Redimensionamos y activamos el diálogo-------------------------------------
-	*/
+      /*
+      Redimensionamos y activamos el diálogo-------------------------------------
+      */
 
    	oDlg:bResized  				:= {|| GridResize( oDlg ) }
 
    	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )
    
-    /*
-	Cerramos los ficheros------------------------------------------------------
-    */
+      /*
+	  Cerramos los ficheros------------------------------------------------------
+      */
 
-    CloseFiles()
+   CloseFiles()
 
 RETURN .t.
 
