@@ -238,9 +238,9 @@ METHOD GeneraXml()
    local oError
    local oBlock
 
-   ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="ISO-8859-1" ?>' )
+   // ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="ISO-8859-1" ?>' )
 
-   // ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8" ?> ' )
+   ::oXml         := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' )
 
    /*
    Comienza el nodo principal--------------------------------------------------
@@ -255,14 +255,17 @@ METHOD GeneraXml()
    
    /*
    Facturae 3.2
-   */
 
    ::oXmlNode     := TXmlNode():new( , "fe:Facturae",;
                                        {  "xmlns:fe" => "http://www.facturae.es/Facturae/2009/v3.2/Facturae",;
                                           "xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",;
                                           "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",;
                                           "xsi:schemaLocation" => "http://www.facturae.es/Facturae/2009/v3.2/Facturae" } )
+   */
 
+   ::oXmlNode     := TXmlNode():new( , "fe:Facturae",;
+                                       {  "xmlns:ds" => "http://www.w3.org/2000/09/xmldsig#",;
+                                          "xmlns:fe" => "http://www.facturae.es/Facturae/2009/v3.2/Facturae" } )
 
    ::HeaderXml()
 
@@ -443,8 +446,8 @@ METHOD PartiesXml()
                      ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'Volume', ,                      ::oSellerParty:nVolume ) )
                   end if
 
-                  if !Empty( ::oSellerParty:cAditionalRegistrationData )
-                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'AditionalRegistrationData', ,   ::oSellerParty:cAditionalRegistrationData ) )
+                  if !Empty( ::oSellerParty:AditionalRegistrationData() )
+                     ::oXmlRegistrationData:addBelow( TXmlNode():new( , 'AditionalRegistrationData', ,   ::oSellerParty:AditionalRegistrationData() ) )
                   end if
 
                ::oXmlLegalEntity:addBelow( ::oXmlRegistrationData )
@@ -1374,21 +1377,22 @@ CLASS Party FROM Address
    DATA     cFirstSurname                 INIT ''
    DATA     cSecondSurname                INIT ''
 
-   ACCESS   TaxIdentificationNumber       INLINE ( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) )
+   ACCESS   TaxIdentificationNumber       INLINE ( hb_StrToUTF8( Rtrim( Left( ::cTaxIdentificationNumber, 30 ) ) ) )
 
-   ACCESS   Telephone                     INLINE ( Rtrim( ::cTelephone         ) )
-   ACCESS   TelFax                        INLINE ( Rtrim( ::cTelFax            ) )
-   ACCESS   WebAddress                    INLINE ( Rtrim( ::cWebAddress        ) )
-   ACCESS   ElectronicMail                INLINE ( Rtrim( ::cElectronicMail    ) )
-   ACCESS   PersonTypeCode                INLINE ( Rtrim( ::cPersonTypeCode    ) )
-   ACCESS   ResidenceTypeCode             INLINE ( Rtrim( ::cResidenceTypeCode ) )
+   ACCESS   AditionalRegistrationData     INLINE ( hb_StrToUTF8( Rtrim( ::cAditionalRegistrationData ) ) )
+   ACCESS   Telephone                     INLINE ( hb_StrToUTF8( Rtrim( ::cTelephone ) ) )
+   ACCESS   TelFax                        INLINE ( hb_StrToUTF8( Rtrim( ::cTelFax ) ) )
+   ACCESS   WebAddress                    INLINE ( hb_StrToUTF8( Rtrim( ::cWebAddress ) ) )
+   ACCESS   ElectronicMail                INLINE ( hb_StrToUTF8( Rtrim( ::cElectronicMail ) ) )
+   ACCESS   PersonTypeCode                INLINE ( hb_StrToUTF8( Rtrim( ::cPersonTypeCode ) ) )
+   ACCESS   ResidenceTypeCode             INLINE ( hb_StrToUTF8( Rtrim( ::cResidenceTypeCode ) ) )
 
-   ACCESS   CorporateName                 INLINE ( Rtrim( Left( ::cCorporateName, 80 ) ) )
-   ACCESS   TradeName                     INLINE ( Rtrim( Left( ::cTradeName, 40 ) ) )
+   ACCESS   CorporateName                 INLINE ( hb_StrToUTF8( Rtrim( Left( ::cCorporateName, 80 ) ) ) )
+   ACCESS   TradeName                     INLINE ( hb_StrToUTF8( Rtrim( Left( ::cTradeName, 40 ) ) ) )
 
-   ACCESS   Name                          INLINE ( Rtrim( Left( ::cName, 40 ) ) )
-   ACCESS   FirstSurname                  INLINE ( Rtrim( Left( ::cFirstSurname, 40 ) ) )
-   ACCESS   SecondSurname                 INLINE ( Rtrim( Left( ::cSecondSurname, 40 ) ) )
+   ACCESS   Name                          INLINE ( hb_StrToUTF8( Rtrim( Left( ::cName, 40 ) ) ) )
+   ACCESS   FirstSurname                  INLINE ( hb_StrToUTF8( Rtrim( Left( ::cFirstSurname, 40 ) ) ) )
+   ACCESS   SecondSurname                 INLINE ( hb_StrToUTF8( Rtrim( Left( ::cSecondSurname, 40 ) ) ) )
 
 ENDCLASS
 
@@ -1440,7 +1444,7 @@ CLASS ItemLine
    DATA     nGrossAmount                  INIT 0.00
    DATA     aTax                          INIT {}
 
-   ACCESS   ItemDescription               INLINE ( Rtrim( ::cItemDescription ) )
+   ACCESS   ItemDescription               INLINE ( hb_StrToUTF8( rtrim( ::cItemDescription ) ) )
    ACCESS   UnitOfMeasure                 INLINE ( ::cUnitOfMeasure )
    ACCESS   Quantity                      INLINE ( Alltrim( Trans( ::nQuantity,                          DoubleTwoDecimalPicture ) ) )
    ACCESS   UnitPriceWithoutTax           INLINE ( Alltrim( Trans( ::nUnitPriceWithoutTax,               DoubleSixDecimalPicture ) ) )
@@ -1519,11 +1523,11 @@ CLASS Address
    DATA     cProvince               INIT ''
    DATA     cCountryCode            INIT 'ESP'
 
-   ACCESS   Address                 INLINE ( alltrim( left( ::cAddress, 80 ) ) )
-   ACCESS   PostCode                INLINE ( alltrim( left( ::cPostCode, 9 ) ) )
-   ACCESS   Town                    INLINE ( alltrim( left( ::cTown, 50 ) ) )
-   ACCESS   Province                INLINE ( alltrim( left( ::cProvince, 20 ) ) )
-   ACCESS   CountryCode             INLINE ( alltrim( left( ::cCountryCode, 3 ) ) )
+   ACCESS   Address                 INLINE ( hb_StrToUTF8( alltrim( left( ::cAddress, 80 ) ) ) )
+   ACCESS   PostCode                INLINE ( hb_StrToUTF8( alltrim( left( ::cPostCode, 9 ) ) ) )
+   ACCESS   Town                    INLINE ( hb_StrToUTF8( alltrim( left( ::cTown, 50 ) ) ) )
+   ACCESS   Province                INLINE ( hb_StrToUTF8( alltrim( left( ::cProvince, 20 ) ) ) )
+   ACCESS   CountryCode             INLINE ( hb_StrToUTF8( alltrim( left( ::cCountryCode, 3 ) ) ) )
 
 ENDCLASS
 
@@ -1549,9 +1553,9 @@ CLASS AdministrativeCentres FROM Address
    DATA     cRoleTypeCode           INIT ''
    DATA     cCentreDescription      INIT ''
 
-   ACCESS   CentreCode              INLINE ( alltrim( ::cCentreCode   ) )
-   ACCESS   RoleTypeCode            INLINE ( alltrim( ::cRoleTypeCode ) )
-   ACCESS   CentreDescription       INLINE ( alltrim( ::cCentreDescription ) )
+   ACCESS   CentreCode              INLINE ( hb_StrToUTF8( alltrim( ::cCentreCode   ) ) )
+   ACCESS   RoleTypeCode            INLINE ( hb_StrToUTF8( alltrim( ::cRoleTypeCode ) ) )
+   ACCESS   CentreDescription       INLINE ( hb_StrToUTF8( alltrim( ::cCentreDescription ) ) )
 
 ENDCLASS
 

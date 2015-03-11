@@ -1178,6 +1178,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                ( dbfFacCliL )->nLote      := ( dbfAlbCliL )->nLote
                ( dbfFacCliL )->cLote      := ( dbfAlbCliL )->cLote
                ( dbfFacCliL )->dFecCad    := ( dbfAlbCliL )->dFecCad
+               ( dbfFacCliL )->cNumPed    := ( dbfAlbCliL )->cNumPed
 
                ( dbfFacCliL )->cCodAlb    := oDbfTmp:cNumAlb
                ( dbfFacCliL )->dFecAlb    := oDbfTmp:dFecAlb
