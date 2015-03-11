@@ -1085,7 +1085,7 @@ CLASS GetPeriodo FROM ComponentGet
 
    METHOD Resource( oContainer )
 
-   METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+   METHOD InRange( uValue )      INLINE ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() )
 
 END CLASS 
 
@@ -1222,7 +1222,7 @@ CLASS GetRangoCliente FROM Component
 
    METHOD Resource( oContainer )
 
-   //METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+   METHOD InRange( uValue )      INLINE ( ::oAll:Value() .or. ( uValue >= ::oInicio:Value() .and. uValue <= ::oFin:Value() ) )
 
 END CLASS 
 
@@ -1281,7 +1281,7 @@ CLASS GetRangoGrupoCliente FROM Component
 
    METHOD Resource( oContainer )
 
-   //METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+   METHOD InRange( uValue )      INLINE ( ::oAll:Value() .or. ( uValue >= ::oInicio:Value() .and. uValue <= ::oFin:Value() ) )
 
 END CLASS 
 
@@ -1344,7 +1344,7 @@ CLASS GetRangoSeries FROM Component
 
    METHOD UnselectAll()       INLINE ( if( !Empty( ::hObjectSerie ), hEval( ::hObjectSerie, {| h, o, i | o:uCheckValue := .f., o:oCheckControl:Refresh() } ), ) )
 
-   //METHOD InRange( uValue )      INLINE ( empty( uValue ) .or. ( uValue >= ::oFechaInicio:Value() .and. uValue <= ::oFechaFin:Value() ) )
+   METHOD InRange( uValue )
 
 END CLASS 
 
@@ -1366,32 +1366,32 @@ METHOD New( idTodas, idNinguna, idInicio, oContainer ) CLASS GetRangoSeries
    ::oTodas          := ComponentUrlLink():New( idTodas, {|| ::SelectAll() }, "Todas", oContainer )
    ::oNinguna        := ComponentUrlLink():New( idNinguna, {|| ::UnselectAll() }, "Ninguna", oContainer )
 
-   ::hObjectSerie    := { "SerieA"  =>  ComponentCheck():New( idInicio, .t., oContainer ),;
-                          "SerieB"  =>  ComponentCheck():New( idInicio + 1, .t., oContainer ),;
-                          "SerieC"  =>  ComponentCheck():New( idInicio + 2, .t., oContainer ),;
-                          "SerieD"  =>  ComponentCheck():New( idInicio + 3, .t., oContainer ),;
-                          "SerieE"  =>  ComponentCheck():New( idInicio + 4, .t., oContainer ),;
-                          "SerieF"  =>  ComponentCheck():New( idInicio + 5, .t., oContainer ),;
-                          "SerieG"  =>  ComponentCheck():New( idInicio + 6, .t., oContainer ),;
-                          "SerieH"  =>  ComponentCheck():New( idInicio + 7, .t., oContainer ),;
-                          "SerieI"  =>  ComponentCheck():New( idInicio + 8, .t., oContainer ),;
-                          "SerieJ"  =>  ComponentCheck():New( idInicio + 9, .t., oContainer ),;
-                          "SerieK"  =>  ComponentCheck():New( idInicio + 10, .t., oContainer ),;
-                          "SerieL"  =>  ComponentCheck():New( idInicio + 11, .t., oContainer ),;
-                          "SerieM"  =>  ComponentCheck():New( idInicio + 12, .t., oContainer ),;
-                          "SerieN"  =>  ComponentCheck():New( idInicio + 13, .t., oContainer ),;
-                          "SerieO"  =>  ComponentCheck():New( idInicio + 14, .t., oContainer ),;
-                          "SerieP"  =>  ComponentCheck():New( idInicio + 15, .t., oContainer ),;
-                          "SerieQ"  =>  ComponentCheck():New( idInicio + 16, .t., oContainer ),;
-                          "SerieR"  =>  ComponentCheck():New( idInicio + 17, .t., oContainer ),; 
-                          "SerieS"  =>  ComponentCheck():New( idInicio + 18, .t., oContainer ),; 
-                          "SerieT"  =>  ComponentCheck():New( idInicio + 19, .t., oContainer ),; 
-                          "SerieU"  =>  ComponentCheck():New( idInicio + 20, .t., oContainer ),; 
-                          "SerieV"  =>  ComponentCheck():New( idInicio + 21, .t., oContainer ),; 
-                          "SerieW"  =>  ComponentCheck():New( idInicio + 22, .t., oContainer ),; 
-                          "SerieX"  =>  ComponentCheck():New( idInicio + 23, .t., oContainer ),; 
-                          "SerieY"  =>  ComponentCheck():New( idInicio + 24, .t., oContainer ),; 
-                          "SerieZ"  =>  ComponentCheck():New( idInicio + 25, .t., oContainer ) }
+   ::hObjectSerie    := { "A"  =>  ComponentCheck():New( idInicio, .t., oContainer ),;
+                          "B"  =>  ComponentCheck():New( idInicio + 1, .t., oContainer ),;
+                          "C"  =>  ComponentCheck():New( idInicio + 2, .t., oContainer ),;
+                          "D"  =>  ComponentCheck():New( idInicio + 3, .t., oContainer ),;
+                          "E"  =>  ComponentCheck():New( idInicio + 4, .t., oContainer ),;
+                          "F"  =>  ComponentCheck():New( idInicio + 5, .t., oContainer ),;
+                          "G"  =>  ComponentCheck():New( idInicio + 6, .t., oContainer ),;
+                          "H"  =>  ComponentCheck():New( idInicio + 7, .t., oContainer ),;
+                          "I"  =>  ComponentCheck():New( idInicio + 8, .t., oContainer ),;
+                          "J"  =>  ComponentCheck():New( idInicio + 9, .t., oContainer ),;
+                          "K"  =>  ComponentCheck():New( idInicio + 10, .t., oContainer ),;
+                          "L"  =>  ComponentCheck():New( idInicio + 11, .t., oContainer ),;
+                          "M"  =>  ComponentCheck():New( idInicio + 12, .t., oContainer ),;
+                          "N"  =>  ComponentCheck():New( idInicio + 13, .t., oContainer ),;
+                          "O"  =>  ComponentCheck():New( idInicio + 14, .t., oContainer ),;
+                          "P"  =>  ComponentCheck():New( idInicio + 15, .t., oContainer ),;
+                          "Q"  =>  ComponentCheck():New( idInicio + 16, .t., oContainer ),;
+                          "R"  =>  ComponentCheck():New( idInicio + 17, .t., oContainer ),; 
+                          "S"  =>  ComponentCheck():New( idInicio + 18, .t., oContainer ),; 
+                          "T"  =>  ComponentCheck():New( idInicio + 19, .t., oContainer ),; 
+                          "U"  =>  ComponentCheck():New( idInicio + 20, .t., oContainer ),; 
+                          "V"  =>  ComponentCheck():New( idInicio + 21, .t., oContainer ),; 
+                          "W"  =>  ComponentCheck():New( idInicio + 22, .t., oContainer ),; 
+                          "X"  =>  ComponentCheck():New( idInicio + 23, .t., oContainer ),; 
+                          "Y"  =>  ComponentCheck():New( idInicio + 24, .t., oContainer ),; 
+                          "Z"  =>  ComponentCheck():New( idInicio + 25, .t., oContainer ) }
 
 Return ( Self )
 
@@ -1407,6 +1407,14 @@ METHOD Resource( oDialog ) CLASS GetRangoSeries
    end if   
 
 Return ( Self )
+
+METHOD InRange( uValue ) CLASS GetRangoSeries
+
+   if Empty( uValue )
+      Return .f.
+   end if
+
+return ( hGet( ::hObjectSerie, uValue ):Value() )
 
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//

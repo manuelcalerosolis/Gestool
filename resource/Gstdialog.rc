@@ -20187,13 +20187,14 @@ FONT 8, "MS Sans Serif"
   CONTROL "Albarán", 220, "Button", BS_AUTORADIOBUTTON, 8, 158, 37, 10
   CONTROL "", 230, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 51, 143, 60, 12
   CONTROL "Generar sobre serie de albarán", 240, "Button", BS_AUTORADIOBUTTON, 178, 144, 120, 10
-  CONTROL "Generar sobre serie", 250, "Button", BS_AUTORADIOBUTTON, 178, 156, 72, 10
-  CONTROL "", 260, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 257, 154, 40, 12
-  CONTROL "Agrupar por clientes", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 184, 76, 11
-  CONTROL "Facturar por cada dirección", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 18, 197, 103, 11
-  CONTROL "Solo albaranes entregados", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 186, 100, 11
-  CONTROL "Unificar formas de pago", 291, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 198, 88, 11
-  CONTROL "Totalizar por albaranes", 292, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 210, 88, 11
+  CONTROL "Generar sobre serie del cliente", 241, "Button", BS_AUTORADIOBUTTON, 178, 156, 120, 10
+  CONTROL "Generar sobre serie", 250, "Button", BS_AUTORADIOBUTTON, 178, 169, 72, 10
+  CONTROL "", 260, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 257, 167, 40, 12
+  CONTROL "Agrupar por clientes", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 192, 76, 11
+  CONTROL "Facturar por cada dirección", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 18, 205, 103, 11
+  CONTROL "Solo albaranes entregados", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 194, 100, 11
+  CONTROL "Unificar formas de pago", 291, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 206, 88, 11
+  CONTROL "Totalizar por albaranes", 292, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 218, 88, 11
   CONTROL "Todas", 310, "Static", WS_GROUP, 344, 16, 30, 8
   CONTROL "Ninguna", 320, "Static", WS_GROUP, 393, 16, 30, 8
   CONTROL "Serie A", 370, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 344, 30, 40, 10
@@ -20232,9 +20233,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 9, 33, 320, 1
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 9, 81, 320, 1
   CONTROL "Series", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 337, 2, 104, 234
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 2, 173, 332, 63
-  CONTROL "Fechas de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 131, 164, 39
-  CONTROL "Series de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 169, 131, 165, 39
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 2, 182, 332, 54
+  CONTROL "Fechas de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 131, 164, 50
+  CONTROL "Series de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 169, 131, 165, 50
 }
 
 GENFAC_04 DIALOG DISCARDABLE 11, 16, 449, 243
