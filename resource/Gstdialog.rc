@@ -20193,8 +20193,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "Agrupar por clientes", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 192, 76, 11
   CONTROL "Facturar por cada dirección", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 18, 205, 103, 11
   CONTROL "Solo albaranes entregados", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 194, 100, 11
-  CONTROL "Unificar formas de pago", 291, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 206, 88, 11
-  CONTROL "Totalizar por albaranes", 292, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 218, 88, 11
+  CONTROL "Facturar por forma de pago", 291, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 206, 103, 11
+  CONTROL "Facturar por descuentos", 293, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 217, 103, 11
+  CONTROL "Totalizar por albaranes", 292, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 178, 228, 88, 11
   CONTROL "Todas", 310, "Static", WS_GROUP, 344, 16, 30, 8
   CONTROL "Ninguna", 320, "Static", WS_GROUP, 393, 16, 30, 8
   CONTROL "Serie A", 370, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 344, 30, 40, 10
@@ -20232,8 +20233,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Hasta ", 192, "Static", WS_GROUP, 20, 114, 30, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 9, 33, 320, 1
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 9, 81, 320, 1
-  CONTROL "Series", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 337, 2, 104, 234
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 2, 182, 332, 54
+  CONTROL "Series", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 337, 2, 104, 239
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 2, 182, 332, 59
   CONTROL "Fechas de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 2, 131, 164, 50
   CONTROL "Series de facturas", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 169, 131, 165, 50
 }
