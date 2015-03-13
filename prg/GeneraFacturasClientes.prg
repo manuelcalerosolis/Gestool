@@ -68,6 +68,7 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    METHOD TestCreateTree()
 
    METHOD CreateListaAlbaranes()
+   METHOD OrdenaListaAlbaranes()
 
    METHOD CreateTree()
    METHOD GetItemTree()
@@ -93,8 +94,10 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    METHOD CreaNodo()
    METHOD AbreNodo()                   INLINE ( TreeBegin(), ::lNodoActivo   := .t. )
    METHOD CierraNodo()
+   METHOD cClaveAlbaran()
    METHOD cClaveActual()
    METHOD AgregaNodo()
+   METHOD ExisteNodo( hAlbaran )
 
    METHOD InitClaves()
    METHOD setClaveAnterior( cValor )   INLINE ( ::cClaveAnterior := cValor )
@@ -105,29 +108,17 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
 
    METHOD cTextoNodoPadre()
 
-   METHOD GetHashNodoPadre()           INLINE ( {  "id" => ::cClaveActual(),;
+   METHOD GetHashAlbaranes()            INLINE ( { "clave" => ::cClaveAlbaran(),;
+                                                   "id" => D():AlbaranesClientesId( ::nView ),;
+                                                   "textoid" => D():AlbaranesClientesIdTextShort( ::nView ),;
                                                    "seleccionado" => .t.,;
                                                    "cliente" => ( D():AlbaranesClientes( ::nView ) )->cCodCli,;
-                                                   "serie" => ( D():AlbaranesClientes( ::nView ) )->cSerAlb,;
-                                                   "formapago" => ( D():AlbaranesClientes( ::nView ) )->cCodPago,;
-                                                   "direccion" => ( D():AlbaranesClientes( ::nView ) )->cCodObr,;
-                                                   "fecha" => ( D():AlbaranesClientes( ::nView ) )->dFecAlb,;
-                                                   "total" => "",;
-                                                   "texto" => ::cTextoNodoPadre(),;
-                                                   "nDto1" => ( D():AlbaranesClientes( ::nView ) )->nDtoEsp,;
-                                                   "nDto2" => ( D():AlbaranesClientes( ::nView ) )->nDpp,;
-                                                   "nDto3" => ( D():AlbaranesClientes( ::nView ) )->nDtoUno,;
-                                                   "nDto4" => ( D():AlbaranesClientes( ::nView ) )->nDtoDos } )
-
-   METHOD GetHashNodoHijo()            INLINE ( {  "id" => D():AlbaranesClientesId( ::nView ),;
-                                                   "seleccionado" => .t.,;
-                                                   "cliente" => ( D():AlbaranesClientes( ::nView ) )->cCodCli,;
+                                                   "nombre" => ( D():AlbaranesClientes( ::nView ) )->cNomCli,;
                                                    "serie" => ( D():AlbaranesClientes( ::nView ) )->cSerAlb,;
                                                    "formapago" => ( D():AlbaranesClientes( ::nView ) )->cCodPago,;
                                                    "direccion" => ( D():AlbaranesClientes( ::nView ) )->cCodObr,;
                                                    "fecha" => ( D():AlbaranesClientes( ::nView ) )->dFecAlb,;
                                                    "total" => ( D():AlbaranesClientes( ::nView ) )->nTotAlb,;
-                                                   "texto" => "Albarán: " + D():AlbaranesClientesIdTextShort( ::nView ) + " Fecha: " + dToc( ( D():AlbaranesClientes( ::nView ) )->dFecAlb ),;
                                                    "nDto1" => ( D():AlbaranesClientes( ::nView ) )->nDtoEsp,;
                                                    "nDto2" => ( D():AlbaranesClientes( ::nView ) )->nDpp,;
                                                    "nDto3" => ( D():AlbaranesClientes( ::nView ) )->nDtoUno,;
@@ -436,10 +427,7 @@ METHOD NextPage()  CLASS GeneraFacturasClientes
 
       ::LoadAlbaranes()
 
-      MsgInfo( len( ::aListaAlbaranes ) )
-      //MsgInfo( ValToExp( ::aListaAlbaranes ) )
-
-      /*if ::oTreeTotales:nCount() == 0
+      if ::oTreeTotales:nCount() == 0
          MsgStop( "No existen registros en las condiciones solicitadas." )
          Return .f.
       end if
@@ -448,7 +436,7 @@ METHOD NextPage()  CLASS GeneraFacturasClientes
    
       SetWindowText( ::oBtnNxt:hWnd, "&Terminar" )
    
-      ::oPag:GoNext()*/
+      ::oPag:GoNext()
 
    case ::oPag:nOption == 2
 
@@ -479,15 +467,21 @@ Return ( self )
 METHOD LoadAlbaranes() CLASS GeneraFacturasClientes
 
    ::CreateListaAlbaranes()
+   
+   ::OrdenaListaAlbaranes()
 
-   /*::CreateTree()
+   if Len( ::aListaAlbaranes ) > 0
+   
+      ::CreateTree()
 
-   if ::oTreeTotales:nCount() > 0
+      if ::oTreeTotales:nCount() > 0
 
-      ::SetTreeBrowse()
-      ::SetTotalesDocumentos()
+         ::SetTreeBrowse()
+         //::SetTotalesDocumentos()
 
-   end if*/
+      end if
+
+   end if
 
 Return ( self )
 
@@ -553,8 +547,10 @@ Return ( self )
 
 METHOD CreateListaAlbaranes() CLASS GeneraFacturasClientes
 
-   local nRec     := ( D():AlbaranesClientes( ::nView ) )->( Recno() )
-   local nOrdAnt  := ( D():AlbaranesClientes( ::nView ) )->( OrdSetFocus( "LCLIOBR" ) )
+   local nRec           := ( D():AlbaranesClientes( ::nView ) )->( Recno() )
+   local nOrdAnt        := ( D():AlbaranesClientes( ::nView ) )->( OrdSetFocus( "LCLIOBR" ) )
+
+   ::aListaAlbaranes    := {}
 
    ::oMetMsg:SetTotal( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyCount() ) )
 
@@ -564,7 +560,7 @@ METHOD CreateListaAlbaranes() CLASS GeneraFacturasClientes
 
       if ::lIsFacturable()
 
-         ///////////////////////////////////////////////////////
+         aAdd( ::aListaAlbaranes, ::GetHashAlbaranes )
 
       end if
 
@@ -573,8 +569,6 @@ METHOD CreateListaAlbaranes() CLASS GeneraFacturasClientes
       ::oMetMsg:Set( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyNo() ) )
 
    end while
-
-   ::CierraNodo()
 
    ::oMetMsg:Set( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyCount() ) )
    
@@ -585,10 +579,19 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD OrdenaListaAlbaranes() CLASS GeneraFacturasClientes
+
+   if len( ::aListaAlbaranes ) > 1
+      aSort( ::aListaAlbaranes, , , {|x, y| hGet( x, "clave" ) < hGet( y, "clave" ) }  )
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD CreateTree() CLASS GeneraFacturasClientes
 
-   local nRec     := ( D():AlbaranesClientes( ::nView ) )->( Recno() )
-   local nOrdAnt  := ( D():AlbaranesClientes( ::nView ) )->( OrdSetFocus( "LCLIOBR" ) )
+   local hAlbaran
 
    TreeInit()
 
@@ -596,7 +599,7 @@ METHOD CreateTree() CLASS GeneraFacturasClientes
 
    ::InitClaves()
 
-   ::oMetMsg:SetTotal( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyCount() ) )
+   /*::oMetMsg:SetTotal( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyCount() ) )
 
    ( D():AlbaranesClientes( ::nView ) )->( dbGoTop() )
 
@@ -618,14 +621,29 @@ METHOD CreateTree() CLASS GeneraFacturasClientes
 
       ::oMetMsg:Set( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyNo() ) )
 
-   end while
+   end while*/
+
+   for each hAlbaran in ::aListaAlbaranes
+
+      ::ExisteNodo( hAlbaran )
+
+      ::AgregaNodo( hAlbaran )
+
+   next
 
    ::CierraNodo()
 
-   ::oMetMsg:Set( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyCount() ) )
-   
-   ( D():AlbaranesClientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():AlbaranesClientes( ::nView ) )->( dbGoTo( nRec ) )
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ExisteNodo( hAlbaran ) CLASS GeneraFacturasClientes
+
+   if !::lValidaNodo( hAlbaran )
+      ::CierraNodo()
+      ::CreaNodo( hAlbaran )
+      ::AbreNodo()
+   end if
 
 Return ( self )
 
@@ -636,7 +654,7 @@ METHOD GetItemTree() CLASS GeneraFacturasClientes
    local cItem    := ""
 
    if !Empty( ::oBrwAlbaranes:oTreeItem ) 
-      cItem       := hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "texto" )
+      cItem       := hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "textoid" )
    end if
 
 Return ( cItem )
@@ -823,10 +841,10 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidaNodo() CLASS GeneraFacturasClientes
+METHOD lValidaNodo( hCargo ) CLASS GeneraFacturasClientes
 
    local lValid         := .t.
-   local cClaveActual   := ::cClaveActual()
+   local cClaveActual   := ::cClaveActual( hCargo )
 
    if ::cClaveAnterior != cClaveActual
       lValid            := .f.
@@ -842,7 +860,13 @@ Return ( lValid )
 
 //---------------------------------------------------------------------------//
 
-METHOD cClaveActual() CLASS GeneraFacturasClientes
+METHOD cClaveActual( hCargo ) CLASS GeneraFacturasClientes
+
+Return hGet( hCargo, "clave" )
+
+//---------------------------------------------------------------------------//
+
+METHOD cClaveAlbaran() CLASS GeneraFacturasClientes
 
    local cClave   := ""
 
@@ -899,9 +923,9 @@ Return ( cClave )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreaNodo() CLASS GeneraFacturasClientes
+METHOD CreaNodo( hCargo ) CLASS GeneraFacturasClientes
 
-   TreeAddItem( ::cClaveActual() ):Cargo := ::GetHashNodoPadre()
+   TreeAddItem( ::cClaveActual( hCargo ) ):Cargo := hCargo
 
 Return ( self )
 
@@ -918,9 +942,9 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AgregaNodo() CLASS GeneraFacturasClientes
+METHOD AgregaNodo( hCargo ) CLASS GeneraFacturasClientes
 
-   TreeAddItem( D():AlbaranesClientesId( ::nView ), "Detalles", , , , .f. ):Cargo := ::GetHashNodoHijo()
+   TreeAddItem( hGet( hCargo, "id" ), "Detalles", , , , .f. ):Cargo := hCargo
 
 Return ( self )
 
