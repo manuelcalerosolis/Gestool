@@ -11256,7 +11256,7 @@ Static Function DataReport( oFr )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",               {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas", "Series de lineas de facturas",     {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
+//   oFr:SetMasterDetail( "Facturas", "Series de lineas de facturas",     {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Incidencias de facturas",          {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Documentos de facturas",           {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Clientes",                         {|| ( D():FacturasClientes( nView ) )->cCodCli } )
@@ -11281,9 +11281,10 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",   {|| ( dbfFacCliL )->cUnidad } )
    oFr:SetMasterDetail( "Lineas de facturas", "SAT",                   	{|| ( dbfFacCliL )->cNumSat } )
    oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",   {|| ( dbfFacCliL )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Series de lineas de facturas",   {|| ( dbfFacCliL )->cSerie + str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac + str( ( dbfFacCliL )->nNumLin ) } )
 
    oFr:SetResyncPair(   "Facturas", "Lineas de facturas" )
-   oFr:SetResyncPair(   "Facturas", "Series de lineas de facturas" )
+//   oFr:SetResyncPair(   "Facturas", "Series de lineas de facturas" )
    oFr:SetResyncPair(   "Facturas", "Incidencias de facturas" )
    oFr:SetResyncPair(   "Facturas", "Documentos de facturas" )
    oFr:SetResyncPair(   "Facturas", "Empresa" )
@@ -11308,6 +11309,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" )
    oFr:SetResyncPair( 	"Lineas de facturas", "SAT" )
    oFr:SetResyncPair( 	"Lineas de facturas", "Impuestos especiales" )
+   oFr:SetResyncPair( 	"Lineas de facturas", "Series de lineas de facturas" )
 
 Return nil
 
