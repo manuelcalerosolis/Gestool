@@ -51,6 +51,8 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    DATA aDto1           INIT {}
    DATA aDto2           INIT {}
 
+   DATA aListaAlbaranes INIT {}
+
    METHOD New()
 
    METHOD lOpenFiles()
@@ -64,6 +66,8 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    METHOD LoadAlbaranes()
    METHOD CreaFacturas()
    METHOD TestCreateTree()
+
+   METHOD CreateListaAlbaranes()
 
    METHOD CreateTree()
    METHOD GetItemTree()
@@ -123,7 +127,7 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
                                                    "direccion" => ( D():AlbaranesClientes( ::nView ) )->cCodObr,;
                                                    "fecha" => ( D():AlbaranesClientes( ::nView ) )->dFecAlb,;
                                                    "total" => ( D():AlbaranesClientes( ::nView ) )->nTotAlb,;
-                                                   "texto" => "Albarán: " + D():AlbaranesClientesIdTextShort( ::nView ) + " Fecha: " + dToc( ( D():AlbaranesClientes( ::nView ) )->dFecAlb ),;
+                                                   "texto" => "AlbarÃ¡n: " + D():AlbaranesClientesIdTextShort( ::nView ) + " Fecha: " + dToc( ( D():AlbaranesClientes( ::nView ) )->dFecAlb ),;
                                                    "nDto1" => ( D():AlbaranesClientes( ::nView ) )->nDtoEsp,;
                                                    "nDto2" => ( D():AlbaranesClientes( ::nView ) )->nDpp,;
                                                    "nDto3" => ( D():AlbaranesClientes( ::nView ) )->nDtoUno,;
@@ -137,6 +141,7 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    METHOD getDescuentos( aDto )
    METHOD getMediaDescuento( aDto )
    METHOD setDescuento()
+   METHOD lValidDescuentos( aDto )
 
 ENDCLASS
 
@@ -317,7 +322,7 @@ METHOD Resource() CLASS GeneraFacturasClientes
    ::oMetMsg      := TApoloMeter():ReDefine( 120, { | u | if( pCount() == 0, ::nMetMsg, ::nMetMsg := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )          
 
    /*
-   Segunda caja de diálogo-----------------------------------------------------
+   Segunda caja de diÃ¡logo-----------------------------------------------------
    */
 
    ::oBrwAlbaranes                  := IXBrowse():New( ::oPag:aDialogs[ 2 ] )
@@ -431,7 +436,10 @@ METHOD NextPage()  CLASS GeneraFacturasClientes
 
       ::LoadAlbaranes()
 
-      if ::oTreeTotales:nCount() == 0
+      MsgInfo( len( ::aListaAlbaranes ) )
+      //MsgInfo( ValToExp( ::aListaAlbaranes ) )
+
+      /*if ::oTreeTotales:nCount() == 0
          MsgStop( "No existen registros en las condiciones solicitadas." )
          Return .f.
       end if
@@ -440,13 +448,13 @@ METHOD NextPage()  CLASS GeneraFacturasClientes
    
       SetWindowText( ::oBtnNxt:hWnd, "&Terminar" )
    
-      ::oPag:GoNext()
+      ::oPag:GoNext()*/
 
    case ::oPag:nOption == 2
 
       ::CreaFacturas()
 
-      MsgInfo( "Proceso terminado con éxito." )
+      MsgInfo( "Proceso terminado con Ã©xito." )
 
       ::oDlg:End()
 
@@ -470,14 +478,16 @@ Return ( self )
 
 METHOD LoadAlbaranes() CLASS GeneraFacturasClientes
 
-   ::CreateTree()
+   ::CreateListaAlbaranes()
+
+   /*::CreateTree()
 
    if ::oTreeTotales:nCount() > 0
 
       ::SetTreeBrowse()
       ::SetTotalesDocumentos()
 
-   end if
+   end if*/
 
 Return ( self )
 
@@ -536,6 +546,40 @@ METHOD SetTotalesDocumentos() CLASS GeneraFacturasClientes
       end while
 
    end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreateListaAlbaranes() CLASS GeneraFacturasClientes
+
+   local nRec     := ( D():AlbaranesClientes( ::nView ) )->( Recno() )
+   local nOrdAnt  := ( D():AlbaranesClientes( ::nView ) )->( OrdSetFocus( "LCLIOBR" ) )
+
+   ::oMetMsg:SetTotal( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyCount() ) )
+
+   ( D():AlbaranesClientes( ::nView ) )->( dbGoTop() )
+
+   while !( D():AlbaranesClientes( ::nView ) )->( Eof() )
+
+      if ::lIsFacturable()
+
+         ///////////////////////////////////////////////////////
+
+      end if
+
+      ( D():AlbaranesClientes( ::nView ) )->( dbSkip() )
+
+      ::oMetMsg:Set( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyNo() ) )
+
+   end while
+
+   ::CierraNodo()
+
+   ::oMetMsg:Set( ( D():AlbaranesClientes( ::nView ) )->( OrdKeyCount() ) )
+   
+   ( D():AlbaranesClientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():AlbaranesClientes( ::nView ) )->( dbGoTo( nRec ) )
 
 Return ( self )
 
@@ -841,12 +885,12 @@ METHOD cTextoNodoPadre() CLASS GeneraFacturasClientes
    local cClave   := ""
 
    if !::oAgruparCliente:Value()
-      cClave      := "Albarán: " + D():AlbaranesClientesIdTextShort( ::nView ) + " Cliente: " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) + " - " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cNomCli )
+      cClave      := "AlbarÃ¡n: " + D():AlbaranesClientesIdTextShort( ::nView ) + " Cliente: " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) + " - " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cNomCli )
       Return ( cClave )
    end if
 
    if ::oAgruparDireccion:Value()
-      cClave   := "Cliente: " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) + " - " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cNomCli ) + if( Empty( ( D():AlbaranesClientes( ::nView ) )->cCodObr ), "   Sin dirección", "   Dirección: " ) + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodObr )
+      cClave   := "Cliente: " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) + " - " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cNomCli ) + if( Empty( ( D():AlbaranesClientes( ::nView ) )->cCodObr ), "   Sin direcciÃ³n", "   DirecciÃ³n: " ) + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodObr )
    else
       cClave   := "Cliente: " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) + " - " + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cNomCli )
    end if
@@ -1101,75 +1145,46 @@ Return ( dFecha )
 
 METHOD GetDescuentos() CLASS GeneraFacturasClientes
 
-   local n
-   local lMedia      := .f.
-   local nDescuento
-   
-   nDescuento  := hGet( ::aDtoEsp[ 1 ], "descuento" )
+   if (  ::lValidDescuentos( ::aDtoEsp ) .or.;
+         ::lValidDescuentos( ::aDtoPp ) .or.; 
+         ::lValidDescuentos( ::aDto1 ) .or.; 
+         ::lValidDescuentos( ::aDto2 ) )
 
-   if len( ::aDtoEsp ) > 1
+         ::getMediaDescuento()
 
-      for n := 2 to len( ::aDtoEsp )
+   else
 
-         if nDescuento != hGet( ::aDtoEsp[ n ], "descuento" )
-            lMedia      := .t.
-            exit
-         end if
-      next
+      ?"no hago la media"
 
-   end if
-
-   nDescuento  := hGet( ::aDtoPp[ 1 ], "descuento" )
-
-   if len( ::aDtoPp ) > 1
-
-      for n := 2 to len( ::aDtoPp )
-
-         if nDescuento != hGet( ::aDtoPp[ n ], "descuento" )
-            lMedia      := .t.
-            exit
-         end if
-      next
-
-   end if
-
-   nDescuento  := hGet( ::aDto1[ 1 ], "descuento" )
-
-   if len( ::aDto1 ) > 1
-
-      for n := 2 to len( ::aDto1 )
-
-         if nDescuento != hGet( ::aDto1[ n ], "descuento" )
-            lMedia      := .t.
-            exit
-         end if
-      next
-
-   end if
-
-   nDescuento  := hGet( ::aDto2[ 1 ], "descuento" )
-
-   if len( ::aDto2 ) > 1
-
-      for n := 2 to len( ::aDto2 )
-
-         if nDescuento != hGet( ::aDto2[ n ], "descuento" )
-            lMedia      := .t.
-            exit
-         end if
-      next
-
-   end if
-
-   if lMedia
-      ::getMediaDescuento()
    end if
 
 Return ( self  )
 
 //---------------------------------------------------------------------------//
 
-METHOD getMediaDescuento( aDto )
+METHOD lValidDescuentos( aDto ) CLASS GeneraFacturasClientes
+
+   local n
+   local lMedia      := .f.
+   local nDescuento  := hGet( aDto[ 1 ], "descuento" )
+
+   if len( aDto ) > 1
+
+      for n := 2 to len( aDto )
+
+         if nDescuento != hGet( aDto[ n ], "descuento" )
+            lMedia      := .t.
+            exit
+         end if
+      next
+
+   end if
+
+Return ( lMedia )
+
+//---------------------------------------------------------------------------//
+
+METHOD getMediaDescuento( aDto ) CLASS GeneraFacturasClientes
 
    local n        := 1
    local nMedia   := 0
