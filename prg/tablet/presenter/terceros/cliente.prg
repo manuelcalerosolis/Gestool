@@ -13,6 +13,8 @@ CLASS Cliente FROM Ventas
 
    METHOD New()
 
+   METHOD Init( nView )
+
    METHOD setEnviroment()        INLINE ( ::setDataTable( "Client" ) ) 
    
    METHOD showIncidencia()       INLINE ( ::oClienteIncidencia:showNavigator() )
@@ -51,6 +53,21 @@ METHOD New() CLASS Cliente
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD Init( oSender ) CLASS Cliente
+
+   ::nView                 := oSender:nView
+
+   ::oViewEdit             := ClienteView():New( self )
+
+   ::oClienteIncidencia    := ClienteIncidencia():New( self )
+
+   ::setEnviroment()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD onPostGetDocumento() CLASS Cliente
 

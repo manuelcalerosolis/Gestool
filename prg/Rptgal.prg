@@ -2524,6 +2524,12 @@ Return nil
 Function TGENMAILINGDATABASEALBARANESCLIENTES()
 Return nil
 
+Function GENERAFACTURASCLIENTES()
+Return nil
+
+Function ACCESSCODE()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

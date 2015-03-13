@@ -8,6 +8,8 @@ CLASS PedidoClienteViewEdit FROM ViewEdit
 
    METHOD insertControls()
 
+   METHOD evalRotor()         INLINE ( ::oSender:evalRotor() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

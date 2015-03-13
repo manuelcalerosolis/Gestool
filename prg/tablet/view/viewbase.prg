@@ -55,6 +55,8 @@ CLASS ViewBase
                                                       hGet( ::oSender:hDictionaryMaster, cName ),;
                                                       hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
 
+   METHOD getValue( cName )            INLINE ( hGet( ::oSender:hDictionaryMaster, cName ) )
+
    METHOD setErrorValidator( cErrorText )
 
    METHOD errorValidator() 

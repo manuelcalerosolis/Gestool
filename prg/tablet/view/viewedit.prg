@@ -34,7 +34,9 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD defineBotonesMovimiento()
 
-   METHOD RefreshBrowse()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
+   METHOD refreshBrowse()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
+
+   METHOD evalRotor()               VIRTUAL
 
 END CLASS
 
@@ -70,7 +72,7 @@ METHOD defineAceptarCancelar() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_atom_64",;
-                           "bLClicked" => {|| MsgInfo( "Llamamos al Info de Cliente" ) },;
+                           "bLClicked" => {|| ::evalRotor() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;

@@ -3,6 +3,10 @@
 
 CLASS PedidoCliente FROM DocumentosVentas  
 
+   DATA oViewEdit
+
+   DATA oCliente
+
    METHOD New()
 
    METHOD setEnviroment()              INLINE ( ::setDataTable( "PedCliT" ), ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ) )
@@ -25,25 +29,30 @@ CLASS PedidoCliente FROM DocumentosVentas
 
    METHOD StartResourceDetail()
 
+   METHOD evalRotor()                  INLINE ( ::oCliente:edit() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
 
 METHOD New() CLASS PedidoCliente
 
+   if !::OpenFiles()
+      Return ( self )
+   end if 
+
    ::oViewSearchNavigator  := PedidoClienteViewSearchNavigator():New( self )
 
    ::oViewEdit             := PedidoClienteViewEdit():New( self )
 
-   if ::OpenFiles()
+   ::oCliente              := Cliente():Init( self )   
 
-      ::setEnviroment()
+   ::setEnviroment()
 
-      ::setNavigator()
+   ::setNavigator()
 
-      ::CloseFiles()
+   ::CloseFiles()
 
-   end if
 
 return ( self )
 
