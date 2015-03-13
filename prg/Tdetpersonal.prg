@@ -299,7 +299,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
          ID       141 ;
          OF       oDlg
 
-         oHorIni:bValid    := {|| if( ValidTime( oHorIni ), ::lTiempoEmpleado(), .f. ) }
+         oHorIni:bValid    := {|| if( validHourMinutes( oHorIni ), ::lTiempoEmpleado(), .f. ) }
          oHorIni:bChange   := {|| ::lTiempoEmpleado() }
 
       REDEFINE GET oHorFin ;
@@ -312,7 +312,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
          ID       151 ;
          OF       oDlg
 
-         oHorFin:bValid    := {|| if( ValidTime( oHorFin ), ::lTiempoEmpleado(), .f. ) }
+         oHorFin:bValid    := {|| if( validHourMinutes( oHorFin ), ::lTiempoEmpleado(), .f. ) }
          oHorFin:bChange   := {|| ::lTiempoEmpleado() }
 
       REDEFINE GET ::oTmpEmp ;

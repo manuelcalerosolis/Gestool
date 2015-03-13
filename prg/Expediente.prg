@@ -913,7 +913,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       131 ;
          OF       oFld:aDialogs[1]
 
-      oHorIni:bValid    := {|| if( ValidTime( oHorIni ), ::lTiempoEmpleado( oTmpEmp ), .f. ) }
+      oHorIni:bValid    := {|| if( validHourMinutes( oHorIni ), ::lTiempoEmpleado( oTmpEmp ), .f. ) }
       oHorIni:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
 
       REDEFINE GET oFecFin VAR ::oDbf:dFecVto ;
@@ -934,7 +934,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       141 ;
          OF       oFld:aDialogs[1]
 
-      oHorFin:bValid    := {|| if( ValidTime( oHorFin ), ::lTiempoEmpleado( oTmpEmp ), .f. ) }
+      oHorFin:bValid    := {|| if( validHourMinutes( oHorFin ), ::lTiempoEmpleado( oTmpEmp ), .f. ) }
       oHorFin:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
 
       REDEFINE GET oTmpEmp ;

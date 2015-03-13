@@ -17391,7 +17391,14 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
             nBasLin           := nTotLin - nDescuentoEsp - nDescuentoPp  
 
             if ( cTikL )->nIvaTil != 0
-               nBasLin        := ( nTotLin - nIvmLin ) / ( 1 + ( ( cTikL )->nIvaTil / 100 ) )
+
+               if uFieldEmpresa( "lIvaImpEsp" )
+                  nBasLin     := ( nTotLin ) / ( 1 + ( ( cTikL )->nIvaTil / 100 ) )
+                  nBasLin     -= nIvmLin
+               else 
+                  nBasLin     := ( nTotLin - nIvmLin ) / ( 1 + ( ( cTikL )->nIvaTil / 100 ) )
+               end if 
+
             else
                nBasLin        := nTotLin
             end if
@@ -17419,7 +17426,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
                aBrtTik[ 3 ]   += nTotLin
                aBasTik[ 3 ]   += nBasLin
                aImpTik[ 3 ]   += ( nTotLin - nIvmLin - nBasLin )
-               aIvmTik[ 3 ]   += nIvmLin
+               aIvmTik[ 3 ]   += nIvmLin 
 
             end case
 
@@ -17487,130 +17494,6 @@ RETURN ( if( lPic, Trans( nTotTik, cPorDiv ), nTotTik ) )
 
 #else
 
-FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
-
-   local bCond
-   local nRecLin
-   local nDouDiv
-   local cCodDiv
-   local nVdvDiv
-   local cTipTik
-   local nOrdAnt
-   local nTotLin     := 0
-   local nBasLin     := 0
-   local nIvmLin     := 0
-   local nNumCom     := 0
-
-   DEFAULT cTikT     := dbfTikT
-   DEFAULT cTikL     := dbfTikL
-   DEFAULT cDiv      := dbfDiv
-   DEFAULT cNumTik   := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
-   DEFAULT lPic      := .f.
-
-   public nTotTik    := 0
-   public nTotPax    := 0
-   public nTotNet    := 0
-   public nTotIva    := 0
-   public nTotIvm    := 0
-   public aBasTik    := { 0, 0, 0 }
-   public aImpTik    := { 0, 0, 0 }
-   public aIvaTik    := { nil, nil, nil }
-   public aIvmTik    := { 0, 0, 0 }
-
-   nRecLin           := ( cTikL )->( Recno() )
-
-   if aTmp != nil
-      cCodDiv        := aTmp[ _CDIVTIK ]
-      nVdvDiv        := aTmp[ _NVDVTIK ]
-      cTipTik        := aTmp[ _CTIPTIK ]
-      nNumCom        := aTmp[ _NNUMCOM ]
-      bCond          := {|| !( cTikL )->( eof() ) }
-      ( cTikL )->( dbGoTop() )
-   else
-      cCodDiv        := ( cTikT )->cDivTik
-      nVdvDiv        := ( cTikT )->nVdvTik
-      cTipTik        := ( cTikT )->cTipTik
-      nNumCom        := ( cTikT )->nNumCom
-      bCond          := {|| ( cTikL )->cSerTil + ( cTikL )->cNumTil + ( cTikL )->cSufTil == cNumTik .AND. !( cTikL )->( eof() ) }
-      nOrdAnt        := ( cTikL )->( OrdSetFocus( "cNumTil" ) )
-      ( cTikL )->( dbSeek( cNumTik ) )
-   end if
-
-   nDouDiv           := nDouDiv( cCodDiv, cDiv )
-   nDorDiv           := nRouDiv( cCodDiv, cDiv ) // Decimales de redondeo
-   cPorDiv           := cPorDiv( cCodDiv, cDiv ) // Picture de la divisa redondeada
-
-   while Eval( bCond )
-
-      if lValLine( cTikL ) .and. !( cTikL )->lFreTil
-
-         if ( lExcCnt == nil                                .or.;    // Entran todos
-            ( lExcCnt .and. ( cTikL )->nCtlStk != 2 )       .or.;    // Articulos sin contadores
-            (!lExcCnt .and. ( cTikL )->nCtlStk == 2 ) )              // Articulos con contadores
-
-            nTotLin     := nTotLTpv( cTikL, nDouDiv, nDorDiv )
-            nIvmLin     := nIvmLTpv( cTikL, nDouDiv, nDorDiv )
-
-            if ( cTikL )->nIvaTil != 0
-               nBasLin  := nTotLin / ( 1 + ( ( cTikL )->nIvaTil / 100 ) )
-            end if
-
-            do case
-            case aIvaTik[ 1 ] == nil .or. aIvaTik[ 1 ] == ( cTikL )->nIvaTil
-
-               aIvaTik[ 1 ]   := ( cTikL )->nIvaTil
-               aBasTik[ 1 ]   += nBasLin
-               aImpTik[ 1 ]   += ( nTotLin - nBasLin )
-               aIvmTik[ 1 ]   += nIvmLin
-
-            case aIvaTik[ 2 ] == nil .or. aIvaTik[ 2 ] == ( cTikL )->nIvaTil
-
-               aIvaTik[ 2 ]   := ( cTikL )->nIvaTil
-               aBasTik[ 2 ]   += nBasLin
-               aImpTik[ 2 ]   += ( nTotLin - nBasLin )
-               aIvmTik[ 2 ]   += nIvmLin
-
-            case aIvaTik[ 3 ] == nil .or. aIvaTik[ 3 ] == ( cTikL )->nIvaTil
-
-               aIvaTik[ 3 ]   := ( cTikL )->nIvaTil
-               aBasTik[ 3 ]   += nBasLin
-               aImpTik[ 3 ]   += ( nTotLin - nBasLin )
-               aIvmTik[ 3 ]   += nIvmLin
-
-            end case
-
-            nTotTik           += nTotLin
-
-         end if
-
-      end if
-
-      ( cTikl )->( dbskip() )
-
-   end while
-
-   nTotNet         := aBasTik[ 1 ] + aBasTik[ 2 ] + aBasTik[ 3 ]
-   nTotIva         := aImpTik[ 1 ] + aImpTik[ 2 ] + aImpTik[ 3 ]
-   nTotIvm         := aIvmTik[ 1 ] + aIvmTik[ 2 ] + aIvmTik[ 3 ]
-
-   /*
-   Total en la moneda de documento---------------------------------------------
-   */
-
-   nTotPax         := nTotTik / NotCero( nNumCom )
-   nTotTik         := Round( nTotTik, nDorDiv )
-
-   /*
-   Reposicionamiento-----------------------------------------------------------
-   */
-
-   if !Empty( nOrdAnt )
-      ( cTikL )->( OrdSetFocus( nOrdAnt ) )
-   end if
-
-   ( cTikL )->( dbGoTo( nRecLin ) )
-
-RETURN ( if( lPic, Trans( nTotTik, cPorDiv ), nTotTik ) )
 
 #endif
 

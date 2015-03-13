@@ -122,7 +122,8 @@ METHOD setFacturasClientesSend( hMail ) CLASS TGenMailingDatabaseFacturasCliente
 
       if ( D():FacturasClientes( ::nView ) )->( dbrlock() )
          ( D():FacturasClientes( ::nView ) )->lMail   := .f.
-         ( D():FacturasClientes( ::nView ) )->tMail   := DateTime()
+         ( D():FacturasClientes( ::nView ) )->dMail   := Date()
+         ( D():FacturasClientes( ::nView ) )->tMail   := TimeToString()
          ( D():FacturasClientes( ::nView ) )->( dbunlock() )
       end if
 

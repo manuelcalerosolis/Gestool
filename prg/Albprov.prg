@@ -199,7 +199,9 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CCODIMP                 112
 #define _NVALIMP                 114
 #define _DAPERTURA               115
-#define _DCIERRE                 116
+#define _TAPERTURA               116
+#define _DCIERRE                 117
+#define _TCIERRE                 118
 
 /*
 Definici¢n de Array para impuestos
@@ -3302,10 +3304,26 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[3]
 
+      REDEFINE GET aGet[ _TAPERTURA ] ;
+         VAR      aTmp[ _TAPERTURA ];
+         ID       371 ;
+         PICTURE  "@R 99:99:99" ;
+         VALID    ( validTime( aTmp[ _TAPERTURA ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[3]
+
       REDEFINE GET aGet[ _DCIERRE ] ;
          VAR      aTmp[ _DCIERRE ];
          ID       380 ;
          SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[3]
+
+      REDEFINE GET aGet[ _TCIERRE ] ;
+         VAR      aTmp[ _TCIERRE ];
+         ID       381 ;
+         PICTURE  "@R 99:99:99" ;
+         VALID    ( validTime( aTmp[ _TCIERRE ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[3]
 
@@ -9188,8 +9206,10 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "cNumFac",      "C", 12,  0, "Número de la factura de cliente" , "",               "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cCodImp",      "C",  3,  0, "Código de impuesto especial",      "",               "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "nValImp",      "N", 16,  6, "Importe de impuesto especial",     "",               "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "dApertura",    "D",  8,  0, "Fecha apertura de lote",       "",                   "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "dCierre",      "D",  8,  0, "Fecha fin de lote",            "",                   "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "dApertura",    "D",  8,  0, "Fecha apertura de lote",        "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "tApertura",    "C",  6,  0, "Hora apertura de lote",         "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "dCierre",      "D",  8,  0, "Fecha cierre de lote",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "tCierre",      "C",  6,  0, "Hora cierre de lote",           "",                  "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 

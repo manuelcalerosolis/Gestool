@@ -19,7 +19,7 @@
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
+#define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;                  
 #define _NNUMFAC             2      //,"N",  9, 0, "Numero de la factura" },;
 #define _CSUFFAC             3      //,"C",  2, 0, "Sufijo de la factura" },;
 #define _CTURFAC             4      //,"C",  2, 0, "Sufijo de la factura" },;
@@ -338,8 +338,6 @@ memvar nTotTrn
 memvar nTotAtp
 memvar nTotAnt
 memvar nTotRnt
-memvar nTotEnt
-memvar nTotDtoEnt
 memvar nTotPctRnt
 memvar nVdv
 memvar nVdvDivFac
@@ -1942,7 +1940,6 @@ STATIC FUNCTION OpenFiles( lExt )
       public nTotRet    := 0
       public nTotTrn    := 0
       public nTotAnt    := 0
-      public nTotEnt    := 0
       public nTotCos    := 0
       public nTotCob    := 0
       public nTotPes    := 0
@@ -1951,7 +1948,6 @@ STATIC FUNCTION OpenFiles( lExt )
       public nTotArt    := 0
       public nTotCaj    := 0
       public nTotPctRnt := 0
-      public nTotDtoEnt := 0
 
       public aTotIva    := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
       public aIvaUno    := aTotIva[ 1 ]
@@ -2511,8 +2507,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
       aTmp[ _CMANOBR    ]  := Padr( "Gastos", 250 )
       aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
-      aTmp[ _NENTINI    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nEntIni" )
-      aTmp[ _NPCTDTO    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nPctDto" )
       aTmp[ _LRECC      ]	:= lRECCEmpresa()
 
    case nMode == DUPL_MODE
@@ -2538,8 +2532,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _LSNDDOC    ]  := .t.
       aTmp[ _LMAIL      ]  := .t.
       aTmp[ _CNFC       ]  := Space( 20 )
-      aTmp[ _NENTINI    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nEntIni" )
-      aTmp[ _NPCTDTO    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nPctDto" )
       aTmp[ _LRECC      ]	:= lRECCEmpresa()
 
    case nMode == EDIT_MODE
@@ -2849,7 +2841,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       240 ;
          PICTURE  "@!" ;
          WHEN     ( lWhen .and. !lRecibosPagadosTmp( dbfTmpPgo ) );
-         VALID    ( cFPago( aGet[ _CCODPAGO ], dbfFPago, oSay[ 4 ], aGet[ _NENTINI ], aGet[ _NPCTDTO ] ) ) ;
+         VALID    ( cFPago( aGet[ _CCODPAGO ], dbfFPago, oSay[ 4 ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwFPago( aGet[ _CCODPAGO ], oSay[ 4 ] ) );
          OF       oFld:aDialogs[1]
@@ -3430,7 +3422,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       with object ( oBrwIva:AddCol() )
          :cHeader          := "Base"
          :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
-         :nWidth           := 95
+         :nWidth           := 76
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "Imp. esp."
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 6 ], cPorDiv ), "" ) }
+         :nWidth           := 76
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -3439,7 +3439,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :cHeader          := "%" + cImp()
          :bStrData         := {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), aTotIva[ oBrwIva:nArrayAt, 3 ], "" ) }
          :bEditValue       := {|| aTotIva[ oBrwIva:nArrayAt, 3 ] }
-         :nWidth           := 78
+         :nWidth           := 44
          :cEditPicture     := "@E 999.99"
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -3460,7 +3460,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       with object ( oBrwIva:AddCol() )
          :cHeader          := "% R.E."
          :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 999.99"), "" ) }
-         :nWidth           := 71
+         :nWidth           := 44
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -3468,7 +3468,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       with object ( oBrwIva:AddCol() )
          :cHeader          := "R.E."
          :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ],  Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
-         :nWidth           := 71
+         :nWidth           := 76
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -3855,11 +3855,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE CHECKBOX aGet[ _LMAIL ] VAR aTmp[ _LMAIL ] ;
          ID       135 ;
          WHEN     ( lWhen .and. lUsrMaster() ) ;
-         ON CHANGE( iif( aTmp[ _LMAIL ], aGet[ _DMAIL ]:Hide(), aGet[ _DMAIL ]:Show() ) ) ;
+         ON CHANGE( iif(   aTmp[ _LMAIL ],;
+                           ( aGet[ _DMAIL ]:Hide(), aGet[ _TMAIL ]:Hide() ),;
+                           ( aGet[ _DMAIL ]:Show(), aGet[ _TMAIL ]:Show() ) ) );
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _DMAIL ] VAR aTmp[ _DMAIL ] ;
          ID       136 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _TMAIL ] VAR aTmp[ _TMAIL ] ;
+         ID       137 ;
+         PICTURE  "@R 99:99:99" ;
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
@@ -4884,7 +4892,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( uFieldEmpresa( "lModImp" ) .AND. nMode != ZOOM_MODE ) ;
          PICTURE  cPouDiv ;
          ON CHANGE( lCalcDeta( aTmp, aTmpFac ) );
-         ON HELP  ( oNewImp:nBrwImp( aGet[_NVALIMP] ) );
+         ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[1]
 
    end if
@@ -5605,8 +5613,6 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       		aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
       		aTmp[ _CMANOBR    ]  := Padr( "Gastos", 250 )
       		aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
-      		aTmp[ _NENTINI    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nEntIni" )
-      		aTmp[ _NPCTDTO    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nPctDto" )
       		aTmp[ _LRECC      ]	:= lRECCEmpresa()
 
          case nMode == EDIT_MODE
@@ -11344,8 +11350,6 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Total artículos",                     "GetHbVar('nTotArt')" )
    oFr:AddVariable(     "Facturas",             "Total cajas",                         "GetHbVar('nTotCaj')" )
    oFr:AddVariable(     "Facturas",             "Total punto verde",                   "GetHbVar('nTotPnt')" )
-   oFr:AddVariable(     "Facturas",             "Total entrega inicial",               "GetHbVar('nTotEnt')" )
-   oFr:AddVariable(     "Facturas",             "Total descuento por entrega inicial", "GetHbVar('nTotDtoEnt')" )
    oFr:AddVariable(     "Facturas",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
 
    oFr:AddVariable(     "Facturas",             "Bruto primer tipo de " + cImp(),     	"GetHbArrayVar('aIvaUno',1)" )
@@ -12334,14 +12338,6 @@ STATIC FUNCTION RecalculaTotal( aTmp )
       oGetRnt:SetText( alltrim( Trans( nTotRnt, cPorDiv ) ) + space( 1 ) + cSimDiv( cCodDiv, dbfDiv ) + " : " + alltrim( Trans( nTotPctRnt, "999.99" ) ) + "%" ) 
    end if
 
-   if oGetEnt != nil
-      oGetEnt:SetText( Trans( nTotEnt, cPorDiv ) )
-   end if
-
-   if oGetDtoEnt != nil
-      oGetDtoEnt:SetText( Trans( nTotDtoEnt, cPorDiv ) )
-   end if
-
    if oGetReq != nil
       oGetReq:SetText( Trans( nTotReq, cPorDiv ) )
    end if
@@ -12500,7 +12496,7 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, lTotal )
       nBase          := nCalculo
    end if
 
-   nComision 		 := ( nBase * aTmp[ _NCOMAGE ] / 100 )
+   nComision 		   := ( nBase * aTmp[ _NCOMAGE ] / 100 )
    nMargen           := nBase - nCosto - nComision
 
    if nCalculo == 0
@@ -20679,7 +20675,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 								         "", 				 	    "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                            "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"dMail"       ,"D", 8,   0, "Fecha mail enviado" ,                                 "",                   "", "( cDbf )"} )
-   // aAdd( aItmFacCli, {"tMail"       ,"C", 6,   0, "Hora mail enviado" ,                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"tMail"       ,"C", 6,   0, "Hora mail enviado" ,                                  "",                   "", "( cDbf )"} )
 
 RETURN ( aItmFacCli )
 
@@ -20733,7 +20729,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    local nDtoEsp
    local nTipRet
    local nPctRet
-   local nEntIni
    local nDtoIni
    local nDtoPP
    local nPorte
@@ -20844,8 +20839,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       nSbrAtp        := aTmp[ _NSBRATP ]
       nDtoAtp        := aTmp[ _NDTOATP ]
       nKgsTrn        := aTmp[ _NKGSTRN ]
-      nEntIni        := aTmp[ _NENTINI ]
-      nDtoIni        := aTmp[ _NPCTDTO ]
       lPntVer        := aTmp[ _LOPERPV ]
       bCondition     := {|| ( cFacCliL )->( !eof() ) }
       ( cFacCliL )->( dbGoTop() )
@@ -20865,8 +20858,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       nSbrAtp        := ( cFacCliT )->nSbrAtp
       nDtoAtp        := ( cFacCliT )->nDtoAtp
       nKgsTrn        := ( cFacCliT )->nKgsTrn
-      nEntIni        := ( cFacCliT )->nEntIni
-      nDtoIni        := ( cFacCliT )->nPctDto
       lPntVer        := ( cFacCliT )->lOperPV
       bCondition     := {|| ( cFacCliL )->cSerie + str( ( cFacCliL )->nNumFac ) + ( cFacCliL )->cSufFac == cFactura .and. !( cFacCliL )->( eof() ) }
       ( cFacCliL )->( dbSeek( cFactura ) )
@@ -21173,24 +21164,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    end if
 
    /*
-   Total entregas--------------------------------------------------------------
-   */
-
-   if nDtoIni != 0
-
-      aTotalEnt[1]   := Round( _NBASIVA1 * nDtoIni / 100, nRouDiv )
-      aTotalEnt[2]   := Round( _NBASIVA2 * nDtoIni / 100, nRouDiv )
-      aTotalEnt[3]   := Round( _NBASIVA3 * nDtoIni / 100, nRouDiv )
-
-      nTotDtoEnt     := aTotalEnt[ 1 ] + aTotalEnt[ 2 ] + aTotalEnt[ 3 ]
-
-      _NBASIVA1      -= aTotalEnt[ 1 ]
-      _NBASIVA2      -= aTotalEnt[ 2 ]
-      _NBASIVA3      -= aTotalEnt[ 3 ]
-
-   end if
-
-   /*
    Estudio de " + cImp() + " para el Gasto despues de los descuentos----------------------
    */
 
@@ -21236,7 +21209,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    Una vez echos los descuentos le sumamos el IVMH-----------------------------
    */
 
-   if uFieldEmpresa( "lIvaImpEsp" )
+   if !lIvaInc .and. uFieldEmpresa( "lIvaImpEsp" )
       _NBASIVA1      += _NIVMIVA1
       _NBASIVA2      += _NIVMIVA2
       _NBASIVA3      += _NIVMIVA3
@@ -21330,7 +21303,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
          _NBASIVA3         -= ( _NIMPIVA3 + _NIMPREQ3 )
 
       else 
-         
+
          _NIMPIVA1         := if( _NPCTIVA1 != nil .and. _NPCTIVA1 != 0, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
          _NIMPIVA2         := if( _NPCTIVA2 != nil .and. _NPCTIVA2 != 0, Round( _NBASIVA2 / ( 100 / _NPCTIVA2 + 1 ), nRouDiv ), 0 )
          _NIMPIVA3         := if( _NPCTIVA3 != nil .and. _NPCTIVA3 != 0, Round( _NBASIVA3 / ( 100 / _NPCTIVA3 + 1 ), nRouDiv ), 0 )
@@ -21340,6 +21313,12 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
          _NBASIVA3         -= _NIMPIVA3
 
       end if
+
+      if uFieldEmpresa( "lIvaImpEsp" )
+         _NBASIVA1         -= _NIVMIVA1
+         _NBASIVA2         -= _NIVMIVA2
+         _NBASIVA3         -= _NIVMIVA3
+      end if 
 
       nTotBrt 				   := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
 
@@ -21355,6 +21334,10 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
          _NIMPREQ3         := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
       end if
 
+      _NBASIVA1            -= _NIVMIVA1
+      _NBASIVA2            -= _NIVMIVA2
+      _NBASIVA3            -= _NIVMIVA3
+
    end if
 
    /*
@@ -21362,13 +21345,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    */
 
    nTotNet           	:= Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
-
-
-   /*
-   Total entregas--------------------------------------------------------------
-   */
-
-   nTotEnt           	:= Round( nTotNet * nEntIni / 100, nRouDiv )
 
    /*
    Sumamos los portes al final-------------------------------------------------
@@ -21410,10 +21386,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    Total de impuestos
    */
 
-   nTotImp           := Round( nTotIva + nTotReq , nRouDiv )
-   if !uFieldEmpresa( "lIvaImpEsp" )
-      nTotImp        += Round( nTotIvm , nRouDiv )
-   end if 
+   nTotImp           := Round( nTotIva + nTotReq + nTotIvm, nRouDiv )
 
    /*
    Total retenciones

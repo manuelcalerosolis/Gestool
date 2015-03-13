@@ -16,7 +16,7 @@ Return ( cValue )
 
 //---------------------------------------------------------------------------//
 
-Function TimeToString()                         
+Function timeToString()
 
    local cTime := time()
    cTime       := substr( cTime, 1, 2 ) + substr( cTime, 4, 2 ) + substr( cTime, 7, 2 )

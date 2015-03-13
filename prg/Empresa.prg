@@ -1685,7 +1685,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          SPINNER ;
          ON UP    ( UpTime( aGet[ _CINIJOR ] ) );
          ON DOWN  ( DwTime( aGet[ _CINIJOR ] ) );
-         VALID    ( validHoursMinutes( aGet[ _CINIJOR ], .t. ) );
+         VALID    ( validHourMinutes( aGet[ _CINIJOR ], .t. ) );
          ID       280 ;
          OF       fldValores
 

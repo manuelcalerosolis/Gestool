@@ -43,7 +43,7 @@ CLASS TGenMailing
    DATA cRecipients                       INIT Space( 250 )
 
    METHOD setRecipients( cText )          INLINE ( ::cRecipients := padr( cText, 250 ) )
-   METHOD getRecipients()                 INLINE ( iif( !empty( ::cRecipients ), alltrim( ::cRecipients ), ::evalBlockRecipients() ) )
+   METHOD getRecipients()                 INLINE ( iif( !empty( ::bRecipients ), ::evalBlockRecipients(), alltrim( ::cRecipients ) ) )
 
       METHOD hideRecipients()             INLINE ( ::lHideRecipients := .t., if ( !empty( ::oRecipients ), ::oRecipients:Hide(), ) )
       METHOD showRecipients()             INLINE ( ::lHideRecipients := .f., if ( !empty( ::oRecipients ), ::oRecipients:Show(), ) )

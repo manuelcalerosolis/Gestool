@@ -11568,23 +11568,9 @@ function SynArt( cPath )
          Buscamos si exite un codigo de barras por defecto---------------------
          */
 
-
-         /*if !Empty( ( dbfArticulo )->Codebar )
-
-            ( dbfCodebar )->( dbAppend() )
-
-            ( dbfCodebar )->cCodArt          :=( dbfArticulo )->Codigo
-            ( dbfCodebar )->cCodBar          := ( dbfArticulo )->Codebar
-            ( dbfCodebar )->lDefBar          := .t.
-
-            ( dbfCodebar )->( dbUnlock() )
-
-         end if   */
-         
-
          if Empty( ( dbfArticulo )->Codebar )
 
-            nOrdAnt                           := ( dbfCodebar )->( OrdSetFocus( "cCodArt" ) )
+            nOrdAnt                          := ( dbfCodebar )->( OrdSetFocus( "cCodArt" ) )
 
             if ( dbfCodebar )->( dbSeek( ( dbfArticulo )->Codigo ) )
                ( dbfArticulo )->CodeBar      := ( dbfCodebar )->cCodBar

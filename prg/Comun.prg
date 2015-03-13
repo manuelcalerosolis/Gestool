@@ -3029,11 +3029,22 @@ Return ( dtoc( dDate ) + space( 1 ) + trans( cTime, "@R 99:99:99" ) )
 
 //---------------------------------------------------------------------------//
 
-Function validTime( cTime )
+Function validTime( uTime )
 
-   local nHour    := val( substr( cTime, 1, 2 ) )
-   local nMinutes := val( substr( cTime, 3, 2 ) )
-   local nSeconds := val( substr( cTime, 5, 2 ) )
+   local cTime
+   local nHour    
+   local nMinutes 
+   local nSeconds 
+
+   if isObject( uTime )
+      cTime       := uTime:varGet()
+   else 
+      cTime       := uTime
+   end if 
+
+   nHour          := val( substr( cTime, 1, 2 ) )
+   nMinutes       := val( substr( cTime, 3, 2 ) )
+   nSeconds       := val( substr( cTime, 5, 2 ) )
 
    if !validHour( nHour )
       Return .f.
@@ -3058,6 +3069,33 @@ Function validMinutesSeconds( nMinutes )
 Return ( nMinutes >= 0 .and. nMinutes <= 59 )
 
 //---------------------------------------------------------------------------//
+
+Function validHourMinutes( uTime )
+
+   local cTime
+   local nHour
+   local nMinutes
+
+   if isObject( uTime )
+      cTime       := uTime:varGet()
+   else 
+      cTime       := uTime
+   end if 
+
+   nHour          := val( substr( cTime, 1, 2 ) )
+   nMinutes       := val( substr( cTime, 3, 2 ) )
+
+   if !validHour( nHour )
+      Return .f.
+   end if 
+
+   if !validMinutesSeconds( nMinutes )
+      Return .f.
+   end if 
+
+Return ( .t. )
+
+//--------------------------------------------------------------------------//
 
 Function getSysTime()
 

@@ -1299,7 +1299,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       170 ;
          OF       oFld:aDialogs[1]
 
-         oHorIni:bValid    := {|| if( ValidTime( oHorIni ), ::lTiempoEmpleado( oTmpEmp ), ), ::lRecargaPersonal( , , , , oHorIni ) }
+         oHorIni:bValid    := {|| if( validHourMinutes( oHorIni ), ::lTiempoEmpleado( oTmpEmp ), ), ::lRecargaPersonal( , , , , oHorIni ) }
          oHorIni:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
 
       REDEFINE GET oHorFin ;
@@ -1312,7 +1312,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       180 ;
          OF       oFld:aDialogs[1]
 
-         oHorFin:bValid    := {|| if( ValidTime( oHorFin ), ::lTiempoEmpleado( oTmpEmp ), ), ::lRecargaPersonal( , , , , , oHorFin ) }
+         oHorFin:bValid    := {|| if( validHourMinutes( oHorFin ), ::lTiempoEmpleado( oTmpEmp ), ), ::lRecargaPersonal( , , , , , oHorFin ) }
          oHorFin:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
 
       REDEFINE GET oTmpEmp ;

@@ -641,7 +641,7 @@ METHOD Resource( nMode, aInit ) CLASS TNotas
       SPINNER ;
       ON UP    ( UpTime( oGetHora ) );
       ON DOWN  ( DwTime( oGetHora ) );
-      VALID    ( ChkTime( ::oDbf:cHorNot ) ) ;
+      VALID    ( validHourMinutes( ::oDbf:cHorNot ) ) ;
       ID       160 ;
 		OF 		oDlg
 
@@ -719,26 +719,6 @@ METHOD Resource( nMode, aInit ) CLASS TNotas
    ::oDbf:nIntNot := oCmbInteresado:nAt
 
 RETURN ( oDlg:nResult == IDOK )
-
-//--------------------------------------------------------------------------//
-
-Function ChkTime( cTime )
-
-	local cHora
-	local cMinutos
-   local lReturn  := .f.
-
-   DEFAULT cTime  := "0000"
-
-   cHora          := SubStr( cTime, 1, 2 )
-   cMinutos       := SubStr( cTime, 3, 2 )
-
-	IF ( Val( cHora ) >= 0 .AND. Val( cHora ) < 24 ) .AND. ;
-      ( Val( cMinutos ) >= 0 .AND. Val( cMinutos ) < 59 )
-      lReturn     := .t.
-	END IF
-
-Return lReturn
 
 //--------------------------------------------------------------------------//
 

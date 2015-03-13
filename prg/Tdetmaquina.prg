@@ -216,7 +216,7 @@ METHOD Resource( nMode )
          ID       140 ;
          OF       oDlg
 
-         oHorIni:bValid    := {|| if( ValidTime( oHorIni ), ( ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh(), .t. ), .f. ) }
+         oHorIni:bValid    := {|| if( validHourMinutes( oHorIni ), ( ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh(), .t. ), .f. ) }
          oHorIni:bChange   := {|| ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh() }
 
       REDEFINE GET oFecFin VAR ::oDbfVir:dFecFin ;
@@ -238,7 +238,7 @@ METHOD Resource( nMode )
          ID       160 ;
          OF       oDlg
 
-         oHorFin:bValid    := {|| if( ValidTime( oHorFin ), ( ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh(), .t. ), .f. ) }
+         oHorFin:bValid    := {|| if( validHourMinutes( oHorFin ), ( ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh(), .t. ), .f. ) }
          oHorFin:bChange   := {|| ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh() }
 
       REDEFINE SAY ::oTmpEmp VAR ::cTmpEmp ;

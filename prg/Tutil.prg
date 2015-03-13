@@ -279,36 +279,6 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-Function validHoursMinutes( oGet )
-
-   local cTime       := oGet:VarGet()
-   local cHora       := SubStr( cTime, 1, 2 )
-   local nHora       := Val( cHora )
-   local cMinuto     := SubStr( cTime, 3, 2 )
-   local nMinuto     := Val( cMinuto )
-
-   if nHora < 0 .or. nHora > 23
-      return .f.
-   end if
-
-   if nMinuto < 0 .or. nMinuto > 59
-      return .f.
-   end if
-
-   if Empty( cMinuto ) .and. !Empty( cTime )
-
-      if nHora <= 9
-         cHora := "0" + AllTrim( Str( nHora ) )
-      end if
-
-      oGet:cText( cHora + "00" )
-      oGet:Refresh()
-   end if
-
-Return .t.
-
-//----------------------------------------------------------------------------//
-
 Function nElapTime( cTimeInicial, cTimeFinal )
 
    local nTotalMinutos  := 0

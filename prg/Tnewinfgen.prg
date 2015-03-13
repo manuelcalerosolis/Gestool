@@ -3973,7 +3973,7 @@ METHOD oDefHoraInicio( nId, oDlg ) CLASS TNewInfGen
       SPINNER ;
       ON UP          ( UpTime( ::oHoraInicio ) );
       ON DOWN        ( DwTime( ::oHoraInicio ) );
-      VALID          ( ValidTime( ::oHoraInicio, .t. ) );
+      VALID          ( validHourMinutes( ::oHoraInicio, .t. ) );
       ID             nId ;
       OF             oDlg
 
@@ -3996,7 +3996,7 @@ METHOD oDefHoraFin( nId, oDlg ) CLASS TNewInfGen
       SPINNER ;
       ON UP       ( UpTime( ::oHoraFin ) );
       ON DOWN     ( DwTime( ::oHoraFin ) );
-      VALID       ( ValidTime( ::oHoraFin, .t. ) );
+      VALID       ( validHourMinutes( ::oHoraFin, .t. ) );
       ID          nId ;
       OF          oDlg
 
