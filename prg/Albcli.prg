@@ -7527,9 +7527,7 @@ Static Function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies, cAlbCliP, lT
    end if
 
    if lVisualDocumento( cFmtEnt, D():Documentos( nView ) )
-
-      PrintReportEntAlbCli( if( lPrint, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, D():Documentos( nView ), cAlbCliP, lTicket )
-
+      PrintReportEntAlbCli( if( lPrint, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, cAlbCliP, lTicket )
    else
 
       private cDbf         := D():Get( "AlbCliT", nView )
