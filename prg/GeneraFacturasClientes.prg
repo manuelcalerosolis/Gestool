@@ -1,4 +1,4 @@
-#include "FiveWin.Ch" 
+#include "FiveWin.Ch"
 #include "Folder.ch"
 #include "Report.ch"
 #include "Menu.ch"
@@ -106,7 +106,6 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
    METHOD AbreNodo()                   INLINE ( TreeBegin(), ::lNodoActivo   := .t. )
    METHOD CierraNodo()
    METHOD cClaveAlbaran()
-   METHOD cClaveActual()
    METHOD AgregaNodo()
    METHOD ExisteNodo( hAlbaran )
 
@@ -478,6 +477,11 @@ METHOD NextPage()  CLASS GeneraFacturasClientes
 
       ::LoadAlbaranes()
 
+      if Empty( ::oTreeTotales )
+         MsgStop( "No existen registros en las condiciones solicitadas." )
+         Return .f.
+      end if
+
       if ::oTreeTotales:nCount() == 0
          MsgStop( "No existen registros en las condiciones solicitadas." )
          Return .f.
@@ -806,7 +810,7 @@ METHOD ChangeBrowse() CLASS GeneraFacturasClientes
          */
 
          nLevel := ::oBrwAlbaranes:oTreeItem:oTree:oFirst:nLevel
-
+         
          ::oBrwAlbaranes:oTreeItem:oTree:Eval( { | oItem | If( oItem:nLevel >= nLevel, ::SetValueCheck( oItem, !hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "seleccionado" ) ), ) } )
 
          ::SetValueCheck( ::oBrwAlbaranes:oTreeItem, !hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "seleccionado" ) )
@@ -882,7 +886,7 @@ Return ( self )
 METHOD lValidaNodo( hCargo ) CLASS GeneraFacturasClientes
 
    local lValid         := .t.
-   local cClaveActual   := ::cClaveActual( hCargo )
+   local cClaveActual   := hGet( hCargo, "clave" )
 
    if ::cClaveAnterior != cClaveActual
       lValid            := .f.
@@ -895,12 +899,6 @@ METHOD lValidaNodo( hCargo ) CLASS GeneraFacturasClientes
    ::setClaveAnterior( cClaveActual )
 
 Return ( lValid )
-
-//---------------------------------------------------------------------------//
-
-METHOD cClaveActual( hCargo ) CLASS GeneraFacturasClientes
-
-Return hGet( hCargo, "clave" )
 
 //---------------------------------------------------------------------------//
 
@@ -973,7 +971,7 @@ Return ( cClave )
 
 METHOD CreaNodo( hCargo ) CLASS GeneraFacturasClientes
 
-   TreeAddItem( ::cClaveActual( hCargo ) ):Cargo := hCargo
+   TreeAddItem( hGet( hCargo, "clave" ) ):Cargo := hCargo
 
 Return ( self )
 
