@@ -1112,6 +1112,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
    local oImp
    local oDel
    local oRotor
+   local oScript
 
    DEFAULT  oMenuItem   := _MENUITEM_
    DEFAULT  oWnd        := oWnd()
@@ -1576,6 +1577,13 @@ else
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "TPV" )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -17127,7 +17135,7 @@ function aItmTik()
    aAdd( aItmTik, { "cCodAge",  "C",      3,     0, "Código del agente" }                                     )
    aAdd( aItmTik, { "cCodRut",  "C",      4,     0, "Código de la ruta" }                                     )
    aAdd( aItmTik, { "cCodTar",  "C",      5,     0, "Código de la tarifa" }                                   )
-   aAdd( aItmTik, { "cCodObr",  "C",     10,     0, "Código de la dirección" }                                     )
+   aAdd( aItmTik, { "cCodObr",  "C",     10,     0, "Código de la dirección" }                                )
    aAdd( aItmTik, { "nComAge",  "N",      6,     2, "Porcentaje de comisión del agente" }                     )
    aAdd( aItmTik, { "lLiqTik",  "L",      1,     0, "Tiket liquidado" }                                       )
    aAdd( aItmTik, { "cCodPro",  "C",      9,     0, "Código de proyecto en contabilidad"}                     )
@@ -17434,7 +17442,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
             nTotDtoEsp        += nDescuentoEsp
             nTotDpp           += nDescuentoPp
 
-            nTotCos           += nCosLTpv( cTikL,  nDouDiv, nDorDiv ) // ( cTikL )->nCosDiv
+            nTotCos           += nCosLTpv( cTikL, nDouDiv, nDorDiv ) // ( cTikL )->nCosDiv
 
             if ( cTikL )->lInPromo
                nTotPrm        += nTotLin - nDescuentoEsp - nDescuentoPp

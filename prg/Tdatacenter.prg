@@ -2136,6 +2136,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDatatable:cArea        := "Temporadas"
    oDataTable:cName        := cPatEmp() + "Temporadas"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Temporadas.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Temporadas.Cdx"
@@ -2145,6 +2146,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Categorias"
    oDataTable:cName        := cPatEmp() + "Categorias"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Categorias.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Categorias.Cdx"
@@ -3323,6 +3325,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "TikeL"
    oDataTable:cName        := cPatEmp() + "TikeL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TikeL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TikeL.Cdx"
@@ -5209,8 +5212,16 @@ CLASS D
 
    // Facturas rectificativas--------------------------------------------------
 
-   METHOD FacturasRectificativas( nView )       INLINE ( ::Get( "FacRecT", nView ) )
-      METHOD FacturasRectificativasId( nView )  INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
+   METHOD FacturasRectificativas( nView )             INLINE ( ::Get( "FacRecT", nView ) )
+      METHOD FacturasRectificativasId( nView )        INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
+
+   // Tikets de clientes-------------------------------------------------------
+
+   METHOD Tikets( nView )                             INLINE ( ::Get( "TikeT", nView ) )
+      METHOD TiketsId( nView )                        INLINE ( ( ::Tikets( nView ) )->cSerTik + ( ::Tikets( nView ) )->cNumTik + ( ::Tikets( nView ) )->cSufTik )
+
+   METHOD TiketsLineas( nView )                       INLINE ( ::Get( "TikeL", nView ) )
+      METHOD TiketsLineasId( nView )                  INLINE ( ( ::TiketsLineas( nView ) )->cSerTil + ( ::TiketsLineas( nView ) )->cNumTil + ( ::TiketsLineas( nView ) )->cSufTil )
 
    // Pedidos de clientes------------------------------------------------------
 

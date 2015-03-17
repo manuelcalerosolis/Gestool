@@ -36,7 +36,7 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD refreshBrowse()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
 
-   METHOD evalRotor()               VIRTUAL
+   METHOD onClickRotor()               VIRTUAL
 
 END CLASS
 
@@ -72,7 +72,7 @@ METHOD defineAceptarCancelar() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_atom_64",;
-                           "bLClicked" => {|| ::evalRotor() },;
+                           "bLClicked" => {|| ::onClickRotor() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;

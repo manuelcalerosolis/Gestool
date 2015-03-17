@@ -377,7 +377,7 @@ METHOD CompilarFicheroScript() CLASS TScripts
 #else
 
       msginfo( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log" ) 
-      tracelog( FullCurDir() + "harbour\harbour.exe " + valtoprg( ::cFicheroPrg ) + " /i" + FullCurDir() + "include /gh /n /p /o" + valtoprg( ::cFicheroHbr ) + " > " )     
+      logwrite( FullCurDir() + "harbour\harbour.exe " + valtoprg( ::cFicheroPrg ) + " /i" + FullCurDir() + "include /gh /n /p /o" + valtoprg( ::cFicheroHbr ) + " > " )     
       waitRun( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
 
 #endif

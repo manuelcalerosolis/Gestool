@@ -29,7 +29,7 @@ CLASS PedidoCliente FROM DocumentosVentas
 
    METHOD StartResourceDetail()
 
-   METHOD evalRotor()                  INLINE ( ::oCliente:edit() )
+   METHOD onClickRotor()                  INLINE ( ::oCliente:edit() )
 
 END CLASS
 
