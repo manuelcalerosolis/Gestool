@@ -16071,12 +16071,14 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, 
    end while
 
    // Restar el importe del impuesto especial si nos los piden con iva includio
-
+   //Si nos piden el precio con impuestos incluidos, no le restamos el impuesto especial
+/*
    if lIvaInc
       if !empty(oNewImp)
          nPreIva  -= oNewImp:nValImp( ( dbfArticulo )->cCodImp )
       end if 
    end if 
+*/
 
    if oTarifa != nil
       oTarifa:cText( nTarifa )
