@@ -3086,6 +3086,7 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliS.Cdx"
    oDataTable:cDescription := "Albaranes de clientes"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDatatable:bId          := {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb }
    ::AddEmpresaTable( oDataTable )
 
    /*
@@ -5171,6 +5172,12 @@ CLASS D
       METHOD GetAlbaranClienteLineas( nView )         INLINE ( ::getArrayRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientesLineas( nView ), nView ) )
       METHOD GetAlbaranClienteLineaBlank( nView )     INLINE ( ::getHashRecordBlank( ::AlbaranesClientesLineas( nView ), nView ) )
 
+   METHOD AlbaranesClientesSeries( nView )            INLINE ( ::Get( "AlbCliS", nView ) )
+      METHOD AlbaranesClientesSeriesId( nView )       INLINE ( ( ::Get( "AlbCliS", nView ) )->cSerAlb + str( ( ::Get( "AlbCliS", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliS", nView ) )->cSufAlb )
+
+   METHOD AlbaranesClientesCobros( nView )            INLINE ( ::Get( "AlbCliP", nView ) )
+      METHOD AlbaranesClientesCobrosId( nView )       INLINE ( ( ::Get( "AlbCliP", nView ) )->cSerAlb + str( ( ::Get( "AlbCliP", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliP", nView ) )->cSufAlb )
+
    // Facturas de clientes-----------------------------------------------------
 
    METHOD FacturasClientes( nView )             INLINE ( ::Get( "FacCliT", nView ) )
@@ -5195,6 +5202,10 @@ CLASS D
                                                                ( ( ::FacturasClientesEntidades( nView ) )->( dbDelete() ), ( ::FacturasClientesEntidades( nView ) )->( dbUnLock() ) ),;
                                                                ) )  
       METHOD eofFacturasClientesEntidades( nView ) INLINE ( ( ::FacturasClientesEntidades( nView ) )->( eof() ) )
+
+   METHOD FacturasClientesSeries( nView )       INLINE ( ::Get( "FacCliS", nView ) )
+
+   METHOD AnticiposClientes( nView )            INLINE ( ::Get( "AntCliT", nView ) )
 
    // Facturas rectificativas--------------------------------------------------
 
