@@ -2588,7 +2588,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       with object ( oBrwIva:AddCol() )
          :cHeader          := "Base"
          :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
-         :nWidth           := 108
+         :nWidth           := 76       
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "Imp. esp."
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 6 ], cPorDiv ), "" ) }
+         :nWidth           := 76
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -2597,7 +2605,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          :cHeader          := "%" + cImp()
          :bStrData         := {|| if( !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ), aTotIva[ oBrwIva:nArrayAt, 3 ], "" ) }
          :bEditValue       := {|| aTotIva[ oBrwIva:nArrayAt, 3 ] }
-         :nWidth           := 60
+         :nWidth           := 44
          :cEditPicture     := "@E 999.99"
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -2610,7 +2618,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       with object ( oBrwIva:AddCol() )
          :cHeader          := cImp()
          :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil, Trans( aTotIva[ oBrwIva:nArrayAt, 8 ], cPorDiv ), "" ) }
-         :nWidth           := 66
+         :nWidth           := 76
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -2618,7 +2626,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       with object ( oBrwIva:AddCol() )
          :cHeader          := "% R.E."
          :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ], Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 99.9"), "" ) }
-         :nWidth           := 60
+         :nWidth           := 44
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -2626,7 +2634,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       with object ( oBrwIva:AddCol() )
          :cHeader          := "R.E."
          :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] != nil .and. aTmp[ _LRECARGO ], Trans( aTotIva[ oBrwIva:nArrayAt, 9 ], cPorDiv ), "" ) }
-         :nWidth           := 60
+         :nWidth           := 76
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -16093,7 +16101,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    Una vez echos los descuentos le sumamos el IVMH-----------------------------
 	*/
 
-   if uFieldEmpresa( "lIvaImpEsp" )
+   if !lIvaInc .and. uFieldEmpresa( "lIvaImpEsp" )
       _NBASIVA1      += _NIVMIVA1
       _NBASIVA2      += _NIVMIVA2
       _NBASIVA3      += _NIVMIVA3
@@ -16119,7 +16127,19 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
          _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
       end if
 
+      if uFieldEmpresa( "lIvaImpEsp")
+         _NBASIVA1            -= _NIVMIVA1
+         _NBASIVA2            -= _NIVMIVA2
+         _NBASIVA3            -= _NIVMIVA3
+      end if
+
    else
+
+		if  !uFieldEmpresa( "lIvaImpEsp" )
+         _NBASIVA1         -= _NIVMIVA1
+         _NBASIVA2         -= _NIVMIVA2
+         _NBASIVA3         -= _NIVMIVA3   
+      end if   
 
       if _NPCTIVA1 != 0
          _NIMPIVA1   := if( _NPCTIVA1 != nil, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
@@ -16146,6 +16166,12 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
       _NBASIVA1      -= _NIMPIVA1
       _NBASIVA2      -= _NIMPIVA2
       _NBASIVA3      -= _NIMPIVA3
+
+      if uFieldEmpresa( "lIvaImpEsp")
+         _NBASIVA1         -= _NIVMIVA1
+         _NBASIVA2         -= _NIVMIVA2
+         _NBASIVA3         -= _NIVMIVA3
+      end if
 
       _NBASIVA1      -= _NIMPREQ1
       _NBASIVA2      -= _NIMPREQ2
@@ -16193,10 +16219,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 	Total de impuestos
 	*/
 
-   nTotImp           := Round( nTotIva + nTotReq , nRouDiv )
-   if !uFieldEmpresa( "lIvaImpEsp" )
-      nTotImp        += Round( nTotIvm , nRouDiv )
-   end if 
+   nTotImp           := Round( nTotIva + nTotReq + nTotIvm , nRouDiv )
 
    /*
    Total rentabilidad----------------------------------------------------------
