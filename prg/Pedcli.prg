@@ -16498,14 +16498,14 @@ RETURN if( lPic, Trans( nTotRec, cPorDiv ), nTotRec )
 
 FUNCTION nComLPedCli( uPedCliT, cPedCliL, nDecOut, nDerOut )
 
-   local nImpLPedCli  := nImpLPedCli( uPedCliT, cPedCliL, nDecOut, nDerOut, , .f., .t., .f. )
+   local nImpLPedCli := nImpLPedCli( uPedCliT, cPedCliL, nDecOut, nDerOut, , .f., .t., .f. )
 
 RETURN ( nImpLPedCli * ( cPedCliL )->nComAge / 100 )
 
 //--------------------------------------------------------------------------//
 
 /*
- Cálculo del neto, sin descuentos para las comisiones de los agentes
+Cálculo del neto, sin descuentos para las comisiones de los agentes
 */
 
 FUNCTION nImpLPedCli( uPedCliT, cPedCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
