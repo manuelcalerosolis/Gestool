@@ -6852,6 +6852,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| WinEdtRec( nil, bEdtTablet, D():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
 
+      if oUser():lAdministrador()
    	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 3.5, oDlg ) },;
                                              		"nWidth"    => 64,;
@@ -6859,6 +6860,7 @@ Function FacCliTablet()
                                              		"cResName"  => "flat_minus_64",;
                                              		"bLClicked" => {|| WinDelRec( oBrw, D():FacturasClientes( nView ), {|| QuiFacCli() }, , , .t. ) },;
                                              		"oWnd"      => oDlg } )
+      end if
 
    	oBtnUpPage			:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
@@ -6907,11 +6909,11 @@ Function FacCliTablet()
    	oBrw:nMarqueeStyle   	:= 6
    	oBrw:cName           	:= "Grid facturas"
 
-    with object ( oBrw:AddCol() )
+      with object ( oBrw:AddCol() )
        	:cHeader            := "Factura"
-        :bEditValue         := {|| ( D():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + CRLF + Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) }
-        :nWidth             := 160
-    end with
+         :bEditValue         := {|| ( D():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + CRLF + Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) }
+         :nWidth             := 160
+      end with
 
     with object ( oBrw:AddCol() )
        	:cHeader            := "Cliente"
