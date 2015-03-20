@@ -5857,6 +5857,8 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| AppDeta( oBrwLin, bEdtDetTablet, aTmp, .f. ) },;
                                              		"oWnd"      => oDlg } )
 
+      if oUser():lAdministrador()
+
    	oBtnEdt  			:= TGridImage():Build(  {  "nTop"      => 145,;
                                              		"nLeft"     => {|| GridWidth( 2, oDlg ) },;
                                              		"nWidth"    => 64,;
@@ -5872,6 +5874,8 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"cResName"  => "flat_minus_64",;
                                              		"bLClicked" => {|| WinDelRec( oBrwLin, dbfTmpLin, , , , .t. ) },;
                                              		"oWnd"      => oDlg } )
+
+      end if 
 
       oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 145,;
                                                    "nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
@@ -6852,7 +6856,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| WinEdtRec( nil, bEdtTablet, D():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
 
-      if oUser():lAdministrador()
+      if oUser():lMaster()
    	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 3.5, oDlg ) },;
                                              		"nWidth"    => 64,;
@@ -6911,9 +6915,9 @@ Function FacCliTablet()
 
       with object ( oBrw:AddCol() )
        	:cHeader            := "Factura"
-         :bEditValue         := {|| ( D():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + CRLF + Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) }
-         :nWidth             := 160
-      end with
+        :bEditValue         := {|| ( D():FacturasClientes( nView ) )->cSerie + "/" + AllTrim( Str( ( D():FacturasClientes( nView ) )->nNumFac ) ) + CRLF + Dtoc( ( D():FacturasClientes( nView ) )->dFecFac ) }
+        :nWidth             := 160
+    end with
 
     with object ( oBrw:AddCol() )
        	:cHeader            := "Cliente"
@@ -13713,7 +13717,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                 end if
             end if
 
-            if hhaskey( hAtipica, "nDescuentoPorcentual" )
+            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
             	if hAtipica[ "nDescuentoPorcentual"] != 0 
                 	if !Empty( aGet[ _NDTO ] )
                 		aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
@@ -13721,7 +13725,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                 end if
             end if
 
-            if hhaskey( hAtipica, "nDescuentoPromocional" )
+            if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
             	if hAtipica[ "nDescuentoPromocional" ] != 0
                 	if !Empty( aGet[ _NDTOPRM ] )
                 		aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
@@ -13729,7 +13733,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                 end if
             end if
 
-            if hhaskey( hAtipica, "nComisionAgente" )
+            if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
             	if hAtipica[ "nComisionAgente" ] != 0
             		if !Empty( aGet[ _NCOMAGE ] )
             			aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
@@ -13737,7 +13741,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             	end if	
             end if
 
-            if hhaskey( hAtipica, "nDescuentoLineal" )
+            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
             	if hAtipica[ "nDescuentoLineal" ] != 0
             		if !Empty( aGet[ _NDTODIV ] )
             			aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
@@ -17962,11 +17966,8 @@ Static Function ImprimirSeriesFacturas( nDevice, lExt )
 
    oPrinter:bSkip    := {||   ( D():FacturasClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenFacCli(  nDevice,;
-                                          "Imprimiendo documento : " + D():FacturasClientesId( nView ),;
-                                          oPrinter:oFormatoDocumento:uGetValue,;
-                                          oPrinter:oImpresora:uGetValue,;
-                                          if( !oPrinter:oCopias:lCopiasPredeterminadas, oPrinter:oCopias:uGetValue, ) ) }
+   //oPrinter:bAction  := {||   GenFacCli( nDevice, "Imprimiendo documento : " + D():FacturasClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenFacCli( nDevice, "Imprimiendo documento : " + D():FacturasClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 
