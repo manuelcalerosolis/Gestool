@@ -2459,6 +2459,9 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTrn    := ""
                   ::oDbf:cCodUsr    := ::oAlbPrvT:cCodUsr
 
+                  //Para poder filtrar por proveedor, guardamos su códipo también en el campo provhab
+
+                  ::oDbf:cPrvHab    := ::oAlbPrvT:cCodPrv
                   
                   ::oDbf:nPreArt    := nImpUAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDerOut, ::nValDiv )
                   ::oDbf:nUniArt    := nTotNAlbPrv( ::oAlbPrvL:cAlias )
