@@ -8174,7 +8174,11 @@ Static Function ImprimirSeriesPresupuestosClientes( nDevice, lExt )
 
    oPrinter:bSkip    := {||   ( D():PresupuestosClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenPreCli( nDevice, "Imprimiendo documento : " + D():PresupuestosClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenPreCli(  nDevice,; 
+                                          "Imprimiendo documento : " + D():PresupuestosClientesId( nView ),;
+                                          oPrinter:oFormatoDocumento:uGetValue,;
+                                          oPrinter:oImpresora:uGetValue,;
+                                          if( !oPrinter:oCopias:lCopiasPredeterminadas, oPrinter:oCopias:uGetValue, ) ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 

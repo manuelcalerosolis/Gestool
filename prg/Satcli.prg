@@ -8300,7 +8300,11 @@ Static Function ImprimirSeriesSatClientes( nDevice, lExt )
 
    oPrinter:bSkip    := {||   ( D():SatClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenSatCli( nDevice, "Imprimiendo documento : " + D():SatClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenSatCli(  nDevice,;
+                                          "Imprimiendo documento : " + D():SatClientesId( nView ),;
+                                          oPrinter:oFormatoDocumento:uGetValue,;
+                                          oPrinter:oImpresora:uGetValue,;
+                                          if( !oPrinter:oCopias:lCopiasPredeterminadas, oPrinter:oCopias:uGetValue, ) ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 

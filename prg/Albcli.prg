@@ -13377,7 +13377,11 @@ Static Function ImprimirSeriesAlbaranes( nDevice, lExternal )
 
    oPrinter:bSkip    := {||   ( D():AlbaranesClientes( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenAlbCli( nDevice, "Imprimiendo documento : " + D():AlbaranesClientesId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue ) }
+   oPrinter:bAction  := {||   GenAlbCli(  nDevice,; 
+                                          "Imprimiendo documento : " + D():AlbaranesClientesId( nView ),;
+                                          oPrinter:oFormatoDocumento:uGetValue,;
+                                          oPrinter:oImpresora:uGetValue,;
+                                          if( !oPrinter:oCopias:lCopiasPredeterminadas, oPrinter:oCopias:uGetValue, ) ) }
 
    oPrinter:bStart   := {||   if( lExternal, oPrinter:DisableRange(), ) }
 

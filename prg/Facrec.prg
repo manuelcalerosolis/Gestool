@@ -10768,7 +10768,11 @@ Static Function ImprimirSeriesFacturasRectificativas( nDevice, lExt )
 
    oPrinter:bSkip    := {||   ( D():FacturasRectificativas( nView ) )->( dbSkip() ) }
 
-   oPrinter:bAction  := {||   GenFacRec( nDevice, "Imprimiendo documento : " + D():FacturasRectificativasId( nView ), oPrinter:oFormatoDocumento:uGetValue, oPrinter:oImpresora:uGetValue, oPrinter:oCopias:uGetValue ) }
+   oPrinter:bAction  := {||   GenFacRec(  nDevice,;
+                                          "Imprimiendo documento : " + D():FacturasRectificativasId( nView ),;
+                                          oPrinter:oFormatoDocumento:uGetValue,;
+                                          oPrinter:oImpresora:uGetValue,;
+                                          if( !oPrinter:oCopias:lCopiasPredeterminadas, oPrinter:oCopias:uGetValue, ) ) }
 
    oPrinter:bStart   := {||   if( lExt, oPrinter:DisableRange(), ) }
 
