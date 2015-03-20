@@ -13711,7 +13711,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                 end if
             end if
 
-            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
+            if hhaskey( hAtipica, "nDescuentoPorcentual" )
             	if hAtipica[ "nDescuentoPorcentual"] != 0 
                 	if !Empty( aGet[ _NDTO ] )
                 		aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
@@ -13719,7 +13719,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                 end if
             end if
 
-            if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
+            if hhaskey( hAtipica, "nDescuentoPromocional" )
             	if hAtipica[ "nDescuentoPromocional" ] != 0
                 	if !Empty( aGet[ _NDTOPRM ] )
                 		aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
@@ -13727,7 +13727,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
                 end if
             end if
 
-            if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
+            if hhaskey( hAtipica, "nComisionAgente" )
             	if hAtipica[ "nComisionAgente" ] != 0
             		if !Empty( aGet[ _NCOMAGE ] )
             			aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
@@ -13735,7 +13735,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             	end if	
             end if
 
-            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
+            if hhaskey( hAtipica, "nDescuentoLineal" )
             	if hAtipica[ "nDescuentoLineal" ] != 0
             		if !Empty( aGet[ _NDTODIV ] )
             			aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )

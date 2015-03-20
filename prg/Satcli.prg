@@ -5804,25 +5804,25 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
                   end if
                end if
 
-               if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ]  == 0
+               if hhaskey( hAtipica, "nDescuentoPorcentual" )
                   if hAtipica[ "nDescuentoPorcentual"] != 0
                      aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
                   end if
                end if
 
-               if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
+               if hhaskey( hAtipica, "nDescuentoPromocional" )
                   if hAtipica[ "nDescuentoPromocional" ] != 0
                      aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
                   end if   
                end if
 
-               if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
+               if hhaskey( hAtipica, "nComisionAgente" )
                   if hAtipica[ "nComisionAgente" ] != 0
                      aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
                   end if   
                end if
 
-               if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
+               if hhaskey( hAtipica, "nDescuentoLineal" )
                   if hAtipica[ "nDescuentoLineal" ] != 0
                      aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
                   end if   
