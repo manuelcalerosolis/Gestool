@@ -1329,13 +1329,13 @@ METHOD Resource( nMode, aDatosAnterior )
 			ID 		500 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetProduccion:Append( ::oBrwMaterialProducido ), ::oBrwMateriaPrima:Refresh(), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
+         ACTION   ( ::oDetProduccion:Append( ::oBrwMaterialProducido ), ::oBrwMaterialProducido:MakeTotals(), ::oBrwMaterialProducido:Refresh(), ::oBrwMateriaPrima:Refresh(), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oBrwMateriaPrima:Refresh(), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
+         ACTION   ( ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oBrwMaterialProducido:MakeTotals(), ::oBrwMaterialProducido:Refresh(), ::oBrwMateriaPrima:Refresh(), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
@@ -1346,7 +1346,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       503 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetProduccion:Del( ::oBrwMaterialProducido, ::oBrwMateriaPrima ), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
+         ACTION   ( ::oDetProduccion:Del( ::oBrwMaterialProducido, ::oBrwMateriaPrima ), ::oBrwMaterialProducido:MakeTotals(), ::oBrwMateriaPrima:Refresh(), ::oTotProducido:Refresh(), ::oTotParte:Refresh() )
 
       /*
       Browse de materiales--------------------------------------------------------
@@ -1443,13 +1443,13 @@ METHOD Resource( nMode, aDatosAnterior )
 			ID 		500 ;
          OF       oFld:aDialogs[2] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaterial:Append( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() )
+         ACTION   ( ::oDetMaterial:Append( ::oBrwMateriaPrima ), ::oBrwMateriaPrima:MakeTotals(), ::oTotMaterias:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		501 ;
          OF       oFld:aDialogs[2] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() )
+         ACTION   ( ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oBrwMateriaPrima:MakeTotals(), ::oTotMaterias:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
@@ -1460,7 +1460,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       503 ;
          OF       oFld:aDialogs[2] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaterial:Del( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() )
+         ACTION   ( ::oDetMaterial:Del( ::oBrwMateriaPrima ), ::oBrwMateriaPrima:MakeTotals(), ::oTotMaterias:Refresh() )
 
       ::oBrwMateriaPrima                  := IXBrowse():New( oFld:aDialogs[ 2 ] )
 
@@ -1549,13 +1549,13 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       500 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Append( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
+         ACTION   ( ::oDetPersonal:Append( ::oBrwPersonal ), ::oBrwPersonal:MakeTotals(), ::oTotPersonal:Refresh() )
 
 		REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
+         ACTION   ( ::oDetPersonal:Edit( ::oBrwPersonal ), ::oBrwPersonal:MakeTotals(), ::oTotPersonal:Refresh() )
 
 		REDEFINE BUTTON ;
          ID       502 ;
@@ -1566,7 +1566,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       503 ;
          OF       oFld:aDialogs[3] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetPersonal:Del( ::oBrwPersonal ), ::oTotPersonal:Refresh() )
+         ACTION   ( ::oDetPersonal:Del( ::oBrwPersonal ), ::oBrwPersonal:MakeTotals(), ::oTotPersonal:Refresh() )
 
       ::oBrwPersonal                := IXBrowse():New( oFld:aDialogs[3] )
 
@@ -1622,13 +1622,13 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       500 ;
          OF       oFld:aDialogs[4] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaquina:Append( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() )
+         ACTION   ( ::oDetMaquina:Append( ::oBrwMaquinaria ), ::oBrwMaquinaria:MakeTotals(), ::oTotMaquinaria:Refresh() )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[4] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() )
+         ACTION   ( ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oBrwMaquinaria:MakeTotals(), ::oTotMaquinaria:Refresh() )
 
       REDEFINE BUTTON ;
          ID       502 ;
@@ -1639,7 +1639,7 @@ METHOD Resource( nMode, aDatosAnterior )
          ID       503 ;
          OF       oFld:aDialogs[4] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oDetMaquina:Del( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() )
+         ACTION   ( ::oDetMaquina:Del( ::oBrwMaquinaria ), ::oBrwMaquinaria:MakeTotals(), ::oTotMaquinaria:Refresh() )
 
       ::oBrwMaquinaria                 := IXBrowse():New( oFld:aDialogs[4] )
 
@@ -1736,21 +1736,21 @@ METHOD Resource( nMode, aDatosAnterior )
          ACTION   ( oDlg:end() )
 
       if nMode != ZOOM_MODE
-         oFld:aDialogs[1]:AddFastKey( VK_F2, {|| ::oDetProduccion:Append( ::oBrwMaterialProducido ), ::oTotProducido:Refresh() } )
-         oFld:aDialogs[1]:AddFastKey( VK_F3, {|| ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oTotProducido:Refresh() } )
-         oFld:aDialogs[1]:AddFastKey( VK_F4, {|| ::oDetProduccion:Del( ::oBrwMaterialProducido, ::oBrwMateriaPrima ) } )
+         oFld:aDialogs[1]:AddFastKey( VK_F2, {|| ::oDetProduccion:Append( ::oBrwMaterialProducido ), ::oBrwMaterialProducido:MakeTotals(), ::oTotProducido:Refresh() } )
+         oFld:aDialogs[1]:AddFastKey( VK_F3, {|| ::oDetProduccion:Edit( ::oBrwMaterialProducido ), ::oBrwMaterialProducido:MakeTotals(), ::oTotProducido:Refresh() } )
+         oFld:aDialogs[1]:AddFastKey( VK_F4, {|| ::oDetProduccion:Del( ::oBrwMaterialProducido, ::oBrwMaterialProducido:MakeTotals(), ::oBrwMateriaPrima ) } )
          
-         oFld:aDialogs[2]:AddFastKey( VK_F2, {|| ::oDetMaterial:Append( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() } )
-         oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() } )
-         oFld:aDialogs[2]:AddFastKey( VK_F4, {|| ::oDetMaterial:Del( ::oBrwMateriaPrima ), ::oTotMaterias:Refresh() } )
+         oFld:aDialogs[2]:AddFastKey( VK_F2, {|| ::oDetMaterial:Append( ::oBrwMateriaPrima ), ::oBrwMateriaPrima:MakeTotals(), ::oTotMaterias:Refresh() } )
+         oFld:aDialogs[2]:AddFastKey( VK_F3, {|| ::oDetMaterial:Edit( ::oBrwMateriaPrima ), ::oBrwMateriaPrima:MakeTotals(), ::oTotMaterias:Refresh() } )
+         oFld:aDialogs[2]:AddFastKey( VK_F4, {|| ::oDetMaterial:Del( ::oBrwMateriaPrima ), ::oBrwMateriaPrima:MakeTotals(), ::oTotMaterias:Refresh() } )
          
-         oFld:aDialogs[3]:AddFastKey( VK_F2, {|| ::oDetPersonal:Append( ::oBrwPersonal ), ::oTotPersonal:Refresh() } )
-         oFld:aDialogs[3]:AddFastKey( VK_F3, {|| ::oDetPersonal:Edit( ::oBrwPersonal ), ::oTotPersonal:Refresh() } )
-         oFld:aDialogs[3]:AddFastKey( VK_F4, {|| ::oDetPersonal:Del( ::oBrwPersonal ), ::oTotPersonal:Refresh() } )
+         oFld:aDialogs[3]:AddFastKey( VK_F2, {|| ::oDetPersonal:Append( ::oBrwPersonal ), ::oBrwPersonal:MakeTotals(), ::oTotPersonal:Refresh() } )
+         oFld:aDialogs[3]:AddFastKey( VK_F3, {|| ::oDetPersonal:Edit( ::oBrwPersonal ), ::oBrwPersonal:MakeTotals(), ::oTotPersonal:Refresh() } )
+         oFld:aDialogs[3]:AddFastKey( VK_F4, {|| ::oDetPersonal:Del( ::oBrwPersonal ), ::oBrwPersonal:MakeTotals(), ::oTotPersonal:Refresh() } )
          
-         oFld:aDialogs[4]:AddFastKey( VK_F2, {|| ::oDetMaquina:Append( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() } )
-         oFld:aDialogs[4]:AddFastKey( VK_F3, {|| ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() } )
-         oFld:aDialogs[4]:AddFastKey( VK_F4, {|| ::oDetMaquina:Del( ::oBrwMaquinaria ), ::oTotMaquinaria:Refresh() } )
+         oFld:aDialogs[4]:AddFastKey( VK_F2, {|| ::oDetMaquina:Append( ::oBrwMaquinaria ), ::oBrwMaquinaria:MakeTotals(), ::oTotMaquinaria:Refresh() } )
+         oFld:aDialogs[4]:AddFastKey( VK_F3, {|| ::oDetMaquina:Edit( ::oBrwMaquinaria ), ::oBrwMaquinaria:MakeTotals(), ::oTotMaquinaria:Refresh() } )
+         oFld:aDialogs[4]:AddFastKey( VK_F4, {|| ::oDetMaquina:Del( ::oBrwMaquinaria ), ::oBrwMaquinaria:MakeTotals(), ::oTotMaquinaria:Refresh() } )
 
          oDlg:AddFastKey( VK_F5, {|| ::Save( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg, oFld ) } )
       end if
@@ -1781,6 +1781,11 @@ RETURN ( oDlg:nResult == IDOK )
 //--------------------------------------------------------------------------//
 
 METHOD StarResource( oFecIni )
+
+   ::oBrwMaterialProducido:MakeTotals()
+   ::oBrwMateriaPrima:MakeTotals()
+   ::oBrwPersonal:MakeTotals()
+   ::oBrwMaquinaria:MakeTotals()
 
    ::oBrwMaterialProducido:Load()
    ::oBrwMateriaPrima:Load()

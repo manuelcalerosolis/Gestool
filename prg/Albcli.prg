@@ -8161,8 +8161,8 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Clientes", ( D():Get( "Client", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
-   oFr:SetWorkArea(     "Clientes.País", oPais:Select() )
-   oFr:SetFieldAliases( "Clientes.País", cObjectsToReport( oPais:oDbf ) )
+   oFr:SetWorkArea(     "País", oPais:Select() )
+   oFr:SetFieldAliases( "País", cObjectsToReport( oPais:oDbf ) )
 
    oFr:SetWorkArea(     "Obras", ( dbfObrasT )->( Select() ) )
    oFr:SetFieldAliases( "Obras",  cItemsToReport( aItmObr() ) )
@@ -8217,8 +8217,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Albaranes", "Transportistas",                  {|| ( D():Get( "AlbCliT", nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Albaranes", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
    oFr:SetMasterDetail( "Albaranes", "Usuarios",                        {|| ( D():Get( "AlbCliT", nView ) )->cCodUsr } )
-
-   oFr:SetMasterDetail( "Clientes", "Clientes.Pais",                    {|| ( D():Get( "Client", nView ) )->cCodPai } )
+   oFr:SetMasterDetail( "Albaranes", "País",                            {|| RetFld( ( D():Get( "AlbCliT", nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
 
    oFr:SetMasterDetail( "Lineas de albaranes", "Artículos",             {|| ( D():Get( "AlbCliL", nView ) )->cRef } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",         {|| ( D():Get( "AlbCliL", nView ) )->cTipMov } )
@@ -8242,6 +8241,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Albaranes", "Formas de pago" )
    oFr:SetResyncPair(   "Albaranes", "Transportistas" )
    oFr:SetResyncPair(   "Albaranes", "Usuarios" )
+   oFr:SetResyncPair(   "Albaranes", "Pais" )
 
    oFr:SetResyncPair(   "Lineas de albaranes", "Artículos" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Tipo de venta" )

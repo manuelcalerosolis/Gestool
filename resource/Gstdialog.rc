@@ -2369,7 +2369,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 245, 135, 72, 12
   CONTROL "", 350, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 108, 147, 71, 12
   CONTROL "", 360, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 108, 160, 71, 12
-  CONTROL "&Aceptar", 500, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 223, 182, 50, 14
+  CONTROL "&Aceptar [F5]", 500, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 223, 182, 50, 14
   CONTROL "&Cancelar", 550, "Button", WS_TABSTOP, 274, 182, 50, 14
   CONTROL "Banco", -1, "Button", BS_GROUPBOX, 44, 29, 280, 146
   CONTROL "Nombre", -1, "Static", WS_GROUP, 50, 54, 29, 8
@@ -5242,7 +5242,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Nombre", -1, "Static", WS_GROUP, 9, 27, 30, 8
   CONTROL "Bandera", -1, "Static", WS_GROUP, 9, 102, 32, 8
   CONTROL "Enteros", -1, "Static", WS_GROUP, 9, 141, 51, 8
-  CONTROL "Valor pesetas", -1, "Static", WS_GROUP, 9, 40, 48, 8
+  CONTROL "Valor", -1, "Static", WS_GROUP, 9, 40, 48, 8
   CONTROL "Último cambio", -1, "Static", WS_GROUP, 9, 66, 49, 8
   CONTROL "Mascara de precios compra", -1, "Button", BS_GROUPBOX, 2, 128, 105, 49
   CONTROL "Decimales", -1, "Static", WS_GROUP, 9, 153, 38, 8

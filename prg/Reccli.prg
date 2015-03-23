@@ -2076,7 +2076,7 @@ function SynRecCli( cPath )
    USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPago", @dbfFPago ) ) EXCLUSIVE
    if !lAIS() ; ( dbfFPago )->( ordListAdd( cPatGrp() + "FPAGO.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Divisas", @dbfDiv ) ) EXCLUSIVE
+   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Divisas", @dbfDiv ) )
    if !lAIS() ; ( dbfDiv )->( ordListAdd( cPatDat() + "DIVISAS.CDX" ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIva", @dbfIva ) ) EXCLUSIVE

@@ -816,8 +816,6 @@ METHOD lLoadBanco( aGet, nMode ) CLASS TCuentasBancarias
    aGet[ ::oDbf:FieldPos( "cFaxBnc" ) ]:cText( oRetFld( cBanco, ::oBanco:oDbf, "cFaxBnc" ) )
    aGet[ ::oDbf:FieldPos( "cPContBnc")]:cText( oRetFld( cBanco, ::oBanco:oDbf, "cPcoBnc" ) )
 
-   aGet[ ::oDbf:FieldPos( "cPaisIBAN" ) ]:cText( oRetFld( cBanco, ::oBanco:oDbf, "cPaisIBAN" ) )
-   aGet[ ::oDbf:FieldPos( "cCtrlIBAN" ) ]:cText( oRetFld( cBanco, ::oBanco:oDbf, "cCtrlIBAN" ) )
    aGet[ ::oDbf:FieldPos( "cEntBnc" ) ]:cText( oRetFld( cBanco, ::oBanco:oDbf, "cEntBnc" ) )
    aGet[ ::oDbf:FieldPos( "cSucBnc" ) ]:cText( oRetFld( cBanco, ::oBanco:oDbf, "cOfiBnc" ) )
    aGet[ ::oDbf:FieldPos( "cDigBnc" ) ]:cText( Space( 2 ) )

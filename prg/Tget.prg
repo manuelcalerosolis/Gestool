@@ -861,6 +861,8 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
    local bKeyAction := SetKey( nKey )
    local nDefButton
 
+   MsgStop( "Paso por el keychar" )
+
    if ::bKeyChar != nil
       if Eval( ::bKeyChar, nKey, nFlags, Self ) == 0
          return 0

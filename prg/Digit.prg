@@ -170,6 +170,8 @@ function IbanDigit( cCountry, cEntidad, cSucursal, cDigito, cCuenta )
   local cIban       := cEntidad + cSucursal + cDigito + cCuenta
   local cAlgorithm  := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+  DEFAULT cCountry  := Space( 2 )
+
   if !Empty( cIban )
   
     cIban += str( at( substr(cCountry,1,1), cAlgorithm ) +9, 2, 0 )

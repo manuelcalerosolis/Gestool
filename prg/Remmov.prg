@@ -3705,6 +3705,19 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          WHEN     ( .f. ) ;
          OF       oDlg
 
+      // Lote------------------------------------------------------------------
+
+      REDEFINE SAY ::oSayLote VAR cSayLote ;
+         ID       154;
+         OF       oDlg
+
+      REDEFINE GET ::oGetLote VAR ::oDbfVir:cLote ;
+         ID       155 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      ::oGetLote:bValid    := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( oDlg, .f., nMode ), .t. ) }
+
       // Browse de propiedades-------------------------------------------------
 
       ::oBrwPrp                       := IXBrowse():New( oDlg )
@@ -3729,19 +3742,6 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
       ::oBrwPrp:MakeTotals()
 
       ::oBrwPrp:CreateFromResource( 600 )
-
-      // Lote------------------------------------------------------------------
-
-      REDEFINE SAY ::oSayLote VAR cSayLote ;
-         ID       154;
-         OF       oDlg
-
-      REDEFINE GET ::oGetLote VAR ::oDbfVir:cLote ;
-         ID       155 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      ::oGetLote:bValid    := {|| if( !Empty( ::oDbfVir:cLote ), ::loadArticulo( oDlg, .f., nMode ), .t. ) }
 
       REDEFINE GET ::oValPr1 VAR ::oDbfVir:cValPr1;
          ID       120 ;
@@ -4417,6 +4417,9 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
                   case !Empty( ::oDbfVir:cCodPr2 ) .and. Empty( ::oDbfVir:cValPr2 )
                      ::oValPr2:SetFocus()
+
+                  case ::oDbfVir:lLote
+                     ::oGetLote:SetFocus()
 
                   otherwise
                      ::oUndMov:SetFocus()

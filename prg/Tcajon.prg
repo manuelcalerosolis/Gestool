@@ -135,9 +135,6 @@ Function PrintEscCode( cEscCode, cPrinter )
 
    if memowrit( cFile, alltrim( retChr( cEscCode ) ) )
       nResult     := win_printFileRaw( alltrim( cPrinter ), cFile )
-      if nResult != 0
-         //msgStop( "Error enviando codigos de escape a impresora." )
-      end if 
       fErase( cFile )
    end if 
 
