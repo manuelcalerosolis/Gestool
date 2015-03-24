@@ -16,7 +16,7 @@
 #define NUM_BTN_FAM               7
 #define NUM_BTN_ART              19
 
-#define FONT_NAME                "Segoe UI" // "Arial" //  
+#define FONT_NAME                "Segoe UI" // "Arial" //
 
 /*
 Ficheros-----------------------------------------------------------------------
@@ -1110,6 +1110,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
    local lEur           := .f.
    local oPrv
    local oImp
+   local oPdf
    local oDel
    local oRotor
    local oScript
@@ -1445,7 +1446,7 @@ end if
 
    DEFINE BTNSHELL oPrv RESOURCE "IMP" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( ImpTiket( .f., .f., .t. ) ) ;
+      ACTION   ( ImpTiket( IS_PRINTER, .f., .t. ) ) ;
       TOOLTIP  "(I)mprimir";
       MESSAGE  "Imprimir tiket" ;
       HOTKEY   "I";
@@ -1476,10 +1477,18 @@ else
 
    DEFINE BTNSHELL oImp RESOURCE "PREV1" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( ImpTiket( .t. ) ) ;
+      ACTION   ( ImpTiket( IS_SCREEN ) ) ;
       TOOLTIP  "(P)revisualizar";
       MESSAGE  "Previsualizar tiket" ;
       HOTKEY   "P";
+      LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL oPdf RESOURCE "DOCLOCK" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ImpTiket( IS_PDF ) ) ;
+      TOOLTIP  "Pd(f)";
+      MESSAGE  "Pdf" ;
+      HOTKEY   "F";
       LEVEL    ACC_IMPR
 
    DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
@@ -1679,15 +1688,15 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function ImpTiket( lPrev, lEntrega, lImpMenu, dbfImp, oDatos )
+Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
 
    local oPrnTik
    local nCopClient
    local nNumTik
 
-   DEFAULT lPrev        := .f.
    DEFAULT lEntrega     := .f.
    DEFAULT lImpMenu     := .f.
+   DEFAULT nDevice      := IS_PRINTER
 
    if Empty( oDatos )
       oDatos            := TFormatosImpresion():Load( dbfCajT )
@@ -1700,7 +1709,7 @@ Static Function ImpTiket( lPrev, lEntrega, lImpMenu, dbfImp, oDatos )
    ----------------------------------------------------------------------------
    */
 
-   if lPrev
+   if nDevice == IS_SCREEN .or. nDevice == IS_PDF
 
       nCopTik           := 1
 
@@ -1729,17 +1738,17 @@ Static Function ImpTiket( lPrev, lEntrega, lImpMenu, dbfImp, oDatos )
          do case
             case ( lRegalo )
 
-               nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo tickets", oDatos:cFormatoRegalo, oDatos:cPrinterRegalo )
+               nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoRegalo, oDatos:cPrinterRegalo )
 
                lRegalo  := .f.
 
             case ( lEntrega )
 
-               nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo tickets", oDatos:cFormatoEntrega, oDatos:cPrinterEntrega )
+               nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoEntrega, oDatos:cPrinterEntrega )
 
             otherwise
 
-               nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
+               nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
 
          end case
 
@@ -1747,57 +1756,57 @@ Static Function ImpTiket( lPrev, lEntrega, lImpMenu, dbfImp, oDatos )
 
          if ( dbfTikT )->lFreTik
 
-            nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo cheques regalo", oDatos:cFmtTikChk, oDatos:cPrinterTikChk )
+            nGenTikCli( nDevice, "Imprimiendo cheques regalo", oDatos:cFmtTikChk, oDatos:cPrinterTikChk )
 
          else
 
-            nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo vales", oDatos:cFmtVal, oDatos:cPrinterTikChk )
+            nGenTikCli( nDevice, "Imprimiendo vales", oDatos:cFmtVal, oDatos:cPrinterTikChk )
 
          end if
 
       case ( dbfTikT )->cTipTik == SAVDEV
 
-         nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo devoluciones", oDatos:cFmtTikDev, oDatos:cPrinterDev )
+         nGenTikCli( nDevice, "Imprimiendo devoluciones", oDatos:cFmtTikDev, oDatos:cPrinterDev )
 
       case ( dbfTikT )->cTipTik == SAVALB
 
          if lImpAlbaranesEnImpresora( ( dbfTikT )->cNcjTik, dbfCajT )
 
-            if lPrev
+            if nDevice == IS_SCREEN
                VisAlbCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
             else
                PrnAlbCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo albaranes", oDatos:cFmtAlbCaj, oDatos:cPrinterAlbCaj )
             end if
 
          else
-            nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo albaranes", oDatos:cFmtAlb, oDatos:cPrinterAlb )
+            nGenTikCli( nDevice, "Imprimiendo albaranes", oDatos:cFmtAlb, oDatos:cPrinterAlb )
          end if
 
       case ( dbfTikT )->cTipTik == SAVFAC
 
          if lImpFacturasEnImpresora( ( dbfTikT )->cNcjTik, dbfCajT )
 
-            if lPrev
+            if nDevice == IS_SCREEN
                VisFacCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
             else
                PrnFacCli( ( dbfTikT )->cNumDoc, .f., "Imprimiendo facturas", oDatos:cFmtFacCaj, oDatos:cPrinterFacCaj )
             end if
 
          else
-            nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo facturas", oDatos:cFmtFac, oDatos:cPrinterFac )
+            nGenTikCli( nDevice, "Imprimiendo facturas", oDatos:cFmtFac, oDatos:cPrinterFac )
          end if
 
       case ( dbfTikT )->cTipTik == SAVPDA
 
          if lEntrega
-            nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo tickets", oDatos:cFmtEntCaj, oDatos:cPrinterEntCaj )
+            nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFmtEntCaj, oDatos:cPrinterEntCaj )
          else
-            nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
+            nGenTikCli( nDevice, "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
          end if
 
       case ( dbfTikT )->cTipTik == SAVAPT
 
-         nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo apartados", oDatos:cFmtApt, oDatos:cPrinterApt )
+         nGenTikCli( nDevice, "Imprimiendo apartados", oDatos:cFmtApt, oDatos:cPrinterApt )
 
    end case
 
@@ -4312,7 +4321,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          */
 
          if lCopTik .and. nSave != SAVAPT // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
-            ImpTiket( .f. )
+            ImpTiket( IS_PRINTER )
          end if
 
          /*
@@ -4362,7 +4371,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
                dbGather( aTbl, dbfTikL, .t. )
 
                if lCopTik
-                  ImpTiket( .f. )
+                  ImpTiket( IS_PRINTER )
                end if
 
             end if
@@ -4425,7 +4434,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             dbGather( aTbl, dbfTikL, .t. )
 
             if lCopTik // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
-               ImpTiket( .f. )
+               ImpTiket( IS_PRINTER )
             end if
 
          end if
@@ -5966,7 +5975,7 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
                ( dbfTikT )->( OrdKeyVal() ) >= uNumDes   .AND.;
                ( dbfTikT )->( OrdKeyVal() ) <= uNumHas
 
-            ImpTiket( , , .t., , oDatos )
+            ImpTiket( IS_PRINTER, , .t., , oDatos )
 
             ( dbfTikT )->( dbSkip() )
 
@@ -5982,7 +5991,7 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
                ( dbfTikT )->( OrdKeyVal() ) <= uNumHas   .and.;
                !( dbfTikT )->( Bof() )
 
-            ImpTiket( , , .t., , oDatos )
+            ImpTiket( IS_PRINTER, , .t., , oDatos )
 
             ( dbfTikT )->( dbSkip( -1 ) )
 
@@ -13330,7 +13339,7 @@ FUNCTION PrnTikCli( nNumTik, lOpenBrowse  )
 
       if FrontTpv( , , , , .f. )
          if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
-            ImpTiket( .f. )
+            ImpTiket( IS_PRINTER )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -13341,7 +13350,7 @@ FUNCTION PrnTikCli( nNumTik, lOpenBrowse  )
       if OpenFiles( nil, .t. )
          if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
             nTotTik()
-            ImpTiket( .f. )
+            ImpTiket( IS_PRINTER )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -13372,7 +13381,7 @@ FUNCTION VisTikCli( nNumTik, lOpenBrowse  )
 
       if FrontTpv( , , , , .f. )
          if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
-            ImpTiket( .t. )
+            ImpTiket( IS_SCREEN )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -13383,7 +13392,7 @@ FUNCTION VisTikCli( nNumTik, lOpenBrowse  )
       if OpenFiles( nil, .t. )
          if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
             nTotTik()
-            ImpTiket( .t. )
+            ImpTiket( IS_SCREEN )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -18708,7 +18717,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
       Imprimir el registro-----------------------------------------------------
       */
 
-      ImpTiket( .f. )
+      ImpTiket( IS_PRINTER )
 
       /*
       Tomamos el total de devoluciones de un ticket----------------------------
@@ -18790,7 +18799,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
 
          dbGather( aBlankL, dbfTikL, .t. )
 
-         ImpTiket( .f. )
+         ImpTiket( IS_PRINTER )
 
       end if
 
