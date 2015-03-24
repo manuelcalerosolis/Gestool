@@ -1463,89 +1463,89 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
 
       REDEFINE GET oGet VAR cVar FONT oFnt ID 100 OF oDlg
 
-      REDEFINE BUTTON ID 101 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("1") ) )
+      REDEFINE BUTTON ID 101 OF oDlg ACTION ( keybPressed( oGet, "1" ) )
 
-      REDEFINE BUTTON ID 102 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("2") ) )
+      REDEFINE BUTTON ID 102 OF oDlg ACTION ( keybPressed( oGet, "2" ) )
 
-      REDEFINE BUTTON ID 103 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("3") ) )
+      REDEFINE BUTTON ID 103 OF oDlg ACTION ( keybPressed( oGet, "3" ) ) 
 
-      REDEFINE BUTTON ID 104 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("4") ) )
+      REDEFINE BUTTON ID 104 OF oDlg ACTION ( keybPressed( oGet, "4" ) )
 
-      REDEFINE BUTTON ID 105 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("5") ) )
+      REDEFINE BUTTON ID 105 OF oDlg ACTION ( keybPressed( oGet, "5" ) ) 
 
-      REDEFINE BUTTON ID 106 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("6") ) )
+      REDEFINE BUTTON ID 106 OF oDlg ACTION ( keybPressed( oGet, "6" ) ) 
 
-      REDEFINE BUTTON ID 107 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("7") ) )
+      REDEFINE BUTTON ID 107 OF oDlg ACTION ( keybPressed( oGet, "7" ) ) 
 
-      REDEFINE BUTTON ID 108 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("8") ) )
+      REDEFINE BUTTON ID 108 OF oDlg ACTION ( keybPressed( oGet, "8" ) ) 
 
-      REDEFINE BUTTON ID 109 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("9") ) )
+      REDEFINE BUTTON ID 109 OF oDlg ACTION ( keybPressed( oGet, "9" ) )
 
-      REDEFINE BUTTON ID 110 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("0") ) )
+      REDEFINE BUTTON ID 110 OF oDlg ACTION ( keybPressed( oGet, "0" ) )
 
-      REDEFINE BUTTON ID 111 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("Q") ) )
+      REDEFINE BUTTON ID 111 OF oDlg ACTION ( keybPressed( oGet, "Q" ) )
 
-      REDEFINE BUTTON ID 112 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("W") ) )
+      REDEFINE BUTTON ID 112 OF oDlg ACTION ( keybPressed( oGet, "W" ) )
 
-      REDEFINE BUTTON ID 113 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("E") ) )
+      REDEFINE BUTTON ID 113 OF oDlg ACTION ( keybPressed( oGet, "E" ) )
 
-      REDEFINE BUTTON ID 114 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("R") ) )
+      REDEFINE BUTTON ID 114 OF oDlg ACTION ( keybPressed( oGet, "R" ) )
 
-      REDEFINE BUTTON ID 115 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("T") ) )
+      REDEFINE BUTTON ID 115 OF oDlg ACTION ( keybPressed( oGet, "T" ) )
 
-      REDEFINE BUTTON ID 116 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("Y") ) )
+      REDEFINE BUTTON ID 116 OF oDlg ACTION ( keybPressed( oGet, "Y" ) )
 
-      REDEFINE BUTTON ID 117 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("U") ) )
+      REDEFINE BUTTON ID 117 OF oDlg ACTION ( keybPressed( oGet, "U" ) )
 
-      REDEFINE BUTTON ID 118 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("I") ) )
+      REDEFINE BUTTON ID 118 OF oDlg ACTION ( keybPressed( oGet, "I" ) )
 
-      REDEFINE BUTTON ID 119 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("O") ) )
+      REDEFINE BUTTON ID 119 OF oDlg ACTION ( keybPressed( oGet, "O" ) )
 
-      REDEFINE BUTTON ID 120 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("P") ) )
+      REDEFINE BUTTON ID 120 OF oDlg ACTION ( keybPressed( oGet, "P" ) )
 
-      REDEFINE BUTTON ID 121 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("A") ) )
+      REDEFINE BUTTON ID 121 OF oDlg ACTION ( keybPressed( oGet, "A" ) )
 
-      REDEFINE BUTTON ID 122 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("S") ) )
+      REDEFINE BUTTON ID 122 OF oDlg ACTION ( keybPressed( oGet, "S" ) )
 
-      REDEFINE BUTTON ID 123 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("D") ) )
+      REDEFINE BUTTON ID 123 OF oDlg ACTION ( keybPressed( oGet, "D" ) )
 
-      REDEFINE BUTTON ID 124 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("F") ) )
+      REDEFINE BUTTON ID 124 OF oDlg ACTION ( keybPressed( oGet, "F" ) )
 
-      REDEFINE BUTTON ID 125 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("G") ) )
+      REDEFINE BUTTON ID 125 OF oDlg ACTION ( keybPressed( oGet, "G" ) )
 
-      REDEFINE BUTTON ID 126 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("H") ) )
+      REDEFINE BUTTON ID 126 OF oDlg ACTION ( keybPressed( oGet, "H" ) )
 
-      REDEFINE BUTTON ID 127 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("J") ) )
+      REDEFINE BUTTON ID 127 OF oDlg ACTION ( keybPressed( oGet, "J" ) )
 
-      REDEFINE BUTTON ID 128 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("K") ) )
+      REDEFINE BUTTON ID 128 OF oDlg ACTION ( keybPressed( oGet, "K" ) )
 
-      REDEFINE BUTTON ID 129 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("L") ) )
+      REDEFINE BUTTON ID 129 OF oDlg ACTION ( keybPressed( oGet, "L" ) )
 
-      REDEFINE BUTTON ID 130 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("Ñ") ) )
+      REDEFINE BUTTON ID 130 OF oDlg ACTION ( keybPressed( oGet, "Ñ" ) )
 
-      REDEFINE BUTTON ID 131 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("Z") ) )
+      REDEFINE BUTTON ID 131 OF oDlg ACTION ( keybPressed( oGet, "Z" ) )
 
-      REDEFINE BUTTON ID 132 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("X") ) )
+      REDEFINE BUTTON ID 132 OF oDlg ACTION ( keybPressed( oGet, "X" ) )
 
-      REDEFINE BUTTON ID 133 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("C") ) )
+      REDEFINE BUTTON ID 133 OF oDlg ACTION ( keybPressed( oGet, "C" ) )
 
-      REDEFINE BUTTON ID 134 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("V") ) )
+      REDEFINE BUTTON ID 134 OF oDlg ACTION ( keybPressed( oGet, "V" ) )
 
-      REDEFINE BUTTON ID 135 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("B") ) )
+      REDEFINE BUTTON ID 135 OF oDlg ACTION ( keybPressed( oGet, "B" ) )
 
-      REDEFINE BUTTON ID 136 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("N") ) )
+      REDEFINE BUTTON ID 136 OF oDlg ACTION ( keybPressed( oGet, "N" ) )
 
-      REDEFINE BUTTON ID 137 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("M") ) )
+      REDEFINE BUTTON ID 137 OF oDlg ACTION ( keybPressed( oGet, "M" ) )
 
-      REDEFINE BUTTON ID 138 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC(",") ) )
+      REDEFINE BUTTON ID 138 OF oDlg ACTION ( keybPressed( oGet, "," ) )
 
-      REDEFINE BUTTON ID 139 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC(".") ) )
+      REDEFINE BUTTON ID 139 OF oDlg ACTION ( keybPressed( oGet, "." ) )
 
-      REDEFINE BUTTON ID 140 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC("-") ) )
+      REDEFINE BUTTON ID 140 OF oDlg ACTION ( keybPressed( oGet, "-" ) )
 
-      REDEFINE BUTTON ID 150 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyDown( VK_BACK ) )
+      REDEFINE BUTTON ID 150 OF oDlg ACTION ( setFocus( oGet:hWnd ), oGet:KeyChar( VK_BACK ) )
 
-      REDEFINE BUTTON ID 151 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( ASC(" ") ) )
+      REDEFINE BUTTON ID 151 OF oDlg ACTION ( keybPressed( oGet, " " ) )
 
       REDEFINE BUTTON ID IDOK       OF oDlg ACTION ( oDlg:End( IDOK ) )
 
@@ -1568,6 +1568,18 @@ Function VirtualKey( lPassword, uGetKey, cTitle )
    end if
 
 Return ( "" )
+
+//---------------------------------------------------------------------------//
+
+Function keybPressed( oGet, cKey )
+
+   MsgBeep()
+
+   setFocus( oGet:hWnd )
+
+   oGet:KeyChar( ASC( cKey ) )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
