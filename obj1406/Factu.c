@@ -7557,7 +7557,7 @@ HB_FUNC( TEST )
 {
 	static const HB_BYTE pcode[] =
 	{
-		36,20,23,100,110,7
+		36,22,23,100,110,7
 	};
 
 	hb_vmExecute( pcode, symbols );

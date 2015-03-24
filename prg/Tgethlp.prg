@@ -165,6 +165,8 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGetHlp
    local lAccept
    local bKeyAction := SetKey( nKey )
 
+   msgAlert("KeyChar TGetHlp")
+
    if nKey == VK_ESCAPE  // avoids a beep!
       ::oWnd:KeyChar( nKey, nFlags )
       return 1

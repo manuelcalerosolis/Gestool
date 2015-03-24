@@ -2,10 +2,6 @@
 #include "Constant.ch"
 #include "Set.ch"
 
-#ifndef ES_PASSWORD
-   #define ES_PASSWORD         32   // 0x020
-#endif
-
 #define GWL_STYLE          -16
 
 #define COLOR_WINDOW         5
@@ -20,28 +16,13 @@
 #define WM_CUT             768
 #define WM_PASTE           770
 #define WM_CLEAR           771
-
-#ifndef MB_ICONEXCLAMATION
-   #define MB_ICONEXCLAMATION 48
-#endif
+#define WM_NCCALCSIZE      131   // 0x0083
 
 #define CW_USEDEFAULT    32768
 
-#ifdef __CLIPPER__
-   #define EM_GETSEL    (WM_USER+0)
-   #define EM_SETSEL    (WM_USER+1)
-   #define EM_UNDO     (WM_USER+23)
-#else
-   #define EM_GETSEL      176
-   #define EM_SETSEL      177
-   #define EM_UNDO        199
-   #ifdef __XPP__
-      #define Super  ::TControl
-      #define New    _New
-      #define GetNew _GetNew
-      #define GetDelSel _GetDelSel
-   #endif
-#endif
+#define EM_GETSEL          176
+#define EM_SETSEL          177
+#define EM_UNDO            199
 
 #define EM_SETMARGINS      211 // 0x00D3
 #define EM_GETMARGINS      212 // 0x00D4
@@ -61,38 +42,56 @@
 
 #define SM_CYHSCROLL         3
 
+#define SWP_NOSIZE           1
+#define SWP_NOMOVE           2
+#define SWP_NOZORDER         4
+#define SWP_FRAMECHANGED    32
+
+#define EM_SETCUEBANNER 0x1501
+#define TRANSPARENT          1
+
 //----------------------------------------------------------------------------//
 
 CLASS TGet FROM TControl
 
-   DATA   oGet
+   DATA   oGet, oBtn, bAction
    DATA   bMin, bMax
    DATA   nPos
    DATA   lReadOnly, lPassword
-   DATA   cError
+   DATA   cError, cBmpName
    DATA   hHeap
    DATA   cPicture
-   DATA   lDisColors  // Use standard disabled colors
    DATA   bPostKey
    DATA   lSpinner
    DATA   nOldClrPane // Old background color, if color changed with focus
+   DATA   nClrTextDis, nClrPaneDis
+   DATA   nBmpWidth
+   DATA   lAdjustBtn // Adjust buutton get
+   DATA   lBtnTransparent
+   DATA   cCueText
+   DATA   nTxtStyle
+   DATA   lKeepFocus INIT .T. // keep the focus after pressing the ACTION button
 
-   CLASSDATA lClrFocus INIT .F. // change GET color when focused
-   CLASSDATA nClrFocus INIT nRGB( 235, 235, 145 ) // color to use when GET is focused and lClrFocus is .T.
+   CLASSDATA lDisColors INIT .T. // Use standard disabled colors
+   CLASSDATA lClrFocus  INIT .F. // change GET color when focused
+   CLASSDATA nClrFocus  INIT nRGB( 235, 235, 145 ) // color to use when GET is focused and lClrFocus is .T.
 
    METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
                nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel,;
                cMsg, lUpdate, bWhen, lCenter, lRight, bChanged,;
                lReadOnly, lPassword, lNoBorder, nHelpId,;
-               lSpinner, bUp, bDown, bMin, bMax ) CONSTRUCTOR
+               lSpinner, bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
+               cCueText, cVarName ) CONSTRUCTOR
 
    METHOD Assign() INLINE ::oGet:Assign()
 
-   METHOD cToChar() INLINE Super:cToChar( "EDIT" )
+   METHOD cToChar() INLINE ::Super:cToChar( "EDIT" )
 
    METHOD Copy()
 
    METHOD Create( cClsName )
+
+   METHOD CreateButton()
 
    METHOD Cut()
 
@@ -100,11 +99,11 @@ CLASS TGet FROM TControl
 
    METHOD Destroy()
 
-   #ifndef __C3__
-      METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
-   #endif
+   METHOD Display() INLINE ::BeginPaint(), ::Paint(), ::EndPaint(), 0
 
    METHOD EraseBkGnd( hDC ) INLINE 1
+
+   METHOD GenLocals()
 
    METHOD cGenPrg()
 
@@ -137,7 +136,7 @@ CLASS TGet FROM TControl
    METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid,;
                     nClrFore, nClrBack, oFont, oCursor, cMsg,;
                     lUpdate, bWhen, bChanged, lReadOnly,;
-                    lSpinner, bUp, bDown, bMin, bMax ) CONSTRUCTOR
+                    lSpinner, bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName, cCueText ) CONSTRUCTOR
 
    METHOD Refresh() INLINE ::oGet:SetFocus(),;
                            ::oGet:UpdateBuffer(),;
@@ -162,6 +161,8 @@ CLASS TGet FROM TControl
    METHOD RButtonDown( nRow, nCol, nFlags )
 
    METHOD Resize( nType, nWidth, nHeight )
+
+   METHOD SaveToRC( nIndent )
 
    METHOD SelectAll() INLINE ::SetSel( 0, -1 )
 
@@ -203,12 +204,8 @@ CLASS TGet FROM TControl
 
    METHOD Value() INLINE ::VarGet()
 
-   #ifndef __CLIPPER__
-      #ifndef __C3__
-      METHOD VarPut( uVal ) INLINE  If( ValType( ::bSetGet ) == "B",;
-                                        Eval( ::bSetGet, uVal ),)
-      #endif
-   #endif
+   METHOD VarPut( uVal ) INLINE  If( ValType( ::bSetGet ) == "B",;
+                                     Eval( ::bSetGet, uVal ),)
 
    METHOD Inc()   OPERATOR "++"
    METHOD Dec()   OPERATOR "--"
@@ -216,6 +213,8 @@ CLASS TGet FROM TControl
    METHOD ScrollNumber( nDirection )
 
    METHOD SetColorFocus( nClrFocus )
+
+   METHOD SetCueBanner( lOnFocus, cText ) INLINE SendMessage( ::hWnd, EM_SETCUEBANNER, lOnFocus, AnsiToWide( cText ) )
 
 ENDCLASS
 
@@ -225,11 +224,8 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
             nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
             lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
             lPassword, lNoBorder, nHelpId, lSpinner,;
-            bUp, bDown, bMin, bMax ) CLASS TGet
-
-#ifdef __XPP__
-   #undef New
-#endif
+            bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
+            cCueText ) CLASS TGet
 
    local cText := Space( 50 )
 
@@ -248,11 +244,11 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
                     Transform( Eval( bSetGet ), cPict ) )
 
    if lSpinner
-     nHeight := Max( 15, nHeight )
+      nHeight := Max( 15, nHeight )
    endif
 
-   ::nTop     = nRow * If( lPixel, 1, GET_CHARPIX_H )	 //13
-   ::nLeft    = nCol * If( lPixel, 1, GET_CHARPIX_W )	 // 8
+   ::nTop     = nRow * If( lPixel, 1, GET_CHARPIX_H )  //13
+   ::nLeft    = nCol * If( lPixel, 1, GET_CHARPIX_W )  // 8
    ::nBottom  = ::nTop + nHeight - 1
    ::nRight   = ::nLeft + If( nWidth == nil, ( 1 + Len( ::cCaption ) ) * 3.5, ;
                                                nWidth - 1 ) + ;
@@ -278,7 +274,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
          endif
       else
          if ! lNoBorder
-            ::nStyle = nOr( ::nStyle, If( oWnd:ChildLevel( TDialog() ) != 0, WS_BORDER, 0 ) )
+            ::nStyle = nOr( ::nStyle, If( oWnd:IsKindOf( "TDIALOG" ), WS_BORDER, 0 ) )
             ::nExStyle = WS_EX_CLIENTEDGE
          endif
       endif
@@ -287,12 +283,13 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
    ::nStyle    = If( lNoBorder, nAnd( ::nStyle, nNot( WS_BORDER ) ), ::nStyle )
    ::nId       = ::GetNewId()
    ::bSetGet   = bSetGet
-   ::oGet      = GetNew( 20, 20, bSetGet,, cPict )
+   ::oGet      = FWGetNew( 20, 20, bSetGet, cVarName, cPict )
    ::bValid    = bValid
    ::lDrag     = lDesign
    ::lCaptured = .f.
    ::lPassword = lPassword
-   ::oFont     = oFont
+//   ::oFont     = oFont
+   ::SetFont( oFont )
    ::oCursor   = oCursor
    ::cMsg      = cMsg
    ::lUpdate   = lUpdate
@@ -306,30 +303,42 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
    ::bPostKey  = { | x, y | y }
    ::lSpinner  = lSpinner
    ::hHeap     = 0
+   ::bAction   = bAction
+   ::cBmpName  = cBmpName
+   ::cCueText  = cCueText
+   ::nTxtStyle = nOR( ETO_CLIPPED, ETO_OPAQUE )
 
    ::SetColor( nClrFore, nClrBack )
-   ::lDisColors = .t.
+   ::lAdjustBtn = .f.
+   ::lBtnTransparent = .f.
 
    ::oGet:SetFocus()
    ::cCaption = ::oGet:Buffer
    ::oGet:KillFocus()
 
-   #ifndef __CLIPPER__
-      if lPassword .and. oFont == nil
-         DEFINE FONT ::oFont NAME "Arial" SIZE 0, -14 BOLD
-      endif
-   #endif
+    ::nClrTextDis = nClrFore
+    ::nClrPaneDis = ::nClrPane // nClrBack
+
+    if lPassword .and. oFont == nil
+       DEFINE FONT ::oFont NAME "Arial" SIZE 0, -14 BOLD
+    endif
 
    if ! Empty( oWnd:hWnd )
       ::Create( "EDIT" )
-      if oFont != nil
-         ::SetFont( oFont )
+      if ::oFont != nil
+         ::SetFont( ::oFont )
+      else
+         ::GetFont()
       endif
-      ::GetFont()
       oWnd:AddControl( Self )
+      ::CreateButton()
    else
       oWnd:DefControl( Self )
    endif
+
+   DEFAULT cVarName := "oGet" + ::GetCtrlIndex()
+
+   ::cVarName = cVarName
 
    if lDesign
       ::CheckDots()
@@ -345,7 +354,8 @@ return Self
 
 METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
                  nClrBack, oFont, oCursor, cMsg, lUpdate, bWhen, bChanged,;
-                 lReadOnly, lSpinner, bUp, bDown, bMin, bMax ) CLASS TGet
+                 lReadOnly, lSpinner, bUp, bDown, bMin, bMax, bAction, cBmpName,;
+                 cVarName, cCueText ) CLASS TGet
 
    DEFAULT oWnd     := GetWndDefault(),;
            nClrFore := GetSysColor( COLOR_WINDOWTEXT ),;
@@ -361,12 +371,13 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    ::oWnd      = oWnd
    ::nHelpId   = nHelpId
    ::bSetGet   = bSetGet
-   ::oGet      = GetNew( 20, 20, bSetGet,, cPict )
+   ::oGet      = FWGetNew( 20, 20, bSetGet, cVarName, cPict )
    ::bValid    = bValid
    ::lDrag     = .f.
    ::lCaptured = .f.
    ::lPassword = .f.
-   ::oFont     = oFont
+//   ::oFont     = oFont
+   ::SetFont( oFont )
    ::oCursor   = oCursor
    ::cMsg      = cMsg
    ::lUpdate   = lUpdate
@@ -379,9 +390,16 @@ METHOD ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore,;
    ::bPostKey  = { | x, y | y }
    ::lSpinner  = lSpinner
    ::hHeap     = 0
+   ::bAction   = bAction
+   ::cBmpName  = cBmpName
+   ::nClrTextDis = nClrFore
+   ::nClrPaneDis = nClrBack
+   ::cCueText  = cCueText
+   ::nTxtStyle = nOR( ETO_CLIPPED, ETO_OPAQUE )
 
    ::SetColor( nClrFore, nClrBack )
-   ::lDisColors = .t.
+   ::lAdjustBtn = .f.
+   ::lBtnTransparent = .f.
 
    if lSpinner
       ::Spinner( bUp, bDown, bMin, bMax )
@@ -433,31 +451,93 @@ return nil
 
 //----------------------------------------------------------------------------//
 
+METHOD CreateButton() CLASS TGet
+
+   local oThis := Self
+   local hBitmap
+   local nBmpWidth := 1
+   local lFileBmp := .t.
+
+   if ValType( ::bAction ) == "B" .and. Upper( ::ClassName() ) == "TGET"
+      if Empty( ::cBmpName )
+         @ 0, ::nWidth - ::nHeight - If( ::lSpinner, 20, 0 ) BUTTONBMP ::oBtn OF Self ;
+         ACTION ( Eval( oThis:bAction, oThis ), if( ::lKeepFocus, oThis:SetFocus(), nil ) ) ;
+         SIZE ::nHeight - 4, ::nHeight - 4 PIXEL
+         if Empty( ::oBtn:hBitmap )
+            ::oBtn:SetText( "..." )
+         endif
+      else
+
+         hBitmap   = If( ( lFileBmp := File( ::cBmpName ) ), ReadBitmap( 0, ::cBmpName ),;
+                     LoadBitmap( GetResources(), ::cBmpName ) )
+
+         if ::lAdjustBtn
+            nBmpWidth := nBmpWidth( hBitmap ) + 5
+            ::SetMargins( 1, nBmpWidth )
+         else
+            nBmpWidth := ::nHeight - 4
+         endif
+
+         if ::lBtnTransparent
+            ::oBtn := TBtnBmp():New( 0, ::nWidth - nBmpWidth - If( ::lSpinner, 20, 4 ), nBmpWidth, ::nHeight - 4,;
+            if ( !lFileBmp, ::cBmpName, ),,if ( lFileBmp, ::cBmpName, ),,{|| Eval( oThis:bAction, oThis ),oThis:SetFocus() },;
+            Self,,,,,,,,,.f.)
+            ::oBtn:lTransparent := ::lBtnTransparent
+         else
+            ::oBtn := TButtonBmp():New( 0, ::nWidth - nBmpWidth - If( ::lSpinner, 20, 4 ),, Self, {|| Eval( oThis:bAction, oThis ),oThis:SetFocus() }, ;
+            nBmpWidth, ::nHeight - 4,,,,.t.,,,,,,,::cBmpName )
+         endif
+
+         DeleteObject( hBitmap )
+
+      endif
+      ::oBtn:lCancel = .T. // so the GET VALID is not fired when the button is focused
+
+      if Upper( ::oWnd:ClassName() ) == "TDIALOG" .and. ::oWnd:lResize16
+         ::oBtn:nWidth  = ::nHeight - 5
+         ::oBtn:nHeight = ::nHeight - 5
+         ::oBtn:nLeft   = ( ::nWidth * 1.167 ) - ::nHeight
+      endif
+
+      if ! IsAppThemed()
+         ::oBtn:SetPos( 2, ::oBtn:nLeft + 2 )
+      endif
+
+      /*
+      // We force a WM_NCCALCSIZE msg to be sent to the GET
+      SetWindowPos( ::hWnd, 0, 0, 0, 0, 0,;
+                    nOr( SWP_NOMOVE, SWP_NOSIZE, SWP_NOZORDER, SWP_FRAMECHANGED ) )
+      */
+   endif
+
+return nil
+
+//----------------------------------------------------------------------------//
+
 METHOD GetDlgCode( nLastKey ) CLASS TGet
 
-   #ifdef __CLIPPER__
-   // Needed to do non-modal editing on a browse
-      if Len( ::oWnd:aControls ) == 1 .and. ::oWnd:ChildLevel( TWBrowse() ) != 0
-         return DLGC_WANTALLKEYS
-      endif
-   #else
-      if Len( ::oWnd:aControls ) == 1
-         return DLGC_WANTALLKEYS
-      endif
-   #endif
+   if Len( ::oWnd:aControls ) == 1
+      return DLGC_WANTALLKEYS
+   endif
 
-#ifdef __CLIPPER__
-   return Super:GetDlgCode( nLastKey )
-#else
    ::oWnd:nLastKey = nLastKey
-   return DLGC_WANTALLKEYS
-#endif
+
+   if ::oWnd:IsKindOf( "TXBROWSE" )
+      return DLGC_WANTALLKEYS
+   else
+      if ::oWnd:oWnd != nil .and. ;
+         ::oWnd:oWnd:ClassName() $ "TFOLDER,TFOLDEREX,TMDICHILD,TWINDOW,TDIALOG"
+         return DLGC_WANTALLKEYS
+      endif
+   endif
+
+return DLGC_WANTALLKEYS // DLGC_WANTTAB // nil
 
 //----------------------------------------------------------------------------//
 
 METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TGet
 
-   local oClp
+   local oClp, cText, n
 
    do case
       case nMsg == WM_CUT
@@ -467,16 +547,23 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TGet
            ::oGet:Pos -= Len( oClp:GetText() )
            oClp:End()
            ::oGet:Assign()
+           if ::bChange != nil
+              Eval( ::bChange,,, Self )
+           endif
            return 0
 
       case nMsg == WM_PASTE
            if GetFocus() == ::hWnd
               CallWindowProc( ::nOldProc, ::hWnd, WM_PASTE, 0, 0 )
-              ::oGet:buffer = Pad( GetWindowText( ::hWnd ), Len( ::oGet:buffer ) )
-              DEFINE CLIPBOARD oClp OF Self FORMAT TEXT
-              ::oGet:Pos += Len( oClp:GetText() )
-              oClp:End()
+              if ValType( ::oGet:Original ) $ "CM"
+                 SetWindowText( ::hWnd, SubStr( GetWindowText( ::hWnd ), 1, Len( ::oGet:Original ) ) )
+              endif
+              ::oGet:Buffer = GetWindowText( ::hWnd )
+              ::oGet:Pos = GetCaretPos()[ 2 ]
               ::oGet:Assign()
+              if ::bChange != nil
+                 Eval( ::bChange,,, Self )
+              endif
            endif
            return 0
 
@@ -485,16 +572,27 @@ METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TGet
            ::oGet:buffer = Space( Len( ::oGet:buffer ) )
            ::SetPos( 1 )
            ::oGet:Assign()
+           if ::bChange != nil
+              Eval( ::bChange,,, Self )
+           endif
            return 0
+
+      /*
+      case nMsg == WM_NCCALCSIZE
+           if nWParam == 1
+              NCCSRight( nLParam, ::oBtn:nWidth )
+           endif
+           return 0
+      */
    endcase
 
-return Super:HandleEvent( nMsg, nWParam, nLParam )
+return ::Super:HandleEvent( nMsg, nWParam, nLParam )
 
 //----------------------------------------------------------------------------//
 
 METHOD Initiate( hDlg ) CLASS TGet
 
-   Super:Initiate( hDlg )
+   ::Super:Initiate( hDlg )
    ::oGet:SetFocus()
 
    if lAnd( GetWindowLong( ::hWnd, GWL_STYLE ), ES_PASSWORD )
@@ -507,10 +605,13 @@ METHOD Initiate( hDlg ) CLASS TGet
                      nOr( GetWindowLong( ::hWnd, GWL_STYLE ), ES_PASSWORD ) )
    endif
 
+   SetWindowLong( ::hWnd, GWL_STYLE,;
+                  nOr( GetWindowLong( ::hWnd, GWL_STYLE ), ES_AUTOHSCROLL ) )
+
    if ::lReadOnly .and. ::nClrText == GetSysColor( COLOR_WINDOWTEXT ) ;
       .and. ::nClrPane == GetSysColor( COLOR_WINDOW )
-      ::SetColor( GetSysColor(COLOR_GRAYTEXT) , GetSysColor( COLOR_BTNFACE ))
-//     ::Disable()
+      ::SetColor( GetSysColor( COLOR_GRAYTEXT ), GetSysColor( COLOR_BTNFACE ) )
+      // ::Disable()
    endif
 
    ::DispText()
@@ -521,7 +622,17 @@ METHOD Initiate( hDlg ) CLASS TGet
    endif
    ::oGet:KillFocus()
 
-   ::SetMargins( 1, 1 )
+   if ValType( ::bAction ) == "B"
+      ::SetMargins( 1, ::nHeight )
+   else
+      ::SetMargins( 1, 1 )
+   endif
+
+   ::CreateButton()
+
+   if ! Empty( ::cCueText )
+      SendWideStringMessage( ::hWnd, EM_SETCUEBANNER, .T., ::cCueText )
+   endif
 
 return nil
 
@@ -542,12 +653,16 @@ return nil
 
 METHOD cText( uVal ) CLASS TGet
 
-   if PCount() == 1      // OJO Con Objects 2.0 PCount() es PCount() + 1
+   local cWindowText
+
+   if PCount() == 1
       ::oGet:VarPut( uVal )
       ::Refresh()
    endif
 
-return GetWindowText( ::hWnd )
+   cWindowText := GetWindowText( ::hWnd )
+
+return If( ! Empty( ::cCueText ) .and. cWindowText == "", ::oGet:buffer, cWindowText )
 
 //----------------------------------------------------------------------------//
 
@@ -602,7 +717,7 @@ return nil
 METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TGet
 
    if ::lDrag
-      return Super:MouseMove( nRow, nCol, nKeyFlags )
+      return ::Super:MouseMove( nRow, nCol, nKeyFlags )
    else
       ::oWnd:SetMsg( ::cMsg )        // Many thanks to HMP
       if ::oCursor != nil
@@ -615,7 +730,9 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TGet
       if ::bMMoved != nil
          return Eval( ::bMMoved, nRow, nCol, nKeyFlags )
       endif
-
+      if ::oBtn != nil
+         ::oBtn:Refresh()
+      endif
    endif
 
 return nil      // We want standard Get behavior !!!
@@ -634,7 +751,7 @@ METHOD Copy() CLASS TGet
       oClp:SetText( ::GetSel() )
       oClp:End()
    else
-      msgStop( "The clipboard is not available now!" )
+      MsgAlert( "The clipboard is not available now!" )
    endif
 
 return nil
@@ -642,7 +759,7 @@ return nil
 //---------------------------------------------------------------------------//
 
 METHOD Default() CLASS TGet
-
+? PROCNAME(0)
    if ::oFont != nil
       ::SetFont( ::oFont )
    else
@@ -656,11 +773,17 @@ return nil
 METHOD Destroy() CLASS TGet
 
    if ::hHeap != 0
-      // LocalShrink( ::hHeap, 0 )
       ::hHeap = 0
    endif
 
-return Super:Destroy()
+return ::Super:Destroy()
+
+//---------------------------------------------------------------------------//
+
+METHOD GenLocals() CLASS TGet
+
+return ", " + ::cVarName + ", " + "c" + SubStr( ::cVarName, 2 ) + " := " + ;
+       If( Empty( ::GetText() ), "Space( 20 )", '"' + ::GetText() + '"' )
 
 //---------------------------------------------------------------------------//
 
@@ -669,9 +792,9 @@ METHOD cGenPrg() CLASS TGet
    local cCode := ""
 
    cCode += CRLF + "   @ " + Str( ::nTop, 3 ) + ", " + Str( ::nLeft, 3 ) + ;
-            " GET oGet SIZE " + Str( ::nWidth, 3 ) + ;
-            ", " + Str( ::nHeight, 3 ) + ;
-            " PIXEL OF oWnd " + CRLF
+            " GET " + ::cVarName + " VAR " + "c" + SubStr( ::cVarName, 2 ) + ;
+            " SIZE " + Str( ::nWidth, 3 ) + ", " + Str( ::nHeight, 3 ) + ;
+            " PIXEL OF " + ::oWnd:cVarName + CRLF
 
 return cCode
 
@@ -691,15 +814,15 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
    endif
 
    do case
-   	  case nKey == VK_PRIOR
-   	       if ::lSpinner
-   	          Self--
-   	       endif
+        case nKey == VK_PRIOR
+             if ::lSpinner
+                Self--
+             endif
 
-   	  case nKey == VK_NEXT
-   	       if ::lSpinner
-   	          Self++
-   	       endif
+        case nKey == VK_NEXT
+             if ::lSpinner
+                Self++
+             endif
 
       case nKey == VK_UP
            if Len( ::oWnd:aControls ) > 1
@@ -714,10 +837,19 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
            endif
 
       case nKey == VK_LEFT
+           if ::oGet:buffer != nil .and. ::nPos >= Len( ::oGet:buffer )
+              ::GetSelPos( @nLo, @nHi )
+              ::oGet:Pos = nLo + 1
+              ::nPos := nLo + 1
+           endif
            if GetKeyState( VK_CONTROL )
               ::oGet:WordLeft()
            else
               ::oGet:Left()
+              #ifndef __XHARBOUR__
+                 ::nPos--
+                 ::oGet:Pos := ::nPos
+              #endif
            endif
 
            ::oGet:Pos = Max( ::oGet:Pos, 1 )
@@ -731,9 +863,16 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
            end
            ::nPos = nLo + 1
            if ::nPos < ::oGet:Pos
-              ::SetPos( ::oGet:Pos )
+              #ifndef __XHARBOUR__
+                 ::SetPos( ::oGet:Pos-1 )
+              #else
+                 ::SetPos( ::oGet:Pos )
+              #endif
            else
               ::oGet:Pos = ::nPos
+           endif
+           if ::oBtn != nil
+              ::oBtn:Refresh()
            endif
            return 0
 
@@ -756,7 +895,19 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
               end
               ::oGet:Pos = nHi + 1
               ::nPos     = nHi + 1
+           elseif nPos == Len( ::oGet:buffer )
+//              ::nPos++
+//              ::oGet:Pos := ::nPos
+              ::GetSelPos( @nLo, @nHi )
+              ::oGet:Pos = nLo + 1
+              ::nPos := nLo + 1
+              CallWindowProc( ::nOldProc, ::hWnd, WM_KEYDOWN, nKey, nFlags )
+
            endif
+           if ::oBtn != nil
+              ::oBtn:Refresh()
+           endif
+
            return 0
                                           // Many thanks to HMP
       case nKey == VK_INSERT .and. ! GetKeyState( VK_SHIFT ) ;
@@ -813,8 +964,15 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
 
                if nKey == VK_END
                   ::oGet:End()
-                  ::SetPos( ::oGet:Pos )
+                  if ::oGet:Pos == len( ::oGet:buffer )
+                     ::SetPos( ::oGet:Pos + 1)
+                  else
+                     ::SetPos( ::oGet:Pos )
+                  endif
                endif
+           endif
+           if ::oBtn != nil
+              ::oBtn:Refresh()
            endif
            return 0
 
@@ -825,7 +983,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
            endif
 
            if ::lDrag
-              return Super:KeyDown( nKey, nFlags )
+              return ::Super:KeyDown( nKey, nFlags )
            endif
 
            ::GetSelPos( @nLo, @nHi )
@@ -838,8 +996,30 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
               endif
            else
               if nKey == VK_DELETE
+                 #ifndef __XHARBOUR__
+                    if ::nPos > len( ::oGet:buffer() )
+                       return 0
+                    endif
+                 #endif
                  ::oGet:Delete()
               else
+                 #ifndef __XHARBOUR__
+                    if hb_isstring( ::oGet:buffer ) .and. ( ::nPos > len( ::oGet:buffer ) )
+                       ::oGet:Delete()
+                    else
+                       ::oGet:BackSpace()
+                    endif
+
+              endif
+           endif
+           ::EditUpdate()
+           if ::bChange != nil
+              Eval( ::bChange, nKey, nFlags, Self )
+           endif
+
+           return 0
+
+                 #else
                  ::oGet:BackSpace()
               endif
            endif
@@ -848,9 +1028,11 @@ METHOD KeyDown( nKey, nFlags ) CLASS TGet
               Eval( ::bChange, nKey, nFlags, Self )
            endif
            return 0
+                 #endif
+
    endcase
 
-return Super:KeyDown( nKey, nFlags )
+return ::Super:KeyDown( nKey, nFlags )
 
 //---------------------------------------------------------------------------//
 
@@ -860,8 +1042,6 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
    local lAccept
    local bKeyAction := SetKey( nKey )
    local nDefButton
-
-   MsgStop( "Paso por el keychar" )
 
    if ::bKeyChar != nil
       if Eval( ::bKeyChar, nKey, nFlags, Self ) == 0
@@ -874,9 +1054,11 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
       return 1
    endif
 
+   #ifndef __XPP__
    if ! Empty( ::cPicture ) .and. '@!' $ ::cPicture
       nKey = Asc( CharUpper( nKey ) )
    endif
+   #endif
 
    if bKeyAction != nil .and. lAnd( nFlags, 16777216 ) // function Key
       Eval( bKeyAction, ProcName( 4 ), ProcLine( 4 ), Self )
@@ -892,24 +1074,23 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
 
    do case
       case nKey == VK_BACK       // Already processed at KeyDown
-           Eval( ::bPostKey, Self, ::oGet:Buffer )
            return 0
 
       // case nKey == VK_ESCAPE
       //     return 0
 
       case nKey == VK_TAB .and. GetKeyState( VK_SHIFT )
-           if ::bChange != nil
+           if ::bChange != nil .and. ( ::oGet:Changed .or. ::oGet:UnTransform() != ::oGet:Original )
               lAccept = Eval( ::bChange, nKey, nFlags, Self )
               if ValType( lAccept ) == "L" .and. lAccept
-                 if Upper( ::oWnd:ClassName() ) == "TCOMBOBOX"
+                 if ::oWnd:IsKindOf( "TCOMBOBOX" )
                     ::oWnd:oWnd:GoPrevCtrl( ::hWnd )
                  else
                     ::oWnd:GoPrevCtrl( ::hWnd )
                  endif
               endif
            else
-              if Upper( ::oWnd:ClassName() ) == "TCOMBOBOX"
+              if ::oWnd:IsKindOf( "TCOMBOBOX" )
                  ::oWnd:oWnd:GoPrevCtrl( ::hWnd )
               else
                  ::oWnd:GoPrevCtrl( ::hWnd )
@@ -933,22 +1114,22 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
 
            #ifndef __CLIPPER__
                if nKey == VK_RETURN  // Execute DEFPUSHBUTTON Action
-                  Super:KeyChar( nKey, nFlags )
+                  ::Super:KeyChar( nKey, nFlags )
                endif
            #endif
 
            return 0
 
       case nKey >= 32 .and. nKey < 256
-
-           #ifdef __HARBOUR__
-           // <lk> deadkey+tab [or enter] previously pressed will cause a r/t error
-              if ::oGet:buffer == nil
-                 return 0
-              endif
-           #endif
+           if ::oGet:buffer == nil
+              return 0
+           endif
+           if ::nPos > Len( ::oGet:buffer ) + 1
+              return 0
+           endif
 
            ::GetSelPos( @nLo, @nHi )
+
            // Delete selection
            if nHi != nLo
               ::GetDelSel( nLo, nHi )
@@ -975,6 +1156,9 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
               endif
            endif
            ::EditUpdate()
+           if nHi+1 == len( ::oGet:buffer )
+              ::SetPos( nHi+2 )
+           endif
            if ::oGet:TypeOut
               if ! Set( _SET_CONFIRM )
                  ::oWnd:nLastKey = VK_RETURN
@@ -992,9 +1176,12 @@ METHOD KeyChar( nKey, nFlags ) CLASS TGet
               endif
            endif
            Eval( ::bPostKey, Self, ::oGet:Buffer )
+           if ::oBtn != nil
+              ::oBtn:Refresh()
+           endif
 
       otherwise
-           return Super:KeyChar( nKey, nFlags )
+           return ::Super:KeyChar( nKey, nFlags )
    endcase
 
 return 0
@@ -1014,7 +1201,7 @@ METHOD lValid() CLASS TGet
       ::oGet:Assign()
       if ValType( ::bValid ) == "B"
          lRet := Eval( ::bValid, Self  )
-         if !lRet
+         if ! lRet
             ::oWnd:nLastKey = 0
          endif
       endif
@@ -1026,9 +1213,7 @@ return lRet
 
 METHOD LostFocus( hCtlFocus ) CLASS TGet
 
-   local nClrFocus
-
-   Super:LostFocus( hCtlFocus )
+   ::Super:LostFocus( hCtlFocus )
 
    if ! ::lPassword
       if ::oGet:buffer != GetWindowText( ::hWnd )  // right click popup action
@@ -1049,17 +1234,19 @@ METHOD LostFocus( hCtlFocus ) CLASS TGet
    if ! ::oGet:BadDate .and. ! ::lReadOnly .and. ;
       ( ::oGet:changed .or. ::oGet:unTransform() <> ::oGet:original )
       ::oGet:Assign()     // for adjust numbers
-      ::oGet:UpdateBuffer()
+      // ::oGet:UpdateBuffer()
    endif
-
-   #ifdef __XPP__
-      DEFAULT ::lClrFocus := .F.
-   #endif
 
    if ::lClrFocus
-      ::SetColor( ::nClrText, ::nOldClrPane )
+      if ::nOldClrPane != nil
+         ::SetColor( ::nClrText, ::nOldClrPane )
+      endif
    endif
 
+   if ::oGet:Type == "D"
+      ::oGet:KillFocus()
+      ::oGet:SetFocus()
+   endif
    ::DispText()
 
    if ! ::oGet:BadDate
@@ -1077,6 +1264,11 @@ METHOD Paint() CLASS TGet
 
    local aInfo := ::DispBegin()
    local hOldFont
+   local nClrBtnTxt, nClrBtnPane
+   local nOldMode
+
+   nClrBtnTxt := ::nClrText
+   nClrBtnPane := ::nClrPane
 
    if ::oBrush != nil
       FillRect( ::hDC, GetClientRect( ::hWnd ), ::oBrush:hBrush )
@@ -1084,57 +1276,96 @@ METHOD Paint() CLASS TGet
       CallWindowProc( ::nOldProc, ::hWnd, WM_ERASEBKGND, ::hDC, 0 )
    endif
 
-   if IsWindowEnabled( ::hWnd )
+   if IsWindowEnabled( ::hWnd ) .and. ! ::lReadOnly
       CallWindowProc( ::nOldProc, ::hWnd, WM_PAINT, ::hDC, 0 )
    else
       if ::lDisColors
          SetTextColor( ::hDC, GetSysColor( COLOR_GRAYTEXT ) )
          SetBkColor( ::hDC, GetSysColor( COLOR_WINDOW ) )
+         nClrBtnPane := GetSysColor( COLOR_WINDOW )
       else
-         SetTextColor( ::hDC, ::nClrText )
-         SetBkColor( ::hDC, ::nClrPane )
+         if ValType( ::nClrTextDis ) == "B"
+            SetTextColor( ::hDC, Eval( ::nClrTextDis ) )
+         elseif ValType( ::nClrTextDis ) == "N"
+            if ::nClrTextDis >= 0
+               SetTextColor( ::hDC, ::nClrTextDis  )
+               nClrBtnTxt := ::nClrTextDis
+            else
+               SetTextColor( ::hDC, ::nClrText )
+            endif
+        endif
+
+        if ValType( ::nClrPaneDis ) == "B"
+            SetBkColor( ::hDC, Eval( ::nClrPaneDis ) )
+        elseif ValType( ::nClrPaneDis ) == "N"
+            if ::nClrPaneDis >= 0
+               SetBkColor( ::hDC, ::nClrPaneDis  )
+               nClrBtnPane := ::nClrPaneDis
+            else
+               SetBkColor( ::hDC, ::nClrPane )
+            endif
+        endif
       endif
+
       if ::oFont != nil
          hOldFont = SelectObject( ::hDC, ::oFont:hFont )
       endif
+
+      nOldMode = SetBkMode( ::hDC, TRANSPARENT )
 
       do case
          case lAnd( GetWindowLong( ::hWnd, GWL_STYLE ), ES_CENTER )
               SetTextAlign( ::hDC, TA_CENTER )
               if ::lSpinner
                  ExtTextOut( ::hDC, 1, ( ::nWidth() - 3 - GetSysMetrics( SM_CYHSCROLL ) ) / 2,;
-                    { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+                    { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ), ::nTxtStyle )
               else
                  ExtTextOut( ::hDC, 1, ( ::nWidth() - 3 ) / 2,;
-                   { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+                   { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ), ::nTxtStyle )
               endif
 
-         case lAnd( GetWindowLong( ::hWnd, GWL_STYLE ), ES_RIGHT )
+                 case lAnd( GetWindowLong( ::hWnd, GWL_STYLE ), ES_RIGHT )
               SetTextAlign( ::hDC, TA_RIGHT )
               if ::lSpinner
                  ExtTextOut( ::hDC, 1, ::nWidth() - 7 - GetSysMetrics( SM_CYHSCROLL ),;
-                    { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+                    { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ), ::nTxtStyle )
               else
-                 ExtTextOut( ::hDC, 1, ::nWidth() - 7,;
-                    { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+                  if ValType( ::bAction ) == "B"
+                      ExtTextOut( ::hDC, 1, ::nWidth() - 7 - ::nHeight,;
+                    { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ), ::nTxtStyle )
+                 else
+                    ExtTextOut( ::hDC, 1, ::nWidth() - 7 ,;
+                    { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ), ::nTxtStyle )
+                  endif
               endif
 
          otherwise
               SetTextAlign( ::hDC, TA_LEFT )
               ExtTextOut( ::hDC, 1, 2,;
-                { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+                { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ), ::nTxtStyle )
       endcase
 
       if ::oFont != nil
          SelectObject( ::hDC, hOldFont )
       endif
+
+      SetBkMode( ::hDC, nOldMode )
+
    endif
+
 
    if ValType( ::bPainted ) == "B"
       Eval( ::bPainted, ::hDC, ::cPS, Self )
    endif
 
-   ::DispEnd( aInfo )
+// button
+
+  if ::oBtn != nil .and. ::lBtnTransparent
+     ::oBtn:SetColor( nClrBtnTxt, nClrBtnPane )
+  endif
+
+
+  ::DispEnd( aInfo )
 
 return 1
 
@@ -1142,8 +1373,7 @@ return 1
 
 METHOD Paste( cText ) CLASS TGet
 
-   local oClp
-   local cTemp
+   local oClp, cTemp, nLen
 
    DEFINE CLIPBOARD oClp OF Self FORMAT TEXT
 
@@ -1152,12 +1382,14 @@ METHOD Paste( cText ) CLASS TGet
          cText = oClp:GetText()
          oClp:Close()
       else
-         msgStop( "The clipboard is not available!" )
+         MsgAlert( "The clipboard is not available!" )
       endif
    endif
 
    if ! Empty( cText )
       cTemp = ::GetText()
+      nLen = Len( ::oGet:Buffer )
+
       do case
          case ValType( cTemp ) == "C"
               ::oGet:Buffer = SubStr( cTemp, 1, ::nPos - 1 ) + Trim( cText ) + ;
@@ -1174,16 +1406,22 @@ METHOD Paste( cText ) CLASS TGet
                               SubStr( cTemp, ::nPos ) )
       endcase
 
+      ::oGet:Buffer = Pad( ::oGet:Buffer, nLen )
+
       ::DispText() // from buffer to screen
 
-      // EMW - the text has been changed!
       if ::bChange != nil
          Eval( ::bChange,,, Self )
+      endif
+
+      if ::oBtn != nil
+         ::oBtn:Refresh()
       endif
 
    endif
 
 return nil
+
 
 //----------------------------------------------------------------------------//
 
@@ -1197,7 +1435,10 @@ METHOD DispText() CLASS TGet
                                            Len( Trim( ::oGet:buffer ) ) ) )
       #endif
    else
-      SetWindowText( ::hWnd, ::oGet:buffer )
+      SetWindowText( ::hWnd, If( ! Empty( ::cCueText );
+                                   .and. Empty( ::oGet:VarGet() );
+                                   .and. GetFocus() != ::hWnd,;  // Focus is outside
+                                   "", ::oGet:buffer ) )
    endif
 
 return nil
@@ -1206,7 +1447,7 @@ return nil
 
 METHOD Move( nTop, nLeft, nBottom, nRight, lRepaint ) CLASS TGet
 
-   Super:Move( nTop, nLeft, nBottom, nRight, lRepaint )
+   ::Super:Move( nTop, nLeft, nBottom, nRight, lRepaint )
    MoveGet( ::hWnd, ::nRight - ::nLeft, ::nBottom - ::nTop )
 
 return nil
@@ -1227,14 +1468,10 @@ return Self
 
 METHOD GotFocus( hCtlLost ) CLASS TGet
 
-    ::lFocused = .t.
+    ::lFocused = .T.
 
     #ifdef __XHARBOUR__
        ::oGet:VarGet()
-    #endif
-
-    #ifdef __XPP__
-       DEFAULT ::lClrFocus := .F.
     #endif
 
     if ! Empty( ::cPicture ) .and. ::oGet:Type == "N"
@@ -1268,7 +1505,7 @@ METHOD GotFocus( hCtlLost ) CLASS TGet
        HideCaret( ::hWnd )
     endif
 
-    Super:GotFocus( hCtlLost )
+    ::Super:GotFocus( hCtlLost )
 
 return 0
 
@@ -1279,7 +1516,7 @@ METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TGet
    local nLo, nHi
 
    if ::lDrag
-      return Super:LButtonDown( nRow, nCol, nFlags )
+      return ::Super:LButtonDown( nRow, nCol, nFlags )
    else
       CallWindowProc( ::nOldProc, ::hWnd, WM_LBUTTONDOWN, nFlags,;
                       nMakeLong( nCol, nRow ) )
@@ -1292,7 +1529,10 @@ METHOD LButtonDown( nRow, nCol, nFlags ) CLASS TGet
          ::oGet:Pos = ::nPos
       endif
       if ::bLClicked != nil
-         Eval( ::bLClicked )
+         Eval( ::bLClicked, nRow, nCol, nFlags, Self )
+      endif
+      if ::oBtn != nil
+         ::oBtn:Refresh()
       endif
       return 1
    endif
@@ -1306,13 +1546,13 @@ METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TGet
    local nLo, nHi, cText
 
    if ::lDrag
-      Super:LButtonUp( nRow, nCol, nFlags )
+      ::Super:LButtonUp( nRow, nCol, nFlags )
       SysRefresh()
       ::Refresh()
       return 0
    else
       cText = ::GetText()
-      If Left( cText, 1 ) == "("
+      if Left( cText, 1 ) == "("
          ::nPos = 2
          ::SetPos( ::nPos )
       elseif Empty( cText ) .or. RTrim( cText ) == "  /  /" .or. ;
@@ -1323,8 +1563,15 @@ METHOD LButtonUp( nRow, nCol, nFlags ) CLASS TGet
       else
          ::GetSelPos( @nLo, @nHi )
          ::oGet:pos = nHi + 1
-         ::nPos = ::oGet:pos
+         ::nPos = nHi + 1 // don't use ::oGet:pos here! as it does not allow higher values
       endif
+      if ::oBtn != nil
+         ::oBtn:Refresh()
+      endif
+   endif
+   if ::oGet:buffer != nil .and. ::nPos > Len( ::oGet:buffer )
+      ::nPos = Len( ::oGet:buffer ) + 1
+      ::oGet:pos = ::nPos
    endif
 
 return nil
@@ -1378,7 +1625,22 @@ METHOD Resize( nType, nWidth, nHeight ) CLASS TGet
       ::Refresh()
    endif
 
-return Super:ReSize( nType, nWidth, nHeight )
+return ::Super:ReSize( nType, nWidth, nHeight )
+
+//----------------------------------------------------------------------------//
+
+METHOD SaveToRC( nIndent ) CLASS TGet
+
+   local cRC := Space( nIndent ) + "EDITTEXT "
+
+   // cRC += '"' + ::cCaption + '", '
+   cRC += AllTrim( Str( ::nId ) ) + ", "
+   cRC += AllTrim( Str( ::nTop ) ) + ", "
+   cRC += AllTrim( Str( ::nLeft ) ) + ", "
+   cRC += AllTrim( Str( ::nWidth ) ) + ", "
+   cRC += AllTrim( Str( ::nHeight ) )
+
+return cRC
 
 //----------------------------------------------------------------------------//
 
@@ -1427,7 +1689,7 @@ METHOD Cut() CLASS TGet
    local nLo, nHi, cTemp
 
    if ::lReadOnly
-      msgStop( "The get is read only!", "Can't cut" )
+      MsgAlert( "The get is read only!", "Can't cut" )
       return nil
    endif
 
@@ -1696,23 +1958,21 @@ RETURN nil
 
 METHOD SetColorFocus( nClrFocus ) CLASS TGet
 
-   ::lClrFocus = .T.
-   ::nClrFocus = nClrFocus
+   local nOldClrFocus := ::nClrFocus
 
-return nil
+   ::lClrFocus = .T.
+
+   if nClrFocus != nil
+      ::nClrFocus = nClrFocus
+   endif
+
+return nOldClrFocus
 
 //----------------------------------------------------------------------------//
 
 function SetGetColorFocus( nClrFocus )
 
-   local oGet := TGet()
-
-   oGet:lClrFocus = .T.
-   if nClrFocus != nil
-      oGet:nClrFocus = nClrFocus
-   endif
-
-return nil
+return TGet():SetColorFocus( nClrFocus )
 
 //----------------------------------------------------------------------------//
 

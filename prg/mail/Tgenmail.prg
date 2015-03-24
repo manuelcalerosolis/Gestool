@@ -43,7 +43,7 @@ CLASS TGenMailing
    DATA cRecipients                       INIT Space( 250 )
 
    METHOD setRecipients( cText )          INLINE ( ::cRecipients := padr( cText, 250 ) )
-   METHOD getRecipients()                 INLINE ( iif( !empty( ::bRecipients ), ::evalBlockRecipients(), alltrim( ::cRecipients ) ) )
+   METHOD getRecipients()                 INLINE ( iif( ::lMultiSelect(), ::evalBlockRecipients(), alltrim( ::cRecipients ) ) )
 
       METHOD hideRecipients()             INLINE ( ::lHideRecipients := .t., if ( !empty( ::oRecipients ), ::oRecipients:Hide(), ) )
       METHOD showRecipients()             INLINE ( ::lHideRecipients := .f., if ( !empty( ::oRecipients ), ::oRecipients:Show(), ) )
@@ -76,8 +76,9 @@ CLASS TGenMailing
 
    DATA aSelected                         INIT {}
    METHOD setSelected( aSelected )        INLINE ( ::aSelected := aSelected )
+   METHOD lMultiSelect()                  INLINE ( len( ::aSelected ) > 1 ) 
 
-   METHOD setMultiSelectMode( lMode )     INLINE ( iif(  ( len( ::aSelected ) > 1 ),;
+   METHOD setMultiSelectMode()            INLINE ( iif(  ::lMultiSelect(),;
                                                          ( ::setRecipients( "" ), ::HideRecipients() ),;
                                                          ( ::setRecipients( ::evalBlockRecipients() ), ::ShowRecipients() ) ) )
 
@@ -129,19 +130,19 @@ CLASS TGenMailing
    DATA lCancel
 
    DATA oPaquetesTotales
-   DATA nPaquetesTotales               INIT 1
-   DATA nPaqueteActual                 INIT 1
+   DATA nPaquetesTotales                  INIT 1
+   DATA nPaqueteActual                    INIT 1
 
    DATA nTime
 
-   DATA cTiempo                        INIT "0 seg."
-   DATA aTiempo                        INIT { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
+   DATA cTiempo                           INIT "0 seg."
+   DATA aTiempo                           INIT { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
 
    DATA oBmpRedactar
    DATA oBmpProceso
    DATA oBmpDatabase
 
-   DATA aMailingList                   INIT {}
+   DATA aMailingList                      INIT {}
 
    METHOD New()
    METHOD Create()
