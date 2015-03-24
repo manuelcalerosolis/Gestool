@@ -768,10 +768,10 @@ STATIC FUNCTION EdtDocs( aTmp, aGet, dbfDoc, oBrw, cTipoDoc, bValid, nMode )
       cCodDoc     := aTmp[ dCTIPO ]
    end if
 
-	/*
+   /*
    Creamos la primera caja de Dialogo
-	---------------------------------------------------------------------------
-	*/
+   -------------------------------------------------------------------------
+   */
 
       REDEFINE COMBOBOX oTipDoc ;
          VAR      cTipDoc ;

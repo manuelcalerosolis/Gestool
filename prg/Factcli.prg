@@ -784,6 +784,17 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Mail"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( D():FacturasClientes( nView ) )->lMail }
+         :nWidth           := 20
+         :lHide            := .t.
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Imp16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo"
          :bEditValue       := {|| aTipFac[ if( ( D():FacturasClientes( nView ) )->lAlquiler, 2, 1 ) ] }
          :nWidth           := 50
