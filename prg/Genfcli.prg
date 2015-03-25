@@ -882,7 +882,6 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
    local dbfFacCliP
    local dbfFacCliS
    local dbfAntCliT
-   local dbfObrasT
    local aProcesado           := {}
    local nProcesando          := 0
    local cLinObr              := Space( 1 )
@@ -906,7 +905,6 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
    local nTotEntAlb           := 0
    local aTotFac
    local nRecAnt
-   local cDesObr              := ""
 
    if oDbfTmp:LastRec() <= 0
       msgStop( "No hay albaranes para facturar" )
@@ -932,9 +930,6 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
 
    USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
    SET ADSINDEX TO ( cPath + "AntCliT.CDX" ) ADDITIVE
-
-   USE ( cPatCli() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-   SET ADSINDEX TO ( cPatCli() + "OBRAST.CDX" ) ADDITIVE
 
    /*
    Meter-----------------------------------------------------------------------
@@ -1042,7 +1037,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
             ( dbfFacCliT )->cCodAge       := ( dbfAlbCliT )->cCodAge
             ( dbfFacCliT )->cCodRut       := ( dbfAlbCliT )->cCodRut
             ( dbfFacCliT )->cCodTar       := ( dbfAlbCliT )->cCodTar
-            //( dbfFacCliT )->cCodObr       := ( dbfAlbCliT )->cCodObr
+            ( dbfFacCliT )->cCodObr       := ( dbfAlbCliT )->cCodObr
             ( dbfFacCliT )->cDivFac       := ( dbfAlbCliT )->cDivAlb
             ( dbfFacCliT )->nVdvFac       := ( dbfAlbCliT )->nVdvAlb
             ( dbfFacCliT )->lRecargo      := ( dbfAlbCliT )->lRecargo
@@ -1104,10 +1099,7 @@ Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo,
                ( dbfFacCliL )->cSerie     := cSerAlb
                ( dbfFacCliL )->nNumFac    := nNewFac
                ( dbfFacCliL )->cSufFac    := cSufEmp
-               cDesObr                    := Alltrim( cNumObr() ) + Space( 1 ) + ( dbfAlbCliT )->cCodObr +Space( 1 )
-               cDesObr                    += AllTrim( RetFld( ( dbfAlbCliT )->cCodCli + ( dbfAlbCliT )->cCodObr, dbfObrasT, "cNomObr" ) )
-               ( dbfFacCliL )->cDetalle   := cDesObr
-               ( dbfFacCliL )->mLngDes    := cDesObr
+               ( dbfFacCliL )->cDetalle   := Alltrim( cNumObr() ) + Space( 1 ) + ( dbfAlbCliT )->cCodObr
                ( dbfFacCliL )->lControl   := .t.
                cLinObr                    := ( dbfAlbCliT )->cCodObr
             end if

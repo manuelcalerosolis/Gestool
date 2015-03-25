@@ -9931,7 +9931,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                cDesAlb                 := ""
                if lNumObr()
                   cDesAlb              += Alltrim( cNumObr() ) + " " + StrTran( aAlbaranes[ nItem, 8 ], " ", "" ) + Space( 1 )
-                  cDesAlb              += if( !Empty( aAlbaranes[ nItem, 8 ] ), AllTrim( RetFld( aAlbaranes[ nItem, 5 ] + aAlbaranes[ nItem, 8 ], dbfObrasT, "cNomObr" ) ), "" )
                end if
                if lNumAlb()
                   cDesAlb              += Alltrim( cNumAlb() ) + " " + Left( aAlbaranes[ nItem, 2 ], 1 ) + "/" + AllTrim( Substr( aAlbaranes[ nItem, 2 ], 2, 9 ) ) + "/" + Right( aAlbaranes[ nItem, 2 ], 2 ) + Space( 1 )
@@ -9942,7 +9941,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                cDesAlb                 += " - Fecha " + Dtoc( aAlbaranes[ nItem, 4] )
 
                ( dbfTmpLin )->cDetalle := cDesAlb
-               ( dbfTmpLin )->mLngDes  := cDesAlb
                ( dbfTmpLin )->lControl := .t.
                ( dbfTmpLin )->nNumLin  := ++nOffSet
 
