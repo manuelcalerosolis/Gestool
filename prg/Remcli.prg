@@ -788,6 +788,20 @@ METHOD Resource( nMode )
       end with
 
       with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Forma pago"
+         :bStrData         := {|| Rtrim( ::oDbfVir:cCodPgo ) + Space( 1 ) + cNbrFPago( ::oDbfVir:cCodPgo ) }
+         :nWidth           := 150
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Agente"
+         :bStrData         := {|| Rtrim( ::oDbfVir:cCodAge ) + Space( 1 ) + RetNbrAge( ::oDbfVir:cCodAge ) }
+         :nWidth           := 150
+         :lHide            := .t.
+      end with
+
+      with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Importe"
          :bEditValue       := {|| nTotRecCli( ::oDbfVir, ::oDivisas:cAlias, ::oDbf:cCodDiv, .t. ) }
          :nWidth           := 100
@@ -804,6 +818,7 @@ METHOD Resource( nMode )
       end with
 
       ::oBrwDet:CreateFromResource( 150 )
+      ::oBrwDet:bLDblClick := {|| ::EditDet() }
 
       REDEFINE BUTTON ;
          ID       511 ;
@@ -1517,7 +1532,7 @@ RETURN ( Self )
 
 METHOD EditDet()
 
-   ?"Modifico el Recibo"
+   EdtRecCli( ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec ) )
 
 Return ( Self )
 
