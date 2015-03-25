@@ -71,6 +71,7 @@ CLASS TRemesas FROM TMasDet
    */
 
    METHOD AppendDet()
+   METHOD EditDet()
    METHOD RollBack()
    METHOD SaveDet()        VIRTUAL
 
@@ -716,6 +717,12 @@ METHOD Resource( nMode )
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( ::AppendDet() )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( ::EditDet() )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
@@ -1505,6 +1512,14 @@ METHOD AppendDet()
    end if
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD EditDet()
+
+   ?"Modifico el Recibo"
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 

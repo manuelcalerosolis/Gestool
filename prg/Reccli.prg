@@ -2292,7 +2292,9 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
                            "Fecha expedición",;
                            "Fecha vencimiento",;
                            "Fecha cobro",;
-                           "Importe" }
+                           "Importe",;
+                           "Forma pago",;
+                           "Agente" }
 
    nOrd              := GetBrwOpt( "BrwRecCli" )
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
@@ -2332,7 +2334,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
       oBrw:cName              := "Browse de recibos de cliente"
       oBrw:bLDblClick         := {|| oDlg:end( IDOK ) }
 
-      oBrw:nMarqueeStyle      := 5
+      oBrw:nMarqueeStyle      := 6
 
       oBrw:CreateFromResource( 105 )
 
@@ -2383,6 +2385,20 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
          :bEditValue          := {|| ( dbfFacCliP )->cNomCli }
          :nWidth              := 280
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), aGet1:SetFocus() }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Forma pago"
+         :bEditValue          := {|| ( dbfFacCliP )->cCodPgo + " - " + cNbrFPago( ( dbfFacCliP )->cCodPgo ) }
+         :nWidth              := 200
+         :lHide               := .t.
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Agente"
+         :bEditValue          := {|| ( dbfFacCliP )->cCodAge + " - " + RetNbrAge( ( dbfFacCliP )->cCodAge ) }
+         :nWidth              := 280
+         :lHide               := .t.
       end with
 
       with object ( oBrw:AddCol() )
@@ -4298,6 +4314,16 @@ Function rxRecCli( cPath, oMeter )
       ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , , , .t. ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nImporte", "nImporte", {|| Field->nImporte }, ) )
 
+      //Forma de Pago
+
+      ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCodPgo", "cCodPgo", {|| Field->cCodPgo } ) )
+      
+      //Agente,;
+
+      ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCodAge", "cCodAge", {|| Field->CCODAGE } ) )
+
       // Codigo de clientes no cobrados
 
       ( dbfFacCliT )->( ordCondSet("!Deleted() .and. !Field->lCobrado", {|| !Deleted() .and. !Field->lCobrado } ) )
@@ -4312,9 +4338,6 @@ Function rxRecCli( cPath, oMeter )
 
       ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCtaRem", "cCtaRem", {|| Field->CCTAREM }, ) )
-
-      ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cCodAge", "cCodAge", {|| Field->CCODAGE } ) )
 
       ( dbfFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "nNumCob", "Str( nNumCob ) + cSufCob", {|| Str( Field->NNUMCOB ) + Field->CSUFCOB } ) )
