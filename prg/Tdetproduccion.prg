@@ -659,10 +659,7 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
                ::oLote:cText( ::oParent:oArt:cLote )
                ::oDbfVir:lLote   := ::oParent:oArt:lLote
                ::oFecCad:Show()
-<<<<<<< HEAD
                ::oFecCad:cText( dFechaCaducidad( ::oParent:oDbf:dFecOrd, ::oParent:oArt:nDuracion, ::oParent:oArt:nTipDur ) )
-=======
->>>>>>> origin/master
             else
                ::oLote:Hide()
                ::oFecCad:Hide()
