@@ -82,6 +82,7 @@ Definici¢n de la base de datos de albaranes a proveedores
 #define _NTOTALB                  60
 #define _CALMORIGEN               61  
 #define _NFACTURADO               62
+#define _TFECALB                  63     //   D      8     0 "",  
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -202,6 +203,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _TAPERTURA               116
 #define _DCIERRE                 117
 #define _TCIERRE                 118
+#define __TFECALB                119     //   D      8     0 "",  
 
 /*
 Definici¢n de Array para impuestos
@@ -1106,6 +1108,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       aTmp[ _DFECIMP ]     := Ctod( "" )
       aTmp[ _DSUALB  ]     := Ctod( "" )
       aTmp[ _NFACTURADO ]  := 1
+      aTmp[ _TFECALB ]     := getSysTime()
 
       if !Empty( cCodPrv )
          aTmp[ _CCODPRV ]  := cCodPrv
@@ -1864,8 +1867,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
 			ID 		110 ;
 			SPINNER ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _TFECALB ] VAR aTmp[ _TFECALB ] ;
+         ID       111 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECALB ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[1]
 
       REDEFINE BUTTON ;
          ID       558 ;
@@ -5342,8 +5353,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
    oMsgText( "Archivando" )
 
-   /*oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       BeginTransaction()
 
@@ -5359,12 +5370,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
          nNumAlb           := nNewDoc( cSerAlb, D():AlbaranesProveedores( nView ), "nAlbPrv", , D():Contadores( nView ) )
          aTmp[ _NNUMALB ]  := nNumAlb
-
-         /*
-         if ( aTmp[ _LNUMSER ] .and. aTmp[ _LAUTSER ] )
-
-         end if
-         */
 
       case nMode == EDIT_MODE
 
@@ -5425,6 +5430,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
          aTbl[ _LCHGLIN ]     := .f.
          aTbl[ _NPRECOM ]     := nNetUAlbPrv( aTbl, aTmp, nDinDiv, nDirDiv, aTmp[ _NVDVALB ] )
          aTbl[ __DFECALB]     := aTmp[ _DFECALB ]
+         aTbl[ __TFECALB]     := aTmp[ _TFECALB ]
 
          AppendReferenciaProveedor( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVALB ], aTbl[ _NPREDIV ], D():ProveedorArticulo( nView ), nMode )
 
@@ -5464,12 +5470,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
       */
 
       WinGather( aTmp, , D():AlbaranesProveedores( nView ), , nMode )
-
-      /*
-      Actualizamos el stock en la web------------------------------------------
-      */
-
-      //ActualizaStockWeb( cSerAlb + Str( nNumAlb ) + cSufAlb )
 
       /*
       Ponemos el estado al pedido----------------------------------------------
@@ -5525,7 +5525,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
          oStock:SetRecibidoPedCli( cNumPed )
       next
 
-
       /*
       SiAgrupamos ponemos el estado en el pedido-------------------------------
       */
@@ -5557,7 +5556,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
       CommitTransaction()
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       RollBackTransaction()
 
@@ -5565,7 +5564,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    oMsgText()
    EndProgress()
@@ -8511,10 +8510,10 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
 
       ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
-      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastIn", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastIn", "cRef + cAlmLin + dtos( dFecAlb ) + tFecAlb", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
 
       ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
-      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastOu", "cRef + cAlmOrigen + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmOrigen + dtos( Field->dFecAlb ) } ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastOu", "cRef + cAlmOrigen + dtos( dFecAlb ) + tFecAlb", {|| Field->cRef + Field->cAlmOrigen + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
 
       ( cAlbPrvT )->( dbCloseArea() )
    else
@@ -9016,7 +9015,6 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-
 function aItmAlbPrv()
 
    local aItmAlbPrv  := {}
@@ -9083,6 +9081,7 @@ function aItmAlbPrv()
    aAdd( aItmAlbPrv, { "nTotAlb",      "N", 16,  6, "Total albarán",               "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía","",              "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nFacturado",   "N",  1,  0, "Estado del albarán",          "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,           "",                   "", "( cDbf )"} )
 
 Return ( aItmAlbPrv )
 
@@ -9210,6 +9209,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "tApertura",    "C",  6,  0, "Hora apertura de lote",         "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "dCierre",      "D",  8,  0, "Fecha cierre de lote",          "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "tCierre",      "C",  6,  0, "Hora cierre de lote",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,             "",                  "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 
