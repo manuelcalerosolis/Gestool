@@ -5259,7 +5259,8 @@ CLASS D
                                                                ( ::Clientes( nView ) )->( dbgotop() ) )  
       METHOD quitScopeClientes( nView )               INLINE ( ( ::Clientes( nView ) )->( ordScope( 0, nil ) ),;
                                                                ( ::Clientes( nView ) )->( ordScope( 1, nil ) ),;
-                                                               ::setStatusClientes( nView ) )  
+                                                               ::setStatusClientes( nView ) )
+      METHOD getLastKeyClientes( nView )              INLINE ( nextkey( space(12), ::Clientes( nView ), "0", retNumCodCliEmp() ) )
       
    METHOD ClientesDirecciones( nView )                INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
@@ -5955,7 +5956,7 @@ METHOD setDefaultValue( hash, cDataTable, nView ) CLASS D
    workArea          := ::Get( cDataTable, nView )   
    aDefaultValue     := TDataCenter():getDefaultValue( cDataTable )
 
-   hEval( aDefaultValue, {|key,value| hSet( hash, key, Eval( Value ) ) } )
+   hEval( aDefaultValue, {|key, value, nView| hSet( hash, key, Eval( Value, nView ) ) } )
 
 RETURN ( hash )
 

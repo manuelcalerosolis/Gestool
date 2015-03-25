@@ -603,20 +603,12 @@ function NextKey( uVal, uAlias, cChar, nLen )
             uVal  := ""
          end if
 
-         /*
-         uVal     := AllTrim( Str( Val( uVal ) + 1 ) )
-
-         if !Empty( cChar )
-            uVal  := RJust( uVal, cChar, nLen )
-         end if
-         */
-
          while .t.
 
             uVal     := AllTrim( Str( Val( uVal ) + 1 ) )
 
             if !Empty( cChar )
-               uVal  := RJust( uVal, cChar, nLen )
+               uVal  := rjust( uVal, cChar, nLen )
             end if
 
             if ( uAlias )->( dbSeek( uVal ) )

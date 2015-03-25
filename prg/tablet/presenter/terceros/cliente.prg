@@ -68,7 +68,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD onPostGetDocumento() CLASS Cliente
 
    local cTipo          := str( hGet( ::hDictionaryMaster, "TipoCliente" ) )
@@ -78,6 +77,8 @@ METHOD onPostGetDocumento() CLASS Cliente
          ::cTipoCliente := hGet( ::hTipoCliente, cTipo )
       end if 
    end if 
+
+   hSet( ::hDictionaryMaster, "Codigo", D():getLastKeyClientes( ::nView ) )
 
 Return ( .t. )   
 
@@ -94,7 +95,6 @@ METHOD onPreSaveDocumento() CLASS Cliente
    end if 
 
    hSet( ::hDictionaryMaster, "TipoCliente", nTipoCliente ) 
-   hSet( ::hDictionaryMaster, "CodigoAgente", AccessCode():cAgente ) 
 
 Return ( .t. )   
 
