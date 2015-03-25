@@ -192,7 +192,7 @@ HB_FUNC( INTERNETDIRECTORY )
    {
       iFiles++;
 
-	while( InternetFindNextFileA( hFind, &lpFindFileData ) )
+  while( InternetFindNextFileA( hFind, &lpFindFileData ) )
       {
          iFiles++;
        }

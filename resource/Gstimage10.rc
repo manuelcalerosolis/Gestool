@@ -16,7 +16,7 @@ CLIPBOARD_EMPTY_EARTH_32 BITMAP "..\\bmp\\clipboard_empty_earth_32.bmp"
 
 CLIPBOARD_EMPTY_16 BITMAP "..\\bmp\\clipboard_empty_16.bmp"
 CLIPBOARD_EMPTY_32 BITMAP "..\\bmp\\clipboard_empty_32.bmp"
-// CLIPBOARD_EMPTY_48 BITMAP "..\\bmp\\clipboard_empty_48.bmp" 
+Barcode_32 BITMAP "..\\bmp\\barcode_32.bmp"
 
 UNDORED16 BITMAP "..\\bmp\\UndoRed16.bmp"
 Add2_Alpha_48 BITMAP "..\\bmp\\Add2_Alpha_48.bmp"
