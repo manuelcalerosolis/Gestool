@@ -539,6 +539,12 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Hora"
+         :bEditValue       := {|| trans( ( D():AlbaranesProveedores( nView ) )->tFecAlb, "@R 99:99:99") }
+         :nWidth           := 60
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
          :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->cCodCaj }
          :nWidth           := 40

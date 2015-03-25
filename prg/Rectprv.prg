@@ -90,6 +90,7 @@
 #define _CSUCBNC                 78
 #define _CDIGBNC                 79
 #define _CCTABNC                 80
+#define _TFECFAC                 81
 
 /*
 Lineas de Detalle
@@ -185,6 +186,7 @@ Lineas de Detalle
 #define _CFORMATO                  91
 #define _CCODIMP                   92
 #define _NVALIMP                   93
+#define __TFECFAC                  94
 
 /*
 Definici¢n de Array para impuestos
@@ -730,6 +732,12 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Hora"
+         :bEditValue       := {|| trans( ( D():FacturasRectificativasProveedores( nView ) )->tFecFac, "@R 99:99:99") }
+         :nWidth           := 60
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
          :bEditValue       := {|| ( D():FacturasRectificativasProveedores( nView ) )->cCodCaj }
          :nWidth           := 40
@@ -1090,6 +1098,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
       aTmp[ _CCODUSR ]  := cCurUsr()
       aTmp[ _CCODDLG ]  := oUser():cDelegacion()
       aTmp[ _DFECIMP ]  := Ctod( "" )
+      aTmp[ _TFECFAC ]  := getSysTime()
 
       if !Empty( cCodPrv )
          aTmp[ _CCODPRV ]  := cCodPrv
@@ -1937,6 +1946,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _TFECFAC ] VAR aTmp[ _TFECFAC ] ;
+         ID       111 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECFAC ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[1]
 
 		REDEFINE GET aGet[_CSUPED] VAR aTmp[_CSUPED] ;
 			ID 		120 ;
@@ -6355,11 +6373,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    ( dbfTmp )->( dbGoTop() )
    while !( dbfTmp )->( eof() )
 
-      aTbl                                               := dbScatter( dbfTmp )
-      aTbl[ _CSERFAC ]                                   := cSerFac
-      aTbl[ _NNUMFAC ]                                   := nNumFac
-      aTbl[ _CSUFFAC ]                                   := cSufFac
-      aTbl[ ( D():FacturasRectificativasProveedoresLineas( nView ) )->( FieldPos( "dFecFac" ) ) ]  := aTmp[ _DFECFAC ]
+      aTbl               := dbScatter( dbfTmp )
+      aTbl[ _CSERFAC ]   := cSerFac
+      aTbl[ _NNUMFAC ]   := nNumFac
+      aTbl[ _CSUFFAC ]   := cSufFac
+      aTbl[ __DFECFAC ]  := aTmp[ _DFECFAC ]
+      aTbl[ __TFECFAC ]  := aTmp[ _TFECFAC ]
 
       dbGather( aTbl, D():FacturasRectificativasProveedoresLineas( nView ), .t. )
 
@@ -9940,7 +9959,7 @@ FUNCTION rxRctPrv( cPath, oMeter )
       ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "Lote", "cLote", {|| Field->cLote }, ) )
 
       ( dbfRctPrvL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
-      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) } ) )
+      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( dbfRctPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.Cdx", "iNumRct", "'04' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '04' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
@@ -10716,6 +10735,7 @@ function aItmRctPrv()
    aAdd( aItmFacPrv, { "cSucBnc"    ,"C",  4, 0, "Sucursal de la cuenta bancaria del proveedor" ,        "",               "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cDigBnc"    ,"C",  2, 0, "Dígito de control de la cuenta bancaria del proveedor","",               "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cCtaBnc"    ,"C", 10, 0, "Cuenta bancaria del proveedor" ,                       "",               "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura rectificativa" ,                    "",               "", "( cDbf )", nil } )
 
 return ( aItmFacPrv )
 
@@ -10818,6 +10838,7 @@ function aColRctPrv()
    aAdd( aColFacPrv, { "cFormato"   ,"C",100, 0, "Formato de compra",            "",                    "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "cCodImp"    ,"C",  3, 0, "Código de impuesto especial",  "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto especial", "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,          "",                   "", "( cDbfCol )" } )
 
 Return ( aColFacPrv )
 

@@ -92,6 +92,7 @@
 #define _CDIGBNC                 80
 #define _CCTABNC                 81
 #define _LRECC                   82
+#define _TFECFAC                 83
 
 /*
 Lineas de Detalle
@@ -195,6 +196,8 @@ Lineas de Detalle
 #define _INUMALB                 99 
 #define _CCODIMP                 100
 #define _NVALIMP                 101
+#define __TFECFAC                102
+
 
 /*
 Definici¢n de Array para impuestos--------------------------------------------------
@@ -790,6 +793,12 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Hora"
+         :bEditValue       := {|| trans( ( D():FacturasProveedores( nView ) )->tFecFac, "@R 99:99:99") }
+         :nWidth           := 60
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
          :bEditValue       := {|| ( D():FacturasProveedores( nView ) )->cCodCaj }
          :nWidth           := 40
@@ -1165,6 +1174,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
       aTmp[ _CCODDLG ]     := oUser():cDelegacion()
       aTmp[ _DFECENT ]     := Ctod( "" )
       aTmp[ _DFECIMP ]     := Ctod( "" )
+      aTmp[ _TFECFAC ]     := getSysTime()
 
       if !Empty( cCodPrv )
          aTmp[ _CCODPRV ]  := cCodPrv
@@ -2026,6 +2036,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          ID       110 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _TFECFAC ] VAR aTmp[ _TFECFAC ] ;
+         ID       111 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECFAC ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CSUPED ] VAR aTmp[ _CSUPED ] ;
@@ -6916,13 +6935,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    ( dbfTmp )->( dbGoTop() )
    while !( dbfTmp )->( eof() )
 
-      aTbl                                               := dbScatter( dbfTmp )
-      aTbl[ _CSERFAC ]                                   := cSerFac
-      aTbl[ _NNUMFAC ]                                   := nNumFac
-      aTbl[ _CSUFFAC ]                                   := cSufFac
-      aTbl[ _LCHGLIN ]                                   := .f.
-      aTbl[ _NPRECOM ]                                   := nNetUFacPrv( aTbl, aTmp, nDinDiv, nRinDiv ) //, aTmp[ _NVDVFAC ] )
-      aTbl[ ( D():FacturasProveedoresLineas( nView ) )->( FieldPos( "dFecFac" ) ) ]  := aTmp[ _DFECFAC ]
+      aTbl                 := dbScatter( dbfTmp )
+      aTbl[ _CSERFAC ]     := cSerFac
+      aTbl[ _NNUMFAC ]     := nNumFac
+      aTbl[ _CSUFFAC ]     := cSufFac
+      aTbl[ _LCHGLIN ]     := .f.
+      aTbl[ _NPRECOM ]     := nNetUFacPrv( aTbl, aTmp, nDinDiv, nRinDiv ) //, aTmp[ _NVDVFAC ] )
+      aTbl[ __DFECFAC ]    := aTmp[ _DFECFAC ]
+      aTbl[ __TFECFAC ]    := aTmp[ _TFECFAC ]
 
       /*
       Comprobamos que exista el articulo en la base de datos-------------------
@@ -9286,7 +9306,7 @@ FUNCTION rxFacPrv( cPath, oMeter )
       ( cFacPrvL )->( ordCreate( cPath + "FACPRVL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
 
       ( cFacPrvL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
-      ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) } ) )
+      ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( cFacPrvL )->( dbCloseArea() )
    else
@@ -10058,6 +10078,7 @@ function aItmFacPrv()
    aAdd( aItmFacPrv, { "cDigBnc"    ,"C",  2, 0, "Dígito de control de la cuenta bancaria del proveedor" ,"",      "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cCtaBnc"    ,"C", 10, 0, "Cuenta bancaria del proveedor" ,                        "",      "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "lRECC"      ,"L",  1, 0, "Acogida al régimen especial del criterio de caja",      "",      "", "( cDbf )", .f. } )
+   aAdd( aItmFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,                     "",                    "", "( cDbf )", nil } )
 
 return ( aItmFacPrv )
 
@@ -10204,6 +10225,7 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "iNumAlb"    ,"C", 16, 0, "Identificador del albarán",    "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cCodImp"    ,"C",  3, 0, "Código de impuesto especial",  "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto especial", "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,          "",                   "", "( cDbfCol )", nil } )
 
 return ( aColFacPrv )
 
