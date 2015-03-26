@@ -12820,6 +12820,8 @@ Method LoadAuxiliar() CLASS TFacturaProveedorLabelGenerator
                   ( ::cAreaTmpLabel )->mObsLin  := ( D():FacturasProveedoresLineas( nView ) )->mObsLin
                   ( ::cAreaTmpLabel )->nPvpRec  := ( D():FacturasProveedoresLineas( nView ) )->nPvpRec
                   ( ::cAreaTmpLabel )->nUndLin  := nTotNFacPrv( D():FacturasProveedoresLineas( nView ) )
+                  ( ::cAreaTmpLabel )->dFecCad  := ( D():FacturasProveedoresLineas( nView ) )->dFecCad
+                  ( ::cAreaTmpLabel )->dFecFac  := ( D():FacturasProveedoresLineas( nView ) )->dFecFac
                   ( ::cAreaTmpLabel )->lLabel   := .t.
 
                   if ::nCantidadLabels == 1

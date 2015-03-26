@@ -1438,11 +1438,7 @@ METHOD Print( nDevice ) CLASS TInfGen
 
    case nDevice == 5
 
-      if !Empty( cPrinterPDF() )
-         oDevice  := TPrinter():New( Rtrim( ::cAliasTitle ), .f., .f., Rtrim( cPrinterPDF() ) )
-      end if
-
-      ::oReport   := RptBegin({ {|| Rtrim( ::cTitle ) }, {|| Rtrim( ::cAliasTitle ) } },;            //aTitle   ,;
+      ::oReport   := RptBegin({ {|| Rtrim( ::cTitle ) }, {|| Rtrim( ::cAliasTitle ) } },;          //aTitle   ,;
                               ::aHeader ,;                                                         //aHead    ,;
                               ::aFooter,;                                                          //aFoot    ,;
                               aFnt,;                                                               //aFont    ,;
@@ -1450,8 +1446,8 @@ METHOD Print( nDevice ) CLASS TInfGen
                               .f.,;                                                                //lSummary ,;
                               nil,;                                                                //cRptfile ,;
                               nil,;                                                                //cResName ,;
-                              .t.,;                                                                //lPrint   ,;
-                              .f.,;                                                                //lScreen  ,;
+                              .f.,;                                                                //lPrint   ,;
+                              .t.,;                                                                //lScreen  ,;
                               nil,;                                                                //cFile    ,;
                               oDevice,;                                                            //oDevice  ,;
                               Rtrim( ::cTitle ),;                                                  //cName    ,;

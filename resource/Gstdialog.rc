@@ -17108,8 +17108,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 142, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 557, 52, 50, 12
   CONTROL "", 170, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 345, 65, 66, 12
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 49, 96, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 104, 96, 50, 14
-  CONTROL "&Importar", 503, "Button", WS_TABSTOP, 158, 96, 50, 14
+  CONTROL "Modificar [F3]", 501, "Button", WS_TABSTOP, 102, 96, 50, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 156, 96, 50, 14
+  CONTROL "&Importar", 503, "Button", WS_TABSTOP, 210, 96, 50, 14
   CONTROL "", 150, "TXBrowse", WS_TABSTOP|0x00300000, 50, 112, 557, 210
   CONTROL "&Aceptar [F5]", 511, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 456, 331, 50, 14
   CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 511, 331, 50, 14

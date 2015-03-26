@@ -759,7 +759,7 @@ return nil
 //---------------------------------------------------------------------------//
 
 METHOD Default() CLASS TGet
-? PROCNAME(0)
+
    if ::oFont != nil
       ::SetFont( ::oFont )
    else

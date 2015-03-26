@@ -40,6 +40,10 @@ METHOD Create()
    ::AddField( "dFecVto",   "D",  8, 0, {|| "" },     "Vencimiento", .t., "Fecha de vencimiento",  13, .f. )
    ::AddField( "cCodCli",   "C", 12, 0, {|| "" },     "Cod. cli.",   .t., "Código del cliente",    15, .f. )
    ::AddField( "cNomCli",   "C", 50, 0, {|| "" },     "Cliente",     .t., "Nombre del cliente",    35, .f. )
+   ::AddField( "cCodAge",   "C", 12, 0, {|| "" },     "Cod. Age.",   .f., "Código del agente",     15, .f. )
+   ::AddField( "cNomAge",   "C", 50, 0, {|| "" },     "Agente",      .f., "Nombre del agente",     35, .f. )
+   ::AddField( "cCodPgo",   "C", 12, 0, {|| "" },     "Cod. Pgo.",   .f., "Código del pago",       15, .f. )
+   ::AddField( "cNomPgo",   "C", 50, 0, {|| "" },     "Forma pago",  .f., "Forma de pago",         35, .f. )
    ::AddField( "cCtaRem",   "C", 20, 0, {|| "" },     "Cuenta",      .t., "Cuenta bancaria",       20, .f. )
    ::AddField( "nTotRec",   "N", 16, 2, {|| "" },     "Total",       .t., "Total del recibo",      20, .t. )
 
@@ -203,6 +207,10 @@ METHOD lGenerate()
             ::oDbf:cCodCli  := ::oFacCliP:cCodCli
             ::oDbf:cNomCli  := RetClient( ::oFacCliP:cCodCli, ::oDbfCli:cAlias )
             ::oDbf:nTotRec  := nTotRecCli( ::oFacCliP:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cDivPgo )
+            ::oDbf:cCodAge  := ::oFacCliP:cCodAge
+            ::oDbf:cNomAge  := RetNbrAge( ::oFacCliP:cCodAge )
+            ::oDbf:cCodPgo  := ::oFacCliP:cCodPgo
+            ::oDbf:cNomPgo  := cNbrFPago( ::oFacCliP:cCodPgo )
 
             cBncCli         := ::oFacCliP:cEntCli + ::oFacCliP:cSucCli + ::oFacCliP:cDigCli + ::oFacCliP:cCtaCli
 
