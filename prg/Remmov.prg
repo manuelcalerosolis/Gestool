@@ -103,6 +103,7 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  oAlmDes
    DATA  oCodMov
    DATA  oFecRem
+   DATA  oTimRem
    DATA  oSufRem
    DATA  oNumRem
 
@@ -318,7 +319,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
       FIELD NAME "cCodAge"             TYPE "C" LEN  3  DEC 0                                                                                COMMENT "Código agente"                   HIDE  OF ::oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Tipo de movimiento"              HIDE  OF ::oDbf
       FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"            COLSIZE 80           OF ::oDbf
-      FIELD NAME "cTimRem"             TYPE "C" LEN  6  DEC 0                             DEFAULT  Time()                                    COMMENT "Hora"                            HIDE  OF ::oDbf
+      FIELD NAME "cTimRem"             TYPE "C" LEN  6  DEC 0 PICTURE "@R 99:99:99"       DEFAULT  getSysTime()                              COMMENT "Hora"                            HIDE  OF ::oDbf
       FIELD NAME "cAlmOrg"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. org."        COLSIZE 60           OF ::oDbf
       FIELD CALCULATE NAME "cNomAlmOrg"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmOrg, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
       FIELD NAME "cAlmDes"             TYPE "C" LEN 16  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. des."        COLSIZE 60           OF ::oDbf
@@ -1018,6 +1019,15 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          SPINNER ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE GET ::oTimRem VAR ::oDbf:cTimRem ;
+         ID       121 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  ( ::oDbf:FieldByName( "cTimRem" ):cPict );
+         VALID    ( iif(   !validTime( ::oDbf:cTimRem  ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oDlg
 
       REDEFINE GET ::oDbf:cCodUsr ;
          ID       220 ;
@@ -3361,6 +3371,10 @@ Function SynRemMov( cPath )
 
       end if
 
+      if Empty( ( dbfHisMov )->cTimMov )
+         ( dbfHisMov )->cTimMov        := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "cTimRem", "cNumRem" )
+      end if
+
       ( dbfHisMov )->( dbSkip() )
 
    end while
@@ -3531,7 +3545,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
    DEFINE TABLE oDbf FILE ( cFileName ) CLASS "HisMov" ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia )
 
       FIELD NAME "dFecMov"    TYPE "D" LEN   8 DEC 0 COMMENT "Fecha movimiento"                    OF oDbf
-      FIELD NAME "cTimMov"    TYPE "C" LEN   5 DEC 0 COMMENT "Hora movimiento"                     OF oDbf
+      FIELD NAME "cTimMov"    TYPE "C" LEN   6 DEC 0 COMMENT "Hora movimiento"                     OF oDbf
       FIELD NAME "nTipMov"    TYPE "N" LEN   1 DEC 0 COMMENT "Tipo movimiento"                     OF oDbf
       FIELD NAME "cAliMov"    TYPE "C" LEN  16 DEC 0 COMMENT "Alm. ent."                           OF oDbf
       FIELD NAME "cAloMov"    TYPE "C" LEN  16 DEC 0 COMMENT "Alm. sal."                           OF oDbf
@@ -4652,8 +4666,8 @@ METHOD AppendKit() CLASS TDetMovimientos
 
             ::oDbfVir:Append()
 
-            ::oDbfVir:dFecMov    := GetSysDate()
-            ::oDbfVir:cTimMov    := Time()
+            ::oDbfVir:dFecMov    := getSysDate()
+            ::oDbfVir:cTimMov    := getSysTime()
             ::oDbfVir:nTipMov    := nTipMov
             ::oDbfVir:cAliMov    := cAliMov
             ::oDbfVir:cAloMov    := cAloMov
@@ -4922,6 +4936,7 @@ METHOD Asigna() CLASS TDetMovimientos
    ::oDbfVir:nNumRem    := ::oParent:oDbf:nNumRem
    ::oDbfVir:cSufRem    := ::oParent:oDbf:cSufRem
    ::oDbfVir:dFecMov    := ::oParent:oDbf:dFecRem
+   ::oDbfVir:cTimMov    := ::oParent:oDbf:cTimRem
    ::oDbfVir:nTipMov    := ::oParent:oDbf:nTipMov
    ::oDbfVir:cCodMov    := ::oParent:oDbf:cCodMov
    ::oDbfVir:cAliMov    := ::oParent:oDbf:cAlmDes
