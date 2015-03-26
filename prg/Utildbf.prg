@@ -1346,6 +1346,20 @@ Function dbSafeUnlock( cAlias )
 
 Return nil
 
+//---------------------------------------------------------------------------//
+
+function dbSafeLock( cAlias )
+
+   if ( cAlias )->( Used() )
+      
+      if dbLock( cAlias )
+         Return .t.
+      end if
+
+   end if
+
+return .f.
+
 //----------------------------------------------------------------------------//
 
 FUNCTION dbAppendDefault( cAliOrigen, cAliDestino, aStruct )

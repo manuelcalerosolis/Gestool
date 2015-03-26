@@ -8626,11 +8626,11 @@ Return cNomCli
 
 function lChgImpDoc( dbfT )
 
-   if dbLock( dbfT )
+   if dbSafeLock( dbfT )
       ( dbfT )->lImprimido := .t.
       ( dbfT )->dFecImp    := GetSysDate()
       ( dbfT )->cHorImp    := SubStr( Time(), 1, 5 )
-      ( dbfT )->( dbUnLock() )
+      dbSafeUnLock( dbfT )
    end if
 
 Return .t.
