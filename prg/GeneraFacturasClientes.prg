@@ -143,7 +143,7 @@ CLASS GeneraFacturasClientes FROM DialogBuilder
                                                    "ndto2" => aTotal[13],;
                                                    "ndto3" => aTotal[14],;
                                                    "ndto4" => aTotal[15] } )
-   
+
    METHOD getSerie( oITem )
    METHOD getFormaPago( oItem )
    METHOD getDireccion( oItem )
@@ -802,7 +802,7 @@ METHOD ChangeBrowse() CLASS GeneraFacturasClientes
          */
 
          ::SetValueCheck( ::oBrwAlbaranes:oTreeItem, !hGet( ::oBrwAlbaranes:oTreeItem:Cargo, "seleccionado" ) )
-
+         
          ::UpdatePadre( ::oBrwAlbaranes:oTreeItem )
 
       else
@@ -973,7 +973,21 @@ Return ( cClave )
 
 METHOD CreaNodo( hCargo ) CLASS GeneraFacturasClientes
 
-   TreeAddItem( hGet( hCargo, "clave" ) ):Cargo := hCargo
+   local h :=  {  "clave" => hGet( hCargo, "clave" ),;
+                  "seleccionado" => .t.,;
+                  "id" => hGet( hCargo, "id" ),;
+                  "textoid" => hGet( hCargo, "textoid" ),;
+                  "cliente" => hGet( hCargo, "cliente" ),;
+                  "nombre" => hGet( hCargo, "nombre" ),;
+                  "serie" => hGet( hCargo, "serie" ),;
+                  "formapago" => hGet( hCargo, "formapago" ),;
+                  "direccion" => hGet( hCargo, "direccion" ),;
+                  "fecha" => hGet( hCargo, "fecha" ),;
+                  "total" => hGet( hCargo, "total" ),;
+                  "sualbaran" => hGet( hCargo, "sualbaran" ),;
+                  "documentos" => "" }
+
+   TreeAddItem( hGet( hCargo, "clave" ) ):Cargo := h
 
 Return ( self )
 
@@ -992,7 +1006,7 @@ Return ( self )
 
 METHOD AgregaNodo( hCargo ) CLASS GeneraFacturasClientes
 
-   TreeAddItem( hGet( hCargo, "id" ), "Detalles", , , , .f. ):Cargo := hCargo
+   TreeAddItem( hGet( hCargo, "id" ) ):Cargo := hCargo
 
 Return ( self )
 
