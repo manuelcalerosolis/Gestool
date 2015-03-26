@@ -3314,6 +3314,23 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ID       360 ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aTmp[ __DFECALB ];
+         ID       370 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ __TFECALB ] VAR aTmp[ __TFECALB ] ;
+         ID       371 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ __TFECALB ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[2]
+
+      // Terced dialogo--------------------------------------------------------
+
       REDEFINE GET aGet[ _DAPERTURA ] ;
          VAR      aTmp[ _DAPERTURA ];
          ID       370 ;

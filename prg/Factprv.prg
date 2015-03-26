@@ -6300,16 +6300,16 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
       return .t.
    end if
 
-   while ( ( D():AlbaranesProveedores( nView ) )->cCodPrv = cCodPrv .and. !( D():AlbaranesProveedores( nView ) )->(Eof()) )
+   while ( ( D():AlbaranesProveedores( nView ) )->cCodPrv = cCodPrv .and. !( D():AlbaranesProveedores( nView ) )->( eof() ) )
 
-      if ( D():AlbaranesProveedores( nView ) )->nFacturado == 1
-         aAdd( aAlbaranes, {  ( D():AlbaranesProveedores( nView ) )->lFacturado ,;
-                              ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ,;
+      if D():AlbaranesProveedoresNoFacturado( nView )
+         aAdd( aAlbaranes, {  .t.,;
+                              ( D():AlbaranesProveedoresId( nView ) ),;
                               ( D():AlbaranesProveedores( nView ) )->cSuAlb  ,;
                               ( D():AlbaranesProveedores( nView ) )->dFecAlb ,;
                               ( D():AlbaranesProveedores( nView ) )->cCodPrv ,;
                               ( D():AlbaranesProveedores( nView ) )->cNomPrv ,;
-                              nTotAlbPrv( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb, D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), nil, nil, .t. ) } )
+                              nTotAlbPrv( D():AlbaranesProveedoresId( nView ), D():AlbaranesProveedores( nView ), D():AlbaranesProveedoresLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), nil, nil, .t. ) } )
 
       endif
 
@@ -6474,10 +6474,6 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
 
             aNumAlb:Add( aAlbaranes[ nItem, 2 ] )
 
-            if ( D():AlbaranesProveedores( nView ) )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
-               SetFacturadoAlbaranProveedor( !( D():AlbaranesProveedores( nView ) )->lFacturado, nView )
-            end if
-
             if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
 
                cDetalle                := "Albaran Nº" + ( D():AlbaranesProveedoresLineas( nView ) )->cSerAlb + "/" + AllTrim( Str( ( D():AlbaranesProveedoresLineas( nView ) )->nNumAlb ) ) + "/" + Rtrim( ( D():AlbaranesProveedoresLineas( nView ) )->cSufAlb )
@@ -6494,6 +6490,10 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
                AddLineasAlbaranProveedor( aAlbaranes[ nItem, 2 ], .t. )
 
             end if
+
+//            if ( D():AlbaranesProveedores( nView ) )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
+//               SetFacturadoAlbaranProveedor( D():AlbaranesProveedoresNoFacturado( nView ), nView )
+//            end if
 
             oBrw:Refresh()
 
@@ -6539,7 +6539,7 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
 
    if ( D():AlbaranesProveedores( nView ) )->( dbSeek( cAlbaran ) )
 
-      if ( D():AlbaranesProveedores( nView ) )->lFacturado
+      if ( D():AlbaranesProveedoresFacturado( nView ) )
 
          MsgStop( "Albaran facturado" )
          lValid   := .f.
@@ -6893,11 +6893,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
       nNumFac           := nNewDoc( cSerFac, D():FacturasProveedores( nView ), "NFACPRV", , D():Contadores( nView ) )
       aTmp[ _NNUMFAC ]  := nNumFac
-
-      /*
-      nNumNFC           := nNewNFC( cSerFac, D():FacturasProveedores( nView ), "NFACPRV", D():Contadores( nView ) )
-      aTmp[ _CNFC    ]  := nNumNFC
-      */
 
       aTmp[ _LIMPALB ]  := !aNumAlb:Empty() .or. !Empty( aTmp[ _CNUMALB ] )
 
@@ -8236,109 +8231,113 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
 
          nNumLin                 := ( D():AlbaranesProveedoresLineas( nView ) )->nNumLin
 
-         ( dbfTmp )->( dbAppend() )
+         if ( D():AlbaranesProveedoresLineasNoFacturada( nView ) )
 
-         if lNewLin
-            nNewLin              := nLastNum( dbfTmp )
-            ( dbfTmp )->nNumLin  := nNewLin
-         else
-            ( dbfTmp )->nNumLin  := nNumLin
-         end if
+            ( dbfTmp )->( dbAppend() )
 
-         ( dbfTmp )->cRef        := ( D():AlbaranesProveedoresLineas( nView ) )->cRef
-         ( dbfTmp )->cDetalle    := ( D():AlbaranesProveedoresLineas( nView ) )->cDetalle
-         ( dbfTmp )->mLngDes     := ( D():AlbaranesProveedoresLineas( nView ) )->mLngDes
-         ( dbfTmp )->mNumSer     := ( D():AlbaranesProveedoresLineas( nView ) )->mNumSer
-         ( dbfTmp )->nIva        := ( D():AlbaranesProveedoresLineas( nView ) )->nIva
-         ( dbfTmp )->nReq        := ( D():AlbaranesProveedoresLineas( nView ) )->nReq
-         ( dbfTmp )->nPreUnit    := ( D():AlbaranesProveedoresLineas( nView ) )->nPreDiv
-         ( dbfTmp )->nPreCom     := ( D():AlbaranesProveedoresLineas( nView ) )->nPreCom
-         ( dbfTmp )->nUniCaja    := ( D():AlbaranesProveedoresLineas( nView ) )->nUniCaja
-         ( dbfTmp )->nCanEnt     := ( D():AlbaranesProveedoresLineas( nView ) )->nCanEnt
-         ( dbfTmp )->nDtoLin     := ( D():AlbaranesProveedoresLineas( nView ) )->nDtoLin
-         ( dbfTmp )->nDtoPrm     := ( D():AlbaranesProveedoresLineas( nView ) )->nDtoPrm
-         ( dbfTmp )->nDtoRap     := ( D():AlbaranesProveedoresLineas( nView ) )->nDtoRap
-         ( dbfTmp )->cAlmLin     := ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin
-         ( dbfTmp )->nUndKit     := ( D():AlbaranesProveedoresLineas( nView ) )->nUndKit
-         ( dbfTmp )->lKitChl     := ( D():AlbaranesProveedoresLineas( nView ) )->lKitChl
-         ( dbfTmp )->lKitArt     := ( D():AlbaranesProveedoresLineas( nView ) )->lKitArt
-         ( dbfTmp )->lKitPrc     := ( D():AlbaranesProveedoresLineas( nView ) )->lKitPrc
-         ( dbfTmp )->lIvaLin     := ( D():AlbaranesProveedoresLineas( nView ) )->lIvaLin
-         ( dbfTmp )->cCodPr1     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr1                           // Cod. prop. 1
-         ( dbfTmp )->cCodPr2     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr2                           // Cod. prop. 2
-         ( dbfTmp )->cValPr1     := ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1                           // Val. prop. 1
-         ( dbfTmp )->cValPr2     := ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2                           // Val. prop. 2
-         ( dbfTmp )->nBnfLin1    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin1
-         ( dbfTmp )->nBnfLin2    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin2
-         ( dbfTmp )->nBnfLin3    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin3
-         ( dbfTmp )->nBnfLin4    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin4
-         ( dbfTmp )->nBnfLin5    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin5
-         ( dbfTmp )->nBnfLin6    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin6
-         ( dbfTmp )->lBnfLin1    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin1
-         ( dbfTmp )->lBnfLin2    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin2
-         ( dbfTmp )->lBnfLin3    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin3
-         ( dbfTmp )->lBnfLin4    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin4
-         ( dbfTmp )->lBnfLin5    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin5
-         ( dbfTmp )->lBnfLin6    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin6
-         ( dbfTmp )->nPvpLin1    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin1
-         ( dbfTmp )->nPvpLin2    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin2
-         ( dbfTmp )->nPvpLin3    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin3
-         ( dbfTmp )->nPvpLin4    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin4
-         ( dbfTmp )->nPvpLin5    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin5
-         ( dbfTmp )->nPvpLin6    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin6
-         ( dbfTmp )->nIvaLin1    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin1
-         ( dbfTmp )->nIvaLin2    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin2
-         ( dbfTmp )->nIvaLin3    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin3
-         ( dbfTmp )->nIvaLin4    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin4
-         ( dbfTmp )->nIvaLin5    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin5
-         ( dbfTmp )->nIvaLin6    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin6
-         ( dbfTmp )->lLote       := ( D():AlbaranesProveedoresLineas( nView ) )->lLote
-         ( dbfTmp )->nLote       := ( D():AlbaranesProveedoresLineas( nView ) )->nLote
-         ( dbfTmp )->cLote       := ( D():AlbaranesProveedoresLineas( nView ) )->cLote
-         ( dbfTmp )->mObsLin     := ( D():AlbaranesProveedoresLineas( nView ) )->mObsLin
-         ( dbfTmp )->cRefPrv     := ( D():AlbaranesProveedoresLineas( nView ) )->cRefPrv
-         ( dbfTmp )->cUnidad     := ( D():AlbaranesProveedoresLineas( nView ) )->cUnidad
-         ( dbfTmp )->nNumMed     := ( D():AlbaranesProveedoresLineas( nView ) )->nNumMed
-         ( dbfTmp )->nMedUno     := ( D():AlbaranesProveedoresLineas( nView ) )->nMedUno
-         ( dbfTmp )->nMedDos     := ( D():AlbaranesProveedoresLineas( nView ) )->nMedDos
-         ( dbfTmp )->nMedTre     := ( D():AlbaranesProveedoresLineas( nView ) )->nMedTre
-         ( dbfTmp )->dFecCad     := ( D():AlbaranesProveedoresLineas( nView ) )->dFecCad
-         ( dbfTmp )->nBultos     := ( D():AlbaranesProveedoresLineas( nView ) )->nBultos
-         ( dbfTmp )->cFormato    := ( D():AlbaranesProveedoresLineas( nView ) )->cFormato
-         ( dbfTmp )->cCodImp     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodImp
-         ( dbfTmp )->nValImp     := ( D():AlbaranesProveedoresLineas( nView ) )->nValImp
-         ( dbfTmp )->dFecFac     := ( D():AlbaranesProveedoresLineas( nView ) )->dFecAlb
-         ( dbfTmp )->tFecFac     := ( D():AlbaranesProveedoresLineas( nView ) )->tFecAlb
+            if lNewLin
+               nNewLin              := nLastNum( dbfTmp )
+               ( dbfTmp )->nNumLin  := nNewLin
+            else
+               ( dbfTmp )->nNumLin  := nNumLin
+            end if
 
-         ( dbfTmp )->iNumAlb     := D():AlbaranesProveedoresLineasNumero( nView )
+            ( dbfTmp )->cRef        := ( D():AlbaranesProveedoresLineas( nView ) )->cRef
+            ( dbfTmp )->cDetalle    := ( D():AlbaranesProveedoresLineas( nView ) )->cDetalle
+            ( dbfTmp )->mLngDes     := ( D():AlbaranesProveedoresLineas( nView ) )->mLngDes
+            ( dbfTmp )->mNumSer     := ( D():AlbaranesProveedoresLineas( nView ) )->mNumSer
+            ( dbfTmp )->nIva        := ( D():AlbaranesProveedoresLineas( nView ) )->nIva
+            ( dbfTmp )->nReq        := ( D():AlbaranesProveedoresLineas( nView ) )->nReq
+            ( dbfTmp )->nPreUnit    := ( D():AlbaranesProveedoresLineas( nView ) )->nPreDiv
+            ( dbfTmp )->nPreCom     := ( D():AlbaranesProveedoresLineas( nView ) )->nPreCom
+            ( dbfTmp )->nUniCaja    := ( D():AlbaranesProveedoresLineas( nView ) )->nUniCaja
+            ( dbfTmp )->nCanEnt     := ( D():AlbaranesProveedoresLineas( nView ) )->nCanEnt
+            ( dbfTmp )->nDtoLin     := ( D():AlbaranesProveedoresLineas( nView ) )->nDtoLin
+            ( dbfTmp )->nDtoPrm     := ( D():AlbaranesProveedoresLineas( nView ) )->nDtoPrm
+            ( dbfTmp )->nDtoRap     := ( D():AlbaranesProveedoresLineas( nView ) )->nDtoRap
+            ( dbfTmp )->cAlmLin     := ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin
+            ( dbfTmp )->nUndKit     := ( D():AlbaranesProveedoresLineas( nView ) )->nUndKit
+            ( dbfTmp )->lKitChl     := ( D():AlbaranesProveedoresLineas( nView ) )->lKitChl
+            ( dbfTmp )->lKitArt     := ( D():AlbaranesProveedoresLineas( nView ) )->lKitArt
+            ( dbfTmp )->lKitPrc     := ( D():AlbaranesProveedoresLineas( nView ) )->lKitPrc
+            ( dbfTmp )->lIvaLin     := ( D():AlbaranesProveedoresLineas( nView ) )->lIvaLin
+            ( dbfTmp )->cCodPr1     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr1                           // Cod. prop. 1
+            ( dbfTmp )->cCodPr2     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodPr2                           // Cod. prop. 2
+            ( dbfTmp )->cValPr1     := ( D():AlbaranesProveedoresLineas( nView ) )->cValPr1                           // Val. prop. 1
+            ( dbfTmp )->cValPr2     := ( D():AlbaranesProveedoresLineas( nView ) )->cValPr2                           // Val. prop. 2
+            ( dbfTmp )->nBnfLin1    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin1
+            ( dbfTmp )->nBnfLin2    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin2
+            ( dbfTmp )->nBnfLin3    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin3
+            ( dbfTmp )->nBnfLin4    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin4
+            ( dbfTmp )->nBnfLin5    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin5
+            ( dbfTmp )->nBnfLin6    := ( D():AlbaranesProveedoresLineas( nView ) )->nBnfLin6
+            ( dbfTmp )->lBnfLin1    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin1
+            ( dbfTmp )->lBnfLin2    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin2
+            ( dbfTmp )->lBnfLin3    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin3
+            ( dbfTmp )->lBnfLin4    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin4
+            ( dbfTmp )->lBnfLin5    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin5
+            ( dbfTmp )->lBnfLin6    := ( D():AlbaranesProveedoresLineas( nView ) )->lBnfLin6
+            ( dbfTmp )->nPvpLin1    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin1
+            ( dbfTmp )->nPvpLin2    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin2
+            ( dbfTmp )->nPvpLin3    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin3
+            ( dbfTmp )->nPvpLin4    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin4
+            ( dbfTmp )->nPvpLin5    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin5
+            ( dbfTmp )->nPvpLin6    := ( D():AlbaranesProveedoresLineas( nView ) )->nPvpLin6
+            ( dbfTmp )->nIvaLin1    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin1
+            ( dbfTmp )->nIvaLin2    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin2
+            ( dbfTmp )->nIvaLin3    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin3
+            ( dbfTmp )->nIvaLin4    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin4
+            ( dbfTmp )->nIvaLin5    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin5
+            ( dbfTmp )->nIvaLin6    := ( D():AlbaranesProveedoresLineas( nView ) )->nIvaLin6
+            ( dbfTmp )->lLote       := ( D():AlbaranesProveedoresLineas( nView ) )->lLote
+            ( dbfTmp )->nLote       := ( D():AlbaranesProveedoresLineas( nView ) )->nLote
+            ( dbfTmp )->cLote       := ( D():AlbaranesProveedoresLineas( nView ) )->cLote
+            ( dbfTmp )->mObsLin     := ( D():AlbaranesProveedoresLineas( nView ) )->mObsLin
+            ( dbfTmp )->cRefPrv     := ( D():AlbaranesProveedoresLineas( nView ) )->cRefPrv
+            ( dbfTmp )->cUnidad     := ( D():AlbaranesProveedoresLineas( nView ) )->cUnidad
+            ( dbfTmp )->nNumMed     := ( D():AlbaranesProveedoresLineas( nView ) )->nNumMed
+            ( dbfTmp )->nMedUno     := ( D():AlbaranesProveedoresLineas( nView ) )->nMedUno
+            ( dbfTmp )->nMedDos     := ( D():AlbaranesProveedoresLineas( nView ) )->nMedDos
+            ( dbfTmp )->nMedTre     := ( D():AlbaranesProveedoresLineas( nView ) )->nMedTre
+            ( dbfTmp )->dFecCad     := ( D():AlbaranesProveedoresLineas( nView ) )->dFecCad
+            ( dbfTmp )->nBultos     := ( D():AlbaranesProveedoresLineas( nView ) )->nBultos
+            ( dbfTmp )->cFormato    := ( D():AlbaranesProveedoresLineas( nView ) )->cFormato
+            ( dbfTmp )->cCodImp     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodImp
+            ( dbfTmp )->nValImp     := ( D():AlbaranesProveedoresLineas( nView ) )->nValImp
+            ( dbfTmp )->dFecFac     := ( D():AlbaranesProveedoresLineas( nView ) )->dFecAlb
+            ( dbfTmp )->tFecFac     := ( D():AlbaranesProveedoresLineas( nView ) )->tFecAlb
 
-         // Pasamos series de pedidos------------------------------------------
+            ( dbfTmp )->iNumAlb     := D():AlbaranesProveedoresLineasNumero( nView )
 
-         if ( D():AlbaranesProveedoresSeries( nView ) )->( dbSeek( cAlbaran + Str( nNumLin ) ) )
+            // Pasamos series de pedidos------------------------------------------
 
-            while ( ( D():AlbaranesProveedoresSeries( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresSeries( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresSeries( nView ) )->cSufAlb + Str( ( D():AlbaranesProveedoresSeries( nView ) )->nNumLin ) == cAlbaran + Str( nNumLin ) ) .and. !( D():AlbaranesProveedoresSeries( nView ) )->( eof() )
+            if ( D():AlbaranesProveedoresSeries( nView ) )->( dbSeek( cAlbaran + Str( nNumLin ) ) )
 
-               ( dbfTmpSer )->( dbAppend() )
+               while ( ( D():AlbaranesProveedoresSeries( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedoresSeries( nView ) )->nNumAlb ) + ( D():AlbaranesProveedoresSeries( nView ) )->cSufAlb + Str( ( D():AlbaranesProveedoresSeries( nView ) )->nNumLin ) == cAlbaran + Str( nNumLin ) ) .and. !( D():AlbaranesProveedoresSeries( nView ) )->( eof() )
 
-               if lNewLin
-                  ( dbfTmpSer )->nNumLin  := nNewLin
-               else
-                  ( dbfTmpSer )->nNumLin  := nNumLin
-               end if
+                  ( dbfTmpSer )->( dbAppend() )
 
-               ( dbfTmpSer )->cSerFac     := ( D():AlbaranesProveedoresSeries( nView ) )->cSerAlb
-               ( dbfTmpSer )->nNumFac     := ( D():AlbaranesProveedoresSeries( nView ) )->nNumAlb
-               ( dbfTmpSer )->cSufFac     := ( D():AlbaranesProveedoresSeries( nView ) )->cSufAlb
-               ( dbfTmpSer )->cRef        := ( D():AlbaranesProveedoresSeries( nView ) )->cRef
-               ( dbfTmpSer )->cAlmLin     := ( D():AlbaranesProveedoresSeries( nView ) )->cAlmLin
-               ( dbfTmpSer )->lUndNeg     := ( D():AlbaranesProveedoresSeries( nView ) )->lUndNeg
-               ( dbfTmpSer )->cNumSer     := ( D():AlbaranesProveedoresSeries( nView ) )->cNumSer
+                  if lNewLin
+                     ( dbfTmpSer )->nNumLin  := nNewLin
+                  else
+                     ( dbfTmpSer )->nNumLin  := nNumLin
+                  end if
 
-               ( D():AlbaranesProveedoresSeries( nView ) )->( dbSkip() )
+                  ( dbfTmpSer )->cSerFac     := ( D():AlbaranesProveedoresSeries( nView ) )->cSerAlb
+                  ( dbfTmpSer )->nNumFac     := ( D():AlbaranesProveedoresSeries( nView ) )->nNumAlb
+                  ( dbfTmpSer )->cSufFac     := ( D():AlbaranesProveedoresSeries( nView ) )->cSufAlb
+                  ( dbfTmpSer )->cRef        := ( D():AlbaranesProveedoresSeries( nView ) )->cRef
+                  ( dbfTmpSer )->cAlmLin     := ( D():AlbaranesProveedoresSeries( nView ) )->cAlmLin
+                  ( dbfTmpSer )->lUndNeg     := ( D():AlbaranesProveedoresSeries( nView ) )->lUndNeg
+                  ( dbfTmpSer )->cNumSer     := ( D():AlbaranesProveedoresSeries( nView ) )->cNumSer
 
-            end while
+                  ( D():AlbaranesProveedoresSeries( nView ) )->( dbSkip() )
 
-         end if
+               end while
+
+            end if
+
+         end if 
 
          ( D():AlbaranesProveedoresLineas( nView ) )->( dbSkip() )
 

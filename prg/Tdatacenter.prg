@@ -5315,6 +5315,8 @@ CLASS D
    METHOD AlbaranesProveedores( nView )                  INLINE ( ::Get( "AlbProvT", nView ) ) 
       METHOD AlbaranesProveedoresId( nView )             INLINE ( ( ::Get( "AlbProvT", nView ) )->cSerAlb + str( ( ::Get( "AlbProvT", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbProvT", nView ) )->cSufAlb )
       METHOD AlbaranesProveedoresFecha( nView )          INLINE ( ( ::Get( "AlbProvT", nView ) )->dFecAlb )
+      METHOD AlbaranesProveedoresFacturado( nView )      INLINE ( ( ::Get( "AlbProvT", nView ) )->nFacturado == 3 )
+      METHOD AlbaranesProveedoresNoFacturado( nView )    INLINE ( !::AlbaranesProveedoresFacturado( nView ) )
 
       METHOD getStatusAlbaranesProveedores( nView )      INLINE ( ::aStatus := aGetStatus( ::Get( "AlbProvT", nView ) ) )
       METHOD setStatusAlbaranesProveedores( nView )      INLINE ( SetStatus( ::Get( "AlbProvT", nView ), ::aStatus ) ) 
@@ -5328,6 +5330,10 @@ CLASS D
          METHOD AlbaranesProveedoresLineasId( nView )    INLINE ( ( ::Get( "AlbProvL", nView ) )->cSerAlb + str( ( ::Get( "AlbProvL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbProvL", nView ) )->cSufAlb )
          METHOD AlbaranesProveedoresLineasNumero( nView );
                                                          INLINE ( ( ::Get( "AlbProvL", nView ) )->cSerAlb + str( ( ::Get( "AlbProvL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbProvL", nView ) )->cSufAlb + str( ( ::Get( "AlbProvL", nView ) )->nNumLin, 4 ) )
+      METHOD AlbaranesProveedoresLineasFacturada( nView );
+                                                         INLINE ( ( ::AlbaranesProveedoresLineas( nView ) )->lFacturado )
+      METHOD AlbaranesProveedoresLineasNoFacturada( nView );
+                                                         INLINE ( !::AlbaranesProveedoresLineasFacturada( nView ) )
 
       METHOD getStatusAlbaranesProveedoresLineas( nView );
                                                          INLINE ( ::aStatus := aGetStatus( ::Get( "AlbProvL", nView ) ) )
