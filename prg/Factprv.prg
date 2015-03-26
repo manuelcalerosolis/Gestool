@@ -3506,6 +3506,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
 
+      REDEFINE GET aGet[ __DFECFAC ] VAR aTmp[ __DFECFAC ] ;
+         ID       370 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ __TFECFAC ] VAR aTmp[ __TFECFAC ] ;
+         ID       371 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ __TFECFAC ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[2]
+
       REDEFINE GET aGet[_MOBSLIN] VAR aTmp[_MOBSLIN] ;
          MEMO ;
          ID       100 ;
@@ -6941,8 +6956,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       aTbl[ _CSUFFAC ]     := cSufFac
       aTbl[ _LCHGLIN ]     := .f.
       aTbl[ _NPRECOM ]     := nNetUFacPrv( aTbl, aTmp, nDinDiv, nRinDiv ) //, aTmp[ _NVDVFAC ] )
-      aTbl[ __DFECFAC ]    := aTmp[ _DFECFAC ]
-      aTbl[ __TFECFAC ]    := aTmp[ _TFECFAC ]
+      
+      if Empty( aTbl[ __DFECFAC ] )
+         aTbl[ __DFECFAC ] := aTmp[ _DFECFAC ]
+      end if
+
+      if Empty( aTbl[ __TFECFAC ] )
+         aTbl[ __TFECFAC ] := aTmp[ _TFECFAC ]
+      end if
 
       /*
       Comprobamos que exista el articulo en la base de datos-------------------
@@ -8286,6 +8307,8 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
          ( dbfTmp )->cFormato    := ( D():AlbaranesProveedoresLineas( nView ) )->cFormato
          ( dbfTmp )->cCodImp     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodImp
          ( dbfTmp )->nValImp     := ( D():AlbaranesProveedoresLineas( nView ) )->nValImp
+         ( dbfTmp )->dFecFac     := ( D():AlbaranesProveedoresLineas( nView ) )->dFecAlb
+         ( dbfTmp )->tFecFac     := ( D():AlbaranesProveedoresLineas( nView ) )->tFecAlb
 
          ( dbfTmp )->iNumAlb     := D():AlbaranesProveedoresLineasNumero( nView )
 

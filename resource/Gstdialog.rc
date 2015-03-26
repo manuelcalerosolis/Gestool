@@ -12056,11 +12056,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 780, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 196, 129, 70, 12
   CONTROL "", 790, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER, 280, 129, 70, 12
   CONTROL "Guardar nuevos precios de compra", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 147, 130, 10
-  CONTROL "Control de stocks", 350, "Button", BS_AUTORADIOBUTTON, 7, 175, 68, 10
-  CONTROL "Contadores", 351, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 7, 187, 49, 10
-  CONTROL "No controlar stock", 352, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 7, 199, 71, 10
-  CONTROL "Línea facturada", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 8, 217, 64, 10
-  CONTROL "Impuestos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 1, 352, 24
+  CONTROL "Control de stocks", 350, "Button", BS_AUTORADIOBUTTON, 7, 173, 68, 10
+  CONTROL "Contadores", 351, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 7, 185, 49, 10
+  CONTROL "No controlar stock", 352, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 7, 197, 71, 10
+  CONTROL "", 370, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 91, 210, 60, 12
+  CONTROL "", 371, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 153, 210, 40, 12
+  CONTROL "Línea facturada", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 196, 12, 64, 10
+  CONTROL "Impuestos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 1, 184, 24
   CONTROL "", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 25, 352, 136
   CONTROL "Precio de compra", -1, "Static", WS_GROUP, 8, 36, 65, 8
   CONTROL "Precio 1", -1, "Static", WS_GROUP, 8, 61, 30, 10
@@ -12078,7 +12080,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "Bloq.", -1, "Static", WS_GROUP, 53, 103, 23, 10
   CONTROL "Bloq.", -1, "Static", WS_GROUP, 53, 117, 23, 10
   CONTROL "Bloq.", -1, "Static", WS_GROUP, 53, 131, 23, 10
-  CONTROL "Stock", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 164, 352, 49
+  CONTROL "Stock", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 162, 352, 64
+  CONTROL "Fecha valor stock", -1, "Static", WS_GROUP, 7, 212, 60, 10
+  CONTROL "", 4001, "Button", BS_GROUPBOX|WS_TABSTOP, 190, 1, 165, 24
 }
 
 LALBPRV_3 DIALOG DISCARDABLE 26, 35, 360, 261
@@ -12088,7 +12092,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "Control de stocks", 350, "Button", BS_AUTORADIOBUTTON, 7, 12, 68, 10
   CONTROL "Contadores", 351, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 7, 23, 49, 10
   CONTROL "No controlar stock", 352, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 7, 34, 71, 10
-  CONTROL "Stock", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 3, 352, 43
+  CONTROL "", 360, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 81, 47, 60, 12
+  CONTROL "", 361, "Edit", ES_MULTILINE|WS_BORDER|WS_TABSTOP, 144, 47, 40, 12
+  CONTROL "Stock", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 3, 352, 63
+  CONTROL "Fecha valor stock", -1, "Static", WS_GROUP, 7, 49, 60, 10
 }
 
 LALQCLI_1 DIALOG DISCARDABLE 150, 93, 359, 181

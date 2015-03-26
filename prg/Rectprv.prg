@@ -3391,6 +3391,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
 
+      REDEFINE GET aGet[ __DFECFAC ] VAR aTmp[ __DFECFAC ] ;
+         ID       360 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ __TFECFAC ] VAR aTmp[ __TFECFAC ] ;
+         ID       361 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ __TFECFAC ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[2]
+
       REDEFINE GET aGet[_MOBSLIN] VAR aTmp[_MOBSLIN] ;
          MEMO ;
          ID       100 ;
@@ -5985,7 +6000,9 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
             ( dbfTmp )->nBultos  := ( D():FacturasProveedoresLineas( nView ) )->nBultos
             ( dbfTmp )->cFormato := ( D():FacturasProveedoresLineas( nView ) )->cFormato   
             ( dbfTmp )->cCodImp  := ( D():FacturasProveedoresLineas( nView ) )->cCodImp    
-            ( dbfTmp )->nValImp  := ( D():FacturasProveedoresLineas( nView ) )->nValImp    
+            ( dbfTmp )->nValImp  := ( D():FacturasProveedoresLineas( nView ) )->nValImp
+            ( dbfTmp )->dFecFac  := ( D():FacturasProveedoresLineas( nView ) )->dFecFac
+            ( dbfTmp )->tFecFac  := ( D():FacturasProveedoresLineas( nView ) )->tFecFac
 
             ( D():FacturasProveedoresLineas( nView ) )->( dbSkip() )
 

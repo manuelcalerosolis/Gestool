@@ -3302,6 +3302,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
 
+
+      REDEFINE GET aGet[ __DFECALB ] VAR aTmp[ __DFECALB ] ;
+         ID       370 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ __TFECALB ] VAR aTmp[ __TFECALB ] ;
+         ID       371 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECALB ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[2]
+
       REDEFINE CHECKBOX aGet[ _LCHGLIN ] ;
          VAR      aTmp[ _LCHGLIN ];
          ID       420 ;
@@ -5435,8 +5451,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
          aTbl[ _CSUFALB ]     := cSufAlb
          aTbl[ _LCHGLIN ]     := .f.
          aTbl[ _NPRECOM ]     := nNetUAlbPrv( aTbl, aTmp, nDinDiv, nDirDiv, aTmp[ _NVDVALB ] )
-         aTbl[ __DFECALB]     := aTmp[ _DFECALB ]
-         aTbl[ __TFECALB]     := aTmp[ _TFECALB ]
+         aTbl[ __DFECALB ]     := aTmp[ _DFECALB ]
+         aTbl[ __TFECALB ]     := aTmp[ _TFECALB ]
 
          AppendReferenciaProveedor( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVALB ], aTbl[ _NPREDIV ], D():ProveedorArticulo( nView ), nMode )
 
