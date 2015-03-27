@@ -407,71 +407,23 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:lBitmap    := .f.
       ::oDbf:Save()
 
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 21
+      ::oDbf:cNombre    := "Porcentaje I.V.A."
+      ::oDbf:lEditable  := .t.
+      ::oDbf:lVisible   := .t.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "%IVA"
+      ::oDbf:lAlign     := .t.
+      ::oDbf:cPicture   := '"@E 99.99"'
+      ::oDbf:nAncho     := 40
+      ::oDbf:lBitmap    := .f.
+      ::oDbf:Save()
+
+
    end if
 
 RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

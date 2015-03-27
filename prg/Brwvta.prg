@@ -3468,26 +3468,21 @@ Function EdtDetMenu( oCodArt, oDlg, lOferta )
                RESOURCE "Cube_Yellow_16";
                ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
 
-            MENUITEM    "&2. Modificar codigos de barras";
-               MESSAGE  "Modificar los codigos de barras del articulo" ;
-               RESOURCE "Remotecontrol_16";
-               ACTION   ( EdtArtCodeBar( oCodArt:VarGet() ) );
-
-            MENUITEM    "&3. Informe de artículo";
+            MENUITEM    "&2. Informe de artículo";
                MESSAGE  "Abrir el informe del artículo" ;
                RESOURCE "Info16";
                ACTION   ( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) );
 
          ENDMENU
 
-      if lOferta
+      /*if lOferta
 
          MENUITEM    "&2. Artículo en oferta  ";
             MESSAGE  "Modificar la ficha del artículo" ;
             RESOURCE "Sel16";
             ACTION   ( EdtArticulo( oCodArt:VarGet() ) );
 
-      end if
+      end if*/
 
    ENDMENU
 
