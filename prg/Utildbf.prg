@@ -1350,12 +1350,12 @@ Return nil
 
 function dbSafeLock( cAlias )
 
-   if ( cAlias )->( Used() )
+   if !( cAlias )->( Used() )
+      return .f.
+   end if
       
-      if dbLock( cAlias )
-         Return .t.
-      end if
-
+   if dbLock( cAlias )
+      Return .t.
    end if
 
 return .f.
