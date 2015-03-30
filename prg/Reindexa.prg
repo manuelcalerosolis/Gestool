@@ -343,6 +343,8 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Remesas de movimientos", ::aProgress[ 3 ] );     TRemMovAlm():New( ::cPathEmp ):Reindexa()
          ::SetText( "Generando índices : Envios y recepciones", ::aProgress[ 3 ] );       TSndRecInf():Reindexa( ::cPathEmp )
 
+         ::SetText( "Generando índices : Campos extra", ::aProgress[ 3 ] );               TCamposExtra():New( ::cPathEmp ):Reindexa()
+
          ::SetText( "Generando índices : Secciones", ::aProgress[ 3 ] );                        TSeccion():Create( ::cPathEmp ):Reindexa()
          ::SetText( "Generando índices : Tipos de horas", ::aProgress[ 3 ] );                   THoras():Create( ::cPathEmp ):Reindexa()
          ::SetText( "Generando índices : Operarios", ::aProgress[ 3 ] );                        TOperarios():Create( ::cPathEmp ):Reindexa()
