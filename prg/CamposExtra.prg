@@ -11,17 +11,29 @@ static oCamposExtra
 
 CLASS TCamposExtra FROM TMant
 
-   DATA  cMru              INIT  "form_green_add_16"
-   DATA  cBitmap           INIT  Rgb( 128, 57, 123 )
+   DATA cMru               INIT  "form_green_add_16"
+   DATA cBitmap            INIT  Rgb( 128, 57, 123 )
 
-   DATA  oDlg
+   DATA oDlg
 
-   DATA  lOpenFiles        INIT .f.      
+   DATA lOpenFiles         INIT .f.      
 
-   DATA  oCodigo
-   DATA  oNombre
-   DATA  oLongitud
-   DATA  oDecimales
+   DATA oCodigo
+   DATA oNombre
+   DATA oTipo
+   DATA cTipo              INIT "Texto"
+   DATA aTipo              INIT { "Texto", "Número", "Fecha", "Si/No", "Lista" }
+   DATA oLongitud
+   DATA oDecimales
+   DATA hActions
+   DATA oValorDefecto
+   DATA cValorDefecto      INIT Space( 100 )
+   DATA oAddDefecto
+   DATA oDelDefecto
+
+   DATA oListaDefecto
+   DATA cListaDefecto      INIT ""
+   DATA aValoresDefecto
 
    Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
 
@@ -39,6 +51,41 @@ CLASS TCamposExtra FROM TMant
 
    Method Resource( nMode )
 
+   Method ChangeTipo()                 INLINE ( if( hhaskey( ::hActions, ::cTipo ), Eval( hGet( ::hActions, ::cTipo ) ), ) )
+
+   Method PreSave()                    INLINE ( ::oDbf:nTipo  := ::oTipo:nAt, ::SetValoresDefecto() )
+
+   Method initCombo()                  INLINE ( ::cTipo := ::aTipo[ Max( ::oDbf:nTipo, 1 ) ] )
+
+   Method initDefecto()                INLINE ( ::cValorDefecto := Space( 100 ) )
+
+   Method initValores()                INLINE ( ::initCombo(),;
+                                                ::initDefecto(),;
+                                                ::GetValoresDefecto() )
+
+   Method enableLongitud()             INLINE ( ::oLongitud:Enable(),;
+                                                ::oDecimales:Enable() )
+
+   Method disableLongitud()            INLINE ( ::oLongitud:Disable(),;
+                                                ::oDecimales:Disable() )
+
+   Method cTextLongitud( nLon, nDec)   INLINE ( ::oLongitud:cText( nLon ),;
+                                                ::oDecimales:cText( nDec ) )
+   
+   Method enableDefecto()              INLINE ( ::oValorDefecto:Enable(),; 
+                                                ::oAddDefecto:Enable(),;
+                                                ::oDelDefecto:Enable(),;
+                                                ::oListaDefecto:Enable() )
+
+   Method disableDefecto()             INLINE ( ::oValorDefecto:Disable(),;
+                                                ::oAddDefecto:Disable(),;
+                                                ::oDelDefecto:Disable(),;
+                                                ::oListaDefecto:Disable() )
+
+   Method SetValoresDefecto()          INLINE ( ::oDbf:mDefecto   := hb_serialize( ::oListaDefecto:aItems ) )
+   
+   Method GetValoresDefecto()          INLINE ( ::aValoresDefecto := hb_deserialize( ::oDbf:mDefecto ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -55,7 +102,16 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCamposExtra
    ::oWndParent            := oWndParent
    ::oDbf                  := nil
 
+   ::hActions              := {  "Texto" => {|| ::enableLongitud(), ::disableDefecto() } ,;
+                                 "Número" => {|| ::enableLongitud(), ::disableDefecto() } ,;
+                                 "Fecha" => {|| ::disableLongitud(), ::cTextLongitud( 8, 0 ), ::disableDefecto() } ,;
+                                 "Si/No" => {|| ::disableLongitud(), ::cTextLongitud( 1, 0 ), ::disableDefecto() } ,;
+                                 "Lista" => {|| ::disableLongitud(), ::cTextLongitud( 10, 0 ), ::enableDefecto() } }
+
+   ::aValoresDefecto       := { }
+
    ::bFirstKey             := {|| ::oDbf:cCodigo }
+   ::bOnPreSave            := {|| ::PreSave() }
 
 RETURN ( Self )
 
@@ -122,26 +178,12 @@ METHOD Activate() CLASS TCamposExtra
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
 
-      DEFINE BTNSHELL RESOURCE "DUP" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecDup() );
-         TOOLTIP  "(D)uplicar";
-         HOTKEY   "D" ;
-         LEVEL    ACC_APPD
-
       DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
          NOBORDER ;
          ACTION   ( ::oWndBrw:RecEdit() );
          TOOLTIP  "(M)odificar";
          HOTKEY   "M" ;
          LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "ZOOM" OF ::oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ::oWndBrw:RecZoom() );
-         TOOLTIP  "(Z)oom";
-         HOTKEY   "Z" ;
-         LEVEL    ACC_ZOOM
 
       DEFINE BTNSHELL oDel RESOURCE "DEL" OF ::oWndBrw ;
          NOBORDER ;
@@ -291,73 +333,97 @@ METHOD Resource( nMode ) CLASS TCamposExtra
    local oBtnAceptar
    local oBtnCancelar
 
+   ::initValores()
+
    DEFINE DIALOG ::oDlg RESOURCE "EXTRA" TITLE LblTitle( nMode ) + "campo extra"
 
    REDEFINE BITMAP oBmp ;
-      ID       600 ;
-      RESOURCE "form_green_add_48_alpha" ;
+      ID          600 ;
+      RESOURCE    "form_green_add_48_alpha" ;
       TRANSPARENT ;
-      OF       ::oDlg
+      OF          ::oDlg
    
    REDEFINE GET ::oCodigo VAR ::oDbf:cCodigo ;
-      ID       100 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       ::oDlg
+      ID          100 ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      OF          ::oDlg
 
    REDEFINE GET ::oNombre VAR ::oDbf:cNombre ;
-      ID       110 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       ::oDlg
+      ID          110 ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      OF          ::oDlg
 
    REDEFINE CHECKBOX ::oDbf:lRequerido ;
-      ID       120 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       ::oDlg
+      ID          120 ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      OF          ::oDlg
 
+   REDEFINE COMBOBOX ::oTipo ;
+      VAR         ::cTipo ;
+      ITEMS       ::aTipo ;
+      ID          130 ;
+      OF          ::oDlg
 
-
-
-
-
-
-
+      ::oTipo:bChange   := {|| ::ChangeTipo() }
 
    REDEFINE GET ::oLongitud VAR ::oDbf:nLongitud ;
-      ID       140 ;
-      PICTURE  "999" ;
+      ID          140 ;
+      PICTURE     "999" ;
       SPINNER ;
-      MIN      1 ;
-      MAX      200 ;
-      OF       ::oDlg   
+      MIN         1 ;
+      MAX         200 ;
+      VALID       ( ::oDbf:nLongitud >= 1 .and. ::oDbf:nLongitud <= 200 ) ;
+      OF          ::oDlg   
 
    REDEFINE GET ::oDecimales VAR ::oDbf:nDecimales ;
-      ID       150 ;
-      PICTURE  "9" ;
+      ID          150 ;
+      PICTURE     "9" ;
       SPINNER ;
-      MIN      1 ;
-      MAX      6 ;
-      OF       ::oDlg
+      MIN         0 ;
+      MAX         6 ;
+      VALID       ( ::oDbf:nDecimales >= 0 .and. ::oDbf:nDecimales <= 6 ) ;
+      OF          ::oDlg
 
+   REDEFINE GET ::oValorDefecto VAR ::cValorDefecto ;
+      ID          160 ;
+      OF          ::oDlg
 
+   REDEFINE BUTTON ::oAddDefecto;
+      ID          170 ;
+      OF          ::oDlg ;
+      ACTION      ( if( !Empty( ::cValorDefecto ), ::oListaDefecto:Add( ::cValorDefecto ), ) )
 
+   REDEFINE BUTTON ::oDelDefecto;
+      ID          180 ;
+      OF          ::oDlg ;
+      ACTION      ( ::oListaDefecto:Del() )
+
+   REDEFINE LISTBOX ::oListaDefecto ;
+      VAR         ::cListaDefecto ;
+      ITEMS       ::aValoresDefecto ;
+      ID          190 ;
+      OF          ::oDlg
 
    REDEFINE BUTTON oBtnAceptar ;
-      ID       IDOK ;
-      OF       ::oDlg ;
-      ACTION   ( ::oDlg:End( IDOK ) )
+      ID          IDOK ;
+      OF          ::oDlg ;
+      ACTION      ( ::oDlg:End( IDOK ) )
 
    REDEFINE BUTTON oBtnCancelar ;
-      ID       IDCANCEL ;
-      OF       ::oDlg ;
+      ID          IDCANCEL ;
+      OF          ::oDlg ;
       CANCEL ;
-      ACTION   ( ::oDlg:End( IDCANCEL ) )
+      ACTION      ( ::oDlg:End( IDCANCEL ) )
+
+      ::oDlg:bStart  := {|| ::ChangeTipo() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
    oBmp:End()
 
-Return ( .t. )
+Return ( ::oDlg:nResult == IDOK )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
