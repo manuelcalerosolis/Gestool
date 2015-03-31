@@ -35,6 +35,11 @@ CLASS TCamposExtra FROM TMant
    DATA cListaDefecto      INIT ""
    DATA aValoresDefecto
 
+   DATA oTree
+   DATA oTreeImageList
+
+   DATA aDocumentos        INIT {}
+
    Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
 
    Method DefineFiles()
@@ -86,6 +91,10 @@ CLASS TCamposExtra FROM TMant
    
    Method GetValoresDefecto()          INLINE ( ::aValoresDefecto := hb_deserialize( ::oDbf:mDefecto ) )
 
+   Method initDocumentos()
+
+   Method CreaTreeDocumentos()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -109,6 +118,9 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCamposExtra
                                  "Lista" => {|| ::disableLongitud(), ::cTextLongitud( 10, 0 ), ::enableDefecto() } }
 
    ::aValoresDefecto       := { }
+
+   ::aDocumentos           := {  "Artículos" => .t.,;
+                                 "Clientes" => .t. }
 
    ::bFirstKey             := {|| ::oDbf:cCodigo }
    ::bOnPreSave            := {|| ::PreSave() }
@@ -335,6 +347,12 @@ METHOD Resource( nMode ) CLASS TCamposExtra
 
    ::initValores()
 
+   if nMode == APPD_MODE .or. Empty( ::oDbf:mDocumento )
+
+      ::initDocumentos()
+
+   end if
+
    DEFINE DIALOG ::oDlg RESOURCE "EXTRA" TITLE LblTitle( nMode ) + "campo extra"
 
    REDEFINE BITMAP oBmp ;
@@ -404,6 +422,8 @@ METHOD Resource( nMode ) CLASS TCamposExtra
       ID          190 ;
       OF          ::oDlg
 
+   ::oTree     := TTreeView():Redefine( 200, ::oDlg )
+
    REDEFINE BUTTON oBtnAceptar ;
       ID          IDOK ;
       OF          ::oDlg ;
@@ -415,13 +435,36 @@ METHOD Resource( nMode ) CLASS TCamposExtra
       CANCEL ;
       ACTION      ( ::oDlg:End( IDCANCEL ) )
 
-      ::oDlg:bStart  := {|| ::ChangeTipo() }
+      ::oDlg:bStart  := {|| ::ChangeTipo(), ::CreaTreeDocumentos() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
    oBmp:End()
 
 Return ( ::oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD initDocumentos() CLASS TCamposExtra
+
+   ::aDocumentos     := {  "Artículos" => .t.,;
+                           "Clientes" => .t. }
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreaTreeDocumentos() CLASS TCamposExtra
+
+   ::oTreeImageList := TImageList():New( 16, 16 )
+
+   hEval( ::aDocumentos, {| k, v, i | ::oTreeImageList:AddMasked( TBitmap():Define( hGet( ICONOS_DOCUMENTOS_ITEMS, k ) ), Rgb( 255, 0, 255 ) ) } )
+
+   ::oTree:SetImageList( ::oTreeImageList )
+
+   hEval( ::aDocumentos, {| k, v, i | ::oTree:Add( k, i - 1 ) } )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
