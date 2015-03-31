@@ -1019,7 +1019,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
          SPINNER ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
-
+/*
       REDEFINE GET ::oTimRem VAR ::oDbf:cTimRem ;
          ID       121 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -1028,7 +1028,7 @@ METHOD Resource( nMode ) CLASS TRemMovAlm
                            ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
                            .t. ) );
          OF       oDlg
-
+*/
       REDEFINE GET ::oDbf:cCodUsr ;
          ID       220 ;
          WHEN     ( .f. ) ;
