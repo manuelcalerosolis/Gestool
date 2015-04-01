@@ -2530,6 +2530,9 @@ Return nil
 Function ACCESSCODE()
 Return nil
 
+Function TCamposExtra()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

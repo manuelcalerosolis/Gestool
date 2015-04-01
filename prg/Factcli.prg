@@ -5891,6 +5891,10 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	   Botones de las lineas----------------------------------------------------
    	*/
 
+      msgAlert(oUser():lMaster(), "master")
+
+      if .f. //oUser():lMaster()
+
    	oBtnAdd  			:= TGridImage():Build(  {  "nTop"      => 145,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"nWidth"    => 64,;
@@ -5899,7 +5903,6 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| AppDeta( oBrwLin, bEdtDetTablet, aTmp, .f. ) },;
                                              		"oWnd"      => oDlg } )
 
-      if oUser():lAdministrador()
 
    	oBtnEdt  			:= TGridImage():Build(  {  "nTop"      => 145,;
                                              		"nLeft"     => {|| GridWidth( 2, oDlg ) },;
@@ -6068,21 +6071,23 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
         :lHide               := .t.
     end with
 
-    with object ( oBrwLin:AddCol() )
-        :cHeader             := "Total"
-        :bEditValue          := {|| nTotLFacCli( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
-        :cEditPicture        := cPorDiv
-        :nWidth              := 94
-        :nDataStrAlign       := 1
-        :nHeadStrAlign       := 1
-        :nFooterType         := AGGR_SUM
-    end with
+      with object ( oBrwLin:AddCol() )
+         :cHeader             := "Total"
+         :bEditValue          := {|| nTotLFacCli( dbfTmpLin, nDouDiv, nRouDiv, nil, .t., aTmp[ _LOPERPV ], .t. ) }
+         :cEditPicture        := cPorDiv
+         :nWidth              := 94
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :nFooterType         := AGGR_SUM
+      end with
 
    	oBrwLin:nHeaderHeight   	:= 48
    	oBrwLin:nFooterHeight   	:= 48
    	oBrwLin:nRowHeight      	:= 48
 
+   if .f. //oUser():lMaster()
    	oBrwLin:bLDblClick      	:= {|| EdtDeta( oBrwLin, bEdtDetTablet, aTmp, .f., nMode ) }
+   endif
 
    	oBrwLin:CreateFromCode( 105 )
 
@@ -6898,7 +6903,7 @@ Function FacCliTablet()
                                              		"bLClicked" => {|| WinEdtRec( nil, bEdtTablet, D():FacturasClientes( nView ) ) },;
                                              		"oWnd"      => oDlg } )
 
-      if oUser():lMaster()
+      if .f. //oUser():lMaster()
    	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 75,;
                                              		"nLeft"     => {|| GridWidth( 3.5, oDlg ) },;
                                              		"nWidth"    => 64,;
