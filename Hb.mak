@@ -409,6 +409,7 @@ ClienteIncidenciaViewNavigator.prg     \
 PedidoClienteViewEdit.prg              \
 GeneraFacturasClientes.prg             \
 CamposExtra.prg             \
+DetCamposExtra.prg          \
 
 C               =       	\
 Img2pdf.c               	\
@@ -808,7 +809,8 @@ ClienteIncidenciaView.obj              \
 ClienteIncidenciaViewNavigator.obj     \
 PedidoClienteViewEdit.obj              \
 GeneraFacturasClientes.obj             \
-CamposExtra.obj
+CamposExtra.obj                        \
+DetCamposExtra.obj
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1194,6 +1196,7 @@ $(OBJ)\ClienteIncidenciaViewNavigator.obj    +
 $(OBJ)\PedidoClienteViewEdit.obj             +
 $(OBJ)\GeneraFacturasClientes.obj            + 
 $(OBJ)\CamposExtra.obj                       +
+$(OBJ)\DetCamposExtra.obj                    +
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +
