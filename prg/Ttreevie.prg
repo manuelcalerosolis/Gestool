@@ -49,7 +49,6 @@ CLASS TTreeView FROM TControl
    DATA   bItemSelectChanged
    DATA   bAction
 
-   
    CLASSDATA aProperties ;
       INIT { "aItems", "cTitle", "cVarName", "l3D", "nClrText",;
              "nClrPane", "nAlign", "nTop", "nLeft",;

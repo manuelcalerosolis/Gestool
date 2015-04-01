@@ -58,7 +58,7 @@ CLASS TCamposExtra FROM TMant
 
    Method ChangeTipo()                 INLINE ( if( hhaskey( ::hActions, ::cTipo ), Eval( hGet( ::hActions, ::cTipo ) ), ) )
 
-   Method PreSave()                    INLINE ( ::oDbf:nTipo  := ::oTipo:nAt, ::SetValoresDefecto() )
+   Method PreSave()
 
    Method initCombo()                  INLINE ( ::cTipo := ::aTipo[ Max( ::oDbf:nTipo, 1 ) ] )
 
@@ -88,12 +88,20 @@ CLASS TCamposExtra FROM TMant
                                                 ::oListaDefecto:Disable() )
 
    Method SetValoresDefecto()          INLINE ( ::oDbf:mDefecto   := hb_serialize( ::oListaDefecto:aItems ) )
-   
    Method GetValoresDefecto()          INLINE ( ::aValoresDefecto := hb_deserialize( ::oDbf:mDefecto ) )
 
    Method initDocumentos()
 
    Method CreaTreeDocumentos()
+   Method CreaListaImagenes()
+   Method AddItemTree( k, v, i )
+
+   Method cargaValoresDocumentos( nMode )
+
+   Method SetDocumentos()
+   Method GetDocumentos()
+
+   Method lValidResource( nMode )
 
 END CLASS
 
@@ -111,8 +119,8 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCamposExtra
    ::oWndParent            := oWndParent
    ::oDbf                  := nil
 
-   ::hActions              := {  "Texto" => {|| ::enableLongitud(), ::disableDefecto() } ,;
-                                 "Número" => {|| ::enableLongitud(), ::disableDefecto() } ,;
+   ::hActions              := {  "Texto" => {|| ::enableLongitud(), ::disableDefecto(), ::cTextLongitud( 1, 0 ) } ,;
+                                 "Número" => {|| ::enableLongitud(), ::disableDefecto(), ::cTextLongitud( 1, 0 ) } ,;
                                  "Fecha" => {|| ::disableLongitud(), ::cTextLongitud( 8, 0 ), ::disableDefecto() } ,;
                                  "Si/No" => {|| ::disableLongitud(), ::cTextLongitud( 1, 0 ), ::disableDefecto() } ,;
                                  "Lista" => {|| ::disableLongitud(), ::cTextLongitud( 10, 0 ), ::enableDefecto() } }
@@ -347,11 +355,7 @@ METHOD Resource( nMode ) CLASS TCamposExtra
 
    ::initValores()
 
-   if nMode == APPD_MODE .or. Empty( ::oDbf:mDocumento )
-
-      ::initDocumentos()
-
-   end if
+   ::cargaValoresDocumentos( nMode )
 
    DEFINE DIALOG ::oDlg RESOURCE "EXTRA" TITLE LblTitle( nMode ) + "campo extra"
 
@@ -363,7 +367,7 @@ METHOD Resource( nMode ) CLASS TCamposExtra
    
    REDEFINE GET ::oCodigo VAR ::oDbf:cCodigo ;
       ID          100 ;
-      WHEN        ( nMode != ZOOM_MODE ) ;
+      WHEN        ( nMode == APPD_MODE ) ;
       OF          ::oDlg
 
    REDEFINE GET ::oNombre VAR ::oDbf:cNombre ;
@@ -422,12 +426,12 @@ METHOD Resource( nMode ) CLASS TCamposExtra
       ID          190 ;
       OF          ::oDlg
 
-   ::oTree     := TTreeView():Redefine( 200, ::oDlg )
+   ::oTree                       := TTreeView():Redefine( 200, ::oDlg )
 
    REDEFINE BUTTON oBtnAceptar ;
       ID          IDOK ;
       OF          ::oDlg ;
-      ACTION      ( ::oDlg:End( IDOK ) )
+      ACTION      ( if( ::lValidResource( nMode ), ::oDlg:End( IDOK ), ) )
 
    REDEFINE BUTTON oBtnCancelar ;
       ID          IDCANCEL ;
@@ -445,10 +449,23 @@ Return ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+METHOD cargaValoresDocumentos( nMode ) CLASS TCamposExtra
+
+   if nMode == APPD_MODE .or. Empty( ::oDbf:mDocumento )
+      ::initDocumentos()
+   else
+      ::GetDocumentos()
+   end if
+
+Return ( self )
+
+//----------------------------------------------------------------------------//
+
 METHOD initDocumentos() CLASS TCamposExtra
 
    ::aDocumentos     := {  "Artículos" => .t.,;
-                           "Clientes" => .t. }
+                           "Clientes" => .f.,;
+                           "Proveedores" => .t. }
 
 Return ( self )
 
@@ -456,16 +473,105 @@ Return ( self )
 
 METHOD CreaTreeDocumentos() CLASS TCamposExtra
 
-   ::oTreeImageList := TImageList():New( 16, 16 )
+   local oItem
+
+   ::CreaListaImagenes()
+
+   hEval( ::aDocumentos, {| k, v, i | ::AddItemTree( k, v, i ) } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreaListaImagenes() CLASS TCamposExtra
+
+   ::oTreeImageList  := TImageList():New( 16, 16 )
 
    hEval( ::aDocumentos, {| k, v, i | ::oTreeImageList:AddMasked( TBitmap():Define( hGet( ICONOS_DOCUMENTOS_ITEMS, k ) ), Rgb( 255, 0, 255 ) ) } )
 
    ::oTree:SetImageList( ::oTreeImageList )
 
-   hEval( ::aDocumentos, {| k, v, i | ::oTree:Add( k, i - 1 ) } )
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddItemTree( k, v, i ) CLASS TCamposExtra
+
+   local oItem  :=  ::oTree:Add( k, i - 1 )
+
+   ::oTree:SetCheck( oItem, v )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method SetDocumentos() CLASS TCamposExtra
+
+   local oItem
+
+   ?"SetDocumentos"
+
+   for each oItem in ::oTree:aItems
+
+      ?oItem:cPrompt
+      
+      ?::oTree:GetCheck( oItem )
+
+   next
+
+   /*MsgInfo( hb_ValtoExp( ::aDocumentos ) )
+
+   ::oDbf:mDocumento := hb_serialize( ::aDocumentos )
+
+   ?::oDbf:mDocumento*/
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+   
+Method GetDocumentos() CLASS TCamposExtra
+
+   ::aDocumentos     := hb_deserialize( ::oDbf:mDocumento)
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD lValidResource( nMode ) CLASS TCamposExtra
+
+   if Empty( ::oDbf:cCodigo )
+      
+      MsgStop( "Código del campo extra no puede estar vacío." )
+      ::oCodigo:SetFocus()
+
+      Return .f.
+
+   end if
+
+   if Empty( ::oDbf:cNombre )
+      
+      MsgStop( "Nombre del campo extra no puede estar vacío." )
+      ::oNombre:SetFocus()
+
+      Return .f.
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Method PreSave() CLASS TCamposExtra
+
+   ::oDbf:nTipo  := ::oTipo:nAt
+   
+   ::SetValoresDefecto()
+
+   ::SetDocumentos()
 
 Return ( self )
 
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
