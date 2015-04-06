@@ -3685,6 +3685,17 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
       TDetMovimientos():Create( cPath ):CheckFiles()                                ; sysrefresh()
 
+      TCamposExtra():Create( cPath ):CheckFiles()                                     ; sysrefresh()
+
+      if oMsg != nil
+         oMsg:SetText( "Creando campos extra" )
+      end if
+
+      TDetCamposExtra():Create( cPath ):CheckFiles()                                     ; sysrefresh()
+
+      if oMsg != nil
+         oMsg:SetText( "Creando detalle de campos extra" )
+      end if
 
       if oMsg != nil
          oMsg:SetText( "Creando catálogos" )
@@ -4621,6 +4632,12 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
 
          oMsg:SetText( "Añadiendo movimientos de almacén" )
          TRemMovAlm():Create():SyncAllDbf()
+
+         oMsg:SetText( "Añadiendo campos extra" )
+         TCamposExtra():Create():SyncAllDbf()
+
+         oMsg:SetText( "Añadiendo detalles de campos extra" )
+         TDetCamposExtra():Create():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo notas" )
          TNotas():Create():SyncAllDbf()

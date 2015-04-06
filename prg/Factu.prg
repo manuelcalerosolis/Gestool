@@ -1190,6 +1190,7 @@ Function InitClasses()
    TReindex()
    TRemesas()
    TRemMovAlm()
+   TCamposExtra()
    TInfRemMov()
    TStock()
    TDeleleteObsoletos()
@@ -2877,7 +2878,7 @@ Function CreateAcceso( oWnd )
    oGrupo:cLittleBitmap := "Note_16"
    oGrupo:cBigBitmap    := "Note_32"
 
-   oItem                := oItemHerramientas:Add()
+   /*oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cambiar códigos'
    oItem:cMessage       := 'Cambiar códigos'
@@ -2885,6 +2886,16 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01073"
    oItem:cBmp           := "Replace_16"
    oItem:cBmpBig        := "Replace_32"
+   oItem:lShow          := .f.*/
+
+   oItem                := oItemHerramientas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Campos extra'
+   oItem:cMessage       := 'Acceso a los campos extra'
+   oItem:bAction        := {|| CamposExtra( "01124", oWnd ) }
+   oItem:cId            := "01124"
+   oItem:cBmp           := "form_green_add_16"
+   oItem:cBmpBig        := "form_green_add_32"
    oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
@@ -2946,7 +2957,7 @@ Function CreateAcceso( oWnd )
    if isProfesional()
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     :=  1
+   oGrupo:nBigItems     := 1
    oGrupo:nLittleItems  := 2
    oGrupo:cPrompt       := 'Exportaciones e importaciones'
    oGrupo:cLittleBitmap := "Satellite_dish_16"
