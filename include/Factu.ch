@@ -289,6 +289,13 @@ Defines para ficheros INI
                                         "18. Pago contra reembolso",;
                                         "19. Pago mediante tarjeta" }
 
+#define DOCUMENTOS_ITEMS        {       "Artículos" => ART_TBL,;
+                                        "Clientes" => CLI_TBL,;
+                                        "Proveedores" => PRV_TBL }
+
+#define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "Cube_Yellow_16",;
+                                        "Clientes" => "User1_16",;
+                                        "Proveedores" => "Businessman_16" }
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )

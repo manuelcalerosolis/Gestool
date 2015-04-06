@@ -1847,7 +1847,7 @@ METHOD lCloseCaja( lClose, cCodCaja )
    ::lCloTiket( lClose, cCodCaja )
 
    /*
-   Cerrar los pagos __________________________________________________________________
+   Cerrar los pagos____________________________________________________________
    */
 
    if ::oMeter != nil
@@ -2409,7 +2409,6 @@ METHOD lInvCierre()
    end if
 
    ::oDbf:GetStatus()
-
    ::cCurTurno    := ::GetLastClose()
 
    if Empty( ::cCurTurno )
@@ -2601,7 +2600,7 @@ METHOD lCloTiket( lClose, cCodCaj )
 
    if ::oTikT:Seek( ::cCurTurno + cCodCaj )
 
-      while ::oTikT:cTurTik + ::oTikT:cSufTik + ::oTikT:cNcjTik == ::cCurTurno + cCodCaj .and. !::oTikT:eof()
+      while ::oTikT:cTurTik + ::oTikT:cSufTik + ::oTikT:cNcjTik == Substr( ::cCurTurno, 1, 8 ) + cCodCaj .and. !::oTikT:eof()
 
          ::ActTactil()
 
@@ -2629,7 +2628,7 @@ METHOD lCloPgoTik( lClose, cCodCaj )
 
    if ::oTikP:Seek( ::cCurTurno + cCodCaj )
 
-      while ::oTikP:cTurPgo + ::oTikP:cSufTik + ::oTikP:cCodCaj == ::cCurTurno + cCodCaj .and. !::oTikP:eof()
+      while ::oTikP:cTurPgo + ::oTikP:cSufTik + ::oTikP:cCodCaj == SubStr( ::cCurTurno, 1, 8 ) + cCodCaj .and. !::oTikP:eof()
 
          ::oTikP:FieldPutByName( "lCloPgo", lClose )
 

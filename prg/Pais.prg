@@ -227,8 +227,6 @@ METHOD GetPais( cCodPai, oSay, oBmp )
 
    if ::oDbf:Seek( cCodPai )
 
-      ::oDbf:Load()
-
       oSay:cText( ::oDbf:cNomPai )
 
       oBmp:LoadImage( ::oDbf:cResPai )

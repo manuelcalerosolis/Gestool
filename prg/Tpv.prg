@@ -7697,6 +7697,16 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            PICTURE  "@!" ;
                            OF       oDlgDet
 
+            case cName == "Porcentaje I.V.A."
+
+               @ 0, 0 GET  aGet[ _NIVATIL ] VAR aTmp[ _NIVATIL ];
+                           NOBORDER ;
+                           FONT     oBrw:oFont ;
+                           PICTURE  "@E 999.99" ;
+                           VALID    lTiva( dbfIva, aTmp[ _NIVATIL ] ) ;
+                           ON CHANGE( lCalcDeta( aTmp, oGetTotal ) ) ;
+                           OF       oDlgDet
+
          end case
 
       next
@@ -7714,7 +7724,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
       oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
 
       oDlgDet:bKeyDown        := { | nKey | EdtDetKeyDown( nKey, aGet, oDlgDet, oBtn ) }
-      oDlgDet:bStart          := { || if( !Empty( cCodArt ), ( Eval( aGet[ _CCBATIL ]:bLostFocus ), aGet[ _CCBATIL ]:lValid() ), ), SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn, nTop, nLeft, nHeight, nWidth ) }
+      oDlgDet:bStart          := { || if( !Empty( cCodArt ), ( Eval( aGet[ _CCBATIL ]:bLostFocus ), aGet[ _CCBATIL ]:lValid() ), ), SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn ) } //, nTop, nLeft, nHeight, nWidth ) }
 
       oDlgDet:bLostFocus      := { || DlgLostFocus( nMode, aTmp ) }
 
@@ -8140,7 +8150,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          if lNotVta
 
             SetLostFocusOff()
-            MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + aTik[ _CALMTIK ] + "." )
+            MsgStop( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + AllTrim( aTik[ _CALMTIK ] ) + "." )
             SetLostFocusOn()
 
             return .f.
@@ -8150,7 +8160,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
          if lMsgVta
 
             SetLostFocusOff()
-            lOk   := ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + aTik[ _CALMTIK ] + ".", "¿Continuar con la venta?" )
+            lOk   := ApoloMsgNoYes( "No hay stock suficiente, tenemos " + Alltrim( Trans( nStockActual, MasUnd() ) ) + " unidad(es) disponible(s) en almacén " + AllTrim( aTik[ _CALMTIK ] ) + ".", "¿Continuar con la venta?" )
             SetLostFocusOn()
 
             if !lOk
@@ -8450,7 +8460,7 @@ Return ( lCodArt )
 Esta funci¢n recoge los articulos del Escaner y los valida
 */
 
-STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lNotVta )
+STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lMsgVta, lNotVta )
 
    local lOk         := .t.
    local nTotal      := 0
@@ -8551,6 +8561,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
             aGet[ _NPVPTIL ]:lNeedGetFocus   := aTmp[ _LTIPACC ]
          end if
 
+         lMsgVta                             := ( dbfArticulo )->lMsgVta
          lNotVta                             := ( dbfArticulo )->lNotVta
 
          /*
@@ -8614,7 +8625,13 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          */
 
          if aTik[ _NREGIVA ] <= 1
+
+            if !Empty( aGet[ _NIVATIL ] )
+               aGet[ _NIVATIL ]:cText( nIva( dbfIva, ( dbfArticulo )->TipoIva ) )
+            end if
+
             aTmp[ _NIVATIL ]  := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+
          end if
 
          /*
@@ -12932,6 +12949,8 @@ Function NameToField( cName )
          cField   := {|| Trans( ( dbfTmpL )->nNumLin, "9999" ) }
       case cName == "Código de barras"
          cField   := {|| cCodigoBarrasDefecto( ( dbfTmpL )->cCbaTil, dbfCodeBar ) }
+      case cName == "Porcentaje I.V.A."
+         cField   := {|| ( dbfTmpL )->nIvaTil }
    end case
 
 RETURN ( cField )
