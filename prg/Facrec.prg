@@ -110,6 +110,7 @@
 #define _CCTABNC            98
 #define _LOPERPV            99
 #define _NDTOTARIFA 	   100
+#define _TFECFAC           101      //,"C",  6, 0, "Hora de la factura" },;
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -189,9 +190,10 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DESCRIP                 72
 #define _LLINOFE                 73      //   L      1     0
 #define _LVOLIMP                 74
-#define __DFECFAC						75
-#define __NBULTOS 					76
-#define _CFORMATO 					77
+#define __DFECFAC				 75
+#define __NBULTOS 				 76
+#define _CFORMATO 				 77
+#define __TFECFAC                78      //   C      6    0
 
 /*
 Definici¢n de Array para impuestos
@@ -1623,6 +1625,12 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Hora"
+         :bEditValue       := {|| trans( ( D():FacturasRectificativas( nView ) )->tFecFac, "@R 99:99:99") }
+         :nWidth           := 60
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
          :bEditValue       := {|| ( D():FacturasRectificativas( nView ) )->cCodCaj }
          :nWidth           := 40
@@ -2051,6 +2059,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       aTmp[ _CCODDLG    ]  := oUser():cDelegacion()
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
       aTmp[ _CMANOBR    ]  := Padr( "Gastos", 250 )
+      aTmp[ _TFECFAC    ]  := getSysTime()
 
       if !Empty( cCodCli )
          aTmp[ _CCODCLI ]  := cCodCli
@@ -3032,6 +3041,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[1]
 
+	  REDEFINE GET aGet[ _TFECFAC ] VAR aTmp[ _TFECFAC ] ;
+         ID       131 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECFAC ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET aGet[ _CNUMFAC ] VAR aTmp[ _CNUMFAC ] ;
 			ID 		150 ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
@@ -3683,6 +3701,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _CALMLIN  ] := aTmpFac[ _CCODALM ]
       aTmp[ _LIVALIN  ] := aTmpFac[ _LIVAINC ]
       aTmp[ _NTARLIN  ] := aTmpFac[ _NTARIFA ]
+      aTmp[ __DFECFAC ] := aTmpFac[ _DFECFAC ]
+      aTmp[ __TFECFAC ] := aTmpFac[ _TFECFAC ]
       if !Empty( cCodArtEnt )
          cCodArt        := Padr( cCodArtEnt, 32 )
       end if
@@ -4219,6 +4239,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       350, 351, 352 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
+
+      REDEFINE Get aGet[ __DFECFAC ] VAR aTmp[ __DFECFAC ] ;
+      	ID 		  360 ;
+      	SPINNER ;
+      	WHEN      (nMode != ZOOM_MODE .AND. !lTotLin ) ;
+      	ON HELP   aGet [ __DFECFAC ]:cText( Calendario( aTmp[ __DFECFAC ] ) ) ;
+      	OF        oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ __TFECFAC ] VAR aTmp[ __TFECFAC ] ;
+      	ID 		  361 ;
+      	PICTURE   "@R 99:99:99" ;
+      	WHEN      ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+      	VALID     ( iif(	!validTime( aTmp[ __TFECFAC ] ),;
+      						( msgStop( "El mensaje de la hora no es correcto" ), .f. ),;
+      						.t. ) );
+      	OF 		  oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
          MEMO ;
@@ -8934,6 +8970,8 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->dFecCad    := ( dbfFacCliL )->dFecCad
                   ( dbfTmpLin )->nBultos    := ( dbfFacCliL )->nBultos
                   ( dbfTmpLin )->cFormato   := ( dbfFacCliL )->cFormato
+                  ( dbfTmpLin )->dFecFac    := ( dbfFacCliL )->dFecFac
+                  ( dbfTmpLin )->tFecfac    := ( dbfFacCliL )->tFecfac
 
                end if
 
@@ -11745,7 +11783,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
 
       ( dbfFacRecL )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) } ) )
+      ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( dbfFacRecL)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
@@ -11790,10 +11828,10 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( cFacRecT )->( __dbPack() )
 
       ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "NNUMFAC", "CSERIE + Str(NNUMFAC) + CSUFFAC", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac }, ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "NNUMFAC", "CSERIE + Str( NNUMFAC ) + CSUFFAC", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac }, ) )
 
       ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "DFECFAC", "DFECFAC", {|| Field->DFECFAC } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "DFECFAC", "dtos( DFECFAC ) + tFecFac", {|| dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
@@ -12646,6 +12684,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, {"cCtaBnc"     ,"C", 10, 0, "Cuenta bancaria del cliente" ,                         "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"lOperPV"     ,"L",  1, 0, "Lógico para operar con punto verde" ,                  "",                   "", "( cDbf )", .t. } )
    aAdd( aItmFacRec, {"nDtoTarifa"  ,"N",  6, 2, "Descuento de tarifa de cliente",                       "",                   "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"tFecFac"     ,"C",  6, 0, "Hora de la factura",                                   "",                   "", "( cDbf )"} )
 
 RETURN ( aItmFacRec )
 
@@ -12786,9 +12825,10 @@ function aColFacRec()
    aAdd( aColFacRec, { "Descrip"     ,"M", 10, 0, "Descripción larga del artículo"        ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "lLinOfe"     ,"L",  1, 0, "Linea con oferta"                      ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "lVolImp"     ,"L",  1, 0, "Aplicar volumen impuestos especiales " ,"",               "", "( cDbfCol )" } )
-   aAdd( aColFacRec, { "dFecFac"     ,"D",  8, 0, "Fecha de la factura rectificativa"     ,"" ,              "", "( cDbfCol )" } )
-   aAdd( aColFacRec, { "nBultos"  	 ,"N", 16, 6, "Numero de bultos en líneas"				,"",               "", "( cDbfCol )" } )
-   aAdd( aColFacRec, { "cFormato" 	 ,"C",100, 0, "Formato de venta"								,"",               "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "dFecFac"     ,"D",  8, 0, "Fecha de la factura rectificativa"     ,"",               "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "nBultos"  	 ,"N", 16, 6, "Numero de bultos en líneas"		      ,"",               "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "cFormato" 	 ,"C",100, 0, "Formato de venta"					  ,"",               "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "tFecfac" 	 ,"C",  6, 0, "Hora de la factura rectificativa"      ,"",               "", "( cDbfCol )" } )
 
 return ( aColFacRec )
 

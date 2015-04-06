@@ -121,7 +121,8 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CDIGBNC                  100
 #define _CCTABNC                  101
 #define _NDTOTARIFA               102 
-#define _NFACTURADO               103   
+#define _NFACTURADO               103  
+#define _TFECALB                  104 
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -227,6 +228,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DUNIULTCOM               98
 #define __NBULTOS                 99
 #define _CFORMATO                100
+#define __TFECALB                101
 
 /*
 Definici¢n de Array para impuestos
@@ -671,6 +673,12 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| Dtoc( ( D():Get( "AlbCliT", nView ) )->dFecAlb ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )   
+         :cHeader          := "Hora"
+         :bEditValue       := {|| trans( ( D():Get( "AlbCliT", nView ) )->tFecAlb, "@R 99:99:99") }
+         :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -2138,6 +2146,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _NIVAMAN   ]   := nIva( D():Get( "TIva", nView ), cDefIva() )
          aTmp[ _CMANOBR   ]   := Padr( "Gastos", 250 )
          aTmp[ _NFACTURADO]   := 1
+         aTmp[ _TFECALB   ]   := getsystime()
 
       case nMode == DUPL_MODE
 
@@ -2151,7 +2160,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
             Return .f.
          end if
 
-         aTmp[ _DFECALB   ]   := GetSysDate()
+         aTmp[ _DFECALB   ]   := getsysdate()
+         aTmp[ _TFECALB   ]   := getsystime()
          aTmp[ _CTURALB   ]   := cCurSesion()
          aTmp[ _CCODCAJ   ]   := oUser():cCaja()
          aTmp[ _LFACTURADO]   := .f.
@@ -3193,6 +3203,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ON HELP  aGet[ _DFECALB ]:cText( Calendario( aTmp[ _DFECALB ] ) ) ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ _TFECALB ] VAR aTmp[ _TFECALB ];
+         ID       131 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( lWhen ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECALB ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[1]
+
       REDEFINE COMBOBOX oTipAlb VAR cTipAlb ;
          ID       217 ;
          WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
@@ -4104,6 +4123,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       aTmp[ __DFECENT ]       := aTmpAlb[ _DFECENTR ]
       aTmp[ __LALQUILER ]     := !Empty( oTipAlb ) .and. oTipAlb:nAt == 2
 
+      aTmp[ __DFECALB ]       := aTmpAlb[ _DFECALB ]
+      aTmp[ __TFECALB ]       := aTmpAlb[ _TFECALB ]
+
       if !Empty( cCodArtEnt )
          cCodArt              := cCodArtEnt
       end if
@@ -4695,6 +4717,20 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE RADIO aGet[ _NCTLSTK ] VAR aTmp[ _NCTLSTK ] ;
          ID       350, 351, 352 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 2 ]
+
+      REDEFINE GET aGet[ __DFECALB ] VAR aTmp[ __DFECALB ] ;
+         ID       360 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 2 ]
+
+      REDEFINE GET aGet[ __TFECALB ] VAR aTmp[ __TFECALB ] ;
+         ID       361 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ __TFECALB ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
          OF       oFld:aDialogs[ 2 ]
 
       REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
@@ -11253,8 +11289,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
 
-         ( dbfTmpLin )->dFecAlb  := aTmp[ _DFECALB ]
          ( dbfTmpLin )->cCodCli  := aTmp[ _CCODCLI ]
+         ( dbfTmpLin )->dFecAlb  := aTmp[ _DFECALB ]
+         ( dbfTmpLin )->tFecAlb  := aTmp[ _TFECALB ]
 
          dbPass( dbfTmpLin, D():Get( "AlbCliL", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
 
@@ -12911,6 +12948,7 @@ Static Function AppendDatosAtipicas( aTmpAlb )
          ( dbfTmpLin )->lIvaLin        := aTmpAlb[ _LIVAINC ]
          ( dbfTmpLin )->nTarLin        := aTmpAlb[ _NTARIFA ]
          ( dbfTmpLin )->dFecAlb        := aTmpAlb[ _DFECALB ]
+         ( dbfTmpLin )->tFecAlb        := aTmpAlb[ _TFECALB ]
          ( dbfTmpLin )->nCanEnt        := 1
          ( dbfTmpLin )->nUniCaja       := 0
          ( dbfTmpLin )->lFromAtp       := .t.
@@ -16162,7 +16200,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMALB", "CSERALB + Str(NNUMALB) + CSUFALB", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "DFECALB", {|| Field->DFECALB } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "dtos( DFECALB ) + tFecAlb" , {|| dtos( Field->DFECALB ) +  Field->tFecAlb  } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
@@ -16224,10 +16262,10 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecAlb )", {|| Field->cCodCli + dtos( Field->dFecAlb ) } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecAlb ) + tFecAlb", {|| Field->cCodCli + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "dFecDes", "dFecAlb", {|| Field->dFecAlb } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "dFecDes", "dtos( dFecAlb ) + tFecAlb", {|| dtos( Field->dFecAlb ) +  Field->tFecAlb } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "LCLIOBR", "CCODCLI + CCODOBR", {|| Field->CCODCLI + Field->CCODOBR } ) )
@@ -16270,7 +16308,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumRef", "cSerAlb + Str( nNumAlb ) + cSufAlb + cRef", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Field->cRef } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecAlb ) + tFecAlb", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
@@ -16281,7 +16319,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       // Albaranes no facturados-----------------------------------------------
 
       ( cAlbCliT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecAlb )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecAlb ) + tFecAlb", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
 
       ( cAlbCliT )->( dbCloseArea() )
 
@@ -16559,6 +16597,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",                          "UnidadesUltimaCompra",          "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nBultos",   "N", 16, 6, "Numero de bultos",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",                                "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "tFecAlb",   "C",  6, 0, "Hora del albaran",                                "",                              "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
@@ -16671,6 +16710,8 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                              "CuentaBancaria",                "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nDtoTarifa","N",  6, 2, "Descuento de tarifa de cliente",                           "DescuentoTarifa",               "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albaran" ,                                      "Estado",                        "", "( cDbf )", {|| 1 } } )
+   aAdd( aItmAlbCli, { "tFecAlb"   ,"C",  6, 0, "Hora del albarán" ,                                        "Hora",                          "", "( cDbf )", {|| getSysTime() } } )
+
 
 Return ( aItmAlbCli )
 
