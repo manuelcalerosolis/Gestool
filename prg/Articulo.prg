@@ -94,6 +94,8 @@ static oFabricante
 static oOrdenComanda
 static oTpvMenu
 
+static oDetCamposExtra
+
 static oActiveX
 
 static cCatOld
@@ -428,6 +430,12 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       oTpvMenu:lAppendBuscar     := .f.
       oTpvMenu:lModificarBuscar  := .f.
 
+      oDetCamposExtra      := TDetCamposExtra():New()
+      if !oDetCamposExtra:OpenFiles
+         lOpenFiles        := .f.
+      end if
+      oDetCamposExtra:SetTipoDocumento( "Artículos" )
+
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
       */
@@ -700,57 +708,62 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oTpvMenu:CloseService()
    end if
 
-   dbfArticulo    := nil
-   dbfProv        := nil
-   dbfCatalogo    := nil
-   dbfIva         := nil
-   dbfFam         := nil
-   dbfFamPrv      := nil
-   dbfArtPrv      := nil
-   oStock         := nil
-   dbfTMov        := nil
-   dbfTarPreT     := nil
-   dbfTarPreL     := nil
-   dbfTarPreS     := nil
-   dbfOfe         := nil
-   dbfImg         := nil
-   dbfDiv         := nil
-   dbfArtVta      := nil
-   oBandera       := nil
-   dbfAlmT        := nil
-   dbfArtKit      := nil
-   dbfArtLbl      := nil
-   dbfTblPro      := nil
-   dbfPro         := nil
-   dbfCodebar     := nil
-   oTankes        := nil
-   oTipArt        := nil
-   oCatalogo      := nil
-   oOrdenComanda  := nil 
-   oNewImp        := nil
-   oFraPub        := nil
-   dbfDoc         := nil
-   dbfCategoria   := nil
-   dbfTemporada   := nil
-   dbfAlbPrvL     := nil
-   dbfFacPrvL     := nil
-   dbfAlbCliL     := nil
-   dbfFacCliL     := nil
-   dbfFacRecL     := nil
-   dbfTikCliL     := nil
-   dbfProLin      := nil
-   dbfProMat      := nil
-   dbfHisMov      := nil
-   dbfAlbPrvT     := nil
-   dbfAlbCliT     := nil
-   dbfPedPrvL     := nil
-   dbfPedCliL     := nil
-   dbfUbicaT      := nil
-   dbfUbicaL      := nil
-   dbfTImp        := nil
-   oTpvMenu       := nil
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
+   end if
 
-   lOpenFiles     := .f.
+   dbfArticulo       := nil
+   dbfProv           := nil
+   dbfCatalogo       := nil
+   dbfIva            := nil
+   dbfFam            := nil
+   dbfFamPrv         := nil
+   dbfArtPrv         := nil
+   oStock            := nil
+   dbfTMov           := nil
+   dbfTarPreT        := nil
+   dbfTarPreL        := nil
+   dbfTarPreS        := nil
+   dbfOfe            := nil
+   dbfImg            := nil
+   dbfDiv            := nil
+   dbfArtVta         := nil
+   oBandera          := nil
+   dbfAlmT           := nil
+   dbfArtKit         := nil
+   dbfArtLbl         := nil
+   dbfTblPro         := nil
+   dbfPro            := nil
+   dbfCodebar        := nil
+   oTankes           := nil
+   oTipArt           := nil
+   oCatalogo         := nil
+   oOrdenComanda     := nil 
+   oNewImp           := nil
+   oFraPub           := nil
+   dbfDoc            := nil
+   dbfCategoria      := nil
+   dbfTemporada      := nil
+   dbfAlbPrvL        := nil
+   dbfFacPrvL        := nil
+   dbfAlbCliL        := nil
+   dbfFacCliL        := nil
+   dbfFacRecL        := nil
+   dbfTikCliL        := nil
+   dbfProLin         := nil
+   dbfProMat         := nil
+   dbfHisMov         := nil
+   dbfAlbPrvT        := nil
+   dbfAlbCliT        := nil
+   dbfPedPrvL        := nil
+   dbfPedCliL        := nil
+   dbfUbicaT         := nil
+   dbfUbicaL         := nil
+   dbfTImp           := nil
+   oTpvMenu          := nil
+   oDetCamposExtra   := nil
+
+   lOpenFiles        := .f.
 
 RETURN ( .t. )
 
@@ -2099,6 +2112,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    /*
    Codificacion de proveedores----------------------------------------------
    */
+
+   REDEFINE BUTTON aBtnDiv[ 5 ]; 
+      ID       511 ;
+      OF       fldPrecios;
+      ACTION   ( oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) )
 
    REDEFINE BUTTON aBtnDiv[ 5 ]; 
       ID       510 ;
