@@ -103,6 +103,8 @@ CLASS TCamposExtra FROM TMant
 
    Method lValidResource( nMode )
 
+   Method aCamposExtra( cTipoCampo )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -126,9 +128,6 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TCamposExtra
                                  "Lista" => {|| ::disableLongitud(), ::cTextLongitud( 10, 0 ), ::enableDefecto() } }
 
    ::aValoresDefecto       := { }
-
-   ::aDocumentos           := {  "Artículos" => .t.,;
-                                 "Clientes" => .t. }
 
    ::bFirstKey             := {|| ::oDbf:cCodigo }
    ::bOnPreSave            := {|| ::PreSave() }
@@ -519,11 +518,11 @@ Method SetDocumentos() CLASS TCamposExtra
 
    next
 
-   /*MsgInfo( hb_ValtoExp( ::aDocumentos ) )
+   MsgInfo( hb_ValtoExp( ::aDocumentos ) )
 
    ::oDbf:mDocumento := hb_serialize( ::aDocumentos )
 
-   ?::oDbf:mDocumento*/
+   ?::oDbf:mDocumento
 
 Return ( Self )
 
@@ -570,6 +569,48 @@ Method PreSave() CLASS TCamposExtra
    ::SetDocumentos()
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
+
+   local aCamposExtra := {}
+   local aCampos
+   local cValor
+
+   ::oDbf:GoTop()
+
+   while !::oDbf:Eof()
+
+      aCampos  := hb_deserialize( ::oDbf:mDocumento )
+
+      if hGet( aCampos, cTipoCampo )
+
+         do case 
+            case ::oDbf:nTipo == 2
+               cValor   := 0
+            case ::oDbf:nTipo == 3
+               cValor   := cTod( "" )
+            otherwise
+               cValor   := Space( 100 )
+         end case
+
+         aAdd( aCamposExtra, {   "código" => ::oDbf:cCodigo,;
+                                 "descripción" => ::oDbf:cNombre,;
+                                 "tipo" => ::oDbf:nTipo,;
+                                 "longitud" => ::oDbf:nLongitud,;
+                                 "decimales" => ::oDbf:nDecimales,;
+                                 "lrequerido" => ::oDbf:lRequerido,;
+                                 "valores" => hb_deserialize( ::oDbf:mDefecto ),;
+                                 "valor" => cValor } )
+
+      end if
+
+      ::oDbf:Skip()
+
+   end while
+
+Return ( aCamposExtra )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

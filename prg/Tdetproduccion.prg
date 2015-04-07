@@ -136,7 +136,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "cLote"      TYPE "C" LEN 12  DEC 0 COMMENT "Lote"                          COLSIZE  80 OF oDbf
       FIELD NAME "dFecOrd"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha"                         HIDE        OF oDbf
       FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT "Clasificación"                 HIDE        OF oDbf
-      FIELD NAME "dFecCad"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha de caducidad"            COLSIZE  80 OF oDbf             
+      FIELD NAME "dFecCad"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha de caducidad"            COLSIZE  80 OF oDbf
+      FIELD NAME "cHorIni"    TYPE "C" LEN  6  DEC 0 COMMENT "Hora"                          HIDE        OF oDbf           
 
       ::CommunFields( oDbf )
 
@@ -156,7 +157,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       INDEX TO ( cFileName )  TAG "cCodFab"  ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + cCodFab"           NODELETED OF oDbf       
       INDEX TO ( cFileName )  TAG "nTipArt"  ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd + Str( nTipArt, 1 )" NODELETED OF oDbf
       INDEX TO ( cFileName )  TAG "iNumOrd"  ON "'30' + cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"              NODELETED OF oDbf
-      INDEX TO ( cFileName )  TAG "cStkFast" ON "cCodArt + cAlmOrd + dtos( dFecOrd ) + cValPr1 + cValPr2 + cLote";
+      INDEX TO ( cFileName )  TAG "cStkFast" ON "cCodArt + cAlmOrd + dtos( dFecOrd ) + cHorIni + cValPr1 + cValPr2 + cLote";
                                                                                                             NODELETED DESCENDING OF oDbf
 
    END DATABASE oDbf
@@ -845,6 +846,7 @@ METHOD SaveDetails() CLASS TDetProduccion
    ::oDbfVir:nNumOrd := ::oParent:oDbf:nNumOrd
    ::oDbfVir:cSufOrd := ::oParent:oDbf:cSufOrd
    ::oDbfVir:dFecOrd := ::oParent:oDbf:dFecOrd
+   ::oDbfVir:cHorIni := ::oParent:oDbf:cHorIni
 
 RETURN ( Self )
 
