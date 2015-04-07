@@ -1289,7 +1289,7 @@ METHOD Resource( nMode, aDatosAnterior )
       Hora inicio, hora fin, tiempo empleado-----------------------------------
       */
 
-      REDEFINE GET oHorIni ;
+      REDEFINE GET oHorIni ; 
          VAR      ::oDbf:cHorIni ;
          PICTURE  "@R 99:99:99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;

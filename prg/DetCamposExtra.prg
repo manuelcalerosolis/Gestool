@@ -15,13 +15,17 @@ CLASS TDetCamposExtra FROM TMant
    DATA oBrw
    DATA oCol
 
-   DATA TipoDocumento      INIT ""
+   DATA TipoDocumento         INIT ""
 
-   DATA aCamposExtra       INIT {}
+   DATA aCamposExtra          INIT {}
 
-   DATA lOpenFiles         INIT .f.
+   DATA lOpenFiles            INIT .f.
 
-   DATA oCamposExtra      
+   DATA oCamposExtra  
+
+
+
+   DATA hFormatoColumnas      INIT  {}
 
    Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
 
@@ -33,19 +37,23 @@ CLASS TDetCamposExtra FROM TMant
    Method OpenService( lExclusive )
    Method CloseService()
 
+   Method SetTipoDocumento( cValor )   INLINE ( ::TipoDocumento  := cValor )
+
    Method Reindexa( oMeter )
 
    Method Play()
 
    Method Resource( nMode )
 
-   Method SetTipoDocumento( cValor )
-
    Method CargaValores( cClave )
 
    Method GuardaValores()              INLINE ( MsgInfo( "Guardamos valores", "provisional" ) )
 
    Method ChangeBrowse()
+
+   Method setColType( uValue )         INLINE ( ::oCol:nEditType := uValue )
+   Method setColPicture( uValue )      INLINE ( ::oCol:cEditPicture := uValue )
+   Method setColListTxt( aValue )      INLINE ( ::oCol:aEditListTxt := aValue )
 
 END CLASS
 
@@ -62,6 +70,19 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TDetCamposExtra
    ::cPath                 := cPath
    ::oWndParent            := oWndParent
    ::oDbf                  := nil
+
+   ::hFormatoColumnas      := {  "1" => {||  ::setColType( EDIT_GET ) ,;
+                                             ::setColPicture( "" ) } ,;
+                                 "2" => {||  ::setColType( EDIT_GET ) ,;
+                                             ::setColPicture( NumPict( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "longitud" ), hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "decimales" ) ) ) } ,;
+                                 "3" => {||  ::setColType( EDIT_GET ) ,;
+                                             ::setColPicture( "" ) } ,;
+                                 "4" => {||  ::setColType( EDIT_LISTBOX ),;
+                                             ::setColListTxt( { "si", "no" } ),;
+                                             ::setColPicture( "" ) } ,;
+                                 "5" => {||  ::setColType( EDIT_LISTBOX ) ,;
+                                             ::setColListTxt( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valores" ) ) ,;
+                                             ::setColPicture( "" ) } }
 
 RETURN ( Self )
 
@@ -215,18 +236,6 @@ RETURN ( Self )
 
 //--------------------------------------------------------------------------//
 
-METHOD SetTipoDocumento( cValor ) CLASS TDetCamposExtra
-
-   ::TipoDocumento  := cValor
-
-   if !Empty( ::TipoDocumento )
-      ::aCamposExtra    := ::oCamposExtra:aCamposExtra( ::TipoDocumento )
-   end if
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
 Method Play( cClave )
 
    if Empty( ::TipoDocumento )
@@ -234,12 +243,16 @@ Method Play( cClave )
       Return .f.
    end if
 
+   if !Empty( ::TipoDocumento )
+      ::aCamposExtra    := ::oCamposExtra:aCamposExtra( ::TipoDocumento )
+   end if
+
    if len( ::aCamposExtra ) < 1
       MsgStop( "No existen campos extra para este tipo de documento." )
       Return .f.
    end if  
 
-   //::CargaValores( cClave ) 
+   ::CargaValores( cClave ) 
 
    if ::Resource()
       ::GuardaValores( cClave )
@@ -289,9 +302,11 @@ METHOD Resource() CLASS TDetCamposExtra
 
       ::oBrw:SetArray( ::aCamposExtra, , , .f. )
 
-      ::oBrw:nMarqueeStyle          := 6
+      ::oBrw:nMarqueeStyle          := MARQSTYLE_HIGHLCELL
       ::oBrw:lRecordSelector        := .f.
       ::oBrw:lHScroll               := .f.
+      ::oBrw:lFastEdit              := .t.
+
       ::oBrw:bChange                := {|| ::ChangeBrowse() }
 
       ::oBrw:CreateFromResource( 100 )
@@ -299,13 +314,14 @@ METHOD Resource() CLASS TDetCamposExtra
       with object ( ::oBrw:AddCol() )
          :cHeader          := "Descripción"
          :bStrData         := {|| hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "descripción" ) }
-         :nWidth           := 300
+         :nWidth           := 250
       end with
 
       with object ( ::oCol := ::oBrw:AddCol() )
          :cHeader          := "Valor"
          :bEditValue       := {|| hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valor" ) }
-         :nWidth           := 300
+         :bStrData         := {|| hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valor" ) }
+         :nWidth           := 250
       end with
 
    REDEFINE BUTTON ;
@@ -331,30 +347,7 @@ Return ( ::oDlg:nResult == IDOK )
 
 METHOD ChangeBrowse() CLASS TDetCamposExtra
 
-   do case 
-      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 1
-         ::oCol:nEditType        := EDIT_GET
-         ::oCol:cEditPicture     := ""
-
-      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 2
-         ::oCol:nEditType        := EDIT_GET
-         ::oCol:cEditPicture     := "@ 999999.999"
-
-      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 3 
-         ::oCol:nEditType        := EDIT_GET
-         ::oCol:cEditPicture     := ""
-
-      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 4
-         ::oCol:nEditType        := EDIT_LISTBOX
-         ::oCol:aEditListTxt     := { "si", "no" }
-         ::oCol:cEditPicture     := ""
-
-      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 5
-         ::oCol:nEditType        := EDIT_LISTBOX
-         ::oCol:aEditListTxt     := hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valores" )
-         ::oCol:cEditPicture     := ""
-
-   end case
+   Eval( hGet( ::hFormatoColumnas, AllTrim( Str( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) ) ) ) )
 
    ::oCol:bOnPostEdit            := {|o,x,n| hSet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valor", x ) }
 

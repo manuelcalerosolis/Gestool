@@ -577,6 +577,8 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
    local aCamposExtra := {}
    local aCampos
    local cValor
+   local nLen
+   local nDec
 
    ::oDbf:GoTop()
 
