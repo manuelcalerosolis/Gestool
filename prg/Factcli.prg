@@ -141,10 +141,11 @@
 #define _LOPERPV           120
 #define _LRECC             121
 #define _CCODPRY           122
-#define _NDTOTARIFA 	      123
+#define _NDTOTARIFA 	   123
 #define _LMAIL             124
 #define _DMAIL             125
 #define _TMAIL             126
+#define _TFECFAC           127
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -235,15 +236,16 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP            83
 #define _LGASSUP            84
 #define __CNUMPED           85
-#define __DFECFAC			    86
+#define __DFECFAC			86
 #define _CSUPED             87     
 #define __CNUMSAT           88
-#define _DFECULTCOM 		    89
-#define __CCODCLI 			 90
-#define _LFROMATP 			 91
-#define _NUNIULTCOM  	 	 92
-#define __NBULTOS			    93
-#define _CFORMATO 			 94
+#define _DFECULTCOM 		89
+#define __CCODCLI 			90
+#define _LFROMATP 			91
+#define _NUNIULTCOM  	 	92
+#define __NBULTOS			93
+#define _CFORMATO 			94
+#define __TFECFAC 			95
 
 /*
 Definici¢n de Array para impuestos
@@ -847,6 +849,12 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Hora"
+         :bEditValue       := {|| trans( ( D():FacturasClientes( nView ) )->tFecFac, "@R 99:99:99") }
+         :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -2518,7 +2526,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       aTmp[ _LIVAINC    ]  := uFieldEmpresa( "lIvaInc" )
       aTmp[ _CMANOBR    ]  := Padr( "Gastos", 250 )
       aTmp[ _NIVAMAN    ]  := nIva( dbfIva, cDefIva() )
-      aTmp[ _LRECC      ]	:= lRECCEmpresa()
+      aTmp[ _LRECC      ]  := lRECCEmpresa()
+      aTmp[ _TFECFAC    ]  := getSysTime()
 
    case nMode == DUPL_MODE
 
@@ -2533,6 +2542,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       end if
 
       aTmp[ _DFECFAC    ]  := GetSysDate()
+      aTmp[ _TFECFAC    ]  := getSysTime()
       aTmp[ _CTURFAC    ]  := cCurSesion()
       aTmp[ _CNUMALB    ]  := ""
       aTmp[ _CNUMPED    ]  := ""
@@ -3602,6 +3612,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ON HELP  aGet[ _DFECFAC ]:cText( Calendario( aTmp[ _DFECFAC ] ) ) ;
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _TFECFAC ] VAR aTmp[ _TFECFAC ] ;
+         ID       131 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( lWhen ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECFAC ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[1]
+
 
       /*
       Criterio de caja_________________________________________________________
@@ -4683,6 +4703,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _CTIPMOV  ]       := cDefVta()
       aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
       aTmp[ __CNUMPED ]       := aTmpFac[ _CNUMPED ]
+      aTmp[ __DFECFAC   ]     := aTmpFac[ _DFECFAC ]
+      aTmp[ __TFECFAC   ]     := aTmpFac[ _TFECFAC ]
 
       if !Empty( cCodArtEnt )
          cCodArt              := Padr( cCodArtEnt, 32 )
@@ -5080,11 +5102,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       end if
 
-      REDEFINE CHECKBOX aGet[ _LVOLIMP ] VAR aTmp[ _LVOLIMP ] ;
-         ID       411;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[2]
-
       REDEFINE GET aGet[ _NDTODIV ] VAR aTmp[ _NDTODIV ] ;
          ID       260 ;
          IDSAY    261 ;
@@ -5225,6 +5242,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ON HELP  aGet[ __DFECFAC ]:cText( Calendario( aTmp[ __DFECFAC ] ) ) ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aGet[ __TFECFAC ] VAR aTmp[ __TFECFAC ] ;
+         ID       361 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         VALID    ( iif(   !validTime( aTmp[ __TFECFAC ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[2]
+
       REDEFINE CHECKBOX aGet[_LCONTROL] VAR aTmp[_LCONTROL]  ;
          ID       130 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -5287,6 +5313,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE GET oRentabilidadLinea VAR cRentabilidadLinea ;
          ID       300 ;
          IDSAY    301 ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE CHECKBOX aGet[ _LVOLIMP ] VAR aTmp[ _LVOLIMP ] ;
+         ID       411;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aGet[ _LKITART ] VAR aTmp[ _LKITART ]  ;
@@ -7521,7 +7552,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
             while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. !( dbfAlbCliL )->( eof() ) )
 
-               appendRegisterByHash( dbfAlbCliL, dbfTmpLin, { "cSerie" => Space(1), "nNumFac" => 0, "cSuPed" => cSuPed, "dFecFac" => ( dbfAlbCliL )->dFecAlb } )
+               appendRegisterByHash( dbfAlbCliL, dbfTmpLin, { "cSerie" => Space(1), "nNumFac" => 0, "cSuPed" => cSuPed, "dFecFac" => ( dbfAlbCliL )->dFecAlb, "tFecFac" => ( dbfAlbCliL )->tFecAlb } )
 
                ( dbfAlbCliL )->( dbSkip() )
 
@@ -9958,6 +9989,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                appendRegisterByHash( dbfAlbCliL, dbfTmpLin, {  "nNumLin" => nOffSet,;
                                                                "cCodAlb" => ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb,;
                                                                "dFecFac" => ( dbfAlbCliT )->dFecAlb,;
+                                                               "tFecFac" => ( dbfAlbCliT )->tFecAlb,;
                                                                "cSuPed"  => cSuPed } )
 
                /*
@@ -14636,6 +14668,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    local cNumAlb
    local dFecFac
    local cCodCli
+   local tFecFac
 
    if Empty( aTmp[ _CSERIE ] )
       aTmp[ _CSERIE ]   := "A"
@@ -14647,7 +14680,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    cNumPed              := aTmp[ _CNUMPED ]
    cNumAlb              := aTmp[ _CNUMALB ]
    dFecFac              := aTmp[ _DFECFAC ]
-   cCodCli 				   := aTmp[ _CCODCLI ]
+   tFecFac 				:= aTmp[ _TFECFAC ]
+   cCodCli 				:= aTmp[ _CCODCLI ]
 
    /*
    Comprobamos la fecha del documento------------------------------------------
@@ -14750,8 +14784,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    oDlg:Disable()
 
-   oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+//   oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+//   BEGIN SEQUENCE
 
       oMsgText( "Archivando" )
       
@@ -14818,7 +14852,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       de la importacion de las atipicas-------------------------------------------
       */
 
-      GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCodCli, aTmp )
+      GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFecFac, cCodCli, aTmp )
 
       /*
       Rellenamos los campos de totales--------------------------------------------
@@ -14974,14 +15008,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       ChkLqdFacCli( nil, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
 
-   RECOVER USING oError
-
-      RollBackTransaction()
-
-      msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-   ErrorBlock( oBlock )
+//   RECOVER USING oError
+//
+//      RollBackTransaction()
+//
+//      msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
+//
+//   END SEQUENCE
+//   ErrorBlock( oBlock )
 
    /*
    Cerramos el dialogo---------------------------------------------------------
@@ -20262,10 +20296,10 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "iNumFac", "'11' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacCliL )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecFac )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecFac ) } ) )
+      ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( dbfFacCliL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted() }, , , , , , , , , .t. ) )
-      ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac )", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) } ) )
+      ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( dbfFacCliL )->( dbCloseArea() )
 
@@ -20314,7 +20348,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "NNUMFAC", "CSERIE + str(NNUMFAC) + CSUFFAC", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac }, ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "DFECFAC", "DFECFAC", {|| Field->DFECFAC } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "DFECFAC", "dtos( DFECFAC ) + tFecFac", {|| Dtos( Field->DFECFAC ) + Field->tFecFac } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
@@ -20377,10 +20411,10 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "iNumFac", "'11' + cSerie + str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecFac )", {|| Field->cCodCli + dtos( Field->dFecFac ) } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCliFec", "cCodCli + Dtos( dFecFac ) + tFecFac", {|| Field->cCodCli + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "dFecDes", "dFecFac", {|| Field->dFecFac } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "dFecDes", "Dtos( dFecFac ) + tFecFac", {|| Dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
       ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "lMail", "lMail", {|| Field->lMail } ) )
@@ -20544,7 +20578,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nMedTre"    ,"N", 16, 6, "Tercera unidad de medición"            , "MasUnd()",      "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "nTarLin"    ,"N",  1, 0, "Tarifa de precio aplicada"             , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lImpFra",   "L",   1, 0, "Lógico de imprimir frase publicitaria" , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "Código del proyecto"       			 	  , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodPry",   "C",   4, 0, "Código del proyecto"       			 , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cTxtFra",   "C", 250, 0, "Texto de la frase publicitaria"        , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "Descrip",   "M",  10, 0, "Descripción larga"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lLinOfe",   "L",   1, 0, "Linea con oferta"                      , "",              "", "( cDbfCol )" } )
@@ -20553,13 +20587,14 @@ function aColFacCli()
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						     , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					     , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					     , "'@!'",          "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""  						  			           , "",         		"", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				     , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"			     , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"						     , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 						 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecUltCom","D",   8, 0, "Fecha última compra" 					 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCodCli"   ,"C",  12, 0, "Código del cliente"  					 , "'@!'",          "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lFromAtp"  ,"L",   1, 0, ""                                      , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"			 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"						 , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, {"tFecFac",    "C",   6, 0, "Hora de la factura"                    , "",              "", "( cDbfCol )"} )
 
 return ( aColFacCli )
 
@@ -20611,13 +20646,13 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"CNUMSAT"     ,"C", 12, 0, "Número de S.A.T." ,                                    "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NTIPOFAC"    ,"N",  1, 0, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cDtoEsp"     ,"C", 50, 0, "Descripción de porcentaje de descuento especial" ,     "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nDtoEsp"     ,"N", 10, 6, "Porcentaje de descuento especial" ,                    "'@EZ 999,999999'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nDtoEsp"     ,"N", 10, 6, "Porcentaje de descuento especial" ,                    "'@EZ 999,999999'",   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cDpp"        ,"C", 50, 0, "Descripción de porcentaje de descuento por pronto pago","",                  "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nDpp"        ,"N", 10, 6, "Porcentaje de descuento por pronto pago" ,             "'@EZ 999,999999'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CDTOUNO"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado", "'@EZ 999,999999'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NDTOUNO"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,999999'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"CDTODOS"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado" ,"'@EZ 999,999999'",       "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NDTODOS"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,999999'",       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nDpp"        ,"N", 10, 6, "Porcentaje de descuento por pronto pago" ,             "'@EZ 999,999999'",   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CDTOUNO"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado", "'@EZ 999,999999'",   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NDTOUNO"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,999999'",   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"CDTODOS"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado" ,"'@EZ 999,999999'",   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NDTODOS"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" , "'@EZ 999,999999'",   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTOCNT"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTORAP"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NDTOPUB"     ,"N",  6, 2, "" ,                                                    "",                   "", "( cDbf )"} )
@@ -20680,7 +20715,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cNFC"        ,"C", 20,  0, "Código NFC" ,                                         "'@!",                "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cFacPrv"     ,"C", 12,  0, "Factura de proveedor" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cBanco"      ,"C", 50,  0, "Nombre del banco del cliente" ,                       "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "País IBAN de la cuenta bancaria del cliente",         "", 					    "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "País IBAN de la cuenta bancaria del cliente",         "", 		           "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cCtrlIBAN"   ,"C",  2,  0, "Dígito de control IBAN de la cuenta bancaria del cliente", "",              "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cEntBnc"     ,"C",  4,  0, "Entidad de la cuenta bancaria del cliente" ,          "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"cSucBnc"     ,"C",  4,  0, "Sucursal de la cuenta bancaria del cliente" ,         "",                   "", "( cDbf )"} )
@@ -20689,12 +20724,13 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"nTotLiq"     ,"N", 16,  6, "Total liquidado" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"nTotPdt"     ,"N", 16,  6, "Total pendiente" ,                                    "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja", 	"",					 	 "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"cCodPry" 	   ,"C", 4,   0, "Código del proyecto", 								         "", 				  	    "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 								         "", 				 	    "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja",    "",		           "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"cCodPry" 	   ,"C", 4,   0, "Código del proyecto",      				         "", 			       "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 							     "", 			       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                            "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"dMail"       ,"D", 8,   0, "Fecha mail enviado" ,                                 "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"tMail"       ,"C", 6,   0, "Hora mail enviado" ,                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                 "",                   "", "( cDbf )"} )
 
 RETURN ( aItmFacCli )
 
@@ -23664,6 +23700,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
    local cNumAlb
    local dFecFac
    local cCodCli
+   local tFecFac
 
    /*
    Tomamos valores-------------------------------------------------------------
@@ -23679,6 +23716,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
    cNumPed              := aTmp[ _CNUMPED ]
    cNumAlb              := aTmp[ _CNUMALB ]
    dFecFac              := aTmp[ _DFECFAC ]
+   tFecFac 				:= aTmp[ _TFECFAC ]
    cCodCli              := aTmp[ _CCODCLI ]
 
    /*
@@ -23763,7 +23801,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
       de la importacion de las atipicas----------------------------------------
       */
 
-      GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCodCli, aTmp )
+      GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFecFac, cCodCli, aTmp )
 
       /*
       Rellenamos los campos de totales--------------------------------------------
@@ -24113,15 +24151,22 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, cCodCli, aTmp )
+Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFecFac, cCodCli, aTmp )
 
    ( dbfTmpLin )->( dbGoTop() )
    while ( dbfTmpLin )->( !eof() )
 
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
          
-         ( dbfTmpLin )->dFecFac  := if( !empty( ( dbfTmpLin )->dFecAlb ), ( dbfTmpLin )->dFecAlb, dFecFac )
-         ( dbfTmpLin )->cCodCli  := cCodCli
+         ( dbfTmpLin )->cCodCli  	:= cCodCli
+         
+         if empty( ( dbfTmpLin )->dFecFac )
+         	( dbfTmpLin )->dFecFac  := dFecFac 
+         end if 
+
+         if empty( (dbfTmpLin)->tFecFac )
+         	( dbfTmpLin )->tFecFac  := tFecFac 
+         end if 
 
          dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
 

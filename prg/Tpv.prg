@@ -91,6 +91,7 @@ Ficheros-----------------------------------------------------------------------
 #define _LLIQDEV                   67
 #define _NUBITIK                   68
 #define _NREGIVA                   69
+#define _TFECTIK                   70     //   C      6      0
 
 #define _CSERTIL                   1      //   C      1      0
 #define _CNUMTIL                   2      //   C     10      0
@@ -190,6 +191,7 @@ Ficheros-----------------------------------------------------------------------
 #define _LIMP                     5
 #define _DFTIKIMP                 8
 #define _CHTIKIMP                 9
+
 
 #ifndef __PDA__
 
@@ -2624,9 +2626,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
 		REDEFINE GET aTmp[ _DFECTIK ];
 			ID 		120 ;
+         SPINNER ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			SPINNER ;
          OF       oDlgTpv
+
+      REDEFINE Get aGet[ _TFECTIK ] VAR aTmp[ _TFECTIK ];
+         ID       121 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECTIK ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oDlgTpv
+
 
       REDEFINE GET aGet[ _NCOBTIK ] VAR aTmp[ _NCOBTIK ];
          PICTURE  cPorDiv ;
@@ -6663,6 +6675,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       aTmp[ _DFECCRE    ]              := Date()
       aTmp[ _CTIMCRE    ]              := SubStr( Time(), 1, 5 )
       aTmp[ _DFECTIK    ]              := GetSysDate()
+      aTmp[ _TFECTIK    ]              := strtran( time(), ":", "" )
       aTmp[ _CALIASTIK  ]              := ""
       aTmp[ _CCODSALA   ]              := ""
       aTmp[ _CPNTVENTA  ]              := ""
@@ -11550,6 +11563,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliT )->dFecCre    := aTik[ _DFECCRE ]
       ( dbfAlbCliT )->cTimCre    := aTik[ _CTIMCRE ]
       ( dbfAlbCliT )->dFecAlb    := aTik[ _DFECTIK ]
+      ( dbfAlbCliT )->tFecAlb    := aTik[ _TFECTIK ]
       ( dbfAlbCliT )->cCodUsr    := aTik[ _CCCJTIK ]
       ( dbfAlbCliT )->cDtoEsp    := aTik[ _CDTOESP ]
       ( dbfAlbCliT )->nDtoEsp    := aTik[ _NDTOESP ]
@@ -11682,6 +11696,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliL )->lKitPrc    := ( dbfTmpL    )->lKitPrc
       ( dbfAlbCliL )->mNumSer    := ( dbfTmpL    )->mNumSer
       ( dbfAlbCliL )->dFecAlb    := ( dbfAlbCliT )->dFecAlb
+      ( dbfAlbCliL )->tFecAlb    := ( dbfAlbCliT )->tFecAlb
       ( dbfAlbCliL )->cAlmLin    := aTik[ _CALMTIK ]
       ( dbfAlbCliL )->lIvaLin    := .t.
       ( dbfAlbCliL )->( dbUnLock() )
@@ -11986,12 +12001,14 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
    local cNomFacCli
    local dFecFacCli
    local nOrdAnt
-   local cCodFam                 := ""
+   local cCodFam
+   local tFecFacCli                 := ""
 
    if nMode == DUPL_MODE
       aTik[ _CNUMTIK ]           := Str( nNewDoc( aTik[ _CSERTIK ], dbfTikT, "NTIKCLI", 10, dbfCount ), 10 )
       aTik[ _CSUFTIK ]           := RetSufEmp()
       aTik[ _DFECTIK ]           := GetSysDate()
+      aTik[ _TFECTIK ]           := strtran( time(), ":", "" )
       aTik[ _LSNDDOC ]           := .t.
       aTik[ _LCLOTIK ]           := .f.
    end if
@@ -12008,12 +12025,14 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       cCliFacCli                 := aTik[ _CCLITIK ]
       cNomFacCli                 := aTik[ _CNOMTIK ]
       dFecFacCli                 := aTik[ _DFECTIK ]
+      tFecFacCli                 := aTik[ _TFECTIK ]
 
       ( dbfFacCliT )->( dbAppend() )
       ( dbfFacCliT )->cSerie     := cSerFacCli
       ( dbfFacCliT )->nNumFac    := nNewFacCli
       ( dbfFacCliT )->cSufFac    := cSufFacCli
       ( dbfFacCliT )->dFecFac    := dFecFacCli
+      ( dbfFacCliT )->TFecFac    := tFecFacCli
       ( dbfFacCliT )->cTurFac    := cCurSesion()
       ( dbfFacCliT )->dFecCre    := aTik[ _DFECCRE ]
       ( dbfFacCliT )->cTimCre    := aTik[ _CTIMCRE ]
@@ -12036,6 +12055,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       cCliFacCli                 := aTik[ _CCLITIK ]
       cNomFacCli                 := aTik[ _CNOMTIK ]
       dFecFacCli                 := aTik[ _DFECTIK ]
+      tFecFacCli                 := aTik[ _TFECTIK ]
 
       /*
       Posicionamos en el factura existente-------------------------------------
@@ -12081,6 +12101,10 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
          ( dbfFacCliT )->dFecFac    := aTik[ _DFECTIK ]
       end if
 
+      if Empty( ( dbfFacCliT )->tFecFac )
+         ( dbfFacCliT )->tFecFac    := aTik[ _TFECTIK ]
+      end if
+
       ( dbfFacCliT )->lSndDoc       := .t.
       ( dbfFacCliT )->lIvaInc       := .t.
       ( dbfFacCliT )->cCodAlm       := aTik[ _CALMTIK ]
@@ -12122,6 +12146,7 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
       ( dbfFacCliL )->nNumFac    := nNewFacCli
       ( dbfFacCliL )->cSufFac    := cSufFacCli
       ( dbfFacCliL )->dFecFac    := dFecFacCli
+      ( dbfFacCliL )->tFecFac    := tFecFacCli
       ( dbfFacCliL )->cRef       := ( dbfTmpL )->cCbaTil
       ( dbfFacCliL )->cDetalle   := ( dbfTmpL )->cNomTil
       ( dbfFacCliL )->nPreUnit   := ( dbfTmpL )->nPvpTil // Round( ( dbfTmpL )->NPVPTIL / ( 1 + ( ( dbfTmpL )->NIVATIL / 100 ) ), nDouDiv )
@@ -12341,6 +12366,10 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
 
       if ( dbfTmpL )->dFecTik != aTmp[ _DFECTIK ]
          ( dbfTmpL )->dFecTik := aTmp[ _DFECTIK ]
+      end if
+
+      if ( dbfTmpL )->TFecTik != aTmp[ _TFECTIK ]
+         ( dbfTmpL )->TFecTik := aTmp[ _TFECTIK ]
       end if
 
       AddArticuloComercio( ( dbfTmpL )->cCbaTil )
@@ -16837,7 +16866,7 @@ FUNCTION rxTpv( cPath, oMeter )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CNUMTIK", "CSERTIK + CNUMTIK + CSUFTIK", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "DFECTIK", "DFECTIK", {|| Field->DFECTIK } ) )
+      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "DFECTIK", "dtos( DFECTIK ) + TFECTIK", {|| dtos( Field->DFECTIK ) + Field->tFecTik } ) )
 
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CCLITIK", "CCLITIK", {|| Field->CCLITIK } ) )
@@ -17198,6 +17227,7 @@ function aItmTik()
    aAdd( aItmTik, { "lLiqDev",  "L",      1,     0, "Liquidado por devolución" }                              )
    aAdd( aItmTik, { "nUbiTik",  "N",      1,     0, "Tipo de ubicación" }                                     )
    aAdd( aItmTik, { "nRegIva",  "N",      1,     0, "Régimen de " + cImp() }                                  )
+   aAdd( aItmTik, { "tFecTik",  "c",      6,     0, "Hora del tiket stock" }                                  )
 
 return ( aItmTik )
 
@@ -17287,6 +17317,8 @@ function aColTik()
    aAdd( aColTik, { "cCodMnu",  "C",      3,     0, "Código de menú",                     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nLinMnu",  "N",      4,     0, "Número de linea de menú",            "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nComStk",  "N",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "tFecTik",  "C",      6,     0, "",                                   "",                  "", "( cDbfCol )" } )
+
 
 Return ( aColTik )
 
