@@ -239,7 +239,7 @@ Method Play( cClave )
       Return .f.
    end if  
 
-   ::CargaValores( cClave ) 
+   //::CargaValores( cClave ) 
 
    if ::Resource()
       ::GuardaValores( cClave )
@@ -299,13 +299,13 @@ METHOD Resource() CLASS TDetCamposExtra
       with object ( ::oBrw:AddCol() )
          :cHeader          := "Descripción"
          :bStrData         := {|| hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "descripción" ) }
-         :nWidth           := 200
+         :nWidth           := 300
       end with
 
       with object ( ::oCol := ::oBrw:AddCol() )
          :cHeader          := "Valor"
          :bEditValue       := {|| hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valor" ) }
-         :nWidth           := 400
+         :nWidth           := 300
       end with
 
    REDEFINE BUTTON ;
@@ -332,16 +332,27 @@ Return ( ::oDlg:nResult == IDOK )
 METHOD ChangeBrowse() CLASS TDetCamposExtra
 
    do case 
-      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) < 4
+      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 1
          ::oCol:nEditType        := EDIT_GET
+         ::oCol:cEditPicture     := ""
+
+      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 2
+         ::oCol:nEditType        := EDIT_GET
+         ::oCol:cEditPicture     := "@ 999999.999"
+
+      case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 3 
+         ::oCol:nEditType        := EDIT_GET
+         ::oCol:cEditPicture     := ""
 
       case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 4
          ::oCol:nEditType        := EDIT_LISTBOX
          ::oCol:aEditListTxt     := { "si", "no" }
+         ::oCol:cEditPicture     := ""
 
       case hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) == 5
          ::oCol:nEditType        := EDIT_LISTBOX
          ::oCol:aEditListTxt     := hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valores" )
+         ::oCol:cEditPicture     := ""
 
    end case
 
