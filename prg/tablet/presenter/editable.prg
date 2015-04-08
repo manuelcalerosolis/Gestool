@@ -51,6 +51,10 @@ CLASS Editable
    METHOD setDetailArea( cDetailArea )    INLINE ( ::cDetailArea  := cDetailArea )
    METHOD getDetailArea()                 INLINE ( ::cDetailArea )
 
+   METHOD lAppendMode()                   INLINE ( ::nMode == APPD_MODE )
+   METHOD lEditMode()                     INLINE ( ::nMode == EDIT_MODE )
+   METHOD lZoomMode()                     INLINE ( ::nMode == ZOOM_MODE )
+
    METHOD AppendDetail()
    METHOD EditDetail()
    METHOD DeleteDetail()

@@ -112,7 +112,7 @@ METHOD setAttachment( oMail, hMail )
       if file( rtrim( cItem ) )
          oMail:Attachments:Add( rtrim( cItem ) )
       else
-         msgAlert( "File to attachment " + rtrim( cItem ) + " not found" )         
+         msgStop( "File to attachment " + rtrim( cItem ) + " not found" )         
       end if 
    next
 

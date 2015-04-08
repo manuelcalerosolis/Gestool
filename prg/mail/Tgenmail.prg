@@ -39,7 +39,7 @@ CLASS TGenMailing
    DATA bRecipients
       METHOD setBlockRecipients( bRecipients ) ;
                                           INLINE ( ::bRecipients := bRecipients )
-      METHOD evalBlockRecipients()        INLINE ( msgAlert( eval( ::bRecipients ), "bRecipients" ), iif( !empty( ::bRecipients ), eval( ::bRecipients ), "" ) )
+      METHOD evalBlockRecipients()        INLINE ( iif( !empty( ::bRecipients ), eval( ::bRecipients ), "" ) )
 
    DATA cRecipients                       INIT Space( 250 )
 

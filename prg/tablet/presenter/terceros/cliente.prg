@@ -78,7 +78,9 @@ METHOD onPostGetDocumento() CLASS Cliente
       end if 
    end if 
 
-   hSet( ::hDictionaryMaster, "Codigo", D():getLastKeyClientes( ::nView ) )
+   if ::lAppendMode()
+      hSet( ::hDictionaryMaster, "Codigo", D():getLastKeyClientes( ::nView ) )
+   end if 
 
 Return ( .t. )   
 
