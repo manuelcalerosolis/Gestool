@@ -74,6 +74,7 @@ function Main( ParamsMain, ParamsSecond )
    local cAdsIp
    local cAdsData
    local cAdsLocal
+   local cAdsFile
    local nAdsServer
    
    local dbfUser
@@ -122,6 +123,7 @@ function Main( ParamsMain, ParamsSecond )
    cAdsData          := GetPvProfString(  "ADS",      "Data",     "",   FullCurDir() + "GstApolo.Ini" )
    nAdsServer        := GetPvProfInt(     "ADS",      "Server",   7,    FullCurDir() + "GstApolo.Ini" )
    cAdsLocal         := GetPvProfString(  "ADS",      "Local",    "",   FullCurDir() + "GstApolo.Ini" )
+   cAdsFile          := GetPvProfString(  "ADS",      "File",     "",   FullCurDir() + "GstApolo.Ini" )
 
    // Motor de bases de datos--------------------------------------------------
 
@@ -130,6 +132,7 @@ function Main( ParamsMain, ParamsSecond )
       lAIS( .t. )
       cIp( cAdsIp )
       cData( cAdsData )
+      cAdsFile( cAdsFile )
 
       nAdsServer( nAdsServer )
       cAdsLocal( cAdsLocal )
@@ -139,9 +142,7 @@ function Main( ParamsMain, ParamsSecond )
 
       AdsSetServerType( nAdsServer() )    // TODOS
       AdsSetFileType( 2 )                 // ADS_CDX
-
       AdsRightsCheck( .f. )
-
       AdsCacheOpenTables( 250 )
 
       with object ( TDataCenter() )

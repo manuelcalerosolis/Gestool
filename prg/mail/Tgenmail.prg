@@ -19,6 +19,7 @@ CLASS TGenMailing
    DATA oFlt
 
    DATA lPageDatabase                     INIT .f.
+   DATA lMultiSelect                      INIT .f.
 
    DATA oBtnSiguiente
    DATA oBtnAnterior
@@ -38,12 +39,14 @@ CLASS TGenMailing
    DATA bRecipients
       METHOD setBlockRecipients( bRecipients ) ;
                                           INLINE ( ::bRecipients := bRecipients )
-      METHOD evalBlockRecipients()        INLINE ( iif( !empty( ::bRecipients ), eval( ::bRecipients ), "" ) )
+      METHOD evalBlockRecipients()        INLINE ( msgAlert( eval( ::bRecipients ), "bRecipients" ), iif( !empty( ::bRecipients ), eval( ::bRecipients ), "" ) )
 
    DATA cRecipients                       INIT Space( 250 )
 
    METHOD setRecipients( cText )          INLINE ( ::cRecipients := padr( cText, 250 ) )
-   METHOD getRecipients()                 INLINE ( iif( ::lMultiSelect(), ::evalBlockRecipients(), alltrim( ::cRecipients ) ) )
+   METHOD getRecipients()                 INLINE ( iif(  ::getMultiSelect(),;
+                                                         ::evalBlockRecipients(),;
+                                                         alltrim( ::cRecipients ) ) )
 
       METHOD hideRecipients()             INLINE ( ::lHideRecipients := .t., if ( !empty( ::oRecipients ), ::oRecipients:Hide(), ) )
       METHOD showRecipients()             INLINE ( ::lHideRecipients := .f., if ( !empty( ::oRecipients ), ::oRecipients:Show(), ) )
@@ -75,12 +78,14 @@ CLASS TGenMailing
    // Seleccion de registros---------------------------------------------------
 
    DATA aSelected                         INIT {}
-   METHOD setSelected( aSelected )        INLINE ( ::aSelected := aSelected )
-   METHOD lMultiSelect()                  INLINE ( len( ::aSelected ) > 1 ) 
+   METHOD setSelected( aSelected )        INLINE ( ::aSelected := aSelected,;
+                                                   ::setMultiSelect( len( aSelected ) > 1 ) )
+   METHOD setMultiSelect( lMultiSelect )  INLINE ( ::lMultiSelect := lMultiSelect )
+   METHOD getMultiSelect()                INLINE ( ::lMultiSelect )
 
-   METHOD setMultiSelectMode()            INLINE ( iif(  ::lMultiSelect(),;
+   METHOD setMultiSelectMode()            INLINE ( iif(  ::getMultiSelect(),;
                                                          ( ::setRecipients( "" ), ::HideRecipients() ),;
-                                                         ( ::setRecipients( ::evalBlockRecipients() ), ::ShowRecipients() ) ) )
+                                                         ( ::setRecipients( ::evalBlockRecipients() ), ::showRecipients() ) ) )
 
    DATA cBmpDatabase
    METHOD setBmpDatabase( cBmpDatabase ) ;
@@ -297,15 +302,15 @@ METHOD Resource() CLASS TGenMailing
 
       ::oFld         := TPages():Redefine( 10, ::oDlg, ::aPages )
 
-         ::buildPageRedactar()
+      ::buildPageRedactar()
 
-         if ::lPageDatabase
-            ::buildPageDatabase()
-         end if
+      if ::lPageDatabase
+         ::buildPageDatabase()
+      end if
 
-         ::buildPageProceso()
+      ::buildPageProceso()
 
-         ::buildButtonsGeneral()
+      ::buildButtonsGeneral()
 
       ::oDlg:bStart  := {|| ::startResource() }
 

@@ -11,7 +11,7 @@ CLASS TDataCenter
 
    CLASSDATA   oInstance
 
-   CLASSDATA   cDataDictionaryFile        INIT cPatADS(.t.) + "Gestool.Add"
+   CLASSDATA   cDataDictionaryFile        INIT cPatADS(.t.) + cAdsFile()
    CLASSDATA   cDataDictionaryComment     INIT "Gestool ADS data dictionary"
 
    CLASSDATA   aDDTables                  INIT {}

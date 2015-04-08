@@ -150,9 +150,6 @@ Function Main( cCodEmp, cCodUsr, cIp )
 
       with object ( TDataCenter() )
 
-         :cDataDictionaryFile       := cAdsUNC() + "Datos\GstApolo.Add"
-         :cDataDictionaryComment    := "GstApolo ADS data dictionary"
-
          :ConnectDataDictionary()
 
          if !:lAdsConnection

@@ -1142,7 +1142,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          NOBORDER ;
          MENU     This:Toggle() ;
          TOOLTIP  "En(v)iar" ;
-         MESSAGE  "Seleccionar albaranes para ser enviados" ;
+         MESSAGE  "Seleccionar facturas para ser enviadas" ;
          ACTION   lSnd( oWndBrw, D():FacturasClientes( nView ) ) ;
          HOTKEY   "V";
          LEVEL    ACC_EDIT

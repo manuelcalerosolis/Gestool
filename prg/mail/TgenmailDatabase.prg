@@ -58,9 +58,13 @@ Return ( Self )
 METHOD databaseDialog() CLASS TGenMailingDatabase
 
    ::lPageDatabase   := .t.
+
+   ::setMultiselect( .t. )
+
    ::aPages          := { "Select_Mail_Redactar", "Select_Mail_Registros", "Select_Mail_Proceso" }
 
    ::hideRecipients()
+
    ::Resource()
 
 Return ( Self )

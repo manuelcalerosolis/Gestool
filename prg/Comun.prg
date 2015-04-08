@@ -33,6 +33,8 @@ static cIp              := ""
 static cData            := ""
 static nAdsServer       := 7
 static cAdsLocal        := ""
+static cAdsFile         := "Gestool.Add"
+
 static cCodigoAgente    := ""
 
 static dSysDate
@@ -271,6 +273,16 @@ Function cAdsUNC()
    end if
 
 Return ( cIp() + cData() )
+
+//----------------------------------------------------------------------------//
+
+Function cAdsFile( cFile )
+
+   if ( isChar( cFile ) .and. !empty( cFile ) )
+      cAdsFile := cFile
+   end if 
+
+Return ( cAdsFile )
 
 //----------------------------------------------------------------------------//
 
