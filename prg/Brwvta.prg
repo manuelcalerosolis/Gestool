@@ -799,6 +799,14 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    end with
 
    with object ( oBrwTmp:addCol() )
+      :cHeader       := "Hora"
+      :bEditValue    := {|| oDbfTmp:tFecDoc }
+      :cEditPicture  := "@R 99:99:99"
+      :cSortOrder    := "tFecDoc"
+      :nWidth        := 40
+   end with
+
+   with object ( oBrwTmp:addCol() )
       :cHeader       := "Código"
       :bEditValue    := {|| oDbfTmp:cCodDoc }
       :cSortOrder    := "cCodDoc"
@@ -2010,6 +2018,7 @@ Static Function LoadPedidoProveedor( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfPedPrvL )->cSufPed
             oDbfTmp:cEstDoc   := aEstadoPedido[ Max( RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "nEstado" ), 1 ) ]
             oDbfTmp:dFecDoc   := dFecPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT )
+            oDbfTmp:tFecDoc   := ""
             oDbfTmp:cCodDoc   := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "cCodPrv" )
             oDbfTmp:cNomDoc   := cNbrPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT )
             oDbfTmp:cRef      := ( dbfPedPrvL )->cRef
@@ -2050,6 +2059,7 @@ Static Function LoadAlbaranProveedor( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfAlbPrvL )->cSufAlb
             oDbfTmp:cEstDoc   := if( RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" ), "Facturado", "No facturado" )
             oDbfTmp:dFecDoc   := dFecAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT )
+            oDbfTmp:tFecDoc   := tFecAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "cCodPrv" )
             oDbfTmp:cNomDoc   := cNbrAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT )
             oDbfTmp:lFacturado:= RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" )
@@ -2093,6 +2103,7 @@ Static Function LoadFacturaProveedor( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfFacPrvL )->cSufFac
             oDbfTmp:cEstDoc   := aEstadoFactura[ nEstFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, dbfFacPrvP ) ]
             oDbfTmp:dFecDoc   := dFecFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT )
+            oDbfTmp:tFecDoc   := tFecFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "cCodPrv" )
             oDbfTmp:cNomDoc   := cNbrFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT )
             oDbfTmp:lFacturado:= .f.
@@ -2136,6 +2147,7 @@ Static Function LoadRectificativaProveedor( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfRctPrvL )->cSufFac
             oDbfTmp:cEstDoc   := aEstadoFactura[ nEstRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT, dbfFacPrvP ) ]
             oDbfTmp:dFecDoc   := dFecRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT )
+            oDbfTmp:tFecDoc   := tFecRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT, "cCodPrv" )
             oDbfTmp:cNomDoc   := cNbrRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT )
             oDbfTmp:lFacturado:= .f.
@@ -2179,6 +2191,7 @@ Static Function LoadSATCliente( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfSatCliL )->cSufSat
             oDbfTmp:cEstDoc   := if( RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lEstado" ), "Aprobado", "Pendiente" )
             oDbfTmp:dFecDoc   := dFecSatCli( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT )
+            oDbfTmp:tFecDoc   := ""
             oDbfTmp:cCodDoc   := RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "cCodCli" )
             oDbfTmp:cNomDoc   := RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "cNomCli" )
             oDbfTmp:cRef      := ( dbfSatCliL )->cRef
@@ -2222,6 +2235,7 @@ Static Function LoadPresupuestoCliente( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfPreCliL )->cSufPre
             oDbfTmp:cEstDoc   := if( RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lEstado" ), "Aprobado", "Pendiente" )
             oDbfTmp:dFecDoc   := dFecPreCli( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT )
+            oDbfTmp:tFecDoc   := ""
             oDbfTmp:cCodDoc   := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "cCodCli" )
             oDbfTmp:cNomDoc   := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "cNomCli" )
             oDbfTmp:cRef      := ( dbfPreCliL )->cRef
@@ -2267,6 +2281,7 @@ Static Function LoadPedidosCliente( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfPedCliL )->cSufPed
             oDbfTmp:cEstDoc   := aEstadoPedido[ Max( RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "nEstado" ), 1 ) ]
             oDbfTmp:dFecDoc   := dFecPedCli( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT )
+            oDbfTmp:tFecDoc   := ""
             oDbfTmp:cCodDoc   := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "cCodCli" )
             oDbfTmp:cNomDoc   := cNbrPedCli( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT )
             oDbfTmp:cRef      := ( dbfPedCliL )->cRef
@@ -2308,6 +2323,7 @@ Static Function LoadAlbaranesCliente( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfAlbCliL )->cSufAlb
             oDbfTmp:cEstDoc   := if( RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" ), "Facturado", "No facturado" )
             oDbfTmp:dFecDoc   := dFecAlbCli( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT )
+            oDbfTmp:tFecDoc   := tFecAlbCli( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
             oDbfTmp:cNomDoc   := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cNomCli" )
             oDbfTmp:lFacturado:= RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
@@ -2352,6 +2368,7 @@ Static Function LoadFacturasCliente( cCodArt, nYear )
             oDbfTmp:cSufDoc   := ( dbfFacCliL )->cSufFac
             oDbfTmp:cEstDoc   := aEstadoFactura[ nChkPagFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, dbfFacCliP ) ]
             oDbfTmp:dFecDoc   := dFecFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT )
+            oDbfTmp:tFecDoc   := tFecFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cCodCli" )
             oDbfTmp:cNomDoc   := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cNomCli" )
             oDbfTmp:lFacturado:= .f.
@@ -2393,7 +2410,10 @@ Static Function LoadFacturasRectificativas( cCodArt, nYear )
             oDbfTmp:cNumDoc   := ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac
             oDbfTmp:cSufDoc   := ( dbfFacRecL )->cSufFac
             oDbfTmp:cEstDoc   := ""
+            //msgStop(dFecFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT ), "LoadFacRec date")
+            //msgStop(tFecFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT ), "LoadFacRec time")
             oDbfTmp:dFecDoc   := dFecFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT )
+            oDbfTmp:tFecDoc   := tFecFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT, "cCodCli" )
             oDbfTmp:cNomDoc   := cNbrFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT )
             oDbfTmp:cRef      := ( dbfFacRecL )->cRef
@@ -2472,8 +2492,8 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
 
                oDbfTmp:cNumDoc         := ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil
                oDbfTmp:cSufDoc         := ( dbfTikCliL )->cSufTil
-
                oDbfTmp:dFecDoc         := dFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT )
+               oDbfTmp:tFecDoc         := tFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT )
                oDbfTmp:cCodDoc         := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cCliTik" )
                oDbfTmp:cNomDoc         := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cNomTik" )
                oDbfTmp:cRef            := ( dbfTikCliL )->cCbaTil
@@ -2521,6 +2541,7 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
                oDbfTmp:cSufDoc      := ( dbfTikCliL )->cSufTil
                oDbfTmp:cEstDoc      := ""
                oDbfTmp:dFecDoc      := dFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT )
+               oDbfTmp:tFecDoc      := tFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT )
                oDbfTmp:cCodDoc      := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cCliTik" )
                oDbfTmp:cNomDoc      := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cNomTik" )
                oDbfTmp:cRef         := ( dbfTikCliL )->cComTil
@@ -2570,6 +2591,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:cSufDoc   := ( dbfMovAlm )->cSufRem
                oDbfTmp:cEstDoc   := "Movimiento"
                oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
+               oDbfTmp:tFecDoc   := ( dbfMovAlm )->cTimMov
                oDbfTmp:cNomDoc   := cTextoMovimiento( dbfMovAlm )
                oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
                oDbfTmp:cValPr1   := ( dbfMovAlm )->cValPr1
@@ -2590,6 +2612,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:cNumDoc   := Str( ( dbfMovAlm )->nNumRem ) + ( dbfMovAlm )->cSufRem
                oDbfTmp:cSufDoc   := ( dbfMovAlm )->cSufRem
                oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
+               oDbfTmp:tFecDoc   := ( dbfMovAlm )->cTimMov
                oDbfTmp:cNomDoc   := cTextoMovimiento( dbfMovAlm )
                oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
                oDbfTmp:cValPr1   := ( dbfMovAlm )->cValPr1
@@ -2638,7 +2661,8 @@ Static Function LoadProduccion( cCodArt, nYear )
                oDbfTmp:cNumDoc   := ( dbfProducL )->cSerOrd + Str( ( dbfProducL )->nNumOrd ) + ( dbfProducL )->cSufOrd
                oDbfTmp:cSufDoc   := ( dbfProducL )->cSufOrd
                oDbfTmp:cEstDoc   := Space(1)
-               oDbfTmp:dFecDoc   := ( dbfProducT )->dFecFin
+               oDbfTmp:dFecDoc   := ( dbfProducT )->dFecOrd
+               oDbfTmp:tFecDoc   := ( dbfProducT )->cHorIni
                oDbfTmp:cNomDoc   := "Material"
                oDbfTmp:cRef      := ( dbfProducL )->cCodArt
                oDbfTmp:cValPr1   := ( dbfProducL )->cValPr1
@@ -2681,7 +2705,8 @@ Static Function LoadProduccion( cCodArt, nYear )
                oDbfTmp:cNumDoc   := ( dbfProducM )->cSerOrd + Str( ( dbfProducM )->nNumOrd ) + ( dbfProducM )->cSufOrd
                oDbfTmp:cSufDoc   := ( dbfProducM )->cSufOrd
                oDbfTmp:cEstDoc   := Space(1)
-               oDbfTmp:dFecDoc   := ( dbfProducT )->dFecFin
+               oDbfTmp:dFecDoc   := ( dbfProducT )->dFecOrd
+               oDbfTmp:tFecDoc   := ( dbfProducT )->cHorIni
                oDbfTmp:cNomDoc   := "Materias primas"
                oDbfTmp:cRef      := ( dbfProducM )->cCodArt
                oDbfTmp:cValPr1   := ( dbfProducM )->cValPr1
@@ -3375,10 +3400,11 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       FIELD NAME "nDtoDoc"    TYPE "N" LEN 16 DEC 6 COMMENT "Descuento porcentual"           OF oDbf
       FIELD NAME "nImpDoc"    TYPE "N" LEN 16 DEC 6 COMMENT "Importe unidad"                 OF oDbf
       FIELD NAME "nTotDoc"    TYPE "N" LEN 16 DEC 6 COMMENT "Total documento"                OF oDbf
+      FIELD NAME "tFecDoc"    TYPE "C" LEN  6 DEC 0 COMMENT "Hora del documento"             OF oDbf
 
       INDEX TO ( cFileName ) TAG "nTypDoc" ON "nTypDoc + Dtos( dFecDoc )"                    OF oDbf
       INDEX TO ( cFileName ) TAG "cEstDoc" ON "cEstDoc + Dtos( dFecDoc )"                    OF oDbf
-      INDEX TO ( cFileName ) TAG "dFecDoc" ON "Dtos( dFecDoc )"                              OF oDbf
+      INDEX TO ( cFileName ) TAG "dFecDoc" ON "Dtos( dFecDoc ) + tFecDoc"                    OF oDbf
       INDEX TO ( cFileName ) TAG "cNumDoc" ON "cNumDoc + Dtos( dFecDoc )"                    OF oDbf
       INDEX TO ( cFileName ) TAG "cSufDoc" ON "cSufDoc"                                      OF oDbf
       INDEX TO ( cFileName ) TAG "cNomDoc" ON "cNomDoc + Dtos( dFecDoc )"                    OF oDbf

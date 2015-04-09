@@ -10098,6 +10098,22 @@ FUNCTION dFecRctPrv( cFacPrv, cRctPrvT )
 
 RETURN ( dFecFac )
 
+//---------------------------------------------------------------------------//
+
+/*
+Devuelve la hora de una factura rectificativa de proveedor
+*/
+
+FUNCTION tFecRctPrv( cFacPrv, cRctPrvT )
+
+   local tFecFac  := Replicate( "0", 6 )
+
+   IF (cRctPrvT)->( dbSeek( cFacPrv ) )
+      tFecFac  := (cRctPrvT)->TFECFAC
+   END IF
+
+RETURN ( tFecFac )
+
 //----------------------------------------------------------------------------//
 /*
 Devuelve el codigo del Proveedor pasando un numero de factura

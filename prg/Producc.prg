@@ -411,14 +411,14 @@ METHOD Activate()
          :cHeader          := "Fecha inicio"
          :cSortOrder       := "dFecOrd"
          :bEditValue       := {|| Dtoc( ::oDbf:FieldGetByName( "dFecOrd" ) ) + "-" + Trans( ::oDbf:FieldGetByName( "cHorIni" ), "@R 99:99:99" ) }
-         :nWidth           := 100
+         :nWidth           := 110
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( ::oWndBrw:AddXCol() )
          :cHeader          := "Fecha fin"
          :bEditValue       := {|| Dtoc( ::oDbf:FieldGetByName( "dFecFin" ) ) + "-" + Trans( ::oDbf:FieldGetByName( "cHorFin" ), "@R 99:99:99" ) }
-         :nWidth           := 100
+         :nWidth           := 110
       end with
 
       with object ( ::oWndBrw:AddXCol() )
@@ -977,14 +977,14 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nVdvDiv" TYPE "N" LEN 16  DEC 6 COMMENT "Valor divisa"                           OF ::oDbf
       FIELD NAME "cAlmOrd" TYPE "C" LEN 16  DEC 0 COMMENT "Almacén destino"                        OF ::oDbf
       FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"                                OF ::oDbf
-      FIELD NAME "cHorIni" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99:99"   OF ::oDbf
-      FIELD NAME "cHorFin" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99:99"   OF ::oDbf
+      FIELD NAME "cHorIni" TYPE "C" LEN 06  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99:99"   OF ::oDbf
+      FIELD NAME "cHorFin" TYPE "C" LEN 06  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99:99"   OF ::oDbf
       FIELD NAME "cCodOpe" TYPE "C" LEN 03  DEC 0 COMMENT "Operación"                              OF ::oDbf
       FIELD NAME "cAlmOrg" TYPE "C" LEN 16  DEC 0 COMMENT "Almacén Origen"                         OF ::oDbf
       FIELD NAME "lRecCos" TYPE "L" LEN 01  DEC 0 COMMENT "Recalcula"      HIDE                    OF ::oDbf
 
       INDEX TO "ProCab.Cdx" TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"         COMMENT "Número"        NODELETED OF ::oDbf
-      INDEX TO "ProCab.Cdx" TAG "dFecOrd" ON "dFecOrd"                                       COMMENT "Fecha inicio"  NODELETED OF ::oDbf
+      INDEX TO "ProCab.Cdx" TAG "dFecOrd" ON "dtos( dFecOrd ) + cHorIni"                     COMMENT "Fecha inicio"  NODELETED OF ::oDbf
       INDEX TO "ProCab.Cdx" TAG "cCodOpe" ON "cCodOpe"                                       COMMENT "Operación"     NODELETED OF ::oDbf
       INDEX TO "ProCab.Cdx" TAG "cCodSec" ON "cCodSec"                                       COMMENT "Sección"       NODELETED OF ::oDbf
       INDEX TO "ProCab.Cdx" TAG "cAlmOrd" ON "cAlmOrd"                                       COMMENT "Almacén"       NODELETED OF ::oDbf
@@ -1013,8 +1013,8 @@ METHOD DefineHash()
          "nVdvDiv" => { "Type" => "N", "Len" => 16, "Decimals" => 6, "Comment" => "Valor divisa",     "Validate" => "Required" },;
          "cAlmOrd" => { "Type" => "C", "Len" => 16, "Decimals" => 0, "Comment" => "Almacén destino",  "Validate" => "Required" },;
          "cCodSec" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Sección",          "Validate" => "Required" },;
-         "cHorIni" => { "Type" => "C", "Len" => 05, "Decimals" => 0, "Comment" => "Hora de inicio",   "Validate" => "Required", "Picture" => "@R 99:99:99" },;
-         "cHorFin" => { "Type" => "C", "Len" => 05, "Decimals" => 0, "Comment" => "Hora de fin",      "Validate" => "Required", "Picture" => "@R 99:99:99" },;
+         "cHorIni" => { "Type" => "C", "Len" => 06, "Decimals" => 0, "Comment" => "Hora de inicio",   "Validate" => "Required", "Picture" => "@R 99:99:99" },;
+         "cHorFin" => { "Type" => "C", "Len" => 06, "Decimals" => 0, "Comment" => "Hora de fin",      "Validate" => "Required", "Picture" => "@R 99:99:99" },;
          "cCodOpe" => { "Type" => "C", "Len" => 03, "Decimals" => 0, "Comment" => "Operación",        "Validate" => "Required" },;
          "cAlmOrg" => { "Type" => "C", "Len" => 16, "Decimals" => 0, "Comment" => "Almacén Origen",   "Validate" => "" };
       },;
@@ -1083,9 +1083,11 @@ METHOD Resource( nMode, aDatosAnterior )
       else
          ::oDbf:dFecOrd    := GetSysDate()
          ::oDbf:dFecFin    := GetSysDate()
-         ::oDbf:cHorIni    := uFieldEmpresa( "cIniJor" )
-         ::oDbf:cHorFin    := SubStr( Time(), 1, 2 ) + SubStr( Time(), 4, 2 )
+         ::oDbf:cHorIni    := getHoraInicioEmpresa()
+         ::oDbf:cHorFin    := GetSysTime()
       end if
+
+      //SubStr( Time(), 1, 2 ) + SubStr( Time(), 4, 2 )
 
       ::oDbf:lRecCos       := uFieldEmpresa( "lRecCostes" )
 
@@ -4117,8 +4119,8 @@ METHOD DefineAuxiliar()
       FIELD NAME "cCodOpe"    TYPE "C" LEN  03  DEC 0 COMMENT "Operación"                                OF ::cAreaTmpLabel
       FIELD NAME "dFecIni"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha inicio"                             OF ::cAreaTmpLabel
       FIELD NAME "dFecFin"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha fin"                                OF ::cAreaTmpLabel
-      FIELD NAME "cHorIni"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99"        OF ::cAreaTmpLabel
-      FIELD NAME "cHorFin"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99"        OF ::cAreaTmpLabel
+      FIELD NAME "cHorIni"    TYPE "C" LEN  06  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99:99"        OF ::cAreaTmpLabel
+      FIELD NAME "cHorFin"    TYPE "C" LEN  06  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99:99"        OF ::cAreaTmpLabel
       FIELD NAME "nCajas"     TYPE "N" LEN  16  DEC 6 COMMENT "Cajas"                                    OF ::cAreaTmpLabel
       FIELD NAME "nUnidades"  TYPE "N" LEN  16  DEC 6 COMMENT "Unidades"                                 OF ::cAreaTmpLabel
       FIELD NAME "nUndHra"    TYPE "N" LEN  16  DEC 6 COMMENT "Tot. und/hra"                             OF ::cAreaTmpLabel
@@ -4528,8 +4530,8 @@ Method lPrepareDataReportLbl( lDesign ) CLASS TProduccion
       FIELD NAME "cCodOpe"    TYPE "C" LEN  03  DEC 0 COMMENT "Operación"                                OF ::cAreaTemporalLabel
       FIELD NAME "dFecIni"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha inicio"                             OF ::cAreaTemporalLabel
       FIELD NAME "dFecFin"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha fin"                                OF ::cAreaTemporalLabel
-      FIELD NAME "cHorIni"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99"        OF ::cAreaTemporalLabel
-      FIELD NAME "cHorFin"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99"        OF ::cAreaTemporalLabel
+      FIELD NAME "cHorIni"    TYPE "C" LEN  06  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99:99"        OF ::cAreaTemporalLabel
+      FIELD NAME "cHorFin"    TYPE "C" LEN  06  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99:99"        OF ::cAreaTemporalLabel
       FIELD NAME "nCajas"     TYPE "N" LEN  16  DEC 6 COMMENT "Cajas"                                    OF ::cAreaTemporalLabel
       FIELD NAME "nUnidades"  TYPE "N" LEN  16  DEC 6 COMMENT "Unidades"                                 OF ::cAreaTemporalLabel
       FIELD NAME "nUndHra"    TYPE "N" LEN  16  DEC 6 COMMENT "Tot. und/hra"                             OF ::cAreaTemporalLabel

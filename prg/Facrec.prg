@@ -11924,12 +11924,12 @@ FUNCTION dFecFacRec( cFacRec, cFacRecT )
 
    local aStatus
 	local dFecFac	:= CtoD("")
-
+	
    if IsObject( cFacRecT )
 
       cFacRecT:GetStatus( .t. )
 
-      if cFacRecT:Seek( cFacRecT )
+      if cFacRecT:Seek( cFacRec )
          dFecFac  := cFacRecT:dFecFac
       end if
 
@@ -11938,8 +11938,8 @@ FUNCTION dFecFacRec( cFacRec, cFacRecT )
    else
 
       aStatus     := aGetStatus( cFacRecT, .t. )
-
-      if ( cFacRecT )->( dbSeek( cFacRecT ) )
+      
+      if ( cFacRecT )->( dbSeek( cFacRec ) )
          dFecFac  := ( cFacRecT )->dFecFac
       end if
 
@@ -11948,6 +11948,33 @@ FUNCTION dFecFacRec( cFacRec, cFacRecT )
    end if
 
 RETURN ( dFecFac )
+
+//--------------------------------------------------------------------------//
+
+/*
+Devuelve la hora de una factura rectificativa de cliente
+*/
+
+FUNCTION tFecFacRec( cFacRec, cFacRecT )
+
+   local aStatus
+   local tFecFac	:= Replicate( "0", 6 )
+
+   if IsObject( cFacRecT )
+      cFacRecT:GetStatus( .t. )
+      if cFacRecT:Seek( cFacRec )
+         tFecFac  := cFacRecT:tFecFac
+      end if
+      cFacRecT:SetStatus()
+   else
+      aStatus     := aGetStatus( cFacRecT, .t. )
+      if ( cFacRecT )->( dbSeek( cFacRec ) )
+         tFecFac  := ( cFacRecT )->tFecFac
+      end if
+      SetStatus( cFacRecT, aStatus )
+   end if
+
+RETURN ( tFecFac )
 
 //----------------------------------------------------------------------------//
 /*

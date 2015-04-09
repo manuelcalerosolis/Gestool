@@ -10899,6 +10899,28 @@ FUNCTION dFecTik( cNumTik, uTikT )
 RETURN dDate
 
 //--------------------------------------------------------------------------//
+
+/*
+Devuelve la hora de un tiket
+*/
+
+FUNCTION tFecTik( cNumTik, uTikT )
+
+   local tDate    := Replicate( "0", 6 )
+
+   if IsObject( uTikT )
+      if uTikT:Seek( cNumTik )
+         tDate    := uTikT:tFecTik
+      end if
+   else
+      if ( uTikT )->( dbSeek( cNumTik ) )
+         tDate    := ( uTikT )->tFecTik
+      end if
+   end if
+
+RETURN tDate
+
+//--------------------------------------------------------------------------//
 /*
 STATIC FUNCTION DisVis( PriLin, SecLin, cFilBmp )
 

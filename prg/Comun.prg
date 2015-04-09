@@ -3113,6 +3113,14 @@ Function getSysTime()
 
 Return ( strtran( time(), ":", "" ) )
 
+//--------------------------------------------------------------------------//
+
+Function getHoraInicioEmpresa()
+
+Return ( uFieldEmpresa( "cIniJor" ) + "00")
+
+//--------------------------------------------------------------------------//
+
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 

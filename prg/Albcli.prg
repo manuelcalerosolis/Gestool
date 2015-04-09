@@ -121,7 +121,8 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CDIGBNC                  100
 #define _CCTABNC                  101
 #define _NDTOTARIFA               102 
-#define _NFACTURADO               103   
+#define _NFACTURADO               103
+#define _TFECALB                  104   
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -227,6 +228,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DUNIULTCOM               98
 #define __NBULTOS                 99
 #define _CFORMATO                100
+#define __TFECALB                101
+
 
 /*
 Definici¢n de Array para impuestos
@@ -671,6 +674,13 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :bEditValue       := {|| Dtoc( ( D():Get( "AlbCliT", nView ) )->dFecAlb ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )   
+         :cHeader          := "Hora"
+         :cSortOrder       := "tFecAlb"
+         :bEditValue       := {|| Trans( ( D():Get( "AlbCliT", nView ) )->tFecAlb, "@R 99:99:99" ) }
+         :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -2138,6 +2148,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          aTmp[ _NIVAMAN   ]   := nIva( D():Get( "TIva", nView ), cDefIva() )
          aTmp[ _CMANOBR   ]   := Padr( "Gastos", 250 )
          aTmp[ _NFACTURADO]   := 1
+         aTmp[ _TFECALB   ]   := GetSysTime()
 
       case nMode == DUPL_MODE
 
@@ -2152,6 +2163,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          end if
 
          aTmp[ _DFECALB   ]   := GetSysDate()
+         aTmp[ _TFECALB   ]   := GetSysTime()
          aTmp[ _CTURALB   ]   := cCurSesion()
          aTmp[ _CCODCAJ   ]   := oUser():cCaja()
          aTmp[ _LFACTURADO]   := .f.
@@ -3191,6 +3203,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          SPINNER ;
          WHEN     ( lWhen ) ;
          ON HELP  aGet[ _DFECALB ]:cText( Calendario( aTmp[ _DFECALB ] ) ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _TFECALB ] VAR aTmp[ _TFECALB ];
+         ID       131 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( lWhen ) ;
+         VALID    ( iif(   !validTime( aTmp[ _TFECALB ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE COMBOBOX oTipAlb VAR cTipAlb ;
@@ -4696,6 +4717,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       350, 351, 352 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
+
+      REDEFINE GET aGet[ __DFECALB ] VAR aTmp[ __DFECALB ];
+         ID       360 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ __TFECALB ] VAR aTmp[ __TFECALB ] ;
+         ID       361 ;
+         PICTURE  "@R 99:99:99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( iif(   !validTime( aTmp[ __TFECALB ] ),;
+                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                           .t. ) );
+         OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
          MEMO ;
@@ -11254,6 +11290,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
 
          ( dbfTmpLin )->dFecAlb  := aTmp[ _DFECALB ]
+         ( dbfTmpLin )->tFecAlb  := aTmp[ _TFECALB ]
          ( dbfTmpLin )->cCodCli  := aTmp[ _CCODCLI ]
 
          dbPass( dbfTmpLin, D():Get( "AlbCliL", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
@@ -14260,6 +14297,27 @@ FUNCTION dFecAlbCli( cAlbCli, uAlbCliT )
 RETURN ( dFecAlb )
 
 //---------------------------------------------------------------------------//
+/*
+Devuelve la hora de un albaran de cliente
+*/
+
+FUNCTION tFecAlbCli( cAlbCli, uAlbCliT )
+
+   local tFecAlb  := Replicate( "0", 6 )
+
+   if ValType( uAlbCliT ) == "C"
+      if dbSeekInOrd( cAlbCli, "nNumAlb", uAlbCliT )
+         tFecAlb  := ( uAlbCliT )->tFecAlb
+      end if
+   else
+      if uAlbCliT:SeekInOrd( cAlbCli, "nNumAlb" )
+         tFecAlb  := uAlbCliT:tFecAlb
+      end if
+   end if
+
+RETURN ( tFecAlb )
+
+//---------------------------------------------------------------------------//
 
 FUNCTION cCliAlbCli( cAlbCli, uAlbCliT )
 
@@ -16162,7 +16220,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMALB", "CSERALB + Str(NNUMALB) + CSUFALB", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "DFECALB", {|| Field->DFECALB } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "dtos( DFECALB ) + tFecAlb", {|| dtos( Field->DFECALB ) + Field->tFecAlb } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
@@ -16224,7 +16282,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMCLI", "CSERALB + Str(NNUMALB) + CSUFALB + CCODCLI", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB + Field->CCODCLI } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecAlb )", {|| Field->cCodCli + dtos( Field->dFecAlb ) } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "cCliFec", "cCodCli + dtos( dFecAlb ) + tFecAlb", {|| Field->cCodCli + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "dFecDes", "dFecAlb", {|| Field->dFecAlb } ) )
@@ -16270,7 +16328,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumRef", "cSerAlb + Str( nNumAlb ) + cSufAlb + cRef", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Field->cRef } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
-      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecAlb )", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "cRefFec", "cRef + cCodCli + dtos( dFecAlb ) + tFecAlb", {|| Field->cRef + Field->cCodCli + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
@@ -16436,19 +16494,20 @@ function aItmAlbPgo()
    aAdd( aBasRecCli, {"cNumRec"     ,"C", 14, 0, "Número del pedido al que pertenece", "",                  "", "( cDbfEnt )" } )
    aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "Lógico de pasado",                   "",                  "", "( cDbfEnt )" } )
    aAdd( aBasRecCli, {"cBncEmp"     ,"C", 50, 0, "Banco de la empresa para el recibo" ,"",                  "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cBncCli"     ,"C", 50, 0, "Banco del cliente para el recibo" ,"",                    "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cBncCli"     ,"C", 50, 0, "Banco del cliente para el recibo" ,  "",                  "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cEPaisIBAN"  ,"C",  2, 0, "País IBAN de la cuenta bancaria de la empresa",       "", "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cECtrlIBAN"  ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria de la empresa", "", "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cEntEmp"     ,"C",  4, 0, "Entidad de la cuenta de la empresa",  "",                 "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cSucEmp"     ,"C",  4, 0, "Sucursal de la cuenta de la empresa",  "",                "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cSucEmp"     ,"C",  4, 0, "Sucursal de la cuenta de la empresa", "",                 "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cDigEmp"     ,"C",  2, 0, "Dígito de control de la cuenta de la empresa", "",        "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cCtaEmp"     ,"C", 10, 0, "Cuenta bancaria de la empresa",  "",                      "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cCtaEmp"     ,"C", 10, 0, "Cuenta bancaria de la empresa",       "",                 "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cPaisIBAN"   ,"C",  2, 0, "País IBAN de la cuenta bancaria del cliente",           "", "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cCtrlIBAN"   ,"C",  2, 0, "Dígito de control IBAN de la cuenta bancaria del cliente", "", "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cEntCli"     ,"C",  4, 0, "Entidad de la cuenta del cliente",  "",                   "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cSucCli"     ,"C",  4, 0, "Sucursal de la cuenta del cliente",  "",                  "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",          "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",  "",                        "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",        "",                  "", "( cDbfEnt )", nil } )
+   aAdd( aBasRecCli, {"tFecAlb"     ,"C",  6, 0, "Hora del albaran rectificativa",     "",                  "", "( cDbfEnt )", nil } )
 
 
 return ( aBasRecCli )
@@ -16559,6 +16618,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",                          "UnidadesUltimaCompra",          "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nBultos",   "N", 16, 6, "Numero de bultos",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",                                "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "tFecAlb" ,  "C",  6, 0, "Hora del albaran rectificativa",                  "",                              "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 

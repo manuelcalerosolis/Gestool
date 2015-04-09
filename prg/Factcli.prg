@@ -21996,6 +21996,32 @@ FUNCTION dFecFacCli( cFacCli, cFacCliT )
 
 RETURN ( dFecFac )
 
+//---------------------------------------------------------------------------//
+/*
+Devuelve la hora de una factura de cliente
+*/
+
+FUNCTION tFecFacCli( cFacCli, cFacCliT )
+
+   local aStatus
+   local tFecFac  := Replicate( "0", 6 )
+
+   if IsObject( cFacCliT )
+      cFacCliT:GetStatus( .t. )
+      if cFacCliT:Seek( cFacCli )
+         tFecFac  := cFacCliT:tFecFac
+      end if
+      cFacCliT:SetStatus()
+   else
+      aStatus  := aGetStatus( cFacCliT, .t. )
+      if ( cFacCliT )->( dbSeek( cFacCli ) )
+         tFecFac  := ( cFacCliT )->tFecFac
+      end if
+      SetStatus( cFacCliT, aStatus )
+   end if
+
+RETURN ( tFecFac )
+
 //----------------------------------------------------------------------------//
 
 FUNCTION BrowseInformesFacCli( oGet, oGet2 )

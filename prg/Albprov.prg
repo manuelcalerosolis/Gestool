@@ -8637,6 +8637,22 @@ FUNCTION dFecAlbPrv( cAlbPrv, cAlbPrvT )
 
 RETURN ( dFecFac )
 
+//---------------------------------------------------------------------------//
+
+/*
+Devuelve la Hora de un albaran de proveedor
+*/
+
+FUNCTION tFecAlbPrv( cAlbPrv, cAlbPrvT )
+
+   local tFecFac  := Replicate( "0", 6 )
+
+   if ( cAlbPrvT )->( dbSeek( cAlbPrv ) )
+      tFecFac     := ( cAlbPrvT )->tFecAlb
+   end if
+
+RETURN ( tFecFac )
+
 //----------------------------------------------------------------------------//
 
 /*

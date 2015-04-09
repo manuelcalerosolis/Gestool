@@ -13,7 +13,7 @@ REQUEST DBFCDX
 #define _MODULEITEM_               "01051"
 
 #define _DFECMOV                   1      //   D      8     0
-#define _CTIMMOV                   2      //   C      5     0
+#define _CTIMMOV                   2      //   C      6     0
 #define _NTIPMOV                   3      //   N      1     0
 #define _CALIMOV                   4      //   C      3     0
 #define _CALOMOV                   5      //   C      3     0

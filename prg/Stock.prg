@@ -1881,6 +1881,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := Str( ( ::cHisMovT )->nNumRem )
          :cDelegacion         := ( ::cHisMovT )->cSufRem
          :dFechaDocumento     := ( ::cHisMovT )->dFecMov
+         :tFechaDocumento     := ( ::cHisMovT )->cTimMov
          :cCodigo             := ( ::cHisMovT )->cRefMov
          :cCodigoPropiedad1   := ( ::cHisMovT )->cCodPr1
          :cCodigoPropiedad2   := ( ::cHisMovT )->cCodPr2
@@ -1932,6 +1933,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
          :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
          :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
+         :tFechaDocumento     := ( ::cAlbPrvL )->tFecAlb
          :cCodigo             := ( ::cAlbPrvL )->cRef
          :cCodigoAlmacen      := ( ::cAlbPrvL )->cAlmOrigen
          :cCodigoPropiedad1   := ( ::cAlbPrvL )->cCodPr1
@@ -1967,6 +1969,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
          :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
          :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
+         :tFechaDocumento     := ( ::cAlbPrvL )->tFecAlb
          :cCodigo             := ( ::cAlbPrvL )->cRef
          :cCodigoAlmacen      := ( ::cAlbPrvL )->cAlmLin
          :cCodigoPropiedad1   := ( ::cAlbPrvL )->cCodPr1
@@ -2002,6 +2005,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
          :cDelegacion         := ( ::cFacPrvL )->cSufFac
          :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
+         :tFechaDocumento     := ( ::cFacPrvL )->tFecFac
          :cCodigo             := ( ::cFacPrvL )->cRef
          :cCodigoAlmacen      := ( ::cFacPrvL )->cAlmLin
          :cCodigoPropiedad1   := ( ::cFacPrvL )->cCodPr1
@@ -2037,6 +2041,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
          :cDelegacion         := ( ::cRctPrvL )->cSufFac
          :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
+         :tFechaDocumento     := ( ::cRctPrvL )->tFecFac
          :cCodigo             := ( ::cRctPrvL )->cRef
          :cCodigoAlmacen      := ( ::cRctPrvL )->cAlmLin
          :cCodigoPropiedad1   := ( ::cRctPrvL )->cCodPr1
@@ -2072,6 +2077,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbCliL )->nNumAlb ) )
          :cDelegacion         := ( ::cAlbCliL )->cSufAlb
          :dFechaDocumento     := ( ::cAlbCliL )->dFecAlb
+         :tFechaDocumento     := ( ::cAlbCliL )->tFecAlb
          :cCodigo             := ( ::cAlbCliL )->cRef
          :cCodigoAlmacen      := ( ::cAlbCliL )->cAlmLin
          :cCodigoPropiedad1   := ( ::cAlbCliL )->cCodPr1
@@ -2107,6 +2113,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cFacCliL )->cSerie + "/" + Alltrim( Str( ( ::cFacCliL )->nNumFac ) )
          :cDelegacion         := ( ::cFacCliL )->cSufFac
          :dFechaDocumento     := ( ::cFacCliL )->dFecFac
+         :tFechaDocumento     := ( ::cFacCliL )->tFecFac
          :cCodigo             := ( ::cFacCliL )->cRef
          :cCodigoAlmacen      := ( ::cFacCliL )->cAlmLin
          :cCodigoPropiedad1   := ( ::cFacCliL )->cCodPr1
@@ -2143,6 +2150,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cFacRecL )->cSerie + "/" + Alltrim( Str( ( ::cFacRecL )->nNumFac ) )
          :cDelegacion         := ( ::cFacRecL )->cSufFac
          :dFechaDocumento     := ( ::cFacRecL )->dFecFac
+         :tFechaDocumento     := ( ::cFacRecL )->tFecFac
          :cCodigo             := ( ::cFacRecL )->cRef
          :cCodigoAlmacen      := ( ::cFacRecL )->cAlmLin
          :cCodigoPropiedad1   := ( ::cFacRecL )->cCodPr1
@@ -2193,6 +2201,7 @@ RETURN ( lDup )
          :cNumeroDocumento       := ( ::cTikL )->cSerTil + "/" + Alltrim( ( ::cTikL )->cNumTil )
          :cDelegacion            := ( ::cTikL )->cSufTil
          :dFechaDocumento        := ( ::cTikL )->dFecTik
+         :tFechaDocumento        := ( ::cTikL )->tFecTik
 
          if IsTrue( lCombinado)
             :cCodigo             := ( ::cTikL )->cComTil
@@ -2242,6 +2251,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cProducL )->cSerOrd + "/" + Alltrim( Str( ( ::cProducL )->nNumOrd ) )
          :cDelegacion         := ( ::cProducL )->cSufOrd
          :dFechaDocumento     := ( ::cProducL )->dFecOrd
+         :tFechaDocumento     := ( ::cProducL )->cHorIni
          :cCodigo             := ( ::cProducL )->cCodArt
          :cCodigoAlmacen      := ( ::cProducL )->cAlmOrd
          :cCodigoPropiedad1   := ( ::cProducL )->cCodPr1
@@ -2278,6 +2288,7 @@ RETURN ( lDup )
          :cNumeroDocumento    := ( ::cProducM )->cSerOrd + "/" + Alltrim( Str( ( ::cProducM )->nNumOrd ) )
          :cDelegacion         := ( ::cProducM )->cSufOrd
          :dFechaDocumento     := ( ::cProducM )->dFecOrd
+         :tFechaDocumento     := ( ::cProducM )->cHorIni
          :cCodigo             := ( ::cProducM )->cCodArt
          :cCodigoAlmacen      := ( ::cProducM )->cAlmOrd
          :cCodigoPropiedad1   := ( ::cProducM )->cCodPr1
@@ -4271,6 +4282,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cNumeroDocumento    := ( ::tmpAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::tmpAlbCliL )->nNumAlb ) )
                :cDelegacion         := ( ::tmpAlbCliL )->cSufAlb
                :dFechaDocumento     := ( ::tmpAlbCliL )->dFecAlb
+               :tFechaDocumento     := ( ::tmpAlbCliL )->tFecAlb
                :cCodigoAlmacen      := ( ::tmpAlbCliL )->cAlmLin
                :cCodigoPropiedad1   := ( ::tmpAlbCliL )->cCodPr1
                :cCodigoPropiedad2   := ( ::tmpAlbCliL )->cCodPr2
@@ -4313,6 +4325,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cNumeroDocumento    := ( ::tmpFacCliL )->cSerie + "/" + Alltrim( Str( ( ::tmpFacCliL )->nNumFac ) )
                :cDelegacion         := ( ::tmpFacCliL )->cSufFac
                :dFechaDocumento     := ( ::tmpFacCliL )->dFecFac
+               :tFechaDocumento     := ( ::tmpFacCliL )->tFecFac
                :cCodigoAlmacen      := ( ::tmpFacCliL )->cAlmLin
                :cCodigoPropiedad1   := ( ::tmpFacCliL )->cCodPr1
                :cCodigoPropiedad2   := ( ::tmpFacCliL )->cCodPr2
@@ -5134,7 +5147,7 @@ METHOD oTreeStocks( cCodArt, cCodAlm )
 
    ::aStockArticulo( cCodArt, cCodAlm )
 
-   aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote + dtos( x:dFechaDocumento ) < y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote + dtos( y:dFechaDocumento ) } )
+   aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote + dtos( x:dFechaDocumento ) + x:tFechaDocumento < y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote + dtos( y:dFechaDocumento ) + y:tFechaDocumento } )
 
    ::oTree     := TreeBegin()
    
@@ -6559,6 +6572,7 @@ CLASS SStock
    DATA cCodigo               INIT ""
    DATA cDelegacion           INIT ""
    DATA dFechaDocumento       INIT Ctod( "" )
+   DATA tFechaDocumento       INIT ""
    DATA dConsolidacion        INIT Ctod( "" )
    DATA cCodigoAlmacen        INIT ""
    DATA cCodigoPropiedad1     INIT ""
@@ -6578,7 +6592,7 @@ CLASS SStock
    
    METHOD New()
 
-   METHOD Documento()         INLINE ( cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ) )
+   METHOD Documento()         INLINE ( cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ) + " a las " + trans( ::tFechaDocumento, "@R 99:99:99" ) )
 
    METHOD Say()
 
