@@ -16507,7 +16507,6 @@ function aItmAlbPgo()
    aAdd( aBasRecCli, {"cSucCli"     ,"C",  4, 0, "Sucursal de la cuenta del cliente",  "",                  "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",          "", "( cDbfEnt )", nil } )
    aAdd( aBasRecCli, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",        "",                  "", "( cDbfEnt )", nil } )
-   aAdd( aBasRecCli, {"tFecAlb"     ,"C",  6, 0, "Hora del albaran rectificativa",     "",                  "", "( cDbfEnt )", nil } )
 
 
 return ( aBasRecCli )
@@ -16618,7 +16617,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nUniUltCom","N", 16, 6, "Unidades última compra",                          "UnidadesUltimaCompra",          "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nBultos",   "N", 16, 6, "Numero de bultos",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",                                "",                              "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "tFecAlb" ,  "C",  6, 0, "Hora del albaran rectificativa",                  "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "tFecAlb" ,  "C",  6, 0, "Hora del albarán",                                "",                              "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
@@ -16731,6 +16730,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "cCtaBnc"  , "C", 10, 0, "Cuenta bancaria del cliente",                              "CuentaBancaria",                "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nDtoTarifa","N",  6, 2, "Descuento de tarifa de cliente",                           "DescuentoTarifa",               "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albaran" ,                                      "Estado",                        "", "( cDbf )", {|| 1 } } )
+   aAdd( aItmAlbCli, { "tFecAlb",   "C",  6, 0, "Hora del albarán" ,                                        "Hora",                          "", "( cDbf )", {|| nil } } )
 
 Return ( aItmAlbCli )
 
