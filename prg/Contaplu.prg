@@ -2674,7 +2674,7 @@ CLASS EnlaceA3
    METHOD DescripcionApunte()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionApunte" ], 30 ) )
    METHOD Importe()                       INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "Importe" ] ) )
    METHOD Reserva( nSpace )               INLINE ( ::cBuffer   += space( nSpace ) )
-   METHOD NIF()                           INLINE ( ::cBuffer   += padr( ::hAsiento[ "Nif" ], 14 ) )
+   METHOD NIF()                           INLINE ( ::cBuffer   += padr( trimNif( ::hAsiento[ "Nif" ] ), 14 ) )
    METHOD NombreCliente()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "NombreCliente" ], 40 ) )
    METHOD CodigoPostal()                  INLINE ( ::cBuffer   += padr( ::hAsiento[ "CodigoPostal" ], 5 ) )
    METHOD FechaOperacion()                INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaOperacion"] ) )

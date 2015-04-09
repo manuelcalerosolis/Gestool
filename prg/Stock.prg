@@ -6587,9 +6587,10 @@ CLASS SStock
    
    METHOD New()
 
-   METHOD Documento()         INLINE ( if( empty( ::tFechaDocumento ) ,;
-                               cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ),;
-                               cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ) + " a las " + trans( ::tFechaDocumento, "@R 99:99:99" ) ) )
+   METHOD Documento()         INLINE ( cTextDocument( ::cTipoDocumento ) + space(1) + ;
+                                       alltrim( ::cNumeroDocumento ) + space(1) + ;
+                                       "de fecha " + dtoc( ::dFechaDocumento ) + ;
+                                       if( empty(::tFechaDocumento), "", " a las " + trans( ::tFechaDocumento, "@R 99:99:99" ) ) )
 
    METHOD Say()
 

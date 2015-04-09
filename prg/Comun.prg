@@ -3121,6 +3121,16 @@ Return ( uFieldEmpresa( "cIniJor" ) + "00")
 
 //--------------------------------------------------------------------------//
 
+Function trimNif( cNif )
+
+   cNif   := strtran( cNif, " ", "" )
+   cNif   := strtran( cNif, ".", "" )
+   cNif   := strtran( cNif, "-", "" )
+   cNif   := strtran( cNif, "_", "" )
+
+return( cNif )
+
+//--------------------------------------------------------------------------//
 /*
 Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 
