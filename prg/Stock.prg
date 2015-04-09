@@ -292,6 +292,8 @@ CLASS TStock
    METHOD SetCodigoAlmacen( cCodigoAlmacen )
    METHOD lCodigoAlmacen( cCodigoAlmacen )
 
+   METHOD getFechaHoraConsolidacion()        INLINE ( dtos( ( ::cHisMovT )->dFecMov ) + ( ::cHisMovT )->cTimMov )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -3868,7 +3870,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
             if !Empty( ( ::cHisMovT)->cAloMov )                            .and.;
                ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAloMov == cCodAlm ) .and.;
-               ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
+               ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov, ( ::cHisMovT )->cTimMov )
                
                if nTotLMovAlm( ::cHisMovT ) > 0 
 
@@ -3881,7 +3883,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
 
             if !Empty( ( ::cHisMovT)->cAliMov )                            .and.;
                ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
-               ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
+               ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov, ( ::cHisMovT )->cTimMov )
 
                if nTotNMovAlm( ::cHisMovT ) > 0
 
@@ -3912,8 +3914,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          ( Empty( cLote )   .or. ( ::cAlbPrvL )->cLote == cLote )       .and.;
          !( ::cAlbPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) //.and.;
-            //Empty( cCodAlm ) .or. ( ( ::cAlbPrvL )->cAlmLin == cCodAlm )
+         if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb )
 
             nUnidades   += nTotNAlbPrv( ::cAlbPrvL )
             nImporte    += nTotLAlbPrv( ::cAlbPrvL, ::nDecIn, ::nDerIn )
@@ -3938,8 +3939,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
       ( Empty( cLote )   .or. ( ::cFacPrvL )->cLote == cLote )      .and.;
       !( ::cFacPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) //.and.;
-            //Empty( cCodAlm ) .or. ( ( ::cFacPrvL )->cAlmLin == cCodAlm )
+         if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac )
 
             nUnidades   += nTotNFacPrv( ::cFacPrvL )
             nImporte    += nTotLFacPrv( ::cFacPrvL, ::nDecIn, ::nDerIn )
@@ -3966,8 +3966,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
       ( Empty( cLote )    .or. ( ::cRctPrvL )->cLote == cLote )      .and.;
       !( ::cRctPrvL )->( eof() )
 
-         if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac )  // .and.;
-            //Empty( cCodAlm ) .or. ( ( ::cRctPrvL )->cAlmLin == cCodAlm )
+         if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac )
 
             nUnidades   += nTotNRctPrv( ::cRctPrvL )
             nImporte    += nTotLRctPrv( ::cRctPrvL, ::nDecIn, ::nDerIn )
@@ -3992,8 +3991,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2, cLote 
          ( Empty( cLote )    .or. ( ::cProducL )->cLote == cLote )      .and.;
          !( ::cProducL )->( eof() )
       
-         if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd ) //.and.;
-            // Empty( cCodAlm ) .or. ( ( ::cProducL )->cAlmOrd == cCodAlm )
+         if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd, ( ::cProducL )->cHorIni ) 
 
             nUnidades   += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd )
             nImporte    += ( NotCaja( ( ::cProducL )->nCajOrd ) * ( ::cProducL )->nUndOrd ) * ( ( ::cProducL )->nImpOrd )
@@ -5659,12 +5657,12 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
          if Empty( ::dConsolidacion )
 
-            ::dConsolidacion     := ( ::cHisMovT )->dFecMov
+            ::dConsolidacion     := ::getFechaHoraConsolidacion()
 
          else
 
-            if ( ::cHisMovT)->dFecMov > ::dConsolidacion
-               ::dConsolidacion  := ( ::cHisMovT )->dFecMov
+            if ::getFechaHoraConsolidacion() > ::dConsolidacion
+               ::dConsolidacion  := ::getFechaHoraConsolidacion()
             end if
 
          end if
@@ -5677,22 +5675,18 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
 
    // Guardamos el criterio de busqueda para la proxima-----------------------
 
-   //::cCodigoConsolidacion        := cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote
-
    ( ::cHisMovT )->( ordSetFocus( nOrd ) )
    ( ::cHisMovT )->( dbGoTo( nRec ) )
-
-   // msgAlert( ::dConsolidacion, "dConsolidacion" )
 
 Return ( ::dConsolidacion )
 
 //---------------------------------------------------------------------------//
 
-METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha )
+METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha, tHora )
 
    local dConsolidacion := ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-Return ( Empty( dConsolidacion ) .or. dFecha >= dConsolidacion )
+Return ( Empty( dConsolidacion ) .or. dtos( dFecha ) + tHora >= dConsolidacion )
 
 //---------------------------------------------------------------------------//
 
@@ -5738,7 +5732,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
          if ( Empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
 
-            if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT )->cAliMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov ) 
+            if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT )->cAliMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov ) 
 
                // Buscamos el numero de serie----------------------------------------
 
@@ -5776,7 +5770,7 @@ METHOD aStockMovimientosAlmacen( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni,
 
          if ( Empty( dFecIni ) .or. ( ::cHisMovT )->dFecMov >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )
 
-            if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov ) 
+            if ::lCheckConsolidacion( ( ::cHisMovT )->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT )->cCodPr1, ( ::cHisMovT )->cCodPr2, ( ::cHisMovT )->cValPr1, ( ::cHisMovT )->cValPr2, ( ::cHisMovT )->cLote, ( ::cHisMovT )->dFecMov, ( ::cHisMovT )->cTimMov ) 
 
                // Buscamos el numero de serie----------------------------------------
 
@@ -5827,7 +5821,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
          if cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
 
-            if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) 
+            if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb ) ) 
 
                if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 
@@ -5877,7 +5871,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
          if cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
 
-            if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) ) 
+            if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb ) ) 
 
                if ( Empty( dFecIni ) .or. ( ::cAlbPrvL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbPrvL )->dFecAlb <= dFecFin ) 
 
@@ -5934,7 +5928,7 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
          if cCodigoArticulo != ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmLin + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
 
-            if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) )
+            if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac ) )
 
                if ( Empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
                   
@@ -5991,7 +5985,7 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
 
          if cCodigoArticulo != ( ::cRctPrvL )->cRef + ( ::cRctPrvL )->cAlmLin + ( ::cRctPrvL )->cCodPr1 + ( ::cRctPrvL )->cCodPr2 + ( ::cRctPrvL )->cValPr1 + ( ::cRctPrvL )->cValPr2 + ( ::cRctPrvL )->cLote
 
-            if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac ) 
+            if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac ) 
 
                if ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
 
@@ -6048,7 +6042,7 @@ METHOD aStockAlbaranCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
          if cCodigoArticulo != ( ::cAlbCliL )->cRef + ( ::cAlbCliL )->cAlmLin + ( ::cAlbCliL )->cCodPr1 + ( ::cAlbCliL )->cCodPr2 + ( ::cAlbCliL )->cValPr1 + ( ::cAlbCliL )->cValPr2 + ( ::cAlbCliL )->cLote
 
-            if ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb ) 
+            if ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb, ( ::cAlbCliL )->tFecAlb ) 
 
                if ( Empty( dFecIni ) .or. ( ::cAlbCliL )->dFecAlb >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cAlbCliL )->dFecAlb <= dFecFin )  
 
@@ -6103,7 +6097,7 @@ METHOD aStockFacturaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
          if cCodigoArticulo != ( ::cFacCliL )->cRef + ( ::cFacCliL )->cAlmLin + ( ::cFacCliL )->cCodPr1 + ( ::cFacCliL )->cCodPr2 + ( ::cFacCliL )->cValPr1 + ( ::cFacCliL )->cValPr2 + ( ::cFacCliL )->cLote
 
-            if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac ) 
+            if ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac, ( ::cFacCliL )->tFecFac ) 
          
                if ( Empty( dFecIni ) .or. ( ::cFacCliL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacCliL )->dFecFac <= dFecFin )
 
@@ -6158,7 +6152,7 @@ METHOD aStockRectificativaCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIn
 
          if cCodigoArticulo != ( ::cFacRecL )->cRef + ( ::cFacRecL )->cAlmLin + ( ::cFacRecL )->cCodPr1 + ( ::cFacRecL )->cCodPr2 + ( ::cFacRecL )->cValPr1 + ( ::cFacRecL )->cValPr2 + ( ::cFacRecL )->cLote
 
-            if ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac )
+            if ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac, ( ::cFacRecL )->tFecFac )
 
                if ( Empty( dFecIni ) .or. ( ::cFacRecL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacRecL )->dFecFac <= dFecFin )
 
@@ -6213,7 +6207,7 @@ METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
          if cCodigoArticulo != ( ::cTikL )->cCbaTil + ( ::cTikL )->cAlmLin + ( ::cTikL )->cCodPr1 + ( ::cTikL )->cCodPr2 + ( ::cTikL )->cValPr1 + ( ::cTikL )->cValPr2 + ( ::cTikL )->cLote
 
-            if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik ) 
+            if ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik, ( ::cTikL )->tFecTik ) 
 
                if ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
 
@@ -6261,7 +6255,7 @@ METHOD aStockTicketsCliente( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFe
 
          if cCodigoArticulo != ( ::cTikL )->cCbaTil + ( ::cTikL )->cAlmLin + ( ::cTikL )->cCodPr1 + ( ::cTikL )->cCodPr2 + ( ::cTikL )->cValPr1 + ( ::cTikL )->cValPr2 + ( ::cTikL )->cLote
 
-            if ::lCheckConsolidacion( ( ::cTikL )->cComTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik ) 
+            if ::lCheckConsolidacion( ( ::cTikL )->cComTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik, ( ::cTikL )->tFecTik ) 
 
                if ( Empty( dFecIni ) .or. ( ::cTikL )->dFecTik >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cTikL )->dFecTik <= dFecFin ) 
 
@@ -6302,7 +6296,7 @@ METHOD aStockProduccion( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecFin
 
          if cCodigoArticulo != ( ::cProducL )->cCodArt + ( ::cProducL )->cAlmOrd + ( ::cProducL )->cCodPr1 + ( ::cProducL )->cCodPr2 + ( ::cProducL )->cValPr1 + ( ::cProducL )->cValPr2 + ( ::cProducL )->cLote
 
-            if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd )
+            if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd, ( ::cProducL )->cHorIni )
 
                if ( Empty( dFecIni ) .or. ( ::cProducL )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducL )->dFecOrd <= dFecFin )
 
@@ -6357,7 +6351,7 @@ METHOD aStockMateriaPrima( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, dFecF
 
          if cCodigoArticulo != ( ::cProducM )->cCodArt + ( ::cProducM )->cAlmOrd + ( ::cProducM )->cCodPr1 + ( ::cProducM )->cCodPr2 + ( ::cProducM )->cValPr1 + ( ::cProducM )->cValPr2 + ( ::cProducM )->cLote
 
-            if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd ) 
+            if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd, ( ::cProducM )->cHorIni ) 
 
                if ( Empty( dFecIni ) .or. ( ::cProducM )->dFecOrd >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cProducM )->dFecOrd <= dFecFin )
 
