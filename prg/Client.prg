@@ -8439,7 +8439,7 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( __dbPack() )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CliInc.Cdx", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
+      ( dbfCli )->( ordCreate( cPath + "CliInc.Cdx", "CCODCLI", "CCODCLI + dtos(dFecInc)", {|| Field->CCODCLI+ dtos(Field->dFecInc) } ) )
 
       ( dbfCli )->( dbCloseArea() )
    else

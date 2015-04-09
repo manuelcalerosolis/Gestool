@@ -15,6 +15,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    DATA  oCliAtp
    DATA  oCliDoc
    DATA  oCliInc
+   DATA  oTipInc
 
    DATA  oStock
 
@@ -169,6 +170,8 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oCliInc  PATH ( cPatCli() ) CLASS "CliInc"   FILE "CliInc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliInc.Cdx"
 
+      DATABASE NEW ::oTipInc  PATH ( cPatEmp() ) CLASS "TipInc"   FILE "TipInci.Dbf" VIA ( cDriver() ) SHARED INDEX "TipInci.Cdx"
+
       ::oCnfFlt               := TDataCenter():oCnfFlt()
 
       /*
@@ -280,6 +283,10 @@ METHOD CloseFiles() CLASS TFastVentasClientes
 
    if !Empty( ::oCliInc ) .and. ( ::oCliInc:Used() )
       ::oCliInc:End()
+   end if 
+
+   if !Empty( ::oTipInc ) .and. ( ::oTipInc:Used() )
+      ::oTipInc:End()
    end if 
 
    if !Empty( ::oCnfFlt ) .and. ( ::oCnfFlt:Used() )
@@ -442,6 +449,9 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Incidencias",                      ::oCliInc:nArea )
    ::oFastReport:SetFieldAliases(   "Incidencias",                      cItemsToReport( aCliInc() ) )
 
+   ::oFastReport:SetWorkArea(       "Tipos de incidencias",             ::oTipInc:nArea )
+   ::oFastReport:SetFieldAliases(   "Tipos de incidencias",             cItemsToReport( aItmInci() ) )
+
    /*
    Relaciones------------------------------------------------------------------
    */
@@ -460,6 +470,8 @@ METHOD DataReport() CLASS TFastVentasClientes
    
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Formas de pago",       {|| ::oDbfCli:CodPago } )
+
+   ::oFastReport:SetMasterDetail(   "Incidencias", "Tipos de incidencias", {|| ::oCliInc:cCodTip } )
 
    /*
    Relación con la tabla de direcciones en funcion del tipo de informe
@@ -484,7 +496,9 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
    
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
-   ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )   
+   ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )  
+
+   ::oFastReport:SetResyncPair(     "Incidencias", "Tipos de incidencias" ) 
 
    do case
       case ::cReportType == "SAT de clientes"
@@ -1683,7 +1697,7 @@ METHOD AddClientes() CLASS TFastVentasClientes
       if ::lValidRegister()
          ::oDbf:Insert()
       else
-         ::oDbf:Save()
+         ::oDbf:Cancel()
       end if
 
       ::oDbfCli:Skip()
