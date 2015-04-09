@@ -1405,6 +1405,14 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          TOOLTIP  "Rotor" ;
          LEVEL    ACC_EDIT
 
+         DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( oDetCamposExtra:Play( ( dbfArticulo )->Codigo ) );
+            TOOLTIP  "Campos extra" ;
+            FROM     oRotor ;
+            ALLOW    EXIT ;
+            LEVEL    ACC_EDIT
+
          DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( PedPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
@@ -2112,11 +2120,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    /*
    Codificacion de proveedores----------------------------------------------
    */
-
-   REDEFINE BUTTON aBtnDiv[ 5 ]; 
-      ID       511 ;
-      OF       fldPrecios;
-      ACTION   ( oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) )
 
    REDEFINE BUTTON aBtnDiv[ 5 ]; 
       ID       510 ;
@@ -12655,6 +12658,11 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
             MESSAGE  "Muestra el informe del artículo en escandallo" ;
             RESOURCE "info16" ;
             ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
+
+            MENUITEM "&3. Campos extra";
+            MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
+            RESOURCE "form_green_add_16" ;
+            ACTION   ( oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) )
 
             if !lExternal
 

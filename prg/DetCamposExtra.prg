@@ -23,8 +23,6 @@ CLASS TDetCamposExtra FROM TMant
 
    DATA oCamposExtra  
 
-
-
    DATA hFormatoColumnas      INIT  {}
 
    Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
@@ -47,13 +45,20 @@ CLASS TDetCamposExtra FROM TMant
 
    Method CargaValores( cClave )
 
-   Method GuardaValores()              INLINE ( MsgInfo( "Guardamos valores", "provisional" ) )
+   Method RollBackValores( cClave )
+
+   Method GuardaValores( cClave )
 
    Method ChangeBrowse()
 
    Method setColType( uValue )         INLINE ( ::oCol:nEditType := uValue )
    Method setColPicture( uValue )      INLINE ( ::oCol:cEditPicture := uValue )
    Method setColListTxt( aValue )      INLINE ( ::oCol:aEditListTxt := aValue )
+
+   Method cFormat2Char( uValor )
+   Method cChar2Format( uValor, nFormat )
+
+   Method lPreSave()
 
 END CLASS
 
@@ -74,7 +79,7 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TDetCamposExtra
    ::hFormatoColumnas      := {  "1" => {||  ::setColType( EDIT_GET ) ,;
                                              ::setColPicture( "" ) } ,;
                                  "2" => {||  ::setColType( EDIT_GET ) ,;
-                                             ::setColPicture( NumPict( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "longitud" ), hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "decimales" ) ) ) } ,;
+                                             ::setColPicture( NumPict( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "longitud" ) + hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "decimales" ) - 1, hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "decimales" ), , .t. ) ) } ,;
                                  "3" => {||  ::setColType( EDIT_GET ) ,;
                                              ::setColPicture( "" ) } ,;
                                  "4" => {||  ::setColType( EDIT_LISTBOX ),;
@@ -95,15 +100,16 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TDetCamposExtra
 
    DEFINE DATABASE ::oDbf FILE "DETCAMPOEXTRA.DBF" CLASS "DETCAMPOEXTRA" ALIAS "DETCAMPOEXTRA" PATH ( cPath ) VIA ( cDriver ) COMMENT "Detalle campos extra"
       
-      FIELD NAME "nTipDoc"       TYPE "N" LEN   2  DEC 0 COMMENT "Tipo documento"         HIDE           OF ::oDbf
+      FIELD NAME "cTipDoc"       TYPE "C" LEN   2  DEC 0 COMMENT "Tipo documento"         HIDE           OF ::oDbf
       FIELD NAME "cCodTipo"      TYPE "C" LEN   3  DEC 0 COMMENT "Código"                 HIDE           OF ::oDbf
       FIELD NAME "cClave"        TYPE "C" LEN  20  DEC 0 COMMENT "Clave principal"        HIDE           OF ::oDbf
       FIELD NAME "cValor"        TYPE "C" LEN 250  DEC 0 COMMENT "Valor del campo"        HIDE           OF ::oDbf
 
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "nTipDoc"      ON "nTipDoc"            COMMENT "nTipDoc"             NODELETED OF ::oDbf
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cCodTipo"     ON "cCodTipo"           COMMENT "cCodTipo"            NODELETED OF ::oDbf
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cClave"       ON "cClave"             COMMENT "cClave"              NODELETED OF ::oDbf
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cTipoClave"   ON "cCodTipo + cClave"  COMMENT "cCodTipo + cClave"   NODELETED OF ::oDbf
+      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cTipDoc"      ON "cTipDoc"                        COMMENT "cTipDoc"                      NODELETED OF ::oDbf
+      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cCodTipo"     ON "cCodTipo"                       COMMENT "cCodTipo"                     NODELETED OF ::oDbf
+      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cClave"       ON "cClave"                         COMMENT "cClave"                       NODELETED OF ::oDbf
+      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cTipoClave"   ON "cCodTipo + cClave"              COMMENT "cCodTipo + cClave"            NODELETED OF ::oDbf
+      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cClaveTotal"  ON "cTipDoc + cCodTipo + cClave"    COMMENT "cTipDoc + cCodTipo + cClave"  NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -255,6 +261,7 @@ Method Play( cClave )
    ::CargaValores( cClave ) 
 
    if ::Resource()
+      ::RollBackValores( cClave )
       ::GuardaValores( cClave )
    end if
 
@@ -262,16 +269,56 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD cFormat2Char( uValor, ldtos ) CLASS TDetCamposExtra
+
+   DEFAULT ldtos     := .f.
+
+   do case 
+      case Valtype( uValor ) == "C"
+         Return ( Padr( uValor, 250 ) )
+
+      case Valtype( uValor  ) == "D"
+         Return ( Padr( if( lDtos, dtos( uValor ), dtoc( uValor ) ), 250 ) )
+
+      case Valtype( uValor ) == "N"
+         Return ( Padr( Str( uValor ), 250 ) )
+
+   end case
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD cChar2Format( uValor, nFormat ) CLASS TDetCamposExtra
+
+   do case 
+      case nFormat == 2
+         Return ( Val( AllTrim( uValor ) ) )
+
+      case nFormat == 3
+         Return ( ctod( AllTrim( uValor ) ) )
+
+   end case
+
+Return ( uValor )
+
+//---------------------------------------------------------------------------//
+
 METHOD CargaValores( cClave ) CLASS TDetCamposExtra
 
-   local nRec     := ::oDbf:Recno()
-   local nOrdAnt  := ::oDbf:OrdSetFocus( "cTipoClave" )
+   local nRec              := ::oDbf:Recno()
+   local nOrdAnt           := ::oDbf:OrdSetFocus( "cClaveTotal" )
    local hCampos
+   local cClavePrincipal
 
    for each hCampos in ::aCamposExtra
 
-      if ::oDbf:Seek( hGet( hCampos, "código" ) + Padr( cClave, 20 ) )
-         hSet( hCampos, "valor", ::oDbf:cValor )
+      cClavePrincipal      := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 20 )
+
+      if ::oDbf:Seek( cClavePrincipal )
+
+         hSet( hCampos, "valor", ::cChar2Format( ::oDbf:cValor, hGet( hCampos, "tipo" ) ) )
+
       end if
 
    next
@@ -313,7 +360,7 @@ METHOD Resource() CLASS TDetCamposExtra
 
       with object ( ::oBrw:AddCol() )
          :cHeader          := "Descripción"
-         :bStrData         := {|| hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "descripción" ) }
+         :bStrData         := {|| AllTrim( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "descripción" ) ) + if( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "lrequerido" ), " *", "" ) }
          :nWidth           := 250
       end with
 
@@ -321,13 +368,13 @@ METHOD Resource() CLASS TDetCamposExtra
          :cHeader          := "Valor"
          :bEditValue       := {|| hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valor" ) }
          :bStrData         := {|| hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valor" ) }
-         :nWidth           := 250
+         :nWidth           := 300
       end with
 
    REDEFINE BUTTON ;
       ID          IDOK ;
       OF          ::oDlg ;
-      ACTION      ( ::oDlg:End( IDOK ) )
+      ACTION      ( if( ::lPresave(), ::oDlg:End( IDOK ), ) )
 
    REDEFINE BUTTON  ;
       ID          IDCANCEL ;
@@ -345,6 +392,28 @@ Return ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
+METHOD lPreSave() CLASS TDetCamposExtra
+
+   local cError   := ""
+   local hCampo
+
+   for each hCampo in ::aCamposExtra
+
+      if hGet( hCampo, "lrequerido" ) .and. empty( ::cFormat2Char( hGet( hCampo, "valor" ), .t. ) )
+         cError   += Space( 3 ) + "* " + AllTrim( hGet( hCampo, "descripción" ) ) + CRLF
+      end if
+
+   next
+
+   if !Empty( cError )
+      MsgStop( "Campos obligatorios que no están rellenos: " + CRLF + cError )
+      Return .f.
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD ChangeBrowse() CLASS TDetCamposExtra
 
    Eval( hGet( ::hFormatoColumnas, AllTrim( Str( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "tipo" ) ) ) ) )
@@ -352,5 +421,50 @@ METHOD ChangeBrowse() CLASS TDetCamposExtra
    ::oCol:bOnPostEdit            := {|o,x,n| hSet( ::aCamposExtra[ ::oBrw:nArrayAt ], "valor", x ) }
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD RollBackValores( cClave ) CLASS TDetCamposExtra
+
+   local nRec     := ::oDbf:Recno()
+   local nOrdAnt  := ::oDbf:OrdSetFocus( "cClaveTotal" )
+   local hCampos
+   local cClavePrincipal
+
+   for each hCampos in ::aCamposExtra
+
+      cClavePrincipal    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento ) + hGet( hCampos, "código" ) + Padr( cClave, 20 )
+
+      while ::oDbf:Seek( cClavePrincipal )
+         ::oDbf:Delete()
+      end while
+
+   next
+
+   ::oDbf:OrdSetFocus( nOrdAnt )
+   ::oDbf:GoTo( nRec )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD GuardaValores( cClave ) CLASS TDetCamposExtra
+
+   local hCampos
+
+   for each hCampos in ::aCamposExtra
+
+      ::oDbf:Append()
+
+      ::oDbf:cTipDoc    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento )
+      ::oDbf:cCodTipo   := hGet( hCampos, "código" )
+      ::oDbf:cClave     := Padr( cClave, 20 )
+      ::oDbf:cValor     := ::cFormat2Char( hGet( hCampos, "valor" ) )
+
+      ::oDbf:Save()
+
+   next
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

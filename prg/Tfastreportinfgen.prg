@@ -287,6 +287,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD nTotalDescuentoPorcentualLineaAlbaranesClientes()       INLINE ( nDtoLAlbCli( ::oAlbCliL:cAlias ) )
    METHOD nTotalDescuentoPromocionalLineaAlbaranesClientes()      INLINE ( nPrmLAlbCli( ::oAlbCliL:cAlias ) )
 
+   METHOD AddVariableArticulos()
+
    METHOD AddVariableFacturaCliente()
    METHOD AddVariableLineasFacturaCliente()
    METHOD AddVariableRecibosCliente()
@@ -381,6 +383,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD nTotalIVALineaRectificativasProveedores()                      INLINE ( nIvaLRctPrv( ::oRctPrvL:cAlias ) )
    METHOD nTotalDescuentoPorcentualLineaRectificativasProveedores()      INLINE ( nDtoLRctPrv( ::oRctPrvL:cAlias ) )
    METHOD nTotalDescuentoPromocionalLineaRectificativasProveedores()     INLINE ( nPrmLRctPrv( ::oRctPrvL:cAlias ) )
+
+   METHOD ValorCampoExtra( cTipoDoccumento, cCodCampoExtra )
 
    //------------------------------------------------------------------------//
 
@@ -2581,6 +2585,14 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD AddVariableArticulos()
+
+   ::oFastReport:AddVariable(    "Campos extra",       "Primer campo extra",           "CallHbFunc( 'oTinfGen', ['ValorCampoExtra', 'Artículos', '001'])" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD AddVariableSATCliente()
 
    ::oFastReport:AddVariable(    "SAT clientes",            "Total base SAT clientes",            "CallHbFunc( 'oTinfGen', ['nBaseSATClientes'])"    )
@@ -3626,5 +3638,13 @@ METHOD insertIfValid()
    end if
 
 Return ( lValidRegister )
+
+//----------------------------------------------------------------------------//
+
+METHOD ValorCampoExtra( cTipoDoccumento, cCodCampoExtra )
+
+   local cValorCampoExtra  := cTipoDoccumento + cCodCampoExtra
+
+Return ( cValorCampoExtra )
 
 //----------------------------------------------------------------------------//

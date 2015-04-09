@@ -1235,7 +1235,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "Impuesto esp.", -1, "Static", WS_GROUP, 49, 54, 49, 8
   CONTROL "Impuestos", -1, "Button", BS_GROUPBOX, 44, 29, 347, 49
   CONTROL "", -1, "Button", BS_GROUPBOX, 43, 248, 448, 23
-  CONTROL "Campos extra", 511, "Button", WS_TABSTOP, 236, 88, 123, 14
 }
 
 ART_6 DIALOG DISCARDABLE 32, 6, 496, 286
