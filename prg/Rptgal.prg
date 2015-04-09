@@ -2530,6 +2530,9 @@ Return nil
 Function TCamposExtra()
 Return nil
 
+Function TDetCamposExtra()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

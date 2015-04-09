@@ -44,7 +44,7 @@ METHOD Create()
    ::AddField( "cNomAge",   "C", 50, 0, {|| "" },     "Agente",      .f., "Nombre del agente",     35, .f. )
    ::AddField( "cCodPgo",   "C", 12, 0, {|| "" },     "Cod. Pgo.",   .f., "Código del pago",       15, .f. )
    ::AddField( "cNomPgo",   "C", 50, 0, {|| "" },     "Forma pago",  .f., "Forma de pago",         35, .f. )
-   ::AddField( "cCtaRem",   "C", 20, 0, {|| "" },     "Cuenta",      .t., "Cuenta bancaria",       20, .f. )
+   ::AddField( "cCtaRem",   "C", 24, 0, {|| "" },     "Cuenta",      .t., "Cuenta bancaria",       30, .f. )
    ::AddField( "nTotRec",   "N", 16, 2, {|| "" },     "Total",       .t., "Total del recibo",      20, .t. )
 
    ::AddTmpIndex( "nNumRem", "nNumRem" )
@@ -212,9 +212,9 @@ METHOD lGenerate()
             ::oDbf:cCodPgo  := ::oFacCliP:cCodPgo
             ::oDbf:cNomPgo  := cNbrFPago( ::oFacCliP:cCodPgo )
 
-            cBncCli         := ::oFacCliP:cEntCli + ::oFacCliP:cSucCli + ::oFacCliP:cDigCli + ::oFacCliP:cCtaCli
+            cBncCli         := ::oFacCliP:cPaisIBAN + ::oFacCliP:cCtrlIBAN + ::oFacCliP:cEntCli + ::oFacCliP:cSucCli + ::oFacCliP:cDigCli + ::oFacCliP:cCtaCli
 
-            if Empty( cBncCli ) .or. Len( AllTrim( cBncCli ) ) != 20
+            if Empty( cBncCli ) .or. Len( AllTrim( cBncCli ) ) != 24
                cBncCli      := cClientCuenta( ::oFacCliP:cCodCli )
             end if
 

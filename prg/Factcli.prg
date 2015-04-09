@@ -19532,10 +19532,10 @@ function SynFacCli( cPath )
          Esto es para Cafes y zumos para que todos los facturas tengan la ruta del cliente
          */
         
-         /*if ( D():FacturasClientes( nView ) )->( dbRLock() )
+         if ( D():FacturasClientes( nView ) )->( dbRLock() )
            	( D():FacturasClientes( nView ) )->cCodRut := RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CCODRUT" )
          	( D():FacturasClientes( nView ) )->( dbUnLock() )
-         end if*/
+         end if
 
          if !Empty( ( D():FacturasClientes( nView ) )->cNumPed )
             aAdd( aNumPed, ( D():FacturasClientes( nView ) )->cNumPed )

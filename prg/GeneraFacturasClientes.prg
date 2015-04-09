@@ -1224,6 +1224,7 @@ METHOD AppendFacturaCabecera( oItem ) CLASS GeneraFacturasClientes
       ( D():FacturasClientes( ::nView ) )->nTarifa    := Max( ( D():Clientes( ::nView ) )->nTarifa, 1 )
       ( D():FacturasClientes( ::nView ) )->lOperPv    := ( D():Clientes( ::nView ) )->lPntVer
       ( D():FacturasClientes( ::nView ) )->lRecargo   := ( D():Clientes( ::nView ) )->lReq
+      ( D():FacturasClientes( ::nView ) )->cCodRut    := ( D():Clientes( ::nView ) )->cCodRut
    end if
 
    if !::oAgruparCliente:Value()
