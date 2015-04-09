@@ -6451,6 +6451,7 @@ METHOD InsertStockPendiente( nTotal, lLote, lNumeroSerie )
       :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
       :cDelegacion         := ( ::cPedPrvL )->cSufPed
       :dFechaDocumento     := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
+      :tFechaDocumento     := ""
       :cCodigoAlmacen      := ( ::cPedPrvL )->cAlmLin
       :cCodigoPropiedad1   := ( ::cPedPrvL )->cCodPr1
       :cCodigoPropiedad2   := ( ::cPedPrvL )->cCodPr2
@@ -6586,7 +6587,9 @@ CLASS SStock
    
    METHOD New()
 
-   METHOD Documento()         INLINE ( cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ) + " a las " + trans( ::tFechaDocumento, "@R 99:99:99" ) )
+   METHOD Documento()         INLINE ( if( empty( ::tFechaDocumento ) ,;
+                               cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ),;
+                               cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ) + " a las " + trans( ::tFechaDocumento, "@R 99:99:99" ) ) )
 
    METHOD Say()
 
