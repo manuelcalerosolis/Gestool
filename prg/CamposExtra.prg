@@ -90,16 +90,15 @@ CLASS TCamposExtra FROM TMant
    Method SetValoresDefecto()          INLINE ( ::oDbf:mDefecto   := hb_serialize( ::oListaDefecto:aItems ) )
    Method GetValoresDefecto()          INLINE ( ::aValoresDefecto := hb_deserialize( ::oDbf:mDefecto ) )
 
+   Method setDocumentos()              INLINE ( ::oDbf:mDocumento := hb_serialize( ::aDocumentos ) )
+   Method getDocumentos()              INLINE ( ::aDocumentos     := hb_deserialize( ::oDbf:mDocumento ) )
+   Method readDocumentos()             
    Method initDocumentos()
+   Method cargaValoresDocumentos( nMode )
 
    Method CreaTreeDocumentos()
    Method CreaListaImagenes()
    Method AddItemTree( k, v, i )
-
-   Method cargaValoresDocumentos( nMode )
-
-   Method SetDocumentos()
-   Method GetDocumentos()
 
    Method lValidResource( nMode )
 
@@ -232,25 +231,26 @@ RETURN ( Self )
 METHOD OpenFiles( lExclusive ) CLASS TCamposExtra
 
    local oError
-   local oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock           
 
-   DEFAULT lExclusive         := .f.
+   DEFAULT lExclusive      := .f.
 
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if !::lOpenFiles
+      if !::lOpenFiles
 
-      if Empty( ::oDbf )
-         ::DefineFiles()
+         if Empty( ::oDbf )
+            ::DefineFiles()
+         end if
+
+         ::oDbf:Activate( .f., !( lExclusive ) )
+
+         ::lLoadDivisa()
+
+         ::lOpenFiles      := .t.
+
       end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-      ::lLoadDivisa()
-
-      ::lOpenFiles         := .t.
-
-   end if
 
    RECOVER USING oError
 
@@ -425,7 +425,7 @@ METHOD Resource( nMode ) CLASS TCamposExtra
       ID          190 ;
       OF          ::oDlg
 
-   ::oTree                       := TTreeView():Redefine( 200, ::oDlg )
+   ::oTree        := TTreeView():Redefine( 200, ::oDlg )
 
    REDEFINE BUTTON oBtnAceptar ;
       ID          IDOK ;
@@ -453,7 +453,7 @@ METHOD cargaValoresDocumentos( nMode ) CLASS TCamposExtra
    if nMode == APPD_MODE .or. Empty( ::oDbf:mDocumento )
       ::initDocumentos()
    else
-      ::GetDocumentos()
+      ::getDocumentos()
    end if
 
 Return ( self )
@@ -504,57 +504,40 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SetDocumentos() CLASS TCamposExtra
+Method readDocumentos() CLASS TCamposExtra
 
    local oItem
 
-   ?"SetDocumentos"
-
    for each oItem in ::oTree:aItems
-
-      ?oItem:cPrompt
-      
-      ?::oTree:GetCheck( oItem )
-
+      if hhaskey( ::aDocumentos, oItem:cPrompt )
+         hset( ::aDocumentos, oItem:cPrompt, ::oTree:GetCheck( oItem ) )
+      end if 
    next
 
-   MsgInfo( hb_ValtoExp( ::aDocumentos ) )
-
-   ::oDbf:mDocumento := hb_serialize( ::aDocumentos )
-
-   ?::oDbf:mDocumento
+   ? hb_valtoexp( ::aDocumentos )
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
    
-Method GetDocumentos() CLASS TCamposExtra
-
-   ::aDocumentos     := hb_deserialize( ::oDbf:mDocumento)
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 METHOD lValidResource( nMode ) CLASS TCamposExtra
 
+   local oItem
+
    if Empty( ::oDbf:cCodigo )
-      
       MsgStop( "Código del campo extra no puede estar vacío." )
       ::oCodigo:SetFocus()
-
       Return .f.
-
    end if
 
    if Empty( ::oDbf:cNombre )
-      
       MsgStop( "Nombre del campo extra no puede estar vacío." )
       ::oNombre:SetFocus()
-
       Return .f.
-
    end if
+
+   ::readDocumentos()
 
 Return .t.
 
@@ -564,9 +547,9 @@ Method PreSave() CLASS TCamposExtra
 
    ::oDbf:nTipo  := ::oTipo:nAt
    
-   ::SetValoresDefecto()
+   ::setValoresDefecto()
 
-   ::SetDocumentos()
+   ::setDocumentos()
 
 Return ( self )
 
