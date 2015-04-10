@@ -2874,12 +2874,12 @@ Function CreateAcceso( oWnd )
    end if
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 4
+   oGrupo:nBigItems     := 5
    oGrupo:cPrompt       := 'Útiles'
    oGrupo:cLittleBitmap := "Note_16"
    oGrupo:cBigBitmap    := "Note_32"
 
-   /*oItem                := oItemHerramientas:Add()
+   oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Cambiar códigos'
    oItem:cMessage       := 'Cambiar códigos'
@@ -2887,7 +2887,7 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01073"
    oItem:cBmp           := "Replace_16"
    oItem:cBmpBig        := "Replace_32"
-   oItem:lShow          := .f.*/
+   oItem:lShow          := .f.
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo

@@ -514,8 +514,6 @@ Method readDocumentos() CLASS TCamposExtra
       end if 
    next
 
-   ? hb_valtoexp( ::aDocumentos )
-
 Return ( Self )
 
 //---------------------------------------------------------------------------//
