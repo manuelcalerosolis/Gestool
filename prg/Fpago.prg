@@ -1172,8 +1172,8 @@ function aItmFPago()
    aAdd( aBase, { "cSucBnc",   "C",   4,   0, "Sucursal de la cuenta"                                  ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cDigBnc",   "C",   2,   0, "Dígito de control de la cuenta"                         ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCtaBnc",   "C",  10,   0, "Cuenta bancaria"                                        ,  "",   "", "( cDbfPgo )" } )
-   aAdd( aBase, { "cCodWeb",   "C", 100,   0, "Código web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
-
+   aAdd( aBase, { "cCodWeb",   "C", 200,   0, "Modulo web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
+   
 return ( aBase )
 
 //---------------------------------------------------------------------------//

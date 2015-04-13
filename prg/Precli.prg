@@ -9666,6 +9666,9 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( cPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
 
+      ( cPreCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodWeb", "Str( Field->cCodWeb )", {|| Str( Field->cCodWeb ) } ) )
+
       ( cPreCliT )->( dbCloseArea() )
 
    else
@@ -10152,6 +10155,9 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "nTotPre",   "N", 16,  6, "Total presupuesto" ,                                "", "", "( cDbf )"} )
    aAdd( aItmPreCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
    aAdd( aItmPreCli, { "nDtoTarifa","N",  6,  2, "Descuento de tarifa de cliente",                    "", "", "( cDbf )"} )
+   aAdd( aItmPreCli, { "cCodWeb",   "N",  11,  0, "Codigo del presupuesto en la web" ,                "", "", "( cDbf )"} )
+   aAdd( aItmPreCli, { "lWeb",      "L",   1,  0, "Lógico de recibido por web" ,                      "", "", "( cDbf )"} )
+   aAdd( aItmPreCli, { "lInternet", "L",   1,  0, "Pedido desde internet" ,                           "", "", "( cDbf )"} )
 
 return ( aItmPreCli )
 

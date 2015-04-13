@@ -2449,6 +2449,15 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       210 ;
             OF       fldComunicaciones
 
+      REDEFINE GET aGet[ _CSERIEPRE ] VAR aTmp[ _CSERIEPRE ] ;
+            SPINNER ;
+            ON UP    ( UpSerie( aGet[ _CSERIEPRE ] ) );
+            ON DOWN  ( DwSerie( aGet[ _CSERIEPRE ] ) );
+            PICTURE  "@!" ;
+            VALID    ( aTmp[ _CSERIEPRE ] >= "A" .AND. aTmp[ _CSERIEPRE ] <= "Z"  );
+            ID       320 ;
+            OF       fldComunicaciones
+
       REDEFINE BTNBMP ;
             ID       150 ;
             OF       fldComunicaciones ;
@@ -6669,6 +6678,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lSSLMai",    "L",  1, 0, "Lógico de uso de protocolo SSL del servidor de correo", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCcoMai",    "C",250, 0, "Enviar con copia oculta de mail a cuenta de correo",    "", "", "aEmp()", "" } )
    aAdd( aDbf, {"lRecEnt",    "L",  1, 0, "Lógico para recibir albaranes como entregados",         "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"cSeriePre",  "C",  1, 0, "Serie para presupuestos de internet",                   "", "", "aEmp()", "A" } )
 
 Return ( aDbf )
 
