@@ -267,7 +267,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	*/
 
    for n := 1 to Len( aVentas )
-
       nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoEsp )
       nRestaDescuentoVenta( @aVentas[ n, 3 ], nDpp )
       nRestaDescuentoVenta( @aVentas[ n, 3 ], nDtoUno )
@@ -560,6 +559,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       next
 
    end if
+
+   // msgAlert( hb_valToExp( aIva, "aIva" ) )
 
    nTotDebe          := Round( nTotDebe, nRouDiv )
    nTotHaber         := Round( nTotHaber, nRouDiv )

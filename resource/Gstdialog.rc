@@ -20287,7 +20287,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 380, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 61, 193, 70, 12
   CONTROL "", 381, "Edit", WS_BORDER|WS_TABSTOP, 134, 193, 60, 12
   CONTROL "Observaciones", -1, "Static", WS_GROUP, 4, 8, 50, 8
-  CONTROL "Fecha entrada", -1, "Static", WS_GROUP, 4, 182, 51, 8
+  CONTROL "Fecha apertura", -1, "Static", WS_GROUP, 4, 182, 51, 8
   CONTROL "Fecha cierre", -1, "Static", WS_GROUP, 4, 196, 45, 8
 }
 

@@ -2651,7 +2651,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
       aTmp[ _CALMLIN  ]    := aTmpAlb[ _CCODALM ]
       aTmp[ _CCODPED  ]    := aTmpAlb[ _CNUMPED ]
       aTmp[ _LCHGLIN  ]    := lActCos()
-      aTmp[ _DFECCAD  ]    := Ctod( "" )
+      aTmp[ _DFECCAD  ]    := ctod( "" )
+      aTmp[ _DAPERTURA]    := ctod( "" )
+      aTmp[ _DCIERRE  ]    := ctod( "" )
       aTmp[ _NNUMLIN  ]    := nLastNum( dbfTmp )
 
       if !Empty( cCodArtEnt )
