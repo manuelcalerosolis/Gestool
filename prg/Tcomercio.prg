@@ -9602,8 +9602,6 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-
-
 METHOD getDate( cDatePrestashop ) CLASS TComercio
 
    local dFecha
@@ -9746,70 +9744,67 @@ METHOD insertLineaPresupuestoPrestashop( oQuery ) CLASS TComercio
    local oQueryL           := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_detail" ) + " WHERE id_order=" + AllTrim( Str( ::idOrderPrestashop ) ) )
    local nNumLin           := 1
 
-      if oQueryL:Open()
+   if oQueryL:Open() .and. ( oQueryL:RecCount() > 0 )
 
-         if oQueryL:RecCount() > 0
+      oQueryL:GoTop()
+      while !oQueryL:Eof()
 
-            oQueryL:GoTop()
+         ::oPreCliL:Append()
+         ::oPreCliL:Blank()
 
-            while !oQueryL:Eof()
+         ::oPreCliL:cSerPre        := ::cSeriePresupuesto
+         ::oPreCliL:nNumPre        := ::nNumeroPresupuesto
+         ::oPreCliL:cSufPre        := ::cSufijoPresupuesto
+         ::oPreCliL:dFecha         := ::getDate( oQuery:FieldGetByName( "date_add" ) )
+         ::oPreCliL:cDetalle       := oQueryL:FieldGetByName( "product_name" )
+         ::oPreCliL:mLngDes        := oQueryL:FieldGetByName( "product_name" )
+         ::oPreCliL:nCanPre        := 1
+         ::oPreCliL:nUniCaja       := oQueryL:FieldGetByName( "product_quantity" )
+         ::oPreCliL:nPreDiv        := oQueryL:FieldGetByName( "product_price" )
+         ::oPreCliL:nNumLin        := nNumLin
+         ::oPreCliL:cAlmLin        := cDefAlm()
+         ::oPreCliL:nTarLin        := 1
+         ::oPreCliL:nDto           := oQueryL:FieldGetByName( "reduction_percent" )
+         ::oPreCliL:nDtoDiv        := oQueryL:FieldGetByName( "reduction_amount" )
+         ::oPreCliL:nIva           := ::nIvaProduct( oQueryL:FieldGetByName( "product_id" ) )
 
-               ::oPreCliL:Append()
-               ::oPreCliL:Blank()
+         if ::oArt:SeekInOrd( Str( oQueryL:FieldGetByName( "product_id" ), 11 ) , "cCodWeb" )
 
-               ::oPreCliL:cSerPre        := ::cSeriePresupuesto
-               ::oPreCliL:nNumPre        := ::nNumeroPresupuesto
-               ::oPreCliL:cSufPre        := ::cSufijoPresupuesto
-               ::oPreCliL:dFecha         := ::getDate( oQuery:FieldGetByName( "date_add" ) )
-               ::oPreCliL:cDetalle       := oQueryL:FieldGetByName( "product_name" )
-               ::oPreCliL:mLngDes        := oQueryL:FieldGetByName( "product_name" )
-               ::oPreCliL:nCanPre        := 1
-               ::oPreCliL:nUniCaja       := oQueryL:FieldGetByName( "product_quantity" )
-               ::oPreCliL:nPreDiv        := oQueryL:FieldGetByName( "product_price" )
-               ::oPreCliL:nNumLin        := nNumLin
-               ::oPreCliL:cAlmLin        := cDefAlm()
-               ::oPreCliL:nTarLin        := 1
-               ::oPreCliL:nDto           := oQueryL:FieldGetByName( "reduction_percent" )
-               ::oPreCliL:nDtoDiv        := oQueryL:FieldGetByName( "reduction_amount" )
-               ::oPreCliL:nIva           := ::nIvaProduct( oQueryL:FieldGetByName( "product_id" ) )
-
-               if ::oArt:SeekInOrd( Str( oQueryL:FieldGetByName( "product_id" ), 11 ) , "cCodWeb" )
-
-                  ::oPreCliL:cRef        := ::oArt:Codigo
-                  ::oPreCliL:cUnidad     := ::oArt:cUnidad
-                  ::oPreCliL:nPesoKg     := ::oArt:nPesoKg
-                  ::oPreCliL:cPesoKg     := ::oArt:cUnidad
-                  ::oPreCliL:nVolumen    := ::oArt:nVolumen
-                  ::oPreCliL:cVolumen    := ::oArt:cVolumen
-                  ::oPreCliL:nCtlStk     := ::oArt:nCtlStock
-                  ::oPreCliL:nCosDiv     := nCosto( ::oArt:Codigo, ::oArt:cAlias, ::oKit:cAlias )
-                  ::oPreCliL:cCodTip     := ::oArt:cCodTip
-                  ::oPreCliL:cCodFam     := ::oArt:Familia
-                  ::oPreCliL:cGrpFam     := RetFld( ::oArt:Familia, ::oFam:cAlias, "cCodGrp" )
-                  ::oPreCliL:cCodPr1     := ::oArt:cCodPrp1
-                  ::oPreCliL:cCodPr2     := ::oArt:cCodPrp2
-                  ::oPreCliL:cValPr1     := ::GetValPrp( oRetFld( ::oArt:cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
-                  ::oPreCliL:cValPr2     := ::GetValPrp( oRetFld( ::oArt:cCodPrp2, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
-                  ::oPreCliL:lLote       := ::oArt:lLote 
-                  ::oPreCliL:cLote       := ::oArt:cLote 
-
-               end if
-
-            if !::oPreCliL:Save()
-               ::treeSetText( "Error al descargar las lineas el pedido: " ;
-                               + ::cSeriePresupuesto + "/" + AllTrim( Str( ::nNumeroPresupuesto ) ) ;
-                               + "/" + ::cSufijoPresupuesto, 3 )
-            end if
-
-            oQueryL:Skip()
-
-            nNumLin++
-
-            end while
+            ::oPreCliL:cRef        := ::oArt:Codigo
+            ::oPreCliL:cUnidad     := ::oArt:cUnidad
+            ::oPreCliL:nPesoKg     := ::oArt:nPesoKg
+            ::oPreCliL:cPesoKg     := ::oArt:cUnidad
+            ::oPreCliL:nVolumen    := ::oArt:nVolumen
+            ::oPreCliL:cVolumen    := ::oArt:cVolumen
+            ::oPreCliL:nCtlStk     := ::oArt:nCtlStock
+            ::oPreCliL:nCosDiv     := nCosto( ::oArt:Codigo, ::oArt:cAlias, ::oKit:cAlias )
+            ::oPreCliL:cCodTip     := ::oArt:cCodTip
+            ::oPreCliL:cCodFam     := ::oArt:Familia
+            ::oPreCliL:cGrpFam     := RetFld( ::oArt:Familia, ::oFam:cAlias, "cCodGrp" )
+            ::oPreCliL:cCodPr1     := ::oArt:cCodPrp1
+            ::oPreCliL:cCodPr2     := ::oArt:cCodPrp2
+            ::oPreCliL:cValPr1     := ::GetValPrp( oRetFld( ::oArt:cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
+            ::oPreCliL:cValPr2     := ::GetValPrp( oRetFld( ::oArt:cCodPrp2, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
+            ::oPreCliL:lLote       := ::oArt:lLote 
+            ::oPreCliL:cLote       := ::oArt:cLote 
 
          end if
 
-      end if
+         if !::oPreCliL:Save()
+            ::treeSetText( "Error al descargar las lineas el pedido: " ;
+                            + ::cSeriePresupuesto + "/" + AllTrim( Str( ::nNumeroPresupuesto ) ) ;
+                            + "/" + ::cSufijoPresupuesto, 3 )
+         end if
+
+      oQueryL:Skip()
+
+      nNumLin++
+
+      end while
+
+   end if
+
+   oQueryL:Free()
 
 Return ( .t. )
  
@@ -9817,57 +9812,50 @@ Return ( .t. )
 
 METHOD appendMessagePresupuesto ( dFecha ) CLASS TComercio
 
-local oQueryThead
+   local oQueryThead
    local oQueryMessage
 
    oQueryThead    := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "customer_thread" ) + " WHERE id_order=" + AllTrim( Str( ::idOrderPrestashop ) ) )
 
-   if oQueryThead:Open()
+   if oQueryThead:Open() .and. ( oQueryThead:RecCount() > 0 )
 
-      if oQueryThead:RecCount() > 0
+      oQueryThead:GoTop()
+      while !oQueryThead:Eof()
 
-         oQueryThead:GoTop()
+         oQueryMessage    := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "customer_message" ) + " WHERE id_customer_thread=" + AllTrim( Str( oQueryThead:FieldGet( 1 ) ) ) )
 
-         while !oQueryThead:Eof()
+         if oQueryMessage:Open() .and. ( oQueryMessage:RecCount() > 0 )
 
-            oQueryMessage    := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "customer_message" ) + " WHERE id_customer_thread=" + AllTrim( Str( oQueryThead:FieldGet( 1 ) ) ) )
+            oQueryMessage:GoTop()
+            while !oQueryMessage:Eof()
 
-            if oQueryMessage:Open()
+               ::oPreCliI:Append()
+               ::oPreCliI:Blank()
 
-               if oQueryMessage:RecCount() > 0
+               ::oPreCliI:cSerPre   := ::cSeriePresupuesto
+               ::oPreCliI:nNumPre   := ::nNumeroPresupuesto
+               ::oPreCliI:cSufPre   := ::cSufijoPresupuesto
+               ::oPreCliI:dFecInc   := dFecha
+               ::oPreCliI:mDesInc   := oQueryMessage:FieldGetByName( "message" )
+               ::oPreCliI:lAviso    := .t.
 
-                  oQueryMessage:GoTop()
+               ::oPreCliI:Save()
 
-                  while !oQueryMessage:Eof()
+               oQueryMessage:Skip()
 
-                     ::oPreCliI:Append()
-                     ::oPreCliI:Blank()
+            end while
 
-                     ::oPreCliI:cSerPre   := ::cSeriePresupuesto
-                     ::oPreCliI:nNumPre   := ::nNumeroPresupuesto
-                     ::oPreCliI:cSufPre   := ::cSufijoPresupuesto
-                     ::oPreCliI:dFecInc   := dFecha
-                     ::oPreCliI:mDesInc   := oQueryMessage:FieldGetByName( "message" )
-                     ::oPreCliI:lAviso    := .t.
+         end if
+            
+         oQueryMessage:Free()    
 
-                     ::oPreCliI:Save()
+         oQueryThead:Skip()
 
-                  oQueryMessage:Skip()
+      end while
 
-                  end while
+   end if   
 
-               end if
-               
-            end if      
-
-            oQueryThead:Skip()
-
-         end while
-
-      end if   
-
-   end if
-
+   oQueryThead:Free()
 
 Return ( .t. )
  
@@ -9884,7 +9872,6 @@ METHOD insertPedidoPrestashop( oQuery ) CLASS TComercio
    ::AppendMessagePedido( ::getDate( oQuery:FieldGetByName( "date_add" ) ) )
 
 return ( .t. )
-
 
 //---------------------------------------------------------------------------//
 
