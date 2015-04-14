@@ -2526,13 +2526,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    end case
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT     (  if( !Empty( cNumAlb ), aGet[ _CNUMALB ]:lValid(), ),;
-                     EdtRecMenu( aTmp, oDlg ),;
-                     ShowKitFacPrv( D():FacturasProveedores( nView ), oBrwLin, cCodPrv, dbfTmpInc, aGet, aTmp, aControl, oSayGas, oSayLabels, oBrwIva ),;
-                     oBrwLin:Load(),;
-                     oBrwPgo:Load(),;
-                     oBrwInc:Load() ) ;
-      ON PAINT    (  RecalculaTotal( aTmp ) );
+      ON INIT     ( InitDialog( cNumAlb, aGet, aTmp, oDlg, oBrwLin, cCodPrv, oBrwPgo, oBrwInc, dbfTmpInc, aControl, oSayGas, oSayLabels, oBrwIva ) ) ;
+      ON PAINT    ( RecalculaTotal( aTmp ) );
       CENTER
 
    oBmpEmp:End()
@@ -2611,6 +2606,26 @@ Static Function EdtRecMenu( aTmp, oDlg )
    oDlg:SetMenu( oMnuRec )
 
 Return ( oMnuRec )
+
+//----------------------------------------------------------------------------//
+
+Static Function InitDialog( cNumAlb, aGet, aTmp, oDlg, oBrwLin, cCodPrv, oBrwPgo, oBrwInc, dbfTmpInc, aControl, oSayGas, oSayLabels, oBrwIva )
+
+   if !Empty( cNumAlb )
+      aGet[ _CNUMALB ]:lValid()
+   endif
+   
+   EdtRecMenu( aTmp, oDlg )
+
+   oBrwLin:MakeTotals()
+
+   ShowKitFacPrv( D():FacturasProveedores( nView ), oBrwLin, cCodPrv, dbfTmpInc, aGet, aTmp, aControl, oSayGas, oSayLabels, oBrwIva )
+   
+   oBrwLin:Load()
+   oBrwPgo:Load()
+   oBrwInc:Load()
+
+return( .t. )
 
 //----------------------------------------------------------------------------//
 

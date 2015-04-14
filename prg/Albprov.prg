@@ -2192,9 +2192,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    end case
 
 	ACTIVATE DIALOG oDlg	;
-      ON INIT     (  if( !Empty( cCodPed ), aGet[ _CNUMPED ]:lValid(), ),;
-                     EdtRecMenu( aTmp, oDlg ),;
-                     oBrwLin:Load() ) ;
+      ON INIT     (  initEdtRec( cCodPed, aTmp, oDlg, oBrwLin, aGet) ) ;
       ON PAINT    ( RecalculaTotal( aTmp ) );
       CENTER
 
@@ -2233,6 +2231,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    dbCommitAll()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//----------------------------------------------------------------------------//
+
+Static Function initEdtRec( cCodPed, aTmp, oDlg, oBrwLin, aGet )
+
+   if !Empty( cCodPed )
+      aGet[ _CNUMPED ]:lValid()
+   endif
+                     
+   EdtRecMenu( aTmp, oDlg )
+
+   oBrwLin:MakeTotals()
+
+   oBrwLin:Load()
+
+
+return( .t. )
 
 //----------------------------------------------------------------------------//
 

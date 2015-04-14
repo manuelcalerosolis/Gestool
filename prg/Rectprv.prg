@@ -2428,12 +2428,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
    end case
 
 	ACTIVATE DIALOG oDlg	;
-      ON INIT     (  if( !Empty( cNumFac ), aGet[ _CNUMFAC ]:lValid(), ),;
-                     EdtRecMenu( aTmp, oDlg ),;
-                     ShowKitRctPrv( D():FacturasRectificativasProveedores( nView ), oBrwLin, cCodPrv, dbfTmpInc, aGet, aTmp, aControl, oSayGas, oSayLabels, oBrwIva ),;
-                     oBrwLin:Load(),;
-                     oBrwPgo:Load(),;
-                     oBrwInc:Load() ) ;
+      ON INIT     (  initEdtRec( cNumFac, aGet, aTmp, oDlg, oBrwLin, oBrwPgo, oBrwInc, cCodPrv, dbfTmpInc, aControl, oSayGas, oSayLabels, oBrwIva ) ) ;
       ON PAINT    (  RecalculaTotal( aTmp ) );
 		CENTER
 
@@ -2455,6 +2450,25 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
    KillTrans( oBrwLin )
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function initEdtRec( cNumFac, aGet, aTmp, oDlg, oBrwLin, oBrwPgo, oBrwInc, cCodPrv, dbfTmpInc, aControl, oSayGas, oSayLabels, oBrwIva )
+
+   if !Empty( cNumFac )
+      aGet[ _CNUMFAC ]:lValid()
+   endif
+
+   EdtRecMenu( aTmp, oDlg )
+   ShowKitRctPrv( D():FacturasRectificativasProveedores( nView ), oBrwLin, cCodPrv, dbfTmpInc, aGet, aTmp, aControl, oSayGas, oSayLabels, oBrwIva )
+   
+   oBrwLin:MakeTotals()
+
+   oBrwLin:Load()
+   oBrwPgo:Load()
+   oBrwInc:Load()
+
+return( .t. )
 
 //---------------------------------------------------------------------------//
 

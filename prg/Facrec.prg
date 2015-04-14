@@ -3603,13 +3603,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    end case
 
    ACTIVATE DIALOG oDlg ;
-         ON INIT (   EdtRecMenu( aTmp, oDlg ),;
-                     if( !Empty( cCodCli ), aGet[ _CCODCLI ]:lValid(), ),;
-                     SetDialog( oSayGetRnt, oGetRnt ),;
-                     oBrwLin:Load(),;
-                     oBrwPgo:Load(),;
-                     oBrwInc:Load(),;
-                     RecalculaTotal( aTmp ) );
+         ON INIT 	 (   initEdtRec( cCodCli, aGet, aTmp, oDlg, oBrwLin, oBrwPgo, oBrwInc, oSayGetRnt, oGetRnt ) );
+         ON PAINT    (  RecalculaTotal( aTmp ) );
          CENTER
 
    EndEdtRecMenu()
@@ -3637,6 +3632,25 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    KillTrans( oBrwLin, oBrwInc, oBrwPgo )
 
 RETURN ( oDlg:nResult == IDOK )
+
+//----------------------------------------------------------------------------//
+
+Static Function initEdtRec( cCodCli, aGet, aTmp, oDlg, oBrwLin, oBrwPgo, oBrwInc, oSayGetRnt, oGetRnt )
+
+   if !Empty( cCodCli )
+      aGet[ _CCODCLI ]:lValid()
+   endif
+
+   EdtRecMenu( aTmp, oDlg )
+   SetDialog( oSayGetRnt, oGetRnt )
+   
+   oBrwLin:MakeTotals()
+
+   oBrwLin:Load()
+   oBrwPgo:Load()
+   oBrwInc:Load()
+
+return( .t. )
 
 //----------------------------------------------------------------------------//
 
