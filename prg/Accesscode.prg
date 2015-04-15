@@ -503,6 +503,8 @@ METHOD InitTactilResource( oDlg, oImgUsr, oLstUsr ) CLASS AccessCode
 
          if !( ::dbfUser )->lUseUse .and. !( ::dbfUser )->lGrupo
 
+         msgAlert( (::dbfUser)->cCodUse, "cod usuario" )
+
             if !Empty( ( ::dbfUser )->cImagen ) .and. File( Rtrim( ( ::dbfUser )->cImagen ) )
 
                oImgUsr:Add( TBitmap():Define( , Rtrim( ( ::dbfUser )->cImagen ) ) )
@@ -519,17 +521,23 @@ METHOD InitTactilResource( oDlg, oImgUsr, oLstUsr ) CLASS AccessCode
 
             else
 
+            msgAlert("no encuentra imagen")
+
                with object ( TListViewItem():New() )
                   :Cargo   := ( ::dbfUser )->cCodUse
                   :cText   := Capitalize( ( ::dbfUser )->cNbrUse )
                   :nImage  := if( ( ::dbfUser )->nGrpUse <= 1, 0, 1 )
                   :nGroup  := if( ( ::dbfUser )->nGrpUse <= 1, 1, 2 )
+                  msgAlert("antes de create")
                   :Create( oLstUsr )
+                  msgAlert("despues de create")
                end with
 
             end if
 
          end if
+
+         msgAlert("antes de skip")
 
          ( ::dbfUser )->( dbSkip() )
 
