@@ -21401,9 +21401,9 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       end if
 
    	if uFieldEmpresa( "lIvaImpEsp" )
-      	_NBASIVA1            -= _NIVMIVA1
-      	_NBASIVA2            -= _NIVMIVA2
-      	_NBASIVA3            -= _NIVMIVA3
+      	_NBASIVA1         -= _NIVMIVA1
+      	_NBASIVA2         -= _NIVMIVA2
+      	_NBASIVA3         -= _NIVMIVA3
    	end if
 
    end if

@@ -33,6 +33,8 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local nIvaAnt
    local nAcuAnt     := 0
    local nTotAnt     := 0
+   local uIva
+   local newIva
    local aIva        := {}
    local aIvm        := {}
    local aTrn        := {}
@@ -54,6 +56,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local cProyecto
    local cClave
    local a
+   local sTotFacCli
    local ptaDebe
    local ptaRet
    local lReturn     := .t.
@@ -86,6 +89,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    a                 := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f., lExcCnt  )
    ptaDebe           := a[ 4 ]
    ptaRet            := a[ 12 ]
+
+   sTotFacCli        := sTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f., lExcCnt  )
+   ptaDebe           := sTotFacCli:nTotalDocumento
+   ptaRet            := sTotFacCli:nTotalRetencion
+   newIva            := sTotFacCli:aTotalIva
+
+   msgAlert( hb_valToExp( newIva ), "aTotalIva" )
 
    cProyecto         := Left( cCodPro, 3 )
    cClave            := Right( cCodPro, 6 )
@@ -196,7 +206,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
                nPos           := aScan( aIva, {|x| x[ 1 ] == nIva } )
                if nPos  == 0
-                  aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, nImpDet, nImpPnt, nImpTrn, 0 } )
+                  aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, nImpDet, nImpPnt, nImpTrn, 0, 0, 0 } )
                else
                   aIva[ nPos, 4 ] += nImpDet
                   aIva[ nPos, 5 ] += nImpPnt
@@ -393,6 +403,35 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    ( dbfAntCliT )->( OrdSetFocus( n ) )
 
    /*
+   Ponemos la cuentas de IVA---------------------------------------------------
+   */
+
+   for each uIva in newIva
+
+      if isNum( uIva[ 3 ] )
+
+         /*
+         Construimos las bases de los impuestos--------------------------------
+         */
+
+         if lIvaCEE
+            cSubCtaIva  := uFieldEmpresa( "cCtaCeeRpt" )
+            cSubCtaReq  := uFieldEmpresa( "cCtaCeeSpt" )
+         else
+            cSubCtaIva  := cSubCuentaIva( uIva[ 3 ],     ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
+            cSubCtaReq  := cSubCuentaRecargo( uIva[ 3 ], ( dbfFacCliT )->lRecargo, cRuta, cCodEmp, dbfIva )
+         end if
+
+         aAdd( uIva, cSubCtaIva )
+         aAdd( uIva, cSubCtaReq )
+
+      end if 
+
+   next 
+
+   msgAlert( hb_valToExp( newIva ) )
+
+   /*
 	Chequando antes de pasar a Contaplus
 	--------------------------------------------------------------------------
 	*/
@@ -419,17 +458,21 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 	--------------------------------------------------------------------------
 	*/
 
-   for n := 1 to len( aIva )
+   for each uIva in newIva 
 
-      if !ChkSubcuenta( cRutCnt(), cCodEmp, aIva[ n, 2 ], , .f., .f. )
-         oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + aIva[ n, 2 ] + " no encontada.", 0 ) )
-         lErrorFound := .t.
-      end if
+      if isNum( uIva[ 3 ] )
 
-      if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, aIva[ n, 3 ], , .f., .f. )
-         oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + aIva[ n, 3 ] + " no encontada.", 0 ) )
-         lErrorFound := .t.
-      end if
+         if !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 10 ], , .f., .f. )
+            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 10 ] + " no encontada.", 0 ) )
+            lErrorFound := .t.
+         end if
+
+         if lRecargo .and. !ChkSubcuenta( cRutCnt(), cCodEmp, uIva[ 11 ], , .f., .f. )
+            oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " subcuenta " + uIva[ 11 ] + " no encontada.", 0 ) )
+            lErrorFound := .t.
+         end if
+
+      end if 
 
    next
 
@@ -484,15 +527,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    cPago          := "C/Fcta. N." + ( dbfFacCliT )->CSERIE + "/" + AllTrim( Str( (dbfFacCliT)->NNUMFAC ) + "/" + (dbfFacCliT)->CSUFFAC )
 
    /*
-   Incluimos el Ivmh cuando no tiene subcuenta
-   -------------------------------------------------------------------------
-
-   if Empty( oNewImp:cCtaImp( ( dbfFacCliL )->nValImp ) )
-      aVentas[ n, 3 ]   := aVentas[ n, 3 ] + nImpIvm
-   end if
-   */
-
-   /*
    Cuadre del apunte
    -------------------------------------------------------------------------
    */
@@ -530,47 +564,20 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       nTotHaber      += Round( aTrn[ n, 2 ], nRouDiv )
    next
 
-   for n := 1 to len( aIva )
+   for each uIva in newIva 
 
-      if lIvaInc
+      if isNum( uIva[ 8 ] )
+         nTotHaber   += uIva[ 8 ]
+      end if 
 
-         if aIva[ n, 1 ] != 0
-            nCalculo := Round( aIva[ n, 4 ] / ( 100 / aIva[ n, 1 ] + 1 ), nRouDiv )
-            nCalculo += Round( aIva[ n, 7 ] / ( 100 / aIva[ n, 1 ] + 1 ), nRouDiv )
-         else
-            nCalculo := 0
-         end if
-
-      else
-
-         nCalculo    := Round( aIva[ n, 4 ] * aIva[ n, 1 ] / 100, nRouDiv )
-         nCalculo    += Round( aIva[ n, 7 ] * aIva[ n, 1 ] / 100, nRouDiv )
-
-      end if
-
-      nTotHaber      += nCalculo
+      if lRecargo .and. isNum( uIva[ 9 ] )
+         nTotHaber   += uIva[ 9 ]
+      end if 
 
    next
 
-   if lRecargo
-
-      for n := 1 to len( aIva )
-         nTotHaber   += Round( nPReq( dbfIva, aIva[ n, 1 ] ) * aIva[ n, 4 ] / 100, nRouDiv )
-      next
-
-   end if
-
-   // msgAlert( hb_valToExp( aIva, "aIva" ) )
-
    nTotDebe          := Round( nTotDebe, nRouDiv )
    nTotHaber         := Round( nTotHaber, nRouDiv )
-
-   /*
-   if ( nTotDebe != nTotHaber )
-      oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " asiento no cuadrado, total debe : " + Alltrim( Str( nTotDebe ) ) + " total haber " + Alltrim( Str( nTotHaber ) ) + ".", 0 ) )
-      lErrorFound    := .t.
-   end if
-   */
 
    /*
    Realización de Asientos
@@ -829,117 +836,66 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       --------------------------------------------------------------------------
       */
 
-      for n := 1 to len( aIva )
+      for each uIva in newIva
 
-         nBase          := Round( aIva[ n, 4 ], nRouDiv ) + Round( aIva[ n, 7 ], nRouDiv )
+         if ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
 
-         if lIvaInc
-
-            if aIva[ n, 1 ] != 0
-               nCalculo := Round( aIva[ n, 4 ] / ( 100 / aIva[ n, 1 ] + 1 ), nRouDiv )
-               nCalculo += Round( aIva[ n, 7 ] / ( 100 / aIva[ n, 1 ] + 1 ), nRouDiv )
-            else
-               nCalculo := 0
-            end if
-
-            if aIva[ n, 1 ] != 0 .or. uFieldEmpresa( "lConIva" )
-
-               aAdd( aSimula, MkAsiento(  nAsiento, ;
-                                          cCodDiv, ;
-                                          dFecha, ;
-                                          aIva[ n, 2 ],;       // Cuenta de impuestos
-                                          if( lIvaCEE, aIva[ n, 3 ], cCtaCli ),;            // Contrapartida
-                                          ,;                   // Ptas. Debe
-                                          cConcepto,;
-                                          nCalculo,;           // Ptas. Haber
-                                          cFactura,;
-                                          nBase - nCalculo,;   // Base Imponible
-                                          Round( aIva[ n, 1 ], nRouDiv ),;
-                                          If( lRecargo, nPReq( dbfIva, aIva[ n, 1 ] ), ),;
-                                          ,;
-                                          cProyecto,;
-                                          cClave,;
-                                          ,;
-                                          ,;
-                                          ,;
-                                          lSimula,;
-                                          cTerNif,;
-                                          cTerNom ) )
-
-            end if
-
-         else
-
-            nCalculo    := Round( aIva[ n, 4 ] * aIva[ n, 1 ] / 100, nRouDiv )
-            nCalculo    += Round( aIva[ n, 7 ] * aIva[ n, 1 ] / 100, nRouDiv )
-
-            if aIva[ n, 1 ] != 0 .or. uFieldEmpresa( "lConIva" )
-
-               aadd( aSimula, MkAsiento(  nAsiento, ;
-                                          cCodDiv, ;
-                                          dFecha, ;
-                                          aIva[ n, 2 ],;    // Cuenta de impuestos
-                                          if( lIvaCEE, aIva[ n, 3 ], cCtaCli ),;            // Contrapartida
-                                          ,;                // Ptas. Debe
-                                          cConcepto,;
-                                          nCalculo,;        // Ptas. Haber
-                                          cFactura,;
-                                          nBase,;           // Base Imponible
-                                          Round( aIva[ n, 1 ], nRouDiv ),;
-                                          If( lRecargo, nPReq( dbfIva, aIva[ n, 1 ] ), ),;
-                                          ,;
-                                          cProyecto,;
-                                          cClave,;
-                                          ,;
-                                          ,;
-                                          ,;
-                                          lSimula,;
-                                          cTerNif,;
-                                          cTerNom ) )
-
-            end if
+            aAdd( aSimula, MkAsiento(  nAsiento, ;                          
+                                       cCodDiv, ;                          
+                                       dFecha, ;                          
+                                       uIva[ 10 ],;         // Cuenta de impuestos                          
+                                       cCtaCli,;            // Contrapartida                          
+                                       ,;                   // Ptas. Debe                          
+                                       cConcepto,;                          
+                                       uIva[ 8 ],;          // Ptas. Haber                          
+                                       cFactura,;                          
+                                       uIva[ 1 ],;          // Base Imponible                          
+                                       uIva[ 3 ],;                          
+                                       uIva[ 4 ],;                          
+                                       ,;                          
+                                       cProyecto,;                          
+                                       cClave,;                          
+                                       ,;                          
+                                       ,;                          
+                                       ,;                          
+                                       lSimula,;                          
+                                       cTerNif,;                          
+                                       cTerNom ) )                          
 
          end if
 
+         /*
+         Asientos del Recargo
+         -------------------------------------------------------------------------
+         */
+
+         if ( lRecargo .and. uIva[ 9 ] != 0 )
+
+            aadd( aSimula, MkAsiento(  nAsiento,;
+                                       cCodDiv,;
+                                       dFecha,;
+                                       uIva[ 11 ],;
+                                       ,;
+                                       ,;
+                                       cConcepto,;
+                                       uIva[ 9 ],;
+                                       cFactura,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       cProyecto,;
+                                       cClave,;
+                                       ,;
+                                       ,;
+                                       ,;
+                                       lSimula,;
+                                       cTerNif,;
+                                       cTerNom ) )
+
+         end if 
+
       next
-
-      /*
-      Asientos del Recargo
-      -------------------------------------------------------------------------
-      */
-
-      if lRecargo
-
-         for n := 1 to len( aIva )
-
-            if Round( nPReq( dbfIva, aIva[ n, 1 ] ) * ( aIva[ n, 4 ] ) / 100, nRouDiv ) != 0
-
-               aadd( aSimula, MkAsiento(  nAsiento,;
-                                          cCodDiv,;
-                                          dFecha,;
-                                          aIva[ n, 3 ],;
-                                          ,;
-                                          ,;
-                                          cConcepto,;
-                                          Round( nPReq( dbfIva, aIva[ n, 1 ] ) * ( aIva[ n, 4 ] ) / 100, nRouDiv ),;
-                                          cFactura,;
-                                          ,;
-                                          ,;
-                                          ,;
-                                          ,;
-                                          cProyecto,;
-                                          cClave,;
-                                          ,;
-                                          ,;
-                                          ,;
-                                          lSimula,;
-                                          cTerNif,;
-                                          cTerNom ) )
-            end if
-
-         next
-
-      end if
 
    end if
 
