@@ -2330,6 +2330,22 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | TDetFideliza():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "CAMPOEXTRA"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "CAMPOEXTRA.DBF"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CAMPOEXTRA.CDX"
+   oDataTable:cDescription := "Campos extra"
+   oDataTable:bCreateFile  := {| cPath | TCamposExtra():BuildFiles( .t., cPath ) }
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "DETCAMPOEXTRA"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "DETCAMPOEXTRA.DBF"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "DETCAMPOEXTRA.CDX"
+   oDataTable:cDescription := "Detalle de campos extra"
+   oDataTable:bCreateFile  := {| cPath | TDetCamposExtra():BuildFiles( .t., cPath ) }
+   ::AddEmpresaTable( oDataTable )
+
    /*
    Clientes--------------------------------------------------------------------
    */
@@ -5460,6 +5476,8 @@ CLASS D
    METHOD ImpuestosEspeciales( nView )       INLINE ( ::GetObject( "ImpuestosEspeciales", nView ) )
 
    METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )
+
+   METHOD Ruta( nView )                      INLINE ( ::Get( "Ruta", nView ) )
 
    METHOD Operarios( nView )                 INLINE ( ::Get( "OpeT", nView ) )
 
