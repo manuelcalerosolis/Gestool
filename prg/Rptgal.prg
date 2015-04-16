@@ -95,6 +95,7 @@ Function Main( cCodEmp, cCodUsr, cIp )
    cAdsIp            := GetPvProfString( "ADS", "Ip",    "", FullCurDir() + "GstApolo.Ini" )
    cAdsType          := GetPvProfString( "ADS", "Type",  "", FullCurDir() + "GstApolo.Ini" )
    cAdsData          := GetPvProfString( "ADS", "Data",  "", FullCurDir() + "GstApolo.Ini" )
+   cAdsFile          := GetPvProfString( "ADS", "File",  "", FullCurDir() + "GstApolo.Ini" )
 
    // Motor de bases de datos--------------------------------------------------
 
@@ -137,6 +138,7 @@ Function Main( cCodEmp, cCodUsr, cIp )
       lAIS( .t. )
       cIp( cAdsIp )
       cData( cAdsData )
+      cAdsFile( cAdsFile )
 
       RddRegister(   'ADS', 1 )
       RddSetDefault( 'ADSCDX' )
