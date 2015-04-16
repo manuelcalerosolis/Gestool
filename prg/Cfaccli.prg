@@ -95,8 +95,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    ptaRet            := sTotFacCli:nTotalRetencion
    newIva            := sTotFacCli:aTotalIva
 
-   msgAlert( hb_valToExp( newIva ), "aTotalIva" )
-
    cProyecto         := Left( cCodPro, 3 )
    cClave            := Right( cCodPro, 6 )
 
@@ -428,8 +426,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       end if 
 
    next 
-
-   msgAlert( hb_valToExp( newIva ) )
 
    /*
 	Chequando antes de pasar a Contaplus
