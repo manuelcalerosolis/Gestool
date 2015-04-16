@@ -19,7 +19,7 @@
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;                  
+#define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
 #define _NNUMFAC             2      //,"N",  9, 0, "Numero de la factura" },;
 #define _CSUFFAC             3      //,"C",  2, 0, "Sufijo de la factura" },;
 #define _CTURFAC             4      //,"C",  2, 0, "Sufijo de la factura" },;
@@ -5891,11 +5891,9 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	   Botones de las lineas----------------------------------------------------
    	*/
 
-      msgAlert(oUser():lMaster(), "master")
+      if oUser():lAdministrador()
 
-      if .f. //oUser():lMaster()
-
-   	oBtnAdd  			:= TGridImage():Build(  {  "nTop"      => 145,;
+   	  oBtnAdd  			:= TGridImage():Build(  {  "nTop"      => 145,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5904,7 +5902,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"oWnd"      => oDlg } )
 
 
-   	oBtnEdt  			:= TGridImage():Build(  {  "nTop"      => 145,;
+   	  oBtnEdt  			:= TGridImage():Build(  {  "nTop"      => 145,;
                                              		"nLeft"     => {|| GridWidth( 2, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5912,7 +5910,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| EdtDeta( oBrwLin, bEdtDetTablet, aTmp, .f., nMode ) },;
                                              		"oWnd"      => oDlg } )
 
-   	oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 145,;
+   	  oBtnDel  			:= TGridImage():Build(  {  "nTop"      => 145,;
                                              		"nLeft"     => {|| GridWidth( 3.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
@@ -5920,7 +5918,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| WinDelRec( oBrwLin, dbfTmpLin, , , , .t. ) },;
                                              		"oWnd"      => oDlg } )
 
-      end if 
+      end if
 
       oBtnUpPage        := TGridImage():Build(  {  "nTop"      => 145,;
                                                    "nLeft"     => {|| GridWidth( 7.5, oDlg ) },;
