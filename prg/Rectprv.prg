@@ -6139,7 +6139,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       end if
 
       /*
-      A¤adimos desde el fichero de incidencias
+      A¤adimos desde el fichero de documetos
       */
 
       if ( D():FacturasRectificativasProveedoresDocumentos( nView ) )->( dbSeek( nFactura ) )

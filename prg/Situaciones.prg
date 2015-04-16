@@ -11,6 +11,8 @@ CLASS TSituaciones FROM TMant
    CLASSDATA aSituaciones
 
    DATA  cMru                                   INIT "Document_Attachment_16"
+   DATA  oComercio
+   DATA  lenguajePrestashop
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Create( cPath )                       CONSTRUCTOR
@@ -18,7 +20,15 @@ CLASS TSituaciones FROM TMant
    METHOD DefineFiles()
 
    METHOD Resource( nMode )
-   METHOD   lSaveResource()
+   METHOD lSaveResource()
+
+   METHOD Activate()
+   METHOD sincronizarSituacionesPrestashop()
+   METHOD findState( statePrestashop )          INLINE ( ::oDbf:SeekInOrd( upper( statePrestashop ), "cSitua" ) )   
+   METHOD processStatePrestashop()
+   METHOD assignIdPrestashop( idStatePrestashop );
+                                                INLINE ( ::oDbf:FieldPutByName( "idPs", idStatePrestashop ) )
+   METHOD importStatePrestashop( oQuery )
 
    METHOD LoadSituaciones()
    METHOD LoadSituacionesFromFiles()            INLINE ( if( ::OpenFiles(), ( ::LoadSituaciones(), ::CloseFiles() ), ) )
@@ -71,9 +81,11 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "Situa.Dbf" CLASS "Situa" ALIAS "Situa" PATH ( cPath ) VIA ( cDriver ) COMMENT GetTraslation( "Situaciones" )
 
-      FIELD NAME "cSitua"  TYPE "C" LEN 30  DEC 0  COMMENT "Número de serie"        COLSIZE 200    OF ::oDbf
+      FIELD NAME "cSitua"  TYPE "C"      LEN 140     DEC 0       COMMENT "Número de serie"               COLSIZE 200    OF ::oDbf
+      FIELD NAME "idPs"    TYPE "N"      LEN 9       DEC 0       COMMENT "Codigo prestashop"   HIDE      COLSIZE 200    OF ::oDbf
 
-      INDEX TO "Situa.Cdx" TAG "cSitua" ON "Upper( cSitua )"   COMMENT "Situación"  NODELETED      OF ::oDbf
+      INDEX TO "Situa.Cdx" TAG "cSitua"   ON "Upper( cSitua )"    COMMENT "Situación"           NODELETED      OF ::oDbf
+      INDEX TO "Situa.Cdx" TAG "idPs"     ON "idPs"               COMMENT "Id de Prestashop"    NODELETED      OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -90,6 +102,11 @@ METHOD Resource( nMode )
    REDEFINE GET   ::oDbf:cSitua ;
       ID          100 ;
       WHEN        ( nMode != ZOOM_MODE ) ; 
+      OF          oDlg
+
+   REDEFINE GET   ::oDbf:idPs ;
+      ID          200 ;
+      WHEN        ( .f. ) ; 
       OF          oDlg
 
    REDEFINE BUTTON ;
@@ -138,3 +155,118 @@ Return ( ::aSituaciones )
 
 //---------------------------------------------------------------------------//
 
+METHOD Activate() 
+
+   if nAnd( ::nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end if
+
+   /*
+   Cerramos todas las ventanas-------------------------------------------------
+   */
+
+   if ::oWndParent != nil
+      ::oWndParent:CloseAll()
+   end if
+
+   if Empty( ::oDbf ) .or. !::oDbf:Used()
+      ::lOpenFiles      := ::OpenFiles()
+   end if
+
+   /*
+   Creamos el Shell------------------------------------------------------------
+   */
+
+   if ::lOpenFiles
+
+      if !::lCreateShell
+         ::CreateShell( ::nLevel )
+      end if
+
+      ::oWndBrw:GralButtons( Self )
+
+      DEFINE BTNSHELL RESOURCE "Document_Chart_" GROUP OF ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::sincronizarSituacionesPrestashop() ) ;
+         TOOLTIP  "Sincronizar";
+         HOTKEY   "N" ;
+         LEVEL    ACC_IMPR
+
+      ::oWndBrw:EndButtons( Self )
+
+      if ::cHtmlHelp != nil
+         ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+      end if
+
+      ::oWndBrw:Activate( , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
+
+   end if
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD sincronizarSituacionesPrestashop()
+
+   ::oComercio             := TComercio():New()
+
+   if !::oComercio:connect()
+      msgStop( "No se ha podido conectar a la base de datos" )
+      Return ( .f. )
+   end if 
+
+   ::lenguajePrestashop    := ::oComercio:GetLanguagePrestashop()
+
+   ::processStatePrestashop()
+
+   ::oComercio:disconnect()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD processStatePrestashop()
+
+   local oQuery   := TMSQuery():New( ::oComercio:oCon, 'SELECT * FROM ps_order_state_lang WHERE id_lang = ' + alltrim( str( ::lenguajePrestashop ) ) )
+
+   if oQuery:Open() .and. ( oQuery:RecCount() > 0 )
+      
+      ::oDbf:getStatus()
+
+      while !oQuery:Eof()
+         
+         if ::findState( oQuery:FieldGetByName( "name" ) )
+
+            if empty( ::oDbf:idPs )
+               ::assignIdPrestashop( oQuery:FieldGetByName( "id_order_state" ) )
+            end if 
+
+         else
+            
+            ::importStatePrestashop( oQuery )
+
+         endif
+         
+         oQuery:Skip()
+
+      end while
+
+      ::oDbf:setStatus()
+
+   endif
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD importStatePrestashop( oQuery )
+   
+   ::oDbf:Append()
+   ::oDbf:cSitua     := oQuery:FieldGetByName( "name" )
+   ::oDbf:idPs       := oQuery:FieldGetByName( "id_order_state" )
+   ::oDbf:Save()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------// 

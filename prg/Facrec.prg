@@ -773,10 +773,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
-/*
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @D():Clientes( nView ) ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-*/
+
       USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
 

@@ -322,6 +322,8 @@ static bEdtRes       := { |aTmp, aGet, dbfPedCliR, oBrw, bWhen, bValid, nMode, a
 static bEdtDoc       := { |aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo       := { |aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed | EdtEnt( aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed ) }
 static bEdtTablet    := { |aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtTablet( aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
+//static bEdtEst       := { |aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpLin ) }////////////////////////////////////////////////////////////
+
 
 static lExternal     := .f.
 static aTipPed       := { "Venta", "Alquiler" }
@@ -394,6 +396,7 @@ static dbfTikCliL
 static dbfProLin
 static dbfProMat
 static dbfHisMov
+static dbfsitua
 static cOrdAnt
 static oBandera
 static oTrans
@@ -407,6 +410,8 @@ static dbfTmpDoc
 static dbfTmpPgo
 static dbfTVta
 static dbfPro
+static dbfPedCliE
+static dbfTmpEst
 
 static dbfTblPro
 static dbfAgeCom
@@ -417,6 +422,7 @@ static cTmpRes
 static cTmpInc
 static cTmpDoc
 static cTmpPgo
+static cTmpEst
 static oGetNet
 static oGetTrn
 static oGetIvm
@@ -686,6 +692,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():PedidosClientes( nView )
 
+      D():PedidosClientesLineas( nView )
+
+      D():PedidosClientesSituaciones( nView )
+
       D():Clientes( nView )
 
       D():GruposClientes( nView )
@@ -696,10 +706,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Articulos( nView )
 
-      D():PedidosClientesLineas( nView )
-
       D():Documentos( nView )
       ( D():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
+
+      D():Situaciones( nView )
 
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
@@ -1725,6 +1735,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    local oBrwInc
    local oBrwDoc
    local oBrwPgo
+   local oBrwEst
    local oSay           := Array( 11 )
    local cSay           := Array( 11 )
    local oSayLabels     := Array(  9 )
@@ -1904,8 +1915,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "pedidos de clientes"
 
       REDEFINE FOLDER oFld ID 200 OF oDlg ;
-         PROMPT   "&Pedido",  "Da&tos",   "&Incidencias", "D&ocumentos";
-         DIALOGS  "PEDCLI_1", "PEDCLI_2", "PEDCLI_3",     "PEDCLI_4"
+         PROMPT   "&Pedido",  "Da&tos",   "&Incidencias", "D&ocumentos", "&Estados";
+         DIALOGS  "PEDCLI_1", "PEDCLI_2", "PEDCLI_3",     "PEDCLI_4"   , "PEDCLI_5"
 
       /*
 		Cliente_________________________________________________________________
@@ -1934,6 +1945,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
         RESOURCE "address_book2_alpha_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[4]
+
+      REDEFINE BITMAP oBmpGeneral ;
+        ID       990 ;
+        TRANSPARENT ;
+        OF       oFld:aDialogs[5]
 
       REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
 			ID 		130 ;
@@ -3250,7 +3266,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          OF       oFld:aDialogs[ 3 ] ;
          ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) )
 
-      //Caja de dialogo de docuentos
+      //Caja de dialogo de documentos
 
       oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
@@ -3302,6 +3318,99 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ID       504 ;
          OF       oFld:aDialogs[ 4 ] ;
          ACTION   ( ShellExecute( oDlg:hWnd, "open", Rtrim( ( dbfTmpDoc )->cRuta ) ) )
+
+          /*
+      Estados--------------------------------------------------------------
+      */
+
+      oBrwEst                 := IXBrowse():New( oFld:aDialogs[ 5 ] )
+
+      oBrwEst:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwEst:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwEst:cAlias          := dbfTmpEst
+
+      oBrwEst:nMarqueeStyle   := 6
+      oBrwEst:cName           := "Pedido de cliente.Estado de prestashop"
+
+         /*with object ( oBrwEst:AddCol() )
+            :cHeader          := "Resuelta"
+            :bStrData         := {|| "" }
+            :bEditValue       := {|| ( dbfTmpEst )->lListo }
+            :nWidth           := 70
+            :SetCheck( { "Sel16", "Cnt16" } )
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Código"
+            :bEditValue       := {|| ( dbfTmpEst )->cCodTip }
+            :nWidth           := 80
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Incidencia"
+            :bEditValue       := {|| cNomInci( ( dbfTmpEst )->cCodTip, dbfInci ) }
+            :nWidth           := 200
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Fecha"
+        	:bEditValue       := {|| Dtoc( ( dbfTmpEst )->dFecInc ) }
+            :nWidth           := 90
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Descripción"
+            :bEditValue       := {|| ( dbfTmpEst )->mDesInc }
+            :nWidth           := 470
+         end with
+
+         if nMode != ZOOM_MODE
+            oBrwEst:bLDblClick   := {|| WinEdtRec( oBrwEst, bEdtIEst, dbfTmpEst, nil, nil, aTmp ) }
+         end if*/
+
+
+         oBrwEst:CreateFromResource( 210 )
+
+     REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( msgalert( "boton añadir" ) )
+
+
+//WinAppRec( oBrwEst, bEdtInc, dbfTmpEst, nil, nil, aTmp )
+
+
+     REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( msgalert( "boton editar" ) )
+
+
+//WinEdtRec( oBrwEst, bEdtInc, dbfTmpEst, nil, nil, aTmp )
+
+
+	REDEFINE BUTTON ;
+		ID 		502 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( msgalert( "boton borrar" ) )
+
+
+//WinDelRec( oBrwEst, dbfTmpEst )
+
+
+	REDEFINE BUTTON ;
+			ID 		503 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         ACTION   ( msgalert( "boton ZOOM" ) )
+
+
+//WinZooRec( oBrwEst, bEdtInc, dbfTmpEst, nil, nil, aTmp )
+
+
 
 		/*
 		Botones comunes a la caja de dialogo____________________________________
@@ -3358,6 +3467,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       oFld:aDialogs[4]:AddFastKey( VK_F2, {|| WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
       oFld:aDialogs[4]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
       oFld:aDialogs[4]:AddFastKey( VK_F4, {|| WinDelRec( oBrwDoc, dbfTmpDoc ) } )
+
+      /*oFld:aDialogs[5]:AddFastKey( VK_F2, {|| WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
+      oFld:aDialogs[5]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
+      oFld:aDialogs[5]:AddFastKey( VK_F4, {|| WinDelRec( oBrwEst, dbfTmpEst ) } )*/
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ), GenPedCli( IS_PRINTER ), ) } )
@@ -8125,6 +8238,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Documentos de pedidos", ( dbfPedCliD )->( Select() ) )
    oFr:SetFieldAliases( "Documentos de pedidos", cItemsToReport( aPedCliDoc() ) )
 
+   oFr:SetWorkArea(     "Situaciones de pedidos", ( dbfPedCliE )->( Select() ) )
+   oFr:SetFieldAliases( "Situaciones de pedidos", cItemsToReport( aPedCliEst() ) )
+
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
@@ -8412,6 +8528,10 @@ STATIC FUNCTION CreateFiles( cPath )
       dbCreate( cPath + "PedCliP.Dbf", aSqlStruct( aPedCliPgo() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "PedCliE.Dbf" )
+      dbCreate( cPath + "PedCliE.Dbf", aSqlStruct( aPedCliEst() ), cDriver() )
+   end if
+
 RETURN NIL
 
 //-------------------------------------------------------------------------//
@@ -8508,6 +8628,8 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfProMat  ), ( dbfProMat  )->( dbCloseArea() ), )
    if( !Empty( dbfHisMov  ), ( dbfHisMov  )->( dbCloseArea() ), )
    if( !Empty( dbfCliBnc  ), ( dbfCliBnc  )->( dbCloseArea() ), )
+//   if( !Empty( dbfPedCliE  ), ( dbfPedCliE  )->( dbCloseArea() ), )///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
    if( !Empty( oStock     ), oStock:end(),  )
    if( !Empty( oTrans     ), oTrans:end(),  )
@@ -8526,6 +8648,7 @@ STATIC FUNCTION CloseFiles()
    D():DeleteView( nView )
 
    dbfPedCliI     := nil
+ //  dbfPedCliE     := nil/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
    dbfPedCliD     := nil
    dbfPedCliP     := nil
    dbfPreCliT     := nil
@@ -8776,6 +8899,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
             end if
          end while
 
+    //     while ( dbfPedCliE )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //        if dbLock( dbfPedCliE )
+    //           ( dbfPedCliE )->( dbDelete() )
+    //           ( dbfPedCliE )->( dbUnLock() )
+    //        end if
+    //     end while
+
       end if
 
    end case
@@ -8856,6 +8986,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
       dbPass( dbfTmpRes, dbfPedCliR, .t., cSerPed, nNumPed, cSufPed )
       ( dbfTmpRes )->( dbSkip() )
    end while
+
+   /*
+   Escribimos en el fichero definitivo (Estados de prestachop)
+   */
+
+  // ( dbfTmpEst )->( DbGoTop() )
+  // while ( dbfTmpEst )->( !eof() )
+  //    dbPass( dbfTmpEst, dbfPedCliE, .t., cSerPed, nNumPed, cSufPed )////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //    ( dbfTmpEst )->( dbSkip() )
+  // end while
 
    /*
    Si el pedido está cancelado ponemos el estado a 3---------------------------
@@ -9369,6 +9509,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    cTmpDoc        := cGetNewFileName( cPatTmp() + cDbfDoc )
    cTmpPgo        := cGetNewFileName( cPatTmp() + cDbfPgo )
 
+
 	/*
 	Primero Crear la base de datos local
 	*/
@@ -9445,6 +9586,19 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
+  	dbCreate( cTmpRes, aSqlStruct( aPedCliEst() ), cLocalDriver() )
+   	dbUseArea( .t., cLocalDriver(), cTmpRes, cCheckArea( cDbfRes, @dbfTmpRes ), .f. )
+  	if !NetErr()
+
+  		( dbfTmpEst )->( ordCreate( cTmpRes, "nNumPed", "cSerPed + str( nNumPed ) + cSufPed + dtos( dFecSit )  + tFecSit", {|| Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed + dtos( Field->dFecSit )  + Field->tFecSit } ) )
+      	( dbfTmpEst )->( ordListAdd( cTmpRes ) )
+
+  	else
+
+      	lErrors     := .t.
+
+  	end if
+
 	/*
 	A¤adimos desde el fichero de lineas
 	*/
@@ -9485,6 +9639,23 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    end if
 
    ( dbfTmpInc )->( dbGoTop() )
+
+   /*
+   A¤adimos desde el fichero de estado de prestashop
+	*/
+
+  // if ( dbfPedCliE )->( dbSeek( cPedido ) )
+
+  //    while ( ( dbfPedCliE )->cSerPed + Str( ( dbfPedCliE )->nNumPed ) + ( dbfPedCliE )->cSufPed == cPedido ) .AND. ( dbfPedCliE )->( !eof() )////////////////////////////////////////////////////////////////////////////////
+
+  //       dbPass( dbfPedCliE, dbfTmpEst, .t. )
+  //       ( dbfPedCliE )->( dbSkip() )
+
+  //    end while
+
+  // end if
+
+  // ( dbfTmpEst )->( dbGoTop() )
 
    /*
    A¤adimos desde el fichero de documentos
@@ -13161,17 +13332,19 @@ FUNCTION QuiPedCli()
    local nOrdRes
    local nOrdInc
    local nOrdDoc
+   local nOrdEst
 
    if ( D():PedidosClientes( nView ) )->lCloPed .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar pedidos cerrados los administradores." )
       Return .f.
    end if
 
-   nOrdDet        := ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdPgo        := ( dbfPedCliP )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdRes        := ( dbfPedCliR )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdInc        := ( dbfPedCliI )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdDoc        := ( dbfPedCliD )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdDet        	:= ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdPgo        	:= ( dbfPedCliP )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdRes        	:= ( dbfPedCliR )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdInc        	:= ( dbfPedCliI )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdDoc        	:= ( dbfPedCliD )->( OrdSetFocus( "NNUMPED" ) )
+ //  nOrdEst			:= ( dbfPedCliE )->( OrdSetFocus( "NNUMPED" ) )////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
    /*
    Cambiamos el estado del presupuesto del que viene el pedido-----------------
@@ -13239,11 +13412,24 @@ FUNCTION QuiPedCli()
       end if
    end while
 
+   /*
+   Estados de prestashop--------------------------------------------------------
+   */
+
+  // while ( dbfPedCliE )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView )  )->cSufPed ) ) .and. !( dbfPedCliE )->( eof() )
+  //    if dbLock( dbfPedCliE )
+  //       ( dbfPedCliE )->( dbDelete() )
+  //       ( dbfPedCliE )->( dbUnLock() )
+  //    end if
+ //  end while
+
+
    ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( nOrdDet ) )
    ( dbfPedCliP )->( OrdSetFocus( nOrdPgo ) )
    ( dbfPedCliR )->( OrdSetFocus( nOrdRes ) )
    ( dbfPedCliI )->( OrdSetFocus( nOrdInc ) )
    ( dbfPedCliD )->( OrdSetFocus( nOrdDoc ) )
+   //( dbfPedCliE )->( OrdSetFocus( nOrdEst ) )//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Return ( .t. )
 
@@ -13271,6 +13457,9 @@ Function SynPedCli( cPath )
 
    USE ( cPatEmp() + "PEDCLII.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLII", @dbfPedCliI ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLII.CDX" ) ADDITIVE
+
+  // USE ( cPatEmp() + "PEDCLIE.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIE", @dbfPedCliE ) )///////////////////////////////////////////////////////////////////////////////////////////////
+  // SET ADSINDEX TO ( cPatEmp() + "PEDCLIE.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "PEDCLID.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLID", @dbfPedCliD ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLID.CDX" ) ADDITIVE
@@ -13426,6 +13615,7 @@ Function SynPedCli( cPath )
    CLOSE ( dbfIva     )
    CLOSE ( dbfDiv     )
    CLOSE ( dbfFPago   )
+   //CLOSE ( dbfPedCliE )////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Return nil
 
@@ -14856,12 +15046,17 @@ FUNCTION IsPedCli( cPath )
       dbCreate( cPath + "PedCliP.Dbf", aSqlStruct( aPedCliPgo() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "PedCliE.Dbf" )
+      dbCreate( cPath + "PedCliE.Dbf", aSqlStruct( aPedCliEst() ), cDriver() )
+   end if
+
    if !lExistIndex( cPath + "PedCliT.Cdx" ) .or. ;
       !lExistIndex( cPath + "PedCliL.Cdx" ) .or. ;
       !lExistIndex( cPath + "PedCliR.Cdx" ) .or. ;
       !lExistIndex( cPath + "PedCliI.Cdx" ) .or. ;
       !lExistIndex( cPath + "PedCliP.Cdx" ) .or. ;
-      !lExistTable( cPath + "PedCliD.Cdx" )
+      !lExistTable( cPath + "PedCliD.Cdx" ) .or. ;
+      !lExistTable( cPath + "PedCliE.Cdx" )
 
       rxPedCli( cPath )
 
@@ -14880,6 +15075,7 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
    local oldPedCliP
    local oldAlbCliT
    local oldAlbCliL
+   local oldPedCliE
 
    DEFAULT cPath     := cPatEmp()
    DEFAULT lAppend   := .f.
@@ -14931,6 +15127,9 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
       dbUseArea( .t., cDriver(), cPathOld + "AlbCliL.DBF", cCheckArea( "AlbCliL", @oldAlbCliL ), .f. )
       ( oldAlbCliL )->( ordListAdd( cPathOld + "AlbCliL.CDX" ) )
+
+      dbUseArea( .t., cDriver(), cPathOld + "PedCliE.DBF", cCheckArea( "PedCliE", @oldPedCliE ), .f. )
+      ( oldPedCliE )->( ordListAdd( cPathOld + "PedCliE.CDX" ) )
 
       while !( oldPedCliT )->( eof() )
 
@@ -15004,6 +15203,7 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
       ( oldPedCliI )->( dbCloseArea() )
       ( oldPedCliD )->( dbCloseArea() )
       ( oldPedCliP )->( dbCloseArea() )
+      ( oldPedCliE )->( dbCloseArea() )
 
       ( oldAlbCliT )->( dbCloseArea() )
       ( oldAlbCliL )->( dbCloseArea() )
@@ -15025,8 +15225,11 @@ FUNCTION rxPedCli( cPath, oMeter )
       !lExistTable( cPath + "PEDCLIR.DBF" ) .OR. ;
       !lExistTable( cPath + "PEDCLII.DBF" ) .OR. ;
       !lExistTable( cPath + "PEDCLID.DBF" ) .OR. ;
-      !lExistTable( cPath + "PEDCLIP.DBF" )
+      !lExistTable( cPath + "PEDCLIP.DBF" ) .OR. ;
+      !lExistTable( cPath + "PEDCLIE.DBF" )
+
       CreateFiles( cPath )
+
    end if
 
    fEraseIndex( cPath + "PEDCLIT.CDX" )
@@ -15035,6 +15238,7 @@ FUNCTION rxPedCli( cPath, oMeter )
    fEraseIndex( cPath + "PEDCLII.CDX" )
    fEraseIndex( cPath + "PEDCLID.CDX" )
    fEraseIndex( cPath + "PEDCLIP.CDX" )
+   fEraseIndex( cPath + "PEDCLIE.CDX" )
 
    dbUseArea( .t., cDriver(), cPath + "PEDCLIT.DBF", cCheckArea( "PEDCLIT", @cPedCliT ), .f. )
    if !( cPedCliT )->( neterr() )
@@ -15205,6 +15409,27 @@ FUNCTION rxPedCli( cPath, oMeter )
 
    end if
 
+   dbUseArea( .t., cDriver(), cPath + "PedCliE.DBF", cCheckArea( "PedCliE", @cPedCliT ), .f. )
+
+   if !( cPedCliT )->( neterr() )
+
+      ( cPedCliT )->( __dbPack() )
+
+      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliE.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->NNUMPED ) + Field->CSUFPED } ) )
+
+      ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliE.Cdx", "cSitua", "cSitua", {|| Field->cSitua } ) )
+
+      ( cPedCliT )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
+
+   end if
+
+
 RETURN NIL
 
 //--------------------------------------------------------------------------//
@@ -15313,6 +15538,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cCtaBnc",  "C",  10,  0, "Cuenta bancaria del cliente",                             "CuentaBancaria",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "lProduc",  "L",   1,  0, "Lógico para incluir en producción" ,                      "IncluirEnProduccion",     "", "( cDbf )", {|| .t. } } )
    aAdd( aItmPedCli, { "nDtoTarifa","N",  6,  2, "Descuentos de tarifa", 			                           "DescuentoTarifa", 	      "", "( cDbf )", nil } )
+
 
 return ( aItmPedCli )
 
@@ -15451,6 +15677,21 @@ function aPedCliDoc()
    aAdd( aPedCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento", "",                   "", "( cDbfCol )", nil } )
 
 return ( aPedCliDoc )
+
+//---------------------------------------------------------------------------//
+
+function aPedCliEst()
+
+   local aPedCliEst  := {}
+
+   aAdd( aPedCliEst, { "cSerPed", "C",    1,  0, "Serie de pedido" ,            "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliEst, { "nNumPed", "N",    9,  0, "Numero de pedido" ,           "'999999999'",        "", "( cDbfCol )", nil } )
+   aAdd( aPedCliEst, { "cSufPed", "C",    2,  0, "Sufijo de pedido" ,           "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliEst, { "cSitua",  "C",  140,  0, "Situación" ,   	    		"",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliEst, { "dFecInc", "D",    8,  0, "Fecha de la situación" ,      "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliEst, { "tFecInc", "C",    6,  0, "Hora de la situación" ,       "",                   "", "( cDbfCol )", nil } )   
+
+return ( aPedCliEst )
 
 //---------------------------------------------------------------------------//
 

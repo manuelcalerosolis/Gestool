@@ -2,3 +2,4 @@
 #define IDC_STATIC (-1)
 #endif
 
+#define ESTADOPEDIDO  1001

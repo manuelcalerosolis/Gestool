@@ -1835,6 +1835,7 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Situa"
    oDataTable:cName        := cPatDat() + "Situa"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Situa.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Situa.Cdx"
@@ -3038,6 +3039,14 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliR.Cdx"
    oDataTable:cDescription := "Pedidos de clientes"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedCliE"
+   oDataTable:cName        := cPatEmp() + "PedCliE"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliE.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliE.Cdx"
+   oDataTable:cDescription := "Pedidos de clientes situaciones"
    ::AddEmpresaTable( oDataTable )
 
    /*
@@ -5257,6 +5266,16 @@ CLASS D
       METHOD PedidosClientesLineasId( nView )         INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
       METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
       METHOD GetPedidoClienteLineaBlank( nView )      INLINE ( ::getHashRecordBlank( ::PedidosClientesLineas( nView ), nView ) )
+
+
+   METHOD PedidosClientesSituaciones( nView )            INLINE ( ::Get( "PedCliE", nView ) )
+      METHOD PedidosClientesSituacionesId( nView )       INLINE ( ( ::Get( "PedCliE", nView ) )->cSerPed + str( ( ::Get( "PedCliE", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliE", nView ) )->cSufPed )
+      METHOD PedidosClientesSituacionesIdText( nView )   INLINE ( ::Get( "PedCliE", nView ) )->cSerPed + "/" + Alltrim( Str( ( ::Get( "PedCliE", nView ) )->nNumPed ) )
+
+   // Situaciones----------------------------------------------------------------
+
+   METHOD Situaciones( nView )                        INLINE ( ::Get( "Situa", nView ) )
+      METHOD SituacionesId( nView )                   INLINE ( ( ::Get( "Situa", nView ) )->cSitua )
 
    // Clientes-----------------------------------------------------------------
 
