@@ -68,6 +68,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local nDtoUno     := 0
    local nDtoDos     := 0
    local nPctDto     := 0
+   local nPctIva     := 0
 
 	DEFAULT lSimula	:= .t.
    DEFAULT nAsiento  := 0
@@ -99,8 +100,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    cClave            := Right( cCodPro, 6 )
 
    /*
-   Seleccionamos las empresa dependiendo de la serie de factura
-	-------------------------------------------------------------------------- 
+   Seleccionamos las empresa dependiendo de la serie de factura----------------
 	*/
 
    cRuta             := cRutCnt()
@@ -121,8 +121,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    end if
 
    /*
-   Preparamos los apuntes de cliente
-   ----------------------------------------------------------------------------
+   Preparamos los apuntes de cliente-------------------------------------------
    */
 
    if Empty( cCtaCli )
@@ -134,8 +133,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    end if
 
    /*
-	Estudio de los Articulos de una factura
-   ----------------------------------------------------------------------------
+	Estudio de los Articulos de una factura-------------------------------------
 	*/
 
    if ( dbfFacCliL )->( dbSeek( nFactura ) )
@@ -649,8 +647,13 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
          if lIvaInc
 
+            nPctIva     := aVentas[ n, 2 ]
+            if lRecargo
+               nPctIva  += nPReq( dbfIva, aVentas[ n, 2 ] )
+            end if             
+
             if aVentas[ n, 2 ] != 0
-               nCalculo -= Round( aVentas[ n, 3 ] / ( 100 / aVentas[ n, 2 ] + 1 ), nRouDiv )
+               nCalculo -= Round( aVentas[ n, 3 ] / ( 100 / nPctIva + 1 ), nRouDiv )
             end if
 
          end if 
