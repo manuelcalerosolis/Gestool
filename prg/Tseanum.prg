@@ -1611,8 +1611,15 @@ METHOD Resource() CLASS TNumerosSerie
 
    case IsObject( ::uTmpSer )
 
+   msgAlert(::uTmpSer:Alias, "::uTmpSer")
+msgAlert(::cCodArt, "articulo buscado")
+
       if ::uTmpSer:Seek( Str( ::nNumLin, 4 ) + ::cCodArt )
+
+      msgAlert("encontrado")
          while ( Str( ::uTmpSer:nNumLin, 4 ) + ::uTmpSer:cCodArt == Str( ::nNumLin, 4 ) + ::cCodArt ) .and. ! ::uTmpSer:Eof()
+
+         msgAlert(::uTmpSer:cCodArt, "codart")
             if ( n <= ::nAbsUnidades() )
                ::aNumSer[ n ] := ::uTmpSer:cNumSer
             end if

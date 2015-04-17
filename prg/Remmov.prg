@@ -5222,8 +5222,15 @@ RETURN ( Self )
 
 METHOD Resource( nMode ) CLASS TDetSeriesMovimientos
 
-   ::oDbfVir:GetStatus()
-   ::oDbfVir:OrdSetFocus( "nNumLin" )
+  // ::oDbfVir:GetStatus()
+  // ::oDbfVir:OrdSetFocus( "nNumLin" )
+
+  ::oDbf:nArea:GetStatus()
+  ::oDbf:nArea:OrdSetFocus( "nNumLin" )
+
+   msgAlert(::oDbfVir:ALIAS, "dbfvir")
+   msgAlert(::odbf:Alias, "odbf")
+
 
    with object ( TNumerosSerie() )
 
@@ -5232,14 +5239,20 @@ METHOD Resource( nMode ) CLASS TDetSeriesMovimientos
       :lCompras         := ( ::oParent:oDbf:nTipMov != 1 )
 
       :cCodArt          := ::oParent:oDetMovimientos:oDbfVir:cRefMov
+
       :nNumLin          := ::oParent:oDetMovimientos:oDbfVir:nNumLin
-      :cCodAlm          := ::oParent:oDbf:cAlmOrg
+      :cCodAlm          := ::oParent:oDbf:cAlmDes
 
       :nTotalUnidades   := nTotNMovAlm( ::oParent:oDetMovimientos:oDbfVir )
 
       :oStock           := ::oParent:oStock
 
-      :uTmpSer          := ::oDbfVir
+      //:uTmpSer          := ::oDbfVir
+
+      if nMode := 2
+         :uTmpSer       := ::oDbf:nArea
+      else
+         :uTmpSer       := ::oDbfVir
 
       :Resource()
 
