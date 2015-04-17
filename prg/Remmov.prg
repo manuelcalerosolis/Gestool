@@ -3076,16 +3076,6 @@ METHOD GenerarEtiquetas CLASS TRemMovAlm
    
    if oLabelGenetator:lCreateAuxiliarArticulo()
 
-      //?"llego"
-
-      /*
-      Llenamos la tabla auxiliar-----------------------------------------------
-      */
-
-      //oLabelGenetator:LoadAuxiliarMovimientoAlmacen()
-
-      //?"Paso"
-
       oLabelGenetator:Resource( .t. )
 
    end if   
@@ -5253,6 +5243,7 @@ METHOD Resource( nMode ) CLASS TDetSeriesMovimientos
          :uTmpSer       := ::oDbf:nArea
       else
          :uTmpSer       := ::oDbfVir
+      end if      
 
       :Resource()
 
