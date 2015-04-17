@@ -105,14 +105,17 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _CNUMALB                  90
 #define _LOPERPV                  91
 #define _CBANCO                   92
-#define _CPAISIBAN 				    93
-#define _CCTRLIBAN 				    94
+#define _CPAISIBAN 				  93
+#define _CCTRLIBAN 				  94
 #define _CENTBNC                  95
 #define _CSUCBNC                  96
 #define _CDIGBNC                  97
 #define _CCTABNC                  98
 #define _LPRODUC                  99
 #define _NDTOTARIFA              100
+#define _CSITUA				 	 101
+#define _DFECSIT				 102
+#define _TFECSIT				 103
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -322,7 +325,7 @@ static bEdtRes       := { |aTmp, aGet, dbfPedCliR, oBrw, bWhen, bValid, nMode, a
 static bEdtDoc       := { |aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo       := { |aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed | EdtEnt( aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed ) }
 static bEdtTablet    := { |aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtTablet( aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
-//static bEdtEst       := { |aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpLin ) }////////////////////////////////////////////////////////////
+static bEdtEst       := { |aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpLin | EdtEst( aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpLin ) } 
 
 
 static lExternal     := .f.
@@ -1915,7 +1918,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "pedidos de clientes"
 
       REDEFINE FOLDER oFld ID 200 OF oDlg ;
-         PROMPT   "&Pedido",  "Da&tos",   "&Incidencias", "D&ocumentos", "&Estados";
+         PROMPT   "&Pedido",  "Da&tos",   "&Incidencias", "D&ocumentos", "&Situaciones";
          DIALOGS  "PEDCLI_1", "PEDCLI_2", "PEDCLI_3",     "PEDCLI_4"   , "PEDCLI_5"
 
       /*
@@ -3320,7 +3323,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ACTION   ( ShellExecute( oDlg:hWnd, "open", Rtrim( ( dbfTmpDoc )->cRuta ) ) )
 
           /*
-      Estados--------------------------------------------------------------
+      Situaciones--------------------------------------------------------------
       */
 
       oBrwEst                 := IXBrowse():New( oFld:aDialogs[ 5 ] )
@@ -3331,60 +3334,47 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       oBrwEst:cAlias          := dbfTmpEst
 
       oBrwEst:nMarqueeStyle   := 6
-      oBrwEst:cName           := "Pedido de cliente.Estado de prestashop"
-
-         /*with object ( oBrwEst:AddCol() )
-            :cHeader          := "Resuelta"
-            :bStrData         := {|| "" }
-            :bEditValue       := {|| ( dbfTmpEst )->lListo }
-            :nWidth           := 70
-            :SetCheck( { "Sel16", "Cnt16" } )
-         end with
+      oBrwEst:cName           := "Pedido de cliente.Situaciones"
 
          with object ( oBrwEst:AddCol() )
-            :cHeader          := "Código"
-            :bEditValue       := {|| ( dbfTmpEst )->cCodTip }
-            :nWidth           := 80
-         end with
-
-         with object ( oBrwEst:AddCol() )
-            :cHeader          := "Incidencia"
-            :bEditValue       := {|| cNomInci( ( dbfTmpEst )->cCodTip, dbfInci ) }
-            :nWidth           := 200
+            :cHeader          := "Nombre"
+            :bEditValue       := {|| ( dbfTmpEst )->cSitua }
+            :nWidth           := 140
          end with
 
          with object ( oBrwEst:AddCol() )
             :cHeader          := "Fecha"
-        	:bEditValue       := {|| Dtoc( ( dbfTmpEst )->dFecInc ) }
+            :bEditValue       := {|| ( dbfTmpEst )->dFecSit }
             :nWidth           := 90
+         	:nDataStrAlign    := 1
+         	:nHeadStrAlign    := 1
          end with
 
          with object ( oBrwEst:AddCol() )
-            :cHeader          := "Descripción"
-            :bEditValue       := {|| ( dbfTmpEst )->mDesInc }
-            :nWidth           := 470
+            :cHeader          := "Hora"
+            :bEditValue       := {|| trans( ( dbfTmpEst )->tFecSit, "@R 99:99:99" ) }
+            :nWidth           := 90
          end with
 
          if nMode != ZOOM_MODE
-            oBrwEst:bLDblClick   := {|| WinEdtRec( oBrwEst, bEdtIEst, dbfTmpEst, nil, nil, aTmp ) }
-         end if*/
-
+            oBrwEst:bLDblClick   := {|| WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) }
+         end if
 
          oBrwEst:CreateFromResource( 210 )
 
      REDEFINE BUTTON ;
          ID       500 ;
-         OF       oFld:aDialogs[ 3 ] ;
+         OF       oFld:aDialogs[ 5 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( msgalert( "boton añadir" ) )
+         ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 
-//WinAppRec( oBrwEst, bEdtInc, dbfTmpEst, nil, nil, aTmp )
+//
 
 
      REDEFINE BUTTON ;
          ID       501 ;
-         OF       oFld:aDialogs[ 3 ] ;
+         OF       oFld:aDialogs[ 5 ] ;
          WHEN     ( lWhen ) ;
          ACTION   ( msgalert( "boton editar" ) )
 
@@ -3394,7 +3384,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
 	REDEFINE BUTTON ;
 		ID 		502 ;
-         OF       oFld:aDialogs[ 3 ] ;
+         OF       oFld:aDialogs[ 5 ] ;
          WHEN     ( lWhen ) ;
          ACTION   ( msgalert( "boton borrar" ) )
 
@@ -3404,7 +3394,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
 	REDEFINE BUTTON ;
 			ID 		503 ;
-         OF       oFld:aDialogs[ 3 ] ;
+         OF       oFld:aDialogs[ 5 ] ;
          ACTION   ( msgalert( "boton ZOOM" ) )
 
 
@@ -3468,9 +3458,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       oFld:aDialogs[4]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
       oFld:aDialogs[4]:AddFastKey( VK_F4, {|| WinDelRec( oBrwDoc, dbfTmpDoc ) } )
 
-      /*oFld:aDialogs[5]:AddFastKey( VK_F2, {|| WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
+      oFld:aDialogs[5]:AddFastKey( VK_F2, {|| WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
       oFld:aDialogs[5]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
-      oFld:aDialogs[5]:AddFastKey( VK_F4, {|| WinDelRec( oBrwEst, dbfTmpEst ) } )*/
+      oFld:aDialogs[5]:AddFastKey( VK_F4, {|| WinDelRec( oBrwEst, dbfTmpEst ) } )
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ), GenPedCli( IS_PRINTER ), ) } )
@@ -8628,7 +8618,7 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfProMat  ), ( dbfProMat  )->( dbCloseArea() ), )
    if( !Empty( dbfHisMov  ), ( dbfHisMov  )->( dbCloseArea() ), )
    if( !Empty( dbfCliBnc  ), ( dbfCliBnc  )->( dbCloseArea() ), )
-//   if( !Empty( dbfPedCliE  ), ( dbfPedCliE  )->( dbCloseArea() ), )///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   if( !Empty( dbfPedCliE  ), ( dbfPedCliE  )->( dbCloseArea() ), ) 
 
 
    if( !Empty( oStock     ), oStock:end(),  )
@@ -8648,7 +8638,7 @@ STATIC FUNCTION CloseFiles()
    D():DeleteView( nView )
 
    dbfPedCliI     := nil
- //  dbfPedCliE     := nil/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   dbfPedCliE     := nil 
    dbfPedCliD     := nil
    dbfPedCliP     := nil
    dbfPreCliT     := nil
@@ -8837,8 +8827,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
 
    oMsgText( "Archivando" )
 
-   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   //oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   //BEGIN SEQUENCE
 
    BeginTransaction()
 
@@ -8899,12 +8889,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
             end if
          end while
 
-    //     while ( dbfPedCliE )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //        if dbLock( dbfPedCliE )
-    //           ( dbfPedCliE )->( dbDelete() )
-    //           ( dbfPedCliE )->( dbUnLock() )
-    //        end if
-    //     end while
+         while ( dbfPedCliE )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) ) 
+            if dbLock( dbfPedCliE )
+               ( dbfPedCliE )->( dbDelete() )
+               ( dbfPedCliE )->( dbUnLock() )
+            end if
+         end while
 
       end if
 
@@ -8988,14 +8978,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    end while
 
    /*
-   Escribimos en el fichero definitivo (Estados de prestachop)
+   Escribimos en el fichero definitivo (Situaciones)
    */
 
-  // ( dbfTmpEst )->( DbGoTop() )
-  // while ( dbfTmpEst )->( !eof() )
-  //    dbPass( dbfTmpEst, dbfPedCliE, .t., cSerPed, nNumPed, cSufPed )////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //    ( dbfTmpEst )->( dbSkip() )
-  // end while
+   	( dbfTmpEst )->( DbGoTop() )
+   	while ( dbfTmpEst )->( !eof() )
+      	dbPass( dbfTmpEst, dbfPedCliE, .t., cSerPed, nNumPed, cSufPed ) 
+      	( dbfTmpEst )->( dbSkip() )
+   	end while
 
    /*
    Si el pedido está cancelado ponemos el estado a 3---------------------------
@@ -9044,7 +9034,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
 
    CommitTransaction()
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       RollBackTransaction()
       msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
@@ -9054,7 +9044,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
 
    oMsgText()
 
-   EndProgress()
+   EndProgress()*/
 
    /*
    Encendemos el dialogo-------------------------------------------------------
@@ -9493,6 +9483,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local cDbfDoc  := "PCliD"
    local cDbfRes  := "PCliR"
    local cDbfPgo  := "PCliP"
+   local cDbfEst  := "PCliE"
    local cPedido  := ""
    local nOrd
 
@@ -9500,14 +9491,15 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       cPedido     := aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ]
    end if
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    cTmpLin        := cGetNewFileName( cPatTmp() + cDbfLin )
    cTmpRes        := cGetNewFileName( cPatTmp() + cDbfRes )
    cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
    cTmpDoc        := cGetNewFileName( cPatTmp() + cDbfDoc )
    cTmpPgo        := cGetNewFileName( cPatTmp() + cDbfPgo )
+   cTmpEst        := cGetNewFileName( cPatTmp() + cDbfEst )
 
 
 	/*
@@ -9586,12 +9578,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
-  	dbCreate( cTmpRes, aSqlStruct( aPedCliEst() ), cLocalDriver() )
-   	dbUseArea( .t., cLocalDriver(), cTmpRes, cCheckArea( cDbfRes, @dbfTmpRes ), .f. )
+  	dbCreate( cTmpEst, aSqlStruct( aPedCliEst() ), cLocalDriver() )
+   	dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
   	if !NetErr()
 
-  		( dbfTmpEst )->( ordCreate( cTmpRes, "nNumPed", "cSerPed + str( nNumPed ) + cSufPed + dtos( dFecSit )  + tFecSit", {|| Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed + dtos( Field->dFecSit )  + Field->tFecSit } ) )
-      	( dbfTmpEst )->( ordListAdd( cTmpRes ) )
+  		( dbfTmpEst )->( ordCreate( cTmpEst, "nNumPed", "cSerPed + str( nNumPed ) + cSufPed + dtos( dFecSit )  + tFecSit", {|| Field->cSerPed + str( Field->nNumPed ) + Field->cSufPed + dtos( Field->dFecSit )  + Field->tFecSit } ) )
+      	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
 
   	else
 
@@ -9641,21 +9633,21 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpInc )->( dbGoTop() )
 
    /*
-   A¤adimos desde el fichero de estado de prestashop
-	*/
+   A¤adimos desde el fichero de situaiones
+*/
+	
+	if ( dbfPedCliE )->( dbSeek( cPedido ) )
 
-  // if ( dbfPedCliE )->( dbSeek( cPedido ) )
+      	while ( ( dbfPedCliE )->cSerPed + Str( ( dbfPedCliE )->nNumPed ) + ( dbfPedCliE )->cSufPed == cPedido ) .AND. ( dbfPedCliE )->( !eof() ) 
 
-  //    while ( ( dbfPedCliE )->cSerPed + Str( ( dbfPedCliE )->nNumPed ) + ( dbfPedCliE )->cSufPed == cPedido ) .AND. ( dbfPedCliE )->( !eof() )////////////////////////////////////////////////////////////////////////////////
+         dbPass( dbfPedCliE, dbfTmpEst, .t. )
+         ( dbfPedCliE )->( dbSkip() )
 
-  //       dbPass( dbfPedCliE, dbfTmpEst, .t. )
-  //       ( dbfPedCliE )->( dbSkip() )
+    	end while
 
-  //    end while
+  	end if
 
-  // end if
-
-  // ( dbfTmpEst )->( dbGoTop() )
+  	( dbfTmpEst )->( dbGoTop() )
 
    /*
    A¤adimos desde el fichero de documentos
@@ -9708,7 +9700,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    ( dbfTmpRes )->( dbGoTop() )
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
 
@@ -9718,7 +9710,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )/*/
 
 RETURN lErrors
 
@@ -9726,46 +9718,46 @@ RETURN lErrors
 
 Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmpPed )
 
-   local oDlg
-   local oNomInci
-   local cNomInci         	:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
+   	local oDlg
+   	local oNomInci
+   	local cNomInci         	:= RetFld( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
 
-   if nMode == APPD_MODE
-      aTmp[ _CSERPED  ]    := aTmpPed[ _CSERPED ]
-      aTmp[ _NNUMPED  ]    := aTmpPed[ _NNUMPED ]
-      aTmp[ _CSUFPED  ]    := aTmpPed[ _CSUFPED ]
+   	if nMode == APPD_MODE
+      	aTmp[ _CSERPED  ]    := aTmpPed[ _CSERPED ]
+      	aTmp[ _NNUMPED  ]    := aTmpPed[ _NNUMPED ]
+      	aTmp[ _CSUFPED  ]    := aTmpPed[ _CSUFPED ]
 
-      if IsMuebles()
-         aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
-      end if
-   end if
+      	if IsMuebles()
+         	aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
+      	end if
+   	end if
 
-   DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de presupuestos a clientes"
+   	DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de presupuestos a clientes"
 
-      REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
-         OF       oDlg
+      	REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
+         	VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
+         	ID       120 ;
+         	WHEN     ( nMode != ZOOM_MODE ) ;
+         	VALID    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) ) ;
+         	BITMAP   "LUPA" ;
+         	ON HELP  ( BrwIncidencia( dbfInci, aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) ) ;
+         	OF       oDlg
 
-      REDEFINE GET oNomInci VAR cNomInci;
-         WHEN     .f. ;
-         ID       130 ;
-         OF       oDlg
+      	REDEFINE GET oNomInci VAR cNomInci;
+      	   WHEN     .f. ;
+      	   ID       130 ;
+      	   OF       oDlg
 
-      REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
-         ID       100 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+	      REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ] ;
+	         ID       100 ;
+	         SPINNER ;
+	         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ] ;
          ID       150 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+		WHEN 		( nMode != ZOOM_MODE ) ;
+      	   OF       oDlg
 
       REDEFINE GET aTmp[ ( dbfTmpInc )->( FieldPos( "mDesInc" ) ) ] ;
          MEMO ;
@@ -9776,7 +9768,7 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
       REDEFINE CHECKBOX aTmp[ ( dbfTmpInc )->( FieldPos( "lListo" ) ) ] ;
          ID       140 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+      	   OF       oDlg
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -9784,19 +9776,81 @@ Static Function EdtInc( aTmp, aGet, dbfPedCliI, oBrw, bWhen, bValid, nMode, aTmp
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) )
 
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:end() )
+      	REDEFINE BUTTON ;
+         	ID       IDCANCEL ;
+         	OF       oDlg ;
+	        CANCEL ;
+      	   ACTION   ( oDlg:end() )
 
-   if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) } )
-   end if
+   	if nMode != ZOOM_MODE
+   	   oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( IDOK ) } )
+   	end if
+	
+   	ACTIVATE DIALOG oDlg CENTER
+
+Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function EdtEst( aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpPed )
+
+   	local oDlg
+
+   	if nMode == APPD_MODE
+      	
+      	/*aTmp[ _CSERPED  ]    := aTmpPed[ _CSERPED ]
+      	aTmp[ _NNUMPED  ]    := aTmpPed[ _NNUMPED ]
+      	aTmp[ _CSUFPED  ]    := aTmpPed[ _CSUFPED ]*/
+    	aTmp[ (dbfPedCliE)->(fieldpos("tFecSit")) ]	:= GetSysTime()
+
+    end if
+
+   	DEFINE DIALOG oDlg RESOURCE "SITUACION-ESTADO" TITLE LblTitle( nMode ) + "Situación del documento del cliente"
+
+   		REDEFINE COMBOBOX aGet[ (dbfPedCliE)->(fieldpos("cSitua")) ] ;
+   			VAR 	 aTmp[ (dbfPedCliE)->(fieldpos("cSitua")) ] ;
+         	ID       200 ;
+         	WHEN     ( nMode != ZOOM_MODE );
+         	ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
+         	OF       oDlg
+
+        REDEFINE GET aGet[ (dbfPedCliE)->(fieldpos("dFecSit")) ] ;
+        	VAR 	aTmp[ (dbfPedCliE)->(fieldpos("dFecSit")) ] ;
+			ID 		100 ;
+			SPINNER ;
+         	ON HELP  aGet[ (dbfPedCliE)->(fieldpos("dFecSit")) ]:cText( Calendario( aTmp[ (dbfPedCliE)->(fieldpos("dFecSit")) ] ) ) ;
+			WHEN 	( nMode != ZOOM_MODE ) ;
+			OF 		oDlg
+
+	  	REDEFINE GET aGet[ (dbfPedCliE)->(fieldpos("tFecSit")) ] ;
+	  		VAR 	 aTmp[ (dbfPedCliE)->(fieldpos("tFecSit")) ] ;
+         	ID       101 ;
+         	PICTURE  "@R 99:99:99" ;
+         	WHEN     ( nMode != ZOOM_MODE ) ;
+         	VALID    ( iif( !validTime( aTmp[ (dbfPedCliE)->(fieldpos("tFecSit")) ] ),;
+                          ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                          .t. ) );
+         	OF       oDlg
+
+      	REDEFINE BUTTON ;
+         	ID       IDOK ;
+         	OF       oDlg ;
+         	WHEN     ( nMode != ZOOM_MODE ) ;
+         	ACTION   ( WinGather( aTmp, nil, dbfTmpEst, oBrw, nMode ), oDlg:end( IDOK ) )
+
+      	REDEFINE BUTTON ;
+         	ID       IDCANCEL ;
+         	OF       oDlg ;
+         	CANCEL ;
+         	ACTION   ( oDlg:end() )
+
+   	if nMode != ZOOM_MODE
+    	oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpEst, oBrw, nMode ), oDlg:end( IDOK ) } )
+   	end if
 
    ACTIVATE DIALOG oDlg CENTER
 
-Return ( oDlg:nResult == IDOK )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -13344,7 +13398,7 @@ FUNCTION QuiPedCli()
    nOrdRes        	:= ( dbfPedCliR )->( OrdSetFocus( "NNUMPED" ) )
    nOrdInc        	:= ( dbfPedCliI )->( OrdSetFocus( "NNUMPED" ) )
    nOrdDoc        	:= ( dbfPedCliD )->( OrdSetFocus( "NNUMPED" ) )
- //  nOrdEst			:= ( dbfPedCliE )->( OrdSetFocus( "NNUMPED" ) )////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   nOrdEst			:= ( dbfPedCliE )->( OrdSetFocus( "NNUMPED" ) ) 
 
    /*
    Cambiamos el estado del presupuesto del que viene el pedido-----------------
@@ -13413,15 +13467,15 @@ FUNCTION QuiPedCli()
    end while
 
    /*
-   Estados de prestashop--------------------------------------------------------
+   Situaciones--------------------------------------------------------
    */
 
-  // while ( dbfPedCliE )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView )  )->cSufPed ) ) .and. !( dbfPedCliE )->( eof() )
-  //    if dbLock( dbfPedCliE )
-  //       ( dbfPedCliE )->( dbDelete() )
-  //       ( dbfPedCliE )->( dbUnLock() )
-  //    end if
- //  end while
+   	while ( dbfPedCliE )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView )  )->cSufPed ) ) .and. !( dbfPedCliE )->( eof() )
+ 	    if dbLock( dbfPedCliE )
+         	( dbfPedCliE )->( dbDelete() )
+         	( dbfPedCliE )->( dbUnLock() )
+      	end if
+   	end while
 
 
    ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( nOrdDet ) )
@@ -13429,7 +13483,7 @@ FUNCTION QuiPedCli()
    ( dbfPedCliR )->( OrdSetFocus( nOrdRes ) )
    ( dbfPedCliI )->( OrdSetFocus( nOrdInc ) )
    ( dbfPedCliD )->( OrdSetFocus( nOrdDoc ) )
-   //( dbfPedCliE )->( OrdSetFocus( nOrdEst ) )//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   ( dbfPedCliE )->( OrdSetFocus( nOrdEst ) ) 
 
 Return ( .t. )
 
@@ -13458,8 +13512,8 @@ Function SynPedCli( cPath )
    USE ( cPatEmp() + "PEDCLII.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLII", @dbfPedCliI ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLII.CDX" ) ADDITIVE
 
-  // USE ( cPatEmp() + "PEDCLIE.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIE", @dbfPedCliE ) )///////////////////////////////////////////////////////////////////////////////////////////////
-  // SET ADSINDEX TO ( cPatEmp() + "PEDCLIE.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PEDCLIE.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIE", @dbfPedCliE ) ) 
+   SET ADSINDEX TO ( cPatEmp() + "PEDCLIE.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "PEDCLID.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLID", @dbfPedCliD ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLID.CDX" ) ADDITIVE
@@ -13615,7 +13669,7 @@ Function SynPedCli( cPath )
    CLOSE ( dbfIva     )
    CLOSE ( dbfDiv     )
    CLOSE ( dbfFPago   )
-   //CLOSE ( dbfPedCliE )////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   CLOSE ( dbfPedCliE ) 
 
 Return nil
 
@@ -15688,8 +15742,8 @@ function aPedCliEst()
    aAdd( aPedCliEst, { "nNumPed", "N",    9,  0, "Numero de pedido" ,           "'999999999'",        "", "( cDbfCol )", nil } )
    aAdd( aPedCliEst, { "cSufPed", "C",    2,  0, "Sufijo de pedido" ,           "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliEst, { "cSitua",  "C",  140,  0, "Situación" ,   	    		"",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliEst, { "dFecInc", "D",    8,  0, "Fecha de la situación" ,      "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliEst, { "tFecInc", "C",    6,  0, "Hora de la situación" ,       "",                   "", "( cDbfCol )", nil } )   
+   aAdd( aPedCliEst, { "dFecSit", "D",    8,  0, "Fecha de la situación" ,      "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliEst, { "tFecSit", "C",    6,  0, "Hora de la situación" ,       "",                   "", "( cDbfCol )", nil } )   
 
 return ( aPedCliEst )
 
