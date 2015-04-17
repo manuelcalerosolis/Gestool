@@ -1026,7 +1026,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
    local oImp
    local oPrv
    local oSnd
-   local oDel
+   local oChangeState
    local oRpl
    local oPdf
    local oMail
@@ -1472,7 +1472,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       HOTKEY   "Z" ;
       LEVEL    ACC_ZOOM
 
-   DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oWndBrw:RecDel() );
       MENU     This:Toggle() ;
@@ -1532,11 +1532,21 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    if oUser():lAdministrador()
 
-      DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
+      DEFINE BTNSHELL oChangeState RESOURCE "CHGSTATE" OF oWndBrw ;
          NOBORDER ;
+         MENU     This:Toggle() ;
          ACTION   ( ChgSta( oWndBrw:oBrw ) ) ;
          TOOLTIP  "Cambiar es(t)ado" ;
          HOTKEY   "T";
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "CHGSTATE" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oStock:SetEstadoPedCli( D():PedidosClientesId( nView ), oWndBrw:Refresh() ) );
+         TOOLTIP  "(R)ecalcular estado" ;
+         HOTKEY   "R";
+         FROM     oChangeState ;
+         CLOSED ;
          LEVEL    ACC_EDIT
 
    end if

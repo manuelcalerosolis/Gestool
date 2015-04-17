@@ -1007,14 +1007,12 @@ return self
 
 //---------------------------------------------------------------------------//
 
-METHOD SetEstadoPedCli( cNumPed, lFactura, cNumFac ) CLASS TStock
+METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
 
    local nEstPed        := 1
    local nTotPed        := 0
    local nTotSer        := 0
    local nTotLineaAct   := 0
-
-   DEFAULT lFactura     := .f.
 
    if Empty( ::cPedCliT ) .or. Empty( ::cPedCliL )
       return .f.
@@ -1053,6 +1051,9 @@ METHOD SetEstadoPedCli( cNumPed, lFactura, cNumFac ) CLASS TStock
       En funcion de lo recibido colocamos los pedidos
       */
 
+      msgAlert( nTotPed, "nTotPed")
+      msgAlert( nTotSer, "nTotSer")
+
       do case
          case nTotSer == 0
             nEstPed     := 1
@@ -1068,6 +1069,8 @@ METHOD SetEstadoPedCli( cNumPed, lFactura, cNumFac ) CLASS TStock
       end if
 
    end if
+
+   msgAlert( nEstPed, "nEstPed" )
 
 Return .t.
 
