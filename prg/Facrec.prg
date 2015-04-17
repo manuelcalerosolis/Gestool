@@ -13243,7 +13243,7 @@ function SynFacRec( cPath )
       USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-      USE ( cPatCli() + "Client.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @dbfClient ) ) EXCLUSIVE
+      USE ( cPatCli() + "Client.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @dbfClient ) ) SHARED
       SET ADSINDEX TO ( cPatCli() + "Client.CDX" ) ADDITIVE
 
       oNewImp        := TNewImp():Create( cPatEmp() )

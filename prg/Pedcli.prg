@@ -113,9 +113,7 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _CCTABNC                  98
 #define _LPRODUC                  99
 #define _NDTOTARIFA              100
-#define _CSITUA				 	 101
-#define _DFECSIT				 102
-#define _TFECSIT				 103
+
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -325,7 +323,7 @@ static bEdtRes       := { |aTmp, aGet, dbfPedCliR, oBrw, bWhen, bValid, nMode, a
 static bEdtDoc       := { |aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfPedCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo       := { |aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed | EdtEnt( aTmp, aGet, dbfPedCliP, oBrw, bWhen, bValid, nMode, aTmpPed ) }
 static bEdtTablet    := { |aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtTablet( aTmp, aGet, dbfPedCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
-static bEdtEst       := { |aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpLin | EdtEst( aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpLin ) } 
+static bEdtEst       := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) } 
 
 
 static lExternal     := .f.
@@ -3354,7 +3352,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
          with object ( oBrwEst:AddCol() )
             :cHeader          := "Fecha"
-            :bEditValue       := {|| ( dbfTmpEst )->dFecSit }
+            :bEditValue       := {|| Dtoc( ( dbfTmpEst )->dFecSit ) }
             :nWidth           := 90
          	:nDataStrAlign    := 1
          	:nHeadStrAlign    := 1
@@ -3379,37 +3377,24 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 
-//
-
-
      REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[ 5 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( msgalert( "boton editar" ) )
-
-
-//WinEdtRec( oBrwEst, bEdtInc, dbfTmpEst, nil, nil, aTmp )
+         ACTION   ( WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 
 	REDEFINE BUTTON ;
 		ID 		502 ;
          OF       oFld:aDialogs[ 5 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( msgalert( "boton borrar" ) )
-
-
-//WinDelRec( oBrwEst, dbfTmpEst )
+         ACTION   ( WinDelRec( oBrwEst, dbfTmpEst ) )
 
 
 	REDEFINE BUTTON ;
 			ID 		503 ;
          OF       oFld:aDialogs[ 5 ] ;
-         ACTION   ( msgalert( "boton ZOOM" ) )
-
-
-//WinZooRec( oBrwEst, bEdtInc, dbfTmpEst, nil, nil, aTmp )
-
+         ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 
 		/*
@@ -8238,7 +8223,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Documentos de pedidos", ( dbfPedCliD )->( Select() ) )
    oFr:SetFieldAliases( "Documentos de pedidos", cItemsToReport( aPedCliDoc() ) )
 
-   oFr:SetWorkArea(     "Situaciones de pedidos", ( dbfPedCliE )->( Select() ) )
+   oFr:SetWorkArea(     "Situaciones de pedidos", ( D():PedidosClientesSituaciones( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Situaciones de pedidos", cItemsToReport( aPedCliEst() ) )
 
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
@@ -8628,7 +8613,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfProMat  ), ( dbfProMat  )->( dbCloseArea() ), )
    if( !Empty( dbfHisMov  ), ( dbfHisMov  )->( dbCloseArea() ), )
    if( !Empty( dbfCliBnc  ), ( dbfCliBnc  )->( dbCloseArea() ), )
-   if( !Empty( dbfPedCliE  ), ( dbfPedCliE  )->( dbCloseArea() ), ) 
 
 
    if( !Empty( oStock     ), oStock:end(),  )
@@ -8648,7 +8632,6 @@ STATIC FUNCTION CloseFiles()
    D():DeleteView( nView )
 
    dbfPedCliI     := nil
-   dbfPedCliE     := nil 
    dbfPedCliD     := nil
    dbfPedCliP     := nil
    dbfPreCliT     := nil
@@ -8704,6 +8687,7 @@ STATIC FUNCTION CloseFiles()
    dbfProMat      := nil
    dbfHisMov      := nil
    dbfCliBnc      := nil
+   nView		  := nil
 
    oStock         := nil
    oBandera       := nil
@@ -8899,10 +8883,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
             end if
          end while
 
-         while ( dbfPedCliE )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) ) 
-            if dbLock( dbfPedCliE )
-               ( dbfPedCliE )->( dbDelete() )
-               ( dbfPedCliE )->( dbUnLock() )
+         while ( D():PedidosClientesSituaciones( nView ) )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) ) 
+            if dbLock( D():PedidosClientesSituaciones( nView ) )
+               ( D():PedidosClientesSituaciones( nView ) )->( dbDelete() )
+               ( D():PedidosClientesSituaciones( nView ) )->( dbUnLock() )
             end if
          end while
 
@@ -8991,9 +8975,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    Escribimos en el fichero definitivo (Situaciones)
    */
 
-   	( dbfTmpEst )->( DbGoTop() )
+    ( dbfTmpEst )->( DbGoTop() )
    	while ( dbfTmpEst )->( !eof() )
-      	dbPass( dbfTmpEst, dbfPedCliE, .t., cSerPed, nNumPed, cSufPed ) 
+      	dbPass( dbfTmpEst, D():PedidosClientesSituaciones( nView ), .t., cSerPed, nNumPed, cSufPed ) 
       	( dbfTmpEst )->( dbSkip() )
    	end while
 
@@ -9646,12 +9630,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    A¤adimos desde el fichero de situaiones
 */
 	
-	if ( dbfPedCliE )->( dbSeek( cPedido ) )
+	if ( D():PedidosClientesSituaciones( nView ) )->( dbSeek( cPedido ) )
 
-      	while ( ( dbfPedCliE )->cSerPed + Str( ( dbfPedCliE )->nNumPed ) + ( dbfPedCliE )->cSufPed == cPedido ) .AND. ( dbfPedCliE )->( !eof() ) 
+      	while ( ( D():PedidosClientesSituaciones( nView ) )->cSerPed + Str( ( D():PedidosClientesSituaciones( nView ) )->nNumPed ) + ( D():PedidosClientesSituaciones( nView ) )->cSufPed == cPedido ) .AND. ( D():PedidosClientesSituaciones( nView ) )->( !eof() ) 
 
-         dbPass( dbfPedCliE, dbfTmpEst, .t. )
-         ( dbfPedCliE )->( dbSkip() )
+         dbPass( D():PedidosClientesSituaciones( nView ), dbfTmpEst, .t. )
+         ( D():PedidosClientesSituaciones( nView ) )->( dbSkip() )
 
     	end while
 
@@ -9802,42 +9786,39 @@ Return ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtEst( aTmp, aGet, dbfPedCliE, oBrw, bWhen, bValid, nMode, aTmpPed )
+Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpPed )
 
    	local oDlg
 
    	if nMode == APPD_MODE
       	
-      	/*aTmp[ _CSERPED  ]    := aTmpPed[ _CSERPED ]
-      	aTmp[ _NNUMPED  ]    := aTmpPed[ _NNUMPED ]
-      	aTmp[ _CSUFPED  ]    := aTmpPed[ _CSUFPED ]*/
-    	aTmp[ (dbfPedCliE)->(fieldpos("tFecSit")) ]	:= GetSysTime()
+      	aTmp[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("tFecSit")) ]	:= GetSysTime()
 
     end if
 
    	DEFINE DIALOG oDlg RESOURCE "SITUACION-ESTADO" TITLE LblTitle( nMode ) + "Situación del documento del cliente"
 
-   		REDEFINE COMBOBOX aGet[ (dbfPedCliE)->(fieldpos("cSitua")) ] ;
-   			VAR 	 aTmp[ (dbfPedCliE)->(fieldpos("cSitua")) ] ;
+   		REDEFINE COMBOBOX aGet[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
+   			VAR 	 aTmp[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
          	ID       200 ;
          	WHEN     ( nMode != ZOOM_MODE );
          	ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
          	OF       oDlg
 
-        REDEFINE GET aGet[ (dbfPedCliE)->(fieldpos("dFecSit")) ] ;
-        	VAR 	aTmp[ (dbfPedCliE)->(fieldpos("dFecSit")) ] ;
+        REDEFINE GET aGet[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
+        	VAR 	aTmp[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
 			ID 		100 ;
 			SPINNER ;
-         	ON HELP  aGet[ (dbfPedCliE)->(fieldpos("dFecSit")) ]:cText( Calendario( aTmp[ (dbfPedCliE)->(fieldpos("dFecSit")) ] ) ) ;
+         	ON HELP  aGet[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("dFecSit")) ]:cText( Calendario( aTmp[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ) ) ;
 			WHEN 	( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
-	  	REDEFINE GET aGet[ (dbfPedCliE)->(fieldpos("tFecSit")) ] ;
-	  		VAR 	 aTmp[ (dbfPedCliE)->(fieldpos("tFecSit")) ] ;
+	  	REDEFINE GET aGet[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ;
+	  		VAR 	 aTmp[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ;
          	ID       101 ;
          	PICTURE  "@R 99:99:99" ;
          	WHEN     ( nMode != ZOOM_MODE ) ;
-         	VALID    ( iif( !validTime( aTmp[ (dbfPedCliE)->(fieldpos("tFecSit")) ] ),;
+         	VALID    ( iif( !validTime( aTmp[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ),;
                           ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
                           .t. ) );
          	OF       oDlg
@@ -13408,7 +13389,7 @@ FUNCTION QuiPedCli()
    nOrdRes        	:= ( dbfPedCliR )->( OrdSetFocus( "NNUMPED" ) )
    nOrdInc        	:= ( dbfPedCliI )->( OrdSetFocus( "NNUMPED" ) )
    nOrdDoc        	:= ( dbfPedCliD )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdEst			:= ( dbfPedCliE )->( OrdSetFocus( "NNUMPED" ) ) 
+   nOrdEst			:= ( D():PedidosClientesSituaciones( nView ) )->( OrdSetFocus( "NNUMPED" ) ) 
 
    /*
    Cambiamos el estado del presupuesto del que viene el pedido-----------------
@@ -13480,10 +13461,10 @@ FUNCTION QuiPedCli()
    Situaciones--------------------------------------------------------
    */
 
-   	while ( dbfPedCliE )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView )  )->cSufPed ) ) .and. !( dbfPedCliE )->( eof() )
- 	    if dbLock( dbfPedCliE )
-         	( dbfPedCliE )->( dbDelete() )
-         	( dbfPedCliE )->( dbUnLock() )
+   	while ( D():PedidosClientesSituaciones( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView )  )->cSufPed ) ) .and. !( D():PedidosClientesSituaciones( nView ) )->( eof() )
+ 	    if dbLock( D():PedidosClientesSituaciones( nView ) )
+         	( D():PedidosClientesSituaciones( nView ) )->( dbDelete() )
+         	( D():PedidosClientesSituaciones( nView ) )->( dbUnLock() )
       	end if
    	end while
 
@@ -13493,7 +13474,7 @@ FUNCTION QuiPedCli()
    ( dbfPedCliR )->( OrdSetFocus( nOrdRes ) )
    ( dbfPedCliI )->( OrdSetFocus( nOrdInc ) )
    ( dbfPedCliD )->( OrdSetFocus( nOrdDoc ) )
-   ( dbfPedCliE )->( OrdSetFocus( nOrdEst ) ) 
+   ( D():PedidosClientesSituaciones( nView ) )->( OrdSetFocus( nOrdEst ) ) 
 
 Return ( .t. )
 
@@ -13571,6 +13552,8 @@ Function SynPedCli( cPath )
 
       end while
 
+
+
    	( dbfPedCliT )->( ordSetFocus( 1 ) )
 
    	( dbfPedCliT )->( dbGoTop() )
@@ -13597,6 +13580,7 @@ Function SynPedCli( cPath )
          ( dbfPedCliT )->( dbSkip() )
 
     end while
+
 
     // Lineas -----------------------------------------------------------------
 
@@ -13639,6 +13623,7 @@ Function SynPedCli( cPath )
 
     end while
 
+
    	( dbfPedCliL )->( ordSetFocus( 1 ) )
 
     // Incidencias ----------------------------------------------------------
@@ -13657,6 +13642,7 @@ Function SynPedCli( cPath )
         SysRefresh()
 
     end while
+
 
    	( dbfPedCliI )->( ordSetFocus( 1 ) )
 
@@ -15976,9 +15962,9 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 
 	if !Empty( nView )
 		DEFAULT cPedCliT   	:= D():PedidosClientes( nView )
-      DEFAULT cClient   	:= D():Clientes( nView )
-      DEFAULT cPedCliL     := D():PedidosClientesLineas( nView )
-   end if	
+      	DEFAULT cClient   	:= D():Clientes( nView )
+      	DEFAULT cPedCliL     := D():PedidosClientesLineas( nView )
+   end if
 	
 	DEFAULT cIva            := dbfIva
 	DEFAULT cDiv            := dbfDiv
