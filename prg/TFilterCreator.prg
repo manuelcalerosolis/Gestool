@@ -764,7 +764,11 @@ CLASS TBrowseFilter
                                                                   "Block"        => {|| nil },;
                                                                   "Conditions"   => { 	"Igual",;
                                        									                     "Distinto",;
-                                       									                     "Contenga" } },;
+                                       									                     "Contenga",;
+                                                                                       "Mayor",;
+                                                                                       "Menor",;
+                                                                                       "Mayor igual",;
+                                                                                       "Menor igual" } },;
                               					      	"D"	=> {  "Value"        => GetSysDate(),;
                                                                   "Edit"         => EDIT_GET_BUTTON,;
                                                                   "List"         => nil,;
