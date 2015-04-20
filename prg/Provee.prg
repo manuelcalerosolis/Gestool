@@ -3084,7 +3084,7 @@ Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDl
                RESOURCE "info16" ;
                ACTION   ( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) )
 
-            MENUITEM "&2. Campos extra";
+            MENUITEM "&2. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para el proveedor" ;
                RESOURCE "form_green_add_16" ;
                ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) )

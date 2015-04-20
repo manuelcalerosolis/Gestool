@@ -6113,7 +6113,7 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
          RESOURCE "info16" ;
          ACTION   ( BrwVtaCli( ( D():Get( "Client", nView ) )->Cod, ( D():Get( "Client", nView ) )->Titulo ) )
 
-         MENUITEM "&2. Campos extra";
+         MENUITEM "&2. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para el cliente" ;
             RESOURCE "form_green_add_16" ;
             ACTION   ( oDetCamposExtra:Play( ( D():Get( "Client", nView ) )->Cod ) )

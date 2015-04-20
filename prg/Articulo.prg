@@ -12661,7 +12661,7 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
             RESOURCE "info16" ;
             ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
 
-            MENUITEM "&3. Campos extra";
+            MENUITEM "&3. Campos extra [F9]";
             MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
             RESOURCE "form_green_add_16" ;
             ACTION   ( oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) )
