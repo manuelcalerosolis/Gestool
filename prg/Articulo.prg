@@ -4516,6 +4516,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       oDlg:AddFastKey(  VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
       oDlg:AddFastKey(  VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
 
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) } )
+
       oDlg:AddFastKey(  VK_F5, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
 
       if uFieldEmpresa( "lRealWeb" )

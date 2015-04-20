@@ -296,7 +296,9 @@ static lOpenFiles       := .f.
 
 static nLabels          := 1
 
-static aIniCli         
+static aIniCli
+
+static oDetCamposExtra         
 
 static bEdtRec          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtBig          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtBig( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
@@ -462,6 +464,12 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles        := .f.
       end if
 
+      oDetCamposExtra      := TDetCamposExtra():New()
+      if !oDetCamposExtra:OpenFiles
+         lOpenFiles        := .f.
+      end if
+      oDetCamposExtra:SetTipoDocumento( "Clientes" )
+
       cPinDiv              := cPinDiv( cDivEmp() ) // Picture de la divisa de compra
       cPouDiv              := cPouDiv( cDivEmp() ) // Picture de la divisa
       cPorDiv              := cPorDiv( cDivEmp() ) // Picture de la divisa redondeada
@@ -544,29 +552,34 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oBanco:End()
    end if
 
-   D():DeleteView( nView )
-
-   dbfArtKit      := nil
-   cFPago         := nil
-   cAgente        := nil
-   dbfObrasT      := nil
-   dbfContactos   := nil
-   dbfFPago       := nil
-   dbfAlmT        := nil
-   dbfFamilia     := nil
-   dbfPro         := nil
-   dbfProL        := nil
-   dbfDoc         := nil
-   dbfBanco       := nil
-   dbfOfe         := nil
-   dbfArtDiv      := nil
-   dbfRuta        := nil
-
-   if lDestroy
-      oWndBrw     := nil
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
-   lOpenFiles     := .f.
+   D():DeleteView( nView )
+
+   dbfArtKit         := nil
+   cFPago            := nil
+   cAgente           := nil
+   dbfObrasT         := nil
+   dbfContactos      := nil
+   dbfFPago          := nil
+   dbfAlmT           := nil
+   dbfFamilia        := nil
+   dbfPro            := nil
+   dbfProL           := nil
+   dbfDoc            := nil
+   dbfBanco          := nil
+   dbfOfe            := nil
+   dbfArtDiv         := nil
+   dbfRuta           := nil
+   oDetCamposExtra   := nil 
+
+   if lDestroy
+      oWndBrw        := nil
+   end if
+
+   lOpenFiles        := .f.
 
    EnableAcceso()
 
@@ -1061,6 +1074,14 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          ACTION   ( oRotor:Expand() ) ;
          TOOLTIP  "Rotor" ;
          LEVEL    ACC_EDIT
+
+         DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( oDetCamposExtra:Play( ( D():Get( "Client", nView ) )->Cod ) );
+            TOOLTIP  "Campos extra" ;
+            FROM     oRotor ;
+            ALLOW    EXIT ;
+            LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
@@ -3744,6 +3765,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          oDlg:AddFastKey( VK_F7, {|| if( oFld:nOption > 1, oFld:SetOption( oFld:nOption - 1 ), ) } )
          oDlg:AddFastKey( VK_F8, {|| if( oFld:nOption < Len( oFld:aDialogs ), oFld:SetOption( oFld:nOption + 1 ), ) } )
 
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _COD ] ) } )
+
          oDlg:AddFastKey( VK_F5, {|| SavClient( aTmp, aGet, oDlg, oBrw, nMode ) } )
 
       end if
@@ -6089,6 +6112,11 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
          MESSAGE  "Muestra el informe del Cliente" ;
          RESOURCE "info16" ;
          ACTION   ( BrwVtaCli( ( D():Get( "Client", nView ) )->Cod, ( D():Get( "Client", nView ) )->Titulo ) )
+
+         MENUITEM "&2. Campos extra";
+            MESSAGE  "Mostramos y rellenamos los campos extra para el cliente" ;
+            RESOURCE "form_green_add_16" ;
+            ACTION   ( oDetCamposExtra:Play( ( D():Get( "Client", nView ) )->Cod ) )
 
          #endif
 

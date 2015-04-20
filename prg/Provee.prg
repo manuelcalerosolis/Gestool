@@ -130,6 +130,7 @@ static filProvee
 static tmpProvee
 static dbfDoc
 static oBanco
+static oDetCamposExtra
 
 static oRTF
 static cRTF
@@ -242,6 +243,12 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       oBanco            := TBancos():Create()
       oBanco:OpenFiles()
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      if !oDetCamposExtra:OpenFiles
+         lOpenFiles        := .f.
+      end if
+      oDetCamposExtra:SetTipoDocumento( "Proveedores" )
 
       cPinDiv        := cPinDiv( cDivEmp(), dbfDiv ) // Picture de la divisa
       cPirDiv        := cPirDiv( cDivEmp(), dbfDiv ) // Picture de la divisa redondeada
@@ -598,6 +605,14 @@ FUNCTION Provee( oMenuItem, oWnd )
          ACTION   ( oRotor:Expand() ) ;
          TOOLTIP  "Rotor" ;
          LEVEL    ACC_EDIT
+
+         DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) );
+            TOOLTIP  "Campos extra" ;
+            FROM     oRotor ;
+            ALLOW    EXIT ;
+            LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
             ALLOW    EXIT ;
@@ -1830,6 +1845,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          oFld:aDialogs[6]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
          oFld:aDialogs[6]:AddFastKey( VK_F4, {|| DbDelRec( oBrwDoc, dbfTmpDoc, nil, nil, .t. ) } )
 
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _COD ] ) } )
+
          oDlg:AddFastKey( VK_F5, {|| lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ) } )
 
       end if
@@ -2264,25 +2281,30 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oBanco:End()
    end if
 
-   dbfProvee   := nil
-   dbfProveeD  := nil
-   dbfPedPrvT  := nil
-   dbfPedPrvL  := nil
-   dbfAlbPrvT  := nil
-   dbfAlbPrvL  := nil
-   dbfFacPrvT  := nil
-   dbfFacPrvL  := nil
-   dbfFPago    := nil
-   dbfArtPrv   := nil
-   dbfIva      := nil
-   dbfArticulo := nil
-   dbfDiv      := nil
-   oBandera    := nil
-   oPais       := nil
-   dbfBanco    := nil
-   oGrpPrv     := nil
-   dbfDoc      := nil
-   oBanco      := nil
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:End()
+   end if
+
+   dbfProvee         := nil
+   dbfProveeD        := nil
+   dbfPedPrvT        := nil
+   dbfPedPrvL        := nil
+   dbfAlbPrvT        := nil
+   dbfAlbPrvL        := nil
+   dbfFacPrvT        := nil
+   dbfFacPrvL        := nil
+   dbfFPago          := nil
+   dbfArtPrv         := nil
+   dbfIva            := nil
+   dbfArticulo       := nil
+   dbfDiv            := nil
+   oBandera          := nil
+   oPais             := nil
+   dbfBanco          := nil
+   oGrpPrv           := nil
+   dbfDoc            := nil
+   oBanco            := nil
+   oDetCamposExtra   := nil
 
    if lDestroy
       oWndBrw        := nil
@@ -3061,6 +3083,11 @@ Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDl
                MESSAGE  "Muestra el informe del artículo" ;
                RESOURCE "info16" ;
                ACTION   ( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) )
+
+            MENUITEM "&2. Campos extra";
+               MESSAGE  "Mostramos y rellenamos los campos extra para el proveedor" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) )
 
 #endif
 
