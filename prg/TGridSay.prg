@@ -178,13 +178,15 @@ CLASS TGridGet FROM TGet, TGridable
    METHOD Build( hBuilder ) 
 
    METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
-            nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
-            lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
-            lPassword, lNoBorder, nHelpId, lSpinner,;
-            bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
-            cCueText ) CONSTRUCTOR
+               nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg,;
+               lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly,;
+               lPassword, lNoBorder, nHelpId, lSpinner,;
+               bUp, bDown, bMin, bMax, bAction, cBmpName, cVarName,;
+               cCueText ) CONSTRUCTOR
 
-   METHOD GotFocus( hCtlLost )   INLINE ( ShowKeyboard(), ::Super:gotFocus( hCtlLost ), ::Super:keyDown( VK_HOME ) ) // , ::Supper:SetPos( ::oGet:Pos ) )
+   METHOD GotFocus( hCtlLost )   INLINE ( ShowKeyboard(),; 
+                                          ::Super:gotFocus( hCtlLost ),;
+                                          ::Super:selectAll() ) // , ::Supper:SetPos( ::oGet:Pos ) )
 
    METHOD HardEnable()
 

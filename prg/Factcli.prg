@@ -5661,7 +5661,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
             cSerieAnterior      := aTmp[ _CSERIE ]
 
-    end case  		
+      end case  		
 
       cCodPagoAnterior           := aTmp[ _CCODPAGO ]
 
@@ -5674,7 +5674,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	end if
 
    	/*
-	Cargamos los pictures------------------------------------------------------
+      Cargamos los pictures------------------------------------------------------
    	*/
 
    	cPicUnd                 := MasUnd()                            // Picture de las unidades
@@ -5686,13 +5686,13 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	cPpvDiv                 := cPpvDiv( aTmp[ _CDIVFAC ], dbfDiv ) // Picture del punto verde
    	nDpvDiv                 := nDpvDiv( aTmp[ _CDIVFAC ], dbfDiv ) // Decimales de redondeo del punto verde
 
-   	//-----------------------------------------------------------------------//
+      //-----------------------------------------------------------------------//
 
       oDlg           := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
-	/*
-	Cabeceras------------------------------------------------------------------
-	*/
+      /*
+      Cabeceras------------------------------------------------------------------
+      */
 
 	   oSayGeneral    	:= TGridSay():Build(    { 	"nRow"      => 0,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
@@ -5722,9 +5722,9 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"bLClicked" => {|| EdtResumenTablet( aTmp, aGet, nMode, oDlg ) },;
                                              		"oWnd"      => oDlg } )
 
- 	/*
-	Serie de la factura--------------------------------------------------------
-   	*/
+      /*
+      Serie de la factura--------------------------------------------------------
+      */
 
    	if nMode == EDIT_MODE .and. !aTmp[ _LSNDDOC ]
 
@@ -5967,6 +5967,10 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    oBrwLin:nMarqueeStyle   	:= 6
    oBrwLin:lFooter 		  	   := .t.
    oBrwLin:cName           	:= "Grid lineas facturas"
+
+   if oUser():lAdministrador()
+      oBrwLin:bLDblClick      := {|| EdtDeta( oBrwLin, bEdtDetTablet, aTmp, .f., nMode ) }
+   end if 
 
    with object ( oBrwLin:AddCol() )
        	:cHeader             := "Número"
@@ -20351,7 +20355,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "NNUMFAC", "CSERIE + str(NNUMFAC) + CSUFFAC", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac }, ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "DFECFAC", "dtos( DFECFAC ) + tFecFac", {|| Dtos( Field->DFECFAC ) + Field->tFecFac } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "dFecFac", "dFecFac", {|| Field->dFecFac } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )

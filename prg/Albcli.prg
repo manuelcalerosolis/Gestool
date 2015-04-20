@@ -16220,7 +16220,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMALB", "CSERALB + Str(NNUMALB) + CSUFALB", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "dtos( DFECALB ) + tFecAlb", {|| dtos( Field->DFECALB ) + Field->tFecAlb } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "dFecAlb", "dFecAlb", {|| Field->dFecAlb } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
