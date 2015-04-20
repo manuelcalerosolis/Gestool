@@ -1070,8 +1070,6 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
 
    end if
 
-   msgAlert( nEstPed, "nEstPed" )
-
 Return .t.
 
 //---------------------------------------------------------------------------//

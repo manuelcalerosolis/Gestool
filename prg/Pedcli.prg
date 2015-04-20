@@ -1959,6 +1959,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
+        RESOURCE "document_attachment_48_alpha";
         TRANSPARENT ;
         OF       oFld:aDialogs[5]
 
@@ -15739,7 +15740,8 @@ function aPedCliEst()
    aAdd( aPedCliEst, { "cSufPed", "C",    2,  0, "Sufijo de pedido" ,           "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliEst, { "cSitua",  "C",  140,  0, "Situación" ,   	    		"",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliEst, { "dFecSit", "D",    8,  0, "Fecha de la situación" ,      "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliEst, { "tFecSit", "C",    6,  0, "Hora de la situación" ,       "",                   "", "( cDbfCol )", nil } )   
+   aAdd( aPedCliEst, { "tFecSit", "C",    6,  0, "Hora de la situación" ,       "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliEst, { "idPs",    "N",    9,  0, "Id prestashop" ,              "",                   "", "( cDbfCol )", nil } )   
 
 return ( aPedCliEst )
 
@@ -18114,3 +18116,11 @@ Static Function cFormatoPedidosClientes( cSerie )
 Return ( cFormato ) 
 
 //---------------------------------------------------------------------------//   
+
+//Static Function syncSituacionesPedidoPrestashop()
+
+
+
+//Return ( .t. )
+
+//---------------------------------------------------------------------------//
