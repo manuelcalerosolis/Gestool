@@ -14646,33 +14646,16 @@ function nEstadoRecPedCli( dbfPedPrvL, dbfAlbPrvL, dbfTmpLin )
    local nEstado     := 1
    local nTotRec     := 0
 
-   if IsMuebles()
+   nOrdAnt        := ( dbfPedPrvL )->( OrdSetFocus( "cPedCliRef" ) )
 
-      nOrdAnt        := ( dbfPedPrvL )->( OrdSetFocus( "cPedCliDet" ) )
+   if ( dbfPedPrvL )->( dbSeek( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + ( dbfTmpLin )->cRef + ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2 ) )
 
-      if ( dbfPedPrvL )->( dbSeek( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + ( dbfTmpLin )->cRef + ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2 + ( dbfTmpLin )->cRefPrv + ( dbfTmpLin )->cDetalle ) )
-
-         nTotUni     := nTotNPedCli( dbfTmpLin )
-         nTotRec     := nUnidadesRecibidasPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, ( dbfTmpLin)->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cRefPrv, ( dbfTmpLin )->cDetalle, dbfAlbPrvL )
-
-      end if
-
-      ( dbfPedPrvL )->( OrdSetFocus( nOrdAnt ) )
-
-   else
-
-      nOrdAnt        := ( dbfPedPrvL )->( OrdSetFocus( "cPedCliRef" ) )
-
-      if ( dbfPedPrvL )->( dbSeek( ( dbfTmpLin )->cSerPed + Str( ( dbfTmpLin )->nNumPed ) + ( dbfTmpLin )->cSufPed + ( dbfTmpLin )->cRef + ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2 ) )
-
-         nTotUni     := nTotNPedCli( dbfTmpLin )
-         nTotRec     := nUnidadesRecibidasPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, ( dbfTmpLin)->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cRefPrv, ( dbfTmpLin )->cDetalle, dbfAlbPrvL )
-
-      end if
-
-      ( dbfPedPrvL )->( OrdSetFocus( nOrdAnt ) )
+      nTotUni     := nTotNPedCli( dbfTmpLin )
+      nTotRec     := nUnidadesRecibidasPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, ( dbfTmpLin)->cRef, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, ( dbfTmpLin )->cRefPrv, ( dbfTmpLin )->cDetalle, dbfAlbPrvL )
 
    end if
+
+   ( dbfPedPrvL )->( OrdSetFocus( nOrdAnt ) )
 
    do case
       case nTotRec == 0
