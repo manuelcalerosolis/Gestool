@@ -132,6 +132,8 @@
 #define _DLLACLI                 122
 #define _CTIMCLI                 123
 #define _CTIPINCI                124
+#define _TELEFONO2               125
+#define _MOVIL2                  126
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -1544,9 +1546,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CCODEDI ] VAR aTmp[ _CCODEDI ] ;
-         ID       145 ;
+         ID       146 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
+         OF       fldComercial
 
       REDEFINE GET aGet[ _POBLACION ] VAR aTmp[ _POBLACION ];
          ID       150 ;
@@ -1606,6 +1608,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          VALID    ( if( nMode == APPD_MODE, lValidTlf( aGet[_TELEFONO] ), .t. ) ) ;
          OF       fldGeneral
 
+      REDEFINE GET aGet[_TELEFONO2] VAR aTmp[_TELEFONO2] ;
+         ID       185 ;
+         COLOR    CLR_GET ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldGeneral
+
       REDEFINE GET aGet[_FAX] VAR aTmp[_FAX] ;
          ID       190 ;
          COLOR    CLR_GET ;
@@ -1614,6 +1622,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[_MOVIL] VAR aTmp[_MOVIL] ;
          ID       195 ;
+         COLOR    CLR_GET ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldGeneral
+
+      REDEFINE GET aGet[_MOVIL2] VAR aTmp[_MOVIL2] ;
+         ID       196 ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
@@ -8820,6 +8834,8 @@ FUNCTION aItmCli()
    aAdd( aBase, { "dLlaCli",   "D",  8, 0, "Última llamada del cliente" ,                   "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cTimCli",   "C",  5, 0, "Hora última llamada del cliente" ,              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cTipInci",  "C",  5, 0, "Tipo de incidencia" ,                           "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Telefono2", "C", 20, 0, "Teléfono2",                                     "Telefono",           "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Movil2",    "C", 20, 0, "Móvil2",                                        "Movil",              "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
 
