@@ -1522,6 +1522,7 @@ METHOD ImportaPedidosProveedores()
 
          ::oDbfPedPrvTGst:cCodAlm      := oUser():cAlmacen()
          ::oDbfPedPrvTGst:cCodCaj      := cDefCaj()
+         ::oDbfPedPrvTGst:cDivPed      := cDivEmp()
          ::oDbfPedPrvTGst:dFecEnt      := ::oDbfPedPrvTFac:Fecha
          //buscamos el codigo de la forma de pago, 
 
