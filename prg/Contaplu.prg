@@ -2753,7 +2753,7 @@ ENDCLASS
 
       ::aAsiento                          := {}
       ::cDirectory                        := "C:\ENLACEA3"
-      ::cFile                             := "SUENALCE.DAT" 
+      ::cFile                             := "SUENLACE.DAT" 
       ::cDate                             := DateToString()
       ::cBuffer                           := ""
 

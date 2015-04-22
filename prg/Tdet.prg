@@ -169,7 +169,7 @@ METHOD Load( lAppend ) CLASS TDet
       ::oDbfVir:Activate( .f., .f. )
    end if
 
-   ::oDbfVir:Zap()
+   ::oDbfVir:Zap()   
 
    if ::oParent:cFirstKey != nil
 

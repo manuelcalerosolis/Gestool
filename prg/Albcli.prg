@@ -5,11 +5,11 @@
 #include "Xbrowse.ch"
 #include "Factu.ch"
 
-#define CLR_BAR                   14197607
-#define _MENUITEM_                "01057"
+#define CLR_BAR                  14197607
+#define _MENUITEM_               "01057"
 
-#define impuestos_DESG            1
-#define impuestos_INCL            2
+#define impuestos_DESG           1
+#define impuestos_INCL           2
 
 #define albNoFacturado           1
 #define albParcialmenteFacturado 2
@@ -16220,7 +16220,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "NNUMALB", "CSERALB + Str(NNUMALB) + CSUFALB", {|| Field->CSERALB + Str( Field->NNUMALB ) + Field->CSUFALB } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "DFECALB", "dtos( DFECALB ) + tFecAlb", {|| dtos( Field->DFECALB ) + Field->tFecAlb } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "dFecAlb", "dFecAlb", {|| Field->dFecAlb } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )
@@ -16269,7 +16269,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
 
       // Albaranes no facturado------------------------------------------------
 
-      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. lFacturado", {|| !Deleted() .and. Field->lFacturado }  ) )
+      ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
 
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )

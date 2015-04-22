@@ -1009,10 +1009,11 @@ return self
 
 METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
 
-   local nEstPed        := 1
-   local nTotPed        := 0
-   local nTotSer        := 0
-   local nTotLineaAct   := 0
+   local nEstPed                    := 1
+   local nTotalUnidadesPedidas      := 0
+   local nLineasUnidadesRecibidas   := 0
+   local nLineasUnidadesPedidas     := 0
+   local nTotalUnidadesRecibidas    := 0
 
    if Empty( ::cPedCliT ) .or. Empty( ::cPedCliL )
       return .f.
@@ -1022,8 +1023,7 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
    Comprobamos como esta el pedido------------------------------------------
    */
 
-   if ( ::cPedCliT )->( dbSeek( cNumPed ) )  .and.;
-      ( ::cPedCliL )->( dbSeek( cNumPed ) )
+   if ( ::cPedCliL )->( dbSeek( cNumPed ) )
 
       while ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed == cNumPed .and.;
             !( ::cPedCliL )->( eof() )
@@ -1033,13 +1033,15 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
             //se cuenta la linea actual, para evitar que de como valido, pedir 5 de un producto y 5 de otro
             //pero al recibir 2 de uno y 8 del otro
 
-            nTotLineaAct:= nTotNPedCli( ::cPedCliL )
+            nLineasUnidadesPedidas     := nTotNPedCli( ::cPedCliL )
 
-            nTotPed     += nTotLineaAct
+            nTotalUnidadesPedidas      += nLineasUnidadesPedidas
 
-            nTotSer     += Min( nUnidadesRecibidasAlbCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cAlbCliL ), nTotLineaAct )
-            nTotSer     += Min( nUnidadesRecibidasFacCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cFacCliL ), nTotLineaAct )
-            //nTotSer     += Min( nTotRFacCli( cNumFac, nil, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ( ::cPedCliL )->cLote, ::cFacCliT, ::cFacCliL ), nTotLineaAct )
+            nLineasUnidadesRecibidas   := nUnidadesRecibidasAlbCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cAlbCliL )
+            nLineasUnidadesRecibidas   += nUnidadesRecibidasFacCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cCodPr1, ( ::cPedCliL )->cCodPr2, ::cFacCliL )
+            nLineasUnidadesRecibidas   := Min( nLineasUnidadesRecibidas, nLineasUnidadesPedidas )     
+
+            nTotalUnidadesRecibidas    += nLineasUnidadesRecibidas
 
          end if
 
@@ -1051,19 +1053,16 @@ METHOD SetEstadoPedCli( cNumPed ) CLASS TStock
       En funcion de lo recibido colocamos los pedidos
       */
 
-      msgAlert( nTotPed, "nTotPed")
-      msgAlert( nTotSer, "nTotSer")
-
       do case
-         case nTotSer == 0
+         case nTotalUnidadesRecibidas == 0
             nEstPed     := 1
-         case nTotPed > nTotSer
+         case nTotalUnidadesPedidas > nTotalUnidadesRecibidas
             nEstPed     := 2
-         case nTotSer >= nTotPed
+         case nTotalUnidadesRecibidas >= nTotalUnidadesPedidas
             nEstPed     := 3
       end case
 
-      if dbLock( ::cPedCliT )
+      if ( ::cPedCliT )->( dbSeek( cNumPed ) ) .and. dbLock( ::cPedCliT )
          ( ::cPedCliT )->nEstado := nEstPed
          ( ::cPedCliT )->( dbUnlock() )
       end if
@@ -1185,48 +1184,23 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
 
          if nTotNPedCli( ::cPedCliL ) != 0
 
-            if IsMuebles()
+            if dbSeekInOrd( cNumPed + ( ::cPedCliL )->cRef + ( ::cPedCliL )->cValPr1 + ( ::cPedCliL )->cValPr2, "cPedCliRef", ::cPedPrvL )
 
-               if dbSeekInOrd( cNumPed + ( ::cPedCliL )->cRef + ( ::cPedCliL )->cValPr1 + ( ::cPedCliL )->cValPr2 + ( ::cPedCliL )->cRefPrv + ( ::cPedCliL )->cDetalle, "cPedCliDet", ::cPedPrvL )
-
-                  do case
-                     case nEstado == 0 .or. nEstado == 3
-                        nEstado := 3
-                     case nEstado == 1
-                        nEstado := 2
-                  end case
-
-               else
-
-                  do case
-                     case nEstado == 0
-                        nEstado := 1
-                     case nEstado == 3
-                        nEstado := 2
-                  end case
-               end if
+               do case
+                  case nEstado == 0 .or. nEstado == 3
+                     nEstado := 3
+                  case nEstado == 1
+                     nEstado := 2
+               end case
 
             else
 
-               if dbSeekInOrd( cNumPed + ( ::cPedCliL )->cRef + ( ::cPedCliL )->cValPr1 + ( ::cPedCliL )->cValPr2, "cPedCliRef", ::cPedPrvL )
-
-                  do case
-                     case nEstado == 0 .or. nEstado == 3
-                        nEstado := 3
-                     case nEstado == 1
-                        nEstado := 2
-                  end case
-
-               else
-
-                  do case
-                     case nEstado == 0
-                        nEstado := 1
-                     case nEstado == 3
-                        nEstado := 2
-                  end case
-
-               end if
+               do case
+                  case nEstado == 0
+                     nEstado := 1
+                  case nEstado == 3
+                     nEstado := 2
+               end case
 
             end if
 

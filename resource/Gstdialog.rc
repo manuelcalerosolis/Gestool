@@ -3392,11 +3392,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 90, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 114, 258, 11
   CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 98, 127, 258, 11
   CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 411, 62, 76, 11
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 411, 75, 76, 11
+  CONTROL "", 185, "Edit", WS_BORDER|WS_TABSTOP, 411, 75, 76, 11
   CONTROL "", 195, "Edit", WS_BORDER|WS_TABSTOP, 411, 88, 76, 11
-  CONTROL "", 145, "Edit", WS_BORDER|WS_TABSTOP, 411, 101, 76, 11
-  CONTROL "", 95, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 411, 114, 76, 71
-  CONTROL "Enviar correo eléctronico", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 363, 127, 121, 10
+  CONTROL "", 196, "Edit", WS_BORDER|WS_TABSTOP, 411, 101, 76, 11
+  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 411, 114, 76, 11
+  CONTROL "", 95, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 411, 126, 76, 71
+  CONTROL "Email", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 127, 46, 10
   CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 98, 145, 54, 11
   CONTROL "", 201, "Edit", WS_BORDER|WS_TABSTOP, 154, 145, 202, 11
   CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 98, 158, 54, 11
@@ -3430,12 +3431,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "CP y Provincia", -1, "Static", WS_GROUP, 47, 91, 51, 8
   CONTROL "País", -1, "Static", WS_GROUP, 47, 104, 37, 8
   CONTROL "Contacto", -1, "Static", WS_GROUP, 47, 117, 37, 8
-  CONTROL "Teléfono", -1, "Static", WS_GROUP, 363, 65, 29, 8
+  CONTROL "Teléfono 1", -1, "Static", WS_GROUP, 363, 65, 35, 8
   CONTROL "Tipo cliente", -1, "Static", WS_GROUP, 363, 39, 39, 8
   CONTROL "N.I.F. / C.I.F.", -1, "Static", WS_GROUP, 363, 52, 42, 8
-  CONTROL "Color", -1, "Static", WS_GROUP, 363, 117, 39, 8
-  CONTROL "Móvil", -1, "Static", WS_GROUP, 363, 91, 22, 8
-  CONTROL "Fax", -1, "Static", WS_GROUP, 363, 78, 13, 8
+  CONTROL "Color", -1, "Static", WS_GROUP, 363, 129, 39, 8
+  CONTROL "Móvil 1", -1, "Static", WS_GROUP, 363, 91, 28, 8
+  CONTROL "Fax", -1, "Static", WS_GROUP, 363, 117, 13, 8
   CONTROL "Precio/Comb.", -1, "Static", WS_GROUP, 363, 148, 48, 8
   CONTROL "Tarifa persnlz.", -1, "Static", WS_GROUP, 47, 149, 48, 8
   CONTROL "Forma pago", -1, "Static", WS_GROUP, 47, 162, 38, 8
@@ -3451,11 +3452,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 139, 316, 110
   CONTROL "", -1, "Button", BS_GROUPBOX, 362, 139, 130, 110
   CONTROL "Transportista", -1, "Static", WS_GROUP, 47, 239, 46, 8
-  CONTROL "EDI [EAN]", -1, "Static", WS_GROUP, 363, 104, 38, 8
-  CONTROL "E-mail", -1, "Static", WS_GROUP, 47, 129, 20, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales del cliente ", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
   CONTROL "Descuento", -1, "Static", WS_GROUP, 364, 160, 48, 8
+  CONTROL "Móvil 2", -1, "Static", WS_GROUP, 363, 104, 28, 8
+  CONTROL "Teléfono 2", -1, "Static", WS_GROUP, 363, 78, 35, 8
 }
 
 CLIENT_1 DIALOG DISCARDABLE -3, 20, 496, 254
@@ -3542,11 +3543,14 @@ FONT 8, "MS Sans Serif"
   CONTROL "Contraseña", -1, "Static", WS_GROUP, 50, 78, 37, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos realcionados con la actividad comercial del cliente ", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
-  CONTROL "Última llamada", -1, "Button", BS_GROUPBOX, 43, 90, 338, 23
+  CONTROL "Última llamada", -1, "Button", BS_GROUPBOX, 43, 90, 155, 23
   CONTROL "", 600, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 102, 99, 60, 11
   CONTROL "", 601, "Edit", WS_BORDER|WS_TABSTOP, 163, 99, 28, 11
   CONTROL "Fecha", -1, "Static", WS_GROUP, 49, 102, 35, 8
   CONTROL "", 602, "TBtnBmp", 0x00000000, 89, 99, 12, 11
+  CONTROL "", -1, "Button", BS_GROUPBOX, 199, 90, 182, 23
+  CONTROL "", 146, "Edit", WS_BORDER|WS_TABSTOP, 283, 100, 76, 11
+  CONTROL "EDI [EAN]", 4002, "Static", WS_GROUP, 206, 103, 38, 8
 }
 
 CLIENT_10 DIALOG DISCARDABLE 32, 32, 496, 254
@@ -16370,10 +16374,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 100, 127, 76, 12
   CONTROL "", 401, "Edit", WS_BORDER, 178, 127, 180, 12
   CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 411, 62, 76, 12
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 411, 88, 76, 12
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 411, 101, 76, 12
-  CONTROL "", 720, "Edit", WS_BORDER|WS_TABSTOP, 411, 114, 76, 12
-  CONTROL "", 191, "Edit", WS_BORDER|WS_TABSTOP, 411, 127, 76, 12
+  CONTROL "", 185, "Edit", WS_BORDER|WS_TABSTOP, 411, 75, 76, 12
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 411, 88, 76, 12
+  CONTROL "", 205, "Edit", WS_BORDER|WS_TABSTOP, 411, 101, 76, 12
+  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 411, 114, 76, 12
+  CONTROL "", 720, "Edit", WS_BORDER|WS_TABSTOP, 411, 127, 76, 12
+  CONTROL "", 191, "Edit", WS_BORDER|WS_TABSTOP, 411, 237, 76, 12
   CONTROL "Acogido al régimen especial del criterio de caja", 195, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 152, 161, 10
   CONTROL "", 210, "Edit", WS_BORDER|WS_TABSTOP, 100, 173, 76, 12
   CONTROL "", 330, "Edit", WS_BORDER, 178, 173, 181, 12
@@ -16384,7 +16390,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 280, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 224, 35, 12
   CONTROL "", 300, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 411, 210, 35, 12
   CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 100, 237, 259, 12
-  CONTROL "Enviar correo electrónico", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 362, 238, 92, 10
+  CONTROL "Email", 159, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 238, 47, 10
   CONTROL "Código", -1, "Static", WS_GROUP, 48, 39, 32, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 48, 52, 29, 8
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 48, 65, 29, 8
@@ -16393,9 +16399,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "País", -1, "Static", WS_GROUP, 48, 104, 37, 8
   CONTROL "Contacto", -1, "Static", WS_GROUP, 48, 116, 37, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 362, 65, 29, 8
-  CONTROL "Fax", -1, "Static", WS_GROUP, 362, 91, 14, 8
+  CONTROL "Fax", -1, "Static", WS_GROUP, 362, 118, 14, 8
   CONTROL "N.I.F. / C.I.F.", -1, "Static", WS_GROUP, 362, 52, 44, 8
-  CONTROL "Su cliente", -1, "Static", WS_GROUP, 362, 130, 37, 8
+  CONTROL "Su cliente", -1, "Static", WS_GROUP, 362, 241, 37, 8
   CONTROL "Forma pago", -1, "Static", WS_GROUP, 48, 176, 38, 8
   CONTROL "1er dia pago", -1, "Static", WS_GROUP, 362, 175, 45, 8
   CONTROL "Vacaciones", -1, "Static", WS_GROUP, 48, 189, 38, 8
@@ -16403,17 +16409,18 @@ FONT 8, "MS Sans Serif"
   CONTROL "2º día pago", -1, "Static", WS_GROUP, 362, 188, 43, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 29, 448, 112
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 165, 448, 37
-  CONTROL "Tel. contacto", -1, "Static", WS_GROUP, 362, 117, 44, 8
+  CONTROL "Tel. contacto", -1, "Static", WS_GROUP, 362, 131, 44, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 202, 448, 49
   CONTROL "días", -1, "Static", WS_GROUP, 449, 213, 15, 8
   CONTROL "Plazo entrega", -1, "Static", WS_GROUP, 362, 213, 47, 8
-  CONTROL "Móvil", -1, "Static", WS_GROUP, 362, 104, 21, 8
+  CONTROL "Móvil", -1, "Static", WS_GROUP, 362, 92, 21, 8
   CONTROL "Grupo", -1, "Static", WS_GROUP, 48, 130, 23, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales del proveedor", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
-  CONTROL "E-mail", -1, "Static", WS_GROUP, 48, 240, 24, 8
   CONTROL "Serie", -1, "Static", WS_GROUP, 48, 214, 21, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 143, 448, 23
+  CONTROL "Teléfono 2", -1, "Static", WS_GROUP, 362, 79, 38, 8
+  CONTROL "Móvil 2", -1, "Static", WS_GROUP, 362, 105, 30, 8
 }
 
 PROVEEDOR_2 DIALOG DISCARDABLE 28, 66, 426, 219
@@ -20340,7 +20347,7 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH
 
-SITUACION-ESTADO DIALOG DISCARDABLE 103, 127, 337, 71
+ESTADO DIALOG DISCARDABLE 103, 127, 337, 71
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Situaciones"
 FONT 8, "MS Sans Serif"

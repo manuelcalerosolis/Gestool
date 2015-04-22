@@ -5049,6 +5049,8 @@ CLASS TDetSeriesMovimientos FROM TDet
 
    MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
 
+   METHOD Load( lAppend )
+
    METHOD Save()
 
    METHOD RollBack()
@@ -5212,15 +5214,8 @@ RETURN ( Self )
 
 METHOD Resource( nMode ) CLASS TDetSeriesMovimientos
 
-  // ::oDbfVir:GetStatus()
-  // ::oDbfVir:OrdSetFocus( "nNumLin" )
-
-  ::oDbf:nArea:GetStatus()
-  ::oDbf:nArea:OrdSetFocus( "nNumLin" )
-
-   msgAlert(::oDbfVir:ALIAS, "dbfvir")
-   msgAlert(::odbf:Alias, "odbf")
-
+   ::oDbfVir:GetStatus()
+   ::oDbfVir:OrdSetFocus( "nNumLin" )
 
    with object ( TNumerosSerie() )
 
@@ -5237,13 +5232,7 @@ METHOD Resource( nMode ) CLASS TDetSeriesMovimientos
 
       :oStock           := ::oParent:oStock
 
-      //:uTmpSer          := ::oDbfVir
-
-      if nMode := 2
-         :uTmpSer       := ::oDbf:nArea
-      else
-         :uTmpSer       := ::oDbfVir
-      end if      
+      :uTmpSer          := ::oDbfVir
 
       :Resource()
 
@@ -5252,6 +5241,54 @@ METHOD Resource( nMode ) CLASS TDetSeriesMovimientos
    ::oDbfVir:SetStatus()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Load( lAppend )
+
+   DEFAULT lAppend   := .f.
+
+   ::nRegisterLoaded := 0
+
+   if Empty( ::oDbfVir )
+      ::oDbfVir      := ::DefineFiles( cPatTmp(), cLocalDriver(), .t. )
+   end if
+
+   if !( ::oDbfVir:Used() )
+      ::oDbfVir:Activate( .f., .f. )
+   end if
+
+   ::oDbfVir:Zap()   
+
+   if ::oParent:cFirstKey != nil
+
+      if ( lAppend ) .and. ::oDbf:Seek( ::oParent:cFirstKey )
+
+         while !Empty( ::oDbf:OrdKeyVal() ) .and. ( str( ::oDbf:nNumRem ) + ::oDbf:cSufRem == ::oParent:cFirstKey ) .and. !( ::oDbf:Eof() )
+
+            if ::bOnPreLoad != nil
+               Eval( ::bOnPreLoad, Self )
+            end if
+
+            ::oDbfVir:AppendFromObject( ::oDbf )
+
+            ::nRegisterLoaded++
+
+            if ::bOnPostLoad != nil
+               Eval( ::bOnPostLoad, Self )
+            end if
+
+            ::oDbf:Skip()
+
+         end while
+
+      end if
+
+   end if
+
+   ::oDbfVir:GoTop()
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 

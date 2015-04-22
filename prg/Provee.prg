@@ -91,6 +91,8 @@
 #define _CDIREST                  74      //   C    150     0
 #define _SERIE                    75      //   C    150     0
 #define _LRECC                    76
+#define _TELEFONO2                77
+#define _MOVIL2                   78
 
 memvar dbfPrv
 memvar cDbfPrv
@@ -849,6 +851,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[_TELEFONO2] VAR aTmp[_TELEFONO2] ;
+         ID       185 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         COLOR    CLR_GET ;
+         OF       oFld:aDialogs[1]
+
 		REDEFINE GET aGet[_FAX] VAR aTmp[_FAX] ;
          ID       190 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -857,6 +865,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       REDEFINE GET aGet[_MOVIL] VAR aTmp[_MOVIL] ;
          ID       200 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         COLOR    CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[_MOVIL2] VAR aTmp[_MOVIL2] ;
+         ID       205 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
@@ -3084,7 +3098,7 @@ Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDl
                RESOURCE "info16" ;
                ACTION   ( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) )
 
-            MENUITEM "&2. Campos extra";
+            MENUITEM "&2. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para el proveedor" ;
                RESOURCE "form_green_add_16" ;
                ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) )
@@ -4979,6 +4993,8 @@ FUNCTION aItmPrv()
    aAdd( aItmPrv, { "cDirEst",   "C",150, 0, "dirección del establecimiento" ,       "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "Serie",     "C",  1, 0, "Serie del documento" ,                 "",                   "", "( cDbfPrv )" } )
    aAdd( aItmPrv, { "lRECC",     "L",  1, 0, "Acogido al régimen especial del criterio de caja",  "",      "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "TELEFONO2", "C", 12, 0, "Teléfono2 proveedor",                  "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "MOVIL2",    "C", 12, 0, "Movil2 proveedor",                     "",                   "", "( cDbfPrv )" } )
 
 RETURN ( aItmPrv )
 
