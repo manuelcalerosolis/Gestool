@@ -330,6 +330,7 @@ Static Function CreateMainWindow( oIconApp )
    // Mensajes-----------------------------------------------------------------
 
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
+   oWnd:setFont( oFontLittelTitle() )
 
    oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100,,,, .t. )
 
