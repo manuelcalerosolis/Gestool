@@ -29,7 +29,11 @@ CLASS TSituaciones FROM TMant
    METHOD assignIdPrestashop( idStatePrestashop );
                                                 INLINE ( ::oDbf:FieldPutByName( "idPs", idStatePrestashop ) )
    METHOD importStatePrestashop( oQuery )
-
+   METHOD importState( oQuery )
+   METHOD exportStateGestool( oQuery )
+   METHOD exportState( oQuery )
+   METHOD exportStateLang( oQuery )
+   
    METHOD LoadSituaciones()
    METHOD LoadSituacionesFromFiles()            INLINE ( if( ::OpenFiles(), ( ::LoadSituaciones(), ::CloseFiles() ), ) )
    METHOD GetSituaciones()                      INLINE ( ::LoadSituacionesFromFiles(), ::aSituaciones ) 
@@ -228,29 +232,20 @@ RETURN ( Self )
 
 METHOD processStatePrestashop()
 
-   local oQuery   := TMSQuery():New( ::oComercio:oCon, 'SELECT * FROM ps_order_state_lang WHERE id_lang = ' + alltrim( str( ::lenguajePrestashop ) ) )
+   local oQuery   := TMSQuery():New( ::oComercio:oCon, "SELECT * FROM " + ::oComercio:cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + alltrim( str( ::lenguajePrestashop ) ) )
 
    if oQuery:Open() .and. ( oQuery:RecCount() > 0 )
       
       ::oDbf:getStatus()
 
       while !oQuery:Eof()
-         
-         if ::findState( oQuery:FieldGetByName( "name" ) )
 
-            if empty( ::oDbf:idPs )
-               ::assignIdPrestashop( oQuery:FieldGetByName( "id_order_state" ) )
-            end if 
-
-         else
-            
-            ::importStatePrestashop( oQuery )
-
-         endif
-         
+         ::importStatePrestashop( oQuery )         
          oQuery:Skip()
 
       end while
+
+      ::exportStateGestool( oQuery )
 
       ::oDbf:setStatus()
 
@@ -261,6 +256,22 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD importStatePrestashop( oQuery )
+
+   if ::findState( oQuery:FieldGetByName( "name" ) )
+
+            if empty( ::oDbf:idPs )
+               ::assignIdPrestashop( oQuery:FieldGetByName( "id_order_state" ) )
+            end if 
+
+         else
+            ::importState( oQuery )
+         endif
+
+Return( .t. ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD importState( oQuery )
    
    ::oDbf:Append()
    ::oDbf:cSitua     := oQuery:FieldGetByName( "name" )
@@ -270,3 +281,85 @@ METHOD importStatePrestashop( oQuery )
 Return ( .t. )
 
 //---------------------------------------------------------------------------// 
+
+METHOD exportStateGestool( oQuery )
+
+   local insertState
+   local insertStateLang
+   local idPs
+
+   ::oDbf:GoTop()
+
+msgAlert( "antes del while" )
+
+   while !::oDbf:eof()
+
+      if empty( ::oDbf:idps )
+
+         idPs         := ::exportState()  
+
+         ::exportStateLang( idPs )
+      
+      endif
+
+      ::oDbf:Skip()
+
+   end while
+
+Return( .t. )
+
+//---------------------------------------------------------------------------// 
+
+METHOD exportState()
+
+   local insertState
+   local idps
+   
+   insertState               :="INSERT INTO " + ::oComercio:cPrefixtable( "order_state" ) + " VALUES ( '', 0, 0, '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0 )" 
+
+   msgAlert( ::oDbf:idPs, "idps null" )
+
+   if TMSCommand():New( ::oComercio:oCon ):ExecDirect( insertState )
+      idPs            := ::oComercio:oCon:GetInsertId()
+   end if 
+
+   msgAlert( idPs, "idPs relleno" )
+
+   if !empty( idPs )
+      ::oDbf:fieldPutByName( "idPs", idPs )
+   endif
+
+         
+Return( idps )
+
+//---------------------------------------------------------------------------// 
+
+METHOD exportStateLang( idPs )
+
+   local insertStateLang
+
+      msgAlert( ::oDbf:cSitua, "cSitua")
+
+      insertStateLang           :="INSERT INTO " + ::oComercio:cPrefixtable( "order_state_lang" ) + " VALUES ( " + alltrim( str( idPs ) ) + ", " + alltrim( str( ::lenguajePrestashop ) ) + ", '" + alltrim( ::oDbf:cSitua ) + "', '' ) "
+
+      if TMSCommand():New( ::oComercio:oCon ):ExecDirect( insertStateLang )
+
+         msgAlert( "colsuta de inserccion realizada" )
+   
+         if !empty( idPs )
+            ::oDbf:fieldPutByName( "idPs", idPs )
+         endif
+   
+      else
+
+         msgAlert( "no se hizo la consuta" )
+
+      end if
+   
+Return( .t. )
+
+//---------------------------------------------------------------------------// 
+
+
+
+ 

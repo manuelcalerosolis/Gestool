@@ -10930,7 +10930,7 @@ Function SynRctPrv( cPath )
    USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
    SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
-   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
+   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
