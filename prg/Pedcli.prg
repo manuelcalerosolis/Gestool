@@ -1832,6 +1832,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             Return .f.
          end if
 
+         if !empty( aTmp[ _CCODWEB ] ) .and. !oUser():lAdministrador()
+            MsgStop( "Los pedidos procedentes de Prestashop, no pueden ser modificados." )
+            Return .f.
+         end if
+
    end case
 
    if Empty( Rtrim( aTmp[ _CSERPED ] ) )
@@ -18132,6 +18137,7 @@ Static Function cFormatoPedidosClientes( cSerie )
 Return ( cFormato ) 
 
 //---------------------------------------------------------------------------//   
+
 
 
 

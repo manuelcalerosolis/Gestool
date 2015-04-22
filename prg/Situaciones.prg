@@ -33,7 +33,8 @@ CLASS TSituaciones FROM TMant
    METHOD exportStateGestool( oQuery )
    METHOD exportState( oQuery )
    METHOD exportStateLang( oQuery )
-   
+   //METHOD idState()
+
    METHOD LoadSituaciones()
    METHOD LoadSituacionesFromFiles()            INLINE ( if( ::OpenFiles(), ( ::LoadSituaciones(), ::CloseFiles() ), ) )
    METHOD GetSituaciones()                      INLINE ( ::LoadSituacionesFromFiles(), ::aSituaciones ) 
@@ -290,8 +291,6 @@ METHOD exportStateGestool( oQuery )
 
    ::oDbf:GoTop()
 
-msgAlert( "antes del while" )
-
    while !::oDbf:eof()
 
       if empty( ::oDbf:idps )
@@ -317,13 +316,9 @@ METHOD exportState()
    
    insertState               :="INSERT INTO " + ::oComercio:cPrefixtable( "order_state" ) + " VALUES ( '', 0, 0, '', '', 1, 0, 0, 0, 0, 0, 0, 0, 0 )" 
 
-   msgAlert( ::oDbf:idPs, "idps null" )
-
    if TMSCommand():New( ::oComercio:oCon ):ExecDirect( insertState )
       idPs            := ::oComercio:oCon:GetInsertId()
    end if 
-
-   msgAlert( idPs, "idPs relleno" )
 
    if !empty( idPs )
       ::oDbf:fieldPutByName( "idPs", idPs )
@@ -338,28 +333,17 @@ METHOD exportStateLang( idPs )
 
    local insertStateLang
 
-      msgAlert( ::oDbf:cSitua, "cSitua")
-
       insertStateLang           :="INSERT INTO " + ::oComercio:cPrefixtable( "order_state_lang" ) + " VALUES ( " + alltrim( str( idPs ) ) + ", " + alltrim( str( ::lenguajePrestashop ) ) + ", '" + alltrim( ::oDbf:cSitua ) + "', '' ) "
 
       if TMSCommand():New( ::oComercio:oCon ):ExecDirect( insertStateLang )
 
-         msgAlert( "colsuta de inserccion realizada" )
-   
          if !empty( idPs )
             ::oDbf:fieldPutByName( "idPs", idPs )
          endif
    
-      else
-
-         msgAlert( "no se hizo la consuta" )
-
       end if
    
 Return( .t. )
 
 //---------------------------------------------------------------------------// 
 
-
-
- 
