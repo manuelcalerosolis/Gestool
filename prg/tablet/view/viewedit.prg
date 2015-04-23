@@ -36,7 +36,7 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD refreshBrowse()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
 
-   METHOD onClickRotor()               VIRTUAL
+   METHOD onClickRotor()            VIRTUAL
 
 END CLASS
 
