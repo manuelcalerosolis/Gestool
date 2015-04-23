@@ -11842,7 +11842,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "NNUMFAC", "CSERIE + Str( NNUMFAC ) + CSUFFAC", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac }, ) )
 
       ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "DFECFAC", "dtos( DFECFAC ) + tFecFac", {|| dtos( Field->dFecFac ) + Field->tFecFac } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "dFecFac", "dFecFac", {|| Field->dFecFac } ) )
 
       ( cFacRecT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacRecT )->( ordCreate( cPath + "FacRecT.CDX", "CCODCLI", "CCODCLI", {|| Field->CCODCLI } ) )

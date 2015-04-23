@@ -7055,7 +7055,6 @@ FUNCTION rxPedPrv( cPath, oMeter )
       ( cPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "CNOMPRV", "Upper( CNOMPRV )", {|| Upper( Field->CNOMPRV ) } ) )
 
-
       /*
       Ordenes fechados---------------------------------------------------------
       */

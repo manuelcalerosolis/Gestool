@@ -18757,18 +18757,17 @@ Return ( .t. )
 
 Static Function BuildWeb( cCodArt )
 
+   if !lPubArt()
+      return .f.
+   end if
+
    with object ( TComercio():New() )  
 
       :MeterTotal( GetAutoMeterDialog() )
       :TextTotal( GetAutoTextDialog() )
 
       :BuildDeleteProductPrestashop( cCodArt )
-
-      if lPubArt()
-
-         :BuildProductPrestashop( cCodArt )
-
-      end if
+      :BuildProductPrestashop( cCodArt )
 
    end with
 

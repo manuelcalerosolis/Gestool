@@ -94,6 +94,7 @@ CLASS TComercio
    DATA  oDivisas
    DATA  oPedCliT
    DATA  oPedCliI
+   DATA  oPedCliE
    DATA  oPedCliL
    DATA  oCount
    DATA  oFab
@@ -157,6 +158,8 @@ CLASS TComercio
    DATA  aArticulosActualizar INIT {}
 
    DATA  cPrefijoBaseDatos
+
+   DATA TSituaciones
 
 
    DATA idOrderPrestashop
@@ -327,6 +330,7 @@ CLASS TComercio
    METHOD insertLineaPedidoPrestashop( oQuery )
    METHOD insertClientePedidoPrestashop( oQuery )
    METHOD getDate( cDatePrestashop )
+   METHOD getTime( ctimePrestashop )
    METHOD insertPresupuestoPrestashop( oQuery )
    METHOD getCountersPresupustoPrestashop( oQuery )
    METHOD insertDatosCabeceraPedidoPretashop( oQuery )
@@ -335,7 +339,16 @@ CLASS TComercio
    METHOD appendMessagePresupuesto ( dFecha )
    METHOD insertCabeceraPresupuestoPretashop( oQuery )
    METHOD insertClientePresupuestoPrestashop( oQuery )
+   METHOD appendStatePedidoPrestashop( oQuery )
 
+   METHOD syncSituacionesPedidoPrestashop( cCodWeb, cSerPed, nNumPed, cSufPed )
+   METHOD syncronizeStatesGestool( cCodWeb, cSerPed, nNumPed, cSufPed )
+   METHOD checkExistStateUp( oQuery, cCodWeb, cSerPed, nNumPed, cSufPed )
+   METHOD syncronizeStatesPrestashop ( cSerPed, nNumPed, cSufPed, cCodWeb, oQuery )
+   METHOD downloadState( oQuery, cSerPed, nNumPed, cSufPed )
+   METHOD UploadState( id_order_state, dFecSit, tFecSit, cCodWeb )
+   METHOD getDatePrestashop( dFec, tFec )
+   METHOD idOrderState( cSitua )
 
    // Datos para la recopilacion de informacion----------------------------
 
@@ -524,6 +537,8 @@ METHOD filesOpen() CLASS TComercio
       ::oPedCliT := TDataCenter():oPedCliT()
 
       DATABASE NEW ::oPedCliI PATH ( cPatEmp() ) FILE "PEDCLII.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLII.CDX"
+
+      DATABASE NEW ::oPedCliE PATH ( cPatEmp() ) FILE "PEDCLIE.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLIE.CDX"
 
       DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
 
@@ -9418,6 +9433,28 @@ Return ( dFecha )
 
 //---------------------------------------------------------------------------//
 
+METHOD getDatePrestashop( dFecha, tHora ) CLASS TComercio
+
+   local cFechaPrestashop
+
+   SET DATE FORMAT "yyyy-mm-dd"
+   cFechaPrestashop   := alltrim( dtoc( dFecha ) ) + " " + alltrim( trans( tHora, "@R ##:##:##" ) ) + ".0000000"
+   SET DATE FORMAT "dd/mm/yyyy"
+
+Return ( cFechaPrestashop )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTime( ctimePrestashop ) CLASS TComercio
+
+   local dHora
+
+   dHora   := strtran( SubStr( cTimePrestashop, 12, 8 ), ":", "" )
+   
+Return ( dHora )
+
+//---------------------------------------------------------------------------//
+
 METHOD checkDate( cDatePrestashop ) CLASS TComercio
 
    local dFecha   := ::getDate( cDatePrestashop )
@@ -9675,6 +9712,8 @@ METHOD insertPedidoPrestashop( oQuery ) CLASS TComercio
 
    ::AppendMessagePedido( ::getDate( oQuery:FieldGetByName( "date_add" ) ) )
 
+   ::appendStatePedidoPrestashop( oQuery )
+
 return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -9854,6 +9893,204 @@ METHOD insertLineaPedidoPrestashop( oQuery ) CLASS TComercio
       end if
 
 return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD appendStatePedidoPrestashop( oQuery ) CLASS TComercio
+
+   local oQueryState
+   
+   oQueryState    := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_history" ) + " h inner join "+ ::cPrefixtable( "order_state_lang" ) + " s on h.id_order_state = s.id_order_state WHERE s.id_lang = " + alltrim( str( ::GetLanguagePrestashop() ) ) + " and id_order = " + AllTrim( Str( ::idOrderPrestashop ) ) )
+
+   if oQueryState:Open()
+
+      if oQueryState:RecCount() > 0
+
+         oQueryState:GoTop()
+
+         while !oQueryState:Eof()
+
+            ::oPedCliE:Append()
+            ::oPedCliE:Blank()
+
+            ::oPedCliE:cSerPed   := ::cSeriePedido
+            ::oPedCliE:nNumPed   := ::nNumeroPedido
+            ::oPedCliE:cSufPed   := ::cSufijoPedido
+            ::oPedCliE:cSitua    := oQueryState:FieldGetByName( "name" )
+            ::oPedCliE:dFecSit   := ::getDate( oQueryState:FieldGetByName( "date_add" ) )
+            ::oPedCliE:tFecSit   := ::getTime( oQueryState:FieldGetByName( "date_add" ) )
+            ::oPedCliE:idPs      := oQueryState:FieldGetByName( "id_order_history" )
+                     
+            ::oPedCliE:Save()
+
+         oQueryState:Skip()
+
+          end while
+
+      end if
+               
+   end if      
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD syncSituacionesPedidoPrestashop( cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TComercio
+
+   if !::connect()
+      msginfo( "No ha sido posible la conexion" )
+      Return .f.
+   end if
+
+   if !::filesOpen()
+      Return .f.
+   end if 
+
+   ::syncronizeStatesGestool( cCodWeb, cSerPed, nNumPed, cSufPed )
+
+   ::syncronizeStatesPrestashop( cSerPed, nNumPed, cSufPed, cCodWeb )
+
+   ::filesClose()
+
+   ::disconnect()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD syncronizeStatesGestool( cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TComercio
+   
+   local oQueryState
+   
+   oQueryState   := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_history" ) +" where id_order = " + alltrim( str( cCodWeb ) ) )
+
+   if oQueryState:Open() .and. oQueryState:RecCount() > 0
+
+      while !oQueryState:eof()
+
+         ::checkExistStateUp( oQueryState, cCodWeb, cSerPed, nNumPed, cSufPed )
+
+         oQueryState:Skip()
+
+      end while
+      
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD checkExistStateUp( oQuery, cCodWeb, cSerPed, nNumPed, cSufPed ) CLASS TComercio
+
+   if !::oPedCliE:SeekInOrd( str( oQuery:FieldGetByName( "id_order_history" ), 11 ), "idPs" )
+      ::downloadState( oQuery, cSerPed, nNumPed, cSufPed)
+   endif
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD downloadState( oQuery, cSerPed, nNumPed, cSufPed ) CLASS TComercio
+
+   local oQueryState
+
+   oQueryState          := TMSQuery():New( ::oCon, "SELECT * FROM " +::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + alltrim( str( ::GetLanguagePrestashop() ) ) + " and id_order_state = " + AllTrim( str( oQuery:FieldGetByName( "id_order_state" ) ) ) ) 
+
+   if oQueryState:Open() .and. oQueryState:RecCount() > 0
+
+         ::oPedCliE:Append()
+         ::oPedCliE:Blank()
+
+         ::oPedCliE:cSerPed   := cSerPed
+         ::oPedCliE:nNumPed   := nNumPed
+         ::oPedCliE:cSufPed   := cSufPed
+         ::oPedCliE:cSitua    := oQueryState:FieldGetByName( "name" )
+         ::oPedCliE:dFecSit   := ::getDate( oQuery:FieldGetByName( "date_add" ) )
+         ::oPedCliE:tFecSit   := ::getTime( oQuery:FieldGetByName( "date_add" ) )
+         ::oPedCliE:idPs      := oQuery:FieldGetByName( "id_order_history" )
+                  
+         ::oPedCliE:Save()
+
+   end if
+
+Return( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD syncronizeStatesPrestashop ( cSerPed, nNumPed, cSufPed, cCodWeb ) CLASS TComercio
+
+   local nRec        := ::oPedCliE:Recno()
+   local nOrdAnt     := ::oPedCliE:OrdSetFocus( "NNUMPED" )
+   local id
+   local oQuery
+   
+   oQuery   := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_history" ) + " where id_order = " + alltrim( str( cCodWeb ) ) )
+
+   
+   if oQuery:Open() .and. oQuery:RecCount() > 0
+
+      if ::oPedCliE:Seek( cSerPed + str( nNumPed ) + cSufPed )
+
+         while ( ::oPedCliE:cSerPed + str( ::oPedCliE:nNumPed ) + ::oPedCliE:cSufPed ) == ( cSerPed + str( nNumPed ) + cSufPed ) .and. !::oPedCliE:eof()
+        
+            if empty( ::oPedCliE:idPs )
+                          
+               id       := ::UploadState( ::idOrderState( ::oPedCliE:cSitua ), ::oPedCliE:dFecSit, ::oPedCliE:tFecSit, cCodWeb )      
+
+               if !empty( id )
+                  ::oPedCliE:fieldPutByName( "idPs", id )
+               end if 
+            endif
+
+            ::oPedCliE:Skip()  
+
+         end while
+
+      endif
+
+   endif
+
+   ::oPedCliE:OrdSetFocus( nOrdAnt )
+   ::oPedCliE:GoTo( nRec )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD idOrderState( cSitua ) CLASS TComercio
+
+   local oQuery2 
+   local idState  
+
+   oQuery2             := TMSQuery():New( ::oCon, "SELECT id_order_state FROM " + ::cPrefixtable( "order_state_lang" ) + " WHERE id_lang = " + alltrim( str( ::GetLanguagePrestashop() ) ) + " and name = '" + alltrim( cSitua ) + "'" )
+
+
+   if oQuery2:Open() .and. oQuery2:RecCount() > 0
+
+      idState := oQuery2:FieldGetByName( "id_order_state" )
+
+   endif
+
+Return ( idState )
+
+//---------------------------------------------------------------------------//
+
+METHOD UploadState( id_order_state, dFecSit, tFecSit, cCodWeb ) CLASS TComercio
+
+   local id 
+   local cCommand 
+
+   cCommand      :=  "INSERT INTO " + ::cPrefixtable( "order_history" ) + " VALUES ( '', 1, " + alltrim( str( cCodWeb ) ) + ", " + alltrim( str( id_order_state ) ) + ", '" + ::getDatePrestashop(::oPedCliE:dFecSit, ::oPedCliE:tFecSit) + "' )" 
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      id             := ::oCon:GetInsertId()   
+   end if 
+
+Return ( id  )
+
+//---------------------------------------------------------------------------//
+
+
 
 //---------------------------------------------------------------------------//
 

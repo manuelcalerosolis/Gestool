@@ -70,6 +70,7 @@ Function Main( cCodEmp, cCodUsr, cIp )
    local cAdsIp
    local cAdsType
    local cAdsData
+   local cAdsFile
 
    DEFAULT cCodEmp   := Alltrim( Str( Year( Date() ) ) )
    DEFAULT cCodUsr   := "000"
@@ -99,41 +100,7 @@ Function Main( cCodEmp, cCodUsr, cIp )
 
    // Motor de bases de datos--------------------------------------------------
 
-   do case
-   case ( "ADSLOCAL" $ cAdsType )
-
-      lAds( .t. )
-
-      RddRegister(   'ADS', 1 )
-      RddSetDefault( 'ADSCDX' )
-
-      AdsSetServerType( 1 )   // ADS_LOCAL_SERVER
-      AdsSetFileType( 2 )     // ADS_CDX
-
-      AdsRightsCheck( .f. )
-
-   case ( "ADSREMOTE" $ cAdsType )
-
-      lAds( .t. )
-      cIp( cAdsIp )
-      cData( cAdsData )
-
-      RddRegister(   'ADS', 1 )
-      RddSetDefault( 'ADSCDX' )
-
-      AdsSetServerType( 2 )   // ADS_LOCAL_SERVER
-      AdsSetFileType( 2 )     // ADS_CDX
-
-      AdsRightsCheck( .f. )
-
-      nError      := AdsIsServerLoaded( cAdsIp )
-      if nError == 0
-         adsGetLastError( @cError )
-         msgStop( cError, "Salida de la aplicación" )
-         Return .f.
-      end if
-
-   case ( "ADSINTERNET" $ cAdsType )
+   if ( "ADSINTERNET" $ cAdsType )
 
       lAIS( .t. )
       cIp( cAdsIp )
@@ -164,13 +131,13 @@ Function Main( cCodEmp, cCodUsr, cIp )
 
       end with
 
-   otherwise
+   else
 
       lCdx( .t. )
 
       RddSetDefault( 'DBFCDX' )
 
-   end case
+   end if
 
    TDataCenter():BuildData()
 
@@ -1885,7 +1852,7 @@ FUNCTION IsReportFolder()
       USE ( cPatDat() + "USERS.DBF" )     NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
 
-      while !( dbfUser )->( Eof() )
+      while !( dbfUser )->( eof() )
 
          if !( dbfFolder )->( dbSeek( ( dbfUser )->cCodUse + Padr( "Favoritos", 100 ) ) )
             ( dbfFolder )->( dbAppend() )
@@ -2015,9 +1982,11 @@ Static function CreateFavoritoReportGalery( oTrvArbolGaleria )
    ( dbfFavorito )->( dbGoTop() )
    while !( dbfFavorito )->( Eof() )
 
+      sysRefresh()
+
       if cCarpeta == ( dbfFavorito )->cCarpeta
 
-         n := aScan( aInforme, {|a| a[1] == rTrim( ( dbfFavorito )->cNomRpt ) } )
+         n := aScan( aInforme, {|a| a[1] == rtrim( ( dbfFavorito )->cNomRpt ) } )
 
          if n != 0
 

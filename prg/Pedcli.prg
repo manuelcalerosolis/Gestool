@@ -1832,6 +1832,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             Return .f.
          end if
 
+         if !empty( aTmp[ _CCODWEB ] ) .and. !oUser():lAdministrador()
+            MsgStop( "Los pedidos procedentes de Prestashop, no pueden ser modificados." )
+            Return .f.
+         end if
+
    end case
 
    if Empty( Rtrim( aTmp[ _CSERPED ] ) )
@@ -8747,7 +8752,7 @@ Return .t.
 
 //------------------------------------------------------------------------//
 
-STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
+STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaWeb )
 
    local oError
    local oBlock
@@ -8755,6 +8760,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    local cSerPed
    local nNumPed
    local cSufPed
+
+   DEFAULT lActualizaWeb   	:= .f.
 
    if Empty( aTmp[ _CSERPED ] )
       aTmp[ _CSERPED ]  := "A"
@@ -9020,6 +9027,17 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    if !Empty( oStock )
       oStock:SetGeneradoPedCli( cSerPed + Str( nNumPed ) + cSufPed )
    end if
+
+	/*
+	Actualizamos los datos de la web para tiempo real------------------------
+	*/
+
+		
+	if uFieldempresa( "lRealWeb" ) .and. ( !empty( ( D():PedidosClientes( nView ) )->cCodWeb ) )
+		with object ( TComercio():New() )
+			:syncSituacionesPedidoPrestashop( ( D():PedidosClientes( nView ) )->cCodWeb, ( D():PedidosClientes( nView ) )->cSerPed, ( D():PedidosClientes( nView ) )->nNumPed, ( D():PedidosClientes( nView ) )->cSufPed )
+		end with
+	end if
 
    /*
    Escribe los datos pendientes------------------------------------------------
@@ -15455,6 +15473,9 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliE.Cdx", "cSitua", "cSitua", {|| Field->cSitua } ) )
 
+      ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliE.Cdx", "idPs", "str( idPs )", {|| str( Field->idPs ) } ) )
+
       ( cPedCliT )->( dbCloseArea() )
 
    else
@@ -15724,7 +15745,7 @@ function aPedCliEst()
    aAdd( aPedCliEst, { "cSitua",  "C",  140,  0, "Situación" ,   	    		"",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliEst, { "dFecSit", "D",    8,  0, "Fecha de la situación" ,      "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliEst, { "tFecSit", "C",    6,  0, "Hora de la situación" ,       "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliEst, { "idPs",    "N",    9,  0, "Id prestashop" ,              "",                   "", "( cDbfCol )", nil } )   
+   aAdd( aPedCliEst, { "idPs",    "N",   11,  0, "Id prestashop" ,              "",                   "", "( cDbfCol )", nil } )   
 
 return ( aPedCliEst )
 
@@ -18100,10 +18121,6 @@ Return ( cFormato )
 
 //---------------------------------------------------------------------------//   
 
-//Static Function syncSituacionesPedidoPrestashop()
 
 
 
-//Return ( .t. )
-
-//---------------------------------------------------------------------------//
