@@ -3146,6 +3146,14 @@ METHOD BuildEmpresa()
    oDatatable:bId          := {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb }
    ::AddEmpresaTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "AlbCliE"
+   oDataTable:cName        := cPatEmp() + "AlbCliE"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliE.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliE.Cdx"
+   oDataTable:cDescription := "Situaciones de albaranes de clientes"
+   ::AddEmpresaTable( oDataTable )
+
    /*
    Remesas---------------------------------------------------------------------
    */
@@ -5239,6 +5247,10 @@ CLASS D
 
    METHOD AlbaranesClientesCobros( nView )            INLINE ( ::Get( "AlbCliP", nView ) )
       METHOD AlbaranesClientesCobrosId( nView )       INLINE ( ( ::Get( "AlbCliP", nView ) )->cSerAlb + str( ( ::Get( "AlbCliP", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliP", nView ) )->cSufAlb )
+
+   METHOD AlbaranesClientesSituaciones( nView )            INLINE ( ::Get( "AlbCliE", nView ) )
+      METHOD AlbaranesClientesSituacionesId( nView )       INLINE ( ( ::Get( "AlbCliE", nView ) )->cSerAlb + str( ( ::Get( "AlbCliE", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliE", nView ) )->cSufAlb )
+      METHOD AlbaranesClientesSituacionesIdText( nView )   INLINE ( ::Get( "AlbCliE", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliE", nView ) )->nNumAlb ) )
 
    // Facturas de clientes-----------------------------------------------------
 
