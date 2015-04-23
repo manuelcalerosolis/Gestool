@@ -356,12 +356,15 @@ static dbfTmpLin
 static dbfTmpInc
 static dbfTmpDoc
 static dbfTmpPgo
+static dbfTmpEst
 static dbfTmpSer
+static dbfAlbCliE
 static dbfDelega
 static cTmpLin
 static cTmpInc
 static cTmpDoc
 static cTmpPgo
+static cTmpEst
 static cTmpSer
 static dbfInci
 static dbfRuta
@@ -502,6 +505,7 @@ static bEdtDet          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmp
 static bEdtInc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtPgo          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb | EdtEnt( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb ) }
+static bEdtEst          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb | EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb ) }
 
 static oMailing
 
@@ -1295,7 +1299,9 @@ STATIC FUNCTION OpenFiles()
 
       D():ArticuloStockAlmacenes( nView )  
 
-      D():ArticuloLenguaje( nView )   
+      D():ArticuloLenguaje( nView )  
+
+      D():AlbaranesClientesSituaciones( nView )  
 
       // Aperturas ------------------------------------------------------------
 
@@ -2105,6 +2111,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oSayLabels  := Array( 10 )
    local oBmpDiv
    local oBmpEmp
+   local oBrwEst
    local oBrwPgo
    local lWhen       := if( oUser():lAdministrador(), nMode != ZOOM_MODE, if( nMode == EDIT_MODE, !aTmp[ _LCLOALB ], nMode != ZOOM_MODE ) )
    local oSayGetRnt
@@ -2281,11 +2288,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          PROMPT   "Albará&n",;
                   "Da&tos",;
                   "&Incidencias",;
-                  "D&ocumentos" ;
+                  "D&ocumentos",;
+                  "&Situaciones";
          DIALOGS  "ALBCLI_1",;
                   "ALBCLI_2",;
                   "PEDCLI_3",;
-                  "PEDCLI_4"
+                  "PEDCLI_4",;
+                  "PEDCLI_5"
 
       /*
       Codigo de Cliente________________________________________________________
@@ -2314,6 +2323,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
         RESOURCE "address_book2_alpha_48" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[4]
+
+      REDEFINE BITMAP oBmpGeneral ;
+        ID       990 ;
+        RESOURCE "document_attachment_48_alpha";
+        TRANSPARENT ;
+        OF       oFld:aDialogs[5]
 
       REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
          ID       170 ;
@@ -3726,6 +3741,73 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[ 4 ] ;
          ACTION   ( ShellExecute( oDlg:hWnd, "open", rTrim( ( dbfTmpDoc )->cRuta ) ) )
 
+
+     /*
+      Situaciones--------------------------------------------------------------
+      */
+
+      oBrwEst                 := IXBrowse():New( oFld:aDialogs[ 5 ] )
+
+      oBrwEst:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwEst:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwEst:cAlias          := dbfTmpEst
+
+      oBrwEst:nMarqueeStyle   := 6
+      oBrwEst:cName           := "Pedido de cliente.Situaciones"
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Nombre"
+            :bEditValue       := {|| ( dbfTmpEst )->cSitua }
+            :nWidth           := 140
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Fecha"
+            :bEditValue       := {|| Dtoc( ( dbfTmpEst )->dFecSit ) }
+            :nWidth           := 90
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Hora"
+            :bEditValue       := {|| trans( ( dbfTmpEst )->tFecSit, "@R 99:99:99" ) }
+            :nWidth           := 90
+         end with
+
+         if nMode != ZOOM_MODE
+            oBrwEst:bLDblClick   := {|| WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) }
+         end if
+
+         oBrwEst:CreateFromResource( 210 )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oFld:aDialogs[ 5 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oFld:aDialogs[ 5 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
+
+      REDEFINE BUTTON ;
+         ID        502 ;
+         OF       oFld:aDialogs[ 5 ] ;
+         WHEN     ( lWhen ) ;
+         ACTION   ( WinDelRec( oBrwEst, dbfTmpEst ) )
+
+
+      REDEFINE BUTTON ;
+         ID        503 ;
+         OF       oFld:aDialogs[ 5 ] ;
+         ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
       /*
       Botones comunes a la caja de dialogo____________________________________
       */
@@ -3777,6 +3859,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oFld:aDialogs[4]:AddFastKey( VK_F2, {|| WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
       oFld:aDialogs[4]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
       oFld:aDialogs[4]:AddFastKey( VK_F4, {|| WinDelRec( oBrwDoc, dbfTmpDoc ) } )
+
+      oFld:aDialogs[5]:AddFastKey( VK_F2, {|| WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
+      oFld:aDialogs[5]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
+      oFld:aDialogs[5]:AddFastKey( VK_F4, {|| WinDelRec( oBrwEst, dbfTmpEst ) } )
 
       oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), ImprimirSeriesAlbaranes(), ) } )
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ) } )
@@ -4881,6 +4967,65 @@ Static Function EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
    ACTIVATE DIALOG oDlg CENTER
 
 Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpAlb )
+
+      local oDlg
+
+      if nMode == APPD_MODE
+         
+         aTmp[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("tFecSit")) ]   := GetSysTime()
+
+    end if
+
+      DEFINE DIALOG oDlg RESOURCE "SITUACION_ESTADO" TITLE LblTitle( nMode ) + "Situación del documento del cliente"
+
+         REDEFINE COMBOBOX aGet[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
+            VAR    aTmp[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
+            ID       200 ;
+            WHEN     ( nMode != ZOOM_MODE );
+            ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
+            OF       oDlg
+
+         REDEFINE GET aGet[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
+            VAR   aTmp[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
+            ID       100 ;
+            SPINNER ;
+            ON HELP  aGet[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("dFecSit")) ]:cText( Calendario( aTmp[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ) ) ;
+            WHEN  ( nMode != ZOOM_MODE ) ;
+            OF       oDlg
+
+         REDEFINE GET aGet[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ;
+            VAR    aTmp[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ;
+            ID       101 ;
+            PICTURE  "@R 99:99:99" ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            VALID    ( iif( !validTime( aTmp[ (D():AlbaranesClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ),;
+                          ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                          .t. ) );
+            OF       oDlg
+
+         REDEFINE BUTTON ;
+            ID       IDOK ;
+            OF       oDlg ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            ACTION   ( WinGather( aTmp, nil, dbfTmpEst, oBrw, nMode ), oDlg:end( IDOK ) )
+
+         REDEFINE BUTTON ;
+            ID       IDCANCEL ;
+            OF       oDlg ;
+            CANCEL ;
+            ACTION   ( oDlg:end() )
+
+      if nMode != ZOOM_MODE
+      oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpEst, oBrw, nMode ), oDlg:end( IDOK ) } )
+      end if
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -8193,6 +8338,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Entregas de albaranes", ( D():Get( "AlbCliP", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Entregas de albaranes", cItemsToReport( aItmAlbPgo() ) )
 
+    oFr:SetWorkArea(     "Situaciones de Albaranes", ( D():AlbaranesClientesSituaciones( nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Situaciones de Albaranes", cItemsToReport( aAlbCliEst() ) )
+
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
@@ -8515,6 +8663,10 @@ STATIC FUNCTION CreateFiles( cPath )
       dbCreate( cPath + "AlbCliS.Dbf", aSqlStruct( aSerAlbCli() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "AlbCliE.Dbf" )
+      dbCreate( cPath + "AlbCliE.Dbf", aSqlStruct( aAlbCliEst() ), cDriver() )
+   end if
+
 RETURN NIL
 
 //--------------------------------------------------------------------//
@@ -8574,6 +8726,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local cDbfDoc     := "ACliD"
    local cDbfPgo     := "ACliP"
    local cDbfSer     := "ACliS"
+   local cDbfEst     := "ACliE"
    local cAlbaran
 
    CursorWait()
@@ -8591,6 +8744,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       cTmpDoc        := cGetNewFileName( cPatTmp() + cDbfDoc )
       cTmpPgo        := cGetNewFileName( cPatTmp() + cDbfPgo )
       cTmpSer        := cGetNewFileName( cPatTmp() + cDbfSer )
+      cTmpEst        := cGetNewFileName( cPatTmp() + cDbfEst )
 
       do case
          case nMode == APPD_MODE .or. nMode == DUPL_MODE
@@ -8651,6 +8805,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       end if
 
+
       /*
       Base de datos de los anticipos----------------------------------------------
       */
@@ -8701,6 +8856,33 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       else
 
          lErrors     := .t.
+
+      end if
+
+      /*
+      A¤adimos desde el fichero de situaiones
+   */
+      dbCreate( cTmpEst, aSqlStruct( aAlbCliEst() ), cLocalDriver() )
+      dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
+      if !NetErr()
+
+         ( dbfTmpEst )->( ordCreate( cTmpEst, "nNumAlb", "cSerAlb + str( nNumAlb ) + cSufAlb + dtos( dFecSit )  + tFecSit", {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb + dtos( Field->dFecSit )  + Field->tFecSit } ) )
+         ( dbfTmpEst )->( ordListAdd( cTmpEst ) )
+
+         if ( D():AlbaranesClientesSituaciones( nView ) )->( dbSeek( cAlbaran ) )
+
+            while ( ( D():AlbaranesClientesSituaciones( nView ) )->cSerAlb + Str( ( D():AlbaranesClientesSituaciones( nView ) )->nNumAlb ) + ( D():AlbaranesClientesSituaciones( nView ) )->cSufAlb == cAlbaran ) .AND. ( D():AlbaranesClientesSituaciones( nView ) )->( !eof() ) 
+               dbPass( D():AlbaranesClientesSituaciones( nView ), dbfTmpEst, .t. )
+               ( D():AlbaranesClientesSituaciones( nView ) )->( dbSkip() )
+            end while
+
+         end if
+
+         ( dbfTmpEst )->( dbGoTop() )
+
+      else
+
+            lErrors     := .t.
 
       end if
 
@@ -11281,6 +11463,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
          end if
       end while
 
+      while ( D():AlbaranesClientesSituaciones( nView ) )->( dbSeek( cSerAlb + str( nNumAlb ) + cSufAlb ) ) 
+         if dbLock( D():AlbaranesClientesSituaciones( nView ) )
+            ( D():AlbaranesClientesSituaciones( nView ) )->( dbDelete() )
+            ( D():AlbaranesClientesSituaciones( nView ) )->( dbUnLock() )
+         end if
+      end while
+
    end case
 
    /*
@@ -11363,6 +11552,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       dbPass( dbfTmpSer, D():Get( "AlbCliS", nView ), .t., cSerAlb, nNumAlb, cSufAlb, dFecAlb )
       ( dbfTmpSer )->( dbSkip() )
    end while
+
+   /*
+   Escribimos en el fichero definitivo (Situaciones)
+   */
+
+    ( dbfTmpEst )->( DbGoTop() )
+      while ( dbfTmpEst )->( !eof() )
+         dbPass( dbfTmpEst, D():AlbaranesClientesSituaciones( nView ), .t., cSerAlb, nNumAlb, cSufAlb ) 
+         ( dbfTmpEst )->( dbSkip() )
+      end while
 
    /*
    Estado del pedido-----------------------------------------------------------
@@ -16053,11 +16252,16 @@ FUNCTION IsAlbCli( cPath )
       dbCreate( cPath + "AlbCliD.Dbf", aSqlStruct( aAlbCliDoc() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "AlbCliE.Dbf" )
+      dbCreate( cPath + "AlbCliE.Dbf", aSqlStruct( aAlbCliEst() ), cDriver() )
+   end if
+
    if !lExistIndex( cPath + "AlbCliT.Cdx" ) .or. ;
       !lExistIndex( cPath + "AlbCliL.Cdx" ) .or. ;
       !lExistIndex( cPath + "AlbCliP.Cdx" ) .or. ;
       !lExistIndex( cPath + "AlbCliI.Cdx" ) .or. ;
-      !lExistTable( cPath + "AlbCliD.Cdx" )
+      !lExistTable( cPath + "AlbCliD.Cdx" ) .or. ;
+      !lExistTable( cPath + "AlbCliE.Cdx" )
 
       rxAlbCli( cPath )
 
@@ -16211,7 +16415,8 @@ FUNCTION rxAlbCli( cPath, oMeter )
       !lExistTable( cPath + "ALBCLII.DBF" )   .OR. ;
       !lExistTable( cPath + "ALBCLID.DBF" )   .OR. ;
       !lExistTable( cPath + "ALBCLIP.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLIS.DBF" )
+      !lExistTable( cPath + "ALBCLIS.DBF" )   .OR. ;
+      !lExistTable( cPath + "ALBCLIE.DBF" )
 
       CreateFiles( cPath )
 
@@ -16223,6 +16428,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
    fEraseIndex( cPath + "ALBCLID.CDX" )
    fEraseIndex( cPath + "ALBCLIP.CDX" )
    fEraseIndex( cPath + "ALBCLIS.CDX" )
+   fEraseIndex( cPath + "ALBCLIE.CDX" )
 
    dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @cAlbCliT ), .f. )
 
@@ -16446,7 +16652,46 @@ FUNCTION rxAlbCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de albaranes de clientes" )
    end if
 
+   dbUseArea( .t., cDriver(), cPath + "AlbCliE.DBF", cCheckArea( "AlbCliE", @cAlbCliT ), .f. )
+
+   if !( cAlbCliT )->( neterr() )
+
+      ( cAlbCliT )->( __dbPack() )
+
+      ( cAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliE.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliE.Cdx", "cSitua", "cSitua", {|| Field->cSitua } ) )
+
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbCliT )->( ordCreate( cPath + "AlbCliE.Cdx", "idPs", "str( idPs )", {|| str( Field->idPs ) } ) )
+
+      ( cAlbCliT )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
+
+   end if
+
 RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+function aAlbCliEst()
+
+   local aAlbCliEst  := {}
+
+   aAdd( aAlbCliEst, { "cSerAlb", "C",    1,  0, "Serie de pedido" ,            "",                   "", "( cDbfCol )", nil } )
+   aAdd( aAlbCliEst, { "nNumAlb", "N",    9,  0, "Numero de pedido" ,           "'999999999'",        "", "( cDbfCol )", nil } )
+   aAdd( aAlbCliEst, { "cSufAlb", "C",    2,  0, "Sufijo de pedido" ,           "",                   "", "( cDbfCol )", nil } )
+   aAdd( aAlbCliEst, { "cSitua",  "C",  140,  0, "Situación" ,             "",                   "", "( cDbfCol )", nil } )
+   aAdd( aAlbCliEst, { "dFecSit", "D",    8,  0, "Fecha de la situación" ,      "",                   "", "( cDbfCol )", nil } )
+   aAdd( aAlbCliEst, { "tFecSit", "C",    6,  0, "Hora de la situación" ,       "",                   "", "( cDbfCol )", nil } )
+   aAdd( aAlbCliEst, { "idPs",    "N",   11,  0, "Id prestashop" ,              "",                   "", "( cDbfCol )", nil } )   
+
+return ( aAlbCliEst )
 
 //--------------------------------------------------------------------------//
 
