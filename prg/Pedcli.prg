@@ -9815,7 +9815,7 @@ Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpPed )
 
     end if
 
-   	DEFINE DIALOG oDlg RESOURCE "SITUACION-ESTADO" TITLE LblTitle( nMode ) + "Situación del documento del cliente"
+   	DEFINE DIALOG oDlg RESOURCE "SITUACION_ESTADO" TITLE LblTitle( nMode ) + "Situación del documento del cliente"
 
    		REDEFINE COMBOBOX aGet[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
    			VAR 	 aTmp[ (D():PedidosClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
