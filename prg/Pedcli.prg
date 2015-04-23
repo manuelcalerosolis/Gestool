@@ -1832,11 +1832,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             Return .f.
          end if
 
-         if !empty( aTmp[ _CCODWEB ] ) .and. !oUser():lAdministrador()
-            MsgStop( "Los pedidos procedentes de Prestashop, no pueden ser modificados." )
-            Return .f.
-         end if
-
    end case
 
    if Empty( Rtrim( aTmp[ _CSERPED ] ) )
@@ -3376,31 +3371,31 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
          oBrwEst:CreateFromResource( 210 )
 
-     REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oFld:aDialogs[ 5 ] ;
-         WHEN     ( lWhen ) ;
-         ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+    REDEFINE BUTTON ;
+        ID       500 ;
+        OF       oFld:aDialogs[ 5 ] ;
+        WHEN     ( lWhen ) ;
+        ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 
-     REDEFINE BUTTON ;
-         ID       501 ;
-         OF       oFld:aDialogs[ 5 ] ;
-         WHEN     ( lWhen ) ;
-         ACTION   ( WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
-
-
-	REDEFINE BUTTON ;
-		ID 		502 ;
-         OF       oFld:aDialogs[ 5 ] ;
-         WHEN     ( lWhen ) ;
-         ACTION   ( WinDelRec( oBrwEst, dbfTmpEst ) )
+    REDEFINE BUTTON ;
+        ID       501 ;
+        OF       oFld:aDialogs[ 5 ] ;
+        WHEN     ( lWhen ) ;
+        ACTION   ( WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 
 	REDEFINE BUTTON ;
-			ID 		503 ;
-         OF       oFld:aDialogs[ 5 ] ;
-         ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+		ID 		 502 ;
+        OF       oFld:aDialogs[ 5 ] ;
+        WHEN     ( lWhen ) ;
+        ACTION   ( WinDelRec( oBrwEst, dbfTmpEst ) )
+
+
+	REDEFINE BUTTON ;
+		ID 		 503 ;
+        OF       oFld:aDialogs[ 5 ] ;
+        ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 
 		/*

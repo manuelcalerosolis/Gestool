@@ -3000,6 +3000,14 @@ METHOD BuildEmpresa()
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "PreCliE"
+   oDataTable:cName        := cPatEmp() + "PreCliE"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "PreCliE.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PreCliE.Cdx"
+   oDataTable:cDescription := "Situaciones de presupuestos de clientes"
+   ::AddEmpresaTable( oDataTable )
+
    /*
    Pedidos Clientes
    */
@@ -5192,6 +5200,10 @@ CLASS D
                                                 INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + "/" + alltrim( str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) ) )
       METHOD PresupuestosClientesIdText( nView ) ;
                                                 INLINE ( ::PresupuestosClientesIdTextShort( nView ) + "/" + ( ::Get( "PreCliT", nView ) )->cSufPre )
+
+   METHOD PresupuestosClientesSituaciones( nView )            INLINE ( ::Get( "PreCliE", nView ) )
+      METHOD PresupuestosClientesSituacionesId( nView )       INLINE ( ( ::Get( "PreCliE", nView ) )->cSerPre + str( ( ::Get( "PreCliE", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliE", nView ) )->cSufPre )
+      METHOD PresupuestosClientesSituacionesIdText( nView )   INLINE ( ::Get( "PreCliE", nView ) )->cSerPre + "/" + Alltrim( Str( ( ::Get( "PreCliE", nView ) )->nNumPre ) )
 
    // Pedidos de clientes------------------------------------------------------
 
