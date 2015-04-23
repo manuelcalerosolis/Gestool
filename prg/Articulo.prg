@@ -94,6 +94,7 @@ static oUndMedicion
 static oFraPub
 static oFabricante
 static oOrdenComanda
+static oLenguajes
 static oTpvMenu
 
 static oDetCamposExtra
@@ -125,7 +126,7 @@ static bEdit2              := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode    
 static bEdtDet             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtAlm             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtAlm( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtVta             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtVta( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
-static bEdtLeng            := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtLeng( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtLeng            := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpArt | EdtLeng( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpArt ) }
 static bEdtKit             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtKit( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtImg             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtImg( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtCod             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtCodebar( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
@@ -226,6 +227,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       nView       := D():CreateView()
 
       D():ArticuloLenguaje( nView )
+      D():Lenguajes( nView )
 
       lOpenFiles  := .t.
 
@@ -428,6 +430,11 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       if !oOrdenComanda:OpenFiles()
          lOpenfiles        := .f.
       end if 
+
+      oLenguajes           := TLenguaje():Create( cPatDat() )
+      if !oLenguajes:OpenFiles()
+         lOpenFiles        := .f.
+      end if
 
       oTpvMenu             := TpvMenu():Create( cPath )
       oTpvMenu:OpenService( .f., cPath )
@@ -719,6 +726,10 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oDetCamposExtra:CloseFiles()
    end if
 
+   if !Empty( oLenguajes )
+      oLenguajes:End()
+   end if
+
    dbfArticulo       := nil
    dbfProv           := nil
    dbfCatalogo       := nil
@@ -769,6 +780,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
    dbfTImp           := nil
    oTpvMenu          := nil
    oDetCamposExtra   := nil
+   oLenguajes        := nil
 
    lOpenFiles        := .f.
 
@@ -1579,6 +1591,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oBmpWeb
    local oBmpUbicaciones
    local oBmpImagenes
+   local oBmpTactil
    local aImpComanda          := aTiposImpresoras( dbfTImp )
    local oImpComanda1
    local oImpComanda2
@@ -1707,7 +1720,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          PROMPT   "&General",;
                   "&Precios",;
                   "&Táctil",;
-                  "&Descripciones",;
+                  "&Idiomas",;
                   "Imagenes",;
                   "P&ropiedades",;
                   "&Logística",;
@@ -1983,6 +1996,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    Tactil----------------------------------------------------------------------
    */
 
+   REDEFINE BITMAP oBmpImagenes ;
+         ID       500 ;
+         RESOURCE "hand_point_48" ;
+         TRANSPARENT ;
+         OF       fldTactil
+
    REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LINCTCL" ) ) ] ;
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -2066,7 +2085,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpPrecios ;
          ID       500 ;
-         RESOURCE "Symbol_euro_Alpha_48" ;
+         RESOURCE "Symbol_euro_48" ;
          TRANSPARENT ;
          OF       fldPrecios
 
@@ -3019,15 +3038,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       oBrwLeng:CreateFromResource( 100 )
 
       with object ( oBrwLeng:AddCol() )
+         :cHeader                := "Lenguaje"
+         :bEditValue             := {|| AllTrim( ( dbfTmpLeng )->cCodLen ) + " - " + RetFld( ( dbfTmpLeng )->cCodLen, D():Lenguajes( nView ), "cNomLen" ) }
+         :nWidth                 := 200
+      end with
+
+      with object ( oBrwLeng:AddCol() )
          :cHeader                := "Descripción"
          :bEditValue             := {|| ( dbfTmpLeng )->cDesTik }
-         :nWidth                 := 160
+         :nWidth                 := 400
       end with
 
       with object ( oBrwLeng:AddCol() )
          :cHeader                := "Descripción larga"
          :bEditValue             := {|| ( dbfTmpLeng )->cDesArt }
          :nWidth                 := 400
+         :lHide                  := .t.
       end with
 
       if nMode != ZOOM_MODE
@@ -3036,26 +3062,26 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpDescripciones ;
          ID       500 ;
-         RESOURCE "Document_Text_Alpha_48" ;
+         RESOURCE "user_message_48" ; 
          TRANSPARENT ;
          OF       fldDescripciones
 
       REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "Descrip" ) ) ] MEMO;
 			ID 		210 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldDescripciones
+         OF       fldTactil
 
       REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "mComent" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "mComent" ) ) ];
          ID       370 ;
 			MEMO ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldDescripciones
+         OF       fldTactil
 
       REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lMosCom" ) ) ] ;
          ID       380 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldDescripciones
+         OF       fldTactil
 
       /*
       Fechas-------------------------------------------------------------------
@@ -3299,12 +3325,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpLogistica ;
          ID       500 ;
-         RESOURCE "Truck_Red_Alpha_48" ;
+         RESOURCE "Truck_Red_48" ;
          TRANSPARENT ;
          OF       fldLogistica
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodFra" ) ) ] ;
-      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodFra" ) ) ] ;
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodFra" ) ) ] ; 
       ID       420 ;
       IDTEXT   425 ;
       WHEN     ( nMode != ZOOM_MODE ) ;
@@ -3499,7 +3525,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpStocks ;
          ID       500 ;
-         RESOURCE "Package_Alpha_48" ;
+         RESOURCE "Package_48" ;
          TRANSPARENT ;
          OF       fldStocks
 
@@ -3969,7 +3995,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpOfertas ;
          ID       510 ;
-         RESOURCE "Star2_Red_Alpha_48" ;
+         RESOURCE "Star_Red_48" ;
          TRANSPARENT ;
          OF       fldOfertas
 
@@ -4427,7 +4453,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE BITMAP oBmpImagenes ;
          ID       510 ;
-         RESOURCE "Photo_landscape2_48_alpha" ;
+         RESOURCE "Photo_landscape2_48" ;
          TRANSPARENT ;
          OF       fldImagenes
 
@@ -4580,7 +4606,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    end if
 
-   oDlg:bStart    := {|| StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCtaVta, oBrwCtaCom, oBrwCodeBar, oBrwImg ) }
+   oDlg:bStart    := {|| StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCtaVta, oBrwCtaCom, oBrwCodeBar, oBrwImg, oBrwLeng ) }
 
    ACTIVATE DIALOG oDlg CENTER ;
          ON INIT  (  EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode ) ) ;
@@ -4649,6 +4675,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    if !Empty( oBmpImagenes )
       oBmpImagenes:End()
+   end if
+
+   if !Empty( oBmpTactil )
+      oBmpTactil:End()
    end if
 
    CursorWE()
@@ -5129,7 +5159,7 @@ Return .f.
 
 //---------------------------------------------------------------------------//
 
-Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCtaVta, oBrwCtaCom, oBrwCodeBar, oBrwImg )
+Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCtaVta, oBrwCtaCom, oBrwCodeBar, oBrwImg, oBrwLeng )
 
    CursorWait()
 
@@ -5243,6 +5273,10 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
 
    if !Empty( oBrwImg )
       oBrwImg:LoadData()
+   end if
+
+   if !Empty( oBrwLeng )
+      oBrwLeng:LoadData()
    end if
 
    IXBrowse():CloseData()
@@ -7140,37 +7174,97 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtLeng( aTmp, aGet, dbfTmpLeng, oBrw, bWhen, bValid, nMode )
+STATIC FUNCTION EdtLeng( aTmp, aGet, dbfTmpLeng, oBrw, bWhen, bValid, nMode, aTmpArt )
 
    local oDlg
+   local oBmp
 
-      DEFINE DIALOG oDlg RESOURCE "ARTLENG" TITLE LblTitle( nMode ) + "descripciones por lenguaje"
+   DEFINE DIALOG oDlg RESOURCE "ARTLENG" TITLE LblTitle( nMode ) + "descripciones por lenguaje"
 
+   REDEFINE BITMAP oBmp ;
+      ID       600 ;
+      RESOURCE "user_message_48" ; 
+      TRANSPARENT ;
+      OF       oDlg
 
+   REDEFINE GET aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ] ;
+      VAR      aTmp[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ] ;
+      ID       110 ;
+      IDTEXT   111;
+      COLOR    CLR_GET ;
+      VALID    ( oLenguajes:Existe( aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ], aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ]:oHelpText, "cNomLen" ) );
+      ON HELP  ( oLenguajes:Buscar( aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ] ) ) ;
+      BITMAP   "LUPA" ;
+      OF       oDlg
 
+   REDEFINE GET aGet[ ( dbfTmpLeng )->( fieldpos( "cDesTik" ) ) ] ; 
+      VAR      aTmp[ ( dbfTmpLeng )->( fieldpos( "cDesTik" ) ) ] ;
+      ID       120 ;
+      OF       oDlg   
 
+   REDEFINE GET aGet[ ( dbfTmpLeng )->( fieldpos( "cDesArt" ) ) ] ; 
+      VAR      aTmp[ ( dbfTmpLeng )->( fieldpos( "cDesArt" ) ) ] ;
+      MEMO ;
+      ID       130 ;
+      OF       oDlg
 
+   REDEFINE BUTTON;
+      ID       IDOK ;
+      OF       oDlg ;
+      ACTION   ( EndEdtLeng( aGet, aTmp, aTmpArt, dbfTmpLeng, oBrw, nMode, oDlg ) )
 
+   REDEFINE BUTTON;
+      ID       IDCANCEL ;
+      OF       oDlg ;
+      CANCEL ;
+      ACTION   ( oDlg:end() )
 
+   if nMode != APPD_MODE
+      oDlg:AddFastKey( VK_F5, {|| EndEdtLeng( aGet, aTmp, aTmpArt, dbfTmpLeng, oBrw, nMode, oDlg ) } )
+   end if
 
-      REDEFINE BUTTON;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
-
-      REDEFINE BUTTON;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:end() )
-
-      if nMode != APPD_MODE
-         oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
-      end if
+   oDlg:bStart    := {|| aGet[ ( dbfTmpLeng )->( fieldpos( "cCodLen" ) ) ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER
 
+   if !Empty( oBmp )
+      oBmp:End()
+   end if
+
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+static function EndEdtLeng( aGet, aTmp, aTmpArt, dbfTmpLeng, oBrw, nMode, oDlg )
+
+   if Empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cCodLen" ) ) ] )
+      MsgStop( "Código de lenguaje no puede estar vacío." )
+      aGet[ ( dbfTmpLeng )->( FieldPos( "cCodLen" ) ) ]:SetFocus()
+      Return .f.
+   end if
+
+   if Empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cDesTik" ) ) ] ) .and. Empty( aTmp[ ( dbfTmpLeng )->( FieldPos( "cDesArt" ) ) ] )
+
+      MsgStop( "Tiene que introducir al menos una descripción." )
+      aGet[ ( dbfTmpLeng )->( FieldPos( "cDesTik" ) ) ]:SetFocus()
+      Return .f.
+   end if
+
+   /*
+   Nos aseguramos de que tomamos el código de artículo-------------------------
+   */
+
+   aTmp[ ( dbfTmpLeng )->( FieldPos( "cCodArt" ) ) ]  := aTmpArt[ ( dbfArticulo )->( FieldPos( "Codigo" ) ) ]
+
+   /*
+   Guardamos el fichero temporal-----------------------------------------------
+   */
+
+   WinGather( aTmp, aGet, dbfTmpLeng, oBrw, nMode )
+
+   oDlg:End( IDOK )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -15970,7 +16064,7 @@ Function aItmArtLeng()
    aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código del artículo", "",   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodLen",   "C",  4, 0, "Código del lenguaje", "",   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cDesTik",   "C", 30, 0, "Descripción corta",   "",   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDesArt",   "C",200, 0, "Descripción larga",   "",   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesArt",   "M",200, 0, "Descripción larga",   "",   "", "( cDbfArt )", nil } )
 
 Return ( aBase )
 

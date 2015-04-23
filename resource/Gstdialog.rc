@@ -1072,13 +1072,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Aña&dir [F2]", 510, "Button", WS_TABSTOP, 49, 40, 50, 14
   CONTROL "&Modificar [F3]", 511, "Button", WS_TABSTOP, 104, 40, 50, 14
   CONTROL "&Eliminar [F4]", 512, "Button", WS_TABSTOP, 159, 40, 50, 14
-  CONTROL "", 100, "TXBrowse", 0x00300000, 47, 56, 438, 107
-  CONTROL "", 210, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 123, 173, 362, 50
-  CONTROL "Mostrar comentario", 380, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 226, 73, 10
-  CONTROL "", 370, "Edit", ES_MULTILINE|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 123, 226, 362, 50
-  CONTROL "Descripciones por lenguaje", -1, "Button", BS_GROUPBOX, 44, 29, 446, 138
-  CONTROL "Descripcion larga", -1, "Static", WS_GROUP, 47, 175, 60, 8
-  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 164, 446, 116
+  CONTROL "", 100, "TXBrowse", 0x00300000, 47, 56, 438, 220
+  CONTROL "Descripciones por lenguaje", -1, "Button", BS_GROUPBOX, 44, 29, 446, 251
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
   CONTROL "Descripciones del artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
@@ -1520,16 +1515,21 @@ FONT 8, "MS Sans Serif"
   CONTROL "Artículo por peso", 480, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 143, 89, 10
   CONTROL "", 490, "Edit", WS_BORDER|WS_TABSTOP, 139, 153, 40, 11
   CONTROL "", 491, "Edit", WS_BORDER|WS_TABSTOP, 180, 153, 307, 11
+  CONTROL "", 210, "Edit", ES_MULTILINE|ES_AUTOVSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 139, 181, 348, 50
+  CONTROL "", 370, "Edit", ES_MULTILINE|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 139, 234, 348, 50
   CONTROL "Texto táctil", -1, "Static", WS_GROUP, 49, 62, 47, 8
   CONTROL "Imagen táctil", -1, "Static", WS_GROUP, 49, 89, 45, 8
   CONTROL "Posición", -1, "Static", WS_GROUP, 49, 50, 32, 8
   CONTROL "Impresora comanda", -1, "Static", WS_GROUP, 49, 115, 67, 8
   CONTROL "Impresora copia comanda", -1, "Static", WS_GROUP, 49, 130, 87, 8
-  CONTROL "", 500, "TBitMap", 0x0000020e, 4, 3, 34, 30, 0x00000020
   CONTROL "Propiedades para el terminal punto de venta táctil", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
   CONTROL "Color botón", -1, "Static", WS_GROUP, 49, 76, 41, 8
   CONTROL "Orden", -1, "Static", WS_GROUP, 49, 102, 25, 8
   CONTROL "Menú acompañamiento", 4003, "Static", WS_GROUP, 49, 156, 84, 8
+  CONTROL "Mostrar comentario", 380, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 234, 73, 10
+  CONTROL "Descripcion larga", -1, "Static", WS_GROUP, 49, 183, 60, 8
+  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 172, 447, 116
+  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
 }
 
 ART_WEB DIALOG DISCARDABLE 36, 16, 496, 286
