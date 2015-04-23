@@ -1618,6 +1618,8 @@ STATIC FUNCTION OpenFiles( lExt )
       D():Documentos( nView )
       ( D():Documentos( nView ) )->( ordSetFocus( "cTipo" ) )
 
+      D():ArticuloLenguaje( nView )
+
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles      := .f.
       end if
@@ -11453,6 +11455,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Cuenta bancaria cliente",                         "CallHbFunc('cCtaFacCli')" )
 
    oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo",                            "CallHbFunc('cDesFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo otro lenguaje",              "CallHbFunc('cDesFacCliLeng')" )
    oFr:AddVariable(     "Lineas de facturas",   "Total unidades artículo",                         "CallHbFunc('nTotNFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario del artículo",                    "CallHbFunc('nTotUFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario con descuentos",                  "CallHbFunc('nTotPFacCli')" )
@@ -18407,6 +18410,16 @@ FUNCTION cDesFacCli( cFacCliL, cFacCliS )
    DEFAULT cFacCliS  := dbfFacCliS
 
 RETURN ( Descrip( cFacCliL, cFacCliS ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesFacCliLeng( cFacCliL, cFacCliS, cArtLeng )
+
+   DEFAULT cFacCliL  := dbfFacCliL
+   DEFAULT cFacCliS  := dbfFacCliS
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cFacCliL, cFacCliS, cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 

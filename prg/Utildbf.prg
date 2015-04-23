@@ -17,6 +17,8 @@
 static aResources             := {}
 static aAdsDirectory          := {}
 
+static cLenguajeSegundario    := {}
+
 static hTraslations           := {=>}
 
 //--------------------------------------------------------------------------//
@@ -3446,6 +3448,22 @@ Function nRestaDescuentoVenta( nValor, nDescuento )
    nValor -= nCalculaDescuentoVenta( nValor, nDescuento )
 
 Return ( nValor )
+
+//---------------------------------------------------------------------------//
+
+Function setLenguajeSegundario( cLenguaje )
+
+   if !Empty( cLenguaje )
+      cLenguajeSegundario  := cLenguaje
+   end if
+
+Return( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function getLenguajeSegundario()
+
+return cLenguajeSegundario
 
 //---------------------------------------------------------------------------//
    

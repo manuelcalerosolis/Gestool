@@ -1293,7 +1293,9 @@ STATIC FUNCTION OpenFiles()
 
       D():Articulos( nView )       
 
-      D():ArticuloStockAlmacenes( nView )     
+      D():ArticuloStockAlmacenes( nView )  
+
+      D():ArticuloLenguaje( nView )   
 
       // Aperturas ------------------------------------------------------------
 
@@ -8352,6 +8354,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Albaranes",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
    
    oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",                "CallHbFunc('cDesAlbCli')"  )
+   oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesAlbCliLeng')"  )
    oFr:AddVariable(     "Lineas de albaranes",   "Total unidades artículo",             "CallHbFunc('nTotNAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Precio unitario del artículo",        "CallHbFunc('nTotUAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Total línea de albaran",              "CallHbFunc('nTotLAlbCli')" )
@@ -14090,6 +14093,16 @@ FUNCTION cDesAlbCli( cAlbCliL, cAlbCliS )
    DEFAULT cAlbCliS  := D():Get( "AlbCliS", nView )
 
 RETURN ( Descrip( cAlbCliL, cAlbCliS ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesAlbCliLeng( cAlbCliL, cAlbCliS, cArtLeng )
+
+   DEFAULT cAlbCliL  := D():Get( "AlbCliL", nView )
+   DEFAULT cAlbCliS  := D():Get( "AlbCliS", nView )
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cAlbCliL, cAlbCliS, cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 /*

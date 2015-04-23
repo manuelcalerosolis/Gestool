@@ -1846,6 +1846,48 @@ RETURN ( cReturn )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION DescripLeng( cFacCliL, cFacCliS, cArtLeng )
+
+    local nOrd
+    local cKey
+    local cReturn     := ""
+    local nOrdAnt     := ( cArtLeng )->( OrdSetFocus( "CARTLEN" ) )
+
+    if !( cArtLeng )->( dbSeek( ( cFacCliL )->cRef + getLenguajeSegundario() ) )
+
+      if !Empty( ( cFacCliL )->cDetalle )
+        cReturn       := Rtrim( ( cFacCliL )->cDetalle ) 
+      else
+        cReturn       := Rtrim( ( cFacCliL )->mLngDes )
+      end if
+
+    else
+
+      if !Empty( ( cArtLeng )->cDesArt ) 
+        cReturn       := AllTrim( ( cArtLeng )->cDesArt )
+      else
+        cReturn       := AllTrim( ( cArtLeng )->cDesTik )
+      end if
+
+    end if
+
+    if !Empty( cFacCliS )
+
+        nOrd           := ( cFacCliL )->( OrdSetFocus( 1 ) )
+        cKey           := ( cFacCliL )->( OrdKeyVal() ) + Str( ( cFacCliL )->nNumLin, 4 )
+
+        cReturn        += SerialDescrip( cKey, cFacCliS )
+
+        ( cFacCliL )->( OrdSetFocus( nOrd ) )
+
+    end if
+
+  ( cArtLeng )->( OrdSetFocus( "nOrdAnt" ) )   
+
+RETURN ( cReturn )
+
+//---------------------------------------------------------------------------//
+
 Function SerialDescrip( cKey, cFacCliS )
 
    local nOrd
