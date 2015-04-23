@@ -1188,6 +1188,7 @@ Function InitClasses()
    TNotas()
    TOrdCarga()
    TPais()
+   TLenguaje()
    TReindex()
    TRemesas()
    TRemMovAlm()
@@ -1935,7 +1936,7 @@ Function CreateAcceso( oWnd )
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 10
+   oGrupo:nBigItems     := 11
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "Folder2_Red_16"
    oGrupo:cBigBitmap    := "Folder2_Red_32"
@@ -1978,6 +1979,16 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01041"
    oItem:cBmp           := "Flag_spain_16"
    oItem:cBmpBig        := "Flag_spain_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Lenguajes"
+   oItem:cMessage       := "Acceso a los lenguajes"
+   oItem:bAction        := {|| TLenguaje():New( cPatDat(), oWnd, "01041" ):Activate() }
+   oItem:cId            := "01125"
+   oItem:cBmp           := "user1_message_16"
+   oItem:cBmpBig        := "user1_message_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -3616,19 +3627,25 @@ Function BuildMenu()
                ACTION   ( TPais():New( cPatDat(), oWnd, oMenuItem ):Activate() ) ;
                RESOURCE "Flag_spain_16" ;
 
-            MENUITEM    "&L. Tipos de ventas";
+            MENUITEM    "&L. Lenguajes";
+               HELPID   "01125" ;
+               MESSAGE  "Lenguajes" ;
+               ACTION   ( TLenguaje():New( cPatDat(), oWnd, oMenuItem ):Activate() ) ;
+               RESOURCE "user1_message_16" ;
+
+            MENUITEM    "&M. Tipos de ventas";
                HELPID   "01043" ;
                MESSAGE  "Tipos de movimientos de ventas" ;
                ACTION   ( TVta( oMenuItem, oWnd ) );
                RESOURCE "Wallet_closed_16" ;
 
-            MENUITEM    "&M. Transportistas";
+            MENUITEM    "&N. Transportistas";
                MESSAGE  "Transportistas" ;
                HELPID   "01045" ;
                ACTION   ( TTrans():New( cPatCli(), oWnd, oMenuItem ):Activate() );
                RESOURCE "Truck_Blue_16" ;
 
-            MENUITEM    "&N. Tipificaciones";
+            MENUITEM    "&O. Tipificaciones";
                MESSAGE  "Ficheros relacionados con tipificaciones";
                RESOURCE "Folder2_Red_16" ;
 

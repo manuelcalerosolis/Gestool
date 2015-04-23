@@ -1845,11 +1845,22 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Pais"
    oDataTable:cName        := cPatDat() + "Pais"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Pais.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Pais.Cdx"
    oDataTable:cDescription := "Paises"
    oDataTable:bCreateFile  := {| cPath | TPais():BuildFiles( .t., cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddDataTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "Lenguaje"
+   oDataTable:cName        := cPatDat() + "Lenguaje"
+   oDataTable:cDataFile    := cPatDat( .t. ) + "Lenguaje.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "Lenguaje.Cdx"
+   oDataTable:cDescription := "Lenguajes"
+   oDataTable:bCreateFile  := {| cPath | TLenguaje():BuildFiles( .t., cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
@@ -2063,6 +2074,15 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProvArt.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProvArt.Cdx"
    oDataTable:cDescription := "Artículos proveedor"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares   
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "ArtLeng"
+   oDataTable:cName        := cPatEmp() + "ArtLeng"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtLeng.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtLeng.Cdx"
+   oDataTable:cDescription := "Artículos lenguaje"
    oDataTable:lTrigger     := ::lTriggerAuxiliares   
    ::AddEmpresaTable( oDataTable )
 
@@ -2332,6 +2352,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "CAMPOEXTRA"
    oDataTable:cName        := cPatEmp() + "CAMPOEXTRA"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CAMPOEXTRA.DBF"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CAMPOEXTRA.CDX"
@@ -2340,6 +2361,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "DETCAMPOEXTRA"
    oDataTable:cName        := cPatEmp() + "DETCAMPOEXTRA"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "DETCAMPOEXTRA.DBF"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "DETCAMPOEXTRA.CDX"
@@ -5332,6 +5354,7 @@ CLASS D
       METHOD gotoIdClientesEntidad( id, nView )       INLINE ( ::seek( ::ClientesEntidad( nView ), id ) ) 
 
    METHOD GruposClientes( nView )                     INLINE ( ::GetObject( "GruposClientes", nView ) )
+   METHOD GrupoClientes( nView )                      INLINE ( ::Get( "GrpCli", nView ) )
 
    // Pedidos de proveedores---------------------------------------------------
 
@@ -5452,6 +5475,8 @@ CLASS D
 
    METHOD ProveedorArticulo( nView )                              INLINE ( ::Get( "ProvArt", nView ) )
 
+   METHOD ArticuloLenguaje( nView )                               INLINE ( ::Get( "ArtLeng", nView ) )
+
    METHOD Articulos( nView )                                      INLINE ( ::Get( "Articulo", nView ) )
    METHOD ArticulosId( nView )                                    INLINE ( ( ::Get( "Articulo", nView ) )->Codigo )
    METHOD ArticulosIdText( nView )                                INLINE ( alltrim( ( ::Get( "Articulo", nView ) )->Codigo ) + Space(1) + alltrim( ( ::Get( "Articulo", nView ) )->Nombre ) )
@@ -5496,9 +5521,16 @@ CLASS D
 
    METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )
 
+   METHOD Lenguajes( nView )                 INLINE ( ::Get( "Lenguaje", nView ) )
+
    METHOD Ruta( nView )                      INLINE ( ::Get( "Ruta", nView ) )
 
    METHOD Operarios( nView )                 INLINE ( ::Get( "OpeT", nView ) )
+
+   METHOD CamposExtras( nView )              INLINE ( ::Get( "CAMPOEXTRA", nView ) )
+   METHOD DetCamposExtras( nView )           INLINE ( ::Get( "DETCAMPOEXTRA", nView ) )
+
+   METHOD Pais( nView )                      INLINE ( ::Get( "Pais", nView ) )
 
    METHOD Lock( cDatabase, nView )           INLINE ( dbLock( ::Get( cDatabase, nView ) ) )
    METHOD UnLock( cDatabase, nView )         INLINE ( ( ::Get( cDatabase, nView ) )->( dbUnLock() ) ) 

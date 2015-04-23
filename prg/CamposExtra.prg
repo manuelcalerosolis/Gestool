@@ -568,7 +568,6 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
       aCampos  := hb_deserialize( ::oDbf:mDocumento )
 
       if hGet( aCampos, cTipoCampo )
-
          do case 
             case ::oDbf:nTipo == 2
                cValor   := 0

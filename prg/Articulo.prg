@@ -63,6 +63,8 @@ static dbfDoc
 
 static filTmpPrv
 static dbfTmpPrv
+static filTmpLeng
+static dbfTmpLeng
 static filTmpVta
 static dbfTmpVta
 static filTmpKit
@@ -123,6 +125,7 @@ static bEdit2              := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode    
 static bEdtDet             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtAlm             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtAlm( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtVta             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtVta( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
+static bEdtLeng            := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtLeng( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtKit             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtKit( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 static bEdtImg             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtImg( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtCod             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtCodebar( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
@@ -221,6 +224,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       oMsgText( 'Abriendo ficheros artículos' )
 
       nView       := D():CreateView()
+
+      D():ArticuloLenguaje( nView )
 
       lOpenFiles  := .t.
 
@@ -495,6 +500,8 @@ STATIC FUNCTION CloseFiles( lDestroy )
       end if
 
    end if
+
+   D():DeleteView( nView )
 
    if dbfArticulo != nil
       ( dbfArticulo )->( dbCloseArea() )
@@ -1509,6 +1516,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oBlock
    local oError
    local oBrwDiv
+   local oBrwLeng
    local oBrwCtaCom
    local oBrwCodebar
    local aBtnDiv        := Array( 8 )
@@ -2979,6 +2987,52 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       /*
       Tercera ventana----------------------------------------------------------
       */
+
+      REDEFINE BUTTON;
+         ID       510 ;
+         OF       fldDescripciones;
+         WHEN     ( nMode != ZOOM_MODE );
+         ACTION   ( WinAppRec( oBrwLeng, bEdtLeng, dbfTmpLeng, , , aTmp ) )
+
+      REDEFINE BUTTON;
+         ID       511 ;
+         OF       fldDescripciones;
+         WHEN     ( nMode != ZOOM_MODE );
+         ACTION   ( WinEdtRec( oBrwLeng, bEdtLeng, dbfTmpLeng, , , aTmp ) )
+
+      REDEFINE BUTTON;
+         ID       512 ;
+         OF       fldDescripciones;
+         WHEN     ( nMode != ZOOM_MODE );
+         ACTION   ( dbDelRec( oBrwLeng, dbfTmpLeng ) )
+
+      oBrwLeng                   := IXBrowse():New( fldDescripciones )
+
+      oBrwLeng:bClrSel           := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwLeng:bClrSelFocus      := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwLeng:lHScroll          := .f.
+      oBrwLeng:cAlias            := dbfTmpLeng
+      oBrwLeng:nMarqueeStyle     := 6
+      oBrwLeng:cName             := "Articulos.Lenguajes"
+
+      oBrwLeng:CreateFromResource( 100 )
+
+      with object ( oBrwLeng:AddCol() )
+         :cHeader                := "Descripción"
+         :bEditValue             := {|| ( dbfTmpLeng )->cDesTik }
+         :nWidth                 := 160
+      end with
+
+      with object ( oBrwLeng:AddCol() )
+         :cHeader                := "Descripción larga"
+         :bEditValue             := {|| ( dbfTmpLeng )->cDesArt }
+         :nWidth                 := 400
+      end with
+
+      if nMode != ZOOM_MODE
+         oBrwLeng:bLDblClick  := {|| WinEdtRec( oBrwLeng, bEdtLeng, dbfTmpLeng, , , aTmp ) }
+      end if
 
       REDEFINE BITMAP oBmpDescripciones ;
          ID       500 ;
@@ -5457,6 +5511,7 @@ Static Function BeginTrans( aTmp, nMode )
    aAdd( aItmSubCta, { "nIva",      "N",  5, 2, "I.V.A"      } )
 
    filTmpPrv         := cGetNewFileName( cPatTmp() + "PrvArt" )
+   filTmpLeng        := cGetNewFileName( cPatTmp() + "ArtLeng" )
    filTmpAlm         := cGetNewFileName( cPatTmp() + "ArtAlm" )
    filTmpVta         := cGetNewFileName( cPatTmp() + "VtaArt" )
    filTmpKit         := cGetNewFileName( cPatTmp() + "KitArt" )
@@ -5487,6 +5542,28 @@ Static Function BeginTrans( aTmp, nMode )
             ( dbfArtPrv )->( dbSkip() )
          end while
          ( dbfTmpPrv )->( dbGoTop() )
+      end if
+
+   end if
+
+   /*
+   Creamos la temporal de lenguajes--------------------------------------------
+   */
+
+   dbCreate( filTmpLeng, aSqlStruct( aItmArtLeng() ), cLocalDriver() )
+   dbUseArea( .t., cLocalDriver(), filTmpLeng, cCheckArea( "ArtLeng", @dbfTmpLeng ), .f. )
+
+   if !NetErr()
+
+      ( dbfTmpPrv )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( dbfTmpPrv )->( OrdCreate( filTmpPrv, "cCodArt", "cCodArt", {|| Field->cCodArt } ) )
+
+      if nMode != APPD_MODE .and. ( D():ArticuloLenguaje( nView ) )->( dbSeek( cCodArt ) )
+         while ( D():ArticuloLenguaje( nView ) )->cCodArt == cCodArt .and. !( D():ArticuloLenguaje( nView ) )->( eof() )
+            dbPass( D():ArticuloLenguaje( nView ), dbfTmpLeng, .t. )
+            ( D():ArticuloLenguaje( nView ) )->( dbSkip() )
+         end while
+         ( dbfTmpLeng )->( dbGoTop() )
       end if
 
    end if
@@ -5822,6 +5899,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
             end if
          end while
 
+         while ( D():ArticuloLenguaje( nView ) )->( dbSeek( cCod ) ) .and. !( D():ArticuloLenguaje( nView ) )->( eof() )
+            if dbLock( D():ArticuloLenguaje( nView ) )
+               ( D():ArticuloLenguaje( nView ) )->( dbDelete() )
+               ( D():ArticuloLenguaje( nView ) )->( dbUnLock() )
+            end if
+         end while
+
          while ( D():ArticuloStockAlmacenes( nView ) )->( dbSeek( cCod ) ) .and. !( D():ArticuloStockAlmacenes( nView ) )->( eof() )
             if dbLock( D():ArticuloStockAlmacenes( nView ) )
                ( D():ArticuloStockAlmacenes( nView ) )->( dbDelete() )
@@ -5889,6 +5973,14 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
           dbPass( dbfTmpPrv, dbfArtPrv, .t. )
          ( dbfTmpPrv )->( dbSkip() )
+      end while
+
+
+      ( dbfTmpLeng )->( OrdSetFocus( 0 ) )
+      ( dbfTmpLeng )->( dbGoTop() )
+      while !( dbfTmpLeng )->( eof() )
+          dbPass( dbfTmpLeng, D():ArticuloLenguaje( nView ), .t. )
+         ( dbfTmpLeng )->( dbSkip() )
       end while
 
       ( dbfTmpAlm )->( OrdSetFocus( 0 ) )
@@ -6067,6 +6159,10 @@ Static Function KillTrans( oBrwPrv, oBrwDiv, oBrwStk, oBrwCta, oBrwCom, oBrw2, o
       ( dbfTmpPrv )->( dbCloseArea() )
    end if
 
+   if !Empty( dbfTmpLeng ) .and. ( dbfTmpLeng )->( Used() )
+      ( dbfTmpLeng )->( dbCloseArea() )
+   end if
+
    if !Empty( dbfTmpAlm ) .and. ( dbfTmpAlm )->( Used() )
       ( dbfTmpAlm )->( dbCloseArea() )
    end if
@@ -6108,8 +6204,10 @@ Static Function KillTrans( oBrwPrv, oBrwDiv, oBrwStk, oBrwCta, oBrwCom, oBrw2, o
    dbfTmpOfe      := nil
    dbfTmpImg      := nil
    dbfTmpAlm      := nil 
+   dbfTmpLeng     := nil
 
    dbfErase( filTmpPrv     )
+   dbfErase( filTmpLeng    )
    dbfErase( filTmpAlm     )
    dbfErase( filTmpVta     )
    dbfErase( filTmpKit     )
@@ -7034,6 +7132,40 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       if nMode != APPD_MODE
          oDlg:AddFastKey( VK_F5, {|| EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDlg, dbfTmpVta, nMode, oBrwPrp1, oBrwPrp2 ) } )
+      end if
+
+   ACTIVATE DIALOG oDlg CENTER
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION EdtLeng( aTmp, aGet, dbfTmpLeng, oBrw, bWhen, bValid, nMode )
+
+   local oDlg
+
+      DEFINE DIALOG oDlg RESOURCE "ARTLENG" TITLE LblTitle( nMode ) + "descripciones por lenguaje"
+
+
+
+
+
+
+
+
+      REDEFINE BUTTON;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+      if nMode != APPD_MODE
+         oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
       end if
 
    ACTIVATE DIALOG oDlg CENTER
@@ -15055,6 +15187,10 @@ Function IsArticulo( cPath )
       dbCreate( cPath + "ProvArt.Dbf",    aSqlStruct( aItmArtPrv() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "ArtLeng.Dbf" )
+      dbCreate( cPath + "ArtLeng.Dbf",    aSqlStruct( aItmArtLeng() ), cDriver() )
+   end if
+
    if !lExistTable( cPath + "ArtLbl.Dbf" )
       dbCreate( cPath + "ArtLbl.Dbf",     aSqlStruct( aItmLbl() ), cDriver() )
    end if
@@ -15068,6 +15204,7 @@ Function IsArticulo( cPath )
       !lExistIndex( cPath + "ArtKit.Cdx"     )  .or. ;
       !lExistIndex( cPath + "ArtCodebar.Cdx" )  .or. ;
       !lExistIndex( cPath + "ProvArt.Cdx"    )  .or. ;
+      !lExistIndex( cPath + "ArtLeng.Cdx"    )  .or. ;
       !lExistIndex( cPath + "ArtLbl.Cdx"     )  .or. ;
       !lExistIndex( cPath + "ArtImg.Cdx"     )
 
@@ -15110,6 +15247,10 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
       dbCreate( cPath + "ProvArt.Dbf",    aSqlStruct( aItmArtPrv() ),   cDriver() )
    end if
 
+   if !lExistTable( cPath + "ArtLeng.Dbf" )
+      dbCreate( cPath + "ArtLeng.Dbf",    aSqlStruct( aItmArtLeng() ),   cDriver() )
+   end if
+
    if !lExistTable( cPath + "ArtLbl.Dbf" )
       dbCreate( cPath + "ArtLbl.Dbf",     aSqlStruct( aItmLbl() ),      cDriver() )
    end if
@@ -15131,6 +15272,7 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
       AppDbf( cPathOld, cPath, "Articulo"    )
       AppDbf( cPathOld, cPath, "ArtDiv"      )
       AppDbf( cPathOld, cPath, "ProvArt"     )
+      AppDbf( cPathOld, cPath, "ArtLeng"     )
       AppDbf( cPathOld, cPath, "ArtCodebar"  )
       AppDbf( cPathOld, cPath, "ArtKit"      )
       AppDbf( cPathOld, cPath, "ArtLbl"      )
@@ -15159,6 +15301,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
    if !lExistTable( cPath + "Articulo.Dbf"   ) .or. ;
       !lExistTable( cPath + "ProvArt.Dbf"    ) .or. ;
+      !lExistTable( cPath + "ArtLeng.Dbf"    ) .or. ;
       !lExistTable( cPath + "ArtDiv.Dbf"     ) .or. ;
       !lExistTable( cPath + "ArtKit.Dbf"     ) .or. ;
       !lExistTable( cPath + "ArtCodebar.Dbf" ) .or. ;
@@ -15172,6 +15315,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
    fErase( cPath + "Articulo.Cdx"   )
    fErase( cPath + "ProvArt.Cdx"    )
+   fErase( cPath + "ArtLeng.Cdx"    )
    fErase( cPath + "ArtDiv.Cdx"     )
    fErase( cPath + "ArtKit.Cdx"     )
    fErase( cPath + "ArtCodebar.Cdx" )
@@ -15289,6 +15433,30 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
       ( dbfArticulo )->( ordCondSet("!Deleted() .and. lDefPrv", {|| !Deleted() } ) )
       ( dbfArticulo )->( ordCreate( cPath + "PROVART.CDX", "lDefPrv", "CCODART", {|| Field->CCODART } ) )
+
+      ( dbfArticulo )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
+
+   end if
+
+   /*
+   Articulos lenguajes---------------------------------------------------------
+   */
+
+   dbUseArea( .t., cDriver(), cPath + "ARTLENG.DBF", cCheckArea( "ARTLENG", @dbfArticulo ), .f. )
+
+   if !( dbfArticulo )->( neterr() )
+
+      ( dbfArticulo )->( __dbPack() )
+
+      ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ARTLENG.CDX", "CCODART", "CCODART", {|| Field->CCODART } ) )
+
+      ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ARTLENG.CDX", "CARTLEN", "CCODART + CCODLEN", {|| Field->CCODART + Field->CCODLEN } ) )
 
       ( dbfArticulo )->( dbCloseArea() )
 
@@ -15790,6 +15958,19 @@ Function aItmArtPrv()
    aAdd( aBase, { "cDivPrv",   "C",  3, 0, "Código de la divisa"               , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpPrv",   "N", 19, 6, "Importe de compra"                 , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lDefPrv",   "L",  1, 0, "Lógico de proveedor por defecto"   , "",                  "", "( cDbfArt )", nil } )
+
+Return ( aBase )
+
+//---------------------------------------------------------------------------//
+
+Function aItmArtLeng()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código del artículo", "",   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodLen",   "C",  4, 0, "Código del lenguaje", "",   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesTik",   "C", 30, 0, "Descripción corta",   "",   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesArt",   "C",200, 0, "Descripción larga",   "",   "", "( cDbfArt )", nil } )
 
 Return ( aBase )
 

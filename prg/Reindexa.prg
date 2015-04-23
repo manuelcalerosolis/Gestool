@@ -241,6 +241,7 @@ METHOD GenIndices( oMsg )
 
             if ::lEmpresa
                ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )                   ; TPais():Create( ::cPathDat ):Reindexa()
+               ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )                 ; TLenguaje():Create( ::cPathDat ):Reindexa()
             end if
 
          end if

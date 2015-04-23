@@ -359,7 +359,7 @@ METHOD Resource() CLASS TDetCamposExtra
       ::oBrw:CreateFromResource( 100 )
 
       with object ( ::oBrw:AddCol() )
-         :cHeader          := "Descripción"
+         :cHeader          := "Campo"
          :bStrData         := {|| AllTrim( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "descripción" ) ) + if( hGet( ::aCamposExtra[ ::oBrw:nArrayAt ], "lrequerido" ), " *", "" ) }
          :nWidth           := 250
       end with

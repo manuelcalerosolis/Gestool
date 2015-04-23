@@ -410,6 +410,7 @@ PedidoClienteViewEdit.prg              \
 GeneraFacturasClientes.prg             \
 CamposExtra.prg             \
 DetCamposExtra.prg          \
+Lenguajes.prg               \
 
 C               =       	\
 Img2pdf.c               	\
@@ -810,6 +811,7 @@ ClienteIncidenciaViewNavigator.obj     \
 PedidoClienteViewEdit.obj              \
 GeneraFacturasClientes.obj             \
 CamposExtra.obj                        \
+Lenguajes.obj                          \
 DetCamposExtra.obj
 
 .PRG.OBJ:
@@ -1197,6 +1199,7 @@ $(OBJ)\PedidoClienteViewEdit.obj             +
 $(OBJ)\GeneraFacturasClientes.obj            + 
 $(OBJ)\CamposExtra.obj                       +
 $(OBJ)\DetCamposExtra.obj                    +
+$(OBJ)\Lenguajes.obj                         +
 $(OBJ)\Ventas.obj
 $<,$*
 $(FWLIB)\FiveH.lib               +
