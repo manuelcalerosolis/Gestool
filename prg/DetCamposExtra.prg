@@ -465,6 +465,6 @@ METHOD GuardaValores( cClave ) CLASS TDetCamposExtra
 
    next
 
-Return ( self )
+Return ( self ) 
 
 //---------------------------------------------------------------------------//

@@ -443,7 +443,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       oTpvMenu:lModificarBuscar  := .f.
 
       oDetCamposExtra      := TDetCamposExtra():New()
-      if !oDetCamposExtra:OpenFiles
+      if !oDetCamposExtra:OpenFiles()
          lOpenFiles        := .f.
       end if
       oDetCamposExtra:SetTipoDocumento( "Artículos" )

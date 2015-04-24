@@ -80,6 +80,8 @@ static oComentarios
 
 static oBtnAceptarActualizarWeb
 
+static oDetCamposExtra
+
 static cNewFil
 
 static bEdit         := { |aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode ) }
@@ -380,6 +382,10 @@ static function OpenFiles()
    oComentarios      := TComentarios():Create( cPatArt() )
    oComentarios:OpenFiles()
 
+   oDetCamposExtra      := TDetCamposExtra():New()
+   oDetCamposExtra:OpenFiles()
+   oDetCamposExtra:SetTipoDocumento( "Familias" )
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de familias" )
@@ -417,6 +423,10 @@ static function CloseFiles()
 
    if !Empty( oComentarios )
       oComentarios:End()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    oWndBrw        := nil
@@ -1006,18 +1016,21 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          oFld:aDialogs[2]:AddFastKey( VK_F2, {|| WinAppRec( oBrwPrv, bEdit2, dbfTmp ) } )
          oFld:aDialogs[2]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) } )
          oFld:aDialogs[2]:AddFastKey( VK_F4, {|| dbDelRec( oBrwPrv, dbfTmp ) } )
+
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg ) } )
-         
+
          if uFieldEmpresa( "lRealWeb" )
             oDlg:AddFastKey( VK_F6, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg, .t. ) } )
          end if
 
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CCODFAM ] ) } )
+
       end if
 
-      oDlg:bStart    := {|| StartEdtRec( aGet, aTmp ) }
+      oDlg:bStart    := {|| StartEdtRec( aGet, aTmp, bmpImage ) }
 
       ACTIVATE DIALOG oDlg CENTER ;
-         ON INIT     ( ChgBmp( aGet[ _CIMGBTN ], bmpImage ) ) ;
+         ON INIT     ( EdtRecMenu( oDlg, aTmp ) ) ;
 
    RECOVER USING oError
 
@@ -1041,7 +1054,32 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aGet, aTmp )
+Static Function EdtRecMenu( oDlg, aTmp )
+
+   local oMenu
+
+   MENU oMenu
+
+      MENUITEM    "&1. Rotor"
+
+         MENU
+
+            MENUITEM "&1. Campos extra [F9]";
+            MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+            RESOURCE "form_green_add_16" ;
+            ACTION   ( oDetCamposExtra:Play( aTmp[ _CCODFAM ] ) )
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oMenu )
+
+Return ( oMenu )
+
+//--------------------------------------------------------------------------//
+
+Static Function StartEdtRec( aGet, aTmp, bmpImage )
 
    aGet[ _CCODGRP  ]:lValid()
    aGet[ _CCOMFAM  ]:lValid()
@@ -1060,6 +1098,8 @@ Static Function StartEdtRec( aGet, aTmp )
    LoadTree()  
 
    SetTreeState( , , aTmp[ _CFAMCMB ] )
+
+   ChgBmp( aGet[ _CIMGBTN ], bmpImage )
 
 Return .t.
 

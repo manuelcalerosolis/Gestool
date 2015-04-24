@@ -438,7 +438,9 @@ METHOD Resource( nMode ) CLASS TCamposExtra
       CANCEL ;
       ACTION      ( ::oDlg:End( IDCANCEL ) )
 
-      ::oDlg:bStart  := {|| ::ChangeTipo(), ::CreaTreeDocumentos() }
+      ::oDlg:AddFastKey( VK_F5, {|| oBtnAceptar:Click() } )
+
+      ::oDlg:bStart  := {|| ::CreaTreeDocumentos() } // ::ChangeTipo(),
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -462,9 +464,10 @@ Return ( self )
 
 METHOD initDocumentos() CLASS TCamposExtra
 
-   ::aDocumentos     := {  "Artículos" => .t.,;
+   ::aDocumentos     := {  "Artículos" => .f.,;
                            "Clientes" => .f.,;
-                           "Proveedores" => .t. }
+                           "Proveedores" => .f.,;
+                           "Familias" => .f. }
 
 Return ( self )
 
@@ -517,7 +520,6 @@ Method readDocumentos() CLASS TCamposExtra
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-   
 
 METHOD lValidResource( nMode ) CLASS TCamposExtra
 
@@ -567,12 +569,13 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
 
       aCampos  := hb_deserialize( ::oDbf:mDocumento )
 
-      if hGet( aCampos, cTipoCampo )
+      if hhaskey( aCampos, cTipoCampo ) .and. hGet( aCampos, cTipoCampo )
+
          do case 
             case ::oDbf:nTipo == 2
                cValor   := 0
             case ::oDbf:nTipo == 3
-               cValor   := cTod( "" )
+               cValor   := cTod( "" ) 
             otherwise
                cValor   := Space( 100 )
          end case
