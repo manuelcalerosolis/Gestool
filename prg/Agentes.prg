@@ -57,6 +57,8 @@ static dbfAgeRel
 static dbfProvee
 static dbfArticulo
 
+static oDetCamposExtra
+
 static dbfTmpCom
 static dbfTmpRel
 
@@ -576,16 +578,45 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg ) } )
-      end if
+      
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTemp[ _CCODAGE ] ) } )
+
+      endif
 
       oDlg:bStart := {|| EvalGet( aoGet, nMode ) }
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDlg CENTER;
+         ON INIT     ( EdtRecMenu( oDlg, aTemp ) ) ;
 
    oBmpGeneral:End()
    oBmpComisiones:End()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static Function EdtRecMenu( oDlg, aTemp )
+
+   local oMenu
+
+   MENU oMenu
+
+      MENUITEM    "&1. Rotor"
+
+         MENU
+
+            MENUITEM "&1. Campos extra [F9]";
+            MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+            RESOURCE "form_green_add_16" ;
+            ACTION   ( oDetCamposExtra:Play( aTemp[ _CCODAGE ] ) )
+
+         ENDMENU
+
+   ENDMENU
+
+   oDlg:SetMenu( oMenu )
+
+Return ( oMenu )
 
 //--------------------------------------------------------------------------//
 
@@ -1850,6 +1881,10 @@ Static Function OpenFiles()
       USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Agentes" )
+
       lOpenFiles        := .t.
 
    RECOVER USING oError
@@ -1886,6 +1921,10 @@ Static Function CloseFiles()
 
    if !Empty( dbfArticulo )
       ( dbfArticulo )->( dbCloseArea() )
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    dbfAge      := nil

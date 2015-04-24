@@ -467,7 +467,8 @@ METHOD initDocumentos() CLASS TCamposExtra
    ::aDocumentos     := {  "Artículos" => .f.,;
                            "Clientes" => .f.,;
                            "Proveedores" => .f.,;
-                           "Familias" => .f. }
+                           "Familias" => .f.,;
+                           "Agentes" => .f. }
 
 Return ( self )
 

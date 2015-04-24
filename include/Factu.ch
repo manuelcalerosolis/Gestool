@@ -177,6 +177,8 @@ Defines para ficheros INI
 #define FST_PRV                 '35'
 #define FST_PRO                 '36'
 #define FAM_TBL                 '37'
+#define AGE_TBL                 '38'
+
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
@@ -293,12 +295,14 @@ Defines para ficheros INI
 #define DOCUMENTOS_ITEMS        {       "Artículos" => ART_TBL,;
                                         "Clientes" => CLI_TBL,;
                                         "Proveedores" => PRV_TBL,;
-                                        "Familias" => FAM_TBL  }
+                                        "Familias" => FAM_TBL,;
+                                        "Agentes" => AGE_TBL  }
 
 #define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "Cube_Yellow_16",;
                                         "Clientes" => "User1_16",;
                                         "Proveedores" => "Businessman_16",;
-                                        "Familias" => "Cubes_16" }
+                                        "Familias" => "Cubes_16",;
+                                        "Agentes" => "Security_Agent_16" }
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )

@@ -333,6 +333,7 @@ Return ( Self )
 METHOD Resource() CLASS TDetCamposExtra
 
    local oBmp
+   local oBtnAceptar
    
    DEFINE DIALOG ::oDlg RESOURCE "EXTRADET" TITLE "Campos extra"
 
@@ -371,7 +372,7 @@ METHOD Resource() CLASS TDetCamposExtra
          :nWidth           := 300
       end with
 
-   REDEFINE BUTTON ;
+   REDEFINE BUTTON oBtnAceptar ;
       ID          IDOK ;
       OF          ::oDlg ;
       ACTION      ( if( ::lPresave(), ::oDlg:End( IDOK ), ) )
@@ -381,6 +382,8 @@ METHOD Resource() CLASS TDetCamposExtra
       OF          ::oDlg ;
       CANCEL ;
       ACTION      ( ::oDlg:End( IDCANCEL ) )
+
+      ::oDlg:AddFastKey( VK_F5, {|| oBtnAceptar:Click() } )
 
       ::oDlg:bStart        := {|| ::ChangeBrowse() }
 
