@@ -386,6 +386,7 @@ static dbfFacCliP
 static dbfFacCliI
 static dbfFacCliD
 static dbfFacCliS
+static dbfPedCliE
 static dbfFacRecT
 static dbfFacRecL
 static dbfFacRecS
@@ -425,6 +426,7 @@ static dbfTmpAnt
 static dbfTmpPgo
 static dbfTmpSer
 Static dbfTmpEntidades
+Static dbfTmpEst
 
 static oRieCli
 static nRieCli
@@ -483,6 +485,7 @@ static cTmpAnt
 static cTmpPgo
 static cTmpSer
 static cTmpEnt
+static cTmpEst
 static oGetTotal
 static oTotFacLin
 static oGetNet
@@ -592,6 +595,7 @@ static bEdtDoc             := { |aTmp, aGet, dbfFacCliD, oBrw, bWhen, bValid, nM
 static bEdtEntidades       := { |aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, nMode| EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, nMode ) }
 static bEdtTablet          := { |aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtTablet( aTmp, aGet, cFacCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 static bEdtDetTablet       := { |aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, bWhen, bValid, nMode, aTmpFac ) }
+static bEdtEst 		       := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac | EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 
 //---------------------------------------------------------------------------//
 //Funciones del programa
@@ -1601,6 +1605,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():FacturasClientesEntidades( nView )
 
+      D():FacturasClientesSituaciones( nView )
+
       D():Clientes( nView )
 
       D():GruposClientes( nView )
@@ -2463,6 +2469,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local oBrwAnt
    local oBrwPgo
    local oBrwEntidades
+   local oBrwEst
    local oSay              := Array( 12 )
    local cSay              := Array( 12 )
    local oSayLabels        := Array(  5 )
@@ -2480,11 +2487,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local cTipFac
    local oSayDias
    local hBmp
-   local hBmpGeneral			:= { 	{ "Resource" => "Factura_cliente_48_alpha", 	"Dialog" => 1 },;
-   										{ "Resource" => "Folder2_red_alpha_48", 		"Dialog" => 2 },;
-   										{ "Resource" => "Information_48_alpha", 		"Dialog" => 3 },;
-   										{ "Resource" => "Address_book2_alpha_48", 	"Dialog" => 4 },;
-                                 { "Resource" => "Address_book2_alpha_48",    "Dialog" => 5 } }
+   local hBmpGeneral			:= { 	{ "Resource" => "Factura_cliente_48_alpha", 		"Dialog" => 1 },;
+   										{ "Resource" => "Folder2_red_alpha_48", 			"Dialog" => 2 },;
+   										{ "Resource" => "Information_48_alpha", 			"Dialog" => 3 },;
+   										{ "Resource" => "Address_book2_alpha_48", 			"Dialog" => 4 },;
+                                 		{ "Resource" => "Address_book2_alpha_48",    		"Dialog" => 5 },;
+                                 		{ "Resource" => "document_attachment_48_alpha",    	"Dialog" => 6 } }
 
    
    /*
@@ -2668,12 +2676,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                   "Da&tos",;
                   "&Incidencias",;
                   "D&ocumentos",;
-                  "&Entidades";
+                  "&Entidades",;
+                  "&Situaciones";
          DIALOGS  "FACCLI_1",;
                   "FACCLI_2",;
                   "PEDCLI_3",;
                   "PEDCLI_4",;
-                  "VIEW_FACTURAS_ENTIDADES"
+                  "VIEW_FACTURAS_ENTIDADES",;
+                  "PEDCLI_5"
 
       /*
       Datos del cliente--------------------------------------------------------
@@ -4337,6 +4347,74 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[ 5 ] ;
          ACTION   ( WinZooRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) )
 
+         /*
+      Situaciones--------------------------------------------------------------
+      */
+
+      oBrwEst                 := IXBrowse():New( oFld:aDialogs[ 6 ] )
+
+      oBrwEst:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwEst:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwEst:cAlias          := dbfTmpEst
+
+      oBrwEst:nMarqueeStyle   := 6
+      oBrwEst:cName           := "Pedido de cliente.Situaciones"
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Nombre"
+            :bEditValue       := {|| ( dbfTmpEst )->cSitua }
+            :nWidth           := 140
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Fecha"
+            :bEditValue       := {|| Dtoc( ( dbfTmpEst )->dFecSit ) }
+            :nWidth           := 90
+         	:nDataStrAlign    := 1
+         	:nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Hora"
+            :bEditValue       := {|| trans( ( dbfTmpEst )->tFecSit, "@R 99:99:99" ) }
+            :nWidth           := 90
+         end with
+
+         if nMode != ZOOM_MODE
+            oBrwEst:bLDblClick   := {|| WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) }
+         end if
+
+         oBrwEst:CreateFromResource( 210 )
+
+    REDEFINE BUTTON ;
+        ID       500 ;
+        OF       oFld:aDialogs[ 6 ] ;
+        WHEN     ( lWhen ) ;
+        ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
+
+    REDEFINE BUTTON ;
+        ID       501 ;
+        OF       oFld:aDialogs[ 6 ] ;
+        WHEN     ( lWhen ) ;
+        ACTION   ( WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
+
+	REDEFINE BUTTON ;
+		ID 		 502 ;
+        OF       oFld:aDialogs[ 6 ] ;
+        WHEN     ( lWhen ) ;
+        ACTION   ( WinDelRec( oBrwEst, dbfTmpEst ) )
+
+
+	REDEFINE BUTTON ;
+		ID 		 503 ;
+        OF       oFld:aDialogs[ 6 ] ;
+        ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
+
+
       /*
       Fin de los Folders
       -----------------------------------------------------------------------
@@ -4398,6 +4476,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	      oFld:aDialogs[4]:AddFastKey( VK_F2, {|| WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
 	      oFld:aDialogs[4]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
 	      oFld:aDialogs[4]:AddFastKey( VK_F4, {|| WinDelRec( oBrwDoc, dbfTmpDoc ) } )
+
+	      oFld:aDialogs[6]:AddFastKey( VK_F2, {|| WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
+	      oFld:aDialogs[6]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) } )
+	      oFld:aDialogs[6]:AddFastKey( VK_F4, {|| WinDelRec( oBrwEst, dbfTmpEst ) } )
 
 	      oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ), GenFacCli( IS_PRINTER ), ) } )
 	      oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ) } )
@@ -5494,6 +5576,66 @@ Static Function EdtInc( aTmp, aGet, dbfFacCliI, oBrw, bWhen, bValid, nMode, aTmp
    ACTIVATE DIALOG oDlg CENTER
 
 Return ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac )
+
+   	local oDlg
+
+   	if nMode == APPD_MODE
+      	
+      	aTmp[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("tFecSit")) ]	:= GetSysTime()
+
+    end if
+
+   	DEFINE DIALOG oDlg RESOURCE "SITUACION_ESTADO" TITLE LblTitle( nMode ) + "Situación del documento del cliente"
+
+   		REDEFINE COMBOBOX aGet[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
+   			VAR 	 aTmp[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("cSitua")) ] ;
+         	ID       200 ;
+         	WHEN     ( nMode != ZOOM_MODE );
+         	ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
+         	OF       oDlg
+
+        REDEFINE GET aGet[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
+        	VAR 	aTmp[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
+			ID 		100 ;
+			SPINNER ;
+         	ON HELP  aGet[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("dFecSit")) ]:cText( Calendario( aTmp[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("dFecSit")) ] ) ) ;
+			WHEN 	( nMode != ZOOM_MODE ) ;
+			OF 		oDlg
+
+	  	REDEFINE GET aGet[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ;
+	  		VAR 	 aTmp[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ;
+         	ID       101 ;
+         	PICTURE  "@R 99:99:99" ;
+         	WHEN     ( nMode != ZOOM_MODE ) ;
+         	VALID    ( iif( !validTime( aTmp[ (D():FacturasClientesSituaciones( nView ))->(fieldpos("tFecSit")) ] ),;
+                          ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                          .t. ) );
+         	OF       oDlg
+
+      	REDEFINE BUTTON ;
+         	ID       IDOK ;
+         	OF       oDlg ;
+         	WHEN     ( nMode != ZOOM_MODE ) ;
+         	ACTION   ( WinGather( aTmp, nil, dbfTmpEst, oBrw, nMode ), oDlg:end( IDOK ) )
+
+      	REDEFINE BUTTON ;
+         	ID       IDCANCEL ;
+         	OF       oDlg ;
+         	CANCEL ;
+         	ACTION   ( oDlg:end() )
+
+   	if nMode != ZOOM_MODE
+    	oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpEst, oBrw, nMode ), oDlg:end( IDOK ) } )
+   	end if
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( .t. )
+
 
 //--------------------------------------------------------------------------//
 
@@ -11735,11 +11877,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local cDbfPgo  := "FCliP"
    local cDbfSer  := "FCliS"
    local cDbfEnt  := "FCliE"
+   local cDbfEst  := "FCliC"
 
    CursorWait()
 
-   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+  /* oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE/*
 
    /*
    Inicialización de variables-------------------------------------------------
@@ -11771,6 +11914,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    cTmpPgo        := cGetNewFileName( cPatTmp() + cDbfPgo )
    cTmpSer        := cGetNewFileName( cPatTmp() + cDbfSer )
    cTmpEnt        := cGetNewFileName( cPatTmp() + cDbfEnt )
+   cTmpEst        := cGetNewFileName( cPatTmp() + cDbfEst )
 
    /*
    Primero crear la base de datos local----------------------------------------
@@ -11971,7 +12115,41 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
-   RECOVER USING oError
+
+   /*
+   A¤adimos desde el fichero de situaiones
+*/
+	
+	dbCreate( cTmpEst, aSqlStruct( aFacCliEst() ), cLocalDriver() )
+   	dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
+
+  	if !( dbfTmpEst )->( NetErr() )
+
+  		( dbfTmpEst )->( ordCreate( cTmpEst, "nNumFac", "cSerFac + str( nNumFac ) + cSufFac + dtos( dFecSit )  + tFecSit", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac + dtos( Field->dFecSit )  + Field->tFecSit } ) )
+      	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
+
+      	if ( D():FacturasClientesSituaciones( nView ) )->( dbSeek( cFac ) )
+
+      	while ( ( D():FacturasClientesSituaciones( nView ) )->cSerFac + Str( ( D():FacturasClientesSituaciones( nView ) )->nNumFac ) + ( D():FacturasClientesSituaciones( nView ) )->cSufFac == cFac ) .AND. ( D():FacturasClientesSituaciones( nView ) )->( !eof() ) 
+
+         dbPass( D():FacturasClientesSituaciones( nView ), dbfTmpEst, .t. )
+         ( D():FacturasClientesSituaciones( nView ) )->( dbSkip() )
+
+    	end while
+
+  	end if
+
+  	( dbfTmpEst )->( dbGoTop() )
+
+  	else
+
+      	lErrors     := .t.
+
+  	end if
+
+	
+
+   /*RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
 
@@ -11981,7 +12159,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    CursorWE()
 
@@ -20247,6 +20425,10 @@ FUNCTION mkFacCli( cPath, oMeter, lReindex )
       dbCreate( cPath + "FACCLIE.DBF", aSqlStruct( aEntidadesFacCli() ), cDriver() )
    end if
 
+   if !lExistTable( cPath + "FACCLIC.Dbf" )
+      dbCreate( cPath + "FACCLIC.Dbf", aSqlStruct( aFacCliEst() ), cDriver() )
+   end if
+
    if lReindex
       rxFacCli( cPath )
    end if
@@ -20276,7 +20458,8 @@ FUNCTION rxFacCli( cPath, oMeter )
       !lExistTable( cPath + "FacCliI.Dbf" )   .or.;
       !lExistTable( cPath + "FacCliD.Dbf" )   .or.;
       !lExistTable( cPath + "FacCliS.Dbf" )   .or.;
-      !lExistTable( cPath + "FacCliE.Dbf" )  
+      !lExistTable( cPath + "FacCliE.Dbf" )   .or.;
+      !lExistTable( cPath + "FacCliC.Dbf" )  
       mkFacCli( cPath, nil, .f. )
    end if
 
@@ -20286,6 +20469,7 @@ FUNCTION rxFacCli( cPath, oMeter )
    fEraseIndex( cPath + "FacCliD.Cdx" )
    fEraseIndex( cPath + "FacCliS.Cdx" )
    fEraseIndex( cPath + "FacCliE.Cdx" )
+   fEraseIndex( cPath + "FacCliC.Cdx" )
 
    dbUseArea( .t., cDriver(), cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @dbfFacCliL ), .f. )
    if !( dbfFacCliL )->( neterr() )
@@ -20480,7 +20664,42 @@ FUNCTION rxFacCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de entidades de facturas de clientes" )
    end if
 
+   dbUseArea( .t., cDriver(), cPath + "FacCliC.Dbf", cCheckArea( "FacCliC", @cFacCliT ), .f. )
+
+   if !( cFacCliT )->( neterr() )
+      ( cFacCliT )->( __dbPack() )
+
+      ( cFacCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliC.Cdx", "nNumFac", "cSerFac + str( nNumFac ) + cSufFac", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac } ) )
+
+      ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliC.Cdx", "cSitua", "cSitua", {|| Field->cSitua } ) )
+
+      ( cFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cFacCliT )->( ordCreate( cPath + "FacCliC.Cdx", "idPs", "str( idPs )", {|| str( Field->idPs ) } ) )
+
+      ( cFacCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de entidades de facturas de clientes" )
+   end if
+
 Return nil
+
+//---------------------------------------------------------------------------//
+
+function aFacCliEst()
+
+   local aFacCliEst  := {}
+
+   aAdd( aFacCliEst, { "cSerFac", "C",    1,  0, "Serie de factura" ,            "",                   "", "( cDbfCol )", nil } )
+   aAdd( aFacCliEst, { "nNumFac", "N",    9,  0, "Numero de factura" ,           "'999999999'",        "", "( cDbfCol )", nil } )
+   aAdd( aFacCliEst, { "cSufFac", "C",    2,  0, "Sufijo de factura" ,           "",                   "", "( cDbfCol )", nil } )
+   aAdd( aFacCliEst, { "cSitua",  "C",  140,  0, "Situación" ,                   "",                   "", "( cDbfCol )", nil } )
+   aAdd( aFacCliEst, { "dFecSit", "D",    8,  0, "Fecha de la situación" ,       "",                   "", "( cDbfCol )", nil } )
+   aAdd( aFacCliEst, { "tFecSit", "C",    6,  0, "Hora de la situación" ,        "",                   "", "( cDbfCol )", nil } )
+   aAdd( aFacCliEst, { "idPs",    "N",   11,  0, "Id prestashop" ,               "",                   "", "( cDbfCol )", nil } )   
+
+return ( aFacCliEst )
 
 //--------------------------------------------------------------------------//
 
@@ -24193,6 +24412,17 @@ Static Function RollBackFacCli( cNumeroDocumento )
    end while
    ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
 
+   /*
+   Eliminamos las situaciones anteriores-----------------------------------------
+   */
+
+   	while ( D():FacturasClientesSituaciones( nView ) )->( dbSeek( cNumeroDocumento ) ) 
+	    if dbLock( D():FacturasClientesSituaciones( nView ) )
+	       ( D():FacturasClientesSituaciones( nView ) )->( dbDelete() )
+	       ( D():FacturasClientesSituaciones( nView ) )->( dbUnLock() )
+	    end if
+	end while
+
 Return .t.
 
 //---------------------------------------------------------------------------//
@@ -24267,6 +24497,16 @@ Static Function GuardaTemporalesFacCli( cSerFac, nNumFac, cSufFac, dFecFac, tFec
       ( dbfTmpEntidades )->( dbSkip() )
       SysRefresh()
    end while
+
+   /*
+   Escribimos en el fichero definitivo (Situaciones)
+   */
+
+    ( dbfTmpEst )->( DbGoTop() )
+   	while ( dbfTmpEst )->( !eof() )
+      	dbPass( dbfTmpEst, D():FacturasClientesSituaciones( nView ), .t., cSerFac, nNumFac, cSufFac ) 
+      	( dbfTmpEst )->( dbSkip() )
+   	end while
 
    /*
    Ahora escribimos en el fichero definitivo de anticipos----------------------

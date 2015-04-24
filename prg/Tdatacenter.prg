@@ -3339,6 +3339,14 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | THisFacAutomatica():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacCliC"
+   oDataTable:cName        := cPatEmp() + "FacCliC"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliC.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliC.Cdx"
+   oDataTable:cDescription := "Situaciones de Facturas de clientes"
+   ::AddEmpresaTable( oDataTable )
+
    /*
    Facturas de anticipo-----------------------------------------------
    */
@@ -5276,6 +5284,10 @@ CLASS D
                                                                ( ( ::FacturasClientesEntidades( nView ) )->( dbDelete() ), ( ::FacturasClientesEntidades( nView ) )->( dbUnLock() ) ),;
                                                                ) )  
       METHOD eofFacturasClientesEntidades( nView ) INLINE ( ( ::FacturasClientesEntidades( nView ) )->( eof() ) )
+
+   METHOD FacturasClientesSituaciones( nView )            INLINE ( ::Get( "FacCliC", nView ) )
+      METHOD FacturasClientesSituacionesId( nView )       INLINE ( ( ::Get( "FacCliC", nView ) )->cSerFac + str( ( ::Get( "FacCliC", nView ) )->nNumFac, 9 ) + ( ::Get( "FacCliC", nView ) )->cSufFac )
+      METHOD FacturasClientesSituacionesIdText( nView )   INLINE ( ::Get( "FacCliC", nView ) )->cSerFac + "/" + Alltrim( Str( ( ::Get( "FacCliC", nView ) )->nNumFac ) )
 
    METHOD FacturasClientesSeries( nView )       INLINE ( ::Get( "FacCliS", nView ) )
 
