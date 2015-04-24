@@ -327,6 +327,7 @@ static dbfFacRecL
 static dbfFacRecI
 static dbfFacRecD
 static dbfFacRecS
+static dbfFacRecE
 static dbfFacCliT
 static dbfFacCliL
 static dbfFacCliS
@@ -347,6 +348,7 @@ static dbfTmpDoc
 static dbfTmpAnt
 static dbfTmpPgo
 static dbfTmpSer
+static dbfTmpEst
 static dbfIva
 static dbfCount
 static dbfClient
@@ -404,6 +406,7 @@ static cTmpDoc
 static cTmpAnt
 static cTmpPgo
 static cTmpSer
+static cTmpEst
 static oGetTotal
 static oGetNet
 static oGetTotPnt
@@ -458,6 +461,7 @@ static bEdtRec             := { |aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMod
 static bEdtDet             := { |aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 static bEdtInc             := { |aTmp, aGet, dbfFacRecI, oBrw, bWhen, bValid, nMode, aTmpLin| EdtInc( aTmp, aGet, dbfFacRecI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc             := { |aTmp, aGet, dbfFacRecD, oBrw, bWhen, bValid, nMode, aTmpLin| EdtDoc( aTmp, aGet, dbfFacRecD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
+static bEdtEst			   := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac | EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 
 //---------------------------------------------------------------------------//
 //Funciones del programa
@@ -727,6 +731,8 @@ STATIC FUNCTION OpenFiles( lExt )
       D():Atipicas( nView )
 
       D():FacturasRectificativas( nView )
+
+      D():FacturasRectificativasSituaciones( nView )
 
       D():Clientes( nView )
 
@@ -2008,6 +2014,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
    local oBrwInc
    local oBrwDoc
    local oBrwPgo
+   local oBrwEst
    local oSay              := Array( 12 )
    local cSay              := Array( 12 )
    local oSayLabels        := Array( 9 )
@@ -2196,11 +2203,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          PROMPT   "&Factura",;
                   "Da&tos",;
                   "&Incidencias",;
-                  "D&ocumentos" ;
+                  "D&ocumentos",;
+                  "&situaciones" ;
          DIALOGS  "FACREC_01",;
                   "FACREC_02",;
                   "PEDCLI_3",;
-                  "PEDCLI_4"
+                  "PEDCLI_4",;
+                  "PEDCLI_5"
 
       /*
       Datos del cliente--------------------------------------------------------
@@ -3505,6 +3514,75 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          ID       504 ;
          OF       oFld:aDialogs[ 4 ] ;
          ACTION   ( ShellExecute( oDlg:hWnd, "open", Rtrim( ( dbfTmpDoc )->cRuta ) ) )
+
+
+         /*
+      Situaciones--------------------------------------------------------------
+      */
+
+      oBrwEst                 := IXBrowse():New( oFld:aDialogs[ 5 ] )
+
+      oBrwEst:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwEst:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwEst:cAlias          := dbfTmpEst
+
+      oBrwEst:nMarqueeStyle   := 6
+      oBrwEst:cName           := "Factura rectificativa de cliente.Situaciones"
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Nombre"
+            :bEditValue       := {|| ( dbfTmpEst )->cSitua }
+            :nWidth           := 140
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Fecha"
+            :bEditValue       := {|| Dtoc( ( dbfTmpEst )->dFecSit ) }
+            :nWidth           := 90
+         	:nDataStrAlign    := 1
+         	:nHeadStrAlign    := 1
+         end with
+
+         with object ( oBrwEst:AddCol() )
+            :cHeader          := "Hora"
+            :bEditValue       := {|| trans( ( dbfTmpEst )->tFecSit, "@R 99:99:99" ) }
+            :nWidth           := 90
+         end with
+
+         if nMode != ZOOM_MODE
+            oBrwEst:bLDblClick   := {|| WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) }
+         end if
+
+         oBrwEst:CreateFromResource( 210 )
+
+    REDEFINE BUTTON ;
+        ID       500 ;
+        OF       oFld:aDialogs[ 5 ] ;
+        WHEN     ( nMode != ZOOM_MODE ) ;
+        ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
+
+    REDEFINE BUTTON ;
+        ID       501 ;
+        OF       oFld:aDialogs[ 5 ] ;
+        WHEN     ( nMode != ZOOM_MODE ) ;
+        ACTION   ( WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
+
+	REDEFINE BUTTON ;
+		ID 		 502 ;
+        OF       oFld:aDialogs[ 5 ] ;
+        WHEN     ( nMode != ZOOM_MODE ) ;
+        ACTION   ( WinDelRec( oBrwEst, dbfTmpEst ) )
+
+
+	REDEFINE BUTTON ;
+		ID 		 503 ;
+        OF       oFld:aDialogs[ 5 ] ;
+        ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
+
+
 
       /*
 		Fin de los Folders
@@ -5053,6 +5131,65 @@ Static Function EdtInc( aTmp, aGet, dbfFacRecI, oBrw, bWhen, bValid, nMode, aTmp
 Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
+
+Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac )
+
+   	local oDlg
+
+   	if nMode == APPD_MODE
+      	
+      	aTmp[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("tFecSit")) ]	:= GetSysTime()
+
+    end if
+
+   	DEFINE DIALOG oDlg RESOURCE "SITUACION_ESTADO" TITLE LblTitle( nMode ) + "Situación del documento del cliente"
+
+   		REDEFINE COMBOBOX aGet[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("cSitua")) ] ;
+   			VAR 	 aTmp[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("cSitua")) ] ;
+         	ID       200 ;
+         	WHEN     ( nMode != ZOOM_MODE );
+         	ITEMS    ( TSituaciones():GetInstance():GetSituaciones() ) ;
+         	OF       oDlg
+
+        REDEFINE GET aGet[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
+        	VAR 	aTmp[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("dFecSit")) ] ;
+			ID 		100 ;
+			SPINNER ;
+         	ON HELP  aGet[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("dFecSit")) ]:cText( Calendario( aTmp[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("dFecSit")) ] ) ) ;
+			WHEN 	( nMode != ZOOM_MODE ) ;
+			OF 		oDlg
+
+	  	REDEFINE GET aGet[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("tFecSit")) ] ;
+	  		VAR 	 aTmp[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("tFecSit")) ] ;
+         	ID       101 ;
+         	PICTURE  "@R 99:99:99" ;
+         	WHEN     ( nMode != ZOOM_MODE ) ;
+         	VALID    ( iif( !validTime( aTmp[ (D():FacturasRectificativasSituaciones( nView ))->(fieldpos("tFecSit")) ] ),;
+                          ( msgStop( "El formato de la hora no es correcto" ), .f. ),;
+                          .t. ) );
+         	OF       oDlg
+
+      	REDEFINE BUTTON ;
+         	ID       IDOK ;
+         	OF       oDlg ;
+         	WHEN     ( nMode != ZOOM_MODE ) ;
+         	ACTION   ( WinGather( aTmp, nil, dbfTmpEst, oBrw, nMode ), oDlg:end( IDOK ) )
+
+      	REDEFINE BUTTON ;
+         	ID       IDCANCEL ;
+         	OF       oDlg ;
+         	CANCEL ;
+         	ACTION   ( oDlg:end() )
+
+   	if nMode != ZOOM_MODE
+    	oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpEst, oBrw, nMode ), oDlg:end( IDOK ) } )
+   	end if
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 Static Function EdtDoc( aTmp, aGet, dbfFacRecD, oBrw, bWhen, bValid, nMode, aTmpLin )
 
@@ -6733,6 +6870,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    local cDbfAnt  := "FCliA"
    local cDbfPgo  := "FCliP"
    local cDbfSer  := "FCliS"
+   local cDbfEst  := "FCliE"
    local cFac     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
 
    CursorWait()
@@ -6746,6 +6884,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    cTmpAnt        := cGetNewFileName( cPatTmp() + cDbfAnt )
    cTmpPgo        := cGetNewFileName( cPatTmp() + cDbfPgo )
    cTmpSer        := cGetNewFileName( cPatTmp() + cDbfSer )
+   cTmpEst        := cGetNewFileName( cPatTmp() + cDbfEst )
 
    /*
    Inicialización de variables-------------------------------------------------
@@ -6904,6 +7043,37 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       lErrors     := .t.
 
    end if
+
+/*
+   A¤adimos desde el fichero de situaiones
+*/
+	
+	dbCreate( cTmpEst, aSqlStruct( aFacRecEst() ), cLocalDriver() )
+   	dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
+
+  	if !NetErr()
+
+  		( dbfTmpEst )->( ordCreate( cTmpEst, "nNumFac", "cSerFac + str( nNumFac ) + cSufFac + dtos( dFecSit )  + tFecSit", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac + dtos( Field->dFecSit )  + Field->tFecSit } ) )
+      	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
+
+      	if ( D():FacturasRectificativasSituaciones( nView ) )->( dbSeek( cFac ) )
+
+      	while ( ( D():FacturasRectificativasSituaciones( nView ) )->cSerFac + Str( ( D():FacturasRectificativasSituaciones( nView ) )->nNumFac ) + ( D():FacturasRectificativasSituaciones( nView ) )->cSufFac == cFac ) .AND. ( D():FacturasRectificativasSituaciones( nView ) )->( !eof() ) 
+
+         dbPass( D():FacturasRectificativasSituaciones( nView ), dbfTmpEst, .t. )
+         ( D():FacturasRectificativasSituaciones( nView ) )->( dbSkip() )
+
+    	end while
+
+  	end if
+
+  	( dbfTmpEst )->( dbGoTop() )
+
+  	else
+
+      	lErrors     := .t.
+
+  	end if
 
    RECOVER USING oError
 
@@ -7146,6 +7316,17 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          end if
       end while
 
+      /*
+      Eliminamos las situaciones anteriores------------------------------------------
+      */
+
+      while ( D():FacturasRectificativasSituaciones( nView ) )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) 
+         if dbLock( D():FacturasRectificativasSituaciones( nView ) )
+           ( D():FacturasRectificativasSituaciones( nView ) )->( dbDelete() )
+           ( D():FacturasRectificativasSituaciones( nView ) )->( dbUnLock() )
+         end if
+      end while
+
    end case
 
    /*
@@ -7224,6 +7405,17 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       ( dbfTmpPgo )->( dbSkip() )
 
    end while
+
+   /*
+   Escribimos en el fichero definitivo de Situaciones-------------------------
+   */
+
+    ( dbfTmpEst )->( DbGoTop() )
+   	while ( dbfTmpEst )->( !eof() )
+      	dbPass( dbfTmpEst, D():FacturasRectificativasSituaciones( nView ), .t., cSerFac, nNumFac, cSufFac ) 
+      	( dbfTmpEst )->( dbSkip() )
+   	end while
+
 
    /*
    Rellenamos  los campos de los totales---------------------------------------
@@ -7378,6 +7570,10 @@ STATIC FUNCTION CreateFiles( cPath, lReindex )
 
    if !lExistTable( cPath + "FacRecS.Dbf" )
       dbCreate( cPath + "FacRecS.Dbf", aSqlStruct( aSerFacRec() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "FacRecE.Dbf" )
+      dbCreate( cPath + "FacRecE.Dbf", aSqlStruct( aFacRecEst() ), cDriver() )
    end if
 
    if lReindex
@@ -11767,7 +11963,9 @@ FUNCTION rxFacRec( cPath, oMeter )
       !lExistTable( cPath + "FacRecL.Dbf" )   .or.;
       !lExistTable( cPath + "FacRecI.Dbf" )   .or.;
       !lExistTable( cPath + "FacRecD.Dbf" )   .or.;
-      !lExistTable( cPath + "FacRecS.Dbf" )
+      !lExistTable( cPath + "FacRecS.Dbf" )   .or.;
+      !lExistTable( cPath + "FacRecE.Dbf" )
+
       CreateFiles( cPath, .f. )
    end if
 
@@ -11776,6 +11974,7 @@ FUNCTION rxFacRec( cPath, oMeter )
    fEraseIndex( cPath + "FacRecI.Cdx" )
    fEraseIndex( cPath + "FacRecD.Cdx" )
    fEraseIndex( cPath + "FacRecS.Cdx" )
+   fEraseIndex( cPath + "FacRecE.Cdx" )
 
    dbUseArea( .t., cDriver(), cPath + "FacRecL.DBF", cCheckArea( "FacRecL", @dbfFacRecL ), .f. )
    if !( dbfFacRecL )->( neterr() )
@@ -11921,6 +12120,25 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( cFacRecT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de números de series de facturas rectificativas de clientes" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "FacRecE.Dbf", cCheckArea( "FacRecE", @cFacRecT ), .f. )
+
+   if !( cFacRecT )->( neterr() )
+      ( cFacRecT )->( __dbPack() )
+
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecE.Cdx", "nNumFac", "cSerFac + str( nNumFac ) + cSufFac", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac } ) )
+
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecE.Cdx", "cSitua", "cSitua", {|| Field->cSitua } ) )
+
+      ( cFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cFacRecT )->( ordCreate( cPath + "FacRecE.Cdx", "idPs", "str( idPs )", {|| str( Field->idPs ) } ) )
+
+      ( cFacRecT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de entidades de facturas de clientes" )
    end if
 
 Return nil
@@ -12940,6 +13158,22 @@ return ( aColFacRec )
 
 //---------------------------------------------------------------------------//
 
+function aFacRecEst()
+
+   local aFacRecEst  := {}
+
+   aAdd( aFacRecEst, { "cSerFac", "C",    1,  0, "Serie de Factura rectificativa" ,               "",         "", "( cDbfCol )" } )
+   aAdd( aFacRecEst, { "nNumFac", "N",    9,  0, "Numero de Factura rectificativa" ,   "'999999999'",         "", "( cDbfCol )" } )
+   aAdd( aFacRecEst, { "cSufFac", "C",    2,  0, "Sufijo de Factura rectificativa" ,              "",         "", "( cDbfCol )" } )
+   aAdd( aFacRecEst, { "cSitua",  "C",  140,  0, "Situación" ,   	    		                  "",         "", "( cDbfCol )" } )
+   aAdd( aFacRecEst, { "dFecSit", "D",    8,  0, "Fecha de la situación" ,                        "",         "", "( cDbfCol )" } )
+   aAdd( aFacRecEst, { "tFecSit", "C",    6,  0, "Hora de la situación" ,                         "",         "", "( cDbfCol )" } )
+   aAdd( aFacRecEst, { "idPs",    "N",   11,  0, "Id prestashop" ,                                "",         "", "( cDbfCol )" } )   
+
+return ( aFacRecEst )
+
+//---------------------------------------------------------------------------//
+
 //
 // Devuelve el numero de unidades reservadas en facturas a clientes
 //
@@ -13224,6 +13458,9 @@ function SynFacRec( cPath )
       USE ( cPath + "FacRecI.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecI", @dbfFacRecI ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPath + "FacRecI.CDX" ) ADDITIVE
 
+      USE ( cPath + "FacRecE.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecE", @dbfFacRecE ) ) EXCLUSIVE
+      SET ADSINDEX TO ( cPath + "FacRecE.CDX" ) ADDITIVE
+
       USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) ) EXCLUSIVE
       SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
       ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
@@ -13388,6 +13625,7 @@ function SynFacRec( cPath )
    CLOSE ( dbfFacRecL  )
    CLOSE ( dbfFacRecS  )
    CLOSE ( dbfFacRecI  )
+   CLOSE ( dbfFacRecE  )
    CLOSE ( dbfFacCliP  )
    CLOSE ( dbfAntCliT  )
    CLOSE ( dbfFamilia  )

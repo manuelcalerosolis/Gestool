@@ -4359,7 +4359,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       oBrwEst:cAlias          := dbfTmpEst
 
       oBrwEst:nMarqueeStyle   := 6
-      oBrwEst:cName           := "Pedido de cliente.Situaciones"
+      oBrwEst:cName           := "Factura de cliente.Situaciones"
 
          with object ( oBrwEst:AddCol() )
             :cHeader          := "Nombre"
@@ -11881,8 +11881,8 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    CursorWait()
 
-  /* oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE/*
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    /*
    Inicialización de variables-------------------------------------------------
@@ -12149,7 +12149,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
 	
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales." + CRLF + ErrorMessage( oError ) )
 
@@ -12159,7 +12159,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    CursorWE()
 

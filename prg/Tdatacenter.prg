@@ -3348,6 +3348,19 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    /*
+   Facturas Rectificativas-----------------------------------------------
+   */
+
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "FacRecE"
+   oDataTable:cName        := cPatEmp() + "FacRecE"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacRecE.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacRecE.Cdx"
+   oDataTable:cDescription := "Situaciones de Facturas rectificativas de clientes"
+   ::AddEmpresaTable( oDataTable )
+
+   /*
    Facturas de anticipo-----------------------------------------------
    */
 
@@ -5297,6 +5310,10 @@ CLASS D
 
    METHOD FacturasRectificativas( nView )             INLINE ( ::Get( "FacRecT", nView ) )
       METHOD FacturasRectificativasId( nView )        INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
+
+   METHOD FacturasRectificativasSituaciones( nView )            INLINE ( ::Get( "FacRecE", nView ) )
+      METHOD FacturasRectificativasSituacionesId( nView )       INLINE ( ( ::Get( "FacRecE", nView ) )->cSerFac + str( ( ::Get( "FacRecE", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecE", nView ) )->cSufFac )
+      METHOD FacturasRectificativasSituacionesIdText( nView )   INLINE ( ::Get( "FacRecE", nView ) )->cSerFac + "/" + Alltrim( Str( ( ::Get( "FacRecE", nView ) )->nNumFac ) )
 
    // Tikets de clientes-------------------------------------------------------
 
