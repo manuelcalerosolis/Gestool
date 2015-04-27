@@ -180,6 +180,7 @@ Defines para ficheros INI
 #define AGE_TBL                 '38'
 
 
+
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
 #define ACC_EDIT                4        // Solo modificar
@@ -292,17 +293,53 @@ Defines para ficheros INI
                                         "18. Pago contra reembolso",;
                                         "19. Pago mediante tarjeta" }
 
-#define DOCUMENTOS_ITEMS        {       "Artículos" => ART_TBL,;
-                                        "Clientes" => CLI_TBL,;
-                                        "Proveedores" => PRV_TBL,;
-                                        "Familias" => FAM_TBL,;
-                                        "Agentes" => AGE_TBL  }
+#define DOCUMENTOS_SELECTED     {  "Artículos" => .f.,;
+                                   "Clientes" => .f.,;
+                                   "Proveedores" => .f.,;
+                                   "Familias" => .f.,;
+                                   "Agentes" => .f.,;
+                                   "Presupuestos a clientes"=> .f.,;
+                                   "Pedidos a clientes" => .f.,;
+                                   "Albaranes a clientes" => .f.,;
+                                   "Facturas a clientes" => .f.,;
+                                   "Facturas de anticipos a clientes" => .f.,;
+                                   "Facturas rectificativa a clientes" => .f.,;
+                                   "Pedidos a proveedores" => .f.,;
+                                   "Albaranes a proveedores" => .f.,;
+                                   "Facturas a proveedores" => .f.,;
+                                   "Facturas rectificativa a proveedores" => .f. }
 
-#define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "Cube_Yellow_16",;
-                                        "Clientes" => "User1_16",;
-                                        "Proveedores" => "Businessman_16",;
-                                        "Familias" => "Cubes_16",;
-                                        "Agentes" => "Security_Agent_16" }
+#define DOCUMENTOS_ITEMS        {   "Artículos" => ART_TBL,;
+                                    "Clientes" => CLI_TBL,;
+                                    "Proveedores" => PRV_TBL,;
+                                    "Familias" => FAM_TBL,;
+                                    "Agentes" => AGE_TBL,;
+                                    "Presupuestos a clientes" => PRE_CLI,;
+                                    "Pedidos a clientes" => PED_CLI,;
+                                    "Albaranes a clientes" => ALB_CLI,;
+                                    "Facturas a clientes" => FAC_CLI,;
+                                    "Facturas de anticipos a clientes" => ANT_CLI,;
+                                    "Facturas rectificativa a clientes" => FAC_REC,;
+                                    "Pedidos a proveedores" => PED_PRV,;
+                                    "Albaranes a proveedores" => ALB_PRV,;
+                                    "Facturas a proveedores" => FAC_PRV,;
+                                    "Facturas rectificativa a proveedores" => RCT_PRV }
+
+#define ICONOS_DOCUMENTOS_ITEMS {   "Artículos" => "Cube_Yellow_16",;
+                                    "Clientes" => "User1_16",;
+                                    "Proveedores" => "Businessman_16",;
+                                    "Familias" => "Cubes_16",;
+                                    "Agentes" => "Security_Agent_16",;
+                                    "Presupuestos a clientes" => "Notebook_user1_16",;
+                                    "Pedidos a clientes" => "Clipboard_empty_user1_16",;
+                                    "Albaranes a clientes" => "Document_plain_user1_16",;
+                                    "Facturas a clientes" => "Document_user1_16",;
+                                    "Facturas de anticipos a clientes" => "Document_money2_16",;
+                                    "Facturas rectificativa a clientes" => "Document_delete_16",;
+                                    "Pedidos a proveedores" => "Clipboard_empty_businessman_16",;
+                                    "Albaranes a proveedores" => "Document_plain_businessman_16",;
+                                    "Facturas a proveedores" => "Document_businessman_16",;
+                                    "Facturas rectificativa a proveedores" => "Document_navigate_cross_16" }
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )

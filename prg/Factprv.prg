@@ -367,6 +367,8 @@ static bEdtDoc          := { |aTmp, aGet, dbfFacPrvD, oBrw, bWhen, bValid, nMode
 static oNumerosSerie
 static oBtnNumerosSerie
 
+static oDetCamposExtra
+
 static nView
 
 //----------------------------------------------------------------------------//
@@ -528,6 +530,15 @@ STATIC FUNCTION OpenFiles( lExt )
       oNumerosSerie:lCompras  := .t.
       oNumerosSerie:oStock    := oStock
 
+      
+      /*
+      Campos extras------------------------------------------------------------------------
+      */
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Facturas a proveedores" )
+
       EnableAcceso()
 
    RECOVER
@@ -567,6 +578,10 @@ Static Function CloseFiles()
 
    if !Empty( oFntTot )
       oFntTot:end()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    EnableAcceso()
@@ -2508,6 +2523,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
 
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDinDiv, oDlg ) } )
       oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDinDiv, oDlg ), GenFacPrv( IS_PRINTER ), ) } )
+      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERFAC ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) } )
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
@@ -2573,19 +2589,26 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             if !lExternal
 
-            MENUITEM    "&1. Visualizar albarán";
+
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] ) )
+
+
+            MENUITEM    "&2. Visualizar albarán";
                MESSAGE  "Visualiza el albarán del que proviene" ;
                RESOURCE "Document_plain_businessman_16" ;
                ACTION   ( if( !Empty( ( D():FacturasProveedores( nView ) )->cNumAlb ), ZooAlbPrv( ( D():FacturasProveedores( nView ) )->cNumAlb ), MsgStop( "La factura no proviene de un albarán" ) ))
 
             SEPARATOR
 
-            MENUITEM    "&2. Modificar proveedor";
+            MENUITEM    "&3. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
                RESOURCE "Businessman_16" ;
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
-            MENUITEM    "&3. Informe de proveedor";
+            MENUITEM    "&4. Informe de proveedor";
                MESSAGE  "Abrir el informe del proveedor" ;
                RESOURCE "Info16" ;
                ACTION   ( InfProveedor( aTmp[ _CCODPRV ] ) );
@@ -2594,7 +2617,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&4. Informe del documento";
+            MENUITEM    "&5. Informe del documento";
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( FAC_PRV, ( D():FacturasProveedores( nView ) )->cSerFac + Str( ( D():FacturasProveedores( nView ) )->nNumFac ) + ( D():FacturasProveedores( nView ) )->cSufFac ) )

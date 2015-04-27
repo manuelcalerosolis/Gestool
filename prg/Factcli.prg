@@ -582,6 +582,8 @@ static cFiltroUsuario      := ""
 static oMeter
 static nMeter              := 1
 
+static oDetCamposExtra
+
 static oCbxRuta
 
 static nUltimoCliente      := 0
@@ -1989,6 +1991,16 @@ STATIC FUNCTION OpenFiles( lExt )
       public aImpVto    := {}
       public aDatVto    := {}
 
+
+      /*
+      Campos extras------------------------------------------------------------------------
+      */
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Facturas a clientes" )
+
+
       lOpenFiles        := .t.
 
       EnableAcceso()
@@ -2361,6 +2373,8 @@ STATIC FUNCTION CloseFiles()
       oEntidades:End()
    end if 
 
+
+
    TProyecto():GetInstance():CloseFiles()
 
    dbfIva      := nil
@@ -2450,6 +2464,10 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oFont )
       oFont:end()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    SysRefresh()
@@ -4483,6 +4501,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
 	      oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ), GenFacCli( IS_PRINTER ), ) } )
 	      oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ) } )
+	      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) } )
 	      oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 	
 	   end if
@@ -10414,48 +10433,53 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             if !lExternal
 
-            MENUITEM    "&1. Visualizar presupuesto";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] ) )
+
+            MENUITEM    "&2. Visualizar presupuesto";
                MESSAGE  "Visualiza el presupueso del que proviene" ;
                RESOURCE "Notebook_User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CNUMPRE ] ), ZooPreCli( aTmp[ _CNUMPRE ] ), MsgStop( "No hay presupusto asociado" ) ) )
 
             SEPARATOR
 
-            MENUITEM    "&2. Visualizar pedido";
+            MENUITEM    "&3. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
                RESOURCE "Clipboard_Empty_User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CNUMPED ] ), ZooPedCli( aTmp[ _CNUMPED ] ), MsgStop( "No hay pedido asociado" ) ) );
 
             SEPARATOR
 
-            MENUITEM    "&3. Visualizar albarán";
+            MENUITEM    "&4. Visualizar albarán";
                MESSAGE  "Visualiza el albarán del que proviene" ;
                RESOURCE "Document_Plain_User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CNUMALB ] ), ZooAlbCli( aTmp[ _CNUMALB ] ), MsgStop( "No hay albarán asociado" ) ) );
 
             SEPARATOR
 
-            MENUITEM    "&4. Generar anticipo";
+            MENUITEM    "&5. Generar anticipo";
                MESSAGE  "Genera factura de anticipo" ;
                RESOURCE "Document_Money2_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), CreateAntCli( aTmp[ _CCODCLI ] ), msgStop("Debe seleccionar un cliente para hacer una factura de anticipo" ) ) )
 
-            MENUITEM    "&5. Modificar cliente";
+            MENUITEM    "&6. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&6. Modificar cliente contactos";
+            MENUITEM    "&7. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&7. Informe de cliente";
+            MENUITEM    "&8. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&8. Modificar dirección";
+            MENUITEM    "&9. Modificar dirección";
                MESSAGE  "Modifica ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
@@ -10464,7 +10488,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&9. Informe del documento";
+            MENUITEM    "&10. Informe del documento";
                MESSAGE  "Informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( FAC_CLI, aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) );

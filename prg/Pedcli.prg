@@ -402,6 +402,7 @@ static cOrdAnt
 static oBandera
 static oTrans
 static oNewImp
+static oDetCamposExtra
 static dbfTmpLin
 static dbfTmpPedLin
 static dbfTmpFin
@@ -998,6 +999,15 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       EnableAcceso()
+
+      /*
+		Campos extras------------------------------------------------------------------------
+      */
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Pedidos a clientes" )
+
 
    RECOVER USING oError
 
@@ -3461,6 +3471,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ), GenPedCli( IS_PRINTER ), ) } )
       oDlg:AddFastKey( VK_F7, {|| ExcelImport( aTmp, dbfTmpLin, D():Articulos( nView ), dbfArtDiv, dbfFamilia, dbfDiv, oBrwLin, .t. ) } )
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERPED ] + str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) } )
 
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
@@ -4020,36 +4031,41 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             if !lExternal
 
-            MENUITEM    "&1. Visualizar presupuesto";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) )
+
+            MENUITEM    "&2. Visualizar presupuesto";
                MESSAGE  "Visualiza el presupuesto del cliente" ;
                RESOURCE "Notebook_User1_16";
                ACTION   ( if( !Empty( aTmp[ _CNUMPRE ] ), ZooPreCli( aTmp[ _CNUMPRE ] ), MsgStop( "El pedido no proviene de presupuesto" ) ) )
 
             SEPARATOR
 
-            MENUITEM    "&2. Generar anticipo";
+            MENUITEM    "&3. Generar anticipo";
                MESSAGE  "Genera anticipo de cliente" ;
                RESOURCE "Document_Money2_16";
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), CreateAntCli( aTmp[ _CCODCLI ] ), msgStop("Debe seleccionar un cliente para hacer una factura de anticipo" ) ) );
 
             SEPARATOR
 
-            MENUITEM    "&3. Modificar cliente";
+            MENUITEM    "&4. Modificar cliente";
                MESSAGE  "Modificar la ficha del cliente" ;
                RESOURCE "User1_16";
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&4. Modificar cliente contactos";
+            MENUITEM    "&5. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&5. Informe de cliente";
+            MENUITEM    "&6. Informe de cliente";
                MESSAGE  "Abrir el informe del cliente" ;
                RESOURCE "Info16";
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&6. Modificar dirección";
+            MENUITEM    "&7. Modificar dirección";
                MESSAGE  "Modifica la obra del documento" ;
                RESOURCE "Worker16";
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
@@ -4058,7 +4074,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&7. Informe del documento";
+            MENUITEM    "&8. Informe del documento";
                MESSAGE  "Informe del documento" ;
                RESOURCE "Info16";
                ACTION   ( TTrazaDocumento():Activate( PED_CLI, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) );
@@ -8628,6 +8644,10 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oUndMedicion )
       oUndMedicion:end()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    D():DeleteView( nView )

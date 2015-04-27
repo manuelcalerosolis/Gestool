@@ -12877,20 +12877,22 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
 
          MENU
 
-            MENUITEM "&1. Informe del artículo";
+            MENUITEM "&1. Campos extra [F9]";
+            MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
+            RESOURCE "form_green_add_16" ;
+            ACTION   ( oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) )
+
+            MENUITEM "&2. Informe del artículo";
             MESSAGE  "Muestra el informe del artículo" ;
             RESOURCE "info16" ;
             ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
 
-            MENUITEM "&2. Informe de artículo en escandallo";
+            MENUITEM "&3. Informe de artículo en escandallo";
             MESSAGE  "Muestra el informe del artículo en escandallo" ;
             RESOURCE "info16" ;
             ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
 
-            MENUITEM "&3. Campos extra [F9]";
-            MESSAGE  "Mostramos y rellenamos los campos extra para el artículo" ;
-            RESOURCE "form_green_add_16" ;
-            ACTION   ( oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) )
+            
 
             if !lExternal
 

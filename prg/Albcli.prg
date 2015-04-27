@@ -456,6 +456,8 @@ static oGrpFam
 static oFraPub
 static oPais
 
+static oDetCamposExtra
+
 static oBtnKit
 static oBtnAtp
 
@@ -1593,6 +1595,14 @@ STATIC FUNCTION OpenFiles()
 
       end if
 
+      /*
+      Campos extras------------------------------------------------------------------------
+      */
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Albaranes a clientes" )
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -1833,6 +1843,10 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oPais )
       oPais:End()
    end if 
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
+   end if
 
    D():DeleteView( nView )
 
@@ -3866,6 +3880,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ), ImprimirSeriesAlbaranes(), ) } )
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ) } )
+      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERALB ] + str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] ) } )
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
    end if
@@ -4056,14 +4071,19 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
 
          MENU
 
-            MENUITEM    "&1. Visualizar pedido";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB] ) + aTmp[ _CSUFALB ] ) )
+
+            MENUITEM    "&2. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
                RESOURCE "Clipboard_Empty_User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CNUMPED ] ), ZooPedCli( aTmp[ _CNUMPED ] ), MsgStop( "El albarán no procede de un pedido" ) ) )
 
             SEPARATOR
 
-            MENUITEM    "&2. Generar anticipo";
+            MENUITEM    "&3. Generar anticipo";
                MESSAGE  "Genera factura de anticipo" ;
                RESOURCE "Document_Money2_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ),;
@@ -4072,29 +4092,29 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
 
             SEPARATOR
 
-            MENUITEM    "&3. Modificar cliente";
+            MENUITEM    "&4. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&4. Modificar cliente contactos";
+            MENUITEM    "&5. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&5. Informe de cliente";
+            MENUITEM    "&6. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&6. Modificar dirección";
+            MENUITEM    "&7. Modificar dirección";
                MESSAGE  "Modifica ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );
 
             SEPARATOR
 
-            MENUITEM    "&7. Informe del documento";
+            MENUITEM    "&8. Informe del documento";
                MESSAGE  "Informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( ALB_CLI, aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] ) );

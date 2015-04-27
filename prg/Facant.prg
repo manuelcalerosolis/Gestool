@@ -171,6 +171,8 @@ static lOpenFiles       := .f.
 static lExternal        := .f.
 static cFiltroUsuario   := ""
 
+static oDetCamposExtra
+
 #ifndef __PDA__
 
 static bEdtRec          := { |aTmp, aGet, dbfAntCliT, oBrw, bWhen, bValid, nMode, cSerAnt| EdtRec( aTmp, aGet, dbfAntCliT, oBrw, bWhen, bValid, nMode, cSerAnt ) }
@@ -463,6 +465,15 @@ STATIC FUNCTION OpenFiles( lExt )
       cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
    end if
 
+   /*
+      Campos extras------------------------------------------------------------------------
+   */
+
+   oDetCamposExtra      := TDetCamposExtra():New()
+   oDetCamposExtra:OpenFiles()
+   oDetCamposExtra:SetTipoDocumento( "Facturas de anticipos a clientes" )
+
+
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
@@ -569,6 +580,10 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oStock )
       oStock:end()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    D():DeleteView( nView )
@@ -1802,6 +1817,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, oBrw, nMode, nRouDiv, nTotAnt, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, oBrw, nMode, nRouDiv, nTotAnt, oDlg ), GenAntCli( IS_PRINTER ), ) } )
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERANT ] + str( aTmp[ _NNUMANT ] ) + aTmp[ _CSUFANT ] ) } )
 
    end if
 
@@ -4342,24 +4358,29 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
          MENU
 
-            MENUITEM    "&1. Visualizar factura";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERANT ] + Str( aTmp[ _NNUMANT] ) + aTmp[ _CSUFANT ] ) )
+
+            MENUITEM    "&2. Visualizar factura";
                MESSAGE  "Visualiza la factura que lo liquida" ;
                RESOURCE "Document_Plain_User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CNUMDOC ] ), ZooFacCli( aTmp[ _CNUMDOC ] ), MsgStop( "Este documento no esta liquidado" ) ) );
 
             SEPARATOR
 
-            MENUITEM    "&2. Modificar cliente";
+            MENUITEM    "&3. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&3. Informe de cliente";
+            MENUITEM    "&4. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&4. Modificar dirección";
+            MENUITEM    "&5. Modificar dirección";
                MESSAGE  "Modifica ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );

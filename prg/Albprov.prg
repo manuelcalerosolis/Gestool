@@ -304,6 +304,7 @@ static oBrwIva
 static oStock
 static oFont
 static oMenu
+static oDetCamposExtra
 static nNumAlb
 static aNumAlb          := {}
 static nGetNeto         := 0
@@ -1022,6 +1023,14 @@ STATIC FUNCTION OpenFiles( lExt )
 
       EnableAcceso()
 
+      /*
+      Campos extras------------------------------------------------------------------------
+      */
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Albaranes a proveedores" )
+
    RECOVER
 
       lOpenFiles           := .f.
@@ -1054,6 +1063,10 @@ STATIC FUNCTION CloseFiles()
 
    if oStock != nil
       oStock:end()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    D():DeleteView( nView )
@@ -2167,6 +2180,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
       oDlg:AddFastKey( VK_F7, {|| ExcelImport( aTmp, dbfTmp, D():Articulos( nView ), D():ArticuloPrecioPropiedades( nView ), D():Familias( nView ), D():Divisas( nView ), oBrwLin, , D():Kit( nView ) ) } )
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nDinDiv, nDirDiv, oBrw, nMode, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, nDinDiv, nDirDiv, oBrw, nMode, oDlg ), GenAlbPrv( IS_PRINTER ), ) } )
+      oDlg:AddFastKey( VK_F9,{|| oDetCamposExtra:Play( aTmp[ _CSERALB ] + str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] ) } )
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
@@ -2329,19 +2343,24 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             if !lExternal
 
-            MENUITEM    "&1. Visualizar pedido";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB] ) + aTmp[ _CSUFALB ] ) )
+
+            MENUITEM    "&2. Visualizar pedido";
                MESSAGE  "Visualiza el pedido del que proviene" ;
                RESOURCE "Clipboard_empty_businessman_16" ;
                ACTION   ( if(!Empty( aTmp[ _CNUMPED ] ), ZooPedPrv( aTmp[ _CNUMPED ] ), msgStop( "No hay pedido asociado" ) ) )
 
             SEPARATOR
 
-            MENUITEM    "&2. Modificar proveedor";
+            MENUITEM    "&3. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
                RESOURCE "Businessman_16" ;
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
-            MENUITEM    "&3. Informe de proveedor";
+            MENUITEM    "&4. Informe de proveedor";
                MESSAGE  "Abrir el informe del proveedor" ;
                RESOURCE "Info16" ;
                ACTION   ( InfProveedor( aTmp[ _CCODPRV ] ) );
@@ -2350,7 +2369,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&4. Informe del documento";
+            MENUITEM    "&5. Informe del documento";
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( ALB_PRV, ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb ) )

@@ -339,6 +339,8 @@ static nGetIva          := 0
 static nGetReq          := 0
 static nGetPgd          := 0
 
+static oDetCamposExtra
+
 static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
@@ -503,6 +505,14 @@ STATIC FUNCTION OpenFiles( lExt )
          cFiltroUsuario := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
       end if
 
+      /*
+      Campos extras------------------------------------------------------------------------
+      */
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Facturas rectificativa a proveedores" )
+
       EnableAcceso()
 
    RECOVER
@@ -533,6 +543,10 @@ Static Function CloseFiles()
 
    if oStock != nil
       oStock:end()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    oBandera    := nil
@@ -2410,6 +2424,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDinDiv, oDlg, oFld ) } )
       oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDinDiv, oDlg, oFld ), GenRctPrv( IS_PRINTER ), ) } )
+      oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERFAC ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) } )
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
@@ -2866,19 +2881,25 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             if !lExternal
 
-            MENUITEM    "&1. Visualizar albarán";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) )
+
+
+            MENUITEM    "&2. Visualizar albarán";
                MESSAGE  "Visualiza la factura del la que proviene" ;
                RESOURCE "Document_plain_businessman_16" ;
                ACTION   ( if( !Empty( ( D():FacturasRectificativasProveedores( nView ) )->cNumFac ), ZooFacPrv( ( D():FacturasRectificativasProveedores( nView ) )->cNumFac ), MsgStop( "La factura rectificativa no proviene de una factura" ) ))
 
             SEPARATOR
 
-            MENUITEM    "&2. Modificar proveedor";
+            MENUITEM    "&3. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
                RESOURCE "Businessman_16" ;
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
-            MENUITEM    "&3. Informe de proveedor";
+            MENUITEM    "&4. Informe de proveedor";
                MESSAGE  "Abrir el informe del proveedor" ;
                RESOURCE "Info16" ;
                ACTION   ( InfProveedor( aTmp[ _CCODPRV ] ) );
@@ -2887,7 +2908,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&4. Informe del documento";
+            MENUITEM    "&5. Informe del documento";
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( FAC_PRV, ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) + ( D():FacturasRectificativasProveedores( nView ) )->cSufFac ) )

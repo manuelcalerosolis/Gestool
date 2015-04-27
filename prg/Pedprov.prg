@@ -237,6 +237,7 @@ static nGetReq          := 0
 static nVdvDiv          := 1
 static oFont
 static oMenu
+static oDetCamposExtra
 static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
@@ -362,6 +363,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ImpuestosEspeciales( nView )
 
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Pedidos a proveedores" )
+
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
@@ -405,6 +410,10 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oFont )
       oFont:end()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    if oStock != nil
@@ -2057,7 +2066,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aGet, aTmp, oBrw, nMode, oDlg ) } )
          oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aGet, aTmp, oBrw, nMode, oDlg ), GenPedPrv( IS_PRINTER ), ) } )
+         oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERPED ] + str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) } )
          oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
+
       end if
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
@@ -2111,12 +2122,17 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oBrwLin, nMode, oDlg )
 
             if !lExternal
 
-            MENUITEM    "&1. Modificar proveedor";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) )
+
+            MENUITEM    "&2. Modificar proveedor";
                MESSAGE  "Modificar la ficha del proveedor" ;
                RESOURCE "Businessman_16";
                ACTION   ( EdtPrv( aTmp[ _CCODPRV ] ) )
 
-            MENUITEM    "&2. Informe de proveedor";
+            MENUITEM    "&3. Informe de proveedor";
                MESSAGE  "Abrir el informe del proveedor" ;
                RESOURCE "Info16";
                ACTION   ( InfProveedor( aTmp[ _CCODPRV ] ) );
@@ -2125,10 +2141,12 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oBrwLin, nMode, oDlg )
 
             end if
 
-            MENUITEM    "&3. Informe del documento";
+            MENUITEM    "&4. Informe del documento";
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16";
                ACTION   ( TTrazaDocumento():Activate( PED_PRV, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) )
+
+
 
          ENDMENU
 

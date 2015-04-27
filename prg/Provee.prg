@@ -3093,15 +3093,15 @@ Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDl
 
 #ifndef __TACTIL__
 
-            MENUITEM    "&1. Informe del proveedor";
-               MESSAGE  "Muestra el informe del artículo" ;
-               RESOURCE "info16" ;
-               ACTION   ( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) )
-
-            MENUITEM "&2. Campos extra [F9]";
+            MENUITEM "&1. Campos extra [F9]";
                MESSAGE  "Mostramos y rellenamos los campos extra para el proveedor" ;
                RESOURCE "form_green_add_16" ;
                ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) )
+
+            MENUITEM    "&2. Informe del proveedor";
+               MESSAGE  "Muestra el informe del artículo" ;
+               RESOURCE "info16" ;
+               ACTION   ( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) )
 
 #endif
 

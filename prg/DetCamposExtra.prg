@@ -5,16 +5,16 @@
 #include "Factu.ch" 
 #include "FastRepH.ch"
 
-//---------------------------------------------------------------------------//
-
+//---------------------------------------------------------------------------// 
+ 
 CLASS TDetCamposExtra FROM TMant
-
+         
    DATA oDbf
    DATA oDlg
    
    DATA oBrw
    DATA oCol
-
+  
    DATA TipoDocumento         INIT ""
 
    DATA aCamposExtra          INIT {}

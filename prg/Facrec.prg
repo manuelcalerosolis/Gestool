@@ -447,6 +447,8 @@ static nComisionLinea      := 0
 static oFont
 static oMenu
 
+static oDetCamposExtra
+
 static aTip                := {}
 static aNumAlb             := {}
 static cOldCodCli          := ""
@@ -1054,6 +1056,14 @@ STATIC FUNCTION OpenFiles( lExt )
 
       end if
 
+      /*
+      Campos extras------------------------------------------------------------------------
+      */
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Facturas rectificativa a clientes" )
+
    RECOVER USING oError
 
       lOpenFiles        := .f.
@@ -1369,6 +1379,10 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oBanco )
       oBanco:End()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    D():DeleteView( nView )
@@ -3657,6 +3671,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg, oFld ) } )
       oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg, oFld ), GenFacRec( IS_PRINTER ), ) } )
+      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) } )
 
    end if
 
@@ -8913,22 +8928,27 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
          MENU
 
-            MENUITEM    "&1. Modificar cliente";
+         	MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC] ) + aTmp[ _CSUFFAC ] ) )
+
+            MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modifica la ficha del cliente" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&2. Modificar cliente contactos";
+            MENUITEM    "&3. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )              
 
-            MENUITEM    "&3. Informe de cliente";
+            MENUITEM    "&4. Informe de cliente";
                MESSAGE  "Informe de cliente" ;
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código de cliente vacío" ) ) );
 
-            MENUITEM    "&4. Modificar dirección";
+            MENUITEM    "&5. Modificar dirección";
                MESSAGE  "Modifica ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) );

@@ -93,7 +93,8 @@ CLASS TCamposExtra FROM TMant
    Method setDocumentos()              INLINE ( ::oDbf:mDocumento := hb_serialize( ::aDocumentos ) )
    Method getDocumentos()              INLINE ( ::aDocumentos     := hb_deserialize( ::oDbf:mDocumento ) )
    Method readDocumentos()             
-   Method initDocumentos()
+   Method initDocumentos()             INLINE ( ::aDocumentos     := DOCUMENTOS_SELECTED )
+
    Method cargaValoresDocumentos( nMode )
 
    Method CreaTreeDocumentos()
@@ -285,7 +286,7 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 METHOD OpenService( lExclusive, cPath ) CLASS TCamposExtra
-
+       
    local lOpen          := .t.
    local oError
    local oBlock
@@ -462,18 +463,6 @@ Return ( self )
 
 //----------------------------------------------------------------------------//
 
-METHOD initDocumentos() CLASS TCamposExtra
-
-   ::aDocumentos     := {  "Artículos" => .f.,;
-                           "Clientes" => .f.,;
-                           "Proveedores" => .f.,;
-                           "Familias" => .f.,;
-                           "Agentes" => .f. }
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD CreaTreeDocumentos() CLASS TCamposExtra
 
    local oItem
@@ -641,4 +630,4 @@ FUNCTION CamposExtra( oMenuItem, oWnd )
 
 RETURN NIL
 
-//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//     
