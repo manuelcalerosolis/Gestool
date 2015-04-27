@@ -979,6 +979,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ImpuestosEspeciales( nView )
 
+      D():ArticuloLenguaje( nView )
+
       /*
       Almacenes----------------------------------------------------------------
       */
@@ -6773,6 +6775,7 @@ Static Function VariableReport( oFr )
 
    oFr:AddVariable(     "Lineas de albaranes",   "Código del artículo con propiedades",      "CallHbFunc('cCodAlbPrv')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",                     "CallHbFunc('cDesAlbPrv')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo otro lenguaje",       "CallHbFunc('cDesAlbPrvLeng')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Total unidades artículo",                  "CallHbFunc('nTotNAlbPrv')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Precio unitario del artículo",             "CallHbFunc('nTotUAlbPrv')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Total línea de albaran",                   "CallHbFunc('nTotLAlbPrv')" )
@@ -10252,6 +10255,16 @@ FUNCTION cDesAlbPrv( cAlbPrvL, cAlbPrvS )
    DEFAULT cAlbPrvS  := D():AlbaranesProveedoresSeries( nView )
 
 RETURN ( Descrip( cAlbPrvL, cAlbPrvS ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesAlbPrvLeng( cAlbPrvL, cAlbPrvS, cArtLeng )
+
+   DEFAULT cAlbPrvL  := D():AlbaranesProveedoresLineas( nView )
+   DEFAULT cAlbPrvS  := D():AlbaranesProveedoresSeries( nView )
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cAlbPrvL, cAlbPrvS, cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 

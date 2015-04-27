@@ -501,6 +501,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ImpuestosEspeciales( nView )
 
+      D():ArticuloLenguaje( nView )
+
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
@@ -8197,6 +8199,7 @@ Static Function VariableReport( oFr )
 
    oFr:AddVariable(     "Lineas de facturas",   "Código del artículo con propiedades",       "CallHbFunc('cPrpFacPrv')" )
    oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo",                      "CallHbFunc('cDesFacPrv')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo otro lenguaje",        "CallHbFunc('cDesFacPrvLeng')" )
    oFr:AddVariable(     "Lineas de facturas",   "Total unidades artículo",                   "CallHbFunc('nTotNFacPrv')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario de factura",                "CallHbFunc('nTotUFacPrv')" )
    oFr:AddVariable(     "Lineas de facturas",   "Total línea de factura",                    "CallHbFunc('nTotLFacPrv')" )
@@ -11642,6 +11645,25 @@ FUNCTION cDesFacPrv( cFacPrvT, cFacPrvL, cFacPrvS )
       cReturn        := Rtrim( ( cFacPrvT )->cDetalle )
    else
       cReturn        := Descrip( cFacPrvL, cFacPrvS )
+   end if
+
+RETURN ( cReturn )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesFacPrvLeng( cFacPrvT, cFacPrvL, cFacPrvS, cArtLeng )
+
+   local cReturn     := ""
+
+   DEFAULT cFacPrvT  := D():FacturasProveedores( nView )
+   DEFAULT cFacPrvL  := D():FacturasProveedoresLineas( nView )
+   DEFAULT cFacPrvS  := D():FacturasProveedoresSeries( nView )
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+   if ( cFacPrvT )->lFacGas
+      cReturn        := Rtrim( ( cFacPrvT )->cDetalle )
+   else
+      cReturn        := DescripLeng( cFacPrvL, cFacPrvS, cArtLeng )
    end if
 
 RETURN ( cReturn )

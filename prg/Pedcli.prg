@@ -712,6 +712,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Situaciones( nView )
 
+      D():ArticuloLenguaje( nView )
+
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
 
@@ -8374,6 +8376,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
    oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo",                "CallHbFunc('cDesPedCli')"  )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesPedCliLeng')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total unidades artículo",             "CallHbFunc('nTotNPedCli')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPedCli')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total línea de pedido",               "CallHbFunc('nTotLPedCli')" )
@@ -12691,6 +12694,15 @@ FUNCTION cDesPedCli( cPedCliL )
    DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
 
 RETURN ( Descrip( cPedCliL ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesPedCliLeng( cPedCliL, cArtLeng )
+
+   DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cPedCliL, , cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 

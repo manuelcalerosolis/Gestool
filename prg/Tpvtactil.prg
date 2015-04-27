@@ -93,6 +93,7 @@ CLASS TpvTactil
    DATA oArticulo
    DATA oCodigoBarraArticulo
    DATA oArticulosEscandallos
+   DATA oArticulosLenguajes
    DATA oArticulosOfertas
    DATA oOferta
    DATA oFormaPago
@@ -809,16 +810,20 @@ CLASS TpvTactil
 
    METHOD GetPesoBalanza()
 
-   METHOD KillResource()         INLINE ( ::lKillResource   := .t., ::EnableDialog(), ::oDlg:End() )
+   METHOD KillResource()               INLINE ( ::lKillResource   := .t., ::EnableDialog(), ::oDlg:End() )
 
    METHOD GeneraVale()
    METHOD lLiquidaVale( sCobro )
 
    METHOD cValeTicket( cNumeroTicket )
 
-   METHOD cTextoLineaTicket()    INLINE ( ::cTextoLinea( ::oTiketLinea ) )
+   METHOD cTextoLineaTicket()          INLINE ( ::cTextoLinea( ::oTiketLinea ) )
+
+   METHOD cTextoLineaTicketLeng()      INLINE ( ::cTextoLineaLeng( ::oTiketLinea, ::oArticulosLenguajes ) )
 
    METHOD cTextoLinea( oDbf )
+
+   METHOD cTextoLineaLeng( oDbf, oArticulosLenguajes )
 
    METHOD cTextoLineaDivision( oDbf )
 
@@ -1206,6 +1211,8 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oArticulosEscandallos                     PATH ( cPatArt() )   FILE "ARTKIT.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
+   DATABASE NEW ::oArticulosLenguajes                       PATH ( cPatArt() )   FILE "ARTLENG"             VIA ( cDriver() ) SHARED INDEX "ARTLENG"
+
    DATABASE NEW ::oArticulosOfertas                         PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
    DATABASE NEW ::oOferta                                   PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
@@ -1522,6 +1529,10 @@ METHOD CloseFiles() CLASS TpvTactil
 
    if ::oArticulosEscandallos != nil .and. ::oArticulosEscandallos:Used()
       ::oArticulosEscandallos:End()
+   end if
+
+   if ::oArticulosLenguajes != nil .and. ::oArticulosLenguajes:Used()
+      ::oArticulosLenguajes:End()
    end if
 
    if ::oArticulosOfertas != nil .and. ::oArticulosOfertas:Used()
@@ -1853,6 +1864,7 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oArticulo                               := nil
    ::oCodigoBarraArticulo                    := nil
    ::oArticulosEscandallos                   := nil
+   ::oArticulosLenguajes                     := nil
    ::oArticulosOfertas                       := nil
    ::oOferta                                 := nil
    ::oFormaPago                              := nil
@@ -8967,6 +8979,7 @@ METHOD VariableReport() CLASS TpvTactil
          ::oFastReport:AddVariable(     "Tickets",             "Total IVMH",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalImpuestoHidrocarburos()' ] )" )
 
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",               "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicket()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del ticket en distinto idioma",        "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicketLeng()' ] )" ) 
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                      "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLinea()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                 "CallHbFunc( 'oTpvTactil', [ 'nPrecioLinea()' ] )" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Total línea de factura",                       "CallHbFunc( 'oTpvTactil', [ 'nTotalLinea()' ] )" )
@@ -8981,11 +8994,13 @@ METHOD VariableReport() CLASS TpvTactil
          ::oFastReport:AddVariable(     "Lineas de comandas",  "Detalle del artículo en comanda",              "CallHbFunc( 'oTpvTactil', [ 'cDescripcionComanda()' ] )" )
 
          ::oFastReport:AddVariable(     "Lineas de albaranes", "Detalle del artículo del albarán",             "CallHbFunc('cTpvDesAlbCli')"  )
+         ::oFastReport:AddVariable(     "Lineas de albaranes", "Detalle del albarán en distinto idioma",       "CallHbFunc('cTpvDesAlbCliLeng')"  )
          ::oFastReport:AddVariable(     "Lineas de albaranes", "Total unidades artículo del albarán",          "CallHbFunc('nTpvTotNAlbCli')" )
          ::oFastReport:AddVariable(     "Lineas de albaranes", "Precio unitario del artículo del albarán",     "CallHbFunc('nTpvTotUAlbCli')" )
          ::oFastReport:AddVariable(     "Lineas de albaranes", "Total línea de albarán",                       "CallHbFunc('nTpvTotLAlbCli')" )
 
          ::oFastReport:AddVariable(     "Lineas de facturas",  "Detalle del artículo de la factura",           "CallHbFunc('cTpvDesFacCli')" )
+         ::oFastReport:AddVariable(     "Lineas de facturas",  "Detalle de la factura en distinto idioma",     "CallHbFunc('cTpvDesFacCliLeng')" )
          ::oFastReport:AddVariable(     "Lineas de facturas",  "Total unidades artículo de la factura",        "CallHbFunc('nTpvTotNFacCli')" )
          ::oFastReport:AddVariable(     "Lineas de facturas",  "Precio unitario del artículo de la factura",   "CallHbFunc('nTpvTotUFacCli')" )
          ::oFastReport:AddVariable(     "Lineas de facturas",  "Total línea de factura.",                      "CallHbFunc('nTpvTotLFacCli')" )
@@ -9846,6 +9861,48 @@ METHOD cTextoLinea( oDbf )
    if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
       cTexto      := Space( 3 ) + "<" + cTexto + ">"
    end if
+
+RETURN ( alltrim( cTexto ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD cTextoLineaLeng( oDbf, oArticulosLenguajes )
+
+   local cTexto
+   local nOrdAnt
+
+   DEFAULT oDbf                  := ::oTemporalLinea
+   DEFAULT oArticulosLenguajes   := ::oArticulosLenguajes
+
+   oArticulosLenguajes:OrdSetFocus( "CARTLEN" )
+
+   if !oArticulosLenguajes:Seek( oDbf:cCbaTil + getLenguajeSegundario() )
+      cTexto                     := Rtrim( oDbf:cNomTil )
+   else
+      if !Empty( oArticulosLenguajes:cDesArt ) 
+         cTexto                   := AllTrim( oArticulosLenguajes:cDesArt )
+      else
+         cTexto                   := AllTrim( oArticulosLenguajes:cDesTik )
+      end if
+   end if
+
+   if !Empty( oDbf:cComent )
+      cTexto      := "[*] " + cTexto
+   end if
+
+   if !Empty( oDbf:cNcmTil )
+      cTexto      += " con " + CRLF + oDbf:cNcmTil
+   end if
+
+   if !Empty( oDbf:lKitChl )
+      cTexto      := Space( 3 ) + "<" + cTexto + ">"
+   end if
+
+   if ( oDbf:nLinMnu != bottomNumber ) .and. !( oDbf:lMnuTil )
+      cTexto      := Space( 3 ) + "<" + cTexto + ">"
+   end if
+
+   oArticulosLenguajes:OrdSetFocus( nOrdAnt )
 
 RETURN ( alltrim( cTexto ) )
 

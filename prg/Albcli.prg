@@ -14288,18 +14288,22 @@ RETURN ( Round( nCalculo, nDec ) )
 
 FUNCTION cDesAlbCli( cAlbCliL, cAlbCliS )
 
-   DEFAULT cAlbCliL  := D():Get( "AlbCliL", nView )
-   DEFAULT cAlbCliS  := D():Get( "AlbCliS", nView )
+   if !Empty( nView )
+      DEFAULT cAlbCliL  := D():Get( "AlbCliL", nView )
+      DEFAULT cAlbCliS  := D():Get( "AlbCliS", nView )
+   end if
 
 RETURN ( Descrip( cAlbCliL, cAlbCliS ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cDesAlbCliLeng( cAlbCliL, cAlbCliS, cArtLeng )
+FUNCTION cDesAlbCliLeng( cAlbCliL, cAlbCliS, cArtLeng ) // CallHbFunc('SetLenguajeSegundario', ['ENU'] )
 
-   DEFAULT cAlbCliL  := D():Get( "AlbCliL", nView )
-   DEFAULT cAlbCliS  := D():Get( "AlbCliS", nView )
-   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+   if !Empty( nView )
+      DEFAULT cAlbCliL  := D():Get( "AlbCliL", nView )
+      DEFAULT cAlbCliS  := D():Get( "AlbCliS", nView )
+      DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+   end if
 
 RETURN ( DescripLeng( cAlbCliL, cAlbCliS, cArtLeng ) )
 

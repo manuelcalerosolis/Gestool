@@ -631,6 +631,8 @@ STATIC FUNCTION OpenFiles( lExt )
       D():Documentos( nView )
       ( D():Documentos( nView ) )->( ordSetFocus( "cTipo" ) )
 
+      D():ArticuloLenguaje( nView )
+
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
 
@@ -8251,6 +8253,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Presupuestos",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
    oFr:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo",                "CallHbFunc('cDesPreCli' )" )
+   oFr:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesPreCliLeng')" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Total unidades artículo",             "CallHbFunc('nTotNPreCli')" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPreCli')" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Total línea de presupuesto",          "CallHbFunc('nTotLPreCli')" )
@@ -9396,6 +9399,15 @@ FUNCTION cDesPreCli( cPreCliL )
    DEFAULT cPreCliL  := dbfPreCliL
 
 RETURN ( Descrip( cPreCliL ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesPreCliLeng( cPreCliL, cArtLeng )
+
+   DEFAULT cPreCliL  := dbfPreCliL
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cPreCliL, , cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 
