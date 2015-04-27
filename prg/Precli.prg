@@ -634,6 +634,8 @@ STATIC FUNCTION OpenFiles( lExt )
       D():Documentos( nView )
       ( D():Documentos( nView ) )->( ordSetFocus( "cTipo" ) )
 
+      D():ArticuloLenguaje( nView )
+
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
 
@@ -7006,16 +7008,6 @@ STATIC FUNCTION CreateFiles( cPath )
       dbCreate( cPath + "PreCliE.Dbf", aSqlStruct( aPreCliEst() ), cDriver() )
    end if
 
-   /*
-   if !File( cPath + "PltCliT.Dbf" )
-      dbCreate( cPath + "PltCliT.Dbf", aPltCliT,      cDriver() )
-   end if
-
-   if !File( cPath + "PltCliL.Dbf" )
-      dbCreate( cPath + "PltCliL.Dbf", aPltCliL,      cDriver() )
-   end if
-   */
-
 RETURN NIL
 
 //----------------------------------------------------------------------------//
@@ -8274,6 +8266,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Presupuestos",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
    oFr:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo",                "CallHbFunc('cDesPreCli' )" )
+   oFr:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesPreCliLeng')" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Total unidades artículo",             "CallHbFunc('nTotNPreCli')" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPreCli')" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Total línea de presupuesto",          "CallHbFunc('nTotLPreCli')" )
@@ -9422,6 +9415,15 @@ RETURN ( Descrip( cPreCliL ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION cDesPreCliLeng( cPreCliL, cArtLeng )
+
+   DEFAULT cPreCliL  := dbfPreCliL
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cPreCliL, , cArtLeng ) )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION nTotLPreCli( cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
@@ -9858,14 +9860,18 @@ FUNCTION rxPreCli( cPath, oMeter )
    if !lExistTable( cPath + "PRECLIT.DBF" ) .OR. ;
       !lExistTable( cPath + "PRECLIL.DBF" ) .OR. ;
       !lExistTable( cPath + "PRECLII.DBF" ) .OR. ;
-      !lExistTable( cPath + "PRECLID.DBF" )
+      !lExistTable( cPath + "PRECLID.DBF" ) .OR. ;
+      !lExistTable( cPath + "PRECLIE.DBF" )
+
       CreateFiles( cPath )
+
    end if
 
    fEraseIndex( cPath + "PRECLIT.CDX" )
    fEraseIndex( cPath + "PRECLIL.CDX" )
    fEraseIndex( cPath + "PRECLII.CDX" )
    fEraseIndex( cPath + "PRECLID.CDX" )
+   fEraseIndex( cPath + "PRECLIE.CDX" )
 
    dbUseArea( .t., cDriver(), cPath + "PRECLIT.DBF", cCheckArea( "PRECLIT", @cPreCliT ), .f. )
    if !( cPreCliT )->( neterr() )

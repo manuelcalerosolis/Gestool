@@ -746,6 +746,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Articulos( nView )
 
+      D():ArticuloLenguaje( nView )
+
       USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
 
@@ -10318,6 +10320,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas rectificativas",             "Cuenta bancaria cliente",             "CallHbFunc('cCtaFacRec')" )
 
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Detalle del artículo",                "CallHbFunc('cDesFacRec')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesFacRecLeng')" )
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total unidades artículo",             "CallHbFunc('nTotNFacRec')" )
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario del artículo",        "CallHbFunc('nTotUFacRec')" )
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario con descuentos",      "CallHbFunc('nTotPFacRec')" )
@@ -14220,6 +14223,16 @@ FUNCTION cDesFacRec( cFacRecL, cFacRecS )
    DEFAULT cFacRecS  := dbfFacRecS
 
 RETURN ( Descrip( cFacRecL, cFacRecS ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesFacRecLeng( cFacRecL, cFacRecS, cArtLeng )
+
+   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT cFacRecS  := dbfFacRecS
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cFacRecL, cFacRecS, cArtLeng ) )
 
 //------------------------------------------------------------------------//
 

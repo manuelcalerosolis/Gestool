@@ -526,6 +526,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Contadores( nView )
 
+      D():ArticuloLenguaje( nView )
+
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -8176,6 +8178,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "SAT",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
    oFr:AddVariable(     "Lineas de SAT",   "Detalle del artículo",                "CallHbFunc('cDesSatCli')"  )
+   oFr:AddVariable(     "Lineas de SAT",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesSatCliLeng')"  )
    oFr:AddVariable(     "Lineas de SAT",   "Total unidades artículo",             "CallHbFunc('nTotNSatCli')" )
    oFr:AddVariable(     "Lineas de SAT",   "Precio unitario del artículo",        "CallHbFunc('nTotUSatCli')" )
    oFr:AddVariable(     "Lineas de SAT",   "Total línea de SAT",                  "CallHbFunc('nTotLSatCli')" )
@@ -9303,6 +9306,16 @@ FUNCTION cDesSatCli( cSatCliL, cSatCliS )
    DEFAULT cSatCliS  := dbfSatCliS
 
 RETURN ( Descrip( cSatCliL, cSatCliS ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesSatCliLeng( cSatCliL, cSatCliS, cArtLeng )
+
+   DEFAULT cSatCliL  := dbfSatCliL
+   DEFAULT cSatCliS  := dbfSatCliS
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cSatCliL, cSatCliS, cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 

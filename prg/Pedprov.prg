@@ -367,6 +367,9 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Pedidos a proveedores" )
 
+      D():ArticuloLenguaje( nView )
+
+
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
@@ -5598,6 +5601,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',6)" )
 
    oFr:AddVariable(     "Lineas de pedidos",   "Detalle del artículo",                "CallHbFunc('cDesPedPrv')" )
+   oFr:AddVariable(     "Lineas de pedidos",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesPedPrvLeng')" )
    oFr:AddVariable(     "Lineas de pedidos",   "Total unidades artículo",             "CallHbFunc('nTotNPedPrv')" )
    oFr:AddVariable(     "Lineas de pedidos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPedPrv')" )
    oFr:AddVariable(     "Lineas de pedidos",   "Total línea de pedido",               "CallHbFunc('nTotLPedPrv')" )
@@ -8964,6 +8968,15 @@ FUNCTION cDesPedPrv( cPedPrvL )
    DEFAULT cPedPrvL  := D():PedidosProveedoresLineas( nView )
 
 RETURN ( Descrip( cPedPrvL ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesPedPrvLeng( cPedPrvL, cPedPrvS, cArtLeng )
+
+   DEFAULT cPedPrvL  := D():PedidosProveedoresLineas( nView )
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cPedPrvL, , cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 

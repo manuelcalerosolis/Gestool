@@ -18,6 +18,12 @@
 
 #define FONT_NAME                "Segoe UI" // "Arial" //
 
+#define ubiGeneral                  0
+#define ubiLlevar                   1
+#define ubiSala                     2
+#define ubiRecoger                  3
+#define ubiEncargar                 4
+
 /*
 Ficheros-----------------------------------------------------------------------
 */
@@ -510,6 +516,12 @@ static lTwoLin             := .f.
 static nScreenHorzRes
 static nScreenVertRes
 
+static hTextoUbicacion     := {  ubiSala => {|| Rtrim( ( dbfTikT )->cPntVenta ) },;
+                                 ubiGeneral => {|| "General: "  + Rtrim( ( dbfTikT )->cAliasTik ) },;
+                                 ubiRecoger => {|| "Para recoger: " + Rtrim( ( dbfTikT )->cAliasTik ) },;
+                                 ubiLlevar => {|| "Para llevar: " + Rtrim( ( dbfTikT )->cNomTik ) },;
+                                 ubiEncargar => {|| "Encargo: " + Rtrim( ( dbfTikT )->cNomTik ) } }
+
 //---------------------------------------------------------------------------//
 
 #ifndef __PDA__
@@ -559,6 +571,8 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       D():Atipicas( nView )
 
       D():Get( "LogPorta", nView )
+
+      D():ArticuloLenguaje( nView )
 
       USE ( cPatEmp + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
       SET ADSINDEX TO ( cPatEmp + "TIKET.CDX" ) ADDITIVE
@@ -14535,9 +14549,10 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Tickets",             "Total entregas a cuenta",                 "CallHbFunc('nTotalEntregado')" )
    oFr:AddVariable(     "Tickets",             "Total vales liquidados en compra",        "CallHbFunc('nTotValTikInfo')" )
 
-   oFr:AddVariable(     "Tickets",             "Ubicación del ticket",                    "CallHbFunc( 'oTpvTactil', [ 'cTxtUbicacion()' ] )" )
+   oFr:AddVariable(     "Tickets",             "Ubicación del ticket",                    "CallHbFunc( 'cTxtUbicacion' )" )
 
-   oFr:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",                "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicket()' ] )" )
+   oFr:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",                "CallHbFunc('cTextoLineaTicket')" )
+   oFr:AddVariable(     "Lineas de tickets",   "Detalle del ticket en distinto idioma",         "CallHbFunc('cTextoLineaTicketLeng')" ) 
    oFr:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                       "CallHbFunc('nTotNTpv')" )
    oFr:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                  "CallHbFunc('nTotUTpv')" )
    oFr:AddVariable(     "Lineas de tickets",   "Precio unitario con descuentos",                "CallHbFunc('nNetLTpv')" )
@@ -14546,21 +14561,83 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de tickets",   "Total IVMH línea de factura",                   "CallHbFunc('nIvmLTpv')" )
    oFr:AddVariable(     "Lineas de tickets",   "Total línea de factura",                        "CallHbFunc('nTotLTpv')" )
 
-   oFr:AddVariable(     "Lineas de comandas",  "Total unidades en comanda",                     "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaComanda()' ] )" )
-   oFr:AddVariable(     "Lineas de comandas",  "Total unidades impresas en comanda",            "CallHbFunc( 'oTpvTactil', [ 'nUnidadesImpresasComanda()' ] )" )
-   oFr:AddVariable(     "Lineas de comandas",  "Detalle del artículo en comanda",               "CallHbFunc( 'oTpvTactil', [ 'cDescripcionComanda()' ] )" )
-
    oFr:AddVariable(     "Lineas de albaranes", "Detalle del artículo del albarán",              "CallHbFunc('cTpvDesAlbCli')"  )
+   oFr:AddVariable(     "Lineas de albaranes", "Detalle del albarán en distinto idioma",        "CallHbFunc('cTpvDesAlbCliLeng')"  )
    oFr:AddVariable(     "Lineas de albaranes", "Total unidades artículo del albarán",           "CallHbFunc('nTpvTotNAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes", "Precio unitario del artículo del albarán",      "CallHbFunc('nTpvTotUAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes", "Total línea de albarán",                        "CallHbFunc('nTpvTotLAlbCli')" )
 
    oFr:AddVariable(     "Lineas de facturas",  "Detalle del artículo de la factura",            "CallHbFunc('cTpvDesFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",  "Detalle de la factura en distinto idioma",      "CallHbFunc('cTpvDesFacCliLeng')" )
    oFr:AddVariable(     "Lineas de facturas",  "Total unidades artículo de la factura",         "CallHbFunc('nTpvTotNFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",  "Precio unitario del artículo de la factura",    "CallHbFunc('nTpvTotUFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",  "Total línea de factura.",                       "CallHbFunc('nTpvTotLFacCli')" )
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Function cTxtUbicacion( cTikT )
+
+   local cUbicacion  := ""
+
+   DEFAULT cTikT     := dbfTikT
+
+   cUbicacion        := Eval( hGet( hTextoUbicacion, ( dbfTikT )->nUbiTik ) )
+
+RETURN ( cUbicacion )
+
+//---------------------------------------------------------------------------//
+
+Function cTextoLineaTicket( cTikL )
+
+   local cTexto   := ""
+
+   DEFAULT cTikL  := dbfTikL
+
+   cTexto         := Rtrim( ( dbfTikL )->cNomTil )
+
+   if !Empty( ( dbfTikL )->cNcmTil )
+      cTexto      += " con " + CRLF + ( dbfTikL )->cNcmTil
+   end if
+
+   if !Empty( ( dbfTikL )->lKitChl )
+      cTexto      := Space( 3 ) + "<" + cTexto + ">"
+   end if
+
+Return ( AllTrim( cTexto ) )
+
+//---------------------------------------------------------------------------//
+
+Function cTextoLineaTicketLeng( cTikL, cArtLeng )
+
+   local cTexto      := ""
+   local nOrdAnt
+
+   DEFAULT cTikL     := dbfTikL
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+   nOrdAnt           := ( cArtLeng )->( OrdSetFocus( "CARTLEN" ) )
+
+   if !( cArtLeng )->( dbSeek( ( dbfTikL )->cCbaTil + getLenguajeSegundario() ) )
+      cTexto         := Rtrim( ( dbfTikL )->cNomTil )
+   else
+      if !Empty( ( cArtLeng )->cDesArt ) 
+        cTexto       := AllTrim( ( cArtLeng )->cDesArt )
+      else
+        cTexto       := AllTrim( ( cArtLeng )->cDesTik )
+      end if
+   end if
+
+   if !Empty( ( dbfTikL )->cNcmTil )
+      cTexto         += " con " + CRLF + ( dbfTikL )->cNcmTil
+   end if
+
+   if !Empty( ( dbfTikL )->lKitChl )
+      cTexto         := Space( 3 ) + "<" + cTexto + ">"
+   end if
+
+Return( cTexto )
 
 //---------------------------------------------------------------------------//
 
@@ -14764,6 +14841,11 @@ return cDesAlbCli( dbfAlbCliL )
 
 //---------------------------------------------------------------------------//
 
+function cTpvDesAlbCliLeng()
+return cDesAlbCliLeng( dbfAlbCliL, , D():ArticuloLenguaje( nView ) )
+
+//---------------------------------------------------------------------------//
+
 function nTpvTotNAlbCli()
 return nTotNAlbCli( dbfAlbCliL )
 
@@ -14781,6 +14863,11 @@ return nTotLAlbCli( dbfAlbCliL )
 
 function cTpvDesFacCli()
 return cDesFacCli( dbfFacCliL )
+
+//---------------------------------------------------------------------------//
+
+function cTpvDesFacCliLeng()
+return cDesFacCliLeng( dbfFacCliL, , D():ArticuloLenguaje( nView ) )
 
 //---------------------------------------------------------------------------//
 

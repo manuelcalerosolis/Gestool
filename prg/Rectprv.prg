@@ -486,6 +486,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ImpuestosEspeciales( nView )
 
+      D():ArticuloLenguaje( nView )
+
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
@@ -7521,6 +7523,7 @@ Static Function VariableReport( oFr )
 
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Código del artículo con propiedades", "CallHbFunc('cPrpRctPrv')" )
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Detalle del artículo",                "CallHbFunc('cDesRctPrv')" )
+   oFr:AddVariable(     "Lineas de facturas rectificativas",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesRctPrvLeng')" )
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total unidades artículo",             "CallHbFunc('nTotNRctPrv')" )
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Precio unitario de factura",          "CallHbFunc('nTotURctPrv')" )
    oFr:AddVariable(     "Lineas de facturas rectificativas",   "Total línea de factura",              "CallHbFunc('nTotLRctPrv')" )
@@ -11413,7 +11416,17 @@ FUNCTION cDesRctPrv( cFacPrvL, cFacPrvS )
 
 RETURN ( Descrip( cFacPrvL, cFacPrvS ) )
 
-//------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesRctPrvLeng( cFacPrvL, cFacPrvS, cArtLeng )
+
+   DEFAULT cFacPrvL  := D():FacturasRectificativasProveedoresLineas( nView )
+   DEFAULT cFacPrvS  := D():FacturasRectificativasProveedoresDocumentos( nView )
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cFacPrvL, cFacPrvS, cArtLeng ) )
+
+//---------------------------------------------------------------------------//
 
 Function cCtaRctPrv( cRctPrvT, cRctPrvP, cBncPrv )
 

@@ -713,6 +713,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Situaciones( nView )
 
+      D():ArticuloLenguaje( nView )
+
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
 
@@ -4194,7 +4196,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    nOrdPedPrv           	:= ( dbfPedPrvL )->( OrdSetFocus( "cPedCliRef" ) )
 
    dFecRes              	:= dTmpPdtRec( aTmp[ _CREF ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTmpRes )
-   nTotRes              	:= nUnidadesRecibidasAlbCliNoFacturados( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfAlbCliL )
+   nTotRes              	:= nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfAlbCliL )
    nTotRes              	+= nUnidadesRecibidasFacCli( cNumPed, aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], dbfFacCliL )
 
    if nTotRes > nTotNPedCli( aTmp )
@@ -8390,6 +8392,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
    oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo",                "CallHbFunc('cDesPedCli')"  )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesPedCliLeng')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total unidades artículo",             "CallHbFunc('nTotNPedCli')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPedCli')" )
    oFr:AddVariable(     "Lineas de Pedidos",   "Total línea de pedido",               "CallHbFunc('nTotLPedCli')" )
@@ -12711,6 +12714,15 @@ FUNCTION cDesPedCli( cPedCliL )
    DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
 
 RETURN ( Descrip( cPedCliL ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION cDesPedCliLeng( cPedCliL, cArtLeng )
+
+   DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
+   DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
+
+RETURN ( DescripLeng( cPedCliL, , cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 
