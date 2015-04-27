@@ -6985,16 +6985,6 @@ STATIC FUNCTION CreateFiles( cPath )
       dbCreate( cPath + "PreCliE.Dbf", aSqlStruct( aPreCliEst() ), cDriver() )
    end if
 
-   /*
-   if !File( cPath + "PltCliT.Dbf" )
-      dbCreate( cPath + "PltCliT.Dbf", aPltCliT,      cDriver() )
-   end if
-
-   if !File( cPath + "PltCliL.Dbf" )
-      dbCreate( cPath + "PltCliL.Dbf", aPltCliL,      cDriver() )
-   end if
-   */
-
 RETURN NIL
 
 //----------------------------------------------------------------------------//
@@ -9847,14 +9837,18 @@ FUNCTION rxPreCli( cPath, oMeter )
    if !lExistTable( cPath + "PRECLIT.DBF" ) .OR. ;
       !lExistTable( cPath + "PRECLIL.DBF" ) .OR. ;
       !lExistTable( cPath + "PRECLII.DBF" ) .OR. ;
-      !lExistTable( cPath + "PRECLID.DBF" )
+      !lExistTable( cPath + "PRECLID.DBF" ) .OR. ;
+      !lExistTable( cPath + "PRECLIE.DBF" )
+
       CreateFiles( cPath )
+
    end if
 
    fEraseIndex( cPath + "PRECLIT.CDX" )
    fEraseIndex( cPath + "PRECLIL.CDX" )
    fEraseIndex( cPath + "PRECLII.CDX" )
    fEraseIndex( cPath + "PRECLID.CDX" )
+   fEraseIndex( cPath + "PRECLIE.CDX" )
 
    dbUseArea( .t., cDriver(), cPath + "PRECLIT.DBF", cCheckArea( "PRECLIT", @cPreCliT ), .f. )
    if !( cPreCliT )->( neterr() )

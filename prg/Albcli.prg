@@ -15820,7 +15820,7 @@ return ( nTot )
 
 //---------------------------------------------------------------------------//
 
-function nUnidadesRecibidasAlbCliNoFacturados( cNumPed, cCodArt, cCodPr1, cCodPr2, cAlbCliL )
+function nUnidadesRecibidasAlbaranesClientesNoFacturados( cNumPed, cCodArt, cCodPr1, cCodPr2, cAlbCliL )
 
    local nTot        := 0
    local aStaLin     := aGetStatus( cAlbCliL, .f. )
