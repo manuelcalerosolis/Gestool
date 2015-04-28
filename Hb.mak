@@ -411,10 +411,11 @@ GeneraFacturasClientes.prg             \
 CamposExtra.prg             \
 DetCamposExtra.prg          \
 Lenguajes.prg               \
+CentroCoste.Prg 			\
 
 C               =       	\
 Img2pdf.c               	\
-Treeview.c 						\
+Treeview.c 					\
 
 OBJS            =       \
 Factu.obj               \
@@ -812,7 +813,8 @@ PedidoClienteViewEdit.obj              \
 GeneraFacturasClientes.obj             \
 CamposExtra.obj                        \
 Lenguajes.obj                          \
-DetCamposExtra.obj
+DetCamposExtra.Obj 					   \
+CentroCoste.Obj 					   \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1200,7 +1202,8 @@ $(OBJ)\GeneraFacturasClientes.obj            +
 $(OBJ)\CamposExtra.obj                       +
 $(OBJ)\DetCamposExtra.obj                    +
 $(OBJ)\Lenguajes.obj                         +
-$(OBJ)\Ventas.obj
+$(OBJ)\Ventas.obj 							 +
+$(OBJ)\CentroCoste.Obj 						 
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +

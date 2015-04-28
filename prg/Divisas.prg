@@ -1737,7 +1737,7 @@ RETURN ( cPorDiv )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve el picture de la divisa
+Devuelve el picture de la divisa de venta
 */
 
 FUNCTION cPouDiv( cCodDiv, dbfDiv )

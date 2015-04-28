@@ -1211,6 +1211,8 @@ Function InitClasses()
    TInvitacion()
    TXBrowse():Register( nOr( CS_VREDRAW, CS_HREDRAW, CS_DBLCLKS ) )
    TBandera():New()
+   TCentroCoste()
+
 
 Return .t.
 
@@ -1970,6 +1972,16 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01104"
    oItem:cBmp           := "Led_Red_16"
    oItem:cBmpBig        := "Led_Red_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := "Centro de costes"
+   oItem:cMessage       := "Acceso al centro de coste"
+   oItem:bAction        := {|| TCentroCoste():New( cPatDat(), oWnd, "01041" ):Activate() }
+   oItem:cId            := "01041"
+   oItem:cBmp           := "Document_money2_16"
+   oItem:cBmpBig        := "Document_money2_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()

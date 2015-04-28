@@ -4613,6 +4613,9 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          oMsg:SetText( "Lenguaje" )
          TLenguaje():Create( cPatDat() ):SyncAllDbf()
 
+         oMsg:SetText( "Centro de coste" )
+         TCentroCoste():Create( cPatDat() ):SyncAllDbf()
+
          oMsg:SetText( "Unidades de medición" )
          UniMedicion():Create():SyncAllDbf()
 
