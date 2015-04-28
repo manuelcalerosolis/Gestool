@@ -11437,6 +11437,18 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Incidencias",       ( D():Get( "CliInc", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias",       cItemsToReport( aCliInc() ) )
 
+   oFr:SetWorkArea(     "País", oPais:Select() )   
+   oFr:SetFieldAliases( "País", cObjectsToReport( oPais:oDbf ) )
+
+   oFr:SetWorkArea(     "Rutas", ( dbfRuta )->( Select() ) )
+   oFr:SetFieldAliases( "Rutas", cItemsToReport( aItmRut() ) )
+
+   oFr:SetWorkArea(     "Agentes", ( cAgente )->( Select() ) )
+   oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
+
+   oFr:SetWorkArea(     "Formas de pago", ( dbfFPago )->( Select() ) )
+   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
+
    if lTemporal
       oFr:SetMasterDetail( "Clientes",       "Documentos",        {|| ( tmpClient )->Cod } )
       oFr:SetMasterDetail( "Clientes",       "Tarifas clientes",  {|| ( tmpClient )->Cod } )
@@ -11444,6 +11456,10 @@ Static Function DataReport( oFr, lTemporal )
       oFr:SetMasterDetail( "Clientes",       "Contactos",         {|| ( tmpClient )->Cod } )
       oFr:SetMasterDetail( "Clientes",       "Bancos",            {|| ( tmpClient )->Cod } )
       oFr:SetMasterDetail( "Clientes",       "Incidencias",       {|| ( tmpClient )->Cod } )
+      oFr:SetMasterDetail( "Clientes",       "Rutas",             {|| ( tmpClient )->cCodRut } )
+      oFr:SetMasterDetail( "Clientes",       "Agentes",           {|| ( tmpClient )->cAgente } )
+      oFr:SetMasterDetail( "Clientes",       "Formas de pago",    {|| ( tmpClient )->CodPago } )
+      oFr:SetMasterDetail( "Clientes",       "País",              {|| ( tmpClient )->cCodPai } )
    else
       oFr:SetMasterDetail( "Clientes",       "Documentos",        {|| ( D():Get( "Client", nView ) )->Cod } )
       oFr:SetMasterDetail( "Clientes",       "Tarifas clientes",  {|| ( D():Get( "Client", nView ) )->Cod } )
@@ -11451,6 +11467,10 @@ Static Function DataReport( oFr, lTemporal )
       oFr:SetMasterDetail( "Clientes",       "Contactos",         {|| ( D():Get( "Client", nView ) )->Cod } )
       oFr:SetMasterDetail( "Clientes",       "Bancos",            {|| ( D():Get( "Client", nView ) )->Cod } )
       oFr:SetMasterDetail( "Clientes",       "Incidencias",       {|| ( D():Get( "Client", nView ) )->Cod } )
+      oFr:SetMasterDetail( "Clientes",       "Rutas",             {|| ( D():Get( "Client", nView ) )->cCodRut } )
+      oFr:SetMasterDetail( "Clientes",       "Agentes",           {|| ( D():Get( "Client", nView ) )->cAgente } )
+      oFr:SetMasterDetail( "Clientes",       "Formas de pago",    {|| ( D():Get( "Client", nView ) )->CodPago } )
+      oFr:SetMasterDetail( "Clientes",       "País",              {|| ( D():Get( "Client", nView ) )->cCodPai } )
    end if
 
    oFr:SetResyncPair(      "Clientes",       "Documentos" )
@@ -11459,6 +11479,11 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetResyncPair(      "Clientes",       "Contactos" )
    oFr:SetResyncPair(      "Clientes",       "Bancos" )
    oFr:SetResyncPair(      "Clientes",       "Incidencias" )
+
+   oFr:SetResyncPair(      "Clientes",       "Rutas" )
+   oFr:SetResyncPair(      "Clientes",       "Agentes" )
+   oFr:SetResyncPair(      "Clientes",       "Formas de pago" )
+   oFr:SetResyncPair(      "Clientes",       "País" )
 
 Return nil
 

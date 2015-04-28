@@ -2433,6 +2433,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDatatable:cArea        := "CliBnc"
    oDataTable:cName        := cPatCli() + "CliBnc"
    oDataTable:cDataFile    := cPatCli( , .t. ) + "CliBnc.Dbf"
    oDataTable:cIndexFile   := cPatCli( , .t. ) + "CliBnc.Cdx"
@@ -5400,6 +5401,7 @@ CLASS D
                                                                ( ::ClientesIncidencias( nView ) )->( ordScope( 1, nil ) ),;
                                                                ::setStatusClientesIncidencias( nView ) )  
 
+   METHOD ClientesBancos( nView )                     INLINE ( ::Get( "CliBnc", nView ) )
 
    METHOD ClientesEntidad( nView )                    INLINE ( ::Get( "CliDad", nView ) )
       METHOD ClientesEntidadId( nView )               INLINE ( ( ::Get( "CliDad", nView ) )->cCodCli )
