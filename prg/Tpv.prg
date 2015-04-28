@@ -3961,6 +3961,9 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
    if lExacto( aTmp ) .or. lCobro( @aTmp, aGet, @nSave, nMode, @lValeDiferencia, @nValeDiferencia, lBig, oDlgTpv )
 
+      msgAlert( lValeDiferencia, "lValeDiferencia" ) 
+      msgAlert( nValeDiferencia, "nValeDiferencia" )
+
       /*
       Justo antes de guardar volvemos a comprobar que existan lineas-----------
       */
@@ -4346,7 +4349,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Imprimir el registro--------------------------------------------------
          */
 
-         if lCopTik .and. nSave != SAVAPT // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
+         if lCopTik .and. ( nSave != SAVAPT ) // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
             ImpTiket( IS_PRINTER )
          end if
 
@@ -4354,52 +4357,14 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Generamos el vale por la diferencia si nos lo piden-------------------
          */
 
-         if lValeDiferencia //.and. nMode == APPD_MODE
+         if lValeDiferencia .and. ( nSave != SAVVAL .or. nSave != SAVDEV )
+            
+            SetAutoTextDialog( 'Generando vales' )
 
-            if ( nSave != SAVVAL ) .or. ( nSave != SAVDEV  )
+            generateVale( nValeDiferencia )
 
-               SetAutoTextDialog( 'Generando vales' )
-
-               /*
-               Obtenemos el nuevo numero del vale---------------------------------
-               */
-
-               aTmp              := dbScatter( dbfTikT )
-
-               aTmp[ _DFECTIK ]  := dFecMaxVale( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT  )
-               aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
-               aTmp[ _CSUFTIK ]  := RetSufEmp()
-               aTmp[ _CHORTIK ]  := Substr( Time(), 1, 5 )
-               aTmp[ _DFECCRE ]  := Date()
-               aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )
-               aTmp[ _CTIPTIK ]  := SAVVAL
-               aTmp[ _LCLOTIK ]  := .f.
-               aTmp[ _NTOTNET ]  := nValeDiferencia
-               aTmp[ _NTOTIVA ]  := 0
-               aTmp[ _NTOTTIK ]  := nValeDiferencia
-
-               dbGather( aTmp, dbfTikT, .t. )
-
-               /*
-               Guardamos las lineas del tiket----------------------------------------
-               */
-
-               aTbl              := dbBlankRec( dbfTmpL )
-
-               aTbl[ _CSERTIL ]  := aTmp[ _CSERTIK ]
-               aTbl[ _CNUMTIL ]  := aTmp[ _CNUMTIK ]
-               aTbl[ _CSUFTIL ]  := aTmp[ _CSUFTIK ]
-               aTbl[ _CNOMTIL ]  := "Vale por diferencias"
-               aTbl[ _NUNTTIL ]  := 1
-               aTbl[ _NNUMLIN ]  := 1
-               aTbl[ _NPVPTIL ]  := nValeDiferencia
-
-               dbGather( aTbl, dbfTikL, .t. )
-
-               if lCopTik
-                  ImpTiket( IS_PRINTER )
-               end if
-
+            if lCopTik
+               ImpTiket( IS_PRINTER )
             end if
 
          end if
@@ -4469,7 +4434,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Modo para el proximo ticket----------------------------------------------
          */
 
-         nSaveMode                  := APPD_MODE
+         nSaveMode               := APPD_MODE
 
          /*
          Cerrando-----------------------------------------------------------------
@@ -20047,5 +20012,48 @@ Static Function AddArticuloComercio( cCodArt )
    end if
 
 Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function generateVale( nValeDiferencia )
+
+   local aTmp
+   local aTbl
+
+   /*
+   Obtenemos el nuevo numero del vale---------------------------------
+   */
+
+   aTmp              := dbScatter( dbfTikT )
+
+   aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+   aTmp[ _CSUFTIK ]  := RetSufEmp()
+   aTmp[ _DFECTIK ]  := dFecMaxVale( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT  )
+   aTmp[ _CHORTIK ]  := Substr( Time(), 1, 5 )
+   aTmp[ _DFECCRE ]  := Date()
+   aTmp[ _CTIMCRE ]  := SubStr( Time(), 1, 5 )
+   aTmp[ _CTIPTIK ]  := SAVVAL
+   aTmp[ _NTOTNET ]  := nValeDiferencia
+   aTmp[ _NTOTTIK ]  := nValeDiferencia
+
+   dbGather( aTmp, dbfTikT, .t. )
+
+   /*
+   Guardamos las lineas del tiket----------------------------------------
+   */
+
+   aTbl              := dbBlankRec( dbfTmpL )
+
+   aTbl[ _CSERTIL ]  := aTmp[ _CSERTIK ]
+   aTbl[ _CNUMTIL ]  := aTmp[ _CNUMTIK ]
+   aTbl[ _CSUFTIL ]  := aTmp[ _CSUFTIK ]
+   aTbl[ _CNOMTIL ]  := "Vale por diferencias"
+   aTbl[ _NUNTTIL ]  := 1
+   aTbl[ _NNUMLIN ]  := 1
+   aTbl[ _NPVPTIL ]  := nValeDiferencia
+
+   dbGather( aTbl, dbfTikL, .t. )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
