@@ -157,21 +157,21 @@ STATIC FUNCTION OpenFiles( lCount )
                         "Facturas a clientes",;
                         "Anticipos de facturas clientes",;
                         "Facturas rectificativas",;
-                        "IntroducciÃ³n depÃ³sitos",;
-                        "Estado depÃ³sitos",;
+                        "Introducción depósitos",;
+                        "Estado depósitos",;
                         "Tickets a clientes",;
-                        "Partes de producciÃ³n",;
+                        "Partes de producción",;
                         "Expedientes",;
-                        "Movimientos de almacÃ©n",;
-                        "SesiÃ³nes",;
+                        "Movimientos de almacén",;
+                        "Sesiónes",;
                         "Remesas bancarias",;
                         "Ordenes de carga",;
                         "Cobros de clientes",;
                         "Recibos de proveedor",;
                         "Recibos de clientes",;
-                        "LiquidaciÃ³n de agentes",;
+                        "Liquidación de agentes",;
                         "Entrega a cuenta pedido",;
-                        "Entrega a cuenta albarÃ¡n" }
+                        "Entrega a cuenta albarán" }
 
       aImagenes   := {  "Clipboard_empty_businessman_16",;
                         "Document_plain_businessman_16",;
@@ -306,7 +306,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
 			TITLE 	"Empresas" ;
          ALIAS    ( dbfEmp );
-         PROMPTS  "CÃ³digo",;
+         PROMPTS  "Código",;
 						"Nombre";
          MRU      "Office_Building_16";
          BITMAP   clrTopArchivos ;
@@ -338,7 +338,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "CodEmp"
          :bEditValue       := {|| if( ( dbfEmp )->lGrupo, "<" + rTrim( ( dbfEmp )->CodEmp ) + ">", ( dbfEmp )->CodEmp ) }
          :nWidth           := 80
@@ -377,7 +377,7 @@ if oUser():lCambiarEmpresa
       DEFINE BTNSHELL RESOURCE "NEW" GROUP OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
-         TOOLTIP  "(A)Ã±adir";
+         TOOLTIP  "(A)ñadir";
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
 
@@ -522,7 +522,7 @@ STATIC FUNCTION WinDelEmp()
    local cPath    := FullCurDir() + "Emp" + ( dbfEmp )->CodEmp + "\"
 
    if nUsrInUse() > 1
-      msgStop( "Hay mÃ¡s de un usuario conectado a la aplicaciÃ³n", "AtenciÃ³n" )
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       return ( lRet )
    end if
 
@@ -532,9 +532,9 @@ STATIC FUNCTION WinDelEmp()
 
    else
 
-      if ApoloMsgNoYes( "Confirme eliminaciÃ³n de empresa", "SupresiÃ³n de empresa" )
+      if ApoloMsgNoYes( "Confirme eliminación de empresa", "Supresión de empresa" )
 
-         if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos de la empresa : " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresiÃ³n de empresa" )
+         if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos de la empresa : " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresión de empresa" )
 
             CursorWait()
 
@@ -596,7 +596,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    local oBmpBancos
 
    if ( nMode == APPD_MODE ) .and. ( nUsrInUse() > 1 )
-      msgStop( "Hay mÃ¡s de un usuario conectado a la aplicaciÃ³n", "AtenciÃ³n" )
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       return .f.
    end if
 
@@ -652,7 +652,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       ID       400 ;
       OF       oDlg ;
       PROMPT   "Em&presa",;
-               "&ImportaciÃ³n",;
+               "&Importación",;
                "De&legaciones";
       DIALOGS  "EMPRESA_1",;
                "EMPRESA_9",;
@@ -1036,7 +1036,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
       oBrwDet:cName           := "Delegacion.Empresa"
 
       with object ( oBrwDet:AddCol() )
-         :cHeader             := "CÃ³digo"
+         :cHeader             := "Código"
          :cSortOrder          := "cCodDlg"
          :bEditValue          := {|| ( tmpDlg )->cCodDlg }
          :nWidth              := 80
@@ -1147,7 +1147,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oBmpTPV
 
    local aBnfSobre               := { "Costo", "Venta" }
-   local aCifRut                 := { "CÃ¡lculo de C.I.F.", "CÃ¡lculo de R.U.T." }
+   local aCifRut                 := { "Cálculo de C.I.F.", "Cálculo de R.U.T." }
    local aPrinters               := GetPrinters()
    local oSayFmt
    local cSayFmt                 := ""
@@ -1252,7 +1252,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    cSay[ 42 ]              := aCifRut[ Max( aTmp[ _NCIFRUT ], 1 ) ]
 
    cSay[ 47 ]              := RetFld( aTmp[ _CSUFDOC ], dbfDlg, "cNomDlg" )
-
+ 
    cTiempoPed              := cTiempoToCadena( aTmp[ _NTIEMPOPED ] )
 
    cCmbContabilidad        := aCmbContabilidad[ Min( Max( aTmp[ _NEXPCONTBL ], 1 ), len( aCmbContabilidad ) ) ]
@@ -1261,7 +1261,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "EmpresaCfg" ;
-      TITLE       "ConfiguraciÃ³n de empresa : " + aTmp[ _CODEMP ] + "-" + aTmp[ _CNOMBRE ] ;
+      TITLE       "Configuración de empresa : " + aTmp[ _CODEMP ] + "-" + aTmp[ _CNOMBRE ] ;
       OF          oWnd()
 
       REDEFINE PAGES oFld ;
@@ -2129,7 +2129,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       end with
 
       with object ( oBrwEmp:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :bEditValue       := {|| aItmEmp[ oBrwEmp:nArrayAt, 2 ] }
          :nWidth           := 60
       end with
@@ -2539,13 +2539,13 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
    RECOVER USING oError
 
-      msgStop( "Imposible editar configuraciÃ³n de empresas" + CRLF + ErrorMessage( oError )  )
+      msgStop( "Imposible editar configuración de empresas" + CRLF + ErrorMessage( oError )  )
 
    END SEQUENCE
    ErrorBlock( oBlock ) 
 
    /*
-   Matamos los objetos con las imÃ¡genes----------------------------------------
+   Matamos los objetos con las imágenes----------------------------------------
    */
 
    KillTrans()
@@ -2559,7 +2559,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    InitServices()
 
    /*
-   Matamos los objetos con las imÃ¡genes----------------------------------------
+   Matamos los objetos con las imágenes----------------------------------------
    */
 
    if !Empty( oBmpComportamiento )
@@ -2620,7 +2620,7 @@ Static Function StartEdtCnf( aTmp, oSay, oBrw, oDlg, oFld, nMode )
    oGrupo            := TDotNetGroup():New( oCarpeta, 488, "Opciones", .f. ) 
       oBoton         := TDotNetButton():New( 60, oGrupo, "Wrench_32_alpha",            "General",           1, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Preferences_Edit_32_alpha",  "Valores",           2, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
-      oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32_alpha",       "ArtÃ­culos",         3, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
+      oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32_alpha",       "Artículos",         3, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Cashier_32_alpha",           "T.P.V.",            4, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Document_Edit_32_alpha",     "Contadores",        5, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
       oBoton         := TDotNetButton():New( 60, oGrupo, "Folder2_red_32_alpha",       "Contabilidad",      6, {| oBtn | oFld:SetOption( oBtn:nColumna ) }, , , .f., .f., .f. )
@@ -2856,7 +2856,7 @@ Static Function EndDelega( aTmp, aGet, tmpDlg, oBrw, nMode, oDlg, cCod )
 
    if nMode == APPD_MODE
       if Empty( aTmp[ ( tmpDlg )->( FieldPos( "cCodDlg" ) ) ] ) .or. ( tmpDlg )->( dbSeek( cCod + aTmp[ ( tmpDlg )->( FieldPos( "cCodDlg" ) ) ] ) )
-         MsgStop( "CÃ³digo no valido" )
+         MsgStop( "Código no valido" )
          return nil
       end if
    end if
@@ -2870,12 +2870,12 @@ Return ( oDlg:end( IDOK ) )
 Static Function lValidDelega( cCodEmpresa, cCodDelega )
 
    if Empty( cCodDelega )
-      MsgStop( "CÃ³digo de delgaciÃ³n no puede estar vacio" )
+      MsgStop( "Código de delgación no puede estar vacio" )
       return .f.
    end if
 
    if ( tmpDlg )->( dbSeek( cCodEmpresa + cCodDelega ) )
-      MsgStop( "DelegaciÃ³n existente" )
+      MsgStop( "Delegación existente" )
       return .f.
    end if
 
@@ -3010,7 +3010,7 @@ FUNCTION BrwEmpresa( oGet, dbfEmp, oGet2, lGrupo )
    local nRec
    local nOrd     := GetBrwOpt( "BrwEmpresa" )
 	local oCbxOrd
-   local aCbxOrd  := { "CÃ³digo", "Nombre" }
+   local aCbxOrd  := { "Código", "Nombre" }
    local cCbxOrd
 
    DEFAULT lGrupo := .f.
@@ -3057,7 +3057,7 @@ FUNCTION BrwEmpresa( oGet, dbfEmp, oGet2, lGrupo )
       oBrw:cName           := "Browse.Empresa"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "CodEmp"
          :bEditValue       := {|| ( dbfEmp )->CodEmp }
          :nWidth           := 80
@@ -3422,7 +3422,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    if !lSoft
 
-      oMsgText( 'Seleccionado sesiÃ³n actual' )
+      oMsgText( 'Seleccionado sesión actual' )
 
       ChkTurno( , oWnd )
 
@@ -3480,7 +3480,7 @@ STATIC FUNCTION WinDelGrp( oBrw, dbfEmp )
    local nRec     := ( dbfEmp )->( Recno() )
 
    if nUsrInUse() > 1
-      msgStop( "Hay mÃ¡s de un usuario conectado a la aplicaciÃ³n", "AtenciÃ³n" )
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       return ( lRet )
    end if
 
@@ -3492,9 +3492,9 @@ STATIC FUNCTION WinDelGrp( oBrw, dbfEmp )
 
    ( dbfEmp )->( dbGoto( nRec ) )
 
-   if ApoloMsgNoYes( "Confirme eliminaciÃ³n de grupo", "SupresiÃ³n de grupo" )
+   if ApoloMsgNoYes( "Confirme eliminación de grupo", "Supresión de grupo" )
 
-      if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos del grupo: " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresiÃ³n de grupo" )
+      if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos del grupo: " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresión de grupo" )
 
          CursorWait()
 
@@ -3584,7 +3584,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local lAIS           := lAIS()
 
    if lAIS()
-      msgStop( "Esta opciÃ³n no esta permitida para motor de bases de datos ADS.")
+      msgStop( "Esta opción no esta permitida para motor de bases de datos ADS.")
       Return ( nil )
    end if
 
@@ -3683,13 +3683,13 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
-         oMsg:SetText( "Creando movimientos de almacÃ©n" )
+         oMsg:SetText( "Creando movimientos de almacén" )
       end if
       
       TRemMovAlm():Create( cPath ):CheckFiles()                                     ; sysrefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando lineas de movimientos de almacÃ©n" )
+         oMsg:SetText( "Creando lineas de movimientos de almacén" )
       end if
 
       TDetMovimientos():Create( cPath ):CheckFiles()                                ; sysrefresh()
@@ -3707,7 +3707,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
-         oMsg:SetText( "Creando catÃ¡logos" )
+         oMsg:SetText( "Creando catálogos" )
       end if
       
       if cPathOld != nil
@@ -3717,7 +3717,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
-         oMsg:SetText( "Creando unidades de mediciÃ³n" )
+         oMsg:SetText( "Creando unidades de medición" )
       end if
 
       if cPathOld != nil
@@ -3772,7 +3772,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkRuta( cPath, aImportacion:lRuta, cPathGrp, nil )            ; sysrefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando almacÃ©n" )
+         oMsg:SetText( "Creando almacén" )
       end if
 
       mkAlmacen(  cPath, aImportacion:lAlmacen, cPathGrp, nil )         ; sysrefresh()
@@ -3883,7 +3883,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
-         oMsg:SetText( "Creando atÃ­picas de clientes y grupos" )
+         oMsg:SetText( "Creando atípicas de clientes y grupos" )
       end if
 
       if cPathOld != nil .and. aImportacion:lArticulos
@@ -3903,7 +3903,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
-         oMsg:SetText( "Creando grupos de facturas automÃ¡ticas" )
+         oMsg:SetText( "Creando grupos de facturas automáticas" )
       end if
 
       if cPathOld != nil .and. aImportacion:lClientes
@@ -4039,11 +4039,11 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       SysRefresh()
 
       /*
-      Tablas de producciÃ³n----------------------------------------------
+      Tablas de producción----------------------------------------------
 		*/
 
       if oMsg != nil
-         oMsg:SetText( "Creando secciones de producciÃ³n" )
+         oMsg:SetText( "Creando secciones de producción" )
       end if
 
       if cPathOld != nil
@@ -4054,7 +4054,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       SysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando horas de producciÃ³n" )
+         oMsg:SetText( "Creando horas de producción" )
       end if
 
       if cPathOld != nil
@@ -4064,7 +4064,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if oMsg != nil
-         oMsg:SetText( "Creando detalle de horas de producciÃ³n" )
+         oMsg:SetText( "Creando detalle de horas de producción" )
       end if
 
       if cPathOld != nil
@@ -4075,7 +4075,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       SysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando operarios de producciÃ³n" )
+         oMsg:SetText( "Creando operarios de producción" )
       end if
 
       if cPathOld != nil
@@ -4086,7 +4086,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       SysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando operaciones de producciÃ³n" )
+         oMsg:SetText( "Creando operaciones de producción" )
       end if
 
       if cPathOld != nil
@@ -4097,7 +4097,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       SysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando tipos de operaciones de producciÃ³n" )
+         oMsg:SetText( "Creando tipos de operaciones de producción" )
       end if
 
       if cPathOld != nil
@@ -4108,7 +4108,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       SysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando maquinarias de producciÃ³n" )
+         oMsg:SetText( "Creando maquinarias de producción" )
       end if
 
       if cPathOld != nil
@@ -4119,7 +4119,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       SysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando costos de maquinarias de producciÃ³n" )
+         oMsg:SetText( "Creando costos de maquinarias de producción" )
       end if
 
       if cPathOld != nil
@@ -4284,18 +4284,18 @@ FUNCTION lActualiza( cCodEmp, oWndBrw, lNoWait, cNomEmp, lCompress )
    DEFAULT lCompress := .t.
 
    if nUsrInUse() > 1
-      msgStop( "Hay mÃ¡s de un usuario conectado a la aplicaciÃ³n", "AtenciÃ³n" )
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       return .f.
    end if
 
    if !TReindex():lFreeHandle()
-      msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicaciÃ³n" + CRLF + ;
+      msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;
                "en estos momentos, reintentelo pasados unos segundos." )
       return .f.
    end if
 
    if !TReindex():lCreateHandle()
-      msgStop( "Esta opciÃ³n ya ha sido inicada por otro usuario", "AtenciÃ³n" )
+      msgStop( "Esta opción ya ha sido inicada por otro usuario", "Atención" )
       return .f.
    end if
 
@@ -4427,7 +4427,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
             ActDbf( cEmpDat, cEmpTmp, "Tiva", "tipos de impuestos", oMet, oMsg, aMsg )
          end if
 
-         oMsg:SetText( "AÃ±adiendo filtros" )
+         oMsg:SetText( "Añadiendo filtros" )
             TFilterDatabase():Create():SyncAllDbf() 
 
          if mkCajas( cEmpTmp )
@@ -4444,11 +4444,11 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          end if
 
          if mkCajPorta( cEmpTmp )
-            ActDbf( cEmpDat, cEmpTmp, "CajPorta", "cajÃ³n portamonedas", oMet, oMsg, aMsg )
+            ActDbf( cEmpDat, cEmpTmp, "CajPorta", "cajón portamonedas", oMet, oMsg, aMsg )
          end if
 
          if mkLogPorta( cEmpTmp )
-            ActDbf( cEmpOld, cEmpTmp, "LogPorta", "log cajÃ³n portamonedas", oMet, oMsg, aMsg )
+            ActDbf( cEmpOld, cEmpTmp, "LogPorta", "log cajón portamonedas", oMet, oMsg, aMsg )
          end if
 
          if mkTipImp( cEmpTmp )
@@ -4456,7 +4456,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          end if
 
          if mkReport( cEmpTmp, .f. )
-            ActDbf( cEmpOld, cEmpTmp, "CfgCar", "AÃ±adiendo datos de documentos", oMet, oMsg, aMsg )
+            ActDbf( cEmpOld, cEmpTmp, "CfgCar", "Añadiendo datos de documentos", oMet, oMsg, aMsg )
          end if
 
          /*
@@ -4468,7 +4468,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "Familias",  "familias", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FamPrv",    "familias de proveedores", oMet, oMsg, aMsg )
 
-         ActDbf( cEmpOld, cEmpTmp, "Categorias","categorÃ­as", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "Categorias","categorías", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Pro",       "propiedades", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "TblPro",    "tabla de propiedades", oMet, oMsg, aMsg )
@@ -4488,14 +4488,14 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "PromoT",    "promociones", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PromoL",    "promociones", oMet, oMsg, aMsg )
 
-         ActDbf( cEmpOld, cEmpTmp, "Articulo",  "artÃ­culos", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "Articulo",  "artículos", oMet, oMsg, aMsg )
 
-         ActDbf( cEmpOld, cEmpTmp, "ArtCodebar","cÃ³digos de barras", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "ArtCodebar","códigos de barras", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "ArtDiv",    "precios por ventas propiedades", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ArtKit",    "artÃ­culos kits", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ArtLbl",    "artÃ­culos relaciÃ³n de codigos de barras", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ArtImg",    "artÃ­culos relaciÃ³n de imagenes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ProvArt",   "artÃ­culos por proveedor", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "ArtKit",    "artículos kits", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "ArtLbl",    "artículos relación de codigos de barras", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "ArtImg",    "artículos relación de imagenes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "ProvArt",   "artículos por proveedor", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "ArtAlm",    "stock por almacenes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "HisMov",    "historicos de movimientos", oMet, oMsg, aMsg )
@@ -4520,7 +4520,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "EntSal",    "entradas y salidas de caja", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "TikeT",     "tickets", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "TikeL",     "lÃ­neas de tickets", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "TikeL",     "líneas de tickets", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "TikeP",     "pagos de tickets", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "TikeC",     "pagos de clientes tickets", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "TikeS",     "series de tickets", oMet, oMsg, aMsg )
@@ -4528,46 +4528,46 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "Oferta",    "ofertas", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "PedProvT",  "pedidos a proveedores", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "PedProvL",  "lÃ­neas de pedidos a proveedores", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "PedProvL",  "líneas de pedidos a proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedPrvI",   "incidencias de pedidos a proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedPrvD",   "documentos de pedidos a proveedores", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "AlbProvT",  "albaran de proveedores", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "AlbProvL",  "lÃ­neas de albarÃ¡n a proveedores", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "AlbProvL",  "líneas de albarán a proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "AlbPrvI",   "incidencias de albaranes a proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "AlbPrvD",   "documentos de albaranes a proveedores", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "AlbPrvS",   "nÃºmeros de serie de albaranes a proveedores", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "AlbPrvS",   "números de serie de albaranes a proveedores", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "FacPrvT",   "facturas de proveedores", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "FacPrvL",   "lÃ­neas de facturas de proveedores", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "FacPrvL",   "líneas de facturas de proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacPrvP",   "pagos de facturas de proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacPrvI",   "incidencias de facturas a proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacPrvD",   "documentos de facturas a proveedores", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "FacPrvS",   "nÃºmeros de serie de facturas a proveedores", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "FacPrvS",   "números de serie de facturas a proveedores", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "RctPrvT",   "facturas rectificativas de proveedores", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "RctPrvL",   "lÃ­neas de facturas rectificativas de proveedores", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "RctPrvL",   "líneas de facturas rectificativas de proveedores", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "RctPrvI",   "incidencias de facturas rectificativas de proveedores", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "RctPrvS",   "nÃºmeros de serie de facturas rectificativas a proveedores", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "RctPrvS",   "números de serie de facturas rectificativas a proveedores", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "DepAgeT",   "depositos a almacenes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "DepAgeL",   "lÃ­neas de depositos a almacenes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "DepAgeL",   "líneas de depositos a almacenes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "ExtAgeT",   "existencias a almacenes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "ExtAgeL",   "lÃ­neas de existencias a almacenes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "ExtAgeL",   "líneas de existencias a almacenes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "SatCliT",   "S.A.T. a clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "SatCliL",   "lÃ­neas de S.A.T. a clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "SatCliL",   "líneas de S.A.T. a clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "SatCliI",   "incidencias de S.A.T. a clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "SatCliD",   "documentos de S.A.T. a clientes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "PreCliT",   "presupuestos a clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "PreCliL",   "lÃ­neas de presupuestos a clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "PreCliL",   "líneas de presupuestos a clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PreCliI",   "incidencias de presupuestos a clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PreCliD",   "documentos de presupuestos a clientes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "PedCliT",   "pedidos de clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "PedCliL",   "lÃ­neas de pedidos de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "PedCliL",   "líneas de pedidos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliR",   "reservas de pedidos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliI",   "incidencias de pedidos de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "PedCliD",   "documentos de pedidos de clientes", oMet, oMsg, aMsg )
@@ -4575,21 +4575,21 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "PedCliE",   "situaciones de pedido de cliente", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "AlbCliT",   "albaranes de clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "AlbCliL",   "lÃ­neas de albaranes de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "AlbCliL",   "líneas de albaranes de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "AlbCliI",   "incidencias de albaranes a clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "AlbCliD",   "documentos de albaranes a clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "AlbCliP",   "entregas a cuenta de albaranes a clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "AlbCliS",   "nÃºmeros de series de albaranes a clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "AlbCliS",   "números de series de albaranes a clientes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "FacCliT",   "facturas de clientes", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "FacCliL",   "lÃ­neas de facturas de clientes", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "FacCliL",   "líneas de facturas de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacCliP",   "pagos de facturas de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacCliI",   "incidencias de facturas de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacCliD",   "documentos de facturas de clientes", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacCliS",   "series de facturas de clientes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "FacRecT",   "facturas rectificativas", oMet, oMsg, aMsg )
-         ActDbf( cEmpOld, cEmpTmp, "FacRecL",   "lÃ­neas de facturas rectificativas", oMet, oMsg, aMsg )
+         ActDbf( cEmpOld, cEmpTmp, "FacRecL",   "líneas de facturas rectificativas", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacRecI",   "incidencias de facturas rectificativas", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacRecD",   "documentos de facturas rectificativas", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "FacRecS",   "series de facturas rectificativas", oMet, oMsg, aMsg )
@@ -4607,7 +4607,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          end if
          */
 
-         oMsg:SetText( "PaÃ­s" )
+         oMsg:SetText( "País" )
          TPais():Create( cPatDat() ):SyncAllDbf()
 
          oMsg:SetText( "Lenguaje" )
@@ -4616,238 +4616,238 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          oMsg:SetText( "Centro de coste" )
          TCentroCoste():Create( cPatDat() ):SyncAllDbf()
 
-         oMsg:SetText( "Unidades de mediciÃ³n" )
+         oMsg:SetText( "Unidades de medición" )
          UniMedicion():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo bancos" )
+         oMsg:SetText( "Añadiendo bancos" )
          TBancos():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo cuentas bancarias" )
+         oMsg:SetText( "Añadiendo cuentas bancarias" )
          TCuentasBancarias():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo backup" )
+         oMsg:SetText( "Añadiendo backup" )
          TBackup():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo envios y recepciones" )
+         oMsg:SetText( "Añadiendo envios y recepciones" )
          TSndRecInf():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo frases publicitarias" )
+         oMsg:SetText( "Añadiendo frases publicitarias" )
          TFrasesPublicitarias():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo datos de documentos" )
+         oMsg:SetText( "Añadiendo datos de documentos" )
          TInfGen():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo grupos de familias" )
+         oMsg:SetText( "Añadiendo grupos de familias" )
          TGrpFam():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo fabricante" )
+         oMsg:SetText( "Añadiendo fabricante" )
          TFabricantes():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo tipos de comandas" )
+         oMsg:SetText( "Añadiendo tipos de comandas" )
          TComandas():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo movimientos de almacÃ©n" )
+         oMsg:SetText( "Añadiendo movimientos de almacén" )
          TRemMovAlm():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo campos extra" )
+         oMsg:SetText( "Añadiendo campos extra" )
          TCamposExtra():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo detalles de campos extra" )
+         oMsg:SetText( "Añadiendo detalles de campos extra" )
          TDetCamposExtra():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo notas" )
+         oMsg:SetText( "Añadiendo notas" )
          TNotas():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo agenda" )
+         oMsg:SetText( "Añadiendo agenda" )
          TAgenda():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo sala de ventas" )
+         oMsg:SetText( "Añadiendo sala de ventas" )
          TSalaVenta():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo ubicaciones de sala de ventas" )
+         oMsg:SetText( "Añadiendo ubicaciones de sala de ventas" )
          TDetSalaVta():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo plantillas de ventas automÃ¡ticas" )
+         oMsg:SetText( "Añadiendo plantillas de ventas automáticas" )
          TFacAutomatica():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lÃ­neas de plantillas de ventas automÃ¡ticas" )
+         oMsg:SetText( "Añadiendo líneas de plantillas de ventas automáticas" )
          TDetFacAutomatica():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo histÃ³rico de plantillas de ventas automÃ¡ticas" )
+         oMsg:SetText( "Añadiendo histórico de plantillas de ventas automáticas" )
          THisFacAutomatica():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo invitaciones" )
+         oMsg:SetText( "Añadiendo invitaciones" )
          TInvitacion():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo partes de producciÃ³n" )
+         oMsg:SetText( "Añadiendo partes de producción" )
          TProduccion():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo expedientes" )
+         oMsg:SetText( "Añadiendo expedientes" )
          TExpediente():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo ordenes de carga" )
+         oMsg:SetText( "Añadiendo ordenes de carga" )
          TOrdCarga():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lÃ­neas ordenes de carga" )
+         oMsg:SetText( "Añadiendo líneas ordenes de carga" )
          TDetOrdCar():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo tipos de artÃ­culos" )
+         oMsg:SetText( "Añadiendo tipos de artículos" )
          TTipArt():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo proyectos" )
+         oMsg:SetText( "Añadiendo proyectos" )
          TProyecto():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo catÃ¡logos de artÃ­culos" )
+         oMsg:SetText( "Añadiendo catálogos de artículos" )
          TCatalogo():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo grupos de clientes" )
+         oMsg:SetText( "Añadiendo grupos de clientes" )
          TGrpCli():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo grupos de proveedores" )
+         oMsg:SetText( "Añadiendo grupos de proveedores" )
          TGrpPrv():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo nuevos impuestos" )
+         oMsg:SetText( "Añadiendo nuevos impuestos" )
          TNewImp():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo transportistas" )
+         oMsg:SetText( "Añadiendo transportistas" )
          TTrans():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo turnos" )
+         oMsg:SetText( "Añadiendo turnos" )
          TTurno():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo cuentas de remesas" )
+         oMsg:SetText( "Añadiendo cuentas de remesas" )
          TCtaRem():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo remesas" )
+         oMsg:SetText( "Añadiendo remesas" )
          TRemesas():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo secciones" )
+         oMsg:SetText( "Añadiendo secciones" )
          TSeccion():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo tipos de horas" )
+         oMsg:SetText( "Añadiendo tipos de horas" )
          THoras():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo operarios" )
+         oMsg:SetText( "Añadiendo operarios" )
          TOperarios():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo horas de operarios" )
+         oMsg:SetText( "Añadiendo horas de operarios" )
          TDetHoras():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo operaciones" )
+         oMsg:SetText( "Añadiendo operaciones" )
          TOperacion():Create():SyncAllDbf()
 
-         oMsg:SetText( "Tipos de operaciÃ³n" )
+         oMsg:SetText( "Tipos de operación" )
          TTipOpera():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo costes maquinaria" )
+         oMsg:SetText( "Añadiendo costes maquinaria" )
          TCosMaq():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo mÃ¡quina" )
+         oMsg:SetText( "Añadiendo máquina" )
          TMaquina():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo detalle mÃ¡quinas" )
+         oMsg:SetText( "Añadiendo detalle máquinas" )
          TDetCostes():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lÃ­neas de partes de producciÃ³n" )
+         oMsg:SetText( "Añadiendo líneas de partes de producción" )
          TDetProduccion():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo series de partes de producciÃ³n" )
+         oMsg:SetText( "Añadiendo series de partes de producción" )
          TDetSeriesProduccion():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lÃ­neas de personal" )
+         oMsg:SetText( "Añadiendo líneas de personal" )
          TDetPersonal():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lÃ­neas de horas de personal" )
+         oMsg:SetText( "Añadiendo líneas de horas de personal" )
          TDetHorasPersonal():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lÃ­neas de materias primas" )
+         oMsg:SetText( "Añadiendo líneas de materias primas" )
          TDetMaterial():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo series de materiales de producciÃ³n" )
+         oMsg:SetText( "Añadiendo series de materiales de producción" )
          TDetSeriesMaterial():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lineas de movimientos de almacÃ©n" )
+         oMsg:SetText( "Añadiendo lineas de movimientos de almacén" )
          TDetMovimientos():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo series de movimientos de almacÃ©n" )
+         oMsg:SetText( "Añadiendo series de movimientos de almacén" )
          TDetSeriesMovimientos():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lÃ­neas de maquinaria" )
+         oMsg:SetText( "Añadiendo líneas de maquinaria" )
          TDetMaquina():New():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo tipos de expedientes" )
+         oMsg:SetText( "Añadiendo tipos de expedientes" )
          TTipoExpediente():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo subtipos de expediente" )
+         oMsg:SetText( "Añadiendo subtipos de expediente" )
          TDetTipoExpediente():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo entidades" )
+         oMsg:SetText( "Añadiendo entidades" )
          TEntidades():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo colaboradores" )
+         oMsg:SetText( "Añadiendo colaboradores" )
          TColaboradores():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo actuaciones" )
+         oMsg:SetText( "Añadiendo actuaciones" )
          TActuaciones():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo expedientes" )
+         oMsg:SetText( "Añadiendo expedientes" )
          TExpediente():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo actuaciones de expedientes" )
+         oMsg:SetText( "Añadiendo actuaciones de expedientes" )
          TDetActuacion():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo tanques de combustible" )
+         oMsg:SetText( "Añadiendo tanques de combustible" )
          TTankes():Create( cPatArt() ):SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo comentarios" )
+         oMsg:SetText( "Añadiendo comentarios" )
          TComentarios():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo detalles de comentarios" )
+         oMsg:SetText( "Añadiendo detalles de comentarios" )
          TDetComentarios():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo ordenes de comandas" )
+         oMsg:SetText( "Añadiendo ordenes de comandas" )
          TOrdenComanda():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo programas de fidelizaciÃ³n" )
+         oMsg:SetText( "Añadiendo programas de fidelización" )
          TFideliza():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo detalles de programas de fidelizaciÃ³n" )
+         oMsg:SetText( "Añadiendo detalles de programas de fidelización" )
          TDetFideliza():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo capturas" )
+         oMsg:SetText( "Añadiendo capturas" )
          TCaptura():Create( cPatDat() ):SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo detalles de capturas" )
+         oMsg:SetText( "Añadiendo detalles de capturas" )
          TDetCaptura():Create( cPatDat() ):SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo plantillas XML" )
+         oMsg:SetText( "Añadiendo plantillas XML" )
          TPlantillaXml():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo detalles de plantillas XML" )
+         oMsg:SetText( "Añadiendo detalles de plantillas XML" )
          TDetCabeceraPlantillaXML():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo liquidaciones de agentes" )
+         oMsg:SetText( "Añadiendo liquidaciones de agentes" )
          TCobAge():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo lÃ­neas de liquidaciones de agentes" )
+         oMsg:SetText( "Añadiendo líneas de liquidaciones de agentes" )
          TDetCobAge():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo reporting" )
+         oMsg:SetText( "Añadiendo reporting" )
          TFastReportInfGen():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo scripts" )
+         oMsg:SetText( "Añadiendo scripts" )
          TScripts():Create():SyncAllDbf()
 
-         oMsg:SetText( "AÃ±adiendo envios y recepciones de internet" )
+         oMsg:SetText( "Añadiendo envios y recepciones de internet" )
          TSndRecInf():SyncAllDbf()
 
-         oMsg:SetText( "MenÃºs" )
+         oMsg:SetText( "Menús" )
          TpvMenu():Create():SyncAllDbf()
 
-         oMsg:SetText( "Ordenes de menÃºs" )
+         oMsg:SetText( "Ordenes de menús" )
          TpvMenuOrdenes():Create():SyncAllDbf()
 
-         oMsg:SetText( "Articulos de menÃº" )
+         oMsg:SetText( "Articulos de menú" )
          TPVMenuArticulo():Create():SyncAllDbf()
 
       RECOVER USING oError
@@ -5013,7 +5013,7 @@ Static Function BeginEdtRec( aTmp )
    end if
 
 	/*
-   AÃ±adimos a los temporales---------------------------------------------------
+   Añadimos a los temporales---------------------------------------------------
 	*/
 
    if !lErrors
@@ -5079,7 +5079,7 @@ Static Function BeginEdtCnf( aTmp )
    end if
 
 	/*
-   AÃ±adimos a los temporales---------------------------------------------------
+   Añadimos a los temporales---------------------------------------------------
 	*/
 
    if !lErrors
@@ -5125,7 +5125,7 @@ Return nil
 //---------------------------------------------------------------------------//
 
 /*
-Comprueba los cambios de estructura y aÃ±ade registros
+Comprueba los cambios de estructura y añade registros
 */
 
 FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
@@ -5143,7 +5143,7 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
    SysRefresh()
 
    if oMsg != nil
-      oMsg:SetText( "AÃ±adiendo " + cText )
+      oMsg:SetText( "Añadiendo " + cText )
    end if
 
    if !lExistTable( dbfNamOld + ".Dbf" )
@@ -5383,7 +5383,7 @@ FUNCTION ConfEmpresa( oWnd, oMenuItem, nSelFolder )
       if ( dbfEmp )->( dbSeek( cCodEmp() ) )
          WinEdtRec( nil, bEdtC, dbfEmp, nSelFolder )
       else
-         MsgStop( "CÃ³digo de empresa " + cCodEmp() + " no encontrada." )
+         MsgStop( "Código de empresa " + cCodEmp() + " no encontrada." )
       end if
 
       CloseFiles()
@@ -5511,13 +5511,13 @@ Function ChkAllEmp( lForced )
       ( dbfEmp )->( dbCloseArea() )
 
       if lForced .or. ;
-         ApoloMsgNoYes(    "El sistema ha detectado una nueva versiÃ³n, es"       + CRLF + ;
-                           "conveniente que inicie el proceso de actualizaciÃ³n"  + CRLF + ;
+         ApoloMsgNoYes(    "El sistema ha detectado una nueva versión, es"       + CRLF + ;
+                           "conveniente que inicie el proceso de actualización"  + CRLF + ;
                            "de sus datos, para ello deben de salir todos los"    + CRLF + ;
-                           "usuarios de la aplicaciÃ³n."                          + CRLF + ;
+                           "usuarios de la aplicación."                          + CRLF + ;
                                                                                  + CRLF + ;
-                           "Â¿Desea actualizar todos sus datos?",;
-                           "Seleccione una opciÃ³n" )
+                           "¿Desea actualizar todos sus datos?",;
+                           "Seleccione una opción" )
 
 
          if !Empty( oWnd() )
@@ -5921,7 +5921,7 @@ function BrwDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
    local cGet1
 	local oCbxOrd
    local cCbxOrd
-   local aCbxOrd           := { "CÃ³digo" }
+   local aCbxOrd           := { "Código" }
 
    DEFAULT cCodigoEmpresa  := cCodEmp()
 
@@ -5934,7 +5934,7 @@ function BrwDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
    ( dbfDelega )->( dbSetFilter( {|| Field->cCodEmp == cCodigoEmpresa }, "cCodEmp == " + cCodigoEmpresa ) )
    ( dbfDelega )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "DelegaciÃ³n"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Delegación"
 
 		REDEFINE GET oGet1 VAR cGet1;
          ID          104 ;
@@ -5960,7 +5960,7 @@ function BrwDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
       oBrw:cName           := "Browse.Delegacion.Empresa"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCodDlg"
          :bEditValue       := {|| ( dbfDelega )->cCodDlg }
          :nWidth           := 80
@@ -6059,7 +6059,7 @@ function cDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
 
    else
       
-      msgStop( "DelegaciÃ³n no encontrada" )
+      msgStop( "Delegación no encontrada" )
 
    end if
 
@@ -6376,37 +6376,37 @@ FUNCTION aItmEmp()
 
    local aDbf  := {}
 
-   aAdd( aDbf, {"CodEmp",     "C",  4, 0, "CÃ³digo de la empresa",            "",                   "", "aEmp()", "" } )
+   aAdd( aDbf, {"CodEmp",     "C",  4, 0, "Código de la empresa",            "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"cNombre",    "C", 45, 0, "Nombre de la empresa",            "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CNIF",       "C", 15, 0, "Nif de la empresa",               "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CADMINIS",   "C", 35, 0, "Administrador",                   "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CDOMICILIO", "C", 35, 0, "Domicilio",                       "",                   "", "aEmp()", "" } )
-   aAdd( aDbf, {"CPOBLACION", "C", 35, 0, "PoblaciÃ³n",                       "",                   "", "aEmp()", "" } )
+   aAdd( aDbf, {"CPOBLACION", "C", 35, 0, "Población",                       "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CPROVINCIA", "C", 30, 0, "Provincia",                       "",                   "", "aEmp()", "" } )
-   aAdd( aDbf, {"CCODPOS",    "C",  5, 0, "CÃ³digo postal",                   "",                   "", "aEmp()", "" } )
-   aAdd( aDbf, {"CTLF",       "C", 15, 0, "TelÃ©fono",                        "",                   "", "aEmp()", "" } )
+   aAdd( aDbf, {"CCODPOS",    "C",  5, 0, "Código postal",                   "",                   "", "aEmp()", "" } )
+   aAdd( aDbf, {"CTLF",       "C", 15, 0, "Teléfono",                        "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CFAX",       "C", 15, 0, "Fax",                             "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"EMAIL",      "C", 50, 0, "E-mail",                          "",                   "", "aEmp()", "" } )
-   aAdd( aDbf, {"WEB",        "C",120, 0, "PÃ¡gina web",                      "",                   "", "aEmp()", "" } )
+   aAdd( aDbf, {"WEB",        "C",120, 0, "Página web",                      "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"LACTIVA",    "L",  1, 0, "Activa",                          "",                   "", "aEmp()", .f. } )
-   aAdd( aDbf, {"NCODCLI",    "N",  2, 0, "NÃºmero de digitos del cÃ³digo de cliente", "",           "", "aEmp()", 0 } )
-   aAdd( aDbf, {"NCODPRV",    "N",  2, 0, "NÃºmero de digitos del cÃ³digo de proveedor", "",         "", "aEmp()", 0 } )
+   aAdd( aDbf, {"NCODCLI",    "N",  2, 0, "Número de digitos del código de cliente", "",           "", "aEmp()", 0 } )
+   aAdd( aDbf, {"NCODPRV",    "N",  2, 0, "Número de digitos del código de proveedor", "",         "", "aEmp()", 0 } )
    aAdd( aDbf, {"CSUFDOC",    "C",  2, 0, "Sufijo para documentos",          "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CDIVEMP",    "C",  3, 0, "Divisa de la empresa",            "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CDIVCHG",    "C",  3, 0, "Divisa para cambios",             "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"NTURTIK",    "N",  4, 0, "Contador para turnos",            "",                   "", "aEmp()", 0 } )
-   aAdd( aDbf, {"LCODART",    "L",  1, 0, "Permitir solo artÃ­culos codificados", "",               "", "aEmp()", .f. } )
+   aAdd( aDbf, {"LCODART",    "L",  1, 0, "Permitir solo artículos codificados", "",               "", "aEmp()", .f. } )
    aAdd( aDbf, {"CENVUSR",    "C", 20, 0, "Tipo de envio cliente o servidor","",                   "", "aEmp()", "" } )
-   aAdd( aDbf, {"NTIPCON",    "N",  1, 0, "Tipo de conexiÃ³n",                "",                   "", "aEmp()", 0 } )
-   aAdd( aDbf, {"CRUTCON",    "C",250, 0, "Ruta de la conexiÃ³n",             "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"CNOMCON",    "C", 50, 0, "Nombre de la conexiÃ³n",           "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"CUSRCON",    "C", 50, 0, "Nombre de usuario de la conexiÃ³n","",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"CPSWCON",    "C", 20, 0, "Password para conexiÃ³n",          "",                   "", "aEmp()", nil } )
+   aAdd( aDbf, {"NTIPCON",    "N",  1, 0, "Tipo de conexión",                "",                   "", "aEmp()", 0 } )
+   aAdd( aDbf, {"CRUTCON",    "C",250, 0, "Ruta de la conexión",             "",                   "", "aEmp()", nil } )
+   aAdd( aDbf, {"CNOMCON",    "C", 50, 0, "Nombre de la conexión",           "",                   "", "aEmp()", nil } )
+   aAdd( aDbf, {"CUSRCON",    "C", 50, 0, "Nombre de usuario de la conexión","",                   "", "aEmp()", nil } )
+   aAdd( aDbf, {"CPSWCON",    "C", 20, 0, "Password para conexión",          "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"CSITFTP",    "C",100, 0, "Nombre del servidor ftp",         "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"CUSRFTP",    "C", 50, 0, "Nombre de usuario para ftp",      "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"CPSWFTP",    "C", 20, 0, "Password para usuario",           "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"NNUMTUR",    "N",  9, 0, "NÃºmero del turno",                "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"NNUMREM",    "N",  9, 0, "NÃºmero de la remesa",             "",                   "", "aEmp()", nil } )
+   aAdd( aDbf, {"NNUMTUR",    "N",  9, 0, "Número del turno",                "",                   "", "aEmp()", nil } )
+   aAdd( aDbf, {"NNUMREM",    "N",  9, 0, "Número de la remesa",             "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"LUSECAJ",    "L",  1, 0, "Usar cajas",                      "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"LCALCAJ",    "L",  1, 0, "Cajas en calculo",                "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"LENTCON",    "L",  1, 0, "Entradas continuas",              "",                   "", "aEmp()", nil } )
@@ -6420,65 +6420,65 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"CNUMALB",    "C", 50, 0, "Texto a incluir comentarios de nuestro albaran", "",    "", "aEmp()", nil } )
    aAdd( aDbf, {"LSUALB" ,    "L",  1, 0, "Incluir comentarios de su albaran", "",                 "", "aEmp()", nil } )
    aAdd( aDbf, {"CSUALB" ,    "C", 50, 0, "Texto a incluir comentarios de su albaran", "",         "", "aEmp()", nil } )
-   aAdd( aDbf, {"LNUMOBR",    "L",  1, 0, "Incluir comentarios de la direcciÃ³n",  "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"CNUMOBR",    "C", 50, 0, "Texto a incluir comentarios de la direcciÃ³n", "",            "", "aEmp()", nil } )
+   aAdd( aDbf, {"LNUMOBR",    "L",  1, 0, "Incluir comentarios de la dirección",  "",                   "", "aEmp()", nil } )
+   aAdd( aDbf, {"CNUMOBR",    "C", 50, 0, "Texto a incluir comentarios de la dirección", "",            "", "aEmp()", nil } )
    aAdd( aDbf, {"CDEFALM",    "C", 16, 0, "Almacen por defecto",             "",                   "", "aEmp()", nil } )
    aAdd( aDbf, {"CDEFFPG",    "C",  2, 0, "Forma de pago por defecto",       "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"NDGTUND",    "N",  2, 0, "NÃºmero de digitos para las unidades", "",               "", "aEmp()", nil } )
-   aAdd( aDbf, {"NDECUND",    "N",  1, 0, "NÃºmero de decimales para las unidades", "",             "", "aEmp()", nil } )
+   aAdd( aDbf, {"NDGTUND",    "N",  2, 0, "Número de digitos para las unidades", "",               "", "aEmp()", nil } )
+   aAdd( aDbf, {"NDECUND",    "N",  1, 0, "Número de decimales para las unidades", "",             "", "aEmp()", nil } )
    aAdd( aDbf, {"CRUTCNT",    "C",100, 0, "Ruta de contabilidad",            "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpA",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie A", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpB",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie B", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpC",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie C", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpD",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie D", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpE",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie E", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpF",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie F", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpG",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie G", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpH",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie H", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpI",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie I", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpJ",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie J", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpK",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie K", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpL",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie L", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpM",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie M", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpN",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie N", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpO",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie O", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpP",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie P", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpQ",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie Q", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpR",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie R", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpS",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie S", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpT",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie T", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpU",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie U", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpV",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie V", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpW",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie W", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpX",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie X", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpY",   "C",  5, 0, "CÃ³digo de la empresa en contaplus para la serie Y", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpA",   "C",  5, 0, "Código de la empresa en contaplus para la serie A", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpB",   "C",  5, 0, "Código de la empresa en contaplus para la serie B", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpC",   "C",  5, 0, "Código de la empresa en contaplus para la serie C", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpD",   "C",  5, 0, "Código de la empresa en contaplus para la serie D", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpE",   "C",  5, 0, "Código de la empresa en contaplus para la serie E", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpF",   "C",  5, 0, "Código de la empresa en contaplus para la serie F", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpG",   "C",  5, 0, "Código de la empresa en contaplus para la serie G", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpH",   "C",  5, 0, "Código de la empresa en contaplus para la serie H", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpI",   "C",  5, 0, "Código de la empresa en contaplus para la serie I", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpJ",   "C",  5, 0, "Código de la empresa en contaplus para la serie J", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpK",   "C",  5, 0, "Código de la empresa en contaplus para la serie K", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpL",   "C",  5, 0, "Código de la empresa en contaplus para la serie L", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpM",   "C",  5, 0, "Código de la empresa en contaplus para la serie M", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpN",   "C",  5, 0, "Código de la empresa en contaplus para la serie N", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpO",   "C",  5, 0, "Código de la empresa en contaplus para la serie O", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpP",   "C",  5, 0, "Código de la empresa en contaplus para la serie P", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpQ",   "C",  5, 0, "Código de la empresa en contaplus para la serie Q", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpR",   "C",  5, 0, "Código de la empresa en contaplus para la serie R", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpS",   "C",  5, 0, "Código de la empresa en contaplus para la serie S", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpT",   "C",  5, 0, "Código de la empresa en contaplus para la serie T", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpU",   "C",  5, 0, "Código de la empresa en contaplus para la serie U", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpV",   "C",  5, 0, "Código de la empresa en contaplus para la serie V", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpW",   "C",  5, 0, "Código de la empresa en contaplus para la serie W", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpX",   "C",  5, 0, "Código de la empresa en contaplus para la serie X", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpY",   "C",  5, 0, "Código de la empresa en contaplus para la serie Y", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodEmpZ",   "C",  5, 0, "Codigo de la empresa en contaplus para la serie Z", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProA",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie A" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProB",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie B" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProC",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie C" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProD",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie D" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProE",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie E" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProF",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie F" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProG",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie G" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProH",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie H" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProI",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie I" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProJ",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie J" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProK",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie K" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProL",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie L" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProM",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie M" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProN",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie N" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProO",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie O" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProP",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie P" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProQ",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie Q" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProR",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie R" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProS",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie S" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProT",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie T" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProU",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie U" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProV",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie V" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProW",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie W" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProX",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie X" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProY",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie Y" , "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodProZ",   "C",  9, 0, "CÃ³digo del proyecto en contaplus para la serie Z",  "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProA",   "C",  9, 0, "Código del proyecto en contaplus para la serie A" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProB",   "C",  9, 0, "Código del proyecto en contaplus para la serie B" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProC",   "C",  9, 0, "Código del proyecto en contaplus para la serie C" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProD",   "C",  9, 0, "Código del proyecto en contaplus para la serie D" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProE",   "C",  9, 0, "Código del proyecto en contaplus para la serie E" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProF",   "C",  9, 0, "Código del proyecto en contaplus para la serie F" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProG",   "C",  9, 0, "Código del proyecto en contaplus para la serie G" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProH",   "C",  9, 0, "Código del proyecto en contaplus para la serie H" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProI",   "C",  9, 0, "Código del proyecto en contaplus para la serie I" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProJ",   "C",  9, 0, "Código del proyecto en contaplus para la serie J" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProK",   "C",  9, 0, "Código del proyecto en contaplus para la serie K" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProL",   "C",  9, 0, "Código del proyecto en contaplus para la serie L" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProM",   "C",  9, 0, "Código del proyecto en contaplus para la serie M" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProN",   "C",  9, 0, "Código del proyecto en contaplus para la serie N" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProO",   "C",  9, 0, "Código del proyecto en contaplus para la serie O" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProP",   "C",  9, 0, "Código del proyecto en contaplus para la serie P" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProQ",   "C",  9, 0, "Código del proyecto en contaplus para la serie Q" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProR",   "C",  9, 0, "Código del proyecto en contaplus para la serie R" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProS",   "C",  9, 0, "Código del proyecto en contaplus para la serie S" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProT",   "C",  9, 0, "Código del proyecto en contaplus para la serie T" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProU",   "C",  9, 0, "Código del proyecto en contaplus para la serie U" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProV",   "C",  9, 0, "Código del proyecto en contaplus para la serie V" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProW",   "C",  9, 0, "Código del proyecto en contaplus para la serie W" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProX",   "C",  9, 0, "Código del proyecto en contaplus para la serie X" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProY",   "C",  9, 0, "Código del proyecto en contaplus para la serie Y" , "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodProZ",   "C",  9, 0, "Código del proyecto en contaplus para la serie Z",  "", "", "aEmp()", nil } )
    aAdd( aDbf, {"CCTACLI",    "C",  3, 0, "Cuenta en contaplus de clientes",                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"CCTAPRV",    "C",  3, 0, "Cuenta en contaplus de proveedores",                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"CCTAVTA",    "C",  3, 0, "Cuenta en contaplus de venta",                      "", "", "aEmp()", nil } )
@@ -6489,16 +6489,16 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"CCTACOB",    "C", 12, 0, "Subcuenta de cobros en T.P.V.",                         "", "", "aEmp()", nil } )
    aAdd( aDbf, {"CCTASIN",    "C", 12, 0, "Subcuenta de clientes sin codificar",                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"LGETCOB",    "L",  1, 0, "Recoger obras",                                         "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"DFECVER",    "D",  8, 0, "Fecha de la versiÃ³n",                                   "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"LSELFAM",    "L",  1, 0, "Selector por famÃ­lia",                                  "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"DFECVER",    "D",  8, 0, "Fecha de la versión",                                   "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"LSELFAM",    "L",  1, 0, "Selector por família",                                  "", "", "aEmp()", nil } )
    aAdd( aDbf, {"LUSEIMP",    "L",  1, 0, "Habilitar impuestos especiales",                        "", "", "aEmp()", nil } )
    aAdd( aDbf, {"LMODIMP",    "L",  1, 0, "Modificar impuestos especiales",                        "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"NNUMLIQ",    "N",  9, 0, "NÃºmero de la liquidaciÃ³n",                              "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"NNUMCAR",    "N",  9, 0, "NÃºmero de la ordenes de carga",                         "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"NNUMLIQ",    "N",  9, 0, "Número de la liquidación",                              "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"NNUMCAR",    "N",  9, 0, "Número de la ordenes de carga",                         "", "", "aEmp()", nil } )
    aAdd( aDbf, {"CDIRIMG",    "C",100, 0, "Directorio de imagenes",                                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"CDEFIVA",    "C",  1, 0, "Tipo de impuesto por defecto",                          "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"NNUMMOV",    "N",  9, 0, "NÃºmero del movimiento de almacen",                      "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"NNUMCOB",    "N",  9, 0, "NÃºmero del cobro de agentes",                           "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"NNUMMOV",    "N",  9, 0, "Número del movimiento de almacen",                      "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"NNUMCOB",    "N",  9, 0, "Número del cobro de agentes",                           "", "", "aEmp()", nil } )
    aAdd( aDbf, {"NDEFBNF1",   "N",  6, 2, "Primer porcentaje de beneficio por defecto",            "", "", "aEmp()", nil } )
    aAdd( aDbf, {"NDEFBNF2",   "N",  6, 2, "Segundo porcentaje de beneficio por defecto",           "", "", "aEmp()", nil } )
    aAdd( aDbf, {"NDEFBNF3",   "N",  6, 2, "Tercer porcentaje de beneficio por defecto",            "", "", "aEmp()", nil } )
@@ -6512,23 +6512,23 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nDefSbr5",   "N",  1, 0, "Quinto beneficio sobre el costo o sobre venta por defecto", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"nDefSbr6",   "N",  1, 0, "Sexto beneficio sobre el costo o sobre venta por defecto",  "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lShwKit",    "L",  1, 0, "Mostrar productos kit",                                 "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lPasNil",    "L",  1, 0, "Confirmar artÃ­culos sin valorar",                       "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"nDgtEsc",    "N",  1, 0, "NÃºmero de digitos para escandallos",                    "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"nDecEsc",    "N",  1, 0, "NÃºmero de decimales para escandallos",                  "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lPasNil",    "L",  1, 0, "Confirmar artículos sin valorar",                       "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"nDgtEsc",    "N",  1, 0, "Número de digitos para escandallos",                    "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"nDecEsc",    "N",  1, 0, "Número de decimales para escandallos",                  "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lGetLot",    "L",  1, 0, "Recoger lotes",                                         "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lBusImp",    "L",  1, 0, "Buscar importes en la tarifa inferior",                 "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lShwCos",    "L",  1, 0, "Mostrar precios de costo",                              "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lGetAge",    "L",  1, 0, "Recoger el agente",                                     "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lImpExa",    "L",  1, 0, "Importe exacto al cobrar",                              "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lGetUsr",    "L",  1, 0, "Recoger el usuario",                                    "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lIvaReq",    "L",  1, 0, "LÃ³gico para creaciÃ³n de cuentas de contabilidad",       "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lEnvEnt",    "L",  1, 0, "LÃ³gico para enviar solo albaranes entregados",          "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lIvaReq",    "L",  1, 0, "Lógico para creación de cuentas de contabilidad",       "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lEnvEnt",    "L",  1, 0, "Lógico para enviar solo albaranes entregados",          "", "", "aEmp()", nil } )
    aAdd( aDbf, {"nDiaVal",    "N",  3, 0, "Dias de validez para un presupuesto",                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCtaAnt",    "C", 12, 0, "Subcuenta de anticipos de clientes",                    "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"nSndInf",    "N",  9, 0, "NÃºmero del Ãºltimo envio",                               "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"nRecInf",    "N",  9, 0, "NÃºmero del la Ãºltima recepciÃ³n",                        "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"nSndInf",    "N",  9, 0, "Número del último envio",                               "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"nRecInf",    "N",  9, 0, "Número del la última recepción",                        "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cPrnPdf",    "C",220, 0, "Impresora para generar PDF",                            "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lCodeBar",   "L",  1, 0, "LÃ³gico seleccionar multiples cÃ³digos de barras",        "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lCodeBar",   "L",  1, 0, "Lógico seleccionar multiples códigos de barras",        "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cDedVta",    "C",  2, 0, "Tipo de venta por defecto",                             "", "", "aEmp()", nil } )
    aAdd( aDbf, {"dIniOpe",    "D",  8, 0, "Fecha de inicio de las operaciones",                    "", "", "aEmp()", nil } )
    aAdd( aDbf, {"dFinOpe",    "D",  8, 0, "Fecha de fin de las operaciones",                       "", "", "aEmp()", nil } )
@@ -6536,22 +6536,22 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cSitSql",    "C",100, 0, "Nombre del servidor para MySql",                        "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cUsrSql",    "C", 50, 0, "Nombre de usuario para MySql",                          "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cPswSql",    "C", 20, 0, "Password para usuario para MySql",                      "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"nPrtSql",    "N",  5, 0, "Puerto para conexiÃ³n de MySql",                         "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"nPrtSql",    "N",  5, 0, "Puerto para conexión de MySql",                         "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cDtbSql",    "C",100, 0, "Base de datos MySql",                                   "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cNbrCaj",    "C",100, 0, "DescripciÃ³n para cajas",                                "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cNbrUnd",    "C",100, 0, "DescripciÃ³n para unidades",                             "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lUsePor",    "L",  1, 0, "LÃ³gico habilitar portes",                               "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lUsePnt",    "L",  1, 0, "LÃ³gico habilitar punto verde",                          "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lIvaInc",    "L",  1, 0, "LÃ³gico para impuestos incluido",                        "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cNbrCaj",    "C",100, 0, "Descripción para cajas",                                "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cNbrUnd",    "C",100, 0, "Descripción para unidades",                             "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lUsePor",    "L",  1, 0, "Lógico habilitar portes",                               "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lUsePnt",    "L",  1, 0, "Lógico habilitar punto verde",                          "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lIvaInc",    "L",  1, 0, "Lógico para impuestos incluido",                        "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCtaCeeRpt", "C", 12, 0, "Cuenta en contaplus de impuestos repercutido",          "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCtaCeeSpt", "C", 12, 0, "Cuenta en contaplus de impuestos soportado",            "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lUseTbl",    "L",  1, 0, "LÃ³gico para usar tabla de propiedades",                 "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lShwTar1",   "L",  1, 0, "LÃ³gico para mostrar la primera tarifa",                 "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"lShwTar2",   "L",  1, 0, "LÃ³gico para mostrar la segunda tarifa",                 "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"lShwTar3",   "L",  1, 0, "LÃ³gico para mostrar la tercera tarifa",                 "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"lShwTar4",   "L",  1, 0, "LÃ³gico para mostrar la cuarta tarifa",                  "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"lShwTar5",   "L",  1, 0, "LÃ³gico para mostrar la quinta tarifa",                  "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"lShwTar6",   "L",  1, 0, "LÃ³gico para mostrar la sexta tarifa",                   "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lUseTbl",    "L",  1, 0, "Lógico para usar tabla de propiedades",                 "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lShwTar1",   "L",  1, 0, "Lógico para mostrar la primera tarifa",                 "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lShwTar2",   "L",  1, 0, "Lógico para mostrar la segunda tarifa",                 "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lShwTar3",   "L",  1, 0, "Lógico para mostrar la tercera tarifa",                 "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lShwTar4",   "L",  1, 0, "Lógico para mostrar la cuarta tarifa",                  "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lShwTar5",   "L",  1, 0, "Lógico para mostrar la quinta tarifa",                  "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lShwTar6",   "L",  1, 0, "Lógico para mostrar la sexta tarifa",                   "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"cTxtTar1",   "C", 50, 0, "Nombre para la primera tarifa",                         "", "", "aEmp()", "Precio 1"} )
    aAdd( aDbf, {"cTxtTar2",   "C", 50, 0, "Nombre para la segunda tarifa",                         "", "", "aEmp()", "Precio 2"} )
    aAdd( aDbf, {"cTxtTar3",   "C", 50, 0, "Nombre para la tercera tarifa",                         "", "", "aEmp()", "Precio 3"} )
@@ -6564,61 +6564,61 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cPssMai",    "C",250, 0, "Clave de cuenta de correo",                             "", "", "aEmp()", "" } )
    aAdd( aDbf, {"cCcpMai",    "C",250, 0, "Enviar copias de mail a cuenta de correo",              "", "", "aEmp()", "" } )
    aAdd( aDbf, {"nNumPgo",    "N",  9, 0, "Contador para pago de clientes",                        "", "", "aEmp()", 1 } )
-   aAdd( aDbf, {"lSelCaj",    "L",  1, 0, "LÃ³gico seleccionar cajas",                              "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lSelAlm",    "L",  1, 0, "LÃ³gico seleccionar almacenes",                          "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lAddCut",    "L",  1, 0, "LÃ³gico sumar unidades en TPV",                          "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lFidelity",  "L",  1, 0, "LÃ³gico para iniciar el modo fidelity",                  "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lPreLin",    "L",  1, 0, "LÃ³gico seleccionar precios en lÃ­nea",                   "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lDtoLin",    "L",  1, 0, "LÃ³gico habilitar descuento lineal",                     "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"lSalPdt",    "L",  1, 0, "LÃ³gico avisar saldo pendiente",                         "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lSelCaj",    "L",  1, 0, "Lógico seleccionar cajas",                              "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lSelAlm",    "L",  1, 0, "Lógico seleccionar almacenes",                          "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lAddCut",    "L",  1, 0, "Lógico sumar unidades en TPV",                          "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lFidelity",  "L",  1, 0, "Lógico para iniciar el modo fidelity",                  "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lPreLin",    "L",  1, 0, "Lógico seleccionar precios en línea",                   "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lDtoLin",    "L",  1, 0, "Lógico habilitar descuento lineal",                     "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lSalPdt",    "L",  1, 0, "Lógico avisar saldo pendiente",                         "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"nPrtMai",    "N",  5, 0, "Puerto del servidor de correo",                         "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lAutMai",    "L",  1, 0, "LÃ³gico de autenticaciÃ³n del servidor de correo",        "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lGetUbi",    "L",  1, 0, "Recoger ubicaciÃ³n de venta",                            "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lGrupo",     "L",  1, 0, "LÃ³gico de grupo",                                       "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodGrp",    "C",  4, 0, "CÃ³digo del grupo",                                      "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lStkCero",   "L",  1, 0, "LÃ³gico para mostrar estokaje cero",                     "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lShowSala",  "L",  1, 0, "LÃ³gico para mostrar las sala de venta siempre",         "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"nPreTPro",   "N",  1, 0, "Precios para productos en tÃ¡ctil",                      "", "", "aEmp()", 1 } )
-   aAdd( aDbf, {"nPreTCmb",   "N",  1, 0, "Precios para combinados en tÃ¡ctil",                     "", "", "aEmp()", 2 } )
-   aAdd( aDbf, {"lCosPrv",    "L",  1, 0, "LÃ³gico costo por proveedor",                            "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lShwPop",    "L",  1, 0, "LÃ³gico de mostrar ventanas de stocks",                  "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"nCifRut",    "N",  1, 0, "NÃºmerico para calclulo de CIF o RUT",                   "", "", "aEmp()", 1 } )
+   aAdd( aDbf, {"lAutMai",    "L",  1, 0, "Lógico de autenticación del servidor de correo",        "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lGetUbi",    "L",  1, 0, "Recoger ubicación de venta",                            "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lGrupo",     "L",  1, 0, "Lógico de grupo",                                       "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodGrp",    "C",  4, 0, "Código del grupo",                                      "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lStkCero",   "L",  1, 0, "Lógico para mostrar estokaje cero",                     "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lShowSala",  "L",  1, 0, "Lógico para mostrar las sala de venta siempre",         "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"nPreTPro",   "N",  1, 0, "Precios para productos en táctil",                      "", "", "aEmp()", 1 } )
+   aAdd( aDbf, {"nPreTCmb",   "N",  1, 0, "Precios para combinados en táctil",                     "", "", "aEmp()", 2 } )
+   aAdd( aDbf, {"lCosPrv",    "L",  1, 0, "Lógico costo por proveedor",                            "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lShwPop",    "L",  1, 0, "Lógico de mostrar ventanas de stocks",                  "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"nCifRut",    "N",  1, 0, "Númerico para calclulo de CIF o RUT",                   "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"cDImagen",   "C",250, 0, "Ruta para las imagenes en FTP",                         "", "", "aEmp()", Space( 250 ) } )
-   aAdd( aDbf, {"lGetFpg",    "L",  1, 0, "LÃ³gico de solicitar siempre forma de pago",             "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lGetFpg",    "L",  1, 0, "Lógico de solicitar siempre forma de pago",             "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cSeriePed",  "C",  1, 0, "Serie para pedidos de internet",                        "", "", "aEmp()", "A" } )
    aAdd( aDbf, {"nTiempoPed", "N",  3, 0, "Tiempo en recargar los pedidos",                        "", "", "aEmp()", 0 } )
    aAdd( aDbf, {"lNStkAct",   "L",  1, 0, "Logico para no mostrar el stock actual en ventas",      "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cRutEdi",    "C",250, 0, "Ruta para exportar las facturas a EDI",                 "", "", "aEmp()", Space( 250 ) } )
-   aAdd( aDbf, {"cCodEdi",    "C", 17, 0, "CÃ³digo EDI [EAN] de nuestras empresa",                  "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEdi",    "C", 17, 0, "Código EDI [EAN] de nuestras empresa",                  "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cUsrFtpImg", "C", 50, 0, "Nombre de usuario para ftp de imagenes",                "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cPswFtpImg", "C", 50, 0, "ContraseÃ±a de usuario para ftp de imagenes",            "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cPswFtpImg", "C", 50, 0, "Contraseña de usuario para ftp de imagenes",            "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cHstFtpImg", "C", 50, 0, "Host para ftp de imagenes",                             "", "", "aEmp()", nil } )
    aAdd( aDbf, {"nPrtFtp",    "N",  5, 0, "Puerto del servidor ftp para imagenes",                 "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cNumRegMer", "C",250, 0, "NÃºmero del registro mercantil",                         "", "", "aEmp()", Space( 250 ) } )
-   aAdd( aDbf, {"nTiempoImp", "N",  3, 0, "Tiempo de recarga de impresiÃ³n pda",                    "", "", "aEmp()", 0 } )
-   aAdd( aDbf, {"lPasEnvio",  "L",  1, 0, "LÃ³gico envio pasivo de datos",                          "", "", "aEmp()", 0 } )
-   aAdd( aDbf, {"lPasFtp",    "L",  1, 0, "LÃ³gico envio pasivo ftp",                               "", "", "aEmp()", 0 } )
-   aAdd( aDbf, {"lOrdNomTpv", "L",  1, 0, "LÃ³gico ordÃ©n TPV por nombre",                           "", "", "aEmp()", 0 } )
-   aAdd( aDbf, {"lGrpCli",    "L",  1, 0, "LÃ³gico de grupo tablas de cliente",                     "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lGrpArt",    "L",  1, 0, "LÃ³gico de grupo tablas de artÃ­culos",                   "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"cNumRegMer", "C",250, 0, "Número del registro mercantil",                         "", "", "aEmp()", Space( 250 ) } )
+   aAdd( aDbf, {"nTiempoImp", "N",  3, 0, "Tiempo de recarga de impresión pda",                    "", "", "aEmp()", 0 } )
+   aAdd( aDbf, {"lPasEnvio",  "L",  1, 0, "Lógico envio pasivo de datos",                          "", "", "aEmp()", 0 } )
+   aAdd( aDbf, {"lPasFtp",    "L",  1, 0, "Lógico envio pasivo ftp",                               "", "", "aEmp()", 0 } )
+   aAdd( aDbf, {"lOrdNomTpv", "L",  1, 0, "Lógico ordén TPV por nombre",                           "", "", "aEmp()", 0 } )
+   aAdd( aDbf, {"lGrpCli",    "L",  1, 0, "Lógico de grupo tablas de cliente",                     "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lGrpArt",    "L",  1, 0, "Lógico de grupo tablas de artículos",                   "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"CDefTem",    "C",  3, 0, "Temporada por defecto",                                 "", "", "aEmp()", nil } )
    aAdd( aDbf, {"nDiaVale",   "N",  3, 0, "Numeros de dias para que el vale sea valido",           "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lNumTik",    "L",  1, 0, "LÃ³gico numero del tiket obligatorio para devoluciÃ³n",   "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lCosAct",    "L",  1, 0, "LÃ³gico para usar costo actual en movimientos",          "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lGrpPrv",    "L",  1, 0, "LÃ³gico de grupo tablas de proveedores",                 "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lGrpAlm",    "L",  1, 0, "LÃ³gico de grupo tablas de almacÃ©n",                     "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lNumTik",    "L",  1, 0, "Lógico numero del tiket obligatorio para devolución",   "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lCosAct",    "L",  1, 0, "Lógico para usar costo actual en movimientos",          "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lGrpPrv",    "L",  1, 0, "Lógico de grupo tablas de proveedores",                 "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lGrpAlm",    "L",  1, 0, "Lógico de grupo tablas de almacén",                     "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"nPreVta",    "N",  1, 0, "Precios para ventas generales",                         "", "", "aEmp()", 0 } )
    aAdd( aDbf, {"nPreWebVta", "N",  1, 0, "Precios para ventas web",                               "", "", "aEmp()", 0 } )
-   aAdd( aDbf, {"lSerNoCom",  "L",  1, 0, "Avisar en ventas de nÃºmeros de serie no comprados",     "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lConIva",    "L",  1, 0, "LÃ³gico para contabilizar apuntes de impuestos siempre", "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lSerNoCom",  "L",  1, 0, "Avisar en ventas de números de serie no comprados",     "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lConIva",    "L",  1, 0, "Lógico para contabilizar apuntes de impuestos siempre", "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"lIvaImpEsp", "L",  1, 0, "Aplicar impuestos a impuestos especiales",              "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lBtnFam",    "L",  1, 0, "Seleccion de familias por botones en PDA",              "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lPreMin",    "L",  1, 0, "LÃ³gico no permitir ventas bajo precio mÃ­nimo",          "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lCalLot",    "L",  1, 0, "LÃ³gico calculo de lotes en stock",                      "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lCalSer",    "L",  1, 0, "LÃ³gico calculo de nÃºmeros de serie en stock",           "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lMovCos",    "L",  1, 0, "LÃ³gico no usar movimientos en costo medio",             "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lGrpEnt",    "L",  1, 0, "LÃ³gico agrupar entregas a cuenta en recibos",           "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lBusCir",    "L",  1, 0, "LÃ³gico activar bÃºsqueda circular",                      "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lPreMin",    "L",  1, 0, "Lógico no permitir ventas bajo precio mínimo",          "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lCalLot",    "L",  1, 0, "Lógico calculo de lotes en stock",                      "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lCalSer",    "L",  1, 0, "Lógico calculo de números de serie en stock",           "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lMovCos",    "L",  1, 0, "Lógico no usar movimientos en costo medio",             "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lGrpEnt",    "L",  1, 0, "Lógico agrupar entregas a cuenta en recibos",           "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lBusCir",    "L",  1, 0, "Lógico activar búsqueda circular",                      "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cNomSerA",   "C", 60, 0, "Nombre para la serie A",                                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNomSerB",   "C", 60, 0, "Nombre para la serie B",                                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNomSerC",   "C", 60, 0, "Nombre para la serie C",                                "", "", "aEmp()", nil } )
@@ -6646,45 +6646,45 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cNomSerY",   "C", 60, 0, "Nombre para la serie Y",                                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNomSerZ",   "C", 60, 0, "Nombre para la serie Z",                                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lCntNeg",    "L",  1, 0, "Contabilizar negativo",                                 "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lImgArt",    "L",  1, 0, "LÃ³gico si un artÃ­culo lleva imagen",                    "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lImgArt",    "L",  1, 0, "Lógico si un artículo lleva imagen",                    "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCooKey",    "C",250, 0, "Valor de __COOKIE_KEY__ para prestashop",               "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNomImp",    "C", 20, 0, "Nombre del impuesto",                                   "", "", "aEmp()", "IVA" } )
-   aAdd( aDbf, {"lReqDec",    "L",  1, 0, "LÃ³gico si el recargo se aplica con decimales",          "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lAptNeg",    "L",  1, 0, "LÃ³gico de realizar apunte en contaplus en negativo",    "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lLlevar",    "L",  1, 0, "LÃ³gico realizar para llevar en tÃ¡ctil",                 "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"lRecoger",   "L",  1, 0, "LÃ³gico realizar para recoger en tÃ¡ctil",                "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"nAutSer",    "N", 16, 0, "NÃºmero de autserializado",                              "", "", "aEmp()", 1 } )
-   aAdd( aDbf, {"lEncargar",  "L",  1, 0, "LÃ³gico realizar para encargos en tÃ¡ctil",               "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"nCopSea",    "N",  1, 0, "NÃºmero para comportamiento en caso de conflicto",       "", "", "aEmp()", 1 } )
-   aAdd( aDbf, {"lRealWeb",   "L",  1, 0, "LÃ³gico conectar tiempo real con la web",                "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lRecNumFac", "L",  1, 0, "LÃ³gico para recuperar el nÃºmero de las facturas",       "", "", "aEmp()", .t. } )
-   aAdd( aDbf, {"lAlbTct",    "L",  1, 0, "LÃ³gico para realizar albaranes desde tÃ¡ctil",           "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lFacTct",    "L",  1, 0, "LÃ³gico para realizar facturas desde tÃ¡ctil",            "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lReqDec",    "L",  1, 0, "Lógico si el recargo se aplica con decimales",          "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lAptNeg",    "L",  1, 0, "Lógico de realizar apunte en contaplus en negativo",    "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lLlevar",    "L",  1, 0, "Lógico realizar para llevar en táctil",                 "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lRecoger",   "L",  1, 0, "Lógico realizar para recoger en táctil",                "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"nAutSer",    "N", 16, 0, "Número de autserializado",                              "", "", "aEmp()", 1 } )
+   aAdd( aDbf, {"lEncargar",  "L",  1, 0, "Lógico realizar para encargos en táctil",               "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"nCopSea",    "N",  1, 0, "Número para comportamiento en caso de conflicto",       "", "", "aEmp()", 1 } )
+   aAdd( aDbf, {"lRealWeb",   "L",  1, 0, "Lógico conectar tiempo real con la web",                "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lRecNumFac", "L",  1, 0, "Lógico para recuperar el número de las facturas",       "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lAlbTct",    "L",  1, 0, "Lógico para realizar albaranes desde táctil",           "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lFacTct",    "L",  1, 0, "Lógico para realizar facturas desde táctil",            "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cPrefixTbl", "C", 10, 0, "Prefijo para tablas de prestashop",                     "", "", "aEmp()", "ps_" } )
-   aAdd( aDbf, {"lMailTrno",  "L",  1, 0, "LÃ³gico para enviar mail de cierre de turno",            "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"cMailTrno",  "C",200, 0, "direcciÃ³n de correo electÃ³nico para cierre de turno",   "", "", "aEmp()", "" } )
+   aAdd( aDbf, {"lMailTrno",  "L",  1, 0, "Lógico para enviar mail de cierre de turno",            "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"cMailTrno",  "C",200, 0, "dirección de correo electónico para cierre de turno",   "", "", "aEmp()", "" } )
    aAdd( aDbf, {"cCtaPor",    "C", 12, 0, "Subcuenta de portes",                                   "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCtaGas",    "C", 12, 0, "Subcuenta de gastos",                                   "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lApeNomb",   "L",  1, 0, "LÃ³gico recibir apellidos, nombre desde la web",         "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lTotTikCob", "L",  1, 0, "LÃ³gico mostrar total ticket al cobrar",                 "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"nTipImpTpv", "N",  1, 0, "OpciÃ³n impresiÃ³n al cobrar en tpv tÃ¡ctil",              "", "", "aEmp()", 1 } )
-   aAdd( aDbf, {"lEmpFrnq",   "L",  1, 0, "LÃ³gico empresa franquiciada",                           "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lRECC",      "L",  1, 0, "RÃ©gimen especial del criterio de caja",                 "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"nIniRECC",   "N",  4, 0, "AÃ±o inicio rÃ©gimen especial del criterio de caja",      "", "", "aEmp()", } )
-   aAdd( aDbf, {"nFinRECC",   "N",  4, 0, "AÃ±o fin rÃ©gimen especial del criterio de caja",         "", "", "aEmp()", } )
-   aAdd( aDbf, {"lHExpWeb",   "L",  1, 0, "Ocultar botÃ³n exportar web",                            "", "", "aEmp()", } )
-   aAdd( aDbf, {"lRecCostes", "L",  1, 0, "Recalcula costes en partes de producciÃ³n",              "", "", "aEmp()", } )
-   aAdd( aDbf, {"nExpContbl", "N",  1, 0, "ExportaciÃ³n contable",                                  "", "", "aEmp()", } )
+   aAdd( aDbf, {"lApeNomb",   "L",  1, 0, "Lógico recibir apellidos, nombre desde la web",         "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lTotTikCob", "L",  1, 0, "Lógico mostrar total ticket al cobrar",                 "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"nTipImpTpv", "N",  1, 0, "Opción impresión al cobrar en tpv táctil",              "", "", "aEmp()", 1 } )
+   aAdd( aDbf, {"lEmpFrnq",   "L",  1, 0, "Lógico empresa franquiciada",                           "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lRECC",      "L",  1, 0, "Régimen especial del criterio de caja",                 "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"nIniRECC",   "N",  4, 0, "Año inicio régimen especial del criterio de caja",      "", "", "aEmp()", } )
+   aAdd( aDbf, {"nFinRECC",   "N",  4, 0, "Año fin régimen especial del criterio de caja",         "", "", "aEmp()", } )
+   aAdd( aDbf, {"lHExpWeb",   "L",  1, 0, "Ocultar botón exportar web",                            "", "", "aEmp()", } )
+   aAdd( aDbf, {"lRecCostes", "L",  1, 0, "Recalcula costes en partes de producción",              "", "", "aEmp()", } )
+   aAdd( aDbf, {"nExpContbl", "N",  1, 0, "Exportación contable",                                  "", "", "aEmp()", } )
    aAdd( aDbf, {"lShowLin",   "L",  1, 0, "Ocultar lineas borradas",                               "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lShowOrg",   "L",  1, 0, "Mostrar almacÃ©n origen en compras",                     "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lShowOrg",   "L",  1, 0, "Mostrar almacén origen en compras",                     "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lUseBultos", "L",  1, 0, "Usar bultos",                                           "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cNbrBultos", "C",100, 0, "DescripciÃ³n para bultos",                               "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodCliFrq", "C", 12, 0, "CÃ³digo de cliente para franquicia",                     "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodPrvFrq", "C", 12, 0, "CÃ³digo de proveedor para franquicia",                   "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lStkAlm",    "L",  1, 0, "LÃ³gico de usar stock por almacenes",                    "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"lSSLMai",    "L",  1, 0, "LÃ³gico de uso de protocolo SSL del servidor de correo", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cNbrBultos", "C",100, 0, "Descripción para bultos",                               "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodCliFrq", "C", 12, 0, "Código de cliente para franquicia",                     "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodPrvFrq", "C", 12, 0, "Código de proveedor para franquicia",                   "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lStkAlm",    "L",  1, 0, "Lógico de usar stock por almacenes",                    "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"lSSLMai",    "L",  1, 0, "Lógico de uso de protocolo SSL del servidor de correo", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCcoMai",    "C",250, 0, "Enviar con copia oculta de mail a cuenta de correo",    "", "", "aEmp()", "" } )
-   aAdd( aDbf, {"lRecEnt",    "L",  1, 0, "LÃ³gico para recibir albaranes como entregados",         "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lRecEnt",    "L",  1, 0, "Lógico para recibir albaranes como entregados",         "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cSeriePre",  "C",  1, 0, "Serie para presupuestos de internet",                   "", "", "aEmp()", "A" } )
 
 Return ( aDbf )
@@ -6695,9 +6695,9 @@ static function aItmDlg()
 
    local aItmDlg  := {}
 
-   aAdd( aItmDlg, { "CCODEMP", "C", 4, 0, "CÃ³digo de empresa"    } )
-   aAdd( aItmDlg, { "CCODDLG", "C", 2, 0, "CÃ³digo de delegaciÃ³n" } )
-   aAdd( aItmDlg, { "CNOMDLG", "C",50, 0, "Nombre de delegaciÃ³n" } )
+   aAdd( aItmDlg, { "CCODEMP", "C", 4, 0, "Código de empresa"    } )
+   aAdd( aItmDlg, { "CCODDLG", "C", 2, 0, "Código de delegación" } )
+   aAdd( aItmDlg, { "CNOMDLG", "C",50, 0, "Nombre de delegación" } )
 
 return ( aItmDlg )
 
@@ -6774,7 +6774,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 /*
-Valida la fecha del documento que estamos haciendo para que estÃ©n en el rango marcado en la empresa
+Valida la fecha del documento que estamos haciendo para que estén en el rango marcado en la empresa
 */
 
 Function lValidaOperacion( dOperacion, lMessage )
@@ -6787,7 +6787,7 @@ Function lValidaOperacion( dOperacion, lMessage )
    end if
 
    if lMessage
-      msgStop( "La fecha del documento no estÃ¡ entre la fecha de operaciones marcada en la empresa" )
+      msgStop( "La fecha del documento no está entre la fecha de operaciones marcada en la empresa" )
    end if
 
 Return ( .f. )
@@ -7013,7 +7013,7 @@ RETURN .t.
 //---------------------------------------------------------------------------//
 
 /*
-Comprueba los cambios de estructura y aÃ±ade registros
+Comprueba los cambios de estructura y añade registros
 */
 
 FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg, aMsg )
@@ -7127,17 +7127,17 @@ FUNCTION aItmBnc()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodEmp",     "C",  2, 0, "CÃ³digo de empresa",                "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCodEmp",     "C",  2, 0, "Código de empresa",                "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cEntBnc",     "C",  4, 0, "Entidad bancaria",                 "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cSucBnc",     "C",  4, 0, "Sucursal bancaria",                "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cDigBnc",     "C",  2, 0, "DÃ­gito control",                   "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cDigBnc",     "C",  2, 0, "Dígito control",                   "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cCtaBnc",     "C", 10, 0, "Cuenta",                           "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cCodBnc",     "C", 50, 0, "Nombre del banco",                 "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cDirBnc",     "C", 35, 0, "Domicilio del banco",              "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cPobBnc",     "C", 25, 0, "PoblaciÃ³n del banco",              "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPobBnc",     "C", 25, 0, "Población del banco",              "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cProBnc",     "C", 20, 0, "Provincia del banco",              "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cCPBnc",      "C", 15, 0, "CÃ³digo postal",                    "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cTlfBnc",     "C", 20, 0, "TelÃ©fono",                         "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCPBnc",      "C", 15, 0, "Código postal",                    "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cTlfBnc",     "C", 20, 0, "Teléfono",                         "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cFaxBnc",     "C", 20, 0, "Fax",                              "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cPContBnc",   "C", 35, 0, "Persona de contacto",              "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cPaiBnc",     "C",  4, 0, "Pais",                             "",                   "", "( cDbfBnc )" } )
@@ -7237,7 +7237,7 @@ FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucurs
       oBrw:nMarqueeStyle   := 5
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCodBnc"
          :bEditValue       := {|| ( dbfBancos )->cCodBnc }
          :nWidth           := 80
@@ -7267,13 +7267,13 @@ FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucurs
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "PoblaciÃ³n"
+         :cHeader          := "Población"
          :bEditValue       := {|| ( dbfBancos )->cPobBnc }
          :nWidth           := 100
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo postal"
+         :cHeader          := "Código postal"
          :bEditValue       := {|| ( dbfBancos )->cCPBnc }
          :nWidth           := 40
       end with
@@ -7285,7 +7285,7 @@ FUNCTION BrwBncEmp( oGet, oGetPaisIBAN, oGetControlIBAN, oGetEntidad, oGetSucurs
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "TelÃ©fono"
+         :cHeader          := "Teléfono"
          :bEditValue       := {|| ( dbfBancos )->cTlfBnc }
          :nWidth           := 80
       end with
@@ -7534,7 +7534,7 @@ Function SelectDelegacion()
    local oGetBuscar
    local cGetBuscar     := Space( 100 )
    local oCbxOrden
-   local cCbxOrden      := "CÃ³digo"
+   local cCbxOrden      := "Código"
 
    /*
    Apertura de ficharos--------------------------------------------------------
@@ -7557,7 +7557,7 @@ Function SelectDelegacion()
 
    DEFINE DIALOG  oDlg ;
       RESOURCE    "SelectItem" ;
-      TITLE       "Seleccionar delegaciÃ³n" ;
+      TITLE       "Seleccionar delegación" ;
 
       REDEFINE BITMAP oBmp ;
          ID       300 ;
@@ -7575,7 +7575,7 @@ Function SelectDelegacion()
       REDEFINE COMBOBOX oCbxOrden ;
          VAR      cCbxOrden ;
          ID       110 ;
-         ITEMS    { "CÃ³digo", "Nombre" } ;
+         ITEMS    { "Código", "Nombre" } ;
          ON CHANGE( ( dbfDlg )->( OrdSetFocus( oCbxOrden:nAt ) ), oBrw:Refresh(), oGetBuscar:SetFocus() ) ;
          OF       oDlg
 
@@ -7591,7 +7591,7 @@ Function SelectDelegacion()
       oBrw:CreateFromResource( 200 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCodDlg"
          :bEditValue       := {|| ( dbfDlg )->cCodDlg }
          :nWidth           := 40

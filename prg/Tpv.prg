@@ -3961,9 +3961,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
    if lExacto( aTmp ) .or. lCobro( @aTmp, aGet, @nSave, nMode, @lValeDiferencia, @nValeDiferencia, lBig, oDlgTpv )
 
-      msgAlert( lValeDiferencia, "lValeDiferencia" ) 
-      msgAlert( nValeDiferencia, "nValeDiferencia" )
-
       /*
       Justo antes de guardar volvemos a comprobar que existan lineas-----------
       */
@@ -4009,7 +4006,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Obtenemos el nuevo numero del Tiket-----------------------------------
             */
 
-            SetAutoTextDialog( 'Obtenemos el nuevo número' )
+            setAutoTextDialog( 'Obtenemos el nuevo número' )
 
             aTmp[ _CNUMTIK ]  := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
             aTmp[ _CSUFTIK ]  := RetSufEmp()
@@ -4031,7 +4028,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Eliminamos las lineas----------------------------------------------
             */
 
-            SetAutoTextDialog( 'Eliminando lineas' )
+            setAutoTextDialog( 'Eliminando lineas' )
 
             while ( dbfTikL )->( dbSeek( nNumTik ) )
                
@@ -4047,7 +4044,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Eliminamos los pagos-----------------------------------------------
             */
 
-            SetAutoTextDialog( 'Eliminando pagos' )
+            setAutoTextDialog( 'Eliminando pagos' )
 
             while ( dbfTikP )->( dbSeek( nNumTik ) )
 
@@ -4062,7 +4059,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Eliminamos los vales ----------------------------------------------
             */
 
-            SetAutoTextDialog( 'Eliminando vales' )
+            setAutoTextDialog( 'Eliminando vales' )
 
             nOrd  := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
             nRec  := ( dbfTikT )->( Recno() )
@@ -4084,7 +4081,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             Quitamos las marcas desde el fichero de Tiket----------------------
             */
 
-            SetAutoTextDialog( 'Eliminando anticipos' )
+            setAutoTextDialog( 'Eliminando anticipos' )
 
             if !Empty( cNumDoc )
 
@@ -4113,7 +4110,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Anotamos los pagos-------------------------------------------------------
          */
 
-         SetAutoTextDialog( 'Anotando los pagos' )
+         setAutoTextDialog( 'Anotando los pagos' )
 
          if ( oTotDiv:lValeMayorTotal() )
 
@@ -4152,7 +4149,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if !Empty( aTmp[ _CALBTIK ] )
 
-            SetAutoTextDialog( 'Estado albarán' )
+            setAutoTextDialog( 'Estado albarán' )
 
             if dbSeekInOrd( aTmp[ _CALBTIK ], "nNumAlb", dbfAlbCliT )
 
@@ -4193,7 +4190,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if !Empty( aTmp[ _CPEDTIK ] )
 
-            SetAutoTextDialog( 'Estado pedido' )
+            setAutoTextDialog( 'Estado pedido' )
 
             if dbSeekInOrd( aTmp[ _CPEDTIK ], "nNumPed", dbfPedCliT )
 
@@ -4213,7 +4210,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if !Empty( aTmp[ _CPRETIK ] )
 
-            SetAutoTextDialog( 'Estado presupuesto' )
+            setAutoTextDialog( 'Estado presupuesto' )
 
             if dbSeekInOrd( aTmp[ _CPRETIK ], "nNumPre", dbfPreCliT )
 
@@ -4255,7 +4252,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Actualizamos el stock en la web------------------------------------------
          */
 
-         SetAutoTextDialog( "Archivando")
+         setAutoTextDialog( "Archivando")
 
          ActualizaStockWeb()
 
@@ -4263,7 +4260,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Anotamos los vales ------------------------------------------------------
          */
 
-         SetAutoTextDialog( 'Archivando vales' )
+         setAutoTextDialog( 'Archivando vales' )
 
          nRec                          := ( dbfTikT )->( Recno() )
 
@@ -4287,7 +4284,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Ahora escribimos en el fichero definitivo los anticipos------------------
          */
 
-         SetAutoTextDialog( 'Archivando anticipos' )
+         setAutoTextDialog( 'Archivando anticipos' )
 
          ( dbfTmpA )->( dbGoTop() )
          while !( dbfTmpA )->( eof() )
@@ -4339,7 +4336,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Apertura de la caja---------------------------------------------------
          */
 
-         SetAutoTextDialog( 'Abriendo la caja' )
+         setAutoTextDialog( 'Abriendo la caja' )
 
          if ( dbfTikT )->cTipTik != SAVALB
             oUser():OpenCajon( nView )
@@ -4359,7 +4356,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if lValeDiferencia .and. ( nSave != SAVVAL .or. nSave != SAVDEV )
             
-            SetAutoTextDialog( 'Generando vales' )
+            setAutoTextDialog( 'Generando vales' )
 
             generateVale( nValeDiferencia )
 
@@ -4375,56 +4372,11 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if ( lValePromocion ) .and. ( nValePromocion > 0 ) .and. ( nMode == APPD_MODE ) .and. ( nSave != SAVVAL )
 
-            SetAutoTextDialog( 'Generando vales' )
+            setAutoTextDialog( 'Generando vales' )
 
-            /*
-            Obtenemos el nuevo numero del vale------------------------------
-            */
+            generatePromocion( nValePromocion, nSave )
 
-            aTmp                 := dbScatter( dbfTikT )
-
-            aTmp[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
-            aTmp[ _CSUFTIK ]     := RetSufEmp()
-            aTmp[ _CHORTIK ]     := Substr( Time(), 1, 5 )
-            aTmp[ _DFECCRE ]     := Date()
-            aTmp[ _CTIMCRE ]     := SubStr( Time(), 1, 5 )
-            aTmp[ _CTIPTIK ]     := SAVVAL
-            aTmp[ _CTIKVAL ]     := nNumTik
-            aTmp[ _LCLOTIK ]     := .f.
-
-            if ( nSave == SAVDEV )
-               aTmp[ _NTOTNET ]  := - nValePromocion
-               aTmp[ _NTOTTIK ]  := - nValePromocion
-            else
-               aTmp[ _NTOTNET ]  := nValePromocion
-               aTmp[ _NTOTTIK ]  := nValePromocion
-            endif
-
-            dbGather( aTmp, dbfTikT, .t. )
-
-            /*
-            Guardamos las lineas del tiket----------------------------------------
-            */
-
-            aTbl                 := dbBlankRec( dbfTmpL )
-
-            aTbl[ _CSERTIL ]     := aTmp[ _CSERTIK ]
-            aTbl[ _CNUMTIL ]     := aTmp[ _CNUMTIK ]
-            aTbl[ _CSUFTIL ]     := aTmp[ _CSUFTIK ]
-            aTbl[ _CTIPTIK ]     := SAVVAL
-            aTbl[ _NUNTTIL ]     := 1
-            aTbl[ _NNUMLIN ]     := 1
-            aTbl[ _CNOMTIL ]     := "Vale por promoción"
-
-            if ( nSave == SAVDEV )
-               aTbl[ _NPVPTIL ]  := - nValePromocion
-            else
-               aTbl[ _NPVPTIL ]  := nValePromocion
-            endif
-
-            dbGather( aTbl, dbfTikL, .t. )
-
-            if lCopTik // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
+            if lCopTik 
                ImpTiket( IS_PRINTER )
             end if
 
@@ -4466,7 +4418,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       if ( lBig ) .or. ( lEntCon() .and. ( nMode == APPD_MODE ) .and. ( Empty( cAlbTik ) .and. Empty( cPedTik ) .and. Empty( cPreTik ) ) )
 
-         SetAutoTextDialog( 'Inicializado entorno' )
+         setAutoTextDialog( 'Inicializado entorno' )
 
          if BeginTrans( aTmp, aGet, nMode, .t. )
             lSaveNewTik    := .f.
@@ -18389,12 +18341,13 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
          TRANSPARENT ;
          OF          oDlg
 
-      REDEFINE GET oNumero VAR cNumero ;
+      REDEFINE GET   oNumero ;
+         VAR         cNumero ;
          ID          100 ;
          PICTURE     "@!" ;
          BITMAP      "LUPA" ;
-         VALID       ( ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTmp ) ) ;
-         ON HELP     ( BrwTikCli( oNumero ) ) ;
+         VALID       ( validaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTmp ) ) ;
+         ON HELP     ( brwTikCli( oNumero ) ) ;
          OF          oDlg ;
 
       /*
@@ -18455,9 +18408,9 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
       end with
 
       with object ( oBrwDev:AddCol() )
-         :cHeader                := "dFecCad"
+         :cHeader                := "Caducidad"
          :bEditValue             := {|| ( dbfTmp )->dFecCad }
-         :nWidth                 := 50
+         :nWidth                 := 80
       end with
 
       with object ( oBrwDev:AddCol() )
@@ -18537,7 +18490,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
 
    dbfErase( cNewFil )
 
-   dbfTmp         := nil
+   dbfTmp                     := nil
 
 Return ( oDlg:nResult == IDOK )
 
@@ -18588,7 +18541,7 @@ Static Function ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTm
    local nOrdLin
    local cNumero
 
-   cNumero        := oNumero:VarGet()
+   cNumero        := Upper( oNumero:VarGet() )
 
    if Empty( cNumero )
       Return .t.
@@ -18600,15 +18553,17 @@ Static Function ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTm
    nRecAnt        := ( dbfTikT )->( RecNo() )
    nOrdAnt        := ( dbfTikT )->( OrdSetFocus( "cNumTik" ) )
 
-   if !lBigSeek( nil, Upper( cNumero ), dbfTikT )
+   if !lBigSeek( nil, cNumero, dbfTikT, nil, nil, nil, 11 )
 
       lErr        := .t.
+      msgStop( "Documento " + alltrim( cNumero ) + " no encontrado." )
 
    else
 
-      if ( dbfTikT )->cTipTik != "1"
+      if ( dbfTikT )->cTipTik != SAVTIK
 
          lErr     := .t.
+         msgStop( "Documento " + alltrim( cNumero ) + " no es un ticket." )
 
       else
 
@@ -18687,11 +18642,12 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    local nRec
    local nOrd
    local aTotalTicket
-   local nTotalTicket
    local cSerieTicket
    local nNumeroTicket
    local cSufijoTicket
    local cNumeroTicket
+   local nTotalTicket            := 0
+   local cTipoDocumento          := !Empty( oBtn )
    local nTotalDevolucion        := 0
    local nTotTicketOriginal      := 0
    local nTotTicketResultado     := 0
@@ -18702,195 +18658,208 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    local aBlankL                 := {}
 
    if len( oBrwDev:Cargo ) == 0
+      msgStop( "Debe seleccionar al menos una línea" )
+      return ( .f. )
+   end if 
 
-      MsgStop( "Debe seleccionar al menos una línea" )
+   CursorWait()
 
+   oDlg:Disable()
+
+
+   /*
+   Obtenemos el nuevo numero del Tiket--------------------------------------
+   */
+
+   cNumeroTicket        := alltrim( oNumero:VarGet() )
+   cSerieTicket         := aTmp[ _CSERTIK ]
+   nNumeroTicket        := str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+   cSufijoTicket        := retSufEmp()
+
+   if !empty(oBtn)
+      cTipoDocumento    := SAVDEV
    else
+      cTipoDocumento    := SAVVAL
+   end if 
 
-      CursorWait()
+   aTmp[ _CSERTIK ]     := cSerieTicket
+   aTmp[ _CNUMTIK ]     := nNumeroTicket
+   aTmp[ _CSUFTIK ]     := cSufijoTicket
 
-      oDlg:Disable()
 
-      cNumeroTicket        := Alltrim( oNumero:VarGet() )
-      nTotalTicket         := 0
-      cSerieTicket         := aTmp[ _CSERTIK ]
-      nNumeroTicket        := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
-      cSufijoTicket        := RetSufEmp()
+   /*
+   Valores por defecto------------------------------------------------------
+   */
 
-      /*
-      Valores por defecto------------------------------------------------------
-      */
+   aTmp[ _CDIVTIK ]     := cDivEmp()
+   aTmp[ _NVDVTIK ]     := nValDiv( cDivEmp(), dbfDiv )
+   aTmp[ _CTURTIK ]     := cCurSesion()
+   aTmp[ _CCCJTIK ]     := cCurUsr()
+   aTmp[ _CNCJTIK ]     := oUser():cCaja()
+   aTmp[ _NTARIFA ]     := Max( uFieldEmpresa( "nPreVta" ), 1 )
+   aTmp[ _DFECCRE ]     := Date()
+   aTmp[ _CTIMCRE ]     := SubStr( Time(), 1, 5 )
+   aTmp[ _CHORTIK ]     := Substr( Time(), 1, 5 )
+   aTmp[ _LABIERTO]     := .f.
+   aTmp[ _LCLOTIK ]     := .f.
+   aTmp[ _LPGDTIK ]     := .t.
+   aTmp[ _CTIPTIK ]     := cTipoDocumento
 
-      aTmp[ _CDIVTIK ]     := cDivEmp()
-      aTmp[ _NVDVTIK ]     := nValDiv( cDivEmp(), dbfDiv )
-      aTmp[ _CTURTIK ]     := cCurSesion()
-      aTmp[ _CCCJTIK ]     := cCurUsr()
-      aTmp[ _CNCJTIK ]     := oUser():cCaja()
-      aTmp[ _NTARIFA ]     := Max( uFieldEmpresa( "nPreVta" ), 1 )
-      aTmp[ _DFECCRE ]     := Date()
-      aTmp[ _CTIMCRE ]     := SubStr( Time(), 1, 5 )
-      aTmp[ _CHORTIK ]     := Substr( Time(), 1, 5 )
-      aTmp[ _LABIERTO]     := .f.
-      aTmp[ _LCLOTIK ]     := .f.
-      aTmp[ _LPGDTIK ]     := .t.
 
-      /*
-      Archivamos el tipo de venta que se ha realizado--------------------------
-      */
+   /*
+   Salvamos a disco el array de las cabeceras-------------------------------
+   */
 
-      if !Empty( oBtn )
-         aTmp[ _CTIPTIK ]  := SAVDEV
-      else
-         aTmp[ _CTIPTIK ]  := SAVVAL
-      end if
+   winGather( aTmp, nil, dbfTikT, nil, APPD_MODE, nil, .f. )
 
-      /*
-      Obtenemos el nuevo numero del Tiket--------------------------------------
-      */
 
-      aTmp[ _CSERTIK ]     := cSerieTicket
-      aTmp[ _CNUMTIK ]     := nNumeroTicket
-      aTmp[ _CSUFTIK ]     := cSufijoTicket
+   /*
+   Añade las líneas seleccionadas-------------------------------------------
+   */
 
-      /*
-      Añade las líneas seleccionadas-------------------------------------------
-      */
+   for each nRec in ( oBrwDev:Cargo )
+      ( dbfTmp )->( dbgoto( nRec ) )
+      dbPass( dbfTmp, dbfTikL, .t., cSerieTicket, nNumeroTicket, cSufijoTicket, cTipoDocumento )
+   next
 
-      for each nRec in ( oBrwDev:Cargo )
 
-         ( dbfTmp )->( dbGoTo( nRec ) )
+   /*
+   Calculamos el total del vale o devolucion--------------------------------
+   */
 
-         dbPass( dbfTmp, dbfTikL, .t., cSerieTicket, nNumeroTicket, cSufijoTicket, SAVDEV )
+   nRec                       := ( dbfTikT )->( recno() )
+   nOrd                       := ( dbfTikT )->( ordsetfocus( "cNumTik" ) )
 
-         nTotalTicket      += nTotLTpv( dbfTmp, nDouDiv, nDorDiv )
+   if ( dbfTikT )->( dbSeek( cSerieTicket + nNumeroTicket + cSufijoTicket ) )
 
-      next
+      aTotalTicket            := aTotTik( cSerieTicket + nNumeroTicket + cSufijoTicket, dbfTikT, dbfTikL, dbfDiv, nil, nil, .f. )
 
-      /*
-      Salvamos a disco el array de las cabeceras-------------------------------
-      */
+      if dbLock( dbfTikT )
 
-      WinGather( aTmp, nil, dbfTikT, nil, APPD_MODE, nil, .f. )
+         ( dbfTikT )->nTotNet := aTotalTicket[ 1 ]
+         ( dbfTikT )->nTotIva := aTotalTicket[ 2 ]
+         ( dbfTikT )->nTotTik := aTotalTicket[ 3 ]
 
-      /*
-      Pagos del ticket---------------------------------------------------------
-      */
+         ( dbfTikT )->( dbUnLock() )
 
-      if !Empty( oBtn ) .and. dbAppe( dbfTikP )
+      endif
+
+   end if
+
+   ( dbfTikT )->( ordsetfocus( nOrd ) )
+   ( dbfTikT )->( dbgoto( nRec ) )
+
+
+   /*
+   Pagos del ticket---------------------------------------------------------
+   */
+
+   if ( cTipoDocumento == SAVDEV ) .and. ( !empty( aTotalTicket ) ) .and. ( aTotalTicket[ 3 ] != 0 ) 
+
+      if dbAppe( dbfTikP )
          ( dbfTikP )->cSerTik    := cSerieTicket
          ( dbfTikP )->cNumTik    := nNumeroTicket
          ( dbfTikP )->cSufTik    := cSufijoTicket
-         ( dbfTikP )->nImpTik    := nTotalTicket
          ( dbfTikP )->cTurPgo    := cCurSesion()
-         ( dbfTikP )->dPgoTik    := GetSysDate()
-         ( dbfTikP )->cTimTik    := SubStr( Time(), 1, 5 )
+         ( dbfTikP )->dPgoTik    := getSysDate()
+         ( dbfTikP )->cTimTik    := substr( Time(), 1, 5 )
          ( dbfTikP )->cCodCaj    := oUser():cCaja()
          ( dbfTikP )->cFpgPgo    := oBtn:Cargo
          ( dbfTikP )->cDivPgo    := cDivEmp()
          ( dbfTikP )->nVdvPgo    := nValDiv( cDivEmp(), dbfDiv )
+         ( dbfTikP )->nImpTik    := aTotalTicket[ 3 ]
       end if
 
+   end if 
+
+
+   /*
+   Resto el total de vale cuando realizo una devolución---------------------
+   */
+
+   nRec                       := ( dbfTikT )->( recno() )
+   nOrd                       := ( dbfTikT )->( ordsetfocus( "cTikVal" ) )
+
+   if ( dbfTikT )->( dbSeek( cNumeroTicket ) ) 
+
+      if dbLock( dbfTikT )
+         ( dbfTikT )->lLiqTik := .t.
+         ( dbfTikT )->lLiqDev := .t.
+         ( dbfTikT )->( dbUnLock() )
+      endif
+
+   end if
+
+   ( dbfTikT )->( ordsetfocus( nOrd ) )
+   ( dbfTikT )->( dbgoto( nRec ) )
+
+
+   /*
+   Abrir la caja -----------------------------------------------------------
+   */
+
+   oUser():OpenCajon( nView )
+
+   /*
+   Imprimir el registro-----------------------------------------------------
+   */
+   
+
+   ImpTiket( IS_PRINTER )
+
+
+   /*
+   Tomamos el total de devoluciones de un ticket----------------------------
+   */
+
+   nTotalDevolucion           := nTotalDevoluciones( Padr( cNumeroTicket, 13 ), dbfTikT, dbfTikL )
+
+   /*
+   Tomamos los valores para generar el vale regalo--------------------------
+   */
+
+   if dbSeekInOrd( cNumeroTicket, "cNumTik", dbfTikT ) .and. dbSeekInOrd( cNumeroTicket, "cNumTil", dbfTikL )
+
+      nTotTicketOriginal      := nTotTik()
+      nTotTicketResultado     := nTotTicketOriginal - nTotalDevolucion
+
       /*
-      Resto el total de vale cuando realizo una devolución---------------------
+      Capturanmos el porcentaje de promoción--------------------------------
       */
 
-      nRec                       := ( dbfTikT )->( RecNo() )
+      nPorcentajeFidelizacion := oFideliza:nPorcentajePrograma( nTotTicketResultado )
 
-      if dbSeekInOrd( cNumeroTicket, "cTikVal", dbfTikT )
+      /*
+      Vemos si cumple las condiciones para la promoción---------------------
+      */
 
-         if dbLock( dbfTikT )
-            ( dbfTikT )->lLiqTik := .t.
-            ( dbfTikT )->lLiqDev := .t.
-
-            ( dbfTikT )->( dbUnLock() )
-         endif
-
+      lValePromocion          := ( !retfld( ( dbfTikT )->cCliTik, dbfClient, "lExcFid" ) .and. ( nPorcentajeFidelizacion != 0 ) )
+      if lValePromocion
+         nValePromocion       := nTotTicketResultado * nPorcentajeFidelizacion / 100
       end if
 
-      /*
-      Calculamos el total del vale o devolucion--------------------------------
-      */
+   end if
 
-      nOrd                       := ( dbfTikT )->( OrdSetFocus( "cNumTik" ) )
 
-      if ( dbfTikT )->( dbSeek( cSerieTicket + nNumeroTicket + cSufijoTicket ) )
+   /*
+   Generamos el vale regalo-------------------------------------------------
+   */
 
-         aTotalTicket            := aTotTik( cSerieTicket + nNumeroTicket + cSufijoTicket, dbfTikT, dbfTikL, dbfDiv, nil, nil, .f. )
+   if ( lValePromocion ) .and. ( nValePromocion > 0 )
 
-         if dbLock( dbfTikT )
+      setAutoTextDialog( 'Generando vales' )
 
-            ( dbfTikT )->nTotNet := aTotalTicket[ 1 ]
-            ( dbfTikT )->nTotIva := aTotalTicket[ 2 ]
-            ( dbfTikT )->nTotTik := aTotalTicket[ 3 ]
-
-            ( dbfTikT )->( dbUnLock() )
-
-         endif
-
-      end if
-
-      ( dbfTikT )->( OrdSetFocus( nOrd ) )
-      ( dbfTikT )->( dbGoTo( nRec ) )
-
-      /*
-      Abrir la caja -----------------------------------------------------------
-      */
-
-      oUser():OpenCajon( nView )
-
-      /*
-      Imprimir el registro-----------------------------------------------------
-      */
+      generatePromocion( nValePromocion )
 
       ImpTiket( IS_PRINTER )
 
-      /*
-      Tomamos el total de devoluciones de un ticket----------------------------
-      */
+   end if 
 
-      nTotalDevolucion  := nTotalDevoluciones( Padr( cNumeroTicket, 13 ), dbfTikT, dbfTikL )
-
-      /*
-      Tomamos los valores para generar el vale regalo--------------------------
-      */
-
-      if dbSeekInOrd( cNumeroTicket, "cNumTik", dbfTikT ) .and.;
-         dbSeekInOrd( cNumeroTicket, "cNumTil", dbfTikL )
-
-         nTotTicketOriginal      := nTotTik()
-         nTotTicketResultado     := nTotTicketOriginal - nTotalDevolucion
-
-         /*
-         Capturanmos el porcentaje de promoción--------------------------------
-         */
-
-         nPorcentajeFidelizacion := oFideliza:nPorcentajePrograma( nTotTicketResultado  )
-
-         /*
-         Vemos si cumple las condiciones para la promoción---------------------
-         */
-
-         lValePromocion          := ( !Retfld( ( dbfTikT )->cCliTik, dbfClient, "lExcFid" ) .and. ( nPorcentajeFidelizacion != 0 ) )
-         if lValePromocion
-            nValePromocion       := nTotTicketResultado * nPorcentajeFidelizacion / 100
-         end if
-
-      end if
-
-      /*
-      Generamos el vale regalo-------------------------------------------------
-      */
-
-      if ( lValePromocion ) .and. ( nValePromocion > 0 )
-
+   /*
          if !Empty( oMetMsg )
             oMetMsg:cText        := 'Generando vales'
             oMetMsg:Refresh()
          end if
-
-         /*
-         Obtenemos el nuevo numero del vale------------------------------------
-         */
 
          aBlankT                 := dbScatter( dbfTikT )
 
@@ -18906,10 +18875,6 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
          aBlankT[ _NTOTTIK ]     := nValePromocion
 
          dbGather( aBlankT, dbfTikT, .t. )
-
-         /*
-         Guardamos las lineas del tiket----------------------------------------
-         */
 
          aBlankL                 := dbBlankRec( dbfTmpL )
 
@@ -18927,18 +18892,16 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
          ImpTiket( IS_PRINTER )
 
       end if
-
+      */
       /*
       Recuperamos el cursor y cerramos la ventana------------------------------
       */
 
-      oDlg:Enable()
+   oDlg:Enable()
 
-      CursorWE()
+   CursorWE()
 
-      oDlg:End( IDOK )
-
-   end if
+   oDlg:End( IDOK )
 
 Return ( .t. )
 
@@ -19202,7 +19165,7 @@ Static Function BrwTikCli( oGet )
 
       oBrw:cAlias             := dbfTikT
       oBrw:cName              := "Ticket cliente"
-      oBrw:bLDblClick         := {|| oDlg:End( IDOK ) }
+      oBrw:bLDblClick         := {|| EndBrwTikCli( oGet, oDlg ) }
 
       oBrw:nMarqueeStyle      := 5
 
@@ -19234,7 +19197,7 @@ Static Function BrwTikCli( oGet )
          :cHeader             := "Nombre cliente"
          :bEditValue          := {|| AllTrim( ( dbfTikT )->cNomTik ) }
          :cSortOrder          := "cNomTik"
-         :nWidth              := 150
+         :nWidth              := 300
          :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
@@ -19330,12 +19293,14 @@ RETURN ( oDlg:nResult == IDOK )
 
 Static Function EndBrwTikCli( oGet, oDlg )
 
-   if ( dbfTikT )->cTipTik != "1"
+   if ( dbfTikT )->cTipTik != SAVTIK
       MsgStop( "El tipo de documento seleccionado debe ser un ticket" )
       Return .f.
    end if 
 
    if !Empty( oGet )
+
+
       oGet:cText( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik )
    end if
 
@@ -20057,3 +20022,102 @@ Static Function generateVale( nValeDiferencia )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+Static Function generatePromocion( nValePromocion, nSave )
+
+   local aTmp
+   local aTbl
+
+   if ( !empty( nSave ) .and. nSave == SAVDEV )
+      nValePromocion    := - nValePromocion
+   end if 
+
+   /*
+   Obtenemos el nuevo numero del vale------------------------------
+   */
+
+   aTmp                 := dbScatter( dbfTikT )
+
+   aTmp[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+   aTmp[ _CSUFTIK ]     := RetSufEmp()
+   aTmp[ _CHORTIK ]     := Substr( Time(), 1, 5 )
+   aTmp[ _DFECCRE ]     := Date()
+   aTmp[ _CTIMCRE ]     := SubStr( Time(), 1, 5 )
+   aTmp[ _CTIPTIK ]     := SAVVAL
+   aTmp[ _CTIKVAL ]     := nNumTik
+   aTmp[ _LCLOTIK ]     := .f.
+   aTmp[ _NTOTNET ]     := nValePromocion
+   aTmp[ _NTOTTIK ]     := nValePromocion
+
+   dbGather( aTmp, dbfTikT, .t. )
+
+   /*
+   Guardamos las lineas del tiket----------------------------------------
+   */
+
+   aTbl                 := dbBlankRec( dbfTmpL )
+
+   aTbl[ _CSERTIL ]     := aTmp[ _CSERTIK ]
+   aTbl[ _CNUMTIL ]     := aTmp[ _CNUMTIK ]
+   aTbl[ _CSUFTIL ]     := aTmp[ _CSUFTIK ]
+   aTbl[ _CTIPTIK ]     := SAVVAL
+   aTbl[ _NUNTTIL ]     := 1
+   aTbl[ _NNUMLIN ]     := 1
+   aTbl[ _CNOMTIL ]     := "Vale por promoción"
+
+   if ( nSave == SAVDEV )
+      aTbl[ _NPVPTIL ]  := - nValePromocion
+   else
+      aTbl[ _NPVPTIL ]  := nValePromocion
+   endif
+
+   dbGather( aTbl, dbfTikL, .t. )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+/*
+      if ( lValePromocion ) .and. ( nValePromocion > 0 )
+
+         if !Empty( oMetMsg )
+            oMetMsg:cText        := 'Generando vales'
+            oMetMsg:Refresh()
+         end if
+
+         // Obtenemos el nuevo numero del vale------------------------------------
+
+         aBlankT                 := dbScatter( dbfTikT )
+
+         aBlankT[ _CNUMTIK ]     := Str( nNewDoc( aTmp[ _CSERTIK ], dbfTikT, "nTikCli", 10, dbfCount ), 10 )
+         aBlankT[ _CSUFTIK ]     := RetSufEmp()
+         aBlankT[ _CHORTIK ]     := Substr( Time(), 1, 5 )
+         aBlankT[ _DFECCRE ]     := Date()
+         aBlankT[ _CTIMCRE ]     := SubStr( Time(), 1, 5 )
+         aBlankT[ _CTIPTIK ]     := SAVVAL
+         aBlankT[ _CTIKVAL ]     := cNumeroTicket
+         aBlankT[ _LCLOTIK ]     := .f.
+         aBlankT[ _NTOTNET ]     := nValePromocion
+         aBlankT[ _NTOTTIK ]     := nValePromocion
+
+         dbGather( aBlankT, dbfTikT, .t. )
+
+         // Guardamos las lineas del tiket----------------------------------------
+
+         aBlankL                 := dbBlankRec( dbfTmpL )
+
+         aBlankL[ _CSERTIL ]     := aBlankT[ _CSERTIK ]
+         aBlankL[ _CNUMTIL ]     := aBlankT[ _CNUMTIK ]
+         aBlankL[ _CSUFTIL ]     := aBlankT[ _CSUFTIK ]
+         aBlankL[ _CTIPTIK ]     := SAVVAL
+         aBlankL[ _NUNTTIL ]     := 1
+         aBlankL[ _NNUMLIN ]     := 1
+         aBlankL[ _CNOMTIL ]     := "Vale por promoción"
+         aBlankL[ _NPVPTIL ]     := nValePromocion
+
+         dbGather( aBlankL, dbfTikL, .t. )
+
+         ImpTiket( IS_PRINTER )
+
+      end if
+*/
