@@ -411,11 +411,15 @@ GeneraFacturasClientes.prg             \
 CamposExtra.prg             \
 DetCamposExtra.prg          \
 Lenguajes.prg               \
+<<<<<<< HEAD
 EstadoSat.Prg               \
+=======
+CentroCoste.Prg 			\
+>>>>>>> origin/master
 
 C               =       	\
 Img2pdf.c               	\
-Treeview.c 						\
+Treeview.c 					\
 
 OBJS            =       \
 Factu.obj               \
@@ -813,8 +817,13 @@ PedidoClienteViewEdit.obj              \
 GeneraFacturasClientes.obj             \
 CamposExtra.obj                        \
 Lenguajes.obj                          \
+<<<<<<< HEAD
 DetCamposExtra.obj                     \
 EstadoSat.obj                                                                      
+=======
+DetCamposExtra.Obj 					   \
+CentroCoste.Obj 					   \
+>>>>>>> origin/master
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1202,8 +1211,13 @@ $(OBJ)\GeneraFacturasClientes.obj            +
 $(OBJ)\CamposExtra.obj                       +
 $(OBJ)\DetCamposExtra.obj                    +
 $(OBJ)\Lenguajes.obj                         +
+<<<<<<< HEAD
 $(OBJ)\EstadoSat.obj                         +
 $(OBJ)\Ventas.obj
+=======
+$(OBJ)\Ventas.obj 							 +
+$(OBJ)\CentroCoste.Obj 						 
+>>>>>>> origin/master
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +

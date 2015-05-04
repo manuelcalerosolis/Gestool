@@ -1252,7 +1252,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    cSay[ 42 ]              := aCifRut[ Max( aTmp[ _NCIFRUT ], 1 ) ]
 
    cSay[ 47 ]              := RetFld( aTmp[ _CSUFDOC ], dbfDlg, "cNomDlg" )
-
+ 
    cTiempoPed              := cTiempoToCadena( aTmp[ _NTIEMPOPED ] )
 
    cCmbContabilidad        := aCmbContabilidad[ Min( Max( aTmp[ _NEXPCONTBL ], 1 ), len( aCmbContabilidad ) ) ]
@@ -4620,6 +4620,9 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
 
          oMsg:SetText( "Lenguaje" )
          TLenguaje():Create( cPatDat() ):SyncAllDbf()
+
+         oMsg:SetText( "Centro de coste" )
+         TCentroCoste():Create( cPatDat() ):SyncAllDbf()
 
          oMsg:SetText( "Unidades de medición" )
          UniMedicion():Create():SyncAllDbf()

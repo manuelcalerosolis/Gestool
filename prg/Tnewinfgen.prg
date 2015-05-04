@@ -28,6 +28,8 @@ memvar cGrupoFamiliaDesde
 memvar cGrupoFamiliaHasta
 memvar cGrupoTArticuloDesde
 memvar cGrupoTArticuloHasta
+memvar cGrupoAlmacenDesde
+memvar cGrupoAlmacenHasta
 
 //---------------------------------------------------------------------------//
 
@@ -4061,6 +4063,13 @@ Method AddVariable() CLASS TNewInfGen
    end if
 
    if !Empty( ::oGrupoAlmacen )
+
+      public cGrupoAlmacenDesde        := ::oGrupoAlmacen:Cargo:Desde
+      public cGrupoAlmacenHasta        := ::oGrupoAlmacen:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde almacen",                  "GetHbVar('cGrupoAlmacenDesde')")
+      ::oFastReport:AddVariable(       "Informe", "Hasta almacen",                  "GetHbVar('cGrupoAlmacenHasta')")
+
    end if
 
    if !Empty( ::oGrupoMaquina )

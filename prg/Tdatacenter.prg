@@ -1873,6 +1873,16 @@ METHOD BuildData()
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "Centro de coste"
+   oDataTable:cName        := cPatDat() + "CentroCoste"
+   oDataTable:cDataFile    := cPatDat( .t. ) + "CentroCoste.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "CentroCoste.Cdx"
+   oDataTable:cDescription := "Centro de coste"
+   oDataTable:bCreateFile  := {| cPath | TCentroCoste():BuildFiles( .t., cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddDataTable( oDataTable )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

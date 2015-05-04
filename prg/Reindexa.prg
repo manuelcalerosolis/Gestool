@@ -128,8 +128,8 @@ METHOD GenIndices( oMsg )
       dbCloseAll()
    end if
 
-   // oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   // BEGIN SEQUENCE
+    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+    BEGIN SEQUENCE
 
    if !Empty( oMsg )
       ::oMsg         := oMsg
@@ -243,6 +243,7 @@ METHOD GenIndices( oMsg )
             if ::lEmpresa
                ::SetText( "Generando índices : Paises", ::aProgress[ 1 ] )                   ; TPais():Create( ::cPathDat ):Reindexa()
                ::SetText( "Generando índices : Lenguaje", ::aProgress[ 1 ] )                 ; TLenguaje():Create( ::cPathDat ):Reindexa()
+               ::SetText( "Generando índices : Centro de coste", ::aProgress[ 1 ] )          ; TCentroCoste():Create( ::cPathDat ):Reindexa()
             end if
 
          end if
@@ -536,14 +537,14 @@ METHOD GenIndices( oMsg )
       MsgInfo( "Proceso finalizado con éxito, tiempo empleado : " + AllTrim( Str( Seconds() - nSeconds ) ) + " seg.", "Información" )
    end if
 
-//   RECOVER USING oError
-//
-//      msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
-//
-//
-//   END SEQUENCE
-//
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
+
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
    if ::oDlg != nil
       ::oDlg:bValid  := {|| .t. }
