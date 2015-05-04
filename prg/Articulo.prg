@@ -36,7 +36,7 @@
 #define fldContabilidad             oFld:aDialogs[9]
 #define fldOfertas                  oFld:aDialogs[10]
 #define fldEscandallos              oFld:aDialogs[11]
-#define fldWeb                      oFld:aDialogs[12]
+#define fldWeb                      oFld:aDialogs[12] 
 
 memvar cDbfArt
 memvar cDbfDiv
@@ -9176,6 +9176,21 @@ STATIC FUNCTION DelDetalle( cCodArt )
          end if
 
          ( dbfArtVta )->( dbSkip() )
+
+      end while
+
+   end if
+
+   if ( D():ArticuloLenguaje( nView ) )->( dbSeek( cCodArt ) )
+
+      while ( D():ArticuloLenguaje( nView ) )->cCodArt == cCodArt .and. !( D():ArticuloLenguaje( nView ) )->( eof() )
+
+         if dbLock( D():ArticuloLenguaje( nView ) )
+            ( D():ArticuloLenguaje( nView ) )->( dbDelete() )
+            ( D():ArticuloLenguaje( nView ) )->( dbUnLock() )
+         end if
+
+         ( D():ArticuloLenguaje( nView ) )->( dbSkip() )
 
       end while
 

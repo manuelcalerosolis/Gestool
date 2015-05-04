@@ -931,7 +931,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Código de barras", -1, "Button", BS_GROUPBOX, 382, 29, 108, 251
   CONTROL "Clasificación", -1, "Button", BS_GROUPBOX, 44, 67, 336, 73
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 45, 219, 336, 61
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 98, 39, 76, 11
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 98, 39, 102, 11
   CONTROL "", 130, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 51, 279, 11
   CONTROL "Añ&d [F2]", 300, "Button", WS_TABSTOP, 387, 39, 33, 14
   CONTROL "&Mod [F3]", 310, "Button", WS_TABSTOP, 420, 39, 33, 14
@@ -955,7 +955,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Autoserializar", 138, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 98, 205, 55, 10
   CONTROL "", 220, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 228, 279, 11
   CONTROL "Solicitar número de lote", 600, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 153, 88, 10
-  CONTROL "", 610, "Edit", WS_BORDER|WS_TABSTOP, 98, 165, 101, 11
+  CONTROL "", 610, "Edit", WS_BORDER|WS_TABSTOP, 98, 165, 102, 11
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 42, 33, 8
   CONTROL "Descripción", -1, "Static", WS_GROUP, 49, 54, 39, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 49, 79, 33, 8
@@ -969,7 +969,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Lote", -1, "Button", BS_GROUPBOX, 44, 142, 336, 37
   CONTROL "Numero de serie", -1, "Button", BS_GROUPBOX, 44, 181, 336, 37
   CONTROL "Aplicar factor de conversión", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 254, 101, 10
-  CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 98, 265, 62, 11
+  CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 98, 265, 56, 11
   CONTROL "Factor", -1, "Static", WS_GROUP, 49, 268, 33, 8
   CONTROL "", 250, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 289, 242, 41, 11
   CONTROL "", 251, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 332, 242, 45, 41
@@ -17655,7 +17655,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Operario", -1, "Static", WS_GROUP, 432, 105, 28, 8
   CONTROL "", 350, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 465, 114, 70, 11
   CONTROL "", 351, "Edit", WS_BORDER, 536, 114, 110, 11
-  CONTROL "Categoría", -1, "Static", WS_GROUP, 432, 117, 34, 8
+  CONTROL "Estado art.", -1, "Static", WS_GROUP, 432, 117, 34, 8
   CONTROL "", 352, "TBitMap", 0x00800000, 648, 114, 14, 11
 }
 
@@ -20411,5 +20411,23 @@ FONT 8, "MS Sans Serif"
   CONTROL "Lenguaje", -1, "Static", WS_GROUP, 50, 47, 34, 8
   CONTROL "Descripción corta", -1, "Static", WS_GROUP, 50, 61, 63, 8
   CONTROL "Descripción extendida", -1, "Static", WS_GROUP, 50, 74, 75, 8
+}
+
+ESTADOSAT DIALOG DISCARDABLE 175, 153, 240, 119
+STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
+CAPTION "Estados"
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 41, 15, 40, 12
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 41, 29, 190, 12
+  CONTROL "", 120, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|WS_TABSTOP, 41, 43, 93, 102
+  CONTROL "Artículo disponible", 130, "Button", BS_AUTORADIOBUTTON, 41, 59, 75, 10
+  CONTROL "Artículo no disponible", 140, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 41, 73, 84, 10
+  CONTROL "&Aceptar [F5]", 500, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 131, 97, 50, 14
+  CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 186, 97, 50, 14
+  CONTROL "Color", -1, "Static", WS_GROUP, 9, 46, 22, 8
+  CONTROL "Código", -1, "Static", WS_GROUP, 9, 18, 25, 8
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 4, 4, 232, 84
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 9, 32, 27, 8
 }
 

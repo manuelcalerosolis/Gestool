@@ -1937,7 +1937,7 @@ Function CreateAcceso( oWnd )
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 11
+   oGrupo:nBigItems     := 12
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "Folder2_Red_16"
    oGrupo:cBigBitmap    := "Folder2_Red_32"
@@ -2030,6 +2030,16 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01096"
    oItem:cBmp           := "Document_Attachment_16"
    oItem:cBmpBig        := "Document_Attachment_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Estados artículos'
+   oItem:cMessage       := 'Acceso al fichero de categorías'
+   oItem:bAction        := {|| EstadoSat( "01126", oWnd() ) }
+   oItem:cId            := "01126"
+   oItem:cBmp           := "bookmarks_preferences_16"
+   oItem:cBmpBig        := "bookmarks_preferences_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()
@@ -2905,8 +2915,8 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Campos extra'
    oItem:cMessage       := 'Acceso a los campos extra'
-   oItem:bAction        := {|| CamposExtra( "01124", oWnd ) }
-   oItem:cId            := "01124"
+   oItem:bAction        := {|| CamposExtra( "01127", oWnd ) }
+   oItem:cId            := "01127"
    oItem:cBmp           := "form_green_add_16"
    oItem:cBmpBig        := "form_green_add_32"
    oItem:lShow          := .f.

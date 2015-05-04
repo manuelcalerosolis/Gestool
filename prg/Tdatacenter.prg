@@ -2177,6 +2177,16 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "EstadoSat"
+   oDataTable:cName        := cPatEmp() + "EstadoSat"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "EstadoSat.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "EstadoSat.Cdx"
+   oDataTable:cDescription := "EstadoSat"
+   oDataTable:bCreateFile  := {| cPath | mkEstadoSat( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxEstadoSat( cPath ) }
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
    oDataTable:cArea        := "TipArt"
    oDataTable:cName        := cPatEmp() + "TipArt"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TipArt.Dbf"
