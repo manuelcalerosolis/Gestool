@@ -307,6 +307,12 @@ CLASS TShell FROM TMdiChild
    METHOD SetDefaultComboFilter( aFilter )   INLINE ( ::oWndBar:SetDefaultComboFilter( aFilter ) )
    METHOD SetComboFilter( cItem )            INLINE ( ::oWndBar:SetComboFilter( cItem ) )
 
+   METHOD setFilterByUser( cFilterExpresion) INLINE   (  cFilterExpresion := ::oActiveFilter:defaultFilterByUser(),;
+                                                         iif(  !empty( cFilterExpresion ),;
+                                                               ::oWndBar:setComboFilter( cFilterExpresion ),;
+                                                            );
+                                                      )
+
    METHOD ToExcel()
 
 ENDCLASS
@@ -532,9 +538,14 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
       ::oWndBar:EnableComboBox( ::aPrompt )
 
       if !Empty( ::oActiveFilter:Ready() )
+         
          ::EnableComboFilter( ::oActiveFilter:aFiltersName )
+         
          ::SetDefaultComboFilter()
          ::ShowAddButtonFilter()
+
+         ::setFilterByUser()
+
       end if 
 
       ::oWndBar:EnableGet()
@@ -2597,9 +2608,10 @@ METHOD ChgFilter() CLASS TShell
 
       if cFilter != txtFilters 
          
-         cFilterExpresion     := ::oActiveFilter:ExpresionFilter( cFilter )
+         cFilterExpresion     := ::oActiveFilter:getExpresionFilter( cFilter )
          if !Empty ( cFilterExpresion )
-            CreateFastFilter( cFilterExpresion, ::xAlias, .f. )
+            buildSetFilter( cFilterExpresion, ::xAlias, .f. )
+            // CreateFastFilter( cFilterExpresion, ::xAlias, .f. )
          endif
 
          ::ShowButtonFilter()
@@ -2607,7 +2619,8 @@ METHOD ChgFilter() CLASS TShell
 
       else 
 
-         DestroyFastFilter( ::xAlias )
+         quitSetFilter( ::xAlias )
+         // DestroyFastFilter( ::xAlias )
 
          ::HideButtonFilter()
          ::HideEditButtonFilter()

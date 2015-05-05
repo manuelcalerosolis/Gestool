@@ -60,11 +60,12 @@ CLASS TFilterCreator
 
    METHOD Ready()                            INLINE ( !Empty( ::cType ) .and. !Empty( ::oFilterDatabase ) )
 
-   METHOD FiltersName()
-   METHOD SetFiltersName( aFilter )          INLINE ( ::aFiltersName := aFilter )
-   METHOD GetFiltersName( )                  INLINE ( ::aFiltersName )
+   METHOD filtersName()
+   METHOD defaultFilterByUser()              INLINE ( ::oFilterDatabase:defaultFilterByUser() )
+   METHOD setFiltersName( aFilter )          INLINE ( ::aFiltersName := aFilter )
+   METHOD getFiltersName( )                  INLINE ( ::aFiltersName )
 
-   METHOD ExpresionFilter( cFilterName )     INLINE ( if( ::BuildFilter( ::oFilterDatabase:ArrayFilter( cFilterName ) ), ::cExpresionFilter, "" ) ) // ::oFilterDatabase:ExpresionFilter( cFilterName ) ) 
+   METHOD getExpresionFilter(  cFilterName )     INLINE ( if( ::BuildFilter( ::oFilterDatabase:ArrayFilter( cFilterName ) ), ::cExpresionFilter, "" ) ) // ::oFilterDatabase:getExpresionFilter(  cFilterName ) ) 
    METHOD ArrayFilter( cFilterName )         INLINE ( ::oFilterDatabase:ArrayFilter( cFilterName ) )
 
    METHOD BuildFilter( aFilter )
@@ -251,7 +252,7 @@ METHOD BuildExpresion( cExpresionFilter )
 
    ::bExpresionFilter         := Compile( cExpresionFilter )
 
-   if Empty( ::bExpresionFilter )
+   if empty( ::bExpresionFilter )
       msgStop( "Expresión erronea " + cExpresionFilter, "Error!" )
    end if
 
@@ -263,10 +264,13 @@ METHOD FiltersName() CLASS TFilterCreator
 
    local aFilters             := ::oFilterDatabase:FiltersName()
 
-   ::SetFiltersName( aFilters )
+   ::setFiltersName( aFilters )
 
 RETURN ( aFilters )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -313,6 +317,9 @@ METHOD Init( oSender ) CLASS TReplaceCreator
 
 RETURN ( Self )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -605,7 +612,7 @@ CLASS TReplaceDialog FROM TFilterDialog
       METHOD okDialog()
 
    METHOD dbfReplace()                 INLINE ( ::oFilterCreator:cDbfReplace )
-   METHOD expresionFilter()            INLINE ( ::oFilterCreator:bExpresionFilter )
+   METHOD getExpresionFilter( )            INLINE ( ::oFilterCreator:bExpresionFilter )
 
 END CLASS
 
@@ -688,7 +695,7 @@ METHOD okDialog() CLASS TReplaceDialog
 
          cGetVal  := ( ::dbfReplace() )->( Eval( Compile( cGetValue( ::cExpReplace, ValType( ( ::dbfReplace() )->( FieldGet( nFldPos ) ) ) ) ) ) )
 
-         if ::lAllRecno .or. ( ::dbfReplace() )->( Eval( ::ExpresionFilter() ) )
+         if ::lAllRecno .or. ( ::dbfReplace() )->( Eval( ::getExpresionFilter( ) ) )
             
             if ( ::dbfReplace() )->( dbRLock() )
                ( ::dbfReplace() )->( FieldPut( nFldPos, cGetVal ) )
@@ -1131,9 +1138,12 @@ CLASS TFilterDatabase FROM TMant
    METHOD SerializeFilter()
    METHOD UnSerializeFilter()
 
-   METHOD FiltersName()
+   METHOD filtersName()
+   METHOD defaultFilterByUser( cFilterType, cFilterUser ) 
+   
+   METHOD getDefaultFilter( cFilterName )
+   METHOD getExpresionFilter( cFilterName )
 
-   METHOD ExpresionFilter( cFilterName )
    METHOD ArrayFilter( cFilterName )
 
 END CLASS
@@ -1197,7 +1207,8 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TFilterDatabase
       FIELD NAME "cExpFlt" TYPE "M" LEN  10 DEC 0 COMMENT "Expresión del filtro"          OF oDbf
       FIELD NAME "lDefFlt" TYPE "L" LEN   1 DEC 0 COMMENT "Lógico de filtro por defecto"  OF oDbf
 
-      INDEX TO "CnfFlt.Cdx" TAG "cTipDoc" ON "cTipDoc + Upper( cTexFlt )" COMMENT "Código" NODELETED OF oDbf
+      INDEX TO "CnfFlt.Cdx" TAG "cTipDoc" ON "cTipDoc + Upper( cTexFlt )"                 COMMENT "Código"  NODELETED OF oDbf
+      INDEX TO "CnfFlt.Cdx" TAG "lDefFlt" ON "cTipDoc + cCodUsr"           FOR "lDefFlt"  COMMENT "Usuario" NODELETED OF oDbf
 
    END DATABASE oDbf
 
@@ -1262,22 +1273,24 @@ RETURN ( aFilter )
 
 METHOD Save( cFilterName ) CLASS TFilterDatabase
 
-   if !empty( cFilterName )
-      ::cFilterName     := padr( cFilterName, 100 )
-   end if 
+   if ::Dialog( cFilterName )
 
-   if ::Dialog()
-
-      if !Empty( ::cFilterName ) .and. ::SeekFullKey( ::cFilterName )
+      if ::seekFullKey()
          ::oDbf:Delete()
       end if 
 
       ::oDbf:Blank()
+
       ::oDbf:cTipDoc    := ::oFilterCreator:GetFilterType()
       ::oDbf:cTexFlt    := ::cFilterName
       ::oDbf:cExpFlt    := ::oFilterCreator:cExpresionFilter
-      ::oDbf:lDefFlt    := ::lDefault
       ::oDbf:cFldFlt    := ::SerializeFilter( ::oFilterCreator:aFilter )
+      ::oDbf:lDefFlt    := ::lDefault
+
+      if !::lAllUser
+         ::oDbf:cCodUsr := cCurUsr()
+      end if  
+      
       ::oDbf:Insert()
 
    end if 
@@ -1286,11 +1299,12 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Dialog() CLASS TFilterDatabase
+METHOD Dialog( cFilterName ) CLASS TFilterDatabase
 
    local oDlg
 
-   ::cFilterName  := Padr( ::cFilterName, 100 )
+   ::cFilterName  := padr( cFilterName, 100 )
+   ::lDefault     := ::getDefaultFilter()
 
    DEFINE DIALOG oDlg RESOURCE "Nombre_Filtro"
 
@@ -1349,22 +1363,41 @@ METHOD FiltersName( cFilterType ) CLASS TFilterDatabase
    
    DEFAULT cFilterType  := ::oFilterCreator:GetFilterType()
 
-   if !empty( ::oDbf )
+   if empty( ::oDbf )
+      RETURN ( aFilter )
+   end if 
 
-      if ::oDbf:Seek( cFilterType )
-         while ( ::oDbf:cTipDoc == cFilterType ) .and. !( ::oDbf:Eof() )
-            aAdd( aFilter, ::oDbf:cTexFlt )
-            ::oDbf:Skip()
-         end while
-      end if 
-
+   if ::oDbf:Seek( cFilterType )
+      while ( ::oDbf:cTipDoc == cFilterType ) .and. !( ::oDbf:Eof() )
+         aAdd( aFilter, ::oDbf:cTexFlt )
+         ::oDbf:Skip()
+      end while
    end if 
 
 RETURN ( aFilter )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExpresionFilter( cFilterName ) CLASS TFilterDatabase
+METHOD defaultFilterByUser( cFilterType, cFilterUser ) CLASS TFilterDatabase
+
+   local cFilter        := ""
+   
+   DEFAULT cFilterType  := ::oFilterCreator:GetFilterType()
+   DEFAULT cFilterUser  := cCurUsr()
+
+   if empty( ::oDbf )
+      RETURN ( cFilter )
+   end if 
+
+   if ::oDbf:SeekInOrd( cFilterType + cFilterUser, "lDefFlt" )
+      cFilter           := ::oDbf:cTexFlt 
+   end if 
+
+RETURN ( cFilter )
+
+//---------------------------------------------------------------------------//
+
+METHOD getExpresionFilter(  cFilterName ) CLASS TFilterDatabase
 
    local cFilterExpresion  := ""
 
@@ -1373,6 +1406,20 @@ METHOD ExpresionFilter( cFilterName ) CLASS TFilterDatabase
    end if 
 
 RETURN ( cFilterExpresion )
+
+//---------------------------------------------------------------------------//
+
+METHOD getDefaultFilter( cFilterName ) CLASS TFilterDatabase
+
+   local defaultFilter  := .f.
+
+   DEFAULT cFilterName  := ::cFilterName
+
+   if ::SeekFullKey( cFilterName )
+      defaultFilter     := ::oDbf:lDefFlt
+   end if 
+
+RETURN ( defaultFilter )
 
 //---------------------------------------------------------------------------//
 
@@ -1390,6 +1437,8 @@ RETURN ( aArrayFilter )
 
 METHOD SeekFullKey( cFilterName ) CLASS TFilterDatabase
    
+   DEFAULT cFilterName     := ::cFilterName
+
    if !Empty( cFilterName )
       RETURN ( ::oDbf:Seek( ::oFilterCreator:GetFilterType() + upper( alltrim( cFilterName ) ) ) )
    end if

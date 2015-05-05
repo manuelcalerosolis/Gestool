@@ -414,32 +414,7 @@ Function CreateFastFilter( cExpresionFilter, cAlias, lInclude, oMeter, cExpUsuar
 
    if lAds() .or. lAIS()
 
-      cOrdKey              := ( cAlias )->( OrdKey() )
-
-      if lInclude
-         cExpresionFilter  := "'" + cExpresionFilter + "' $ " + cOrdKey + " .and. !Deleted()"
-      end if
-
-      if Empty( cExpUsuario ) .and. !Empty( cFiltroUsuario )
-         cExpresionFilter  += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroUsuario
-      end if
-
-      if Empty( cExpFecha ) .and. !Empty( cFiltroFecha )
-         cExpresionFilter  += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
-      end if
-
-      if !Empty( cExpresionFilter )
-
-         bExpFilter        := bCheck2Block( cExpresionFilter )
-
-         ( cAlias )->( dbSetFilter( bExpFilter, cExpresionFilter ) )
-         ( cAlias )->( dbGoTop() )
-
-      else
-
-         ( cAlias )->( dbSetFilter() )
-
-      end if
+      buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFecha )
 
    else
 
@@ -565,6 +540,53 @@ Function OrdClearScope( oBrw, dbf )
 Return .t.
 
 //---------------------------------------------------------------------------//
-//
-// Crea Bag Customer con tags indicados o Bag normal con sus tags correspondientes si es un filtro
-//
+
+Function buildSetFilter( cExpresionFilter, cAlias, lInclude, cExpUsuario, cExpFecha )
+
+   local cOrdKey
+   local bExpFilter
+
+   DEFAULT lInclude     := .t.
+   DEFAULT cExpUsuario  := ""
+   DEFAULT cExpFecha    := ""
+
+   cOrdKey              := ( cAlias )->( OrdKey() )
+
+   if lInclude
+      cExpresionFilter  := "'" + cExpresionFilter + "' $ " + cOrdKey + " .and. !Deleted()"
+   end if
+
+   if Empty( cExpUsuario ) .and. !Empty( cFiltroUsuario )
+      cExpresionFilter  += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroUsuario
+   end if
+
+   if Empty( cExpFecha ) .and. !Empty( cFiltroFecha )
+      cExpresionFilter  += if( !Empty( cExpresionFilter ), " .and. ", "" ) + cFiltroFecha
+   end if
+
+   if !Empty( cExpresionFilter )
+
+      bExpFilter        := bCheck2Block( cExpresionFilter )
+
+      ( cAlias )->( dbSetFilter( bExpFilter, cExpresionFilter ) )
+      ( cAlias )->( dbGoTop() )
+
+   else
+
+      ( cAlias )->( dbSetFilter() )
+
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function quitSetFilter( cAlias )
+
+   if !Empty( cAlias ) .and. ( cAlias )->( used() )
+      ( cAlias )->( dbClearFilter() )
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
