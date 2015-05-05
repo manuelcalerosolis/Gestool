@@ -37,7 +37,7 @@
 #define fldContabilidad             oFld:aDialogs[9]
 #define fldOfertas                  oFld:aDialogs[10]
 #define fldEscandallos              oFld:aDialogs[11]
-#define fldWeb                      oFld:aDialogs[12]
+#define fldWeb                      oFld:aDialogs[12] 
 
 memvar cDbfArt
 memvar cDbfDiv
@@ -229,6 +229,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       D():ArticuloLenguaje( nView )
       D():Lenguajes( nView )
+      D():EstadoArticulo( nView )
 
       lOpenFiles  := .t.
 
@@ -853,6 +854,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                   "Categoría" ,;
                   "Temporada" ,;
                   "Fabricante" ,;
+                  "Estado" ,;
                   "Posición táctil" ,;
                   "Publicar" ,;
                   "Web" ;
@@ -1000,6 +1002,17 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t. 
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Estado"
+         :cSortOrder       := "cCodEst"
+         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodEst ) + if( !Empty( ( dbfArticulo )->cCodEst ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
+         :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( ( dbfArticulo )->cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
+         :nWidth           := 140
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t. 
+         AddResourceTipoCategoria( hb_QWith() )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1576,6 +1589,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local aBtn                 := Array( 14 )
    local oBmpCategoria
    local oBmpTemporada
+   local oBmpEstado
    local cCbxPrecio           := "Ventas"
    local nTotStkAct           := 0
    local nTotStkPdr           := 0
@@ -1909,6 +1923,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       357 ;
          TRANSPARENT ;
          OF       fldGeneral
+
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ] ;
+         ID       400 ;
+         IDTEXT   401 ;         
+         WHEN     ( nMode == APPD_MODE .or. oUser():lAdministrador() ) ;
+         VALID    ( cEstadoArticulo( aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ], D():EstadoArticulo( nView ), aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ]:oHelpText, oBmpEstado ) ) ;
+         ON HELP  ( BrwEstadoArticulo( aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ]:oHelpText, oBmpEstado ) ) ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[1]
+
+   REDEFINE BITMAP oBmpEstado ;
+         ID       402 ;
+         TRANSPARENT ;
+         OF       oFld:aDialogs[1]
 
    /*
    Lote------------------------------------------------------------------------
@@ -4628,6 +4656,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    if !Empty( oBmpCategoria )
       oBmpCategoria:End()
+   end if
+
+   if !Empty( oBmpTemporada )
+      oBmpTemporada:End()
+   end if
+
+   if !Empty( oBmpEstado )
+      oBmpEstado:End()
    end if
 
    if !Empty( oBmpGeneral )
@@ -9177,6 +9213,21 @@ STATIC FUNCTION DelDetalle( cCodArt )
          end if
 
          ( dbfArtVta )->( dbSkip() )
+
+      end while
+
+   end if
+
+   if ( D():ArticuloLenguaje( nView ) )->( dbSeek( cCodArt ) )
+
+      while ( D():ArticuloLenguaje( nView ) )->cCodArt == cCodArt .and. !( D():ArticuloLenguaje( nView ) )->( eof() )
+
+         if dbLock( D():ArticuloLenguaje( nView ) )
+            ( D():ArticuloLenguaje( nView ) )->( dbDelete() )
+            ( D():ArticuloLenguaje( nView ) )->( dbUnLock() )
+         end if
+
+         ( D():ArticuloLenguaje( nView ) )->( dbSkip() )
 
       end while
 
@@ -15752,6 +15803,9 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CCODFAB", "CCODFAB", {|| Field->CCODFAB }, ) )
 
+      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.Cdx", "cCodEst", "Field->cCodEst", {|| Field->cCodEst } ) )
+
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CFAMNOM", "FAMILIA + NOMBRE", {|| Field->FAMILIA + Field->NOMBRE }, ) )
 
@@ -16258,6 +16312,7 @@ function aItmArt()
    aAdd( aBase, { "cTitSeo",   "C", 70, 0, "Meta-título",                              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cDesSeo",   "C",160, 0, "Meta-descripcion",                         "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cKeySeo",   "C",160, 0, "Meta-keywords",                            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodEst",   "C",  3, 0, "Estado del artículo",                      "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

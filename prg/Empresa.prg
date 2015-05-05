@@ -3637,6 +3637,12 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkCategoria( cPath, aImportacion:lArticulos, cPathGrp ); rxCategoria( cPath )   ; SysRefresh()
 
       if oMsg != nil
+         oMsg:SetText( "Creando Estados de los SAT" )
+      end if
+
+      mkEstadoSat( cPath, aImportacion:lSatCli, cPathGrp ); rxEstadoSat( cPath )   ; SysRefresh()
+
+      if oMsg != nil
          oMsg:SetText( "Creando temporadas" )
       end if
 
@@ -4469,6 +4475,8 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "FamPrv",    "familias de proveedores", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Categorias","categorías", oMet, oMsg, aMsg )
+
+         ActDbf( cEmpOld, cEmpTmp, "EstadoSat","estado de los SAT", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Pro",       "propiedades", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "TblPro",    "tabla de propiedades", oMet, oMsg, aMsg )
