@@ -1190,7 +1190,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Dirección",;
                "Agente",;
                "Operario",;
-               "Categoría",;
+               "Estado artículo",;
                "Situación";
       MRU      "Power-drill_user1_16";
       BITMAP   clrTopArchivos ;
@@ -6377,6 +6377,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    local cSufSat
    local dFecSat
    local cCodCli
+   local cCodEst
+   local nOrdAnt
 
    if Empty( aTmp[ _CSERSAT ] )
       aTmp[ _CSERSAT ]  := "A"
@@ -6387,6 +6389,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    cSufSat              := aTmp[ _CSUFSAT ]
    cCodCli              := aTmp[ _CCODCLI ]
    dFecSat              := aTmp[ _DFECSAT ]
+   cCodEst              := aTmp[ _CCODEST ]
 
    /*
    Comprobamos la fecha del documento
@@ -6510,6 +6513,19 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       ( dbfTmpLin )->dFecSat     := dFecSat
       ( dbfTmpLin )->cCodCli     := cCodCli
 
+      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. ( dbfTmpLin )->nCtlstk == 2
+
+         if ( D():Articulos( nView ) )->( dbSeek( ( dbfTmpLin )->cRef ) )
+
+            if dbLock( D():Articulos( nView ) )
+               ( D():Articulos( nView ) )->cCodEst    := aTmp[ _CCODEST ]
+               ( D():Articulos( nView ) )->( dbUnLock() )
+            end if
+
+         end if
+
+      end if
+
       dbPass( dbfTmpLin, dbfSatCliL, .t., cSerSat, nNumSat, cSufSat )
       ( dbfTmpLin )->( dbSkip() )
 
@@ -6565,6 +6581,44 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _NTOTSAT ]     := nTotSat
 
    WinGather( aTmp, , D():SatClientes( nView ), , nMode )
+
+   /*
+   Pasamos, si estamos modificando, el estado a los artículos------------------
+   */
+
+   if nMode == EDIT_MODE
+
+      nOrdAnt := ( D():SatClientes( nView ) )->( OrdSetFocus( "cNumDes" ) )
+
+      ( D():SatClientes( nView ) )->( dbGoTop() )
+
+      if ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat == cSerSat + Str( nNumSat ) + cSufSat .and.;
+         ( D():SatClientes( nView ) )->dFecSat  == dFecSat
+
+         if ( dbfSatCliL )->( dbSeek( cSerSat + Str( nNumSat ) + cSufSat ) )
+
+            while ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat == cSerSat + Str( nNumSat ) + cSufSat .and. !( dbfSatCliL )->( Eof() )
+
+               if ( D():Articulos( nView ) )->( dbSeek( ( dbfSatCliL )->cRef ) )
+
+                  if dbLock( D():Articulos( nView ) )
+                     ( D():Articulos( nView ) )->cCodEst    := cCodEst
+                     ( D():Articulos( nView ) )->( dbUnLock() )
+                  end if
+
+               end if
+
+               ( dbfSatCliL )->( dbSkip() )
+
+            end while
+
+         end if
+
+      end if
+
+      ( D():SatClientes( nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+   end if
 
    /*
    Escribe los datos pendientes------------------------------------------------
@@ -9808,6 +9862,9 @@ FUNCTION rxSatCli( cPath, oMeter )
 
       ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cCodEst", "cCodEst", {|| Field->cCodEst } ) )
+
+      ( cSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cNumDes", "CSERSAT + STR( NNUMSAT ) + CSUFSAT", {|| Field->CSERSAT + STR(Field->NNUMSAT) + Field->CSUFSAT } ) )
 
       ( cSatCliT )->( dbCloseArea() )
 

@@ -5602,6 +5602,8 @@ CLASS D
 
    METHOD Operarios( nView )                 INLINE ( ::Get( "OpeT", nView ) )
 
+   METHOD EstadoArticulo( nView )            INLINE ( ::Get( "EstadoSat", nView ) )
+
    METHOD CamposExtras( nView )              INLINE ( ::Get( "CAMPOEXTRA", nView ) )
    METHOD DetCamposExtras( nView )           INLINE ( ::Get( "DETCAMPOEXTRA", nView ) )
 
