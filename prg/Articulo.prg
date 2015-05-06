@@ -1469,6 +1469,14 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
+         DEFINE BTNSHELL RESOURCE "Power-drill_user1_" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( SatCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+            TOOLTIP  "Añadir SAT de cliente" ;
+            FROM     oRotor ;
+            ALLOW    EXIT ;
+            LEVEL    ACC_EDIT         
+
          DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( PreCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
@@ -6138,8 +6146,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr6") ) ]       := oSay[ 16 ]:nAt
       aTmp[ ( dbfArticulo )->( fieldpos( "nPosTpv" ) ) ]       -= 0.5
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp1" ) ) ]      := aImpComanda[ oImpComanda1:nAt ]
-      aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp2" ) ) ]      := aImpComanda[ oImpComanda2:nAt ]
+      if !Empty( oImpComanda1 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp1" ) ) ]      := aImpComanda[ oImpComanda1:nAt ]
+      end if
+
+      if !Empty( oImpComanda2 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp2" ) ) ]      := aImpComanda[ oImpComanda2:nAt ]
+      end if
 
       if !Empty( oActiveX )
          aTmp[ ( dbfArticulo )->( fieldpos( "mDesTec" ) ) ]    := oActiveX:DocumentHTML
@@ -12933,63 +12946,10 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
             RESOURCE "form_green_add_16" ;
             ACTION   ( oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) )
 
-            MENUITEM "&2. Informe del artículo";
-            MESSAGE  "Muestra el informe del artículo" ;
-            RESOURCE "info16" ;
-            ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
-
-            MENUITEM "&3. Informe de artículo en escandallo";
+            MENUITEM "&2. Informe de artículo en escandallo";
             MESSAGE  "Muestra el informe del artículo en escandallo" ;
             RESOURCE "info16" ;
             ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
-
-            
-
-            if !lExternal
-
-            SEPARATOR
-
-            MENUITEM "&3. Añadir pedido a proveedor";
-            MESSAGE  "Añade un pedido a proveedor" ;
-            RESOURCE "Clipboard_empty_businessman_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PedPrv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&4. Añadir albarán de proveedor";
-            MESSAGE  "Añade un albarán de proveedor" ;
-            RESOURCE "Document_plain_businessman_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbPrv( nil , nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&5. Añadir factura de proveedor";
-            MESSAGE  "Añade una factura de proveedor" ;
-            RESOURCE "Document_businessman_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FacPrv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&6. Añadir presupuesto de cliente";
-            MESSAGE  "Añade un presupuesto de cliente" ;
-            RESOURCE "Notebook_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PreCli( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&7. Añadir pedido de cliente";
-            MESSAGE  "Añade un pedido de cliente" ;
-            RESOURCE "Clipboard_empty_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PedCli( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&8. Añadir albarán de cliente";
-            MESSAGE  "Añade un albarán de cliente" ;
-            RESOURCE "Document_plain_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbCli( nil, nil, { "Artículo" => ( dbfArticulo )->Codigo } ), ) )
-
-            MENUITEM "&9. Añadir factura de cliente";
-            MESSAGE  "Añade una factura de cliente" ;
-            RESOURCE "Document_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FactCli( nil, nil, { "Artículo" => ( dbfArticulo )->Codigo } ), ) )
-
-            MENUITEM "&A. Añadir tiket de cliente";
-            MESSAGE  "Añade un tiket de cliente" ;
-            RESOURCE "Cashier_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FrontTpv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            end if
 
          ENDMENU
 

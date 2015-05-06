@@ -1,3 +1,4 @@
+
 #include "FiveWin.ch"  
 #include "Factu.ch" 
 #include "Report.ch"
@@ -120,6 +121,10 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
    end if
 
    if !::lGrupoFabricante( .t. )
+      return .f.
+   end if
+
+   if !::lGrupoEstadoArticulo( .t. )
       return .f.
    end if
 
@@ -448,6 +453,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "TipoIva",     "C",  1, 0, {|| "@!" }, "Código del tipo de " + cImp()            )
    ::AddField( "cCodTip",     "C", 18, 0, {|| "@!" }, "Código del tipo de artículo"             )
    ::AddField( "cCodCate",    "C",  3, 0, {|| "@!" }, "Código categoría"                        )
+   ::AddField( "cCodEst",     "C",  3, 0, {|| "@!" }, "Código estado artículo"                  )
    ::AddField( "cCodTemp",    "C",  3, 0, {|| "@!" }, "Código temporada"                        )
    ::AddField( "cCodFab",     "C",  3, 0, {|| "@!" }, "Código fabricante"                       )
    ::AddField( "cCodGrp",     "C", 12, 0, {|| "@!" }, "Código grupo de cliente"                 )
@@ -632,23 +638,24 @@ Return ( Self )
 
 Method lValidRegister() CLASS TFastVentasArticulos
 
-   if !empty( ::oDbf:cCodArt )                                                                                                          .and.;
-      ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()      .and. ::oDbf:cCodArt   <= ::oGrupoArticulo:Cargo:getHasta() )      .and.;
-      ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:getDesde()       .and. ::oDbf:cCodFam   <= ::oGrupoFamilia:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cCodTip     >= ::oGrupoTArticulo:Cargo:getDesde()     .and. ::oDbf:cCodTip   <= ::oGrupoTArticulo:Cargo:getHasta() )     .and.;
-      ( ::oDbf:TipoIva     >= ::oGrupoIva:Cargo:getDesde()           .and. ::oDbf:TipoIva   <= ::oGrupoIva:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCodCate    >= ::oGrupoCategoria:Cargo:getDesde()     .and. ::oDbf:cCodCate  <= ::oGrupoCategoria:Cargo:getHasta() )     .and.;
-      ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()     .and. ::oDbf:cCodTemp  <= ::oGrupoTemporada:Cargo:getHasta() )     .and.;
-      ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()    .and. ::oDbf:cCodFab   <= ::oGrupoFabricante:Cargo:getHasta() )    .and.;
-      ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()       .and. ::oDbf:cCodCli   <= ::oGrupoCliente:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()      .and. ::oDbf:cCodGrp   <= ::oGrupoGCliente:Cargo:getHasta() )      .and.;
-      ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()         .and. ::oDbf:cCodPago  <= ::oGrupoFpago:Cargo:getHasta() )         .and.;
-      ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()          .and. ::oDbf:cCodRut   <= ::oGrupoRuta:Cargo:getHasta() )          .and.;
-      ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()        .and. ::oDbf:cCodAge   <= ::oGrupoAgente:Cargo:getHasta() )        .and.;
-      ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde() .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:getHasta() ) .and.;
-      ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()     .and. ::oDbf:cPrvHab   <= ::oGrupoProveedor:Cargo:getHasta() )     .and.;
-      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()       .and. ::oDbf:cCodAlm   <= ::oGrupoAlmacen:Cargo:getHasta() ) 
+   if !empty( ::oDbf:cCodArt )                                                                                                                  .and.;
+      ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()         .and. ::oDbf:cCodArt    <= ::oGrupoArticulo:Cargo:getHasta() )          .and.;
+      ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:getDesde()          .and. ::oDbf:cCodFam    <= ::oGrupoFamilia:Cargo:getHasta() )           .and.;
+      ( ::oDbf:cCodTip     >= ::oGrupoTArticulo:Cargo:getDesde()        .and. ::oDbf:cCodTip    <= ::oGrupoTArticulo:Cargo:getHasta() )         .and.;
+      ( ::oDbf:TipoIva     >= ::oGrupoIva:Cargo:getDesde()              .and. ::oDbf:TipoIva    <= ::oGrupoIva:Cargo:getHasta() )               .and.;
+      ( ::oDbf:cCodCate    >= ::oGrupoCategoria:Cargo:getDesde()        .and. ::oDbf:cCodCate   <= ::oGrupoCategoria:Cargo:getHasta() )         .and.;
+      ( ::oDbf:cCodEst     >= ::oGrupoEstadoArticulo:Cargo:getDesde()   .and. ::oDbf:cCodEst    <= ::oGrupoEstadoArticulo:Cargo:getHasta() )    .and.;
+      ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()        .and. ::oDbf:cCodTemp   <= ::oGrupoTemporada:Cargo:getHasta() )         .and.;
+      ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()       .and. ::oDbf:cCodFab    <= ::oGrupoFabricante:Cargo:getHasta() )        .and.;
+      ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()          .and. ::oDbf:cCodCli    <= ::oGrupoCliente:Cargo:getHasta() )           .and.;
+      ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()         .and. ::oDbf:cCodGrp    <= ::oGrupoGCliente:Cargo:getHasta() )          .and.;
+      ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()            .and. ::oDbf:cCodPago   <= ::oGrupoFpago:Cargo:getHasta() )             .and.;
+      ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()             .and. ::oDbf:cCodRut    <= ::oGrupoRuta:Cargo:getHasta() )              .and.;
+      ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()           .and. ::oDbf:cCodAge    <= ::oGrupoAgente:Cargo:getHasta() )            .and.;
+      ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde()    .and. ::oDbf:cCodTrn    <= ::oGrupoTransportista:Cargo:getHasta() )     .and.;
+      ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()          .and. ::oDbf:cCodUsr    <= ::oGrupoUsuario:Cargo:getHasta() )           .and.;
+      ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cPrvHab    <= ::oGrupoProveedor:Cargo:getHasta() )         .and.;
+      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() ) 
 
       Return .t.
 
@@ -764,6 +771,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Fabricantes",                ::oDbfFab:Select() )
    ::oFastReport:SetFieldAliases(   "Fabricantes",                cObjectsToReport( ::oDbfFab:oDbf ) )
 
+   ::oFastReport:SetWorkArea(       "Estado artículo",            ::oDbfEstArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Estado artículo",            cItemsToReport( aItmEstadoSat() ) )
+
    ::oFastReport:SetWorkArea(       "Tipos de " + cImp(),         ::oDbfIva:nArea )
    ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(),         cItemsToReport( aItmTIva() ) )
 
@@ -791,6 +801,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",              {|| ::oDbfArt:cCodCate } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ::oDbfArt:cCodTemp } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ::oDbfArt:cCodFab } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Estado artículo",         {|| ::oDbfArt:cCodEst } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ::oDbfArt:TipoIva } )
 
    ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
@@ -816,6 +827,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Categorias" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Estado artículo" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
    
    ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
@@ -902,6 +914,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oSatCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   
@@ -1061,6 +1074,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPreCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oPreCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodAlm    := ::oPreCliL:cAlmLin
@@ -1206,6 +1220,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPedCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodAlm    := ::oPedCliL:cAlmLin
@@ -1362,6 +1377,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oAlbCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodAlm    := ::oAlbCliL:cAlmLin
@@ -1515,6 +1531,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oFacCliL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oFacCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodAlm    := ::oFacCliL:cAlmLin
@@ -1665,6 +1682,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oFacRecL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodAlm    := ::oFacRecL:cAlmLin
@@ -1813,6 +1831,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cCodFam    := ::oTikCliL:cCodFam
                   ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
@@ -1896,6 +1915,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cCodFam    := ::oTikCliL:cCodFam
                   ::oDbf:cCodTip    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oTikCliL:cCbaTil, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodAlm    := ::oTikCliL:cAlmLin
@@ -1988,7 +2008,7 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
 
       ::oDbf:Blank()
 
-      ::oDbf:cCodArt  := ::oDbfArt:cCodArt
+      ::oDbf:cCodArt  := ::oDbfArt:Codigo
       ::oDbf:cCodCli  := ::oDbfArt:cPrvHab
       ::oDbf:cPrvHab  := ::oDbfArt:cPrvHab
       ::oDbf:cNomArt  := ::oDbfArt:Nombre
@@ -1998,6 +2018,7 @@ METHOD listadoArticulo() CLASS TFastVentasArticulos
       ::oDbf:cCodCate := ::oDbfArt:cCodCate
       ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
       ::oDbf:cCodFab  := ::oDbfArt:cCodFab
+      ::oDbf:cCodEst  := ::oDbfArt:cCodEst
       ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
 
       ::InsertIfValid()
@@ -2139,6 +2160,7 @@ METHOD fillFromArticulo() CLASS TFastVentasArticulos
    ::oDbf:TipoIva    := ::oDbfArt:TipoIva
    ::oDbf:cCodTip    := ::oDbfArt:cCodTip
    ::oDbf:cCodCate   := ::oDbfArt:cCodCate
+   ::oDbf:cCodEst    := ::oDbfArt:cCodEst
    ::oDbf:cCodTemp   := ::oDbfArt:cCodTemp
    ::oDbf:cCodFab    := ::oDbfArt:cCodFab
    ::oDbf:nCosArt    := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
@@ -2305,6 +2327,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPedPrvL:nIva )
                      ::oDbf:cCodTip    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                      ::oDbf:cCodCate   := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                     ::oDbf:cCodEst    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                      ::oDbf:cCodTemp   := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                      ::oDbf:cCodFab    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                      ::oDbf:cCodGrp    := RetFld( ::oPedPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
@@ -2444,6 +2467,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oAlbPrvL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodGrp    := RetFld( ::oAlbPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
@@ -2583,6 +2607,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oFacPrvL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodGrp    := RetFld( ::oFacPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
@@ -2719,6 +2744,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oRctPrvL:nIva )
                   ::oDbf:cCodTip    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   ::oDbf:cCodGrp    := RetFld( ::oRctPrvL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )

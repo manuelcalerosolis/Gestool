@@ -1167,7 +1167,9 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
    */
 
    if oWnd != nil
+      ?"Antes cerrarlo todo"
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      ?"despues de cerrarlo todo"
    end if
 
    if !OpenFiles()

@@ -24,6 +24,8 @@ memvar cGrupoTemporadaDesde
 memvar cGrupoTemporadaHasta
 memvar cGrupoCategoriaDesde
 memvar cGrupoCategoriaHasta
+memvar cGrupoEstadoArticuloDesde
+memvar cGrupoEstadoArticuloHasta
 memvar cGrupoFamiliaDesde
 memvar cGrupoFamiliaHasta
 memvar cGrupoTArticuloDesde
@@ -99,6 +101,7 @@ CLASS TNewInfGen FROM TInfGen
    DATA oGrupoFabricante
    DATA oGrupoTOperacion
    DATA oGrupoCategoria
+   DATA oGrupoEstadoArticulo
    DATA oGrupoRuta
    DATA oGrupoFacturas
    DATA oGrupoFacturasCompras
@@ -194,6 +197,8 @@ CLASS TNewInfGen FROM TInfGen
    METHOD lGrupoColaborador( lInitGroup, lImp )
 
    METHOD lGrupoCategoria( lInitGroup, lImp )
+
+   METHOD lGrupoEstadoArticulo( lInitGroup, lImp )
 
    METHOD lGrupoRuta( lInitGroup, lImp )
 
@@ -2813,6 +2818,82 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
+METHOD lGrupoEstadoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock
+
+   DEFAULT lImp         := .t.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if ::oDbfEstArt == nil .or. !::oDbfEstArt:Used()
+      DATABASE NEW ::oDbfEstArt PATH ( cPatEmp() ) FILE "ESTADOSAT.DBF" VIA ( cDriver() ) SHARED INDEX "ESTADOSAT.CDX"
+   end if
+
+   ::oGrupoEstadoArticulo                   := TRGroup():New( {|| ::oDbf:cCodEst }, {|| "Estado : " + AllTrim( ::oDbf:cCodEst ) + " - " + AllTRim( ::oDbf:cNomEst ) }, {|| "Total estado : " + ::oDbf:cCodEst }, {|| 3 }, ::lSalto )
+
+   ::oGrupoEstadoArticulo:Cargo             := TItemGroup()
+   ::oGrupoEstadoArticulo:Cargo:Nombre      := "Estado"
+   ::oGrupoEstadoArticulo:Cargo:Expresion   := "cCodEst"
+   ::oGrupoEstadoArticulo:Cargo:Todos       := .t.
+   ::oGrupoEstadoArticulo:Cargo:Desde       := Space( 3 )
+   ::oGrupoEstadoArticulo:Cargo:Hasta       := Replicate( "Z", 3 )
+   ::oGrupoEstadoArticulo:Cargo:cPicDesde   := "@!"
+   ::oGrupoEstadoArticulo:Cargo:cPicHasta   := "@!"
+   ::oGrupoEstadoArticulo:Cargo:HelpDesde   := {|| BrwEstadoArticulo( ::oDesde, ::oSayDesde ) }
+   ::oGrupoEstadoArticulo:Cargo:HelpHasta   := {|| BrwEstadoArticulo( ::oHasta, ::oSayHasta ) }
+   ::oGrupoEstadoArticulo:Cargo:TextDesde   := {|| oRetFld( ::oGrupoEstadoArticulo:Cargo:Desde, ::oDbfEstArt, "cNombre", "Codigo" ) }
+   ::oGrupoEstadoArticulo:Cargo:TextHasta   := {|| oRetFld( ::oGrupoEstadoArticulo:Cargo:Hasta, ::oDbfEstArt, "cNombre", "Codigo" ) }
+   ::oGrupoEstadoArticulo:Cargo:ValidDesde  := {|oGet| if( cEstadoArticulo( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfEstArt:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoEstadoArticulo:Cargo:ValidHasta  := {|oGet| if( cEstadoArticulo( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfEstArt:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoEstadoArticulo:Cargo:lImprimir   := lImp
+   ::oGrupoEstadoArticulo:Cargo:cBitmap     := "bookmarks_preferences_16"
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( "bookmarks_preferences_16" ), Rgb( 255, 0, 255 ) )
+   end if
+
+   if lInitGroup != nil
+
+      aAdd( ::aSelectionGroup, ::oGrupoEstadoArticulo )
+
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( "bookmarks_preferences_16" ), Rgb( 255, 0, 255 ) )
+         ::oGrupoEstadoArticulo:Cargo:Imagen   := len( ::oImageGroup:aBitmaps ) - 1
+      end if
+
+      if lInitGroup
+         if !Empty( ::oColNombre )
+            ::oColNombre:AddResource( ::oGrupoEstadoArticulo:Cargo:cBitmap )
+         end if
+         aAdd( ::aInitGroup, ::oGrupoEstadoArticulo )
+      end if
+
+   end if
+
+   aAdd( ::aSelectionRango, ::oGrupoEstadoArticulo )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
+
+      if !Empty( ::oDbfEstArt )
+         ::oDbfEstArt:End()
+      end if
+
+      lOpen          := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
 METHOD lGrupoRuta( lInitGroup, lImp ) CLASS TNewInfGen
 
    local lOpen          := .t.
@@ -4148,6 +4229,16 @@ Method AddVariable() CLASS TNewInfGen
 
       ::oFastReport:AddVariable(       "Informe", "Desde código de categoria",  "GetHbVar('cGrupoCategoriaDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código de categoria",  "GetHbVar('cGrupoCategoriaHasta')" )
+
+   end if
+
+   if !Empty( ::oGrupoEstadoArticulo )
+
+      public cGrupoEstadoArticuloDesde           := ::oGrupoEstadoArticulo:Cargo:Desde
+      public cGrupoEstadoArticuloHasta           := ::oGrupoEstadoArticulo:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de estado artículo",  "GetHbVar('cGrupoEstadoArticuloDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de estado artículo",  "GetHbVar('cGrupoEstadoArticuloHasta')" )
 
    end if
 
