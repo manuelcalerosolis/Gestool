@@ -408,11 +408,19 @@ ClienteIncidenciaView.prg              \
 ClienteIncidenciaViewNavigator.prg     \
 PedidoClienteViewEdit.prg              \
 GeneraFacturasClientes.prg             \
+<<<<<<< HEAD
+CamposExtra.prg                        \
+DetCamposExtra.prg                     \
+Lenguajes.prg                          \
+CentroCoste.Prg                        \
+Autoget.prg                            \
+=======
 CamposExtra.prg             \
 DetCamposExtra.prg          \
 Lenguajes.prg               \
 EstadoSat.Prg               \
 CentroCoste.Prg 			    \
+>>>>>>> origin/master
 
 C               =       	\
 Img2pdf.c               	\
@@ -789,22 +797,22 @@ TLabelGenerator.obj 		\
 TTreevie.obj 				\
 ApoloMeter.obj 			\
 TGridSay.obj				\
-FacturarLineasAlbaranesProveedor.obj\
-Editable.obj               \
-ViewNavigator.obj          \
-Ventas.obj                 \
-Cliente.obj                \
-PedidoCliente.obj          \
-AlbaranCliente.obj         \
-DocumentosVentas.obj       \
-ViewBase.obj               \
-ViewEdit.obj               \
-ClienteView.obj            \
-ViewEditDetail.obj         \
-ViewEditResumen.obj        \
-LineasPedidoCliente.obj    \
-LineasDocumentosVentas.obj \
-ViewSearchNavigator.obj    \
+FacturarLineasAlbaranesProveedor.obj   \
+Editable.obj                           \
+ViewNavigator.obj                      \
+Ventas.obj                             \
+Cliente.obj                            \
+PedidoCliente.obj                      \
+AlbaranCliente.obj                     \
+DocumentosVentas.obj                   \
+ViewBase.obj                           \
+ViewEdit.obj                           \
+ClienteView.obj                        \
+ViewEditDetail.obj                     \
+ViewEditResumen.obj                    \
+LineasPedidoCliente.obj                \
+LineasDocumentosVentas.obj             \
+ViewSearchNavigator.obj                \
 PedidoClienteViewSearchNavigator.obj   \
 ClienteViewSearchNavigator.obj         \
 ClienteIncidencia.obj                  \
@@ -814,9 +822,15 @@ PedidoClienteViewEdit.obj              \
 GeneraFacturasClientes.obj             \
 CamposExtra.obj                        \
 Lenguajes.obj                          \
+<<<<<<< HEAD
+DetCamposExtra.Obj 					      \
+CentroCoste.Obj 					         \
+Autoget.obj                            \
+=======
 DetCamposExtra.obj                     \
 EstadoSat.obj                          \
 Centrocoste.obj
+>>>>>>> origin/master
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1204,9 +1218,15 @@ $(OBJ)\GeneraFacturasClientes.obj            +
 $(OBJ)\CamposExtra.obj                       +
 $(OBJ)\DetCamposExtra.obj                    +
 $(OBJ)\Lenguajes.obj                         +
+<<<<<<< HEAD
+$(OBJ)\Ventas.obj                            +
+$(OBJ)\CentroCoste.Obj                       +
+$(OBJ)\Autoget.Obj                  
+=======
 $(OBJ)\EstadoSat.obj                         +
 $(OBJ)\Ventas.obj 							 +
 $(OBJ)\CentroCoste.Obj 						 
+>>>>>>> origin/master
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +

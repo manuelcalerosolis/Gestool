@@ -837,7 +837,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
       for each uIva in newIva
 
-         if ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
+         if ( len( uIva ) >= 11 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
 
             aAdd( aSimula, MkAsiento(  nAsiento, ;                          
                                        cCodDiv, ;                          
@@ -868,7 +868,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          -------------------------------------------------------------------------
          */
 
-         if ( lRecargo .and. uIva[ 9 ] != 0 )
+         if ( lRecargo .and. len( uIva ) >= 11 .and. uIva[ 9 ] != 0 )
 
             aadd( aSimula, MkAsiento(  nAsiento,;
                                        cCodDiv,;

@@ -2504,6 +2504,13 @@ Return nil
 Function TDetCamposExtra()
 Return nil
 
+Function TLenguaje()
+Return nil
+
+Function TCentroCoste()
+Return nil
+
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP
