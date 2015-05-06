@@ -834,7 +834,6 @@ STATIC FUNCTION CloseFiles()
       oFont:end()
    end if
 
-
    if !Empty( dbfSatCliL   )
       ( dbfSatCliL   )->( dbCloseArea() )
    end if
