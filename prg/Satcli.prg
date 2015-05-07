@@ -407,6 +407,7 @@ static oComisionLinea
 static nComisionLinea   := 0
 
 static oMailing
+static oMailingOperario
 
 static cMaquina         := ""
 
@@ -740,6 +741,10 @@ STATIC FUNCTION OpenFiles( lExt )
       end if   
 
       oMailing          := TGenmailingDatabaseSATClientes():New( nView )
+      oMailing:setBlockRecipients( {|| alltrim( retFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ) } )
+
+      oMailingOperario  := TGenmailingDatabaseSATClientes():New( nView )
+      oMailingOperario:setBlockRecipients( {|| alltrim( oRetFld( ( D():SatClientes( nView ) )->cCodOpe, oOperario:oDbf, "cMeiTra" ) ) } )
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -1528,7 +1533,13 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
-      TOOLTIP  "Correo electrónico";
+      TOOLTIP  "Correo electrónico cliente";
+      LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oMailingOperario:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
+      TOOLTIP  "Correo electrónico operario";
       LEVEL    ACC_IMPR
 
    if oUser():lAdministrador()
@@ -11556,13 +11567,22 @@ Return ( printReportSATCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
 Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
-
-  local cFilePdf              := cPatTmp() + "SATCliente" + StrTran( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
+   local cFilePdf              := cPatTmp() + "SATCliente" + StrTran( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice            := IS_SCREEN
    DEFAULT nCopies            := 1
    DEFAULT cPrinter           := PrnGetName()
    DEFAULT cCodigoDocumento   := cFormatoSATClientes()   
+
+   if empty( cCodigoDocumento )
+      msgStop( "El código del documento esta vacio" )
+      Return ( nil )
+   end if 
+
+   if !lMemoDocumento( cCodigoDocumento, dbfDoc )
+      msgStop( "El formato " + cCodigoDocumento + " no se encuentra, o no es un formato visual." )
+      Return ( nil )
+   end if 
 
    SysRefresh()
 
@@ -11654,7 +11674,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    oFr:DestroyFr()
 
-Return .t.
+Return cFilePdf
 
 //---------------------------------------------------------------------------//
 
