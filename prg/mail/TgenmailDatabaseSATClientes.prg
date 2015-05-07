@@ -19,7 +19,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseSATClientes
 
    ::Super:New( nView )
 
-   ::setItems( aItmPreCli() )
+   ::setItems( aItmSatCli() )
 
    ::setWorkArea( D():SATClientes( nView ) )
 
@@ -31,9 +31,7 @@ METHOD New( nView ) CLASS TGenMailingDatabaseSATClientes
 
    ::setBmpDatabase( "S.A.T._cliente_48_alpha" )
 
-   ::setAsunto( "Envio de nuestro presupuesto número {Serie de S.A.T.}/{Número de S.A.T.}" )
-
-   ::setBlockRecipients( {|| alltrim( retFld( ( D():SatClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cMeiInt" ) ) } )
+   ::setAsunto( "Envio de nuestro S.A.T. número {Serie de S.A.T.}/{Número de S.A.T.}" )
 
 Return ( Self )
 

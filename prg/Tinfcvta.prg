@@ -54,33 +54,36 @@ RETURN ( self )
 METHOD OpenFiles()
 
    local lOpen    := .t.
+   local oError
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF"    VIA ( cLocalDriver() ) SHARED INDEX "TIKET.CDX"
+      ::oAlbCliT := TDataCenter():oAlbCliT()
 
-   DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF"    VIA ( cLocalDriver() ) SHARED INDEX "TIKEL.CDX"
+      ::oFacCliT := TDataCenter():oFacCliT()  
 
-   ::oAlbCliT := TDataCenter():oAlbCliT()
+      DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF"    VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
-   DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"  VIA ( cLocalDriver() ) SHARED INDEX "ALBCLIL.CDX"
+      DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.DBF"    VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-   ::oFacCliT := TDataCenter():oFacCliT()  
+      DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cLocalDriver() ) SHARED INDEX "FACCLIL.CDX"
+      DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-   DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) FILE "FACRECT.DBF"  VIA ( cLocalDriver() ) SHARED INDEX "FACRECT.CDX"
+      DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) FILE "FACRECT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
 
-   DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cLocalDriver() ) SHARED INDEX "FACRECL.CDX"
+      DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cLocalDriver() ) SHARED INDEX "TVTA.CDX"
+      DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
-   RECOVER
+   RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+
       ::CloseFiles()
-      lOpen          := .f.
+
+      lOpen       := .f.
 
    END SEQUENCE
 

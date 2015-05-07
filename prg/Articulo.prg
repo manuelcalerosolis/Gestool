@@ -5,6 +5,7 @@
 #include "Xbrowse.ch"
 #include "FastRepH.ch"
 #include "Factu.ch" 
+#include "Autoget.ch"
 
 #define GWL_STYLE                   -16
 #define TVS_TRACKSELECT             512 //   0x0200
@@ -36,7 +37,7 @@
 #define fldContabilidad             oFld:aDialogs[9]
 #define fldOfertas                  oFld:aDialogs[10]
 #define fldEscandallos              oFld:aDialogs[11]
-#define fldWeb                      oFld:aDialogs[12]
+#define fldWeb                      oFld:aDialogs[12] 
 
 memvar cDbfArt
 memvar cDbfDiv
@@ -228,6 +229,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       D():ArticuloLenguaje( nView )
       D():Lenguajes( nView )
+      D():EstadoArticulo( nView )
 
       lOpenFiles  := .t.
 
@@ -852,6 +854,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                   "Categoría" ,;
                   "Temporada" ,;
                   "Fabricante" ,;
+                  "Estado" ,;
                   "Posición táctil" ,;
                   "Publicar" ,;
                   "Web" ;
@@ -999,6 +1002,17 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t. 
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Estado"
+         :cSortOrder       := "cCodEst"
+         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodEst ) + if( !Empty( ( dbfArticulo )->cCodEst ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
+         :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( ( dbfArticulo )->cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
+         :nWidth           := 140
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t. 
+         AddResourceTipoCategoria( hb_QWith() )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1229,7 +1243,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( SearchProveedor() ) ;
+         ACTION   ( buscarExtendido() ) ;
          TOOLTIP  "Buscar e(x)tendido" ;
          HOTKEY   "X"
 
@@ -1456,6 +1470,14 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
+         DEFINE BTNSHELL RESOURCE "Power-drill_user1_" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( SatCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+            TOOLTIP  "Añadir SAT de cliente" ;
+            FROM     oRotor ;
+            ALLOW    EXIT ;
+            LEVEL    ACC_EDIT         
+
          DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( PreCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
@@ -1575,6 +1597,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local aBtn                 := Array( 14 )
    local oBmpCategoria
    local oBmpTemporada
+   local oBmpEstado
    local cCbxPrecio           := "Ventas"
    local nTotStkAct           := 0
    local nTotStkPdr           := 0
@@ -1908,6 +1931,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       357 ;
          TRANSPARENT ;
          OF       fldGeneral
+
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ] ;
+         ID       400 ;
+         IDTEXT   401 ;         
+         WHEN     ( nMode == APPD_MODE .or. oUser():lAdministrador() ) ;
+         VALID    ( cEstadoArticulo( aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ], D():EstadoArticulo( nView ), aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ]:oHelpText, oBmpEstado ) ) ;
+         ON HELP  ( BrwEstadoArticulo( aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodEst" ) ) ]:oHelpText, oBmpEstado ) ) ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[1]
+
+   REDEFINE BITMAP oBmpEstado ;
+         ID       402 ;
+         TRANSPARENT ;
+         OF       oFld:aDialogs[1]
 
    /*
    Lote------------------------------------------------------------------------
@@ -4629,6 +4666,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       oBmpCategoria:End()
    end if
 
+   if !Empty( oBmpTemporada )
+      oBmpTemporada:End()
+   end if
+
+   if !Empty( oBmpEstado )
+      oBmpEstado:End()
+   end if
+
    if !Empty( oBmpGeneral )
       oBmpGeneral:End()
    end if
@@ -6102,8 +6147,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr6") ) ]       := oSay[ 16 ]:nAt
       aTmp[ ( dbfArticulo )->( fieldpos( "nPosTpv" ) ) ]       -= 0.5
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp1" ) ) ]      := aImpComanda[ oImpComanda1:nAt ]
-      aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp2" ) ) ]      := aImpComanda[ oImpComanda2:nAt ]
+      if !Empty( oImpComanda1 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp1" ) ) ]      := aImpComanda[ oImpComanda1:nAt ]
+      end if
+
+      if !Empty( oImpComanda2 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp2" ) ) ]      := aImpComanda[ oImpComanda2:nAt ]
+      end if
 
       if !Empty( oActiveX )
          aTmp[ ( dbfArticulo )->( fieldpos( "mDesTec" ) ) ]    := oActiveX:DocumentHTML
@@ -9181,6 +9231,21 @@ STATIC FUNCTION DelDetalle( cCodArt )
 
    end if
 
+   if ( D():ArticuloLenguaje( nView ) )->( dbSeek( cCodArt ) )
+
+      while ( D():ArticuloLenguaje( nView ) )->cCodArt == cCodArt .and. !( D():ArticuloLenguaje( nView ) )->( eof() )
+
+         if dbLock( D():ArticuloLenguaje( nView ) )
+            ( D():ArticuloLenguaje( nView ) )->( dbDelete() )
+            ( D():ArticuloLenguaje( nView ) )->( dbUnLock() )
+         end if
+
+         ( D():ArticuloLenguaje( nView ) )->( dbSkip() )
+
+      end while
+
+   end if
+
    EndWait()
 
 RETURN NIL
@@ -11165,7 +11230,7 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-Function SearchProveedor()
+Function buscarExtendido()
 
    local nSea     := 1
 	local oDlg
@@ -11268,6 +11333,302 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
+Function buscarTipologias()
+
+   local oDlg
+   local oGetFamilia
+   local cGetFamilia := space( 100 )
+   local aCountries  := {;
+      {"Afghanistan", 'AF'},; 
+      {"Åland Islands", 'AX'},; 
+      {"Albania", 'AL'},; 
+      {"Algeria", 'DZ'},; 
+      {"American Samoa", 'AS'},; 
+      {"AndorrA", 'AD'},; 
+      {"Angola", 'AO'},; 
+      {"Anguilla", 'AI'},; 
+      {"Antarctica", 'AQ'},; 
+      {"Antigua and Barbuda", 'AG'},; 
+      {"Argentina", 'AR'},; 
+      {"Armenia", 'AM'},; 
+      {"Aruba", 'AW'},; 
+      {"Australia", 'AU'},; 
+      {"Austria", 'AT'},; 
+      {"Azerbaijan", 'AZ'},; 
+      {"Bahamas", 'BS'},; 
+      {"Bahrain", 'BH'},; 
+      {"Bangladesh", 'BD'},; 
+      {"Barbados", 'BB'},; 
+      {"Belarus", 'BY'},; 
+      {"Belgium", 'BE'},; 
+      {"Belize", 'BZ'},; 
+      {"Benin", 'BJ'},; 
+      {"Bermuda", 'BM'},; 
+      {"Bhutan", 'BT'},; 
+      {"Bolivia", 'BO'},; 
+      {"Bosnia and Herzegovina", 'BA'},; 
+      {"Botswana", 'BW'},; 
+      {"Bouvet Island", 'BV'},; 
+      {"Brazil", 'BR'},; 
+      {"British Indian Ocean Territory", 'IO'},; 
+      {"Brunei Darussalam", 'BN'},; 
+      {"Bulgaria", 'BG'},; 
+      {"Burkina Faso", 'BF'},; 
+      {"Burundi", 'BI'},; 
+      {"Cambodia", 'KH'},; 
+      {"Cameroon", 'CM'},; 
+      {"Canada", 'CA'},; 
+      {"Cape Verde", 'CV'},; 
+      {"Cayman Islands", 'KY'},; 
+      {"Central African Republic", 'CF'},; 
+      {"Chad", 'TD'},; 
+      {"Chile", 'CL'},; 
+      {"China", 'CN'},; 
+      {"Christmas Island", 'CX'},; 
+      {"Cocos (Keeling) Islands", 'CC'},; 
+      {"Colombia", 'CO'},; 
+      {"Comoros", 'KM'},; 
+      {"Congo", 'CG'},; 
+      {"Congo, The Democratic Republic of the", 'CD'},; 
+      {"Cook Islands", 'CK'},; 
+      {"Costa Rica", 'CR'},; 
+      {"Cote D'Ivoire", 'CI'},; 
+      {"Croatia", 'HR'},; 
+      {"Cuba", 'CU'},; 
+      {"Cyprus", 'CY'},; 
+      {"Czech Republic", 'CZ'},; 
+      {"Denmark", 'DK'},; 
+      {"Djibouti", 'DJ'},; 
+      {"Dominica", 'DM'},; 
+      {"Dominican Republic", 'DO'},; 
+      {"Ecuador", 'EC'},; 
+      {"Egypt", 'EG'},; 
+      {"El Salvador", 'SV'},; 
+      {"Equatorial Guinea", 'GQ'},; 
+      {"Eritrea", 'ER'},; 
+      {"Estonia", 'EE'},; 
+      {"Ethiopia", 'ET'},; 
+      {"Falkland Islands (Malvinas)", 'FK'},; 
+      {"Faroe Islands", 'FO'},; 
+      {"Fiji", 'FJ'},; 
+      {"Finland", 'FI'},; 
+      {"France", 'FR'},; 
+      {"French Guiana", 'GF'},; 
+      {"French Polynesia", 'PF'},; 
+      {"French Southern Territories", 'TF'},; 
+      {"Gabon", 'GA'},; 
+      {"Gambia", 'GM'},; 
+      {"Georgia", 'GE'},; 
+      {"Germany", 'DE'},; 
+      {"Ghana", 'GH'},; 
+      {"Gibraltar", 'GI'},; 
+      {"Greece", 'GR'},; 
+      {"Greenland", 'GL'},; 
+      {"Grenada", 'GD'},; 
+      {"Guadeloupe", 'GP'},; 
+      {"Guam", 'GU'},; 
+      {"Guatemala", 'GT'},; 
+      {"Guernsey", 'GG'},; 
+      {"Guinea", 'GN'},; 
+      {"Guinea-Bissau", 'GW'},; 
+      {"Guyana", 'GY'},; 
+      {"Haiti", 'HT'},; 
+      {"Heard Island and Mcdonald Islands", 'HM'},; 
+      {"Holy See (Vatican City State)", 'VA'},; 
+      {"Honduras", 'HN'},; 
+      {"Hong Kong", 'HK'},; 
+      {"Hungary", 'HU'},; 
+      {"Iceland", 'IS'},; 
+      {"India", 'IN'},; 
+      {"Indonesia", 'ID'},; 
+      {"Iran, Islamic Republic Of", 'IR'},; 
+      {"Iraq", 'IQ'},; 
+      {"Ireland", 'IE'},; 
+      {"Isle of Man", 'IM'},; 
+      {"Israel", 'IL'},; 
+      {"Italy", 'IT'},; 
+      {"Jamaica", 'JM'},; 
+      {"Japan", 'JP'},; 
+      {"Jersey", 'JE'},; 
+      {"Jordan", 'JO'},; 
+      {"Kazakhstan", 'KZ'},; 
+      {"Kenya", 'KE'},; 
+      {"Kiribati", 'KI'},; 
+      {"Korea, Democratic People\'S Republic of", 'KP'},; 
+      {"Korea, Republic of", 'KR'},; 
+      {"Kuwait", 'KW'},; 
+      {"Kyrgyzstan", 'KG'},; 
+      {"Lao People\'S Democratic Republic", 'LA'},; 
+      {"Latvia", 'LV'},; 
+      {"Lebanon", 'LB'},; 
+      {"Lesotho", 'LS'},; 
+      {"Liberia", 'LR'},; 
+      {"Libyan Arab Jamahiriya", 'LY'},; 
+      {"Liechtenstein", 'LI'},; 
+      {"Lithuania", 'LT'},; 
+      {"Luxembourg", 'LU'},; 
+      {"Macao", 'MO'},; 
+      {"Macedonia, The Former Yugoslav Republic of", 'MK'},; 
+      {"Madagascar", 'MG'},; 
+      {"Malawi", 'MW'},; 
+      {"Malaysia", 'MY'},; 
+      {"Maldives", 'MV'},; 
+      {"Mali", 'ML'},; 
+      {"Malta", 'MT'},; 
+      {"Marshall Islands", 'MH'},; 
+      {"Martinique", 'MQ'},; 
+      {"Mauritania", 'MR'},; 
+      {"Mauritius", 'MU'},; 
+      {"Mayotte", 'YT'},; 
+      {"Mexico", 'MX'},; 
+      {"Micronesia, Federated States of", 'FM'},; 
+      {"Moldova, Republic of", 'MD'},; 
+      {"Monaco", 'MC'},; 
+      {"Mongolia", 'MN'},; 
+      {"Montserrat", 'MS'},; 
+      {"Morocco", 'MA'},; 
+      {"Mozambique", 'MZ'},; 
+      {"Myanmar", 'MM'},; 
+      {"Namibia", 'NA'},; 
+      {"Nauru", 'NR'},; 
+      {"Nepal", 'NP'},; 
+      {"Netherlands", 'NL'},; 
+      {"Netherlands Antilles", 'AN'},; 
+      {"New Caledonia", 'NC'},; 
+      {"New Zealand", 'NZ'},; 
+      {"Nicaragua", 'NI'},; 
+      {"Niger", 'NE'},; 
+      {"Nigeria", 'NG'},; 
+      {"Niue", 'NU'},; 
+      {"Norfolk Island", 'NF'},; 
+      {"Northern Mariana Islands", 'MP'},; 
+      {"Norway", 'NO'},; 
+      {"Oman", 'OM'},; 
+      {"Pakistan", 'PK'},; 
+      {"Palau", 'PW'},; 
+      {"Palestinian Territory, Occupied", 'PS'},; 
+      {"Panama", 'PA'},; 
+      {"Papua New Guinea", 'PG'},; 
+      {"Paraguay", 'PY'},; 
+      {"Peru", 'PE'},; 
+      {"Philippines", 'PH'},; 
+      {"Pitcairn", 'PN'},; 
+      {"Poland", 'PL'},; 
+      {"Portugal", 'PT'},; 
+      {"Puerto Rico", 'PR'},; 
+      {"Qatar", 'QA'},; 
+      {"Reunion", 'RE'},; 
+      {"Romania", 'RO'},; 
+      {"Russian Federation", 'RU'},; 
+      {"RWANDA", 'RW'},; 
+      {"Saint Helena", 'SH'},; 
+      {"Saint Kitts and Nevis", 'KN'},; 
+      {"Saint Lucia", 'LC'},; 
+      {"Saint Pierre and Miquelon", 'PM'},; 
+      {"Saint Vincent and the Grenadines", 'VC'},; 
+      {"Samoa", 'WS'},; 
+      {"San Marino", 'SM'},; 
+      {"Sao Tome and Principe", 'ST'},; 
+      {"Saudi Arabia", 'SA'},; 
+      {"Senegal", 'SN'},; 
+      {"Serbia and Montenegro", 'CS'},; 
+      {"Seychelles", 'SC'},; 
+      {"Sierra Leone", 'SL'},; 
+      {"Singapore", 'SG'},; 
+      {"Slovakia", 'SK'},; 
+      {"Slovenia", 'SI'},; 
+      {"Solomon Islands", 'SB'},; 
+      {"Somalia", 'SO'},; 
+      {"South Africa", 'ZA'},; 
+      {"South Georgia and the South Sandwich Islands", 'GS'},; 
+      {"Spain", 'ES'},; 
+      {"Sri Lanka", 'LK'},; 
+      {"Sudan", 'SD'},; 
+      {"Suriname", 'SR'},; 
+      {"Svalbard and Jan Mayen", 'SJ'},; 
+      {"Swaziland", 'SZ'},; 
+      {"Sweden", 'SE'},; 
+      {"Switzerland", 'CH'},; 
+      {"Syrian Arab Republic", 'SY'},; 
+      {"Taiwan, Province of China", 'TW'},; 
+      {"Tajikistan", 'TJ'},; 
+      {"Tanzania, United Republic of", 'TZ'},; 
+      {"Thailand", 'TH'},; 
+      {"Timor-Leste", 'TL'},; 
+      {"Togo", 'TG'},; 
+      {"Tokelau", 'TK'},; 
+      {"Tonga", 'TO'},; 
+      {"Trinidad and Tobago", 'TT'},; 
+      {"Tunisia", 'TN'},; 
+      {"Turkey", 'TR'},; 
+      {"Turkmenistan", 'TM'},; 
+      {"Turks and Caicos Islands", 'TC'},; 
+      {"Tuvalu", 'TV'},; 
+      {"Uganda", 'UG'},; 
+      {"Ukraine", 'UA'},; 
+      {"United Arab Emirates", 'AE'},; 
+      {"United Kingdom", 'GB'},; 
+      {"United States", 'US'},; 
+      {"United States Minor Outlying Islands", 'UM'},; 
+      {"Uruguay", 'UY'},; 
+      {"Uzbekistan", 'UZ'},; 
+      {"Vanuatu", 'VU'},; 
+      {"Venezuela", 'VE'},; 
+      {"Viet Nam", 'VN'},; 
+      {"Virgin Islands, British", 'VG'},; 
+      {"Virgin Islands, U.S.", 'VI'},; 
+      {"Wallis and Futuna", 'WF'},; 
+      {"Western Sahara", 'EH'},; 
+      {"Yemen", 'YE'},; 
+      {"Zambia", 'ZM'},; 
+      {"Zimbabwe", 'ZW'} ;
+   }   
+
+/*   
+   local aCountries  := {  "Afghanistan" => 'AF',;
+                           "Albania" => 'AL' }
+*/
+
+   DEFINE DIALOG oDlg RESOURCE "Buscar_tipologias"
+
+      oGetFamilia    := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, cGetFamilia, cGetFamilia := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFamilia",, aCountries,, 400, {|uDataSource, cData, Self| filterFamilias( uDataSource, cData, Self )} )
+
+/*
+      REDEFINE AUTOGET oGetFamilia ;
+         VAR         cGetFamilia ;
+         ID          100 ;
+         OF          oDlg ;
+         DATASOURCE  aCountries;
+         FILTER      filterFamilias( uDataSource, cData, Self );          
+         HEIGHTLIST  400
+*/
+
+      REDEFINE BUTTON ;
+         ID          500 ;
+         OF          oDlg ;
+         CANCEL ;
+         ACTION      ( oDlg:end() )
+
+   oDlg:AddFastKey( VK_F5, {|| msgAlert( cGetFamilia) } )   
+
+   ACTIVATE DIALOG oDlg CENTER
+
+RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+Static Function filterFamilias( uDataSource, cData, Self )
+
+   local aList       := {}
+
+   msgAlert( cData )
+  
+   aEval( uDataSource, {|x| iif( lower( cData ) $ lower( x[1] ), aadd( aList, x ), ) } )
+   //hEval( Self:uOrgData, {|k,v,i| msgAlert( k, cData ) } )
+
+RETURN aList
+
+//---------------------------------------------------------------------------//
 //
 // Devuelve el de barras pasandole el codigo interno
 //
@@ -12882,63 +13243,10 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
             RESOURCE "form_green_add_16" ;
             ACTION   ( oDetCamposExtra:Play( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ) )
 
-            MENUITEM "&2. Informe del artículo";
-            MESSAGE  "Muestra el informe del artículo" ;
-            RESOURCE "info16" ;
-            ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
-
-            MENUITEM "&3. Informe de artículo en escandallo";
+            MENUITEM "&2. Informe de artículo en escandallo";
             MESSAGE  "Muestra el informe del artículo en escandallo" ;
             RESOURCE "info16" ;
             ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
-
-            
-
-            if !lExternal
-
-            SEPARATOR
-
-            MENUITEM "&3. Añadir pedido a proveedor";
-            MESSAGE  "Añade un pedido a proveedor" ;
-            RESOURCE "Clipboard_empty_businessman_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PedPrv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&4. Añadir albarán de proveedor";
-            MESSAGE  "Añade un albarán de proveedor" ;
-            RESOURCE "Document_plain_businessman_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbPrv( nil , nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&5. Añadir factura de proveedor";
-            MESSAGE  "Añade una factura de proveedor" ;
-            RESOURCE "Document_businessman_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FacPrv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&6. Añadir presupuesto de cliente";
-            MESSAGE  "Añade un presupuesto de cliente" ;
-            RESOURCE "Notebook_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PreCli( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&7. Añadir pedido de cliente";
-            MESSAGE  "Añade un pedido de cliente" ;
-            RESOURCE "Clipboard_empty_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PedCli( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            MENUITEM "&8. Añadir albarán de cliente";
-            MESSAGE  "Añade un albarán de cliente" ;
-            RESOURCE "Document_plain_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbCli( nil, nil, { "Artículo" => ( dbfArticulo )->Codigo } ), ) )
-
-            MENUITEM "&9. Añadir factura de cliente";
-            MESSAGE  "Añade una factura de cliente" ;
-            RESOURCE "Document_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FactCli( nil, nil, { "Artículo" => ( dbfArticulo )->Codigo } ), ) )
-
-            MENUITEM "&A. Añadir tiket de cliente";
-            MESSAGE  "Añade un tiket de cliente" ;
-            RESOURCE "Cashier_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FrontTpv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
-
-            end if
 
          ENDMENU
 
@@ -15455,6 +15763,9 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CCODFAB", "CCODFAB", {|| Field->CCODFAB }, ) )
 
+      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.Cdx", "cCodEst", "Field->cCodEst", {|| Field->cCodEst } ) )
+
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CFAMNOM", "FAMILIA + NOMBRE", {|| Field->FAMILIA + Field->NOMBRE }, ) )
 
@@ -15961,6 +16272,7 @@ function aItmArt()
    aAdd( aBase, { "cTitSeo",   "C", 70, 0, "Meta-título",                              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cDesSeo",   "C",160, 0, "Meta-descripcion",                         "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cKeySeo",   "C",160, 0, "Meta-keywords",                            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodEst",   "C",  3, 0, "Estado del artículo",                      "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -19948,3 +20260,6 @@ CLASS SImagenes
 END CLASS
 
 //---------------------------------------------------------------------------//
+
+
+

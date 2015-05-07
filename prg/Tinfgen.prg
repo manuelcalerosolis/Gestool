@@ -137,6 +137,7 @@ CLASS TInfGen
    DATA cPrvDes
    DATA oDbfFam
    DATA oDbfCat
+   DATA oDbfEstArt
    DATA oTipArt
    DATA oDbfFab
    DATA oDbfIva
@@ -759,6 +760,10 @@ METHOD End() CLASS TInfGen
 
    if ::oDbfCat != nil .and. ::oDbfCat:Used()
       ::oDbfCat:End()
+   end if
+
+   if ::oDbfEstArt != nil .and. ::oDbfEstArt:Used()
+      ::oDbfEstArt:End()
    end if
 
    if ::oDbfPrv != nil .and. ::oDbfPrv:Used()

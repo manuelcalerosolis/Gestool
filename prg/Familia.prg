@@ -357,34 +357,34 @@ static function OpenFiles()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-   SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
+      USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
+      SET ADSINDEX TO ( cPatArt() + "Familias.Cdx" ) ADDITIVE
 
-   USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
-   SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
+      USE ( cPatArt() + "FamPrv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMPRV", @dbfFamPrv ) )
+      SET ADSINDEX TO ( cPatArt() + "FamPrv.Cdx" ) ADDITIVE
 
-   USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
-   SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
+      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
 
-   USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-   SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
-   ( dbfArticulo )->( OrdSetFocus( "cFamCod" ) )
+      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+      SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
+      ( dbfArticulo )->( OrdSetFocus( "cFamCod" ) )
 
-   oGrpFam           := TGrpFam():Create( cPatArt() )
-   oGrpFam:OpenFiles()
+      oGrpFam           := TGrpFam():Create( cPatArt() )
+      oGrpFam:OpenFiles()
 
-   oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
-   oFraPub:OpenFiles()
+      oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
+      oFraPub:OpenFiles()
 
-   oTComandas        := TComandas():Create( cPatArt() )
-   oTComandas:OpenFiles()
+      oTComandas        := TComandas():Create( cPatArt() )
+      oTComandas:OpenFiles()
 
-   oComentarios      := TComentarios():Create( cPatArt() )
-   oComentarios:OpenFiles()
+      oComentarios      := TComentarios():Create( cPatArt() )
+      oComentarios:OpenFiles()
 
-   oDetCamposExtra      := TDetCamposExtra():New()
-   oDetCamposExtra:OpenFiles()
-   oDetCamposExtra:SetTipoDocumento( "Familias" )
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "Familias" )
 
    RECOVER USING oError
 

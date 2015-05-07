@@ -2385,9 +2385,10 @@ STATIC FUNCTION CloseFiles()
       oPais:End()
    end if
 
-   if empty(oEntidades)
+   if !empty( oEntidades )
       oEntidades:End()
    end if 
+
 
    if empty( oCentroCoste )
       oCentroCoste:End()
@@ -2396,6 +2397,10 @@ STATIC FUNCTION CloseFiles()
 
 
    TProyecto():GetInstance():CloseFiles()
+   if !empty( TProyecto():GetInstance() )
+      TProyecto():GetInstance():CloseFiles()
+   end if 
+
 
    dbfIva      := nil
    dbfFPago    := nil
@@ -5954,7 +5959,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "nHeight"   => nAltoGet,;
                                                    "lDesign"   => .f. } )
          
-         aGet[ _CSERIE ]   := TGridGet():Build(    {  "nRow"      => 40,;
+         aGet[ _CSERIE ]   := TGridGet():Build( {  "nRow"      => 40,;
                                                    "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CSERIE ], aTmp[ _CSERIE ] := u ) },;
                                                    "oWnd"      => oDlg,;
@@ -5976,7 +5981,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 													            "nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| ChangeSerieTablet( aGet ) } } )
 
-         aGet[ _CSERIE ]   := TGridGet():Build(    {  "nRow"      => 40,;
+         aGet[ _CSERIE ]   := TGridGet():Build( {  "nRow"      => 40,;
                                                    "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CSERIE ], aTmp[ _CSERIE ] := u ) },;
                                                    "oWnd"      => oDlg,;
@@ -19819,10 +19824,10 @@ function SynFacCli( cPath )
          Esto es para Cafes y zumos para que todos los facturas tengan la ruta del cliente
          */
         
-         if ( D():FacturasClientes( nView ) )->( dbRLock() )
+         /*if ( D():FacturasClientes( nView ) )->( dbRLock() )
            	( D():FacturasClientes( nView ) )->cCodRut := RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "CCODRUT" )
          	( D():FacturasClientes( nView ) )->( dbUnLock() )
-         end if
+         end if*/
 
          if !Empty( ( D():FacturasClientes( nView ) )->cNumPed )
             aAdd( aNumPed, ( D():FacturasClientes( nView ) )->cNumPed )

@@ -99,6 +99,7 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _CCODCAT                  84
 #define _CHORINI                  85
 #define _CHORFIN                  86
+#define _CCODEST                  87
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -332,7 +333,7 @@ static dbfOferta
 static dbfTVta
 static dbfTblPro
 static dbfPro
-static dbfCategoria
+static dbfEstado
 
 static dbfArtDiv
 static dbfDelega
@@ -406,6 +407,7 @@ static oComisionLinea
 static nComisionLinea   := 0
 
 static oMailing
+static oMailingOperario
 
 static cMaquina         := ""
 
@@ -442,7 +444,7 @@ FUNCTION GenSatCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    end if
 
    if nCopies == 0 
-      nCopies           := nCopiasDocumento( ( D():SatClientes( nView ) )->cSerPre, "nPedCli", D():Get( "NCount", nView ) )
+      nCopies           := nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Get( "NCount", nView ) )
    end if 
 
    if nCopies == 0
@@ -685,8 +687,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
       SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
-      SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ESTADOSAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ESTADOSAT", @dbfEstado ) )
+      SET ADSINDEX TO ( cPatEmp() + "ESTADOSAT.CDX" ) ADDITIVE
 /*
       if !TDataCenter():OpenSatCliT( @D():SatClientes( nView ) )
          lOpenFiles     := .f.
@@ -745,6 +747,10 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra:SetTipoDocumento( "S.A.T" )
 
       oMailing          := TGenmailingDatabaseSATClientes():New( nView )
+      oMailing:setBlockRecipients( {|| alltrim( retFld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) ) } )
+
+      oMailingOperario  := TGenmailingDatabaseSATClientes():New( nView )
+      oMailingOperario:setBlockRecipients( {|| alltrim( oRetFld( ( D():SatClientes( nView ) )->cCodOpe, oOperario:oDbf, "cMeiTra" ) ) } )
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -838,7 +844,6 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oFont )
       oFont:end()
    end if
-
 
    if !Empty( dbfSatCliL   )
       ( dbfSatCliL   )->( dbCloseArea() )
@@ -1036,8 +1041,8 @@ STATIC FUNCTION CloseFiles()
       ( dbfAntCliT )->( dbCloseArea() )
    end if
 
-   if dbfCategoria != nil
-      ( dbfCategoria )->( dbCloseArea() )
+   if dbfEstado != nil
+      ( dbfEstado )->( dbCloseArea() )
    end if
 
    if !Empty( oNewImp )
@@ -1115,7 +1120,7 @@ STATIC FUNCTION CloseFiles()
    dbfInci        := nil
    dbfAgeCom      := nil
    dbfEmp         := nil
-   dbfCategoria   := nil
+   dbfEstado      := nil
 
    oOperario      := nil
 
@@ -1199,7 +1204,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Dirección",;
                "Agente",;
                "Operario",;
-               "Categoría",;
+               "Estado artículo",;
                "Situación";
       MRU      "Power-drill_user1_16";
       BITMAP   clrTopArchivos ;
@@ -1354,10 +1359,10 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Categoría"
-         :cSortOrder       := "cCodCat"
-         :bStrData         := {|| AllTrim( ( D():SatClientes( nView ) )->cCodCat ) + if( !Empty( ( D():SatClientes( nView ) )->cCodCat ), " - ", "" ) + RetFld( ( D():SatClientes( nView ) )->cCodCat, dbfCategoria, "cNombre" ) }
-         :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( D():SatClientes( nView ) )->cCodCat, dbfCategoria, "cTipo" ) ) }
+         :cHeader          := "Estado artículo"
+         :cSortOrder       := "cCodEst"
+         :bStrData         := {|| AllTrim( ( D():SatClientes( nView ) )->cCodEst ) + if( !Empty( ( D():SatClientes( nView ) )->cCodEst ), " - ", "" ) + RetFld( ( D():SatClientes( nView ) )->cCodEst, dbfEstado, "cNombre" ) }
+         :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( ( D():SatClientes( nView ) )->cCodEst, dbfEstado, "cTipo" ) ) }
          :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t. 
@@ -1538,7 +1543,13 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
-      TOOLTIP  "Correo electrónico";
+      TOOLTIP  "Correo electrónico cliente";
+      LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oMailingOperario:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
+      TOOLTIP  "Correo electrónico operario";
       LEVEL    ACC_IMPR
 
    if oUser():lAdministrador()
@@ -1709,7 +1720,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    local cTipSat
    local oSayDias
    local oBmpGeneral
-   local oBmpCategoria
+   local oBmpEstado
 
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -2068,7 +2079,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( .f. );
          OF       oFld:aDialogs[1]
       
-
       /*
       Operario-----------------------------------------------------------------
       */
@@ -2672,16 +2682,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CCODCAT ] VAR aTmp[ _CCODCAT ] ;
+      REDEFINE GET aGet[ _CCODEST ] VAR aTmp[ _CCODEST ] ;
          ID       350 ;
          IDTEXT   351 ;         
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cCategoria( aGet[ _CCODCAT ], dbfCategoria, aGet[ _CCODCAT ]:oHelpText, oBmpCategoria ) ) ;
-         ON HELP  ( BrwCategoria( aGet[ _CCODCAT ], aGet[ _CCODCAT ]:oHelpText, oBmpCategoria ) ) ;
+         VALID    ( cEstadoArticulo( aGet[ _CCODEST ], dbfEstado, aGet[ _CCODEST ]:oHelpText, oBmpEstado ) ) ;
+         ON HELP  ( BrwEstadoArticulo( aGet[ _CCODEST ], aGet[ _CCODEST ]:oHelpText, oBmpEstado ) ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE BITMAP oBmpCategoria ;
+      REDEFINE BITMAP oBmpEstado ;
          ID       352 ;
          TRANSPARENT ;
          OF       oFld:aDialogs[1]   
@@ -3036,16 +3046,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid() ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid() ), oDlg:End() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) ), oDlg:End() ) }
+         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), ( aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) ), oDlg:End() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
+         oDlg:bStart := {|| aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid(), AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( D():SatClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, D():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ), aGet[ _CCODOPE ]:lValid(), aGet[ _CCODCAT ]:lValid() }
+         oDlg:bStart := {|| ShowKit( D():SatClientes( nView ), dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, D():Clientes( nView ), oGetRnt, aGet, oSayGetRnt ), aGet[ _CCODOPE ]:lValid(), aGet[ _CCODEST ]:lValid() }
 
    end case
 
@@ -3062,7 +3072,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    oBmpEmp:end()
    oBmpDiv:end()
    oBmpGeneral:End()
-   oBmpCategoria:End()
+   oBmpEstado:End()
 
    ( D():SatClientes( nView ) )->( ordSetFocus( nOrd ) )
 
@@ -6393,6 +6403,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    local cSufSat
    local dFecSat
    local cCodCli
+   local cCodEst
+   local nOrdAnt
 
    if Empty( aTmp[ _CSERSAT ] )
       aTmp[ _CSERSAT ]  := "A"
@@ -6403,6 +6415,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    cSufSat              := aTmp[ _CSUFSAT ]
    cCodCli              := aTmp[ _CCODCLI ]
    dFecSat              := aTmp[ _DFECSAT ]
+   cCodEst              := aTmp[ _CCODEST ]
 
    /*
    Comprobamos la fecha del documento
@@ -6526,6 +6539,19 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       ( dbfTmpLin )->dFecSat     := dFecSat
       ( dbfTmpLin )->cCodCli     := cCodCli
 
+      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. ( dbfTmpLin )->nCtlstk == 2
+
+         if ( D():Articulos( nView ) )->( dbSeek( ( dbfTmpLin )->cRef ) )
+
+            if dbLock( D():Articulos( nView ) )
+               ( D():Articulos( nView ) )->cCodEst    := aTmp[ _CCODEST ]
+               ( D():Articulos( nView ) )->( dbUnLock() )
+            end if
+
+         end if
+
+      end if
+
       dbPass( dbfTmpLin, dbfSatCliL, .t., cSerSat, nNumSat, cSufSat )
       ( dbfTmpLin )->( dbSkip() )
 
@@ -6581,6 +6607,44 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _NTOTSAT ]     := nTotSat
 
    WinGather( aTmp, , D():SatClientes( nView ), , nMode )
+
+   /*
+   Pasamos, si estamos modificando, el estado a los artículos------------------
+   */
+
+   if nMode == EDIT_MODE
+
+      nOrdAnt := ( D():SatClientes( nView ) )->( OrdSetFocus( "cNumDes" ) )
+
+      ( D():SatClientes( nView ) )->( dbGoTop() )
+
+      if ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat == cSerSat + Str( nNumSat ) + cSufSat .and.;
+         ( D():SatClientes( nView ) )->dFecSat  == dFecSat
+
+         if ( dbfSatCliL )->( dbSeek( cSerSat + Str( nNumSat ) + cSufSat ) )
+
+            while ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat == cSerSat + Str( nNumSat ) + cSufSat .and. !( dbfSatCliL )->( Eof() )
+
+               if ( D():Articulos( nView ) )->( dbSeek( ( dbfSatCliL )->cRef ) )
+
+                  if dbLock( D():Articulos( nView ) )
+                     ( D():Articulos( nView ) )->cCodEst    := cCodEst
+                     ( D():Articulos( nView ) )->( dbUnLock() )
+                  end if
+
+               end if
+
+               ( dbfSatCliL )->( dbSkip() )
+
+            end while
+
+         end if
+
+      end if
+
+      ( D():SatClientes( nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+   end if
 
    /*
    Escribe los datos pendientes------------------------------------------------
@@ -9822,6 +9886,12 @@ FUNCTION rxSatCli( cPath, oMeter )
       ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cSituac", "cSituac", {|| Field->cSituac } ) )
 
+      ( cSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cCodEst", "cCodEst", {|| Field->cCodEst } ) )
+
+      ( cSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
+      ( cSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cNumDes", "CSERSAT + STR( NNUMSAT ) + CSUFSAT", {|| Field->CSERSAT + STR(Field->NNUMSAT) + Field->CSUFSAT } ) )
+
       ( cSatCliT )->( dbCloseArea() )
 
    else
@@ -10276,6 +10346,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "cCodCat",   "C",  3,  0, "Código categoría" ,                                 "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "cHorIni",   "C",  5,  0, "Hora de inicio" ,                                   "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "cHorFin",   "C",  5,  0, "Hora de fin" ,                                      "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cCodEst",   "C",  3,  0, "Código estado" ,                                    "", "", "( cDbf )"} )
 
 return ( aItmSatCli )
 
@@ -11512,13 +11583,22 @@ Return ( printReportSATCli( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
 Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    local oFr
-
-  local cFilePdf              := cPatTmp() + "SATCliente" + StrTran( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
+   local cFilePdf              := cPatTmp() + "SATCliente" + StrTran( ( D():SatClientes( nView ) )->cSerSat + Str( ( D():SatClientes( nView ) )->nNumSat ) + ( D():SatClientes( nView ) )->cSufSat, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice            := IS_SCREEN
    DEFAULT nCopies            := 1
    DEFAULT cPrinter           := PrnGetName()
    DEFAULT cCodigoDocumento   := cFormatoSATClientes()   
+
+   if empty( cCodigoDocumento )
+      msgStop( "El código del documento esta vacio" )
+      Return ( nil )
+   end if 
+
+   if !lMemoDocumento( cCodigoDocumento, dbfDoc )
+      msgStop( "El formato " + cCodigoDocumento + " no se encuentra, o no es un formato visual." )
+      Return ( nil )
+   end if 
 
    SysRefresh()
 
@@ -11610,7 +11690,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
 
    oFr:DestroyFr()
 
-Return .t.
+Return cFilePdf
 
 //---------------------------------------------------------------------------//
 

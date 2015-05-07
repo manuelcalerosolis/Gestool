@@ -32,7 +32,6 @@ static dbfClient
 static dbfSatCliT
 static dbfSatCliL
 static dbfSatCliS
-static dbfCategoria
 static dbfArticulo
 
 static oDbfTmp
@@ -97,11 +96,13 @@ static oTotRie
 static oTotEnt
 static oTotPed
 
+static nView
+
 static lOpenFiles    := .f.
 
 //---------------------------------------------------------------------------//
 
-Static Function OpenFiles( lMessage )
+Static Function OpenFiles( cCodCli, lMessage )
 
    local oError
    local oBlock
@@ -117,6 +118,10 @@ Static Function OpenFiles( lMessage )
    aVta              := Array( 12, 4 )
 
    aEval( aVta, {|a| Afill( a, 0 ) } )
+
+   nView             := D():CreateView()
+
+   D():EstadoArticulo( nView )
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -191,9 +196,6 @@ Static Function OpenFiles( lMessage )
       USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "CATEGORIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CATEGORIA", @dbfCategoria ) )
-      SET ADSINDEX TO ( cPatArt() + "CATEGORIAS.CDX" ) ADDITIVE
-
       USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
@@ -240,6 +242,8 @@ Static Function OpenFiles( lMessage )
       oDbfTmpMaqL:Activate( .f., .f. )
 
       lOpenFiles        := .t.
+
+      LoadMaquinas( cCodCli )
 
    RECOVER USING oError
 
@@ -290,7 +294,6 @@ Static Function CloseFiles()
    ( dbfClient    )->( dbCloseArea() )
    ( dbfIva       )->( dbCloseArea() )
    ( dbfFPago     )->( dbCloseArea() )
-   ( dbfCategoria )->( dbCloseArea() )
    ( dbfArticulo  )->( dbCloseArea() )
 
    if !Empty( oOperario )
@@ -306,6 +309,18 @@ Static Function CloseFiles()
    dbfErase( oDbfTmpMaq:cPath + oDbfTmpMaqL:cName )
 
    lOpenFiles       := .f.
+
+return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
+
+   if lAIS()
+      LoadMaquinasSQL( cCodCli, cCmbAnio, oBrwMaq )
+   else
+      LoadMaquinasDBF( cCodCli, cCmbAnio, oBrwMaq )
+   end if 
 
 return .t.
 
@@ -328,7 +343,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    local oBtnAceptar
    local uResultado
 
-   if !OpenFiles( .f. )
+   if !OpenFiles( cCodCli, .f. )
       Return nil
    end if
 
@@ -703,14 +718,35 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    oBrwMaq:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrwMaq:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   oDbfTmpMaq:SetBrowse( oBrwMaq )
+   oBrwMaq:cAlias                := "SatCli"
 
    oBrwMaq:nMarqueeStyle         := 6
 
    oBrwMaq:cName                 := "Máquinas en informe de clientes"
+   oBrwMaq:bLDblClick            := {|| HistoriaMaquina( cCmbAnio ) }
 
    oBrwMaq:CreateFromResource( 300 )
 
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Artículo"
+      :cSortOrder       := "cRef"
+      :bEditValue       := {|| alltrim( SatCli->cRef ) + " - " + alltrim( SatCli->nombre ) }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      :nWidth           := 260
+   end with
+
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Fecha"
+      :bEditValue       := {|| SatCli->dFecSat }
+      :nDataStrAlign    := AL_LEFT
+      :nHeadStrAlign    := AL_LEFT
+      :nWidth           := 80
+   end with
+
+
+   /*
+   oDbfTmpMaq:SetBrowse( oBrwMaq )
+   
    with object ( oBrwMaq:addCol() )
       :cHeader          := "Artículo"
       :cSortOrder       := "cRefSer"
@@ -736,11 +772,11 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    end with
 
    with object ( oBrwMaq:addCol() )
-      :cHeader          := "Categoría"
-      :cSortOrder       := "cCodCat"
-      :bEditValue       := {|| AllTrim( oDbfTmpMaq:cCodCat ) }
-      :bStrData         := {|| AllTrim( oDbfTmpMaq:cCodCat ) + if( !Empty( oDbfTmpMaq:cCodCat ), " - ", "" ) + RetFld( oDbfTmpMaq:cCodCat, dbfCategoria, "cNombre" ) }
-      :bBmpData         := {|| nBitmapTipoCategoria( RetFld( oDbfTmpMaq:cCodCat, dbfCategoria, "cTipo" ) ) }
+      :cHeader          := "Estado"
+      :cSortOrder       := "cCodEst"
+      :bEditValue       := {|| AllTrim( oDbfTmpMaq:cCodEst ) }
+      :bStrData         := {|| AllTrim( oDbfTmpMaq:cCodEst ) + if( !Empty( oDbfTmpMaq:cCodEst ), " - ", "" ) + RetFld( oDbfTmpMaq:cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
+      :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( oDbfTmpMaq:cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
       :nWidth           := 170
       AddResourceTipoCategoria( hb_QWith() )
@@ -759,15 +795,13 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       :bEditValue       := {|| oDbfTmpMaq:cDesUbi }
       :nWidth           := 130
    end with
-
-   oBrwMaq:bLDblClick   := {|| HistoriaMaquina( cCmbAnio ) }
+   */
 
    /*Anno del ejecicio, por defecto lleva el anno actual*/
 
    REDEFINE COMBOBOX oCmbAnio VAR cCmbAnio ;
       ITEMS    { "Todos", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" } ;
       ID       310 ;
-      COLOR    CLR_GET ;
       ON CHANGE( LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq ), oBrwTmp:Refresh(), oGraph:Refresh() ) ;
       OF       oDlg
 
@@ -844,8 +878,6 @@ static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oB
    DEFAULT lSatCli   := .f.
 
    LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta )
-
-   LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
 
    oBrwTmp:Refresh()
 
@@ -1129,10 +1161,12 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
+Static Function LoadMaquinasDbf( cCodCli, cCmbAnio, oBrwMaq )
 
    local nOrdAntL  := ( dbfSatCliL )->( OrdSetFocus( "cCodCli" ) )
    local nOrdAntT  := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
+
+   TDataCenter():lSelectSATFromClient()
 
    oDbfTmpMaq:Zap()
 
@@ -1158,7 +1192,7 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
                   oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
                   oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
                   oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
-                  oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
+                  oDbfTmpMaq:cCodEst   := ( dbfSatCliT )->cCodEst
                   oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
 
                end if
@@ -1179,7 +1213,7 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
                   oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
                   oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
                   oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
-                  oDbfTmpMaq:cCodCat   := ( dbfSatCliT )->cCodCat
+                  oDbfTmpMaq:cCodEst   := ( dbfSatCliT )->cCodEst
                   oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
 
                   oDbfTmpMaq:Save()
@@ -1204,6 +1238,20 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
    if !Empty( oBrwMaq )
       oBrwMaq:Refresh()
    end if  
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function LoadMaquinasSQL( cCodCli, cCmbAnio, oBrwMaq )
+
+   if TDataCenter():lSelectSATFromClient( cCodCli, cCmbAnio ) != nil
+
+      if !Empty( oBrwMaq )
+         oBrwMaq:Refresh()
+      end if  
+
+   end if 
 
 Return nil
 
@@ -1235,7 +1283,7 @@ Static function LoadLineasMaquinas( cCmbAnio, oBrwMaqL )
             oDbfTmpMaqL:cDetalle       := oDbfTmpMaq:cDetalle
             oDbfTmpMaqL:cSituac        := ( dbfSatCliT )->cSituac
             oDbfTmpMaqL:cCodOpe        := ( dbfSatCliT )->cCodOpe
-            oDbfTmpMaqL:cCodCat        := ( dbfSatCliT )->cCodCat
+            oDbfTmpMaqL:cCodEst        := ( dbfSatCliT )->cCodEst
             oDbfTmpMaqL:cNomCli        := oDbfTmpMaq:cNomCli
 
             oDbfTmpMaqL:Save()
@@ -1320,11 +1368,11 @@ Static Function HistoriaMaquina( cCmbAnio )
       end with
 
       with object ( oBrwMaqL:addCol() )
-         :cHeader          := "Categoría"
-         :cSortOrder       := "cCodCat"
-         :bEditValue       := {|| AllTrim( oDbfTmpMaqL:cCodCat ) }
-         :bStrData         := {|| AllTrim( oDbfTmpMaqL:cCodCat ) + if( !Empty( oDbfTmpMaqL:cCodCat ), " - ", "" ) + RetFld( oDbfTmpMaqL:cCodCat, dbfCategoria, "cNombre" ) }
-         :bBmpData         := {|| nBitmapTipoCategoria( RetFld( oDbfTmpMaqL:cCodCat, dbfCategoria, "cTipo" ) ) }
+         :cHeader          := "Estado"
+         :cSortOrder       := "cCodEst"
+         :bEditValue       := {|| AllTrim( oDbfTmpMaqL:cCodEst ) }
+         :bStrData         := {|| AllTrim( oDbfTmpMaqL:cCodEst ) + if( !Empty( oDbfTmpMaqL:cCodEst ), " - ", "" ) + RetFld( oDbfTmpMaqL:cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
+         :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( oDbfTmpMaqL:cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :nWidth           := 200
          AddResourceTipoCategoria( hb_QWith() )
@@ -1376,7 +1424,7 @@ Function aTotVentasCliente( cCodCli, nYear, lUnits )
    DEFAULT lUnits := .t.
 
    if !lOpenFiles
-      if OpenFiles( .f. )
+      if OpenFiles( cCodCli, .f. )
          lClo     := .t.
       else
          return ( aVta )
@@ -1789,13 +1837,13 @@ Static Function DefineTemporalMaquinas( cPath, lUniqueName, cFileName )
       FIELD NAME "DFECSAT"  TYPE "D" LEN   8 DEC 0 COMMENT "Fecha del SAT"             OF oDbf
       FIELD NAME "CSITUAC"  TYPE "C" LEN  20 DEC 0 COMMENT "Situación del SAT"         OF oDbf
       FIELD NAME "CCODOPE"  TYPE "C" LEN   5 DEC 0 COMMENT "Código operario"           OF oDbf
-      FIELD NAME "CCODCAT"  TYPE "C" LEN   3 DEC 0 COMMENT "Código categoría"          OF oDbf
+      FIELD NAME "CCODEST"  TYPE "C" LEN   3 DEC 0 COMMENT "Código estado"             OF oDbf
       FIELD NAME "CDESUBI"  TYPE "C" LEN 200 DEC 0 COMMENT "Ubicación de máquina"      OF oDbf
 
       INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef"                                   OF oDbf
       INDEX TO ( cFileName ) TAG "cSituac" ON "cSituac"                                OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOpe" ON "cCodOpe"                                OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodCat" ON "cCodCat"                                OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodEst" ON "cCodEst"                                OF oDbf
 
    END DATABASE oDbf
 
@@ -1827,13 +1875,13 @@ Static Function DefineTemporalMaquinasLineas( cPath, lUniqueName, cFileName )
       FIELD NAME "CDETALLE" TYPE "C" LEN 250 DEC 0 COMMENT "Descripción de artículo"   OF oDbf
       FIELD NAME "CSITUAC"  TYPE "C" LEN  20 DEC 0 COMMENT "Situación del SAT"         OF oDbf
       FIELD NAME "CCODOPE"  TYPE "C" LEN   5 DEC 0 COMMENT "Código operario"           OF oDbf
-      FIELD NAME "CCODCAT"  TYPE "C" LEN   3 DEC 0 COMMENT "Código categoría"          OF oDbf
+      FIELD NAME "CCODEST"  TYPE "C" LEN   3 DEC 0 COMMENT "Código estado"             OF oDbf
 
       INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef"                                   OF oDbf
       INDEX TO ( cFileName ) TAG "cNumSat" ON "cSerSat + Str( nNumSat ) + cSufSat"     OF oDbf
       INDEX TO ( cFileName ) TAG "cSituac" ON "cSituac"                                OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOpe" ON "cCodOpe"                                OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodCat" ON "cCodCat"                                OF oDbf
+      INDEX TO ( cFileName ) TAG "cCodEst" ON "cCodEst"                                OF oDbf
 
    END DATABASE oDbf
 

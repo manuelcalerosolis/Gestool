@@ -185,8 +185,8 @@ CLASS TGridGet FROM TGet, TGridable
                cCueText ) CONSTRUCTOR
 
    METHOD GotFocus( hCtlLost )   INLINE ( ShowKeyboard(),; 
-                                          ::Super:gotFocus( hCtlLost ),;
-                                          ::Super:selectAll() ) // , ::Supper:SetPos( ::oGet:Pos ) )
+                                          ::Super:gotFocus( hCtlLost ) )
+                                          // ::Super:selectAll() ) // , ::Supper:SetPos( ::oGet:Pos ) )
 
    METHOD HardEnable()
 

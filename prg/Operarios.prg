@@ -175,6 +175,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nPagas"     TYPE "N" LEN  3  DEC 0 COMMENT "Pagas Año"               HIDE         OF oDbf
       FIELD NAME "nDiaPro"    TYPE "N" LEN  5  DEC 0 COMMENT "Dias producctivos"       HIDE         OF oDbf
       FIELD NAME "nHorDia"    TYPE "N" LEN 16  DEC 6 COMMENT "Horas por día"           HIDE         OF oDbf
+      FIELD NAME "cMeiTra"    TYPE "C" LEN 65  DEC 0 COMMENT "Email"                   HIDE         OF oDbf
 
       INDEX TO "OpeT.Cdx" TAG "cCodTra" ON "cCodTra" COMMENT "Código"   NODELETED OF oDbf
       INDEX TO "OpeT.Cdx" TAG "cNomTra" ON "cNomTra" COMMENT "Nombre"   NODELETED OF oDbf
@@ -198,7 +199,7 @@ METHOD Resource( nMode )
    local oTotCosOpe
    local oBmpGeneral
 
-   if nMode == APPD_MODE
+   if nMode == APPD_MODE .or. Empty( ::oDbf:cDivTra )
       ::oDbf:cDivTra := cDivEmp()
    end if
 
@@ -266,6 +267,11 @@ METHOD Resource( nMode )
          ID       190 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE GET ::oDbf:cMeiTra;
+         ID       260 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
 
       /*
       Datos del trabajador para sacar el coste del mismo-----------------------

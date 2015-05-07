@@ -844,6 +844,10 @@ METHOD End() CLASS TFastReportInfGen
       ::oDbfCat:End()
    end if
 
+   if ::oDbfEstArt != nil .and. ::oDbfEstArt:Used()
+      ::oDbfEstArt:End()
+   end if
+
    if ::oDbfPrv != nil .and. ::oDbfPrv:Used()
       ::oDbfPrv:End()
    end if
