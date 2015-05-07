@@ -162,6 +162,8 @@ CLASS TDataCenter
    METHOD SetAplicationID( cNombreUsuario )
 
    METHOD ExecuteSqlStatement( cSql, cSqlStatement )
+   
+   METHOD lSelectSATFromClient( cCodigoCliente )
 
    METHOD Resource( nId )
    METHOD StartResource()
@@ -4625,7 +4627,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD ReindexTable( oTable )
 
    local oError
@@ -4904,6 +4905,8 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
    BEGIN SEQUENCE
 
       dbSelectArea( 0 )
+
+      ::CloseArea( cSqlStatement )
    
       lOk            := ADSCreateSQLStatement( cSqlStatement, 7 )
    
@@ -4943,6 +4946,39 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
    CursorWE()
 
 RETURN ( lOk )
+
+//---------------------------------------------------------------------------//
+
+METHOD lSelectSATFromClient( cCodigoCliente, cAnno )
+
+   local lOk
+   local cStm
+   local cOpe
+
+   DEFAULT cCodigoCliente  := "0000000"    
+
+   /*
+   Creamos la instruccion------------------------------------------------------
+   */
+
+   cStm           := "SELECT lineasSat.cRef, cabeceraSat.dfecsat, cabeceraSat.cSerSat, articulos.nombre " 
+   cStm           += "FROM " + cPatEmp() + "SatCliL lineasSat "
+   cStm           += "INNER JOIN " + cPatEmp() + "SatCliT cabeceraSat on lineasSat.cSerSat = cabeceraSat.cSerSat and lineasSat.nNumSat = cabeceraSat.nNumSat and lineasSat.cSufSat = cabeceraSat.cSufSat "
+   cStm           += "INNER JOIN " + cPatEmp() + "Articulo articulos on lineasSat.cRef = articulos.Codigo "
+   cStm           += "WHERE lineasSat.cCodCli = '" + alltrim( cCodigoCliente ) + "'"
+
+   logwrite( cStm )
+   msgAlert( cStm, "cStm" )
+
+   /*
+   Creamos la snetencia--------------------------------------------------------
+   */
+
+   if ::ExecuteSqlStatement( cStm, "SatCli" )
+      Return( "SatCli" )
+   end if 
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -5824,28 +5860,44 @@ ENDCLASS
 
       local dbf
       local lOpen
+      local oError
+      local oBlock
+      local uHandle        := .f.
       local oDataTable
 
-      oDataTable        := TDataCenter():ScanDataTable( cDataTable )
+      oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
 
-      if !empty( oDataTable )
+         oDataTable        := TDataCenter():ScanDataTable( cDataTable )
 
-         dbUseArea( .t., ( cDriver() ), ( oDataTable:cAreaName() ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) // oDataTable:cFileName()
-         if( !lAIS(), ordListAdd( ( oDataTable:cIndexFile ) ), ordSetFocus( 1 ) )
+         if !empty( oDataTable )
 
-         lOpen          := !neterr()
-         if lOpen
-            ::AddView( oDataTable:cArea, dbf, nView )
-         end if 
+            dbUseArea( .t., ( cDriver() ), ( oDataTable:cAreaName() ), ( cCheckArea( oDataTable:cArea, @dbf ) ), .t., .f. ) // oDataTable:cFileName()
+            iif( !lAIS(), ordListAdd( ( oDataTable:cIndexFile ) ), ordSetFocus( 1 ) )
 
-      else 
+            if !neterr()
 
-         msgStop( "No puedo encontrar la tabla " + cDataTable )   
-         Return ( .f. )
+               ::AddView( oDataTable:cArea, dbf, nView )
 
-      end if
+               uHandle     := ::GetView( cDataTable, nView ) 
 
-   Return ( ::GetView( cDataTable, nView ) )
+            end if 
+
+         else 
+
+            msgStop( "No puedo encontrar la tabla " + cDataTable )   
+
+         end if
+
+      RECOVER USING oError
+
+         msgStop( "Imposible abrir todas la base de datos" + CRLF + ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   Return ( uHandle )
 
    //---------------------------------------------------------------------------//
 

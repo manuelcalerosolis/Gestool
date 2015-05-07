@@ -102,7 +102,7 @@ static lOpenFiles    := .f.
 
 //---------------------------------------------------------------------------//
 
-Static Function OpenFiles( lMessage )
+Static Function OpenFiles( cCodCli, lMessage )
 
    local oError
    local oBlock
@@ -243,6 +243,8 @@ Static Function OpenFiles( lMessage )
 
       lOpenFiles        := .t.
 
+      LoadMaquinas( cCodCli )
+
    RECOVER USING oError
 
       if lMessage
@@ -312,6 +314,18 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
+Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
+
+   if lAIS()
+      LoadMaquinasSQL( cCodCli, cCmbAnio, oBrwMaq )
+   else
+      LoadMaquinasDBF( cCodCli, cCmbAnio, oBrwMaq )
+   end if 
+
+return .t.
+
+//---------------------------------------------------------------------------//
+
 function BrwVtaCli( cCodCli, cNomCli, lSatCli )
 
    local oDlg
@@ -329,7 +343,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    local oBtnAceptar
    local uResultado
 
-   if !OpenFiles( .f. )
+   if !OpenFiles( cCodCli, .f. )
       Return nil
    end if
 
@@ -704,14 +718,35 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    oBrwMaq:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrwMaq:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   oDbfTmpMaq:SetBrowse( oBrwMaq )
+   oBrwMaq:cAlias                := "SatCli"
 
    oBrwMaq:nMarqueeStyle         := 6
 
    oBrwMaq:cName                 := "Máquinas en informe de clientes"
+   oBrwMaq:bLDblClick            := {|| HistoriaMaquina( cCmbAnio ) }
 
    oBrwMaq:CreateFromResource( 300 )
 
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Artículo"
+      :cSortOrder       := "cRef"
+      :bEditValue       := {|| alltrim( SatCli->cRef ) + " - " + alltrim( SatCli->nombre ) }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      :nWidth           := 260
+   end with
+
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Fecha"
+      :bEditValue       := {|| SatCli->dFecSat }
+      :nDataStrAlign    := AL_LEFT
+      :nHeadStrAlign    := AL_LEFT
+      :nWidth           := 80
+   end with
+
+
+   /*
+   oDbfTmpMaq:SetBrowse( oBrwMaq )
+   
    with object ( oBrwMaq:addCol() )
       :cHeader          := "Artículo"
       :cSortOrder       := "cRefSer"
@@ -760,15 +795,13 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       :bEditValue       := {|| oDbfTmpMaq:cDesUbi }
       :nWidth           := 130
    end with
-
-   oBrwMaq:bLDblClick   := {|| HistoriaMaquina( cCmbAnio ) }
+   */
 
    /*Anno del ejecicio, por defecto lleva el anno actual*/
 
    REDEFINE COMBOBOX oCmbAnio VAR cCmbAnio ;
       ITEMS    { "Todos", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" } ;
       ID       310 ;
-      COLOR    CLR_GET ;
       ON CHANGE( LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq ), oBrwTmp:Refresh(), oGraph:Refresh() ) ;
       OF       oDlg
 
@@ -845,8 +878,6 @@ static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oB
    DEFAULT lSatCli   := .f.
 
    LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta )
-
-   LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
 
    oBrwTmp:Refresh()
 
@@ -1130,10 +1161,12 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
+Static Function LoadMaquinasDbf( cCodCli, cCmbAnio, oBrwMaq )
 
    local nOrdAntL  := ( dbfSatCliL )->( OrdSetFocus( "cCodCli" ) )
    local nOrdAntT  := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
+
+   TDataCenter():lSelectSATFromClient()
 
    oDbfTmpMaq:Zap()
 
@@ -1205,6 +1238,20 @@ Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
    if !Empty( oBrwMaq )
       oBrwMaq:Refresh()
    end if  
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function LoadMaquinasSQL( cCodCli, cCmbAnio, oBrwMaq )
+
+   if TDataCenter():lSelectSATFromClient( cCodCli, cCmbAnio ) != nil
+
+      if !Empty( oBrwMaq )
+         oBrwMaq:Refresh()
+      end if  
+
+   end if 
 
 Return nil
 
@@ -1377,7 +1424,7 @@ Function aTotVentasCliente( cCodCli, nYear, lUnits )
    DEFAULT lUnits := .t.
 
    if !lOpenFiles
-      if OpenFiles( .f. )
+      if OpenFiles( cCodCli, .f. )
          lClo     := .t.
       else
          return ( aVta )

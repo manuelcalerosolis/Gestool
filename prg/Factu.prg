@@ -842,8 +842,6 @@ STATIC FUNCTION EndApp()
    ErrorBlock( oBlock )
 
    if ( oDlg:nResult == IDOK )
-   
-   
       FinishAplication()
    end if
 
@@ -6017,8 +6015,6 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
-
-   // VirtualKey( .f., space( 100 ), "test" )
 
 Return ( nil )
 

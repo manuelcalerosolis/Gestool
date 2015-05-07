@@ -2369,13 +2369,13 @@ STATIC FUNCTION CloseFiles()
       oPais:End()
    end if
 
-   if empty(oEntidades)
+   if !empty( oEntidades )
       oEntidades:End()
    end if 
 
-
-
-   TProyecto():GetInstance():CloseFiles()
+   if !empty( TProyecto():GetInstance() )
+      TProyecto():GetInstance():CloseFiles()
+   end if 
 
    dbfIva      := nil
    dbfFPago    := nil
@@ -5903,7 +5903,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                                    "nHeight"   => nAltoGet,;
                                                    "lDesign"   => .f. } )
          
-         aGet[ _CSERIE ]   := TGridGet():Build(    {  "nRow"      => 40,;
+         aGet[ _CSERIE ]   := TGridGet():Build( {  "nRow"      => 40,;
                                                    "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CSERIE ], aTmp[ _CSERIE ] := u ) },;
                                                    "oWnd"      => oDlg,;
@@ -5925,7 +5925,7 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 													            "nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| ChangeSerieTablet( aGet ) } } )
 
-         aGet[ _CSERIE ]   := TGridGet():Build(    {  "nRow"      => 40,;
+         aGet[ _CSERIE ]   := TGridGet():Build( {  "nRow"      => 40,;
                                                    "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CSERIE ], aTmp[ _CSERIE ] := u ) },;
                                                    "oWnd"      => oDlg,;
