@@ -242,7 +242,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
                "Expedición",;
                "Vencimiento",;
                "Sesión",;
-               "Cobro",;
+               "Pago",;
                "Importe";
       EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, D():FacturasProveedoresPagos( nView ) ) ) ;
       ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, D():FacturasProveedoresPagos( nView ) ) ) ;
@@ -366,7 +366,7 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
    end with
 
    with object ( oWndBrw:AddXCol() )
-      :cHeader          := "Cobro"
+      :cHeader          := "Pago"
       :cSortOrder       := "dEntrada"
       :bEditValue       := {|| Dtoc( ( D():FacturasProveedoresPagos( nView ) )->dEntrada ) }
       :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
