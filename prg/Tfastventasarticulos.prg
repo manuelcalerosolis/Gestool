@@ -657,26 +657,6 @@ Return ( Self )
 
 Method lValidRegister() CLASS TFastVentasArticulos
 
-<<<<<<< HEAD
-   if !empty( ::oDbf:cCodArt )                                                                                                          .and.;
-      ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()      .and. ::oDbf:cCodArt   <= ::oGrupoArticulo:Cargo:getHasta() )      .and.;
-      ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:getDesde()       .and. ::oDbf:cCodFam   <= ::oGrupoFamilia:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cCodTip     >= ::oGrupoTArticulo:Cargo:getDesde()     .and. ::oDbf:cCodTip   <= ::oGrupoTArticulo:Cargo:getHasta() )     .and.;
-      ( ::oDbf:TipoIva     >= ::oGrupoIva:Cargo:getDesde()           .and. ::oDbf:TipoIva   <= ::oGrupoIva:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCodCate    >= ::oGrupoCategoria:Cargo:getDesde()     .and. ::oDbf:cCodCate  <= ::oGrupoCategoria:Cargo:getHasta() )     .and.;
-      ( ::oDbf:cCodTemp    >= ::oGrupoTemporada:Cargo:getDesde()     .and. ::oDbf:cCodTemp  <= ::oGrupoTemporada:Cargo:getHasta() )     .and.;
-      ( ::oDbf:cCodFab     >= ::oGrupoFabricante:Cargo:getDesde()    .and. ::oDbf:cCodFab   <= ::oGrupoFabricante:Cargo:getHasta() )    .and.;
-      ( ::oDbf:cCodCli     >= ::oGrupoCliente:Cargo:getDesde()       .and. ::oDbf:cCodCli   <= ::oGrupoCliente:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cCodGrp     >= ::oGrupoGCliente:Cargo:getDesde()      .and. ::oDbf:cCodGrp   <= ::oGrupoGCliente:Cargo:getHasta() )      .and.;
-      ( ::oDbf:cCodPago    >= ::oGrupoFpago:Cargo:getDesde()         .and. ::oDbf:cCodPago  <= ::oGrupoFpago:Cargo:getHasta() )         .and.;
-      ( ::oDbf:cCodRut     >= ::oGrupoRuta:Cargo:getDesde()          .and. ::oDbf:cCodRut   <= ::oGrupoRuta:Cargo:getHasta() )          .and.;
-      ( ::oDbf:cCodAge     >= ::oGrupoAgente:Cargo:getDesde()        .and. ::oDbf:cCodAge   <= ::oGrupoAgente:Cargo:getHasta() )        .and.;
-      ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde() .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:getHasta() ) .and.;
-      ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()     .and. ::oDbf:cPrvHab   <= ::oGrupoProveedor:Cargo:getHasta() )     .and.;
-      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()       .and. ::oDbf:cCodAlm   <= ::oGrupoAlmacen:Cargo:getHasta() )       .and.;
-      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()   .and. ::oDbf:cCtrCoste <= ::oGrupoCentroCoste:Cargo:getHasta() ) 
-=======
    if !empty( ::oDbf:cCodArt )                                                                                                                  .and.;
       ( ::oDbf:cCodArt     >= ::oGrupoArticulo:Cargo:getDesde()         .and. ::oDbf:cCodArt    <= ::oGrupoArticulo:Cargo:getHasta() )          .and.;
       ( ::oDbf:cCodFam     >= ::oGrupoFamilia:Cargo:getDesde()          .and. ::oDbf:cCodFam    <= ::oGrupoFamilia:Cargo:getHasta() )           .and.;
@@ -694,8 +674,9 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde()    .and. ::oDbf:cCodTrn    <= ::oGrupoTransportista:Cargo:getHasta() )     .and.;
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()          .and. ::oDbf:cCodUsr    <= ::oGrupoUsuario:Cargo:getHasta() )           .and.;
       ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cPrvHab    <= ::oGrupoProveedor:Cargo:getHasta() )         .and.;
-      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() ) 
->>>>>>> origin/master
+      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )           .and.;
+      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()   .and. ::oDbf:cCtrCoste <= ::oGrupoCentroCoste:Cargo:getHasta() ) 
+
 
       Return .t.
 
