@@ -83,6 +83,7 @@ Definici¢n de la base de datos de albaranes a proveedores
 #define _CALMORIGEN               61  
 #define _NFACTURADO               62
 #define _TFECALB                  63     //   D      8     0 "",  
+#define _CCENTROCOSTE             64
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -204,6 +205,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DCIERRE                 117
 #define _TCIERRE                 118
 #define __TFECALB                119     //   D      8     0 "",  
+#define __CCENTROCOSTE           120
 
 /*
 Definici¢n de Array para impuestos
@@ -305,6 +307,7 @@ static oStock
 static oFont
 static oMenu
 static oDetCamposExtra
+static oCentroCoste
 static nNumAlb
 static aNumAlb          := {}
 static nGetNeto         := 0
@@ -543,6 +546,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :cHeader          := "Hora"
          :bEditValue       := {|| trans( ( D():AlbaranesProveedores( nView ) )->tFecAlb, "@R 99:99:99") }
          :nWidth           := 60
+         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -637,6 +641,14 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Centro de coste"
+         :bEditValue       := {|| ( D():AlbaranesProveedores( nView ) )->cCtrCoste }
+         :nWidth           := 50
+         :lHide            := .t.
+      end with
+
 
       oWndBrw:cHtmlHelp    := "Albaran de proveedor"
 
@@ -1006,6 +1018,15 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       /*
+      Centro de coste-----------------------------------------------------------
+      */
+      oCentroCoste      := TCentroCoste():Create( cPatDat() )
+      if !oCentroCoste:OpenFiles()
+         lOpenFiles     := .f.
+      end if
+
+
+      /*
       Cargamos la clase bandera------------------------------------------------
       */
 
@@ -1069,6 +1090,10 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
+   end if
+
+   if !Empty( oCentroCoste )
+      oCentroCoste:end()
    end if
 
    D():DeleteView( nView )
@@ -1512,7 +1537,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
             :nWidth           := 180
             :lHide            := .t.
          end with
-
          
          with object ( oBrwLin:AddCol() )
             :cHeader          := cNombreCajas()
@@ -1608,6 +1632,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
             :nDataStrAlign    := 1
             :nHeadStrAlign    := 1
             :nFooterType      := AGGR_SUM
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader          := "Centro de coste"
+            :bEditValue       := {|| ( dbfTmp )->cCtrCoste }
+            :nWidth           := 40
+            :lHide            := .t.
          end with
 
          if nMode != ZOOM_MODE
@@ -1953,6 +1984,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
+      /* Centro de coste */
+
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+         ID       310 ;
+         IDTEXT   311 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
       /*
       Regimen de impuestos-----------------------------------------------------------
       */
@@ -2191,19 +2233,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cCodPed 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
          oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ),;
-                              ( ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay ) ),;
+                              ( ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) ),;
                               oDlg:end() ) }
 
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
          oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ),;
-                              ( AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay ) ),;
+                              ( AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) ),;
                               oDlg:end() ) }
 
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay ) }
+         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay ) }
+         oDlg:bStart := {|| ShowKitCom( D():AlbaranesProveedores( nView ), dbfTmp, oBrwLin, cCodPrv, dbfTmpInc, aGet ), StartEdtRecAlbProv( aGet, oSay, nMode ) }
 
    end case
 
@@ -2321,7 +2363,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-Static Function StartEdtRecAlbProv( aGet, oSay )
+Static Function StartEdtRecAlbProv( aGet, oSay, nMode )
 
    if uFieldEmpresa( "lShowOrg" )
       aGet[ _CALMORIGEN ]:Show()
@@ -2330,6 +2372,16 @@ Static Function StartEdtRecAlbProv( aGet, oSay )
       aGet[ _CALMORIGEN ]:Hide()
       oSay[7]:Hide()
    end if
+
+   if nMode != APPD_MODE
+
+      if !empty( aGet[ _CCENTROCOSTE ] )
+         aGet[ _CCENTROCOSTE ]:lValid()
+      endif
+
+   endif
+
+
 
 Return ( .t. )
 
@@ -3032,6 +3084,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          ON HELP  ( BrwAlmacen( Self, aGet[ _CALMLIN ]:oHelpText ) ) ;
 			OF 		oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
+         ID       270 ;
+         IDTEXT   271 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET oTotal VAR nTotal ;
 			ID 		210 ;
 			WHEN 		.F. ;
@@ -3519,6 +3580,12 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
 
       oSayLote:Hide()
 
+      aGet[ __CCENTROCOSTE ]:cText( aTmpAlb[ _CCENTROCOSTE ] )
+
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif 
+
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
       aGet[ _CREF    ]:Hide()
@@ -3528,6 +3595,10 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
       aGet[ _DFECCAD ]:Hide()
 
       oSayLote:Hide()
+
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif 
 
    case nMode != APPD_MODE .AND. !empty( cCodArt )
 
@@ -3544,6 +3615,10 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
          aGet[ _DFECCAD ]:Hide()
          oSayLote:Hide()
       end if
+
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif 
 
    end case
 
@@ -8513,6 +8588,9 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->CSUFALB } ) )
 
+      ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+
       ( cAlbPrvT )->( dbCloseArea() )
 
    else
@@ -9160,6 +9238,7 @@ function aItmAlbPrv()
    aAdd( aItmAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía","",              "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nFacturado",   "N",  1,  0, "Estado del albarán",          "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,           "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "cCtrCoste",    "C",  9,  0, "Codigo del centro de coste" , "",                   "", "( cDbf )"} )
 
 Return ( aItmAlbPrv )
 
@@ -9288,6 +9367,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "dCierre",      "D",  8,  0, "Fecha cierre de lote",          "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "tCierre",      "C",  6,  0, "Hora cierre de lote",           "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,             "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cCtrCoste",    "C",  9,  0, "Codigo del centro de coste" ,   "",                  "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 

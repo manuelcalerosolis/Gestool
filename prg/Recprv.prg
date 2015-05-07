@@ -60,6 +60,7 @@ Defines para las lineas de Pago
 #define _CSUCPRV                46
 #define _CDIGPRV                47
 #define _CCTAPRV                48
+#define _CCENTROCOSTE           49
 
 memvar cDbf
 memvar cDbfCol
@@ -81,6 +82,8 @@ static dbfFacPrvL
 static dbfRctPrvT
 static dbfFPago
 static dbfIva
+
+static oCentroCoste
 
 static nView
 
@@ -147,6 +150,11 @@ STATIC FUNCTION OpenFiles( cPatEmp )
          cFiltroUsuario := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
       end if
 
+      oCentroCoste            := TCentroCoste():Create( cPatDat() )
+      if !oCentroCoste:OpenFiles()
+         lOpenFiles     := .f.
+      end if 
+
       EnableAcceso()
 
    RECOVER
@@ -170,6 +178,10 @@ STATIC FUNCTION CloseFiles()
    DisableAcceso()
 
    DestroyFastFilter( D():FacturasProveedoresPagos( nView ), .t., .t. )
+
+   if !Empty( oCentroCoste )
+      oCentroCoste:CloseFiles()
+   end if
 
    oBandera    := nil
    oWndBrw     := nil
@@ -412,6 +424,13 @@ FUNCTION RecPrv( oMenuItem, oWnd, aNumRec )
       :bEditValue       := {|| cSimDiv( if( lEur, cDivChg(), ( D():FacturasProveedoresPagos( nView ) )->cDivPgo ), D():Divisas( nView ) ) }
       :nWidth           := 30
    end with
+
+   with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Centro de coste"
+         :bEditValue       := {|| ( D():FacturasProveedoresPagos( nView ) )->cCtrCoste }
+         :nWidth           := 30
+         :lHide            := .t.
+      end with
 
    oWndBrw:lAutoSeek    := .f.
    oWndBrw:cHtmlHelp    := "Recibo de proveedor"
@@ -829,6 +848,15 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
          WHEN     .F. ;
          OF       oFld:aDialogs[ 1 ]
 
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+         ID       260 ;
+         IDTEXT   261 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 1 ]
+
       /*
       Segunda caja de dialogo--------------------------------------------------
       */
@@ -956,7 +984,7 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
       REDEFINE CHECKBOX aGet[ _LDEVUELTO ] VAR aTmp[ _LDEVUELTO ];
          ID       100 ;
          WHEN     ( aTmp[ _LCOBRADO] .and. nMode != ZOOM_MODE ) ;
-         ON CHANGE( lValDevPrv( aGet, aTmp, .f. ) ) ;
+         ON CHANGE( startEdtPag( aGet, aTmp, .f. ) ) ;
          OF       oFld:aDialogs[ 3 ]
 
       REDEFINE GET aGet[ _DFECDEV ] VAR aTmp[ _DFECDEV ] ;
@@ -994,14 +1022,11 @@ Static Function EdtPag( aTmp, aGet, dbf, oBrw, lRectificativa, bValid, nMode )
 
    oDlg:AddFastKey ( VK_F1, {|| ChmHelp ("Pagos") } )
 
-   oDlg:bStart    := {|| lValDevPrv( aGet, aTmp, .t. ) }
+   oDlg:bStart    := {|| startEdtPag( aGet, aTmp, .t. ) }
 
    ACTIVATE DIALOG oDlg ;
          CENTER ;
-         ON INIT ( EdtRecMenu( aTmp, oDlg ),;
-                   aGet[ _CDIVPGO ]:lValid(),;
-                   aGet[ _CCTAREC ]:lValid(),;
-                   aGet[ _CCODPGO ]:lValid() )
+         ON INIT ( EdtRecMenu( aTmp, oDlg ) )
 
    EndEdtRecMenu()
 
@@ -1027,8 +1052,8 @@ Static Function EndTrans( aTmp, aGet, dbf, oBrw, oDlg, nDinDiv, nMode )
    local nCon
    local nRec        := ( dbf )->( Recno() )
    local lImpNeg     := ( dbf )->nImporte < 0
-   local nImpFld     := abs( ( dbf )->nImporte )
-   local nImpTmp     := abs( aTmp[ _NIMPORTE ] )
+   local nImpFld     := round( abs( ( dbf )->nImporte ), nDinDiv )
+   local nImpTmp     := round( abs( aTmp[ _NIMPORTE ] ), nDinDiv )
    local cNumFac     := aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
    local cNumRec     := aTmp[ _CSERFAC ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] )
    local lDevuelto   := aTmp[ _LDEVUELTO ]
@@ -2589,6 +2614,9 @@ FUNCTION rxRecPrv( cPath, oMeter )
       ( dbfFacPrvP )->( ordCondSet( "!Deleted() .and. Field->lCobrado", {|| !Deleted() .and. Field->lCobrado } ) )
       ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.Cdx", "lCtaBnc", "Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEPaisIBAN + Field->cECtrlIBAN + Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
 
+      ( dbfFacPrvP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacPrvP )->( ordCreate( cPath + "FacPrvP.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+
       ( dbfFacPrvP )->( dbCloseArea() )
 
    else
@@ -2653,6 +2681,8 @@ function aItmRecPrv()
    aAdd( aRecFacPrv, { "cSucPrv"    ,"C",  4, 0, "Sucursal de la cuenta del proveedor",   "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cDigPrv"    ,"C",  2, 0, "Dígito de control de la cuenta del proveedor", "",     "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cCtaPrv"    ,"C", 10, 0, "Cuenta bancaria del proveedor",         "",            "", "( cDbfRec )" } )
+   aAdd( aRecFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Codigo del centro de coste",            "",            "", "( cDbfRec )" } )
+
 
 return ( aRecFacPrv )
 
@@ -3151,7 +3181,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function lValDevPrv( aGet, aTmp, lIntro )
+Function startEdtPag( aGet, aTmp, lIntro )
 
    DEFAULT lIntro := .f.
 
@@ -3203,11 +3233,21 @@ Function lValDevPrv( aGet, aTmp, lIntro )
       aGet[ _CRECDEV ]:Enable()
    end if
 
+   if lIntro
+      aGet[ _CDIVPGO ]:lValid()
+      aGet[ _CCTAREC ]:lValid()
+      aGet[ _CCODPGO ]:lValid()
+   end if 
+
+   if !empty( aGet[ _CCENTROCOSTE ] )
+      aGet[ _CCENTROCOSTE ]:lValid()
+   endif
+
 return .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION ExtEdtRecPrv( cFacPrvP, nExternalView, lRectificativa )
+FUNCTION ExtEdtRecPrv( cFacPrvP, nExternalView, lRectificativa, oCtrCoste )
 
    local nLevel            := nLevelUsr( _MENUITEM_ )
 
@@ -3217,6 +3257,8 @@ FUNCTION ExtEdtRecPrv( cFacPrvP, nExternalView, lRectificativa )
       msgStop( 'Acceso no permitido.' )
       return .t.
    end if
+
+   oCentroCoste            := oCtrCoste
 
    nView                   := nExternalView
 

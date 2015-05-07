@@ -77,6 +77,7 @@
 #define _NTOTIVA             58
 #define _NTOTREQ             59
 #define _NTOTANT             60
+#define _CCENTROCOSTE        61
 
 /*
 Variables Memvar para todo el .prg logico no!
@@ -172,6 +173,8 @@ static lExternal        := .f.
 static cFiltroUsuario   := ""
 
 static oDetCamposExtra
+
+static oCentroCoste
 
 #ifndef __PDA__
 
@@ -361,8 +364,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
    lExternal            := lExt
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    nView                := D():CreateView()
 
@@ -447,6 +450,11 @@ STATIC FUNCTION OpenFiles( lExt )
       lOpenFiles        := .f.
    end if
 
+   oCentroCoste         := TCentroCoste():Create( cPatDat() )
+   if !oCentroCoste:OpenFiles()
+      lOpenFiles        := .f.
+   end if
+
    lOpenFiles           := .t.
 
    public nTotAnt       := 0
@@ -474,13 +482,13 @@ STATIC FUNCTION OpenFiles( lExt )
    oDetCamposExtra:SetTipoDocumento( "Facturas de anticipos a clientes" )
 
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
       CloseFiles()
 
    END SEQUENCE
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 RETURN ( lOpenFiles )
 
@@ -580,6 +588,10 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oStock )
       oStock:end()
+   end if
+
+   if !Empty( oCentroCoste )
+      oCentroCoste:end()
    end if
 
    if !Empty( oDetCamposExtra )
@@ -894,6 +906,13 @@ FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
          :nWidth           := 60
          :lHide            := .t.
          :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Centro de coste"
+         :bEditValue       := {|| ( dbfAntCliT )->cCtrCoste }
+         :nWidth           := 30
+         :lHide            := .t.
       end with
 
    oWndBrw:CreateXFromCode()
@@ -1498,6 +1517,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
          ID       241 ;
 			OF 		oFld:aDialogs[1]
 
+      /*
+      Centro de coste____________________________________________________________________
+      */
+
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+            ID       380 ;
+            IDTEXT   381 ;
+            BITMAP   "LUPA" ;
+            VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+            ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            OF       oFld:aDialogs[1]
+
 		/*
       Formas de pago_____________________________________________________________________
 		*/
@@ -1825,6 +1857,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
       oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], dbfUsr ), , oDlg:End() ) }
    end if
 
+   oDlg:bStart := {|| StartEdtRec( aGet, nMode ) }
+
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtRecMenu( aTmp, oDlg ), nRecTot( aTmp, aGet ), oBrwInc:Load() ) ;
       CENTER
@@ -1851,6 +1885,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cS
 RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
+
+Static Function StartEdtRec( aGet, nMode )
+
+   if nMode != APPD_MODE
+
+      if !empty( aGet[ _CCENTROCOSTE ] )
+         aGet[ _CCENTROCOSTE ]:lValid()
+      endif     
+
+   endif
+   
+Return ( .t. )
+
 
 Static Function EdtInc( aTmp, aGet, dbfAntCliI, oBrw, bWhen, bValid, nMode, aTmpFac )
 
@@ -5203,6 +5250,7 @@ function aItmAntCli()
    aAdd( aItmAntCli, {"nTotIva"     ,"N", 16, 6, "Total " + cImp() ,                                           "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nTotReq"     ,"N", 16, 6, "Total recargo" ,                                       "",                   "", "( cDbf )"} )
    aAdd( aItmAntCli, {"nTotAnt"     ,"N", 16, 6, "Total anticipo" ,                                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCtrCoste"   ,"C",  9, 0, "Cosigo del centro de coste" ,                          "",                   "", "( cDbf )"} )
 
 RETURN ( aItmAntCli )
 
@@ -5513,6 +5561,9 @@ FUNCTION rxAntCli( cPath, oMeter )
 
       ( dbfAntCliT )->( ordCondSet( "!Deleted() .and. !lLiquidada", {|| !Deleted() .and. !Field->lLiquidada } ) )
       ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "lNomCli", "Upper( cNomCli )", {|| Upper( Field->cNomCli ) } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
 
       ( dbfAntCliT )->( dbCloseArea() )
 

@@ -8,7 +8,7 @@
 static oCamposExtra
 
 //---------------------------------------------------------------------------//
-
+  
 CLASS TCamposExtra FROM TMant
 
    DATA cMru               INIT  "form_green_add_16"

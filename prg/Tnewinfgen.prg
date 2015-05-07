@@ -30,6 +30,8 @@ memvar cGrupoTArticuloDesde
 memvar cGrupoTArticuloHasta
 memvar cGrupoAlmacenDesde
 memvar cGrupoAlmacenHasta
+memvar cGrupoCentroCosteDesde
+memvar cGrupoCentroCosteHasta
 
 //---------------------------------------------------------------------------//
 
@@ -137,6 +139,9 @@ CLASS TNewInfGen FROM TInfGen
    DATA  oHoraFin
    DATA  cHoraFin
 
+   DATA  oDbfCentroCoste
+   DATA  oGrupoCentroCoste
+
    METHOD NewResource()
 
    METHOD lGrupoArticulo( lInitGroup, lImp )
@@ -178,6 +183,8 @@ CLASS TNewInfGen FROM TInfGen
    METHOD lGrupoFamilia( lInitGroup, lImp )
 
    METHOD lGrupoGFamilia( lInitGroup, lImp )
+
+   METHOD lGrupoCentroCoste( lInitGroup, lImp )
 
    METHOD lGrupoTipoArticulo( lInitGroup, lImp )
 
@@ -2381,6 +2388,82 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
+METHOD lGrupoCentroCoste( lInitGroup, lImp ) CLASS TNewInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         
+
+   DEFAULT lImp         := .t.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   ::oDbfCentroCoste := TCentroCoste():New( cPatDat() )
+   ::oDbfCentroCoste:OpenFiles()
+
+   ::oGrupoCentroCoste                    := TRGroup():New( {|| ::oDbf:cCtrCoste }, {|| "Centro de coste : " + AllTrim( ::oDbf:cCtrCoste ) }, {|| "Total Centro de coste : " + ::oDbf:cCtrCoste }, {|| 3 }, ::lSalto )
+
+   ::oGrupoCentroCoste:Cargo              := TItemGroup()
+   ::oGrupoCentroCoste:Cargo:Nombre       := "Ctr. de coste"
+   ::oGrupoCentroCoste:Cargo:Expresion    := "cCodigo"
+   ::oGrupoCentroCoste:Cargo:Todos        := .t.
+   ::oGrupoCentroCoste:Cargo:Desde        := Space( 16 )           // dbFirst( ::oDbfCentroCoste, 1 )
+   ::oGrupoCentroCoste:Cargo:Hasta        := Replicate( "Z", 16 )  // dbLast( ::oDbfCentroCoste, 1 )
+   ::oGrupoCentroCoste:Cargo:cPicDesde    := "@!"
+   ::oGrupoCentroCoste:Cargo:cPicHasta    := "@!"
+   ::oGrupoCentroCoste:Cargo:HelpDesde    := {|| ::oDbfCentroCoste:Buscar( ::oDesde ) }
+   ::oGrupoCentroCoste:Cargo:HelpHasta    := {|| ::oDbfCentroCoste:Buscar( ::oHasta ) }
+   ::oGrupoCentroCoste:Cargo:TextDesde    := {|| oRetFld( ::oGrupoCentroCoste:Cargo:Desde, ::oDbfCentroCoste:oDbf, "cNombre", "cCodigo" ) }
+   ::oGrupoCentroCoste:Cargo:TextHasta    := {|| oRetFld( ::oGrupoCentroCoste:Cargo:Hasta, ::oDbfCentroCoste:oDbf, "cNombre", "cCodigo" ) }
+   ::oGrupoCentroCoste:Cargo:ValidDesde   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNombre", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. )  }
+   ::oGrupoCentroCoste:Cargo:ValidHasta   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNombre", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoCentroCoste:Cargo:lImprimir    := lImp
+   ::oGrupoCentroCoste:Cargo:cBitmap      := "Document_money2_16"
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( ::oGrupoCentroCoste:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
+   end if
+
+   if lInitGroup != nil
+
+      aAdd( ::aSelectionGroup, ::oGrupoCentroCoste )
+
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( ::oGrupoCentroCoste:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
+         ::oGrupoCentroCoste:Cargo:Imagen := len( ::oImageGroup:aBitmaps ) -1
+      end if
+
+      if lInitGroup
+         if !Empty( ::oColNombre )
+            ::oColNombre:AddResource( ::oGrupoCentroCoste:Cargo:cBitmap )
+         end if
+         aAdd( ::aInitGroup, ::oGrupoCentroCoste )
+      end if
+
+   end if
+
+   aAdd( ::aSelectionRango, ::oGrupoCentroCoste )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
+
+      if !Empty( ::oDbfCentroCoste )
+         ::oDbfCentroCoste:End()
+      end if
+
+      lOpen                            := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+
 METHOD lGrupoTipoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
 
    local lOpen          := .t.
@@ -4132,6 +4215,16 @@ Method AddVariable() CLASS TNewInfGen
 
       ::oFastReport:AddVariable(       "Informe", "Desde código de tipo de artículo",  "GetHbVar('cGrupoTArticuloDesde')" )
       ::oFastReport:AddVariable(       "Informe", "Hasta código de tipo de artículo",  "GetHbVar('cGrupoTArticuloHasta')" )
+
+   end if
+
+   if !Empty( ::oGrupoCentroCoste )
+
+      public cGrupoCentroCosteDesde          := ::oGrupoCentroCoste:Cargo:Desde
+      public cGrupoCentroCosteHasta          := ::oGrupoCentroCoste:Cargo:Hasta
+
+      ::oFastReport:AddVariable(       "Informe", "Desde código de centro de coste",  "GetHbVar('cGrupoCentroCosteDesde')" )
+      ::oFastReport:AddVariable(       "Informe", "Hasta código de centro de coste",  "GetHbVar('cGrupoCentroCosteHasta')" )
 
    end if
 

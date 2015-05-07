@@ -307,7 +307,8 @@ Defines para ficheros INI
                                    "Pedidos a proveedores" => .f.,;
                                    "Albaranes a proveedores" => .f.,;
                                    "Facturas a proveedores" => .f.,;
-                                   "Facturas rectificativa a proveedores" => .f. }
+                                   "Facturas rectificativa a proveedores" => .f.,;
+                                   "S.A.T" => .f. }
 
 #define DOCUMENTOS_ITEMS        {   "Artículos" => ART_TBL,;
                                     "Clientes" => CLI_TBL,;
@@ -323,7 +324,8 @@ Defines para ficheros INI
                                     "Pedidos a proveedores" => PED_PRV,;
                                     "Albaranes a proveedores" => ALB_PRV,;
                                     "Facturas a proveedores" => FAC_PRV,;
-                                    "Facturas rectificativa a proveedores" => RCT_PRV }
+                                    "Facturas rectificativa a proveedores" => RCT_PRV,;
+                                    "S.A.T" => SAT_CLI }
 
 #define ICONOS_DOCUMENTOS_ITEMS {   "Artículos" => "Cube_Yellow_16",;
                                     "Clientes" => "User1_16",;
@@ -339,7 +341,8 @@ Defines para ficheros INI
                                     "Pedidos a proveedores" => "Clipboard_empty_businessman_16",;
                                     "Albaranes a proveedores" => "Document_plain_businessman_16",;
                                     "Facturas a proveedores" => "Document_businessman_16",;
-                                    "Facturas rectificativa a proveedores" => "Document_navigate_cross_16" }
+                                    "Facturas rectificativa a proveedores" => "Document_navigate_cross_16",;
+                                    "S.A.T" => "Power-drill_user1_16" }
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )

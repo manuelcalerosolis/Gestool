@@ -91,7 +91,8 @@
 #define _CDIGBNC                 79
 #define _CCTABNC                 80
 #define _TFECFAC                 81
-
+#define _CCENTROCOSTE            82
+ 
 /*
 Lineas de Detalle
 */
@@ -187,6 +188,7 @@ Lineas de Detalle
 #define _CCODIMP                   92
 #define _NVALIMP                   93
 #define __TFECFAC                  94
+#define __CCENTROCOSTE             95
 
 /*
 Definici¢n de Array para impuestos
@@ -340,6 +342,7 @@ static nGetReq          := 0
 static nGetPgd          := 0
 
 static oDetCamposExtra
+static oCentroCoste
 
 static cOldCodCli       := ""
 static cOldCodArt       := ""
@@ -515,6 +518,15 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Facturas rectificativa a proveedores" )
 
+      /*
+      Centro de coste-----------------------------------------------------------------------
+      */
+
+      oCentroCoste            := TCentroCoste():Create( cPatDat() )
+      if !oCentroCoste:OpenFiles()
+         lOpenFiles     := .f.
+      end if 
+
       EnableAcceso()
 
    RECOVER
@@ -549,6 +561,10 @@ Static Function CloseFiles()
 
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
+   end if
+
+   if !Empty( oCentroCoste )
+      oCentroCoste:CloseFiles()
    end if
 
    oBandera    := nil
@@ -751,6 +767,7 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          :cHeader          := "Hora"
          :bEditValue       := {|| trans( ( D():FacturasRectificativasProveedores( nView ) )->tFecFac, "@R 99:99:99") }
          :nWidth           := 60
+         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -835,6 +852,13 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
          :cHeader          := "Div."
          :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( D():FacturasRectificativasProveedores( nView ) )->cDivFac ), D():Divisas( nView ) ) }
          :nWidth           := 30
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Centro de coste"
+         :bEditValue       := {|| ( D():FacturasRectificativasProveedores( nView ) )->cCtrCoste }
+         :nWidth           := 30
+         :lHide            := .t.
       end with
 
       oWndBrw:lAutoSeek    := .f.
@@ -1625,6 +1649,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
             :nFooterType      := AGGR_SUM
          end with
 
+         with object ( oBrwLin:AddCol() )
+         :cHeader          := "Centro de coste"
+         :bEditValue       := {|| ( dbfTmp )->cCtrCoste }
+         :nWidth           := 20
+         :lHide            := .t.
+      end with
+
          if nMode != ZOOM_MODE
             oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
          end if
@@ -2081,6 +2112,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+            ID       350 ;
+            IDTEXT   351 ;
+            BITMAP   "LUPA" ;
+            VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+            ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            OF       oFld:aDialogs[2]
+
 
       REDEFINE GET aGet[ _CCODPRO ] VAR aTmp[ _CCODPRO ] ;
          ID       170 ;
@@ -2196,7 +2236,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
          end with
 
          if nMode != ZOOM_MODE
-            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, nView ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
+            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, nView, , oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
          end if
 
       oBrwPgo:CreateFromResource( 220 )
@@ -2205,7 +2245,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
 			ID 		501 ;
 			OF 		oFld:aDialogs[2];
 			WHEN 		( nMode == EDIT_MODE ) ;
-         ACTION   ( ExtEdtRecPrv( dbfTmpPgo, nView ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
+         ACTION   ( ExtEdtRecPrv( dbfTmpPgo, nView, , oCentroCoste ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) )
 
 		REDEFINE BUTTON ;
 			ID 		502 ;
@@ -2442,6 +2482,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
 
+      otherwise
+         oDlg:bStart := {|| StartEdtRec( aGet, nMode ) }
+
    end case
 
 	ACTIVATE DIALOG oDlg	;
@@ -2467,6 +2510,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, cRctPrvT, oBrw, cCodPrv, cCodArt, nMode, cNu
    KillTrans( oBrwLin )
 
 RETURN ( oDlg:nResult == IDOK )
+
+//----------------------------------------------------------------------------//
+
+Static Function StartEdtRec( aGet, nMode )
+
+  
+      if !empty( aGet[ _CCENTROCOSTE ] )
+         aGet[ _CCENTROCOSTE ]:lValid()
+      endif 
+
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -3417,6 +3472,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
 			WHEN 		.F. ;
          ID       241 ;
 			OF 		oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR  aTmp[ __CCENTROCOSTE ] ;
+           ID       410 ;
+           IDTEXT   411 ;
+           BITMAP   "LUPA" ;  
+           WHEN     ( nMode != ZOOM_MODE ) ;
+           VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+           ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
+           OF       oFld:aDialogs[ 1 ]
    
       /*
       Segunda caja de diálogo _________________________________________________
@@ -3542,6 +3606,12 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
       aGet[ _CALMLIN ]:cText( aTmpFac[ _CCODALM ] )
       aGet[ _NIVA    ]:cText( nIva( D():TiposIva( nView ), cDefIva() ) )
 
+      aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
+
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif
+
    case nMode != APPD_MODE .AND. empty( cCodArt )
 
       aGet[ _CREF    ]:hide()
@@ -3549,6 +3619,10 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
 		aGet[ _MLNGDES ]:show()
       aGet[ _CLOTE   ]:hide()
       aGet[ _DFECCAD ]:hide()
+
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif
 
    case nMode != APPD_MODE .AND. !empty( cCodArt )
 
@@ -3563,6 +3637,10 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
          aGet[ _CLOTE   ]:Hide()
          aGet[ _DFECCAD ]:Hide()
       end if
+
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif
 
    end case
 
@@ -5987,6 +6065,13 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
          aGet[ _NPCTRET ]:cText( ( D():FacturasProveedores( nView ) )->nPctRet )
       end if
 
+      if !empty ( ( D():FacturasProveedores( nView ) )->cCtrCoste )
+
+         aGet[ _CCENTROCOSTE ]:cText( ( D():FacturasProveedores( nView ) )->cCtrCoste )
+         aGet[ _CCENTROCOSTE ]:lValid()
+
+     endif
+
       /*
       Si lo encuentra----------------------------------------------------------
       */
@@ -6040,6 +6125,7 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
             ( dbfTmp )->nValImp  := ( D():FacturasProveedoresLineas( nView ) )->nValImp
             ( dbfTmp )->dFecFac  := ( D():FacturasProveedoresLineas( nView ) )->dFecFac
             ( dbfTmp )->tFecFac  := ( D():FacturasProveedoresLineas( nView ) )->tFecFac
+            ( dbfTmp )->cCtrCoste := ( D():FacturasProveedoresLineas( nView ) )->cCtrCoste
 
             ( D():FacturasProveedoresLineas( nView ) )->( dbSkip() )
 
@@ -6498,6 +6584,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
 
    ( dbfTmpPgo )->( dbGoTop() )
    while ( dbfTmpPgo )->( !eof() )
+
+      if !empty( aTmp[ _CCENTROCOSTE ] )
+         ( dbfTmpPgo )->cCtrCoste := aTmp[ _CCENTROCOSTE ]
+      endif
+
       dbPass( dbfTmpPgo, D():FacturasProveedoresPagos( nView ), .t., cSerFac, nNumFac, cSufFac )
       ( dbfTmpPgo )->( dbSkip() )
    end while
@@ -10342,6 +10433,10 @@ FUNCTION GenPgoRctPrv( cNumFac, cRctPrvT, cRctPrvL, cRctPrvP, cPrv, cIva, cFPago
             ( cRctPrvP )->cCodCaj       := cCodCaj
             ( cRctPrvP )->cCodUsr       := cCodUsr
 
+            if !empty( ( cRctPrvT )->cCtrCoste )
+               ( cRctPrvP )->cCtrCoste  := ( cRctPrvT )->cCtrCoste
+            endif
+
             if ( cFPago )->lUtlBnc
                ( cRctPrvP )->cEPaisIBAN := ( cFPago )->cPaisIBAN
                ( cRctPrvP )->cECtrlIBAN := ( cFPago )->cCtrlIBAN
@@ -10807,6 +10902,7 @@ function aItmRctPrv()
    aAdd( aItmFacPrv, { "cDigBnc"    ,"C",  2, 0, "Dígito de control de la cuenta bancaria del proveedor","",               "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cCtaBnc"    ,"C", 10, 0, "Cuenta bancaria del proveedor" ,                       "",               "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura rectificativa" ,                    "",               "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Codigo del Centro de coste",                           "",               "", "( cDbf )", nil } )
 
 return ( aItmFacPrv )
 
@@ -10910,6 +11006,7 @@ function aColRctPrv()
    aAdd( aColFacPrv, { "cCodImp"    ,"C",  3, 0, "Código de impuesto especial",  "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto especial", "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,          "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Codigo del Centro de coste" ,  "",                   "", "( cDbfCol )" } )
 
 Return ( aColFacPrv )
 

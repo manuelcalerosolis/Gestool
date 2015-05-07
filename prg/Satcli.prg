@@ -409,6 +409,8 @@ static oMailing
 
 static cMaquina         := ""
 
+static oDetCamposExtra
+
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
@@ -738,6 +740,10 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if   
 
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "S.A.T" )
+
       oMailing          := TGenmailingDatabaseSATClientes():New( nView )
 
       /*
@@ -1065,6 +1071,10 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oOperario )
       oOperario:End()
    end if   
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
+   end if
 
    D():DeleteView( nView )
 
@@ -3016,6 +3026,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ), GenSatCli( IS_PRINTER ), ) } )
+      oDlg:AddFastKey( VK_F9,             {|| oDetCamposExtra:Play( aTmp[ _CSERSAT ] + str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] ) } )
 
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
@@ -3091,22 +3102,27 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             if !lExternal
 
-            MENUITEM    "&1. Modificar cliente";
+            MENUITEM    "&1. Campos extra [F9]";
+               MESSAGE  "Mostramos y rellenamos los campos extra para la familia" ;
+               RESOURCE "form_green_add_16" ;
+               ACTION   ( oDetCamposExtra:Play( aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT] ) + aTmp[ _CSUFSAT ] ) )
+
+            MENUITEM    "&2. Modificar cliente";
                MESSAGE  "Modificar la ficha del cliente" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ] ), MsgStop( "Código cliente vacío" ) ) )
 
-            MENUITEM    "&2. Modificar cliente contactos";
+            MENUITEM    "&3. Modificar cliente contactos";
                MESSAGE  "Modifica la ficha del cliente en contactos" ;
                RESOURCE "User1_16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), EdtCli( aTmp[ _CCODCLI ], , 5 ), MsgStop( "Código de cliente vacío" ) ) )
 
-            MENUITEM    "&3. Informe de cliente";
+            MENUITEM    "&4. Informe de cliente";
                MESSAGE  "Abrir el informe del cliente" ;
                RESOURCE "Info16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODCLI ] ), InfCliente( aTmp[ _CCODCLI ] ), MsgStop( "Código cliente vacío" ) ) );
 
-            MENUITEM    "&4. Modificar dirección";
+            MENUITEM    "&5. Modificar dirección";
                MESSAGE  "Modificar ficha de la dirección" ;
                RESOURCE "Worker16" ;
                ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el S.A.T." ) ) )
@@ -3115,7 +3131,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             end if
 
-            MENUITEM    "&5. Informe del documento";
+            MENUITEM    "&6. Informe del documento";
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( SAT_CLI, aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] ) )

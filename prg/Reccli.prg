@@ -78,6 +78,8 @@ Defines para las lineas de Pago
 #define _CCTACLI                 64
 #define _LREMESA                 65
 #define _CNUMMTR                 66
+#define _LPASADO                 67
+#define _CCENTROCOSTE            68
 
 memvar cDbfRec
 memvar cDbf
@@ -117,6 +119,7 @@ static dbfTurno
 
 static oCtaRem
 static oBandera
+static oCentroCoste
 
 static lPgdOld
 static nImpOld
@@ -221,6 +224,11 @@ STATIC FUNCTION OpenFiles( lExt )
       oCtaRem              := TCtaRem():Create( cPatCli() )
       oCtaRem:OpenFiles()
 
+      oCentroCoste            := TCentroCoste():Create( cPatDat() )
+      if !oCentroCoste:OpenFiles()
+         lOpenFiles     := .f.
+      end if 
+
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos de recibos de clientes" + CRLF + ErrorMessage( oError ) )
@@ -299,6 +307,10 @@ STATIC FUNCTION CloseFiles()
    if oCtaRem != nil
       oCtaRem:CloseFiles()
       oCtaRem:End()
+   end if
+
+   if !Empty( oCentroCoste )
+      oCentroCoste:CloseFiles()
    end if
 
    dbfFacCliP  := nil
@@ -574,6 +586,13 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
          :bEditValue       := {|| Alltrim( Str( ( dbfFacCliP )->nNumRem ) ) + "/" + ( dbfFacCliP )->cSufRem }
          :lHide            := .t.
          :nWidth           := 80
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Centro de coste"
+         :bEditValue       := {|| ( dbfFacCliP )->cCtrCoste }
+         :nWidth           := 30
+         :lHide            := .t.
       end with
 
       oWndBrw:CreateXFromCode()
@@ -1350,6 +1369,19 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
 
 
       /*
+      Centro de coste______________________________________________________________
+      */
+
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+         ID       280 ;
+         IDTEXT   281 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+      /*
       Botones__________________________________________________________________
 		*/
 
@@ -1438,6 +1470,7 @@ Static Function StartEdtRec( aTmp, aGet )
    aGet[ _CCTAREC ]:lValid()
    aGet[ _CCTAGAS ]:lValid()
    aGet[ _CCTAREM ]:lValid()
+   aGet[ _CCENTROCOSTE ]:lValid()
 
    aGet[ _DPRECOB ]:SetFocus()
 
@@ -2738,6 +2771,10 @@ FUNCTION GenPgoFacRec( cNumFac, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfCli, dbfF
             ( dbfFacCliP )->cCodAge       := cCodAge
             ( dbfFacCliP )->lEsperaDoc    := ( dbfFPago )->lEsperaDoc
 
+            if !empty( ( dbfFacRecT )->cCtrCoste )
+               ( dbfFacCliP )->cCtrCoste  := ( dbfFacRecT )->cCtrCoste
+            endif
+
             if ( dbfFPago )->nCobRec == 1 .and. nMode == APPD_MODE
                ( dbfFacCliP )->lCobrado   := .t.
                ( dbfFacCliP )->cTurRec    := cCurSesion()
@@ -3030,7 +3067,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION ExtEdtRecCli( cFacCliP, cFacCliT, cFacCliL, cAntCliT, cPgo, cAge, cCaj, cIva, cDiv, oCta, oBcn, lRectificativa )
+FUNCTION ExtEdtRecCli( cFacCliP, cFacCliT, cFacCliL, cAntCliT, cPgo, cAge, cCaj, cIva, cDiv, oCta, oBcn, lRectificativa, oCtrCoste )
 
    local nLevel            := nLevelUsr( _MENUITEM_ )
 
@@ -3050,6 +3087,7 @@ FUNCTION ExtEdtRecCli( cFacCliP, cFacCliT, cFacCliL, cAntCliT, cPgo, cAge, cCaj,
    dbfCajT                 := cCaj
    dbfIva                  := cIva
    dbfDiv                  := cDiv
+   oCentroCoste            := oCtrCoste
 
    oCtaRem                 := oCta
 
@@ -4501,6 +4539,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"lRemesa"     ,"L",  1, 0, "Lógico de incluido en una remesa",  "",             "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cNumMtr"     ,"C", 15, 0, "Numero del recibo matriz",   "",                    "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "Lógico pasado", "",                                 "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCtrCoste"   ,"C",  9, 0, "Codigo del Centro de coste", "",                    "", "( cDbfRec )" } )
 
 Return ( aBasRecCli )
 
@@ -4697,6 +4736,10 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
             ( dbfFacCliP )->cCtaRem       := cCtaRem
             ( dbfFacCliP )->cCodAge       := cCodAge
             ( dbfFacCliP )->lEsperaDoc    := ( dbfFPago )->lEsperaDoc
+
+            if !empty( ( dbfFacCliT )->cCtrCoste )
+                ( dbfFacCliP )->cCtrCoste    := ( dbfFacCliT )->cCtrCoste
+            endif
 
             if !( "TABLET" $ cParamsMain() )
 

@@ -19,6 +19,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oHisMov
    DATA  oArtPrv
    DATA  oArtAlm
+   DATA  oCtrCoste
 
    DATA  oStock
 
@@ -171,6 +172,10 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
       return .f.
    end if
 
+   if !::lGrupoCentroCoste( .t. )
+      return .f.
+   end if
+
    ::oFilter      := TFilterCreator():Init()
    if !Empty( ::oFilter )
       ::oFilter:SetDatabase( ::oDbf )
@@ -268,6 +273,13 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
          ::oStock:CreateTemporalFiles()
 
       end if
+
+      ::oCtrCoste    := TCentroCoste():Create( cPatDat() )
+      if !::oCtrCoste:OpenFiles()
+         
+         lOpen    := .f.
+
+      endif
 
    RECOVER USING oError
 
@@ -420,6 +432,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oCnfFlt:end()
       end if
 
+      if !Empty( ::oCtrCoste )
+         ::oCtrCoste:end()
+      end if
+
       if !Empty( ::oStock )
          ::oStock:DeleteTemporalFiles()
          ::oStock:End()
@@ -521,6 +537,9 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "lKitChl",     "L",  1, 0, {|| "" },   "Línea perteneciente a escandallo"        )
 
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
+
+   ::AddField( "cCtrCoste",    "C",  9, 0, {|| "" },   "Codigo del centro de coste"             )
+   //::AddField( "cNomCtrCoste", "C", 50, 0, {|| "" },   "Nombre del centro de coste"             )
 
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
@@ -648,7 +667,8 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodTrn     >= ::oGrupoTransportista:Cargo:getDesde() .and. ::oDbf:cCodTrn   <= ::oGrupoTransportista:Cargo:getHasta() ) .and.;
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()       .and. ::oDbf:cCodUsr   <= ::oGrupoUsuario:Cargo:getHasta() )       .and.;
       ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()     .and. ::oDbf:cPrvHab   <= ::oGrupoProveedor:Cargo:getHasta() )     .and.;
-      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()       .and. ::oDbf:cCodAlm   <= ::oGrupoAlmacen:Cargo:getHasta() ) 
+      ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()       .and. ::oDbf:cCodAlm   <= ::oGrupoAlmacen:Cargo:getHasta() )       .and.;
+      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()   .and. ::oDbf:cCtrCoste <= ::oGrupoCentroCoste:Cargo:getHasta() ) 
 
       Return .t.
 
@@ -782,6 +802,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Stock por almacén",          ::oArtAlm:nArea )
    ::oFastReport:SetFieldAliases(   "Stock por almacén",          cItemsToReport( aItmStockaAlmacenes() ) )
 
+   ::oFastReport:SetWorkArea(       "Centro de coste",            ::oCtrCoste:Select() )
+   ::oFastReport:SetFieldAliases(   "Centro de coste",            cObjectsToReport( ::oCtrCoste:oDbf ) )
+
    /*
    Relaciones entre tablas-----------------------------------------------------
    */
@@ -805,7 +828,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",        {|| ::oDbf:cCodArt } )
    ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",  {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacén",  {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )  
+   ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacén",  {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Centro de coste",    {|| ::oDbf:cCtrCoste } )   
 
    /*
    Resincronizar con los movimientos-------------------------------------------
@@ -831,6 +855,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
    ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
    ::oFastReport:SetResyncPair(     "Informe", "Stock por almacén" )  
+   ::oFastReport:SetResyncPair(     "Informe", "Centro de coste" ) 
 
    ::SetDataReport()
 
@@ -1431,6 +1456,8 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:lKitArt    := ::oAlbCliL:lKitArt
                   ::oDbf:lKitChl    := ::oAlbCliL:lKitChl
 
+                  ::oDbf:cCtrCoste  := ::oAlbCliL:cCtrCoste
+
                   ::InsertIfValid()
 
                end if
@@ -1584,6 +1611,9 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:lKitArt    := ::oFacCliL:lKitArt
                   ::oDbf:lKitChl    := ::oFacCliL:lKitChl
 
+                  ::oDbf:cCtrCoste  := ::oFacCliL:cCtrCoste
+
+
                   ::InsertIfValid()
 
                end if
@@ -1733,6 +1763,8 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
                   ::oDbf:lKitArt    := ::oFacRecL:lKitArt
                   ::oDbf:lKitChl    := ::oFacRecL:lKitChl
+
+                  ::oDbf:cCtrCoste  := ::oFacRecL:cCtrCoste
 
                   ::InsertIfValid()
 
@@ -2503,7 +2535,9 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
                   ::oDbf:nBultos    := ::oAlbPrvL:nBultos
                   ::oDbf:cFOrmato   := ::oAlbPrvL:cFOrmato
-                  ::oDBf:nCajas      := ::oAlbPrvL:nCanEnt
+                  ::oDBf:nCajas     := ::oAlbPrvL:nCanEnt
+
+                  ::oDBf:cCtrCoste  := ::oAlbPrvL:cCtrCoste
 
                   ::InsertIfValid()
                   
@@ -2641,6 +2675,8 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cFormato   := ::oFacPrvL:cFormato
                   ::oDbf:nCajas     := ::oFacPrvL:nCanEnt
 
+                  ::oDbf:cCtrCoste  := ::oFacPrvL:cCtrCoste
+
                   ::InsertIfValid()
 
                end if
@@ -2775,6 +2811,8 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:nBultos    := ::oRctPrvL:nBultos
                   ::oDbf:cFormato   := ::oRctPrvL:cFormato
                   ::oDbf:nCajas     := ::oRctPrvL:nCanEnt
+
+                  ::oDbf:cCtrCoste  := ::oRctPrvL:cCtrCoste
 
                   ::InsertIfValid()
 

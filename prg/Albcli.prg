@@ -122,7 +122,8 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _CCTABNC                  101
 #define _NDTOTARIFA               102 
 #define _NFACTURADO               103
-#define _TFECALB                  104   
+#define _TFECALB                  104
+#define _CCENTROCOSTE             105   
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -229,6 +230,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define __NBULTOS                 99
 #define _CFORMATO                100
 #define __TFECALB                101
+#define __CCENTROCOSTE           102
 
 
 /*
@@ -419,11 +421,13 @@ static oStock
 static oTrans
 static oNewImp
 static oUndMedicion
+static oCentroCoste
 static oBandera
 static dbfKit
 static dbfTblCnv
 static dbfOferta
 static dbfObrasT
+static dbfCentroCoste
 static dbfFamilia
 static dbfArtDiv
 static dbfAgeCom
@@ -687,6 +691,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :cSortOrder       := "tFecAlb"
          :bEditValue       := {|| Trans( ( D():Get( "AlbCliT", nView ) )->tFecAlb, "@R 99:99:99" ) }
          :nWidth           := 60
+         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -872,6 +877,14 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :nWidth           := 180
          :lHide            := .t.
       end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Centro de coste"
+         :bEditValue       := {|| ( D():Get( "AlbCliT", nView ) )->cCtrCoste }
+         :nWidth           := 30
+         :lHide            := .t.
+      end with
+
 
       oWndBrw:CreateXFromCode()
 
@@ -1529,6 +1542,11 @@ STATIC FUNCTION OpenFiles()
          lOpenFiles     := .f.
       end if
 
+      oCentroCoste      := TCentroCoste():Create( cPatDat() )
+      if !oCentroCoste:OpenFiles()
+         lOpenFiles     := .f.
+      end if
+
       oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
       if !oFraPub:OpenFiles()
          lOpenFiles     := .f.
@@ -1842,6 +1860,9 @@ STATIC FUNCTION CloseFiles()
    end if
    if !Empty( oPais )
       oPais:End()
+   end if
+   if !Empty( oCentroCoste )
+      oCentroCoste:end()
    end if 
 
    if !Empty( oDetCamposExtra )
@@ -1902,6 +1923,7 @@ STATIC FUNCTION CloseFiles()
    oTipArt        := nil
    oGrpFam        := nil
    oUndMedicion   := nil
+   oCentroCoste   := nil
    oFraPub        := nil
 
    lOpenFiles     := .f.
@@ -2910,6 +2932,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          :nFooterType         := AGGR_SUM
       end with
 
+      with object ( oBrwLin:AddCol() )
+         :cHeader          := "Centro de coste"
+         :bEditValue       := {|| ( dbfTmpLin )->cCtrCoste }
+         :nWidth           := 20
+         :lHide            := .t.
+      end with
+
       if nMode != ZOOM_MODE
          oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
       end if
@@ -3490,6 +3519,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          FONT     oFont ;
          OF       oFld:aDialogs[1]
 
+         /* Centro de coste */
+
+      REDEFINE GET aGet[ _CCENTROCOSTE ] VAR aTmp[ _CCENTROCOSTE ] ;
+         ID       180 ;
+         IDTEXT   181 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ _CCENTROCOSTE ], aGet[ _CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ _CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
       /*
       Pagos
       -------------------------------------------------------------------------
@@ -3885,7 +3925,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
    end if
 
-   oDlg:bStart       := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin ) }
+   oDlg:bStart       := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin,  ) }
 
    oDlg:AddFastKey(  VK_F1, {|| ChmHelp( "Albaranes2" ) } )
 
@@ -3952,7 +3992,16 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
  
       end if 
 
+   else
+
+      if !empty( aGet[ _CCENTROCOSTE ] )
+         aGet[ _CCENTROCOSTE ]:lValid()
+      endif
+
    end if 
+
+
+
 
    /*
    Muestra y oculta las rentabilidades-----------------------------------------
@@ -3984,6 +4033,8 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
       ( dbfTmpInc )->( dbGoTop() )
 
    end if
+
+
 
 Return ( nil )
 
@@ -4820,6 +4871,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       340 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
+
+      REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
+         ID       370 ;
+         IDTEXT   371 ;
+         BITMAP   "LUPA" ;
+         VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
+         ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
 
       REDEFINE RADIO aGet[ _NCTLSTK ] VAR aTmp[ _NCTLSTK ] ;
          ID       350, 351, 352 ;
@@ -9510,6 +9570,12 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
          aGet[ _NIVA ]:cText( nIva( D():Get( "TIva", nView ), cDefIva() ) )
       end if
 
+      aGet[ __CCENTROCOSTE ]:cText( aTmpAlb[ _CCENTROCOSTE ] )
+
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif
+
    case ( nMode == DUPL_MODE .or. nMode == EDIT_MODE .OR. nMode == ZOOM_MODE )
 
       if aTmp[ _LLOTE ]
@@ -9542,16 +9608,20 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
          aGet[ _MLNGDES  ]:show()
       end if
 
-   if !Empty( oStock )
+      if !Empty( oStock )
 
-      oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
+         oStock:nPutStockActual( cCodArt, aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct )
 
-      if uFieldEmpresa( "lNStkAct" )
-         oStkAct:Hide()
+         if uFieldEmpresa( "lNStkAct" )
+            oStkAct:Hide()
+         end if
+
       end if
 
-   end if
-
+      if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:lValid()
+      endif
+      
    end case
 
    if !Empty( aTmp[_CCODPR1 ] )
@@ -11501,9 +11571,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
 
-         ( dbfTmpLin )->dFecAlb  := aTmp[ _DFECALB ]
-         ( dbfTmpLin )->tFecAlb  := aTmp[ _TFECALB ]
-         ( dbfTmpLin )->cCodCli  := aTmp[ _CCODCLI ]
+         ( dbfTmpLin )->dFecAlb     := aTmp[ _DFECALB ]
+         ( dbfTmpLin )->tFecAlb     := aTmp[ _TFECALB ]
+         ( dbfTmpLin )->cCodCli     := aTmp[ _CCODCLI ]
+         if empty( ( dbfTmpLin )->cCtrCoste )
+            ( dbfTmpLin )->cCtrCoste   := aTmp[ _CCENTROCOSTE ]
+         endif
 
          dbPass( dbfTmpLin, D():Get( "AlbCliL", nView ), .t., cSerAlb, nNumAlb, cSufAlb )
 
@@ -16510,6 +16583,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "CNUMTIK", "CNUMTIK", {|| Field->CNUMTIK } ) )
 
+      ( cAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( cAlbCliT )->( ordCreate( cPath + "ALBCLIT.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+
       // Albaranes no facturado------------------------------------------------
 
       ( cAlbCliT )->( ordCondSet( "!Deleted() .and. !lFacturado", {|| !Deleted() .and. !Field->lFacturado }  ) )
@@ -16900,6 +16976,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nBultos",   "N", 16, 6, "Numero de bultos",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "tFecAlb" ,  "C",  6, 0, "Hora del albarán",                                "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cCtrCoste", "C",  9, 0, "Codigo del centro de coste",                      "CentroCoste",                   "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
@@ -17013,6 +17090,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "nDtoTarifa","N",  6, 2, "Descuento de tarifa de cliente",                           "DescuentoTarifa",               "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albaran" ,                                      "Estado",                        "", "( cDbf )", {|| 1 } } )
    aAdd( aItmAlbCli, { "tFecAlb",   "C",  6, 0, "Hora del albarán" ,                                        "Hora",                          "", "( cDbf )", {|| nil } } )
+   aAdd( aItmAlbCli, { "cCtrCoste", "C",  9, 0, "Codigo del centro de coste" ,                              "CentroCoste",                   "", "( cDbf )", nil } )
 
 Return ( aItmAlbCli )
 
