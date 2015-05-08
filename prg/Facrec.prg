@@ -2240,7 +2240,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
                   "Da&tos",;
                   "&Incidencias",;
                   "D&ocumentos",;
-                  "&situaciones" ;
+                  "&Situaciones" ;
          DIALOGS  "FACREC_01",;
                   "FACREC_02",;
                   "PEDCLI_3",;

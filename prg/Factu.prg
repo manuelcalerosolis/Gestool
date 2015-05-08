@@ -1979,8 +1979,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := "Acceso al centro de coste"
    oItem:bAction        := {|| TCentroCoste():New( cPatDat(), oWnd, "01041" ):Activate() }
    oItem:cId            := "01041"
-   oItem:cBmp           := "Document_money2_16"
-   oItem:cBmpBig        := "Document_money2_32"
+   oItem:cBmp           := "centro_coste_16"
+   oItem:cBmpBig        := "centro_coste_32"
    oItem:lShow          := .f.
 
    oItem                := oItemArchivo:Add()

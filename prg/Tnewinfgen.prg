@@ -2424,7 +2424,7 @@ METHOD lGrupoCentroCoste( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCentroCoste:Cargo:ValidDesde   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNombre", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. )  }
    ::oGrupoCentroCoste:Cargo:ValidHasta   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNombre", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCentroCoste:Cargo:lImprimir    := lImp
-   ::oGrupoCentroCoste:Cargo:cBitmap      := "Document_money2_16"
+   ::oGrupoCentroCoste:Cargo:cBitmap      := "centro_coste_16"
 
    if !Empty( ::oImageList )
       ::oImageList:AddMasked( TBitmap():Define( ::oGrupoCentroCoste:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
