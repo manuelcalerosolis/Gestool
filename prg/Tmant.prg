@@ -576,8 +576,6 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
    local cGetSearch
    local nOrdAnt
 
-   msginfo( oGet, "oGet en buscar" )
-
    /*
    Apertura de ficheros si no lo estan-----------------------------------------
    */
