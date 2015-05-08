@@ -781,7 +781,7 @@ METHOD lGrupoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoArticulo:Cargo:cPicHasta    := Replicate( "#", 18 )
    ::oGrupoArticulo:Cargo:TextDesde    := {|| oRetFld( ::oGrupoArticulo:Cargo:Desde, ::oDbfArt, "Nombre", "Codigo" ) }
    ::oGrupoArticulo:Cargo:TextHasta    := {|| oRetFld( ::oGrupoArticulo:Cargo:Hasta, ::oDbfArt, "Nombre", "Codigo" ) }
-   ::oGrupoArticulo:Cargo:HelpDesde    := {|| BrwArticulo( ::oDesde, ::oSayDesde, , .f. ) }
+   ::oGrupoArticulo:Cargo:HelpDesde    := {|| msgAlert( ::oDesde, "oDesde artículo" ), BrwArticulo( ::oDesde, ::oSayDesde, , .f. ) }
    ::oGrupoArticulo:Cargo:HelpHasta    := {|| BrwArticulo( ::oHasta, ::oSayHasta, , .f. ) }
    ::oGrupoArticulo:Cargo:ValidDesde   := {|oGet| if( cArticulo( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfArt:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoArticulo:Cargo:ValidHasta   := {|oGet| if( cArticulo( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfArt:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
@@ -1974,7 +1974,7 @@ METHOD lGrupoTransportista( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTransportista:Cargo:Hasta      := Replicate( "Z", 9 )   // dbLast( ::oDbfTrn:oDbf, 1 )
    ::oGrupoTransportista:Cargo:cPicDesde  := "@!"
    ::oGrupoTransportista:Cargo:cPicHasta  := "@!"
-   ::oGrupoTransportista:Cargo:HelpDesde  := {|| ::oDbfTrn:Buscar( ::oDesde ) }
+   ::oGrupoTransportista:Cargo:HelpDesde  := {|| msgAlert( ::oDesde, "oDesde" ), ::oDbfTrn:Buscar( ::oDesde ) }
    ::oGrupoTransportista:Cargo:HelpHasta  := {|| ::oDbfTrn:Buscar( ::oHasta ) }
    ::oGrupoTransportista:Cargo:TextDesde  := {|| oRetFld( ::oGrupoTransportista:Cargo:Desde, ::oDbfTrn:oDbf, "cNomTrn", "cCodTrn" ) }
    ::oGrupoTransportista:Cargo:TextHasta  := {|| oRetFld( ::oGrupoTransportista:Cargo:Hasta, ::oDbfTrn:oDbf, "cNomTrn", "cCodTrn" ) }
@@ -2424,7 +2424,7 @@ METHOD lGrupoCentroCoste( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCentroCoste:Cargo:ValidDesde   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oDesde ), ::oSayDesde, "cNombre", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. )  }
    ::oGrupoCentroCoste:Cargo:ValidHasta   := {|oGet| if( ::oDbfCentroCoste:Existe( if( !Empty( oGet ), oGet, ::oHasta ), ::oSayHasta, "cNombre", .t., .t., "0" ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoCentroCoste:Cargo:lImprimir    := lImp
-   ::oGrupoCentroCoste:Cargo:cBitmap      := "Document_money2_16"
+   ::oGrupoCentroCoste:Cargo:cBitmap      := "centro_coste_16"
 
    if !Empty( ::oImageList )
       ::oImageList:AddMasked( TBitmap():Define( ::oGrupoCentroCoste:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )

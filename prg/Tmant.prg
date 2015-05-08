@@ -576,6 +576,13 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
    local cGetSearch
    local nOrdAnt
 
+
+   msgAlert( oGet , "desde Buscar" )
+   msgAlert( cField, "cField" )
+   msgAlert( oGetField, "oGetField" )
+
+   //msgAlert( hb_valtoexp( oGet ), "desde Buscar" )
+
    /*
    Apertura de ficheros si no lo estan-----------------------------------------
    */
@@ -727,9 +734,12 @@ METHOD Buscar( oGet, cField, oGetField ) CLASS TMant
    Resultados------------------------------------------------------------------
    */
 
+   msgAlert( oGet, "antes de ok" )
+
    if oDlg:nResult == IDOK
 
       uVal                 := ::oDbf:FieldGetByName( cField )
+
 
       if !Empty( oGet ) .and. IsObject( oGet ) .and. !Empty( uVal )
 
@@ -890,6 +900,10 @@ METHOD Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar, uOrder ) CLA
    end if
 
    ::oDbf:SetStatus()
+
+   msgAlert(  uValor , "desde existe" )
+
+   //msgAlert( hb_valtoexp( uValor ), "desde existe" )
 
 RETURN lValid
 
