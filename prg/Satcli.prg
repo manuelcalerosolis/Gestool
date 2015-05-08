@@ -11617,7 +11617,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, cCodigoDocumento )
    oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
 
    /*
-   Zona de datos------------------------------------------------------------
+   Zona de datos---------------------------------------------------------------
    */
 
    DataReport( oFr )
