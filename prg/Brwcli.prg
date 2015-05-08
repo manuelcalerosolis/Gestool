@@ -743,6 +743,38 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       :nWidth           := 80
    end with
 
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Operario"
+      :cSortOrder       := "cCodOpe"
+      :bEditValue       := {|| alltrim( SatCli->cCodOpe ) + " - " + SatCli->cNomTra }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      :nWidth           := 170
+   end with
+
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Estado"
+      :cSortOrder       := "cCodEst"
+      :bEditValue       := {|| alltrim( SatCli->cCodEst ) }
+      :bStrData         := {|| alltrim( SatCli->cCodEst ) + " - " + SatCli->cNombre }
+      :bBmpData         := {|| nBitmapTipoEstadoSat( SatCli->cTipo ) }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      :nWidth           := 170
+      AddResourceTipoCategoria( hb_QWith() )
+   end with
+
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Situación"
+      :cSortOrder       := "cSituac"
+      :bEditValue       := {|| SatCli->cSituac }
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      :nWidth           := 100
+   end with
+
+   with object ( oBrwMaq:addCol() )
+      :cHeader          := "Ubicación"
+      :bEditValue       := {|| SatCli->cDesUbi }
+      :nWidth           := 130
+   end with
 
    /*
    oDbfTmpMaq:SetBrowse( oBrwMaq )
@@ -1166,8 +1198,6 @@ Static Function LoadMaquinasDbf( cCodCli, cCmbAnio, oBrwMaq )
    local nOrdAntL  := ( dbfSatCliL )->( OrdSetFocus( "cCodCli" ) )
    local nOrdAntT  := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
 
-   TDataCenter():lSelectSATFromClient()
-
    oDbfTmpMaq:Zap()
 
    ( dbfSatCliL )->( dbGoTop() )
@@ -1245,7 +1275,9 @@ Return nil
 
 Static Function LoadMaquinasSQL( cCodCli, cCmbAnio, oBrwMaq )
 
-   if TDataCenter():lSelectSATFromClient( cCodCli, cCmbAnio ) != nil
+   if TDataCenter():selectSATFromClient( cCodCli, cCmbAnio )
+
+      TDataCenter():onlyOneProductFromSAT()
 
       if !Empty( oBrwMaq )
          oBrwMaq:Refresh()

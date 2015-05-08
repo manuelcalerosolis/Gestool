@@ -163,7 +163,8 @@ CLASS TDataCenter
 
    METHOD ExecuteSqlStatement( cSql, cSqlStatement )
    
-   METHOD lSelectSATFromClient( cCodigoCliente )
+   METHOD selectSATFromClient( cCodigoCliente )
+      METHOD onlyOneProductFromSAT()
 
    METHOD Resource( nId )
    METHOD StartResource()
@@ -4908,7 +4909,7 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
 
       ::CloseArea( cSqlStatement )
    
-      lOk            := ADSCreateSQLStatement( cSqlStatement, 7 )
+      lOk            := ADSCreateSQLStatement( cSqlStatement, ADS_CDX )
    
       if lOk
    
@@ -4949,38 +4950,86 @@ RETURN ( lOk )
 
 //---------------------------------------------------------------------------//
 
-METHOD lSelectSATFromClient( cCodigoCliente, cAnno )
+METHOD selectSATFromClient( cCodigoCliente, cAnno )
 
    local lOk
    local cStm
    local cOpe
 
-   DEFAULT cCodigoCliente  := "0000000"    
+   DEFAULT cCodigoCliente  := "0000000"
+   DEFAULT cAnno           := ""    
 
    /*
    Creamos la instruccion------------------------------------------------------
    */
 
-   cStm           := "SELECT lineasSat.cRef, cabeceraSat.dfecsat, cabeceraSat.cSerSat, articulos.nombre " 
+   cStm           := "SELECT lineasSat.cRef, "           
+   cStm           +=          "cabeceraSat.dfecsat, "
+   cStm           +=          "cabeceraSat.cSerSat, "
+   cStm           +=          "cabeceraSat.cCodOpe, "
+   cStm           +=          "cabeceraSat.cCodEst, "
+   cStm           +=          "cabeceraSat.cSituac, "
+   cStm           +=          "operario.cNomTra, "
+   cStm           +=          "estadoSat.cNombre, "
+   cStm           +=          "estadoSat.cTipo, "
+   cStm           +=          "articulos.nombre, " 
+   cStm           +=          "articulos.cDesUbi " 
    cStm           += "FROM " + cPatEmp() + "SatCliL lineasSat "
    cStm           += "INNER JOIN " + cPatEmp() + "SatCliT cabeceraSat on lineasSat.cSerSat = cabeceraSat.cSerSat and lineasSat.nNumSat = cabeceraSat.nNumSat and lineasSat.cSufSat = cabeceraSat.cSufSat "
-   cStm           += "INNER JOIN " + cPatEmp() + "Articulo articulos on lineasSat.cRef = articulos.Codigo "
-   cStm           += "WHERE lineasSat.cCodCli = '" + alltrim( cCodigoCliente ) + "'"
+   cStm           += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabeceraSat.cCodOpe = operario.cCodTra "
+   cStm           += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
+   cStm           += "LEFT JOIN " + cPatEmp() + "Articulo articulos on lineasSat.cRef = articulos.Codigo "
+   
+   if empty( cAnno )
+      cStm        += "WHERE lineasSat.cCodCli = '" + alltrim( cCodigoCliente ) + "' "
+   else
+      cStm        += "WHERE lineasSat.cCodCli = '" + alltrim( cCodigoCliente ) + "' AND YEAR( lineasSat.dFecSat ) = " + cAnno + " "
+   end if 
+
+   cStm           += "ORDER BY lineasSat.cRef, lineasSat.dFecSat DESC"
 
    logwrite( cStm )
-   msgAlert( cStm, "cStm" )
 
-   /*
-   Creamos la snetencia--------------------------------------------------------
-   */
+RETURN ( ::ExecuteSqlStatement( cStm, "SatCli" ) )
 
-   if ::ExecuteSqlStatement( cStm, "SatCli" )
-      Return( "SatCli" )
-   end if 
+//---------------------------------------------------------------------------//
+ 
+METHOD onlyOneProductFromSAT()
+
+   local cCodigoArticulo   := ""
+
+   if !SatCli->( used() )
+      RETURN ( nil )
+   end if
+
+   SatCli->( dbgotop() )
+   while !SatCli->( eof() )
+      
+      // msgAlert( cCodigoArticulo, "cCodigoArticulo" )
+      // msgAlert( SatCli->cRef, "SatCli->cRef" )
+      // msgAlert( cCodigoArticulo == SatCli->cRef, "cCodigoArticulo == SatCli->cRef" )
+
+      if .t. // ( cCodigoArticulo == SatCli->cRef )
+
+         if SatCli->( dbRLock() )
+            SatCli->( dbDelete() )
+            SatCli->( dbUnLock() )
+         end if 
+
+      else 
+         cCodigoArticulo   := SatCli->cRef 
+      end if
+
+      SatCli->( dbSkip() )
+
+   end while
+
+   SatCli->( dbgotop() )
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
+
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -5137,11 +5186,11 @@ Function ADSExecuteSQLScript( cScript )
          ( cSqlAlias )->( dbCloseArea() )
       end if 
 
-      if !ADSCreateSQLStatement( cSqlAlias, 7 ) 
+      if !ADSCreateSQLStatement( cSqlAlias, ADS_CDX ) 
 
          ( cSqlAlias )->( dbCloseArea() )
 
-         MsgStop( "AdsCreateSqlStatement() failed with error "+ cValToChar( ADSGetLastError() ) )
+         MsgStop( "AdsCreateSqlStatement() failed with error " + cValToChar( ADSGetLastError() ) )
 
       else
 
@@ -5702,12 +5751,7 @@ ENDCLASS
 
             for each u in hView
 
-#ifdef __XHARBOUR__
-               value    := u:value()
-#else
                value    := u
-#endif
-
                do case
                   case isChar( value )
                      if( ( value )->( used() ), ( value )->( dbCloseArea() ), )

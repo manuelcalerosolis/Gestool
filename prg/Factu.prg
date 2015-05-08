@@ -137,12 +137,13 @@ function Main( ParamsMain, ParamsSecond )
       nAdsServer( nAdsServer )
       cAdsLocal( cAdsLocal )
 
-      rddRegister(   'ADS', 1 )
+      rddRegister( 'ADS', 1 )
       rddSetDefault( 'ADSCDX' )
 
       AdsSetServerType( nAdsServer() )    // TODOS
       AdsSetFileType( 2 )                 // ADS_CDX
       AdsRightsCheck( .f. )
+      AdsSetDeleted( .f. )
       AdsCacheOpenTables( 250 )
 
       with object ( TDataCenter() )
