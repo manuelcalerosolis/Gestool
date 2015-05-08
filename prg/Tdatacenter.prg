@@ -164,7 +164,7 @@ CLASS TDataCenter
    METHOD ExecuteSqlStatement( cSql, cSqlStatement )
    
    METHOD selectSATFromClient( cCodigoCliente )
-      METHOD onlyOneProductFromSAT()
+      METHOD treeProductFromSAT()
 
    METHOD Resource( nId )
    METHOD StartResource()
@@ -4910,7 +4910,6 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
       ::CloseArea( cSqlStatement )
    
       lOk            := ADSCreateSQLStatement( cSqlStatement, ADS_CDX )
-   
       if lOk
    
          lOk         := ADSExecuteSQLDirect( cSql )
@@ -4952,19 +4951,17 @@ RETURN ( lOk )
 
 METHOD selectSATFromClient( cCodigoCliente, cAnno )
 
-   local lOk
    local cStm
-   local cOpe
-
-   DEFAULT cCodigoCliente  := "0000000"
-   DEFAULT cAnno           := ""    
 
    /*
    Creamos la instruccion------------------------------------------------------
    */
 
    cStm           := "SELECT lineasSat.cRef, "           
-   cStm           +=          "cabeceraSat.dfecsat, "
+   cStm           +=          "lineasSat.cSerSat, "
+   cStm           +=          "lineasSat.nNumSat, "
+   cStm           +=          "lineasSat.cSufSat, "
+   cStm           +=          "cabeceraSat.dFecSat, "
    cStm           +=          "cabeceraSat.cSerSat, "
    cStm           +=          "cabeceraSat.cCodOpe, "
    cStm           +=          "cabeceraSat.cCodEst, "
@@ -4972,7 +4969,7 @@ METHOD selectSATFromClient( cCodigoCliente, cAnno )
    cStm           +=          "operario.cNomTra, "
    cStm           +=          "estadoSat.cNombre, "
    cStm           +=          "estadoSat.cTipo, "
-   cStm           +=          "articulos.nombre, " 
+   cStm           +=          "articulos.Nombre, " 
    cStm           +=          "articulos.cDesUbi " 
    cStm           += "FROM " + cPatEmp() + "SatCliL lineasSat "
    cStm           += "INNER JOIN " + cPatEmp() + "SatCliT cabeceraSat on lineasSat.cSerSat = cabeceraSat.cSerSat and lineasSat.nNumSat = cabeceraSat.nNumSat and lineasSat.cSufSat = cabeceraSat.cSufSat "
@@ -4988,47 +4985,57 @@ METHOD selectSATFromClient( cCodigoCliente, cAnno )
 
    cStm           += "ORDER BY lineasSat.cRef, lineasSat.dFecSat DESC"
 
-   logwrite( cStm )
-
 RETURN ( ::ExecuteSqlStatement( cStm, "SatCli" ) )
 
 //---------------------------------------------------------------------------//
  
-METHOD onlyOneProductFromSAT()
+METHOD treeProductFromSAT()
 
-   local cCodigoArticulo   := ""
+   local oTree
+   local cCodigoArticulo   
 
    if !SatCli->( used() )
       RETURN ( nil )
    end if
 
    SatCli->( dbgotop() )
-   while !SatCli->( eof() )
-      
-      // msgAlert( cCodigoArticulo, "cCodigoArticulo" )
-      // msgAlert( SatCli->cRef, "SatCli->cRef" )
-      // msgAlert( cCodigoArticulo == SatCli->cRef, "cCodigoArticulo == SatCli->cRef" )
 
-      if .t. // ( cCodigoArticulo == SatCli->cRef )
+   TreeInit()
+   oTree                   := TreeBegin()
 
-         if SatCli->( dbRLock() )
-            SatCli->( dbDelete() )
-            SatCli->( dbUnLock() )
-         end if 
+      while !SatCli->( eof() )
+         
+         if empty( cCodigoArticulo )
+            TreeAddItem( SatCli->cRef ):Cargo     := hashRecord( "SatCli" )
+            TreeBegin()
+            cCodigoArticulo   := SatCli->cRef
 
-      else 
-         cCodigoArticulo   := SatCli->cRef 
-      end if
+         else
 
-      SatCli->( dbSkip() )
+            if cCodigoArticulo != SatCli->cRef
+               TreeEnd()
+               cCodigoArticulo   := SatCli->cRef
+               TreeAddItem( SatCli->cRef ):Cargo  := hashRecord( "SatCli" )
+               TreeBegin(,)
+            endif
 
-   end while
+         endif 
+
+         if SatCli->cRef == cCodigoArticulo
+            TreeAddItem( SatCli->cRef ):Cargo     := hashRecord( "SatCli" )
+         endif
+
+         SatCli->( dbSkip() )
+
+      end while
+
+   TreeEnd()
+
+   TreeEnd()
 
    SatCli->( dbgotop() )
 
-RETURN ( nil )
-
-
+RETURN ( oTree )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

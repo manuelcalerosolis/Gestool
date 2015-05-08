@@ -35,8 +35,6 @@ static dbfSatCliS
 static dbfArticulo
 
 static oDbfTmp
-static oDbfTmpMaq
-static oDbfTmpMaqL
 static oOperario
 
 static cMaquina
@@ -69,6 +67,10 @@ static oTreeDocumentos
 static oTreeCobros
 static oTreeImageList
 
+static oBrwMaquinaria
+
+static oBmpMaquina
+
 static oVta
 static aVta
 static nCobTik       := 0
@@ -98,7 +100,7 @@ static oTotPed
 
 static nView
 
-static lOpenFiles    := .f.
+static lOpenFiles    := .t.
 
 //---------------------------------------------------------------------------//
 
@@ -235,15 +237,9 @@ Static Function OpenFiles( cCodCli, lMessage )
       oDbfTmp           := DefineTemporal()
       oDbfTmp:Activate( .f., .f. )
 
-      oDbfTmpMaq        := DefineTemporalMaquinas()
-      oDbfTmpMaq:Activate( .f., .f. )
-
-      oDbfTmpMaqL       := DefineTemporalMaquinasLineas()
-      oDbfTmpMaqL:Activate( .f., .f. )
-
-      lOpenFiles        := .t.
-
-      LoadMaquinas( cCodCli )
+      if lAis() .and. !TDataCenter():selectSATFromClient( cCodCli )
+         lOpenFiles     := .f.
+      end if 
 
    RECOVER USING oError
 
@@ -251,7 +247,7 @@ Static Function OpenFiles( cCodCli, lMessage )
          msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos" )
       end if
 
-      lOpenFiles     := .f.
+      lOpenFiles        := .f.
 
    END SEQUENCE
 
@@ -301,26 +297,10 @@ Static Function CloseFiles()
    end if
 
    oDbfTmp:Close()
-   oDbfTmpMaq:Close()
-   oDbfTmpMaqL:Close()
 
    dbfErase( oDbfTmp:cPath + oDbfTmp:cName )
-   dbfErase( oDbfTmpMaq:cPath + oDbfTmpMaq:cName )
-   dbfErase( oDbfTmpMaq:cPath + oDbfTmpMaqL:cName )
 
    lOpenFiles       := .f.
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-Static Function LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq )
-
-   if lAIS()
-      LoadMaquinasSQL( cCodCli, cCmbAnio, oBrwMaq )
-   else
-      LoadMaquinasDBF( cCodCli, cCmbAnio, oBrwMaq )
-   end if 
 
 return .t.
 
@@ -332,16 +312,25 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    local oFld
    local oBrwTmp
    local oBrwVta
-   local oBrwMaq
    local oTree
    local oCmbAnio
    local cCmbAnio          := "Todos" //Str( Year( GetSysDate() ) )
    local oBmpGeneral
    local oBmpDocumentos
    local oBmpGraficos
-   local oBmpMaquina
    local oBtnAceptar
    local uResultado
+   local aPrompts          := {  "E&stadisticas"      ,;
+                                 "&Documentos"         ,;
+                                 "&Gráfico"            }
+   local aDialogs          := {  "CLIENT_9"           ,; 
+                                 "INFO_1"             ,;
+                                 "INFO_2"             }
+
+   if lAis()
+      aadd( aPrompts, "A&rtículos" )
+      aadd( aDialogs, "INFO_4" )
+   end if 
 
    if !OpenFiles( cCodCli, .f. )
       Return nil
@@ -364,8 +353,6 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    Codigo de cliente-----------------------------------------------------------
    */
 
-   oDbfTmp:Cargo           := cCodCli
-
    ( dbfClient )->( dbSeek( cCodCli ) )
 
    /*
@@ -374,509 +361,387 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
 
    DEFINE DIALOG oDlg RESOURCE "ARTINFO" TITLE "Información del cliente : " + Rtrim( cNomCli )
 
-      REDEFINE FOLDER oFld ;
-            ID       300 ;
-            OF       oDlg ;
-            PROMPT   "E&stadisticas"      ,;
-                     "Documentos"         ,;
-                     "Gráfico"            ,;
-                     "Artículos por contador";
-            DIALOGS  "CLIENT_9"           ,; 
-                     "INFO_1"             ,;
-                     "INFO_2"             ,;
-                     "INFO_4"
-
-   REDEFINE BITMAP oBmpGeneral ID 500 RESOURCE "Businessman2_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 1 ]
-
-   /*
-   Browse con la información por meses-----------------------------------------
-   */
-
-   oBrwVta                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
-
-   oBrwVta:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrwVta:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   oBrwVta:SetArray( aVta, , , .f. )
-
-   oBrwVta:lFooter            := .t.
-   oBrwVta:lVScroll           := .f.
-   oBrwVta:lHScroll           := .f.
-   oBrwVta:nMarqueeStyle      := 5
-   oBrwVta:cName              := "Ventas en informe de clientes"
-   oBrwVta:CreateFromResource( 400 )
-
-   with object ( oBrwVta:AddCol() )
-      :cHeader                   := "Mes"
-      :nWidth                    := 290
-      :bStrData                  := {|| cNombreMes( oBrwVta:nArrayAt ) }
-      :bFooter                   := {|| "Totales" }
-   end with
-
-   with object ( oBrwVta:AddCol() )
-      :cHeader                   := cNombreCajas()
-      :nWidth                    := 120
-      :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 1] }
-      :cEditPicture              := cPicUnd
-      :bFooter                   := {|| aTotVta[1] }
-      :nDataStrAlign             := 1
-      :nHeadStrAlign             := 1
-      :nFootStrAlign             := 1
-   end with
-
-   with object ( oBrwVta:AddCol() )
-      :cHeader                   := cNombreUnidades()
-      :nWidth                    := 120
-      :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 2] }
-      :cEditPicture              := cPicUnd
-      :bFooter                   := {|| aTotVta[2] }
-      :nDataStrAlign             := 1
-      :nHeadStrAlign             := 1
-      :nFootStrAlign             := 1
-   end with
-
-   with object ( oBrwVta:AddCol() )
-      :cHeader                   := "Total " + cNombreUnidades()
-      :nWidth                    := 120
-      :bEditValue                := {|| NotCero( aVta[ oBrwVta:nArrayAt, 1] ) + NotCero( aVta[ oBrwVta:nArrayAt, 2] ) }
-      :cEditPicture              := cPicUnd
-      :bFooter                   := {|| aTotVta[2] }
-      :nDataStrAlign             := 1
-      :nHeadStrAlign             := 1
-      :nFootStrAlign             := 1
-      :lHide                     := .t.
-   end with
-
-   with object ( oBrwVta:AddCol() )
-      :cHeader                   := "Importe"
-      :nWidth                    := 140
-      :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 3] }
-      :cEditPicture              := cPirDiv
-      :bFooter                   := {|| aTotVta[3] }
-      :nDataStrAlign             := 1
-      :nHeadStrAlign             := 1
-      :nFootStrAlign             := 1
-   end with
-
-   if !oUser():lNotRentabilidad()
-
-   with object ( oBrwVta:AddCol() )
-      :cHeader                   := "Rentabilidad"
-      :nWidth                    := 140
-      :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 4] }
-      :cEditPicture              := cPirDiv
-      :bFooter                   := {|| aTotVta[4] }
-      :nDataStrAlign             := 1
-      :nHeadStrAlign             := 1
-      :nFootStrAlign             := 1
-   end with
-
-   end if
-
-   /*
-   Estado de cuentas
-   */
-
-   REDEFINE SAY oTotPed PROMPT nTotPed                                                       ID 609 PICTURE cPorDiv   OF oFld:aDialogs[1] // Pedido
-   REDEFINE SAY oPdtFac PROMPT nPdtFac                                                       ID 601 PICTURE cPorDiv   OF oFld:aDialogs[1] // Pendiente facturar
-   REDEFINE SAY oTotFac PROMPT nTotFac                                                       ID 602 PICTURE cPorDiv   OF oFld:aDialogs[1] // Facturado
-   REDEFINE SAY oFacRec PROMPT nFacRec                                                       ID 606 PICTURE cPorDiv   OF oFld:aDialogs[1] // Rectificado
-   REDEFINE SAY oTotTik PROMPT nTotTik                                                       ID 611 PICTURE cPorDiv   OF oFld:aDialogs[1] // Tickets
-   REDEFINE SAY oTotCob PROMPT nTotCob                                                       ID 603 PICTURE cPorDiv   OF oFld:aDialogs[1] // Cobros
-   REDEFINE SAY oCobAnt PROMPT nCobAnt                                                       ID 604 PICTURE cPorDiv   OF oFld:aDialogs[1] // Anticipado
-   REDEFINE SAY oTotEnt PROMPT nTotEnt                                                       ID 605 PICTURE cPorDiv   OF oFld:aDialogs[1] // Entregas
-   REDEFINE SAY oTotPdt PROMPT ( nPdtFac + ( ( nTotFac + nTotTik + nFacRec ) - ( nTotCob + nCobAnt + nTotEnt ) ) );
-                                                                                             ID 607 PICTURE cPorDiv   OF oFld:aDialogs[1]
-   REDEFINE SAY oTotRie PROMPT ( ( nTotFac + nTotTik + nFacRec ) - ( nTotCob + nCobAnt + nTotEnt ) ) ;
-                                                                                             ID 608 PICTURE cPorDiv   OF oFld:aDialogs[1]
-
-
-   REDEFINE SAY oTotVal PROMPT nValTik                                                       ID 610 PICTURE cPorDiv   OF oFld:aDialogs[1]
-
-   /*
-   Documentos------------------------------------------------------------------
-   */
-
-   oTree          := TTreeView():Redefine( 310, oFld:aDialogs[2]  )
-   oTree:bChanged := {|| TreeChanged( oTree, oBrwTmp ) }
-
-   /*
-   Barra de botones y datos----------------------------------------------------
-   */
-
-   REDEFINE BUTTON ;
-      ID       301 ;
-      OF       oFld:aDialogs[2] ;
-      ACTION   ( EditDocument( oBrwTmp ) )
-
-   REDEFINE BUTTON ;
-      ID       302 ;
-      OF       oFld:aDialogs[2] ;
-      ACTION   ( ZoomDocument( oBrwTmp ) )
-
-   REDEFINE BUTTON ;
-      ID       303 ;
-      OF       oFld:aDialogs[2] ;
-      ACTION   ( DeleteDocument( oBrwTmp ) )
-
-   REDEFINE BUTTON ;
-      ID       304 ;
-      OF       oFld:aDialogs[2] ;
-      ACTION   ( VisualizaDocument( oBrwTmp ) )
-
-   REDEFINE BUTTON ;
-      ID       305 ;
-      OF       oFld:aDialogs[2] ;
-      ACTION   ( PrintDocument( oBrwTmp ) )
-
-   REDEFINE BUTTON oBtnFiltro ;
-      ID       306 ;
-      OF       oFld:aDialogs[2] ;
-      ACTION   ( Filtro( oBrwTmp ) )
-
-   REDEFINE BUTTON ;
-      ID       307 ;
-      OF       oFld:aDialogs[2] ;
-      ACTION   ( TInfLCli():New( "Informe detallado de documentos de clientes", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
-
-   /*
-   Browse temporarl------------------------------------------------------------
-   */
-
-   REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "Document_Text_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 2 ]
-
-   oBrwTmp                       := IXBrowse():New( oFld:aDialogs[ 2 ] )
-
-   oBrwTmp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrwTmp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   oDbfTmp:SetBrowse( oBrwTmp )
-
-   oBrwTmp:nMarqueeStyle         := 5
-   oBrwTmp:lFooter               := .t.
-
-   oBrwTmp:cName                 := "Documentos en informe de cliente"
-
-   oBrwTmp:CreateFromResource( 300 )
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Dc. Documento"
-      :bStrData      := {|| cTextoDocumento() }
-      :bBmpData      := {|| nImagenDocument() }
-      :nWidth        := 20
-      :AddResource( "Notebook_user1_16" )
-      :AddResource( "Clipboard_empty_user1_16" )
-      :AddResource( "Document_plain_user1_16" )
-      :AddResource( "Document_user1_16" )
-      :AddResource( "Document_delete_16" )
-      :AddResource( "Document_money2_16" )
-      :AddResource( "Cashier_user1_16" )
-      :AddResource( "Briefcase_user1_16" )
-      :AddResource( "Clipboard_empty_money_16" )
-      :AddResource( "Document_plain_money_16" )
-      :AddResource( "Cashier_user1_16" )
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Estado"
-      :bEditValue    := {|| oDbfTmp:cEstado }
-      :nWidth        := 70
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Número"
-      :bEditValue    := {|| cMaskNumDoc( oDbfTmp ) }
-      :nWidth        := 80
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Fecha"
-      :bEditValue    := {|| Dtoc( oDbfTmp:dFecDoc ) }
-      :nWidth        := 70
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Código"
-      :bEditValue    := {|| oDbfTmp:cCodCli }
-      :nWidth        := 50
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Nombre"
-      :bEditValue    := {|| oDbfTmp:cNomCli }
-      :nWidth        := 310
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Almacén"
-      :bEditValue    := {|| oDbfTmp:cAlmDoc }
-      :nWidth        := 30
-      :lHide         := .t.
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Total"
-      :bEditValue    := {|| oDbfTmp:nImpDoc }
-      :bFooter       := {|| nTotImp( oDbfTmp ) }
-      :cEditPicture  := cPorDiv
-      :nWidth        := 80
-      :nDataStrAlign := 1
-      :nHeadStrAlign := 1
-      :nFootStrAlign := 1
-   end with
-
-   oBrwTmp:bLDblClick   := {|| ZoomDocument( oBrwTmp ) }
-
-   /*
-   Graph start setting---------------------------------------------------------
-   */
-
-   REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "Chart_area_48_alpha" TRANSPARENT OF oFld:aDialogs[ 3 ]
-
-   REDEFINE BTNBMP ;
-      ID       101 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "ColumnChart16" ;
-      NOBORDER ;
-      TOOLTIP  "Gráfico de barras" ;
-      ACTION   ( oGraph:SetType( GRAPH_TYPE_BAR ) )
-
-   REDEFINE BTNBMP ;
-      ID       102 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "LineChart16" ;
-      NOBORDER ;
-      TOOLTIP  "Gráfico de lineas" ;
-      ACTION   ( oGraph:SetType( GRAPH_TYPE_LINE ) )
-
-   REDEFINE BTNBMP ;
-      ID       103 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "DotChart16" ;
-      NOBORDER ;
-      TOOLTIP  "Gráfico de puntos" ;
-      ACTION   ( oGraph:SetType( GRAPH_TYPE_POINT ) )
-
-   REDEFINE BTNBMP ;
-      ID       104 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "PieChart16" ;
-      NOBORDER ;
-      TOOLTIP  "Gráfico combinado" ;
-      ACTION   ( oGraph:SetType( GRAPH_TYPE_PIE ) )
-
-   REDEFINE BTNBMP ;
-      ID       105 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Chart16" ;
-      NOBORDER ;
-      TOOLTIP  "Gráfico combinado" ;
-      ACTION   ( oGraph:SetType( GRAPH_TYPE_ALL ) )
-
-   REDEFINE BTNBMP ;
-      ID       106 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Text3d16" ;
-      NOBORDER ;
-      TOOLTIP  "Gráficos en tres dimensiones" ;
-      ACTION   ( oGraph:l3D :=!oGraph:l3D, oGraph:Refresh() )
-
-   REDEFINE BTNBMP ;
-      ID       107 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Copy16" ;
-      NOBORDER ;
-      TOOLTIP  "Copiar el gráfico en el portapapeles" ;
-      ACTION   ( oGraph:Copy2ClipBoard() )
-
-   REDEFINE BTNBMP ;
-      ID       108 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Imp16" ;
-      NOBORDER ;
-      TOOLTIP  "Imprimir el gráfico" ;
-      ACTION   ( GetPrtCoors( oGraph ) )
-
-   REDEFINE BTNBMP ;
-      ID       109 ;
-      OF       oFld:aDialogs[ 3 ] ;
-      RESOURCE "Preferences16" ;
-      NOBORDER ;
-      TOOLTIP  "Propiedades del gráfico" ;
-      ACTION   ( GraphPropierties( oGraph ) )
-
-   oGraph                  := TGraph():ReDefine( 300, oFld:aDialogs[3] )
-
-   /*
-   Cuarta pestaña para CZ------------------------------------------------------
-   */
-
-   REDEFINE BITMAP oBmpMaquina ID 500 RESOURCE "control_panel2_48" TRANSPARENT OF oFld:aDialogs[ 4 ]
-
-   oBrwMaq                       := IXBrowse():New( oFld:aDialogs[ 4 ] )
-
-   oBrwMaq:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrwMaq:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   oBrwMaq:cAlias                := "SatCli"
-
-   oBrwMaq:nMarqueeStyle         := 6
-
-   oBrwMaq:cName                 := "Máquinas en informe de clientes"
-   oBrwMaq:bLDblClick            := {|| HistoriaMaquina( cCmbAnio ) }
-
-   oBrwMaq:CreateFromResource( 300 )
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Artículo"
-      :cSortOrder       := "cRef"
-      :bEditValue       := {|| alltrim( SatCli->cRef ) + " - " + alltrim( SatCli->nombre ) }
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 260
-   end with
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Fecha"
-      :bEditValue       := {|| SatCli->dFecSat }
-      :nDataStrAlign    := AL_LEFT
-      :nHeadStrAlign    := AL_LEFT
-      :nWidth           := 80
-   end with
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Operario"
-      :cSortOrder       := "cCodOpe"
-      :bEditValue       := {|| alltrim( SatCli->cCodOpe ) + " - " + SatCli->cNomTra }
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 170
-   end with
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Estado"
-      :cSortOrder       := "cCodEst"
-      :bEditValue       := {|| alltrim( SatCli->cCodEst ) }
-      :bStrData         := {|| alltrim( SatCli->cCodEst ) + " - " + SatCli->cNombre }
-      :bBmpData         := {|| nBitmapTipoEstadoSat( SatCli->cTipo ) }
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 170
-      AddResourceTipoCategoria( hb_QWith() )
-   end with
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Situación"
-      :cSortOrder       := "cSituac"
-      :bEditValue       := {|| SatCli->cSituac }
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 100
-   end with
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Ubicación"
-      :bEditValue       := {|| SatCli->cDesUbi }
-      :nWidth           := 130
-   end with
-
-   /*
-   oDbfTmpMaq:SetBrowse( oBrwMaq )
-   
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Artículo"
-      :cSortOrder       := "cRefSer"
-      :bEditValue       := {|| AllTrim( oDbfTmpMaq:cRef ) + " - " + AllTrim( oDbfTmpMaq:cDetalle ) }
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 260
-   end with
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Fecha"
-      :bEditValue       := {|| oDbfTmpMaq:dFecSat }
-      :nDataStrAlign    := AL_LEFT
-      :nHeadStrAlign    := AL_LEFT
-      :nWidth           := 80
-   end with
+      oFld                 := TFolder():ReDefine( 300, aPrompts, aDialogs, oDlg,,,,, .f. )
+
+      REDEFINE BITMAP oBmpGeneral ID 500 RESOURCE "Businessman2_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 1 ]
+
+      /*
+      Browse con la información por meses-----------------------------------------
+      */
+
+      oBrwVta                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+
+      oBrwVta:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwVta:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwVta:SetArray( aVta, , , .f. )
+
+      oBrwVta:lFooter            := .t.
+      oBrwVta:lVScroll           := .f.
+      oBrwVta:lHScroll           := .f.
+      oBrwVta:nMarqueeStyle      := 5
+      oBrwVta:cName              := "Ventas en informe de clientes"
+      oBrwVta:CreateFromResource( 400 )
+
+      with object ( oBrwVta:AddCol() )
+         :cHeader                   := "Mes"
+         :nWidth                    := 290
+         :bStrData                  := {|| cNombreMes( oBrwVta:nArrayAt ) }
+         :bFooter                   := {|| "Totales" }
+      end with
+
+      with object ( oBrwVta:AddCol() )
+         :cHeader                   := cNombreCajas()
+         :nWidth                    := 120
+         :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 1] }
+         :cEditPicture              := cPicUnd
+         :bFooter                   := {|| aTotVta[1] }
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :nFootStrAlign             := 1
+      end with
+
+      with object ( oBrwVta:AddCol() )
+         :cHeader                   := cNombreUnidades()
+         :nWidth                    := 120
+         :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 2] }
+         :cEditPicture              := cPicUnd
+         :bFooter                   := {|| aTotVta[2] }
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :nFootStrAlign             := 1
+      end with
+
+      with object ( oBrwVta:AddCol() )
+         :cHeader                   := "Total " + cNombreUnidades()
+         :nWidth                    := 120
+         :bEditValue                := {|| NotCero( aVta[ oBrwVta:nArrayAt, 1] ) + NotCero( aVta[ oBrwVta:nArrayAt, 2] ) }
+         :cEditPicture              := cPicUnd
+         :bFooter                   := {|| aTotVta[2] }
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :nFootStrAlign             := 1
+         :lHide                     := .t.
+      end with
+
+      with object ( oBrwVta:AddCol() )
+         :cHeader                   := "Importe"
+         :nWidth                    := 140
+         :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 3] }
+         :cEditPicture              := cPirDiv
+         :bFooter                   := {|| aTotVta[3] }
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :nFootStrAlign             := 1
+      end with
+
+      if !oUser():lNotRentabilidad()
+
+      with object ( oBrwVta:AddCol() )
+         :cHeader                   := "Rentabilidad"
+         :nWidth                    := 140
+         :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 4] }
+         :cEditPicture              := cPirDiv
+         :bFooter                   := {|| aTotVta[4] }
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :nFootStrAlign             := 1
+      end with
+
+      end if
+
+      /*
+      Estado de cuentas
+      */
+
+      REDEFINE SAY oTotPed PROMPT nTotPed                                                       ID 609 PICTURE cPorDiv   OF oFld:aDialogs[1] // Pedido
+      REDEFINE SAY oPdtFac PROMPT nPdtFac                                                       ID 601 PICTURE cPorDiv   OF oFld:aDialogs[1] // Pendiente facturar
+      REDEFINE SAY oTotFac PROMPT nTotFac                                                       ID 602 PICTURE cPorDiv   OF oFld:aDialogs[1] // Facturado
+      REDEFINE SAY oFacRec PROMPT nFacRec                                                       ID 606 PICTURE cPorDiv   OF oFld:aDialogs[1] // Rectificado
+      REDEFINE SAY oTotTik PROMPT nTotTik                                                       ID 611 PICTURE cPorDiv   OF oFld:aDialogs[1] // Tickets
+      REDEFINE SAY oTotCob PROMPT nTotCob                                                       ID 603 PICTURE cPorDiv   OF oFld:aDialogs[1] // Cobros
+      REDEFINE SAY oCobAnt PROMPT nCobAnt                                                       ID 604 PICTURE cPorDiv   OF oFld:aDialogs[1] // Anticipado
+      REDEFINE SAY oTotEnt PROMPT nTotEnt                                                       ID 605 PICTURE cPorDiv   OF oFld:aDialogs[1] // Entregas
+      REDEFINE SAY oTotPdt PROMPT ( nPdtFac + ( ( nTotFac + nTotTik + nFacRec ) - ( nTotCob + nCobAnt + nTotEnt ) ) );
+                                                                                                ID 607 PICTURE cPorDiv   OF oFld:aDialogs[1]
+      REDEFINE SAY oTotRie PROMPT ( ( nTotFac + nTotTik + nFacRec ) - ( nTotCob + nCobAnt + nTotEnt ) ) ;
+                                                                                                ID 608 PICTURE cPorDiv   OF oFld:aDialogs[1]
+
+
+      REDEFINE SAY oTotVal PROMPT nValTik                                                       ID 610 PICTURE cPorDiv   OF oFld:aDialogs[1]
+
+      /*
+      Documentos------------------------------------------------------------------
+      */
+
+      oTree          := TTreeView():Redefine( 310, oFld:aDialogs[2]  )
+      oTree:bChanged := {|| TreeChanged( oTree, oBrwTmp ) }
+
+      /*
+      Barra de botones y datos----------------------------------------------------
+      */
+
+      REDEFINE BUTTON ;
+         ID       301 ;
+         OF       oFld:aDialogs[2] ;
+         ACTION   ( EditDocument( oBrwTmp ) )
+
+      REDEFINE BUTTON ;
+         ID       302 ;
+         OF       oFld:aDialogs[2] ;
+         ACTION   ( ZoomDocument( oBrwTmp ) )
+
+      REDEFINE BUTTON ;
+         ID       303 ;
+         OF       oFld:aDialogs[2] ;
+         ACTION   ( DeleteDocument( oBrwTmp ) )
+
+      REDEFINE BUTTON ;
+         ID       304 ;
+         OF       oFld:aDialogs[2] ;
+         ACTION   ( VisualizaDocument( oBrwTmp ) )
+
+      REDEFINE BUTTON ;
+         ID       305 ;
+         OF       oFld:aDialogs[2] ;
+         ACTION   ( PrintDocument( oBrwTmp ) )
+
+      REDEFINE BUTTON oBtnFiltro ;
+         ID       306 ;
+         OF       oFld:aDialogs[2] ;
+         ACTION   ( Filtro( oBrwTmp ) )
+
+      REDEFINE BUTTON ;
+         ID       307 ;
+         OF       oFld:aDialogs[2] ;
+         ACTION   ( TInfLCli():New( "Informe detallado de documentos de clientes", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
+
+      /*
+      Browse temporarl------------------------------------------------------------
+      */
+
+      REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "Document_Text_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 2 ]
+
+      oBrwTmp                       := IXBrowse():New( oFld:aDialogs[ 2 ] )
+
+      oBrwTmp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwTmp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oDbfTmp:SetBrowse( oBrwTmp )
+
+      oBrwTmp:nMarqueeStyle         := 5
+      oBrwTmp:lFooter               := .t.
+
+      oBrwTmp:cName                 := "Documentos en informe de cliente"
+
+      oBrwTmp:CreateFromResource( 300 )
+
+      with object ( oBrwTmp:addCol() )
+         :cHeader       := "Dc. Documento"
+         :bStrData      := {|| cTextoDocumento() }
+         :bBmpData      := {|| nImagenDocument() }
+         :nWidth        := 20
+         :AddResource( "Notebook_user1_16" )
+         :AddResource( "Clipboard_empty_user1_16" )
+         :AddResource( "Document_plain_user1_16" )
+         :AddResource( "Document_user1_16" )
+         :AddResource( "Document_delete_16" )
+         :AddResource( "Document_money2_16" )
+         :AddResource( "Cashier_user1_16" )
+         :AddResource( "Briefcase_user1_16" )
+         :AddResource( "Clipboard_empty_money_16" )
+         :AddResource( "Document_plain_money_16" )
+         :AddResource( "Cashier_user1_16" )
+      end with
+
+      with object ( oBrwTmp:addCol() )
+         :cHeader       := "Estado"
+         :bEditValue    := {|| oDbfTmp:cEstado }
+         :nWidth        := 70
+      end with
+
+      with object ( oBrwTmp:addCol() )
+         :cHeader       := "Número"
+         :bEditValue    := {|| cMaskNumDoc( oDbfTmp ) }
+         :nWidth        := 80
+      end with
+
+      with object ( oBrwTmp:addCol() )
+         :cHeader       := "Fecha"
+         :bEditValue    := {|| Dtoc( oDbfTmp:dFecDoc ) }
+         :nWidth        := 70
+      end with
+
+      with object ( oBrwTmp:addCol() )
+         :cHeader       := "Código"
+         :bEditValue    := {|| oDbfTmp:cCodCli }
+         :nWidth        := 50
+      end with
+
+      with object ( oBrwTmp:addCol() )
+         :cHeader       := "Nombre"
+         :bEditValue    := {|| oDbfTmp:cNomCli }
+         :nWidth        := 310
+      end with
+
+      with object ( oBrwTmp:addCol() )
+         :cHeader       := "Almacén"
+         :bEditValue    := {|| oDbfTmp:cAlmDoc }
+         :nWidth        := 30
+         :lHide         := .t.
+      end with
+
+      with object ( oBrwTmp:addCol() )
+         :cHeader       := "Total"
+         :bEditValue    := {|| oDbfTmp:nImpDoc }
+         :bFooter       := {|| nTotImp( oDbfTmp ) }
+         :cEditPicture  := cPorDiv
+         :nWidth        := 80
+         :nDataStrAlign := 1
+         :nHeadStrAlign := 1
+         :nFootStrAlign := 1
+      end with
+
+      oBrwTmp:bLDblClick   := {|| ZoomDocument( oBrwTmp ) }
+
+      /*
+      Graph start setting---------------------------------------------------------
+      */
+
+      REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "Chart_area_48_alpha" TRANSPARENT OF oFld:aDialogs[ 3 ]
+
+      REDEFINE BTNBMP ;
+         ID       101 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "ColumnChart16" ;
+         NOBORDER ;
+         TOOLTIP  "Gráfico de barras" ;
+         ACTION   ( oGraph:SetType( GRAPH_TYPE_BAR ) )
+
+      REDEFINE BTNBMP ;
+         ID       102 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "LineChart16" ;
+         NOBORDER ;
+         TOOLTIP  "Gráfico de lineas" ;
+         ACTION   ( oGraph:SetType( GRAPH_TYPE_LINE ) )
+
+      REDEFINE BTNBMP ;
+         ID       103 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "DotChart16" ;
+         NOBORDER ;
+         TOOLTIP  "Gráfico de puntos" ;
+         ACTION   ( oGraph:SetType( GRAPH_TYPE_POINT ) )
+
+      REDEFINE BTNBMP ;
+         ID       104 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "PieChart16" ;
+         NOBORDER ;
+         TOOLTIP  "Gráfico combinado" ;
+         ACTION   ( oGraph:SetType( GRAPH_TYPE_PIE ) )
+
+      REDEFINE BTNBMP ;
+         ID       105 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "Chart16" ;
+         NOBORDER ;
+         TOOLTIP  "Gráfico combinado" ;
+         ACTION   ( oGraph:SetType( GRAPH_TYPE_ALL ) )
+
+      REDEFINE BTNBMP ;
+         ID       106 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "Text3d16" ;
+         NOBORDER ;
+         TOOLTIP  "Gráficos en tres dimensiones" ;
+         ACTION   ( oGraph:l3D :=!oGraph:l3D, oGraph:Refresh() )
+
+      REDEFINE BTNBMP ;
+         ID       107 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "Copy16" ;
+         NOBORDER ;
+         TOOLTIP  "Copiar el gráfico en el portapapeles" ;
+         ACTION   ( oGraph:Copy2ClipBoard() )
+
+      REDEFINE BTNBMP ;
+         ID       108 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "Imp16" ;
+         NOBORDER ;
+         TOOLTIP  "Imprimir el gráfico" ;
+         ACTION   ( GetPrtCoors( oGraph ) )
+
+      REDEFINE BTNBMP ;
+         ID       109 ;
+         OF       oFld:aDialogs[ 3 ] ;
+         RESOURCE "Preferences16" ;
+         NOBORDER ;
+         TOOLTIP  "Propiedades del gráfico" ;
+         ACTION   ( GraphPropierties( oGraph ) )
+
+      oGraph      := TGraph():ReDefine( 300, oFld:aDialogs[3] )
+
+      /*
+      Cuarta pestaña para CZ------------------------------------------------------
+      */
+
+      if lAis()
+         buildFolderArticulosContadores( oFld )
+      end if 
+
+      /*
+      Anno del ejecicio, por defecto lleva el anno actual
+      */
+
+      REDEFINE COMBOBOX oCmbAnio VAR cCmbAnio ;
+         ITEMS    { "Todos", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" } ;
+         ID       310 ;
+         ON CHANGE(  LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), oBrwTmp:Refresh(), oGraph:Refresh() ) ;
+         OF       oDlg
+
+      /*
+      Botones comunes a la caja de dialogo----------------------------------------
+      */
+
+      REDEFINE SAY oText VAR cText ;
+         ID       400 ;
+         OF       oDlg
+
+      oMeter      := TApoloMeter():ReDefine( 200, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 10, oDlg, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
+
+      REDEFINE BUTTON ;
+         ID       306 ;
+         OF       oDlg ;
+         ACTION   ( LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), oBrwTmp:Refresh(), oGraph:Refresh() )
+
+      REDEFINE BUTTON oBtnAceptar;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+      /*
+      Teclas rápidas para los botones---------------------------------------------
+      */
+
+      oFld:aDialogs[2]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ) } )
+      oFld:aDialogs[2]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ) } )
       
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Operario"
-      :cSortOrder       := "cCodOpe"
-      :bEditValue       := {|| AllTrim( oDbfTmpMaq:cCodOpe ) + if( !Empty( oDbfTmpMaq:cCodOpe ), " - ", "" ) + oRetFld( oDbfTmpMaq:cCodOpe, oOperario:oDbf, "cNomTra", "cCodTra" ) }
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 170
-   end with
+      if isTrue( lSatCli )
+         oDlg:AddFastKey( VK_F5, {|| oDlg:end( IDOK ) } )
+      end if   
 
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Estado"
-      :cSortOrder       := "cCodEst"
-      :bEditValue       := {|| AllTrim( oDbfTmpMaq:cCodEst ) }
-      :bStrData         := {|| AllTrim( oDbfTmpMaq:cCodEst ) + if( !Empty( oDbfTmpMaq:cCodEst ), " - ", "" ) + RetFld( oDbfTmpMaq:cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
-      :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( oDbfTmpMaq:cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 170
-      AddResourceTipoCategoria( hb_QWith() )
-   end with
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Situación"
-      :cSortOrder       := "cSituac"
-      :bEditValue       := {|| oDbfTmpMaq:cSituac }
-      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      :nWidth           := 100
-   end with
-
-   with object ( oBrwMaq:addCol() )
-      :cHeader          := "Ubicación"
-      :bEditValue       := {|| oDbfTmpMaq:cDesUbi }
-      :nWidth           := 130
-   end with
-   */
-
-   /*Anno del ejecicio, por defecto lleva el anno actual*/
-
-   REDEFINE COMBOBOX oCmbAnio VAR cCmbAnio ;
-      ITEMS    { "Todos", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" } ;
-      ID       310 ;
-      ON CHANGE( LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq ), oBrwTmp:Refresh(), oGraph:Refresh() ) ;
-      OF       oDlg
-
-   /*
-   Botones comunes a la caja de dialogo----------------------------------------
-   */
-
-   REDEFINE SAY oText VAR cText ;
-      ID       400 ;
-      OF       oDlg
-
-   oMeter      := TApoloMeter():ReDefine( 200, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 10, oDlg, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
-
-   REDEFINE BUTTON ;
-      ID       306 ;
-      OF       oDlg ;
-      ACTION   ( LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), LoadMaquinas( cCodCli, cCmbAnio, oBrwMaq ), oBrwTmp:Refresh(), oGraph:Refresh() )
-
-   REDEFINE BUTTON oBtnAceptar;
-      ID       IDOK ;
-      OF       oDlg ;
-      ACTION   ( EndDialog( oDlg ) )
-
-   REDEFINE BUTTON ;
-      ID       501 ;
-      OF       oDlg ;
-      ACTION   ( oDlg:end() )
-
-   /*
-   Teclas rápidas para los botones---------------------------------------------
-   */
-
-   oFld:aDialogs[2]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ) } )
-   oFld:aDialogs[2]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ) } )
-   
-   if isTrue( lSatCli )
-      oDlg:AddFastKey( VK_F5, {|| EndDialog( oDlg ) } )
-   end if   
-
-   oDlg:bStart := {|| StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oBrwMaq, oBrwTmp, oGraph, oBtnAceptar ) }
+      oDlg:bStart := {|| StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oBrwTmp, oGraph, oBtnAceptar ) }
 
    ACTIVATE DIALOG oDlg CENTER ;
-         ON INIT  ( InitBrwVtaCli( cCodCli, oBrwTmp, oTree, oDlg ), SysRefresh() ) ;
+         ON INIT  ( initDialog( cCodCli, oBrwTmp, oTree, oDlg ), SysRefresh() ) ;
          VALID    ( CloseFiles() )
 
    if oDlg:nResult == IDOK
@@ -897,15 +762,23 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       oBmpGraficos:End()
    end if
 
-   oMenu:End()
+   if !empty(oBmpMaquina)
+      oBmpMaquina:end()
+   end if 
 
-   oBrwMaq:CloseData()
+   if !empty(oMenu)
+      oMenu:End()
+   end if 
+
+   if !empty(oBrwMaquinaria)
+      oBrwMaquinaria:CloseData()
+   end if 
 
 return uResultado
 
 //---------------------------------------------------------------------------//
 
-static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oBrwMaq, oBrwTmp, oGraph, oBtnAceptar )
+static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oBrwTmp, oGraph, oBtnAceptar )
 
    DEFAULT lSatCli   := .f.
 
@@ -915,7 +788,7 @@ static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oB
 
    oGraph:Refresh()
 
-   oBrwMaq:Load()
+   oBrwMaquinaria:Load()
 
    if lSatCli   
       oBtnAceptar:Show()
@@ -929,17 +802,92 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function EndDialog( oDlg )
+Static Function buildFolderArticulosContadores( oFld )
 
-   cMaquina := oDbfTmpMaq:cRef
+   REDEFINE BITMAP oBmpMaquina ID 500 RESOURCE "control_panel2_48" TRANSPARENT OF oFld:aDialogs[ 4 ]
 
-   oDlg:end( IDOK )
+      oBrwMaquinaria                       := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
-Return .t.
+      oBrwMaquinaria:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwMaquinaria:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwMaquinaria:nMarqueeStyle         := 6
+      oBrwMaquinaria:cName                 := "Máquinas en informe de clientes"
+
+      oBrwMaquinaria:setTree( TDataCenter():treeProductFromSAT(), { "Navigate_Minus_16", "Navigate_Plus_16" } )
+
+      oBrwMaquinaria:bLDblClick            := {|| msgAlert( oBrwMaquinaria:oTreeItem:Cargo[ "cSerSat" ] + str( oBrwMaquinaria:oTreeItem:Cargo[ "nNumSat" ] ) + oBrwMaquinaria:oTreeItem:Cargo[ "cSufSat" ] ) }
+
+      if len( oBrwMaquinaria:aCols ) > 0
+         oBrwMaquinaria:aCols[ 1 ]:cHeader := ""
+         oBrwMaquinaria:aCols[ 1 ]:nWidth  := 20
+      end if
+
+      oBrwMaquinaria:CreateFromResource( 300 )
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Artículo"
+         :bEditValue       := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cRef" ] ) + " - " + alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "Nombre" ] ) }
+         :nWidth           := 260
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "S.A.T."
+         :bEditValue       := {|| oBrwMaquinaria:oTreeItem:Cargo[ "cSerSat" ] + "/" + alltrim( str( oBrwMaquinaria:oTreeItem:Cargo[ "nNumSat" ] ) ) }
+         :nDataStrAlign    := AL_LEFT
+         :nHeadStrAlign    := AL_LEFT
+         :nWidth           := 120
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Dlg."
+         :bEditValue       := {|| oBrwMaquinaria:oTreeItem:Cargo[ "cSufSat" ] }
+         :nDataStrAlign    := AL_LEFT
+         :nHeadStrAlign    := AL_LEFT
+         :lHide            := .t.
+         :nWidth           := 40
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Fecha"
+         :bEditValue       := {|| oBrwMaquinaria:oTreeItem:Cargo[ "dFecSat" ] }
+         :nDataStrAlign    := AL_LEFT
+         :nHeadStrAlign    := AL_LEFT
+         :nWidth           := 80
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Operario"
+         :bEditValue       := {|| oBrwMaquinaria:oTreeItem:Cargo[ "cCodOpe" ] + " - " + oBrwMaquinaria:oTreeItem:Cargo[ "cNomTra" ] }
+         :nWidth           := 170
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Estado"
+         :bEditValue       := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cCodEst" ] ) }
+         :bStrData         := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cCodEst" ] ) + " - " + oBrwMaquinaria:oTreeItem:Cargo[ "cNombre" ] }
+         :bBmpData         := {|| nBitmapTipoEstadoSat( oBrwMaquinaria:oTreeItem:Cargo[ "cTipo" ] ) }
+         :nWidth           := 170
+         AddResourceTipoCategoria( hb_QWith() )
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Situación"
+         :bEditValue       := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cSituac" ] ) }
+         :nWidth           := 100
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Ubicación"
+         :bEditValue       := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cDesUbi" ] ) }
+         :nWidth           := 130
+      end with
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function InitBrwVtaCli( cCodCli, oBrwTmp, oTree, oDlg )
+Static Function initDialog( cCodCli, oBrwTmp, oTree, oDlg )
 
    oBrwTmp:Load()
 
@@ -1190,252 +1138,6 @@ Static Function LoadDatos( cCodCli, oDlg, Anio, oBrwVta )
    oDlg:Enable()
 
 return nil
-
-//---------------------------------------------------------------------------//
-
-Static Function LoadMaquinasDbf( cCodCli, cCmbAnio, oBrwMaq )
-
-   local nOrdAntL  := ( dbfSatCliL )->( OrdSetFocus( "cCodCli" ) )
-   local nOrdAntT  := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
-
-   oDbfTmpMaq:Zap()
-
-   ( dbfSatCliL )->( dbGoTop() )
-
-   if ( dbfSatCliL )->( dbSeek( cCodCli ) )
-
-      while ( dbfSatCliL )->cCodCli == cCodCli .and. !( dbfSatCliL )->( Eof() )
-
-          if !Empty( ( dbfSatCliL )->cRef )      .and.;
-            if( cCmbAnio == "Todos", .t., ( Year( ( dbfSatCliL )->dFecSat ) == Val( cCmbAnio ) ) )
-
-            if !oDbfTmpMaq:Seek( ( dbfSatCliL )->cRef )
-
-               oDbfTmpMaq:Append()
-
-               oDbfTmpMaq:cCodCli      := cCodCli
-               oDbfTmpMaq:cRef         := ( dbfSatCliL )->cRef
-               oDbfTmpMaq:cDetalle     := ( dbfSatCliL )->cDetalle
-
-               if ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
-
-                  oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
-                  oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
-                  oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
-                  oDbfTmpMaq:cCodEst   := ( dbfSatCliT )->cCodEst
-                  oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
-
-               end if
-
-               if ( dbfArticulo )->( dbSeek( ( dbfSatCliL )->cRef ) )
-                  oDbfTmpMaq:cDesUbi   := ( dbfArticulo )->cDesUbi
-               end if
-
-               oDbfTmpMaq:Save()
-
-            else
-            
-               if ( dbfSatCliL )->dFecSat > oDbfTmpMaq:dFecSat .and.;
-                  ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
-                  
-                  oDbfTmpMaq:Load()
-
-                  oDbfTmpMaq:dFecSat   := ( dbfSatCliT )->dFecSat
-                  oDbfTmpMaq:cSituac   := ( dbfSatCliT )->cSituac
-                  oDbfTmpMaq:cCodOpe   := ( dbfSatCliT )->cCodOpe
-                  oDbfTmpMaq:cCodEst   := ( dbfSatCliT )->cCodEst
-                  oDbfTmpMaq:cNomCli   := ( dbfSatCliT )->cNomCli
-
-                  oDbfTmpMaq:Save()
-
-               end if
-
-            end if   
-
-         end if
-
-         ( dbfSatCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   oDbfTmpMaq:GoTop()
-
-   ( dbfSatCliL )->( OrdSetFocus( nOrdAntL ) )
-   ( dbfSatCliT )->( OrdSetFocus( nOrdAntT ) )
-
-   if !Empty( oBrwMaq )
-      oBrwMaq:Refresh()
-   end if  
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Static Function LoadMaquinasSQL( cCodCli, cCmbAnio, oBrwMaq )
-
-   if TDataCenter():selectSATFromClient( cCodCli, cCmbAnio )
-
-      TDataCenter():onlyOneProductFromSAT()
-
-      if !Empty( oBrwMaq )
-         oBrwMaq:Refresh()
-      end if  
-
-   end if 
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Static function LoadLineasMaquinas( cCmbAnio, oBrwMaqL )
-
-   local nOrdAntL  := ( dbfSatCliL )->( OrdSetFocus( "cRef" ) )
-   local nOrdAntT  := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
-
-   oDbfTmpMaqL:Zap()
-
-   ( dbfSatCliL )->( dbGoTop() )
-
-   if ( dbfSatCliL )->( dbSeek( oDbfTmpMaq:cRef ) )
-
-      while ( dbfSatCliL )->cRef == oDbfTmpMaq:cRef .and. !( dbfSatCliL )->( Eof() )
-
-         if ( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
-
-            oDbfTmpMaqL:Append()
-
-            oDbfTmpMaqL:cSerSat        := ( dbfSatCliT )->cSerSat
-            oDbfTmpMaqL:nNumSat        := ( dbfSatCliT )->nNumSat
-            oDbfTmpMaqL:cSufSat        := ( dbfSatCliT )->cSufSat
-            oDbfTmpMaqL:dFecSat        := ( dbfSatCliT )->dFecSat
-            oDbfTmpMaqL:cCodCli        := oDbfTmpMaq:cCodCli
-            oDbfTmpMaqL:cRef           := oDbfTmpMaq:cRef
-            oDbfTmpMaqL:cDetalle       := oDbfTmpMaq:cDetalle
-            oDbfTmpMaqL:cSituac        := ( dbfSatCliT )->cSituac
-            oDbfTmpMaqL:cCodOpe        := ( dbfSatCliT )->cCodOpe
-            oDbfTmpMaqL:cCodEst        := ( dbfSatCliT )->cCodEst
-            oDbfTmpMaqL:cNomCli        := oDbfTmpMaq:cNomCli
-
-            oDbfTmpMaqL:Save()
-
-         end if   
-
-         oDbfTmpMaqL:Save()
-
-         ( dbfSatCliL )->( dbSkip() )
-
-      end while
-
-   end if
-   
-   ( dbfSatCliL )->( OrdSetFocus( nOrdAntL ) )
-   ( dbfSatCliT )->( OrdSetFocus( nOrdAntT ) )
-
-   if !Empty( oBrwMaqL )
-      oBrwMaqL:Refresh()
-   end if
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Static Function HistoriaMaquina( cCmbAnio )
-   
-   local oDlg
-   local oBmp
-   local oBrwMaqL
-   local oCliente
-   local oMaquina
-   local oSerie
-
-   DEFINE DIALOG oDlg RESOURCE "LHISMAQ" TITLE "Histórico de S.A.T de clientes"
-
-      REDEFINE BITMAP oBmp ID 500 RESOURCE "Control_Panel2_48" TRANSPARENT OF oDlg
-
-      REDEFINE SAY oCliente PROMPT "Cliente: " + AllTrim( oDbfTmpMaq:cCodCli ) + " - " + AllTrim( oDbfTmpMaq:cNomCli ) ;
-         ID       110 ;
-         OF       oDlg
-
-      REDEFINE SAY oMaquina PROMPT "Artículo: " + AllTrim( oDbfTmpMaq:cRef ) + " - " + AllTrim( oDbfTmpMaq:cDetalle ) ;
-         ID       120 ;
-         OF       oDlg 
-
-      oBrwMaqL                       := IXBrowse():New( oDlg )
-
-      oBrwMaqL:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwMaqL:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oDbfTmpMaqL:SetBrowse( oBrwMaqL )
-
-      oBrwMaqL:nMarqueeStyle         := 6
-
-      oBrwMaqL:cName                 := "Histórico maquina"
-
-      oBrwMaqL:CreateFromResource( 100 )
-
-      with object ( oBrwMaqL:addCol() )
-         :cHeader          := "Número"
-         :cSortOrder       := "cNumSat"
-         :bEditValue       := {|| oDbfTmpMaqL:cSerSat + "/" + AllTrim( Str( oDbfTmpMaqL:nNumSat ) ) + "/" + oDbfTmpMaqL:cSufSat }
-         :nWidth           := 70
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-      end with
-
-      with object ( oBrwMaqL:addCol() )
-         :cHeader          := "Fecha"
-         :bEditValue       := {|| oDbfTmpMaqL:dFecSat }
-         :nDataStrAlign    := AL_LEFT
-         :nHeadStrAlign    := AL_LEFT
-         :nWidth           := 80
-      end with
-      
-      with object ( oBrwMaqL:addCol() )
-         :cHeader          := "Operario"
-         :cSortOrder       := "cCodOpe"
-         :bEditValue       := {|| AllTrim( oDbfTmpMaqL:cCodOpe ) + if( !Empty( oDbfTmpMaqL:cCodOpe ), " - ", "" ) + oRetFld( oDbfTmpMaqL:cCodOpe, oOperario:oDbf, "cNomTra", "cCodTra" ) } 
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-         :nWidth           := 200
-      end with
-
-      with object ( oBrwMaqL:addCol() )
-         :cHeader          := "Estado"
-         :cSortOrder       := "cCodEst"
-         :bEditValue       := {|| AllTrim( oDbfTmpMaqL:cCodEst ) }
-         :bStrData         := {|| AllTrim( oDbfTmpMaqL:cCodEst ) + if( !Empty( oDbfTmpMaqL:cCodEst ), " - ", "" ) + RetFld( oDbfTmpMaqL:cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
-         :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( oDbfTmpMaqL:cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-         :nWidth           := 200
-         AddResourceTipoCategoria( hb_QWith() )
-      end with
-
-      with object ( oBrwMaqL:addCol() )
-         :cHeader          := "Situación"
-         :cSortOrder       := "cSituac"
-         :bEditValue       := {|| AllTrim( oDbfTmpMaqL:cSituac ) }
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-         :nWidth           := 130
-      end with
-
-      oBrwMaqL:bLDblClick   := {|| EdtSatCli( oDbfTmpMaqL:cSerSat + Str( oDbfTmpMaqL:nNumSat ) + oDbfTmpMaqL:cSufSat ) }
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   oDlg:End()
-
-      oDlg:bStart := {|| LoadLineasMaquinas( cCmbAnio, oBrwMaqL ), oBrwMaqL:Load() }
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   oBrwMaqL:CloseData()
-
-   if !Empty( oBmp )
-      oBmp:End()
-   end if
-
-Return nil
 
 //---------------------------------------------------------------------------//
 
@@ -1841,79 +1543,6 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       INDEX TO ( cFileName ) TAG "cTypDoc" ON "nTypDoc + Dtos( dFecDoc )"                                                                                                 OF oDbf
       INDEX TO ( cFileName ) TAG "cDocume" ON "Dtos( dFecDoc )" FOR "( nTypDoc >= '05' .and. nTypDoc <= '09' ) .or. ( nTypDoc >= '12' .and. nTypDoc <= '14' )"            OF oDbf
       INDEX TO ( cFileName ) TAG "cCobros" ON "Dtos( dFecDoc )" FOR "nTypDoc == '10' .or. nTypDoc == '15' .or. nTypDoc == '21' .or. nTypDoc == '22' .or. nTypDoc == '30'" OF oDbf
-
-   END DATABASE oDbf
-
-Return ( oDbf )
-
-//---------------------------------------------------------------------------//
-
-Static Function DefineTemporalMaquinas( cPath, lUniqueName, cFileName )
-
-   local oDbf
-
-   DEFAULT cPath        := cPatTmp()
-   DEFAULT lUniqueName  := .t.
-   DEFAULT cFileName    := "InfMaq"
-
-   if lUniqueName
-      cFileName         := cGetNewFileName( cFileName, , , cPatTmp() )
-   end if
-
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS "InfMaq" ALIAS ( cFileName ) PATH ( cPath ) VIA ( cLocalDriver() )
-
-      FIELD NAME "CCODCLI"  TYPE "C" LEN  12 DEC 0 COMMENT "Código del cliente"        OF oDbf
-      FIELD NAME "CNOMCLI"  TYPE "C" LEN  80 DEC 0 COMMENT "Nombre del cliente"        OF oDbf
-      FIELD NAME "CREF"     TYPE "C" LEN  18 DEC 0 COMMENT "Referencia del artículo"   OF oDbf
-      FIELD NAME "CDETALLE" TYPE "C" LEN 250 DEC 0 COMMENT "Descripción de artículo"   OF oDbf
-      FIELD NAME "DFECSAT"  TYPE "D" LEN   8 DEC 0 COMMENT "Fecha del SAT"             OF oDbf
-      FIELD NAME "CSITUAC"  TYPE "C" LEN  20 DEC 0 COMMENT "Situación del SAT"         OF oDbf
-      FIELD NAME "CCODOPE"  TYPE "C" LEN   5 DEC 0 COMMENT "Código operario"           OF oDbf
-      FIELD NAME "CCODEST"  TYPE "C" LEN   3 DEC 0 COMMENT "Código estado"             OF oDbf
-      FIELD NAME "CDESUBI"  TYPE "C" LEN 200 DEC 0 COMMENT "Ubicación de máquina"      OF oDbf
-
-      INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef"                                   OF oDbf
-      INDEX TO ( cFileName ) TAG "cSituac" ON "cSituac"                                OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodOpe" ON "cCodOpe"                                OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodEst" ON "cCodEst"                                OF oDbf
-
-   END DATABASE oDbf
-
-Return ( oDbf )
-
-//---------------------------------------------------------------------------//
-
-Static Function DefineTemporalMaquinasLineas( cPath, lUniqueName, cFileName )
-
-   local oDbf
-
-   DEFAULT cPath        := cPatTmp()
-   DEFAULT lUniqueName  := .t.
-   DEFAULT cFileName    := "InfMaqL"
-
-   if lUniqueName
-      cFileName         := cGetNewFileName( cFileName, , , cPatTmp() )
-   end if
-
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS "InfMaqL" ALIAS ( cFileName ) PATH ( cPath ) VIA ( cLocalDriver() )
-
-      FIELD NAME "CSERSAT"  TYPE "C" LEN   1 DEC 0 COMMENT "Serie del SAT"             OF oDbf
-      FIELD NAME "NNUMSAT"  TYPE "N" LEN   9 DEC 0 COMMENT "Número del SAT"            OF oDbf
-      FIELD NAME "CSUFSAT"  TYPE "C" LEN   2 DEC 0 COMMENT "Sufijo del SAT"            OF oDbf
-      FIELD NAME "DFECSAT"  TYPE "D" LEN   8 DEC 0 COMMENT "Fecha del SAT"             OF oDbf
-      FIELD NAME "CCODCLI"  TYPE "C" LEN  12 DEC 0 COMMENT "Código del cliente"        OF oDbf
-      FIELD NAME "CNOMCLI"  TYPE "C" LEN  80 DEC 0 COMMENT "Nombre del cliente"        OF oDbf
-      FIELD NAME "CREF"     TYPE "C" LEN  18 DEC 0 COMMENT "Referencia del artículo"   OF oDbf
-      FIELD NAME "CDETALLE" TYPE "C" LEN 250 DEC 0 COMMENT "Descripción de artículo"   OF oDbf
-      FIELD NAME "CSITUAC"  TYPE "C" LEN  20 DEC 0 COMMENT "Situación del SAT"         OF oDbf
-      FIELD NAME "CCODOPE"  TYPE "C" LEN   5 DEC 0 COMMENT "Código operario"           OF oDbf
-      FIELD NAME "CCODEST"  TYPE "C" LEN   3 DEC 0 COMMENT "Código estado"             OF oDbf
-
-      INDEX TO ( cFileName ) TAG "cRefSer" ON "cRef"                                   OF oDbf
-      INDEX TO ( cFileName ) TAG "cNumSat" ON "cSerSat + Str( nNumSat ) + cSufSat"     OF oDbf
-      INDEX TO ( cFileName ) TAG "cSituac" ON "cSituac"                                OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodOpe" ON "cCodOpe"                                OF oDbf
-      INDEX TO ( cFileName ) TAG "cCodEst" ON "cCodEst"                                OF oDbf
 
    END DATABASE oDbf
 

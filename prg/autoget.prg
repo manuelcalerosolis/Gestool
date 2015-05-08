@@ -265,9 +265,10 @@ METHOD OpenList( nKey, nFlags ) CLASS TAutoGet
    nret = ::Super:KeyChar( nKey, nFlags )
    
    if ::oGet:Buffer != nil .and. len( alltrim( ::oGet:Buffer ) ) > 0
-      msgWait( ::oGet:Buffer, , 0.000001 )
-      //? ( hb_valToExp( ::uDataSource ) )
-      ::uOrgData = ::uDataSource
+      // msgWait( ::oGet:Buffer, , 0.000001 )
+      if empty( ::uOrgData ) //? ( hb_valToExp( ::uDataSource ) )
+         ::uOrgData = ::uDataSource
+      endif
       ::uDataSource := Eval( ::bCreateList, ::uDataSource, AllTrim( ::oGet:Buffer ), Self )
       ::CreateList()
    endif

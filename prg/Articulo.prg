@@ -1243,7 +1243,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( buscarExtendido() ) ;
+         ACTION   ( buscarTipologias() ) ; // buscarExtendido() ) ;
          TOOLTIP  "Buscar e(x)tendido" ;
          HOTKEY   "X"
 
@@ -11609,7 +11609,7 @@ Function buscarTipologias()
          CANCEL ;
          ACTION      ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| msgAlert( cGetFamilia) } )   
+   // oDlg:AddFastKey( VK_F5, {|| msgAlert( cGetFamilia) } )   
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -11621,7 +11621,7 @@ Static Function filterFamilias( uDataSource, cData, Self )
 
    local aList       := {}
 
-   msgAlert( cData )
+   // msgAlert( cData )
   
    aEval( uDataSource, {|x| iif( lower( cData ) $ lower( x[1] ), aadd( aList, x ), ) } )
    //hEval( Self:uOrgData, {|k,v,i| msgAlert( k, cData ) } )
