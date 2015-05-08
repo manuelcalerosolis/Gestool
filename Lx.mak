@@ -1044,6 +1044,7 @@ ApoloMeter.prg 			\
 Components.prg 			\
 TGridSay.prg 				\
 Bitmap.prg              \
+EstadoSat.prg           \
 
 C               =       \
 Metafi32.c              \
@@ -2078,6 +2079,7 @@ ApoloMeter.obj 			\
 Components.obj 			\
 TGridSay.obj 				\
 Bitmap.obj              \
+EstadoSat.obj           \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3118,7 +3120,8 @@ $(OBJ)\TpvMenuOrdenes.obj 			+
 $(OBJ)\ApoloMeter.obj 				+
 $(OBJ)\Components.obj 				+
 $(OBJ)\TGridSay.obj 				   +	
-$(OBJ)\Bitmap.obj              
+$(OBJ)\Bitmap.obj                +      
+$(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +
 $(FWLIB)\FiveHC.lib              +

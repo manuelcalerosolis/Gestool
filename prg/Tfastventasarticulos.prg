@@ -675,8 +675,7 @@ Method lValidRegister() CLASS TFastVentasArticulos
       ( ::oDbf:cCodUsr     >= ::oGrupoUsuario:Cargo:getDesde()          .and. ::oDbf:cCodUsr    <= ::oGrupoUsuario:Cargo:getHasta() )           .and.;
       ( ::oDbf:cPrvHab     >= ::oGrupoProveedor:Cargo:getDesde()        .and. ::oDbf:cPrvHab    <= ::oGrupoProveedor:Cargo:getHasta() )         .and.;
       ( ::oDbf:cCodAlm     >= ::oGrupoAlmacen:Cargo:getDesde()          .and. ::oDbf:cCodAlm    <= ::oGrupoAlmacen:Cargo:getHasta() )           .and.;
-      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()   .and. ::oDbf:cCtrCoste <= ::oGrupoCentroCoste:Cargo:getHasta() ) 
-
+      ( ::oDbf:cCtrCoste   >= ::oGrupoCentroCoste:Cargo:getDesde()      .and. ::oDbf:cCtrCoste  <= ::oGrupoCentroCoste:Cargo:getHasta() ) 
 
       Return .t.
 
