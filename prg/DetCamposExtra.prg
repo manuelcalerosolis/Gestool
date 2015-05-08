@@ -6,7 +6,7 @@
 #include "FastRepH.ch"
 
 //---------------------------------------------------------------------------// 
-   
+     
 CLASS TDetCamposExtra FROM TMant
          
    DATA oDbf
