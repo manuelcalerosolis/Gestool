@@ -26,7 +26,7 @@
 #define ubiSala                     2
 #define ubiRecoger                  3
 #define ubiEncargar                 4
-
+   
 #define exitAceptarRegalo           1
 #define exitAceptarImprimir         2
 #define exitAceptar                 3
