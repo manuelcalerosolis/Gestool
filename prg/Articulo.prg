@@ -11346,13 +11346,13 @@ Function buscarTipologias()
    local oGetFabricante
    local oGetEstado
    local cGetCodigo := space( 100 )
-   local cGetNombre
-   local cGetFamilia
-   local cGetTipo
-   local cGetCategoria
-   local cGetTemporada
-   local cGetFabricante
-   local cGetEstado
+   local cGetNombre := space( 200 )
+   local cGetFamilia := space( 200 )
+   local cGetTipo := space( 200 )
+   local cGetCategoria := space( 200 )
+   local cGetTemporada := space( 200 )
+   local cGetFabricante := space( 200 )
+   local cGetEstado := space( 200 )
    local aCountries  := {;
       {"Afghanistan", 'AF'},; 
       {"Åland Islands", 'AX'},; 
@@ -11608,9 +11608,9 @@ Function buscarTipologias()
          OF       oDlg
 
       oGetCodigo     := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, cGetCodigo, cGetCodigo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCodigo",, aCodigosArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetNombre     := TAutoGet():ReDefine( 110, { | u | iif( pcount() == 0, cGetNombre, cGetNombre := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetNombre",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetFamilia    := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, cGetFamilia, cGetFamilia := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFamilia",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetTipo       := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, cGetTipo, cGetTipo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )      
+      oGetNombre     := TAutoGet():ReDefine( 110, { | u | iif( pcount() == 0, cGetNombre, cGetNombre := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetNombre",, aNombresArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetFamilia    := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, cGetFamilia, cGetFamilia := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFamilia",, aNombresFamilias(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetTipo       := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, cGetTipo, cGetTipo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, aNombresTipoArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )      
       oGetCategoria  := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, cGetCategoria, cGetCategoria := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCategoria",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
       oGetTemporada  := TAutoGet():ReDefine( 150, { | u | iif( pcount() == 0, cGetTemporada, cGetTemporada := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTemporada",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
       oGetFabricante := TAutoGet():ReDefine( 160, { | u | iif( pcount() == 0, cGetFabricante, cGetFabricante := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFabricante",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
@@ -11650,12 +11650,95 @@ RETURN aList
 
 Static Function aCodigosArticulo()
 
-   local a  := {}
+   local nRec        := ( dbfArticulo )->( Recno() )
+   local nOrdAnt     := ( dbfArticulo )->( OrdSetFocus( "Codigo" ) )
+   local aCodigos    := {}
 
-Return a
+   ( dbfArticulo )->( dbGoTop() )
+
+   while !( dbfArticulo )->( Eof() )
+
+      aAdd( aCodigos, { ( dbfArticulo )->Codigo, ( dbfArticulo )->Codigo } )
+
+      ( dbfArticulo )->( dbSkip() )
+
+   end while
+
+   ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfArticulo )->( dbGoTo( nRec ) )
+
+Return aCodigos
 
 //---------------------------------------------------------------------------//
 
+Static Function aNombresArticulo()
+
+   local nRec        := ( dbfArticulo )->( Recno() )
+   local nOrdAnt     := ( dbfArticulo )->( OrdSetFocus( "Nombre" ) )
+   local aCodigos    := {}
+
+   ( dbfArticulo )->( dbGoTop() )
+
+   while !( dbfArticulo )->( Eof() )
+
+      aAdd( aCodigos, { ( dbfArticulo )->Nombre, ( dbfArticulo )->Codigo } )
+
+      ( dbfArticulo )->( dbSkip() )
+
+   end while
+
+   ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfArticulo )->( dbGoTo( nRec ) )
+
+Return aCodigos
+
+//---------------------------------------------------------------------------//
+
+Static Function aNombresFamilias()
+
+   local nRec        := ( dbfFam )->( Recno() )
+   local nOrdAnt     := ( dbfFam )->( OrdSetFocus( "cNomFam" ) )
+   local aCodigos    := {}
+
+   ( dbfFam )->( dbGoTop() )
+
+   while !( dbfFam )->( Eof() )
+
+      aAdd( aCodigos, { ( dbfFam )->cNomFam, ( dbfFam )->cCodFam } )
+
+      ( dbfFam )->( dbSkip() )
+
+   end while
+
+   ( dbfFam )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFam )->( dbGoTo( nRec ) )
+
+Return aCodigos
+
+//---------------------------------------------------------------------------//
+
+Static Function aNombresTipoArticulo()
+
+   local nRec        := oTipart:oDbf:Recno()
+   local nOrdAnt     := oTipart:oDbf:OrdSetFocus( "cNomTip" )
+   local aCodigos    := {}
+
+   oTipart:oDbf:GoTop()
+
+   while !oTipart:oDbf:Eof()
+
+      aAdd( aCodigos, { oTipart:oDbf:cNomTip, oTipart:oDbf:cCodTip } )
+
+      oTipart:oDbf:Skip()
+
+   end while
+
+   oTipart:oDbf:OrdSetFocus( nOrdAnt )
+   oTipart:oDbf:GoTo( nRec )
+
+Return aCodigos
+
+//---------------------------------------------------------------------------//
 //
 // Devuelve el de barras pasandole el codigo interno
 //
