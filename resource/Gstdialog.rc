@@ -20489,18 +20489,31 @@ FONT 8, "Helv"
   CONTROL "Objetivo de compra", 4002, "Static", WS_GROUP, 10, 62, 67, 8
 }
 
-BUSCAR_TIPOLOGIAS DIALOG DISCARDABLE 37, 77, 281, 69
+BUSCAR_TIPOLOGIAS DIALOG DISCARDABLE 37, 77, 336, 173
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION
 CAPTION "Busqueda de articulos..."
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 47, 4, 231, 12
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 47, 17, 230, 12
-  CONTROL "", 120, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 47, 30, 231, 12
-  CONTROL "&Aceptar", 500, "Button", WS_TABSTOP, 173, 51, 50, 14
-  CONTROL "&Cancelar", 510, "Button", WS_TABSTOP, 228, 51, 50, 14
-  CONTROL "Descripción", -1, "Static", WS_GROUP, 3, 20, 41, 8
-  CONTROL "Familias", -1, "Static", WS_GROUP, 3, 7, 37, 8
-  CONTROL "Importe", -1, "Static", WS_GROUP, 3, 33, 41, 8
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 95, 40, 230, 12
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 95, 53, 230, 12
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 95, 66, 230, 12
+  CONTROL "&Aceptar", IDOK, "Button", WS_TABSTOP, 227, 156, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 282, 156, 50, 14
+  CONTROL "Descripción", -1, "Static", WS_GROUP, 51, 57, 41, 8
+  CONTROL "Código", -1, "Static", WS_GROUP, 51, 44, 37, 8
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 95, 79, 230, 12
+  CONTROL "Familia", -1, "Static", WS_GROUP, 51, 70, 41, 8
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 95, 92, 230, 12
+  CONTROL "Tipo artículo", -1, "Static", WS_GROUP, 51, 83, 41, 8
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 95, 106, 230, 12
+  CONTROL "Categoría", -1, "Static", WS_GROUP, 51, 96, 41, 8
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 95, 119, 230, 12
+  CONTROL "Temporada", -1, "Static", WS_GROUP, 51, 110, 41, 8
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 95, 132, 230, 12
+  CONTROL "Fabricante", -1, "Static", WS_GROUP, 51, 123, 41, 8
+  CONTROL "Estado", -1, "Static", WS_GROUP, 51, 136, 41, 8
+  CONTROL "", 500, "TBitMap", 0x0000020e, 4, 3, 34, 30, 0x00000020
+  CONTROL "Búsqueda avanzada de artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 287, 8
+  CONTROL "General", 4002, "Button", BS_GROUPBOX, 44, 29, 287, 122
 }
 

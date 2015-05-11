@@ -1241,7 +1241,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       oWndBrw:AddSeaBar()
 
-      DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "zoom_in_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( buscarTipologias() ) ; // buscarExtendido() ) ;
          TOOLTIP  "Buscar e(x)tendido" ;
@@ -11336,8 +11336,23 @@ RETURN NIL
 Function buscarTipologias()
 
    local oDlg
+   local oBmp
+   local oGetCodigo
+   local oGetNombre
    local oGetFamilia
-   local cGetFamilia := space( 100 )
+   local oGetTipo
+   local oGetCategoria
+   local oGetTemporada
+   local oGetFabricante
+   local oGetEstado
+   local cGetCodigo := space( 100 )
+   local cGetNombre
+   local cGetFamilia
+   local cGetTipo
+   local cGetCategoria
+   local cGetTemporada
+   local cGetFabricante
+   local cGetEstado
    local aCountries  := {;
       {"Afghanistan", 'AF'},; 
       {"Åland Islands", 'AX'},; 
@@ -11584,51 +11599,63 @@ Function buscarTipologias()
       {"Zimbabwe", 'ZW'} ;
    }   
 
-/*   
-   local aCountries  := {  "Afghanistan" => 'AF',;
-                           "Albania" => 'AL' }
-*/
-
    DEFINE DIALOG oDlg RESOURCE "Buscar_tipologias"
 
-      oGetFamilia    := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, cGetFamilia, cGetFamilia := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFamilia",, aCountries,, 400, {|uDataSource, cData, Self| filterFamilias( uDataSource, cData, Self )} )
+      REDEFINE BITMAP oBmp ;
+         ID       500 ;
+         RESOURCE "zoom_in_48" ;
+         TRANSPARENT ;
+         OF       oDlg
 
-/*
-      REDEFINE AUTOGET oGetFamilia ;
-         VAR         cGetFamilia ;
-         ID          100 ;
-         OF          oDlg ;
-         DATASOURCE  aCountries;
-         FILTER      filterFamilias( uDataSource, cData, Self );          
-         HEIGHTLIST  400
-*/
+      oGetCodigo     := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, cGetCodigo, cGetCodigo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCodigo",, aCodigosArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetNombre     := TAutoGet():ReDefine( 110, { | u | iif( pcount() == 0, cGetNombre, cGetNombre := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetNombre",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetFamilia    := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, cGetFamilia, cGetFamilia := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFamilia",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetTipo       := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, cGetTipo, cGetTipo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )      
+      oGetCategoria  := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, cGetCategoria, cGetCategoria := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCategoria",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetTemporada  := TAutoGet():ReDefine( 150, { | u | iif( pcount() == 0, cGetTemporada, cGetTemporada := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTemporada",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetFabricante := TAutoGet():ReDefine( 160, { | u | iif( pcount() == 0, cGetFabricante, cGetFabricante := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFabricante",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetEstado     := TAutoGet():ReDefine( 170, { | u | iif( pcount() == 0, cGetEstado, cGetEstado := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
 
       REDEFINE BUTTON ;
-         ID          500 ;
+         ID          IDOK ;
+         OF          oDlg ;
+         CANCEL ;
+         ACTION      ( oDlg:end( IDOK ) ) 
+
+      REDEFINE BUTTON ;
+         ID          IDCANCEL ;
          OF          oDlg ;
          CANCEL ;
          ACTION      ( oDlg:end() )
 
-   // oDlg:AddFastKey( VK_F5, {|| msgAlert( cGetFamilia) } )   
-
    ACTIVATE DIALOG oDlg CENTER
+
+   if !Empty( oBmp )
+      oBmp:End()
+   end if
 
 RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Static Function filterFamilias( uDataSource, cData, Self )
+Static Function cfilter( uDataSource, cData, Self )
 
    local aList       := {}
 
-   // msgAlert( cData )
-  
    aEval( uDataSource, {|x| iif( lower( cData ) $ lower( x[1] ), aadd( aList, x ), ) } )
-   //hEval( Self:uOrgData, {|k,v,i| msgAlert( k, cData ) } )
 
 RETURN aList
 
 //---------------------------------------------------------------------------//
+
+Static Function aCodigosArticulo()
+
+   local a  := {}
+
+Return a
+
+//---------------------------------------------------------------------------//
+
 //
 // Devuelve el de barras pasandole el codigo interno
 //

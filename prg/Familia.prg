@@ -383,8 +383,10 @@ static function OpenFiles()
       oComentarios:OpenFiles()
 
       oDetCamposExtra      := TDetCamposExtra():New()
-      oDetCamposExtra:OpenFiles()
-      oDetCamposExtra:SetTipoDocumento( "Familias" )
+      if !empty( oDetCamposExtra )
+         oDetCamposExtra:OpenFiles()
+         oDetCamposExtra:SetTipoDocumento( "Familias" )
+      end if
 
    RECOVER USING oError
 
