@@ -78,8 +78,10 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD AddVariableStock() 
 
-   METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido)
-   METHOD GetEntradaPedido( cCodArt, cCodAlm, cLote, cDatoRequerido )
+   METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido )
+      METHOD GetEntradaPedido( cCodArt, cCodAlm, cLote, cDatoRequerido )
+      METHOD GetEntradaAlbaran( cCodArt, cCodAlm, cLote, cDatoRequerido )
+      METHOD GetEntradaAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido )
 
 END CLASS
 
@@ -2870,43 +2872,23 @@ RETURN ( Self )
 
 METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido ) 
 
-   local cDato    
-   local nOrdAntAlbPrv
-   local nOrdAntMovAlm
+   local cDato  := ctod('')  
    
-   nOrdAntAlbPrv     := ::oAlbPrvL:OrdSetFocus( "cRef" )
-   nOrdAntMovAlm     := ::oHisMov:OrdSetFocus( "cStock" )
-
    cDato             := ::GetEntradaPedido( cCodArt, cCodAlm, cLote, cDatoRequerido )   
 
-   //si no esta  en pedido sigo por albaranes
    if Empty( cDato )
-
-   cDato             := ::GetEntradaAlbaran( cCodArt, cCodAlm, cLote, cDatoRequerido )
-
-      if ::oAlbPrvL:Seek( cCodArt)
-
-         while ( Alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
-            if Alltrim( ::oAlbPrvL:cAlmLin ) == cCodAlm .and. Alltrim( ::oAlbPrvL:cLote ) == cLote
-               cDato    := "encotrado en albaranes"       
-            end if
-               ::oAlbPrvL:skip()
-         end while
-      end if  
-
+      cDato          := ::GetEntradaAlbaran( cCodArt, cCodAlm, cLote, cDatoRequerido )     
    end if 
 
    if Empty( cDato )
-         //si no esta en albaranes, sigo por movimientos de almacen
-         if ::oHisMov:Seek( cCodArt )
-            //devuelvo los datos del movimiento
-            cDato    := ::oHisMov:dFecMov           
-         end if
+      cDato          := ::GetEntradaAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido )
    end if
 
+        
+
    
-   ::oAlbPrvL:OrdSetFocus( nOrdAntAlbPrv )
-   ::oHisMov:OrdSetFocus( nOrdAntMovAlm )
+   
+   
 
 RETURN ( cDato )
 
@@ -2923,20 +2905,67 @@ METHOD GetEntradaPedido( cCodArt, cCodAlm, cLote, cDatoRequerido )
    if ::oPedPrvL:Seek( cCodArt ) 
    
       while ( alltrim( ::oPedPrvL:cRef ) == alltrim( cCodArt ) ) .and. !( ::oPedPrvL:Eof() )
+
          if alltrim( ::oPedPrvL:cAlmLin ) == alltrim( cCodAlm ) .and. alltrim( ::oPedPrvL:cLote ) == alltrim( cLote )
-            //necesito la fecha mas reciente
             dFecPed := RetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT:cAlias, "dFecPed" )
             if cDato < dFecPed
                cDato    := dFecPed
-               end if                
+            end if                
          end if
+
          ::oPedPrvL:skip(1)
+
       end while
+
    end if 
 
    ::oPedPrvL:OrdSetFocus( nOrdAntPedPrv )
 
 RETURN ( cDato )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEntradaAlbaran( cCodArt, cCodAlm, cLote, cDatoRequerido )
+
+   local cDato       := ctod('')
+   local dFecAlb
+   local nOrdAntAlbPrv
+
+   nOrdAntAlbPrv     := ::oAlbPrvL:OrdSetFocus( "cRef" )
+
+   if ::oAlbPrvL:Seek( cCodArt)
+
+      while ( Alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
+         if Alltrim( ::oAlbPrvL:cAlmLin ) == cCodAlm .and. Alltrim( ::oAlbPrvL:cLote ) == cLote
+            dFecAlb := ::oAlbPrvL:dFecAlb
+            if cDato < dFecAlb
+               cDato    := dFecAlb       
+            end if 
+         end if
+            ::oAlbPrvL:skip()
+      end while
+   end if  
+
+   ::oAlbPrvL:OrdSetFocus( nOrdAntAlbPrv )
+
+RETURN ( cDato )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEntradaAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido )
+
+   local dFecha := ctod('')
+   local nOrdAntMovAlm
+
+   nOrdAntMovAlm     := ::oHisMov:OrdSetFocus( "cStock" )
+
+   if ::oHisMov:Seek( cCodArt )
+      dFecha    := ::oHisMov:dFecMov           
+   end if
+
+   ::oHisMov:OrdSetFocus( nOrdAntMovAlm )
+
+RETURN ( dFecha )
 
 //---------------------------------------------------------------------------//
 METHOD StartDialog() CLASS TFastVentasArticulos
