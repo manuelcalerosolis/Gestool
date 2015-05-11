@@ -3070,11 +3070,15 @@ RETURN ( Self )
 
 METHOD GuardaDocumentoCerrado()
 
-  ::oTiketCabecera:lAbierto  := .f.
+   if ::oTiketCabecera:nUbiTik == ubiLlevar
+      ::oTiketCabecera:lAbierto  := .t.
+   else
+      ::oTiketCabecera:lAbierto  := .f.
+   end if
 
-  ::GuardaDocumento( .f. )
+   ::GuardaDocumento( .f. )
 
-  ::ProcesaDocumentosInternos()
+   ::ProcesaDocumentosInternos()
 
 RETURN ( Self )
 
