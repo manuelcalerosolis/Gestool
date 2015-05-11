@@ -15422,7 +15422,8 @@ function SynAlbCli( cPath )
                ( D():Get( "AlbCliL", nView ) )->( dbUnLock() )
             end if
          end if
-
+//en el caso de TuRueda,se han rellenado los importes de la ecotasa a albaranes atiguos, que ya la tenian 
+/*
          if Empty( ( D():Get( "AlbCliL", nView ) )->nValImp )
             cCodImp                    := RetFld( ( D():Get( "AlbCliL", nView ) )->CREF, D():Articulos( nView ), "cCodImp" )
             if !Empty( cCodImp )
@@ -15432,6 +15433,7 @@ function SynAlbCli( cPath )
                end if   
             end if
          end if
+*/
 
          if Empty( ( D():Get( "AlbCliL", nView ) )->nVolumen )
             if dbLock( D():Get( "AlbCliL", nView ) )

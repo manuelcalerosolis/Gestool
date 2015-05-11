@@ -19894,6 +19894,8 @@ function SynFacCli( cPath )
          	end if
          end if
 
+   		//en el caso de TuRueda,se han rellenado los importes de la ecotasa a albaranes atiguos, que ya la tenian
+			/*
          if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nValImp )
             cCodImp                    := RetFld( ( dbfFacCliL )->cRef, D():Articulos( nView ), "cCodImp" )
             if !Empty( cCodImp )
@@ -19903,7 +19905,16 @@ function SynFacCli( cPath )
                end if
             end if
          end if
-
+			*/
+			/*
+			if Empty( ( dbfFacCliL )->cCodImp )
+           	if ( dbfFacCliL )->( dbRLock() )
+            	( dbfFacCliL )->nValImp := 0
+            	( dbfFacCliL )->( dbUnLock() )
+           	end if
+         end if
+			*/
+			
          if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nVolumen )
             if ( dbfFacCliL )->( dbRLock() )
                ( dbfFacCliL )->nVolumen   := RetFld( ( dbfFacCliL )->cRef, D():Articulos( nView ), "nVolumen" )

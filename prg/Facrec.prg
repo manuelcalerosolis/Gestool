@@ -13642,14 +13642,16 @@ function SynFacRec( cPath )
 	      if Empty( ( dbfFacRecL )->cLote ) .and. !Empty( ( dbfFacRecL )->nLote )
 	         ( dbfFacRecL )->cLote      := AllTrim( Str( ( dbfFacRecL )->nLote ) )
 	      end if
-	      
+
+/*	      
 	      if Empty( ( dbfFacRecL )->nValImp )
 	         cCodImp                    := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
 	        	if !Empty( cCodImp )
 	            ( dbfFacRecL )->nValImp := oNewImp:nValImp( cCodImp )
 	         end if
 	      end if
-	      
+*/	  			
+
 	      if Empty( ( dbfFacRecL )->nVolumen )
 	         ( dbfFacRecL )->nVolumen   :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
 	      end if

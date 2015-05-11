@@ -78,6 +78,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD AddVariableStock() 
 
+   METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido)
+   METHOD GetEntradaPedido( cCodArt, cCodAlm, cLote, cDatoRequerido )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -2865,6 +2868,77 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido ) 
+
+   local cDato    
+   local nOrdAntAlbPrv
+   local nOrdAntMovAlm
+   
+   nOrdAntAlbPrv     := ::oAlbPrvL:OrdSetFocus( "cRef" )
+   nOrdAntMovAlm     := ::oHisMov:OrdSetFocus( "cStock" )
+
+   cDato             := ::GetEntradaPedido( cCodArt, cCodAlm, cLote, cDatoRequerido )   
+
+   //si no esta  en pedido sigo por albaranes
+   if Empty( cDato )
+
+   cDato             := ::GetEntradaAlbaran( cCodArt, cCodAlm, cLote, cDatoRequerido )
+
+      if ::oAlbPrvL:Seek( cCodArt)
+
+         while ( Alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
+            if Alltrim( ::oAlbPrvL:cAlmLin ) == cCodAlm .and. Alltrim( ::oAlbPrvL:cLote ) == cLote
+               cDato    := "encotrado en albaranes"       
+            end if
+               ::oAlbPrvL:skip()
+         end while
+      end if  
+
+   end if 
+
+   if Empty( cDato )
+         //si no esta en albaranes, sigo por movimientos de almacen
+         if ::oHisMov:Seek( cCodArt )
+            //devuelvo los datos del movimiento
+            cDato    := ::oHisMov:dFecMov           
+         end if
+   end if
+
+   
+   ::oAlbPrvL:OrdSetFocus( nOrdAntAlbPrv )
+   ::oHisMov:OrdSetFocus( nOrdAntMovAlm )
+
+RETURN ( cDato )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEntradaPedido( cCodArt, cCodAlm, cLote, cDatoRequerido )
+
+   local nOrdAntPedPrv
+   local cDato := ctod('')
+   local dFecPed
+
+   nOrdAntPedPrv     := ::oPedPrvL:OrdSetFocus( "cRef" )
+
+   if ::oPedPrvL:Seek( cCodArt ) 
+   
+      while ( alltrim( ::oPedPrvL:cRef ) == alltrim( cCodArt ) ) .and. !( ::oPedPrvL:Eof() )
+         if alltrim( ::oPedPrvL:cAlmLin ) == alltrim( cCodAlm ) .and. alltrim( ::oPedPrvL:cLote ) == alltrim( cLote )
+            //necesito la fecha mas reciente
+            dFecPed := RetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT:cAlias, "dFecPed" )
+            if cDato < dFecPed
+               cDato    := dFecPed
+               end if                
+         end if
+         ::oPedPrvL:skip(1)
+      end while
+   end if 
+
+   ::oPedPrvL:OrdSetFocus( nOrdAntPedPrv )
+
+RETURN ( cDato )
+
+//---------------------------------------------------------------------------//
 METHOD StartDialog() CLASS TFastVentasArticulos
 
    /*
