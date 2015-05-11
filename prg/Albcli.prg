@@ -15434,6 +15434,14 @@ function SynAlbCli( cPath )
             end if
          end if
 */
+/*
+         if Empty( ( D():Get( "AlbCliL", nView ) )->cCodImp )
+            if dbLock( D():Get( "AlbCliL", nView ) )
+               ( D():Get( "AlbCliL", nView ) )->nValImp := 0
+               ( D():Get( "AlbCliL", nView ) )->( dbUnlock() )
+            end if   
+         end if
+*/
 
          if Empty( ( D():Get( "AlbCliL", nView ) )->nVolumen )
             if dbLock( D():Get( "AlbCliL", nView ) )
