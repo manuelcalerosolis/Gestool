@@ -2884,12 +2884,6 @@ METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido )
       cDato          := ::GetEntradaAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido )
    end if
 
-        
-
-   
-   
-   
-
 RETURN ( cDato )
 
 //---------------------------------------------------------------------------//
@@ -2913,7 +2907,7 @@ METHOD GetEntradaPedido( cCodArt, cCodAlm, cLote, cDatoRequerido )
             end if                
          end if
 
-         ::oPedPrvL:skip(1)
+         ::oPedPrvL:skip()
 
       end while
 
@@ -2935,8 +2929,8 @@ METHOD GetEntradaAlbaran( cCodArt, cCodAlm, cLote, cDatoRequerido )
 
    if ::oAlbPrvL:Seek( cCodArt)
 
-      while ( Alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
-         if Alltrim( ::oAlbPrvL:cAlmLin ) == cCodAlm .and. Alltrim( ::oAlbPrvL:cLote ) == cLote
+      while ( alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
+         if alltrim( ::oAlbPrvL:cAlmLin ) == cCodAlm .and. alltrim( ::oAlbPrvL:cLote ) == cLote
             dFecAlb := ::oAlbPrvL:dFecAlb
             if cDato < dFecAlb
                cDato    := dFecAlb       
@@ -2954,18 +2948,28 @@ RETURN ( cDato )
 
 METHOD GetEntradaAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido )
 
-   local dFecha := ctod('')
+   local cDato := ctod('')
+   local dFecha
    local nOrdAntMovAlm
 
    nOrdAntMovAlm     := ::oHisMov:OrdSetFocus( "cStock" )
 
    if ::oHisMov:Seek( cCodArt )
-      dFecha    := ::oHisMov:dFecMov           
+      while ( alltrim( ::oHisMov:cRefMov ) ) == alltrim( cCodArt ) .and. !( ::oHisMov:Eof() )
+         if (alltrim( ::oHisMov:cAliMov ) == alltrim( cCodAlm ) ) .and. ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
+            dFecha    := ::oHisMov:dFecMov   
+            if cDato < dFecha
+               cDato := dFecha          
+            end if
+         end if
+         ::oHisMov:skip()
+      end while
+
    end if
 
    ::oHisMov:OrdSetFocus( nOrdAntMovAlm )
 
-RETURN ( dFecha )
+RETURN ( cDato )
 
 //---------------------------------------------------------------------------//
 METHOD StartDialog() CLASS TFastVentasArticulos
