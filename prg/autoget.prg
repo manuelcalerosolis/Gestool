@@ -381,7 +381,6 @@ METHOD New( nTop, nLeft, oWnd, nWidth, nHeight, oGet, aGradItem, aGradList, nClr
    ::Create()
    ::nMaxHeight := ::nHeight
 
-
 return Self
 
 //---------------------------------------------------------------------------//
