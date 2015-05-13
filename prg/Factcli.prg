@@ -13060,29 +13060,23 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 			end if	
 
 			aTmp[ _NREQ ]		:= nReq( dbfIva, cDefIva() )
-
 		end if
 
-		if !Empty( oStkAct )
-
+		if !empty( oStkAct )
 			if !uFieldEmpresa( "lNStkAct" )
 				oStkAct:Show()
 				oStkAct:cText( 0 )
 			else
 				oStkAct:Hide()
 			end if
-
 		end if
 
-		aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
-
 		if !empty( aGet[ __CCENTROCOSTE ] )
+         aGet[ __CCENTROCOSTE ]:cText( aTmpFac[ _CCENTROCOSTE ] )
 			aGet[ __CCENTROCOSTE ]:lValid()
 		endif
 
-
-
-   	case ( nMode == EDIT_MODE .OR. nMode == ZOOM_MODE )
+   case ( nMode == EDIT_MODE .OR. nMode == ZOOM_MODE )
 
 		if !Empty( cCodArt )
 		 
@@ -13106,7 +13100,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 					aGet[_MLNGDES ]:show()
 				end if
 
-				else
+			else
 
 				if !Empty( aGet[_CDETALLE] )
 					aGet[_CDETALLE]:show()

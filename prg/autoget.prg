@@ -8,13 +8,113 @@ TAutoget
 
 #define CS_DROPSHADOW       0x00020000
 #define GCL_STYLE           (-26)
-#define DEFAULT_GUI_FONT     17
-#define TME_LEAVE             2   
+#define DEFAULT_GUI_FONT    17
+#define TME_LEAVE           2   
 #define WM_MOUSELEAVE       675
-#define COLOR_CAPTIONTEXT       9
+
+#define COLOR_WINDOW        5
+#define COLOR_WINDOWTEXT    8
+#define COLOR_BTNFACE       15
+#define COLOR_HIGHLIGHT     13
 
 
 #define DATATYPE_HASH 256
+
+CLASS TAutoCombo FROM TComboBox
+
+   DATA aOriginalList               INIT  {}
+
+   METHOD setOrginalList( aList )   INLINE ( ::aOriginalList := aList )
+
+   METHOD KeyChar( nKey, nFlags )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD KeyChar( nKey, nFlags ) CLASS TAutoCombo
+
+   local nNewAT := 0, nOldAT := ::nAT, uItem
+
+   msgStop( "keychar")
+
+   if Len( ::aItems ) == 0
+      return 0
+   endif
+
+   if ::lIncSearch
+      do case
+         case nKey = 32   // VK_DELETE (DO NOT WORK!)
+              if Empty( ::oGet:hWnd )
+                 ::cSearchKey = ""
+                 nNewAt = 1
+                 uItem  = ::aItems[ nNewAt ]
+              else
+                 ::cSearchKey += " "
+              endif
+
+         case nKey = VK_BACK
+              ::cSearchKey = Left( ::cSearchKey, Len( ::cSearchKey ) - 1 )
+
+         case nKey = 190
+              nKey = 0
+              ::cSearchKey += "."
+
+         case ! Empty( ::oGet:hWnd ) .and. nKey = VK_TAB
+              if ! GetKeyState( VK_SHIFT )
+                 ::oWnd:GoNextCtrl( ::hWnd )
+              else
+                 ::oWnd:GoPrevCtrl( ::hWnd )
+              endif
+              return 0
+
+         otherwise
+              if ::lCaseSensitive
+                 ::cSearchKey += Chr( nKey )
+              else
+                ::cSearchKey += Upper( Chr( nKey ) )
+              endif
+      endcase
+
+      msgStop( ::cSearchKey, "cSearchKey" )
+
+      if Empty( uItem )
+         if nNewAt == 0
+            if ::lCaseSensitive
+               nNewAt = AScan( ::aItems, { | x | SubStr( x, 1, Len( ::cSearchKey ) ) == ::cSearchKey } )
+            else
+               nNewAt = AScan( ::aItems, { | x | SubStr( Upper( x ), 1, Len( ::cSearchKey ) ) == ::cSearchKey } )
+            endif
+            if Empty( ::oGet:hWnd )
+               uItem = ::aItems[ If( nNewAt > 0, nNewAt, Max( ::nAT, 1 ) ) ]
+            else
+               uItem = If( nNewAt > 0, ::aItems[ nNewAt ], ::cSearchKey )
+               MsgInfo( uItem )
+            endif
+         else
+            uItem = ::aItems[ Max( nNewAt, 1) ]
+         endif
+      endif
+      ::Set( If( ValType( Eval( ::bSetGet ) ) == "N", AScan( ::aItems, uItem ), uItem ) )
+      if ! Empty( ::oGet:hWnd )
+         ::oGet:SetPos( Len( ::cSearchKey ) + 1 )
+      endif
+   endif
+
+   if ::bChange != nil
+      if ! Empty( ::oGet:hWnd ) .or. ( nNewAT != nOldAt .and. nNewAt != 0 )
+         Eval( ::bChange, Self, ::VarGet() )
+      endif
+   endif
+
+   if nKey == VK_RETURN
+      return ::oWnd:GoNextCtrl( ::hWnd )
+   endif
+
+return If( ::lIncSearch, 0, nil )
+
+//----------------------------------------------------------------------------//
+
 
 CLASS TAutoGet FROM TGet
 
@@ -86,7 +186,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
                     aGradList := { { 1, nRGB( 248, 248, 248 ), nRGB( 228, 228, 228 ) } },;
                     nClrLine  := nRGB( 251, 203, 9 ),;//nRGB( 184, 214, 251 )
                     nClrSel  := nRGB( 199, 116, 5 ),;
-                    nClrText := GetSysColor( COLOR_CAPTIONTEXT )
+                    nClrText := GetSysColor( COLOR_WINDOWTEXT ) //GetSysColor( COLOR_CAPTIONTEXT )
 
    ::cField   = Flds
    ::nLHeight = nLHeight 
@@ -120,12 +220,20 @@ METHOD ReDefine( nId,       bSetGet,  oWnd,    nHelpId, cPict,   bValid, nClrFor
 
    DEFAULT Flds     := 1
    DEFAULT nLHeight := 170
+/*
    DEFAULT          aGradItem := { { 1/2, nRGB( 253, 249, 225 ), nRGB( 253, 249, 225 ) },;
    	                           { 1/2, nRGB( 253, 245, 206 ), nRGB( 253, 249, 225 ) } },;
                     aGradList := { { 1, nRGB( 248, 248, 248 ), nRGB( 228, 228, 228 ) } },;
                     nClrLine  := nRGB( 251, 203, 9 ),;//nRGB( 184, 214, 251 )
                     nClrSel   := nRGB( 199, 116, 5 ),;
                     nClrText  := GetSysColor( COLOR_CAPTIONTEXT )
+*/
+   DEFAULT          aGradItem := { { 1, nRGB( 255, 255, 225 ), nRGB( 255, 255, 225 ) } },;
+                    aGradList := { { 1, nRGB( 255, 255, 225 ), nRGB( 255, 255, 225 ) } },;
+                    nClrLine  := GetSysColor( COLOR_WINDOWTEXT ),; // nRGB( 251, 203, 9 ),;//nRGB( 184, 214, 251 )
+                    nClrSel   := GetSysColor( COLOR_WINDOWTEXT ),;
+                    nClrText  := GetSysColor( COLOR_WINDOWTEXT ) // GetSysColor( COLOR_CAPTIONTEXT )
+
                     
    ::cField   = Flds
    ::nLHeight = nLHeight 
@@ -287,7 +395,6 @@ CLASS TGetList FROM TControl
    DATA nClrLine    //will be custom
    DATA nClrText, nClrSel
    
-   
    DATA uOrgValue
    
    DATA bKeyCount
@@ -336,7 +443,6 @@ CLASS TGetList FROM TControl
 
    METHOD RowCount()     INLINE Int( ::nHeight  / ::nRowHeight )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -359,7 +465,7 @@ METHOD New( nTop, nLeft, oWnd, nWidth, nHeight, oGet, aGradItem, aGradList, nClr
    ::lCaptured = .f.
    ::oGet      = oGet
    ::Register()
-   ::aGradItem     = aGradItem
+   ::aGradItem = aGradItem
    ::aGradList = aGradList
    ::nClrLine  = nClrLine
    ::nClrText  = nClrText
@@ -380,7 +486,6 @@ METHOD New( nTop, nLeft, oWnd, nWidth, nHeight, oGet, aGradItem, aGradList, nClr
    
    ::Create()
    ::nMaxHeight := ::nHeight
-
 
 return Self
 
@@ -532,8 +637,8 @@ METHOD Paint() CLASS TGetList
    local aInfo 
    local aRect  := GetClientRect( ::hWnd )
    local n, nRowPos
-   local nMaxRow := ::RowCount()
-   local aBack := ::aGradList 
+   local nMaxRow  := ::RowCount()
+   local aBack    := ::aGradList 
    
    aInfo   = ::DispBegin()
    
@@ -615,18 +720,13 @@ return nHeight
 static function IsRecordSet( o )
 
    local lRecSet  := .f.
-
-#ifdef __XHARBOUR__
-   lRecSet  := ( o:IsDerivedFrom( "TOLEAUTO" ) .and. "RECORDSET" $ Upper( o:cClassName ) )
-#else
    local u
 
    TRY
-      u  := o:Fields:Count()
-      lRecSet  := .t.
+      u           := o:Fields:Count()
+      lRecSet     := .t.
    CATCH
    END
-#endif
 
 return lRecSet
 

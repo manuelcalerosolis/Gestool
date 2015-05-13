@@ -788,7 +788,9 @@ static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oB
 
    oGraph:Refresh()
 
-   oBrwMaquinaria:Load()
+   if !empty(oBrwMaquinaria)
+      oBrwMaquinaria:Load()
+   end if 
 
    if lSatCli   
       oBtnAceptar:Show()

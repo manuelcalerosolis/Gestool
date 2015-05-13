@@ -11343,6 +11343,7 @@ Function buscarTipologias()
    local oGetTemporada
    local oGetFabricante
    local oGetEstado
+<<<<<<< HEAD
    local cGetFamilia := space( 200 )
    local cGetTipo := space( 200 )
    local cGetCategoria := space( 200 )
@@ -11357,6 +11358,24 @@ Function buscarTipologias()
          RESOURCE "zoom_in_48" ;
          TRANSPARENT ;
          OF       oDlg 
+=======
+   local cGetCodigo     := space( 100 )
+   local cGetNombre     := ""
+   local cGetFamilia    := space( 200 )
+   local cGetTipo       := space( 200 )
+   local cGetCategoria  := space( 200 )
+   local cGetTemporada  := space( 200 )
+   local cGetFabricante := space( 200 )
+   local cGetEstado     := space( 200 )
+   local aCountries     := {"", "Afghanistan", "Islands", "Albania", "Alemania" } 
+
+   DEFINE DIALOG oDlg RESOURCE "Buscar_tipologias"
+
+      oGetCodigo     := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, cGetCodigo, cGetCodigo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCodigo",, aCodigosArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      
+      oGetNombre              := TAutoCombo():ReDefine( 110, { | u | iif( pcount() == 0, cGetNombre, cGetNombre := u ) }, aCountries, oDlg,,,,,,, .f. )
+      oGetNombre:lIncSearch   := .t.
+>>>>>>> origin/master
 
       oGetFamilia    := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, cGetFamilia, cGetFamilia := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFamilia",, aNombresFamilias(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
       oGetTipo       := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, cGetTipo, cGetTipo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, aNombresTipoArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )      
@@ -11378,10 +11397,6 @@ Function buscarTipologias()
          ACTION      ( oDlg:end() )
 
    ACTIVATE DIALOG oDlg CENTER
-
-   if !Empty( oBmp )
-      oBmp:End()
-   end if
 
 RETURN NIL
 

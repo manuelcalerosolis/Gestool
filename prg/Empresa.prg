@@ -7653,6 +7653,11 @@ function ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
    local cCodEmp  := ""
    local cNomEmp  := ""
 
+   if lAIS()
+      msgStop( "Esta opción no esta disponible para versiones ADS.", "Actualizar empresas." )
+      Return nil
+   end if 
+
    // Paramos los servicios----------------------------------------------------
 
    CursorWait()
