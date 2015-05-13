@@ -13100,7 +13100,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 					aGet[_MLNGDES ]:show()
 				end if
 
-				else
+			else
 
 				if !Empty( aGet[_CDETALLE] )
 					aGet[_CDETALLE]:show()

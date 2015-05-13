@@ -212,6 +212,7 @@ CLASS TStock
 
    METHOD aStockArticulo( cCodArt )
       METHOD nStockArticulo( cCodArt )
+      METHOD nBultosArticulo( cCodArt )
       METHOD nStockSerie( cCodArt, cCodAlm, uNumeroSerie )
       METHOD aStockAlmacen( oRemMov )
 
@@ -4339,6 +4340,19 @@ Return ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
 
+METHOD nBultosArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin ) CLASS TStock
+
+   local nBultosArticulo := 0
+
+   ::aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFecFin )
+
+   aEval( ::aStocks, {|o| nBultosArticulo += o:nBultos } )
+
+Return ( nBultosArticulo )
+
+//---------------------------------------------------------------------------//
+
+
 METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
    local nStockArticulo := 0
@@ -4685,6 +4699,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cAlbPrvL )->cValPr1
                      :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
                      :cLote               := ( ::cAlbPrvL )->cLote
+                     :nBultos             := ( ::cAlbPrvL )->nBultos
                      :nUnidades           := nTotNAlbPrv( ::cAlbPrvL )
                      ::Integra( hb_QWith() )
                   end with
@@ -6558,6 +6573,7 @@ CLASS SStock
    DATA nPendientesEntregar   INIT 0
    DATA cNumeroDocumento      INIT ""
    DATA cTipoDocumento        INIT ""
+   DATA nBultos               INIT 0
 
    //------------------------------------------------------------------------//
    

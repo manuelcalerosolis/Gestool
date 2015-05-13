@@ -569,7 +569,6 @@ FUNCTION IsVisor()
    local oBlock
    local oError
    local dbfVisor
-   local lIsVisor  := .f.
 
    if !lExistTable( cPatDat() + "VISOR.DBF" )
       mkVisor( cPatDat() )
@@ -582,39 +581,36 @@ FUNCTION IsVisor()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatDat() + "VISOR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "VISOR", @dbfVisor ) )
-   SET ADSINDEX TO ( cPatDat() + "VISOR.CDX" ) ADDITIVE
+       USE ( cPatDat() + "VISOR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "VISOR", @dbfVisor ) )
+       SET ADSINDEX TO ( cPatDat() + "VISOR.CDX" ) ADDITIVE
 
-   ( dbfVisor )->( __dbLocate( { || ( dbfVisor )->cCodVis == "000" } ) )
-   if!( dbfVisor )->( Found() )
-      ( dbfVisor )->( dbAppend() )
-      ( dbfVisor )->cCodVis      := "000"
-      ( dbfVisor )->cNomVis      := "Visor por defecto"
-      ( dbfVisor )->cPort        := "COM1"
-      ( dbfVisor )->nBitSec      := 9600
-      ( dbfVisor )->nBitPar      := 1
-      ( dbfVisor )->nBitDat      := 8
-      ( dbfVisor )->cBitPari     := "Sin paridad"
-      ( dbfVisor )->nLinea       := 2
-      ( dbfVisor )->nChaLin      := 20
-      ( dbfVisor )->cRetro       := ""              //Retroceso del visor
-      ( dbfVisor )->cAvCha       := ""              //Avance caracter del visor
-      ( dbfVisor )->cAvLin       := ""              //Avance linea del visor
-      ( dbfVisor )->cReset       := "12"            //Reset del visor
-      ( dbfVisor )->cEscNor      := ""              //Escritura normal
-      ( dbfVisor )->cEscDes      := ""              //Escritura desplazada
-      ( dbfVisor )->cPosIni      := ""              //Posición de inicio
-      ( dbfVisor )->cPosFin      := ""              //Posición de fin
-      ( dbfVisor )->cPriFil      := ""              //Primera fila
-      ( dbfVisor )->cPriCol      := ""              //Primera columna
-      ( dbfVisor )->cText1       := ""              //Texto defec. primera linea
-      ( dbfVisor )->cText2       := ""              //Texto defec. segunda linea
-      ( dbfVisor )->nInact       := 15              //Segundos de inactividad del visor
-      ( dbfVisor )->( dbUnLock() )
-
-   end if
-
-   lIsVisor        := .t.
+       ( dbfVisor )->( __dbLocate( { || ( dbfVisor )->cCodVis == "000" } ) )
+       if!( dbfVisor )->( Found() )
+          ( dbfVisor )->( dbAppend() )
+          ( dbfVisor )->cCodVis      := "000"
+          ( dbfVisor )->cNomVis      := "Visor por defecto"
+          ( dbfVisor )->cPort        := "COM1"
+          ( dbfVisor )->nBitSec      := 9600
+          ( dbfVisor )->nBitPar      := 1
+          ( dbfVisor )->nBitDat      := 8
+          ( dbfVisor )->cBitPari     := "Sin paridad"
+          ( dbfVisor )->nLinea       := 2
+          ( dbfVisor )->nChaLin      := 20
+          ( dbfVisor )->cRetro       := ""              //Retroceso del visor
+          ( dbfVisor )->cAvCha       := ""              //Avance caracter del visor
+          ( dbfVisor )->cAvLin       := ""              //Avance linea del visor
+          ( dbfVisor )->cReset       := "12"            //Reset del visor
+          ( dbfVisor )->cEscNor      := ""              //Escritura normal
+          ( dbfVisor )->cEscDes      := ""              //Escritura desplazada
+          ( dbfVisor )->cPosIni      := ""              //Posición de inicio
+          ( dbfVisor )->cPosFin      := ""              //Posición de fin
+          ( dbfVisor )->cPriFil      := ""              //Primera fila
+          ( dbfVisor )->cPriCol      := ""              //Primera columna
+          ( dbfVisor )->cText1       := ""              //Texto defec. primera linea
+          ( dbfVisor )->cText2       := ""              //Texto defec. segunda linea
+          ( dbfVisor )->nInact       := 15              //Segundos de inactividad del visor
+          ( dbfVisor )->( dbUnLock() )
+       end if
 
    RECOVER USING oError
 
@@ -626,7 +622,7 @@ FUNCTION IsVisor()
 
    CLOSE ( dbfVisor )
 
-RETURN ( lIsVisor )
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 /*
