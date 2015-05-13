@@ -414,6 +414,7 @@ Lenguajes.prg                          \
 CentroCoste.Prg                        \
 Autoget.prg                            \
 EstadoSat.prg                          \
+TSpecialSearchArticulo.prg             \
 
 C               =       	\
 Img2pdf.c               	\
@@ -819,6 +820,7 @@ DetCamposExtra.obj                     \
 EstadoSat.obj                          \
 Centrocoste.obj                        \
 Autoget.obj                            \
+TSpecialSearchArticulo.obj             \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1209,6 +1211,7 @@ $(OBJ)\Lenguajes.obj                         +
 $(OBJ)\EstadoSat.obj                         +
 $(OBJ)\Ventas.obj                            +
 $(OBJ)\CentroCoste.Obj                       +
+$(OBJ)\TSpecialSearchArticulo.obj            +
 $(OBJ)\Autoget.Obj                  
 $<,$*
 $(FWLIB)\FiveH.lib               +

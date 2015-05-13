@@ -1821,7 +1821,7 @@ Function CreateAcceso( oWnd )
    // Busquedas----------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 2
+   oGrupo:nBigItems     := 3
    oGrupo:cPrompt       := 'Búsquedas'
    oGrupo:cLittleBitmap := "Package_Find_16"
    oGrupo:cBigBitmap    := "Package_Find_32"
@@ -1845,6 +1845,17 @@ Function CreateAcceso( oWnd )
    oItem:cId            := "01023"
    oItem:cBmp           := "Package_View_16"
    oItem:cBmpBig        := "Package_View_32"
+   oItem:lShow          := .f.
+   oItem:lLittle        := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Búsqueda especial'
+   oItem:cMessage       := 'Búsqueda especial'
+   oItem:bAction        := {|| tSpecialSearchArticulo():New( "01127", oWnd ) }
+   oItem:cId            := "01127"
+   oItem:cBmp           := "zoom_in_16"
+   oItem:cBmpBig        := "zoom_in_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .f.
 
@@ -3486,6 +3497,12 @@ Function BuildMenu()
                      HELPID   "01023" ;
                      RESOURCE "Package_View_16" ;
 
+                  MENUITEM    "&I. Búsqueda especial";
+                     MESSAGE  "Búsqueda especial" ;
+                     ACTION   ( tSpecialSearchArticulo():New( oMenuItem, oWnd ) ) ;
+                     HELPID   "01127" ;
+                     RESOURCE "zoom_in_16" ;
+
                ENDMENU
 
             MENUITEM    "&8. Clientes";
@@ -3493,7 +3510,7 @@ Function BuildMenu()
                RESOURCE "User1_16" ;
 
                MENU
-                  MENUITEM    "&1. Grupos";
+                  MENUITEM    "&1. Grupos"; 
                      HELPID   "01030" ;
                      MESSAGE  "Base de datos de grupos de clientes" ;
                      ACTION   ( TGrpCli():New( cPatCli(), oWnd, oMenuItem ):Activate() );

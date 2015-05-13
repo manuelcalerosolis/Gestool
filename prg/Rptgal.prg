@@ -2510,6 +2510,8 @@ Return nil
 Function TCentroCoste()
 Return nil
 
+Function TSPECIALSEARCHARTICULO
+Return nil
 
 //------------------------------------------------------------------//
 

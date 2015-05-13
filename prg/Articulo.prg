@@ -1241,9 +1241,9 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       oWndBrw:AddSeaBar()
 
-      DEFINE BTNSHELL RESOURCE "zoom_in_" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( buscarTipologias() ) ; // buscarExtendido() ) ;
+         ACTION   ( buscarExtendido() ) ; //buscarTipologias()
          TOOLTIP  "Buscar e(x)tendido" ;
          HOTKEY   "X"
 
@@ -11337,267 +11337,18 @@ Function buscarTipologias()
 
    local oDlg
    local oBmp
-   local oGetCodigo
-   local oGetNombre
    local oGetFamilia
    local oGetTipo
    local oGetCategoria
    local oGetTemporada
    local oGetFabricante
    local oGetEstado
-   local cGetCodigo := space( 100 )
-   local cGetNombre := space( 200 )
    local cGetFamilia := space( 200 )
    local cGetTipo := space( 200 )
    local cGetCategoria := space( 200 )
    local cGetTemporada := space( 200 )
    local cGetFabricante := space( 200 )
    local cGetEstado := space( 200 )
-   local aCountries  := {;
-      {"Afghanistan", 'AF'},; 
-      {"Åland Islands", 'AX'},; 
-      {"Albania", 'AL'},; 
-      {"Algeria", 'DZ'},; 
-      {"American Samoa", 'AS'},; 
-      {"AndorrA", 'AD'},; 
-      {"Angola", 'AO'},; 
-      {"Anguilla", 'AI'},; 
-      {"Antarctica", 'AQ'},; 
-      {"Antigua and Barbuda", 'AG'},; 
-      {"Argentina", 'AR'},; 
-      {"Armenia", 'AM'},; 
-      {"Aruba", 'AW'},; 
-      {"Australia", 'AU'},; 
-      {"Austria", 'AT'},; 
-      {"Azerbaijan", 'AZ'},; 
-      {"Bahamas", 'BS'},; 
-      {"Bahrain", 'BH'},; 
-      {"Bangladesh", 'BD'},; 
-      {"Barbados", 'BB'},; 
-      {"Belarus", 'BY'},; 
-      {"Belgium", 'BE'},; 
-      {"Belize", 'BZ'},; 
-      {"Benin", 'BJ'},; 
-      {"Bermuda", 'BM'},; 
-      {"Bhutan", 'BT'},; 
-      {"Bolivia", 'BO'},; 
-      {"Bosnia and Herzegovina", 'BA'},; 
-      {"Botswana", 'BW'},; 
-      {"Bouvet Island", 'BV'},; 
-      {"Brazil", 'BR'},; 
-      {"British Indian Ocean Territory", 'IO'},; 
-      {"Brunei Darussalam", 'BN'},; 
-      {"Bulgaria", 'BG'},; 
-      {"Burkina Faso", 'BF'},; 
-      {"Burundi", 'BI'},; 
-      {"Cambodia", 'KH'},; 
-      {"Cameroon", 'CM'},; 
-      {"Canada", 'CA'},; 
-      {"Cape Verde", 'CV'},; 
-      {"Cayman Islands", 'KY'},; 
-      {"Central African Republic", 'CF'},; 
-      {"Chad", 'TD'},; 
-      {"Chile", 'CL'},; 
-      {"China", 'CN'},; 
-      {"Christmas Island", 'CX'},; 
-      {"Cocos (Keeling) Islands", 'CC'},; 
-      {"Colombia", 'CO'},; 
-      {"Comoros", 'KM'},; 
-      {"Congo", 'CG'},; 
-      {"Congo, The Democratic Republic of the", 'CD'},; 
-      {"Cook Islands", 'CK'},; 
-      {"Costa Rica", 'CR'},; 
-      {"Cote D'Ivoire", 'CI'},; 
-      {"Croatia", 'HR'},; 
-      {"Cuba", 'CU'},; 
-      {"Cyprus", 'CY'},; 
-      {"Czech Republic", 'CZ'},; 
-      {"Denmark", 'DK'},; 
-      {"Djibouti", 'DJ'},; 
-      {"Dominica", 'DM'},; 
-      {"Dominican Republic", 'DO'},; 
-      {"Ecuador", 'EC'},; 
-      {"Egypt", 'EG'},; 
-      {"El Salvador", 'SV'},; 
-      {"Equatorial Guinea", 'GQ'},; 
-      {"Eritrea", 'ER'},; 
-      {"Estonia", 'EE'},; 
-      {"Ethiopia", 'ET'},; 
-      {"Falkland Islands (Malvinas)", 'FK'},; 
-      {"Faroe Islands", 'FO'},; 
-      {"Fiji", 'FJ'},; 
-      {"Finland", 'FI'},; 
-      {"France", 'FR'},; 
-      {"French Guiana", 'GF'},; 
-      {"French Polynesia", 'PF'},; 
-      {"French Southern Territories", 'TF'},; 
-      {"Gabon", 'GA'},; 
-      {"Gambia", 'GM'},; 
-      {"Georgia", 'GE'},; 
-      {"Germany", 'DE'},; 
-      {"Ghana", 'GH'},; 
-      {"Gibraltar", 'GI'},; 
-      {"Greece", 'GR'},; 
-      {"Greenland", 'GL'},; 
-      {"Grenada", 'GD'},; 
-      {"Guadeloupe", 'GP'},; 
-      {"Guam", 'GU'},; 
-      {"Guatemala", 'GT'},; 
-      {"Guernsey", 'GG'},; 
-      {"Guinea", 'GN'},; 
-      {"Guinea-Bissau", 'GW'},; 
-      {"Guyana", 'GY'},; 
-      {"Haiti", 'HT'},; 
-      {"Heard Island and Mcdonald Islands", 'HM'},; 
-      {"Holy See (Vatican City State)", 'VA'},; 
-      {"Honduras", 'HN'},; 
-      {"Hong Kong", 'HK'},; 
-      {"Hungary", 'HU'},; 
-      {"Iceland", 'IS'},; 
-      {"India", 'IN'},; 
-      {"Indonesia", 'ID'},; 
-      {"Iran, Islamic Republic Of", 'IR'},; 
-      {"Iraq", 'IQ'},; 
-      {"Ireland", 'IE'},; 
-      {"Isle of Man", 'IM'},; 
-      {"Israel", 'IL'},; 
-      {"Italy", 'IT'},; 
-      {"Jamaica", 'JM'},; 
-      {"Japan", 'JP'},; 
-      {"Jersey", 'JE'},; 
-      {"Jordan", 'JO'},; 
-      {"Kazakhstan", 'KZ'},; 
-      {"Kenya", 'KE'},; 
-      {"Kiribati", 'KI'},; 
-      {"Korea, Democratic People\'S Republic of", 'KP'},; 
-      {"Korea, Republic of", 'KR'},; 
-      {"Kuwait", 'KW'},; 
-      {"Kyrgyzstan", 'KG'},; 
-      {"Lao People\'S Democratic Republic", 'LA'},; 
-      {"Latvia", 'LV'},; 
-      {"Lebanon", 'LB'},; 
-      {"Lesotho", 'LS'},; 
-      {"Liberia", 'LR'},; 
-      {"Libyan Arab Jamahiriya", 'LY'},; 
-      {"Liechtenstein", 'LI'},; 
-      {"Lithuania", 'LT'},; 
-      {"Luxembourg", 'LU'},; 
-      {"Macao", 'MO'},; 
-      {"Macedonia, The Former Yugoslav Republic of", 'MK'},; 
-      {"Madagascar", 'MG'},; 
-      {"Malawi", 'MW'},; 
-      {"Malaysia", 'MY'},; 
-      {"Maldives", 'MV'},; 
-      {"Mali", 'ML'},; 
-      {"Malta", 'MT'},; 
-      {"Marshall Islands", 'MH'},; 
-      {"Martinique", 'MQ'},; 
-      {"Mauritania", 'MR'},; 
-      {"Mauritius", 'MU'},; 
-      {"Mayotte", 'YT'},; 
-      {"Mexico", 'MX'},; 
-      {"Micronesia, Federated States of", 'FM'},; 
-      {"Moldova, Republic of", 'MD'},; 
-      {"Monaco", 'MC'},; 
-      {"Mongolia", 'MN'},; 
-      {"Montserrat", 'MS'},; 
-      {"Morocco", 'MA'},; 
-      {"Mozambique", 'MZ'},; 
-      {"Myanmar", 'MM'},; 
-      {"Namibia", 'NA'},; 
-      {"Nauru", 'NR'},; 
-      {"Nepal", 'NP'},; 
-      {"Netherlands", 'NL'},; 
-      {"Netherlands Antilles", 'AN'},; 
-      {"New Caledonia", 'NC'},; 
-      {"New Zealand", 'NZ'},; 
-      {"Nicaragua", 'NI'},; 
-      {"Niger", 'NE'},; 
-      {"Nigeria", 'NG'},; 
-      {"Niue", 'NU'},; 
-      {"Norfolk Island", 'NF'},; 
-      {"Northern Mariana Islands", 'MP'},; 
-      {"Norway", 'NO'},; 
-      {"Oman", 'OM'},; 
-      {"Pakistan", 'PK'},; 
-      {"Palau", 'PW'},; 
-      {"Palestinian Territory, Occupied", 'PS'},; 
-      {"Panama", 'PA'},; 
-      {"Papua New Guinea", 'PG'},; 
-      {"Paraguay", 'PY'},; 
-      {"Peru", 'PE'},; 
-      {"Philippines", 'PH'},; 
-      {"Pitcairn", 'PN'},; 
-      {"Poland", 'PL'},; 
-      {"Portugal", 'PT'},; 
-      {"Puerto Rico", 'PR'},; 
-      {"Qatar", 'QA'},; 
-      {"Reunion", 'RE'},; 
-      {"Romania", 'RO'},; 
-      {"Russian Federation", 'RU'},; 
-      {"RWANDA", 'RW'},; 
-      {"Saint Helena", 'SH'},; 
-      {"Saint Kitts and Nevis", 'KN'},; 
-      {"Saint Lucia", 'LC'},; 
-      {"Saint Pierre and Miquelon", 'PM'},; 
-      {"Saint Vincent and the Grenadines", 'VC'},; 
-      {"Samoa", 'WS'},; 
-      {"San Marino", 'SM'},; 
-      {"Sao Tome and Principe", 'ST'},; 
-      {"Saudi Arabia", 'SA'},; 
-      {"Senegal", 'SN'},; 
-      {"Serbia and Montenegro", 'CS'},; 
-      {"Seychelles", 'SC'},; 
-      {"Sierra Leone", 'SL'},; 
-      {"Singapore", 'SG'},; 
-      {"Slovakia", 'SK'},; 
-      {"Slovenia", 'SI'},; 
-      {"Solomon Islands", 'SB'},; 
-      {"Somalia", 'SO'},; 
-      {"South Africa", 'ZA'},; 
-      {"South Georgia and the South Sandwich Islands", 'GS'},; 
-      {"Spain", 'ES'},; 
-      {"Sri Lanka", 'LK'},; 
-      {"Sudan", 'SD'},; 
-      {"Suriname", 'SR'},; 
-      {"Svalbard and Jan Mayen", 'SJ'},; 
-      {"Swaziland", 'SZ'},; 
-      {"Sweden", 'SE'},; 
-      {"Switzerland", 'CH'},; 
-      {"Syrian Arab Republic", 'SY'},; 
-      {"Taiwan, Province of China", 'TW'},; 
-      {"Tajikistan", 'TJ'},; 
-      {"Tanzania, United Republic of", 'TZ'},; 
-      {"Thailand", 'TH'},; 
-      {"Timor-Leste", 'TL'},; 
-      {"Togo", 'TG'},; 
-      {"Tokelau", 'TK'},; 
-      {"Tonga", 'TO'},; 
-      {"Trinidad and Tobago", 'TT'},; 
-      {"Tunisia", 'TN'},; 
-      {"Turkey", 'TR'},; 
-      {"Turkmenistan", 'TM'},; 
-      {"Turks and Caicos Islands", 'TC'},; 
-      {"Tuvalu", 'TV'},; 
-      {"Uganda", 'UG'},; 
-      {"Ukraine", 'UA'},; 
-      {"United Arab Emirates", 'AE'},; 
-      {"United Kingdom", 'GB'},; 
-      {"United States", 'US'},; 
-      {"United States Minor Outlying Islands", 'UM'},; 
-      {"Uruguay", 'UY'},; 
-      {"Uzbekistan", 'UZ'},; 
-      {"Vanuatu", 'VU'},; 
-      {"Venezuela", 'VE'},; 
-      {"Viet Nam", 'VN'},; 
-      {"Virgin Islands, British", 'VG'},; 
-      {"Virgin Islands, U.S.", 'VI'},; 
-      {"Wallis and Futuna", 'WF'},; 
-      {"Western Sahara", 'EH'},; 
-      {"Yemen", 'YE'},; 
-      {"Zambia", 'ZM'},; 
-      {"Zimbabwe", 'ZW'} ;
-   }   
 
    DEFINE DIALOG oDlg RESOURCE "Buscar_tipologias"
 
@@ -11605,16 +11356,14 @@ Function buscarTipologias()
          ID       500 ;
          RESOURCE "zoom_in_48" ;
          TRANSPARENT ;
-         OF       oDlg
+         OF       oDlg 
 
-      oGetCodigo     := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, cGetCodigo, cGetCodigo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCodigo",, aCodigosArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetNombre     := TAutoGet():ReDefine( 110, { | u | iif( pcount() == 0, cGetNombre, cGetNombre := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetNombre",, aNombresArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
       oGetFamilia    := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, cGetFamilia, cGetFamilia := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFamilia",, aNombresFamilias(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
       oGetTipo       := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, cGetTipo, cGetTipo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, aNombresTipoArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )      
-      oGetCategoria  := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, cGetCategoria, cGetCategoria := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCategoria",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetTemporada  := TAutoGet():ReDefine( 150, { | u | iif( pcount() == 0, cGetTemporada, cGetTemporada := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTemporada",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetFabricante := TAutoGet():ReDefine( 160, { | u | iif( pcount() == 0, cGetFabricante, cGetFabricante := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFabricante",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetEstado     := TAutoGet():ReDefine( 170, { | u | iif( pcount() == 0, cGetEstado, cGetEstado := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, aCountries,, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetCategoria  := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, cGetCategoria, cGetCategoria := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCategoria",, aNombresCategoria(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetTemporada  := TAutoGet():ReDefine( 150, { | u | iif( pcount() == 0, cGetTemporada, cGetTemporada := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTemporada",, aNombresTemporada(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetFabricante := TAutoGet():ReDefine( 160, { | u | iif( pcount() == 0, cGetFabricante, cGetFabricante := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFabricante",, aNombresFabricante(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      oGetEstado     := TAutoGet():ReDefine( 170, { | u | iif( pcount() == 0, cGetEstado, cGetEstado := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, aNombresEstadoArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
 
       REDEFINE BUTTON ;
          ID          IDOK ;
@@ -11651,7 +11400,6 @@ RETURN aList
 Static Function aCodigosArticulo()
 
    local nRec        := ( dbfArticulo )->( Recno() )
-   local nOrdAnt     := ( dbfArticulo )->( OrdSetFocus( "Codigo" ) )
    local aCodigos    := {}
 
    ( dbfArticulo )->( dbGoTop() )
@@ -11664,7 +11412,6 @@ Static Function aCodigosArticulo()
 
    end while
 
-   ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
    ( dbfArticulo )->( dbGoTo( nRec ) )
 
 Return aCodigos
@@ -11674,7 +11421,6 @@ Return aCodigos
 Static Function aNombresArticulo()
 
    local nRec        := ( dbfArticulo )->( Recno() )
-   local nOrdAnt     := ( dbfArticulo )->( OrdSetFocus( "Nombre" ) )
    local aCodigos    := {}
 
    ( dbfArticulo )->( dbGoTop() )
@@ -11687,7 +11433,6 @@ Static Function aNombresArticulo()
 
    end while
 
-   ( dbfArticulo )->( OrdSetFocus( nOrdAnt ) )
    ( dbfArticulo )->( dbGoTo( nRec ) )
 
 Return aCodigos
@@ -11697,7 +11442,6 @@ Return aCodigos
 Static Function aNombresFamilias()
 
    local nRec        := ( dbfFam )->( Recno() )
-   local nOrdAnt     := ( dbfFam )->( OrdSetFocus( "cNomFam" ) )
    local aCodigos    := {}
 
    ( dbfFam )->( dbGoTop() )
@@ -11710,7 +11454,6 @@ Static Function aNombresFamilias()
 
    end while
 
-   ( dbfFam )->( OrdSetFocus( nOrdAnt ) )
    ( dbfFam )->( dbGoTo( nRec ) )
 
 Return aCodigos
@@ -11720,7 +11463,6 @@ Return aCodigos
 Static Function aNombresTipoArticulo()
 
    local nRec        := oTipart:oDbf:Recno()
-   local nOrdAnt     := oTipart:oDbf:OrdSetFocus( "cNomTip" )
    local aCodigos    := {}
 
    oTipart:oDbf:GoTop()
@@ -11733,8 +11475,91 @@ Static Function aNombresTipoArticulo()
 
    end while
 
-   oTipart:oDbf:OrdSetFocus( nOrdAnt )
    oTipart:oDbf:GoTo( nRec )
+
+Return aCodigos
+
+//---------------------------------------------------------------------------//
+
+Static Function aNombresCategoria()
+
+   local nRec        := ( dbfCategoria )->( Recno() )
+   local aCodigos    := {}
+
+   ( dbfCategoria )->( dbGoTop() )
+
+   while !( dbfCategoria )->( Eof() )
+
+      aAdd( aCodigos, { ( dbfCategoria )->cNombre, ( dbfCategoria )->cCodigo } )
+
+      ( dbfCategoria )->( dbSkip() )
+
+   end while
+
+   ( dbfCategoria )->( dbGoTo( nRec ) )
+
+Return aCodigos
+
+//---------------------------------------------------------------------------//
+
+Static Function aNombresTemporada()
+
+   local nRec        := ( dbfTemporada )->( Recno() )
+   local aCodigos    := {}
+
+   ( dbfTemporada )->( dbGoTop() )
+
+   while !( dbfTemporada )->( Eof() )
+
+      aAdd( aCodigos, { ( dbfTemporada )->cNombre, ( dbfTemporada )->cCodigo } )
+
+      ( dbfTemporada )->( dbSkip() )
+
+   end while
+
+   ( dbfTemporada )->( dbGoTo( nRec ) )
+
+Return aCodigos
+
+//---------------------------------------------------------------------------//
+
+Static Function aNombresFabricante()
+
+   local nRec        := oFabricante:oDbf:Recno()
+   local aCodigos    := {}
+
+   oFabricante:oDbf:GoTop()
+
+   while !oFabricante:oDbf:Eof()
+
+      aAdd( aCodigos, { oFabricante:oDbf:cNomFab, oFabricante:oDbf:cCodFab } )
+
+      oFabricante:oDbf:Skip()
+
+   end while
+
+   oFabricante:oDbf:GoTo( nRec )
+
+Return aCodigos
+
+//---------------------------------------------------------------------------//
+
+Static Function aNombresEstadoArticulo()
+
+   local nRec        := ( D():EstadoArticulo( nView ) )->( Recno() )
+   local aCodigos    := {}
+
+   ( D():EstadoArticulo( nView ) )->( dbGoTop() )
+
+   while !( D():EstadoArticulo( nView ) )->( Eof() )
+
+      aAdd( aCodigos, { ( D():EstadoArticulo( nView ) )->cNombre, ( D():EstadoArticulo( nView ) )->cCodigo } )
+
+      ( D():EstadoArticulo( nView ) )->( dbSkip() )
+
+   end while
+
+   ( D():EstadoArticulo( nView ) )->( dbGoTo( nRec ) )
 
 Return aCodigos
 
