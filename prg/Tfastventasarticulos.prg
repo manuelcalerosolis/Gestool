@@ -1,4 +1,3 @@
-
 #include "FiveWin.ch"  
 #include "Factu.ch" 
 #include "Report.ch"
@@ -496,6 +495,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cPosCli",     "C", 15, 0, {|| "@!" }, "Código postal cliente/proveedor"         )
 
    ::AddField( "nUniArt",     "N", 16, 6, {|| "" },   "Unidades artículo"                       )
+   ::AddField( "nBultos",     "N", 16, 6, {|| "" },   "Bultos artículo"                         )
    ::AddField( "nPreArt",     "N", 16, 6, {|| "" },   "Precio unitario artículo"                ) 
 
    ::AddField( "nPdtRec",     "N", 16, 6, {|| "" },   "Unidades pendientes de recibir"          )
@@ -527,7 +527,6 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cNumSer",     "C", 30, 0, {|| "" },   "Número de serie"                         )
 
-
    ::AddField( "cClsDoc",     "C",  2, 0, {|| "" },   "Clase de documento"                      )
    ::AddField( "cTipDoc",     "C", 30, 0, {|| "" },   "Tipo de documento"                       )
    ::AddField( "cIdeDoc",     "C", 27, 0, {|| "" },   "Identificador del documento"             )
@@ -554,7 +553,6 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
    ::AddField( "cCtrCoste",    "C",  9, 0, {|| "" },   "Codigo del centro de coste"             )
-   //::AddField( "cNomCtrCoste", "C", 50, 0, {|| "" },   "Nombre del centro de coste"             )
 
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )
@@ -2136,7 +2134,8 @@ METHOD appendStockArticulo( aStockArticulo )
          ::oDbf:cLote      := sStock:cLote                 
          ::oDbf:dFecCad    := sStock:dFechaCaducidad       
          ::oDbf:cNumSer    := sStock:cNumeroSerie  
-         ::oDbf:nUniArt    := sStock:nUnidades             
+         ::oDbf:nUniArt    := sStock:nUnidades
+         ::oDbf:nBultos    := sStock:nBultos
          ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
          ::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
          ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
@@ -3107,10 +3106,6 @@ RETURN ( uCampoRequerido )
 
 //---------------------------------------------------------------------------//
 METHOD StartDialog() CLASS TFastVentasArticulos
-
-   /*
-   Imagenes--------------------------------------------------------------------
-   */
 
    ::CreateTreeImageList()
 

@@ -27,6 +27,8 @@ CLASS TAutoCombo FROM TComboBox
    METHOD setOrginalList( aList )   INLINE ( ::aOriginalList := aList )
 
    METHOD KeyChar( nKey, nFlags )
+   
+   METHOD GetKeyChar( nKey )
 
 END CLASS
 
@@ -115,6 +117,54 @@ return If( ::lIncSearch, 0, nil )
 
 //----------------------------------------------------------------------------//
 
+METHOD GetKeyChar( nKey ) CLASS TAutoget
+
+   local nAt, cText
+
+   msgAlert( "GetKeyChar")
+
+   if ( nKey == VK_TAB .and. ! GetKeyState( VK_SHIFT ) ) .or. nKey == VK_RETURN
+      ::oWnd:GoNextCtrl( ::hWnd )
+      return 0
+   else
+      if nKey == VK_TAB .and. GetKeyState( VK_SHIFT )
+         ::oWnd:GoPrevCtrl( ::hWnd )
+         return 0
+      endif
+   endif
+
+   if ( nKey >= Asc( "A" ) .and. nKey <= Asc( "Z" ) ) .or. ;
+      ( nKey >= Asc( "a" ) .and. nKey <= Asc( "z" ) ) .or. ;
+      ( nKey >= Asc( "0" ) .and. nKey <= Asc( "9" ) ) .or. ;
+      Chr( nKey ) $ "+-/=?$*&%$() " .or. nKey == VK_BACK
+      if nKey == VK_BACK
+         cText = SubStr( ::oGet:GetText(), 1, ::oGet:oGet:pos - 1 )
+      else
+         cText = SubStr( ::oGet:GetText(), 1, ::oGet:oGet:pos - 1 ) + Chr( nKey )
+      endif
+      if ! Empty( cText )
+         if ( nAt := AScan( ::aItems, { | c | Upper( Left( c, Len( cText ) ) ) == ;
+                                           Upper( cText ) } ) ) != 0
+            ::oGet:SetText( ::aItems[ nAt ] )
+            ::oGet:oGet:buffer = PadR( ::aItems[ nAt ], Len( ::oGet:oGet:buffer ) )
+            if nKey != VK_BACK
+               ::oGet:SetPos( ::oGet:oGet:pos + 1 )
+            else
+               ::oGet:SetPos( ::oGet:oGet:pos )
+            endif
+            return 0
+         endif
+      else
+         ::oGet:SetText( "" )
+         ::oGet:oGet:buffer = Space( Len( ::oGet:oGet:buffer ) )
+         ::oGet:oGet:pos = 0
+         ::oGet:SetPos( 0 )
+      endif
+   endif
+
+return nKey
+
+//----------------------------------------------------------------------------//
 
 CLASS TAutoGet FROM TGet
 

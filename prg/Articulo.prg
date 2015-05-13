@@ -11367,7 +11367,7 @@ Function buscarTipologias()
    local cGetTemporada  := space( 200 )
    local cGetFabricante := space( 200 )
    local cGetEstado     := space( 200 )
-   local aCountries     := {"", "Afghanistan", "Islands", "Albania", "Alemania" } 
+   local aCountries     := { "Afghanistan", "Islands", "Albania", "Alemania" } 
 
    DEFINE DIALOG oDlg RESOURCE "Buscar_tipologias"
 

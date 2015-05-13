@@ -4352,7 +4352,6 @@ Return ( nBultosArticulo )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
    local nStockArticulo := 0
