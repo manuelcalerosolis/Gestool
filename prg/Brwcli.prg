@@ -353,7 +353,11 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    Codigo de cliente-----------------------------------------------------------
    */
 
-   ( dbfClient )->( dbSeek( cCodCli ) )
+   if !( dbfClient )->( dbSeek( cCodCli ) )
+      msgStop( "Cliente no encontrado.")
+   end if 
+
+
 
    /*
    Montamos el dialogo

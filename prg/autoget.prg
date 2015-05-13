@@ -117,7 +117,7 @@ return If( ::lIncSearch, 0, nil )
 
 //----------------------------------------------------------------------------//
 
-METHOD GetKeyChar( nKey ) CLASS TAutoget
+METHOD GetKeyChar( nKey ) CLASS TAutoCombo
 
    local nAt, cText
 

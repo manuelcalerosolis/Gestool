@@ -5,7 +5,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TSPECIALSEARCHARTICULO
+CLASS TSpecialSearchArticulo
 
    DATA nView
 
@@ -27,7 +27,7 @@ CLASS TSPECIALSEARCHARTICULO
 
    DATA oBrwArticulo
 
-   METHOD New
+   METHOD New()
 
    METHOD OpenFiles()
    METHOD CloseFiles()
@@ -92,15 +92,15 @@ METHOD OpenFiles() CLASS TSPECIALSEARCHARTICULO
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::nView              := D():CreateView()
+      ::nView              := D():CreateView()
 
-   D():EstadoArticulo( ::nView )
+      D():EstadoArticulo( ::nView )
 
-   D():TipoArticulos( ::nView )
+      D():TipoArticulos( ::nView )
 
-   D():Articulos( ::nView )
+      D():Articulos( ::nView )
 
-   D():Clientes( ::nView )
+      D():Clientes( ::nView )
 
    RECOVER USING oError
 
@@ -171,9 +171,22 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oBrwArticulo:CreateFromResource( 300 )
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Código"
+         :cHeader             := "Código artículo"
          :bEditValue          := {|| SelectArticulo->Codigo }
          :nWidth              := 120
+      end with
+
+      with object ( ::oBrwArticulo:AddCol() )
+         :cHeader             := "Info artículo"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| msgAlert( SelectArticulo->Codigo ) }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "Cube_Yellow_16" )
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
@@ -190,7 +203,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
 
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "Disponibilidad"
-         :bEditValue          := {|| if( SelectArticulo->nDisp == 1, "Disponible", "No disponible" ) }
+         :bEditValue          := {|| iif( SelectArticulo->nDisp == 1, "Disponible", "No disponible" ) }
          :nWidth              := 80
       end with
 
@@ -201,8 +214,10 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Número S.A.T."
-         :bEditValue          := {|| SelectArticulo->cSerSat + "/" + AllTrim( Str( SelectArticulo->nNumSat ) ) + "/" + SelectArticulo->cSufSat }
+         :cHeader             := "S.A.T."
+         :bEditValue          := {|| iif( !empty(SelectArticulo->cSerSat ),;
+                                          SelectArticulo->cSerSat + "/" + alltrim( str( SelectArticulo->nNumSat ) ) + "/" + SelectArticulo->cSufSat,;
+                                          "" ) }
          :nWidth              := 150
       end with
 
@@ -210,12 +225,27 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Fecha"
          :bEditValue          := {|| SelectArticulo->dFecSat }
          :nWidth              := 150
+         :nDataStrAlign       := 3
+         :nHeadStrAlign       := 3
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "Cliente"
          :bEditValue          := {|| SelectArticulo->cCodCli }
          :nWidth              := 150
+      end with
+
+      with object ( ::oBrwArticulo:AddCol() )
+         :cHeader             := "Informe cliente"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| brwVtaCli( SelectArticulo->cCodCli, SelectArticulo->Titulo, .t.  ) }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "User1_16" )
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
@@ -323,9 +353,7 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        += " ORDER BY articulos.Codigo"
 
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
-      
       ::oBrwArticulo:Refresh()
-
    end if
 
    ::ReiniciaValores()
