@@ -14,6 +14,8 @@ CLASS TSpecialSearchArticulo
    DATA oBotonBuscar
    DATA oBotonLimpiar
    DATA oBotonSalir
+   DATA oBotonAnnadir
+   DATA oBotonModificar
 
    DATA oGetArticulo
    DATA oGetTipo
@@ -137,6 +139,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       REDEFINE BITMAP oBmp;
          RESOURCE "zoom_in_48" ;
          ID       500 ;
+         TRANSPARENT ;
          OF       ::oDlg
 
       ::oGetArticulo    := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, ::cGetArticulo, ::cGetArticulo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetArticulo",, ::GetArrayNombres( D():Articulos( ::nView ), 1 ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, self )} )
@@ -148,13 +151,25 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          ID          200 ;
          OF          ::oDlg ;
          CANCEL ;
-         ACTION      ( ::SearchArticulos() )
+         ACTION      ( ::SearchArticulos() ) 
 
       REDEFINE BUTTON ::oBotonLimpiar ;
          ID          210 ;
          OF          ::oDlg ;
          CANCEL ;
          ACTION      ( ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() )
+
+      REDEFINE BUTTON ::oBotonAnnadir ;
+         ID          400 ;
+         OF          ::oDlg ;
+         CANCEL ;
+         ACTION      ( AppArticulo(), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() ) 
+
+      REDEFINE BUTTON ::oBotonModificar ;
+         ID          410 ;
+         OF          ::oDlg ;
+         CANCEL ;
+         ACTION      ( EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() )
 
       ::oBrwArticulo                 := IXBrowse():New( ::oDlg )
 
@@ -164,7 +179,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oBrwArticulo:cAlias          := "SelectArticulo"
 
       ::oBrwArticulo:nMarqueeStyle   := 6
-      ::oBrwArticulo:cName           := "Articulos.Busqueda avanzada"
+      ::oBrwArticulo:cName           := "Articulos.Busquedaavanzada"
       ::oBrwArticulo:lFooter         := .t.
       ::oBrwArticulo:lAutoSort       := .t.
 
@@ -180,7 +195,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Info artículo"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| msgAlert( SelectArticulo->Codigo ) }
+         :bEditBlock          := {||InfArticulo( SelectArticulo->Codigo ) }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -205,26 +220,54 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Disponibilidad"
          :bEditValue          := {|| iif( SelectArticulo->nDisp == 1, "Disponible", "No disponible" ) }
          :nWidth              := 80
+         :lHide               := .t.
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "Ubicación"
          :bEditValue          := {|| SelectArticulo->cDesUbi }
          :nWidth              := 150
+         :lHide               := .t.
+      end with
+
+      with object ( ::oBrwArticulo:AddCol() )
+         :cHeader             := "Añadir S.A.T."
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| AppSatCli( SelectArticulo->cCodCli, SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "NEW16" )
+      end with
+
+      with object ( ::oBrwArticulo:AddCol() )
+         :cHeader             := "Modificar S.A.T."
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| EdtSatCli( SelectArticulo->cSerSat + str( SelectArticulo->nNumSat, 9 ) + SelectArticulo->cSufSat ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "EDIT16" )
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "S.A.T."
-         :bEditValue          := {|| iif( !empty(SelectArticulo->cSerSat ),;
+         :bEditValue          := {|| iif( !empty( SelectArticulo->cSerSat ),;
                                           SelectArticulo->cSerSat + "/" + alltrim( str( SelectArticulo->nNumSat ) ) + "/" + SelectArticulo->cSufSat,;
                                           "" ) }
-         :nWidth              := 150
+         :nWidth              := 90
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "Fecha"
          :bEditValue          := {|| SelectArticulo->dFecSat }
-         :nWidth              := 150
+         :nWidth              := 75
          :nDataStrAlign       := 3
          :nHeadStrAlign       := 3
       end with
@@ -233,6 +276,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Cliente"
          :bEditValue          := {|| SelectArticulo->cCodCli }
          :nWidth              := 150
+         :lHide               := .t.
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
@@ -254,11 +298,18 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :nWidth              := 150
       end with
 
+      ::oBrwArticulo:bLDblClick      := {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+
       REDEFINE BUTTON ::oBotonSalir;
          ID          IDCANCEL ;
          OF          ::oDlg ;
          CANCEL ;
          ACTION      ( ::oDlg:end() )
+
+      ::oDlg:AddFastKey( VK_F2, {|| AppArticulo(), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
+      ::oDlg:AddFastKey( VK_F3, {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
+
+      ::oDlg:bStart     := {|| ::oBrwArticulo:LoadData() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
