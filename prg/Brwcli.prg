@@ -68,7 +68,6 @@ static oTreeCobros
 static oTreeImageList
 
 static oBrwMaquinaria
-
 static oBmpMaquina
 
 static oVta
@@ -113,33 +112,28 @@ Static Function OpenFiles( cCodCli, lMessage )
 
    CursorWait()
 
-   oTotVta           := Array( 4 )
-   aTotVta           := Afill( Array( 4 ), 0 )
+   oTotVta           := array( 4 )
+   aTotVta           := afill( array( 4 ), 0 )
 
-   oVta              := Array( 12, 4 )
-   aVta              := Array( 12, 4 )
+   oVta              := array( 12, 4 )
+   aVta              := array( 12, 4 )
 
-   aEval( aVta, {|a| Afill( a, 0 ) } )
-
-   nView             := D():CreateView()
-
-   D():EstadoArticulo( nView )
+   aEval( aVta, {|a| afill( a, 0 ) } )
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+      lOpenFiles     := .t.
+
+      nView          := D():CreateView()
+
+      D():EstadoArticulo( nView )
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
       USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
       SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      /*
-      Documentos relacionados de ventas
-      */
 
       USE ( cPatEmp() + "SATCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIT", @dbfSatCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIT.CDX" ) ADDITIVE
@@ -354,10 +348,10 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    */
 
    if !( dbfClient )->( dbSeek( cCodCli ) )
-      msgStop( "Cliente no encontrado.")
+      CloseFiles()
+      msgStop( "Cliente " + alltrim( cCodCli ) + " no encontrado." )
+      Return ( nil )
    end if 
-
-
 
    /*
    Montamos el dialogo
@@ -365,7 +359,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
 
    DEFINE DIALOG oDlg RESOURCE "ARTINFO" TITLE "Información del cliente : " + Rtrim( cNomCli )
 
-      oFld                 := TFolder():ReDefine( 300, aPrompts, aDialogs, oDlg,,,,, .f. )
+      oFld                       := TFolder():ReDefine( 300, aPrompts, aDialogs, oDlg,,,,, .f. )
 
       REDEFINE BITMAP oBmpGeneral ID 500 RESOURCE "Businessman2_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 1 ]
 
@@ -373,10 +367,10 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       Browse con la información por meses-----------------------------------------
       */
 
-      oBrwVta                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+      oBrwVta                    := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
-      oBrwVta:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwVta:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwVta:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwVta:bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
       oBrwVta:SetArray( aVta, , , .f. )
 
