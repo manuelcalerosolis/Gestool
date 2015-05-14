@@ -166,6 +166,8 @@ CLASS TDataCenter
    METHOD selectSATFromClient( cCodigoCliente )
       METHOD treeProductFromSAT()
 
+   METHOD selectSATFromArticulo( cCodigoArticulo )
+
    METHOD Resource( nId )
    METHOD StartResource()
 
@@ -5036,6 +5038,48 @@ METHOD treeProductFromSAT()
    SatCli->( dbgotop() )
 
 RETURN ( oTree )
+
+//---------------------------------------------------------------------------//
+
+METHOD selectSATFromArticulo( cCodigoArticulo )
+
+   local cStm
+
+   /*
+   Creamos la instruccion------------------------------------------------------
+   */
+
+   cStm           := "SELECT lineasSat.cRef        AS codigoArticulo, "           
+   cStm           +=          "lineasSat.cSerSat   AS serieLineaSAT, "
+   cStm           +=          "lineasSat.nNumSat   AS numeroLineaSAT, "
+   cStm           +=          "lineasSat.cSufSat   AS sufijoLineaSAT, "
+   cStm           +=          "lineasSat.mObsLin   AS observacionesLineaSAT, "
+   cStm           +=          "cabeceraSat.dFecSat AS fechaSAT, "
+   cStm           +=          "cabeceraSat.cCodOpe, "
+   cStm           +=          "cabeceraSat.cCodEst, "
+   cStm           +=          "cabeceraSat.cSituac, "
+   cStm           +=          "cabeceraSat.cHorIni AS horaInicioSAT, "
+   cStm           +=          "cabeceraSat.cHorFin AS horaFinSAT, "
+   cStm           +=          "operario.cNomTra    AS operarioNombre, "
+   cStm           +=          "estadoSat.cNombre, "
+   cStm           +=          "estadoSat.cTipo     AS tipoEstadoSAT, "
+   cStm           +=          "articulos.cDesUbi   AS ubicacionArticulo, "
+   cStm           +=          "clientes.titulo     AS clienteNombre " 
+
+   cStm           += "FROM " + cPatEmp() + "SatCliL lineasSat "
+   
+   cStm           += "INNER JOIN " + cPatEmp() + "SatCliT   cabeceraSat on lineasSat.cSerSat = cabeceraSat.cSerSat and lineasSat.nNumSat = cabeceraSat.nNumSat and lineasSat.cSufSat = cabeceraSat.cSufSat "
+   
+   cStm           += "LEFT JOIN " + cPatEmp() + "EstadoSat  estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
+   cStm           += "LEFT JOIN " + cPatEmp() + "OpeT       operario on cabeceraSat.cCodOpe = operario.cCodTra "
+   cStm           += "LEFT JOIN " + cPatEmp() + "Articulo   articulos on lineasSat.cRef = articulos.Codigo "
+   cStm           += "LEFT JOIN " + cPatCli() + "Client     clientes on cabeceraSat.cCodCli = clientes.Cod "
+
+   cStm           += "WHERE lineasSat.cRef = '" + alltrim( cCodigoArticulo ) + "' "
+
+   cStm           += "ORDER BY lineasSat.cRef, lineasSat.dFecSat DESC"
+
+RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

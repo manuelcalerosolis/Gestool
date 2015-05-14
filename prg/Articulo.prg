@@ -1300,7 +1300,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) ) ;
+         ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre ) ) ;
          TOOLTIP  "(I)nforme artículo" ;
          HOTKEY   "I" ;
          LEVEL    ACC_ZOOM
@@ -11704,7 +11704,7 @@ FUNCTION InfArticulo( cCodArt, oBrw )
    end if
 
    if ( dbfArticulo )->( dbSeek( cCodArt ) )
-      BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre, dbfDiv, dbfIva, dbfAlmT, dbfArticulo )
+      BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre )
    else
       MsgStop( "No se encuentra artículo" )
    end if

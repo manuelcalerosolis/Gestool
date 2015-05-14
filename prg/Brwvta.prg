@@ -12,6 +12,7 @@
 #define fldStocks                oFld:aDialogs[ 2 ]
 #define fldEstadisticas          oFld:aDialogs[ 3 ]
 #define fldGraficos              oFld:aDialogs[ 4 ]
+#define fldContadores            oFld:aDialogs[ 5 ]
 
 static dbfDiv
 static dbfIva
@@ -74,6 +75,9 @@ static nMeter
 static oText
 static cText         := ""
 
+static oBrwMaquinaria
+static oBmpMaquinaria
+
 static oTreeImageList
 static oTreeDocument
 static oTreeCompras
@@ -129,7 +133,7 @@ static oGraph
 //---------------------------------------------------------------------------//
 
 
-Static Function OpenFiles()
+Static Function OpenFiles( cCodArt )
 
    local oError
    local oBlock
@@ -158,9 +162,17 @@ Static Function OpenFiles()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   /*
-   Documentos relacionados de compras------------------------------------------
-   */
+   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+
+   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
+   SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+
+   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+   SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+
+   USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
+   SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
@@ -284,6 +296,10 @@ Static Function OpenFiles()
       lOpenFiles        := .f.
    end if
 
+   if lAis() .and. !TDataCenter():selectSATFromArticulo( cCodArt )
+      lOpenFiles        := .f.
+   end if 
+
    oDbfTmp              := DefineTemporal()
    oDbfTmp:Activate( .f., .f. )
 
@@ -320,37 +336,41 @@ Static Function CloseFiles()
       oTreeImageList:End()
    end if
 
-   (dbfPedPrvT)->( dbCloseArea() )
-   (dbfPedPrvL)->( dbCloseArea() )
-   (dbfAlbPrvT)->( dbCloseArea() )
-   (dbfAlbPrvL)->( dbCloseArea() )
-   (dbfFacPrvT)->( dbCloseArea() )
-   (dbfFacPrvL)->( dbCloseArea() )
-   (dbfFacPrvP)->( dbCloseArea() )
-   (dbfPreCliT)->( dbCloseArea() )
-   (dbfPreCliL)->( dbCloseArea() )
-   (dbfPedCliT)->( dbCloseArea() )
-   (dbfPedCliL)->( dbCloseArea() )
-   (dbfPedCliR)->( dbCloseArea() )
-   (dbfAlbCliT)->( dbCloseArea() )
-   (dbfAlbCliL)->( dbCloseArea() )
-   (dbfFacCliT)->( dbCloseArea() )
-   (dbfFacCliL)->( dbCloseArea() )
-   (dbfFacCliP)->( dbCloseArea() )
-   (dbfFacRecT)->( dbCloseArea() )
-   (dbfFacRecL)->( dbCloseArea() )
-   (dbfTikCliT)->( dbCloseArea() )
-   (dbfTikCliL)->( dbCloseArea() )
-   (dbfTikCliP)->( dbCloseArea() )
-   (dbfMovAlm )->( dbCloseArea() )
-   (dbfArtKit )->( dbCloseArea() )
-   (dbfProducT)->( dbCloseArea() )
-   (dbfProducL)->( dbCloseArea() )
-   (dbfProducM)->( dbCloseArea() )
-   (dbfRctPrvT)->( dbCloseArea() )
-   (dbfRctPrvL)->( dbCloseArea() )
-   (dbfSatCliT)->( dbCloseArea() )
-   (dbfSatCliL)->( dbCloseArea() )
+   ( dbfDiv     )->( dbCloseArea() )
+   ( dbfIva     )->( dbCloseArea() )
+   ( dbfAlm     )->( dbCloseArea() )
+   ( dbfArticulo)->( dbCloseArea() )
+   ( dbfPedPrvT )->( dbCloseArea() )
+   ( dbfPedPrvL )->( dbCloseArea() )
+   ( dbfAlbPrvT )->( dbCloseArea() )
+   ( dbfAlbPrvL )->( dbCloseArea() )
+   ( dbfFacPrvT )->( dbCloseArea() )
+   ( dbfFacPrvL )->( dbCloseArea() )
+   ( dbfFacPrvP )->( dbCloseArea() )
+   ( dbfPreCliT )->( dbCloseArea() )
+   ( dbfPreCliL )->( dbCloseArea() )
+   ( dbfPedCliT )->( dbCloseArea() )
+   ( dbfPedCliL )->( dbCloseArea() )
+   ( dbfPedCliR )->( dbCloseArea() )
+   ( dbfAlbCliT )->( dbCloseArea() )
+   ( dbfAlbCliL )->( dbCloseArea() )
+   ( dbfFacCliT )->( dbCloseArea() )
+   ( dbfFacCliL )->( dbCloseArea() )
+   ( dbfFacCliP )->( dbCloseArea() )
+   ( dbfFacRecT )->( dbCloseArea() )
+   ( dbfFacRecL )->( dbCloseArea() )
+   ( dbfTikCliT )->( dbCloseArea() )
+   ( dbfTikCliL )->( dbCloseArea() )
+   ( dbfTikCliP )->( dbCloseArea() )
+   ( dbfMovAlm  )->( dbCloseArea() )
+   ( dbfArtKit  )->( dbCloseArea() )
+   ( dbfProducT )->( dbCloseArea() )
+   ( dbfProducL )->( dbCloseArea() )
+   ( dbfProducM )->( dbCloseArea() )
+   ( dbfRctPrvT )->( dbCloseArea() )
+   ( dbfRctPrvL )->( dbCloseArea() )
+   ( dbfSatCliT )->( dbCloseArea() )
+   ( dbfSatCliL )->( dbCloseArea() )
 
    if !Empty( oStock )
       oStock:End()
@@ -365,7 +385,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
+function BrwVtaComArt( cCodArt, cNomArt )
 
    local nOrd
    local nRec
@@ -382,17 +402,26 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    local oBmpDocumentos
    local oBmpGraficos
    local oBmpStock
+   local aPrompts          := {  "&Documentos"        ,;
+                                 "Stock"              ,;
+                                 "&Estadisticas"      ,;
+                                 "Gráfico" }
+   local aDialogs          := {  "INFO_1"             ,;
+                                 "INFO_3"             ,;
+                                 "ART_8"              ,;
+                                 "INFO_2"            }
+
 
    if Empty( cCodArt )
       Return nil
    end if
 
-   dbfDiv                  := cDiv
-   dbfIva                  := cIva
-   dbfAlm                  := cAlm
-   dbfArticulo             := cArticulo
+   if lAis()
+      aadd( aPrompts, "A&rtículos" )
+      aadd( aDialogs, "INFO_4" )
+   end if 
 
-   if !OpenFiles()
+   if !OpenFiles( cCodArt )
       Return nil
    end if
 
@@ -418,7 +447,11 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    Codigo de articulo----------------------------------------------------------
    */
 
-   oDbfTmp:Cargo           := cCodArt
+   if !( dbfArticulo )->( dbSeek( cCodArt ) )
+      msgStop( "Artículo " + alltrim(cCodArt) + " no encontrado." )
+      CloseFiles()
+      Return nil 
+   end if 
 
    /*
    Montamos el dialogo
@@ -426,23 +459,13 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    DEFINE DIALOG oDlg RESOURCE "ArtInfo" TITLE "Información del artículo : " + Rtrim( cCodArt ) + " - " + Rtrim( cNomArt )
 
-   REDEFINE FOLDER   oFld ;
-			ID 		   300 ;
-			OF 		   oDlg ;
-         PROMPT      "&Documentos"        ,;
-                     "Stock"              ,;
-                     "&Estadisticas"      ,;
-                     "Gráfico"            ; 
-         DIALOGS     "INFO_1"             ,;
-                     "INFO_3"             ,;
-                     "ART_8"              ,;
-                     "INFO_2"
+      oFld                       := TFolder():ReDefine( 300, aPrompts, aDialogs, oDlg,,,,, .f. )
 
-   /*
-   Compras---------------------------------------------------------------------
-   */
+      /*
+      Compras---------------------------------------------------------------------
+      */
 
-   REDEFINE BITMAP   oBmpGeneral;
+      REDEFINE BITMAP oBmpGeneral;
          ID          500 ;
          RESOURCE    "Cube_Yellow_Alpha_48" ;
          TRANSPARENT ;
@@ -1019,6 +1042,14 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       OF       oDlg ;
       ACTION   ( oDlg:End() )
 
+      /*
+      Cuarta pestaña para CZ------------------------------------------------------
+      */
+
+      if lAis()
+         buildFolderArticulosContadores( oFld )
+      end if 
+
    oFld:aDialogs[ 3 ]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ),     LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
    oFld:aDialogs[ 3 ]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ),   LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
 
@@ -1050,10 +1081,84 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    oMenu:End()
 
-   ( dbfArticulo )->( OrdSetFocus( nOrd ) )
-   ( dbfArticulo )->( dbGoTo( nRec ) )
-
 return nil
+
+//---------------------------------------------------------------------------//
+
+Static Function buildFolderArticulosContadores( oFld )
+
+   REDEFINE BITMAP oBmpMaquinaria ID 500 RESOURCE "control_panel2_48" TRANSPARENT OF fldContadores
+
+      oBrwMaquinaria                      := IXBrowse():New( fldContadores )
+
+      oBrwMaquinaria:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwMaquinaria:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwMaquinaria:cAlias               := "SatCliArticulos"
+
+      oBrwMaquinaria:nMarqueeStyle        := 6
+      oBrwMaquinaria:cName                := "Máquinas en informe de articulos"
+
+      oBrwMaquinaria:CreateFromResource( 300 )
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Cliente"
+         :bEditValue       := {|| SatCliArticulos->clienteNombre }
+         :nWidth           := 260
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Estado"
+         :bEditValue       := {|| SatCliArticulos->tipoEstadoSAT }
+         :nWidth           := 120
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Operario"
+         :bEditValue       := {|| SatCliArticulos->operarioNombre }
+         :nWidth           := 120
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Observaciones"
+         :bEditValue       := {|| SatCliArticulos->observacionesLineaSAT }
+         :nWidth           := 120
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Fecha"
+         :bEditValue       := {|| SatCliArticulos->fechaSAT }
+         :nWidth           := 80
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Inicio"
+         :bEditValue       := {|| trans( SatCliArticulos->horaInicioSAT, "@R 99:99" ) }
+         :nWidth           := 40
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Fin"
+         :bEditValue       := {|| trans( SatCliArticulos->horaFinSAT, "@R 99:99" ) }
+         :nWidth           := 40
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "Fin"
+         :bEditValue       := {|| trans( SatCliArticulos->horaFinSAT, "@R 99:99" ) }
+         :nWidth           := 40
+      end with
+
+      with object ( oBrwMaquinaria:addCol() )
+         :cHeader          := "S.A.T."
+         :bEditValue       := {|| iif( !empty( SatCliArticulos->serieLineaSAT ),;
+                                       SatCliArticulos->serieLineaSAT + "/" + alltrim( str( SatCliArticulos->numeroLineaSAT ) ) + "/" + SatCliArticulos->sufijoLineaSAT,;
+                                       "" ) }
+         :nWidth           := 150
+      end with
+
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
