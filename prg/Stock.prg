@@ -4731,6 +4731,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cFacPrvL )->cValPr1
                      :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
                      :cLote               := ( ::cFacPrvL )->cLote
+                     :nBultos             := ( ::cFacPrvL )->nBultos
                      :nUnidades           := nTotNFacPrv( ::cFacPrvL )
                      ::Integra( hb_QWith() )
                   end with
@@ -4763,6 +4764,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cRctPrvL )->cValPr1
                      :cValorPropiedad2    := ( ::cRctPrvL )->cValPr2
                      :cLote               := ( ::cRctPrvL )->cLote
+                     :nBultos             := ( ::cRctPrvL )->nBultos
                      :nUnidades           := nTotNRctPrv( ::cRctPrvL )
                      ::Integra( hb_QWith() )
                   end with
@@ -4795,6 +4797,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cAlbCliL )->cValPr1
                      :cValorPropiedad2    := ( ::cAlbCliL )->cValPr2
                      :cLote               := ( ::cAlbCliL )->cLote
+                     :nBultos             := -( ::cAlbCliL )->nBultos
                      :nUnidades           := - nTotVAlbCli( ::cAlbCliL )
                      ::Integra( hb_QWith() )
                   end with
@@ -4827,6 +4830,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cFacCliL )->cValPr1
                      :cValorPropiedad2    := ( ::cFacCliL )->cValPr2
                      :cLote               := ( ::cFacCliL )->cLote
+                     :nBultos             := -( ::cFacCliL )->nBultos
                      :nUnidades           := - nTotVFacCli( ::cFacCliL )   // - nTotNFacCli( ::cFacCliL )
                      ::Integra( hb_QWith() )
                   end with
@@ -4859,6 +4863,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cFacRecL )->cValPr1
                      :cValorPropiedad2    := ( ::cFacRecL )->cValPr2
                      :cLote               := ( ::cFacRecL )->cLote
+                     :nBultos             := -( ::cFacRecL )->nBultos
                      :nUnidades           := - nTotVFacRec( ::cFacRecL )
                      ::Integra( hb_QWith() )
                   end with
@@ -5043,6 +5048,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
                      :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
                      :cLote               := ( ::cHisMovT)->cLote
+                     :nBultos             := ( ::cHisMovT)->nBultos
                      :nUnidades           := nTotNMovAlm( ::cHisMovT)
                      ::Integra( hb_QWith() )
                   end with
@@ -5058,6 +5064,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
                      :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
                      :cLote               := ( ::cHisMovT)->cLote
+                     :nBultos             := - ( ::cHisMovT)->nBultos
                      :nUnidades           := - nTotNMovAlm( ::cHisMovT)
                      ::Integra( hb_QWith() )
                   end with
@@ -5112,6 +5119,7 @@ Method Integra( sStocks ) CLASS TStock
                                                    if( ::lNumeroSerie, rtrim( o:cNumeroSerie ) == rtrim( sStocks:cNumeroSerie ), .t. ) } )
       if nPos != 0
          ::aStocks[ nPos ]:nUnidades               += sStocks:nUnidades
+         ::aStocks[ nPos ]:nBultos                 += sStocks:nBultos
          ::aStocks[ nPos ]:nPendientesRecibir      += sStocks:nPendientesRecibir
          ::aStocks[ nPos ]:nPendientesEntregar     += sStocks:nPendientesEntregar
       else
@@ -6609,6 +6617,7 @@ METHOD New() CLASS SStock
    ::nPendientesEntregar   := 0
    ::cNumeroDocumento      := ""
    ::cTipoDocumento        := ""
+   ::nBultos               := 0
 
 RETURN ( Self )
 
