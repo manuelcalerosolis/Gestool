@@ -14,8 +14,6 @@ CLASS TSpecialSearchArticulo
    DATA oBotonBuscar
    DATA oBotonLimpiar
    DATA oBotonSalir
-   DATA oBotonAnnadir
-   DATA oBotonModificar
 
    DATA oGetArticulo
    DATA oGetTipo
@@ -159,18 +157,6 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          CANCEL ;
          ACTION      ( ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() )
 
-      REDEFINE BUTTON ::oBotonAnnadir ;
-         ID          400 ;
-         OF          ::oDlg ;
-         CANCEL ;
-         ACTION      ( AppArticulo(), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() ) 
-
-      REDEFINE BUTTON ::oBotonModificar ;
-         ID          410 ;
-         OF          ::oDlg ;
-         CANCEL ;
-         ACTION      ( EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() )
-
       ::oBrwArticulo                 := IXBrowse():New( ::oDlg )
 
       ::oBrwArticulo:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
@@ -182,20 +168,41 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oBrwArticulo:cName           := "Articulos.Busquedaavanzada"
       ::oBrwArticulo:lFooter         := .t.
       ::oBrwArticulo:lAutoSort       := .t.
+      ::oBrwArticulo:nRowHeight      := 20
 
       ::oBrwArticulo:CreateFromResource( 300 )
 
       with object ( ::oBrwArticulo:AddCol() )
-         :cHeader             := "Código artículo"
-         :bEditValue          := {|| SelectArticulo->Codigo }
-         :nWidth              := 120
+         :cHeader             := "Añadir artículo"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| AppArticulo(), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "NEW16" )
+      end with
+
+      with object ( ::oBrwArticulo:AddCol() )
+         :cHeader             := "Modificar artículo"
+         :bStrData            := {|| "" }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
+         :nEditType           := 5
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "EDIT16" )
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "Info artículo"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {||InfArticulo( SelectArticulo->Codigo ) }
+         :bEditBlock          := {|| InfArticulo( SelectArticulo->Codigo ) }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -204,10 +211,16 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :AddResource( "Cube_Yellow_16" )
       end with
 
+      with object ( ::oBrwArticulo:AddCol() ) 
+         :cHeader             := "Código artículo"
+         :bEditValue          := {|| SelectArticulo->Codigo }
+         :nWidth              := 100
+      end with
+
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "Tipo artículo"
          :bEditValue          := {|| SelectArticulo->cNomTip }
-         :nWidth              := 200
+         :nWidth              := 180
       end with
 
       with object ( ::oBrwArticulo:AddCol() )
@@ -406,8 +419,6 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
       ::oBrwArticulo:Refresh()
    end if
-
-   ::ReiniciaValores()
 
 Return ( self )
 
