@@ -11356,19 +11356,10 @@ Function buscarTipologias()
 
    local aCountries     := { "Afghanistan", "Islands", "Albania", "Alemania" } 
 
-   DEFINE DIALOG oDlg RESOURCE "Buscar_tipologias"
+   DEFINE DIALOG oDlg RESOURCE "Buscar_Combo"
 
-      oGetCodigo     := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, cGetCodigo, cGetCodigo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCodigo",, aCodigosArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      
       oGetNombre              := TAutoCombo():ReDefine( 110, { | u | iif( pcount() == 0, cGetNombre, cGetNombre := u ) }, aCountries, oDlg,,,,,,, .f. )
       oGetNombre:lIncSearch   := .t.
-
-      oGetFamilia    := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, cGetFamilia, cGetFamilia := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFamilia",, aNombresFamilias(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetTipo       := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, cGetTipo, cGetTipo := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, aNombresTipoArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )      
-      oGetCategoria  := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, cGetCategoria, cGetCategoria := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCategoria",, aNombresCategoria(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetTemporada  := TAutoGet():ReDefine( 150, { | u | iif( pcount() == 0, cGetTemporada, cGetTemporada := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTemporada",, aNombresTemporada(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetFabricante := TAutoGet():ReDefine( 160, { | u | iif( pcount() == 0, cGetFabricante, cGetFabricante := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetFabricante",, aNombresFabricante(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      oGetEstado     := TAutoGet():ReDefine( 170, { | u | iif( pcount() == 0, cGetEstado, cGetEstado := u ) }, oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, aNombresEstadoArticulo(),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
 
       REDEFINE BUTTON ;
          ID          IDOK ;

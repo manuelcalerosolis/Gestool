@@ -83,15 +83,16 @@ METHOD KeyChar( nKey, nFlags ) CLASS TAutoCombo
       if Empty( uItem )
          if nNewAt == 0
             if ::lCaseSensitive
-               nNewAt = AScan( ::aItems, { | x | SubStr( x, 1, Len( ::cSearchKey ) ) == ::cSearchKey } )
+               nNewAt = AScan( ::aItems, { | x | msgAlert( alltrim(::cSearchKey), "cSearchKey"), msgAlert(x, "x"), alltrim(::cSearchKey) $ x } )
+               // nNewAt = AScan( ::aItems, { | x | SubStr( x, 1, Len( ::cSearchKey ) ) == ::cSearchKey } )
             else
-               nNewAt = AScan( ::aItems, { | x | SubStr( Upper( x ), 1, Len( ::cSearchKey ) ) == ::cSearchKey } )
+               // nNewAt = AScan( ::aItems, { | x | SubStr( Upper( x ), 1, Len( ::cSearchKey ) ) == ::cSearchKey } )
+               nNewAt = AScan( ::aItems, { | x |  msgAlert( alltrim(::cSearchKey), "cSearchKey"), msgAlert(x, "x"), alltrim(::cSearchKey) $ Upper( x ) } )
             endif
             if Empty( ::oGet:hWnd )
                uItem = ::aItems[ If( nNewAt > 0, nNewAt, Max( ::nAT, 1 ) ) ]
             else
                uItem = If( nNewAt > 0, ::aItems[ nNewAt ], ::cSearchKey )
-               MsgInfo( uItem )
             endif
          else
             uItem = ::aItems[ Max( nNewAt, 1) ]
@@ -121,8 +122,6 @@ METHOD GetKeyChar( nKey ) CLASS TAutoCombo
 
    local nAt, cText
 
-   msgAlert( "GetKeyChar")
-
    if ( nKey == VK_TAB .and. ! GetKeyState( VK_SHIFT ) ) .or. nKey == VK_RETURN
       ::oWnd:GoNextCtrl( ::hWnd )
       return 0
@@ -137,16 +136,21 @@ METHOD GetKeyChar( nKey ) CLASS TAutoCombo
       ( nKey >= Asc( "a" ) .and. nKey <= Asc( "z" ) ) .or. ;
       ( nKey >= Asc( "0" ) .and. nKey <= Asc( "9" ) ) .or. ;
       Chr( nKey ) $ "+-/=?$*&%$() " .or. nKey == VK_BACK
+
+      ::Close()
+
       if nKey == VK_BACK
          cText = SubStr( ::oGet:GetText(), 1, ::oGet:oGet:pos - 1 )
       else
          cText = SubStr( ::oGet:GetText(), 1, ::oGet:oGet:pos - 1 ) + Chr( nKey )
       endif
       if ! Empty( cText )
-         if ( nAt := AScan( ::aItems, { | c | Upper( Left( c, Len( cText ) ) ) == ;
-                                           Upper( cText ) } ) ) != 0
+         if ( nAt := AScan( ::aItems, { | c | Upper( cText ) $ Upper( c ) } ) ) != 0
             ::oGet:SetText( ::aItems[ nAt ] )
             ::oGet:oGet:buffer = PadR( ::aItems[ nAt ], Len( ::oGet:oGet:buffer ) )
+
+            ::Open()
+
             if nKey != VK_BACK
                ::oGet:SetPos( ::oGet:oGet:pos + 1 )
             else
