@@ -20500,9 +20500,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 415, 54, 130, 12
   CONTROL "Buscar", 200, "Button", WS_TABSTOP, 548, 53, 50, 13
   CONTROL "Limpiar", 210, "Button", WS_TABSTOP, 598, 53, 50, 13
-  CONTROL "Añadir [F2]", 400, "Button", WS_TABSTOP, 49, 74, 50, 13
-  CONTROL "Modificar [F3]", 410, "Button", WS_TABSTOP, 101, 74, 50, 13
-  CONTROL "", 300, "TXBrowse", WS_TABSTOP|0x00300000, 50, 100, 598, 184
+  CONTROL "", 300, "TXBrowse", WS_TABSTOP|0x00300000, 50, 84, 598, 200
   CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 598, 293, 50, 14
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 44, 37, 8
   CONTROL "Tipo artículo", -1, "Static", WS_GROUP, 151, 44, 41, 8
@@ -20510,7 +20508,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Búsqueda avanzada de artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 287, 8
   CONTROL "Filtros", -1, "Button", BS_GROUPBOX, 43, 29, 610, 42
   CONTROL "Cliente", -1, "Static", WS_GROUP, 415, 44, 41, 8
-  CONTROL "Resultado", -1, "Button", BS_GROUPBOX, 43, 90, 610, 200
+  CONTROL "Resultado", -1, "Button", BS_GROUPBOX, 43, 74, 610, 216
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
 }
 
