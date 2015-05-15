@@ -1821,7 +1821,7 @@ Function CreateAcceso( oWnd )
    // Busquedas----------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 3
+   oGrupo:nBigItems     := if( lAIS(), 3, 2 )
    oGrupo:cPrompt       := 'Búsquedas'
    oGrupo:cLittleBitmap := "Package_Find_16"
    oGrupo:cBigBitmap    := "Package_Find_32"
@@ -1848,6 +1848,8 @@ Function CreateAcceso( oWnd )
    oItem:lShow          := .f.
    oItem:lLittle        := .f.
 
+   if lAIS()
+
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Búsqueda especial'
@@ -1858,6 +1860,8 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "zoom_in_32"
    oItem:lShow          := .f.
    oItem:lLittle        := .f.
+
+   end if
 
 
    // Impuestos----------------------------------------------------------------
@@ -3497,11 +3501,15 @@ Function BuildMenu()
                      HELPID   "01023" ;
                      RESOURCE "Package_View_16" ;
 
+                  if lAIS()
+
                   MENUITEM    "&I. Búsqueda especial";
                      MESSAGE  "Búsqueda especial" ;
                      ACTION   ( tSpecialSearchArticulo():New( oMenuItem, oWnd ) ) ;
                      HELPID   "01127" ;
                      RESOURCE "zoom_in_16" ;
+
+                  end if
 
                ENDMENU
 

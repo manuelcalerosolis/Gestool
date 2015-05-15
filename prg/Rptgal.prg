@@ -2513,6 +2513,16 @@ Return nil
 Function TSPECIALSEARCHARTICULO
 Return nil
 
+Function TSpecialInfoArticulo
+Return nil
+
+Function TSpecialInfoCliente
+Return nil
+
+Function TAutoCombo
+Return nil
+
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

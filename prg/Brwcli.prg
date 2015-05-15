@@ -67,9 +67,6 @@ static oTreeDocumentos
 static oTreeCobros
 static oTreeImageList
 
-static oBrwMaquinaria
-static oBmpMaquina
-
 static oVta
 static aVta
 static nCobTik       := 0
@@ -128,6 +125,9 @@ Static Function OpenFiles( cCodCli, lMessage )
       nView          := D():CreateView()
 
       D():EstadoArticulo( nView )
+
+      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
@@ -231,10 +231,6 @@ Static Function OpenFiles( cCodCli, lMessage )
       oDbfTmp           := DefineTemporal()
       oDbfTmp:Activate( .f., .f. )
 
-      if lAis() .and. !TDataCenter():selectSATFromClient( cCodCli )
-         lOpenFiles     := .f.
-      end if 
-
    RECOVER USING oError
 
       if lMessage
@@ -308,7 +304,7 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    local oBrwVta
    local oTree
    local oCmbAnio
-   local cCmbAnio          := "Todos" //Str( Year( GetSysDate() ) )
+   local cCmbAnio          := "Todos"
    local oBmpGeneral
    local oBmpDocumentos
    local oBmpGraficos
@@ -320,11 +316,6 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
    local aDialogs          := {  "CLIENT_9"           ,; 
                                  "INFO_1"             ,;
                                  "INFO_2"             }
-
-   if lAis()
-      aadd( aPrompts, "A&rtículos" )
-      aadd( aDialogs, "INFO_4" )
-   end if 
 
    if !OpenFiles( cCodCli, .f. )
       Return nil
@@ -683,14 +674,6 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       oGraph      := TGraph():ReDefine( 300, oFld:aDialogs[3] )
 
       /*
-      Cuarta pestaña para CZ------------------------------------------------------
-      */
-
-      if lAis()
-         buildFolderArticulosContadores( oFld )
-      end if 
-
-      /*
       Anno del ejecicio, por defecto lleva el anno actual
       */
 
@@ -760,16 +743,8 @@ function BrwVtaCli( cCodCli, cNomCli, lSatCli )
       oBmpGraficos:End()
    end if
 
-   if !empty(oBmpMaquina)
-      oBmpMaquina:end()
-   end if 
-
    if !empty(oMenu)
       oMenu:End()
-   end if 
-
-   if !empty(oBrwMaquinaria)
-      oBrwMaquinaria:CloseData()
    end if 
 
 return uResultado
@@ -786,10 +761,6 @@ static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oB
 
    oGraph:Refresh()
 
-   if !empty(oBrwMaquinaria)
-      oBrwMaquinaria:Load()
-   end if 
-
    if lSatCli   
       oBtnAceptar:Show()
       oFld:SetOption( 4 )
@@ -799,91 +770,6 @@ static function StartDialog( cCodCli, cCmbAnio, lSatCli, oFld, oDlg, oBrwVta, oB
    end if
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-Static Function buildFolderArticulosContadores( oFld )
-
-   REDEFINE BITMAP oBmpMaquina ID 500 RESOURCE "control_panel2_48" TRANSPARENT OF oFld:aDialogs[ 4 ]
-
-      oBrwMaquinaria                       := IXBrowse():New( oFld:aDialogs[ 4 ] )
-
-      oBrwMaquinaria:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwMaquinaria:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwMaquinaria:nMarqueeStyle         := 6
-      oBrwMaquinaria:cName                 := "Máquinas en informe de clientes"
-
-      oBrwMaquinaria:setTree( TDataCenter():treeProductFromSAT(), { "Navigate_Minus_16", "Navigate_Plus_16" } )
-
-      oBrwMaquinaria:bLDblClick            := {|| msgAlert( oBrwMaquinaria:oTreeItem:Cargo[ "cSerSat" ] + str( oBrwMaquinaria:oTreeItem:Cargo[ "nNumSat" ] ) + oBrwMaquinaria:oTreeItem:Cargo[ "cSufSat" ] ) }
-
-      if len( oBrwMaquinaria:aCols ) > 0
-         oBrwMaquinaria:aCols[ 1 ]:cHeader := ""
-         oBrwMaquinaria:aCols[ 1 ]:nWidth  := 20
-      end if
-
-      oBrwMaquinaria:CreateFromResource( 300 )
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Artículo"
-         :bEditValue       := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cRef" ] ) + " - " + alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "Nombre" ] ) }
-         :nWidth           := 260
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "S.A.T."
-         :bEditValue       := {|| oBrwMaquinaria:oTreeItem:Cargo[ "cSerSat" ] + "/" + alltrim( str( oBrwMaquinaria:oTreeItem:Cargo[ "nNumSat" ] ) ) }
-         :nDataStrAlign    := AL_LEFT
-         :nHeadStrAlign    := AL_LEFT
-         :nWidth           := 120
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Dlg."
-         :bEditValue       := {|| oBrwMaquinaria:oTreeItem:Cargo[ "cSufSat" ] }
-         :nDataStrAlign    := AL_LEFT
-         :nHeadStrAlign    := AL_LEFT
-         :lHide            := .t.
-         :nWidth           := 40
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Fecha"
-         :bEditValue       := {|| oBrwMaquinaria:oTreeItem:Cargo[ "dFecSat" ] }
-         :nDataStrAlign    := AL_LEFT
-         :nHeadStrAlign    := AL_LEFT
-         :nWidth           := 80
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Operario"
-         :bEditValue       := {|| oBrwMaquinaria:oTreeItem:Cargo[ "cCodOpe" ] + " - " + oBrwMaquinaria:oTreeItem:Cargo[ "cNomTra" ] }
-         :nWidth           := 170
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Estado"
-         :bEditValue       := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cCodEst" ] ) }
-         :bStrData         := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cCodEst" ] ) + " - " + oBrwMaquinaria:oTreeItem:Cargo[ "cNombre" ] }
-         :bBmpData         := {|| nBitmapTipoEstadoSat( oBrwMaquinaria:oTreeItem:Cargo[ "cTipo" ] ) }
-         :nWidth           := 170
-         AddResourceTipoCategoria( hb_QWith() )
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Situación"
-         :bEditValue       := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cSituac" ] ) }
-         :nWidth           := 100
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Ubicación"
-         :bEditValue       := {|| alltrim( oBrwMaquinaria:oTreeItem:Cargo[ "cDesUbi" ] ) }
-         :nWidth           := 130
-      end with
-
-Return ( nil )
 
 //---------------------------------------------------------------------------//
 

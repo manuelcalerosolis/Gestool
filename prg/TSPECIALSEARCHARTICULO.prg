@@ -202,7 +202,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Info artículo"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| InfArticulo( SelectArticulo->Codigo ) }
+         :bEditBlock          := {|| TSpecialInfoArticulo():Run( SelectArticulo->Codigo, SelectArticulo->Nombre ) }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -296,7 +296,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Informe cliente"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| brwVtaCli( SelectArticulo->cCodCli, SelectArticulo->Titulo, .t.  ) }
+         :bEditBlock          := {|| TSpecialInfoCliente():Run( SelectArticulo->cCodCli, SelectArticulo->Titulo ) } // brwVtaCli( SelectArticulo->cCodCli, SelectArticulo->Titulo, .t.  ) }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -363,6 +363,7 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
    local cSentencia  := ""
 
    cSentencia        += "SELECT articulos.Codigo, "
+   cSentencia        +=        "articulos.Nombre, "
    cSentencia        +=        "articulos.cDesUbi, "
    cSentencia        +=        "estadoSat.cNombre, "
    cSentencia        +=        "estadoSat.nDisp, "  
@@ -397,6 +398,7 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    local cSentencia  := ""
 
    cSentencia        += "SELECT articulos.Codigo, "
+   cSentencia        +=        "articulos.Nombre, "
    cSentencia        +=        "articulos.cDesUbi, "
    cSentencia        +=        "estadoSat.cNombre, "
    cSentencia        +=        "estadoSat.nDisp, "  

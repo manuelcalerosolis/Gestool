@@ -46,17 +46,14 @@ Return ( Self )
 METHOD Resource() CLASS TSpecialInfoArticulo
 
    local oDlg
-   local oFld
    local oBmp
    local oBrwArticulo
 
-   DEFINE DIALOG oDlg RESOURCE "ArtInfo" TITLE "Información del artículo : " + Rtrim( ::cCodigoArticulo ) + " - " + Rtrim( ::cNombreArticulo )
+   DEFINE DIALOG oDlg RESOURCE "Info_5" TITLE "Información del artículo : " + Rtrim( ::cCodigoArticulo ) + " - " + Rtrim( ::cNombreArticulo )
 
-      oFld                                := TFolder():ReDefine( 300, { "A&rtículos" }, { "INFO_4" }, oDlg,,,,, .f. )
+   REDEFINE BITMAP oBmp ID 500 RESOURCE "Cube_Yellow_Alpha_48" TRANSPARENT OF oDlg
 
-   REDEFINE BITMAP oBmp ID 500 RESOURCE "control_panel2_48" TRANSPARENT OF oFld:aDialogs[ 1 ]
-
-      oBrwArticulo                      := IXBrowse():New( oFld:aDialogs[ 1 ] )
+      oBrwArticulo                      := IXBrowse():New( oDlg )
 
       oBrwArticulo:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwArticulo:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }

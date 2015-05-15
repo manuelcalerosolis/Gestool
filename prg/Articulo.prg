@@ -17270,7 +17270,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       REDEFINE BUTTON ;
 			ID 		500 ;
 			OF 		oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. lAppend .and. !IsReport() );
+         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. lAppend .and. !IsReport() ); 
          ACTION   ( WinAppRec( oBrw, bEdit, dbfArticulo ) )
 
    if !IsReport()
