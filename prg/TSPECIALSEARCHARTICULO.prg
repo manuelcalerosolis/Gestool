@@ -479,7 +479,3 @@ Function cFilter( uDataSource, cData, self )
 RETURN aList
 
 //---------------------------------------------------------------------------//
-
-
-
-

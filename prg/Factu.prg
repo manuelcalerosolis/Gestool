@@ -6042,7 +6042,7 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   buscarTipologias()
+   //buscarTipologias()
 
 Return ( nil )
 
