@@ -75,9 +75,6 @@ static nMeter
 static oText
 static cText         := ""
 
-static oBrwMaquinaria
-static oBmpMaquinaria
-
 static oTreeImageList
 static oTreeDocument
 static oTreeCompras
@@ -296,10 +293,6 @@ Static Function OpenFiles( cCodArt )
       lOpenFiles        := .f.
    end if
 
-   if lAis() .and. !TDataCenter():selectSATFromArticulo( cCodArt )
-      lOpenFiles        := .f.
-   end if 
-
    oDbfTmp              := DefineTemporal()
    oDbfTmp:Activate( .f., .f. )
 
@@ -397,7 +390,7 @@ function BrwVtaComArt( cCodArt, cNomArt )
    local oBrwVta
    local oTree
    local oCmbAnio
-   local cCmbAnio          := "Todos" //Str( Year( GetSysDate() ) ) // 
+   local cCmbAnio          := "Todos"
    local oBmpGeneral
    local oBmpDocumentos
    local oBmpGraficos
@@ -415,11 +408,6 @@ function BrwVtaComArt( cCodArt, cNomArt )
    if Empty( cCodArt )
       Return nil
    end if
-
-   if lAis()
-      aadd( aPrompts, "A&rtículos" )
-      aadd( aDialogs, "INFO_4" )
-   end if 
 
    if !OpenFiles( cCodArt )
       Return nil
@@ -1042,14 +1030,6 @@ function BrwVtaComArt( cCodArt, cNomArt )
       OF       oDlg ;
       ACTION   ( oDlg:End() )
 
-      /*
-      Cuarta pestaña para CZ------------------------------------------------------
-      */
-
-      if lAis()
-         buildFolderArticulosContadores( oFld )
-      end if 
-
    oFld:aDialogs[ 3 ]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ),     LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
    oFld:aDialogs[ 3 ]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ),   LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
 
@@ -1082,83 +1062,6 @@ function BrwVtaComArt( cCodArt, cNomArt )
    oMenu:End()
 
 return nil
-
-//---------------------------------------------------------------------------//
-
-Static Function buildFolderArticulosContadores( oFld )
-
-   REDEFINE BITMAP oBmpMaquinaria ID 500 RESOURCE "control_panel2_48" TRANSPARENT OF fldContadores
-
-      oBrwMaquinaria                      := IXBrowse():New( fldContadores )
-
-      oBrwMaquinaria:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwMaquinaria:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwMaquinaria:cAlias               := "SatCliArticulos"
-
-      oBrwMaquinaria:nMarqueeStyle        := 6
-      oBrwMaquinaria:cName                := "Máquinas en informe de articulos"
-
-      oBrwMaquinaria:CreateFromResource( 300 )
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Cliente"
-         :bEditValue       := {|| SatCliArticulos->clienteNombre }
-         :nWidth           := 260
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Estado"
-         :bEditValue       := {|| SatCliArticulos->tipoEstadoSAT }
-         :nWidth           := 120
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Operario"
-         :bEditValue       := {|| SatCliArticulos->operarioNombre }
-         :nWidth           := 120
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Observaciones"
-         :bEditValue       := {|| SatCliArticulos->observacionesLineaSAT }
-         :nWidth           := 120
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Fecha"
-         :bEditValue       := {|| SatCliArticulos->fechaSAT }
-         :nWidth           := 80
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Inicio"
-         :bEditValue       := {|| trans( SatCliArticulos->horaInicioSAT, "@R 99:99" ) }
-         :nWidth           := 40
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Fin"
-         :bEditValue       := {|| trans( SatCliArticulos->horaFinSAT, "@R 99:99" ) }
-         :nWidth           := 40
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "Fin"
-         :bEditValue       := {|| trans( SatCliArticulos->horaFinSAT, "@R 99:99" ) }
-         :nWidth           := 40
-      end with
-
-      with object ( oBrwMaquinaria:addCol() )
-         :cHeader          := "S.A.T."
-         :bEditValue       := {|| iif( !empty( SatCliArticulos->serieLineaSAT ),;
-                                       SatCliArticulos->serieLineaSAT + "/" + alltrim( str( SatCliArticulos->numeroLineaSAT ) ) + "/" + SatCliArticulos->sufijoLineaSAT,;
-                                       "" ) }
-         :nWidth           := 150
-      end with
-
-
-Return ( nil )
 
 //---------------------------------------------------------------------------//
 
