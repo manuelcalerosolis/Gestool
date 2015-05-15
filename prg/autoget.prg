@@ -14,11 +14,11 @@ TAutoget
 
 #define COLOR_WINDOW        5
 #define COLOR_WINDOWTEXT    8
+#define COLOR_CAPTIONTEXT   9
 #define COLOR_BTNFACE       15
 #define COLOR_HIGHLIGHT     13
 
-
-#define DATATYPE_HASH 256
+#define DATATYPE_HASH       256
 
 CLASS TAutoCombo FROM TComboBox
 
@@ -232,7 +232,7 @@ METHOD New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid,;
    DEFAULT Flds     := 1
    DEFAULT nLHeight := 170
    DEFAULT          aGradItem := { { 1/2, nRGB( 253, 249, 225 ), nRGB( 253, 249, 225 ) },;
-   	                           { 1/2, nRGB( 253, 245, 206 ), nRGB( 253, 249, 225 ) } },;
+                               { 1/2, nRGB( 253, 245, 206 ), nRGB( 253, 249, 225 ) } },;
                     aGradList := { { 1, nRGB( 248, 248, 248 ), nRGB( 228, 228, 228 ) } },;
                     nClrLine  := nRGB( 251, 203, 9 ),;//nRGB( 184, 214, 251 )
                     nClrSel  := nRGB( 199, 116, 5 ),;
@@ -270,19 +270,12 @@ METHOD ReDefine( nId,       bSetGet,  oWnd,    nHelpId, cPict,   bValid, nClrFor
 
    DEFAULT Flds     := 1
    DEFAULT nLHeight := 170
-/*
    DEFAULT          aGradItem := { { 1/2, nRGB( 253, 249, 225 ), nRGB( 253, 249, 225 ) },;
-   	                           { 1/2, nRGB( 253, 245, 206 ), nRGB( 253, 249, 225 ) } },;
+                               { 1/2, nRGB( 253, 245, 206 ), nRGB( 253, 249, 225 ) } },;
                     aGradList := { { 1, nRGB( 248, 248, 248 ), nRGB( 228, 228, 228 ) } },;
                     nClrLine  := nRGB( 251, 203, 9 ),;//nRGB( 184, 214, 251 )
                     nClrSel   := nRGB( 199, 116, 5 ),;
                     nClrText  := GetSysColor( COLOR_CAPTIONTEXT )
-*/
-   DEFAULT          aGradItem := { { 1, nRGB( 255, 255, 225 ), nRGB( 255, 255, 225 ) } },;
-                    aGradList := { { 1, nRGB( 255, 255, 225 ), nRGB( 255, 255, 225 ) } },;
-                    nClrLine  := GetSysColor( COLOR_WINDOWTEXT ),; // nRGB( 251, 203, 9 ),;//nRGB( 184, 214, 251 )
-                    nClrSel   := GetSysColor( COLOR_WINDOWTEXT ),;
-                    nClrText  := GetSysColor( COLOR_WINDOWTEXT ) // GetSysColor( COLOR_CAPTIONTEXT )
 
                     
    ::cField   = Flds
