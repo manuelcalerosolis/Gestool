@@ -50,7 +50,7 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( oMenuItem, oWnd ) CLASS TSPECIALSEARCHARTICULO
+METHOD New( oMenuItem, oWnd ) CLASS TSpecialSearchArticulo
 
    local nLevel
 
@@ -466,3 +466,5 @@ Function cFilter( uDataSource, cData, self )
 RETURN aList
 
 //---------------------------------------------------------------------------//
+
+
