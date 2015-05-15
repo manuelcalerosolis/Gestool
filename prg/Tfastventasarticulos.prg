@@ -495,7 +495,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cPosCli",     "C", 15, 0, {|| "@!" }, "Código postal cliente/proveedor"         )
 
    ::AddField( "nUniArt",     "N", 16, 6, {|| "" },   "Unidades artículo"                       )
-   ::AddField( "nBultos",     "N", 16, 6, {|| "" },   "Bultos artículo"                         )
+ //  ::AddField( "nBultos",     "N", 16, 6, {|| "" },   "Bultos artículo"                         )
    ::AddField( "nPreArt",     "N", 16, 6, {|| "" },   "Precio unitario artículo"                ) 
 
    ::AddField( "nPdtRec",     "N", 16, 6, {|| "" },   "Unidades pendientes de recibir"          )
@@ -2873,20 +2873,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido ) 
+METHOD GetInformacionEntrada( cCodArt, cLote, cDatoRequerido ) 
 
    local cDato       := ctod('')  
 
-   if ::isEntradaPedidoProveedor( cCodArt, cCodAlm, cLote )
-      Return ( ::getDatoPedidoProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido ) )
-   end if 
+   if ::isEntradaMovimientoAlmacen( cCodArt, cLote )
+      Return (::GetDatoMovimientosAlamcen( cCodArt, cLote, cDatoRequerido ) )
+   end if
 
-   if ::isEntradaAlbaranProveedor( cCodArt, cCodAlm, cLote )
-      Return ( ::GetDatoAlbaranProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido ) )     
-   end if 
+   if ::isEntradaAlbaranProveedor( cCodArt, cLote )
+      Return ( ::GetDatoAlbaranProveedor( cCodArt, cLote, cDatoRequerido ) )     
+   end if    
 
-   if ::isEntradaMovimientoAlmacen( cCodArt, cCodAlm, cLote )
-      Return (::GetDatoMovimientosAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido ) )
+   if ::isEntradaPedidoProveedor( cCodArt, cLote )
+      Return ( ::getDatoPedidoProveedor( cCodArt, cLote, cDatoRequerido ) )
    end if
    
 
@@ -2894,7 +2894,7 @@ RETURN ( cDato )
 
 //---------------------------------------------------------------------------//
 
-METHOD isEntradaPedidoProveedor( cCodArt, cCodAlm, cLote )
+METHOD isEntradaPedidoProveedor( cCodArt, cLote )
 
    local aStatusPedidoProveedores
    local isEntradaPedido      := .f.
@@ -2906,7 +2906,7 @@ METHOD isEntradaPedidoProveedor( cCodArt, cCodAlm, cLote )
    
       while ( alltrim( ::oPedPrvL:cRef ) == alltrim( cCodArt ) ) .and. !( ::oPedPrvL:Eof() )
 
-         if alltrim( ::oPedPrvL:cAlmLin ) == alltrim( cCodAlm ) .and. alltrim( ::oPedPrvL:cLote ) == alltrim( cLote )
+         if alltrim( ::oPedPrvL:cLote ) == alltrim( cLote )
             isEntradaPedido   := .t.
             exit
          end if 
@@ -2923,10 +2923,10 @@ RETURN ( isEntradaPedido )
 
 //-----------------------------------------------------------------------------//
 
-METHOD getDatoPedidoProveedor( cCodArt, cCodAlm, cLote, cCampoRequerido )
+METHOD getDatoPedidoProveedor( cCodArt, cLote, cCampoRequerido )
 
    local aStatusPedidoProveedores
-   local dFechaPedido      := ctod('')
+   local dFechaPedido      := date()
    local dFechaDocumento
    local uCampoRequerido
 
@@ -2937,10 +2937,10 @@ METHOD getDatoPedidoProveedor( cCodArt, cCodAlm, cLote, cCampoRequerido )
    
       while ( alltrim( ::oPedPrvL:cRef ) == alltrim( cCodArt ) ) .and. !( ::oPedPrvL:Eof() )
 
-         if alltrim( ::oPedPrvL:cAlmLin ) == alltrim( cCodAlm ) .and. alltrim( ::oPedPrvL:cLote ) == alltrim( cLote )
+         if alltrim( ::oPedPrvL:cLote ) == alltrim( cLote )
             dFechaDocumento   := RetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT:cAlias, "dFecPed" )
             
-            if dFechaPedido < dFechaDocumento
+            if dFechaPedido >= dFechaDocumento
 
                dFechaPedido         := dFechaDocumento
 
@@ -2969,7 +2969,7 @@ RETURN ( uCampoRequerido )
 
 //---------------------------------------------------------------------------//
 
-METHOD isEntradaAlbaranProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido )
+METHOD isEntradaAlbaranProveedor( cCodArt, cLote, cDatoRequerido )
 
    local sStatusAlbaranProveeedor
    local isEntradaAlbaranProveedor  := .f.
@@ -2981,7 +2981,7 @@ METHOD isEntradaAlbaranProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido )
 
       while ( alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
 
-         if alltrim( ::oAlbPrvL:cAlmLin ) == cCodAlm .and. alltrim( ::oAlbPrvL:cLote ) == cLote
+         if alltrim( ::oAlbPrvL:cLote ) == cLote
             isEntradaAlbaranProveedor := .t.
             exit
          end if
@@ -2997,10 +2997,10 @@ RETURN ( isEntradaAlbaranProveedor )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetDatoAlbaranProveedor( cCodArt, cCodAlm, cLote, cCampoRequerido )
+METHOD GetDatoAlbaranProveedor( cCodArt, cLote, cCampoRequerido )
 
    local aStatusAlbaranProveeedor
-   local dFechaAlbaran  := ctod('')
+   local dFechaAlbaran  := date()
    local dFechadocumento 
    local uCampoRequerido
 
@@ -3010,10 +3010,10 @@ METHOD GetDatoAlbaranProveedor( cCodArt, cCodAlm, cLote, cCampoRequerido )
    if ::oAlbPrvL:Seek( cCodArt)
 
       while ( alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
-         if alltrim( ::oAlbPrvL:cAlmLin ) == cCodAlm .and. alltrim( ::oAlbPrvL:cLote ) == cLote
+         if alltrim( ::oAlbPrvL:cLote ) == cLote
             dFechaDocumento := ::oAlbPrvL:dFecAlb
 
-            if dFechaAlbaran < dFechaDocumento
+            if dFechaAlbaran >= dFechaDocumento
                dFechaAlbaran    := dFechaDocumento 
 
                if !empty(cCampoRequerido) .and. ( ::oAlbPrvL:fieldpos(cCampoRequerido) != 0 )
@@ -3037,7 +3037,7 @@ METHOD GetDatoAlbaranProveedor( cCodArt, cCodAlm, cLote, cCampoRequerido )
 RETURN ( uCampoRequerido )
 
 //---------------------------------------------------------------------------//
-METHOD isEntradaMovimientoAlmacen( cCodArt, cCodAlm, cLote )
+METHOD isEntradaMovimientoAlmacen( cCodArt, cLote )
 
    local aStatusMovimientosAlmacen
    local isEntradaMovimientoAlmacen := .f.
@@ -3049,7 +3049,8 @@ METHOD isEntradaMovimientoAlmacen( cCodArt, cCodAlm, cLote )
    if ::oHisMov:Seek( cCodArt )
 
       while ( alltrim( ::oHisMov:cRefMov ) ) == alltrim( cCodArt ) .and. !( ::oHisMov:Eof() )
-         if (alltrim( ::oHisMov:cAliMov ) == alltrim( cCodAlm ) ) .and. ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
+      //   if (alltrim( ::oHisMov:cAliMov ) == alltrim( cCodAlm ) ) .and. ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
+         if ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
             isEntradaMovimientoAlmacen := .t.
             exit
          end if
@@ -3064,10 +3065,10 @@ METHOD isEntradaMovimientoAlmacen( cCodArt, cCodAlm, cLote )
 RETURN ( isEntradaMovimientoAlmacen )
 //---------------------------------------------------------------------------//
 
-METHOD GetDatoMovimientosAlamcen( cCodArt, cCodAlm, cLote, cCampoRequerido )
+METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
 
    local aStatusMovimientosAlmacen 
-   local dFechaMovimiento    := ctod('')
+   local dFechaMovimiento    := date()
    local dFechaDocumento 
    local uCampoRequerido
 
@@ -3077,10 +3078,10 @@ METHOD GetDatoMovimientosAlamcen( cCodArt, cCodAlm, cLote, cCampoRequerido )
    if ::oHisMov:Seek( cCodArt )
 
       while ( alltrim( ::oHisMov:cRefMov ) ) == alltrim( cCodArt ) .and. !( ::oHisMov:Eof() )
-         if (alltrim( ::oHisMov:cAliMov ) == alltrim( cCodAlm ) ) .and. ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
+         if ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
 
             dFechaDocumento         := ::oHisMov:dFecMov   
-            if dFechaMovimiento < dFechaDocumento
+            if dFechaMovimiento > dFechaDocumento
                dFechaMovimiento     := dFechaDocumento 
 
                if !empty( cCampoRequerido ) .and. ( ::oHisMov:fieldpos( cCampoRequerido ) !=0 )

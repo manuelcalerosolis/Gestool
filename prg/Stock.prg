@@ -1878,6 +1878,7 @@ RETURN ( lDup )
                :cNumeroSerie  := ( ::cHisMovS )->cNumSer
             else
                :nUnidades     := nUnidades
+               :nBultos       := ( ::cHisMovT )->nBultos
             end if 
 
          else 
@@ -1889,6 +1890,7 @@ RETURN ( lDup )
                :cNumeroSerie  := ( ::cHisMovS )->cNumSer
             else
                :nUnidades     := -nUnidades
+               :nBultos       := -( ::cHisMovT )->nBultos
             end if 
 
          end if
@@ -1921,6 +1923,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
          :cLote               := ( ::cAlbPrvL )->cLote
          :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
+         :nBultos             := -( ::cAlbPrvL )->nBultos
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -1957,6 +1960,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
          :cLote               := ( ::cAlbPrvL )->cLote
          :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
+         :nBultos             := ( ::cAlbPrvL )->nBultos
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
@@ -1993,6 +1997,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
          :cLote               := ( ::cFacPrvL )->cLote
          :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
+         :nBultos             := ( ::cFacPrvL )->nBultos
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
@@ -2029,6 +2034,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cRctPrvL )->cValPr2
          :cLote               := ( ::cRctPrvL )->cLote
          :dFechaCaducidad     := ( ::cRctPrvL )->dFecCad
+         :nBultos             := ( ::cRctPrvL )->nBultos
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
@@ -2065,6 +2071,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cAlbCliL )->cValPr2
          :cLote               := ( ::cAlbCliL )->cLote
          :dFechaCaducidad     := ( ::cAlbCliL )->dFecCad
+         :nBultos             := -( ::cAlbCliL )->nBultos
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -2101,6 +2108,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cFacCliL )->cValPr2
          :cLote               := ( ::cFacCliL )->cLote
          :dFechaCaducidad     := ( ::cFacCliL )->dFecCad
+         :nBultos             :=-( ::cFacCliL )->nBultos
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -2138,6 +2146,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cFacRecL )->cValPr2
          :cLote               := ( ::cFacRecL )->cLote
          :dFechaCaducidad     := ( ::cFacRecL )->dFecCad
+         :nBultos             := -( ::cFacRecL )->nBultos
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -4683,7 +4692,6 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
       /*
       Albaranes de proveedor------------------------------------------------------
       */
-
          if ( ::cAlbPrvL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
             while ( ::cAlbPrvL )->cRef == ( ::cArticulo )->Codigo .and. !( ::cAlbPrvL )->( Eof() )
