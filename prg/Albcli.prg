@@ -4000,9 +4000,6 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
    end if 
 
-
-
-
    /*
    Muestra y oculta las rentabilidades-----------------------------------------
    */

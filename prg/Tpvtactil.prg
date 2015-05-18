@@ -2943,25 +2943,17 @@ METHOD DestroyFastReport()
 
 METHOD EliminaLineaTemporal()
 
-  if uFieldEmpresa( "lShowLin" )
-     ::oTemporalLinea:lDelTil   := .t. // ::oTemporalLinea:Delete()
-  else 
-     ::oTemporalLinea:lDelTil   := .t.
-  end if
+   ::oTemporalLinea:lDelTil   := .t. // ::oTemporalLinea:Delete()
 
-  RETURN ( nil )
+RETURN ( nil )
 
 //------------------------------------------------------------------------//
 
 METHOD SaltaLineaTemporal()
 
-  if uFieldEmpresa( "lShowLin" )
-     ::oTemporalLinea:Skip() // ::oTemporalLinea:Skip(0)
-  else
-     ::oTemporalLinea:Skip()
-  end if 
+   ::oTemporalLinea:Skip() // ::oTemporalLinea:Skip(0)
 
-  RETURN ( nil )
+RETURN ( nil )
 
 //------------------------------------------------------------------------//
 
