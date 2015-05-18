@@ -617,13 +617,13 @@ CLASS TpvTactil
    METHOD InstanceFastReport()
    METHOD DestroyFastReport()
    
-   METHOD EliminaLineaTemporal()
-   METHOD SaltaLineaTemporal()
+   METHOD EliminaLineaTemporal()          INLINE ( ::oTemporalLinea:lDelTil   := .t. )
+   METHOD SaltaLineaTemporal()            INLINE ( ::oTemporalLinea:Skip() )
 
    METHOD CambiarPrecio()
    METHOD nGetUnidades( lUnaUnidad )
 
-   METHOD nGetPrecio()
+   METHOD nGetPrecio()                    INLINE ( val( ::cGetUnidades ) )
    METHOD cTipoDocumento()
 
    METHOD OnClickIniciarSesion()
@@ -2941,22 +2941,6 @@ METHOD DestroyFastReport()
 
 //------------------------------------------------------------------------//
 
-METHOD EliminaLineaTemporal()
-
-   ::oTemporalLinea:lDelTil   := .t. // ::oTemporalLinea:Delete()
-
-RETURN ( nil )
-
-//------------------------------------------------------------------------//
-
-METHOD SaltaLineaTemporal()
-
-   ::oTemporalLinea:Skip() // ::oTemporalLinea:Skip(0)
-
-RETURN ( nil )
-
-//------------------------------------------------------------------------//
-
 METHOD CambiarPrecio()
 
   if ( ::oTemporalLinea:ordKeyCount() != 0 ) .and. ( Val( ::cGetUnidades ) != 0 )
@@ -2977,33 +2961,22 @@ METHOD CambiarPrecio()
 
 METHOD nGetUnidades( lUnaUnidad )
 
-  local nUnidades      := 1
+   local nUnidades      := 1
 
-  DEFAULT lUnaUnidad   := .f.
+   DEFAULT lUnaUnidad   := .f.
 
-  nUnidades            := Val( ::cGetUnidades )
+   nUnidades            := Val( ::cGetUnidades )
 
-  if ( ( lUnaUnidad .and. nUnidades == 0 ) .or. ::lGetPrecio )
-     nUnidades         := 1 // Max( nUnidades, 1 )
-  end if
+   if ( ( lUnaUnidad .and. nUnidades == 0 ) .or. ::lGetPrecio )
+      nUnidades         := 1 // Max( nUnidades, 1 )
+   end if
 
-  if !::lGetPrecio
-     ::oGetUnidades:cText( "" )
-  end if 
+   if !::lGetPrecio
+      ::oGetUnidades:cText( "" )
+   end if 
 
-  RETURN ( nUnidades )
+RETURN ( nUnidades )
 
-
-
-//------------------------------------------------------------------------//
-
-METHOD nGetPrecio()
-
-  local nPrecio      
-
-  nPrecio            := Val( ::cGetUnidades )
-
-RETURN ( nPrecio )
 
 //------------------------------------------------------------------------//
 

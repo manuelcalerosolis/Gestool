@@ -134,6 +134,7 @@
 #define _CTIPINCI                124
 #define _TELEFONO2               125
 #define _MOVIL2                  126
+#define _CAGENTE2                127      //   C      3     0
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -1760,13 +1761,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET oSay[2] VAR cSay[2] ;
          ID       231 ;
-         COLOR    CLR_GET ;
          WHEN     ( .F. ) ;
+         OF       fldGeneral
+
+      /*
+      Codigo de Agente2______________________________________________________________
+      */
+
+      REDEFINE GET aGet[ _CAGENTE2 ] VAR aTmp[ _CAGENTE2 ] ;
+         ID       310 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cAgentes( aGet[ _CAGENTE ], , oSay[ 7 ] ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAgentes( aGet[ _CAGENTE ], oSay[ 7 ] ) ) ;
+         OF       fldGeneral
+
+      REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
+         WHEN     .f.;
+         ID       311 ;
          OF       fldGeneral
 
       REDEFINE GET aGet[ _CCODGRP ] VAR aTmp[ _CCODGRP ] ;
          ID       240 ;
-         COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( oGrpCli:Existe( aGet[ _CCODGRP ], oSay[ 5 ], "cNomGrp", .t., .t., "0" ) );
          ON HELP  ( oGrpCli:Buscar( aGet[ _CCODGRP ] ) ) ;
@@ -1776,26 +1792,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET oSay[5] VAR cSay[5] ;
          ID       241 ;
          SPINNER ;
-         WHEN     ( .f. ) ;
-         COLOR    CLR_GET ;
-         OF       fldGeneral
-
-      /*
-      Codigo de Almacen______________________________________________________________
-      */
-
-      REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ] ;
-         ID       310 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ _CCODALM ], dbfAlmT, oSay[7] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( aGet[ _CCODALM ], oSay[7] ) ) ;
-         COLOR    CLR_GET ;
-         OF       fldGeneral
-
-      REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
-         WHEN     .F. ;
-         ID       311 ;
+         WHEN     .f.;
          OF       fldGeneral
 
       /*
@@ -1969,7 +1966,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET aGet[_NDPP] VAR aTmp[_NDPP] ;
          SPINNER ;
          ID       170;
-         COLOR    CLR_GET ;
          PICTURE  "@E 999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
@@ -8835,8 +8831,9 @@ FUNCTION aItmCli()
    aAdd( aBase, { "dLlaCli",   "D",  8, 0, "Última llamada del cliente" ,                   "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cTimCli",   "C",  5, 0, "Hora última llamada del cliente" ,              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cTipInci",  "C",  5, 0, "Tipo de incidencia" ,                           "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Telefono2", "C", 50, 0, "Teléfono2",                                     "Telefono",           "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Movil2",    "C", 50, 0, "Móvil2",                                        "Movil",              "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Telefono2", "C", 50, 0, "Segundo teléfono",                              "Telefono2",          "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Movil2",    "C", 50, 0, "Segundo móvil",                                 "Movil2",             "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgente2",  "C",  3, 0, "Código de segundo agente comercial ",           "CodigoAgente2",      "", "( cDbfCli )", {|| accessCode():cAgente } } )
 
 RETURN ( aBase )
 
