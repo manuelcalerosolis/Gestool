@@ -11682,6 +11682,10 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
    
    oFr:AddVariable(     "Facturas",             "Cuenta bancaria cliente",                         "CallHbFunc('cCtaFacCli')" )
+   oFr:AddVariable(     "Facturas",             "Saldo anterior envase 4",                         "CallHbFunc('nSaldoAnterior4')" )
+   oFr:AddVariable(     "Facturas",             "Saldo anterior envase 8",                         "CallHbFunc('nSaldoAnterior8')" )
+   oFr:AddVariable(     "Facturas",             "Saldo anterior envase 16",                        "CallHbFunc('nSaldoAnterior16')" )
+   
 
    oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo",                            "CallHbFunc('cDesFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo otro lenguaje",              "CallHbFunc('cDesFacCliLeng')" )
@@ -24698,3 +24702,27 @@ Function cFormatoFacturasClientes( cSerie )
 Return ( cFormato ) 
 
 //---------------------------------------------------------------------------//   
+
+Function nSaldoAnterior4( cNumDoc )
+
+   DEFAULT cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+
+Return oStock:nSaldoAnterior( Padr( "4", 18 ), cNumDoc )
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoAnterior8( cNumDoc )
+
+   DEFAULT cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+
+Return oStock:nSaldoAnterior( Padr( "8", 18 ), cNumDoc )
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoAnterior16( cNumDoc )
+
+   DEFAULT cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+
+Return oStock:nSaldoAnterior( Padr( "16", 18 ), cNumDoc )
+
+//---------------------------------------------------------------------------//
