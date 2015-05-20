@@ -1368,7 +1368,7 @@ METHOD appendLineasAlbaran( oItem ) CLASS GeneraFacturasClientes
                   ( D():FacturasClientesSeries( ::nView ) )->cSerFac  := ::cSerie
                   ( D():FacturasClientesSeries( ::nView ) )->nNumFac  := ::nNumero
                   ( D():FacturasClientesSeries( ::nView ) )->cSufFac  := ::cSufijo
-                  ( D():FacturasClientesSeries( ::nView ) )->nNumLin  := ::nNumLin
+                  ( D():FacturasClientesSeries( ::nView ) )->nNumLin  := ::nNumLin - 1
                   ( D():FacturasClientesSeries( ::nView ) )->cRef     := ( D():AlbaranesClientesSeries( ::nView ) )->cRef
                   ( D():FacturasClientesSeries( ::nView ) )->cAlmLin  := ( D():AlbaranesClientesSeries( ::nView ) )->cAlmLin
                   ( D():FacturasClientesSeries( ::nView ) )->cNumSer  := ( D():AlbaranesClientesSeries( ::nView ) )->cNumSer
