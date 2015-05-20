@@ -1771,9 +1771,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET aGet[ _CAGENTE2 ] VAR aTmp[ _CAGENTE2 ] ;
          ID       310 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cAgentes( aGet[ _CAGENTE ], , oSay[ 7 ] ) ) ;
+         VALID    ( cAgentes( aGet[ _CAGENTE2 ], , oSay[ 7 ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAgentes( aGet[ _CAGENTE ], oSay[ 7 ] ) ) ;
+         ON HELP  ( BrwAgentes( aGet[ _CAGENTE2 ], oSay[ 7 ] ) ) ;
          OF       fldGeneral
 
       REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
