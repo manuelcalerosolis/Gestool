@@ -24759,7 +24759,6 @@ Function nSaldoAnterior16()
 Return oStock:nSaldoAnterior( Padr( "16", 18 ), cNumDoc )
 
 //---------------------------------------------------------------------------//
-<<<<<<< HEAD
 
 Function nSaldoDocumento4()
 
@@ -24809,9 +24808,3 @@ Function nTotalSaldo16()
 	local dFecFac  	:= ( D():FacturasClientes( nView ) )->dFecFac
 	
 Return oStock:nTotalSaldo( Padr("16", 18 ), cCodCli, dFecFac)
-
-
-
-
-=======
->>>>>>> origin/master
