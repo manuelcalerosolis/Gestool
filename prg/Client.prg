@@ -301,7 +301,9 @@ static nLabels          := 1
 
 static aIniCli
 
-static oDetCamposExtra         
+static oDetCamposExtra    
+static oEntidades
+static aEntidades       := {}
 
 static bEdtRec          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtBig          := { | aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtBig( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
@@ -329,8 +331,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
    lExternal            := lExt
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
       DisableAcceso()
 
@@ -471,6 +473,12 @@ STATIC FUNCTION OpenFiles( lExt )
       if !oDetCamposExtra:OpenFiles
          lOpenFiles        := .f.
       end if
+
+      oEntidades        := TEntidades():Create()
+      if !oEntidades:OpenFiles()
+         lOpenFiles     := .f.
+      end if
+
       oDetCamposExtra:SetTipoDocumento( "Clientes" )
 
       cPinDiv              := cPinDiv( cDivEmp() ) // Picture de la divisa de compra
@@ -481,7 +489,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       EnableAcceso()
 
-   RECOVER USING oError
+  /* RECOVER USING oError
 
       lOpenFiles           := .f.
 
@@ -491,7 +499,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    if !lOpenFiles
       CloseFiles()
@@ -557,6 +565,10 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
+   end if
+
+   if !empty( oEntidades )
+      oEntidades:End()
    end if
 
    D():DeleteView( nView )
@@ -1771,9 +1783,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET aGet[ _CAGENTE2 ] VAR aTmp[ _CAGENTE2 ] ;
          ID       310 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cAgentes( aGet[ _CAGENTE ], , oSay[ 7 ] ) ) ;
+         VALID    ( cAgentes( aGet[ _CAGENTE2 ], , oSay[ 7 ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwAgentes( aGet[ _CAGENTE ], oSay[ 7 ] ) ) ;
+         ON HELP  ( BrwAgentes( aGet[ _CAGENTE2 ], oSay[ 7 ] ) ) ;
          OF       fldGeneral
 
       REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
@@ -2521,7 +2533,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       /*
       Pestaña de facturae-----------------------------------------------------
       */
-      
+
+
+   
       REDEFINE BITMAP oBmpFacturae ;
          ID       600 ;
          RESOURCE "User_mobilephone_Alpha_48" ;
@@ -2532,24 +2546,24 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       500 ;
          OF       fldFacturae ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinAppRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae ) )
+         ACTION   ( WinAppRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae, , , aTmp[ _COD ] ) )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       fldFacturae ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinEdtRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae ) )
+         ACTION   ( WinEdtRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae, , , aTmp[ _COD ] ) )
+
+      REDEFINE BUTTON ;
+         ID       503 ;
+         OF       fldFacturae ;
+         ACTION   ( WinZooRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae, , , aTmp[ _COD ] ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
          OF       fldFacturae ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinZooRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae ) )
-
-      REDEFINE BUTTON ;
-         ID       503 ;
-         OF       fldFacturae ;
-         ACTION   ( msgAlert( "dploy") )
+         ACTION   ( WinDelRec( oBrwFacturae, dbfTmpFacturae ) )
 
       oBrwFacturae                  := IXBrowse():New( fldFacturae )
 
@@ -2557,37 +2571,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oBrwFacturae:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
       oBrwFacturae:cAlias           := dbfTmpFacturae
-      oBrwFacturae:nMarqueeStyle    := 5
+      oBrwFacturae:nMarqueeStyle    := 6
       oBrwFacturae:cName            := "Clientes.Facturae"
 
       with object ( oBrwFacturae:AddCol() )
          :cHeader                   := "Descripción del organismo"
          :bEditValue                := {|| ( dbfTmpFacturae )->cDesFac }
-         :nWidth                    := 260
-      end with
-
-      with object ( oBrwFacturae:AddCol() )
-         :cHeader                   := "Oficina contable"
-         :bEditValue                := {|| ( dbfTmpFacturae )->cOfiCnt }
-         :nWidth                    := 120
-      end with
-
-      with object ( oBrwFacturae:AddCol() )
-         :cHeader                   := "Organo gestor"
-         :bEditValue                := {|| ( dbfTmpFacturae )->cOrgGes }
-         :nWidth                    := 120
-      end with
-
-      with object ( oBrwFacturae:AddCol() )
-         :cHeader                   := "Unidad tramitadora"
-         :bEditValue                := {|| ( dbfTmpFacturae )->cUniTrm }
-         :nWidth                    := 120
+         :nWidth                    := 500
       end with
 
       oBrwFacturae:bRClicked        := {| nRow, nCol, nFlags | oBrwFacturae:RButtonDown( nRow, nCol, nFlags ) }
 
       if nMode != ZOOM_MODE
-         oBrwFacturae:bLDblClick    := {|| EdtContactos( dbfTmpCon, oBrwFacturae ) }
+         oBrwFacturae:bLDblClick    := {|| WinEdtRec( oBrwFacturae, bEdtFacturae, dbfTmpFacturae ), aTmp[ _COD ] }
       end if
 
       oBrwFacturae:CreateFromResource( 400 )
@@ -3983,39 +3979,68 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-Static Function EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin )
+Static Function EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode )
 
    local oDlg
+   local oBrwFacturae
 
-   DEFINE DIALOG oDlg RESOURCE "Clientes_Facturae" TITLE LblTitle( nMode ) + "organismos de emisión"
+   if nMode == EDIT_MODE .or. nMode == ZOOM_MODE
+      aEntidades  := hb_deserialize( aTmp[ ( dbfTmpFacturae )->( FieldPos( "mMemo" ) ) ] )
+   endif
+
+   DEFINE DIALOG oDlg RESOURCE "CLIENTES_FACTURAE_ENTIDAD" TITLE LblTitle( nMode ) + "organismos de emisión"
 
       REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ] ;
-         ID       90 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOfiCnt" ) ) ] ;
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOrgGes" ) ) ] ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+      REDEFINE BUTTON ;
+         ID       500;
+         OF       oDlg ;
+         WHEN     (  nMode != ZOOM_MODE ) ;
+         ACTION   ( EdtEntidades( APPD_MODE, oBrwFacturae ) )
 
-      REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cUniTrm" ) ) ] ;
-         ID       120 ;
+      REDEFINE BUTTON ;
+         ID       501;
+         OF       oDlg ;
+         WHEN     (  nMode != ZOOM_MODE ) ;
+         ACTION   (  EdtEntidades( EDIT_MODE, oBrwFacturae, aEntidades[ oBrwFacturae:nArrayAt ] ) )
+
+      REDEFINE BUTTON ;
+         ID       502;
+         OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
+         ACTION   ( delEntidadesArray( oBrwFacturae:nArrayAt, oBrwFacturae ) )
+
+      oBrwFacturae                        := IXBrowse():New( oDlg )
+
+      oBrwFacturae:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwFacturae:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwFacturae:SetArray( aEntidades, , , .f. )
+
+      oBrwFacturae:nMarqueeStyle          := 5
+
+      oBrwFacturae:CreateFromResource( 250 )
+
+      with object ( oBrwFacturae:AddCol() )
+         :cHeader          := "Entidad"
+         :bStrData         := {|| if( !empty( aEntidades ) .and. isHash( aEntidades[ oBrwFacturae:nArrayAt ] ), hget( aEntidades[ oBrwFacturae:nArrayAt ], "CodigoEntidad" ), "" ) }
+         :nWidth           := 250
+      end with
+
+      with object ( oBrwFacturae:AddCol() )
+         :cHeader          := "Rol"
+         :bStrData         := {|| if( !empty( aEntidades ) .and. isHash( aEntidades[ oBrwFacturae:nArrayAt ] ), hget( aEntidades[ oBrwFacturae:nArrayAt ], "RolEntidad" ), "" ) }
+         :nWidth           := 130
+      end with
 
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;
          WHEN     (  nMode != ZOOM_MODE ) ;
-         ACTION   (  if(   validEdtFacturae( aTmp ),;
-                           ( WinGather( aTmp, nil, dbfTmpFacturae, oBrw, nMode ), oDlg:end( IDOK ) ),; 
-                           ) )
+         ACTION   ( if( validEdtFacturae( aTmp ), ( endEdtfacturae( aTmp, nMode, oBrwFacturae ), oDlg:end( IDOK ) ), ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -4023,15 +4048,46 @@ Static Function EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLi
          CANCEL ;
          ACTION   ( oDlg:end() )
 
+
       if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| if(  validEdtFacturae( aTmp ),;
-                                          ( WinGather( aTmp, nil, dbfTmpFacturae, oBrw, nMode ), oDlg:end( IDOK ) ),;
-                                          ) } )
+         oDlg:AddFastKey( VK_F5, {|| if( validEdtFacturae( aTmp ), ( endEdtfacturae( aTmp, nMode, oBrwFacturae ), oDlg:end( IDOK ) ), ) } )
+      end if
+
+      if nMode != ZOOM_MODE
+         oBrwFacturae:bLDblClick    := {|| EdtEntidades( EDIT_MODE, oBrwFacturae, aEntidades[ oBrwFacturae:nArrayAt ] ) }
       end if
 
    ACTIVATE DIALOG oDlg CENTER
 
+    aEntidades    := {}
+
 Return ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+Static Function endEdtFacturae( aTmp, nMode, oBrwFacturae )
+
+   aTmp[ ( dbfTmpFacturae )->( FieldPos( "mMemo" ) ) ] := hb_serialize( aEntidades )
+
+   WinGather( aTmp, , dbfTmpFacturae, oBrwFacturae, nMode, , .f. )
+
+return( .t. )
+
+//--------------------------------------------------------------------------//
+
+Static Function delEntidadesArray( nArray, oBrw )
+
+   local cTxt  := "¿Desea eliminar el registro en curso?"
+
+   if oUser():lNotConfirmDelete() .or. apoloMsgNoYes( cTxt, "Confirme supersión")
+
+      aDel( aEntidades, nArray, .t. )
+
+      oBrw:refresh()
+
+   endif
+
+Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -4040,26 +4096,117 @@ Static function validEdtFacturae( aTmp )
    if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ] )
       msgStop( "Descripción del organismo no puede estar vacio" )
       return .f.
+   else 
+      if dbSeekInOrd( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ], "cDesFac", D():ClientesEntidad( nView ) )
+         msgStop( "Descripción ya existe." )
+         return .f.
+      endif      
    end if
 
-   if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOfiCnt" ) ) ] )
-      msgStop( "Oficina contable no puede estar vacia" )
-      return .f.
-   end if
-
-   if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cOrgGes" ) ) ] )
-      msgStop( "Organo gestor no puede estar vacio" )
-      return .f.
-   end if
-
-   if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cUniTrm" ) ) ] )
-      msgStop( "Unidad tramitadora no puede estar vacia" )
+   if len( aEntidades ) < 1
+      msgStop( "Los campos Entidad y Rol no pueden estar vacios" )
       return .f.
    end if
 
 Return .t.
 
 //--------------------------------------------------------------------------//
+
+Static Function EdtEntidades( nMode, oBrw, hash )
+
+   local oDlg
+   local oCodigo
+   local oRol
+   local cCodigo
+   local cRol
+
+   if nMode == APPD_MODE
+      hash        := { "CodigoEntidad"=>"", "RolEntidad"=>"" }
+   endif
+
+   if  nMode == EDIT_MODE 
+
+      if len( hash ) == 0
+         return .f.
+      else
+         cCodigo  := hget( hash, "CodigoEntidad" )
+         cRol     := hget( hash, "RolEntidad" )
+      endif
+
+   endif
+
+   DEFINE DIALOG oDlg RESOURCE "Facturas_Entidades" TITLE LblTitle( nMode ) + "entidades"
+
+      REDEFINE GET oCodigo VAR cCodigo;
+         ID       100 ;
+         IDTEXT   101 ;
+         PICTURE  "@!" ;
+         BITMAP   "LUPA" ;
+         OF       oDlg
+
+      oCodigo:bHelp     := {|| oEntidades:Buscar( oCodigo ) }
+      oCodigo:bValid    := {|| iif( !empty( oCodigo:varGet() ), oEntidades:Existe( oCodigo, oCodigo:oHelpText, "cDesEnt" ), .t. ) }
+
+      REDEFINE COMBOBOX oRol VAR cRol;
+         ITEMS    aRolesValues();
+         ID       110 ;
+         OF       oDlg
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   (  if( lValidEntidad( cCodigo, oRol ), ( setcCodigoRol( cCodigo, oRol, hash, nMode ), oBrw:Refresh(), oDlg:end( IDOK ) ), ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+      oDlg:AddFastKey( VK_F5, {|| if( lValidEntidad( cCodigo, oRol ), ( setcCodigoRol( cCodigo, oRol, hash, nMode ), oBrw:Refresh(), oDlg:end( IDOK ) ), ) } )
+
+   oDlg:bStart    := {|| if( !empty( cCodigo ), oCodigo:lValid(), ) }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+function setcCodigoRol ( Codigo, Rol, hash, nMode )
+
+   do case
+      case nMode == APPD_MODE
+
+         hset( hash, "CodigoEntidad", Codigo )
+         hset( hash, "RolEntidad", Rol:varGet() )
+
+         aAdd( aEntidades, hash )
+
+      case nMode == EDIT_MODE
+         hset( hash, "CodigoEntidad", Codigo )
+         hset( hash, "RolEntidad", Rol:varGet() )
+   end case
+
+Return ( .t. )
+
+//--------------------------------------------------------------------------//
+
+Function lValidEntidad( Codigo, Rol )
+
+   if empty( Codigo )
+      msgInfo( "La entidad no puede estar vacia." )
+      Return .f.
+   endif 
+
+   if empty( Rol:varGet() )
+      msgInfo( "El rol no puede estar vacio." )
+      return .f.
+   endif
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
 
 Function getOrganismosFacturae( cCodigoCliente, nView )
 
@@ -4068,12 +4215,10 @@ Function getOrganismosFacturae( cCodigoCliente, nView )
    if D():gotoIdClientesEntidad( cCodigoCliente, nView ) 
       while D():ClientesEntidadId( nView ) == cCodigoCliente .and. !D():eofClientesEntidad( nView )
          aAdd( aOrganismos,   alltrim( ( D():ClientesEntidad( nView ) )->cDesFac ) + "," + ;
-                              alltrim( ( D():ClientesEntidad( nView ) )->cOfiCnt ) + "," + ;
-                              alltrim( ( D():ClientesEntidad( nView ) )->cOrgGes ) + "," + ;
-                              alltrim( ( D():ClientesEntidad( nView ) )->cUniTrm ) )
+                              alltrim( ( D():ClientesEntidad( nView ) )->mMemo ) )
          ( D():ClientesEntidad( nView ) )->( dbSkip() ) 
       end while
-   end if 
+   end if
 
 Return ( aOrganismos )
 
@@ -8120,6 +8265,163 @@ RETURN oDlg:nResult == IDOK
 
 //---------------------------------------------------------------------------//
 
+/*
+Browse de entidad
+*/
+
+FUNCTION BrwEntidad( cCodCli, oDbf )
+
+   local oDlg
+   local hBmp
+   local oBrw
+   local uGet1
+   local cGet1
+   local nOrdAnt     := GetBrwOpt( "BrwEntidad" )
+   local oCbxOrd
+   local aCbxOrd     := { "Descripción del organismo" }
+   local cCbxOrd
+   local nLevel      := nLevelUsr( "04012" )
+   local oSayText
+   local cSayText    := "Listado de entidades"
+   local hash        := {}
+   local chash
+
+   nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrdAnt ]
+
+   if !OpenFiles( .t. ) 
+      Return nil
+   end if
+
+   /*
+   Origen de busqueda----------------------------------------------------------
+   */
+
+   if ( D():ClientesEntidad( nView ) )->( dbSeek( cCodCli ) )   
+      
+      ( D():ClientesEntidad( nView ) )->( ordSetFocus( nOrdAnt ) )
+      ( D():ClientesEntidad( nView ) )->( OrdScope( 0, cCodCli ) )
+      ( D():ClientesEntidad( nView ) )->( OrdScope( 1, cCodCli ) )
+      ( D():ClientesEntidad( nView ) )->( dbGoTop() )
+   
+   else
+
+      MsgInfo( "El cliente seleccionado no tiene entidades que importar." )
+       CloseFiles()
+      return .f.
+
+   endif
+
+   /*
+   Distintas cajas de dialogo--------------------------------------------------
+   */
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar entidad"
+   
+
+      REDEFINE GET uGet1 VAR cGet1;
+         ID       104 ;
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, ( D():ClientesEntidad( nView ) ), .t. ) );
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oCbxOrd ;
+         VAR      cCbxOrd ;
+         ID       102 ;
+         ITEMS    aCbxOrd ;
+         ON CHANGE( ( D():ClientesEntidad( nView ) )->( OrdSetFocus( oCbxOrd:nAt ) ),;
+                     ( D():ClientesEntidad( nView ) )->( OrdScope( 0, cCodCli ) ),;
+                     ( D():ClientesEntidad( nView ) )->( OrdScope( 1, cCodCli ) ),;
+                     oBrw:Refresh(),;
+                     uGet1:SetFocus() );
+         OF       oDlg
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := ( D():ClientesEntidad( nView ) )
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Clientes"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Descripción del organismo"
+         :cSortOrder       := "cDesFac"
+         :bEditValue       := {|| ( D():ClientesEntidad( nView ) )->cDesFac }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end(IDOK) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end() )
+
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     nAnd( nLevel, ACC_APPD ) != 0 ;
+         ACTION   ( WinAppRec( oBrw, bEdtRec, ( D():ClientesEntidad( nView ) ) ) )
+
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     nAnd( nLevel, ACC_EDIT ) != 0;
+         ACTION   ( WinEdtRec( oBrw, bEdtRec, ( D():ClientesEntidad( nView ) ) ) )
+
+      oDlg:AddFastKey( VK_F2,    {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdtRec, ( D():ClientesEntidad( nView ) ) ), ) } )
+
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+
+   oDlg:bStart           := {|| oBrw:Load() }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+
+         hash           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
+
+      for each chash in hash
+
+         if !dbSeekInOrd( ( padr( hget( chash, "CodigoEntidad"), 60 ) + padr( hget( chash, "RolEntidad"), 60 ) ), "cRolEnt", oDbf )
+
+            ( oDbf )->( dbAppend() )
+
+            ( oDbf )->CodEntidad    := hget( chash, "CodigoEntidad")
+            ( oDbf )->RolEntidad    := hget( chash, "RolEntidad")
+
+            ( oDbf )->( dbUnlock() )
+
+         endif
+
+      next
+
+   end if
+
+   DestroyFastFilter( D():ClientesEntidad( nView ) )
+
+   SetBrwOpt( "BrwEntidad", ( D():ClientesEntidad( nView ) )->( OrdNumber() ) )
+
+   CloseFiles()
+
+   DeleteObject( hBmp )
+
+RETURN oDlg:nResult == IDOK
+
+//---------------------------------------------------------------------------//
+
 FUNCTION LoaIniCli( cPath, cIniCli )
 
    local n
@@ -8517,7 +8819,7 @@ FUNCTION rxClient( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de contactos de clientes." )
    end if
 
-   // Tabla de contactos-------------------------------------------------------
+   // Tabla de Facturae-------------------------------------------------------
 
    fEraseIndex( cPath + "CliDad.Cdx" )
 
@@ -8528,6 +8830,9 @@ FUNCTION rxClient( cPath, oMeter )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CliDad.Cdx", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
+
+      ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CliDad.Cdx", "cDesFac", "cDesFac", {|| Field->cDesFac } ) )
 
       ( dbfCli )->( dbCloseArea() )
    else
@@ -8639,9 +8944,7 @@ function aCliDad()
 
    aAdd( aCliDad, { "cCodCli", "C",   12,  0, "Código del cliente" ,        "",                   "", "( cDbfCol )" } )
    aAdd( aCliDad, { "cDesFac", "C",   60,  0, "Descripción del organismo" , "",                   "", "( cDbfCol )" } )
-   aAdd( aCliDad, { "cOfiCnt", "C",   14,  0, "Oficina contable" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aCliDad, { "cOrgGes", "C",   14,  0, "Organo gestor" ,             "",                   "", "( cDbfCol )" } )
-   aAdd( aCliDad, { "cUniTrm", "C",   14,  0, "Unidad tramitadora" ,        "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDad, { "mMemo",   "M",   10,  0, "Memo relaciones de organismos", "",                "", "( cDbfCol )" } )
 
 return ( aCliDad )
 

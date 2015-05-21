@@ -40,7 +40,7 @@ CLASS TItemGroup
 
    METHOD GetDesde()       INLINE ( if( Empty( ::Desde ), "", alltrim( ::Desde ) ) )
    METHOD GetHasta()       INLINE ( if( Empty( ::Hasta ), "", alltrim( ::Hasta ) ) )
-
+ 
 END CLASS
 
 //---------------------------------------------------------------------------//
