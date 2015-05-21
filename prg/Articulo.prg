@@ -7268,7 +7268,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-      oDlg:bStart := {|| StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel ) }
+      oDlg:bStart := {|| StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel, oSay ) }
 
       if nMode != APPD_MODE
          oDlg:AddFastKey( VK_F5, {|| EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDlg, dbfTmpVta, nMode, oBrwPrp1, oBrwPrp2 ) } )
@@ -8030,7 +8030,7 @@ Return ( lSeek )
 
 //---------------------------------------------------------------------------//
 
-Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel )
+Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, oNingunaPrp1, oTodasPrp2, oNingunaPrp2, oBtnOk, oBtnCancel, oSay )
 
    if nMode == APPD_MODE
 
@@ -8090,6 +8090,63 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
       end if
 
+   end if
+
+   oSay[ 7 ]:SetText( uFieldEmpresa( "cTxtTar1", "Precio 1" ) )
+
+   if uFieldEmpresa( "lShwTar2" )
+      oSay[ 8 ]:SetText( uFieldEmpresa( "cTxtTar2", "Precio 2" ) )
+   else
+      oSay[ 8 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ]:Hide()
+      oSay[ 2 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta2" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva2" ) ) ]:Hide()
+   end if
+
+   if uFieldEmpresa( "lShwTar3" )
+      oSay[ 9 ]:SetText( uFieldEmpresa( "cTxtTar3", "Precio 3" ) )
+   else
+      oSay[ 9 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "lBnf3" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "Benef3" ) ) ]:Hide()
+      oSay[ 3 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta3" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva3" ) ) ]:Hide()
+   end if
+
+   if uFieldEmpresa( "lShwTar4" )
+      oSay[ 10 ]:SetText( uFieldEmpresa( "cTxtTar4", "Precio 4" ) )
+   else
+      oSay[ 10 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "lBnf4" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "Benef4" ) ) ]:Hide()
+      oSay[ 4 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta4" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva4" ) ) ]:Hide()
+   end if
+
+   if uFieldEmpresa( "lShwTar5" )
+      oSay[ 11 ]:SetText( uFieldEmpresa( "cTxtTar5", "Precio 5" ) )
+   else
+      oSay[ 11 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "lBnf5" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "Benef5" ) ) ]:Hide()
+      oSay[ 5 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta5" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva5" ) ) ]:Hide()
+   end if
+
+   if uFieldEmpresa( "lShwTar6" )
+      oSay[ 12 ]:SetText( uFieldEmpresa( "cTxtTar6", "Precio 6" ) )
+   else
+      oSay[ 12 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "lBnf6" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "Benef6" ) ) ]:Hide()
+      oSay[ 6 ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta6" ) ) ]:Hide()
+      aGet[ ( dbfTmpVta )->( fieldpos( "nPreIva6" ) ) ]:Hide()
    end if
 
 Return nil
