@@ -586,6 +586,7 @@ static nMeter              := 1
 
 static oDetCamposExtra
 static oCentroCoste
+static aEntidades       := {}
 
 static oCbxRuta
 
@@ -1638,6 +1639,8 @@ STATIC FUNCTION OpenFiles( lExt )
       ( D():Documentos( nView ) )->( ordSetFocus( "cTipo" ) )
 
       D():ArticuloLenguaje( nView )
+
+      D():ClientesEntidad( nView )
 
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles      := .f.
@@ -4367,19 +4370,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwEntidades:AddCol() )
          :cHeader          := "Entidades"
-         :bEditValue       := {|| ( dbfTmpEntidades )->cCodEnt }
-         :nWidth           := 200
+         :bEditValue       := {|| ( dbfTmpEntidades )->CodEntidad }
+         :nWidth           := 300
       end with
 
       with object ( oBrwEntidades:AddCol() )
          :cHeader          := "Rol"
-         :bEditValue       := {|| ( dbfTmpEntidades )->cRol }
-         :nWidth           := 200
+         :bEditValue       := {|| ( dbfTmpEntidades )->RolEntidad }
+         :nWidth           := 300
       end with
-
-      if nMode != ZOOM_MODE
-         oBrwEntidades:bLDblClick   := {|| WinEdtRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) }
-      end if
 
       oBrwEntidades:CreateFromResource( 210 )
 
@@ -4387,24 +4386,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       500 ;
          OF       oFld:aDialogs[ 5 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( WinAppRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) )
+         ACTION   ( BrwEntidad( aTmp[ _CCODCLI ], dbfTmpEntidades ), oBrwEntidades:refresh() )
 
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[ 5 ] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( WinEdtRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) )
+         ACTION   ( WinAppRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) )
 
       REDEFINE BUTTON ;
          ID       502 ;
          OF       oFld:aDialogs[ 5 ] ;
          WHEN     ( lWhen ) ;
          ACTION   ( WinDelRec( oBrwEntidades, dbfTmpEntidades ) )
-
-      REDEFINE BUTTON ;
-         ID       503 ;
-         OF       oFld:aDialogs[ 5 ] ;
-         ACTION   ( WinZooRec( oBrwEntidades, bEdtEntidades, dbfTmpEntidades ) )
 
          /*
       Situaciones--------------------------------------------------------------
@@ -5771,18 +5765,17 @@ Static Function EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, 
    DEFINE DIALOG oDlg RESOURCE "Facturas_Entidades" TITLE LblTitle( nMode ) + "entidades"
 
       REDEFINE GET oCodigo ;
-         VAR      aTmp[ ( dbfTmpEntidades )->( FieldPos( "cCodEnt" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpEntidades )->( FieldPos( "CodEntidad" ) ) ] ;
          ID       100 ;
          IDTEXT   101 ;
          PICTURE  "@!" ;
          BITMAP   "LUPA" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       oCodigo:bHelp     := {|| oEntidades:Buscar( oCodigo ) }
       oCodigo:bValid    := {|| iif( !empty( oCodigo:varGet() ), oEntidades:Existe( oCodigo, oCodigo:oHelpText, "cDesEnt" ), .t. ) }
 
-      REDEFINE COMBOBOX aTmp[ ( dbfTmpEntidades )->( FieldPos( "cRol" ) ) ] ;
+      REDEFINE COMBOBOX aTmp[ ( dbfTmpEntidades )->( FieldPos( "RolEntidad" ) ) ] ;
          ITEMS    aRolesValues();
          ID       110 ;
          OF       oDlg
@@ -5790,8 +5783,7 @@ Static Function EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, 
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinGather( aTmp, nil, dbfTmpEntidades, oBrw, nMode ), oDlg:end( IDOK ) )
+         ACTION   ( endEdtEntidades( dbfTmpEntidades, aTmp, oBrw, nMode, oDlg, aTmp[ ( dbfTmpEntidades )->( FieldPos( "CodEntidad" ) ) ], aTmp[ ( dbfTmpEntidades )->( FieldPos( "RolEntidad" ) ) ] ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -5799,9 +5791,9 @@ Static Function EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, 
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-   if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpEntidades, oBrw, nMode ), oDlg:end( IDOK ) } )
-   end if
+   
+      oDlg:AddFastKey( VK_F5, {|| endEdtEntidades( dbfTmpEntidades, aTmp, oBrw, nMode, oDlg, aTmp[ ( dbfTmpEntidades )->( FieldPos( "CodEntidad" ) ) ], aTmp[ ( dbfTmpEntidades )->( FieldPos( "RolEntidad" ) ) ] ) } ) 
+
 
    oDlg:bStart    := {|| oCodigo:lValid() }
 
@@ -5811,6 +5803,37 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
+static function lvalid( oDbf, CodigoEntidad, RolEntidad )
+
+	if empty( CodigoEntidad )
+      	msgInfo( "La entidad no puede estar vacia." )
+      	Return .f.
+   	endif 
+
+   	if empty( RolEntidad )
+      	msgInfo( "El rol no puede estar vacio." )
+      	return .f.
+   	endif
+
+	if dbSeekInOrd( ( padr( CodigoEntidad, 60 ) + padr( RolEntidad, 60 ) ), "cRolEnt", oDbf )
+		msgInfo( "Codigo y rol ya introducidos." )
+		return .f.
+	endif
+
+return  .t.
+
+//--------------------------------------------------------------------------//
+
+static function  endEdtEntidades( oDbf, aTmp, oBrw, nMode, oDlg, CodEntidad, RolEntidad )
+
+	if lValid( oDbf, CodEntidad, RolEntidad )
+		WinGather( aTmp, nil, oDbf, oBrw, nMode )
+		oDlg:end( IDOK ) 
+	endif
+
+return .t.
+
+//--------------------------------------------------------------------------//
 
 STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
@@ -12190,6 +12213,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpEntidades )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpEntidades )->( OrdCreate( cTmpEnt, "nRecno", "str( recno() )", {|| str( recno() ) } ) )
+
+      ( dbfTmpEntidades )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpEntidades )->( OrdCreate( cTmpEnt, "cRolEnt", "CodEntidad + RolEntidad", {|| Field->CodEntidad + Field->RolEntidad } ) )
 
       if D():gotoIdFacturasClientesEntidades( cFac, nView )
          while ( D():FacturasClientesEntidadesId( nView ) == cFac .and. !D():eofFacturasClientesEntidades( nView ) )
@@ -20782,7 +20808,7 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( cFacCliT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de entidades de facturas de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de Situación de facturas de clientes" )
    end if
 
 Return nil
@@ -21101,11 +21127,11 @@ Function aEntidadesFacCli()
 
    local aColFacCli  := {}
 
-   aAdd( aColFacCli,  { "cSerFac",     "C",  1,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "nNumFac",     "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "cSufFac",     "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "cCodEnt",     "C", 14,   0, "Código de la entidad",             "",                   "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "cRol",        "C", 18,   0, "Rol",                              "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cSerFac",      "C",  1,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "nNumFac",      "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cSufFac",      "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "CodEntidad",   "C", 60,   0, "Codigo de la Entidad" ,            "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "RolEntidad",   "C", 60,   0, "Rol de la entidad",                "",                  "", "( cDbfCol )" } )
 
 Return ( aColFacCli )
 
