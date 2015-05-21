@@ -3801,7 +3801,7 @@ FONT 8, "MS Sans Serif"
 }
 
 CLIENT_3 DIALOG DISCARDABLE 26, 26, 496, 254
-STYLE WS_CHILD|DS_3DLOOK
+STYLE WS_CHILD|DS_3DLOOK|WS_CAPTION
 CAPTION "ç"
 FONT 8, "MS Sans Serif"
 {
@@ -19967,16 +19967,16 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 570, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_TABSTOP, 136, 103, 42, 33
   CONTROL "", 580, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 189, 103, 60, 12
   CONTROL "", 590, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 262, 103, 60, 12
-  CONTROL "Precio 1", -1, "Static", WS_GROUP, 10, 36, 35, 10
-  CONTROL "%Beneficio", 4002, "Button", BS_GROUPBOX, 51, 23, 131, 96
-  CONTROL "Neto", 4003, "Button", BS_GROUPBOX, 185, 23, 69, 96
-  CONTROL "Impuestos incluidos", 4004, "Button", BS_GROUPBOX, 257, 23, 73, 96
-  CONTROL "Precios", 4005, "Button", BS_GROUPBOX, 2, 23, 45, 96
-  CONTROL "Precio 2", 4006, "Static", WS_GROUP, 10, 50, 35, 10
-  CONTROL "Precio 3", 4007, "Static", WS_GROUP, 10, 64, 35, 10
-  CONTROL "Precio 4", 4008, "Static", WS_GROUP, 10, 78, 35, 10
-  CONTROL "Precio 5", 4009, "Static", WS_GROUP, 10, 92, 35, 10
-  CONTROL "Precio 6", 4010, "Static", WS_GROUP, 10, 106, 35, 10
+  CONTROL "Precio 1", 610, "Static", WS_GROUP, 10, 36, 35, 10
+  CONTROL "%Beneficio", -1, "Button", BS_GROUPBOX, 51, 23, 131, 96
+  CONTROL "Neto", -1, "Button", BS_GROUPBOX, 185, 23, 69, 96
+  CONTROL "Impuestos incluidos", -1, "Button", BS_GROUPBOX, 257, 23, 73, 96
+  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 2, 23, 45, 96
+  CONTROL "Precio 2", 620, "Static", WS_GROUP, 10, 50, 35, 10
+  CONTROL "Precio 3", 630, "Static", WS_GROUP, 10, 64, 35, 10
+  CONTROL "Precio 4", 640, "Static", WS_GROUP, 10, 78, 35, 10
+  CONTROL "Precio 5", 650, "Static", WS_GROUP, 10, 92, 35, 10
+  CONTROL "Precio 6", 660, "Static", WS_GROUP, 10, 106, 35, 10
   CONTROL "Costo", 401, "Static", WS_GROUP, 10, 8, 21, 8
 }
 

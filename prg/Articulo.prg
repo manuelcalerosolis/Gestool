@@ -3189,20 +3189,46 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       oBrwDiv:cName           := "Articulos.Propiedades"
 
          with object ( oBrwDiv:AddCol() )
-            :cHeader          := "Prop. 1"
+            :cHeader          := AllTrim( retProp( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ], dbfPro ) )
             :cSortOrder       := "cValPr1"
-            :bEditValue       := {|| ( dbfTmpVta )->cValPr1 }
+            :bEditValue       := {|| AllTrim( ( dbfTmpVta )->cValPr1 ) + " - " + AllTrim( retValProp( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1 ) ) }
             :nWidth           := 160
             :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          end with
 
+         if retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ], dbfPro, "lColor" )
+
+            with object ( oBrwDiv:AddCol() )
+               :cHeader          := "C. Prp1"
+               :bStrData         := {|| "" }
+               :nWidth           := 16
+               :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+               :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+               :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+            end with
+
+         end if
+
          with object ( oBrwDiv:AddCol() )
-            :cHeader          := "Prop. 2"
+            :cHeader          := AllTrim( retProp( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ], dbfPro ) )
             :cSortOrder       := "cValPr2"
-            :bEditValue       := {|| ( dbfTmpVta )->cValPr2 }
+            :bEditValue       := {|| AllTrim( ( dbfTmpVta )->cValPr2 ) + " - " + AllTrim( retValProp( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2 ) ) }
             :nWidth           := 160
             :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          end with
+
+         if retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ], dbfPro, "lColor" )
+
+            with object ( oBrwDiv:AddCol() )
+               :cHeader          := "C. Prp2"
+               :bStrData         := {|| "" }
+               :nWidth           := 16
+               :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
+               :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
+               :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
+            end with
+
+         end if
 
          with object ( oBrwDiv:AddCol() )
             :cHeader          := "Costo"
@@ -6482,8 +6508,8 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    local cSayPr2           := ""
    local cSayVp1           := ""
    local cSayVp2           := ""
-   local cSay              := Array( 6 )
-   local oSay              := Array( 6 )
+   local cSay              := Array( 12 )
+   local oSay              := Array( 12 )
    local aBnfSobre         := aBenefSobre
    local oTotPnt
    local oImgArt
@@ -6571,6 +6597,12 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    cSay[4]                 := aBnfSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr4" ) ) ], 1 ) ]
    cSay[5]                 := aBnfSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr5" ) ) ], 1 ) ]
    cSay[6]                 := aBnfSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr6" ) ) ], 1 ) ]
+   cSay[7]                 := "Precio 1"
+   cSay[8]                 := "Precio 2"
+   cSay[9]                 := "Precio 3"
+   cSay[10]                := "Precio 4"
+   cSay[11]                := "Precio 5"
+   cSay[12]                := "Precio 6"
 
    /*
    Seleccionamos las Imágenes--------------------------------------------------
@@ -6734,6 +6766,30 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    /*
    Tarifa1 ______________________________________________________________________________
    */
+
+      REDEFINE SAY oSay[ 7 ] VAR cSay[ 7 ] ;
+         ID       610 ;
+         OF       oFld:aDialogs[1] ;
+
+      REDEFINE SAY oSay[ 8 ] VAR cSay[ 8 ] ;
+         ID       620 ;
+         OF       oFld:aDialogs[1] ;
+
+      REDEFINE SAY oSay[ 9 ] VAR cSay[ 9 ];
+         ID       630 ;
+         OF       oFld:aDialogs[1] ;
+
+      REDEFINE SAY oSay[ 10 ] VAR cSay[ 10 ] ;
+         ID       640 ;
+         OF       oFld:aDialogs[1] ;
+
+      REDEFINE SAY oSay[ 11 ] VAR cSay[ 11 ] ;
+         ID       650 ;
+         OF       oFld:aDialogs[1] ;
+
+      REDEFINE SAY oSay[ 12 ] VAR cSay[ 12 ] ;
+         ID       660 ;
+         OF       oFld:aDialogs[1] ;
 
       REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lBnf1" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1" ) ) ] ;
