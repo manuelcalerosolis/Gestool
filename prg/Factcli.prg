@@ -11685,7 +11685,14 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Facturas",             "Saldo anterior envase 4",                         "CallHbFunc('nSaldoAnterior4')" )
    oFr:AddVariable(     "Facturas",             "Saldo anterior envase 8",                         "CallHbFunc('nSaldoAnterior8')" )
    oFr:AddVariable(     "Facturas",             "Saldo anterior envase 16",                        "CallHbFunc('nSaldoAnterior16')" )
-   
+
+   oFr:AddVariable(     "Facturas",             "Saldo documento envase 4",                        "CallHbFunc('nSaldoDocumento4')" )
+   oFr:AddVariable(     "Facturas",             "Saldo documento envase 8",                        "CallHbFunc('nSaldoDocumento8')" )
+   oFr:AddVariable(     "Facturas",             "Saldo documento envase 16",                       "CallHbFunc('nSaldoDocumento16')" )
+
+   oFr:AddVariable(     "Facturas",             "Total saldo envase 4",                         	"CallHbFunc('nTotalSaldo4')" )
+   oFr:AddVariable(     "Facturas",             "Total saldo envase 8",                         	"CallHbFunc('nTotalSaldo8')" )
+   oFr:AddVariable(     "Facturas",             "Total saldo envase 16",                         	"CallHbFunc('nTotalSaldo16')" )
 
    oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo",                            "CallHbFunc('cDesFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Detalle del artículo otro lenguaje",              "CallHbFunc('cDesFacCliLeng')" )
@@ -24703,26 +24710,79 @@ Return ( cFormato )
 
 //---------------------------------------------------------------------------//   
 
-Function nSaldoAnterior4( cNumDoc )
+Function nSaldoAnterior4()
 
-   DEFAULT cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+   local cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
 
 Return oStock:nSaldoAnterior( Padr( "4", 18 ), cNumDoc )
 
 //---------------------------------------------------------------------------//
 
-Function nSaldoAnterior8( cNumDoc )
+Function nSaldoAnterior8()
 
-   DEFAULT cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+   local cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
 
 Return oStock:nSaldoAnterior( Padr( "8", 18 ), cNumDoc )
 
 //---------------------------------------------------------------------------//
 
-Function nSaldoAnterior16( cNumDoc )
+Function nSaldoAnterior16()
 
-   DEFAULT cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+   local cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
 
 Return oStock:nSaldoAnterior( Padr( "16", 18 ), cNumDoc )
 
 //---------------------------------------------------------------------------//
+
+Function nSaldoDocumento4()
+
+	local cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+
+Return oStock:nSaldoDocumento( Padr("4", 18 ), cNumDoc)
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoDocumento8()
+
+	local cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+	
+Return oStock:nSaldoDocumento( Padr("8", 18 ), cNumDoc)
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoDocumento16()
+
+	local cNumDoc := ( D():FacturasClientes( nView ) )->cSerie + Str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac
+	
+Return oStock:nSaldoDocumento( Padr("16", 18 ), cNumDoc)
+
+//---------------------------------------------------------------------------//
+
+Function nTotalSaldo4()
+
+	local cCodCli 	:= ( D():FacturasClientes( nView ) )->cCodCli
+	local dFecFac  	:= ( D():FacturasClientes( nView ) )->dFecFac
+	
+Return oStock:nTotalSaldo( Padr("4", 18 ), cCodCli, dFecFac)
+
+//---------------------------------------------------------------------------//
+
+Function nTotalSaldo8()
+
+	local cCodCli 	:= ( D():FacturasClientes( nView ) )->cCodCli
+	local dFecFac  	:= ( D():FacturasClientes( nView ) )->dFecFac
+	
+Return oStock:nTotalSaldo( Padr("8", 18 ), cCodCli, dFecFac)
+
+//---------------------------------------------------------------------------//
+
+Function nTotalSaldo16()
+
+	local cCodCli 	:= ( D():FacturasClientes( nView ) )->cCodCli
+	local dFecFac  	:= ( D():FacturasClientes( nView ) )->dFecFac
+	
+Return oStock:nTotalSaldo( Padr("16", 18 ), cCodCli, dFecFac)
+
+
+
+

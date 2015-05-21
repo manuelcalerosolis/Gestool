@@ -8577,6 +8577,18 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Albaranes",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
    oFr:AddVariable(     "Albaranes",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
    oFr:AddVariable(     "Albaranes",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
+
+   oFr:AddVariable(     "Albaranes",             "Saldo anterior envase 4",                                       "CallHbFunc('nSaldoAnterior4')" )
+   oFr:AddVariable(     "Albaranes",             "Saldo anterior envase 8",                                       "CallHbFunc('nSaldoAnterior8')" )
+   oFr:AddVariable(     "Albaranes",             "Saldo anterior envase 16",                                      "CallHbFunc('nSaldoAnterior16')" )
+
+   oFr:AddVariable(     "Albaranes",             "Saldo documento envase 4",                                      "CallHbFunc('nSaldoDocumento4')" )
+   oFr:AddVariable(     "Albaranes",             "Saldo documento envase 8",                                      "CallHbFunc('nSaldoDocumento8')" )
+   oFr:AddVariable(     "Albaranes",             "Saldo documento envase 16",                                     "CallHbFunc('nSaldoDocumento16')" )
+
+   oFr:AddVariable(     "Albaranes",             "Total saldo envase 4",                                          "CallHbFunc('nTotalSaldo4')" )
+   oFr:AddVariable(     "Albaranes",             "Total saldo envase 8",                                          "CallHbFunc('nTotalSaldo8')" )
+   oFr:AddVariable(     "Albaranes",             "Total saldo envase 16",                                         "CallHbFunc('nTotalSaldo16')" )
    
    oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",                "CallHbFunc('cDesAlbCli')"  )
    oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesAlbCliLeng')"  )
@@ -18510,3 +18522,76 @@ Static Function ChangePrecio( oCol, uNewValue, nKey, aTmp )
 Return .t.  
 
 //---------------------------------------------------------------------------//
+
+Function nSaldoAnterior4()
+
+   local cNumDoc := ( D():AlbaranesClientes( nView ) )->cSerAlb + Str( ( D():AlbaranesClientes( nView ) )->nNumAlb ) + ( D():AlbaranesClientes( nView ) )->cSufAlb
+
+Return oStock:nSaldoAntAlb( Padr( "4", 18 ), cNumDoc ) 
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoAnterior8()
+
+   local cNumDoc := ( D():AlbaranesClientes( nView ) )->cSerAlb + Str( ( D():AlbaranesClientes( nView ) )->nNumAlb ) + ( D():AlbaranesClientes( nView ) )->cSufAlb
+
+Return oStock:nSaldoAntAlb( Padr( "8", 18 ), cNumDoc )
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoAnterior16()
+
+   local cNumDoc := ( D():AlbaranesClientes( nView ) )->cSerAlb + Str( ( D():AlbaranesClientes( nView ) )->nNumAlb ) + ( D():AlbaranesClientes( nView ) )->cSufAlb
+
+Return oStock:nSaldoAntAlb( Padr( "16", 18 ), cNumDoc )
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoDocumento4()
+
+   local cNumDoc := ( D():AlbaranesClientes( nView ) )->cSerAlb + Str( ( D():AlbaranesClientes( nView ) )->nNumAlb ) + ( D():AlbaranesClientes( nView ) )->cSufAlb
+
+Return oStock:nSaldoDocAlb( Padr("4", 18 ), cNumDoc)
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoDocumento8()
+
+   local cNumDoc := ( D():AlbaranesClientes( nView ) )->cSerAlb + Str( ( D():AlbaranesClientes( nView ) )->nNumAlb ) + ( D():AlbaranesClientes( nView ) )->cSufAlb
+   
+Return oStock:nSaldoDocAlb( Padr("8", 18 ), cNumDoc)
+
+//---------------------------------------------------------------------------//
+
+Function nSaldoDocumento16()
+
+   local cNumDoc := ( D():AlbaranesClientes( nView ) )->cSerAlb + Str( ( D():AlbaranesClientes( nView ) )->nNumAlb ) + ( D():AlbaranesClientes( nView ) )->cSufAlb
+   
+Return oStock:nSaldoDocAlb( Padr("16", 18 ), cNumDoc )
+
+//---------------------------------------------------------------------------//
+
+Function nTotalSaldo4()
+
+   local cCodCli  := ( D():AlbaranesClientes( nView ) )->cCodCli
+   local dFecAlb     := ( D():AlbaranesClientes( nView ) )->dFecAlb
+   
+Return oStock:nTotalSaldo( Padr("4", 18 ), cCodCli, dFecAlb )
+
+//---------------------------------------------------------------------------//
+
+Function nTotalSaldo8()
+
+   local cCodCli  := ( D():AlbaranesClientes( nView ) )->cCodCli
+   local dFecAlb     := ( D():AlbaranesClientes( nView ) )->dFecAlb
+   
+Return oStock:nTotalSaldo( Padr("8", 18 ), cCodCli, dFecAlb ) 
+
+//---------------------------------------------------------------------------//
+
+Function nTotalSaldo16()
+
+   local cCodCli  := ( D():AlbaranesClientes( nView ) )->cCodCli
+   local dFecAlb     := ( D():AlbaranesClientes( nView ) )->dFecAlb
+   
+Return oStock:nTotalSaldo( Padr("16", 18 ), cCodCli, dFecAlb )
