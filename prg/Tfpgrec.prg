@@ -45,16 +45,6 @@ METHOD Create()
    ::AddField( "CPROCLI", "C", 20, 0, {|| "@!" },         "Provincia",                 .f., "Provincia"                 , 20, .f.)
    ::AddField( "CCDPCLI", "C",  7, 0, {|| "@!" },         "CP",                        .f., "Cod. postal"               , 20, .f.)
    ::AddField( "CTLFCLI", "C", 12, 0, {|| "@!" },         "Tlf.",                      .f., "Teléfono"                  ,  7, .f.)
-   ::AddField( "CDEFI01", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(1) },      .f., {|| ::cNameIniCli(1) }      , 50, .f.)
-   ::AddField( "CDEFI02", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(2) },      .f., {|| ::cNameIniCli(2) }      , 50, .f.)
-   ::AddField( "CDEFI03", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(3) },      .f., {|| ::cNameIniCli(3) }      , 50, .f.)
-   ::AddField( "CDEFI04", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(4) },      .f., {|| ::cNameIniCli(4) }      , 50, .f.)
-   ::AddField( "CDEFI05", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(5) },      .f., {|| ::cNameIniCli(5) }      , 50, .f.)
-   ::AddField( "CDEFI06", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(6) },      .f., {|| ::cNameIniCli(6) }      , 50, .f.)
-   ::AddField( "CDEFI07", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(7) },      .f., {|| ::cNameIniCli(7) }      , 50, .f.)
-   ::AddField( "CDEFI08", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(8) },      .f., {|| ::cNameIniCli(8) }      , 50, .f.)
-   ::AddField( "CDEFI09", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(9) },      .f., {|| ::cNameIniCli(9) }      , 50, .f.)
-   ::AddField( "CDEFI10", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(10)},      .f., {|| ::cNameIniCli(10)}      , 50, .f.)
    ::AddField( "CCODAGE", "C",  3, 0, {|| "@!" },         "Cod. age.",                 .f., "Código agente"             , 14, .f.)
    ::AddField( "CNOMAGE", "C", 40, 0, {|| "@!" },         "Agente",                    .f., "Nombre agente"             , 14, .f.)
    ::AddField( "NTOTDOC", "N", 16, 6, {|| ::cPicOut },    "Tot. Rec",                  .t., "Total recibo"              , 14, .t.)
@@ -232,16 +222,6 @@ METHOD lGenerate()
             ::oDbf:cProCli := ::oDbfCli:Provincia
             ::oDbf:cCdpCli := ::oDbfCli:CodPostal
             ::oDbf:cTlfCli := ::oDbfCli:Telefono
-            ::oDbf:cDefI01 := ::oDbfCli:CusRDef01
-            ::oDbf:cDefI02 := ::oDbfCli:CusRDef02
-            ::oDbf:cDefI03 := ::oDbfCli:CusRDef03
-            ::oDbf:cDefI04 := ::oDbfCli:CusRDef04
-            ::oDbf:cDefI05 := ::oDbfCli:CusRDef05
-            ::oDbf:cDefI06 := ::oDbfCli:CusRDef06
-            ::oDbf:cDefI07 := ::oDbfCli:CusRDef07
-            ::oDbf:cDefI08 := ::oDbfCli:CusRDef08
-            ::oDbf:cDefI09 := ::oDbfCli:CusRDef09
-            ::oDbf:cDefI10 := ::oDbfCli:CusRDef10
          end if
 
          ::oDbf:dFecMov    := ::oFacCliP:dPreCob

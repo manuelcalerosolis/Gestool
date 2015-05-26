@@ -44,16 +44,6 @@ METHOD Create()
    ::AddField( "cProPrv", "C", 20, 0, {|| "@!" },         "Provincia",              .f., "Provincia",                  20 )
    ::AddField( "cCdpPrv", "C",  7, 0, {|| "@!" },         "CP",                     .f., "Cod. Postal",                 7 )
    ::AddField( "cTlfPrv", "C", 12, 0, {|| "@!" },         "Tlf",                    .f., "Teléfono",                   12 )
-   ::AddField( "cDefI01", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(1) },   .f., {|| ::cNameIniPrv(1) } ,      50 )
-   ::AddField( "cDefI02", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(2) },   .f., {|| ::cNameIniPrv(2) } ,      50 )
-   ::AddField( "cDefI03", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(3) },   .f., {|| ::cNameIniPrv(3) } ,      50 )
-   ::AddField( "cDefI04", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(4) },   .f., {|| ::cNameIniPrv(4) } ,      50 )
-   ::AddField( "cDefI05", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(5) },   .f., {|| ::cNameIniPrv(5) } ,      50 )
-   ::AddField( "cDefI06", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(6) },   .f., {|| ::cNameIniPrv(6) } ,      50 )
-   ::AddField( "cDefI07", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(7) },   .f., {|| ::cNameIniPrv(7) } ,      50 )
-   ::AddField( "cDefI08", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(8) },   .f., {|| ::cNameIniPrv(8) } ,      50 )
-   ::AddField( "cDefI09", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(9) },   .f., {|| ::cNameIniPrv(9) } ,      50 )
-   ::AddField( "cDefI10", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(10)},   .f., {|| ::cNameIniPrv(10)} ,      50 )
    ::AddField( "nTotDoc", "N", 16, 6, {|| ::cPicOut },    "Tot. Rec",               .t., "Total recibo"              , 14, .t.)
    ::AddField( "dFecMov", "D",  8, 0, {|| "@!" },         "Fecha",                  .t., "Fecha de expedición"       , 10, .f.)
    ::AddField( "dFecCob", "D",  8, 0, {|| "@!" },         "Fecha pago",             .f., "Fecha de cobro"            , 10, .f.)
@@ -217,16 +207,6 @@ METHOD lGenerate()
             ::oDbf:cProPrv := ::oDbfPrv:Provincia
             ::oDbf:cCdpPrv := ::oDbfPrv:CodPostal
             ::oDbf:cTlfPrv := ::oDbfPrv:Telefono
-            ::oDbf:cDefI01 := ::oDbfPrv:CusRDef01
-            ::oDbf:cDefI02 := ::oDbfPrv:CusRDef02
-            ::oDbf:cDefI03 := ::oDbfPrv:CusRDef03
-            ::oDbf:cDefI04 := ::oDbfPrv:CusRDef04
-            ::oDbf:cDefI05 := ::oDbfPrv:CusRDef05
-            ::oDbf:cDefI06 := ::oDbfPrv:CusRDef06
-            ::oDbf:cDefI07 := ::oDbfPrv:CusRDef07
-            ::oDbf:cDefI08 := ::oDbfPrv:CusRDef08
-            ::oDbf:cDefI09 := ::oDbfPrv:CusRDef09
-            ::oDbf:cDefI10 := ::oDbfPrv:CusRDef10
          end if
          ::oDbf:dFecMov := ::oFacPrvP:dPreCob
          ::oDbf:dFecCob := ::oFacPrvP:dEntrada

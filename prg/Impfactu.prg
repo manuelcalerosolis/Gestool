@@ -1344,7 +1344,6 @@ METHOD Importar()
             ::oDbfCliGst:cCodGrp    := Padl( AllTrim( ::oDbfCliFac:cCodGrup), 4, "0" )
             ::oDbfCliGst:cCodRem    := ::oDbfCliFac:cCtaRem
             ::oDbfCliGst:cMeiInt    := ::oDbfCliFac:eMail
-            ::oDbfCliGst:cUsrDef01  := ::oDbfCliFac:cContacto
 
             // Comentarios-----------------------------------------------------
 

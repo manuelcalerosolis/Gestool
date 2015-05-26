@@ -43,16 +43,6 @@ METHOD Create()
    ::AddField( "CPROCLI", "C", 20, 0, {|| "@!" },         "Prov",                      .f., "Provincia",           )
    ::AddField( "CCDPCLI", "C",  7, 0, {|| "@!" },         "CP",                        .f., "Cod. Postal",         )
    ::AddField( "CTLFCLI", "C", 12, 0, {|| "@!" },         "Tlf",                       .f., "Teléfono",            )
-   ::AddField( "CDEFI01", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(1) },      .f., {|| ::cNameIniCli(1) } )
-   ::AddField( "CDEFI02", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(2) },      .f., {|| ::cNameIniCli(2) } )
-   ::AddField( "CDEFI03", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(3) },      .f., {|| ::cNameIniCli(3) } )
-   ::AddField( "CDEFI04", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(4) },      .f., {|| ::cNameIniCli(4) } )
-   ::AddField( "CDEFI05", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(5) },      .f., {|| ::cNameIniCli(5) } )
-   ::AddField( "CDEFI06", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(6) },      .f., {|| ::cNameIniCli(6) } )
-   ::AddField( "CDEFI07", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(7) },      .f., {|| ::cNameIniCli(7) } )
-   ::AddField( "CDEFI08", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(8) },      .f., {|| ::cNameIniCli(8) } )
-   ::AddField( "CDEFI09", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(9) },      .f., {|| ::cNameIniCli(9) } )
-   ::AddField( "CDEFI10", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(10)},      .f., {|| ::cNameIniCli(10)} )
    ::AddField( "NTOTNET", "N", 16, 6, {|| ::cPicOut },    "Neto",                      .t., "Neto",                )
    ::AddField( "NTOTIVA", "N", 16, 6, {|| ::cPicOut },    cImp(),                       .t., cImp(),                 )
    ::AddField( "NTOTREQ", "N", 16, 3, {|| ::cPicOut },    "Rec",                       .t., "Rec",                 )
@@ -239,16 +229,6 @@ METHOD lGenerate() CLASS TDiaCFac
                      ::oDbf:CPROCLI := ::oDbfCli:Provincia
                      ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                      ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                     ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                     ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                     ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                     ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                     ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                     ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                     ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                     ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                     ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                     ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                    END IF
 

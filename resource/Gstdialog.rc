@@ -3801,8 +3801,7 @@ FONT 8, "MS Sans Serif"
 }
 
 CLIENT_3 DIALOG DISCARDABLE 26, 26, 496, 254
-STYLE WS_CHILD|DS_3DLOOK|WS_CAPTION
-CAPTION "ç"
+STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 350, "Edit", WS_BORDER|WS_TABSTOP, 99, 40, 70, 11
@@ -3831,33 +3830,12 @@ FONT 8, "MS Sans Serif"
 {
   CONTROL "", 450, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 78, 40, 76, 12
   CONTROL "", 460, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_TABSTOP, 78, 54, 76, 133
-  CONTROL "", 370, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 166, 40, 321, 56
-  CONTROL "Mostrar comentario en documentos de venta", 380, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 166, 98, 154, 10
-  CONTROL "Definidos", -1, "Button", BS_GROUPBOX, 44, 112, 448, 140
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 166, 121, 321, 12
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 166, 135, 321, 12
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 166, 148, 321, 12
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 166, 161, 321, 12
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 166, 174, 321, 12
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 166, 187, 321, 12
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 166, 200, 321, 12
-  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 166, 213, 321, 12
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 166, 226, 321, 12
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 166, 239, 321, 12
-  CONTROL "", 105, "Static", WS_GROUP, 49, 125, 108, 8
-  CONTROL "", 115, "Static", WS_GROUP, 49, 139, 108, 8
-  CONTROL "", 125, "Static", WS_GROUP, 49, 152, 108, 8
-  CONTROL "", 135, "Static", WS_GROUP, 49, 165, 108, 8
-  CONTROL "", 145, "Static", WS_GROUP, 49, 178, 108, 8
-  CONTROL "", 155, "Static", WS_GROUP, 49, 191, 108, 8
-  CONTROL "", 165, "Static", WS_GROUP, 49, 204, 108, 8
-  CONTROL "", 175, "Static", WS_GROUP, 49, 217, 108, 8
-  CONTROL "", 185, "Static", WS_GROUP, 49, 230, 108, 8
-  CONTROL "", 195, "Static", WS_GROUP, 49, 242, 108, 8
-  CONTROL "Comentario", -1, "Button", BS_GROUPBOX, 161, 29, 331, 82
+  CONTROL "", 370, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 84, 438, 152
+  CONTROL "Mostrar comentario en documentos de venta", 380, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 238, 154, 10
+  CONTROL "Comentario", -1, "Button", BS_GROUPBOX, 44, 73, 447, 178
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Comentarios a mostar al realizar un documento de ventas y campos definidos por el usuario de la aplicación.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
-  CONTROL "Estadísticas", -1, "Button", BS_GROUPBOX, 44, 29, 114, 82
+  CONTROL "Estadísticas", -1, "Button", BS_GROUPBOX, 44, 29, 447, 42
   CONTROL "Nacido", -1, "Static", WS_GROUP, 49, 43, 28, 8
   CONTROL "Sexo", -1, "Static", WS_GROUP, 49, 58, 21, 8
 }
@@ -3984,37 +3962,16 @@ FONT 8, "MS Sans Serif"
   CONTROL "Impresora", -1, "Static", WS_GROUP, 7, 53, 35, 8
 }
 
-CNF_DEF_CLI DIALOG DISCARDABLE 36, 31, 254, 198
+CNF_DEF_CLI DIALOG DISCARDABLE 36, 31, 254, 55
 STYLE WS_POPUP|DS_3DLOOK|WS_THICKFRAME|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Configuración de clientes"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 86, 16, 156, 12
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 86, 29, 156, 12
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 86, 42, 156, 12
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 86, 54, 156, 12
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 86, 66, 156, 12
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 86, 78, 156, 12
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 86, 90, 156, 12
-  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 86, 102, 156, 12
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 86, 114, 156, 12
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 86, 126, 156, 12
-  CONTROL "Nombre campo 1", -1, "Static", WS_GROUP, 10, 19, 65, 8
-  CONTROL "Nombre campo 2", -1, "Static", WS_GROUP, 10, 32, 65, 8
-  CONTROL "Nombre campo 3", -1, "Static", WS_GROUP, 10, 45, 65, 8
-  CONTROL "Nombre campo 4", -1, "Static", WS_GROUP, 10, 57, 65, 8
-  CONTROL "Nombre campo 5", -1, "Static", WS_GROUP, 10, 69, 65, 8
-  CONTROL "Nombre campo 6", -1, "Static", WS_GROUP, 10, 81, 65, 8
-  CONTROL "Nombre campo 7", -1, "Static", WS_GROUP, 10, 93, 65, 8
-  CONTROL "Nombre campo 8", -1, "Static", WS_GROUP, 10, 105, 65, 8
-  CONTROL "Nombre campo 9", -1, "Static", WS_GROUP, 10, 117, 65, 8
-  CONTROL "Nombre campo 10", -1, "Static", WS_GROUP, 10, 129, 67, 8
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 144, 180, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 199, 180, 50, 14
-  CONTROL "Nombre de los campos configurables", -1, "Button", BS_GROUPBOX, 4, 4, 245, 139
-  CONTROL "Configuración de tarifas", 230, "Button", BS_GROUPBOX, 4, 147, 245, 28
-  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 86, 158, 61, 40
-  CONTROL "Mostrar", 220, "Static", WS_GROUP, 10, 161, 67, 8
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 144, 37, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 199, 37, 50, 14
+  CONTROL "Configuración de tarifas", 230, "Button", BS_GROUPBOX, 4, 4, 245, 28
+  CONTROL "", 210, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 86, 15, 61, 40
+  CONTROL "Mostrar", 220, "Static", WS_GROUP, 10, 18, 67, 8
 }
 
 CNF_VIS_TPV DIALOG DISCARDABLE 44, 19, 294, 258

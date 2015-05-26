@@ -225,16 +225,6 @@ METHOD lGenerate() CLASS TdlAgeAlb
                            ::oDbf:CPROCLI := ::oDbfCli:Provincia
                            ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                            ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                           ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                           ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                           ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                           ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                           ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                           ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                           ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                           ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                           ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                           ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                         end if
 
@@ -300,16 +290,6 @@ METHOD lGenerate() CLASS TdlAgeAlb
                      ::oDbf:CPROCLI := ::oDbfCli:Provincia
                      ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                      ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                     ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                     ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                     ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                     ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                     ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                     ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                     ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                     ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                     ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                     ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                   end if
 

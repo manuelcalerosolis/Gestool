@@ -152,16 +152,6 @@ METHOD lGenerate()
       ::oDbf:cProCli  := ::oDbfCli:Provincia
       ::oDbf:cCdpCli  := ::oDbfCli:CodPostal
       ::oDbf:cTlfCli  := ::oDbfCli:Telefono
-      ::oDbf:cDefI01  := ::oDbfCli:cUsrDef01
-      ::oDbf:cDefI02  := ::oDbfCli:cUsrDef02
-      ::oDbf:cDefI03  := ::oDbfCli:cUsrDef03
-      ::oDbf:cDefI04  := ::oDbfCli:cUsrDef04
-      ::oDbf:cDefI05  := ::oDbfCli:cUsrDef05
-      ::oDbf:cDefI06  := ::oDbfCli:cUsrDef06
-      ::oDbf:cDefI07  := ::oDbfCli:cUsrDef07
-      ::oDbf:cDefI08  := ::oDbfCli:cUsrDef08
-      ::oDbf:cDefI09  := ::oDbfCli:cUsrDef09
-      ::oDbf:cDefI10  := ::oDbfCli:cUsrDef10
 
       ::oDbf:Save()
 

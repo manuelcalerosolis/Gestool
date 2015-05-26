@@ -299,7 +299,7 @@ static lOpenFiles       := .f.
 
 static nLabels          := 1
 
-static aIniCli
+static cIniCli
 
 static oDetCamposExtra    
 static oEntidades
@@ -331,8 +331,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
    lExternal            := lExt
 
-   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       DisableAcceso()
 
@@ -489,7 +489,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       EnableAcceso()
 
-  /* RECOVER USING oError
+   RECOVER USING oError
 
       lOpenFiles           := .f.
 
@@ -499,7 +499,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    if !lOpenFiles
       CloseFiles()
@@ -663,10 +663,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
                   "Establecimiento",;
                   "Correo electrónico",;
                   "Cliente web" ,;
-                  "Ruta" ,;
-                  if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) ) ,;
-                  if( Empty( AllTrim( aIniCli[2] ) ), "Campo definido 2", AllTrim( aIniCli[2] ) ) ,;
-                  if( Empty( AllTrim( aIniCli[3] ) ), "Campo definido 3", AllTrim( aIniCli[3] ) ) ;
+                  "Ruta" ;
          ALIAS    ( D():Get( "Client", nView ) );
          MRU      "User1_16";
          APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, D():Get( "Client", nView ) ) );
@@ -870,33 +867,6 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          :cHeader          := "Última llamada"
          :bEditValue       := {|| dtoc( ( D():Get( "Client", nView ) )->dLlaCli ) + space( 1 ) + ( D():Get( "Client", nView ) )->cTimCli } 
          :nWidth           := 100
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) )
-         :cSortOrder       := "cUsrDef01"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->cUsrDef01 }
-         :nWidth           := 120
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := if( Empty( AllTrim( aIniCli[2] ) ), "Campo definido 2", AllTrim( aIniCli[2] ) )
-         :cSortOrder       := "cUsrDef02"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->cUsrDef02 }
-         :nWidth           := 120
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := if( Empty( AllTrim( aIniCli[3] ) ), "Campo definido 3", AllTrim( aIniCli[3] ) )
-         :cSortOrder       := "cUsrDef03"
-         :bEditValue       := {|| ( D():Get( "Client", nView ) )->cUsrDef03 }
-         :nWidth           := 120 
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
       end with
 
@@ -1355,7 +1325,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local aResClients    := { "Cli", "CliPot", "CliPot" }
    local aMes           := { "Ninguno", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }
    local oFiltroAtp
-   local cFiltroAtp     := aIniCli[ 11 ]
+   local cFiltroAtp     := cIniCli
    local aFiltroAtp     := { "Todas", "Activas" }
    local oZoom
    local cZoom          := "100%"
@@ -1473,7 +1443,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "&Direcciones",;
                   "&Bancos",;
                   "Co&ntabilidad",;
-                  "Definidos",;
+                  "Comentarios",;
                   "&Tarifa",;
                   "Doc&umentos",;
                   "&Incidencias",;
@@ -2919,86 +2889,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldDefinidos
 
-      REDEFINE SAY PROMPT aIniCli[1] ;
-         ID       105 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF01 ] VAR aTmp[ _CUSRDEF01 ] ;
-         ID       110 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[2] ;
-         ID       115 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF02 ] VAR aTmp[ _CUSRDEF02 ] ;
-         ID       120 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[3] ;
-         ID       125 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF03 ] VAR aTmp[ _CUSRDEF03 ] ;
-         ID       130 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[4] ;
-         ID       135 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF04 ] VAR aTmp[ _CUSRDEF04 ] ;
-         ID       140 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[5] ;
-         ID       145 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF05 ] VAR aTmp[ _CUSRDEF05 ] ;
-         ID       150 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[6] ;
-         ID       155 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF06 ] VAR aTmp[ _CUSRDEF06 ] ;
-         ID       160 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[7] ;
-         ID       165 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF07 ] VAR aTmp[ _CUSRDEF07 ] ;
-         ID       170 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[8] ;
-         ID       175 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF08 ] VAR aTmp[ _CUSRDEF08 ] ;
-         ID       180 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[9] ;
-         ID       185 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF09 ] VAR aTmp[ _CUSRDEF09 ] ;
-         ID       190 ;
-         OF       fldDefinidos
-
-      REDEFINE SAY PROMPT aIniCli[10] ;
-         ID       195 ;
-         OF       fldDefinidos
-
-      REDEFINE GET aGet[ _CUSRDEF10 ] VAR aTmp[ _CUSRDEF10 ] ;
-         ID       200 ;
-         OF       fldDefinidos
-
       /*
       Quinta caja de dialogo__________________________________________________
       */
@@ -3698,24 +3588,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :lHide                  := .t.
       end with
 
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := if( Empty( AllTrim( aIniCli[1] ) ), "Campo definido 1", AllTrim( aIniCli[1] ) )
-         :bEditValue             := {|| aTmp[ _CUSRDEF01 ] }
-         :nWidth                 := 100
-         :lHide                  := .t.
-         :nEditType              := 1
-         :bOnPostEdit            := {|oCol, uNewValue, nKey| ChangeCampoDef( oCol, uNewValue, nKey, aTmp, _CUSRDEF01, oBrwRecCli ) }
-      end with
-
-      with object ( oBrwRecCli:AddCol() )
-         :cHeader                := if( Empty( AllTrim( aIniCli[2] ) ), "Campo definido 2", AllTrim( aIniCli[2] ) )
-         :bEditValue             := {|| aTmp[ _CUSRDEF02 ] }
-         :nWidth                 := 100
-         :lHide                  := .t.
-         :nEditType              := 1
-         :bOnPostEdit            := {|oCol, uNewValue, nKey| ChangeCampoDef( oCol, uNewValue, nKey, aTmp, _CUSRDEF02, oBrwRecCli ) }
-      end with
-
       /*
       Botones de la Caja de Dialogo__________________________________________
       */
@@ -4227,12 +4099,6 @@ Return ( aOrganismos )
 Static Function ShowFld( aTmp, aGet )
 
    local n
-
-   for n := 1 to 10
-      if Empty( Rtrim( aIniCli[ n ] ) )
-         aGet[ ( D():Get( "Client", nView ) )->( fieldpos( "cUsrDef" + Rjust( str( n ), "0", 2 ) ) ) ]:hide()
-      end if
-   next
 
    lRecargaArray( aGet, aTmp )
 
@@ -5128,45 +4994,23 @@ Devuelve la estructura de la base de datos en funcion del codigo de cliente
 STATIC FUNCTION CnfCli()
 
    local oDlg
-   local cIniCli  := cPatEmp() + "Client.Ini"
+   local IniCli   := cPatEmp() + "Client.Ini"
 
    DEFINE DIALOG oDlg RESOURCE "CNF_DEF_CLI" TITLE "Configurar clientes"
 
-      REDEFINE GET aIniCli[ 1 ] ID 110 OF oDlg
-
-      REDEFINE GET aIniCli[ 2 ] ID 120 OF oDlg
-
-      REDEFINE GET aIniCli[ 3 ] ID 130 OF oDlg
-
-      REDEFINE GET aIniCli[ 4 ] ID 140 OF oDlg
-
-      REDEFINE GET aIniCli[ 5 ] ID 150 OF oDlg
-
-      REDEFINE GET aIniCli[ 6 ] ID 160 OF oDlg
-
-      REDEFINE GET aIniCli[ 7 ] ID 170 OF oDlg
-
-      REDEFINE GET aIniCli[ 8 ] ID 180 OF oDlg
-
-      REDEFINE GET aIniCli[ 9 ] ID 190 OF oDlg
-
-      REDEFINE GET aIniCli[ 10 ] ID 200 OF oDlg
-
-      REDEFINE COMBOBOX aIniCli[ 11 ] ID 210 UPDATE ITEMS { "Todas", "Activas" } OF oDlg
+      REDEFINE COMBOBOX cIniCli ID 210 UPDATE ITEMS { "Todas", "Activas" } OF oDlg 
 
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;
-         ACTION   ( WrtIniCli( cIniCli, ), oDlg:end( IDOK ) )
+         ACTION   ( WrtIniCli( IniCli, ), oDlg:end( IDOK ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
          OF       oDlg ;
          ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| WrtIniCli( cIniCli, ), oDlg:end( IDOK ) } )
-
-   // oDlg:bStart := {|| aIniCli[ 1 ] }
+   oDlg:AddFastKey( VK_F5, {|| WrtIniCli( IniCli, ), oDlg:end( IDOK ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -5174,19 +5018,9 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION WrtIniCli( cIniCli )
+STATIC FUNCTION WrtIniCli( UrlIniCli )
 
-   WritePProString( "campos", "1", aIniCli[ 1 ], cIniCli )
-   WritePProString( "campos", "2", aIniCli[ 2 ], cIniCli )
-   WritePProString( "campos", "3", aIniCli[ 3 ], cIniCli )
-   WritePProString( "campos", "4", aIniCli[ 4 ], cIniCli )
-   WritePProString( "campos", "5", aIniCli[ 5 ], cIniCli )
-   WritePProString( "campos", "6", aIniCli[ 6 ], cIniCli )
-   WritePProString( "campos", "7", aIniCli[ 7 ], cIniCli )
-   WritePProString( "campos", "8", aIniCli[ 8 ], cIniCli )
-   WritePProString( "campos", "9", aIniCli[ 9 ], cIniCli )
-   WritePProString( "campos", "10",aIniCli[ 10], cIniCli )
-   WritePProString( "filtro", "ft",aIniCli[ 11], cIniCli )
+   WritePProString( "filtro", "ft", cIniCli, UrlIniCli )
 
 RETURN NIL
 
@@ -8422,55 +8256,23 @@ RETURN oDlg:nResult == IDOK
 
 //---------------------------------------------------------------------------//
 
-FUNCTION LoaIniCli( cPath, cIniCli )
+FUNCTION LoaIniCli( cPath, IniCli )
 
    local n
-   local oIniCli
+   local oFileIniCli
 
    DEFAULT cPath     := cPatEmp()
    DEFAULT cIniCli   := cPath + "Client.Ini"
 
-   aIniCli 			 := Array( 11 )
+   INI oFileIniCli FILE IniCli
 
-   /*
-   Fichero Ini de la Aplicaci¢n
-   ---------------------------------------------------------------------------
-   */
-
-   INI oIniCli FILE cIniCli
-
-      GET aIniCli[ 1 ] SECTION "campos" ENTRY "1" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 2 ] SECTION "campos" ENTRY "2" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 3 ] SECTION "campos" ENTRY "3" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 4 ] SECTION "campos" ENTRY "4" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 5 ] SECTION "campos" ENTRY "5" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 6 ] SECTION "campos" ENTRY "6" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 7 ] SECTION "campos" ENTRY "7" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 8 ] SECTION "campos" ENTRY "8" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 9 ] SECTION "campos" ENTRY "9" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 10 ] SECTION "campos" ENTRY "10" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 11 ] SECTION "filtro" ENTRY "ft" OF oIniCli DEFAULT "Activas"
+      GET cInicli SECTION "filtro" ENTRY "ft" OF oFileIniCli DEFAULT "Activas"
 
    ENDINI
 
-   for n := 1 TO 10
-      aIniCli[ n ]   := padr( aIniCli[ n ], 50 )
-   next
+   cInicli     := Rtrim( cInicli )
 
-   aIniCli[ 11 ]     := Rtrim( aIniCli[ 11 ] )
-
-//RETURN ( nil )
-RETURN ( aIniCli )
+RETURN ( cIniCli )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -8656,15 +8458,6 @@ FUNCTION rxClient( cPath, oMeter )
 
       ( dbfCli )->( ordCondSet("!Deleted() .and. Field->lSndInt .and. Field->lPubInt" , {||!Deleted() .and. Field->lSndInt .and. Field->lPubInt }  ) )
       ( dbfCli )->( ordCreate( cPath + "Client.CDX", "lPubInt", "Field->Cod", {|| Field->Cod } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef01", "UPPER( Field->cUsrDef01 )", {|| UPPER( Field->cUsrDef01 ) } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef02", "UPPER( Field->cUsrDef02 )", {|| UPPER( Field->cUsrDef02 ) } ) )
-
-      ( dbfCli )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cUsrDef03", "UPPER( Field->cUsrDef03 )", {|| UPPER( Field->cUsrDef03 ) } ) )
 
       ( dbfCli )->( ordCondSet( "!Deleted() .and. !Field->lBlqCli", {|| !Deleted() .and. !Field->lBlqCli }  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lBlqCli", "Field->Cod", {|| Field->Cod } ) )

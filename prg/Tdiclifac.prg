@@ -22,16 +22,6 @@ FUNCTION TDCliPre()
    aAdd( aCol, { "CPROCLI", "C", 20, 0, {|| "@!" },         "Prov",                      .f., "Provincia",                } )
    aAdd( aCol, { "CCDPCLI", "C",  7, 0, {|| "@!" },         "CP",                        .f., "Cod. Postal",              } )
    aAdd( aCol, { "CTLFCLI", "C", 12, 0, {|| "@!" },         "Tlf",                       .f., "Teléfono",                 } )
-   aAdd( aCol, { "CDEFI01", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(1) }, .f., {|| oInf:cNameIniCli(1) } } )
-   aAdd( aCol, { "CDEFI02", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(2) }, .f., {|| oInf:cNameIniCli(2) } } )
-   aAdd( aCol, { "CDEFI03", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(3) }, .f., {|| oInf:cNameIniCli(3) } } )
-   aAdd( aCol, { "CDEFI04", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(4) }, .f., {|| oInf:cNameIniCli(4) } } )
-   aAdd( aCol, { "CDEFI05", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(5) }, .f., {|| oInf:cNameIniCli(5) } } )
-   aAdd( aCol, { "CDEFI06", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(6) }, .f., {|| oInf:cNameIniCli(6) } } )
-   aAdd( aCol, { "CDEFI07", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(7) }, .f., {|| oInf:cNameIniCli(7) } } )
-   aAdd( aCol, { "CDEFI08", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(8) }, .f., {|| oInf:cNameIniCli(8) } } )
-   aAdd( aCol, { "CDEFI09", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(9) }, .f., {|| oInf:cNameIniCli(9) } } )
-   aAdd( aCol, { "CDEFI10", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(10)}, .f., {|| oInf:cNameIniCli(10)} } )
    aAdd( aCol, { "NTOTNET", "N", 16, 6, {|| oInf:cPicOut  },"Neto",                      .f., "Neto",                     } )
    aAdd( aCol, { "NTOTIVA", "N", 16, 6, {|| oInf:cPicOut  },cImp(),                       .t., cImp()                       } )
    aAdd( aCol, { "NTOTREQ", "N", 16, 3, {|| oInf:cPicOut  },"Rec",                       .f., "Rec"                       } )
@@ -249,16 +239,6 @@ METHOD lGenerate() CLASS TDiaCPre
                      ::oDbf:CPROCLI := ::oDbfCli:Provincia
                      ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                      ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                     ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                     ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                     ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                     ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                     ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                     ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                     ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                     ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                     ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                     ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                    END IF
 

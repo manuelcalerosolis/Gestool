@@ -22,16 +22,6 @@ FUNCTION TDiaCli()
    aAdd( aCol, { "CPROCLI", "C", 20, 0, {|| "@!" },          "Prov",                       .f., "Provincia"                 , 20, .f.} )
    aAdd( aCol, { "CCDPCLI", "C",  7, 0, {|| "@!" },          "CP",                         .f., "Cod. Postal"               ,  7, .f.} )
    aAdd( aCol, { "CTLFCLI", "C", 12, 0, {|| "@!" },          "Tlf",                        .f., "Teléfono"                  , 12, .f.} )
-   aAdd( aCol, { "CDEFI01", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(1) },    .f., {|| oInf:cNameIniCli(1) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI02", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(2) },    .f., {|| oInf:cNameIniCli(2) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI03", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(3) },    .f., {|| oInf:cNameIniCli(3) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI04", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(4) },    .f., {|| oInf:cNameIniCli(4) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI05", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(5) },    .f., {|| oInf:cNameIniCli(5) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI06", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(6) },    .f., {|| oInf:cNameIniCli(6) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI07", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(7) },    .f., {|| oInf:cNameIniCli(7) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI08", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(8) },    .f., {|| oInf:cNameIniCli(8) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI09", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(9) },    .f., {|| oInf:cNameIniCli(9) }   , 50, .f.} )
-   aAdd( aCol, { "CDEFI10", "C",100, 0, {|| "@!" },          {|| oInf:cNameIniCli(10)},    .f., {|| oInf:cNameIniCli(10)}   , 50, .f.} )
    aAdd( aCol, { "NBASIMP", "N", 16, 6, {|| oInf:cPicOut },  "Base Imponible",             .t., "Base Imponible"            , 10, .t.} )
    aAdd( aCol, { "NTOTIVA", "N", 16, 6, {|| oInf:cPicOut },  "IVA.",                       .t., "Total " + cImp()           , 10, .t.} )
    aAdd( aCol, { "NRECEQU", "N", 16, 6, {|| oInf:cPicOut },  "Rec.",                       .t., "Recargo Equivalencia"      , 10, .t.} )
@@ -281,16 +271,6 @@ METHOD lGenerate() CLASS  TInfDiaCli
             ::oDbf:CPROCLI := ::oDbfCli:Provincia
             ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
             ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-            ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-            ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-            ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-            ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-            ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-            ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-            ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-            ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-            ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-            ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
          END IF
 
@@ -345,16 +325,6 @@ METHOD lGenerate() CLASS  TInfDiaCli
             ::oDbf:CPROCLI := ::oDbfCli:Provincia
             ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
             ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-            ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-            ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-            ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-            ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-            ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-            ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-            ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-            ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-            ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-            ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
           END IF
 
@@ -409,17 +379,7 @@ METHOD lGenerate() CLASS  TInfDiaCli
             ::oDbf:CPROCLI := ::oDbfCli:Provincia
             ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
             ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-            ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-            ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-            ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-            ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-            ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-            ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-            ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-            ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-            ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-            ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
-
+            
          END IF
 
          aTot           := aTotAlbCli( ::oAlbCliT:CSERALB + Str( ::oAlbCliT:NNUMALB ) + ::oAlbCliT:CSUFALB, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::cDivInf  )
@@ -474,16 +434,6 @@ METHOD lGenerate() CLASS  TInfDiaCli
             ::oDbf:CPROCLI := ::oDbfCli:Provincia
             ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
             ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-            ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-            ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-            ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-            ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-            ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-            ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-            ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-            ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-            ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-            ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
           END IF
 
@@ -545,16 +495,6 @@ METHOD lGenerate() CLASS  TInfDiaCli
                    ::oDbf:CPROCLI := ::oDbfCli:Provincia
                    ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                    ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                   ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                   ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                   ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                   ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                   ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                   ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                   ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                   ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                   ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                   ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                  END IF
 

@@ -1045,6 +1045,9 @@ Components.prg 			\
 TGridSay.prg 				\
 Bitmap.prg              \
 EstadoSat.prg           \
+Lenguajes.prg           \
+CamposExtra.prg         \
+DetCamposExtra.prg      \
 
 C               =       \
 Metafi32.c              \
@@ -2080,6 +2083,9 @@ Components.obj 			\
 TGridSay.obj 				\
 Bitmap.obj              \
 EstadoSat.obj           \
+Lenguajes.obj           \
+CamposExtra.obj         \
+DetCamposExtra.obj      \
 
 .PRG.OBJ:
    $(HB)\Bin\Harbour $< /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3120,7 +3126,10 @@ $(OBJ)\TpvMenuOrdenes.obj 			+
 $(OBJ)\ApoloMeter.obj 				+
 $(OBJ)\Components.obj 				+
 $(OBJ)\TGridSay.obj 				   +	
-$(OBJ)\Bitmap.obj                +      
+$(OBJ)\Bitmap.obj                +
+$(OBJ)\Lenguajes.obj             +
+$(OBJ)\CamposExtra.obj           +
+$(OBJ)\DetCamposExtra.obj        +
 $(OBJ)\EstadoSat.obj             
 $<,$*
 $(FWLIB)\FiveH.lib               +

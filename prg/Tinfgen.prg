@@ -618,8 +618,6 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
    ::oDbfAge                  := nil
    ::oDbfArt                  := nil
    ::oDbfArticuloMateriaPrima := nil
-   ::aIniCli                  := LoaIniCli()
-   ::aIniPrv                  := LoaIniPrv()
    ::lDefGraph                := .f.
    ::lExcCero                 := .t.
 
@@ -4805,16 +4803,6 @@ METHOD AddCliente( cCodCli, oDbfDocT, lTiket )
          end if
 
          ::oDbf:cTlfCli := ::oDbfCli:Telefono
-         ::oDbf:cDefI01 := ::oDbfCli:CusRDef01
-         ::oDbf:cDefI02 := ::oDbfCli:CusRDef02
-         ::oDbf:cDefI03 := ::oDbfCli:CusRDef03
-         ::oDbf:cDefI04 := ::oDbfCli:CusRDef04
-         ::oDbf:cDefI05 := ::oDbfCli:CusRDef05
-         ::oDbf:cDefI06 := ::oDbfCli:CusRDef06
-         ::oDbf:cDefI07 := ::oDbfCli:CusRDef07
-         ::oDbf:cDefI08 := ::oDbfCli:CusRDef08
-         ::oDbf:cDefI09 := ::oDbfCli:CusRDef09
-         ::oDbf:cDefI10 := ::oDbfCli:CusRDef10
 
          if ::oDbf:FieldPos( "cNbrEst" ) != 0
             ::oDbf:cNbrEst := ::oDbfCli:NbrEst
@@ -4906,16 +4894,6 @@ METHOD AddProveedor( cCodPrv )
       ::oDbf:cProPrv := ::oDbfPrv:Provincia
       ::oDbf:cCdpPrv := ::oDbfPrv:CodPostal
       ::oDbf:cTlfPrv := ::oDbfPrv:Telefono
-      ::oDbf:cDefI01 := ::oDbfPrv:CusRDef01
-      ::oDbf:cDefI02 := ::oDbfPrv:CusRDef02
-      ::oDbf:cDefI03 := ::oDbfPrv:CusRDef03
-      ::oDbf:cDefI04 := ::oDbfPrv:CusRDef04
-      ::oDbf:cDefI05 := ::oDbfPrv:CusRDef05
-      ::oDbf:cDefI06 := ::oDbfPrv:CusRDef06
-      ::oDbf:cDefI07 := ::oDbfPrv:CusRDef07
-      ::oDbf:cDefI08 := ::oDbfPrv:CusRDef08
-      ::oDbf:cDefI09 := ::oDbfPrv:CusRDef09
-      ::oDbf:cDefI10 := ::oDbfPrv:CusRDef10
 
    end if
 

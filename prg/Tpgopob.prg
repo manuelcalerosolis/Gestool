@@ -43,16 +43,6 @@ METHOD Create() CLASS TInfPgoPob
    ::AddField( "cProCli", "C", 20, 0,  {|| "@!" },         "Provincia",                 .f., "Provincia",                  20 )
    ::AddField( "cCdpCli", "C",  7, 0,  {|| "@!" },         "Cod. Postal",               .f., "Cod. Postal",                 7 )
    ::AddField( "cTlfCli", "C", 12, 0,  {|| "@!" },         "Teléfono",                  .f., "Teléfono",                   12 )
-   ::AddField( "cDefI01", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(1) },      .f., {|| ::cNameIniCli(1) },       50 )
-   ::AddField( "cDefI02", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(2) },      .f., {|| ::cNameIniCli(2) },       50 )
-   ::AddField( "cDefI03", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(3) },      .f., {|| ::cNameIniCli(3) },       50 )
-   ::AddField( "cDefI04", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(4) },      .f., {|| ::cNameIniCli(4) },       50 )
-   ::AddField( "cDefI05", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(5) },      .f., {|| ::cNameIniCli(5) },       50 )
-   ::AddField( "cDefI06", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(6) },      .f., {|| ::cNameIniCli(6) },       50 )
-   ::AddField( "cDefI07", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(7) },      .f., {|| ::cNameIniCli(7) },       50 )
-   ::AddField( "cDefI08", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(8) },      .f., {|| ::cNameIniCli(8) },       50 )
-   ::AddField( "cDefI09", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(9) },      .f., {|| ::cNameIniCli(9) },       50 )
-   ::AddField( "cDefI10", "C",100, 0,  {|| "@!" },         {|| ::cNameIniCli(10)},      .f., {|| ::cNameIniCli(10)},       50 )
    ::AddField( "dFecDoc", "D",  8, 0,  {|| "" },           "Emisión",                   .t., "Fecha",                      10 )
    ::AddField( "cForPag", "C",  2, 0,  {|| "" },           "Pgo.",                      .f., "Forma pago",                  3 )
    ::AddField( "cNomPgo", "C", 40, 0,  {|| "@!" },         "Forma de pago",             .f., "Nombre de formas de pago"  , 40, .f.)
@@ -208,16 +198,6 @@ METHOD lGenerate() CLASS TInfPgoPob
             ::oDbf:cProCli := ::oDbfCli:Provincia
             ::oDbf:cCdpCli := ::oDbfCli:CodPostal
             ::oDbf:cTlfCli := ::oDbfCli:Telefono
-            ::oDbf:cDefI01 := ::oDbfCli:CusRDef01
-            ::oDbf:cDefI02 := ::oDbfCli:CusRDef02
-            ::oDbf:cDefI03 := ::oDbfCli:CusRDef03
-            ::oDbf:cDefI04 := ::oDbfCli:CusRDef04
-            ::oDbf:cDefI05 := ::oDbfCli:CusRDef05
-            ::oDbf:cDefI06 := ::oDbfCli:CusRDef06
-            ::oDbf:cDefI07 := ::oDbfCli:CusRDef07
-            ::oDbf:cDefI08 := ::oDbfCli:CusRDef08
-            ::oDbf:cDefI09 := ::oDbfCli:CusRDef09
-            ::oDbf:cDefI10 := ::oDbfCli:CusRDef10
          end if
 
          ::oDbf:dFecDoc    := ::oFacCliP:dPreCob

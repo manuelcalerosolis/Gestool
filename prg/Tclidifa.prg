@@ -21,18 +21,8 @@ FUNCTION TCliDiFa()
    aAdd( aCol, { "CPROCLI", "C", 20, 0, {|| "@!" },         "Prov",                      .f., "Provincia",                  20 } )
    aAdd( aCol, { "CCDPCLI", "C",  7, 0, {|| "@!" },         "CP",                        .f., "Cod. Postal",                 7 } )
    aAdd( aCol, { "CTLFCLI", "C", 12, 0, {|| "@!" },         "Tlf",                       .f., "Teléfono",                   12 } )
-   aAdd( aCol, { "CDEFI01", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(1) },   .f., {|| oInf:cNameIniCli(1) },    50 } )
-   aAdd( aCol, { "CDEFI02", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(2) },   .f., {|| oInf:cNameIniCli(2) },    50 } )
-   aAdd( aCol, { "CDEFI03", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(3) },   .f., {|| oInf:cNameIniCli(3) },    50 } )
-   aAdd( aCol, { "CDEFI04", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(4) },   .f., {|| oInf:cNameIniCli(4) },    50 } )
-   aAdd( aCol, { "CDEFI05", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(5) },   .f., {|| oInf:cNameIniCli(5) },    50 } )
-   aAdd( aCol, { "CDEFI06", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(6) },   .f., {|| oInf:cNameIniCli(6) },    50 } )
-   aAdd( aCol, { "CDEFI07", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(7) },   .f., {|| oInf:cNameIniCli(7) },    50 } )
-   aAdd( aCol, { "CDEFI08", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(8) },   .f., {|| oInf:cNameIniCli(8) },    50 } )
-   aAdd( aCol, { "CDEFI09", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(9) },   .f., {|| oInf:cNameIniCli(9) },    50 } )
-   aAdd( aCol, { "CDEFI10", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(10)},   .f., {|| oInf:cNameIniCli(10)},    50 } )
    aAdd( aCol, { "NTOTNET", "N", 16, 6, {|| oInf:cPicOut  },"Neto",                      .t., "Neto",                       12 } )
-   aAdd( aCol, { "NTOTIVA", "N", 16, 6, {|| oInf:cPicOut  },cImp(),                       .t., cImp(),                        12 } )
+   aAdd( aCol, { "NTOTIVA", "N", 16, 6, {|| oInf:cPicOut  },cImp(),                      .t., cImp(),                        12 } )
    aAdd( aCol, { "NTOTREQ", "N", 16, 3, {|| oInf:cPicOut  },"Rec",                       .t., "Rec",                        12 } )
    aAdd( aCol, { "NTOTPNT", "N", 16, 6, {|| oInf:cPicOut }, "P.V.",                      .t., "Punto verde",                12 } )
    aAdd( aCol, { "NTOTDOC", "N", 16, 6, {|| oInf:cPicOut }, "Total",                     .t., "Total",                      12 } )
@@ -241,16 +231,6 @@ METHOD lGenerate() CLASS TCliDiInf
                   ::oDbf:CPROCLI := ::oDbfCli:Provincia
                   ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                   ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                  ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                  ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                  ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                  ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                  ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                  ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                  ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                  ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                  ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                  ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                end if
 

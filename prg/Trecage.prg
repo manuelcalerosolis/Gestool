@@ -119,16 +119,6 @@ METHOD Create()
    ::AddField( "cProCli", "C", 20, 0, {|| "@!" },         "Provincia",              .f., "Provincia"                 , 20, .f. )
    ::AddField( "cCdpCli", "C",  7, 0, {|| "@!" },         "CP",                     .f., "Cod. Postal"               , 20, .f. )
    ::AddField( "cTlfCli", "C", 12, 0, {|| "@!" },         "Tlf",                    .f., "Teléfono"                  ,  7, .f. )
-   ::AddField( "cDefI01", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(1) },   .f., {|| ::cNameIniCli(1) }      , 50, .f. )
-   ::AddField( "cDefI02", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(2) },   .f., {|| ::cNameIniCli(2) }      , 50, .f. )
-   ::AddField( "cDefI03", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(3) },   .f., {|| ::cNameIniCli(3) }      , 50, .f. )
-   ::AddField( "cDefI04", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(4) },   .f., {|| ::cNameIniCli(4) }      , 50, .f. )
-   ::AddField( "cDefI05", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(5) },   .f., {|| ::cNameIniCli(5) }      , 50, .f. )
-   ::AddField( "cDefI06", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(6) },   .f., {|| ::cNameIniCli(6) }      , 50, .f. )
-   ::AddField( "cDefI07", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(7) },   .f., {|| ::cNameIniCli(7) }      , 50, .f. )
-   ::AddField( "cDefI08", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(8) },   .f., {|| ::cNameIniCli(8) }      , 50, .f. )
-   ::AddField( "cDefI09", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(9) },   .f., {|| ::cNameIniCli(9) }      , 50, .f. )
-   ::AddField( "cDefI10", "C",100, 0, {|| "@!" },         {|| ::cNameIniCli(10)},   .f., {|| ::cNameIniCli(10)}      , 50, .f. )
    ::AddField( "nTotDoc", "N", 16, 6, {|| ::cPicOut },    "Tot. Rec",               .t., "Total recibo"              , 10, .t. )
    ::AddField( "nTotDia", "N", 16, 0, {|| "99999" },      "Dias",                   .t., "Dias transcurridos"        ,  4, .t. )
    ::AddField( "nTotFac", "N", 16, 6, {|| ::cPicOut },    "Tot. Fac",               .t., "Total factura"             , 10, .t. )
@@ -400,16 +390,6 @@ METHOD AddLine( cAgeFac )
    ::oDbf:cProCli := ::oDbfCli:Provincia
    ::oDbf:cCdpCli := ::oDbfCli:CodPostal
    ::oDbf:cTlfCli := ::oDbfCli:Telefono
-   ::oDbf:cDefI01 := ::oDbfCli:CusRDef01
-   ::oDbf:cDefI02 := ::oDbfCli:CusRDef02
-   ::oDbf:cDefI03 := ::oDbfCli:CusRDef03
-   ::oDbf:cDefI04 := ::oDbfCli:CusRDef04
-   ::oDbf:cDefI05 := ::oDbfCli:CusRDef05
-   ::oDbf:cDefI06 := ::oDbfCli:CusRDef06
-   ::oDbf:cDefI07 := ::oDbfCli:CusRDef07
-   ::oDbf:cDefI08 := ::oDbfCli:CusRDef08
-   ::oDbf:cDefI09 := ::oDbfCli:CusRDef09
-   ::oDbf:cDefI10 := ::oDbfCli:CusRDef10
 
    ::oDbf:dFecMov := ::oFacCliP:dPreCob
    ::oDbf:nTotDoc := nTotRecCli( ::oFacCliP:cAlias, ::oDbfDiv:cAlias, ::cDivInf )

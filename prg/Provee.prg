@@ -118,7 +118,6 @@ static oPais
 static cPirDiv
 static cPinDiv
 static oWndBrw
-static aIniCli
 static filTmpSubCta
 static dbfTmpSubCta
 static dbfTmpDoc
@@ -254,8 +253,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       cPinDiv        := cPinDiv( cDivEmp(), dbfDiv ) // Picture de la divisa
       cPirDiv        := cPirDiv( cDivEmp(), dbfDiv ) // Picture de la divisa redondeada
-
-      aIniCli        := LoaIniPrv( cPath )
 
       EnableAcceso()
 
@@ -595,13 +592,6 @@ FUNCTION Provee( oMenuItem, oWnd )
             LEVEL    ACC_EDIT
 
       end if
-
-      DEFINE BTNSHELL RESOURCE "CNFCLI" GROUP OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( CnfPrv() ) ;
-         TOOLTIP  "Confi(g)urar campos" ;
-         HOTKEY   "G";
-         LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
          ACTION   ( oRotor:Expand() ) ;
@@ -1461,96 +1451,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 			MEMO ;
 			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[1] ;
-			ID 		105 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF01 ] VAR aTmp[ _CUSRDEF01 ] ;
-			ID 		110 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[2] ;
-			ID 		115 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF02 ] VAR aTmp[ _CUSRDEF02 ] ;
-			ID 		120 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[3] ;
-			ID 		125 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF03 ] VAR aTmp[ _CUSRDEF03 ] ;
-			ID 		130 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[4] ;
-			ID 		135 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF04 ] VAR aTmp[ _CUSRDEF04 ] ;
-			ID 		140 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[5] ;
-			ID 		145 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF05 ] VAR aTmp[ _CUSRDEF05 ] ;
-			ID 		150 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[6] ;
-			ID 		155 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF06 ] VAR aTmp[ _CUSRDEF06 ] ;
-			ID 		160 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[7] ;
-			ID 		165 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF07 ] VAR aTmp[ _CUSRDEF07 ] ;
-			ID 		170 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[8] ;
-			ID 		175 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF08 ] VAR aTmp[ _CUSRDEF08 ] ;
-			ID 		180 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[9] ;
-			ID 		185 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF09 ] VAR aTmp[ _CUSRDEF09 ] ;
-			ID 		190 ;
-         WHEN     ( nMode != ZOOM_MODE );
-         OF       oFld:aDialogs[5]
-
-		REDEFINE SAY PROMPT aIniCli[10] ;
-			ID 		195 ;
-         OF       oFld:aDialogs[5]
-
-      REDEFINE GET aGet[ _CUSRDEF10 ] VAR aTmp[ _CUSRDEF10 ] ;
-			ID 		200 ;
-         WHEN     ( nMode != ZOOM_MODE );
          OF       oFld:aDialogs[5]
 
       /*
@@ -2510,149 +2410,9 @@ RETURN cText
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION CnfPrv()
-
-	local oDlg
-   local cIniCli  := cPatEmp() + "Provee.Ini"
-   local oCombo
-   local cCombo   := ""
-   local oSay
-   local oGroup
-
-   DEFINE DIALOG oDlg RESOURCE "CNF_DEF_CLI" TITLE "Configurar campos definibles"
-
-		REDEFINE GET aIniCli[ 1 ] ;
-			ID 		110 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 2 ] ;
-			ID 		120 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 3 ] ;
-			ID 		130 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 4 ] ;
-			ID 		140 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 5 ] ;
-			ID 		150 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 6 ] ;
-			ID 		160 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 7 ] ;
-			ID 		170 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 8 ] ;
-			ID 		180 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 9 ] ;
-			ID 		190 ;
-			OF 		oDlg
-
-		REDEFINE GET aIniCli[ 10] ;
-			ID 		200 ;
-			OF 		oDlg
-
-      REDEFINE COMBOBOX oCombo VAR cCombo ;
-         ID       210 ;
-         ITEMS    { "" } ;
-         OF       oDlg
-
-      REDEFINE SAY      oSay     ID 220 OF oDlg
-
-      REDEFINE GROUP    oGroup   ID 230 OF oDlg TRANSPARENT
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-			OF 		oDlg ;
-         ACTION   ( WrtIniPrv( aIniCli, cIniCli ), oDlg:end( IDOK ) )
-
-		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-			ACTION 	( oDlg:end() )
-
-   oDlg:AddFastKey( VK_F5, {|| WrtIniPrv( aIniCli, cIniCli ), oDlg:end( IDOK ) } )
-
-   oDlg:bStart := {|| oCombo:Hide(), oSay:Hide(), oGroup:Hide() }
-	ACTIVATE DIALOG oDlg CENTER
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
-
-FUNCTION LoaIniPrv( cPath, cIniCli )
-
-	local n
-	local oIniCli
-
-   DEFAULT cPath     := cPatEmp()
-   DEFAULT cIniCli   := cPath + "Provee.Ini"
-
-   aIniCli           := array( 10 )
-
-	/*
-	Fichero Ini de la Aplicaci¢n
-	---------------------------------------------------------------------------
-	*/
-
-	INI oIniCli FILE cIniCli
-
-      GET aIniCli[ 1 ] SECTION "campos" ENTRY "1" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 2 ] SECTION "campos" ENTRY "2" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 3 ] SECTION "campos" ENTRY "3" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 4 ] SECTION "campos" ENTRY "4" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 5 ] SECTION "campos" ENTRY "5" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 6 ] SECTION "campos" ENTRY "6" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 7 ] SECTION "campos" ENTRY "7" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 8 ] SECTION "campos" ENTRY "8" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 9 ] SECTION "campos" ENTRY "9" OF oIniCli DEFAULT Space( 50 )
-      GET aIniCli[ 10] SECTION "campos" ENTRY "10" OF oIniCli DEFAULT Space( 50 )
-
-	ENDINI
-
-	FOR n := 1 TO 10
-		aIniCli[ n ] := padr( aIniCli[ n ], 50 )
-	NEXT
-
-RETURN ( aIniCli )
-
-//---------------------------------------------------------------------------//
-
-Static Function WrtIniPrv( aIniCli, cIniCli )
-
-	WritePProString( "campos", "1", aIniCli[ 1 ], cIniCli )
-	WritePProString( "campos", "2", aIniCli[ 2 ], cIniCli )
-	WritePProString( "campos", "3", aIniCli[ 3 ], cIniCli )
-	WritePProString( "campos", "4", aIniCli[ 4 ], cIniCli )
-	WritePProString( "campos", "5", aIniCli[ 5 ], cIniCli )
-	WritePProString( "campos", "6", aIniCli[ 6 ], cIniCli )
-	WritePProString( "campos", "7", aIniCli[ 7 ], cIniCli )
-	WritePProString( "campos", "8", aIniCli[ 8 ], cIniCli )
-	WritePProString( "campos", "9", aIniCli[ 9 ], cIniCli )
-	WritePProString( "campos", "10",aIniCli[ 10], cIniCli )
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
 Static Function StartEdtRec( aTmp, aGet, oValPnt )
 
 	local n
-
-   for n := 1 to 10
-      if Empty( Rtrim( aIniCli[ n ] ) ) .and. !Empty( aGet[ ( dbfProvee )->( fieldpos( "CUSRDEF" + rjust( str( n ), "0", 2 ) ) ) ] )
-         aGet[ ( dbfProvee )->( fieldpos( "CUSRDEF" + rjust( str( n ), "0", 2 ) ) ) ]:hide()
-      end if
-   next
 
    /*
    Pasamos del campo memo de las observaciones al objeto richedit--------------

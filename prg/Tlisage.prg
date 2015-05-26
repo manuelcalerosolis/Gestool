@@ -37,16 +37,6 @@ METHOD Create()
    ::AddField ( "CPROCLI", "C", 20, 0, {|| "@!" },   "Provincia",                 .f., "Provincia",                  20 )
    ::AddField ( "CCDPCLI", "C",  7, 0, {|| "@!" },   "Código postal",             .f., "Cod. Postal",                 7 )
    ::AddField ( "CTLFCLI", "C", 12, 0, {|| "@!" },   "Teléfono",                  .f., "Teléfono",                   12 )
-   ::AddField ( "CDEFI01", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(1) },      .f., {|| ::cNameIniCli(1) },       50 )
-   ::AddField ( "CDEFI02", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(2) },      .f., {|| ::cNameIniCli(2) },       50 )
-   ::AddField ( "CDEFI03", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(3) },      .f., {|| ::cNameIniCli(3) },       50 )
-   ::AddField ( "CDEFI04", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(4) },      .f., {|| ::cNameIniCli(4) },       50 )
-   ::AddField ( "CDEFI05", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(5) },      .f., {|| ::cNameIniCli(5) },       50 )
-   ::AddField ( "CDEFI06", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(6) },      .f., {|| ::cNameIniCli(6) },       50 )
-   ::AddField ( "CDEFI07", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(7) },      .f., {|| ::cNameIniCli(7) },       50 )
-   ::AddField ( "CDEFI08", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(8) },      .f., {|| ::cNameIniCli(8) },       50 )
-   ::AddField ( "CDEFI09", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(9) },      .f., {|| ::cNameIniCli(9) },       50 )
-   ::AddField ( "CDEFI10", "C",100, 0, {|| "@!" },   {|| ::cNameIniCli(10)},      .f., {|| ::cNameIniCli(10)},       50 )
 
    ::AddTmpIndex( "CCODAGE", "CCODAGE + CCODGRP + CCODCLI" )
    ::AddGroup( {|| ::oDbf:cCodAge }, {|| "Agente  : " + Rtrim( ::oDbf:cCodAge ) + "-" + oRetFld( ::oDbf:cCodAge, ::oDbfAge ) } )
@@ -163,16 +153,6 @@ METHOD lGenerate()
          ::oDbf:CPROCLI := ::oDbfCli:Provincia
          ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
          ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-         ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-         ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-         ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-         ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-         ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-         ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-         ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-         ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-         ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-         ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
          ::oDbf:Save()
 

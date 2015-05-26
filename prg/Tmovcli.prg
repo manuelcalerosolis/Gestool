@@ -19,16 +19,6 @@ FUNCTION TMovClf()
    aAdd( aCol, { "CPROCLI", "C", 20, 0, {|| "@!" },             "Provincia",    .f.,  "Provincia",        20 } )
    aAdd( aCol, { "CCDPCLI", "C",  7, 0, {|| "@!" },             "Cod. Postal",  .f.,  "Cod. Postal",       7 } )
    aAdd( aCol, { "CTLFCLI", "C", 12, 0, {|| "@!" },             "Telefono",     .f.,  "Telefono",         12 } )
-   aAdd( aCol, { "CDEFI01", "C",100, 0, {|| "@!" },             "Definido1",    .f.,  "Defenido1",        50 } )
-   aAdd( aCol, { "CDEFI02", "C",100, 0, {|| "@!" },             "Definido2",    .f.,  "Defenido2",        50 } )
-   aAdd( aCol, { "CDEFI03", "C",100, 0, {|| "@!" },             "Definido3",    .f.,  "Defenido3",        50 } )
-   aAdd( aCol, { "CDEFI04", "C",100, 0, {|| "@!" },             "Definido4",    .f.,  "Defenido4",        50 } )
-   aAdd( aCol, { "CDEFI05", "C",100, 0, {|| "@!" },             "Definido5",    .f.,  "Defenido5",        50 } )
-   aAdd( aCol, { "CDEFI06", "C",100, 0, {|| "@!" },             "Definido6",    .f.,  "Defenido6",        50 } )
-   aAdd( aCol, { "CDEFI07", "C",100, 0, {|| "@!" },             "Definido7",    .f.,  "Defenido7",        50 } )
-   aAdd( aCol, { "CDEFI08", "C",100, 0, {|| "@!" },             "Definido8",    .f.,  "Defenido8",        50 } )
-   aAdd( aCol, { "CDEFI09", "C",100, 0, {|| "@!" },             "Definido9",    .f.,  "Defenido9",        50 } )
-   aAdd( aCol, { "CDEFI10", "C",100, 0, {|| "@!" },             "Definido10",   .f.,  "Defenido10",       50 } )
    aAdd( aCol, { "CCODFAM", "C", 16, 0, {|| "@!" },             "Cod. Fam.",    .f.,  "Codigo Familia",    5 } )
    aAdd( aCol, { "CNOMFAM", "C", 30, 0, {|| "@!" },             "Familia",      .f.,  "Familia",          15 } )
    aAdd( aCol, { "NNUMCAJ", "N", 13, 6, {|| MasUnd() },         "Cajas",        .t.,  "Cajas",             8 } )
@@ -211,16 +201,6 @@ METHOD lGenerate() CLASS TMovClFInf
                         ::oDbf:CPROCLI := ::oDbfCli:Provincia
                         ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                         ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                        ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                        ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                        ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                        ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                        ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                        ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                        ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                        ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                        ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                        ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                      END IF
 

@@ -65,16 +65,6 @@ METHOD Create( lOnlySelected )
    ::AddField( "cAgente",   "C",  3, 0, {|| "" },     "Agn",                     .f., "Código agente comercial",3, .f. )
    ::AddField( "cMeiInt",   "C", 65, 0, {|| "" },     "Mail",                    .f., "dirección correo electrónico", 30, .f. )
    ::AddField( "cWebInt",   "C", 65, 0, {|| "" },     "Web",                     .f., "Página web",            30, .f. )
-   ::AddField( "cDefI01",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(1) },    .f., {|| ::cNameIniCli(1) },  50, .f. )
-   ::AddField( "cDefI02",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(2) },    .f., {|| ::cNameIniCli(2) },  50, .f. )
-   ::AddField( "cDefI03",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(3) },    .f., {|| ::cNameIniCli(3) },  50, .f. )
-   ::AddField( "cDefI04",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(4) },    .f., {|| ::cNameIniCli(4) },  50, .f. )
-   ::AddField( "cDefI05",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(5) },    .f., {|| ::cNameIniCli(5) },  50, .f. )
-   ::AddField( "cDefI06",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(6) },    .f., {|| ::cNameIniCli(6) },  50, .f. )
-   ::AddField( "cDefI07",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(7) },    .f., {|| ::cNameIniCli(7) },  50, .f. )
-   ::AddField( "cDefI08",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(8) },    .f., {|| ::cNameIniCli(8) },  50, .f. )
-   ::AddField( "cDefI09",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(9) },    .f., {|| ::cNameIniCli(9) },  50, .f. )
-   ::AddField( "cDefI10",   "C",100, 0, {|| "" },     {|| ::cNameIniCli(10)},    .f., {|| ::cNameIniCli(10)},  50, .f. )
    ::AddField( "nRiesgo",   "N", 16, 6, {|| PicOut()},"Riesgo máximo",           .f., "Riesgo máximo",         20, .f. )
    ::AddField( "nRieReal",  "N", 16, 6, {|| PicOut()},"Riesgo real",             .f., "Riesgo real",           20, .f. )
    ::AddField( "cPerCto",   "C", 30, 0, {|| "@!" },   "Contacto",                .f., "Persona de contacto",   20, .f. )
@@ -263,16 +253,6 @@ METHOD lGenerate()
          ::oDbf:cPerCto    := ::oDbfCli:cPerCto
          ::oDbf:cMeiInt    := ::oDbfCli:cMeiInt
          ::oDbf:cWebInt    := ::oDbfCli:cWebInt
-         ::oDbf:cDefI01    := ::oDbfCli:cUsrDef01
-         ::oDbf:cDefI02    := ::oDbfCli:cUsrDef02
-         ::oDbf:cDefI03    := ::oDbfCli:cUsrDef03
-         ::oDbf:cDefI04    := ::oDbfCli:cUsrDef04
-         ::oDbf:cDefI05    := ::oDbfCli:cUsrDef05
-         ::oDbf:cDefI06    := ::oDbfCli:cUsrDef06
-         ::oDbf:cDefI07    := ::oDbfCli:cUsrDef07
-         ::oDbf:cDefI08    := ::oDbfCli:cUsrDef08
-         ::oDbf:cDefI09    := ::oDbfCli:cUsrDef09
-         ::oDbf:cDefI10    := ::oDbfCli:cUsrDef10
 
          ::oDbf:Save()
 

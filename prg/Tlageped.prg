@@ -16,23 +16,13 @@ FUNCTION TlAgePed()
    aAdd( aCol, { "CNOMAGE", "C", 50, 0,  {|| "@!" },         "Agente",                    .f., "Agente",                   25 } )
    aAdd( aCol, { "CCODCLI", "C", 12, 0,  {|| "@!" },         "Cod. cli.",                 .t., "Código cliente",            8 } )
    aAdd( aCol, { "CNOMCLI", "C", 50, 0,  {|| "@!" },         "Cliente",                   .t., "Nombre cliente",           25 } )
-   aAdd( aCol, { "CNIFCLI", "C", 15, 0,  {|| "@!" },         "Nif",                       .f., "Nif",                        12 } )
-   aAdd( aCol, { "CDOMCLI", "C", 35, 0,  {|| "@!" },         "Domicilio",                 .f., "Domicilio",                  20 } )
-   aAdd( aCol, { "CPOBCLI", "C", 35, 0,  {|| "@!" },         "Población",                 .f., "Población",                  25 } )
-   aAdd( aCol, { "CPROCLI", "C", 20, 0,  {|| "@!" },         "Provincia",                 .f., "Provincia",                  20 } )
-   aAdd( aCol, { "CCDPCLI", "C",  7, 0,  {|| "@!" },         "Cod. Postal",               .f., "Cod. Postal",                 7 } )
-   aAdd( aCol, { "CTLFCLI", "C", 12, 0,  {|| "@!" },         "Teléfono",                  .f., "Teléfono",                   12 } )
-   aAdd( aCol, { "CDEFI01", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(1) },   .f., {|| oInf:cNameIniCli(1) },    50 } )
-   aAdd( aCol, { "CDEFI02", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(2) },   .f., {|| oInf:cNameIniCli(2) },    50 } )
-   aAdd( aCol, { "CDEFI03", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(3) },   .f., {|| oInf:cNameIniCli(3) },    50 } )
-   aAdd( aCol, { "CDEFI04", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(4) },   .f., {|| oInf:cNameIniCli(4) },    50 } )
-   aAdd( aCol, { "CDEFI05", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(5) },   .f., {|| oInf:cNameIniCli(5) },    50 } )
-   aAdd( aCol, { "CDEFI06", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(6) },   .f., {|| oInf:cNameIniCli(6) },    50 } )
-   aAdd( aCol, { "CDEFI07", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(7) },   .f., {|| oInf:cNameIniCli(7) },    50 } )
-   aAdd( aCol, { "CDEFI08", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(8) },   .f., {|| oInf:cNameIniCli(8) },    50 } )
-   aAdd( aCol, { "CDEFI09", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(9) },   .f., {|| oInf:cNameIniCli(9) },    50 } )
-   aAdd( aCol, { "CDEFI10", "C",100, 0,  {|| "@!" },         {|| oInf:cNameIniCli(10)},   .f., {|| oInf:cNameIniCli(10)},    50 } )
-   aAdd( aCol, { "CREFART", "C", 18, 0,  {|| "@!" },         "Código artículo",                 .t., "Código artículo",          10 } )
+   aAdd( aCol, { "CNIFCLI", "C", 15, 0,  {|| "@!" },         "Nif",                       .f., "Nif",                      12 } )
+   aAdd( aCol, { "CDOMCLI", "C", 35, 0,  {|| "@!" },         "Domicilio",                 .f., "Domicilio",                20 } )
+   aAdd( aCol, { "CPOBCLI", "C", 35, 0,  {|| "@!" },         "Población",                 .f., "Población",                25 } )
+   aAdd( aCol, { "CPROCLI", "C", 20, 0,  {|| "@!" },         "Provincia",                 .f., "Provincia",                20 } )
+   aAdd( aCol, { "CCDPCLI", "C",  7, 0,  {|| "@!" },         "Cod. Postal",               .f., "Cod. Postal",               7 } )
+   aAdd( aCol, { "CTLFCLI", "C", 12, 0,  {|| "@!" },         "Teléfono",                  .f., "Teléfono",                 12 } )
+   aAdd( aCol, { "CREFART", "C", 18, 0,  {|| "@!" },         "Código artículo",           .t., "Código artículo",          10 } )
    aAdd( aCol, { "CDESART", "C", 50, 0,  {|| "@!" },         "Artículo",                  .t., "Artículo",                 25 } )
    aAdd( aCol, { "NUNDCAJ", "N", 13, 6,  {|| MasUnd () },    "Cajas",                     .f., "Cajas",                     8 } )
    aAdd( aCol, { "NUNDART", "N", 13, 6,  {|| MasUnd () },    "Und.",                      .t., "Unidades",                  8 } )
@@ -265,16 +255,6 @@ METHOD lGenerate() CLASS TdlAgeAlb
                            ::oDbf:CPROCLI := ::oDbfCli:Provincia
                            ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                            ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                           ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                           ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                           ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                           ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                           ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                           ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                           ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                           ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                           ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                           ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                         end if
 
@@ -340,16 +320,6 @@ METHOD lGenerate() CLASS TdlAgeAlb
                      ::oDbf:CPROCLI := ::oDbfCli:Provincia
                      ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
                      ::oDbf:CTLFCLI := ::oDbfCli:Telefono
-                     ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
-                     ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
-                     ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
-                     ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
-                     ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
-                     ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
-                     ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
-                     ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
-                     ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
-                     ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
 
                   end if
 

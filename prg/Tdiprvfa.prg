@@ -21,18 +21,8 @@ FUNCTION TDPrvFac()
    aAdd( aCol, { "CPROPRV", "C", 20, 0, {|| "@!" },         "Prov",                      .f., "Provincia",                 20 } )
    aAdd( aCol, { "CCDPPRV", "C",  7, 0, {|| "@!" },         "CP",                        .f., "Cod. Postal",               20 } )
    aAdd( aCol, { "CTLFPRV", "C", 12, 0, {|| "@!" },         "Tlf",                       .f., "Teléfono",                   7 } )
-   aAdd( aCol, { "CDEFI01", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(1) },   .f., {|| oInf:cNameIniPrv(1) },   50 } )
-   aAdd( aCol, { "CDEFI02", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(2) },   .f., {|| oInf:cNameIniPrv(2) },   50 } )
-   aAdd( aCol, { "CDEFI03", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(3) },   .f., {|| oInf:cNameIniPrv(3) },   50 } )
-   aAdd( aCol, { "CDEFI04", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(4) },   .f., {|| oInf:cNameIniPrv(4) },   50 } )
-   aAdd( aCol, { "CDEFI05", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(5) },   .f., {|| oInf:cNameIniPrv(5) },   50 } )
-   aAdd( aCol, { "CDEFI06", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(6) },   .f., {|| oInf:cNameIniPrv(6) },   50 } )
-   aAdd( aCol, { "CDEFI07", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(7) },   .f., {|| oInf:cNameIniPrv(7) },   50 } )
-   aAdd( aCol, { "CDEFI08", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(8) },   .f., {|| oInf:cNameIniPrv(8) },   50 } )
-   aAdd( aCol, { "CDEFI09", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(9) },   .f., {|| oInf:cNameIniPrv(9) },   50 } )
-   aAdd( aCol, { "CDEFI10", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(10)},   .f., {|| oInf:cNameIniPrv(10)},   50 } )
    aAdd( aCol, { "NTOTNET", "N", 16, 6, {|| oInf:cPicIn },  "Neto",                      .t., "Neto",                      10 } )
-   aAdd( aCol, { "NTOTIVA", "N", 16, 6, {|| oInf:cPicIn },  cImp(),                       .t., cImp(),                       10 } )
+   aAdd( aCol, { "NTOTIVA", "N", 16, 6, {|| oInf:cPicIn },  cImp(),                      .t., cImp(),                      10 } )
    aAdd( aCol, { "NTOTREQ", "N", 16, 3, {|| oInf:cPicIn },  "Rec",                       .t., "Rec",                       10 } )
    aAdd( aCol, { "NTOTDOC", "N", 16, 6, {|| oInf:cPicIn },  "Total",                     .t., "Total",                     10 } )
 
@@ -250,16 +240,6 @@ METHOD lGenerate() CLASS TDiaPFac
             ::oDbf:CPROPRV := ::oDbfPrv:Provincia
             ::oDbf:CCDPPRV := ::oDbfPrv:CodPostal
             ::oDbf:CTLFPRV := ::oDbfPrv:Telefono
-            ::oDbf:CDEFI01 := ::oDbfPrv:cUsrDef01
-            ::oDbf:CDEFI02 := ::oDbfPrv:cUsrDef02
-            ::oDbf:CDEFI03 := ::oDbfPrv:cUsrDef03
-            ::oDbf:CDEFI04 := ::oDbfPrv:cUsrDef04
-            ::oDbf:CDEFI05 := ::oDbfPrv:cUsrDef05
-            ::oDbf:CDEFI06 := ::oDbfPrv:cUsrDef06
-            ::oDbf:CDEFI07 := ::oDbfPrv:cUsrDef07
-            ::oDbf:CDEFI08 := ::oDbfPrv:cUsrDef08
-            ::oDbf:CDEFI09 := ::oDbfPrv:cUsrDef09
-            ::oDbf:CDEFI10 := ::oDbfPrv:cUsrDef10
 
          end if
 

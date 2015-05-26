@@ -529,9 +529,6 @@ METHOD ImportaProveedores()
       ::oDbfPrvGst:Movil       := ::oDbfPrvFac:Movil
       ::oDbfPrvGst:cMeiInt     := ::oDbfPrvFac:Correoe
       ::oDbfPrvGst:cWebInt     := ::oDbfPrvFac:Url
-      ::oDbfPrvGst:cUsrDef01   := ::oDbfPrvFac:Libre1
-      ::oDbfPrvGst:cUsrDef02   := ::oDbfPrvFac:Libre2
-      ::oDbfPrvGst:cUsrDef03   := ::oDbfPrvFac:Libre3
       ::oDbfPrvGst:nCopiasf    := 1
       ::oDbfPrvGst:cCodUsr     := cCurUsr()
       ::oDbfPrvGst:dFecChg     := GetSysDate()
@@ -600,7 +597,6 @@ METHOD ImportaClientes()
       ::oDbfCliGst:cMeiInt    := ::oDbfCliFac:Correoe
       ::oDbfCliGst:cWebInt    := ::oDbfCliFac:Url
       ::oDbfCliGst:cPerCto    := ::oDbfCliFac:Contacto
-      //::oDbfCliGst:cCodAlm    := oUser():cAlmacen()
       ::oDbfCliGst:cCodUsr    := cCurUsr()
       ::oDbfCliGst:dFecChg    := GetSysDate()
       ::oDbfCliGst:cTimChg    := Time()
@@ -609,9 +605,6 @@ METHOD ImportaClientes()
       ::oDbfCliGst:cDtoAtp    := Padr( "Atipico", 50 )
       ::oDbfCliGst:nDtoEsp    := ::oDbfCliFac:Descuento
       ::oDbfCliGst:lChgPre    := .t.
-      ::oDbfCliGst:cUsrDef01  := ::oDbfCliFac:Libre1
-      ::oDbfCliGst:cUsrDef02  := ::oDbfCliFac:Libre2
-      ::oDbfCliGst:cUsrDef03  := ::oDbfCliFac:Libre3
 
       nOrdAnt := ::oDbfPgo:OrdSetFocus( "CDESPAGO" )
 
