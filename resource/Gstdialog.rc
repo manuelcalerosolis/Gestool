@@ -15033,14 +15033,14 @@ FONT 8, "MS Sans Serif"
   CONTROL "Unidades", 221, "Button", BS_AUTORADIOBUTTON, 55, 184, 43, 10
   CONTROL "", 240, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 187, 183, 60, 12
   CONTROL "Impuestos incluidos", -1, "Button", BS_GROUPBOX, 169, 63, 81, 85
-  CONTROL "Precio 1", 300, "Static", WS_GROUP, 55, 77, 27, 8
+  CONTROL "Precio 1", -1, "Static", WS_GROUP, 55, 77, 27, 8
   CONTROL "A vender", -1, "Static", WS_GROUP, 143, 174, 31, 8
   CONTROL "A cobrar", -1, "Static", WS_GROUP, 143, 186, 30, 8
-  CONTROL "Precio 2", 301, "Static", WS_GROUP, 55, 89, 30, 8
-  CONTROL "Precio 3", 302, "Static", WS_GROUP, 55, 101, 32, 8
-  CONTROL "Precio 4", 303, "Static", WS_GROUP, 55, 113, 31, 8
-  CONTROL "Precio 5", 304, "Static", WS_GROUP, 55, 125, 31, 8
-  CONTROL "Precio 6", 305, "Static", WS_GROUP, 55, 137, 32, 8
+  CONTROL "Precio 2", -1, "Static", WS_GROUP, 55, 89, 30, 8
+  CONTROL "Precio 3", -1, "Static", WS_GROUP, 55, 101, 32, 8
+  CONTROL "Precio 4", -1, "Static", WS_GROUP, 55, 113, 31, 8
+  CONTROL "Precio 5", -1, "Static", WS_GROUP, 55, 125, 31, 8
+  CONTROL "Precio 6", -1, "Static", WS_GROUP, 55, 137, 32, 8
   CONTROL "Lineal", -1, "Static", WS_GROUP, 254, 87, 21, 8
   CONTROL "Porcentual", -1, "Static", WS_GROUP, 254, 75, 36, 8
   CONTROL "Descuentos", -1, "Button", BS_GROUPBOX, 251, 63, 125, 85
@@ -20228,9 +20228,9 @@ VIEW_FACTURAS_ENTIDADES DIALOG DISCARDABLE 64, -21, 670, 375
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "&Importar [F*]", 500, "Button", WS_TABSTOP, 44, 30, 50, 14
-  CONTROL "&Añadir[F2]", 501, "Button", WS_TABSTOP, 99, 30, 50, 14
-  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 154, 30, 50, 14
+  CONTROL "&Importar", 500, "Button", WS_TABSTOP, 154, 30, 50, 14
+  CONTROL "&Añadir[F2]", 501, "Button", WS_TABSTOP, 44, 30, 50, 14
+  CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 99, 30, 50, 14
   CONTROL "", 210, "TXBrowse", 0x00200000, 44, 48, 620, 323
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Releción de entidades para faturae", -1, "Static", WS_GROUP, 44, 3, 120, 8

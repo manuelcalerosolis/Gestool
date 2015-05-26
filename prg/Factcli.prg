@@ -2538,7 +2538,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    										{ "Resource" => "Information_48_alpha", 			"Dialog" => 3 },;
    										{ "Resource" => "Address_book2_alpha_48", 			"Dialog" => 4 },;
                                  		{ "Resource" => "Address_book2_alpha_48",    		"Dialog" => 5 },;
-                                 		{ "Resource" => "document_attachment_48_alpha",    	"Dialog" => 6 } }
+                                 		{ "Resource" => "document_attachment_48",    	    "Dialog" => 6 } }
 
    
    /*
