@@ -712,6 +712,8 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
    local cSayVp1
    local cSayVp2
    local nValDiv           := 1
+   local oSay              := Array( 6 )
+   local cSay              := Array( 6 )
    local oGetPrc           := Array( 6 )
    local oSayPrc           := Array( 6 )
    local cGetGrp           := RetFld( aBlank[ _CGRPOFE ], oGrpCli:GetAlias() )
@@ -761,6 +763,13 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 
    end case
 
+   /*cSay[1]                 := uFieldEmpresa( "cTxtTar1", "Precio 1" )
+   cSay[2]                 := uFieldEmpresa( "cTxtTar2", "Precio 2" )
+   cSay[3]                 := uFieldEmpresa( "cTxtTar3", "Precio 3" )
+   cSay[4]                 := uFieldEmpresa( "cTxtTar4", "Precio 4" )
+   cSay[5]                 := uFieldEmpresa( "cTxtTar5", "Precio 5" )
+   cSay[6]                 := uFieldEmpresa( "cTxtTar6", "Precio 6" )*/
+
    cPouDiv                 := cPouDiv( cDivEmp(), dbfDiv )
 
    DEFINE DIALOG oDlg RESOURCE "OFERTA_00" TITLE LblTitle( nMode ) + "ofertas"
@@ -783,7 +792,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 
       REDEFINE BITMAP oBmpPrimera ;
          ID       500 ;
-         RESOURCE "Star_Red_Alpha_48" ;
+         RESOURCE "Star_Red_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[1]
 
@@ -920,7 +929,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 
       REDEFINE BITMAP oBmpSegunda ;
          ID       500 ;
-         RESOURCE "Symbol_Euro_Alpha_48" ;
+         RESOURCE "Symbol_euro_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[2]
 
@@ -930,7 +939,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          OF       oFld:aDialogs[2] ;
 
       /*
-      " + cImp() + " INCLUIDO___________________________________________________________________
+      " + cImp() + " INCLUIDO__________________________________________________
       */
 
       REDEFINE CHECKBOX aoGet[ _LIVAINC ] VAR aBlank[ _LIVAINC ] ;
@@ -939,7 +948,18 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          OF       oFld:aDialogs[2]
 
       /*
-      Importe _______________________________________________________________________
+      Nombres de precios_______________________________________________________
+      */
+
+      REDEFINE SAY oSay[ 1 ] ID 300 OF oFld:aDialogs[2]
+      REDEFINE SAY oSay[ 2 ] ID 301 OF oFld:aDialogs[2]
+      REDEFINE SAY oSay[ 3 ] ID 302 OF oFld:aDialogs[2]
+      REDEFINE SAY oSay[ 4 ] ID 303 OF oFld:aDialogs[2]
+      REDEFINE SAY oSay[ 5 ] ID 304 OF oFld:aDialogs[2]
+      REDEFINE SAY oSay[ 6 ] ID 305 OF oFld:aDialogs[2]
+
+      /*
+      Importe _________________________________________________________________
       */
 
       REDEFINE GET aoGet[ _NPREOFE1 ] VAR aBlank[ _NPREOFE1 ] ;
@@ -1186,7 +1206,8 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
                          oBtnAnterior:Hide(),;
                          if( !Empty( cCodArt ), aoGet[ _CARTOFE ]:lValid(), ),;
                          InitProp( aBlank, aoGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 ),;
-                         aoGet[ _CARTOFE ]:SetFocus() }
+                         aoGet[ _CARTOFE ]:SetFocus(),;
+                         StartPrecios( oSay, aoGet ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -1242,6 +1263,54 @@ static function BotonSiguiente( aBlank, aoGet, nMode, oBrw, oFld, oDlg, oTipoOfe
          end if
 
    end case
+
+Return .t.
+
+//--------------------------------------------------------------------------//
+
+Static Function StartPrecios( oSay, aoGet )
+
+   oSay[ 1 ]:SetText( uFieldEmpresa( "cTxtTar1", "Precio 1" ) )
+
+   if uFieldEmpresa( "lShwTar2" )
+      oSay[ 2 ]:SetText( uFieldEmpresa( "cTxtTar2", "Precio 2" ) )
+   else
+      oSay[ 2 ]:Hide()
+      aoGet[ _NPREOFE2 ]:Hide()
+      aoGet[ _NPREIVA2 ]:Hide()
+   end if
+
+   if uFieldEmpresa( "lShwTar3" )
+      oSay[ 3 ]:SetText( uFieldEmpresa( "cTxtTar3", "Precio 3" ) )
+   else
+      oSay[ 3 ]:Hide()
+      aoGet[ _NPREOFE3 ]:Hide()
+      aoGet[ _NPREIVA3 ]:Hide()
+   end if
+
+   if uFieldEmpresa( "lShwTar4" )
+      oSay[ 4 ]:SetText( uFieldEmpresa( "cTxtTar4", "Precio 4" ) )
+   else
+      oSay[ 4 ]:Hide()
+      aoGet[ _NPREOFE4 ]:Hide()
+      aoGet[ _NPREIVA4 ]:Hide()
+   end if
+
+   if uFieldEmpresa( "lShwTar5" )
+      oSay[ 5 ]:SetText( uFieldEmpresa( "cTxtTar5", "Precio 5" ) )
+   else
+      oSay[ 5 ]:Hide()
+      aoGet[ _NPREOFE5 ]:Hide()
+      aoGet[ _NPREIVA5 ]:Hide()
+   end if
+
+   if uFieldEmpresa( "lShwTar6" )
+      oSay[ 6 ]:SetText( uFieldEmpresa( "cTxtTar6", "Precio 6" ) )
+   else
+      oSay[ 6 ]:Hide()
+      aoGet[ _NPREOFE6 ]:Hide()
+      aoGet[ _NPREIVA6 ]:Hide()
+   end if
 
 Return .t.
 

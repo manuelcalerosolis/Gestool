@@ -4090,7 +4090,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 1"
+      :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1 " )
       :bEditValue       := {|| ( dbfTmpOfe )->nPreOfe1 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4099,7 +4099,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 1 " + cImp()
+      :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1 " ) + cImp()
       :bEditValue       := {|| ( dbfTmpOfe )->nPreIva1 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4108,7 +4108,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 2"
+      :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2 " )
       :bEditValue       := {|| ( dbfTmpOfe )->nPreOfe2 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4117,7 +4117,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 2 " + cImp()
+      :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2 " ) + cImp()
       :bEditValue       := {|| ( dbfTmpOfe )->nPreIva2 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4126,7 +4126,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 3"
+      :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3 " )
       :bEditValue       := {|| ( dbfTmpOfe )->nPreOfe3 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4135,7 +4135,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 3 " + cImp()
+      :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3 " ) + cImp()
       :bEditValue       := {|| ( dbfTmpOfe )->nPreIva3 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4144,7 +4144,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 4"
+      :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4 " )
       :bEditValue       := {|| ( dbfTmpOfe )->nPreOfe4 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4153,7 +4153,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 4 " + cImp()
+      :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4 " ) + cImp()
       :bEditValue       := {|| ( dbfTmpOfe )->nPreIva4 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4162,7 +4162,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 5"
+      :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5 " )
       :bEditValue       := {|| ( dbfTmpOfe )->nPreOfe5 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4171,7 +4171,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 5 " + cImp()
+      :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5 " ) + cImp()
       :bEditValue       := {|| ( dbfTmpOfe )->nPreIva5 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4180,7 +4180,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 6"
+      :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6 " )
       :bEditValue       := {|| ( dbfTmpOfe )->nPreOfe6 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -4189,7 +4189,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end with
 
    with object ( oBrwOfe:AddCol() )
-      :cHeader          := "Precio 6 " + cImp()
+      :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6 " ) + cImp()
       :bEditValue       := {|| ( dbfTmpOfe )->nPreIva6 }
       :nWidth           := 90
       :cEditPicture     := cPouDiv
@@ -6597,12 +6597,12 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    cSay[4]                 := aBnfSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr4" ) ) ], 1 ) ]
    cSay[5]                 := aBnfSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr5" ) ) ], 1 ) ]
    cSay[6]                 := aBnfSobre[ Max( aTmp[ ( dbfTmpVta )->( fieldpos( "nBnfSbr6" ) ) ], 1 ) ]
-   cSay[7]                 := "Precio 1"
-   cSay[8]                 := "Precio 2"
-   cSay[9]                 := "Precio 3"
-   cSay[10]                := "Precio 4"
-   cSay[11]                := "Precio 5"
-   cSay[12]                := "Precio 6"
+   cSay[7]                 := uFieldEmpresa( "cTxtTar1", "Precio 1" )
+   cSay[8]                 := uFieldEmpresa( "cTxtTar2", "Precio 2" )
+   cSay[9]                 := uFieldEmpresa( "cTxtTar3", "Precio 3" )
+   cSay[10]                := uFieldEmpresa( "cTxtTar4", "Precio 4" )
+   cSay[11]                := uFieldEmpresa( "cTxtTar5", "Precio 5" )
+   cSay[12]                := uFieldEmpresa( "cTxtTar6", "Precio 6" )
 
    /*
    Seleccionamos las Imágenes--------------------------------------------------
