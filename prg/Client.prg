@@ -8252,24 +8252,7 @@ FUNCTION LoaIniCli( cPath, IniCli )
    DEFAULT cPath     := cPatEmp()
    DEFAULT cIniCli   := cPath + "Client.Ini"
 
-<<<<<<< HEAD
    INI oFileIniCli FILE IniCli
-=======
-   aIniCli 			 := Array( 11 )
-
-   /*
-   Fichero Ini de la Aplicaci¢n
-   ---------------------------------------------------------------------------
-   */
-
-   INI oIniCli FILE cIniCli
-
-      GET aIniCli[ 1 ] SECTION "campos" ENTRY "1" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 2 ] SECTION "campos" ENTRY "2" OF oIniCli DEFAULT Space( 50 )
-
-      GET aIniCli[ 3 ] SECTION "campos" ENTRY "3" OF oIniCli DEFAULT Space( 50 )
->>>>>>> origin/master
 
       GET cInicli SECTION "filtro" ENTRY "ft" OF oFileIniCli DEFAULT "Activas"
 
