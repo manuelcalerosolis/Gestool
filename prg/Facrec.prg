@@ -3205,7 +3205,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       	REDEFINE GET aGet[ _NBULTOS ] VAR aTmp[ _NBULTOS ];
          	ID       128 ;
 			SPINNER;
-         	PICTURE  "999" ;
+         	PICTURE  "99999" ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
          	OF       oFld:aDialogs[2]
 
@@ -12982,7 +12982,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, {"MCOMENT"     ,"M", 10, 0, "Comentarios" ,                                         "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"MOBSERV"     ,"M", 10, 0, "Observaciones" ,                                       "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CCODPAGO"    ,"C",  2, 0, "Código del tipo de pago" ,                             "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"NBULTOS"     ,"N",  3, 0, "Número de bultos" ,                                    "999,999",            "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"NBULTOS"     ,"N",  5, 0, "Número de bultos" ,                                    "999,999",            "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NPORTES"     ,"N",  6, 0, "Valor del porte" ,                                     "cPorDivFac",         "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NIVAMAN"     ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,              "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NMANOBR"     ,"N", 16, 6, "Gastos" ,                                              "cPorDivFac",         "", "( cDbf )"} )

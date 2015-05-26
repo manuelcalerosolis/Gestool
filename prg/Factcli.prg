@@ -3871,7 +3871,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[_NBULTOS] VAR aTmp[_NBULTOS];
          ID       128 ;
          SPINNER;
-         PICTURE  "999" ;
+         PICTURE  "99999" ;
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
@@ -21011,7 +21011,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"MCOMENT"     ,"M", 10, 0, "Comentarios" ,                                         "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"MOBSERV"     ,"M", 10, 0, "Observaciones" ,                                       "",                   "", "( cDbf )"} )
    aAdd( aItmFacCli, {"CCODPAGO"    ,"C",  2, 0, "Código del tipo de pago" ,                             "",                   "", "( cDbf )"} )
-   aAdd( aItmFacCli, {"NBULTOS"     ,"N",  3, 0, "Número de bultos" ,                                    "999,999",            "", "( cDbf )"} )
+   aAdd( aItmFacCli, {"NBULTOS"     ,"N",  5, 0, "Número de bultos" ,                                    "999,999",            "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NPORTES"     ,"N",  6, 0, "Valor del porte" ,                                     "cPorDivFac",         "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NIVAMAN"     ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,              "'@EZ 999,99'",       "", "( cDbf )"} )
    aAdd( aItmFacCli, {"NMANOBR"     ,"N", 16, 6, "Gasto" ,                                               "cPorDivFac",         "", "( cDbf )"} )

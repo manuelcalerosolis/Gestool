@@ -2837,7 +2837,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
      REDEFINE GET aGet[_NBULTOS] VAR aTmp[_NBULTOS];
          ID       128 ;
 			SPINNER;
-         PICTURE  "999" ;
+         PICTURE  "99999" ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
@@ -10381,7 +10381,7 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "NDTOPTF",   "N",  7,  2, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmPreCli, { "LRECARGO",  "L",  1,  0, "Aplicar recargo de equivalencia", "",                   "", "( cDbf )"} )
    aAdd( aItmPreCli, { "NPCTCOMAGE","N",  5,  2, "Pct. de comisión del agente",     "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NBULTOS",   "N",  3,  0, "Numero de bultos",                "'999'",              "", "( cDbf )"} )
+   aAdd( aItmPreCli, { "NBULTOS",   "N",  5,  0, "Numero de bultos",                "'999'",              "", "( cDbf )"} )
    aAdd( aItmPreCli, { "CNUMALB",   "C", 10,  0, "" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmPreCli, { "CDIVPRE",   "C",  3,  0, "Código de divisa",                "",                   "", "( cDbf )"} )
    aAdd( aItmPreCli, { "NVDVPRE",   "N", 10,  4, "Valor del cambio de la divisa",   "'@EZ 999,999.9999'", "", "( cDbf )"} )

@@ -2956,7 +2956,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       REDEFINE GET aGet[ _NBULTOS ] VAR aTmp[ _NBULTOS ];
          ID       128 ;
 			SPINNER;
-         PICTURE  "999" ;
+         PICTURE  "99999" ;
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
@@ -15563,7 +15563,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "NDTOPTF", "N",    7,  2, "",                                                        "",                        "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LRECARGO","L",    1,  0, "Aplicar recargo de equivalencia",                         "RecargoEquivalencia",     "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NPCTCOMAGE","N",  5,  2, "Pct. de comisión del agente",                             "ComisionAgente",          "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "NBULTOS", "N",    3,  0, "Número de bultos",                                        "Bultos",                  "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "NBULTOS", "N",    5,  0, "Número de bultos",                                        "Bultos",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CNUMPRE", "C",   12,  0, "",                                                        "NumeroPresupuesto",       "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CDIVPED", "C",    3,  0, "Código de divisa",                                        "Divisa",                  "", "( cDbf )", {|| cDivEmp() } } )
    aAdd( aItmPedCli, { "NVDVPED", "N",   10,  4, "Valor del cambio de la divisa",                           "ValorDivisa",             "", "( cDbf )", {|| nChgDiv() } } )

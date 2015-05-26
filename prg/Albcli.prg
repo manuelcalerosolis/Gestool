@@ -3414,7 +3414,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       REDEFINE GET aGet[ _NBULTOS ] VAR aTmp[ _NBULTOS ];
          ID       128 ;
          SPINNER;
-         PICTURE  "999" ;
+         PICTURE  "99999" ;
          WHEN     ( lWhen ) ;
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[2]
@@ -17028,7 +17028,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "MCOMENT"   ,"M", 10, 0, "Cometarios del albarán" ,                                  "Comentarios",                   "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "MOBSERV"   ,"M", 10, 0, "Observaciones" ,                                           "Observaciones",                 "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CCODPAGO"  ,"C",  2, 0, "Código de la forma de pago" ,                              "Pago",                          "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "NBULTOS"   ,"N",  3, 0, "Número de bultos" ,                                        "Bultos",                        "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NBULTOS"   ,"N",  5, 0, "Número de bultos" ,                                        "Bultos",                        "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "NPORTES"   ,"N", 16, 6, "Importe de los portes" ,                                   "",                              "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CCODAGE"   ,"C",  3, 0, "Código del agente" ,                                       "Agente",                        "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CCODOBR"   ,"C", 10, 0, "Código de dirección" ,                                     "Direccion",                     "", "( cDbf )", nil } )
