@@ -2275,6 +2275,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
         TRANSPARENT ;
         OF       oFld:aDialogs[4]
 
+      REDEFINE BITMAP oBmpGeneral ;
+        ID       990 ;
+        RESOURCE "document_attachment_48" ;
+        TRANSPARENT ;
+        OF       oFld:aDialogs[5]
+
 		REDEFINE GET aGet[_CCODCLI] VAR aTmp[_CCODCLI] ;
          ID       170 ;
          WHEN     ( nMode != ZOOM_MODE ) ;

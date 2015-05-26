@@ -2538,7 +2538,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    										{ "Resource" => "Information_48_alpha", 			"Dialog" => 3 },;
    										{ "Resource" => "Address_book2_alpha_48", 			"Dialog" => 4 },;
                                  		{ "Resource" => "Address_book2_alpha_48",    		"Dialog" => 5 },;
-                                 		{ "Resource" => "document_attachment_48_alpha",    	"Dialog" => 6 } }
+                                 		{ "Resource" => "document_attachment_48",    	    "Dialog" => 6 } }
 
    
    /*
@@ -12646,32 +12646,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 
          end if
 
-         	msgAlert( ( D():ClientesEntidad( nView ) )->( OrdKeyCount() ), "OrdKeyCount" )
-
-         if ( D():ClientesEntidad( nView ) )->( OrdKeyCount() ) = 1
-
-
-         	msgAlert( "El cliente solo tiene una linea en entidad." )
-
-            	/*hash           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
-
-			    for each chash in hash
-
-			        if !dbSeekInOrd( ( padr( hget( chash, "CodigoEntidad"), 60 ) + padr( hget( chash, "RolEntidad"), 60 ) ), "cRolEnt", oDbf )
-
-			            ( aTmp[ ( dbfTmpEntidades ) ] )->( dbAppend() )
-
-			            aTmp[ ( dbfTmpEntidades )->( FieldPos( "CodigoEntidad" ) ) ]    := hget( chash, "CodigoEntidad")
-			            aTmp[ ( dbfTmpEntidades )->( FieldPos( "RolEntidad" ) ) ]    	:= hget( chash, "RolEntidad")
-
-			            ( aTmp[ ( dbfTmpEntidades ) ] )->( dbUnlock() )
-
-			        endif
-
-			     next*/
-   
-         endif
-
+         cargaEntidadCliente( cNewCodCli, nView, dbfTmpEntidades )
 
       end if
 
