@@ -12300,7 +12300,6 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
    local lValid      := .t.
    local cNewCodCli  := aGet[ _CCODCLI ]:varGet()
    local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
-   local hash
 
    DEFAULT lShowInc  := .t.
 
@@ -12645,33 +12644,10 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
             aTmp[ _NSBRATP ] := ( D():Clientes( nView ) )->nSbrAtp
 
          end if
+  		
+         cargaEntidadCliente( cNewCodCli, nView, dbfTmpEntidades )
 
-         	msgAlert( ( D():ClientesEntidad( nView ) )->( OrdKeyCount() ), "OrdKeyCount" )
-
-         if ( D():ClientesEntidad( nView ) )->( OrdKeyCount() ) = 1
-
-
-         	msgAlert( "El cliente solo tiene una linea en entidad." )
-
-            	/*hash           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
-
-			    for each chash in hash
-
-			        if !dbSeekInOrd( ( padr( hget( chash, "CodigoEntidad"), 60 ) + padr( hget( chash, "RolEntidad"), 60 ) ), "cRolEnt", oDbf )
-
-			            ( aTmp[ ( dbfTmpEntidades ) ] )->( dbAppend() )
-
-			            aTmp[ ( dbfTmpEntidades )->( FieldPos( "CodigoEntidad" ) ) ]    := hget( chash, "CodigoEntidad")
-			            aTmp[ ( dbfTmpEntidades )->( FieldPos( "RolEntidad" ) ) ]    	:= hget( chash, "RolEntidad")
-
-			            ( aTmp[ ( dbfTmpEntidades ) ] )->( dbUnlock() )
-
-			        endif
-
-			     next*/
-   
-         endif
-
+         
 
       end if
 

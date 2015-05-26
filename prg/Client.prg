@@ -4040,7 +4040,7 @@ Static Function EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode )
          ID       IDOK ;
          OF       oDlg ;
          WHEN     (  nMode != ZOOM_MODE ) ;
-         ACTION   ( if( validEdtFacturae( aTmp ), ( endEdtfacturae( aTmp, nMode, oBrwFacturae ), oDlg:end( IDOK ) ), ) )
+         ACTION   ( if( validEdtFacturae( aTmp, nMode ) , ( endEdtfacturae( aTmp, nMode, oBrwFacturae ), oDlg:end( IDOK ) ), ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -4091,16 +4091,19 @@ Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Static function validEdtFacturae( aTmp )
+Static function validEdtFacturae( aTmp, nMode )
 
    if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ] )
       msgStop( "Descripción del organismo no puede estar vacio" )
       return .f.
-   else 
-      if dbSeekInOrd( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ], "cDesFac", D():ClientesEntidad( nView ) )
-         msgStop( "Descripción ya existe." )
-         return .f.
-      endif      
+   endif
+
+   if nMode == APPD_MODE .and. ;
+      dbSeekInOrd( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ], "cDesFac", D():ClientesEntidad( nView ) )
+
+            msgStop( "Descripción ya existe." )
+            return .f.
+
    end if
 
    if len( aEntidades ) < 1
@@ -8391,22 +8394,7 @@ FUNCTION BrwEntidad( cCodCli, oDbf )
 
    if oDlg:nResult == IDOK
 
-         hash           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
-
-      for each chash in hash
-
-         if !dbSeekInOrd( ( padr( hget( chash, "CodigoEntidad"), 60 ) + padr( hget( chash, "RolEntidad"), 60 ) ), "cRolEnt", oDbf )
-
-            ( oDbf )->( dbAppend() )
-
-            ( oDbf )->CodEntidad    := hget( chash, "CodigoEntidad")
-            ( oDbf )->RolEntidad    := hget( chash, "RolEntidad")
-
-            ( oDbf )->( dbUnlock() )
-
-         endif
-
-      next
+      aplicaEntidadCliente( , nView, oDbf )
 
    end if
 
@@ -14114,5 +14102,68 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    oBtnCancelar:end()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+function numeroEntidadCliente( cCodCli, nView )
+
+   local contador    := 0
+   local nRecAnt     := ( D():ClientesEntidad( nView ) )->( RecNo() )
+
+   if ( D():ClientesEntidad( nView ) )->( dbSeek( cCodCli ) )
+
+      while ( D():ClientesEntidad( nView ) )->cCodCli == padr( cCodCli, 12) .and. !D():eofClientesEntidad( nView ) 
+
+            contador += 1
+
+         ( D():ClientesEntidad( nView ) )->( dbSkip() )
+
+      end While
+
+   endif
+
+   ( D():ClientesEntidad( nView ) )->( dbGoTo( nRecAnt ) )
+
+Return( contador )
+
+//---------------------------------------------------------------------------//
+
+function cargaEntidadCliente( cCodCli, nView, aTmp )
+
+  if ( numeroEntidadCliente( cCodCli, nView ) ) = 1
+
+      aplicaEntidadCliente( cCodCli, nView, aTmp ) 
+
+      return( .t. )
+
+  endif
+
+Return( .f. )
+
+//---------------------------------------------------------------------------//
+
+function aplicaEntidadCliente( cCodCli, nView, oDbf )
+
+   local hash        := {}
+   local chash
+  
+   hash           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
+
+      for each chash in hash
+
+            if !dbSeekInOrd( ( padr( hget( chash, "CodigoEntidad"), 60 ) + padr( hget( chash, "RolEntidad"), 60 ) ), "cRolEnt", oDbf )
+
+               ( oDbf )->( dbAppend() )
+
+               ( oDbf )->CodEntidad    := hget( chash, "CodigoEntidad")
+               ( oDbf )->RolEntidad    := hget( chash, "RolEntidad")
+
+               ( oDbf )->( dbUnlock() )
+
+            endif 
+
+      next
+
+Return( .t. )
 
 //---------------------------------------------------------------------------//
