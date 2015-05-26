@@ -1879,6 +1879,7 @@ RETURN ( lDup )
             else
                :nUnidades     := nUnidades
                :nBultos       := ( ::cHisMovT )->nBultos
+               :nCajas        := ( ::cHisMovT )->nCajMov
             end if 
 
          else 
@@ -1891,6 +1892,7 @@ RETURN ( lDup )
             else
                :nUnidades     := -nUnidades
                :nBultos       := -( ::cHisMovT )->nBultos
+               :nCajas        := -( ::cHisMovT )->nCajMov
             end if 
 
          end if
@@ -1924,6 +1926,7 @@ RETURN ( lDup )
          :cLote               := ( ::cAlbPrvL )->cLote
          :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
          :nBultos             := -( ::cAlbPrvL )->nBultos
+         :nCajas              := -( ::cAlbPrvL )->nCanEnt
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -1961,6 +1964,7 @@ RETURN ( lDup )
          :cLote               := ( ::cAlbPrvL )->cLote
          :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
          :nBultos             := ( ::cAlbPrvL )->nBultos
+         :nCajas              := ( ::cAlbPrvL )->nCanEnt
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
@@ -1998,6 +2002,7 @@ RETURN ( lDup )
          :cLote               := ( ::cFacPrvL )->cLote
          :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
          :nBultos             := ( ::cFacPrvL )->nBultos
+         :nCajas               := ( ::cFacPrvL )->nCanEnt
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
@@ -2035,6 +2040,7 @@ RETURN ( lDup )
          :cLote               := ( ::cRctPrvL )->cLote
          :dFechaCaducidad     := ( ::cRctPrvL )->dFecCad
          :nBultos             := ( ::cRctPrvL )->nBultos
+         :nCajas              := ( ::cRctPrvL )->nCanEnt
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
@@ -2072,6 +2078,7 @@ RETURN ( lDup )
          :cLote               := ( ::cAlbCliL )->cLote
          :dFechaCaducidad     := ( ::cAlbCliL )->dFecCad
          :nBultos             := -( ::cAlbCliL )->nBultos
+         :nCajas              := -( ::cAlbCliL )->nCanEnt
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -2108,7 +2115,8 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cFacCliL )->cValPr2
          :cLote               := ( ::cFacCliL )->cLote
          :dFechaCaducidad     := ( ::cFacCliL )->dFecCad
-         :nBultos             :=-( ::cFacCliL )->nBultos
+         :nBultos             := -( ::cFacCliL )->nBultos
+         :nCajas              := -( ::cFacCliL )->nCanEnt
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -2147,6 +2155,7 @@ RETURN ( lDup )
          :cLote               := ( ::cFacRecL )->cLote
          :dFechaCaducidad     := ( ::cFacRecL )->dFecCad
          :nBultos             := -( ::cFacRecL )->nBultos
+         :nCajas              := -( ::cFacRecL )->nCanEnt
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -4707,7 +4716,8 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad2    := ( ::cAlbPrvL )->cValPr2
                      :cLote               := ( ::cAlbPrvL )->cLote
                      :nBultos             := ( ::cAlbPrvL )->nBultos
-                     :nUnidades           := nTotNAlbPrv( ::cAlbPrvL )
+                     :nCajas              := ( ::cAlbPrvL )->nCanEnt
+                     :nUnidades           := nTotNAlbPrv( ::cAlbPrvL )                     
                      ::Integra( hb_QWith() )
                   end with
 
@@ -4740,6 +4750,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
                      :cLote               := ( ::cFacPrvL )->cLote
                      :nBultos             := ( ::cFacPrvL )->nBultos
+                     :nCajas              := ( ::cFacPrvL )->nCanEnt
                      :nUnidades           := nTotNFacPrv( ::cFacPrvL )
                      ::Integra( hb_QWith() )
                   end with
@@ -4773,6 +4784,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad2    := ( ::cRctPrvL )->cValPr2
                      :cLote               := ( ::cRctPrvL )->cLote
                      :nBultos             := ( ::cRctPrvL )->nBultos
+                     :nCajas              := ( ::cRctPrvL )->nCanEnt
                      :nUnidades           := nTotNRctPrv( ::cRctPrvL )
                      ::Integra( hb_QWith() )
                   end with
@@ -4806,6 +4818,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad2    := ( ::cAlbCliL )->cValPr2
                      :cLote               := ( ::cAlbCliL )->cLote
                      :nBultos             := -( ::cAlbCliL )->nBultos
+                     :nCajas              := -( ::cAlbCliL )->nCanEnt
                      :nUnidades           := - nTotVAlbCli( ::cAlbCliL )
                      ::Integra( hb_QWith() )
                   end with
@@ -4839,6 +4852,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad2    := ( ::cFacCliL )->cValPr2
                      :cLote               := ( ::cFacCliL )->cLote
                      :nBultos             := -( ::cFacCliL )->nBultos
+                     :nCajas              := -( ::cFacCliL )->nCanEnt
                      :nUnidades           := - nTotVFacCli( ::cFacCliL )   // - nTotNFacCli( ::cFacCliL )
                      ::Integra( hb_QWith() )
                   end with
@@ -4872,6 +4886,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad2    := ( ::cFacRecL )->cValPr2
                      :cLote               := ( ::cFacRecL )->cLote
                      :nBultos             := -( ::cFacRecL )->nBultos
+                     :nCajas              := -( ::cFacRecL )->nCanEnt
                      :nUnidades           := - nTotVFacRec( ::cFacRecL )
                      ::Integra( hb_QWith() )
                   end with
@@ -5050,13 +5065,14 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                if !Empty( ( ::cHisMovT)->cAliMov ) .and. ( ::cHisMovT)->cAliMov == cCodAlm
 
                   with object ( SStock():New() )
-                     :cCodigo             := ( ::cHisMovT)->cRefMov
-                     :cCodigoPropiedad1   := ( ::cHisMovT)->cCodPr1
-                     :cCodigoPropiedad2   := ( ::cHisMovT)->cCodPr2
-                     :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
-                     :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
-                     :cLote               := ( ::cHisMovT)->cLote
-                     :nBultos             := ( ::cHisMovT)->nBultos
+                     :cCodigo             := ( ::cHisMovT )->cRefMov
+                     :cCodigoPropiedad1   := ( ::cHisMovT )->cCodPr1
+                     :cCodigoPropiedad2   := ( ::cHisMovT )->cCodPr2
+                     :cValorPropiedad1    := ( ::cHisMovT )->cValPr1
+                     :cValorPropiedad2    := ( ::cHisMovT )->cValPr2
+                     :cLote               := ( ::cHisMovT )->cLote
+                     :nBultos             := ( ::cHisMovT )->nBultos
+                     :nCajas              := ( ::cHisMovT )->nCajMov
                      :nUnidades           := nTotNMovAlm( ::cHisMovT)
                      ::Integra( hb_QWith() )
                   end with
@@ -5066,13 +5082,14 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                if !Empty( ( ::cHisMovT)->cAloMov ) .and. ( ::cHisMovT)->cAloMov == cCodAlm
 
                   with object ( SStock():New() )
-                     :cCodigo             := ( ::cHisMovT)->cRefMov
-                     :cCodigoPropiedad1   := ( ::cHisMovT)->cCodPr1
-                     :cCodigoPropiedad2   := ( ::cHisMovT)->cCodPr2
-                     :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
-                     :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
-                     :cLote               := ( ::cHisMovT)->cLote
-                     :nBultos             := - ( ::cHisMovT)->nBultos
+                     :cCodigo             := ( ::cHisMovT )->cRefMov
+                     :cCodigoPropiedad1   := ( ::cHisMovT )->cCodPr1
+                     :cCodigoPropiedad2   := ( ::cHisMovT )->cCodPr2
+                     :cValorPropiedad1    := ( ::cHisMovT )->cValPr1
+                     :cValorPropiedad2    := ( ::cHisMovT )->cValPr2
+                     :cLote               := ( ::cHisMovT )->cLote
+                     :nBultos             := - ( ::cHisMovT )->nBultos
+                     :nCajas              := - ( ::cHisMovT )->nCajMov
                      :nUnidades           := - nTotNMovAlm( ::cHisMovT)
                      ::Integra( hb_QWith() )
                   end with
@@ -5128,6 +5145,7 @@ Method Integra( sStocks ) CLASS TStock
       if nPos != 0
          ::aStocks[ nPos ]:nUnidades               += sStocks:nUnidades
          ::aStocks[ nPos ]:nBultos                 += sStocks:nBultos
+         ::aStocks[ nPos ]:nCajas                  += sStocks:nCajas
          ::aStocks[ nPos ]:nPendientesRecibir      += sStocks:nPendientesRecibir
          ::aStocks[ nPos ]:nPendientesEntregar     += sStocks:nPendientesEntregar
       else
@@ -6589,6 +6607,7 @@ CLASS SStock
    DATA cNumeroDocumento      INIT ""
    DATA cTipoDocumento        INIT ""
    DATA nBultos               INIT 0
+   DATA nCajas                INIT 0
 
    //------------------------------------------------------------------------//
    
@@ -6626,6 +6645,7 @@ METHOD New() CLASS SStock
    ::cNumeroDocumento      := ""
    ::cTipoDocumento        := ""
    ::nBultos               := 0
+   ::nCajas                := 0
 
 RETURN ( Self )
 

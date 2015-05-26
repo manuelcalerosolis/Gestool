@@ -2136,6 +2136,7 @@ METHOD appendStockArticulo( aStockArticulo )
          ::oDbf:cNumSer    := sStock:cNumeroSerie  
          ::oDbf:nUniArt    := sStock:nUnidades
          ::oDbf:nBultos    := sStock:nBultos
+         ::oDbf:nCajas     := sStock:nCajas
          ::oDbf:nPdtRec    := sStock:nPendientesRecibir    
          ::oDbf:nPdtEnt    := sStock:nPendientesEntregar   
          ::oDbf:cNumDoc    := sStock:cNumeroDocumento      
@@ -3079,14 +3080,15 @@ METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
 
       while ( alltrim( ::oHisMov:cRefMov ) ) == alltrim( cCodArt ) .and. !( ::oHisMov:Eof() )
          if ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
-
             dFechaDocumento         := ::oHisMov:dFecMov   
-            if dFechaMovimiento > dFechaDocumento
+
+            if dFechaMovimiento >= dFechaDocumento
                dFechaMovimiento     := dFechaDocumento 
 
-               if !empty( cCampoRequerido ) .and. ( ::oHisMov:fieldpos( cCampoRequerido ) !=0 )
+               if !empty( cCampoRequerido ) .and. ( ::oHisMov:fieldpos( cCampoRequerido ) != 0 )
                   uCampoRequerido   := ::oHisMov:fieldgetbyname( cCampoRequerido )
-               end if 
+               end if
+                
             end if
 
          end if
