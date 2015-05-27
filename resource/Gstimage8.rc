@@ -108,6 +108,7 @@ folder_ok_16 BITMAP "..\\bmp\\folder_ok_16.bmp"
 clipboard_ok_16 BITMAP "..\\bmp\\clipboard_ok_16.bmp"
 document_ok_16 BITMAP "..\\bmp\\document_ok_16.bmp"
 
+message_48 BITMAP "..\\bmp\\message_48.bmp"
 message_32 BITMAP "..\\bmp\\message_32.bmp"
 message_16 BITMAP "..\\bmp\\message_16.bmp"
 

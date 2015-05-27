@@ -1323,8 +1323,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local aStrColor      := { "Ninguno", "Verde", "Naranja", "Rojo" }
    local aResColor      := { "COLOR_00", "COLOR_01", "COLOR_02", "COLOR_03" }
    local aStrRetencion  := { "Ret. S/Base", "Ret. S/Total" }
-   local aSexos         := { "", "Entidad", "Hombre", "Mujer" }
-   local cSexo
    local aResClients    := { "Cli", "CliPot", "CliPot" }
    local aMes           := { "Ninguno", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }
    local oFiltroAtp
@@ -1422,8 +1420,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
    cTipRetencion           := aStrRetencion[ Min( Max( aTmp[ _NTIPRET ], 1 ), len( aStrRetencion ) ) ]
 
-   cSexo                   := aSexos[ Min( Max( aTmp[ _NSEXO ], 1 ), len( aSexos ) ) ]
-
    if Empty( aTmp[ _CDTOESP ] )
       aTmp[ _CDTOESP ]     := Padr( "General", 50 )
    end if
@@ -1458,7 +1454,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "&Direcciones",;
                   "&Bancos",;
                   "Co&ntabilidad",;
-                  "Comentarios",;
+                  "Comentario",;
                   "&Tarifa",;
                   "Doc&umentos",;
                   "&Incidencias",;
@@ -2291,7 +2287,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpDirecciones ;
          ID       600 ;
-         RESOURCE "Signpost_Alpha_48" ;
+         RESOURCE "Signpost_48" ;
          TRANSPARENT ;
          OF       fldDirecciones
 
@@ -2400,7 +2396,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       
       REDEFINE BITMAP oBmpContactos ;
          ID       600 ;
-         RESOURCE "User_mobilephone_Alpha_48" ;
+         RESOURCE "User_mobilephone_48" ;
          TRANSPARENT ;
          OF       fldContactos
 
@@ -2514,12 +2510,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       /*
       Pestanna de facturae-----------------------------------------------------
       */
-
-
    
       REDEFINE BITMAP oBmpFacturae ;
          ID       600 ;
-         RESOURCE "User_mobilephone_Alpha_48" ;
+         RESOURCE "form_blue_48" ;
          TRANSPARENT ;
          OF       fldFacturae
 
@@ -2575,7 +2569,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpBancos ;
          ID       500 ;
-         RESOURCE "Money_Alpha_48" ;
+         RESOURCE "Money_48" ;
          TRANSPARENT ;
          OF       fldBancos
 
@@ -2871,22 +2865,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpComentario ;
          ID       500 ;
-         RESOURCE "Message_Alpha_48" ;
+         RESOURCE "Message_48" ;
          TRANSPARENT ;
          OF       fldDefinidos
-
-      REDEFINE GET aGet[ _DFECNACI ] VAR aTmp[ _DFECNACI ];
-         ID       450 ;
-         WHEN     ( nMode != ZOOM_MODE );  
-         SPINNER;
-         OF       fldDefinidos   
-
-      REDEFINE COMBOBOX aGet[ _NSEXO ] ;
-         VAR      cSexo ;
-         ITEMS    aSexos ;
-         ID       460 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldDefinidos   
 
       REDEFINE GET aGet[ _MCOMENT ] VAR aTmp[ _MCOMENT ];
          ID       370 ;
@@ -3273,11 +3254,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpObservaciones ;
          ID       600 ;
-         RESOURCE "Information2_Alpha_48" ;
+         RESOURCE "information2_48" ;
          TRANSPARENT ;
          OF       fldObservaciones
 
-      DEFINE CLIPBOARD oClp OF fldObservaciones FORMAT TEXT
+      DEFINE CLIPBOARD oClp OF fldObservaciones FORMAT TEXT 
 
       REDEFINE BTNBMP oBtn[ 1 ] ;
          ID       100 ;
@@ -3289,7 +3270,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ACTION   ( oRTF:Print(), oRTF:SetFocus() )
 
       REDEFINE BTNBMP oBtn[ 2 ] ;
-         ID       110 ;
+         ID       110 ;  
          WHEN     ( .t. ) ;
          OF       fldObservaciones ;
          RESOURCE "PREV116" ;
@@ -4948,8 +4929,8 @@ Static Function MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, a
                if !( cArea )->( dbSeek( ( D():Get( "Client", nView ) )->SubCta, .t. ) )
 
                   if lChkCreate .or. ApoloMsgNoYes(   "Subcuenta : " + Rtrim( ( D():Get( "Client", nView ) )->SubCta ) + " no existe" + CRLF + ;
-                                                      "Â¿ Desea crearla ?",;
-                                                      "Enlace con contaplus Â®" )
+                                                      "¿ Desea crearla ?",;
+                                                      "Enlace con contaplus®" )
 
                      ( cArea )->( dbAppend() )
                      ( cArea )->Cod         := ( D():Get( "Client", nView ) )->Subcta
@@ -10132,10 +10113,6 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
 
    if !Empty( aGet[ _NTIPRET ] )
       aTmp[ _NTIPRET ]  := aGet[ _NTIPRET ]:nAt
-   end if
-
-   if !Empty( aGet[ _NSEXO ] )
-      aTmp[ _NSEXO ]  := aGet[ _NSEXO ]:nAt
    end if
 
    if !Empty( oRTF )

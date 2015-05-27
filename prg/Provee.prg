@@ -723,11 +723,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 			OF 		oDlg ;
          PROMPT   "&General"           ,;
                   "Co&mercial"         ,;
-                  "&Bancos",;
+                  "&Bancos"            ,;
                   "C&ontabilidad"      ,;
-                  "De&finidos"         ,;
+                  "Comentario"         ,;
                   "Doc&umentos"        ,;
-                  "&Observaciones"     ;
+                  "&Observaciones"      ;
          DIALOGS  "PROVEEDOR_1"        ,;
                   "PROVEEDOR_6"        ,;
                   "CLIENT_2"           ,;
@@ -742,7 +742,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       500 ;
-         RESOURCE "User_Alpha_48" ;
+         RESOURCE "User_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[1]
 
@@ -956,7 +956,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
       REDEFINE GET aGet[ _CMEIINT ] VAR aTmp[ _CMEIINT ] ;
          ID       310 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( ValidEmailAddress( aTmp[ _CMEIINT ], .t. ) );
          ON HELP  ( ShellExecute( oDlg:hWnd, "open", "mailto:" + Rtrim( aGet[ _CMEIINT ]:cText() ) ) ) ;
          BITMAP   "MAIL16" ;
          UPDATE ;
@@ -1196,7 +1195,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpBancos ;
          ID       500 ;
-         RESOURCE "Money_Alpha_48" ;
+         RESOURCE "Money_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[3]
 
@@ -1437,7 +1436,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpComentario ;
          ID       500 ;
-         RESOURCE "Message_Alpha_48" ;
+         RESOURCE "Message_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[5]
 
@@ -1537,7 +1536,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       REDEFINE BITMAP oBmpObservaciones ;
          ID       600 ;
-         RESOURCE "Information2_Alpha_48" ;
+         RESOURCE "Information2_48" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[7]
 

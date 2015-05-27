@@ -2536,9 +2536,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local hBmpGeneral			:= { 	{ "Resource" => "Factura_cliente_48_alpha", 		"Dialog" => 1 },;
    										{ "Resource" => "Folder2_red_alpha_48", 			"Dialog" => 2 },;
    										{ "Resource" => "Information_48_alpha", 			"Dialog" => 3 },;
-   										{ "Resource" => "Address_book2_alpha_48", 			"Dialog" => 4 },;
-                                 		{ "Resource" => "Address_book2_alpha_48",    		"Dialog" => 5 },;
-                                 		{ "Resource" => "document_attachment_48",    	    "Dialog" => 6 } }
+   										{ "Resource" => "Address_book2_alpha_48", 		"Dialog" => 4 },;
+                                 { "Resource" => "form_blue_48",    		         "Dialog" => 5 },;
+                                 { "Resource" => "document_attachment_48",    	"Dialog" => 6 } }
 
    
    /*

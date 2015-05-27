@@ -763,13 +763,6 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
 
    end case
 
-   /*cSay[1]                 := uFieldEmpresa( "cTxtTar1", "Precio 1" )
-   cSay[2]                 := uFieldEmpresa( "cTxtTar2", "Precio 2" )
-   cSay[3]                 := uFieldEmpresa( "cTxtTar3", "Precio 3" )
-   cSay[4]                 := uFieldEmpresa( "cTxtTar4", "Precio 4" )
-   cSay[5]                 := uFieldEmpresa( "cTxtTar5", "Precio 5" )
-   cSay[6]                 := uFieldEmpresa( "cTxtTar6", "Precio 6" )*/
-
    cPouDiv                 := cPouDiv( cDivEmp(), dbfDiv )
 
    DEFINE DIALOG oDlg RESOURCE "OFERTA_00" TITLE LblTitle( nMode ) + "ofertas"
@@ -1202,13 +1195,8 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          CANCEL ;
 			ACTION 	( 	oDlg:end() )
 
-      oDlg:bStart := {|| ChangeComboTipo( aoGet, aBlank, nValDiv, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTipoOferta, cCodArt ),;
-                         oBtnAnterior:Hide(),;
-                         if( !Empty( cCodArt ), aoGet[ _CARTOFE ]:lValid(), ),;
-                         InitProp( aBlank, aoGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 ),;
-                         aoGet[ _CARTOFE ]:SetFocus(),;
-                         StartPrecios( oSay, aoGet ) }
-
+      oDlg:bStart := {|| StartEdtRec( aoGet, aBlank, nValDiv, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTipoOferta, cCodArt, oSay ) }
+      
    ACTIVATE DIALOG oDlg CENTER
 
    oBmpPrimera:End()
@@ -1216,6 +1204,24 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
    oBmpTercera:End()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+static function StartEdtRec( aoGet, aBlank, nValDiv, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTipoOferta, cCodArt, oSay )
+
+   ChangeComboTipo( aoGet, aBlank, nValDiv, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oTipoOferta, cCodArt )
+
+   oBtnAnterior:Hide()
+
+   if( !Empty( cCodArt ), aoGet[ _CARTOFE ]:lValid(), )
+
+   InitProp( aBlank, aoGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 )
+
+   aoGet[ _CARTOFE ]:SetFocus()
+
+   StartPrecios( oSay, aoGet )
+
+Return .t.
 
 //--------------------------------------------------------------------------//
 
