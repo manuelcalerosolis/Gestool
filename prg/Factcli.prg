@@ -13996,23 +13996,63 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          end if
 
-         //--guardamos el precio del artículo dependiendo de las propiedades--//
+	      /*
+			Estudiamos los casos de las atipicas de clientes-----------------------
+	      */
 
-         nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
+        	hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
+        
+        	if !Empty( hAtipica )
 
-        if !Empty( aGet[_NPREUNIT] )
+            if hhaskey( hAtipica, "nImporte" ) 
+                if hAtipica[ "nImporte" ] != 0
+                	if !Empty( aGet[ _NPREUNIT ] )
+                		aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
+                	end if	
+                end if
+            end if
 
-        	if nPrePro == 0
-	           	aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
-       		else
-	           	aGet[ _NPREUNIT ]:cText( nPrePro )
+            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
+            	if hAtipica[ "nDescuentoPorcentual"] != 0 
+                	if !Empty( aGet[ _NDTO ] )
+                		aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+                	end if	
+                end if
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
+            	if hAtipica[ "nDescuentoPromocional" ] != 0
+                	if !Empty( aGet[ _NDTOPRM ] )
+                		aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
+                	end if	
+                end if
+            end if
+
+            if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
+            	if hAtipica[ "nComisionAgente" ] != 0
+            		if !Empty( aGet[ _NCOMAGE ] )
+            			aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
+            		end if	
+            	end if	
+            end if
+
+            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
+            	if hAtipica[ "nDescuentoLineal" ] != 0
+            		if !Empty( aGet[ _NDTODIV ] )
+            			aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+            		end if
+            	end if
+            end if
+
+            if hhaskey( hAtipica, "nTarifaPrecio" )
+            	aGet[ _NTARLIN ]:cText( hAtipica[ "nTarifaPrecio" ] )
+            end if 
+
         	end if
 
-        end if
+        	// Precios en tarifas-------------------------------------------------
 
-        //--Precios en tarifas--//
-
-        if !Empty( aTmpFac[_CCODTAR] )
+        	if !Empty( aTmpFac[ _CCODTAR ] ) .and. empty( aTmp[ _NPREUNIT ] )
 
             //--Precio--//
             nImpOfe  := RetPrcTar( aTmp[ _CREF ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
@@ -14065,57 +14105,20 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             	end if	
             end if
 
-        end if
+        	end if
 
-      /*
-		Estudiamos los casos de las atipicas de clientes-----------------------
-      */
+         //--guardamos el precio del artículo dependiendo de las propiedades--//
 
-        hAtipica := hAtipica( hValue( aTmp, aTmpFac ) )
-        
-        if !Empty( hAtipica )
+        	if !empty( aGet[ _NPREUNIT ] ) .and. empty( aTmp[ _NPREUNIT ] )
 
-            if hhaskey( hAtipica, "nImporte" ) 
-                if hAtipica[ "nImporte" ] != 0
-                	if !Empty( aGet[ _NPREUNIT ] )
-                		aGet[ _NPREUNIT ]:cText( hAtipica[ "nImporte" ] )
-                	end if	
-                end if
-            end if
+	         nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
+        		if nPrePro == 0
+	           	aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
+       		else
+	           	aGet[ _NPREUNIT ]:cText( nPrePro )
+        		end if
 
-            if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. aTmp[ _NDTO ] == 0
-            	if hAtipica[ "nDescuentoPorcentual"] != 0 
-                	if !Empty( aGet[ _NDTO ] )
-                		aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
-                	end if	
-                end if
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. aTmp[ _NDTOPRM ] == 0
-            	if hAtipica[ "nDescuentoPromocional" ] != 0
-                	if !Empty( aGet[ _NDTOPRM ] )
-                		aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
-                	end if	
-                end if
-            end if
-
-            if hhaskey( hAtipica, "nComisionAgente" ) .and. aTmp[ _NCOMAGE ] == 0
-            	if hAtipica[ "nComisionAgente" ] != 0
-            		if !Empty( aGet[ _NCOMAGE ] )
-            			aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
-            		end if	
-            	end if	
-            end if
-
-            if hhaskey( hAtipica, "nDescuentoLineal" ) .and. aTmp[ _NDTODIV ] == 0
-            	if hAtipica[ "nDescuentoLineal" ] != 0
-            		if !Empty( aGet[ _NDTODIV ] )
-            			aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
-            		end if
-            	end if
-            end if
-
-        end if
+        	end if
 
          /*
          Cargamos el codigo de las unidades---------------------------------
@@ -18231,53 +18234,53 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function hValue( aTmp, aTmpFac )
+Static Function hValue( uTmpLinea, uTmpCabecera )
 
    local hValue                  := {=>}
 
    do case 
-      case ValType( aTmp ) == "A"
+      case ValType( uTmpLinea ) == "A"
 
-         hValue[ "cCodigoArticulo"   ] := aTmp[ _CREF ]
-         hValue[ "cCodigoPropiedad1" ] := aTmp[ _CCODPR1 ]
-         hValue[ "cCodigoPropiedad2" ] := aTmp[ _CCODPR2 ]
-         hValue[ "cValorPropiedad1"  ] := aTmp[ _CVALPR1 ]
-         hValue[ "cValorPropiedad2"  ] := aTmp[ _CVALPR2 ]
-         hValue[ "cCodigoFamilia"    ] := aTmp[ _CCODFAM ]
-         hValue[ "nTarifaPrecio"     ] := aTmp[ _NTARLIN ]
-         hValue[ "nCajas"            ] := aTmp[ _NCANENT ]
-         hValue[ "nUnidades"         ] := aTmp[ _NUNICAJA ]
+         hValue[ "cCodigoArticulo"   ] := uTmpLinea[ _CREF ]
+         hValue[ "cCodigoPropiedad1" ] := uTmpLinea[ _CCODPR1 ]
+         hValue[ "cCodigoPropiedad2" ] := uTmpLinea[ _CCODPR2 ]
+         hValue[ "cValorPropiedad1"  ] := uTmpLinea[ _CVALPR1 ]
+         hValue[ "cValorPropiedad2"  ] := uTmpLinea[ _CVALPR2 ]
+         hValue[ "cCodigoFamilia"    ] := uTmpLinea[ _CCODFAM ]
+         hValue[ "nTarifaPrecio"     ] := uTmpLinea[ _NTARLIN ]
+         hValue[ "nCajas"            ] := uTmpLinea[ _NCANENT ]
+         hValue[ "nUnidades"         ] := uTmpLinea[ _NUNICAJA ]
 
-      case ValType( aTmp ) == "C"
+      case ValType( uTmpLinea ) == "C"
 
-         hValue[ "cCodigoArticulo"   ] := ( aTmp )->cRef
-         hValue[ "cCodigoPropiedad1" ] := ( aTmp )->cCodPr1
-         hValue[ "cCodigoPropiedad2" ] := ( aTmp )->cCodPr2
-         hValue[ "cValorPropiedad1"  ] := ( aTmp )->cValPr1
-         hValue[ "cValorPropiedad2"  ] := ( aTmp )->cValPr2
-         hValue[ "cCodigoFamilia"    ] := ( aTmp )->cCodFam
-         hValue[ "nTarifaPrecio"     ] := ( aTmp )->nTarLin         
-         hValue[ "nCajas"            ] := ( aTmp )->nCanEnt
-         hValue[ "nUnidades"         ] := ( aTmp )->nUniCaja
+         hValue[ "cCodigoArticulo"   ] := ( uTmpLinea )->cRef
+         hValue[ "cCodigoPropiedad1" ] := ( uTmpLinea )->cCodPr1
+         hValue[ "cCodigoPropiedad2" ] := ( uTmpLinea )->cCodPr2
+         hValue[ "cValorPropiedad1"  ] := ( uTmpLinea )->cValPr1
+         hValue[ "cValorPropiedad2"  ] := ( uTmpLinea )->cValPr2
+         hValue[ "cCodigoFamilia"    ] := ( uTmpLinea )->cCodFam
+         hValue[ "nTarifaPrecio"     ] := ( uTmpLinea )->nTarLin         
+         hValue[ "nCajas"            ] := ( uTmpLinea )->nCanEnt
+         hValue[ "nUnidades"         ] := ( uTmpLinea )->nUniCaja
 
    end case      
 
    do case 
-      case ValType( aTmpFac ) == "A"
+      case ValType( uTmpCabecera ) == "A"
 
-         hValue[ "cCodigoCliente"    ] := aTmpFac[ _CCODCLI ]
-         hValue[ "cCodigoGrupo"      ] := aTmpFac[ _CCODGRP ]
-         hValue[ "lIvaIncluido"      ] := aTmpFac[ _LIVAINC ]
-         hValue[ "dFecha"            ] := aTmpFac[ _DFECFAC ]
-         hValue[ "nDescuentoTarifa"  ] := aTmpFac[ _NDTOTARIFA ]
+         hValue[ "cCodigoCliente"    ] := uTmpCabecera[ _CCODCLI ]
+         hValue[ "cCodigoGrupo"      ] := uTmpCabecera[ _CCODGRP ]
+         hValue[ "lIvaIncluido"      ] := uTmpCabecera[ _LIVAINC ]
+         hValue[ "dFecha"            ] := uTmpCabecera[ _DFECFAC ]
+         hValue[ "nDescuentoTarifa"  ] := uTmpCabecera[ _NDTOTARIFA ]
 
-      case ValType( aTmpFac ) == "C"
+      case ValType( uTmpCabecera ) == "C"
          
-         hValue[ "cCodigoCliente"    ] := ( aTmpFac )->cCodCli
-         hValue[ "cCodigoGrupo"      ] := ( aTmpFac )->cCodGrp
-         hValue[ "lIvaIncluido"      ] := ( aTmpFac )->lIvaInc
-         hValue[ "dFecha"            ] := ( aTmpFac )->dFecFac
-         hValue[ "nDescuentoTarifa"  ] := ( aTmpFac )->nDtoTarifa
+         hValue[ "cCodigoCliente"    ] := ( uTmpCabecera )->cCodCli
+         hValue[ "cCodigoGrupo"      ] := ( uTmpCabecera )->cCodGrp
+         hValue[ "lIvaIncluido"      ] := ( uTmpCabecera )->lIvaInc
+         hValue[ "dFecha"            ] := ( uTmpCabecera )->dFecFac
+         hValue[ "nDescuentoTarifa"  ] := ( uTmpCabecera )->nDtoTarifa
 
    end case
 

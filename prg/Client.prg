@@ -12963,6 +12963,8 @@ Function hValoresAtipica( hValue, hAtipica )
 
    end while
 
+   hAtipica[ "nTarifaPrecio" ]  :=  nTarifa
+   
    /*
    Aplicamos el descuento segun el descuento de tarifa que tenemos en la ficha del cliente
    */
