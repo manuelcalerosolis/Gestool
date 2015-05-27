@@ -1603,7 +1603,7 @@ Return ( lAddTable )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddTrigger( oTable, cAction )
+METHOD AddTrigger( oTable )
 
    ::CreateTriggerInsert( oTable )
    ::CreateTriggerUpdate( oTable )
@@ -3879,8 +3879,8 @@ METHOD CreateOperationLogTable()
 
    local cTable
 
-   if File( cPatADS(.t.) + "SqlOperationLog.adt" )
-      fErase( cPatADS(.t.) + "SqlOperationLog.adt" )
+   if file( cPatADS(.t.) + "SqlOperationLog.adt" )
+      ferase( cPatADS(.t.) + "SqlOperationLog.adt" )
    end if
 
    cTable         := 'CREATE TABLE SqlOperationLog (' + CRLF
@@ -3900,8 +3900,8 @@ METHOD CreateColumnLogTable()
 
    local cTable
 
-   if File( cPatADS(.t.) + "SqlColumnLog.adt" )
-      fErase( cPatADS(.t.) + "SqlColumnLog.adt" )
+   if file( cPatADS(.t.) + "SqlColumnLog.adt" )
+      ferase( cPatADS(.t.) + "SqlColumnLog.adt" )
    end if
 
    cTable         := 'CREATE TABLE SqlColumnLog (' + CRLF

@@ -893,6 +893,10 @@ METHOD TaxesXml( oTax )
       Return ( nil )
    end if
 
+   if oTax:nTaxBase == 0
+      Return ( nil )
+   end if
+
    /*
    Inicio de InvoiceHeader-----------------------------------------------------
    */
@@ -903,26 +907,22 @@ METHOD TaxesXml( oTax )
    Tipo de impuestos--------------------------------------------------------------
    */
 
-   if oTax:nTaxBase != 0
+   ::oXmlTax:addBelow( TXmlNode():new( , 'TaxTypeCode', ,   oTax:cTaxTypeCode ) )
+   ::oXmlTax:addBelow( TXmlNode():new( , 'TaxRate', ,       oTax:TaxRate() ) )
 
-      ::oXmlTax:addBelow( TXmlNode():new( , 'TaxTypeCode', ,   oTax:cTaxTypeCode ) )
-      ::oXmlTax:addBelow( TXmlNode():new( , 'TaxRate', ,       oTax:TaxRate() ) )
+   ::oXmlTaxableBase := TXmlNode():new( , 'TaxableBase' )
 
-      ::oXmlTaxableBase := TXmlNode():new( , 'TaxableBase' )
+      ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'TotalAmount', ,       oTax:TaxBase() ) )
+      ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'EquivalentInEuros', , EquivalentInEuros ) )
 
-         ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'TotalAmount', ,       oTax:TaxBase() ) )
-         ::oXmlTaxableBase:addBelow( TXmlNode():new( , 'EquivalentInEuros', , EquivalentInEuros ) )
+   ::oXmlTax:addBelow( ::oXmlTaxableBase )
 
-      ::oXmlTax:addBelow( ::oXmlTaxableBase )
+   ::oXmlTaxAmount   := TXmlNode():new( , 'TaxAmount' )
 
-      ::oXmlTaxAmount   := TXmlNode():new( , 'TaxAmount' )
+      ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,         oTax:TaxAmount() ) )
+      ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EquivalentInEuros ) )
 
-         ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'TotalAmount', ,         oTax:TaxAmount() ) )
-         ::oXmlTaxAmount:addBelow( TXmlNode():new( , 'EquivalentInEuros', ,   EquivalentInEuros ) )
-
-      ::oXmlTax:addBelow( ::oXmlTaxAmount )
-
-   end if
+   ::oXmlTax:addBelow( ::oXmlTaxAmount )
 
    /*
    Recargo de equivalencia--------------------------------------------------
