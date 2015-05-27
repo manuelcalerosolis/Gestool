@@ -1384,6 +1384,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
    do case
       case nMode == APPD_MODE
+
          aTmp[ _LSNDINT ]  := .t.
          aTmp[ _LMODDAT ]  := .t.
          aTmp[ _LCHGPRE ]  := .t.
@@ -1393,14 +1394,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          aTmp[ _DLLACLI ]  := ctod( "" )
 
       case nMode == DUPL_MODE
+
          aTmp[ _COD ]      := NextKey( aTmp[ _COD ], ( D():Get( "Client", nView ) ), "0", RetNumCodCliEmp() )
          aTmp[ _DLLACLI ]  := ctod( "" )
 
       case nMode == EDIT_MODE
-         if !empty( aTmp[ _NTARIFA ] )
-            cNombreTarifa     := aTmp[ _NTARIFA ]
+
+         if aScan( aNombreTarifas, uFieldEmpresa( "cTxtTar" + alltrim( str( aTmp[ _NTARIFA ] ) ) ) ) != 0 
+            cNombreTarifa     := uFieldEmpresa( "cTxtTar" + alltrim( str( aTmp[ _NTARIFA ] ) ) )
          else
-            cNombreTarifa  := aNombreTarifas[1]
+            cNombreTarifa     := aNombreTarifas[1]
+            aTmp[ _NTARIFA ]  := 1
          endif
 
       otherwise
@@ -1628,7 +1632,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE COMBOBOX aGet[ _NTARIFA ] VAR cNombreTarifa ;
          ID       100 ;
-         ITEMS    aNombreTarifas();
+         ITEMS    aNombreTarifas;
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
          OF       fldGeneral
 

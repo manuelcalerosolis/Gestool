@@ -1620,7 +1620,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oImpComanda2
    local cImpComanda1
    local cImpComanda2
-
+   local aNombreTarifas    := aNombreTarifas()
+   local cNombreTarifaWeb  := aNombreTarifas[1]
+ 
    CursorWait()
 
    if BeginTrans( aTmp, nMode )
@@ -1689,12 +1691,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
       aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"   ) ) ]   := NextKey( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfArticulo )
       aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ]   := ""
+      cNombreTarifaWeb                                      := aNombreTarifas[ ( dbfArticulo )->nTarWeb ]
+
+   case nMode == EDIT_MODE
+
+      if aScan( aNombreTarifas, uFieldEmpresa( "cTxtTar" + alltrim( str( aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ) ) ) ) != 0 
+         cNombreTarifaWeb                                   := uFieldEmpresa( "cTxtTar" + alltrim( str( aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ) ) )
+      else
+         cNombreTarifaWeb                                   := aNombreTarifas[1]
+         aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] := 1
+      endif
 
    end case
 
-   cCatOld                    := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
-   cPrvOld                    := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
-   cImageOld                  := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
+   cCatOld                                                  := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
+   cPrvOld                                                  := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
+   cImageOld                                                := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
 
    if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] )
       aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ]    := GetSysColor( COLOR_BTNFACE )
@@ -4432,18 +4444,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldWeb
 
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ;
+   REDEFINE COMBOBOX   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ;
+         VAR      cNombreTarifaWeb ;
          ID       150 ;
-         PICTURE  "9" ;
-         SPINNER ;
-         MIN      1 ;
-         MAX      6 ;
+         ITEMS    aNombreTarifas;
          WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] );
-         VALID    ( ( aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] >= 1 .and. aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] <= 6 ) );
          OF       fldWeb
 
-   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:bChange  := {|| ChangeTarWeb( aGet, aTmp ), CalDtoWeb( aGet, aTmp ) }      
+   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:bChange  := {|| addAtmpcNombreTarifaWeb( aGet, aTmp, nMode ),;
+                                                                      ChangeTarWeb( aGet, aTmp ),;
+                                                                      CalDtoWeb( aGet, aTmp ) }      
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
@@ -4755,6 +4765,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    CursorWE()
 
 Return ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+static function addAtmpcNombreTarifaWeb( aGet, aTmp, nMode )
+
+
+   if nMode == EDIT_MODE
+
+      if !Empty( aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] )
+         aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := nNumeroTarifa( aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:varGet )
+      end if
+
+   endif
+
+Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
