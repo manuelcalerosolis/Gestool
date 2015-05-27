@@ -10120,7 +10120,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    end if
 
    if !Empty( aGet[ _NTARIFA ] )
-      aTmp[ _NTARIFA ]  := nNumeroTarifa( aGet[ _NTARIFA ]:varGet )
+      aTmp[ _NTARIFA ]  := nNumeroTarifa( aGet[ _NTARIFA ]:varGet ()
    end if
 
 

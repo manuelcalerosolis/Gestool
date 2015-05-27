@@ -4451,7 +4451,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] );
          OF       fldWeb
 
-   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:bChange  := {|| addAtmpcNombreTarifaWeb( aGet, aTmp, nMode ),;
+   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:bChange  := {|| actualizaTarifaWeb( aGet, aTmp, nMode ),;
                                                                       ChangeTarWeb( aGet, aTmp ),;
                                                                       CalDtoWeb( aGet, aTmp ) }      
 
@@ -4768,15 +4768,10 @@ Return ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
-static function addAtmpcNombreTarifaWeb( aGet, aTmp, nMode )
+static function actualizaTarifaWeb( aGet, aTmp, nMode )
 
-
-   if nMode == EDIT_MODE
-
-      if !Empty( aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] )
-         aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := nNumeroTarifa( aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:varGet )
-      end if
-
+   if !Empty( aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] )
+      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := nNumeroTarifa( aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:varGet() )
    endif
 
 Return ( .t. )
