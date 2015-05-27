@@ -365,6 +365,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ClientesEntidad( nView )
 
+      D():Empresa( nView )
+
       /*
       Apertura de fichero de Obras------------------------------------------------
       */
@@ -1279,6 +1281,7 @@ STATIC FUNCTION EdtBig( aTmp, aGet, dbfCli, oBrw, bWhen, bValid, nMode )
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
 /*
 Edita el cliente
 */
@@ -1353,6 +1356,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local oBmpAutomaticas
    local oBmpRecibos
    local oBmpFacturae
+   local aNombreTarifas := aNombreTarifas()
+   local cNombreTarifa  := aNombreTarifas[1]
 
    aFacAut              := hb_aTokens( aTmp[ _MFACAUT ], "," )
 
@@ -1384,13 +1389,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          aTmp[ _LCHGPRE ]  := .t.
          aTmp[ _COPIASF ]  := 0
          aTmp[ _NLABEL  ]  := 1
-         aTmp[ _NTARIFA ]  := 1
          aTmp[ _NTARCMB ]  := 1
          aTmp[ _DLLACLI ]  := ctod( "" )
 
       case nMode == DUPL_MODE
          aTmp[ _COD ]      := NextKey( aTmp[ _COD ], ( D():Get( "Client", nView ) ), "0", RetNumCodCliEmp() )
          aTmp[ _DLLACLI ]  := ctod( "" )
+
+      case nMode == EDIT_MODE
+         if !empty( aTmp[ _NTARIFA ] )
+            cNombreTarifa     := aTmp[ _NTARIFA ]
+         else
+            cNombreTarifa  := aNombreTarifas[1]
+         endif
 
       otherwise
          nImpRie           := oStock:nRiesgo( aTmp[ _COD ] )
@@ -1615,14 +1626,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
-      REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ] ;
+      REDEFINE COMBOBOX aGet[ _NTARIFA ] VAR cNombreTarifa ;
          ID       100 ;
-         PICTURE  "9" ;
-         SPINNER ;
-         MIN      1 ;
-         MAX      6 ;
+         ITEMS    aNombreTarifas();
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         VALID    ( aTmp[ _NTARIFA ] >= 1 .and. aTmp[ _NTARIFA ] <= 6 );
          OF       fldGeneral
 
       REDEFINE GET aGet[ _NTARCMB ] VAR aTmp[ _NTARCMB ] ;
@@ -10131,6 +10138,11 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
       aTmp[ _MOBSERV ]  := oRTF:SaveAsRTF()
    end if
 
+   if !Empty( aGet[ _NTARIFA ] )
+      aTmp[ _NTARIFA ]  := nNumeroTarifa( aGet[ _NTARIFA ]:varGet )
+   end if
+
+
    /*
    Borramos los posibles filtros de la tabla temporal de atipicas--------------
    */
@@ -13900,14 +13912,14 @@ RETURN ( oDlg:nResult == IDOK )
 
 function numeroEntidadCliente( cCodCli, nView )
 
-   local contador    := 0
-   local nRecAnt     := ( D():ClientesEntidad( nView ) )->( RecNo() )
+   local nEntidades  := 0
+   local hStatus     := hGetStatus( D():ClientesEntidad( nView ), "cCodCli" )
 
    if ( D():ClientesEntidad( nView ) )->( dbSeek( cCodCli ) )
 
-      while ( D():ClientesEntidad( nView ) )->cCodCli == padr( cCodCli, 12) .and. !D():eofClientesEntidad( nView ) 
+      while  alltrim( ( D():ClientesEntidad( nView ) )->cCodCli )  == alltrim( cCodCli ) .and. ! D():eofClientesEntidad( nView ) 
 
-            contador += 1
+         nEntidades++
 
          ( D():ClientesEntidad( nView ) )->( dbSkip() )
 
@@ -13915,47 +13927,45 @@ function numeroEntidadCliente( cCodCli, nView )
 
    endif
 
-   ( D():ClientesEntidad( nView ) )->( dbGoTo( nRecAnt ) )
+   hSetStatus( hStatus )
 
-Return( contador )
-
-//---------------------------------------------------------------------------//
-
-function cargaEntidadCliente( cCodCli, nView, aTmp )
-
-  if ( numeroEntidadCliente( cCodCli, nView ) ) = 1
-
-      aplicaEntidadCliente( cCodCli, nView, aTmp ) 
-
-      return( .t. )
-
-  endif
-
-Return( .f. )
+Return ( nEntidades )
 
 //---------------------------------------------------------------------------//
 
-function aplicaEntidadCliente( cCodCli, nView, oDbf )
+function cargaEntidadCliente( cCodCli, nView, dbfTmpEntidades )
 
-   local hash        := {}
-   local chash
+   if ( numeroEntidadCliente( cCodCli, nView ) ) != 1
+      Return ( .f. )
+   endif
+
+   aplicaEntidadCliente( cCodCli, nView, dbfTmpEntidades ) 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+function aplicaEntidadCliente( cCodCli, nView, dbfTmpEntidades )
+
+   local aEntidades     := {}
+   local hEntidad
   
-   hash           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
+   aEntidades           := hb_deserialize( ( D():ClientesEntidad( nView ) )->mMemo )
 
-      for each chash in hash
+   for each hEntidad in aEntidades
 
-            if !dbSeekInOrd( ( padr( hget( chash, "CodigoEntidad"), 60 ) + padr( hget( chash, "RolEntidad"), 60 ) ), "cRolEnt", oDbf )
+      if !dbSeekInOrd( ( padr( hget( hEntidad, "CodigoEntidad"), 60 ) + padr( hget( hEntidad, "RolEntidad"), 60 ) ), "cRolEnt", dbfTmpEntidades )
 
-               ( oDbf )->( dbAppend() )
+         ( dbfTmpEntidades )->( dbAppend() )
 
-               ( oDbf )->CodEntidad    := hget( chash, "CodigoEntidad")
-               ( oDbf )->RolEntidad    := hget( chash, "RolEntidad")
+         ( dbfTmpEntidades )->CodEntidad    := hget( hEntidad, "CodigoEntidad")
+         ( dbfTmpEntidades )->RolEntidad    := hget( hEntidad, "RolEntidad")
 
-               ( oDbf )->( dbUnlock() )
+         ( dbfTmpEntidades )->( dbUnlock() )
 
-            endif 
+      endif 
 
-      next
+   next
 
 Return( .t. )
 

@@ -4,6 +4,8 @@
 #include "hbxml.ch"
 #include "Xbrowse.ch"
 
+#define NUMERO_TARIFAS  6
+
 static cCodigoEmpresaEnUso
 static cCodigoDelegacionEnUso
 
@@ -3218,3 +3220,38 @@ Function ADSRunSQL( cAlias, cSql, aParameters, hConnection, lShow )
 
 RETURN lCreate
 */
+
+//---------------------------------------------------------------------------//
+
+function aNombreTarifas() 
+
+   local n                
+   local aNombreTarifas   := {}
+   
+   for n := 1 to NUMERO_TARIFAS
+
+      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) 
+         aadd( aNombreTarifas, uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ), "Precio " + alltrim( str( n ) ) ) )
+      endif
+
+   next
+
+return ( aNombreTarifas )
+
+//---------------------------------------------------------------------------//
+
+function nNumeroTarifa( cNombreTarifa ) 
+
+   local n
+   
+   for n := 1 to NUMERO_TARIFAS
+
+      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .and. alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == cNombreTarifa
+         Return ( n )
+      endif
+
+   next
+
+return ( 1 )
+
+//---------------------------------------------------------------------------//
