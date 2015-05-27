@@ -653,15 +653,15 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
          XBROWSE ;
          TITLE    "Clientes" ;
-         PROMPT   "C√≥digo cliente",;
+         PROMPT   "CÛdigo cliente",;
                   "Nombre",;
                   if( uFieldEmpresa( "nCifRut" ) == 1, "NIF/CIF", "RUT" ),;
-                  "Poblaci√≥n",;
+                  "PoblaciÛn",;
                   "Provincia",;
-                  "C√≥digo postal",;
-                  "Tel√©fono",;
+                  "CÛdigo postal",;
+                  "TelÈfono",;
                   "Establecimiento",;
-                  "Correo electr√≥nico",;
+                  "Correo electrÛnico",;
                   "Cliente web" ,;
                   "Ruta" ;
          ALIAS    ( D():Get( "Client", nView ) );
@@ -727,7 +727,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "C√≥digo cliente"
+         :cHeader          := "CÛdigo cliente"
          :cSortOrder       := "Cod"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Cod }
          :nWidth           := 110
@@ -757,7 +757,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Tel√©fono"
+         :cHeader          := "TelÈfono"
          :cSortOrder       := "Telefono"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Telefono }
          :nWidth           := 80
@@ -779,7 +779,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Poblaci√≥n"
+         :cHeader          := "PoblaciÛn"
          :cSortOrder       := "Poblacion"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Poblacion }
          :nWidth           := 200
@@ -787,7 +787,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "C√≥digo postal"
+         :cHeader          := "CÛdigo postal"
          :cSortOrder       := "CodPostal"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->CodPostal }
          :nWidth           := 60
@@ -811,7 +811,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Correo electr√≥nico"
+         :cHeader          := "Correo electrÛnico"
          :cSortOrder       := "cMeiInt"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->cMeiInt }
          :nWidth           := 100
@@ -857,14 +857,14 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "√öltima venta"
+         :cHeader          := "⁄ltima venta"
          :bEditValue       := {|| dtoc( dUltimaVentaCliente( ( D():Get( "Client", nView ) )->Cod, D():Get( "AlbCliT", nView ), D():Get( "FacCliT", nView ) ) ) } 
          :nWidth           := 80
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() ) 
-         :cHeader          := "√öltima llamada"
+         :cHeader          := "⁄ltima llamada"
          :bEditValue       := {|| dtoc( ( D():Get( "Client", nView ) )->dLlaCli ) + space( 1 ) + ( D():Get( "Client", nView ) )->cTimCli } 
          :nWidth           := 100
          :lHide            := .t.
@@ -900,7 +900,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
          ON DROP  ( oWndBrw:RecDup() );
-         TOOLTIP  "(A)√±adir";
+         TOOLTIP  "(A)Òadir";
          BEGIN GROUP;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
@@ -1071,20 +1071,20 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( PreCli( nil, oWnd, ( D():Get( "Client", nView ) )->Cod, nil ) );
-            TOOLTIP  "A√±adir presupuesto de cliente" ;
+            TOOLTIP  "AÒadir presupuesto de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( PedCli( nil, oWnd, ( D():Get( "Client", nView ) )->Cod, nil ) );
-            TOOLTIP  "A√±adir pedido de cliente" ;
+            TOOLTIP  "AÒadir pedido de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
             ACTION   ( appAlbCli( { "Cliente" => ( D():Get( "Client", nView ) )->Cod } ) );
-            TOOLTIP  "A√±adir albar√°n de cliente" ;
+            TOOLTIP  "AÒadir albar·n de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
@@ -1092,21 +1092,21 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( AlbCli( nil, oWnd, { "Cliente" => ( D():Get( "Client", nView ) )->Cod } ) );
-            TOOLTIP  "Ir a albar√°n de cliente" ;
+            TOOLTIP  "Ir a albar·n de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT*/
 
          DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( FactCli( nil, oWnd, { "Cliente" => ( D():Get( "Client", nView ) )->Cod } ) );
-            TOOLTIP  "A√±adir factura de cliente" ;
+            TOOLTIP  "AÒadir factura de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( FrontTpv( nil, oWnd, ( D():Get( "Client", nView ) )->Cod, nil ) );
-            TOOLTIP  "A√±adir tiket de cliente" ;
+            TOOLTIP  "AÒadir tiket de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
 
@@ -1439,7 +1439,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       oDlg ;
          PROMPT   "&General",;
                   "C&omercial",;
-                  "Au&tom√°ticas",;
+                  "Au&tom·ticas",;
                   "&Direcciones",;
                   "&Bancos",;
                   "Co&ntabilidad",;
@@ -1466,7 +1466,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "CLIENT_FACTURAE" ,;
                   "CLIENT_18"
       /*
-      Primera pesta√±a----------------------------------------------------------
+      Primera pestanna----------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpGeneral ;
@@ -1687,7 +1687,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          PICTURE  "99" ;
          SPINNER ;
          VALID    ( if( ( aTmp[_DIAPAGO2] != 0 .and. aTmp[_DIAPAGO2] <= aTmp[_DIAPAGO] ),;
-                      ( msgStop( "Segundo d√≠a de pago debe ser mayor que el primero" ), .f. ),;
+                      ( msgStop( "Segundo dÌa de pago debe ser mayor que el primero" ), .f. ),;
                       .t. ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
@@ -2224,7 +2224,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       TBtnBmp():ReDefine( 602, "Recycle_16",,,,,{|| LlamadaAhora( aGet ) }, fldComercial, .f., , .f.,  )               
 
       /*
-      Tercera pesta√±a----------------------------------------------------------
+      Tercera pestaÒa----------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpAutomaticas ;
@@ -2263,7 +2263,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oBrwFacAut:CreateFromResource( 400 )
 
       with object ( oBrwFacAut:AddCol() )
-         :cHeader          := "C√≥digo"
+         :cHeader          := "CÛdigo"
          :bStrData         := {|| if( Len( aFacAut ) > 0, aFacAut[ oBrwFacAut:nArrayAt ], "" ) }
          :nWidth           := 75
       end with
@@ -2275,7 +2275,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       /*
-      Cuarta pesta√±a-----------------------------------------------------------
+      Cuarta pestanna-----------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpDirecciones ;
@@ -2329,7 +2329,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwObr:AddCol() )
-         :cHeader          := "C√≥digo"
+         :cHeader          := "CÛdigo"
          :bEditValue       := {|| ( dbfTmpObr )->cCodObr }
          :nWidth           := 60
       end with
@@ -2347,13 +2347,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwObr:AddCol() )
-         :cHeader          := "Poblaci√≥n"
+         :cHeader          := "PoblaciÛn"
          :bEditValue       := {|| ( dbfTmpObr )->cPobObr }
          :nWidth           := 100
       end with
 
       with object ( oBrwObr:AddCol() )
-         :cHeader          := "C√≥digo postal"
+         :cHeader          := "CÛdigo postal"
          :bEditValue       := {|| ( dbfTmpObr )->cPosObr }
          :nWidth           := 60
       end with
@@ -2365,7 +2365,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwObr:AddCol() )
-         :cHeader          := "Tel√©fono"
+         :cHeader          := "TelÈfono"
          :bEditValue       := {|| ( dbfTmpObr )->cTelObr }
          :nWidth           := 80
       end with
@@ -2384,7 +2384,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oBrwObr:CreateFromResource( 400 )
 
       /*
-      Pesta√±a de contactos-----------------------------------------------------
+      Pestanna de contactos-----------------------------------------------------
       */
       
       REDEFINE BITMAP oBmpContactos ;
@@ -2444,13 +2444,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwCon:AddCol() )
-         :cHeader             := "Poblaci√≥n"
+         :cHeader             := "PoblaciÛn"
          :bEditValue          := {|| ( dbfTmpCon )->cPobCon }
          :nWidth              := 100
       end with
 
       with object ( oBrwCon:AddCol() )
-         :cHeader             := "C√≥digo postal"
+         :cHeader             := "CÛdigo postal"
          :bEditValue          := {|| ( dbfTmpCon )->cPosCon }
          :nWidth              := 60
       end with
@@ -2462,7 +2462,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwCon:AddCol() )
-         :cHeader             := "Tel√©fono"
+         :cHeader             := "TelÈfono"
          :bEditValue          := {|| ( dbfTmpCon )->cTelCon }
          :nWidth              := 80
       end with
@@ -2487,7 +2487,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwCon:AddCol() )
-         :cHeader             := "√öltima llamada"
+         :cHeader             := "⁄ltima llamada"
          :bEditValue          := {|| dtoc( ( dbfTmpCon )->dLlaCon ) + space( 1 ) + ( dbfTmpCon )->cTimCon }
          :nWidth              := 100
       end with
@@ -2501,7 +2501,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oBrwCon:CreateFromResource( 400 )
 
       /*
-      Pesta√±a de facturae-----------------------------------------------------
+      Pestanna de facturae-----------------------------------------------------
       */
 
 
@@ -2545,7 +2545,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oBrwFacturae:cName            := "Clientes.Facturae"
 
       with object ( oBrwFacturae:AddCol() )
-         :cHeader                   := "Descripci√≥n del organismo"
+         :cHeader                   := "DescripciÛn del organismo"
          :bEditValue                := {|| ( dbfTmpFacturae )->cDesFac }
          :nWidth                    := 500
       end with
@@ -2559,7 +2559,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oBrwFacturae:CreateFromResource( 400 )
 
       /*
-      Tercera pesta√±a----------------------------------------------------------
+      Tercera pestanna----------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpBancos ;
@@ -2626,13 +2626,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwBnc:AddCol() )
-         :cHeader          := "Poblaci√≥n"
+         :cHeader          := "PoblaciÛn"
          :bEditValue       := {|| ( dbfTmpBnc )->cPobBnc }
          :nWidth           := 100
       end with
 
       with object ( oBrwBnc:AddCol() )
-         :cHeader          := "C√≥digo postal"
+         :cHeader          := "CÛdigo postal"
          :bEditValue       := {|| ( dbfTmpBnc )->cCPBnc }
          :nWidth           := 40
       end with
@@ -2644,7 +2644,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwBnc:AddCol() )
-         :cHeader          := "Tel√©fono"
+         :cHeader          := "TelÈfono"
          :bEditValue       := {|| ( dbfTmpBnc )->cTlfBnc }
          :nWidth           := 80
       end with
@@ -2895,7 +2895,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE BITMAP oBmpTarifa ;
          ID       600 ;
-         RESOURCE "Symbol_euro_Alpha_48" ;
+         RESOURCE "Symbol_euro_48" ;
          TRANSPARENT ;
          OF       fldTarifa
 
@@ -2932,7 +2932,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE BUTTON ;
          ID       505 ;
          OF       fldTarifa ;
-         ACTION   ( Searching( dbfTmpAtp, { "Art√≠culo", "Familia" }, oBrwAtp ) )
+         ACTION   ( Searching( dbfTmpAtp, { "ArtÌculo", "Familia" }, oBrwAtp ) )
 
       #ifndef __TACTIL__
 
@@ -2964,19 +2964,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       with object ( oBrwAtp:AddCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| if( ( dbfTmpAtp )->nTipAtp <= 1, "Art√≠culo", "Familia" ) }
+         :bEditValue       := {|| if( ( dbfTmpAtp )->nTipAtp <= 1, "ArtÌculo", "Familia" ) }
          :nWidth           := 60
       end with
 
       with object ( oBrwAtp:AddCol() )
-         :cHeader          := "Of. Art√≠culo en oferta"
+         :cHeader          := "Of. ArtÌculo en oferta"
          :bEditValue       := {|| ( dbfTmpAtp )->nTipAtp <= 1 .and. lArticuloEnOferta( ( dbfTmpAtp )->cCodArt, ( D():Get( "Client", nView ) )->Cod, ( D():Get( "Client", nView ) )->cCodGrp ) }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
       end with
 
       with object ( oBrwAtp:AddCol() )
-         :cHeader          := "C√≥digo"
+         :cHeader          := "CÛdigo"
          :bEditValue       := {|| if( ( dbfTmpAtp )->nTipAtp <= 1, ( dbfTmpAtp )->cCodArt, ( dbfTmpAtp )->cCodFam ) }
          :nWidth           := 80
       end with
@@ -3102,7 +3102,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oBrwAtp:CreateFromResource( 400 )
 
       /*
-      Octava pesta√±a-----------------------------------------------------------
+      Octava pestanna-----------------------------------------------------------
       */
 
       REDEFINE BITMAP oBmpDocumentos ;
@@ -3198,13 +3198,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwInc:AddCol() )
-         :cHeader          := "Descripci√≥n"
+         :cHeader          := "DescripciÛn"
          :bEditValue       := {|| ( dbfTmpInc )->mDesInc }
          :nWidth           := 350
       end with
 
       with object ( oBrwInc:AddCol() )
-         :cHeader          := "C√≥digo"
+         :cHeader          := "CÛdigo"
          :cSortOrder       := "cCodTip"
          :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
          :nWidth           := 40
@@ -3430,7 +3430,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       fldObservaciones ;
          RESOURCE "Pin_Blue_16" ;
          NOBORDER ;
-         TOOLTIP  "Vi√±etas" ;
+         TOOLTIP  "ViÒetas" ;
          ACTION   ( lBullet := !lBullet, oRTF:SetBullet( lBullet ), oRTF:SetFocus() )
 
       REDEFINE BTNBMP oBtn[ 17 ] ;
@@ -3449,7 +3449,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       oRTF:bChange:= { || RTFRefreshButtons( oRtf, oBtn ) }
 
       /*
-      Pesta√±a de gesti√≥n de cobros de clientes_________________________________
+      Pestanna de gestiÛn de cobros de clientes_________________________________
       */
 
       REDEFINE BITMAP oBmpRecibos ;
@@ -3514,7 +3514,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       end with
 
       with object ( oBrwRecCli:AddCol() )
-         :cHeader                := "N√∫mero"
+         :cHeader                := "N˙mero"
          :bEditValue             := {|| AllTrim( ( D():Get( "FacCliP", nView ) )->cSerie ) + "/" + AllTrim( Str( ( D():Get( "FacCliP", nView ) )->nNumFac ) ) + "/" +  AllTrim( ( D():Get( "FacCliP", nView ) )->cSufFac ) + "-" + AllTrim( Str( ( D():Get( "FacCliP", nView ) )->nNumRec ) ) }
          :nWidth                 := 80
       end with
@@ -3726,7 +3726,7 @@ function AddFacAut( oBrwFacAut )
       if aScan( aFacAut, cResultado ) == 0
          aAdd( aFacAut, cResultado )
       else
-         MsgStop( "La plantilla autom√°tica ya se encuentra introducida." )
+         MsgStop( "La plantilla autom·tica ya se encuentra introducida." )
       end if
 
    end if
@@ -3860,7 +3860,7 @@ Static Function EdtFacturae( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode )
       aEntidades  := hb_deserialize( aTmp[ ( dbfTmpFacturae )->( FieldPos( "mMemo" ) ) ] )
    endif
 
-   DEFINE DIALOG oDlg RESOURCE "CLIENTES_FACTURAE_ENTIDAD" TITLE LblTitle( nMode ) + "organismos de emisi√≥n"
+   DEFINE DIALOG oDlg RESOURCE "CLIENTES_FACTURAE_ENTIDAD" TITLE LblTitle( nMode ) + "organismos de emisiÛn"
 
       REDEFINE GET aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ] ;
          ID       100 ;
@@ -3949,9 +3949,9 @@ return( .t. )
 
 Static Function delEntidadesArray( nArray, oBrw )
 
-   local cTxt  := "¬øDesea eliminar el registro en curso?"
+   local cTxt  := "øDesea eliminar el registro en curso?"
 
-   if oUser():lNotConfirmDelete() .or. apoloMsgNoYes( cTxt, "Confirme supersi√≥n")
+   if oUser():lNotConfirmDelete() .or. apoloMsgNoYes( cTxt, "Confirme supersiÛn")
 
       aDel( aEntidades, nArray, .t. )
 
@@ -3966,7 +3966,7 @@ Return ( .t. )
 Static function validEdtFacturae( aTmp, nMode )
 
    if empty( aTmp[ ( dbfTmpFacturae )->( FieldPos( "cDesFac" ) ) ] )
-      msgStop( "Descripci√≥n del organismo no puede estar vacio" )
+      msgStop( "DescripciÛn del organismo no puede estar vacio" )
       return .f.     
    end if
 
@@ -4142,8 +4142,8 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
    local oSobre
    local cSobre         := "Precio 1"
    local aSobre         := { "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }
-   local cNaturaleza    := "Art√≠culo"
-   local aNaturaleza    := { "Art√≠culo", "Familia" }
+   local cNaturaleza    := "ArtÌculo"
+   local aNaturaleza    := { "ArtÌculo", "Familia" }
    local oBrwRen
    local cPouEmp        := cPouDiv( cDivEmp() )
    local cPouChg        := cPouDiv( cDivChg() )
@@ -4587,7 +4587,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          OF       oFld:aDialogs[2]
 
       /*
-      Estudio rentabilidad - segunda pesta√±a-----------------------------------
+      Estudio rentabilidad - segunda pestanna-----------------------------------
       */
 
       REDEFINE COMBOBOX oSobre VAR cSobre ;
@@ -4629,7 +4629,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          oBrwRen:aJustify       := { .f., .f., .t., .t., .t., .f. }
 
       /*
-      Botones comunes de la caja de di√°logo
+      Botones comunes de la caja de di·logo
       */
 
       REDEFINE BUTTON oBtnRen ;
@@ -4954,7 +4954,7 @@ Static Function MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, a
 
                   else
 
-                     oItem := oTree:Add( "Cuenta " + Rtrim( ( D():Get( "Client", nView ) )->Subcta ) + " del cliente " + Rtrim( ( D():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( D():Get( "Client", nView ) )->Titulo ) + " creaci√≥n cancelada", 1 )
+                     oItem := oTree:Add( "Cuenta " + Rtrim( ( D():Get( "Client", nView ) )->Subcta ) + " del cliente " + Rtrim( ( D():Get( "Client", nView ) )->Cod ) + ", " + Rtrim( ( D():Get( "Client", nView ) )->Titulo ) + " creaciÛn cancelada", 1 )
 
                   end if
 
@@ -5542,7 +5542,7 @@ STATIC FUNCTION ChgPrc( oWndBrw )
       OF       oDlg
 
    /*
-   Monta los art√≠culos
+   Monta los articulos
    */
 
    REDEFINE GET oArtOrg VAR cArtOrg;
@@ -5752,7 +5752,7 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
    if ApoloMsgNoYes( "¬øDesea actualizar los datos de las tarifas de clientes?", "ATENCION" )
 
       if !lTarifa1 .and. !lTarifa2 .and. !lTarifa3 .and. !lTarifa4 .and. !lTarifa5 .and. !lTarifa6
-         msgStop( "No ha elegido ning√∫na tarifa a cambiar." )
+         msgStop( "No ha elegido ninguna tarifa a cambiar." )
          Return .f.
       end if
 
@@ -5769,7 +5769,7 @@ STATIC FUNCTION mkChgPrc( cFam, cIva, cCliOrg, cCliDes, lTarifa1, lTarifa2, lTar
          end if
 
          if dIniPre > dFinPre
-            msgStop( "Fecha de inicio debe ser anterior a la fecha de finalizaci√≥n." )
+            msgStop( "Fecha de inicio debe ser anterior a la fecha de finalizaciÛn." )
             Return .f.
          end if
 
@@ -6117,28 +6117,28 @@ STATIC FUNCTION EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode )
 
             SEPARATOR
 
-            MENUITEM "&1. A√±adir presupuesto de cliente";
-            MESSAGE  "A√±ade un presupuesto de cliente" ;
+            MENUITEM "&1. AÒadir presupuesto de cliente";
+            MESSAGE  "AÒade un presupuesto de cliente" ;
             RESOURCE "Notebook_user1_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), PreCli( nil, nil, ( D():Get( "Client", nView ) )->Cod, nil ) )
 
-            MENUITEM "&2. A√±adir pedido de cliente";
-            MESSAGE  "A√±ade un pedido de cliente" ;
+            MENUITEM "&2. AÒadir pedido de cliente";
+            MESSAGE  "AÒade un pedido de cliente" ;
             RESOURCE "Clipboard_empty_user1_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), PedCli( nil, nil, ( D():Get( "Client", nView ) )->Cod, nil ) )
 
-            MENUITEM "&3. A√±adir albar√°n de cliente";
-            MESSAGE  "A√±ade un albar√°n de cliente" ;
+            MENUITEM "&3. AÒadir albar·n de cliente";
+            MESSAGE  "AÒade un albar·n de cliente" ;
             RESOURCE "Document_plain_user1_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), AlbCli( nil, nil,  { "Cliente" => ( D():Get( "Client", nView ) )->Cod } ) )
 
-            MENUITEM "&4. A√±adir factura de cliente";
-            MESSAGE  "A√±ade una factura de cliente" ;
+            MENUITEM "&4. AÒadir factura de cliente";
+            MESSAGE  "AÒade una factura de cliente" ;
             RESOURCE "Document_user1_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), FactCli( nil, nil, { "Cliente" => ( D():Get( "Client", nView ) )->Cod } ) )
 
-            MENUITEM "&5. A√±adir tiket de cliente";
-            MESSAGE  "A√±ade un tiket de cliente" ;
+            MENUITEM "&5. AÒadir tiket de cliente";
+            MESSAGE  "AÒade un tiket de cliente" ;
             RESOURCE "Cashier_user1_16";
             ACTION   ( SavClient( aTmp, aGet, oDlg, oBrw, nMode ), FrontTpv( nil, nil, ( D():Get( "Client", nView ) )->Cod, nil ) )
 
@@ -6160,7 +6160,7 @@ Return ( oMenu:End() )
 
 //---------------------------------------------------------------------------//
 /*
-Esta funci√≥n carga el valor del precio de compra segun el campo LPRCCOM
+Esta funciÛn carga el valor del precio de compra segun el campo LPRCCOM
 */
 
 STATIC FUNCTION lChangeCostoParticular( aGet, aTmp, oCosto, nMode )
@@ -6181,7 +6181,7 @@ Return ( .t. )
 //---------------------------------------------------------------------------//
 
 /*
-Funci√≥n que edita la caja de di√°logo de bancos
+FunciÛn que edita la caja de di·logo de bancos
 */
 
 Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCodCli )
@@ -6387,7 +6387,7 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, aTmpCli, bValid, nMode, cCo
          ACTION   ( oDlg:End() )
 
    /*
-   Tecla r√°pida para boton aceptar---------------------------------------------
+   Tecla r·pida para boton aceptar---------------------------------------------
    */
 
    if nMode != ZOOM_MODE
@@ -6406,7 +6406,7 @@ Return ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 /*
-Funcion que termina el di√°logo y comprueba que no falte ning√∫n campo
+Funcion que termina el di·logo y comprueba que no falte ning˙n campo
 */
 
 Static Function EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodCli, aTmpCli, cOldCtaBnc )
@@ -6596,7 +6596,7 @@ Function SynClient( cPath )
       end while
 
       /*
-      Pasamos y limpiamos el campo antiguo de facturas autom√°ticas-------------
+      Pasamos y limpiamos el campo antiguo de facturas autom·ticas-------------
       */
 
       ( D():Get( "Client", nView ) )->( dbGoTop() )
@@ -6660,7 +6660,7 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
 
    ( dbfCli )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE cResource TITLE "Seleccionar cliente ordenado por: Tel√©fono"
+   DEFINE DIALOG oDlg RESOURCE cResource TITLE "Seleccionar cliente ordenado por: TelÈfono"
 
       REDEFINE BUTTONBMP ;
          ID       100 ;
@@ -6704,7 +6704,7 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C√≥digo"
+         :cHeader          := "CÛdigo"
          :cSortOrder       := "CodBig"
          :bEditValue       := {|| AllTrim( ( dbfCli )->Cod ) }
          :nWidth           := 110
@@ -6718,7 +6718,7 @@ Function BrwCliTactil( oGet, dbfCli, oGet2, lReturnCliente, cText, cBitmap )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Tel√©fono"
+         :cHeader          := "TelÈfono"
          :cSortOrder       := "Telefono"
          :bEditValue       := {|| AllTrim( ( dbfCli )->Telefono ) }
          :nWidth           := 140
@@ -6993,8 +6993,8 @@ Method lDefault() CLASS TClienteLabelGenerator
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::cCriterio          := "Ning√∫n criterio"
-      ::aCriterio          := { "Ning√∫n criterio", "Grupo clientes", "Fecha modificaci√≥n" }
+      ::cCriterio          := "Ning˙n criterio"
+      ::aCriterio          := { "Ning˙n criterio", "Grupo clientes", "Fecha modificaciÛn" }
 
       ::cGrupoInicio       := ( D():Get( "Client", nView ) )->cCodGrp
       ::cGrupoFin          := ( D():Get( "Client", nView ) )->cCodGrp
@@ -7015,13 +7015,13 @@ Method lDefault() CLASS TClienteLabelGenerator
       ::nCantidadLabels    := 1
       ::nUnidadesLabels    := 1
 
-      ::aSearch            := { "C√≥digo", "Nombre", "NIF/CIF", "Poblaci√≥n", "Provincia", "C√≥digo postal", "Tel√©fono" }
+      ::aSearch            := { "CÛdigo", "Nombre", "NIF/CIF", "PoblaciÛn", "Provincia", "CÛdigo postal", "TelÈfono" }
 
    RECOVER USING oError
 
       lError               := .t.
 
-      msgStop( "Error en la creaci√≥n de generador de etiquetas" + CRLF + ErrorMessage( oError ) )
+      msgStop( "Error en la creaciÛn de generador de etiquetas" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
    ErrorBlock( oBlock )
@@ -7036,8 +7036,8 @@ Method Create() CLASS TClienteLabelGenerator
    local oGetOrd
    local oCbxOrd
    local cGetOrd     := Space( 100 )
-   local cCbxOrd     := "C√≥digo"
-   local aCbxOrd     := { "C√≥digo", "Nombre" }
+   local cCbxOrd     := "CÛdigo"
+   local aCbxOrd     := { "CÛdigo", "Nombre" }
 
    if ::lDefault()
 
@@ -7221,7 +7221,7 @@ Method Create() CLASS TClienteLabelGenerator
          end with
 
          with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "C√≥digo"
+            :cHeader          := "CÛdigo"
             :cSortOrder       := "Cod"
             :bEditValue       := {|| ( D():Get( "Client", nView ) )->Cod }
             :nWidth           := 80
@@ -7255,7 +7255,7 @@ Method Create() CLASS TClienteLabelGenerator
          end with
 
          with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "Tel√©fono"
+            :cHeader          := "TelÈfono"
             :cSortOrder       := "Telefono"
             :bEditValue       := {|| ( D():Get( "Client", nView ) )->Telefono }
             :nWidth           := 80
@@ -7274,14 +7274,14 @@ Method Create() CLASS TClienteLabelGenerator
          end with
 
          with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "Poblaci√≥n"
+            :cHeader          := "PoblaciÛn"
             :cSortOrder       := "Poblacion"
             :bEditValue       := {|| ( D():Get( "Client", nView ) )->Poblacion }
             :nWidth           := 200
          end with
 
          with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "C√≥digo postal"
+            :cHeader          := "CÛdigo postal"
             :cSortOrder       := "CodPostal"
             :bEditValue       := {|| ( D():Get( "Client", nView ) )->CodPostal }
             :nWidth           := 60
@@ -7302,7 +7302,7 @@ Method Create() CLASS TClienteLabelGenerator
          end with
 
          with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "Correo electr√≥nico"
+            :cHeader          := "Correo electrÛnico"
             :cSortOrder       := "cMeiInt"
             :bEditValue       := {|| ( D():Get( "Client", nView ) )->cMeiInt }
             :nWidth           := 100
@@ -7600,7 +7600,7 @@ Method lPrintLabels() CLASS TClienteLabelGenerator
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Dise√±ador de documentos" )
+   oFr:SetTitle(        "DiseÒador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -7643,7 +7643,7 @@ Method lPrintLabels() CLASS TClienteLabelGenerator
    end if
 
    /*
-   Destruye el dise√±ador-------------------------------------------------------
+   Destruye el diseÒador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -7855,7 +7855,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    local cTxtOrigen  := uGet:VarGet()
    local nOrdAnt     := GetBrwOpt( "BrwClient" )
    local oCbxOrd
-   local aCbxOrd     := { "C√≥digo", "Nombre", "NIF/CIF", "Poblaci√≥n", "Provincia", "C√≥digo postal", "Tel√©fono", "Establecimiento", "Correo electr√≥nico" }
+   local aCbxOrd     := { "CÛdigo", "Nombre", "NIF/CIF", "PoblaciÛn", "Provincia", "CÛdigo postal", "TelÈfono", "Establecimiento", "Correo electrÛnico" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01032" )
    local oSayText
@@ -7924,7 +7924,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C√≥digo"
+         :cHeader          := "CÛdigo"
          :cSortOrder       := "Cod"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Cod }
          :nWidth           := 80
@@ -7948,7 +7948,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Tel√©fono"
+         :cHeader          := "TelÈfono"
          :cSortOrder       := "Telefono"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Telefono }
          :nWidth           := 80
@@ -7969,7 +7969,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Poblaci√≥n"
+         :cHeader          := "PoblaciÛn"
          :cSortOrder       := "Poblacion"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Poblacion }
          :nWidth           := 200
@@ -7977,7 +7977,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C√≥digo postal"
+         :cHeader          := "CÛdigo postal"
          :cSortOrder       := "CodPostal"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->CodPostal }
          :nWidth           := 60
@@ -8001,7 +8001,7 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Correo electr√≥nico"
+         :cHeader          := "Correo electrÛnico"
          :cSortOrder       := "cMeiInt"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->cMeiInt }
          :nWidth           := 100
@@ -8115,7 +8115,7 @@ FUNCTION BrwEntidad( cCodCli, oDbf )
    local cGet1
    local nOrdAnt     := GetBrwOpt( "BrwEntidad" )
    local oCbxOrd
-   local aCbxOrd     := { "Descripci√≥n del organismo" }
+   local aCbxOrd     := { "DescripciÛn del organismo" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "04012" )
    local oSayText
@@ -8183,7 +8183,7 @@ FUNCTION BrwEntidad( cCodCli, oDbf )
       oBrw:cName           := "Browse.Clientes"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Descripci√≥n del organismo"
+         :cHeader          := "DescripciÛn del organismo"
          :cSortOrder       := "cDesFac"
          :bEditValue       := {|| ( D():ClientesEntidad( nView ) )->cDesFac }
          :nWidth           := 200
@@ -8667,13 +8667,13 @@ FUNCTION aCliInc()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodCli",     "C", 12, 0, "C√≥digo del cliente",               "C√≥digo",            "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "cCodCli",     "C", 12, 0, "CÛdigo del cliente",               "CÛdigo",            "", "( cDbfInc )", nil } )
    aAdd( aBase, { "cCodTip",     "C",  3, 0, "Tipo de incidencia" ,              "Tipo",              "", "( cDbfInc )", nil } )
    aAdd( aBase, { "dFecInc",     "D",  8, 0, "Fecha de la incidencia" ,          "Fecha",             "", "( cDbfInc )", {|| getSysDate() } } )
    aAdd( aBase, { "tTimInc",     "C",  6, 0, "Hora de la incidencia" ,           "Hora",              "", "( cDbfInc )", {|| getSysTime() } } )
-   aAdd( aBase, { "mDesInc",     "M", 10, 0, "Descripci√≥n de la incidencia" ,    "Nombre",            "", "( cDbfInc )", "" } )
-   aAdd( aBase, { "lListo",      "L",  1, 0, "L√≥gico de listo" ,                 "",                  "", "( cDbfInc )", nil } )
-   aAdd( aBase, { "lAviso",      "L",  1, 0, "L√≥gico de aviso" ,                 "",                  "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "mDesInc",     "M", 10, 0, "DescripciÛn de la incidencia" ,    "Nombre",            "", "( cDbfInc )", "" } )
+   aAdd( aBase, { "lListo",      "L",  1, 0, "LÛgico de listo" ,                 "",                  "", "( cDbfInc )", nil } )
+   aAdd( aBase, { "lAviso",      "L",  1, 0, "LÛgico de aviso" ,                 "",                  "", "( cDbfInc )", nil } )
 
 RETURN ( aBase )
 
@@ -8683,22 +8683,22 @@ FUNCTION aCliBnc()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodCli",     "C", 12, 0, "C√≥digo del cliente",                        "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "lBncDef",     "L",  1, 0, "L√≥gico banco por defecto",                  "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCodCli",     "C", 12, 0, "CÛdigo del cliente",                        "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "lBncDef",     "L",  1, 0, "LÛgico banco por defecto",                  "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cCodBnc",     "C", 50, 0, "Nombre del banco",                          "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cDirBnc",     "C", 35, 0, "Domicilio del banco",                       "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cPobBnc",     "C", 25, 0, "Poblaci√≥n del banco",                       "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPobBnc",     "C", 25, 0, "PoblaciÛn del banco",                       "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cProBnc",     "C", 20, 0, "Provincia del banco",                       "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cCPBnc",      "C", 15, 0, "C√≥digo postal",                             "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cTlfBnc",     "C", 20, 0, "Tel√©fono",                                  "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCPBnc",      "C", 15, 0, "CÛdigo postal",                             "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cTlfBnc",     "C", 20, 0, "TelÈfono",                                  "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cFaxBnc",     "C", 20, 0, "Fax",                                       "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cPContBnc",   "C", 35, 0, "Persona de contacto",                       "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cPaiBnc",     "C",  4, 0, "Pa√≠s",                                      "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cPaisIBAN",   "C",  2, 0, "Pa√≠s IBAN",                                 "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cCtrlIBAN",   "C",  2, 0, "D√≠gito de control IBAN",                    "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPaiBnc",     "C",  4, 0, "PaÌs",                                      "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPaisIBAN",   "C",  2, 0, "PaÌs IBAN",                                 "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCtrlIBAN",   "C",  2, 0, "DÌgito de control IBAN",                    "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cEntBnc",     "C",  4, 0, "Entidad de la cuenta bancaria",             "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cSucBnc",     "C",  4, 0, "Sucursal de la cuenta bancaria",            "",                   "", "( cDbfBnc )" } )
-   aAdd( aBase, { "cDigBnc",     "C",  2, 0, "D√≠gito de control de la cuenta bancaria",   "",                   "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cDigBnc",     "C",  2, 0, "DÌgito de control de la cuenta bancaria",   "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "cCtaBnc",     "C", 20, 0, "Cuenta bancaria",                           "",                   "", "( cDbfBnc )" } )
    aAdd( aBase, { "nSalIni",     "N", 16, 6, "Saldo inicial",                             "",                   "", "( cDbfBnc )" } )
 
@@ -8710,7 +8710,7 @@ function aCliDoc()
 
    local aCliDoc  := {}
 
-   aAdd( aCliDoc, { "cCodCli", "C",   12,  0, "C√≥digo del cliente" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDoc, { "cCodCli", "C",   12,  0, "CÛdigo del cliente" ,             "",                   "", "( cDbfCol )" } )
    aAdd( aCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,           "",                   "", "( cDbfCol )" } )
    aAdd( aCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,             "",                   "", "( cDbfCol )" } )
    aAdd( aCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,    "",                   "", "( cDbfCol )" } )
@@ -8723,8 +8723,8 @@ function aCliDad()
 
    local aCliDad  := {}
 
-   aAdd( aCliDad, { "cCodCli", "C",   12,  0, "C√≥digo del cliente" ,        "",                   "", "( cDbfCol )" } )
-   aAdd( aCliDad, { "cDesFac", "C",   60,  0, "Descripci√≥n del organismo" , "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDad, { "cCodCli", "C",   12,  0, "CÛdigo del cliente" ,        "",                   "", "( cDbfCol )" } )
+   aAdd( aCliDad, { "cDesFac", "C",   60,  0, "DescripciÛn del organismo" , "",                   "", "( cDbfCol )" } )
    aAdd( aCliDad, { "mMemo",   "M",   10,  0, "Memo relaciones de organismos", "",                "", "( cDbfCol )" } )
 
 return ( aCliDad )
@@ -8735,25 +8735,25 @@ FUNCTION aItmAtp()
 
    local aBase := {}
 
-   aAdd( aBase,  { "cCodCli",   "C", 12, 0, "C√≥digo del cliente" }                     )
-   aAdd( aBase,  { "cCodGrp",   "C",  4, 0, "C√≥digo de grupo de cliente" }             )
-   aAdd( aBase,  { "cCodArt",   "C", 18, 0, "C√≥digo de art√≠culo en atipicas" }         )
-   aAdd( aBase,  { "cCodFam",   "C", 16, 0, "C√≥digo de familias en atipicas" }         )
-   aAdd( aBase,  { "nTipAtp",   "N",  1, 0, "Tipo de at√≠picas" }                       )
-   aAdd( aBase,  { "cCodPr1",   "C", 20, 0, "C√≥digo propiedad 1" }                     )
+   aAdd( aBase,  { "cCodCli",   "C", 12, 0, "CÛdigo del cliente" }                     )
+   aAdd( aBase,  { "cCodGrp",   "C",  4, 0, "CÛdigo de grupo de cliente" }             )
+   aAdd( aBase,  { "cCodArt",   "C", 18, 0, "CÛdigo de artÌculo en atipicas" }         )
+   aAdd( aBase,  { "cCodFam",   "C", 16, 0, "CÛdigo de familias en atipicas" }         )
+   aAdd( aBase,  { "nTipAtp",   "N",  1, 0, "Tipo de atÌpicas" }                       )
+   aAdd( aBase,  { "cCodPr1",   "C", 20, 0, "CÛdigo propiedad 1" }                     )
    aAdd( aBase,  { "cValPr1",   "C", 40, 0, "Valor propiedad 1" }                      )
-   aAdd( aBase,  { "cCodPr2",   "C", 20, 0, "C√≥digo propiedad 2" }                     )
+   aAdd( aBase,  { "cCodPr2",   "C", 20, 0, "CÛdigo propiedad 2" }                     )
    aAdd( aBase,  { "cValPr2",   "C", 40, 0, "Valor propiedad 2" }                      )
-   aAdd( aBase,  { "dFecIni",   "D",  8, 0, "Fecha inicio de la situaci√≥n atipica" }   )
-   aAdd( aBase,  { "dFecFin",   "D",  8, 0, "Fecha fin de la situaci√≥n atipica" }      )
-   aAdd( aBase,  { "lPrcCom",   "L",  1, 0, "L√≥gico para precio de compras personal" } )
+   aAdd( aBase,  { "dFecIni",   "D",  8, 0, "Fecha inicio de la situaciÛn atipica" }   )
+   aAdd( aBase,  { "dFecFin",   "D",  8, 0, "Fecha fin de la situaciÛn atipica" }      )
+   aAdd( aBase,  { "lPrcCom",   "L",  1, 0, "LÛgico para precio de compras personal" } )
    aAdd( aBase,  { "nPrcCom",   "N", 16, 6, "Precio de coste" }                        )
-   aAdd( aBase,  { "nPrcArt",   "N", 16, 6, "Precio de venta 1 del art√≠culo" }         )
-   aAdd( aBase,  { "nPrcArt2",  "N", 16, 6, "Precio de venta 2 del art√≠culo" }         )
-   aAdd( aBase,  { "nPrcArt3",  "N", 16, 6, "Precio de venta 3 del art√≠culo" }         )
-   aAdd( aBase,  { "nPrcArt4",  "N", 16, 6, "Precio de venta 4 del art√≠culo" }         )
-   aAdd( aBase,  { "nPrcArt5",  "N", 16, 6, "Precio de venta 5 del art√≠culo" }         )
-   aAdd( aBase,  { "nPrcArt6",  "N", 16, 6, "Precio de venta 6 del art√≠culo" }         )
+   aAdd( aBase,  { "nPrcArt",   "N", 16, 6, "Precio de venta 1 del artÌculo" }         )
+   aAdd( aBase,  { "nPrcArt2",  "N", 16, 6, "Precio de venta 2 del artÌculo" }         )
+   aAdd( aBase,  { "nPrcArt3",  "N", 16, 6, "Precio de venta 3 del artÌculo" }         )
+   aAdd( aBase,  { "nPrcArt4",  "N", 16, 6, "Precio de venta 4 del artÌculo" }         )
+   aAdd( aBase,  { "nPrcArt5",  "N", 16, 6, "Precio de venta 5 del artÌculo" }         )
+   aAdd( aBase,  { "nPrcArt6",  "N", 16, 6, "Precio de venta 6 del artÌculo" }         )
    aAdd( aBase,  { "nPreIva1",  "N", 16, 6, "Precio de venta 1 con " + cImp() }        )
    aAdd( aBase,  { "nPreIva2",  "N", 16, 6, "Precio de venta 2 con " + cImp() }        )
    aAdd( aBase,  { "nPreIva3",  "N", 16, 6, "Precio de venta 3 con " + cImp() }        )
@@ -8762,8 +8762,8 @@ FUNCTION aItmAtp()
    aAdd( aBase,  { "nPreIva6",  "N", 16, 6, "Precio de venta 6 con " + cImp() }        )
    aAdd( aBase,  { "nDtoArt",   "N",  6, 2, "Descuento del articulo" }                 )
    aAdd( aBase,  { "nDprArt",   "N",  6, 2, "Descuento promocional del articulo" }     )
-   aAdd( aBase,  { "lComAge",   "L",  1, 0, "L√≥gico para tener en cuenta el porcentaje o no" } )
-   aAdd( aBase,  { "nComAge",   "N",  6, 2, "Comisi√≥n del agente" }                    )
+   aAdd( aBase,  { "lComAge",   "L",  1, 0, "LÛgico para tener en cuenta el porcentaje o no" } )
+   aAdd( aBase,  { "nComAge",   "N",  6, 2, "ComisiÛn del agente" }                    )
    aAdd( aBase,  { "nDtoDiv",   "N", 16, 6, "Descuento lineal" }                       )
    aAdd( aBase,  { "lAplPre",   "L",  1, 0, "Aplicar en presupuestos" }                )
    aAdd( aBase,  { "lAplPed",   "L",  1, 0, "Aplicar en pedidos" }                     )
@@ -8791,60 +8791,60 @@ FUNCTION aItmCli()
 
    local aBase := {}
 
-   aAdd( aBase, { "Cod",       "C", 12, 0, "C√≥digo",                                        "Codigo",             "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Cod",       "C", 12, 0, "CÛdigo",                                        "Codigo",             "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Titulo",    "C", 80, 0, "Nombre",                                        "Nombre",             "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Nif",       "C", 15, 0, "NIF",                                           "NIF",                "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Domicilio", "C",200, 0, "Domicilio",                                     "Domicilio",          "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Poblacion", "C",200, 0, "Poblaci√≥n",                                     "Poblacion",          "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Poblacion", "C",200, 0, "PoblaciÛn",                                     "Poblacion",          "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Provincia", "C",100, 0, "Provincia",                                     "Provincia",          "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "CodPostal", "C", 15, 0, "C√≥digo postal",                                 "CodigoPostal",       "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Telefono",  "C", 50, 0, "Tel√©fono",                                      "Telefono",           "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "CodPostal", "C", 15, 0, "CÛdigo postal",                                 "CodigoPostal",       "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Telefono",  "C", 50, 0, "TelÈfono",                                      "Telefono",           "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Fax",       "C", 50, 0, "Fax",                                           "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Movil",     "C", 50, 0, "M√≥vil",                                         "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Movil",     "C", 50, 0, "MÛvil",                                         "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "NbrEst",    "C", 35, 0, "Nombre del establecimiento" ,                   "NombreEstablecimiento", "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Direst",    "C", 35, 0, "Domicilio del servicio" ,                       "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "DiaPago",   "N",  2, 0, "Primer d√≠a de pago",                            "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "DiaPago2",  "N",  2, 0, "Segundo d√≠a de pago",                           "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "DiaPago",   "N",  2, 0, "Primer dÌa de pago",                            "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "DiaPago2",  "N",  2, 0, "Segundo dÌa de pago",                           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Banco",     "C", 50, 0, "Nombre del banco",                              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "DirBanco",  "C", 35, 0, "Domicilio del banco",                           "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "PobBanco",  "C", 25, 0, "Poblaci√≥n del banco",                           "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "PobBanco",  "C", 25, 0, "PoblaciÛn del banco",                           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cProBanco", "C", 20, 0, "Provincia del banco",                           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Cuenta",    "C", 20, 0, "",                                              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nTipCli",   "N",  1, 0, "Tipo",                                          "TipoCliente",        "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "CodPago",   "C",  2, 0, "C√≥digo del tipo de pago",                       "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cDtoEsp",   "C", 50, 0, "Descripci√≥n del descuento por factura" ,        "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "CodPago",   "C",  2, 0, "CÛdigo del tipo de pago",                       "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cDtoEsp",   "C", 50, 0, "DescripciÛn del descuento por factura" ,        "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nDtoEsp",   "N",  6, 2, "Porcentaje de descuento por factura" ,          "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cDpp",      "C", 50, 0, "Descripci√≥n del descuento por pronto pago" ,    "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cDpp",      "C", 50, 0, "DescripciÛn del descuento por pronto pago" ,    "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nDpp",      "N",  6, 2, "Porcentaje de descuento por pronto pago" ,      "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nDtoCnt",   "N",  6, 2, "Porcentaje del primer dto personalizado" ,      "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nDtoRap",   "N",  6, 2, "Porcentaje del segundo dto personalizado" ,     "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cDtoUno",   "C", 50, 0, "Descripci√≥n del primer dto personalizado" ,     "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cDtoDos",   "C", 50, 0, "Descripci√≥n del segundo dto personalizado" ,    "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cDtoUno",   "C", 50, 0, "DescripciÛn del primer dto personalizado" ,     "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cDtoDos",   "C", 50, 0, "DescripciÛn del segundo dto personalizado" ,    "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nDtoPtf",   "N",  6, 2, "Importe de descuento plataforma" ,              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Riesgo",    "N", 16, 6, "Importe maximo autorizado para operaciones",    "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "CopiasF",   "N",  1, 0, "N√∫mero de facturas a imprimir",                 "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Serie",     "C",  1, 0, "C√≥digo de la serie de facturas",                "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "CopiasF",   "N",  1, 0, "N˙mero de facturas a imprimir",                 "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Serie",     "C",  1, 0, "CÛdigo de la serie de facturas",                "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nRegIva",   "N",  1, 0, "Regimen de " + cImp(),                          "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lReq",      "L",  1, 0, "L√≥gico para recargo de equivalencia (S/N)",     "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lReq",      "L",  1, 0, "LÛgico para recargo de equivalencia (S/N)",     "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Subcta",    "C", 12, 0, "Subcuenta cliente enlace contaplus",            "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "CtaVenta",  "C",  3, 0, "Cuenta venta cliente contaplus",                "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgente",   "C",  3, 0, "C√≥digo agente comercial",                       "CodigoAgente",       "", "( cDbfCli )", {|| accessCode():cAgente } } )
+   aAdd( aBase, { "cAgente",   "C",  3, 0, "CÛdigo agente comercial",                       "CodigoAgente",       "", "( cDbfCli )", {|| accessCode():cAgente } } )
    aAdd( aBase, { "lMayorista","L",  1, 0, "Utilizar precio de mayorista (S/N)" ,           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nTarifa",   "N",  1, 0, "Tarifa a aplicar" ,                             "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lLabel",    "L",  1, 0, "L√≥gico para etiquetado (S/N)" ,                 "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "nLabel",    "N",  5, 0, "N√∫mero de etiquetas a imprimir" ,               "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodTar",   "C",  5, 0, "C√≥digo de tarifa" ,                             "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lLabel",    "L",  1, 0, "LÛgico para etiquetado (S/N)" ,                 "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "nLabel",    "N",  5, 0, "N˙mero de etiquetas a imprimir" ,               "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodTar",   "C",  5, 0, "CÛdigo de tarifa" ,                             "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "mComent",   "M", 10, 0, "Memo para comentarios" ,                        "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodRut",   "C",  4, 0, "C√≥digo de ruta" ,                               "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodRut2",  "C",  4, 0, "C√≥digo de ruta alternativa" ,                   "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodPai",   "C",  4, 0, "C√≥digo de pa√≠s" ,                               "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodGrp",   "C",  4, 0, "C√≥digo de grupo de cliente" ,                   "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodRem",   "C",  3, 0, "C√≥digo de remesa" ,                             "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cMeiInt",   "C", 65, 0, "Correo electr√≥nico" ,                           "Email",              "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cWebInt",   "C", 65, 0, "P√°gina web" ,                                   "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lChgPre",   "L",  1, 0, "L√≥gico para autorizaci√≥n de venta de cr√©dito" , "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lCreSol",   "L",  1, 0, "L√≥gico para bloquear con riesgo alcanzado" ,    "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lPntVer",   "L",  1, 0, "L√≥gico para operar con punto verde" ,           "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodRut",   "C",  4, 0, "CÛdigo de ruta" ,                               "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodRut2",  "C",  4, 0, "CÛdigo de ruta alternativa" ,                   "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodPai",   "C",  4, 0, "CÛdigo de paÌs" ,                               "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodGrp",   "C",  4, 0, "CÛdigo de grupo de cliente" ,                   "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodRem",   "C",  3, 0, "CÛdigo de remesa" ,                             "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cMeiInt",   "C", 65, 0, "Correo electrÛnico" ,                           "Email",              "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cWebInt",   "C", 65, 0, "P·gina web" ,                                   "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lChgPre",   "L",  1, 0, "LÛgico para autorizaciÛn de venta de crÈdito" , "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lCreSol",   "L",  1, 0, "LÛgico para bloquear con riesgo alcanzado" ,    "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lPntVer",   "L",  1, 0, "LÛgico para operar con punto verde" ,           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cUsrDef01", "C",100, 0, "Campo definido 1" ,                             "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cUsrDef02", "C",100, 0, "Campo definido 2" ,                             "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cUsrDef03", "C",100, 0, "Campo definido 3" ,                             "",                   "", "( cDbfCli )", nil } )
@@ -8869,61 +8869,61 @@ FUNCTION aItmCli()
    aAdd( aBase, { "nVisVie",   "N",  4, 0, "" ,                                             "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nVisSab",   "N",  4, 0, "" ,                                             "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nVisDom",   "N",  4, 0, "" ,                                             "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgeLun",   "C",  3, 0, "C√≥digo agente para visita lunes",               "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgeMar",   "C",  3, 0, "C√≥digo agente para visita martes",              "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgeMie",   "C",  3, 0, "C√≥digo agente para visita miercoles",           "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgeJue",   "C",  3, 0, "C√≥digo agente para visita jueves",              "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgeVie",   "C",  3, 0, "C√≥digo agente para visita viernes",             "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgeSab",   "C",  3, 0, "C√≥digo agente para visita sabado",              "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgeDom",   "C",  3, 0, "C√≥digo agente para visita domingo",             "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lSndInt",   "L",  1, 0, "L√≥gico para envio por internet" ,               "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgeLun",   "C",  3, 0, "CÛdigo agente para visita lunes",               "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgeMar",   "C",  3, 0, "CÛdigo agente para visita martes",              "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgeMie",   "C",  3, 0, "CÛdigo agente para visita miercoles",           "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgeJue",   "C",  3, 0, "CÛdigo agente para visita jueves",              "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgeVie",   "C",  3, 0, "CÛdigo agente para visita viernes",             "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgeSab",   "C",  3, 0, "CÛdigo agente para visita sabado",              "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgeDom",   "C",  3, 0, "CÛdigo agente para visita domingo",             "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lSndInt",   "L",  1, 0, "LÛgico para envio por internet" ,               "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cPerCto",   "C",200, 0, "Persona de contacto" ,                          "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodAlm",   "C", 16, 0, "C√≥digo de almac√©n",                             "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodAlm",   "C", 16, 0, "CÛdigo de almacÈn",                             "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nMesVac",   "N",  2, 0, "Mes de vacaciones",                             "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nImpRie",   "N", 16, 6, "Riesgo alcanzado",                              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nColor",    "N", 10, 0, "",                                              "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "SubCtaDto", "C", 12, 0, "C√≥digo subcuenta descuento",                    "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "SubCtaDto", "C", 12, 0, "CÛdigo subcuenta descuento",                    "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "lBlqCli",   "L",  1, 0, "Cliente bloqueado" ,                            "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "lMosCom",   "L",  1, 0, "Mostrar comentario" ,                           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "lTotAlb",   "L",  1, 0, "Totalizar albaranes" ,                          "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cDtoAtp",   "C", 50, 0, "Descripci√≥n del descuento atipico" ,            "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "nDtoAtp",   "N",  6, 2, "Porcentaje de descuento at√≠pico" ,              "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cDtoAtp",   "C", 50, 0, "DescripciÛn del descuento atipico" ,            "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "nDtoAtp",   "N",  6, 2, "Porcentaje de descuento atÌpico" ,              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nSbrAtp",   "N",  1, 0, "" ,                                             "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodUsr",   "C",  3, 0, "C√≥digo de usuario que realiza el cambio" ,      "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodUsr",   "C",  3, 0, "CÛdigo de usuario que realiza el cambio" ,      "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dFecChg",   "D",  8, 0, "Fecha de cambio" ,                              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cTimChg",   "C",  5, 0, "Hora de cambio" ,                               "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "nTipRet",   "N",  1, 0, "Tipo de retenci√≥n ( 1-Base / 2-Base+IVA )",     "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "nPctRet",   "N",  6, 2, "Porcentaje de retenci√≥n",                       "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "nTipRet",   "N",  1, 0, "Tipo de retenciÛn ( 1-Base / 2-Base+IVA )",     "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "nPctRet",   "N",  6, 2, "Porcentaje de retenciÛn",                       "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dFecBlq",   "D",  8, 0, "Fecha de bloqueo del cliente",                  "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cMotBlq",   "C",250, 0, "Motivo del bloqueo del cliente",                "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lModDat",   "L",  1, 0, "L√≥gico para no modificar datos en la venta" ,   "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lMail",     "L",  1, 0, "L√≥gico para enviar mail" ,                      "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodTrn",   "C",  9, 0, "C√≥digo del transportista" ,                     "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lModDat",   "L",  1, 0, "LÛgico para no modificar datos en la venta" ,   "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lMail",     "L",  1, 0, "LÛgico para enviar mail" ,                      "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodTrn",   "C",  9, 0, "CÛdigo del transportista" ,                     "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "mObserv",   "M", 10, 0, "Observaciones",                                 "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lPubInt",   "L",  4, 0, "L√≥gico para publicar en internet (S/N)",        "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cClave",    "C", 40, 0, "Contrase√±a cliente para Web",                   "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "C√≥digo del cliente en la web",                  "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cCodEdi",   "C", 17, 0, "C√≥digo del cliente en EDI (EAN)",               "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cFacAut",   "C",  3, 0, "C√≥digo de factura autom√°tica",                  "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lWeb",      "L",  4, 0, "L√≥gico para creado desde internet (S/N)",       "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "nDtoArt",   "N",  1, 0, "Descuento de art√≠culo",                         "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "lExcFid",   "L",  1, 0, "L√≥gico para creado desde internet (S/N)",       "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "mFacAut",   "M", 10, 0, "Plantillas de facturas autom√°ticas",            "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lPubInt",   "L",  4, 0, "LÛgico para publicar en internet (S/N)",        "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cClave",    "C", 40, 0, "ContraseÒa cliente para Web",                   "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "CÛdigo del cliente en la web",                  "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodEdi",   "C", 17, 0, "CÛdigo del cliente en EDI (EAN)",               "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cFacAut",   "C",  3, 0, "CÛdigo de factura autom·tica",                  "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lWeb",      "L",  4, 0, "LÛgico para creado desde internet (S/N)",       "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "nDtoArt",   "N",  1, 0, "Descuento de artÌculo",                         "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "lExcFid",   "L",  1, 0, "LÛgico para creado desde internet (S/N)",       "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "mFacAut",   "M", 10, 0, "Plantillas de facturas autom·ticas",            "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "dFecNaci",  "D",  8, 0, "Fecha de nacimiento",                           "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "nSexo",     "N",  1, 0, "Sexo del cliente",                              "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "nTarCmb",   "N",  1, 0, "Tarifa a aplicar para combinar en t√°ctil" ,     "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "dLlaCli",   "D",  8, 0, "√öltima llamada del cliente" ,                   "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cTimCli",   "C",  5, 0, "Hora √∫ltima llamada del cliente" ,              "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "nTarCmb",   "N",  1, 0, "Tarifa a aplicar para combinar en t·ctil" ,     "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "dLlaCli",   "D",  8, 0, "⁄ltima llamada del cliente" ,                   "",                   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cTimCli",   "C",  5, 0, "Hora ˙ltima llamada del cliente" ,              "",                   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cTipInci",  "C",  5, 0, "Tipo de incidencia" ,                           "",                   "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Telefono2", "C", 50, 0, "Segundo tel√©fono",                              "Telefono2",          "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "Movil2",    "C", 50, 0, "Segundo m√≥vil",                                 "Movil2",             "", "( cDbfCli )", nil } )
-   aAdd( aBase, { "cAgente2",  "C",  3, 0, "C√≥digo de segundo agente comercial ",           "CodigoAgente2",      "", "( cDbfCli )", {|| accessCode():cAgente } } )
+   aAdd( aBase, { "Telefono2", "C", 50, 0, "Segundo telÈfono",                              "Telefono2",          "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "Movil2",    "C", 50, 0, "Segundo mÛvil",                                 "Movil2",             "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cAgente2",  "C",  3, 0, "CÛdigo de segundo agente comercial ",           "CodigoAgente2",      "", "( cDbfCli )", {|| accessCode():cAgente } } )
 
 RETURN ( aBase )
 
 //----------------------------------------------------------------------------//
 /*
-Devuelve si el cliente tiene autorizaci√≥n para ventas de credito
+Devuelve si el cliente tiene autorizaciÛn para ventas de credito
 */
 
 FUNCTION lCliBlq( cCodCli, dbfCli )
@@ -9370,7 +9370,7 @@ return ( lSea )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve si el cliente tiene autorizaci√≥n para ventas de credito
+Devuelve si el cliente tiene autorizaciÛn para ventas de credito
 */
 
 FUNCTION lCliChg( cCodCli, dbfClient )
@@ -9513,7 +9513,7 @@ FUNCTION cClient( oGet, dbfCli, oGet2 )
 
    else
 
-      msgStop( "Cliente no encontrado", "C√≥digo buscado : " + xValor )
+      msgStop( "Cliente no encontrado", "CÛdigo buscado : " + xValor )
 
    end if
 
@@ -9583,7 +9583,7 @@ STATIC FUNCTION lValidTlf( oGet )
    local nOrd     := ( D():Get( "Client", nView ) )->( OrdSetFocus( "Telefono" ) )
 
    if !Empty( cTlf ) .and. ( D():Get( "Client", nView ) )->( dbSeek( cTlf ) )
-      msgStop( 'El t√©lefono introducido ya existe en la base de datos' )
+      msgStop( 'El tÈlefono introducido ya existe en la base de datos' )
    end if
 
    ( D():Get( "Client", nView ) )->( dbGoTo( nRec ) )
@@ -9697,7 +9697,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    ( dbfTmpCon )->( ordSetFocus( "cCodCli" ) )
 
    /*
-   A√±adimos desde el fichero de atipicas---------------------------------------
+   AÒadimos desde el fichero de atipicas---------------------------------------
    */
 
    if nMode != APPD_MODE
@@ -9714,7 +9714,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpAtp )->( dbGoTop() )
 
       /*
-      A√±adimos desde el fichero de documentos----------------------------------
+      AÒadimos desde el fichero de documentos----------------------------------
       */
 
       if ( D():Get( "ClientD", nView ) )->( dbSeek( cCodCli ) )
@@ -9728,7 +9728,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
 
       /*
-      A√±adimos desde el fichero de documentos----------------------------------
+      AÒadimos desde el fichero de documentos----------------------------------
       */
 
       if D():gotoIdClientesEntidad( cCodCli, nView ) 
@@ -9923,12 +9923,12 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
       if Empty( aTmp[ _COD ] )
-         MsgStop( "C√≥digo no puede estar vacio" )
+         MsgStop( "CÛdigo no puede estar vacÌo" )
          return nil
       end if
 
       if Existe( aTmp[ _COD ], D():Get( "Client", nView ), "Cod" )
-         MsgStop( "C√≥digo ya existe " + Rtrim( aTmp[ _COD ] ) )
+         MsgStop( "CÛdigo ya existe " + Rtrim( aTmp[ _COD ] ) )
          return nil
       end if
 
@@ -9943,7 +9943,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
       end if
 
       if Empty( aTmp[ _CCLAVE ] ) .or. Len( AllTrim( aTmp[ _CCLAVE ] ) ) < 5
-         MsgStop( "La contrase√±a debe tener al menos 5 caracteres" )
+         MsgStop( "La contraseÒa debe tener al menos 5 caracteres" )
          aGet[ _CCLAVE ]:SetFocus()
          return nil
       end if
@@ -9956,7 +9956,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    end if
 
    /*
-   Comprobamos que la tarifa est√© entre 1 y 6---------------------------------
+   Comprobamos que la tarifa est· entre 1 y 6---------------------------------
    */
 
    if aTmp[ _NTARIFA ] < 1
@@ -9976,7 +9976,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    end if
 
    /*
-   Comprobamos que la tarifa para combinar est√© entre 1 y 6---------------------------------
+   Comprobamos que la tarifa para combinar est· entre 1 y 6---------------------------------
    */
 
    if aTmp[ _NTARCMB ] < 1
@@ -9996,12 +9996,12 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    end if
 
    /*
-   Comprobamos que el descuento de art√≠culo est√© entre 1 y 6-------------------
+   Comprobamos que el descuento de artÌculo est· entre 1 y 6-------------------
    */
 
    if aTmp[ _NDTOART ] < 0 .or. aTmp[ _NDTOART ] > 6
 
-      MsgStop( "El descuento de art√≠culo a seleccionar debe de estar entre 0 y 6" )
+      MsgStop( "El descuento de artÌculo a seleccionar debe de estar entre 0 y 6" )
 
       if !Empty( aGet[ _NDTOART ] )
          aGet[ _NDTOART ]:SetFocus()
@@ -10020,11 +10020,11 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    if ( "RISI" $ cParamsMain() )   
 
       if Empty( aTmp[ _CCODGRP ] )
-         cText := Space( 6 ) + "* C√≥digo de grupo" + CRLF
+         cText := Space( 6 ) + "* CÛdigo de grupo" + CRLF
       end if
 
       if Empty( aTmp[ _CCODRUT ] )
-         cText := Space( 6 ) + "* C√≥digo de ruta" + CRLF
+         cText := Space( 6 ) + "* CÛdigo de ruta" + CRLF
       end if
 
    end if 
@@ -10041,7 +10041,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    end if
 
    if Empty( aTmp[ _POBLACION ] )
-      cText += Space( 6 ) + "* Poblaci√≥n" + CRLF
+      cText += Space( 6 ) + "* PoblaciÛn" + CRLF
    end if
 
    if Empty( aTmp[ _CODPOSTAL ] )
@@ -10057,11 +10057,11 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    end if
 
    if Empty( aTmp[ _TELEFONO ] )
-      cText += Space( 6 ) + "* Tel√©fono" + CRLF
+      cText += Space( 6 ) + "* TelÈfono" + CRLF
    end if
 
    if !Empty( cText )
-      if !ApoloMsgNoYes( "Son recomendables introducir los siguientes campo(s): " + CRLF + cText + CRLF + " ¬øDesea continuar sin introducirlos?", "Seleccione una opci√≥n" )
+      if !ApoloMsgNoYes( "Son recomendables introducir los siguientes campo(s): " + CRLF + cText + CRLF + " øDesea continuar sin introducirlos?", "Seleccione una opciÛn" )
          return nil
       end if
    end if
@@ -10079,7 +10079,7 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    oMsgProgress()
 
    /*
-   Guardamos el array con las facturas autom√°ticas-----------------------------
+   Guardamos el array con las facturas autom·ticas-----------------------------
    */
 
    aTmp[ _MFACAUT ]     := ""
@@ -10626,7 +10626,7 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
          end if
 
       else
-         MsgStop( "C√≥digo de art√≠culo no encontrado" )
+         MsgStop( "CÛdigo de artÌculo no encontrado" )
          return .f.
       end if
 
@@ -10798,7 +10798,7 @@ Static Function lArrayRen( nTipPre, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto )
 
    end if
 
-   /*Comisi√≥n agente*/
+   /*ComisiÛn agente*/
 
    if aTmp[ _aNCOMAGE ] != 0
 
@@ -10937,9 +10937,9 @@ Static Function lArrayRen( nTipPre, oBrwRen, aTmp, aTmpCli, aGetCli, cCosto )
 
    aAdd( aRentabilidad, { "Rent. costo", "", nResultado, .t., .f. } )
 
-   /*Rentabilidad m√≠nima del art√≠culo*/
+   /*Rentabilidad m·nima del artÌculo*/
 
-   aAdd( aRentabilidad, { "Rent. m√≠nima", "", ( D():Get( "Articulo", nView ) )->nRenMin, .t., if( ( D():Get( "Articulo", nView ) )->nRenMin > nResultado, .t., .f. ) } )
+   aAdd( aRentabilidad, { "Rent. mÌnima", "", ( D():Get( "Articulo", nView ) )->nRenMin, .t., if( ( D():Get( "Articulo", nView ) )->nRenMin > nResultado, .t., .f. ) } )
 
    /*Ratio capacidad de maniobra*/
 
@@ -11315,24 +11315,24 @@ static function SaveEdtAtp( aGet, aTmp, dbfTmpAtp, oBrw, oDlg, nMode )
    if nMode == APPD_MODE
 
       if Empty( aTmp[ _aCCODART ] ) .and. aGet[ _aNTIPATP ]:nAt <= 1
-         MsgStop( "C√≥digo de art√≠culo no puede estar vac√≠o" )
+         MsgStop( "CÛdigo de artÌculo no puede estar vacÌo" )
          aGet[ _aCCODART ]:SetFocus()
          return .f.
       end if
 
       if dbSeekAtp( aTmp, dbfTmpAtp, .f. ) .and. aGet[ _aNTIPATP ]:nAt <= 1
-         msgStop( "C√≥digo de art√≠culo ya en tarifa para el rango de fechas" )
+         msgStop( "CÛdigo de artÌculo ya en tarifa para el rango de fechas" )
          return nil
       end if
 
       if Empty( aTmp[ _aCCODFAM ] ) .and. aGet[ _aNTIPATP ]:nAt == 2
-         MsgStop( "C√≥digo de fam√≠lia no puede estar vac√≠o" )
+         MsgStop( "CÛdigo de famÌlia no puede estar vacÌo" )
          aGet[ _aCCODFAM ]:SetFocus()
          return .f.
       end if
 
       if dbSeekAtp( aTmp, dbfTmpAtp, .t. ) .and. aGet[ _aNTIPATP ]:nAt == 2
-         msgStop( "C√≥digo de familia ya en tarifa para el rango de fechas" )
+         msgStop( "CÛdigo de familia ya en tarifa para el rango de fechas" )
          return .f.
       end if
 
@@ -11518,8 +11518,8 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Incidencias",       ( D():Get( "CliInc", nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Incidencias",       cItemsToReport( aCliInc() ) )
 
-   oFr:SetWorkArea(     "Pa√≠s", oPais:Select() )   
-   oFr:SetFieldAliases( "Pa√≠s", cObjectsToReport( oPais:oDbf ) )
+   oFr:SetWorkArea(     "PaÌs", oPais:Select() )   
+   oFr:SetFieldAliases( "PaÌs", cObjectsToReport( oPais:oDbf ) )
 
    oFr:SetWorkArea(     "Rutas", ( dbfRuta )->( Select() ) )
    oFr:SetFieldAliases( "Rutas", cItemsToReport( aItmRut() ) )
@@ -11540,7 +11540,7 @@ Static Function DataReport( oFr, lTemporal )
       oFr:SetMasterDetail( "Clientes",       "Rutas",             {|| ( tmpClient )->cCodRut } )
       oFr:SetMasterDetail( "Clientes",       "Agentes",           {|| ( tmpClient )->cAgente } )
       oFr:SetMasterDetail( "Clientes",       "Formas de pago",    {|| ( tmpClient )->CodPago } )
-      oFr:SetMasterDetail( "Clientes",       "Pa√≠s",              {|| ( tmpClient )->cCodPai } )
+      oFr:SetMasterDetail( "Clientes",       "PaÌs",              {|| ( tmpClient )->cCodPai } )
    else
       oFr:SetMasterDetail( "Clientes",       "Documentos",        {|| ( D():Get( "Client", nView ) )->Cod } )
       oFr:SetMasterDetail( "Clientes",       "Tarifas clientes",  {|| ( D():Get( "Client", nView ) )->Cod } )
@@ -11551,7 +11551,7 @@ Static Function DataReport( oFr, lTemporal )
       oFr:SetMasterDetail( "Clientes",       "Rutas",             {|| ( D():Get( "Client", nView ) )->cCodRut } )
       oFr:SetMasterDetail( "Clientes",       "Agentes",           {|| ( D():Get( "Client", nView ) )->cAgente } )
       oFr:SetMasterDetail( "Clientes",       "Formas de pago",    {|| ( D():Get( "Client", nView ) )->CodPago } )
-      oFr:SetMasterDetail( "Clientes",       "Pa√≠s",              {|| ( D():Get( "Client", nView ) )->cCodPai } )
+      oFr:SetMasterDetail( "Clientes",       "PaÌs",              {|| ( D():Get( "Client", nView ) )->cCodPai } )
    end if
 
    oFr:SetResyncPair(      "Clientes",       "Documentos" )
@@ -11564,7 +11564,7 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetResyncPair(      "Clientes",       "Rutas" )
    oFr:SetResyncPair(      "Clientes",       "Agentes" )
    oFr:SetResyncPair(      "Clientes",       "Formas de pago" )
-   oFr:SetResyncPair(      "Clientes",       "Pa√≠s" )
+   oFr:SetResyncPair(      "Clientes",       "PaÌs" )
 
 Return nil
 
@@ -11627,13 +11627,13 @@ Function DesignReportClient( oFr, dbfDoc )
          end if
 
          /*
-         Dise√±o de report---------------------------------------------------------
+         DiseÒo de report---------------------------------------------------------
          */
 
          oFr:DesignReport()
 
          /*
-         Destruye el dise√±ador----------------------------------------------------
+         Destruye el diseÒador----------------------------------------------------
          */
 
          oFr:DestroyFr()
@@ -11685,7 +11685,7 @@ Function PrintReportCliente( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "Dise√±ador de documentos" )
+   oFr:SetTitle(        "DiseÒador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -11741,7 +11741,7 @@ Function PrintReportCliente( nDevice, nCopies, cPrinter, dbfDoc )
    end if
 
    /*
-   Destruye el dise√±ador-------------------------------------------------------
+   Destruye el diseÒador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -11810,7 +11810,7 @@ FUNCTION BrwCli( oGet, oGet2, dbfCli )
    local cGet1
    local nOrd     := GetBrwOpt( "BrwCli" )
    local oCbxOrd
-   local aCbxOrd  := { "C√≥digo", "Nombre", "NIF/CIF", "Poblaci√≥n", "Provincia", "C√≥digo postal", "Tel√©fono", "Establecimiento", "Correo electr√≥nico" }
+   local aCbxOrd  := { "CÛdigo", "Nombre", "NIF/CIF", "PoblaciÛn", "Provincia", "CÛdigo postal", "TelÈfono", "Establecimiento", "Correo electrÛnico" }
    local cCbxOrd
    local cReturn  := Space( 12 )
 
@@ -11857,7 +11857,7 @@ FUNCTION BrwCli( oGet, oGet2, dbfCli )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C√≥digo"
+         :cHeader          := "CÛdigo"
          :cSortOrder       := "Cod"
          :bEditValue       := {|| ( dbfCli )->Cod }
          :nWidth           := 80
@@ -11881,7 +11881,7 @@ FUNCTION BrwCli( oGet, oGet2, dbfCli )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Tel√©fono"
+         :cHeader          := "TelÈfono"
          :cSortOrder       := "Telefono"
          :bEditValue       := {|| ( dbfCli )->Telefono }
          :nWidth           := 80
@@ -11902,7 +11902,7 @@ FUNCTION BrwCli( oGet, oGet2, dbfCli )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Poblaci√≥n"
+         :cHeader          := "PoblaciÛn"
          :cSortOrder       := "Poblacion"
          :bEditValue       := {|| ( dbfCli )->Poblacion }
          :nWidth           := 200
@@ -11910,7 +11910,7 @@ FUNCTION BrwCli( oGet, oGet2, dbfCli )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C√≥digo postal"
+         :cHeader          := "Codigo postal"
          :cSortOrder       := "CodPostal"
          :bEditValue       := {|| ( dbfCli )->CodPostal }
          :nWidth           := 60
@@ -11934,7 +11934,7 @@ FUNCTION BrwCli( oGet, oGet2, dbfCli )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Correo electr√≥nico"
+         :cHeader          := "Correo electrÛnico"
          :cSortOrder       := "cMeiInt"
          :bEditValue       := {|| ( dbfCli )->cMeiInt }
          :nWidth           := 100
@@ -12316,13 +12316,13 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Poblaci√≥n"
+         :cHeader          := "PoblaciÛn"
          :bEditValue       := {|| ( dbfBancos )->cPobBnc }
          :nWidth           := 100
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "C√≥digo postal"
+         :cHeader          := "CÛdigo postal"
          :bEditValue       := {|| ( dbfBancos )->cCPBnc }
          :nWidth           := 40
       end with
@@ -12334,7 +12334,7 @@ FUNCTION BrwBncCli( oGet, oPaisIBAN, oControlIBAN, oEntBnc, oSucBnc, oDigBnc, oC
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Tel√©fono"
+         :cHeader          := "TelÈfono"
          :bEditValue       := {|| ( dbfBancos )->cTlfBnc }
          :nWidth           := 80
       end with
@@ -12506,14 +12506,14 @@ Function hAtipica( hValue )
       !hhaskey( hValue, "nUnidades" )           .or.;
       !hhaskey( hValue, "nView" )               
 
-      msgStop( "Faltan parametros funci√≥n hAtipica" )
+      msgStop( "Faltan parametros funciÛn hAtipica" )
 
       return ( hAtipica )
 
    endif 
 
    /*
-   Guardamos la posici√≥n inicial-----------------------------------------------
+   Guardamos la posiciÛn inicial-----------------------------------------------
    */
 
    nRec              		:= ( D():Atipicas( hValue[ "nView" ] ) )->( Recno() )
@@ -12755,7 +12755,7 @@ Function hAtipica( hValue )
    end if 
 
    /*
-   Devolvemos a su posici√≥n inicial--------------------------------------------
+   Devolvemos a su posiciÛn inicial--------------------------------------------
    */
    
    ( D():Atipicas( hValue[ "nView" ] ) )->( dbGoTo( nRec ) )
@@ -13452,11 +13452,11 @@ static function aCreaArrayPeriodos()
 
    end case
 
-   aAdd( aPeriodo, "Doce √∫ltimos meses" )
+   aAdd( aPeriodo, "Doce ˙ltimos meses" )
 
-   aAdd( aPeriodo, "A√±o en curso" )
+   aAdd( aPeriodo, "AÒo en curso" )
 
-   aAdd( aPeriodo, "A√±o anterior" )
+   aAdd( aPeriodo, "AÒo anterior" )
 
    aAdd( aPeriodo, "Todos" )
 
@@ -13507,17 +13507,17 @@ Static Function lRecargaFecha( oFechaInicio, oFechaFin, cPeriodo )
          oFechaInicio:cText( CtoD( "01/10/" + Str( Year( GetSysDate() ) ) ) )
          oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case cPeriodo == "Doce √∫ltimos meses"
+      case cPeriodo == "Doce ˙ltimos meses"
 
          oFechaInicio:cText( CtoD( Str( Day( GetSysDate() ) ) + "/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) -1 ) ) )
          oFechaFin:cText( GetSysDate() )
 
-      case cPeriodo == "A√±o en curso"
+      case cPeriodo == "AÒo en curso"
 
          oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
          oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case cPeriodo == "A√±o anterior"
+      case cPeriodo == "AÒo anterior"
 
          oFechaInicio:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
          oFechaFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
@@ -13598,7 +13598,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    local cTxtOrigen  := if( !empty( uGet ), uGet:VarGet(), )
    local nOrdAnt     := GetBrwOpt( "BrwGridClient" )
    local oCbxOrd
-   local aCbxOrd     := { "C√≥digo", "Nombre", "NIF/CIF", "Poblaci√≥n", "Provincia", "C√≥digo postal", "Tel√©fono", "Establecimiento", "Correo electr√≥nico" }
+   local aCbxOrd     := { "CÛdigo", "Nombre", "NIF/CIF", "PoblaciÛn", "Provincia", "CÛdigo postal", "TelÈfono", "Establecimiento", "Correo electrÛnico" }
    local cCbxOrd
    local nLevel      := nLevelUsr( "01032" )
    local oBtnAdd
@@ -13746,7 +13746,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    oBrw:cName           := "BrwGridClient"
 
    with object ( oBrw:AddCol() )
-      :cHeader          := "C√≥digo"
+      :cHeader          := "CÛdigo"
       :cSortOrder       := "Cod"
       :bEditValue       := {|| ( D():Get( "Client", nView ) )->Cod }
       :nWidth           := 120
@@ -13770,7 +13770,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    end with
 
    with object ( oBrw:AddCol() )
-      :cHeader          := "Tel√©fono"
+      :cHeader          := "TelÈfono"
       :cSortOrder       := "Telefono"
       :bEditValue       := {|| ( D():Get( "Client", nView ) )->Telefono }
       :nWidth           := 180
@@ -13791,7 +13791,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    end with
 
    with object ( oBrw:AddCol() )
-      :cHeader          := "Poblaci√≥n"
+      :cHeader          := "PoblaciÛn"
       :cSortOrder       := "Poblacion"
       :bEditValue       := {|| ( D():Get( "Client", nView ) )->Poblacion }
       :nWidth           := 300
@@ -13799,7 +13799,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    end with
 
    with object ( oBrw:AddCol() )
-      :cHeader          := "C√≥digo postal"
+      :cHeader          := "CÛdigo postal"
       :cSortOrder       := "CodPostal"
       :bEditValue       := {|| ( D():Get( "Client", nView ) )->CodPostal }
       :nWidth           := 140
@@ -13823,7 +13823,7 @@ FUNCTION GridBrwClient( uGet, uGetName, lBigStyle )
    end with
 
    with object ( oBrw:AddCol() )
-      :cHeader          := "Correo electr√≥nico"
+      :cHeader          := "Correo electÛnico"
       :cSortOrder       := "cMeiInt"
       :bEditValue       := {|| ( D():Get( "Client", nView ) )->cMeiInt }
       :nWidth           := 180
