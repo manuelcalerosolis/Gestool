@@ -433,9 +433,10 @@ END CLASS
 
 METHOD New( oContainer )
    
-   ::oContainer   := oContainer
-
-   ::oContainer:AddComponent( Self )
+   if !empty( oContainer )
+      ::oContainer   := oContainer
+      ::oContainer:AddComponent( Self )
+   end if 
 
 Return ( Self )
    
@@ -776,6 +777,36 @@ METHOD Resource( oDlg ) CLASS GetCombo
 
 Return ( Self )
 
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//
+
+CLASS GetComboTarifa FROM GetCombo
+
+   METHOD Build( hBuilder ) 
+
+   METHOD setTarifa( nTarifa )   VIRTUAL
+   METHOD getTarifa()            VIRTUAL   
+
+END CLASS 
+
+//--------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS GetComboTarifa
+
+   local idCombo     := if( hhaskey( hBuilder, "idCombo" ),    hBuilder[ "idCombo"   ], nil )
+   local uValue      := if( hhaskey( hBuilder, "uValue"),      hBuilder[ "uValue"    ], nil )
+   local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
+   local aValues     := aNombreTarifas()
+
+   ::New( idCombo, uValue, aValues, oContainer )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//

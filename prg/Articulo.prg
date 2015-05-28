@@ -1929,6 +1929,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldGeneral
 
+   REDEFINE SAY ;
+         PROMPT   getTraslation("Temporada");
+         ID       800 ;
+         OF       fldGeneral
+
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ] ;
          ID       355 ;

@@ -194,7 +194,7 @@ FUNCTION Temporada( oMenuItem, oWnd )
 
       DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70 ;
       XBROWSE ;
-      TITLE    "Temporadas de artículos" ;
+      TITLE    getTraslation( "Temporadas de artículos" );
       PROMPT   "Código",;
                "Nombre";
       ALIAS    ( dbfTemporada ) ;
