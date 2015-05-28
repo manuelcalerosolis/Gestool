@@ -2836,10 +2836,10 @@ METHOD lGrupoCategoria( lInitGroup, lImp ) CLASS TNewInfGen
       DATABASE NEW ::oDbfCat PATH ( cPatArt() ) FILE "CATEGORIAS.DBF" VIA ( cDriver() ) SHARED INDEX "CATEGORIAS.CDX"
    end if
 
-   ::oGrupoCategoria                   := TRGroup():New( {|| ::oDbf:cCodCat }, {|| "Categoría : " + AllTrim( ::oDbf:cCodCat ) + " - " + AllTRim( ::oDbf:cNomCat ) }, {|| "Total categoria : " + ::oDbf:cCodCat }, {|| 3 }, ::lSalto )
+   ::oGrupoCategoria                   := TRGroup():New( {|| ::oDbf:cCodCat }, {|| getTraslation( "Categoría" ) + " : " + AllTrim( ::oDbf:cCodCat ) + " - " + AllTRim( ::oDbf:cNomCat ) }, {|| "Total" + getTraslation( "categoria") + " : " + ::oDbf:cCodCat }, {|| 3 }, ::lSalto )
 
    ::oGrupoCategoria:Cargo             := TItemGroup()
-   ::oGrupoCategoria:Cargo:Nombre      := "Categorias"
+   ::oGrupoCategoria:Cargo:Nombre      := getTraslation( "Categorías" )
    ::oGrupoCategoria:Cargo:Expresion   := "cCodCat"
    ::oGrupoCategoria:Cargo:Todos       := .t.
    ::oGrupoCategoria:Cargo:Desde       := Space( 3 )            // dbFirst( ::oDbfCat, 1 )
@@ -3246,7 +3246,7 @@ METHOD lGrupoTemporada( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTemporada                   := TRGroup():New( {|| ::oDbf:cCodTmp }, {|| "Temporada : " + AllTrim( ::oDbf:cCodTmp ) + " - " + AllTRim( ::oDbf:cNomTmp ) }, {|| "Total temporada..." }, {|| 3 }, ::lSalto )
 
    ::oGrupoTemporada:Cargo             := TItemGroup()
-   ::oGrupoTemporada:Cargo:Nombre      := "Temporada"
+   ::oGrupoTemporada:Cargo:Nombre      := getTraslation( "Temporada" )
    ::oGrupoTemporada:Cargo:Expresion   := "cCodTmp"
    ::oGrupoTemporada:Cargo:Todos       := .t.
    ::oGrupoTemporada:Cargo:Desde       := Space( 3 )            // dbFirst( ::oDbfTmp, 1 )
