@@ -6425,7 +6425,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
    while ( ( D():AlbaranesProveedores( nView ) )->cCodPrv = cCodPrv .and. !( D():AlbaranesProveedores( nView ) )->( eof() ) )
 
       if D():AlbaranesProveedoresNoFacturado( nView )
-         aAdd( aAlbaranes, {  .t.,;
+         aAdd( aAlbaranes, {  .f.,;
                               ( D():AlbaranesProveedoresId( nView ) ),;
                               ( D():AlbaranesProveedores( nView ) )->cSuAlb  ,;
                               ( D():AlbaranesProveedores( nView ) )->dFecAlb ,;
