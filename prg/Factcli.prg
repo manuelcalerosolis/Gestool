@@ -2536,9 +2536,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    local hBmpGeneral			:= { 	{ "Resource" => "Factura_cliente_48_alpha", 		"Dialog" => 1 },;
    										{ "Resource" => "Folder2_red_alpha_48", 			"Dialog" => 2 },;
    										{ "Resource" => "Information_48_alpha", 			"Dialog" => 3 },;
-   										{ "Resource" => "Address_book2_alpha_48", 		"Dialog" => 4 },;
-                                 { "Resource" => "form_blue_48",    		         "Dialog" => 5 },;
-                                 { "Resource" => "document_attachment_48",    	"Dialog" => 6 } }
+   										{ "Resource" => "Address_book2_alpha_48", 		    "Dialog" => 4 },;
+                                 		{ "Resource" => "form_blue_48",    		         	"Dialog" => 5 },;
+                                 		{ "Resource" => "document_attachment_48",    		"Dialog" => 6 } }
+   // local container1 		:=  oFld:aDialogs[1]
 
    
    /*
@@ -2814,6 +2815,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
          OF       oFld:aDialogs[1]
+
+         //aGet[ _NTARIFA ] 	:= GetComboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ], "oContainer" =>  oFld:aDialogs[1] } )
 
       /*
       Codigo de Divisas______________________________________________________________
