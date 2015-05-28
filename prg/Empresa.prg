@@ -3643,7 +3643,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       mkEstadoSat( cPath, aImportacion:lSatCli, cPathGrp ); rxEstadoSat( cPath )   ; SysRefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando temporadas" )
+         oMsg:SetText( "Creando " + getTraslation( "temporadas" ) )
       end if
 
       mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; SysRefresh()

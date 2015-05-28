@@ -1757,8 +1757,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Categorías'
-   oItem:cMessage       := 'Acceso al fichero de categorías'
+   oItem:cPrompt        := getTraslation( 'Categorías' )
+   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
    oItem:bAction        := {|| Categoria( "01101", oWnd() ) }
    oItem:cId            := "01101"
    oItem:cBmp           := "Colors_16"
@@ -1768,8 +1768,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Temporadas'
-   oItem:cMessage       := 'Acceso al fichero de temporadas'
+   oItem:cPrompt        := getTraslation( 'Temporadas' )
+   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'temporadas' )
    oItem:bAction        := {|| Temporada( "01114", oWnd() ) }
    oItem:cId            := "01114"
    oItem:cBmp           := "Sun_and_cloud_16"
@@ -2061,7 +2061,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Estados artículos'
-   oItem:cMessage       := 'Acceso al fichero de categorías'
+   oItem:cMessage       := 'Acceso al fichero de ' + getTraslation( 'categorías' )
    oItem:bAction        := {|| EstadoSat( "01126", oWnd() ) }
    oItem:cId            := "01126"
    oItem:cBmp           := "bookmarks_preferences_16"
@@ -3455,14 +3455,14 @@ Function BuildMenu()
                      HELPID   "01103" ;
                      RESOURCE "Tape_Measure1_16" ;
 
-                  MENUITEM    "&B. Categorías";
-                     MESSAGE  "Categorías de artículos" ;
+                  MENUITEM    "&B. " + getTraslation( "Categorías" );
+                     MESSAGE  getTraslation( "Categorías" ) + " de artículos" ;
                      ACTION   ( Categoria( oMenuItem, oWnd ) ) ;
                      HELPID   "01101" ;
                      RESOURCE "Colors_16" ;
 
-                  MENUITEM    "&C. Temporadas";
-                     MESSAGE  "Temporadas de artículos" ;
+                  MENUITEM    "&C. " + getTraslation( "Temporadas" );
+                     MESSAGE  getTraslation ( "Temporadas de artículos" ) ;
                      ACTION   ( Temporada( oMenuItem, oWnd ) ) ;
                      HELPID   "01114" ;
                      RESOURCE "Sun_and_cloud_16"
@@ -5987,7 +5987,6 @@ Function MainTablet()
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
-   
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -6046,8 +6045,5 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function T( cString, hStrings )
-
-Return ( traslate )   
 
 

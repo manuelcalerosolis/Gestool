@@ -215,7 +215,7 @@ METHOD GenIndices( oMsg )
       if ::lDatos
 
          ::SetText( "Generando índices : Familias", ::aProgress[ 1 ] )              ; rxFamilia( ::cPatArt )
-         ::SetText( "Generando índices : Categorías", ::aProgress[ 1 ] )            ; rxCategoria( ::cPatArt )
+         ::SetText( "Generando índices : " + getTraslation( "Categorías" ), ::aProgress[ 1 ] )            ; rxCategoria( ::cPatArt )
          ::SetText( "Generando índices : Estados del SAT", ::aProgress[ 1 ] )       ; rxEstadoSat()
          ::SetText( "Generando índices : Tempordas", ::aProgress[ 1 ] )             ; rxTemporada( ::cPatArt )
          ::SetText( "Generando índices : Grupos de familias", ::aProgress[ 1 ] )    ; TGrpFam():Create( ::cPatArt ):Reindexa()

@@ -786,18 +786,12 @@ Return ( Self )
 
 CLASS GetComboTarifa FROM GetCombo
 
-<<<<<<< HEAD
    DATA idCombo
    DATA uValue                   INIT "Combo" 
    DATA aValues                  INIT {"Combo"}
    DATA oControl
 
    METHOD Build( hBuilder ) 
-   METHOD New( idCombo, uValue, aValues, oContainer )
-   //METHOD Resource( oDlg )
-=======
-   METHOD Build( hBuilder ) 
->>>>>>> 470baefc60f8c5e30554a3c7fda808608848c3a2
 
    METHOD setTarifa( nTarifa )   VIRTUAL
    METHOD getTarifa()            VIRTUAL   
@@ -818,43 +812,14 @@ METHOD Build( hBuilder ) CLASS GetComboTarifa
 Return ( Self )
 
 //--------------------------------------------------------------------------//
-<<<<<<< HEAD
-
-METHOD New( idCombo, uValue, aValues, oContainer ) CLASS GetComboTarifa
-
-   ::idCombo   := idCombo
-   ::uValue    := uValue
-   ::aValues   := aValues
-
-   ::Super:New( idCombo, uValue, aValues, oContainer )
-
-RETURN ( Self )
-//--------------------------------------------------------------------------//
-
-/*METHOD Resource( oDlg ) CLASS GetComboTarifa
-
-   REDEFINE COMBOBOX ::oControl ;
-      VAR      ::uValue ;
-      ITEMS    ::aValues ;
-      ID       ::idCombo ;
-      OF       oDlg
-
-   ::oControl:bChange      := {|| ::Change() }
-
-Return ( Self )*/
-
-=======
-//--------------------------------------------------------------------------//
->>>>>>> 470baefc60f8c5e30554a3c7fda808608848c3a2
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
-<<<<<<< HEAD
-
-=======
 //--------------------------------------------------------------------------//
->>>>>>> 470baefc60f8c5e30554a3c7fda808608848c3a2
+//--------------------------------------------------------------------------//
+
+//--------------------------------------------------------------------------//
 
 CLASS GetCliente FROM ComponentGetSay
 

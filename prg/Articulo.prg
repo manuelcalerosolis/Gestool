@@ -851,8 +851,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                   "No obsoletos + Código",;
                   "No obsoletos + Nombre",;
                   "Tipo" ,;
-                  "Categoría" ,;
-                  "Temporada" ,;
+                  getTraslation( "Categoría" ) ,;
+                  getTraslation( "Temporada" ) ,;
                   "Fabricante" ,;
                   "Estado" ,;
                   "Posición táctil" ,;
@@ -973,7 +973,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Categoría"
+         :cHeader          := getTraslation( "Categoría" )
          :cSortOrder       := "cCodCate"
          :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodCate ) + if( !Empty( ( dbfArticulo )->cCodCate ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cNombre" ) }
          :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cTipo" ) ) }
@@ -984,7 +984,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Temporada"
+         :cHeader          := getTraslation( "Temporada" )
          :cSortOrder       := "cCodTemp"
          :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodTemp ) + if( !Empty( ( dbfArticulo )->cCodTemp ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cNombre" ) }
          :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cTipo" ) ) }
@@ -1928,9 +1928,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       352 ;
          TRANSPARENT ;
          OF       fldGeneral
+   REDEFINE SAY ;
+         PROMPT   getTraslation( "Categoría" );
+         ID       700 ;
+         OF       fldGeneral
 
    REDEFINE SAY ;
-         PROMPT   getTraslation("Temporada");
+         PROMPT   getTraslation( "Temporada" );
          ID       800 ;
          OF       fldGeneral
 
