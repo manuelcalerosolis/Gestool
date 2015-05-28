@@ -3262,28 +3262,26 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Function GetTraslation( cText )
+Function getTraslation( cText )
 
    local cTraslation    := ""
 
    if HHasKey( hTraslations, cText )
       cTraslation       := HGet( hTraslations, cText )
    else 
-      cTraslation       := GetPvProfString( "Traslations", cText, "", FullCurDir() + "GstApolo.Ini" )      
+      cTraslation       := GetPvProfString( "Traslations", cText, "", fullcurdir() + "GstApolo.Ini" )      
       if !empty( cTraslation )
          hSet( hTraslations, cText, cTraslation )   
       end if
    end if 
 
-return ( if( !Empty( cTraslation ), cTraslation, cText ) )   
+return ( if( !empty( cTraslation ), cTraslation, cText ) )   
 
 //---------------------------------------------------------------------------//
 
 Function ValToMoney( cMoney )
 
 Return ( Val( StrTran( cMoney, ",", "." ) ) )
-
-//---------------------------------------------------------------------------//
 
 //--------------------------------------------------------------------------//
 

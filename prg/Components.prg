@@ -433,9 +433,10 @@ END CLASS
 
 METHOD New( oContainer )
    
-   ::oContainer   := oContainer
-
-   ::oContainer:AddComponent( Self )
+   if !empty( oContainer )
+      ::oContainer   := oContainer
+      ::oContainer:AddComponent( Self )
+   end if 
 
 Return ( Self )
    
@@ -785,6 +786,7 @@ Return ( Self )
 
 CLASS GetComboTarifa FROM GetCombo
 
+<<<<<<< HEAD
    DATA idCombo
    DATA uValue                   INIT "Combo" 
    DATA aValues                  INIT {"Combo"}
@@ -793,6 +795,9 @@ CLASS GetComboTarifa FROM GetCombo
    METHOD Build( hBuilder ) 
    METHOD New( idCombo, uValue, aValues, oContainer )
    //METHOD Resource( oDlg )
+=======
+   METHOD Build( hBuilder ) 
+>>>>>>> 470baefc60f8c5e30554a3c7fda808608848c3a2
 
    METHOD setTarifa( nTarifa )   VIRTUAL
    METHOD getTarifa()            VIRTUAL   
@@ -813,6 +818,7 @@ METHOD Build( hBuilder ) CLASS GetComboTarifa
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+<<<<<<< HEAD
 
 METHOD New( idCombo, uValue, aValues, oContainer ) CLASS GetComboTarifa
 
@@ -837,11 +843,18 @@ RETURN ( Self )
 
 Return ( Self )*/
 
+=======
+//--------------------------------------------------------------------------//
+>>>>>>> 470baefc60f8c5e30554a3c7fda808608848c3a2
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
+<<<<<<< HEAD
 
+=======
+//--------------------------------------------------------------------------//
+>>>>>>> 470baefc60f8c5e30554a3c7fda808608848c3a2
 
 CLASS GetCliente FROM ComponentGetSay
 

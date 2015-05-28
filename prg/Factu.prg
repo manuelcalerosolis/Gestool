@@ -6042,10 +6042,12 @@ Return ( by( nRow ) )
 
 Function Test() 
 
-   //buscarTipologias()
-
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+Function T( cString, hStrings )
+
+Return ( traslate )   
 
 

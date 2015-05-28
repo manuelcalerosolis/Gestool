@@ -2806,6 +2806,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          PICTURE  cPorDiv ;
          OF       oFld:aDialogs[1]
 
+      /*
       REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
          ID       171 ;
          SPINNER ;
@@ -2815,6 +2816,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
          OF       oFld:aDialogs[1]
+*/
+
+      aGet[ _NTARIFA ]  := GetComboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ] } )
+      aGet[ _NTARIFA ]:Resource( oFld:aDialogs[1] )
 
          //aGet[ _NTARIFA ] 	:= GetComboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ], "oContainer" =>  oFld:aDialogs[1] } )
 
@@ -12531,16 +12536,16 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
          else
          	aTmp[ _CCODRUT ] 	:= ( D():Clientes( nView ) )->cAgente
          end if	
-
-		 if !Empty( aGet[ _NTARIFA ] )         
+/*
+         if !Empty( aGet[ _NTARIFA ] )         
          	if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->nTarifa )
             	aGet[ _NTARIFA ]:cText( ( D():Clientes( nView ) )->nTarifa )
          	end if
          else
          	aTmp[ _NTARIFA ] 	:= ( D():Clientes( nView ) )->nTarifa
          end if
-
-		 if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
+*/
+         if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
             aTmp[ _NDTOTARIFA ] := ( D():Clientes( nView ) )->nDtoArt
          end if
 
@@ -17214,9 +17219,9 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
          aGet[ _CCODOBR ]:cText( ( dbfSatCliT )->CCODOBR )
          aGet[ _CCODOBR ]:lValid()
-
+/*
          aGet[ _NTARIFA ]:cText( ( dbfSatCliT )->nTarifa )
-
+*/
          aGet[ _CCODTRN ]:cText( ( dbfSatCliT )->cCodTrn )
          aGet[ _CCODTRN ]:lValid() 
 

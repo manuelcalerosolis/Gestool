@@ -978,7 +978,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Tipo artículo", 888, "Static", WS_GROUP, 49, 90, 47, 8
   CONTROL "Categoría", -1, "Static", WS_GROUP, 49, 102, 35, 8
   CONTROL "Fabricante", -1, "Static", WS_GROUP, 49, 126, 47, 8
-  CONTROL "Temporada", -1, "Static", WS_GROUP, 49, 114, 41, 8
+  CONTROL "Temporada", 800, "Static", WS_GROUP, 49, 114, 47, 8
   CONTROL "", 500, "TBitMap", 0x0000020e, 4, 3, 34, 30, 0x00000020
   CONTROL "Datos generales del artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
   CONTROL "Lote actual", -1, "Static", WS_GROUP, 49, 190, 41, 8
@@ -6605,7 +6605,7 @@ FONT 8, "MS Sans Serif"
 {
   CONTROL "Descuentos", 700, "Button", BS_GROUPBOX, 44, 274, 152, 75
   CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 254, 30, 104, 11
-  CONTROL "", 171, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 399, 30, 65, 11
+  CONTROL "", 171, "ComboBox", WS_BORDER|CBS_DROPDOWN|CBS_NOINTEGRALHEIGHT|WS_TABSTOP, 399, 28, 65, 103
   CONTROL "", 180, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 254, 42, 210, 11
   CONTROL "", 181, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 254, 54, 104, 11
   CONTROL "", 182, "Edit", ES_RIGHT|WS_BORDER, 399, 54, 65, 11
