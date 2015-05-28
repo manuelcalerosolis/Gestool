@@ -5,6 +5,8 @@
 
 #define FW_BOLD                        700
 
+#define NUMERO_TARIFAS                 6
+
 //---------------------------------------------------------------------------//
 
 CLASS DialogBuilder
@@ -17,7 +19,7 @@ CLASS DialogBuilder
 
    METHOD End()                        INLINE ( ::oDlg:end() )
 
-   METHOD AddComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
+   METHOD addComponent( oComponent )   INLINE ( aAdd( ::aComponents, oComponent ) )
 
 END CLASS
 
@@ -732,7 +734,7 @@ CLASS GetCombo FROM Component
 
    METHOD Resource(oDlg)
 
-   METHOD Value()                INLINE ( Eval( ::oControl:bSetGet ) )
+   METHOD Value()                INLINE ( eval( ::oControl:bSetGet ) )
 
    METHOD Disable()              INLINE ( ::oControl:Disable() )
    METHOD Enable()               INLINE ( ::oControl:Enable() )
@@ -757,9 +759,12 @@ Return ( Self )
 
 METHOD New( idCombo, uValue, aValues, oContainer ) CLASS GetCombo
 
-   ::idCombo   := idCombo
-   ::uValue    := uValue
-   ::aValues   := aValues
+   ::idCombo      := idCombo
+   ::uValue       := uValue
+
+   if !empty( aValues )
+      ::aValues   := aValues
+   end if 
 
    ::Super:New( oContainer )
 
@@ -788,8 +793,11 @@ CLASS GetComboTarifa FROM GetCombo
 
    METHOD Build( hBuilder ) 
 
-   METHOD setTarifa( nTarifa )   VIRTUAL
-   METHOD getTarifa()            VIRTUAL   
+   METHOD getTarifa()                  
+   METHOD setTarifa( nTarifa )         INLINE   ( ::oControl:set( ::getTarifaNombre( nTarifa ) ) )
+   METHOD getTarifaNombre( nTarifa )  
+
+   METHOD varGet()                     INLINE   ( ::oControl:varGet() )
 
 END CLASS 
 
@@ -800,13 +808,41 @@ METHOD Build( hBuilder ) CLASS GetComboTarifa
    local idCombo     := if( hhaskey( hBuilder, "idCombo" ),    hBuilder[ "idCombo"   ], nil )
    local uValue      := if( hhaskey( hBuilder, "uValue"),      hBuilder[ "uValue"    ], nil )
    local oContainer  := if( hhaskey( hBuilder, "oContainer"),  hBuilder[ "oContainer"], nil )
-   local aValues     := aNombreTarifas()
 
-   ::New( idCombo, uValue, aValues, oContainer )
+   ::aValues         := aNombreTarifas()
+
+   uValue            := ::getTarifaNombre( uValue )
+
+   ::New( idCombo, uValue )
 
 Return ( Self )
 
 //--------------------------------------------------------------------------//
+
+METHOD getTarifa()
+
+   local n
+
+   for n := 1 to NUMERO_TARIFAS
+      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .and. alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == ::Value()
+         Return ( n )
+      endif
+   next
+
+Return ( 1 )
+
+//--------------------------------------------------------------------------//
+
+METHOD getTarifaNombre( nTarifa )
+
+   local cTarifaNombre  := ""
+
+   if aScan( ::aValues, uFieldEmpresa( "cTxtTar" + alltrim( str( nTarifa ) ) ) ) != 0
+      cTarifaNombre     := uFieldEmpresa( "cTxtTar" + alltrim( str( nTarifa ) ) )
+   end if 
+
+Return ( cTarifaNombre )
+
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//

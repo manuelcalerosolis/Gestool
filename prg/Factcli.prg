@@ -2806,16 +2806,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
-         ID       171 ;
-         SPINNER ;
-         MIN      1 ;
-         MAX      6 ;
-         PICTURE  "9" ;
-         VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         OF       oFld:aDialogs[1]
-*/
+      Tarifas______________________________________________________________
+      */
 
       aGet[ _NTARIFA ]  := GetComboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ] } )
       aGet[ _NTARIFA ]:Resource( oFld:aDialogs[1] )
@@ -12526,22 +12518,22 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
          end if
 
          if !Empty( aGet[ _CCODRUT ] )
-         	if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodRut )
+         	if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !empty( ( D():Clientes( nView ) )->cCodRut )
 	            aGet[ _CCODRUT ]:cText( ( D():Clientes( nView ))->cCodRut )
             	aGet[ _CCODRUT ]:lValid()
          	end if
          else
          	aTmp[ _CCODRUT ] 	:= ( D():Clientes( nView ) )->cAgente
          end if	
-/*
-         if !Empty( aGet[ _NTARIFA ] )         
-         	if ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->nTarifa )
-            	aGet[ _NTARIFA ]:cText( ( D():Clientes( nView ) )->nTarifa )
+
+         if !empty( aGet[ _NTARIFA ] )         
+         	if ( empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !empty( ( D():Clientes( nView ) )->nTarifa )
+            	aGet[ _NTARIFA ]:setTarifa( ( D():Clientes( nView ) )->nTarifa )
          	end if
          else
          	aTmp[ _NTARIFA ] 	:= ( D():Clientes( nView ) )->nTarifa
          end if
-*/
+
          if ( Empty( aTmp[ _NDTOTARIFA ] ) .or. lChgCodCli )
             aTmp[ _NDTOTARIFA ] := ( D():Clientes( nView ) )->nDtoArt
          end if
@@ -15009,8 +15001,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    cNumPed              := aTmp[ _CNUMPED ]
    cNumAlb              := aTmp[ _CNUMALB ]
    dFecFac              := aTmp[ _DFECFAC ]
-   tFecFac 				:= aTmp[ _TFECFAC ]
-   cCodCli 				:= aTmp[ _CCODCLI ]
+   tFecFac              := aTmp[ _TFECFAC ]
+   cCodCli              := aTmp[ _CCODCLI ]
 
    /*
    Comprobamos la fecha del documento------------------------------------------
@@ -15136,6 +15128,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       aTmp[ _DFECCRE ]        := GetSysDate()
       aTmp[ _CTIMCRE ]        := Time()
+      aTmp[ _NTARIFA ]        := aGet[ _NTARIFA ]:getTarifa()
 
       /*
       Guardamos el tipo para alquileres-------------------------------------------
@@ -17216,9 +17209,9 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
          aGet[ _CCODOBR ]:cText( ( dbfSatCliT )->CCODOBR )
          aGet[ _CCODOBR ]:lValid()
-/*
-         aGet[ _NTARIFA ]:cText( ( dbfSatCliT )->nTarifa )
-*/
+
+         aGet[ _NTARIFA ]:setTarifa( ( dbfSatCliT )->nTarifa )
+
          aGet[ _CCODTRN ]:cText( ( dbfSatCliT )->cCodTrn )
          aGet[ _CCODTRN ]:lValid() 
 

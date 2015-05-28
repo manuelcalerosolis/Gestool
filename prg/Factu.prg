@@ -6046,8 +6046,5 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function T( cString, hStrings )
-
-Return ( traslate )   
 
 
