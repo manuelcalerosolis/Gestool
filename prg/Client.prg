@@ -253,6 +253,8 @@ static oCtaRem
 static cAgente
 static oNewImp
 
+static oGetTarifa
+
 static cPinDiv
 static cPouDiv
 static cPorDiv
@@ -1396,15 +1398,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          aTmp[ _COD ]      := NextKey( aTmp[ _COD ], ( D():Get( "Client", nView ) ), "0", RetNumCodCliEmp() )
          aTmp[ _DLLACLI ]  := ctod( "" )
 
-      case nMode == EDIT_MODE
-
-         if aScan( aNombreTarifas, uFieldEmpresa( "cTxtTar" + alltrim( str( aTmp[ _NTARIFA ] ) ) ) ) != 0 
-            cNombreTarifa     := uFieldEmpresa( "cTxtTar" + alltrim( str( aTmp[ _NTARIFA ] ) ) )
-         else
-            cNombreTarifa     := aNombreTarifas[1]
-            aTmp[ _NTARIFA ]  := 1
-         endif
-
       otherwise
          nImpRie           := oStock:nRiesgo( aTmp[ _COD ] )
 
@@ -1626,11 +1619,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
 
-      REDEFINE COMBOBOX aGet[ _NTARIFA ] VAR cNombreTarifa ;
-         ID       100 ;
-         ITEMS    aNombreTarifas;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         OF       fldGeneral
+         /*
+         --------------Combox tarifa
+         */
+
+      oGetTarifa  := comboTarifa():Build( { "idCombo" => 100, "uValue" => aTmp[ _NTARIFA ] } )
+      oGetTarifa:Resource( fldGeneral )
+
+         /*
+         --------------
+         */
 
       REDEFINE GET aGet[ _NTARCMB ] VAR aTmp[ _NTARCMB ] ;
          ID       102 ;
@@ -9948,26 +9946,6 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
    end if
 
    /*
-   Comprobamos que la tarifa está entre 1 y 6---------------------------------
-   */
-
-   if aTmp[ _NTARIFA ] < 1
-      aTmp[ _NTARIFA ]  := 1
-   end if
-
-   if aTmp[ _NTARIFA ] < 1 .or. aTmp[ _NTARIFA ] > 6
-
-      MsgStop( "La tarifa a seleccionar debe de estar entre 1 y 6" )
-
-      if !Empty( aGet[ _NTARIFA ] )
-         aGet[ _NTARIFA ]:SetFocus()
-      end if
-
-      return nil
-
-   end if
-
-   /*
    Comprobamos que la tarifa para combinar está entre 1 y 6---------------------------------
    */
 
@@ -10119,8 +10097,8 @@ STATIC FUNCTION SavClient( aTmp, aGet, oDlg, oBrw, nMode )
       aTmp[ _MOBSERV ]  := oRTF:SaveAsRTF()
    end if
 
-   if !Empty( aGet[ _NTARIFA ] )
-      aTmp[ _NTARIFA ]  := nNumeroTarifa( aGet[ _NTARIFA ]:varGet() )
+   if !Empty( oGetTarifa )
+      aTmp[ _NTARIFA ]  := oGetTarifa:getTarifa()
    end if
 
 

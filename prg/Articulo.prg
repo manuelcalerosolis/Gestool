@@ -99,6 +99,7 @@ static oLenguajes
 static oTpvMenu
 
 static oDetCamposExtra
+static oGetTarWeb
 
 static oActiveX
 
@@ -1691,16 +1692,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
       aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"   ) ) ]   := NextKey( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfArticulo )
       aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ]   := ""
-      cNombreTarifaWeb                                      := aNombreTarifas[ ( dbfArticulo )->nTarWeb ]
-
-   case nMode == EDIT_MODE
-
-      if aScan( aNombreTarifas, uFieldEmpresa( "cTxtTar" + alltrim( str( aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ) ) ) ) != 0 
-         cNombreTarifaWeb                                   := uFieldEmpresa( "cTxtTar" + alltrim( str( aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ) ) )
-      else
-         cNombreTarifaWeb                                   := aNombreTarifas[1]
-         aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] := 1
-      endif
+      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb"  ) ) ]   := oGetTarWeb:getTarifa()
 
    end case
 
@@ -4453,16 +4445,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldWeb
 
-   REDEFINE COMBOBOX   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ;
-         VAR      cNombreTarifaWeb ;
-         ID       150 ;
-         ITEMS    aNombreTarifas;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] );
-         OF       fldWeb
+   /*
+   Tarifas-----------------------------------
+   */
 
-   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:bChange  := {|| actualizaTarifaWeb( aGet, aTmp, nMode ),;
-                                                                      ChangeTarWeb( aGet, aTmp ),;
-                                                                      CalDtoWeb( aGet, aTmp ) }      
+   oGetTarWeb  := comboTarifa():Build( { "idCombo" => 150, "uValue" => aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] } )
+   oGetTarWeb:Resource( fldWeb )
+   oGetTarWeb:setWhen( {|| nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] } )
+   oGetTarWeb:setChange( {|| ChangeTarWeb( aGet, aTmp ), CalDtoWeb( aGet, aTmp ) } )
+
+   /*
+   -------------------------------------------
+   */
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
@@ -4779,8 +4773,8 @@ Return ( oDlg:nResult == IDOK )
 
 static function actualizaTarifaWeb( aGet, aTmp, nMode )
 
-   if !Empty( aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] )
-      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := nNumeroTarifa( aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]:varGet() )
+   if !Empty( oGetTarWeb )
+      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
    endif
 
 Return ( .t. )
@@ -5903,6 +5897,10 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    local cProvHab          := ""
 
    DEFAULT lActualizaWeb   := .f.
+
+   if !Empty( oGetTarWeb )
+     aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
+   end if
 
    /*
    Tomamos los valores de los códigos de barra---------------------------------

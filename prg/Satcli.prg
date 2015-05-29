@@ -370,6 +370,7 @@ static oGetRnt
 static oGetPes
 static oGetDif
 static oGetTotal
+static oGetTarifa
 static oFont
 static oMenu
 static cPouDiv
@@ -1953,7 +1954,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
+     /* REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
          ID       132 ;
          SPINNER ;
          MIN      1 ;
@@ -1961,7 +1962,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          PICTURE  "9" ;
          VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]*/
+
+      /*
+      Tarifas______________________________________________________________
+      */
+
+      oGetTarifa  := comboTarifa():Build( { "idCombo" => 132, "uValue" => aTmp[ _NTARIFA ] } )
+      oGetTarifa:Resource( oFld:aDialogs[1] )
+
+
+      //____________________________________________________________________
 
       REDEFINE GET oRieCli VAR nRieCli;
          ID       133 ;
@@ -3282,9 +3293,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ _NCANSAT  ]    := 1
       aTmp[ _LIVALIN  ]    := aTmpSat[ _LIVAINC ]
       aTmp[ _CALMLIN  ]    := aTmpSat[ _CCODALM ]
-      aTmp[ _NTARLIN  ]    := aTmpSat[ _NTARIFA ]
       aTmp[ __CCODCLI ]    := aTmpSat[ _CCODCLI ]
       aTmp[ __DFECSAT ]    := aTmpSat[ _DFECSAT ]
+
+      aTmp[ _NTARLIN  ]    := oGetTarifa:getTarifa()
 
       if !Empty( cCodArtEnt )
          cCodArt           := Padr( cCodArtEnt, 32 )
@@ -4167,9 +4179,9 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    if Empty( aTmp[ _NTARLIN ] )
       if !Empty( aGet[ _NTARLIN ] )
-         aGet[ _NTARLIN ]:cText( aTmpSat[ _NTARIFA ] )
+         aGet[ _NTARLIN ]:cText( oGetTarifa:getTarifa() )
       else
-         aTmp[ _NTARLIN ]     := aTmpSat[ _NTARIFA ]
+         aTmp[ _NTARLIN ]     := oGetTarifa:getTarifa()
       end if
    end if
 
@@ -6486,6 +6498,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    aTmp[ _DFECCRE ]        := Date()
    aTmp[ _CTIMCRE ]        := Time()
+   aTmp[ _NTARIFA ]        := oGetTarifa:getTarifa()
 
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
@@ -6853,8 +6866,12 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             aGet[ _CCODRUT ]:lValid()
          end if
 
-         if !Empty( aGet[ _NTARIFA ] ) .and. ( Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->nTarifa )
-            aGet[ _NTARIFA ]:cText( ( D():Clientes( nView ) )->nTarifa )
+         if !empty( oGetTarifa )         
+            if ( empty( oGetTarifa:varGet() ) .or. lChgCodCli ) .and. !empty( ( D():Clientes( nView ) )->nTarifa )
+               oGetTarifa:setTarifa( ( D():Clientes( nView ) )->nTarifa )
+            end if
+         else
+            aTmp[ _NTARIFA ]  := ( D():Clientes( nView ) )->nTarifa
          end if
 
          if !Empty( aGet[ _CCODTRN ] ) .and. ( Empty( aGet[ _CCODTRN ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( D():Clientes( nView ) )->cCodTrn )

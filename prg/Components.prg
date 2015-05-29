@@ -742,6 +742,8 @@ CLASS GetCombo FROM Component
    METHOD SetChange( bChange )   INLINE ( if( isBlock( bChange ), ::bChange := bChange, ) )
    METHOD Change()               INLINE ( if( isBlock( ::bChange ), eval( ::bChange ), ) )
 
+   METHOD setWhen( bWhen )       INLINE ( if( isBlock( bWhen ), ::oControl:bWhen := bWhen, ) )
+
 END CLASS 
 
 //--------------------------------------------------------------------------//
@@ -774,8 +776,8 @@ METHOD Resource( oDlg ) CLASS GetCombo
 
    REDEFINE COMBOBOX ::oControl ;
       VAR      ::uValue ;
-      ITEMS    ::aValues ;
       ID       ::idCombo ;
+      ITEMS    ::aValues ;
       OF       oDlg
 
    ::oControl:bChange      := {|| ::Change() }
@@ -789,7 +791,7 @@ Return ( Self )
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 
-CLASS GetComboTarifa FROM GetCombo
+CLASS comboTarifa FROM GetCombo
 
    DATA idCombo
    DATA uValue                   INIT "Combo" 
@@ -808,7 +810,7 @@ END CLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD Build( hBuilder ) CLASS GetComboTarifa
+METHOD Build( hBuilder ) CLASS comboTarifa
 
    local idCombo     := if( hhaskey( hBuilder, "idCombo" ),    hBuilder[ "idCombo"   ], nil )
    local uValue      := if( hhaskey( hBuilder, "uValue"),      hBuilder[ "uValue"    ], nil )
@@ -829,7 +831,7 @@ METHOD getTarifa()
    local n
 
    for n := 1 to NUMERO_TARIFAS
-      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .and. alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == ::Value()
+      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .and. alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == ::VarGet()
          Return ( n )
       endif
    next
@@ -845,6 +847,13 @@ METHOD getTarifaNombre( nTarifa )
    if aScan( ::aValues, uFieldEmpresa( "cTxtTar" + alltrim( str( nTarifa ) ) ) ) != 0
       cTarifaNombre     := uFieldEmpresa( "cTxtTar" + alltrim( str( nTarifa ) ) )
    end if 
+
+   /*----Tarifa por defecto
+
+   else
+      cTarifaNombre     := ::aValues[1]
+
+   */
 
 Return ( cTarifaNombre )
 
