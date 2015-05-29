@@ -2386,10 +2386,10 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
-   oDataTable:cArea        := "DETCAMPOEXTRA"
-   oDataTable:cName        := cPatEmp() + "DETCAMPOEXTRA"
-   oDataTable:cDataFile    := cPatEmp( , .t. ) + "DETCAMPOEXTRA.DBF"
-   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "DETCAMPOEXTRA.CDX"
+   oDataTable:cArea        := "DETCEXTRA"
+   oDataTable:cName        := cPatEmp() + "DETCEXTRA"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "DETCEXTRA.DBF"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "DETCEXTRA.CDX"
    oDataTable:cDescription := "Detalle de campos extra"
    oDataTable:bCreateFile  := {| cPath | TDetCamposExtra():BuildFiles( .t., cPath ) }
    ::AddEmpresaTable( oDataTable )
@@ -5743,7 +5743,7 @@ CLASS D
    METHOD EstadoArticulo( nView )            INLINE ( ::Get( "EstadoSat", nView ) )
 
    METHOD CamposExtras( nView )              INLINE ( ::Get( "CAMPOEXTRA", nView ) )
-   METHOD DetCamposExtras( nView )           INLINE ( ::Get( "DETCAMPOEXTRA", nView ) )
+   METHOD DetCamposExtras( nView )           INLINE ( ::Get( "DETCEXTRA", nView ) )
 
    METHOD Pais( nView )                      INLINE ( ::Get( "Pais", nView ) )
 

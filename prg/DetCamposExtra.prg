@@ -98,18 +98,18 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TDetCamposExtra
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "DETCAMPOEXTRA.DBF" CLASS "DETCAMPOEXTRA" ALIAS "DETCAMPOEXTRA" PATH ( cPath ) VIA ( cDriver ) COMMENT "Detalle campos extra"
+   DEFINE DATABASE ::oDbf FILE "DETCEXTRA.DBF" CLASS "DETCEXTRA" ALIAS "DETCEXTRA" PATH ( cPath ) VIA ( cDriver ) COMMENT "Detalle campos extra"
       
       FIELD NAME "cTipDoc"       TYPE "C" LEN   2  DEC 0 COMMENT "Tipo documento"         HIDE           OF ::oDbf
       FIELD NAME "cCodTipo"      TYPE "C" LEN   3  DEC 0 COMMENT "Código"                 HIDE           OF ::oDbf
       FIELD NAME "cClave"        TYPE "C" LEN  20  DEC 0 COMMENT "Clave principal"        HIDE           OF ::oDbf
       FIELD NAME "cValor"        TYPE "C" LEN 250  DEC 0 COMMENT "Valor del campo"        HIDE           OF ::oDbf
 
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cTipDoc"      ON "cTipDoc"                        COMMENT "cTipDoc"                      NODELETED OF ::oDbf
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cCodTipo"     ON "cCodTipo"                       COMMENT "cCodTipo"                     NODELETED OF ::oDbf
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cClave"       ON "cClave"                         COMMENT "cClave"                       NODELETED OF ::oDbf
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cTipoClave"   ON "cCodTipo + cClave"              COMMENT "cCodTipo + cClave"            NODELETED OF ::oDbf
-      INDEX TO "DETCAMPOEXTRA.Cdx" TAG "cClaveTotal"  ON "cTipDoc + cCodTipo + cClave"    COMMENT "cTipDoc + cCodTipo + cClave"  NODELETED OF ::oDbf
+      INDEX TO "DETCEXTRA.Cdx" TAG "cTipDoc"      ON "cTipDoc"                        COMMENT "cTipDoc"                      NODELETED OF ::oDbf
+      INDEX TO "DETCEXTRA.Cdx" TAG "cCodTipo"     ON "cCodTipo"                       COMMENT "cCodTipo"                     NODELETED OF ::oDbf
+      INDEX TO "DETCEXTRA.Cdx" TAG "cClave"       ON "cClave"                         COMMENT "cClave"                       NODELETED OF ::oDbf
+      INDEX TO "DETCEXTRA.Cdx" TAG "cTipoClave"   ON "cCodTipo + cClave"              COMMENT "cCodTipo + cClave"            NODELETED OF ::oDbf
+      INDEX TO "DETCEXTRA.Cdx" TAG "cTotClave"    ON "cTipDoc + cCodTipo + cClave"    COMMENT "cTipDoc + cCodTipo + cClave"  NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -307,7 +307,7 @@ Return ( uValor )
 METHOD CargaValores( cClave ) CLASS TDetCamposExtra
 
    local nRec              := ::oDbf:Recno()
-   local nOrdAnt           := ::oDbf:OrdSetFocus( "cClaveTotal" )
+   local nOrdAnt           := ::oDbf:OrdSetFocus( "cTotClave" )
    local hCampos
    local cClavePrincipal
 
@@ -430,7 +430,7 @@ Return ( Self )
 METHOD RollBackValores( cClave ) CLASS TDetCamposExtra
 
    local nRec     := ::oDbf:Recno()
-   local nOrdAnt  := ::oDbf:OrdSetFocus( "cClaveTotal" )
+   local nOrdAnt  := ::oDbf:OrdSetFocus( "cTotClave" )
    local hCampos
    local cClavePrincipal
 
