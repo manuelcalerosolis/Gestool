@@ -105,8 +105,8 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _CNUMALB                  90
 #define _LOPERPV                  91
 #define _CBANCO                   92
-#define _CPAISIBAN 				  93
-#define _CCTRLIBAN 				  94
+#define _CPAISIBAN 				    93
+#define _CCTRLIBAN 				    94
 #define _CENTBNC                  95
 #define _CSUCBNC                  96
 #define _CDIGBNC                  97
@@ -8849,8 +8849,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    oMsgText( "Archivando" )
 
-   //oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   //BEGIN SEQUENCE
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    BeginTransaction()
 
@@ -9068,7 +9068,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    CommitTransaction()
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       RollBackTransaction()
       msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
@@ -9078,7 +9078,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    oMsgText()
 
-   EndProgress()*/
+   endProgress()
 
    /*
    Encendemos el dialogo-------------------------------------------------------

@@ -4477,14 +4477,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ] ;
          ID       122 ;
-         WHEN     ( !aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
          OF       fldWeb
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ] ;
          ID       123 ;
-         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
          OF       fldWeb
 
@@ -6375,14 +6375,16 @@ RETURN ( .t. )
 
 STATIC FUNCTION StdCol( lIvaInc, nMode )
 
-RETURN ( lIvaInc .and. nMode != ZOOM_MODE )
+RETURN ( nMode != ZOOM_MODE )
+
+// RETURN ( lIvaInc .and. nMode != ZOOM_MODE )
 
 //--------------------------------------------------------------------------//
 
 STATIC FUNCTION ActTitle( nKey, nFlags, aGet, nMode, oDlg )
 
 	aGet:assign()
-   oDlg:cTitle( LblTitle( nMode ) + " artículo : " + Rtrim( aGet:varGet() ) + Chr( nKey ) )
+   oDlg:cTitle( LblTitle( nMode ) + " artículo : " + rtrim( aGet:varget() ) ) // + Chr( nKey ) )
 
 RETURN NIL
 
@@ -8686,9 +8688,9 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
    local nIvaPct
    local nNewIva  := nPrePts
 
-   if lIvaInc
-      return .t.
-   end if
+   // if lIvaInc
+   //    return .t.
+   // end if
 
    if nCosto != 0
 
@@ -8770,11 +8772,9 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
 	local nIvaPct
    local nPreIva
 
-   //return .t.
-
-   if !lIvaInc
-      Return .t.
-   end if
+   // if !lIvaInc
+   //    Return .t.
+   // end if
 
    if IsChar( uTipIva )
       nIvaPct     := nIva( dbfIva, uTipIva )

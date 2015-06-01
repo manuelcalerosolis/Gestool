@@ -5499,7 +5499,6 @@ CLASS D
       METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
       METHOD GetPedidoClienteLineaBlank( nView )      INLINE ( ::getHashRecordBlank( ::PedidosClientesLineas( nView ), nView ) )
 
-
    METHOD PedidosClientesSituaciones( nView )            INLINE ( ::Get( "PedCliE", nView ) )
       METHOD PedidosClientesSituacionesId( nView )       INLINE ( ( ::Get( "PedCliE", nView ) )->cSerPed + str( ( ::Get( "PedCliE", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliE", nView ) )->cSufPed )
       METHOD PedidosClientesSituacionesIdText( nView )   INLINE ( ::Get( "PedCliE", nView ) )->cSerPed + "/" + Alltrim( Str( ( ::Get( "PedCliE", nView ) )->nNumPed ) )
