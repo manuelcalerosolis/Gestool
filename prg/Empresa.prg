@@ -99,9 +99,18 @@ static cGrupoNFC
 static oGetPlantillaDefecto
 static cGetPlantillaDefecto
 
+static oGetPrecioVenta
+static oGetPrecioWebVenta
+static oGetPrecioProducto
+static oGetPrecioCombinado
+
+static aNombresTarifas 
+
 static oCmbContabilidad
 static cCmbContabilidad        
-static aCmbContabilidad        := { "Contaplus", "A3 CON" }        
+static aCmbContabilidad        := { "Contaplus", "A3 CON" }   
+
+static NUMERO_TARIFAS          := 6     
 
 //----------------------------------------------------------------------------//
 
@@ -1855,8 +1864,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR6 ] VAR aTmp[ _LSHWTAR6 ] ;
-         ID       600 ;
-         OF       fldArticulos
+         ID          600 ;
+         OF          fldArticulos
 
       REDEFINE GET aGet[ _CTXTTAR6 ] VAR aTmp[ _CTXTTAR6 ] ;
          ID       610;
@@ -1877,37 +1886,76 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       630;
          OF       fldArticulos
 
-      REDEFINE GET aGet[ _NPREVTA ] VAR aTmp[ _NPREVTA ] ;
-         ID       800 ;
-         SPINNER ;
-         MIN      0 ;
-         MAX      6 ;
-         PICTURE  "9" ;
-         OF       fldArticulos
+         /*
+         Precio Venta------------------------------
+         */
 
-      REDEFINE GET aGet[ _NPREWEBVTA ] VAR aTmp[ _NPREWEBVTA ] ;
+         oGetPrecioVenta   := comboTarifa():Build( { "idCombo" => 800, "uValue" => aTmp[ _NPREVTA ] } )
+         oGetPrecioVenta:Resource( fldArticulos )
+
+         /*
+         ------------------------------------------
+         */
+
+      /*REDEFINE GET aGet[ _NPREWEBVTA ] VAR aTmp[ _NPREWEBVTA ] ;
          ID       810 ;
          SPINNER ;
          MIN      0 ;
          MAX      6 ;
          PICTURE  "9" ;
-         OF       fldArticulos
+         OF       fldArticulos*/
 
-      REDEFINE GET aGet[ _NPRETPRO ] VAR aTmp[ _NPRETPRO ] ;
+         /*
+         Precio venta web--------------------------
+         */
+
+         oGetPrecioWebVenta   := comboTarifa():Build( { "idCombo" => 810, "uValue" => aTmp[ _NPREWEBVTA ] } )
+         oGetPrecioWebVenta:Resource( fldArticulos )
+
+         /*
+         ------------------------------------------
+         */
+
+
+      /*REDEFINE GET aGet[ _NPRETPRO ] VAR aTmp[ _NPRETPRO ] ;
          ID       740 ;
          SPINNER ;
          MIN      0 ;
          MAX      6 ;
          PICTURE  "9" ;
-         OF       fldArticulos
+         OF       fldArticulos*/
 
-      REDEFINE GET aGet[ _NPRETCMB ] VAR aTmp[ _NPRETCMB ] ;
+         /*
+         Precio Producto----------------------------
+         */
+
+         oGetPrecioProducto   := comboTarifa():Build( { "idCombo" => 740, "uValue" => aTmp[ _NPRETPRO ] } )
+         oGetPrecioProducto:Resource( fldArticulos )
+
+         /*
+         -------------------------------------------
+         */
+
+
+
+      /*REDEFINE GET aGet[ _NPRETCMB ] VAR aTmp[ _NPRETCMB ] ;
          ID       750 ;
          SPINNER ;
          MIN      0 ;
          MAX      6 ;
          PICTURE  "9" ;
-         OF       fldArticulos
+         OF       fldArticulos*/
+
+         /*
+         Precio de Combinado-------------------------
+         */
+
+         oGetPrecioCombinado    := comboTarifa():Build( { "idCombo" => 750, "uValue" => aTmp[ _NPRETCMB ] } )
+         oGetPrecioCombinado:Resource( fldArticulos )
+
+         /*
+         --------------------------------------------
+         */
 
       REDEFINE CHECKBOX aGet[ _LBULTOS ] VAR aTmp[ _LBULTOS ] ;
          ID       450 ;
@@ -5249,9 +5297,9 @@ Return ( lCopy )
 
 STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oFld, oDlg, oBtnOk, oBrwDet, dbfEmp, nMode )
 
-   local cCodEmp  := aTmp[ _CODEMP ]
+   local cCodEmp           := aTmp[ _CODEMP ]
 
-   cNewEmpresa    := aTmp[ _CODEMP ]
+   cNewEmpresa             := aTmp[ _CODEMP ]
 
    if nMode == APPD_MODE
 
@@ -5738,6 +5786,30 @@ Static Function SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode )
    aTmp[ _NCIFRUT ]     := oSay[ 42 ]:nAt
 
    aTmp[ _NTIEMPOPED ]  := cCadenaToTiempo( cTiempoPed )
+
+   if !empty( oGetPrecioVenta )
+      aTmp[ _NPREVTA ]        := oGetPrecioVenta:getTarifa()
+   else
+      aTmp[ _NPREVTA ]        := 1
+   endif
+
+   if !empty( oGetPrecioWebVenta )
+      aTmp[ _NPREWEBVTA ]     := oGetPrecioWebVenta:getTarifa()
+   else
+      aTmp[ _NPREWEBVTA ]     := 1
+   endif
+
+   if !empty( oGetPrecioProducto )
+      aTmp[ _NPRETPRO ]       := oGetPrecioProducto:getTarifa()
+   else
+      aTmp[ _NPRETPRO ]       := 1
+   endif
+
+   if !empty( oGetPrecioCombinado )
+      aTmp[ _NPRETCMB ]       := oGetPrecioCombinado:getTarifa() 
+   else
+      aTmp[ _NPRETCMB ]       := 1
+   endif
 
    // Pasamos los contadores---------------------------------------------------
 
@@ -7692,3 +7764,21 @@ function ActualizaEstructuras( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
 RETURN nil
 
 //---------------------------------------------------------------------------//
+
+function aNombresTarifas( aTmp ) 
+
+   local n                
+   
+   aNombresTarifas   := {}
+   
+   for n := 1 to NUMERO_TARIFAS
+
+      if aTmp[ "_lShwTar" + alltrim( str( n ) ) ] 
+         aadd( aNombresTarifas, ( if ( !empty( aTmp[ "_cTxtTar" + alltrim( str( n ) ) ] ), aTmp[ "_cTxtTar" + alltrim( str( n ) ) ], "Precio " + alltrim( str( n ) ) ) ) )
+      endif
+
+   next
+
+return ( aNombresTarifas )
+
+//----------------------------------------------------------------------------//
