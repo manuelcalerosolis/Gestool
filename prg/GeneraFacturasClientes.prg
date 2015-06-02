@@ -1342,8 +1342,13 @@ METHOD appendLineasAlbaran( oItem ) CLASS GeneraFacturasClientes
             ( D():FacturasClientesLineas( ::nView ) )->lNotVta    := ( D():AlbaranesClientesLineas( ::nView ) )->lNotVta
             ( D():FacturasClientesLineas( ::nView ) )->lImpLin    := ( D():AlbaranesClientesLineas( ::nView ) )->lImpLin
             ( D():FacturasClientesLineas( ::nView ) )->nValImp    := ( D():AlbaranesClientesLineas( ::nView ) )->nValImp
-            ( D():FacturasClientesLineas( ::nView ) )->lIvaLin    := ( D():AlbaranesClientesLineas( ::nView ) )->lIvaLin
-            ( D():FacturasClientesLineas( ::nView ) )->nPreUnit   := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit
+
+            if ( D():AlbaranesClientesLineas( ::nView ) )->lIvaLin
+               ( D():FacturasClientesLineas( ::nView ) )->nPreUnit   := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit / ( 1 + ( ( D():AlbaranesClientesLineas( ::nView ) )->nIva / 100 ) )
+            else
+               ( D():FacturasClientesLineas( ::nView ) )->nPreUnit   := ( D():AlbaranesClientesLineas( ::nView ) )->nPreUnit
+            end if
+
             ( D():FacturasClientesLineas( ::nView ) )->cImagen    := ( D():AlbaranesClientesLineas( ::nView ) )->cImagen
             ( D():FacturasClientesLineas( ::nView ) )->cCodFam    := ( D():AlbaranesClientesLineas( ::nView ) )->cCodFam
             ( D():FacturasClientesLineas( ::nView ) )->cGrpFam    := ( D():AlbaranesClientesLineas( ::nView ) )->cGrpFam
