@@ -6686,6 +6686,13 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       end with
 
       with object ( oBrwPrp1:AddCol() )
+         :cHeader          := "Codigo"
+         :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cValPrp }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
+      with object ( oBrwPrp1:AddCol() )
          :cHeader          := retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro )
          :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cDesPrp }
          :nWidth           := if( lColorPrp1, 103, 119 )
@@ -6740,6 +6747,13 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          :bEditValue       := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:lSel, .f. ) }
          :nWidth           := 16
          :SetCheck( { "BSEL", "Nil16" } )
+      end with
+
+      with object ( oBrwPrp2:AddCol() )
+         :cHeader          := "Codigo"
+         :bStrData         := {|| aValPrp2[ oBrwPrp2:nArrayAt ]:cValPrp }
+         :nWidth           := 100
+         :lHide            := .t.
       end with
 
       with object ( oBrwPrp2:AddCol() )
