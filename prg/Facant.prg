@@ -2381,6 +2381,13 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli )
 
    if ( dbfCli )->( dbSeek( cNewCodCli ) )
 
+      if ( dbfCli )->lBlqCli
+         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+                  "Motivo: " + AllTrim( ( dbfCli )->cMotBlq ),;
+                  "Imposible archivar" )
+         return .f.
+      end if
+
       /*
       Si tenemos parcado en la empresa que mostremos el saldo pendiente del cliente
       */

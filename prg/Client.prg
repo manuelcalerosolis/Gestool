@@ -8916,7 +8916,7 @@ RETURN ( aBase )
 
 //----------------------------------------------------------------------------//
 /*
-Devuelve si el cliente tiene autorización para ventas de credito
+Devuelve si el cliente está bloqueado
 */
 
 FUNCTION lCliBlq( cCodCli, dbfCli )

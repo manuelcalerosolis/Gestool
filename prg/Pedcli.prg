@@ -8805,7 +8805,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    */
 
    if lCliBlq( aTmp[ _CCODCLI ], D():Clientes( nView ) )
-      msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta." )
+      msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta." + CRLF + ;
+                  "Motivo: " + AllTrim( RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "cMotBlq" ) ),;
+                  "Imposible archivar" )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if

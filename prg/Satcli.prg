@@ -6725,7 +6725,9 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
    if ( D():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
 
       if ( D():Clientes( nView ) )->lBlqCli
-         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
+         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+                  "Motivo: " + AllTrim( ( D():Clientes( nView ) )->cMotBlq ),;
+                  "Imposible archivar" )
          return .f.
       end if
 

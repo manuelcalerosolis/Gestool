@@ -9441,7 +9441,9 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode )
          ShowIncidenciaCliente( ( D():Get( "Client", nView ) )->Cod, nView )
 
          if ( D():Get( "Client", nView ) )->lBlqCli
-            msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" , "Imposible archivar como albarán" )
+            msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+                     "Motivo: " + AllTrim( ( D():Get( "Client", nView ) )->cMotBlq ),;
+                     "Imposible archivar" )
          end if
 
          if !( D():Get( "Client", nView ) )->lChgPre
@@ -11440,7 +11442,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    end if
 
    if lCliBlq( aTmp[ _CCODCLI ], D():Get( "Client", nView ) )
-      msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" , "Imposible archivar como albarán" )
+      msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta"  + CRLF + ;
+               "Motivo: " + AllTrim( RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "cMotBlq" ) ),;
+               "Imposible archivar como albarán" )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if

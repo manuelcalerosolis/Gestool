@@ -24327,9 +24327,13 @@ Static Function lClienteBloqueado( aGet, cCliente )
    if lCliBlq( cCliente, D():Clientes( nView ) )
          
       if ( "TABLET" $ cParamsMain() )
-         apoloMsgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta")
+         apoloMsgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+                  "Motivo: " + AllTrim( RetFld( cCliente, D():Clientes( nView ), "cMotBlq" ) ),;
+                  "Imposible archivar" )
       else
-         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
+         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+                  "Motivo: " + AllTrim( RetFld( cCliente, D():Clientes( nView ), "cMotBlq" ) ),;
+                  "Imposible archivar" )
       end if
 
       if !Empty( aGet[ _CCODCLI ] )
