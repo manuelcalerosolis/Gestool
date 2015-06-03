@@ -6667,11 +6667,12 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       oBrwPrp1:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp1:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwPrp1:SetArray( aValPrp1, , , .f. )
+      oBrwPrp1:SetArray( aValPrp1, .t., , .f. )
 
       oBrwPrp1:nMarqueeStyle          := 5
       oBrwPrp1:lRecordSelector        := .f.
       oBrwPrp1:lHScroll               := .f.
+      oBrwPrp1:cName                  := "Articulo.Propiedad1"
 
       oBrwPrp1:CreateFromResource( 100 )
 
@@ -6686,17 +6687,18 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       end with
 
       with object ( oBrwPrp1:AddCol() )
-         :cHeader          := "Codigo"
+         :cHeader          := "Código"
          :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cValPrp }
-         :nWidth           := 100
+         :nWidth           := 25
          :lHide            := .t.
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp1 ) }
       end with
 
       with object ( oBrwPrp1:AddCol() )
          :cHeader          := retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro )
          :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cDesPrp }
          :nWidth           := if( lColorPrp1, 103, 119 )
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCol:SortArrayData() }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp1, AllTrim( retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro ) ) ) }
       end with
 
       if lColorPrp1
@@ -6731,11 +6733,12 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       oBrwPrp2:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp2:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwPrp2:SetArray( aValPrp2, , , .f. )
+      oBrwPrp2:SetArray( aValPrp2, .t., , .f. )
 
       oBrwPrp2:nMarqueeStyle          := 5
       oBrwPrp2:lRecordSelector        := .f.
       oBrwPrp2:lHScroll               := .f.
+      oBrwPrp1:cName                  := "Articulo.Propiedad2"
 
       oBrwPrp2:CreateFromResource( 110 )
 
@@ -6750,17 +6753,19 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       end with
 
       with object ( oBrwPrp2:AddCol() )
-         :cHeader          := "Codigo"
+         :cHeader          := "Código"
          :bStrData         := {|| aValPrp2[ oBrwPrp2:nArrayAt ]:cValPrp }
          :nWidth           := 100
          :lHide            := .t.
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp2 ) }
       end with
 
       with object ( oBrwPrp2:AddCol() )
          :cHeader          := if( Len( aValPrp2 ) != 0, retFld( aValPrp2[ oBrwPrp2:nArrayAt ]:cCodPrp, dbfPro ), "" )
          :bStrData         := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:cDesPrp, "" ) }
          :nWidth           := if( lColorPrp2, 103, 119 )
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCol:SortArrayData() }
+         :cOrder           := "A"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp2, AllTrim( retFld( aValPrp2[ oBrwPrp2:nArrayAt ]:cCodPrp, dbfPro ) ) ) }
       end with
 
       if lColorPrp2
@@ -7320,6 +7325,43 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+static function cOrdenBrwPropiedades( oCol, oBrw, cOrden )
+
+   local oColumn
+
+   if !Empty( oBrw)
+
+      do case
+         case AllTrim( oCol:cHeader ) == cOrden
+
+            aSort( oBrw:aArrayData, , , {|x,y| x:cDesPrp < y:cDesPrp } )
+
+            for each oColumn in oBrw:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := cOrden
+
+         case AllTrim( oCol:cHeader ) == "Código"
+
+            aSort( oBrw:aArrayData, , , {|x,y| x:cValPrp < y:cValPrp } )
+
+            for each oColumn in oBrw:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := "Código"
+
+      end case
+
+      oBrw:Refresh()
+
+   end if
+
+return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -8095,6 +8137,14 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
          SetWindowText( oBtnCancel:hWnd, "Cancelar" )
       end if
 
+   end if
+
+   if !Empty( oBrwPrp1 )
+      oBrwPrp1:Load()
+   end if
+
+   if !Empty( oBrwPrp2 )
+      oBrwPrp2:Load()
    end if
 
    if !Empty( oBrwPrp1 ) .and. !Empty( oTodasPrp1 ) .and. !Empty( oNingunaPrp1 )
