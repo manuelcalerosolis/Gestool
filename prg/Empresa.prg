@@ -104,8 +104,6 @@ static oGetPrecioWebVenta
 static oGetPrecioProducto
 static oGetPrecioCombinado
 
-static aNombresTarifas 
-
 static oCmbContabilidad
 static cCmbContabilidad        
 static aCmbContabilidad        := { "Contaplus", "A3 CON" }   
@@ -7765,20 +7763,3 @@ RETURN nil
 
 //---------------------------------------------------------------------------//
 
-function aNombresTarifas( aTmp ) 
-
-   local n                
-   
-   aNombresTarifas   := {}
-   
-   for n := 1 to NUMERO_TARIFAS
-
-      if aTmp[ "_lShwTar" + alltrim( str( n ) ) ] 
-         aadd( aNombresTarifas, ( if ( !empty( aTmp[ "_cTxtTar" + alltrim( str( n ) ) ] ), aTmp[ "_cTxtTar" + alltrim( str( n ) ) ], "Precio " + alltrim( str( n ) ) ) ) )
-      endif
-
-   next
-
-return ( aNombresTarifas )
-
-//----------------------------------------------------------------------------//
