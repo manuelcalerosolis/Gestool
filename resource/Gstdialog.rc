@@ -1551,9 +1551,9 @@ ART_WEB DIALOG DISCARDABLE 36, 16, 496, 286
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Publicar este artículo en la página web", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 38, 141, 10
-  CONTROL "Producto destacado", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 64, 50, 77, 10
-  CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 416, 37, 70, 12
+  CONTROL "Publicar este artículo en la página web", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 39, 141, 10
+  CONTROL "Producto destacado", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 64, 51, 77, 10
+  CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 417, 37, 70, 12
   CONTROL "Sobre precio", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 79, 54, 10
   CONTROL "", 150, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 106, 76, 76, 71
   CONTROL "", 120, "Edit", ES_RIGHT|ES_MULTILINE|WS_BORDER, 106, 92, 56, 12
@@ -1565,7 +1565,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 190, "Edit", ES_MULTILINE|WS_BORDER, 106, 255, 383, 12
   CONTROL "Caracteristicas técnicas", -1, "Button", BS_GROUPBOX, 44, 109, 448, 118
   CONTROL "Precios y ofertas para la web", -1, "Button", BS_GROUPBOX, 44, 65, 447, 43
-  CONTROL "Código web", -1, "Static", WS_GROUP, 351, 40, 40, 8
+  CONTROL "Código web", -1, "Static", WS_GROUP, 351, 41, 40, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 3, 4, 34, 30
   CONTROL "Configuración para el artículo en la web", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
   CONTROL "Precios de tarifas", -1, "Static", WS_GROUP, 48, 95, 56, 8

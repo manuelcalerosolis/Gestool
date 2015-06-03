@@ -4445,18 +4445,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldWeb
 
-   /*sz
-   Tarifas-----------------------------------
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
+      VAR   aTmp[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
+      ID    210 ;
+      PICTURE  "999999" ;
+      WHEN  ( .f. ) ;
+      OF    fldWeb
+
+   /*
+   Tarifas---------------------------------------------------------------------
    */
 
    oGetTarWeb  := comboTarifa():Build( { "idCombo" => 150, "uValue" => aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] } )
    oGetTarWeb:Resource( fldWeb )
    oGetTarWeb:setWhen( {|| nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] } )
    oGetTarWeb:setChange( {|| ChangeTarWeb( aGet, aTmp ), CalDtoWeb( aGet, aTmp ) } )
-
-   /*
-   -------------------------------------------
-   */
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
