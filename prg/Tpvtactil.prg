@@ -880,7 +880,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    if ::l1024()
       ::cResource             := "TpvTactil"
       ::lImagenArticulos      := !uFieldEmpresa( "lImgArt" )
-   else 
+   else
       ::cResource             := "TpvTactilSmall"
       ::lImagenArticulos      := .f.
    end if   
@@ -2054,10 +2054,11 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Led_green_32" )
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
-   ::oBtnBalanza                 := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() },          ::oDlg, , , .f., , , , .f., "scales_32" )
 
    if !::l1024() 
       ::oBtnSSalir               := TButtonBmp():ReDefine( 509, {|| ::oDlg:End },                  ::oDlg, , , .f., , , , .f., "End32" )
+   else
+      ::oBtnBalanza              := TButtonBmp():ReDefine( 510, {|| ::GetPesoBalanza() },          ::oDlg, , , .f., , , , .f., "scales_32" )
    end if
 
    /*
@@ -2271,7 +2272,9 @@ METHOD Resource() CLASS TpvTactil
    Get para las busquedas de códigos de barras------------------------------
    */
 
-   ::oBtnPrecioUnidades       := TButtonBmp():ReDefine( 601, {|| ::CambiarUnidadesPrecio() }, ::oDlg, , , .f., , , , .f., "Paginator_32" )
+   if ::l1024()
+      ::oBtnPrecioUnidades       := TButtonBmp():ReDefine( 601, {|| ::CambiarUnidadesPrecio() }, ::oDlg, , , .f., , , , .f., "Paginator_32" )
+   end if
 
    REDEFINE GET ::oGetUnidades VAR ::cGetUnidades;
       ID       600 ;
@@ -2433,7 +2436,7 @@ METHOD Resource() CLASS TpvTactil
       ::oBtnSSalon            := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
       ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntrega() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
       ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )
-      ::oBtnPrecioUnidades    := TButtonBmp():ReDefine( 601, {|| ::CambiarUnidadesPrecio() }, ::oDlg, , , .f., , , , .f., "Paginator_32" )   
+      //::oBtnPrecioUnidades    := TButtonBmp():ReDefine( 601, {|| ::CambiarUnidadesPrecio() }, ::oDlg, , , .f., , , , .f., "Paginator_32" )   
    end if
 
    /*
@@ -2816,13 +2819,18 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnPrintDocumento:Move( ::oBtnPrintDocumento:nTop + nDialogHeight, ::oBtnPrintDocumento:nLeft + nDialogWidth, , , .f. )
 
    ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f.)
-   ::oBtnBalanza:Move( ::oBtnBalanza:nTop + nDialogHeight, ::oBtnBalanza:nLeft + nDialogWidth, , , .f.)
+   
+   if !Empty( ::oBtnBalanza )
+      ::oBtnBalanza:Move( ::oBtnBalanza:nTop + nDialogHeight, ::oBtnBalanza:nLeft + nDialogWidth, , , .f.)
+   end if
    
    if !Empty( ::oBtnSSalir )
       ::oBtnSSalir:Move( ::oBtnSSalir:nTop + nDialogHeight, ::oBtnSSalir:nLeft + nDialogWidth, , , .f.)
    end if   
 
-   ::oBtnPrecioUnidades:Move( ::oBtnPrecioUnidades:nTop + nDialogHeight, ::oBtnPrecioUnidades:nLeft + nDialogWidth, , , .f. )
+   if !Empty( ::oBtnPrecioUnidades )
+      ::oBtnPrecioUnidades:Move( ::oBtnPrecioUnidades:nTop + nDialogHeight, ::oBtnPrecioUnidades:nLeft + nDialogWidth, , , .f. )
+   end if
 
    ::oGetUnidades:Move( ::oGetUnidades:nTop + nDialogHeight, ::oGetUnidades:nLeft + nDialogWidth, , , .f. )
 
