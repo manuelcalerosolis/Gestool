@@ -2974,22 +2974,15 @@ METHOD isEntradaAlbaranProveedor( cCodArt, cLote, cDatoRequerido )
 
    local sStatusAlbaranProveeedor
    local isEntradaAlbaranProveedor  := .f.
+   local cReferencia    := Padr( cCodArt, 18 ) + Padr( cLote, 12 )
    
    sStatusAlbaranProveeedor   := ::oAlbPrvL:getStatus()
-   ::oAlbPrvL:ordSetFocus(  "cRef" )
+   ::oAlbPrvL:ordSetFocus(  "cRefLote" )
 
-   if ::oAlbPrvL:Seek( cCodArt)
+   if ::oAlbPrvL:Seek( cReferencia)
 
-      while ( alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
+      isEntradaAlbaranProveedor := .t.
 
-         if alltrim( ::oAlbPrvL:cLote ) == cLote
-            isEntradaAlbaranProveedor := .t.
-            exit
-         end if
-
-            ::oAlbPrvL:skip()
-
-      end while
    end if  
 
    ::oAlbPrvL:setStatus( sStatusAlbaranProveeedor )
@@ -3004,27 +2997,27 @@ METHOD GetDatoAlbaranProveedor( cCodArt, cLote, cCampoRequerido )
    local dFechaAlbaran  := date()
    local dFechadocumento 
    local uCampoRequerido
+   local cReferencia    := Padr( cCodArt, 18 ) + Padr( cLote, 12 )
 
    aStatusAlbaranProveeedor   := ::oAlbPrvL:getStatus()
-   ::oAlbPrvL:OrdSetFocus( "cRef" )
+   ::oAlbPrvL:OrdSetFocus( "cRefLote" )
 
-   if ::oAlbPrvL:Seek( cCodArt)
+   if ::oAlbPrvL:Seek( cReferencia )
 
-      while ( alltrim( ::oAlbPrvL:cRef ) == cCodArt ) .and. !( ::oAlbPrvL:Eof() )
-         if alltrim( ::oAlbPrvL:cLote ) == cLote
-            dFechaDocumento := ::oAlbPrvL:dFecAlb
+      while ( alltrim( ::oAlbPrvL:cRef ) + alltrim( ::oAlbPrvL:cLote ) ) == ( alltrim( cCodArt ) + alltrim( cLote ) ).and. !( ::oAlbPrvL:Eof() )
 
-            if dFechaAlbaran >= dFechaDocumento
-               dFechaAlbaran    := dFechaDocumento 
+         dFechaDocumento := ::oAlbPrvL:dFecAlb
 
-               if !empty(cCampoRequerido) .and. ( ::oAlbPrvL:fieldpos(cCampoRequerido) != 0 )
-                  uCampoRequerido   := ::oAlbPrvL:fieldgetbyname( cCampoRequerido)
-               end if 
-               
+         if dFechaAlbaran >= dFechaDocumento
+            dFechaAlbaran    := dFechaDocumento 
+
+            if !empty(cCampoRequerido) .and. ( ::oAlbPrvL:fieldpos(cCampoRequerido) != 0 )
+               uCampoRequerido   := ::oAlbPrvL:fieldgetbyname( cCampoRequerido)
             end if 
-         end if
+               
+         end if 
 
-         ::oAlbPrvL:skip()
+      ::oAlbPrvL:skip()
 
       end while
    end if  
@@ -3042,22 +3035,14 @@ METHOD isEntradaMovimientoAlmacen( cCodArt, cLote )
 
    local aStatusMovimientosAlmacen
    local isEntradaMovimientoAlmacen := .f.
-
+   local cReferencia := Padr( cCodArt, 18 ) + padr( " ", 80 ) + Padr( cLote, 12 )
 
    aStatusMovimientosAlmacen := ::oHisMov:getStatus()
-   ::oHisMov:OrdSetFocus( "cRef" )
+   ::oHisMov:OrdSetFocus( "cRefMov" )
 
-   if ::oHisMov:Seek( cCodArt )
+   if ::oHisMov:Seek( cReferencia )
 
-      while ( alltrim( ::oHisMov:cRefMov ) ) == alltrim( cCodArt ) .and. !( ::oHisMov:Eof() )
-      //   if (alltrim( ::oHisMov:cAliMov ) == alltrim( cCodAlm ) ) .and. ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
-         if ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
-            isEntradaMovimientoAlmacen := .t.
-            exit
-         end if
-         ::oHisMov:skip()
-
-      end while
+      isEntradaMovimientoAlmacen := .t.
 
    end if
 
@@ -3072,28 +3057,27 @@ METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
    local dFechaMovimiento    := date()
    local dFechaDocumento 
    local uCampoRequerido
+   local cReferencia := Padr( cCodArt, 18 ) + padr( " ", 80 ) + Padr( cLote, 12 )
 
    aStatusMovimientosAlmacen := ::oHisMov:getStatus()
-   ::oHisMov:OrdSetFocus( "cRef" )
+   ::oHisMov:OrdSetFocus( "cRefMov" )
 
-   if ::oHisMov:Seek( cCodArt )
+   if ::oHisMov:Seek( cReferencia )
 
-      while ( alltrim( ::oHisMov:cRefMov ) ) == alltrim( cCodArt ) .and. !( ::oHisMov:Eof() )
-         if ( alltrim( ::oHisMov:cLote ) == alltrim( cLote ) )
-            dFechaDocumento         := ::oHisMov:dFecMov   
+      while ( alltrim( ::oHisMov:cRefMov ) + alltrim( ::oHisMov:cLote ) == alltrim( cCodArt ) + alltrim( cLote ) ) .and. !( ::oHisMov:Eof() )
 
-            if dFechaMovimiento >= dFechaDocumento
-               dFechaMovimiento     := dFechaDocumento 
+         dFechaDocumento         := ::oHisMov:dFecMov   
 
-               if !empty( cCampoRequerido ) .and. ( ::oHisMov:fieldpos( cCampoRequerido ) != 0 )
-                  uCampoRequerido   := ::oHisMov:fieldgetbyname( cCampoRequerido )
-               end if
-                
+         if dFechaMovimiento >= dFechaDocumento
+            dFechaMovimiento     := dFechaDocumento 
+
+            if !empty( cCampoRequerido ) .and. ( ::oHisMov:fieldpos( cCampoRequerido ) != 0 )
+               uCampoRequerido   := ::oHisMov:fieldgetbyname( cCampoRequerido )
             end if
-
+                
          end if
 
-         ::oHisMov:skip()
+      ::oHisMov:skip()
 
       end while
 
