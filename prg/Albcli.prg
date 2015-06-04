@@ -997,6 +997,13 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TLabelGeneratorAlbaranClientes():New( nView ):Dialog() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
+
    DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TFastVentasArticulos():New():Play( ALB_CLI ) ) ;
@@ -1226,6 +1233,8 @@ STATIC FUNCTION OpenFiles()
 
       nView             := D():CreateView()
 
+      D():GetObject( "UnidadMedicion", nView )
+
       /*
       Tablas de albaranes de clientes------------------------------------------
       */
@@ -1318,6 +1327,8 @@ STATIC FUNCTION OpenFiles()
       D():ArticuloLenguaje( nView )  
 
       D():AlbaranesClientesSituaciones( nView )  
+
+      D():ImpuestosEspeciales( nView )
 
       // Aperturas ------------------------------------------------------------
 
@@ -17022,6 +17033,8 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "cFormato",  "C",100, 0, "Formato de venta",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "tFecAlb" ,  "C",  6, 0, "Hora del albarán",                                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCtrCoste", "C",  9, 0, "Codigo del centro de coste",                      "CentroCoste",                   "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "lLabel",    "L",  1, 0, "Lógico para marca de etiqueta",                   "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "nLabel",    "N",  6, 0, "Unidades de etiquetas a imprimir",                "",                              "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
@@ -18623,3 +18636,67 @@ Function nTotalSaldoAlbCli16( cCodCli, dFecAlb )
 Return oStock:nTotalSaldo( Padr("16", 18 ), cCodCli, dFecAlb )
 
 //---------------------------------------------------------------------------//
+
+Function DesignLabelAlbaranClientes( oFr, cDoc )
+
+   local oLabel   := TLabelGeneratorAlbaranClientes():New( nView )
+
+   if oLabel:lErrorOnCreate
+      Return .f.
+   end if 
+
+   if !oLabel:lCreateTempReport()
+      Return .f.
+   end if 
+
+   /*
+   Zona de datos---------------------------------------------------------
+   */
+   oLabel:DataLabel( oFr, .f. )
+
+   /*
+   Paginas y bandas------------------------------------------------------
+   */
+
+   if !Empty( ( cDoc )->mReport )
+
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+
+   else
+
+      oFr:AddPage(         "MainPage" )
+
+      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de albaranes" )
+
+   end if
+
+   /*
+   Diseño de report------------------------------------------------------
+   */
+
+   oFr:DesignReport()
+
+   /*
+   Destruye el diseñador-------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   /*
+   Destruye el fichero temporal------------------------------------------------
+   */
+
+   oLabel:DestroyTempReport()
+
+   /*
+   Cierra ficheros-------------------------------------------------------
+   */
+
+   oLabel:End()
+
+Return .t.
+
+//--------------------------------------------------------------------------//

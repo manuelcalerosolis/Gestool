@@ -226,6 +226,7 @@ static aTipDoc     := {  "Artículos [Etiquetas]",;
                          "Ofertas de artículos [Etiquetas]",;
                          "Producción [Etiquetas]",;
                          "Pedido de proveedores [Etiquetas]",;
+                         "Albaran de clientes [Etiquetas]",;
                          "Pedido proveedores",;
                          "Albarán proveedores",;
                          "Factura proveedores",;
@@ -249,7 +250,7 @@ static aTipDoc     := {  "Artículos [Etiquetas]",;
                          "Expedientes",;
                          "Arqueo de sesiones",;
                          "Pagos de clientes",;
-                         "Liquidación de agentes"}
+                         "Liquidación de agentes" }
 
 static aCodDoc     := {  "AR",;
                          "CL",;
@@ -260,6 +261,7 @@ static aCodDoc     := {  "AR",;
                          "OF",;
                          "LP",;
                          "PE",;
+                         "AB",;
                          "PP",;
                          "AP",;
                          "FP",;
@@ -3863,14 +3865,14 @@ Return nil*/
 		REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
-         ACTION   ( WinAppRec( oBrw, bEdit0, dbfDoc, cTipDoc ) )
+         ACTION   ( addRecDocument( dbfDoc, oBrw, bEdit0, cTipDoc ) )
 
 		REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
          ACTION   ( VisualEdtDocs( dbfDoc ) ) 
 
-      oDlg:AddFastKey( VK_F2,       {|| WinAppRec( oBrw, bEdit0, dbfDoc, cTipDoc ) } )
+      oDlg:AddFastKey( VK_F2,       {|| addRecDocument( dbfDoc, oBrw, bEdit0, cTipDoc ) } )
       oDlg:AddFastKey( VK_F3,       {|| VisualEdtDocs( dbfDoc ) } )
 
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
@@ -3905,6 +3907,19 @@ Return nil*/
    CloseFiles()
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+Function addRecDocument( dbfDoc, oBrw, bEdit0, cTipDoc )
+
+      DestroyFastFilter( dbfDoc )
+      
+      WinAppRec( oBrw, bEdit0, dbfDoc, cTipDoc )
+
+      ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == cTipDoc }, "cTipo == '" + cTipDoc + "'" ) )
+      ( dbfDoc )->( dbGoTop() )
+
+Return( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -4084,6 +4099,9 @@ Static Function VisualEdtDocs( dbfDoc )
 
       case cTipo == "PE"
          DesignLabelPedidoProveedores( oFr, dbfDoc )
+
+      case cTipo == "AB"
+         DesignLabelAlbaranClientes( oFr, dbfDoc )
 
       case cTipo == "PP"
          DesignReportPedPrv( oFr, dbfDoc )

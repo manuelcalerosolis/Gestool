@@ -5426,6 +5426,12 @@ CLASS D
    METHOD AlbaranesClientesCobros( nView )            INLINE ( ::Get( "AlbCliP", nView ) )
       METHOD AlbaranesClientesCobrosId( nView )       INLINE ( ( ::Get( "AlbCliP", nView ) )->cSerAlb + str( ( ::Get( "AlbCliP", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliP", nView ) )->cSufAlb )
 
+   METHOD AlbaranesClientesIncidencias( nView )            INLINE ( ::Get( "AlbCliI", nView ) )
+      METHOD AlbaranesClientesIncidenciasId( nView )       INLINE ( ( ::Get( "AlbCliI", nView ) )->cSerAlb + str( ( ::Get( "AlbCliI", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliI", nView ) )->cSufAlb )
+
+   METHOD AlbaranesClientesDocumentos( nView )             INLINE ( ::Get( "AlbCliD", nView ) )
+      METHOD AlbaranesClientesDocumentosId( nView )        INLINE ( ( ::Get( "AlbCliD", nView ) )->cSerAlb + str( ( ::Get( "AlbCliD", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliD", nView ) )->cSufAlb )
+
    METHOD AlbaranesClientesSituaciones( nView )            INLINE ( ::Get( "AlbCliE", nView ) )
       METHOD AlbaranesClientesSituacionesId( nView )       INLINE ( ( ::Get( "AlbCliE", nView ) )->cSerAlb + str( ( ::Get( "AlbCliE", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliE", nView ) )->cSufAlb )
       METHOD AlbaranesClientesSituacionesIdText( nView )   INLINE ( ::Get( "AlbCliE", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliE", nView ) )->nNumAlb ) )

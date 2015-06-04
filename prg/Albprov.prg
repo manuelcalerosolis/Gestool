@@ -6706,9 +6706,6 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Formas de pago", ( D():FormasPago( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
-   oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
-
    oFr:SetWorkArea(     "Código de proveedores", ( D():ProveedorArticulo( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
 

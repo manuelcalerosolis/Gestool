@@ -216,8 +216,6 @@ static cTmpDoc
 static dbfFamilia
 static dbfArtPrv
 
-static oLabelGenerator
-
 static dbfClient
 static oStock
 static oGetNet
@@ -376,8 +374,6 @@ STATIC FUNCTION OpenFiles( lExt )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
       end if
-
-      oLabelGenerator   := TLabelGeneratorPedidoProveedores():New( nView )
 
       oBandera          := TBandera():New()
 
@@ -795,7 +791,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( oLabelGenerator:Dialog() ) ;
+         ACTION   ( TLabelGeneratorPedidoProveedores():New( nView ):Dialog() ) ;
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
@@ -9273,7 +9269,7 @@ RETURN ( nTotUnd )
 
 Function DesignLabelPedidoProveedores( oFr, cDoc )
 
-   local oLabel   := oLabelGenerator:New( nView )
+   local oLabel   := TLabelGeneratorPedidoProveedores():New( nView )
 
    if oLabel:lErrorOnCreate
       Return .f.
@@ -9304,7 +9300,7 @@ Function DesignLabelPedidoProveedores( oFr, cDoc )
       oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
       oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
       oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de facturas rectificativas" )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de pedidos" )
 
    end if
 
