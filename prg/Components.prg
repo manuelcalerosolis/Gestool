@@ -3313,8 +3313,8 @@ Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorAlbaranClientes
    oFr:SetWorkArea(     "Empresa", ( D():Empresa( ::nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFr:SetWorkArea(     "Proveedor", ( D():Proveedores( ::nView ) )->( Select() ) )
-   oFr:SetFieldAliases( "Proveedor", cItemsToReport( aItmPrv() ) )
+   oFr:SetWorkArea(     "Clientes", ( D():Clientes( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
    oFr:SetWorkArea(     "Almacenes", ( D():Almacen( ::nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
@@ -3353,7 +3353,7 @@ Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorAlbaranClientes
       oFr:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",       {|| ( ::DbfLineas )->cCodImp } )
    end if
 
-   oFr:SetMasterDetail(    "Albaranes", "Proveedores",                          {|| ( ::DbfCabecera)->cCodPrv } )
+   oFr:SetMasterDetail(    "Albaranes", "Clientes",                             {|| ( ::DbfCabecera)->cCodCli } )
    oFr:SetMasterDetail(    "Albaranes", "Almacenes",                            {|| ( ::DbfCabecera)->cCodAlm } )
    oFr:SetMasterDetail(    "Albaranes", "Formas de pago",                       {|| ( ::DbfCabecera)->cCodPago} )
    oFr:SetMasterDetail(    "Albaranes", "Bancos",                               {|| ( ::DbfCabecera)->cCodPrv } )
@@ -3366,7 +3366,7 @@ Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorAlbaranClientes
    oFr:SetResyncPair(      "Lineas de albaranes", "Documentos de albaranes" )
    oFr:SetResyncPair(      "Lineas de albaranes", "Impuestos especiales" )   
 
-   oFr:SetResyncPair(      "Albaranes", "Proveedores" )
+   oFr:SetResyncPair(      "Albaranes", "Clientes" )
    oFr:SetResyncPair(      "Albaranes", "Almacenes" )
    oFr:SetResyncPair(      "Albaranes", "Formas de pago" )
    oFr:SetResyncPair(      "Albaranes", "Bancos" )
@@ -3576,3 +3576,203 @@ Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoClientes
 
 Return ( nil )
 
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TLabelGeneratorPresupuestoClientes FROM TLabelGenerator
+
+   METHOD New( nView )
+   METHOD LoadTempLabelEdition() 
+   Method dataLabel( oFr, lTemporal )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView ) CLASS TLabelGeneratorPresupuestoClientes
+
+   ::cSerieInicio       := ( D():PresupuestosClientes( nView ) )->cSerPre
+   ::cSerieFin          := ( D():PresupuestosClientes( nView ) )->cSerPre
+
+   ::nDocumentoInicio   := ( D():PresupuestosClientes( nView ) )->nNumPre
+   ::nDocumentoFin      := ( D():PresupuestosClientes( nView ) )->nNumPre
+   ::cSufijoInicio      := ( D():PresupuestosClientes( nView ) )->cSufPre
+   ::cSufijoFin         := ( D():PresupuestosClientes( nView ) )->cSufPre
+
+   ::cNombreDocumento   := "Presupuesto clientes"
+
+   ::inicialDoc         := "PR"
+
+   ::dbfCabecera        := ( D():PresupuestosClientes( nView ) )
+   ::dbfLineas          := ( D():PresupuestosClientesLineas( nView ) )
+
+   ::idDocument         := D():PresupuestosClientesId( nView ) 
+
+   ::tmpLabelReport     := "LblRpt"
+
+   ::aStructureField    := aSqlStruct( aColPreCli() )
+
+   ::nView              := nView 
+
+   ::Super:New() 
+
+Return( Self )
+ 
+//---------------------------------------------------------------------------//
+
+Method LoadTempLabelEdition() CLASS TLabelGeneratorPresupuestoClientes
+
+   local nRec
+   local nOrd
+
+   //Limpiamos la base de datos temporal-----------------------------------------
+
+   if ( ::tmpLabelEdition )->( Used() )
+      ( ::tmpLabelEdition )->( __dbZap() )
+   end if 
+
+   //Llenamos la tabla temporal--------------------------------------------------
+
+   nRec           := ( ::DbfCabecera)->( Recno() )
+   nOrd           := ( ::DbfCabecera)->( OrdSetFocus( "nNumPre" ) )
+
+   if ( ::DbfCabecera)->( dbSeek( ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio, .t. ) )
+
+      while ( ::DbfCabecera)->cSerPre + Str( ( ::DbfCabecera)->nNumPre ) + ( ::DbfCabecera)->cSufPre >= ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio  .and.;
+            ( ::DbfCabecera)->cSerPre + Str( ( ::DbfCabecera)->nNumPre ) + ( ::DbfCabecera)->cSufPre <= ::cSerieFin + Str( ::nDocumentoFin, 9 ) + ::cSufijoFin           .and.;
+            !( ::DbfCabecera)->( eof() )
+
+         if ( ::DbfLineas )->( dbSeek( ( ::DbfCabecera)->cSerPre + Str( ( ::DbfCabecera)->nNumPre ) + ( ::DbfCabecera)->cSufPre ) )
+
+            while ( ::DbfLineas )->cSerPre + Str( ( ::DbfLineas )->nNumPre ) + ( ::DbfLineas )->cSufPre == ( ::DbfCabecera)->cSerPre + Str( ( ::DbfCabecera)->nNumPre ) + ( ::DbfCabecera)->cSufPre  .and. ( ::DbfLineas )->( !eof() )
+
+               if !Empty( ( ::DbfLineas )->cRef )
+
+                  dbPass( ::DbfLineas, ::tmpLabelEdition, .t. )
+
+                  dblock( ::tmpLabelEdition )
+
+                  ( ::tmpLabelEdition )->nNumLin  := nTotNPreCli( ::DbfLineas )
+                  ( ::tmpLabelEdition )->lLabel   := .t.
+
+                  if ::nCantidadLabels == 1
+                     ( ::tmpLabelEdition )->nLabel   := nTotNPreCli( ::DbfLineas )
+                  else
+                     ( ::tmpLabelEdition )->nLabel   := ::nUnidadesLabels
+                  end if
+
+                  ( ::tmpLabelEdition )->( dbUnlock() )
+
+               end if
+
+               ( ::DbfLineas )->( dbSkip() )
+
+            end while
+
+         end if
+
+         ( ::DbfCabecera)->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::DbfCabecera)->( OrdSetFocus( nOrd ) )
+   ( ::DbfCabecera)->( dbGoTo( nRec ) )
+
+   ( ::tmpLabelEdition )->( dbGoTop() )
+
+   ::oBrwLabel:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPresupuestoClientes
+
+   oFr:ClearDataSets()
+
+   if lTemporal
+      oFr:SetWorkArea(  "Lineas de presupuestos", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
+   else
+      oFr:SetWorkArea(  "Lineas de presupuestos", ( ::DbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
+   end if
+
+   oFr:SetFieldAliases( "Lineas de presupuestos", cItemsToReport( aColPreCli() ) )
+
+   oFr:SetWorkArea(     "Presupuestos", ( ::DbfCabecera)->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetFieldAliases( "Presupuestos", cItemsToReport( aItmPreCli() ) )
+
+   oFr:SetWorkArea(     "Incidencias de presupuestos", ( D():PresupuestosClientesIncidencias( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Incidencias de presupuestos", cItemsToReport( aIncPreCli() ) )
+
+   oFr:SetWorkArea(     "Documentos de presupuestos", ( D():PresupuestosClientesDocumentos( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Documentos de presupuestos", cItemsToReport( aPreCliDoc() ) )
+
+   oFr:SetWorkArea(     "Empresa", ( D():Empresa( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Clientes", ( D():Clientes( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
+
+   oFr:SetWorkArea(     "Almacenes", ( D():Almacen( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
+
+   oFr:SetWorkArea(     "Formas de pago", ( D():FormasPago( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
+
+   oFr:SetWorkArea(     "Artículos", ( D():Articulos( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
+
+   oFr:SetWorkArea(     "Precios por propiedades", ( D():ArticuloPrecioPropiedades( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Precios por propiedades", cItemsToReport( aItmVta() ) )
+
+   oFr:SetWorkArea(     "Código de proveedores", ( D():ProveedorArticulo( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
+
+   oFr:SetWorkArea(     "Unidades de medición",  D():GetObject( "UnidadMedicion", ::nView ):Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():GetObject( "UnidadMedicion", ::nView ):oDbf) )
+
+   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
+   
+   if lTemporal
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Presupuestos",                   {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",                      {|| ( ::tmpLabelReport )->cRef } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Precios por propiedades",        {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Incidencias de presupuestos",    {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Documentos de presupuestos",     {|| ( ::tmpLabelReport )->cSerPre + Str( ( ::tmpLabelReport )->nNumPre ) + ( ::tmpLabelReport )->cSufPre } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",           {|| ( ::tmpLabelReport )->cCodImp } )
+   else
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Presupuestos",                  {|| ( ::DbfLineas )->cSerPre + Str( ( ::DbfLineas )->nNumPre ) + ( ::DbfLineas )->cSufPre } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",                     {|| ( ::DbfLineas )->cRef } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Precios por propiedades",       {|| ( ::DbfLineas )->cRef + ( ::DbfLineas )->cCodPr1 + ( ::DbfLineas )->cCodPr2 + ( ::DbfLineas )->cValPr1 + ( ::DbfLineas )->cValPr2 } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Incidencias de presupuestos",   {|| ( ::DbfLineas )->cSerPre + Str( ( ::DbfLineas )->nNumPre ) + ( ::DbfLineas )->cSufPre } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Documentos de presupuestos",    {|| ( ::DbfLineas )->cSerPre + Str( ( ::DbfLineas )->nNumPre ) + ( ::DbfLineas )->cSufPre } )
+      oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",          {|| ( ::DbfLineas )->cCodImp } )
+   end if
+
+   oFr:SetMasterDetail(    "Presupuestos", "Clientes",                             {|| ( ::DbfCabecera)->cCodCli } )
+   oFr:SetMasterDetail(    "Presupuestos", "Almacenes",                            {|| ( ::DbfCabecera)->cCodAlm } )
+   oFr:SetMasterDetail(    "Presupuestos", "Formas de pago",                       {|| ( ::DbfCabecera)->cCodPgo} )
+   oFr:SetMasterDetail(    "Presupuestos", "Empresa",                              {|| cCodigoEmpresaEnUso() } )
+
+   oFr:SetResyncPair(      "Lineas de presupuestos", "Presupuestos" )
+   oFr:SetResyncPair(      "Lineas de presupuestos", "Artículos" )
+   oFr:SetResyncPair(      "Lineas de presupuestos", "Precios por propiedades" )
+   oFr:SetResyncPair(      "Lineas de presupuestos", "Incidencias de presupuestos" )
+   oFr:SetResyncPair(      "Lineas de presupuestos", "Documentos de presupuestos" )
+   oFr:SetResyncPair(      "Lineas de presupuestos", "Impuestos especiales" )   
+
+   oFr:SetResyncPair(      "Presupuestos", "Clientes" )
+   oFr:SetResyncPair(      "Presupuestos", "Almacenes" )
+   oFr:SetResyncPair(      "Presupuestos", "Formas de pago" )
+   oFr:SetResyncPair(      "Presupuestos", "Empresa" )
+
+Return ( nil )

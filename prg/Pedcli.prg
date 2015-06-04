@@ -18216,7 +18216,7 @@ Function DesignLabelPedidoClientes( oFr, cDoc )
       oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
       oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
       oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de albaranes" )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de pedidos" )
 
    end if
 

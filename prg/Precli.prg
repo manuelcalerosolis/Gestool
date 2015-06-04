@@ -637,6 +637,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloLenguaje( nView )
 
+      D():GetObject( "UnidadMedicion", nView )
+
+      D():ImpuestosEspeciales( nView )
+
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
 
@@ -1616,6 +1620,13 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TLabelGeneratorPresupuestoClientes():New( nView ):Dialog() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
 
    if oUser():lAdministrador()
 
@@ -10448,6 +10459,7 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "cCodWeb",   "N",  11,  0, "Codigo del presupuesto en la web" ,                "", "", "( cDbf )"} )
    aAdd( aItmPreCli, { "lWeb",      "L",   1,  0, "Lógico de recibido por web" ,                      "", "", "( cDbf )"} )
    aAdd( aItmPreCli, { "lInternet", "L",   1,  0, "Pedido desde internet" ,                           "", "", "( cDbf )"} )
+   
 
 return ( aItmPreCli )
 
@@ -10590,6 +10602,8 @@ function aColPreCli()
    aAdd( aColPreCli, { "dFecCad"  ,"D",   8,  0, "Fecha de caducidad",               "",                   "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "nBultos"  ,"N",  16,  6, "Numero de bultos en líneas",       "",                   "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "cFormato" ,"C", 100,  0, "Formato de venta",                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColPreCli, { "lLabel"   ,"L",   1,  0, "Lógico para marca de etiqueta",    "",                   "", "( cDbfCol )" } )
+   aAdd( aColPreCli, { "nLabel"   ,"N",   6,  0, "Unidades de etiquetas a imprimir", "",                   "", "( cDbfCol )" } )
 
 return ( aColPreCli )
 
@@ -12380,3 +12394,66 @@ Static Function cFormatoPresupuestosClientes( cSerie )
 Return ( cFormato ) 
 
 //---------------------------------------------------------------------------//   
+
+Function DesignLabelPresupuestoClientes( oFr, cDoc )
+
+   local oLabel   := TLabelGeneratorPresupuestoClientes():New( nView )
+
+   if oLabel:lErrorOnCreate
+      Return .f.
+   end if 
+
+   if !oLabel:lCreateTempReport()
+      Return .f.
+   end if 
+
+   /*
+   Zona de datos---------------------------------------------------------
+   */
+   oLabel:DataLabel( oFr, .f. )
+
+   /*
+   Paginas y bandas------------------------------------------------------
+   */
+
+   if !Empty( ( cDoc )->mReport )
+
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+
+   else
+
+      oFr:AddPage(         "MainPage" )
+
+      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de presupuestos" )
+
+   end if
+
+   /*
+   Diseño de report------------------------------------------------------
+   */
+
+   oFr:DesignReport()
+
+   /*
+   Destruye el diseñador-------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   /*
+   Destruye el fichero temporal------------------------------------------------
+   */
+
+   oLabel:DestroyTempReport()
+
+   /*
+   Cierra ficheros-------------------------------------------------------
+   */
+
+   oLabel:End()
+
+Return .t.   
+
