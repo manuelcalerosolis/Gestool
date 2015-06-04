@@ -3835,7 +3835,9 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       end if
 
       if !Empty( aGet[ _CCLITIK ] ) .and. lCliBlq( aTmp[ _CCLITIK ], dbfClient )
-         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" , "Imposible archivar como albarán" )
+         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+                  "Motivo: " + AllTrim( RetFld( aTmp[ _CCLITIK ], dbfClient, "cMotBlq" ) ),;
+                  "Imposible archivar" )
          aGet[ _CCLITIK ]:SetFocus()
          lSaveNewTik         := .f.
          return .f.
@@ -11293,7 +11295,9 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
    if ( dbfClient )->( dbSeek( cNewCodCli ) )
 
       if ( dbfClient )->lBlqCli
-         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
+         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+                  "Motivo: " + AllTrim( ( dbfClient )->cMotBlq ),;
+                  "Imposible archivar" )
          return .f.
       end if
 

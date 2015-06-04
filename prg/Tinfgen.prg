@@ -438,10 +438,6 @@ CLASS TInfGen
 
    METHOD PutOriginal()
 
-   METHOD cNameIniCli( nFld )
-
-   METHOD cNameIniPrv( nFld )
-
    METHOD PrnTiket()
 
    METHOD FldCliente()
@@ -4289,38 +4285,6 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD cNameIniCli( nFld )
-
-   local cText
-
-   DEFAULT nFld   := 1
-
-   if Empty( Rtrim( ::aIniCli[ nFld ] ) )
-      cText := "Campo definido " + Str( nFld, 2 )
-   else
-      cText := Rtrim( ::aIniCli[ nFld ] )
-   end if
-
-return ( cText )
-
-//----------------------------------------------------------------------------//
-
-METHOD cNameIniPrv( nFld )
-
-   local cText
-
-   DEFAULT nFld   := 1
-
-   if Empty( Rtrim( ::aIniPrv[ nFld ] ) )
-      cText := "Campo definido " + Str( nFld, 2 )
-   else
-      cText := Rtrim( ::aIniPrv[ nFld ] )
-   end if
-
-return ( cText )
-
-//----------------------------------------------------------------------------//
-
 METHOD PrnTiket()
 
 return ( Self )
@@ -4522,16 +4486,6 @@ METHOD FldDiaPrv()
    ::AddField( "cProPrv", "C", 20, 0, {|| "@!" },         "Provincia",                 .f., "Provincia",                 20 )
    ::AddField( "cCdpPrv", "C",  7, 0, {|| "@!" },         "CP",                        .f., "Cod. Postal",                7 )
    ::AddField( "cTlfPrv", "C", 12, 0, {|| "@!" },         "Tlf",                       .f., "Teléfono",                  12 )
-   ::AddField( "cDefI01", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(1) },      .f., {|| ::cNameIniPrv(1) } ,     50 )
-   ::AddField( "cDefI02", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(2) },      .f., {|| ::cNameIniPrv(2) } ,     50 )
-   ::AddField( "cDefI03", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(3) },      .f., {|| ::cNameIniPrv(3) } ,     50 )
-   ::AddField( "cDefI04", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(4) },      .f., {|| ::cNameIniPrv(4) } ,     50 )
-   ::AddField( "cDefI05", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(5) },      .f., {|| ::cNameIniPrv(5) } ,     50 )
-   ::AddField( "cDefI06", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(6) },      .f., {|| ::cNameIniPrv(6) } ,     50 )
-   ::AddField( "cDefI07", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(7) },      .f., {|| ::cNameIniPrv(7) } ,     50 )
-   ::AddField( "cDefI08", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(8) },      .f., {|| ::cNameIniPrv(8) } ,     50 )
-   ::AddField( "cDefI09", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(9) },      .f., {|| ::cNameIniPrv(9) } ,     50 )
-   ::AddField( "cDefI10", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(10)},      .f., {|| ::cNameIniPrv(10)} ,     50 )
    ::AddField( "nTotNet", "N", 16, 6, {|| ::cPicOut  },   "Neto",                      .t., "Neto",                      10 )
    ::AddField( "nTotPnt", "N", 16, 6, {|| ::cPicPnt },    "P.V.",                      .t., "Punto Verde",               10 )
    ::AddField( "nTotTrn", "N", 16, 6, {|| ::cPicOut },    "Transp.",                   .t., "Transporte",                10 )
@@ -4853,16 +4807,6 @@ METHOD FldProveedor()
    ::AddField( "cProPrv", "C", 20, 0, {|| "@!" },         "Provincia",                 .f., "Provincia",                  20 )
    ::AddField( "cCdpPrv", "C",  7, 0, {|| "@!" },         "CP",                        .f., "Cod. Postal",                 7 )
    ::AddField( "cTlfPrv", "C", 12, 0, {|| "@!" },         "Tlf",                       .f., "Teléfono",                   12 )
-   ::AddField( "cDefI01", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(1) },      .f., {|| ::cNameIniPrv(1) } ,      50 )
-   ::AddField( "cDefI02", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(2) },      .f., {|| ::cNameIniPrv(2) } ,      50 )
-   ::AddField( "cDefI03", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(3) },      .f., {|| ::cNameIniPrv(3) } ,      50 )
-   ::AddField( "cDefI04", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(4) },      .f., {|| ::cNameIniPrv(4) } ,      50 )
-   ::AddField( "cDefI05", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(5) },      .f., {|| ::cNameIniPrv(5) } ,      50 )
-   ::AddField( "cDefI06", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(6) },      .f., {|| ::cNameIniPrv(6) } ,      50 )
-   ::AddField( "cDefI07", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(7) },      .f., {|| ::cNameIniPrv(7) } ,      50 )
-   ::AddField( "cDefI08", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(8) },      .f., {|| ::cNameIniPrv(8) } ,      50 )
-   ::AddField( "cDefI09", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(9) },      .f., {|| ::cNameIniPrv(9) } ,      50 )
-   ::AddField( "cDefI10", "C",100, 0, {|| "@!" },         {|| ::cNameIniPrv(10)},      .f., {|| ::cNameIniPrv(10)} ,      50 )
 
 RETURN ( Self )
 

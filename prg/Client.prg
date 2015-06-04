@@ -8461,6 +8461,9 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( ordCondSet( "!Deleted() .and. Field->lVisDom", {|| !Deleted() .and. Field->lVisDom }  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisDom", "Str( Field->nVisDom )", {|| Str( Field->nVisDom ) } ) )
 
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCodEdi", "Field->cCodEdi", {|| Field->cCodEdi } ) )
+
       ( dbfCli )->( dbCloseArea() )
 
    else
@@ -8913,7 +8916,7 @@ RETURN ( aBase )
 
 //----------------------------------------------------------------------------//
 /*
-Devuelve si el cliente tiene autorización para ventas de credito
+Devuelve si el cliente está bloqueado
 */
 
 FUNCTION lCliBlq( cCodCli, dbfCli )

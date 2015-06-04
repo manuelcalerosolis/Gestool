@@ -4442,18 +4442,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldWeb
 
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
+      VAR   aTmp[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
+      ID    210 ;
+      PICTURE  "999999" ;
+      WHEN  ( .f. ) ;
+      OF    fldWeb
+
    /*
-   Tarifas-----------------------------------
+   Tarifas---------------------------------------------------------------------
    */
 
    oGetTarWeb  := comboTarifa():Build( { "idCombo" => 150, "uValue" => aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] } )
    oGetTarWeb:Resource( fldWeb )
    oGetTarWeb:setWhen( {|| nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] } )
    oGetTarWeb:setChange( {|| ChangeTarWeb( aGet, aTmp ), CalDtoWeb( aGet, aTmp ) } )
-
-   /*
-   -------------------------------------------
-   */
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
@@ -4476,6 +4479,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       122 ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
+         VALID    CalBnfPts( .t.,; 
+                             aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ],;
+                             aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ],;
+                             aTmp[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ],;
+                             ,;
+                             aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
+                             aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ],;
+                             nDecDiv,;
+                             aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
+                             ,;
+                             aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                             aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) ;
          OF       fldWeb
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ] ;
@@ -4483,11 +4498,26 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       123 ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
+<<<<<<< HEAD
          OF       fldWeb
 
    REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
          ID       210 ;
          WHEN     ( .F. );
+=======
+         VALID    ( CalBnfIva( .t.,;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ],;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ],; 
+                               ,;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
+                               aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ],;
+                               nDecDiv,;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
+                               oSayWeb[ 1 ],;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
+>>>>>>> origin/master
          OF       fldWeb
 
    REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lPubPor" ) ) ] ;
@@ -6664,11 +6694,12 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       oBrwPrp1:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp1:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwPrp1:SetArray( aValPrp1, , , .f. )
+      oBrwPrp1:SetArray( aValPrp1, .t., , .f. )
 
       oBrwPrp1:nMarqueeStyle          := 5
       oBrwPrp1:lRecordSelector        := .f.
       oBrwPrp1:lHScroll               := .f.
+      oBrwPrp1:cName                  := "Articulo.Propiedad1"
 
       oBrwPrp1:CreateFromResource( 100 )
 
@@ -6683,10 +6714,17 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       end with
 
       with object ( oBrwPrp1:AddCol() )
+         :cHeader          := "Código"
+         :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cValPrp }
+         :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp1 ) }
+      end with
+
+      with object ( oBrwPrp1:AddCol() )
          :cHeader          := retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro )
          :bStrData         := {|| aValPrp1[ oBrwPrp1:nArrayAt ]:cDesPrp }
          :nWidth           := if( lColorPrp1, 103, 119 )
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCol:SortArrayData() }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp1, AllTrim( retFld( aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp, dbfPro ) ) ) }
       end with
 
       if lColorPrp1
@@ -6721,11 +6759,12 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       oBrwPrp2:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp2:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrwPrp2:SetArray( aValPrp2, , , .f. )
+      oBrwPrp2:SetArray( aValPrp2, .t., , .f. )
 
       oBrwPrp2:nMarqueeStyle          := 5
       oBrwPrp2:lRecordSelector        := .f.
       oBrwPrp2:lHScroll               := .f.
+      oBrwPrp2:cName                  := "Articulo.Propiedad2"
 
       oBrwPrp2:CreateFromResource( 110 )
 
@@ -6740,10 +6779,18 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       end with
 
       with object ( oBrwPrp2:AddCol() )
+         :cHeader          := "Código"
+         :bStrData         := {|| aValPrp2[ oBrwPrp2:nArrayAt ]:cValPrp }
+         :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp2 ) }
+      end with
+
+      with object ( oBrwPrp2:AddCol() )
          :cHeader          := if( Len( aValPrp2 ) != 0, retFld( aValPrp2[ oBrwPrp2:nArrayAt ]:cCodPrp, dbfPro ), "" )
          :bStrData         := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:cDesPrp, "" ) }
          :nWidth           := if( lColorPrp2, 103, 119 )
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCol:SortArrayData() }
+         :cOrder           := "A"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp2, AllTrim( retFld( aValPrp2[ oBrwPrp2:nArrayAt ]:cCodPrp, dbfPro ) ) ) }
       end with
 
       if lColorPrp2
@@ -7303,6 +7350,43 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
    ACTIVATE DIALOG oDlg CENTER
 
 RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+static function cOrdenBrwPropiedades( oCol, oBrw, cOrden )
+
+   local oColumn
+
+   if !Empty( oBrw)
+
+      do case
+         case AllTrim( oCol:cHeader ) == cOrden
+
+            aSort( oBrw:aArrayData, , , {|x,y| x:cDesPrp < y:cDesPrp } )
+
+            for each oColumn in oBrw:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := cOrden
+
+         case AllTrim( oCol:cHeader ) == "Código"
+
+            aSort( oBrw:aArrayData, , , {|x,y| x:cValPrp < y:cValPrp } )
+
+            for each oColumn in oBrw:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := "Código"
+
+      end case
+
+      oBrw:Refresh()
+
+   end if
+
+return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -8080,6 +8164,14 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
 
    end if
 
+   if !Empty( oBrwPrp1 )
+      oBrwPrp1:Load()
+   end if
+
+   if !Empty( oBrwPrp2 )
+      oBrwPrp2:Load()
+   end if
+
    if !Empty( oBrwPrp1 ) .and. !Empty( oTodasPrp1 ) .and. !Empty( oNingunaPrp1 )
 
       if nMode == EDIT_MODE
@@ -8699,11 +8791,15 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
 		Proteccion contra limites
 		*/
 
-      if nNewBnf > 0 .and. nNewBnf < 999
-			oBnf:cText( nNewBnf )
-      else
-			oBnf:cText( 0 )
-      end
+      if oBnf != nil
+
+         if nNewBnf > 0 .and. nNewBnf < 999
+   			oBnf:cText( nNewBnf )
+         else
+   			oBnf:cText( 0 )
+         end
+
+      end if
 
    end if
 
@@ -8829,10 +8925,14 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
 
       nNewBnf     := nPorcentajeBeneficio( lSobreCoste, nNewPre, nCosto )
 
-      if nNewBnf > 0 .and. nNewBnf < 999
-			oBnf:cText( nNewBnf )
-      else
-			oBnf:cText( 0 )
+      if oBnf != nil
+
+         if nNewBnf > 0 .and. nNewBnf < 999
+			   oBnf:cText( nNewBnf )
+         else
+   			oBnf:cText( 0 )
+         end if
+
       end if
 
    end if
@@ -19102,33 +19202,37 @@ Function ChangeTarWeb( aGet, aTmp )
 
    if aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ]
 
+      if Empty( oGetTarWeb )
+         Return .f.
+      end if
+
       do case
-         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 1
+         case oGetTarWeb:getTarifa() == 1
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] )
 
-         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 2
+         case oGetTarWeb:getTarifa() == 2
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA2" ) ) ] )
 
-         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 3
+         case oGetTarWeb:getTarifa() == 3
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA3" ) ) ] )
 
-         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 4
+         case oGetTarWeb:getTarifa() == 4
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA4" ) ) ] )
 
-         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 5
+         case oGetTarWeb:getTarifa() == 5
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA5" ) ) ] )
 
-         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 6
+         case oGetTarWeb:getTarifa() == 6
             aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ] )
             aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA6" ) ) ] )

@@ -216,6 +216,8 @@ static cTmpDoc
 static dbfFamilia
 static dbfArtPrv
 
+static oLabelGenerator
+
 static dbfClient
 static oStock
 static oGetNet
@@ -375,6 +377,8 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
+      oLabelGenerator   := TLabelGeneratorPedidoProveedores():New( nView )
+
       oBandera          := TBandera():New()
 
       /*
@@ -450,6 +454,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
    local oRotor
    local oBtnEur
    local nLevel
+   local LabelGeneratorPedidoProveedores
    local lEuro          := .f.
 
    DEFAULT oMenuItem    := _MENUITEM_
@@ -787,6 +792,13 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       LEVEL    ACC_IMPR
 
       lGenPed( oWndBrw:oBrw, oMail, IS_MAIL ) ;
+
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oLabelGenerator:Dialog() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
 
    if oUser():lAdministrador()
 
@@ -7764,6 +7776,8 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de compra",                "",                  "", "( cDbfCol )" } )
    aAdd( aColPedPrv,  { "cCodImp", "C",  3,   0, "Código de impuesto especial",      "",                  "", "( cDbfCol )" } )
    aAdd( aColPedPrv,  { "nValImp", "N", 16,   6, "Importe de impuesto especial",     "",                  "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "lLabel",  "L",  1,   0, "Lógico para marca de etiqueta",     "",                 "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "nLabel",  "N",  6,   0, "Unidades de etiquetas a imprimir",  "",                 "", "( cDbfCol )" } )
 
 Return ( aColPedPrv )
 
@@ -9213,3 +9227,111 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
 Return .t.
 
 //---------------------------------------------------------------------------//
+
+/*
+Function getNumeroAlbaranProveedorLinea( nView )
+
+Return ( substr( ( D():FacturasProveedoresLineas( nView ) )->iNumAlb, 1, 12 ) )
+
+//---------------------------------------------------------------------------//
+*/
+
+FUNCTION nTotNDocumento( uDbf )
+
+   local nTotUnd
+
+   do case
+      case ValType( uDbf ) == "A"
+         nTotUnd  := NotCaja( uDbf[ _NCANENT ] )
+         nTotUnd  *= uDbf[ _NUNICAJA ]
+         nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
+         nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
+         nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
+         nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
+
+      case ValType( uDbf ) == "O"
+         nTotUnd  := NotCaja( uDbf:nCanEnt )
+         nTotUnd  *= uDbf:nUniCaja
+         nTotUnd  *= NotCero( uDbf:nUndKit )
+         nTotUnd  *= NotCero( uDbf:nMedUno )
+         nTotUnd  *= NotCero( uDbf:nMedDos )
+         nTotUnd  *= NotCero( uDbf:nMedTre )
+
+      otherwise
+         nTotUnd  := NotCaja( ( uDbf )->nCanEnt )
+         nTotUnd  *= ( uDbf )->nUniCaja
+         nTotUnd  *= NotCero( ( uDbf )->nUndKit )
+         nTotUnd  *= NotCero( ( uDbf )->nMedUno )
+         nTotUnd  *= NotCero( ( uDbf )->nMedDos )
+         nTotUnd  *= NotCero( ( uDbf )->nMedTre )
+
+   end case
+
+RETURN ( nTotUnd )
+
+//--------------------------------------------------------------------------//
+
+Function DesignLabelPedidoProveedores( oFr, cDoc )
+
+   local oLabel   := oLabelGenerator:New( nView )
+
+   if oLabel:lErrorOnCreate
+      Return .f.
+   end if 
+
+   if !oLabel:lCreateTempReport()
+      Return .f.
+   end if 
+
+   /*
+   Zona de datos---------------------------------------------------------
+   */
+
+   oLabel:DataLabel( oFr, .f. )
+
+   /*
+   Paginas y bandas------------------------------------------------------
+   */
+
+   if !Empty( ( cDoc )->mReport )
+
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+
+   else
+
+      oFr:AddPage(         "MainPage" )
+
+      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de facturas rectificativas" )
+
+   end if
+
+   /*
+   Diseño de report------------------------------------------------------
+   */
+
+   oFr:DesignReport()
+
+   /*
+   Destruye el diseñador-------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   /*
+   Destruye el fichero temporal------------------------------------------------
+   */
+
+   oLabel:DestroyTempReport()
+
+   /*
+   Cierra ficheros-------------------------------------------------------
+   */
+
+   oLabel:End()
+
+Return .t.
+
+//--------------------------------------------------------------------------//

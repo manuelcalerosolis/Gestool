@@ -6725,7 +6725,9 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
    if ( D():Clientes( nView ) )->( dbSeek( cNewCodCli ) )
 
       if ( D():Clientes( nView ) )->lBlqCli
-         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" )
+         msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
+                  "Motivo: " + AllTrim( ( D():Clientes( nView ) )->cMotBlq ),;
+                  "Imposible archivar" )
          return .f.
       end if
 
@@ -10299,7 +10301,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",               "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "lEstado",   "L",  1,  0, "Estado del S.A.T.",               "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "CSUSAT",    "C", 10,  0, "",                                "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSUSAT",    "C",100,  0, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCONDENT",  "C",100,  0, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "MCOMENT",   "M", 10,  0, "Comentarios",                     "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "MOBSERV",   "M", 10,  0, "Averia",                          "",                   "", "( cDbf )"} )
