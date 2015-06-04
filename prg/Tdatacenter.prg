@@ -2219,6 +2219,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Fabricantes"
    oDataTable:cName        := cPatEmp() + "Fabricantes"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Fabricantes.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Fabricantes.Cdx"
@@ -5749,6 +5750,8 @@ CLASS D
    METHOD Agentes( nView )                   INLINE ( ::Get( "Agentes", nView ) )
 
    METHOD Lenguajes( nView )                 INLINE ( ::Get( "Lenguaje", nView ) )
+
+   METHOD Fabricantes( nView )               INLINE ( ::Get( "Fabricantes", nView ) )
 
    METHOD Ruta( nView )                      INLINE ( ::Get( "Ruta", nView ) )
 
