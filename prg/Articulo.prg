@@ -4498,13 +4498,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       123 ;
          WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPwbDiv ;
-<<<<<<< HEAD
          OF       fldWeb
 
    REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
          ID       210 ;
          WHEN     ( .F. );
-=======
          VALID    ( CalBnfIva( .t.,;
                                aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ],;
@@ -4517,7 +4515,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                                oSayWeb[ 1 ],;
                                aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
                                aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
->>>>>>> origin/master
          OF       fldWeb
 
    REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lPubPor" ) ) ] ;
