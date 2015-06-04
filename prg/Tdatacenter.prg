@@ -5495,6 +5495,15 @@ CLASS D
    METHOD FacturasRectificativas( nView )             INLINE ( ::Get( "FacRecT", nView ) )
       METHOD FacturasRectificativasId( nView )        INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
 
+   METHOD FacturasRectificativasLineas( nView )             INLINE ( ::Get( "FacRecL", nView ) )
+      METHOD FacturasRectificativasLineasId( nView )        INLINE ( ( ::Get( "FacRecL", nView ) )->cSerie + str( ( ::Get( "FacRecL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecL", nView ) )->cSufFac )
+
+   METHOD FacturasRectificativasIncidencias( nView )             INLINE ( ::Get( "FacRecI", nView ) )
+      METHOD FacturasRectificativasIncidenciasId( nView )        INLINE ( ( ::Get( "FacRecI", nView ) )->cSerie + str( ( ::Get( "FacRecI", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecI", nView ) )->cSufFac )
+
+   METHOD FacturasRectificativasDocumentos( nView )             INLINE ( ::Get( "FacRecD", nView ) )
+      METHOD FacturasRectificativasDocumentosId( nView )        INLINE ( ( ::Get( "FacRecD", nView ) )->cSerie + str( ( ::Get( "FacRecD", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecD", nView ) )->cSufFac )
+
    METHOD FacturasRectificativasSituaciones( nView )            INLINE ( ::Get( "FacRecE", nView ) )
       METHOD FacturasRectificativasSituacionesId( nView )       INLINE ( ( ::Get( "FacRecE", nView ) )->cSerFac + str( ( ::Get( "FacRecE", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecE", nView ) )->cSufFac )
       METHOD FacturasRectificativasSituacionesIdText( nView )   INLINE ( ::Get( "FacRecE", nView ) )->cSerFac + "/" + Alltrim( Str( ( ::Get( "FacRecE", nView ) )->nNumFac ) )

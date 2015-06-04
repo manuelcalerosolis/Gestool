@@ -752,6 +752,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloLenguaje( nView )
 
+      D():GetObject( "UnidadMedicion", nView )
+
+      D():ImpuestosEspeciales( nView )
+
       USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
 
@@ -1889,6 +1893,13 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       LEVEL    ACC_IMPR
 
       lGenFacRec( oWndBrw:oBrw, oMail, IS_MAIL ) ;
+
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TLabelGeneratorFacturasRectificativaClientes():New( nView ):Dialog() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
 
    DEFINE BTNSHELL oLiq RESOURCE "Money2_" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -13008,7 +13019,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, {"CCODAGE"     ,"C",  3, 0, "Código del agente" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CCODRUT"     ,"C",  4, 0, "Código de la ruta" ,                                   "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"CCODTAR"     ,"C",  5, 0, "Código de la tarifa" ,                                 "",                   "", "( cDbf )"} )
-   aAdd( aItmFacRec, {"CCODOBR"     ,"C", 10, 0, "Código de la dirección" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmFacRec, {"CCODOBR"     ,"C", 10, 0, "Código de la dirección" ,                              "'@!'",               "", "( cDbf )"} )
    aAdd( aItmFacRec, {"NPCTCOMAGE"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
    aAdd( aItmFacRec, {"LLIQUIDADA"  ,"L",  1, 0, "Lógico de la liquidación" ,                            "",                   "", "( cDbf )"} )
    aAdd( aItmFacRec, {"LCONTAB"     ,"L",  1, 0, "Lógico de la contabilización" ,                        "",                   "", "( cDbf )"} )
@@ -13194,7 +13205,7 @@ function aColFacRec()
    aAdd( aColFacRec, { "NCOSDIV"     ,"N", 16, 6, "Costo del producto"                    , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NPVPREC"     ,"N", 16, 6, "Precio de venta recomendado"           , "cPorDivFac" ,   "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CALMLIN"     ,"C", 16, 0, "Código de almacén"                     , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "LIVALIN"     ,"L",  1, 0, cImp() + " incluido"                          , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "LIVALIN"     ,"L",  1, 0, cImp() + " incluido"                    , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "CCODIMP"     ,"C",  3, 0, "Código del impuesto especial"          , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NVALIMP"     ,"N", 16, 6, "Importe del impuesto especial"         , "cPorDivFac" ,   "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LLOTE"       ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
@@ -13235,6 +13246,8 @@ function aColFacRec()
    aAdd( aColFacRec, { "cFormato" 	 ,"C",100, 0, "Formato de venta"					  ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "tFecfac" 	 ,"C",  6, 0, "Hora de la factura rectificativa"      ,"",               "", "( cDbfCol )" } )
    aAdd( aColFacRec, { "cCtrCoste" 	 ,"C",  9, 0, "Codigo del Centro de coste"            ,"",               "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "lLabel"      ,"L",  1, 0, "Lógico para marca de etiqueta"         ,"",               "", "( cDbfCol )" } )
+   aAdd( aColFacRec, { "nLabel"      ,"N",  6, 0, "Unidades de etiquetas a imprimir"      ,"",               "", "( cDbfCol )" } )
 
 return ( aColFacRec )
 
@@ -14698,5 +14711,67 @@ FUNCTION BrwFacRec( oGet, oIva )
 
 RETURN ( oDlg:nResult == IDOK )
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//   
+
+Function DesignLabelFacturaRectificativaClientes( oFr, cDoc )
+
+   local oLabel   := TLabelGeneratorFacturasRectificativaClientes():New( nView )
+
+   if oLabel:lErrorOnCreate
+      Return .f.
+   end if 
+
+   if !oLabel:lCreateTempReport()
+      Return .f.
+   end if 
+
+   /*
+   Zona de datos---------------------------------------------------------
+   */
+   oLabel:DataLabel( oFr, .f. )
+
+   /*
+   Paginas y bandas------------------------------------------------------
+   */
+
+   if !Empty( ( cDoc )->mReport )
+
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+
+   else
+
+      oFr:AddPage(         "MainPage" )
+
+      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de facturas" )
+
+   end if
+
+   /*
+   Diseño de report------------------------------------------------------
+   */
+
+   oFr:DesignReport()
+
+   /*
+   Destruye el diseñador-------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   /*
+   Destruye el fichero temporal------------------------------------------------
+   */
+
+   oLabel:DestroyTempReport()
+
+   /*
+   Cierra ficheros-------------------------------------------------------
+   */
+
+   oLabel:End()
+
+Return .t.
 
