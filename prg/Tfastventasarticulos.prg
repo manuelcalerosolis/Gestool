@@ -2899,22 +2899,14 @@ METHOD isEntradaPedidoProveedor( cCodArt, cLote )
 
    local aStatusPedidoProveedores
    local isEntradaPedido      := .f.
+   local cReferencia          := Padr( cCodArt, 18 ) + Padr( cLote, 12 )
 
    aStatusPedidoProveedores   :=  ::oPedPrvL:getStatus()
-   ::oPedPrvL:OrdSetFocus( "cRef" )
+   ::oPedPrvL:OrdSetFocus( "cRefLote" )
 
-   if ::oPedPrvL:Seek( cCodArt ) 
+   if ::oPedPrvL:Seek( cReferencia ) 
    
-      while ( alltrim( ::oPedPrvL:cRef ) == alltrim( cCodArt ) ) .and. !( ::oPedPrvL:Eof() )
-
-         if alltrim( ::oPedPrvL:cLote ) == alltrim( cLote )
-            isEntradaPedido   := .t.
-            exit
-         end if 
-
-         ::oPedPrvL:skip()
-
-      end while
+      isEntradaPedido   := .t.
 
    end if 
 
@@ -2930,31 +2922,29 @@ METHOD getDatoPedidoProveedor( cCodArt, cLote, cCampoRequerido )
    local dFechaPedido      := date()
    local dFechaDocumento
    local uCampoRequerido
+   local cReferencia          := Padr( cCodArt, 18 ) + Padr( cLote, 12 )
 
    aStatusPedidoProveedores   :=  ::oPedPrvL:getStatus()
-   ::oPedPrvL:OrdSetFocus( "cRef" )
+   ::oPedPrvL:OrdSetFocus( "cRefLote" )
 
-   if ::oPedPrvL:Seek( cCodArt ) 
+   if ::oPedPrvL:Seek( cReferencia ) 
    
-      while ( alltrim( ::oPedPrvL:cRef ) == alltrim( cCodArt ) ) .and. !( ::oPedPrvL:Eof() )
+      while ( alltrim( ::oPedPrvL:cRef ) + alltrim( ::oPedPrvL:cLote ) == alltrim( cCodArt ) + alltrim( cLote ) ) .and. !( ::oPedPrvL:Eof() )
 
-         if alltrim( ::oPedPrvL:cLote ) == alltrim( cLote )
-            dFechaDocumento   := RetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT:cAlias, "dFecPed" )
+         dFechaDocumento   := RetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT:cAlias, "dFecPed" )
             
-            if dFechaPedido >= dFechaDocumento
+         if dFechaPedido >= dFechaDocumento
 
-               dFechaPedido         := dFechaDocumento
+            dFechaPedido         := dFechaDocumento
 
-               if !empty( cCampoRequerido ) .and. ( ::oPedPrvL:fieldpos(cCampoRequerido) != 0 )
-                  uCampoRequerido   := ::oPedPrvL:fieldgetbyname(cCampoRequerido) 
+            if !empty( cCampoRequerido ) .and. ( ::oPedPrvL:fieldpos(cCampoRequerido) != 0 )
+               uCampoRequerido   := ::oPedPrvL:fieldgetbyname(cCampoRequerido) 
 
-               end if 
-
-            end if
+            end if 
 
          end if
 
-         ::oPedPrvL:skip()
+      ::oPedPrvL:skip()
 
       end while
 
