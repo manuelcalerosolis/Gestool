@@ -227,6 +227,7 @@ static aTipDoc     := {  "Artículos [Etiquetas]",;
                          "Producción [Etiquetas]",;
                          "Pedido de proveedores [Etiquetas]",;
                          "Albaran de clientes [Etiquetas]",;
+                         "Pedido de clientes [Etiquetas]",;
                          "Pedido proveedores",;
                          "Albarán proveedores",;
                          "Factura proveedores",;
@@ -262,6 +263,7 @@ static aCodDoc     := {  "AR",;
                          "LP",;
                          "PE",;
                          "AB",;
+                         "PB",;
                          "PP",;
                          "AP",;
                          "FP",;
@@ -745,22 +747,11 @@ RETURN .T.
 STATIC FUNCTION EdtDocs( aTmp, aGet, dbfDoc, oBrw, cTipoDoc, bValid, nMode )
 
    local oDlg
-   //local oFld
    local nPos
    local oTipDoc
    local cTipDoc     := aTipDoc[ 1 ]
    local cCodDoc     := aCodDoc[ 1 ]
    local oBtnAceptar
-
-   //BeginTrans( aTmp, nMode )
-
-   DEFINE DIALOG oDlg RESOURCE "DOCUMENTS" TITLE LblTitle( nMode ) + "documento : " + rtrim( aTmp[ dCDESCRIP ] )
-
-   /*REDEFINE FOLDER oFld ;
-      ID       400 ;
-      OF       oDlg ;
-      PROMPT   "&General"; //   "Documento",   "Campo&s" ,    "Colum&nas",   "Bi&tmaps"; //,    "Ca&jas" ;
-      DIALOGS  "DOCUMENTS_2" // "DOCUMENTS_0", "DOCUMENTS_1", "DOCUMENTS_3", "DOCUMENTS_5"//, "DOCUMENTS_4"*/
 
    if nMode == APPD_MODE
       nPos              := aScan( aTipDoc, {| aTipDoc | substr( aTipDoc, 1, 2 ) == cTipoDoc } )
@@ -776,6 +767,9 @@ STATIC FUNCTION EdtDocs( aTmp, aGet, dbfDoc, oBrw, cTipoDoc, bValid, nMode )
    Creamos la primera caja de Dialogo
    -------------------------------------------------------------------------
    */
+
+   DEFINE DIALOG oDlg RESOURCE "DOCUMENTS" TITLE LblTitle( nMode ) + "documento : " + rtrim( aTmp[ dCDESCRIP ] )
+
 
       REDEFINE COMBOBOX oTipDoc ;
          VAR      cTipDoc ;
@@ -3354,17 +3348,6 @@ Static Function SaveEdtDocs( aTmp, aGet, oDlg, oBrw, oBtnAceptar, cTipDoc, nMode
          return nil
       end if
 
-      /*if oFld:nOption == 1 .and. ! aTmp[ dLVISUAL ]
-
-         SetWindowText( oBtnAceptar:hWnd, "&Aceptar" )
-
-         oFld:SetPrompts( { "&General", "Documento", "Campo&s", "Colum&nas", "Bi&tmaps", "Ca&jas" } )
-         oFld:SetOption( 2 )
-
-         return nil
-
-      end if*/
-
    end if
 
    oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -3807,6 +3790,8 @@ Return nil*/
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
 
+   
+
    if !Empty( cTipDoc )
       ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == cTipDoc }, "cTipo == '" + cTipDoc + "'" ) )
       ( dbfDoc )->( dbGoTop() )
@@ -4102,6 +4087,9 @@ Static Function VisualEdtDocs( dbfDoc )
 
       case cTipo == "AB"
          DesignLabelAlbaranClientes( oFr, dbfDoc )
+
+      case cTipo == "PB"
+         DesignLabelPedidoClientes( oFr, dbfDoc )
 
       case cTipo == "PP"
          DesignReportPedPrv( oFr, dbfDoc )

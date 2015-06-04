@@ -2297,6 +2297,7 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
 
    local nOldTag
    local cAlias
+   local cFilter
    local lReturn  := .t.
    local xClave   := oGet:VarGet()
 
@@ -2310,6 +2311,9 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
    else
       cAlias      := uAlias
    end if
+
+   cFilter        := ( cAlias )->( dbFilter() )
+   ( cAlias )->( dbClearFilter() )
 
    nOldTag        := ( cAlias )->( OrdSetFocus( nTag ) )
 
@@ -2337,6 +2341,13 @@ FUNCTION validKey( oGet, uAlias, lRjust, cChar, nTag, nLen )
    end if
 
 	( cAlias )->( OrdSetFocus( nOldTag ) )
+
+   set filter to &cFilter
+
+   if !empty(cFilter)
+      ( cAlias )->( dbSetFilter( {|| &cFilter }, cFilter ) )
+   end if
+
 
 RETURN lReturn
 

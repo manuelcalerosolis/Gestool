@@ -705,6 +705,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Get( "CliInc", nView )
 
+      D():GetObject( "UnidadMedicion", nView )
+
+      D():ImpuestosEspeciales( nView )
+
       D():ArticuloStockAlmacenes( nView )
 
       D():Articulos( nView )
@@ -1533,6 +1537,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
+
+     DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TLabelGeneratorPedidoClientes():New( nView ):Dialog() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
 
    DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
       NOBORDER ;
@@ -15733,6 +15744,8 @@ function aColPedCli()
    aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades última compra",		                     "",                        "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nBultos",   "N",   16,  6, "Numero de bultos en líneas", 	                  "",              	         "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cFormato",  "C",  100,  0, "Formato de venta",                                "",              	         "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lLabel",    "L",    1,  0, "Lógico para marca de etiqueta",					  "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nLabel",    "N",    6,  0, "Unidades de etiquetas a imprimir",                "",                        "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 
@@ -18157,6 +18170,66 @@ Return ( cFormato )
 
 //---------------------------------------------------------------------------//   
 
+Function DesignLabelPedidoClientes( oFr, cDoc )
 
+   local oLabel   := TLabelGeneratorPedidoClientes():New( nView )
+
+   if oLabel:lErrorOnCreate
+      Return .f.
+   end if 
+
+   if !oLabel:lCreateTempReport()
+      Return .f.
+   end if 
+
+   /*
+   Zona de datos---------------------------------------------------------
+   */
+   oLabel:DataLabel( oFr, .f. )
+
+   /*
+   Paginas y bandas------------------------------------------------------
+   */
+
+   if !Empty( ( cDoc )->mReport )
+
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+
+   else
+
+      oFr:AddPage(         "MainPage" )
+
+      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de albaranes" )
+
+   end if
+
+   /*
+   Diseño de report------------------------------------------------------
+   */
+
+   oFr:DesignReport()
+
+   /*
+   Destruye el diseñador-------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   /*
+   Destruye el fichero temporal------------------------------------------------
+   */
+
+   oLabel:DestroyTempReport()
+
+   /*
+   Cierra ficheros-------------------------------------------------------
+   */
+
+   oLabel:End()
+
+Return .t.
 
 

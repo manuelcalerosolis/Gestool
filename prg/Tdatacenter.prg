@@ -3065,6 +3065,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedCliI"
    oDataTable:cName        := cPatEmp() + "PedCliI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliI.Cdx"
@@ -3073,6 +3074,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedCliD"
    oDataTable:cName        := cPatEmp() + "PedCliD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliD.Cdx"
@@ -3081,6 +3083,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "PedCliP"   
    oDataTable:cName        := cPatEmp() + "PedCliP"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliP.Cdx"
@@ -5508,6 +5511,12 @@ CLASS D
    METHOD PedidosClientesSituaciones( nView )            INLINE ( ::Get( "PedCliE", nView ) )
       METHOD PedidosClientesSituacionesId( nView )       INLINE ( ( ::Get( "PedCliE", nView ) )->cSerPed + str( ( ::Get( "PedCliE", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliE", nView ) )->cSufPed )
       METHOD PedidosClientesSituacionesIdText( nView )   INLINE ( ::Get( "PedCliE", nView ) )->cSerPed + "/" + Alltrim( Str( ( ::Get( "PedCliE", nView ) )->nNumPed ) )
+
+   METHOD PedidosClientesIncidencias( nView )            INLINE ( ::Get( "PedCliI", nView ) )
+      METHOD PedidosClientesIncidenciasId( nView )       INLINE ( ( ::Get( "PedCliI", nView ) )->cSerPed + str( ( ::Get( "PedCliI", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliI", nView ) )->cSufPed )
+
+    METHOD PedidosClientesDocumentos( nView )            INLINE ( ::Get( "PedCliD", nView ) )
+      METHOD PedidosClientesDocumentosId( nView )       INLINE ( ( ::Get( "PedCliD", nView ) )->cSerPed + str( ( ::Get( "PedCliD", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliD", nView ) )->cSufPed )
 
    // Situaciones----------------------------------------------------------------
 
