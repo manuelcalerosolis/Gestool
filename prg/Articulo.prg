@@ -4442,13 +4442,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldWeb
 
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
-      VAR   aTmp[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
-      ID    210 ;
-      PICTURE  "999999" ;
-      WHEN  ( .f. ) ;
-      OF    fldWeb
-
    /*
    Tarifas---------------------------------------------------------------------
    */
