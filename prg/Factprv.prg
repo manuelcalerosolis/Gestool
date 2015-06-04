@@ -1654,10 +1654,24 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          end with
 
          with object ( oBrwLin:AddCol() )
+            :cHeader             := "Valor prop. 1"
+            :bEditValue          := {|| retValProp( ( dbfTmp )->cCodPr1 + ( dbfTmp )->cValPr1 )}
+            :nWidth              := 40
+            :lHide               := .t.
+         end with
+
+         with object ( oBrwLin:AddCol() )
             :cHeader          := "Prop. 2"
             :bEditValue       := {|| ( dbfTmp )->cValPr2 }
             :nWidth           := 60
             :lHide            := .t.
+         end with
+
+         with object ( oBrwLin:AddCol() )
+            :cHeader             := "Valor prop. 2"
+            :bEditValue          := {|| retValProp( ( dbfTmp )->cCodPr2 + ( dbfTmp )->cValPr2 )}
+            :nWidth              := 40
+            :lHide               := .t.
          end with
 
          with object ( oBrwLin:AddCol() )
