@@ -104,10 +104,6 @@ function Main( ParamsMain, ParamsSecond )
 
    FwNumFormat( 'E', .t. )
 
-   // Test---------------------------------------------------------------------
-
-   Test()
-
    SetResDebug( .t. )
 
    DialogExtend() 
@@ -967,6 +963,12 @@ FUNCTION lInitCheck( oMessage, oProgress )
    end if
 
    SetEmpresa( , , , , , oWnd )
+
+   // Test---------------------------------------------------------------------
+
+   Test()
+
+   // fin test-----------------------------------------------------------------
 
    if !Empty( oMessage )
       oMessage:SetText( 'Comprobaciones finalizadas' )
@@ -6040,6 +6042,30 @@ Return ( by( nRow ) )
 //---------------------------------------------------------------------------//
 
 Function Test() 
+
+   /*
+   Envío de  mail al usuario----------------------------------------------
+   
+   local hashDatabaseList  := {=>}
+
+   hSet( hashDatabaseList, "mail", "mcalero@gestool.es" )
+   hSet( hashDatabaseList, "subject", "Indicencias en albaranes de proveedor" )
+   hSet( hashDatabaseList, "message", "message" )
+
+   with object TSendMail():New()
+      
+      if :buildMailerObject()
+
+         :sendMail( hashDatabaseList )
+
+      else 
+
+         msgAlert( "No he podido crear el buildMailerObject")
+   
+      end if 
+
+   end with
+   */
 
 Return ( nil )
 

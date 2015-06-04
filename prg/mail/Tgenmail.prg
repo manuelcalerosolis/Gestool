@@ -530,7 +530,6 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD addFileAdjunto() CLASS TGenMailing
 
    local cFile       := cGetFile( 'Fichero ( *.* ) | *.*', 'Seleccione el fichero a adjuntar' )

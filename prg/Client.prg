@@ -1357,7 +1357,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
    local oBmpRecibos
    local oBmpFacturae
    local aNombreTarifas := aNombreTarifas()
-   local cNombreTarifa  := aNombreTarifas[1]
+   local cNombreTarifa  := if( len( aNombreTarifas ) > 0, aNombreTarifas[ 1 ], "" )
 
    aFacAut              := hb_aTokens( aTmp[ _MFACAUT ], "," )
 

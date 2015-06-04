@@ -285,369 +285,366 @@ FUNCTION Provee( oMenuItem, oWnd )
    DEFAULT oMenuItem    := "01034"
    DEFAULT oWnd         := oWnd()
 
-   if Empty( oWndBrw )
+   if !empty( oWndBrw )
+      oWndBrw:putFocus()
+      Return .t.
+   end if 
 
-      /*
-      Obtenemos el nivel de acceso
-      */
+   /*
+   Obtenemos el nivel de acceso
+   */
 
-      nLevel            := nLevelUsr( oMenuItem )
-      if nAnd( nLevel, 1 ) != 0
-         msgStop( "Acceso no permitido." )
-         return .f.
-      end if
+   nLevel               := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      return .f.
+   end if
 
-      /*
-      Cerramos todas las ventanas
-      */
+   /*
+   Cerramos todas las ventanas
 
-      if oWnd != nil
-         SysRefresh(); oWnd:CloseAll(); SysRefresh()
-      end if
+   if oWnd != nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end if
+   */
 
-      /*
-      Apertura de ficheros
-      */
+   /*
+   Apertura de ficheros
+   */
 
-      if !OpenFiles( .f. )
-         return .f.
-      end if
+   if !OpenFiles( .f. )
+      return .f.
+   end if
 
-      DisableAcceso()
+   DisableAcceso()
 
-      /*
-      Anotamos el movimiento para el navegador
-      */
+   /*
+   Anotamos el movimiento para el navegador
+   */
 
-      AddMnuNext( "Proveedores", ProcName() )
+   AddMnuNext( "Proveedores", ProcName() )
 
-      DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
-         XBROWSE ;
-			TITLE 	"Proveedores" ;
-         PROMPT   "Código",;
-                  "Nombre",;
-                  "NIF/CIF",;
-                  "Población",;
-                  "Teléfono" ,;
-                  "Fax",;
-                  "Domicilio",;
-                  "Población",;
-                  "Código postal",;
-                  "Provincia",;
-                  "Correo electrónico",;
-                  "Contacto" ;
-         MRU      "Businessman_16";
-         BITMAP   ( clrTopCompras ) ;
-         ALIAS    ( dbfProvee ) ;
-         APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfProvee ) );
-         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfProvee ) );
-			EDIT 		( WinEdtRec( oWndBrw:oBrw, bEdit, dbfProvee ) ) ;
-         DELETE   ( WinDelRec( oWndBrw:oBrw, dbfProvee ) ) ;
-         LEVEL    nLevel ;
-         OF       oWnd
+   DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
+      XBROWSE ;
+		TITLE 	"Proveedores" ;
+      PROMPT   "Código",;
+               "Nombre",;
+               "NIF/CIF",;
+               "Población",;
+               "Teléfono" ,;
+               "Fax",;
+               "Domicilio",;
+               "Población",;
+               "Código postal",;
+               "Provincia",;
+               "Correo electrónico",;
+               "Contacto" ;
+      MRU      "Businessman_16";
+      BITMAP   ( clrTopCompras ) ;
+      ALIAS    ( dbfProvee ) ;
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfProvee ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfProvee ) );
+		EDIT 		( WinEdtRec( oWndBrw:oBrw, bEdit, dbfProvee ) ) ;
+      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfProvee ) ) ;
+      LEVEL    nLevel ;
+      OF       oWnd
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Bloqueado"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfProvee )->lBlqPrv }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "stop_16" )
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Bloqueado"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( dbfProvee )->lBlqPrv }
+      :nWidth           := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "stop_16" )
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Envio"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfProvee )->lSndInt }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Envio"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( dbfProvee )->lSndInt }
+      :nWidth           := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "Lbl16" )
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "Cod"
-         :bEditValue       := {|| ( dbfProvee )->Cod }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Código"
+      :cSortOrder       := "Cod"
+      :bEditValue       := {|| ( dbfProvee )->Cod }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "Titulo"
-         :bEditValue       := {|| ( dbfProvee )->Titulo }
-         :nWidth           := 280
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Nombre"
+      :cSortOrder       := "Titulo"
+      :bEditValue       := {|| ( dbfProvee )->Titulo }
+      :nWidth           := 280
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "NIF/CIF"
-         :cSortOrder       := "Nif"
-         :bEditValue       := {|| ( dbfProvee )->Nif }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "NIF/CIF"
+      :cSortOrder       := "Nif"
+      :bEditValue       := {|| ( dbfProvee )->Nif }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Teléfono"
-         :cSortOrder       := "Telefono"
-         :bEditValue       := {|| ( dbfProvee )->Telefono }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Teléfono"
+      :cSortOrder       := "Telefono"
+      :bEditValue       := {|| ( dbfProvee )->Telefono }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Fax"
-         :bEditValue       := {|| ( dbfProvee )->Fax }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Fax"
+      :bEditValue       := {|| ( dbfProvee )->Fax }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Domicilio"
-         :bEditValue       := {|| ( dbfProvee )->Domicilio }
-         :nWidth           := 300
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Domicilio"
+      :bEditValue       := {|| ( dbfProvee )->Domicilio }
+      :nWidth           := 300
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Población"
-         :cSortOrder       := "Poblacion"
-         :bEditValue       := {|| ( dbfProvee )->Poblacion }
-         :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Población"
+      :cSortOrder       := "Poblacion"
+      :bEditValue       := {|| ( dbfProvee )->Poblacion }
+      :nWidth           := 200
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código postal"
-         :cSortOrder       := "CodPostal"
-         :bEditValue       := {|| ( dbfProvee )->CodPostal }
-         :nWidth           := 60
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Código postal"
+      :cSortOrder       := "CodPostal"
+      :bEditValue       := {|| ( dbfProvee )->CodPostal }
+      :nWidth           := 60
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Provincia"
-         :cSortOrder       := "Provincia"
-         :bEditValue       := {|| ( dbfProvee )->Provincia }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Provincia"
+      :cSortOrder       := "Provincia"
+      :bEditValue       := {|| ( dbfProvee )->Provincia }
+      :nWidth           := 100
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Correo electrónico"
-         :cSortOrder       := "cMeiInt"
-         :bEditValue       := {|| ( dbfProvee )->cMeiInt }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Correo electrónico"
+      :cSortOrder       := "cMeiInt"
+      :bEditValue       := {|| ( dbfProvee )->cMeiInt }
+      :nWidth           := 100
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Contacto"
-         :bEditValue       := {|| ( dbfProvee )->cPerCto }
-         :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Contacto"
+      :bEditValue       := {|| ( dbfProvee )->cPerCto }
+      :nWidth           := 200
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Observaciones"
-         :bEditValue       := {|| ( dbfProvee )->mComent }
-         :nWidth           := 200
-      end with
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Observaciones"
+      :bEditValue       := {|| ( dbfProvee )->mComent }
+      :nWidth           := 200
+   end with
 
-      oWndBrw:cHtmlHelp    := "Proveedores"
+   oWndBrw:cHtmlHelp    := "Proveedores"
 
-      oWndBrw:CreateXFromCode()
+   oWndBrw:CreateXFromCode()
 
-      DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( oWndBrw:SearchSetFocus() ) ;
-			TOOLTIP 	"(B)uscar" ;
-         HOTKEY   "B";
+   DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( oWndBrw:SearchSetFocus() ) ;
+		TOOLTIP 	"(B)uscar" ;
+      HOTKEY   "B";
 
-      oWndBrw:AddSeaBar()
+   oWndBrw:AddSeaBar()
 
-		DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( oWndBrw:RecAdd() );
-			ON DROP	( oWndBrw:RecDup() );
-			TOOLTIP 	"(A)ñadir";
-         BEGIN GROUP;
-         HOTKEY   "A";
-         LEVEL    ACC_APPD
+	DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
+		NOBORDER ;
+		ACTION 	( oWndBrw:RecAdd() );
+		ON DROP	( oWndBrw:RecDup() );
+		TOOLTIP 	"(A)ñadir";
+      BEGIN GROUP;
+      HOTKEY   "A";
+      LEVEL    ACC_APPD
 
-		DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( oWndBrw:RecDup() );
-			TOOLTIP 	"(D)uplicar";
-         MRU ;
-         HOTKEY   "D";
-         LEVEL    ACC_APPD
+	DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
+		NOBORDER ;
+		ACTION 	( oWndBrw:RecDup() );
+		TOOLTIP 	"(D)uplicar";
+      MRU ;
+      HOTKEY   "D";
+      LEVEL    ACC_APPD
 
-		DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
-			NOBORDER ;
-			ACTION  	( oWndBrw:RecEdit() );
-			TOOLTIP 	"(M)odificar";
-         MRU ;
-         HOTKEY   "M" ;
-         LEVEL    ACC_EDIT
+	DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+		NOBORDER ;
+		ACTION  	( oWndBrw:RecEdit() );
+		TOOLTIP 	"(M)odificar";
+      MRU ;
+      HOTKEY   "M" ;
+      LEVEL    ACC_EDIT
 
-		DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
-			NOBORDER ;
-			ACTION  	( WinZooRec( oWndBrw:oBrw, bEdit, dbfProvee ) );
-			TOOLTIP 	"(Z)oom";
-         MRU ;
-         HOTKEY   "Z" ;
-         LEVEL    ACC_ZOOM
+	DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
+		NOBORDER ;
+		ACTION  	( WinZooRec( oWndBrw:oBrw, bEdit, dbfProvee ) );
+		TOOLTIP 	"(Z)oom";
+      MRU ;
+      HOTKEY   "Z" ;
+      LEVEL    ACC_ZOOM
 
-		DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( oWndBrw:RecDel() );
-			TOOLTIP 	"(E)liminar";
-         MRU ;
-         HOTKEY   "E";
-         LEVEL    ACC_DELE
+	DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
+		NOBORDER ;
+		ACTION 	( oWndBrw:RecDel() );
+		TOOLTIP 	"(E)liminar";
+      MRU ;
+      HOTKEY   "E";
+      LEVEL    ACC_DELE
 
-      #ifndef __TACTIL__
+   #ifndef __TACTIL__
 
-      DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) );
-         TOOLTIP  "(I)nforme proveedor" ;
-         HOTKEY   "I" ;
-         LEVEL    ACC_ZOOM
+   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) );
+      TOOLTIP  "(I)nforme proveedor" ;
+      HOTKEY   "I" ;
+      LEVEL    ACC_ZOOM
 
-      #endif
+   #endif
 
-      DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( TInfPrv():New( "Listado de proveedores" ):Play() ) ;
-			TOOLTIP 	"(L)istado";
-         HOTKEY   "L" ;
+   DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( TInfPrv():New( "Listado de proveedores" ):Play() ) ;
+		TOOLTIP 	"(L)istado";
+      HOTKEY   "L" ;
 
-      DEFINE BTNSHELL RESOURCE "Document_Chart_" GROUP OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( ReportingClient() ) ;
-         TOOLTIP  "Rep(o)rting";
-         HOTKEY   "O" ;
-         LEVEL    ACC_IMPR
+   DEFINE BTNSHELL RESOURCE "Document_Chart_" GROUP OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( ReportingClient() ) ;
+      TOOLTIP  "Rep(o)rting";
+      HOTKEY   "O" ;
+      LEVEL    ACC_IMPR
 
-      #ifndef __PDA__
+   #ifndef __PDA__
 
-      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( TProveedorLabelGenerator():Create() ) ;
-         TOOLTIP  "Eti(q)uetas" ;
-         HOTKEY   "Q" ;
-         LEVEL    ACC_IMPR
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( TProveedorLabelGenerator():Create() ) ;
+      TOOLTIP  "Eti(q)uetas" ;
+      HOTKEY   "Q" ;
+      LEVEL    ACC_IMPR
 
-      #endif
+   #endif
 
-      DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( TGenMailingProveedores():New( dbfProvee ):Resource() ) ;
-         TOOLTIP  "Enviar correos" ;
-         HOTKEY   "V" ;
-         LEVEL    ACC_IMPR
+   DEFINE BTNSHELL RESOURCE "Mail" OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( TGenMailingProveedores():New( dbfProvee ):Resource() ) ;
+      TOOLTIP  "Enviar correos" ;
+      HOTKEY   "V" ;
+      LEVEL    ACC_IMPR
 
-      DEFINE BTNSHELL oSnd RESOURCE "Lbl" GROUP OF oWndBrw ;
+   DEFINE BTNSHELL oSnd RESOURCE "Lbl" GROUP OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      TOOLTIP  "En(v)iar" ;
+      ACTION   lSndPrv( oWndBrw, dbfProvee ) ;
+      HOTKEY   "V";
+      LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
          NOBORDER ;
-         MENU     This:Toggle() ;
-         TOOLTIP  "En(v)iar" ;
-         ACTION   lSndPrv( oWndBrw, dbfProvee ) ;
-         HOTKEY   "V";
+         ACTION   ( lSelectAll( oWndBrw, dbfProvee, "lSndInt", .t., .t., .t. ) );
+         TOOLTIP  "Todos" ;
+         FROM     oSnd ;
+         CLOSED ;
          LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( lSelectAll( oWndBrw, dbfProvee, "lSndInt", .t., .t., .t. ) );
-            TOOLTIP  "Todos" ;
-            FROM     oSnd ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( lSelectAll( oWndBrw, dbfProvee, "lSndInt", .f., .t., .t. ) );
-            TOOLTIP  "Ninguno" ;
-            FROM     oSnd ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
+      DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( ChkAllSubCta() ) ;
-         TOOLTIP  "Com(p)robar subcuentas" ;
-         HOTKEY   "P";
+         ACTION   ( lSelectAll( oWndBrw, dbfProvee, "lSndInt", .f., .t., .t. ) );
+         TOOLTIP  "Ninguno" ;
+         FROM     oSnd ;
+         CLOSED ;
          LEVEL    ACC_EDIT
 
-      if oUser():lAdministrador()
+   DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ChkAllSubCta() ) ;
+      TOOLTIP  "Com(p)robar subcuentas" ;
+      HOTKEY   "P";
+      LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( ReplaceCreator( oWndBrw, dbfProvee, aItmPrv() ) ) ;
-            TOOLTIP  "Cambiar campos" ;
-            LEVEL    ACC_EDIT
+   if oUser():lAdministrador()
 
-      end if
-
-      DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
-         ACTION   ( oRotor:Expand() ) ;
-         TOOLTIP  "Rotor" ;
+      DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfProvee, aItmPrv() ) ) ;
+         TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) );
-            TOOLTIP  "Campos extra" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
+   end if
 
-         DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( PedPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) ) ;
-            TOOLTIP  "Añadir pedido a proveedor" ;
-            FROM     oRotor ;
-            LEVEL    ACC_EDIT
+   DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
+      ACTION   ( oRotor:Expand() ) ;
+      TOOLTIP  "Rotor" ;
+      LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( AlbPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) );
-            TOOLTIP  "Añadir albarán de proveedor" ;
-            FROM     oRotor ;
-            LEVEL    ACC_EDIT
+      DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oDetCamposExtra:Play( ( dbfProvee )->Cod ) );
+         TOOLTIP  "Campos extra" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
 
-         DEFINE BTNSHELL RESOURCE "Document_businessman_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( FacPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) );
-            TOOLTIP  "Añadir factura de proveedor" ;
-            FROM     oRotor ;
-            LEVEL    ACC_EDIT
+      DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( PedPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) ) ;
+         TOOLTIP  "Añadir pedido a proveedor" ;
+         FROM     oRotor ;
+         LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
-			ACTION 	( oWndBrw:End() ) ;
-			TOOLTIP 	"(S)alir" ;
-			HOTKEY 	"S"
+      DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( AlbPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) );
+         TOOLTIP  "Añadir albarán de proveedor" ;
+         FROM     oRotor ;
+         LEVEL    ACC_EDIT
 
-      /*
-      Datos para el filtro-----------------------------------------------------
-      */
+      DEFINE BTNSHELL RESOURCE "Document_businessman_" OF oWndBrw ;
+         ALLOW    EXIT ;
+         ACTION   ( FacPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) );
+         TOOLTIP  "Añadir factura de proveedor" ;
+         FROM     oRotor ;
+         LEVEL    ACC_EDIT
 
-      oWndBrw:oActiveFilter:SetFields( aItmPrv() )
-      oWndBrw:oActiveFilter:SetFilterType( PRV_TBL )
+   DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
+		ACTION 	( oWndBrw:End() ) ;
+		TOOLTIP 	"(S)alir" ;
+		HOTKEY 	"S"
 
-		ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )
+   /*
+   Datos para el filtro-----------------------------------------------------
+   */
 
-      EnableAcceso()
+   oWndBrw:oActiveFilter:SetFields( aItmPrv() )
+   oWndBrw:oActiveFilter:SetFilterType( PRV_TBL )
 
-	ELSE
+	ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )
 
-		oWndBrw:SetFocus()
-
-	END IF
+   EnableAcceso()
 
 Return .t.
 

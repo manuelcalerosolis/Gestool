@@ -7363,6 +7363,7 @@ STATIC FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
    local cFilEdm
    local hFilEdm
    local cBuffer
+   local hashDatabaseList  := {=>}
 
    cInforme                := ""
 
@@ -7441,15 +7442,6 @@ STATIC FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
 
             SysRefresh()
 
-            /*
-            MsgStop( "deslin :" + cvaltochar( cDesLin ) + CRLF + ;
-                     "nUntLin :" + cvaltochar( nUntLin) + CRLF + ;
-                     "nPvpLin :" + cvaltochar( nPvpLin) + CRLF + ;
-                     "nDtoLin :" + cvaltochar( nDtoLin) + CRLF + ;
-                     "cRefLin :" + cvaltochar( cRefLin) + CRLF,;
-                     cBuffer )
-            */
-
             cBuffer        := Space( _ICG_LINE_LEN_ )
 
          end while
@@ -7487,15 +7479,17 @@ STATIC FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
       Envío de  mail al usuario----------------------------------------------
       */
 
-      with object TGenMailing():New()
+      hSet( hashDatabaseList, "mail", "josecarlos@icgmotor.com" )
+      hSet( hashDatabaseList, "subject", "Indicencias en albaranes de proveedor" )
+      hSet( hashDatabaseList, "message", Rtrim( cInforme ) )
 
-         :cGetDe           := __GSTROTOR__ + Space( 1 ) + __GSTVERSION__
-         :cGetAsunto       := "Indicencias en albaranes de proveedor"
-         :cNombre          := __GSTROTOR__
-         :cDireccion       := "josecarlos@icgmotor.com"
-         :cGetMensaje      := Rtrim( cInforme )
+      with object TSendMail():New()
+         
+         if :buildMailerObject()
 
-         :lExternalSend()
+            :sendMail( hashDatabaseList )
+
+         end if 
 
       end with
 

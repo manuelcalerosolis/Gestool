@@ -54,6 +54,8 @@ CLASS TShell FROM TMdiChild
    DATA  oFont
    DATA  oIcon
 
+   DATA  nWindow
+
    DATA  xAlias
    DATA  nArea
    DATA  cTitle
@@ -190,7 +192,8 @@ CLASS TShell FROM TMdiChild
    METHOD Select()      INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:Refresh(), ::oBrw:Select() ), ) )
    METHOD SelectOne()   INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:SelectOne() ), ) )
 
-   METHOD SetFocus()    INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ), ( ::oBrw:SetFocus(), ::oBrw:Select( 0 ), ::oBrw:Select( 1 ) ), ) )
+   METHOD SetFocus()    
+   METHOD putFocus()    INLINE ( ::setWindowsBar(), ::SetFocus() )
 
    METHOD SetIndex( nIndex )
 
@@ -315,6 +318,8 @@ CLASS TShell FROM TMdiChild
 
    METHOD ToExcel()
 
+   METHOD setWindowsBar()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -416,7 +421,13 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    ::Super:New( 0, 0, 0, 0, cTitle, 0, oMenu, oWnd, oIcon, , , , oCursor, , .t., , nHelpId, "NONE", .f., .f., .f., .f. )
 
+//   ::nWindow            := len( oWnd():aWnd )
+
+//   msgAlert( ::nWindow, "nWindow" )
+
    // Imagelist----------------------------------------------------------------
+
+
 
    if ::lBigStyle
       ::oImageList      := TImageList():New( 32, 32 )
@@ -533,32 +544,7 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    // Preparamos la ventana principal---------------------------------------
 
-   if !Empty( ::oWndBar )
-
-      ::oWndBar:EnableComboBox( ::aPrompt )
-
-      if !Empty( ::oActiveFilter:Ready() )
-         
-         ::EnableComboFilter( ::oActiveFilter:aFiltersName )
-         
-         ::SetDefaultComboFilter()
-         ::ShowAddButtonFilter()
-
-         ::setFilterByUser()
-
-      end if 
-
-      ::oWndBar:EnableGet()
-
-      if ::lFechado
-         ::oWndBar:ShowYearCombobox()
-      end if
-
-      if !Empty( ::nTab ) 
-         ::ChgCombo( ::nTab )
-      end if
-
-   end if
+   ::setWindowsBar()
 
    CursorWE()
 
@@ -836,12 +822,6 @@ METHOD End( lForceExit ) CLASS TShell
       ::oBrw   := nil
    end if
 
-   // Evaluamos el bValid------------------------------------------------------
-/*
-   if ::bValid != nil
-      Eval( ::bValid )
-   end if
-*/
    ::oWndClient:ChildClose( Self )
 
    ::Super:End()
@@ -1218,9 +1198,9 @@ METHOD RecEdit()
 
       ::SetOnProcess()
 
-      Eval( ::bEdit )
+      eval( ::bEdit )
 
-      if !Empty( ::oBrw )
+      if !empty( ::oBrw )
          ::oBrw:Refresh()
       end if
 
@@ -1952,7 +1932,7 @@ METHOD lPressCol( nCol ) CLASS TShell
    local nPos
    local cHeader
 
-   if !Empty( nCol ) .and. nCol <= len( ::oBrw:aHeaders )
+   if !empty( nCol ) .and. nCol <= len( ::oBrw:aHeaders )
 
       cHeader     := ::oBrw:aHeaders[ nCol ]
 
@@ -1961,8 +1941,8 @@ METHOD lPressCol( nCol ) CLASS TShell
 
          ::oWndBar:SetComboBoxSet( cHeader )
 
-         if ( ::xAlias )->( Used() )
-            ( ::xAlias )->( OrdSetFocus( ::oWndBar:GetComboBoxAt() ) )
+         if ( ::xAlias )->( used() )
+            ( ::xAlias )->( ordsetfocus( ::oWndBar:GetComboBoxAt() ) )
          end if 
 
          ::oBrw:Refresh()
@@ -2655,6 +2635,64 @@ METHOD AplyFilter()
 
    if !Empty( ::oActiveFilter )
       ::ChgFilter()
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD SetFocus()
+
+   local nScan
+
+   if !empty(::oWndClient)
+      nScan    := ascan( ::oWndClient:aWnd, {|o| o:hWnd == ::hWnd } ) 
+      if nScan != 0
+         ::oWndClient:select( nScan )
+      end if
+   end if  
+
+   if !Empty( ::oBtnMain )
+      ::oBtnBar:Select( ::oBtnMain )
+   end if 
+
+   if !Empty( ::oBrw )
+      ::oBrw:SetFocus()
+      ::oBrw:Select( 0 )
+      ::oBrw:Select( 1 )
+   end if 
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD setWindowsBar()
+
+   if empty( ::oWndBar )
+      Return ( Self )
+   end if 
+
+   ::oWndBar:EnableComboBox( ::aPrompt )
+
+   if !empty( ::oActiveFilter:Ready() )
+      
+      ::enableComboFilter( ::oActiveFilter:aFiltersName )
+      
+      ::SetDefaultComboFilter()
+      ::ShowAddButtonFilter()
+
+      ::setFilterByUser()
+
+   end if 
+
+   ::oWndBar:enableGet()
+
+   if ::lFechado
+      ::oWndBar:ShowYearCombobox()
+   end if
+
+   if !empty( ::nTab ) 
+      ::chgCombo( ::nTab )
    end if
 
 Return ( Self )

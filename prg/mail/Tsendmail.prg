@@ -20,7 +20,12 @@ CLASS TSendMail
    DATA mailServerConCopia
    DATA mailServerAuthenticate
    DATA mailServerSSL
-   
+
+   // Log de información
+
+   DATA cLogFile              
+   DATA hLogFile              INIT  -1 
+
    METHOD New( oSender )
 
    // Metodos para controlar la vista
@@ -35,10 +40,6 @@ CLASS TSendMail
                               INLINE ( iif( !empty( ::oSender ), ::oSender:setMeterTotal( nTotal ), ) )
    METHOD setMeter( nSet )    INLINE ( iif( !empty( ::oSender ), ::oSender:setMeter( nSet ), ) )
 
-   // Log de información
-
-   DATA cLogFile              
-   DATA hLogFile              INIT  -1 
    METHOD initLogFile()       INLINE ( ::cLogFile := cPatLog() + "Mail" + Dtos( Date() ) + StrTran( Time(), ":", "" ) + ".log",;
                                        ::hLogFile := fCreate( ::cLogFile ) )
    METHOD writeLogFile( cText ) ;
@@ -82,7 +83,6 @@ CLASS TSendMail
    METHOD isMailServer()      INLINE ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
    METHOD mailServerString()  INLINE ( ::mailServer + if( !empty( ::mailServerPort ), ":" + alltrim( str( ::mailServerPort ) ), "" ) )
    METHOD getMensajeHTML()    INLINE ( "<HTML>" + strtran( alltrim( ::oSender:cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
-
 
    METHOD getFromHash( hMail, cKey ) ;
                               INLINE ( iif( hhaskey( hMail, cKey ), hGet( hMail, cKey ), nil ) )      

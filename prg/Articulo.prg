@@ -806,739 +806,736 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    DEFAULT  oWnd        := oWnd()
    DEFAULT  bOnInit     := nil
 
-   if oWndBrw == nil
-
-      /*
-      Obtenemos el nivel de acceso---------------------------------------------
-      */
-
-      nLevel            := nLevelUsr( oMenuItem )
-      if nAnd( nLevel, 1 ) != 0
-         msgStop( "Acceso no permitido." )
-         return .f.
-      end if
-
-      /*
-      Cerramos todas las ventanas----------------------------------------------
-      */
-
-      if oWnd != nil
-         SysRefresh(); oWnd:CloseAll(); SysRefresh()
-      end if
-
-      /*
-      Apertura de ficheros-----------------------------------------------------
-      */
-
-      if !OpenFiles( .f. )
-         return .f.
-      end if
-
-      CursorWait()
-
-      /*
-      Anotamos el movimiento para el navegador---------------------------------
-      */
-
-      AddMnuNext( "Artículos", ProcName() )
-
-      DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
-         XBROWSE ;
-         TITLE    "Artículos" ;
-         PROMPT   "Código",;
-						"Nombre",;
-                  "Familia",;
-                  "Proveedor" ,;
-                  "No obsoletos + Código",;
-                  "No obsoletos + Nombre",;
-                  "Tipo" ,;
-                  getTraslation( "Categoría" ) ,;
-                  getTraslation( "Temporada" ) ,;
-                  "Fabricante" ,;
-                  "Estado" ,;
-                  "Posición táctil" ,;
-                  "Publicar" ,;
-                  "Web" ;
-         MRU      "Cube_Yellow_16";
-         BITMAP   clrTopArchivos ;
-         ALIAS    ( dbfArticulo ) ;
-         APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfArticulo ) ) ;
-			EDIT 		( WinEdtRec( oWndBrw:oBrw, bEdit, dbfArticulo ) ) ;
-         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfArticulo ) ) ;
-         DELETE   ( WinDelRec( oWndBrw:oBrw, dbfArticulo, {|| DelDetalle( ( dbfArticulo )->Codigo ) } ) ) ;
-         LEVEL    nLevel ;
-         OF       oWnd
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Escandallos"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfArticulo )->lKitArt }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "BmpKit" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Envio"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfArticulo )->lSndDoc }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Lbl16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código de barras"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| dbSeekInOrd( ( dbfArticulo )->Codigo, "cCodArt", dbfCodebar ) }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Remotecontrol_16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Táctil"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfArticulo )->lIncTcl }
-         :nWidth           := 18
-         :lHide            := .t.
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Tactil16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Posición táctil"
-         :cSortOrder       := "nPosTpv"
-         :bEditValue       := {|| if( ( dbfArticulo )->lIncTcl, Trans( ( dbfArticulo )->nPosTpv, "999" ), "" ) }
-         :nWidth           := 80
-         :lHide            := .t.
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Publicar"
-         :cSortOrder       := "lPubInt"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfArticulo )->lPubInt }
-         :nWidth           := 20
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "SndInt16" )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Código"
-         :cSortOrder       := "Codigo"
-         :bEditValue       := {|| ( dbfArticulo )->Codigo }
-         :nWidth           := 100
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Nombre"
-         :cSortOrder       := "Nombre"
-         :bEditValue       := {|| ( dbfArticulo )->Nombre }
-         :nWidth           := 300
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Familia"
-         :cSortOrder       := "cFamCod"
-         :bEditValue       := {|| ( dbfArticulo )->Familia }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Nombre familia"
-         :bEditValue       := {|| RetFamilia( (dbfArticulo)->Familia, dbfFam ) }
-         :nWidth           := 140
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Tipo"
-         :cSortOrder       := "cCodTip"
-         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodTip ) + if( !Empty( ( dbfArticulo )->cCodTip ), " - ", "" ) + oRetFld( ( dbfArticulo )->cCodTip, oTipArt:oDbf, "cNomTip" ) }
-         :nWidth           := 140
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t. 
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := getTraslation( "Categoría" )
-         :cSortOrder       := "cCodCate"
-         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodCate ) + if( !Empty( ( dbfArticulo )->cCodCate ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cNombre" ) }
-         :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cTipo" ) ) }
-         :nWidth           := 140
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t. 
-         AddResourceTipoCategoria( hb_QWith() )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := getTraslation( "Temporada" )
-         :cSortOrder       := "cCodTemp"
-         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodTemp ) + if( !Empty( ( dbfArticulo )->cCodTemp ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cNombre" ) }
-         :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cTipo" ) ) }
-         :nWidth           := 140
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t. 
-         AddResourceTipoTemporada( hb_QWith() ) 
-         :lHide            := .t. 
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Fabricante"
-         :cSortOrder       := "cCodFab"
-         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodFab ) + if( !Empty( ( dbfArticulo )->cCodFab ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodFab, oFabricante:GetAlias() ) }
-         :nWidth           := 140
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t. 
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Estado"
-         :cSortOrder       := "cCodEst"
-         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodEst ) + if( !Empty( ( dbfArticulo )->cCodEst ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
-         :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( ( dbfArticulo )->cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
-         :nWidth           := 140
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t. 
-         AddResourceTipoCategoria( hb_QWith() )
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) 
-         :bEditValue       := {|| ( dbfArticulo )->pVenta1 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
-      end with
-
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + Space( 1 ) +  cImp()
-         :bEditValue       := {|| ( dbfArticulo )->pVtaIva1 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) 
-         :bEditValue       := {|| ( dbfArticulo )->pVenta2 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + Space( 1 ) +  cImp()
-         :bEditValue       := {|| ( dbfArticulo )->pVtaIva2 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) 
-         :bEditValue       := {|| ( dbfArticulo )->pVenta3 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
-      end with
-
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + Space( 1 ) +  cImp()
-         :bEditValue       := {|| ( dbfArticulo )->pVtaIva3 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) 
-         :bEditValue       := {|| ( dbfArticulo )->pVenta4 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + Space( 1 ) +  cImp()
-         :bEditValue       := {|| ( dbfArticulo )->pVtaIva4 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) 
-         :bEditValue       := {|| ( dbfArticulo )->pVenta5 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
-      end with
-
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + Space( 1 ) +  cImp()
-         :bEditValue       := {|| ( dbfArticulo )->pVtaIva5 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) 
-         :bEditValue       := {|| ( dbfArticulo )->pVenta6 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + Space( 1 ) +  cImp()
-         :bEditValue       := {|| ( dbfArticulo )->pVtaIva6 }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
-         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Proveedor"
-         :cSortOrder       := "cPrvHab"
-         :bStrData         := {|| if( !Empty( ( dbfArticulo )->cPrvHab ), AllTrim( ( dbfArticulo )->cPrvHab ) + " - " + RetProvee( ( dbfArticulo )->cPrvHab, dbfProv ), "" ) }
-         :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Referencia de proveedor"
-         :bStrData         := {|| cRefArtPrv( ( dbfArticulo )->Codigo, ( dbfArticulo )->cPrvHab, dbfArtPrv ) }
-         :nWidth           := 100
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Web"
-         :cSortOrder       := "cCodWeb"
-         :bStrData         := {|| ( dbfArticulo )->cCodWeb }
-         :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         :lHide            := .t.
-      end with
-
-      if ( oUser():lCostos() )
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Costo"
-         :bStrData         := {|| if( oUser():lNotCostos(), "", nCosto( nil, dbfArticulo, dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      end if
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Precio mínimo"
-         :bEditValue       := {|| ( dbfArticulo )->PvpRec }
-         :cEditPicture     := cPouDiv
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-         :nEditType        := 1
-         :lHide            := .t.
-      end with
-
-      oWndBrw:cHtmlHelp    := "Articulos"
-      oWndBrw:bToolTip     := {|| dlgTooltip( ( dbfArticulo )->Codigo, oWndBrw:oBrw ) }
-
-      if uFieldEmpresa( "lShwPop" )
-         oWndBrw:oBrw:bChange    := {|| if( !Empty( oWndBrw ), oWndBrw:CheckExtendInfo(), ) }
-      else
-         oWndBrw:oBrw:bChange    := {|| oWndBrw:DestroyTooltip() }
-         aAdd( oWndBrw:aFastKey, { VK_SPACE, {|| if( !Empty( oWndBrw ), oWndBrw:ShowExtendInfo(), ) } } )
-      end if
-
-      oWndBrw:CreateXFromCode()
-
-      DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( oWndBrw:SearchSetFocus() ) ;
-			TOOLTIP 	"(B)uscar" ;
-         HOTKEY   "B"
-
-      oWndBrw:AddSeaBar()
-
-      DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( buscarExtendido() ) ; //buscarTipologias()
-         TOOLTIP  "Buscar e(x)tendido" ;
-         HOTKEY   "X"
-
-      DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( oWndBrw:RecAdd() );
-         TOOLTIP  "(A)ñadir";
-         BEGIN GROUP;
-         HOTKEY   "A" ;
-         LEVEL    ACC_APPD
-
-		DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( oWndBrw:RecDup() );
-			TOOLTIP 	"(D)uplicar";
-         HOTKEY   "D";
-         LEVEL    ACC_APPD
-
-		DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
-			NOBORDER ;
-			ACTION  	( oWndBrw:RecEdit() );
-         TOOLTIP  "(M)odificar";
-         HOTKEY   "M";
-         LEVEL    ACC_EDIT
-
-		DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
-			NOBORDER ;
-			ACTION  	( WinZooRec( oWndBrw:oBrw, bEdit, dbfArticulo ) );
-			TOOLTIP 	"(Z)oom";
-         HOTKEY   "Z" ;
-         LEVEL    ACC_ZOOM
-
-      DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( oWndBrw:RecDel() );
-         MENU     This:Toggle() ;
-         TOOLTIP  "(E)liminar";
-         HOTKEY   "E";
-         LEVEL    ACC_DELE
-
-         DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( TDeleleteObsoletos():New(), oWndBrw:Refresh() );
-            TOOLTIP  "Sin movimientos" ;
-            FROM     oDel ;
-            CLOSED ;
-            LEVEL    ACC_DELE
-
-		DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
-			NOBORDER ;
-			ACTION 	( SetPtsEur( oWndBrw, oBtnEur ) ) ;
-         TOOLTIP  "Mo(n)eda";
-         HOTKEY   "N"
-
-      DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre ) ) ;
-         TOOLTIP  "(I)nforme artículo" ;
-         HOTKEY   "I" ;
-         LEVEL    ACC_ZOOM
-
-
-      DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( TInfArtFam():New( "Listado de artículos" ):Play( .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) );
-         TOOLTIP  "Lis(t)ado";
-         HOTKEY   "T" ;
-         LEVEL    ACC_IMPR
-
-      DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( TFastVentasArticulos():New():Play() ) ;
-         TOOLTIP  "Rep(o)rting";
-         HOTKEY   "O" ;
-         LEVEL    ACC_IMPR
-
-      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( TArticuloLabelGenerator():Create() ) ;
-         TOOLTIP  "Eti(q)uetas" ;
-         HOTKEY   "Q";
-         LEVEL    ACC_IMPR
-
-      if oUser():lAdministrador()
-
-         DEFINE BTNSHELL RESOURCE "CHGPRE" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( ChgPrc( dbfArticulo, oWndBrw ) ) ;
-            TOOLTIP  "(C)ambiar precios" ;
-            HOTKEY   "C";
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" OF oWndBrw ;
-            NOBORDER ;
-            MENU     This:Toggle() ;
-            ACTION   ( ReplaceCreator( oWndBrw, dbfArticulo, aItmArt(), ART_TBL ) ) ;
-            TOOLTIP  "Cambiar campos" ;
-            LEVEL    ACC_EDIT
-
-            DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-               NOBORDER ;
-               ACTION   ( ReplaceCreator( oWndBrw, dbfArtKit, aItmKit() ) ) ;
-               TOOLTIP  "Lineas escandallos" ;
-               FROM     oRpl ;
-               CLOSED ;
-               LEVEL    ACC_EDIT
-
-            DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
-               NOBORDER ;
-               ACTION   ( ReplaceCreator( oWndBrw, dbfArtVta, aItmVta() ) ) ;
-               TOOLTIP  "Ventas por propiedades" ;
-               FROM     oRpl ;
-               CLOSED ;
-               LEVEL    ACC_EDIT
-
-      end if
-
-      DEFINE BTNSHELL oSnd RESOURCE "Lbl" GROUP OF oWndBrw ;
-         NOBORDER ;
-         MENU     This:Toggle() ;
-         TOOLTIP  "En(v)iar" ;
-         MESSAGE  "Seleccionar registros para ser enviados" ;
-         ACTION   ChangelSndDoc() ;
-         HOTKEY   "V";
-         LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( lSelectAll( oWndBrw, dbfArticulo, dbfFam ) );
-            TOOLTIP  "Todos" ;
-            FROM     oSnd ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( lSelectAll( oWndBrw, dbfArticulo, dbfFam, .f. ) );
-            TOOLTIP  "Ninguno" ;
-            FROM     oSnd ;
-            CLOSED ;
-            LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "SNDINT" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( ChangePublicar() );
-         TOOLTIP  "P(u)blicar" ;
-         HOTKEY   "U";
-         LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL oTct RESOURCE "TACTIL" OF oWndBrw ;
-         NOBORDER ;
-         MENU     This:Toggle() ;
-         ACTION   ( ChangeField( dbfArticulo, "lIncTcl", !( dbfArticulo )->lIncTcl, oWndBrw ) ) ;
-         TOOLTIP  "Táctil" ;
-         LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Up" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( ChangePosition( .f. ), oWndBrw:Select() ) ;
-            TOOLTIP  "S(u)bir posición" ;
-            FROM     oTct ;
-            CLOSED ;
-            LEVEL    ACC_IMPR
-
-         DEFINE BTNSHELL RESOURCE "Down" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( ChangePosition( .t. ), oWndBrw:Select() ) ;
-            TOOLTIP  "Ba(j)ar posición" ;
-            FROM     oTct ;
-            LEVEL    ACC_IMPR
-
-      if ( "VI" $ cParamsMain() )
-
-      DEFINE BTNSHELL RESOURCE "BMPEXPTAR" OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( GetDisk() ) ;
-         TOOLTIP  "Infortisa" ;
-         LEVEL    ACC_EDIT
-
-      end if
-      
-      DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( oScript:Expand() ) ;
-         TOOLTIP  "Scripts" ;
-
-         ImportScript( oWndBrw, oScript, "Articulos" )  
-
-      DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
-         NOBORDER ;
-         ACTION   ( oRotor:Expand() ) ;
-         TOOLTIP  "Rotor" ;
-         LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( oDetCamposExtra:Play( ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "Campos extra" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( PedPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "Añadir pedido a proveedor" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( AlbPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "Añadir albarán de proveedor" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Document_businessman_" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( FacPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "Añadir factura de proveedor" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Power-drill_user1_" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( SatCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "Añadir SAT de cliente" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT         
-
-         DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
-            NOBORDER ;
-            ACTION   ( PreCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "Añadir presupuesto de cliente" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
-            ACTION   ( PedCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "Añadir pedido de cliente" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
-            ACTION   ( AlbCli( nil, oWnd, { "Artículo" => ( dbfArticulo )->Codigo } ) );
-            TOOLTIP  "Añadir albarán de cliente" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
-            ACTION   ( FactCli( nil, oWnd, { "Artículo" => ( dbfArticulo )->Codigo } ) );
-            TOOLTIP  "Añadir factura de cliente" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-         DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
-            ACTION   ( FrontTpv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "Añadir tiket de cliente" ;
-            FROM     oRotor ;
-            ALLOW    EXIT ;
-            LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
-			ACTION 	( oWndBrw:End() ) ;
-			TOOLTIP 	"(S)alir" ;
-         ALLOW    EXIT ;
-         HOTKEY   "S"
-
-      oWndBrw:oActiveFilter:SetFields( aItmArt() )
-      oWndBrw:oActiveFilter:SetFilterType( ART_TBL )
-
-      ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )
-
-      if !Empty( bOnInit )
-         Eval( bOnInit )
-      end if
-
-      bOnInit     := nil
-
-      CursorWE()
-
-   else
-
-      oWndBrw:SetFocus()
+   if !empty( oWndBrw )
+      oWndBrw:putFocus()
+      Return .t.
+   end if
+
+   /*
+   Obtenemos el nivel de acceso---------------------------------------------
+   */
+
+   nLevel            := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      return .f.
+   end if
+
+   /*
+   Cerramos todas las ventanas----------------------------------------------
+
+   if oWnd != nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end if
+   */
+
+   /*
+   Apertura de ficheros-----------------------------------------------------
+   */
+
+   if !OpenFiles( .f. )
+      return .f.
+   end if
+
+   CursorWait()
+
+   /*
+   Anotamos el movimiento para el navegador---------------------------------
+   */
+
+   AddMnuNext( "Artículos", ProcName() )
+
+   DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
+      XBROWSE ;
+      TITLE    "Artículos" ;
+      PROMPT   "Código",;
+					"Nombre",;
+               "Familia",;
+               "Proveedor" ,;
+               "No obsoletos + Código",;
+               "No obsoletos + Nombre",;
+               "Tipo" ,;
+               getTraslation( "Categoría" ) ,;
+               getTraslation( "Temporada" ) ,;
+               "Fabricante" ,;
+               "Estado" ,;
+               "Posición táctil" ,;
+               "Publicar" ,;
+               "Web" ;
+      MRU      "Cube_Yellow_16";
+      BITMAP   clrTopArchivos ;
+      ALIAS    ( dbfArticulo ) ;
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdit, dbfArticulo ) ) ;
+		EDIT 		( WinEdtRec( oWndBrw:oBrw, bEdit, dbfArticulo ) ) ;
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfArticulo ) ) ;
+      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfArticulo, {|| DelDetalle( ( dbfArticulo )->Codigo ) } ) ) ;
+      LEVEL    nLevel ;
+      OF       oWnd
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Escandallos"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( dbfArticulo )->lKitArt }
+      :nWidth           := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "BmpKit" )
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Envio"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( dbfArticulo )->lSndDoc }
+      :nWidth           := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "Lbl16" )
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Código de barras"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| dbSeekInOrd( ( dbfArticulo )->Codigo, "cCodArt", dbfCodebar ) }
+      :nWidth           := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "Remotecontrol_16" )
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Táctil"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( dbfArticulo )->lIncTcl }
+      :nWidth           := 18
+      :lHide            := .t.
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "Tactil16" )
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Posición táctil"
+      :cSortOrder       := "nPosTpv"
+      :bEditValue       := {|| if( ( dbfArticulo )->lIncTcl, Trans( ( dbfArticulo )->nPosTpv, "999" ), "" ) }
+      :nWidth           := 80
+      :lHide            := .t.
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Publicar"
+      :cSortOrder       := "lPubInt"
+      :nHeadBmpNo       := 3
+      :bStrData         := {|| "" }
+      :bEditValue       := {|| ( dbfArticulo )->lPubInt }
+      :nWidth           := 20
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :SetCheck( { "Sel16", "Nil16" } )
+      :AddResource( "SndInt16" )
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Código"
+      :cSortOrder       := "Codigo"
+      :bEditValue       := {|| ( dbfArticulo )->Codigo }
+      :nWidth           := 100
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Nombre"
+      :cSortOrder       := "Nombre"
+      :bEditValue       := {|| ( dbfArticulo )->Nombre }
+      :nWidth           := 300
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Familia"
+      :cSortOrder       := "cFamCod"
+      :bEditValue       := {|| ( dbfArticulo )->Familia }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Nombre familia"
+      :bEditValue       := {|| RetFamilia( (dbfArticulo)->Familia, dbfFam ) }
+      :nWidth           := 140
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Tipo"
+      :cSortOrder       := "cCodTip"
+      :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodTip ) + if( !Empty( ( dbfArticulo )->cCodTip ), " - ", "" ) + oRetFld( ( dbfArticulo )->cCodTip, oTipArt:oDbf, "cNomTip" ) }
+      :nWidth           := 140
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t. 
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := getTraslation( "Categoría" )
+      :cSortOrder       := "cCodCate"
+      :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodCate ) + if( !Empty( ( dbfArticulo )->cCodCate ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cNombre" ) }
+      :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cTipo" ) ) }
+      :nWidth           := 140
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t. 
+      AddResourceTipoCategoria( hb_QWith() )
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := getTraslation( "Temporada" )
+      :cSortOrder       := "cCodTemp"
+      :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodTemp ) + if( !Empty( ( dbfArticulo )->cCodTemp ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cNombre" ) }
+      :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cTipo" ) ) }
+      :nWidth           := 140
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t. 
+      AddResourceTipoTemporada( hb_QWith() ) 
+      :lHide            := .t. 
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Fabricante"
+      :cSortOrder       := "cCodFab"
+      :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodFab ) + if( !Empty( ( dbfArticulo )->cCodFab ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodFab, oFabricante:GetAlias() ) }
+      :nWidth           := 140
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t. 
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Estado"
+      :cSortOrder       := "cCodEst"
+      :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodEst ) + if( !Empty( ( dbfArticulo )->cCodEst ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodEst, D():EstadoArticulo( nView ), "cNombre" ) }
+      :bBmpData         := {|| nBitmapTipoEstadoSat( RetFld( ( dbfArticulo )->cCodEst, D():EstadoArticulo( nView ), "cTipo" ) ) }
+      :nWidth           := 140
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t. 
+      AddResourceTipoCategoria( hb_QWith() )
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) 
+      :bEditValue       := {|| ( dbfArticulo )->pVenta1 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
+   end with
+
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| ( dbfArticulo )->pVtaIva1 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) 
+      :bEditValue       := {|| ( dbfArticulo )->pVenta2 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| ( dbfArticulo )->pVtaIva2 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) 
+      :bEditValue       := {|| ( dbfArticulo )->pVenta3 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
+   end with
+
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| ( dbfArticulo )->pVtaIva3 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) 
+      :bEditValue       := {|| ( dbfArticulo )->pVenta4 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| ( dbfArticulo )->pVtaIva4 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) 
+      :bEditValue       := {|| ( dbfArticulo )->pVenta5 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
+   end with
+
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| ( dbfArticulo )->pVtaIva5 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) 
+      :bEditValue       := {|| ( dbfArticulo )->pVenta6 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + Space( 1 ) +  cImp()
+      :bEditValue       := {|| ( dbfArticulo )->pVtaIva6 }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+      :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
+      :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Proveedor"
+      :cSortOrder       := "cPrvHab"
+      :bStrData         := {|| if( !Empty( ( dbfArticulo )->cPrvHab ), AllTrim( ( dbfArticulo )->cPrvHab ) + " - " + RetProvee( ( dbfArticulo )->cPrvHab, dbfProv ), "" ) }
+      :nWidth           := 200
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t.
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Referencia de proveedor"
+      :bStrData         := {|| cRefArtPrv( ( dbfArticulo )->Codigo, ( dbfArticulo )->cPrvHab, dbfArtPrv ) }
+      :nWidth           := 100
+      :lHide            := .t.
+   end with
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Web"
+      :cSortOrder       := "cCodWeb"
+      :bStrData         := {|| ( dbfArticulo )->cCodWeb }
+      :nWidth           := 80
+      :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      :lHide            := .t.
+   end with
+
+   if ( oUser():lCostos() )
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Costo"
+      :bStrData         := {|| if( oUser():lNotCostos(), "", nCosto( nil, dbfArticulo, dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) ) }
+      :nWidth           := 100
+      :nDataStrAlign    := AL_RIGHT
+      :nHeadStrAlign    := AL_RIGHT
+      :lHide            := .t.
+   end with
 
    end if
+
+   with object ( oWndBrw:AddXCol() )
+      :cHeader          := "Precio mínimo"
+      :bEditValue       := {|| ( dbfArticulo )->PvpRec }
+      :cEditPicture     := cPouDiv
+      :nWidth           := 80
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nEditType        := 1
+      :lHide            := .t.
+   end with
+
+   oWndBrw:cHtmlHelp    := "Articulos"
+   oWndBrw:bToolTip     := {|| dlgTooltip( ( dbfArticulo )->Codigo, oWndBrw:oBrw ) }
+
+   if uFieldEmpresa( "lShwPop" )
+      oWndBrw:oBrw:bChange    := {|| if( !Empty( oWndBrw ), oWndBrw:CheckExtendInfo(), ) }
+   else
+      oWndBrw:oBrw:bChange    := {|| oWndBrw:DestroyTooltip() }
+      aAdd( oWndBrw:aFastKey, { VK_SPACE, {|| if( !Empty( oWndBrw ), oWndBrw:ShowExtendInfo(), ) } } )
+   end if
+
+   oWndBrw:CreateXFromCode()
+
+   DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( oWndBrw:SearchSetFocus() ) ;
+		TOOLTIP 	"(B)uscar" ;
+      HOTKEY   "B"
+
+   oWndBrw:AddSeaBar()
+
+   DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( buscarExtendido() ) ; //buscarTipologias()
+      TOOLTIP  "Buscar e(x)tendido" ;
+      HOTKEY   "X"
+
+   DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( oWndBrw:RecAdd() );
+      TOOLTIP  "(A)ñadir";
+      BEGIN GROUP;
+      HOTKEY   "A" ;
+      LEVEL    ACC_APPD
+
+	DEFINE BTNSHELL RESOURCE "DUP" OF oWndBrw ;
+		NOBORDER ;
+		ACTION 	( oWndBrw:RecDup() );
+		TOOLTIP 	"(D)uplicar";
+      HOTKEY   "D";
+      LEVEL    ACC_APPD
+
+	DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+		NOBORDER ;
+		ACTION  	( oWndBrw:RecEdit() );
+      TOOLTIP  "(M)odificar";
+      HOTKEY   "M";
+      LEVEL    ACC_EDIT
+
+	DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
+		NOBORDER ;
+		ACTION  	( WinZooRec( oWndBrw:oBrw, bEdit, dbfArticulo ) );
+		TOOLTIP 	"(Z)oom";
+      HOTKEY   "Z" ;
+      LEVEL    ACC_ZOOM
+
+   DEFINE BTNSHELL oDel RESOURCE "DEL" OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( oWndBrw:RecDel() );
+      MENU     This:Toggle() ;
+      TOOLTIP  "(E)liminar";
+      HOTKEY   "E";
+      LEVEL    ACC_DELE
+
+      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TDeleleteObsoletos():New(), oWndBrw:Refresh() );
+         TOOLTIP  "Sin movimientos" ;
+         FROM     oDel ;
+         CLOSED ;
+         LEVEL    ACC_DELE
+
+	DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBrw ;
+		NOBORDER ;
+		ACTION 	( SetPtsEur( oWndBrw, oBtnEur ) ) ;
+      TOOLTIP  "Mo(n)eda";
+      HOTKEY   "N"
+
+   DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
+		NOBORDER ;
+      ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre ) ) ;
+      TOOLTIP  "(I)nforme artículo" ;
+      HOTKEY   "I" ;
+      LEVEL    ACC_ZOOM
+
+
+   DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( TInfArtFam():New( "Listado de artículos" ):Play( .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) );
+      TOOLTIP  "Lis(t)ado";
+      HOTKEY   "T" ;
+      LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL RESOURCE "Document_Chart_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( TFastVentasArticulos():New():Play() ) ;
+      TOOLTIP  "Rep(o)rting";
+      HOTKEY   "O" ;
+      LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( TArticuloLabelGenerator():Create() ) ;
+      TOOLTIP  "Eti(q)uetas" ;
+      HOTKEY   "Q";
+      LEVEL    ACC_IMPR
+
+   if oUser():lAdministrador()
+
+      DEFINE BTNSHELL RESOURCE "CHGPRE" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ChgPrc( dbfArticulo, oWndBrw ) ) ;
+         TOOLTIP  "(C)ambiar precios" ;
+         HOTKEY   "C";
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" OF oWndBrw ;
+         NOBORDER ;
+         MENU     This:Toggle() ;
+         ACTION   ( ReplaceCreator( oWndBrw, dbfArticulo, aItmArt(), ART_TBL ) ) ;
+         TOOLTIP  "Cambiar campos" ;
+         LEVEL    ACC_EDIT
+
+         DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfArtKit, aItmKit() ) ) ;
+            TOOLTIP  "Lineas escandallos" ;
+            FROM     oRpl ;
+            CLOSED ;
+            LEVEL    ACC_EDIT
+
+         DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
+            NOBORDER ;
+            ACTION   ( ReplaceCreator( oWndBrw, dbfArtVta, aItmVta() ) ) ;
+            TOOLTIP  "Ventas por propiedades" ;
+            FROM     oRpl ;
+            CLOSED ;
+            LEVEL    ACC_EDIT
+
+   end if
+
+   DEFINE BTNSHELL oSnd RESOURCE "Lbl" GROUP OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      TOOLTIP  "En(v)iar" ;
+      MESSAGE  "Seleccionar registros para ser enviados" ;
+      ACTION   ChangelSndDoc() ;
+      HOTKEY   "V";
+      LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( lSelectAll( oWndBrw, dbfArticulo, dbfFam ) );
+         TOOLTIP  "Todos" ;
+         FROM     oSnd ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Lbl" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( lSelectAll( oWndBrw, dbfArticulo, dbfFam, .f. ) );
+         TOOLTIP  "Ninguno" ;
+         FROM     oSnd ;
+         CLOSED ;
+         LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "SNDINT" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ChangePublicar() );
+      TOOLTIP  "P(u)blicar" ;
+      HOTKEY   "U";
+      LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oTct RESOURCE "TACTIL" OF oWndBrw ;
+      NOBORDER ;
+      MENU     This:Toggle() ;
+      ACTION   ( ChangeField( dbfArticulo, "lIncTcl", !( dbfArticulo )->lIncTcl, oWndBrw ) ) ;
+      TOOLTIP  "Táctil" ;
+      LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Up" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ChangePosition( .f. ), oWndBrw:Select() ) ;
+         TOOLTIP  "S(u)bir posición" ;
+         FROM     oTct ;
+         CLOSED ;
+         LEVEL    ACC_IMPR
+
+      DEFINE BTNSHELL RESOURCE "Down" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ChangePosition( .t. ), oWndBrw:Select() ) ;
+         TOOLTIP  "Ba(j)ar posición" ;
+         FROM     oTct ;
+         LEVEL    ACC_IMPR
+
+   if ( "VI" $ cParamsMain() )
+
+   DEFINE BTNSHELL RESOURCE "BMPEXPTAR" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( GetDisk() ) ;
+      TOOLTIP  "Infortisa" ;
+      LEVEL    ACC_EDIT
+
+   end if
+   
+   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "Articulos" )  
+
+   DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oRotor:Expand() ) ;
+      TOOLTIP  "Rotor" ;
+      LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "form_green_add_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( oDetCamposExtra:Play( ( dbfArticulo )->Codigo ) );
+         TOOLTIP  "Campos extra" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( PedPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+         TOOLTIP  "Añadir pedido a proveedor" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( AlbPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+         TOOLTIP  "Añadir albarán de proveedor" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Document_businessman_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( FacPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+         TOOLTIP  "Añadir factura de proveedor" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Power-drill_user1_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( SatCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+         TOOLTIP  "Añadir SAT de cliente" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT         
+
+      DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( PreCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+         TOOLTIP  "Añadir presupuesto de cliente" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
+         ACTION   ( PedCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+         TOOLTIP  "Añadir pedido de cliente" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
+         ACTION   ( AlbCli( nil, oWnd, { "Artículo" => ( dbfArticulo )->Codigo } ) );
+         TOOLTIP  "Añadir albarán de cliente" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
+         ACTION   ( FactCli( nil, oWnd, { "Artículo" => ( dbfArticulo )->Codigo } ) );
+         TOOLTIP  "Añadir factura de cliente" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+      DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
+         ACTION   ( FrontTpv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+         TOOLTIP  "Añadir tiket de cliente" ;
+         FROM     oRotor ;
+         ALLOW    EXIT ;
+         LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
+		ACTION 	( oWndBrw:End() ) ;
+		TOOLTIP 	"(S)alir" ;
+      ALLOW    EXIT ;
+      HOTKEY   "S"
+
+   oWndBrw:oActiveFilter:SetFields( aItmArt() )
+   oWndBrw:oActiveFilter:SetFilterType( ART_TBL )
+
+   ACTIVATE WINDOW oWndBrw VALID ( CloseFiles( .t. ) )
+
+   if !Empty( bOnInit )
+      Eval( bOnInit )
+   end if
+
+   bOnInit     := nil
+
+   CursorWE()
 
 RETURN ( .t. )
 
@@ -4488,7 +4485,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  cPwbDiv ;
          OF       fldWeb
 
-   REDEFINE GET aTmp[( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
+   REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
          ID       210 ;
          WHEN     ( .F. );
          OF       fldWeb

@@ -120,8 +120,6 @@ Source: "c:\fw195\gestool\bin\frsysth.dll";            DestDir: "{app}"; Flags: 
 Source: "c:\fw195\gestool\bin\ace32.dll";              DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\aicu32.dll";             DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\axcws32.dll";            DestDir: "{app}"; Flags: ignoreversion
-; Source: "c:\fw195\gestool\bin\adsloc32.dll";           DestDir: "{app}"; Flags: ignoreversion
-
 
 Source: "c:\fw195\gestool\bin\mscomctl.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\gestool\bin\richtx32.ocx";           DestDir: "{app}"; Flags: ignoreversion onlyifdoesntexist

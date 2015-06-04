@@ -2513,6 +2513,9 @@ Return nil
 Function TAutoCombo
 Return nil
 
+Function TSendMail
+Return nil
+
 
 //------------------------------------------------------------------//
 

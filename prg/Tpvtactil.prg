@@ -182,8 +182,6 @@ CLASS TpvTactil
    DATA oBrwFamilias
    DATA oBrwLineas
 
-   DATA oImgArticulos
-   
    DATA oLstArticulos
    DATA oLstOrden
 
@@ -667,13 +665,13 @@ CLASS TpvTactil
 
    METHOD lLineaValida( lExcluirContadores )
 
-   METHOD lLineaImpresa()          INLINE ( ::oTiketLinea:FieldGetByName( "lImpCom" ) )
-      METHOD SetLineaImpresa( lImpresa)     INLINE ( if( lImpresa, ::oTiketLinea:FieldPutByName( "lImpCom", .t. ), ::oTiketLinea:FieldPutByName( "lImpCom", .f. ) ) )
+   METHOD lLineaImpresa()                    INLINE ( ::oTiketLinea:FieldGetByName( "lImpCom" ) )
+      METHOD SetLineaImpresa( lImpresa)      INLINE ( if( lImpresa, ::oTiketLinea:FieldPutByName( "lImpCom", .t. ), ::oTiketLinea:FieldPutByName( "lImpCom", .f. ) ) )
 
    METHOD nUnidadesLinea( uTmpL, lPicture )
    METHOD nUnidadesImpresas( uTmpL, lPicture )
 
-   METHOD nPrecioLinea()               INLINE ( Round( ::oTiketLinea:nPvpTil, ::nDecimalesImporte ) + Round( ::oTiketLinea:nPcmTil, ::nDecimalesImporte ) )  // Precio
+   METHOD nPrecioLinea()                     INLINE ( Round( ::oTiketLinea:nPvpTil, ::nDecimalesImporte ) + Round( ::oTiketLinea:nPcmTil, ::nDecimalesImporte ) )  // Precio
 
    METHOD nTotalLinea( uTmpL, lPic )
    METHOD nTotalLineaUno( uTmpL, nVdv )
@@ -4100,11 +4098,17 @@ METHOD cFileBmpName( cFile, lEmptyImage ) CLASS TpvTactil
 
    DEFAULT lEmptyImage  := .f.
 
-   if At( ":", cFile ) == 0 .and. !Empty( cPatImg() )
-      cFile             := Rtrim( cPatImg() ) + Rtrim( cFile )
+   if at( ":", cFile ) == 0 .and. !empty( cPatImg() )
+      cFile             := rtrim( cPatImg() ) + rtrim( cFile )
    else
-      cFile             := Rtrim( cFile )
+      cFile             := rtrim( cFile )
    end if
+
+   if file( cFile )
+      return ( cFile )
+   end if 
+
+   cFile                := fullCurDir() + cFile
 
 RETURN ( cFile )
 
@@ -4122,7 +4126,7 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
    if( ::oArticulo:lPeso )
       
-      ::nUnidades                := Calculadora( 0, , , "Introduzca peso" )
+      ::nUnidades             := Calculadora( 0, , , "Introduzca peso" )
       
       if( ::nUnidades == 0 )
           Return .f.
@@ -4130,7 +4134,7 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
    else
 
-      ::nUnidades               := ::nGetUnidades( .t. )
+      ::nUnidades             := ::nGetUnidades( .t. )
 
    end if
 
