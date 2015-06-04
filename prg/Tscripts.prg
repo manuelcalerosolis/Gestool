@@ -394,27 +394,13 @@ Return ( .t. )
 
 METHOD EjecutarFicheroScript() CLASS TScripts
 
-   local oError
-   local oBlock
-
    // Desactivamos todos los Scripts-------------------------------------------
 
    ::DeActivateAllTimer()
 
-   /*oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
-
       // Ejecutamos el script compilado----------------------------------------
 
       ::RunScript( ::cFicheroHbr )
-
-   /*RECOVER USING oError
-
-      msgStop( "Error de ejecución." + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )*/
 
    // Activamos todos los scripts----------------------------------------------
 
@@ -428,24 +414,25 @@ METHOD RunScript( cFichero ) CLASS TScripts
 
    local u
    local pHrb
+   local oError
+   local oBlock
 
-#ifdef __XHARBOUR__
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   if file( cFichero )
-      pHrb        := __hrbLoad( cFichero )
-      u           := __hrbDo( pHrb )
-      __hrbUnload( pHrb )   
-   end if
+      if file( cFichero )
+         pHrb        := hb_hrbLoad( cFichero )
+         u           := hb_hrbDo( pHrb )
+         hb_hrbUnload( pHrb )   
+      end if
 
-#else
+   RECOVER USING oError
 
-   if file( cFichero )
-      pHrb        := hb_hrbLoad( cFichero )
-      u           := hb_hrbDo( pHrb )
-      hb_hrbUnload( pHrb )   
-   end if
+      msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
 
-#endif
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( nil )
 

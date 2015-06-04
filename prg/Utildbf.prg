@@ -1659,7 +1659,7 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    if !( cAlias )->( eof() )
       if dbDialogLock( cAlias )
          aTmp        := dbScatter( cAlias )
-         aGet        := Array( ( cAlias )->( fCount() ) )
+         aGet        := array( ( cAlias )->( fCount() ) )
          lResult     := Eval( bEdit, aTmp, aGet, cAlias, oBrw, bWhen, bValid, EDIT_MODE, xOthers )
          dbSafeUnLock( cAlias )
       end if

@@ -3198,209 +3198,209 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       oBrwDiv:nMarqueeStyle   := 6
       oBrwDiv:cName           := "Articulos.Propiedades"
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := AllTrim( retProp( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ], dbfPro ) )
-            :cSortOrder       := "cValPr1"
-            :bEditValue       := {|| AllTrim( ( dbfTmpVta )->cValPr1 ) + " - " + AllTrim( retValProp( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1 ) ) }
-            :nWidth           := 160
-            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := AllTrim( retProp( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ], dbfPro ) )
+         :cSortOrder       := "cValPr1"
+         :bEditValue       := {|| AllTrim( ( dbfTmpVta )->cValPr1 ) + " - " + AllTrim( retValProp( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1 ) ) }
+         :nWidth           := 160
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      end with
 
-         if retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ], dbfPro, "lColor" )
-
-            with object ( oBrwDiv:AddCol() )
-               :cHeader          := "C. Prp1"
-               :bStrData         := {|| "" }
-               :nWidth           := 16
-               :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
-               :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
-               :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
-            end with
-
-         end if
+      if retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ], dbfPro, "lColor" )
 
          with object ( oBrwDiv:AddCol() )
-            :cHeader          := AllTrim( retProp( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ], dbfPro ) )
-            :cSortOrder       := "cValPr2"
-            :bEditValue       := {|| AllTrim( ( dbfTmpVta )->cValPr2 ) + " - " + AllTrim( retValProp( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2 ) ) }
-            :nWidth           := 160
-            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+            :cHeader          := "C. Prp1"
+            :bStrData         := {|| "" }
+            :nWidth           := 16
+            :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+            :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+            :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
          end with
 
-         if retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ], dbfPro, "lColor" )
+      end if
 
-            with object ( oBrwDiv:AddCol() )
-               :cHeader          := "C. Prp2"
-               :bStrData         := {|| "" }
-               :nWidth           := 16
-               :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
-               :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
-               :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
-            end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := AllTrim( retProp( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ], dbfPro ) )
+         :cSortOrder       := "cValPr2"
+         :bEditValue       := {|| AllTrim( ( dbfTmpVta )->cValPr2 ) + " - " + AllTrim( retValProp( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2 ) ) }
+         :nWidth           := 160
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
+      end with
 
-         end if
+      if retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ], dbfPro, "lColor" )
 
          with object ( oBrwDiv:AddCol() )
-            :cHeader          := "Costo"
-            :bEditValue       := {|| ( dbfTmpVta )->nPreCom }
-            :nWidth           := 100
-            :cEditPicture     := cPinDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
+            :cHeader          := "C. Prp2"
+            :bStrData         := {|| "" }
+            :nWidth           := 16
+            :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
+            :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
+            :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp2" ) ) ] + ( dbfTmpVta )->cValPr2, dbfTblPro, "nColor" ) } }
          end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
-            :bEditValue       := {|| ( dbfTmpVta )->nPreVta1 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-         end with
+      end if
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + Space( 1 ) + cImp()
-            :bEditValue       := {|| ( dbfTmpVta )->nPreIva1 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := "Costo"
+         :bEditValue       := {|| ( dbfTmpVta )->nPreCom }
+         :nWidth           := 100
+         :cEditPicture     := cPinDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
-            :bEditValue       := {|| ( dbfTmpVta )->nPreVta2 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
+         :bEditValue       := {|| ( dbfTmpVta )->nPreVta1 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + Space( 1 ) + cImp()
-            :bEditValue       := {|| ( dbfTmpVta )->nPreIva2 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + Space( 1 ) + cImp()
+         :bEditValue       := {|| ( dbfTmpVta )->nPreIva1 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
-            :bEditValue       := {|| ( dbfTmpVta )->nPreVta3 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
+         :bEditValue       := {|| ( dbfTmpVta )->nPreVta2 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + Space( 1 ) + cImp()
-            :bEditValue       := {|| ( dbfTmpVta )->nPreIva3 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + Space( 1 ) + cImp()
+         :bEditValue       := {|| ( dbfTmpVta )->nPreIva2 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
-            :bEditValue       := {|| ( dbfTmpVta )->nPreVta4 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
+         :bEditValue       := {|| ( dbfTmpVta )->nPreVta3 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + Space( 1 ) + cImp()
-            :bEditValue       := {|| ( dbfTmpVta )->nPreIva4 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + Space( 1 ) + cImp()
+         :bEditValue       := {|| ( dbfTmpVta )->nPreIva3 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
-            :bEditValue       := {|| ( dbfTmpVta )->nPreVta5 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
+         :bEditValue       := {|| ( dbfTmpVta )->nPreVta4 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + Space( 1 ) + cImp()
-            :bEditValue       := {|| ( dbfTmpVta )->nPreIva5 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + Space( 1 ) + cImp()
+         :bEditValue       := {|| ( dbfTmpVta )->nPreIva4 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
-            :bEditValue       := {|| ( dbfTmpVta )->nPreVta6 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
+         :bEditValue       := {|| ( dbfTmpVta )->nPreVta5 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + Space( 1 ) + cImp()
-            :bEditValue       := {|| ( dbfTmpVta )->nPreIva6 }
-            :nWidth           := 100
-            :cEditPicture     := cPouDiv
-            :nDataStrAlign    := AL_RIGHT
-            :nHeadStrAlign    := AL_RIGHT
-            :lHide            := .t.
-         end with
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + Space( 1 ) + cImp()
+         :bEditValue       := {|| ( dbfTmpVta )->nPreIva5 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         if nMode != ZOOM_MODE
-            oBrwDiv:bLDblClick   := {|| WinEdtRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) }
-         end if
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
+         :bEditValue       := {|| ( dbfTmpVta )->nPreVta6 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
 
-         oBrwDiv:CreateFromResource( 430 )
+      with object ( oBrwDiv:AddCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + Space( 1 ) + cImp()
+         :bEditValue       := {|| ( dbfTmpVta )->nPreIva6 }
+         :nWidth           := 100
+         :cEditPicture     := cPouDiv
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
+
+      if nMode != ZOOM_MODE
+         oBrwDiv:bLDblClick   := {|| WinEdtRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) }
+      end if
+
+      oBrwDiv:CreateFromResource( 430 )
 
    REDEFINE BUTTON aBtnDiv[ 1 ];
-			ID 		500 ;
-         OF       fldPropiedades;
-         WHEN     ( !Empty( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
-         ACTION   ( WinAppRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) )
+		ID 		500 ;
+      OF       fldPropiedades;
+      WHEN     ( !Empty( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
+      ACTION   ( WinAppRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) )
 
    REDEFINE BUTTON aBtnDiv[ 2 ];
-			ID 		501 ;
-         OF       fldPropiedades;
-         WHEN     ( !Empty( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
-         ACTION   ( WinEdtRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) )
+		ID 		501 ;
+      OF       fldPropiedades;
+      WHEN     ( !Empty( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
+      ACTION   ( WinEdtRec( oBrwDiv, bEdtVta, dbfTmpVta, , , aTmp ) )
 
    REDEFINE BUTTON aBtnDiv[ 3 ];
-			ID 		502 ;
-         OF       fldPropiedades;
-         WHEN     ( !Empty( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
-         ACTION   ( dbDelRec( oBrwDiv, dbfTmpVta ) )
+		ID 		502 ;
+      OF       fldPropiedades;
+      WHEN     ( !Empty( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ) .and. nMode != ZOOM_MODE );
+      ACTION   ( dbDelRec( oBrwDiv, dbfTmpVta ) )
 
    /*
    Quinta caja de dialogo______________________________________________________
    */
 
    REDEFINE BITMAP oBmpLogistica ;
-         ID       500 ;
-         RESOURCE "Truck_Red_48" ;
-         TRANSPARENT ;
-         OF       fldLogistica
+      ID       500 ;
+      RESOURCE "Truck_Red_48" ;
+      TRANSPARENT ;
+      OF       fldLogistica
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodFra" ) ) ] ;
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodFra" ) ) ] ; 
@@ -4501,10 +4501,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                                aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ],;
                                aTmp[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ],; 
                                ,;
-                               aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ],;
                                aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ],;
                                nDecDiv,;
-                               aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
+                               aTmp[ ( dbfArticulo )->( fieldpos( "cCodImp" ) ) ],;
                                oSayWeb[ 1 ],;
                                aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
                                aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
@@ -4701,88 +4701,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    oDlg:bStart    := {|| StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, oBtnMoneda, aBtn, bmpImage, oBrwPrv, oBrwDiv, oBrwStk, oBrwKit, oBrwOfe, oBrwCtaVta, oBrwCtaCom, oBrwCodeBar, oBrwImg, oBrwLeng ) }
 
-   ACTIVATE DIALOG oDlg CENTER ;
-         ON INIT  (  EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode ) ) ;
-         VALID    (  KillTrans( oBrwPrv, oBrwDiv, oBrwStk, oBrwCtaVta, oBrwCtaCom, oBrwOfe, oBrwKit ) )
-   
+   ACTIVATE DIALOG oDlg ;
+      CENTER ;
+      ON INIT     (  EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode ) ) ;
+      VALID       (  KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil ) )
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir el dialogo de artículos" )
 
    END SEQUENCE
    ErrorBlock( oBlock )
-
-   CursorWait()
-
-   if !Empty( oMenu )
-      oMenu:End()
-   end if
-
-   if !Empty( oBmpCategoria )
-      oBmpCategoria:End()
-   end if
-
-   if !Empty( oBmpTemporada )
-      oBmpTemporada:End()
-   end if
-
-   if !Empty( oBmpEstado )
-      oBmpEstado:End()
-   end if
-
-   if !Empty( oBmpGeneral )
-      oBmpGeneral:End()
-   end if
-
-   if !Empty( oBmpPrecios )
-      oBmpPrecios:End()
-   end if
-
-   if !Empty( oBmpDescripciones )
-      oBmpDescripciones:End()
-   end if
-
-   if !Empty( oBmpPropiedades )
-      oBmpPropiedades:End()
-   end if
-
-   if !Empty( oBmpLogistica )
-      oBmpLogistica:End()
-   end if
-
-   if !Empty( oBmpStocks )
-      oBmpStocks:End()
-   end if
-
-   if !Empty( oBmpContabilidad )
-      oBmpContabilidad:End()
-   end if
-
-   if !Empty( oBmpOfertas )
-      oBmpOfertas:End()
-   end if
-
-   if !Empty( oBmpEscandallos )
-      oBmpEscandallos:End()
-   end if
-
-   if !Empty( oBmpWeb )
-      oBmpWeb:End()
-   end if
-
-   if !Empty( oBmpUbicaciones )
-      oBmpUbicaciones:End()
-   end if
-
-   if !Empty( oBmpImagenes )
-      oBmpImagenes:End()
-   end if
-
-   if !Empty( oBmpTactil )
-      oBmpTactil:End()
-   end if
-
-   CursorWE()
 
 Return ( oDlg:nResult == IDOK )
 
@@ -6303,7 +6232,7 @@ Return ( .t. )
 
 //-----------------------------------------------------------------------//
 
-Static Function KillTrans( oBrwPrv, oBrwDiv, oBrwStk, oBrwCta, oBrwCom, oBrw2, oBrw5 )
+Static Function KillTrans( oMenu, oBmpCategoria, oBmpTemporada, oBmpEstado, oBmpGeneral, oBmpPrecios, oBmpDescripciones, oBmpPropiedades, oBmpLogistica, oBmpStocks, oBmpContabilidad, oBmpOfertas, oBmpEscandallos, oBmpWeb, oBmpUbicaciones, oBmpImagenes, oBmpTactil )
 
    /*
    Quitamos los filtros de stock-----------------------------------------------
@@ -6370,6 +6299,74 @@ Static Function KillTrans( oBrwPrv, oBrwDiv, oBrwStk, oBrwCta, oBrwCom, oBrw2, o
    dbfErase( filTmpCodebar )
    dbfErase( filTmpSubCta  )
    dbfErase( filTmpSubCom  )
+
+   if !Empty( oMenu )
+      oMenu:End()
+   end if
+
+   if !Empty( oBmpCategoria )
+      oBmpCategoria:End()
+   end if
+
+   if !Empty( oBmpTemporada )
+      oBmpTemporada:End()
+   end if
+
+   if !Empty( oBmpEstado )
+      oBmpEstado:End()
+   end if
+
+   if !Empty( oBmpGeneral )
+      oBmpGeneral:End()
+   end if
+
+   if !Empty( oBmpPrecios )
+      oBmpPrecios:End()
+   end if
+
+   if !Empty( oBmpDescripciones )
+      oBmpDescripciones:End()
+   end if
+
+   if !Empty( oBmpPropiedades )
+      oBmpPropiedades:End()
+   end if
+
+   if !Empty( oBmpLogistica )
+      oBmpLogistica:End()
+   end if
+
+   if !Empty( oBmpStocks )
+      oBmpStocks:End()
+   end if
+
+   if !Empty( oBmpContabilidad )
+      oBmpContabilidad:End()
+   end if
+
+   if !Empty( oBmpOfertas )
+      oBmpOfertas:End()
+   end if
+
+   if !Empty( oBmpEscandallos )
+      oBmpEscandallos:End()
+   end if
+
+   if !Empty( oBmpWeb )
+      oBmpWeb:End()
+   end if
+
+   if !Empty( oBmpUbicaciones )
+      oBmpUbicaciones:End()
+   end if
+
+   if !Empty( oBmpImagenes )
+      oBmpImagenes:End()
+   end if
+
+   if !Empty( oBmpTactil )
+      oBmpTactil:End()
+   end if
 
 Return .t.
 
@@ -20418,6 +20415,4 @@ CLASS SImagenes
 END CLASS
 
 //---------------------------------------------------------------------------//
-
-
 

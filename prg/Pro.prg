@@ -1056,7 +1056,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTblPro, dbfArtCom, oBrw, oGetUnd, oGetPre )
+Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPre, oBrw, nView )
 
    local n
    local a
@@ -1071,12 +1071,14 @@ Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTbl
    local aSizesTable       := {}
    local aJustifyTable     := {}
 
-   nOrd                    := ( dbfTblPro )->( OrdSetFocus( "nOrdPro" ) )
+   msgAlert( hb_valtoexp( aValoresPropiedad1( cCodArt, nView ) ) )
 
-   if !Empty( cCodPr1 ) .and. ( dbfTblPro )->( dbSeek( cCodPr1 ) )
-      while ( dbfTblPro )->cCodPro == cCodPr1 .and. !( dbfTblPro )->( eof() )
+   nOrd                    := ( D():PropiedadesLineas( nView ) )->( OrdSetFocus( "nOrdPro" ) )
+
+   if !Empty( cCodPr1 ) .and. ( D():PropiedadesLineas( nView ) )->( dbSeek( cCodPr1 ) )
+      while ( D():PropiedadesLineas( nView ) )->cCodPro == cCodPr1 .and. !( D():PropiedadesLineas( nView ) )->( eof() )
          nTotalRow++
-         ( dbfTblPro )->( dbSkip() )
+         ( D():PropiedadesLineas( nView ) )->( dbSkip() )
       end while
       nTotalCol++
    end if
@@ -1085,10 +1087,10 @@ Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTbl
       Return nil
    end if
 
-   if !Empty( cCodPr2 ) .and. ( dbfTblPro )->( dbSeek( cCodPr2 ) )
-      while ( dbfTblPro )->cCodPro == cCodPr2 .and. !( dbfTblPro )->( eof() )
+   if !Empty( cCodPr2 ) .and. ( D():PropiedadesLineas( nView ) )->( dbSeek( cCodPr2 ) )
+      while ( D():PropiedadesLineas( nView ) )->cCodPro == cCodPr2 .and. !( D():PropiedadesLineas( nView ) )->( eof() )
          nTotalCol++
-         ( dbfTblPro )->( dbSkip() )
+         ( D():PropiedadesLineas( nView ) )->( dbSkip() )
       end while
    else
       nTotalCol++
@@ -1096,47 +1098,47 @@ Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTbl
 
    aPropertiesTable        := Array( nTotalRow, nTotalCol )
 
-   if ( dbfPro )->( dbSeek( cCodPr1 ) )
-      aAdd( aHeadersTable, ( dbfPro )->cDesPro )
+   if ( D():Propiedades( nView ) )->( dbSeek( cCodPr1 ) )
+      aAdd( aHeadersTable, ( D():Propiedades( nView ) )->cDesPro )
       aAdd( aSizesTable,   60 )
       aAdd( aJustifyTable, .f. )
    end if
 
-   if ( dbfTblPro )->( dbSeek( cCodPr1 ) )
-      while ( dbfTblPro )->cCodPro == cCodPr1 .and. !( dbfTblPro )->( eof() )
+   if ( D():PropiedadesLineas( nView ) )->( dbSeek( cCodPr1 ) )
+      while ( D():PropiedadesLineas( nView ) )->cCodPro == cCodPr1 .and. !( D():PropiedadesLineas( nView ) )->( eof() )
          aPropertiesTable[ nRow, nCol ]                     := TPropertiesItems():New()
          aPropertiesTable[ nRow, nCol ]:cCodigo             := cCodArt
-         aPropertiesTable[ nRow, nCol ]:cHead               := Rtrim( ( dbfPro )->cDesPro )
-         aPropertiesTable[ nRow, nCol ]:cText               := ( dbfTblPro )->cDesTbl
-         aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1   := ( dbfTblPro )->cCodPro
-         aPropertiesTable[ nRow, nCol ]:cValorPropiedad1    := ( dbfTblPro )->cCodTbl
+         aPropertiesTable[ nRow, nCol ]:cHead               := Rtrim( ( D():Propiedades( nView ) )->cDesPro )
+         aPropertiesTable[ nRow, nCol ]:cText               := ( D():PropiedadesLineas( nView ) )->cDesTbl
+         aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1   := ( D():PropiedadesLineas( nView ) )->cCodPro
+         aPropertiesTable[ nRow, nCol ]:cValorPropiedad1    := ( D():PropiedadesLineas( nView ) )->cCodTbl
          nRow++
-         ( dbfTblPro )->( dbSkip() )
+         ( D():PropiedadesLineas( nView ) )->( dbSkip() )
       end while
    end if
 
-   if !Empty( cCodPr2 ) .and. ( dbfTblPro )->( dbSeek( cCodPr2 ) )
+   if !Empty( cCodPr2 ) .and. ( D():PropiedadesLineas( nView ) )->( dbSeek( cCodPr2 ) )
 
-      while ( dbfTblPro )->cCodPro == cCodPr2 .and. !( dbfTblPro )->( eof() )
+      while ( D():PropiedadesLineas( nView ) )->cCodPro == cCodPr2 .and. !( D():PropiedadesLineas( nView ) )->( eof() )
 
          nCol++
 
-         aAdd( aHeadersTable, Rtrim( ( dbfTblPro )->cDesTbl ) )
+         aAdd( aHeadersTable, Rtrim( ( D():PropiedadesLineas( nView ) )->cDesTbl ) )
          aAdd( aSizesTable,   60 )
          aAdd( aJustifyTable, .t. )
 
          for n := 1 to nTotalRow
             aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
             aPropertiesTable[ n, nCol ]:Value               := 0
-            aPropertiesTable[ n, nCol ]:cHead               := Rtrim( ( dbfTblPro )->cDesTbl )
+            aPropertiesTable[ n, nCol ]:cHead               := Rtrim( ( D():PropiedadesLineas( nView ) )->cDesTbl )
             aPropertiesTable[ n, nCol ]:cCodigo             := cCodArt
             aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
             aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
-            aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := ( dbfTblPro )->cCodPro
-            aPropertiesTable[ n, nCol ]:cValorPropiedad2    := ( dbfTblPro )->cCodTbl
+            aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := ( D():PropiedadesLineas( nView ) )->cCodPro
+            aPropertiesTable[ n, nCol ]:cValorPropiedad2    := ( D():PropiedadesLineas( nView ) )->cCodTbl
          next
 
-         ( dbfTblPro )->( dbSkip() )
+         ( D():PropiedadesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -1166,7 +1168,7 @@ Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTbl
    for each a in aPropertiesTable
       for each o in a
          if IsObject( o )
-            o:PrecioCompra( nPreCos, dbfArtCom )
+            o:PrecioCompra( nPreCos, D():ArticuloPrecioPropiedades( nView ) )
          end if
       next
    next
@@ -1175,7 +1177,7 @@ Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTbl
    Reposicionamiento-----------------------------------------------------------
    */
 
-   ( dbfTblPro )->( OrdSetFocus( nOrd ) )
+   ( D():PropiedadesLineas( nView ) )->( OrdSetFocus( nOrd ) )
 
    // Asignamos la informacion al browse---------------------------------------
 
@@ -2672,6 +2674,44 @@ Return lPub
 
 //---------------------------------------------------------------------------//
 
+Function aValoresPropiedad1( cCodigoArticulo, nView )
+
+   local aValores    := {}
+
+   cCodigoArticulo   := rtrim( cCodigoArticulo )
+
+   D():getInitStatus( "ArtDiv", nView )
+
+   if ( D():ArticuloPrecioPropiedades( nView ) )->( dbSeek( cCodigoArticulo ) )
+
+      while rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->cCodArt ) == cCodigoArticulo .and. !( D():ArticuloPrecioPropiedades( nView ) )->( eof() )
+
+         if !isValoresPorpiedad( aValores, nView )
+            addValoresPorpiedad( aValores, nView )
+         end if 
+
+         ( D():ArticuloPrecioPropiedades( nView ) )->( dbskip() )
+
+      end while
+
+   end if 
+
+   D():setStatus( "ArtDiv", nView )
+
+Return ( aValores )
+
+Static Function isValoresPorpiedad( aValores, nView )
+
+Return ( ascan( aValores, {| hash | hash[ "CodigoPropiedad" ] == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->cCodPr1 ) .and. hash[ "ValorPropiedad" ] == rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->cValPr1 ) } ) != 0 )
+
+Static Function addValoresPorpiedad( aValores, nView )
+
+   local hPropiedades   := {  "CodigoPropiedad" => rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->cCodPr1 ),;
+                              "ValorPropiedad" => rtrim( ( D():ArticuloPrecioPropiedades( nView ) )->cValPr1 ) }
+
+Return ( aadd( aValores, hPropiedades ) )
+
+//---------------------------------------------------------------------------//
 
 
 
