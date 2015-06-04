@@ -5463,6 +5463,12 @@ CLASS D
    METHOD FacturasClientesLineas( nView )       INLINE ( ::Get( "FacCliL", nView ) )
       METHOD FacturasClientesLineasId( nView )  INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
 
+   METHOD FacturasClientesIncidencias( nView )       INLINE ( ::Get( "FacCliI", nView ) )
+      METHOD FacturasClientesIncidenciasId( nView )  INLINE ( ( ::Get( "FacCliI", nView ) )->cSerie + Str( ( ::Get( "FacCliI", nView ) )->nNumFac ) +  ( ::Get( "FacCliI", nView ) )->cSufFac )
+
+   METHOD FacturasClientesDocumentos( nView )       INLINE ( ::Get( "FacCliD", nView ) )
+      METHOD FacturasClientesDocumentosId( nView )  INLINE ( ( ::Get( "FacCliD", nView ) )->cSerie + Str( ( ::Get( "FacCliD", nView ) )->nNumFac ) +  ( ::Get( "FacCliD", nView ) )->cSufFac )
+
    METHOD FacturasClientesCobros( nView )       INLINE ( ::Get( "FacCliP", nView ) )
       METHOD FacturasClientesCobrosId( nView )  INLINE ( ( ::Get( "FacCliP", nView ) )->cSerie + Str( ( ::Get( "FacCliP", nView ) )->nNumFac ) +  ( ::Get( "FacCliP", nView ) )->cSufFac + Str( ( ::Get( "FacCliP", nView ) )->nNumRec ) )
 

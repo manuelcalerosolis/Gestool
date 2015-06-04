@@ -1125,6 +1125,14 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
          TOOLTIP  "Correo electrónico";
          LEVEL    ACC_IMPR
 
+      DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TLabelGeneratorFacturasClientes():New( nView ):Dialog() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
+
+
       DEFINE BTNSHELL oLiq RESOURCE "Money2_" OF oWndBrw GROUP ;
          NOBORDER ;
          ACTION   ( lLiquida( oWndBrw:oBrw ) ) ;
@@ -1642,6 +1650,10 @@ STATIC FUNCTION OpenFiles( lExt )
       D():ArticuloLenguaje( nView )
 
       D():ClientesEntidad( nView )
+
+      D():GetObject( "UnidadMedicion", nView )
+
+      D():ImpuestosEspeciales( nView )
 
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles      := .f.
@@ -21001,8 +21013,10 @@ function aColFacCli()
    aAdd( aColFacCli, { "nUniUltCom","N",  16, 6, "Unidades última compra"				 , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "nBultos",   "N",  16, 6, "Numero de bultos en líneas"			 , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cFormato",  "C", 100, 0, "Formato de venta"						 , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "tFecFac",    "C",   6, 0, "Hora de la factura"                   , "",              "", "( cDbfCol )"} )
-   aAdd( aColFacCli, { "cCtrCoste",  "C",   9, 0, "Codigo del centro de coste"           , "",              "", "( cDbfCol )"} )
+   aAdd( aColFacCli, { "tFecFac",   "C",   6, 0, "Hora de la factura"                    , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cCtrCoste", "C",   9, 0, "Codigo del centro de coste"            , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "lLabel"   , "L",   1, 0, "Lógico para marca de etiqueta"         , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "nLabel"   , "N",   6, 0, "Unidades de etiquetas a imprimir"      , "",              "", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
@@ -24847,3 +24861,81 @@ Function nTotalSaldo16( cCodCli, dFecFac )
 Return oStock:nTotalSaldo( Padr("16", 18 ), cCodCli, dFecFac)
 
 //---------------------------------------------------------------------------//
+
+Static Function cFormatoPresupuestosClientes( cSerie )
+
+   local cFormato
+
+   DEFAULT cSerie    := ( D():PresupuestosClientes( nView ) )->cSerPre
+
+   cFormato          := cFormatoDocumento( cSerie, "nPreCli", D():Contadores( nView ) )
+
+   if Empty( cFormato )
+      cFormato       := cFirstDoc( "RC", D():Documentos( nView ) )
+   end if
+
+Return ( cFormato ) 
+
+//---------------------------------------------------------------------------//   
+
+Function DesignLabelFacturaClientes( oFr, cDoc )
+
+   local oLabel   := TLabelGeneratorFacturasClientes():New( nView )
+
+   if oLabel:lErrorOnCreate
+      Return .f.
+   end if 
+
+   if !oLabel:lCreateTempReport()
+      Return .f.
+   end if 
+
+   /*
+   Zona de datos---------------------------------------------------------
+   */
+   oLabel:DataLabel( oFr, .f. )
+
+   /*
+   Paginas y bandas------------------------------------------------------
+   */
+
+   if !Empty( ( cDoc )->mReport )
+
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+
+   else
+
+      oFr:AddPage(         "MainPage" )
+
+      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de facturas" )
+
+   end if
+
+   /*
+   Diseño de report------------------------------------------------------
+   */
+
+   oFr:DesignReport()
+
+   /*
+   Destruye el diseñador-------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   /*
+   Destruye el fichero temporal------------------------------------------------
+   */
+
+   oLabel:DestroyTempReport()
+
+   /*
+   Cierra ficheros-------------------------------------------------------
+   */
+
+   oLabel:End()
+
+Return .t.   

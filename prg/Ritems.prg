@@ -229,6 +229,7 @@ static aTipDoc     := {  "Artículos [Etiquetas]",;
                          "Albaran de clientes [Etiquetas]",;
                          "Pedido de clientes [Etiquetas]",;
                          "Presupuesto de clientes [Etiquetas]",;
+                         "Factura de clientes [ Etiquetas ]",;
                          "Pedido proveedores",;
                          "Albarán proveedores",;
                          "Factura proveedores",;
@@ -266,6 +267,7 @@ static aCodDoc     := {  "AR",;
                          "AB",;
                          "PB",;
                          "PR",;
+                         "FB",;
                          "PP",;
                          "AP",;
                          "FP",;
@@ -4095,6 +4097,9 @@ Static Function VisualEdtDocs( dbfDoc )
 
       case cTipo == "PR"
          DesignLabelPresupuestoClientes( oFr, dbfDoc )
+
+      case cTipo == "FB"
+         DesignLabelFacturaClientes( oFr, dbfDoc )
 
       case cTipo == "PP"
          DesignReportPedPrv( oFr, dbfDoc )
