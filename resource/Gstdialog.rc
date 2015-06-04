@@ -13666,6 +13666,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 2, 30, 12
   CONTROL "No imprimir línea ", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 3, 67, 10
   CONTROL "", 120, "Edit", ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 27, 60, 12
+  CONTROL "", 121, "Edit", ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 161, 27, 60, 12
   CONTROL "Línea de control", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 15, 65, 10
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 100, 40, 60, 12
   CONTROL "", 151, "Edit", WS_BORDER, 161, 40, 194, 12
@@ -13683,7 +13684,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Control de stocks", 350, "Button", BS_AUTORADIOBUTTON, 5, 158, 68, 10
   CONTROL "Contadores", 351, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 171, 49, 10
   CONTROL "No controlar stock", 352, "Button", BS_AUTORADIOBUTTON|WS_GROUP, 5, 184, 71, 10
-  CONTROL "Fecha de entrega", 901, "Static", WS_GROUP, 5, 30, 61, 8
+  CONTROL "Plazo de entrega", -1, "Static", WS_GROUP, 5, 30, 61, 8
   CONTROL "Imagen", -1, "Static", WS_GROUP, 5, 102, 73, 8
   CONTROL "Grupo de familia", -1, "Static", WS_GROUP, 5, 43, 55, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 5, 55, 27, 8

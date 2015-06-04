@@ -210,6 +210,9 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NUNIULTCOM 			  		 92
 #define __NBULTOS 					 93
 #define _CFORMATO 					 94
+#define _LLABEL                   95
+#define _NLABEL                   96
+#define _DFECFIN                  97  
 
 /*
 Array para impuestos
@@ -4799,6 +4802,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
       REDEFINE GET aGet[ _DFECHA ] VAR aTmp[ _DFECHA ] ;
          ID       120 ;
+         SPINNER ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _DFECFIN ] VAR aTmp[ _DFECFIN ] ;
+         ID       121 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
@@ -15758,8 +15767,9 @@ function aColPedCli()
    aAdd( aColPedCli, { "nUniUltCom","N",   16,  6, "Unidades última compra",		                     "",                        "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nBultos",   "N",   16,  6, "Numero de bultos en líneas", 	                  "",              	         "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cFormato",  "C",  100,  0, "Formato de venta",                                "",              	         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "lLabel",    "L",    1,  0, "Lógico para marca de etiqueta",					  "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "lLabel",    "L",    1,  0, "Lógico para marca de etiqueta",					      "",                        "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nLabel",    "N",    6,  0, "Unidades de etiquetas a imprimir",                "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "dFecFin",   "D",    8,  0, "Fecha fin de entrega",                            "Fechaentregafin",         "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 
