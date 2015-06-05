@@ -4522,7 +4522,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       IDCANCEL ;
          OF       oDlg ;
          CANCEL ;
-         ACTION   ( CancelEdtRec( nMode, aGet, oDlg ) )
+         ACTION   ( oDlg:end() )
 
       REDEFINE GROUP oSayLabels[ 1 ] ID 700 OF oFld:aDialogs[ 1 ] TRANSPARENT
       REDEFINE SAY   oSayLabels[ 2 ] ID 708 OF oFld:aDialogs[ 1 ]
@@ -4540,7 +4540,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 	   Apertura de la caja de Dialogo
 	   ----------------------------------------------------------------------------
 	   */
-	
+
 	   if nMode != ZOOM_MODE
 	
 	      oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f. ) } )
@@ -4576,6 +4576,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    /*
    Salimos --------------------------------------------------------------------
    */
+
+   if ( oDlg:nResult != IDOK )
+      CancelEdtRec( nMode, aGet )
+   end if 
 
    DisableAcceso()
 
@@ -4760,68 +4764,66 @@ Return ( nil )
 
 //----------------------------------------------------------------------------//
 
-Static Function CancelEdtRec( nMode, aGet, oDlg )
+Static Function CancelEdtRec( nMode, aGet )
 
    local cNumDoc  
 
-   if ExitNoSave( nMode, dbfTmpLin )
-
-      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-
-	      CursorWait()
-
-	   	/*
-	   	rollback de los albaranes facturados-------------------------------------
-	   	*/
-	
-	      if len( aNumAlb ) > 0
-	         for each cNumDoc in aNumAlb 
-	            if ( dbfAlbCliT )->( dbSeek( cNumDoc ) )
-	               SetFacturadoAlbaranCliente( .f., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
-	            end if
-	         next
-	      end if
-
-	      // Presupuestos----------------------------------------------------------
-	
-	      cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
-	
-	      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
-	         if ( dbfPreCliT )->lEstado .and. dbLock( dbfPreCliT )
-	            ( dbfPreCliT )->lEstado    := .f.
-	            ( dbfPreCliT )->( dbUnLock() )
-	         end if
-	      end if 
-
-	      // Pedidos---------------------------------------------------------------
-	
-	      cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
-	
-	      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
-	         if ( dbfPedCliT )->nEstado != 1 .and. dbLock( dbfPedCliT )
-	            ( dbfPedCliT )->nEstado    := 1
-	            ( dbfPedCliT )->( dbUnLock() )
-	         end if
-	      end if 
-
-	      // SAT--------------------------------------------------------------
-	
-	      cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
-	
-	      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfSatCliT )
-	         if ( dbfSatCliT )->lEstado .and. dbLock( dbfSatCliT )
-	            ( dbfSatCliT )->lEstado    := .f.
-	            ( dbfSatCliT )->( dbUnLock() )
-	         end if
-	      end if 
-
-	      CursorWE()
-
-	   end if
-
-      oDlg:end()
-
+   if !exitNoSave( nMode, dbfTmpLin )
+      Return ( nil )
    end if 
+
+  if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+
+      CursorWait()
+
+   	/*
+   	rollback de los albaranes facturados-------------------------------------
+   	*/
+
+      if len( aNumAlb ) > 0
+         for each cNumDoc in aNumAlb 
+            if ( dbfAlbCliT )->( dbSeek( cNumDoc ) )
+               SetFacturadoAlbaranCliente( .f., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
+            end if
+         next
+      end if
+
+      // Presupuestos----------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
+         if ( dbfPreCliT )->lEstado .and. dbLock( dbfPreCliT )
+            ( dbfPreCliT )->lEstado    := .f.
+            ( dbfPreCliT )->( dbUnLock() )
+         end if
+      end if 
+
+      // Pedidos---------------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
+         if ( dbfPedCliT )->nEstado != 1 .and. dbLock( dbfPedCliT )
+            ( dbfPedCliT )->nEstado    := 1
+            ( dbfPedCliT )->( dbUnLock() )
+         end if
+      end if 
+
+      // SAT--------------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfSatCliT )
+         if ( dbfSatCliT )->lEstado .and. dbLock( dbfSatCliT )
+            ( dbfSatCliT )->lEstado    := .f.
+            ( dbfSatCliT )->( dbUnLock() )
+         end if
+      end if 
+
+      CursorWE()
+
+   end if
 
 Return ( nil )
 
