@@ -479,7 +479,7 @@ return ( aSer[ Min( Max( Asc( cSer ) - 64, 1 ), len( aSer ) ) ] )
 
 //---------------------------------------------------------------------------//
 
-function RetFld( cCod, cAlias, xFld, nOrd )
+function retFld( cCod, cAlias, xFld, nOrd )
 
    local nRec
    local nAnt

@@ -3473,6 +3473,16 @@ Function getLenguajeSegundario()
 return cLenguajeSegundario
 
 //---------------------------------------------------------------------------//
+
+Function fieldGetByName( cFieldName )
+
+   if empty( alias() )
+      Return ""
+   end if 
+
+Return ( ( alias() )->( fieldget( fieldpos( cFieldName ) ) ) )
+
+//---------------------------------------------------------------------------//
    
 CLASS excluyentArray
 

@@ -3240,7 +3240,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
                nPreCom              := nCosto( nil, D():Articulos( nView ), D():Kit( nView ), .f., aTmpPed[ _CDIVPED ], D():Divisas( nView ) )
 
-               LoadPropertiesTable( cCodArt, nPreCom, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwPrp, nView )
+               newPropertiesTable( cCodArt, nPreCom, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwPrp, nView )
 
             else
 
