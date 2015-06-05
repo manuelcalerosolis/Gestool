@@ -6767,7 +6767,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       with object ( oBrwPrp2:AddCol() )
          :cHeader          := "Código"
-         :bStrData         := {|| aValPrp2[ oBrwPrp2:nArrayAt ]:cValPrp }
+         :bStrData         := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:cValPrp, "" ) }
          :nWidth           := 40
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | cOrdenBrwPropiedades( oCol, oBrwPrp2 ) }
       end with
@@ -6818,7 +6818,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
                      aGet[ ( dbfTmpVta )->( fieldpos( "Benef5" ) ) ]:lValid(),;
                      aGet[ ( dbfTmpVta )->( fieldpos( "Benef6" ) ) ]:lValid(),;
                      .t. );
-			PICTURE 	cPinDiv ;
+			PICTURE 	cPinDiv() ;
          SPINNER ;
          OF       oFld:aDialogs[1] ;
          IDSAY    401 ;
