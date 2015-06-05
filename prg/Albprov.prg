@@ -206,6 +206,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _TCIERRE                 118
 #define __TFECALB                119     //   D      8     0 "",  
 #define __CCENTROCOSTE           120
+#define __CSUALB                 121    //   C      2     0 "CSUFALB",
 
 /*
 Definici¢n de Array para impuestos
@@ -3550,7 +3551,7 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
    if Empty( aTmp[ __CALMORIGEN ] )
       aTmp[ __CALMORIGEN ]  := aTmpAlb[ _CALMORIGEN ]
    end if
-
+  
    if uFieldEmpresa( "lShowOrg" )
       aGet[ __CALMORIGEN ]:Show()
    else
@@ -3733,6 +3734,8 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
       MsgStop( "Código de almacén no encontrado" )
       Return nil
    end if
+
+   aTmp[ __CSUALB ]  := aTmpAlb[ _CSUALB ]
 
    /*
    Comprobamos si tiene que introducir números de serie------------------------
@@ -5453,6 +5456,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
    dFecAlb              := aTmp[ _DFECALB ]
    cNumPedPrv           := aTmp[ _CNUMPED ]
    aNumPedCli           := {}
+
 
    /*
    Comprobamos la fecha del documento------------------------------------------
@@ -9376,6 +9380,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "tCierre",      "C",  6,  0, "Hora cierre de lote",           "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,             "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cCtrCoste",    "C",  9,  0, "Codigo del centro de coste" ,   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cSuAlb",       "C", 12,  0, "Número de su albarán",          "",                  "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 

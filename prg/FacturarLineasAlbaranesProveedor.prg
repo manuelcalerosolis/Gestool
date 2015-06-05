@@ -2,6 +2,12 @@
 #include "Factu.ch" 
 #include "MesDbf.ch"
 #include "Xbrowse.ch"
+#include "Folder.ch"
+#include "Report.ch"
+#include "Label.ch"
+#include "Menu.ch"
+#include "FastRepH.ch" 
+#include "dbInfo.ch"
 
 #define albNoFacturado              1
 #define albParcialmenteFacturado    2
@@ -78,6 +84,8 @@ CLASS TFacturarLineasAlbaranesProveedor FROM DialogBuilder
       METHOD guardaTotalesFacturaProveedor()
       METHOD genPagosFacturaProveedor()
 
+   METHOD getSuAlb()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -134,15 +142,27 @@ METHOD CreaTemporales()
                   "TmpPrvI",;
                   {  {  "tagName" => "nNumAlb" ,;
                         "tagExpresion" => "cSerAlb + str( nNumAlb ) + cSufAlb + str( nNumLin )",;
-                        "tagBlock" => {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb + str( Field->nNumLin ) } } },;
+                        "tagBlock" => {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb + str( Field->nNumLin ) } },;
+					      {  "tagName" => "cSuAlb" ,;
+                        "tagExpresion" => "cSuAlb",;
+                        "tagBlock" => {|| Field->cSuAlb } },;
+                     {  "tagName" => "cDetalle" ,;
+                        "tagExpresion" => "cDetalle",;
+                        "tagBlock" => {|| Field->cDetalle } } },;
                   ::nView ) 
 
-
+ 
    D():BuildTmp(  "AlbProvL",;
                   "TmpPrvO",;
                   {  {  "tagName" => "nNumAlb" ,;
                         "tagExpresion" => "cSerAlb + str( nNumAlb ) + cSufAlb + str( nNumLin )",;
-                        "tagBlock" => {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb + str( Field->nNumLin ) } } },;
+                        "tagBlock" => {|| Field->cSerAlb + str( Field->nNumAlb ) + Field->cSufAlb + str( Field->nNumLin ) } },;
+                     {  "tagName" => "cSuAlb" ,;
+                        "tagExpresion" => "cSuAlb",;
+                        "tagBlock" => {|| Field->cSuAlb } },;
+                     {  "tagName" => "cDetalle" ,;
+                        "tagExpresion" => "cDetalle",;
+                        "tagBlock" => {|| Field->cDetalle } } },;
                   ::nView ) 
 
 Return ( Self )
@@ -218,8 +238,10 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
       with object ( ::oBrwEntrada:AddCol() )
          :cHeader          := "Descripción"
+         :cSortOrder       := "cDetalle"
          :bEditValue       := {|| if( Empty( ( D():Tmp( "TmpPrvI", ::nView ) )->cRef ) .and. !Empty( ( D():Tmp( "TmpPrvI", ::nView ) )->mLngDes ), ( D():Tmp( "TmpPrvI", ::nView ) )->mLngDes, ( D():Tmp( "TmpPrvI", ::nView ) )->cDetalle ) }
          :nWidth           := 305
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }         
       end with
 
       with object ( ::oBrwEntrada:AddCol() )
@@ -262,6 +284,14 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
          :bEditValue       := {|| if( !Empty( (D():Tmp( "TmpPrvI", ::nView ))->cNumPed ), GetCliente( (D():Tmp( "TmpPrvI", ::nView ))->cNumPed ), "" ) }
          :nWidth           := 180
          :lHide            := .t.
+      end with
+
+      with object ( ::oBrwEntrada:AddCol() )
+         :cHeader          := "Su albarán"
+         :cSortOrder       := "cSuAlb"
+         :bEditValue       := {|| if( !Empty( (D():Tmp( "TmpPrvI", ::nView ))->cSuAlb ), (D():Tmp( "TmpPrvI", ::nView ))->cSuAlb , "" ) }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
       end with
 
       with object ( ::oBrwEntrada:AddCol() )
@@ -384,8 +414,18 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
 
       with object ( ::oBrwSalida:AddCol() )
          :cHeader          := "Descripción"
+         :cSortOrder       := "cDetalle"
          :bEditValue       := {|| if( Empty( ( D():Tmp( "TmpPrvO", ::nView ) )->cRef ) .and. !Empty( ( D():Tmp( "TmpPrvO", ::nView ) )->mLngDes ), ( D():Tmp( "TmpPrvO", ::nView ) )->mLngDes, ( D():Tmp( "TmpPrvO", ::nView ) )->cDetalle ) }
          :nWidth           := 305
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) } 
+      end with
+
+      with object ( ::oBrwSalida:AddCol() )
+         :cHeader          := "Su albarán"
+         :cSortOrder       := "cSuAlb"
+         :bEditValue       := {|| if( !Empty( (D():Tmp( "TmpPrvO", ::nView ))->cSuAlb ),  (D():Tmp( "TmpPrvO", ::nView ))->cSuAlb , "" ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
       end with
 
       with object ( ::oBrwSalida:AddCol() )
@@ -425,6 +465,8 @@ METHOD Resource() CLASS TFacturarLineasAlbaranesProveedor
          :nHeadStrAlign    := 1
          :nFooterType      := AGGR_SUM
       end with
+
+
 
       with object ( ::oBrwSalida:AddCol() )
          :cHeader          := "UM. Unidad de medición"
@@ -534,6 +576,26 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD getSuAlb()
+	
+	local cSuAlb 	:= ""
+	local nOrd
+	local nNumAlb 	:= (D():Tmp( "TmpPrvI", ::nView ))->cSerAlb + str( (D():Tmp( "TmpPrvI", ::nView ))->nNumAlb ) + (D():Tmp( "TmpPrvI", ::nView ))->cSufAlb
+
+
+	nOrd                    := ( D():AlbaranesProveedores( ::nView ) )->( OrdSetFocus( "nNumAlb" ) )
+
+
+	if ( D():AlbaranesProveedores( ::nView ) )-> ( dbSeek( nNumAlb ) )
+		cSuAlb 	:= ( D():AlbaranesProveedores( ::nView ) )->cSufAlb
+   	end if
+
+   (  D():AlbaranesProveedores( ::nView ) )->( OrdSetFocus( nOrd ) )
+
+Return ( cSuAlb )
+
+//---------------------------------------------------------------------------//
+
 METHOD ValidArticulo()
 
    if cArticulo( ::oArticulo:oGetControl, D():Get( "Articulo", ::nView ), ::oArticulo:oSayControl )
@@ -547,7 +609,8 @@ Return ( Self )
 
 METHOD StartResource()
 
-   ::oBrwEntrada:Load()
+   //::oBrwEntrada:Load()
+   ::oBrwEntrada():load()
 
    ::oBrwSalida:Load()
 
