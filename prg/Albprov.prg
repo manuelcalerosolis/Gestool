@@ -9556,11 +9556,18 @@ Function SynAlbPrv( cPath )
          ( cAlbPrvT )->cNumFac := AllTrim( ( cAlbPrvT )->cNumFac ) + "00"
       end if
 
-      if ( cAlbPrvT )->lFacturado
-         ( cAlbPrvT )->nFacturado   := 3
-      else
-         ( cAlbPrvT )->nFacturado   := 1
-      end if
+      if ( cAlbPrvT )->nFacturado == 0
+
+         if ( cAlbPrvT )->lFacturado  
+            ( cAlbPrvT )->nFacturado   := 3
+            msgAlert( "facturado" )
+         else
+            msgAlert( ( cAlbPrvT )->lFacturado, "lFacturado" )
+            msgAlert( "no facturado" )
+            ( cAlbPrvT )->nFacturado   := 1
+         end if
+
+      endif
 
       /*
       Rellenamos los campos de totales-----------------------------------------
