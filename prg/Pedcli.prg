@@ -527,10 +527,10 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    else
 
       nTotPedCli( nNumPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), D():TiposIva( nView ), dbfDiv, dbfFPago, nil, cDivEmp() )
-      nPagPedCli( nNumPed, dbfPedCliP, dbfDiv, cDivEmp() )
+      nPagPedCli( nNumPed, D():PedidosClientesPagos( nView ), dbfDiv, cDivEmp() )
 
       ( D():PedidosClientesLineas( nView ) )->( dbSeek( nNumPed ) )
-      ( dbfPedCliP )->( dbSeek( nNumPed ) )
+      ( D():PedidosClientesPagos( nView ) )->( dbSeek( nNumPed ) )
       ( D():Clientes( nView )  )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODCLI ) )
       ( dbfAgent   )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODAGE ) )
       ( dbfFPago   )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODPGO ) )
@@ -540,7 +540,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
       private cDbf         := D():PedidosClientes( nView )
       private cDbfCol      := D():PedidosClientesLineas( nView )
-      private cDbfPag      := dbfPedCliP
+      private cDbfPag      := D():PedidosClientesPagos( nView )
       private cCliente     := D():Clientes( nView )
       private cDbfCli      := D():Clientes( nView )
       private cDbfObr      := dbfObrasT
@@ -698,6 +698,8 @@ STATIC FUNCTION OpenFiles( lExt )
       D():PedidosClientesLineas( nView )
 
       D():PedidosClientesSituaciones( nView )
+
+      D():PedidosClientesPagos( nView )
 
       D():Clientes( nView )
 
@@ -1329,7 +1331,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Entregado " + cDivEmp()
-         :bEditValue       := {|| nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfPedCliP, dbfDiv, if( lEuro, cDivChg(), cDivEmp() ), .t. ) }
+         :bEditValue       := {|| nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientesPagos( nView ), dbfDiv, if( lEuro, cDivChg(), cDivEmp() ), .t. ) }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1385,7 +1387,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Pendiente"
-         :bEditValue       := {|| ( nTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), D():TiposIva( nView ), dbfDiv, dbfFPago, nil, nil, .f. ) - nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, dbfPedCliP, dbfDiv, nil, .f. ) ) }
+         :bEditValue       := {|| ( nTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), D():TiposIva( nView ), dbfDiv, dbfFPago, nil, nil, .f. ) - nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientesPagos( nView ), dbfDiv, nil, .f. ) ) }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1542,7 +1544,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( WinAppRec( oWndBrw:oBrw, bEdtPgo, dbfPedCliP ) ) ;
+      ACTION   ( WinAppRec( oWndBrw:oBrw, bEdtPgo, D():PedidosClientesPagos( nView ) ) ) ;
       TOOLTIP  "Entregas a (c)uenta" ;
       HOTKEY   "C";
       LEVEL    ACC_APPD
@@ -5845,13 +5847,13 @@ STATIC FUNCTION DelDetalle( cNumPed )
 
    //Entregas------------------------------------------------------------------
 
-   if ( dbfPedCliP )->( dbSeek( cNumPed ) )
-      while ( dbfPedCliP )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliP )->( eof() )
-         if dbDialogLock( dbfPedCliP )
-            ( dbfPedCliP )->( dbDelete() )
-            ( dbfPedCliP )->( dbUnLock() )
+   if ( D():PedidosClientesPagos( nView ) )->( dbSeek( cNumPed ) )
+      while ( D():PedidosClientesPagos( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( D():PedidosClientesPagos( nView ) )->( eof() )
+         if dbDialogLock( D():PedidosClientesPagos( nView ) )
+            ( D():PedidosClientesPagos( nView ) )->( dbDelete() )
+            ( D():PedidosClientesPagos( nView ) )->( dbUnLock() )
          end if
-         ( dbfPedCliP )->( dbSkip() )
+         ( D():PedidosClientesPagos( nView ) )->( dbSkip() )
       end do
    end if
 
@@ -6465,7 +6467,7 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 /*Esta funcion se usa para lanzar el diálogo para imprimir o visualizar las entregas a cuenta*/
 
-STATIC FUNCTION PrnEntregas( lPrint, dbfPedCliP )
+STATIC FUNCTION PrnEntregas( lPrint )
 
 	local oDlg
    local oFmtEnt
@@ -6517,7 +6519,7 @@ STATIC FUNCTION PrnEntregas( lPrint, dbfPedCliP )
    REDEFINE BUTTON ;
       ID       500 ;
 		OF 		oDlg ;
-      ACTION   ( GenPrnEntregas( lPrint, cFmtEnt, cPrinter, if( lPrint, nCopPrn, 1 ), dbfPedCliP ), oDlg:End( IDOK ) )
+      ACTION   ( GenPrnEntregas( lPrint, cFmtEnt, cPrinter, if( lPrint, nCopPrn, 1 ), D():PedidosClientesPagos( nView ) ), oDlg:End( IDOK ) )
 
    REDEFINE BUTTON ;
       ID       550 ;
@@ -6534,13 +6536,13 @@ return nil
 //---------------------------------------------------------------------------//
 /*Esta funcion se utiliza para terminar de imprimir las entregas a cuenta*/
 
-static function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies, dbfPedCliP )
+static function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies )
 
    local n              := 1
    local oInf
    local oDevice
    local cCaption       := 'Imprimiendo entrega a cuenta'
-   local nRecno         := ( dbfPedCliP )->( Recno() )
+   local nRecno         := ( D():PedidosClientesPagos( nView ) )->( Recno() )
 
    DEFAULT lPrint       := .t.
    DEFAULT nCopies      := 1
@@ -6556,19 +6558,19 @@ static function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies, dbfPedCliP )
 
    if lVisualDocumento( cFmtEnt, D():Documentos( nView ) )
 
-      PrintReportEntPedCli( if( lPrint, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, D():Documentos( nView ), dbfPedCliP )
+      PrintReportEntPedCli( if( lPrint, IS_PRINTER, IS_SCREEN ), nCopies, cPrinter, D():Documentos( nView ), D():PedidosClientesPagos( nView ) )
 
    else
 
       private cDbf         := D():PedidosClientes( nView )
-      private cDbfEnt      := dbfPedCliP
+      private cDbfEnt      := D():PedidosClientesPagos( nView )
       private cCliente     := D():Clientes( nView )
       private cDbfCli      := D():Clientes( nView )
       private cFPago       := dbfFPago
       private cDbfPgo      := dbfFPago
       private cDbfAge      := dbfAgent
       private cDbfDiv      := dbfDiv
-      private cPorDivEnt   := cPorDiv( ( dbfPedCliP )->cDivPgo, dbfDiv )
+      private cPorDivEnt   := cPorDiv( ( D():PedidosClientesPagos( nView ) )->cDivPgo, dbfDiv )
 
       while n <= nCopies
 
@@ -6610,7 +6612,7 @@ static function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies, dbfPedCliP )
 
          end if
 
-         ( dbfPedCliP )->( dbGoTo( nRecno ) )
+         ( D():PedidosClientesPagos( nView ) )->( dbGoTo( nRecno ) )
 
          oInf              := nil
 
@@ -8442,7 +8444,7 @@ Static Function DataReportEntPedCli( oFr, cPedCliP )
    if !Empty( cPedCliP )
    oFr:SetWorkArea(     "Entrega", ( cPedCliP )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    else
-   oFr:SetWorkArea(     "Entrega", ( dbfPedCliP )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetWorkArea(     "Entrega", ( D():PedidosClientesPagos( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    end if
    oFr:SetFieldAliases( "Entrega", cItemsToReport( aPedCliPgo() ) )
 
@@ -8463,9 +8465,9 @@ Static Function DataReportEntPedCli( oFr, cPedCliP )
    oFr:SetMasterDetail( "Entrega", "Clientes",                 {|| ( cPedCliP )->cCodCli } )
    oFr:SetMasterDetail( "Entrega", "Formas de pago",           {|| ( cPedCliP )->cCodPgo } )
    else
-   oFr:SetMasterDetail( "Entrega", "Pedido de cliente",        {|| ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed } )
-   oFr:SetMasterDetail( "Entrega", "Clientes",                 {|| ( dbfPedCliP )->cCodCli } )
-   oFr:SetMasterDetail( "Entrega", "Formas de pago",           {|| ( dbfPedCliP )->cCodPgo } )
+   oFr:SetMasterDetail( "Entrega", "Pedido de cliente",        {|| ( D():PedidosClientesPagos( nView ) )->cSerPed + Str( ( D():PedidosClientesPagos( nView ) )->nNumPed ) + ( D():PedidosClientesPagos( nView ) )->cSufPed } )
+   oFr:SetMasterDetail( "Entrega", "Clientes",                 {|| ( D():PedidosClientesPagos( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Entrega", "Formas de pago",           {|| ( D():PedidosClientesPagos( nView ) )->cCodPgo } )
    end if
 
    oFr:SetMasterDetail( "Entrega", "Empresa",                  {|| cCodigoEmpresaEnUso() } )
@@ -8733,7 +8735,7 @@ STATIC FUNCTION CloseFiles()
    dbfProMat      := nil
    dbfHisMov      := nil
    dbfCliBnc      := nil
-   nView		  := nil
+   nView		      := nil
 
    oStock         := nil
    oBandera       := nil
@@ -8927,10 +8929,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
                end if
          end while
 
-         while ( dbfPedCliP )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
-            if dbLock( dbfPedCliP )
-               ( dbfPedCliP )->( dbDelete() )
-               ( dbfPedCliP )->( dbUnLock() )
+         while ( D():PedidosClientesPagos( nView ) )->( dbSeek( cSerPed + str( nNumPed ) + cSufPed ) )
+            if dbLock( D():PedidosClientesPagos( nView ) )
+               ( D():PedidosClientesPagos( nView ) )->( dbDelete() )
+               ( D():PedidosClientesPagos( nView ) )->( dbUnLock() )
             end if
          end while
 
@@ -9008,7 +9010,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    ( dbfTmpPgo )->( dbGoTop() )
    while ( dbfTmpPgo )->( !eof() )
-      dbPass( dbfTmpPgo, dbfPedCliP, .t., cSerPed, nNumPed, cSufPed )
+      dbPass( dbfTmpPgo, D():PedidosClientesPagos( nView ), .t., cSerPed, nNumPed, cSufPed )
       ( dbfTmpPgo )->( dbSkip() )
    end while
 
@@ -9730,12 +9732,12 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
    A¤adimos desde el fichero de entregas a cuenta
 	*/
 
-   if ( dbfPedCliP )->( dbSeek( cPedido ) )
+   if ( D():PedidosClientesPagos( nView ) )->( dbSeek( cPedido ) )
 
-      while ( ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed == cPedido ) .AND. ( dbfPedCliP )->( !eof() )
+      while ( ( D():PedidosClientesPagos( nView ) )->cSerPed + Str( ( D():PedidosClientesPagos( nView ) )->nNumPed ) + ( D():PedidosClientesPagos( nView ) )->cSufPed == cPedido ) .AND. ( D():PedidosClientesPagos( nView ) )->( !eof() )
 
-         dbPass( dbfPedCliP, dbfTmpPgo, .t. )
-         ( dbfPedCliP )->( dbSkip() )
+         dbPass( D():PedidosClientesPagos( nView ), dbfTmpPgo, .t. )
+         ( D():PedidosClientesPagos( nView ) )->( dbSkip() )
 
       end while
 
@@ -13460,7 +13462,7 @@ FUNCTION QuiPedCli()
    end if
 
    nOrdDet        	:= ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( "NNUMPED" ) )
-   nOrdPgo        	:= ( dbfPedCliP )->( OrdSetFocus( "NNUMPED" ) )
+   nOrdPgo        	:= ( D():PedidosClientesPagos( nView ) )->( OrdSetFocus( "NNUMPED" ) )
    nOrdRes        	:= ( dbfPedCliR )->( OrdSetFocus( "NNUMPED" ) )
    nOrdInc        	:= ( dbfPedCliI )->( OrdSetFocus( "NNUMPED" ) )
    nOrdDoc        	:= ( dbfPedCliD )->( OrdSetFocus( "NNUMPED" ) )
@@ -13503,10 +13505,10 @@ FUNCTION QuiPedCli()
    Entregas--------------------------------------------------------------------
    */
 
-   while ( dbfPedCliP )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( dbfPedCliP )->( eof() )
-      if dbDialogLock( dbfPedCliP )
-         ( dbfPedCliP )->( dbDelete() )
-         ( dbfPedCliP )->( dbUnLock() )
+   while ( D():PedidosClientesPagos( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) .and. !( D():PedidosClientesPagos( nView ) )->( eof() )
+      if dbDialogLock( D():PedidosClientesPagos( nView ) )
+         ( D():PedidosClientesPagos( nView ) )->( dbDelete() )
+         ( D():PedidosClientesPagos( nView ) )->( dbUnLock() )
       end if
    end while
 
@@ -13545,7 +13547,7 @@ FUNCTION QuiPedCli()
 
 
    ( D():PedidosClientesLineas( nView ) )->( OrdSetFocus( nOrdDet ) )
-   ( dbfPedCliP )->( OrdSetFocus( nOrdPgo ) )
+   ( D():PedidosClientesPagos( nView ) )->( OrdSetFocus( nOrdPgo ) )
    ( dbfPedCliR )->( OrdSetFocus( nOrdRes ) )
    ( dbfPedCliI )->( OrdSetFocus( nOrdInc ) )
    ( dbfPedCliD )->( OrdSetFocus( nOrdDoc ) )
@@ -16829,7 +16831,7 @@ function nEntPedCli( uPedCliP, cDbfDiv, cDivRet, lPic )
    local cPorDiv
    local nTotRec
 
-   DEFAULT uPedCliP  := dbfPedCliP
+   DEFAULT uPedCliP  := D():PedidosClientesPagos( nView )
    DEFAULT cDbfDiv   := dbfDiv
    DEFAULT cDivRet   := cDivEmp()
    DEFAULT lPic      := .f.

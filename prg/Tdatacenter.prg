@@ -5406,7 +5406,7 @@ CLASS D
       METHOD PresupuestosClientesSituacionesId( nView )      INLINE ( ( ::Get( "PreCliE", nView ) )->cSerPre + str( ( ::Get( "PreCliE", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliE", nView ) )->cSufPre )
       METHOD PresupuestosClientesSituacionesIdText( nView )  INLINE ( ::Get( "PreCliE", nView ) )->cSerPre + "/" + Alltrim( Str( ( ::Get( "PreCliE", nView ) )->nNumPre ) )
 
-   // Pedidos de clientes------------------------------------------------------
+   // SAT de clientes------------------------------------------------------
 
    METHOD SatClientes( nView )                  INLINE ( ::Get( "SatCliT", nView ) )
       METHOD SatClientesId( nView )             INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
@@ -5534,8 +5534,6 @@ CLASS D
 
    METHOD PedidosClientesReservas( nView )            INLINE ( ::Get( "PedCliR", nView ) )
 
-   //Lineas de pedidos de clientes---------------------------------------------
-
    METHOD PedidosClientesLineas( nView )              INLINE ( ::Get( "PedCliL", nView ) )
       METHOD PedidosClientesLineasId( nView )         INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
       METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
@@ -5548,8 +5546,11 @@ CLASS D
    METHOD PedidosClientesIncidencias( nView )            INLINE ( ::Get( "PedCliI", nView ) )
       METHOD PedidosClientesIncidenciasId( nView )       INLINE ( ( ::Get( "PedCliI", nView ) )->cSerPed + str( ( ::Get( "PedCliI", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliI", nView ) )->cSufPed )
 
-    METHOD PedidosClientesDocumentos( nView )            INLINE ( ::Get( "PedCliD", nView ) )
+   METHOD PedidosClientesDocumentos( nView )            INLINE ( ::Get( "PedCliD", nView ) )
       METHOD PedidosClientesDocumentosId( nView )       INLINE ( ( ::Get( "PedCliD", nView ) )->cSerPed + str( ( ::Get( "PedCliD", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliD", nView ) )->cSufPed )
+
+   METHOD PedidosClientesPagos( nView )            INLINE ( ::Get( "PedCliP", nView ) )
+      METHOD PedidosClientesPagosId( nView )       INLINE ( ( ::Get( "PedCliP", nView ) )->cSerPed + str( ( ::Get( "PedCliP", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliP", nView ) )->cSufPed )
 
    // Situaciones----------------------------------------------------------------
 
@@ -5575,6 +5576,9 @@ CLASS D
                                                                ( ::Clientes( nView ) )->( ordScope( 1, nil ) ),;
                                                                ::setStatusClientes( nView ) )
       METHOD getLastKeyClientes( nView )              INLINE ( nextkey( space(12), ::Clientes( nView ), "0", retNumCodCliEmp() ) )
+
+
+
       
    METHOD ClientesDirecciones( nView )                INLINE ( ::Get( "ObrasT", nView ) )
       METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
