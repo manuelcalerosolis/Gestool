@@ -1764,6 +1764,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          :lHide            := .t.
       end with
 
+      with object ( oBrwLin:AddCol() )
+         :cHeader          := "Ref. Albarán"
+         :bEditValue       := {|| ( dbfTmp )->iNumAlb }
+         :nWidth           := 100
+         :lHide            := .t.
+      end with
+
          if nMode != ZOOM_MODE
             oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
          end if
