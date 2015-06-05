@@ -378,6 +378,10 @@ Static Function StdKey( nKey )
    do case
       case nKey == 65 .and. GetKeyState( VK_CONTROL ) // Crtl + A
          CreateInfoArticulo()
+      case nKey == 66 .and. GetKeyState( VK_CONTROL ) // Crtl + B
+         BrwSelArticulo()
+      case nKey == 68 .and. GetKeyState( VK_CONTROL ) // Crtl + C
+         BrwClient()
       case nKey == 38 .and. GetKeyState( VK_CONTROL ) // Ctrl + Down
          NextEmpresa()
       case nKey == 40 .and. GetKeyState( VK_CONTROL ) // Ctrl + Up

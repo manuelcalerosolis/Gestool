@@ -7838,11 +7838,12 @@ Browse de clientes
 FUNCTION BrwClient( uGet, uGetName, lBigStyle )
 
    local oDlg
+   local oBmp
    local hBmp
    local oBrw
    local uGet1
    local cGet1
-   local cTxtOrigen  := uGet:VarGet()
+   local cTxtOrigen
    local nOrdAnt     := GetBrwOpt( "BrwClient" )
    local oCbxOrd
    local aCbxOrd     := { "Código", "Nombre", "NIF/CIF", "Población", "Provincia", "Código postal", "Teléfono", "Establecimiento", "Correo electrónico" }
@@ -7850,6 +7851,10 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    local nLevel      := nLevelUsr( "01032" )
    local oSayText
    local cSayText    := "Listado de clientes"
+
+   if !Empty( uGet )
+      cTxtOrigen  := uGet:VarGet()
+   end if
 
    nOrdAnt           := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrdAnt ]
@@ -7879,7 +7884,14 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    case lBigStyle
       DEFINE DIALOG oDlg RESOURCE "BIGHELPENTRY"   TITLE "Seleccionar clientes"
    otherwise
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE "Seleccionar clientes"
+      DEFINE DIALOG oDlg RESOURCE "HELPENTRYIMAGE"  TITLE "Seleccionar clientes"
+
+      REDEFINE BITMAP oBmp ;
+         ID       600 ;
+         RESOURCE "Businessman2_Alpha_48" ;
+         TRANSPARENT ;
+         OF       oDlg
+
    end case
 
       REDEFINE GET uGet1 VAR cGet1;
@@ -8063,11 +8075,15 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
 
    if oDlg:nResult == IDOK
 
-      if ValType( uGet ) == "O"
-         uGet:cText( ( D():Get( "Client", nView ) )->Cod )
-         uGet:lValid()
-      else
-         uGet  := ( D():Get( "Client", nView ) )->Cod
+      if !Empty( uGet )
+
+         if ValType( uGet ) == "O"
+            uGet:cText( ( D():Get( "Client", nView ) )->Cod )
+            uGet:lValid()
+         else
+            uGet  := ( D():Get( "Client", nView ) )->Cod
+         end if
+
       end if
 
       if ValType( uGetName ) == "O"
@@ -8087,6 +8103,10 @@ FUNCTION BrwClient( uGet, uGetName, lBigStyle )
    end if
 
    DeleteObject( hBmp )
+
+   if !Empty( oBmp )
+      oBmp:End()
+   end if
 
 RETURN oDlg:nResult == IDOK
 

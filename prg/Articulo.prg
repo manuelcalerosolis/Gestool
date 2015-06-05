@@ -17074,7 +17074,8 @@ Return ( BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, nil, oBtn, o
 
 Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnSaveLine, oGetLote, oGetCodPrp1, oGetCodPrp2, oGetValPrp1, oGetValPrp2, oGetFecCad )
 
-	local oDlg
+   local oDlg
+   local oBmp
    local oBtn
 	local oBrw
    local oFont
@@ -17148,6 +17149,13 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       else
          DEFINE DIALOG oDlg RESOURCE "HELPENTRYDUP"      TITLE "Seleccionar artículos"
       end if
+
+      REDEFINE BITMAP oBmp ;
+         ID       600 ;
+         RESOURCE "Cube_Yellow_Alpha_48" ;
+         TRANSPARENT ;
+         OF       oDlg
+
    end if
 
 		REDEFINE GET aGet1 VAR cGet1;
@@ -17598,6 +17606,10 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
    if !Empty( oGetCodigo )
       oGetCodigo:SetFocus()
+   end if
+
+   if !Empty( oBmp )
+      oBmp:End()
    end if
 
 RETURN ( cReturn )
