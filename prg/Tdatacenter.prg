@@ -5417,7 +5417,13 @@ CLASS D
       METHOD SatClientesIdText( nView ) ;
                                                 INLINE ( ::SatClientesIdTextShort( nView ) + "/" + ( ::Get( "SatCliT", nView ) )->cSufSat )
 
-   METHOD SatClientesLineas( nView )            INLINE ( ::Get( "SatCliL", nView ) )                                                
+   METHOD SatClientesLineas( nView )            INLINE ( ::Get( "SatCliL", nView ) )
+
+   METHOD SatClientesIncidencias( nView )         INLINE ( ::Get( "SatCliI", nView ) )
+      METHOD SatClientesIncidenciasId( nView )    INLINE ( ( ::Get( "SatCliI", nView ) )->cSerSat + str( ( ::Get( "SatCliI", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliI", nView ) )->cSufSat )
+
+   METHOD SatClientesDocumentos( nView )         INLINE ( ::Get( "SatCliD", nView ) )
+      METHOD SatClientesDocumentosId( nView )    INLINE ( ( ::Get( "SatCliD", nView ) )->cSerSat + str( ( ::Get( "SatCliD", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliD", nView ) )->cSufSat )                                                
 
    // Albaranes de clientes----------------------------------------------------
 

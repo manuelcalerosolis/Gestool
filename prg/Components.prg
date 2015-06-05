@@ -4178,3 +4178,204 @@ Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasRectificativaCli
    oFr:SetResyncPair(      "Facturas", "Empresa" )
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TLabelGeneratorSATClientes FROM TLabelGenerator
+
+   METHOD New( nView )
+   METHOD LoadTempLabelEdition() 
+   Method dataLabel( oFr, lTemporal )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView ) CLASS TLabelGeneratorSATClientes
+
+   ::cSerieInicio       := ( D():SatClientes( nView ) )->cSerSat
+   ::cSerieFin          := ( D():SatClientes( nView ) )->cSerSat
+
+   ::nDocumentoInicio   := ( D():SatClientes( nView ) )->nNumSat
+   ::nDocumentoFin      := ( D():SatClientes( nView ) )->nNumSat
+   ::cSufijoInicio      := ( D():SatClientes( nView ) )->cSufSat
+   ::cSufijoFin         := ( D():SatClientes( nView ) )->cSufSat
+
+   ::cNombreDocumento   := "SAT clientes"
+
+   ::inicialDoc         := "SA"
+
+   ::dbfCabecera        := ( D():SatClientes( nView ) )
+   ::dbfLineas          := ( D():SatClientesLineas( nView ) )
+
+   ::idDocument         := D():SatClientesId( nView ) 
+
+   ::tmpLabelReport     := "LblRpt"
+
+   ::aStructureField    := aSqlStruct( aColSatCli() )
+
+   ::nView              := nView 
+
+   ::Super:New() 
+
+Return( Self )
+ 
+//---------------------------------------------------------------------------//
+
+Method LoadTempLabelEdition() CLASS TLabelGeneratorSATClientes
+
+   local nRec
+   local nOrd
+
+   //Limpiamos la base de datos temporal-----------------------------------------
+
+   if ( ::tmpLabelEdition )->( Used() )
+      ( ::tmpLabelEdition )->( __dbZap() )
+   end if 
+
+   //Llenamos la tabla temporal--------------------------------------------------
+
+   nRec           := ( ::DbfCabecera)->( Recno() )
+   nOrd           := ( ::DbfCabecera)->( OrdSetFocus( "nNumSat" ) )
+
+   if ( ::DbfCabecera)->( dbSeek( ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio, .t. ) )
+
+      while ( ::DbfCabecera)->cSerSat + Str( ( ::DbfCabecera)->nNumSat ) + ( ::DbfCabecera)->cSufSat >= ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio  .and.;
+            ( ::DbfCabecera)->cSerSat + Str( ( ::DbfCabecera)->nNumsat ) + ( ::DbfCabecera)->cSufSat <= ::cSerieFin + Str( ::nDocumentoFin, 9 ) + ::cSufijoFin           .and.;
+            !( ::DbfCabecera)->( eof() )
+
+         if ( ::DbfLineas )->( dbSeek( ( ::DbfCabecera)->cSerSat + Str( ( ::DbfCabecera)->nNumSat ) + ( ::DbfCabecera)->cSufSat ) )
+
+            while ( ::DbfLineas )->cSerSat + Str( ( ::DbfLineas )->nNumSat ) + ( ::DbfLineas )->cSufSat == ( ::DbfCabecera)->cSerSat + Str( ( ::DbfCabecera)->nNumSat ) + ( ::DbfCabecera)->cSufSat  .and. ( ::DbfLineas )->( !eof() )
+
+               if !Empty( ( ::DbfLineas )->cRef )
+
+                  dbPass( ::DbfLineas, ::tmpLabelEdition, .t. )
+
+                  dblock( ::tmpLabelEdition )
+
+                  ( ::tmpLabelEdition )->nNumLin  := nTotNSatCli( ::DbfLineas )
+                  ( ::tmpLabelEdition )->lLabel   := .t.
+
+                  if ::nCantidadLabels == 1
+                     ( ::tmpLabelEdition )->nLabel   := nTotNSatCli( ::DbfLineas )
+                  else
+                     ( ::tmpLabelEdition )->nLabel   := ::nUnidadesLabels
+                  end if
+
+                  ( ::tmpLabelEdition )->( dbUnlock() )
+
+               end if
+
+               ( ::DbfLineas )->( dbSkip() )
+
+            end while
+
+         end if
+
+         ( ::DbfCabecera)->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::DbfCabecera)->( OrdSetFocus( nOrd ) )
+   ( ::DbfCabecera)->( dbGoTo( nRec ) )
+
+   ( ::tmpLabelEdition )->( dbGoTop() )
+
+   ::oBrwLabel:Refresh()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorSATClientes
+
+   oFr:ClearDataSets()
+
+   if lTemporal
+      oFr:SetWorkArea(  "Lineas de SAT", ( ::tmpLabelReport )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
+   else
+      oFr:SetWorkArea(  "Lineas de SAT", ( ::DbfLineas )->( Select() ), .f., { FR_RB_FIRST, FR_RE_COUNT, 20 } )
+   end if
+
+   oFr:SetFieldAliases( "Lineas de SAT", cItemsToReport( aColSatCli() ) )
+
+   oFr:SetWorkArea(     "SAT", ( ::DbfCabecera)->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
+
+   oFr:SetWorkArea(     "Incidencias de SAT", ( D():SatClientesIncidencias( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Incidencias de SAT", cItemsToReport( aIncSatCli() ) )
+
+   oFr:SetWorkArea(     "Documentos de SAT", ( D():SatClientesDocumentos( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Documentos de SAT", cItemsToReport( aSatCliDoc() ) )
+
+   oFr:SetWorkArea(     "Empresa", ( D():Empresa( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Clientes", ( D():Clientes( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
+
+   oFr:SetWorkArea(     "Almacenes", ( D():Almacen( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
+
+   oFr:SetWorkArea(     "Formas de pago", ( D():FormasPago( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
+
+   oFr:SetWorkArea(     "Artículos", ( D():Articulos( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
+
+   oFr:SetWorkArea(     "Precios por propiedades", ( D():ArticuloPrecioPropiedades( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Precios por propiedades", cItemsToReport( aItmVta() ) )
+
+   oFr:SetWorkArea(     "Código de proveedores", ( D():ProveedorArticulo( ::nView ) )->( Select() ) )
+   oFr:SetFieldAliases( "Código de proveedores", cItemsToReport( aItmArtPrv() ) )
+
+   oFr:SetWorkArea(     "Unidades de medición",  D():GetObject( "UnidadMedicion", ::nView ):Select() )
+   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( D():GetObject( "UnidadMedicion", ::nView ):oDbf) )
+
+   oFr:SetWorkArea(     "Impuestos especiales",  D():ImpuestosEspeciales( ::nView ):Select() )
+   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( D():ImpuestosEspeciales( ::nView ):oDbf) )
+   
+   if lTemporal
+      oFr:SetMasterDetail( "Lineas de SAT", "SAT",                      {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Artículos",                {|| ( ::tmpLabelReport )->cRef } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Precios por propiedades",  {|| ( ::tmpLabelReport )->cDetalle + ( ::tmpLabelReport )->cCodPr1 + ( ::tmpLabelReport )->cCodPr2 + ( ::tmpLabelReport )->cValPr1 + ( ::tmpLabelReport )->cValPr2 } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Incidencias de SAT",       {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Documentos de SAT",        {|| ( ::tmpLabelReport )->cSerSat + Str( ( ::tmpLabelReport )->nNumSat ) + ( ::tmpLabelReport )->cSufSat } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",     {|| ( ::tmpLabelReport )->cCodImp } )
+   else
+      oFr:SetMasterDetail( "Lineas de SAT", "SAT",                      {|| ( ::DbfLineas )->cSerSat + Str( ( ::DbfLineas )->nNumSat ) + ( ::DbfLineas )->cSufSat } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Artículos",                {|| ( ::DbfLineas )->cRef } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Precios por propiedades",  {|| ( ::DbfLineas )->cRef + ( ::DbfLineas )->cCodPr1 + ( ::DbfLineas )->cCodPr2 + ( ::DbfLineas )->cValPr1 + ( ::DbfLineas )->cValPr2 } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Incidencias de SAT",       {|| ( ::DbfLineas )->cSerSat + Str( ( ::DbfLineas )->nNumSat ) + ( ::DbfLineas )->cSufSat } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Documentos de SAT",        {|| ( ::DbfLineas )->cSerSat + Str( ( ::DbfLineas )->nNumSat ) + ( ::DbfLineas )->cSufSat } )
+      oFr:SetMasterDetail( "Lineas de SAT", "Impuestos especiales",     {|| ( ::DbfLineas )->cCodImp } )
+   end if
+
+   oFr:SetMasterDetail(    "SAT", "Clientes",             {|| ( ::DbfCabecera)->cCodCli } )
+   oFr:SetMasterDetail(    "SAT", "Almacenes",            {|| ( ::DbfCabecera)->cCodAlm } )
+   oFr:SetMasterDetail(    "SAT", "Formas de pago",       {|| ( ::DbfCabecera)->cCodPgo} )
+   oFr:SetMasterDetail(    "SAT", "Empresa",              {|| cCodigoEmpresaEnUso() } )
+
+   oFr:SetResyncPair(      "Lineas de SAT", "SAT" )
+   oFr:SetResyncPair(      "Lineas de SAT", "Artículos" )
+   oFr:SetResyncPair(      "Lineas de SAT", "Precios por propiedades" )
+   oFr:SetResyncPair(      "Lineas de SAT", "Incidencias de SAT" )
+   oFr:SetResyncPair(      "Lineas de SAT", "Documentos de SAT" )
+   oFr:SetResyncPair(      "Lineas de SAT", "Impuestos especiales" )   
+
+   oFr:SetResyncPair(      "Facturas", "Clientes" )
+   oFr:SetResyncPair(      "Facturas", "Almacenes" )
+   oFr:SetResyncPair(      "Facturas", "Formas de pago" )
+   oFr:SetResyncPair(      "Facturas", "Empresa" )
+
+Return ( nil )

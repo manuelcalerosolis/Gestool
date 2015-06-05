@@ -533,6 +533,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloLenguaje( nView )
 
+      D():GetObject( "UnidadMedicion", nView )
+
+      D():ImpuestosEspeciales( nView )
+
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -1552,6 +1556,13 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       ACTION   ( oMailingOperario:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico operario";
       LEVEL    ACC_IMPR
+
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
+         NOBORDER ;
+         ACTION   ( TLabelGeneratorSATClientes():New( nView ):Dialog() ) ;
+         TOOLTIP  "Eti(q)uetas" ;
+         HOTKEY   "Q";
+         LEVEL    ACC_IMPR
 
    if oUser():lAdministrador()
 
@@ -10521,13 +10532,15 @@ function aColSatCli()
    aAdd( aColSatCli, { "Descrip"  ,"M",  10,  0, "Descripción larga",                "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "lLinOfe"  ,"L",   1,  0, "Línea con oferta",                 "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "lVolImp"  ,"L",   1,  0, "Lógico aplicar volumen con impuestos especiales", "",    "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "nBultos"  ,"N",  16,  6, "Numero de bultos en l?eas",       "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nBultos"  ,"N",  16,  6, "Numero de bultos en l?eas",       "",                    "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "cFormato" ,"C", 100,  0, "Formato de venta",                 "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "cCodCli"  ,"C",  12,  0, "Código del cliente",               "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "dFecSat"  ,"D",   8,  0, "Fecha del SAT",                    "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NCNTACT"  ,"N",  15,  6, "Contador actual",                  "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "CDESUBI"  ,"C", 200,  0, "Descripción de la ubicación",      "",                   "", "( cDbfCol )" } )
-
+   aAdd( aColSatCli, { "lLabel"   ,"L",   1,  0, "Lógico para marca de etiqueta",    "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nLabel"   ,"N",   6,  0, "Unidades de etiquetas a imprimir", "",                   "", "( cDbfCol )" } )
+  
 return ( aColSatCli )
 
 //---------------------------------------------------------------------------//
@@ -10536,10 +10549,10 @@ function aCocSatCli()
 
    local aCocSatCli :=  {}
 
-   aAdd( aCocSatCli, { "Descrip( cDbfCol )",                                         "C", 50, 0, "Detalle del artículo",         "",            "Descripción", "" } )
-   aAdd( aCocSatCli, { "nTotNSatCli( cDbfCol )",                                     "N", 16, 6, "Total articulos",              "MasUnd()",    "Unidades",    "" } )
-   aAdd( aCocSatCli, { "nTotUSatCli( cDbfCol, nDouDivSat, nVdvDivSat )",             "N", 16, 6, "Precio unitario",              "cPouDivSat",  "Precio",      "" } )
-   aAdd( aCocSatCli, { "nTotLSatCli( cDbfCol, nDouDivSat, nRouDivSat, nVdvDivSat )", "N", 16, 6, "Total línea de S.A.T.",        "cPorDivSat",  "Total",       "" } )
+   aAdd( aCocSatCli, { "Descrip( cDbfCol )",                                         "C", 50, 0, "Detalle del artículo",      "",            "Descripción", "" } )
+   aAdd( aCocSatCli, { "nTotNSatCli( cDbfCol )",                                     "N", 16, 6, "Total articulos",           "MasUnd()",    "Unidades",    "" } )
+   aAdd( aCocSatCli, { "nTotUSatCli( cDbfCol, nDouDivSat, nVdvDivSat )",             "N", 16, 6, "Precio unitario",           "cPouDivSat",  "Precio",      "" } )
+   aAdd( aCocSatCli, { "nTotLSatCli( cDbfCol, nDouDivSat, nRouDivSat, nVdvDivSat )", "N", 16, 6, "Total línea de S.A.T.",     "cPorDivSat",  "Total",       "" } )
 
 return ( aCocSatCli )
 
@@ -11829,5 +11842,67 @@ static function ChangeComentario( oCol, uNewValue, nKey, aTmp )
 
 Return .t.  
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//   
+
+Function DesignLabelSATClientes( oFr, cDoc )
+
+   local oLabel   := TLabelGeneratorSATClientes():New( nView )
+
+   if oLabel:lErrorOnCreate
+      Return .f.
+   end if 
+
+   if !oLabel:lCreateTempReport()
+      Return .f.
+   end if 
+
+   /*
+   Zona de datos---------------------------------------------------------
+   */
+   oLabel:DataLabel( oFr, .f. )
+
+   /*
+   Paginas y bandas------------------------------------------------------
+   */
+
+   if !Empty( ( cDoc )->mReport )
+
+      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+
+   else
+
+      oFr:AddPage(         "MainPage" )
+
+      oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+      oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+      oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+      oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de SAT" )
+
+   end if
+
+   /*
+   Diseño de report------------------------------------------------------
+   */
+
+   oFr:DesignReport()
+
+   /*
+   Destruye el diseñador-------------------------------------------------
+   */
+
+   oFr:DestroyFr()
+
+   /*
+   Destruye el fichero temporal------------------------------------------------
+   */
+
+   oLabel:DestroyTempReport()
+
+   /*
+   Cierra ficheros-------------------------------------------------------
+   */
+
+   oLabel:End()
+
+Return .t.
 
