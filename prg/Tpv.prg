@@ -14280,6 +14280,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
+   oFr:SetWorkArea(     "Propiedades", ( dbfTblPro )->( Select() ) )
+   oFr:SetFieldAliases( "Propiedades", cItemsToReport( aItmPro() ) )
+
    oFr:SetWorkArea(     "Familias", ( dbfFamilia )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
 
@@ -14334,6 +14337,7 @@ Static Function BuildRelationReport( oFr )
    oFr:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",   {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTip" ) } )
    oFr:SetMasterDetail( "Lineas de tickets", "Fabricantes",          {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodFab" ) } )
    oFr:SetMasterDetail( "Lineas de tickets", "Temporadas",           {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTemp" ) } )
+   oFr:SetMasterDetail( "Lineas de tickets", "Propiedades",          {|| ( dbfTikL )->cCodPr1 + ( dbfTikL )->cValPr1 } )
 
    oFr:SetMasterDetail( "Pagos de tickets",  "Formas de pago",       {|| ( dbfTikP )->cFpgPgo } )
    oFr:SetMasterDetail( "Lineas de tickets", "Impuestos especiales", {|| ( dbfTikL )->cCodImp } )
@@ -14362,6 +14366,7 @@ Static Function BuildRelationReport( oFr )
    oFr:SetResyncPair(   "Lineas de tickets", "Tipos de artículos" )
    oFr:SetResyncPair(   "Lineas de tickets", "Fabricantes" )
    oFr:SetResyncPair(   "Lineas de tickets", "Temporadas" )
+   oFr:SetResyncPair(   "Lineas de tickets", "Propiedades" )
 
    oFr:SetResyncPair(   "Pagos de tickets", "Formas de pago" )
    oFr:SetResyncPair(   "Lineas de tickets", "Impuestos especiales" )

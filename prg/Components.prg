@@ -2513,7 +2513,7 @@ Method Dialog() CLASS TLabelGenerator
       ::oMtrLabel:nClrBText  := rgb( 128,255,0 )
 
       /*
-      Botones generales--------------------------------------------------------
+      Botones generales-------------------------------------------------------
       */
 
       REDEFINE BUTTON ::oBtnListado ;          // Boton anterior
