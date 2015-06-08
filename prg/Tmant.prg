@@ -10,6 +10,8 @@
 CLASS TMant
 
    CLASSDATA oBandera
+   
+   DATA nView
 
    DATA nLevel
 
@@ -35,8 +37,6 @@ CLASS TMant
    DATA oWndBrw
 
    DATA oReport
-
-   DATA nView
 
    DATA cFirstKey
    DATA bFirstKey       INIT {|| .t. }

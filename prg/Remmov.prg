@@ -507,10 +507,11 @@ RETURN ( Self )
 METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm 
 
    local oError
-   local oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock               
 
    DEFAULT lExclusive         := .f.
 
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    if !::lOpenFiles
@@ -4381,8 +4382,6 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
                ( uFieldEmpresa( "lUseTbl" )                                         .and.;
                ( nMode == APPD_MODE ) )
 
-               ::oBrwPrp:Show()
-
                ::oValPr1:Hide()
                ::oSayPr1:Hide()
                ::oSayVp1:Hide()
@@ -4393,7 +4392,9 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
                ::oSayLote:Hide()
                ::oGetLote:Hide()
 
-               setPropertiesTable( ::oParent:oArt:Codigo, 0, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oUndMov, ::oPreDiv, ::oBrwPrp, ::nView )
+               setPropertiesTable( ::oParent:oArt:Codigo, 0, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oUndMov, ::oPreDiv, ::oBrwPrp, ::oParent:nView )
+               
+               // setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPre, oBrw, nView )
 
             else
 

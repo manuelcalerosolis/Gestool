@@ -1689,7 +1689,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
       aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"   ) ) ]   := NextKey( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfArticulo )
       aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ]   := ""
-      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb"  ) ) ]   := oGetTarWeb:getTarifa()
 
    end case
 
