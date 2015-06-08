@@ -2677,25 +2677,25 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
    local n
    local a
    local o
-   local nRow                 := 1
-   local nCol                 := 1
-   local nTotalRow            := 0
-   local nTotalCol            := 0
+   local nRow                    := 1
+   local nCol                    := 1
+   local nTotalRow               := 0
+   local nTotalCol               := 0
    local hValorPropiedad
-   local aPropertiesTable     := {}
-   local aHeadersTable        := {}
-   local aSizesTable          := {}
-   local aJustifyTable        := {}
+   local aPropertiesTable        := {}
+   local aHeadersTable           := {}
+   local aSizesTable             := {}
+   local aJustifyTable           := {}
    local aPropiedadesArticulo1   
    local aPropiedadesArticulo2   
 
    aPropiedadesArticulo1         := aPropiedadesArticulo1( cCodArt, nView ) 
-   nTotalRow                  := len( aPropiedadesArticulo1 )
+   nTotalRow                     := len( aPropiedadesArticulo1 )
    if nTotalRow != 0
       aPropiedadesArticulo2      := aPropiedadesArticulo2( cCodArt, nView ) 
    else 
       aPropiedadesArticulo1      := aPropiedadesGeneral( cCodPr1, nView )
-      nTotalRow               := len( aPropiedadesArticulo1 )
+      nTotalRow                  := len( aPropiedadesArticulo1 )
       if nTotalRow != 0
          aPropiedadesArticulo2   := aPropiedadesGeneral( cCodPr2, nView )
       else

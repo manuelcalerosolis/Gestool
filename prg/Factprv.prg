@@ -5122,12 +5122,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             aTmp[ _CCODPR1 ]     := ( D():Articulos( nView ) )->cCodPrp1
             aTmp[ _CCODPR2 ]     := ( D():Articulos( nView ) )->cCodPrp2
 
-            if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ;
-               ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
+            if ( !empty( aTmp[ _CCODPR1 ] ) .or. !empty( aTmp[ _CCODPR2 ] ) ) .and. uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE )
 
                nPreCom           := nCosto( nil, D():Articulos( nView ), D():Kit( nView ), .f., aTmpFac[ _CDIVFAC ], D():Divisas( nView ) )
 
-               LoadPropertiesTable( cCodArt, nPreCom, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], D():Propiedades( nView ), D():PropiedadesLineas( nView ), D():ArticuloPrecioPropiedades( nView ), oBrwPrp, aGet[ _NUNICAJA ], aGet[ _NPREUNIT ] )
+               setPropertiesTable( cCodArt, nPreCom, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREUNIT ], oBrwPrp, nView )
 
             else
 

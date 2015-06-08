@@ -267,6 +267,7 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TRemMovAlm
    ::bFirstKey             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
    ::bWhile                := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDetMovimientos:oDbf:nNumRem, 9 ) + ::oDetMovimientos:oDbf:cSufRem .and. !::oDetMovimientos:oDbf:Eof() }
 
+
    ::oDetMovimientos       := TDetMovimientos():New( cPath, Self )
    ::AddDetail( ::oDetMovimientos )
 
@@ -274,9 +275,6 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TRemMovAlm
    ::AddDetail( ::oDetSeriesMovimientos )
 
    ::oDetSeriesMovimientos:bOnPreSaveDetail  := {|| ::oDetSeriesMovimientos:SaveDetails() }
-
-   /*::bOnPostAppend         := {|| ::ActualizaStockWeb( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem ) }
-   ::bOnPostEdit           := {|| ::ActualizaStockWeb( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem ) }*/
 
 RETURN ( Self )
 
@@ -640,6 +638,14 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       ::lLoadDivisa()
 
+      ::nView              := D():CreateView()
+
+      D():ArticuloPrecioPropiedades( ::nView )
+
+      D():PropiedadesLineas( ::nView )
+
+      D():Propiedades( ::nView )
+
       ::lOpenFiles         := .t.
 
    end if
@@ -865,6 +871,8 @@ METHOD CloseFiles() CLASS TRemMovAlm
    if !Empty( ::oTipArt )
       ::oTipArt:end()
    end if
+
+   D():DeleteView( ::nView )
 
    ::oDbf         := nil
    ::oAlm         := nil
@@ -4367,10 +4375,9 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
             ::oDbfVir:cCodPr1       := ::oParent:oArt:cCodPrp1
             ::oDbfVir:cCodPr2       := ::oParent:oArt:cCodPrp2
 
-            if ( !Empty( ::oDbfVir:cCodPr1 ) .or. !Empty( ::oDbfVir:cCodPr2 ) )     .and.;
-               (  !lEmptyProp( ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) .or.;
-                  !lEmptyProp( ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) )      .and.;
-               ( Empty( ::oDbfVir:cValPr1 ) .or. Empty( ::oDbfVir:cValPr2 ) )       .and.;
+            if ( !empty( ::oDbfVir:cCodPr1 ) .or. !empty( ::oDbfVir:cCodPr2 ) )     .and.;
+               ( !lEmptyProp( ::oDbfVir:cCodPr1, ::oParent:oTblPro:cAlias ) .or. !lEmptyProp( ::oDbfVir:cCodPr2, ::oParent:oTblPro:cAlias ) ) .and.;
+               ( empty( ::oDbfVir:cValPr1 ) .or. empty( ::oDbfVir:cValPr2 ) )       .and.;
                ( uFieldEmpresa( "lUseTbl" )                                         .and.;
                ( nMode == APPD_MODE ) )
 
@@ -4386,7 +4393,7 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
                ::oSayLote:Hide()
                ::oGetLote:Hide()
 
-               LoadPropertiesTable( ::oParent:oArt:Codigo, 0, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oParent:oPro:cAlias, ::oParent:oTblPro:cAlias, ::oParent:oArtCom:cAlias, ::oBrwPrp, ::oUndMov, ::oPreDiv )
+               setPropertiesTable( ::oParent:oArt:Codigo, 0, ::oDbfVir:cCodPr1, ::oDbfVir:cCodPr2, ::oUndMov, ::oPreDiv, ::oBrwPrp, ::nView )
 
             else
 
