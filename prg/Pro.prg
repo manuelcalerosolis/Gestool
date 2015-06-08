@@ -2737,6 +2737,168 @@ Return ( aadd( aValores, hPropiedad ) )
 
 //---------------------------------------------------------------------------//
 
+Function newPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPre, oBrw, nView )
+
+   local n
+   local a
+   local o
+   local nOrd
+   local nRow                 := 1
+   local nCol                 := 1
+   local nTotalRow            := 0
+   local nTotalCol            := 0
+   local hValorPropiedad
+   local aPropertiesTable     := {}
+   local aHeadersTable        := {}
+   local aSizesTable          := {}
+   local aJustifyTable        := {}
+   local aValoresPropiedad1   := aValoresPropiedad1( cCodArt, nView ) 
+   local aValoresPropiedad2   := aValoresPropiedad2( cCodArt, nView ) 
+
+   msgAlert( hb_valtoexp( aValoresPropiedad1 ) )
+   msgAlert( hb_valtoexp( aValoresPropiedad2 ) )
+
+   nTotalRow               := len( aValoresPropiedad1 )
+   if nTotalRow == 0
+      Return nil
+   end if
+
+   nTotalCol               := len( aValoresPropiedad2 ) + 1
+
+   aPropertiesTable        := array( nTotalRow, nTotalCol )
+
+   if ( D():Propiedades( nView ) )->( dbSeek( cCodPr1 ) )
+      aadd( aHeadersTable, ( D():Propiedades( nView ) )->cDesPro )
+      aadd( aSizesTable,   60 )
+      aadd( aJustifyTable, .f. )
+   end if
+
+   for each hValorPropiedad in aValoresPropiedad1
+      aPropertiesTable[ nRow, nCol ]                     := TPropertiesItems():New()
+      aPropertiesTable[ nRow, nCol ]:cCodigo             := cCodArt
+      aPropertiesTable[ nRow, nCol ]:cHead               := hValorPropiedad[ "TipoPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cText               := hValorPropiedad[ "CabeceraPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1   := hValorPropiedad[ "CodigoPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cValorPropiedad1    := hValorPropiedad[ "ValorPropiedad" ]
+      nRow++
+   next
+
+   if !empty( cCodPr2 ) .and. !empty( aValoresPropiedad2 )
+
+      for each hValorPropiedad in aValoresPropiedad2
+
+         nCol++
+
+         msgAlert( hb_valtoexp( hValorPropiedad ) )
+
+         aadd( aHeadersTable, hValorPropiedad[ "CabeceraPropiedad" ] )
+         aadd( aSizesTable,   60 )
+         aadd( aJustifyTable, .t. )
+
+         for n := 1 to nTotalRow
+            aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
+            aPropertiesTable[ n, nCol ]:Value               := 0
+            aPropertiesTable[ n, nCol ]:cHead               := hValorPropiedad[ "CabeceraPropiedad" ]
+            aPropertiesTable[ n, nCol ]:cCodigo             := cCodArt
+            aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
+            aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+            aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
+            aPropertiesTable[ n, nCol ]:cValorPropiedad2    := hValorPropiedad[ "ValorPropiedad" ]
+         next
+
+      next
+
+   else
+
+      nCol++
+
+      aAdd( aHeadersTable, "Unidades" )
+      aAdd( aSizesTable,   60 )
+      aAdd( aJustifyTable, .t. )
+
+      for n := 1 to nTotalRow
+         aPropertiesTable[ n, nCol ]                        := TPropertiesItems():New()
+         aPropertiesTable[ n, nCol ]:Value                  := 0
+         aPropertiesTable[ n, nCol ]:cHead                  := "Unidades"
+         aPropertiesTable[ n, nCol ]:cCodigo                := cCodArt
+         aPropertiesTable[ n, nCol ]:cCodigoPropiedad1      := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
+         aPropertiesTable[ n, nCol ]:cValorPropiedad1       := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+      next
+
+   end if
+
+   /*
+   Calculo de precios----------------------------------------------------------
+   */
+
+   for each a in aPropertiesTable
+      for each o in a
+         if IsObject( o )
+            o:PrecioCompra( nPreCos, D():ArticuloPrecioPropiedades( nView ) )
+         end if
+      next
+   next
+
+   /*
+   Reposicionamiento-----------------------------------------------------------
+   */
+
+   ( D():PropiedadesLineas( nView ) )->( OrdSetFocus( nOrd ) )
+
+   // Asignamos la informacion al browse---------------------------------------
+
+   if !empty( oBrw ) .and. ( oBrw:ClassName() == "TXBROWSE" .or. oBrw:ClassName() == "IXBROWSE" )
+
+      oBrw:aCols                 := {}
+      oBrw:Cargo                 := aPropertiesTable   
+      
+      oBrw:SetArray( aPropertiesTable, .f., 0, .f. )
+
+      for n := 1 to len( aPropertiesTable[ 1 ] )
+
+         if isNil( aPropertiesTable[ oBrw:nArrayAt, n ]:Value )
+
+            with object ( oBrw:AddCol() )
+               :Adjust()
+               :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
+               :bEditValue       := bGenEditText( aPropertiesTable, oBrw, n )
+               :nWidth           := 100
+               :bFooter          := {|| "Total" }
+            end with
+
+         else
+
+            with object ( oBrw:AddCol() )
+               :Adjust()
+               :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
+               :bEditValue       := bGenEditValue( aPropertiesTable, oBrw, n )
+               :nWidth           := 80
+               :cEditPicture     := MasUnd()
+               :nTotal           := 0
+               :nDataStrAlign    := AL_RIGHT
+               :nDataBmpAlign    := AL_RIGHT
+               :nHeadStrAlign    := AL_RIGHT
+               :nFootStrAlign    := AL_RIGHT
+               :nHeadBmpAlign    := AL_RIGHT
+               :nFootBmpAlign    := AL_RIGHT
+               :nEditType        := EDIT_GET
+               :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnd ) }
+            end with
+
+         end if
+
+      next
+         
+      oBrw:aCols[ 1 ]:Hide()
+      oBrw:Adjust()
+      oBrw:Show()
+      
+   end if
+
+Return ( aPropertiesTable )
+
+//---------------------------------------------------------------------------//
+
 
 
 
