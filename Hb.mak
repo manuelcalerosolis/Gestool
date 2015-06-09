@@ -416,6 +416,7 @@ EstadoSat.prg                          \
 TSpecialSearchArticulo.prg             \
 TSpecialInfoArticulo.prg               \
 TSpecialInfoCliente.prg                \
+PedCli2PedPrv.prg                      \
 
 C               =       	\
 Img2pdf.c               	\
@@ -823,6 +824,7 @@ Autoget.obj                            \
 TSpecialSearchArticulo.obj             \
 TSpecialInfoArticulo.obj               \
 TSpecialInfoCliente.obj                \
+PedCli2PedPrv.obj                      \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1215,6 +1217,7 @@ $(OBJ)\CentroCoste.Obj                       +
 $(OBJ)\TSpecialSearchArticulo.obj            +
 $(OBJ)\TSpecialInfoArticulo.obj              +
 $(OBJ)\TSpecialInfoCliente.obj               +
+$(OBJ)\PedCli2PedPrv.obj                     +
 $(OBJ)\Autoget.Obj                  
 $<,$*
 $(FWLIB)\FiveH.lib               +

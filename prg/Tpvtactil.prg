@@ -2002,8 +2002,8 @@ METHOD Resource() CLASS TpvTactil
    Botones para acciones de las familias------------------------------------
    */
 
-   ::oBtnFamiliasUp              := TButtonBmp():ReDefine( 302, {|| ::oBrwFamilias:PageUp() },     ::oDlg, , , .f., , , , .f., "Navigate_up2" )
-   ::oBtnFamiliasDown            := TButtonBmp():ReDefine( 303, {|| ::oBrwFamilias:PageDown() },   ::oDlg, , , .f., , , , .f., "Navigate_down2" )
+   ::oBtnFamiliasUp              := TButtonBmp():ReDefine( 302, {|| if( !Empty( ::oBrwFamilias ), ::oBrwFamilias:PageUp(), ) },     ::oDlg, , , .f., , , , .f., "Navigate_up2" )
+   ::oBtnFamiliasDown            := TButtonBmp():ReDefine( 303, {|| if( !Empty( ::oBrwFamilias ), ::oBrwFamilias:PageDown(), ) },   ::oDlg, , , .f., , , , .f., "Navigate_down2" )
    
    ::oBtnPreviewDocumento        := TButtonBmp():ReDefine( 304, {|| ::PrevisualizaTicket() }, ::oDlg, , , .f., , , , .f., "Prev1_32" )
    ::oBtnPrintDocumento          := TButtonBmp():ReDefine( 305, {|| ::ImprimeTicket() }, ::oDlg, , , .f., , , , .f., "Imp32" )

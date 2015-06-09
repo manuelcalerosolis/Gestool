@@ -1641,6 +1641,12 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       TOOLTIP  "(G)enerar pedido a proveedores" ;
       HOTKEY   "G";
 
+   DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( PedCliente2PedProveedor():New( nView ) ) ;
+      TOOLTIP  "Generar NUEVO" ;
+      HOTKEY   "G";   
+
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TTrazaDocumento():Activate( PED_CLI, ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed ) ) ;
