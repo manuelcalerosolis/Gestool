@@ -510,10 +510,10 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
    local oBlock               
 
    DEFAULT lExclusive         := .f.
-
+/*
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    if !::lOpenFiles
 
       if Empty( ::oDbf )
@@ -639,7 +639,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       ::lLoadDivisa()
 
-      ::nView              := D():CreateView()
+      ::nView              := D():CreateView() / 0
 
       D():ArticuloPrecioPropiedades( ::nView )
 
@@ -650,7 +650,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
       ::lOpenFiles         := .t.
 
    end if
-
+/*
    RECOVER USING oError
 
       ::lOpenFiles         := .f.
@@ -660,7 +660,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    if !::lOpenFiles
       ::CloseFiles()
    end if
@@ -873,7 +873,9 @@ METHOD CloseFiles() CLASS TRemMovAlm
       ::oTipArt:end()
    end if
 
-   D():DeleteView( ::nView )
+   if !isNil( ::nView )
+      D():DeleteView( ::nView )
+   end if 
 
    ::oDbf         := nil
    ::oAlm         := nil
@@ -3612,8 +3614,8 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TDetMovimientos
 
    DEFAULT  lExclusive     := .f.
 
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+//   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+//   BEGIN SEQUENCE
 
       if Empty( ::oDbf )
          ::oDbf            := ::DefineFiles( cPath )
@@ -3621,14 +3623,14 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TDetMovimientos
 
       ::oDbf:Activate( .f., !lExclusive )
 
-   RECOVER
-
-      msgStop( "Imposible abrir todas las bases de datos movimientos de almacen" )
-      lOpen                := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+//   RECOVER
+//
+//      msgStop( "Imposible abrir todas las bases de datos movimientos de almacen" )
+//      lOpen                := .f.
+//
+//   END SEQUENCE
+//
+//   ErrorBlock( oBlock )
 
    if !lOpen
       ::CloseFiles()

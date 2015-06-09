@@ -1198,7 +1198,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TFilterDatabase
    DEFAULT cPath        := cPatDat()
    DEFAULT cDriver      := cDriver()
 
-   DEFINE TABLE oDbf FILE "CnfFlt.Dbf" CLASS "CnfFlt" ALIAS "CnfFlt" PATH ( cPath ) VIA ( cDriver ) COMMENT "Filtros"
+   DEFINE TABLE oDbf FILE "CnfFlt.Dbf" ALIAS "CnfFlt" PATH ( cPath ) VIA ( cDriver ) COMMENT "Filtros"
 
       FIELD NAME "cTipDoc" TYPE "C" LEN   2 DEC 0 COMMENT "Tipo de documento"             OF oDbf
       FIELD NAME "cCodUsr" TYPE "C" LEN   3 DEC 0 COMMENT "Usuario"                       OF oDbf

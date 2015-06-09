@@ -3746,10 +3746,14 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
       TDetMovimientos():Create( cPath ):CheckFiles()                                ; sysrefresh()
 
+      if oMsg != nil
+         oMsg:SetText( "Creando campos extras" )
+      end if
+
       TCamposExtra():Create( cPath ):CheckFiles()                                     ; sysrefresh()
 
       if oMsg != nil
-         oMsg:SetText( "Creando campos extra" )
+         oMsg:SetText( "Creando lineas de campos extras" )
       end if
 
       TDetCamposExtra():Create( cPath ):CheckFiles()                                     ; sysrefresh()
@@ -4238,7 +4242,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       */
 
       SysRefresh()
-
 
       /*
       Calculo de stocks--------------------------------------------------------
