@@ -369,18 +369,9 @@ METHOD CompilarFicheroScript() CLASS TScripts
 
       ferase( ::cFicheroHbr )
 
-#ifdef __XHARBOUR__
-
-      msginfo( FullCurDir() + "xharbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " )      
-      waitRun( FullCurDir() + "xharbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
-
-#else
-
       msginfo( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log" ) 
       logwrite( FullCurDir() + "harbour\harbour.exe " + valtoprg( ::cFicheroPrg ) + " /i" + FullCurDir() + "include /gh /n /p /o" + valtoprg( ::cFicheroHbr ) + " > " )     
       waitRun( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
-
-#endif
 
       if !file( ::cFicheroHbr )
          msgStop( "Error al compilar el fichero " + ::cFicheroHbr )
@@ -398,9 +389,9 @@ METHOD EjecutarFicheroScript() CLASS TScripts
 
    ::DeActivateAllTimer()
 
-      // Ejecutamos el script compilado----------------------------------------
+   // Ejecutamos el script compilado----------------------------------------
 
-      ::RunScript( ::cFicheroHbr )
+   ::RunScript( ::cFicheroHbr )
 
    // Activamos todos los scripts----------------------------------------------
 
@@ -522,3 +513,23 @@ Function ImportScript( oMainWindow, oBoton, cDirectory )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+Function runEventScript( cDirectory )
+
+   local aFile
+   local aDirectory  
+   
+   aDirectory  := Directory( cPatScript() + cDirectory + "\*.prg" )
+
+   if !empty( aDirectory )
+
+      for each aFile in aDirectory
+         TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ] )
+      next 
+
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+

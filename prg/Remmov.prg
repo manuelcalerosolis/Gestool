@@ -873,15 +873,9 @@ METHOD CloseFiles() CLASS TRemMovAlm
       ::oTipArt:end()
    end if
 
-<<<<<<< HEAD
    if !isNil( ::nView )
       D():DeleteView( ::nView )
    end if 
-=======
-   if ::nView != nil 
-      D():DeleteView( ::nView )
-   end if
->>>>>>> origin/master
 
    ::oDbf         := nil
    ::oAlm         := nil
@@ -3620,8 +3614,8 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TDetMovimientos
 
    DEFAULT  lExclusive     := .f.
 
-//   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-//   BEGIN SEQUENCE
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       if Empty( ::oDbf )
          ::oDbf            := ::DefineFiles( cPath )
@@ -3629,14 +3623,14 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TDetMovimientos
 
       ::oDbf:Activate( .f., !lExclusive )
 
-//   RECOVER
-//
-//      msgStop( "Imposible abrir todas las bases de datos movimientos de almacen" )
-//      lOpen                := .f.
-//
-//   END SEQUENCE
-//
-//   ErrorBlock( oBlock )
+  RECOVER
+
+     msgStop( "Imposible abrir todas las bases de datos movimientos de almacen" )
+     lOpen                := .f.
+
+  END SEQUENCE
+
+  ErrorBlock( oBlock )
 
    if !lOpen
       ::CloseFiles()

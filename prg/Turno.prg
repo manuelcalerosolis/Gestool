@@ -3785,6 +3785,12 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::oIniArqueo:Set( "Arqueo", "ActualizaStock",   ::lChkActualizaStockWeb )
 
       /*
+      Lanzamos los scripts de cierre de sesion---------------------------------
+      */
+
+      runEventScript( "CerrarSesion" )
+
+      /*
       Comprueba si hay sesiones para trabajar----------------------------------
       */
 

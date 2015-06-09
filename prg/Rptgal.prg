@@ -2510,10 +2510,13 @@ Return nil
 Function TSpecialInfoCliente
 Return nil
 
-Function TAutoCombo
+Function TAutoCombo()
 Return nil
 
-Function TSendMail
+Function TSendMail()
+Return nil
+
+Function PedCLiente2PedProveedor()
 Return nil
 
 
