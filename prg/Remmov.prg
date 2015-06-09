@@ -873,7 +873,9 @@ METHOD CloseFiles() CLASS TRemMovAlm
       ::oTipArt:end()
    end if
 
-   D():DeleteView( ::nView )
+   if ::nView != nil 
+      D():DeleteView( ::nView )
+   end if
 
    ::oDbf         := nil
    ::oAlm         := nil
