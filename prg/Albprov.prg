@@ -3137,7 +3137,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 
       /*
       Tarifa1 ______________________________________________________________________________
-      */
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN1 ] ;
             VAR      aTmp[ _LBNFLIN1 ] ;
@@ -3180,10 +3179,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
 
-      /*
-      Tarifa 2______________________________________________________________________________
-      */
-
       REDEFINE CHECKBOX aGet[ _LBNFLIN2 ] ;
             VAR      aTmp[ _LBNFLIN2 ] ;
             ID       IDOK ;
@@ -3224,10 +3219,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             VALID    ( CalBnfIva( oBeneficioSobre[ 2 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN2 ], aGet[ _NBNFLIN2 ], aTmp[ _NIVA ], aGet[ _NPVPLIN2 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
-
-      /*
-      Tarifa 3______________________________________________________________________________
-      */
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN3 ] ;
             VAR      aTmp[ _LBNFLIN3 ] ;
@@ -3270,10 +3261,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
 
-      /*
-      Tarifa 4______________________________________________________________________________
-      */
-
       REDEFINE CHECKBOX aGet[ _LBNFLIN4 ] ;
             VAR      aTmp[ _LBNFLIN4 ] ;
             ID       650 ;
@@ -3314,10 +3301,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             VALID    ( CalBnfIva( oBeneficioSobre[ 4 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN4 ], aGet[ _NBNFLIN4 ], aTmp[ _NIVA ], aGet[ _NPVPLIN4 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
-
-      /*
-      Tarifa 5______________________________________________________________________________
-      */
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN5 ] ;
             VAR      aTmp[ _LBNFLIN5 ] ;
@@ -3360,10 +3343,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
 
-      /*
-      Tarifa 6______________________________________________________________________________
-      */
-
       REDEFINE CHECKBOX aGet[ _LBNFLIN6 ] ;
             VAR      aTmp[ _LBNFLIN6 ] ;
             ID       750 ;
@@ -3404,6 +3383,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             VALID    ( CalBnfIva( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN6 ], aGet[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NPVPLIN6 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
+      */
 
       /*
       Control de stock
@@ -3426,6 +3406,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          VAR      aTmp[ __LFACTURADO ] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ID       360 ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ __CNUMFAC ] VAR aTmp[ __CNUMFAC ] ;
+         ID       361 ;
+         PICTURE  "@R #/#########/##" ;
+         WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aTmp[ __DFECALB ];
@@ -4891,7 +4877,6 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
             /*
             Situacion posterior------------------------------------------------
-            */
 
             aGet[ _NBNFLIN1 ]:cText( ( D():Articulos( nView ) )->Benef1 )
             aGet[ _NBNFLIN2 ]:cText( ( D():Articulos( nView ) )->Benef2 )
@@ -4927,6 +4912,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             oBeneficioSobre[ 4 ]:Select( Max( ( D():Articulos( nView ) )->nBnfSbr4, 1 ) )
             oBeneficioSobre[ 5 ]:Select( Max( ( D():Articulos( nView ) )->nBnfSbr5, 1 ) )
             oBeneficioSobre[ 6 ]:Select( Max( ( D():Articulos( nView ) )->nBnfSbr6, 1 ) )
+            */
 
             /*
             Guardamos el precio de costo para posteriores comprobaciones
@@ -5222,8 +5208,9 @@ Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
 
    aGet[ _NPRECOM ]:cText( nNetUAlbPrv( aTmp, aTmpAlb, nDinDiv, nDirDiv ) )
 
+   /*
    if aTmp[ _LBNFLIN1 ]
-         aGet[ _NBNFLIN1 ]:lValid()
+      aGet[ _NBNFLIN1 ]:lValid()
    else
       if aTmp[ _LIVALIN ]
          aGet[ _NIVALIN1 ]:lValid()
@@ -5281,6 +5268,7 @@ Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
          aGet[ _NPVPLIN6 ]:lValid()
       end if
    end if
+   */
 
    if lActCos()
       aGet[ _LCHGLIN ]:Click( aTmp[ _NPREDIV ] != 0 )
@@ -10125,15 +10113,17 @@ Return ( setEstadoFacturadoAlbaranProveedorLinea( .f., id, nView ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION setFacturadoAlbaranProveedorLinea( nView )
+FUNCTION setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
 
    local id := ( D():FacturasProveedoresLineas( nView ) )->iNumAlb
 
-Return ( setEstadoFacturadoAlbaranProveedorLinea( .t., id, nView ) )
+   msgAlert("vamos a poner facturado a la linea:" + id )
+
+Return ( setEstadoFacturadoAlbaranProveedorLinea( .t., id, nView, cSerFac, nNumFac, cSufFac ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION setEstadoFacturadoAlbaranProveedorLinea( lFacturado, id, nView )
+FUNCTION setEstadoFacturadoAlbaranProveedorLinea( lFacturado, id, nView, cSerFac, nNumFac, cSufFac )
 
    DEFAULT lFacturado := .f.
 
@@ -10141,16 +10131,50 @@ FUNCTION setEstadoFacturadoAlbaranProveedorLinea( lFacturado, id, nView )
    D():setFocusAlbaranesProveedoresLineas( "nNumLin", nView )
 
    if ( D():AlbaranesProveedoresLineas( nView ) )->( dbSeek( id ) )
+      
       if dbDialogLock( D():AlbaranesProveedoresLineas( nView ) )
-         ( D():AlbaranesProveedoresLineas( nView ) )->lFacturado := lFacturado
+
+         ( D():AlbaranesProveedoresLineas( nView ) )->lFacturado  := lFacturado
+
+         if lFacturado
+            ( D():AlbaranesProveedoresLineas( nView ) )->cNumFac  := cSerFac + str( nNumFac ) + cSufFac
+         else 
+            ( D():AlbaranesProveedoresLineas( nView ) )->cNumFac  := ""
+         end if 
+      
          ( D():AlbaranesProveedoresLineas( nView ) )->( dbUnlock() )
+      
       end if
+
    end if
 
    D():restoreFocusAlbaranesProveedoresLineas( nView )
    D():setStatusAlbaranesProveedoresLineas( nView )
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setFacturadoAlbaranProveedorCabecera( lFacturado, nView, cNumFac )
+
+   local nRec
+   local nOrd
+
+   DEFAULT lFacturado   := .f.
+   DEFAULT cNumFac      := Space( 12 )
+
+   /*
+   Cambiamos las cabeceras-----------------------------------------------------
+   */
+
+   if dbDialogLock( D():AlbaranesProveedores( nView ) )
+      ( D():AlbaranesProveedores( nView ) )->lFacturado := lFacturado
+      ( D():AlbaranesProveedores( nView ) )->cNumFac    := cNumFac
+      ( D():AlbaranesProveedores( nView ) )->nFacturado := if( lFacturado, 3, 1 )
+      ( D():AlbaranesProveedores( nView ) )->( dbUnlock() )
+   end if
+
+RETURN NIL
 
 //---------------------------------------------------------------------------//
 
@@ -10168,12 +10192,7 @@ FUNCTION setFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
    Cambiamos las cabeceras-----------------------------------------------------
    */
 
-   if dbDialogLock( D():AlbaranesProveedores( nView ) )
-      ( D():AlbaranesProveedores( nView ) )->lFacturado := lFacturado
-      ( D():AlbaranesProveedores( nView ) )->cNumFac    := cNumFac
-      ( D():AlbaranesProveedores( nView ) )->nFacturado := if( lFacturado, 3, 1 )
-      ( D():AlbaranesProveedores( nView ) )->( dbUnlock() )
-   end if
+   setFacturadoAlbaranProveedorCabecera( lFacturado, nView, cNumFac )      
 
    /*
    Cambiamos el estado en las lineas-------------------------------------------
@@ -10188,6 +10207,7 @@ FUNCTION setFacturadoAlbaranProveedor( lFacturado, nView, cNumFac )
 
          if dbDialogLock( D():AlbaranesProveedoresLineas( nView ) )
             ( D():AlbaranesProveedoresLineas( nView ) )->lFacturado := lFacturado
+            ( D():AlbaranesProveedoresLineas( nView ) )->cNumFac    := cNumFac
             ( D():AlbaranesProveedoresLineas( nView ) )->( dbUnlock() )
           end if
 

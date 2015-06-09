@@ -2622,7 +2622,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    if oDlg:nResult != IDOK
       for each cNumAlb in aNumAlb:Get()
          if ( D():AlbaranesProveedores( nView ) )->( dbSeek( cNumAlb ) )
-            SetFacturadoAlbaranProveedor( .f., nView )
+            setFacturadoAlbaranProveedorCabecera( .f., nView )
          end if
       next
    end if
@@ -6740,7 +6740,7 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
          Actualizamos el estado------------------------------------------------
          */
 
-         SetFacturadoAlbaranProveedor( .t., nView )
+         setFacturadoAlbaranProveedorCabecera( .t., nView )
 
       end if
 
@@ -7109,9 +7109,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       Comprobamos que exista el articulo en la base de datos-------------------
       */
 
-      AppendReferenciaProveedor( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], D():ProveedorArticulo( nView ), nMode )
+      appendReferenciaProveedor( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], D():ProveedorArticulo( nView ), nMode )
 
-      AppendPropiedadesArticulos( aTbl, aTmp )
+      appendPropiedadesArticulos( aTbl, aTmp )
 
       /*
       Cambios de precios-------------------------------------------------------
@@ -7123,7 +7123,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
       dbGather( aTbl, D():FacturasProveedoresLineas( nView ), .t. )
 
-      setFacturadoAlbaranProveedorLinea( nView )
+      setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
 
       ( dbfTmp )->( dbSkip() )
 
@@ -7751,7 +7751,7 @@ Static Function QuiFacPrv( lDetail )
 
       while ( D():AlbaranesProveedores( nView ) )->cNumFac == cFactura .and. !( D():AlbaranesProveedores( nView ) )->( eof() )
 
-         SetFacturadoAlbaranProveedor( .f., nView )
+         setFacturadoAlbaranProveedor( .f., nView )
 
          ( D():AlbaranesProveedores( nView ) )->( dbSkip() )
 
