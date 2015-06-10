@@ -20598,84 +20598,58 @@ CAPTION "Generar pedidos a proveedores"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "TPages", 100, "TPages", WS_TABSTOP, 44, 39, 468, 281
-  CONTROL "< &Anterior", 500, "Button", WS_TABSTOP, 360, 324, 50, 14
-  CONTROL "Siguien&te >", 501, "Button", WS_TABSTOP, 411, 324, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 463, 324, 50, 14
-  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "< &Anterior", 500, "Button", WS_TABSTOP, 282, 324, 75, 14
+  CONTROL "Siguien&te >", 501, "Button", WS_TABSTOP, 360, 324, 75, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 437, 324, 75, 14
+  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
   CONTROL "Generación de pedidos de proveedor", -1, "Static", WS_GROUP, 44, 3, 444, 8
 }
 
-PEDCLI2PEDPROV_1 DIALOG DISCARDABLE 88, 53, 394, 262
+PEDCLI2PEDPROV_1 DIALOG DISCARDABLE 88, 53, 470, 285
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 49, 9, 55, 10
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 130, 9, 254, 10
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 49, 21, 55, 10
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 130, 21, 254, 10
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 49, 44, 80, 10
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 130, 44, 254, 10
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 49, 56, 80, 10
-  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 130, 56, 254, 10
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 49, 149, 55, 10
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 130, 149, 254, 10
-  CONTROL "Menor que 0", 201, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 175, 55, 12
-  CONTROL "Menor o igual que 0", 202, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 189, 79, 12
-  CONTROL "Menor que stock minimo", 203, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 203, 90, 12
-  CONTROL "Todos los artículos del pedido", 204, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 217, 110, 12
-  CONTROL "Stock mínimo", 212, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 245, 175, 55, 12
-  CONTROL "Stock máximo", 213, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 245, 189, 56, 12
-  CONTROL "Cant. pedido cliente", 214, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 245, 203, 79, 12
-  CONTROL "", 220, "msctls_progress32", 0x00000000, 49, 243, 336, 10
-  CONTROL "Desde", -1, "Static", WS_GROUP, 9, 12, 35, 8
-  CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 24, 35, 8
-  CONTROL "Desde", -1, "Static", WS_GROUP, 9, 47, 26, 8
-  CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 59, 25, 8
-  CONTROL "Destino", -1, "Static", WS_GROUP, 9, 151, 26, 8
-  CONTROL "Proveedores", -1, "Button", BS_GROUPBOX, 3, 0, 386, 36
-  CONTROL "Artículos", -1, "Button", BS_GROUPBOX, 3, 36, 386, 34
-  CONTROL "Almacén", -1, "Button", BS_GROUPBOX, 3, 140, 386, 23
-  CONTROL "Stock disponible", -1, "Button", BS_GROUPBOX, 3, 164, 192, 71
-  CONTROL "Igualar stock a", -1, "Button", BS_GROUPBOX, 197, 164, 192, 71
-  CONTROL "", -1, "Button", BS_GROUPBOX, 3, 235, 386, 22
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 49, 79, 80, 10
-  CONTROL "", 231, "Edit", WS_BORDER|WS_TABSTOP, 130, 79, 254, 10
-  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 49, 91, 80, 10
-  CONTROL "", 241, "Edit", WS_BORDER|WS_TABSTOP, 130, 91, 254, 10
-  CONTROL "Desde", -1, "Static", WS_GROUP, 9, 82, 26, 8
-  CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 94, 25, 8
-  CONTROL "Categorías", -1, "Button", BS_GROUPBOX, 4, 71, 386, 34
-  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 49, 114, 80, 10
-  CONTROL "", 251, "Edit", WS_BORDER|WS_TABSTOP, 130, 114, 254, 10
-  CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 49, 126, 80, 10
-  CONTROL "", 261, "Edit", WS_BORDER|WS_TABSTOP, 130, 126, 254, 10
-  CONTROL "Desde", -1, "Static", WS_GROUP, 9, 117, 26, 8
-  CONTROL "Hasta", -1, "Static", WS_GROUP, 9, 129, 25, 8
-  CONTROL "Temporadas", -1, "Button", BS_GROUPBOX, 4, 106, 386, 34
+  CONTROL "Menor que 0", 201, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 200, 55, 12
+  CONTROL "Menor o igual que 0", 202, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 214, 79, 12
+  CONTROL "Menor que stock minimo", 203, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 228, 90, 12
+  CONTROL "Todos los artículos del pedido", 204, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 49, 242, 110, 12
+  CONTROL "Stock mínimo", 212, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 255, 200, 55, 12
+  CONTROL "Stock máximo", 213, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 255, 214, 56, 12
+  CONTROL "Cant. pedido cliente", 214, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 255, 228, 79, 12
+  CONTROL "", 220, "msctls_progress32", 0x00000000, 9, 266, 452, 10
+  CONTROL "Stock disponible", -1, "Button", BS_GROUPBOX, 3, 189, 229, 71
+  CONTROL "Igualar stock a", -1, "Button", BS_GROUPBOX, 236, 189, 229, 71
+  CONTROL "", -1, "Button", BS_GROUPBOX, 3, 258, 462, 22
+  CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 12, 13, 106, 134
+  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 152, 14, 65, 11
+  CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 248, 14, 65, 11
+  CONTROL "", 130, "TXBrowse", 0x00200000, 3, 33, 462, 154
+  CONTROL "Desde", -1, "Static", WS_GROUP, 123, 17, 26, 8
+  CONTROL "Hasta", -1, "Static", WS_GROUP, 221, 17, 24, 8
+  CONTROL "Periodo", -1, "Button", BS_GROUPBOX, 3, 3, 462, 28
 }
 
-PEDCLI2PEDPROV_2 DIALOG DISCARDABLE 132, 67, 426, 262
+PEDCLI2PEDPROV_2 DIALOG DISCARDABLE 132, 67, 470, 285
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 8, 28, 410, 227
-  CONTROL "&Modificar", 110, "Button", WS_TABSTOP, 8, 12, 50, 14
+  CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 8, 28, 454, 250
+  CONTROL "&Modificar [F3]", 110, "Button", WS_TABSTOP, 8, 12, 50, 14
   CONTROL "&Seleccionar", 120, "Button", WS_TABSTOP, 60, 12, 50, 14
   CONTROL "&Todos", 130, "Button", WS_TABSTOP, 112, 12, 50, 14
   CONTROL "&Ninguno", 140, "Button", WS_TABSTOP, 164, 12, 50, 14
-  CONTROL "Artículos", -1, "Button", BS_GROUPBOX, 3, 0, 420, 259
+  CONTROL "Artículos", -1, "Button", BS_GROUPBOX, 3, 0, 463, 281
 }
 
-PEDCLI2PEDPROV_3 DIALOG DISCARDABLE 102, 64, 426, 262
+PEDCLI2PEDPROV_3 DIALOG DISCARDABLE 102, 64, 470, 285
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Informe", -1, "Button", BS_GROUPBOX, 3, 0, 420, 259
-  CONTROL "&Modificar", 110, "Button", WS_TABSTOP, 370, 10, 50, 14
-  CONTROL "&Zoom", 120, "Button", WS_TABSTOP, 370, 25, 50, 14
-  CONTROL "&Eliminar", 130, "Button", WS_TABSTOP, 370, 40, 50, 14
-  CONTROL "&Visualizar", 140, "Button", WS_TABSTOP, 370, 55, 50, 14
-  CONTROL "&Imprimir", 150, "Button", WS_TABSTOP, 370, 70, 50, 14
-  CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 8, 10, 360, 244
+  CONTROL "Informe", -1, "Button", BS_GROUPBOX, 3, 0, 463, 281
+  CONTROL "&Modificar [F3]", 110, "Button", WS_TABSTOP, 8, 12, 50, 14
+  CONTROL "&Zoom", 120, "Button", WS_TABSTOP, 60, 12, 50, 14
+  CONTROL "&Visualizar", 140, "Button", WS_TABSTOP, 112, 12, 50, 14
+  CONTROL "&Imprimir", 150, "Button", WS_TABSTOP, 164, 12, 50, 14
+  CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 8, 28, 454, 250
 }
 

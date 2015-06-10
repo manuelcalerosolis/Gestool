@@ -14329,7 +14329,7 @@ function aColTmpLin()
    aAdd( aColTmpLin, { "nMedUno", "N",   16,  6, "Primera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nMedDos", "N",   16,  6, "Segunda unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nMedTre", "N",   16,  6, "Tercera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nNumLin", "N",    4,  0, "Nímero de línea",      			"", 		"", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nNumLin", "N",    4,  0, "Número de línea",      			   "", 		   "", "( cDbfCol )" } )
 
 return ( aColTmpLin )
 
