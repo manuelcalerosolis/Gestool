@@ -675,10 +675,11 @@ RETURN ( Self )
 
 METHOD TrazaAlbaranProveedor( cNumDoc )
 
-   local n
    local oItm1
    local oItm2
+   local cDocumento
    local aNumeroPedido  := {}
+   local aNumeroFactura := {}
 
    if ::oAlbPrvT:Seek( cNumDoc )
 
@@ -690,35 +691,29 @@ METHOD TrazaAlbaranProveedor( cNumDoc )
                aAdd( aNumeroPedido, ::oAlbPrvL:cCodPed )
             end if
 
+            if aScan( aNumeroFactura, ::oAlbPrvL:cNumFac ) == 0
+               aAdd( aNumeroFactura, ::oAlbPrvL:cNumFac )
+            end if
+
             ::oAlbPrvL:Skip()
 
          end while
 
       end if
 
-      for n := 1 to len( aNumeroPedido )
-
-         if ::oPedPrvT:SeekInOrd( aNumeroPedido[ n ], 'nNumPed' )
-
+      for each cDocumento in aNumeroPedido 
+         if ::oPedPrvT:SeekInOrd( cDocumento, 'nNumPed' )
             oItm1 := ::AddPedidoProveedor( .f., ::oTree )
-
          end if
-
       next
 
       oItm2 := ::AddAlbaranProveedor( .t., if( !Empty( oItm1 ), oItm1, ::oTree ) )
 
-      if ::oFacPrvT:Seek( ::oAlbPrvT:cNumFac )
-
-         while ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac == ::oAlbPrvT:cNumFac .and. !::oFacPrvT:eof()
-
+      for each cDocumento in aNumeroFactura
+         if ::oFacPrvT:SeekInOrd( cDocumento, 'nNumFac' )
             ::AddFacturaProveedor( .f., oItm2 )
-
-            ::oFacPrvT:Skip()
-
-         end while
-
-      end if
+         end if 
+      next
 
    end if
 

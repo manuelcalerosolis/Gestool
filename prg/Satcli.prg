@@ -414,6 +414,8 @@ static cMaquina         := ""
 
 static oDetCamposExtra
 
+static oBrwProperties
+
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
@@ -3409,17 +3411,35 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       end if
 
-      /*
-      Propiedades
-      -------------------------------------------------------------------------
-      */
+      // Browse de propiedades-------------------------------------------------
 
-      if !aTmp[ __LALQUILER ]
+      oBrwProperties                       := IXBrowse():New( oFld:aDialogs[1] )
+
+      oBrwProperties:nDataType             := DATATYPE_ARRAY
+
+      oBrwProperties:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwProperties:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwProperties:lHScroll              := .t.
+      oBrwProperties:lVScroll              := .t.
+
+      oBrwProperties:nMarqueeStyle         := 3
+      oBrwProperties:lRecordSelector       := .f.
+      oBrwProperties:lFastEdit             := .t.
+      oBrwProperties:nFreeze               := 1
+      oBrwProperties:lFooter               := .t.
+
+      oBrwProperties:SetArray( {}, .f., 0, .f. )
+
+      oBrwProperties:MakeTotals()
+
+      oBrwProperties:CreateFromResource( 500 )
+
+      // Controles de propiedades----------------------------------------------
 
       REDEFINE GET aGet[ _CVALPR1 ] VAR aTmp[ _CVALPR1 ];
          ID       270 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aTmp[_CVALPR1], oSayVp1, aTmp[_CCODPR1 ], dbfTblPro ),;
                         LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ),;
@@ -3436,13 +3456,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE GET oSayVp1 VAR cSayVp1;
          ID       272 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CVALPR2] VAR aTmp[_CVALPR2];
          ID       280 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aTmp[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ], dbfTblPro ),;
                         LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ),;
@@ -3459,10 +3477,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE GET oSayVp2 VAR cSayVp2;
          ID       282 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      end if
 
       /*
       fin de propiedades
@@ -4352,7 +4368,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], D():Articulos( nView ), "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
       MsgStop( "Tiene que introducir números de serie para este artículo." )
       oBtnSer:Click()
-      Return .f.
+      Return nil
    end if
 
    // control de precios minimos-----------------------------------------------
@@ -4362,9 +4378,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       return nil
    end if 
 
-   /*
-   Comprobamos, si estamos por contadores, que no sea 0
-   */
+   // Comprobamos, si estamos por contadores, que no sea 0
 
    if aTmp[ _NCTLSTK ] == 2 .and. aTmp[ _NCNTACT ] == 0
 
@@ -4389,24 +4403,17 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
          GraCntArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _NCNTACT ] )
       end if
 
-      /*
-      Buscamos si existen atipicas de clientes---------------------------------
-      */
+      // Buscamos si existen atipicas de clientes------------------------------
 
       hAtipica := hAtipica( hValue( aTmp, aTmpSat ) )
 
-      if !Empty( hAtipica )
+      if !empty( hAtipica ) .and.  hhaskey( hAtipica, "nTipoXY" ) .and. hhaskey( hAtipica, "nUnidadesGratis" )
 
-         if hhaskey( hAtipica, "nTipoXY" )               .and.;
-            hhaskey( hAtipica, "nUnidadesGratis" )
-
-            if hAtipica[ "nUnidadesGratis" ] != 0
-               aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
-            end if
-
+         if hAtipica[ "nUnidadesGratis" ] != 0
+            aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
          end if
 
-      end if
+      end if 
 
       if aXbYStr[ 1 ] == 0
 
@@ -4481,7 +4488,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
          end if
 
          /*
-         Chequeamos las ofertas por fabricante X  *  Y-------------------------
+         Chequeamos las ofertas por fabricante X * Y-------------------------
          */
 
          if !aTmp[ _LLINOFE ]
@@ -4520,9 +4527,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
                AppendKit( aClo, aTmpSat )
             end if
 
-            aTmp[ _NCANSAT  ] := aXbYStr[ 2 ]
-            aTmp[ _NPREDIV  ] := 0
-            aTmp[ _NDTO ]     := 0
+            aTmp[ _NCANSAT ]  := aXbYStr[ 2 ]
+            aTmp[ _NPREDIV ]  := 0
+            aTmp[ _NDTO    ]  := 0
             aTmp[ _NDTODIV ]  := 0
             aTmp[ _NDTOPRM ]  := 0
             aTmp[ _NCOMAGE ]  := 0
@@ -4530,7 +4537,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
             if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpSat )
+               appendKit( aClo, aTmpSat )
             end if
 
          else
@@ -4557,8 +4564,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
                aTmp[ _NUNICAJA ] := aXbYStr[ 2 ]
             end if
 
-            aTmp[ _NPREDIV  ] := 0
-            aTmp[ _NDTO ]     := 0
+            aTmp[ _NPREDIV ]  := 0
+            aTmp[ _NDTO    ]  := 0
             aTmp[ _NDTODIV ]  := 0
             aTmp[ _NDTOPRM ]  := 0
             aTmp[ _NCOMAGE ]  := 0
@@ -4615,13 +4622,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
    */
 
    if bmpImage != nil
-
       bmpImage:Hide()
-
       if !Empty( bmpImage:hBitmap )
          PalbmpFree( bmpImage:hBitmap, bmpImage:hPalette )
       endif
-
    end if
 
    if nMode == APPD_MODE .and. lEntCon()
@@ -5195,32 +5199,31 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
          return .f.
       end if
 
-      if Empty( aTmp[ _NIVA ] )
+      if empty( aTmp[ _NIVA ] )
          aGet[ _NIVA ]:bWhen     := {|| .t. }
       end if
 
       aGet[ _CDETALLE ]:Hide()
 
-      if !Empty( aGet[ _MLNGDES ] )
+      if !empty( aGet[ _MLNGDES ] )
           aGet[ _MLNGDES ]:Show()
       end if
 
-      if lFocused .and. !Empty( aGet[ _MLNGDES ] )
+      if !empty( oBrwProperties )
+         oBrwProperties:Hide()
+      end if
+
+      if lFocused .and. !empty( aGet[ _MLNGDES ] )
         aGet[ _MLNGDES ]:SetFocus()
       end if
 
    else
 
-      if lModIva()
-         aGet[_NIVA    ]:bWhen   := {|| .t. }
-      else
-         aGet[_NIVA    ]:bWhen   := {|| .f. }
-      end if
+      aGet[ _NIVA     ]:bWhen   := {|| lModIva() }
+      aGet[ _CDETALLE ]:show()
 
-      aGet[_CDETALLE]:show()
-
-      if aGet[_MLNGDES ] != nil
-         aGet[_MLNGDES ]:hide()
+      if aGet[ _MLNGDES ] != nil
+         aGet[ _MLNGDES ]:hide()
       end if
 
       /*
@@ -5420,6 +5423,7 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             */
 
             if ( D():Articulos( nView ) )->lKitArt
+
                aTmp[ _LKITART ]        := .t.                                             // Marcamos como padre del kit
                aTmp[ _LIMPLIN ]        := lImprimirCompuesto( ( D():Articulos( nView ) )->Codigo, D():Articulos( nView ) ) // 1 Todos, 2 Compuesto
                aTmp[ _LKITPRC ]        := lPreciosCompuestos( ( D():Articulos( nView ) )->Codigo, D():Articulos( nView ) ) // 1 Todos, 2 Compuesto
@@ -5488,75 +5492,87 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             Buscamos la familia del articulo y anotamos las propiedades-----------
             */
 
-            aTmp[_CCODPR1 ]         := ( D():Articulos( nView ) )->cCodPrp1
-            aTmp[_CCODPR2 ]         := ( D():Articulos( nView ) )->cCodPrp2
+            aTmp[ _CCODPR1 ]        := ( D():Articulos( nView ) )->cCodPrp1
+            aTmp[ _CCODPR2 ]        := ( D():Articulos( nView ) )->cCodPrp2
 
-            if !Empty( aTmp[ _CCODPR1 ] )
+            if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
 
-               if aGet[ _CVALPR1 ] != nil
-                  aGet[ _CVALPR1 ]:Show()
-                  if lFocused
-                     aGet[ _CVALPR1 ]:SetFocus()
+               setPropertiesTable( cCodArt, 0, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwProperties, nView )
+
+            else
+
+               if !empty(oBrwProperties)
+                  oBrwProperties:Show()
+               end if 
+
+               if !Empty( aTmp[ _CCODPR1 ] )
+
+                  if aGet[ _CVALPR1 ] != nil
+                     aGet[ _CVALPR1 ]:Show()
+                     if lFocused
+                        aGet[ _CVALPR1 ]:SetFocus()
+                     end if
                   end if
+
+                  if oSayPr1 != nil
+                     oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
+                     oSayPr1:show()
+                  end if
+
+                  if oSayVp1 != nil
+                     oSayVp1:SetText( "" )
+                     oSayVp1:Show()
+                  end if
+
+               else
+
+                  if aGet[ _CVALPR1 ] !=  nil
+                     aGet[ _CVALPR1 ]:hide()
+                  end if
+
+                  if oSayPr1 != nil
+                     oSayPr1:Hide()
+                  end if
+
+                  if oSayVp1 != nil
+                     oSayVp1:Hide()
+                  end if
+
                end if
 
-               if oSayPr1 != nil
-                  oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
-                  oSayPr1:show()
+               if !Empty( aTmp[ _CCODPR2 ] )
+
+                  if aGet[ _CVALPR2 ] != nil
+                     aGet[ _CVALPR2 ]:show()
+                  end if
+
+                  if oSayPr2 != nil
+                     oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
+                     oSayPr2:Show()
+                  end if
+
+                  if oSayVp2 != nil
+                     oSayVp2:SetText( "" )
+                     oSayVp2:Show()
+                  end if
+
+               else
+
+                  if aGet[ _CVALPR2 ] != nil
+                     aGet[ _CVALPR2 ]:hide()
+                  end if
+
+                  if oSayPr2 != nil
+                     oSayPr2:hide()
+                  end if
+
+                  if oSayVp2 != nil
+                     oSayVp2:hide()
+                  end if
+
                end if
 
-               if oSayVp1 != nil
-                  oSayVp1:SetText( "" )
-                  oSayVp1:Show()
-               end if
-
-            else
-
-               if aGet[ _CVALPR1 ] !=  nil
-                  aGet[ _CVALPR1 ]:hide()
-               end if
-
-               if oSayPr1 != nil
-                  oSayPr1:Hide()
-               end if
-
-               if oSayVp1 != nil
-                  oSayVp1:Hide()
-               end if
-
-            end if
-
-            if !Empty( aTmp[ _CCODPR2 ] )
-
-               if aGet[ _CVALPR2 ] != nil
-                  aGet[ _CVALPR2 ]:show()
-               end if
-
-               if oSayPr2 != nil
-                  oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
-                  oSayPr2:Show()
-               end if
-
-               if oSayVp2 != nil
-                  oSayVp2:SetText( "" )
-                  oSayVp2:Show()
-               end if
-
-            else
-
-               if aGet[ _CVALPR2 ] != nil
-                  aGet[ _CVALPR2 ]:hide()
-               end if
-
-               if oSayPr2 != nil
-                  oSayPr2:hide()
-               end if
-
-               if oSayVp2 != nil
-                  oSayVp2:hide()
-               end if
-
-            end if
+            end if 
 
             // Si la comisi¢n del articulo hacia el agente es distinto de cero----
 

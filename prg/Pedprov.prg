@@ -3208,7 +3208,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
             Control de stocks--------------------------------------------------
             */
 
-            aTmp[ _NCTLSTK ]     := ( D():Articulos( nView ) )->nCtlStock
+            aTmp[ _NCTLSTK ]        := ( D():Articulos( nView ) )->nCtlStock
 
             /*
             Tratamientos kits-----------------------------------------------------

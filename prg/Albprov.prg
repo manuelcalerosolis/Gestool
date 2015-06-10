@@ -765,7 +765,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       DEFINE BTNSHELL RESOURCE "ChgState" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( SetFacturadoAlbaranProveedor( !lFacturado( D():AlbaranesProveedores( nView ) ), nView ), oWndBrw:refresh() );
+         ACTION   ( SetFacturadoAlbaranProveedores( nView ) );
          TOOLTIP  "Cambiar es(t)ado" ;
          HOTKEY   "T";
          LEVEL    ACC_EDIT
@@ -10117,8 +10117,6 @@ FUNCTION setFacturadoAlbaranProveedorLinea( cSerFac, nNumFac, cSufFac, nView )
 
    local id := ( D():FacturasProveedoresLineas( nView ) )->iNumAlb
 
-   msgAlert("vamos a poner facturado a la linea:" + id )
-
 Return ( setEstadoFacturadoAlbaranProveedorLinea( .t., id, nView, cSerFac, nNumFac, cSufFac ) )
 
 //---------------------------------------------------------------------------//
@@ -10175,6 +10173,46 @@ FUNCTION setFacturadoAlbaranProveedorCabecera( lFacturado, nView, cNumFac )
    end if
 
 RETURN NIL
+
+//---------------------------------------------------------------------------//
+
+FUNCTION setFacturadoAlbaranProveedores( nView )
+
+   local nRec
+   local cTxt
+   local nSelected
+   local nRecHead          
+
+   cTxt                 := "¿Desea cambiar el estado del documento?"
+
+   if isNil( oWndBrw )
+      Return .f.
+   end if 
+
+   nSelected            := len( oWndBrw:oBrw:aSelected  )
+   if nSelected > 1
+      cTxt              := "¿Desea cambiar el estado de " + alltrim( str( nSelected, 3 ) ) + " documentos ?"
+   end if
+
+   if !apoloMsgNoYes( cTxt, "Elija una opción" )
+      Return .f.
+   end if 
+
+   nRecHead                := ( D():AlbaranesProveedores( nView ) )->( recNo() )
+
+   for each nRec in ( oWndBrw:oBrw:aSelected )
+
+      ( D():AlbaranesProveedores( nView ) )->( dbGoTo( nRec ) )
+
+      setFacturadoAlbaranProveedor( !( D():AlbaranesProveedores( nView ) )->lFacturado, nView )
+
+   next
+
+   ( D():AlbaranesProveedores( nView ) )->( dbGoTo( nRecHead ) )
+
+   oWndBrw:Refresh()
+
+RETURN .t.
 
 //---------------------------------------------------------------------------//
 

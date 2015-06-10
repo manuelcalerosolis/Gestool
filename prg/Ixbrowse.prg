@@ -35,6 +35,7 @@ CLASS IXBrowse FROM TXBrowse
    ASSIGN BookMark(u)      INLINE Eval( ::bBookMark, u )
 
    METHOD New( oWnd )
+   METHOD GoLeftMost()
 
    Method GetOriginal()    INLINE ( ::cOriginal := ::SaveState() )
    Method SetOriginal()    INLINE ( ::RestoreState( ::cOriginal ) )
@@ -92,6 +93,25 @@ METHOD New( oWnd )
 #endif
 
 Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD GoLeftMost()
+
+   ::CancelEdit()
+
+   ::nColSel         := 1
+   ::nColOffset      := ::nFreeze
+   ::GetDisplayCols()
+   ::Super:Refresh( ::FullPaint() )
+
+   if ::oHScroll != nil
+      ::oHScroll:SetPos( 1 )
+   endif
+
+   ::Change( .f. )
+
+return nil
 
 //----------------------------------------------------------------------------//
 

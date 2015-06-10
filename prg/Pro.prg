@@ -1287,7 +1287,13 @@ Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:cText } )
 
 Static Function bGenEditValue( aTblPrp, oBrwPrp, n )
 
-Return ( {| x, oCol | aTblPrp[ oBrwPrp:nArrayAt, n ]:Value } )
+Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:Value } )
+
+//--------------------------------------------------------------------------//
+
+Static Function bGenRGBValue( aTblPrp, oBrwPrp, n )
+
+Return ( {|| { nRGB( 0, 0, 0), aTblPrp[ oBrwPrp:nArrayAt, n ]:nRgb } } )
 
 //--------------------------------------------------------------------------//
 
@@ -1441,7 +1447,7 @@ Return ( aRow )
 
 Static Function bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnidades )
 
-   oBrw:Cargo[ oBrw:nArrayAt, oBrw:nColSel + oBrw:nColOffset - 1 ]:Value := xVal 
+   oBrw:Cargo[ oBrw:nArrayAt, oCol:Cargo ]:Value := xVal 
 
    nTotalProperties( oBrw, oGetUnidades )
 
@@ -1519,6 +1525,8 @@ CLASS TPropertiesItems
    DATA  cValorPropiedad1
    DATA  cValorPropiedad2
    DATA  nPrecioCompra
+   DATA  lColor             
+   DATA  nRgb               
    DATA  cHead
 
    DATA  Value
@@ -1545,6 +1553,8 @@ Method New() CLASS TPropertiesItems
    ::cCodigoPropiedad2  := Space( 20 )
    ::cValorPropiedad1   := Space( 40 )
    ::cValorPropiedad2   := Space( 40 )
+   ::lColor             := .f.
+   ::nRgb               := 0
    ::nPrecioCompra      := 0
 
 Return ( Self )
@@ -2703,6 +2713,7 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
       end if 
    end if
 
+   // Montamos los array con las propiedades-----------------------------------
 
    nTotalCol                  := len( aPropiedadesArticulo2 ) + 1
 
@@ -2721,6 +2732,9 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
       aPropertiesTable[ nRow, nCol ]:cText               := hValorPropiedad[ "CabeceraPropiedad" ]
       aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1   := hValorPropiedad[ "CodigoPropiedad" ]
       aPropertiesTable[ nRow, nCol ]:cValorPropiedad1    := hValorPropiedad[ "ValorPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:lColor              := hValorPropiedad[ "ColorPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:nRgb                := hValorPropiedad[ "RgbPropiedad" ]
+
       nRow++
    next
 
@@ -2741,8 +2755,8 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
             aPropertiesTable[ n, nCol ]:cCodigo             := cCodArt
             aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
             aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
-            aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
-            aPropertiesTable[ n, nCol ]:cValorPropiedad2    := hValorPropiedad[ "ValorPropiedad" ]
+            aPropertiesTable[ n, nCol ]:lColor              := aPropertiesTable[ n, 1 ]:lColor
+            aPropertiesTable[ n, nCol ]:nRgb                := aPropertiesTable[ n, 1 ]:nRgb
          next
 
       next
@@ -2762,6 +2776,10 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
          aPropertiesTable[ n, nCol ]:cCodigo                := cCodArt
          aPropertiesTable[ n, nCol ]:cCodigoPropiedad1      := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
          aPropertiesTable[ n, nCol ]:cValorPropiedad1       := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+         aPropertiesTable[ n, nCol ]:cCodigoPropiedad2      := hValorPropiedad[ "CodigoPropiedad" ]
+         aPropertiesTable[ n, nCol ]:cValorPropiedad2       := hValorPropiedad[ "RgbPropiedad" ]
+         aPropertiesTable[ n, nCol ]:lColor                 := hValorPropiedad[ "ColorPropiedad" ]
+         aPropertiesTable[ n, nCol ]:nRgb                   := hValorPropiedad[ "RgbPropiedad" ]
       next
 
    end if
@@ -2784,6 +2802,7 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
 
       oBrw:aCols                 := {}
       oBrw:Cargo                 := aPropertiesTable   
+      oBrw:nFreeze               := 1
       
       oBrw:SetArray( aPropertiesTable, .f., 0, .f. )
 
@@ -2799,19 +2818,39 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
                :bFooter          := {|| "Total" }
             end with
 
+            if aPropertiesTable[ oBrw:nArrayAt, n ]:lColor
+
+               with object ( oBrw:AddCol() )
+                  :Adjust()
+                  :cHeader       := "Color"
+                  :nWidth        := 40
+                  :bFooter       := {|| "" }
+                  :bStrData      := {|| "" }
+                  :nWidth        := 16
+                  :bClrStd       := bGenRGBValue( aPropertiesTable, oBrw, n )
+                  :bClrSel       := bGenRGBValue( aPropertiesTable, oBrw, n )
+                  :bClrSelFocus  := bGenRGBValue( aPropertiesTable, oBrw, n )
+               end with
+               
+               oBrw:nFreeze++
+               oBrw:nColOffset++
+
+            end if 
+
          else
 
             with object ( oBrw:AddCol() )
                :Adjust()
                :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
                :bEditValue       := bGenEditValue( aPropertiesTable, oBrw, n )
-               :nWidth           := 80
                :cEditPicture     := MasUnd()
-               :nTotal           := 0
+               :nWidth           := 80
+               :setAlign( AL_RIGHT )
+               :nFooterType      := AGGR_SUM
                :nEditType        := EDIT_GET
                :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnd ) }
-               :setAlign( AL_RIGHT )
-               :nFootStrAlign    := AL_RIGHT
+               :Cargo            := n
+               :nFootStyle       := :defStyle( AL_RIGHT, .t. )               
             end with
 
          end if
@@ -2883,7 +2922,9 @@ Static Function addValoresPorpiedad( aValores, nView, cCodigoArticulo, cFieldCod
    hPropiedad  := {  "CodigoPropiedad" => rtrim( cCodigoPropiedad ),;
                      "ValorPropiedad" => rtrim( cValorPropiedad ),;
                      "TipoPropiedad" => rtrim( retFld( cCodigoPropiedad, D():Propiedades( nView ), "cDesPro" ) ),;
-                     "CabeceraPropiedad" => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ) }
+                     "ColorPropiedad" => retFld( cCodigoPropiedad, D():Propiedades( nView ), "lColor" ),;
+                     "CabeceraPropiedad" => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ),;
+                     "RgbPropiedad" => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nColor" ) }
 
 Return ( aadd( aValores, hPropiedad ) )
 
@@ -2922,8 +2963,25 @@ Static Function addPropiedades( aPropiedades, nView, cCodigoPropiedad )
    hPropiedad  := {  "CodigoPropiedad" => rtrim( cCodigoPropiedad ),;
                      "ValorPropiedad" => rtrim( cValorPropiedad ),;
                      "TipoPropiedad" => rtrim( retFld( cCodigoPropiedad, D():Propiedades( nView ), "cDesPro" ) ),;
-                     "CabeceraPropiedad" => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ) }
+                     "ColorPropiedad" => retFld( cCodigoPropiedad, D():Propiedades( nView ), "lColor" ),;
+                     "CabeceraPropiedad" => rtrim( retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "cDesTbl" ) ),;
+                     "RgbPropiedad" => retFld( cCodigoPropiedad + cValorPropiedad, D():PropiedadesLineas( nView ), "nColor" ) }
 
 Return ( aadd( aPropiedades, hPropiedad ) )
 
 //---------------------------------------------------------------------------//
+/*
+
+      if retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ], dbfPro, "lColor" )
+
+         with object ( oBrwDiv:AddCol() )
+            :cHeader          := "C. Prp1"
+            :bStrData         := {|| "" }
+            :nWidth           := 16
+            :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+            :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+            :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
+         end with
+
+      end if
+*/
