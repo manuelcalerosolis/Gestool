@@ -329,7 +329,6 @@ static dbfAgent
 static dbfFamilia
 static dbfProvee
 static dbfDoc
-static dbfOferta
 static dbfTVta
 static dbfTblPro
 static dbfPro
@@ -539,6 +538,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ImpuestosEspeciales( nView )
 
+      D():Ofertas( nView )
+
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -590,9 +591,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
       SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
-      SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
       SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
@@ -920,10 +918,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfFamilia   )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfOferta )
-      ( dbfOferta    )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfKit )
       ( dbfKit       )->( dbCloseArea() )
    end if
@@ -1106,7 +1100,6 @@ STATIC FUNCTION CloseFiles()
    dbfDiv         := nil
    dbfDoc         := nil
    dbfFamilia     := nil
-   dbfOferta      := nil
    dbfKit         := nil
    dbfTVta        := nil
    dbfPro         := nil
@@ -4405,15 +4398,19 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
       // Buscamos si existen atipicas de clientes------------------------------
 
-      hAtipica := hAtipica( hValue( aTmp, aTmpSat ) )
+      // setAtipicasClientes( )
 
-      if !empty( hAtipica ) .and.  hhaskey( hAtipica, "nTipoXY" ) .and. hhaskey( hAtipica, "nUnidadesGratis" )
+      hAtipica       := hAtipica( hValue( aTmp, aTmpSat ) )
+
+      if !empty( hAtipica ) .and. hhaskey( hAtipica, "nTipoXY" ) .and. hhaskey( hAtipica, "nUnidadesGratis" )
 
          if hAtipica[ "nUnidadesGratis" ] != 0
-            aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
+            aXbYStr  := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
          end if
 
       end if 
+
+      // No es una atipica de x*y
 
       if aXbYStr[ 1 ] == 0
 
@@ -4423,7 +4420,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( aTmp[ _CREF ], aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 1 )
+            aXbyStr              := nXbYOferta( aTmp[ _CREF ], aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), 1 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4437,7 +4434,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "FAMILIA", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 2 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "FAMILIA", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), 2 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4451,7 +4448,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTIP", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 3 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTIP", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), 3 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4465,7 +4462,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODCATE", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 4 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODCATE", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), 4 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4479,7 +4476,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTEMP", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 5 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTEMP", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), 5 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4493,7 +4490,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODFAB", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 6 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODFAB", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), 6 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -5188,6 +5185,7 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
    local nTarOld     := aTmp[ _NTARLIN ]
    local lChgCodArt  := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
    local nNumDto     := 0
+   local hValue
    local hAtipica
 
    DEFAULT lFocused  := .t.
@@ -5874,42 +5872,36 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             /*
             Chequeamos las atipicas del cliente--------------------------------
             */
+            
+            hValue   := hValue( aTmp, aTmpSAT )
 
-            hAtipica := hAtipica( hValue( aTmp, aTmpSAT ) )
+            hAtipica := hAtipica( hValue )
 
             if !Empty( hAtipica )
                
-               if hhaskey( hAtipica, "nImporte" )
-                  if hAtipica[ "nImporte" ] != 0
-                     aGet[ _NPREDIV ]:cText( hAtipica[ "nImporte" ] )
-                  end if
+               if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
+                  aGet[ _NPREDIV ]:cText( hAtipica[ "nImporte" ] )
                end if
 
-               if hhaskey( hAtipica, "nDescuentoPorcentual" )
-                  if hAtipica[ "nDescuentoPorcentual"] != 0
-                     aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
-                  end if
+               if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. hAtipica[ "nDescuentoPorcentual"] != 0
+                  aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
                end if
 
-               if hhaskey( hAtipica, "nDescuentoPromocional" )
-                  if hAtipica[ "nDescuentoPromocional" ] != 0
-                     aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
-                  end if   
+               if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. hAtipica[ "nDescuentoPromocional" ] != 0
+                  aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
                end if
 
-               if hhaskey( hAtipica, "nComisionAgente" )
-                  if hAtipica[ "nComisionAgente" ] != 0
-                     aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
-                  end if   
+               if hhaskey( hAtipica, "nComisionAgente" ) .and. hAtipica[ "nComisionAgente" ] != 0
+                  aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
                end if
 
-               if hhaskey( hAtipica, "nDescuentoLineal" )
-                  if hAtipica[ "nDescuentoLineal" ] != 0
-                     aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
-                  end if   
+               if hhaskey( hAtipica, "nDescuentoLineal" ) .and. hAtipica[ "nDescuentoLineal" ] != 0
+                  aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
                end if
 
             end if
+
+            // Unidades de medicion -------------------------------------------
 
             if oUndMedicion:oDbf:Seek( ( D():Articulos( nView ) )->cUnidad )
 
@@ -5959,7 +5951,9 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
          Buscamos si hay ofertas-----------------------------------------------
          */
 
-         lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfDiv, dbfKit, dbfIva  )
+         msgAlert( hb_valtoexp( structOfertaArticulo( hValue, nView ) ) )
+
+         lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfDiv, dbfKit, dbfIva  )
 
          /*
          Cargamos los valores para los cambios---------------------------------
@@ -6013,11 +6007,10 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfDiv, dbfKit, dbfIva  )
+static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfDiv, dbfKit, dbfIva  )
 
    local sOfeArt
    local nTotalLinea    := 0
-
 
    if ( D():Articulos( nView ) )->Codigo == cCodArt .or. ( D():Articulos( nView ) )->( dbSeek( cCodArt ) )
 
@@ -6027,7 +6020,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfDiv, d
 
       nTotalLinea := RecalculaLinea( aTmp, aTmpSat, nDouDiv, , , aTmpSat[ _CDIVSAT ], .t. )
 
-      sOfeArt     := sOfertaArticulo( cCodArt, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVSAT ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, aTmp[ _NCANSAT ], nTotalLinea )
+      sOfeArt     := sOfertaArticulo( cCodArt, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVSAT ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, aTmp[ _NCANSAT ], nTotalLinea )
 
       if !Empty( sOfeArt ) 
          if ( sOfeArt:nPrecio != 0 )
@@ -6048,7 +6041,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfDiv, d
          Buscamos si existen ofertas por familia----------------------------
          */
 
-         sOfeArt     := sOfertaFamilia( ( D():Articulos( nView ) )->Familia, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
+         sOfeArt     := sOfertaFamilia( ( D():Articulos( nView ) )->Familia, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6068,7 +6061,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfDiv, d
          Buscamos si existen ofertas por tipos de articulos--------------
          */
 
-         sOfeArt     := sOfertaTipoArticulo( ( D():Articulos( nView ) )->cCodTip, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
+         sOfeArt     := sOfertaTipoArticulo( ( D():Articulos( nView ) )->cCodTip, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6088,7 +6081,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfDiv, d
          Buscamos si existen ofertas por tipos de articulos--------------
          */
 
-         sOfeArt     := sOfertaCategoria( ( D():Articulos( nView ) )->cCodCate, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
+         sOfeArt     := sOfertaCategoria( ( D():Articulos( nView ) )->cCodCate, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6108,7 +6101,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfDiv, d
          Buscamos si existen ofertas por temporadas----------------------
          */
 
-         sOfeArt     := sOfertaTemporada( ( D():Articulos( nView ) )->cCodTemp, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
+         sOfeArt     := sOfertaTemporada( ( D():Articulos( nView ) )->cCodTemp, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6128,7 +6121,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfDiv, d
          Buscamos si existen ofertas por fabricantes---------------------------
          */
 
-         sOfeArt     := sOfertaFabricante( ( D():Articulos( nView ) )->cCodFab, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
+         sOfeArt     := sOfertaFabricante( ( D():Articulos( nView ) )->cCodFab, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], D():Ofertas( nView ), aTmp[ _NTARLIN ], D():Articulos( nView ), aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -7353,7 +7346,7 @@ STATIC FUNCTION RecSatCli( aTmpSat )
          Buscamos si existen ofertas para este articulo y le cambiamos el precio
          */
 
-         nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpSat[ _DFECSAT ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
+         nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpSat[ _DFECSAT ], D():Ofertas( nView ), ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
             ( dbfTmpLin )->nPreDiv     := nCnv2Div( nImpOfe, cDivEmp(), aTmpSat[ _CDIVSAT ] )
          end if
@@ -7362,7 +7355,7 @@ STATIC FUNCTION RecSatCli( aTmpSat )
          Buscamos si existen descuentos en las ofertas
          */
 
-         nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpSat[ _DFECSAT ], dbfOferta, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
+         nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpSat[ _DFECSAT ], D():Ofertas( nView ), ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
             ( dbfTmpLin )->nDtoPrm  := nImpOfe
          end if
@@ -8194,7 +8187,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
-   oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
+   oFr:SetWorkArea(     "Ofertas", ( D():Ofertas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
 
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
@@ -8339,7 +8332,7 @@ Return nil
 
 Static Function hValue( aTmp, aTmpSat )
 
-   local hValue                  := {=>}
+   local hValue                        := {=>}
 
    do case 
       case ValType( aTmp ) == "A"
@@ -8351,7 +8344,7 @@ Static Function hValue( aTmp, aTmpSat )
          hValue[ "cValorPropiedad2"  ] := aTmp[ _CVALPR2 ]
          hValue[ "cCodigoFamilia"    ] := aTmp[ _CCODFAM ]
          hValue[ "nTarifaPrecio"     ] := aTmp[ _NTARLIN ]
-         hValue[ "nCajas"            ] := aTmp[ _NCANENT ]
+         hValue[ "nCajas"            ] := aTmp[ _NCANSAT ]
          hValue[ "nUnidades"         ] := aTmp[ _NUNICAJA ]
 
       case ValType( aTmp ) == "C"
@@ -8363,10 +8356,12 @@ Static Function hValue( aTmp, aTmpSat )
          hValue[ "cValorPropiedad2"  ] := ( aTmp )->cValPr2
          hValue[ "cCodigoFamilia"    ] := ( aTmp )->cCodFam
          hValue[ "nTarifaPrecio"     ] := ( aTmp )->nTarLin         
-         hValue[ "nCajas"            ] := ( aTmp )->nCanEnt
+         hValue[ "nCajas"            ] := ( aTmp )->nCanSat
          hValue[ "nUnidades"         ] := ( aTmp )->nUniCaja
 
    end case      
+
+   hValue[ "nTotalLinea"       ]       := nTotLSatCli( aTmp )
 
    do case 
       case ValType( aTmpSat ) == "A"
@@ -8375,6 +8370,8 @@ Static Function hValue( aTmp, aTmpSat )
          hValue[ "cCodigoGrupo"      ] := aTmpSat[ _CCODGRP ]
          hValue[ "lIvaIncluido"      ] := aTmpSat[ _LIVAINC ]
          hValue[ "dFecha"            ] := aTmpSat[ _DFECSAT ]
+         hValue[ "cGrupoCliente"     ] := aTmpSat[ _CCODGRP ]
+         hValue[ "cDivisa"           ] := aTmpSat[ _CDIVSAT ]
 
       case ValType( aTmpSat ) == "C"
          
@@ -8382,11 +8379,13 @@ Static Function hValue( aTmp, aTmpSat )
          hValue[ "cCodigoGrupo"      ] := ( aTmpSat )->cCodGrp
          hValue[ "lIvaIncluido"      ] := ( aTmpSat )->lIvaInc
          hValue[ "dFecha"            ] := ( aTmpSat )->dFecSat
+         hValue[ "cGrupoCliente"     ] := ( aTmpSat )->cCodGrp 
+         hValue[ "cDivisa"           ] := ( aTmpSat )->cDivSat 
 
    end case
 
-   hValue[ "nTipoDocumento"         ] := SAT_CLI
-   hValue[ "nView"                  ] := nView
+   hValue[ "nTipoDocumento"         ]  := SAT_CLI
+   hValue[ "nView"                  ]  := nView
 
 Return ( hValue )
 
@@ -9459,11 +9458,92 @@ RETURN ( DescripLeng( cSatCliL, cSatCliS, cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotLSatCli( cSatCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+Function isLineaTotalSatCli( uSatCliL )
+
+   if isArray( uSatCliL )
+      Return ( uSatCliL[ _LTOTLIN ] )
+   end if
+
+Return ( ( uSatCliL )->lTotLin )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoLinealSatCli( uSatCliL, nDec, nVdv )
+
+   local nDescuentoLineal
+
+   if isArray( uSatCliL )
+      nDescuentoLineal  := uSatCliL[ _NDTODIV ]
+   else 
+      nDescuentoLineal  := ( uSatCliL )->nDtoDiv
+   end if
+
+Return ( Round( nDescuentoLineal / nVdv, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoPorcentualSatCli( uSatCliL )
+
+   local nDescuentoPorcentual
+
+   if isArray( uSatCliL )
+      nDescuentoPorcentual  := uSatCliL[ _NDTO ]
+   else 
+      nDescuentoPorcentual  := ( uSatCliL )->nDto
+   end if
+
+Return ( nDescuentoPorcentual )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoPromocionSatCli( uSatCliL )
+
+   local nDescuentoPromocion
+
+   if isArray( uSatCliL )
+      nDescuentoPromocion  := uSatCliL[ _NDTOPRM ]
+   else 
+      nDescuentoPromocion  := ( uSatCliL )->nDtoPrm
+   end if
+
+Return ( nDescuentoPromocion )
+
+//---------------------------------------------------------------------------//
+
+Function nPuntoVerdeSatCli( uSatCliL )
+
+   local nPuntoVerde
+
+   if isArray( uSatCliL )
+      nPuntoVerde  := uSatCliL[ _NPNTVER ]
+   else 
+      nPuntoVerde  := ( uSatCliL )->nPntVer
+   end if
+
+Return ( nPuntoVerde )
+
+//---------------------------------------------------------------------------//
+
+Function nTransporteSatCli( uSatCliL )
+
+   local nTransporte
+
+   if isArray( uSatCliL )
+      nTransporte  := uSatCliL[ _NIMPTRN ]
+   else 
+      nTransporte  := ( uSatCliL )->nImpTrn
+   end if
+
+Return ( nTransporte )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotLSatCli( uSatCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
+   local nUnidades
 
-   DEFAULT cSatCliL     := dbfSatCliL
+   DEFAULT uSatCliL     := dbfSatCliL
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -9471,42 +9551,43 @@ FUNCTION nTotLSatCli( cSatCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    DEFAULT lPntVer      := .t.
    DEFAULT lImpTrn      := .t.
 
-   if ( cSatCliL )->lTotLin
+   if isLineaTotalSatCli( uSatCliL )
 
-      nCalculo          := nTotUSatCli( cSatCliL, nDec )
+      nCalculo          := nTotUSatCli( uSatCliL, nDec, nVdv )
 
    else
 
-      nCalculo          := nTotUSatCli( cSatCliL, nDec ) * nTotNSatCli( cSatCliL )
+      nUnidades         := nTotNSatCli( uSatCliL )
+      nCalculo          := nTotUSatCli( uSatCliL, nDec, nVdv ) * nUnidades
 
       /*
       Descuentos---------------------------------------------------------------
       */
 
-      nCalculo          -= Round( ( cSatCliL )->nDtoDiv / nVdv , nDec )
+      nCalculo          -= nDescuentoLinealSatCli( uSatCliL, nDec, nVdv ) * nUnidades
 
-      if ( cSatCliL )->nDto != 0 .AND. lDto
-         nCalculo       -= nCalculo * ( cSatCliL )->nDto / 100
+      if lDto .and. nDescuentoPorcentualSatCli( uSatCliL ) != 0 
+         nCalculo       -= nCalculo * nDescuentoPorcentualSatCli( uSatCliL ) / 100
       end if
 
-      if ( cSatCliL )->nDtoPrm != 0 .AND. lDto
-         nCalculo       -= nCalculo * ( cSatCliL )->nDtoPrm / 100
+      if lDto .and. nDescuentoPromocionSatCli( uSatCliL ) != 0 
+         nCalculo       -= nCalculo * nDescuentoPromocionSatCli( uSatCliL ) / 100
       end if
 
       /*
-      Punto Verde
+      Punto Verde--------------------------------------------------------------
       */
 
-      if lPntVer .and. ( cSatCliL )->nPntVer != 0
-         nCalculo       += ( cSatCliL )->nPntVer * nTotNSatCli( cSatCliL )
+      if lPntVer .and. nPuntoVerdeSatCli( uSatCliL ) != 0
+         nCalculo       += nPuntoVerdeSatCli( uSatCliL ) * nUnidades
       end if
 
       /*
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn .and. ( cSatCliL )->nImpTrn != 0
-         nCalculo       += ( cSatCliL )->nImpTrn * nTotNSatCli( cSatCliL )
+      if lImpTrn .and. nTransporteSatCli( uSatCliL ) != 0
+         nCalculo       += nTransporteSatCli( uSatCliL ) * nUnidades
       end if
 
    end if
@@ -9522,8 +9603,6 @@ FUNCTION nTotLSatCli( cSatCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
-
-
 
 //---------------------------------------------------------------------------//
 /*

@@ -2284,7 +2284,7 @@ RETURN nPreOfe
 Devuelve un array con el precio y los descuentos de la oferta según el artículo
 */
 
-FUNCTION sOfertaArticulo( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta, nPrecio, lIvaInc, cCodPr1, cCodPr2, cValPr1, cValPr2, cDivPre, cDbfArticulo, cDbfDiv, cDbfKit, cDbfIva, nCajVen, nImpVen )
+FUNCTION sOfertaArticulo( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta, nPrecio, lIvaInc, cCodPr1, cCodPr2, cValPr1, cValPr2, nCajVen, nImpVen )
 
    local nPreOfe     := 0
    local nPreAnt     := 0
@@ -2296,7 +2296,7 @@ FUNCTION sOfertaArticulo( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta
    DEFAULT lIvaInc   := .f.
 
    /*
-   Primero buscar si existe el articulo en la oferta
+   Primero buscar si existe el articulo en la oferta--------------------------
    */
 
    if ( dbfOferta )->( dbSeek( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
@@ -4180,3 +4180,26 @@ CLASS sPrecioOferta
 ENDCLASS
 
 //---------------------------------------------------------------------------//
+
+Function structOfertaArticulo( hValue, nView  )
+
+   local lOfertaArticulo  
+   local sOfertaArticulo
+
+   lOfertaArticulo   := .f.
+
+   if !( D():Articulos( nView ) )->( dbSeek( hValue[ "cCodigoArticulo" ] ) )
+      msgStop( "Código de artículo " + alltrim( hValue[ "cCodigoArticulo" ] ) + " no encontrado", "Busqueda de ofertas" )
+      Return nil
+   end if 
+
+   /*
+   Buscamos si existen ofertas por artículo----------------------------
+   */
+
+   sOfertaArticulo   := sOfertaArticulo( hValue[ "cCodigoArticulo" ], hValue[ "cCodigoCliente" ], hValue[ "cGrupoCliente" ], hValue[ "nUnidades" ], hValue[ "dFecha" ], D():Ofertas( nView ), hValue[ "nTarifaPrecio" ], , hValue[ "cCodigoPropiedad1" ], hValue[ "cCodigoPropiedad2" ], hValue[ "cValorPropiedad1" ], hValue[ "cValorPropiedad2" ], hValue[ "cDivisa" ], hValue[ "nCajas" ], hValue[ "nTotalLinea" ] )
+   lOfertaArticulo   := !empty( sOfertaArticulo ) 
+
+Return ( sOfertaArticulo )
+
+//--------------------------------------------------------------------------//

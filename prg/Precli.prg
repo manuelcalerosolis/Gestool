@@ -6088,7 +6088,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticu
 
       nTotalLinea       := RecalculaLinea( aTmp, aTmpPre, nDouDiv, , , aTmpPre[ _CDIVPRE ], .t. )
 
-      sOfeArt           := sOfertaArticulo( cCodArt, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVPRE ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANPRE ], nTotalLinea )
+      sOfeArt           := sOfertaArticulo( cCodArt, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVPRE ], aTmp[ _NCANPRE ], nTotalLinea )
 
       if !Empty( sOfeArt ) 
          if ( sOfeArt:nPrecio != 0 )

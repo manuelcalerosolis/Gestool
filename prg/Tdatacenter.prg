@@ -2253,6 +2253,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "Oferta"
    oDataTable:cName        := cPatEmp() + "Oferta"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Oferta.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Oferta.Cdx"
@@ -5747,6 +5748,8 @@ CLASS D
       METHOD ArticuloPrecioPropiedades( nView )                   INLINE ( ::Get( "ArtDiv", nView ) )
       METHOD ArticuloStockAlmacenes( nView )                      INLINE ( ::Get( "ArtAlm", nView ) )
       METHOD ArticuloStockAlmacenesId( nView )                    INLINE ( ( ::Get( "ArtAlm", nView ) )->cCodArt ) 
+
+   METHOD Ofertas( nView )                                        INLINE ( ::Get( "Oferta", nView ) )
 
    METHOD TipoArticulos( nView )                                  INLINE ( ::Get( "TipArt", nView ) )
 

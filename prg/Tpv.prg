@@ -19635,7 +19635,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
       nTotalLinea := lCalcDeta( aTmp, nil, .t. )
 
-      sOfeArt     := sOfertaArticulo( Padr( cCodArt, 18 ), aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmp[ _NUNTTIL ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], .t., aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVTIK ], dbfArticulo, dbfDiv, dbfKit, dbfIva, 1, nTotalLinea )
+      sOfeArt     := sOfertaArticulo( Padr( cCodArt, 18 ), aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmp[ _NUNTTIL ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], .t., aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVTIK ], 1, nTotalLinea )
 
       if !Empty( sOfeArt ) 
 

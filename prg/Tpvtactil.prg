@@ -4667,7 +4667,7 @@ METHOD nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTa
 
    cCodGrp              := RetGrpCli( ::oTiketCabecera:cCliTik, ::oCliente:cAlias )
 
-   sOferta              := sOfertaArticulo( cCodigoArticulo, ::oTiketCabecera:cCliTik, cCodGrp, 1, GetSysDate(), ::oArticulosOfertas:cAlias, ::nTarifaSolo, .t., Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oTiketCabecera:cDivTik, ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias, 1, nPrecio )
+   sOferta              := sOfertaArticulo( cCodigoArticulo, ::oTiketCabecera:cCliTik, cCodGrp, 1, GetSysDate(), ::oArticulosOfertas:cAlias, ::nTarifaSolo, .t., Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oTiketCabecera:cDivTik, 1, nPrecio )
    if !Empty( sOferta ) 
       nPrecio           := sOferta:nPrecio
    end if
