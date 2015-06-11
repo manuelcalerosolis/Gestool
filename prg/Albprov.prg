@@ -5080,6 +5080,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->cFormato   := ( D():PedidosProveedoresLineas( nView ) )->cFormato
                   (dbfTmp)->cCodImp    := ( D():PedidosProveedoresLineas( nView ) )->cCodImp
                   (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
+                  (dbfTmp)->cCodFam    := ( D():PedidosProveedoresLineas( nView ) )->cCodFam
 
                   /*
                   Comprobamos si hay calculos por cajas
