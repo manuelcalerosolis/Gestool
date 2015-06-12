@@ -6101,47 +6101,48 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
 
             ( dbfTmp )->( dbAppend() )
 
-            ( dbfTmp )->cRef     := ( D():FacturasProveedoresLineas( nView ) )->cRef
-            ( dbfTmp )->cDetalle := ( D():FacturasProveedoresLineas( nView ) )->cDetalle
-            ( dbfTmp )->mLngDes  := ( D():FacturasProveedoresLineas( nView ) )->mLngDes
-            ( dbfTmp )->mNumSer  := ( D():FacturasProveedoresLineas( nView ) )->mNumSer
-            ( dbfTmp )->nIva     := ( D():FacturasProveedoresLineas( nView ) )->nIva
-            ( dbfTmp )->nReq     := ( D():FacturasProveedoresLineas( nView ) )->nReq
-            ( dbfTmp )->nPreUnit := ( D():FacturasProveedoresLineas( nView ) )->nPreUnit
-            ( dbfTmp )->nUniCaja := if( nOption == 2, ( ( D():FacturasProveedoresLineas( nView ) )->nUniCaja * -1 ), ( D():FacturasProveedoresLineas( nView ) )->nUniCaja )
-            ( dbfTmp )->nCanEnt  := ( D():FacturasProveedoresLineas( nView ) )->nCanEnt
-            ( dbfTmp )->nDtoLin  := ( D():FacturasProveedoresLineas( nView ) )->nDtoLin
-            ( dbfTmp )->nDtoPrm  := ( D():FacturasProveedoresLineas( nView ) )->nDtoPrm
-            ( dbfTmp )->nDtoRap  := ( D():FacturasProveedoresLineas( nView ) )->nDtoRap
-            ( dbfTmp )->cAlmLin  := ( D():FacturasProveedoresLineas( nView ) )->cAlmLin
-            ( dbfTmp )->nNumLin  := ( D():FacturasProveedoresLineas( nView ) )->nNumLin
-            ( dbfTmp )->nUndKit  := ( D():FacturasProveedoresLineas( nView ) )->nUndKit
-            ( dbfTmp )->lKitChl  := ( D():FacturasProveedoresLineas( nView ) )->lKitChl
-            ( dbfTmp )->lKitArt  := ( D():FacturasProveedoresLineas( nView ) )->lKitArt
-            ( dbfTmp )->lKitPrc  := ( D():FacturasProveedoresLineas( nView ) )->lKitPrc
-            ( dbfTmp )->cCodPr1  := ( D():FacturasProveedoresLineas( nView ) )->cCodPr1                              // Cod. prop. 1
-            ( dbfTmp )->cCodPr2  := ( D():FacturasProveedoresLineas( nView ) )->cCodPr2                              // Cod. prop. 2
-            ( dbfTmp )->cValPr1  := ( D():FacturasProveedoresLineas( nView ) )->cValPr1                              // Val. prop. 1
-            ( dbfTmp )->cValPr2  := ( D():FacturasProveedoresLineas( nView ) )->cValPr2                              // Val. prop. 2
-            ( dbfTmp )->lLote    := ( D():FacturasProveedoresLineas( nView ) )->lLote
-            ( dbfTmp )->nLote    := ( D():FacturasProveedoresLineas( nView ) )->nLote
-            ( dbfTmp )->cLote    := ( D():FacturasProveedoresLineas( nView ) )->cLote
-            ( dbfTmp )->mObsLin  := ( D():FacturasProveedoresLineas( nView ) )->mObsLin
-            ( dbfTmp )->cRefPrv  := ( D():FacturasProveedoresLineas( nView ) )->cRefPrv
-            ( dbfTmp )->cUnidad  := ( D():FacturasProveedoresLineas( nView ) )->cUnidad
-            ( dbfTmp )->nNumMed  := ( D():FacturasProveedoresLineas( nView ) )->nNumMed
-            ( dbfTmp )->nMedUno  := ( D():FacturasProveedoresLineas( nView ) )->nMedUno
-            ( dbfTmp )->nMedDos  := ( D():FacturasProveedoresLineas( nView ) )->nMedDos
-            ( dbfTmp )->nMedTre  := ( D():FacturasProveedoresLineas( nView ) )->nMedTre
-            ( dbfTmp )->dFecCad  := ( D():FacturasProveedoresLineas( nView ) )->dFecCad
-            ( dbfTmp )->lGasSup  := ( D():FacturasProveedoresLineas( nView ) )->lGasSup
-            ( dbfTmp )->nBultos  := ( D():FacturasProveedoresLineas( nView ) )->nBultos
-            ( dbfTmp )->cFormato := ( D():FacturasProveedoresLineas( nView ) )->cFormato   
-            ( dbfTmp )->cCodImp  := ( D():FacturasProveedoresLineas( nView ) )->cCodImp    
-            ( dbfTmp )->nValImp  := ( D():FacturasProveedoresLineas( nView ) )->nValImp
-            ( dbfTmp )->dFecFac  := ( D():FacturasProveedoresLineas( nView ) )->dFecFac
-            ( dbfTmp )->tFecFac  := ( D():FacturasProveedoresLineas( nView ) )->tFecFac
-            ( dbfTmp )->cCtrCoste := ( D():FacturasProveedoresLineas( nView ) )->cCtrCoste
+            ( dbfTmp )->cRef        := ( D():FacturasProveedoresLineas( nView ) )->cRef
+            ( dbfTmp )->cDetalle    := ( D():FacturasProveedoresLineas( nView ) )->cDetalle
+            ( dbfTmp )->mLngDes     := ( D():FacturasProveedoresLineas( nView ) )->mLngDes
+            ( dbfTmp )->mNumSer     := ( D():FacturasProveedoresLineas( nView ) )->mNumSer
+            ( dbfTmp )->nIva        := ( D():FacturasProveedoresLineas( nView ) )->nIva
+            ( dbfTmp )->nReq        := ( D():FacturasProveedoresLineas( nView ) )->nReq
+            ( dbfTmp )->nPreUnit    := ( D():FacturasProveedoresLineas( nView ) )->nPreUnit
+            ( dbfTmp )->nUniCaja    := if( nOption == 2, ( ( D():FacturasProveedoresLineas( nView ) )->nUniCaja * -1 ), ( D():FacturasProveedoresLineas( nView ) )->nUniCaja )
+            ( dbfTmp )->nCanEnt     := ( D():FacturasProveedoresLineas( nView ) )->nCanEnt
+            ( dbfTmp )->nDtoLin     := ( D():FacturasProveedoresLineas( nView ) )->nDtoLin
+            ( dbfTmp )->nDtoPrm     := ( D():FacturasProveedoresLineas( nView ) )->nDtoPrm
+            ( dbfTmp )->nDtoRap     := ( D():FacturasProveedoresLineas( nView ) )->nDtoRap
+            ( dbfTmp )->cAlmLin     := ( D():FacturasProveedoresLineas( nView ) )->cAlmLin
+            ( dbfTmp )->nNumLin     := ( D():FacturasProveedoresLineas( nView ) )->nNumLin
+            ( dbfTmp )->nUndKit     := ( D():FacturasProveedoresLineas( nView ) )->nUndKit
+            ( dbfTmp )->lKitChl     := ( D():FacturasProveedoresLineas( nView ) )->lKitChl
+            ( dbfTmp )->lKitArt     := ( D():FacturasProveedoresLineas( nView ) )->lKitArt
+            ( dbfTmp )->lKitPrc     := ( D():FacturasProveedoresLineas( nView ) )->lKitPrc
+            ( dbfTmp )->cCodPr1     := ( D():FacturasProveedoresLineas( nView ) )->cCodPr1                              // Cod. prop. 1
+            ( dbfTmp )->cCodPr2     := ( D():FacturasProveedoresLineas( nView ) )->cCodPr2                              // Cod. prop. 2
+            ( dbfTmp )->cValPr1     := ( D():FacturasProveedoresLineas( nView ) )->cValPr1                              // Val. prop. 1
+            ( dbfTmp )->cValPr2     := ( D():FacturasProveedoresLineas( nView ) )->cValPr2                              // Val. prop. 2
+            ( dbfTmp )->lLote       := ( D():FacturasProveedoresLineas( nView ) )->lLote
+            ( dbfTmp )->nLote       := ( D():FacturasProveedoresLineas( nView ) )->nLote
+            ( dbfTmp )->cLote       := ( D():FacturasProveedoresLineas( nView ) )->cLote
+            ( dbfTmp )->mObsLin     := ( D():FacturasProveedoresLineas( nView ) )->mObsLin
+            ( dbfTmp )->cRefPrv     := ( D():FacturasProveedoresLineas( nView ) )->cRefPrv
+            ( dbfTmp )->cUnidad     := ( D():FacturasProveedoresLineas( nView ) )->cUnidad
+            ( dbfTmp )->nNumMed     := ( D():FacturasProveedoresLineas( nView ) )->nNumMed
+            ( dbfTmp )->nMedUno     := ( D():FacturasProveedoresLineas( nView ) )->nMedUno
+            ( dbfTmp )->nMedDos     := ( D():FacturasProveedoresLineas( nView ) )->nMedDos
+            ( dbfTmp )->nMedTre     := ( D():FacturasProveedoresLineas( nView ) )->nMedTre
+            ( dbfTmp )->dFecCad     := ( D():FacturasProveedoresLineas( nView ) )->dFecCad
+            ( dbfTmp )->lGasSup     := ( D():FacturasProveedoresLineas( nView ) )->lGasSup
+            ( dbfTmp )->nBultos     := ( D():FacturasProveedoresLineas( nView ) )->nBultos
+            ( dbfTmp )->cFormato    := ( D():FacturasProveedoresLineas( nView ) )->cFormato   
+            ( dbfTmp )->cCodImp     := ( D():FacturasProveedoresLineas( nView ) )->cCodImp    
+            ( dbfTmp )->nValImp     := ( D():FacturasProveedoresLineas( nView ) )->nValImp
+            ( dbfTmp )->dFecFac     := ( D():FacturasProveedoresLineas( nView ) )->dFecFac
+            ( dbfTmp )->tFecFac     := ( D():FacturasProveedoresLineas( nView ) )->tFecFac
+            ( dbfTmp )->cCtrCoste   := ( D():FacturasProveedoresLineas( nView ) )->cCtrCoste
+            ( dbfTmp )->cCodFam     := ( D():FacturasProveedoresLineas( nView ) )->cCodFam
 
             ( D():FacturasProveedoresLineas( nView ) )->( dbSkip() )
 
