@@ -31,10 +31,22 @@ CLASS PedCliente2PedProveedor
 
    DATA nView
 
+   DATA oTipoArticulo
+   DATA oFabricante
+
    DATA oMtr
    DATA nMtr
 
    DATA dbfTemporal
+
+   DATA oBrwRangos
+
+   DATA oItemGroupArticulo
+   DATA oItemGroupFamilia
+   DATA oItemGroupCategoria
+   DATA oItemGroupTemporada
+   DATA oItemGroupFabricante
+   DATA oItemGroupTipoArticulo
 
    Method New( nView )   CONSTRUCTOR
 
@@ -60,9 +72,17 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( nView ) CLASS PedCliente2PedProveedor
+METHOD New( nView, oTipoArticulo, oFabricante ) CLASS PedCliente2PedProveedor
+
+   if !lAIS()
+      MsgStop( "Opción disponible sólo para versión ADS." )
+      Return .t.
+   end if
 
    ::nView              := nView
+
+   ::oTipoArticulo      := oTipoArticulo
+   ::oFabricante        := oFabricante
 
    ::nStockDisponible   := 4
    ::nStockFin          := 3
@@ -80,7 +100,6 @@ Method CreateLines() CLASS PedCliente2PedProveedor
    local oError
    local oBlock
    local cTmpLin
-   local cTmpFin
    local lErrors  := .f.
 
    CursorWait()
@@ -89,7 +108,6 @@ Method CreateLines() CLASS PedCliente2PedProveedor
    BEGIN SEQUENCE
    
    cTmpLin        := cGetNewFileName( cPatTmp() + "PTmpCliL" )
-   cTmpFin        := cGetNewFileName( cPatTmp() + "PTmpFinL" )
 
    dbCreate( cTmpLin, aSqlStruct( aColTmpLin() ), cLocalDriver() )
 
@@ -97,16 +115,8 @@ Method CreateLines() CLASS PedCliente2PedProveedor
 
    if !NetErr()
       ( ::dbfTemporal )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( ::dbfTemporal )->( ordCreate( cTmpLin, "nNumLin", "Str( nNumLin, 4 )", {|| Str( Field->nNumLin, 4 ) } ) )
+      ( ::dbfTemporal )->( ordCreate( cTmpLin, "cRefProp", "cRef + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote", {|| Field->cRef + Field->cCodPr1 + Field->cCodPr2 + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
 
-      ( ::dbfTemporal )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( ::dbfTemporal )->( ordCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
-
-      ( ::dbfTemporal )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( ::dbfTemporal )->( ordCreate( cTmpLin, "lShow", "lShow", {|| Field->lShow } ) )
-
-      ( ::dbfTemporal )->( ordCondSet( "lShow .and. lSelArt .and. !Deleted()", {|| Field->lShow .and. Field->lSelArt .and. !Deleted() }  ) )
-      ( ::dbfTemporal )->( ordCreate( cTmpLin, "cCodPrv", "cCodPrv", {|| Field->cCodPrv } ) )
    else
       lErrors     := .t.
    end if
@@ -188,17 +198,28 @@ METHOD Resource() CLASS PedCliente2PedProveedor
          SPINNER ;
          OF          ::oPag:aDialogs[1]
 
+      ::oBrwRangos               := BrowseRangos():New( 130, ::oPag:aDialogs[1] )
 
+      ::oItemGroupArticulo       := TItemGroupArticulo():New( ::nView )
+      ::oBrwRangos:AddGroup( ::oItemGroupArticulo )
 
+      ::oItemGroupFamilia        := TItemGroupFamilia():New( ::nView )
+      ::oBrwRangos:AddGroup( ::oItemGroupFamilia )
 
+      ::oItemGroupCategoria      := TItemGroupCategoria():New( ::nView )
+      ::oBrwRangos:AddGroup( ::oItemGroupCategoria )
 
+      ::oItemGroupTemporada      := TItemGroupTemporada():New( ::nView )
+      ::oBrwRangos:AddGroup( ::oItemGroupTemporada )
 
+      ::oItemGroupFabricante     := TItemGroupFabricante():New( ::nView, ::oFabricante )
+      ::oBrwRangos:AddGroup( ::oItemGroupFabricante )
 
+      ::oItemGroupTipoArticulo   := TItemGroupTipoArticulo():New( ::nView, ::oTipoArticulo )
+      ::oBrwRangos:AddGroup( ::oItemGroupTipoArticulo )
 
-
-
-
-
+      ::oBrwRangos:Resource()
+      
       REDEFINE RADIO ::nStockDisponible ;
          ID       201, 202, 203, 204 ;
          OF       ::oPag:aDialogs[1]
@@ -247,6 +268,13 @@ METHOD Resource() CLASS PedCliente2PedProveedor
          :cHeader          := "Código"
          :bEditValue       := {|| ( ::dbfTemporal )->cRef }
          :nWidth           := 70
+      end with
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader          := "Referencia"
+         :bEditValue       := {|| ( ::dbfTemporal )->cRefPrv }
+         :nWidth           := 70
+         :lHide            := .t.
       end with
 
       with object ( ::oBrw:AddCol() )
@@ -598,46 +626,121 @@ RETURN ( .t. )
 
 METHOD LoadLineasPedidos() CLASS PedCliente2PedProveedor
 
-   MsgInfo( "Cargamos las lineas de pedidos" )
+   local cSentencia  := ""
+   local cBusqueda   := ""
 
-   MsgInfo( ::dFecIni, "Fecha inicio" )
-   MsgInfo( ::dFecFin, "Fecha fin" )
+   ( ::dbfTemporal )->( __dbZap() )
+
+   cSentencia        := "SELECT lineaspedidos.cSerPed, "
+   cSentencia        +=        "lineaspedidos.nNumPed, "
+   cSentencia        +=        "lineaspedidos.cSufPed, "
+   cSentencia        +=        "lineaspedidos.cRef, "
+   cSentencia        +=        "lineaspedidos.cDetalle, "
+   cSentencia        +=        "lineaspedidos.cCodPr1, "
+   cSentencia        +=        "lineaspedidos.cCodPr2, "
+   cSentencia        +=        "lineaspedidos.cValPr1, "
+   cSentencia        +=        "lineaspedidos.cValPr2, "
+   cSentencia        +=        "lineaspedidos.cLote, "
+   cSentencia        +=        "lineaspedidos.nIva, "
+   cSentencia        +=        "lineaspedidos.nCanPed, "
+   cSentencia        +=        "lineaspedidos.nUniCaja, "
+   cSentencia        +=        "lineaspedidos.nCosDiv, "
+   cSentencia        +=        "lineaspedidos.cAlmLin, "
+   cSentencia        +=        "lineaspedidos.cCodPrv, "
+   cSentencia        +=        "lineaspedidos.nIva, "
+   cSentencia        +=        "lineaspedidos.nReq, "
+   cSentencia        +=        "lineaspedidos.cRefPrv, "
+   cSentencia        +=        "lineaspedidos.lControl, "
+   cSentencia        +=        "cabecerapedidos.cCodCli, "
+   cSentencia        +=        "cabecerapedidos.cNomCli, "
+   cSentencia        +=        "cabecerapedidos.dFecPed, "
+   cSentencia        +=        "articulos.Familia, "
+   cSentencia        +=        "articulos.cCodTip, "
+   cSentencia        +=        "articulos.cCodCate, "
+   cSentencia        +=        "articulos.cCodTemp, "
+   cSentencia        +=        "articulos.cCodFab "
+   cSentencia        += "FROM " + cPatEmp() + "PedCliL lineaspedidos "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "PedCliT cabecerapedidos on lineaspedidos.cSerPed=cabecerapedidos.cSerPed AND lineaspedidos.nNumPed=cabecerapedidos.nNumPed AND lineaspedidos.cSufped=cabecerapedidos.cSufped "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "Articulo articulos on lineaspedidos.cRef=articulos.codigo "
+   cSentencia        += "WHERE lineaspedidos.cRef>='" + Padr( ::oItemGroupArticulo:GetDesde(), 18 ) + "' AND "
+   cSentencia        +=       "lineaspedidos.cRef<='" + Padr( ::oItemGroupArticulo:GetHasta(), 18 ) + "' AND "
+   cSentencia        +=       "lineaspedidos.cRef<>'' AND "
+   cSentencia        +=       "lineaspedidos.nUniCaja<>0 AND "
+   cSentencia        +=       "cabecerapedidos.dFecPed>='" + dToc( ::dFecIni ) + "' AND "
+   cSentencia        +=       "cabecerapedidos.dFecPed<='" + dToc( ::dFecFin ) + "' AND "   
+   cSentencia        +=       "articulos.Familia>='" + Padr( ::oItemGroupFamilia:GetDesde(), 16 ) + "' AND "
+   cSentencia        +=       "articulos.Familia<='" + Padr( ::oItemGroupFamilia:GetHasta(), 16 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTip>='" + Padr( ::oItemGroupTipoArticulo:GetDesde(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTip<='" + Padr( ::oItemGroupTipoArticulo:GetHasta(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodCate>='" + Padr( ::oItemGroupCategoria:GetDesde(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodCate<='" + Padr( ::oItemGroupCategoria:GetHasta(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTemp>='" + Padr( ::oItemGroupTemporada:GetDesde(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTemp<='" + Padr( ::oItemGroupTemporada:GetHasta(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodFab>='" + Padr( ::oItemGroupFabricante:GetDesde(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodFab<='" + Padr( ::oItemGroupFabricante:GetHasta(), 3 ) + "' "
+   cSentencia        += "ORDER BY lineaspedidos.cRef"
+
+   logwrite( cSentencia )
+
+   if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectLineasPedidos" )
+      
+      ( "SelectLineasPedidos" )->( dbGoTop() )
+
+      while !( "SelectLineasPedidos" )->( Eof() )
+
+         cBusqueda   := ( "SelectLineasPedidos" )->cRef
+         cBusqueda   += ( "SelectLineasPedidos" )->cCodPr1
+         cBusqueda   += ( "SelectLineasPedidos" )->cCodPr2
+         cBusqueda   += ( "SelectLineasPedidos" )->cValPr1
+         cBusqueda   += ( "SelectLineasPedidos" )->cValPr2
+         cBusqueda   += ( "SelectLineasPedidos" )->cLote
+
+         if ( ::dbfTemporal )->( dbSeek( cBusqueda ) )
+
+            if dbLock( ::dbfTemporal )
+               ( ::dbfTemporal )->nNumCaj       += ( "SelectLineasPedidos" )->nCanPed
+               ( ::dbfTemporal )->nNumUni       += ( "SelectLineasPedidos" )->nUniCaja
+               ( ::dbfTemporal )->( dbUnlock() )
+            end if
+
+         else
+         
+            ( ::dbfTemporal )->( dbAppend() )
+
+            ( ::dbfTemporal )->cRef       := ( "SelectLineasPedidos" )->cRef
+            ( ::dbfTemporal )->cDetalle   := ( "SelectLineasPedidos" )->cDetalle
+            ( ::dbfTemporal )->lSelArt    := .t.
+            ( ::dbfTemporal )->cCodPrv    := ( "SelectLineasPedidos" )->cCodPrv
+            ( ::dbfTemporal )->cCodPr1    := ( "SelectLineasPedidos" )->cCodPr1
+            ( ::dbfTemporal )->cCodPr2    := ( "SelectLineasPedidos" )->cCodPr2
+            ( ::dbfTemporal )->cValPr1    := ( "SelectLineasPedidos" )->cValPr1
+            ( ::dbfTemporal )->cValPr2    := ( "SelectLineasPedidos" )->cValPr2
+            ( ::dbfTemporal )->nNumUni    := ( "SelectLineasPedidos" )->nUniCaja
+            ( ::dbfTemporal )->nNumCaj    := ( "SelectLineasPedidos" )->nCanPed
+            //( ::dbfTemporal )->nStkFis    :=    //", "N",   16,  6, "Stock fisico",                    "",         "", "( cDbfCol )" } )
+            //( ::dbfTemporal )->nStkDis    :=    //", "N",   16,  6, "Stock disponible",                "",         "", "( cDbfCol )" } )
+            ( ::dbfTemporal )->nIva       := ( "SelectLineasPedidos" )->nIva
+            ( ::dbfTemporal )->nReq       := ( "SelectLineasPedidos" )->nReq
+            ( ::dbfTemporal )->nPreDiv    := ( "SelectLineasPedidos" )->nCosDiv
+            ( ::dbfTemporal )->cLote      := ( "SelectLineasPedidos" )->cLote
+            ( ::dbfTemporal )->cRefPrv    := ( "SelectLineasPedidos" )->cRefPrv
+
+            ( ::dbfTemporal )->( dbUnlock() )
+
+         end if   
+
+         ( "SelectLineasPedidos" )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::dbfTemporal )->( dbGoTop() )
+
+   if !Empty( ::oBrw )
+      ::oBrw:Refresh()
+   end if
 
 Return .t.
 
 //---------------------------------------------------------------------------//
-
-/*function aColTmpLin()
-
-   local aColTmpLin  := {}
-
-   aAdd( aColTmpLin, { "cRef",    "C",   18,  0, "Referencia del artículo",         "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cDetalle","C",  250,  0, "Nombre del artículo",             "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "mLngDes", "M",   10,  0, "Descripciones largas",            "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "lSelArt", "L",    1,  0, "Lógico de selección de artículo", "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cCodPrv", "C",   12,  0, "Código de proveedor",             "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cCodPr1", "C",   20,  0, "Código propiedad 1",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cCodPr2", "C",   20,  0, "Código propiedad 2",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cValPr1", "C",   40,  0, "Valor propiedad 1",               "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cValPr2", "C",   40,  0, "Valor propiedad 2",               "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nNumUni", "N",   16,  6, "Unidades pedidas",                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nNumCaj", "N",   16,  6, "Cajas pedidas",                   "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nStkFis", "N",   16,  6, "Stock fisico",                    "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nStkDis", "N",   16,  6, "Stock disponible",                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "lShow",   "L",    1,  0, "Lógico de mostrar",               "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nIva",    "N",    6,  2, "Porcentaje de " + cImp(),         "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nReq",    "N",    6,  2, "Porcentaje de recargo",           "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nPreDiv", "N",   16,  6, "Precio del artículo",             "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nDto",    "N",    6,  2, "Descuento del producto",          "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nDtoPrm", "N",    6,  2, "Descuento de promoción",          "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cUnidad", "C",    2,  0, "Unidad de medición",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "lLote",   "L",    1,  0, "",                                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nLote",   "N",    9,  0, "",                                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cLote",   "C",   12,  0, "Número de lote",                  "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "mObsLin", "M",   10,  0, "Observaciones de lineas",         "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cRefPrv", "C",   18,  0, "Referencia proveedor",            "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cUnidad", "C",    2,  0, "Unidad de medición",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nMedUno", "N",   16,  6, "Primera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nMedDos", "N",   16,  6, "Segunda unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nMedTre", "N",   16,  6, "Tercera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "nNumLin", "N",    4,  0, "Número de línea",                 "",         "", "( cDbfCol )" } )*/

@@ -40,7 +40,7 @@ CLASS TItemGroup
 
    METHOD GetDesde()       INLINE ( if( Empty( ::Desde ), "", alltrim( ::Desde ) ) )
    METHOD GetHasta()       INLINE ( if( Empty( ::Hasta ), "", alltrim( ::Hasta ) ) )
- 
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -62,5 +62,173 @@ METHOD ValidMenorIgual( uVal, uMenor )
    end if
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TItemGroupArticulo FROM TItemGroup
+
+   METHOD New( nView )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView ) CLASS TItemGroupArticulo
+
+   ::Nombre       := "Artículo"
+   ::Desde        := Space( 18 )
+   ::Hasta        := Replicate( "Z", 18 )
+   ::cPicDesde    := Replicate( "#", 18 )
+   ::cPicHasta    := Replicate( "#", 18 )
+   ::TextDesde    := {|| RetFld( ::Desde, D():Articulos( nView ), "Nombre", "Codigo" ) }
+   ::TextHasta    := {|| RetFld( ::Hasta, D():Articulos( nView ), "Nombre", "Codigo" ) }
+   ::HelpDesde    := {|oGet| BrwArticulo( oGet, , , .f. ) }
+   ::HelpHasta    := {|oGet| BrwArticulo( oGet, , , .f. ) }
+   ::ValidDesde   := {|oGet| cArticulo( oGet, D():Articulos( nView ) ) }
+   ::ValidHasta   := {|oGet| cArticulo( oGet, D():Articulos( nView ) ) }
+   ::cBitmap      := "Cube_Yellow_16"
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TItemGroupFamilia FROM TItemGroup
+
+   METHOD New( nView )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView ) CLASS TItemGroupFamilia
+
+   ::Nombre       := "Familia"
+   ::Desde        := Space( 16 )
+   ::Hasta        := Replicate( "Z", 16 )
+   ::cPicDesde    := "@!"
+   ::cPicHasta    := "@!"
+   ::TextDesde    := {|| RetFld( ::Desde, D():Familias( nView ), "cNomFam", "cCodFam" ) }
+   ::TextHasta    := {|| RetFld( ::Hasta, D():Familias( nView ), "cNomFam", "cCodFam" ) }
+   ::HelpDesde    := {|oGet| BrwFamilia( oGet ) }
+   ::HelpHasta    := {|oGet| BrwFamilia( oGet ) }
+   ::ValidDesde   := {|oGet| cFamilia( oGet, D():Familias( nView ) ) }
+   ::ValidHasta   := {|oGet| cFamilia( oGet, D():Familias( nView ) ) }
+   ::cBitmap      := "Cubes_16"
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TItemGroupCategoria FROM TItemGroup
+
+   METHOD New( nView )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView ) CLASS TItemGroupCategoria
+
+   ::Nombre       := "Categoría"
+   ::Desde        := Space( 3 )
+   ::Hasta        := Replicate( "Z", 3 )
+   ::cPicDesde    := "@!"
+   ::cPicHasta    := "@!"
+   ::TextDesde    := {|| RetFld( ::Desde, D():Categorias( nView ), "cNombre", "Codigo" ) }
+   ::TextHasta    := {|| RetFld( ::Hasta, D():Categorias( nView ), "cNombre", "Codigo" ) }
+   ::HelpDesde    := {|oGet| BrwCategoria( oGet ) }
+   ::HelpHasta    := {|oGet| BrwCategoria( oGet ) }
+   ::ValidDesde   := {|oGet| cCategoria( oGet, D():Categorias( nView ) ) }
+   ::ValidHasta   := {|oGet| cCategoria( oGet, D():Categorias( nView ) ) }
+   ::cBitmap      := "Colors_16"
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TItemGroupTemporada FROM TItemGroup
+
+   METHOD New( nView )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView ) CLASS TItemGroupTemporada
+
+   ::Nombre       := "Temporadas"
+   ::Desde        := Space( 3 )
+   ::Hasta        := Replicate( "Z", 3 )
+   ::cPicDesde    := "@!"
+   ::cPicHasta    := "@!"
+   ::TextDesde    := {|| RetFld( ::Desde, D():Temporadas( nView ), "cNombre", "Codigo" ) }
+   ::TextHasta    := {|| RetFld( ::Hasta, D():Temporadas( nView ), "cNombre", "Codigo" ) }
+   ::HelpDesde    := {|oGet| BrwTemporada( oGet ) }
+   ::HelpHasta    := {|oGet| BrwTemporada( oGet ) }
+   ::ValidDesde   := {|oGet| cTemporada( oGet, D():Temporadas( nView ) ) }
+   ::ValidHasta   := {|oGet| cTemporada( oGet, D():Temporadas( nView ) ) }
+   ::cBitmap      := "Sun_and_cloud_16"
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TItemGroupFabricante FROM TItemGroup
+
+   METHOD New( nView, oFabricante )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView, oFabricante ) CLASS TItemGroupFabricante
+
+   ::Nombre       := "Fabricante"
+   ::Desde        := Space( 3 )
+   ::Hasta        := Replicate( "Z", 3 )
+   ::cPicDesde    := "@!"
+   ::cPicHasta    := "@!"
+   ::TextDesde    := {|| oRetFld( ::Desde, oFabricante:oDbf, "cNomFab", "cCodFab" ) }
+   ::TextHasta    := {|| oRetFld( ::Hasta, oFabricante:oDbf, "cNomFab", "cCodFab" ) }
+   ::HelpDesde    := {|oGet| oFabricante:Buscar( oGet ) }
+   ::HelpHasta    := {|oGet| oFabricante:Buscar( oGet ) }
+   ::ValidDesde   := {|oGet| oFabricante:Existe( oGet, , "cNomFab", .t., .t., "0" ) }
+   ::ValidHasta   := {|oGet| oFabricante:Existe( oGet, , "cNomFab", .t., .t., "0" ) }
+   ::cBitmap      := "Nut_and_bolt_16"
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS TItemGroupTipoArticulo FROM TItemGroup
+
+   METHOD New( nView, oTipoArticulo )
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD New( nView, oTipoArticulo ) CLASS TItemGroupTipoArticulo
+
+   ::Nombre       := "Tipo artículo"
+   ::Desde        := Space( 3 )
+   ::Hasta        := Replicate( "Z", 3 )
+   ::cPicDesde    := "@!"
+   ::cPicHasta    := "@!"
+   ::TextDesde    := {|| oRetFld( ::Desde, oTipoArticulo:oDbf, "cNomTip", "cCodTip" ) }
+   ::TextHasta    := {|| oRetFld( ::Hasta, oTipoArticulo:oDbf, "cNomTip", "cCodTip" ) }
+   ::HelpDesde    := {|oGet| oTipoArticulo:Buscar( oGet ) }
+   ::HelpHasta    := {|oGet| oTipoArticulo:Buscar( oGet ) }
+   ::ValidDesde   := {|oGet| oTipoArticulo:Existe( oGet, , "cNomTip", .t., .t., "0" ) }
+   ::ValidHasta   := {|oGet| oTipoArticulo:Existe( oGet, , "cNomTip", .t., .t., "0" ) }
+   ::cBitmap      := "Cubes_Blue_16"
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//

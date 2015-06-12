@@ -368,7 +368,6 @@ static dbfPromoL
 static dbfPromoC
 static dbfAgent
 static dbfCodebar
-static dbfFamilia
 static dbfFPago
 static dbfDiv
 static dbfKit
@@ -453,8 +452,8 @@ static nDpvDiv
 static oFont
 static oMenu
 static oGrpFam
-static oFraPub
 static oTipArt
+static oFabricante
 static oUndMedicion
 static oTipPed
 
@@ -713,6 +712,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Articulos( nView )
 
+      D():Familias( nView )
+
       D():Documentos( nView )
       ( D():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
@@ -725,6 +726,10 @@ STATIC FUNCTION OpenFiles( lExt )
       D():PedidosProveedoresLineas( nView )
 
       D():TiposIva( nView )
+
+      D():Categorias( nView )
+
+      D():Temporadas( nView )
 
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
@@ -764,9 +769,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "TARPREL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPREL", @dbfTarPreL ) )
       SET ADSINDEX TO ( cPatArt() + "TARPREL.CDX" ) ADDITIVE
@@ -932,13 +934,13 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
-      oGrpFam           := TGrpFam():Create( cPatArt() )
-      if !oGrpFam:OpenFiles()
-         lOpenFiles     := .f.
+      oFabricante          := TFabricantes():Create( cPatArt() )
+      if !oFabricante:OpenFiles()
+         lOpenFiles        := .f.
       end if
 
-      oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
-      if !oFraPub:OpenFiles()
+      oGrpFam           := TGrpFam():Create( cPatArt() )
+      if !oGrpFam:OpenFiles()
          lOpenFiles     := .f.
       end if
 
@@ -1643,7 +1645,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( PedCliente2PedProveedor():New( nView ) ) ;
+      ACTION   ( PedCliente2PedProveedor():New( nView, oTipArt, oFabricante ) ) ;
       TOOLTIP  "Generar NUEVO" ;
       HOTKEY   "G";   
 
@@ -3502,7 +3504,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ) } )
       oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg ), GenPedCli( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F7, {|| ExcelImport( aTmp, dbfTmpLin, D():Articulos( nView ), dbfArtDiv, dbfFamilia, dbfDiv, oBrwLin, .t. ) } )
+      oDlg:AddFastKey( VK_F7, {|| ExcelImport( aTmp, dbfTmpLin, D():Articulos( nView ), dbfArtDiv, D():Familias( nView ), dbfDiv, oBrwLin, .t. ) } )
       oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERPED ] + str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) } )
 
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
@@ -4243,7 +4245,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    */
 
    cSayGrp              	:= RetFld( aTmp[ _CGRPFAM ], oGrpFam:GetAlias() )
-   cSayFam              	:= RetFld( aTmp[ _CCODFAM ], dbfFamilia )
+   cSayFam              	:= RetFld( aTmp[ _CCODFAM ], D():Familias( nView ) )
 
    /*
    Filtros---------------------------------------------------------------------
@@ -4854,7 +4856,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 			ID 		160 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         VALID    ( oSayFam:cText( RetFld( aTmp[ _CCODFAM  ], dbfFamilia ) ), .t. );
+         VALID    ( oSayFam:cText( RetFld( aTmp[ _CCODFAM  ], D():Familias( nView ) ) ), .t. );
          ON HELP  ( BrwFamilia( aGet[ _CCODFAM ], oSayFam ) );
          OF       oFld:aDialogs[2]
 
@@ -8631,7 +8633,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfPromoC  ), ( dbfPromoC  )->( dbCloseArea() ), )
    if( !Empty( dbfAgent   ), ( dbfAgent   )->( dbCloseArea() ), )
    if( !Empty( dbfCodebar ), ( dbfCodebar )->( dbCloseArea() ), )
-   if( !Empty( dbfFamilia ), ( dbfFamilia )->( dbCloseArea() ), )
    if( !Empty( dbfPrv     ), ( dbfPrv     )->( dbCloseArea() ), )
    if( !Empty( dbfFPago   ), ( dbfFPago   )->( dbCloseArea() ), )
    if( !Empty( dbfDiv     ), ( dbfDiv     )->( dbCloseArea() ), )
@@ -8672,11 +8673,8 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( oTrans     ), oTrans:end(),  )
    if( !Empty( oNewImp    ), oNewImp:end(), )
    if( !Empty( oTipArt    ), oTipArt:end(), )
+   if( !Empty( oFabricante), oFabricante:end(), )
    if( !Empty( oGrpFam    ), oGrpFam:end(), )
-
-   if !Empty( oFraPub )
-      oFraPub:end()
-   end if
 
    if !Empty( oUndMedicion )
       oUndMedicion:end()
@@ -8748,6 +8746,7 @@ STATIC FUNCTION CloseFiles()
    oNewImp        := nil
    oTrans         := nil
    oTipArt        := nil
+   oFabricante    := nil
    oGrpFam        := nil
 
    lOpenFiles     := .f.
@@ -10689,7 +10688,7 @@ Static Function AppendKit( uTmpLin, aTmpPed )
 				*/           
 
             ( dbfTmpLin )->cCodFam 		:= ( D():Articulos( nView ) )->Familia
-            ( dbfTmpLin )->cGrpFam 		:= cGruFam( ( dbfTmpLin )->cCodFam, dbfFamilia )
+            ( dbfTmpLin )->cGrpFam 		:= cGruFam( ( dbfTmpLin )->cCodFam, D():Familias( nView ) )
 
             /*
             Datos de la cabecera-----------------------------------------------
@@ -11148,10 +11147,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                end if
 
                if !Empty( aGet[ _CGRPFAM ] )
-                  aGet[ _CGRPFAM ]:cText( cGruFam( cCodFam, dbfFamilia ) )
+                  aGet[ _CGRPFAM ]:cText( cGruFam( cCodFam, D():Familias( nView ) ) )
                   aGet[ _CGRPFAM ]:lValid()
                else
-                  aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
+                  aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, D():Familias( nView ) )
                end if
 
             else
@@ -11492,9 +11491,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             if aTmp[ _NDTO ] == 0
 
                if !Empty( aGet[ _NDTO ] )
-                  aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
+                  aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, D():Familias( nView ) ) )
                else
-                  aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, dbfFamilia )
+                  aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, D():Familias( nView ) )
                end if
 
             end if
@@ -13571,6 +13570,7 @@ Function SynPedCli( cPath )
    local aTotPed
    local dbfArticulo
    local cdbfIva
+   local dbfFamilia
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE

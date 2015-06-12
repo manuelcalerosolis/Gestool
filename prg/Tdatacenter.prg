@@ -5757,6 +5757,8 @@ CLASS D
 
    METHOD Temporadas( nView )                INLINE ( ::Get( "Temporadas", nView ) )
 
+   METHOD Categorias( nView )                INLINE ( ::Get( "Categorias", nView ) )
+
    METHOD Kit( nView )                       INLINE ( ::Get( "ArtKit", nView ) )
 
    METHOD FormasPago( nView )                INLINE ( ::Get( "FPago", nView ) )

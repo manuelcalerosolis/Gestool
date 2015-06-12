@@ -4379,3 +4379,123 @@ Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorSATClientes
    oFr:SetResyncPair(      "Facturas", "Empresa" )
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS BrowseRangos
+
+   DATA idBrowse
+   DATA oContainer
+   DATA aInitGroup            INIT {}
+   DATA oBrwRango
+   DATA oColNombre
+   DATA oColDesde
+   DATA oColHasta
+
+   METHOD New()
+
+   METHOD Resource()
+
+   METHOD AddGroup( oGroup )  INLINE ( aAdd( ::aInitGroup, oGroup ) )
+
+   METHOD EditValueTextDesde()         INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:HelpDesde ) )
+   METHOD EditValueTextHasta()         INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:HelpHasta ) )
+   METHOD EditTextDesde()              INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:TextDesde ) )
+   METHOD EditTextHasta()              INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:TextHasta ) )
+
+   METHOD ValidValueTextDesde( oGet )  INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:ValidDesde, oGet ) )
+   METHOD ValidValueTextHasta( oGet )  INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:ValidHasta, oGet ) )
+
+END CLASS 
+
+//---------------------------------------------------------------------------//
+
+METHOD New( idBrowse, oContainer ) CLASS BrowseRangos
+
+   ::idBrowse     := idBrowse
+   ::oContainer   := oContainer
+   
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Resource() CLASS BrowseRangos
+
+   local o
+
+   ::oBrwRango                      := IXBrowse():New( ::oContainer )
+
+   ::oBrwRango:bClrSel              := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   ::oBrwRango:bClrSelFocus         := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   ::oBrwRango:SetArray( ::aInitGroup, , , .f. )
+
+   ::oBrwRango:lHScroll             := .f.
+   ::oBrwRango:lVScroll             := .f.
+   ::oBrwRango:lRecordSelector      := .t.
+   ::oBrwRango:lFastEdit            := .t.
+
+   ::oBrwRango:nFreeze              := 1
+   ::oBrwRango:nMarqueeStyle        := 3
+
+   ::oBrwRango:nColSel              := 2
+
+   ::oBrwRango:CreateFromResource( ::idBrowse )
+
+   ::oColNombre                     := ::oBrwRango:AddCol()
+   ::oColNombre:cHeader             := ""
+   ::oColNombre:bStrData            := {|| ::aInitGroup[ ::oBrwRango:nArrayAt ]:Nombre }
+   ::oColNombre:bBmpData            := {|| ::oBrwRango:nArrayAt }
+   ::oColNombre:nWidth              := 90
+
+   for each o in ::aInitGroup
+      ::oColNombre:AddResource( o:cBitmap )
+   next
+
+   with object ( ::oColDesde := ::oBrwRango:AddCol() )
+      :cHeader       := "Desde"
+      :bEditValue    := {|| ::aInitGroup[ ::oBrwRango:nArrayAt ]:Desde }
+      :bOnPostEdit   := {|o,x| ::aInitGroup[ ::oBrwRango:nArrayAt ]:Desde := x }
+      :bEditValid    := {|oGet| ::ValidValueTextDesde( oGet ) }
+      :bEditBlock    := {|| ::EditValueTextDesde() }
+      :cEditPicture  := "@!"
+      :nEditType     := 5
+      :nWidth        := 120
+      :nBtnBmp       := 1
+      :AddResource( "Lupa" )
+   end with
+
+   with object ( ::oBrwRango:AddCol() )
+      :cHeader       := ""
+      :bEditValue    := {|| ::EditTextDesde() } 
+      :nEditType     := 0
+      :nWidth        := 160
+   end with
+
+   with object ( ::oColHasta := ::oBrwRango:AddCol() )
+      :cHeader       := "Hasta"
+      :bEditValue    := {|| ::aInitGroup[ ::oBrwRango:nArrayAt ]:Hasta }
+      :bOnPostEdit   := {|o,x| ::aInitGroup[ ::oBrwRango:nArrayAt ]:Hasta := x }
+      :bEditValid    := {|oGet| ::ValidValueTextHasta( oGet ) }
+      :bEditBlock    := {|| ::EditValueTextHasta() }
+      :cEditPicture  := "@!"
+      :nEditType     := 5
+      :nWidth        := 120
+      :nBtnBmp       := 1
+      :AddResource( "Lupa" )
+   end with
+
+   with object ( ::oBrwRango:AddCol() )
+      :cHeader       := ""
+      :bEditValue    := {|| ::EditTextHasta() }
+      :nEditType     := 0
+      :nWidth        := 160
+   end with
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
