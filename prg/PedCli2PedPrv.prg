@@ -666,6 +666,7 @@ METHOD LoadLineasPedidos() CLASS PedCliente2PedProveedor
    cSentencia        +=       "lineaspedidos.cRef<='" + Padr( ::oItemGroupArticulo:GetHasta(), 18 ) + "' AND "
    cSentencia        +=       "lineaspedidos.cRef<>'' AND "
    cSentencia        +=       "lineaspedidos.nUniCaja<>0 AND "
+   cSentencia        +=       "NOT(lineaspedidos.lControl) AND "
    cSentencia        +=       "cabecerapedidos.dFecPed>='" + dToc( ::dFecIni ) + "' AND "
    cSentencia        +=       "cabecerapedidos.dFecPed<='" + dToc( ::dFecFin ) + "' AND "   
    cSentencia        +=       "articulos.Familia>='" + Padr( ::oItemGroupFamilia:GetDesde(), 16 ) + "' AND "
