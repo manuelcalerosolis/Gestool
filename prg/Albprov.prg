@@ -3750,7 +3750,7 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oDlg, oFld, oBrw, nMode, oTotal, oGet, aTm
    */
 
    if aTmp[ _LLOTE ] .AND. nMode == APPD_MODE
-      GraLotArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _CLOTE ] )
+      saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )
    end if
 
    if nMode == APPD_MODE
@@ -9438,8 +9438,8 @@ function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, 
    DEFAULT cValPr1   := Space( 40 )
    DEFAULT cValPr2   := Space( 40 )
 
-   nRec           := ( cAlbPrvL )->( Recno() )
-   nOrd           := ( cAlbPrvL )->( OrdSetFocus( "cPedPrvRef" ) )
+   nRec              := ( cAlbPrvL )->( Recno() )
+   nOrd              := ( cAlbPrvL )->( OrdSetFocus( "cPedPrvRef" ) )
 
    if ( cAlbPrvL )->( dbSeek( cPedPrv + cCodArt + cValPr1 + cValPr2 ) )
 

@@ -2947,6 +2947,8 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliT.Cdx"
    oDataTable:cDescription := "S.A.T. de clientes"
+   oDatatable:aDictionary  := hashDictionary( aItmSatCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aItmSatCli() )
    oDataTable:bCreateFile  := {| cPath | mkSatCli( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxSatCli( cPath ) }
    ::AddEmpresaTable( oDataTable )
@@ -2957,6 +2959,8 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliL.Cdx"
    oDataTable:cDescription := "S.A.T. de clientes"
+   oDatatable:aDictionary  := hashDictionary( aColSatCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aColSatCli() )
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -5365,6 +5369,7 @@ CLASS D
    METHOD GetObject( cObject, nView )
 
    METHOD getHashRecord( cDatabase, nView )
+   METHOD getHashArray( aRecord, cDatabase, nView )
    METHOD getHashRecordById( id, cDatabase, nView )
    METHOD getHashRecordBlank( cDatabase, nView )
    METHOD getHashRecordDefaultValues( cDatabase, nView ) ;
@@ -5418,7 +5423,13 @@ CLASS D
       METHOD SatClientesIdText( nView ) ;
                                                 INLINE ( ::SatClientesIdTextShort( nView ) + "/" + ( ::Get( "SatCliT", nView ) )->cSufSat )
 
+      METHOD GetSatClientesHash( aArray, nView ) ;
+                                                INLINE ( ::getHashArray( aArray, "SatCliL", nView ) )
+
+
    METHOD SatClientesLineas( nView )            INLINE ( ::Get( "SatCliL", nView ) )
+      METHOD GetSatClientesLineasHash( aArray, nView ) ;
+                                                INLINE ( ::getHashArray( aArray, "SatCliT", nView ) )
 
    METHOD SatClientesIncidencias( nView )         INLINE ( ::Get( "SatCliI", nView ) )
       METHOD SatClientesIncidenciasId( nView )    INLINE ( ( ::Get( "SatCliI", nView ) )->cSerSat + str( ( ::Get( "SatCliI", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliI", nView ) )->cSufSat )
@@ -5750,6 +5761,8 @@ CLASS D
       METHOD ArticuloStockAlmacenesId( nView )                    INLINE ( ( ::Get( "ArtAlm", nView ) )->cCodArt ) 
 
    METHOD Ofertas( nView )                                        INLINE ( ::Get( "Oferta", nView ) )
+      METHOD getStatusOfertas( nView )                            INLINE ( ::aStatus := aGetStatus( ::Ofertas( nView ) ) )
+      METHOD setStatusOfertas( nView )                            INLINE ( SetStatus( ::Ofertas( nView ), ::aStatus ) ) 
 
    METHOD TipoArticulos( nView )                                  INLINE ( ::Get( "TipArt", nView ) )
 
@@ -6211,6 +6224,20 @@ METHOD getHashRecord( cDataTable, nView ) CLASS D
 
    if isHash( aDictionary ) .and. !empty( dbf )
       hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) ) } )
+   end if 
+
+RETURN ( hash )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashArray( aRecord, cDataTable, nView ) CLASS D
+
+   local hash        := {=>}
+   local dbf         := ::Get( cDataTable, nView )   
+   local aDictionary := TDataCenter():getDictionary( cDataTable )
+
+   if isHash( aDictionary ) .and. !empty( dbf )
+      hEval( aDictionary, {|key,value| hSet( hash, key, aRecord[ ( dbf )->( fieldPos( value ) ) ] ) } )
    end if 
 
 RETURN ( hash )

@@ -510,10 +510,10 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
    local oBlock               
 
    DEFAULT lExclusive         := .f.
-/*
+
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    if !::lOpenFiles
 
       if Empty( ::oDbf )
@@ -639,7 +639,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
 
       ::lLoadDivisa()
 
-      ::nView              := D():CreateView() / 0
+      ::nView              := D():CreateView() 
 
       D():ArticuloPrecioPropiedades( ::nView )
 
@@ -650,7 +650,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
       ::lOpenFiles         := .t.
 
    end if
-/*
+
    RECOVER USING oError
 
       ::lOpenFiles         := .f.
@@ -660,7 +660,7 @@ METHOD OpenFiles( lExclusive ) CLASS TRemMovAlm
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    if !::lOpenFiles
       ::CloseFiles()
    end if

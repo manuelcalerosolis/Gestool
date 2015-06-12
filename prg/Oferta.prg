@@ -4181,15 +4181,13 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-Function structOfertaArticulo( hValue, nView  )
+Function structOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView  )
 
-   local lOfertaArticulo  
    local sOfertaArticulo
+   local lOfertaArticulo   := .f.
 
-   lOfertaArticulo   := .f.
-
-   if !( D():Articulos( nView ) )->( dbSeek( hValue[ "cCodigoArticulo" ] ) )
-      msgStop( "Código de artículo " + alltrim( hValue[ "cCodigoArticulo" ] ) + " no encontrado", "Busqueda de ofertas" )
+   if !( D():Articulos( nView ) )->( dbSeek( hLinea[ "Articulo" ] ) )
+      msgStop( "Código de artículo " + alltrim( hLinea[ "Articulo" ] ) + " no encontrado", "Busqueda de ofertas" )
       Return nil
    end if 
 
@@ -4197,9 +4195,90 @@ Function structOfertaArticulo( hValue, nView  )
    Buscamos si existen ofertas por artículo----------------------------
    */
 
-   sOfertaArticulo   := sOfertaArticulo( hValue[ "cCodigoArticulo" ], hValue[ "cCodigoCliente" ], hValue[ "cGrupoCliente" ], hValue[ "nUnidades" ], hValue[ "dFecha" ], D():Ofertas( nView ), hValue[ "nTarifaPrecio" ], , hValue[ "cCodigoPropiedad1" ], hValue[ "cCodigoPropiedad2" ], hValue[ "cValorPropiedad1" ], hValue[ "cValorPropiedad2" ], hValue[ "cDivisa" ], hValue[ "nCajas" ], hValue[ "nTotalLinea" ] )
-   lOfertaArticulo   := !empty( sOfertaArticulo ) 
+   sOfertaArticulo         := hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
+   lOfertaArticulo         := !empty( sOfertaArticulo ) 
 
 Return ( sOfertaArticulo )
 
 //--------------------------------------------------------------------------//
+
+Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
+
+   local nPrecioOferta     := 0
+   local nPrecioAnterior   := 0
+   local cGrupoCliente 
+   local sPrecio
+
+   D():getStatusOfertas( nView )
+   ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
+
+   cGrupoCliente           := retGrpCli( hCabecera[ "Cliente" ], D():Clientes( nView ) ) 
+
+   // Primero buscar si existe el articulo en la oferta-----------------------
+
+   if ( D():Ofertas( nView ) )->( dbSeek( hLinea[ "Articulo" ] + hLinea[ "CodigoPropiedad1" ] + hLinea[ "CodigoPropiedad2" ] + hLinea[ "ValorPropiedad1" ] + hLinea[ "ValorPropiedad2" ] ) )
+
+      while ( D():Ofertas( nView ) )->cArtOfe + ( D():Ofertas( nView ) )->cCodPr1 + ( D():Ofertas( nView ) )->cCodPr2 + ( D():Ofertas( nView ) )->cValPr1 + ( D():Ofertas( nView ) )->cValPr2 == hLinea[ "Articulo" ] + hLinea[ "CodigoPropiedad1" ] + hLinea[ "CodigoPropiedad2" ] + hLinea[ "ValorPropiedad1" ] + hLinea[ "ValorPropiedad2" ] .and. !( D():Ofertas( nView ) )->( eof() )
+
+         // Comprobamos si esta entre las fechas-------------------------------
+
+         if ( D():Ofertas( nView ) )->nTblOfe < 2 .and.;
+            ( hCabecera[ "Fecha" ] >= ( D():Ofertas( nView ) )->dIniOfe .or. empty( ( D():Ofertas( nView ) )->dIniOfe ) ) .and.;
+            ( hCabecera[ "Fecha" ] <= ( D():Ofertas( nView ) )->dFinOfe .or. empty( ( D():Ofertas( nView ) )->dFinOfe ) ) .and.;
+            ( D():Ofertas( nView ) )->nTipOfe == 1 .and.;
+            (  ( ( D():Ofertas( nView ) )->nCliOfe == 1 ) .or. ;
+               ( ( D():Ofertas( nView ) )->nCliOfe == 2 .and. cGrupoCliente == ( D():Ofertas( nView ) )->cGrpOfe ) .or.;
+               ( ( D():Ofertas( nView ) )->nCliOfe == 3 .and. hCabecera[ "Cliente" ] == ( D():Ofertas( nView ) )->cCliOfe ) ) .and.;
+            ( ( ( D():Ofertas( nView ) )->nMinCan == 1 .and. ( ( D():Ofertas( nView ) )->nImpMin == 0 .or. ( ( D():Ofertas( nView ) )->nImpMin != 0 .and. nTotalLinea >= ( D():Ofertas( nView ) )->nImpMin ) ) ) .or.;
+            ( ( D():Ofertas( nView ) )->nMinCan == 2 .and. ( D():Ofertas( nView ) )->nMinTip == 1 .and. ( ( D():Ofertas( nView ) )->nCajMin == 0 .or. ( ( D():Ofertas( nView ) )->nCajMin != 0 .and. hLinea[ "Cajas" ] >= ( D():Ofertas( nView ) )->nCajMin ) ) ) .or.;
+            ( ( D():Ofertas( nView ) )->nMinCan == 2 .and. ( D():Ofertas( nView ) )->nMinTip == 2 .and. ( ( D():Ofertas( nView ) )->nUndMin == 0 .or. ( ( D():Ofertas( nView ) )->nUndMin != 0 .and. hLinea[ "Unidades" ] >= ( D():Ofertas( nView ) )->nUndMin ) ) ) )
+
+            // Comprobamos que no vayamos a vender mas articulos que los del lote
+
+            nPrecioOferta              := getPrecioOferta( hLinea[ "Tarifa" ], hLinea[ "ImpuestosIncluidos" ], nView )
+
+            if nPrecioAnterior == 0 .or. nPrecioOferta < nPrecioAnterior
+               sPrecio                 := sPrecioOferta()
+               sPrecio:nPrecio         := nPrecioOferta
+               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
+               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
+            end if
+
+            nPrecioAnterior            := nPrecioOferta
+
+         end if
+
+         ( D():Ofertas( nView ) )->( dbSkip() )
+
+      end do
+
+   end if
+
+   D():setStatusOfertas( nView )
+
+RETURN ( sPrecio )
+
+//---------------------------------------------------------------------------//
+
+Static Function getPrecioOferta( nTarifa, lIvaIncluido, nView )
+
+   local nPrecioOferta  := 0
+
+   do case
+      case nTarifa == 1
+         nPrecioOferta  :=  if( lIvaIncluido, ( D():Ofertas( nView ) )->nPreIva1, ( D():Ofertas( nView ) )->nPreOfe1 )
+      case nTarifa == 2
+         nPrecioOferta  :=  if( lIvaIncluido, ( D():Ofertas( nView ) )->nPreIva2, ( D():Ofertas( nView ) )->nPreOfe2 )
+      case nTarifa == 3
+         nPrecioOferta  :=  if( lIvaIncluido, ( D():Ofertas( nView ) )->nPreIva3, ( D():Ofertas( nView ) )->nPreOfe3 )
+      case nTarifa == 4
+         nPrecioOferta  :=  if( lIvaIncluido, ( D():Ofertas( nView ) )->nPreIva4, ( D():Ofertas( nView ) )->nPreOfe4 )
+      case nTarifa == 5
+         nPrecioOferta  :=  if( lIvaIncluido, ( D():Ofertas( nView ) )->nPreIva5, ( D():Ofertas( nView ) )->nPreOfe5 )
+      case nTarifa == 6
+         nPrecioOferta  :=  if( lIvaIncluido, ( D():Ofertas( nView ) )->nPreIva6, ( D():Ofertas( nView ) )->nPreOfe6 )
+   end case
+
+Return ( nPrecioOferta )
+
+//---------------------------------------------------------------------------//

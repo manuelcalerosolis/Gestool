@@ -4952,7 +4952,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    if nMode == APPD_MODE
 
       if aTmp[ _LLOTE ]
-         GraLotArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _CLOTE ] )
+         saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
       end if
 
       /*

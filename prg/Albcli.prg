@@ -10879,7 +10879,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
    if nMode == APPD_MODE
 
       if aTmp[ _LLOTE ]
-         GraLotArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _CLOTE ] )
+         saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )
       end if
 
       /*
@@ -17093,7 +17093,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "NTIPOALB"  ,"N",  1, 0, "Tipo de albarán" ,                                         "",                              "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CNUMFAC"   ,"C", 12, 0, "Número del documento facturado" ,                          "NumeroFactura",                 "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "LMAYOR"    ,"L",  1, 0, "" ,                                                        "",                              "", "( cDbf )", nil } )
-   aAdd( aItmAlbCli, { "NTARIFA"   ,"N",  1, 0, "Tarifa de precio aplicada" ,                               "TarifaAplicar",                 "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "NTARIFA"   ,"N",  1, 0, "Tarifa de precio aplicada" ,                               "Tarifa",                        "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CDTOESP"   ,"C", 50, 0, "Descripción porcentaje de descuento",                      "DescripcionDescuento1",         "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "NDTOESP"   ,"N",  6, 2, "Porcentaje de descuento",                                  "PorcentajeDescuento1",          "", "( cDbf )", nil } )
    aAdd( aItmAlbCli, { "CDPP"      ,"C", 50, 0, "Descripción pct. de dto. por pronto pago",                 "DescripcionDescuento2",         "", "( cDbf )", nil } )

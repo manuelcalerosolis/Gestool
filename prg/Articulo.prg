@@ -17011,51 +17011,52 @@ RETURN ( lTmp )
 
 //---------------------------------------------------------------------------//
 
-function GraLotArt( cCodArt, dbfArticulo, cLote )
+function saveLoteActual( cCodArt, cLote, nView )
 
-   local nOrdSetFocus   := ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
-
-   /*
-   Actualizar NLOTE en el Fichero de artículos
-   ----------------------------------------------------------------------------
-   */
-
-   if ( dbfArticulo )->( dbSeek( cCodArt ) )
-      if ( dbfArticulo )->( dbRLock() )
-         ( dbfArticulo )->cLote  := cLote
-         ( dbfArticulo )->( dbRUnLock() )
-      end if
-   end if
-
-   ( dbfArticulo )->( ordSetFocus( nOrdSetFocus ) )
-
-RETURN NIL
-//---------------------------------------------------------------------------//
-
-function GraCntArt( cCodArt, dbfArticulo, nCntAct )
-
-   local nOrdSetFocus   := ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
+   local nOrdSetFocus   := ( D():Articulos( nView ) )->( ordSetFocus( "Codigo" ) )
 
    /*
    Actualizar NLOTE en el Fichero de artículos
    ----------------------------------------------------------------------------
    */
 
-   if ( dbfArticulo )->( dbSeek( cCodArt ) )
-      if ( dbfArticulo )->( dbRLock() )
-         ( dbfArticulo )->nCntAct  := nCntAct
-         ( dbfArticulo )->( dbRUnLock() )
+   if ( D():Articulos( nView ) )->( dbSeek( cCodArt ) )
+      if ( D():Articulos( nView ) )->( dbRLock() )
+         ( D():Articulos( nView ) )->cLote  := cLote
+         ( D():Articulos( nView ) )->( dbRUnLock() )
       end if
    end if
 
-   ( dbfArticulo )->( ordSetFocus( nOrdSetFocus ) )
+   ( D():Articulos( nView ) )->( ordSetFocus( nOrdSetFocus ) )
 
 RETURN NIL
 //---------------------------------------------------------------------------//
 
-function lAccArticulo()
+function saveContadorActual( cCodArt, nCntAct, nView )
 
-return ( nAnd( nLevelUsr( "01014" ), 1 ) == 0 )
+   local nOrdSetFocus   := ( D():Articulos( nView ) )->( ordSetFocus( "Codigo" ) )
+
+   /*
+   Actualizar NLOTE en el Fichero de artículos
+   ----------------------------------------------------------------------------
+   */
+
+   if ( D():Articulos( nView ) )->( dbSeek( cCodArt ) )
+      if ( D():Articulos( nView ) )->( dbRLock() )
+         ( D():Articulos( nView ) )->nCntAct  := nCntAct
+         ( D():Articulos( nView ) )->( dbRUnLock() )
+      end if
+   end if
+
+   ( D():Articulos( nView ) )->( ordSetFocus( nOrdSetFocus ) )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Function lAccArticulo()
+
+Return ( nAnd( nLevelUsr( "01014" ), 1 ) == 0 )
 
 //---------------------------------------------------------------------------//
 

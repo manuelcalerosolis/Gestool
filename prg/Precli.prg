@@ -4489,7 +4489,7 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
    if nMode == APPD_MODE
 
       if aTmp[ _LLOTE ]
-         GraLotArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _CLOTE ] )
+         saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )
       end if
 
       /*

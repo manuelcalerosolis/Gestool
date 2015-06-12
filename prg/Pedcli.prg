@@ -10340,8 +10340,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
 
    if nMode == APPD_MODE
 
-      if !Empty( aTmp[ _CLOTE ] )
-         GraLotArt( aTmp[ _CREF ], D():Articulos( nView ), aTmp[ _CLOTE ] )
+      if aTmp[ _LLOTE ]
+         saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
       end if
 
       /*
@@ -15558,7 +15558,7 @@ function aItmPedCli()
 
    local aItmPedCli := {}
 
-   aAdd( aItmPedCli, { "CSERPED", "C",    1,  0, "Serie del pedido",                                        "Serie",                   "", "( cDbf )", {|| "A" } } )
+   aAdd( aItmPedCli, { "CSERPED", "C",    1,  0, "Serie del pedido",                                        "Serie",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NNUMPED", "N",    9,  0, "Número del pedido",                                       "Numero",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CSUFPED", "C",    2,  0, "Sufijo de pedido",                                        "Sufijo",                  "", "( cDbf )", {|| RetSufEmp() } } )
    aAdd( aItmPedCli, { "CTURPED", "C",    6,  0, "Sesión del pedido",                                       "Turno",                   "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )
@@ -15585,7 +15585,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "MCOMENT", "M",   10,  0, "Comentarios",                                             "Comentarios",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "MOBSERV", "M",   10,  0, "Observaciones",                                           "Observaciones",           "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LMAYOR",  "L",    1,  0, "",                                                        "",                        "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "NTARIFA", "N",    1,  0, "Tarifa de precio aplicada",                               "TarifaAplicar",           "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "NTARIFA", "N",    1,  0, "Tarifa de precio aplicada",                               "Tarifa",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CDTOESP", "C",   50,  0, "Descripción de porcentaje de descuento",                  "DescripcionDescuento1",   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NDTOESP", "N",    5,  2, "Porcentaje de descuento",                                 "PorcentajeDescuento1",    "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CDPP",    "C",   50,  0, "Descripción porcentaje de descuento por pronto pago",     "DescripcionDescuento2",   "", "( cDbf )", nil } )
@@ -15648,7 +15648,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "nTotReq",  "N",  16,  6, "Total recago" ,                                           "TotalRecargo",            "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nTotPed",  "N",  16,  6, "Total pedido" ,                                           "TotalDocumento",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cNumAlb",  "C",  12,  0, "Número del albarán donde se agrupa" ,                     "NumeroAlbaran",           "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "lOperPV",  "L",   1,  0, "Lógico para operar con punto verde" ,                     "OperarPuntoVerde",        "", "( cDbf )", {|| .t. } } )
+   aAdd( aItmPedCli, { "lOperPV",  "L",   1,  0, "Lógico para operar con punto verde" ,                     "OperarPuntoVerde",        "", "( cDbf )", {|| .f. } } )
    aAdd( aItmPedCli, { "cBanco",   "C",  50,  0, "Nombre del banco del cliente",                            "NombreBanco",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cPaisIBAN","C",   2,  0, "País IBAN de la cuenta bancaria del cliente",             "IbanCuenta",              "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCtrlIBAN","C",   2,  0, "Dígito de control IBAN de la cuenta bancaria del cliente","DigitoControlIban",       "", "( cDbf )", nil } )
