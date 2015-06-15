@@ -4504,7 +4504,7 @@ METHOD AgregarCombinado()
    CursorWait()
 
    ::oTemporalLinea:Load()
-   
+
       ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
       ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
       ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
@@ -4516,7 +4516,7 @@ METHOD AgregarCombinado()
       if ( ::oArticulo:lFacCnv )
          ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
       end if
-   
+
    ::oTemporalLinea:Save()
 
    // Agregamos kits si los tiene----------------------------------------------
@@ -6208,17 +6208,17 @@ METHOD cDescripcionComanda( uTmpL ) CLASS TpvTactil
    end if
 
    if !Empty( ::oTemporalComanda:cNomCmd )
-      cReturn        := Rtrim( ::oTemporalComanda:cNomCmd )
+      cReturn        := alltrim( ::oTemporalComanda:cNomCmd )
    else
-      cReturn        := Rtrim( ::oTemporalComanda:cNomTil )
+      cReturn        := alltrim( ::oTemporalComanda:cNomTil )
    end if
 
    if !Empty( ::oTemporalComanda:cNcmTil )
-      cReturn        += " con " + CRLF + Rtrim( ::oTemporalComanda:cNcmTil )
+      cReturn        += " con " + alltrim( ::oTemporalComanda:cNcmTil )
    end if
 
    if !Empty( ::oTemporalComanda:cComent )
-      cReturn        += "[*]" + Space( 1 ) + Alltrim( ::oTemporalComanda:cComent )
+      cReturn        += "[*]" + space( 1 ) + alltrim( ::oTemporalComanda:cComent )
    end if
 
 RETURN ( cReturn )
@@ -8608,8 +8608,8 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Series de lineas de albaranes", ::oAlbaranClienteSerie:nArea )
    ::oFastReport:SetFieldAliases(   "Series de lineas de albaranes", cItemsToReport( aSerAlbCli() ) )
 
-   ::oFastReport:SetWorkArea(       "Propiedades", ::oPropiedadesLinea:nArea )
-   ::oFastReport:SetFieldAliases(   "Propiedades", cItemsToReport( aItmPro() ) )
+   // ::oFastReport:SetWorkArea(       "Propiedades", ::oPropiedadesLinea:nArea )
+   // ::oFastReport:SetFieldAliases(   "Propiedades", cItemsToReport( aItmPro() ) )
 
    ::oFastReport:SetWorkArea(       "Impuestos especiales",  ::oNewImp:Select() )
    ::oFastReport:SetFieldAliases(   "Impuestos especiales",  cObjectsToReport( ::oNewImp:oDbf ) )
@@ -8644,8 +8644,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",          {|| ::oAlbaranClienteLinea:cTipMov } )
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Ofertas",                {|| ::oAlbaranClienteLinea:cRef } )
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",   {|| ::oAlbaranClienteLinea:cUnidad } )
-         ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Propiedades",            {|| ::oAlbaranClienteLinea:cCodPr1 + ::oAlbaranClienteLinea:cValPr1 } )
-         ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",   {|| ::oAlbaranClienteLinea:cCodImp } )
+         // ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Propiedades",            {|| ::oAlbaranClienteLinea:cCodPr1 + ::oAlbaranClienteLinea:cValPr1 } )
+         // ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Impuestos especiales",   {|| ::oAlbaranClienteLinea:cCodImp } )
 
          //------------------------------------------------------------------------//
 
@@ -8668,8 +8668,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetResyncPair( "Lineas de albaranes", "Tipo de venta" )
          ::oFastReport:SetResyncPair( "Lineas de albaranes", "Ofertas" )
          ::oFastReport:SetResyncPair( "Lineas de albaranes", "Unidades de medición" )
-         ::oFastReport:SetResyncPair( "Lineas de albaranes", "Propiedades" )
-         ::oFastReport:SetResyncPair( "Lineas de albaranes", "Impuestos especiales" )
+         // ::oFastReport:SetResyncPair( "Lineas de albaranes", "Propiedades" )
+         // ::oFastReport:SetResyncPair( "Lineas de albaranes", "Impuestos especiales" )
 
       otherwise
 
@@ -8699,8 +8699,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Fabricantes",           {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Temporadas",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Orden comanda",         {|| ::oTemporalComanda:cOrdOrd } )
-         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Propiedades",           {|| ::oTemporalComanda:cCodPr1 + ::oTemporalComanda:cValPr1 } )
-         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Impuestos especiales",  {|| ::oTemporalComanda:cCodImp } )
+         //::oFastReport:SetMasterDetail( "Lineas de comandas", "Propiedades",           {|| ::oTemporalComanda:cCodPr1 + ::oTemporalComanda:cValPr1 } )
+         //::oFastReport:SetMasterDetail( "Lineas de comandas", "Impuestos especiales",  {|| ::oTemporalComanda:cCodImp } )
 
          else
 
@@ -8711,8 +8711,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",     {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
          ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",            {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
          ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Propiedades",            {|| ::oTiketLinea:cCodPr1 + ::oTiketLinea:cValPr1 } )
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Impuestos especiales",   {|| ::oTiketLinea:cCodImp } )
+         // ::oFastReport:SetMasterDetail( "Lineas de tickets", "Propiedades",            {|| ::oTiketLinea:cCodPr1 + ::oTiketLinea:cValPr1 } )
+         // ::oFastReport:SetMasterDetail( "Lineas de tickets", "Impuestos especiales",   {|| ::oTiketLinea:cCodImp } )
 
          end if 
 
@@ -8744,8 +8744,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetResyncPair(  "Lineas de comandas", "Tipos de artículos" )
          ::oFastReport:SetResyncPair(  "Lineas de comandas", "Fabricantes" )
          ::oFastReport:SetResyncPair(  "Lineas de comandas", "Temporadas" )
-         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Propiedades" )
-         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Impuestos especiales" )
+         // ::oFastReport:SetResyncPair(  "Lineas de comandas", "Propiedades" )
+         // ::oFastReport:SetResyncPair(  "Lineas de comandas", "Impuestos especiales" )
 
          else 
 
@@ -8757,8 +8757,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetResyncPair(  "Lineas de tickets", "Tipos de artículos" )
          ::oFastReport:SetResyncPair(  "Lineas de tickets", "Fabricantes" )
          ::oFastReport:SetResyncPair(  "Lineas de tickets", "Temporadas" )
-         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Propiedades" )
-         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Impuestos especiales" )
+         // ::oFastReport:SetResyncPair(  "Lineas de tickets", "Propiedades" )
+         // ::oFastReport:SetResyncPair(  "Lineas de tickets", "Impuestos especiales" )
 
          end if 
 
@@ -8812,8 +8812,8 @@ METHOD ClearRelationReport() CLASS TpvTactil
          ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Tipo de venta" )
          ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Ofertas" )
          ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Unidades de medición" )
-         ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Propiedades" )
-         ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Impuestos especiales" )
+         // ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Propiedades" )
+         // ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Impuestos especiales" )
    
       otherwise
    
@@ -8869,8 +8869,8 @@ METHOD ClearRelationReport() CLASS TpvTactil
             ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Tipos de artículos" )
             ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Fabricantes" )
             ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Temporadas" )
-            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Propiedades" )
-            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Impuestos especiales" )
+            // ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Propiedades" )
+            // ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Impuestos especiales" )
    
          else 
    
@@ -8882,8 +8882,8 @@ METHOD ClearRelationReport() CLASS TpvTactil
             ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Tipos de artículos" )
             ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Fabricantes" )
             ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Temporadas" )
-            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Propiedades" )
-            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Impuestos especiales" )
+            // ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Propiedades" )
+            // ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Impuestos especiales" )
    
          end if
 
@@ -9856,7 +9856,7 @@ METHOD cTextoLinea( oDbf )
    end if
 
    if !Empty( oDbf:cNcmTil )
-      cTexto      += " con " + CRLF + oDbf:cNcmTil
+      cTexto      += " con " + alltrim( oDbf:cNcmTil )
    end if
 
    if !Empty( oDbf:lKitChl )
@@ -9896,7 +9896,7 @@ METHOD cTextoLineaLeng( oDbf, oArticulosLenguajes )
    end if
 
    if !Empty( oDbf:cNcmTil )
-      cTexto      += " con " + CRLF + oDbf:cNcmTil
+      cTexto      += " con " + alltrim( oDbf:cNcmTil )
    end if
 
    if !Empty( oDbf:lKitChl )
@@ -9924,7 +9924,7 @@ METHOD cTextoLineaDivision( oDbf )
    end if
 
    if !Empty( oDbf:cNcmTil )
-      cTexto      += " con " + CRLF + oDbf:cNcmTil
+      cTexto      += " con " + alltrim( oDbf:cNcmTil )
    end if
 
    if !Empty( oDbf:lKitChl ) 

@@ -1062,33 +1062,33 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
 
    DEFAULT cTitle       := "Teclado virtual"
 
-   //cVar                 := Str( nVar, 2 )
+   cVar                 := Str( nVar, 4 )
 
    DEFINE DIALOG oDlg NAME "NumKey" TITLE cTitle
 
       REDEFINE BITMAP oBmp ID 500 RESOURCE ( cBitmap ) TRANSPARENT OF oDlg
 
-      REDEFINE GET oGet VAR cVar PICTURE "99" ID 100 OF oDlg
+      REDEFINE GET oGet VAR cVar PICTURE "9999" ID 100 OF oDlg
 
-      REDEFINE BUTTON ID 101 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("1") ) )
+      REDEFINE BUTTON ID 101 OF oDlg ACTION ( sayNumber( oGet, 1 ) )
 
-      REDEFINE BUTTON ID 102 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("2") ) )
+      REDEFINE BUTTON ID 102 OF oDlg ACTION ( sayNumber( oGet, 2 ) )
 
-      REDEFINE BUTTON ID 103 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("3") ) )
+      REDEFINE BUTTON ID 103 OF oDlg ACTION ( sayNumber( oGet, 3 ) )
 
-      REDEFINE BUTTON ID 104 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("4") ) )
+      REDEFINE BUTTON ID 104 OF oDlg ACTION ( sayNumber( oGet, 4 ) )
 
-      REDEFINE BUTTON ID 105 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("5") ) )
+      REDEFINE BUTTON ID 105 OF oDlg ACTION ( sayNumber( oGet, 5 ) )
 
-      REDEFINE BUTTON ID 106 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("6") ) )
+      REDEFINE BUTTON ID 106 OF oDlg ACTION ( sayNumber( oGet, 6 ) )
 
-      REDEFINE BUTTON ID 107 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("7") ) )
+      REDEFINE BUTTON ID 107 OF oDlg ACTION ( sayNumber( oGet, 7 ) )
 
-      REDEFINE BUTTON ID 108 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("8") ) )
+      REDEFINE BUTTON ID 108 OF oDlg ACTION ( sayNumber( oGet, 8 ) )
 
-      REDEFINE BUTTON ID 109 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("9") ) )
+      REDEFINE BUTTON ID 109 OF oDlg ACTION ( sayNumber( oGet, 9 ) )
 
-      REDEFINE BUTTON ID 110 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:KeyChar( Asc("0") ) )
+      REDEFINE BUTTON ID 110 OF oDlg ACTION ( sayNumber( oGet, 0 ) )
 
       REDEFINE BUTTON ID 150 OF oDlg ACTION ( oGet:SetFocus(.t.), oGet:cText( "0" ) )
 
@@ -1115,6 +1115,22 @@ Function nVirtualNumKey( cBitmap, cTitle, nVar )
    end if 
 
 Return ( cVar )
+
+//--------------------------------------------------------------------------//
+
+Static Function sayNumber( oGet, uNumber )
+  
+   local cText   := alltrim( oGet:cText() )
+
+   if val( cText ) == 0
+      cText      := ""
+   end if 
+ 
+   oGet:cText( padr( alltrim( cText ) + cValToChar( uNumber ), 100, ' ' ) )
+
+   oGet:setFocus()
+
+Return ( nil )
 
 //--------------------------------------------------------------------------//
 //Funciones para el programa y pda

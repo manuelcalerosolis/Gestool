@@ -2391,7 +2391,7 @@ FUNCTION cNombrePropiedad( cCodigoPropiedad, cValorPropiedad, dbfPro )
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if IsObject( dbfPro )
+   if isObject( dbfPro )
       if dbfPro:Seek( cCodigoPropiedad + cValorPropiedad )
          cNombrePropiedad     := dbfPro:cDesTbl
       end if

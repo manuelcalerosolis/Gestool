@@ -4177,6 +4177,10 @@ CLASS sPrecioOferta
    DATA nDtoPorcentual                INIT 0
    DATA nDtoLineal                    INIT 0
 
+   METHOD say()                        INLINE ( "nPrecio" + str( ::nPrecio ) + CRLF +;
+                                                "nDtoPorcentual" + str( ::nDtoPorcentual ) + CRLF +;
+                                                "nDtoLineal" + str( ::nDtoLineal ) )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -4196,7 +4200,26 @@ Function structOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView  )
    */
 
    sOfertaArticulo         := hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
-   lOfertaArticulo         := !empty( sOfertaArticulo ) 
+
+   if empty( sOfertaArticulo ) 
+      sOfertaArticulo      := hOfertaFamilia( hCabecera, hLinea, nTotalLinea, nView )
+   end if 
+
+   if empty( sOfertaArticulo ) 
+      sOfertaArticulo      := hOfertaTipoArticulo( hCabecera, hLinea, nTotalLinea, nView )
+   end if 
+
+   if empty( sOfertaArticulo ) 
+      sOfertaArticulo      := hOfertaCategoria( hCabecera, hLinea, nTotalLinea, nView )
+   end if 
+
+   if empty( sOfertaArticulo )
+      sOfertaArticulo      := hOfertaTemporada( hCabecera, hLinea, nTotalLinea, nView )
+   end if 
+
+   if empty( sOfertaArticulo )
+      hOfertaFabricante( hCabecera, hLinea, nTotalLinea, nView )
+   end if 
 
 Return ( sOfertaArticulo )
 
@@ -4204,15 +4227,12 @@ Return ( sOfertaArticulo )
 
 Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
+   local sPrecio
    local nPrecioOferta     := 0
    local nPrecioAnterior   := 0
-   local cGrupoCliente 
-   local sPrecio
 
    D():getStatusOfertas( nView )
    ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
-
-   cGrupoCliente           := retGrpCli( hCabecera[ "Cliente" ], D():Clientes( nView ) ) 
 
    // Primero buscar si existe el articulo en la oferta-----------------------
 
@@ -4222,16 +4242,15 @@ Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
          // Comprobamos si esta entre las fechas-------------------------------
 
-         if ( D():Ofertas( nView ) )->nTblOfe < 2 .and.;
-            ( hCabecera[ "Fecha" ] >= ( D():Ofertas( nView ) )->dIniOfe .or. empty( ( D():Ofertas( nView ) )->dIniOfe ) ) .and.;
-            ( hCabecera[ "Fecha" ] <= ( D():Ofertas( nView ) )->dFinOfe .or. empty( ( D():Ofertas( nView ) )->dFinOfe ) ) .and.;
-            ( D():Ofertas( nView ) )->nTipOfe == 1 .and.;
-            (  ( ( D():Ofertas( nView ) )->nCliOfe == 1 ) .or. ;
-               ( ( D():Ofertas( nView ) )->nCliOfe == 2 .and. cGrupoCliente == ( D():Ofertas( nView ) )->cGrpOfe ) .or.;
-               ( ( D():Ofertas( nView ) )->nCliOfe == 3 .and. hCabecera[ "Cliente" ] == ( D():Ofertas( nView ) )->cCliOfe ) ) .and.;
-            ( ( ( D():Ofertas( nView ) )->nMinCan == 1 .and. ( ( D():Ofertas( nView ) )->nImpMin == 0 .or. ( ( D():Ofertas( nView ) )->nImpMin != 0 .and. nTotalLinea >= ( D():Ofertas( nView ) )->nImpMin ) ) ) .or.;
-            ( ( D():Ofertas( nView ) )->nMinCan == 2 .and. ( D():Ofertas( nView ) )->nMinTip == 1 .and. ( ( D():Ofertas( nView ) )->nCajMin == 0 .or. ( ( D():Ofertas( nView ) )->nCajMin != 0 .and. hLinea[ "Cajas" ] >= ( D():Ofertas( nView ) )->nCajMin ) ) ) .or.;
-            ( ( D():Ofertas( nView ) )->nMinCan == 2 .and. ( D():Ofertas( nView ) )->nMinTip == 2 .and. ( ( D():Ofertas( nView ) )->nUndMin == 0 .or. ( ( D():Ofertas( nView ) )->nUndMin != 0 .and. hLinea[ "Unidades" ] >= ( D():Ofertas( nView ) )->nUndMin ) ) ) )
+         // msgAlert( isOfertaArticulo( nView ), "isOfertaArticulo" )
+         // msgAlert( isValidFecha( hCabecera, nView ), "isValidFecha" )
+         // msgAlert( isOfertaPrecio( nView ), "isOfertaPrecio" )
+         // msgAlert( isValidClient( hCabecera, nView ), "isValidClient" )
+         // msgAlert( isImporteMinimo( nTotalLinea, nView ), "isImporteMinimo" )
+         // msgAlert( isCajasMinimas( hLinea[ "Cajas" ], nView ), "isCajasMinimas" )
+         // msgAlert( isUnidadesMinimas( hLinea[ "Unidades" ], nView ) , "isUnidadesMinimas")
+
+         if isOfertaArticulo( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView )
 
             // Comprobamos que no vayamos a vender mas articulos que los del lote
 
@@ -4260,6 +4279,201 @@ RETURN ( sPrecio )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION hOfertaFamilia( hCabecera, hLinea, nTotalLinea, nView )
+
+   local sPrecio
+   local cCodigoFamilia
+   local nPorcentajeAnterior  := 0
+
+   cCodigoFamilia             := padr( hLinea[ "Familia" ], 18 )
+
+   D():getStatusOfertas( nView )
+   ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
+
+   if ( D():Ofertas( nView ) )->( dbSeek( cCodigoFamilia ) )
+
+      while ( D():Ofertas( nView ) )->cArtOfe == cCodigoFamilia .and. !( D():Ofertas( nView ) )->( eof() )
+
+         if isOfertaFamilia( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView )  
+
+            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
+               sPrecio                 := sPrecioOferta()
+               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
+               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
+            end if   
+
+            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
+
+         end if
+
+         ( D():Ofertas( nView ) )->( dbSkip() )
+
+      end do
+
+   end if
+
+   D():setStatusOfertas( nView )
+
+RETURN sPrecio
+
+//---------------------------------------------------------------------------//
+
+Static Function hOfertaTipoArticulo( hCabecera, hLinea, nTotalLinea, nView )
+
+   local sPrecio
+   local cCodigoTipo
+   local nPorcentajeAnterior  := 0
+
+   D():getStatusOfertas( nView )
+   ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
+
+   cCodigoTipo                := padr( hLinea[ "Tipo" ], 18 )
+
+   if ( dbfOferta )->( dbSeek( cCodigoTipo ) )
+
+      while ( dbfOferta )->cArtOfe  == cCodigoTipo .and. !( dbfOferta )->( Eof() )
+
+         if isOfertaTipoArticulo( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
+
+            if nPorcentajeAnterior == 0 .or. ( dbfOferta )->nDtoPct > nPorcentajeAnterior
+               sPrecio                 := sPrecioOferta()
+               sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
+               sPrecio:nDtoLineal      := ( dbfOferta )->nDtoLin
+            end if
+
+            nPorcentajeAnterior        := ( dbfOferta )->nDtoPct
+
+         end if
+
+         ( dbfOferta )->( dbSkip() )
+
+      end do
+
+   end if
+
+   D():setStatusOfertas( nView )
+
+RETURN sPrecio
+
+//---------------------------------------------------------------------------//
+
+FUNCTION hOfertaCategoria( hCabecera, hLinea, nTotalLinea, nView )
+
+   local sPrecio
+   local cCodigoTemporada
+   local nPorcentajeAnterior  := 0
+
+   D():getStatusOfertas( nView )
+   ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
+
+   cCodigoTemporada           := retFld( hLinea[ "Articulo" ], D():Articulos( nView ), "cCodTemp" )
+
+   if ( dbfOferta )->( dbSeek( cCodigoTemporada ) )
+
+      while ( dbfOferta )->cArtOfe  == cCodigoTemporada .and. !( dbfOferta )->( Eof() )
+
+         if isOfertaTemporada( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
+
+            if nPorcentajeAnterior == 0 .or. ( dbfOferta )->nDtoPct > nPorcentajeAnterior
+               sPrecio                 := sPrecioOferta()
+               sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
+               sPrecio:nDtoLineal      := ( dbfOferta )->nDtoLin
+            end if
+
+            nPorcentajeAnterior        := ( dbfOferta )->nDtoPct
+
+         end if
+
+         ( dbfOferta )->( dbSkip() )
+
+      end do
+
+   end if
+
+   D():setStatusOfertas( nView )
+
+RETURN sPrecio
+
+//---------------------------------------------------------------------------//
+
+FUNCTION hOfertaTemporada( hCabecera, hLinea, nTotalLinea, nView )
+
+   local sPrecio
+   local cCodigoTemporada
+   local nPorcentajeAnterior  := 0
+
+   D():getStatusOfertas( nView )
+   ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
+
+   cCodigoTemporada           := retFld( hLinea[ "Articulo" ], D():Articulos( nView ), "cCodTemp" )
+
+   if ( dbfOferta )->( dbSeek( cCodigoTemporada ) )
+
+      while ( dbfOferta )->cArtOfe  == cCodigoTemporada .and. !( dbfOferta )->( Eof() )
+
+         if isOfertaTemporada( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
+
+            if nPorcentajeAnterior == 0 .or. ( dbfOferta )->nDtoPct > nPorcentajeAnterior
+               sPrecio                 := sPrecioOferta()
+               sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
+               sPrecio:nDtoLineal      := ( dbfOferta )->nDtoLin
+            end if
+
+            nPorcentajeAnterior        := ( dbfOferta )->nDtoPct
+
+         end if
+
+         ( dbfOferta )->( dbSkip() )
+
+      end do
+
+   end if
+
+   D():setStatusOfertas( nView )
+
+RETURN sPrecio
+
+//---------------------------------------------------------------------------//
+
+FUNCTION hOfertaFabricante( hCabecera, hLinea, nTotalLinea, nView )
+
+   local sPrecio
+   local cCodigoFabricante
+   local nPorcentajeAnterior  := 0
+
+   D():getStatusOfertas( nView )
+   ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
+
+   cCodigoFabricante           := retFld( hLinea[ "Articulo" ], D():Articulos( nView ), "cCodFab" )
+
+   if ( dbfOferta )->( dbSeek( cCodigoFabricante ) )
+
+      while ( dbfOferta )->cArtOfe  == cCodigoFabricante .and. !( dbfOferta )->( Eof() )
+
+         if isOfertaFabricante( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
+
+            if nPorcentajeAnterior == 0 .or. ( dbfOferta )->nDtoPct > nPorcentajeAnterior
+               sPrecio                 := sPrecioOferta()
+               sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
+               sPrecio:nDtoLineal      := ( dbfOferta )->nDtoLin
+            end if
+
+            nPorcentajeAnterior        := ( dbfOferta )->nDtoPct
+
+         end if
+
+         ( dbfOferta )->( dbSkip() )
+
+      end do
+
+   end if
+
+   D():setStatusOfertas( nView )
+
+RETURN sPrecio
+
+//---------------------------------------------------------------------------//
+
 Static Function getPrecioOferta( nTarifa, lIvaIncluido, nView )
 
    local nPrecioOferta  := 0
@@ -4282,3 +4496,96 @@ Static Function getPrecioOferta( nTarifa, lIvaIncluido, nView )
 Return ( nPrecioOferta )
 
 //---------------------------------------------------------------------------//
+
+Static Function isValidClient( hCabecera, nView )
+
+   local cGrupoCliente
+
+   // Todos los clientes
+
+   if ( D():Ofertas( nView ) )->nCliOfe == 1
+      Return .t.
+   end if 
+
+   // Solo el cliente especificado en la oferta
+
+   if ( D():Ofertas( nView ) )->nCliOfe == 3 .and. hCabecera[ "Cliente" ] == ( D():Ofertas( nView ) )->cCliOfe 
+      Return .t.
+   end if 
+
+   cGrupoCliente           := retGrpCli( hCabecera[ "Cliente" ], D():Clientes( nView ) ) 
+   if ( D():Ofertas( nView ) )->nCliOfe == 2 .and. cGrupoCliente == ( D():Ofertas( nView ) )->cGrpOfe 
+      Return .t.
+   end if 
+
+Return ( .f. )   
+
+//---------------------------------------------------------------------------//
+
+Static Function isOfertaArticulo( nView )
+Return ( ( D():Ofertas( nView ) )->nTblOfe < 2 )
+
+//---------------------------------------------------------------------------//
+
+Static Function isOfertaFamilia( nView )
+Return ( ( D():Ofertas( nView ) )->nTblOfe == 2 )
+
+//---------------------------------------------------------------------------//
+
+Static Function isOfertaTipoArticulo( nView )
+Return ( ( D():Ofertas( nView ) )->nTblOfe == 3 )
+
+//---------------------------------------------------------------------------//
+
+Static Function isOfertaCategoria( nView )
+Return ( ( D():Ofertas( nView ) )->nTblOfe == 4 )
+
+//---------------------------------------------------------------------------//
+
+Static Function isOfertaTemporada( nView )
+Return ( ( D():Ofertas( nView ) )->nTblOfe == 5 )
+
+//---------------------------------------------------------------------------//
+
+Static Function isOfertaFabricante( nView )
+Return ( ( D():Ofertas( nView ) )->nTblOfe == 6 )
+
+//---------------------------------------------------------------------------//
+
+Static Function isValidFecha( hCabecera, nView )
+Return ( ( hCabecera[ "Fecha" ] >= ( D():Ofertas( nView ) )->dIniOfe .or. empty( ( D():Ofertas( nView ) )->dIniOfe ) ) .and.;
+         ( hCabecera[ "Fecha" ] <= ( D():Ofertas( nView ) )->dFinOfe .or. empty( ( D():Ofertas( nView ) )->dFinOfe ) ) )
+
+//---------------------------------------------------------------------------//
+
+Static Function isOfertaPrecio( nView )
+Return ( ( D():Ofertas( nView ) )->nTipOfe < 2 )
+
+//---------------------------------------------------------------------------//
+
+Static Function isImporteMinimo( nTotalLinea, nView )
+Return ( ( D():Ofertas( nView ) )->nMinCan == 1 .and. ( ( D():Ofertas( nView ) )->nImpMin == 0 .or. ( ( D():Ofertas( nView ) )->nImpMin != 0 .and. nTotalLinea >= ( D():Ofertas( nView ) )->nImpMin ) ) ) 
+
+//---------------------------------------------------------------------------//
+
+Static Function isCajasMinimas( nTotalCajas, nView )
+Return ( ( D():Ofertas( nView ) )->nMinCan == 2 .and. ( D():Ofertas( nView ) )->nMinTip == 1 .and. ( ( D():Ofertas( nView ) )->nCajMin == 0 .or. ( ( D():Ofertas( nView ) )->nCajMin != 0 .and. nTotalCajas >= ( D():Ofertas( nView ) )->nCajMin ) ) ) 
+
+//---------------------------------------------------------------------------//
+
+Static Function isUnidadesMinimas( nTotalUnidades, nView )
+Return ( ( D():Ofertas( nView ) )->nMinCan == 2 .and. ( D():Ofertas( nView ) )->nMinTip == 2 .and. ( ( D():Ofertas( nView ) )->nUndMin == 0 .or. ( ( D():Ofertas( nView ) )->nUndMin != 0 .and. nTotalUnidades >= ( D():Ofertas( nView ) )->nUndMin ) ) ) 
+
+//---------------------------------------------------------------------------//
+
+Static Function isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView )
+Return ( isValidFecha( hCabecera, nView ) .and. ;
+         isOfertaPrecio( nView ) .and. ;
+         isValidClient( hCabecera, nView ) .and.;
+         (  isImporteMinimo( nTotalLinea, nView ) .or.;
+            isCajasMinimas( hLinea[ "Cajas" ], nView ) .or.;
+            isUnidadesMinimas( hLinea[ "Unidades" ], nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+

@@ -5902,7 +5902,7 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
 
             // Buscamos si hay ofertas-----------------------------------------------
 
-            msgAlert( hb_valtoexp( structOfertaArticulo( D():getHashArray( aTmpSat, "SatCliT", nView ), D():getHashArray( aTmp, "SatCliL", nView ), nTotLSatCli( aTmp ), nView ) ) )
+            msgAlert( structOfertaArticulo( D():getHashArray( aTmpSat, "SatCliT", nView ), D():getHashArray( aTmp, "SatCliL", nView ), nTotLSatCli( aTmp ), nView ):say() ) 
 
             // Unidades de medicion -------------------------------------------
 
