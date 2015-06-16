@@ -4195,9 +4195,7 @@ Function structOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView  )
       Return nil
    end if 
 
-   /*
-   Buscamos si existen ofertas por artículo----------------------------
-   */
+   // Buscamos si existen ofertas por artículo----------------------------
 
    sOfertaArticulo         := hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
@@ -4218,7 +4216,7 @@ Function structOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView  )
    end if 
 
    if empty( sOfertaArticulo )
-      hOfertaFabricante( hCabecera, hLinea, nTotalLinea, nView )
+      sOfertaArticulo      := hOfertaFabricante( hCabecera, hLinea, nTotalLinea, nView )
    end if 
 
 Return ( sOfertaArticulo )
@@ -4329,23 +4327,23 @@ Static Function hOfertaTipoArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
    cCodigoTipo                := padr( hLinea[ "Tipo" ], 18 )
 
-   if ( dbfOferta )->( dbSeek( cCodigoTipo ) )
+   if ( D():Ofertas( nView ) )->( dbSeek( cCodigoTipo ) )
 
-      while ( dbfOferta )->cArtOfe  == cCodigoTipo .and. !( dbfOferta )->( Eof() )
+      while ( D():Ofertas( nView ) )->cArtOfe  == cCodigoTipo .and. !( D():Ofertas( nView ) )->( Eof() )
 
          if isOfertaTipoArticulo( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
 
-            if nPorcentajeAnterior == 0 .or. ( dbfOferta )->nDtoPct > nPorcentajeAnterior
+            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
                sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
-               sPrecio:nDtoLineal      := ( dbfOferta )->nDtoLin
+               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
+               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
             end if
 
-            nPorcentajeAnterior        := ( dbfOferta )->nDtoPct
+            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
 
          end if
 
-         ( dbfOferta )->( dbSkip() )
+         ( D():Ofertas( nView ) )->( dbSkip() )
 
       end do
 
@@ -4368,23 +4366,23 @@ FUNCTION hOfertaCategoria( hCabecera, hLinea, nTotalLinea, nView )
 
    cCodigoTemporada           := retFld( hLinea[ "Articulo" ], D():Articulos( nView ), "cCodTemp" )
 
-   if ( dbfOferta )->( dbSeek( cCodigoTemporada ) )
+   if ( D():Ofertas( nView ) )->( dbSeek( cCodigoTemporada ) )
 
-      while ( dbfOferta )->cArtOfe  == cCodigoTemporada .and. !( dbfOferta )->( Eof() )
+      while ( D():Ofertas( nView ) )->cArtOfe  == cCodigoTemporada .and. !( D():Ofertas( nView ) )->( Eof() )
 
          if isOfertaTemporada( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
 
-            if nPorcentajeAnterior == 0 .or. ( dbfOferta )->nDtoPct > nPorcentajeAnterior
+            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
                sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
-               sPrecio:nDtoLineal      := ( dbfOferta )->nDtoLin
+               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
+               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
             end if
 
-            nPorcentajeAnterior        := ( dbfOferta )->nDtoPct
+            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
 
          end if
 
-         ( dbfOferta )->( dbSkip() )
+         ( D():Ofertas( nView ) )->( dbSkip() )
 
       end do
 
@@ -4407,23 +4405,23 @@ FUNCTION hOfertaTemporada( hCabecera, hLinea, nTotalLinea, nView )
 
    cCodigoTemporada           := retFld( hLinea[ "Articulo" ], D():Articulos( nView ), "cCodTemp" )
 
-   if ( dbfOferta )->( dbSeek( cCodigoTemporada ) )
+   if ( D():Ofertas( nView ) )->( dbSeek( cCodigoTemporada ) )
 
-      while ( dbfOferta )->cArtOfe  == cCodigoTemporada .and. !( dbfOferta )->( Eof() )
+      while ( D():Ofertas( nView ) )->cArtOfe  == cCodigoTemporada .and. !( D():Ofertas( nView ) )->( Eof() )
 
          if isOfertaTemporada( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
 
-            if nPorcentajeAnterior == 0 .or. ( dbfOferta )->nDtoPct > nPorcentajeAnterior
+            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
                sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
-               sPrecio:nDtoLineal      := ( dbfOferta )->nDtoLin
+               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
+               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
             end if
 
-            nPorcentajeAnterior        := ( dbfOferta )->nDtoPct
+            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
 
          end if
 
-         ( dbfOferta )->( dbSkip() )
+         ( D():Ofertas( nView ) )->( dbSkip() )
 
       end do
 
@@ -4446,23 +4444,23 @@ FUNCTION hOfertaFabricante( hCabecera, hLinea, nTotalLinea, nView )
 
    cCodigoFabricante           := retFld( hLinea[ "Articulo" ], D():Articulos( nView ), "cCodFab" )
 
-   if ( dbfOferta )->( dbSeek( cCodigoFabricante ) )
+   if ( D():Ofertas( nView ) )->( dbSeek( cCodigoFabricante ) )
 
-      while ( dbfOferta )->cArtOfe  == cCodigoFabricante .and. !( dbfOferta )->( Eof() )
+      while ( D():Ofertas( nView ) )->cArtOfe  == cCodigoFabricante .and. !( D():Ofertas( nView ) )->( Eof() )
 
          if isOfertaFabricante( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
 
-            if nPorcentajeAnterior == 0 .or. ( dbfOferta )->nDtoPct > nPorcentajeAnterior
+            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
                sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
-               sPrecio:nDtoLineal      := ( dbfOferta )->nDtoLin
+               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
+               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
             end if
 
-            nPorcentajeAnterior        := ( dbfOferta )->nDtoPct
+            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
 
          end if
 
-         ( dbfOferta )->( dbSkip() )
+         ( D():Ofertas( nView ) )->( dbSkip() )
 
       end do
 

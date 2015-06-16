@@ -5370,6 +5370,7 @@ CLASS D
 
    METHOD getHashRecord( cDatabase, nView )
    METHOD getHashArray( aRecord, cDatabase, nView )
+   METHOD getHashTable( cAlias, cDatabase, nView )
    METHOD getHashRecordById( id, cDatabase, nView )
    METHOD getHashRecordBlank( cDatabase, nView )
    METHOD getHashRecordDefaultValues( cDatabase, nView ) ;
@@ -6238,6 +6239,19 @@ METHOD getHashArray( aRecord, cDataTable, nView ) CLASS D
 
    if isHash( aDictionary ) .and. !empty( dbf )
       hEval( aDictionary, {|key,value| hSet( hash, key, aRecord[ ( dbf )->( fieldPos( value ) ) ] ) } )
+   end if 
+
+RETURN ( hash )
+
+//---------------------------------------------------------------------------//
+
+METHOD getHashTable( dbf, cDataTable, nView ) CLASS D
+
+   local hash        := {=>}
+   local aDictionary := TDataCenter():getDictionary( cDataTable )
+
+   if isHash( aDictionary ) .and. !empty( dbf )
+      hEval( aDictionary, {|key,value| hSet( hash, key, ( dbf )->( fieldgetbyname( value ) ) ) } )
    end if 
 
 RETURN ( hash )
