@@ -5118,8 +5118,6 @@ FUNCTION BrwProvee( oGet, oGet2, lApp )
    pdaCloseFiles()
 #endif
 
-   oGet:SetFocus()
-
 RETURN ( cReturn )
 
 //---------------------------------------------------------------------------//

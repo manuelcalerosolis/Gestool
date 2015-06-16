@@ -20617,10 +20617,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "Stock mínimo", 212, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 255, 200, 55, 12
   CONTROL "Stock máximo", 213, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 255, 214, 56, 12
   CONTROL "Cant. pedido cliente", 214, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 255, 228, 79, 12
-  CONTROL "", 220, "msctls_progress32", 0x00000000, 9, 266, 452, 10
-  CONTROL "Stock disponible", -1, "Button", BS_GROUPBOX, 3, 189, 229, 71
-  CONTROL "Igualar stock a", -1, "Button", BS_GROUPBOX, 236, 189, 229, 71
-  CONTROL "", -1, "Button", BS_GROUPBOX, 3, 258, 462, 22
+  CONTROL "", 220, "msctls_progress32", 0x00000000, 9, 270, 452, 6
+  CONTROL "Stock disponible", -1, "Button", BS_GROUPBOX, 3, 189, 229, 74
+  CONTROL "Igualar stock a", -1, "Button", BS_GROUPBOX, 236, 189, 229, 74
+  CONTROL "", -1, "Button", BS_GROUPBOX, 3, 262, 462, 19
   CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_VSCROLL|WS_TABSTOP, 12, 13, 106, 134
   CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 152, 14, 65, 11
   CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 248, 14, 65, 11
@@ -20635,10 +20635,9 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 8, 28, 454, 250
-  CONTROL "&Modificar [F3]", 110, "Button", WS_TABSTOP, 8, 12, 50, 14
-  CONTROL "&Seleccionar", 120, "Button", WS_TABSTOP, 60, 12, 50, 14
-  CONTROL "&Todos", 130, "Button", WS_TABSTOP, 112, 12, 50, 14
-  CONTROL "&Ninguno", 140, "Button", WS_TABSTOP, 164, 12, 50, 14
+  CONTROL "&Seleccionar", 120, "Button", WS_TABSTOP, 8, 12, 50, 14
+  CONTROL "&Todos", 130, "Button", WS_TABSTOP, 60, 12, 50, 14
+  CONTROL "&Ninguno", 140, "Button", WS_TABSTOP, 112, 12, 50, 14
   CONTROL "Artículos", -1, "Button", BS_GROUPBOX, 3, 0, 463, 281
 }
 

@@ -139,7 +139,7 @@ function Main( ParamsMain, ParamsSecond )
       AdsSetServerType( nAdsServer() )    // TODOS
       AdsSetFileType( 2 )                 // ADS_CDX
       AdsRightsCheck( .f. )
-      AdsSetDeleted( .f. )
+      AdsSetDeleted( .t. )
       AdsCacheOpenTables( 250 )
 
       with object ( TDataCenter() )
