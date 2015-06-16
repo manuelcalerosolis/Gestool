@@ -10886,12 +10886,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       Buscamos si existen atipicas de clientes---------------------------------
       */
 
-      hAtipica := hAtipica( hValue( aTmp, aTmpAlb ) )
-
+      hAtipica       := hAtipica( hValue( aTmp, aTmpAlb ) )
       if !Empty( hAtipica )
 
-         if hhaskey( hAtipica, "nTipoXY" )               .and.;
-            hhaskey( hAtipica, "nUnidadesGratis" )
+         if hhaskey( hAtipica, "nTipoXY" ) .and. hhaskey( hAtipica, "nUnidadesGratis" )
 
             if hAtipica[ "nUnidadesGratis" ] != 0
                aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }

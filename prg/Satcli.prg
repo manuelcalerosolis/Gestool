@@ -4335,7 +4335,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
    local aClo     
    local nRec     
    local hAtipica
-   local aXbyStr  := { 0, 0 }
 
    oBtn:SetFocus()
 
@@ -4356,9 +4355,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       return nil
    end if
 
-   /*
-   Comprobamos si tiene que introducir números de serie------------------------
-   */
+   //Comprobamos si tiene que introducir números de serie------------------------
 
    if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], D():Articulos( nView ), "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
       MsgStop( "Tiene que introducir números de serie para este artículo." )
@@ -4385,8 +4382,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
    // Recno--------------------------------------------------------------------
 
-   nRec        := ( dbfTmpLin )->( RecNo() )
-   aClo        := aClone( aTmp )
+   nRec                 := ( dbfTmpLin )->( RecNo() )
+   aClo                 := aClone( aTmp )
 
    // Situaciones atipicas-----------------------------------------------------
 
@@ -4405,26 +4402,24 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
       // Propiedades ----------------------------------------------------------
 
-      if !empty( oBrwPrp:Cargo )
+      if !empty( oBrwProperties:Cargo )
 
-         for n := 1 to len( oBrwPrp:Cargo )
+         for n := 1 to len( oBrwProperties:Cargo )
 
-            for i := 1 to len( oBrwPrp:Cargo[ n ] )
+            for i := 1 to len( oBrwProperties:Cargo[ n ] )
 
-               if IsNum( oBrwPrp:Cargo[ n, i ]:Value ) .and. oBrwPrp:Cargo[ n, i ]:Value != 0
+               if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
-                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmp )
-                  aTmp[ _NUNICAJA]     := oBrwPrp:Cargo[ n, i ]:Value
-                  aTmp[ _CCODPR1 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad1
-                  aTmp[ _CVALPR1 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad1
-                  aTmp[ _CCODPR2 ]     := oBrwPrp:Cargo[ n, i ]:cCodigoPropiedad2
-                  aTmp[ _CVALPR2 ]     := oBrwPrp:Cargo[ n, i ]:cValorPropiedad2
+                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
+                  aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
+                  aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
+                  aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
+                  aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
 
-                  WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
+                  // 
 
-                  if aClo[ _LKITART ]
-                     AppendKit( aClo, aTmpSat )
-                  end if
+                  saveDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
 
                end if
 
@@ -4432,34 +4427,17 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          next
 
-         aCopy( dbBlankRec( dbfTmp ), aTmp )
+         aCopy( dbBlankRec( dbfTmpLin ), aTmp )
 
          aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
       else
 
-         WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
-         if aClo[ _LKITART ]
-            AppendKit( aClo, aTmpSat )
-         end if
-
-      end if
-
-
-         /*
-         Guardamos el registro de manera normal
-         */
-
+         saveDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
 
       end if
 
    else
-
-
-      /*
-      Guardamos el registro de manera normal-----------------------------------
-      */
 
       WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
@@ -4467,9 +4445,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
    ( dbfTmpLin )->( dbGoTo( nRec ) )
 
-   /*
-   Si estamos a¤adiendo y hay entradas continuas
-   */
+   // Si estamos añadiendo y hay entradas continuas--------------------------------
 
    cOldCodArt                          := ""
    cOldUndMed                          := ""
@@ -4478,9 +4454,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       aGet[ _CUNIDAD ]:lValid()
    end if
 
-   /*
-   Liberacion del bitmap-------------------------------------------------------
-   */
+   // Liberacion del bitmap-------------------------------------------------------
 
    if bmpImage != nil
       bmpImage:Hide()
@@ -4508,6 +4482,77 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
    end if
 
 RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+Static Function saveDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
+
+   local hAtipica
+   local nCajasGratis         := 0
+   local nUnidadesGratis      := 0
+
+   // Atipicas ----------------------------------------------------------------
+
+   hAtipica                   := hAtipica( hValue( aTmp, aTmpSat ) )
+   if !empty( hAtipica ) .and. hhaskey( hAtipica, "nTipoXY" ) .and. hhaskey( hAtipica, "nUnidadesGratis" )
+
+      msgAlert( hb_valtoexp( hAtipica ), "hAtipica" )
+
+      if hAtipica[ "nUnidadesGratis" ] != 0
+         if hAtipica[ "nTipoXY" ] == 1
+            nCajasGratis      := hAtipica[ "nUnidadesGratis" ] 
+         else
+            nUnidadesGratis   := hAtipica[ "nUnidadesGratis" ] 
+         end if 
+      end if
+   end if
+
+   // unidades gratis ---------------------------------------------------------
+
+   if nCajasGratis != 0
+      aTmp[ _NCANENT ]        -= nCajasGratis
+      commitDetail( @aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode )
+
+      aTmp[ _NCANENT ]        := nCajasGratis
+      aTmp[ _NPREDIV ]        := 0
+      aTmp[ _NDTO    ]        := 0
+      aTmp[ _NDTODIV ]        := 0
+      aTmp[ _NDTOPRM ]        := 0
+      aTmp[ _NCOMAGE ]        := 0
+   end if 
+
+   // unidades gratis ---------------------------------------------------------
+
+   if nUnidadesGratis != 0
+      if ( aTmp[ _NUNICAJA ] < 0, aTmp[ _NUNICAJA ] += nUnidadesGratis, aTmp[ _NUNICAJA ] -= nUnidadesGratis )
+      commitDetail( @aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode )
+
+      if ( aTmp[ _NUNICAJA ] < 0, aTmp[ _NUNICAJA ] := - nUnidadesGratis, aTmp[ _NUNICAJA ] := nUnidadesGratis )
+      aTmp[ _NPREDIV ]        := 0
+      aTmp[ _NDTO    ]        := 0
+      aTmp[ _NDTODIV ]        := 0
+      aTmp[ _NDTOPRM ]        := 0
+      aTmp[ _NCOMAGE ]        := 0
+   end if 
+
+   commitDetail( @aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
+
+Return nil
+
+//--------------------------------------------------------------------------//
+
+Static Function commitDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
+
+   msgAlert( hb_valtoexp( aGet ), "aGet" )
+   msgAlert( hb_valtoexp( aTmp ), "aTmp" )
+
+   WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
+
+   if ( nMode == APPD_MODE ) .and. ( aClo[ _LKITART ] )
+      appendKit( aClo, aTmpSat )
+   end if
+
+Return nil
 
 //--------------------------------------------------------------------------//
 
