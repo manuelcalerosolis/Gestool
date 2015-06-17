@@ -4251,8 +4251,6 @@ Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
    D():setStatusOfertas( nView )
 
-   MSGaLERT( HB_VALTOEXP( sPrecio:say() ) )
-
 RETURN ( sPrecio )
 
 //---------------------------------------------------------------------------//
