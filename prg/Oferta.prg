@@ -4171,20 +4171,6 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-CLASS sPrecioOferta
-
-   DATA nPrecio                       INIT 0
-   DATA nDtoPorcentual                INIT 0
-   DATA nDtoLineal                    INIT 0
-
-   METHOD say()                        INLINE ( "nPrecio" + str( ::nPrecio ) + CRLF +;
-                                                "nDtoPorcentual" + str( ::nDtoPorcentual ) + CRLF +;
-                                                "nDtoLineal" + str( ::nDtoLineal ) )
-
-ENDCLASS
-
-//---------------------------------------------------------------------------//
-
 Function structOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView  )
 
    local sOfertaArticulo
@@ -4226,8 +4212,6 @@ Return ( sOfertaArticulo )
 Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
    local sPrecio
-   local nPrecioOferta     := 0
-   local nPrecioAnterior   := 0
 
    D():getStatusOfertas( nView )
    ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
@@ -4238,30 +4222,24 @@ Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
       while ( D():Ofertas( nView ) )->cArtOfe + ( D():Ofertas( nView ) )->cCodPr1 + ( D():Ofertas( nView ) )->cCodPr2 + ( D():Ofertas( nView ) )->cValPr1 + ( D():Ofertas( nView ) )->cValPr2 == hLinea[ "Articulo" ] + hLinea[ "CodigoPropiedad1" ] + hLinea[ "CodigoPropiedad2" ] + hLinea[ "ValorPropiedad1" ] + hLinea[ "ValorPropiedad2" ] .and. !( D():Ofertas( nView ) )->( eof() )
 
-         // Comprobamos si esta entre las fechas-------------------------------
-
-         // msgAlert( isOfertaArticulo( nView ), "isOfertaArticulo" )
-         // msgAlert( isValidFecha( hCabecera, nView ), "isValidFecha" )
-         // msgAlert( isOfertaPrecio( nView ), "isOfertaPrecio" )
-         // msgAlert( isValidClient( hCabecera, nView ), "isValidClient" )
-         // msgAlert( isImporteMinimo( nTotalLinea, nView ), "isImporteMinimo" )
-         // msgAlert( isCajasMinimas( hLinea[ "Cajas" ], nView ), "isCajasMinimas" )
-         // msgAlert( isUnidadesMinimas( hLinea[ "Unidades" ], nView ) , "isUnidadesMinimas")
+         //msgAlert( "while" )
+         //msgAlert( isOfertaArticulo( nView ), "Oferta" )
+         //msgAlert( isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ), "Condiciones" )
+         //msgAlert( isOfertaArticulo( nView ), "isOfertaArticulo" )
+         //msgAlert( isValidFecha( hCabecera, nView ), "isValidFecha" )
+         //msgAlert( isOfertaPrecio( nView ), "isOfertaPrecio" )
+         //msgAlert( isValidClient( hCabecera, nView ), "isValidClient" )
+         //msgAlert( isImporteMinimo( nTotalLinea, nView ), "isImporteMinimo" )
+         //msgAlert( isCajasMinimas( hLinea[ "Cajas" ], nView ), "isCajasMinimas" )
+         //msgAlert( isUnidadesMinimas( hLinea[ "Unidades" ], nView ) , "isUnidadesMinimas")
 
          if isOfertaArticulo( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView )
 
             // Comprobamos que no vayamos a vender mas articulos que los del lote
 
-            nPrecioOferta              := getPrecioOferta( hLinea[ "Tarifa" ], hLinea[ "ImpuestosIncluidos" ], nView )
-
-            if nPrecioAnterior == 0 .or. nPrecioOferta < nPrecioAnterior
-               sPrecio                 := sPrecioOferta()
-               sPrecio:nPrecio         := nPrecioOferta
-               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
-               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
+            if empty( sPrecio ) .or. ( sPrecio:nPrecio >= sPrecioOferta():getPrecio( hLinea, nView ) )
+               sPrecio        := sPrecioOferta():get( hLinea, nView )
             end if
-
-            nPrecioAnterior            := nPrecioOferta
 
          end if
 
@@ -4273,6 +4251,8 @@ Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
    D():setStatusOfertas( nView )
 
+   MSGaLERT( HB_VALTOEXP( sPrecio:say() ) )
+
 RETURN ( sPrecio )
 
 //---------------------------------------------------------------------------//
@@ -4281,7 +4261,6 @@ FUNCTION hOfertaFamilia( hCabecera, hLinea, nTotalLinea, nView )
 
    local sPrecio
    local cCodigoFamilia
-   local nPorcentajeAnterior  := 0
 
    cCodigoFamilia             := padr( hLinea[ "Familia" ], 18 )
 
@@ -4294,13 +4273,9 @@ FUNCTION hOfertaFamilia( hCabecera, hLinea, nTotalLinea, nView )
 
          if isOfertaFamilia( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView )  
 
-            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
-               sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
-               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
-            end if   
-
-            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
+            if empty( sPrecio ) .or. ( sPrecio:nDtoPorcentual >= sPrecioOferta():getDtoPorcentual( nView ) )
+               sPrecio        := sPrecioOferta():get( hLinea, nView )
+            end if
 
          end if
 
@@ -4320,7 +4295,6 @@ Static Function hOfertaTipoArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
    local sPrecio
    local cCodigoTipo
-   local nPorcentajeAnterior  := 0
 
    D():getStatusOfertas( nView )
    ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
@@ -4333,13 +4307,9 @@ Static Function hOfertaTipoArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
          if isOfertaTipoArticulo( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
 
-            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
-               sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
-               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
+            if empty( sPrecio ) .or. ( sPrecio:nDtoPorcentual >= sPrecioOferta():getDtoPorcentual( nView ) )
+               sPrecio        := sPrecioOferta():get( hLinea, nView )
             end if
-
-            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
 
          end if
 
@@ -4358,27 +4328,22 @@ RETURN sPrecio
 FUNCTION hOfertaCategoria( hCabecera, hLinea, nTotalLinea, nView )
 
    local sPrecio
-   local cCodigoTemporada
-   local nPorcentajeAnterior  := 0
+   local cCodigoCategoria
 
    D():getStatusOfertas( nView )
    ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
 
-   cCodigoTemporada           := retFld( hLinea[ "Articulo" ], D():Articulos( nView ), "cCodTemp" )
+   cCodigoCategoria           := retFld( hLinea[ "Articulo" ], D():Articulos( nView ), "cCodTemp" )
 
-   if ( D():Ofertas( nView ) )->( dbSeek( cCodigoTemporada ) )
+   if ( D():Ofertas( nView ) )->( dbSeek( cCodigoCategoria ) )
 
-      while ( D():Ofertas( nView ) )->cArtOfe  == cCodigoTemporada .and. !( D():Ofertas( nView ) )->( Eof() )
+      while ( D():Ofertas( nView ) )->cArtOfe  == cCodigoCategoria .and. !( D():Ofertas( nView ) )->( Eof() )
 
          if isOfertaTemporada( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
 
-            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
-               sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
-               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
+            if empty( sPrecio ) .or. ( sPrecio:nDtoPorcentual >= sPrecioOferta():getDtoPorcentual( nView ) )
+               sPrecio        := sPrecioOferta():get( hLinea, nView )
             end if
-
-            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
 
          end if
 
@@ -4398,7 +4363,6 @@ FUNCTION hOfertaTemporada( hCabecera, hLinea, nTotalLinea, nView )
 
    local sPrecio
    local cCodigoTemporada
-   local nPorcentajeAnterior  := 0
 
    D():getStatusOfertas( nView )
    ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
@@ -4411,13 +4375,9 @@ FUNCTION hOfertaTemporada( hCabecera, hLinea, nTotalLinea, nView )
 
          if isOfertaTemporada( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
 
-            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
-               sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
-               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
+            if empty( sPrecio ) .or. ( sPrecio:nDtoPorcentual >= sPrecioOferta():getDtoPorcentual( nView ) )
+               sPrecio        := sPrecioOferta():get( hLinea, nView )
             end if
-
-            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
 
          end if
 
@@ -4437,7 +4397,6 @@ FUNCTION hOfertaFabricante( hCabecera, hLinea, nTotalLinea, nView )
 
    local sPrecio
    local cCodigoFabricante
-   local nPorcentajeAnterior  := 0
 
    D():getStatusOfertas( nView )
    ( D():Ofertas( nView ) )->( ordSetFocus( "cArtOfe" ) )
@@ -4450,13 +4409,9 @@ FUNCTION hOfertaFabricante( hCabecera, hLinea, nTotalLinea, nView )
 
          if isOfertaFabricante( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ) 
 
-            if nPorcentajeAnterior == 0 .or. ( D():Ofertas( nView ) )->nDtoPct > nPorcentajeAnterior
-               sPrecio                 := sPrecioOferta()
-               sPrecio:nDtoPorcentual  := ( D():Ofertas( nView ) )->nDtoPct
-               sPrecio:nDtoLineal      := ( D():Ofertas( nView ) )->nDtoLin
+            if empty( sPrecio ) .or. ( sPrecio:nDtoPorcentual >= sPrecioOferta():getDtoPorcentual( nView ) )
+               sPrecio        := sPrecioOferta():get( hLinea, nView )
             end if
-
-            nPorcentajeAnterior        := ( D():Ofertas( nView ) )->nDtoPct
 
          end if
 
@@ -4475,6 +4430,12 @@ RETURN sPrecio
 Static Function getPrecioOferta( nTarifa, lIvaIncluido, nView )
 
    local nPrecioOferta  := 0
+
+   // Oferta de tipo X*Y-------------------------------------------------------
+
+   if ( D():Ofertas( nView ) )->nTipOfe == 2
+      Return ( nPrecioOferta )
+   end if 
 
    do case
       case nTarifa == 1
@@ -4577,13 +4538,64 @@ Return ( ( D():Ofertas( nView ) )->nMinCan == 2 .and. ( D():Ofertas( nView ) )->
 //---------------------------------------------------------------------------//
 
 Static Function isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView )
-Return ( isValidFecha( hCabecera, nView ) .and. ;
-         isOfertaPrecio( nView ) .and. ;
-         isValidClient( hCabecera, nView ) .and.;
-         (  isImporteMinimo( nTotalLinea, nView ) .or.;
-            isCajasMinimas( hLinea[ "Cajas" ], nView ) .or.;
-            isUnidadesMinimas( hLinea[ "Unidades" ], nView ) ) )
+Return   (  isValidFecha( hCabecera, nView ) .and. ;
+            isValidClient( hCabecera, nView ) .and.;
+            (  isImporteMinimo( nTotalLinea, nView ) .or.;
+               isCajasMinimas( hLinea[ "Cajas" ], nView ) .or.;
+               isUnidadesMinimas( hLinea[ "Unidades" ], nView ) ) )
 
 //---------------------------------------------------------------------------//
 
+CLASS sPrecioOferta
 
+   DATA nPrecio                        INIT 0
+   DATA nDtoPorcentual                 INIT 0
+   DATA nDtoLineal                     INIT 0
+   DATA nCajasGratis                   INIT 0
+   DATA nUnidadesGratis                INIT 0
+
+   METHOD say()                        INLINE ( "nPrecio" + str( ::nPrecio ) + CRLF +;
+                                                "nDtoPorcentual" + str( ::nDtoPorcentual ) + CRLF +;
+                                                "nDtoLineal" + str( ::nDtoLineal ) + CRLF +;
+                                                "nCajasGratis " + str( ::nCajasGratis ) + CRLF +;
+                                                "nUnidadesGratis " + str( ::nUnidadesGratis ) )
+
+   METHOD get( nTarifa, nImpuestosIncluidos, nView )
+   METHOD getPrecio( hLinea, nView ) ;
+                                       INLINE ( getPrecioOferta( hLinea[ "Tarifa" ], hLinea[ "ImpuestosIncluidos" ], nView ) )
+   METHOD getDtoPorcentual( nView )    INLINE ( ( D():Ofertas( nView ) )->nDtoPct )
+   METHOD getDtoLineal( nView )        INLINE ( ( D():Ofertas( nView ) )->nDtoLin )
+
+   METHOD isImporte()                  INLINE ( ::nPrecio != 0 .or. ::nDtoPorcentual != 0 .or. ::nDtoLineal != 0 )
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD get( hLinea, nView ) CLASS sPrecioOferta
+
+   local nDifrenciaUnidades
+
+   ::nDtoPorcentual        := ::getDtoPorcentual( nView )
+   ::nDtoLineal            := ::getDtoLineal( nView )
+         
+   if ( D():Ofertas( nView ) )->nTipOfe == 1
+
+      ::nPrecio            := ::getPrecio( hLinea, nView )
+   
+   else 
+
+      nDifrenciaUnidades   := ( D():Ofertas( nView ) )->nUnvOfe - ( D():Ofertas( nView ) )->nUncOfe
+
+      if ( D():Ofertas( nView ) )->nTipXbY == 1
+         ::nCajasGratis    := int( div( hLinea[ "Cajas" ], ( D():Ofertas( nView ) )->nUnvOfe ) ) * nDifrenciaUnidades
+      end if 
+      if ( D():Ofertas( nView ) )->nTipXbY == 2
+         ::nUnidadesGratis := int( div( hLinea[ "Unidades" ], ( D():Ofertas( nView ) )->nUnvOfe ) ) * nDifrenciaUnidades
+      end if 
+
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//

@@ -4488,32 +4488,41 @@ RETURN NIL
 Static Function saveDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
 
    local hAtipica
+   local sOfertaArticulo
    local nCajasGratis         := 0
    local nUnidadesGratis      := 0
 
    // Atipicas ----------------------------------------------------------------
 
    hAtipica                   := hAtipica( hValue( aTmp, aTmpSat ) )
-   if !empty( hAtipica ) .and. hhaskey( hAtipica, "nTipoXY" ) .and. hhaskey( hAtipica, "nUnidadesGratis" )
-
-      msgAlert( hb_valtoexp( hAtipica ), "hAtipica" )
-
-      if hAtipica[ "nUnidadesGratis" ] != 0
-         if hAtipica[ "nTipoXY" ] == 1
-            nCajasGratis      := hAtipica[ "nUnidadesGratis" ] 
-         else
-            nUnidadesGratis   := hAtipica[ "nUnidadesGratis" ] 
-         end if 
+   if !empty( hAtipica ) 
+      if hhaskey( hAtipica, "nCajasGratis" ) .and. hget( hAtipica, "nCajasGratis" ) != 0
+         nCajasGratis         := hget( hAtipica, "nCajasGratis" ) 
+      end if 
+      if hhaskey( hAtipica, "nUnidadesGratis" ) .and. hget( hAtipica, "nUnidadesGratis" ) != 0
+         nUnidadesGratis      := hget( hAtipica, "nUnidadesGratis" ) 
       end if
    end if
 
-   // unidades gratis ---------------------------------------------------------
+   // Ofertas------------------------------------------------------------------
+
+   if empty( nCajasGratis ) .and. empty( nUnidadesGratis )
+      sOfertaArticulo         := structOfertaArticulo( D():getHashArray( aTmpSat, "SatCliT", nView ), D():getHashArray( aTmp, "SatCliL", nView ), nTotLSatCli( aTmp ), nView )
+      if !empty( sOfertaArticulo ) 
+         nCajasGratis         := sOfertaArticulo:nCajasGratis
+         nUnidadesGratis      := sOfertaArticulo:nUnidadesGratis
+      end if
+   end if 
+
+   // Cajas gratis ---------------------------------------------------------
 
    if nCajasGratis != 0
-      aTmp[ _NCANENT ]        -= nCajasGratis
-      commitDetail( @aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode )
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NCANSAT ]        -= nCajasGratis
+      commitDetail( aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode, .f. )
 
-      aTmp[ _NCANENT ]        := nCajasGratis
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NCANSAT ]        := nCajasGratis
       aTmp[ _NPREDIV ]        := 0
       aTmp[ _NDTO    ]        := 0
       aTmp[ _NDTODIV ]        := 0
@@ -4524,10 +4533,13 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
    // unidades gratis ---------------------------------------------------------
 
    if nUnidadesGratis != 0
-      if ( aTmp[ _NUNICAJA ] < 0, aTmp[ _NUNICAJA ] += nUnidadesGratis, aTmp[ _NUNICAJA ] -= nUnidadesGratis )
-      commitDetail( @aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode )
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NUNICAJA]        -= nUnidadesGratis 
 
-      if ( aTmp[ _NUNICAJA ] < 0, aTmp[ _NUNICAJA ] := - nUnidadesGratis, aTmp[ _NUNICAJA ] := nUnidadesGratis )
+      commitDetail( aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode, .f. )
+
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NUNICAJA]        := nUnidadesGratis 
       aTmp[ _NPREDIV ]        := 0
       aTmp[ _NDTO    ]        := 0
       aTmp[ _NDTODIV ]        := 0
@@ -4535,18 +4547,15 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
       aTmp[ _NCOMAGE ]        := 0
    end if 
 
-   commitDetail( @aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
+   commitDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
 
 Return nil
 
 //--------------------------------------------------------------------------//
 
-Static Function commitDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
+Static Function commitDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode, lEmpty )
 
-   msgAlert( hb_valtoexp( aGet ), "aGet" )
-   msgAlert( hb_valtoexp( aTmp ), "aTmp" )
-
-   WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
+   winGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, lEmpty )
 
    if ( nMode == APPD_MODE ) .and. ( aClo[ _LKITART ] )
       appendKit( aClo, aTmpSat )
@@ -7085,7 +7094,7 @@ STATIC FUNCTION RecSatCli( aTmpSat )
                ( dbfTmpLin )->nDtoDiv  := sOfertaArticulo:nDtoLineal 
             end if 
             
-            ( dbfTmpLin )->lLinOfe     := .t.
+            ( dbfTmpLin )->lLinOfe     := sOfertaArticulo:isImporte()
 
          end if 
 

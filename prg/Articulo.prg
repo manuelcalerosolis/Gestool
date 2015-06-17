@@ -20376,7 +20376,7 @@ RETURN NIL
 Function nDescuentoArticulo( cCodArt, cCodCli, nView )
 
    local nDescuento  := 0
-   local nNumDto    := RetFld( cCodCli, D():Clientes( nView ), "nDtoArt" )
+   local nNumDto     := retFld( cCodCli, D():Clientes( nView ), "nDtoArt" )
 
    if Empty( nNumDto )
       Return 0
@@ -20388,23 +20388,22 @@ Function nDescuentoArticulo( cCodArt, cCodCli, nView )
 
    do case
       case nNumDto == 1
-            nDescuento     := ( D():Articulos( nView ) )->nDtoArt1
+         nDescuento  := ( D():Articulos( nView ) )->nDtoArt1
          
       case nNumDto == 2
-            nDescuento     := ( D():Articulos( nView ) )->nDtoArt2
+         nDescuento  := ( D():Articulos( nView ) )->nDtoArt2
 
       case nNumDto == 3
-            nDescuento     := ( D():Articulos( nView ) )->nDtoArt3
+         nDescuento  := ( D():Articulos( nView ) )->nDtoArt3
 
       case nNumDto == 4
-            nDescuento     := ( D():Articulos( nView ) )->nDtoArt4
+         nDescuento  := ( D():Articulos( nView ) )->nDtoArt4
 
       case nNumDto == 5
-            nDescuento     := ( D():Articulos( nView ) )->nDtoArt5
+         nDescuento  := ( D():Articulos( nView ) )->nDtoArt5
 
       case nNumDto == 6
-            nDescuento     := ( D():Articulos( nView ) )->nDtoArt6
-
+         nDescuento  := ( D():Articulos( nView ) )->nDtoArt6
    end case
 
 Return nDescuento

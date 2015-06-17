@@ -12512,36 +12512,6 @@ Function hAtipica( hValue )
 
    nRec              		:= ( D():Atipicas( hValue[ "nView" ] ) )->( Recno() )
 
-   /*
-   Buscamos por articulo-------------------------------------------------------
-   */
-   
-   /*?"1"
-
-   if !Empty( hValue[ "cCodigoCliente" ] )
-
-      ?"2"
-
-      if dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cCliArt", D():Atipicas( hValue[ "nView" ] ) )
-         
-         ?"3"
-
-         ?lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] )
-         ?lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-         if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-            lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-            ?"Tengo Tarifa a aplicar"
-
-            hAtipica       := hValoresAtipica( hValue, hAtipica )
-
-         end if
-
-      end if 
-
-   end if*/
-
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cCliArt" ) )
 
    if !Empty( hValue[ "cCodigoCliente" ] )
@@ -12567,25 +12537,6 @@ Function hAtipica( hValue )
    end if
 
    ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( nOrdAnt ) )
-
-   /*if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. hhaskey( hAtipica, "nImporte" ) .and. empty( hAtipica[ "nImporte" ] ) )
-
-      if !Empty( hValue[ "cCodigoGrupo" ] )
-
-         if dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ], "cGrpArt", D():Atipicas( hValue[ "nView" ] ) )
-
-            if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-               lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-               hAtipica    := hValoresAtipica( hValue, hAtipica )
-
-            end if   
-         
-         end if
-
-      end if 
-   
-   end if */
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cGrpArt" ) )
 
@@ -12621,21 +12572,6 @@ Function hAtipica( hValue )
    Buscamos por familia--------------------------------------------------------
    */
 
-   /*if !Empty( hValue[ "cCodigoCliente" ] )
-
-      if !Empty( hValue[ "cCodigoFamilia" ] )         .and.;
-         dbSeekInOrd( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ], "cCodFam", D():Atipicas( hValue[ "nView" ] ) )
-         
-         if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-            lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-            hAtipica       := hValoresAtipica( hValue, hAtipica )
-
-         end if
-
-      end if 
-
-   end if */
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cCodFam" ) )
 
@@ -12666,26 +12602,6 @@ Function hAtipica( hValue )
    end if
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( nOrdAnt ) )
-
-   /*if !Empty( hValue[ "cCodigoGrupo" ] )
-
-      if Empty( hAtipica ) .or. ( !Empty( hAtipica ) .and. empty( hAtipica[ "nDescuentoPorcentual" ] ) )
-
-         if !Empty( hValue[ "cCodigoFamilia" ] )         .and.;
-            dbSeekInOrd( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ], "cGrpFam", D():Atipicas( hValue[ "nView" ] ) )
-
-            if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-               lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-               hAtipica    := hValoresAtipica( hValue, hAtipica )
-
-            end if  
-         
-         end if 
-      
-      end if
-
-   end if   */
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cGrpFam" ) )
 
@@ -12730,12 +12646,12 @@ Function hAtipica( hValue )
          do case
             case hAtipica[ "nTipoXY" ] == 1     //Cajas
 
-               nModOferta                       := Int( Div( hValue[ "nCajas" ], hAtipica[ "nUnidadesVender" ] ) )
-               hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
+               nModOferta                          := Int( Div( hValue[ "nCajas" ], hAtipica[ "nUnidadesVender" ] ) )
+               hAtipica[ "nCajasGratis" ]          := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
 
             case hAtipica[ "nTipoXY" ] == 2     //Unidades
 
-               if mod( hValue[ "nCajas" ] * hValue[ "nUnidades" ], hAtipica["nUnidadesVender"] ) == 0
+               if mod( hValue[ "nCajas" ] * hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) == 0
 
                   nModOferta                       := Int( Div( hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) )
                   hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
