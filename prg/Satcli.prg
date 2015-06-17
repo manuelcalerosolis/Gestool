@@ -4385,12 +4385,13 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
    nRec                 := ( dbfTmpLin )->( RecNo() )
    aClo                 := aClone( aTmp )
 
+   aTmp[ _NREQ ]        := nPReq( dbfIva, aTmp[ _NIVA ] )
+
    // Situaciones atipicas-----------------------------------------------------
 
    if nMode == APPD_MODE
 
       aTmp[ _CREF ]     := cCodArt
-      aTmp[ _NREQ ]     := nPReq( dbfIva, aTmp[ _NIVA ] )
 
       if aTmp[ _LLOTE ]
          saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
@@ -4471,6 +4472,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
       SysRefresh()
 
+      aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+      aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+
       if !Empty( aGet[ _CREF ] )
          aGet[ _CREF ]:SetFocus()
       end if
@@ -4519,7 +4523,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
    if nCajasGratis != 0
       aTmp[ _LLINOFE ]        := .t.
       aTmp[ _NCANSAT ]        -= nCajasGratis
-      commitDetail( aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode, .f. )
+      commitDetail( aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode )
 
       aTmp[ _LLINOFE ]        := .t.
       aTmp[ _NCANSAT ]        := nCajasGratis
@@ -4536,7 +4540,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
       aTmp[ _LLINOFE ]        := .t.
       aTmp[ _NUNICAJA]        -= nUnidadesGratis 
 
-      commitDetail( aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode, .f. )
+      commitDetail( aTmp, aClo, nil, aTmpSat, dbfTmpLin, oBrw, nMode )
 
       aTmp[ _LLINOFE ]        := .t.
       aTmp[ _NUNICAJA]        := nUnidadesGratis 
@@ -4553,9 +4557,9 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-Static Function commitDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode, lEmpty )
+Static Function commitDetail( aTmp, aClo, aGet, aTmpSat, dbfTmpLin, oBrw, nMode )
 
-   winGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, lEmpty )
+   winGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, .f. )
 
    if ( nMode == APPD_MODE ) .and. ( aClo[ _LKITART ] )
       appendKit( aClo, aTmpSat )
@@ -5846,31 +5850,41 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
          */
 
          if Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+            
             aGet[ _NPREDIV ]:HardEnable()
             aGet[ _NDTO    ]:HardEnable()
             aGet[ _NDTOPRM ]:HardEnable()
+            
             if aGet[ _NIMPTRN ] != nil
                aGet[ _NIMPTRN ]:HardEnable()
             end if
+            
             if aGet[ _NPNTVER ] != nil
                aGet[ _NPNTVER ]:HardEnable()
             end if
+            
             if aGet[ _NDTODIV ] != nil
                aGet[ _NDTODIV ]:HardEnable()
             end if
+
          else
+            
             aGet[ _NPREDIV ]:HardDisable()
             aGet[ _NDTO    ]:HardDisable()
             aGet[ _NDTOPRM ]:HardDisable()
+            
             if aGet[ _NIMPTRN ] != nil
                aGet[ _NIMPTRN ]:HardDisable()
             end if
+            
             if aGet[ _NPNTVER ] != nil
                aGet[ _NPNTVER ]:HardDisable()
             end if
+            
             if aGet[ _NDTODIV ] != nil
                aGet[ _NDTODIV ]:HardDisable()
             end if
+
          end if
 
       else

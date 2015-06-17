@@ -473,6 +473,8 @@ static aEstadoProduccion   := { "Producido", "En producción", "Pendiente de prod
 
 static oMailing
 
+static oBrwProperties
+
 //---------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
 //---------------------------------------------------------------------------//
@@ -4176,7 +4178,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
    local oEstadoProduccion
    local cEstadoProduccion 
 
-
    do case
    case nMode == APPD_MODE
 
@@ -4190,7 +4191,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       aTmp[ _LIVALIN    ] 	:= aTmpPed[ _LIVAINC ]
       aTmp[ _NTARLIN    ] 	:= oGetTarifa:getTarifa()
       aTmp[ _DFECCAD    ] 	:= Ctod( "" )
-	  aTmp[ _NPRODUC    ]	:= 0
+      aTmp[ _NPRODUC    ]	:= 0
       aTmp[ __DFECSAL   ] 	:= aTmpPed[ _DFECSAL ]
       aTmp[ __DFECENT   ] 	:= aTmpPed[ _DFECENTR]
       aTmp[ __LALQUILER ]	:= !Empty( oTipPed ) .and. ( oTipPed:nAt == 2 )
@@ -4271,47 +4272,23 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
    DEFINE DIALOG oDlg RESOURCE "LFACCLI" TITLE LblTitle( nMode ) + "lineas a pedidos de clientes"
 
-      if aTmp[ __LALQUILER ]
-
-         REDEFINE FOLDER oFld ;
-            ID       400 ;
-            OF       oDlg ;
-            PROMPT   "&General",;
-                     "Da&tos",;
-                     "R&ecepciones",;
-                     "Reser&vas",;
-                     "Entre&gas",;
-                     "&Anular",;
-                     "&Observaciones" ;
-            DIALOGS  "LPRECLI_4",;
-                     "LPEDCLI_2",;
-                     "LPEDCLI_6",;
-                     "LPEDCLI_4",;
-                     "LPEDCLI_5",;
-                     "LPEDCLI_3",;
-                     "LFACCLI_3"
-
-      else
-
-         REDEFINE FOLDER oFld ;
-            ID       400 ;
-            OF       oDlg ;
-            PROMPT   "&General",;
-                     "Da&tos",;
-                     "R&ecepciones",;
-                     "Reser&vas",;
-                     "Entre&gas",;
-                     "&Anular",;
-                     "&Observaciones" ;
-            DIALOGS  "LFACCLI_1",;
-                     "LPEDCLI_2",;
-                     "LPEDCLI_6",;
-                     "LPEDCLI_4",;
-                     "LPEDCLI_5",;
-                     "LPEDCLI_3",;
-                     "LFACCLI_3"
-
-      end if
+      REDEFINE FOLDER oFld ;
+         ID       400 ;
+         OF       oDlg ;
+         PROMPT   "&General",;
+                  "Da&tos",;
+                  "R&ecepciones",;
+                  "Reser&vas",;
+                  "Entre&gas",;
+                  "&Anular",;
+                  "&Observaciones" ;
+         DIALOGS  "LFACCLI_1",;
+                  "LPEDCLI_2",;
+                  "LPEDCLI_6",;
+                  "LPEDCLI_4",;
+                  "LPEDCLI_5",;
+                  "LPEDCLI_3",;
+                  "LFACCLI_3"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt;
 			ID 		100 ;
@@ -4322,7 +4299,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
+      REDEFINE GET aGet[ _CDETALLE ] ;
+         VAR      aTmp[ _CDETALLE ] ;
          ID       110 ;
          WHEN     ( ( lModDes() .or. Empty( aTmp[ _CDETALLE ] ) ) .AND. nMode != ZOOM_MODE );
          OF       oFld:aDialogs[1]
@@ -4332,16 +4310,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       -------------------------------------------------------------------------
       */
 
-      REDEFINE GET aGet[ _CLOTE ] VAR aTmp[ _CLOTE ];
+      REDEFINE GET aGet[ _CLOTE ] ;
+         VAR      aTmp[ _CLOTE ] ;
          ID       112 ;
          IDSAY    113 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-		OF 		oFld:aDialogs[1]
+         OF 		oFld:aDialogs[1]
 
    		aGet[ _CLOTE ]:bValid   := {|| oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) }
-
-      if !aTmp[ __LALQUILER ]
 
       REDEFINE GET oGetCaducidad VAR dGetCaducidad ;
          ID       340 ;
@@ -4350,20 +4327,35 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      end if
-
       REDEFINE GET aGet[ _MLNGDES ] VAR aTmp[ _MLNGDES ] ;
 			MEMO ;
 			ID 		111 ;
          WHEN     ( ( lModDes() .or. Empty( aTmp[ _MLNGDES ] ) ) .AND. nMode != ZOOM_MODE );
          OF       oFld:aDialogs[1]
 
-      /*
-      Propiedades
-      -------------------------------------------------------------------------
-      */
+      // Propiedades-------------------------------------------------
 
-      if !aTmp[ __LALQUILER ]
+      oBrwProperties                       := IXBrowse():New( oFld:aDialogs[1] )
+
+      oBrwProperties:nDataType             := DATATYPE_ARRAY
+
+      oBrwProperties:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwProperties:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwProperties:lHScroll              := .t.
+      oBrwProperties:lVScroll              := .t.
+
+      oBrwProperties:nMarqueeStyle         := 3
+      oBrwProperties:lRecordSelector       := .f.
+      oBrwProperties:lFastEdit             := .t.
+      oBrwProperties:nFreeze               := 1
+      oBrwProperties:lFooter               := .t.
+
+      oBrwProperties:SetArray( {}, .f., 0, .f. )
+
+      oBrwProperties:MakeTotals()
+
+      oBrwProperties:CreateFromResource( 500 )
 
       REDEFINE GET aGet[ _CVALPR1 ] VAR aTmp[ _CVALPR1 ];
          ID       270 ;
@@ -4405,8 +4397,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          WHEN     .f. ;
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
-
-      end if
 
       REDEFINE GET aGet[ _CUNIDAD ] VAR aTmp[ _CUNIDAD ] ;
          ID       170 ;
@@ -10279,9 +10269,10 @@ Return nil
 
 STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oEstadoProduccion, oBtn )
 
+   local n
+   local i 
    local aClo     
    local nRec
-   local aXbyStr 	:= { 0, 0 }
    local hAtipica
 
    oBtn:SetFocus()
@@ -10320,6 +10311,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
 
    // Estado de la produccion--------------------------------------------------
 
+   aTmp[ _NREQ ]                 := nPReq( D():TiposIva( nView ), aTmp[ _NIVA ] )
    aTmp[ _NPRODUC ]  				:= oEstadoProduccion:nAt - 1
 
    if nMode == APPD_MODE
@@ -10328,219 +10320,64 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
          saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
       end if
 
-      /*
-      Chequeamos las ofertas X * Y
-      */
+      // Propiedades ----------------------------------------------------------
 
-      /*
-      Buscamos si existen atipicas de clientes---------------------------------
-      */
+      if !empty( oBrwProperties:Cargo )
 
-      hAtipica := hAtipica( hValue( aTmp, aTmpPed ) )
+         for n := 1 to len( oBrwProperties:Cargo )
 
-      if !Empty( hAtipica )
+            for i := 1 to len( oBrwProperties:Cargo[ n ] )
 
-         if hhaskey( hAtipica, "nTipoXY" )               .and.;
-            hhaskey( hAtipica, "nUnidadesGratis" )
+               if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
-            if hAtipica[ "nUnidadesGratis" ] != 0
-               aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
-            end if
+                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
+                  aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
+                  aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
+                  aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
+                  aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
 
-         end if
+                  // 
 
-      end if
+                  saveDetail( aTmp, aClo, aGet, aTmpPed, dbfTmpLin, oBrw, nMode )
 
-      if aXbYStr[ 1 ] == 0
+               end if
 
-         /*
-         Chequeamos las ofertas por artículos X  *  Y--------------------------
-         */
+            next
 
-         if !aTmp[ _LLINOFE ]
-            aXbyStr  			:= nXbYOferta( aTmp[ _CREF ], aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 1 )
-            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por familia X  *  Y----------------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "Familia", "Codigo" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 2 )
-            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por tipo de artículos X  *  Y------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTIP", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 3 )
-            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por categoria X  *  Y--------------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODCATE", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 4 )
-            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por temporada X  *  Y--------------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTEMP", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 5 )
-            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por fabricante X  *  Y-------------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr  			:= nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODFAB", "CODIGO" ), aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NCANPED ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, 6 )
-            aTmp[ _LLINOFE ]  := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-      end if
-
-      /*
-      si tenemos q reagalar unidades
-      */
-
-      if aXbYStr[ 1 ] != 0 .and. aXbYStr[ 2 ] != 0
-
-         /*
-         Tenemos oferta vamos a ver de q tipo
-         */
-
-         if aXbYStr[ 1 ] == 1
-
-            /*
-            Ofertas de cajas
-            */
-
-            aTmp[ _NCANPED  ] -= aXbYStr[ 2 ]
-
-            WinGather( aTmp, , dbfTmpLin, oBrw, nMode, nil, .f. )
-
-            aTmp[ _NCANPED  ] := aXbYStr[ 2 ]
-            aTmp[ _NPREDIV  ] := 0
-            aTmp[ _NDTO ]     := 0
-            aTmp[ _NDTODIV ]  := 0
-            aTmp[ _NDTOPRM ]  := 0
-            aTmp[ _NCOMAGE ]  := 0
-
-            WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
-         else
-
-            /*
-            Restamos las unidades q vamos a regalar al total de unidades y guardamos primer registro
-            */
-
-            if aTmp[ _NUNICAJA ] < 0
-               aTmp[ _NUNICAJA ] += aXbYStr[ 2 ]
-            else
-               aTmp[ _NUNICAJA ] -= aXbYStr[ 2 ]
-            end if
-
-            WinGather( aTmp, , dbfTmpLin, oBrw, nMode, nil, .f. )
-
-            if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPed )
-            end if
-
-            if aTmp[ _NUNICAJA ] < 0
-               aTmp[ _NUNICAJA ] := -( aXbYStr[ 2 ] )
-            else
-               aTmp[ _NUNICAJA ] := aXbYStr[ 2 ]
-            end if
-
-            aTmp[ _NPREDIV  ] := 0
-            aTmp[ _NDTO ]     := 0
-            aTmp[ _NDTODIV ]  := 0
-            aTmp[ _NDTOPRM ]  := 0
-            aTmp[ _NCOMAGE ]  := 0
-
-            WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
-            if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPed )
-            end if
-
-         end if
+         next
 
       else
 
-         // Guardamos el registro de manera normal-----------------------------
-
-         WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
-         if aClo[ _LKITART ]
-            AppendKit( aClo, aTmpPed )
-         end if
+         saveDetail( aTmp, aClo, aGet, aTmpPed, dbfTmpLin, oBrw, nMode )
 
       end if
 
    else
 
-      aTmp[ _NREQ ]                    := nPReq( D():TiposIva( nView ), aTmp[ _NIVA ] )
-
-      /*
-      Eliminamos los elementos de tipo kit-------------------------------------
-      */
-
-      if aClo[ _LKITART ]
-			DbDelKit( oBrw, dbfTmpLin, aClo[ _NNUMLIN ] )	      
-	   end if
-
-      /*
-      Guardamos el registro de manera normal-----------------------------------
-      */
-
       WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
-      /*
-      Añadimos los kits--------------------------------------------------------
-      */
-
-      if aClo[ _LKITART ]
-         AppendKit( aClo, aTmpPed )
-      end if
 
    end if
 
    ( dbfTmpLin )->( dbGoTo( nRec ) )
 
-   /*
-	Si estamos a¤adiendo y hay entradas continuas-------------------------------
-	*/
+   // Si estamos añadiendo y hay entradas continuas--------------------------------
 
    cOldCodArt                          := ""
    cOldUndMed                          := ""
 
-   if !Empty( aGet[ _CUNIDAD ] )
+   if !empty( aGet[ _CUNIDAD ] )
       aGet[ _CUNIDAD ]:lValid()
    end if
 
-   /*
-   Liberacion del bitmap-------------------------------------------------------
-   */
+   // Liberacion del bitmap-------------------------------------------------------
 
    if !Empty( bmpImage )
       bmpImage:Hide()
       PalBmpFree( bmpImage:hBitmap, bmpImage:hPalette )
    end if
 
-	/*
-   Si estamos a¤adiendo y hay entradas continuas-------------------------------
-	*/
+   // Si estamos añadiendo y hay entradas continuas-------------------------------
 
    if nMode == APPD_MODE .AND. lEntCon()
 
@@ -10550,7 +10387,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
 
       SysRefresh()
 
-      if !Empty( aGet[ _CREF ] )
+      aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+      aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+
+      if !empty( aGet[ _CREF ] )
          aGet[ _CREF ]:SetFocus()
       end if
 
@@ -10561,6 +10401,86 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    end if
 
    CursorWE()
+
+Return nil
+
+//--------------------------------------------------------------------------//
+
+Static Function saveDetail( aTmp, aClo, aGet, aTmpPed, dbfTmpLin, oBrw, nMode )
+
+   local hAtipica
+   local sOfertaArticulo
+   local nCajasGratis         := 0
+   local nUnidadesGratis      := 0
+
+   // Atipicas ----------------------------------------------------------------
+
+   hAtipica                   := hAtipica( hValue( aTmp, aTmpPed ) )
+   if !empty( hAtipica ) 
+      if hhaskey( hAtipica, "nCajasGratis" ) .and. hget( hAtipica, "nCajasGratis" ) != 0
+         nCajasGratis         := hget( hAtipica, "nCajasGratis" ) 
+      end if 
+      if hhaskey( hAtipica, "nUnidadesGratis" ) .and. hget( hAtipica, "nUnidadesGratis" ) != 0
+         nUnidadesGratis      := hget( hAtipica, "nUnidadesGratis" ) 
+      end if
+   end if
+
+   // Ofertas------------------------------------------------------------------
+
+   if empty( nCajasGratis ) .and. empty( nUnidadesGratis )
+      sOfertaArticulo         := structOfertaArticulo( D():getHashArray( aTmpPed, "PedCliT", nView ), D():getHashArray( aTmp, "PedCliL", nView ), nTotLPedCli( aTmp ), nView )
+      if !empty( sOfertaArticulo ) 
+         nCajasGratis         := sOfertaArticulo:nCajasGratis
+         nUnidadesGratis      := sOfertaArticulo:nUnidadesGratis
+      end if
+   end if 
+
+   // Cajas gratis ---------------------------------------------------------
+
+   if nCajasGratis != 0
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NCANPED ]        -= nCajasGratis
+      commitDetail( aTmp, aClo, nil, aTmpPed, dbfTmpLin, oBrw, nMode, .f. )
+
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NCANPED ]        := nCajasGratis
+      aTmp[ _NPREDIV ]        := 0
+      aTmp[ _NDTO    ]        := 0
+      aTmp[ _NDTODIV ]        := 0
+      aTmp[ _NDTOPRM ]        := 0
+      aTmp[ _NCOMAGE ]        := 0
+   end if 
+
+   // unidades gratis ---------------------------------------------------------
+
+   if nUnidadesGratis != 0
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NUNICAJA]        -= nUnidadesGratis 
+
+      commitDetail( aTmp, aClo, nil, aTmpPed, dbfTmpLin, oBrw, nMode, .f. )
+
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NUNICAJA]        := nUnidadesGratis 
+      aTmp[ _NPREDIV ]        := 0
+      aTmp[ _NDTO    ]        := 0
+      aTmp[ _NDTODIV ]        := 0
+      aTmp[ _NDTOPRM ]        := 0
+      aTmp[ _NCOMAGE ]        := 0
+   end if 
+
+   commitDetail( aTmp, aClo, aGet, aTmpPed, dbfTmpLin, oBrw, nMode, .t. )
+
+Return nil
+
+//--------------------------------------------------------------------------//
+
+Static Function commitDetail( aTmp, aClo, aGet, aTmpPed, dbfTmpLin, oBrw, nMode, lEmpty )
+
+   winGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, .f. )
+
+   if ( nMode == APPD_MODE ) .and. ( aClo[ _LKITART ] )
+      appendKit( aClo, aTmpPed )
+   end if
 
 Return nil
 
@@ -10921,14 +10841,15 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
    local nDtoAge
    local cCodFam
    local cPrpArt
-   local nImpAtp     := 0
-   local nImpOfe     := 0
-   local nPrePro     := 0
-   local nNumDto     := 0
+   local nImpAtp              := 0
+   local nImpOfe              := 0
+   local nPrePro              := 0
+   local nDescuentoArticulo   := 0
+   local sOfertaArticulo
    local cProveedor
-   local lChgCodArt  := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
-   local nTarOld     := aTmp[ _NTARLIN ]
-   local dFecPed 		:= aTmpPed[ _DFECPED ]
+   local lChgCodArt           := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
+   local nTarOld              := aTmp[ _NTARLIN ]
+   local dFecPed              := aTmpPed[ _DFECPED ]
    local hAtipica
 
    DEFAULT lFocused  := .t.
@@ -10960,6 +10881,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
       if lFocused .and. !Empty( aGet[ _MLNGDES ] )
         aGet[ _MLNGDES ]:SetFocus()
+      end if
+
+      if !empty( oBrwProperties )
+         oBrwProperties:Hide()
       end if
 
    else
@@ -11291,68 +11216,80 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             Buscamos la familia del articulo y anotamos las propiedades-----------
             */
 
-            aTmp[_CCODPR1 ] := ( D():Articulos( nView ) )->cCodPrp1
-            aTmp[_CCODPR2 ] := ( D():Articulos( nView ) )->cCodPrp2
+            aTmp[ _CCODPR1 ]  := ( D():Articulos( nView ) )->cCodPrp1
+            aTmp[ _CCODPR2 ]  := ( D():Articulos( nView ) )->cCodPrp2
 
-            if !Empty( aTmp[ _CCODPR1 ] )
+            if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
 
-               if aGet[ _CVALPR1 ] != nil
-                  aGet[ _CVALPR1 ]:Show()
-                  if lFocused
-                     aGet[ _CVALPR1 ]:SetFocus()
+               aGet[ _NCANPED  ]:cText( 0 )
+               aGet[ _NUNICAJA ]:cText( 0 )
+
+               setPropertiesTable( cCodArt, 0, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwProperties, nView )
+
+            else 
+
+               if !Empty( aTmp[ _CCODPR1 ] )
+
+                  if aGet[ _CVALPR1 ] != nil
+                     aGet[ _CVALPR1 ]:Show()
+                     if lFocused
+                        aGet[ _CVALPR1 ]:SetFocus()
+                     end if
                   end if
+
+                  if oSayPr1 != nil
+                     oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
+                     oSayPr1:show()
+                  end if
+
+                  if oSayVp1 != nil
+                      oSayVp1:SetText( "" )
+                      oSayVp1:Show()
+                  end if
+
+               else
+
+                  if !Empty( aGet[ _CVALPR1 ] ) .and. !Empty( oSayPr1 ) .and. !Empty( oSayVp1 )
+                     aGet[ _CVALPR1 ]:hide()
+                     oSayPr1:hide()
+                     oSayVp1:hide()
+                  end if
+
                end if
 
-               if oSayPr1 != nil
-                  oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
-                  oSayPr1:show()
+               if !empty( aTmp[_CCODPR2 ] )
+
+                  if aGet[ _CVALPR2 ] != nil
+                     aGet[ _CVALPR2 ]:show()
+                  end if
+
+                  if oSayPr2 != nil
+                     oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
+                     oSayPr2:show()
+                  end if
+
+                  if oSayVp2 != nil
+                      oSayVp2:SetText( "" )
+                      oSayVp2:Show()
+                  end if
+
+               else
+
+                  if !Empty( aGet[ _CVALPR2 ] )
+                     aGet[_CVALPR2 ]:hide()
+                  end if
+
+                  if !Empty( oSayPr2 )
+                     oSayPr2:hide()
+                  end if
+
+                  if !Empty( oSayVp2 )
+                     oSayVp2:hide()
+                  end if
+
                end if
 
-               if oSayVp1 != nil
-                   oSayVp1:SetText( "" )
-                   oSayVp1:Show()
-               end if
-            else
-
-               if !Empty( aGet[ _CVALPR1 ] ) .and. !Empty( oSayPr1 ) .and. !Empty( oSayVp1 )
-                  aGet[ _CVALPR1 ]:hide()
-                  oSayPr1:hide()
-                  oSayVp1:hide()
-               end if
-
-            end if
-
-            if !empty( aTmp[_CCODPR2 ] )
-
-               if aGet[ _CVALPR2 ] != nil
-                  aGet[ _CVALPR2 ]:show()
-               end if
-
-               if oSayPr2 != nil
-                  oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
-                  oSayPr2:show()
-               end if
-
-               if oSayVp2 != nil
-                   oSayVp2:SetText( "" )
-                   oSayVp2:Show()
-               end if
-
-            else
-
-               if !Empty( aGet[ _CVALPR2 ] )
-                  aGet[_CVALPR2 ]:hide()
-               end if
-
-               if !Empty( oSayPr2 )
-                  oSayPr2:hide()
-               end if
-
-               if !Empty( oSayVp2 )
-                  oSayVp2:hide()
-               end if
-
-            end if
+            end if 
 
          end if
 
@@ -11401,85 +11338,26 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _NCOSDIV ]  := nCosPro
             end if
 
-            /*
-            Descuento de artículo----------------------------------------------
-            */
-
-            nNumDto              := RetFld( aTmpPed[ _CCODCLI ], D():Clientes( nView ), "nDtoArt" )
-
-            if nNumDto != 0
-
-               do case
-                  case nNumDto == 1
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt1 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt1
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt1
-                     end if
-
-                  case nNumDto == 2
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt2 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt2
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt2
-                     end if
-
-                  case nNumDto == 3
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO]:cText( ( D():Articulos( nView ) )->nDtoArt3 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt3
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt3
-                     end if
-
-                  case nNumDto == 4
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt4 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt4
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt4
-                     end if
-
-                  case nNumDto == 5
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt5 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt5
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt5
-                     end if
-
-                  case nNumDto == 6
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO]:cText( ( D():Articulos( nView ) )->nDtoArt6 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt6
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt6
-                     end if
-
-               end case
-
+            
+            // Descuento de artículo----------------------------------------------
+         
+            nDescuentoArticulo   := nDescuentoArticulo( cCodArt, aTmpPed[ _CCODCLI ], nView )
+            if nDescuentoArticulo != 0
+               if !Empty( aGet[ _NDTO ] )
+                  aGet[ _NDTO ]:cText( nDescuentoArticulo )
+               else
+                  aTmp[ _NDTO ]  := nDescuentoArticulo
+               end if
             end if
 
-            /*
-            Vemos si hay descuentos en las familias----------------------------
-            */
+            // Vemos si hay descuentos en las familias----------------------------
 
             if aTmp[ _NDTO ] == 0
-
                if !Empty( aGet[ _NDTO ] )
                   aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, D():Familias( nView ) ) )
                else
                   aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, D():Familias( nView ) )
                end if
-
             end if
 
             /*
@@ -11497,14 +11375,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPed[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPed[_CCODTAR] )
 
             if nPrePro == 0
-               aGet[_NPREDIV]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), D():Divisas( nView ), dbfKit, D():TiposIva( nView ), , , oNewImp ) )
+               aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPed[ _CDIVPED ], aTmpPed[ _LIVAINC ], D():Articulos( nView ), D():Divisas( nView ), dbfKit, D():TiposIva( nView ), , , oNewImp ) )
             else
-               aGet[_NPREDIV]:cText( nPrePro )
-            end if
-
-            if aTmp[ __LALQUILER ]
-               aGet[ _NPREDIV ]:cText( 0 )
-               aGet[ _NPREALQ ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpPed[_LIVAINC], D():Articulos( nView ) ) )
+               aGet[ _NPREDIV ]:cText( nPrePro )
             end if
 
             /*
@@ -11561,72 +11434,53 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             if !Empty( hAtipica )
                
-               	if hhaskey( hAtipica, "nImporte" )
-               		if hAtipica[ "nImporte" ] != 0
-                  		aGet[ _NPREDIV ]:cText( hAtipica[ "nImporte" ] )
-                	end if
-               	end if
-
-               	if hhaskey( hAtipica, "nDescuentoPorcentual" )
-               		if hAtipica[ "nDescuentoPorcentual"] != 0
-                  		aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
-                  	end if	
-               	end if
-
-               	if hhaskey( hAtipica, "nDescuentoPromocional" )
-               		if hAtipica[ "nDescuentoPromocional" ] != 0
-                  		aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
-                  	end if	
-               	end if
-
-               	if hhaskey( hAtipica, "nComisionAgente" )
-                  	if hAtipica[ "nComisionAgente" ] != 0
-                  		aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
-                  	end if
-               	end if
-
-               	if hhaskey( hAtipica, "nDescuentoLineal" )
-               		if hAtipica[ "nDescuentoLineal" ] != 0
-                  		aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
-                  	end if
-               	end if
-
-            end if
-
-            //--Buscamos si existen ofertas para este articulo y le cambiamos el precio--//
-
-            nImpOfe     := nImpOferta( aTmp[ _CREF ], aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], dFecPed, dbfOferta, aTmp[ _NTARLIN ], , aTmp[ _CCODPR1 ], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-            if nImpOfe  != 0
-               aGet[ _NPREDIV ]:cText( nImpOfe )
-            end if
-
-            //--Buscamos si existen descuentos en las ofertas--//
-
-            nImpOfe     := nDtoOferta( aTmp[ _CREF ], aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], dFecPed, dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-            if nImpOfe  != 0
-               aGet[ _NDTO ]:cText( nImpOfe )
-            end if
-
-            //--Buscamos si existen descuentos lineales en las ofertas--//
-
-            nImpOfe     := nDtoLineal( aTmp[ _CREF ], aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], dFecPed, dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-            if nImpOfe  != 0
-               if !Empty( aGet[ _NDTODIV ] )
-                  aGet[ _NDTODIV ]:cText( nImpOfe )
-               else
-                  aGet[ _NDTODIV ]  := nImpOfe
+               if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
+                  aGet[ _NPREDIV ]:cText( hAtipica[ "nImporte" ] )
                end if
+
+               if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. hAtipica[ "nDescuentoPorcentual"] != 0
+                  aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
+               end if
+
+               if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. hAtipica[ "nDescuentoPromocional" ] != 0
+                  aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
+               end if
+
+               if hhaskey( hAtipica, "nComisionAgente" ) .and. hAtipica[ "nComisionAgente" ] != 0
+                  aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
+               end if
+
+               if hhaskey( hAtipica, "nDescuentoLineal" ) .and. hAtipica[ "nDescuentoLineal" ] != 0
+                  aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
+               end if
+
+            end if
+
+            // Buscamos si hay ofertas-----------------------------------------------
+
+            sOfertaArticulo   := structOfertaArticulo( D():getHashArray( aTmpPed, "PedCliT", nView ), D():getHashArray( aTmp, "PedCliL", nView ), nTotLPedCli( aTmp ), nView )
+
+            if !empty( sOfertaArticulo ) 
+               
+               if ( sOfertaArticulo:nPrecio != 0 )
+                  aGet[ _NPREDIV ]:cText( sOfertaArticulo:nPrecio )
+               end if 
+               
+               if ( sOfertaArticulo:nDtoPorcentual != 0 )
+                  aGet[ _NDTO ]:cText( sOfertaArticulo:nDtoPorcentual )
+               end if 
+               
+               if ( sOfertaArticulo:nDtoLineal != 0 )
+                  aGet[ _NDTODIV ]:cText( sOfertaArticulo:nDtoLineal )
+               end if 
+               
+               aTmp[ _LLINOFE ] := .t.
+
             end if
 
             ValidaMedicion( aTmp, aGet )
 
          end if
-
-         /*
-         Buscamos si hay ofertas-----------------------------------------------
-         */
-
-         lBuscaOferta( aTmp[ _CREF ], aGet, aTmp, aTmpPed, dbfOferta, D():Divisas( nView ), dbfKit, D():TiposIva( nView )  )
 
          /*
          Cargamos los valores para los cambios---------------------------------
@@ -15681,7 +15535,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "NPESOKG",   "N",   16,  6, "Peso del producto",                               "Peso",                    "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "CPESOKG",   "C",    2,  0, "Unidad de peso del producto",                     "UnidadMedicionPeso",      "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "DFECHA",    "D",    8,  0, "Fecha de entrega",                                "FechaEntrega",            "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CTIPMOV",   "C",    2,  0, "Tipo de movimiento",                              "TipoMovimiento",          "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CTIPMOV",   "C",    2,  0, "Tipo de movimiento",                              "Tipo",                    "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "MLNGDES",   "M",   10,  0, "Descripción de artículo sin codificar",           "DescripcionAmpliada",     "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "LTOTLIN",   "L",    1,  0, "Línea de total",                                  "LineaTotal",              "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "LIMPLIN",   "L",    1,  0, "Línea no imprimible",                             "LineaNoImprimible",       "", "( cDbfCol )", nil } )
@@ -15861,83 +15715,39 @@ function nTotNPedCli( uDbf )
    do case
    case ValType( uDbf ) == "A"
 
-      if uDbf[ __LALQUILER ]
-
-         nTotUnd  := NotCaja( uDbf[ _NCANPED ] )
-         nTotUnd  *= uDbf[ _NUNICAJA ]
-         nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
-         nTotUnd  *= NotCero( uDbf[ __DFECENT ] - uDbf[ __DFECSAL ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
-
-      else
-
-         nTotUnd  := NotCaja( uDbf[ _NCANPED ] )
-         nTotUnd  *= uDbf[ _NUNICAJA ]
-         nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
-
-      end if
+      nTotUnd  := NotCaja( uDbf[ _NCANPED ] )
+      nTotUnd  *= uDbf[ _NUNICAJA ]
+      nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
+      nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
+      nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
+      nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
 
    case ValType( uDbf ) == "O"
 
-      if uDbf:lAlquiler
-
-         nTotUnd  := NotCaja( uDbf:nCanPed )
-         nTotUnd  *= uDbf:nUniCaja
-         nTotUnd  *= NotCero( uDbf:nUndKit )
-         nTotUnd  *= NotCero( uDbf:dFecEnt - uDbf:dFecSal )
-         nTotUnd  *= NotCero( uDbf:nMedUno )
-         nTotUnd  *= NotCero( uDbf:nMedDos )
-         nTotUnd  *= NotCero( uDbf:nMedTre )
-
-      else
-
-         nTotUnd  := NotCaja( uDbf:nCanPed )
-         nTotUnd  *= uDbf:nUniCaja
-         nTotUnd  *= NotCero( uDbf:nUndKit )
-         nTotUnd  *= NotCero( uDbf:nMedUno )
-         nTotUnd  *= NotCero( uDbf:nMedDos )
-         nTotUnd  *= NotCero( uDbf:nMedTre )
-
-      end if
+      nTotUnd  := NotCaja( uDbf:nCanPed )
+      nTotUnd  *= uDbf:nUniCaja
+      nTotUnd  *= NotCero( uDbf:nUndKit )
+      nTotUnd  *= NotCero( uDbf:nMedUno )
+      nTotUnd  *= NotCero( uDbf:nMedDos )
+      nTotUnd  *= NotCero( uDbf:nMedTre )
 
    case ValType( uDbf ) == "H"
 
-      if !hGet( uDbf, "Alquiler" )
-
-         nTotUnd  := NotCaja( hGet( uDbf, "Cajas" ) )
-         nTotUnd  *= hGet( uDbf, "Unidades" )
-         nTotUnd  *= NotCero( hGet( uDbf, "UnidadesKit" ) )
-         nTotUnd  *= NotCero( hGet( uDbf, "Medicion1" ) )
-         nTotUnd  *= NotCero( hGet( uDbf, "Medicion2" ) )
-         nTotUnd  *= NotCero( hGet( uDbf, "Medicion3" ) )
-
-      end if   
+      nTotUnd  := NotCaja( hGet( uDbf, "Cajas" ) )
+      nTotUnd  *= hGet( uDbf, "Unidades" )
+      nTotUnd  *= NotCero( hGet( uDbf, "UnidadesKit" ) )
+      nTotUnd  *= NotCero( hGet( uDbf, "Medicion1" ) )
+      nTotUnd  *= NotCero( hGet( uDbf, "Medicion2" ) )
+      nTotUnd  *= NotCero( hGet( uDbf, "Medicion3" ) )
 
    otherwise
 
-      if ( uDbf )->lAlquiler
-
-         nTotUnd  := NotCaja( ( uDbf )->nCanPed )
-         nTotUnd  *= ( uDbf )->nUniCaja
-         nTotUnd  *= NotCero( ( uDbf )->nUndKit )
-         nTotUnd  *= NotCero( ( uDbf )->dFecEnt - ( uDbf )->dFecSal )
-         nTotUnd  *= NotCero( ( uDbf )->nMedUno )
-         nTotUnd  *= NotCero( ( uDbf )->nMedDos )
-         nTotUnd  *= NotCero( ( uDbf )->nMedTre )
-
-      else
-         nTotUnd  := NotCaja( ( uDbf )->nCanPed )
-         nTotUnd  *= ( uDbf )->nUniCaja
-         nTotUnd  *= NotCero( ( uDbf )->nUndKit )
-         nTotUnd  *= NotCero( ( uDbf )->nMedUno )
-         nTotUnd  *= NotCero( ( uDbf )->nMedDos )
-         nTotUnd  *= NotCero( ( uDbf )->nMedTre )
-      end if
+      nTotUnd  := NotCaja( ( uDbf )->nCanPed )
+      nTotUnd  *= ( uDbf )->nUniCaja
+      nTotUnd  *= NotCero( ( uDbf )->nUndKit )
+      nTotUnd  *= NotCero( ( uDbf )->nMedUno )
+      nTotUnd  *= NotCero( ( uDbf )->nMedDos )
+      nTotUnd  *= NotCero( ( uDbf )->nMedTre )
 
    end case
 
@@ -17041,12 +16851,93 @@ RETURN ( Round( nPntVer, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+Function isLineaTotalPedCli( uPedCliL )
+
+   if isArray( uPedCliL )
+      Return ( uPedCliL[ _LTOTLIN ] )
+   end if
+
+Return ( ( uPedCliL )->lTotLin )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoLinealPedCli( uPedCliL, nDec, nVdv )
+
+   local nDescuentoLineal
+
+   if isArray( uPedCliL )
+      nDescuentoLineal  := uPedCliL[ _NDTODIV ]
+   else 
+      nDescuentoLineal  := ( uPedCliL )->nDtoDiv
+   end if
+
+Return ( Round( nDescuentoLineal / nVdv, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoPorcentualPedCli( uPedCliL )
+
+   local nDescuentoPorcentual
+
+   if isArray( uPedCliL )
+      nDescuentoPorcentual  := uPedCliL[ _NDTO ]
+   else 
+      nDescuentoPorcentual  := ( uPedCliL )->nDto
+   end if
+
+Return ( nDescuentoPorcentual )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoPromocionPedCli( uPedCliL )
+
+   local nDescuentoPromocion
+
+   if isArray( uPedCliL )
+      nDescuentoPromocion  := uPedCliL[ _NDTOPRM ]
+   else 
+      nDescuentoPromocion  := ( uPedCliL )->nDtoPrm
+   end if
+
+Return ( nDescuentoPromocion )
+
+//---------------------------------------------------------------------------//
+
+Function nPuntoVerdePedCli( uPedCliL )
+
+   local nPuntoVerde
+
+   if isArray( uPedCliL )
+      nPuntoVerde  := uPedCliL[ _NPNTVER ]
+   else 
+      nPuntoVerde  := ( uPedCliL )->nPntVer
+   end if
+
+Return ( nPuntoVerde )
+
+//---------------------------------------------------------------------------//
+
+Function nTransportePedCli( uPedCliL )
+
+   local nTransporte
+
+   if isArray( uPedCliL )
+      nTransporte  := uPedCliL[ _NIMPTRN ]
+   else 
+      nTransporte  := ( uPedCliL )->nImpTrn
+   end if
+
+Return ( nTransporte )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotLPedCli( uPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
+   local nUnidades
 
-   if !Empty( nView )
-      DEFAULT cPedCliL  := D():PedidosClientesLineas( nView )
+   if empty( uPedCliL ) .and. !empty( nView )
+      uPedCliL       := D():PedidosClientesLineas( nView )
    end if
 
    DEFAULT nDec      := nDouDiv()
@@ -17056,54 +16947,49 @@ FUNCTION nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    DEFAULT lPntVer   := .t.
    DEFAULT lImpTrn   := .t.
 
-   if ( cPedCliL )->lTotLin
+   if isLineaTotalPedCli( uPedCliL )
 
-      nCalculo       := nTotUPedCli( cPedCliL, nDec )
+      nCalculo       := nTotUPedCli( uPedCliL, nDec, nVdv )
       
    else
 
-      nCalculo       := nTotUPedCli( cPedCliL, nDec )
+      nUnidades      := nTotNPedCli( uPedCliL )
+      nCalculo       := nTotUPedCli( uPedCliL, nDec, nVdv ) * nUnidades
 
       /*
       Descuentos lineales------------------------------------------------------
       */
 
-      if lDto
+      nCalculo        -= nDescuentoLinealPedCli( uPedCliL, nDec, nVdv ) * nUnidades
 
-      	nCalculo  	-= Round( ( cPedCliL )->nDtoDiv / nVdv , nDec )
-      
-      	if ( cPedCliL )->nDto != 0
-         	nCalculo -= nCalculo * ( cPedCliL )->nDto    / 100
-      	end if
+      if lDto .and. nDescuentoPorcentualPedCli( uPedCliL ) != 0 
+         nCalculo    -= nCalculo * nDescuentoPorcentualPedCli( uPedCliL ) / 100
+      end if
 
-      	if ( cPedCliL )->nDtoPrm != 0
-         	nCalculo -= nCalculo * ( cPedCliL )->nDtoPrm / 100
-      	end if
-
-      end if 
+      if lDto .and. nDescuentoPromocionPedCli( uPedCliL ) != 0 
+         nCalculo    -= nCalculo * nDescuentoPromocionPedCli( uPedCliL ) / 100
+      end if
 
       /*
       Punto Verde--------------------------------------------------------------
       */
 
-      if lPntVer
-         nCalculo    += ( cPedCliL )->nPntVer
+      if lPntVer .and. nPuntoVerdePedCli( uPedCliL ) != 0
+         nCalculo    += nPuntoVerdePedCli( uPedCliL ) * nUnidades
       end if
 
       /*
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn 
-         nCalculo    += ( cPedCliL )->nImpTrn
+      if lImpTrn .and. nTransportePedCli( uPedCliL ) != 0
+         nCalculo    += nTransportePedCli( uPedCliL ) * nUnidades
       end if
 
-      /* 
-      Unidades-----------------------------------------------------------------
-      */
+   end if
 
-      nCalculo       *= nTotNPedCli( cPedCliL )
-
+   if nVdv != 0
+      nCalculo       := nCalculo / nVdv
    end if
 
    if nRou != nil
