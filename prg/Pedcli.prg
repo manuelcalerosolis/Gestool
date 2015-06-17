@@ -1629,16 +1629,16 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    end if
 
-   DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
+   /*DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( TPedidosClientes2PedidosProveedor():New( ( D():PedidosClientes( nView ) )->cSerPed, ( D():PedidosClientes( nView ) )->nNumPed, ( D():PedidosClientes( nView ) )->cSufPed, oStock ):Dialog() ) ;
       TOOLTIP  "(G)enerar pedido a proveedores" ;
-      HOTKEY   "G";
+      HOTKEY   "G";*/
 
    DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( PedCliente2PedProveedor():New( nView, oTipArt, oFabricante, oStock ) ) ;
-      TOOLTIP  "Generar NUEVO" ;
+      TOOLTIP  "(G)enerar pedido a proveedores" ;
       HOTKEY   "G";   
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;

@@ -216,6 +216,8 @@ static cTmpDoc
 static dbfFamilia
 static dbfArtPrv
 
+static oMailing
+
 static dbfClient
 static oStock
 static oGetNet
@@ -376,6 +378,8 @@ STATIC FUNCTION OpenFiles( lExt )
       end if
 
       oBandera          := TBandera():New()
+
+      oMailing          := TGenmailingDatabasePedidosProveedor():New( nView )
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -783,11 +787,9 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenPedPrv( IS_MAIL ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
-
-      lGenPed( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
          NOBORDER ;
@@ -3900,7 +3902,7 @@ FUNCTION GenPedPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
 
-      PrintReportPedPrv( nDevice, nCopies, cPrinter, D():Documentos( nView ) )
+      PrintReportPedPrv( nDevice, nCopies, cPrinter, cCodDoc )
 
    else
 
@@ -9111,6 +9113,12 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+Function mailReportPedPrv( cCodigoDocumento )
+
+Return ( printReportPedPrv( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
 Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
 
    local oFr
@@ -9134,7 +9142,7 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( cDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -9146,9 +9154,9 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( cDoc )->mReport )
+   if lMemoDocumento( cDoc, D():Documentos( nView ) )
 
-      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
@@ -9200,28 +9208,6 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
             oFr:SetProperty(  "PDFExport", "Outline",          .t. )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
-
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nPedPrv" )
-                  :SetAlias(        D():PedidosProveedores( nView ) )
-                  :SetItems(        aItmFacRec() )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( D():PedidosProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  pedido de proveedor número " + ( D():PedidosProveedores( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosProveedores( nView ) )->nNumPed ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro pedido de proveedor " + ( D():PedidosProveedores( nView ) )->cSerPed + "/" + Alltrim( Str( ( D():PedidosProveedores( nView ) )->nNumPed ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( D():PedidosProveedores( nView ) )->dfecPed ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :lSend()
-
-               end with
-
-            end if
 
       end case
 
