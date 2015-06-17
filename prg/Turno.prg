@@ -1640,6 +1640,7 @@ Cierra el turno
 METHOD lCloseCajaSeleccionada()
 
    local cCurrentTruno  
+   local cTurno
 
    // Que nadie toque-------------------------------------------------------------
 
@@ -1649,6 +1650,7 @@ METHOD lCloseCajaSeleccionada()
 
    // Cajas deseincronizadas---------------------------------------------------
 
+   cTurno               := ::cCurTurno
    cCurrentTruno        := ::GetFullTurno() 
 
    // Guardamos los comentarios---------------------------------------------------
@@ -1698,7 +1700,8 @@ METHOD lCloseCajaSeleccionada()
          ::oTxt:SetText( "Imprimiendo..." )
       end if
 
-      ::PrintArqueo( cCurrentTruno, ::oDbfCaj:cCodCaj, ::cCmbReport, "", ::cPrnArq, ::cWinArq )
+      ::PrintArqueo( cTurno, ::oDbfCaj:cCodCaj, ::cCmbReport, "", ::cPrnArq, ::cWinArq )
+
    end if 
 
    // Envío de  información por internet----------------------------------------
