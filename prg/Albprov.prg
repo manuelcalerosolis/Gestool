@@ -9545,18 +9545,22 @@ Function SynAlbPrv( cPath )
          ( cAlbPrvT )->cNumFac := AllTrim( ( cAlbPrvT )->cNumFac ) + "00"
       end if
 
-      if ( cAlbPrvT )->nFacturado == 0
+      // Estado del albaran
 
+      if ( cAlbPrvT )->nFacturado != 0
+         if ( cAlbPrvT )->nFacturado == 1
+            ( cAlbPrvT )->lFacturado   := .f.
+         end if
+         if ( cAlbPrvT )->nFacturado == 3
+            ( cAlbPrvT )->lFacturado   := .t.
+         end if
+      else     
          if ( cAlbPrvT )->lFacturado  
             ( cAlbPrvT )->nFacturado   := 3
-            msgAlert( "facturado" )
          else
-            msgAlert( ( cAlbPrvT )->lFacturado, "lFacturado" )
-            msgAlert( "no facturado" )
             ( cAlbPrvT )->nFacturado   := 1
          end if
-
-      endif
+      end if 
 
       /*
       Rellenamos los campos de totales-----------------------------------------
@@ -9642,7 +9646,7 @@ Function SynAlbPrv( cPath )
          ( cAlbPrvL )->cAlmLin    := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cCodAlm" )
       end if
 
-      if ( cAlbPrvL )->lFacturado != RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" )
+      if ( cAlbPrvL )->lFacturado != RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" ) 
          ( cAlbPrvL )->lFacturado := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "lFacturado" )
       end if
 
@@ -9677,7 +9681,7 @@ Function SynAlbPrv( cPath )
       if !Empty( ( cAlbPrvL )->cRefPrv )
          cCodPrv                       := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cCodPrv" )
          if !Empty( cCodPrv )
-            AppendReferenciaProveedor( ( cAlbPrvL )->cRefPrv, cCodPrv, ( cAlbPrvL )->cRef, ( cAlbPrvL )->nDtoLin, ( cAlbPrvL )->nDtoPrm, ( cAlbPrvT )->cDivAlb, ( cAlbPrvL )->nPreDiv, cArtPrv )
+            appendReferenciaProveedor( ( cAlbPrvL )->cRefPrv, cCodPrv, ( cAlbPrvL )->cRef, ( cAlbPrvL )->nDtoLin, ( cAlbPrvL )->nDtoPrm, ( cAlbPrvT )->cDivAlb, ( cAlbPrvL )->nPreDiv, cArtPrv )
          end if 
       end if
 

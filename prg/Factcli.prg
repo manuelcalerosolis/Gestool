@@ -430,8 +430,6 @@ static dbfTmpSer
 Static dbfTmpEntidades
 Static dbfTmpEst
 
-static oRieCli
-static nRieCli
 static oTlfCli
 static cTlfCli
 
@@ -522,6 +520,9 @@ static oFraPub
 static oBanco
 static oPais
 static oEntidades
+
+static oRiesgoCliente
+static nRiesgoCliente      := 0
 
 static oTotalLinea
 static nTotalLinea         := 0
@@ -2682,7 +2683,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    Mostramos datos de clientes-------------------------------------------------
    */
 
-   nRieCli                 := oStock:nRiesgo( aTmp[ _CCODCLI ] )
+   nRiesgoCliente                 := oStock:nRiesgo( aTmp[ _CCODCLI ] )
 
    if Empty( aTmp[ _CTLFCLI ] )
       aTmp[ _CTLFCLI ]     := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
@@ -2813,7 +2814,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET oRieCli VAR nRieCli;
+      REDEFINE GET oRiesgoCliente VAR nRiesgoCliente;
          ID       182 ;
          WHEN     ( nMode != ZOOM_MODE );
          PICTURE  cPorDiv ;
@@ -5894,6 +5895,8 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       local oSayTextRuta
       local cSayTextRuta
 
+      msgAlert( len( aTmp[ _CCODCLI ] ), "antes" )
+
    	do case
    		case nMode == APPD_MODE
 
@@ -5933,6 +5936,8 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       end case  		
 
+      msgAlert( len( aTmp[ _CCODCLI ] ), "despues" )
+
       cCodPagoAnterior           := aTmp[ _CCODPAGO ]
 
    	/*
@@ -5942,6 +5947,8 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	if BeginTrans( aTmp, nMode )
       	Return .f.
    	end if
+
+      msgAlert( len( aTmp[ _CCODCLI ] ), "despues de BeginTrans" )
 
    	/*
       Cargamos los pictures------------------------------------------------------
@@ -6108,6 +6115,8 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"nClrOver" 	=> nGridColor(),;
 																	"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| if( !lRecibosPagadosTmp( dbfTmpPgo ), GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ), ) } } )
+
+      msgAlert( len( aTmp[ _CCODCLI ] ), "antes del control")
 
    	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 	"nRow"      => 95,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
@@ -12611,11 +12620,11 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
             	aTmp[ _MOBSERV ] 	:= ( D():Clientes( nView ) )->mComent
             end if
 
-	      	if !Empty( oRieCli ) .and. lChgCodCli
-         		oStock:SetRiesgo( cNewCodCli, oRieCli, ( D():Clientes( nView ) )->Riesgo )
+	      	if !Empty( oRiesgoCliente ) .and. lChgCodCli
+         		oStock:SetRiesgo( cNewCodCli, oRiesgoCliente, ( D():Clientes( nView ) )->Riesgo )
       		end if
 
-            if ( ( D():Clientes( nView ) )->lCreSol ) .and. ( nRieCli >= ( D():Clientes( nView ) )->Riesgo )
+            if ( ( D():Clientes( nView ) )->lCreSol ) .and. ( nRiesgoCliente >= ( D():Clientes( nView ) )->Riesgo )
             	msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
          	end if 
 

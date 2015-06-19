@@ -2519,6 +2519,11 @@ Return nil
 Function PedCLiente2PedProveedor()
 Return nil
 
+Function TGenMailingDatabasePedidosProveedor()
+Return nil
+
+Function RunEventScript()
+Return nil
 
 //------------------------------------------------------------------//
 

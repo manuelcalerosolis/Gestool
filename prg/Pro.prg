@@ -2726,14 +2726,14 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
    end if
 
    for each hValorPropiedad in aPropiedadesArticulo1
-      aPropertiesTable[ nRow, nCol ]                     := TPropertiesItems():New()
-      aPropertiesTable[ nRow, nCol ]:cCodigo             := cCodArt
-      aPropertiesTable[ nRow, nCol ]:cHead               := hValorPropiedad[ "TipoPropiedad" ]
-      aPropertiesTable[ nRow, nCol ]:cText               := hValorPropiedad[ "CabeceraPropiedad" ]
-      aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1   := hValorPropiedad[ "CodigoPropiedad" ]
-      aPropertiesTable[ nRow, nCol ]:cValorPropiedad1    := hValorPropiedad[ "ValorPropiedad" ]
-      aPropertiesTable[ nRow, nCol ]:lColor              := hValorPropiedad[ "ColorPropiedad" ]
-      aPropertiesTable[ nRow, nCol ]:nRgb                := hValorPropiedad[ "RgbPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]                        := TPropertiesItems():New()
+      aPropertiesTable[ nRow, nCol ]:cCodigo                := cCodArt
+      aPropertiesTable[ nRow, nCol ]:cHead                  := hValorPropiedad[ "TipoPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cText                  := hValorPropiedad[ "CabeceraPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1      := hValorPropiedad[ "CodigoPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:cValorPropiedad1       := hValorPropiedad[ "ValorPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:lColor                 := hValorPropiedad[ "ColorPropiedad" ]
+      aPropertiesTable[ nRow, nCol ]:nRgb                   := hValorPropiedad[ "RgbPropiedad" ]
 
       nRow++
    next
@@ -2755,6 +2755,8 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
             aPropertiesTable[ n, nCol ]:cCodigo             := cCodArt
             aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
             aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+            aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := hValorPropiedad[ "CodigoPropiedad" ]
+            aPropertiesTable[ n, nCol ]:cValorPropiedad2    := hValorPropiedad[ "ValorPropiedad" ]
             aPropertiesTable[ n, nCol ]:lColor              := aPropertiesTable[ n, 1 ]:lColor
             aPropertiesTable[ n, nCol ]:nRgb                := aPropertiesTable[ n, 1 ]:nRgb
          next
