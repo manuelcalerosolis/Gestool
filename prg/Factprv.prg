@@ -6740,6 +6740,8 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
          Actualizamos el estado------------------------------------------------
          */
 
+         //msgAlert( "ANTES DE LLAMAR A setFacturadoAlbaranProveedorCabecera")
+
          setFacturadoAlbaranProveedorCabecera( .t., nView )
 
       end if
@@ -11392,7 +11394,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                            ( cFacPrvP )->cTurRec    := cCurSesion()
                            ( cFacPrvP )->cCodPgo    := ( tmpFacPrvP )->cCodPgo
 
-                           msgAlert( ( tmpFacPrvT )->cCtrCoste )
+                           //msgAlert( ( tmpFacPrvT )->cCtrCoste )
 
                             if !empty( ( tmpFacPrvT )->cCtrCoste )
                               ( cFacPrvP )->cCtrCoste  := ( tmpFacPrvT )->cCtrCoste

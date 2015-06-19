@@ -9549,10 +9549,10 @@ Function SynAlbPrv( cPath )
 
          if ( cAlbPrvT )->lFacturado  
             ( cAlbPrvT )->nFacturado   := 3
-            msgAlert( "facturado" )
+            //msgAlert( "facturado" )
          else
-            msgAlert( ( cAlbPrvT )->lFacturado, "lFacturado" )
-            msgAlert( "no facturado" )
+            //msgAlert( ( cAlbPrvT )->lFacturado, "lFacturado" )
+            //msgAlert( "no facturado" )
             ( cAlbPrvT )->nFacturado   := 1
          end if
 
@@ -10165,6 +10165,7 @@ FUNCTION setFacturadoAlbaranProveedorCabecera( lFacturado, nView, cNumFac )
    /*
    Cambiamos las cabeceras-----------------------------------------------------
    */
+   //msgAlert( lFacturado, "lFacturado" )
 
    if dbDialogLock( D():AlbaranesProveedores( nView ) )
       ( D():AlbaranesProveedores( nView ) )->lFacturado := lFacturado

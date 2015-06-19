@@ -1516,7 +1516,7 @@ else
 
    DEFINE BTNSHELL RESOURCE "BMPCONTA" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfClient, dbfArticulo, dbfFPago, dbfDiv, oWndBrw ) );
+      ACTION   ( DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfClient, dbfArticulo, dbfFPago, dbfDiv, oWndBrw, oNewImp ) );
       TOOLTIP  "Co(n)tabilizar" ;
       HOTKEY   "N";
       LEVEL    ACC_EDIT

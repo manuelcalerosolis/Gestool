@@ -69,6 +69,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    local nDtoDos     := 0
    local nPctDto     := 0
    local nPctIva     := 0
+   local nBaseImponible := 0
 
 	DEFAULT lSimula	:= .t.
    DEFAULT nAsiento  := 0
@@ -197,11 +198,15 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                end if
 
                if uFieldEmpresa( "lIvaImpEsp" )
+
                   nImpDet     += nImpIvm
+
                end if
 
                nPos           := aScan( aIva, {|x| x[ 1 ] == nIva } )
+
                if nPos  == 0
+
                   aAdd( aIva, { nIva, cSubCtaIva, cSubCtaReq, nImpDet, nImpPnt, nImpTrn, 0, 0, 0 } )
                else
                   aIva[ nPos, 4 ] += nImpDet
@@ -403,6 +408,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    */
 
    for each uIva in newIva
+   //for each uIva in aIva
 
       if isNum( uIva[ 3 ] )
 
@@ -839,6 +845,12 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
          if ( len( uIva ) >= 11 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
 
+            if uFieldEmpresa( "lIvaImpEsp")
+               nBaseImponible := uIva[1] + uIva[6]
+            else
+               nBaseImponible := uIva[1]
+            end if
+
             aAdd( aSimula, MkAsiento(  nAsiento, ;                          
                                        cCodDiv, ;                          
                                        dFecha, ;                          
@@ -848,7 +860,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        cConcepto,;                          
                                        uIva[ 8 ],;          // Ptas. Haber                          
                                        cFactura,;                          
-                                       uIva[ 1 ],;          // Base Imponible                          
+                                       nBaseImponible,;          // Base Imponible                          
                                        uIva[ 3 ],;                          
                                        uIva[ 4 ],;                          
                                        ,;                          
@@ -1001,7 +1013,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oBrw )
+Function DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oBrw, oNewImp )
 
    local oRad
    local nRad        := 1
@@ -1152,7 +1164,7 @@ Function DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfD
    REDEFINE BUTTON ;
       ID       IDOK ;
       OF       oDlg ;
-      ACTION   ( ContaSerieTiket( nRad, cSerIni + Str( nDocIni, 10 ) + cSufIni, cSerFin + Str( nDocFin, 10 ) + cSufFin, lFechas, dDesde, dHasta, lChk1, lChk2, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv ) )
+      ACTION   ( ContaSerieTiket( nRad, cSerIni + Str( nDocIni, 10 ) + cSufIni, cSerFin + Str( nDocFin, 10 ) + cSufFin, lFechas, dDesde, dHasta, lChk1, lChk2, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp ) )
 
    REDEFINE BUTTON oBtnCancel ;
       ID       IDCANCEL ;
@@ -1160,7 +1172,7 @@ Function DlgCntTicket( dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfD
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| ContaSerieTiket( nRad, cSerIni + Str( nDocIni, 10 ) + cSufIni, cSerFin + Str( nDocFin, 10 ) + cSufFin, lFechas, dDesde, dHasta, lChk1, lChk2, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv ) } )
+   oDlg:AddFastKey( VK_F5, {|| ContaSerieTiket( nRad, cSerIni + Str( nDocIni, 10 ) + cSufIni, cSerFin + Str( nDocFin, 10 ) + cSufFin, lFechas, dDesde, dHasta, lChk1, lChk2, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp ) } )
 
    oDlg:bStart := {|| StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin ) }
 
@@ -1214,7 +1226,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function ContaSerieTiket( nRad, cNumIni, cNumFin, lFechas, dDesde, dHasta, lSimula, lCobro, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv )
+Static Function ContaSerieTiket( nRad, cNumIni, cNumFin, lFechas, dDesde, dHasta, lSimula, lCobro, oBrw, oMtrInf, oTree, oDlg, oBtnCancel, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp )
 
    local n        := 0
    local aPos
@@ -1258,9 +1270,9 @@ Static Function ContaSerieTiket( nRad, cNumIni, cNumFin, lFechas, dDesde, dHasta
 
             do case
                case ( dbfTikT )->cTipTik == "1"
-                  lRet  := CntTiket( lSimula, lCobro, .f., .t., oTree, 0, , dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv )
+                  lRet  := CntTiket( lSimula, lCobro, .f., .t., oTree, 0, , dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp )
                case ( dbfTikT )->cTipTik == "4"
-                  lRet  := CntTiket( lSimula, lCobro, .t., .t., oTree, 0, , dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv )
+                  lRet  := CntTiket( lSimula, lCobro, .t., .t., oTree, 0, , dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp )
             end case
 
          end if
@@ -1297,9 +1309,9 @@ Static Function ContaSerieTiket( nRad, cNumIni, cNumFin, lFechas, dDesde, dHasta
 
                do case
                   case ( dbfTikT )->cTipTik == "1"
-                     lRet  := CntTiket( lSimula, lCobro, .f., .t., oTree, 0, , dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv )
+                     lRet  := CntTiket( lSimula, lCobro, .f., .t., oTree, 0, , dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp )
                   case ( dbfTikT )->cTipTik == "4"
-                     lRet  := CntTiket( lSimula, lCobro, .t., .t., oTree, 0, , dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv )
+                     lRet  := CntTiket( lSimula, lCobro, .t., .t., oTree, 0, , dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp )
                end case
 
                if IsFalse( lRet )
@@ -1335,7 +1347,7 @@ Return Nil
 
 //--------------------------------------------------------------------------//
 
-Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv )
+Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, dbfTikT, dbfTikL, dbfTikP, dbfCli, dbfArt, dbfFPago, dbfDiv, oNewImp )
 
    local n
    local nPos
@@ -1371,6 +1383,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    local cTerNif     := ( dbfTikT )->cDniCli
    local cTerNom     := ( dbfTikT )->cNomTik
    local lReturn
+   local nBaseImponible
 
    DEFAULT nAsiento  := 0
    DEFAULT aSimula   := {}
@@ -1510,10 +1523,11 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
 
          nPos        := aScan( aIva, {|x| x[ 1 ] == cSubCtaIva } )
          if nPos == 0 // .and. nImpDeta != 0
-            aAdd( aIva, { cSubCtaIva, ( dbfTikL )->nIvaTil, nImpDeta, nIvaDeta } )
+            aAdd( aIva, { cSubCtaIva, ( dbfTikL )->nIvaTil, nImpDeta, nIvaDeta, nIvmDeta  } )
          else
             aIva[ nPos, 3 ] += nImpDeta
             aIva[ nPos, 4 ] += nIvaDeta
+            aIva[ nPos, 5 ] += nIvmDeta
          end if
 
          /*
@@ -1523,8 +1537,10 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
 
          if nIvmDeta != 0
 
-            cSubCtaIvm  := RJust( ( dbfTikL )->nValImp, "0", 2 )
-            cSubCtaIvm  := cCtaVta() + RJust( cSubCtaIvm, "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
+           // cSubCtaIvm  := RJust( ( dbfTikL )->nValImp, "0", 2 )
+           // cSubCtaIvm  := cCtaVta() + RJust( cSubCtaIvm, "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
+
+           cSubCtaIvm   := oNewImp:cCtaImp( ( dbfTikL )->nValImp )
 
             nPos        := aScan( aIvm, {|x| x[ 1 ] == cSubCtaIvm } )
             if nPos == 0
@@ -1803,6 +1819,12 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
 
          if aIva[ n, 4 ] != 0 .or. uFieldEmpresa( "lConIva" )
 
+            if uFieldEmpresa( "lIvaImpEsp")
+               nBaseImponible := aIva[ n, 3 ] + aIva[ n, 5 ]
+            else
+               nBaseImponible := aIva[n, 3 ]
+            end if
+
             aAdd( aSimula, MkAsiento(  nAsiento, ;
                                        cCodDiv, ;
                                        dFecha, ;
@@ -1812,7 +1834,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
                                        cConcepto,;
                                        aIva[ n, 4 ],;    // Ptas. Haber
                                        cNumTik,;
-                                       aIva[ n, 3 ],;    // Base Imponible
+                                       nBaseImponible,;    // Base Imponible
                                        aIva[ n, 2 ],;
                                        ,;
                                        ,;
@@ -1823,7 +1845,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
                                        ,;
                                        lSimula,;
                                        cTerNif,;
-                                       cTerNom ) )
+                                       cTerNom ) )         
 
          end if
 
