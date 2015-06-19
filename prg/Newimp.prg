@@ -257,7 +257,7 @@ METHOD cCtaImp( nValImp ) CLASS TNewImp
 
    if !Empty( nValImp )
 
-      nValImp        := Str( nValImp, 16, 6 )
+      //nValImp        := Str( nValImp, 16, 6 )
 
       ::oDbf:GetStatus()
 
