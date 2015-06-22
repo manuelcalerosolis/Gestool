@@ -7141,7 +7141,7 @@ Function FacCliTablet()
    	Texto de busqueda----------------------------------------------------------
    	*/
 
-   	oGetSearch     		:= TGridGet():Build(    { 	"nRow"      => 45,;
+   	oGetSearch     	:= TGridGet():Build(    { 	"nRow"      => 45,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                              		"bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
                                              		"oWnd"      => oDlg,;
@@ -7274,12 +7274,12 @@ Function FacCliTablet()
 
     with object ( oBrw:AddCol() )
        	:cHeader            := "R.E."
-        :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotReq  }
-        :cEditPicture     	:= cPorDiv()
-        :nWidth             := 80
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
-        :lHide            	:= .t.
+         :bEditValue         := {|| ( D():FacturasClientes( nView ) )->nTotReq  }
+         :cEditPicture     	:= cPorDiv()
+         :nWidth             := 80
+         :nDataStrAlign    	:= 1
+         :nHeadStrAlign    	:= 1
+         :lHide            	:= .t.
     end with
 
     with object ( oBrw:AddCol() )

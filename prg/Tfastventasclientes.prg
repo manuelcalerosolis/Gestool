@@ -1727,3 +1727,28 @@ METHOD preCliInfo()
 return nil 
 
 //---------------------------------------------------------------------------//
+
+CLASS TFastRecibosClientes FROM TFastVentasClientes
+
+   METHOD BuildTree( oTree, lLoadFile ) 
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD BuildTree( oTree, lLoadFile ) CLASS TFastRecibosClientes
+
+   local aReports
+
+   DEFAULT oTree     := ::oTreeReporting
+   DEFAULT lLoadFile := .t.
+
+   aReports := {  { "Title" => "Recibos",                      "Image" =>21, "Type" => "Recibos",                       "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
+                  { "Title" => "Recibos fecha de cobro",       "Image" =>21, "Type" => "Recibos cobro",                 "Directory" => "Clientes\Ventas\Recibos fecha de cobro",       "File" => "Recibos de clientes fecha de cobro.fr3" },;
+               }
+
+   ::BuildNode( aReports, oTree, lLoadFile )
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//

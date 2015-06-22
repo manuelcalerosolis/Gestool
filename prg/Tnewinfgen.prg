@@ -239,6 +239,8 @@ CLASS TNewInfGen FROM TInfGen
 
    METHOD ChangeValor()
 
+   METHOD SetValor()
+
    METHOD InitDialog()
 
    METHOD oDefDesglosar()
@@ -400,7 +402,7 @@ METHOD NewResource( cFldRes ) CLASS TNewInfGen
    Tree de los rangos----------------------------------------------------------
    */
 
-   ::oTreeRango                     := TTreeView():Redefine( 100, ::oFld:aDialogs[1] )
+   ::oTreeRango                     := TTreeView():Redefine( 100, ::oFld:aDialogs[ 1 ] )
    ::oTreeRango:bChanged            := {|| ::ChangeRango() }
    ::oTreeRango:bLostFocus          := {|| ::ChangeValor() }
 
@@ -783,8 +785,8 @@ METHOD lGrupoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoArticulo:Cargo:TextHasta    := {|| oRetFld( ::oGrupoArticulo:Cargo:Hasta, ::oDbfArt, "Nombre", "Codigo" ) }
    ::oGrupoArticulo:Cargo:HelpDesde    := {|| BrwArticulo( ::oDesde, ::oSayDesde, , .f. ) }
    ::oGrupoArticulo:Cargo:HelpHasta    := {|| BrwArticulo( ::oHasta, ::oSayHasta, , .f. ) }
-   ::oGrupoArticulo:Cargo:ValidDesde   := {|oGet| if( cArticulo( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfArt:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoArticulo:Cargo:ValidHasta   := {|oGet| if( cArticulo( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfArt:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoArticulo:Cargo:ValidDesde   := {|oGet| if( cArticulo( if( !empty( oGet ), oGet, ::oDesde ), ::oDbfArt:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
+   ::oGrupoArticulo:Cargo:ValidHasta   := {|oGet| if( cArticulo( if( !empty( oGet ), oGet, ::oHasta ), ::oDbfArt:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
    ::oGrupoArticulo:Cargo:lImprimir    := lImp
    ::oGrupoArticulo:Cargo:cBitmap      := "Cube_Yellow_16"
 
@@ -3742,10 +3744,11 @@ METHOD oDefTodos( nIdTodos, oDlg ) CLASS TNewInfGen
    DEFAULT nIdTodos     := 140
    DEFAULT oDlg         := ::oFld:aDialogs[1]
 
-   REDEFINE CHECKBOX ::oTodos VAR ::lTodos ;
-         ID       ( nIdTodos ) ;
-         ON CHANGE( ::ChangeValor() );
-         OF       oDlg
+   REDEFINE CHECKBOX    ::oTodos ;
+      VAR               ::lTodos ;
+      ID                ( nIdTodos ) ;
+      ON CHANGE         ( ::ChangeValor() );
+      OF                oDlg
 
 return ( self )
 
@@ -3755,92 +3758,75 @@ METHOD ChangeRango() CLASS TNewInfGen
 
    local oItemSelect
 
-   if !Empty( ::oTreeRango )
+   if Empty( ::oTreeRango )
+      Return ( Self )
+   end if 
 
-      oItemSelect          := ::oTreeRango:GetSelected()
+   oItemSelect          := ::oTreeRango:GetSelected()
 
-      if oItemSelect != nil .and. oItemSelect:ClassName() == "TTVITEM"
+   if oItemSelect != nil .and. oItemSelect:ClassName() == "TTVITEM"
 
-         ::lTodos          := ( oItemSelect:Cargo:Cargo:Todos )
-         ::cDesde          := ( oItemSelect:Cargo:Cargo:Desde )
-         ::cHasta          := ( oItemSelect:Cargo:Cargo:Hasta )
+      ::lTodos          := ( oItemSelect:Cargo:Cargo:Todos )
+      ::cDesde          := ( oItemSelect:Cargo:Cargo:Desde )
+      ::cHasta          := ( oItemSelect:Cargo:Cargo:Hasta )
 
-         msgAlert( ::cDesde, "cDesde" )
-         msgAlert( ::cHasta, "cHasta" )
+      // msgAlert( ::cDesde, "cDesde" )
+      // msgAlert( ::cHasta, "cHasta" )
+      // msgAlert( oItemSelect:Cargo:Cargo:Nombre, "Nombre" )
 
-         if !Empty( oItemSelect:Cargo:Cargo:bCondition )
+      if !Empty( oItemSelect:Cargo:Cargo:bCondition )
 
-            if !Eval( oItemSelect:Cargo:Cargo:bCondition )
+         if !Eval( oItemSelect:Cargo:Cargo:bCondition )
 
-               ::oTodos:Disable()
-               ::oDesde:Disable()
-               ::oHasta:Disable()
-
-               ::oDesde:bHelp    := oItemSelect:Cargo:Cargo:HelpDesde
-               ::oDesde:bValid   := oItemSelect:Cargo:Cargo:ValidDesde
-
-               ::oHasta:bHelp    := oItemSelect:Cargo:Cargo:HelpHasta
-               ::oHasta:bValid   := oItemSelect:Cargo:Cargo:ValidHasta
-
-               ::oTodos:Click( ::lTodos )
-
-               ::oDesde:cText( ::cDesde )
-               ::oHasta:cText( ::cHasta )
-
-               ::oDesde:lValid()
-               ::oHasta:lValid()
-
-            else
-
-               ::oTodos:Enable()
-               ::oDesde:Enable()
-               ::oHasta:Enable()
-
-               ::oDesde:bHelp    := oItemSelect:Cargo:Cargo:HelpDesde
-               ::oDesde:bValid   := oItemSelect:Cargo:Cargo:ValidDesde
-
-               ::oHasta:bHelp    := oItemSelect:Cargo:Cargo:HelpHasta
-               ::oHasta:bValid   := oItemSelect:Cargo:Cargo:ValidHasta
-
-               ::oTodos:Click( ::lTodos )
-               ::oDesde:cText( ::cDesde )
-               ::oHasta:cText( ::cHasta )
-
-               ::oDesde:lValid()
-               ::oHasta:lValid()
-
-            end if
+            ::oTodos:Disable()
+            ::oDesde:Disable()
+            ::oHasta:Disable()
 
          else
 
             ::oTodos:Enable()
-
-            ::oDesde:bHelp             := oItemSelect:Cargo:Cargo:HelpDesde
-            ::oDesde:bValid            := oItemSelect:Cargo:Cargo:ValidDesde
-            ::oDesde:oGet:Picture      := oItemSelect:Cargo:Cargo:cPicDesde
-
-            ::oHasta:bHelp             := oItemSelect:Cargo:Cargo:HelpHasta
-            ::oHasta:bValid            := oItemSelect:Cargo:Cargo:ValidHasta
-            ::oHasta:oGet:Picture      := oItemSelect:Cargo:Cargo:cPicHasta
-
-            ::oTodos:Click( ::lTodos )
-
-            ::oDesde:cText( ::cDesde )
-            ::oHasta:cText( ::cHasta )
-
-            ::oDesde:lValid()
-            ::oHasta:lValid()
-
-            ::oDesde:Refresh()
-            ::oHasta:Refresh()
+            ::oDesde:Enable()
+            ::oHasta:Enable()
 
          end if
 
+         ::oDesde:bHelp    := oItemSelect:Cargo:Cargo:HelpDesde
+         ::oDesde:bValid   := oItemSelect:Cargo:Cargo:ValidDesde
+
+         ::oHasta:bHelp    := oItemSelect:Cargo:Cargo:HelpHasta
+         ::oHasta:bValid   := oItemSelect:Cargo:Cargo:ValidHasta
+
+      else
+
+         ::oTodos:Enable()
+
+         ::oDesde:bHelp             := oItemSelect:Cargo:Cargo:HelpDesde
+         ::oDesde:bValid            := oItemSelect:Cargo:Cargo:ValidDesde
+         ::oDesde:oGet:Picture      := oItemSelect:Cargo:Cargo:cPicDesde
+
+         ::oHasta:bHelp             := oItemSelect:Cargo:Cargo:HelpHasta
+         ::oHasta:bValid            := oItemSelect:Cargo:Cargo:ValidHasta
+         ::oHasta:oGet:Picture      := oItemSelect:Cargo:Cargo:cPicHasta
+
       end if
 
-   end if
+      ::oTodos:Click( ::lTodos )
 
+      ::oDesde:cText( ::cDesde )
+      ::oHasta:cText( ::cHasta )
+
+      ::oDesde:lValid()
+      ::oHasta:lValid()
+
+   end if
+   
 Return( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setValor() CLASS TNewInfGen
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -3848,17 +3834,21 @@ METHOD ChangeValor() CLASS TNewInfGen
 
    local oItemSelect
 
-   if !Empty( ::oTreeRango )
+   if Empty( ::oTreeRango )
+      Return ( self )
+   end if 
 
-    oItemSelect       := ::oTreeRango:GetSelected()
+   oItemSelect       := ::oTreeRango:GetSelected()
 
-      if oItemSelect != nil .and. oItemSelect:ClassName() == "TTVITEM"
+   if oItemSelect != nil .and. oItemSelect:ClassName() == "TTVITEM"
 
-         oItemSelect:Cargo:Cargo:Todos  := ::lTodos
-         oItemSelect:Cargo:Cargo:Desde  := ::oDesde:VarGet()
-         oItemSelect:Cargo:Cargo:Hasta  := ::oHasta:VarGet()
+      // msgAlert( oItemSelect:Cargo:Cargo:Nombre, "Nombre" )
+      // msgAlert( ::oDesde:VarGet(), "ChangeValor cDesde" )
+      // msgAlert( ::oHasta:VarGet(), "ChangeValor cHasta" )
 
-      end if
+      oItemSelect:Cargo:Cargo:Todos  := ::lTodos
+      oItemSelect:Cargo:Cargo:Desde  := ::oDesde:VarGet()
+      oItemSelect:Cargo:Cargo:Hasta  := ::oHasta:VarGet()
 
    end if
 

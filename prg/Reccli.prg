@@ -691,9 +691,9 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
    DEFINE BTNSHELL RESOURCE "PREV1" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( InfPreCli():New( "Previsión de cobros" ):Play() ) ;
-      TOOLTIP  "Pre(v)isión";
-      HOTKEY   "V";
+      ACTION   ( TFastRecibosClientes():New():Play() );
+      TOOLTIP  "(R)eporting";
+      HOTKEY   "R";
       LEVEL    ACC_IMPR
 
 #endif
