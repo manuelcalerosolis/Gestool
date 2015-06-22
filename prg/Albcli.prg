@@ -471,6 +471,7 @@ static oBtnSat
 static oBtnPed
 static oBtnAgruparPedido
 static oBtnAgruparSAT
+static oBtnPrecio
 
 static oRieCli
 static nRieCli
@@ -2437,6 +2438,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 172, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
+
+  
+      REDEFINE BTNBMP oBtnPrecio ;
+         ID       174 ;
+         OF       oFld:aDialogs[1] ;
+         RESOURCE "arrow_down_blue_16" ;
+         NOBORDER ;
+         ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
 
          /*
          --------------
