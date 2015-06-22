@@ -5895,8 +5895,6 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       local oSayTextRuta
       local cSayTextRuta
 
-      msgAlert( len( aTmp[ _CCODCLI ] ), "antes" )
-
    	do case
    		case nMode == APPD_MODE
 
@@ -5936,8 +5934,6 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       end case  		
 
-      msgAlert( len( aTmp[ _CCODCLI ] ), "despues" )
-
       cCodPagoAnterior           := aTmp[ _CCODPAGO ]
 
    	/*
@@ -5947,8 +5943,6 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    	if BeginTrans( aTmp, nMode )
       	Return .f.
    	end if
-
-      msgAlert( len( aTmp[ _CCODCLI ] ), "despues de BeginTrans" )
 
    	/*
       Cargamos los pictures------------------------------------------------------
@@ -6115,8 +6109,6 @@ STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
                                              		"nClrOver" 	=> nGridColor(),;
 																	"nClrVisit" => nGridColor(),;
                                              		"bAction"   => {|| if( !lRecibosPagadosTmp( dbfTmpPgo ), GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ), ) } } )
-
-      msgAlert( len( aTmp[ _CCODCLI ] ), "antes del control")
 
    	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 	"nRow"      => 95,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
@@ -14105,7 +14097,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             end if
 
             if hhaskey( hAtipica, "nTarifaPrecio" )
-            	aGet[ _NTARLIN ]:cText( hAtipica[ "nTarifaPrecio" ] )
+               if !empty( aGet[ _NTARLIN ] )
+                  aGet[ _NTARLIN ]:cText( hAtipica[ "nTarifaPrecio" ] )
+               else 
+                  aTmp[ _NTARLIN ]  := hAtipica[ "nTarifaPrecio" ] 
+               end if 
             end if 
 
         	end if
@@ -14117,25 +14113,25 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             //--Precio--//
             nImpOfe  := RetPrcTar( aTmp[ _CREF ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
             if nImpOfe != 0
-               	if !Empty( aGet[_NPREUNIT] )
-               		aGet[_NPREUNIT]:cText( nImpOfe )
-               	end if
+            	if !empty( aGet[ _NPREUNIT ] )
+            		aGet[ _NPREUNIT ]:cText( nImpOfe )
+            	end if
             end if
 
             //--Descuento porcentual--//
             nImpOfe  := RetPctTar( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
             if nImpOfe != 0
-               	if !Empty( aGet[_NDTO ] )
-               		aGet[_NDTO   ]:cText( nImpOfe )
-               	end if	
+            	if !Empty( aGet[_NDTO ] )
+            		aGet[_NDTO   ]:cText( nImpOfe )
+            	end if	
             end if
 
             //--Descuento lineal--//
             nImpOfe  := RetLinTar( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
             if nImpOfe != 0
-               	if !Empty( aGet[_NDTODIV] )
-               		aGet[_NDTODIV]:cText( nImpOfe )
-               	end if	
+            	if !Empty( aGet[_NDTODIV] )
+            		aGet[_NDTODIV]:cText( nImpOfe )
+            	end if	
             end if
 
             // Comision de agente
@@ -14151,9 +14147,9 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             nImpOfe  := RetDtoPrm( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
             if nImpOfe  != 0
-               	if !Empty( aGet[_NDTOPRM] )
-               		aGet[_NDTOPRM]:cText( nImpOfe )
-               	end if	
+            	if !Empty( aGet[_NDTOPRM] )
+            		aGet[_NDTOPRM]:cText( nImpOfe )
+            	end if	
             end if
 
             //--Descuento de promoci¢n para el agente--//
@@ -24191,7 +24187,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
    cNumPed              := aTmp[ _CNUMPED ]
    cNumAlb              := aTmp[ _CNUMALB ]
    dFecFac              := aTmp[ _DFECFAC ]
-   tFecFac 				:= aTmp[ _TFECFAC ]
+   tFecFac 				   := aTmp[ _TFECFAC ]
    cCodCli              := aTmp[ _CCODCLI ]
 
    /*
@@ -24225,7 +24221,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
 
       aTmp[ _DFECCRE ]        := GetSysDate()
       aTmp[ _CTIMCRE ]        := Time()
-      aTmp[ _LALQUILER ]   := .f.
+      aTmp[ _LALQUILER ]      := .f.
 
       do case
       case nMode == APPD_MODE .or. nMode == DUPL_MODE
@@ -24236,6 +24232,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
 
          nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
          aTmp[ _NNUMFAC ]     := nNumFac
+         aTmp[ _LSNDDOC ]     := .t.
 
       case nMode == EDIT_MODE
 
@@ -24253,8 +24250,8 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
             Obtenemos el nuevo número para la serie-------------------------------
             */
 
-            nNumFac              := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
-            aTmp[ _NNUMFAC ]     := nNumFac
+            nNumFac           := nNewDoc( cSerFac, D():FacturasClientes( nView ), "NFACCLI", , D():Contadores( nView ) )
+            aTmp[ _NNUMFAC ]  := nNumFac
 
          else
 
@@ -24266,7 +24263,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
          Marcamos para que podamos volver a enviarlo---------------------------
          */
 
-         aTmp[ _LSNDDOC ]        := .t.
+         aTmp[ _LSNDDOC ]     := .t.
 
       end case
 

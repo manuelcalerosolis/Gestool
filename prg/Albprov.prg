@@ -9557,14 +9557,7 @@ Function SynAlbPrv( cPath )
       else     
          if ( cAlbPrvT )->lFacturado  
             ( cAlbPrvT )->nFacturado   := 3
-<<<<<<< HEAD
          else
-=======
-            //msgAlert( "facturado" )
-         else
-            //msgAlert( ( cAlbPrvT )->lFacturado, "lFacturado" )
-            //msgAlert( "no facturado" )
->>>>>>> origin/master
             ( cAlbPrvT )->nFacturado   := 1
          end if
       end if 

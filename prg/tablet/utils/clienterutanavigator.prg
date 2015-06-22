@@ -28,7 +28,7 @@ CLASS ClienteRutaNavigator
 
    METHOD getSelected()                INLINE ( iif( !empty( ::nProcesado ) .and. ::nProcesado >= 1 .and. ::nProcesado <= len( ::aClientesRuta ),;
                                                 ::aClientesRuta[ ::nProcesado ],;
-                                                "" ) )
+                                                space( 12 ) ) )
 
    METHOD msgClient()                  INLINE ( msgInfo( ( D():Clientes( ::nView ) )->Cod + "-" + ( D():Clientes( ::nView ) )->Titulo ) )
    METHOD test()

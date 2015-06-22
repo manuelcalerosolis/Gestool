@@ -1596,52 +1596,52 @@ METHOD lGrupoFPago( lInitGroup, lImp ) CLASS TNewInfGen
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if ::oDbfFpg == nil .or. !::oDbfFpg:Used()
-      DATABASE NEW ::oDbfFpg PATH ( cPatGrp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
-   end if
-
-   ::oGrupoFpago                   := TRGroup():New( {|| ::oDbf:cCodFpg }, {|| "F. pago : " + AllTrim( ::oDbf:cCodFpg ) + " - " + AllTRim( ::oDbf:cNomFpg ) }, {|| "Total forma de pago : " + ::oDbf:cCodFpg }, {|| 3 }, ::lSalto )
-
-   ::oGrupoFpago:Cargo             := TItemGroup()
-   ::oGrupoFpago:Cargo:Nombre      := "Forma pago"
-   ::oGrupoFpago:Cargo:Expresion   := "cCodFpg"
-   ::oGrupoFpago:Cargo:Todos       := .t.
-   ::oGrupoFpago:Cargo:Desde       := Space( 2 )          // dbFirst( ::oDbfFpg, 1 )
-   ::oGrupoFpago:Cargo:Hasta       := Replicate( "Z", 2 ) // dbLast( ::oDbfFpg, 1 )
-   ::oGrupoFpago:Cargo:cPicDesde   := "@!"
-   ::oGrupoFpago:Cargo:cPicHasta   := "@!"
-   ::oGrupoFpago:Cargo:TextDesde   := {|| oRetFld( ::oGrupoFpago:Cargo:Desde, ::oDbfFpg, "cDesPago", "cCodPago" ) }
-   ::oGrupoFpago:Cargo:TextHasta   := {|| oRetFld( ::oGrupoFpago:Cargo:Hasta, ::oDbfFpg, "cDesPago", "cCodPago" ) }
-   ::oGrupoFpago:Cargo:HelpDesde   := {|| BrwFPago( ::oDesde, ::oSayDesde ) }
-   ::oGrupoFpago:Cargo:HelpHasta   := {|| BrwFPago( ::oHasta, ::oSayHasta ) }
-   ::oGrupoFpago:Cargo:ValidDesde  := {|oGet| if( cFpago( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfFpg:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoFpago:Cargo:ValidHasta  := {|oGet| if( cFpago( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfFpg:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
-   ::oGrupoFPago:Cargo:lImprimir   := lImp
-   ::oGrupoFPago:Cargo:cBitmap     := "Creditcards_16"
-
-   if !Empty( ::oImageList )
-      ::oImageList:AddMasked( TBitmap():Define( ::oGrupoFPago:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
-   end if
-
-   if lInitGroup != nil
-
-      aAdd( ::aSelectionGroup, ::oGrupoFpago )
-
-      if !Empty( ::oImageGroup )
-         ::oImageGroup:AddMasked( TBitmap():Define( ::oGrupoFPago:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
-         ::oGrupoFpago:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
+      if empty( ::oDbfFpg ) .or. !::oDbfFpg:Used()
+         DATABASE NEW ::oDbfFpg PATH ( cPatGrp() ) FILE "FPago.Dbf" VIA ( cDriver() ) SHARED INDEX "FPago.Cdx"
       end if
 
-      if lInitGroup
-         if !Empty( ::oColNombre )
-            ::oColNombre:AddResource( ::oGrupoFPago:Cargo:cBitmap )
+      ::oGrupoFpago                   := TRGroup():New( {|| ::oDbf:cCodFpg }, {|| "F. pago : " + AllTrim( ::oDbf:cCodFpg ) + " - " + AllTRim( ::oDbf:cNomFpg ) }, {|| "Total forma de pago : " + ::oDbf:cCodFpg }, {|| 3 }, ::lSalto )
+
+      ::oGrupoFpago:Cargo             := TItemGroup()
+      ::oGrupoFpago:Cargo:Nombre      := "Forma pago"
+      ::oGrupoFpago:Cargo:Expresion   := "cCodFpg"
+      ::oGrupoFpago:Cargo:Todos       := .t.
+      ::oGrupoFpago:Cargo:Desde       := Space( 2 )          // dbFirst( ::oDbfFpg, 1 )
+      ::oGrupoFpago:Cargo:Hasta       := Replicate( "Z", 2 ) // dbLast( ::oDbfFpg, 1 )
+      ::oGrupoFpago:Cargo:cPicDesde   := "@!"
+      ::oGrupoFpago:Cargo:cPicHasta   := "@!"
+      ::oGrupoFpago:Cargo:TextDesde   := {|| oRetFld( ::oGrupoFpago:Cargo:Desde, ::oDbfFpg, "cDesPago", "cCodPago" ) }
+      ::oGrupoFpago:Cargo:TextHasta   := {|| oRetFld( ::oGrupoFpago:Cargo:Hasta, ::oDbfFpg, "cDesPago", "cCodPago" ) }
+      ::oGrupoFpago:Cargo:HelpDesde   := {|| BrwFPago( ::oDesde, ::oSayDesde ) }
+      ::oGrupoFpago:Cargo:HelpHasta   := {|| BrwFPago( ::oHasta, ::oSayHasta ) }
+      ::oGrupoFpago:Cargo:ValidDesde  := {|oGet| if( cFpago( if( !Empty( oGet ), oGet, ::oDesde ), ::oDbfFpg:cAlias, ::oSayDesde ), ( ::ChangeValor(), .t. ), .f. ) }
+      ::oGrupoFpago:Cargo:ValidHasta  := {|oGet| if( cFpago( if( !Empty( oGet ), oGet, ::oHasta ), ::oDbfFpg:cAlias, ::oSayHasta ), ( ::ChangeValor(), .t. ), .f. ) }
+      ::oGrupoFPago:Cargo:lImprimir   := lImp
+      ::oGrupoFPago:Cargo:cBitmap     := "Creditcards_16"
+
+      if !Empty( ::oImageList )
+         ::oImageList:AddMasked( TBitmap():Define( ::oGrupoFPago:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
+      end if
+
+      if lInitGroup != nil
+
+         aAdd( ::aSelectionGroup, ::oGrupoFpago )
+
+         if !Empty( ::oImageGroup )
+            ::oImageGroup:AddMasked( TBitmap():Define( ::oGrupoFPago:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
+            ::oGrupoFpago:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) -1
          end if
-         aAdd( ::aInitGroup, ::oGrupoFpago )
+
+         if lInitGroup
+            if !Empty( ::oColNombre )
+               ::oColNombre:AddResource( ::oGrupoFPago:Cargo:cBitmap )
+            end if
+            aAdd( ::aInitGroup, ::oGrupoFpago )
+         end if
+
       end if
 
-   end if
-
-   aAdd( ::aSelectionRango, ::oGrupoFpago )
+      aAdd( ::aSelectionRango, ::oGrupoFpago )
 
    RECOVER USING oError
 
@@ -3764,6 +3764,9 @@ METHOD ChangeRango() CLASS TNewInfGen
          ::lTodos          := ( oItemSelect:Cargo:Cargo:Todos )
          ::cDesde          := ( oItemSelect:Cargo:Cargo:Desde )
          ::cHasta          := ( oItemSelect:Cargo:Cargo:Hasta )
+
+         msgAlert( ::cDesde, "cDesde" )
+         msgAlert( ::cHasta, "cHasta" )
 
          if !Empty( oItemSelect:Cargo:Cargo:bCondition )
 

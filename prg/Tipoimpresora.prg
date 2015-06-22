@@ -196,7 +196,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTImp, oBrw, bWhen, bValid, nMode )
 
    local oDlg
 
-   DEFINE DIALOG oDlg RESOURCE "SITUACION" TITLE LblTitle( nMode ) + "tipos de impresoras"
+   DEFINE DIALOG oDlg RESOURCE "TIPO_IMPRESORA" TITLE LblTitle( nMode ) + "tipos de impresoras"
 
    REDEFINE GET aGet[ ( dbfTImp )->( FieldPos( "cTipImp" ) ) ] ;
       VAR      aTmp[ ( dbfTImp )->( FieldPos( "cTipImp" ) ) ] ;
@@ -205,24 +205,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTImp, oBrw, bWhen, bValid, nMode )
       OF       oDlg
 
    REDEFINE BUTTON ;
-      ID       500 ;
+      ID       IDOK ;
       OF       oDlg ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       ACTION   ( EndTrans( aTmp, aGet, dbfTImp, oBrw, nMode, oDlg ) )
 
    REDEFINE BUTTON ;
-      ID       550 ;
+      ID       IDCANCEL ;
       OF       oDlg ;
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   //Teclas rápidas
+   // Teclas rápidas-----------------------------------------------------------
 
    if nMode != ZOOM_MODE
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfTImp, oBrw, nMode, oDlg ) } )
    end if
-
-   oDlg:bStart := {|| aGet[ ( dbfTImp )->( FieldPos( "cTipImp" ) ) ]:SetFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -337,37 +335,13 @@ FUNCTION IsTipImp()
 
    BEGIN SEQUENCE
 
-   if !lExistTable( cPatDat() + "TipImp.Dbf" )
-      mkTipImp( cPatDat() )
-   end if
+      if !lExistTable( cPatDat() + "TipImp.Dbf" )
+         mkTipImp( cPatDat() )
+      end if
 
-   if !lExistIndex( cPatDat() + "TipImp.Cdx" )
-      rxTipImp( cPatDat() )
-   end if
-
-   USE ( cPatDat() + "TipImp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TipImp", @dbfTImp ) )
-   // ( dbfTImp )->( ordListAdd( cPatDat() + "TIPIMP.CDX" ) )
-
-   ( dbfTImp )->( __dbLocate( { || Rtrim( ( dbfTImp )->cTipImp ) == "General" } ) )
-   if !( dbfTImp )->( found() )
-      ( dbfTImp )->( dbAppend() )
-      ( dbfTImp )->cTipImp     := "General"
-      ( dbfTImp )->( dbUnLock() )
-   end if
-
-   ( dbfTImp )->( __dbLocate( { || Rtrim( ( dbfTImp )->cTipImp ) == "Barra" } ) )
-   if !( dbfTImp )->( found() )
-      ( dbfTImp )->( dbAppend() )
-      ( dbfTImp )->cTipImp     := "Barra"
-      ( dbfTImp )->( dbUnLock() )
-   end if
-
-   ( dbfTImp )->( __dbLocate( { || Rtrim( ( dbfTImp )->cTipImp ) == "Cocina" } ) )
-   if !( dbfTImp )->( found() )
-      ( dbfTImp )->( dbAppend() )
-      ( dbfTImp )->cTipImp     := "Cocina"
-      ( dbfTImp )->( dbUnLock() )
-   end if
+      if !lExistIndex( cPatDat() + "TipImp.Cdx" )
+         rxTipImp( cPatDat() )
+      end if
 
    RECOVER USING oError
 
@@ -389,34 +363,34 @@ FUNCTION cTipoImpresora( oGet, dbfTImp )
 
    local oBlock
    local oError
-   local lClose   := .f.
-   local lValid   := .f.
-	local xValor 	:= oGet:varGet()
+   local lClose      := .f.
+   local lValid      := .f.
+	local xValor 	   := oGet:varGet()
 
    if Empty( xValor )
       return .t.
    end if
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfTImp )
-      USE ( cPatDat() + "TIPIMP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPIMP", @dbfTImp ) )
-      SET ADSINDEX TO ( cPatDat() + "TIPIMP.CDX" ) ADDITIVE
-      lClose      := .t.
-   end if
+      if Empty( dbfTImp )
+         USE ( cPatDat() + "TIPIMP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPIMP", @dbfTImp ) )
+         SET ADSINDEX TO ( cPatDat() + "TIPIMP.CDX" ) ADDITIVE
+         lClose      := .t.
+      end if
 
-   if ( dbfTImp )->( dbSeek( Padr( Upper( xValor ), 50 ) ) )
+      if ( dbfTImp )->( dbSeek( Padr( Upper( xValor ), 50 ) ) )
 
-      oGet:cText( ( dbfTImp )->cTipImp )
+         oGet:cText( ( dbfTImp )->cTipImp )
 
-      lValid      := .t.
+         lValid      := .t.
 
-   else
+      else
 
-      msgStop( "Código de tipo de impresora no encontrado" )
+         msgStop( "Código de tipo de impresora no encontrado" )
 
-   end if
+      end if
 
    RECOVER USING oError
 

@@ -60,9 +60,9 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   ::oFacCliP := TDataCenter():oFacCliP()
+      ::oFacCliP := TDataCenter():oFacCliP()
 
-   ::oFacCliT := TDataCenter():oFacCliT()
+      ::oFacCliT := TDataCenter():oFacCliT()
 
    RECOVER
 
@@ -169,7 +169,7 @@ METHOD lGenerate()
    end if
 
    if !::oGrupoCliente:Cargo:Todos
-      cExpHead    += '.and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoFCliente:Cargo:Hasta ) + '"'
+      cExpHead    += '.and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
    end if
 
    if !::oGrupoFPago:Cargo:Todos

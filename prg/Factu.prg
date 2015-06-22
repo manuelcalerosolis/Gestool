@@ -1959,7 +1959,7 @@ Function CreateAcceso( oWnd )
    // Otros--------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso() 
-   oGrupo:nBigItems     := 12
+   oGrupo:nBigItems     := 13
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "Folder2_Red_16"
    oGrupo:cBigBitmap    := "Folder2_Red_32"
