@@ -7158,7 +7158,7 @@ Return ( printReportAlbPrv( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
 
 //---------------------------------------------------------------------------//
 
-static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter )
+static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter, cDoc )
 
    local oFr
    local cFilePdf       := cPatTmp() + "AlbaranProveedor" +  ( D():AlbaranesProveedores( nView ) )->cSerAlb + Alltrim( Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) ) + ".Pdf"

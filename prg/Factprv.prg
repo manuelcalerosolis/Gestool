@@ -374,6 +374,8 @@ static oCentroCoste
 
 static nView
 
+static oMailing
+
 //----------------------------------------------------------------------------//
 
 Static Function initPublics()
@@ -534,6 +536,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oNumerosSerie           := TNumerosSerie()
       oNumerosSerie:lCompras  := .t.
       oNumerosSerie:oStock    := oStock
+
+      oMailing                := TGenmailingDatabaseFacturaProveedor():New( nView )
 
       
       /*
@@ -1017,11 +1021,9 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenFacPrv( IS_MAIL ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
-
-      lGenFac( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
       NOBORDER ;
@@ -4582,7 +4584,7 @@ Static Function GenFacPrv( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
 
-      PrintReportFacPrv( nDevice, nCopies, cPrinter, D():Documentos( nView ) )
+      PrintReportFacPrv( nDevice, nCopies, cPrinter )
 
    else
 
@@ -13294,6 +13296,12 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+Function mailReportFacPrv( cCodigoDocumento )
+
+Return ( printReportFacPrv( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
 Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
 
    local oFr
@@ -13330,9 +13338,9 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( cDoc )->mReport )
+   if !Empty( ( D():Documentos( nView ) )->mReport )
 
-      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" )
 
       /*
       Zona de variables--------------------------------------------------------
@@ -13384,28 +13392,6 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nFacPrv" )
-                  :SetAlias(        D():FacturasProveedores( nView ) )
-                  :SetItems(        aItmFacPrv() )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( D():FacturasProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  factura de proveedor número " + ( D():FacturasProveedores( nView ) )->cSerFac + "/" + Alltrim( Str( ( D():FacturasProveedores( nView ) )->nNumFac ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestra factura de proveedor " + ( D():FacturasProveedores( nView ) )->cSerFac + "/" + Alltrim( Str( ( D():FacturasProveedores( nView ) )->nNumFac ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( D():FacturasProveedores( nView ) )->dfecFac ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :lSend()
-
-               end with
-
-            end if
-
       end case
 
    end if
@@ -13416,7 +13402,7 @@ Function PrintReportFacPrv( nDevice, nCopies, cPrinter, cDoc )
 
    oFr:DestroyFr()
 
-Return .t.
+Return cFilePdf
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
