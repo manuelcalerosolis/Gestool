@@ -1948,9 +1948,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
    DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "pedidos de clientes"
 
-      REDEFINE FOLDER oFld ID 200 OF oDlg ;
-         PROMPT   "&Pedido",  "Da&tos",   "&Incidencias", "D&ocumentos", "&Situaciones";
-         DIALOGS  "PEDCLI_1", "PEDCLI_2", "PEDCLI_3",     "PEDCLI_4"   , "PEDCLI_5"
+      REDEFINE FOLDER oFld;
+         ID       200 ;
+         OF       oDlg ;
+         PROMPT   "&Pedido",;
+                  "Da&tos",;
+                  "&Incidencias",;
+                  "D&ocumentos",;
+                  "&Situaciones";
+         DIALOGS  "PEDCLI_1",;
+                  "PEDCLI_2",;
+                  "PEDCLI_3",;
+                  "PEDCLI_4",;
+                  "PEDCLI_5"
 
       /*
 		Cliente_________________________________________________________________
@@ -2026,16 +2036,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-         /*
-         --------------Combox tarifa
-         */
+         // tarifa
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 132, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
-
-         /*
-         --------------
-         */
 
       REDEFINE GET oRieCli VAR nRieCli;
          ID       133 ;
@@ -2048,7 +2052,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          COLOR    CLR_GET ;
          WHEN     ( lWhen .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
-
 
       /*
 		Tarifa_________________________________________________________________
@@ -10337,8 +10340,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
                   aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
                   aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
 
-                  // 
-
                   saveDetail( aTmp, aClo, aGet, aTmpPed, dbfTmpLin, oBrw, nMode )
 
                end if
@@ -11228,7 +11229,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             else 
 
-               if !Empty( aTmp[ _CCODPR1 ] )
+               if !empty( aTmp[ _CCODPR1 ] )
 
                   if aGet[ _CVALPR1 ] != nil
                      aGet[ _CVALPR1 ]:Show()
@@ -11249,7 +11250,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
                else
 
-                  if !Empty( aGet[ _CVALPR1 ] ) .and. !Empty( oSayPr1 ) .and. !Empty( oSayVp1 )
+                  if !empty( aGet[ _CVALPR1 ] ) .and. !empty( oSayPr1 ) .and. !empty( oSayVp1 )
                      aGet[ _CVALPR1 ]:hide()
                      oSayPr1:hide()
                      oSayVp1:hide()
@@ -11275,15 +11276,15 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
                else
 
-                  if !Empty( aGet[ _CVALPR2 ] )
+                  if !empty( aGet[ _CVALPR2 ] )
                      aGet[_CVALPR2 ]:hide()
                   end if
 
-                  if !Empty( oSayPr2 )
+                  if !empty( oSayPr2 )
                      oSayPr2:hide()
                   end if
 
-                  if !Empty( oSayVp2 )
+                  if !empty( oSayVp2 )
                      oSayVp2:hide()
                   end if
 
@@ -11338,7 +11339,6 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _NCOSDIV ]  := nCosPro
             end if
 
-            
             // Descuento de artículo----------------------------------------------
          
             nDescuentoArticulo   := nDescuentoArticulo( cCodArt, aTmpPed[ _CCODCLI ], nView )
@@ -11384,7 +11384,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             Usando tarifas-----------------------------------------------------
             */
 
-            if !Empty( aTmpPed[_CCODTAR] )
+            if !Empty( aTmpPed[ _CCODTAR ] )
 
                //--Precio--//
                nImpOfe     := RetPrcTar( aTmp[ _CREF ], aTmpPed[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL, aTmp[ _NTARLIN ] )
@@ -11426,9 +11426,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
-            /*
-            Chequeamos las atipicas del cliente--------------------------------
-            */
+            // Chequeamos las atipicas del cliente--------------------------------
 
             hAtipica := hAtipica( hValue( aTmp, aTmpPed ) )
 
@@ -11477,6 +11475,8 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _LLINOFE ] := .t.
 
             end if
+
+            // Mediciones
 
             ValidaMedicion( aTmp, aGet )
 
@@ -12458,12 +12458,12 @@ FUNCTION BrwPedCli( oGet, cPedCliT, cPedCliL, cdbfIva, cdbfDiv, dbfFPago, oIva )
       end with
 
       with object ( oBrw:AddCol() )
-        :cHeader          	:= "Importe"
-        :bEditValue       	:= {|| ( cPedCliT )->nTotPed }
-		:cEditPicture     	:= cPorDiv()
-        :nWidth           	:= 80
-        :nDataStrAlign    	:= 1
-        :nHeadStrAlign    	:= 1
+         :cHeader          := "Importe"
+         :bEditValue       := {|| ( cPedCliT )->nTotPed }
+         :cEditPicture     := cPorDiv()
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
       end with
 
 		REDEFINE BUTTON ;

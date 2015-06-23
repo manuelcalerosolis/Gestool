@@ -2545,7 +2545,6 @@ METHOD BuildEmpresa()
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
-
    /*
    Proveedores-----------------------------------------------------------------
    */
@@ -3002,6 +3001,8 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PreCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PreCliT.Cdx"
    oDataTable:cDescription := "Presupuestos de clientes"
+   oDatatable:aDictionary  := hashDictionary( aItmPreCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aItmPreCli() )
    oDataTable:bCreateFile  := {| cPath | mkPreCli( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxPreCli( cPath ) }
    oDataTable:bSyncFile    := {|| SynPreCli( cPatEmp() ) }
@@ -3013,6 +3014,8 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PreCliL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PreCliL.Cdx"
    oDataTable:cDescription := "Presupuestos de clientes"
+   oDatatable:aDictionary  := hashDictionary( aColPreCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aColPreCli() )
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 

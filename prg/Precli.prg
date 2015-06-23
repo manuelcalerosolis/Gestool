@@ -404,6 +404,7 @@ static oMailing
 
 static oDetCamposExtra
 
+static oBrwProperties
 
 //----------------------------------------------------------------------------//
 //Funciones del programa
@@ -436,7 +437,7 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    end if
 
    if nCopies == 0 
-      nCopies           := nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPedCli", D():Get( "NCount", nView ) )
+      nCopies           := nCopiasDocumento( ( D():PresupuestosClientes( nView ) )->cSerPre, "nPreCli", D():Get( "NCount", nView ) )
    end if 
 
    if nCopies == 0
@@ -624,6 +625,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():PresupuestosClientes( nView )
 
+      D():PresupuestosClientesLineas( nView )
+
       D():Clientes( nView )
 
       D():GruposClientes( nView )
@@ -640,9 +643,6 @@ STATIC FUNCTION OpenFiles( lExt )
       D():GetObject( "UnidadMedicion", nView )
 
       D():ImpuestosEspeciales( nView )
-
-      USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PRECLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLII", @dbfPreCliI ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLII.CDX" ) ADDITIVE
@@ -939,10 +939,6 @@ STATIC FUNCTION CloseFiles()
       oFont:end()
    end if
 
-   if !Empty( dbfPreCliL   )
-      ( dbfPreCliL   )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfPreCliI   )
       ( dbfPreCliI   )->( dbCloseArea() )
    end if
@@ -1177,7 +1173,6 @@ STATIC FUNCTION CloseFiles()
 
    D():DeleteView( nView )
 
-   dbfPreCliL     := nil
    dbfPreCliI     := nil
    dbfPreCliD     := nil
    dbfArtPrv      := nil
@@ -1689,7 +1684,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( ReplaceCreator( oWndBrw, dbfPreCliL, aColPreCli() ) ) ;
+            ACTION   ( ReplaceCreator( oWndBrw, D():PresupuestosClientesLineas( nView ), aColPreCli() ) ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;
@@ -1734,7 +1729,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, PedCli( nil, nil, nil, nil, ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, PreCli( nil, nil, nil, nil, ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar pedido" ;
             FROM     oRotor ;
 
@@ -1826,7 +1821,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    Este valor los guaradamos para detectar los posibles cambios----------------
    */
 
-   cOldCodCli           := aTmp[_CCODCLI]
+   cOldCodCli           := aTmp[ _CCODCLI ]
    cOldSituacion        := aTmp[ _CSITUAC ]
 
    do case
@@ -1959,15 +1954,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
    nRieCli              := oStock:nRiesgo( aTmp[ _CCODCLI ] )
 
-   /*
-   Inicializamos el valor de la tarifa por si cambian--------------------------
-   */
+   // Inicializamos el valor de la tarifa por si cambian--------------------------
 
    InitTarifaCabecera( aTmp[ _NTARIFA ] )
 
-   /*
-   Comienza el dialogo---------------------------------------------------------
-   */
+   // Comienza el dialogo---------------------------------------------------------
 
    DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "presupuestos a clientes"
 
@@ -1985,9 +1976,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
                   "PEDCLI_4",;
                   "PEDCLI_5"
 
-		/*
-		Cliente_________________________________________________________________
-		*/
+		//Cliente_________________________________________________________________
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
@@ -2059,19 +2048,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      /*
-      Tarifas-----------------------------------
-      */
+      // Tarifas-----------------------------------
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 132, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
 
-      //oGetTarifa  := comboTarifa():Build( { "idCombo" => 132, "uValue" => aTmp[ _NTARIFA ] } )
-      //oGetTarifa:Resource( oFld:aDialogs[1] )
-
-      /*
-      -------------------------------------------
-      */
+      // Riesgo -------------------------------------------
 
       REDEFINE GET oRieCli VAR nRieCli;
          ID       133 ;
@@ -2096,9 +2078,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
-		/*
-		Tarifa_________________________________________________________________
-		*/
+		// Tarifa_________________________________________________________________
 
 		REDEFINE GET aGet[_CCODTAR] VAR aTmp[_CCODTAR] ;
 			ID 		140 ;
@@ -2114,9 +2094,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			ID 		141 ;
 			OF 		oFld:aDialogs[1]
 
-		/*
-		Obra____________________________________________________________________
-		*/
+		// Obra____________________________________________________________________
 
 		REDEFINE GET aGet[_CCODOBR] VAR aTmp[_CCODOBR] ;
 			ID 		150 ;
@@ -2132,9 +2110,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			ID 		151 ;
 			OF 		oFld:aDialogs[1]
 
-		/*
-		Almacen________________________________________________________________
-		*/
+		// Almacen________________________________________________________________
 
       REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ] ;
 			ID 		160 ;
@@ -2151,9 +2127,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          ON HELP  ( ExpAlmacen( aTmp[ _CCODALM ], dbfTmpLin, oBrwLin ) ) ;
          OF       oFld:aDialogs[ 1 ]
 
-		/*
-		Forma de Pago__________________________________________________________
-		*/
+		// Forma de Pago__________________________________________________________
 
       REDEFINE GET aGet[ _CCODPGO ] VAR aTmp[ _CCODPGO ] ;
 			ID 		170 ;
@@ -2169,9 +2143,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			ID 		171 ;
 			OF 		oFld:aDialogs[1]
 
-		/*
-		Agente_________________________________________________________________
-		*/
+		// Agente_________________________________________________________________
 
       REDEFINE GET aGet[ _CCODAGE ] VAR aTmp[ _CCODAGE ] ;
 			ID 		180 ;
@@ -2201,9 +2173,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			ID 		183 ;
          WHEN     ( .f. );
 			OF 		oFld:aDialogs[1]
-      /*
-		Ruta____________________________________________________________________
-		*/
+
+		// Ruta____________________________________________________________________
 
       REDEFINE GET aGet[ _CCODRUT ] VAR aTmp[ _CCODRUT ] ;
          ID       185 ;
@@ -2218,9 +2189,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			WHEN 		.F. ;
          OF       oFld:aDialogs[1]
 
-      /*
-		Divisa____________________________________________________________________
-		*/
+		// Divisa____________________________________________________________________
 
 		REDEFINE GET aGet[ _CDIVPRE ] VAR aTmp[ _CDIVPRE ];
          WHEN     ( nMode == APPD_MODE .AND. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
@@ -2237,18 +2206,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			ID 		201;
 			OF 		oFld:aDialogs[1]
 
-      /*
-      Bitmap________________________________________________________________
-		*/
+      // Bitmap________________________________________________________________
 
       REDEFINE BITMAP oBmpEmp ;
          FILE     "Bmp\ImgPreCli.bmp" ;
          ID       500 ;
          OF       oDlg
 
-      /*
-      Detalle------------------------------------------------------------------
-      */
+      // Detalle------------------------------------------------------------------
 
       oBrwLin                 := IXBrowse():New( oFld:aDialogs[1] )
 
@@ -2455,9 +2420,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          oBrwLin:bLDblClick  := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
       end if
 
-		/*
-		Descuentos______________________________________________________________
-		*/
+		// Descuentos______________________________________________________________
 
       REDEFINE GET aGet[ _CDTOESP ] VAR aTmp[ _CDTOESP ] ;
          ID       219 ;
@@ -2521,9 +2484,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[1]
 
-      /*
-      Desglose del impuestos---------------------------------------------------------
-      */
+      // Desglose del impuestos---------------------------------------------------------
 
       oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
 
@@ -2592,10 +2553,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          :nHeadStrAlign    := 1
       end with
 
-      /*
-      Cajas de Totales
-      ------------------------------------------------------------------------
-      */
+      // Cajas de Totales
 
       REDEFINE GET aGet[ _CMANOBR ] VAR aTmp[ _CMANOBR ] ;
          ID       411 ;
@@ -2672,9 +2630,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			FONT 		oFont ;
 			OF 		oFld:aDialogs[1]
 
-		/*
-		Botones de la caja de dialogo___________________________________________
-		*/
+		// Botones de la caja de dialogo___________________________________________
 
 		REDEFINE BUTTON ;
 			ID 		515 ;
@@ -2822,9 +2778,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[2]
 
-      /*
-      Transportistas-----------------------------------------------------------
-      */
+      // Transportistas-----------------------------------------------------------
 
       REDEFINE GET aGet[ _CCODTRN ] VAR aTmp[ _CCODTRN ] ;
          ID       235 ;
@@ -2845,9 +2799,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          PICTURE  ( MasUnd() ) ;
          OF       oFld:aDialogs[2]
 
-      /*
-		Cajas____________________________________________________________________
-		*/
+		// Cajas____________________________________________________________________
 
       REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
 			WHEN 		( nMode != ZOOM_MODE ) ;
@@ -2880,9 +2832,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
-      /*
-      Retirado por________________________________________________________________
-		*/
+      // Retirado por________________________________________________________________
 
       REDEFINE GET aGet[_CRETPOR] VAR aTmp[_CRETPOR] ;
          ID       160 ;
@@ -2896,9 +2846,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      /*
-		Comentarios_____________________________________________________________
-		*/
+		// Comentarios_____________________________________________________________
 
       REDEFINE GET aGet[_DFECENT] VAR aTmp[_DFECENT];
          ID       127 ;
@@ -2925,9 +2873,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[2]
 
-      /*
-      Impresión ( informa de si está impreimido o no y de cuando se imprimió )-
-      */
+      // Impresión ( informa de si está impreimido o no y de cuando se imprimió )-
 
       REDEFINE CHECKBOX aGet[ _LIMPRIMIDO ] VAR aTmp[ _LIMPRIMIDO ] ;
          ID       120 ;
@@ -2956,9 +2902,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          PICTURE  ( MasUnd() ) ;
          OF       oFld:aDialogs[2]
 
-      /*
-      Incidencias--------------------------------------------------------------
-      */
+      // Incidencias--------------------------------------------------------------
 
       oBrwInc                 := IXBrowse():New( oFld:aDialogs[ 3 ] )
 
@@ -3031,9 +2975,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          OF       oFld:aDialogs[ 3 ] ;
          ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )
 
-      /*
-      Caja de diálogo de documentos
-      */
+      // Caja de diálogo de documentos
 
       oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
 
@@ -3046,17 +2988,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
       oBrwDoc:nRowHeight      := 40
       oBrwDoc:nDataLines      := 2
 
-         with object ( oBrwDoc:AddCol() )
-            :cHeader          := "Documento"
-            :bEditValue       := {|| Rtrim( ( dbfTmpDoc )->cNombre ) + CRLF + Space( 5 ) + Rtrim( ( dbfTmpDoc )->cRuta ) }
-            :nWidth           := 960
-         end with
+      with object ( oBrwDoc:AddCol() )
+         :cHeader             := "Documento"
+         :bEditValue          := {|| Rtrim( ( dbfTmpDoc )->cNombre ) + CRLF + Space( 5 ) + Rtrim( ( dbfTmpDoc )->cRuta ) }
+         :nWidth              := 960
+      end with
 
-         if nMode != ZOOM_MODE
-            oBrwDoc:bLDblClick   := {|| ShellExecute( oDlg:hWnd, "open", Rtrim( ( dbfTmpDoc )->cRuta ) ) }
-         end if
+      if nMode != ZOOM_MODE
+         oBrwDoc:bLDblClick   := {|| ShellExecute( oDlg:hWnd, "open", Rtrim( ( dbfTmpDoc )->cRuta ) ) }
+      end if
 
-         oBrwDoc:CreateFromResource( 210 )
+      oBrwDoc:CreateFromResource( 210 )
 
       REDEFINE BUTTON ;
          ID       500 ;
@@ -3086,9 +3028,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          OF       oFld:aDialogs[ 4 ] ;
          ACTION   ( ShellExecute( oDlg:hWnd, "open", rTrim( ( dbfTmpDoc )->cRuta ) ) )
 
-            /*
-      Situaciones--------------------------------------------------------------
-      */
+      // Situaciones--------------------------------------------------------------
 
       oBrwEst                 := IXBrowse():New( oFld:aDialogs[ 5 ] )
 
@@ -3132,7 +3072,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
-
       REDEFINE BUTTON ;
          ID       501 ;
          OF       oFld:aDialogs[ 5 ] ;
@@ -3152,9 +3091,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
          OF       oFld:aDialogs[ 5 ] ;
          ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
-		/*
-		Botones comunes a la caja de dialogo____________________________________
-		*/
+		// Botones comunes a la caja de dialogo____________________________________
 
       REDEFINE BUTTON ;
          ID       3 ;
@@ -3233,12 +3170,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
    end case
 
 	ACTIVATE DIALOG oDlg;
-         ON INIT  (  EdtRecMenu( aTmp, oDlg ) ,;
-                     SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ) ,;
-                     oBrwLin:Load() ,;
-                     oBrwInc:Load() );
-         ON PAINT (  RecalculaTotal( aTmp ) );
-         CENTER
+      ON PAINT (  RecalculaTotal( aTmp ) );
+      ON INIT  (  EdtRecMenu( aTmp, oDlg ) ,;
+                  SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ) ,;
+                  oBrwLin:Load() ,;
+                  oBrwInc:Load() );
+      CENTER
 
    oMenu:End()
 
@@ -3382,7 +3319,7 @@ RETURN WinZooRec( oBrwLin, bEdtDet, dbfTmpLin, .f., nil, aTmp )
 Edita las lineas de Detalle
 */
 
-STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode, aTmpPre )
+STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpPre )
 
    local oDlg
    local oFld
@@ -3463,19 +3400,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
    DEFINE DIALOG oDlg RESOURCE "LFACCLI" TITLE LblTitle( nMode ) + "líneas de presupuestos a clientes"
 
-      if aTmp[ __LALQUILER ]
-
-         REDEFINE FOLDER oFld ID 400 OF oDlg ;
-            PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
-            DIALOGS  "LPRECLI_4",   "LALBCLI_2", "LFACCLI_3"
-
-      else
-
-         REDEFINE FOLDER oFld ID 400 OF oDlg ;
-            PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
-            DIALOGS  "LFACCLI_1",   "LALBCLI_2", "LFACCLI_3"
-
-      end if
+      REDEFINE FOLDER oFld ;
+         ID       400 ;
+         OF       oDlg ;
+         PROMPT   "&General",;
+                  "Da&tos",;
+                  "&Observaciones" ;
+         DIALOGS  "LFACCLI_1",;
+                  "LALBCLI_2",;
+                  "LFACCLI_3"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt;
          ID       100 ;
@@ -3522,17 +3455,34 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      /*
-      Propiedades
-      -------------------------------------------------------------------------
-      */
+      // Propiedades-------------------------------------------------
 
-      if !aTmp[ __LALQUILER ]
+      oBrwProperties                       := IXBrowse():New( oFld:aDialogs[1] )
 
-      REDEFINE GET aGet[ _CVALPR1 ] VAR aTmp[ _CVALPR1 ];
+      oBrwProperties:nDataType             := DATATYPE_ARRAY
+
+      oBrwProperties:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwProperties:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwProperties:lHScroll              := .t.
+      oBrwProperties:lVScroll              := .t.
+
+      oBrwProperties:nMarqueeStyle         := 3
+      oBrwProperties:lRecordSelector       := .f.
+      oBrwProperties:lFastEdit             := .t.
+      oBrwProperties:nFreeze               := 1
+      oBrwProperties:lFooter               := .t.
+
+      oBrwProperties:SetArray( {}, .f., 0, .f. )
+
+      oBrwProperties:MakeTotals()
+
+      oBrwProperties:CreateFromResource( 500 )
+
+      REDEFINE GET aGet[ _CVALPR1 ] ;
+         VAR      aTmp[ _CVALPR1 ];
          ID       270 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aTmp[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], dbfTblPro ),;
                         LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage,  nMode, .f. ),;
@@ -3542,20 +3492,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
          aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) }
 
-      REDEFINE SAY oSayPr1 VAR cSayPr1;
+      REDEFINE SAY oSayPr1 ;
+         VAR      cSayPr1;
          ID       271 ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET oSayVp1 VAR cSayVp1;
+      REDEFINE GET oSayVp1 ;
+         VAR      cSayVp1;
          ID       272 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CVALPR2 ] VAR aTmp[ _CVALPR2 ];
+      REDEFINE GET aGet[ _CVALPR2 ] ;
+         VAR      aTmp[ _CVALPR2 ];
          ID       280 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aTmp[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ], dbfTblPro ),;
                         LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage,  nMode, .f. ),;
@@ -3565,22 +3516,18 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
          aGet[ _CVALPR2 ]:bChange   := {|| aGet[ _CVALPR2 ]:Assign(), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ) }
 
-      REDEFINE SAY oSayPr2 VAR cSayPr2;
+      REDEFINE SAY oSayPr2 ;
+         VAR      cSayPr2;
          ID       281 ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET oSayVp2 VAR cSayVp2;
+      REDEFINE GET oSayVp2 ;
+         VAR      cSayVp2;
          ID       282 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      end if
-
-      /*
-      fin de propiedades
-      -------------------------------------------------------------------------
-      */
+      // fin de propiedades----------------------------------------------------
 
       REDEFINE GET aGet[ _CUNIDAD ] VAR aTmp[ _CUNIDAD ] ;
          ID       170 ;
@@ -3593,8 +3540,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       // Campos de las descripciones de la unidad de medición
 
-      REDEFINE GET aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] ;
-         VAR      aTmp[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] ;
+      REDEFINE GET aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
+         VAR      aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ;
          ID       520 ;
          IDSAY    521 ;
          SPINNER ;
@@ -3603,10 +3550,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] ;
-         VAR      aTmp[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] ;
+      REDEFINE GET aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
+         VAR      aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ;
          ID       530 ;
          IDSAY    531 ;
          SPINNER ;
@@ -3615,10 +3562,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] ;
-         VAR      aTmp[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] ;
+      REDEFINE GET aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
+         VAR      aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ;
          ID       540 ;
          IDSAY    541 ;
          SPINNER ;
@@ -3627,7 +3574,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
 
       REDEFINE GET aGet[ _NIVA ] VAR aTmp[ _NIVA ] ;
          ID       120 ;
@@ -4401,33 +4348,33 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    // Ocultamos o mostramos las tres unidades de medicion----------------------
 
-   if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] )
-      aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+      aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
    end if
 
-   if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] )
-      aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+      aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
    end if
 
-   if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] )
-      aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+   if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+      aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
    end if
 
    if oUndMedicion:oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+      if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+      if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+      if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
@@ -4444,6 +4391,8 @@ Return nil
 
 STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal,  oBtn )
 
+   local n
+   local i
    local aClo
    local nRec
    local aXbyStr  := { 0, 0 }
@@ -4486,180 +4435,47 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
    aClo                          := aClone( aTmp )
    nRec                          := ( dbfTmpLin )->( RecNo() )
 
+   aTmp[ _NREQ ]                 := nPReq( dbfIva, aTmp[ _NIVA ] )
+
+
    if nMode == APPD_MODE
 
       if aTmp[ _LLOTE ]
-         saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )
+         saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
       end if
 
-      /*
-      Buscamos si existen atipicas de clientes---------------------------------
-      */
+      // Propiedades ----------------------------------------------------------
 
-      hAtipica                   := hAtipica( hValue( aTmp, aTmpPre ) )
+      if !empty( oBrwProperties:Cargo )
 
-      if !Empty( hAtipica ) .and. hhaskey( hAtipica, "nTipoXY" ) .and. hhaskey( hAtipica, "nUnidadesGratis" )
+         for n := 1 to len( oBrwProperties:Cargo )
 
-         if hAtipica[ "nUnidadesGratis" ] != 0
-            aXbYStr     := { hAtipica[ "nTipoXY" ], hAtipica[ "nUnidadesGratis" ] }
-         end if
+            for i := 1 to len( oBrwProperties:Cargo[ n ] )
 
-      end if
+               if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
-      if aXbYStr[ 1 ] == 0
+                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                  aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
+                  aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
+                  aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
+                  aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
+                  aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
 
-         /*
-         Chequeamos las ofertas por artículos X  *  Y--------------------------
-         */
+                  saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
 
-         if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( aTmp[ _CREF ], aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 1 )
-            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
-         end if
+               end if
 
-         /*
-         Chequeamos las ofertas por familia X  *  Y----------------------------
-         */
+            next
 
-         if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "FAMILIA", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 2 )
-            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por tipo de artículos X  *  Y------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTIP", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 3 )
-            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por categoria X  *  Y--------------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODCATE", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 4 )
-            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por temporada X  *  Y--------------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODTEMP", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 5 )
-            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-         /*
-         Chequeamos las ofertas por fabricante X  *  Y-------------------------
-         */
-
-         if !aTmp[ _LLINOFE ]
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], D():Articulos( nView ), "CCODFAB", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 6 )
-            aTmp[ _LLINOFE ]     := ( aXbYStr[ 1 ] != 0 )
-         end if
-
-      end if
-
-      /*
-      si tenemos q regalar unidades
-      */
-
-      if aXbYStr[ 1 ] != 0 .and. aXbYStr[ 2 ] != 0
-
-         /*
-         Tenemos oferta vamos a ver de q tipo
-         */
-
-         if aXbyStr[ 1 ] == 1
-
-            /*
-            Ofertas de cajas
-            */
-
-            aTmp[ _NCANPRE  ] -= aXbyStr[ 2 ]
-
-            WinGather( aTmp, , dbfTmpLin, oBrw, nMode, nil, .f. )
-
-            if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPre )
-            end if
-
-            aTmp[ _NCANPRE  ] := aXbYStr[ 2 ]
-            aTmp[ _NPREDIV  ] := 0
-            aTmp[ _NDTO     ] := 0
-            aTmp[ _NDTODIV  ] := 0
-            aTmp[ _NDTOPRM  ] := 0
-            aTmp[ _NCOMAGE  ] := 0
-
-            WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
-            if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPre )
-            end if
-
-         else
-
-            /*
-            Restamos las unidades q vamos a regalar al total de unidades y guardamos primer registro
-            */
-
-            if aTmp[ _NUNICAJA ] < 0
-               aTmp[ _NUNICAJA ] += aXbYStr[ 2 ]
-            else
-               aTmp[ _NUNICAJA ] -= aXbYStr[ 2 ]
-            end if
-
-            WinGather( aTmp, , dbfTmpLin, oBrw, nMode, nil, .f. )
-
-            if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPre )
-            end if
-
-            if aTmp[ _NUNICAJA ] < 0
-               aTmp[ _NUNICAJA ] := -( aXbYStr[ 2 ] )
-            else
-               aTmp[ _NUNICAJA ] := aXbYStr[ 2 ]
-            end if
-
-            aTmp[ _NPREDIV  ] := 0
-            aTmp[ _NDTO ]     := 0
-            aTmp[ _NDTODIV ]  := 0
-            aTmp[ _NDTOPRM ]  := 0
-            aTmp[ _NCOMAGE ]  := 0
-
-            WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
-            if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPre )
-            end if
-
-         end if
+         next
 
       else
 
-         /*
-         Guardamos el registro de manera normal
-         */
-
-         WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
-         if aClo[ _LKITART ]
-            AppendKit( aClo, aTmpPre )
-         end if
+         saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
 
       end if
 
    else
-
-      aTmp[ _NREQ ]                    := nPReq( dbfIva, aTmp[ _NIVA ] )
-
-      /*
-      Guardamos el registro de manera normal-----------------------------------
-      */
 
       WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
@@ -4685,7 +4501,7 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
    if bmpImage != nil
       bmpImage:Hide()
 
-      if !Empty( bmpImage:hBitmap )
+      if !empty( bmpImage:hBitmap )
          PalBmpFree( bmpImage:hBitmap, bmpImage:hPalette )
       endif
 
@@ -4699,6 +4515,13 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
 
       SysRefresh()
 
+      aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+      aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+
+      if !empty( aGet[ _CREF ] )
+         aGet[ _CREF ]:SetFocus()
+      end if
+
    else
 
       oDlg2:end( IDOK )
@@ -4706,6 +4529,88 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
    end if
 
 RETURN NIL
+
+//--------------------------------------------------------------------------//
+
+Static Function saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
+
+   local hAtipica
+   local sOfertaArticulo
+   local nCajasGratis         := 0
+   local nUnidadesGratis      := 0
+
+   // Atipicas ----------------------------------------------------------------
+
+   hAtipica                   := hAtipica( hValue( aTmp, aTmpPre ) )
+   if !empty( hAtipica ) 
+      if hhaskey( hAtipica, "nCajasGratis" ) .and. hget( hAtipica, "nCajasGratis" ) != 0
+         nCajasGratis         := hget( hAtipica, "nCajasGratis" ) 
+      end if 
+      if hhaskey( hAtipica, "nUnidadesGratis" ) .and. hget( hAtipica, "nUnidadesGratis" ) != 0
+         nUnidadesGratis      := hget( hAtipica, "nUnidadesGratis" ) 
+      end if
+   end if
+
+   // Ofertas------------------------------------------------------------------
+
+   if empty( nCajasGratis ) .and. empty( nUnidadesGratis )
+
+      sOfertaArticulo         := structOfertaArticulo( D():getHashArray( aTmpPre, "PreCliT", nView ), D():getHashArray( aTmp, "PreCliL", nView ), nTotLPreCli( aTmp ), nView )
+      if !empty( sOfertaArticulo ) 
+         nCajasGratis         := sOfertaArticulo:nCajasGratis
+         nUnidadesGratis      := sOfertaArticulo:nUnidadesGratis
+      end if
+   end if 
+
+   // Cajas gratis ---------------------------------------------------------
+
+   if nCajasGratis != 0
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NCANPRE ]        -= nCajasGratis
+      
+      commitDetail( aTmp, aClo, nil, aTmpPre, dbfTmpLin, oBrw, nMode, .f. )
+
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NCANPRE ]        := nCajasGratis
+      aTmp[ _NPREDIV ]        := 0
+      aTmp[ _NDTO    ]        := 0
+      aTmp[ _NDTODIV ]        := 0
+      aTmp[ _NDTOPRM ]        := 0
+      aTmp[ _NCOMAGE ]        := 0
+   end if 
+
+   // unidades gratis ---------------------------------------------------------
+
+   if nUnidadesGratis != 0
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NUNICAJA]        -= nUnidadesGratis 
+
+      commitDetail( aTmp, aClo, nil, aTmpPre, dbfTmpLin, oBrw, nMode, .f. )
+
+      aTmp[ _LLINOFE ]        := .t.
+      aTmp[ _NUNICAJA]        := nUnidadesGratis 
+      aTmp[ _NPREDIV ]        := 0
+      aTmp[ _NDTO    ]        := 0
+      aTmp[ _NDTODIV ]        := 0
+      aTmp[ _NDTOPRM ]        := 0
+      aTmp[ _NCOMAGE ]        := 0
+   end if 
+
+   commitDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode, .t. )
+
+Return nil
+
+//--------------------------------------------------------------------------//
+
+Static Function commitDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode, lEmpty )
+
+   winGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, .f. )
+
+   if ( nMode == APPD_MODE ) .and. ( aClo[ _LKITART ] )
+      appendKit( aClo, aTmpPre )
+   end if
+
+Return nil
 
 //--------------------------------------------------------------------------//
 
@@ -4783,14 +4688,14 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpPed )
+Static Function EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpPre )
 
       local oDlg
 
       if nMode == APPD_MODE
          
-         aTmp[ (D():PresupuestosClientesSituaciones( nView ))->(fieldpos("tFecSit")) ]   := GetSysTime()
-
+         aTmp[ ( D():PresupuestosClientesSituaciones( nView ) )->( fieldpos( "tFecSit" ) ) ]   := GetSysTime()
+ 
     end if
 
       DEFINE DIALOG oDlg RESOURCE "SITUACION_ESTADO" TITLE LblTitle( nMode ) + "Situación del documento del cliente"
@@ -5276,15 +5181,17 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
    local nCosPro
    local cCodFam
    local cPrpArt
-   local nPrePro     := 0
+   local nPrePro              := 0
    local nPosComa
    local cProveedor
-   local nTarOld     := aTmp[ _NTARLIN ]
-   local lChgCodArt  := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
-   local nNumDto     := 0
+   local nTarOld              := aTmp[ _NTARLIN ]
+   local lChgCodArt           := ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
+   local nNumDto              := 0
    local hAtipica
+   local nDescuentoArticulo
+   local sOfertaArticulo
 
-   DEFAULT lFocused  := .t.
+   DEFAULT lFocused           := .t.
 
    if Empty( cCodArt )
 
@@ -5305,6 +5212,10 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
       if lFocused .and. !Empty( aGet[ _MLNGDES ] )
         aGet[ _MLNGDES ]:SetFocus()
+      end if
+
+      if !empty( oBrwProperties )
+         oBrwProperties:Hide()
       end if
 
    else
@@ -5570,72 +5481,83 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
             aTmp[ _CCODPR1 ]         := ( D():Articulos( nView ) )->cCodPrp1
             aTmp[ _CCODPR2 ]         := ( D():Articulos( nView ) )->cCodPrp2
 
-            if !Empty( aTmp[ _CCODPR1 ] )
+            if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
 
-               if aGet[ _CVALPR1 ] != nil
-                  aGet[ _CVALPR1 ]:Show()
-                  if lFocused
-                     aGet[ _CVALPR1 ]:SetFocus()
+               aGet[ _NCANPRE  ]:cText( 0 )
+               aGet[ _NUNICAJA ]:cText( 0 )
+
+               setPropertiesTable( cCodArt, 0, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwProperties, nView )
+
+            else 
+
+               if !Empty( aTmp[ _CCODPR1 ] )
+
+                  if aGet[ _CVALPR1 ] != nil
+                     aGet[ _CVALPR1 ]:Show()
+                     if lFocused
+                        aGet[ _CVALPR1 ]:SetFocus()
+                     end if
                   end if
+
+                  if oSayPr1 != nil
+                     oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
+                     oSayPr1:show()
+                  end if
+
+                  if oSayVp1 != nil
+                     oSayVp1:SetText( "" )
+                     oSayVp1:Show()
+                  end if
+
+               else
+
+                  if aGet[ _CVALPR1 ] !=  nil
+                     aGet[ _CVALPR1 ]:hide()
+                  end if
+
+                  if oSayPr1 != nil
+                     oSayPr1:Hide()
+                  end if
+
+                  if oSayVp1 != nil
+                     oSayVp1:Hide()
+                  end if
+
                end if
 
-               if oSayPr1 != nil
-                  oSayPr1:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp1, dbfPro ) )
-                  oSayPr1:show()
+               if !Empty( aTmp[ _CCODPR2 ] )
+
+                  if aGet[ _CVALPR2 ] != nil
+                     aGet[ _CVALPR2 ]:show()
+                  end if
+
+                  if oSayPr2 != nil
+                     oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
+                     oSayPr2:Show()
+                  end if
+
+                  if oSayVp2 != nil
+                     oSayVp2:SetText( "" )
+                     oSayVp2:Show()
+                  end if
+
+               else
+
+                  if aGet[ _CVALPR2 ] != nil
+                     aGet[ _CVALPR2 ]:hide()
+                  end if
+
+                  if oSayPr2 != nil
+                     oSayPr2:hide()
+                  end if
+
+                  if oSayVp2 != nil
+                     oSayVp2:hide()
+                  end if
+
                end if
 
-               if oSayVp1 != nil
-                  oSayVp1:SetText( "" )
-                  oSayVp1:Show()
-               end if
-
-            else
-
-               if aGet[ _CVALPR1 ] !=  nil
-                  aGet[ _CVALPR1 ]:hide()
-               end if
-
-               if oSayPr1 != nil
-                  oSayPr1:Hide()
-               end if
-
-               if oSayVp1 != nil
-                  oSayVp1:Hide()
-               end if
-
-            end if
-
-            if !Empty( aTmp[ _CCODPR2 ] )
-
-               if aGet[ _CVALPR2 ] != nil
-                  aGet[ _CVALPR2 ]:show()
-               end if
-
-               if oSayPr2 != nil
-                  oSayPr2:SetText( retProp( ( D():Articulos( nView ) )->cCodPrp2, dbfPro ) )
-                  oSayPr2:Show()
-               end if
-
-               if oSayVp2 != nil
-                  oSayVp2:SetText( "" )
-                  oSayVp2:Show()
-               end if
-
-            else
-
-               if aGet[ _CVALPR2 ] != nil
-                  aGet[ _CVALPR2 ]:hide()
-               end if
-
-               if oSayPr2 != nil
-                  oSayPr2:hide()
-               end if
-
-               if oSayVp2 != nil
-                  oSayVp2:hide()
-               end if
-
-            end if
+            end if 
 
             // Si la comisi¢n del articulo hacia el agente es distinto de cero----
 
@@ -5752,9 +5674,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
             aTmp[ _NPVPREC ]     := ( D():Articulos( nView ) )->PvpRec
 
-            /*
-            Cargamos los costos
-            */
+            // Cargamos los costos---------------------------------------------
 
             if !uFieldEmpresa( "lCosAct" )
                nCosPro           := oStock:nCostoMedio( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ] )
@@ -5771,90 +5691,38 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _NCOSDIV ]  := nCosPro
             end if
 
-            /*
-            Descuento de artículo----------------------------------------------
-            */
-
-            nNumDto              := RetFld( aTmpPre[ _CCODCLI ], D():Clientes( nView ), "nDtoArt" )
-
-            if nNumDto != 0
-
-               do case
-                  case nNumDto == 1
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt1 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt1
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt1
-                     end if
-
-                  case nNumDto == 2
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt2 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt2
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt2
-                     end if
-
-                  case nNumDto == 3
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO]:cText( ( D():Articulos( nView ) )->nDtoArt3 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt3
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt3
-                     end if
-
-                  case nNumDto == 4
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt4 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt4
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt4
-                     end if
-
-                  case nNumDto == 5
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO ]:cText( ( D():Articulos( nView ) )->nDtoArt5 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt5
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt5
-                     end if
-
-                  case nNumDto == 6
-
-                     if !Empty( aGet[ _NDTO ] )
-                        aGet[ _NDTO]:cText( ( D():Articulos( nView ) )->nDtoArt6 )
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt6
-                     else
-                        aTmp[ _NDTO ]     := ( D():Articulos( nView ) )->nDtoArt6
-                     end if
-
-               end case
-
+            // Descuento de artículo----------------------------------------------
+         
+            nDescuentoArticulo   := nDescuentoArticulo( cCodArt, aTmpPre[ _CCODCLI ], nView )
+            if nDescuentoArticulo != 0
+               if !Empty( aGet[ _NDTO ] )
+                  aGet[ _NDTO ]:cText( nDescuentoArticulo )
+               else
+                  aTmp[ _NDTO ]  := nDescuentoArticulo
+               end if
             end if
 
-            /*
-            Vemos si hay descuentos en las familias----------------------------
-            */
+            // Vemos si hay descuentos en las familias----------------------------
 
             if aTmp[ _NDTO ] == 0
+               if !Empty( aGet[ _NDTO ] )
+                  aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, D():Familias( nView ) ) )
+               else
+                  aTmp[ _NDTO ]     := nDescuentoFamilia( cCodFam, D():Familias( nView ) )
+               end if
+            end if
 
+            // Vemos si hay descuentos en las familias----------------------------
+
+            if aTmp[ _NDTO ] == 0
                if !Empty( aGet[ _NDTO ] )
                   aGet[ _NDTO ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
                else
                   aTmp[ _NDTO ]  := nDescuentoFamilia( cCodFam, dbfFamilia )
                end if
-
             end if
 
-            /*
-            Cargamos el codigo de las unidades---------------------------------
-            */
+            // Cargamos el codigo de las unidades---------------------------------
 
             if !Empty( aGet[ _CUNIDAD ] )
                aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
@@ -5862,25 +5730,14 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                aTmp[ _CUNIDAD ]  := ( D():Articulos( nView ) )->cUnidad
             end if
 
-            /*
-            Obtenemos el precio del artículo
-            */
+            // Obtenemos el precio del artículo
 
-            if !aTmp[ __LALQUILER ]
+            nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPre[_CCODTAR] )
 
-               nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPre[_CCODTAR] )
-
-               if nPrePro == 0
-                  aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPre[ _CDIVPRE ], aTmpPre[_LIVAINC], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp ) )
-               else
-                  aGet[ _NPREDIV ]:cText( nPrePro )
-               end if
-
+            if nPrePro == 0
+               aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPre[ _CDIVPRE ], aTmpPre[_LIVAINC], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , , oNewImp ) )
             else
-
-               aGet[ _NPREDIV ]:cText( 0 )
-               aGet[ _NPREALQ ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpPre[_LIVAINC], D():Articulos( nView ) ) )
-
+               aGet[ _NPREDIV ]:cText( nPrePro )
             end if
 
             /*
@@ -5889,9 +5746,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
             if !Empty( aTmpPre[ _CCODTAR ] )
 
-               /*
-               Cojemos el descuento fijo y el precio del Articulo
-               */
+               // Cojemos el descuento fijo y el precio del Articulo
 
                nImpOfe     := RetPrcTar( aTmp[ _CREF ], aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL, aTmp[ _NTARLIN ] )
                if nImpOfe  != 0
@@ -5913,16 +5768,14 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
                   aGet[ _NCOMAGE ]:cText( nImpOfe )
                end if
 
-               /*Descuento de promoci¢n*/
+               // Descuento de promoción
 
                nImpOfe     := RetDtoPrm( aTmp[ _CREF ], cCodFam, aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpPre[_DFECPRE], dbfTarPreL )
                if nImpOfe  != 0
                   aGet[ _NDTOPRM ]:cText( nImpOfe )
                end if
 
-               /*
-               Obtenemos el descuento de Agente
-               */
+               // Obtenemos el descuento de Agente
 
                nDtoAge     := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpPre[_DFECPRE], aTmpPre[_CCODAGE], dbfTarPreL, dbfTarPreS )
                if nDtoAge  != 0
@@ -5931,89 +5784,59 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2,
 
             end if
 
-            /*
-            Chequeamos las atipicas del cliente--------------------------------
-            */
+            // Chequeamos las atipicas del cliente--------------------------------
 
             hAtipica := hAtipica( hValue( aTmp, aTmpPre ) )
 
             if !Empty( hAtipica )
                
-               if hhaskey( hAtipica, "nImporte" )
-                  if hAtipica[ "nImporte" ] != 0
-                     aGet[ _NPREDIV ]:cText( hAtipica[ "nImporte" ] )
-                  end if   
+               if hhaskey( hAtipica, "nImporte" ) .and. hAtipica[ "nImporte" ] != 0
+                  aGet[ _NPREDIV ]:cText( hAtipica[ "nImporte" ] )
                end if
 
-               if hhaskey( hAtipica, "nDescuentoPorcentual" )
-                  if hAtipica[ "nDescuentoPorcentual"] != 0
-                     aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
-                  end if   
+               if hhaskey( hAtipica, "nDescuentoPorcentual" ) .and. hAtipica[ "nDescuentoPorcentual"] != 0
+                  aGet[ _NDTO ]:cText( hAtipica[ "nDescuentoPorcentual"] )   
                end if
 
-               if hhaskey( hAtipica, "nDescuentoPromocional" )
-                  if hAtipica[ "nDescuentoPromocional" ] != 0
-                     aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
-                  end if   
+               if hhaskey( hAtipica, "nDescuentoPromocional" ) .and. hAtipica[ "nDescuentoPromocional" ] != 0
+                  aGet[ _NDTOPRM ]:cText( hAtipica[ "nDescuentoPromocional" ] )
                end if
 
-               if hhaskey( hAtipica, "nComisionAgente" )
-                  if hAtipica[ "nComisionAgente" ] != 0
-                     aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
-                  end if   
+               if hhaskey( hAtipica, "nComisionAgente" ) .and. hAtipica[ "nComisionAgente" ] != 0
+                  aGet[ _NCOMAGE ]:cText( hAtipica[ "nComisionAgente" ] )
                end if
 
-               if hhaskey( hAtipica, "nDescuentoLineal" )
-                  if hAtipica[ "nDescuentoLineal" ] != 0
-                     aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
-                  end if   
+               if hhaskey( hAtipica, "nDescuentoLineal" ) .and. hAtipica[ "nDescuentoLineal" ] != 0
+                  aGet[ _NDTODIV ]:cText( hAtipica[ "nDescuentoLineal" ] )
                end if
 
             end if
 
-            // Mediciones------------------------------------------------------
+            // Buscamos si hay ofertas-----------------------------------------------
 
-            if oUndMedicion:oDbf:Seek( ( D():Articulos( nView ) )->cUnidad )
+            sOfertaArticulo   := structOfertaArticulo( D():getHashArray( aTmpPre, "PreCliT", nView ), D():getHashArray( aTmp, "PreCliL", nView ), nTotLPreCli( aTmp ), nView )
 
-               if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
-               else
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-               end if
-
-               if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
-               else
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-               end if
-
-               if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) )->nAncArt )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
-               else
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-               end if
-
-            else
-
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            if !empty( sOfertaArticulo ) 
+               
+               if ( sOfertaArticulo:nPrecio != 0 )
+                  aGet[ _NPREDIV ]:cText( sOfertaArticulo:nPrecio )
+               end if 
+               
+               if ( sOfertaArticulo:nDtoPorcentual != 0 )
+                  aGet[ _NDTO ]:cText( sOfertaArticulo:nDtoPorcentual )
+               end if 
+               
+               if ( sOfertaArticulo:nDtoLineal != 0 )
+                  aGet[ _NDTODIV ]:cText( sOfertaArticulo:nDtoLineal )
+               end if 
+               
+               aTmp[ _LLINOFE ] := .t.
 
             end if
+
+            // Mediciones
+
+            ValidaMedicion( aTmp, aGet )
 
          end if
 
@@ -6425,12 +6248,12 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 	A¤adimos desde el fichero de lineas
 	*/
 
-   if ( dbfPreCliL )->( dbSeek( cPre ) )
+   if ( D():PresupuestosClientesLineas( nView ) )->( dbSeek( cPre ) )
 
-      while ( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->NNUMPRE ) + ( dbfPreCliL )->CSUFPRE == cPre .AND. !( dbfPreCliL )->( eof() ) )
+      while ( ( D():PresupuestosClientesLineas( nView ) )->cSerPre + Str( ( D():PresupuestosClientesLineas( nView ) )->NNUMPRE ) + ( D():PresupuestosClientesLineas( nView ) )->CSUFPRE == cPre .AND. !( D():PresupuestosClientesLineas( nView ) )->( eof() ) )
 
-         dbPass( dbfPreCliL, dbfTmpLin, .t. )
-         ( dbfPreCliL )->( dbSkip() )
+         dbPass( D():PresupuestosClientesLineas( nView ), dbfTmpLin, .t. )
+         ( D():PresupuestosClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -6610,16 +6433,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
 
    case nMode == EDIT_MODE
 
-      if nNumPre != 0 .AND. ( dbfPreCliL )->( dbSeek( cSerPre + str( nNumPre ) + cSufPre ) )
+      if nNumPre != 0 .AND. ( D():PresupuestosClientesLineas( nView ) )->( dbSeek( cSerPre + str( nNumPre ) + cSufPre ) )
 
-         do while ( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre == cSerPre + str( nNumPre ) + cSufPre )
+         do while ( ( D():PresupuestosClientesLineas( nView ) )->cSerPre + Str( ( D():PresupuestosClientesLineas( nView ) )->nNumPre ) + ( D():PresupuestosClientesLineas( nView ) )->cSufPre == cSerPre + str( nNumPre ) + cSufPre )
 
-            if dbLock( dbfPreCliL )
-               ( dbfPreCliL )->( dbDelete() )
-               ( dbfPreCliL )->( dbUnLock() )
+            if dbLock( D():PresupuestosClientesLineas( nView ) )
+               ( D():PresupuestosClientesLineas( nView ) )->( dbDelete() )
+               ( D():PresupuestosClientesLineas( nView ) )->( dbUnLock() )
             end if
 
-            ( dbfPreCliL )->( dbSkip() )
+            ( D():PresupuestosClientesLineas( nView ) )->( dbSkip() )
 
          end while
 
@@ -6664,7 +6487,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg, lActu
    ( dbfTmpLin )->( dbGoTop() )
    do while !( dbfTmpLin )->( Eof() )
 
-      dbPass( dbfTmpLin, dbfPreCliL, .t., cSerPre, nNumPre, cSufPre )
+      dbPass( dbfTmpLin, D():PresupuestosClientesLineas( nView ), .t., cSerPre, nNumPre, cSufPre )
       ( dbfTmpLin )->( dbSkip() )
 
       if !( "PDA" $ cParamsMain() )
@@ -7108,7 +6931,7 @@ static function lGenPreCli( oBrw, oBtn, nDevice )
 
          DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( msgStop( "No hay pedidos de proveedores predefinidos" ) );
+            ACTION   ( msgStop( "No hay presupuestos de proveedores predefinidos" ) );
             TOOLTIP  "No hay documentos" ;
             HOTKEY   "N";
             FROM     oBtn ;
@@ -7876,14 +7699,14 @@ STATIC FUNCTION DupPresupuesto( cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfPreCliL )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) )
+   if ( D():PresupuestosClientesLineas( nView ) )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ) )
 
-      while ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre == ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre .and. ;
-            !( dbfPreCliL )->( Eof() )
+      while ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre == ( D():PresupuestosClientesLineas( nView ) )->cSerPre + Str( ( D():PresupuestosClientesLineas( nView ) )->nNumPre ) + ( D():PresupuestosClientesLineas( nView ) )->cSufPre .and. ;
+            !( D():PresupuestosClientesLineas( nView ) )->( Eof() )
 
-         PreRecDup( dbfPreCliL, ( D():PresupuestosClientes( nView ) )->cSerPre, nNewNumPre, ( D():PresupuestosClientes( nView ) )->cSufPre, .f. )
+         PreRecDup( D():PresupuestosClientesLineas( nView ), ( D():PresupuestosClientes( nView ) )->cSerPre, nNewNumPre, ( D():PresupuestosClientes( nView ) )->cSufPre, .f. )
 
-         ( dbfPreCliL )->( dbSkip() )
+         ( D():PresupuestosClientesLineas( nView ) )->( dbSkip() )
 
       end while
 
@@ -7999,72 +7822,72 @@ Static Function ValidaMedicion( aTmp, aGet )
       if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
          if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+            if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( ( D():Articulos( nView ) )->nLngArt )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
+               aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := ( D():Articulos( nView ) )->nLngArt
             end if
          else
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]  := 0
+               aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+            if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( ( D():Articulos( nView ) )->nAltArt )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
+               aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := ( D():Articulos( nView ) )->nAltArt
             end if
 
          else
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]  := 0
+               aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+            if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( ( D():Articulos( nView ) ) ->nAncArt )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
+               aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := ( D():Articulos( nView ) )->nAncArt
             end if
          else
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]  := 0
+               aTmp[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]  := 0
             end if
          end if
 
       else
 
-         if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] )
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ] )
+            aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] )
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ] )
+            aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] )
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ] )
+            aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            aGet[ ( D():PresupuestosClientesLineas( nView ) )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
          end if
 
       end if
@@ -8137,7 +7960,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Presupuestos", ( D():PresupuestosClientes( nView ) )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    oFr:SetFieldAliases( "Presupuestos", cItemsToReport( aItmPreCli() ) )
 
-   oFr:SetWorkArea(     "Lineas de presupuestos", ( dbfPreCliL )->( Select() ) )
+   oFr:SetWorkArea(     "Lineas de presupuestos", ( D():PresupuestosClientesLineas( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Lineas de presupuestos", cItemsToReport( aColPreCli() ) )
 
    oFr:SetWorkArea(     "Incidencias de presupuestos", ( dbfPreCliI )->( Select() ) )
@@ -8204,11 +8027,11 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Presupuestos", "Transportistas",                  {|| ( D():PresupuestosClientes( nView ) )->cCodTrn } )
    oFr:SetMasterDetail( "Presupuestos", "Usuarios",                        {|| ( D():PresupuestosClientes( nView ) )->cCodUsr } )
 
-   oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",             {|| ( dbfPreCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de presupuestos", "Ofertas",               {|| ( dbfPreCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de presupuestos", "Unidades de medición",  {|| ( dbfPreCliL )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",  {|| ( dbfPreCliL )->cCodImp } )
-   oFr:SetMasterDetail( "Lineas de presupuestos", "Familias",               {|| ( dbfPreCliL )->cCodFam } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",             {|| ( D():PresupuestosClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Ofertas",               {|| ( D():PresupuestosClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Unidades de medición",  {|| ( D():PresupuestosClientesLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Impuestos especiales",  {|| ( D():PresupuestosClientesLineas( nView ) )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de presupuestos", "Familias",               {|| ( D():PresupuestosClientesLineas( nView ) )->cCodFam } )
 
    oFr:SetResyncPair(   "Presupuestos", "Lineas de presupuestos" )
    oFr:SetResyncPair(   "Presupuestos", "Incidencias de presupuestos" )
@@ -8499,7 +8322,7 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    local nDescuentosLineas := 0
 
    DEFAULT cPreCliT        := D():PresupuestosClientes( nView )
-   DEFAULT cPreCliL        := dbfPreCliL
+   DEFAULT cPreCliL        := D():PresupuestosClientesLineas( nView )
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT cFPago          := dbfFPago
@@ -9199,7 +9022,8 @@ FUNCTION BrwPreCli( oGet, cPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva )
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotPreCli( ( cPreCliT )->cSerPre + Str( ( cPreCliT )->nNumPre ) + ( cPreCliT )->cSufPre, cPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) }
+         :bEditValue       := {|| ( cPreCliT )->nTotPre }
+         :cEditPicture     := cPorDiv()
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -9301,7 +9125,7 @@ FUNCTION nTotUPreCli( uTmpLin, nDec, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT uTmpLin      := dbfPreCliL
+   DEFAULT uTmpLin      := D():PresupuestosClientesLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nVdv         := 1
 
@@ -9428,7 +9252,7 @@ FUNCTION nTotFPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
 
    local nCalculo    := 0
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := D():PresupuestosClientesLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
@@ -9446,7 +9270,7 @@ return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 FUNCTION cDesPreCli( cPreCliL )
 
-   DEFAULT cPreCliL  := dbfPreCliL
+   DEFAULT cPreCliL  := D():PresupuestosClientesLineas( nView )
 
 RETURN ( Descrip( cPreCliL ) )
 
@@ -9454,77 +9278,156 @@ RETURN ( Descrip( cPreCliL ) )
 
 FUNCTION cDesPreCliLeng( cPreCliL, cArtLeng )
 
-   DEFAULT cPreCliL  := dbfPreCliL
+   DEFAULT cPreCliL  := D():PresupuestosClientesLineas( nView )
    DEFAULT cArtLeng  := D():ArticuloLenguaje( nView )
 
 RETURN ( DescripLeng( cPreCliL, , cArtLeng ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotLPreCli( cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+Function isLineaTotalPreCli( uPreCliL )
+
+   if isArray( uPreCliL )
+      Return ( uPreCliL[ _LTOTLIN ] )
+   end if
+
+Return ( ( uPreCliL )->lTotLin )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoLinealPreCli( uPreCliL, nDec, nVdv )
+
+   local nDescuentoLineal
+
+   if isArray( uPreCliL )
+      nDescuentoLineal  := uPreCliL[ _NDTODIV ]
+   else 
+      nDescuentoLineal  := ( uPreCliL )->nDtoDiv
+   end if
+
+Return ( Round( nDescuentoLineal / nVdv, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoPorcentualPreCli( uPreCliL )
+
+   local nDescuentoPorcentual
+
+   if isArray( uPreCliL )
+      nDescuentoPorcentual  := uPreCliL[ _NDTO ]
+   else 
+      nDescuentoPorcentual  := ( uPreCliL )->nDto
+   end if
+
+Return ( nDescuentoPorcentual )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoPromocionPreCli( uPreCliL )
+
+   local nDescuentoPromocion
+
+   if isArray( uPreCliL )
+      nDescuentoPromocion  := uPreCliL[ _NDTOPRM ]
+   else 
+      nDescuentoPromocion  := ( uPreCliL )->nDtoPrm
+   end if
+
+Return ( nDescuentoPromocion )
+
+//---------------------------------------------------------------------------//
+
+Function nPuntoVerdePreCli( uPreCliL )
+
+   local nPuntoVerde
+
+   if isArray( uPreCliL )
+      nPuntoVerde  := uPreCliL[ _NPNTVER ]
+   else 
+      nPuntoVerde  := ( uPreCliL )->nPntVer
+   end if
+
+Return ( nPuntoVerde )
+
+//---------------------------------------------------------------------------//
+
+Function nTransportePreCli( uPreCliL )
+
+   local nTransporte
+
+   if isArray( uPreCliL )
+      nTransporte  := uPreCliL[ _NIMPTRN ]
+   else 
+      nTransporte  := ( uPreCliL )->nImpTrn
+   end if
+
+Return ( nTransporte )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nTotLPreCli( uPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
+   local nUnidades
 
-   DEFAULT cPreCliL     := dbfPreCliL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
-   DEFAULT nVdv         := 1
-   DEFAULT lDto         := .t.
-   DEFAULT lPntVer      := .f.
-   DEFAULT lImpTrn      := .t.
+   if empty( uPreCliL ) .and. !empty( nView )
+      uPreCliL       := D():PresupuestosClientesLineas( nView )
+   end if
 
-   if ( cPreCliL )->lTotLin
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
 
-      nCalculo          := nTotUPreCli( cPreCliL, nDec )
+   if isLineaTotalPreCli( uPreCliL )
 
+      nCalculo       := nTotUPreCli( uPreCliL, nDec, nVdv )
+      
    else
 
-      nCalculo          := nTotUPreCli( cPreCliL, nDec )
+      nUnidades      := nTotNPreCli( uPreCliL )
+      nCalculo       := nTotUPreCli( uPreCliL, nDec, nVdv ) * nUnidades
 
       /*
-      Descuentos---------------------------------------------------------------
+      Descuentos lineales------------------------------------------------------
       */
 
-      nCalculo          -= Round( ( cPreCliL )->nDtoDiv / nVdv , nDec )
+      nCalculo       -= nDescuentoLinealPreCli( uPreCliL, nDec, nVdv ) * nUnidades
 
-      if ( cPreCliL )->nDto != 0 .AND. lDto
-         nCalculo       -= nCalculo * ( cPreCliL )->nDto / 100
+      if lDto .and. nDescuentoPorcentualPreCli( uPreCliL ) != 0 
+         nCalculo    -= nCalculo * nDescuentoPorcentualPreCli( uPreCliL ) / 100
       end if
 
-      if ( cPreCliL )->nDtoPrm != 0 .AND. lDto
-         nCalculo       -= nCalculo * ( cPreCliL )->nDtoPrm / 100
+      if lDto .and. nDescuentoPromocionPreCli( uPreCliL ) != 0 
+         nCalculo    -= nCalculo * nDescuentoPromocionPreCli( uPreCliL ) / 100
       end if
 
       /*
       Punto Verde--------------------------------------------------------------
       */
 
-      if lPntVer 
-         nCalculo       += ( cPreCliL )->nPntVer
+      if lPntVer .and. nPuntoVerdePreCli( uPreCliL ) != 0
+         nCalculo    += nPuntoVerdePreCli( uPreCliL ) * nUnidades
       end if
 
       /*
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn 
-         nCalculo       += ( cPreCliL )->nImpTrn
+      if lImpTrn .and. nTransportePreCli( uPreCliL ) != 0
+         nCalculo    += nTransportePreCli( uPreCliL ) * nUnidades
       end if
-
-      /* 
-      Unidades-----------------------------------------------------------------
-      */
-
-      nCalculo          *= nTotNPreCli( cPreCliL )
 
    end if
 
    if nVdv != 0
-      nCalculo          := nCalculo / nVdv
+      nCalculo       := nCalculo / nVdv
    end if
 
    if nRou != nil
-      nCalculo          := Round( nCalculo, nRou )
+      nCalculo       := Round( Div( nCalculo, nVdv ), nRou )
    end if
 
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
@@ -9538,7 +9441,7 @@ FUNCTION nDtoLPreCli( cPreCliL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cPreCliL     := dbfPreCliL
+   DEFAULT cPreCliL     := D():PresupuestosClientesLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -9577,7 +9480,7 @@ FUNCTION nPrmLPreCli( cPreCliL, nDec, nRou, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT cPreCliL     := dbfPreCliL
+   DEFAULT cPreCliL     := D():PresupuestosClientesLineas( nView )
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
@@ -9639,7 +9542,7 @@ FUNCTION nPesLPreCli( cPreCliL )
 
    local nCalculo    := 0
 
-   DEFAULT cPreCliL  := dbfPreCliL
+   DEFAULT cPreCliL  := D():PresupuestosClientesLineas( nView )
 
    if !( cPreCliL )->lTotLin .and. !( cPreCliL )->lControl
       nCalculo       := Abs( nTotNPreCli( cPreCliL ) ) * ( cPreCliL )->nPesoKg
@@ -9696,7 +9599,7 @@ FUNCTION nPntLPreCli( dbfLin, nDec, nVdv )
 
    local nPntVer
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := D():PresupuestosClientesLineas( nView )
    DEFAULT nDec      := 2
    DEFAULT nVdv      := 1
 
@@ -9732,7 +9635,7 @@ FUNCTION nTrnLPreCli( dbfLin, nDec, nRou, nVdv )
 
    local nImpTrn
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := D():PresupuestosClientesLineas( nView )
    DEFAULT nDec      := 2
    DEFAULT nRou      := 2
    DEFAULT nVdv      := 1
@@ -10029,7 +9932,7 @@ FUNCTION rxPreCli( cPath, oMeter )
 
    else
 
-      msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
 
    end if
 
@@ -10041,7 +9944,7 @@ FUNCTION nTotNPreCli( uDbf )
 
    local nTotUnd
 
-   DEFAULT uDbf   := dbfPreCliL
+   DEFAULT uDbf   := D():PresupuestosClientesLineas( nView )
 
    do case
    case ValType( uDbf ) == "A"
@@ -10123,7 +10026,7 @@ FUNCTION nTotIPreCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := D():PresupuestosClientesLineas( nView )
    DEFAULT nDec      := 0
    DEFAULT nRouDec   := 0
    DEFAULT nVdv      := 1
@@ -10154,7 +10057,7 @@ RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nImpLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nImpLPreCli( uPreCliT, uPreCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
    local lIvaInc
@@ -10167,7 +10070,7 @@ FUNCTION nImpLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLPreCli( dbfPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLPreCli( uPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ValType( uPreCliT ) == "A"
       nCalculo       -= Round( nCalculo * uPreCliT[ _NDTOESP ]  / 100, nRou )
@@ -10183,14 +10086,14 @@ FUNCTION nImpLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
       lIvaInc        := ( uPreCliT )->lIvaInc
    end if
 
-   if ( dbfPreCliL )->nIva != 0
+   if ( uPreCliL )->nIva != 0
       if lIva  // lo quermos con impuestos
          if !lIvaInc
-            nCalculo += Round( nCalculo * ( dbfPreCliL )->nIva / 100, nRou )
+            nCalculo += Round( nCalculo * ( uPreCliL )->nIva / 100, nRou )
          end if
       else     // lo queremos sin impuestos
          if lIvaInc
-            nCalculo -= Round( nCalculo / ( 100 / ( dbfPreCliL )->nIva  + 1 ), nRou )
+            nCalculo -= Round( nCalculo / ( 100 / ( uPreCliL )->nIva  + 1 ), nRou )
          end if
       end if
    end if
@@ -10199,7 +10102,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nDtoAtpPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
+FUNCTION nDtoAtpPreCli( uPreCliT, uPreCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
 
    local nCalculo    := 0
    local nDtoAtp     := 0
@@ -10210,7 +10113,7 @@ FUNCTION nDtoAtpPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lPntVer, lImpTrn
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLPreCli( dbfPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLPreCli( uPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ( uPreCliT )->nSbrAtp <= 1 .and. ( uPreCliT )->nDtoAtp != 0
       nDtoAtp     += Round( nCalculo * ( uPreCliT )->nDtoAtp / 100, nRou )
@@ -10244,11 +10147,11 @@ RETURN ( nDtoAtp )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nComLPreCli( cPreCliT, dbfPreCliL, nDecOut, nDerOut )
+FUNCTION nComLPreCli( cPreCliT, uPreCliL, nDecOut, nDerOut )
 
-   local nImp        := nImpLPreCli( cPreCliT, dbfPreCliL, nDecOut, nDerOut )
+   local nImp        := nImpLPreCli( cPreCliT, uPreCliL, nDecOut, nDerOut )
 
-RETURN ( nImp * ( dbfPreCliL )->nComAge / 100 )
+RETURN ( nImp * ( uPreCliL )->nComAge / 100 )
 
 //--------------------------------------------------------------------------//
 
@@ -10316,7 +10219,7 @@ return ( nTotVta )
 
 //---------------------------------------------------------------------------//
 
-function nVtaPreCli( cCodCli, dDesde, dHasta, cPreCliT, dbfPreCliL, dbfIva, dbfDiv )
+function nVtaPreCli( cCodCli, dDesde, dHasta, cPreCliT, cPreCliL, dbfIva, dbfDiv )
 
    local nCon     := 0
    local nRec     := ( cPreCliT )->( Recno() )
@@ -10332,7 +10235,7 @@ function nVtaPreCli( cCodCli, dDesde, dHasta, cPreCliT, dbfPreCliL, dbfIva, dbfD
          if ( dDesde == nil .or. ( cPreCliT )->dFecPre >= dDesde )    .and.;
             ( dHasta == nil .or. ( cPreCliT )->dFecPre <= dHasta )
 
-            nCon  += nTotPreCli( ( cPreCliT )->cSerPre + Str( ( cPreCliT )->nNumPre ) + ( cPreCliT )->cSufPre, cPreCliT, dbfPreCliL, dbfIva, dbfDiv, nil, nil, cDivEmp(), .f. )
+            nCon  += nTotPreCli( ( cPreCliT )->cSerPre + Str( ( cPreCliT )->nNumPre ) + ( cPreCliT )->cSufPre, cPreCliT, cPreCliL, dbfIva, dbfDiv, nil, nil, cDivEmp(), .f. )
 
          end if
 
@@ -10375,90 +10278,90 @@ function aItmPreCli()
 
    local aItmPreCli :=  {}
 
-   aAdd( aItmPreCli, { "CSERPRE",   "C",  1,  0, "Serie de presupuesto" ,                             "Serie",                         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NNUMPRE",   "N",  9,  0, "Número de presupuesto" ,                            "Numero",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CSUFPRE",   "C",  2,  0, "Sufijo de presupuesto" ,                            "Sufijo",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CTURPRE",   "C",  6,  0, "Sesión del presupuesto",                            "Turno",                         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "DFECPRE",   "D",  8,  0, "Fecha del presupuesto",                             "Fecha",                         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODCLI",   "C", 12,  0, "Código del cliente",                                "Cliente",                       "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CNOMCLI",   "C", 80,  0, "Nombre del cliente",                                "NombreCliente",                 "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDIRCLI",   "C",200,  0, "Domicilio del cliente",                             "DomicilioCliente",              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CPOBCLI",   "C",200,  0, "Población del cliente",                             "PoblacionCliente",              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CPRVCLI",   "C",100,  0, "Provincia del cliente",                             "ProvinciaCliente",              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CPOSCLI",   "C", 15,  0, "Código postal del cliente",                         "CodigoPostalCliente",           "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDNICLI",   "C", 30,  0, "DNI del cliente",                                   "DniCliente",                    "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LMODCLI",   "L",  1,  0, "Modificar datos del cliente",                       "ModificarDatosCliente",         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODAGE",   "C",  3,  0, "Código del agente",                                 "Agente",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODOBR",   "C", 10,  0, "Código de dirección",                               "Direccion",                     "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODTAR",   "C",  5,  0, "Código de tarifa",                                  "Tarifa",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODALM",   "C", 16,  0, "Código del almacen",                                "Almacen",                       "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODCAJ",   "C",  3,  0, "Código de caja",                                    "Caja",                          "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODPGO",   "C",  2,  0, "Código de pago",                                    "Pago",                          "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",                                 "Ruta",                          "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                                  "FechaSalida",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LESTADO",   "L",  1,  0, "Estado del presupuesto",                            "Estado",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CSUPRE",    "C", 10,  0, "Su presupuesto",                                    "DocumentoOrigen",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCONDENT",  "C",100,  0, "Condiciones del presupuesto",                       "Condiciones",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "MCOMENT",   "M", 10,  0, "Comentarios",                                       "Comentarios",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "MOBSERV",   "M", 10,  0, "Observaciones",                                     "Observaciones",                 "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LMAYOR",    "L",  1,  0, "" ,                                                 "",                              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NTARIFA",   "N",  1,  0, "Tarifa de precio aplicada" ,                        "Tarifa",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDTOESP",   "C", 50,  0, "Descripción del descuento",                         "DescripcionDescuento1",         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOESP",   "N",  5,  2, "Porcentaje de descuento",                           "PorcentajeDescuento1",          "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDPP",      "C", 50,  0, "Descripción del descuento por pronto pago",         "DescripcionDescuento2",         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDPP",      "N",  5,  2, "Pct. de dto. por pronto pago",                      "PorcentajeDescuento2",          "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDTOUNO",   "C", 50,  0, "Desc. del primer descuento pers.",                  "DescripcionDescuento3",         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOUNO",   "N",  5,  2, "Pct. del primer descuento pers.",                   "PorcentajeDescuento3",          "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDTODOS",   "C", 50,  0, "Desc. del segundo descuento pers.",                 "DescripcionDescuento4",         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTODOS",   "N",  5,  2, "Pct. del segundo descuento pers.",                  "PorcentajeDescuento4",          "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOCNT",   "N",  5,  2, "Pct. de dto. por pago contado",                     "",                              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTORAP",   "N",  5,  2, "Pct. de dto. por rappel",                           "",                              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOPUB",   "N",  5,  2, "Pct. de dto. por publicidad",                       "",                              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOPGO",   "N",  5,  2, "Pct. de dto. por pago centralizado",                "",                              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOPTF",   "N",  7,  2, "",                                                  "",                              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LRECARGO",  "L",  1,  0, "Aplicar recargo de equivalencia",                   "RecargoEquivalencia",           "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NPCTCOMAGE","N",  5,  2, "Pct. de comisión del agente",                       "ComisionAgente",                "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NBULTOS",   "N",  5,  0, "Numero de bultos",                                  "Bultos",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CNUMALB",   "C", 10,  0, "" ,                                                 "NumeroAlbaran",                 "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDIVPRE",   "C",  3,  0, "Código de divisa",                                  "Divisa",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NVDVPRE",   "N", 10,  4, "Valor del cambio de la divisa",                     "ValorDivisa",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LSNDDOC",   "L",  1,  0, "Valor lógico documento enviado",                    "Envio",                         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CRETPOR",   "C",150,  0, "Retirado por" ,                                     "RetiradoPor",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CRETMAT",   "C",150,  0, "Matrícula" ,                                        "Matricula",                     "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NREGIVA",   "N",  1,  0, "Regimen de " + cImp() ,                             "TipoImpuesto",                  "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LIVAINC",   "L",  1,  0, "Lógico de " + cImp() + " incluido" ,                "ImpuestosIncluidos",            "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NIVAMAN",   "N",  6,  2, "Porcentaje de " + cImp() + " del gasto" ,           "ImpuestoGastos",                "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NMANOBR",   "N", 16,  6, "Gastos" ,                                           "Gastos",                        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodTrn",   "C",  9,  0, "Código de transportista" ,                          "Transportista",                 "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nKgsTrn"   ,"N", 16,  6, "TARA del transportista" ,                           "TaraTransportista",             "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lCloPre",   "L",  1,  0, "Lógico de presupuesto cerrado" ,                    "DocumentoCerrado",              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodUsr",   "C",  3,  0, "Código de usuario",                                 "Usuario",                       "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "dFecCre",   "D",  8,  0, "Fecha de creación del documento",                   "FechaCreacion",                 "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cTimCre",   "C",  5,  0, "Hora de creación del documento",                    "HoraCreacion",                  "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cSituac",   "C", 20,  0, "Situación del documento",                           "Situacion",                     "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nDiaVal",   "N",  3,  0, "Dias de validez",                                   "DiasValidez",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodGrp",   "C",  4,  0, "Código de grupo de cliente",                        "GrupoCliente",                  "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lImprimido","L",  1,  0, "Lógico de imprimido del documento",                 "Imprimido",                     "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "dFecImp",   "D",  8,  0, "Última fecha de impresión del documento",           "FechaImpresion",                "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cHorImp",   "C",  5,  0, "Hora de la última impresión del documento",         "HoraImpresion",                 "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodDlg",   "C",  2,  0, "Código delegación" ,                                "Delegacion",                    "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nDtoAtp",   "N",  6,  2, "Porcentaje de descuento atípico",                   "DescuentoAtipico",              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nSbrAtp",   "N",  1,  0, "Lugar donde aplicar dto atípico",                   "LugarAplicarDescuentoAtipico",  "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "dFecEntr",  "D",  8,  0, "Fecha de entrada de alquiler",                      "EntradaAlquiler",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "dFecSal",   "D",  8,  0, "Fecha de salidad de alquiler",                      "SalidaAlquiler",                "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lAlquiler", "L",  1,  0, "Lógico de alquiler",                                "Alquiler",                      "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cManObr",   "C",250,  0, "Literal de gastos" ,                                "LiteralGastos",                 "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cNumTik",   "C", 13,  0, "Número del ticket generado" ,                       "NumeroTicket",                  "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cTlfCli",   "C", 20,  0, "Teléfono del cliente" ,                             "TelefonoCliente",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nTotNet",   "N", 16,  6, "Total neto" ,                                       "TotalNeto",                     "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nTotIva",   "N", 16,  6, "Total " + cImp() ,                                  "TotalImpuesto",                 "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "TotalRecargo",                  "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nTotPre",   "N", 16,  6, "Total presupuesto" ,                                "TotalDocumento",                "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "OperarPuntoVerde",              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nDtoTarifa","N",  6,  2, "Descuento de tarifa de cliente",                    "DescuentoTarifa",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodWeb",   "N",  11,  0, "Codigo del presupuesto en la web" ,                "CodigoWeb",                     "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lWeb",      "L",   1,  0, "Lógico de recibido por web" ,                      "",                              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lInternet", "L",   1,  0, "Pedido desde internet" ,                           "",                              "", "( cDbf )"} )
+   aAdd( aItmPreCli, { "CSERPRE",   "C",  1,  0, "Serie de presupuesto" ,                             "Serie",                         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NNUMPRE",   "N",  9,  0, "Número de presupuesto" ,                            "Numero",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CSUFPRE",   "C",  2,  0, "Sufijo de presupuesto" ,                            "Sufijo",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CTURPRE",   "C",  6,  0, "Sesión del presupuesto",                            "Turno",                         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "DFECPRE",   "D",  8,  0, "Fecha del presupuesto",                             "Fecha",                         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCODCLI",   "C", 12,  0, "Código del cliente",                                "Cliente",                       "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CNOMCLI",   "C", 80,  0, "Nombre del cliente",                                "NombreCliente",                 "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CDIRCLI",   "C",200,  0, "Domicilio del cliente",                             "DomicilioCliente",              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CPOBCLI",   "C",200,  0, "Población del cliente",                             "PoblacionCliente",              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CPRVCLI",   "C",100,  0, "Provincia del cliente",                             "ProvinciaCliente",              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CPOSCLI",   "C", 15,  0, "Código postal del cliente",                         "CodigoPostalCliente",           "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CDNICLI",   "C", 30,  0, "DNI del cliente",                                   "DniCliente",                    "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "LMODCLI",   "L",  1,  0, "Modificar datos del cliente",                       "ModificarDatosCliente",         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCODAGE",   "C",  3,  0, "Código del agente",                                 "Agente",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCODOBR",   "C", 10,  0, "Código de dirección",                               "Direccion",                     "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCODTAR",   "C",  5,  0, "Código de tarifa",                                  "Tarifa",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCODALM",   "C", 16,  0, "Código del almacen",                                "Almacen",                       "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCODCAJ",   "C",  3,  0, "Código de caja",                                    "Caja",                          "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCODPGO",   "C",  2,  0, "Código de pago",                                    "Pago",                          "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",                                 "Ruta",                          "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                                  "FechaSalida",                   "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "LESTADO",   "L",  1,  0, "Estado del presupuesto",                            "Estado",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CSUPRE",    "C", 10,  0, "Su presupuesto",                                    "DocumentoOrigen",               "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CCONDENT",  "C",100,  0, "Condiciones del presupuesto",                       "Condiciones",                   "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "MCOMENT",   "M", 10,  0, "Comentarios",                                       "Comentarios",                   "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "MOBSERV",   "M", 10,  0, "Observaciones",                                     "Observaciones",                 "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "LMAYOR",    "L",  1,  0, "" ,                                                 "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NTARIFA",   "N",  1,  0, "Tarifa de precio aplicada" ,                        "Tarifa",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CDTOESP",   "C", 50,  0, "Descripción del descuento",                         "DescripcionDescuento1",         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDTOESP",   "N",  5,  2, "Porcentaje de descuento",                           "PorcentajeDescuento1",          "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CDPP",      "C", 50,  0, "Descripción del descuento por pronto pago",         "DescripcionDescuento2",         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDPP",      "N",  5,  2, "Pct. de dto. por pronto pago",                      "PorcentajeDescuento2",          "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CDTOUNO",   "C", 50,  0, "Desc. del primer descuento pers.",                  "DescripcionDescuento3",         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDTOUNO",   "N",  5,  2, "Pct. del primer descuento pers.",                   "PorcentajeDescuento3",          "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CDTODOS",   "C", 50,  0, "Desc. del segundo descuento pers.",                 "DescripcionDescuento4",         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDTODOS",   "N",  5,  2, "Pct. del segundo descuento pers.",                  "PorcentajeDescuento4",          "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDTOCNT",   "N",  5,  2, "Pct. de dto. por pago contado",                     "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDTORAP",   "N",  5,  2, "Pct. de dto. por rappel",                           "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDTOPUB",   "N",  5,  2, "Pct. de dto. por publicidad",                       "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDTOPGO",   "N",  5,  2, "Pct. de dto. por pago centralizado",                "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NDTOPTF",   "N",  7,  2, "",                                                  "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "LRECARGO",  "L",  1,  0, "Aplicar recargo de equivalencia",                   "RecargoEquivalencia",           "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NPCTCOMAGE","N",  5,  2, "Pct. de comisión del agente",                       "ComisionAgente",                "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NBULTOS",   "N",  5,  0, "Numero de bultos",                                  "Bultos",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CNUMALB",   "C", 10,  0, "" ,                                                 "NumeroAlbaran",                 "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CDIVPRE",   "C",  3,  0, "Código de divisa",                                  "Divisa",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NVDVPRE",   "N", 10,  4, "Valor del cambio de la divisa",                     "ValorDivisa",                   "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "LSNDDOC",   "L",  1,  0, "Valor lógico documento enviado",                    "Envio",                         "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CRETPOR",   "C",150,  0, "Retirado por" ,                                     "RetiradoPor",                   "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "CRETMAT",   "C",150,  0, "Matrícula" ,                                        "Matricula",                     "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NREGIVA",   "N",  1,  0, "Regimen de " + cImp() ,                             "TipoImpuesto",                  "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "LIVAINC",   "L",  1,  0, "Lógico de " + cImp() + " incluido" ,                "ImpuestosIncluidos",            "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NIVAMAN",   "N",  6,  2, "Porcentaje de " + cImp() + " del gasto" ,           "ImpuestoGastos",                "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "NMANOBR",   "N", 16,  6, "Gastos" ,                                           "Gastos",                        "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cCodTrn",   "C",  9,  0, "Código de transportista" ,                          "Transportista",                 "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nKgsTrn"   ,"N", 16,  6, "TARA del transportista" ,                           "TaraTransportista",             "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "lCloPre",   "L",  1,  0, "Lógico de presupuesto cerrado" ,                    "DocumentoCerrado",              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cCodUsr",   "C",  3,  0, "Código de usuario",                                 "Usuario",                       "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "dFecCre",   "D",  8,  0, "Fecha de creación del documento",                   "FechaCreacion",                 "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cTimCre",   "C",  5,  0, "Hora de creación del documento",                    "HoraCreacion",                  "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cSituac",   "C", 20,  0, "Situación del documento",                           "Situacion",                     "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nDiaVal",   "N",  3,  0, "Dias de validez",                                   "DiasValidez",                   "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cCodGrp",   "C",  4,  0, "Código de grupo de cliente",                        "GrupoCliente",                  "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "lImprimido","L",  1,  0, "Lógico de imprimido del documento",                 "Imprimido",                     "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "dFecImp",   "D",  8,  0, "Última fecha de impresión del documento",           "FechaImpresion",                "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cHorImp",   "C",  5,  0, "Hora de la última impresión del documento",         "HoraImpresion",                 "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cCodDlg",   "C",  2,  0, "Código delegación" ,                                "Delegacion",                    "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nDtoAtp",   "N",  6,  2, "Porcentaje de descuento atípico",                   "DescuentoAtipico",              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nSbrAtp",   "N",  1,  0, "Lugar donde aplicar dto atípico",                   "LugarAplicarDescuentoAtipico",  "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "dFecEntr",  "D",  8,  0, "Fecha de entrada de alquiler",                      "EntradaAlquiler",               "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "dFecSal",   "D",  8,  0, "Fecha de salidad de alquiler",                      "SalidaAlquiler",                "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "lAlquiler", "L",  1,  0, "Lógico de alquiler",                                "Alquiler",                      "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cManObr",   "C",250,  0, "Literal de gastos" ,                                "LiteralGastos",                 "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cNumTik",   "C", 13,  0, "Número del ticket generado" ,                       "NumeroTicket",                  "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cTlfCli",   "C", 20,  0, "Teléfono del cliente" ,                             "TelefonoCliente",               "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nTotNet",   "N", 16,  6, "Total neto" ,                                       "TotalNeto",                     "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nTotIva",   "N", 16,  6, "Total " + cImp() ,                                  "TotalImpuesto",                 "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "TotalRecargo",                  "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nTotPre",   "N", 16,  6, "Total presupuesto" ,                                "TotalDocumento",                "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "OperarPuntoVerde",              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "nDtoTarifa","N",  6,  2, "Descuento de tarifa de cliente",                    "DescuentoTarifa",               "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "cCodWeb",   "N",  11,  0, "Codigo del presupuesto en la web" ,                "CodigoWeb",                     "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "lWeb",      "L",   1,  0, "Lógico de recibido por web" ,                      "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "lInternet", "L",   1,  0, "Pedido desde internet" ,                           "",                              "", "( cDbf )", nil } )
    
 
 return ( aItmPreCli )
@@ -10526,7 +10429,7 @@ function aColPreCli()
    aAdd( aColPreCli, { "cRef",    "C",   18,  0, "Referencia del producto" ,                 "Articulo",                      "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "cDetalle","C",  250,  0, "Descripción de artículo" ,                 "DescripcionArticulo",           "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "nIva"    ,"N",    6,  2, "Importe del " + cImp() ,                   "PorcentajeImpuesto",            "", "( cDbfCol )", nil } )
-   aAdd( aColPreCli, { "nCanPre" ,"N",   16,  6, "Cantidad pedida" ,                         "Cajas",                         "", "( cDbfCol )", nil } )
+   aAdd( aColPreCli, { "nCanPre" ,"N",   16,  6, "Cantidad Preida" ,                         "Cajas",                         "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "nUniCaja","N",   16,  6, "Unidades por caja" ,                       "Unidades",                      "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "lConTrol","L",    1,  0, "" ,                                        "",                              "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "nUndKit", "N",   16,  6, "Unidades tipo kit" ,                       "UnidadesKit",                   "", "( cDbfCol )", nil } )
@@ -10890,7 +10793,6 @@ Function SynPreCli( cPath )
 
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
 
    ( dbfPreCliT )->( ordSetFocus( 0 ) )
    ( dbfPreCliT )->( dbGoTop() )
@@ -11718,7 +11620,7 @@ FUNCTION QuiPreCli()
       Return .f.
    end if
 
-   nOrdDet        := ( dbfPreCliL )->( OrdSetFocus( "nNumPre" ) )
+   nOrdDet        := ( D():PresupuestosClientesLineas( nView ) )->( OrdSetFocus( "nNumPre" ) )
    nOrdInc        := ( dbfPreCliI )->( OrdSetFocus( "nNumPre" ) )
    nOrdDoc        := ( dbfPreCliD )->( OrdSetFocus( "nNumPre" ) )
    nOrdEst        := ( D():PresupuestosClientesSituaciones( nView ) )->( OrdSetFocus( "nNumPre" ) ) 
@@ -11728,10 +11630,10 @@ FUNCTION QuiPreCli()
    Detalle---------------------------------------------------------------------
    */
 
-   while ( dbfPreCliL )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView )  )->cSufPre ) ) .and. !( dbfPreCliL )->( eof() )
-      if dbLock( dbfPreCliL )
-         ( dbfPreCliL )->( dbDelete() )
-         ( dbfPreCliL )->( dbUnLock() )
+   while ( D():PresupuestosClientesLineas( nView ) )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView )  )->cSufPre ) ) .and. !( D():PresupuestosClientesLineas( nView ) )->( eof() )
+      if dbLock( D():PresupuestosClientesLineas( nView ) )
+         ( D():PresupuestosClientesLineas( nView ) )->( dbDelete() )
+         ( D():PresupuestosClientesLineas( nView ) )->( dbUnLock() )
       end if
    end while
 
@@ -11770,7 +11672,7 @@ FUNCTION QuiPreCli()
 
 
 
-   ( dbfPreCliL )->( OrdSetFocus( nOrdDet ) )
+   ( D():PresupuestosClientesLineas( nView ) )->( OrdSetFocus( nOrdDet ) )
    ( dbfPreCliI )->( OrdSetFocus( nOrdInc ) )
    ( dbfPreCliD )->( OrdSetFocus( nOrdDoc ) )
    ( D():PresupuestosClientesSituaciones( nView ) )->( OrdSetFocus( nOrdEst ) )
@@ -12335,7 +12237,7 @@ Function nTotDtoLPreCli( dbfLin, nDec, nVdv, cPorDiv )
 
    local nCalculo
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := D():PresupuestosClientesLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 

@@ -4355,23 +4355,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
    DEFINE DIALOG oDlg RESOURCE "LFACCLI" TITLE LblTitle( nMode ) + "líneas a albaranes de clientes"
 
-      if aTmp[ __LALQUILER ]
-
       REDEFINE FOLDER oFld ;
          ID       400 ;
          OF       oDlg ;
-         PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
-         DIALOGS  "LPEDCLI_8",   "LALBCLI_2", "LFACCLI_3"
-
-      else
-
-      REDEFINE FOLDER oFld ;
-         ID       400 ;
-         OF       oDlg ;
-         PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
-         DIALOGS  "LPEDCLI_1",   "LALBCLI_2", "LFACCLI_3"
-
-      end if
+         PROMPT   "&General",;
+                  "Da&tos",;
+                  "&Observaciones" ;
+         DIALOGS  "LPEDCLI_1",;
+                  "LALBCLI_2",;
+                  "LFACCLI_3"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt;
          ID       100 ;
@@ -4408,8 +4400,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
          aGet[ _CLOTE ]:bValid   := {|| LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode ) }
 
-      if !aTmp[ __LALQUILER ]
-
       REDEFINE GET aGet[ _DFECCAD ] VAR aTmp[ _DFECCAD ];
          ID       340 ;
          IDSAY    341 ;
@@ -4417,14 +4407,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      end if
-
       /*
       Propiedades
       -------------------------------------------------------------------------
       */
-
-      if !aTmp[ __LALQUILER ]
 
       REDEFINE GET aGet[ _CVALPR1 ] VAR aTmp[ _CVALPR1 ];
          ID       270 ;
@@ -4470,8 +4456,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
 
-      end if
-
       /*
       fin de propiedades
       -------------------------------------------------------------------------
@@ -4487,32 +4471,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ON HELP  ( BrwIva( aGet[ _NIVA ], D():Get( "TIva", nView ), , .t. ) ) ;
          OF       oFld:aDialogs[1]
 
-      if aTmp[ __LALQUILER ]
-
-      REDEFINE GET aGet[ __DFECSAL ] VAR aTmp[ __DFECSAL ];
-         ID       420 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), oSayDias:Refresh() );
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ __DFECENT ] VAR aTmp[ __DFECENT ];
-         ID       430 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), oSayDias:Refresh() );
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY oSayDias ;
-         VAR      ( aTmp[ __DFECENT ] - aTmp[ __DFECSAL ] );
-         PICTURE  "9999";
-         ID       440;
-         OF       oFld:aDialogs[1]
-
-      else
-
       REDEFINE GET aGet[ _NVALIMP ] VAR aTmp[ _NVALIMP ] ;
          ID       125 ;
          IDSAY    126 ;
@@ -4523,8 +4481,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[1]
-
-      end if
 
       REDEFINE GET aGet[ __NBULTOS ] VAR aTmp[ __NBULTOS ] ;
          ID       610 ;
@@ -17012,7 +16968,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "mObsLin",   "M", 10, 0, "Observación de línea",                            "Observaciones",                 "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cCodPrv",   "C", 12, 0, "Código del proveedor",                            "Proveedor",                     "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cNomPrv",   "C", 30, 0, "Nombre del proveedor",                            "NombreProveedor",               "", "( cDbfCol )", nil } )
-   aAdd( aColAlbCli, { "cImagen",   "C",250, 0, "Fichero de imagen" ,                              "Imagen",                        "", "( cDbfCol )", .t. } )
+   aAdd( aColAlbCli, { "cImagen",   "C",250, 0, "Fichero de imagen" ,                              "Imagen",                        "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nPuntos",   "N", 15, 6, "Puntos del artículo",                             "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nValPnt",   "N", 16, 6, "Valor del punto",                                 "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nDtoPnt",   "N",  5, 2, "Descuento puntos",                                "",                              "", "( cDbfCol )", nil } )
