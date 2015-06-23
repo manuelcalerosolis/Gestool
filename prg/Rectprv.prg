@@ -344,6 +344,8 @@ static nGetPgd          := 0
 static oDetCamposExtra
 static oCentroCoste
 
+static oMailing
+
 static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
@@ -499,6 +501,8 @@ STATIC FUNCTION OpenFiles( lExt )
       oBandera          := TBandera():New()
 
       oFntTot           := TFont():New( "Arial", 8, 26, .F., .T. )// Font del total
+
+      oMailing          := TGenmailingDatabaseFacturaRectificativaProveedor():New( nView )
 
       initPublics()
 
@@ -949,11 +953,9 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( nGenRctPrv( IS_MAIL ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
-
-      lGenFac( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
 			NOBORDER ;
@@ -12002,6 +12004,12 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+Function mailReportRctPrv( cCodigoDocumento )
+
+Return ( printReportRctPrv( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
 Function PrintReportRctPrv( nDevice, nCopies, cPrinter, cDoc )
 
    local oFr
@@ -12025,7 +12033,7 @@ Function PrintReportRctPrv( nDevice, nCopies, cPrinter, cDoc )
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( cDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -12039,9 +12047,9 @@ Function PrintReportRctPrv( nDevice, nCopies, cPrinter, cDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( cDoc )->mReport )
+   if !Empty( ( D():Documentos( nView ) )->mReport )
 
-      oFr:LoadFromBlob( ( cDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
@@ -12093,28 +12101,6 @@ Function PrintReportRctPrv( nDevice, nCopies, cPrinter, cDoc )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nRctPrv" )
-                  :SetAlias(        D():FacturasRectificativasProveedores( nView ) )
-                  :SetItems(        aItmRctPrv() )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( D():AlbaranesProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  factura rectificativa de proveedor número " + ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + "/" + Alltrim( Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestra factura rectificativa de proveedor " + ( D():FacturasRectificativasProveedores( nView ) )->cSerFac + "/" + Alltrim( Str( ( D():FacturasRectificativasProveedores( nView ) )->nNumFac ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( D():FacturasRectificativasProveedores( nView ) )->dfecFac ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :lSend()
-
-               end with
-
-            end if
-
       end case
 
    end if
@@ -12125,7 +12111,7 @@ Function PrintReportRctPrv( nDevice, nCopies, cPrinter, cDoc )
 
    oFr:DestroyFr()
 
-Return .t.
+Return cFilePdf
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
