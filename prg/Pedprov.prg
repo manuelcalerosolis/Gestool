@@ -9219,7 +9219,7 @@ Function PrintReportPedPrv( nDevice, nCopies, cPrinter, cDoc )
 
    oFr:DestroyFr()
 
-Return .t.
+Return cFilePdf
 
 //---------------------------------------------------------------------------//
 

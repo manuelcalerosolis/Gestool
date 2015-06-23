@@ -111,11 +111,12 @@ METHOD setAttachment( oMail, hMail )
    end if 
 
    for each cItem in hb_aTokens( cAttachments, ";" )
+
       if file( rtrim( cItem ) )
          oMail:AddAttachment( rtrim( cItem ) )
       else
          msgStop( "File to attachment " + rtrim( cItem ) + " not found." )
-      end if 
+     end if 
    next
 
 Return ( nil )

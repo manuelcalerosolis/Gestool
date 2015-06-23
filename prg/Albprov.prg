@@ -325,6 +325,8 @@ static cOldUndMed       := ""
 static lOpenFiles       := .f.
 static lExternal        := .f.
 
+static                                                                                                                                                                   oMailing
+
 static bEdtRec          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodPed | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodPed ) }
 static bEdtDet          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aAlbPrv | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtInc          := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpLin ) }
@@ -748,11 +750,9 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenAlbPrv( IS_MAIL ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
-
-      lGenAlb( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
          NOBORDER ;
@@ -1008,6 +1008,8 @@ STATIC FUNCTION OpenFiles( lExt )
       */
 
       D():PedidosClientes( nView )
+
+      oMailing          := TGenmailingDatabaseAlbaranesProveedor():New( nView )
 
       /*
       Stocks-------------------------------------------------------------------
@@ -7150,6 +7152,12 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+Function mailReportAlbPrv( cCodigoDocumento )
+
+Return ( printReportAlbPrv( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
 static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter )
 
    local oFr
@@ -7237,28 +7245,6 @@ static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nAlbPrv" )
-                  :SetAlias(        D():AlbaranesProveedores( nView ) )
-                  :SetItems(        aItmAlbPrv() )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( D():AlbaranesProveedores( nView ) )->cCodPrv, D():Proveedores( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  albaran de proveedor número " + ( D():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro albaran de proveedor " + ( D():AlbaranesProveedores( nView ) )->cSerAlb + "/" + Alltrim( Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( D():AlbaranesProveedores( nView ) )->dfecAlb ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :lSend()
-
-               end with
-
-            end if
-
       end case
 
    end if
@@ -7269,7 +7255,7 @@ static Function PrintReportAlbPrv( nDevice, nCopies, cPrinter )
 
    oFr:DestroyFr()
 
-Return .t.
+Return cFilePdf
 
 //---------------------------------------------------------------------------//
 

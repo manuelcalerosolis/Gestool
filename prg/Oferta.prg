@@ -959,7 +959,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       190 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. !aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalIva( aBlank[ _NPREOFE1 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA1 ] ) );
          VALID    ( CalIva( aBlank[ _NPREOFE1 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA1 ] ) );
          COLOR    CLR_GET ;
@@ -969,7 +969,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       191 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. !aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalIva( aBlank[ _NPREOFE2 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA2 ] ) );
          VALID    ( CalIva( aBlank[ _NPREOFE2 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA2 ] ) );
          COLOR    CLR_GET ;
@@ -979,7 +979,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       192 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. !aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalIva( aBlank[ _NPREOFE3 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA3 ] ) );
          VALID    ( CalIva( aBlank[ _NPREOFE3 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA3 ] ) );
          COLOR    CLR_GET ;
@@ -989,7 +989,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       193 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. !aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalIva( aBlank[ _NPREOFE4 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA4 ] ) );
          VALID    ( CalIva( aBlank[ _NPREOFE4 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA4 ] ) );
          COLOR    CLR_GET ;
@@ -999,7 +999,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       194 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. !aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalIva( aBlank[ _NPREOFE5 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA5 ] ) );
          VALID    ( CalIva( aBlank[ _NPREOFE5 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA5 ] ) );
          COLOR    CLR_GET ;
@@ -1008,7 +1008,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
       REDEFINE GET aoGet[ _NPREOFE6 ] VAR aBlank[ _NPREOFE6 ] ;
          ID       195 ;
          PICTURE  cPouDiv ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. !aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalIva( aBlank[ _NPREOFE6 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA6 ] ) );
          VALID    ( CalIva( aBlank[ _NPREOFE6 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREIVA6 ] ) );
          SPINNER ;
@@ -1023,7 +1023,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       250 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalBas( aBlank[ _NPREIVA1 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE1 ] ) );
          VALID    ( CalBas( aBlank[ _NPREIVA1 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE1 ] ) );
          COLOR    CLR_GET ;
@@ -1033,7 +1033,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       251 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalBas( aBlank[ _NPREIVA2 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE2 ] ) );
          VALID    ( CalBas( aBlank[ _NPREIVA2 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE2 ] ) );
          COLOR    CLR_GET ;
@@ -1043,7 +1043,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       252 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalBas( aBlank[ _NPREIVA3 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE3 ] ) );
          VALID    ( CalBas( aBlank[ _NPREIVA3 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE3 ] ) );
          COLOR    CLR_GET ;
@@ -1053,7 +1053,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       253 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalBas( aBlank[ _NPREIVA4 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE4 ] ) );
          VALID    ( CalBas( aBlank[ _NPREIVA4 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE4 ] ) );
          COLOR    CLR_GET ;
@@ -1063,7 +1063,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
          ID       254 ;
          PICTURE  cPouDiv ;
          SPINNER ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalBas( aBlank[ _NPREIVA5 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE5 ] ) );
          VALID    ( CalBas( aBlank[ _NPREIVA5 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE5 ] ) );
          COLOR    CLR_GET ;
@@ -1072,7 +1072,7 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfOferta, oBrw, lIvaInc, cTipIva, nMode,
       REDEFINE GET aoGet[ _NPREIVA6 ] VAR aBlank[ _NPREIVA6 ] ;
          ID       255 ;
          PICTURE  cPouDiv ;
-         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE .and. aBlank[ _LIVAINC ] ) ;
+         WHEN     ( oTipoOferta:nAt == 1 .and. aBlank[ _NTIPOFE ] == 1 .AND. nMode != ZOOM_MODE  ) ;
          ON CHANGE( CalBas( aBlank[ _NPREIVA6 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE6 ] ) );
          VALID    ( CalBas( aBlank[ _NPREIVA6 ], aBlank[ _LIVAINC ], if( !Empty( cTipIva ) .and. oTipoOferta:nAt == 1, cTipIva, RetFld( aBlank[ _CARTOFE ], dbfArticulo, "TipoIva", "Codigo" ) ), ( dbfArticulo )->cCodImp, aoGet[ _NPREOFE6 ] ) );
          SPINNER ;

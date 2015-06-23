@@ -1620,7 +1620,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local cImpComanda2
    local aNombreTarifas    := aNombreTarifas()
    local cNombreTarifaWeb  := aNombreTarifas[1]
- 
+
    CursorWait()
 
    if BeginTrans( aTmp, nMode )
@@ -1684,6 +1684,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
       aTmp[ ( dbfArticulo )->( fieldpos( "nDuracion" ) ) ]  := 0
       aTmp[ ( dbfArticulo )->( fieldpos( "nTipDur" ) ) ]    := 1
+
+
+      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]    := Padr( GetPvProfString( "PROPIEDADES", "Propiedad1",       "",   FullCurDir() + "GstApolo.Ini" ), 20 )
+      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]    := Padr( GetPvProfString( "PROPIEDADES", "Propiedad2",       "",   FullCurDir() + "GstApolo.Ini" ), 20 )
 
    case nMode == DUPL_MODE
 
