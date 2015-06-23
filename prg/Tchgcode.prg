@@ -45,6 +45,8 @@ CLASS TChgCode
    DATA  oDbfPedPrvT
    DATA  oDbfAlbPrvT
    DATA  oDbfFacPrvT
+   DATA  oDbfMatProd
+   DATA  oDbfMatPrima
    DATA  oDbfPago
    DATA  oPrcArt
    DATA  oRadCod
@@ -280,6 +282,10 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfClient  PATH ( cPatCli() ) FILE "CLIENT.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
 
+   DATABASE NEW ::oDbfMatProd PATH ( cPatEmp() ) FILE "PROLIN.DBF"   VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
+
+   DATABASE NEW ::oDbfMatPrima PATH ( cPatEmp() ) FILE "PROMAT.DBF"   VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
+
    ::oGrpFam:OpenFiles()
 
    RECOVER USING oError
@@ -433,6 +439,14 @@ METHOD CloseFiles()
 
    if !Empty( ::oDbfEmpresa ) .and. ::oDbfEmpresa:Used()
       ::oDbfEmpresa:End()
+   end if
+
+   if !Empty( ::oDbfMatProd ) .and. ::oDbfMatProd:Used()
+      ::oDbfMatProd:End()
+   end if
+
+   if !Empty( ::oDbfMatPrima ) .and. ::oDbfMatPrima:Used()
+      ::oDbfMatPrima:End()
    end if
 
   if !Empty( ::oGrpFam )
@@ -924,9 +938,10 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfPrv:Lastrec()
 
          ::oDbfPrv:OrdSetFocus( 0 )
+
          ::oDbfPrv:GoTop()
          while !::oDbfPrv:Eof()
-            if ::oDbfPrv:cCodArt == ::cGetArtOld
+            if Trim( ::oDbfPrv:cCodArt ) == Trim( ::cGetArtOld )
                ::oDbfPrv:Load()
                ::oDbfPrv:cCodArt    := ::cGetArtNew
                ::oDbfPrv:Save()
@@ -939,10 +954,11 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfTar:Lastrec()
 
          ::oDbfTar:OrdSetFocus( 0 )
+
          ::oDbfTar:GoTop()
          while !::oDbfTar:Eof()
 
-            if ::oDbfTar:cCodArt == ::cGetArtOld
+            if Trim( ::oDbfTar:cCodArt ) == Trim( ::cGetArtOld )
                ::oDbfTar:Load()
                ::oDbfTar:cCodArt    := ::cGetArtNew
                ::oDbfTar:Save()
@@ -958,10 +974,11 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfOfe:Lastrec()
 
          ::oDbfOfe:OrdSetFocus( 0 )
+
          ::oDbfOfe:GoTop()
          while !::oDbfOfe:Eof()
 
-            if ::oDbfOfe:cArtOfe == ::cGetArtOld
+            if Trim( ::oDbfOfe:cArtOfe ) == Trim( ::cGetArtOld )
                ::oDbfOfe:Load()
                ::oDbfOfe:cArtOfe    := ::cGetArtNew
                ::oDbfOfe:Save()
@@ -975,10 +992,11 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfArd:Lastrec()
 
          ::oDbfArd:OrdSetFocus( 0 )
+
          ::oDbfArd:GoTop()
          while !::oDbfArd:Eof()
 
-            if ::oDbfArd:cCodArt == ::cGetArtOld
+            if Trim( ::oDbfArd:cCodArt ) == Trim( ::cGetArtOld )
                ::oDbfArd:Load()
                ::oDbfArd:cCodArt    := ::cGetArtNew
                ::oDbfArd:Save()
@@ -994,7 +1012,7 @@ METHOD ChgCode()
          ::oDbfKit:GoTop()
          while !::oDbfKit:Eof()
 
-            if ::oDbfKit:cCodKit == ::cGetArtOld
+            if Trim( ::oDbfKit:cCodKit ) == Trim( ::cGetArtOld )
                ::oDbfKit:Load()
                ::oDbfKit:cCodKit    := ::cGetArtNew
                ::oDbfKit:Save()
@@ -1010,7 +1028,7 @@ METHOD ChgCode()
          ::oDbfCliAtp:GoTop()
          while !::oDbfCliAtp:Eof()
 
-            if ::oDbfCliAtp:cCodArt == ::cGetArtOld
+            if Trim( ::oDbfCliAtp:cCodArt ) == Trim( ::cGetArtOld )
                ::oDbfCliAtp:Load()
                ::oDbfCliAtp:cCodArt := ::cGetArtNew
                ::oDbfCliAtp:Save()
@@ -1023,10 +1041,11 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfPedPrv:Lastrec()
 
          ::oDbfPedPrv:OrdSetFocus( 0 )
+
          ::oDbfPedPrv:GoTop()
          while !::oDbfPedPrv:Eof()
 
-            if ::oDbfPedPrv:cRef == ::cGetArtOld
+            if Trim( ::oDbfPedPrv:cRef ) == Trim( ::cGetArtOld )
                ::oDbfPedPrv:Load()
                ::oDbfPedPrv:cRef    := ::cGetArtNew
                ::oDbfPedPrv:cCodPr1 := ::cCodPr1New
@@ -1043,10 +1062,11 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfAlbPrv:Lastrec()
 
          ::oDbfAlbPrv:OrdSetFocus( 0 )
+
          ::oDbfAlbPrv:GoTop()
          while !::oDbfAlbPrv:Eof()
 
-            if ::oDbfAlbPrv:cRef == ::cGetArtOld
+            if Trim( ::oDbfAlbPrv:cRef ) == Trim( ::cGetArtOld )
                ::oDbfAlbPrv:Load()
                ::oDbfAlbPrv:cRef    := ::cGetArtNew
                ::oDbfAlbPrv:cCodPr1 := ::cCodPr1New
@@ -1063,10 +1083,11 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfFacPrv:Lastrec()
 
          ::oDbfFacPrv:OrdSetFocus( 0 )
+
          ::oDbfFacPrv:GoTop()
          while !::oDbfFacPrv:Eof()
 
-            if ::oDbfFacPrv:cRef == ::cGetArtOld
+            if Trim( ::oDbfFacPrv:cRef ) == Trim( ::cGetArtOld )
                ::oDbfFacPrv:Load()
                ::oDbfFacPrv:cRef    := ::cGetArtNew
                ::oDbfFacPrv:cCodPr1 := ::cCodPr1New
@@ -1084,10 +1105,12 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfHis:Lastrec()
 
          ::oDbfHis:OrdSetFocus( 0 )
+
          ::oDbfHis:GoTop()
          while !::oDbfHis:Eof()
 
-            if ::oDbfHis:cRefMov == ::cGetArtOld
+            if Trim( ::oDbfHis:cRefMov ) == Trim( ::cGetArtOld )
+
                ::oDbfHis:Load()
                ::oDbfHis:cRefMov    := ::cGetArtNew
                ::oDbfHis:cCodPr1    := ::cCodPr1New
@@ -1106,7 +1129,7 @@ METHOD ChgCode()
          ::oDbfDepAge:OrdSetFocus( 0 )
          ::oDbfDepAge:GoTop()
          while !::oDbfDepAge:Eof()
-            if ::oDbfDepAge:cRef == ::cGetArtOld
+            if Trim( ::oDbfDepAge:cRef ) == Trim( ::cGetArtOld )
                ::oDbfDepAge:Load()
                ::oDbfDepAge:cRef    := ::cGetArtNew
                ::oDbfDepAge:Save()
@@ -1121,7 +1144,7 @@ METHOD ChgCode()
          ::oDbfExtAge:OrdSetFocus( 0 )
          ::oDbfExtAge:GoTop()
          while !::oDbfExtAge:Eof()
-            if ::oDbfExtAge:cRef == ::cGetArtOld
+            if Trim( ::oDbfExtAge:cRef ) == Trim( ::cGetArtOld )
                ::oDbfExtAge:Load()
                ::oDbfExtAge:cRef    := ::cGetArtNew
                ::oDbfExtAge:Save()
@@ -1134,9 +1157,10 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfPreCli:Lastrec()
 
          ::oDbfPreCli:OrdSetFocus( 0 )
+
          ::oDbfPreCli:GoTop()
          while !::oDbfPreCli:Eof()
-            if ::oDbfPreCli:cRef == ::cGetArtOld
+            if Trim( ::oDbfPreCli:cRef ) == Trim( ::cGetArtOld )
                ::oDbfPreCli:Load()
                ::oDbfPreCli:cRef    := ::cGetArtNew
                ::oDbfPreCli:cCodPr1 := ::cCodPr1New
@@ -1153,9 +1177,10 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfPedCli:Lastrec()
 
          ::oDbfPedCli:OrdSetFocus( 0 )
+
          ::oDbfPedCli:GoTop()
          while !::oDbfPedCli:Eof()
-            if ::oDbfPedCli:cRef == ::cGetArtOld
+            if Trim( ::oDbfPedCli:cRef ) == Trim( ::cGetArtOld )
                ::oDbfPedCli:Load()
                ::oDbfPedCli:cRef    := ::cGetArtNew
                ::oDbfPedCli:cCodPr1 := ::cCodPr1New
@@ -1172,9 +1197,10 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfAlbCli:Lastrec()
 
          ::oDbfAlbCli:OrdSetFocus( 0 )
+
          ::oDbfAlbCli:GoTop()
          while !::oDbfAlbCli:Eof()
-            if ::oDbfAlbCli:cRef == ::cGetArtOld
+            if Trim( ::oDbfAlbCli:cRef ) == Trim( ::cGetArtOld )
                ::oDbfAlbCli:Load()
                ::oDbfAlbCli:cRef    := ::cGetArtNew
                ::oDbfAlbCli:cCodPr1 := ::cCodPr1New
@@ -1191,9 +1217,10 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfFacCli:Lastrec()
 
          ::oDbfFacCli:OrdSetFocus( 0 )
+
          ::oDbfFacCli:GoTop()
          while !::oDbfFacCli:Eof()
-            if ::oDbfFacCli:cRef == ::cGetArtOld
+            if Trim( ::oDbfFacCli:cRef ) == Trim( ::cGetArtOld )
                ::oDbfFacCli:Load()
                ::oDbfFacCli:cRef    := ::cGetArtNew
                ::oDbfFacCli:cCodPr1 := ::cCodPr1New
@@ -1210,9 +1237,10 @@ METHOD ChgCode()
          ::oMtrInf:nTotal           := ::oDbfTpvCli:Lastrec()
 
          ::oDbfTpvCli:OrdSetFocus( 0 )
+
          ::oDbfTpvCli:GoTop()
          while !::oDbfTpvCli:Eof()
-            if ::oDbfTpvCli:cCbaTil == ::cGetArtOld
+            if Trim( ::oDbfTpvCli:cCbaTil ) == Trim( ::cGetArtOld )
                ::oDbfTpvCli:Load()
                ::oDbfTpvCli:cCbaTil := ::cGetArtNew
                ::oDbfTpvCli:cCodPr1 := ::cCodPr1New
@@ -1224,6 +1252,46 @@ METHOD ChgCode()
             end if
             ::oDbfTpvCli:Skip()
             ::oMtrInf:AutoInc( ::oDbfTpvCli:Recno() )
+         end while
+
+         ::oMtrInf:nTotal             := ::oDbfMatProd:Lastrec()
+
+         ::oDbfMatProd:OrdSetFocus( 0 )
+
+         ::oDbfMatProd:GoTop()
+         while !::oDbfMatProd:Eof()
+            if Trim( ::oDbfMatProd:cCodArt ) == Trim( ::cGetArtOld )
+               ::oDbfMatProd:Load()
+               ::oDbfMatProd:cCodArt   :=  ::cGetArtNew
+               ::oDbfMatProd:cCodPr1   := ::cCodPr1New
+               ::oDbfMatProd:cValPr1   := ::cGetPr1New
+               ::oDbfMatProd:cCodPr2   := ::cCodPr2New
+               ::oDbfMatProd:cValPr2   := ::cGetPr2New
+               ::oDbfMatProd:Save()
+               ::nRecChanged++
+            end if 
+            ::oDbfMatProd:Skip()
+            ::oMtrInf:AutoInc( ::oDbfMatProd:Recno() )
+         end while
+
+         ::oMtrInf:nTotal             := ::oDbfMatPrima:Lastrec()
+
+         ::oDbfMatPrima:OrdSetFocus( 0 )
+
+         ::oDbfMatPrima:GoTop()
+         while !::oDbfMatPrima:Eof()
+            if Trim( ::oDbfMatPrima:cCodArt ) == Trim( ::cGetArtOld )
+               ::oDbfMatPrima:Load()
+               ::oDbfMatPrima:cCodArt   :=  ::cGetArtNew
+               ::oDbfMatPrima:cCodPr1   := ::cCodPr1New
+               ::oDbfMatPrima:cValPr1   := ::cGetPr1New
+               ::oDbfMatPrima:cCodPr2   := ::cCodPr2New
+               ::oDbfMatPrima:cValPr2   := ::cGetPr2New
+               ::oDbfMatPrima:Save()
+               ::nRecChanged++
+            end if 
+            ::oDbfMatPrima:Skip()
+            ::oMtrInf:AutoInc( ::oDbfMatPrima:Recno() )
          end while
 
          /*
