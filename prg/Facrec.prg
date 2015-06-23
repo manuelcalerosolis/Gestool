@@ -372,9 +372,7 @@ static dbfOferta
 static dbfDiv
 static dbfObrasT
 static dbfFamilia
-static dbfProvee
 static dbfKit
-static dbfDoc
 static dbfArtDiv
 static dbfCliBnc
 static dbfCajT
@@ -462,6 +460,7 @@ static cOldUndMed          := ""
 static lOpenFiles          := .f.
 static lExternal           := .f.
 static cFiltroUsuario      := ""
+static oMailing
 
 static bEdtRec             := { |aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aNumDoc| EdtRec( aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 static bEdtDet             := { |aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac ) }
@@ -491,10 +490,10 @@ STATIC FUNCTION GenFacRec( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nCopies      := if( nCopiasDocumento( ( D():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( D():FacturasRectificativas( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" ), 1 ), nCopiasDocumento( ( D():FacturasRectificativas( nView ) )->cSerie, "nFacRec", dbfCount ) )
 
    if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "FR", dbfDoc )
+      cCodDoc           := cFirstDoc( "FR", D():Documentos( nView ) )
    end if
 
-   if !lExisteDocumento( cCodDoc, dbfDoc )
+   if !lExisteDocumento( cCodDoc, D():Documentos( nView ) )
       return nil
    end if
 
@@ -514,9 +513,9 @@ STATIC FUNCTION GenFacRec( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    Si el documento es de tipo visual-------------------------------------------
    */
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   if lVisualDocumento( cCodDoc, D():Documentos( nView ) )
 
-      PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
+      PrintReportFacRec( nDevice, nCopies, cPrinter )
 
    else
 
@@ -756,6 +755,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ImpuestosEspeciales( nView )
 
+      D():Documentos( nView )
+
       USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
 
@@ -839,10 +840,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
       SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
-      SET ADSINDEX TO ( cPatEmp() + "RDOCUMEN.CDX" ) ADDITIVE
-      SET TAG TO "CTIPO"
 
       USE ( cPatArt() + "PRO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRO", @dbfPro ) )
       SET ADSINDEX TO ( cPatArt() + "PRO.CDX" ) ADDITIVE
@@ -942,9 +939,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
 
-      USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
-      
 	    if !TDataCenter():OpenPreCliT( @dbfPreCliT )
 			lOpenFiles     := .f.
 		end if 
@@ -1013,6 +1007,8 @@ STATIC FUNCTION OpenFiles( lExt )
       if !oCentroCoste:OpenFiles()
          lOpenFiles     := .f.
       end if
+
+      oMailing          := TGenmailingDatabaseFacturaRectificativaCliente():New( nView )
 
       /*
       Declaración de variables publicas----------------------------------------
@@ -1236,10 +1232,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfOferta  )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfDoc )
-      ( dbfDoc     )->( dbCloseArea() )
-   end if
-
    if !Empty( dbfPro )
       ( dbfPro     )->( dbCloseArea() )
    end if
@@ -1360,10 +1352,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfCliBnc )->( dbClosearea() )
    end if
 
-   if !Empty( dbfProvee )
-      ( dbfProvee )->( dbClosearea() )
-   end if
-
    if !Empty( oStock )
       oStock:end()
    end if
@@ -1436,7 +1424,6 @@ STATIC FUNCTION CloseFiles()
    dbfDiv      := nil
    oBandera    := nil
    dbfObrasT   := nil
-   dbfDoc      := nil
    dbfOferta   := nil
    dbfPro      := nil
    dbfTblPro   := nil
@@ -1472,8 +1459,6 @@ STATIC FUNCTION CloseFiles()
    oGrpFam     := nil
    oUndMedicion:= nil
    oBanco      := nil
-
-   dbfProvee   := nil
 
    oWndBrw     := nil
 
@@ -1888,11 +1873,9 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenFacRec( IS_MAIL ) ) ;
+      ACTION   ( oMailing:documentsDialog( oWndBrw:oBrw:aSelected ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
-
-      lGenFacRec( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
          NOBORDER ;
@@ -4411,7 +4394,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
         ID       200 ;
         IDTEXT 	 201 ;	
         WHEN     ( nMode != ZOOM_MODE ) ;
-        VALID    ( cProvee( aGet[ _CCODPRV ], dbfProvee, aGet[ _CCODPRV ]:oHelpText ) );
+        VALID    ( cProvee( aGet[ _CCODPRV ], D():Proveedores( nView ), aGet[ _CCODPRV ]:oHelpText ) );
         BITMAP   "LUPA" ;
         ON HELP  ( BrwProvee( aGet[ _CCODPRV ], aGet[ _CCODPRV ]:oHelpText ) ) ;
         OF       oFld:aDialogs[ 2 ]
@@ -5710,7 +5693,7 @@ STATIC FUNCTION PrnSerie()
    REDEFINE GET oFmtDoc VAR cFmtDoc ;
       ID       90 ;
       COLOR    CLR_GET ;
-      VALID    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
+      VALID    ( cDocumento( oFmtDoc, oSayFmt, D():Documentos( nView ) ) ) ;
       BITMAP   "LUPA" ;
       ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "FR" ) ) ;
       OF       oDlg
@@ -7731,7 +7714,7 @@ static function lGenFacRec( oBrw, oBtn, nDevice )
       return nil
    end if
 
-   if !( dbfDoc )->( dbSeek( "FR" ) )
+   if !( D():Documentos( nView ) )->( dbSeek( "FR" ) )
 
          DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
             NOBORDER ;
@@ -7744,13 +7727,13 @@ static function lGenFacRec( oBrw, oBtn, nDevice )
 
    ELSE
 
-      WHILE ( dbfDoc )->CTIPO == "FR" .AND. !( dbfDoc )->( eof() )
+      WHILE ( D():Documentos( nView ) )->CTIPO == "FR" .AND. !( D():Documentos( nView ) )->( eof() )
 
-         bAction  := bGenFacRec( nDevice, "Imprimiendo facturas rectificativas de clientes", ( dbfDoc )->CODIGO )
+         bAction  := bGenFacRec( nDevice, "Imprimiendo facturas rectificativas de clientes", ( D():Documentos( nView ) )->CODIGO )
 
-         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( D():Documentos( nView ) )->cDescrip ) , , , , , oBtn )
 
-         ( dbfDoc )->( dbSkip() )
+         ( D():Documentos( nView ) )->( dbSkip() )
 
       END DO
 
@@ -14122,7 +14105,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function DesignReportFacRec( oFr, dbfDoc )
+Function DesignReportFacRec( oFr )
 
    local lOpen    := .f.
    local lFlag    := .f.
@@ -14154,9 +14137,9 @@ Function DesignReportFacRec( oFr, dbfDoc )
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( dbfDoc )->mReport )
+      if !Empty( ( D():Documentos( nView ) )->mReport )
 
-         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+         oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
       else
 
@@ -14230,7 +14213,13 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
+Function mailReportFacRec( cCodigoDocumento )
+
+Return ( printReportFacRec( IS_MAIL, 1, prnGetName(), cCodigoDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+Function PrintReportFacRec( nDevice, nCopies, cPrinter )
 
    local oFr
    local cFilePdf       := cPatTmp() + "FacturasRectificativasCliente" + StrTran( ( D():FacturasRectificativas( nView ) )->cSerie + Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) + ( D():FacturasRectificativas( nView ) )->cSufFac, " ", "" ) + ".Pdf"
@@ -14253,7 +14242,7 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
    Manejador de eventos--------------------------------------------------------
    */
 
-   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( D():Documentos( nView ) )->( Select() ), "mReport" ) } )
 
    /*
    Zona de datos------------------------------------------------------------
@@ -14265,9 +14254,9 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !Empty( ( D():Documentos( nView ) )->mReport )
 
-      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+      oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
 
       /*
       Zona de variables--------------------------------------------------------
@@ -14319,28 +14308,6 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
             oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .f. )
             oFr:DoExport(     "PDFExport" )
 
-            if file( cFilePdf )
-
-               with object ( TGenMailing():New() )
-
-                  :SetTypeDocument( "nFacRec" )
-                  :SetAlias(         D():FacturasRectificativas( nView ) )
-                  :SetItems(        aItmFacRec() )
-                  :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( D():FacturasRectificativas( nView ) )->cCodCli, D():Clientes( nView ), "cMeiInt" ) )
-                  :SetAsunto(       "Envío de  factura rectificativa de cliente número " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro factura rectificativa de cliente " + ( D():FacturasRectificativas( nView ) )->cSerie + "/" + Alltrim( Str( ( D():FacturasRectificativas( nView ) )->nNumFac ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( D():FacturasRectificativas( nView ) )->dFecFac ) + Space( 1 ) )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      CRLF )
-                  :SetMensaje(      "Reciba un cordial saludo." )
-
-                  :lSend()
-
-               end with
-
-            end if
-
       end case
 
    end if
@@ -14351,7 +14318,7 @@ Function PrintReportFacRec( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:DestroyFr()
 
-Return .t.
+Return cFilePdf
 
 //---------------------------------------------------------------------------//
 

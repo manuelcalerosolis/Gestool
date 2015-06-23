@@ -67,6 +67,7 @@ TGenMailDatabaseSATClientes.prg           \
 TGenMailDatabasePedidosProveedor.prg      \
 TGenMailDatabaseAlbaranesProveedor.prg    \
 TGenMailDatabaseFacturaProveedor.prg      \
+TGenMailDatabaseFacturaRectificativaCliente.prg  \
 TSendMail.prg              \
 TSendMailOutlook.prg       \
 TSendMailCDO.prg           \
@@ -460,6 +461,7 @@ TGenMailDatabaseSATClientes.obj           \
 TGenMailDatabasePedidosProveedor.obj      \
 TGenMailDatabaseAlbaranesProveedor.obj    \
 TGenMailDatabaseFacturaProveedor.obj      \
+TGenMailDatabaseFacturaRectificativaCliente.obj  \
 TSendMail.obj           \
 TSendMailOutlook.obj    \
 TSendMailCDO.obj        \
@@ -880,6 +882,7 @@ $(OBJ)\TGenMailDatabaseSATClientes.obj          +
 $(OBJ)\TGenMailDatabasePedidosProveedor.obj     +
 $(OBJ)\TGenMailDatabaseAlbaranesProveedor.obj   +
 $(OBJ)\TGenMailDatabaseFacturaProveedor.obj     +
+$(OBJ)\TGenMailDatabaseFacturaRectificativaCliente.obj  +
 $(OBJ)\TSendMail.obj             +
 $(OBJ)\TSendMailOutlook.obj      +
 $(OBJ)\TSendMailCDO.obj          +
