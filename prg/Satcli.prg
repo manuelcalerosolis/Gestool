@@ -4370,7 +4370,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       Return nil
    end if 
 
-
    // Comprobamos, si estamos por contadores, que no sea 0
 
    if aTmp[ _NCTLSTK ] == 2 .and. aTmp[ _NCNTACT ] == 0
