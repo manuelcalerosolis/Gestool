@@ -21048,134 +21048,134 @@ function aItmFacCli()
 
    local aItmFacCli  := {}
 
-   aAdd( aItmFacCli, {"CSERIE"      ,"C",  1, 0, "Serie de la factura" ,                                       "Serie",                   "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NNUMFAC"     ,"N",  9, 0, "Número de la factura" ,                                      "Numero",                  "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CSUFFAC"     ,"C",  2, 0, "Sufijo de la factura" ,                                      "Sufijo",                  "", "( cDbf )", {|| RetSufEmp() } } )
-   aAdd( aItmFacCli, {"CTURFAC"     ,"C",  6, 0, "Sesión de la factura" ,                                      "Turno",                   "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )
-   aAdd( aItmFacCli, {"DFECFAC"     ,"D",  8, 0, "Fecha de la factura" ,                                       "Fecha",                   "", "( cDbf )", {|| GetSysDate() } } )
-   aAdd( aItmFacCli, {"CCODCLI"     ,"C", 12, 0, "Código del cliente" ,                                        "Cliente",                 "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CCODALM"     ,"C", 16, 0, "Código de almacén" ,                                         "",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CCODCAJ"     ,"C",  3, 0, "Código de caja" ,                                            "",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CNOMCLI"     ,"C", 80, 0, "Nombre del cliente" ,                                        "NombreCliente",           "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CDIRCLI"     ,"C",200, 0, "Domicilio del cliente" ,                                     "DomicilioCliente",        "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CPOBCLI"     ,"C",200, 0, "Población del cliente" ,                                     "PoblacionCliente",        "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CPRVCLI"     ,"C",100, 0, "Provincia del cliente" ,                                     "ProvinciaCliente",        "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NCODPROV"    ,"N",  2, 0, "Número de provincia cliente" ,                               "",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CPOSCLI"     ,"C", 15, 0, "Código postal del cliente" ,                                 "CodigoPostalCliente",     "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CDNICLI"     ,"C", 30, 0, "NIF del cliente" ,                                           "DniCliente",              "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"LMODCLI"     ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                     "ModificarDatosCliente",   "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"LMAYOR"      ,"L",  1, 0, "Lógico de mayorista" ,                                       "",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NTARIFA"     ,"N",  1, 0, "Tarifa de precio aplicada" ,                                 "Tarifa",           "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CCODAGE"     ,"C",  3, 0, "Código del agente" ,                                         "Agente",                  "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CCODRUT"     ,"C",  4, 0, "Código de la ruta" ,                                         "Ruta",                    "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CCODTAR"     ,"C",  5, 0, "Código de la tarifa" ,                                       "Tarifa",                  "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CCODOBR"     ,"C", 10, 0, "Código de la dirección" ,                                    "Direccion",               "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NPCTCOMAGE"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                         "ComisionAgente",          "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"LLIQUIDADA"  ,"L",  1, 0, "Lógico de la factura pagada" ,                               "Pagada",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"LCONTAB"     ,"L",  1, 0, "Lógico de la factura contabilizada" ,                        "Contabilizada",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"DFECENT"     ,"D",  8, 0, "Fecha de entrega" ,                                          "FechaEntrega",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CSUFAC"      ,"C", 50, 0, "Su factura" ,                                                "SuFactura",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"LIMPALB"     ,"L",  1, 0, "Lógico si la factura se importó de albaranes" ,              "ImportadaAlbaran",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CCONDENT"    ,"C",100, 0, "Condición de entrada" ,                                      "CondicionEntrada",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"MCOMENT"     ,"M", 10, 0, "Comentarios" ,                                               "Comentarios",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"MOBSERV"     ,"M", 10, 0, "Observaciones" ,                                             "Observaciones",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CCODPAGO"    ,"C",  2, 0, "Código del tipo de pago" ,                                   "Pago",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NBULTOS"     ,"N",  5, 0, "Número de bultos" ,                                          "Bultos",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NPORTES"     ,"N",  6, 0, "Valor del porte" ,                                           "Portes",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NIVAMAN"     ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,                    "ImpuestoGastos",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NMANOBR"     ,"N", 16, 6, "Gasto" ,                                                     "Gastos",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CNUMALB"     ,"C", 12, 0, "Número de albarán" ,                                         "NumeroAlbaran",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CNUMPED"     ,"C", 12, 0, "Número de pedido" ,                                          "NumeroPedido",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CNUMPRE"     ,"C", 12, 0, "Número de presupuesto" ,                                     "NumeroPresupuesto",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CNUMSAT"     ,"C", 12, 0, "Número de S.A.T." ,                                          "NumeroSAT",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NTIPOFAC"    ,"N",  1, 0, "" ,                                                          "",       "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cSerie"      ,"C",  1, 0, "Serie de la factura" ,                                       "Serie",                       "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nNumFac"     ,"N",  9, 0, "Número de la factura" ,                                      "Numero",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cSufFac"     ,"C",  2, 0, "Sufijo de la factura" ,                                      "Sufijo",                      "", "( cDbf )", {|| RetSufEmp() } } )
+   aAdd( aItmFacCli, {"cTurFac"     ,"C",  6, 0, "Sesión de la factura" ,                                      "Turno",                       "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )
+   aAdd( aItmFacCli, {"dFecFac"     ,"D",  8, 0, "Fecha de la factura" ,                                       "Fecha",                       "", "( cDbf )", {|| GetSysDate() } } )
+   aAdd( aItmFacCli, {"cCodCli"     ,"C", 12, 0, "Código del cliente" ,                                        "Cliente",                     "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodAlm"     ,"C", 16, 0, "Código de almacén" ,                                         "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja" ,                                            "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cNomCli"     ,"C", 80, 0, "Nombre del cliente" ,                                        "NombreCliente",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cDirCli"     ,"C",200, 0, "Domicilio del cliente" ,                                     "DomicilioCliente",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cPobCli"     ,"C",200, 0, "Población del cliente" ,                                     "PoblacionCliente",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cPrvCli"     ,"C",100, 0, "Provincia del cliente" ,                                     "ProvinciaCliente",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nCodProV"    ,"N",  2, 0, "Número de provincia cliente" ,                               "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cPosCli"     ,"C", 15, 0, "Código postal del cliente" ,                                 "CodigoPostalCliente",         "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cDniCli"     ,"C", 30, 0, "NIF del cliente" ,                                           "DniCliente",                  "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lModCli"     ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                     "ModificarDatosCliente",       "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lMayor"      ,"L",  1, 0, "Lógico de mayorista" ,                                       "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTarIfa"     ,"N",  1, 0, "Tarifa de precio aplicada" ,                                 "Tarifa",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodAge"     ,"C",  3, 0, "Código del agente" ,                                         "Agente",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodRut"     ,"C",  4, 0, "Código de la ruta" ,                                         "Ruta",                        "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodTar"     ,"C",  5, 0, "Código de la tarifa" ,                                       "Tarifa",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodObr"     ,"C", 10, 0, "Código de la dirección" ,                                    "Direccion",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nPctComAge"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                         "ComisionAgente",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lLiquidada"  ,"L",  1, 0, "Lógico de la factura pagada" ,                               "Pagada",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lContab"     ,"L",  1, 0, "Lógico de la factura contabilizada" ,                        "Contabilizada",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"dFecEnt"     ,"D",  8, 0, "Fecha de entrega" ,                                          "FechaEntrega",                "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cSuFac"      ,"C", 50, 0, "Su factura" ,                                                "SuFactura",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lImpAlb"     ,"L",  1, 0, "Lógico si la factura se importó de albaranes" ,              "ImportadaAlbaran",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCondent"    ,"C",100, 0, "Condición de entrada" ,                                      "CondicionEntrada",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"mComEnt"     ,"M", 10, 0, "Comentarios" ,                                               "Comentarios",                 "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"mObserv"     ,"M", 10, 0, "Observaciones" ,                                             "Observaciones",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodPago"    ,"C",  2, 0, "Código del tipo de pago" ,                                   "Pago",                        "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nBultos"     ,"N",  5, 0, "Número de bultos" ,                                          "Bultos",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nPortes"     ,"N",  6, 0, "Valor del porte" ,                                           "Portes",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nIvaMan"     ,"N",  6, 2, "Porcentaje de " + cImp() + " del gasto" ,                    "ImpuestoGastos",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nManObr"     ,"N", 16, 6, "Gasto" ,                                                     "Gastos",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cNumAlb"     ,"C", 12, 0, "Número de albarán" ,                                         "NumeroAlbaran",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cNumPed"     ,"C", 12, 0, "Número de pedido" ,                                          "NumeroPedido",                "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cNumPre"     ,"C", 12, 0, "Número de presupuesto" ,                                     "NumeroPresupuesto",           "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cNumSat"     ,"C", 12, 0, "Número de S.A.T." ,                                          "NumeroSAT",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTipoFac"    ,"N",  1, 0, "" ,                                                          "",                            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cDtoEsp"     ,"C", 50, 0, "Descripción de porcentaje de descuento especial" ,           "DescripcionDescuento1",       "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nDtoEsp"     ,"N", 10, 6, "Porcentaje de descuento especial" ,                          "PorcentajeDescuento1",        "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cDpp"        ,"C", 50, 0, "Descripción de porcentaje de descuento por pronto pago",     "DescripcionDescuento2",       "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nDpp"        ,"N", 10, 6, "Porcentaje de descuento por pronto pago" ,                   "PorcentajeDescuento2",        "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CDTOUNO"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado",       "DescripcionDescuento3",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NDTOUNO"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" ,       "PorcentajeDescuento3",        "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"CDTODOS"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado" ,      "DescripcionDescuento4",       "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NDTODOS"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" ,       "PorcentajeDescuento4",        "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"NDTOCNT"     ,"N",  6, 2, "" ,                                                    
-   aAdd( aItmFacCli, {"NDTORAP"     ,"N",  6, 2, "" ,                                                    
-   aAdd( aItmFacCli, {"NDTOPUB"     ,"N",  6, 2, "" ,                                                    
-   aAdd( aItmFacCli, {"NDTOPGO"     ,"N",  6, 2, "" ,                                                    
-   aAdd( aItmFacCli, {"NDTOPTF"     ,"N",  7, 2, "" ,                                                    
-   aAdd( aItmFacCli, {"NTIPOIVA"    ,"N",  1, 0, "" ,                                                    
-   aAdd( aItmFacCli, {"NPORCIVA"    ,"N",  4, 1, "" ,                                                    
-   aAdd( aItmFacCli, {"LRECARGO"    ,"L",  1, 0, "Lógico para recargo" ,                                 
-   aAdd( aItmFacCli, {"CREMITIDO"   ,"C", 50, 0, "Campo de remitido" ,                                   
-   aAdd( aItmFacCli, {"LIVAINC"     ,"L",  1, 0, "Lógico " + cImp() + " incluido" ,                      
-   aAdd( aItmFacCli, {"LSNDDOC"     ,"L",  1, 0, "Lógico para documento enviado" ,                       
-   aAdd( aItmFacCli, {"CDIVFAC"     ,"C",  3, 0, "Código de la divisa" ,                                 
-   aAdd( aItmFacCli, {"NVDVFAC"     ,"N", 10, 4, "Cambio de la divisa" ,                                 
-   aAdd( aItmFacCli, {"CRETPOR"     ,"C",100, 0, "Retirado por" ,                                        
-   aAdd( aItmFacCli, {"CRETMAT"     ,"C", 20, 0, "Matrícula" ,                                           
-   aAdd( aItmFacCli, {"CNUMDOC"     ,"C", 13, 0, "" ,                                                    
-   aAdd( aItmFacCli, {"NREGIVA"     ,"N",  1, 0, "Régimen de " + cImp() ,                                
-   aAdd( aItmFacCli, {"CCODPRO"     ,"C",  9, 0, "Código de proyecto en contabilidad" ,                  
-   aAdd( aItmFacCli, {"CDOCORG"     ,"C", 10, 0, "Número del documento origen" ,                         
-   aAdd( aItmFacCli, {"NNUMLIQ"     ,"N",  9, 0, "Número liquidación",                                   
-   aAdd( aItmFacCli, {"CSUFLIQ"     ,"C",  2, 0, "Sufijo de la liquidación",                             
-   aAdd( aItmFacCli, {"NIMPLIQ"     ,"N", 16, 6, "Importe liquidación",                                  
-   aAdd( aItmFacCli, {"DFECLIQ"     ,"D",  8, 0, "Fecha liquidación",                                    
-   aAdd( aItmFacCli, {"cCodTrn"     ,"C",  9, 0, "Código del transportista" ,                            
-   aAdd( aItmFacCli, {"nKgsTrn"     ,"N", 16, 6, "TARA del transportista" ,                              
-   aAdd( aItmFacCli, {"lCloFac"     ,"L",  1, 0, "" ,                                                    
-   aAdd( aItmFacCli, {"cAbnFac"     ,"C", 12, 0, "" ,                                                    
-   aAdd( aItmFacCli, {"cAntFac"     ,"C", 12, 0, "Factura de anticipo" ,                                 
-   aAdd( aItmFacCli, {"nTipRet"     ,"N",  1, 0, "Tipo de retención ( 1. Base / 2. Base+IVA )",          
-   aAdd( aItmFacCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retención",                              
-   aAdd( aItmFacCli, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                    
-   aAdd( aItmFacCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación/modificación del documento",         
-   aAdd( aItmFacCli, {"cTimCre"     ,"C",  5, 0, "Hora de creación/modificación del documento",          
-   aAdd( aItmFacCli, {"cCodGrp"     ,"C",  4, 0, "Código de grupo de cliente" ,                          
-   aAdd( aItmFacCli, {"lImprimido"  ,"L",  1, 0, "Lógico de imprimido" ,                                 
-   aAdd( aItmFacCli, {"dFecImp"     ,"D",  8, 0, "Última fecha de impresión" ,                           
-   aAdd( aItmFacCli, {"cHorImp"     ,"C",  5, 0, "Hora de la última impresión" ,                         
-   aAdd( aItmFacCli, {"cCodDlg"     ,"C",  2, 0, "Código delegación" ,                                   
-   aAdd( aItmFacCli, {"nDtoAtp"     ,"N",  6, 2, "Porcentaje de descuento atípico",                      
-   aAdd( aItmFacCli, {"nSbrAtp"     ,"N",  1, 0, "Lugar donde aplicar dto atípico",                      
-   aAdd( aItmFacCli, {"dFecEntr"    ,"D",  8,  0, "Fecha de entrada de alquiler",                        
-   aAdd( aItmFacCli, {"dFecSal"     ,"D",  8,  0, "Fecha de salida de alquiler",                         
-   aAdd( aItmFacCli, {"lAlquiler"   ,"L",  1,  0, "Lógico de alquiler",                                  
-   aAdd( aItmFacCli, {"lPayCli"     ,"L",  1,  0, "Lógico a pagar por el cliente",                       
-   aAdd( aItmFacCli, {"nPayCli"     ,"N", 16,  6, "A pagar por el cliente",                              
-   aAdd( aItmFacCli, {"cManObr"     ,"C",250,  0, "Literal de gastos",                                   
-   aAdd( aItmFacCli, {"lExpEdi"     ,"L",  1,  0, "Lógico de factura exportada a EDI",                   
-   aAdd( aItmFacCli, {"dFecEdi"     ,"D",  8,  0, "Fecha exportación a EDI",                             
-   aAdd( aItmFacCli, {"cHorEdi"     ,"C",  5,  0, "Hora exportación a EDI",                              
-   aAdd( aItmFacCli, {"cSuAlb"      ,"C", 25,  0, "Referencia a su albarán",                             
-   aAdd( aItmFacCli, {"lExpFac"     ,"L",  1,  0, "Lógico de factura exportada a Facturae",              
-   aAdd( aItmFacCli, {"cTlfCli"     ,"C", 20,  0, "Teléfono del cliente" ,                               
-   aAdd( aItmFacCli, {"nTotNet"     ,"N", 16,  6, "Total neto" ,                                         
-   aAdd( aItmFacCli, {"nTotSup"     ,"N", 16,  6, "Total gastos suplidos" ,                              
-   aAdd( aItmFacCli, {"nTotIva"     ,"N", 16,  6, "Total " + cImp() ,                                    
-   aAdd( aItmFacCli, {"nTotReq"     ,"N", 16,  6, "Total recargo" ,                                      
-   aAdd( aItmFacCli, {"nTotFac"     ,"N", 16,  6, "Total factura" ,                                      
-   aAdd( aItmFacCli, {"nEntIni"     ,"N",  6,  2, "Porcentaje de entrega inicial" ,                      
-   aAdd( aItmFacCli, {"nPctDto"     ,"N",  6,  2, "Porcentaje de descuento por entrega inicial" ,        
-   aAdd( aItmFacCli, {"cNFC"        ,"C", 20,  0, "Código NFC" ,                                         
-   aAdd( aItmFacCli, {"cFacPrv"     ,"C", 12,  0, "Factura de proveedor" ,                               
-   aAdd( aItmFacCli, {"cBanco"      ,"C", 50,  0, "Nombre del banco del cliente" ,                       
-   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "País IBAN de la cuenta bancaria del cliente",         
-   aAdd( aItmFacCli, {"cCtrlIBAN"   ,"C",  2,  0, "Dígito de control IBAN de la cuenta bancaria del cliente", 
-   aAdd( aItmFacCli, {"cEntBnc"     ,"C",  4,  0, "Entidad de la cuenta bancaria del cliente" ,          
-   aAdd( aItmFacCli, {"cSucBnc"     ,"C",  4,  0, "Sucursal de la cuenta bancaria del cliente" ,         
-   aAdd( aItmFacCli, {"cDigBnc"     ,"C",  2,  0, "Dígito de control de la cuenta bancaria del cliente" ,
-   aAdd( aItmFacCli, {"cCtaBnc"     ,"C", 10,  0, "Cuenta bancaria del cliente" ,                        
-   aAdd( aItmFacCli, {"nTotLiq"     ,"N", 16,  6, "Total liquidado" ,                                    
-   aAdd( aItmFacCli, {"nTotPdt"     ,"N", 16,  6, "Total pendiente" ,                                    
-   aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                 
-   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja",    
-   aAdd( aItmFacCli, {"cCodPry" 	   ,"C", 4,   0, "Código del proyecto",      				               
-   aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 							            
-   aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                            
-   aAdd( aItmFacCli, {"dMail"       ,"D", 8,   0, "Fecha mail enviado" ,                                 
-   aAdd( aItmFacCli, {"tMail"       ,"C", 6,   0, "Hora mail enviado" ,                                  
-   aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                 
-   aAdd( aItmFacCli, {"cCtrCoste"   ,"C", 9,   0, "Codigo del centro de coste" ,                         
+   aAdd( aItmFacCli, {"cDtoUno"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado",       "DescripcionDescuento3",       "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nDtoUno"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" ,       "PorcentajeDescuento3",        "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cDtoDos"     ,"C", 25, 0, "Descripción de porcentaje de descuento personalizado" ,      "DescripcionDescuento4",       "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nDtoDos"     ,"N", 10, 6, "Porcentaje de descuento por descuento personalizado" ,       "PorcentajeDescuento4",        "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nDtoCnt"     ,"N",  6, 2, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nDtoRap"     ,"N",  6, 2, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nDtoPub"     ,"N",  6, 2, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nDtoPgo"     ,"N",  6, 2, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nDtoPtf"     ,"N",  7, 2, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTipoIva"    ,"N",  1, 0, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nPorcIva"    ,"N",  4, 1, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lRecargo"    ,"L",  1, 0, "Lógico para recargo" ,                                       "RecargoEquivalencia",         "", "( cDbf )", nil } )  
+   aAdd( aItmFacCli, {"cRemitido"   ,"C", 50, 0, "Campo de remitido" ,                                         "Remitido",                    "", "( cDbf )", nil } )  
+   aAdd( aItmFacCli, {"lIvaInc"     ,"L",  1, 0, "Lógico " + cImp() + " incluido" ,                            "ImpuestosIncluidos",          "", "( cDbf )", {|| uFieldEmpresa( "lIvaInc" ) } } )
+   aAdd( aItmFacCli, {"lSndDoc"     ,"L",  1, 0, "Lógico para documento enviado" ,                             "Envio",                       "", "( cDbf )", {|| .t. } } )                       
+   aAdd( aItmFacCli, {"cDivFac"     ,"C",  3, 0, "Código de la divisa" ,                                       "Divisa",                      "", "( cDbf )", {|| cDivEmp() } } )
+   aAdd( aItmFacCli, {"nVdvFac"     ,"N", 10, 4, "Cambio de la divisa" ,                                       "ValorDivisa",                 "", "( cDbf )", {|| nChgDiv() } } )
+   aAdd( aItmFacCli, {"cRetPor"     ,"C",100, 0, "Retirado por" ,                                              "RetiradoPor",                 "", "( cDbf )", nil } )                                     
+   aAdd( aItmFacCli, {"cRetMat"     ,"C", 20, 0, "Matrícula" ,                                                 "Matricula",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cNumDoc"     ,"C", 13, 0, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nRegIva"     ,"N",  1, 0, "Régimen de " + cImp() ,                                      "TipoImpuesto",                "", "( cDbf )", nil } ) 
+   aAdd( aItmFacCli, {"cCodPro"     ,"C",  9, 0, "Código de proyecto en contabilidad" ,                        "ProyectoContable",            "", "( cDbf )", nil } ) 
+   aAdd( aItmFacCli, {"cDocOrg"     ,"C", 10, 0, "Número del documento origen" ,                               "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nNumLiq"     ,"N",  9, 0, "Número liquidación",                                         "NumeroLiquidacion",           "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cSufLiq"     ,"C",  2, 0, "Sufijo de la liquidación",                                   "SufijoLiquidacion",           "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nImpLiq"     ,"N", 16, 6, "Importe liquidación",                                        "ImporteLiquidacion",          "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"dFecLiq"     ,"D",  8, 0, "Fecha liquidación",                                          "FechaLiquidacion",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodTrn"     ,"C",  9, 0, "Código del transportista" ,                                  "Transportista",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nKgsTrn"     ,"N", 16, 6, "TARA del transportista" ,                                    "TaraTransportista",           "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lCloFac"     ,"L",  1, 0, "" ,                                                          "DocumentoCerrado",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cAbnFac"     ,"C", 12, 0, "" ,                                                          "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cAntFac"     ,"C", 12, 0, "Factura de anticipo" ,                                       "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTipRet"     ,"N",  1, 0, "Tipo de retención ( 1. Base / 2. Base+IVA )",                "TipoRetencion",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retención",                                    "PorcentajeRetencion",         "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                          "Usuario",                     "", "( cDbf )", {|| cCurUsr() } } )
+   aAdd( aItmFacCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación/modificación del documento",               "FechaCreacion",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cTimCre"     ,"C",  5, 0, "Hora de creación/modificación del documento",                "HoraCreacion",                "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodGrp"     ,"C",  4, 0, "Código de grupo de cliente" ,                                "GrupoCliente",                "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lImprimido"  ,"L",  1, 0, "Lógico de imprimido" ,                                       "Imprimido",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"dFecImp"     ,"D",  8, 0, "Última fecha de impresión" ,                                 "FechaImpresion",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cHorImp"     ,"C",  5, 0, "Hora de la última impresión" ,                               "HoraImpresion",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCodDlg"     ,"C",  2, 0, "Código delegación" ,                                         "Delegacion",                  "", "( cDbf )", {|| oUser():cDelegacion() } } )
+   aAdd( aItmFacCli, {"nDtoAtp"     ,"N",  6, 2, "Porcentaje de descuento atípico",                            "DescuentoAtipico",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nSbrAtp"     ,"N",  1, 0, "Lugar donde aplicar dto atípico",                            "LugarAplicarDescuentoAtipico","", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"dFecEntr"    ,"D",  8,  0, "Fecha de entrada de alquiler",                              "EntradaAlquiler",             "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"dFecSal"     ,"D",  8,  0, "Fecha de salida de alquiler",                               "SalidaAlquiler",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lAlquiler"   ,"L",  1,  0, "Lógico de alquiler",                                        "Alquiler",                    "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lPayCli"     ,"L",  1,  0, "Lógico a pagar por el cliente",                             "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nPayCli"     ,"N", 16,  6, "A pagar por el cliente",                                    "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cManObr"     ,"C",250,  0, "Literal de gastos",                                         "LiteralGastos",               "", "( cDbf )", {|| Padr( "Gastos", 250 ) } } )
+   aAdd( aItmFacCli, {"lExpEdi"     ,"L",  1,  0, "Lógico de factura exportada a EDI",                         "ExportadaEDI",                "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"dFecEdi"     ,"D",  8,  0, "Fecha exportación a EDI",                                   "FechaExportadaEDI",           "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cHorEdi"     ,"C",  5,  0, "Hora exportación a EDI",                                    "HoraExportadaEDI",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cSuAlb"      ,"C", 25,  0, "Referencia a su albarán",                                   "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lExpFac"     ,"L",  1,  0, "Lógico de factura exportada a Facturae",                    "ExportadoFacturae",           "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cTlfCli"     ,"C", 20,  0, "Teléfono del cliente" ,                                     "TelefonoCliente",             "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTotNet"     ,"N", 16,  6, "Total neto" ,                                               "TotalNeto",                   "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTotSup"     ,"N", 16,  6, "Total gastos suplidos" ,                                    "TotalSuplidos",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTotIva"     ,"N", 16,  6, "Total " + cImp() ,                                          "TotalImpuesto",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTotReq"     ,"N", 16,  6, "Total recargo" ,                                            "TotalRecargo",                "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTotFac"     ,"N", 16,  6, "Total factura" ,                                            "TotalDocumento",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nEntIni"     ,"N",  6,  2, "Porcentaje de entrega inicial" ,                            "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nPctDto"     ,"N",  6,  2, "Porcentaje de descuento por entrega inicial" ,              "",                            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cNFC"        ,"C", 20,  0, "Código NFC" ,                                               "NFC",                         "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cFacPrv"     ,"C", 12,  0, "Factura de proveedor" ,                                     "FacturaProveedor",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cBanco"      ,"C", 50,  0, "Nombre del banco del cliente" ,                             "NombreBanco",                 "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cPaisIBAN"   ,"C",  2,  0, "País IBAN de la cuenta bancaria del cliente",               "CuentaIBAN",                  "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCtrlIBAN"   ,"C",  2,  0, "Dígito de control IBAN de la cuenta bancaria del cliente",  "DigitoControlIBAN",           "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cEntBnc"     ,"C",  4,  0, "Entidad de la cuenta bancaria del cliente" ,                "EntidadCuenta",               "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cSucBnc"     ,"C",  4,  0, "Sucursal de la cuenta bancaria del cliente" ,               "SucursalCuenta",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cDigBnc"     ,"C",  2,  0, "Dígito de control de la cuenta bancaria del cliente" ,      "DigitoControlCuenta",         "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCtaBnc"     ,"C", 10,  0, "Cuenta bancaria del cliente" ,                              "CuentaBancaria",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTotLiq"     ,"N", 16,  6, "Total liquidado" ,                                          "TotalLiquidado",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTotPdt"     ,"N", 16,  6, "Total pendiente" ,                                          "TotalPendiente",              "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lOperPV"     ,"L", 1,   0, "Lógico para operar con punto verde" ,                       "OperarPuntoVerde",            "", "( cDbf )", {|| .f. } } )
+   aAdd( aItmFacCli, {"lRECC" 		,"L", 1,   0, "Acogida al régimen especial del criterio de caja",          "AcogidaRECC",                 "", "( cDbf )", {|| .f. } } )
+   aAdd( aItmFacCli, {"cCodPry" 	   ,"C", 4,   0, "Código del proyecto",      				                     "Proyecto",                    "", "( cDbfCol )", nil } )
+   aAdd( aItmFacCli, {"nDtoTarifa" 	,"N", 6,   2, "Descuentos de tarifa", 							                  "DescuentoTarifa",             "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"lMail"       ,"L", 1,   0, "Lógico para enviar mail" ,                                  "EnviarMail",                  "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"dMail"       ,"D", 8,   0, "Fecha mail enviado" ,                                       "FechaMailEnviado",            "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"tMail"       ,"C", 6,   0, "Hora mail enviado" ,                                        "HoraMailEnviado",             "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                       "HoraFactura",                 "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cCtrCoste"   ,"C", 9,   0, "Codigo del centro de coste" ,                               "CentroCoste",                 "", "( cDbf )", nil } )
 
 RETURN ( aItmFacCli )
 

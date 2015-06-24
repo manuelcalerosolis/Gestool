@@ -3225,6 +3225,8 @@ METHOD BuildEmpresa()
    oDataTable:bCreateFile  := {| cPath | mkFacCli( cPath ) }
    oDataTable:bCreateIndex := {| cPath | rxFacCli( cPath ) }
    oDataTable:bSyncFile    := {|| SynFacCli( cPatEmp() ) }
+   oDatatable:aDictionary  := hashDictionary( aItmFacCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aItmFacCli() )
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -3234,6 +3236,8 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliL.Cdx"
    oDataTable:cDescription := "Facturas de clientes"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDatatable:aDictionary  := hashDictionary( aColFacCli() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aColFacCli() )
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
