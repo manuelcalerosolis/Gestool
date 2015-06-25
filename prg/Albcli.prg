@@ -3979,8 +3979,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    oDlg:AddFastKey(  VK_F1, {|| ChmHelp( "Albaranes2" ) } )
 
    ACTIVATE DIALOG   oDlg ;
-      ON INIT        (  InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oBrwPgo, hHash ) );
-      ON PAINT       (  RecalculaTotal( aTmp ) );
+      ON INIT        ( initEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oBrwPgo, hHash ) );
+      ON PAINT       ( recalculaTotal( aTmp ) );
+      VALID          ( exitNoSave( nMode, dbfTmpLin ) );
       CENTER
 
    oMenu:end()
@@ -4106,55 +4107,51 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
 
    local cNumDoc  
 
-   if ExitNoSave( nMode, dbfTmpLin )
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      CursorWait()
 
-         CursorWait()
-   
-         // Presupuesto-----------------------------------------------------------
-   
-         cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
-   
-         if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
-            if ( dbfPreCliT )->lEstado .and. dbLock( dbfPreCliT )
-               ( dbfPreCliT )->cNumAlb    := ""
-               ( dbfPreCliT )->lEstado    := .f.
-               ( dbfPreCliT )->( dbUnLock() )
-            end if
-         end if 
+      // Presupuesto-----------------------------------------------------------
 
-         // Pedido----------------------------------------------------------------
-   
-         cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
-   
-         if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
-            if ( dbfPedCliT )->nEstado != 3 .and. dbLock( dbfPedCliT )
-               ( dbfPedCliT )->cNumAlb    := ""
-               ( dbfPedCliT )->nEstado    := 1
-               ( dbfPedCliT )->( dbUnLock() )
-            end if
-         end if 
+      cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
 
-         // SAT----------------------------------------------------------------
-
-         cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
-
-         if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfAlbCliT )
-            if ( dbfAlbCliT )->lEstado .and. dbLock( dbfAlbCliT )
-               ( dbfAlbCliT )->cNumAlb    := ""
-               ( dbfAlbCliT )->lEstado    := .f.
-               ( dbfAlbCliT )->( dbUnLock() )
-            end if
-         end if 
-
-         CursorWE()
-
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
+         if ( dbfPreCliT )->lEstado .and. dbLock( dbfPreCliT )
+            ( dbfPreCliT )->cNumAlb    := ""
+            ( dbfPreCliT )->lEstado    := .f.
+            ( dbfPreCliT )->( dbUnLock() )
+         end if
       end if 
 
-      oDlg:end()
+      // Pedido----------------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
+         if ( dbfPedCliT )->nEstado != 3 .and. dbLock( dbfPedCliT )
+            ( dbfPedCliT )->cNumAlb    := ""
+            ( dbfPedCliT )->nEstado    := 1
+            ( dbfPedCliT )->( dbUnLock() )
+         end if
+      end if 
+
+      // SAT----------------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfAlbCliT )
+         if ( dbfAlbCliT )->lEstado .and. dbLock( dbfAlbCliT )
+            ( dbfAlbCliT )->cNumAlb    := ""
+            ( dbfAlbCliT )->lEstado    := .f.
+            ( dbfAlbCliT )->( dbUnLock() )
+         end if
+      end if 
+
+      CursorWE()
 
    end if 
+
+   oDlg:end()
 
 RETURN ( nil )
 
@@ -10041,11 +10038,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
 
    else
 
-      if lModIva()
-         aGet[ _NIVA ]:bWhen     := {|| .t. }
-      else
-         aGet[ _NIVA ]:bWhen     := {|| .f. }
-      end if
+      aGet[ _NIVA ]:bWhen     := {|| lModIva() }
 
       /*
       Buscamos codificacion GS1-128--------------------------------------------
@@ -11053,7 +11046,6 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-
 STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
 
    local cCodArt
@@ -11140,7 +11132,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
                ( dbfTmpLin )->lKitChl  := .t.
             end if
 
-            ( dbfTmpLin )->cRef        := ( dbfKit      )->cRefKit
+            ( dbfTmpLin )->cRef        := ( dbfKit )->cRefKit
             ( dbfTmpLin )->cDetalle    := ( D():Articulos( nView ) )->Nombre
             ( dbfTmpLin )->nPntVer     := ( D():Articulos( nView ) )->nPntVer1
             ( dbfTmpLin )->nPesokg     := ( D():Articulos( nView ) )->nPesoKg

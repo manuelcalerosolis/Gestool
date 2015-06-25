@@ -1191,25 +1191,25 @@ RETURN ( cRetPic )
 
 FUNCTION CheckCif( oGet )
 
-   local cCif     := oGet:varGet()
-   local cNumero  := ""
-   local cLetra   := ""
+   local cCif         := oGet:varGet()
+   local cNumero      := ""
+   local cLetra       := ""
 
    if isDigit( cCif )
 
       do case
          case Len( RTrim( cCif ) ) < __LENCIF__
 
-            cCif     := RJust( RTrim( cCif ) + Cif( cCif ) , '0', __LENCIF__ )
+            cCif      := RJust( RTrim( cCif ) + Cif( cCif ) , '0', __LENCIF__ )
             oGet:cText( cCif )
 
          case Len( RTrim( cCif ) ) == __LENCIF__
 
-            cNumero  := Left( cCif, __LENCIF__ - 1 )
-            cLetra   := Right( cCif, 1 )
+            cNumero   := Left( cCif, __LENCIF__ - 1 )
+            cLetra    := Right( cCif, 1 )
 
             if cLetra != Cif( cNumero )
-               cCif  := cNumero + Cif( cNumero )
+               cCif   := cNumero + Cif( cNumero )
                oGet:cText( cCif )
             end if
 
