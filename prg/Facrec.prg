@@ -466,7 +466,9 @@ static bEdtRec             := { |aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMod
 static bEdtDet             := { |aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac| EdtDet( aTmp, aGet, cFacRecT, oBrw, bWhen, bValid, nMode, aTmpFac ) }
 static bEdtInc             := { |aTmp, aGet, dbfFacRecI, oBrw, bWhen, bValid, nMode, aTmpLin| EdtInc( aTmp, aGet, dbfFacRecI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc             := { |aTmp, aGet, dbfFacRecD, oBrw, bWhen, bValid, nMode, aTmpLin| EdtDoc( aTmp, aGet, dbfFacRecD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
-static bEdtEst			   := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac | EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac ) }
+static bEdtEst	            := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac | EdtEst( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, aTmpFac ) }
+
+static oBrwProperties
 
 //---------------------------------------------------------------------------//
 //Funciones del programa
@@ -3961,23 +3963,42 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
 			WHEN 		( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      /*
-      Propiedades
-      -------------------------------------------------------------------------
-      */
+      // Propiedades-------------------------------------------------
 
-      REDEFINE GET aGet[_CVALPR1] VAR aTmp[_CVALPR1];
+      oBrwProperties                       := IXBrowse():New( oFld:aDialogs[1] )
+
+      oBrwProperties:nDataType             := DATATYPE_ARRAY
+
+      oBrwProperties:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwProperties:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwProperties:lHScroll              := .t.
+      oBrwProperties:lVScroll              := .t.
+
+      oBrwProperties:nMarqueeStyle         := 3
+      oBrwProperties:lRecordSelector       := .f.
+      oBrwProperties:lFastEdit             := .t.
+      oBrwProperties:nFreeze               := 1
+      oBrwProperties:lFooter               := .t.
+
+      oBrwProperties:SetArray( {}, .f., 0, .f. )
+
+      oBrwProperties:MakeTotals()
+
+      oBrwProperties:CreateFromResource( 500 )
+
+      REDEFINE GET aGet[ _CVALPR1 ] ;
+         VAR      aTmp[ _CVALPR1 ];
          ID       270 ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .and. nMode != MULT_MODE ) ;
          VALID    ( if( lPrpAct( aTmp[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], dbfTblPro ),;
                         loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ),;
                         .f. ) );
-         ON HELP  ( brwPropiedadActual( aGet[_CVALPR1], oSayVp1, aTmp[_CCODPR1 ] ) ) ;
+         ON HELP  ( brwPropiedadActual( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
          OF       oFld:aDialogs[1]
 
-         aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), if( !uFieldEmpresa( "lNStkAct" ), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), ) }
+         aGet[ _CVALPR1 ]:bChange            := {|| aGet[ _CVALPR1 ]:Assign(), if( !uFieldEmpresa( "lNStkAct" ), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), ) }
 
       REDEFINE SAY oSayPr1 VAR cSayPr1;
          ID       271 ;
@@ -3989,9 +4010,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CVALPR2] VAR aTmp[_CVALPR2];
+      REDEFINE GET aGet[ _CVALPR2 ] ;
+         VAR      aTmp[ _CVALPR2 ];
          ID       280 ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          WHEN     ( nMode != ZOOM_MODE .AND. nMode != MULT_MODE ) ;
          VALID    ( if( lPrpAct( aTmp[ _CVALPR2 ], oSayVp2, aTmp[ _CCODPR2 ], dbfTblPro ),;
@@ -4009,8 +4030,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE GET oSayVp2 VAR cSayVp2;
          ID       282 ;
          WHEN     .f. ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
+
+      // fin de propiedades----------------------------------------------------
 
       REDEFINE GET aGet[ _NIMPTRN ] VAR aTmp[ _NIMPTRN ] ;
          ID       350 ;
@@ -4019,20 +4041,14 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpFac ) );
          VALID    ( lCalcDeta( aTmp, aTmpFac ) );
-         COLOR    CLR_GET ;
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
-      /*
-      fin de propiedades
-      -------------------------------------------------------------------------
-      */
 
       REDEFINE GET aGet[ _NIVA ] VAR aTmp[ _NIVA ] ;
 			ID 		120 ;
          WHEN     ( lModIva() .AND. nMode != ZOOM_MODE ) ;
          PICTURE  "@E 99.99" ;
-			COLOR 	CLR_GET ;
          VALID    ( lTiva( dbfIva, aTmp[ _NIVA ], @aTmp[ _NREQ ] ) );
          ON CHANGE( lCalcDeta( aTmp, aTmpFac ) );
          BITMAP   "LUPA" ;
@@ -4045,7 +4061,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          SPINNER ;
          WHEN     ( uFieldEmpresa( "lModImp" ) .AND. nMode != ZOOM_MODE ) ;
          PICTURE  cPouDiv ;
-         COLOR    CLR_GET ;
          ON CHANGE( lCalcDeta( aTmp, aTmpFac ) );
          ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[1]
@@ -6023,7 +6038,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
    local lChgCodArt
    local hAtipica
 
-   DEFAULT lFocused  			:= .t.
+   DEFAULT lFocused           := .t.
 
    lChgCodArt           		:= ( Empty( cOldCodArt ) .or. Rtrim( cOldCodArt ) != Rtrim( cCodArt ) )
 
@@ -6035,28 +6050,25 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
       end if
 
       if Empty( aTmp[ _NIVA ] )
-         aGet[ _NIVA ]:bWhen  	:= {|| .t. }
+         aGet[ _NIVA ]:bWhen  := {|| .t. }
       end if
 
 		aGet[ _CDETALLE ]:cText( Space( 50 ) )
-      aGet[ _CDETALLE ]:bWhen   	:= {|| .t. }
+      aGet[ _CDETALLE ]:bWhen := {|| .t. }
       aGet[ _CDETALLE ]:Hide()
 
       if !Empty( aGet[ _MLNGDES ] )
-         
          aGet[ _MLNGDES ]:Show()
-
 	      if lFocused 
    	     aGet[ _MLNGDES ]:SetFocus()
       	end if
-
       end if
 
-      aGet[_CVALPR1 ]:Hide()
+      aGet[ _CVALPR1 ]:Hide()
       oSayPr1:Hide()
       oSayVp1:Hide()
 
-      aGet[_CVALPR2 ]:Hide()
+      aGet[ _CVALPR2 ]:Hide()
       oSayPr2:Hide()
       oSayVp2:Hide()
 

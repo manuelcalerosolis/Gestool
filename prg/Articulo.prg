@@ -1937,8 +1937,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       800 ;
          OF       fldGeneral
 
-   msgAlert( len( aTmp[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ] ), "nLen" )
-
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ] ;
          ID       355 ;

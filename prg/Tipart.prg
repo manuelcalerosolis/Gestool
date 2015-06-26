@@ -121,7 +121,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD CALCULATE NAME "bPubInt"   LEN  14  DEC 0 COMMENT { "Publicar", "SndInt16", 3 }  VAL {|| ::oDbf:FieldGetByName( "lPubInt" ) } ;
             BITMAPS "Sel16", "Nil16" COLSIZE 20                                                             OF ::oDbf
 
-      FIELD NAME "cCodTip" TYPE "C"    LEN   3  DEC 0 COMMENT "Código"         PICTURE "@!"  COLSIZE 60     OF ::oDbf
+      FIELD NAME "cCodTip" TYPE "C"    LEN   4  DEC 0 COMMENT "Código"         PICTURE "@!"  COLSIZE 60     OF ::oDbf
       FIELD NAME "cNomTip" TYPE "C"    LEN 100  DEC 0 COMMENT "Nombre"                       COLSIZE 200    OF ::oDbf
 
       FIELD CALCULATE NAME "cTipArt"   LEN 100  DEC 0 COMMENT "Clasificación"                VAL {|| ClasificacionTipoArticulo():GetNombre( ::oDbf:FieldGetByName( "nTipArt" ) ) } ;
