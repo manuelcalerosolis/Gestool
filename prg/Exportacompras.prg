@@ -551,6 +551,12 @@ METHOD DblClickTree( nMode, oDlg ) CLASS TExportaCompras
 
    local oSelect   := ::oTreeCampos:GetItem()
 
+   ?"DblClickTree"
+
+   MsgInfo( oSelect )
+
+   MsgInfo( hb_valtoexp( ::oTreeCampos:aItems ) )
+
    if Len( oSelect:aItems ) != 0
       oSelect:Expand()
    else
