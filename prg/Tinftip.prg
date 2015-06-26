@@ -61,7 +61,7 @@ END CLASS
 
 METHOD DetCreateFields()
 
-   ::AddField ( "cCodTip", "C",  3, 0, {|| "@!" },       "Cod. Tip.",                  .f., "Código tipo",                  3, .f. )
+   ::AddField ( "cCodTip", "C",  4, 0, {|| "@!" },       "Cod. Tip.",                  .f., "Código tipo",                  3, .f. )
    ::AddField ( "cNomTip", "C", 50, 0, {|| "@!" },       "Tipo",                       .f., "Tipo de artículo",            28, .f. )
    ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },       "Código artículo",                  .f., "Cod. artículo",               10, .f. )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },       "Descripción",                .f., "Descripción",                 15, .f. )
@@ -92,7 +92,7 @@ RETURN ( self )
 
 METHOD RentCreateFields()
 
-   ::AddField( "cCodTip", "C",  3, 0, {|| "@!" },       "Cod.",              .f., "Código tipo",             3, .f. )
+   ::AddField( "cCodTip", "C",  4, 0, {|| "@!" },       "Cod.",              .f., "Código tipo",             3, .f. )
    ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },       "Código artículo",         .f., "Codigo artículo",        14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },       "Descripción",       .f., "Descripción",            35, .f. )
    ::FldPropiedades()
@@ -120,7 +120,7 @@ RETURN ( self )
 
 METHOD AcuCreate()
 
-   ::AddField( "cCodTip", "C",  3, 0, {|| "@!" },           "Cod. Tip.",      .t., "Código tipo"       ,  3, .f. )
+   ::AddField( "cCodTip", "C",  4, 0, {|| "@!" },           "Cod. Tip.",      .t., "Código tipo"       ,  3, .f. )
    ::AddField( "cNomTip", "C", 50, 0, {|| "@!" },           "Tipo",           .t., "Tipo de artículo"  , 28, .f. )
    ::AddField( "nNumUni", "N", 16, 6, {|| MasUnd() },       cNombreUnidades(),.t., cNombreUnidades()   , 12, .t. )
    ::AddField( "nImpArt", "N", 16, 6, {|| ::cPicImp },      "Precio",         .f., "Precio"            , 12, .f. )

@@ -34,7 +34,7 @@ END CLASS
 
 METHOD Create() CLASS TInfTCon
 
-   ::AddField( "cCodTip",     "C",  3, 0, {|| "@!" },              "Cod.",                                    .f., "Código tipo"             ,  3 )
+   ::AddField( "cCodTip",     "C",  4, 0, {|| "@!" },              "Cod.",                                    .f., "Código tipo"             ,  3 )
    ::AddField( "cNomTip",     "C", 50, 0, {|| "@!" },              "Tipo",                                    .f., "Tipo de artículo"        , 28 )
    ::AddField( "cCodCli",     "C", 12, 0, {|| "@!" },              "Cód. cli.",                               .f., "Cod. Cliente"            ,  8 )
    ::AddField( "cNomCli",     "C", 50, 0, {|| "@!" },              "Cliente",                                 .f., "Nom. Cliente"            , 30 )

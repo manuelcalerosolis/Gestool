@@ -10921,7 +10921,7 @@ function aItmRctPrv()
    aAdd( aItmFacPrv, { "cDigBnc"    ,"C",  2, 0, "Dígito de control de la cuenta bancaria del proveedor","",               "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cCtaBnc"    ,"C", 10, 0, "Cuenta bancaria del proveedor" ,                       "",               "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura rectificativa" ,                    "",               "", "( cDbf )", nil } )
-   aAdd( aItmFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Codigo del Centro de coste",                           "",               "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Código del centro de coste",                           "",               "", "( cDbf )", nil } )
 
 return ( aItmFacPrv )
 
@@ -11025,7 +11025,7 @@ function aColRctPrv()
    aAdd( aColFacPrv, { "cCodImp"    ,"C",  3, 0, "Código de impuesto especial",  "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto especial", "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aColFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Codigo del Centro de coste" ,  "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Código del centro de coste" ,  "",                   "", "( cDbfCol )" } )
 
 Return ( aColFacPrv )
 

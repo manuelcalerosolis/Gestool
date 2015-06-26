@@ -229,7 +229,9 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       nView       := D():CreateView()
 
       D():ArticuloLenguaje( nView )
+      
       D():Lenguajes( nView )
+      
       D():EstadoArticulo( nView )
 
       lOpenFiles  := .t.
@@ -1633,82 +1635,85 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    do case
    case nMode == APPD_MODE
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "nLabel"    ) ) ]  := 1
-      aTmp[ ( dbfArticulo )->( fieldpos( "nCtlStock" ) ) ]  := 1
-      aTmp[ ( dbfArticulo )->( fieldpos( "lLote"     ) ) ]  := .f.
-      aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"    ) ) ]  := Space( 18 )
-      aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc"   ) ) ]  := uFieldEmpresa( "lIvaInc" )
-      aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva"   ) ) ]  := cDefIva()
-      aTmp[ ( dbfArticulo )->( fieldpos( "cCodTemp"  ) ) ]  := uFieldEmpresa( "cDefTem" )
+      aTmp[ ( dbfArticulo )->( fieldpos( "nLabel"    ) ) ]     := 1
+      aTmp[ ( dbfArticulo )->( fieldpos( "nCtlStock" ) ) ]     := 1
+      aTmp[ ( dbfArticulo )->( fieldpos( "lLote"     ) ) ]     := .f.
+      aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"    ) ) ]     := Space( 18 )
+      aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc"   ) ) ]     := uFieldEmpresa( "lIvaInc" )
+      aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva"   ) ) ]     := cDefIva()
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "nImpCom1"  ) ) ]  := 1
-      aTmp[ ( dbfArticulo )->( fieldpos( "nImpCom2"  ) ) ]  := 1
+      if !empty( uFieldEmpresa( "cDefTem" ) )
+         aTmp[ ( dbfArticulo )->( fieldpos( "cCodTemp"  ) ) ]  := uFieldEmpresa( "cDefTem" )
+      end if 
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "nFacCnv"   ) ) ]  := 1
+      aTmp[ ( dbfArticulo )->( fieldpos( "nImpCom1"  ) ) ]     := 1
+      aTmp[ ( dbfArticulo )->( fieldpos( "nImpCom2"  ) ) ]     := 1
+
+      aTmp[ ( dbfArticulo )->( fieldpos( "nFacCnv"   ) ) ]     := 1
 
       if nDefBnf( 1 ) != 0
-      aTmp[ ( dbfArticulo )->( fieldpos( "Benef1"    ) ) ]  := nDefBnf( 1 )
-      aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1"     ) ) ]  := .t.
-      aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr1"  ) ) ]  := nDefSbr( 1 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "Benef1"    ) ) ]  := nDefBnf( 1 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "lBnf1"     ) ) ]  := .t.
+         aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr1"  ) ) ]  := nDefSbr( 1 )
       end if
 
       if nDefBnf( 2 ) != 0
-      aTmp[ ( dbfArticulo )->( fieldpos( "Benef2"    ) ) ]  := nDefBnf( 2 )
-      aTmp[ ( dbfArticulo )->( fieldpos( "lBnf2"     ) ) ]  := .t.
-      aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr2"  ) ) ]  := nDefSbr( 2 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "Benef2"    ) ) ]  := nDefBnf( 2 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "lBnf2"     ) ) ]  := .t.
+         aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr2"  ) ) ]  := nDefSbr( 2 )
       end if
 
       if nDefBnf( 3 ) != 0
-      aTmp[ ( dbfArticulo )->( fieldpos( "Benef3"    ) ) ]  := nDefBnf( 3 )
-      aTmp[ ( dbfArticulo )->( fieldpos( "lBnf3"     ) ) ]  := .t.
-      aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr3"  ) ) ]  := nDefSbr( 3 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "Benef3"    ) ) ]  := nDefBnf( 3 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "lBnf3"     ) ) ]  := .t.
+         aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr3"  ) ) ]  := nDefSbr( 3 )
       end if
 
       if nDefBnf( 4 ) != 0
-      aTmp[ ( dbfArticulo )->( fieldpos( "Benef4"    ) ) ]  := nDefBnf( 4 )
-      aTmp[ ( dbfArticulo )->( fieldpos( "lBnf4"     ) ) ]  := .t.
-      aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr4"  ) ) ]  := nDefSbr( 4 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "Benef4"    ) ) ]  := nDefBnf( 4 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "lBnf4"     ) ) ]  := .t.
+         aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr4"  ) ) ]  := nDefSbr( 4 )
       end if
 
       if nDefBnf( 5 ) != 0
-      aTmp[ ( dbfArticulo )->( fieldpos( "Benef5"    ) ) ]  := nDefBnf( 5 )
-      aTmp[ ( dbfArticulo )->( fieldpos( "lBnf5"     ) ) ]  := .t.
-      aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr5"  ) ) ]  := nDefSbr( 5 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "Benef5"    ) ) ]  := nDefBnf( 5 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "lBnf5"     ) ) ]  := .t.
+         aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr5"  ) ) ]  := nDefSbr( 5 )
       end if
 
       if nDefBnf( 6 ) != 0
-      aTmp[ ( dbfArticulo )->( fieldpos( "Benef6"    ) ) ]  := nDefBnf( 6 )
-      aTmp[ ( dbfArticulo )->( fieldpos( "lBnf6"     ) ) ]  := .t.
-      aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr6"  ) ) ]  := nDefSbr( 6 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "Benef6"    ) ) ]  := nDefBnf( 6 )
+         aTmp[ ( dbfArticulo )->( fieldpos( "lBnf6"     ) ) ]  := .t.
+         aTmp[ ( dbfArticulo )->( fieldpos( "nBnfSbr6"  ) ) ]  := nDefSbr( 6 )
       end if
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "nDuracion" ) ) ]  := 0
-      aTmp[ ( dbfArticulo )->( fieldpos( "nTipDur" ) ) ]    := 1
+      aTmp[ ( dbfArticulo )->( fieldpos( "nDuracion" ) ) ]     := 0
+      aTmp[ ( dbfArticulo )->( fieldpos( "nTipDur" ) ) ]       := 1
 
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]    := Padr( GetPvProfString( "PROPIEDADES", "Propiedad1",       "",   FullCurDir() + "GstApolo.Ini" ), 20 )
-      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]    := Padr( GetPvProfString( "PROPIEDADES", "Propiedad2",       "",   FullCurDir() + "GstApolo.Ini" ), 20 )
+      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad1",       "",   FullCurDir() + "GstApolo.Ini" ), 20 )
+      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]      := Padr( GetPvProfString( "PROPIEDADES", "Propiedad2",       "",   FullCurDir() + "GstApolo.Ini" ), 20 )
 
    case nMode == DUPL_MODE
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"   ) ) ]   := NextKey( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfArticulo )
-      aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ]   := ""
+      aTmp[ ( dbfArticulo )->( fieldpos( "Codigo"   ) ) ]      := NextKey( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfArticulo )
+      aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ]      := ""
 
    end case
 
-   cCatOld                                                  := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
-   cPrvOld                                                  := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
-   cImageOld                                                := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
+   cCatOld                                                     := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
+   cPrvOld                                                     := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
+   cImageOld                                                   := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
 
    if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] )
-      aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ]    := GetSysColor( COLOR_BTNFACE )
+      aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ]       := GetSysColor( COLOR_BTNFACE )
    end if
 
    if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nTipBar" ) ) ] )
-      aTmp[ ( dbfArticulo )->( fieldpos( "nTipBar" ) ) ]    := 1
+      aTmp[ ( dbfArticulo )->( fieldpos( "nTipBar" ) ) ]       := 1
    else
       if aTmp[ ( dbfArticulo )->( fieldpos( "nTipBar" ) ) ] > 3
-         aTmp[ ( dbfArticulo )->( fieldpos( "nTipBar" ) ) ] := 3
+         aTmp[ ( dbfArticulo )->( fieldpos( "nTipBar" ) ) ]    := 3
       end if
    end if
 
@@ -1863,36 +1868,37 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    end if      
 
    REDEFINE GET   oSay[3];
-         VAR      cSay[3];
-			WHEN 		( .F. );
-			ID 		161 ;
-         OF       fldGeneral
+      VAR      cSay[3];
+		WHEN 		( .F. );
+		ID 		161 ;
+      OF       fldGeneral
 
    REDEFINE SAY oNombre VAR "Tipo artículo";
-         ID       888 ;
-         OF       fldGeneral
+      ID       888 ;
+      OF       fldGeneral
 
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CCODTIP" ) ) ] VAR aTmp[( dbfArticulo )->( fieldpos( "CCODTIP" ) ) ] ;
-         ID       270 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oTipArt:Existe( aGet[ ( dbfArticulo )->( fieldpos( "CCODTIP" ) ) ], oSay[9] ) );
-         ON HELP  ( oTipArt:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "CCODTIP" ) ) ] ) ) ;
-         BITMAP   "LUPA" ;
-         OF       fldGeneral
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CCODTIP" ) ) ] ;
+      VAR      aTmp[( dbfArticulo )->( fieldpos( "CCODTIP" ) ) ] ;
+      ID       270 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      VALID    ( oTipArt:Existe( aGet[ ( dbfArticulo )->( fieldpos( "CCODTIP" ) ) ], oSay[9] ) );
+      ON HELP  ( oTipArt:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "CCODTIP" ) ) ] ) ) ;
+      BITMAP   "LUPA" ;
+      OF       fldGeneral
 
    REDEFINE GET oSay[9] VAR cSay[9] ;
-         ID       271 ;
-         SPINNER ;
-         WHEN     ( .f. ) ;
-         OF       fldGeneral
+      ID       271 ;
+      SPINNER ;
+      WHEN     ( .f. ) ;
+      OF       fldGeneral
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ] ;
-         ID       390 ;
-         IDTEXT   391 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         OF       fldGeneral
+      VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ] ;
+      ID       390 ;
+      IDTEXT   391 ;
+      WHEN     ( nMode != ZOOM_MODE ) ;
+      BITMAP   "LUPA" ;
+      OF       fldGeneral
 
    aGet[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ]:bValid := {|| ( aGet[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ]:oHelpText:cText( RetFld( aTmp[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ], oFabricante:GetAlias() ) ), .t. ) }
    aGet[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ]:bHelp  := {|| oFabricante:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ] ) }
@@ -1920,6 +1926,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       352 ;
          TRANSPARENT ;
          OF       fldGeneral
+   
    REDEFINE SAY ;
          PROMPT   getTraslation( "Categoría" );
          ID       700 ;
@@ -1930,13 +1937,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       800 ;
          OF       fldGeneral
 
+   msgAlert( len( aTmp[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ] ), "nLen" )
+
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ] ;
          ID       355 ;
          IDTEXT   356 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cTemporada( aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ], dbfTemporada, aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ]:oHelpText, oBmpTemporada ) ) ;
-         ON HELP  ( BrwTemporada( aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ]:oHelpText, oBmpTemporada ) ) ;
+         ON HELP  ( brwTemporada( aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodTemp" ) ) ]:oHelpText, oBmpTemporada ) ) ;
          BITMAP   "LUPA" ;
          OF       fldGeneral
 
@@ -16320,7 +16329,7 @@ function aItmArt()
    aAdd( aBase, { "LFACCNV",   "L",  1, 0, "Usar factor de conversión" ,              "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CFACCNV",   "C",  2, 0, "Código del factor de conversión" ,        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCODTNK",   "C",  3, 0, "Código del tanque de combustible" ,       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODTIP",   "C",  3, 0, "Código del tipo de artículo" ,            "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODTIP",   "C",  4, 0, "Código del tipo de artículo" ,            "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LTIPACC",   "L",  1, 0, "Lógico de acceso por unidades o importe", "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LCOMBUS",   "L",  1, 0, "Lógico si el artículo es del tipo combustible", "",             "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCODIMP",   "C",  3, 0, "Código del impuesto especiales",          "",                   "", "( cDbfArt )", nil } )

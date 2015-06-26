@@ -483,7 +483,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cCodFam",     "C", 16, 0, {|| "@!" }, "Código familia"                          )
    ::AddField( "TipoIva",     "C",  1, 0, {|| "@!" }, "Código del tipo de " + cImp()            )
-   ::AddField( "cCodTip",     "C", 18, 0, {|| "@!" }, "Código del tipo de artículo"             )
+   ::AddField( "cCodTip",     "C",  4, 0, {|| "@!" }, "Código del tipo de artículo"             )
    ::AddField( "cCodCate",    "C",  3, 0, {|| "@!" }, "Código categoría"                        )
    ::AddField( "cCodEst",     "C",  3, 0, {|| "@!" }, "Código estado artículo"                  )
    ::AddField( "cCodTemp",    "C",  3, 0, {|| "@!" }, "Código temporada"                        )
@@ -563,7 +563,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
 
    ::AddField( "cPrvHab",     "C", 12, 0, {|| "" },   "Proveedor habitual"                      )
 
-   ::AddField( "cCtrCoste",    "C",  9, 0, {|| "" },   "Codigo del centro de coste"             )
+   ::AddField( "cCtrCoste",    "C",  9, 0, {|| "" },   "Código del centro de coste"             )
 
    ::AddTmpIndex( "cCodArt", "cCodArt" )
    ::AddTmpIndex( "cCodPrvArt", "cCodPrv + cCodArt" )

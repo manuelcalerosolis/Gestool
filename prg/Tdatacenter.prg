@@ -3285,6 +3285,8 @@ METHOD BuildEmpresa()
    oDataTable:bCreateIndex := {| cPath | rxFacRec( cPath ) }
    oDataTable:bCreateFile  := {| cPath | mkFacRec( cPath ) }
    oDataTable:bSyncFile    := {|| SynFacRec( cPatEmp() ) }
+   oDatatable:aDictionary  := hashDictionary( aColFacRec() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aColFacRec() )
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()

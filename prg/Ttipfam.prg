@@ -49,7 +49,7 @@ METHOD Create()
 
    ::AddField( "cCodRut", "C",  4, 0, {|| "@!" },          "Ruta",         .f., "Código ruta",                4  )
    ::AddField( "cCodCli", "C", 12, 0, {|| "@!" },          "Cod. cli.",    .f., "Código cliente",            12  )
-   ::AddField( "cCodTip", "C",  3, 0, {|| "@!" },          "Cod. ",        .t., "Código tipo",                5  )
+   ::AddField( "cCodTip", "C",  4, 0, {|| "@!" },          "Cod. ",        .t., "Código tipo",                5  )
    ::AddField( "cNomTip", "C", 35, 0, {|| "@!" },          "Tipo artículo",.t., "Tipo de artículo",          35  )
    ::AddField( "cNomCli", "C", 50, 0, {|| "@!" },          "Nombre",       .f., "Nombre cliente",            35  )
    ::AddField( "nNumCaj", "N", 19, 6, {|| MasUnd() },      "Caj.",         .f., "Cajas",                     12  )

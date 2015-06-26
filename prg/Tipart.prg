@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TTipArt FROM TMANT
+CLASS TTipArt FROM TMant
 
    DATA oClasificacionArticulo
 
@@ -69,6 +69,8 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::cMru               := "Cubes_Blue_16"
 
    ::cBitmap            := clrTopArchivos
+   
+   ::cMessageNotFound   := "Tipo de artículo no encontrado."
 
    ::lAutoButtons       := .f.
    ::lCreateShell       := .f.

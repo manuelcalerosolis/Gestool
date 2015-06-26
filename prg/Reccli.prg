@@ -4539,7 +4539,7 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"lRemesa"     ,"L",  1, 0, "Lógico de incluido en una remesa",  "",             "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cNumMtr"     ,"C", 15, 0, "Numero del recibo matriz",   "",                    "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"lPasado"     ,"L",  1, 0, "Lógico pasado", "",                                 "", "( cDbfRec )" } )
-   aAdd( aBasRecCli, {"cCtrCoste"   ,"C",  9, 0, "Codigo del Centro de coste", "",                    "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cCtrCoste"   ,"C",  9, 0, "Código del centro de coste", "",                    "", "( cDbfRec )" } )
 
 Return ( aBasRecCli )
 

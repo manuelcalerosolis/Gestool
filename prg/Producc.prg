@@ -4870,7 +4870,7 @@ METHOD CommunFields( oDbf ) CLASS TDetalleArticulos
 
    FIELD NAME "cGrpFam"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del grupo de familia"   HIDE        OF oDbf       
    FIELD NAME "cCodFam"    TYPE "C" LEN 16  DEC 0 COMMENT "Código de la familia"          HIDE        OF oDbf       
-   FIELD NAME "cCodTip"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del tipo"               HIDE        OF oDbf        
+   FIELD NAME "cCodTip"    TYPE "C" LEN  4  DEC 0 COMMENT "Código del tipo"               HIDE        OF oDbf        
    FIELD NAME "cCodCat"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de categoría"           HIDE        OF oDbf       
    FIELD NAME "cCodTmp"    TYPE "C" LEN  3  DEC 0 COMMENT "Código de la temporada"        HIDE        OF oDbf       
    FIELD NAME "cCodFab"    TYPE "C" LEN  3  DEC 0 COMMENT "Código del fabricante"         HIDE        OF oDbf       

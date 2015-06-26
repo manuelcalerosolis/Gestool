@@ -9225,7 +9225,7 @@ function aItmAlbPrv()
    aAdd( aItmAlbPrv, { "cAlmOrigen",   "C", 16,  0, "Almacén de origen de la mercancía","",              "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "nFacturado",   "N",  1,  0, "Estado del albarán",          "",                   "", "( cDbf )"} )
    aAdd( aItmAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,           "",                   "", "( cDbf )"} )
-   aAdd( aItmAlbPrv, { "cCtrCoste",    "C",  9,  0, "Codigo del centro de coste" , "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbPrv, { "cCtrCoste",    "C",  9,  0, "Código del centro de coste" , "",                   "", "( cDbf )"} )
 
 Return ( aItmAlbPrv )
 
@@ -9354,7 +9354,7 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "dCierre",      "D",  8,  0, "Fecha cierre de lote",          "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "tCierre",      "C",  6,  0, "Hora cierre de lote",           "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,             "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "cCtrCoste",    "C",  9,  0, "Codigo del centro de coste" ,   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cCtrCoste",    "C",  9,  0, "Código del centro de coste" ,   "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cSuAlb",       "C", 12,  0, "Número de su albarán",          "",                  "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )

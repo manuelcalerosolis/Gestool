@@ -752,7 +752,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cHorVto" TYPE "C" LEN 05  DEC 0 COMMENT "Hora de vencimiento"     PICTURE "@R 99:99"                                  OF oDbf
       FIELD NAME "cCodCli" TYPE "C" LEN 12  DEC 0 COMMENT "Cliente"                                                                     OF oDbf
       FIELD NAME "cNomCli" TYPE "C" LEN 80  DEC 0 COMMENT "Nombre cliente"                                                              OF oDbf
-      FIELD NAME "cCodTip" TYPE "C" LEN 03  DEC 0 COMMENT "Código tipo expediente"                                                      OF oDbf
+      FIELD NAME "cCodTip" TYPE "C" LEN 04  DEC 0 COMMENT "Código tipo expediente"                                                      OF oDbf
       FIELD NAME "cCodSub" TYPE "C" LEN 03  DEC 0 COMMENT "Código subtipo expediente"                                                   OF oDbf
       FIELD NAME "cCodSec" TYPE "C" LEN 03  DEC 0 COMMENT "Sección"                                                                     OF oDbf
       FIELD NAME "cCodCol" TYPE "C" LEN 03  DEC 0 COMMENT "Colaborador"                                                                 OF oDbf

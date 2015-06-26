@@ -10281,7 +10281,7 @@ function aItmFacPrv()
    aAdd( aItmFacPrv, { "cCtaBnc"    ,"C", 10, 0, "Cuenta bancaria del proveedor" ,                        "",      "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "lRECC"      ,"L",  1, 0, "Acogida al régimen especial del criterio de caja",      "",      "", "( cDbf )", .f. } )
    aAdd( aItmFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,                     "",                    "", "( cDbf )", nil } )
-   aAdd( aItmFacPrv, { "cCtrCoste"  ,"C",  9, 0, " Codigo del centro de coste" ,            "",                    "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "cCtrCoste"  ,"C",  9, 0, " Código del centro de coste" ,            "",                    "", "( cDbf )", nil } )
 
 return ( aItmFacPrv )
 

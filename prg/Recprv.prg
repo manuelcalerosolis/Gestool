@@ -2681,7 +2681,7 @@ function aItmRecPrv()
    aAdd( aRecFacPrv, { "cSucPrv"    ,"C",  4, 0, "Sucursal de la cuenta del proveedor",   "",            "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cDigPrv"    ,"C",  2, 0, "Dígito de control de la cuenta del proveedor", "",     "", "( cDbfRec )" } )
    aAdd( aRecFacPrv, { "cCtaPrv"    ,"C", 10, 0, "Cuenta bancaria del proveedor",         "",            "", "( cDbfRec )" } )
-   aAdd( aRecFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Codigo del centro de coste",            "",            "", "( cDbfRec )" } )
+   aAdd( aRecFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Código del centro de coste",            "",            "", "( cDbfRec )" } )
 
 
 return ( aRecFacPrv )

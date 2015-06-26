@@ -39,7 +39,7 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField( "cCodTip", "C",  3, 0, {|| "@!" },           "Cod.",              .t., "Código tipo",            5, .f. )
+   ::AddField( "cCodTip", "C",  4, 0, {|| "@!" },           "Cod.",              .t., "Código tipo",            5, .f. )
    ::AddField( "cNomTip", "C", 35, 0, {|| "@!" },           "Tipo",              .t., "Nombre tipo",           20, .f. )
    ::AddField( "nTotCaj", "N", 16, 6, {|| MasUnd() },       "Cajas",             .f., "Cajas",                 12, .t. )
    ::AddField( "nTotUni", "N", 16, 6, {|| MasUnd() },       "Unds.",             .t., "Unidades",              10, .t. )

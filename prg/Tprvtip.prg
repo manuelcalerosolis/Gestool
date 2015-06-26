@@ -27,7 +27,7 @@ END CLASS
 
 METHOD CreateFields()
 
-   ::AddField ( "cCodTip", "C",  3, 0, {|| "@!" },       "Cod.",          .f., "Código tipo",         3, .f. )
+   ::AddField ( "cCodTip", "C",  4, 0, {|| "@!" },       "Cod.",          .f., "Código tipo",         3, .f. )
    ::AddField ( "cNomTip", "C", 50, 0, {|| "@!" },       "Tipo",          .f., "Tipo de artículo",   28, .f. )
    ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },       "Art.",          .f., "Cod. artículo",      14, .f. )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },       "Artículo",      .f., "Artículo",           40, .f. )
@@ -58,7 +58,7 @@ RETURN ( Self )
 
 METHOD AnuTipFields()
 
-   ::AddField ( "cCodTip", "C",  3, 0, {|| "@!" },         "Cod.",            .t., "Código tipo",       3 )
+   ::AddField ( "cCodTip", "C",  4, 0, {|| "@!" },         "Cod.",            .t., "Código tipo",       3 )
    ::AddField ( "cNomTip", "C", 50, 0, {|| "@!" },         "Tipo",            .t., "Tipo de artículo", 28 )
    ::AddField ( "nImpEne", "N", 16, 6, {|| ::cPicOut },    "Ene",             .t., "Enero",            12 )
    ::AddField ( "nImpFeb", "N", 16, 6, {|| ::cPicOut },    "Feb",             .t., "Febrero",          12 )

@@ -82,6 +82,7 @@ CLASS TMant
    DATA nRouDiv
 
    DATA cTipoDocumento
+   DATA cMessageNotFound   INIT "Valor no enconrado."
 
    DATA lAppendBuscar      INIT .t.
    DATA lModificarBuscar   INIT .t.
@@ -101,7 +102,7 @@ CLASS TMant
    METHOD Del()
    METHOD Dup()
 
-   METHOD Resources()   VIRTUAL
+   METHOD Resources()      VIRTUAL
 
    METHOD CreateFiles( cPath, lAppend, cPathOld, oMeter )
 
@@ -111,7 +112,7 @@ CLASS TMant
 
    METHOD Activate()
 
-   METHOD SetFocus()    INLINE   ( if( ::oWndBrw != nil, ::oWndBrw:SetFocus(), ) )
+   METHOD SetFocus()       INLINE   ( if( ::oWndBrw != nil, ::oWndBrw:SetFocus(), ) )
 
    METHOD CloseFiles()
    MESSAGE CloseService()  METHOD CloseFiles()
@@ -128,9 +129,9 @@ CLASS TMant
 
    METHOD ReturnField( uValue )
 
-   METHOD GetAlias()    INLINE ( ::oDbf:cAlias )
+   METHOD GetAlias()       INLINE ( ::oDbf:cAlias )
 
-   METHOD Select()      INLINE ( ( ::oDbf:cAlias)->( Select() ) )
+   METHOD Select()         INLINE ( ( ::oDbf:cAlias)->( Select() ) )
 
    METHOD End()
 
@@ -884,7 +885,7 @@ METHOD Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar, uOrder ) CLA
    else
 
       if lMessage
-         msgStop( "Valor no encontrado." )
+         msgStop( ::cMessageNotFound, "" )
       end if
 
    end if
