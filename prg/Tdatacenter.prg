@@ -5079,7 +5079,7 @@ METHOD selectSATFromArticulo( cCodigoArticulo )
    cStm           +=          "cabeceraSat.cHorIni AS horaInicioSAT, "
    cStm           +=          "cabeceraSat.cHorFin AS horaFinSAT, "
    cStm           +=          "operario.cNomTra    AS operarioNombre, "
-   cStm           +=          "estadoSat.cNombre, "
+   cStm           +=          "estadoSat.cNombre   AS nombreEstado, "
    cStm           +=          "estadoSat.cTipo     AS tipoEstadoSAT, "
    cStm           +=          "articulos.cDesUbi   AS ubicacionArticulo, "
    cStm           +=          "clientes.titulo     AS clienteNombre " 

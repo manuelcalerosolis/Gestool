@@ -65,6 +65,8 @@ METHOD Resource() CLASS TSpecialInfoArticulo
 
       oBrwArticulo:CreateFromResource( 300 )
 
+      oBrwArticulo:bLDblClick  := {|| EdtSatCli( SatCliArticulos->serieLineaSAT + str( SatCliArticulos->numeroLineaSAT, 9 ) + SatCliArticulos->sufijoLineaSAT ) }
+
       with object ( oBrwArticulo:addCol() )
          :cHeader          := "Cliente"
          :bEditValue       := {|| SatCliArticulos->clienteNombre }
@@ -73,7 +75,7 @@ METHOD Resource() CLASS TSpecialInfoArticulo
 
       with object ( oBrwArticulo:addCol() )
          :cHeader          := "Estado"
-         :bEditValue       := {|| SatCliArticulos->tipoEstadoSAT }
+         :bEditValue       := {|| SatCliArticulos->nombreEstado }
          :nWidth           := 120
       end with
 

@@ -68,6 +68,8 @@ METHOD Resource() CLASS TSpecialInfoCliente
          oBrwCliente:aCols[ 1 ]:nWidth  := 20
       end if
 
+      oBrwCliente:bLDblClick  := {|| EdtSatCli( oBrwCliente:oTreeItem:Cargo[ "cSerSat" ] + str( oBrwCliente:oTreeItem:Cargo[ "nNumSat" ], 9 ) + oBrwCliente:oTreeItem:Cargo[ "cSufSat" ] ) }
+      
       oBrwCliente:CreateFromResource( 300 )
 
       with object ( oBrwCliente:addCol() )
