@@ -549,13 +549,7 @@ Return ( Self )
 
 METHOD DblClickTree( nMode, oDlg ) CLASS TExportaCompras
 
-   local oSelect   := ::oTreeCampos:GetItem()
-
-   ?"DblClickTree"
-
-   MsgInfo( oSelect )
-
-   MsgInfo( hb_valtoexp( ::oTreeCampos:aItems ) )
+   local oSelect   := ::oTreeCampos:GetSelected()
 
    if Len( oSelect:aItems ) != 0
       oSelect:Expand()
@@ -915,10 +909,6 @@ METHOD Exportacion( cGetFile, lOpenResult ) CLASS TExportaCompras
 
       cGetFile          := cGetFile( "*.txt", "Selección de fichero" )
 
-      if Empty( cGetFile )
-         return .f.
-      end if
-
    end if
 
    /*
@@ -1030,7 +1020,7 @@ METHOD Exportacion( cGetFile, lOpenResult ) CLASS TExportaCompras
                                  end if
 
                               case AllTrim( ::oDbf:cTabla ) == "Artículos"
-
+                                 
                                  if ::oDbf:nAlign <= 1
 
                                     if ::lSuprEspacios
