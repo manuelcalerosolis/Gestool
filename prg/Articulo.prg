@@ -825,11 +825,11 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    /*
    Cerramos todas las ventanas----------------------------------------------
-
+   */
+   
    if oWnd != nil
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
-   */
 
    /*
    Apertura de ficheros-----------------------------------------------------

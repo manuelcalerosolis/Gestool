@@ -19663,29 +19663,26 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 330, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 59, 51, 40, 12
   CONTROL "", 430, "Edit", WS_BORDER|WS_TABSTOP, 59, 65, 54, 12
   CONTROL "", 431, "Edit", WS_BORDER, 115, 65, 161, 12
-  CONTROL "", 420, "Edit", WS_BORDER|WS_TABSTOP, 59, 79, 54, 12
-  CONTROL "", 421, "Edit", WS_BORDER, 115, 79, 161, 12
-  CONTROL "Artículos no acumulables", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 96, 95, 10
-  CONTROL "Mostrar ventana comentarios", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 107, 108, 10
-  CONTROL "Publicar en internet", 115, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 135, 74, 10
-  CONTROL "Añadir familia a la descripción", 116, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 147, 108, 10
-  CONTROL "", 180, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 236, 145, 40, 12
-  CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 59, 159, 217, 12
-  CONTROL "Permitir precios sin valoración", 315, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 187, 108, 10
-  CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 59, 198, 54, 12
-  CONTROL "", 310, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 222, 198, 54, 12
-  CONTROL "Rapels %", -1, "Static", WS_GROUP, 173, 201, 35, 8
+  CONTROL "Artículos no acumulables", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 80, 95, 10
+  CONTROL "Mostrar ventana comentarios", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 91, 108, 10
+  CONTROL "Publicar en internet", 115, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 117, 74, 10
+  CONTROL "Añadir familia a la descripción", 116, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 129, 108, 10
+  CONTROL "", 180, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 236, 127, 40, 12
+  CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 59, 141, 217, 12
+  CONTROL "Permitir precios sin valoración", 315, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 9, 169, 108, 10
+  CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 59, 180, 54, 12
+  CONTROL "", 310, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 222, 180, 54, 12
+  CONTROL "Rapels %", -1, "Static", WS_GROUP, 173, 183, 35, 8
   CONTROL "Color botón", -1, "Static", WS_GROUP, 9, 28, 41, 8
   CONTROL "Imagen", -1, "Static", WS_GROUP, 9, 41, 29, 8
-  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 2, 176, 279, 38
-  CONTROL "Descuento %", -1, "Static", WS_GROUP, 9, 202, 47, 8
-  CONTROL "Propiedades táctil", -1, "Button", BS_GROUPBOX, 2, 2, 279, 119
+  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 2, 158, 279, 38
+  CONTROL "Descuento %", -1, "Static", WS_GROUP, 9, 184, 47, 8
+  CONTROL "Propiedades táctil", -1, "Button", BS_GROUPBOX, 2, 2, 279, 102
   CONTROL "Posición", -1, "Static", WS_GROUP, 9, 54, 32, 8
-  CONTROL "Orden", -1, "Static", WS_GROUP, 9, 82, 45, 8
-  CONTROL "Orden Internet", -1, "Static", WS_GROUP, 173, 148, 47, 8
-  CONTROL "Prestashop", -1, "Button", BS_GROUPBOX, 2, 123, 279, 51
+  CONTROL "Orden Internet", -1, "Static", WS_GROUP, 173, 130, 47, 8
+  CONTROL "Prestashop", -1, "Button", BS_GROUPBOX, 2, 105, 279, 51
   CONTROL "Comentario", -1, "Static", WS_GROUP, 9, 67, 48, 8
-  CONTROL "Descripción", -1, "Static", WS_GROUP, 9, 162, 43, 8
+  CONTROL "Descripción", -1, "Static", WS_GROUP, 9, 144, 43, 8
 }
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US

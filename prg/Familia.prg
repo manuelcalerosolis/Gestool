@@ -75,7 +75,6 @@ static dbfArticulo
 
 static oGrpFam
 static oFraPub
-static oTComandas
 static oComentarios
 
 static oBtnAceptarActualizarWeb
@@ -376,9 +375,6 @@ static function OpenFiles()
       oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
       oFraPub:OpenFiles()
 
-      oTComandas        := TComandas():Create( cPatArt() )
-      oTComandas:OpenFiles()
-
       oComentarios      := TComentarios():Create( cPatArt() )
       oComentarios:OpenFiles()
 
@@ -419,9 +415,6 @@ static function CloseFiles()
       oFraPub:End()
    end if
 
-   if !Empty( oTComandas )
-      oTComandas:End()
-   end if
 
    if !Empty( oComentarios )
       oComentarios:End()
@@ -928,20 +921,6 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             PICTURE  "@!" ;
             OF       oFld:aDialogs[2]
 
-         REDEFINE GET aGet[ _CCODIMP ] VAR aTmp[ _CCODIMP ] ;
-            ID       420 ;
-            VALID    ( oSayTComandas:cText( RetFld( aTmp[ _CCODIMP ], oTComandas:GetAlias() ) ), .t. );
-            ON HELP  ( oTComandas:Buscar( aGet[ _CCODIMP ], "cCodigo" ) ) ;
-            BITMAP   "LUPA" ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[2]
-
-         REDEFINE GET oSayTComandas VAR cSayTComandas ;
-            ID       421 ;
-            SPINNER ;
-            WHEN     ( .f. ) ;
-            OF       oFld:aDialogs[2]
-
          // Segunda caja de dialogo--------------------------------------------------
 
          REDEFINE CHECKBOX aTmp[ _LINFSTK ] ;
@@ -1085,7 +1064,6 @@ Static Function StartEdtRec( aGet, aTmp, bmpImage )
 
    aGet[ _CCODGRP  ]:lValid()
    aGet[ _CCOMFAM  ]:lValid()
-   aGet[ _CCODIMP  ]:lValid()
    aGet[ _CCODPRP1 ]:lValid()
    aGet[ _CCODPRP2 ]:lValid()
 
