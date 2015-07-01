@@ -2420,28 +2420,19 @@ Function TFacturarLineasAlbaranes()
 
 Return nil
 
-Function TLabelGenerator()
-
-RETURN nil
-
 Function PageIniClient()
-
 Return nil
 
 Function ImportScript()
-
 Return nil
 
 Function TListViewItem()
-
 Return nil
 
 Function TFacturarLineasAlbaranesProveedor()
-
 Return nil
 
 Function TGenMailing()
-
 Return nil
 
 Function TGenMailingClientes()
@@ -2520,6 +2511,18 @@ Function PedCLiente2PedProveedor()
 Return nil
 
 Function TGenMailingDatabasePedidosProveedor()
+Return nil
+
+Function TGenMailingDatabaseAlbaranesProveedor()
+Return nil
+
+Function TGenMailingDatabaseFacturaProveedor()
+Return nil
+
+Function TGenMailingDatabaseFacturaRectificativaCliente()
+Return nil
+
+Function TGenMailingDatabaseFacturaRectificativaProveedor()
 Return nil
 
 Function RunEventScript()
