@@ -35,7 +35,7 @@ CLASS IXBrowse FROM TXBrowse
    ASSIGN BookMark(u)      INLINE Eval( ::bBookMark, u )
 
    METHOD New( oWnd )
-   METHOD GoLeftMost()
+   // METHOD GoLeftMost()
 
    Method GetOriginal()    INLINE ( ::cOriginal := ::SaveState() )
    Method SetOriginal()    INLINE ( ::RestoreState( ::cOriginal ) )
@@ -95,7 +95,7 @@ METHOD New( oWnd )
 Return ( Self )
 
 //----------------------------------------------------------------------------//
-
+/*
 METHOD GoLeftMost()
 
    ::CancelEdit()
@@ -112,7 +112,7 @@ METHOD GoLeftMost()
    ::Change( .f. )
 
 return nil
-
+*/
 //----------------------------------------------------------------------------//
 
 Method CreateData( cPath )

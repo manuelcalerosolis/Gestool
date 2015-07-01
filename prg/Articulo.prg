@@ -1916,7 +1916,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          BITMAP   "LUPA" ;
          OF       fldGeneral
 
-   REDEFINE GET   oSay[ 17 ] VAR cSay[ 17 ] ;
+   REDEFINE GET   oSay[ 17 ] ;
+         VAR      cSay[ 17 ] ;
          ID       351 ;
          SPINNER ;
          WHEN     ( .f. ) ;

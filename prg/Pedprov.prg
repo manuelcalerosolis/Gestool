@@ -1529,33 +1529,33 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
          oBrwLin:CreateFromResource( 190 )
 
-            REDEFINE BUTTON ;
-                  ID          500 ;
-                  OF          oFld:aDialogs[1] ;
-                  WHEN        ( nMode != ZOOM_MODE ) ;
-                  ACTION      ( AppDeta( oBrwLin, bEdtDet, aTmp ) )
+      REDEFINE BUTTON ;
+            ID          500 ;
+            OF          oFld:aDialogs[1] ;
+            WHEN        ( nMode != ZOOM_MODE ) ;
+            ACTION      ( AppDeta( oBrwLin, bEdtDet, aTmp ) )
 
 		REDEFINE BUTTON ;
-                  ID          501 ;
-                  OF          oFld:aDialogs[1] ;
-                  WHEN 	      ( nMode != ZOOM_MODE ) ;
-                  ACTION      ( EdtDeta( oBrwLin, bEdtDet, aTmp ) )
+            ID          501 ;
+            OF          oFld:aDialogs[1] ;
+            WHEN 	      ( nMode != ZOOM_MODE ) ;
+            ACTION      ( EdtDeta( oBrwLin, bEdtDet, aTmp ) )
 
-            REDEFINE BUTTON ;
-                  ID          502 ;
-                  OF          oFld:aDialogs[1] ;
-                  WHEN        ( nMode != ZOOM_MODE ) ;
-                  ACTION      ( WinDelRec( oBrwLin, dbfTmpLin, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) )
+      REDEFINE BUTTON ;
+            ID          502 ;
+            OF          oFld:aDialogs[1] ;
+            WHEN        ( nMode != ZOOM_MODE ) ;
+            ACTION      ( WinDelRec( oBrwLin, dbfTmpLin, {|| delDeta() }, {|| RecalculaTotal( aTmp ) } ) )
 
 		REDEFINE BUTTON ;
 			ID 		503 ;
 			OF 		oFld:aDialogs[1] ;
-                  ACTION      ( EdtZoom( oBrwLin, bEdtDet, aTmp ) )
+         ACTION      ( EdtZoom( oBrwLin, bEdtDet, aTmp ) )
 
       REDEFINE BUTTON ;
-	   ID 	524 ;
-	   OF 	oFld:aDialogs[1] ;
-	   WHEN 	( nMode != ZOOM_MODE ) ;
+   	   ID 	524 ;
+   	   OF 	oFld:aDialogs[1] ;
+   	   WHEN 	( nMode != ZOOM_MODE ) ;
          ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
 
 	REDEFINE BUTTON ;

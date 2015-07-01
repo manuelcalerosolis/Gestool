@@ -3937,7 +3937,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       IDCANCEL ;
          OF       oDlg ;
          CANCEL ;
-         ACTION   ( CancelEdtRec( nMode, aGet, oDlg ) )
+         ACTION   ( cancelEdtRec( nMode, aGet, oDlg ) )
 
       REDEFINE GROUP oSayLabels[ 1 ] ID 700 OF oFld:aDialogs[ 1 ] TRANSPARENT
       REDEFINE SAY   oSayLabels[ 6 ] ID 708 OF oFld:aDialogs[ 1 ]
@@ -3981,7 +3981,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    ACTIVATE DIALOG   oDlg ;
       ON INIT        ( initEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oBrwPgo, hHash ) );
       ON PAINT       ( recalculaTotal( aTmp ) );
-      VALID          ( exitNoSave( nMode, dbfTmpLin ) );
       CENTER
 
    oMenu:end()
@@ -4068,11 +4067,11 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
    Hace que salte la incidencia al entrar en el documento----------------------
    */
 
-   if !Empty( dbfTmpInc ) .and. ( dbfTmpInc )->( Used() ) 
+   if !empty( dbfTmpInc ) .and. ( dbfTmpInc )->( Used() ) 
 
       while !( dbfTmpInc )->( Eof() )
          if ( dbfTmpInc )->lAviso .and. !( dbfTmpInc )->lListo
-            MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
+            msginfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
          end if
          ( dbfTmpInc )->( dbSkip() )
       end while
@@ -4080,8 +4079,6 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
       ( dbfTmpInc )->( dbGoTop() )
 
    end if
-
-
 
 Return ( nil )
 
@@ -4108,6 +4105,10 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
    local cNumDoc  
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      
+      if exitNoSave( nMode, dbfTmpLin )
+         Return nil 
+      end if          
 
       CursorWait()
 
@@ -4153,7 +4154,7 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
 
    oDlg:end()
 
-RETURN ( nil )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -8380,26 +8381,17 @@ Static Function ChangeTarifa( aTmp, aGet, aTmpAlb )
 
     local nPrePro  := 0
 
-   if !aTmp[ __LALQUILER ]
+   nPrePro     := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], dbfArtDiv, aTmpAlb[ _CCODTAR ] )
 
-      nPrePro     := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], dbfArtDiv, aTmpAlb[ _CCODTAR ] )
-
-      if nPrePro == 0
-         nPrePro  := nRetPreArt( aTmp[ _NTARLIN ], aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], D():Articulos( nView ), D():Get( "Divisas", nView ), dbfKit, D():Get( "TIva", nView ), , , oNewImp )
-      end if
-
-      if nPrePro != 0
-         aGet[ _NPREUNIT ]:cText( nPrePro )
-      end if
-
-   else
-
-      aGet[ _NPREUNIT ]:cText( 0 )
-      aGet[ _NPREALQ  ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], D():Articulos( nView ) ) )
-
+   if nPrePro == 0
+      nPrePro  := nRetPreArt( aTmp[ _NTARLIN ], aTmpAlb[ _CDIVALB ], aTmpAlb[ _LIVAINC ], D():Articulos( nView ), D():Get( "Divisas", nView ), dbfKit, D():Get( "TIva", nView ), , , oNewImp )
    end if
 
-return .t.
+   if nPrePro != 0
+      aGet[ _NPREUNIT ]:cText( nPrePro )
+   end if
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -10972,6 +10964,14 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
    local sOfertaArticulo
    local nCajasGratis         := 0
    local nUnidadesGratis      := 0
+   local nPrecioPropiedades   := 0
+
+   // Precio por propiedades --------------------------------------------------
+
+   nPrecioPropiedades         := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpAlb[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpAlb[ _CCODTAR ] )
+   if !empty(nPrecioPropiedades)
+      aTmp[ _NPREUNIT ]       := nPrecioPropiedades
+   end if 
 
    // Atipicas ----------------------------------------------------------------
 

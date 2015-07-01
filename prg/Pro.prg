@@ -2294,21 +2294,27 @@ Function nPrecioPorPorpiedades( cCodigoArticulo, cCodPr1, cValPr1, cCodPr2, cVal
    DEFAULT nTarPre      := 1
    DEFAULT lIvaInc      := .t.
 
+   cCodigoArticulo      := padr( cCodigoArticulo, 18 )
+   cCodPr1              := padr( cCodPr1, 20 )
+   cValPr1              := padr( cValPr1, 40 )
+   cCodPr2              := padr( cCodPr2, 20 )
+   cValPr2              := padr( cValPr2, 40 )
+
    if dbSeekInOrd( cCodigoArticulo + cCodPr1 + cCodPr2 + cValPr1 + cValPr2, "cCodArt", dbfArtDiv )
 
       do case
          case nTarPre <= 1
-            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva1, ( dbfArtDiv )->nPreVta1 )
+            nPreVta     := if( lIvaInc, ( dbfArtDiv )->nPreIva1, ( dbfArtDiv )->nPreVta1 )
          case nTarPre == 2
-            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva2, ( dbfArtDiv )->nPreVta2 )
+            nPreVta     := if( lIvaInc, ( dbfArtDiv )->nPreIva2, ( dbfArtDiv )->nPreVta2 )
          case nTarPre == 3
-            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva3, ( dbfArtDiv )->nPreVta3 )
+            nPreVta     := if( lIvaInc, ( dbfArtDiv )->nPreIva3, ( dbfArtDiv )->nPreVta3 )
          case nTarPre == 4
-            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva4, ( dbfArtDiv )->nPreVta4 )
+            nPreVta     := if( lIvaInc, ( dbfArtDiv )->nPreIva4, ( dbfArtDiv )->nPreVta4 )
          case nTarPre == 5
-            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva5, ( dbfArtDiv )->nPreVta5 )
+            nPreVta     := if( lIvaInc, ( dbfArtDiv )->nPreIva5, ( dbfArtDiv )->nPreVta5 )
          case nTarPre == 6
-            nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva6, ( dbfArtDiv )->nPreVta6 )
+            nPreVta     := if( lIvaInc, ( dbfArtDiv )->nPreIva6, ( dbfArtDiv )->nPreVta6 )
       end case
 
    end if
@@ -2324,16 +2330,12 @@ Function nPrePro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, nTarPre, lIvaInc,
    DEFAULT nTarPre      := 1
    DEFAULT lIvaInc      := .t.
 
-   if Empty( cCodTar )
-
+   if empty( cCodTar )
       nPreVta           := nPrecioPorPorpiedades( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv, nTarPre, lIvaInc )
-
    else
-
       if !empty( dbfTarPreL )
-         nPreVta        := RetPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL, nTarPre )
+         nPreVta        := retPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL, nTarPre )
       end if
-
    end if
 
 Return ( nPreVta )
@@ -2715,9 +2717,9 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
 
    // Montamos los array con las propiedades-----------------------------------
 
-   nTotalCol                  := len( aPropiedadesArticulo2 ) + 1
+   nTotalCol                     := len( aPropiedadesArticulo2 ) + 1
 
-   aPropertiesTable           := array( nTotalRow, nTotalCol )
+   aPropertiesTable              := array( nTotalRow, nTotalCol )
 
    if ( D():Propiedades( nView ) )->( dbSeek( cCodPr1 ) )
       aadd( aHeadersTable, ( D():Propiedades( nView ) )->cDesPro )
@@ -2812,6 +2814,8 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
 
          if isNil( aPropertiesTable[ oBrw:nArrayAt, n ]:Value )
 
+            // Columna del titulo de la propiedad
+
             with object ( oBrw:AddCol() )
                :Adjust()
                :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
@@ -2819,6 +2823,8 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
                :nWidth           := 100
                :bFooter          := {|| "Total" }
             end with
+
+            // Columna del color de la propiedad
 
             if aPropertiesTable[ oBrw:nArrayAt, n ]:lColor
 
@@ -2846,13 +2852,14 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
                :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
                :bEditValue       := bGenEditValue( aPropertiesTable, oBrw, n )
                :cEditPicture     := MasUnd()
-               :nWidth           := 80
+               :nWidth           := 50
                :setAlign( AL_RIGHT )
                :nFooterType      := AGGR_SUM
                :nEditType        := EDIT_GET
+               :nHeadStrAlign    := AL_RIGHT
                :bOnPostEdit      := {| oCol, xVal, nKey | bPostEditProperties( oCol, xVal, nKey, oBrw, oGetUnd ) }
-               :Cargo            := n
                :nFootStyle       := :defStyle( AL_RIGHT, .t. )               
+               :Cargo            := n
             end with
 
          end if
@@ -2861,7 +2868,15 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
          
       oBrw:aCols[ 1 ]:Hide()
       oBrw:Adjust()
+
+      oBrw:nColSel               := oBrw:nFreeze + 1
+
+      oBrw:nRowHeight            := 20
+      oBrw:nHeaderHeight         := 20
+      oBrw:nFooterHeight         := 20
+
       oBrw:Show()
+
       
    end if
 

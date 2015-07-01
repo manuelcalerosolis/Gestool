@@ -4525,7 +4525,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          ID       IDCANCEL ;
          OF       oDlg ;
          CANCEL ;
-         ACTION   ( oDlg:end() )
+         ACTION   ( if( exitNoSave( nMode, dbfTmpLin ), oDlg:end(), ) )
 
       REDEFINE GROUP oSayLabels[ 1 ] ID 700 OF oFld:aDialogs[ 1 ] TRANSPARENT
       REDEFINE SAY   oSayLabels[ 2 ] ID 708 OF oFld:aDialogs[ 1 ]
@@ -4574,7 +4574,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    ACTIVATE DIALOG oDlg ;
       ON INIT  (  initDialog( aTmp, oDlg, oBrwLin, oBrwInc, oBrwPgo, oBrwAnt ), SetDialog( aGet, oSayDias, oSayGetRnt, oGetRnt ) );
       ON PAINT (  recalculaTotal( aTmp ) );
-      VALID    (  exitNoSave( nMode, dbfTmpLin ) );
       CENTER
 
    /*
@@ -12212,10 +12211,15 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpEntidades )->( OrdCreate( cTmpEnt, "cRolEnt", "CodEntidad + RolEntidad", {|| Field->CodEntidad + Field->RolEntidad } ) )
 
       if D():gotoIdFacturasClientesEntidades( cFac, nView )
+         
          while ( D():FacturasClientesEntidadesId( nView ) == cFac .and. !D():eofFacturasClientesEntidades( nView ) )
+      
             dbPass( D():FacturasClientesEntidades( nView ), dbfTmpEntidades, .t. )
+      
             ( D():FacturasClientesEntidades( nView ) )->( dbSkip() )
+      
          end while
+      
       end if
 
       ( dbfTmpEntidades )->( dbGoTop() )
@@ -12226,38 +12230,35 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    end if
 
-
-   /*
-   A¤adimos desde el fichero de situaiones
-*/
+   // Añadimos desde el fichero de situaiones----------------------------------
 	
 	dbCreate( cTmpEst, aSqlStruct( aFacCliEst() ), cLocalDriver() )
-   	dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
+   dbUseArea( .t., cLocalDriver(), cTmpEst, cCheckArea( cDbfEst, @dbfTmpEst ), .f. )
 
   	if !( dbfTmpEst )->( NetErr() )
 
   		( dbfTmpEst )->( ordCreate( cTmpEst, "nNumFac", "cSerFac + str( nNumFac ) + cSufFac + dtos( dFecSit )  + tFecSit", {|| Field->cSerFac + str( Field->nNumFac ) + Field->cSufFac + dtos( Field->dFecSit )  + Field->tFecSit } ) )
-      	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
+    	( dbfTmpEst )->( ordListAdd( cTmpEst ) )
 
-      	if ( D():FacturasClientesSituaciones( nView ) )->( dbSeek( cFac ) )
+    	if ( D():FacturasClientesSituaciones( nView ) )->( dbSeek( cFac ) )
 
       	while ( ( D():FacturasClientesSituaciones( nView ) )->cSerFac + Str( ( D():FacturasClientesSituaciones( nView ) )->nNumFac ) + ( D():FacturasClientesSituaciones( nView ) )->cSufFac == cFac ) .AND. ( D():FacturasClientesSituaciones( nView ) )->( !eof() ) 
 
-         dbPass( D():FacturasClientesSituaciones( nView ), dbfTmpEst, .t. )
-         ( D():FacturasClientesSituaciones( nView ) )->( dbSkip() )
+            dbPass( D():FacturasClientesSituaciones( nView ), dbfTmpEst, .t. )
 
-    	end while
+            ( D():FacturasClientesSituaciones( nView ) )->( dbSkip() )
 
-  	end if
+         end while
 
-  	( dbfTmpEst )->( dbGoTop() )
+  	   end if
+
+  	   ( dbfTmpEst )->( dbGoTop() )
 
   	else
 
-      	lErrors     := .t.
+      lErrors     := .t.
 
   	end if
-
 	
 
    RECOVER USING oError
@@ -14559,6 +14560,14 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
    local sOfertaArticulo
    local nCajasGratis         := 0
    local nUnidadesGratis      := 0
+   local nPrecioPropiedades   := 0
+
+   // Precio por propiedades --------------------------------------------------
+
+   nPrecioPropiedades         := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[ _CCODTAR ] )
+   if !empty(nPrecioPropiedades)
+      aTmp[ _NPREUNIT ]       := nPrecioPropiedades
+   end if 
 
    // Atipicas ----------------------------------------------------------------
 

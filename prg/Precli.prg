@@ -4538,6 +4538,14 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
    local sOfertaArticulo
    local nCajasGratis         := 0
    local nUnidadesGratis      := 0
+   local nPrecioPropiedades   := 0
+
+   // Precio por propiedades --------------------------------------------------
+
+   nPrecioPropiedades         := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPre[ _CCODTAR ] )
+   if !empty(nPrecioPropiedades)
+      aTmp[ _NPREDIV ]        := nPrecioPropiedades
+   end if 
 
    // Atipicas ----------------------------------------------------------------
 

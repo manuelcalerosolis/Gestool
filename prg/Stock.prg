@@ -5605,30 +5605,29 @@ RETURN ( nUnidades )
 
 //---------------------------------------------------------------------------//
 
-Method SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente, lAviso )
+METHOD setRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente, lAviso )
 
    local nRiesgo  := ::nRiesgo( cCodigoCliente )
 
    DEFAULT lAviso := uFieldEmpresa( "lSalPdt" , .f. )
 
-   if IsObject( oGetRiesgo )
+   if isObject( oGetRiesgo )
 
       oGetRiesgo:cText( nRiesgo )
 
-      if IsNum( nRiesgoCliente )
+      if isNum( nRiesgoCliente )
 
          if ( nRiesgo > nRiesgoCliente )
-            oGetRiesgo:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 0, 0 ) )
+            oGetRiesgo:setColor( Rgb( 255, 255, 255 ), Rgb( 255, 0, 0 ) )
          else
-            oGetRiesgo:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
+            oGetRiesgo:setColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
          end if
 
          oGetRiesgo:Refresh()
 
          if lAviso
-            msgStop( "El riesgo alacanzado es de " + Alltrim( Trans( nRiesgo, cPorDiv() ) ) + "; sobre el establecido en su ficha " + Alltrim( Trans( nRiesgoCliente, cPorDiv() ) ) + ".",;
+            msgStop( "El riesgo alacanzado es de " + alltrim( Trans( nRiesgo, cPorDiv() ) ) + "; sobre el establecido en su ficha " + alltrim( Trans( nRiesgoCliente, cPorDiv() ) ) + ".",;
                      "El riesgo del cliente supera el límite establecido" )
-
          end if
 
       end if
