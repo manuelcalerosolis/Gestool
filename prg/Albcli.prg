@@ -5230,7 +5230,7 @@ Static Function QuiAlbCli()
    local cNumSat
    local aNumPed
 
-   if ( D():Get( "AlbCliT", nView ) )->lCloAlb .and. !oUser():lAdministrador()
+   if ( D():Get( "AlbCliT", nView ) )->lCloAlb .and. !oUser():lAdministrador() 
       msgStop( "Solo pueden eliminar albarares cerrados los administradores." )
       Return .f.
    end if

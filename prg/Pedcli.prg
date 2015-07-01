@@ -11306,13 +11306,15 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             if !Empty( aTmpPed[ _CCODTAR ] )
 
-               //--Precio--//
+               // Precio-------------------------------------------------------
+
                nImpOfe     := RetPrcTar( aTmp[ _CREF ], aTmpPed[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL, aTmp[ _NTARLIN ] )
                if nImpOfe  != 0
                   aGet[ _NPREDIV ]:cText( nImpOfe )
                end if
 
-               //--Descuento porcentual--//
+               // Descuento porcentual-----------------------------------------
+               
                nImpOfe  := RetPctTar( aTmp[ _CREF ], cCodFam, aTmpPed[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
                if nImpOfe  != 0
                   aGet[ _NDTO   ]:cText( nImpOfe )

@@ -1895,12 +1895,12 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
                lTrigger    := CheckEval( bPreBlock )
             end if
 
-            if Valtype( lTrigger ) != "L" .or. lTrigger
+            if isLogic( lTrigger ) .or. lTrigger
 
                dbDel( cAlias )
 
                if !Empty( bPostBlock )
-                  CheckEval( bPostBlock )
+                  checkEval( bPostBlock )
                end if
 
             end if
@@ -1915,15 +1915,15 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
       if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supersión", lTactil )
 
-         if !Empty( bPreBlock )
+         if !empty( bPreBlock )
             lTrigger    := CheckEval( bPreBlock )
          end if
 
-         if Valtype( lTrigger ) != "L" .or. lTrigger
+         if isLogic( lTrigger ) .or. lTrigger
 
             dbDel( cAlias )
 
-            if !Empty( bPostBlock )
+            if !empty( bPostBlock )
                lTrigger := CheckEval( bPostBlock )
             end if
 
@@ -1935,7 +1935,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
 
    end if
 
-   if !Empty( oBrw )
+   if !empty( oBrw )
       oBrw:Select( 0 )
       oBrw:Select( 1 )
       oBrw:Refresh()
