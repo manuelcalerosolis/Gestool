@@ -6108,3 +6108,4 @@ static function DoDraw( hDc, x, y, lPaint )
       LineTo( hDc, x, y )
    endIf 
  
+Return nil 
