@@ -1895,7 +1895,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
                lTrigger    := CheckEval( bPreBlock )
             end if
 
-            if isLogic( lTrigger ) .or. lTrigger
+            if !isLogic( lTrigger ) .or. lTrigger
 
                dbDel( cAlias )
 
@@ -1919,7 +1919,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
             lTrigger    := CheckEval( bPreBlock )
          end if
 
-         if isLogic( lTrigger ) .or. lTrigger
+         if !isLogic( lTrigger ) .or. lTrigger
 
             dbDel( cAlias )
 

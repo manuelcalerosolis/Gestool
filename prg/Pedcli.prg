@@ -1796,7 +1796,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       case nMode == APPD_MODE
 
          if !lCurSesion()
-            MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+            msgStop( "No hay sesiones activas, imposible añadir documentos" )
             Return .f.
          end if
 
@@ -1818,20 +1818,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          aTmp[ _LIVAINC ]     := uFieldEmpresa( "lIvaInc" )
          aTmp[ _CMANOBR ]     := Padr( "Gastos", 250 )
          aTmp[ _NIVAMAN ]     := nIva( D():TiposIva( nView ), cDefIva() )
+         aTmp[ _DFECENTR]     := ctod( "" )
+         aTmp[ _DFECSAL ]     := ctod( "" )
 
-         if !Empty( cCodPre )
+         if !empty( cCodPre )
             aTmp[ _CNUMPRE ]  := cCodPre
          end if
 
       case nMode == DUPL_MODE
 
          if !lCurSesion()
-            MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+            msgStop( "No hay sesiones activas, imposible añadir documentos" )
             Return .f.
          end if
 
          if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-           msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+            msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
             Return .f.
          end if
 
@@ -1843,30 +1845,30 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       case nMode == EDIT_MODE
 
          if aTmp[ _LCLOPED ] .and. !oUser():lAdministrador()
-            MsgStop( "El pedido está cerrado." )
+            msgStop( "El pedido está cerrado." )
             Return .f.
          end if
 
          if aTmp[ _NESTADO ] == 3 .and. !aTmp[ _LCANCEL ]
-            MsgStop( "El pedido ya fue entregado." )
+            msgStop( "El pedido ya fue entregado." )
             Return .f.
          end if
 
    end case
 
-   if Empty( Rtrim( aTmp[ _CSERPED ] ) )
+   if empty( rtrim( aTmp[ _CSERPED ] ) )
       aTmp[ _CSERPED ]     := cSerie
    end if
 
-   if Empty( aTmp[ _NTARIFA ] )
+   if empty( aTmp[ _NTARIFA ] )
       aTmp[ _NTARIFA ]     := Max( uFieldEmpresa( "nPreVta" ), 1 )
    end if
 
-   if Empty( aTmp[ _CDTOESP ] )
+   if empty( aTmp[ _CDTOESP ] )
       aTmp[ _CDTOESP ]     := Padr( "General", 50 )
    end if
 
-   if Empty( aTmp[ _CDPP ] )
+   if empty( aTmp[ _CDPP ] )
       aTmp[ _CDPP ]        := Padr( "Pronto pago", 50 )
    end if
 
@@ -2872,14 +2874,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          IDSAY    121 ;
 			OF 		oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _DFECSAL ] VAR aTmp[ _DFECSAL ];
+      REDEFINE GET aGet[ _DFECENTR ] VAR aTmp[ _DFECENTR ];
          ID       111 ;
          IDSAY    112 ;
-			SPINNER;
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         SPINNER;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _DFECENTR ] VAR aTmp[ _DFECENTR ];
+      REDEFINE GET aGet[ _DFECSAL ] VAR aTmp[ _DFECSAL ];
          ID       113 ;
          IDSAY    114 ;
 			SPINNER;
@@ -8718,7 +8720,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
    /*
    Comprobamos la fecha del documento------------------------------------------
    */
-   if !lValidaOperacion( aTmp[_DFECPED] )
+   if !lValidaOperacion( aTmp[ _DFECPED ] )
       Return .f.
    end if
 
@@ -8728,8 +8730,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    if lCliBlq( aTmp[ _CCODCLI ], D():Clientes( nView ) )
       msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta." + CRLF + ;
-                  "Motivo: " + AllTrim( RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "cMotBlq" ) ),;
-                  "Imposible archivar" )
+               "Motivo: " + AllTrim( RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "cMotBlq" ) ),;
+               "Imposible archivar" )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if
@@ -8763,6 +8765,18 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
       aGet[ _CCODAGE ]:SetFocus()
       return .f.
    end if
+
+   // solo para la jaca--------------------------------------------------------
+
+   if empty( aTmp[ _DFECENTR ] )
+      msgStop( "Fecha inicio servicio no puede estar vacía" )
+      return .f.
+   end if 
+
+   if empty( aTmp[ _DFECSAL ] )
+      msgStop( "Fecha fin servicio no puede estar vacía" )
+      return .f.
+   end if 
 
    if ( dbfTmpLin )->( eof() )
       MsgStop( "No puede almacenar un documento sin líneas." )
@@ -8862,20 +8876,26 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    while ( dbfTmpLin )->( !eof() )
 
-      if nMode == APPD_MODE
-         if dbLock( dbfTmpLin )
-            ( dbfTmpLin )->lAnulado    := aTmp[ _LCANCEL ]
-            ( dbfTmpLin )->dAnulado    := aTmp[ _DCANCEL ]
-            ( dbfTmpLin )->mAnulado    := aTmp[ _CCANCEL ]
-            ( dbfTmpLin )->nProduc     := 2
-            ( dbfTmpLin )->( dbUnLock() )
-         end if
+      if nMode == APPD_MODE .and. dbLock( dbfTmpLin )
+
+         if empty( ( dbfTmpLin )->dFecEnt )
+            ( dbfTmpLin )->dFecEnt  := aTmp[ _DFECSAL ]
+         end if 
+
+         if empty( ( dbfTmpLin )->dFecSal )
+            ( dbfTmpLin )->dFecSal  := aTmp[ _DFECSAL ]
+         end if 
+
+         ( dbfTmpLin )->lAnulado    := aTmp[ _LCANCEL ]
+         ( dbfTmpLin )->dAnulado    := aTmp[ _DCANCEL ]
+         ( dbfTmpLin )->mAnulado    := aTmp[ _CCANCEL ]
+         ( dbfTmpLin )->nProduc     := 2
+         ( dbfTmpLin )->( dbUnLock() )
+
       end if
 
       if !( ( dbfTmpLin )->nUniCaja == 0 .and. ( dbfTmpLin )->lFromAtp )
-
       	dbPass( dbfTmpLin, D():PedidosClientesLineas( nView ), .t., cSerPed, nNumPed, cSufPed )
-
       end if
 
       ( dbfTmpLin )->( dbSkip() )
@@ -9227,9 +9247,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
 
          // Reisgo del cliente-------------------------------------------
 
-
          if oRieCli != nil
-            msgAlert( ( D():Clientes( nView ) )->Riesgo, "Riesgo" )
             oStock:SetRiesgo( cNewCodCli, oRieCli, ( D():Clientes( nView ) )->Riesgo )
          end if
 

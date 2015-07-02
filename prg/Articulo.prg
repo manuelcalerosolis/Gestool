@@ -12774,17 +12774,17 @@ Method CreateData()
    local tmpArticulo
    local tmpCodebar
    local lSnd        := .f.
-   local cFileName
+   local cFileName   := "Art" + StrZero( ::nGetNumberToSend(), 6 )
 
    if ::oSender:lServer
-      cFileName      := "Art" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+      cFileName      += ".All"
    else
-      cFileName      := "Art" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+      cFileName      += "." + RetSufEmp()
    end if
 
-   If !OpenFiles( .f. )
-      Return Nil
-   End If
+   if !OpenFiles( .f. )
+      return nil
+   end if
 
    ::oSender:SetText( 'Seleccionando artículos' )
 
@@ -12938,7 +12938,7 @@ Method CreateData()
 
    if lSnd
 
-      ::oSender:SetText( "Comprimiendo artículos" )
+      ::oSender:SetText( "Comprimiendo artículos "  + cFileName )
 
       if ::oSender:lZipData( cFileName )
          ::oSender:SetText( "Ficheros comprimidos" )
@@ -13169,7 +13169,7 @@ Method Process()
 
             while !( tmpArtDiv )->( eof() )
 
-               if ( dbfArtVta )->( dbSeek( ( tmpArtDiv )->CCODART ) )
+               if ( dbfArtVta )->( dbSeek( ( tmpArtDiv )->cCodArt + ( tmpArtDiv )->CCODPR1 + ( tmpArtDiv )->CCODPR2 + ( tmpArtDiv )->CVALPR1 + ( tmpArtDiv )->CVALPR2 ) )
                   if !::oSender:lServer
                      dbPass( tmpArtDiv, dbfArtVta )
                   end if
