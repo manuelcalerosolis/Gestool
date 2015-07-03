@@ -113,7 +113,7 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _CCTABNC                  98
 #define _LPRODUC                  99
 #define _NDTOTARIFA              100
-
+#define _MFIRMA                  101
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -2360,28 +2360,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Prop. 1"
-         :bEditValue          := {|| ( dbfTmpLin )->cValPr1 }
+         :bEditValue          := {|| alltrim( ( dbfTmpLin )->cValPr1 ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 1"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1 )}
+         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cValPr1, D():PropiedadesLineas( nView ) ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Prop. 2"
-         :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cValPr2 ) }
+         :bEditValue          := {|| alltrim( ( dbfTmpLin )->cValPr2 ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Valor prop. 2"
-         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr2 ) }
+         :bEditValue          := {|| retValProp( ( dbfTmpLin )->cCodPr2 + ( dbfTmpLin )->cValPr2, D():PropiedadesLineas( nView ) ) }
          :nWidth              := 40
          :lHide               := .t.
       end with
@@ -4087,6 +4087,11 @@ Static Function EdtRecMenu( aTmp, oDlg )
                MESSAGE  "Informe del documento" ;
                RESOURCE "Info16";
                ACTION   ( TTrazaDocumento():Activate( PED_CLI, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) );
+
+            MENUITEM    "&9. Firmar documento";
+               MESSAGE  "Firmar documento" ;
+               RESOURCE "User1_16" ;
+               ACTION   ( aTmp[ _MFIRMA ] := signatureToMemo() ) 
 
          ENDMENU
 
@@ -8334,14 +8339,16 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
    oFr:AddVariable(     "Pedidos",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
-   oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo",                "CallHbFunc('cDesPedCli')"  )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesPedCliLeng')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Total unidades artículo",             "CallHbFunc('nTotNPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Total línea de pedido",               "CallHbFunc('nTotLPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Total peso por línea",                "CallHbFunc('nPesLPedCli')" )
-   oFr:AddVariable(     "Lineas de Pedidos",   "Total final línea del pedido",        "CallHbFunc('nTotFPedCli')" )
-
+   oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo",                       "CallHbFunc('cDesPedCli')"  )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Detalle del artículo otro lenguaje",         "CallHbFunc('cDesPedCliLeng')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Total unidades artículo",                    "CallHbFunc('nTotNPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Precio unitario del artículo",               "CallHbFunc('nTotUPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Total línea de pedido",                      "CallHbFunc('nTotLPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Total peso por línea",                       "CallHbFunc('nPesLPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Total final línea del pedido",               "CallHbFunc('nTotFPedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Valor primera propiedad línea del pedido",   "CallHbFunc('cValPrp1PedCli')" )
+   oFr:AddVariable(     "Lineas de Pedidos",   "Valor segunda propiedad línea del pedido",   "CallHbFunc('cValPrp2PedCli')" )
+   
 Return nil
 
 //---------------------------------------------------------------------------//
@@ -15434,7 +15441,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cCtaBnc",  "C",  10,  0, "Cuenta bancaria del cliente",                             "CuentaBancaria",          "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "lProduc",  "L",   1,  0, "Lógico para incluir en producción" ,                      "IncluirEnProduccion",     "", "( cDbf )", {|| .t. } } )
    aAdd( aItmPedCli, { "nDtoTarifa","N",  6,  2, "Descuentos de tarifa", 			                           "DescuentoTarifa", 	      "", "( cDbf )", nil } )
-
+   aAdd( aItmPedCli, { "mFirma",   "M",  10,  2, "Firma",                                                   "Firma",                   "", "( cDbf )", nil } )
 
 return ( aItmPedCli )
 
@@ -15636,8 +15643,18 @@ return ( aPedCliPgo )
 
 //---------------------------------------------------------------------------//
 
+Function cValPrp1PedCli( uDbf )
+
+Return ( retValProp( ( D():PedidosClientesLineas( nView ) )->cCodPr1 + ( D():PedidosClientesLineas( nView ) )->cValPr1, D():PropiedadesLineas( nView ) ) )
+
+//---------------------------------------------------------------------------//
+
+Function cValPrp2PedCli( uDbf )
+
+Return ( retValProp( ( D():PedidosClientesLineas( nView ) )->cCodPr2 + ( D():PedidosClientesLineas( nView ) )->cValPr2, D():PropiedadesLineas( nView ) ) )
+
 //
-// Numero de unidades por linea
+// Numero de unidades por linea------------------------------------------------
 //
 
 function nTotNPedCli( uDbf )

@@ -3497,3 +3497,106 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+function CaptureSignature( cFile )
+
+   local oDlg
+   local oSig
+   local lPaint      := .f.
+   local hDC
+   local lReset      := .f.
+   local oBrush
+   local nPenWidth   := 4
+   local oPenSig
+   local nTop        := 2
+   local nBottom     := 0
+   local aCoord
+   local nColor      := CLR_WHITE
+
+   oBrush            := TBrush():New( , nColor )
+
+   DEFINE DIALOG oDlg TITLE "Firma" PIXEL RESOURCE "DLG_SIGNATURE"
+
+   DEFINE PEN oPenSig WIDTH nPenWidth COLOR CLR_BLACK
+
+   REDEFINE SAY oSig ;
+      ID       200 ;
+      PROMPT   "" ;
+      OF       oDlg
+      
+      oSig:nClrPane  := nRgb( 255,255,255 )
+      oSig:oBrush    := oBrush
+
+   REDEFINE BUTTON ;
+      ID       100 ;
+      OF       oDlg ;
+      UPDATE;
+      ACTION   ( oSig:SaveToBmp( cFile ), oDlg:End() )
+
+   REDEFINE BUTTON ;
+      ID       101 ;
+      OF       oDlg ;
+      ACTION   ( oDlg:End() )
+
+   REDEFINE BUTTON ;
+      ID       102 ;
+      OF       oDlg ;
+      ACTION   (  lPaint := .f., ;
+                  fillRect( hDC, GetClientRect( oSig:hWnd ), oBrush:hBrush ), ;
+                  oSig:refresh( .t. ) )
+
+   oSig:lWantClick := .t.
+   // Fixed row, col to y, x conversion, x/y designation was reversed
+
+   oSig:bLButtonUp := { | y, x, z | DoDraw( hDC, x, y, lPaint := .f.,, oPenSig ) }
+   // Added limits to Top and Bottom in case users draw off canvas
+   
+   oSig:bMMoved    := { | y, x, z | ( if( y >= nBottom .or. y <= nTop , lReset := .t., lReset := .f. ), ;
+                                          DoDraw( hDC, x, y , lPaint, lReset, oPenSig ) ) }
+   oSig:bLClicked  := { | y, x, z | DoDraw( hDC, x, y, lPaint := .t., .t., oPenSig  ) }
+   
+   // If button released when not on Signature area
+   oDlg:bLButtonUp := { || lPaint := .f. }
+
+   ACTIVATE DIALOG oDlg CENTER ;
+      ON INIT  (  aCoord         := GetCoors( oSig:hWnd ), ;
+                  nBottom        := aCoord[3] - aCoord[1] - 2, ;
+                  hDC            := GetDC( oSig:hWnd ),;
+                  oSig:nClrPane  := nColor ) ;
+      VALID ( releaseDC( oSig:hWnd, hDC ), .t. )
+
+   RELEASE PEN oPenSig
+
+return nil
+
+static function DoDraw( hDc, x, y, lPaint, lReset, oPen )
+   
+   if ! lPaint .or. ( lReset != nil .and. lReset )
+      MoveTo( hDC, x, y )
+   else
+      LineTo( hDc, x, y, oPen:hPen )
+   endif
+
+   sysRefresh()
+
+return nil
+
+function signatureToMemo()
+
+   local hBmp
+   local cMemo
+   local cFile    := cPatTmp() + "signature.bmp"  
+
+   captureSignature( cFile )
+
+   if file( cFile ) 
+      hBmp        := readBitMap( 0, cFile )
+      if !empty( hBmp )
+         cMemo    := bmpToStr( hBmp )
+      end if 
+
+      deleteObject( hBmp )
+   else 
+      msgStop( "Error al guardar la firma.")
+   end if 
+
+return ( cMemo )

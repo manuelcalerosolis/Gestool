@@ -6109,3 +6109,4 @@ static function DoDraw( hDc, x, y, lPaint )
    endIf 
  
 Return nil 
+
