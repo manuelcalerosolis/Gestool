@@ -3545,16 +3545,19 @@ function CaptureSignature( cFile )
                   oSig:refresh( .t. ) )
 
    oSig:lWantClick := .t.
+   
    // Fixed row, col to y, x conversion, x/y designation was reversed
 
    oSig:bLButtonUp := { | y, x, z | DoDraw( hDC, x, y, lPaint := .f.,, oPenSig ) }
+   
    // Added limits to Top and Bottom in case users draw off canvas
    
    oSig:bMMoved    := { | y, x, z | ( if( y >= nBottom .or. y <= nTop , lReset := .t., lReset := .f. ), ;
                                           DoDraw( hDC, x, y , lPaint, lReset, oPenSig ) ) }
    oSig:bLClicked  := { | y, x, z | DoDraw( hDC, x, y, lPaint := .t., .t., oPenSig  ) }
    
-   // If button released when not on Signature area
+   // if button released when not on Signature area
+   
    oDlg:bLButtonUp := { || lPaint := .f. }
 
    ACTIVATE DIALOG oDlg CENTER ;
@@ -3580,8 +3583,9 @@ static function DoDraw( hDc, x, y, lPaint, lReset, oPen )
 
 return nil
 
-function signatureToMemo()
+function signatureToMemo( )
 
+   local hBmp
    local hBmp
    local cMemo
    local cFile    := cPatTmp() + "signature.bmp"  

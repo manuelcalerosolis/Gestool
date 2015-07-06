@@ -4090,8 +4090,10 @@ Static Function EdtRecMenu( aTmp, oDlg )
 
             MENUITEM    "&9. Firmar documento";
                MESSAGE  "Firmar documento" ;
-               RESOURCE "User1_16" ;
-               ACTION   ( aTmp[ _MFIRMA ] := signatureToMemo() ) 
+               RESOURCE "Graphics-tablet_16" ;
+               ACTION   ( if( empty( aTmp[ _MFIRMA ] ) .or.  msgNoYes( "El documento ya esta firmado, ¿Desea voler a firmarlo?" ),;
+                              aTmp[ _MFIRMA ] := signatureToMemo(),;
+                              , ) ) 
 
          ENDMENU
 
