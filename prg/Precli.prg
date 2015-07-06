@@ -94,6 +94,10 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _NTOTPRE                  79
 #define _LOPERPV                  80
 #define _NDTOTARIFA               81  
+#define _CCODWEB                  82
+#define _LWEB                     83
+#define _LINTERNET                84
+#define _MFIRMA                   85
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -3241,6 +3245,13 @@ Static Function EdtRecMenu( aTmp, oDlg )
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( PRE_CLI, aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ] ) )
+
+            MENUITEM    "&7. Firmar documento";
+               MESSAGE  "Firmar documento" ;
+               RESOURCE "Graphics-tablet_16" ;
+               ACTION   ( if( empty( aTmp[ _MFIRMA ] ) .or.  msgNoYes( "El documento ya esta firmado, ¿Desea voler a firmarlo?" ),;
+                              aTmp[ _MFIRMA ] := signatureToMemo(),;
+                              ) ) 
 
          ENDMENU
 
@@ -10367,10 +10378,10 @@ function aItmPreCli()
    aAdd( aItmPreCli, { "nTotPre",   "N", 16,  6, "Total presupuesto" ,                                "TotalDocumento",                "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "OperarPuntoVerde",              "", "( cDbf )", nil } )
    aAdd( aItmPreCli, { "nDtoTarifa","N",  6,  2, "Descuento de tarifa de cliente",                    "DescuentoTarifa",               "", "( cDbf )", nil } )
-   aAdd( aItmPreCli, { "cCodWeb",   "N",  11,  0, "Codigo del presupuesto en la web" ,                "CodigoWeb",                     "", "( cDbf )", nil } )
-   aAdd( aItmPreCli, { "lWeb",      "L",   1,  0, "Lógico de recibido por web" ,                      "",                              "", "( cDbf )", nil } )
-   aAdd( aItmPreCli, { "lInternet", "L",   1,  0, "Pedido desde internet" ,                           "",                              "", "( cDbf )", nil } )
-   
+   aAdd( aItmPreCli, { "cCodWeb",   "N", 11,  0, "Codigo del presupuesto en la web" ,                 "CodigoWeb",                     "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "lWeb",      "L",  1,  0, "Lógico de recibido por web" ,                       "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "lInternet", "L",  1,  0, "Pedido desde internet" ,                            "",                              "", "( cDbf )", nil } )
+   aAdd( aItmPreCli, { "mFirma",    "M", 10,  2, "Firma",                                             "Firma",                         "", "( cDbf )", nil } )
 
 return ( aItmPreCli )
 

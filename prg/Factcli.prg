@@ -147,6 +147,7 @@
 #define _TMAIL             126
 #define _TFECFAC           127
 #define _CCENTROCOSTE	   128
+#define _MFIRMA            129
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -10568,6 +10569,13 @@ Static Function EdtRecMenu( aTmp, oDlg )
                MESSAGE  "Informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( FAC_CLI, aTmp[ _CSERIE ] + str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] ) );
+
+            MENUITEM    "&11. Firmar documento";
+               MESSAGE  "Firmar documento" ;
+               RESOURCE "Graphics-tablet_16" ;
+               ACTION   ( if( empty( aTmp[ _MFIRMA ] ) .or.  msgNoYes( "El documento ya esta firmado, ¿Desea voler a firmarlo?" ),;
+                              aTmp[ _MFIRMA ] := signatureToMemo(),;
+                              ) ) 
 
          ENDMENU
 
@@ -21157,6 +21165,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"tMail"       ,"C", 6,   0, "Hora mail enviado" ,                                        "HoraMailEnviado",             "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"tFecFac"     ,"C", 6,   0, "Hora de la factura" ,                                       "HoraFactura",                 "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cCtrCoste"   ,"C", 9,   0, "Código del centro de coste" ,                               "CentroCoste",                 "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, { "mFirma"     ,"M", 10,  0, "Firma" ,                                                    "Firma",                       "", "( cDbf )", nil } )                  
 
 RETURN ( aItmFacCli )
 

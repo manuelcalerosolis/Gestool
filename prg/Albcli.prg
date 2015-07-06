@@ -123,7 +123,9 @@ Definición de la base de datos de albaranes a CLIENTES-------------------------
 #define _NDTOTARIFA               102 
 #define _NFACTURADO               103
 #define _TFECALB                  104
-#define _CCENTROCOSTE             105   
+#define _CCENTROCOSTE             105  
+#define _MFIRMA                   106
+
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -4213,6 +4215,13 @@ Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
                MESSAGE  "Informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( ALB_CLI, aTmp[ _CSERALB ] + Str( aTmp[ _NNUMALB ] ) + aTmp[ _CSUFALB ] ) );
+
+            MENUITEM    "&9. Firmar documento";
+               MESSAGE  "Firmar documento" ;
+               RESOURCE "Graphics-tablet_16" ;
+               ACTION   ( if( empty( aTmp[ _MFIRMA ] ) .or.  msgNoYes( "El documento ya esta firmado, ¿Desea voler a firmarlo?" ),;
+                              aTmp[ _MFIRMA ] := signatureToMemo(),;
+                              ) ) 
 
          ENDMENU
 
@@ -17134,6 +17143,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "nFacturado","N",  1, 0, "Estado del albaran" ,                                      "Estado",                        "", "( cDbf )", {|| 1 } } )
    aAdd( aItmAlbCli, { "tFecAlb",   "C",  6, 0, "Hora del albarán" ,                                        "Hora",                          "", "( cDbf )", {|| nil } } )
    aAdd( aItmAlbCli, { "cCtrCoste", "C",  9, 0, "Código del centro de coste" ,                              "CentroCoste",                   "", "( cDbf )", nil } )
+   aAdd( aItmAlbCli, { "mFirma",    "M", 10, 0, "Firma" ,                                                   "Firma",                         "", "( cDbf )", nil } )                  
 
 Return ( aItmAlbCli )
 

@@ -3497,7 +3497,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-function CaptureSignature( cFile )
+Function CaptureSignature( cFile )
 
    local oDlg
    local oSig
@@ -3530,7 +3530,7 @@ function CaptureSignature( cFile )
       ID       100 ;
       OF       oDlg ;
       UPDATE;
-      ACTION   ( oSig:SaveToBmp( cFile ), oDlg:End() )
+      ACTION   ( oSig:SaveToBmp( cFile ), oDlg:End( IDOK ) )
 
    REDEFINE BUTTON ;
       ID       101 ;
@@ -3569,9 +3569,9 @@ function CaptureSignature( cFile )
 
    RELEASE PEN oPenSig
 
-return nil
+Return ( oDlg:nResult == IDOK )
 
-static function DoDraw( hDc, x, y, lPaint, lReset, oPen )
+Static Function DoDraw( hDc, x, y, lPaint, lReset, oPen )
    
    if ! lPaint .or. ( lReset != nil .and. lReset )
       MoveTo( hDC, x, y )
@@ -3581,26 +3581,27 @@ static function DoDraw( hDc, x, y, lPaint, lReset, oPen )
 
    sysRefresh()
 
-return nil
+Return nil
 
-function signatureToMemo( )
+Function signatureToMemo( )
 
-   local hBmp
    local hBmp
    local cMemo
    local cFile    := cPatTmp() + "signature.bmp"  
 
-   captureSignature( cFile )
+   if captureSignature( cFile ) .and. file( cFile ) 
 
-   if file( cFile ) 
       hBmp        := readBitMap( 0, cFile )
       if !empty( hBmp )
          cMemo    := bmpToStr( hBmp )
       end if 
 
       deleteObject( hBmp )
+   
    else 
+   
       msgStop( "Error al guardar la firma.")
+   
    end if 
 
-return ( cMemo )
+Return ( cMemo )

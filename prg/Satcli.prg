@@ -100,6 +100,7 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _CHORINI                  85
 #define _CHORFIN                  86
 #define _CCODEST                  87
+#define _MFIRMA                   88
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -3176,6 +3177,13 @@ Static Function EdtRecMenu( aTmp, oDlg )
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16" ;
                ACTION   ( TTrazaDocumento():Activate( SAT_CLI, aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] ) )
+
+            MENUITEM    "&7. Firmar documento";
+               MESSAGE  "Firmar documento" ;
+               RESOURCE "Graphics-tablet_16" ;
+               ACTION   ( if( empty( aTmp[ _MFIRMA ] ) .or.  msgNoYes( "El documento ya esta firmado, ¿Desea voler a firmarlo?" ),;
+                              aTmp[ _MFIRMA ] := signatureToMemo(),;
+                              ) ) 
 
          ENDMENU
 
@@ -10247,6 +10255,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "cHorIni",   "C",  5,  0, "Hora de inicio" ,                             "HoraInicio",              "", "( cDbf )", nil } )                  
    aAdd( aItmSatCli, { "cHorFin",   "C",  5,  0, "Hora de fin" ,                                "HoraFin",                 "", "( cDbf )", nil } )                  
    aAdd( aItmSatCli, { "cCodEst",   "C",  3,  0, "Código estado" ,                              "Estado",                  "", "( cDbf )", nil } )                  
+   aAdd( aItmSatCli, { "mFirma",    "M", 10,  0, "Firma" ,                                      "Firma",                   "", "( cDbf )", nil } )                  
 
 return ( aItmSatCli )
 
