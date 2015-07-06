@@ -13858,8 +13858,8 @@ function aplicaEntidadCliente( cCodCli, nView, dbfTmpEntidades )
 
          ( dbfTmpEntidades )->( dbAppend() )
 
-         ( dbfTmpEntidades )->CodEntidad    := hget( hEntidad, "CodigoEntidad")
-         ( dbfTmpEntidades )->RolEntidad    := hget( hEntidad, "RolEntidad")
+         ( dbfTmpEntidades )->cCodEnt     := hget( hEntidad, "CodigoEntidad")
+         ( dbfTmpEntidades )->cRol        := hget( hEntidad, "RolEntidad")
 
          ( dbfTmpEntidades )->( dbUnlock() )
 

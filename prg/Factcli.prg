@@ -4398,13 +4398,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwEntidades:AddCol() )
          :cHeader          := "Entidades"
-         :bEditValue       := {|| ( dbfTmpEntidades )->CodEntidad }
+         :bEditValue       := {|| ( dbfTmpEntidades )->cCodEnt }
          :nWidth           := 300
       end with
 
       with object ( oBrwEntidades:AddCol() )
          :cHeader          := "Rol"
-         :bEditValue       := {|| ( dbfTmpEntidades )->RolEntidad }
+         :bEditValue       := {|| ( dbfTmpEntidades )->cRol }
          :nWidth           := 300
       end with
 
@@ -5736,7 +5736,7 @@ Static Function EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, 
    DEFINE DIALOG oDlg RESOURCE "Facturas_Entidades" TITLE LblTitle( nMode ) + "entidades"
 
       REDEFINE GET oCodigo ;
-         VAR      aTmp[ ( dbfTmpEntidades )->( FieldPos( "CodEntidad" ) ) ] ;
+         VAR      aTmp[ ( dbfTmpEntidades )->( FieldPos( "cCodEnt" ) ) ] ;
          ID       100 ;
          IDTEXT   101 ;
          PICTURE  "@!" ;
@@ -5746,7 +5746,7 @@ Static Function EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, 
       oCodigo:bHelp     := {|| oEntidades:Buscar( oCodigo ) }
       oCodigo:bValid    := {|| iif( !empty( oCodigo:varGet() ), oEntidades:Existe( oCodigo, oCodigo:oHelpText, "cDesEnt" ), .t. ) }
 
-      REDEFINE COMBOBOX aTmp[ ( dbfTmpEntidades )->( FieldPos( "RolEntidad" ) ) ] ;
+      REDEFINE COMBOBOX aTmp[ ( dbfTmpEntidades )->( FieldPos( "cRol" ) ) ] ;
          ITEMS    aRolesValues();
          ID       110 ;
          OF       oDlg
@@ -5754,7 +5754,7 @@ Static Function EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, 
       REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;
-         ACTION   ( endEdtEntidades( dbfTmpEntidades, aTmp, oBrw, nMode, oDlg, aTmp[ ( dbfTmpEntidades )->( FieldPos( "CodEntidad" ) ) ], aTmp[ ( dbfTmpEntidades )->( FieldPos( "RolEntidad" ) ) ] ) )
+         ACTION   ( endEdtEntidades( dbfTmpEntidades, aTmp, oBrw, nMode, oDlg, aTmp[ ( dbfTmpEntidades )->( FieldPos( "cCodEnt" ) ) ], aTmp[ ( dbfTmpEntidades )->( FieldPos( "cRol" ) ) ] ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -5763,7 +5763,7 @@ Static Function EdtEntidades( aTmp, aGet, dbfTmpEntidades, oBrw, bWhen, bValid, 
          ACTION   ( oDlg:end() )
 
    
-      oDlg:AddFastKey( VK_F5, {|| endEdtEntidades( dbfTmpEntidades, aTmp, oBrw, nMode, oDlg, aTmp[ ( dbfTmpEntidades )->( FieldPos( "CodEntidad" ) ) ], aTmp[ ( dbfTmpEntidades )->( FieldPos( "RolEntidad" ) ) ] ) } ) 
+      oDlg:AddFastKey( VK_F5, {|| endEdtEntidades( dbfTmpEntidades, aTmp, oBrw, nMode, oDlg, aTmp[ ( dbfTmpEntidades )->( FieldPos( "cCodEnt" ) ) ], aTmp[ ( dbfTmpEntidades )->( FieldPos( "cRol" ) ) ] ) } ) 
 
 
    oDlg:bStart    := {|| oCodigo:lValid() }
@@ -12203,7 +12203,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
       ( dbfTmpEntidades )->( OrdCreate( cTmpEnt, "nRecno", "str( recno() )", {|| str( recno() ) } ) )
 
       ( dbfTmpEntidades )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
-      ( dbfTmpEntidades )->( OrdCreate( cTmpEnt, "cRolEnt", "CodEntidad + RolEntidad", {|| Field->CodEntidad + Field->RolEntidad } ) )
+      ( dbfTmpEntidades )->( OrdCreate( cTmpEnt, "cRolEnt", "cCodEnt + cRol", {|| Field->cCodEnt + Field->cRol } ) )
 
       if D():gotoIdFacturasClientesEntidades( cFac, nView )
          
@@ -21184,11 +21184,11 @@ Function aEntidadesFacCli()
 
    local aColFacCli  := {}
 
-   aAdd( aColFacCli,  { "cSerFac",      "C",  1,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "nNumFac",      "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "cSufFac",      "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "CodEntidad",   "C", 60,   0, "Codigo de la Entidad" ,            "",                  "", "( cDbfCol )" } )
-   aAdd( aColFacCli,  { "RolEntidad",   "C", 60,   0, "Rol de la entidad",                "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cSerFac",     "C",  1,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "nNumFac",     "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cSufFac",     "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cCodEnt",     "C", 60,   0, "Codigo de la Entidad" ,            "",                  "", "( cDbfCol )" } )
+   aAdd( aColFacCli,  { "cRol",        "C", 60,   0, "Rol de la entidad",                "",                  "", "( cDbfCol )" } )
 
 Return ( aColFacCli )
 
