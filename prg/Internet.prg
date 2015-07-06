@@ -1459,6 +1459,8 @@ METHOD lFtpSendFiles( aSource, aTarget, cDirectory ) CLASS TSndRecInf
 
    for n := 1 to Len( aSource )
 
+      LogWrite( aSource[ n ] )
+
       if isFalse( ::oFtp:UploadFile( aSource[ n ] ) )
          lRet  := .f.
       end if

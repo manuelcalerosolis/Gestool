@@ -408,8 +408,8 @@ METHOD RunScript( cFichero ) CLASS TScripts
    local oError
    local oBlock
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
       if file( cFichero )
          pHrb        := hb_hrbLoad( cFichero )
@@ -417,11 +417,11 @@ METHOD RunScript( cFichero ) CLASS TScripts
          hb_hrbUnload( pHrb )   
       end if
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
 
-   END SEQUENCE
+   END SEQUENCE*/
 
    ErrorBlock( oBlock )
 

@@ -846,9 +846,9 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          if ( len( uIva ) >= 11 ) .and. ( uIva[ 8 ] != 0 .or. uFieldEmpresa( "lConIva" ) )
 
             if uFieldEmpresa( "lIvaImpEsp")
-               nBaseImponible := uIva[1] + uIva[6]
+               nBaseImponible := uIva[2] + uIva[6]
             else
-               nBaseImponible := uIva[1]
+               nBaseImponible := uIva[2]
             end if
 
             aAdd( aSimula, MkAsiento(  nAsiento, ;                          
