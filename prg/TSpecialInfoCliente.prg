@@ -9,31 +9,33 @@ CLASS TSpecialInfoCliente
 
    DATA cCodigoCliente
    DATA cNombreCliente
+   DATA cCodigoArticulo
 
-   METHOD New( cCodigoCliente, cNombreCliente )
+   METHOD New( cCodigoCliente, cNombreCliente, cCodigoArticulo )
 
    METHOD Resource()
 
-   METHOD isSelectSATFromCliente()    INLINE ( TDataCenter():selectSATFromClient( ::cCodigoCliente ) )
+   METHOD isSelectSATFromCliente()    INLINE ( TDataCenter():selectSATFromClient( ::cCodigoCliente, , ::cCodigoArticulo ) )
 
-   METHOD Run( cCodigoCliente, cNombreCliente )
+   METHOD Run( cCodigoCliente, cNombreCliente, cCodigoArticulo )
 
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cCodigoCliente, cNombreCliente ) CLASS TSpecialInfoCliente
+METHOD New( cCodigoCliente, cNombreCliente, cCodigoArticulo ) CLASS TSpecialInfoCliente
 
    ::cCodigoCliente    := cCodigoCliente
    ::cNombreCliente    := cNombreCliente
+   ::cCodigoArticulo   := cCodigoArticulo
 
 Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Run( cCodigoCliente, cNombreCliente )
+METHOD Run( cCodigoCliente, cNombreCliente, cCodigoArticulo )
 
-   ::New( cCodigoCliente, cNombreCliente )
+   ::New( cCodigoCliente, cNombreCliente, cCodigoArticulo )
 
    if ::isSelectSATFromCliente()
       ::Resource()

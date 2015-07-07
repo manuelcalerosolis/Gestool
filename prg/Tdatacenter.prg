@@ -4971,7 +4971,7 @@ RETURN ( lOk )
 
 //---------------------------------------------------------------------------//
 
-METHOD selectSATFromClient( cCodigoCliente, cAnno )
+METHOD selectSATFromClient( cCodigoCliente, cAnno, cCodigoArticulo )
 
    local cStm
 
@@ -4998,9 +4998,9 @@ METHOD selectSATFromClient( cCodigoCliente, cAnno )
    cStm           += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabeceraSat.cCodOpe = operario.cCodTra "
    cStm           += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on cabeceraSat.cCodEst = estadoSat.cCodigo "
    cStm           += "LEFT JOIN " + cPatEmp() + "Articulo articulos on lineasSat.cRef = articulos.Codigo "
-   
+
    if empty( cAnno )
-      cStm        += "WHERE lineasSat.cCodCli = '" + alltrim( cCodigoCliente ) + "' "
+      cStm        += "WHERE lineasSat.cCodCli = '" + alltrim( cCodigoCliente ) + "' AND lineasSat.cRef = '" + cCodigoArticulo + "' "
    else
       cStm        += "WHERE lineasSat.cCodCli = '" + alltrim( cCodigoCliente ) + "' AND YEAR( lineasSat.dFecSat ) = " + cAnno + " "
    end if 
@@ -5097,7 +5097,7 @@ METHOD selectSATFromArticulo( cCodigoArticulo )
 
    cStm           += "WHERE lineasSat.cRef = '" + alltrim( cCodigoArticulo ) + "' "
 
-   cStm           += "ORDER BY lineasSat.cRef, lineasSat.dFecSat DESC"
+   cStm           += "ORDER BY lineasSat.cRef, lineasSat.dFecSat ASC"
 
 RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 

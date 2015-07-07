@@ -37,7 +37,7 @@ CLASS TSpecialSearchArticulo
 
    DATA oEstadoMaquina
    DATA aEstadoMaquina        INIT { "Disponibles", "No disponibles", "Todas" }
-   DATA cEstadoMaquina        INIT "Todas"
+   DATA cEstadoMaquina        INIT "No disponibles"
 
    DATA oBrwArticulo
 
@@ -278,6 +278,13 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :nWidth              := 120
       end with
 
+      with object ( ::oBrwArticulo:AddCol() ) 
+         :cHeader             := "Contador"
+         :bEditValue          := {|| SelectArticulo->nCntAct }
+         :nWidth              := 120
+         :lHide               := .t.
+      end with
+
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "Tipo artículo"
          :bEditValue          := {|| SelectArticulo->cNomTip }
@@ -356,7 +363,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Informe cliente"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| TSpecialInfoCliente():Run( SelectArticulo->cCodCli, SelectArticulo->Titulo ) }
+         :bEditBlock          := {|| TSpecialInfoCliente():Run( SelectArticulo->cCodCli, SelectArticulo->Titulo, SelectArticulo->Codigo ) }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1
@@ -387,6 +394,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
 
       ::oDlg:AddFastKey( VK_F2, {|| AppArticulo(), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
       ::oDlg:AddFastKey( VK_F3, {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
+      ::oDlg:AddFastKey( VK_F4, {|| ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
       ::oDlg:AddFastKey( VK_F5, {|| ::SearchArticulos() } )   
 
       ::oDlg:bStart     := {|| ::oBrwArticulo:LoadData(), ::lRecargaFecha() }
@@ -441,17 +449,18 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "lineasSat.nNumSat, "
    cSentencia        +=        "lineasSat.cSufSat, "
    cSentencia        +=        "lineasSat.cCodCli, "
+   cSentencia        +=        "lineasSat.nCntAct, "
    cSentencia        +=        "clientes.Titulo, "
    cSentencia        +=        "cabecerasat.cCodOpe, "
    cSentencia        +=        "operario.cNomTra "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
-   cSentencia        += "LEFT JOIN ( SELECT cRef, Max(cCodCli) AS cCodCli, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
+   cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, Max(cCodCli) AS cCodCli, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "Client clientes on clientes.cod = lineasSat.cCodCli "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat=cabecerasat.cSerSat AND lineasSat.nNumSat=cabecerasat.nNumSat AND lineasSat.cSufSat=cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
-
+   cSentencia        += "WHERE EstadoSat.nDisp=2 "
    cSentencia        += "ORDER BY articulos.Codigo"
 
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectArticulo" )
@@ -480,13 +489,14 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "lineasSat.nNumSat, "
    cSentencia        +=        "lineasSat.cSufSat, "
    cSentencia        +=        "lineasSat.cCodCli, "
+   cSentencia        +=        "lineasSat.nCntAct, "
    cSentencia        +=        "clientes.Titulo, "
    cSentencia        +=        "cabecerasat.cCodOpe, "
    cSentencia        +=        "operario.cNomTra "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
-   cSentencia        += "LEFT JOIN ( SELECT cRef, Max(cCodCli) AS cCodCli, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
+   cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, Max(cCodCli) AS cCodCli, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "Client clientes on clientes.cod = lineasSat.cCodCli "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat=cabecerasat.cSerSat AND lineasSat.nNumSat=cabecerasat.nNumSat AND lineasSat.cSufSat=cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "

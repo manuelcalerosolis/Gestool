@@ -16,13 +16,13 @@ static cText   := ""
 
 static hRoles  := { "Fiscal" => "01",;
                     "Receptor" => "02",;
-                    "Pagador" => "03",;
+                    "Tercero" => "03",;
                     "Comprador" => "04",;
                     "Cobrador" => "05",;
                     "Vendedor" => "06",;
                     "Receptor del pago" => "07",;
                     "Receptor del cobro" => "08",;
-                    "Emisor" => "09"}
+                    "Emisor" => "09" }
 
 static hPaises := { "Afganistán" => "AFG",;
                     "Albania" => "ALB",;
