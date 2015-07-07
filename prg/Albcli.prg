@@ -4286,10 +4286,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
    local oDlg
    local oFld
    local oBtn
-   local oGet2
-   local cGet2
-   local oGet3
-   local cGet3
    local oTotal
    local nTotal               := 0
    local oSayPr1
@@ -4731,18 +4727,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ _CTIPMOV ] VAR aTmp[ _CTIPMOV ] ;
          WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID    ( cTVta( aGet[ _CTIPMOV ], dbfTVta, oGet2 ) ) ;
+         VALID    ( cTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[ _CTIPMOV ], dbfTVta, oGet2 ) ) ;
+         ON HELP  ( BrwTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
          ID       290 ;
+         IDTEXT   291 ;
+         IDSAY    292 ;
          OF       oFld:aDialogs[1] ;
-         IDSAY    292
-
-      REDEFINE GET oGet2 VAR cGet2 ;
-         ID       291 ;
-         WHEN     ( .F. ) ;
-         COLOR    CLR_GET ;
-         OF       oFld:aDialogs[1]
 
       /*
       Tipo de articulo---------------------------------------------------------
@@ -4750,16 +4741,10 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ _CCODTIP ] VAR aTmp[ _CCODTIP ] ;
          WHEN     ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) ;
-         VALID    ( oTipArt:Existe( aGet[ _CCODTIP ], oGet3 ) ) ;
+         VALID    ( oTipArt:Existe( aGet[ _CCODTIP ], aGet[ _CCODTIP ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( oTipArt:Buscar( aGet[ _CCODTIP ] ) ) ;
          ID       205 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oGet3 VAR cGet3 ;
-         ID       206 ;
-         WHEN     ( .F. ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -4953,7 +4938,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       IDOK ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oStkAct, nStkAct, oTotal, cCodArt, oBtn, oBtnSer )
+         ACTION   SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nStkAct, oTotal, cCodArt, oBtn, oBtnSer )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -4984,7 +4969,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
    // Start --------------------------------------------------------------------
 
-   oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb, oRentLin ),;
+   oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oTotal, aTmpAlb, oRentLin ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ),;
                            aGet[ _CCODPRV ]:lValid() }
@@ -9486,7 +9471,7 @@ RETURN lValid
 Estudiamos la posiblidades que se pueden dar en una linea de detalle
 */
 
-STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb, oRentLin )
+STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oTotal, aTmpAlb, oRentLin )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
 
@@ -9521,15 +9506,9 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
    end if
 
    if !lTipMov()
-
       if !Empty( aGet[ _CTIPMOV ] )
          aGet[ _CTIPMOV ]:hide()
       end if
-
-      if !Empty( oGet2 )
-         oGet2:hide()
-      end if
-
    end if
 
    if aGet[ _NIMPTRN ] != nil
@@ -10814,7 +10793,7 @@ RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oStkAct, nStkAct, oTotal, cCodArt, oBtn, oBtnSer )
+STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nStkAct, oTotal, cCodArt, oBtn, oBtnSer )
 
    local n 
    local i
@@ -10956,7 +10935,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       aCopy( dbBlankRec( dbfTmpLin ), aTmp )
       aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
-      setDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb )
+      setDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oTotal, aTmpAlb )
 
       SysRefresh()
 

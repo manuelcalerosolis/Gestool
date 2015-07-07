@@ -8,12 +8,22 @@ CLASS TTipArt FROM TMant
 
    DATA oClasificacionArticulo
 
-   METHOD Create( cPath ) CONSTRUCTOR
+   DATA  cText              
+   DATA  oSender            
+   DATA  cIniFile       
 
-   METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
+   DATA  nNumberSend                            INIT 0
+   DATA  nNumberRecive                          INIT 0
+
+   DATA  lSelectSend                            INIT .f.
+   DATA  lSelectRecive                          INIT .f.
+
+   METHOD Create( cPath )                       CONSTRUCTOR
+   METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
+   METHOD Initiate( cText, oSender )            CONSTRUCTOR
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
+   MESSAGE OpenService( lExclusive )            METHOD OpenFiles( lExclusive )
 
    METHOD DefineFiles()
 
@@ -43,16 +53,25 @@ CLASS TTipArt FROM TMant
    METHOD ReciveData()
    METHOD Process()
 
+   METHOD nGetNumberToSend()                    INLINE ( GetPvProfInt( "Numero", ::cText, ::nNumberSend, ::cIniFile ) )
+   Method setNumberToSend()                     INLINE ( WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile ) )
+   Method incNumberToSend()                     INLINE ( WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile ) )
+
+   METHOD Save()                                INLINE ( WritePProString( "Envio",     ::cText, cValToChar( ::lSelectSend ), ::cIniFile ),;
+                                                         WritePProString( "Recepcion", ::cText, cValToChar( ::lSelectRecive ), ::cIniFile ) )
+   METHOD Load()                                INLINE ( ::lSelectSend     := ( Upper( GetPvProfString( "Envio",     ::cText, cValToChar( ::lSelectSend ),   ::cIniFile ) ) == ".T." ),;
+                                                         ::lSelectRecive   := ( Upper( GetPvProfString( "Recepcion", ::cText, cValToChar( ::lSelectRecive ), ::cIniFile ) ) == ".T." ) )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
 
 METHOD Create( cPath )
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath        := cPatArt()
 
-   ::cPath           := cPath
-   ::oDbf            := nil
+   ::cPath              := cPath
+   ::oDbf               := nil
 
 RETURN ( Self )
 
@@ -87,25 +106,39 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD Initiate( cText, oSender )
+
+   ::cText              := cText
+   ::oSender            := oSender
+   ::cIniFile           := cPatEmp() + "Empresa.Ini"
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD OpenFiles( lExclusive, cPath )
 
+   local oBlock
+   local oError
    local lOpen          := .t.
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    DEFAULT lExclusive   := .f.
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles( cPath )
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
-   RECOVER
+   RECOVER USING oError
 
-      msgStop( "Imposible abrir las bases de datos de tipos de articulos" )
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de tipos de artículos" )
+      
       ::CloseFiles()
+      
       lOpen             := .f.
 
    END SEQUENCE
@@ -476,11 +509,92 @@ RETURN ( Self )
 
 Method CreateData()
 
+   local lSnd           := .f.
+   local oTipoArt
+   local oTipoArtTmp
+   local cFileName      := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + "." + retSufEmp()
+
+   oTipoArt             := TTipArt():Create( cPatEmp() )
+   oTipoArt:OpenService()
+
+   // Apertura de bases de dataos------------------------------------------------
+
+   oTipoArtTmp          := TTipArt():Create( cPatSnd() )
+   oTipoArtTmp:OpenService( .t. )
+
+   // Traspaso ----------------------------------------------------------------
+
+   ::oSender:SetText( "Enviando tipos de artículos" )
+
+   oTipoArt:oDbf:GoTop()
+   while !oTipoArt:oDbf:eof()
+      
+      if oTipoArt:oDbf:lSelect
+      
+         lSnd           := .t.
+
+         ::oSender:SetText( oTipoArt:oDbf:cCodTip + "; " + oTipoArt:oDbf:cNomTip )
+      
+         dbPass( oTipoArt:oDbf:cAlias, oTipoArtTmp:oDbf:cAlias, .t. )
+
+      end if
+      
+      oTipoArt:oDbf:Skip()
+      
+      SysRefresh()
+   
+   end while
+
+   // Cerrar ficheros----------------------------------------------------------
+
+   oTipoArt:CloseService()
+   oTipoArt:End()
+
+   oTipoArtTmp:CloseService()
+   oTipoArtTmp:End()
+
+   // Comprimir los archivos---------------------------------------------------
+
+   if lSnd
+
+      ::oSender:SetText( "Comprimiendo tipos de artículos" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos en " + cFileName )
+      else
+         ::oSender:SetText( "¡ERROR! al crear fichero comprimido" )
+      end if
+
+   else
+
+      ::oSender:SetText( "No hay tipos de artículos para enviar" )
+
+   end if
+
 Return ( Self )
 
 //----------------------------------------------------------------------------//
 
 Method RestoreData()
+
+   ::cPath     := cPatEmp()
+
+   if ::OpenService()
+
+      while !::oDbf:eof()
+
+         if ::oDbf:lSelect
+            ::oDbf:FieldPutByName( "lSelect", .f. )
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+      ::CloseService()
+
+   end if
+
 
 Return ( Self )
 
@@ -488,22 +602,123 @@ Return ( Self )
 
 Method SendData()
 
+   local cFileName         := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + "." + retSufEmp()
+
+   if file( cPatOut() + cFileName )
+
+      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
+         ::IncNumberToSend()
+         ::oSender:SetText( "Fichero " + lower( cPatOut() + cFileName ) + " enviado" )
+      else
+         ::oSender:SetText( "¡ERROR! fichero " + lower( cPatOut() + cFileName ) + " no enviado" )
+      end if
+
+   end if
+
 Return ( Self )
 
 //----------------------------------------------------------------------------//
 
 Method ReciveData()
 
-Return Self
+   local cDelegacion
+   local aDelegaciones  := aRetDlgEmp()
+
+   /*
+   Recibirlo de internet
+   */
+
+   ::oSender:SetText( "Recibiendo tipos de artículos" )
+
+   for each cDelegacion in aDelegaciones
+      ::oSender:GetFiles( "TipArt*." + cDelegacion, cPatIn() )
+   next
+
+   ::oSender:SetText( "Tipos de artículos recibidas" )
+
+Return ( Self )
 
 //----------------------------------------------------------------------------//
 
 Method Process()
 
-Return Self
+   local m
+   local oBlock
+   local oError
+   local oTipArt
+   local oTipArtTmp
+   local aFiles      := Directory( cPatIn() )
+
+   for m := 1 to len( aFiles )
+
+      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+         // Descomprimimos el fichero------------------------------------------
+
+         if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+            // Ficheros temporales---------------------------------------------
+
+            if file( cPatSnd() + "TipArt.Dbf" )
+
+               oTipArtTmp   := TTipArt():New( cPatSnd() )
+               oTipArtTmp:OpenService( .f. )
+
+               oTipArt      := TTipArt():New( cPatEmp() )
+               oTipArt:OpenService()
+
+               // Trasbase de tipos de articulos-------------------------------
+
+               oTipArtTmp:oDbf:GoTop()
+               while !oTipArtTmp:oDbf:eof()
+
+                  if oTipArt:oDbf:Seek( oTipArtTmp:oDbf:cCodTip )
+                     dbPass( oTipArtTmp:oDbf:cAlias, oTipArt:oDbf:cAlias, .f. )
+                     ::oSender:SetText( "Reemplazado : " + oTipArt:oDbf:cCodTip + "; " + oTipArt:oDbf:cNomTip )
+                  else
+                     dbPass( oTipArtTmp:oDbf:cAlias, oTipArt:oDbf:cAlias, .t. )
+                     ::oSender:SetText( "Añadido : " + oTipArt:oDbf:cCodTip + "; " + oTipArt:oDbf:cNomTip )
+                  end if
+
+                  oTipArtTmp:oDbf:Skip()
+
+                  SysRefresh()
+
+               end while
+
+               /*
+               Finalizando--------------------------------------------------------------
+               */
+
+               oTipArt:CloseService()
+               oTipArt:End()
+
+               oTipArtTmp:CloseService()
+               oTipArtTmp:End()
+
+            end if
+
+         end if 
+
+         ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+      RECOVER USING oError
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return ( Self )
 
 //----------------------------------------------------------------------------//
-
 
 CLASS ClasificacionTipoArticulo
    
@@ -528,6 +743,8 @@ CLASS ClasificacionTipoArticulo
 
 END CLASS
 
+//---------------------------------------------------------------------------//
+
 METHOD New( nId, oDialog ) CLASS ClasificacionTipoArticulo
 
    REDEFINE COMBOBOX ::oClasificacionArticulo ;
@@ -538,9 +755,11 @@ METHOD New( nId, oDialog ) CLASS ClasificacionTipoArticulo
 
    ::oClasificacionArticulo:bChange := {|| ::Change( ::oClasificacionArticulo ) }
    
-RETURN ( Self )
+RETURN ( Self ) 
 
-METHOD GetNombre( nTipArt )
+//---------------------------------------------------------------------------//
+
+METHOD GetNombre( nTipArt ) CLASS ClasificacionTipoArticulo
 
    local cNombre     := ""
 
@@ -552,7 +771,7 @@ RETURN ( cNombre )
 
 //---------------------------------------------------------------------------//
 
-Function GetNombreClasificacionTipoArticulo( nTipoArticulo )
+Function GetNombreClasificacionTipoArticulo( nTipoArticulo ) 
 
 Return ( ClasificacionTipoArticulo():GetNombre( nTipoArticulo ) )
 

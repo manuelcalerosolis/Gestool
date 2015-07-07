@@ -14716,7 +14716,6 @@ FUNCTION nTotUFacRec( uTmpLin, nDec, nVdv )
 
       case IsHash( uTmpLin )
          nCalculo    := hGet( uTmpLin, "PrecioVenta" )
-
    end case 
 
    nCalculo          := nCalculo / nVdv
@@ -14794,7 +14793,7 @@ FUNCTION sTotFacRec( cFactura, cFacRecT, dbfFacRecL, dbfIva, dbfDiv, dbfFacCliP,
 
    sTotal:aTotalIva                       := aTotIva
 
-   nCobro 								  := nPagFacRec( cFactura, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
+   nCobro                                 := nPagFacRec( cFactura, cFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
 
    sTotal:nTotalCobrado                   := nCobro
 

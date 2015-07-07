@@ -173,6 +173,7 @@ METHOD New( oMenuItem, oWnd )
 
    aAdd( ::aSend, TArticuloSenderReciver():New(             "Artículos",               Self ) )
    aAdd( ::aSend, TFamiliaSenderReciver():New(              "Familias",                Self ) )
+   aAdd( ::aSend, TTipArt():Initiate(                       "Tipos de artículos",      Self ) )
    aAdd( ::aSend, TClienteSenderReciver():New(              "Clientes",                Self ) )
    aAdd( ::aSend, TProveedorSenderReciver():New(            "Proveedor",               Self ) )
    aAdd( ::aSend, TPedidosProveedorSenderReciver():New(     "Pedidos de proveedor",    Self ) )
@@ -900,7 +901,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
       Conexion con el sitio ftp---------------------------------------------------
       */
 
-      ::FtpConexion()
+      ::ftpConexion()
 
       if ::lFtpValido
 
@@ -1571,7 +1572,10 @@ Method lZipData( cFileName ) CLASS TSndRecInf
       SysRefresh()
 
       lZip        := hb_ZipFile( cPatOut() + cFileName, cLastPath( cPatSnd() ) + aName[ 1 ], 9 )
-      if !lZip
+      if lZip
+         ::SetText( "Comprimiendo " + lower( cLastPath( cPatSnd() ) + aName[ 1 ] ) + " en " + lower( cPatOut() + cFileName ) )
+      else
+         ::SetText( "Error comprimiendo " + lower( cLastPath( cPatSnd() ) + aName[ 1 ] ) + " en " + lower( cPatOut() + cFileName ) )
          exit
       end if
 
@@ -1589,8 +1593,8 @@ Method lUnZipData( cFileName ) CLASS TSndRecInf
    local nZip
    local lUnZip   := .t.
 
-   aDir           := Hb_GetFilesInZip( cFileName )
-   lUnZip         := Hb_UnZipFile( cFileName, { | cName, nPos | ::SetText( "Descomprimiendo " + cName ) }, , , cPatSnd(), aDir )
+   aDir           := hb_GetFilesInZip( cFileName )
+   lUnZip         := hb_UnZipFile( cFileName, { | cName, nPos | ::SetText( "Descomprimiendo " + lower( cName ) ) }, , , cPatSnd(), aDir )
    hb_gcAll()
 
 Return ( lUnZip )
