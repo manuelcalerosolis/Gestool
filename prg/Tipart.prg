@@ -35,6 +35,14 @@ CLASS TTipArt FROM TMant
    METHOD lSelect( lSel, oBrw )
    METHOD SelectAll( lSel, oBrw )
 
+   // Envios-------------------------------------------------------------------
+
+   METHOD CreateData()
+   METHOD RestoreData()
+   METHOD SendData()
+   METHOD ReciveData()
+   METHOD Process()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -455,7 +463,7 @@ METHOD Enviar( lLoad )
       ::oDbf:lSelect := !::oDbf:lSelect
    end if
 
-      ::oDbf:cCodWeb := 0
+   ::oDbf:cCodWeb    := 0
 
    if lLoad
       ::oDbf:Save()
@@ -465,6 +473,37 @@ METHOD Enviar( lLoad )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+Method CreateData()
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method RestoreData()
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method SendData()
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method ReciveData()
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
+Method Process()
+
+Return Self
+
+//----------------------------------------------------------------------------//
+
 
 CLASS ClasificacionTipoArticulo
    

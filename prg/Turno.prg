@@ -7401,7 +7401,7 @@ Method CreateData()
    Creamos todas las bases de datos relacionadas con Articulos
    */
 
-   oTurnoTmp      := TTurno():Create( cPatSnd() )
+   oTurnoTmp         := TTurno():Create( cPatSnd() )
    oTurnoTmp:OpenService( .t. )
 
    /*

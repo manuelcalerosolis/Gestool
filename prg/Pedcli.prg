@@ -10191,19 +10191,20 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       oBrwAlbPrv:Refresh()
    end if
 
-   if !empty(oBrwProperties)
-      oBrwProperties:hide()
-   end if 
-
    // Empieza la edicion-------------------------------------------------------
 
    if !Empty( oFld )
       oFld:SetOption( 1 )
    end if
 
-   /*
-   Focus al codigo-------------------------------------------------------------
-   */
+   // Propiedades--------------------------------------------------------------
+
+   if !empty(oBrwProperties)
+      oBrwProperties:Hide()
+      oBrwProperties:Cargo    := nil
+   end if 
+
+   // Focus al codigo-------------------------------------------------------------
 
    aGet[ _CREF ]:SetFocus()
 
@@ -10333,10 +10334,6 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       setDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld )
 
       sysRefresh()
-
-      if !empty( aGet[ _CREF ] )
-         aGet[ _CREF ]:SetFocus()
-      end if
 
    else
 

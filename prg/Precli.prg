@@ -4390,9 +4390,14 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    end if
 
-   /*
-   Focus al codigo-------------------------------------------------------------
-   */
+   // Propiedades--------------------------------------------------------------
+
+   if !empty(oBrwProperties)
+      oBrwProperties:Hide()
+      oBrwProperties:Cargo    := nil
+   end if 
+
+   // Focus al codigo-------------------------------------------------------------
 
    aGet[ _CREF ]:SetFocus()
 
@@ -4522,16 +4527,12 @@ STATIC FUNCTION SaveDeta( cCodArt, aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, n
 
       nTotPreCli( nil, D():PresupuestosClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmpPre )
 
-      SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre )
-
-      SysRefresh()
-
       aCopy( dbBlankRec( dbfTmpLin ), aTmp )
       aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
-      if !empty( aGet[ _CREF ] )
-         aGet[ _CREF ]:SetFocus()
-      end if
+      SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre )
+
+      SysRefresh()
 
    else
 

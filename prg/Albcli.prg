@@ -4108,7 +4108,7 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
 
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       
-      if exitNoSave( nMode, dbfTmpLin )
+      if !exitNoSave( nMode, dbfTmpLin )
          Return nil 
       end if          
 
@@ -9834,10 +9834,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
    Focus y validaci¢n----------------------------------------------------------
    */
 
-   if !Empty( oFld )
-      oFld:SetOption( 1 )
-   end if
-
    if !Empty( oTotal )
       oTotal:cText( 0 )
    end if
@@ -9850,16 +9846,26 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, 
       aGet[ _CALMLIN ]:lValid()
    end if
 
-   /*
-   Focus al codigo-------------------------------------------------------------
-   */
+   // Empieza la edicion-------------------------------------------------------
+
+   if !Empty( oFld )
+      oFld:SetOption( 1 )
+   end if
+
+   // Propiedades--------------------------------------------------------------
+
+   if !empty( oBrwProperties )
+      oBrwProperties:Hide()
+      oBrwProperties:Cargo    := nil
+   end if 
+
+   // Focus al codigo-------------------------------------------------------------
 
    aGet[ _CREF ]:SetFocus()
 
 Return nil
 
 //---------------------------------------------------------------------------//
-
 /*
 Calcula totales en las lineas de Detalle
 */
@@ -10947,13 +10953,12 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
       RecalculaTotal( aTmpAlb )
 
+      aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+      aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+
       setDlgMode( aTmp, aGet, oFld, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, oGet2, oTotal, aTmpAlb )
 
       SysRefresh()
-
-      if !Empty( aGet[ _CREF ] )
-         aGet[ _CREF ]:SetFocus()
-      end if
 
    else
 

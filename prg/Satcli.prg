@@ -4065,7 +4065,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
          aGet[ _NNUMLIN ]:cText( nLastNum( dbfTmpLin ) )
       end if
 
-      aGet[ _NCANSAT ]:cText( 1 )
+      aGet[ _NCANSAT  ]:cText( 1 )
       aGet[ _NUNICAJA ]:cText( 1 )
       aGet[ _CALMLIN  ]:cText( aTmpSat[ _CCODALM ] )
       aGet[ _CDETALLE ]:show()
@@ -4153,64 +4153,60 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    end if
 
-   if !aTmp[ __LALQUILER ]
+   if !Empty( aTmp[ _CCODPR1 ] )
 
-      if !Empty( aTmp[ _CCODPR1 ] )
-
-         if !Empty( aGet[_CVALPR1 ] )
-            aGet[ _CVALPR1 ]:Show()
-            aGet[ _CVALPR1 ]:lValid()
-         end if
-         if !Empty( oSayPr1 )
-            oSayPr1:Show()
-            oSayPr1:SetText( retProp( aTmp[_CCODPR1], dbfPro ) )
-         end if
-         if !Empty( oSayVp1 )
-            oSayVp1:Show()
-         end if
-
-      else
-
-         if !Empty( aGet[_CVALPR1 ] )
-            aGet[_CVALPR1 ]:hide()
-         end if
-         if !Empty( oSayPr1 )
-            oSayPr1:hide()
-         end if
-         if !Empty( oSayVp1 )
-            oSayVp1:hide()
-         end if
-
+      if !Empty( aGet[_CVALPR1 ] )
+         aGet[ _CVALPR1 ]:Show()
+         aGet[ _CVALPR1 ]:lValid()
+      end if
+      if !Empty( oSayPr1 )
+         oSayPr1:Show()
+         oSayPr1:SetText( retProp( aTmp[_CCODPR1], dbfPro ) )
+      end if
+      if !Empty( oSayVp1 )
+         oSayVp1:Show()
       end if
 
-      if !Empty( aTmp[ _CCODPR2 ] )
+   else
 
-         if !Empty( aGet[_CVALPR2 ] )
-            aGet[ _CVALPR2 ]:Show()
-            aGet[ _CVALPR2 ]:lValid()
-         end if
+      if !Empty( aGet[_CVALPR1 ] )
+         aGet[_CVALPR1 ]:hide()
+      end if
+      if !Empty( oSayPr1 )
+         oSayPr1:hide()
+      end if
+      if !Empty( oSayVp1 )
+         oSayVp1:hide()
+      end if
 
-         if !Empty( oSayPr2 )
-            oSayPr2:Show()
-            oSayPr2:SetText( retProp(  aTmp[_CCODPR2], dbfPro ) )
-         end if
+   end if
 
-         if !Empty( oSayVp2 )
-            oSayVp2:Show()
-         end if
+   if !Empty( aTmp[ _CCODPR2 ] )
 
-      else
+      if !Empty( aGet[_CVALPR2 ] )
+         aGet[ _CVALPR2 ]:Show()
+         aGet[ _CVALPR2 ]:lValid()
+      end if
 
-         if !Empty( aGet[_CVALPR2 ] )
-            aGet[_CVALPR2 ]:hide()
-         end if
-         if !Empty( oSayPr2 )
-            oSayPr2:hide()
-         end if
-         if !Empty( oSayVp2 )
-            oSayVp2:hide()
-         end if
+      if !Empty( oSayPr2 )
+         oSayPr2:Show()
+         oSayPr2:SetText( retProp(  aTmp[_CCODPR2], dbfPro ) )
+      end if
 
+      if !Empty( oSayVp2 )
+         oSayVp2:Show()
+      end if
+
+   else
+
+      if !Empty( aGet[_CVALPR2 ] )
+         aGet[_CVALPR2 ]:hide()
+      end if
+      if !Empty( oSayPr2 )
+         oSayPr2:hide()
+      end if
+      if !Empty( oSayVp2 )
+         oSayVp2:hide()
       end if
 
    end if
@@ -4331,6 +4327,17 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       end if
 
    end if
+
+   // Propiedades--------------------------------------------------------------
+
+   if !empty(oBrwProperties)
+      oBrwProperties:Hide()
+      oBrwProperties:Cargo    := nil
+   end if 
+
+   // Focus al codigo-------------------------------------------------------------
+
+   aGet[ _CREF ]:SetFocus()
 
 Return nil
 
@@ -4475,16 +4482,12 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
       nTotSatCli( nil, D():SatClientes( nView ), dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmpSat )
 
-      SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote )
-
-      SysRefresh()
-
       aCopy( dbBlankRec( dbfTmpLin ), aTmp )
       aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
 
-      if !Empty( aGet[ _CREF ] )
-         aGet[ _CREF ]:SetFocus()
-      end if
+      setDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote )
+
+      SysRefresh()
 
    else
 
@@ -4620,11 +4623,7 @@ Static Function EdtInc( aTmp, aGet, dbfSatCliI, oBrw, bWhen, bValid, nMode, aTmp
       aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
    end if
 
-   if ( "PDA" $ cParamsMain() )
-   DEFINE DIALOG oDlg RESOURCE "SATCLI_INC_PDA"
-   else
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de S.A.T. a clientes"
-   end if
 
       REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
          VAR      aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
