@@ -4838,8 +4838,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local oDlg
    local oFld
    local oBtn
-   local oGet2
-   local cGet2             := ""
    local oGet3
    local cGet3             := ""
    local oSayPr1
@@ -5288,17 +5286,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       REDEFINE GET aGet[ _CTIPMOV ] VAR aTmp[ _CTIPMOV ] ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID    ( cTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
+         VALID    ( cTVta( aGet[_CTIPMOV], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
+         ON HELP  ( BrwTVta( aGet[_CTIPMOV], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
          ID       290 ;
+         IDTEXT   291 ;
          OF       oFld:aDialogs[1] ;
          IDSAY    292 ;
-
-      REDEFINE GET oGet2 VAR cGet2 ;
-         ID       291 ;
-         WHEN     ( .F. ) ;
-         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -5493,7 +5487,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
         ID       IDOK ;
         OF       oDlg ;
         WHEN     ( nMode != ZOOM_MODE ) ;
-        ACTION   SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotalLinea, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
+        ACTION   SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotalLinea, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
 
     REDEFINE BUTTON ;
         ID       IDCANCEL ;
@@ -5522,7 +5516,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
    oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
-   oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac, oRentabilidadLinea ),;
+   oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac, oRentabilidadLinea ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ), aGet[ _CCODPRV ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
@@ -6417,7 +6411,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| msgWait("Guardando","",.1), aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , nMode, , , , , , , oSayLote ) ), ) },;
+                                             		"bLClicked" => {|| msgWait("Guardando","",.1), aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , , nMode, , , , , , , oSayLote ) ), ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
@@ -6653,7 +6647,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
    	oDlg:bResized  			:= {|| GridResize( oDlg ) }
    	oDlg:bStart 				:= {|| SetDlgMode( aTmp, aGet, , , , , , , nMode, , aTmpFac, , oSayLote ), aGet[ _CREF ]:SetFocus() }  
 
-   	ACTIVATE DIALOG oDlg CENTER ;
+   ACTIVATE DIALOG oDlg CENTER ;
       ON INIT     ( GridMaximize( oDlg ) )
 
 RETURN ( oDlg:nResult == IDOK )
@@ -12923,7 +12917,7 @@ return ( lRecPgd )
 Comprtamiento de la caja de dialogo
 */
 
-STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, oRentLin, oSayLote )
+STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, oRentLin, oSayLote )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
 
@@ -12977,12 +12971,9 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
    end if
 
    if !lTipMov()
-
-      if !Empty( [ _CTIPMOV ] ) .and. !Empty( oGet2 )
+      if !Empty( [ _CTIPMOV ] ) 
          aGet[ _CTIPMOV ]:hide()
-         oGet2:hide()
       end if
-
    end if
 
    if aGet[ _NIMPTRN ] != nil
@@ -13160,7 +13151,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
       end if
       if !Empty( oSayPr1 )
          oSayPr1:Show()
-         oSayPr1:SetText( retProp( aTmp[_CCODPR1], dbfPro ) )
+         oSayPr1:SetText( retProp( aTmp[ _CCODPR1 ], dbfPro ) )
       end if
       if !Empty( oSayVp1 )
          oSayVp1:Show()
@@ -13226,62 +13217,62 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 
    	if !Empty( aGet[ ( dbfFacCliL )->( fieldpos( "nMedTre" ) ) ] )
       	aGet[ ( dbfFacCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-	end if
+	  end if
 
    	if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
-      if !Empty( aGet[ ( dbfFacCliL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfFacCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfFacCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
-      end if
-
-      if !Empty( aGet[ ( dbfFacCliL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfFacCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfFacCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
-      end if
-
-      if !Empty( aGet[ ( dbfFacCliL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfFacCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfFacCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
-      end if
-
-   end if
-
-   /*
-   Mostramos u ocultamos las tarifas por líneas--------------------------------
-   */
-
-   if Empty( aTmp[ _NTARLIN ] )
-      if !Empty( aGet[ _NTARLIN ] )
-         if !Empty( oGetTarifa )
-            aGet[ _NTARLIN ]:cText( oGetTarifa:getTarifa() )
-         else
-            aGet[ _NTARLIN ]:cText( aTmpFac[ _NTARIFA ] )
+         if !Empty( aGet[ ( dbfFacCliL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
+            aGet[ ( dbfFacCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+            aGet[ ( dbfFacCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
          end if
-      else
-         if !Empty( oGetTarifa )
-            aTmp[ _NTARLIN ]     := oGetTarifa:getTarifa()
+
+         if !Empty( aGet[ ( dbfFacCliL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
+            aGet[ ( dbfFacCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+            aGet[ ( dbfFacCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+         end if
+
+         if !Empty( aGet[ ( dbfFacCliL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
+            aGet[ ( dbfFacCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+            aGet[ ( dbfFacCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+         end if
+
+      end if
+
+      /*
+      Mostramos u ocultamos las tarifas por líneas--------------------------------
+      */
+
+      if Empty( aTmp[ _NTARLIN ] )
+         if !Empty( aGet[ _NTARLIN ] )
+            if !Empty( oGetTarifa )
+               aGet[ _NTARLIN ]:cText( oGetTarifa:getTarifa() )
+            else
+               aGet[ _NTARLIN ]:cText( aTmpFac[ _NTARIFA ] )
+            end if
          else
-            aTmp[ _NTARLIN ]     := aTmpFac[ _NTARIFA ]
-         end if 
+            if !Empty( oGetTarifa )
+               aTmp[ _NTARLIN ]     := oGetTarifa:getTarifa()
+            else
+               aTmp[ _NTARLIN ]     := aTmpFac[ _NTARIFA ]
+            end if 
+         end if
       end if
-   end if
 
-   if !Empty( aGet[ _NTARLIN ] )
-      if !uFieldEmpresa( "lPreLin" )
-         aGet[ _NTARLIN ]:Hide()
-      else
-         aGet[ _NTARLIN ]:Show()
+      if !Empty( aGet[ _NTARLIN ] )
+         if !uFieldEmpresa( "lPreLin" )
+            aGet[ _NTARLIN ]:Hide()
+         else
+            aGet[ _NTARLIN ]:Show()
+         end if
       end if
-   end if
 
-   /*
-   Focus y validaci¢n----------------------------------------------------------
-   */
+      /*
+      Focus y validaci¢n----------------------------------------------------------
+      */
 
    	if !Empty( aGet[ _CTIPMOV ] )
       	aGet[ _CTIPMOV ]:lValid()
-   	end
+   	end if
 
    	if !Empty( aGet[ _CCODTIP ] )
       	aGet[ _CCODTIP ]:lValid()
@@ -13297,7 +13288,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
          aGet[ _NCOSDIV ]:Hide()
       end if
 
-   	end if
+	end if
 
    /*
    Solo pueden modificar los precios los administradores-----------------------
@@ -13305,65 +13296,74 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 
    if ( Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
 
-      	if !Empty( aGet[ _NPREUNIT ] )
-      		aGet[ _NPREUNIT ]:HardEnable()
-      	end if
+   	if !Empty( aGet[ _NPREUNIT ] )
+   		aGet[ _NPREUNIT ]:HardEnable()
+   	end if
 
-      	if !Empty( aGet[ _NIMPTRN  ] )
-      		aGet[ _NIMPTRN  ]:HardEnable()
+   	if !Empty( aGet[ _NIMPTRN  ] )
+   		aGet[ _NIMPTRN  ]:HardEnable()
 		end if      		
 
-      	if !Empty( aGet[ _NPNTVER ] )
-          	aGet[ _NPNTVER ]:HardEnable()
-      	end if
+   	if !Empty( aGet[ _NPNTVER ] )
+       	aGet[ _NPNTVER ]:HardEnable()
+   	end if
 
-      	if !Empty( aGet[ _NDTO     ] )
-      		aGet[ _NDTO     ]:HardEnable()
-      	end if
+   	if !Empty( aGet[ _NDTO     ] )
+   		aGet[ _NDTO     ]:HardEnable()
+   	end if
 
-      	if !Empty( aGet[ _NDTOPRM  ] )
-      		aGet[ _NDTOPRM  ]:HardEnable()
-      	end if	
+   	if !Empty( aGet[ _NDTOPRM  ] )
+   		aGet[ _NDTOPRM  ]:HardEnable()
+   	end if	
 
-      	if !Empty( aGet[ _NDTODIV ] )
-        	aGet[ _NDTODIV  ]:HardEnable()
-      	end if
+   	if !Empty( aGet[ _NDTODIV ] )
+     	aGet[ _NDTODIV  ]:HardEnable()
+   	end if
 
    else
 
-      	if !Empty( aGet[ _NPREUNIT ] )
-      		aGet[ _NPREUNIT ]:HardDisable()
+   	if !Empty( aGet[ _NPREUNIT ] )
+   		aGet[ _NPREUNIT ]:HardDisable()
 		end if      		
 
-      	if !Empty( aGet[ _NIMPTRN  ] )
-      		aGet[ _NIMPTRN  ]:HardDisable()
+   	if !Empty( aGet[ _NIMPTRN  ] )
+   		aGet[ _NIMPTRN  ]:HardDisable()
 		end if      		
 
-      	if !Empty( aGet[ _NPNTVER ] )
-         	aGet[ _NPNTVER  ]:HardDisable()
-      	end if
-
-      	if !Empty( aGet[ _NDTO     ] )
-      		aGet[ _NDTO     ]:HardDisable()
-      	end if
-
-      	if !Empty( aGet[ _NDTOPRM  ] )
-      		aGet[ _NDTOPRM  ]:HardDisable()
-      	end if
-
-      	if !Empty(  aGet[ _NDTODIV  ] )
-         	aGet[ _NDTODIV  ]:HardDisable()
-      	end if
-   
+   	if !Empty( aGet[ _NPNTVER ] )
+      	aGet[ _NPNTVER  ]:HardDisable()
    	end if
 
-   	/*
-   	Focus al codigo-------------------------------------------------------------
-  	*/
-
-   	if !Empty( aGet[ _CREF ] )
-   		aGet[ _CREF ]:SetFocus()
+   	if !Empty( aGet[ _NDTO     ] )
+   		aGet[ _NDTO     ]:HardDisable()
    	end if
+
+   	if !Empty( aGet[ _NDTOPRM  ] )
+   		aGet[ _NDTOPRM  ]:HardDisable()
+   	end if
+
+   	if !Empty(  aGet[ _NDTODIV  ] )
+      	aGet[ _NDTODIV  ]:HardDisable()
+   	end if
+
+	end if
+
+   // Empieza la edicion-------------------------------------------------------
+
+   if !Empty( oFld )
+      oFld:SetOption( 1 )
+   end if
+
+   // Propiedades--------------------------------------------------------------
+
+   if !empty( oBrwProperties )
+      oBrwProperties:Hide()
+      oBrwProperties:Cargo    := nil
+   end if 
+
+   // Focus al codigo-------------------------------------------------------------
+
+   aGet[ _CREF ]:SetFocus()
 
 Return nil
 
@@ -14329,7 +14329,7 @@ RETURN .t.
 Guarda la linea de detalle
 */
 
-STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotal, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer, oSayLote )
+STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotal, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer, oSayLote )
 
    local n 
    local i 
@@ -14519,15 +14519,14 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
    cOldCodArt     := ""
    cOldUndMed     := ""
 
-   if !Empty( aGet[ _CUNIDAD ] )
-      aGet[ _CUNIDAD ]:lValid()
-   end if
-
    if nMode == APPD_MODE .AND. lEntCon()
 
       recalculaTotal( aTmpFac )
 
-      setDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, , oSayLote )
+      aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+      aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+
+      setDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac, , oSayLote )
 
       sysRefresh()
 
