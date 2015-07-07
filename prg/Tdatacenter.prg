@@ -3285,8 +3285,8 @@ METHOD BuildEmpresa()
    oDataTable:bCreateIndex := {| cPath | rxFacRec( cPath ) }
    oDataTable:bCreateFile  := {| cPath | mkFacRec( cPath ) }
    oDataTable:bSyncFile    := {|| SynFacRec( cPatEmp() ) }
-   oDatatable:aDictionary  := hashDictionary( aColFacRec() )
-   oDatatable:aDefaultValue:= hashDefaultValue( aColFacRec() )
+   oDatatable:aDictionary  := hashDictionary( aItmFacRec() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aItmFacRec() )
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -3296,6 +3296,8 @@ METHOD BuildEmpresa()
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacRecL.Cdx"
    oDataTable:cDescription := "Rectificativas de clientes"
    oDataTable:lTrigger     := ::lTriggerAuxiliares   
+   oDatatable:aDictionary  := hashDictionary( aColFacRec() )
+   oDatatable:aDefaultValue:= hashDefaultValue( aColFacRec() )
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()

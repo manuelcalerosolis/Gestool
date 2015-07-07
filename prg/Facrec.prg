@@ -2332,29 +2332,24 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[_CTLFCLI] VAR aTmp[_CTLFCLI] ;
-         	ID       187 ;
-         	WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
-         	OF       oFld:aDialogs[1]
+   	REDEFINE GET aGet[_CTLFCLI] VAR aTmp[_CTLFCLI] ;
+      	ID       187 ;
+      	WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
+      	OF       oFld:aDialogs[1]
 
-      	REDEFINE GET oRieCli VAR nRieCli;
-         	ID       182 ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	PICTURE  cPorDiv ;
-         	OF       oFld:aDialogs[1]
+   	REDEFINE GET oRieCli VAR nRieCli;
+      	ID       182 ;
+      	WHEN     ( nMode != ZOOM_MODE );
+      	PICTURE  cPorDiv ;
+      	OF       oFld:aDialogs[1]
 
-      	/*
+     	/*
 		Tarifas----------------------------------
-        */
+      */
 
-        oGetTarifa 		:= comboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ] } )
-        oGetTarifa:Resource( oFld:aDialogs[1] )
-        oGetTarifa:setWhen( {|| nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) } )
-
-        /*
-		-----------------------------------------
-        */
-
+      oGetTarifa 		:= comboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ] } )
+      oGetTarifa:Resource( oFld:aDialogs[1] )
+      oGetTarifa:setWhen( {|| nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) } )
 
       /*
       Bancos-------------------------------------------------------------------
@@ -2420,57 +2415,55 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       Codigo de Divisas________________________________________________________
 		*/
 
-      	REDEFINE GET aGet[ _CDIVFAC ] VAR aTmp[ _CDIVFAC ];
-         	WHEN     ( nMode == APPD_MODE .AND. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
-         	VALID    ( cDivOut( aGet[ _CDIVFAC ], oBmpDiv, aTmp[ _NVDVFAC ], @cPouDiv, @nDouDiv, @cPorDiv, @nRouDiv, @cPpvDiv, @nDpvDiv, oGetMasDiv, dbfDiv, oBandera ) );
-         	PICTURE  "@!";
-         	ID       190 ;
-			COLOR 	CLR_GET ;
-         	BITMAP   "LUPA" ;
-         	ON HELP  BrwDiv( aGet[ _CDIVFAC ], oBmpDiv, aTmp[ _NVDVFAC ], dbfDiv, oBandera ) ;
+   	REDEFINE GET aGet[ _CDIVFAC ] VAR aTmp[ _CDIVFAC ];
+      	WHEN     ( nMode == APPD_MODE .AND. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
+      	VALID    ( cDivOut( aGet[ _CDIVFAC ], oBmpDiv, aTmp[ _NVDVFAC ], @cPouDiv, @nDouDiv, @cPorDiv, @nRouDiv, @cPpvDiv, @nDpvDiv, oGetMasDiv, dbfDiv, oBandera ) );
+      	PICTURE  "@!";
+      	ID       190 ;
+      	BITMAP   "LUPA" ;
+      	ON HELP  BrwDiv( aGet[ _CDIVFAC ], oBmpDiv, aTmp[ _NVDVFAC ], dbfDiv, oBandera ) ;
 			OF 		oFld:aDialogs[1]
 
 		REDEFINE BITMAP oBmpDiv ;
-         	RESOURCE "BAN_EURO" ;
-         	ID       191;
-			OF 		oFld:aDialogs[1]
+      	RESOURCE "BAN_EURO" ;
+      	ID       191;
+         OF 		oFld:aDialogs[1]
 
-      	REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
-         	ID       125 ;
-         	WHEN     ( .f. ) ;
-         	VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 11 ], nil, dbfUsr ) );
-         	OF       oFld:aDialogs[2]
+   	REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
+      	ID       125 ;
+      	WHEN     ( .f. ) ;
+      	VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 11 ], nil, dbfUsr ) );
+      	OF       oFld:aDialogs[2]
 
-      	REDEFINE GET oSay[ 11 ] VAR cSay[ 11 ] ;
-         	ID       126 ;
-         	WHEN     ( .f. ) ;
-         	OF       oFld:aDialogs[2]
+   	REDEFINE GET oSay[ 11 ] VAR cSay[ 11 ] ;
+      	ID       126 ;
+      	WHEN     ( .f. ) ;
+      	OF       oFld:aDialogs[2]
 
       /*
       impuestos Incluido-------------------------------------------------------------
       */
 
-      	REDEFINE CHECKBOX aGet[_LIVAINC] VAR aTmp[_LIVAINC] ;
-         	ID       200 ;
-         	WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
-         	OF       oFld:aDialogs[1]
+   	REDEFINE CHECKBOX aGet[_LIVAINC] VAR aTmp[_LIVAINC] ;
+      	ID       200 ;
+      	WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
+      	OF       oFld:aDialogs[1]
 
       /*
 		Codigo de Tarifa_______________________________________________________________
 		*/
 
-      	REDEFINE GET aGet[_CCODTAR] VAR aTmp[_CCODTAR] ;
-         	ID       210 ;
-         	WHEN     ( nMode != ZOOM_MODE .and. oUser():lAdministrador() ) ;
-         	VALID    ( cTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
-         	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
-			COLOR 	CLR_GET ;
+   	REDEFINE GET aGet[_CCODTAR] VAR aTmp[_CCODTAR] ;
+      	ID       210 ;
+      	WHEN     ( nMode != ZOOM_MODE .and. oUser():lAdministrador() ) ;
+      	VALID    ( cTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
+      	BITMAP   "LUPA" ;
+      	ON HELP  ( BrwTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
 			OF 		oFld:aDialogs[1]
 
-      	REDEFINE GET oSay[ 5 ] VAR cSay[ 5 ] ;
+   	REDEFINE GET oSay[ 5 ] VAR cSay[ 5 ] ;
 			WHEN 		.F. ;
-         	ID       211 ;
+      	ID       211 ;
 			OF 		oFld:aDialogs[1]
 
 		/*
@@ -2478,17 +2471,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 		*/
 
 		REDEFINE GET aGet[_CCODOBR] VAR aTmp[_CCODOBR] ;
-         	ID       220 ;
+      	ID       220 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	VALID    ( cObras( aGet[_CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
-         	BITMAP   "LUPA" ;
-         	ON HELP  ( brwObras( aGet[_CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
-			COLOR 	CLR_GET ;
+      	VALID    ( cObras( aGet[_CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
+      	BITMAP   "LUPA" ;
+      	ON HELP  ( brwObras( aGet[_CCODOBR], oSay[ 7 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
 			OF 		oFld:aDialogs[1]
 
-      	REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
+   	REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
 			WHEN 		.F. ;
-         	ID       221 ;
+      	ID       221 ;
 			OF 		oFld:aDialogs[1]
 
 		/*
@@ -2496,20 +2488,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
 		*/
 
 		REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ] ;
-         	ID       230 ;
+      	ID       230 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         	VALID    ( cAlmacen( aGet[ _CCODALM ], , oSay[ 2 ] ) ) ;
-         	BITMAP   "LUPA" ;
-         	ON HELP  ( BrwAlmacen( aGet[ _CCODALM ], oSay[ 2 ] ) ) ;
-			COLOR 	CLR_GET ;
+      	VALID    ( cAlmacen( aGet[ _CCODALM ], , oSay[ 2 ] ) ) ;
+      	BITMAP   "LUPA" ;
+      	ON HELP  ( BrwAlmacen( aGet[ _CCODALM ], oSay[ 2 ] ) ) ;
 			OF 		oFld:aDialogs[1]
 
-      	REDEFINE GET oSay[ 2 ] VAR cSay[ 2 ] ;
-         	ID       231 ;
-         	WHEN     ( nMode != ZOOM_MODE );
-         	BITMAP   "Bot" ;
-         	ON HELP  ( ExpAlmacen( aTmp[ _CCODALM ], dbfTmpLin, oBrwLin ) ) ;
-			OF 		oFld:aDialogs[1]
+   	REDEFINE GET oSay[ 2 ] VAR cSay[ 2 ] ;
+      	ID       231 ;
+      	WHEN     ( nMode != ZOOM_MODE );
+      	BITMAP   "Bot" ;
+      	ON HELP  ( ExpAlmacen( aTmp[ _CCODALM ], dbfTmpLin, oBrwLin ) ) ;
+   		OF 		oFld:aDialogs[1]
 
 		/*
       Formas de pago_____________________________________________________________________
@@ -3843,10 +3834,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
 	local oDlg
    local oFld
    local oBtn
-	local oGet2
-   local cGet2    := ""
-   local oGet3
-   local cGet3    := ""
    local oSayPr1
    local oSayPr2
    local cSayPr1  := ""
@@ -4269,39 +4256,29 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
 
       REDEFINE GET oTotalLinea VAR nTotalLinea ;
          ID       220 ;
-			WHEN 		.F. ;
-         COLOR    CLR_GET ;
+			WHEN 		.f. ;
          PICTURE  cPorDiv ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CCODTIP ] VAR aTmp[ _CCODTIP ] ;
+      REDEFINE GET aGet[ _CCODTIP ] ;
+         VAR      aTmp[ _CCODTIP ] ;
          WHEN     ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) ;
-         VALID    ( oTipArt:lValid( aGet[ _CCODTIP ], oGet3 ) ) ;
+         VALID    ( oTipArt:existe( aGet[ _CCODTIP ], aGet[ _CCODTIP ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( oTipArt:Buscar( aGet[ _CCODTIP ] ) ) ;
          ID       205 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oGet3 VAR cGet3 ;
-         ID       206 ;
-			WHEN 		( .F. ) ;
-			COLOR 	CLR_GET ;
+         IDTEXT   206 ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CTIPMOV ] VAR aTmp[ _CTIPMOV ] ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         VALID    ( cTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
+         VALID    ( cTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[_CTIPMOV], dbfTVta, oGet2 ) ) ;
+         ON HELP  ( BrwTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
          ID       290 ;
+         IDTEXT   291 ;
          OF       oFld:aDialogs[1] ;
          IDSAY    292 ;
-
-		REDEFINE GET oGet2 VAR cGet2 ;
-         ID       291 ;
-			WHEN 		( .F. ) ;
-			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
@@ -4480,7 +4457,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       IDOK ;
 			OF 		oDlg ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotalLinea, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
+         ACTION   SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotalLinea, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
 
 		REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -4509,7 +4486,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
 
    oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
-   oDlg:bStart    := {|| SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac ),;
+   oDlg:bStart    := {|| SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac ),;
    						 aGet[ _CCODPRV ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
@@ -4530,7 +4507,7 @@ RETURN ( oDlg:nResult == IDOK )
 Comprtamiento de la caja de dialogo
 */
 
-STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac )
+STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac )
 
    local cCodArt        := Left( aGet[ _CREF ]:VarGet(), 18 )
 
@@ -4566,7 +4543,6 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 
    if !lTipMov()
       aGet[ _CTIPMOV ]:hide()
-		oGet2:hide()
    end if
 
    if !uFieldEmpresa( "lUsePor" )
@@ -4659,8 +4635,8 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 
       end if
 
-      	if !empty( aGet[ __CCENTROCOSTE ] )
-			aGet[ __CCENTROCOSTE ]:lValid()
+   	if !empty( aGet[ __CCENTROCOSTE ] )
+   		aGet[ __CCENTROCOSTE ]:lValid()
 		endif
 
    end case
@@ -4829,9 +4805,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
 
    end if
 
-   /*
-   Solo pueden modificar los precios los administradores-----------------------
-   */
+   //Solo pueden modificar los precios los administradores-----------------------
 
    if ( Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
       aGet[ _NPREUNIT ]:HardEnable()
@@ -4849,6 +4823,23 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp
       aGet[ _NDTODIV  ]:HardDisable()
    end if
 
+   // Empieza la edicion-------------------------------------------------------
+
+   if !Empty( oFld )
+      oFld:SetOption( 1 )
+   end if
+
+   // Propiedades--------------------------------------------------------------
+
+   if !empty( oBrwProperties )
+      oBrwProperties:Hide()
+      oBrwProperties:Cargo    := nil
+   end if 
+
+   // Focus al codigo-------------------------------------------------------------
+
+   aGet[ _CREF ]:SetFocus()
+
 RETURN NIL
 
 //--------------------------------------------------------------------------//
@@ -4856,7 +4847,7 @@ RETURN NIL
 Guarda la linea de detalle
 */
 
-STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotal, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
+STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, oTotal, oStkAct, nStkAct, cCodArt, oBtn, oBtnSer )
 
    local n 
    local i
@@ -5022,15 +5013,14 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oGet2, oBrw, oDlg, oSayPr1, oSayP
 
    if nMode == APPD_MODE .AND. lEntCon()
 
-      RecalculaTotal( aTmpFac )
+      recalculaTotal( aTmpFac )
 
-      SetDlgMode( aTmp, aGet, oGet2, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac )
+      aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+      aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+
+      SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotal, aTmpFac )
 
       SysRefresh()
-
-      if !Empty( aGet[ _CREF ] )
-         aGet[ _CREF ]:SetFocus()
-      end if
 
    else
 
@@ -5268,7 +5258,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
+Static Function saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
 
    local hAtipica
    local sOfertaArticulo
@@ -5277,7 +5267,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
 
    // Atipicas ----------------------------------------------------------------
 
-   hAtipica                   := hAtipica( hValue( aTmp, aTmpAlb ) )
+   hAtipica                   := hAtipica( hValue( aTmp, aTmpFac ) )
    if !empty( hAtipica ) 
       if hhaskey( hAtipica, "nCajasGratis" ) .and. hget( hAtipica, "nCajasGratis" ) != 0
          nCajasGratis         := hget( hAtipica, "nCajasGratis" ) 
@@ -5290,7 +5280,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
    // Ofertas------------------------------------------------------------------
 
    if empty( nCajasGratis ) .and. empty( nUnidadesGratis )
-      sOfertaArticulo         := structOfertaArticulo( D():getHashArray( aTmpAlb, "AlbCliT", nView ), D():getHashArray( aTmp, "AlbCliL", nView ), nTotLAlbCli( aTmp ), nView )
+      sOfertaArticulo         := structOfertaArticulo( D():getHashArray( aTmpFac, "FacRecT", nView ), D():getHashArray( aTmp, "FacRecL", nView ), nTotLFacRec( aTmp ), nView )
       if !empty( sOfertaArticulo ) 
          nCajasGratis         := sOfertaArticulo:nCajasGratis
          nUnidadesGratis      := sOfertaArticulo:nUnidadesGratis
@@ -5302,7 +5292,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
    if nCajasGratis != 0
       aTmp[ _LLINOFE ]        := .t.
       aTmp[ _NCANENT ]        -= nCajasGratis
-      commitDetail( aTmp, aClo, nil, aTmpAlb, dbfTmpLin, oBrw, nMode )
+      commitDetail( aTmp, aClo, nil, aTmpFac, dbfTmpLin, oBrw, nMode )
 
       aTmp[ _LLINOFE ]        := .t.
       aTmp[ _NCANENT ]        := nCajasGratis
@@ -5319,7 +5309,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
       aTmp[ _LLINOFE ]        := .t.
       aTmp[ _NUNICAJA]        -= nUnidadesGratis 
 
-      commitDetail( aTmp, aClo, nil, aTmpAlb, dbfTmpLin, oBrw, nMode )
+      commitDetail( aTmp, aClo, nil, aTmpFac, dbfTmpLin, oBrw, nMode )
 
       aTmp[ _LLINOFE ]        := .t.
       aTmp[ _NUNICAJA]        := nUnidadesGratis 
@@ -5330,18 +5320,18 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
       aTmp[ _NCOMAGE ]        := 0
    end if 
 
-   commitDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
+   commitDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
 
 Return nil
 
 //--------------------------------------------------------------------------//
 
-Static Function commitDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
+Static Function commitDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
 
    winGather( aTmp, aGet, dbfTmpLin, oBrw, nMode, nil, .f. )
 
    if ( nMode == APPD_MODE ) .and. ( aClo[ _LKITART ] )
-      appendKit( aClo, aTmpAlb )
+      appendKit( aClo, aTmpFac )
    end if
 
 Return nil
@@ -14552,75 +14542,153 @@ Function cCtaFacRec( cFacRecT, cFacCliP, cBncCli )
 
 Return ( cCtaFacRec )
 
+
+//---------------------------------------------------------------------------//
+
+Function isLineaTotalFacRec( uFacRecL )
+
+   if isArray( uFacRecL )
+      Return ( uFacRecL[ _LTOTLIN ] )
+   end if
+
+Return ( ( uFacRecL )->lTotLin )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoLinealFacRec( uFacRecL, nDec, nVdv )
+
+   local nDescuentoLineal
+
+   if isArray( uFacRecL )
+      nDescuentoLineal  := uFacRecL[ _NDTODIV ]
+   else 
+      nDescuentoLineal  := ( uFacRecL )->nDtoDiv
+   end if
+
+Return ( Round( nDescuentoLineal / nVdv, nDec ) )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoPorcentualFacRec( uFacRecL )
+
+   local nDescuentoPorcentual
+
+   if isArray( uFacRecL )
+      nDescuentoPorcentual  := uFacRecL[ _NDTO ]
+   else 
+      nDescuentoPorcentual  := ( uFacRecL )->nDto
+   end if
+
+Return ( nDescuentoPorcentual )
+
+//---------------------------------------------------------------------------//
+
+Function nDescuentoPromocionFacRec( uFacRecL )
+
+   local nDescuentoPromocion
+
+   if isArray( uFacRecL )
+      nDescuentoPromocion  := uFacRecL[ _NDTOPRM ]
+   else 
+      nDescuentoPromocion  := ( uFacRecL )->nDtoPrm
+   end if
+
+Return ( nDescuentoPromocion )
+
+//---------------------------------------------------------------------------//
+
+Function nPuntoVerdeFacRec( uFacRecL )
+
+   local nPuntoVerde
+
+   if isArray( uFacRecL )
+      nPuntoVerde  := uFacRecL[ _NPNTVER ]
+   else 
+      nPuntoVerde  := ( uFacRecL )->nPntVer
+   end if
+
+Return ( nPuntoVerde )
+
+//---------------------------------------------------------------------------//
+
+Function nTransporteFacRec( uFacRecL )
+
+   local nTransporte
+
+   if isArray( uFacRecL )
+      nTransporte  := uFacRecL[ _NIMPTRN ]
+   else 
+      nTransporte  := ( uFacRecL )->nImpTrn
+   end if
+
+Return ( nTransporte )
+
 //------------------------------------------------------------------------//
+// Lineas de total
 
-/*
-Lineas de total
-*/
-
-FUNCTION nTotLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+FUNCTION nTotLFacRec( uFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
+   local nUnidades
 
-   DEFAULT cFacRecL  := dbfFacRecL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nRou      := nRouDiv()
-   DEFAULT nVdv      := 1
-   DEFAULT lDto      := .t.
-   DEFAULT lPntVer   := .t.
-   DEFAULT lImpTrn   := .t.
+   DEFAULT uFacRecL     := dbfFacRecL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+   DEFAULT lDto         := .t.
+   DEFAULT lPntVer      := .t.
+   DEFAULT lImpTrn      := .t.
 
-   if ( cFacRecL )->lTotLin
+   if isLineaTotalFacRec( uFacRecL )
 
-      nCalculo       := nTotUFacRec( cFacRecL, nDec, nVdv )
+      nCalculo          := nTotUFacRec( uFacRecL, nDec, nVdv )
 
    else
 
-      // Tomamos los valores redondeados---------------------------------------
+      nUnidades         := nTotNFacRec( uFacRecL )
+      nCalculo          := nTotUFacRec( uFacRecL, nDec, nVdv ) * nUnidades
 
-      nCalculo       := nTotUFacRec( cFacRecL, nDec )
+      /*
+      Descuentos---------------------------------------------------------------
+      */
 
-      // Descuentos------------------------------------------------------------
+      nCalculo          -= nDescuentoLinealFacRec( uFacRecL, nDec, nVdv ) * nUnidades
 
-      if lDto
-
-      	nCalculo    -= Round( ( cFacRecL )->nDtoDiv / nVdv , nDec )
-
-         if ( cFacRecL )->nDto != 0
-            nCalculo -= nCalculo * ( cFacRecL )->nDto / 100
-         end if
-
-         if ( cFacRecL )->nDtoPrm != 0
-            nCalculo -= nCalculo * ( cFacRecL )->nDtoPrm / 100
-         end if
-
+      if lDto .and. nDescuentoPorcentualFacRec( uFacRecL ) != 0 
+         nCalculo       -= nCalculo * nDescuentoPorcentualFacRec( uFacRecL ) / 100
       end if
 
-      // Punto verde-----------------------------------------------------------
+      if lDto .and. nDescuentoPromocionFacRec( uFacRecL ) != 0 
+         nCalculo       -= nCalculo * nDescuentoPromocionFacRec( uFacRecL ) / 100
+      end if
 
-      if lPntVer
-         nCalculo    += Round( ( cFacRecL )->nPntVer , nDec )
+      /*
+      Punto Verde--------------------------------------------------------------
+      */
+
+      if lPntVer .and. nPuntoVerdeFacRec( uFacRecL ) != 0
+         nCalculo       += nPuntoVerdeFacRec( uFacRecL ) * nUnidades
       end if
 
       /*
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn 
-         nCalculo    += ( cFacRecL )->nImpTrn 
+      if lImpTrn .and. nTransporteFacRec( uFacRecL ) != 0
+         nCalculo       += nTransporteFacRec( uFacRecL ) * nUnidades
       end if
 
-      // Unidades--------------------------------------------------------------
+   end if
 
-      nCalculo       *= nTotNFacRec( cFacRecL )
-
+   if nVdv != 0
+      nCalculo          := nCalculo / nVdv
    end if
 
    if nRou != nil
-      nCalculo       := Round( nCalculo / nVdv, nRou )
+      nCalculo          := Round( nCalculo, nRou )
    end if
 
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -14628,19 +14696,28 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 Devuelve el total de una linea de factura
 */
 
-FUNCTION nTotUFacRec( cFacRecL, nDec, nVdv )
+FUNCTION nTotUFacRec( uTmpLin, nDec, nVdv )
 
    local nCalculo    := 0
 
-   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT uTmpLin   := dbfFacRecL
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
-   if ValType( cFacRecL ) == "C"
-      nCalculo       := ( cFacRecL )->nPreUnit
-   else
-      nCalculo       := cFacRecL:nPreUnit
-   end if
+   do case
+      case IsChar( uTmpLin )
+         nCalculo    := ( uTmpLin )->nPreUnit
+
+      case IsObject( uTmpLin )
+         nCalculo    := uTmpLin:nPreUnit
+
+      case IsArray( uTmpLin )
+         nCalculo    := uTmpLin[ _NPREUNIT ]
+
+      case IsHash( uTmpLin )
+         nCalculo    := hGet( uTmpLin, "PrecioVenta" )
+
+   end case 
 
    nCalculo          := nCalculo / nVdv
 
