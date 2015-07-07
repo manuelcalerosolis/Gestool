@@ -660,6 +660,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          PROMPT   "Código cliente",;
                   "Nombre",;
                   if( uFieldEmpresa( "nCifRut" ) == 1, "NIF/CIF", "RUT" ),;
+                  "Domicilio",;
                   "Población",;
                   "Provincia",;
                   "Código postal",;
@@ -777,6 +778,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Domicilio"
+         :cSortOrder       := "Domicilio"
          :bEditValue       := {|| ( D():Get( "Client", nView ) )->Domicilio }
          :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
@@ -8414,6 +8416,12 @@ FUNCTION rxClient( cPath, oMeter )
 
       ( dbfCli )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "NIF", "Field->NIF", {|| Field->NIF }, ) )
+
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "DOMICILIO", "UPPER( Field->DOMICILIO )", {|| UPPER( Field->DOMICILIO ) } ) )
+
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "PROVINCIA", "UPPER( Field->PROVINCIA )", {|| UPPER( Field->PROVINCIA ) } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "POBLACION", "UPPER( Field->POBLACION )", {|| UPPER( Field->POBLACION ) } ) )
