@@ -4750,7 +4750,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ _CCODTIP ] VAR aTmp[ _CCODTIP ] ;
          WHEN     ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) ;
-         VALID    ( oTipArt:lValid( aGet[ _CCODTIP ], oGet3 ) ) ;
+         VALID    ( oTipArt:Existe( aGet[ _CCODTIP ], oGet3 ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( oTipArt:Buscar( aGet[ _CCODTIP ] ) ) ;
          ID       205 ;
