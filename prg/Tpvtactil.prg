@@ -839,6 +839,8 @@ CLASS TpvTactil
 
    METHOD CambiarUnidadesPrecio( lGetPrecio )
 
+   METHOD isArticulosSinPeso()
+
 //--------------------------------------------------------------------------//
 
 END CLASS
@@ -4134,7 +4136,7 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
    if ( ::oArticulo:lPeso )
       
-      ::nUnidades             := Calculadora( 0, , , "Introduzca peso",  )
+      ::nUnidades             := Calculadora( 0, , , "Peso: " + ::cNombreArticulo() )
       
       // if ( ::nUnidades == 0 )
       //    Return .f.
@@ -6263,8 +6265,19 @@ RETURN ( sTotalCobros )
 METHOD OnClickCobro() CLASS TpvTactil
 
    if Empty( ::oTemporalLinea ) .or. Empty( ::oTemporalLinea:RecCount() )
-      MsgStop( "No puede almacenar un documento sin línea" )
+      MsgStop( "No puede almacenar un documento sin línea." )
       Return .f.
+   end if
+
+   if ::isArticulosSinPeso()
+      MsgStop( "Existen artículos por peso sin valor." )
+      Return .f.
+   end if 
+
+   ::SetTotal()   
+
+   if !Empty( ::oBrwLineas )
+      ::oBrwLineas:Refresh()
    end if
 
    ::DisableDialog()
@@ -8610,8 +8623,8 @@ METHOD DataReport() CLASS TpvTactil
    // ::oFastReport:SetWorkArea(       "Propiedades", ::oPropiedadesLinea:nArea )
    // ::oFastReport:SetFieldAliases(   "Propiedades", cItemsToReport( aItmPro() ) )
 
-   //::oFastReport:SetWorkArea(       "Impuestos especiales",  ::oNewImp:Select() )
-   //::oFastReport:SetFieldAliases(   "Impuestos especiales",  cObjectsToReport( ::oNewImp:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Impuestos especiales",  ::oNewImp:Select() )
+   ::oFastReport:SetFieldAliases(   "Impuestos especiales",  cObjectsToReport( ::oNewImp:oDbf ) )
 
 RETURN ( Self )
 
@@ -10032,6 +10045,37 @@ METHOD CambiarUnidadesPrecio( lGetPrecio )
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD isArticulosSinPeso()
+
+   local nPeso
+   local lValid                        := .f.
+
+   ::oTemporalLinea:GetStatus()
+
+   ::oTemporalLinea:GoTop()
+   while !::oTemporalLinea:eof()
+
+      if ::oTemporalLinea:lPeso .and. ::nUnidadesLinea( ::oTemporalLinea ) == 0 .and. !::oTemporalLinea:lDelTil
+
+         nPeso                         := Calculadora( 0, , , "Peso: " + alltrim( ::oTemporalLinea:cNomTil ) )
+         if nPeso != 0
+            ::oTemporalLinea:nUntTil   := nPeso
+         else 
+            lValid                     := .t.
+         end if
+
+      end if
+
+      ::oTemporalLinea:Skip()
+
+   end while
+
+   ::oTemporalLinea:SetStatus()
+
+RETURN ( lValid )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -10112,9 +10156,6 @@ METHOD Refresh() CLASS STotalCobros
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
-
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

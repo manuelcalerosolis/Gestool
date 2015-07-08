@@ -368,6 +368,8 @@ FUNCTION Calculadora( nNumber, oGet, lBig, cTitulo )
       if !Empty( oGet )
          oGet:cText( Val( cNumber ) )
       end if
+   else 
+      cNumber             := ""      
    end if
 
 RETURN ( Val( cNumber ) )
