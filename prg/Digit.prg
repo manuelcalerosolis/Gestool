@@ -294,6 +294,12 @@ return ( Val( cDec ) )
 
 //--------------------------------------------------------------------------//
 
+FUNCTION BigCalculadora( nNumber, cTitulo )
+
+RETURN Calculadora( nNumber, nil, nil, cTitulo )
+
+//--------------------------------------------------------------------------//
+
 FUNCTION Calculadora( nNumber, oGet, lBig, cTitulo )
 
    local oDialogo
@@ -309,7 +315,6 @@ FUNCTION Calculadora( nNumber, oGet, lBig, cTitulo )
       cTitle         := cTitulo
     end if
 
-
    DEFAULT nNumber   := oGet:VarGet()
    DEFAULT lBig      := .t.
 
@@ -323,25 +328,25 @@ FUNCTION Calculadora( nNumber, oGet, lBig, cTitulo )
 
       REDEFINE GET oNumber VAR cNumber ID 100 OF oDialogo
 
-      REDEFINE BUTTON ID 101 OF oDialogo ACTION KeyCal("C", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 102 OF oDialogo ACTION KeyCal("<", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 103 OF oDialogo ACTION KeyCal("S", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 104 OF oDialogo ACTION KeyCal("/", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 108 OF oDialogo ACTION KeyCal("*", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 112 OF oDialogo ACTION KeyCal("-", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 116 OF oDialogo ACTION KeyCal("+", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 119 OF oDialogo ACTION KeyCal("=", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 118 OF oDialogo ACTION KeyCal(".", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 117 OF oDialogo ACTION KeyCal("0", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 113 OF oDialogo ACTION KeyCal("1", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 114 OF oDialogo ACTION KeyCal("2", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 115 OF oDialogo ACTION KeyCal("3", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 109 OF oDialogo ACTION KeyCal("4", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 110 OF oDialogo ACTION KeyCal("5", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 111 OF oDialogo ACTION KeyCal("6", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 105 OF oDialogo ACTION KeyCal("7", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 106 OF oDialogo ACTION KeyCal("8", @cNumber, oNumber, @cOperacion, @nValue )
-      REDEFINE BUTTON ID 107 OF oDialogo ACTION KeyCal("9", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 101 OF oDialogo ACTION KeyCal( "C", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 102 OF oDialogo ACTION KeyCal( "<", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 103 OF oDialogo ACTION KeyCal( "S", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 104 OF oDialogo ACTION KeyCal( "/", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 108 OF oDialogo ACTION KeyCal( "*", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 112 OF oDialogo ACTION KeyCal( "-", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 116 OF oDialogo ACTION KeyCal( "+", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 119 OF oDialogo ACTION KeyCal( "=", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 118 OF oDialogo ACTION KeyCal( ".", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 117 OF oDialogo ACTION KeyCal( "0", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 113 OF oDialogo ACTION KeyCal( "1", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 114 OF oDialogo ACTION KeyCal( "2", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 115 OF oDialogo ACTION KeyCal( "3", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 109 OF oDialogo ACTION KeyCal( "4", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 110 OF oDialogo ACTION KeyCal( "5", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 111 OF oDialogo ACTION KeyCal( "6", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 105 OF oDialogo ACTION KeyCal( "7", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 106 OF oDialogo ACTION KeyCal( "8", @cNumber, oNumber, @cOperacion, @nValue )
+      REDEFINE BUTTON ID 107 OF oDialogo ACTION KeyCal( "9", @cNumber, oNumber, @cOperacion, @nValue )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Check_32" ;

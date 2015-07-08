@@ -403,9 +403,9 @@ Return ( Self )
 
 METHOD SelectAll( lSel, oBrw )
 
-   ::oDbf:GetStatus()
-
    DEFAULT lSel   := .f.
+
+   ::oDbf:GetStatus()
 
    ::oDbf:GoTop()
    while !( ::oDbf:eof() )

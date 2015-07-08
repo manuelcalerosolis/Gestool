@@ -175,6 +175,12 @@ Ficheros-----------------------------------------------------------------------
 #define _CNOMORD                  74
 #define _LDELTIL                  75
 #define _DFECCAD                  76
+#define _LMNUTIL                  77 
+#define _CCODMNU                  78
+#define _NLINMNU                  79
+#define _NCOMSTK                  80
+#define __TFECTIK                 81
+#define _LPESO                    82
 
 #define _NNUMREC                   4
 #define _CCODCAJ                   5
@@ -17353,7 +17359,7 @@ function aColTik()
    aAdd( aColTik, { "nLinMnu",  "N",      4,     0, "Número de linea de menú",            "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nComStk",  "N",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "tFecTik",  "C",      6,     0, "",                                   "",                  "", "( cDbfCol )" } )
-
+   aAdd( aColTik, { "lPeso",    "L",      1,     0, "Lógico articulo con peso",           "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 

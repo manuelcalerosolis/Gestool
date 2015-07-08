@@ -4132,13 +4132,13 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
 
    // Tomamos las unidades del teclado-----------------------------------------
 
-   if( ::oArticulo:lPeso )
+   if ( ::oArticulo:lPeso )
       
-      ::nUnidades             := Calculadora( 0, , , "Introduzca peso" )
+      ::nUnidades             := Calculadora( 0, , , "Introduzca peso",  )
       
-      if( ::nUnidades == 0 )
-          Return .f.
-      end if
+      // if ( ::nUnidades == 0 )
+      //    Return .f.
+      // end if
 
    else
 
@@ -4369,6 +4369,7 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
    ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
    ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
+   ::oTemporalLinea:lPeso        := ::oArticulo:lPeso
 
    if ( ::oArticulo:lFacCnv )
       ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
@@ -7376,27 +7377,25 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
 
             ::SetUbicacion()
 
-            // Datos del documento------------------------------------------
+            // Datos del documento---------------------------------------------
 
             ::SetInfo()
 
-            // Cliente------------------------------------------------------
+            // Cliente--------------------------------------------------------
 
             ::SetCliente()
 
-            // Serie -------------------------------------------------------
+            // Serie ----------------------------------------------------------
 
             ::SetSerie()
 
-            // Total documento----------------------------------------------
+            // Total documento-------------------------------------------------
 
             ::SetTotal()
 
          else
 
-            /*
-            Inicializa los valores para un nuevo documento General---------------
-            */
+            // Inicializa los valores para un nuevo documento General----------
 
             ::InitDocumento( ubiGeneral )
 
