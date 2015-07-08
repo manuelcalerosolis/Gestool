@@ -7,19 +7,56 @@
 CLASS TCentroCoste FROM TMant
 
 	DATA lOpenFiles
+   DATA  cMru              INIT     "centro_coste_16"
+
+   DATA aTipo              INIT {   "Clientes", "Artículos", "Proveedores" }
+   DATA cTipo              INIT     "Artículos"
+   DATA oTipo
+
+   DATA cGet
+   DATA oGet
+
+   DATA hValid             INIT {=>}
+   DATA hHelp              INIT {=>}
+
+   METHOD New()
 
 	METHOD DefineFiles( cPath, cDriver )
+
 	METHOD Resource( nMode )
+
 	METHOD lPreSave( oGet, oDlg, nMode )
+
+   METHOD loadValues()
+
 	METHOD validCodigo( oGet, cCodigo, nMode )					
+
 	METHOD validName( cNombre )							INLINE ( iif( empty( cNombre ),;
 																	( msgStop( "La descripción del centro de coste no puede estar vacía." ), .f. ),;
 																	.t. ) )
+   METHOD loadGet()
 
+   METHOD clearGet()
 
 END CLASS
 
 //----------------------------------------------------------------------------//
+
+METHOD New()
+
+   ::Super:New()
+
+   ::hValid       := {  "Clientes" => {|| cClient( ::oGet, , ::oGet:oHelpText ) } ,;
+                        "Artículos" => {|| cArticulo( ::oGet, , ::oGet:oHelpText ) } ,;
+                        "Proveedores" => {|| cProvee( ::oGet, , ::oGet:oHelpText ) } }
+
+   ::hHelp        := {  "Clientes" => {|| BrwClient( ::oGet, ::oGet:oHelpText ) } ,;
+                        "Artículos" => {|| BrwArticulo( ::oGet, ::oGet:oHelpText ) } ,;
+                        "Proveedores" => {|| BrwProvee( ::oGet, ::oGet:oHelpText ) } }
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 
 METHOD DefineFiles( cPath, cDriver )
 
@@ -32,6 +69,8 @@ METHOD DefineFiles( cPath, cDriver )
       	FIELD NAME "cNombre"   TYPE "C" LEN 50  DEC 0  COMMENT "Nombre"  				DEFAULT Space( 50 )  					  				         COLSIZE 200 OF ::oDbf
       	FIELD NAME "nVentas"   TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de Ventas"  						   PICTURE cPorDiv()	  ALIGN RIGHT  	COLSIZE 150 OF ::oDbf
       	FIELD NAME "nCompras"  TYPE "N" LEN 15  DEC 6  COMMENT "Objetivo de compras"  						PICTURE cPirDiv()	  ALIGN RIGHT	   COLSIZE 150 OF ::oDbf
+         FIELD NAME "nTipoDoc"  TYPE "N" LEN  2  DEC 0  COMMENT "Tipo documento asociado"                HIDE  OF ::oDbf
+         FIELD NAME "cCodDoc"   TYPE "C" LEN 30  DEC 0  COMMENT "Documento asociado"                     HIDE  OF ::oDbf
    
       	INDEX TO "CENTROCOSTE.CDX" TAG "cCodigo" ON "cCodigo" COMMENT "Código" NODELETED OF ::oDbf
       	INDEX TO "CENTROCOSTE.CDX" TAG "cNombre" ON "cNombre" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -46,8 +85,17 @@ METHOD Resource( nMode )
 
    	local oDlg
    	local oGet
+      local oBmp
+
+      ::loadValues()
 
    	DEFINE DIALOG oDlg RESOURCE "CentroCoste" TITLE LblTitle( nMode ) + "centro de coste"
+
+         REDEFINE BITMAP oBmp ;
+            RESOURCE "centro_coste_48" ;
+            ID       800 ;
+            TRANSPARENT ;
+            OF       oDlg ;
 
       	REDEFINE GET oGet VAR ::oDbf:cCodigo UPDATE;
             ID 		100 ;
@@ -68,9 +116,25 @@ METHOD Resource( nMode )
 
          REDEFINE GET ::oDbf:nCompras UPDATE;
             ID 		130 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
+            WHEN     ( nMode != ZOOM_MODE ) ; 
             PICTURE  ( cPirDiv() );
             OF 		oDlg
+
+         REDEFINE COMBOBOX ::oTipo ;
+            VAR      ::cTipo ;
+            ID       140 ;
+            ITEMS    ::aTipo ;
+            WHEN     ( nMode != ZOOM_MODE ) ; 
+            OF       oDlg
+
+            ::oTipo:bChange   := {|| ::clearGet(), ::LoadGet() }
+
+         REDEFINE GET ::oGet VAR ::cGet ;
+            ID       150 ;
+            IDTEXT   160 ;
+            BITMAP   "LUPA" ;
+            WHEN     ( nMode != ZOOM_MODE ) ; 
+            OF       oDlg
 
       	REDEFINE BUTTON ;
             ID       IDOK ;
@@ -88,9 +152,13 @@ METHOD Resource( nMode )
       	oDlg:AddFastKey( VK_F5, {|| ::lPreSave( oGet, oDlg, nMode ) } )
    	end if
 
-   	oDlg:bStart    := {|| oGet:SetFocus() }
+   	oDlg:bStart    := {|| ::LoadGet(), ::oGet:lValid(), oGet:SetFocus() }
 
 	ACTIVATE DIALOG oDlg	CENTER
+
+   if !Empty( oBmp )
+      oBmp:End()
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -105,6 +173,13 @@ METHOD lPreSave( oGet, oDlg, nMode )
 	if !::validName( ::oDbf:cNombre )
 		Return .f.
 	endif
+
+   if !::oGet:lValid()
+      Return .f.
+   end if
+
+   ::oDbf:nTipoDoc   := ::oTipo:nAt
+   ::oDbf:cCodDoc    := ::oGet:VarGet
 
 Return ( oDlg:end( IDOK ) )
 
@@ -123,5 +198,32 @@ METHOD validCodigo( oGet, cCodigo, nMode )
 	end if
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD loadValues()
+
+   ::cTipo  := ::aTipo[ Max( ::oDbf:nTipoDoc, 1 ) ]
+   ::cGet   := ::oDbf:cCodDoc
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD loadGet()
+
+   ::oGet:bValid     := hGet( ::hValid, ::cTipo )
+   ::oGet:bHelp      := hGet( ::hHelp, ::cTipo )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD clearGet()
+
+   ::oGet:cText( Space( 30 ) )
+   ::oGet:oHelpText:cText( Space( 200 ) )
+
+Return .t.
 
 //---------------------------------------------------------------------------//

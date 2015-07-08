@@ -1998,8 +1998,8 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Centro de costes"
    oItem:cMessage       := "Acceso al centro de coste"
-   oItem:bAction        := {|| TCentroCoste():New( cPatDat(), oWnd, "01041" ):Activate() }
-   oItem:cId            := "01041"
+   oItem:bAction        := {|| TCentroCoste():New( cPatDat(), oWnd, "01128" ):Activate() }
+   oItem:cId            := "01128"
    oItem:cBmp           := "centro_coste_16"
    oItem:cBmpBig        := "centro_coste_32"
    oItem:lShow          := .f.
@@ -3673,6 +3673,12 @@ Function BuildMenu()
                ACTION   ( TFrasesPublicitarias():New( cPatArt(), oWnd, oMenuItem ):Activate() ) ;
                HELPID   "01104" ;
                RESOURCE "Led_Red_16" ;
+
+            MENUITEM    "K. Centro de costes";
+               MESSAGE  "Acceso al centro de coste" ;
+               ACTION   ( TCentroCoste():New( cPatDat(), oWnd, "01128" ):Activate() ) ;
+               HELPID   "01128" ;
+               RESOURCE "centro_coste_16" ;
 
             MENUITEM    "&K. Paises";
                HELPID   "01041" ;

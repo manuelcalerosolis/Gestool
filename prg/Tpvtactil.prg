@@ -8611,8 +8611,8 @@ METHOD DataReport() CLASS TpvTactil
    // ::oFastReport:SetWorkArea(       "Propiedades", ::oPropiedadesLinea:nArea )
    // ::oFastReport:SetFieldAliases(   "Propiedades", cItemsToReport( aItmPro() ) )
 
-   ::oFastReport:SetWorkArea(       "Impuestos especiales",  ::oNewImp:Select() )
-   ::oFastReport:SetFieldAliases(   "Impuestos especiales",  cObjectsToReport( ::oNewImp:oDbf ) )
+   //::oFastReport:SetWorkArea(       "Impuestos especiales",  ::oNewImp:Select() )
+   //::oFastReport:SetFieldAliases(   "Impuestos especiales",  cObjectsToReport( ::oNewImp:oDbf ) )
 
 RETURN ( Self )
 

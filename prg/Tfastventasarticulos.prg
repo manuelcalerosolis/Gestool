@@ -81,11 +81,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddVariableStock() 
 
    METHOD GetInformacionEntrada( cCodArt, cCodAlm, cLote, cDatoRequerido )
-      METHOD isEntradaPedidoProveedor( cCodArt, cCodAlm, cLote )
-      METHOD getDatoPedidoProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido )
-      METHOD isEntradaAlbaranProveedor( cCodArt, cCodAlm, cLote )
+      //METHOD isEntradaAlbaranProveedor( cCodArt, cCodAlm, cLote )
       METHOD GetDatoAlbaranProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido )
-      METHOD isEntradaMovimientoAlmacen( cCodArt, cCodAlm, cLote )
+      //METHOD isEntradaMovimientoAlmacen( cCodArt, cCodAlm, cLote )
       METHOD GetDatoMovimientosAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido )
 
 END CLASS
@@ -2919,210 +2917,57 @@ RETURN ( Self )
 
 METHOD GetInformacionEntrada( cCodArt, cLote, cDatoRequerido ) 
 
-   local cDato       := ctod('')  
+   local cDato := ::GetDatoMovimientosAlamcen( cCodArt, cLote, cDatoRequerido )
 
-   if ::isEntradaMovimientoAlmacen( cCodArt, cLote )
-      Return (::GetDatoMovimientosAlamcen( cCodArt, cLote, cDatoRequerido ) )
-   end if
-
-   if ::isEntradaAlbaranProveedor( cCodArt, cLote )
-      Return ( ::GetDatoAlbaranProveedor( cCodArt, cLote, cDatoRequerido ) )     
-   end if    
-
-   if ::isEntradaPedidoProveedor( cCodArt, cLote )
-      Return ( ::getDatoPedidoProveedor( cCodArt, cLote, cDatoRequerido ) )
-   end if
-   
-
-RETURN ( cDato )
-
-//---------------------------------------------------------------------------//
-
-METHOD isEntradaPedidoProveedor( cCodArt, cLote )
-
-   local aStatusPedidoProveedores
-   local isEntradaPedido      := .f.
-   local cReferencia          := Padr( cCodArt, 18 ) + Padr( cLote, 12 )
-
-   aStatusPedidoProveedores   :=  ::oPedPrvL:getStatus()
-   ::oPedPrvL:OrdSetFocus( "cRefLote" )
-
-   if ::oPedPrvL:Seek( cReferencia ) 
-   
-      isEntradaPedido   := .t.
-
-   end if 
-
-   ::oPedPrvL:setStatus( aStatusPedidoProveedores )
-
-RETURN ( isEntradaPedido )
-
-//-----------------------------------------------------------------------------//
-
-METHOD getDatoPedidoProveedor( cCodArt, cLote, cCampoRequerido )
-
-   local aStatusPedidoProveedores
-   local dFechaPedido      := date()
-   local dFechaDocumento
-   local uCampoRequerido
-   local cReferencia          := Padr( cCodArt, 18 ) + Padr( cLote, 12 )
-
-   aStatusPedidoProveedores   :=  ::oPedPrvL:getStatus()
-   ::oPedPrvL:OrdSetFocus( "cRefLote" )
-
-   if ::oPedPrvL:Seek( cReferencia ) 
-   
-      while ( alltrim( ::oPedPrvL:cRef ) + alltrim( ::oPedPrvL:cLote ) == alltrim( cCodArt ) + alltrim( cLote ) ) .and. !( ::oPedPrvL:Eof() )
-
-         dFechaDocumento   := RetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT:cAlias, "dFecPed" )
-            
-         if dFechaPedido >= dFechaDocumento
-
-            dFechaPedido         := dFechaDocumento
-
-            if !empty( cCampoRequerido ) .and. ( ::oPedPrvL:fieldpos(cCampoRequerido) != 0 )
-               uCampoRequerido   := ::oPedPrvL:fieldgetbyname(cCampoRequerido) 
-
-            end if 
-
-         end if
-
-      ::oPedPrvL:skip()
-
-      end while
-
-   end if 
-
-   ::oPedPrvL:setStatus( aStatusPedidoProveedores )
-
-   if isNil( uCampoRequerido )
-      uCampoRequerido   := dFechaPedido
-   end if 
-
-RETURN ( uCampoRequerido )
-
-//---------------------------------------------------------------------------//
-
-METHOD isEntradaAlbaranProveedor( cCodArt, cLote, cDatoRequerido )
-
-   local sStatusAlbaranProveeedor
-   local isEntradaAlbaranProveedor  := .f.
-   local cReferencia    := Padr( cCodArt, 18 ) + Padr( cLote, 12 )
-   
-   sStatusAlbaranProveeedor   := ::oAlbPrvL:getStatus()
-   ::oAlbPrvL:ordSetFocus(  "cRefLote" )
-
-   if ::oAlbPrvL:Seek( cReferencia)
-
-      isEntradaAlbaranProveedor := .t.
-
-   end if  
-
-   ::oAlbPrvL:setStatus( sStatusAlbaranProveeedor )
-
-RETURN ( isEntradaAlbaranProveedor )
+RETURN if ( !Empty( cDato ), cDato, ::GetDatoAlbaranProveedor( cCodArt, cLote, cDatoRequerido ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD GetDatoAlbaranProveedor( cCodArt, cLote, cCampoRequerido )
 
-   local aStatusAlbaranProveeedor
-   local dFechaAlbaran  := date()
-   local dFechadocumento 
-   local uCampoRequerido
-   local cReferencia    := Padr( cCodArt, 18 ) + Padr( cLote, 12 )
+   local Resultado
 
-   aStatusAlbaranProveeedor   := ::oAlbPrvL:getStatus()
-   ::oAlbPrvL:OrdSetFocus( "cRefLote" )
+   DEFAULT cCampoRequerido    := "dFecAlb"
 
-   if ::oAlbPrvL:Seek( cReferencia )
+   ::oAlbPrvL:getStatus()
 
-      while ( alltrim( ::oAlbPrvL:cRef ) + alltrim( ::oAlbPrvL:cLote ) ) == ( alltrim( cCodArt ) + alltrim( cLote ) ).and. !( ::oAlbPrvL:Eof() )
+   ::oAlbPrvL:OrdSetFocus( "cRefFec" )
 
-         dFechaDocumento := ::oAlbPrvL:dFecAlb
+   if ::oAlbPrvL:Seek( Padr( cCodArt, 18 ) + Padr( cLote, 12 ) )
 
-         if dFechaAlbaran >= dFechaDocumento
-            dFechaAlbaran    := dFechaDocumento 
-
-            if !empty(cCampoRequerido) .and. ( ::oAlbPrvL:fieldpos(cCampoRequerido) != 0 )
-               uCampoRequerido   := ::oAlbPrvL:fieldgetbyname( cCampoRequerido)
-            end if 
+      if ::oAlbPrvL:fieldpos( cCampoRequerido ) != 0
+         Resultado   := ::oAlbPrvL:fieldgetbyname( cCampoRequerido )
+      end if 
                
-         end if 
-
-      ::oAlbPrvL:skip()
-
-      end while
    end if  
 
-   ::oAlbPrvL:setStatus( aStatusAlbaranProveeedor )
+   ::oAlbPrvL:setStatus()
 
-   if isNil( uCampoRequerido)
-      uCampoRequerido := dFechaAlbaran
-   end if
+RETURN ( Resultado )
 
-RETURN ( uCampoRequerido )
-
-//---------------------------------------------------------------------------//
-METHOD isEntradaMovimientoAlmacen( cCodArt, cLote )
-
-   local aStatusMovimientosAlmacen
-   local isEntradaMovimientoAlmacen := .f.
-   local cReferencia := Padr( cCodArt, 18 ) + padr( " ", 80 ) + Padr( cLote, 12 )
-
-   aStatusMovimientosAlmacen := ::oHisMov:getStatus()
-   ::oHisMov:OrdSetFocus( "cRefMov" )
-
-   if ::oHisMov:Seek( cReferencia )
-
-      isEntradaMovimientoAlmacen := .t.
-
-   end if
-
-   ::oHisMov:setStatus(aStatusMovimientosAlmacen )
-
-RETURN ( isEntradaMovimientoAlmacen )
 //---------------------------------------------------------------------------//
 
 METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
 
-   local aStatusMovimientosAlmacen 
-   local dFechaMovimiento    := date()
-   local dFechaDocumento 
-   local uCampoRequerido
-   local cReferencia := Padr( cCodArt, 18 ) + padr( " ", 80 ) + Padr( cLote, 12 )
+   local Resultado            := ""
 
-   aStatusMovimientosAlmacen := ::oHisMov:getStatus()
-   ::oHisMov:OrdSetFocus( "cRefMov" )
+   DEFAULT cCampoRequerido    := "dFecMov"
 
-   if ::oHisMov:Seek( cReferencia )
+   ::oHisMov:getStatus()
 
-      while ( alltrim( ::oHisMov:cRefMov ) + alltrim( ::oHisMov:cLote ) == alltrim( cCodArt ) + alltrim( cLote ) ) .and. !( ::oHisMov:Eof() )
+   ::oHisMov:OrdSetFocus( "cRefFec" )
 
-         dFechaDocumento         := ::oHisMov:dFecMov   
+   if ::oHisMov:Seek( Padr( cCodArt, 18 ) + Padr( cLote, 12 ) )
 
-         if dFechaMovimiento >= dFechaDocumento
-            dFechaMovimiento     := dFechaDocumento 
-
-            if !empty( cCampoRequerido ) .and. ( ::oHisMov:fieldpos( cCampoRequerido ) != 0 )
-               uCampoRequerido   := ::oHisMov:fieldgetbyname( cCampoRequerido )
-            end if
+      if ::oHisMov:fieldpos( cCampoRequerido ) != 0
+         Resultado   := ::oHisMov:fieldgetbyname( cCampoRequerido )
+      end if
                 
-         end if
-
-      ::oHisMov:skip()
-
-      end while
-
    end if
 
-   ::oHisMov:setStatus( aStatusMovimientosAlmacen )
+   ::oHisMov:setStatus()
 
-   if isNil( uCampoRequerido )
-      uCampoRequerido := dFechaMovimiento
-   end if
-
-RETURN ( uCampoRequerido )
+RETURN ( resultado )
 
 //---------------------------------------------------------------------------//
 METHOD StartDialog() CLASS TFastVentasArticulos

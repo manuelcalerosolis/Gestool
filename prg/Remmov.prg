@@ -3600,6 +3600,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       INDEX TO ( cFileName ) TAG "cStkFastIn"   ON "cRefMov + cAliMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
       INDEX TO ( cFileName ) TAG "cStkFastOu"   ON "cRefMov + cAloMov + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cLote"  NODELETED  OF oDbf
       INDEX TO ( cFileName ) TAG "cRef"         ON "cRefMov"                                NODELETED                     OF oDbf
+      INDEX TO ( cFileName ) TAG "cRefFec"      ON "cRefMov + cLote + dTos( dFecMov )"      NODELETED                     OF oDbf
 
    END DATABASE oDbf
 

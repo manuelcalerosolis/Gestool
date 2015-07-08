@@ -8639,8 +8639,8 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. nCtlStk < 2 .and. !Deleted()", {|| !Field->lFacturado .and. Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
       ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cStkFastOu", "cRef + cAlmOrigen + dtos( dFecAlb ) + tFecAlb", {|| Field->cRef + Field->cAlmOrigen + dtos( Field->dFecAlb ) + Field->tFecAlb } ) )
 
-      ( cAlbPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+      ( cAlbPrvT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cRefFec", "cRef + cLote + dTos( dFecAlb )", {|| Field->cRef + Field->cLote + dTos( Field->dFecAlb ) } ) )
 
       ( cAlbPrvT )->( dbCloseArea() )
    else
