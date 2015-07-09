@@ -5855,8 +5855,16 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    DEFAULT lActualizaWeb   := .f.
 
+   /*
+   Ejecutamos script del evento before append----------------------------------
+   */
+
+   if nMode == APPD_MODE
+      runEventScript( "Articulos\beforeAppend", aTmp )
+   end if
+
    if !Empty( oGetTarWeb )
-     aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
+      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
    end if
 
    /*
@@ -16385,7 +16393,7 @@ function aItmArt()
    aAdd( aBase, { "NDTOPNT",   "N",  6, 2, "Dto. del catalogo" ,                       "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NRENMIN",   "N",  6, 2, "Rentabilidad mínima" ,                     "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CCODCATE",  "C",  3, 0, "Código de categoría",                      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODTEMP",  "C",  3, 0, "Código de la temporada",                   "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODTEMP",  "C",  5, 0, "Código de la temporada",                   "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LECOTASA",  "L",  1, 0, "Lógico para usar ECOTASA",                 "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LMOSCOM",   "L",  1, 0, "Lógico mostrar comentario" ,               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "MCOMENT",   "M", 10, 0, "Comentario a mostrar" ,                    "",                  "", "( cDbfArt )", nil } )

@@ -383,7 +383,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD EjecutarFicheroScript() CLASS TScripts
+METHOD EjecutarFicheroScript( uParam ) CLASS TScripts
 
    // Desactivamos todos los Scripts-------------------------------------------
 
@@ -391,7 +391,7 @@ METHOD EjecutarFicheroScript() CLASS TScripts
 
    // Ejecutamos el script compilado----------------------------------------
 
-   ::RunScript( ::cFicheroHbr )
+   ::RunScript( ::cFicheroHbr, uParam )
 
    // Activamos todos los scripts----------------------------------------------
 
@@ -401,27 +401,27 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD RunScript( cFichero ) CLASS TScripts
+METHOD RunScript( cFichero, uParam ) CLASS TScripts
 
    local u
    local pHrb
    local oError
    local oBlock
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       if file( cFichero )
          pHrb        := hb_hrbLoad( cFichero )
-         u           := hb_hrbDo( pHrb )
+         u           := hb_hrbDo( pHrb, uParam )
          hb_hrbUnload( pHrb )   
       end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Error de ejecución script." + CRLF + ErrorMessage( oError ) )
 
-   END SEQUENCE*/
+   END SEQUENCE
 
    ErrorBlock( oBlock )
 
@@ -480,7 +480,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD CompilarEjecutarFicheroScript( cFicheroPrg )
+METHOD CompilarEjecutarFicheroScript( cFicheroPrg, uParam )
 
    if !empty( cFicheroPrg )
       ::cFicheroPrg  := cFicheroPrg
@@ -489,7 +489,7 @@ METHOD CompilarEjecutarFicheroScript( cFicheroPrg )
 
    ::CompilarFicheroScript()
 
-   ::EjecutarFicheroScript()
+   ::EjecutarFicheroScript( uParam )
 
 Return ( Self )
 
@@ -514,7 +514,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function runEventScript( cDirectory )
+Function runEventScript( cDirectory, uParam )
 
    local aFile
    local aDirectory  
@@ -524,7 +524,7 @@ Function runEventScript( cDirectory )
    if !empty( aDirectory )
 
       for each aFile in aDirectory
-         TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ] )
+         TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam )
       next 
 
    end if 
