@@ -2918,9 +2918,7 @@ Function aPropiedadesArticulo( cCodigoArticulo, nView, cFieldCodigo, cValueCodig
 
    end if 
 
-   msgAlert( hb_valtoexp( aValores, "aValores" ) )
-   asort(aValores, , , {|x,y| val( x[ "ValorPropiedad" ] ) < val( y[ "ValorPropiedad" ] ) } )
-   msgAlert( hb_valtoexp( aValores, "despues" ) )
+   asort( aValores, , , {|x,y| val( x[ "ValorPropiedad" ] ) < val( y[ "ValorPropiedad" ] ) } )
 
    D():setStatus( "ArtDiv", nView )
 
@@ -2991,18 +2989,3 @@ Static Function addPropiedades( aPropiedades, nView, cCodigoPropiedad )
 Return ( aadd( aPropiedades, hPropiedad ) )
 
 //---------------------------------------------------------------------------//
-/*
-
-      if retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ], dbfPro, "lColor" )
-
-         with object ( oBrwDiv:AddCol() )
-            :cHeader          := "C. Prp1"
-            :bStrData         := {|| "" }
-            :nWidth           := 16
-            :bClrStd          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
-            :bClrSel          := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
-            :bClrSelFocus     := {|| { nRGB( 0, 0, 0), retFld( aTmp[ ( dbfArticulo )->( FieldPos( "cCodPrp1" ) ) ] + ( dbfTmpVta )->cValPr1, dbfTblPro, "nColor" ) } }
-         end with
-
-      end if
-*/
