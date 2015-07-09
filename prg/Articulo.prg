@@ -5855,8 +5855,16 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    DEFAULT lActualizaWeb   := .f.
 
+   /*
+   Ejecutamos script del evento before append----------------------------------
+   */
+
+   if nMode == APPD_MODE
+      runEventScript( "Articulos\beforeAppend", aTmp )
+   end if
+
    if !Empty( oGetTarWeb )
-     aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
+      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ]  := oGetTarWeb:getTarifa()
    end if
 
    /*
