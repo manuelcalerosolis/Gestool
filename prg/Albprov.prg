@@ -5448,7 +5448,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
    cNumPedPrv           := aTmp[ _CNUMPED ]
    aNumPedCli           := {}
 
-
    /*
    Comprobamos la fecha del documento------------------------------------------
    */
@@ -5583,11 +5582,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
          /*
          Cambios de precios-------------------------------------------------------
-         */
 
          if ( D():Articulos( nView ) )->( dbSeek( ( dbfTmp )->cRef ) ) .and. ( dbfTmp )->lChgLin
             CambioPrecio( aTmp[ _DFECALB ], D():Articulos( nView ), dbfTmp )
          end if
+         */
 
          /*
          Grabamos-----------------------------------------------------------------
