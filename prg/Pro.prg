@@ -2918,6 +2918,10 @@ Function aPropiedadesArticulo( cCodigoArticulo, nView, cFieldCodigo, cValueCodig
 
    end if 
 
+   msgAlert( hb_valtoexp( aValores, "aValores" ) )
+   asort(aValores, , , {|x,y| val( x[ "ValorPropiedad" ] ) < val( y[ "ValorPropiedad" ] ) } )
+   msgAlert( hb_valtoexp( aValores, "despues" ) )
+
    D():setStatus( "ArtDiv", nView )
 
 Return ( aValores )
