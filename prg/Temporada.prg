@@ -26,7 +26,7 @@ Function aItmTemporada()
 
    local aBase := { }
 
-   aAdd( aBase, { "cCodigo",   "C",  3, 0, "Código de la Temporada" ,   "",   "", "( cDbfTemporada )"} )
+   aAdd( aBase, { "cCodigo",   "C",  5, 0, "Código de la Temporada" ,   "",   "", "( cDbfTemporada )"} )
    aAdd( aBase, { "cNombre",   "C", 50, 0, "Nombre de la Temporada" ,   "",   "", "( cDbfTemporada )"} )
    aAdd( aBase, { "cTipo",     "C", 30, 0, "Tipo de la Temporada" ,     "",   "", "( cDbfTemporada )"} )
 
@@ -41,12 +41,19 @@ Function mkTemporada( cPath, lAppend, cPathOld )
 
    local dbfTemporada
 
+   ?"Entro en el mkTemporada"
+
 	DEFAULT lAppend := .f.
    DEFAULT cPath   := cPatArt()
+
+   ?cPath
+   ?cPathOld
 
    dbCreate( cPath + "Temporadas.Dbf", aSqlStruct( aItmTemporada() ), cDriver() )
 
    if lAppend .and. lIsDir( cPathOld ) .and. lExistTable( cPathOld + "Temporadas.dbf" )
+
+      ?"2"
       
       dbUseArea( .t., cDriver(), cPath + "Temporadas.Dbf", cCheckArea( "Temporada", @dbfTemporada ), .f. )
       
@@ -312,10 +319,11 @@ Static Function EdtRec( aTmp, aGet, dbfTemporada, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ] ;
          ID       100 ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    ( NotValid( aGet[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ], dbfTemporada, .t., "0" ) ) ;
          PICTURE  "@!" ;
          COLOR    CLR_GET ;
          OF       oDlg
+
+         //VALID    ( NotValid( aGet[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ], dbfTemporada, .t., "0" ) ) ;
 
       REDEFINE GET aGet[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ] ;
          VAR      aTmp[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ] ;
@@ -452,7 +460,7 @@ Function cTemporada( oGet, dbfTemporada, oGet2, oBmpTemporada  )
    local lValid         := .f.
    local xValor         := oGet:varGet()
 
-   if ( Empty( xValor ) .or. Rtrim( xValor ) == "ZZZ" )
+   if ( Empty( xValor ) .or. Rtrim( xValor ) == "ZZZZ" )
       if( oGet2 != nil, oGet2:cText( "" ), )
       return .t.
    end if

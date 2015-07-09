@@ -891,7 +891,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :lHide            := .t.
       end with
 
-
       oWndBrw:CreateXFromCode()
 
    DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
@@ -5336,20 +5335,6 @@ Static Function QuiAlbCli()
    if !Empty( cNumSat )
       oStock:SetEstadoAlbCli( cNumSat, .t., cNumAlb )
    end if
-
-   /*
-   Estado de los sat cuando es agrupando-----------------------------------
-   */
-
-   while dbSeekInOrd( cNumAlb, "cNumAlb", dbfAlbCliT ) .and. !( dbfAlbCliT )->( Eof() )
-
-      if dbLock( dbfAlbCliT )
-         ( dbfAlbCliT )->cNumAlb    := ""
-         ( dbfAlbCliT )->lEstado    := .f.
-         ( dbfAlbCliT )->( dbUnLock() )
-      end if
-
-   end while
 
    /*
    Cerramos las tablas---------------------------------------------------------
