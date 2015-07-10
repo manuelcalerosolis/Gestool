@@ -64,7 +64,7 @@ CLASS ViewBase
    METHOD endView()                    INLINE ( ::oDlg:goNextCtrl( GetFocus() ),;
                                                 ::oDlg:goPrevCtrl( GetFocus() ),;
                                                 iif( ::errorValidator(), apoloMsgStop( ::cErrorValidator ), ::oDlg:End( IDOK ) ) )
-   METHOD cancelView()                 INLINE ( ::oDlg:End() )
+   METHOD cancelView()                 INLINE ( ::oDlg:End()  )
 
    METHOD evalDialog()
 

@@ -10,57 +10,61 @@ CLASS Editable
    DATA nMode
 
    DATA cDataTable
+   DATA cDataTableLine
 
    DATA oViewNavigator
    DATA oViewSearchNavigator
    DATA oViewEdit
 
    DATA cDetailArea
-   DATA nPosDetail                        INIT 0
+   DATA nPosDetail                              INIT 0
    
    DATA hDictionaryMaster
    DATA hDictionaryDetail
    DATA oDocumentLineTemporal
 
-   DATA aDetails                          INIT {}
+   DATA aDetails                                INIT {}
  
    METHOD Append()
    METHOD Edit()
    METHOD Delete()
 
-   METHOD setDataTable( cDataTable )      INLINE ( ::cDataTable := cDataTable )
-   METHOD getDataTable()                  INLINE ( ::cDataTable )
+   METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
+   METHOD getDataTable()                        INLINE ( ::cDataTable )
 
-   METHOD onPostGetDocumento()            INLINE ( .t. )
-   METHOD onPreSaveDocumento()            INLINE ( .t. )
-   METHOD onPostSaveDocumento()           INLINE ( .t. )
+   METHOD setDataTableLine( cDataTableLine )    INLINE ( ::cDataTableLine := cDataTableLine )
+   METHOD getDataTableLine()                    INLINE ( ::cDataTableLine )
 
-   METHOD getAppendDocumento()            INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
-   METHOD getEditDocumento()              INLINE ( ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView ) )
-   METHOD deleteDocumento()               INLINE ( D():deleteRecord( ::getDataTable(), ::nView ) )
-      METHOD Resource()                   INLINE ( msgStop( "Resource method must be redefined" ) )
+   METHOD onPostGetDocumento()                  INLINE ( .t. )
+   METHOD onPreSaveDocumento()                  INLINE ( D():SetHashLine( ::oDocumentLines:aLines, ::cDataTableLine, ::nView ) )
+   METHOD onPostSaveDocumento()                 INLINE ( .t. )
 
-   METHOD saveAppendDocumento()           INLINE ( D():appendHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
-   METHOD saveEditDocumento()             INLINE ( D():editHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
+   METHOD getAppendDocumento()                  INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
+   METHOD getEditDocumento()                    INLINE ( ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView ) )
+   METHOD deleteDocumento()                     INLINE ( D():deleteRecord( ::getDataTable(), ::nView ) )
+      METHOD Resource()                         INLINE ( msgStop( "Resource method must be redefined" ) )
+
+   METHOD saveAppendDocumento()                 INLINE ( D():appendHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
+   METHOD saveEditDocumento()                   INLINE ( D():editHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
       METHOD saveDocumento()        
 
-   METHOD getWorkArea()                   INLINE ( D():Get( ::cDataTable, ::nView ) )
+   METHOD getWorkArea()                         INLINE ( D():Get( ::cDataTable, ::nView ) )
 
-   METHOD addDetail( oDetail )            INLINE ( aAdd( ::aDetails, oDetail ) )
+   METHOD addDetail( oDetail )                  INLINE ( aAdd( ::aDetails, oDetail ) )
 
-   METHOD setDetailArea( cDetailArea )    INLINE ( ::cDetailArea  := cDetailArea )
-   METHOD getDetailArea()                 INLINE ( ::cDetailArea )
+   METHOD setDetailArea( cDetailArea )          INLINE ( ::cDetailArea  := cDetailArea )
+   METHOD getDetailArea()                       INLINE ( ::cDetailArea )
 
-   METHOD lAppendMode()                   INLINE ( ::nMode == APPD_MODE )
-   METHOD lEditMode()                     INLINE ( ::nMode == EDIT_MODE )
-   METHOD lZoomMode()                     INLINE ( ::nMode == ZOOM_MODE )
+   METHOD lAppendMode()                         INLINE ( ::nMode == APPD_MODE )
+   METHOD lEditMode()                           INLINE ( ::nMode == EDIT_MODE )
+   METHOD lZoomMode()                           INLINE ( ::nMode == ZOOM_MODE )
 
    METHOD AppendDetail()
    METHOD EditDetail()
    METHOD DeleteDetail()
-   METHOD ResourceDetail()                VIRTUAL
-   METHOD GetAppendDetail()               VIRTUAL
-   METHOD GetEditDetail()                 VIRTUAL
+   METHOD ResourceDetail()                      VIRTUAL
+   METHOD GetAppendDetail()                     VIRTUAL
+   METHOD GetEditDetail()                       VIRTUAL
 
 ENDCLASS
 
@@ -85,6 +89,8 @@ METHOD Append() CLASS Editable
       lAppend     := ::saveAppendDocumento()
 
       ::onPostSaveDocumento()
+
+      ::oDocumentLines:reset()
    
    end if
 
@@ -115,6 +121,8 @@ METHOD Edit() CLASS Editable
       ::onPostSaveDocumento()
 
    end if
+
+   ::oDocumentLines:reset()
 
 Return ( lEdit )
 

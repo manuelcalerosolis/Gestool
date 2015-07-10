@@ -607,6 +607,7 @@ METHOD EditGuardaLinea() CLASS DocumentsSales
 Return ( self )
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 /*METHOD totalLinea( hLine ) CLASS DocumentsSales
 

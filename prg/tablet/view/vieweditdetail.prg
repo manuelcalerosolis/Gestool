@@ -126,7 +126,7 @@ METHOD defineAceptarCancelar() CLASS ViewDetail
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oDlg:End( IDOK ) },;
+                           "bLClicked" => {|| ::oSender:addNumeroLinea( ::oSender:oDocumentLineTemporal:hDictionary ), ::oDlg:End( IDOK ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )

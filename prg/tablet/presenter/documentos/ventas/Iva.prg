@@ -82,10 +82,8 @@ METHOD add( oDocumentLine )
    nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPorcentajeImpuesto() == ::getTipoIva( hIva ) } )
 
    if nPosition != 0
-      msgAlert( "Coinciden" )
       ::sumIva( oDocumentLine, nPosition )
    else
-      msgAlert( "¡¡ No coinciden!!" )
       ::addIva( oDocumentLine )
    end if 
 

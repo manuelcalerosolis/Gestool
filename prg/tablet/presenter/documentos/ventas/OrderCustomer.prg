@@ -15,7 +15,7 @@ CLASS OrderCustomer FROM DocumentsSales
 
    METHOD New()
 
-   METHOD setEnviroment()              INLINE ( ::setDataTable( "PedCliT" ), ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ) )
+   METHOD setEnviroment()              INLINE ( ::setDataTable( "PedCliT" ), ::setDataTableLine( "PedCliL" ), ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ) )
 
    METHOD setNavigator()
 
@@ -48,6 +48,8 @@ CLASS OrderCustomer FROM DocumentsSales
    METHOD CalculaIva()
 
    METHOD SetDocuments()
+
+   METHOD addNumeroLinea()
 
 END CLASS
 
@@ -260,3 +262,23 @@ METHOD SetDocuments() CLASS OrderCustomer
    ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
 
 return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD addNumeroLinea( hDictionaryTemporal ) CLASS OrderCustomer
+
+   Local oDocumentLine
+   Local NumeroLinea
+
+   for each oDocumentLine in ::oDocumentLines:aLines
+      NumeroLinea := oDocumentLine:getNumeroLinea()
+   next
+
+   if Empty( NumeroLinea )
+      hset( hDictionaryTemporal, "NumeroLinea", 1 )
+   else
+      hset( hDictionaryTemporal, "NumeroLinea", NumeroLinea+1 )
+   endif
+
+Return( self )
+//---------------------------------------------------------------------------//

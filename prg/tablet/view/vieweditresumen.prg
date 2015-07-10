@@ -34,7 +34,7 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD defineFormaPago()
 
-   METHOD SetImpresoras( aImpresoras )          INLINE ( msgAlert( HB_ValToExp( aImpresoras ), "aImpresoras" ), if ( !Empty( aImpresoras ), ::aCbxImpresora  := aImpresoras, ::aCbxImpresora := {} ) )
+   METHOD SetImpresoras( aImpresoras )          INLINE ( if ( !Empty( aImpresoras ), ::aCbxImpresora  := aImpresoras, ::aCbxImpresora := {} ) )
    METHOD SetImpresoraDefecto( cImpresora )     INLINE ( if ( !Empty( cImpresora ), ::cCbxImpresora   := cImpresora, ::cCbxImpresora := {} ) )
 
    METHOD defineBrowseIva()
@@ -180,7 +180,6 @@ Return ( self )
 
 METHOD defineComboImpresion() CLASS ViewEditResumen
 
-   msgAlert( HB_ValToExp( ::oSender:SetDocuments() ), "::oSender:SetDocuments()" )
    ::oSender:SetDocuments()
 
    TGridSay():Build(    {     "nRow"      => 90,;

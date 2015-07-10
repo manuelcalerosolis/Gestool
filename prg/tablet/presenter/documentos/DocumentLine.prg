@@ -13,6 +13,9 @@ CLASS DocumentLine
    METHOD Impuesto()  
    METHOD Importe()
 
+   METHOD getSerie()                                           INLINE ( hGet( ::hDictionary, "Serie" ) )
+   METHOD getNumero()                                          INLINE ( hGet( ::hDictionary, "Numero" ) )
+   METHOD getSufijo()                                          INLINE ( hGet( ::hDictionary, "Sufijo" ) )
    METHOD getNumeroLinea()                                     INLINE ( hGet( ::hDictionary, "NumeroLinea" ) )
    METHOD getArticulo()                                        INLINE ( hGet( ::hDictionary, "Articulo" ) )
    METHOD getDescripcionArticulo()                             INLINE ( hGet( ::hDictionary, "DescripcionArticulo" ) )

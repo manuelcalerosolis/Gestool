@@ -20,7 +20,7 @@ CLASS DocumentLines
    METHOD getLineDetail( nPosDetail )                       INLINE ( ::aLines[ nPosDetail ] )
       METHOD getCloneLineDetail( nPosDetail )               INLINE ( oClone( ::getLineDetail( nPosDetail ) ) )
    METHOD GuardaLineDetail( nPosDetail, oDocumentLine )     INLINE ( ::aLines[ nPosDetail ] := oDocumentLine )
-   METHOD appendLineDetail( oDocumentLine )                 INLINE ( aadd( ::aLines, oDocumentLine ) )
+   METHOD appendLineDetail( oDocumentLine )                 INLINE ( aadd( ::aLines, oDocumentLine ), msgAlert( hb_ValtoExp( oDocumentLine ), "oDocumentLine DocumentLines" ) )
 
    METHOD Total()
  
