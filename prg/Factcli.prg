@@ -6373,7 +6373,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
       	aTmp[ _CALMLIN  ]       := aTmpFac[ _CCODALM ]
       	aTmp[ _LIVALIN  ]       := aTmpFac[ _LIVAINC ]
       	aTmp[ _CTIPMOV  ]       := cDefVta()
-	    aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
+         aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
       	aTmp[ __CNUMPED ]       := aTmpFac[ _CNUMPED ]
       	aTmp[ __DFECSAL ]       := aTmpFac[ _DFECSAL  ]
       	aTmp[ __DFECENT ]       := aTmpFac[ _DFECENTR ]
@@ -6386,9 +6386,9 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 
     end case  	
 
-   	//-----------------------------------------------------------------------//
+   //-----------------------------------------------------------------------//
 
-    oDlg           		:= TDialog():New( 1, 5, 40, 100, "LINEAS GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
+   oDlg           		:= TDialog():New( 1, 5, 40, 100, "LINEAS GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
 	/*
 	Cabeceras------------------------------------------------------------------
@@ -6411,7 +6411,10 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| msgWait("Guardando","",.1), aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , , nMode, , , , , , , oSayLote ) ), ) },;
+                                             		"bLClicked" => {||   msgWait("Guardando","",.1),;
+                                                                        aGet[ _CREF ]:lValid(),;
+                                                                        iif( !Empty( aTmp[ _CREF ] ),;
+                                                                           ( SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, , , , , , , nMode, , , , , , , oSayLote ) ), ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
@@ -12971,7 +12974,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
    end if
 
    if !lTipMov()
-      if !Empty( [ _CTIPMOV ] ) 
+      if !Empty( aGet[ _CTIPMOV ] ) 
          aGet[ _CTIPMOV ]:hide()
       end if
    end if
@@ -14466,7 +14469,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
       // Propiedades ----------------------------------------------------------
 
-      if !empty( oBrwProperties:Cargo )
+      if !empty( oBrwProperties ) .and. !empty( oBrwProperties:Cargo )
 
          for n := 1 to len( oBrwProperties:Cargo )
 

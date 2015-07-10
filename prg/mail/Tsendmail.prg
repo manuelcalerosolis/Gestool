@@ -80,7 +80,7 @@ CLASS TSendMail
 
    // Utilidades
 
-   METHOD isMailServer()      INLINE ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
+   METHOD isMailServer()      
    METHOD mailServerString()  INLINE ( ::mailServer + if( !empty( ::mailServerPort ), ":" + alltrim( str( ::mailServerPort ) ), "" ) )
    METHOD getMensajeHTML()    INLINE ( "<HTML>" + strtran( alltrim( ::oSender:cGetMensaje ), CRLF, "<p>" ) + "</HTML>" )
 
@@ -117,6 +117,12 @@ METHOD New( oSender ) CLASS TSendMail
    ::mailServerSSL            := uFieldEmpresa( "lSSLMai")
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isMailServer()
+
+Return ( !empty( ::mailServerHost ) .and. !empty( ::mailServerUserName ) .and. !empty( ::mailServerPassword ) )
 
 //---------------------------------------------------------------------------//
 

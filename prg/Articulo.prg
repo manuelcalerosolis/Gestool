@@ -12828,9 +12828,6 @@ Method CreateData()
    USE ( cPatSnd() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @tmpCodebar ) )
    SET ADSINDEX TO ( cPatSnd() + "ArtCodebar.Cdx" ) ADDITIVE
 
-   USE ( cPatSnd() + "TipArt.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPART", @tmpTipart ) )
-   SET ADSINDEX TO ( cPatSnd() + "TipArt.Cdx" ) ADDITIVE
-
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfArticulo )->( lastrec() )
    end if
@@ -12941,7 +12938,6 @@ Method CreateData()
    CLOSE ( tmpOfe      )
    CLOSE ( tmpImg      )
    CLOSE ( tmpCodebar  )
-   CLOSE ( tmpTipart   )
 
    CloseFiles()
 
