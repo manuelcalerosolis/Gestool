@@ -6338,6 +6338,8 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmp)->nMedUno    := ( D():PedidosProveedoresLineas( nView ) )->nMedUno
                      (dbfTmp)->nMedDos    := ( D():PedidosProveedoresLineas( nView ) )->nMedDos
                      (dbfTmp)->nMedTre    := ( D():PedidosProveedoresLineas( nView ) )->nMedTre
+                     (dbfTmp)->cCodImp    := ( D():PedidosProveedoresLineas( nView ) )->cCodImp
+                     (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
 
                      if dbSeekInOrd( ( D():PedidosProveedoresLineas( nView ) )->cRef, "Codigo", D():Articulos( nView ) )
 
@@ -6458,6 +6460,8 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   (dbfTmp)->nMedUno    := ( D():PedidosProveedoresLineas( nView ) )->nMedUno
                   (dbfTmp)->nMedDos    := ( D():PedidosProveedoresLineas( nView ) )->nMedDos
                   (dbfTmp)->nMedTre    := ( D():PedidosProveedoresLineas( nView ) )->nMedTre
+                  (dbfTmp)->cCodImp    := ( D():PedidosProveedoresLineas( nView ) )->cCodImp
+                  (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
 
                   if dbSeekInOrd( ( D():PedidosProveedoresLineas( nView ) )->cRef, "Codigo", D():Articulos( nView ) )
 
