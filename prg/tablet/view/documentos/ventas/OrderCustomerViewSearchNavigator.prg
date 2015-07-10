@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS PedidoClienteViewSearchNavigator FROM ViewSearchNavigator
+CLASS OrderCustomerViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD setTextoTipoDocumento()      INLINE ( ::cTextoTipoDocumento := "Pedidos de cliente" ) 
 
@@ -13,7 +13,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD setColumns() CLASS PedidoClienteViewSearchNavigator
+METHOD setColumns() CLASS OrderCustomerViewSearchNavigator
 
    ::setBrowseConfigurationName( "Grid pedidos cliente" )
 

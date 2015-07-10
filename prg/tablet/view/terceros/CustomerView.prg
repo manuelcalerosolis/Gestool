@@ -2,7 +2,7 @@
 #include "Factu.ch" 
 #include "Xbrowse.ch"
 
-CLASS ClienteView FROM ViewBase
+CLASS CustomerView FROM ViewBase
   
    METHOD New()
 
@@ -36,7 +36,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS ClienteView
+METHOD New( oSender ) CLASS CustomerView
 
    ::oSender               := oSender
 
@@ -44,7 +44,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertControls() CLASS ClienteView
+METHOD insertControls() CLASS CustomerView
 
    ::defineCodigo(40)
 
@@ -72,7 +72,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineCodigo(nRow) CLASS ClienteView
+METHOD defineCodigo(nRow) CLASS CustomerView
 
    local oCodigo
 
@@ -104,7 +104,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineNIF(nRow) CLASS ClienteView
+METHOD defineNIF(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -134,7 +134,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineNombre(nRow) CLASS ClienteView
+METHOD defineNombre(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -164,7 +164,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineDomicilio(nRow) CLASS ClienteView
+METHOD defineDomicilio(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -191,7 +191,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineCodigoPostal(nRow) CLASS ClienteView
+METHOD defineCodigoPostal(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -218,7 +218,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD definePoblacion(nRow) CLASS ClienteView
+METHOD definePoblacion(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -245,7 +245,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineProvincia(nRow) CLASS ClienteView
+METHOD defineProvincia(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -272,7 +272,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineEstablecimiento(nRow) CLASS ClienteView
+METHOD defineEstablecimiento(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -299,7 +299,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineTipoCliente( nRow ) CLASS ClienteView
+METHOD defineTipoCliente( nRow ) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      =>  nRow ,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -326,7 +326,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineTelefono(nRow) CLASS ClienteView
+METHOD defineTelefono(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -353,7 +353,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineEmail(nRow) CLASS ClienteView
+METHOD defineEmail(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;

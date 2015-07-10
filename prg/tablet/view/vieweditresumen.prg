@@ -34,10 +34,8 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD defineFormaPago()
 
-   METHOD SetImpresoras( aImpresoras )          INLINE ( if ( !Empty( aImpresoras ), ::aCbxImpresora := aImpresoras, ::aCbxImpresora := {} ) )
-   METHOD SetImpresoraDefecto( cImpresora )     INLINE ( if ( !Empty( cImpresora ), ::cCbxImpresora := cImpresora, ::cCbxImpresora := {} ) )
-
-   METHOD SetArrayBrowseIva( hTotalIva )        INLINE ( if ( !Empty( hTotalIva ), ::hTotalIva := hTotalIva, ::hTotalIva := {=>} ) )
+   METHOD SetImpresoras( aImpresoras )          INLINE ( msgAlert( HB_ValToExp( aImpresoras ), "aImpresoras" ), if ( !Empty( aImpresoras ), ::aCbxImpresora  := aImpresoras, ::aCbxImpresora := {} ) )
+   METHOD SetImpresoraDefecto( cImpresora )     INLINE ( if ( !Empty( cImpresora ), ::cCbxImpresora   := cImpresora, ::cCbxImpresora := {} ) )
 
    METHOD defineBrowseIva()
 
@@ -55,7 +53,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Resource( oDlgMaster ) CLASS ViewEditResumen
+METHOD Resource() CLASS ViewEditResumen
 
    ::oDlg   := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
@@ -103,7 +101,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| MsgInfo( "Aceptamos sin imprimir" ), ::oDlg:End() },;
+                           "bLClicked" => {|| MsgInfo( "Aceptamos sin imprimir" ), ::oDlg:End( IDOK ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -127,7 +125,7 @@ METHOD defineCliente() CLASS ViewEditResumen
    TGridGet():Build( {  "nRow"      => 40,;
                         "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                         "oWnd"      => ::oDlg,;
-                        "bSetGet"   => {|u| if( PCount() == 0, ::cCodigoCliente, ::cCodigoCliente := u ) },;
+                        "bSetGet"   => {|u| hGet( ::oSender:hDictionaryMaster, "Cliente" ) },;
                         "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "bWhen"     => {|| .f. },;
@@ -136,7 +134,7 @@ METHOD defineCliente() CLASS ViewEditResumen
    TGridGet():Build( {  "nRow"      => 40,;
                         "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
                         "oWnd"      => ::oDlg,;
-                        "bSetGet"   => {|u| if( PCount() == 0, ::cNombreCliente, ::cNombreCliente := u ) },;
+                        "bSetGet"   => {|u| hGet( ::oSender:hDictionaryMaster, "NombreCliente" )  },;
                         "lPixels"   => .t.,;
                         "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
                         "bWhen"     => {|| .f.},;
@@ -161,7 +159,7 @@ METHOD defineFormaPago() CLASS ViewEditResumen
 
    ::oCodigoFormaPago  := TGridGet():Build( {   "nRow"      => 65,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                                "bSetGet"   => {|u| if( PCount() == 0, ::cCodigoFormaPago, ::cCodigoFormaPago := u ) },;
+                                                "bSetGet"   => {|u| hGet( ::oSender:hDictionaryMaster, "Pago" ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
@@ -170,7 +168,7 @@ METHOD defineFormaPago() CLASS ViewEditResumen
 
    ::oNombreFormaPago  := TGridGet():Build(  {  "nRow"      => 65,;
                                                 "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
-                                                "bSetGet"   => {|u| if( PCount() == 0, ::cNombreFormaPago, ::cNombreFormaPago := u ) },;
+                                                "bSetGet"   => {|u| cNbrFPago( hGet( ::oSender:hDictionaryMaster, "Pago" ), D():FormasPago( ::oSender:nView ) ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
                                                 "lPixels"   => .t.,;
@@ -181,6 +179,9 @@ Return ( self )
 //---------------------------------------------------------------------------//
 
 METHOD defineComboImpresion() CLASS ViewEditResumen
+
+   msgAlert( HB_ValToExp( ::oSender:SetDocuments() ), "::oSender:SetDocuments()" )
+   ::oSender:SetDocuments()
 
    TGridSay():Build(    {     "nRow"      => 90,;
                               "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -208,6 +209,8 @@ Return ( self )
 
 METHOD defineBrowseIva() CLASS ViewEditResumen
 
+   ::oSender:CalculaIVA()
+
    ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
 
    ::oBrowse:nTop             := ::oBrowse:EvalRow( 125 )
@@ -219,40 +222,40 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "Base"
-      :bStrData            := {|| if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "Base" ) ), Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "Base" ), cPorDiv() ), "" ) }
+      :bStrData            := {|| ::oSender:oIva:ShowBase( ::oBrowse:nArrayAt ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 0 }
+      :bFooter             := {|| ::oSender:oIva:TotalBase() }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "%" + cImp() + " - % RE"
-      :bStrData            := {|| if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "PorcentajeIva" ) ), Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "PorcentajeIva" ), "@E 999.99" ), "" ) + CRLF + if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "PorcentajeRe" ) ) != nil ,  Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "PorcentajeRe" ), "@E 999.99"), "" ) }
-      :nWidth              := 160
+      :bStrData            := {|| ::oSender:oIva:ShowPorcentajes( ::oBrowse:nArrayAt ) }
+      :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := cImp() + " - RE"
-      :bStrData            := {|| if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "ImporteIva" ) ), Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "ImporteIva" ), cPorDiv() ), "" ) + CRLF + if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "ImporteRe" ) ) != nil ,  Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "ImporteRe" ), cPorDiv() ), "" ) }
+      :bStrData            := {|| ::oSender:oIva:ShowImportes( ::oBrowse:nArrayAt ) }
       :nWidth              := 160
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 0 }
+      :bFooter             := {|| ::oSender:oIva:transTotalImporte() }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "Total"
-      :bStrData            := {|| if( !IsNil( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "Total" ) ), Trans( hGet( ::hTotalIva[ ::oBrowse:nArrayAt ], "Total" ), cPorDiv() ), "" ) }
+      :bStrData            := {|| ::oSender:oIva:ShowTotal( ::oBrowse:nArrayAt ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| 0 }
+      :bFooter             := {|| ::oSender:oIva:transTotalTotales() }
    end with
 
    ::oBrowse:nHeaderHeight    := 48
@@ -260,7 +263,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
    ::oBrowse:nRowHeight       := 96
    ::oBrowse:nDataLines       := 2
 
-   ::oBrowse:SetArray( ::hTotalIva, , , .f. )
+   ::oBrowse:SetArray( ::oSender:oIva:aIva, , , .f. )
 
    ::oBrowse:CreateFromCode()
 

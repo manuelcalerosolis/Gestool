@@ -80,7 +80,7 @@ METHOD defineAceptarCancelar() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_del_64",;
-                           "bLClicked" => {|| ::oDlg:End() },;
+                           "bLClicked" => {|| ::oSender:onViewCancel() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;
@@ -88,7 +88,7 @@ METHOD defineAceptarCancelar() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oSender:ResumenVenta( ::oCbxRuta, ::oDlg ) },;
+                           "bLClicked" => {|| ::oSender:onViewSave() },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -340,9 +340,7 @@ METHOD defineBrowseLineas() CLASS ViewEdit
    ::oBrowse:nRowHeight       := 96
    ::oBrowse:nDataLines       := 2
 
-   ::oBrowse:SetArray( ::oSender:hDictionaryDetail, , , .f. )
-
-   ::oSender:PropiedadesBrowseDetail()
+   ::oBrowse:SetArray( ::oSender:getLines(), , , .f. )
 
    ::oBrowse:bLDblClick       := {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse() }
 

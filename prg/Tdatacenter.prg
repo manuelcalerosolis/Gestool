@@ -5560,8 +5560,12 @@ CLASS D
 
    METHOD PedidosClientesLineas( nView )              INLINE ( ::Get( "PedCliL", nView ) )
       METHOD PedidosClientesLineasId( nView )         INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
+      METHOD GetPedidoClienteLineasHash( nView )      INLINE ( ::getHashRecord( ::PedidosClientesLineas( nView ), nView ) )
       METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
       METHOD GetPedidoClienteLineaBlank( nView )      INLINE ( ::getHashRecordBlank( ::PedidosClientesLineas( nView ), nView ) )
+
+      METHOD getStatusPedidosClientesLineas( nView )    INLINE ( ::aStatus := aGetStatus( ::PedidosClientesLineas( nView ) ) )
+      METHOD setStatusPedidosClientesLineas( nView )    INLINE ( SetStatus( ::PedidosClientesLineas( nView ), ::aStatus ) ) 
 
    METHOD PedidosClientesSituaciones( nView )            INLINE ( ::Get( "PedCliE", nView ) )
       METHOD PedidosClientesSituacionesId( nView )       INLINE ( ( ::Get( "PedCliE", nView ) )->cSerPed + str( ( ::Get( "PedCliE", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliE", nView ) )->cSufPed )

@@ -204,13 +204,7 @@ METHOD evalDialog() CLASS ViewBase
 
    for each oControl in aControls
 
-      // msgAlert( hb_valtoexp( oControl ), "control" )
-      
-      msgAlert( empty( oControl:bWhen ) .or. eval( oControl:bWhen ), "bWhen" )
-
       if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
-
-         msgAlert( !empty( oControl:bValid ) .and. !eval( oControl:bValid ), "bValid" )            
 
          if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
 

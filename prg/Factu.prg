@@ -5908,7 +5908,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| Cliente():New() },;
+                           "bLClicked" => {|| Customer():New() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 3 ) },;
@@ -5920,14 +5920,14 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| Cliente():New() } } )
+                           "bAction"   => {|| Customer():New() } } )
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| PedidoCliente():New() },;
+                           "bLClicked" => {|| OrderCustomer():New() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
@@ -5939,7 +5939,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| PedidoCliente():New() } } )
+                           "bAction"   => {|| OrderCustomer():New() } } )
 
    /*
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
@@ -5947,7 +5947,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| AlbaranCliente():New() },;
+                           "bLClicked" => {|| DeliveryNoteCustomer():New() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 9 ) },;
@@ -5959,7 +5959,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| AlbaranCliente():New() } } )
+                           "bAction"   => {|| DeliveryNoteCustomer():New() } } )
    */
    
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;

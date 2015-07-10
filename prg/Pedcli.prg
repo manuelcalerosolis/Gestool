@@ -17787,7 +17787,7 @@ RETURN .t.
 
 STATIC FUNCTION EdtTablet( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
-   PedidoCliente():Resource()
+   OrderCustomer():Resource()
 
 RETURN ( .t. )
 

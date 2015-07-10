@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS ClienteIncidencia FROM Editable
+CLASS CustomerIncidence FROM Editable
 
    DATA oSender
 
@@ -27,15 +27,15 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS ClienteIncidencia
+METHOD New( oSender ) CLASS CustomerIncidence
 
    ::oSender               := oSender
 
    ::nView                 := oSender:nView
 
-   ::oViewEdit             := ClienteIncidenciaView():New( self )   
+   ::oViewEdit             := CustomerIncidenceView():New( self )   
 
-   ::oViewNavigator        := ClienteIncidenciaViewNavigator():New( self )
+   ::oViewNavigator        := CustomerIncidenceViewNavigator():New( self )
 
    ::setEnviroment()
 
@@ -43,7 +43,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD showNavigator() CLASS ClienteIncidencia
+METHOD showNavigator() CLASS CustomerIncidence
 
    ::idClient              := D():ClientesId( ::nView )
 
@@ -57,7 +57,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPostGetDocumento() CLASS ClienteIncidencia
+METHOD onPostGetDocumento() CLASS CustomerIncidence
 
    local cTipo := hGet( ::hDictionaryMaster, "Tipo" )
 
@@ -69,7 +69,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPreSaveDocumento() CLASS ClienteIncidencia
+METHOD onPreSaveDocumento() CLASS CustomerIncidence
 
    local cTipo := ""
 

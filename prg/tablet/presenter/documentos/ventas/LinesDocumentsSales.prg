@@ -1,9 +1,9 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
  
-CLASS DocumentosVentas FROM Ventas
+CLASS LinesDocumentsSales FROM DocumentsSales
 
-   DATA nMode
+   /*DATA nMode
 
    DATA oViewEdit
    DATA oViewEditDetail
@@ -20,26 +20,25 @@ CLASS DocumentosVentas FROM Ventas
                                              "7" => "lVisSab",;
                                              "8" => "Cod" }
 
-   DATA hTotalIva                   INIT  {  { "Base" => 0,;
-                                               "PorcentajeIva" => 0,;
-                                               "ImporteIva" => 0,;
-                                               "PorcentajeRe" => 0,;
-                                               "ImporteRe" => 0,;
-                                               "Total" => 0 },;
-                                             { "Base" => 0,;
-                                               "PorcentajeIva" => 0,;
-                                               "ImporteIva" => 0,;
-                                               "PorcentajeRe" => 0,;
-                                               "ImporteRe" => 0,;
-                                               "Total" => 0 },;
-                                             { "Base" => 0,;
-                                               "PorcentajeIva" => 0,;
-                                               "ImporteIva" => 0,;
-                                               "PorcentajeRe" => 0,;
-                                               "ImporteRe" => 0,;
-                                               "Total" => 0 } }  
+   DATA hTotalIva                   INIT  {  { "Base" => 100,;
+                                               "PorcentajeIva" => 21,;
+                                               "ImporteIva" => 121,;
+                                               "PorcentajeRe" => 1,;
+                                               "ImporteRe" => 1 },;
+                                             { "Base" => 100,;
+                                               "PorcentajeIva" => 21,;
+                                               "ImporteIva" => 121,;
+                                               "PorcentajeRe" => 1,;
+                                               "ImporteRe" => 1 },;
+                                             { "Base" => 100,;
+                                               "PorcentajeIva" => 21,;
+                                               "ImporteIva" => 121,;
+                                               "PorcentajeRe" => 1,;
+                                               "ImporteRe" => 1 } } */ 
 
-   METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
+   METHOD New()
+
+   /*METHOD getDataBrowse( Name )     INLINE ( hGet( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
    METHOD isChangeSerieTablet( lReadyToSend, getSerie )
    
@@ -68,7 +67,7 @@ CLASS DocumentosVentas FROM Ventas
    METHOD lSeekArticulo()
 
    METHOD hSetDetail( cField, uValue );
-            INLINE ( hSet( ::hDictionaryDetailTemporal, cField, uValue ) )
+            INLINE ( hSet( ::oDocumentLineTemporal, cField, uValue ) )
 
 
    METHOD setCodigoArticulo();
@@ -117,7 +116,7 @@ CLASS DocumentosVentas FROM Ventas
    METHOD getValorImpuestoEspecial();
             INLINE ( D():ImpuestosEspeciales( ::nView ):nValImp( ( D():Articulos( ::nView ) )->cCodImp,;
                      hGet( ::hDictionaryMaster, "ImpuestosIncluidos" ),;
-                     hGet( ::hDictionaryDetailTemporal, "TipoImpuesto" ) ) )
+                     hGet( ::oDocumentLineTemporal, "TipoImpuesto" ) ) )
 
    METHOD SetImpuestoEspecial()
 
@@ -157,7 +156,7 @@ CLASS DocumentosVentas FROM Ventas
 
    METHOD SetDescuentoPorcentual()
       METHOD SetDescuentoPorcentualArticulo();
-            INLINE ( ::hSetDetail( "DescuentoPorcentual", nDescuentoArticulo( hGet( ::hDictionaryDetailTemporal, "Articulo" ), hGet( ::hDictionaryMaster, "Cliente" ), ::nView ) ) )
+            INLINE ( ::hSetDetail( "DescuentoPorcentual", nDescuentoArticulo( hGet( ::oDocumentLineTemporal, "Articulo" ), hGet( ::hDictionaryMaster, "Cliente" ), ::nView ) ) )
 
       METHOD SetDescuentoPorcentualTarifaCliente()    VIRTUAL
       METHOD SetDescuentoPorcentualAtipicaCliente()   VIRTUAL
@@ -174,19 +173,26 @@ CLASS DocumentosVentas FROM Ventas
 
    METHOD CargaArticulo()
 
-   METHOD lShowLote()   INLINE ( hGet( ::hDictionaryDetailTemporal, "LogicoLote" ) )
+   METHOD lShowLote()   INLINE ( hGet( ::oDocumentLineTemporal, "LogicoLote" ) )
 
    METHOD ResumenVenta( oCbxRuta )
 
    METHOD lValidResumenVenta()
 
-   METHOD SetDocumentosFacturas()
+   METHOD SetDocumentosFacturas()*/
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD isChangeSerieTablet( getSerie ) CLASS DocumentosVentas
+METHOD New() CLASS LinesDocumentsSales
+
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD isChangeSerieTablet( getSerie ) CLASS DocumentsSales
    
    if hGet( ::hDictionaryMaster, "Envio" )
       ::ChangeSerieTablet( getSerie )
@@ -196,7 +202,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ChangeSerieTablet( getSerie ) CLASS DocumentosVentas
+METHOD ChangeSerieTablet( getSerie ) CLASS DocumentsSales
 
    local cSerie   := getSerie:VarGet()
 
@@ -216,7 +222,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidCliente( oGet, oGet2, nMode ) CLASS DocumentosVentas
+METHOD lValidCliente( oGet, oGet2, nMode ) CLASS DocumentsSales
 
    local lValid      := .t.
    local cNewCodCli  := hGet( ::hDictionaryMaster, "Cliente" )
@@ -289,7 +295,7 @@ RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidDireccion( oGet, oGet2, cCodCli ) CLASS DocumentosVentas
+METHOD lValidDireccion( oGet, oGet2, cCodCli ) CLASS DocumentsSales
 
    local lValid   := .f.
    local xValor   := oGet:VarGet()
@@ -341,7 +347,7 @@ Return lValid
 
 //---------------------------------------------------------------------------//
 
-METHOD ChangeRuta( oCbxRuta, oGetCliente, oGetDireccion, oSayTextRuta ) CLASS DocumentosVentas
+METHOD ChangeRuta( oCbxRuta, oGetCliente, oGetDireccion, oSayTextRuta ) CLASS DocumentsSales
 
    local cCliente          := ""
    local nOrdAnt           := ( D():Clientes( ::nView ) )->( OrdSetFocus() )
@@ -396,19 +402,19 @@ return cCliente
 
 //---------------------------------------------------------------------------//
 
-METHOD priorClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion ) CLASS DocumentosVentas
+METHOD priorClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion ) CLASS DocumentsSales
 
 return ( ::moveClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, .t. ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD nextClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion ) CLASS DocumentosVentas
+METHOD nextClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion ) CLASS DocumentsSales
 
 return ( ::moveClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, .f. ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD moveClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, lAnterior ) CLASS DocumentosVentas
+METHOD moveClient( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, lAnterior ) CLASS DocumentsSales
 
    local lSet              := .f.
    local nOrdAnt
@@ -462,7 +468,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaSiguienteCliente( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, nMode ) CLASS DocumentosVentas
+METHOD CargaSiguienteCliente( oCbxRuta, oSayTextRuta, oGetCliente, oGetDireccion, nMode ) CLASS DocumentsSales
 
    ::gotoUltimoCliente( oCbxRuta )
 
@@ -476,7 +482,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD gotoUltimoCliente( oCbxRuta ) CLASS DocumentosVentas
+METHOD gotoUltimoCliente( oCbxRuta ) CLASS DocumentsSales
 
    local nOrdAnt     := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
 
@@ -492,7 +498,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD setUltimoCliente( oCbxRuta ) CLASS DocumentosVentas
+METHOD setUltimoCliente( oCbxRuta ) CLASS DocumentsSales
 
    local nOrdAnt     := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ AllTrim( Str( oCbxRuta:nAt ) ) ] ) )
 
@@ -504,7 +510,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD RecalculaLinea() CLASS DocumentosVentas
+METHOD RecalculaLinea() CLASS DocumentsSales
 
    local nCalculo
    local nUnidades
@@ -513,22 +519,21 @@ METHOD RecalculaLinea() CLASS DocumentosVentas
    local nRentabilidad
    local nBase       := 0
 
-   nUnidades         := nTotNPedCli( ::hDictionaryDetailTemporal )
+   nUnidades         := nTotNPedCli( ::oDocumentLineTemporal )
 
-   nCalculo          := hGet( ::hDictionaryDetailTemporal, "PrecioVenta" )
+   nCalculo          := hGet( ::oDocumentLineTemporal, "PrecioVenta" )
 
-   nCalculo          -= hGet( ::hDictionaryDetailTemporal, "DescuentoLineal" )
+   nCalculo          -= hGet( ::oDocumentLineTemporal, "DescuentoLineal" )
 
    /*
    IVMH------------------------------------------------------------------------
-   */
 
-   if !hGet( ::hDictionaryDetailTemporal, "LineaImpuestoIncluido" )
+   if !hGet( ::oDocumentLineTemporal, "LineaImpuestoIncluido" )
 
-      if hGet( ::hDictionaryDetailTemporal, "VolumenImpuestosEspeciales" )
-         nCalculo += hGet( ::hDictionaryDetailTemporal, "ImporteImpuestoEspecial" ) * NotCero( hGet( ::hDictionaryDetailTemporal, "Volumen" ) )
+      if hGet( ::oDocumentLineTemporal, "VolumenImpuestosEspeciales" )
+         nCalculo += hGet( ::oDocumentLineTemporal, "ImporteImpuestoEspecial" ) * NotCero( hGet( ::oDocumentLineTemporal, "Volumen" ) )
       else
-         nCalculo += hGet( ::hDictionaryDetailTemporal, "ImporteImpuestoEspecial" )
+         nCalculo += hGet( ::oDocumentLineTemporal, "ImporteImpuestoEspecial" )
       end if
 
    end if
@@ -537,30 +542,27 @@ METHOD RecalculaLinea() CLASS DocumentosVentas
 
    /*
    Transporte------------------------------------------------------------------
-   */
 
-   if hGet( ::hDictionaryDetailTemporal, "Portes" ) != 0
-      nCalculo       += hGet( ::hDictionaryDetailTemporal, "Portes" ) * nUnidades
+   if hGet( ::oDocumentLineTemporal, "Portes" ) != 0
+      nCalculo       += hGet( ::oDocumentLineTemporal, "Portes" ) * nUnidades
    end if
 
    /*
    Descuentos------------------------------------------------------------------
-   */
 
-   if hGet( ::hDictionaryDetailTemporal, "DescuentoPorcentual" ) != 0
-      nCalculo       -= nCalculo * hGet( ::hDictionaryDetailTemporal, "DescuentoPorcentual" ) / 100
+   if hGet( ::oDocumentLineTemporal, "DescuentoPorcentual" ) != 0
+      nCalculo       -= nCalculo * hGet( ::oDocumentLineTemporal, "DescuentoPorcentual" ) / 100
    end if
 
-   if hGet( ::hDictionaryDetailTemporal, "DescuentoPromocion" ) != 0
-      nCalculo       -= nCalculo * hGet( ::hDictionaryDetailTemporal, "DescuentoPromocion" ) / 100
+   if hGet( ::oDocumentLineTemporal, "DescuentoPromocion" ) != 0
+      nCalculo       -= nCalculo * hGet( ::oDocumentLineTemporal, "DescuentoPromocion" ) / 100
    end if
 
    /*
    Punto Verde-----------------------------------------------------------------
-   */
 
    if hGet( ::hDictionaryMaster, "OperarPuntoVerde" )
-      nCalculo       += hGet( ::hDictionaryDetailTemporal, "PuntoVerde" ) * nUnidades
+      nCalculo       += hGet( ::oDocumentLineTemporal, "PuntoVerde" ) * nUnidades
    end if
 
    if !Empty( ::oViewEditDetail:oTotalLinea )
@@ -571,21 +573,9 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendGuardaLinea() CLASS DocumentosVentas
+METHOD AppendGuardaLinea() CLASS DocumentsSales
 
-   aAdd( ::hDictionaryDetail, ::hDictionaryDetailTemporal )
-
-   if !Empty( ::oViewEdit:oBrowse )
-      ::oViewEdit:oBrowse:Refresh()
-   end if
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD EditGuardaLinea() CLASS DocumentosVentas
-
-   ::hDictionaryDetail[ ::nPosDetail ] := ::hDictionaryDetailTemporal
+   aAdd( ::hDictionaryDetail, ::oDocumentLineTemporal )
 
    if !Empty( ::oViewEdit:oBrowse )
       ::oViewEdit:oBrowse:Refresh()
@@ -595,9 +585,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD lSeekArticulo() CLASS DocumentosVentas
+METHOD EditGuardaLinea() CLASS DocumentsSales
 
-   local cCodArt     := hGet( ::hDictionaryDetailTemporal, "Articulo" )
+   ::hDictionaryDetail[ ::nPosDetail ] := ::oDocumentLineTemporal
+
+   if !Empty( ::oViewEdit:oBrowse )
+      ::oViewEdit:oBrowse:Refresh()
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD lSeekArticulo() CLASS DocumentsSales
+
+   local cCodArt     := hGet( ::oDocumentLineTemporal, "Articulo" )
 
    if Empty( cCodArt )
       Return .f.
@@ -609,7 +611,7 @@ Return ( dbSeekUpperLower( cCodArt, ::nView ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD lArticuloObsoleto() CLASS DocumentosVentas
+METHOD lArticuloObsoleto() CLASS DocumentsSales
 
    if !( D():Articulos( ::nView ) )->lObs
       Return .f.
@@ -623,7 +625,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//   
 
-METHOD setProveedorArticulo() CLASS DocumentosVentas
+METHOD setProveedorArticulo() CLASS DocumentsSales
 
    local cRefProveedor
    
@@ -637,7 +639,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setLote() CLASS DocumentosVentas
+METHOD setLote() CLASS DocumentsSales
 
    if ( D():Articulos( ::nView ) )->lLote
 
@@ -658,7 +660,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetTipoImpuesto() CLASS DocumentosVentas
+METHOD SetTipoImpuesto() CLASS DocumentsSales
 
    if hGet( ::hDictionaryMaster, "TipoImpuesto" ) <= 1
       ::hSetDetail( "PorcentajeImpuesto", nIva( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva ) )
@@ -669,7 +671,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetImpuestoEspecial() CLASS DocumentosVentas
+METHOD SetImpuestoEspecial() CLASS DocumentsSales
 
    if !Empty( ( D():Articulos( ::nView ) )->cCodImp )
 
@@ -683,9 +685,9 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetPrecioCosto() CLASS DocumentosVentas
+METHOD SetPrecioCosto() CLASS DocumentsSales
 
-   local nCosto   := nCosto(  hGet( ::hDictionaryDetailTemporal, "Articulo" ),;
+   local nCosto   := nCosto(  hGet( ::oDocumentLineTemporal, "Articulo" ),;
                               D():Articulos( ::nView ),;
                               D():Kit( ::nView ),;
                               .f., ,;
@@ -702,7 +704,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetPrecioVenta() CLASS DocumentosVentas
+METHOD SetPrecioVenta() CLASS DocumentsSales
 
    ::SetPrecioArticulo()
    ::SetPrecioTarifaCliente()    //Método Virtual no creado
@@ -713,9 +715,9 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetPrecioArticulo CLASS DocumentosVentas
+METHOD SetPrecioArticulo CLASS DocumentsSales
 
-   local nPrecio   := nRetPreArt(   hGet( ::hDictionaryDetailTemporal, "Tarifa" ),;
+   local nPrecio   := nRetPreArt(   hGet( ::oDocumentLineTemporal, "Tarifa" ),;
                                     hGet( ::hDictionaryMaster, "Divisa" ),;
                                     hGet( ::hDictionaryMaster, "ImpuestosIncluidos" ),;
                                     D():Articulos( ::nView ),;
@@ -729,7 +731,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetComisionAgente() CLASS DocumentosVentas
+METHOD SetComisionAgente() CLASS DocumentsSales
 
    ::SetComisionMaster()
    ::SetComisionTarifaCliente()     //Método Virtual no creado
@@ -739,7 +741,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetDescuentoPorcentual() CLASS DocumentosVentas
+METHOD SetDescuentoPorcentual() CLASS DocumentsSales
 
    ::SetDescuentoPorcentualArticulo()
    ::SetDescuentoPorcentualTarifaCliente()   //Método Virtual no creado
@@ -750,7 +752,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetDescuentoPromocional() CLASS DocumentosVentas
+METHOD SetDescuentoPromocional() CLASS DocumentsSales
 
    ::SetDescuentoPromocionalTarifaCliente()     //Método Virtual no creado
    ::SetDescuentoPromocionalAtipicaCliente()    //Método Virtual no creado
@@ -759,7 +761,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetDescuentoLineal() CLASS DocumentosVentas
+METHOD SetDescuentoLineal() CLASS DocumentsSales
 
    ::SetDescuentoLinealTarifaCliente()       //Método Virtual no creado
    ::SetDescuentoLinealAtipicaCliente()      //Método Virtual no creado
@@ -769,9 +771,9 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD CargaArticulo() CLASS DocumentosVentas
+METHOD CargaArticulo() CLASS DocumentsSales
 
-   local cCodArt  := hGet( ::hDictionaryDetailTemporal, "Articulo" )
+   local cCodArt  := hGet( ::oDocumentLineTemporal, "Articulo" )
 
    if Empty( cCodArt )
       Return .f.
@@ -840,11 +842,7 @@ METHOD CargaArticulo() CLASS DocumentosVentas
 
    ::SetDescuentoLineal()
 
-   ::cOldCodidoArticulo    := hGet( ::hDictionaryDetailTemporal, "Articulo" )
-
-   /*
-   Refrescamos el diálogo, una vez insertado los datos-------------------------
-   */
+   ::cOldCodidoArticulo    := hGet( ::oDocumentLineTemporal, "Articulo" )
 
    ::oViewEditDetail:RefreshDialog()
 
@@ -852,13 +850,12 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidResumenVenta() CLASS DocumentosVentas
+METHOD lValidResumenVenta() CLASS DocumentsSales
 
    local lReturn  := .t.
    
    /*
    Comprobamos que el cliente no esté vacío-----------------------------------
-   */
 
    if Empty( hGet( ::hDictionaryMaster, "Cliente" ) )
       ApoloMsgStop( "Cliente no puede estar vacío.", "¡Atención!" )
@@ -867,7 +864,6 @@ METHOD lValidResumenVenta() CLASS DocumentosVentas
 
    /*
    Comprobamos que el documento tenga líneas----------------------------------
-   */
 
    if len( ::hDictionaryDetail ) <= 0
       ApoloMsgStop( "No puede almacenar un documento sin lineas.", "¡Atención!" )
@@ -878,7 +874,7 @@ Return lReturn
 
 //---------------------------------------------------------------------------//
 
-METHOD ResumenVenta( oCbxRuta, oDlg ) CLASS DocumentosVentas
+METHOD ResumenVenta( oCbxRuta, oDlg ) CLASS DocumentsSales
 
    if !::lValidResumenVenta()
       Return .f.
@@ -902,7 +898,7 @@ METHOD ResumenVenta( oCbxRuta, oDlg ) CLASS DocumentosVentas
 
       ::SetDocumentosFacturas()
 
-      ::oViewEditResumen:Resource( ::oDlg )
+      ::oViewEditResumen:ResourceViewEditResumen( ::oDlg )
 
    end if
 
@@ -912,7 +908,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetDocumentosFacturas() CLASS DocumentosVentas
+METHOD SetDocumentosFacturas() CLASS DocumentsSales
 
    local cSerie         := hGet( ::hDictionaryMaster, "Serie" )
    local cDocumento     := ""
@@ -932,6 +928,6 @@ METHOD SetDocumentosFacturas() CLASS DocumentosVentas
    ::oViewEditResumen:SetImpresoras( aFormatos )
    ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
 
-return ( .t. )
+return ( .t. )*/
 
 //---------------------------------------------------------------------------//

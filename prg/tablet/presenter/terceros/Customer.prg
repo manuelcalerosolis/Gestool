@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS Cliente FROM Ventas
+CLASS Customer FROM DocumentsSales
 
    DATA oClienteIncidencia
 
@@ -30,17 +30,17 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New() CLASS Cliente
+METHOD New() CLASS Customer
 
    if ::OpenFiles()
 
       ::setFilterAgentes()
 
-      ::oViewNavigator        := ClienteViewSearchNavigator():New( self )
+      ::oViewNavigator        := CustomerViewSearchNavigator():New( self )
 
-      ::oViewEdit             := ClienteView():New( self )
+      ::oViewEdit             := CustomerView():New( self )
 
-      ::oClienteIncidencia    := ClienteIncidencia():New( self )
+      ::oClienteIncidencia    := CustomerIncidence():New( self )
 
       ::setEnviroment()
 
@@ -54,13 +54,13 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Init( oSender ) CLASS Cliente
+METHOD Init( oSender ) CLASS Customer
 
    ::nView                 := oSender:nView
 
-   ::oViewEdit             := ClienteView():New( self )
+   ::oViewEdit             := CustomerView():New( self )
 
-   ::oClienteIncidencia    := ClienteIncidencia():New( self )
+   ::oClienteIncidencia    := CustomerIncidence():New( self )
 
    ::setEnviroment()
 
@@ -68,7 +68,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPostGetDocumento() CLASS Cliente
+METHOD onPostGetDocumento() CLASS Customer
 
    local cTipo          := str( hGet( ::hDictionaryMaster, "TipoCliente" ) )
 
@@ -86,7 +86,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPreSaveDocumento() CLASS Cliente
+METHOD onPreSaveDocumento() CLASS Customer
 
    local nScan
    local nTipoCliente      := 1
@@ -102,7 +102,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD setFilterAgentes() CLASS Cliente
+METHOD setFilterAgentes() CLASS Customer
 
    local cCodigoAgente     := AccessCode():cAgente
 

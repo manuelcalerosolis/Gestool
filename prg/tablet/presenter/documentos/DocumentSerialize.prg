@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
  
-CLASS DocumentoSerializable FROM Editable
+CLASS DocumentSerialize FROM Editable
 
    METHOD SerieDocumento()
  
@@ -9,7 +9,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD SerieDocumento() CLASS DocumentoSerializable
+METHOD SerieDocumento() CLASS DocumentSerialize
 
    ApoloMsgStop( "Metemos el serie" )
 

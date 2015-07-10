@@ -20,7 +20,7 @@ CLASS Editable
    
    DATA hDictionaryMaster
    DATA hDictionaryDetail
-   DATA hDictionaryDetailTemporal
+   DATA oDocumentLineTemporal
 
    DATA aDetails                          INIT {}
  
@@ -95,6 +95,8 @@ Return ( lAppend )
 METHOD Edit() CLASS Editable
 
    local lEdit    := .f.
+
+
 
    ::nMode        := EDIT_MODE
 
@@ -175,11 +177,15 @@ Return ( self )
 
 METHOD DeleteDetail( nPos ) CLASS Editable
 
+   Local cTxt  := "¿Desea eliminar el registro en curso?"
+
    if Empty( nPos )
       Return nil
    end if
 
-   aDel( ::hDictionaryDetail, nPos, .t. )
+   if apoloMsgNoYes( cTxt, "Confirme supresión")   
+      aDel( ::oDocumentLines:aLines, nPos, .t. )
+   endif
 
    if !Empty( ::oViewEdit:oBrowse )
       ::oViewEdit:oBrowse:Refresh()
