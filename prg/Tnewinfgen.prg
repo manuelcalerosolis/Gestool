@@ -2844,8 +2844,8 @@ METHOD lGrupoCategoria( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoCategoria:Cargo:Nombre      := getTraslation( "Categorías" )
    ::oGrupoCategoria:Cargo:Expresion   := "cCodCat"
    ::oGrupoCategoria:Cargo:Todos       := .t.
-   ::oGrupoCategoria:Cargo:Desde       := Space( 3 )            // dbFirst( ::oDbfCat, 1 )
-   ::oGrupoCategoria:Cargo:Hasta       := Replicate( "Z", 3 )   // dbLast( ::oDbfCat, 1 )
+   ::oGrupoCategoria:Cargo:Desde       := Space( 10 )            // dbFirst( ::oDbfCat, 1 )
+   ::oGrupoCategoria:Cargo:Hasta       := Replicate( "Z", 10 )   // dbLast( ::oDbfCat, 1 )
    ::oGrupoCategoria:Cargo:cPicDesde   := "@!"
    ::oGrupoCategoria:Cargo:cPicHasta   := "@!"
    ::oGrupoCategoria:Cargo:HelpDesde   := {|| BrwCategoria( ::oDesde, ::oSayDesde ) }
@@ -3251,8 +3251,8 @@ METHOD lGrupoTemporada( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTemporada:Cargo:Nombre      := getTraslation( "Temporada" )
    ::oGrupoTemporada:Cargo:Expresion   := "cCodTmp"
    ::oGrupoTemporada:Cargo:Todos       := .t.
-   ::oGrupoTemporada:Cargo:Desde       := Space( 3 )            // dbFirst( ::oDbfTmp, 1 )
-   ::oGrupoTemporada:Cargo:Hasta       := Replicate( "Z", 3 )   // dbLast( ::oDbfTmp, 1 )
+   ::oGrupoTemporada:Cargo:Desde       := Space( 10 )            // dbFirst( ::oDbfTmp, 1 )
+   ::oGrupoTemporada:Cargo:Hasta       := Replicate( "Z", 10 )   // dbLast( ::oDbfTmp, 1 )
    ::oGrupoTemporada:Cargo:cPicDesde   := "@!"
    ::oGrupoTemporada:Cargo:cPicHasta   := "@!"
    ::oGrupoTemporada:Cargo:TextDesde   := {|| oRetFld( ::oGrupoTemporada:Cargo:Desde, ::oDbfTmp, "cNombre", "Codigo", .t. ) }

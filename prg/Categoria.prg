@@ -46,7 +46,7 @@ Function aItmCategoria()
 
    local aBase := { }
 
-   aAdd( aBase, { "cCodigo",   "C",  3, 0, "Código de la categoría" ,   "",   "", "( cDbfCategoria )"} )
+   aAdd( aBase, { "cCodigo",   "C", 10, 0, "Código de la categoría" ,   "",   "", "( cDbfCategoria )"} )
    aAdd( aBase, { "cNombre",   "C", 50, 0, "Nombre de la categoría" ,   "",   "", "( cDbfCategoria )"} )
    aAdd( aBase, { "cTipo",     "C", 30, 0, "Tipo de la categoría" ,     "",   "", "( cDbfCategoria )"} )
 
@@ -330,10 +330,11 @@ Static Function EdtRec( aTmp, aGet, dbfCategoria, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ] ;
          ID       100 ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
-         VALID    ( NotValid( aGet[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ], dbfCategoria, .t., "0" ) ) ;
          PICTURE  "@!" ;
          COLOR    CLR_GET ;
          OF       oDlg
+
+         //VALID    ( NotValid( aGet[ ( dbfCategoria )->( fieldpos( "cCodigo" ) ) ], dbfCategoria, .t., "0" ) ) ;
 
       REDEFINE GET aGet[ ( dbfCategoria )->( fieldpos( "cNombre" ) ) ] ;
          VAR      aTmp[ ( dbfCategoria )->( fieldpos( "cNombre" ) ) ] ;
@@ -470,11 +471,9 @@ Function cCategoria( oGet, dbfCategoria, oGet2, oBmpCategoria  )
    local lValid         := .f.
    local xValor         := oGet:varGet()
 
-   if Empty( xValor ) .or. ( xValor == replicate( "Z", 3 ) )
+   if Empty( xValor ) .or. ( xValor == replicate( "Z", 10 ) )
       if( oGet2 != nil, oGet2:cText( "" ), )
       return .t.
-   else
-      xValor   := RJustObj( oGet, "0" )
    end if
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
