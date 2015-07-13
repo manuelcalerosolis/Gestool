@@ -101,11 +101,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-<<<<<<< HEAD
-                           "bLClicked" => {|| ::oDlg:End() },;
-=======
                            "bLClicked" => {|| MsgInfo( "Aceptamos sin imprimir" ), ::oDlg:End( IDOK ) },;
->>>>>>> origin/master
                            "oWnd"      => ::oDlg } )
 
 Return ( self )

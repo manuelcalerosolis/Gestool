@@ -3695,15 +3695,9 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando " + getTraslation( "temporadas" ) )
       end if
-<<<<<<< HEAD
-      mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; SysRefresh()
-
-=======
 
       mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; SysRefresh()
 
-
->>>>>>> origin/master
       if oMsg != nil
          oMsg:SetText( "Creando grupos de familias" )
       end if

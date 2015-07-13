@@ -6363,32 +6363,27 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	local oTotal
    local oSayLote
 
-   	do case
-   		case nMode == APPD_MODE
+	if nMode == APPD_MODE
 
-      	aTmp[ _NCANENT  ]       := 1
-      	aTmp[ _NUNICAJA ]       := 1
-      	aTmp[ _DFECHA   ]       := aTmpFac[ _DFECFAC ]
-      	aTmp[ _LTOTLIN  ]       := lTotLin
-      	aTmp[ _CALMLIN  ]       := aTmpFac[ _CCODALM ]
-      	aTmp[ _LIVALIN  ]       := aTmpFac[ _LIVAINC ]
-      	aTmp[ _CTIPMOV  ]       := cDefVta()
-<<<<<<< HEAD
-         aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
-=======
-	      aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
->>>>>>> 65017340c1c6b1dced9bf72f05ab6eeae12b5b42
-      	aTmp[ __CNUMPED ]       := aTmpFac[ _CNUMPED ]
-      	aTmp[ __DFECSAL ]       := aTmpFac[ _DFECSAL  ]
-      	aTmp[ __DFECENT ]       := aTmpFac[ _DFECENTR ]
+   	aTmp[ _NCANENT  ]       := 1
+   	aTmp[ _NUNICAJA ]       := 1
+   	aTmp[ _LTOTLIN  ]       := lTotLin
+   	aTmp[ _CTIPMOV  ]       := cDefVta()
+      aTmp[ _DFECHA   ]       := aTmpFac[ _DFECFAC ]
+      aTmp[ _CALMLIN  ]       := aTmpFac[ _CCODALM ]
+      aTmp[ _LIVALIN  ]       := aTmpFac[ _LIVAINC ]
+      aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
+   	aTmp[ __CNUMPED ]       := aTmpFac[ _CNUMPED ]
+   	aTmp[ __DFECSAL ]       := aTmpFac[ _DFECSAL  ]
+   	aTmp[ __DFECENT ]       := aTmpFac[ _DFECENTR ]
 
-      	if !Empty( oTipFac ) .and. oTipFac:nAt == 2
-         	aTmp[ __LALQUILER ]  := .t.
-	      else
-         	aTmp[ __LALQUILER ]  := .f.
-      	end if
+   	if !Empty( oTipFac ) .and. oTipFac:nAt == 2
+      	aTmp[ __LALQUILER ]  := .t.
+      else
+      	aTmp[ __LALQUILER ]  := .f.
+   	end if
 
-    end case  	
+   end if
 
    //-----------------------------------------------------------------------//
 
@@ -6398,31 +6393,27 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	Cabeceras------------------------------------------------------------------
 	*/
 
-	  oSayGeneral    		:= TGridSay():Build(    { 	"nRow"      => 0,;
-                                             		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
-                                             		"bText"     => {|| LblTitle( nMode ) + " líneas de facturas" },;
-                                             		"oWnd"      => oDlg,;
-                                             		"oFont"     => oGridFontBold(),;
-                                             		"lPixels"   => .t.,;
-                                             		"nClrText"  => Rgb( 0, 0, 0 ),;
-                                             		"nClrBack"  => Rgb( 255, 255, 255 ),;
-                                             		"nWidth"    => {|| GridWidth( 8, oDlg ) },;
-                                             		"nHeight"   => 32,;
-                                             		"lDesign"   => .f. } )
+   oSayGeneral          := TGridSay():Build(    { 	"nRow"      => 0,;
+                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "bText"     => {|| LblTitle( nMode ) + " líneas de facturas" },;
+                                                   "oWnd"      => oDlg,;
+                                                   "oFont"     => oGridFontBold(),;
+                                                   "lPixels"   => .t.,;
+                                                   "nClrText"  => Rgb( 0, 0, 0 ),;
+                                                   "nClrBack"  => Rgb( 255, 255, 255 ),;
+                                                   "nWidth"    => {|| GridWidth( 8, oDlg ) },;
+                                                   "nHeight"   => 32,;
+                                                   "lDesign"   => .f. } )
 
    	oBtnAceptar  		:= TGridImage():Build(  {  "nTop"      => 5,;
                                              		"nLeft"     => {|| GridWidth( 10.5, oDlg ) },;
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-<<<<<<< HEAD
-                                             		"bLClicked" => {||   msgWait("Guardando","",.1),;
+                                             		"bLClicked" => {||   msgWait( "Guardando", "", .1 ),;
                                                                         aGet[ _CREF ]:lValid(),;
                                                                         iif( !Empty( aTmp[ _CREF ] ),;
                                                                            ( SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, , , , , , , nMode, , , , , , , oSayLote ) ), ) },;
-=======
-                                             		"bLClicked" => {|| msgWait("Guardando","",.1), aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, , , , , , , nMode, , , , , , , oSayLote ) ), ) },;
->>>>>>> 65017340c1c6b1dced9bf72f05ab6eeae12b5b42
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
@@ -6516,9 +6507,9 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"nHeight"   => nAltoGet,;
                                           			"bValid"    => {|| lCalcDeta( aTmp, aTmpFac ) } } )
 
-	/*
-   	Unidades-------------------------------------------------------------------
-   	*/
+      /*
+      Unidades-------------------------------------------------------------------
+      */
 
    	oSayUnidades    	:= TGridSay():Build(    { 	"nRow"      => 115,;
                                              		"nCol"      => {|| GridWidth( 0.5, oDlg ) },;
@@ -14477,13 +14468,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
             saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
          end if
 
-<<<<<<< HEAD
-      if !empty( oBrwProperties ) .and. !empty( oBrwProperties:Cargo )
-=======
-         // Propiedades ----------------------------------------------------------
->>>>>>> 65017340c1c6b1dced9bf72f05ab6eeae12b5b42
-
-         if !Empty( oBrwProperties )
+         if !empty( oBrwProperties )
 
             if !empty( oBrwProperties:Cargo )
 
