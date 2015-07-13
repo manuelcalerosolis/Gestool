@@ -1456,6 +1456,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       250 ;
          OF       fldGeneral
 
+      REDEFINE CHECKBOX aGet[ _LSERVICIO ] VAR aTmp[ _LSERVICIO ] ;
+         ID       199 ;
+         OF       fldGeneral
+
       /*
       Controles de TPV---------------------------------------------------------
       */
@@ -6764,6 +6768,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cCcoMai",    "C",250, 0, "Enviar con copia oculta de mail a cuenta de correo",    "", "", "aEmp()", "" } )
    aAdd( aDbf, {"lRecEnt",    "L",  1, 0, "Lógico para recibir albaranes como entregados",         "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cSeriePre",  "C",  1, 0, "Serie para presupuestos de internet",                   "", "", "aEmp()", "A" } )
+   aAdd( aDbf, {"lServicio",  "L",  1, 0, "Lógico Fecha servicio",                                 "", "", "aEmp()" } )
 
 Return ( aDbf )
 

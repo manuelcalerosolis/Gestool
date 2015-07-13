@@ -3587,6 +3587,14 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, cCodArt, cCodPre, oBrwLin,
 
 	end if
 
+   if uFieldempresa( "lServicio" )
+      aGet[ _DFECENTR ]:Show()
+      aGet[ _DFECSAL ]:Show()
+   else
+      aGet[ _DFECENTR ]:Hide()
+      aGet[ _DFECSAL ]:Hide()
+   end if
+
 	/*
 	Hace que salte la incidencia al entrar en el documento----------------------
 	*/
@@ -8777,15 +8785,19 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg, lActualizaW
 
    // solo para la jaca--------------------------------------------------------
 
-   if empty( aTmp[ _DFECENTR ] )
-      msgStop( "Fecha inicio servicio no puede estar vacía" )
-      return .f.
-   end if 
+   if uFieldempresa( "lServicio" )
 
-   if empty( aTmp[ _DFECSAL ] )
-      msgStop( "Fecha fin servicio no puede estar vacía" )
-      return .f.
-   end if 
+      if empty( aTmp[ _DFECENTR ] )
+         msgStop( "Fecha inicio servicio no puede estar vacía" )
+         return .f.
+      end if 
+
+      if empty( aTmp[ _DFECSAL ] )
+         msgStop( "Fecha fin servicio no puede estar vacía" )
+         return .f.
+      end if 
+
+   end if
 
    if ( dbfTmpLin )->( eof() )
       MsgStop( "No puede almacenar un documento sin líneas." )
@@ -9853,6 +9865,14 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
       aGet[ _NCANPED ]:Hide()
    else
       aGet[ _NCANPED ]:SetText( cNombreCajas() )
+   end if
+
+   if uFieldempresa( "lServicio" )
+      aGet[ __DFECENT ]:Show()
+      aGet[ __DFECSAL ]:Show()
+   else
+      aGet[ __DFECENT ]:Hide()
+      aGet[ __DFECSAL ]:Hide()
    end if
 
    if nMode == APPD_MODE

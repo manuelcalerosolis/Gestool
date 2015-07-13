@@ -6411,7 +6411,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nWidth"    => 64,;
                                              		"nHeight"   => 64,;
                                              		"cResName"  => "flat_check_64",;
-                                             		"bLClicked" => {|| msgWait("Guardando","",.1), aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, , oBrw, oDlg, , , , , , , nMode, , , , , , , oSayLote ) ), ) },;
+                                             		"bLClicked" => {|| msgWait("Guardando","",.1), aGet[ _CREF ]:lValid(), if( !Empty( aTmp[ _CREF ] ), ( SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, , , , , , , nMode, , , , , , , oSayLote ) ), ) },;
                                              		"oWnd"      => oDlg } )
 
    	oBtnSalir   		:= TGridImage():Build(  {  "nTop"      => 5,;
@@ -14338,9 +14338,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    local nTotUnd  	:= 0
    local hAtipica
 
-   	if !Empty( oBtn )
-   		oBtn:SetFocus()
-   	end if	
+   if !Empty( oBtn )
+      oBtn:SetFocus()
+    end if	
 
    if !aGet[ _CREF ]:lValid()
       return nil
@@ -14458,53 +14458,65 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
       aTmp[ _NREQ ]     := nPReq( dbfIva, aTmp[ _NIVA ] )
    end if   
 
-   if nMode == APPD_MODE
+   if !( "TABLET" $ cParamsMain() )
 
-      if aTmp[ _LLOTE ]
-         saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
-      end if
+      if nMode == APPD_MODE
 
-      // Propiedades ----------------------------------------------------------
+         if aTmp[ _LLOTE ]
+            saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
+         end if
 
-      if !empty( oBrwProperties:Cargo )
+         // Propiedades ----------------------------------------------------------
 
-         for n := 1 to len( oBrwProperties:Cargo )
+         if !Empty( oBrwProperties )
 
-            for i := 1 to len( oBrwProperties:Cargo[ n ] )
+            if !empty( oBrwProperties:Cargo )
 
-               if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
+               for n := 1 to len( oBrwProperties:Cargo )
 
-                  aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
-                  aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
-                  aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
-                  aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
-                  aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
-                  aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
+                  for i := 1 to len( oBrwProperties:Cargo[ n ] )
 
-                  // guarda la linea------------------------------------------- 
+                     if isNum( oBrwProperties:Cargo[ n, i ]:Value ) .and. oBrwProperties:Cargo[ n, i ]:Value != 0
 
-                  saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
+                        aTmp[ _NNUMLIN ]     := nLastNum( dbfTmpLin )
+                        aTmp[ _NUNICAJA]     := oBrwProperties:Cargo[ n, i ]:Value
+                        aTmp[ _CCODPR1 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad1
+                        aTmp[ _CVALPR1 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad1
+                        aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
+                        aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
 
-               end if
+                        // guarda la linea------------------------------------------- 
 
-            next
+                        saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
 
-         next
+                     end if
 
-         aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+                  next
 
-         aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+               next
+
+               aCopy( dbBlankRec( dbfTmpLin ), aTmp )
+
+               aEval( aGet, {| o, i | if( "GET" $ o:ClassName(), o:cText( aTmp[ i ] ), ) } )
+
+            else
+
+               saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
+
+            end if
+
+         end if
 
       else
 
-         saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
+         WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
       end if
 
    else
 
       WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
-
+      
    end if
 
    /*

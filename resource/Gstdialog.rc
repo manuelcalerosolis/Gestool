@@ -5739,6 +5739,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Agrupar entregas a cuenta en recibos", 204, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 179, 132, 10
   CONTROL "Buscar precios en tarifas inferiores", 195, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 190, 121, 10
   CONTROL "No permitir ventas por debajo de precio mínimo", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 202, 161, 10
+  CONTROL "Habilitar fecha de servicio en pedidos", 199, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 214, 161, 10
   CONTROL "Multiples tipos de movimientos ", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 113, 110, 10
   CONTROL "Avisar en ventas sin valorar", 184, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 124, 100, 10
   CONTROL "Avisar saldo pendiente", 192, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 135, 85, 10
@@ -5768,7 +5769,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 232, 184, 48
   CONTROL "Nombre del impuesto", -1, "Static", WS_GROUP, 234, 90, 70, 8
   CONTROL "Producción", -1, "Button", BS_GROUPBOX, 230, 233, 200, 47
-  CONTROL "Habilitar fecha de servicio en pedidos", 199, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 214, 161, 10
 }
 
 EMPRESA_3 DIALOG DISCARDABLE 92, 14, 436, 353
