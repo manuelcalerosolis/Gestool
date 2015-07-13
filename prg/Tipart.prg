@@ -475,11 +475,15 @@ METHOD PublicarWeb()
 
    local lPublicar   := !::oDbf:lPubInt
 
-   ::oDbf:Load()
-   ::oDbf:lPubInt    := lPublicar
-   ::oDbf:lSelect    := lPublicar
-   ::oDbf:cCodWeb    := 0
-   ::oDbf:Save()
+   ::oDbf:getStatus()
+
+   for each nSelected in ( ::oWndBrw:oBrw:aSelected )
+      ::oDbf:FieldPutByName( "lPubInt", lPublicar )
+      ::oDbf:FieldPutByName( "lSelect", lPublicar )
+      ::oDbf:FieldPutByName( "cCodWeb", 0 )
+   next
+
+   ::oDbf:setStatus()
 
    ::oWndBrw:Refresh()
 
@@ -489,19 +493,19 @@ RETURN ( Self )
 
 METHOD Enviar( lLoad )
 
-   DEFAULT lLoad     := .f.
+   local nSelected
 
-   if lLoad
-      ::oDbf:Load()
-      ::oDbf:lSelect := !::oDbf:lSelect
-   end if
+   ::oDbf:getStatus()
 
-   ::oDbf:cCodWeb    := 0
+   for each nSelected in ( ::oWndBrw:oBrw:aSelected )
+      ::oDbf:goTo( nSelected )
+      ::oDbf:FieldPutByName( "lSelect", !::oDbf:lSelect )
+      ::oDbf:FieldPutByName( "cCodWeb", 0 )
+   next
 
-   if lLoad
-      ::oDbf:Save()
-      ::oWndBrw:Refresh()
-   end if
+   ::oDbf:setStatus()
+
+   ::oWndBrw:Refresh()
 
 RETURN ( Self )
 

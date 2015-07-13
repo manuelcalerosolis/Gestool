@@ -4571,7 +4571,7 @@ FUNCTION rxProvee( cPath, oMeter )
    if !( dbfProvee )->( neterr() )
       ( dbfProvee )->( __dbPack() )
 
-      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfProvee )->( ordCreate( cPath + "PROVEED.CDX", "CCODPRV", "CCODPRV", {|| Field->CCODPRV } )      )
 
       ( dbfProvee )->( dbCloseArea() )
@@ -4615,20 +4615,20 @@ FUNCTION RetProvee( cCodProv, dbfProvee )
    local oError
 	local cAreaAnt 	:= Alias()
 	local cProveedor 	:= ""
-	local lClose		:= .F.
+	local lClose		:= .f.
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-	IF dbfProvee == NIL
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
-		lClose	:= .T.
-	END IF
+   	if empty( dbfProvee )
+         USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
+         SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+   		lClose	   := .t.
+   	end if
 
-	IF (dbfProvee)->( DbSeek( cCodProv ) )
-		cProveedor := (dbfProvee)->TITULO
-	END IF
+      if dbSeekInOrd( cCodProv, "Cod", dbfProvee )
+   		cProveedor  := (dbfProvee)->Titulo
+   	end if
 
    RECOVER USING oError
 
@@ -4638,13 +4638,13 @@ FUNCTION RetProvee( cCodProv, dbfProvee )
 
    ErrorBlock( oBlock )
 
-	IF lClose
+	if lClose
 		CLOSE ( dbfProvee )
-	END IF
+	end if
 
-	IF cAreaAnt != ""
+	if cAreaAnt != ""
 		SELECT( cAreaAnt )
-	END IF
+	end if
 
 RETURN cProveedor
 

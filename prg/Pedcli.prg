@@ -10720,9 +10720,9 @@ STATIC FUNCTION RecalculaLinea( aTmp, aTmpPed, nDec, oTotal, oTot, oMargen, cCod
    if !aTmp[ _LIVALIN ]
 
       if aTmp[ _LVOLIMP ]
-         nCalculo += aTmp[ _NVALIMP ] * NotCero( aTmp[ _NVOLUMEN ] )
+         nCalculo    += aTmp[ _NVALIMP ] * NotCero( aTmp[ _NVOLUMEN ] )
       else
-         nCalculo += aTmp[ _NVALIMP ]
+         nCalculo    += aTmp[ _NVALIMP ]
       end if
 
    end if
