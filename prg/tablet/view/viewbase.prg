@@ -64,7 +64,7 @@ CLASS ViewBase
    METHOD endView()                    INLINE ( ::oDlg:goNextCtrl( GetFocus() ),;
                                                 ::oDlg:goPrevCtrl( GetFocus() ),;
                                                 iif( ::errorValidator(), apoloMsgStop( ::cErrorValidator ), ::oDlg:End( IDOK ) ) )
-   METHOD cancelView()                 INLINE ( ::oDlg:End() )
+   METHOD cancelView()                 INLINE ( ::oDlg:End()  )
 
    METHOD evalDialog()
 
@@ -204,13 +204,7 @@ METHOD evalDialog() CLASS ViewBase
 
    for each oControl in aControls
 
-      // msgAlert( hb_valtoexp( oControl ), "control" )
-      
-      msgAlert( empty( oControl:bWhen ) .or. eval( oControl:bWhen ), "bWhen" )
-
       if empty( oControl:bWhen ) .or. eval( oControl:bWhen )
-
-         msgAlert( !empty( oControl:bValid ) .and. !eval( oControl:bValid ), "bValid" )            
 
          if !empty( oControl:bValid ) .and. !eval( oControl:bValid )
 

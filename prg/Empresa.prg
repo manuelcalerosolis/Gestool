@@ -3691,8 +3691,15 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando " + getTraslation( "temporadas" ) )
       end if
+<<<<<<< HEAD
       mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; SysRefresh()
 
+=======
+
+      mkTemporada( cPath, aImportacion:lArticulos, cPathGrp ); rxTemporada( cPath )   ; SysRefresh()
+
+
+>>>>>>> origin/master
       if oMsg != nil
          oMsg:SetText( "Creando grupos de familias" )
       end if
@@ -4517,6 +4524,8 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          ActDbf( cEmpOld, cEmpTmp, "FamPrv",    "familias de proveedores", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Categorias","categorías", oMet, oMsg, aMsg )
+
+         ActDbf( cEmpOld, cEmpTmp, "Temporadas","temporadas", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "EstadoSat","estado de los SAT", oMet, oMsg, aMsg )
 
@@ -6675,7 +6684,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lOrdNomTpv", "L",  1, 0, "Lógico ordén TPV por nombre",                           "", "", "aEmp()", 0 } )
    aAdd( aDbf, {"lGrpCli",    "L",  1, 0, "Lógico de grupo tablas de cliente",                     "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lGrpArt",    "L",  1, 0, "Lógico de grupo tablas de artículos",                   "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"CDefTem",    "C",  5, 0, "Temporada por defecto",                                 "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"CDefTem",    "C", 10, 0, "Temporada por defecto",                                 "", "", "aEmp()", nil } )
    aAdd( aDbf, {"nDiaVale",   "N",  3, 0, "Numeros de dias para que el vale sea valido",           "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lNumTik",    "L",  1, 0, "Lógico numero del tiket obligatorio para devolución",   "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lCosAct",    "L",  1, 0, "Lógico para usar costo actual en movimientos",          "", "", "aEmp()", .f. } )

@@ -2,7 +2,7 @@
 #include "Factu.ch" 
 #include "Xbrowse.ch"
 
-CLASS ClienteIncidenciaView FROM ViewBase
+CLASS CustomerIncidenceView FROM ViewBase
   
    METHOD New()
 
@@ -24,7 +24,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS ClienteIncidenciaView
+METHOD New( oSender ) CLASS CustomerIncidenceView
 
    ::oSender               := oSender
 
@@ -32,7 +32,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertControls( nMode ) CLASS ClienteIncidenciaView
+METHOD insertControls( nMode ) CLASS CustomerIncidenceView
 
    ::defineNombre()
 
@@ -46,7 +46,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineCombo() CLASS ClienteIncidenciaView
+METHOD defineCombo() CLASS CustomerIncidenceView
 
    TGridSay():Build( {  "nRow"      => 130,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -71,7 +71,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineNombre() CLASS ClienteIncidenciaView
+METHOD defineNombre() CLASS CustomerIncidenceView
 
    TGridSay():Build( {  "nRow"      => 40,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -97,7 +97,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineFecha() CLASS ClienteIncidenciaView
+METHOD defineFecha() CLASS CustomerIncidenceView
 
    TGridSay():Build( {  "nRow"      => 100,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
@@ -122,7 +122,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineHora() CLASS ClienteIncidenciaView
+METHOD defineHora() CLASS CustomerIncidenceView
 
    TGridGet():Build( {  "nRow"      => 100,;
                         "nCol"      => {|| GridWidth( 7, ::oDlg ) },;
@@ -140,7 +140,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD defineIncidencia() CLASS ClienteIncidenciaView
+METHOD defineIncidencia() CLASS CustomerIncidenceView
 
    local getIncidencia
 

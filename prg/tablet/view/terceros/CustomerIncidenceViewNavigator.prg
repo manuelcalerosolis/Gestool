@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS ClienteIncidenciaViewNavigator FROM ViewNavigator
+CLASS CustomerIncidenceViewNavigator FROM ViewNavigator
 
    METHOD setColumns()
 
@@ -14,7 +14,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD setColumns() CLASS ClienteIncidenciaViewNavigator
+METHOD setColumns() CLASS CustomerIncidenceViewNavigator
 
    ::setBrowseConfigurationName( "Grid clientes incidencias" )
 

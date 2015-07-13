@@ -191,6 +191,8 @@ CLASS TDataCenter
    METHOD getDictionary( cDataTable )
    METHOD getDeFaultValue( cDataTable )  
 
+   
+
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
    METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
 
@@ -5392,7 +5394,9 @@ CLASS D
    METHOD setDefaultValue( hash, cDataTable, nView )
 
    METHOD appendHashRecord( hTable, cDataTable, nView )  
-   METHOD editHashRecord( hTable, cDataTable, nView ) 
+   METHOD editHashRecord( hTable, cDataTable, nView )
+
+   METHOD SetHashLine( aTable, cDataTable, nView ) 
 
    METHOD setHashRecord( cDatabase, nView )
    METHOD saveFieldsToRecord()
@@ -5560,8 +5564,12 @@ CLASS D
 
    METHOD PedidosClientesLineas( nView )              INLINE ( ::Get( "PedCliL", nView ) )
       METHOD PedidosClientesLineasId( nView )         INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
+      METHOD GetPedidoClienteLineasHash( nView )      INLINE ( ::getHashRecord( ::PedidosClientesLineas( nView ), nView ) )
       METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
       METHOD GetPedidoClienteLineaBlank( nView )      INLINE ( ::getHashRecordBlank( ::PedidosClientesLineas( nView ), nView ) )
+
+      METHOD getStatusPedidosClientesLineas( nView )    INLINE ( ::aStatus := aGetStatus( ::PedidosClientesLineas( nView ) ) )
+      METHOD setStatusPedidosClientesLineas( nView )    INLINE ( SetStatus( ::PedidosClientesLineas( nView ), ::aStatus ) ) 
 
    METHOD PedidosClientesSituaciones( nView )            INLINE ( ::Get( "PedCliE", nView ) )
       METHOD PedidosClientesSituacionesId( nView )       INLINE ( ( ::Get( "PedCliE", nView ) )->cSerPed + str( ( ::Get( "PedCliE", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliE", nView ) )->cSufPed )
@@ -6455,3 +6463,72 @@ METHOD deleteRecord( cDataTable, nView ) CLASS D
 RETURN ( lDelete )
 
 //---------------------------------------------------------------------------//
+
+METHOD SetHashLine( aTable, cDataTable, nView ) CLASS D
+
+   Local hTable
+   Local serie 
+   Local NumeroLinea
+   local lEdit       := .f.
+   local workArea    := ::Get( cDataTable, nView )   
+   local hDictionary := TDataCenter():getDictionary( cDataTable )
+
+   if empty( workArea )
+      return ( lEdit )
+   end if
+      
+   if empty( hDictionary )
+      return ( lEdit )
+   end if
+/*
+   //NumeroLinea
+
+   //añadir
+   ( workArea )->( dbAppend() )
+   if !( workArea )->( neterr() )
+      ::setHashRecord( hTable, workArea, hDictionary )
+      lAppend        := .t.
+      ( workArea )->( dbUnLock() )
+   end if 
+
+   //editar
+   if ( workArea )->( dbrlock() )
+      ::setHashRecord( hTable, workArea, hDictionary )
+      lEdit          := .t.
+      ( workArea )->( dbUnLock() )
+   end if 
+
+*/
+
+msgAlert( cDataTable, "cDataTable" )
+msgAlert( hb_valtoexp( nView ), "nView" )
+
+   for each hTable in aTable
+
+      NumeroLinea    := hTable:getNumeroLinea()
+      Serie          := hTable:getSerie() + Str( hTable:getNumero() ) + hTable:getSufijo()
+
+      ( workArea )->( ordSetFocus( 1 ) )
+
+      if ( workArea )->( dbSeek( serie ) )  
+
+      //preguntar a manolo si quiere borrar antes de guardar o guardar dependiendo del nMode.
+
+         while ( D():PedidosClientesLineasId( ::nView ) == serie ) .and. !( workArea )->( eof() ) 
+
+            ::addDocumentLine()
+         
+            ( workArea )->( dbSkip() ) 
+         
+         end while
+
+      end if 
+      
+      D():setStatusPedidosClientesLineas( ::nView )
+
+      msgAlert( hb_valtoexp( hTable:hDictionary ), "hTable:hDictionary" )
+      msgAlert( NumeroLinea, "NumeroLinea" )
+
+   next
+
+Return( .t. )

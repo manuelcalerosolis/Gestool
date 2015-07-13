@@ -1,7 +1,7 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS ClienteViewSearchNavigator FROM ViewSearchNavigator
+CLASS CustomerViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD setTextoTipoDocumento()      INLINE ( ::cTextoTipoDocumento := "Clientes" ) 
 
@@ -15,7 +15,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD botonesAcciones() CLASS ClienteViewSearchNavigator
+METHOD botonesAcciones() CLASS CustomerViewSearchNavigator
 
    ::Super:botonesAcciones()
 
@@ -31,7 +31,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setColumns() CLASS ClienteViewSearchNavigator
+METHOD setColumns() CLASS CustomerViewSearchNavigator
 
    ::setBrowseConfigurationName( "Grid clientes" )
 

@@ -27,8 +27,8 @@ CLASS ViewDetail FROM ViewBase
    METHOD Resource()
 
    METHOD SetGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
-                                                      hGet( ::oSender:hDictionaryDetailTemporal, cName ),;
-                                                      hSet( ::oSender:hDictionaryDetailTemporal, cName, uValue ) ) )
+                                                hGet( ::oSender:oDocumentLineTemporal:hDictionary, cName ),;
+                                                hSet( ::oSender:oDocumentLineTemporal:hDictionary, cName, uValue ) ) )
 
    METHOD defineAceptarCancelar()
 
@@ -113,7 +113,6 @@ Return ( ::oDlg:nResult == IDOK )
 
 METHOD defineAceptarCancelar() CLASS ViewDetail
 
-
    TGridImage():Build(  {  "nTop"      => 5,;
                            "nLeft"     => {|| GridWidth( 9.0, ::oDlg ) },;
                            "nWidth"    => 64,;
@@ -127,7 +126,7 @@ METHOD defineAceptarCancelar() CLASS ViewDetail
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oDlg:End( IDOK ) },;
+                           "bLClicked" => {|| ::oSender:addNumeroLinea( ::oSender:oDocumentLineTemporal:hDictionary ), ::oDlg:End( IDOK ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -154,7 +153,7 @@ METHOD defineArticulo() CLASS ViewDetail
                                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                                                       "nHeight"   => 23,;
                                                       "lPixels"   => .t.,;
-                                                      "bValid"    => {|| ::oSender:CargaArticulo(), ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+                                                      "bValid"    => {|| ::oSender:CargaArticulo(), ::oSender:recalcularTotal( ::oTotalLinea ) } } )
    
    ::oGetDescripcionArticulo  := TGridGet():Build( {  "nRow"      => 40,;
                                                       "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
@@ -217,7 +216,7 @@ METHOD defineCajas() CLASS ViewDetail
                                              "cPict"     => MasUnd(),;
                                              "lRight"    => .t.,;
                                              "nHeight"   => 23,;
-                                             "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+                                             "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -246,7 +245,7 @@ METHOD defineUnidades() CLASS ViewDetail
                                           "cPict"     => MasUnd(),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
-                                          "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+                                          "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -275,7 +274,7 @@ METHOD definePrecio() CLASS ViewDetail
                                           "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
-                                          "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+                                          "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -304,7 +303,7 @@ METHOD defineDescuentoPorcentual() CLASS ViewDetail
                                              "cPict"     => "@E 999.99",;
                                              "lRight"    => .t.,;
                                              "nHeight"   => 23,;
-                                             "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+                                             "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
 
 Return ( self )
 
@@ -333,7 +332,7 @@ METHOD defineDescuentoLineal() CLASS ViewDetail
                                                    "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
                                                    "lRight"    => .t.,;
                                                    "nHeight"   => 23,;
-                                                   "bValid"    => {|| ::oSender:RecalculaLinea( ::oTotalLinea ) } } )
+                                                   "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
 
 Return ( self )
 
