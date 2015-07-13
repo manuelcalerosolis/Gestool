@@ -5748,10 +5748,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "No mostrar precios de costo en ventas", 205, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 179, 135, 10
   CONTROL "Aplicar IVA a impuestos especiales", 153, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 190, 125, 10
   CONTROL "Stocks mínimos y máximos por almacenes", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 202, 161, 10
-  CONTROL "No usar movimientos para costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 230, 135, 10
-  CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 230, 137, 10
-  CONTROL "Mostrar almacén origen en compras", 306, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 241, 135, 10
-  CONTROL "Recalcular costes de las lineas producidas", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 266, 151, 10
+  CONTROL "No usar movimientos para costo medio", 203, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 244, 135, 10
+  CONTROL "Usar precios de costos de proveedores", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 266, 137, 10
+  CONTROL "Mostrar almacén origen en compras", 306, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 255, 135, 10
+  CONTROL "Recalcular costes de las lineas producidas", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 235, 266, 151, 10
   CONTROL "Pedidos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 294, 39, 10
   CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 109, 293, 314, 11
   CONTROL "Direcciones", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 306, 51, 10
@@ -5764,10 +5764,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "Facturación [ Incluir las líneas de comentarios ]", -1, "Button", BS_GROUPBOX, 44, 282, 386, 63
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Opciones generales del programa", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 384, 8
-  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 102, 386, 113
-  CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 217, 386, 36
+  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 102, 386, 129
+  CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 232, 184, 48
   CONTROL "Nombre del impuesto", -1, "Static", WS_GROUP, 234, 90, 70, 8
-  CONTROL "Producción", -1, "Button", BS_GROUPBOX, 44, 254, 386, 26
+  CONTROL "Producción", -1, "Button", BS_GROUPBOX, 230, 233, 200, 47
+  CONTROL "Habilitar fecha de servicio en pedidos", 199, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 214, 161, 10
 }
 
 EMPRESA_3 DIALOG DISCARDABLE 92, 14, 436, 353

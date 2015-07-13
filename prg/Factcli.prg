@@ -6373,7 +6373,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
       	aTmp[ _CALMLIN  ]       := aTmpFac[ _CCODALM ]
       	aTmp[ _LIVALIN  ]       := aTmpFac[ _LIVAINC ]
       	aTmp[ _CTIPMOV  ]       := cDefVta()
-	    aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
+	      aTmp[ _NTARLIN  ]       := aTmpFac[ _NTARIFA ]
       	aTmp[ __CNUMPED ]       := aTmpFac[ _CNUMPED ]
       	aTmp[ __DFECSAL ]       := aTmpFac[ _DFECSAL  ]
       	aTmp[ __DFECENT ]       := aTmpFac[ _DFECENTR ]
@@ -12971,7 +12971,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2
    end if
 
    if !lTipMov()
-      if !Empty( [ _CTIPMOV ] ) 
+      if !Empty( aGet[ _CTIPMOV ] ) 
          aGet[ _CTIPMOV ]:hide()
       end if
    end if
