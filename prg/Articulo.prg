@@ -18014,7 +18014,7 @@ Function cSeekCodebar( cCodBar, dbfCodebar, dbfArticulo )
    n                          := At( ".", cCodBar )
    if n != 0
       cCodigo                 := SubStr( cCodBar, 1, n - 1 )
-      cPropiedades            := SubStr( cCodBar, n )
+      cPropiedades            := SubStr( cCodBar, n ) 
    else
       cCodigo                 := cCodBar
    end if
