@@ -19125,7 +19125,7 @@ Static Function dFecMaxVale( cNumTik, cTikT  )
    ( cTikT )->( OrdSetFocus( nOrdAnt ) )
    ( cTikT )->( dbGoTo( nRec ) )
 
-   if Empty( Dtoc(dFecMaxVale ) )
+   if Empty( dFecMaxVale )
       dFecMaxVale       := Date()
    end if
 
