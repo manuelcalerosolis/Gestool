@@ -7737,6 +7737,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          aTmp[ _CCODGRP ]              := ( dbfAlbCliT )->cCodGrp
          aTmp[ _LMODCLI ]              := ( dbfAlbCliT )->lModCli
          aTmp[ _LOPERPV ]              := ( dbfAlbCliT )->lOperPv
+         aTmp[ _CNUMPRE ]					:= ( dbfAlbCliT )->cNumPre
 
          cSuPed                        := ( dbfAlbCliT )->cSuPed
 
