@@ -1268,6 +1268,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Situación"
+         :cSortOrder       := "cSituac"
          :bEditValue       := {|| AllTrim( ( D():PedidosClientes( nView ) )->cSituac ) }
          :nWidth           := 80
          :lHide            := .t.
@@ -15212,10 +15213,13 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "iNumPed", "'09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIT.CDX", "CSUPED", "Field->CSUPED", {|| Field->CSUPED } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "CSUPED", "Field->CSUPED", {|| Field->CSUPED } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "dFecDes", "Field->dFecPed", {|| Field->dFecPed } ) )
+
+      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cSituac", "Field->cSituac", {|| Field->cSituac } ) )
 
       ( cPedCliT )->( dbCloseArea() )
    else
@@ -15227,13 +15231,13 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( cPedCliT )->( __dbPack() )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIL.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->NNUMPED ) + Field->CSUFPED } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->NNUMPED ) + Field->CSUFPED } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIL.CDX", "cRef", "cRef", {|| Field->CREF } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "cRef", "cRef", {|| Field->CREF } ) )
 
       ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cPedCliT )->( ordCreate( cPath + "PEDCLIL.CDX", "Lote", "cLote", {|| Field->cLote } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "Lote", "cLote", {|| Field->cLote } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )

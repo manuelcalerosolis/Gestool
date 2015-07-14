@@ -473,12 +473,14 @@ RETURN ( nTipo )
 
 METHOD PublicarWeb()
 
+   local nSelected
    local lPublicar   := !::oDbf:lPubInt
    local nSelected
 
    ::oDbf:getStatus()
 
    for each nSelected in ( ::oWndBrw:oBrw:aSelected )
+      ::oDbf:goTo( nSelected )
       ::oDbf:FieldPutByName( "lPubInt", lPublicar )
       ::oDbf:FieldPutByName( "lSelect", lPublicar )
       ::oDbf:FieldPutByName( "cCodWeb", 0 )

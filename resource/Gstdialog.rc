@@ -15399,9 +15399,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "I.V.M.H.", 710, "Static", WS_GROUP, 485, 318, 25, 8
   CONTROL "Impuestos", 711, "Static", WS_GROUP, 485, 336, 37, 8
   CONTROL "", 490, "TXBrowse", 0x00200000, 202, 287, 278, 78
-  CONTROL "Número", -1, "Static", WS_GROUP, 44, 33, 51, 8
-  CONTROL "Estado", 121, "Static", WS_GROUP, 44, 81, 51, 8
-  CONTROL "Presupuesto", 124, "Static", WS_GROUP, 44, 93, 51, 8
+  CONTROL "Número", -1, "Static", WS_GROUP, 45, 33, 51, 8
+  CONTROL "Estado", 121, "Static", WS_GROUP, 45, 81, 51, 8
+  CONTROL "Presupuesto", 124, "Static", WS_GROUP, 45, 93, 51, 8
   CONTROL "Divisa", -1, "Static", WS_GROUP, 444, 117, 28, 8
   CONTROL "Cliente", -1, "Static", WS_GROUP, 183, 33, 46, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 183, 45, 46, 8
@@ -15429,16 +15429,17 @@ FONT 8, "MS Sans Serif"
   CONTROL "0", 404, "Static", SS_RIGHT|WS_GROUP, 582, 327, 80, 8
   CONTROL "", 408, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 91, 353, 101, 11
   CONTROL "", 111, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 54, 80, 11
-  CONTROL "Incio servicio", 112, "Static", WS_GROUP, 44, 57, 51, 8
+  CONTROL "Incio servicio", 112, "Static", WS_GROUP, 45, 57, 51, 8
   CONTROL "", 113, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 66, 80, 11
-  CONTROL "Fin servicio", 114, "Static", WS_GROUP, 44, 69, 51, 8
+  CONTROL "Fin servicio", 114, "Static", WS_GROUP, 45, 69, 51, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Pedidos de clientes", -1, "Static", WS_GROUP, 44, 3, 120, 8
-  CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 45, 51, 8
+  CONTROL "Pedidos de clientes", -1, "Static", WS_GROUP, 45, 3, 120, 8
+  CONTROL "Fecha", -1, "Static", WS_GROUP, 45, 45, 51, 8
   CONTROL "Banco", -1, "Static", WS_GROUP, 444, 57, 26, 8
   CONTROL "Cuenta", -1, "Static", WS_GROUP, 444, 69, 28, 8
   CONTROL "", 424, "Edit", WS_BORDER|WS_TABSTOP, 474, 66, 18, 11
   CONTROL "", 425, "Edit", WS_BORDER|WS_TABSTOP, 493, 66, 18, 11
+  CONTROL "Situación", -1, "Static", WS_GROUP, 45, 117, 51, 8
 }
 
 PEDCLI_2 DIALOG DISCARDABLE 45, 10, 670, 375
