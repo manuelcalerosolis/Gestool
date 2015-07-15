@@ -6372,6 +6372,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       end if
 
       dbPass( dbfTmpLin, dbfSatCliL, .t., cSerSat, nNumSat, cSufSat )
+      
       ( dbfTmpLin )->( dbSkip() )
 
       oMsgProgress():Deltapos(1)
