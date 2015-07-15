@@ -475,7 +475,6 @@ METHOD PublicarWeb()
 
    local nSelected
    local lPublicar   := !::oDbf:lPubInt
-   local nSelected
 
    ::oDbf:getStatus()
 
