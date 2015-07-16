@@ -6355,7 +6355,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    ( dbfTmpLin )->( dbGoTop() )
    do while !( dbfTmpLin )->( Eof() )
 
+      MsgInfo( dFecSat, "dFecSat" )
+
       ( dbfTmpLin )->dFecSat     := dFecSat
+      ( dbfTmpLin )->dFecha      := dFecSat
       ( dbfTmpLin )->cCodCli     := cCodCli
 
       if ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) .and. ( dbfTmpLin )->nCtlstk == 2
