@@ -3557,6 +3557,7 @@ METHOD CreateTreeImageList()
       ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
       ::oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),               Rgb( 255, 0, 255 ) ) // 21 Recibos
       ::oTreeImageList:AddMasked( TBitmap():Define( "Folder_document_16" ),               Rgb( 255, 0, 255 ) ) // 22 Folder
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Moneybag_16" ),                      Rgb( 255, 0, 255 ) ) // 23 Iva
 
       if !Empty( ::oTreeReporting )
          ::oTreeReporting:SetImageList( ::oTreeImageList )

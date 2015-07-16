@@ -3320,10 +3320,10 @@ METHOD lGrupoIva( lInitGroup, lImp ) CLASS TNewInfGen
       DATABASE NEW ::oDbfIva PATH ( cPatDat() ) FILE "TIva.Dbf" VIA ( cDriver() ) SHARED INDEX "TIva.Cdx"
    end if
 
-   ::oGrupoIva                  := TRGroup():New( {|| ::oDbf:cCodIva }, {|| cImp() + " : " + AllTrim( ::oDbf:cCodIva ) }, {|| "Total " + cImp() + " : " + ::oDbf:cCodIva }, {|| 3 }, ::lSalto )
+   ::oGrupoIva                  := TRGroup():New( {|| ::oDbf:cCodIva }, {|| "Impuesto : " + AllTrim( ::oDbf:cCodIva ) }, {|| "Total " + cImp() + " : " + ::oDbf:cCodIva }, {|| 3 }, ::lSalto )
 
    ::oGrupoIva:Cargo            := TItemGroup()
-   ::oGrupoIva:Cargo:Nombre     := cImp()
+   ::oGrupoIva:Cargo:Nombre     := "Impuesto"
    ::oGrupoIva:Cargo:Expresion  := "cCodIva"
    ::oGrupoIva:Cargo:Todos      := .t.
    ::oGrupoIva:Cargo:Desde      := Space( 1 )            // dbFirst( ::oDbfIva:oDbf, 1 )
