@@ -4412,7 +4412,7 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    // Obtenemos el precio del articulo-----------------------------------------
 
-   ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+   ::oTemporalLinea:nPvpTil         := ::nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
 
    ::oTemporalLinea:Save()
 
@@ -4488,7 +4488,7 @@ METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu, cCodigoMenu, cCod
 
    // Orden de la comanda------------------------------------------------------
 
-   ::oTemporalLinea:cOrdOrd   := ::oArticulo:cOrdOrd
+   ::oTemporalLinea:cOrdOrd      := ::oArticulo:cOrdOrd
 
    ::oTemporalLinea:Save()
 
@@ -4754,6 +4754,7 @@ METHOD lAcumulaArticulo( cCodigoMenu, cCodigoOrden ) CLASS TpvTactil
             Rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()       .and. ;
             !::oTemporalLinea:lKitChl                                      .and. ;
             !::oTemporalLinea:lDelTil                                      .and. ;
+            !::oTemporalLinea:lSave                                        .and. ;
             ::oTemporalLinea:nPvpTil == nPrecioLinea                       .and. ;
             ::oTemporalLinea:nDtoLin == 0                                  .and. ;
             ::oTemporalLinea:cOrdOrd == cCodigoOrden                       .and. ;
@@ -6804,6 +6805,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
          ::oTemporalLinea:cSufTil   := ::oTiketCabecera:cSufTik
          ::oTemporalLinea:cTipTil   := ::oTiketCabecera:cTipTik
          ::oTemporalLinea:dFecTik   := ::oTiketCabecera:dFecTik
+         ::oTemporalLinea:lSave     := .t.
 
          ::oTiketLinea:AppendFromObject( ::oTemporalLinea )
 

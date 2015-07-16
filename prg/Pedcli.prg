@@ -1082,7 +1082,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
                "Dirección",;
                "Agente",;
                "Entrada",;
-               "Comercio electrónico";
+               "Comercio electrónico",;
+               "Situación";
       MRU      "Clipboard_empty_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():PedidosClientes( nView ) );

@@ -2528,6 +2528,9 @@ Return nil
 Function RunEventScript()
 Return nil
 
+Function OrderCustomer()
+Return nil
+
 //------------------------------------------------------------------//
 
 #pragma BEGINDUMP

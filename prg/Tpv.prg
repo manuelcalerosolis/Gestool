@@ -17360,6 +17360,7 @@ function aColTik()
    aAdd( aColTik, { "nComStk",  "N",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "tFecTik",  "C",      6,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lPeso",    "L",      1,     0, "Lógico articulo con peso",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lSave",    "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 
@@ -17600,9 +17601,6 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    ( cTikL )->( dbGoTo( nRecLin ) )
 
 RETURN ( if( lPic, Trans( nTotTik, cPorDiv ), nTotTik ) )
-
-#else
-
 
 #endif
 

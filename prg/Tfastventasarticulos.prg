@@ -63,8 +63,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddFacturaProveedor()
    METHOD AddRectificativaProveedor()
 
-   METHOD cIdeDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
-   METHOD IdDocumentoLinea()              INLINE ( ::cIdeDocumento() + Str( ::oDbf:nNumLin ) )
+   METHOD idDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
+   METHOD IdDocumentoLinea()              INLINE ( ::idDocumento() + Str( ::oDbf:nNumLin ) )
 
    METHOD StockArticulo()                 INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote ) )
 
@@ -985,7 +985,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:nUniArt    := nTotNSATCli( ::oSatCliL:cAlias )
 
                   ::oDbf:nDtoArt    := ::oSatCliL:nDto
-                  ::oDbf:nLinArt    := ::oSatCliL:nDtoDiv
+                  ::oDbf:nLinArt    := ::oSatCliL:nDtoDiv 
                   ::oDbf:nPrmArt    := ::oSatCliL:nDtoPrm
 
                   ::oDbf:nPreArt    := nImpUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
@@ -1009,7 +1009,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oSatCliT:nNumSat )
                   ::oDbf:cSufDoc    := ::oSatCliT:cSufSat
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::SatCliL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oSatCliT:dFecSat )
@@ -1171,7 +1171,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumPre )
                   ::oDbf:cSufDoc    := ::oPreCliT:cSufPre
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::PreCliL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oPreCliT:dFecPre )
@@ -1325,7 +1325,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumPed )
                   ::oDbf:cSufDoc    := ::oPedCliT:cSufPed
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::PedCliL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oPedCliT:dFecPed )
@@ -1488,7 +1488,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oAlbCliT:nNumAlb )
                   ::oDbf:cSufDoc    := ::oAlbCliT:cSufAlb
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::oAlbCliL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
@@ -1647,7 +1647,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oFacCliT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacCliT:cSufFac
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::oFacCliL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oFacCliT:dFecFac )
@@ -1804,7 +1804,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oFacRecT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacRecT:cSufFac
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::oFacRecL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oFacRecT:dFecFac )
@@ -1953,7 +1953,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
                   ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::oTikCliL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
@@ -2029,7 +2029,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
                   ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::oTikCliL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
@@ -2320,7 +2320,7 @@ METHOD AddParteProduccion() CLASS TFastVentasArticulos
                      ::oDbf:cNumDoc    := Str( ::oProCab:nNumOrd )
                      ::oDbf:cSufDoc    := ::oProCab:cSufOrd
 
-                     ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                     ::oDbf:cIdeDoc    :=  ::idDocumento()
                      ::oDbf:nNumLin    :=  ::oProLin:nNumLin
 
                      ::oDbf:nAnoDoc    := Year( ::oProCab:dFecOrd )
@@ -2448,7 +2448,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cNumDoc    := Str( ::oPedPrvT:nNumPed )
                      ::oDbf:cSufDoc    := ::oPedPrvT:cSufPed
 
-                     ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                     ::oDbf:cIdeDoc    :=  ::idDocumento()
                      ::oDbf:nNumLin    :=  ::oPedPrvL:nNumLin
 
                      ::oDbf:nAnoDoc    := Year( ::oPedPrvT:dFecPed )
@@ -2596,7 +2596,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oAlbPrvT:nNumAlb )
                   ::oDbf:cSufDoc    := ::oAlbPrvT:cSufAlb 
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::oAlbPrvL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oAlbPrvT:dFecAlb )
@@ -2736,7 +2736,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oFacPrvT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacPrvT:cSufFac
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::oFacPrvL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oFacPrvT:dFecFac )
@@ -2875,7 +2875,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cNumDoc    := Str( ::oRctPrvT:nNumFac )
                   ::oDbf:cSufDoc    := ::oRctPrvT:cSufFac
 
-                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+                  ::oDbf:cIdeDoc    :=  ::idDocumento()
                   ::oDbf:nNumLin    :=  ::oRctPrvL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oRctPrvT:dFecFac )

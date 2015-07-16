@@ -46,12 +46,13 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    METHOD AddClientes()
 
-   METHOD cIdeDocumento()     INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+   METHOD idDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+   METHOD idDocumentoLinea()              INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
 
    METHOD preCliInfo( cTitle )
 
-   METHOD RiesgoAlcanzado()   INLINE ( ::oStock:nRiesgo( ::oDbf:cCodCli ) )
-   METHOD TotalFacturado()    INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli ) )
+   METHOD RiesgoAlcanzado()               INLINE ( ::oStock:nRiesgo( ::oDbf:cCodCli ) )
+   METHOD TotalFacturado()                INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli ) )
 
 END CLASS
 
@@ -389,7 +390,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
                   } ;
                   }  }
 
-   ::BuildNode( aReports, oTree, lLoadFile )
+   ::BuildNode( aReports, oTree, lLoadFile ) 
 
    //oTree:ExpandAll()
 
@@ -819,7 +820,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cNumDoc    := Str( ::oSatCliT:nNumSat )
             ::oDbf:cSufDoc    := ::oSatCliT:cSufSat
 
-            ::oDbf:cIdeDoc    :=  ::cIdeDocumento()            
+            ::oDbf:cIdeDoc    :=  ::idDocumento()            
 
             ::oDbf:nAnoDoc    := Year( ::oSatCliT:dFecSat )
             ::oDbf:nMesDoc    := Month( ::oSatCliT:dFecSat )
@@ -925,7 +926,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumPre )
             ::oDbf:cSufDoc    := ::oPreCliT:cSufPre
 
-            ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+            ::oDbf:cIdeDoc    :=  ::idDocumento()
 
             ::oDbf:nAnoDoc    := Year( ::oPreCliT:dFecPre )
             ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecPre )
