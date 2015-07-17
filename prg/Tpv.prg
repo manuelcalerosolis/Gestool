@@ -3033,8 +3033,17 @@ Static Function cAlbCli( aTmp, aGet, cNumAlb, oBrwLin )
             if ( dbfAlbCliT )->lIvaInc
                ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit
             else
-               ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit + ( ( ( dbfAlbCliL )->nPreUnit * ( dbfAlbCliL )->nIva ) / 100 )
+               if  uFieldEmpresa( "lUseImp")  //empresa ecotasa 
+                  if uFieldEmpresa( "lIvaImpEsp" )  //ecotasa con iva
+                     ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit + ( dbfAlbCliL )->nValImp + ( ( ( ( dbfAlbCliL )->nPreUnit + ( dbfAlbCliL )->nValImp ) * ( dbfAlbCliL )->nIva ) / 100 )
+                  else
+                     ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit + ( dbfAlbCliL )->nValImp + ( ( ( dbfAlbCliL )->nPreUnit * ( dbfAlbCliL )->nIva ) / 100 )
+                  end if
+               else
+                  ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit + ( ( ( dbfAlbCliL )->nPreUnit * ( dbfAlbCliL )->nIva ) / 100 )
+               end if
             end if
+
             ( dbfTmpL )->nUntTil    := ( dbfAlbCliL )->nUniCaja
             ( dbfTmpL )->nUndKit    := ( dbfAlbCliL )->nUndKit
             ( dbfTmpL )->nIvaTil    := ( dbfAlbCliL )->nIva
