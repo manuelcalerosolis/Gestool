@@ -9,13 +9,14 @@ CLASS OrderCustomer FROM DocumentsSales
 
    DATA oDocumentLines
 
-   DATA oIva
-
    DATA cTextoResumenVenta             INIT "Resumen pedido"
 
    METHOD New()
 
-   METHOD setEnviroment()              INLINE ( ::setDataTable( "PedCliT" ), ::setDataTableLine( "PedCliL" ), ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ) )
+   METHOD setEnviroment()              INLINE ( ::setDataTable( "PedCliT" ),;
+                                                ::setDataTableLine( "PedCliL" ),;
+                                                ::setDataTableLineID( D():PedidosClientesLineasId( ::nView ) ),;
+                                                ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ) )
 
    METHOD setNavigator()
 
@@ -45,11 +46,25 @@ CLASS OrderCustomer FROM DocumentsSales
 
    METHOD getLineDetail()                 INLINE ( ::oDocumentLines:getLineDetail( ::nPosDetail ) )
 
-   METHOD CalculaIva()
-
    METHOD SetDocuments()
 
-   METHOD addNumeroLinea()
+   METHOD saveEditDocumento()  
+
+   METHOD deleteLinesDocument() 
+
+   METHOD delDocumentLine()               INLINE ( D():deleteRecord( "PedCliL", ::nView ) )
+
+   METHOD saveAppendDocumento()
+
+   METHOD assignLinesDocument()
+
+   METHOD setLinesDocument()
+
+   METHOD appendDocumentLine( oDocumentLine ) INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, "PedCliL", ::nView ) )
+
+   METHOD onPreSaveAppendDocumento()
+
+   METHOD onPreSaveEditDocumento()
 
 END CLASS
 
@@ -69,7 +84,7 @@ METHOD New() CLASS OrderCustomer
 
    ::oDocumentLines        := DocumentLines():New( self ) 
 
-   ::oIva                  := Iva():new( self )
+   ::oTotalDocument        := TotalDocument():New( self )
 
    ::setEnviroment()
 
@@ -129,7 +144,7 @@ Return ( lResult )
 
 METHOD StartResourceDetail() CLASS OrderCustomer
 
-   ::CargaArticulo()
+   ::cargaArticulo()
 
    ::recalcularTotal()
 
@@ -157,8 +172,11 @@ METHOD GetEditDocumento() CLASS OrderCustomer
 RETURN ( self ) 
 
 //---------------------------------------------------------------------------//
+//
+// Convierte las lineas del pedido en objetos
+//
 
-METHOD getLinesDocument( id )
+METHOD getLinesDocument( id ) CLASS OrderCustomer
 
    ::oDocumentLines:reset()
 
@@ -184,7 +202,7 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addDocumentLine() 
+METHOD addDocumentLine() CLASS OrderCustomer
 
    local oDocumentLine  := ::getDocumentLine()
 
@@ -196,7 +214,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getDocumentLine()
+METHOD getDocumentLine() CLASS OrderCustomer
 
    local hLine    := D():GetPedidoClienteLineasHash( ::nView )
 
@@ -208,7 +226,7 @@ Return ( DocumentLine():New( hLine, self ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD getAppendDetail() 
+METHOD getAppendDetail() CLASS OrderCustomer
 
    local hLine             := D():GetPedidoClienteLineaBlank( ::nView )
    ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
@@ -224,20 +242,6 @@ METHOD GetEditDetail() CLASS OrderCustomer
    end if
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD CalculaIva() CLASS OrderCustomer
-
-   Local oDocumentLine
-
-   ::oIva:Reset()
-
-   for each oDocumentLine in ::oDocumentLines:aLines
-      ::oIva:add( oDocumentLine )
-   next
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -265,20 +269,123 @@ return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD addNumeroLinea( hDictionaryTemporal ) CLASS OrderCustomer
+METHOD saveEditDocumento() CLASS OrderCustomer            
 
-   Local oDocumentLine
-   Local NumeroLinea
+   ::Super:saveEditDocumento()
+
+   ::deleteLinesDocument()
+
+   ::assignLinesDocument()   
+
+   ::setLinesDocument()
+
+return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveAppendDocumento() CLASS OrderCustomer
+
+   ::Super:saveAppendDocumento()
+
+   ::assignLinesDocument()
+
+   ::setLinesDocument()
+
+return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteLinesDocument() CLASS OrderCustomer
+
+local id    := hGet( ::hDictionaryMaster, "Serie" ) + Str( hGet( ::hDictionaryMaster, "Numero" ) ) + hGet( ::hDictionaryMaster, "Sufijo" )
+
+   D():getStatusPedidosClientesLineas( ::nView )
+
+   ( D():PedidosClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
+
+   while ( D():PedidosClientesLineas( ::nView ) )->( dbSeek( id ) ) 
+      ::delDocumentLine()
+   end while
+
+   D():setStatusPedidosClientesLineas( ::nView ) 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD assignLinesDocument() CLASS OrderCustomer
+
+   local oDocumentLine
+   Local nNumeroLinea   := 0
 
    for each oDocumentLine in ::oDocumentLines:aLines
-      NumeroLinea := oDocumentLine:getNumeroLinea()
+      oDocumentLine:setNumeroLinea( ++nNumeroLinea )
+      oDocumentLine:setSerieMaster()
+      oDocumentLine:setNumeroMaster()
+      oDocumentLine:setSufijoMaster()
    next
 
-   if Empty( NumeroLinea )
-      hset( hDictionaryTemporal, "NumeroLinea", 1 )
-   else
-      hset( hDictionaryTemporal, "NumeroLinea", NumeroLinea+1 )
-   endif
-
 Return( self )
+
 //---------------------------------------------------------------------------//
+
+METHOD setLinesDocument() CLASS OrderCustomer
+
+   local oDocumentLine
+
+   for each oDocumentLine in ::oDocumentLines:aLines
+      ::appendDocumentLine( oDocumentLine )
+   next
+
+RETURN ( self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreSaveAppendDocumento() CLASS OrderCustomer
+
+   local lPreSaveDocument  := .f.
+   local NumeroDocumento   := nNewDoc( ::hDictionaryMaster[ "Serie" ], D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
+   local nTotPed           := ::oTotalDocument:getTotalDocument()
+
+
+   if !empty( NumeroDocumento )
+      lPreSaveDocument     := .t.
+      hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
+   end if 
+
+   if !empty( nTotPed )
+      hSet( ::hDictionaryMaster, "TotalDocumento", nTotPed )
+      lPreSaveDocument        := .t.
+   end if
+
+Return ( lPreSaveDocument )
+
+//---------------------------------------------------------------------------//
+
+/*METHOD NumeroDocumento() CLASS OrderCustomer
+   
+   local NumeroDocumento   := nNewDoc( ::hDictionaryMaster[ "Serie" ], D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
+
+   if !empty( NumeroDocumento )
+      hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
+      Return .t.
+   end if
+
+Return ( .f. )*/
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreSaveEditDocumento() CLASS OrderCustomer
+
+   Local lPreSaveDocument     := .f.
+   local nTotPed              := ::oTotalDocument:getTotalDocument()
+
+   if !empty( nTotPed )
+      hSet( ::hDictionaryMaster, "TotalDocumento", nTotPed )
+      lPreSaveDocument        := .t.
+   end if
+
+Return ( lPreSaveDocument )
+
+//---------------------------------------------------------------------------//
+

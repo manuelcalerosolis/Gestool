@@ -13,10 +13,22 @@ CLASS DocumentLine
    METHOD Impuesto()  
    METHOD Importe()
 
+   METHOD getSerieMaster()                                     INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
+   METHOD getNumeroMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
+   METHOD getSufijoMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
+
    METHOD getSerie()                                           INLINE ( hGet( ::hDictionary, "Serie" ) )
+   METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::getSerieMaster() ) )
+
    METHOD getNumero()                                          INLINE ( hGet( ::hDictionary, "Numero" ) )
+   METHOD setNumeroMaster()                                    INLINE ( hSet( ::hDictionary, "Numero", ::getNumeroMaster() ) )
+
    METHOD getSufijo()                                          INLINE ( hGet( ::hDictionary, "Sufijo" ) )
+   METHOD setSufijoMaster()                                    INLINE ( hSet( ::hDictionary, "Sufijo", ::getSufijoMaster() ) )
+
    METHOD getNumeroLinea()                                     INLINE ( hGet( ::hDictionary, "NumeroLinea" ) )
+   METHOD setNumeroLinea( NumeroLinea )                        INLINE ( hSet( ::hDictionary, "NumeroLinea", NumeroLinea ) )
+
    METHOD getArticulo()                                        INLINE ( hGet( ::hDictionary, "Articulo" ) )
    METHOD getDescripcionArticulo()                             INLINE ( hGet( ::hDictionary, "DescripcionArticulo" ) )
    METHOD getPorcentajeImpuesto()                              INLINE ( hGet( ::hDictionary, "PorcentajeImpuesto" ) )
@@ -85,7 +97,6 @@ METHOD Total()   CLASS DocumentLine
       Total             += ::getPortes() * ::totalUnidades
    endif
 
-
 Return ( Total )
 
 //---------------------------------------------------------------------------//
@@ -111,14 +122,14 @@ Return ( totalImporte )
 
 METHOD Impuesto() CLASS DocumentLine
    
-   Local Impuesto := 1
+   Local Impuesto := 0
 
    if !( ::isLineaImpuestoIncluido() )
 
       if ::isVolumenImpuestosEspeciales()
-         Return ( NotCero( ::getImporteImpuestoEspecial ) * NotCero( ::getVolumen ) )
+         Return ( ::getImporteImpuestoEspecial * NotCero( ::getVolumen ) )
       else
-         Return ( NotCero( ::getImporteImpuestoEspecial ) )
+         Return ( ::getImporteImpuestoEspecial )
       endif
 
    endif

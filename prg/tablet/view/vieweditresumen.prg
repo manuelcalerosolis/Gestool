@@ -208,8 +208,6 @@ Return ( self )
 
 METHOD defineBrowseIva() CLASS ViewEditResumen
 
-   ::oSender:CalculaIVA()
-
    ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
 
    ::oBrowse:nTop             := ::oBrowse:EvalRow( 125 )
@@ -221,17 +219,17 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "Base"
-      :bStrData            := {|| ::oSender:oIva:ShowBase( ::oBrowse:nArrayAt ) }
+      :bStrData            := {|| ::oSender:oTotalDocument:ShowBaseIVA( ::oBrowse:nArrayAt ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| ::oSender:oIva:TotalBase() }
+      :bFooter             := {|| ::oSender:oTotalDocument:transBase() }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "%" + cImp() + " - % RE"
-      :bStrData            := {|| ::oSender:oIva:ShowPorcentajes( ::oBrowse:nArrayAt ) }
+      :bStrData            := {|| ::oSender:oTotalDocument:ShowPorcentajesIVA( ::oBrowse:nArrayAt ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
@@ -239,22 +237,22 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := cImp() + " - RE"
-      :bStrData            := {|| ::oSender:oIva:ShowImportes( ::oBrowse:nArrayAt ) }
+      :bStrData            := {|| ::oSender:oTotalDocument:ShowImportesIVA( ::oBrowse:nArrayAt ) }
       :nWidth              := 160
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| ::oSender:oIva:transTotalImporte() }
+      :bFooter             := {|| ::oSender:oTotalDocument:transImporteIva() }
    end with
 
    with object ( ::oBrowse:AddCol() )
       :cHeader             := "Total"
-      :bStrData            := {|| ::oSender:oIva:ShowTotal( ::oBrowse:nArrayAt ) }
+      :bStrData            := {|| ::oSender:oTotalDocument:ShowTotalIVA( ::oBrowse:nArrayAt ) }
       :nWidth              := 170
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| ::oSender:oIva:transTotalTotales() }
+      :bFooter             := {|| ::oSender:oTotalDocument:transTotalDocument() }
    end with
 
    ::oBrowse:nHeaderHeight    := 48
@@ -262,7 +260,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
    ::oBrowse:nRowHeight       := 96
    ::oBrowse:nDataLines       := 2
 
-   ::oBrowse:SetArray( ::oSender:oIva:aIva, , , .f. )
+   ::oBrowse:SetArray( ::oSender:oTotalDocument:oIva:aIva, , , .f. )
 
    ::oBrowse:CreateFromCode()
 
