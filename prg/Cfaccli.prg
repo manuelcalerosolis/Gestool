@@ -862,7 +862,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                        cFactura,;                          
                                        nBaseImponible,;          // Base Imponible                          
                                        uIva[ 3 ],;                          
-                                       uIva[ 4 ],;                          
+                                       if( lRecargo, uIva[ 4 ], 0 ),;          // Tipo de recargo                         
                                        ,;                          
                                        cProyecto,;                          
                                        cClave,;                          

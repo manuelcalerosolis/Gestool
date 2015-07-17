@@ -44,6 +44,10 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD AddRecibosCliente( cCodigoCliente )
    METHOD AddRecibosClienteCobro( cCodigoCliente )
 
+   METHOD insertFacturaCliente()
+   METHOD insertRectificativa()
+   METHOD insertTicketCliente()
+
    METHOD AddClientes()
 
    METHOD idDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
@@ -388,7 +392,8 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
                      { "Title" => "Recibos",                      "Image" =>21, "Type" => "Recibos",                       "Directory" => "Clientes\Ventas\Recibos",                      "File" => "Recibos de clientes.fr3" },;
                      { "Title" => "Recibos fecha de cobro",       "Image" =>21, "Type" => "Recibos cobro",                 "Directory" => "Clientes\Ventas\Recibos fecha de cobro",       "File" => "Recibos de clientes fecha de cobro.fr3" },;
                   } ;
-                  }  }
+                  },;
+                  {  "Title" => "Tipo de impuesto",               "Image" =>23, "Type" => "Tipos de impuesto",             "Directory" => "Clientes\TipoImpuesto",                        "File" => "Ventas por tipo de impuesto.fr3"  } }
 
    ::BuildNode( aReports, oTree, lLoadFile ) 
 
@@ -435,9 +440,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Direcciones",                      ::oObras:nArea )
    ::oFastReport:SetFieldAliases(   "Direcciones",                      cItemsToReport( aItmObr() ) )
 
-   //::oFastReport:SetWorkArea(       "Cliente.Direcciones",              ::oObras:nArea )
-   //::oFastReport:SetFieldAliases(   "Cliente.Direcciones",              cItemsToReport( aItmObr() ) )
-
    ::oFastReport:SetWorkArea(       "Bancos",                           ::oBancos:nArea )
    ::oFastReport:SetFieldAliases(   "Bancos",                           cItemsToReport( aCliBnc() ) )
 
@@ -458,8 +460,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    */
 
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",               {|| cCodEmp() } )
-   //::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
-   //::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Bancos",                {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Tarifas de cliente",    {|| ::oDbf:cCodCli } )
@@ -487,7 +487,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Facturas" )
    ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
    ::oFastReport:SetResyncPair(     "Informe", "Bancos" )
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )
@@ -522,8 +521,6 @@ METHOD DataReport() CLASS TFastVentasClientes
       
          ::FastReportFacturaCliente()
          
-//       ::FastReportFacturaRectificativa()
-
       case ::cReportType == "Rectificativas de clientes"
 
          ::FastReportFacturaRectificativa()
@@ -556,7 +553,15 @@ METHOD DataReport() CLASS TFastVentasClientes
 
       case ::cReportType == "Recibos cobro"
 
-         ::FastReportRecibosCliente()   
+         ::FastReportRecibosCliente() 
+
+      case ::cReportType == "Tipo de impuesto"
+
+         ::FastReportFacturaCliente()
+
+         ::FastReportFacturaRectificativa()
+
+         ::FastReportTicket( .t. )
 
    end case
 
@@ -603,10 +608,6 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableLineasFacturaCliente()
          
-//      ::AddVariableRectificativaCliente()
-
-//       ::AddVariableLineasRectificativaCliente()
-
       case ::cReportType == "Rectificativas de clientes"
 
          ::AddVariableRectificativaCliente()
@@ -659,6 +660,14 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableRecibosCliente()
 
+      case ::cReportType == "Tipo de impuesto"
+         
+         ::AddVariableLineasFacturaCliente()
+         
+         ::AddVariableLineasRectificativaCliente() 
+
+         ::AddVariableLineasTicketCliente()
+
    end case
 
    ::oFastReport:AddVariable(    "Clientes",    "Riesgo alcanzado",   "CallHbFunc( 'oTinfGen', ['RiesgoAlcanzado'])" )
@@ -696,8 +705,6 @@ METHOD lGenerate() CLASS TFastVentasClientes
       case ::cReportType == "Facturas de clientes"
 
          ::AddFacturaCliente()   
-
-//       ::AddFacturaRectificativa()
 
       case ::cReportType == "Rectificativas de clientes"
 
@@ -737,6 +744,12 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
          ::AddRecibosClienteCobro()   
 
+      case ::cReportType == "Tipo de impuesto"
+
+         ::insertFacturaCliente()
+         ::insertRectificativa()
+         ::insertTicketCliente()
+
    end case
 
    ::oDbf:SetFilter( ::oFilter:cExpresionFilter )
@@ -754,8 +767,6 @@ Method lValidRegister( cCodigoCliente ) CLASS TFastVentasClientes
       ( ::oDbf:cCodRut  >= ::oGrupoRuta:Cargo:Desde     .and. ::oDbf:cCodRut  <= ::oGrupoRuta:Cargo:Hasta )     .and.;
       ( ::oDbf:cCodAge  >= ::oGrupoAgente:Cargo:Desde   .and. ::oDbf:cCodAge  <= ::oGrupoAgente:Cargo:Hasta )   .and.;
       ( ::oDbf:cCodUsr  >= ::oGrupoUsuario:Cargo:Desde  .and. ::oDbf:cCodUsr  <= ::oGrupoUsuario:Cargo:Hasta )
-
-      // ( ::oDbf:cCodGrp  >= ::oGrupoGCliente:Cargo:Desde .and. ::oDbf:cCodGrp  <= ::oGrupoGcliente:Cargo:Hasta ) .and.;
 
       if ( ::oGrupoGCliente:Cargo:ValidMayorIgual( ::oDbf:cCodGrp, ::oGrupoGCliente:Cargo:Desde ) .and. ::oGrupoGCliente:Cargo:ValidMenorIgual( ::oDbf:cCodGrp, ::oGrupoGcliente:Cargo:Hasta ) )
 
@@ -1664,6 +1675,30 @@ METHOD AddRecibosClienteCobro( cCodigoCliente ) CLASS TFastVentasClientes
 
    ErrorBlock( oBlock )
    
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertFacturaCliente()
+
+   MsgInfo( "insertFacturaCliente" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertRectificativa()
+
+   MsgInfo( "insertRectificativa" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD insertTicketCliente()
+
+   MsgInfo( "insertTicketCliente" )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//

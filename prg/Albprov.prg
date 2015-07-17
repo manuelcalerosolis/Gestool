@@ -198,7 +198,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define __NBULTOS                110
 #define _CFORMATO                111
 #define __CNUMFAC                112
-#define _CCODIMP                 112
+#define _CCODIMP                 113
 #define _NVALIMP                 114
 #define _DAPERTURA               115
 #define _TAPERTURA               116

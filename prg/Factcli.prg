@@ -21449,7 +21449,11 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
                case _NPCTIVA1 == nil .OR. _NPCTIVA1 == ( cFacCliL )->nIva
 
                   _NPCTIVA1      := ( cFacCliL )->nIva
-                  _NPCTREQ1      := ( cFacCliL )->nReq
+
+                  if lRecargo
+                     _NPCTREQ1   := ( cFacCliL )->nReq
+                  end if
+
                   _NBRTIVA1      += nTotalArt
                   _NIVMIVA1      += nTotIvm
                   _NTRNIVA1      += nTotTrn
@@ -21458,7 +21462,11 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
                case _NPCTIVA2 == nil .OR. _NPCTIVA2 == ( cFacCliL )->nIva
 
                   _NPCTIVA2      := ( cFacCliL )->nIva
-                  _NPCTREQ2      := ( cFacCliL )->nReq
+                  
+                  if lRecargo
+                     _NPCTREQ2   := ( cFacCliL )->nReq
+                  end if
+
                   _NBRTIVA2      += nTotalArt
                   _NIVMIVA2      += nTotIvm
                   _NTRNIVA2      += nTotTrn
@@ -21467,7 +21475,11 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
                case _NPCTIVA3 == nil .OR. _NPCTIVA3 == ( cFacCliL )->nIva
 
                   _NPCTIVA3      := ( cFacCliL )->nIva
-                  _NPCTREQ3      := ( cFacCliL )->nReq
+                  
+                  if lRecargo
+                     _NPCTREQ3   := ( cFacCliL )->nReq
+                  end if
+
                   _NBRTIVA3      += nTotalArt
                   _NIVMIVA3      += nTotIvm
                   _NTRNIVA3      += nTotTrn

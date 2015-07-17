@@ -4222,23 +4222,20 @@ Static Function hOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView )
 
       while ( D():Ofertas( nView ) )->cArtOfe + ( D():Ofertas( nView ) )->cCodPr1 + ( D():Ofertas( nView ) )->cCodPr2 + ( D():Ofertas( nView ) )->cValPr1 + ( D():Ofertas( nView ) )->cValPr2 == hLinea[ "Articulo" ] + hLinea[ "CodigoPropiedad1" ] + hLinea[ "CodigoPropiedad2" ] + hLinea[ "ValorPropiedad1" ] + hLinea[ "ValorPropiedad2" ] .and. !( D():Ofertas( nView ) )->( eof() )
 
-         //msgAlert( "while" )
-         //msgAlert( isOfertaArticulo( nView ), "Oferta" )
-         //msgAlert( isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView ), "Condiciones" )
-         //msgAlert( isOfertaArticulo( nView ), "isOfertaArticulo" )
-         //msgAlert( isValidFecha( hCabecera, nView ), "isValidFecha" )
-         //msgAlert( isOfertaPrecio( nView ), "isOfertaPrecio" )
-         //msgAlert( isValidClient( hCabecera, nView ), "isValidClient" )
-         //msgAlert( isImporteMinimo( nTotalLinea, nView ), "isImporteMinimo" )
-         //msgAlert( isCajasMinimas( hLinea[ "Cajas" ], nView ), "isCajasMinimas" )
-         //msgAlert( isUnidadesMinimas( hLinea[ "Unidades" ], nView ) , "isUnidadesMinimas")
-
          if isOfertaArticulo( nView ) .and. isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView )
-
+            
             // Comprobamos que no vayamos a vender mas articulos que los del lote
 
-            if empty( sPrecio ) .or. ( sPrecio:nPrecio >= sPrecioOferta():getPrecio( hLinea, nView ) )
-               sPrecio        := sPrecioOferta():get( hLinea, nView )
+            if empty( sPrecio )
+
+               sPrecio           := sPrecioOferta():get( hLinea, nView )
+
+            else 
+
+               if sPrecioOferta():menor( sPrecio )
+                  sPrecio        := sPrecioOferta():get( hLinea, nView )
+               end if
+
             end if
 
          end if
@@ -4536,11 +4533,24 @@ Return ( ( D():Ofertas( nView ) )->nMinCan == 2 .and. ( D():Ofertas( nView ) )->
 //---------------------------------------------------------------------------//
 
 Static Function isCondiconesComunes( hCabecera, hLinea, nTotalLinea, nView )
-Return   (  isValidFecha( hCabecera, nView ) .and. ;
+
+   local lReturn  := .f.
+
+   lReturn        := isValidFecha( hCabecera, nView ) .and. ;
+                     isValidClient( hCabecera, nView ) .and.;
+                     if( isOfertaPrecio( nView ),; 
+                        (  isImporteMinimo( nTotalLinea, nView ) .or.;
+                           isCajasMinimas( hLinea[ "Cajas" ], nView ) .or.;
+                           isUnidadesMinimas( hLinea[ "Unidades" ], nView ) ),;
+                        .t. )
+
+Return ( lReturn )
+
+/*Return   (  isValidFecha( hCabecera, nView ) .and. ;
             isValidClient( hCabecera, nView ) .and.;
             (  isImporteMinimo( nTotalLinea, nView ) .or.;
                isCajasMinimas( hLinea[ "Cajas" ], nView ) .or.;
-               isUnidadesMinimas( hLinea[ "Unidades" ], nView ) ) )
+               isUnidadesMinimas( hLinea[ "Unidades" ], nView ) ) )*/
 
 //---------------------------------------------------------------------------//
 
@@ -4565,6 +4575,8 @@ CLASS sPrecioOferta
    METHOD getDtoLineal( nView )        INLINE ( ( D():Ofertas( nView ) )->nDtoLin )
 
    METHOD isImporte()                  INLINE ( ::nPrecio != 0 .or. ::nDtoPorcentual != 0 .or. ::nDtoLineal != 0 )
+
+   METHOD menor( sPrecio )
 
 ENDCLASS
 
@@ -4595,5 +4607,15 @@ METHOD get( hLinea, nView ) CLASS sPrecioOferta
    end if 
 
 RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD menor( sPrecio ) CLASS sPrecioOferta
+
+   if ::nPrecio > 0
+      return ( ::nPrecio < sPrecio:nPrecio )
+   end if 
+
+ return ( ::nUnidadesGratis < sPrecio:nUnidadesGratis )
 
 //---------------------------------------------------------------------------//
