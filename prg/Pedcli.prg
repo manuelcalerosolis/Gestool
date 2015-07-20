@@ -488,6 +488,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       return nil
    end if
 
+
    nNumPed              := ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed
 
    DEFAULT nDevice      := IS_PRINTER
@@ -498,6 +499,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       return nil
    end if
 
+   
    // Numero de copias---------------------------------------------------------
 
    if Empty( nCopies )
@@ -8226,23 +8228,29 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
-   oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
-   oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
-
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
-
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
-   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+   if !empty(oUndMedicion)
+      oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
+      oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+   end if 
+
+   if !empty(oTrans)
+      oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
+      oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
+   end if 
+
+   if !empty(oNewImp)
+      oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+      oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+   end if 
 
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
@@ -14479,6 +14487,33 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+FUNCTION visualizaPedidoCliente( cNumeroPedido, cFormatoDocumento )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( .t. )
+
+      if dbSeekInOrd( cNumeroPedido, "nNumPed", D():PedidosClientes( nView ) )
+         nTotPedCli()
+         genPedCli( IS_SCREEN, nil, cFormatoDocumento )
+      else
+         msgStop( "Número de pedido " + alltrim(  cNumeroPedido ) + " no encontrado" )
+      end if
+
+      CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+
 FUNCTION PrnEntPed( cNumEnt, lPrint, dbfPedCliP )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
@@ -18104,4 +18139,6 @@ Function DesignLabelPedidoClientes( oFr, cDoc )
 
 Return .t.
 
+//---------------------------------------------------------------------------//   
 
+//---------------------------------------------------------------------------//   
