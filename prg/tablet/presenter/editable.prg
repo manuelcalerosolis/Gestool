@@ -11,6 +11,7 @@ CLASS Editable
 
    DATA cDataTable
    DATA cDataTableLine
+   DATA cDataTableLineID
 
    DATA oViewNavigator
    DATA oViewSearchNavigator
@@ -26,7 +27,9 @@ CLASS Editable
    DATA aDetails                                INIT {}
  
    METHOD Append()
+   METHOD saveAppend()
    METHOD Edit()
+   METHOD saveEdit()
    METHOD Delete()
 
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
@@ -35,9 +38,15 @@ CLASS Editable
    METHOD setDataTableLine( cDataTableLine )    INLINE ( ::cDataTableLine := cDataTableLine )
    METHOD getDataTableLine()                    INLINE ( ::cDataTableLine )
 
+   METHOD setDataTableLineID( cDataTableLineID )  INLINE ( ::cDataTableLineID := cDataTableLineID )
+   METHOD getDataTableLineID()                    INLINE ( ::cDataTableLineID )
+
    METHOD onPostGetDocumento()                  INLINE ( .t. )
-   METHOD onPreSaveDocumento()                  INLINE ( D():SetHashLine( ::oDocumentLines:aLines, ::cDataTableLine, ::nView ) )
-   METHOD onPostSaveDocumento()                 INLINE ( .t. )
+   METHOD onPreSaveAppendDocumento()            VIRTUAL
+   METHOD onPostSaveAppendDocumento()           INLINE ( .t. )
+
+   METHOD onPreSaveEditDocumento()              VIRTUAL
+   METHOD onPostSaveEditDocumento()             INLINE ( .t. )
 
    METHOD getAppendDocumento()                  INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
    METHOD getEditDocumento()                    INLINE ( ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView ) )
@@ -80,21 +89,31 @@ METHOD Append() CLASS Editable
 
    ::onPostGetDocumento()
 
-   lAppend        := ::Resource()
-
-   if lAppend
-
-      ::onPreSaveDocumento()
-
-      lAppend     := ::saveAppendDocumento()
-
-      ::onPostSaveDocumento()
-
-      ::oDocumentLines:reset()
-   
+   if ::Resource()
+      lAppend     := ::saveAppend()
    end if
 
+   ::oDocumentLines:reset()
+
 Return ( lAppend )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveAppend() CLASS Editable
+
+   local lSave    := .f.
+
+   if !::onPreSaveAppendDocumento()
+      Return .f.
+   end if 
+
+   lSave          := ::saveAppendDocumento()
+
+   if lSave 
+      ::onPostSaveAppendDocumento()
+   end if 
+
+Return ( lSave )
 
 //---------------------------------------------------------------------------//
 
@@ -102,27 +121,35 @@ METHOD Edit() CLASS Editable
 
    local lEdit    := .f.
 
-
-
    ::nMode        := EDIT_MODE
 
    ::getEditDocumento()
 
    ::onPostGetDocumento()
 
-   lEdit          := ::Resource()
-
-   if lEdit
-
-      ::onPreSaveDocumento()
-
-      lEdit       := ::saveEditDocumento()
-
-      ::onPostSaveDocumento()
-
+   if ::Resource()
+      lEdit       := ::saveEdit()
    end if
 
    ::oDocumentLines:reset()
+
+Return ( lEdit )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveEdit() CLASS Editable
+
+   local lEdit    := .f.
+
+   if !::onPreSaveEditDocumento()
+      Return .f.
+   end if 
+
+   lEdit          := ::saveEditDocumento()
+
+   if lEdit 
+      ::onPostSaveEditDocumento()
+   end if 
 
 Return ( lEdit )
 

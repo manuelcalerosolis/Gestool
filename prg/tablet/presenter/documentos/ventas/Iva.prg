@@ -6,8 +6,6 @@ CLASS Iva
    Data aIva                                       
    Data hIva
    Data oSender
-   Data SumImporte                                 
-   Data SumTotal                                   
 
    METHOD New()
    METHOD Reset()
@@ -30,23 +28,15 @@ CLASS Iva
    METHOD getImporteRecargo( nPosition )           INLINE ( hGet( ::aIva[ nPosition ], "ImporteRecargo" ) )
    METHOD getTotal( nPosition )                    INLINE ( hGet( ::aIva[ nPosition ], "Total" ) )
 
-   METHOD ShowBase( nPosition )                    INLINE ( Trans( ::getBase( nPosition ), cPorDiv() ) )
-   METHOD ShowPorcentajes( nPosition )
-   METHOD ShowImportes( nPosition )
-   METHOD ShowTotal( nPosition )
-
    METHOD addIva( oDocumentLine )
-   METHOD sumIva( oDocumentLine, nPosition )
 
    METHOD ImporteImpuesto( nPosition )
    METHOD ImporteRecargo( nPosition )
    METHOD CalculaTotal( nPosition )
 
-   METHOD TotalBase()
-   METHOD TotalImporte()
-   METHOD transTotalImporte()                      INLINE ( Trans( ::TotalImporte(), cPorDiv() ) )
-   METHOD TotalTotales()
-   METHOD transTotalTotales()                      INLINE ( Trans( ::TotalTotales, cPorDiv() ) )
+   METHOD ShowPorcentajes( nPosition )
+   METHOD ShowImportes( nPosition )
+   METHOD ShowTotal( nPosition )
 
 
 END CLASS
@@ -58,9 +48,6 @@ METHOD New( oSender )
    ::oSender      := oSender
    ::aIva         := {}
 
-   ::SumImporte   := 00
-   ::SumTotal     := 00
-
 Return( Self )
 
 //---------------------------------------------------------------------------//
@@ -68,8 +55,6 @@ Return( Self )
 METHOD Reset()
 
    ::aIva         := {}
-   ::SumImporte   := 00
-   ::SumTotal     := 00
 
 Return( Self )
 
@@ -82,7 +67,7 @@ METHOD add( oDocumentLine )
    nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPorcentajeImpuesto() == ::getTipoIva( hIva ) } )
 
    if nPosition != 0
-      ::sumIva( oDocumentLine, nPosition )
+      ::sumBase( nPosition, oDocumentLine:Total() )
    else
       ::addIva( oDocumentLine )
    end if 
@@ -104,21 +89,7 @@ METHOD addIva( oDocumentLine )
 Return( Self )
 
 //---------------------------------------------------------------------------//
-
-METHOD sumIva( oDocumentLine, nPosition )
-
-   local hHash
-
-   if !( nPosition > 0 .and. nPosition <= len( ::aIva ) )
-      Return( self )
-   end if 
-
-   ::sumBase( nPosition, oDocumentLine:total() )
-
-Return( Self )
-
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 
 METHOD ImporteImpuesto( nPosition )
@@ -128,8 +99,6 @@ METHOD ImporteImpuesto( nPosition )
    if ::getPorcentajeImpuesto( nPosition ) !=0
       ImporteImpuesto         := ( ::getBase( nPosition ) * ::getPorcentajeImpuesto( nPosition ) ) / 100
    endif
-
-   ::SumImporte               += ImporteImpuesto
 
 Return( ImporteImpuesto )
 
@@ -143,8 +112,6 @@ METHOD ImporteRecargo( nPosition )
       ImporteRecargo       := ( ::getBase( nPosition ) * ::getPorcentajeRecargo( nPosition ) ) / 100
    endif
 
-   ::SumImporte               += ImporteRecargo
-
 Return( ImporteRecargo )
 
 //---------------------------------------------------------------------------//
@@ -154,8 +121,6 @@ METHOD CalculaTotal( nPosition )
    Local CalculaTotal      := 0
 
    CalculaTotal            := ::getBase( nPosition ) + ::ImporteRecargo( nPosition ) + ::ImporteImpuesto( nPosition )
-
-   //::SumTotal              += CalculaTotal
 
 Return( CalculaTotal )
 
@@ -209,32 +174,3 @@ Return( Total )
 
 //---------------------------------------------------------------------------//
 
-METHOD TotalBase()
-
-   Local TotalBase := 0
-
-   aeval( ::aIva, {|hIva| TotalBase += hGet( hIva, "Base" ) } ) 
-
-Return( Trans( TotalBase, cPorDiv() )  )
-
-//---------------------------------------------------------------------------//
-
-METHOD TotalImporte()
-
-   local TotalImporte   := 0
-
-   aeval(::aIva, {|hIva, nPosition| TotalImporte += ::ImporteImpuesto( nPosition )  })
-
-Return ( TotalImporte )
-
-//---------------------------------------------------------------------------//
-
-METHOD TotalTotales()
-
-   local TotalTotales   := 0
-
-   aeval(::aIva, {|hIva, nPosition| TotalTotales += ::CalculaTotal( nPosition )  })
-
-Return ( TotalTotales )
-
-//---------------------------------------------------------------------------//

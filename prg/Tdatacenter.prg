@@ -5396,8 +5396,6 @@ CLASS D
    METHOD appendHashRecord( hTable, cDataTable, nView )  
    METHOD editHashRecord( hTable, cDataTable, nView )
 
-   METHOD SetHashLine( aTable, cDataTable, nView ) 
-
    METHOD setHashRecord( cDatabase, nView )
    METHOD saveFieldsToRecord()
    METHOD getFieldFromDictionary()
@@ -6464,71 +6462,3 @@ RETURN ( lDelete )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetHashLine( aTable, cDataTable, nView ) CLASS D
-
-   Local hTable
-   Local serie 
-   Local NumeroLinea
-   local lEdit       := .f.
-   local workArea    := ::Get( cDataTable, nView )   
-   local hDictionary := TDataCenter():getDictionary( cDataTable )
-
-   if empty( workArea )
-      return ( lEdit )
-   end if
-      
-   if empty( hDictionary )
-      return ( lEdit )
-   end if
-/*
-   //NumeroLinea
-
-   //añadir
-   ( workArea )->( dbAppend() )
-   if !( workArea )->( neterr() )
-      ::setHashRecord( hTable, workArea, hDictionary )
-      lAppend        := .t.
-      ( workArea )->( dbUnLock() )
-   end if 
-
-   //editar
-   if ( workArea )->( dbrlock() )
-      ::setHashRecord( hTable, workArea, hDictionary )
-      lEdit          := .t.
-      ( workArea )->( dbUnLock() )
-   end if 
-
-*/
-
-msgAlert( cDataTable, "cDataTable" )
-msgAlert( hb_valtoexp( nView ), "nView" )
-
-   for each hTable in aTable
-
-      NumeroLinea    := hTable:getNumeroLinea()
-      Serie          := hTable:getSerie() + Str( hTable:getNumero() ) + hTable:getSufijo()
-
-      ( workArea )->( ordSetFocus( 1 ) )
-
-      if ( workArea )->( dbSeek( serie ) )  
-
-      //preguntar a manolo si quiere borrar antes de guardar o guardar dependiendo del nMode.
-
-         while ( D():PedidosClientesLineasId( ::nView ) == serie ) .and. !( workArea )->( eof() ) 
-
-            ::addDocumentLine()
-         
-            ( workArea )->( dbSkip() ) 
-         
-         end while
-
-      end if 
-      
-      D():setStatusPedidosClientesLineas( ::nView )
-
-      msgAlert( hb_valtoexp( hTable:hDictionary ), "hTable:hDictionary" )
-      msgAlert( NumeroLinea, "NumeroLinea" )
-
-   next
-
-Return( .t. )

@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Factu.ch" 
+#include "Factu.ch"  
 #include "Report.ch"
 #include "MesDbf.ch"
 // #include "FastRepH.ch"
@@ -31,7 +31,7 @@ CLASS TFastVentasProveedores FROM TFastReportInfGen
    METHOD AddFacturaRectificativa()
    METHOD AddProveedor()
 
-   METHOD cIdeDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+   METHOD idDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
 
 END CLASS
 
@@ -254,7 +254,7 @@ METHOD AddPedidoProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
          ::oDbf:cNumDoc    := Str( ::oPedPrvT:nNumPed )
          ::oDbf:cSufDoc    := ::oPedPrvT:cSufPed
 
-         ::oDbf:cIdeDoc    := ::cIdeDocumento()            
+         ::oDbf:cIdeDoc    := ::idDocumento()            
 
          ::oDbf:cCodPrv    := ::oPedPrvT:cCodPrv
          ::oDbf:cNomPrv    := ::oPedPrvT:cNomPrv
@@ -336,7 +336,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
          ::oDbf:cNumDoc := Str( ::oAlbPrvT:nNumAlb )
          ::oDbf:cSufDoc := ::oAlbPrvT:cSufAlb
 
-         ::oDbf:cIdeDoc := ::cIdeDocumento()            
+         ::oDbf:cIdeDoc := ::idDocumento()            
 
          ::oDbf:cCodPrv := ::oAlbPrvT:cCodPrv
          ::oDbf:cNomPrv := ::oAlbPrvT:cNomPrv
@@ -411,7 +411,7 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
          ::oDbf:cNumDoc := Str( ::oFacPrvT:nNumFac )
          ::oDbf:cSufDoc := ::oFacPrvT:cSufFac
 
-         ::oDbf:cIdeDoc := ::cIdeDocumento()                                
+         ::oDbf:cIdeDoc := ::idDocumento()                                
 
          ::oDbf:cCodPrv := ::oFacPrvT:cCodPrv
          ::oDbf:cNomPrv := ::oFacPrvT:cNomPrv
@@ -486,7 +486,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasProveedores
          ::oDbf:cNumDoc := Str( ::oRctPrvT:nNumFac )
          ::oDbf:cSufDoc := ::oRctPrvT:cSufFac
 
-         ::oDbf:cIdeDoc := ::cIdeDocumento()                                
+         ::oDbf:cIdeDoc := ::idDocumento()                                
 
          ::oDbf:cCodPrv := ::oRctPrvT:cCodPrv
          ::oDbf:cNomPrv := ::oRctPrvT:cNomPrv

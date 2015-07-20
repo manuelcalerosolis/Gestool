@@ -3033,8 +3033,17 @@ Static Function cAlbCli( aTmp, aGet, cNumAlb, oBrwLin )
             if ( dbfAlbCliT )->lIvaInc
                ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit
             else
-               ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit + ( ( ( dbfAlbCliL )->nPreUnit * ( dbfAlbCliL )->nIva ) / 100 )
+               if  uFieldEmpresa( "lUseImp")  //empresa ecotasa 
+                  if uFieldEmpresa( "lIvaImpEsp" )  //ecotasa con iva
+                     ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit + ( dbfAlbCliL )->nValImp + ( ( ( ( dbfAlbCliL )->nPreUnit + ( dbfAlbCliL )->nValImp ) * ( dbfAlbCliL )->nIva ) / 100 )
+                  else
+                     ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit + ( dbfAlbCliL )->nValImp + ( ( ( dbfAlbCliL )->nPreUnit * ( dbfAlbCliL )->nIva ) / 100 )
+                  end if
+               else
+                  ( dbfTmpL )->nPvpTil := ( dbfAlbCliL )->nPreUnit + ( ( ( dbfAlbCliL )->nPreUnit * ( dbfAlbCliL )->nIva ) / 100 )
+               end if
             end if
+
             ( dbfTmpL )->nUntTil    := ( dbfAlbCliL )->nUniCaja
             ( dbfTmpL )->nUndKit    := ( dbfAlbCliL )->nUndKit
             ( dbfTmpL )->nIvaTil    := ( dbfAlbCliL )->nIva
@@ -17360,6 +17369,7 @@ function aColTik()
    aAdd( aColTik, { "nComStk",  "N",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "tFecTik",  "C",      6,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lPeso",    "L",      1,     0, "Lógico articulo con peso",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lSave",    "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 
@@ -17600,9 +17610,6 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    ( cTikL )->( dbGoTo( nRecLin ) )
 
 RETURN ( if( lPic, Trans( nTotTik, cPorDiv ), nTotTik ) )
-
-#else
-
 
 #endif
 
