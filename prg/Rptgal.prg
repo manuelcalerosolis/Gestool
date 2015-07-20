@@ -2528,11 +2528,7 @@ Return nil
 Function RunEventScript()
 Return nil
 
-<<<<<<< HEAD
 Function OrderCustomer()
-=======
-Function orderCustomer()
->>>>>>> origin/master
 Return nil
 
 //------------------------------------------------------------------//

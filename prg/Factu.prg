@@ -327,7 +327,7 @@ Static Function CreateMainWindow( oIconApp )
    // Mensajes-----------------------------------------------------------------
 
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:setFont( oFontLittelTitle() )
+   oWnd:oMsgBar:setFont( oFontLittelTitle() )
 
    oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100,,,, .t. )
 
@@ -344,7 +344,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : "      + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "       + Transform( cCurSesion(), "######" ), 100,,,, .t. ) 
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "       + Transform( cCurSesion(), "######" ), 100,,,, .t., {|| dbDialog() } ) 
 
    // Abrimos la ventana-------------------------------------------------------
 

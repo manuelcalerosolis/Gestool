@@ -95,7 +95,6 @@ CLASS TpvTactil
    DATA oArticulosEscandallos
    DATA oArticulosLenguajes
    DATA oArticulosOfertas
-   DATA oOferta
    DATA oFormaPago
    DATA oPropiedadesLinea
    DATA oFamilias
@@ -154,7 +153,6 @@ CLASS TpvTactil
    DATA oMaterialesProducion
    DATA oMaterialesProducionSeries
    DATA oMaterialesNumeroSeries
-   DATA oOferta
    DATA oTipoVenta
    DATA oTransportista
    DATA oCaptura
@@ -1215,8 +1213,6 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oArticulosOfertas                         PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
-   DATABASE NEW ::oOferta                                   PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
-
    DATABASE NEW ::oFormaPago                                PATH ( cPatGrp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    DATABASE NEW ::oPropiedadesLinea                         PATH ( cPatGrp() )   FILE "TBLPRO.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
@@ -1332,8 +1328,6 @@ METHOD OpenFiles() CLASS TpvTactil
    DATABASE NEW ::oMaterialesProducionSeries                PATH ( cPatEmp() )   FILE "PROSER.DBF"          VIA ( cDriver() ) SHARED INDEX "PROSER.CDX"
 
    DATABASE NEW ::oMaterialesNumeroSeries                   PATH ( cPatEmp() )   FILE "MatSer.DBF"          VIA ( cDriver() ) SHARED INDEX "MatSer.CDX"
-
-   DATABASE NEW ::oOferta                                   PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
    DATABASE NEW ::oTipoVenta                                PATH ( cPatDat() )   FILE "TVTA.DBF"            VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
@@ -1537,10 +1531,6 @@ METHOD CloseFiles() CLASS TpvTactil
 
    if ::oArticulosOfertas != nil .and. ::oArticulosOfertas:Used()
       ::oArticulosOfertas:End()
-   end if
-
-   if ::oOferta != nil .and. ::oOferta:Used()
-      ::oOferta:End()
    end if
 
    if ::oFormaPago != nil .and. ::oFormaPago:Used()
@@ -1775,10 +1765,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oMaterialesNumeroSeries:End()
    end if
 
-   if ::oOferta != nil .and. ::oOferta:Used()
-      ::oOferta:End()
-   end if
-
    if ::oTipoVenta != nil .and. ::oTipoVenta:Used()
       ::oTipoVenta:End()
    end if
@@ -1840,7 +1826,7 @@ METHOD CloseFiles() CLASS TpvTactil
    end if
 
    if !empty( ::oTpvMenu )
-      ::oTpvMenu:End()
+      ::oTpvMenu:CloseService()
    end if 
    
    if !empty( ::oTpvMenuOrdenes )
@@ -1866,7 +1852,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oArticulosEscandallos                   := nil
    ::oArticulosLenguajes                     := nil
    ::oArticulosOfertas                       := nil
-   ::oOferta                                 := nil
    ::oFormaPago                              := nil
    ::oPropiedadesLinea                       := nil
    ::oFamilias                               := nil
@@ -1936,7 +1921,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oFideliza                               := nil
    ::oTipArt                                 := nil
    ::oFabricante                             := nil
-   ::oOferta                                 := nil
    ::oTipoVenta                              := nil
    ::oTransportista                          := nil
    ::oOrdenComanda                           := nil 
@@ -6715,7 +6699,6 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
 
       if ::oTurno:OpenFiles()
          ::oTurno:lArqueoTurno( .f., lParcial )
-      else
          ::oTurno:CloseFiles()
       end if
 
@@ -8616,7 +8599,7 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Tipo de venta", ::oTipoVenta:nArea )
    ::oFastReport:SetFieldAliases(   "Tipo de venta", cItemsToReport( aItmTVta() ) )
 
-   ::oFastReport:SetWorkArea(       "Ofertas", ::oOferta:nArea )
+   ::oFastReport:SetWorkArea(       "Ofertas", ::oArticulosOfertas:nArea )
    ::oFastReport:SetFieldAliases(   "Ofertas", cItemsToReport( aItmOfe() ) )
 
    ::oFastReport:SetWorkArea(       "Series de lineas de albaranes", ::oAlbaranClienteSerie:nArea )

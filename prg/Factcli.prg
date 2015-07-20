@@ -6354,7 +6354,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 	local oBtnAceptar
 	local oBtnSalir
 	local oSayArticulo
-	local nAltoGet 		:= 23
+	local nAltoGet 		      := 23
 	local oSayCajas
 	local oSayUnidades
 	local oSayPrecio
@@ -6389,11 +6389,11 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
 
    oDlg           		:= TDialog():New( 1, 5, 40, 100, "LINEAS GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
 
-	/*
-	Cabeceras------------------------------------------------------------------
-	*/
+      /*
+      Cabeceras------------------------------------------------------------------
+      */
 
-   oSayGeneral          := TGridSay():Build(    { 	"nRow"      => 0,;
+      oSayGeneral       := TGridSay():Build(    { 	"nRow"      => 0,;
                                                    "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
                                                    "bText"     => {|| LblTitle( nMode ) + " líneas de facturas" },;
                                                    "oWnd"      => oDlg,;
@@ -6424,9 +6424,9 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"bLClicked" => {|| oDlg:End() },;
                                              		"oWnd"      => oDlg } )
 
-	/*
-	Artículos------------------------------------------------------------------
-	*/
+      /*
+      Artículos------------------------------------------------------------------
+      */
 
 	   oSayArticulo  		:= TGridUrllink():Build({  "nTop"      => 40,;
                                              		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -6446,8 +6446,9 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                           			"nWidth"    => {|| GridWidth( 3, oDlg ) },;
                                           			"nHeight"   => nAltoGet,;
                                           			"lPixels" 	=> .t.,;
-                                          			"bValid"    => {|| LoaArt( aTmp[ _CREF ], aGet, aTmp, aTmpFac,,,,,,, nMode, , oSayLote ), lCalcDeta( aTmp, aTmpFac ) } } )
-	
+                                          			"bValid"    => {|| LoaArt( aTmp[ _CREF ], aGet, aTmp, aTmpFac, , , , , , , nMode, , oSayLote ), lCalcDeta( aTmp, aTmpFac ) } } )
+
+
    	aGet[ _CDETALLE ]  	:= TGridGet():Build( { 	"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 5.5, oDlg ) },;
                                           			"bSetGet"   => {|u| if( PCount() == 0, aTmp[ _CDETALLE ], aTmp[ _CDETALLE ] := u ) },;
@@ -13772,7 +13773,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Código de la frase publicitaria---------------------------------------
          */
 
-         if !Empty( ( D():Articulos( nView ) )->cCodFra )
+         if !empty( ( D():Articulos( nView ) )->cCodFra )
 
             if aGet[ __CCODPRY ] != nil
                aGet[ __CCODPRY ]:cText( aTmpFac[ _CCODPRY ] )
@@ -13787,7 +13788,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          Descripciones largas--------------------------------------------------
          */
 
-         if !Empty( aGet[ _DESCRIP ] )
+         if !empty( aGet[ _DESCRIP ] )
             aGet[ _DESCRIP ]:cText( ( D():Articulos( nView ) )->Descrip )
          else
             aTmp[ _DESCRIP ]     := ( D():Articulos( nView ) )->Descrip
@@ -13800,7 +13801,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          aTmp[ _CCODPR1 ]     := ( D():Articulos( nView ) )->cCodPrp1
          aTmp[ _CCODPR2 ]     := ( D():Articulos( nView ) )->cCodPrp2
 
-         if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
+         if ( !empty( aTmp[ _CCODPR1 ] ) .or. !empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
 
             aGet[ _NCANENT  ]:cText( 0 )
             aGet[ _NUNICAJA ]:cText( 0 )
@@ -14098,10 +14099,10 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
             // Descuento de promoci¢n para el agente---------------------------
 
-            nDtoAge  := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
+            nDtoAge  := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
             if nDtoAge  != 0
-            	if !empty( aGet[_NCOMAGE] )
-            		aGet[_NCOMAGE]:cText( nDtoAge )
+            	if !empty( aGet[ _NCOMAGE] )
+            		aGet[ _NCOMAGE ]:cText( nDtoAge )
             	end if	
             end if
 
@@ -14109,13 +14110,15 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          //--guardamos el precio del artículo dependiendo de las propiedades--//
 
+         sysRefresh()
+
         	if !empty( aGet[ _NPREUNIT ] ) // .and. empty( aTmp[ _NPREUNIT ] )
 
 	         nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
-        		if nPrePro == 0
-	           	aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
-       		else
+        		if nPrePro != 0
 	           	aGet[ _NPREUNIT ]:cText( nPrePro )
+            else
+               aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
         		end if
 
         	end if
