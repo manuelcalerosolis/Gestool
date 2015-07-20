@@ -392,7 +392,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
                      { "Title" => "Recibos fecha de cobro",       "Image" =>21, "Type" => "Recibos cobro",                 "Directory" => "Clientes\Ventas\Recibos fecha de cobro",       "File" => "Recibos de clientes fecha de cobro.fr3" },;
                   } ;
                   },;
-                  {  "Title" => "Tipo de impuesto",               "Image" =>23, "Type" => "Tipos de impuesto",             "Directory" => "Clientes\TipoImpuesto",                        "File" => "Ventas por tipo de impuesto.fr3"  } }
+                  {  "Title" => "Tipo de impuesto",               "Image" =>23, "Type" => "Tipo de impuesto",             "Directory" => "Clientes\TipoImpuesto",                        "File" => "Ventas por tipo de impuesto.fr3"  } }
 
    ::BuildNode( aReports, oTree, lLoadFile )
 
@@ -744,6 +744,8 @@ METHOD lGenerate() CLASS TFastVentasClientes
          ::AddRecibosClienteCobro()   
 
       case ::cReportType == "Tipo de impuesto"
+
+         ?"Entro por el tipo Correcto"
 
          ::insertFacturaCliente()
          ::insertRectificativa()
