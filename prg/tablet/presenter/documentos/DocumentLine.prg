@@ -6,6 +6,8 @@ CLASS DocumentLine
    DATA hDictionary
    DATA hDictionaryMaster
 
+   DATA oSender
+
    METHOD new( hDictionary )
 
    METHOD totalUnidades()
@@ -13,18 +15,18 @@ CLASS DocumentLine
    METHOD Impuesto()  
    METHOD Importe()
 
-   METHOD getSerieMaster()                                     INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
-   METHOD getNumeroMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
-   METHOD getSufijoMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
+   //METHOD getSerieMaster()                                     INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
+   //METHOD getNumeroMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
+   //METHOD getSufijoMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
 
    METHOD getSerie()                                           INLINE ( hGet( ::hDictionary, "Serie" ) )
-   METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::getSerieMaster() ) )
+   METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
 
    METHOD getNumero()                                          INLINE ( hGet( ::hDictionary, "Numero" ) )
-   METHOD setNumeroMaster()                                    INLINE ( hSet( ::hDictionary, "Numero", ::getNumeroMaster() ) )
+   METHOD setNumeroMaster()                                    INLINE ( hSet( ::hDictionary, "Numero", ::oSender:getNumero() ) )
 
    METHOD getSufijo()                                          INLINE ( hGet( ::hDictionary, "Sufijo" ) )
-   METHOD setSufijoMaster()                                    INLINE ( hSet( ::hDictionary, "Sufijo", ::getSufijoMaster() ) )
+   METHOD setSufijoMaster()                                    INLINE ( hSet( ::hDictionary, "Sufijo", ::oSender:getSufijo() ) )
 
    METHOD getNumeroLinea()                                     INLINE ( hGet( ::hDictionary, "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( hSet( ::hDictionary, "NumeroLinea", NumeroLinea ) )
@@ -63,6 +65,7 @@ METHOD new( hDictionary, oSender ) CLASS DocumentLine
 
    ::hDictionary        := hDictionary
    ::hDictionaryMaster  := oSender:hDictionaryMaster
+   ::oSender            := oSender
 
 Return ( Self )
 

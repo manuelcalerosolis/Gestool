@@ -16317,6 +16317,11 @@ CLASS sTotal
    DATA nCobrado                       INIT 0
    DATA nCambio                        INIT 0
 
+   DATA aBrtTik                        INIT { 0, 0, 0 }
+   DATA aBasTik                        INIT { 0, 0, 0 }
+   DATA aIvmTik                        INIT { 0, 0, 0 }
+   DATA aIvaTik                        INIT { 0, 0, 0 }
+
    METHOD nTotalPrimerBruto()          INLINE ( ::aTotalBruto[ 1 ] )
    METHOD nTotalSegundoBruto()         INLINE ( ::aTotalBruto[ 2 ] )
    METHOD nTotalTercerBruto()          INLINE ( ::aTotalBruto[ 3 ] )
@@ -18579,7 +18584,7 @@ FUNCTION sTotFacCli( cFactura, cFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP,
 
 Return ( sTotal )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 /*
 Devuelve el codigo del Cliente pasando un numero de factura

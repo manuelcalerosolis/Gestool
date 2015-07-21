@@ -85,7 +85,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_del_64",;
-                           "bLClicked" => {|| MsgInfo( "Cancelamos" ), ::oDlg:End() },;
+                           "bLClicked" => {|| ::oDlg:End() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;
@@ -93,7 +93,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_printer_64",;
-                           "bLClicked" => {|| ::oDlg:End() },;
+                           "bLClicked" => {|| ::oSender:printDocument() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;
@@ -101,7 +101,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| MsgInfo( "Aceptamos sin imprimir" ), ::oDlg:End( IDOK ) },;
+                           "bLClicked" => {|| ::oDlg:End( IDOK ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
