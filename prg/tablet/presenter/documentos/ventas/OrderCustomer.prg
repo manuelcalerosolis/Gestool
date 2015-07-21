@@ -9,9 +9,15 @@ CLASS OrderCustomer FROM DocumentsSales
 
    DATA oDocumentLines
 
-   DATA cTextoResumenVenta             INIT "Resumen pedido"
+   DATA cTextSummaryDocument             INIT "Resumen pedido"
 
    METHOD New()
+
+   METHOD getSerie()             INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
+   METHOD getNumero()            INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
+   METHOD getSufijo()            INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
+
+   METHOD getID()                      INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
 
    METHOD setEnviroment()              INLINE ( ::setDataTable( "PedCliT" ),;
                                                 ::setDataTableLine( "PedCliL" ),;
@@ -43,28 +49,25 @@ CLASS OrderCustomer FROM DocumentsSales
    METHOD addDocumentLine()
 
    METHOD getLines()                      INLINE ( ::oDocumentLines:getLines() )
-
    METHOD getLineDetail()                 INLINE ( ::oDocumentLines:getLineDetail( ::nPosDetail ) )
 
    METHOD SetDocuments()
 
    METHOD saveEditDocumento()  
-
    METHOD deleteLinesDocument() 
-
    METHOD delDocumentLine()               INLINE ( D():deleteRecord( "PedCliL", ::nView ) )
-
    METHOD saveAppendDocumento()
 
    METHOD assignLinesDocument()
-
    METHOD setLinesDocument()
-
    METHOD appendDocumentLine( oDocumentLine ) INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, "PedCliL", ::nView ) )
 
    METHOD onPreSaveAppendDocumento()
-
    METHOD onPreSaveEditDocumento()
+
+   //METHOD printDocument()
+
+   //METHOD saveModeDocument()
 
 END CLASS
 
@@ -126,7 +129,7 @@ METHOD ResourceDetail( nMode ) CLASS OrderCustomer
 
    local lResult     := .f.
 
-   ::nMode           := nMode
+   //::nMode           := nMode
 
    ::oViewEditDetail := ViewDetail():New( self )
 
@@ -347,7 +350,6 @@ METHOD onPreSaveAppendDocumento() CLASS OrderCustomer
    local NumeroDocumento   := nNewDoc( ::hDictionaryMaster[ "Serie" ], D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
    local nTotPed           := ::oTotalDocument:getTotalDocument()
 
-
    if !empty( NumeroDocumento )
       lPreSaveDocument     := .t.
       hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
@@ -361,17 +363,6 @@ METHOD onPreSaveAppendDocumento() CLASS OrderCustomer
 Return ( lPreSaveDocument )
 
 //---------------------------------------------------------------------------//
-
-/*METHOD NumeroDocumento() CLASS OrderCustomer
-   
-   local NumeroDocumento   := nNewDoc( ::hDictionaryMaster[ "Serie" ], D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
-
-   if !empty( NumeroDocumento )
-      hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
-      Return .t.
-   end if
-
-Return ( .f. )*/
 
 //---------------------------------------------------------------------------//
 
@@ -389,3 +380,38 @@ Return ( lPreSaveDocument )
 
 //---------------------------------------------------------------------------//
 
+/*METHOD printDocument() CLASS OrderCustomer
+
+   Local cCodigoDocumento
+
+   if ::oViewEditResumen:oDlg:End( IDOK )
+      ::oViewEdit:oDlg:end( IDOK )
+      ::saveModeDocument()
+   end if
+
+   ::saveModeDocument()
+
+   if alltrim( ::oViewEditResumen:cCbxImpresora ) == "No imprimir"
+      Return .f.
+   end if
+
+   cCodigoDocumento  := left( ::oViewEditResumen:cCbxImpresora, 3 )
+
+   visualizaPedidoCliente( ::getID(), cCodigoDocumento )
+
+Return( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveModeDocument() CLASS OrderCustomer
+
+   do case
+      case ::nMode == EDIT_MODE
+         ::saveEdit()
+      case ::nMode == APPD_MODE
+         ::saveAppend()
+   end case
+
+Return( self )*/
+
+//---------------------------------------------------------------------------//

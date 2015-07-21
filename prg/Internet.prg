@@ -146,6 +146,7 @@ END CLASS
 METHOD New( oMenuItem, oWnd )
 
    DEFAULT oMenuItem    := "01073"
+   DEFAULT oWnd         := oWnd()
 
    ::nLevel             := nLevelUsr( oMenuItem )
 

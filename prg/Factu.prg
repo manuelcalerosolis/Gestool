@@ -327,7 +327,7 @@ Static Function CreateMainWindow( oIconApp )
    // Mensajes-----------------------------------------------------------------
 
    oWnd:oMsgBar               := TMsgBar():New( oWnd, __GSTCOPYRIGHT__ + Space(2) + cNameVersion(), .f., .f., .f., .f., Rgb( 0,0,0 ), Rgb( 255,255,255 ), , .f. )
-   oWnd:setFont( oFontLittelTitle() )
+   oWnd:oMsgBar:setFont( oFontLittelTitle() )
 
    oDlgProgress               := TMsgItem():New( oWnd:oMsgBar, "", 100,,,, .t. )
 
@@ -344,7 +344,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : "      + Rtrim( oUser():cAlmacen() ), 100,,,, .t., {|| SelectAlmacen() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "       + Transform( cCurSesion(), "######" ), 100,,,, .t. ) 
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "       + Transform( cCurSesion(), "######" ), 100,,,, .t., {|| dbDialog() } ) 
 
    // Abrimos la ventana-------------------------------------------------------
 
@@ -972,7 +972,9 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    Test()
 
-   // fin test-----------------------------------------------------------------
+   // Eventos del inicio---------------------------------
+
+   // runEventScript( "IniciarAplicacion" )
 
    if !Empty( oMessage )
       oMessage:SetText( 'Comprobaciones finalizadas' )
@@ -1030,13 +1032,19 @@ Function lStartCheck()
 
    oMsgText( 'Facturas automáticas' )
 
-      lFacturasAutomaticas()
+   lFacturasAutomaticas()
 
    // Aviso de pedidos pendientes de procesar----------------------------------
 
    oMsgText( 'Pedidos por la web' )
 
-      lPedidosWeb()
+   lPedidosWeb()
+
+   // Evento de inicio de aplicacion-------------------------------------------
+
+   oMsgText( 'Comprobando scripts de inicio' )
+   
+   runEventScript( "IniciarAplicacion" )
 
    // Navegación---------------------------------------------------------------
 
@@ -1050,7 +1058,7 @@ Function lStartCheck()
 
    oMsgText( 'Servicios de timers' )
    
-      InitServices()
+   InitServices()
 
    // Texto limpio y a trabajar------------------------------------------------
 
@@ -6084,38 +6092,4 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-
-static function signature()
-
-   local oDlg, oSig, lPaint := .F., cFile := Lower( "signature.bmp" ), hDC 
-
-   DEFINE DIALOG oDlg TITLE "Signature" FROM 0, 0 TO 150, 350 PIXEL 
-
-   @ 15, 5 SAY oSig PROMPT "" SIZE 150, 40 PIXEL BORDER OF oDlg 
-   
-   @ 01, 5 BUTTON "Clear" SIZE 25, 10 PIXEL ACTION oSig:refresh(.t.) OF oDlg 
-   
-   @ 01, 60 BUTTON "Save" SIZE 25, 10 PIXEL OF odlg ;
-      ACTION ( oSig:SaveToBmp( cFile ), oDlg:End() ) 
-
-   oSig:lWantClick := .T.
-   oSig:bLButtonUp := { | x, y, z | DoDraw( hDC, y+1, x+1, lPaint := .F. ) } 
-   oSig:bMMoved    := { | x, y, z | DoDraw( hDC, y, x , lPaint ) } 
-   oSig:bLClicked  := { | x, y, z | DoDraw( hDC, y, x, lPaint := .T. ) } 
-
-   ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT ( hDC := GetDC( oSig:hWnd ) ) ;
-      VALID ( ReleaseDC( oSig:hWnd, hDC ), .T. )
-
-return nil
-
-static function DoDraw( hDc, x, y, lPaint ) 
-
-   if ! lPaint
-      MoveTo( hDC, x, y ) 
-   else 
-      LineTo( hDc, x, y )
-   endIf 
- 
-Return nil 
 

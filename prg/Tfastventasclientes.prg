@@ -347,6 +347,8 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "nTotRnt",  "N", 16, 6, {|| "" },   "Total rentabilidad"                      )
    ::AddField( "nTotRet",  "N", 16, 6, {|| "" },   "Total retenciones"                       )
    ::AddField( "nTotCob",  "N", 16, 6, {|| "" },   "Total cobros"                            )
+   ::AddField( "nIva",     "N",  6, 2, {|| "" },   "Porcentaje impuesto"                     )
+   ::AddField( "nReq",     "N",  6, 2, {|| "" },   "Porcentaje recargo"                      )
 
    ::AddField( "uCargo",   "C", 20, 0, {|| "" },   "Cargo"                                   )
 
@@ -745,8 +747,6 @@ METHOD lGenerate() CLASS TFastVentasClientes
          ::AddRecibosClienteCobro()   
 
       case ::cReportType == "Tipo de impuesto"
-
-         ?"Entro por el tipo Correcto"
 
          ::insertFacturaCliente()
          ::insertRectificativa()
@@ -1683,7 +1683,115 @@ RETURN ( Self )
 
 METHOD insertFacturaCliente()
 
-   MsgInfo( "insertFacturaCliente" )
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   local aTotIva
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitFacturasClientes()
+
+      ::oFacCliT:OrdSetFocus( "dFecFac" )
+      ::oFacCliL:OrdSetFocus( "nNumFac" )
+
+      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando facturas"
+      ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
+
+      ::oFacCliT:GoTop()
+      while !::lBreak .and. !::oFacCliT:Eof()
+
+         if lChkSer( ::oFacCliT:cSerie, ::aSer )
+
+            sTot              := sTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias )
+
+            for each aTotIva in sTot:aTotalIva 
+
+               if aTotIva[ 8 ] != 0       .and.;
+                  ( cCodigoIva( ::oDbfIva:cAlias, aTotIva[ 3 ] ) >= ::oGrupoIva:Cargo:Desde .and. cCodigoIva( ::oDbfIva:cAlias, aTotIva[ 3 ] ) <= ::oGrupoIva:Cargo:Hasta )
+
+                  ::oDbf:Blank()
+
+                  ::oDbf:cCodCli    := ::oFacCliT:cCodCli
+                  ::oDbf:cNomCli    := ::oFacCliT:cNomCli
+                  ::oDbf:cCodAge    := ::oFacCliT:cCodAge
+                  ::oDbf:cCodPgo    := ::oFacCliT:cCodPago
+                  ::oDbf:cCodRut    := ::oFacCliT:cCodRut
+                  ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
+                  ::oDbf:cCodObr    := ::oFacCliT:cCodObr
+
+                  ::oDbf:cCodPos    := ::oFacCliT:cPosCli
+
+                  ::oDbf:cCodGrp    := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
+
+                  ::oDbf:cTipDoc    := "Factura clientes"
+                  ::oDbf:cClsDoc    := FAC_CLI          
+                  ::oDbf:cSerDoc    := ::oFacCliT:cSerie
+                  ::oDbf:cNumDoc    := Str( ::oFacCliT:nNumFac )
+                  ::oDbf:cSufDoc    := ::oFacCliT:cSufFac
+                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:nAnoDoc    := Year( ::oFacCliT:dFecFac )
+                  ::oDbf:nMesDoc    := Month( ::oFacCliT:dFecFac )
+                  ::oDbf:dFecDoc    := ::oFacCliT:dFecFac
+                  ::oDbf:cHorDoc    := SubStr( ::oFacCliT:cTimCre, 1, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oFacCliT:cTimCre, 4, 2 )
+
+                  ::oDbf:nIva       := aTotIva[ 3 ]
+                  ::oDbf:nReq       := aTotIva[ 4 ]
+                  ::oDbf:nTotNet    := aTotIva[ 2 ]
+                  ::oDbf:nTotIva    := aTotIva[ 8 ]
+                  ::oDbf:nTotReq    := aTotIva[ 9 ]
+                  ::oDbf:nTotDoc    := sTot:nTotalDocumento
+                  ::oDbf:nTotPnt    := aTotIva[ 5 ]
+                  ::oDbf:nTotTrn    := aTotIva[ 7 ]
+                  ::oDbf:nTotCos    := sTot:nTotalCosto
+                  ::oDbf:nTotIvm    := aTotIva[ 6 ]
+                  ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+                  ::oDbf:nTotRet    := sTot:nTotalRetencion
+                  ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+                  /*
+                  Añadimos un nuevo registro--------------------------------------------
+                  */
+
+                  if ::lValidRegister()
+                     ::oDbf:Insert()
+                  else
+                     ::oDbf:Cancel()
+                  end if
+
+                  ::addFacturasClientes()
+
+               end if
+
+            next
+
+         end if
+
+         ::oFacCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 
@@ -1691,7 +1799,115 @@ RETURN ( Self )
 
 METHOD insertRectificativa()
 
-   MsgInfo( "insertRectificativa" )
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   local aTotIva
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitFacturasRectificativasClientes()
+
+      ::oFacRecT:OrdSetFocus( "dFecFac" )
+      ::oFacRecL:OrdSetFocus( "nNumFac" )
+
+      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando facturas rectificativas"
+      ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
+
+      ::oFacRecT:GoTop()
+      while !::lBreak .and. !::oFacRecT:Eof()
+
+         if lChkSer( ::oFacRecT:cSerie, ::aSer )
+
+            sTot              := sTotFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias )
+
+            for each aTotIva in sTot:aTotalIva 
+
+               if aTotIva[ 8 ] != 0       .and.;
+                  ( cCodigoIva( ::oDbfIva:cAlias, aTotIva[ 3 ] ) >= ::oGrupoIva:Cargo:Desde .and. cCodigoIva( ::oDbfIva:cAlias, aTotIva[ 3 ] ) <= ::oGrupoIva:Cargo:Hasta )
+
+                  ::oDbf:Blank()
+
+                  ::oDbf:cCodCli    := ::oFacRecT:cCodCli            
+                  ::oDbf:cNomCli    := ::oFacRecT:cNomCli
+                  ::oDbf:cCodAge    := ::oFacRecT:cCodAge
+                  ::oDbf:cCodPgo    := ::oFacRecT:cCodPago
+                  ::oDbf:cCodRut    := ::oFacRecT:cCodRut
+                  ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
+                  ::oDbf:cCodObr    := ::oFacRecT:cCodObr
+
+                  ::oDbf:cCodPos    := ::oFacRecT:cPosCli
+
+                  ::oDbf:cCodGrp    := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
+
+                  ::oDbf:cTipDoc    := "Factura rectificativa"
+                  ::oDbf:cClsDoc    := FAC_REC
+                  ::oDbf:cSerDoc    := ::oFacRecT:cSerie
+                  ::oDbf:cNumDoc    := Str( ::oFacRecT:nNumFac )
+                  ::oDbf:cSufDoc    := ::oFacRecT:cSufFac
+                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:nAnoDoc    := Year( ::oFacRecT:dFecFac )
+                  ::oDbf:nMesDoc    := Month( ::oFacRecT:dFecFac )
+                  ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
+                  ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
+
+                  ::oDbf:nIva       := aTotIva[ 3 ]
+                  ::oDbf:nReq       := aTotIva[ 4 ]
+                  ::oDbf:nTotNet    := aTotIva[ 2 ]
+                  ::oDbf:nTotIva    := aTotIva[ 8 ]
+                  ::oDbf:nTotReq    := aTotIva[ 9 ]
+                  ::oDbf:nTotDoc    := sTot:nTotalDocumento
+                  ::oDbf:nTotPnt    := aTotIva[ 5 ]
+                  ::oDbf:nTotTrn    := aTotIva[ 7 ]
+                  ::oDbf:nTotCos    := sTot:nTotalCosto
+                  ::oDbf:nTotIvm    := aTotIva[ 6 ]
+                  ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+                  ::oDbf:nTotRet    := sTot:nTotalRetencion
+                  ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+                  /*
+                  Añadimos un nuevo registro--------------------------------------------
+                  */
+
+                  if ::lValidRegister()
+                     ::oDbf:Insert()
+                  else
+                     ::oDbf:Cancel()
+                  end if
+
+                  ::addFacturasRectificativasClientes()
+
+               end if
+
+            next
+
+         end if
+
+         ::oFacRecT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir facturas rectificativa" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 
@@ -1699,7 +1915,112 @@ RETURN ( Self )
 
 METHOD insertTicketCliente()
 
-   MsgInfo( "insertTicketCliente" )
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   local nPosIva        := 1
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitTicketsClientes()
+
+      ::oTikCliT:OrdSetFocus( "dFecTik" )
+      ::oTikCliL:OrdSetFocus( "cNumTik" )
+
+      cExpHead          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerTik <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando tickets"
+      ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
+
+      ::oTikCliT:GoTop()
+      while !::lBreak .and. !::oTikCliT:Eof()
+
+         if lChkSer( ::oTikCliT:cSerTik, ::aSer )
+
+            sTot              := sTotTikCli( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik, ::oTikCliT:cAlias, ::oTikCliL:cAlias, ::oDbfDiv:cAlias )
+
+            for nPosIva := 1 to 3
+
+               if sTot:aTotalIva[ nPosIva ] != 0       .and.;
+                  ( cCodigoIva( ::oDbfIva:cAlias, sTot:aIvaTik[ nPosIva ] ) >= ::oGrupoIva:Cargo:Desde .and. cCodigoIva( ::oDbfIva:cAlias, sTot:aIvaTik[ nPosIva ] ) <= ::oGrupoIva:Cargo:Hasta )
+
+                  ::oDbf:Blank()
+
+                  ::oDbf:cCodCli    := ::oTikCliT:cCliTik
+                  ::oDbf:cNomCli    := ::oTikCliT:cNomTik
+                  ::oDbf:cCodAge    := ::oTikCliT:cCodAge
+                  ::oDbf:cCodPgo    := ::oTikCliT:cFpgTik
+                  ::oDbf:cCodRut    := ::oTikCliT:cCodRut
+                  ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
+                  ::oDbf:cCodObr    := ::oTikCliT:cCodObr
+
+                  ::oDbf:cCodPos    := ::oTikCliT:cPosCli
+
+                  ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
+
+                  ::oDbf:cTipDoc    := "Tickets clientes"
+                  ::oDbf:cClsDoc    := TIK_CLI          
+                  ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
+                  ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
+                  ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
+                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+                  
+                  ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
+                  ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
+                  ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
+                  ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cTimCre, 1, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cTimCre, 4, 2 )
+
+                  ::oDbf:nIva       := sTot:aIvaTik[ nPosIva ]
+                  ::oDbf:nReq       := 0
+                  ::oDbf:nTotNet    := sTot:aBasTik[ nPosIva ]
+                  ::oDbf:nTotIva    := sTot:aTotalIva[ nPosIva ]
+                  ::oDbf:nTotDoc    := sTot:nTotalDocumento
+                  ::oDbf:nTotAge    := sTot:nTotalAgente
+                  ::oDbf:nTotCos    := sTot:nTotalCosto
+                  ::oDbf:nTotIvm    := sTot:aIvmTik[ nPosIva ]
+                  ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+                  ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+                  /*
+                  Añadimos un nuevo registro--------------------------------------------
+                  */
+
+                  if ::lValidRegister()
+                     ::oDbf:Insert()
+                  else
+                     ::oDbf:Cancel()
+                  end if
+
+                  ::addTicketsClientes()
+
+               end if
+
+            next
+
+         end if
+
+         ::oTikCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 

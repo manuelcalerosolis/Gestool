@@ -25,6 +25,7 @@ CLASS TpvMenu FROM TMasDet
 
    DATA oDetMenuArticulo
    DATA oMenuOrdenes
+
    DATA oDlgAcompannamiento
 
    DATA oBrwOrdenesComanda
@@ -231,36 +232,34 @@ RETURN .t.
 
 METHOD OpenService( lExclusive, cPath )
 
-   local lOpen          := .t.
+   local lOpen             := .t.
    local oError
    local oBlock         
 
-   DEFAULT lExclusive   := .f.
+   DEFAULT lExclusive      := .f.
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf         := ::DefineFiles()
+         ::oDbf            := ::DefineFiles()
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
       ::oMenuOrdenes       := TpvMenuOrdenes():New( cPath, Self )
-
       if !::oMenuOrdenes:OpenService()
          lOpen             := .f.
       end if
 
       ::oDetMenuArticulo   := TpvMenuArticulo():New( cPath, Self )
-
       if !::oDetMenuArticulo:OpenService()
          lOpen             := .f.
       end if
 
    RECOVER USING oError
 
-      lOpen             := .f.
+      lOpen                := .f.
 
       ::CloseService()
 
@@ -276,18 +275,18 @@ RETURN ( lOpen )
 
 METHOD CloseService()
 
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+   if !empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:End()
    end if
 
-   if !Empty( ::oDetMenuArticulo )
-      ::oDetMenuArticulo:CloseService()
-      ::oDetMenuArticulo:End()
-   end if
-
-   if !Empty( ::oMenuOrdenes )
+   if !empty( ::oMenuOrdenes )
       ::oMenuOrdenes:CloseService()
       ::oMenuOrdenes:End()
+   end if
+
+   if !empty( ::oDetMenuArticulo )
+      ::oDetMenuArticulo:CloseService()
+      ::oDetMenuArticulo:End()
    end if
 
 RETURN ( .t. )

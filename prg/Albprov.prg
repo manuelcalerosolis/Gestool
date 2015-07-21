@@ -4724,9 +4724,9 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
                setPropertiesTable( cCodArt, nPreCom, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwPrp, nView )
 
             else
-
-               oBrwPrp:Hide()
-
+               
+               hidePropertiesTable( oBrwPrp )
+               
                if !Empty( aTmp[ _CCODPR1 ] )
 
                   if aGet[ _CVALPR1 ] != nil

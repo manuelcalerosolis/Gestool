@@ -22,6 +22,12 @@ CLASS DocumentsSales FROM Documents
 
 
    DATA oTotalDocument
+
+   DATA oTrans
+
+   DATA oUndMedicion
+
+   DATA oNewImp
    
    METHOD OpenFiles()
    METHOD CloseFiles()              INLINE ( D():DeleteView( ::nView ) )
@@ -175,6 +181,10 @@ CLASS DocumentsSales FROM Documents
    METHOD lShowLote()   INLINE ( hGet( ::oDocumentLineTemporal:hDictionary, "LogicoLote" ) )
 
    METHOD SetDocuments()                             VIRTUAL
+
+   METHOD saveModeDocument()
+
+   METHOD printDocument()
 
 
 END CLASS
@@ -988,12 +998,45 @@ METHOD isResumenVenta() CLASS DocumentsSales
       Return .f.
    end if 
 
-   ::oViewEditResumen:SetTextoTipoDocumento( ::cTextoResumenVenta )
+   ::oViewEditResumen:SetTextoTipoDocumento( ::cTextSummaryDocument )
 
 Return ( ::oViewEditResumen:Resource() )
 
 //---------------------------------------------------------------------------//
 
+METHOD printDocument() CLASS DocumentsSales
 
+   Local cCodigoDocumento
 
+   /*if ::oViewEditResumen:oDlg:End( IDOK )
+      ::oViewEdit:oDlg:end( IDOK )
+      ::saveModeDocument()
+   end if*/
+
+   ::saveModeDocument()
+
+   if alltrim( ::oViewEditResumen:cCbxImpresora ) == "No imprimir"
+      Return .f.
+   end if
+
+   cCodigoDocumento  := left( ::oViewEditResumen:cCbxImpresora, 3 )
+
+   visualizaPedidoCliente( ::getID(), cCodigoDocumento )
+
+Return( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD saveModeDocument() CLASS DocumentsSales
+
+   do case
+      case ::nMode == EDIT_MODE
+         ::saveEdit()
+      case ::nMode == APPD_MODE
+         ::saveAppend()
+   end case
+
+Return( self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

@@ -3806,7 +3806,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET aGet[_DFECHA] VAR aTmp[_DFECHA] ;
+      REDEFINE GET aGet[__DFECSAT] VAR aTmp[__DFECSAT] ;
          ID       120 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -5437,9 +5437,7 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
 
             else
 
-               if !empty( oBrwProperties )
-                  oBrwProperties:Hide()
-               end if 
+               hidePropertiesTable( oBrwProperties )
 
                if !Empty( aTmp[ _CCODPR1 ] )
 
@@ -6354,8 +6352,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    ( dbfTmpLin )->( dbGoTop() )
    do while !( dbfTmpLin )->( Eof() )
-
-      MsgInfo( dFecSat, "dFecSat" )
 
       ( dbfTmpLin )->dFecSat     := dFecSat
       ( dbfTmpLin )->dFecha      := dFecSat

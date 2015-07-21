@@ -41,11 +41,9 @@ CLASS TpvMenuOrdenes FROM TDet
 
    METHOD Intercambiable()
 
-
-   //Menu acompañamiento-------------------------------------------------------
+   // Menu acompañamiento------------------------------------------------------
 
    METHOD nUnidadesOrdenAcompannamiento()
-
 
 END CLASS
 
@@ -71,7 +69,6 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "lIntOrd"          TYPE "L" LEN 1   DEC 0 COMMENT "Orden intercambiable"           HIDE OF oDbf
       FIELD NAME "nUndAcomp"        TYPE "N" LEN 1   DEC 0 COMMENT "Unidades menú acompañamiento"   HIDE OF oDbf
 
-
       INDEX TO ( cFileName ) TAG "cCodMnu" ON "cCodMnu"                                        NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cCodOrd" ON "cCodOrd"                                        NODELETED OF oDbf
       INDEX TO ( cFileName ) TAG "cMnuOrd" ON "cCodMnu + cCodOrd"                              NODELETED OF oDbf
@@ -86,13 +83,14 @@ METHOD OpenFiles( lExclusive )
 
    local lOpen             := .t.
    local oError
-   local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock            
 
    DEFAULT  lExclusive     := .f.
 
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      if Empty( ::oDbf )
+      if empty( ::oDbf )
          ::oDbf            := ::DefineFiles()
       end if
 
@@ -114,7 +112,7 @@ METHOD OpenFiles( lExclusive )
 
       ::CloseFiles()
 
-      lOpen             := .f.
+      lOpen                := .f.
 
    END SEQUENCE
 
@@ -127,9 +125,10 @@ RETURN ( lOpen )
 METHOD CloseFiles()
 
    if !empty( ::oDbf ) .and. ::oDbf:Used()
-      ::oDbf:End()
-      ::oDbf            := nil
+      ::oDbf:end()
    end if
+
+   ::oDbf                  := nil
 
 RETURN .t.
 
@@ -177,7 +176,7 @@ METHOD ValidOrden()
          ::oDbfVir:GetStatus()
 
          if ::oDbfVir:SeekInOrd( ::oGetOrdenComanda:varGet(), "cCodOrd" )
-            lValid      := .f.
+            lValid   := .f.
             msgStop( "El orden ya esta agregado" )
          end if
 
@@ -185,7 +184,7 @@ METHOD ValidOrden()
 
       else
 
-         lValid         := .f.
+         lValid      := .f.
 
       end if
 
@@ -194,7 +193,6 @@ METHOD ValidOrden()
 RETURN ( lValid )   
 
 //--------------------------------------------------------------------------//
-
 
 METHOD Resource()
 

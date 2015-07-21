@@ -488,6 +488,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       return nil
    end if
 
+
    nNumPed              := ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed
 
    DEFAULT nDevice      := IS_PRINTER
@@ -498,6 +499,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       return nil
    end if
 
+   
    // Numero de copias---------------------------------------------------------
 
    if Empty( nCopies )
@@ -1083,7 +1085,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
                "Agente",;
                "Entrada",;
                "Comercio electrónico",;
-               "Situación";
+               "Situación",;
+               "Delegación";
       MRU      "Clipboard_empty_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():PedidosClientes( nView ) );
@@ -1234,6 +1237,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cSufPed }
          :nWidth           := 40
          :lHide            := .t.
+         :cSortOrder       := "cSufPed"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1930,7 +1935,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    cSay[ 3 ]        := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr" )
    cSay[ 4 ]        := RetFld( aTmp[ _CCODALM ], dbfAlm )
    cSay[ 5 ]        := RetFld( aTmp[ _CCODPGO ], dbfFPago )
-   cSay[ 6 ]        := RetFld( aTmp[ _CCODAGE ], dbfAgent )
+   cSay[ 6 ]        := cNbrAgent( aTmp[ _CCODAGE ], dbfAgent )
    cSay[ 7 ]        := RetFld( aTmp[ _CCODRUT ], dbfRuta )
    cSay[ 8 ]        := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 9 ]        := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
@@ -3624,9 +3629,12 @@ Return ( nil )
 
 Static Function InitEdtRec( aTmp, aGet, oDlg, oBrwLin, oBrwInc, oBrwPgo )
 
-   EdtRecMenu( aTmp, oDlg )
+   edtRecMenu( aTmp, oDlg )
    
    oBrwLin:Load()
+   oBrwLin:MakeTotals()
+   oBrwLin:RefreshFooters()
+
    oBrwInc:Load()
    oBrwPgo:Load()
 
@@ -8230,23 +8238,29 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
-   oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
-   oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
-
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )
 
-   oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
-
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
    oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
-   oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
-   oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+   if !empty(oUndMedicion)
+      oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
+      oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
+   end if 
+
+   if !empty(oTrans)
+      oFr:SetWorkArea(     "Transportistas", oTrans:Select() )
+      oFr:SetFieldAliases( "Transportistas", cObjectsToReport( oTrans:oDbf ) )
+   end if 
+
+   if !empty(oNewImp)
+      oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
+      oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
+   end if 
 
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed } )
@@ -11206,6 +11220,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             else 
 
+
+               hidePropertiesTable( oBrwProperties )
+
                if !empty( aTmp[ _CCODPR1 ] )
 
                   if aGet[ _CVALPR1 ] != nil
@@ -13670,16 +13687,14 @@ Method CreateData() CLASS TPedidosClientesSenderReciver
    CLOSE ( tmpPedCliL )
    CLOSE ( tmpPedCliI )
 
-   if lSnd
+   // Comprimir los archivos---------------------------------------------------
 
-      /*
-      Comprimir los archivos
-      */
+   if lSnd
 
       ::oSender:SetText( "Comprimiendo pedidos de clientes" )
 
       if ::oSender:lZipData( cFileName )
-         ::oSender:SetText( "Ficheros comprimidos" )
+         ::oSender:SetText( "Ficheros comprimidos en " + cFileName )
       else
          ::oSender:SetText( "ERROR al crear fichero comprimido" )
       end if
@@ -13732,20 +13747,19 @@ Method SendData() CLASS TPedidosClientesSenderReciver
       cFileName         := "PedCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
    end if
 
-   if File( cPatOut() + cFileName )
+   if !file( cPatOut() + cFileName )
+      ::oSender:SetText( "No existe el fichero " + cPatOut() + cFileName )
+      Return (  Self )
+   end if 
 
-      /*
-      Enviarlos a internet
-      */
+   // Enviarlos a internet
 
-      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
-         ::lSuccesfullSend := .t.
-         ::IncNumberToSend()
-         ::oSender:SetText( "Fichero enviado " + cFileName )
-      else
-         ::oSender:SetText( "ERROR al enviar fichero" )
-      end if
-
+   if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
+      ::lSuccesfullSend := .t.
+      ::IncNumberToSend()
+      ::oSender:SetText( "Fichero enviado " + cPatOut() + cFileName )
+   else
+      ::oSender:SetText( "ERROR al enviar fichero" )
    end if
 
 Return ( Self )
@@ -14483,6 +14497,33 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+FUNCTION visualizaPedidoCliente( cNumeroPedido, cFormatoDocumento )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( .t. )
+
+      if dbSeekInOrd( cNumeroPedido, "nNumPed", D():PedidosClientes( nView ) )
+         nTotPedCli()
+         genPedCli( IS_SCREEN, nil, cFormatoDocumento )
+      else
+         msgStop( "Número de pedido " + alltrim(  cNumeroPedido ) + " no encontrado" )
+      end if
+
+      CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+
 FUNCTION PrnEntPed( cNumEnt, lPrint, dbfPedCliP )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
@@ -15219,14 +15260,17 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "iNumPed", "'09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
-      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()} ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "CSUPED", "Field->CSUPED", {|| Field->CSUPED } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "dFecDes", "Field->dFecPed", {|| Field->dFecPed } ) )
 
-      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()} ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cSituac", "Field->cSituac", {|| Field->cSituac } ) )
+
+      ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cSufPed", "Field->cSufPed", {|| Field->cSufPed } ) )
 
       ( cPedCliT )->( dbCloseArea() )
    else
@@ -18108,4 +18152,6 @@ Function DesignLabelPedidoClientes( oFr, cDoc )
 
 Return .t.
 
+//---------------------------------------------------------------------------//   
 
+//---------------------------------------------------------------------------//   

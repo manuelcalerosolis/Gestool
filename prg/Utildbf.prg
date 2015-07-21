@@ -3241,6 +3241,8 @@ function DbDialog( cTitle )
 
    next
 
+   memoWritex( "dbDialog.log", cErrorLog )
+
    @ 0, 0 GET oGet VAR cErrorLog ;
          MULTILINE ;
          OF       oDlg ;
@@ -3261,7 +3263,7 @@ function DbDialog( cTitle )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ) )
+      msgStop( cErrorLog, ErrorMessage( oError ) )
 
    END SEQUENCE
 
