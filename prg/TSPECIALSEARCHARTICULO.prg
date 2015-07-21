@@ -374,7 +374,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
 
       with object ( ::oBrwArticulo:AddCol() )
          :cHeader             := "Cliente"
-         :bEditValue          := {|| SelectArticulo->Titulo }
+         :bEditValue          := {|| SelectArticulo->cNomCli }
          :nWidth              := 150
       end with
 
@@ -448,16 +448,15 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "lineasSat.cSerSat, "
    cSentencia        +=        "lineasSat.nNumSat, "
    cSentencia        +=        "lineasSat.cSufSat, "
-   cSentencia        +=        "lineasSat.cCodCli, "
    cSentencia        +=        "lineasSat.nCntAct, "
-   cSentencia        +=        "clientes.Titulo, "
    cSentencia        +=        "cabecerasat.cCodOpe, "
+   cSentencia        +=        "cabecerasat.cCodCli, "
+   cSentencia        +=        "cabecerasat.cNomCli, "
    cSentencia        +=        "operario.cNomTra "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
-   cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, Max(cCodCli) AS cCodCli, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "Client clientes on clientes.cod = lineasSat.cCodCli "
+   cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat=cabecerasat.cSerSat AND lineasSat.nNumSat=cabecerasat.nNumSat AND lineasSat.cSufSat=cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
    cSentencia        += "WHERE EstadoSat.nDisp=2 "
@@ -488,16 +487,15 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "lineasSat.cSerSat, "
    cSentencia        +=        "lineasSat.nNumSat, "
    cSentencia        +=        "lineasSat.cSufSat, "
-   cSentencia        +=        "lineasSat.cCodCli, "
    cSentencia        +=        "lineasSat.nCntAct, "
-   cSentencia        +=        "clientes.Titulo, "
    cSentencia        +=        "cabecerasat.cCodOpe, "
+   cSentencia        +=        "cabecerasat.cCodCli, "
+   cSentencia        +=        "cabecerasat.cNomCli, "
    cSentencia        +=        "operario.cNomTra "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
-   cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, Max(cCodCli) AS cCodCli, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "Client clientes on clientes.cod = lineasSat.cCodCli "
+   cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat=cabecerasat.cSerSat AND lineasSat.nNumSat=cabecerasat.nNumSat AND lineasSat.cSufSat=cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
    cSentencia        += ::cGetWhereSentencia()
