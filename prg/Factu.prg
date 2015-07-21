@@ -972,7 +972,9 @@ FUNCTION lInitCheck( oMessage, oProgress )
 
    Test()
 
-   // fin test-----------------------------------------------------------------
+   // Eventos del inicio---------------------------------
+
+   // runEventScript( "IniciarAplicacion" )
 
    if !Empty( oMessage )
       oMessage:SetText( 'Comprobaciones finalizadas' )
@@ -1030,13 +1032,19 @@ Function lStartCheck()
 
    oMsgText( 'Facturas automáticas' )
 
-      lFacturasAutomaticas()
+   lFacturasAutomaticas()
 
    // Aviso de pedidos pendientes de procesar----------------------------------
 
    oMsgText( 'Pedidos por la web' )
 
-      lPedidosWeb()
+   lPedidosWeb()
+
+   // Evento de inicio de aplicacion-------------------------------------------
+
+   oMsgText( 'Comprobando scripts de inicio' )
+   
+   runEventScript( "IniciarAplicacion" )
 
    // Navegación---------------------------------------------------------------
 
@@ -1050,7 +1058,7 @@ Function lStartCheck()
 
    oMsgText( 'Servicios de timers' )
    
-      InitServices()
+   InitServices()
 
    // Texto limpio y a trabajar------------------------------------------------
 
@@ -5921,6 +5929,8 @@ Function MainTablet()
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| Customer():New() } } )
+   
+   //----------------Pedidos de clientes
 
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -5941,8 +5951,9 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| OrderCustomer():New() } } )
 
-   /*
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
+   //----------------Albaranes de clientes
+   
+   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5959,8 +5970,8 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| DeliveryNoteCustomer():New() } } )
-   */
+                           "bAction"   => {|| DeliveryNoteCustomer():New() } } )*/
+   
    
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
@@ -6081,38 +6092,4 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-
-static function signature()
-
-   local oDlg, oSig, lPaint := .F., cFile := Lower( "signature.bmp" ), hDC 
-
-   DEFINE DIALOG oDlg TITLE "Signature" FROM 0, 0 TO 150, 350 PIXEL 
-
-   @ 15, 5 SAY oSig PROMPT "" SIZE 150, 40 PIXEL BORDER OF oDlg 
-   
-   @ 01, 5 BUTTON "Clear" SIZE 25, 10 PIXEL ACTION oSig:refresh(.t.) OF oDlg 
-   
-   @ 01, 60 BUTTON "Save" SIZE 25, 10 PIXEL OF odlg ;
-      ACTION ( oSig:SaveToBmp( cFile ), oDlg:End() ) 
-
-   oSig:lWantClick := .T.
-   oSig:bLButtonUp := { | x, y, z | DoDraw( hDC, y+1, x+1, lPaint := .F. ) } 
-   oSig:bMMoved    := { | x, y, z | DoDraw( hDC, y, x , lPaint ) } 
-   oSig:bLClicked  := { | x, y, z | DoDraw( hDC, y, x, lPaint := .T. ) } 
-
-   ACTIVATE DIALOG oDlg CENTER ;
-      ON INIT ( hDC := GetDC( oSig:hWnd ) ) ;
-      VALID ( ReleaseDC( oSig:hWnd, hDC ), .T. )
-
-return nil
-
-static function DoDraw( hDc, x, y, lPaint ) 
-
-   if ! lPaint
-      MoveTo( hDC, x, y ) 
-   else 
-      LineTo( hDc, x, y )
-   endIf 
- 
-Return nil 
 

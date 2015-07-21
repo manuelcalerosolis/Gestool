@@ -3,8 +3,8 @@
  
 CLASS Documents FROM Editable
 
-   METHOD total()                VIRTUAL
-   METHOD recalcularTotal()      VIRTUAL
+   METHOD total()                      VIRTUAL
+   METHOD recalcularTotal()            VIRTUAL
  
 END CLASS
 

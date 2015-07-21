@@ -126,7 +126,7 @@ METHOD defineAceptarCancelar() CLASS ViewDetail
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::oSender:addNumeroLinea( ::oSender:oDocumentLineTemporal:hDictionary ), ::oDlg:End( IDOK ) },;
+                           "bLClicked" => {|| ::oDlg:End( IDOK ) },;
                            "oWnd"      => ::oDlg } )
 
 Return ( self )
@@ -153,7 +153,7 @@ METHOD defineArticulo() CLASS ViewDetail
                                                       "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
                                                       "nHeight"   => 23,;
                                                       "lPixels"   => .t.,;
-                                                      "bValid"    => {|| ::oSender:CargaArticulo(), ::oSender:recalcularTotal( ::oTotalLinea ) } } )
+                                                      "bValid"    => {|| ::oSender:CargaArticulo(), ::oSender:recalcularTotal() } } )
    
    ::oGetDescripcionArticulo  := TGridGet():Build( {  "nRow"      => 40,;
                                                       "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
@@ -216,7 +216,7 @@ METHOD defineCajas() CLASS ViewDetail
                                              "cPict"     => MasUnd(),;
                                              "lRight"    => .t.,;
                                              "nHeight"   => 23,;
-                                             "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
+                                             "bValid"    => {|| ::oSender:recalcularTotal() } } )
 
 Return ( self )
 
@@ -245,7 +245,7 @@ METHOD defineUnidades() CLASS ViewDetail
                                           "cPict"     => MasUnd(),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
-                                          "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
+                                          "bValid"    => {|| ::oSender:recalcularTotal() } } )
 
 Return ( self )
 
@@ -274,7 +274,7 @@ METHOD definePrecio() CLASS ViewDetail
                                           "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
-                                          "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
+                                          "bValid"    => {||  ::oSender:recalcularTotal() } } )
 
 Return ( self )
 
@@ -303,7 +303,7 @@ METHOD defineDescuentoPorcentual() CLASS ViewDetail
                                              "cPict"     => "@E 999.99",;
                                              "lRight"    => .t.,;
                                              "nHeight"   => 23,;
-                                             "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
+                                             "bValid"    => {|| ::oSender:recalcularTotal() } } )
 
 Return ( self )
 
@@ -332,7 +332,7 @@ METHOD defineDescuentoLineal() CLASS ViewDetail
                                                    "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
                                                    "lRight"    => .t.,;
                                                    "nHeight"   => 23,;
-                                                   "bValid"    => {|| ::oSender:recalcularTotal( ::oTotalLinea ) } } )
+                                                   "bValid"    => {|| ::oSender:recalcularTotal() } } )
 
 Return ( self )
 
@@ -383,3 +383,4 @@ METHOD RefreshDialog() CLASS ViewDetail
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+

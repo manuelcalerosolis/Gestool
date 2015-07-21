@@ -1083,7 +1083,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
                "Agente",;
                "Entrada",;
                "Comercio electrónico",;
-               "Situación";
+               "Situación",;
+               "Delegación";
       MRU      "Clipboard_empty_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( D():PedidosClientes( nView ) );
@@ -1234,6 +1235,8 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cSufPed }
          :nWidth           := 40
          :lHide            := .t.
+         :cSortOrder       := "cSufPed"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1930,7 +1933,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    cSay[ 3 ]        := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr" )
    cSay[ 4 ]        := RetFld( aTmp[ _CCODALM ], dbfAlm )
    cSay[ 5 ]        := RetFld( aTmp[ _CCODPGO ], dbfFPago )
-   cSay[ 6 ]        := RetFld( aTmp[ _CCODAGE ], dbfAgent )
+   cSay[ 6 ]        := cNbrAgent( aTmp[ _CCODAGE ], dbfAgent )
    cSay[ 7 ]        := RetFld( aTmp[ _CCODRUT ], dbfRuta )
    cSay[ 8 ]        := oTrans:cNombre( aTmp[ _CCODTRN ] )
    cSay[ 9 ]        := RetFld( aTmp[ _CCODCAJ ], dbfCajT )
@@ -13666,16 +13669,14 @@ Method CreateData() CLASS TPedidosClientesSenderReciver
    CLOSE ( tmpPedCliL )
    CLOSE ( tmpPedCliI )
 
-   if lSnd
+   // Comprimir los archivos---------------------------------------------------
 
-      /*
-      Comprimir los archivos
-      */
+   if lSnd
 
       ::oSender:SetText( "Comprimiendo pedidos de clientes" )
 
       if ::oSender:lZipData( cFileName )
-         ::oSender:SetText( "Ficheros comprimidos" )
+         ::oSender:SetText( "Ficheros comprimidos en " + cFileName )
       else
          ::oSender:SetText( "ERROR al crear fichero comprimido" )
       end if
@@ -13728,20 +13729,19 @@ Method SendData() CLASS TPedidosClientesSenderReciver
       cFileName         := "PedCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
    end if
 
-   if File( cPatOut() + cFileName )
+   if !file( cPatOut() + cFileName )
+      ::oSender:SetText( "No existe el fichero " + cPatOut() + cFileName )
+      Return (  Self )
+   end if 
 
-      /*
-      Enviarlos a internet
-      */
+   // Enviarlos a internet
 
-      if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
-         ::lSuccesfullSend := .t.
-         ::IncNumberToSend()
-         ::oSender:SetText( "Fichero enviado " + cFileName )
-      else
-         ::oSender:SetText( "ERROR al enviar fichero" )
-      end if
-
+   if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
+      ::lSuccesfullSend := .t.
+      ::IncNumberToSend()
+      ::oSender:SetText( "Fichero enviado " + cPatOut() + cFileName )
+   else
+      ::oSender:SetText( "ERROR al enviar fichero" )
    end if
 
 Return ( Self )
@@ -15215,14 +15215,17 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "iNumPed", "'09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
-      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()} ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "CSUPED", "Field->CSUPED", {|| Field->CSUPED } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "dFecDes", "Field->dFecPed", {|| Field->dFecPed } ) )
 
-      ( cPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()} ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cSituac", "Field->cSituac", {|| Field->cSituac } ) )
+
+      ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()} ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cSufPed", "Field->cSufPed", {|| Field->cSufPed } ) )
 
       ( cPedCliT )->( dbCloseArea() )
    else

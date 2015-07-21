@@ -20,26 +20,8 @@ CLASS DocumentsSales FROM Documents
                                              "7" => "lVisSab",;
                                              "8" => "Cod" }
 
-                                                                    
 
-   DATA hTotalIva                   INIT  {  { "Base" => 100,;
-                                               "PorcentajeIva" => 0,;
-                                               "ImporteIva" => 0,;
-                                               "PorcentajeRe" => 0,;
-                                               "ImporteRe" => 0,;
-                                               "Total" => 0 },;
-                                             { "Base" => 0,;
-                                               "PorcentajeIva" => 0,;
-                                               "ImporteIva" => 0,;
-                                               "PorcentajeRe" => 0,;
-                                               "ImporteRe" => 0,;
-                                               "Total" => 0 },;
-                                             { "Base" => 0,;
-                                               "PorcentajeIva" => 0,;
-                                               "ImporteIva" => 0,;
-                                               "PorcentajeRe" => 0,;
-                                               "ImporteRe" => 0,;
-                                               "Total" => 0 } }  
+   DATA oTotalDocument
    
    METHOD OpenFiles()
    METHOD CloseFiles()              INLINE ( D():DeleteView( ::nView ) )
@@ -73,7 +55,7 @@ CLASS DocumentsSales FROM Documents
    //METHOD totalLinea()
    //METHOD recalculaLinea( oTotal )
 
-   METHOD Total()
+   METHOD Total()                      INLINE ( ::oDocumentLines:Total() /*aLines[::nPosDetail]:*/ )
    METHOD recalcularTotal()
 
    METHOD calculaIVA()                 VIRTUAL
@@ -674,18 +656,13 @@ RETURN ( totalLinea )
 */
 //---------------------------------------------------------------------------//
 
-METHOD Total() CLASS DocumentsSales
-
-   ::oDocumentLines:Total()
-
-Return ( ::oDocumentLines:Total() )
 
 //---------------------------------------------------------------------------//
 
 METHOD recalcularTotal() CLASS DocumentsSales
 
    if !Empty( ::oViewEditDetail:oTotalLinea )
-      ::oViewEditDetail:oTotalLinea:cText( ::total() )
+      ::oViewEditDetail:oTotalLinea:cText( ::oDocumentLineTemporal:Total() )
    end if
 
 RETURN ( .t. )
@@ -984,6 +961,8 @@ Return ( self )
 //---------------------------------------------------------------------------//  
 
 METHOD onViewSave()
+
+   ::oTotalDocument:Calculate()
 
    if ::isResumenVenta()
 

@@ -397,7 +397,8 @@ DocumentLines.prg                      \
 DocumentLine.prg                       \
 Customer.prg                           \
 OrderCustomer.prg                      \
-Iva.prg                                \    
+Iva.prg                                \
+TotalDocument.prg                      \        
 DeliveryNoteCustomer.prg               \
 DocumentsSales.prg                     \
 ViewBase.prg                           \
@@ -814,6 +815,7 @@ DocumentLine.obj                       \
 Customer.obj                           \
 OrderCustomer.obj                      \
 Iva.obj                                \
+TotalDocument.obj                      \
 DeliveryNoteCustomer.obj               \
 DocumentsSales.obj                     \
 ViewBase.obj                           \
@@ -1213,6 +1215,7 @@ $(OBJ)\ViewNavigator.obj                     +
 $(OBJ)\Customer.obj                          +
 $(OBJ)\OrderCustomer.obj                     +
 $(OBJ)\Iva.obj                               +
+$(OBJ)\TotalDocument.obj                     +
 $(OBJ)\DeliveryNoteCustomer.obj              +
 $(OBJ)\DocumentsSales.obj                    +
 $(OBJ)\ViewBase.obj                          +
