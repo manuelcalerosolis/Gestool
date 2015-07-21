@@ -526,7 +526,7 @@ METHOD cGetWhereSentencia() CLASS TSPECIALSEARCHARTICULO
    end if
 
    if !Empty( ::cGetCliente )
-      cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "clientes.Titulo='" + Padr( ::cGetCliente, 80 ) + "'" 
+      cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "cabecerasat.cNomCli='" + Padr( ::cGetCliente, 80 ) + "'" 
    end if
 
    if !Empty( ::dFecIni ) .and. !Empty( ::dFecFin ) .and. ( ( ::dFecIni != CtoD( "01/01/2000" ) ) .or. ( ::dFecFin != CtoD( "31/12/3000" ) ) )
