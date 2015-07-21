@@ -2316,13 +2316,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Número"
+         :cSortOrder          := "nNumLin"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | if( !empty( oCol ), oCol:SetOrder(), ) }
          :cEditPicture        := "9999"
          :nWidth              := 54
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
       end with
-
+     
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
@@ -2823,13 +2825,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 			ID 		524 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
+      //   ACTION   ( DbSwapUp( dbfTmpLin, oBrwLin ) )
 
 		REDEFINE BUTTON ;
 			ID 		525 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( lWhen ) ;
-         ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
+         ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
+      //   ACTION   ( DbSwapDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnKit;
         ID       	526 ;

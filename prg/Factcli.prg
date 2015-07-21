@@ -15976,6 +15976,17 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
                oItemLine:nQuantity                 := nTotNFacCli( dbfFacCliL )
                oItemLine:nUnitPriceWithoutTax      := nNetUFacCli( dbfFacCliL, nDouDiv ) 
 
+               // Descuento lineal
+
+               if ( dbfFacCliL )->nDtoDiv != 0               
+
+               	oDiscount 								:= Discount()
+               	oDiscount:nDiscountAmount 			:= nDescuentoLinealFacCli( dbfFacCliL, nDouDiv ) * nTotNFacCli( dbfFacCliL )
+
+               	oItemLine:addDiscount( oDiscount )
+
+               end if
+
                // Primer descuento en linea---------------------------------------
 
                if ( dbfFacCliL )->nDto != 0
@@ -15996,14 +16007,14 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
 
                   oItemLine:addDiscount( oDiscount )
 
-               end if
+               end if               
 
                // Impuestos----------------------------------------------------
 
                oTax                                := Tax()
                oTax:nTaxRate                       := ( dbfFacCliL )->nIva
                oTax:nTaxBase                       := nNetLFacCli( dbfFacCliL, nDouDiv, nRouDiv, , , .f., .f. ) 
-               oTax:nTaxAmount                     := nIvaLFacCli( dbfFacCliL, nDouDiv, nRouDiv, , .f., .f., .f. )
+               oTax:nTaxAmount                     := nIvaLFacCli( dbfFacCliL, nDouDiv, nRouDiv, , , .f., .f. )
 
                if ( D():FacturasClientes( nView ) )->lRecargo
                   oTax:nEquivalenceSurcharge       := ( dbfFacCliL )->nReq
@@ -18447,7 +18458,7 @@ FUNCTION nIvaLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    DEFAULT lPntVer   := .t.
    DEFAULT lImpTrn   := .t.
 
-   nCalculo          := nTotLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+   nCalculo          := nTotLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv ) 
 
    if !( cFacCliL )->lIvaLin
       nCalculo       := nCalculo * ( cFacCliL )->nIva / 100
@@ -20244,6 +20255,8 @@ Function nDescuentoLinealFacCli( uFacCliL, nDec, nVdv )
 
    local nDescuentoLineal
 
+   DEFAULT nVdv         := 1
+
    if isArray( uFacCliL )
       nDescuentoLineal  := uFacCliL[ _NDTODIV ]
    else 
@@ -20336,7 +20349,9 @@ FUNCTION nTotLFacCli( uFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
       Descuentos---------------------------------------------------------------
       */
 
-      nCalculo          -= nDescuentoLinealFacCli( uFacCliL, nDec, nVdv ) * nUnidades
+      if lDto
+      	nCalculo       -= nDescuentoLinealFacCli( uFacCliL, nDec, nVdv ) * nUnidades
+      end if 
 
       if lDto .and. nDescuentoPorcentualFacCli( uFacCliL ) != 0 
          nCalculo       -= nCalculo * nDescuentoPorcentualFacCli( uFacCliL ) / 100

@@ -892,11 +892,11 @@ METHOD TaxesXml( oTax )
    if Empty( oTax )
       Return ( nil )
    end if
-
+/*
    if oTax:nTaxBase == 0
       Return ( nil )
    end if
-
+*/
    /*
    Inicio de InvoiceHeader-----------------------------------------------------
    */
@@ -1053,7 +1053,11 @@ METHOD DiscountXml( oDiscount )
    ::oXmlDiscount   := TXmlNode():new( , 'Discount' )
 
       ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountReason', , oDiscount:DiscountReason() ) )
-      ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountRate', ,   oDiscount:DiscountRate() ) )
+
+      if ( oDiscount:nDiscountRate != 0 )
+         ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountRate', ,   oDiscount:DiscountRate() ) )
+      end if 
+
       ::oXmlDiscount:addBelow( TXmlNode():new( , 'DiscountAmount', , oDiscount:DiscountAmount() ) )
 
 Return ( ::oXmlDiscount )
@@ -1477,7 +1481,9 @@ METHOD addDiscount( oDiscount ) CLASS ItemLine
       ::nTotalCost                     := ::nQuantity * ::nUnitPriceWithoutTax
    end if
 
-   oDiscount:nDiscountAmount           := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, nRouDiv() )
+   if oDiscount:nDiscountRate != 0
+      oDiscount:nDiscountAmount       := Round( ::nTotalCost * oDiscount:nDiscountRate / 100, nRouDiv() )
+   end if
 
    aAdd( ::aDiscount, oDiscount )
 

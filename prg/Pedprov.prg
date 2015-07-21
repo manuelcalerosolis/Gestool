@@ -2508,6 +2508,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPed, cCodArt, nMode )
       nTotRes           := nTotNPedPrv( aTmp )
    end if
 
+   //msgalert( nTotRes, "ntotres al final")
+
    nOrdAnt              := ( D():AlbaranesProveedoresLineas( nView ) )->( OrdSetFocus( "cPedPrvRef" ) )
 
    ( D():AlbaranesProveedoresLineas( nView ) )->( OrdScope( 0, aTmp[ _CSERPED ] + Str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] + aTmp[ _CREF ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ] + aTmp[ _CLOTE ] ) )
