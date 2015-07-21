@@ -1394,7 +1394,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
    DEFINE BTNSHELL RESOURCE "SNDINT" OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( ChangePublicar() );
+      ACTION   ( changePublicar() );
       TOOLTIP  "P(u)blicar" ;
       HOTKEY   "U";
       LEVEL    ACC_EDIT
@@ -1402,7 +1402,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
    DEFINE BTNSHELL oTct RESOURCE "TACTIL" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( ChangeField( dbfArticulo, "lIncTcl", !( dbfArticulo )->lIncTcl, oWndBrw ) ) ;
+      ACTION   ( changeTactil() ) ;
       TOOLTIP  "Táctil" ;
       LEVEL    ACC_EDIT
 
@@ -4445,7 +4445,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LPUBINT" ) ) ] ;
          ID       100 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON CHANGE( ChangePublicar( aTmp ) ) ;
+         ON CHANGE( ChangePublicarTemporal( aTmp ) ) ;
          OF       fldWeb
 
    REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] ;
@@ -6199,7 +6199,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       Cambios para publicar en internet----------------------------------------
       */
 
-      ChangePublicar( aTmp )
+      ChangePublicarTemporal( aTmp )
 
       /*
       Grabamos el registro a disco---------------------------------------------
@@ -18740,46 +18740,68 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function ChangePublicar( aTmp )
+Static Function changeTactil()
 
    local nRec
 
-   if Empty( aTmp )
+   for each nRec in ( oWndBrw:oBrw:aSelected )
 
-      for each nRec in ( oWndBrw:oBrw:aSelected )
+      ( dbfArticulo )->( dbGoTo( nRec ) )
 
-         ( dbfArticulo )->( dbGoTo( nRec ) )
+      if ( dbfArticulo )->( dbRLock() )
+         ( dbfArticulo )->lIncTcl   := !( dbfArticulo )->lIncTcl
+         ( dbfArticulo )->( dbCommit() )
+         ( dbfArticulo )->( dbUnLock() )
+      end if 
 
-         if ( dbfArticulo )->( dbRLock() )
-            ( dbfArticulo )->lPubInt   := !( dbfArticulo )->lPubInt
-            ( dbfArticulo )->lSndDoc   := ( dbfArticulo )->lPubInt
-            ( dbfArticulo )->( dbCommit() )
-            ( dbfArticulo )->( dbUnLock() )
-         end if
+   next 
 
-         if ( dbfArticulo )->lPubInt
-            ChangeFamiliaInt(       ( dbfArticulo )->Familia   )
-            ChangePropiedadesInt(   ( dbfArticulo )->cCodPrp1  )
-            ChangePropiedadesInt(   ( dbfArticulo )->cCodPrp2  )
-            ChangeFabricantesInt(   ( dbfArticulo )->cCodFab   )
-            ChangeTipArtInt(        ( dbfArticulo )->cCodTip   )
-         end if
+Return ( nil )
 
-      next
+//---------------------------------------------------------------------------//
 
-   else
+Function ChangePublicar()
 
-      if aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ]
-         ChangeFamiliaInt(       aTmp[ ( dbfArticulo )->( fieldpos( "Familia"  ) ) ] )
-         ChangePropiedadesInt(   aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] )
-         ChangePropiedadesInt(   aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] )
-         ChangeFabricantesInt(   aTmp[ ( dbfArticulo )->( fieldpos( "cCodFab"  ) ) ] )
-         ChangeTipArtInt(        aTmp[ ( dbfArticulo )->( fieldpos( "cCodTip"  ) ) ] )
+   local nRec
+
+   for each nRec in ( oWndBrw:oBrw:aSelected )
+
+      ( dbfArticulo )->( dbGoTo( nRec ) )
+
+      if ( dbfArticulo )->( dbRLock() )
+         ( dbfArticulo )->lPubInt   := !( dbfArticulo )->lPubInt
+         ( dbfArticulo )->lSndDoc   := ( dbfArticulo )->lPubInt
+         ( dbfArticulo )->( dbCommit() )
+         ( dbfArticulo )->( dbUnLock() )
       end if
 
+      if ( dbfArticulo )->lPubInt
+         ChangeFamiliaInt(       ( dbfArticulo )->Familia   )
+         ChangePropiedadesInt(   ( dbfArticulo )->cCodPrp1  )
+         ChangePropiedadesInt(   ( dbfArticulo )->cCodPrp2  )
+         ChangeFabricantesInt(   ( dbfArticulo )->cCodFab   )
+         ChangeTipArtInt(        ( dbfArticulo )->cCodTip   )
+      end if
+
+   next
+
+   oWndBrw:Refresh( .t. )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+static function ChangePublicarTemporal( aTmp )
+
+   if aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ]
+      ChangeFamiliaInt(       aTmp[ ( dbfArticulo )->( fieldpos( "Familia"  ) ) ] )
+      ChangePropiedadesInt(   aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] )
+      ChangePropiedadesInt(   aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] )
+      ChangeFabricantesInt(   aTmp[ ( dbfArticulo )->( fieldpos( "cCodFab"  ) ) ] )
+      ChangeTipArtInt(        aTmp[ ( dbfArticulo )->( fieldpos( "cCodTip"  ) ) ] )
    end if
 
-   if !Empty( oWndBrw )
+   if !empty( oWndBrw )
       oWndBrw:Refresh( .t. )
    end if
 

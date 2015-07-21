@@ -4401,6 +4401,8 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
 
             else
 
+               hidePropertiesTable( ::oBrwPrp )
+
                if !Empty( ::oDbfVir:cCodPr1 )
                   ::oValPr1:show()
                   ::oSayPr1:show()

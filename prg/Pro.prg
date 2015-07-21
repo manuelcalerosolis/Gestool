@@ -2684,6 +2684,16 @@ Return lPub
 
 //---------------------------------------------------------------------------//
 
+Function hidePropertiesTable( oBrw )
+
+   if !empty( oBrw )
+      oBrw:Hide()
+   end if 
+
+Return ( nil )   
+
+//---------------------------------------------------------------------------//
+
 Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPre, oBrw, nView )
 
    local n
@@ -2876,7 +2886,6 @@ Function setPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, oGetUnd, oGetPr
       oBrw:nFooterHeight         := 20
 
       oBrw:Show()
-
       
    end if
 

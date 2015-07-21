@@ -3625,9 +3625,12 @@ Return ( nil )
 
 Static Function InitEdtRec( aTmp, aGet, oDlg, oBrwLin, oBrwInc, oBrwPgo )
 
-   EdtRecMenu( aTmp, oDlg )
+   edtRecMenu( aTmp, oDlg )
    
    oBrwLin:Load()
+   oBrwLin:MakeTotals()
+   oBrwLin:RefreshFooters()
+
    oBrwInc:Load()
    oBrwPgo:Load()
 
@@ -11212,6 +11215,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
                setPropertiesTable( cCodArt, 0, aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _NUNICAJA ], aGet[ _NPREDIV ], oBrwProperties, nView )
 
             else 
+
+
+               hidePropertiesTable( oBrwProperties )
 
                if !empty( aTmp[ _CCODPR1 ] )
 

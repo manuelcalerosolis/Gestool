@@ -6645,6 +6645,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          else 
 
+            hidePropertiesTable( oBrwProperties )
+
             if !Empty( aTmp[ _CCODPR1 ] )
                aGet[ _CVALPR1 ]:Show()
                if lFocused

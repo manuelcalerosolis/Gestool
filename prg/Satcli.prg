@@ -5437,9 +5437,7 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
 
             else
 
-               if !empty( oBrwProperties )
-                  oBrwProperties:Hide()
-               end if 
+               hidePropertiesTable( oBrwProperties )
 
                if !Empty( aTmp[ _CCODPR1 ] )
 

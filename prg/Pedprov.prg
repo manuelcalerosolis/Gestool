@@ -3245,7 +3245,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
 
             else
 
-               oBrwPrp:Hide()
+               hidePropertiesTable( oBrwPrp )
 
                if !Empty( aTmp[ _CCODPR1 ] ) // .and. !uFieldEmpresa( "lUseTbl" ) .or. ( nMode == APPD_MODE )
 

@@ -13810,6 +13810,8 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          else 
 
+            hidePropertiesTable( oBrwProperties )
+
             if !Empty( aTmp[ _CCODPR1 ] )
 
                if aGet[ _CVALPR1 ] != nil
