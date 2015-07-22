@@ -132,7 +132,16 @@ METHOD Resource() CLASS TSpecialInfoCliente
          :nWidth           := 130
       end with
 
-      oDlg:bStart     := {|| oBrwCliente:LoadData() }
+      with object ( oBrwCliente:addCol() )
+         :cHeader          := "Contador"
+         :bEditValue       := {|| Trans( oBrwCliente:oTreeItem:Cargo[ "nCntAct" ], "@E 999,999,999.99" ) }
+         :nWidth           := 130
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
+
+      oDlg:bStart     := {|| oBrwCliente:Load() }
 
    ACTIVATE DIALOG oDlg CENTER
 

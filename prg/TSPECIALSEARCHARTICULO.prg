@@ -363,7 +363,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :cHeader             := "Informe cliente"
          :bStrData            := {|| "" }
          :bOnPostEdit         := {|| .t. }
-         :bEditBlock          := {|| TSpecialInfoCliente():Run( SelectArticulo->cCodCli, SelectArticulo->Titulo, SelectArticulo->Codigo ) }
+         :bEditBlock          := {|| TSpecialInfoCliente():Run( SelectArticulo->cCodCli, SelectArticulo->cNomCli, SelectArticulo->Codigo ) }
          :nEditType           := 5
          :nWidth              := 20
          :nHeadBmpNo          := 1

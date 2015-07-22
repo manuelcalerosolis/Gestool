@@ -4987,6 +4987,7 @@ METHOD selectSATFromClient( cCodigoCliente, cAnno, cCodigoArticulo )
    cStm           +=          "lineasSat.cSerSat, "
    cStm           +=          "lineasSat.nNumSat, "
    cStm           +=          "lineasSat.cSufSat, "
+   cStm           +=          "lineasSat.nCntAct, "
    cStm           +=          "cabeceraSat.dFecSat, "
    cStm           +=          "cabeceraSat.cSerSat, "
    cStm           +=          "cabeceraSat.cCodOpe, "
@@ -5078,6 +5079,7 @@ METHOD selectSATFromArticulo( cCodigoArticulo )
    cStm           +=          "lineasSat.nNumSat   AS numeroLineaSAT, "
    cStm           +=          "lineasSat.cSufSat   AS sufijoLineaSAT, "
    cStm           +=          "lineasSat.mObsLin   AS observacionesLineaSAT, "
+   cStm           +=          "lineasSat.nCntAct   AS contadorLineaSAT, "
    cStm           +=          "cabeceraSat.dFecSat AS fechaSAT, "
    cStm           +=          "cabeceraSat.cCodOpe, "
    cStm           +=          "cabeceraSat.cCodEst, "
@@ -5101,7 +5103,7 @@ METHOD selectSATFromArticulo( cCodigoArticulo )
 
    cStm           += "WHERE lineasSat.cRef = '" + alltrim( cCodigoArticulo ) + "' "
 
-   cStm           += "ORDER BY lineasSat.cRef, lineasSat.dFecSat ASC"
+   cStm           += "ORDER BY lineasSat.cRef, lineasSat.dFecSat DESC"
 
 RETURN ( ::ExecuteSqlStatement( cStm, "SatCliArticulos" ) )
 
