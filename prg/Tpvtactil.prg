@@ -243,11 +243,14 @@ CLASS TpvTactil
 
    DATA oBtnPrecioUnidades
 
-
    DATA cTemporalLinea
    DATA oTemporalLinea
    DATA cTemporalComanda
    DATA oTemporalComanda
+
+   DATA oTemporalImpresionLinea
+   DATA cTemporalImpresionLinea
+
    DATA cTemporalCobro
    DATA oTemporalCobro
    DATA cTemporalDivisionOriginal
@@ -838,6 +841,8 @@ CLASS TpvTactil
    METHOD CambiarUnidadesPrecio( lGetPrecio )
 
    METHOD isArticulosSinPeso()
+
+   METHOD LoadTemporalImpresionlinea()
 
 //--------------------------------------------------------------------------//
 
@@ -4020,6 +4025,24 @@ METHOD CreateTemporal() CLASS TpvTactil
    ::oTemporalComanda:Activate( .f., .f. ) 
 
    /*
+   Definimos las bases de datos temporal impresión líneas-------------------------------
+   */
+
+   ::cTemporalImpresionLinea      := cGetNewFileName( cPatTmp() + "TikImpL" )
+
+   DEFINE DATABASE ::oTemporalImpresionLinea FILE ( ::cTemporalImpresionLinea ) CLASS "TikImpL" ALIAS "TikImpL" PATH ( cPatTmp() ) VIA ( cLocalDriver() ) COMMENT "Temporal lineas ticket cliente"
+
+      for each aFieldCol in aColTik()
+         ::oTemporalImpresionLinea:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
+      next
+
+      INDEX TO ( ::cTemporalComanda ) TAG "TikImpL" ON Field->cSerTil + Field->cNumTil + Field->cSufTil + Field->cOrdOrd + Str( Recno() )    COMMENT "Orden"   NODELETED OF ::oTemporalImpresionLinea
+
+   END DATABASE ::oTemporalImpresionLinea
+
+   ::oTemporalImpresionLinea:Activate( .f., .f. ) 
+
+   /*
    Definimos las bases de datos temporal linea---------------------------------
    */
 
@@ -4075,6 +4098,14 @@ METHOD DestroyTemporal() CLASS TpvTactil
    ::oTemporalComanda                     := nil
 
    dbfErase( ::cTemporalComanda )
+
+   if ::oTemporalImpresionLinea != nil .and. ::oTemporalImpresionLinea:Used()
+      ::oTemporalImpresionLinea:End()
+   end if
+
+   ::oTemporalImpresionLinea              := nil
+
+   dbfErase( ::cTemporalImpresionLinea )
 
    if ::oTemporalCobro != nil .and. ::oTemporalCobro:Used()
       ::oTemporalCobro:End()
@@ -8138,6 +8169,8 @@ METHOD ImprimeDocumento() CLASS TpvTactil
 
    CursorWait()
 
+   ::LoadTemporalImpresionlinea()
+
    if ::nTipoDocumento == documentoAlbaran
 
       ::DestroyFastReport()
@@ -8518,7 +8551,8 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Albaranes", ::oAlbaranClienteCabecera:nArea )
    ::oFastReport:SetFieldAliases(   "Albaranes", cItemsToReport( aItmAlbCli() ) )
 
-   ::oFastReport:SetWorkArea(       "Lineas de tickets", ::oTiketLinea:nArea )
+   //::oFastReport:SetWorkArea(       "Lineas de tickets", ::oTiketLinea:nArea )
+   ::oFastReport:SetWorkArea(       "Lineas de tickets", ::oTemporalImpresionLinea:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de tickets", cItemsToReport( aColTik() ) )
 
    ::oFastReport:SetWorkArea(       "Lineas de comandas", ::oTemporalComanda:nArea )
@@ -8701,13 +8735,13 @@ METHOD BuildRelationReport() CLASS TpvTactil
 
          else
 
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",              {|| ::oTiketLinea:cCbaTil } )
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",                {|| ::oTiketLinea:cFamTil } )
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",   {|| ::oTiketLinea:cUnidad } )
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",     {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",            {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
-         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",              {|| ::oTemporalImpresionLinea:cCbaTil } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",                {|| ::oTemporalImpresionLinea:cFamTil } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",   {|| ::oTemporalImpresionLinea:cUnidad } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",             {|| RetFld( ::oTemporalImpresionLinea:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",     {|| RetFld( ::oTemporalImpresionLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",            {|| RetFld( ::oTemporalImpresionLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",             {|| RetFld( ::oTemporalImpresionLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
          // ::oFastReport:SetMasterDetail( "Lineas de tickets", "Propiedades",            {|| ::oTiketLinea:cCodPr1 + ::oTiketLinea:cValPr1 } )
          // ::oFastReport:SetMasterDetail( "Lineas de tickets", "Impuestos especiales",   {|| ::oTiketLinea:cCodImp } )
 
@@ -10059,6 +10093,29 @@ METHOD isArticulosSinPeso()
    ::oTemporalLinea:SetStatus()
 
 RETURN ( lValid )
+
+//---------------------------------------------------------------------------//
+
+METHOD LoadTemporalImpresionlinea()
+
+   //MsgInfo( "Cargamos el temporal de lineas para imprimir" )
+
+   if ::oTiketLinea:Seek( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
+
+      while ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik .and.;
+            !::oTiketLinea:Eof()
+
+            //MsgInfo( ::oTiketLinea:cNomTil, "Producto" )
+
+            dbPass( ::oTiketLinea:cAlias, ::oTemporalImpresionLinea:cAlias, .t. )
+
+            ::oTiketLinea:Skip()
+
+      end while
+
+   end if
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
