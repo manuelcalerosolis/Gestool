@@ -93,7 +93,7 @@ METHOD defineBotonesGenerales() CLASS ViewEditResumen
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_printer_64",;
-                           "bLClicked" => {|| ::oSender:printDocument() },;
+                           "bLClicked" => {|| ::oSender:setFormatToPrint( ::cCbxImpresora ), ::oDlg:End( IDOK ) },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;

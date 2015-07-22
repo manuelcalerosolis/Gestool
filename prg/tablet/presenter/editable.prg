@@ -16,6 +16,7 @@ CLASS Editable
    DATA oViewNavigator
    DATA oViewSearchNavigator
    DATA oViewEdit
+   DATA oViewEditDetail
 
    DATA cDetailArea
    DATA nPosDetail                              INIT 0
@@ -26,6 +27,8 @@ CLASS Editable
 
    DATA aDetails                                INIT {}
  
+   DATA cFormatToPrint
+
    METHOD Append()
    METHOD saveAppend()
    METHOD Edit()
@@ -75,6 +78,10 @@ CLASS Editable
    METHOD GetAppendDetail()                     VIRTUAL
    METHOD GetEditDetail()                       VIRTUAL
 
+   METHOD setFormatToPrint( cFormat )           INLINE ( ::cFormatToPrint := cFormat )
+   METHOD resetFormatToPrint( cFormat )         INLINE ( ::cFormatToPrint := "" )
+
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -94,6 +101,8 @@ METHOD Append() CLASS Editable
    end if
 
    ::oDocumentLines:reset()
+
+   ::isPrintDocument()
 
 Return ( lAppend )
 
@@ -132,6 +141,8 @@ METHOD Edit() CLASS Editable
    end if
 
    ::oDocumentLines:reset()
+
+   ::isPrintDocument()
 
 Return ( lEdit )
 
@@ -229,3 +240,4 @@ METHOD DeleteDetail( nPos ) CLASS Editable
 Return ( self )
 
 //---------------------------------------------------------------------------//
+

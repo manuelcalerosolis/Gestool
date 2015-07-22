@@ -9,6 +9,8 @@ CLASS OrderCustomer FROM DocumentsSales
 
    DATA oDocumentLines
 
+   DATA oLinesOrderCustomer
+
    DATA cTextSummaryDocument             INIT "Resumen pedido"
 
    METHOD New()
@@ -28,7 +30,7 @@ CLASS OrderCustomer FROM DocumentsSales
 
    METHOD Resource( nMode )
 
-   METHOD ResourceDetail( nMode )
+   METHOD ResourceDetail( nMode )         INLINE ( ::oLinesOrderCustomer:ResourceDetail( nMode ) )
 
    METHOD GetAppendDocumento()
 
@@ -65,9 +67,7 @@ CLASS OrderCustomer FROM DocumentsSales
    METHOD onPreSaveAppendDocumento()
    METHOD onPreSaveEditDocumento()
 
-   //METHOD printDocument()
-
-   //METHOD saveModeDocument()
+   METHOD setViewEditDetail()             INLINE ( ::oViewEditDetail := ::oLinesOrderCustomer:oViewEditDetail )
 
 END CLASS
 
@@ -88,6 +88,8 @@ METHOD New() CLASS OrderCustomer
    ::oDocumentLines        := DocumentLines():New( self ) 
 
    ::oTotalDocument        := TotalDocument():New( self )
+
+   ::oLinesOrderCustomer   := LinesOrderCustomer():New( self )
 
    ::setEnviroment()
 
@@ -125,11 +127,9 @@ Return ( lResource )
 
 //---------------------------------------------------------------------------//
 
-METHOD ResourceDetail( nMode ) CLASS OrderCustomer
+/*METHOD ResourceDetail( nMode ) CLASS OrderCustomer
 
    local lResult     := .f.
-
-   //::nMode           := nMode
 
    ::oViewEditDetail := ViewDetail():New( self )
 
@@ -141,7 +141,7 @@ METHOD ResourceDetail( nMode ) CLASS OrderCustomer
 
    end if
 
-Return ( lResult )   
+Return ( lResult )*/
 
 //---------------------------------------------------------------------------//
 
@@ -363,7 +363,6 @@ METHOD onPreSaveAppendDocumento() CLASS OrderCustomer
 Return ( lPreSaveDocument )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 
 METHOD onPreSaveEditDocumento() CLASS OrderCustomer
@@ -380,38 +379,3 @@ Return ( lPreSaveDocument )
 
 //---------------------------------------------------------------------------//
 
-/*METHOD printDocument() CLASS OrderCustomer
-
-   Local cCodigoDocumento
-
-   if ::oViewEditResumen:oDlg:End( IDOK )
-      ::oViewEdit:oDlg:end( IDOK )
-      ::saveModeDocument()
-   end if
-
-   ::saveModeDocument()
-
-   if alltrim( ::oViewEditResumen:cCbxImpresora ) == "No imprimir"
-      Return .f.
-   end if
-
-   cCodigoDocumento  := left( ::oViewEditResumen:cCbxImpresora, 3 )
-
-   visualizaPedidoCliente( ::getID(), cCodigoDocumento )
-
-Return( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD saveModeDocument() CLASS OrderCustomer
-
-   do case
-      case ::nMode == EDIT_MODE
-         ::saveEdit()
-      case ::nMode == APPD_MODE
-         ::saveAppend()
-   end case
-
-Return( self )*/
-
-//---------------------------------------------------------------------------//

@@ -15,10 +15,6 @@ CLASS DocumentLine
    METHOD Impuesto()  
    METHOD Importe()
 
-   //METHOD getSerieMaster()                                     INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
-   //METHOD getNumeroMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
-   //METHOD getSufijoMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
-
    METHOD getSerie()                                           INLINE ( hGet( ::hDictionary, "Serie" ) )
    METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
 
