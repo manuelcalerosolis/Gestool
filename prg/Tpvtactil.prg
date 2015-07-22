@@ -6354,9 +6354,7 @@ METHOD OnClickCobro() CLASS TpvTactil
       
       ::SetSerie()
 
-      /*
-      Recoger usuario-------------------------------------------------------
-      */
+      // Recoger usuario-------------------------------------------------------
 
       ::GetUsuario()
 
@@ -9823,15 +9821,19 @@ METHOD ShowCombinado( lShowCombinando )
 
   ::lShowCombinado        := lShowCombinando
 
-  if lShowCombinando
-     ::oBtnCombinado:LoadBitmap( "Led_red_32" ) 
-     ::oSayImporte:SetText( "Combinando..." )
-  else
-     ::oBtnCombinado:LoadBitmap( "Led_green_32" )
-     ::oSayImporte:SetText( "Total" )
-  end if 
+   if empty( ::oBtnCombinado )
+      Return ( Self )
+   end if 
+
+   if lShowCombinando
+      ::oBtnCombinado:LoadBitmap( "Led_red_32" ) 
+      ::oSayImporte:SetText( "Combinando..." )
+   else
+      ::oBtnCombinado:LoadBitmap( "Led_green_32" )
+      ::oSayImporte:SetText( "Total" )
+   end if 
    
-  ::oBtnCombinado:Refresh() 
+   ::oBtnCombinado:Refresh() 
 
 RETURN ( Self )
 
@@ -10052,6 +10054,10 @@ METHOD CambiarUnidadesPrecio( lGetPrecio )
    DEFAULT lGetPrecio        := !::lGetPrecio
 
    ::lGetPrecio              := lGetPrecio
+
+   if empty( ::oBtnPrecioUnidades )
+      RETURN ( Self )
+   end if 
 
    if ::lGetPrecio
       ::oBtnPrecioUnidades:LoadBitmap( "Currency_euro_32" ) 

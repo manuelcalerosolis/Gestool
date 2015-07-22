@@ -4365,7 +4365,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          PROMPT   "&General",;
                   "Da&tos",;
                   "&Observaciones" ;
-         DIALOGS  "LPEDCLI_1",;
+         DIALOGS  "LFACCLI_1",;
                   "LALBCLI_2",;
                   "LFACCLI_3"
 
@@ -4506,26 +4506,26 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ __NBULTOS ] VAR aTmp[ __NBULTOS ] ;
-         ID       610 ;
+         ID       450 ;
+         IDSAY    451 ;
          SPINNER ;
-         WHEN ( nMode != ZOOM_MODE ) .AND. uFieldEmpresa( "lUseBultos" ) ;
+         WHEN     ( nMode != ZOOM_MODE ) .AND. uFieldEmpresa( "lUseBultos" ) ;
          PICTURE  cPicUnd ;
-         OF       oFld:aDialogs[1] ;
-         IDSAY    611
+         OF       oFld:aDialogs[1] 
 
       REDEFINE GET aGet[ _NCANENT ] VAR aTmp[ _NCANENT ];
-         ID       130;
+         ID       130 ;
+         IDSAY    131 ;
          SPINNER ;
          WHEN     ( !aTmp[ _LCONTROL ] .AND. lUseCaj() .AND. nMode != ZOOM_MODE ) ;
          PICTURE  cPicUnd ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          OF       oFld:aDialogs[1] ;
-         IDSAY    131
 
       REDEFINE GET aGet[ _NUNICAJA ] VAR aTmp[ _NUNICAJA ] ;
-         ID       140;
-         IDSAY    141;
+         ID       140 ;
+         IDSAY    141 ;
          SPINNER ;
          WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
@@ -4667,7 +4667,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CFORMATO ] VAR aTmp[ _CFORMATO ];
-         ID       620;
+         ID       460 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
@@ -4725,13 +4725,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       */
 
       REDEFINE GET aGet[ _CTIPMOV ] VAR aTmp[ _CTIPMOV ] ;
+         ID       290 ;
+         IDTEXT   291 ;
+         IDSAY    292 ;
          WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
          VALID    ( cTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
-         ID       290 ;
-         IDTEXT   291 ;
-         IDSAY    292 ;
          OF       oFld:aDialogs[1] ;
 
       /*
@@ -4739,11 +4739,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       */
 
       REDEFINE GET aGet[ _CCODTIP ] VAR aTmp[ _CCODTIP ] ;
+         ID       205 ;
+         IDTEXT   206 ;
          WHEN     ( nMode != ZOOM_MODE .and. nMode != MULT_MODE .and. !lTotLin ) ;
          VALID    ( oTipArt:Existe( aGet[ _CCODTIP ], aGet[ _CCODTIP ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( oTipArt:Buscar( aGet[ _CCODTIP ] ) ) ;
-         ID       205 ;
          OF       oFld:aDialogs[1]
 
       /*
