@@ -38,6 +38,7 @@ CLASS Iva
    METHOD ShowImportes( nPosition )
    METHOD ShowTotal( nPosition )
 
+   METHOD getDictionaryMaster( cField )            INLINE ( hGet( ::oSender:oSender:hDictionaryMaster, cField ) )
 
 END CLASS
 
@@ -120,7 +121,12 @@ METHOD CalculaTotal( nPosition )
 
    Local CalculaTotal      := 0
 
-   CalculaTotal            := ::getBase( nPosition ) + ::ImporteRecargo( nPosition ) + ::ImporteImpuesto( nPosition )
+   CalculaTotal            := ::getBase( nPosition ) 
+   CalculaTotal            += ::ImporteImpuesto( nPosition )
+
+   if ::getDictionaryMaster( "RecargoEquivalencia" )
+      CalculaTotal         += ::ImporteRecargo( nPosition ) 
+   endif
 
 Return( CalculaTotal )
 

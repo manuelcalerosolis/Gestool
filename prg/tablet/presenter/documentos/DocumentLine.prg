@@ -47,7 +47,6 @@ CLASS DocumentLine
 
    METHOD isLineaImpuestoIncluido()                            INLINE ( hGet( ::hDictionary, "LineaImpuestoIncluido" ) )
    METHOD isVolumenImpuestosEspeciales()                       INLINE ( hGet( ::hDictionary, "VolumenImpuestosEspeciales" ) )
-   METHOD isPuntoVerde()                                       INLINE ( hGet( ::hDictionaryMaster, "OperarPuntoVerde" ) )
 
    METHOD getImporteImpuestoEspecial()                         INLINE ( hGet( ::hDictionary, "ImporteImpuestoEspecial" ) )
    METHOD getVolumen()                                         INLINE ( hGet( ::hDictionary, "Volumen" ) )
@@ -88,7 +87,7 @@ METHOD Total()   CLASS DocumentLine
 
    Total                += ::Impuesto()
 
-   if ::isPuntoVerde()    
+   if ::oSender:isPuntoVerde()    
       Total             += ::getPuntoVerde() * ::totalUnidades()
    end if 
 

@@ -15,22 +15,26 @@ CLASS OrderCustomer FROM DocumentsSales
 
    METHOD New()
 
-   METHOD getSerie()             INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
-   METHOD getNumero()            INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
-   METHOD getSufijo()            INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
+   METHOD getSerie()                   INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
+   METHOD getNumero()                  INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
+   METHOD getSufijo()                  INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
 
    METHOD getID()                      INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
+
+   METHOD isPuntoVerde()               INLINE ( hGet( ::hDictionaryMaster, "OperarPuntoVerde" ) )
+
+   METHOD isRecargoEquivalencia()      INLINE ( hGet( ::hDictionaryMaster, "lRecargo" ) )
 
    METHOD setEnviroment()              INLINE ( ::setDataTable( "PedCliT" ),;
                                                 ::setDataTableLine( "PedCliL" ),;
                                                 ::setDataTableLineID( D():PedidosClientesLineasId( ::nView ) ),;
-                                                ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ) )
+                                                ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ), ( ::getWorkArea() )->( dbgotop() ) )
 
    METHOD setNavigator()
 
    METHOD Resource( nMode )
 
-   METHOD ResourceDetail( nMode )         INLINE ( ::oLinesOrderCustomer:ResourceDetail( nMode ) )
+   METHOD ResourceDetail( nMode )      INLINE ( ::oLinesOrderCustomer:ResourceDetail( nMode ) )
 
    METHOD GetAppendDocumento()
 

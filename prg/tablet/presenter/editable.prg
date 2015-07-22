@@ -89,6 +89,9 @@ ENDCLASS
 METHOD Append() CLASS Editable
 
    local lAppend  := .f.
+   local nord
+
+   nOrd           := ( ::getWorkArea )->( OrdSetFocus( "dFecDes" ) )
 
    ::nMode        := APPD_MODE
 
@@ -103,6 +106,8 @@ METHOD Append() CLASS Editable
    ::oDocumentLines:reset()
 
    ::isPrintDocument()
+
+   ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 
 Return ( lAppend )
 
@@ -129,6 +134,9 @@ Return ( lSave )
 METHOD Edit() CLASS Editable
 
    local lEdit    := .f.
+   local nord
+
+   nOrd           := ( ::getWorkArea )->( OrdSetFocus( "dFecDes" ) )
 
    ::nMode        := EDIT_MODE
 
@@ -143,6 +151,8 @@ METHOD Edit() CLASS Editable
    ::oDocumentLines:reset()
 
    ::isPrintDocument()
+
+   ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 
 Return ( lEdit )
 
