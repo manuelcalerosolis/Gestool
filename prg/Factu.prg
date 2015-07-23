@@ -5929,6 +5929,28 @@ Function MainTablet()
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| Customer():New() } } )
+
+   //----------------Salir
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_End_64",;
+                           "bLClicked" => {|| oDlg:End() },;
+                           "oWnd"      => oDlg } )
+/*
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 3 ) },;
+                           "nLeft"     => {|| GridWidth( 10, oDlg ) },;
+                           "cURL"      => "Salir",;
+                           "oWnd"      => oDlg,;
+                           "oFont"     => oGridFont(),;
+                           "lPixel"    => .t.,;
+                           "nClrInit"  => nGridColor(),;
+                           "nClrOver"  => nGridColor(),;
+                           "nClrVisit" => nGridColor(),;
+                           "bAction"   => {|| oDlg:End() } } )
+*/
    
    //----------------Pedidos de clientes
 
@@ -5953,7 +5975,7 @@ Function MainTablet()
 
    //----------------Albaranes de clientes
    
-   /*TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -5970,10 +5992,11 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| DeliveryNoteCustomer():New() } } )*/
+                           "bAction"   => {|| DeliveryNoteCustomer():New() } } )
+
+   //----------------Facturas
    
-   
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
                      		"nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
@@ -5981,7 +6004,7 @@ Function MainTablet()
                      		"bLClicked" => {|| FacCliTablet() },;
                      		"oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 9 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Facturas de clientes",;
                            "oWnd"      => oDlg,;
@@ -5992,7 +6015,9 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| FacCliTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 12 ) },;
+   //----------------Envio y recepcion
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
@@ -6000,7 +6025,7 @@ Function MainTablet()
                            "bLClicked" => {|| TSndRecInf():New():ActivateTablet() },;
                            "oWnd"      => oDlg } )
 
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;
+   TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
                            "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
                            "cURL"      => "Envío y recepción",;
                            "oWnd"      => oDlg,;
@@ -6011,24 +6036,7 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| TSndRecInf():New():ActivateTablet() } } )
 
-   TGridImage():Build(  {  "nTop"      => {|| GridRow( 15 ) },;
-                           "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_End_64",;
-                           "bLClicked" => {|| oDlg:End() },;
-                           "oWnd"      => oDlg } )
-
-   TGridUrllink():Build({  "nTop"      => {|| GridRow( 15 ) },;
-                           "nLeft"     => {|| GridWidth( 1.5, oDlg ) },;
-                           "cURL"      => "Salir",;
-                           "oWnd"      => oDlg,;
-                           "oFont"     => oGridFont(),;
-                           "lPixel"    => .t.,;
-                           "nClrInit"  => nGridColor(),;
-                           "nClrOver"  => nGridColor(),;
-                           "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| oDlg:End() } } )
+   //----------------Informacion empresa
 
    oGridTree   := TGridTreeView():Build( ;
                         {  "nTop"      => {|| GridRow( 9 ) },;

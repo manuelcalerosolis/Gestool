@@ -25,10 +25,11 @@ CLASS ViewDetail FROM ViewBase
    METHOD New()
 
    METHOD Resource()
+   METHOD getOrderCustomer()           INLINE ( ::oSender:oSender )
 
    METHOD SetGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
-                                                hGet( ::oSender:oDocumentLineTemporal:hDictionary, cName ),;
-                                                hSet( ::oSender:oDocumentLineTemporal:hDictionary, cName, uValue ) ) )
+                                                hGet( ::getOrderCustomer():oDocumentLineTemporal:hDictionary, cName ),;
+                                                hSet( ::getOrderCustomer():oDocumentLineTemporal:hDictionary, cName, uValue ) ) )
 
    METHOD defineAceptarCancelar()
 
@@ -63,6 +64,8 @@ CLASS ViewDetail FROM ViewBase
 
    METHOD RefreshDialog()
 
+   METHOD startDialog()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -90,7 +93,7 @@ METHOD Resource( nMode ) CLASS ViewDetail
    ::defineCajas()
 
    ::defineUnidades()
-
+ 
    ::definePrecio()
 
    ::defineDescuentoPorcentual()
@@ -103,11 +106,21 @@ METHOD Resource( nMode ) CLASS ViewDetail
 
    ::oDlg:bResized         := {|| ::resizeDialog() }
 
-   ::oDlg:bStart           := {|| ::HideLote(), ::oSender:StartResourceDetail() }
+   ::oDlg:bStart           := {|| ::startDialog() }
 
-   ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
+   ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
 
 Return ( ::oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD startDialog() CLASS ViewDetail
+
+    ::hideLote()
+
+   ::oSender:StartResourceDetail()
+
+Return( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -271,7 +284,7 @@ METHOD definePrecio() CLASS ViewDetail
                                           "oWnd"      => ::oDlg,;
                                           "lPixels"   => .t.,;
                                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                          "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
+                                          "cPict"     => cPouDiv( hGet( ::getOrderCustomer():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
                                           "bValid"    => {||  ::oSender:recalcularTotal() } } )
@@ -329,7 +342,7 @@ METHOD defineDescuentoLineal() CLASS ViewDetail
                                                    "oWnd"      => ::oDlg,;
                                                    "lPixels"   => .t.,;
                                                    "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                                   "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
+                                                   "cPict"     => cPouDiv( hGet( ::getOrderCustomer():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
                                                    "lRight"    => .t.,;
                                                    "nHeight"   => 23,;
                                                    "bValid"    => {|| ::oSender:recalcularTotal() } } )
@@ -360,7 +373,7 @@ METHOD defineTotal() CLASS ViewDetail
                                           "oWnd"      => ::oDlg,;
                                           "lPixels"   => .t.,;
                                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                          "cPict"     => cPouDiv( hGet( ::oSender:hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:nView ) ),;
+                                          "cPict"     => cPouDiv( hGet( ::getOrderCustomer():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView() ) ),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
                                           "bWhen"     => {|| .f. } } )

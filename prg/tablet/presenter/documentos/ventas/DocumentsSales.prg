@@ -6,11 +6,11 @@ CLASS DocumentsSales FROM Documents
    DATA nMode
 
    DATA oViewEdit
-   DATA oViewEditDetail
    DATA oViewEditResumen
+
    
    DATA nUltimoCliente
-   DATA cOldCodidoArticulo          INIT ""
+   
    DATA hOrdenRutas                 INIT {   "1" => "lVisDom",;
                                              "2" => "lVisLun",;
                                              "3" => "lVisMar",;
@@ -23,12 +23,6 @@ CLASS DocumentsSales FROM Documents
 
    DATA oTotalDocument
 
-   DATA oTrans
-
-   DATA oUndMedicion
-
-   DATA oNewImp
-   
    METHOD OpenFiles()
    METHOD CloseFiles()              INLINE ( D():DeleteView( ::nView ) )
 
@@ -58,134 +52,17 @@ CLASS DocumentsSales FROM Documents
    METHOD gotoUltimoCliente( oCbxRuta )
    METHOD setUltimoCliente( oCbxRuta )
 
-   //METHOD totalLinea()
-   //METHOD recalculaLinea( oTotal )
-
-   METHOD Total()                      INLINE ( ::oDocumentLines:Total() /*aLines[::nPosDetail]:*/ )
-   METHOD recalcularTotal()
+   METHOD Total()                      INLINE ( ::oDocumentLines:Total() )
 
    METHOD calculaIVA()                 VIRTUAL
 
    METHOD AppendGuardaLinea()
    METHOD EditGuardaLinea()
 
-   METHOD lSeekArticulo()
-
-   METHOD hSetDetail( cField, uValue );
-            INLINE ( hSet( ::oDocumentLineTemporal:hDictionary, cField, uValue ) )
-
-
-   METHOD setCodigoArticulo();
-            INLINE ( ::hSetDetail( "Articulo", ( D():Articulos( ::nView ) )->Codigo ),;
-                     ::oViewEditDetail:oGetArticulo:Refresh() )
-
-   METHOD lArticuloObsoleto()
-
-   METHOD setDetalleArticulo();    
-            INLINE ( ::hSetDetail( "DescripcionArticulo", ( D():Articulos( ::nView ) )->Nombre ),;
-                     ::hSetDetail( "DescripcionAmpliada", ( D():Articulos( ::nView ) )->Descrip ),;
-                     ::oViewEditDetail:oGetDescripcionArticulo:Refresh() )
-
-   METHOD setProveedorArticulo()
-
-   METHOD setLote()
-
-   METHOD setTipoVenta();
-            INLINE ( ::hSetDetail( "AvisarSinStock", ( D():Articulos( ::nView ) )->lMsgVta ),;
-                     ::hSetDetail( "NoPermitirSinStock", ( D():Articulos( ::nView ) )->lNotVta ) )
-
-   METHOD setFamilia();
-            INLINE ( ::hSetDetail( "Familia", ( D():Articulos( ::nView ) )->Familia ),;
-                     ::hSetDetail( "GrupoFamilia", cGruFam( ( D():Articulos( ::nView ) )->Familia, D():Familias( ::nView ) ) ) )
-
-   METHOD setPeso();
-            INLINE ( ::hSetDetail( "Peso", ( D():Articulos( ::nView ) )->nPesoKg ),;
-                     ::hSetDetail( "UnidadMedicionPeso", ( D():Articulos( ::nView ) )->cUndDim ) )
-
-   METHOD setVolumen();
-            INLINE ( ::hSetDetail( "Volumen", ( D():Articulos( ::nView ) )->nVolumen ),;
-                     ::hSetDetail( "UnidadMedicionVolumen", ( D():Articulos( ::nView ) )->cVolumen ) )
-
-   METHOD setUnidadMedicion();
-            INLINE ( ::hSetDetail( "UnidadMedicion", ( D():Articulos( ::nView ) )->cUnidad ) )
-
-   METHOD setTipoArticulo();
-            INLINE ( ::hSetDetail( "TipoArticulo", ( D():Articulos( ::nView ) )->cCodTip ) )
-
-   METHOD setCajas();
-            INLINE ( iif( !Empty( ( D():Articulos( ::nView ) )->nCajEnt ), ::hSetDetail( "Cajas", ( D():Articulos( ::nView ) )->nCajEnt ), ::hSetDetail( "Cajas", 1 ) ) )
-
-   METHOD setUnidades();
-            INLINE ( iif( !Empty( ( D():Articulos( ::nView ) )->nUniCaja ), ::hSetDetail( "Unidades", ( D():Articulos( ::nView ) )->nUniCaja ), ::hSetDetail( "Unidades", 1 ) ) )
-
-   METHOD getValorImpuestoEspecial();
-            INLINE ( D():ImpuestosEspeciales( ::nView ):nValImp( ( D():Articulos( ::nView ) )->cCodImp,;
-                     hGet( ::hDictionaryMaster, "ImpuestosIncluidos" ),;
-                     hGet( ::oDocumentLineTemporal:hDictionary, "TipoImpuesto" ) ) )
-
-   METHOD SetImpuestoEspecial()
-
-   METHOD SetTipoImpuesto()
-
-   METHOD SetFactorConversion();
-            INLINE ( iif( ( D():Articulos( ::nView ) )->lFacCnv, ::hSetDetail( "FactorConversion", ( D():Articulos( ::nView ) )->nFacCnv ), ) )
-
-   METHOD SetImagenProducto();
-            INLINE ( ::hSetDetail( "Imagen", ( D():Articulos( ::nView ) )->cImagen ) )
-
-   METHOD SetControlStock();
-            INLINE ( ::hSetDetail( "TipoStock", ( D():Articulos( ::nView ) )->nCtlStock ) )
-
-   METHOD SetPrecioRecomendado();
-            INLINE ( ::hSetDetail( "PrecioVentaRecomendado", ( D():Articulos( ::nView ) )->PvpRec ) )
-
-   METHOD SetPuntoVerde();
-            INLINE ( ::hSetDetail( "PuntoVerde", ( D():Articulos( ::nView ) )->nPntVer1 ) )
-
-   METHOD SetUnidadMedicion();
-            INLINE ( ::hSetDetail( "UnidadMedicion", ( D():Articulos( ::nView ) )->cUnidad ) )
-
-   METHOD SetPrecioCosto()
-      METHOD SetPrecioCostoMedio()        VIRTUAL
-
-   METHOD SetPrecioVenta()
-      METHOD SetPrecioArticulo
-      METHOD SetPrecioTarifaCliente       VIRTUAL
-      METHOD SetPrecioAtipicaCliente      VIRTUAL
-      METHOD SetPrecioOfertaArticulo      VIRTUAL
-
-   METHOD SetComisionAgente() 
-      METHOD SetComisionMaster()          INLINE ( ::hSetDetail( "ComisionAgente", hGet( ::hDictionaryMaster, "ComisionAgente" ) ) )
-      METHOD SetComisionTarifaCliente()   VIRTUAL
-      METHOD SetComisionAtipicaCliente()  VIRTUAL
-
-   METHOD SetDescuentoPorcentual()
-      METHOD SetDescuentoPorcentualArticulo();
-            INLINE ( ::hSetDetail( "DescuentoPorcentual", nDescuentoArticulo( hGet( ::oDocumentLineTemporal:hDictionary, "Articulo" ), hGet( ::hDictionaryMaster, "Cliente" ), ::nView ) ) )
-
-      METHOD SetDescuentoPorcentualTarifaCliente()    VIRTUAL
-      METHOD SetDescuentoPorcentualAtipicaCliente()   VIRTUAL
-      METHOD SetDescuentoPorcentualOfertaArticulo()   VIRTUAL
-
-   METHOD SetDescuentoPromocional()
-      METHOD SetDescuentoPromocionalTarifaCliente()   VIRTUAL
-      METHOD SetDescuentoPromocionalAtipicaCliente()  VIRTUAL
-
-   METHOD SetDescuentoLineal()
-      METHOD SetDescuentoLinealTarifaCliente()        VIRTUAL
-      METHOD SetDescuentoLinealAtipicaCliente()       VIRTUAL
-      METHOD SetDescuentoLinealOfertaArticulo()       VIRTUAL
-
-   METHOD CargaArticulo()
-
-   METHOD lShowLote()   INLINE ( hGet( ::oDocumentLineTemporal:hDictionary, "LogicoLote" ) )
-
    METHOD SetDocuments()                             VIRTUAL
 
-   METHOD saveModeDocument()
-
+   METHOD isPrintDocument()
    METHOD printDocument()
-
 
 END CLASS
 
@@ -599,342 +476,6 @@ METHOD EditGuardaLinea() CLASS DocumentsSales
 Return ( self )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-/*METHOD totalLinea( hLine ) CLASS DocumentsSales
-
-   local totalLinea  := 0
-   local totalUnidades
-
-   DEFAULT hLine     := ::oDocumentLineTemporal
-
-   if empty( hLine )
-      return .f.
-   endif
-
-   totalUnidades     := DocumentLine():totalUnidades()
-
-   totalLinea          := hGet( hLine, "PrecioVenta" )
-
-   totalLinea          -= hGet( hLine, "DescuentoLineal" )
-
-   
-   IVMH------------------------------------------------------------------------
-   
-
-   if !hGet( hLine, "LineaImpuestoIncluido" )
-
-      if hGet( hLine, "VolumenImpuestosEspeciales" )
-         totalLinea += hGet( hLine, "ImporteImpuestoEspecial" ) * NotCero( hGet( hLine, "Volumen" ) )
-      else
-         totalLinea += hGet( hLine, "ImporteImpuestoEspecial" )
-      end if
-
-   end if
-
-   totalLinea          *= nUnidades
-
-   
-   Transporte------------------------------------------------------------------
-   
-
-   if hGet( hLine, "Portes" ) != 0
-      totalLinea       += hGet( hLine, "Portes" ) * nUnidades
-   end if
-
-   
-   Descuentos------------------------------------------------------------------
-   
-
-   if hGet( hLine, "DescuentoPorcentual" ) != 0
-      totalLinea       -= totalLinea * hGet( hLine, "DescuentoPorcentual" ) / 100
-   end if
-
-   if hGet( hLine, "DescuentoPromocion" ) != 0
-      totalLinea       -= totalLinea * hGet( hLine, "DescuentoPromocion" ) / 100
-   end if
-
-   
-   Punto Verde-----------------------------------------------------------------
-   
-
-   if hGet( ::hDictionaryMaster, "OperarPuntoVerde" )
-      totalLinea       += hGet( hLine, "PuntoVerde" ) * nUnidades
-   end if
-
-RETURN ( totalLinea )
-*/
-//---------------------------------------------------------------------------//
-
-
-//---------------------------------------------------------------------------//
-
-METHOD recalcularTotal() CLASS DocumentsSales
-
-   if !Empty( ::oViewEditDetail:oTotalLinea )
-      ::oViewEditDetail:oTotalLinea:cText( ::oDocumentLineTemporal:Total() )
-   end if
-
-RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD lSeekArticulo() CLASS DocumentsSales
-
-   local cCodArt     := hGet( ::oDocumentLineTemporal:hDictionary, "Articulo" )
-
-   if Empty( cCodArt )
-      Return .f.
-   end if
-
-   cCodArt           := cSeekCodebarView( cCodArt, ::nView )
-
-Return ( dbSeekUpperLower( cCodArt, ::nView ) )
-
-//---------------------------------------------------------------------------//
-
-METHOD lArticuloObsoleto() CLASS DocumentsSales
-
-   if !( D():Articulos( ::nView ) )->lObs
-      Return .f.
-   end if
-
-   ApoloMsgStop( "Artículo catalogado como obsoleto" )
-
-   ::oViewEditDetail:oGetArticulo:SetFocus()
-
-Return .t.
-
-//---------------------------------------------------------------------------//   
-
-METHOD setProveedorArticulo() CLASS DocumentsSales
-
-   local cRefProveedor
-   
-   cRefProveedor     := Padr( cRefPrvArt( ( D():Articulos( ::nView ) )->Codigo, ( D():Articulos( ::nView ) )->cPrvHab , D():ProveedorArticulo( ::nView ) ) , 18 )
-
-   ::hSetDetail( "Proveedor", ( D():Articulos( ::nView ) )->cPrvHab )
-   ::hSetDetail( "NombreProveedor", RetFld( ( D():Articulos( ::nView ) )->cPrvHab, D():Proveedores( ::nView ) ) )
-   ::hSetDetail( "ReferenciaProveedor", cRefProveedor )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD setLote() CLASS DocumentsSales
-
-   if ( D():Articulos( ::nView ) )->lLote
-
-      ::hSetDetail( "LogicoLote", ( D():Articulos( ::nView ) )->lLote )
-      ::hSetDetail( "Lote", ( D():Articulos( ::nView ) )->cLote )
-
-      ::oViewEditDetail:ShowLote()
-
-   else
-
-      ::oViewEditDetail:HideLote()
-
-   end if
-
-   ::oViewEditDetail:RefreshLote()
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetTipoImpuesto() CLASS DocumentsSales
-
-   if hGet( ::hDictionaryMaster, "TipoImpuesto" ) <= 1
-      ::hSetDetail( "PorcentajeImpuesto", nIva( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva ) )
-      ::hSetDetail( "RecargoEquivalencia", nReq( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva ) )
-   end if
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetImpuestoEspecial() CLASS DocumentsSales
-
-   if !Empty( ( D():Articulos( ::nView ) )->cCodImp )
-
-      ::hSetDetail( "ImpuestoEspecial", ( D():Articulos( ::nView ) )->cCodImp )
-      ::hSetDetail( "ImporteImpuestoEspecial", ::getValorImpuestoEspecial() )
-      ::hSetDetail( "VolumenImpuestosEspeciales", RetFld( ( D():Articulos( ::nView ) )->cCodImp, D():ImpuestosEspeciales( ::nView ):cAlias, "lIvaVol" ) )
-
-   end if
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetPrecioCosto() CLASS DocumentsSales
-
-   local nCosto   := nCosto(  hGet( ::oDocumentLineTemporal:hDictionary, "Articulo" ),;
-                              D():Articulos( ::nView ),;
-                              D():Kit( ::nView ),;
-                              .f., ,;
-                              D():Divisas( ::nView ) )
-
-
-   ::hSetDetail( "PrecioCosto", nCosto )
-
-   if !uFieldEmpresa( "lCosAct" )
-      ::SetPrecioCostoMedio()       //Método Virtual no creado
-   end if
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetPrecioVenta() CLASS DocumentsSales
-
-   ::SetPrecioArticulo()
-   ::SetPrecioTarifaCliente()    //Método Virtual no creado
-   ::SetPrecioAtipicaCliente()   //Método Virtual no creado
-   ::SetPrecioOfertaArticulo()   //Método Virtual no creado
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetPrecioArticulo CLASS DocumentsSales
-
-   local nPrecio   := nRetPreArt(   hGet( ::oDocumentLineTemporal:hDictionary, "Tarifa" ),;
-                                    hGet( ::hDictionaryMaster, "Divisa" ),;
-                                    hGet( ::hDictionaryMaster, "ImpuestosIncluidos" ),;
-                                    D():Articulos( ::nView ),;
-                                    D():Divisas( ::nView ),;
-                                    D():Kit( ::nView ),;
-                                    D():TiposIva( ::nView ) )
-
-   ::hSetDetail( "PrecioVenta", nPrecio )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetComisionAgente() CLASS DocumentsSales
-
-   ::SetComisionMaster()
-   ::SetComisionTarifaCliente()     //Método Virtual no creado
-   ::SetComisionAtipicaCliente()    //Método Virtual no creado
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetDescuentoPorcentual() CLASS DocumentsSales
-
-   ::SetDescuentoPorcentualArticulo()
-   ::SetDescuentoPorcentualTarifaCliente()   //Método Virtual no creado
-   ::SetDescuentoPorcentualAtipicaCliente()  //Método Virtual no creado
-   ::SetDescuentoPorcentualOfertaArticulo()  //Método Virtual no creado
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetDescuentoPromocional() CLASS DocumentsSales
-
-   ::SetDescuentoPromocionalTarifaCliente()     //Método Virtual no creado
-   ::SetDescuentoPromocionalAtipicaCliente()    //Método Virtual no creado
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD SetDescuentoLineal() CLASS DocumentsSales
-
-   ::SetDescuentoLinealTarifaCliente()       //Método Virtual no creado
-   ::SetDescuentoLinealAtipicaCliente()      //Método Virtual no creado
-   ::SetDescuentoLinealOfertaArticulo()      //Método Virtual no creado
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD CargaArticulo() CLASS DocumentsSales
-
-   local cCodArt  := hGet( ::oDocumentLineTemporal:hDictionary, "Articulo" )
-
-   if Empty( cCodArt )
-      Return .f.
-   end if
-
-   if cCodArt == ::cOldCodidoArticulo
-      Return .f.
-   end if
-
-   if !::lSeekArticulo()
-      ApoloMsgStop( "Artículo no encontrado" )
-      Return .f.
-   end if
-
-   if ::lArticuloObsoleto()
-      return .f.
-   end if
-
-   ::setCodigoArticulo()
-
-   ::setDetalleArticulo()
-
-   ::setProveedorArticulo()
-
-   ::setLote()
-
-   ::setTipoVenta()
-
-   ::setFamilia()
-
-   ::setPeso()
-
-   ::setVolumen()
-
-   ::setUnidadMedicion()
-
-   ::setTipoArticulo()
-
-   ::SetCajas()
-
-   ::SetUnidades()
-
-   ::SetImpuestoEspecial()
-
-   ::SetTipoImpuesto()
-
-   ::SetFactorConversion()
-
-   ::SetImagenProducto()
-
-   ::SetPrecioRecomendado()
-
-   ::SetPuntoVerde()
-
-   ::SetUnidadMedicion()
-
-   ::SetPrecioCosto()
-
-   ::SetPrecioVenta()
-
-   ::SetComisionAgente()
-
-   ::SetDescuentoPorcentual()
-
-   ::SetDescuentoPromocional()
-
-   ::SetDescuentoLineal()
-
-   ::cOldCodidoArticulo    := hGet( ::oDocumentLineTemporal:hDictionary, "Articulo" )
-
-   /*
-   Refrescamos el diálogo, una vez insertado los datos-------------------------
-   */
-
-   ::oViewEditDetail:RefreshDialog()
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
 
 METHOD lValidResumenVenta() CLASS DocumentsSales
 
@@ -1004,39 +545,28 @@ Return ( ::oViewEditResumen:Resource() )
 
 //---------------------------------------------------------------------------//
 
-METHOD printDocument() CLASS DocumentsSales
+METHOD isPrintDocument() CLASS DocumentsSales
 
-   Local cCodigoDocumento
-
-   /*if ::oViewEditResumen:oDlg:End( IDOK )
-      ::oViewEdit:oDlg:end( IDOK )
-      ::saveModeDocument()
-   end if*/
-
-   ::saveModeDocument()
-
-   if alltrim( ::oViewEditResumen:cCbxImpresora ) == "No imprimir"
+   if empty( ::cFormatToPrint ) .or. alltrim( ::cFormatToPrint ) == "No imprimir"
       Return .f.
    end if
 
-   cCodigoDocumento  := left( ::oViewEditResumen:cCbxImpresora, 3 )
+   ::cFormatToPrint  := left( ::cFormatToPrint, 3 )
 
-   visualizaPedidoCliente( ::getID(), cCodigoDocumento )
+   ::printDocument()
 
-Return( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD saveModeDocument() CLASS DocumentsSales
-
-   do case
-      case ::nMode == EDIT_MODE
-         ::saveEdit()
-      case ::nMode == APPD_MODE
-         ::saveAppend()
-   end case
+   ::resetFormatToPrint()
 
 Return( self )
 
+//---------------------------------------------------------------------------//
+
+METHOD printDocument() CLASS DocumentsSales
+
+   visualizaPedidoCliente( ::getID(), ::cFormatToPrint )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

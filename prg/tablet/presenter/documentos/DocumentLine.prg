@@ -15,10 +15,6 @@ CLASS DocumentLine
    METHOD Impuesto()  
    METHOD Importe()
 
-   //METHOD getSerieMaster()                                     INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
-   //METHOD getNumeroMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
-   //METHOD getSufijoMaster()                                    INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
-
    METHOD getSerie()                                           INLINE ( hGet( ::hDictionary, "Serie" ) )
    METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
 
@@ -51,7 +47,6 @@ CLASS DocumentLine
 
    METHOD isLineaImpuestoIncluido()                            INLINE ( hGet( ::hDictionary, "LineaImpuestoIncluido" ) )
    METHOD isVolumenImpuestosEspeciales()                       INLINE ( hGet( ::hDictionary, "VolumenImpuestosEspeciales" ) )
-   METHOD isPuntoVerde()                                       INLINE ( hGet( ::hDictionaryMaster, "OperarPuntoVerde" ) )
 
    METHOD getImporteImpuestoEspecial()                         INLINE ( hGet( ::hDictionary, "ImporteImpuestoEspecial" ) )
    METHOD getVolumen()                                         INLINE ( hGet( ::hDictionary, "Volumen" ) )
@@ -92,7 +87,7 @@ METHOD Total()   CLASS DocumentLine
 
    Total                += ::Impuesto()
 
-   if ::isPuntoVerde()    
+   if ::oSender:isPuntoVerde()    
       Total             += ::getPuntoVerde() * ::totalUnidades()
    end if 
 

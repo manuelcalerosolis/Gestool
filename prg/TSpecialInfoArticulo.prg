@@ -123,7 +123,16 @@ METHOD Resource() CLASS TSpecialInfoArticulo
          :nWidth           := 150
       end with
 
-      oDlg:bStart     := {|| oBrwArticulo:LoadData() }
+      with object ( oBrwArticulo:addCol() )
+         :cHeader          := "Contador"
+         :bEditValue       := {|| Trans( SatCliArticulos->contadorLineaSAT, "@E 999,999,999.99" ) }
+         :nWidth           := 130
+         :nDataStrAlign    := AL_RIGHT
+         :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
+
+      oDlg:bStart     := {|| oBrwArticulo:Load() }
 
    ACTIVATE DIALOG oDlg CENTER
 
