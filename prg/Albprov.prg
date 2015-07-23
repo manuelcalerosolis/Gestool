@@ -5034,7 +5034,7 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                Vamos a ver si quedan unidades por recibir
                */
 
-               if nTotPdt > 0
+               if nTotPdt != 0
 
                   (dbfTmp)->( dbAppend() )
 

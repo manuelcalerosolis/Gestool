@@ -102,6 +102,7 @@ CLASS TpvListaTicket
    METHOD StartResource()
 
    METHOD OnClickListaTicket()
+   METHOD OnClickReabrirTicket() 
 
    METHOD LineaPrimera()      INLINE ( ::oBrwListaTicket:GoTop(),    ::oBrwListaTicket:Select(0), ::oBrwListaTicket:Select(1) )
    METHOD PaginaAnterior()    INLINE ( ::oBrwListaTicket:PageUp(),   ::oBrwListaTicket:Select(0), ::oBrwListaTicket:Select(1) )
@@ -405,9 +406,10 @@ METHOD StartResource() CLASS TpvListaTicket
          ::oAnteriorLinea     := TDotNetButton():New( 60, oGrupo,    "Navigate_up",             "Línea anterior",     5, {|| ::LineaAnterior() } )
          ::oSiguienteLinea    := TDotNetButton():New( 60, oGrupo,    "Navigate_down",           "Línea siguiente",    6, {|| ::LineaSiguiente() } )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 126,  "Salida", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "Check_32",                "Aceptar",            1, {|| ::OnClickListaTicket() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "End32",                   "Salida",             2, {|| ::End() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 186,  "Salida", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "Check_32",                "Reabrir",            1, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "Check_32",                "Aceptar",            2, {|| ::OnClickListaTicket() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "End32",                   "Salida",             3, {|| ::End() }, , , .f., .f., .f. )
 
    end if
 
@@ -460,6 +462,36 @@ METHOD OnClickListaTicket() CLASS TpvListaTicket
    ::cNumeroTicket            := ::oSender:oTiketCabecera:cSerTik + ::oSender:oTiketCabecera:cNumTik + ::oSender:oTiketCabecera:cSufTik
 
    ::oDlg:End()
+
+Return ( nil )
+
+//-------------------------------------------------------------------------//
+
+METHOD OnClickReabrirTicket() CLASS TpvListaTicket
+
+   local cTextoTicket         := ::oSender:oTiketCabecera:cSerTik + "/" + alltrim( ::oSender:oTiketCabecera:cNumTik ) + "/" + alltrim( ::oSender:oTiketCabecera:cSufTik )
+   local cNumeroTicket        := ::oSender:oTiketCabecera:cSerTik + ::oSender:oTiketCabecera:cNumTik + ::oSender:oTiketCabecera:cSufTik
+   
+   if ::oSender:oTiketCabecera:lCloTik
+      apoloMsgStop( "El ticket " + cTextoTicket + " pertenece a una sesión cerrada", "Atención" )
+      Return ( nil )
+   end if 
+
+   if apoloMsgNoYes( "¿ Desea realmente reabir el ticket " + cTextoTicket + "?" + ;
+                     CRLF + ;
+                     "Se eliminaran los pagos de este ticket y el ticket podrá ser modificado",;
+                     "Confirme", .t. )
+
+      CursorWait()
+
+      ::oSender:oTpvCobros:EliminaCobros( cNumeroTicket ) 
+      ::oSender:oTiketCabecera:fieldPutByName( "lPgdTik", .f. )
+
+      CursorWE()
+
+      ::OnClickListaTicket()
+
+   end if 
 
 Return ( nil )
 

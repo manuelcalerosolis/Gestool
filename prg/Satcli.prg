@@ -3361,9 +3361,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PROMPT   "&General",;
                   "Da&tos",;
                   "&Observaciones" ;
-         DIALOGS  "LSATCLI_1",;
+         DIALOGS  "LFACCLI_1",;
                   "LSATCLI_2",;
-                  "LSATCLI_3"
+                  "LFACCLI_3"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt;
          ID       100 ;

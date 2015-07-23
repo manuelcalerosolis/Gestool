@@ -757,11 +757,11 @@ Return .t.
 Elimina los pagos--------------------------------------------------------
 */
 
-METHOD EliminaCobros() CLASS TpvCobros
+METHOD EliminaCobros( cNumeroTicket ) CLASS TpvCobros
 
-   local cNumeroTicket  := ::oSender:cNumeroTicket()
+   DEFAULT cNumeroTicket   := ::oSender:cNumeroTicket()
 
-   if !Empty( cNumeroTicket )
+   if !empty( cNumeroTicket )
 
       ::oSender:oTiketCabecera:GetStatus()
 
@@ -823,6 +823,7 @@ METHOD GuardaCobros() CLASS TpvCobros
       else 
 
          msgStop( "No he podido almacenar los pagos del ticket " + ::oSender:cNumeroTicketFormato() )
+         
          Return .f.
 
       end if
