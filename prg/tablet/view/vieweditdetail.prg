@@ -25,11 +25,11 @@ CLASS ViewDetail FROM ViewBase
    METHOD New()
 
    METHOD Resource()
-   METHOD getOrderCustomer()           INLINE ( ::oSender:oSender )
+   METHOD getSenderDocument()           INLINE ( ::oSender:getSender() )
 
    METHOD SetGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
-                                                hGet( ::getOrderCustomer():oDocumentLineTemporal:hDictionary, cName ),;
-                                                hSet( ::getOrderCustomer():oDocumentLineTemporal:hDictionary, cName, uValue ) ) )
+                                                hGet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cName ),;
+                                                hSet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cName, uValue ) ) )
 
    METHOD defineAceptarCancelar()
 
@@ -284,7 +284,7 @@ METHOD definePrecio() CLASS ViewDetail
                                           "oWnd"      => ::oDlg,;
                                           "lPixels"   => .t.,;
                                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                          "cPict"     => cPouDiv( hGet( ::getOrderCustomer():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
+                                          "cPict"     => cPouDiv( hGet( ::getSenderDocument():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
                                           "bValid"    => {||  ::oSender:recalcularTotal() } } )
@@ -342,7 +342,7 @@ METHOD defineDescuentoLineal() CLASS ViewDetail
                                                    "oWnd"      => ::oDlg,;
                                                    "lPixels"   => .t.,;
                                                    "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                                   "cPict"     => cPouDiv( hGet( ::getOrderCustomer():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
+                                                   "cPict"     => cPouDiv( hGet( ::getSenderDocument():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
                                                    "lRight"    => .t.,;
                                                    "nHeight"   => 23,;
                                                    "bValid"    => {|| ::oSender:recalcularTotal() } } )
@@ -373,7 +373,7 @@ METHOD defineTotal() CLASS ViewDetail
                                           "oWnd"      => ::oDlg,;
                                           "lPixels"   => .t.,;
                                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                          "cPict"     => cPouDiv( hGet( ::getOrderCustomer():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView() ) ),;
+                                          "cPict"     => cPouDiv( hGet( ::getSenderDocument():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView() ) ),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
                                           "bWhen"     => {|| .f. } } )

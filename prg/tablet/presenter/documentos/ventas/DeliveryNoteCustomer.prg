@@ -4,26 +4,38 @@
 
 CLASS DeliveryNoteCustomer FROM DocumentsSales  
 
+   DATA oLinesDeliveryNoteCustomer
+
+   DATA cTextSummaryDocument              INIT "Resumen albarán"
+
    METHOD New()
-   
-   METHOD setAeras()
 
-   METHOD setNavigator()
-
-   METHOD PropiedadesBrowse()
-
-   METHOD PropiedadesBrowseDetail()
+   METHOD setEnviroment()                 INLINE ( ::setDataTable( "AlbCliT" ),;
+                                                ::setDataTableLine( "AlbCliL" ),;
+                                                ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ), ( ::getWorkArea() )->( dbgotop() ) )
 
    METHOD Resource( nMode )
 
-   METHOD ResourceDetail( nMode )
+   METHOD ResourceDetail( nMode )         INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
+
+   METHOD onClickRotor()                  INLINE ( ::oCliente:ClickRotor( hGet( ::hDictionaryMaster, "Cliente" ) ) )
 
    METHOD GetAppendDocumento()
-
    METHOD GetEditDocumento()
 
+   METHOD getLinesDocument( id )
+   METHOD addDocumentLine()
+   METHOD getDocumentLine()
+
+   METHOD getLines()                      INLINE ( ::oDocumentLines:getLines() )
+   METHOD getLineDetail()                 INLINE ( ::oDocumentLines:getLineDetail( ::nPosDetail ) )
+
+   METHOD onPreSaveAppendDocumento()
    METHOD GetAppendDetail()
    METHOD GetEditDetail()
+   METHOD deleteLinesDocument()
+
+   METHOD SetDocuments()
 
 END CLASS
 
@@ -31,146 +43,35 @@ END CLASS
 
 METHOD New() CLASS DeliveryNoteCustomer
 
-   if ::OpenFiles()
+   ::super:New( self )
 
-      ::setAeras()
+   ::oViewSearchNavigator:setTextoTipoDocumento( "Albaranes de clientes" )  
 
-      ::setNavigator()
-
-      ::CloseFiles()
-
-   end if   
+   ::oLinesDeliveryNoteCustomer           := LinesDeliveryNoteCustomer():New( self )
 
 return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setAeras() CLASS DeliveryNoteCustomer
-
-   ::setWorkArea( D():AlbaranesClientes( ::nView ) )  
-   ::setDetailArea( D():AlbaranesClientesLineas( ::nView ) )
-
-   ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD setNavigator() CLASS DeliveryNoteCustomer
-
-   ::oViewNavigator       := ViewNavigator():New( self )
-
-   if !Empty( ::oViewNavigator )
-
-      ::oViewNavigator:SetTextoTipoDocumento( "Albaranes de cliente" )
-      ::oViewNavigator:SetItemsBusqueda( { "Número", "Fecha", "Código", "Nombre" } )
-      ::oViewNavigator:setWorkArea( ::getWorkArea() )
-
-      ::oViewNavigator:ResourceViewNavigator()
-
-   end if
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD PropiedadesBrowse() CLASS DeliveryNoteCustomer
-
-   ::oViewNavigator:oBrowse:cName       := "Grid albaranes"
-
-   with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := "Albarán"
-      :bEditValue        := {|| D():AlbaranesClientesIdText( ::nView ) + CRLF + Dtoc( ( D():AlbaranesClientes( ::nView ) )->dFecAlb ) }
-      :nWidth            := 160
-   end with
-
-   with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := "Cliente"
-      :bEditValue        := {|| AllTrim( ( D():AlbaranesClientes( ::nView ) )->cCodCli ) + CRLF + AllTrim( ( D():AlbaranesClientes( ::nView ) )->cNomCli )  }
-      :nWidth            := 320
-   end with
-
-   with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := "Base"
-      :bEditValue        := {|| ( D():AlbaranesClientes( ::nView ) )->nTotNet  }
-      :cEditPicture      := cPorDiv()
-      :nWidth            := 80
-      :nDataStrAlign     := 1
-      :nHeadStrAlign     := 1
-      :lHide             := .t.
-   end with
-
-   with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := cImp()
-      :bEditValue        := {|| ( D():AlbaranesClientes( ::nView ) )->nTotIva  }
-      :cEditPicture      := cPorDiv()
-      :nWidth            := 80
-      :nDataStrAlign     := 1
-      :nHeadStrAlign     := 1
-      :lHide             := .t.
-   end with
-
-   with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := "R.E."
-      :bEditValue        := {|| ( D():AlbaranesClientes( ::nView ) )->nTotReq  }
-      :cEditPicture      := cPorDiv()
-      :nWidth            := 80
-      :nDataStrAlign     := 1
-      :nHeadStrAlign     := 1
-      :lHide             := .t.
-   end with
-
-   with object ( ::oViewNavigator:oBrowse:AddCol() )
-      :cHeader           := "Total"
-      :bEditValue        := {|| ( D():AlbaranesClientes( ::nView ) )->nTotAlb }
-      :cEditPicture      := cPorDiv()
-      :nWidth            := 190
-      :nDataStrAlign     := 1
-      :nHeadStrAlign     := 1
-   end with
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD Resource( nMode ) CLASS DeliveryNoteCustomer
 
-   ::oViewEdit       := ViewEdit():New( self )
+   local lResource   := .f.
 
    if !Empty( ::oViewEdit )
 
       ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "albarán" )
       
-      ::oViewEdit:ResourceViewEdit( nMode )
+      lResource      := ::oViewEdit:Resource( nMode )
 
    end if
 
-Return ( .t. )   
-
-//---------------------------------------------------------------------------//
-
-METHOD ResourceDetail( nMode ) CLASS DeliveryNoteCustomer
-
-   local lResult     := .f.
-
-   ::oViewEditDetail := ViewDetail():New( self )
-
-   if !Empty( ::oViewEditDetail )
-
-      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + " linea de albarán" )
-      
-      lResult        := ::oViewEditDetail:ResourceViewEditDetail( nMode )
-
-   end if
-
-Return ( lResult )   
+Return ( lResource )   
 
 //---------------------------------------------------------------------------//
 
 METHOD GetAppendDocumento() CLASS DeliveryNoteCustomer
 
-   ::hDictionaryMaster      := D():getDefaultHashAlbaranCliente( ::nView )
-   ::hDictionaryDetail      := {}
+   ::hDictionaryMaster      := D():GetDefaultHashAlbaranCliente( ::nView )
 
 Return ( self )
 
@@ -178,118 +79,111 @@ Return ( self )
 
 METHOD GetEditDocumento() CLASS DeliveryNoteCustomer
 
-   ::hDictionaryMaster      := D():getCurrentHashAlbaranCliente( ::nView ) 
-   ::hDictionaryDetail      := D():GetAlbaranClienteLineas( ::nView )
+   local id                := D():AlbaranesClientesId( ::nView )
+
+   ::hDictionaryMaster     := D():getAlbaranCliente( ::nView )
+
+   ::getLinesDocument( id )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+//
+// Convierte las lineas del albaran en objetos
+//
+
+METHOD getLinesDocument( id ) CLASS DeliveryNoteCustomer
+
+   ::oDocumentLines:reset()
+
+   D():getStatusAlbaranesClientesLineas( ::nView )
+
+   ( D():AlbaranesClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
+
+   if ( D():AlbaranesClientesLineas( ::nView ) )->( dbSeek( id ) )  
+
+      while ( D():AlbaranesClientesLineasId( ::nView ) == id ) .and. !( D():AlbaranesClientesLineas( ::nView ) )->( eof() ) 
+
+         ::addDocumentLine()
+      
+         ( D():AlbaranesClientesLineas( ::nView ) )->( dbSkip() ) 
+      
+      end while
+
+   end if 
+   
+   D():setStatusAlbaranesClientesLineas( ::nView ) 
+
+RETURN ( self ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD addDocumentLine() CLASS DeliveryNoteCustomer
+
+   local oDocumentLine  := ::getDocumentLine()
+
+   if !empty( oDocumentLine )
+      ::oDocumentLines:addLines( oDocumentLine )
+   end if
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD PropiedadesBrowseDetail() CLASS DeliveryNoteCustomer
+METHOD getDocumentLine() CLASS DeliveryNoteCustomer
 
-   ::oViewEdit:oBrowse:cName            := "Grid albaranes lineas"
+   local hLine    := D():GetAlbaranClienteLineasHash( ::nView )
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := "Número"
-      :bEditValue             := {|| ::getDataBrowse( "NumeroLinea" ) }
-      :cEditPicture           := "9999"
-      :nWidth                 := 55
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-      :lHide                  := .t.   
-   end with
+   if empty( hLine )
+      Return ( nil )
+   end if 
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := "Cód"
-      :bEditValue             := {|| ::getDataBrowse( "Articulo" ) }
-      :nWidth                 := 80
-   end with
+Return ( DocumentLine():New( hLine, self ) )
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := "Descripción"
-      :bEditValue             := {|| ::getDataBrowse( "DescripcionArticulo" ) }
-      :bFooter                := {|| "Total..." }
-      :nWidth                 := 310
-   end with
+//---------------------------------------------------------------------------//
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := cNombreCajas()
-      :bEditValue             := {|| ::getDataBrowse( "Cajas" ) }
-      :cEditPicture           := MasUnd()
-      :nWidth                 := 60
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-      :lHide                  := .t.
-      :nFooterType            := AGGR_SUM
-   end with
+METHOD onPreSaveAppendDocumento() CLASS DeliveryNoteCustomer
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := cNombreUnidades()
-      :bEditValue             := {|| ::getDataBrowse( "Unidades" ) }
-      :cEditPicture           := MasUnd()
-      :nWidth                 := 60
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-      :lHide                  := .t.
-      :nFooterType            := AGGR_SUM
-   end with
+   local lPreSaveDocument  := .f.
+   local NumeroDocumento   := nNewDoc( ::getSerie(), D():AlbaranesClientes( ::nView ), "nAlbCli", , D():Contadores( ::nView ) )
+   local nTotAlb           := ::oTotalDocument:getTotalDocument()
+   local nTotIVA           := ::oTotalDocument:getImporteIva()
+   local nTotReq           := ::oTotalDocument:getImporteRecargo()
+   local nTotNeto          := ::oTotalDocument:getBase()
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := "Und"
-      :bEditValue             := {|| nTotNAlbCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
-      :cEditPicture           := MasUnd()
-      :nWidth                 := 90
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-      :nFooterType            := AGGR_SUM
-   end with
+   if !empty( NumeroDocumento )
+      hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
+      lPreSaveDocument     := .t.
+   end if 
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := "Precio"
-      :bEditValue             := {|| nTotUAlbCli( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ] ) }
-      :cEditPicture           := cPouDiv( hGet( ::hDictionaryMaster, "Divisa" ), D():Divisas( ::nView ) )
-      :nWidth                 := 90
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-   end with
+   if !empty( nTotAlb )
+      hSet( ::hDictionaryMaster, "TotalDocumento", nTotAlb )
+      lPreSaveDocument        := .t.
+   end if
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := "% Dto."
-      :bEditValue             := {|| ::getDataBrowse( "Descuento" ) }
-      :cEditPicture           := "@E 999.99"
-      :nWidth                 := 55
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-      :lHide                  := .t.
-   end with
+   if !empty( nTotIVA )
+      hSet( ::hDictionaryMaster, "TotalImpuesto", nTotIVA )
+      lPreSaveDocument     := .t.
+   end if
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := "% " + cImp()
-      :bEditValue             := {|| ::getDataBrowse( "PorcentajeImpuesto" ) }
-      :cEditPicture           := "@E 999.99"
-      :nWidth                 := 45
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-      :lHide                  := .t.
-   end with
+   if !empty( nTotReq )
+      hSet( ::hDictionaryMaster, "TotalRecargo", nTotReq )
+      lPreSaveDocument     := .t.
+   end if
 
-   with object ( ::oViewEdit:oBrowse:AddCol() )
-      :cHeader                := "Total"
-      :bEditValue             := {|| nTotalLineaAlbaranCliente( ::hDictionaryDetail[ ::oViewEdit:oBrowse:nArrayAt ], , , , .t., hGet( ::hDictionaryMaster, "OperarPuntoVerde" ), .t. ) }
-      :cEditPicture           := cPouDiv( hGet( ::hDictionaryMaster, "Divisa" ), D():Divisas( ::nView ) )
-      :nWidth                 := 94
-      :nDataStrAlign          := 1
-      :nHeadStrAlign          := 1
-      :nFooterType            := AGGR_SUM
-   end with
+   if !empty( nTotNeto )
+      hSet( ::hDictionaryMaster, "TotalNeto", nTotNeto )
+      lPreSaveDocument     := .t.
+   end if
 
-Return ( self )
+Return ( lPreSaveDocument )
 
 //---------------------------------------------------------------------------//
 
 METHOD GetAppendDetail() CLASS DeliveryNoteCustomer
 
-   ::oDocumentLineTemporal      := D():GetAlbaranClienteLineaBlank( ::nView )
+   local hLine             := D():GetAlbaranClienteLineaBlank( ::nView )
+   ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
 
 Return ( self )
 
@@ -297,8 +191,50 @@ Return ( self )
 
 METHOD GetEditDetail() CLASS DeliveryNoteCustomer
 
-   ::oDocumentLineTemporal      := ::hDictionaryDetail[ ::nPosDetail ]
+   if !Empty( ::nPosDetail )
+      ::oDocumentLineTemporal   := ::oDocumentLines:getCloneLineDetail( ::nPosDetail )
+   end if
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD deleteLinesDocument() CLASS DeliveryNoteCustomer
+
+   D():getStatusAlbaranesClientesLineas( ::nView )
+
+   ( D():AlbaranesClientesLineas( ::nView ) )->( ordSetFocus( 1 ) )
+
+   while ( D():AlbaranesClientesLineas( ::nView ) )->( dbSeek( ::getID() ) ) 
+      ::delDocumentLine()
+   end while
+
+   D():setStatusAlbaranesClientesLineas( ::nView ) 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD SetDocuments() CLASS DeliveryNoteCustomer
+
+   local cSerie         := hGet( ::hDictionaryMaster, "Serie" )
+   local cDocumento     := ""
+   local cFormato
+   local nFormato
+   local aFormatos      := aDocs( "AB", D():Documentos( ::nView ), .t. )
+
+   cFormato             := cFormatoDocumento( cSerie, "nAlbCli", D():Contadores( ::nView ) )
+
+   if Empty( cFormato )
+      cFormato          := cFirstDoc( "AB", D():Documentos( ::nView ) )
+   end if
+
+   nFormato             := aScan( aFormatos, {|x| Left( x, 3 ) == cFormato } )
+   nFormato             := Max( Min( nFormato, len( aFormatos ) ), 1 )
+
+   ::oViewEditResumen:SetImpresoras( aFormatos )
+   ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
+
+return ( .t. )
 
 //---------------------------------------------------------------------------//

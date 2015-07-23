@@ -1,30 +1,40 @@
 #include "FiveWin.Ch"
 #include "Factu.ch" 
 
-CLASS Customer FROM DocumentsSales
+CLASS Customer FROM Editable
 
    DATA oClienteIncidencia
 
    DATA oViewIncidencia
 
-   DATA cTipoCliente             INIT ""
+   DATA cTipoCliente                   INIT ""
 
-   DATA hTipoCliente             INIT { "1" => "Clientes", "2" => "Potenciales", "3" => "Web" }
+   DATA hTipoCliente                   INIT { "1" => "Clientes", "2" => "Potenciales", "3" => "Web" }
 
    METHOD New()
 
+   METHOD runNavigatorCustomer()
+
+   METHOD OpenFiles()
+   METHOD CloseFiles()              INLINE ( D():DeleteView( ::nView ) )
+
    METHOD Init( nView )
 
-   METHOD setEnviroment()        INLINE ( ::setDataTable( "Client" ) ) 
+   METHOD setEnviroment()              INLINE ( ::setDataTable( "Client" ) ) 
    
-   METHOD showIncidencia()       INLINE ( ::oClienteIncidencia:showNavigator() )
+   METHOD showIncidencia()             INLINE ( ::oClienteIncidencia:showNavigator() )
 
-   METHOD Resource()             INLINE ( ::oViewEdit:Resource() )   
-
-   METHOD onPostGetDocumento()
-   METHOD onPreSaveDocumento()   
+   METHOD Resource()                   INLINE ( ::oViewEdit:Resource() )   
 
    METHOD setFilterAgentes()
+
+   METHOD onPreSaveEditDocumento()     INLINE ( .t. )
+   METHOD onPreEnd()                   INLINE ( .t. )
+
+   METHOD onPostGetDocumento()
+   METHOD onPreSaveDocumento()
+
+   METHOD ClickRotor()           
 
 ENDCLASS
 
@@ -44,13 +54,56 @@ METHOD New() CLASS Customer
 
       ::setEnviroment()
 
-      ::oViewNavigator:showView()
-
-      ::CloseFiles()
-
    end if   
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD runNavigatorCustomer() CLASS Customer
+
+   if !empty( ::oViewNavigator )
+      ::oViewNavigator:showView()
+   end if
+
+   ::CloseFiles()
+
+return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD OpenFiles() CLASS Customer
+
+   local oError
+   local oBlock
+   local lOpenFiles     := .t.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ::nView           := D():CreateView()
+
+      D():Clientes( ::nView )
+
+      D():ClientesDirecciones( ::nView )
+
+      D():TiposIncidencias( ::nView )
+
+   RECOVER USING oError
+
+      lOpenFiles     := .f.
+
+      ApoloMsgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if !lOpenFiles
+      ::CloseFiles( "" )
+   end if
+
+Return ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
@@ -115,5 +168,13 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD ClickRotor( Codigo ) CLASS Customer
 
+   //MsgAlert( Codigo, "Codigo del cliente" )
+
+   ::edit()
+
+Return( .t. )
+
+//---------------------------------------------------------------------------//
 

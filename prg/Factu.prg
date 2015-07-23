@@ -5911,12 +5911,14 @@ Function MainTablet()
                            "cResName"  => "Gestool",;
                            "oWnd"      => oDlg } )
 
+   //----------------Clientes
+
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 3 ) },;
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| Customer():New() },;
+                           "cResName"  => "user1_64",;
+                           "bLClicked" => {|| Customer():New():runNavigatorCustomer() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 3 ) },;
@@ -5928,7 +5930,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| Customer():New() } } )
+                           "bAction"   => {|| Customer():New():runNavigatorCustomer() } } )
 
    //----------------Salir
 
@@ -5959,7 +5961,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| OrderCustomer():New() },;
+                           "bLClicked" => {|| OrderCustomer():New():runNavigator() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
@@ -5971,7 +5973,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| OrderCustomer():New() } } )
+                           "bAction"   => {|| OrderCustomer():New():runNavigator() } } )
 
    //----------------Albaranes de clientes
    
@@ -5979,8 +5981,8 @@ Function MainTablet()
                            "nLeft"     => {|| GridWidth( 0.5, oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| DeliveryNoteCustomer():New() },;
+                           "cResName"  => "document_plain_user1_64",;
+                           "bLClicked" => {|| DeliveryNoteCustomer():New():runNavigator() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 9 ) },;
@@ -5992,7 +5994,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| DeliveryNoteCustomer():New() } } )
+                           "bAction"   => {|| DeliveryNoteCustomer():New():runNavigator() } } )
 
    //----------------Facturas
    

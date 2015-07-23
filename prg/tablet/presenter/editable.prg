@@ -16,13 +16,13 @@ CLASS Editable
    DATA oViewNavigator
    DATA oViewSearchNavigator
    DATA oViewEdit
+   DATA oCliente
    DATA oViewEditDetail
 
    DATA cDetailArea
    DATA nPosDetail                              INIT 0
    
    DATA hDictionaryMaster
-   DATA hDictionaryDetail
    DATA oDocumentLineTemporal
 
    DATA aDetails                                INIT {}
@@ -41,15 +41,14 @@ CLASS Editable
    METHOD setDataTableLine( cDataTableLine )    INLINE ( ::cDataTableLine := cDataTableLine )
    METHOD getDataTableLine()                    INLINE ( ::cDataTableLine )
 
-   METHOD setDataTableLineID( cDataTableLineID )  INLINE ( ::cDataTableLineID := cDataTableLineID )
-   METHOD getDataTableLineID()                    INLINE ( ::cDataTableLineID )
-
    METHOD onPostGetDocumento()                  INLINE ( .t. )
    METHOD onPreSaveAppendDocumento()            VIRTUAL
    METHOD onPostSaveAppendDocumento()           INLINE ( .t. )
 
    METHOD onPreSaveEditDocumento()              VIRTUAL
    METHOD onPostSaveEditDocumento()             INLINE ( .t. )
+
+   METHOD onPreEnd()                            VIRTUAL
 
    METHOD getAppendDocumento()                  INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
    METHOD getEditDocumento()                    INLINE ( ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView ) )
@@ -103,9 +102,7 @@ METHOD Append() CLASS Editable
       lAppend     := ::saveAppend()
    end if
 
-   ::oDocumentLines:reset()
-
-   ::isPrintDocument()
+   ::onPreEnd()
 
    ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 
@@ -148,9 +145,7 @@ METHOD Edit() CLASS Editable
       lEdit       := ::saveEdit()
    end if
 
-   ::oDocumentLines:reset()
-
-   ::isPrintDocument()
+   ::onPreEnd()
 
    ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 

@@ -1,21 +1,21 @@
 #include "FiveWin.Ch"
 #include "Factu.ch"
 
-CLASS LinesOrderCustomer FROM LinesDocumentsSales  
+CLASS LinesDeliveryNoteCustomer FROM LinesDocumentsSales  
 
    DATA oSender
    
    METHOD ResourceDetail( nMode )
 
-   METHOD getSender()     INLINE ( ::oSender )
-   METHOD getView()              INLINE ( ::getSender():nView )
+   METHOD getSender()               INLINE ( ::oSender )
+   METHOD getView()                 INLINE ( ::getSender():nView )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
-METHOD ResourceDetail( nMode ) CLASS LinesOrderCustomer
+METHOD ResourceDetail( nMode ) CLASS LinesDeliveryNoteCustomer
 
    local lResult     := .f.
 
@@ -23,7 +23,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesOrderCustomer
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de pedido" )
+      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de albarán" )
 
       lResult        := ::oViewEditDetail:Resource( nMode )
 

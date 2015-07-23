@@ -2,7 +2,7 @@
 #include "Factu.ch" 
 #include "Xbrowse.ch"
 
-CLASS OrderCustomerViewEdit FROM ViewEdit 
+CLASS DocumentSalesViewEdit FROM ViewEdit 
   
    METHOD New()
 
@@ -18,7 +18,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( oSender ) CLASS OrderCustomerViewEdit
+METHOD New( oSender ) CLASS DocumentSalesViewEdit
 
    ::oSender   := oSender
 
@@ -26,7 +26,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD insertControls() CLASS OrderCustomerViewEdit
+METHOD insertControls() CLASS DocumentSalesViewEdit
 
    ::defineSerie()
 
@@ -44,12 +44,12 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD columnsBrowseLineas() CLASS OrderCustomerViewEdit
+METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
 
    with object ( ::oBrowse:AddCol() )
       :cHeader                := "Cód"
       :bEditValue             := {|| ::getDocumentLine():getArticulo() }
-      :nWidth                 := 80
+      :nWidth                 := 100
    end with
 
    with object ( ::oBrowse:AddCol() )
@@ -124,7 +124,7 @@ METHOD columnsBrowseLineas() CLASS OrderCustomerViewEdit
       :cHeader                := "Total"
       :bEditValue             := {|| ::getDocumentLine():Total() }
       :cEditPicture           := cPouDiv()
-      :nWidth                 := 94
+      :nWidth                 := 120
       :nDataStrAlign          := 1
       :nHeadStrAlign          := 1
       :nFooterType            := AGGR_SUM
