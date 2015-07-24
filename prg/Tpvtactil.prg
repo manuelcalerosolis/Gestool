@@ -670,11 +670,14 @@ CLASS TpvTactil
       METHOD SetLineaImpresa( lImpresa)      INLINE ( if( lImpresa, ::oTiketLinea:FieldPutByName( "lImpCom", .t. ), ::oTiketLinea:FieldPutByName( "lImpCom", .f. ) ) )
 
    METHOD nUnidadesLinea( uTmpL, lPicture )
+   METHOD nUnidadesLineaTemp( uTmpL, lPicture )
    METHOD nUnidadesImpresas( uTmpL, lPicture )
 
    METHOD nPrecioLinea()                     INLINE ( Round( ::oTiketLinea:nPvpTil, ::nDecimalesImporte ) + Round( ::oTiketLinea:nPcmTil, ::nDecimalesImporte ) )  // Precio
+   METHOD nPrecioLineaTemp()                 INLINE ( Round( ::oTemporalImpresionLinea:nPvpTil, ::nDecimalesImporte ) + Round( ::oTemporalImpresionLinea:nPcmTil, ::nDecimalesImporte ) )  // Precio
 
    METHOD nTotalLinea( uTmpL, lPic )
+   METHOD nTotalLineaTemp( uTmpL, lPic )
    METHOD nTotalLineaUno( uTmpL, nVdv )
    METHOD nTotalLineaDos( uTmpL, nVdv )
 
@@ -819,6 +822,10 @@ CLASS TpvTactil
    METHOD cTextoLineaTicket()          INLINE ( ::cTextoLinea( ::oTiketLinea ) )
 
    METHOD cTextoLineaTicketLeng()      INLINE ( ::cTextoLineaLeng( ::oTiketLinea, ::oArticulosLenguajes ) )
+
+   METHOD cTextoLineaTicketTemp()      INLINE ( ::cTextoLinea( ::oTemporalImpresionLinea ) )
+
+   METHOD cTextoLineaTicketLengTemp()  INLINE ( ::cTextoLineaLeng( ::oTemporalImpresionLinea, ::oArticulosLenguajes ) )
 
    METHOD cTextoLinea( oDbf )
 
@@ -4036,7 +4043,8 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalImpresionLinea:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalComanda ) TAG "TikImpL" ON Field->cSerTil + Field->cNumTil + Field->cSufTil + Field->cOrdOrd + Str( Recno() )    COMMENT "Orden"   NODELETED OF ::oTemporalImpresionLinea
+      INDEX TO ( ::cTemporalImpresionLinea ) TAG "NumTik" ON Field->cSerTil + Field->cNumTil + Field->cSufTil + Str( Recno() )    COMMENT "Orden"   NODELETED OF ::oTemporalImpresionLinea
+      INDEX TO ( ::cTemporalImpresionLinea ) TAG "Codigo" ON Field->cCbaTil COMMENT "Codigo"   NODELETED OF ::oTemporalImpresionLinea
 
    END DATABASE ::oTemporalImpresionLinea
 
@@ -6057,6 +6065,24 @@ RETURN ( if( lPicture, Trans( nUnidadesLinea, ::cPictureUnidades ), nUnidadesLin
 
 //---------------------------------------------------------------------------//
 
+METHOD nUnidadesLineaTemp( uTmpL, lPicture ) CLASS TpvTactil
+
+   local nUnidadesLinea    := 0
+
+   DEFAULT uTmpL           := ::oTemporalImpresionLinea
+   DEFAULT lPicture        := .f.
+
+   if Empty( uTmpL )
+      Return ( nUnidadesLinea )
+   end if
+
+   nUnidadesLinea          := uTmpL:nUntTil
+   nUnidadesLinea          *= NotCero( uTmpL:nUndKit )
+
+RETURN ( if( lPicture, Trans( nUnidadesLinea, ::cPictureUnidades ), nUnidadesLinea ) )
+
+//---------------------------------------------------------------------------//
+
 METHOD nUnidadesImpresas( uTmpL, lPicture ) CLASS TpvTactil
 
    local nUnidadesLinea
@@ -6075,6 +6101,20 @@ METHOD nTotalLinea( uTmpL, lPicture ) CLASS TpvTactil
    local nTotalLinea
 
    DEFAULT uTmpL     := ::oTiketLinea
+   DEFAULT lPicture  := .f.
+
+   nTotalLinea       := ::nTotalLineaUno( uTmpL )
+   nTotalLinea       += ::nTotalLineaDos( uTmpL )
+
+RETURN ( if( lPicture, Trans( nTotalLinea, ::cPictureTotal ), nTotalLinea ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalLineaTemp( uTmpL, lPicture ) CLASS TpvTactil
+
+   local nTotalLinea
+
+   DEFAULT uTmpL     := ::oTemporalImpresionLinea
    DEFAULT lPicture  := .f.
 
    nTotalLinea       := ::nTotalLineaUno( uTmpL )
@@ -9012,11 +9052,11 @@ METHOD VariableReport() CLASS TpvTactil
 
          ::oFastReport:AddVariable(     "Tickets",             "Total IVMH",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalImpuestoHidrocarburos()' ] )" )
 
-         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",               "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicket()' ] )" )
-         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del ticket en distinto idioma",        "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicketLeng()' ] )" ) 
-         ::oFastReport:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                      "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLinea()' ] )" )
-         ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                 "CallHbFunc( 'oTpvTactil', [ 'nPrecioLinea()' ] )" )
-         ::oFastReport:AddVariable(     "Lineas de tickets",   "Total línea de factura",                       "CallHbFunc( 'oTpvTactil', [ 'nTotalLinea()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del artículo en ticket",               "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicketTemp()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Detalle del ticket en distinto idioma",        "CallHbFunc( 'oTpvTactil', [ 'cTextoLineaTicketLengTemp()' ] )" ) 
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                      "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaTemp()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                 "CallHbFunc( 'oTpvTactil', [ 'nPrecioLineaTemp()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Total línea de factura",                       "CallHbFunc( 'oTpvTactil', [ 'nTotalLineaTemp()' ] )" )
 
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario con descuentos",               "CallHbFunc('nNetLTpv')" )
          ::oFastReport:AddVariable(     "Lineas de tickets",   "Importe descuento línea del factura",          "CallHbFunc('nDtoUTpv')" )
@@ -10104,22 +10144,49 @@ RETURN ( lValid )
 
 METHOD LoadTemporalImpresionlinea()
 
-   //MsgInfo( "Cargamos el temporal de lineas para imprimir" )
+   local nOrdAnt
+
+   ::oTemporalImpresionLinea:Zap()
+
+   nOrdAnt        := ::oTemporalImpresionLinea:OrdSetFocus( "Codigo" )
 
    if ::oTiketLinea:Seek( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
 
       while ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik .and.;
             !::oTiketLinea:Eof()
 
-            //MsgInfo( ::oTiketLinea:cNomTil, "Producto" )
+            if ::oTemporalImpresionLinea:Seek( ::oTiketLinea:cCbaTil )
 
-            dbPass( ::oTiketLinea:cAlias, ::oTemporalImpresionLinea:cAlias, .t. )
+               if ::oTiketLinea:nPvpTil == ::oTemporalImpresionLinea:nPvpTil  .and.;
+                  ::oTiketLinea:cComTil == ::oTemporalImpresionLinea:cComTil  .and.;
+                  ::oTiketLinea:cCodPr1 == ::oTemporalImpresionLinea:cCodPr1  .and.;
+                  ::oTiketLinea:cValPr1 == ::oTemporalImpresionLinea:cValPr1  .and.;
+                  ::oTiketLinea:nDtoDiv == ::oTemporalImpresionLinea:nDtoDiv  .and.;
+                  ::oTiketLinea:cComent == ::oTemporalImpresionLinea:cComent
+
+                  ::oTemporalImpresionLinea:Load()
+                  ::oTemporalImpresionLinea:nUntTil   += ::oTiketLinea:nUntTil
+                  ::oTemporalImpresionLinea:Save()
+
+               else
+
+                  dbPass( ::oTiketLinea:cAlias, ::oTemporalImpresionLinea:cAlias, .t. )
+
+               end if
+
+            else
+
+               dbPass( ::oTiketLinea:cAlias, ::oTemporalImpresionLinea:cAlias, .t. )
+
+            end if
 
             ::oTiketLinea:Skip()
 
       end while
 
    end if
+
+   ::oTemporalImpresionLinea:OrdSetFocus( nOrdAnt )
 
 Return ( .t. )
 
