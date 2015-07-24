@@ -224,9 +224,9 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
                               "nHeight"   => 23,;
                               "lDesign"   => .f. } )*/
 
-   TCheckBox():New( 115, GridWidth( 0.5, ::oDlg ), "Recargo Equivalencia", {|| hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) }, ::oDlg, 23, 23,;        //nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
-                     nil, nil, oGridFont(), nil, nil, nil,;   //nHelpTopic, bChange, oGridFont(), bValid, nClrFore, nClrBack,; 
-                     nil, nil, nil, nil, nil )     //lDesign, lPixel, cMsg, lUpdate, bWhen
+   TCheckBox():New( 115, 10, "Recargo Equivalencia", {|| hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) }, ::oDlg, 100, 100 ) //,;  //nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
+//                     nil, nil, oGridFont(), nil, nil, nil,;   //nHelpTopic, bChange, oGridFont(), bValid, nClrFore, nClrBack,; 
+//                     nil, nil, nil, nil, nil )     //lDesign, lPixel, cMsg, lUpdate, bWhen
 
 Return ( self )
 
