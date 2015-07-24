@@ -229,6 +229,8 @@ METHOD lValidCliente( oGet, oGet2, nMode ) CLASS DocumentsSales
    local lValid      := .t.
    local cNewCodCli  := hGet( ::hDictionaryMaster, "Cliente" )
 
+   msgAlert( "lValidCliente" )
+
    if Empty( cNewCodCli )
       Return .t.
    else

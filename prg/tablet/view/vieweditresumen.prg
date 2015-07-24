@@ -41,6 +41,8 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD defineComboImpresion()
 
+   METHOD defineCheckRecargo()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -66,6 +68,8 @@ METHOD Resource() CLASS ViewEditResumen
    ::defineFormaPago()
 
    ::defineComboImpresion()
+
+   ::defineCheckRecargo()
 
    ::defineBrowseIva()
 
@@ -206,11 +210,33 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD defineCheckRecargo() CLASS ViewEditResumen
+
+   /*TGridSay():Build(    {     "nRow"      => 115,;
+                              "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                              "bText"     => {|| "Recargo Equivalencia:" },;
+                              "oWnd"      => ::oDlg,;
+                              "oFont"     => oGridFont(),;
+                              "lPixels"   => .t.,;
+                              "nClrText"  => Rgb( 0, 0, 0 ),;
+                              "nClrBack"  => Rgb( 255, 255, 255 ),;
+                              "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
+                              "nHeight"   => 23,;
+                              "lDesign"   => .f. } )*/
+
+   TCheckBox():New( 115, GridWidth( 0.5, ::oDlg ), "Recargo Equivalencia", {|| hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) }, ::oDlg, 23, 23,;        //nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
+                     nil, nil, oGridFont(), nil, nil, nil,;   //nHelpTopic, bChange, oGridFont(), bValid, nClrFore, nClrBack,; 
+                     nil, nil, nil, nil, nil )     //lDesign, lPixel, cMsg, lUpdate, bWhen
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD defineBrowseIva() CLASS ViewEditResumen
 
    ::oBrowse                  := TGridIXBrowse():New( ::oDlg )
 
-   ::oBrowse:nTop             := ::oBrowse:EvalRow( 125 )
+   ::oBrowse:nTop             := ::oBrowse:EvalRow( 150 )
    ::oBrowse:nLeft            := ::oBrowse:EvalCol( {|| GridWidth( 0.5, ::oDlg ) } )
    ::oBrowse:nWidth           := ::oBrowse:EvalWidth( {|| GridWidth( 11, ::oDlg ) } )
    ::oBrowse:nHeight          := ::oBrowse:EvalHeight( {|| GridHeigth( ::oDlg ) - ::oBrowse:nTop - 10 } )

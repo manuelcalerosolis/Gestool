@@ -73,7 +73,7 @@ Return ( TotalImporteIVA )
 
 METHOD getImporteRecargo() CLASS TotalDocument
 
-   local TotalImporteRecargo   := 0
+   local TotalImporteRecargo     := 0
 
    aeval( ::oIva:aIva, {|hIva, nPosition| TotalImporteRecargo += ::oIva:ImporteRecargo( nPosition ) } )
 

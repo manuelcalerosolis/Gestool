@@ -172,6 +172,8 @@ METHOD ClickRotor( Codigo ) CLASS Customer
 
    //MsgAlert( Codigo, "Codigo del cliente" )
 
+//   ::oSender:lValidCliente( ,Codigo )
+
    ::edit()
 
 Return( .t. )
