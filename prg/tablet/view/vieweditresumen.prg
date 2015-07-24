@@ -228,7 +228,6 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
                               "nHeight"   => 23,;
                               "lDesign"   => .f. } )*/
 
-<<<<<<< HEAD
    ::oGridCheckBox   := TGridCheckBox():Build(  {  "nRow"      => 115,;       
                                                    "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                                                    "cCaption"  => " Recargo Equivalencia",;
@@ -243,12 +242,7 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
                      /* ::oSender:bChangeCheckBox()    nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
                         nHelpTopic, bChange, oFont, bValid, nClrFore, nClrBack,;
                         lDesign, lPixel, cMsg, lUpdate, bWhen                    */
-=======
-   TCheckBox():New( 115, 10, "Recargo Equivalencia", {|| hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) }, ::oDlg, 100, 100 ) //,;  //nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
-//                     nil, nil, oGridFont(), nil, nil, nil,;   //nHelpTopic, bChange, oGridFont(), bValid, nClrFore, nClrBack,; 
-//                     nil, nil, nil, nil, nil )     //lDesign, lPixel, cMsg, lUpdate, bWhen
 
->>>>>>> origin/master
 Return ( self )
 
 //---------------------------------------------------------------------------//
