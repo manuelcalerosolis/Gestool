@@ -5384,6 +5384,7 @@ CLASS D
    METHOD GetObject( cObject, nView )
 
    METHOD getHashRecord( cDatabase, nView )
+   METHOD getFieldDictionary( cField, cDataTable, nView )
    METHOD getHashArray( aRecord, cDatabase, nView )
    METHOD getHashTable( cAlias, cDatabase, nView )
    METHOD getHashRecordById( id, cDatabase, nView )
@@ -5461,13 +5462,17 @@ CLASS D
       METHOD AlbaranesClientesIdTextShort( nView );
                                                       INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
       METHOD AlbaranesClientesIdText( nView )         INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
-      METHOD getCurrentHashAlbaranCliente( nView )    INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
+      METHOD getAlbaranCliente( nView )               INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
       METHOD getDefaultHashAlbaranCliente( nView )    INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
    METHOD AlbaranesClientesLineas( nView )            INLINE ( ::Get( "AlbCliL", nView ) )
       METHOD AlbaranesClientesLineasId( nView )       INLINE ( ( ::Get( "AlbCliL", nView ) )->cSerAlb + str( ( ::Get( "AlbCliL", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliL", nView ) )->cSufAlb )
+      METHOD GetAlbaranClienteLineasHash( nView )     INLINE ( ::getHashRecord( ::AlbaranesClientesLineas( nView ), nView ) )
       METHOD GetAlbaranClienteLineas( nView )         INLINE ( ::getArrayRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientesLineas( nView ), nView ) )
       METHOD GetAlbaranClienteLineaBlank( nView )     INLINE ( ::getHashRecordBlank( ::AlbaranesClientesLineas( nView ), nView ) )
+
+   METHOD getStatusAlbaranesClientesLineas( nView )   INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientesLineas( nView ) ) )
+   METHOD setStatusAlbaranesClientesLineas( nView )   INLINE ( SetStatus( ::AlbaranesClientesLineas( nView ), ::aStatus ) )
 
    METHOD AlbaranesClientesSeries( nView )            INLINE ( ::Get( "AlbCliS", nView ) )
       METHOD AlbaranesClientesSeriesId( nView )       INLINE ( ( ::Get( "AlbCliS", nView ) )->cSerAlb + str( ( ::Get( "AlbCliS", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliS", nView ) )->cSufAlb )
@@ -6249,6 +6254,23 @@ METHOD getHashRecord( cDataTable, nView ) CLASS D
 RETURN ( hash )
 
 //---------------------------------------------------------------------------//
+
+METHOD getFieldDictionary( cField, cDataTable, nView ) CLASS D
+
+   local dbf         := ::Get( cDataTable, nView )   
+   local aDictionary := TDataCenter():getDictionary( cDataTable )
+   local value
+
+   value             := hGet( aDictionary, cField )
+
+   if !empty( value )
+     Return( ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) )
+   endif
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD getHashArray( aRecord, cDataTable, nView ) CLASS D
 
