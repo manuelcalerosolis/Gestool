@@ -7,6 +7,7 @@ CLASS ViewEditResumen FROM ViewBase
    DATA oDlg
    DATA oSender
    DATA oBrowse
+   DATA oGridCheckBox
    DATA oCbxImpresora
    DATA aCbxImpresora         INIT {}
    DATA cCbxImpresora
@@ -16,7 +17,6 @@ CLASS ViewEditResumen FROM ViewBase
    DATA cCodigoFormaPago      INIT ""
    DATA oNombreFormaPago
    DATA cNombreFormaPago      INIT ""
-   DATA hTotalIva             INIT {=>}
 
    METHOD New()
 
@@ -42,6 +42,10 @@ CLASS ViewEditResumen FROM ViewBase
    METHOD defineComboImpresion()
 
    METHOD defineCheckRecargo()
+
+   METHOD SetGet( u )                           INLINE ( if( hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) != u .and. !empty( u ),;
+                                                             hset( ::oSender:hDictionaryMaster, "RecargoEquivalencia", u ),;
+                                                             hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) ) )
 
 END CLASS
 
@@ -224,10 +228,20 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
                               "nHeight"   => 23,;
                               "lDesign"   => .f. } )*/
 
-   TCheckBox():New( 115, GridWidth( 0.5, ::oDlg ), "Recargo Equivalencia", {|| hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) }, ::oDlg, 23, 23,;        //nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
-                     nil, nil, oGridFont(), nil, nil, nil,;   //nHelpTopic, bChange, oGridFont(), bValid, nClrFore, nClrBack,; 
-                     nil, nil, nil, nil, nil )     //lDesign, lPixel, cMsg, lUpdate, bWhen
+   ::oGridCheckBox   := TGridCheckBox():Build(  {  "nRow"      => 115,;       
+                                                   "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "cCaption"  => " Recargo Equivalencia",;
+                                                   "bSetGet"   => {|u| ::SetGet( u ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t.,;
+                                                   "bChange"   => {|| msgAlert( ::oGridCheckBox:varGet(), "oGridCheckBox" ) } } )
 
+                     /* ::oSender:bChangeCheckBox()    nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
+                        nHelpTopic, bChange, oFont, bValid, nClrFore, nClrBack,;
+                        lDesign, lPixel, cMsg, lUpdate, bWhen                    */
 Return ( self )
 
 //---------------------------------------------------------------------------//

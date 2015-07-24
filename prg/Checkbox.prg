@@ -34,7 +34,7 @@ CLASS TCheckBox FROM TControl
 
    METHOD Default()
 
-   METHOD cToChar() INLINE Super:cToChar( "BUTTON" )
+   METHOD cToChar() INLINE Super:cToChar( "CHECKBOX" )
 
    #ifndef __CLIPPER__
       METHOD EraseBkGnd( hDC )

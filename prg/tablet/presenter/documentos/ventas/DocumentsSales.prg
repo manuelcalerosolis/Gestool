@@ -88,6 +88,8 @@ CLASS DocumentsSales FROM Documents
    METHOD onPreSaveEditDocumento()
    METHOD onPreEnd()
 
+   METHOD bChangeCheckBox()
+
 
 END CLASS
 
@@ -727,5 +729,10 @@ METHOD onPreEnd() CLASS DocumentsSales
 
 Return( lPostSaveEditDocumento )
 
+//---------------------------------------------------------------------------//
 
+METHOD bChangeCheckBox() CLASS DocumentsSales
 
+Return( .t. )
+
+//---------------------------------------------------------------------------//

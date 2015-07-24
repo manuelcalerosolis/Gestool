@@ -704,6 +704,66 @@ Return Self
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 
+
+CLASS TGridCheckBox FROM TCheckBox, TGridable
+
+   METHOD Build( hBuilder )
+
+   METHOD New()
+
+END CLASS
+
+//----------------------------------------------------------------------------//
+
+METHOD Build( hBuilder ) CLASS TGridCheckBox
+
+   local nRow        := if( hhaskey( hBuilder, "nRow" ),       hBuilder[ "nRow"       ], nil )
+   local nCol        := if( hhaskey( hBuilder, "nCol" ),       hBuilder[ "nCol"       ], nil )
+   local cCaption    := if( hhaskey( hBuilder, "cCaption" ),   hBuilder[ "cCaption"   ], nil )
+   local bSetGet     := if( hhaskey( hBuilder, "bSetGet" ),    hBuilder[ "bSetGet"    ], nil )
+   local oWnd        := if( hhaskey( hBuilder, "oWnd" ),       hBuilder[ "oWnd"       ], nil )
+   local nWidth      := if( hhaskey( hBuilder, "nWidth" ),     hBuilder[ "nWidth"     ], nil )
+   local nHeight     := if( hhaskey( hBuilder, "nHeight" ),    hBuilder[ "nHeight"    ], nil )
+   local nHelpTopic  := if( hhaskey( hBuilder, "nHelpTopic" ), hBuilder[ "nHelpTopic" ], nil )
+   local bChange     := if( hhaskey( hBuilder, "bChange" ),    hBuilder[ "bChange"    ], nil )
+   local bValid      := if( hhaskey( hBuilder, "bValid" ),     hBuilder[ "bValid"     ], nil )
+   local nClrFore    := if( hhaskey( hBuilder, "nClrFore" ),   hBuilder[ "nClrFore"   ], nil )
+   local nClrBack    := if( hhaskey( hBuilder, "nClrBack" ),   hBuilder[ "nClrBack"   ], nil )
+   local lPixel      := if( hhaskey( hBuilder, "lPixel" ),     hBuilder[ "lPixel"     ], .t. )
+   local oFont       := if( hhaskey( hBuilder, "oFont" ),      hBuilder[ "oFont"      ], nil )
+   local cMsg        := if( hhaskey( hBuilder, "cMsg" ),       hBuilder[ "cMsg"       ], nil )
+   local lUpdate     := if( hhaskey( hBuilder, "lUpdate" ),    hBuilder[ "lUpdate"    ], nil )
+   local bWhen       := if( hhaskey( hBuilder, "bWhen" ),      hBuilder[ "bWhen"      ], nil )
+   local lDesign     := if( hhaskey( hBuilder, "lDesign" ),    hBuilder[ "lDesign"    ], nil )
+
+Return ( ::New( nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
+               nHelpTopic, bChange, oFont, bValid, nClrFore, nClrBack,;
+               lDesign, lPixel, cMsg, lUpdate, bWhen ) )
+
+//----------------------------------------------------------------------------//
+
+METHOD New( nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
+               nHelpTopic, bChange, oFont, bValid, nClrFore, nClrBack,;
+               lDesign, lPixel, cMsg, lUpdate, bWhen ) CLASS TGridCheckBox
+
+   nRow     := ::EvalRow( nRow )
+   nCol     := ::EvalCol( nCol )
+   nWidth   := ::EvalWidth( nWidth )
+   nHeight  := ::EvalHeight( nHeight )
+
+   ::Super:New( nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
+               nHelpTopic, bChange, oFont, bValid, nClrFore, nClrBack,;
+               lDesign, lPixel, cMsg, lUpdate, bWhen ) 
+
+Return Self
+
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+//----------------------------------------------------------------------------//
+
 Function oGridFont()
 
    if empty( oFont )
@@ -785,4 +845,6 @@ Static Function HideKeyboard()
 Return .t. 
 
 //----------------------------------------------------------------------------//
+
+
 
