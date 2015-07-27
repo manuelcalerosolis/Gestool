@@ -43,7 +43,7 @@ CLASS DocumentLine
 
 
    METHOD getDescuentoPorcentual()                             INLINE ( hGet( ::hDictionary, "DescuentoPorcentual" ) )
-   METHOD getDescuentoPromocion()                              INLINE ( hGet( ::hDictionary, "DescuentoPorcentual" ) )
+   METHOD getDescuentoPromocion()                              INLINE ( hGet( ::hDictionary, "DescuentoPromocion" ) )
 
    METHOD isLineaImpuestoIncluido()                            INLINE ( hGet( ::hDictionary, "LineaImpuestoIncluido" ) )
    METHOD isVolumenImpuestosEspeciales()                       INLINE ( hGet( ::hDictionary, "VolumenImpuestosEspeciales" ) )

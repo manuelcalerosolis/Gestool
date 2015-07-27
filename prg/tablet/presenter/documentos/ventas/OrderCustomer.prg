@@ -22,8 +22,6 @@ CLASS OrderCustomer FROM DocumentsSales
    METHOD GetAppendDetail()
    METHOD GetEditDetail()
 
-   METHOD onClickRotor()                  INLINE ( ::oCliente:ClickRotor( hGet( ::hDictionaryMaster, "Cliente" ) ) )
-
    METHOD getLinesDocument()
    METHOD getDocumentLine()
 

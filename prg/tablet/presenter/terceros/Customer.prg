@@ -12,13 +12,12 @@ CLASS Customer FROM Editable
    DATA hTipoCliente                   INIT { "1" => "Clientes", "2" => "Potenciales", "3" => "Web" }
 
    METHOD New()
+   METHOD Init( nView )
 
    METHOD runNavigatorCustomer()
 
    METHOD OpenFiles()
-   METHOD CloseFiles()              INLINE ( D():DeleteView( ::nView ) )
-
-   METHOD Init( nView )
+   METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
 
    METHOD setEnviroment()              INLINE ( ::setDataTable( "Client" ) ) 
    
@@ -34,7 +33,7 @@ CLASS Customer FROM Editable
    METHOD onPostGetDocumento()
    METHOD onPreSaveDocumento()
 
-   METHOD ClickRotor()           
+   METHOD EditCustomer( Codigo )           
 
 ENDCLASS
 
@@ -55,6 +54,20 @@ METHOD New() CLASS Customer
       ::setEnviroment()
 
    end if   
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Init( oSender ) CLASS Customer
+
+   ::nView                 := oSender:nView
+
+   ::oViewEdit             := CustomerView():New( self )
+
+   ::oClienteIncidencia    := CustomerIncidence():New( self )
+
+   ::setEnviroment()
 
 Return ( self )
 
@@ -107,20 +120,6 @@ Return ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
-METHOD Init( oSender ) CLASS Customer
-
-   ::nView                 := oSender:nView
-
-   ::oViewEdit             := CustomerView():New( self )
-
-   ::oClienteIncidencia    := CustomerIncidence():New( self )
-
-   ::setEnviroment()
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD onPostGetDocumento() CLASS Customer
 
    local cTipo          := str( hGet( ::hDictionaryMaster, "TipoCliente" ) )
@@ -168,13 +167,21 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD ClickRotor( Codigo ) CLASS Customer
+METHOD EditCustomer( Codigo ) CLASS Customer
 
-   //MsgAlert( Codigo, "Codigo del cliente" )
+   if empty( Codigo )
+      Return .f.
+   end if 
 
-//   ::oSender:lValidCliente( ,Codigo )
+   D():getStatusClientes( ::nView )
 
-   ::edit()
+   ( D():Clientes( ::nView ) )->( ordSetFocus( 1 ) )
+
+   if ( D():Clientes( ::nView ) )->( dbseek( Codigo ) )
+      ::edit()
+   end if 
+
+   D():setStatusClientes( ::nView )
 
 Return( .t. )
 

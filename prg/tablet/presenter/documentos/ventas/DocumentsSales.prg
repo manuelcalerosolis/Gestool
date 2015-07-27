@@ -81,14 +81,16 @@ CLASS DocumentsSales FROM Documents
 
    METHOD assignLinesDocument()
    METHOD setLinesDocument()
-   METHOD appendDocumentLine( oDocumentLine ) INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, ::getDataTableLine(), ::nView ) )
+   METHOD appendDocumentLine( oDocumentLine )   INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, ::getDataTableLine(), ::nView ) )
 
-   METHOD delDocumentLine()               INLINE ( D():deleteRecord( ::getDataTableLine(), ::nView ) )
+   METHOD delDocumentLine()                     INLINE ( D():deleteRecord( ::getDataTableLine(), ::nView ) )
 
    METHOD onPreSaveEditDocumento()
    METHOD onPreEnd()
 
-   METHOD bChangeCheckBox()
+   METHOD cComboRecargoValue()
+
+   METHOD onClickRotor()                        INLINE ( ::oCliente:EditCustomer( hGet( ::hDictionaryMaster, "Cliente" ) ) )
 
 
 END CLASS
@@ -230,8 +232,6 @@ METHOD lValidCliente( oGet, oGet2, nMode ) CLASS DocumentsSales
 
    local lValid      := .t.
    local cNewCodCli  := hGet( ::hDictionaryMaster, "Cliente" )
-
-   msgAlert( "lValidCliente" )
 
    if Empty( cNewCodCli )
       Return .t.
@@ -731,8 +731,16 @@ Return( lPostSaveEditDocumento )
 
 //---------------------------------------------------------------------------//
 
-METHOD bChangeCheckBox() CLASS DocumentsSales
+METHOD cComboRecargoValue() CLASS DocumentsSales
 
-Return( .t. )
+   Local cComboRecargoValue
+
+   // hGet( ::oSender:hDictionaryMaster, "Pago" )
+
+   if !empty( ::oViewEditResumen:aComboRecargo[1] )
+      cComboRecargoValue    := ::oViewEditResumen:cComboRecargo[1]
+   endif
+
+Return( ::oViewEditResumen:cComboRecargo  := cComboRecargoValue )
 
 //---------------------------------------------------------------------------//

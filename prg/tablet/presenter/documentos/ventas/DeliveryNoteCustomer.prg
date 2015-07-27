@@ -18,8 +18,6 @@ CLASS DeliveryNoteCustomer FROM DocumentsSales
 
    METHOD ResourceDetail( nMode )         INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
 
-   METHOD onClickRotor()                  INLINE ( ::oCliente:ClickRotor( hGet( ::hDictionaryMaster, "Cliente" ) ) )
-
    METHOD GetAppendDocumento()
    METHOD GetEditDocumento()
 

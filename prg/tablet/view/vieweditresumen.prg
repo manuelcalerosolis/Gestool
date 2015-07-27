@@ -7,7 +7,10 @@ CLASS ViewEditResumen FROM ViewBase
    DATA oDlg
    DATA oSender
    DATA oBrowse
-   DATA oGridCheckBox
+   DATA oCheckBoxRecargo
+   DATA oComboRecargo
+   DATA aComboRecargo         INIT { "Con recargo Equivalencia", "Sin Recargo Equivalencia" }
+   DATA cComboRecargo
    DATA oCbxImpresora
    DATA aCbxImpresora         INIT {}
    DATA cCbxImpresora
@@ -43,9 +46,7 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD defineCheckRecargo()
 
-   METHOD SetGet( u )                           INLINE ( if( hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) != u .and. !empty( u ),;
-                                                             hset( ::oSender:hDictionaryMaster, "RecargoEquivalencia", u ),;
-                                                             hGet( ::oSender:hDictionaryMaster, "RecargoEquivalencia" ) ) )
+   METHOD SetGet( u )                           INLINE ( hset( ::oSender:hDictionaryMaster, "RecargoEquivalencia", u ) )
 
 END CLASS
 
@@ -216,7 +217,8 @@ Return ( self )
 
 METHOD defineCheckRecargo() CLASS ViewEditResumen
 
-   /*TGridSay():Build(    {     "nRow"      => 115,;
+   /*
+   TGridSay():Build(    {     "nRow"      => 115,;
                               "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                               "bText"     => {|| "Recargo Equivalencia:" },;
                               "oWnd"      => ::oDlg,;
@@ -226,23 +228,30 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
                               "nClrBack"  => Rgb( 255, 255, 255 ),;
                               "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                               "nHeight"   => 23,;
-                              "lDesign"   => .f. } )*/
+                              "lDesign"   => .f. } )
+   */
 
-   ::oGridCheckBox   := TGridCheckBox():Build(  {  "nRow"      => 115,;       
-                                                   "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                                                   "cCaption"  => " Recargo Equivalencia",;
-                                                   "bSetGet"   => {|u| ::SetGet( u ) },;
+   ::oCheckBoxRecargo   := TGridCheckBox():Build(  {  "nRow"      => 115,;       
+                                                      "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                      "cCaption"  => " Recargo Equivalencia",;
+                                                      "bSetGet"   => {|u| ::SetGetValue( u, "RecargoEquivalencia" ) },;
+                                                      "oWnd"      => ::oDlg,;
+                                                      "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
+                                                      "nHeight"   => 23,;
+                                                      "oFont"     => oGridFont(),;
+                                                      "lPixels"   => .t.,;
+                                                      "bChange"   => {|| ::oBrowse:Refresh() } } )
+
+/*
+   ::oComboRecargo  := TGridComboBox():Build(  {   "nRow"      => 115,;
+                                                   "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, ::cComboRecargo, ::cComboRecargo := u ) },;
                                                    "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
-                                                   "nHeight"   => 23,;
-                                                   "oFont"     => oGridFont(),;
-                                                   "lPixels"   => .t.,;
-                                                   "bChange"   => {|| msgAlert( ::oGridCheckBox:varGet(), "oGridCheckBox" ) } } )
-
-                     /* ::oSender:bChangeCheckBox()    nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight,;
-                        nHelpTopic, bChange, oFont, bValid, nClrFore, nClrBack,;
-                        lDesign, lPixel, cMsg, lUpdate, bWhen                    */
-
+                                                   "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "aItems"    => ::aComboRecargo },;
+                                                   "bChange"   => {|| msgAlert(  ) } )
+*/
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -283,7 +292,7 @@ METHOD defineBrowseIva() CLASS ViewEditResumen
       :nDataStrAlign       := 1
       :nHeadStrAlign       := 1
       :nFootStrAlign       := 1
-      :bFooter             := {|| ::oSender:oTotalDocument:transImporteIva() }
+      :bFooter             := {|| ::oSender:oTotalDocument:transImporte() }
    end with
 
    with object ( ::oBrowse:AddCol() )

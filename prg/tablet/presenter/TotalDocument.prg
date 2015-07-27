@@ -20,6 +20,7 @@ CLASS TotalDocument
    METHOD transImporteIva()                        INLINE ( Trans( ::getImporteIva(), cPorDiv() ) ) 
    METHOD getImporteRecargo()
    METHOD transImporteRecargo()                    INLINE ( Trans( ::getImporteRecargo(), cPorDiv() ) )
+   METHOD transImporte()
    METHOD getTotalDocument()
    METHOD transTotalDocument()                     INLINE ( Trans( ::getTotalDocument, cPorDiv() ) )
 
@@ -92,3 +93,15 @@ METHOD getTotalDocument() CLASS TotalDocument
 Return ( TotalDocument )
 
 //---------------------------------------------------------------------------//
+
+METHOD transImporte() CLASS TotalDocument
+
+   Local transImporte := ""
+
+   transImporte := ::getImporteIva()
+
+   if ::oIva:getDictionaryMaster( "RecargoEquivalencia" )
+      transImporte += ::getImporteRecargo()
+   endif
+
+Return( Trans( transImporte, cPorDiv() ) )

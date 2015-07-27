@@ -72,7 +72,7 @@ METHOD defineAceptarCancelar() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_atom_64",;
-                           "bLClicked" => {|| ::onClickRotor() },;
+                           "bLClicked" => {|| ::oSender:onClickRotor() },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 5,;

@@ -13,6 +13,7 @@ CLASS Iva
    METHOD add()
 
    METHOD getTipoIva( hIva )                       INLINE ( hGet( hIva, "PorcentajeImpuesto" ) )
+   METHOD getTipoRecargo( hIva )                   INLINE ( hGet( hIva, "PorcentajeRecargo" ) )
 
    METHOD setValue( nPosition, Field, Value )      INLINE ( hSet( ::aIva[ nPosition ], Field, Value ) )
 
@@ -63,9 +64,10 @@ Return( Self )
 
 METHOD add( oDocumentLine )
 
+   local nPositionR
    local nPosition
 
-   nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPorcentajeImpuesto() == ::getTipoIva( hIva ) } )
+   nPosition      := aScan( ::aIva, {|hIva| oDocumentLine:getPorcentajeImpuesto() == ::getTipoIva( hIva ) .and. oDocumentLine:getRecargoEquivalencia() == ::getTipoRecargo( hIva ) } )
 
    if nPosition != 0
       ::sumBase( nPosition, oDocumentLine:Total() )
@@ -109,6 +111,10 @@ METHOD ImporteRecargo( nPosition )
 
    Local ImporteRecargo    := 0
 
+   if !( ::getDictionaryMaster( "RecargoEquivalencia" ) )
+      Return ImporteRecargo    
+   endif
+
    if ::getPorcentajeRecargo( nPosition ) != 0
       ImporteRecargo       := ( ::getBase( nPosition ) * ::getPorcentajeRecargo( nPosition ) ) / 100
    endif
@@ -123,10 +129,7 @@ METHOD CalculaTotal( nPosition )
 
    CalculaTotal            := ::getBase( nPosition ) 
    CalculaTotal            += ::ImporteImpuesto( nPosition )
-
-   if ::getDictionaryMaster( "RecargoEquivalencia" )
-      CalculaTotal         += ::ImporteRecargo( nPosition ) 
-   endif
+   CalculaTotal            += ::ImporteRecargo( nPosition ) 
 
 Return( CalculaTotal )
 
@@ -137,13 +140,17 @@ METHOD ShowPorcentajes( nPosition )
    Local Porcentaje := ""
 
    if !IsNil( ::getPorcentajeImpuesto( nPosition ) )
-      Porcentaje += Trans( ::getPorcentajeImpuesto( nPosition ), "@E 999.99" )
+      Porcentaje  += Trans( ::getPorcentajeImpuesto( nPosition ), "@E 999.99" )
    endif
 
-   Porcentaje += CRLF
+   Porcentaje     += CRLF
 
-   if !IsNil( ::getPorcentajeRecargo( nPosition ) )
-      Porcentaje += Trans( ::getPorcentajeRecargo( nPosition ), "@E 999.99")
+   if !( ::getDictionaryMaster( "RecargoEquivalencia" ) )
+      Return Porcentaje
+   else
+      if !IsNil( ::getPorcentajeRecargo( nPosition ) )
+         Porcentaje += Trans( ::getPorcentajeRecargo( nPosition ), "@E 999.99")
+      endif
    endif
 
 Return( Porcentaje )
@@ -160,8 +167,12 @@ METHOD ShowImportes( nPosition )
 
    Importe += CRLF 
 
-   if !IsNil( ::ImporteRecargo( nPosition ) )
-      Importe += Trans( ::ImporteRecargo( nPosition ), cPorDiv() )
+   if !( ::getDictionaryMaster( "RecargoEquivalencia" ) )
+      Return Importe
+   else
+      if !IsNil( ::ImporteRecargo( nPosition ) )
+         Importe += Trans( ::ImporteRecargo( nPosition ), cPorDiv() )
+      endif
    endif
 
 Return( Importe )
