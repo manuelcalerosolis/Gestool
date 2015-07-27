@@ -6847,12 +6847,25 @@ static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
                                                    "aItems"    => aCbxOrd } )
 
    /*
+   Recargo equivalencia------------------------------------------------------
+   */
+
+   aGet[ _LRECARGO ] := TGridCheckBox():Build(  {  "nRow"      => 115,;
+                                                   "nCol"      => {|| GridWidth( 0.5, oDlg ) },;
+                                                   "cCaption"  => "Recargo Equivalencia" ,;
+                                                   "bSetGet"   => {|u| if( PCount() == 0, aTmp[ _LRECARGO ], aTmp[ _LRECARGO ] := u ) },;
+                                                   "oWnd"      => oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 9, oDlg ) },;
+                                                   "nHeight"   => 25,;
+                                                   "bChange"   => {|| RecalculaTotal( aTmp ), oBrwIva:Refresh() } } )
+
+   /*
    Desglose de I.V.A.---------------------------------------------------------
    */
 
    oBrwIva                 := TGridIXBrowse():New( oDlg )
 
-   oBrwIva:nTop            := oBrwIva:EvalRow( 125 )
+   oBrwIva:nTop            := oBrwIva:EvalRow( 150 )
    oBrwIva:nLeft           := oBrwIva:EvalCol( {|| GridWidth( 0.5, oDlg ) } )
    oBrwIva:nWidth          := oBrwIva:EvalWidth( {|| GridWidth( 11, oDlg ) } )
    oBrwIva:nHeight         := oBrwIva:EvalHeight( {|| GridHeigth( oDlg ) - oBrwIva:nTop - 10 } )
