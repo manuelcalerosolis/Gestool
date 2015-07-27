@@ -406,10 +406,9 @@ METHOD StartResource() CLASS TpvListaTicket
          ::oAnteriorLinea     := TDotNetButton():New( 60, oGrupo,    "Navigate_up",             "Línea anterior",     5, {|| ::LineaAnterior() } )
          ::oSiguienteLinea    := TDotNetButton():New( 60, oGrupo,    "Navigate_down",           "Línea siguiente",    6, {|| ::LineaSiguiente() } )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 186,  "Salida", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "Check_32",                "Reabrir",            1, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "Check_32",                "Aceptar",            2, {|| ::OnClickListaTicket() }, , , .f., .f., .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "End32",                   "Salida",             3, {|| ::End() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 126,  "Salida", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "Check_32",                "Aceptar",            1, {|| ::OnClickListaTicket() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "End32",                   "Salida",             2, {|| ::End() }, , , .f., .f., .f. )
 
    end if
 
@@ -473,7 +472,12 @@ METHOD OnClickReabrirTicket() CLASS TpvListaTicket
    local cNumeroTicket        := ::oSender:oTiketCabecera:cSerTik + ::oSender:oTiketCabecera:cNumTik + ::oSender:oTiketCabecera:cSufTik
    
    if ::oSender:oTiketCabecera:lCloTik
-      apoloMsgStop( "El ticket " + cTextoTicket + " pertenece a una sesión cerrada", "Atención" )
+      apoloMsgStop( "El ticket " + cTextoTicket + " pertenece a una sesión cerrada.", "Atención" )
+      Return ( nil )
+   end if 
+
+   if !::oSender:oTiketCabecera:lPgdTik
+      apoloMsgStop( "El ticket " + cTextoTicket + " no esta pagado.", "Atención" )
       Return ( nil )
    end if 
 
