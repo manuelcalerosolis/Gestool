@@ -15098,6 +15098,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
    DisableAcceso()
 
+   // Ejecutamos script del evento before append-------------------------------
+
+   if nMode == APPD_MODE
+   end if
+
    oDlg:Disable()
 
    oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
@@ -15138,6 +15143,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       do case
       case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
+         runEventScript( "FacturasCleintes\beforeAppend", aTmp )
+
          oMsgText( "Obteniendo nuevos numeros" )
          if !Empty( oMeter )
          	oMeter:Set( 2 )
@@ -15158,6 +15165,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          aTmp[ _LIMPALB ]     := !Empty( aNumAlb )
 
       case nMode == EDIT_MODE
+
+         runEventScript( "FacturasCleintes\beforeEdit", aTmp )
 
          RollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
 
@@ -15307,9 +15316,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       oMsgText( "Generamos los pagos" )
       
-	  if !Empty( oMeter )
+      if !Empty( oMeter )
 	      oMeter:Set( 8 )
-	  end if    
+      end if    
 
       GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, D():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
 
@@ -15325,14 +15334,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       ChkLqdFacCli( nil, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
 
-   	RECOVER USING oError
+	RECOVER USING oError
 
-	     RollBackTransaction()
+      RollBackTransaction()
 
-	     msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
+      msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
 
-   	END SEQUENCE
-   	ErrorBlock( oBlock )
+	END SEQUENCE
+	ErrorBlock( oBlock )
 
    /*
    Cerramos el dialogo---------------------------------------------------------
@@ -24242,17 +24251,13 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
    tFecFac 				   := aTmp[ _TFECFAC ]
    cCodCli              := aTmp[ _CCODCLI ]
 
-   /*
-   Comprobamos campos del documento--------------------------------------------
-   */
+   // Comprobamos campos del documento--------------------------------------------
 
    if !lComprobacionesFactCli( aGet, aTmp )
       return .f.
    end if
 
-   /*
-   Para q nadie toque mientras grabamos----------------------------------------
-   */
+   // Para q nadie toque mientras grabamos----------------------------------------
 
    oDlg:Disable()
 
@@ -24278,6 +24283,8 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
       do case
       case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
+         runEventScript( "FacturasCleintes\beforeAppend", aTmp )
+
          /*
          Obtenemos el nuevo numero de la factura----------------------------------
          */
@@ -24287,6 +24294,8 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
          aTmp[ _LSNDDOC ]     := .t.
 
       case nMode == EDIT_MODE
+
+         runEventScript( "FacturasCleintes\beforeEdit", aTmp )
 
          if lCambioSerie( aTmp )
             
@@ -24343,23 +24352,17 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
 
       WinGather( aTmp, , D():FacturasClientes( nView ), , nMode )
 
-      /*
-      Escribe los datos pendientes------------------------------------------------
-      */
+      // Escribe los datos pendientes------------------------------------------------
 
       dbCommitAll()
 
       CommitTransaction()
 
-      /*
-      Generar los pagos de las facturas-------------------------------------------
-      */
+      // Generar los pagos de las facturas-------------------------------------------
 
       GenPgoFacCli( cSerFac + str( nNumFac, 9 ) + cSufFac, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, D():Clientes( nView ), dbfFPago, dbfDiv, dbfIva, nMode )
 
-      /*
-      Comprobamos el estado de la factura-----------------------------------------
-      */
+      // Comprobamos el estado de la factura-----------------------------------------
 
       ChkLqdFacCli( nil, D():FacturasClientes( nView ), dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv )
 

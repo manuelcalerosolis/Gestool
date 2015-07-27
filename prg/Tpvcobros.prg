@@ -763,13 +763,13 @@ METHOD EliminaCobros( cNumeroTicket ) CLASS TpvCobros
 
    if !empty( cNumeroTicket )
 
-      ::oSender:oTiketCabecera:GetStatus()
+      ::oSender:oTiketCobro:GetStatus()
 
       while ( ::oSender:oTiketCobro:Seek( cNumeroTicket ) )
          ::oSender:oTiketCobro:Delete(.f.)
       end while
 
-      ::oSender:oTiketCabecera:SetStatus()
+      ::oSender:oTiketCobro:SetStatus()
 
    end if
 

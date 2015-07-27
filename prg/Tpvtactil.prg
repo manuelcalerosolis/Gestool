@@ -851,6 +851,8 @@ CLASS TpvTactil
 
    METHOD LoadTemporalImpresionlinea()
 
+   METHOD OnClickReabrirTicket()
+
 //--------------------------------------------------------------------------//
 
 END CLASS
@@ -952,12 +954,12 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
 
    ::oBtnNum                  := Array( 15 )
 
-   ::oFntNum                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 46 ), .f., .f. )
    ::oFntBrw                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 20 ), .f., .t. )
-   ::oFntDto                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 40 ), .f., .f. ) 
-   ::oFntDlg                  := TFont():New( "Segoe UI", 12, ::ResizedFont( 32 ), .f., .f. )
-   ::oFntEur                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 30 ), .f., .f. )
    ::oFntFld                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 26 ), .f., .t. )
+   ::oFntEur                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 30 ), .f., .f. )
+   ::oFntDlg                  := TFont():New( "Segoe UI", 12, ::ResizedFont( 32 ), .f., .f. )
+   ::oFntDto                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 40 ), .f., .f. ) 
+   ::oFntNum                  := TFont():New( "Segoe UI",  0, ::ResizedFont( 46 ), .f., .f. )
 
    ::cSayZona                 := "Zona"  
    ::cSayInfo                 := ""
@@ -1261,7 +1263,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oAlmacen                                  PATH ( cPatAlm() )   FILE "ALMACEN.DBF"         VIA ( cDriver() ) SHARED INDEX "ALMACEN.CDX"
 
-   DATABASE NEW ::oArticuloPropiedades                         PATH ( cPatArt() )   FILE "ARTDIV.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+   DATABASE NEW ::oArticuloPropiedades                      PATH ( cPatArt() )   FILE "ARTDIV.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
 
    DATABASE NEW ::oTarifaPrecioLinea                        PATH ( cPatArt() )   FILE "TARPREL.DBF"         VIA ( cDriver() ) SHARED INDEX "TARPREL.CDX"
 
@@ -2584,9 +2586,7 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )
  
-      /*
-      Segunda pestaña de tpv tactil--------------------------------------------
-      */
+      // Segunda pestaña de tpv tactil--------------------------------------------
       
       oCarpeta                := TCarpeta():New( ::oOfficeBar, "Más..." )
 
@@ -2596,6 +2596,9 @@ METHOD StartResource() CLASS TpvTactil
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Lote", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Barcode_32",                    "Lote",              1, {|| ::AgregarLote() }, , , .f., .f., .f. )
+
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Reabrir ticket", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Reabrir",           1, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cajas", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar",       1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
@@ -10187,6 +10190,42 @@ METHOD LoadTemporalImpresionlinea()
    end if
 
    ::oTemporalImpresionLinea:OrdSetFocus( nOrdAnt )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD OnClickReabrirTicket()
+
+   local cTextoTicket   := ::cNumeroTicketByNameFormato()
+
+   if ::oTiketCabecera:lCloTik
+      apoloMsgStop( "El ticket " + cTextoTicket + " pertenece a una sesión cerrada.", "Atención" )
+      Return ( .f. )
+   end if 
+
+   if !::oTiketCabecera:lPgdTik
+      apoloMsgStop( "El ticket " + cTextoTicket + " no esta pagado.", "Atención" )
+      Return ( .f. )
+   end if 
+
+   if apoloMsgNoYes( "¿ Desea realmente reabir el ticket " + cTextoTicket + "?" + ;
+                     CRLF + ;
+                     "Se eliminaran los pagos de este ticket y el ticket podrá ser modificado",;
+                     "Confirme", .t. )
+
+      CursorWait()
+
+      ::oTpvCobros:EliminaCobros() 
+      
+      ::oTiketCabecera:lPgdTik   := .f. 
+      ::oTiketCabecera:lAbierto  := .t. 
+
+      ::GuardaDocumento( .f. )
+
+      CursorWE()
+
+   end if 
 
 Return ( .t. )
 
