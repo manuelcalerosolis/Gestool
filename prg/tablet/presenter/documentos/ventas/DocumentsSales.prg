@@ -10,15 +10,26 @@ CLASS DocumentsSales FROM Documents
 
    DATA nUltimoCliente
    
-   DATA hOrdenRutas                 INIT {   "1" => "lVisDom",;
-                                             "2" => "lVisLun",;
-                                             "3" => "lVisMar",;
-                                             "4" => "lVisMie",;
-                                             "5" => "lVisJue",;
-                                             "6" => "lVisVie",;
-                                             "7" => "lVisSab",;
-                                             "8" => "Cod" }
+   DATA hOrdenRutas                    INIT {   "1" => "lVisDom",;
+                                                "2" => "lVisLun",;
+                                                "3" => "lVisMar",;
+                                                "4" => "lVisMie",;
+                                                "5" => "lVisJue",;
+                                                "6" => "lVisVie",;
+                                                "7" => "lVisSab",;
+                                                "8" => "Cod" }
 
+   DATA cTextSummaryDocument           INIT ""
+      METHOD setTextSummaryDocument( cTextSummaryDocument ) ;
+                                       INLINE ( ::cTextSummaryDocument := cTextSummaryDocument )
+
+   DATA cTypePrintDocuments            INIT ""                                       
+      METHOD setTypePrintDocuments( cTypePrintDocuments ) ;
+                                       INLINE ( ::cTypePrintDocuments := cTypePrintDocuments )
+
+   DATA cCounterDocuments              INIT ""                                       
+      METHOD setCounterDocuments( cCounterDocuments ) ;
+                                       INLINE ( ::cCounterDocuments := cCounterDocuments )
 
    DATA oTotalDocument
 
@@ -26,7 +37,7 @@ CLASS DocumentsSales FROM Documents
    METHOD runNavigator()
 
    METHOD OpenFiles()
-   METHOD CloseFiles()              INLINE ( D():DeleteView( ::nView ) )
+   METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
 
    METHOD getSerie()                   INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
    METHOD getNumero()                  INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
@@ -43,7 +54,7 @@ CLASS DocumentsSales FROM Documents
    METHOD isResumenVenta()
    METHOD lValidResumenVenta()
 
-   METHOD getDataBrowse( Name )     INLINE ( hGet( ::oDocumentLineTemporal:hDictionary[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
+   METHOD getDataBrowse( Name )        INLINE ( hGet( ::oDocumentLineTemporal:hDictionary[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
    METHOD isChangeSerieTablet( lReadyToSend, getSerie )
    
@@ -64,14 +75,13 @@ CLASS DocumentsSales FROM Documents
    METHOD gotoUltimoCliente( oCbxRuta )
    METHOD setUltimoCliente( oCbxRuta )
 
-   METHOD Total()                      INLINE ( ::oDocumentLines:Total() )
-
-   METHOD calculaIVA()                 VIRTUAL
+   METHOD Total()                                  INLINE ( ::oDocumentLines:Total() )
+   METHOD calculaIVA()                             VIRTUAL
 
    METHOD AppendGuardaLinea()
    METHOD EditGuardaLinea()
 
-   METHOD SetDocuments()                             VIRTUAL
+   METHOD setDocuments()                           VIRTUAL
 
    METHOD isPrintDocument()
    METHOD printDocument()
@@ -79,19 +89,28 @@ CLASS DocumentsSales FROM Documents
    METHOD saveEditDocumento()
    METHOD saveAppendDocumento()
 
-   METHOD assignLinesDocument()
-   METHOD setLinesDocument()
-   METHOD appendDocumentLine( oDocumentLine )   INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, ::getDataTableLine(), ::nView ) )
+   // Lineas
 
-   METHOD delDocumentLine()                     INLINE ( D():deleteRecord( ::getDataTableLine(), ::nView ) )
+   METHOD addDocumentLine()
+      METHOD assignLinesDocument()
+      METHOD setLinesDocument()
+      METHOD appendDocumentLine( oDocumentLine )   INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, ::getDataTableLine(), ::nView ) )
+      METHOD delDocumentLine()                     INLINE ( D():deleteRecord( ::getDataTableLine(), ::nView ) )
 
-   METHOD onPreSaveEditDocumento()
+   METHOD onPreSaveEditDocumento()                 INLINE ( ::setTotalsInDictionaryMaster() )
+   METHOD onPreSaveAppendDocumento()
    METHOD onPreEnd()
+      METHOD setTotalsInDictionaryMaster( NumeroDocumento) 
 
    METHOD cComboRecargoValue()
 
-   METHOD onClickRotor()                        INLINE ( ::oCliente:EditCustomer( hGet( ::hDictionaryMaster, "Cliente" ) ) )
+   METHOD onClickRotor()                           INLINE ( ::oCliente:EditCustomer( hGet( ::hDictionaryMaster, "Cliente" ) ) )
 
+   METHOD getEditDetail() 
+   
+   METHOD setDocuments()
+   
+   METHOD Resource( nMode )
 
 END CLASS
 
@@ -112,8 +131,6 @@ METHOD New( oSender ) CLASS DocumentsSales
    ::oDocumentLines        := DocumentLines():New( oSender ) 
 
    ::oTotalDocument        := TotalDocument():New( oSender )
-
-   ::setEnviroment()
 
 return ( self )
 
@@ -693,36 +710,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPreSaveEditDocumento() CLASS DocumentsSales
-
-   Local lPreSaveDocument     := .f.
-   local nTotDoc              := ::oTotalDocument:getTotalDocument()
-   local nTotIVA           := ::oTotalDocument:getImporteIva()
-   local nTotReq           := ::oTotalDocument:getImporteRecargo()
-   local nTotNeto          := ::oTotalDocument:getBase()
-
-   if !empty( nTotDoc )
-      hSet( ::hDictionaryMaster, "TotalDocumento", nTotDoc )
-      lPreSaveDocument        := .t.
-   end if
-
-   if !empty( nTotIVA )
-      hSet( ::hDictionaryMaster, "TotalImpuesto", nTotIVA )
-      lPreSaveDocument     := .t.
-   end if
-
-   if !empty( nTotReq )
-      hSet( ::hDictionaryMaster, "TotalRecargo", nTotReq )
-      lPreSaveDocument     := .t.
-   end if
-
-   if !empty( nTotNeto )
-      hSet( ::hDictionaryMaster, "TotalNeto", nTotNeto )
-      lPreSaveDocument     := .t.
-   end if
-
-Return ( lPreSaveDocument )
-
 //---------------------------------------------------------------------------//
 
 METHOD onPreEnd() CLASS DocumentsSales
@@ -750,3 +737,91 @@ METHOD cComboRecargoValue() CLASS DocumentsSales
 Return( ::oViewEditResumen:cComboRecargo  := cComboRecargoValue )
 
 //---------------------------------------------------------------------------//
+
+METHOD addDocumentLine() CLASS DocumentsSales
+
+   local oDocumentLine  := ::getDocumentLine()
+
+   if !empty( oDocumentLine )
+      ::oDocumentLines:addLines( oDocumentLine )
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setTotalsInDictionaryMaster( NumeroDocumento ) CLASS DocumentsSales
+
+   if !empty( NumeroDocumento )
+      hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
+   end if 
+
+   hSet( ::hDictionaryMaster, "TotalDocumento", ::oTotalDocument:getTotalDocument() )
+
+   hSet( ::hDictionaryMaster, "TotalImpuesto", ::oTotalDocument:getImporteIva() )
+
+   hSet( ::hDictionaryMaster, "TotalRecargo", ::oTotalDocument:getImporteRecargo() )
+
+   hSet( ::hDictionaryMaster, "TotalNeto", ::oTotalDocument:getBase() )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD GetEditDetail() CLASS DocumentsSales
+
+   if !Empty( ::nPosDetail )
+      ::oDocumentLineTemporal   := ::oDocumentLines:getCloneLineDetail( ::nPosDetail )
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setDocuments() CLASS DocumentsSales
+
+   local cDocumento     := ""
+   local cFormato
+   local nFormato
+   local aFormatos      := aDocs( ::cTypePrintDocuments, D():Documentos( ::nView ), .t. )
+
+   cFormato             := cFormatoDocumento( ::getSerie(), ::cCounterDocuments, D():Contadores( ::nView ) )
+
+   if Empty( cFormato )
+      cFormato          := cFirstDoc( ::cTypePrintDocuments, D():Documentos( ::nView ) )
+   end if
+
+   nFormato             := aScan( aFormatos, {|x| Left( x, 3 ) == cFormato } )
+   nFormato             := Max( Min( nFormato, len( aFormatos ) ), 1 )
+
+   ::oViewEditResumen:SetImpresoras( aFormatos )
+   ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
+
+return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD Resource( nMode ) CLASS DocumentsSales
+
+   local lResource   := .f.
+
+   if !Empty( ::oViewEdit )
+      lResource      := ::oViewEdit:Resource( nMode )
+   end if
+
+Return ( lResource )   
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreSaveAppendDocumento() CLASS DocumentsSales
+
+   local NumeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::cCounterDocuments, , D():Contadores( ::nView ) )
+
+   if empty( NumeroDocumento )
+      Return ( .f. )
+   end if 
+
+Return ( ::setTotalsInDictionaryMaster( NumeroDocumento ) )
+
+//---------------------------------------------------------------------------//
+

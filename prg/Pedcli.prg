@@ -15415,7 +15415,7 @@ function aItmPedCli()
 
    local aItmPedCli := {}
 
-   aAdd( aItmPedCli, { "cSerPed", "C",    1,  0, "Serie del pedido",                                        "Serie",                   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "cSerPed", "C",    1,  0, "Serie del pedido",                                        "Serie",                   "", "( cDbf )", {|| "A" } } )
    aAdd( aItmPedCli, { "nNumPed", "N",    9,  0, "Número del pedido",                                       "Numero",                  "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cSufPed", "C",    2,  0, "Sufijo de pedido",                                        "Sufijo",                  "", "( cDbf )", {|| retSufEmp() } } )
    aAdd( aItmPedCli, { "cTurPed", "C",    6,  0, "Sesión del pedido",                                       "Turno",                   "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )

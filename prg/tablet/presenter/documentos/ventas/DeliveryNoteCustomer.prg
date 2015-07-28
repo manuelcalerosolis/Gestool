@@ -6,34 +6,21 @@ CLASS DeliveryNoteCustomer FROM DocumentsSales
 
    DATA oLinesDeliveryNoteCustomer
 
-   DATA cTextSummaryDocument              INIT "Resumen albarán"
-
    METHOD New()
-
-   METHOD setEnviroment()                 INLINE ( ::setDataTable( "AlbCliT" ),;
-                                                ::setDataTableLine( "AlbCliL" ),;
-                                                ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) ), ( ::getWorkArea() )->( dbgotop() ) )
-
-   METHOD Resource( nMode )
 
    METHOD ResourceDetail( nMode )         INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
 
-   METHOD GetAppendDocumento()
-   METHOD GetEditDocumento()
+   METHOD getAppendDocumento()
+   METHOD getEditDocumento()
 
    METHOD getLinesDocument( id )
-   METHOD addDocumentLine()
    METHOD getDocumentLine()
 
    METHOD getLines()                      INLINE ( ::oDocumentLines:getLines() )
    METHOD getLineDetail()                 INLINE ( ::oDocumentLines:getLineDetail( ::nPosDetail ) )
 
-   METHOD onPreSaveAppendDocumento()
-   METHOD GetAppendDetail()
-   METHOD GetEditDetail()
+   METHOD getAppendDetail()
    METHOD deleteLinesDocument()
-
-   METHOD SetDocuments()
 
 END CLASS
 
@@ -43,27 +30,25 @@ METHOD New() CLASS DeliveryNoteCustomer
 
    ::super:New( self )
 
+   ::setTextSummaryDocument( "Resumen albarán" )
+   ::setTypePrintDocuments( "AC" )
+   ::setCounterDocuments( "nAlbCli" )
+
    ::oViewSearchNavigator:setTextoTipoDocumento( "Albaranes de clientes" )  
 
+   ::oViewEdit:setTextoTipoDocumento( "Albarán" )  
+
    ::oLinesDeliveryNoteCustomer           := LinesDeliveryNoteCustomer():New( self )
+ 
+   // Areas
 
-return ( self )
+   ::setDataTable( "AlbCliT" )
+   ::setDataTableLine( "AlbCliL" )
 
-//---------------------------------------------------------------------------//
+   ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
+   ( ::getWorkArea() )->( dbgotop() ) 
 
-METHOD Resource( nMode ) CLASS DeliveryNoteCustomer
-
-   local lResource   := .f.
-
-   if !Empty( ::oViewEdit )
-
-      ::oViewEdit:SetTextoTipoDocumento( LblTitle( nMode ) + "albarán" )
-      
-      lResource      := ::oViewEdit:Resource( nMode )
-
-   end if
-
-Return ( lResource )   
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -116,18 +101,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addDocumentLine() CLASS DeliveryNoteCustomer
-
-   local oDocumentLine  := ::getDocumentLine()
-
-   if !empty( oDocumentLine )
-      ::oDocumentLines:addLines( oDocumentLine )
-   end if
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
 METHOD getDocumentLine() CLASS DeliveryNoteCustomer
 
    local hLine    := D():GetAlbaranClienteLineasHash( ::nView )
@@ -140,58 +113,10 @@ Return ( DocumentLine():New( hLine, self ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPreSaveAppendDocumento() CLASS DeliveryNoteCustomer
-
-   local lPreSaveDocument  := .f.
-   local NumeroDocumento   := nNewDoc( ::getSerie(), D():AlbaranesClientes( ::nView ), "nAlbCli", , D():Contadores( ::nView ) )
-   local nTotAlb           := ::oTotalDocument:getTotalDocument()
-   local nTotIVA           := ::oTotalDocument:getImporteIva()
-   local nTotReq           := ::oTotalDocument:getImporteRecargo()
-   local nTotNeto          := ::oTotalDocument:getBase()
-
-   if !empty( NumeroDocumento )
-      hSet( ::hDictionaryMaster, "Numero", NumeroDocumento )
-      lPreSaveDocument     := .t.
-   end if 
-
-   if !empty( nTotAlb )
-      hSet( ::hDictionaryMaster, "TotalDocumento", nTotAlb )
-      lPreSaveDocument        := .t.
-   end if
-
-   if !empty( nTotIVA )
-      hSet( ::hDictionaryMaster, "TotalImpuesto", nTotIVA )
-      lPreSaveDocument     := .t.
-   end if
-
-   if !empty( nTotReq )
-      hSet( ::hDictionaryMaster, "TotalRecargo", nTotReq )
-      lPreSaveDocument     := .t.
-   end if
-
-   if !empty( nTotNeto )
-      hSet( ::hDictionaryMaster, "TotalNeto", nTotNeto )
-      lPreSaveDocument     := .t.
-   end if
-
-Return ( lPreSaveDocument )
-
-//---------------------------------------------------------------------------//
-
 METHOD GetAppendDetail() CLASS DeliveryNoteCustomer
 
    local hLine             := D():GetAlbaranClienteLineaBlank( ::nView )
    ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD GetEditDetail() CLASS DeliveryNoteCustomer
-
-   if !Empty( ::nPosDetail )
-      ::oDocumentLineTemporal   := ::oDocumentLines:getCloneLineDetail( ::nPosDetail )
-   end if
 
 Return ( self )
 
@@ -213,26 +138,3 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD SetDocuments() CLASS DeliveryNoteCustomer
-
-   local cSerie         := hGet( ::hDictionaryMaster, "Serie" )
-   local cDocumento     := ""
-   local cFormato
-   local nFormato
-   local aFormatos      := aDocs( "AB", D():Documentos( ::nView ), .t. )
-
-   cFormato             := cFormatoDocumento( cSerie, "nAlbCli", D():Contadores( ::nView ) )
-
-   if Empty( cFormato )
-      cFormato          := cFirstDoc( "AB", D():Documentos( ::nView ) )
-   end if
-
-   nFormato             := aScan( aFormatos, {|x| Left( x, 3 ) == cFormato } )
-   nFormato             := Max( Min( nFormato, len( aFormatos ) ), 1 )
-
-   ::oViewEditResumen:SetImpresoras( aFormatos )
-   ::oViewEditResumen:SetImpresoraDefecto( aFormatos[ nFormato ] )
-
-return ( .t. )
-
-//---------------------------------------------------------------------------//

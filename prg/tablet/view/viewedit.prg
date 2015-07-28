@@ -38,6 +38,8 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD onClickRotor()            VIRTUAL
 
+   METHOD getTitleTipoDocumento()   INLINE ( lblTitle( ::getMode() ) + ::getTextoTipoDocumento() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

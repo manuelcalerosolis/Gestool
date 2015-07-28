@@ -18,10 +18,11 @@ CLASS ViewBase
    DATA Style                          INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
 
    DATA cTextoTipoDocumento
-
-   METHOD setTextoTipoDocumento( cTextoTipoDocumento );
+      METHOD setTextoTipoDocumento( cTextoTipoDocumento );
                                        INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
-   METHOD getTextoTipoDocumento()      INLINE ( ::cTextoTipoDocumento )
+      METHOD getTextoTipoDocumento()   INLINE ( ::cTextoTipoDocumento )
+
+   METHOD getTitleTipoDocumento()      INLINE ( ::getTextoTipoDocumento() )
 
    DATA bPreShowDialog
    METHOD setPreShowDialog( bPreShowDialog );
@@ -108,7 +109,7 @@ METHOD defineTitulo() CLASS ViewBase
 
    TGridSay():Build(    {  "nRow"      => 0,;
                            "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
-                           "bText"     => {|| ::getTextoTipoDocumento() },;
+                           "bText"     => {|| ::getTitleTipoDocumento() },;
                            "oWnd"      => ::oDlg,;
                            "oFont"     => oGridFontBold(),;
                            "lPixels"   => .t.,;
