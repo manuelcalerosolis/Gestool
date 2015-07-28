@@ -239,6 +239,10 @@ METHOD lValidCliente( oGet, oGet2, nMode ) CLASS DocumentsSales
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
 
+    D():getStatusClientes( ::nView )
+
+   ( D():Clientes( ::nView ) )->( ordSetFocus( 1 ) )
+
    if ( D():Clientes( ::nView ) )->( dbSeek( cNewCodCli ) )
 
       hSet( ::hDictionaryMaster, "Cliente", cNewCodCli )
@@ -279,6 +283,8 @@ METHOD lValidCliente( oGet, oGet2, nMode ) CLASS DocumentsSales
          hSet( ::hDictionaryMaster, "LugarAplicarDescuentoAtipico", ( D():Clientes( ::nView ) )->nSbrAtp )
 
       end if
+
+      D():setStatusClientes( ::nView )
 
       if !Empty( oGet )
          oGet:Refresh()
