@@ -15143,7 +15143,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       do case
       case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-         runEventScript( "FacturasCleintes\beforeAppend", aTmp )
+         runEventScript( "FacturasClientes\beforeAppend", aTmp )
 
          oMsgText( "Obteniendo nuevos numeros" )
          if !Empty( oMeter )
@@ -15166,7 +15166,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
       case nMode == EDIT_MODE
 
-         runEventScript( "FacturasCleintes\beforeEdit", aTmp )
+         runEventScript( "FacturasClientes\beforeEdit", aTmp )
 
          RollBackFacCli( cSerFac + str( nNumFac ) + cSufFac )
 
@@ -24283,7 +24283,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
       do case
       case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-         runEventScript( "FacturasCleintes\beforeAppend", aTmp )
+         runEventScript( "FacturasClientes\beforeAppend", aTmp )
 
          /*
          Obtenemos el nuevo numero de la factura----------------------------------
@@ -24295,7 +24295,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
 
       case nMode == EDIT_MODE
 
-         runEventScript( "FacturasCleintes\beforeEdit", aTmp )
+         runEventScript( "FacturasClientes\beforeEdit", aTmp )
 
          if lCambioSerie( aTmp )
             
