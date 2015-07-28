@@ -40,6 +40,7 @@ CLASS Editable
 
    METHOD setDataTableLine( cDataTableLine )    INLINE ( ::cDataTableLine := cDataTableLine )
    METHOD getDataTableLine()                    INLINE ( ::cDataTableLine )
+   METHOD getWorkAreaLine()                     INLINE ( D():Get( ::cDataTableLine, ::nView ) )
 
    METHOD onPostGetDocumento()                  INLINE ( .t. )
    METHOD onPreSaveAppendDocumento()            VIRTUAL
