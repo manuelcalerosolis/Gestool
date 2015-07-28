@@ -539,6 +539,7 @@ CLASS TpvTactil
    METHOD lBlankTicket()               INLINE ( alltrim( ::oTiketCabecera:cNumTik ) == "" )
 
    METHOD cNumeroTicket()              INLINE ( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
+   METHOD cNumeroTicketLinea()         INLINE ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil )
    METHOD cNumeroTicketByName()        INLINE ( ::oTiketCabecera:FieldGetByName( "cSerTik" ) + ::oTiketCabecera:FieldGetByName( "cNumTik" ) + ::oTiketCabecera:FieldGetByName( "cSufTik" ) )
    METHOD cNumeroTicketFormato( cNumeroTicket ) ;
                                        INLINE ( if(   Empty( cNumeroTicket ),;
@@ -7112,7 +7113,7 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
          ::oTemporalLinea:Zap()
 
-         while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == cNumeroTicket ) .and. !( ::oTiketLinea:Eof() )
+         while ( ::cNumeroTicketLinea() == cNumeroTicket ) .and. !( ::oTiketLinea:Eof() )
 
             if !( uFieldEmpresa( "lShowLin" ) .and. ::oTiketLinea:lDelTil )
 
@@ -8251,7 +8252,7 @@ METHOD ProcesaComandas( lCopia )
 
    if ::oTiketLinea:Seek( ::cNumeroTicket() )
 
-      while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
+      while ( ::cNumeroTicketLinea() == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
 
          lAppend        := .f.
 
@@ -8344,7 +8345,7 @@ METHOD ProcesaLineas()
    // Ponemos la marca para saber que el producto está imprimido---------------
 
    if ::oTiketLinea:Seek( ::cNumeroTicket() )
-      while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
+      while ( ::cNumeroTicketLinea() == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
          ::oTiketLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea() )
          ::oTiketLinea:Skip()
       end while
@@ -8400,7 +8401,7 @@ METHOD ProcesaAnulacion()
 
    if ::oTiketLinea:Seek( ::cNumeroTicket() )
 
-      while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
+      while ( ::cNumeroTicketLinea() == ::cNumeroTicket() ) .and. !( ::oTiketLinea:Eof() )
 
          lAppend        := .f.
 
@@ -10153,10 +10154,9 @@ METHOD LoadTemporalImpresionlinea()
 
    nOrdAnt        := ::oTemporalImpresionLinea:OrdSetFocus( "Codigo" )
 
-   if ::oTiketLinea:Seek( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik )
+   if ::oTiketLinea:Seek( ::cNumeroTicket() )
 
-      while ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik .and.;
-            !::oTiketLinea:Eof()
+      while ::cNumeroTicketLinea() == ::cNumeroTicket() .and. !::oTiketLinea:Eof()
 
             if ::oTemporalImpresionLinea:Seek( ::oTiketLinea:cCbaTil )
 
@@ -10211,7 +10211,7 @@ METHOD OnClickReabrirTicket()
 
    if apoloMsgNoYes( "¿ Desea realmente reabir el ticket " + cTextoTicket + "?" + ;
                      CRLF + ;
-                     "Se eliminaran los pagos de este ticket y el ticket podrá ser modificado",;
+                     "Se eliminaran los pagos de este ticket y podrá ser modificado",;
                      "Confirme", .t. )
 
       CursorWait()
