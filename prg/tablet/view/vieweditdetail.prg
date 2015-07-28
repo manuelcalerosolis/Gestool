@@ -110,13 +110,15 @@ METHOD Resource( nMode ) CLASS ViewDetail
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
 
+   ::oSender:resetCodigoArticulo()
+
 Return ( ::oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
 METHOD startDialog() CLASS ViewDetail
 
-    ::hideLote()
+   ::hideLote()
 
    ::oSender:StartResourceDetail()
 

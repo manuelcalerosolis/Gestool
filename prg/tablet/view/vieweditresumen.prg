@@ -217,20 +217,6 @@ Return ( self )
 
 METHOD defineCheckRecargo() CLASS ViewEditResumen
 
-   /*
-   TGridSay():Build(    {     "nRow"      => 115,;
-                              "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
-                              "bText"     => {|| "Recargo Equivalencia:" },;
-                              "oWnd"      => ::oDlg,;
-                              "oFont"     => oGridFont(),;
-                              "lPixels"   => .t.,;
-                              "nClrText"  => Rgb( 0, 0, 0 ),;
-                              "nClrBack"  => Rgb( 255, 255, 255 ),;
-                              "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
-                              "nHeight"   => 23,;
-                              "lDesign"   => .f. } )
-   */
-
    ::oCheckBoxRecargo   := TGridCheckBox():Build(  {  "nRow"      => 115,;       
                                                       "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                                                       "cCaption"  => " Recargo Equivalencia",;
@@ -242,16 +228,7 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
                                                       "lPixels"   => .t.,;
                                                       "bChange"   => {|| ::oBrowse:Refresh() } } )
 
-/*
-   ::oComboRecargo  := TGridComboBox():Build(  {   "nRow"      => 115,;
-                                                   "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                                   "bSetGet"   => {|u| if( PCount() == 0, ::cComboRecargo, ::cComboRecargo := u ) },;
-                                                   "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
-                                                   "nHeight"   => 25,;
-                                                   "aItems"    => ::aComboRecargo },;
-                                                   "bChange"   => {|| msgAlert(  ) } )
-*/
+
 Return ( self )
 
 //---------------------------------------------------------------------------//

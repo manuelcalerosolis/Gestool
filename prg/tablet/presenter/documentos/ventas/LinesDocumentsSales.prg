@@ -3,7 +3,7 @@
  
 CLASS LinesDocumentsSales FROM Editable
 
-   DATA cOldCodidoArticulo          INIT ""
+   DATA cOldCodigoArticulo          INIT ""
 
    DATA oViewEditDetail
 
@@ -116,6 +116,7 @@ CLASS LinesDocumentsSales FROM Editable
       METHOD SetDescuentoLinealOfertaArticulo()             VIRTUAL
 
    METHOD CargaArticulo()
+   METHOD resetCodigoArticulo()                             INLINE ( ::cOldCodigoArticulo := "" )
 
    METHOD lShowLote()   INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, "LogicoLote" ) )
 
@@ -317,7 +318,7 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
       Return .f.
    end if
 
-   if cCodArt == ::cOldCodidoArticulo
+   if cCodArt == ::cOldCodigoArticulo
       Return .f.
    end if
 
@@ -380,7 +381,7 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
 
    ::SetDescuentoLineal()
 
-   ::cOldCodidoArticulo    := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
+   ::cOldCodigoArticulo    := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
 
    /*
    Refrescamos el diálogo, una vez insertado los datos-------------------------

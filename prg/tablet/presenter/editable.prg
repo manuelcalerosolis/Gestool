@@ -198,11 +198,21 @@ Return ( self )
 
 METHOD AppendDetail() CLASS Editable
 
+   Local lResult := .t.
+
    ::GetAppendDetail()
 
-   if ::ResourceDetail( APPD_MODE )
+   lResult := ::ResourceDetail( APPD_MODE )
+
+   while lResult .and. lEntCon()
+
       ::AppendGuardaLinea()
-   end if   
+
+      ::GetAppendDetail()
+      
+      lResult := ::ResourceDetail( APPD_MODE )
+
+   end While
   
 Return ( self )
 
