@@ -6314,7 +6314,7 @@ Cliente--------------------------------------------------------------------
 
 	// Redimensionamos y activamos el diálogo------------------------------------- 
 
-   	oDlg:bResized  				:= {|| GridResize( oDlg ), oBrwLin:Load() }
+   	oDlg:bResized  				:= {|| GridResize( oDlg ), oBrwLin:Load(), oBrwLin:MakeTotals() }
 
       oDlg:bStart                := {|| startEdtTablet( nMode, aGet, oSayTextRuta ) }
 
