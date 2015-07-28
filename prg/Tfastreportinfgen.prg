@@ -3571,7 +3571,7 @@ METHOD TreeReportingChanged()
 
    local cTitle   := ::oTreeReporting:GetSelText()
 
-   if cTitle == "Listado"
+   if ( "Listado" $ cTitle )
       ::lHideFecha()
    else
       ::lShowFecha()

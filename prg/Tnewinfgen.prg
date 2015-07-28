@@ -3001,8 +3001,8 @@ METHOD lGrupoRuta( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoRuta:Cargo:Nombre     := "Ruta"
    ::oGrupoRuta:Cargo:Expresion  := "cCodRut"
    ::oGrupoRuta:Cargo:Todos      := .t.
-   ::oGrupoRuta:Cargo:Desde      := Space( 3 )            // dbFirst( ::oDbfRut, 1 )
-   ::oGrupoRuta:Cargo:Hasta      := Replicate( "Z", 3 )   // dbLast( ::oDbfRut, 1 )
+   ::oGrupoRuta:Cargo:Desde      := Space( 4 )            // dbFirst( ::oDbfRut, 1 )
+   ::oGrupoRuta:Cargo:Hasta      := Replicate( "Z", 4 )   // dbLast( ::oDbfRut, 1 )
    ::oGrupoRuta:Cargo:cPicDesde  := "@!"
    ::oGrupoRuta:Cargo:cPicHasta  := "@!"
    ::oGrupoRuta:Cargo:TextDesde  := {|| oRetFld( ::oGrupoRuta:Cargo:Desde, ::oDbfRut, "CDESRUT", "CCODRUT" ) }

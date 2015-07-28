@@ -834,6 +834,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Direcciones",                ::oObras:nArea ) 
    ::oFastReport:SetFieldAliases(   "Direcciones",                cItemsToReport( aItmObr() ) )
 
+   ::oFastReport:SetWorkArea(       "Rutas",                      ::oDbfRut:nArea ) 
+   ::oFastReport:SetFieldAliases(   "Rutas",                      cItemsToReport( aItmRut() ) )
+
    /*
    Relaciones entre tablas-----------------------------------------------------
    */
@@ -854,6 +857,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",                          {|| ::oDbf:cCodUsr } )
    ::oFastReport:SetMasterDetail(   "Informe", "Almacenes",                         {|| ::oDbf:cCodAlm } )
    ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",                       {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Rutas",                             {|| ::oDbf:cCodRut } )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",  {|| ::oDbf:cCodArt } )  
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
@@ -882,6 +886,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
    ::oFastReport:SetResyncPair(     "Informe", "Almacenes" )
    ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
+   ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
