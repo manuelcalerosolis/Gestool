@@ -1084,13 +1084,13 @@ RETURN ( Self )
 
 Method FtpConexion() CLASS TSndRecInf
 
+   local cUrl
    local nRetry            := 0
    local ftpSit            := cFirstPath( Rtrim( cSitFtp() ) )
    local ftpDir            := cNoPathLeft( Rtrim( cSitFtp() ) )
    local nbrUsr            := Rtrim( cUsrFtp() )
    local accUsr            := Rtrim( cPswFtp() )
    local pasInt            := uFieldEmpresa( "lPasEnvio" )
-   local cUrl
 
    if nTipConInt() == 2
 

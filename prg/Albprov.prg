@@ -374,6 +374,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
    local oPdf
    local oMail
    local oRotor
+   local oScript
    local nLevel
    local oBtnEur
    local lEuro          := .f.
@@ -814,6 +815,13 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "AlbaranesProveedores" )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;
