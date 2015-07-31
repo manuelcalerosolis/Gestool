@@ -6003,7 +6003,7 @@ Function MainTablet()
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
                      		"cResName"  => "flat_document_64",;
-                     		"bLClicked" => {|| FacCliTablet() },;
+                     		"bLClicked" => {|| InvoiceCustomer():New():runNavigator() },;     //FacCliTablet()
                      		"oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;
@@ -6015,7 +6015,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| FacCliTablet() } } )
+                           "bAction"   => {|| InvoiceCustomer():New():runNavigator() } } )        //FacCliTablet()
 
    //----------------Envio y recepcion
 

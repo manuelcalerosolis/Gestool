@@ -12,7 +12,7 @@ CLASS TotalDocument
    METHOD Calculate()
 
    METHOD getBruto()                               INLINE ( ::Bruto )
-   METHOD getBase()                                INLINE ( ::getBruto() )
+   METHOD getBase()                                //INLINE ( ::getBruto() )
    METHOD transBase()                              INLINE ( Trans( ::getBase(), cPorDiv() ) )
    METHOD getDescuento()                           INLINE ( 0 )
    METHOD transDescuento()                         INLINE ( Trans( ::getDescuento, cPorDiv() ) )
@@ -26,7 +26,7 @@ CLASS TotalDocument
 
    METHOD Reset()                                  INLINE ( ::Bruto := 0, ::oIva:Reset() )
 
-   METHOD showBaseIVA( nPosition )                 INLINE ( Trans( ::oIva:getBase( nPosition ), cPorDiv() ) )
+   METHOD showBaseIVA( nPosition )                 INLINE ( ::oIva:ShowBase( nPosition ) )
    METHOD ShowPorcentajesIVA( nPosition )          INLINE ( ::oIva:ShowPorcentajes( nPosition ) )
    METHOD ShowImportesIVA( nPosition )             INLINE ( ::oIva:ShowImportes( nPosition ) )
    METHOD ShowTotalIVA( nPosition )                INLINE ( ::oIva:ShowTotal( nPosition ) )
@@ -59,6 +59,16 @@ METHOD Calculate() CLASS TotalDocument
    next
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getBase() CLASS TotalDocument
+
+   Local TotalBase         := 0
+
+   aeval( ::oIva:aIva, {|hIva, nPosition| TotalBase += ::oIva:Base( nPosition ) } )
+
+Return( TotalBase )
 
 //---------------------------------------------------------------------------//
 

@@ -3,6 +3,14 @@
 #include "Xbrowse.ch"
 
 CLASS CustomerView FROM ViewBase
+
+   DATA oCheckVisLun
+   DATA oCheckVisMar
+   DATA oCheckVisMie
+   DATA oCheckVisJue
+   DATA oCheckVisVie
+   DATA oCheckVisSab
+   DATA oCheckVisDom
   
    METHOD New()
 
@@ -31,6 +39,10 @@ CLASS CustomerView FROM ViewBase
    METHOD defineTelefono()
 
    METHOD defineEmail()
+
+   METHOD defineRuta()
+
+   METHOD whenControl()             INLINE ( ::getMode() == EDIT_MODE .and. oUser():lAdministrador() )
 
 END CLASS
 
@@ -67,6 +79,8 @@ METHOD insertControls() CLASS CustomerView
    ::defineEmail(310)
 
    ::defineEstablecimiento(340)
+
+   ::defineRuta(370)
 
 Return ( self )
 
@@ -123,6 +137,7 @@ METHOD defineNIF(nRow) CLASS CustomerView
                         "bSetGet"   => {|u| ::SetGetValue( u, "NIF" ) },;
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
+                        "bWhen"     => {|| ::whenControl() },;
                         "nHeight"   => 23,;
                         "cPict"     => "@!",;
                         "bValid"    => {||   iif( empty( hGet( ::oSender:hDictionaryMaster, "NIF" ) ),;
@@ -153,6 +168,7 @@ METHOD defineNombre(nRow) CLASS CustomerView
                         "bSetGet"   => {|u| ::SetGetValue( u, "Nombre" ) },;
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9.0, ::oDlg ) },;
+                        "bWhen"     => {|| ::whenControl() },;
                         "bValid"    => {||   iif( empty( hGet( ::oSender:hDictionaryMaster, "Nombre" ) ),;
                                                 ::setErrorValidator( "El nombre es un dato obligatorio" ),;
                                                 .t. ) },;
@@ -184,6 +200,7 @@ METHOD defineDomicilio(nRow) CLASS CustomerView
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
 
@@ -211,6 +228,7 @@ METHOD defineCodigoPostal(nRow) CLASS CustomerView
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
 
@@ -238,6 +256,7 @@ METHOD definePoblacion(nRow) CLASS CustomerView
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
 
@@ -265,6 +284,7 @@ METHOD defineProvincia(nRow) CLASS CustomerView
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
 
@@ -284,6 +304,7 @@ METHOD defineEstablecimiento(nRow) CLASS CustomerView
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
                         "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "lDesign"   => .f. } )
 
    TGridGet():Build( {  "nRow"      => nRow,;
@@ -292,6 +313,7 @@ METHOD defineEstablecimiento(nRow) CLASS CustomerView
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
 
@@ -320,6 +342,7 @@ METHOD defineTipoCliente( nRow ) CLASS CustomerView
                               "oWnd"      => ::oDlg,;
                               "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                               "nHeight"   => 25,;
+                              "bWhen"     => {|| ::whenControl() },;
                               "aItems"    => hGetValues( ::oSender:hTipoCliente ) } )
 
 Return ( self )
@@ -338,6 +361,7 @@ METHOD defineTelefono(nRow) CLASS CustomerView
                         "nClrBack"  => Rgb( 255, 255, 255 ),;
                         "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "lDesign"   => .f. } )
 
    TGridGet():Build( {  "nRow"      => nRow,;
@@ -346,6 +370,7 @@ METHOD defineTelefono(nRow) CLASS CustomerView
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "cPict"     => "@!",;
                         "lPixels"   => .t. } )
 
@@ -357,7 +382,7 @@ METHOD defineEmail(nRow) CLASS CustomerView
 
    TGridSay():Build( {  "nRow"      => nRow,;
                         "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
-                        "bText"     => {|| "email" },;
+                        "bText"     => {|| "E-mail" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFont(),;
                         "lPixels"   => .t.,;
@@ -373,8 +398,106 @@ METHOD defineEmail(nRow) CLASS CustomerView
                         "oWnd"      => ::oDlg,;
                         "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                         "nHeight"   => 23,;
+                        "bWhen"     => {|| ::whenControl() },;
                         "lPixels"   => .t. } )
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD defineRuta(nRow) CLASS CustomerView
+
+   TGridSay():Build( {  "nRow"      => nRow,;
+                        "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
+                        "bText"     => {|| "Ruta " },;
+                        "oWnd"      => ::oDlg,;
+                        "oFont"     => oGridFont(),;
+                        "lPixels"   => .t.,;
+                        "nClrText"  => Rgb( 0, 0, 0 ),;
+                        "nClrBack"  => Rgb( 255, 255, 255 ),;
+                        "nWidth"    => {|| GridWidth( ::widthLabel, ::oDlg ) },;
+                        "nHeight"   => 23,;
+                        "lDesign"   => .f. } )
+
+
+   ::oCheckVisLun    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
+                                                   "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                   "cCaption"  => " L",;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "lVisLun" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::whenControl() },;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t. } )
+
+   ::oCheckVisMar    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
+                                                   "nCol"      => {|| GridWidth( 3, ::oDlg ) },;
+                                                   "cCaption"  => " M",;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "lVisMar" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::whenControl() },;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t. } )
+
+   ::oCheckVisMie    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
+                                                   "nCol"      => {|| GridWidth( 3.5, ::oDlg ) },;
+                                                   "cCaption"  => " X",;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "lVisMie" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::whenControl() },;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t. } )
+
+   ::oCheckVisJue    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
+                                                   "nCol"      => {|| GridWidth( 4, ::oDlg ) },;
+                                                   "cCaption"  => " J",;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "lVisJue" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::whenControl() },;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t. } )
+
+   ::oCheckVisVie    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
+                                                   "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
+                                                   "cCaption"  => " V",;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "lVisVie" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::whenControl() },;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t. } )
+
+   ::oCheckVisSab    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
+                                                   "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
+                                                   "cCaption"  => " S",;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "lVisSab" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::whenControl() },;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t. } )
+
+   ::oCheckVisDom    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
+                                                   "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
+                                                   "cCaption"  => " D",;
+                                                   "bSetGet"   => {|u| ::SetGetValue( u, "lVisDom" ) },;
+                                                   "oWnd"      => ::oDlg,;
+                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::whenControl() },;
+                                                   "oFont"     => oGridFont(),;
+                                                   "lPixels"   => .t. } )
+
+Return( self )
+
+//---------------------------------------------------------------------------//
+

@@ -400,6 +400,7 @@ OrderCustomer.prg                      \
 Iva.prg                                \
 TotalDocument.prg                      \        
 DeliveryNoteCustomer.prg               \
+InvoiceCustomer.prg                    \
 DocumentsSales.prg                     \
 ViewBase.prg                           \
 ViewEdit.prg                           \
@@ -410,7 +411,6 @@ LinesDocumentsSales.prg                \
 LinesOrderCustomer.prg                 \
 LinesDeliveryNoteCustomer.prg          \
 ViewSearchNavigator.prg                \
-OrderCustomerViewSearchNavigator.prg   \
 DocumentSalesViewSearchNavigator.prg   \
 CustomerViewSearchNavigator.prg        \
 CustomerIncidence.prg                  \
@@ -819,6 +819,7 @@ OrderCustomer.obj                      \
 Iva.obj                                \
 TotalDocument.obj                      \
 DeliveryNoteCustomer.obj               \
+InvoiceCustomer.obj                    \
 DocumentsSales.obj                     \
 ViewBase.obj                           \
 ViewEdit.obj                           \
@@ -829,7 +830,6 @@ LinesDocumentsSales.obj                \
 LinesOrderCustomer.obj                 \
 LinesDeliveryNoteCustomer.obj          \
 ViewSearchNavigator.obj                \
-OrderCustomerViewSearchNavigator.obj   \
 DocumentSalesViewSearchNavigator.obj   \
 CustomerViewSearchNavigator.obj        \
 CustomerIncidence.obj                  \
@@ -1221,6 +1221,7 @@ $(OBJ)\OrderCustomer.obj                     +
 $(OBJ)\Iva.obj                               +
 $(OBJ)\TotalDocument.obj                     +
 $(OBJ)\DeliveryNoteCustomer.obj              +
+$(OBJ)\InvoiceCustomer.obj                   +
 $(OBJ)\DocumentsSales.obj                    +
 $(OBJ)\ViewBase.obj                          +
 $(OBJ)\ViewEdit.obj                          +
@@ -1231,7 +1232,6 @@ $(OBJ)\LinesDocumentsSales.obj               +
 $(OBJ)\LinesOrderCustomer.obj                +
 $(OBJ)\LinesDeliveryNoteCustomer.obj         +
 $(OBJ)\ViewSearchNavigator.obj               +
-$(OBJ)\OrderCustomerViewSearchNavigator.obj  +
 $(OBJ)\DocumentSalesViewSearchNavigator.obj  +
 $(OBJ)\CustomerViewSearchNavigator.obj       +
 $(OBJ)\CustomerIncidence.obj                 +

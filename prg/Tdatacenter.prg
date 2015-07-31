@@ -5498,9 +5498,17 @@ CLASS D
       METHOD FacturasClientesIdTextShort( nView );
                                                 INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) )
       METHOD FacturasClientesIdText( nView )    INLINE ( ::FacturasClientesIdTextShort( nView ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )
+      METHOD getFacturaCliente( nView )               INLINE ( ::getHashRecordById( ::FacturasClientesId( nView ), ::FacturasClientes( nView ), nView ) )
+      METHOD getDefaultHashFacturaCliente( nView )    INLINE ( ::getHashRecordDefaultValues( ::FacturasClientes( nView ), nView ) )
 
-   METHOD FacturasClientesLineas( nView )       INLINE ( ::Get( "FacCliL", nView ) )
-      METHOD FacturasClientesLineasId( nView )  INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
+   METHOD FacturasClientesLineas( nView )           INLINE ( ::Get( "FacCliL", nView ) )
+      METHOD FacturasClientesLineasId( nView )      INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
+      METHOD GetFacturaClienteLineasHash( nView )   INLINE ( ::getHashRecord( ::FacturasClientesLineas( nView ), nView ) )
+      METHOD GetFacturaClienteLineas( nView )       INLINE ( ::getArrayRecordById( ::FacturasClientesId( nView ), ::FacturasClientesLineas( nView ), nView ) )
+      METHOD GetFacturaClienteLineaBlank( nView )   INLINE ( ::getHashRecordBlank( ::FacturasClientesLineas( nView ), nView ) )
+
+   METHOD getStatusFacturasClientesLineas( nView )   INLINE ( ::aStatus := aGetStatus( ::FacturasClientesLineas( nView ) ) )
+   METHOD setStatusFacturasClientesLineas( nView )   INLINE ( SetStatus( ::FacturasClientesLineas( nView ), ::aStatus ) )
 
    METHOD FacturasClientesIncidencias( nView )       INLINE ( ::Get( "FacCliI", nView ) )
       METHOD FacturasClientesIncidenciasId( nView )  INLINE ( ( ::Get( "FacCliI", nView ) )->cSerie + Str( ( ::Get( "FacCliI", nView ) )->nNumFac ) +  ( ::Get( "FacCliI", nView ) )->cSufFac )

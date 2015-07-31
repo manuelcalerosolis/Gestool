@@ -21096,7 +21096,7 @@ function aItmFacCli()
 
    local aItmFacCli  := {}
 
-   aAdd( aItmFacCli, {"cSerie"      ,"C",  1, 0, "Serie de la factura" ,                                       "Serie",                       "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"cSerie"      ,"C",  1, 0, "Serie de la factura" ,                                       "Serie",                       "", "( cDbf )", {|| "A" } } )
    aAdd( aItmFacCli, {"nNumFac"     ,"N",  9, 0, "Número de la factura" ,                                      "Numero",                      "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cSufFac"     ,"C",  2, 0, "Sufijo de la factura" ,                                      "Sufijo",                      "", "( cDbf )", {|| RetSufEmp() } } )
    aAdd( aItmFacCli, {"cTurFac"     ,"C",  6, 0, "Sesión de la factura" ,                                      "Turno",                       "", "( cDbf )", {|| cCurSesion( nil, .f.) } } )
@@ -21113,7 +21113,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cDniCli"     ,"C", 30, 0, "NIF del cliente" ,                                           "DniCliente",                  "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"lModCli"     ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                     "ModificarDatosCliente",       "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"lMayor"      ,"L",  1, 0, "Lógico de mayorista" ,                                       "",                            "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"nTarIfa"     ,"N",  1, 0, "Tarifa de precio aplicada" ,                                 "Tarifa",                      "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"nTarIfa"     ,"N",  1, 0, "Tarifa de precio aplicada" ,                                 "NumeroTarifa",                "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cCodAge"     ,"C",  3, 0, "Código del agente" ,                                         "Agente",                      "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cCodRut"     ,"C",  4, 0, "Código de la ruta" ,                                         "Ruta",                        "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cCodTar"     ,"C",  5, 0, "Código de la tarifa" ,                                       "Tarifa",                      "", "( cDbf )", nil } )
