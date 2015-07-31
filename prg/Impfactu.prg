@@ -195,7 +195,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfGrpCliFac PATH ( ::cPathFac ) FILE "GRUPCLI.DBF"  VIA ( cLocalDriver() ) CLASS "GRPCLIFAC"
    end if
 
-   if !File( ::cPathFac + "CLIENTES.DBF" ) .or. !File( ::cPathFac + "DIRCLI.DBF" ) .or. !File( ::cPathFac + "PROVINC.DBF" ) .or. !File( ::cPathFac + "ATIPICAS.DBF" ) .or. !File( ::cPathFac + "BANCOSCL.DBF" )
+   if !File( ::cPathFac + "CLIENTES.DBF" ) .or. !File( ::cPathFac + "DIRCLI.DBF" ) .or. !File( ::cPathFac + "PROVINC.DBF" ) .or. !File( ::cPathFac + "ATIPICAS.DBF" )// .or. !File( ::cPathFac + "BANCOSCL.DBF" )
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de clientes ni direcciones", ::cPathFac + "CLIENTES.DBF" + ::cPathFac + "DIRCLI.DBF" )
    else
@@ -207,7 +207,7 @@ METHOD OpenFiles()
 
       DATABASE NEW ::oDbfCliFac  PATH ( ::cPathFac ) FILE "CLIENTES.DBF"   VIA ( cLocalDriver() )  CLASS "Clifac"
       DATABASE NEW ::oDbfObrFac  PATH ( ::cPathFac ) FILE "DIRCLI.DBF"     VIA ( cLocalDriver() )  CLASS "Obrfac"
-      DATABASE NEW ::oDbfBncFac  PATH ( ::cPathFac ) FILE "BancosCL.DBF"   VIA ( cLocalDriver() )  CLASS "Bancoscl"
+      //DATABASE NEW ::oDbfBncFac  PATH ( ::cPathFac ) FILE "BancosCL.DBF"   VIA ( cLocalDriver() )  CLASS "Bancoscl"
       DATABASE NEW ::oDbfAtpFac  PATH ( ::cPathFac ) FILE "ATIPICAS.DBF"   VIA ( cLocalDriver() )  CLASS "Atpfac"
       DATABASE NEW ::oDbfProvFac PATH ( ::cPathFac ) FILE "PROVINC.DBF"    VIA ( cLocalDriver() )  CLASS "Provfac"   SHARED INDEX "PROVINC.CDX"
       DATABASE NEW ::oDbfCliCom  PATH ( ::cPathFac ) FILE "ClienteC.Dbf"   VIA ( cLocalDriver() )  CLASS "Clientec"  SHARED INDEX "ClienteC.Cdx"
@@ -1404,7 +1404,7 @@ METHOD Importar()
          Trasbase de bancos-----------------------------------------------------
          */
 
-         ::aMtrIndices[ 5 ]:SetTotal( ::oDbfBncFac:LastRec() )
+         /*::aMtrIndices[ 5 ]:SetTotal( ::oDbfBncFac:LastRec() )
 
          ::oDbfBncFac:GoTop()
          while !( ::oDbfBncFac:eof() )
@@ -1430,7 +1430,7 @@ METHOD Importar()
 
             ::oDbfBncFac:Skip()
 
-         end while
+         end while*/
 
          /*
          Trasbase de Atipicas--------------------------------------------------
