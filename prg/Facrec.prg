@@ -5083,7 +5083,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
       cSufAlb                          := ( uTmpLin )->cSufFac
       nCanEnt                          := ( uTmpLin )->nCanEnt
       dFecAlb                          := ( uTmpLin )->dFecha
-      cTipMov                          := ( uTmpLin )->cTipMov
+      cTipMov                          := ( uTmpLin )->cTipMov      
       cAlmLin                          := ( uTmpLin )->cAlmLin
       nIvaLin                          := ( uTmpLin )->nIva
       lIvaLin                          := ( uTmpLin )->lIvaLin
@@ -5148,13 +5148,12 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             Datos de la cabecera-----------------------------------------------
             */           
 
-            ( dbfTmpLin )->cSerAlb     := cSerAlb
-            ( dbfTmpLin )->nNumAlb     := nNumAlb
-            ( dbfTmpLin )->cSufAlb     := cSufAlb
+            ( dbfTmpLin )->cSerie      := cSerAlb
+            ( dbfTmpLin )->nNumFac     := nNumAlb
+            ( dbfTmpLin )->cSufFac     := cSufAlb
             ( dbfTmpLin )->nCanEnt     := nCanEnt
             ( dbfTmpLin )->dFecha      := dFecAlb
             ( dbfTmpLin )->cTipMov     := cTipMov
-            ( dbfTmpLin )->cNumPed     := cNumPed
             ( dbfTmpLin )->cAlmLin     := cAlmLin
             ( dbfTmpLin )->lIvaLin     := lIvaLin
 
