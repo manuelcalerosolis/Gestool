@@ -5573,6 +5573,9 @@ CLASS D
       METHOD GetPedidoClienteBlank( nView )           INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )
       METHOD GetPedidoClienteDefaultValue( nView )    INLINE ( ::getHashRecordDefaultValues( ::PedidosClientes( nView ), nView ) )
 
+      METHOD getStatusPedidosClientes( nView )    INLINE ( ::aStatus := aGetStatus( ::PedidosClientes( nView ) ) )
+      METHOD setStatusPedidosClientes( nView )    INLINE ( SetStatus( ::PedidosClientes( nView ), ::aStatus ) ) 
+
    METHOD PedidosClientesReservas( nView )            INLINE ( ::Get( "PedCliR", nView ) )
 
    METHOD PedidosClientesLineas( nView )              INLINE ( ::Get( "PedCliL", nView ) )

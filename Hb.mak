@@ -402,6 +402,8 @@ TotalDocument.prg                      \
 DeliveryNoteCustomer.prg               \
 InvoiceCustomer.prg                    \
 DocumentsSales.prg                     \
+DailySummarySales.Prg                  \
+DailySummarySalesView.prg              \
 ViewBase.prg                           \
 ViewEdit.prg                           \
 CustomerView.prg                       \
@@ -821,6 +823,8 @@ TotalDocument.obj                      \
 DeliveryNoteCustomer.obj               \
 InvoiceCustomer.obj                    \
 DocumentsSales.obj                     \
+DailySummarySales.obj                  \
+DailySummarySalesView.obj              \
 ViewBase.obj                           \
 ViewEdit.obj                           \
 CustomerView.obj                       \
@@ -1223,6 +1227,8 @@ $(OBJ)\TotalDocument.obj                     +
 $(OBJ)\DeliveryNoteCustomer.obj              +
 $(OBJ)\InvoiceCustomer.obj                   +
 $(OBJ)\DocumentsSales.obj                    +
+$(OBJ)\DailySummarySales.obj                 +
+$(OBJ)\DailySummarySalesView.obj             +
 $(OBJ)\ViewBase.obj                          +
 $(OBJ)\ViewEdit.obj                          +
 $(OBJ)\CustomerView.obj                      +

@@ -5975,6 +5975,16 @@ Function MainTablet()
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| OrderCustomer():New():runNavigator() } } )
 
+   //----------------Resumen diario
+
+   TGridImage():Build(  {  "nTop"      => {|| GridRow( 6 ) },;
+                           "nLeft"     => {|| GridWidth( 11.5, oDlg ) - 64 },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_about_64",;
+                           "bLClicked" => {|| DailySummarySales():New():runNavigator() },;
+                           "oWnd"      => oDlg } )
+
    //----------------Albaranes de clientes
    
    TGridImage():Build(  {  "nTop"      => {|| GridRow( 9 ) },;
