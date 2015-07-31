@@ -15075,6 +15075,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       return .f.
    end if
 
+   if ( ( D():Get( "Client", nView ) )->lCreSol ) .and. ( nMode == APPD_MODE .or. nMode == EDIT_MODE ) 
+      if ( nRiesgoCliente + nTotFac >= ( D():Get( "Client", nView ) )->Riesgo )
+         msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
+         return .f.
+      end if 
+   end if 
+
    if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
       ( dbfTmpLin )->( dbGoTop() )

@@ -11411,6 +11411,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       return .f.
    end if
 
+   if ( ( D():Get( "Client", nView ) )->lCreSol ) .and. ( nMode == APPD_MODE .or. nMode == EDIT_MODE ) 
+      if ( nRieCli + nTotAlb >= ( D():Get( "Client", nView ) )->Riesgo )
+         msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como albarán" )
+         return .f.
+      end if 
+   end if 
+
    if nTotDif < 0
       MsgStop( "La carga excede la capacidad del medio de transporte." )
    end if
@@ -11426,27 +11433,21 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    BeginTransaction()
 
-   /*
-   Quitamos los filtros--------------------------------------------------------
-   */
+   // Quitamos los filtros--------------------------------------------------------
 
    ( dbfTmpLin )->( dbClearFilter() )
 
    oMsgProgress()
    oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
 
-   /*
-   Primero hacer el RollBack---------------------------------------------------
-   */
+   // Primero hacer el RollBack---------------------------------------------------
 
    aTmp[ _DFECCRE ]        := Date()
    aTmp[ _CTIMCRE ]        := Time()
    aTmp[ _NTARIFA ]        := oGetTarifa:getTarifa()
 
-   /*
-   Guardamos el tipo para alquileres-------------------------------------------
-   */
-
+   // Guardamos el tipo para alquileres-------------------------------------------
+   
    if !Empty( oTipAlb ) .and. oTipAlb:nAt == 2
       aTmp[ _LALQUILER ]   := .t.
    else
