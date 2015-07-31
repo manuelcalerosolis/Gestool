@@ -426,7 +426,7 @@ METHOD AddFactura()
                ::oDbf:cCodCli := ::cCliDoc
                ::oDbf:cNomCli := ::cNomDoc
 
-               ::AddCliente( ::cCliDoc )
+               ::AddCliente( ::cCliDoc, ::oFacCliT )
 
                ::oDbf:cDocFac := StrTran( ::oFacCliL:cSerie + "/" + Str( ::oFacCliL:nNumFac ) + "/" + ::oFacCliL:cSufFac, " ", "" )
                aTotFac        := aTotFacCli( ::cNumDoc, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias )
