@@ -5884,6 +5884,7 @@ Function MainTablet()
 	local oDlg
    local nRow           
    local oGridTree
+   local cAgente        := GetPvProfString( "Tablet", "Agente", "",   FullCurDir() + "GstApolo.Ini" )
 
    nRow                 := 0
    oDlg                 := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
@@ -6066,6 +6067,7 @@ Function MainTablet()
                               oGridTree:Add( "Delegación : "   + Rtrim( oUser():cDelegacion() ) ),;
                               oGridTree:Add( "Caja : "         + oUser():cCaja() ),;
                               oGridTree:Add( "Almacén : "      + Rtrim( oUser():cAlmacen() ) ),;
+                              oGridTree:Add( "Agente : "       + Rtrim( cAgente ) ),;
                               oGridTree:Add( "Sesión : "       + Alltrim( Transform( cCurSesion(), "######" ) ) ) } 
 
 	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )

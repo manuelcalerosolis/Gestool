@@ -3580,6 +3580,24 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          :lHide                  := .t.
       end with
 
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Obs Cobro"
+         :bEditValue             := {|| aTmp[ _CUSRDEF01 ] }
+         :nWidth                 := 100
+         :lHide                  := .t.
+         :nEditType              := 1
+         :bOnPostEdit            := {|oCol, uNewValue, nKey| ChangeCampoDef( oCol, uNewValue, nKey, aTmp, _CUSRDEF01, oBrwRecCli ) }
+      end with
+
+      with object ( oBrwRecCli:AddCol() )
+         :cHeader                := "Contacto/Tlf"
+         :bEditValue             := {|| aTmp[ _CUSRDEF02 ] }
+         :nWidth                 := 100
+         :lHide                  := .t.
+         :nEditType              := 1
+         :bOnPostEdit            := {|oCol, uNewValue, nKey| ChangeCampoDef( oCol, uNewValue, nKey, aTmp, _CUSRDEF02, oBrwRecCli ) }
+      end with
+
       /*
       Botones de la Caja de Dialogo__________________________________________
       */
