@@ -2760,8 +2760,15 @@ METHOD DataReport( oFr ) CLASS TRemMovAlm
    oFr:SetWorkArea(     "Agentes", ::oDbfAge:nArea )
    oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
 
+   
+   if !Empty( ::oDetMovimientos )
+      oFr:SetWorkArea(     "Artículos", ::oArt:nArea )
+      oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
+   end if      
+
    if !Empty( ::oDetMovimientos )
       oFr:SetMasterDetail( "Movimiento", "Lineas de movimientos", {|| Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem } )
+      oFr:SetMasterDetail( "Movimiento", "Artículos", {|| ::oDetMovimientos:oDbf:cRefMov } )
    end if
 
    oFr:SetMasterDetail( "Movimiento", "Empresa",               {|| cCodigoEmpresaEnUso() } )
@@ -2771,6 +2778,7 @@ METHOD DataReport( oFr ) CLASS TRemMovAlm
 
    if !Empty( ::oDetMovimientos )
       oFr:SetResyncPair(   "Movimiento", "Lineas de movimientos" )
+      oFr:SetResyncPair(   "Artículos", "Artículos" )
    end if
 
    oFr:SetResyncPair(   "Movimiento", "Empresa" )
