@@ -10885,7 +10885,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
 
       else
 
-         saveDetail( aTmp, aClo, aGet, aTmpAlb, dbfTmpLin, oBrw, nMode )
+        WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
       end if
 

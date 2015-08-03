@@ -4980,7 +4980,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oFld, oBrw, oDlg, oSayPr1, oSayPr
 
       else
 
-         saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
+         WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
       end if
 
@@ -5263,6 +5263,15 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
    local sOfertaArticulo
    local nCajasGratis         := 0
    local nUnidadesGratis      := 0
+   local nPrecioPropiedades   := 0
+
+   //Precio por propiedades
+
+   nPrecioPropiedades         := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[ _CCODTAR ] )
+   if !empty(nPrecioPropiedades)
+      aTmp[ _NPREUNIT ]       := nPrecioPropiedades
+   end if
+
 
    // Atipicas ----------------------------------------------------------------
 
