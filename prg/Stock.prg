@@ -4072,7 +4072,11 @@ METHOD Almacenes()
 
    ( ::cAlm )->( dbGoTop() )
    while !( ::cAlm )->( eof() )
-      aAdd( ::aAlmacenes, ( ::cAlm )->cCodAlm )
+
+      if aScan( ::aAlmacenes, ( ::cAlm )->cCodAlm ) == 0
+         aAdd( ::aAlmacenes, ( ::cAlm )->cCodAlm )
+      end if 
+
       ( ::cAlm )->( dbSkip() )
    end while
 
@@ -5172,7 +5176,7 @@ METHOD oTreeStocks( cCodArt, cCodAlm )
    aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote + dtos( x:dFechaDocumento ) + x:tFechaDocumento < y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote + dtos( y:dFechaDocumento ) + y:tFechaDocumento } )
 
    ::oTree     := TreeBegin()
-   
+
    for each x in ::aStocks
 
       if cValue != x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote
