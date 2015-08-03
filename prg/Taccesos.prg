@@ -656,7 +656,7 @@ Method CreateSearchBar( oWnd )
    @ 124, 710 COMBOBOX ::oYearComboBox ;
             VAR      ::cYearComboBox ;
             ITEMS    ::aYearComboBox ;
-            STYLE    2 ;
+            STYLE    3 ;
             OF       ::oRebar ;
             FONT     ::oFont ;
             PIXEL    SIZE 60, 30

@@ -11976,7 +11976,7 @@ Static Function YearComboBoxChange()
 
    oWndBrw:Refresh()
 
-Return nil
+Return .t.
 
 //----------------------------------------------------------------------------//
 
