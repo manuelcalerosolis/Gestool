@@ -670,8 +670,6 @@ RETURN ( self )
 
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
 METHOD onPreEnd() CLASS DocumentsSales
    
    Local lPostSaveEditDocumento  := .t.
@@ -789,6 +787,7 @@ METHOD setDatasFromClientes() CLASS DocumentsSales
 
    Local lReturn           := .f.
    Local CodidoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
+   local AgenteIni         := GetPvProfString( "Tablet", "Agente", "",   FullCurDir() + "GstApolo.Ini" )
 
    D():getStatusClientes( ::nView )
 
@@ -818,7 +817,7 @@ METHOD setDatasFromClientes() CLASS DocumentsSales
          hSet( ::hDictionaryMaster, "Almacen", ( D():Clientes( ::nView ) )->cCodAlm )
          hSet( ::hDictionaryMaster, "Tarifa", ( D():Clientes( ::nView ) )->cCodTar )
          hSet( ::hDictionaryMaster, "Pago", ( D():Clientes( ::nView ) )->CodPago )
-         hSet( ::hDictionaryMaster, "Agente", ( D():Clientes( ::nView ) )->cAgente )
+         hSet( ::hDictionaryMaster, "Agente", ( if( Empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
          hSet( ::hDictionaryMaster, "Ruta", ( D():Clientes( ::nView ) )->cCodRut )
          hSet( ::hDictionaryMaster, "NumeroTarifa", ( D():Clientes( ::nView ) )->nTarifa )
          hSet( ::hDictionaryMaster, "DescuentoTarifa", ( D():Clientes( ::nView ) )->nDtoArt )
@@ -836,7 +835,7 @@ METHOD setDatasFromClientes() CLASS DocumentsSales
 
       end if
 
-   end if 
+   end if
 
    D():setStatusClientes( ::nView )
 
@@ -844,4 +843,3 @@ METHOD setDatasFromClientes() CLASS DocumentsSales
 Return( lReturn ) 
 
 //---------------------------------------------------------------------------//
-

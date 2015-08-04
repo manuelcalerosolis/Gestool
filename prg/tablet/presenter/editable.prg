@@ -52,7 +52,7 @@ CLASS Editable
    METHOD onPreEnd()                            VIRTUAL
 
    METHOD getAppendDocumento()                  INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
-   METHOD getEditDocumento()                    INLINE ( ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView ) )
+   METHOD getEditDocumento()
    METHOD deleteDocumento()                     INLINE ( D():deleteRecord( ::getDataTable(), ::nView ) )
       METHOD Resource()                         INLINE ( msgStop( "Resource method must be redefined" ) )
 
@@ -138,15 +138,17 @@ METHOD Edit() CLASS Editable
 
    ::nMode        := EDIT_MODE
 
-   ::getEditDocumento()
+   if ::getEditDocumento()
 
-   ::onPostGetDocumento()
+      ::onPostGetDocumento()
 
-   if ::Resource()
-      lEdit       := ::saveEdit()
+      if ::Resource()
+         lEdit       := ::saveEdit()
+      end if
+
+      ::onPreEnd()
+
    end if
-
-   ::onPreEnd()
 
    ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 
@@ -186,6 +188,14 @@ METHOD Delete() CLASS Editable
    end if 
 
 Return ( lDelete )
+
+//---------------------------------------------------------------------------//
+
+METHOD getEditDocumento() CLASS Editable
+
+   ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 

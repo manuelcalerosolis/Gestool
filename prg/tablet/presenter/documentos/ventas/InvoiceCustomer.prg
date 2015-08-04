@@ -39,7 +39,7 @@ METHOD New() CLASS InvoiceCustomer
 
    ::oViewEdit:setTextoTipoDocumento( "Factura" )  
 
-   ::oLinesDeliveryNoteCustomer           := LinesDeliveryNoteCustomer():New( self )
+   ::oLinesDeliveryNoteCustomer           := LinesInvoiceCustomer():New( self )
  
    // Areas
 
@@ -70,11 +70,15 @@ METHOD GetEditDocumento() CLASS InvoiceCustomer
 
    local id                := D():FacturasClientesId( ::nView )
 
+   if Empty( id )
+      Return .f.
+   end if
+
    ::hDictionaryMaster     := D():getFacturaCliente( ::nView )
 
    ::getLinesDocument( id )
 
-Return ( self )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 //
@@ -122,6 +126,7 @@ Return ( DocumentLine():New( hLine, self ) )
 METHOD GetAppendDetail() CLASS InvoiceCustomer
 
    local hLine             := D():GetFacturaClienteLineaBlank( ::nView )
+
    ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
 
 Return ( self )

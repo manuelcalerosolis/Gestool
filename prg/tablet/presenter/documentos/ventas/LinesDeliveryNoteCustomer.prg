@@ -13,7 +13,6 @@ CLASS LinesDeliveryNoteCustomer FROM LinesDocumentsSales
 END CLASS
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 METHOD ResourceDetail( nMode ) CLASS LinesDeliveryNoteCustomer
 

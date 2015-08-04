@@ -425,73 +425,73 @@ METHOD defineRuta(nRow) CLASS CustomerView
                                                    "cCaption"  => " L",;
                                                    "bSetGet"   => {|u| ::SetGetValue( u, "lVisLun" ) },;
                                                    "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
                                                    "nHeight"   => 23,;
                                                    "bWhen"     => {|| ::whenControl() },;
                                                    "oFont"     => oGridFont(),;
                                                    "lPixels"   => .t. } )
 
    ::oCheckVisMar    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
-                                                   "nCol"      => {|| GridWidth( 3, ::oDlg ) },;
+                                                   "nCol"      => {|| GridWidth( 3.5, ::oDlg ) },;
                                                    "cCaption"  => " M",;
                                                    "bSetGet"   => {|u| ::SetGetValue( u, "lVisMar" ) },;
                                                    "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
                                                    "nHeight"   => 23,;
                                                    "bWhen"     => {|| ::whenControl() },;
                                                    "oFont"     => oGridFont(),;
                                                    "lPixels"   => .t. } )
 
    ::oCheckVisMie    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
-                                                   "nCol"      => {|| GridWidth( 3.5, ::oDlg ) },;
+                                                   "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
                                                    "cCaption"  => " X",;
                                                    "bSetGet"   => {|u| ::SetGetValue( u, "lVisMie" ) },;
                                                    "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
                                                    "nHeight"   => 23,;
                                                    "bWhen"     => {|| ::whenControl() },;
                                                    "oFont"     => oGridFont(),;
                                                    "lPixels"   => .t. } )
 
    ::oCheckVisJue    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
-                                                   "nCol"      => {|| GridWidth( 4, ::oDlg ) },;
+                                                   "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
                                                    "cCaption"  => " J",;
                                                    "bSetGet"   => {|u| ::SetGetValue( u, "lVisJue" ) },;
                                                    "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
                                                    "nHeight"   => 23,;
                                                    "bWhen"     => {|| ::whenControl() },;
                                                    "oFont"     => oGridFont(),;
                                                    "lPixels"   => .t. } )
 
    ::oCheckVisVie    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
-                                                   "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
+                                                   "nCol"      => {|| GridWidth( 6.5, ::oDlg ) },;
                                                    "cCaption"  => " V",;
                                                    "bSetGet"   => {|u| ::SetGetValue( u, "lVisVie" ) },;
                                                    "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
                                                    "nHeight"   => 23,;
                                                    "bWhen"     => {|| ::whenControl() },;
                                                    "oFont"     => oGridFont(),;
                                                    "lPixels"   => .t. } )
 
    ::oCheckVisSab    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
-                                                   "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
+                                                   "nCol"      => {|| GridWidth( 7.5, ::oDlg ) },;
                                                    "cCaption"  => " S",;
                                                    "bSetGet"   => {|u| ::SetGetValue( u, "lVisSab" ) },;
                                                    "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
                                                    "nHeight"   => 23,;
                                                    "bWhen"     => {|| ::whenControl() },;
                                                    "oFont"     => oGridFont(),;
                                                    "lPixels"   => .t. } )
 
    ::oCheckVisDom    := TGridCheckBox():Build(  {  "nRow"      => nRow,;       
-                                                   "nCol"      => {|| GridWidth( 5.5, ::oDlg ) },;
+                                                   "nCol"      => {|| GridWidth( 8.5, ::oDlg ) },;
                                                    "cCaption"  => " D",;
                                                    "bSetGet"   => {|u| ::SetGetValue( u, "lVisDom" ) },;
                                                    "oWnd"      => ::oDlg,;
-                                                   "nWidth"    => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                   "nWidth"    => {|| GridWidth( 1, ::oDlg ) },;
                                                    "nHeight"   => 23,;
                                                    "bWhen"     => {|| ::whenControl() },;
                                                    "oFont"     => oGridFont(),;

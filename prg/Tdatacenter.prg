@@ -5494,7 +5494,7 @@ CLASS D
 
    METHOD FacturasClientes( nView )             INLINE ( ::Get( "FacCliT", nView ) )
       METHOD FacturasClientesFecha( nView )     INLINE ( ( ::FacturasClientes( nView ) )->dFecFac )
-      METHOD FacturasClientesId( nView )        INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) + ( ::Get( "FacCliT", nView ) )->cSufFac )
+      METHOD FacturasClientesId( nView )        INLINE ( if( ( ::Get( "FacCliT", nView ) )->nNumFac == 0, "", ( ::Get( "FacCliT", nView ) )->cSerie + Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) + ( ::Get( "FacCliT", nView ) )->cSufFac ) )
       METHOD FacturasClientesIdTextShort( nView );
                                                 INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) )
       METHOD FacturasClientesIdText( nView )    INLINE ( ::FacturasClientesIdTextShort( nView ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )

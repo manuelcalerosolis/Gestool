@@ -63,11 +63,15 @@ METHOD GetEditDocumento() CLASS OrderCustomer
 
    local id                := D():PedidosClientesId( ::nView )
 
+   if Val( id ) == 0
+      Return .f.
+   end if
+
    ::hDictionaryMaster     := D():GetPedidoCliente( ::nView )
 
    ::getLinesDocument( id )
 
-RETURN ( self ) 
+RETURN ( .t. ) 
 
 //---------------------------------------------------------------------------//
 //

@@ -586,7 +586,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfTarPreT, oBrw, oBrwDet, nMode, oDlg )
       if Empty( cCodTar )
          MsgStop( "Código no puede estar vacio" )
          return nil
-      end if
+     end if
 
       if dbSeekInOrd( cCodTar, "CCODTAR", dbfTarPreT )
          msgStop( "Código ya existe" )

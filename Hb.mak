@@ -412,6 +412,7 @@ ViewEditResumen.prg                    \
 LinesDocumentsSales.prg                \
 LinesOrderCustomer.prg                 \
 LinesDeliveryNoteCustomer.prg          \
+LinesInvoiceCustomer.prg               \
 ViewSearchNavigator.prg                \
 DocumentSalesViewSearchNavigator.prg   \
 CustomerViewSearchNavigator.prg        \
@@ -833,6 +834,7 @@ ViewEditResumen.obj                    \
 LinesDocumentsSales.obj                \
 LinesOrderCustomer.obj                 \
 LinesDeliveryNoteCustomer.obj          \
+LinesInvoiceCustomer.obj               \
 ViewSearchNavigator.obj                \
 DocumentSalesViewSearchNavigator.obj   \
 CustomerViewSearchNavigator.obj        \
@@ -1237,6 +1239,7 @@ $(OBJ)\ViewEditResumen.obj                   +
 $(OBJ)\LinesDocumentsSales.obj               +
 $(OBJ)\LinesOrderCustomer.obj                +
 $(OBJ)\LinesDeliveryNoteCustomer.obj         +
+$(OBJ)\LinesInvoiceCustomer.obj              +
 $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\DocumentSalesViewSearchNavigator.obj  +
 $(OBJ)\CustomerViewSearchNavigator.obj       +

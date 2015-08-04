@@ -6066,8 +6066,8 @@ Function MainTablet()
                               oGridTree:Add( "Usuario : "      + Rtrim( oUser():cNombre() ) ),;
                               oGridTree:Add( "Delegación : "   + Rtrim( oUser():cDelegacion() ) ),;
                               oGridTree:Add( "Caja : "         + oUser():cCaja() ),;
-                              oGridTree:Add( "Almacén : "      + Rtrim( oUser():cAlmacen() ) ),;
-                              oGridTree:Add( "Agente : "       + Rtrim( cAgente ) ),;
+                              oGridTree:Add( "Almacén : "      + Rtrim( oUser():cAlmacen() ) + "-" + RetAlmacen( oUser():cAlmacen() ) ),;
+                              oGridTree:Add( "Agente : "       + Rtrim( cAgente ) + "-" + AllTrim( RetNbrAge( cAgente ) ) ),;
                               oGridTree:Add( "Sesión : "       + Alltrim( Transform( cCurSesion(), "######" ) ) ) } 
 
 	ACTIVATE DIALOG oDlg CENTER ON INIT ( GridMaximize( oDlg ) )

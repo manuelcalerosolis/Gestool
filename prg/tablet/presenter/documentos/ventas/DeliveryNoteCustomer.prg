@@ -64,11 +64,15 @@ METHOD GetEditDocumento() CLASS DeliveryNoteCustomer
 
    local id                := D():AlbaranesClientesId( ::nView )
 
+   if Val( id ) == 0
+      Return .f.
+   end if      
+
    ::hDictionaryMaster     := D():getAlbaranCliente( ::nView )
 
    ::getLinesDocument( id )
 
-Return ( self )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 //
