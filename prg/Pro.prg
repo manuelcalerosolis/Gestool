@@ -2346,27 +2346,28 @@ FUNCTION retValProp( cCodPrp, dbfPro )
 
    local oBlock
    local oError
-   local lClo     := .f.
-   local cPrp     := Space( 3 )
+   local lClo        := .f.
+   local cPrp        := ""
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    if Empty( dbfPro )
       USE ( cPatArt() + "TBLPRO.DBF" ) NEW VIA ( cDriver() ) SHARED   ALIAS ( cCheckArea( "PROTBL", @dbfPro ) )
       SET ADSINDEX TO ( cPatArt() + "TBLPRO.CDX" ) ADDITIVE
-      lClo        := .t.
+      lClo           := .t.
    end if
 
-   if ValType( dbfPro ) == "O"
-      if dbfPro:Seek( cCodPrp )
-         cPrp     := dbfPro:cDesTbl
-      end if
-   else
-      if ( dbfPro )->( dbSeek( cCodPrp ) )
-         cPrp     := ( dbfPro )->cDesTbl
-      end if
-   end if
+   do case
+      case isObject( dbfPro ) 
+         if dbfPro:Seek( cCodPrp )
+            cPrp     := dbfPro:cDesTbl
+         end if
+      case isChar( dbfPro )
+         if ( dbfPro )->( dbSeek( cCodPrp ) )
+            cPrp     := ( dbfPro )->cDesTbl
+         end if
+   end case 
 
    RECOVER USING oError
 

@@ -1297,6 +1297,22 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Población"
+         :bEditValue       := {|| alltrim( ( D():PedidosClientes( nView ) )->cPobCli ) }
+         :nWidth           := 180
+         :lHide            := .t.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :bEditValue       := {|| alltrim( ( D():PedidosClientes( nView ) )->cPrvCli ) }
+         :nWidth           := 180
+         :lHide            := .t.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodAge }

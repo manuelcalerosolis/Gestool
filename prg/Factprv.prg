@@ -3657,7 +3657,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
             PICTURE  cPorDiv ;
             OF       oFld:aDialogs[ 2 ]
 
-      REDEFINE CHECKBOX aGet[ _LCHGLIN ] VAR aTmp[ _LCHGLIN ];
+      REDEFINE CHECKBOX aGet[ _LCHGLIN ] ;
+         VAR            aTmp[ _LCHGLIN ] ;
          ID       420 ;
          WHEN     ( nMode != ZOOM_MODE .and. lActCos() );
          OF       oFld:aDialogs[2]
@@ -3668,7 +3669,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
       */
 
       REDEFINE RADIO aGet[ _NCTLSTK ] ;
-         VAR      aTmp[ _NCTLSTK ] ;
+         VAR         aTmp[ _NCTLSTK ] ;
          ID       350, 351, 352 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]

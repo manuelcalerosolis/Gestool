@@ -3147,6 +3147,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
 
       /*
       Tarifa1 ______________________________________________________________________________
+      */
 
       REDEFINE CHECKBOX aGet[ _LBNFLIN1 ] ;
             VAR      aTmp[ _LBNFLIN1 ] ;
@@ -3393,7 +3394,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
             VALID    ( CalBnfIva( oBeneficioSobre[ 6 ]:nAt <= 1, aTmp[ _LIVALIN ], aTmp[ _NPRECOM ], aTmp[ _NIVALIN6 ], aGet[ _NBNFLIN6 ], aTmp[ _NIVA ], aGet[ _NPVPLIN6 ], nDinDiv ) );
             PICTURE  cPinDiv ;
             OF       oFld:aDialogs[ 2 ]
-      */
 
       /*
       Control de stock
@@ -3413,16 +3413,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpAlb, cCodArtEnt, nMode )
          OF       oFld:aDialogs[2]
 
       REDEFINE CHECKBOX aGet[ __LFACTURADO ] ;
-         VAR      aTmp[ __LFACTURADO ] ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ID       360 ;
-         OF       oFld:aDialogs[2]
+         VAR            aTmp[ __LFACTURADO ] ;
+         WHEN           ( nMode != ZOOM_MODE ) ;
+         ID             360 ;
+         OF             oFld:aDialogs[2]
 
-      REDEFINE GET aGet[ __CNUMFAC ] VAR aTmp[ __CNUMFAC ] ;
-         ID       361 ;
-         PICTURE  "@R #/#########/##" ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[2]
+      REDEFINE GET   aGet[ __CNUMFAC ] ;
+         VAR         aTmp[ __CNUMFAC ] ;
+         ID          361 ;
+         PICTURE     "@R #/#########/##" ;
+         WHEN        ( .f. ) ;
+         OF          oFld:aDialogs[2]
 
       REDEFINE GET aTmp[ __DFECALB ];
          ID       370 ;
@@ -3559,6 +3560,9 @@ Static Function SetDlgMode( aGet, aTmp, aTmpAlb, nMode, oSayPr1, oSayPr2, oSayVp
          aGet[ _NPNTVER ]:Hide()
       end if
    end if
+
+   aGet[ __LFACTURADO ]:Show()
+   aGet[ __CNUMFAC    ]:Show()
 
    oBrwPrp:Hide()
 
@@ -5590,11 +5594,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nDec, nRec, oBrw, nMode, oDlg )
 
          /*
          Cambios de precios-------------------------------------------------------
+         */
 
          if ( D():Articulos( nView ) )->( dbSeek( ( dbfTmp )->cRef ) ) .and. ( dbfTmp )->lChgLin
             CambioPrecio( aTmp[ _DFECALB ], D():Articulos( nView ), dbfTmp )
          end if
-         */
 
          /*
          Grabamos-----------------------------------------------------------------
