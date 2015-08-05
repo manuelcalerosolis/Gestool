@@ -8,6 +8,7 @@ CLASS Editable
    DATA nView
 
    DATA nMode
+   DATA lChangePrecio                           INIT .t.
 
    DATA cDataTable
    DATA cDataTableLine
@@ -91,16 +92,18 @@ METHOD Append() CLASS Editable
    local lAppend  := .f.
    local nord
 
-   nOrd           := ( ::getWorkArea )->( OrdSetFocus( "dFecDes" ) )
+   nOrd                 := ( ::getWorkArea )->( OrdSetFocus( "dFecDes" ) )
 
-   ::nMode        := APPD_MODE
+   ::nMode              := APPD_MODE
+
+   ::lChangePrecio      := oUser():lCambiarPrecio()
 
    ::getAppendDocumento()
 
    ::onPostGetDocumento()
 
    if ::Resource()
-      lAppend     := ::saveAppend()
+      lAppend           := ::saveAppend()
    end if
 
    ::onPreEnd()
@@ -131,19 +134,21 @@ Return ( lSave )
 
 METHOD Edit() CLASS Editable
 
-   local lEdit    := .f.
+   local lEdit          := .f.
    local nord
 
-   nOrd           := ( ::getWorkArea )->( OrdSetFocus( "dFecDes" ) )
+   nOrd                 := ( ::getWorkArea )->( OrdSetFocus( "dFecDes" ) )
 
-   ::nMode        := EDIT_MODE
+   ::nMode              := EDIT_MODE
+
+   ::lChangePrecio      := oUser():lCambiarPrecio()
 
    if ::getEditDocumento()
 
       ::onPostGetDocumento()
 
       if ::Resource()
-         lEdit       := ::saveEdit()
+         lEdit          := ::saveEdit()
       end if
 
       ::onPreEnd()

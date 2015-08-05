@@ -41,6 +41,7 @@ CLASS ViewBase
 
    METHOD getView()                    INLINE ( ::oSender:nView )
    METHOD getMode()                    INLINE ( ::oSender:nMode )
+   METHOD getChangePrecio()            INLINE ( ::oSender:oSender:lChangePrecio )
 
    METHOD defineTitulo()
    METHOD defineAceptarCancelar()

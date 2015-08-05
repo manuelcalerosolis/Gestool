@@ -289,7 +289,8 @@ METHOD definePrecio() CLASS ViewDetail
                                           "cPict"     => cPouDiv( hGet( ::getSenderDocument():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
-                                          "bValid"    => {||  ::oSender:recalcularTotal() } } )
+                                          "bWhen"     => {|| ::getChangePrecio() },;
+                                          "bValid"    => {|| ::oSender:recalcularTotal() } } )
 
 Return ( self )
 
@@ -347,6 +348,7 @@ METHOD defineDescuentoLineal() CLASS ViewDetail
                                                    "cPict"     => cPouDiv( hGet( ::getSenderDocument():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
                                                    "lRight"    => .t.,;
                                                    "nHeight"   => 23,;
+                                                   "bWhen"     => {|| ::getChangePrecio() },;
                                                    "bValid"    => {|| ::oSender:recalcularTotal() } } )
 
 Return ( self )
