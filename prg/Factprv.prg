@@ -94,6 +94,7 @@
 #define _LRECC                   82
 #define _TFECFAC                 83
 #define _CCENTROCOSTE            84
+#define _CALMORIGEN              85
 
 /*
 Lineas de Detalle
@@ -199,6 +200,7 @@ Lineas de Detalle
 #define _NVALIMP                 101
 #define __TFECFAC                102
 #define __CCENTROCOSTE           103
+#define __CALMORIGEN             104
 
 
 /*
@@ -1181,8 +1183,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    local oBrwInc
    local oBrwDoc
    local cGetRet
-   local oGet        := Array( 6 )
-   local cGet        := Array( 6 )
+   local oGet        := Array( 7 )
+   local cGet        := Array( 7 )
    local oSayLabels  := Array( 7 )
    local cTlfPrv
    local oTlfPrv
@@ -1413,6 +1415,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          ID       151 ;
          WHEN     ( .F. );
          COLOR    CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CALMORIGEN ] VAR aTmp[ _CALMORIGEN ]  ;
+         ID       340 ;
+         IDSAY    342 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cAlmacen( aGet[ _CALMORIGEN ], D():Almacen( nView ), oGet[ 7 ] ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAlmacen( aGet[ _CALMORIGEN ], oGet[ 7 ] ) ) ;
+         COLOR    CLR_GET ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET oGet[ 7 ] VAR cGet[ 7 ] ;
+         WHEN     .F. ;
+         ID       341 ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CCODPAGO ] VAR aTmp[ _CCODPAGO ];
@@ -2605,7 +2622,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| StartEdtRecFacProv( aGet, nMode ) }
+         oDlg:bStart := {|| StartEdtRecFacProv( aGet, oGet, nMode ) }
 
    end case
 
@@ -2647,7 +2664,15 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function StartEdtRecFacProv( aGet, nMode )
+Static Function StartEdtRecFacProv( aGet, oGet, nMode )
+
+   if uFieldEmpresa( "lShowOrg" )
+      aGet[ _CALMORIGEN ]:Show()
+      oGet[7]:Show()
+   else
+      aGet[ _CALMORIGEN ]:Hide()
+      oGet[7]:Hide()
+   end if
 
    if nMode != APPD_MODE
 
@@ -2984,6 +3009,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
    case nMode == APPD_MODE
 
       aTmp[ _NUNICAJA ]    := 1
+      aTmp[ __CALMORIGEN ] := aTmpFac[ _CALMORIGEN ]
       aTmp[ _CALMLIN  ]    := aTmpFac[ _CCODALM ]
       aTmp[ _NNUMLIN  ]    := nLastNum( dbfTmp )
       aTmp[ _LCHGLIN  ]    := lActCos()
@@ -3307,6 +3333,16 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          WHEN     .F. ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ __CALMORIGEN ] VAR aTmp[ __CALMORIGEN ]  ;
+         ID       330 ;
+         IDTEXT   331 ;
+         IDSAY    332 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    (  cAlmacen( aGet[ __CALMORIGEN ], D():Almacen( nView ), aGet[ __CALMORIGEN ]:oHelpText ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAlmacen( aGet[ __CALMORIGEN ], aGet[ __CALMORIGEN ]:oHelpText ) ) ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET aGet[_CALMLIN] VAR aTmp[_CALMLIN]  ;
          ID       240 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -3316,6 +3352,11 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET oSay2 VAR cSay2 ;
+         WHEN     .F. ;
+         ID       241 ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET aGet[ __CCENTROCOSTE ] VAR aTmp[ __CCENTROCOSTE ] ;
          ID       410 ;
          IDTEXT   411 ;
@@ -3323,12 +3364,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpFac, cCodArtEnt, nMode )
          VALID    ( oCentroCoste:Existe( aGet[ __CCENTROCOSTE ], aGet[ __CCENTROCOSTE ]:oHelpText, "cNombre" ) );
          ON HELP  ( oCentroCoste:Buscar( aGet[ __CCENTROCOSTE ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oSay2 VAR cSay2 ;
-         WHEN     .F. ;
-         ID       241 ;
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]      
 
       /*
       Segunda caja de dialogo_________________________________________________
@@ -3770,6 +3806,20 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
 
    aGet[ _NUNICAJA ]:SetText( cNombreUnidades() )
 
+   if Empty( aTmp[_CALMLIN ] )
+      aTmp[ _CALMLIN ]  := aTmpFac[ _CCODALM ]
+   end if
+
+   if Empty( aTmp[ __CALMORIGEN ] )
+      aTmp[ __CALMORIGEN ]  := aTmpFac[ _CALMORIGEN ]
+   end if
+  
+   if uFieldEmpresa( "lShowOrg" )
+      aGet[ __CALMORIGEN ]:Show()
+   else
+      aGet[ __CALMORIGEN ]:Hide()
+   end if
+
    oBrwPrp:Hide()
 
    oSayPr1:SetText( "" )
@@ -3797,6 +3847,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
       aGet[ _DFECCAD ]:Hide()
       aGet[ _NCANENT ]:cText( 1 )
       aGet[ _NUNICAJA]:cText( 1 )
+      aGet[ __CALMORIGEN ]:cText( aTmpFac[ _CALMORIGEN ] )
       aGet[ _CALMLIN ]:cText( aTmpFac[ _CCODALM ] )
 
       aGet[ _NIVA    ]:cText( nIva( D():TiposIva( nView ), cDefIva() ) )
@@ -3903,6 +3954,7 @@ STATIC FUNCTION SetDlgMode( aGet, aTmp, oFld, aTmpFac, nMode, oSayPr1, oSayPr2, 
    end if
 
    aGet[ _CALMLIN ]:lValid()
+   aGet[ __CALMORIGEN  ]:lValid()
    aGet[ _CREF    ]:SetFocus()
 
 Return Nil
@@ -3937,6 +3989,12 @@ STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, oFld, aTmpFac,
 
    if !cAlmacen( aGet[ _CALMLIN ], D():Almacen( nView ) )
       MsgStop( "Código de almacen no encontrado" )
+      Return nil
+   end if
+
+   if ( aTmp[ _CALMLIN ] == aTmp[ __CALMORIGEN ] )
+      MsgStop( "El almacén de origen debe ser distinto al almacén de destino" )
+      aGet[ __CALMORIGEN ]:SetFocus()
       Return nil
    end if
 
@@ -6698,6 +6756,9 @@ STATIC FUNCTION cAlbPrv( aGet, oBrw, nMode, aTmp )
          aGet[ _CCODALM ]:cText( ( D():AlbaranesProveedores( nView ) )->cCodAlm )
          aGet[ _CCODALM ]:lValid()
 
+         aGet[ _CALMORIGEN ]:cText( ( D():AlbaranesProveedores( nView ) )->cAlmOrigen )
+         aGet[ _CALMORIGEN ]:lValid()
+
          aGet[ _CCODCAJ ]:cText( ( D():AlbaranesProveedores( nView ) )->cCodCaj )
          aGet[ _CCODCAJ ]:lValid()
 
@@ -6989,6 +7050,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    if Empty( aTmp[ _CCODALM ] )
       msgStop( "Almacen no puede estar vacío." )
       aGet[ _CCODALM ]:SetFocus()
+      return .f.
+   end if
+
+   if ( aTmp[ _CCODALM ] == aTmp[ _CALMORIGEN ] )
+      msgStop( "Almacén origen debe ser distinto al almacén destino" )
+      aGet[ _CALMORIGEN ]:SetFocus()
       return .f.
    end if
 
@@ -8411,6 +8478,7 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
             ( dbfTmp )->nDtoPrm     := ( D():AlbaranesProveedoresLineas( nView ) )->nDtoPrm
             ( dbfTmp )->nDtoRap     := ( D():AlbaranesProveedoresLineas( nView ) )->nDtoRap
             ( dbfTmp )->cAlmLin     := ( D():AlbaranesProveedoresLineas( nView ) )->cAlmLin
+            ( dbfTmp )->cAlmOrigen  := ( D():AlbaranesProveedoresLineas( nView ) )->cAlmOrigen
             ( dbfTmp )->nUndKit     := ( D():AlbaranesProveedoresLineas( nView ) )->nUndKit
             ( dbfTmp )->lKitChl     := ( D():AlbaranesProveedoresLineas( nView ) )->lKitChl
             ( dbfTmp )->lKitArt     := ( D():AlbaranesProveedoresLineas( nView ) )->lKitArt
@@ -9490,6 +9558,9 @@ FUNCTION rxFacPrv( cPath, oMeter )
       ( cFacPrvL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
       ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.Cdx", "cStkFast", "cRef + cAlmLin + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmLin + dtos( Field->dFecFac ) + Field->tFecFac } ) )
 
+      ( cFacPrvL )->( ordCondSet( "nCtlStk < 2 .and. !Deleted()", {|| Field->nCtlStk < 2 .and. !Deleted()}, , , , , , , , , .t. ) )
+      ( cFacPrvL )->( ordCreate( cPath + "FacPrvL.Cdx", "cStkFastOu", "cRef + cAlmOrigen + dtos( dFecFac ) + tFecFac", {|| Field->cRef + Field->cAlmOrigen + dtos( Field->dFecFac ) + Field->tFecFac } ) )
+
       ( cFacPrvL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
@@ -10282,6 +10353,7 @@ function aItmFacPrv()
    aAdd( aItmFacPrv, { "lRECC"      ,"L",  1, 0, "Acogida al régimen especial del criterio de caja",      "",      "", "( cDbf )", .f. } )
    aAdd( aItmFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,                     "",                    "", "( cDbf )", nil } )
    aAdd( aItmFacPrv, { "cCtrCoste"  ,"C",  9, 0, " Código del centro de coste" ,            "",                    "", "( cDbf )", nil } )
+   aAdd( aItmFacPrv, { "cAlmOrigen" ,"C", 16, 0, "Almacén de origen de la mercancía" ,      "",           "",      "", "( cDbf )", nil } )
 
 return ( aItmFacPrv )
 
@@ -10430,6 +10502,7 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "nValImp"    ,"N", 16, 6, "Importe de impuesto especial", "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,          "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Codig del centro de coste" ,   "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "cAlmOrigen" ,"C", 16, 0, "Almacén de origen de la mercancía", "",              "", "( cDbfCol )", nil } )
 
 return ( aColFacPrv )
 
