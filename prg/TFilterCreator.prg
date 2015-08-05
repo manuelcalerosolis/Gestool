@@ -1303,7 +1303,12 @@ METHOD Dialog( cFilterName ) CLASS TFilterDatabase
 
    local oDlg
 
-   ::cFilterName  := padr( cFilterName, 100 )
+   if !Empty( cFilterName )
+      ::cFilterName  := padr( cFilterName, 100 )
+   else
+      ::cFilterName  := Space( 100 )
+   end if
+   
    ::lDefault     := ::getDefaultFilter()
 
    DEFINE DIALOG oDlg RESOURCE "Nombre_Filtro"
