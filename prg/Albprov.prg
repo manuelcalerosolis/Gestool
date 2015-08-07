@@ -9642,7 +9642,7 @@ Function SynAlbPrv( cPath )
       if Empty( ( cAlbPrvL )->nReq )
          ( cAlbPrvL )->nReq       := nPReq( cIva, ( cAlbPrvL )->nIva )
       end if
-
+   
       if Empty( ( cAlbPrvL )->cAlmLin )
          ( cAlbPrvL )->cAlmLin    := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cCodAlm" )
       end if
@@ -9703,6 +9703,10 @@ Function SynAlbPrv( cPath )
          ( cArtDiv )->( dbUnlock() )
 
       end if
+
+      if Empty( ( cAlbPrvL )->cAlmOrigen ) .and. !Empty( RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cAlmOrigen" ) )
+         ( cAlbPrvL )->cAlmOrigen := RetFld( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->cSufAlb, cAlbPrvT, "cAlmOrigen" )
+      end if 
 
       ( cAlbPrvL )->( dbSkip() )
 

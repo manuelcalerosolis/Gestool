@@ -10583,6 +10583,9 @@ Function SynFacPrv( cPath )
    dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
    if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
+   dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @dbfAlbPrvL ), .f. )
+   if !lAIS(); ordListAdd( cPath + "ALBPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end   
+
    // Cabeceras -------------------------------------------------------------------
 
    ( dbfFacPrvT )->( OrdSetFocus( 0 ) )
@@ -10686,6 +10689,14 @@ Function SynFacPrv( cPath )
          ( cArtDiv )->nPreCom    := ( dbfFacPrvL )->NPRECOM
          ( cArtDiv )->( dbUnlock() )
 
+      end if
+
+      /*
+      Almacen de origen en facturas
+      */
+
+      if !Empty( ( dbfFacPrvL )->iNumAlb )
+         ( dbfFacPrvL )->cAlmOrigen := RetFld( ( dbfFacPrvL )->iNumAlb, dbfAlbPrvL, "cAlmOrigen", "nNumLin" )
       end if
 
       ( dbfFacPrvL )->( dbSkip() )
@@ -10860,6 +10871,10 @@ Function SynFacPrv( cPath )
 
    if !Empty( cArtDiv ) .and. ( cArtDiv )->( Used() )
       ( cArtDiv )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfAlbPrvL ) .and. ( dbfAlbPrvL )->( Used() )
+      ( dbfAlbPrvL )->( dbCloseArea() )
    end if
 
 return nil
