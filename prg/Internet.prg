@@ -150,9 +150,7 @@ METHOD New( oMenuItem, oWnd )
 
    ::nLevel             := nLevelUsr( oMenuItem )
 
-   /*
-   Cerramos todas las ventanas
-   */
+   // Cerramos todas las ventanas----------------------------------------------
 
    if oWnd != nil
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
@@ -169,8 +167,6 @@ METHOD New( oMenuItem, oWnd )
    // Path de comunicaciones---------------------------------------------------
 
    ::setPathComunication( cRutConInt() )
-
-//   aAdd( ::aSend, TFabricantes():Initiate(                  "Fabricantes",              Self ) )
 
    aAdd( ::aSend, TArticuloSenderReciver():New(             "Artículos",               Self ) )
    aAdd( ::aSend, TFamiliaSenderReciver():New(              "Familias",                Self ) )
@@ -401,20 +397,25 @@ METHOD Activate( oWnd, lAuto ) CLASS TSndRecInf
 
    DEFAULT lAuto     := .f.
 
+   if !isInternet()
+      msgStop( "No dispone de conexión a internet en estos momentos.")
+      return ( Self )
+   end if
+
    if nAnd( ::nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return ( Self )
    end if
 
    if oWnd != nil
-      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      sysRefresh(); oWnd:CloseAll(); sysRefresh()
    end if
 
    if !::OpenFiles()
       return ( Self )
    end if
 
-   ::lInProcess   := .t.
+   ::lInProcess      := .t.
 
    ::LoadFromIni()
 

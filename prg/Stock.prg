@@ -274,6 +274,8 @@ CLASS TStock
    METHOD DeleteStockAlbaranProveedores( lNumeroSerie )
 
    METHOD InsertStockFacturaProveedores( lNumeroSerie )
+   METHOD DeleteStockFacturaProveedores( lNumeroSerie )
+
    METHOD InsertStockRectificativaProveedores( lNumeroSerie )
    METHOD InsertStockAlbaranClientes( lNumeroSerie )
    METHOD InsertStockFacturaClientes( lNumeroSerie )
@@ -1981,6 +1983,44 @@ RETURN ( lDup )
 
    //---------------------------------------------------------------------------//
 
+      METHOD DeleteStockFacturaProveedores( lNumeroSerie )
+
+      local nUnidades         := nTotNFacPrv( ::cFacPrvL )
+
+      with object ( SStock():New() )
+      
+         :cTipoDocumento      := FAC_PRV
+         :cAlias              := ( ::cFacPrvL )
+         :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
+         :cDelegacion         := ( ::cFacPrvL )->cSufFac
+         :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
+         :tFechaDocumento     := ( ::cFacPrvL )->tFecFac
+         :cCodigo             := ( ::cFacPrvL )->cRef
+         :cCodigoAlmacen      := ( ::cFacPrvL )->cAlmOrigen
+         :cCodigoPropiedad1   := ( ::cFacPrvL )->cCodPr1
+         :cCodigoPropiedad2   := ( ::cFacPrvL )->cCodPr2
+         :cValorPropiedad1    := ( ::cFacPrvL )->cValPr1
+         :cValorPropiedad2    := ( ::cFacPrvL )->cValPr2
+         :cLote               := ( ::cFacPrvL )->cLote
+         :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
+         :nBultos             := -( ::cFacPrvL )->nBultos
+         :nCajas              := -( ::cFacPrvL )->nCanEnt
+
+         if IsTrue( lNumeroSerie )
+            :nUnidades        := if( nUnidades > 0, -1, 1 )
+            :cNumeroSerie     := ( ::cFacPrvS )->cNumSer
+         else
+            :nUnidades        := -nUnidades
+         end if
+         
+         ::Integra( hb_QWith() )
+
+      end with
+
+   RETURN nil 
+   
+   //---------------------------------------------------------------------------//
+
    METHOD InsertStockFacturaProveedores( lNumeroSerie )
 
       local nUnidades         := nTotNFacPrv( ::cFacPrvL )
@@ -2002,7 +2042,7 @@ RETURN ( lDup )
          :cLote               := ( ::cFacPrvL )->cLote
          :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
          :nBultos             := ( ::cFacPrvL )->nBultos
-         :nCajas               := ( ::cFacPrvL )->nCanEnt
+         :nCajas              := ( ::cFacPrvL )->nCanEnt
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
@@ -5896,7 +5936,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
       while ( ::cAlbPrvL )->cRef == cCodArt .and. ( ::cAlbPrvL )->cAlmOrigen == cCodAlm .and. !( ::cAlbPrvL )->( eof() )
 
-         if cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
+         if cCodigoArticulo != ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmOrigen + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
 
             if ( ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmOrigen, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb, ( ::cAlbPrvL )->tFecAlb ) ) 
 
@@ -5924,7 +5964,7 @@ METHOD aStockAlbaranProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
 
             else 
 
-               cCodigoArticulo := ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmLin + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
+               cCodigoArticulo := ( ::cAlbPrvL )->cRef + ( ::cAlbPrvL )->cAlmOrigen + ( ::cAlbPrvL )->cCodPr1 + ( ::cAlbPrvL )->cCodPr2 + ( ::cAlbPrvL )->cValPr1 + ( ::cAlbPrvL )->cValPr2 + ( ::cAlbPrvL )->cLote
 
             end if 
 
@@ -5982,6 +6022,56 @@ METHOD aStockFacturaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFecIni, d
             else 
 
                cCodigoArticulo := ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmLin + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
+
+            end if
+
+         end if 
+
+         ( ::cFacPrvL )->( dbSkip() )
+
+      end while
+
+   end if
+
+   //Facturas con doble almacen
+
+   cCodigoArticulo            := ""
+
+   ( ::cFacPrvL )->( ordSetFocus( "cStkFastOu" ) )   
+
+   if ( ::cFacPrvL )->( dbSeek( cCodArt + cCodAlm ) )
+
+      while ( ::cFacPrvL )->cRef == cCodArt .and. ( ::cFacPrvL )->cAlmOrigen == cCodAlm .and. !( ::cFacPrvL )->( Eof() )
+
+         if cCodigoArticulo != ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmOrigen + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
+
+            if ( ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmOrigen, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac, ( ::cFacPrvL )->tFecFac ) )
+
+               if ( Empty( dFecIni ) .or. ( ::cFacPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cFacPrvL )->dFecFac <= dFecFin )
+                  
+                  // Buscamos el numero de serie----------------------------------
+
+                  if lNumeroSerie .and. ( ::cFacPrvS )->( dbSeek( ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) ) )
+
+                     while ( ::cFacPrvS )->cSerFac + Str( ( ::cFacPrvS )->nNumFac ) + ( ::cFacPrvS )->cSufFac + Str( ( ::cFacPrvS )->nNumLin ) == ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac + Str( ( ::cFacPrvL )->nNumLin ) .and. !( ::cFacPrvS )->( eof() )
+
+                        ::DeleteStockFacturaProveedores( .t. )
+
+                        ( ::cFacPrvS )->( dbSkip() )
+
+                     end while
+
+                  else 
+
+                     ::DeleteStockFacturaProveedores()
+
+                  end if 
+
+               end if 
+
+            else 
+
+               cCodigoArticulo := ( ::cFacPrvL )->cRef + ( ::cFacPrvL )->cAlmOrigen + ( ::cFacPrvL )->cCodPr1 + ( ::cFacPrvL )->cCodPr2 + ( ::cFacPrvL )->cValPr1 + ( ::cFacPrvL )->cValPr2 + ( ::cFacPrvL )->cLote
 
             end if
 

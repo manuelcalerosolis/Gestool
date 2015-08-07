@@ -22,6 +22,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oCtrCoste
    DATA  oObras
 
+   DATA  oPrp1
+   DATA  oPrp2
+
    DATA  oStock
 
    METHOD lResource( cFld )
@@ -63,7 +66,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddFacturaProveedor()
    METHOD AddRectificativaProveedor()
 
-   METHOD idDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
+   METHOD idDocumento()                   INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
    METHOD IdDocumentoLinea()              INLINE ( ::idDocumento() + Str( ::oDbf:nNumLin ) )
 
    METHOD StockArticulo()                 INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote ) )
@@ -268,6 +271,10 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oObras   PATH ( cPatCli() ) CLASS "ObrasT"      FILE "ObrasT.Dbf"    VIA ( cDriver() ) SHARED INDEX "ObrasT.Cdx"
 
+      DATABASE NEW ::oPrp1    PATH ( cPatArt() ) CLASS "TblPro1"     FILE "TblPro.Dbf"    VIA ( cDriver() ) SHARED INDEX "TblPro.Cdx" 
+
+      DATABASE NEW ::oPrp2    PATH ( cPatArt() ) CLASS "TblPro2"     FILE "TblPro.Dbf"    VIA ( cDriver() ) SHARED INDEX "TblPro.Cdx"
+
       ::oProCab   := TDataCenter():oProCab()
 
       ::oProLin   := TDataCenter():oProLin()
@@ -450,6 +457,14 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
       if !Empty( ::oObras ) .and. ( ::oObras:Used() )
          ::oObras:end()
       end if
+
+      if !empty( ::oPrp1 ) .and. ( ::oPrp1:Used() )
+         ::oPrp1:end()
+      end if 
+
+      if !empty( ::oPrp2 ) .and. ( ::oPrp2:Used() )
+         ::oPrp2:end()
+      end if 
 
       if !Empty( ::oCtrCoste )
          ::oCtrCoste:end()
@@ -837,6 +852,12 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Rutas",                      ::oDbfRut:nArea ) 
    ::oFastReport:SetFieldAliases(   "Rutas",                      cItemsToReport( aItmRut() ) )
 
+   ::oFastReport:SetWorkArea(       "Propiedades 1",              ::oPrp1:nArea ) 
+   ::oFastReport:SetFieldAliases(   "Propiedades 1",              cItemsToReport( aItmPro() ) )
+
+   ::oFastReport:SetWorkArea(       "Propiedades 2",              ::oPrp2:nArea ) 
+   ::oFastReport:SetFieldAliases(   "Propiedades 2",              cItemsToReport( aItmPro() ) )
+
    /*
    Relaciones entre tablas-----------------------------------------------------
    */
@@ -866,6 +887,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacén",  {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )
    ::oFastReport:SetMasterDetail(   "Informe", "Centro de coste",    {|| ::oDbf:cCtrCoste } )   
 
+   ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 1",    {|| ::oDbf:cCodPr1 + ::oDbf:cValPr1 } )   
+   ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 2",    {|| ::oDbf:cCodPr2 + ::oDbf:cValPr2 } )   
+
    /*
    Resincronizar con los movimientos-------------------------------------------
    */
@@ -894,6 +918,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Códigos de barras" )
    ::oFastReport:SetResyncPair(     "Informe", "Stock por almacén" )  
    ::oFastReport:SetResyncPair(     "Informe", "Centro de coste" ) 
+
+   ::oFastReport:SetResyncPair(     "Informe", "Propiedades 1" )   
+   ::oFastReport:SetResyncPair(     "Informe", "Propiedades 2" )   
 
    ::SetDataReport()
 
@@ -1331,7 +1358,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cSufDoc    := ::oPedCliT:cSufPed
 
                   ::oDbf:cIdeDoc    :=  ::idDocumento()
-                  ::oDbf:nNumLin    :=  ::PedCliL:nNumLin
+                  ::oDbf:nNumLin    :=  ::oPedCliL:nNumLin
 
                   ::oDbf:nAnoDoc    := Year( ::oPedCliT:dFecPed )
                   ::oDbf:nMesDoc    := Month( ::oPedCliT:dFecPed )
@@ -1670,7 +1697,6 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:lKitChl    := ::oFacCliL:lKitChl
 
                   ::oDbf:cCtrCoste  := ::oFacCliL:cCtrCoste
-
 
                   ::InsertIfValid()
 

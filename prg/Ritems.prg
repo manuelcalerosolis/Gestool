@@ -3182,7 +3182,11 @@ Function lExisteDocumento( cCodigoDocumento, dbfDoc )
 
          nOrd                    := dbfDoc:OrdSetFocus( "Codigo" )
 
+<<<<<<< HEAD
          if ! dbfDoc:Seek( cCodigoDocumento )
+=======
+         if !( dbfDoc:Seek( cCodigoDocumento ) )
+>>>>>>> origin/master
             MsgStop( "Código de documento " + cCodigoDocumento + " no encontrado." )
             lExisteDocumento     := .f.
          end if
