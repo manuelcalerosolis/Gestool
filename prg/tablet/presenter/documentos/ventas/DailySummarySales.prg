@@ -49,8 +49,8 @@ Return( self )
 
 METHOD CalculatePedido() CLASS DailySummarySales
 
-   ::oDailySummarySales:oPedido              := 0
-   ::oDailySummarySales:oPedidoTotal         := 0
+   ::oDailySummarySales:oPedido                 := 0
+   ::oDailySummarySales:oPedidoTotal            := 0
 
     D():getStatusPedidosClientes( ::nView )
 
@@ -58,9 +58,9 @@ METHOD CalculatePedido() CLASS DailySummarySales
 
    while ( D():PedidosClientes( ::nView ) )->dFecPed == getSysDate() .and. !( D():PedidosClientes( ::nView ) )->( eof() )
 
-         ::oDailySummarySales:oPedido          += 1 
+         ::oDailySummarySales:oPedido           += 1 
 
-         ::oDailySummarySales:oPedidoTotal     += ( D():PedidosClientes( ::nView ) )->nTotped
+         ::oDailySummarySales:oPedidoTotal      += ( D():PedidosClientes( ::nView ) )->nTotped
       
          ( D():PedidosClientes( ::nView ) )->( dbSkip() ) 
       
@@ -83,8 +83,28 @@ Return( self )
 
 METHOD CalculateFactura() CLASS DailySummarySales
 
-   ::oDailySummarySales:oFactura              := 5
-   ::oDailySummarySales:oFacturaTotal         := 10
+   ::oDailySummarySales:oFactura                := 0
+   ::oDailySummarySales:oFacturaTotal           := 0
+
+    D():getStatusFacturasClientes( ::nView )
+
+   ( D():FacturasClientes( ::nView ) )->( ordSetFocus( "DFECFAC" ) )
+
+   if ( D():FacturasClientes( ::nView ) )->( dbSeek( getSysDate() ) )
+
+      while ( D():FacturasClientes( ::nView ) )->dFecFac == getSysDate() .and. !( D():FacturasClientes( ::nView ) )->( eof() )
+
+         ::oDailySummarySales:oFactura           += 1 
+
+         ::oDailySummarySales:oFacturaTotal      += ( D():FacturasClientes( ::nView ) )->nTotFac
+      
+         ( D():FacturasClientes( ::nView ) )->( dbSkip() ) 
+      
+      end while
+
+   end if
+
+   D():setStatusFacturasClientes( ::nView )
 
 Return( self )
 
@@ -99,3 +119,5 @@ METHOD CalculateTotal() CLASS DailySummarySales
    ::oDailySummarySales:oTotal        += ::oDailySummarySales:oFacturaTotal
 
 Return( self )
+
+//---------------------------------------------------------------------------//

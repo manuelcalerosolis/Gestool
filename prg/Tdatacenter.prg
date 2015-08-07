@@ -5501,6 +5501,9 @@ CLASS D
       METHOD getFacturaCliente( nView )               INLINE ( ::getHashRecordById( ::FacturasClientesId( nView ), ::FacturasClientes( nView ), nView ) )
       METHOD getDefaultHashFacturaCliente( nView )    INLINE ( ::getHashRecordDefaultValues( ::FacturasClientes( nView ), nView ) )
 
+      METHOD getStatusFacturasClientes( nView )       INLINE ( ::aStatus := aGetStatus( ::FacturasClientes( nView ) ) )
+      METHOD setStatusFacturasClientes( nView )       INLINE ( SetStatus( ::FacturasClientes( nView ), ::aStatus ) ) 
+
    METHOD FacturasClientesLineas( nView )           INLINE ( ::Get( "FacCliL", nView ) )
       METHOD FacturasClientesLineasId( nView )      INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
       METHOD GetFacturaClienteLineasHash( nView )   INLINE ( ::getHashRecord( ::FacturasClientesLineas( nView ), nView ) )

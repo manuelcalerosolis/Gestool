@@ -4,6 +4,10 @@
 
 CLASS DailySummarySalesView FROM ViewBase
 
+   DATA oFecIni
+   DATA dFecIni               INIT GetSysDate()
+   DATA oFecFin
+   DATA dFecFin               INIT GetSysDate()
    DATA oPedido               INIT ""
    DATA oPedidoTotal          INIT ""
    DATA oAlbaran              INIT ""
@@ -12,11 +16,17 @@ CLASS DailySummarySalesView FROM ViewBase
    DATA oFacturaTotal         INIT ""
    DATA oTotal                INIT ""
 
+   DATA oCbxRango
+   DATA aCbxRango             INIT {}
+   DATA cCbxRango             INIT "Hoy"
+
    METHOD New()
 
    METHOD insertControls()
 
    METHOD defineAceptarCancelar()
+
+   METHOD defineFechas()
 
    METHOD defineCabecera()
 
@@ -27,6 +37,8 @@ CLASS DailySummarySalesView FROM ViewBase
    METHOD defineFacturas()
 
    METHOD defineTotal()
+
+   METHOD cargaPeriodo()
 
    METHOD getTitleTipoDocumento()   INLINE ( ::getTextoTipoDocumento() )
 
@@ -41,9 +53,12 @@ METHOD New( oSender ) CLASS DailySummarySalesView
 Return ( self )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
 
 METHOD insertControls() CLASS DailySummarySalesView
+
+   ::cargaPeriodo()
+
+   ::defineFechas()
 
    ::defineCabecera()
 
@@ -74,11 +89,44 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD defineFechas() CLASS DailySummarySalesView
+
+   ::oCbxRango    := TGridComboBox():Build(  {  "nRow"      => 50,;
+                                                "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::cCbxRango, ::cCbxRango := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "nWidth"    => {|| GridWidth( 3.5, ::oDlg ) },;
+                                                "nHeight"   => 25,;
+                                                "aItems"    => ::aCbxRango,;
+                                                "bChange"   => {|| MsgInfo( "Cambio el combo" ) } } )
+
+   ::oFecIni      := TGridGet():Build( {        "nRow"      => 50,;
+                                                "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::dFecIni, ::dFecIni := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "lPixels"   => .t.,;
+                                                "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lRight"    => .t. } ) 
+
+   ::oFecFin      := TGridGet():Build( {        "nRow"      => 50,;
+                                                "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::dFecFin, ::dFecFin := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "lPixels"   => .t.,;
+                                                "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lRight"    => .t. } )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD defineCabecera() CLASS DailySummarySalesView
 
    
-   TGridSay():Build( {  "nRow"      => 67,;
-                        "nCol"      => {|| GridWidth( 3.5, ::oDlg ) },;
+   TGridSay():Build( {  "nRow"      => 87,;
+                        "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
                         "bText"     => {|| "Documentos" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFontBold(),;
@@ -90,8 +138,8 @@ METHOD defineCabecera() CLASS DailySummarySalesView
                         "lDesign"   => .f. } )
 
 
-   TGridSay():Build( {  "nRow"      => 67,;
-                        "nCol"      => {|| GridWidth( 7.5, ::oDlg ) },;
+   TGridSay():Build( {  "nRow"      => 87,;
+                        "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
                         "bText"     => {|| "Total" },;
                         "oWnd"      => ::oDlg,;
                         "oFont"     => oGridFontBold(),;
@@ -124,22 +172,22 @@ METHOD definePedidos() CLASS DailySummarySalesView
                         "lDesign"   => .f. } )
 
    TGridGet():Build( {  "nRow"      => 120,;
-                        "nCol"      => {|| GridWidth( 3.5, ::oDlg ) },;
+                        "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::oPedido },;
                         "oWnd"      => ::oDlg,;
                         "lPixels"   => .t.,;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lRight"    => .t.,;
                         "bWhen"     => {|| .f. } } )
 
    TGridGet():Build( {  "nRow"      => 120,;
-                        "nCol"      => {|| GridWidth( 7.5, ::oDlg ) },;
+                        "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
                         "bSetGet"   => {|u| ::oPedidoTotal },;
                         "oWnd"      => ::oDlg,;
                         "lPixels"   => .t.,;
                         "cPict"     => cPorDiv(),;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lRight"    => .t.,;
                         "bWhen"     => {|| .f. } } )
@@ -166,22 +214,22 @@ METHOD defineAlbaranes() CLASS DailySummarySalesView
                         "lDesign"   => .f. } )
 
    TGridGet():Build( {  "nRow"      => 148,;
-                        "nCol"      => {|| GridWidth( 3.5, ::oDlg ) },;
+                        "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::oAlbaran },;
                         "oWnd"      => ::oDlg,;
                         "lPixels"   => .t.,;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lRight"    => .t.,;
                         "bWhen"     => {|| .f. } } )
 
    TGridGet():Build( {  "nRow"      => 148,;
-                        "nCol"      => {|| GridWidth( 7.5, ::oDlg ) },;
+                        "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
                         "bSetGet"   => {|u| ::oAlbaranTotal },;
                         "oWnd"      => ::oDlg,;
                         "lPixels"   => .t.,;
                         "cPict"     => cPorDiv(),;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lRight"    => .t.,;
                         "bWhen"     => {|| .f. } } )
@@ -208,22 +256,22 @@ METHOD defineFacturas() CLASS DailySummarySalesView
                         "lDesign"   => .f. } )
 
    TGridGet():Build( {  "nRow"      => 176,;
-                        "nCol"      => {|| GridWidth( 3.5, ::oDlg ) },;
+                        "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
                         "bSetGet"   => {|u| ::oFactura },;
                         "oWnd"      => ::oDlg,;
                         "lPixels"   => .t.,;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lRight"    => .t.,;
                         "bWhen"     => {|| .f. } } )
 
    TGridGet():Build( {  "nRow"      => 176,;
-                        "nCol"      => {|| GridWidth( 7.5, ::oDlg ) },;
+                        "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
                         "bSetGet"   => {|u| ::oFacturaTotal },;
                         "oWnd"      => ::oDlg,;
                         "lPixels"   => .t.,;
                         "cPict"     => cPorDiv(),;
-                        "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                         "nHeight"   => 23,;
                         "lRight"    => .t.,;
                         "bWhen"     => {|| .f. } } )
@@ -250,17 +298,37 @@ METHOD defineTotal() CLASS DailySummarySalesView
                            "lDesign"   => .f. } )
 
    TGridGet():Build(   {   "nRow"      => 204,;
-                           "nCol"      => {|| GridWidth( 7.5, ::oDlg ) },;
+                           "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
                            "bSetGet"   => {|u| ::oTotal },;
                            "oWnd"      => ::oDlg,;
                            "oFont"     => oGridFontBold(),;
                            "lPixels"   => .t.,;
                            "cPict"     => cPorDiv(),;
-                           "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
+                           "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                            "nHeight"   => 23,;
                            "lRight"    => .t.,;
                            "bWhen"     => {|| .f. } } )
 
 Return( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD cargaPeriodo() CLASS DailySummarySalesView 
+
+   ::aCbxRango                 := {}
+
+   aAdd( ::aCbxRango, "Hoy" )
+   aAdd( ::aCbxRango, "Ayer" )
+   aAdd( ::aCbxRango, "Mes en curso" )
+   aAdd( ::aCbxRango, "Mes anterior" )
+   aAdd( ::aCbxRango, "Primer trimestre" )
+   aAdd( ::aCbxRango, "Segundo trimestre" )
+   aAdd( ::aCbxRango, "Tercer trimestre" )
+   aAdd( ::aCbxRango, "Cuatro trimestre" )
+   aAdd( ::aCbxRango, "Doce últimos meses" )
+   aAdd( ::aCbxRango, "Año en curso" )
+   aAdd( ::aCbxRango, "Año anterior" )
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//

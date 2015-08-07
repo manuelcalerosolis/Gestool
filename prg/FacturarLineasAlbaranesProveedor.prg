@@ -1023,6 +1023,7 @@ METHOD insertLineaFacturaProveedor()
       ( D():FacturasProveedoresLineas( ::nView ) )->nBultos    := ( D():Tmp( "TmpPrvO", ::nView ) )->nBultos
       ( D():FacturasProveedoresLineas( ::nView ) )->cFormato   := ( D():Tmp( "TmpPrvO", ::nView ) )->cFormato
       ( D():FacturasProveedoresLineas( ::nView ) )->iNumAlb    := ( D():Tmp( "TmpPrvO", ::nView ) )->cSerAlb + str( ( D():Tmp( "TmpPrvO", ::nView ) )->nNumAlb, 9 ) + ( D():Tmp( "TmpPrvO", ::nView ) )->cSufAlb + str( ( D():Tmp( "TmpPrvO", ::nView ) )->nNumLin, 4 )
+      ( D():FacturasProveedoresLineas( ::nView ) )->cAlmOrigen := ( D():Tmp( "TmpPrvO", ::nView ) )->cAlmOrigen
 
       ( D():FacturasProveedoresLineas( ::nView ) )->( dbUnLock() )
 
