@@ -589,7 +589,7 @@ CLASS TpvTactil
 
    METHOD OnClickDividirMesa()
 
-   METHOD OnClickEntrega()
+   METHOD OnClickEntregaNota()
 
    METHOD OnClickLista( nOption )
    METHOD OnClickPendientes()
@@ -2433,7 +2433,7 @@ METHOD Resource() CLASS TpvTactil
 
    if !::l1024()
       ::oBtnSSalon            := TButtonBmp():ReDefine( 506, {|| ::OnClickSalaVenta() },  ::oDlg, , , .f., , , , .f., "Cup_32" )
-      ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntrega() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
+      ::oBtnSEntregar         := TButtonBmp():ReDefine( 507, {|| ::OnClickEntregaNota() },    ::oDlg, , , .f., , , , .f., "Printer_32" )
       ::oBtnSCobrar           := TButtonBmp():ReDefine( 508, {|| ::OnClickCobro() },      ::oDlg, , , .f., , , , .f., "Money2_32" )
       //::oBtnPrecioUnidades    := TButtonBmp():ReDefine( 601, {|| ::CambiarUnidadesPrecio() }, ::oDlg, , , .f., , , , .f., "Paginator_32" )   
    end if
@@ -2540,7 +2540,7 @@ METHOD StartResource() CLASS TpvTactil
          oBoton               := TDotNetButton():New( 60, oGrupo, "Disk_blue_32",                  "Guardar y procesar",1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",     1, {|| ::OnClickEntrega() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",     1, {|| ::OnClickEntregaNota() }, , , .f., .f., .f. )
 
       if uFieldEmpresa( "lAlbTct" )
 
@@ -6330,7 +6330,7 @@ METHOD OnClickCobro() CLASS TpvTactil
    end if
 
    if ::isArticulosSinPeso()
-      MsgStop( "Existen artículos por peso sin valor." )
+      msgStop( "Existen artículos por peso sin valor." )
       Return .f.
    end if 
 
@@ -6669,7 +6669,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD OnClickEntrega() CLASS TpvTactil
+METHOD OnClickEntregaNota() CLASS TpvTactil
 
    /*
    Si el documento es nuevo y no tiene lineas no lo guardo---------------------
@@ -6686,6 +6686,13 @@ METHOD OnClickEntrega() CLASS TpvTactil
    if ::lEmptyAlias() .and. !::SetAliasDocumento()
       Return ( .t. )
    end if
+
+   // Articulos sin peso-------------------------------------------------------
+
+   if ::isArticulosSinPeso()
+      msgStop( "Existen artículos por peso sin valor." )
+      Return .f.
+   end if 
 
    ::DisableDialog()
 
