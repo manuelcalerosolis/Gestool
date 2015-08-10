@@ -230,9 +230,6 @@ CLASS TTpvSalon
 
    METHOD cTitle( uValue )          INLINE ( if( !Empty( uValue ), ::Title := uValue, ::Title ) )
 
-//---------------------------------------------------------------------------//
-
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -1441,6 +1438,7 @@ CLASS sTpvSala
    DATA nPrecio
    DATA nPreCmb
    DATA cImagen
+   DATA lComensal
 
    DATA aPunto     AS ARRAY INIT {}
 
@@ -1460,6 +1458,7 @@ Method New( oSender ) CLASS sTpvSala
    ::nPrecio      := oSender:oDbf:nPrecio
    ::nPreCmb      := oSender:oDbf:nPreCmb
    ::cDescripcion := Rtrim( oSender:oDbf:cDescrip )
+   ::lComensal    := oSender:oDbf:lComensal
 
    ::cImagen      := oSender:cBigResource()
 

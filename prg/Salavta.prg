@@ -77,7 +77,6 @@ CLASS TSalaVenta FROM TMasDet
    DATA nSelectedPrecio    AS NUMERIC  INIT  1
    DATA nSelectedCombinado AS NUMERIC  INIT  2
    DATA cSelectedTiket
-   DATA lComensales        AS LOGIC    INIT .f.
 
    DATA cSelectedImagen
    DATA cSelectedTexto
@@ -219,7 +218,6 @@ METHOD Resource( nMode )
          ITEMS    ::aPrecio
 
       REDEFINE CHECKBOX ::oDbf:lComensal ;
-         UPDATE ;
          ID       150 ;
          OF       oDlg
 
@@ -241,11 +239,6 @@ METHOD Resource( nMode )
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-      REDEFINE BUTTON ;
-         ID       9 ;
-			OF 		oDlg ;
-         ACTION   ( MsgInfo( "Ayuda no definida" ) )
-
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F3, {|| ::oSalon:Design( ::oDetSalaVta:oDbfVir, oDlg ) } )
          oDlg:AddFastKey( VK_F5, {|| if( ::lPreSave( nMode, oCmbImagen, oCmbPrecio, oCmbPreCmb ), oDlg:end( IDOK ), ) } )
@@ -261,17 +254,19 @@ RETURN ( oDlg:nResult == IDOK )
 
 METHOD lPreSave( nMode, oCmbImagen, oCmbPrecio, oCmbPreCmb )
 
+   msgStop( ::oDbf:lComensal, "lPresave" )
+
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if ::oDbf:SeekInOrd( ::oDbf:cCodigo, "cCodigo" )
-         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodigo ) )
-         return .f.
+         msgStop( "Código ya existe " + Rtrim( ::oDbf:cCodigo ) )
+         Return .f.
       end if
 
    end if
 
    if Empty( ::oDbf:cDescrip )
-      MsgStop( "La descripción de la sala no puede estar vacía." )
+      msgStop( "La descripción de la sala no puede estar vacía." )
       Return .f.
    end if
 

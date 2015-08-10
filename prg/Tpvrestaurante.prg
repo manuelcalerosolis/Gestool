@@ -179,7 +179,7 @@ CLASS TTpvRestaurante FROM TMasDet
    DATA cSelectedImagen
    DATA cSelectedTexto
 
-   DATA lComensales        AS LOGIC    INIT .f.
+   DATA lComensal          AS LOGIC    INIT .f.
 
    Method New( cPath, oWndParent, oMenuItem )
    Method Create( cPath )
@@ -201,7 +201,7 @@ CLASS TTpvRestaurante FROM TMasDet
 
    Method SetPunto( sPunto )
 
-   Method cSelected()            INLINE ( if( !Empty( ::cSelectedSala ), ::cSelectedSala + ::cSelectedPunto, Space( 3 ) + ::cSelectedPunto ) )
+   Method cSelected()            INLINE ( if( !empty( ::cSelectedSala ), ::cSelectedSala + ::cSelectedPunto, Space( 3 ) + ::cSelectedPunto ) )
 
    Method cTextoSala()
 
@@ -230,7 +230,7 @@ CLASS TTpvRestaurante FROM TMasDet
    Method nImagenPunto( sPunto, n )
    Method nImagenTiket( sSala, sPunto, n )
 
-   Method lCambiaPunto( cTiket ) INLINE ( !Empty( ::cSelectedTiket ) .and. ( cTiket != ::cSelectedTiket ) )
+   Method lCambiaPunto( cTiket ) INLINE ( !empty( ::cSelectedTiket ) .and. ( cTiket != ::cSelectedTiket ) )
 
    Method cSelectedTicket()      INLINE ( ::cSelectedTiket )
 
@@ -241,9 +241,9 @@ CLASS TTpvRestaurante FROM TMasDet
    Method SetGenerico( sPunto )
    Method SetLlevar( sPunto )
 
-   Method lLlevar()              INLINE ( Empty( ::cSelectedSala ) .and. AllTrim( ::cSelectedPunto ) == "Llevar" )
+   Method lLlevar()              INLINE ( empty( ::cSelectedSala ) .and. AllTrim( ::cSelectedPunto ) == "Llevar" )
    Method lGeneric()             INLINE ( !::lNotGeneric() )
-   Method lNotGeneric()          INLINE ( !Empty( ::cSelectedSala ) .and. !Empty( ::cSelectedPunto ) )
+   Method lNotGeneric()          INLINE ( !empty( ::cSelectedSala ) .and. !empty( ::cSelectedPunto ) )
 
    METHOD cImagen()              INLINE ( ::aImagen[ Min( Max( ::oDbf:nImagen, 1 ), len( ::aImagen ) ) ] )
    METHOD cPrecio()              INLINE ( ::aPrecio[ Min( Max( ::oDbf:nPrecio, 1 ), len( ::aPrecio ) ) ] )
@@ -314,7 +314,7 @@ Method Selector( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestauran
 
    if ::oSalon:Selector( lPuntosPendientes, lLlevar, nSelectOption )
 
-      if !Empty( ::oSalon:oSelectedPunto )
+      if !empty( ::oSalon:oSelectedPunto )
 
          if ::oSalon:oSelectedPunto:lGenerico()
 
@@ -322,11 +322,9 @@ Method Selector( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestauran
 
          else
 
-            /*
-            Vamos a ver si en esta ubicacion hay tickets-----------------------
-            */
+            // Vamos a ver si en esta ubicacion hay tickets-----------------------
 
-            if !Empty( ::oSalon:oSelectedPunto:cTiket() )
+            if !empty( ::oSalon:oSelectedPunto:cTiket() )
                ::SetTicket()
             else
                ::SetPunto( ::oSalon:oSelectedPunto )
@@ -368,15 +366,15 @@ Method SetTicket() CLASS TTpvRestaurante
       ::oSelectedPunto:cSufijo         := ::oSender:oTiketCabecera:FieldGetByName( "cSufTik" )
       ::oSelectedPunto:cAlias          := ::oSender:oTiketCabecera:FieldGetByName( "cAliasTik" )
 
-      if !Empty( ::oSender:oTiketCabecera:FieldGetByName( "nTarifa" ) )
+      if !empty( ::oSender:oTiketCabecera:FieldGetByName( "nTarifa" ) )
          ::oSelectedPunto:nPrecio      := ::oSender:oTiketCabecera:FieldGetByName( "nTarifa" )
       end if
       
-      if !Empty( ::oSender:oTiketCabecera:FieldGetByName( "cCodSala" ) )
+      if !empty( ::oSender:oTiketCabecera:FieldGetByName( "cCodSala" ) )
          ::oSelectedPunto:cCodigoSala  := ::oSender:oTiketCabecera:FieldGetByName( "cCodSala" )
       end if
       
-      if !Empty( ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" ) )
+      if !empty( ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" ) )
          ::oSelectedPunto:cPuntoVenta  := ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" )
       end if
 
@@ -388,6 +386,7 @@ Method SetTicket() CLASS TTpvRestaurante
       ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
       ::nSelectedUbicacion             := ::oSelectedPunto:nUbicacion
       ::cSelectedImagen                := ::oSelectedPunto:cImagen
+      ::lComensal                      := ::oSelectedPunto:lComensal
 
       ::SelectedPrecio(    ::oSelectedPunto:nPrecio )
       ::SelectedCombinado( ::oSelectedPunto:nPreCmb )
@@ -430,6 +429,8 @@ Method Sala( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestaurante
          ::cSelectedPunto     := ""
          ::oSelectedPunto     := nil
 
+         ::lComensal          := .f.
+
          ::cSelectedSala      := ::aSalas[ ::nTarifa ]:cCodigo
          ::cSelectedImagen    := ::aSalas[ ::nTarifa ]:cImagen
          ::cSelectedTexto     := ::aSalas[ ::nTarifa ]:cDescripcion
@@ -455,7 +456,7 @@ Method BuildSalas() CLASS TTpvRestaurante
    ::oDbf:GoTop()
    while !::oDbf:Eof()
 
-      if Empty( ::cInitialSala )
+      if empty( ::cInitialSala )
          ::cInitialSala    := ::oDbf:cCodigo
       end if
 
@@ -499,12 +500,13 @@ Method InitSala() CLASS TTpvRestaurante
          ::SelectedPrecio(    Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
          ::SelectedCombinado( Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
 
-         ::cSelectedSala         := ""
-         ::cSelectedTiket        := ""
-         ::cSelectedImagen       := ""
-         ::cSelectedTexto        := ""
-         ::cSelectedPunto        := ""
-         ::oSelectedPunto        := nil
+         ::cSelectedSala      := ""
+         ::cSelectedTiket     := ""
+         ::cSelectedImagen    := ""
+         ::cSelectedTexto     := ""
+         ::cSelectedPunto     := ""
+         ::lComensal          := .f.
+         ::oSelectedPunto     := nil
 
       case ( IsFalse( ::lPuntosVenta ) .and. ( len( ::aSalas ) > 0 ) )
 
@@ -516,6 +518,7 @@ Method InitSala() CLASS TTpvRestaurante
          ::cSelectedTexto     := ::aSalas[ 1 ]:cDescripcion
          ::cSelectedTiket     := ""
          ::cSelectedPunto     := ""
+         ::lComensal          := .f.
          ::oSelectedPunto     := nil
 
    end case
@@ -533,7 +536,7 @@ METHOD OpenFiles( lExclusive ) CLASS TTpvRestaurante
 
    BEGIN SEQUENCE
 
-      if Empty( ::oDbf )
+      if empty( ::oDbf )
          ::DefineFiles()
       end if
 
@@ -557,7 +560,7 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TTpvRestaurante
 
-   if !Empty( ::oDbf ) .and. ::oDbf:Used()
+   if !empty( ::oDbf ) .and. ::oDbf:Used()
       ::oDbf:End()
    end if
 
@@ -587,6 +590,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TTpvRestaurante
       FIELD NAME "nPrecio"       TYPE "N" LEN  1  DEC 0 COMMENT "Precios sala"      HIDE                                OF ::oDbf
       FIELD NAME "nImagen"       TYPE "N" LEN  2  DEC 0 COMMENT "Imagen"            HIDE                                OF ::oDbf
       FIELD NAME "nPreCmb"       TYPE "N" LEN  1  DEC 0 COMMENT "Precio Combinado"  HIDE                                OF ::oDbf
+      FIELD NAME "lComensal"     TYPE "L" LEN  1  DEC 0 COMMENT "Solicitar comensales"    HIDE                          OF ::oDbf
 
       INDEX TO "SalaVta.Cdx" TAG "cCodigo"      ON "cCodigo"      COMMENT "Código" NODELETED                            OF ::oDbf
       INDEX TO "SalaVta.Cdx" TAG "cDescrip"     ON "cDescrip"     COMMENT "Nombre" NODELETED                            OF ::oDbf
@@ -599,7 +603,7 @@ RETURN ( ::oDbf )
 
 Method End() CLASS TTpvRestaurante
 
-   if !Empty( ::oSalon )
+   if !empty( ::oSalon )
       ::oSalon:End()
    end if
 
@@ -662,6 +666,10 @@ METHOD Resource( nMode ) CLASS TTpvRestaurante
          WHEN     ( nMode != ZOOM_MODE ) ;
          ITEMS    ::aPrecio
 
+      REDEFINE CHECKBOX ::oDbf:lComensal ;
+         ID       150 ;
+         OF       oDlg
+
       REDEFINE BUTTON ;
          ID       503 ;
          OF       oDlg ;
@@ -680,11 +688,6 @@ METHOD Resource( nMode ) CLASS TTpvRestaurante
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-      REDEFINE BUTTON ;
-         ID       9 ;
-			OF 		oDlg ;
-         ACTION   ( MsgInfo( "Ayuda no definida" ) )
-
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F3, {|| ::oSalon:Design( ::oDetSalaVta:oDbfVir, oDlg ) } )
          oDlg:AddFastKey( VK_F5, {|| if( ::lPreSave( nMode, oCmbImagen, oCmbPrecio, oCmbPreCmb ), oDlg:end( IDOK ), ) } )
@@ -702,15 +705,15 @@ METHOD lPreSave( nMode, oCmbImagen, oCmbPrecio, oCmbPreCmb ) CLASS TTpvRestauran
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      if ::oDbf:SeekInOrd( ::oDbf:cCodigo, "cCodigo" )
-         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodigo ) )
-         return .f.
+      if ::oDbf:seekInOrd( ::oDbf:cCodigo, "cCodigo" )
+         msgStop( "Código ya existe " + Rtrim( ::oDbf:cCodigo ) )
+         Return .f.
       end if
 
    end if
 
-   if Empty( ::oDbf:cDescrip )
-      MsgStop( "La descripción de la sala no puede estar vacía." )
+   if empty( ::oDbf:cDescrip )
+      msgStop( "La descripción de la sala no puede estar vacía." )
       Return .f.
    end if
 
@@ -979,7 +982,7 @@ Method InitTikets( oImgSala, oLstSala ) CLASS TTpvRestaurante
 
                while ::oSender:oTiketCabecera:FieldGetByName( "cCodSala" ) == sSala:cCodigo .and. !::oSender:oTiketCabecera:eof()
 
-                  if !Empty( ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" ) )
+                  if !empty( ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" ) )
 
                      sPunto   := sTpvPunto():New( n++, sSala, Self )
 
@@ -1010,7 +1013,7 @@ Method InitTikets( oImgSala, oLstSala ) CLASS TTpvRestaurante
          ::oSender:oTiketCabecera:GoTop()
          while !( ::oSender:oTiketCabecera:eof() )
 
-            if Empty( ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" ) )
+            if empty( ::oSender:oTiketCabecera:FieldGetByName( "cPntVenta" ) )
 
                sPunto   := sTpvPunto():New( n++, nil, Self )
 
@@ -1062,13 +1065,13 @@ Method ConfigButton( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
 
       case IsFalse( ::lPuntosVenta )
 
-         if Empty( ::cSelectedImagen )
+         if empty( ::cSelectedImagen )
             oBtnTarifa:cBmp( "Cup_32" )
          else
             oBtnTarifa:cBmp( ::cSelectedImagen )
          end if
 
-         if Empty( ::cSelectedTexto )
+         if empty( ::cSelectedTexto )
             oBtnTarifa:cCaption( "General" )
          else
             oBtnTarifa:cCaption( ::cSelectedTexto )
@@ -1078,13 +1081,13 @@ Method ConfigButton( oBtnTarifa, oBtnRenombrar ) CLASS TTpvRestaurante
 
       case IsTrue( ::lPuntosVenta )
 
-         if Empty( ::cSelectedImagen )
+         if empty( ::cSelectedImagen )
             oBtnTarifa:cBmp( "Cup_32" )
          else
             oBtnTarifa:cBmp( ::cSelectedImagen )
          end if
 
-         if Empty( ::cSelectedTexto )
+         if empty( ::cSelectedTexto )
             oBtnTarifa:cCaption( "General" )
          else
             oBtnTarifa:cCaption( ::cSelectedTexto )
@@ -1100,7 +1103,7 @@ Return ( Self )
 
 Method Reset( oBtnTarifa ) CLASS TTpvRestaurante
 
-   if !Empty( oBtnTarifa )
+   if !empty( oBtnTarifa )
       oBtnTarifa:cBmp( "Cup_48" )
       oBtnTarifa:cCaption( "General" )
    end if
@@ -1115,7 +1118,7 @@ Method nImagenTiket( sSala, sPunto, n ) CLASS TTpvRestaurante
 
    ::oSender:oTiketCabecera:GetStatus()
 
-   if !Empty( sPunto:cTiket() )
+   if !empty( sPunto:cTiket() )
       if ( ::oSender:oTiketCabecera:SeekInOrd( sPunto:cTiket(), "cNumTik" ) ) .and. !( ::oSender:oTiketCabecera:FieldGetByName( "lAbierto" ) )
          ++nImagen
       end if
@@ -1133,7 +1136,7 @@ Method nStatePunto( sPunto ) CLASS TTpvRestaurante
 
    ::oSender:oTiketCabecera:GetStatus()
 
-   if !Empty( sPunto:cPunto() ) .and. !Empty( sPunto:cPuntoVenta )
+   if !empty( sPunto:cPunto() ) .and. !empty( sPunto:cPuntoVenta )
 
       if ( ::oSender:oTiketCabecera:SeekInOrd( sPunto:cPunto(), "cCodSal" ) ) .and. ( ::oSender:oTiketCabecera:FieldGetByName( "lAbierto" ) )
          ++nImagen
@@ -1153,7 +1156,7 @@ Method nImagenPunto( sPunto, n ) CLASS TTpvRestaurante
 
    ::oSender:oTiketCabecera:GetStatus()
 
-      if !Empty( sPunto:cPunto() )
+      if !empty( sPunto:cPunto() )
          if ( ::oSender:oTiketCabecera:SeekInOrd( sPunto:cPunto(), "cCodSal" ) ) .and. !( ::oSender:oTiketCabecera:FieldGetByName( "lAbierto" ) )
             ++nImagen
          end if
@@ -1196,7 +1199,7 @@ Method cTextoPunto( sPunto ) CLASS TTpvRestaurante
 
       if ( ::oSender:oTiketCabecera:SeekInOrd( sPunto:cPunto(), "cCodSal" ) ) .and. ( ::oSender:oTiketCabecera:FieldGetByName( "lPgdTik" ) )
 
-         if !Empty( ::oSender:oTiketCabecera:FieldGetByName( "cAliasTik" ) )
+         if !empty( ::oSender:oTiketCabecera:FieldGetByName( "cAliasTik" ) )
             cTextoPunto := Upper( Rtrim( ::oSender:oTiketCabecera:FieldGetByName( "cAliasTik" ) ) )
          end if
 
@@ -1220,13 +1223,13 @@ Method cTextoGenerico( sPunto ) CLASS TTpvRestaurante
 
    cTextoPunto          := "General"
 
-   if !Empty( ::cTikT ) .and. !Empty( ::cTikL )
+   if !empty( ::cTikT ) .and. !empty( ::cTikL )
 
       nRecno            := ( ::cTikT )->( Recno() )
 
       if ( dbSeekInOrd( sPunto:cTiket(), "cNumTik", ::cTikT ) .and. !( ::cTikT )->lPgdTik )
 
-         if !Empty( ( ::cTikT )->cAliasTik )
+         if !empty( ( ::cTikT )->cAliasTik )
             cTextoPunto := Upper( Rtrim( ( ::cTikT )->cAliasTik ) )
          end if
 
@@ -1259,7 +1262,7 @@ Method SetSelectedImagen() CLASS TTpvRestaurante
 
    local nScan
 
-   if Empty( ::aSalas )
+   if empty( ::aSalas )
       Return ( Self )
    end if
 
@@ -1270,7 +1273,7 @@ Method SetSelectedImagen() CLASS TTpvRestaurante
 
       case IsTrue( ::lPuntosVenta )
 
-         if Empty( ::cSelectedImagen )
+         if empty( ::cSelectedImagen )
             nScan                := aScan( ::aSalas, {|o| o:cCodigo == ::cSelectedSala } )
             if nScan != 0
                ::cSelectedImagen := ::aSalas[ nScan ]:cImagen
@@ -1287,7 +1290,7 @@ Method SetSelectedTexto() CLASS TTpvRestaurante
 
    local nScan
 
-   if Empty( ::aSalas )
+   if empty( ::aSalas )
       Return ( Self )
    end if
 
@@ -1310,6 +1313,7 @@ Method SetGenerico( sPunto ) CLASS TTpvRestaurante
 
    ::cSelectedSala               := ""
    ::cSelectedPunto              := "General"
+   ::lComensal                   := .f.
 
    ::SelectedPrecio(    sPunto:nPrecio )
    ::SelectedCombinado( sPunto:nPreCmb )
@@ -1329,6 +1333,7 @@ Method SetLlevar( sPunto ) CLASS TTpvRestaurante
 
    ::cSelectedSala               := ""
    ::cSelectedPunto              := "Llevar"
+   ::lComensal                   := .f.
    
    ::cSelectedImagen             := sPunto:cImagen
    ::cSelectedTiket              := sPunto:cTiket()
@@ -1346,8 +1351,8 @@ Return ( Self )
 
 Method SetSelected( uTmp, sPunto ) CLASS TTpvRestaurante
 
-   if Empty( sPunto )
-      if !Empty( ::oSelectedPunto )
+   if empty( sPunto )
+      if !empty( ::oSelectedPunto )
          sPunto               := ::oSelectedPunto
       else
          sPunto               := sPunto():Generico()
@@ -1362,13 +1367,13 @@ Method SetSelected( uTmp, sPunto ) CLASS TTpvRestaurante
          sPunto:cSufijo          := ( ::cTikT )->cSufTik
          sPunto:cAlias           := ( ::cTikT )->cAliasTik
 
-         if !Empty( ( ::cTikT )->nTarifa )
+         if !empty( ( ::cTikT )->nTarifa )
             sPunto:nPrecio       := ( ::cTikT )->nTarifa
          end if
-         if !Empty( ( ::cTikT )->cCodSala )
+         if !empty( ( ::cTikT )->cCodSala )
             sPunto:cCodigoSala   := ( ::cTikT )->cCodSala
          end if
-         if !Empty( ( ::cTikT )->cPntVenta )
+         if !empty( ( ::cTikT )->cPntVenta )
             sPunto:cPuntoVenta   := ( ::cTikT )->cPntVenta
          end if
 
@@ -1379,13 +1384,13 @@ Method SetSelected( uTmp, sPunto ) CLASS TTpvRestaurante
          sPunto:cSufijo          := uTmp[ ( ::cTikT )->( FieldPos( "cSufTik"   ) ) ]
          sPunto:cAlias           := uTmp[ ( ::cTikT )->( FieldPos( "cAliasTik" ) ) ]
 
-         if !Empty( uTmp[ ( ::cTikT )->( FieldPos( "nTarifa" ) ) ] )
+         if !empty( uTmp[ ( ::cTikT )->( FieldPos( "nTarifa" ) ) ] )
             sPunto:nPrecio       := uTmp[ ( ::cTikT )->( FieldPos( "nTarifa"   ) ) ]
          end if
-         if !Empty( uTmp[ ( ::cTikT )->( FieldPos( "cCodSala" ) ) ] )
+         if !empty( uTmp[ ( ::cTikT )->( FieldPos( "cCodSala" ) ) ] )
             sPunto:cCodigoSala   := uTmp[ ( ::cTikT )->( FieldPos( "cCodSala"  ) ) ]
          end if
-         if !Empty( uTmp[ ( ::cTikT )->( FieldPos( "cPntVenta" ) ) ] )
+         if !empty( uTmp[ ( ::cTikT )->( FieldPos( "cPntVenta" ) ) ] )
             sPunto:cPuntoVenta   := uTmp[ ( ::cTikT )->( FieldPos( "cPntVenta" ) ) ]
          end if
 
@@ -1398,6 +1403,7 @@ Method SetSelected( uTmp, sPunto ) CLASS TTpvRestaurante
    ::cSelectedSala               := sPunto:cSala
    ::cSelectedPunto              := sPunto:cPuntoVenta
    ::nSelectedUbicacion          := sPunto:nUbicacion
+   ::lComensal                   := sPunto:lComensal
 
    ::SelectedPrecio(    sPunto:nPrecio )
    ::SelectedCombinado( sPunto:nPreCmb )
@@ -1429,10 +1435,10 @@ Method SetSalaVta( aTmp, dbfTikT ) CLASS TTpvRestaurante
 
    DEFAULT dbfTikT   := ::cTikT
 
-   if Empty( aTmp[ ( dbfTikT )->( FieldPos( "cCodSala" ) ) ] )
+   if empty( aTmp[ ( dbfTikT )->( FieldPos( "cCodSala" ) ) ] )
 
       do case
-         case Empty( aTmp[ ( dbfTikT )->( FieldPos( "cPntVenta" ) ) ] )
+         case empty( aTmp[ ( dbfTikT )->( FieldPos( "cPntVenta" ) ) ] )
              ::SetPunto( sPunto():New( , dbfTikT ) )
 
          case AllTrim( aTmp[ ( dbfTikT )->( FieldPos( "cPntVenta" ) ) ] ) == "General"
@@ -1455,7 +1461,7 @@ return .t.
 
 Method SetPunto( sPunto ) CLASS TTpvRestaurante
 
-   if !Empty( sPunto )
+   if !empty( sPunto )
 
       ::oSelectedPunto                 := sPunto
 
@@ -1466,6 +1472,7 @@ Method SetPunto( sPunto ) CLASS TTpvRestaurante
       ::cSelectedSala                  := ::oSelectedPunto:cSala
       ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
       ::nSelectedUbicacion             := ::oSelectedPunto:nUbicacion
+      ::lComensal                      := ::oSelectedPunto:lComensal
      
       ::SelectedPrecio(    ::oSelectedPunto:nPrecio )             
       ::SelectedCombinado( ::oSelectedPunto:nPreCmb )             
@@ -1588,13 +1595,13 @@ METHOD OpenFiles( lExclusive ) CLASS TDetSalaVenta
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::oDbf            := ::DefineFiles()
-   end if
+      if empty( ::oDbf )
+         ::oDbf            := ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !lExclusive )
+      ::oDbf:Activate( .f., !lExclusive )
 
-   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+      ::bOnPreSaveDetail   := {|| ::SaveDetails() }
 
    RECOVER
 
@@ -1645,11 +1652,6 @@ METHOD Resource( nMode ) CLASS TDetSalaVenta
 			OF 		oDlg ;
          CANCEL ;
          ACTION   ( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       9 ;
-			OF 		oDlg ;
-         ACTION   ( MsgInfo( "Ayuda no definida" ) )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| if( ::lPresave( oGetDescrip, nMode ), oDlg:end( IDOK ), ) } )

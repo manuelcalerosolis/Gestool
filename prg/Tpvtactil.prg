@@ -854,10 +854,11 @@ CLASS TpvTactil
 
    METHOD OnClickReabrirTicket()
 
-//--------------------------------------------------------------------------//
+   METHOD getComensales()                    INLINE ( if( ::oRestaurante:lComensal, ::OnClickComensales(), ) )
 
 END CLASS
 
+//--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
 //--------------------------------------------------------------------------//
@@ -9518,13 +9519,13 @@ METHOD InitDocumento( nUbicacion )
 	::oTiketCabecera:Blank()
 	::oTiketCabecera:SetDefault()
 
-	// Cargamos los valores por defecto--------------------------------------
+   // Cargamos los valores por defecto--------------------------------------
 
-	::CargaValoresDefecto( nUbicacion, .t. )
+   ::CargaValoresDefecto( nUbicacion, .t. )
 
-   msgAlert( ::oRestaurante:lComensales, "lComensales" )
+   CursorWE()
 
-	CursorWE()
+   ::getComensales()
 
 RETURN ( Self )
 

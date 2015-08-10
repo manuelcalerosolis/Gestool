@@ -120,6 +120,8 @@ CLASS sTpvPunto
    DATA nPrecio
    DATA nPreCmb
 
+   DATA lComensal          INIT .f.
+
    DATA nTotal             INIT 0
    DATA cTotal             INIT ""
 
@@ -206,6 +208,7 @@ Method CreateFromSala( nNumero, oSender ) CLASS sTpvPunto
    ::cCodigoSala     := ::oSender:cCodigo
    ::nPrecio         := ::oSender:nPrecio
    ::nPreCmb         := ::oSender:nPreCmb
+   ::lComensal       := ::oSender:lComensal
    ::nUbicacion      := ubiSala
 
    ::cImagen         := ::cImagenPunto( ::nType )
@@ -309,6 +312,8 @@ Method Llevar( dbfTikT ) CLASS sTpvPunto
       ::nPreCmb      := 1
    end if
 
+   ::lComensal       := .f.
+
    ::cImagen         := "Wheel_32"
    ::oSala           := nil
 
@@ -350,6 +355,8 @@ Method Encargar( dbfTikT ) CLASS sTpvPunto
    else
       ::nPreCmb      := 1
    end if
+
+   ::lComensal       := .f.
 
    ::cImagen         := "address_book2_32"
    ::oSala           := nil

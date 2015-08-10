@@ -1042,7 +1042,7 @@ METHOD PdaColorSalones( aBtnSala, cNombre ) CLASS TSalon
 
    local n
 
-   for n:= 1 to 5
+   for n := 1 to 5
 
       if aBtnSala[ n ]:cCaption == cNombre
          aBtnSala[ n ]:SetColor( nRgb( 0, 0, 0 ), nRgb( 100, 100, 232 ) )
@@ -1257,9 +1257,7 @@ METHOD LoadFromMemory( cCodigoSala, lPuntosPendientes ) CLASS TSalon
             if sSala:cCodigo == cCodigoSala
 
                for each sPunto in sSala:aPunto
-
                   sPunto:CreateMesa( Self, lPuntosPendientes )
-
                next
 
             end if
@@ -1424,7 +1422,7 @@ CLASS sPunto
    DATA nPrecio
    DATA nPreCmb
 
-   DATA lComensales        INIT .f.
+   DATA lComensal          INIT .f.
 
    DATA nTotal             INIT 0
 
@@ -1472,7 +1470,7 @@ Method New( nNumero, dbfTikT, oSala ) CLASS sPunto
    ::cAlias          := ( dbfTikT )->cAliasTik
    ::nPrecio         := ( dbfTikT )->nTarifa
    ::nTotal          := ( dbfTikT )->nTotTik
-   ::lComensales     := .f.
+   ::lComensal       := .f.
    ::nPreCmb         := uFieldEmpresa( "nPreTCmb" )
    ::cTikT           := dbfTikT
 
@@ -1494,15 +1492,14 @@ Method Create( nNumero, cDescripcion, nTipo, nFila, nColumna, oSala, dbfTikT ) C
    ::nTipo           := nTipo
    ::nFila           := nFila
    ::nColumna        := nColumna
+
+   ::oSala           := oSala
    ::cCodigoSala     := oSala:cCodigo
    ::nPrecio         := oSala:nPrecio
    ::nPreCmb         := oSala:nPreCmb
-   ::lComensales     := oSala:lComensales
-   ::oSala           := oSala
+   ::lComensal       := oSala:lComensal
 
-#ifndef __PDA__
    ::cImagen         := ::cImagenPunto( nTipo )
-#endif
 
    ::cTikT           := dbfTikT
 
@@ -1540,7 +1537,7 @@ Method Generico( dbfTikT ) CLASS sPunto
    end if
    ::cImagen         := "Cup_32"
    ::oSala           := nil
-   ::lComensales     := .f.
+   ::lComensal       := .f.
 
 Return ( Self )
 
@@ -1576,7 +1573,7 @@ Method Llevar( dbfTikT ) CLASS sPunto
    end if
    ::cImagen         := "Wheel_32"
    ::oSala           := nil
-   ::lComensales     := .f.
+   ::lComensal       := .f.
 
 Return ( Self )
 
@@ -1633,7 +1630,7 @@ Method CreateMesa( oSalon, lPuntosPendientes ) CLASS sPunto
          ::cNumero      := ""
          ::nTotal       := 0
          ::cSufijo      := ""
-         ::lComensales  := .f.
+         ::lComensal    := .f.
 
       end case
 

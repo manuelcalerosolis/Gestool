@@ -4001,10 +4001,10 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       end if
 
       if cPathOld != nil
-         TSalaVenta():Create( cPath ):CheckFiles( cPathOld + "SalaVta.Dbf" )     ; SysRefresh()
+         TTpvRestaurante():Create( cPath ):CheckFiles( cPathOld + "SalaVta.Dbf" )     ; SysRefresh()
          TDetSalaVta():Create( cPath ):CheckFiles( cPathOld + "SlaPnt.Dbf" )     ; SysRefresh()
       else
-         TSalaVenta():Create( cPath ):CheckFiles()                               ; SysRefresh()
+         TTpvRestaurante():Create( cPath ):CheckFiles()                               ; SysRefresh()
          TDetSalaVta():Create( cPath ):CheckFiles()                              ; SysRefresh()
       end if
 

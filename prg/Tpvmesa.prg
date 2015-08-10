@@ -134,6 +134,7 @@ CLASS TTpvMesa FROM TControl
    DATA cImagen
    DATA nPrecio
    DATA nPreCmb
+   DATA lComensal          INIT .f.
 
    DATA nType
 
@@ -260,7 +261,6 @@ METHOD LoadFromPunto( oSender ) CLASS TTpvMesa
 
       ::cAlias       := Rtrim( oSender:cAlias )
       ::cNombre      := Rtrim( oSender:cNombre )
-
 
    RECOVER USING oError
 
@@ -408,22 +408,12 @@ Return ( "" )
 
 METHOD LButtonUp( nRow, nCol, nKeyFlags ) CLASS TTpvMesa
 
-   if !::lDesign
-
-      if ::lSeleccionable()
-
-         if ::nUbicacion == ubiGeneral
-
-            ::oSender:GetSalon():SelectPunto( ::oSender )
-
-         else
-
-            ::oSender:GetSalon():SelectPunto( ::oSender )
-
-         end if
-
-      end if
-
+   if ::lDesign
+      Return ( Self )
+   end if 
+   
+   if ::lSeleccionable()
+      ::oSender:GetSalon():SelectPunto( ::oSender )
    end if
 
 Return ( Self )
