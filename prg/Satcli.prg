@@ -4411,9 +4411,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
          saveLoteActual( aTmp[ _CREF ], aTmp[ _CLOTE ], nView )   
       end if
 
-      if aTmp[ _NCTLSTK ] == 2
+      /*if aTmp[ _NCTLSTK ] == 2
          saveContadorActual( aTmp[ _CREF ], aTmp[ _NCNTACT ], nView )
-      end if
+      end if*/
 
       // Propiedades ----------------------------------------------------------
 

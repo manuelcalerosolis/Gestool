@@ -4221,8 +4221,8 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    // Proceso------------------------------------------------------------------
 
-//   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-//   BEGIN SEQUENCE
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    for each cCodAlm in aAlmacenes
 
@@ -4327,15 +4327,15 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    end if
 
-   // Control de errores-------------------------------------------------------
+   // Control de erroress-------------------------------------------------------
 
-//   RECOVER USING oError
-//
-//      msgStop( ErrorMessage( oError ), "Calculo de stock" )
-//
-//   END SEQUENCE
-//   
-//   ErrorBlock( oBlock )
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Calculo de stock" )
+
+   END SEQUENCE
+   
+   ErrorBlock( oBlock )
 
    Return ( ::aStocks )
 
@@ -5744,13 +5744,6 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    cValPrp2             := if ( len( cValPrp2 ) != 40, Padr( cValPrp2, 40 ), cValPrp2 )
    cLote                := if ( len( cLote )    != 12, Padr( cLote, 12 ), cLote )
 
-   // Si el criterio de la peticion no cambia devolvemos la fecha de consolidacion
-   /*
-   if ::cCodigoConsolidacion == cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote .and. !empty( ::dConsolidacion )
-      msgAlert( ::dConsolidacion, "salida pq no ha cambios" )
-      Return ( ::dConsolidacion )
-   end if 
-   */
    // Entramos en el calculo real de la consolidacion--------------------------
 
    ::dConsolidacion     := nil
