@@ -1302,6 +1302,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode, cNumAlb 
    cGet[ 3 ]            := RetFld( aTmp[ _CCODPAGO], D():FormasPago( nView ) )
    cGet[ 5 ]            := RetFld( aTmp[ _CCODCAJ ], D():Cajas( nView ) )
    cGet[ 6 ]            := RetFld( cCodEmp() + aTmp[ _CCODDLG ], D():Delegaciones( nView ), "cNomDlg" )
+   cGet[ 7 ]            := RetFld( aTmp[ _CALMORIGEN ], D():Almacen( nView ) )
 
    DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "facturas a proveedores"
 

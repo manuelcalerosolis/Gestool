@@ -277,6 +277,8 @@ CLASS TStock
    METHOD DeleteStockFacturaProveedores( lNumeroSerie )
 
    METHOD InsertStockRectificativaProveedores( lNumeroSerie )
+   METHOD DeleteStockRectificativaProveedores( lNumeroSerie )
+
    METHOD InsertStockAlbaranClientes( lNumeroSerie )
    METHOD InsertStockFacturaClientes( lNumeroSerie )
    METHOD InsertStockRectificativaClientes( lNumeroSerie )
@@ -2087,6 +2089,44 @@ RETURN ( lDup )
             :cNumeroSerie     := ( ::cRctPrvS )->cNumSer
          else
             :nUnidades        := nUnidades
+         end if
+         
+         ::Integra( hb_QWith() )
+
+      end with
+
+   RETURN nil
+   
+   //---------------------------------------------------------------------------//
+
+   METHOD DeleteStockRectificativaProveedores( lNumeroSerie )
+
+      local nUnidades         := nTotNRctPrv( ::cRctPrvL )
+
+      with object ( SStock():New() )
+
+         :cTipoDocumento      := RCT_PRV
+         :cAlias              := ( ::cRctPrvL )
+         :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
+         :cDelegacion         := ( ::cRctPrvL )->cSufFac
+         :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
+         :tFechaDocumento     := ( ::cRctPrvL )->tFecFac
+         :cCodigo             := ( ::cRctPrvL )->cRef
+         :cCodigoAlmacen      := ( ::cRctPrvL )->cAlmOrigen
+         :cCodigoPropiedad1   := ( ::cRctPrvL )->cCodPr1
+         :cCodigoPropiedad2   := ( ::cRctPrvL )->cCodPr2
+         :cValorPropiedad1    := ( ::cRctPrvL )->cValPr1
+         :cValorPropiedad2    := ( ::cRctPrvL )->cValPr2
+         :cLote               := ( ::cRctPrvL )->cLote
+         :dFechaCaducidad     := ( ::cRctPrvL )->dFecCad
+         :nBultos             := ( ::cRctPrvL )->nBultos
+         :nCajas              := ( ::cRctPrvL )->nCanEnt
+
+         if IsTrue( lNumeroSerie )
+            :nUnidades        := if( nUnidades > 0, -1, 1 )
+            :cNumeroSerie     := ( ::cRctPrvS )->cNumSer
+         else
+            :nUnidades        := -nUnidades
          end if
          
          ::Integra( hb_QWith() )
@@ -6139,6 +6179,56 @@ METHOD aStockRectificativaProveedor( cCodArt, cCodAlm, lLote, lNumeroSerie, dFec
       end while
 
    end if
+
+   //Rectificativas con doble almacen
+
+   cCodigoArticulo         := ""
+
+   ( ::cRctPrvL )->( ordSetFocus( "cStkFastOu" ) )
+
+   if ( ::cRctPrvL )->( dbSeek( cCodArt + cCodAlm ) )
+
+      while ( ::cRctPrvL )->cRef == cCodArt  .and. ( ::cRctPrvL )->cAlmOrigen == cCodAlm .and. !( ::cRctPrvL )->( Eof() )
+
+         if cCodigoArticulo != ( ::cRctPrvL )->cRef + ( ::cRctPrvL )->cAlmOrigen + ( ::cRctPrvL )->cCodPr1 + ( ::cRctPrvL )->cCodPr2 + ( ::cRctPrvL )->cValPr1 + ( ::cRctPrvL )->cValPr2 + ( ::cRctPrvL )->cLote
+
+            if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmOrigen, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac, ( ::cRctPrvL )->tFecFac ) 
+
+               if ( Empty( dFecIni ) .or. ( ::cRctPrvL )->dFecFac >= dFecIni ) .and. ( Empty( dFecFin ) .or. ( ::cRctPrvL )->dFecFac <= dFecFin ) 
+
+                  // Buscamos el numero de serie-------------------------------------
+
+                  if lNumeroSerie .and. ( ::cRctPrvS )->( dbSeek( ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac + Str( ( ::cRctPrvL )->nNumLin ) ) )
+
+                    while ( ::cRctPrvS )->cSerFac + Str( ( ::cRctPrvS )->nNumFac ) + ( ::cRctPrvS )->cSufFac + Str( ( ::cRctPrvS )->nNumLin ) == ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac + Str( ( ::cRctPrvL )->nNumLin ) .and. !( ::cRctPrvS )->( eof() )
+
+                        ::DeleteStockRectificativaProveedores( .t. )
+
+                        ( ::cRctPrvS )->( dbSkip() )
+
+                     end while
+
+                  else 
+
+                     ::DeleteStockRectificativaProveedores()
+
+                  end if 
+
+               end if
+
+            else 
+
+               cCodigoArticulo   := ( ::cRctPrvL )->cRef + ( ::cRctPrvL )->cAlmOrigen + ( ::cRctPrvL )->cCodPr1 + ( ::cRctPrvL )->cCodPr2 + ( ::cRctPrvL )->cValPr1 + ( ::cRctPrvL )->cValPr2 + ( ::cRctPrvL )->cLote
+
+            end if 
+
+         end if 
+
+         ( ::cRctPrvL )->( dbSkip() )
+
+      end while
+
+   end if 
 
    ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
    ( ::cRctPrvS )->( OrdSetFocus( nOrdRctPrvS ) )
