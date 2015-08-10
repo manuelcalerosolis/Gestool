@@ -5888,12 +5888,12 @@ ENDCLASS
       DEFAULT nView  := ::nView
 
       if empty( nView )
-         msgStop( "No hay vistas disponibles." / 2 )
+         msgStop( "No hay vistas disponibles." )
          Return ( .f. )
       end if
 
       if !hHasKey( ::hViews, nView )
-         msgStop( "Vista " + Alltrim( Str( nView ) ) + " no encontrada." )
+         msgStop( "Vista " + alltrim( str( nView ) ) + " no encontrada." )
          Return ( .f. )
       end if 
 

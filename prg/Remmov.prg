@@ -869,7 +869,7 @@ METHOD CloseFiles() CLASS TRemMovAlm
       ::oBandera:End()
    end if
 
-   if !Empty( ::oTipArt )
+   if !empty( ::oTipArt )
       ::oTipArt:end()
    end if
 
@@ -915,6 +915,8 @@ METHOD CloseFiles() CLASS TRemMovAlm
    ::oBandera     := nil
 
    ::lOpenFiles   := .f.
+
+   ::nView        := nil 
 
 RETURN ( .t. )
 
@@ -2759,32 +2761,29 @@ METHOD DataReport( oFr ) CLASS TRemMovAlm
 
    oFr:SetWorkArea(     "Agentes", ::oDbfAge:nArea )
    oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
-
    
    if !Empty( ::oDetMovimientos )
       oFr:SetWorkArea(     "Artículos", ::oArt:nArea )
       oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
-   end if      
 
-   if !Empty( ::oDetMovimientos )
-      oFr:SetMasterDetail( "Movimiento", "Lineas de movimientos", {|| Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem } )
-      oFr:SetMasterDetail( "Movimiento", "Artículos", {|| ::oDetMovimientos:oDbf:cRefMov } )
+      oFr:SetMasterDetail( "Movimiento",              "Lineas de movimientos",   {|| Str( ::oDbf:nNumRem ) + ::oDbf:cSufRem } )
+      oFr:SetMasterDetail( "Lineas de movimientos",   "Artículos",               {|| ::oDetMovimientos:oDbf:cRefMov } )
    end if
 
-   oFr:SetMasterDetail( "Movimiento", "Empresa",               {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Movimiento", "Almacén origen",        {|| ::oDbf:cAlmOrg } )
-   oFr:SetMasterDetail( "Movimiento", "Almacén destino",       {|| ::oDbf:cAlmDes } )
-   oFr:SetMasterDetail( "Movimiento", "Agentes",               {|| ::oDbf:cCodAge } )
+   oFr:SetMasterDetail( "Movimiento",                 "Empresa",               {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Movimiento",                 "Almacén origen",        {|| ::oDbf:cAlmOrg } )
+   oFr:SetMasterDetail( "Movimiento",                 "Almacén destino",       {|| ::oDbf:cAlmDes } )
+   oFr:SetMasterDetail( "Movimiento",                 "Agentes",               {|| ::oDbf:cCodAge } )
+
+   oFr:SetResyncPair(   "Movimiento",                 "Empresa" )
+   oFr:SetResyncPair(   "Movimiento",                 "Almacén origen" )
+   oFr:SetResyncPair(   "Movimiento",                 "Almacén destino" )
+   oFr:SetResyncPair(   "Movimiento",                 "Agentes" )
 
    if !Empty( ::oDetMovimientos )
-      oFr:SetResyncPair(   "Movimiento", "Lineas de movimientos" )
-      oFr:SetResyncPair(   "Artículos", "Artículos" )
+      oFr:SetResyncPair(   "Movimiento",              "Lineas de movimientos" )
+      oFr:SetResyncPair(   "Lineas de movimientos",   "Artículos" )
    end if
-
-   oFr:SetResyncPair(   "Movimiento", "Empresa" )
-   oFr:SetResyncPair(   "Movimiento", "Almacén origen" )
-   oFr:SetResyncPair(   "Movimiento", "Almacén destino" )
-   oFr:SetResyncPair(   "Movimiento", "Agentes" )
 
 Return nil
 

@@ -165,7 +165,7 @@ CLASS sTpvPunto
    Method lGenerico()      INLINE ( ::nUbicacion == ubiGeneral )
    Method lLlevar()        INLINE ( ::nUbicacion == ubiLlevar )
    Method lRecoger()       INLINE ( ::nUbicacion == ubiRecoger )
-   Method lEncargar()       INLINE ( ::nUbicacion == ubiEncargar )
+   Method lEncargar()      INLINE ( ::nUbicacion == ubiEncargar )
 
    Method oTiketCabecera() INLINE ( ::oSender:oSender:oSender:oTiketCabecera )
 

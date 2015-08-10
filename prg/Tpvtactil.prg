@@ -1885,7 +1885,7 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oAgentes                                := nil
    ::oRuta                                   := nil
    ::oAlmacen                                := nil
-   ::oArticuloPropiedades                       := nil
+   ::oArticuloPropiedades                    := nil
    ::oTarifaPrecioLinea                      := nil
    ::oTarifaPrecioLineaAgente                := nil
    ::oDocument                               := nil
@@ -9521,6 +9521,8 @@ METHOD InitDocumento( nUbicacion )
 	// Cargamos los valores por defecto--------------------------------------
 
 	::CargaValoresDefecto( nUbicacion, .t. )
+
+   msgAlert( ::oRestaurante:lComensales, "lComensales" )
 
 	CursorWE()
 

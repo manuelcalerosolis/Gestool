@@ -179,6 +179,8 @@ CLASS TTpvRestaurante FROM TMasDet
    DATA cSelectedImagen
    DATA cSelectedTexto
 
+   DATA lComensales        AS LOGIC    INIT .f.
+
    Method New( cPath, oWndParent, oMenuItem )
    Method Create( cPath )
 

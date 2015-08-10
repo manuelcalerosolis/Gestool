@@ -77,6 +77,7 @@ CLASS TSalaVenta FROM TMasDet
    DATA nSelectedPrecio    AS NUMERIC  INIT  1
    DATA nSelectedCombinado AS NUMERIC  INIT  2
    DATA cSelectedTiket
+   DATA lComensales        AS LOGIC    INIT .f.
 
    DATA cSelectedImagen
    DATA cSelectedTexto
@@ -216,6 +217,11 @@ METHOD Resource( nMode )
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ITEMS    ::aPrecio
+
+      REDEFINE CHECKBOX ::oDbf:lComensal ;
+         UPDATE ;
+         ID       150 ;
+         OF       oDlg
 
       REDEFINE BUTTON ;
          ID       503 ;
@@ -1461,6 +1467,7 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "nPrecio"       TYPE "N" LEN  1  DEC 0 COMMENT "Precios sala"      HIDE                                OF ::oDbf
       FIELD NAME "nImagen"       TYPE "N" LEN  2  DEC 0 COMMENT "Imagen"            HIDE                                OF ::oDbf
       FIELD NAME "nPreCmb"       TYPE "N" LEN  1  DEC 0 COMMENT "Precio Combinado"  HIDE                                OF ::oDbf
+      FIELD NAME "lComensal"     TYPE "L" LEN  1  DEC 0 COMMENT "Solicitar comensales"    HIDE                          OF ::oDbf
 
       INDEX TO "SalaVta.Cdx" TAG "cCodigo"      ON "cCodigo"      COMMENT "Código" NODELETED                            OF ::oDbf
       INDEX TO "SalaVta.Cdx" TAG "cDescrip"     ON "cDescrip"     COMMENT "Nombre" NODELETED                            OF ::oDbf

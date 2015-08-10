@@ -1424,6 +1424,8 @@ CLASS sPunto
    DATA nPrecio
    DATA nPreCmb
 
+   DATA lComensales        INIT .f.
+
    DATA nTotal             INIT 0
 
    DATA nTipo
@@ -1470,6 +1472,7 @@ Method New( nNumero, dbfTikT, oSala ) CLASS sPunto
    ::cAlias          := ( dbfTikT )->cAliasTik
    ::nPrecio         := ( dbfTikT )->nTarifa
    ::nTotal          := ( dbfTikT )->nTotTik
+   ::lComensales     := .f.
    ::nPreCmb         := uFieldEmpresa( "nPreTCmb" )
    ::cTikT           := dbfTikT
 
@@ -1494,6 +1497,7 @@ Method Create( nNumero, cDescripcion, nTipo, nFila, nColumna, oSala, dbfTikT ) C
    ::cCodigoSala     := oSala:cCodigo
    ::nPrecio         := oSala:nPrecio
    ::nPreCmb         := oSala:nPreCmb
+   ::lComensales     := oSala:lComensales
    ::oSala           := oSala
 
 #ifndef __PDA__
@@ -1511,15 +1515,15 @@ Method Generico( dbfTikT ) CLASS sPunto
    ::nNumero         := 0
 
    if !Empty( dbfTikT )
-      ::cSerie          := ( dbfTikT )->cSerTik
-      ::cNumero         := ( dbfTikT )->cNumTik
-      ::cSufijo         := ( dbfTikT )->cSufTik
-      ::cAlias          := ( dbfTikT )->cAliasTik
+      ::cSerie       := ( dbfTikT )->cSerTik
+      ::cNumero      := ( dbfTikT )->cNumTik
+      ::cSufijo      := ( dbfTikT )->cSufTik
+      ::cAlias       := ( dbfTikT )->cAliasTik
    else
-      ::cSerie          := ""
-      ::cNumero         := ""
-      ::cSufijo         := ""
-      ::cAlias          := ""
+      ::cSerie       := ""
+      ::cNumero      := ""
+      ::cSufijo      := ""
+      ::cAlias       := ""
    end if
 
    ::cCodigoSala     := ""
@@ -1536,6 +1540,7 @@ Method Generico( dbfTikT ) CLASS sPunto
    end if
    ::cImagen         := "Cup_32"
    ::oSala           := nil
+   ::lComensales     := .f.
 
 Return ( Self )
 
@@ -1571,6 +1576,7 @@ Method Llevar( dbfTikT ) CLASS sPunto
    end if
    ::cImagen         := "Wheel_32"
    ::oSala           := nil
+   ::lComensales     := .f.
 
 Return ( Self )
 
@@ -1627,6 +1633,7 @@ Method CreateMesa( oSalon, lPuntosPendientes ) CLASS sPunto
          ::cNumero      := ""
          ::nTotal       := 0
          ::cSufijo      := ""
+         ::lComensales  := .f.
 
       end case
 
@@ -1637,8 +1644,6 @@ Method CreateMesa( oSalon, lPuntosPendientes ) CLASS sPunto
    /*
    Crea la mesa----------------------------------------------------------------
    */
-
-#ifndef __PDA__
 
    if !lPda()
 
@@ -1684,31 +1689,6 @@ Method CreateMesa( oSalon, lPuntosPendientes ) CLASS sPunto
       end if
 
    end if
-
-#else
-
-   if !Empty( ::cPuntoVenta )
-
-      ::aMesas             := {}
-
-      oMesa                := oSalon:ClickSalon( ::nTipo, ::nFila, ::nColumna, Self )
-
-      if !Empty( oMesa ) .and. IsChar( oMesa:oBtnBmp:cTooltip )
-
-         oMesa:nEstado     := ::nEstado
-         oMesa:sPunto      := Self
-
-         if ( IsTrue( lPuntosPendientes ) .and. ::nEstado <= 1 )
-            oMesa:Disable()
-         end if
-
-      end if
-
-      aAdd( ::aMesas, oMesa )
-
-   end if
-
-#endif
 
 Return ( self )
 
