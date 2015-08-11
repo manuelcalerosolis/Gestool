@@ -10222,6 +10222,14 @@ Return ( .t. )
 
 METHOD OnClickEliminarTicket()
 
+   ::oTemporalLinea:GoTop()
+   while !( ::oTemporalLinea:eof() )
+      ::eliminarLinea()
+      ::oTemporalLinea:Skip()
+   end while
+
+   ::setTicketPagado()
+
    msgAlert( "OnClickEliminarTicket" )
 
 Return .t.
