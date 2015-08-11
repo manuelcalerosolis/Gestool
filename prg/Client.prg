@@ -1740,6 +1740,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          COLOR    CLR_GET ;
          OF       fldGeneral
 
+      REDEFINE GET aGet[_CCODALM] VAR aTmp[_CCODALM] ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cAlmacen( aGet[_CCODALM], dbfAlmT, oSay[9] ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwAlmacen( aGet[_CCODALM], oSay[9] ) ) ;
+         COLOR    CLR_GET ;
+         OF       fldGeneral
+
+      REDEFINE GET oSay[9] VAR cSay[9] ;
+         ID       251 ;
+         WHEN     ( .f. ) ;
+         COLOR    CLR_GET ;
+         OF       fldGeneral   
+
       REDEFINE GET aGet[ _CAGENTE ] VAR aTmp[ _CAGENTE ] ;
          ID       230 ;
          WHEN     ( nMode != ZOOM_MODE ) ;

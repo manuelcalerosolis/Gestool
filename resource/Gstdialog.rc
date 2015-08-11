@@ -3396,19 +3396,19 @@ FONT 8, "MS Sans Serif"
   CONTROL "Provincia", -1, "Static", WS_GROUP, 7, 62, 33, 8
 }
 
-CLIENT DIALOG DISCARDABLE 138, 96, 504, 306
+CLIENT DIALOG DISCARDABLE 138, 96, 504, 317
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU
 CAPTION "Clientes"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 500, "SysTabControl32", 0x00000000, 2, 3, 500, 268
-  CONTROL "A&nterior [F7]", 3, "Button", 0x00000000, 1, 276, 50, 14
-  CONTROL "&Siguiente [F8]", 4, "Button", 0x00000000, 57, 276, 50, 14
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 396, 276, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 452, 276, 50, 14
+  CONTROL "", 500, "SysTabControl32", 0x00000000, 2, 3, 500, 280
+  CONTROL "A&nterior [F7]", 3, "Button", 0x00000000, 1, 288, 50, 14
+  CONTROL "&Siguiente [F8]", 4, "Button", 0x00000000, 57, 288, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 396, 288, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 452, 288, 50, 14
 }
 
-CLIENT_0 DIALOG DISCARDABLE 35, -50, 496, 254
+CLIENT_0 DIALOG DISCARDABLE 35, -50, 496, 267
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -3440,14 +3440,16 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 321, "Edit", WS_BORDER|WS_TABSTOP, 154, 171, 202, 11
   CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 98, 184, 54, 11
   CONTROL "", 221, "Edit", WS_BORDER|WS_TABSTOP, 154, 184, 202, 11
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 98, 197, 54, 11
-  CONTROL "", 231, "Edit", WS_BORDER|WS_TABSTOP, 154, 197, 202, 11
-  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 98, 210, 54, 11
-  CONTROL "", 311, "Edit", WS_BORDER|WS_TABSTOP, 154, 210, 202, 11
-  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 98, 223, 54, 11
-  CONTROL "", 241, "Edit", WS_BORDER|WS_TABSTOP, 154, 223, 202, 11
-  CONTROL "", 315, "Edit", WS_BORDER|WS_TABSTOP, 98, 236, 54, 11
-  CONTROL "", 316, "Edit", WS_BORDER|WS_TABSTOP, 154, 236, 202, 11
+  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 98, 196, 54, 11
+  CONTROL "", 251, "Edit", WS_BORDER|WS_TABSTOP, 154, 196, 202, 11
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 98, 208, 54, 11
+  CONTROL "", 231, "Edit", WS_BORDER|WS_TABSTOP, 154, 208, 202, 11
+  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 98, 221, 54, 11
+  CONTROL "", 311, "Edit", WS_BORDER|WS_TABSTOP, 154, 221, 202, 11
+  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 98, 234, 54, 11
+  CONTROL "", 241, "Edit", WS_BORDER|WS_TABSTOP, 154, 234, 202, 11
+  CONTROL "", 315, "Edit", WS_BORDER|WS_TABSTOP, 98, 247, 54, 11
+  CONTROL "", 316, "Edit", WS_BORDER|WS_TABSTOP, 154, 247, 202, 11
   CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 412, 144, 76, 71
   CONTROL "", 102, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 412, 158, 36, 11
   CONTROL "", 101, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 412, 171, 36, 11
@@ -3475,25 +3477,26 @@ FONT 8, "MS Sans Serif"
   CONTROL "Tarifa persnlz.", -1, "Static", WS_GROUP, 47, 149, 48, 8
   CONTROL "Forma pago", -1, "Static", WS_GROUP, 47, 162, 38, 8
   CONTROL "Remesa", -1, "Static", WS_GROUP, 47, 175, 35, 8
-  CONTROL "Ruta", -1, "Static", WS_GROUP, 47, 188, 21, 8
-  CONTROL "Agente", -1, "Static", WS_GROUP, 47, 200, 24, 8
-  CONTROL "Grupo", -1, "Static", WS_GROUP, 47, 226, 33, 8
-  CONTROL "Agente 2", -1, "Static", WS_GROUP, 47, 213, 30, 8
+  CONTROL "Ruta", -1, "Static", WS_GROUP, 47, 187, 21, 8
+  CONTROL "Agente", -1, "Static", WS_GROUP, 47, 211, 24, 8
+  CONTROL "Grupo", -1, "Static", WS_GROUP, 47, 237, 33, 8
+  CONTROL "Agente 2", -1, "Static", WS_GROUP, 47, 224, 30, 8
   CONTROL "Serie/Copias", -1, "Static", WS_GROUP, 363, 187, 45, 8
   CONTROL "1º/2º día pago", -1, "Static", WS_GROUP, 363, 239, 49, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 29, 448, 112
-  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 139, 316, 110
-  CONTROL "", -1, "Button", BS_GROUPBOX, 360, 139, 132, 110
-  CONTROL "Transportista", -1, "Static", WS_GROUP, 47, 239, 46, 8
+  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 139, 316, 124
+  CONTROL "", -1, "Button", BS_GROUPBOX, 360, 139, 132, 124
+  CONTROL "Transportista", -1, "Static", WS_GROUP, 47, 250, 46, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales del cliente ", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
   CONTROL "Descuento", -1, "Static", WS_GROUP, 364, 174, 40, 8
   CONTROL "Móvil 2", -1, "Static", WS_GROUP, 363, 104, 28, 8
   CONTROL "Teléfono 2", -1, "Static", WS_GROUP, 363, 78, 35, 8
   CONTROL "Combinado", -1, "Static", WS_GROUP, 363, 161, 41, 8
+  CONTROL "Almacén", -1, "Static", WS_GROUP, 47, 199, 34, 8
 }
 
-CLIENT_1 DIALOG DISCARDABLE -3, 20, 496, 254
+CLIENT_1 DIALOG DISCARDABLE -3, 20, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -3562,7 +3565,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Mes de vacaciones", -1, "Static", WS_GROUP, 390, 137, 73, 10
   CONTROL "Establecimiento", -1, "Button", BS_GROUPBOX, 44, 29, 338, 61
   CONTROL "Régimen de impuestos", -1, "Button", BS_GROUPBOX, 43, 115, 155, 101
-  CONTROL "Bloqueo", -1, "Button", BS_GROUPBOX, 384, 171, 108, 79
+  CONTROL "Bloqueo", -1, "Button", BS_GROUPBOX, 384, 171, 108, 91
   CONTROL "Descuentos", 98, "Button", BS_GROUPBOX, 199, 115, 182, 61
   CONTROL "Días de visita", -1, "Button", BS_GROUPBOX, 384, 29, 108, 142
   CONTROL "%", -1, "Static", WS_GROUP, 370, 140, 8, 8
@@ -3571,7 +3574,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "%", -1, "Static", WS_GROUP, 142, 205, 9, 8
   CONTROL "Tipo I.R.P.F.", -1, "Static", WS_GROUP, 50, 190, 45, 8
   CONTROL "Descuentos atipicos", -1, "Button", BS_GROUPBOX, 199, 177, 182, 39
-  CONTROL "Crédito", -1, "Button", BS_GROUPBOX, 43, 217, 338, 34
+  CONTROL "Crédito", -1, "Button", BS_GROUPBOX, 43, 216, 338, 47
   CONTROL "Fecha", -1, "Static", WS_GROUP, 391, 214, 25, 10
   CONTROL "Motivo", -1, "Static", WS_GROUP, 391, 226, 24, 10
   CONTROL "Contraseña", -1, "Static", WS_GROUP, 50, 78, 37, 8
@@ -3587,12 +3590,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "EDI [EAN]", 4002, "Static", WS_GROUP, 206, 103, 38, 8
 }
 
-CLIENT_10 DIALOG DISCARDABLE 32, 32, 496, 254
+CLIENT_10 DIALOG DISCARDABLE 32, 32, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 442, 190
-  CONTROL "Documentos", -1, "Button", BS_GROUPBOX, 44, 29, 450, 222
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 442, 202
+  CONTROL "Documentos", -1, "Button", BS_GROUPBOX, 44, 29, 450, 234
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 48, 39, 50, 14
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 103, 39, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 158, 39, 50, 14
@@ -3610,12 +3613,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "Recibos", -1, "Button", BS_GROUPBOX, 2, 0, 468, 232
 }
 
-CLIENT_12 DIALOG DISCARDABLE 32, 32, 496, 254
+CLIENT_12 DIALOG DISCARDABLE 32, 32, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 442, 190
-  CONTROL "Incidencias", -1, "Button", BS_GROUPBOX, 44, 29, 450, 222
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 442, 202
+  CONTROL "Incidencias", -1, "Button", BS_GROUPBOX, 44, 29, 450, 234
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 48, 39, 50, 14
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 103, 39, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 158, 39, 50, 14
@@ -3711,11 +3714,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "0", 604, "Static", SS_RIGHT|WS_GROUP, 147, 175, 80, 8
 }
 
-CLIENT_14 DIALOG DISCARDABLE 32, 32, 496, 254
+CLIENT_14 DIALOG DISCARDABLE 32, 32, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 300, "RichEdit20A", WS_TABSTOP|0x00a01004, 47, 54, 442, 194
+  CONTROL "", 300, "RichEdit20A", WS_TABSTOP|0x00a01004, 47, 54, 442, 204
   CONTROL "", 100, "TBtnBmp", 0x00000000, 48, 39, 12, 12
   CONTROL "", 110, "TBtnBmp", 0x00000000, 61, 39, 12, 12
   CONTROL "", 120, "TBtnBmp", 0x00000000, 77, 39, 12, 12
@@ -3736,12 +3739,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 270, "TBtnBmp", 0x00000000, 418, 39, 12, 12
   CONTROL "", 280, "TBtnBmp", 0x00000000, 434, 39, 12, 12
   CONTROL "", 290, "TBtnBmp", 0x00000000, 447, 39, 12, 12
-  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 29, 450, 222
+  CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 29, 450, 234
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Observaciones, podemos editar este texto con distinto tipos de fuentes, colores, guiones, etc.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
 
-CLIENT_15 DIALOG DISCARDABLE 26, 26, 496, 254
+CLIENT_15 DIALOG DISCARDABLE 26, 26, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -3750,13 +3753,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 156, 40, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 210, 40, 50, 14
   CONTROL "&Predeterminar", 504, "Button", WS_TABSTOP, 264, 40, 50, 14
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 188
-  CONTROL "Direcciones", -1, "Button", BS_GROUPBOX, 44, 29, 448, 220
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 200
+  CONTROL "Direcciones", -1, "Button", BS_GROUPBOX, 44, 29, 448, 232
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Relación de las direcciones, delgaciones, obras, etc.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
 
-CLIENT_16 DIALOG DISCARDABLE 26, 26, 496, 254
+CLIENT_16 DIALOG DISCARDABLE 26, 26, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -3764,27 +3767,27 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 102, 40, 50, 14
   CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 156, 40, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 210, 40, 50, 14
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 188
-  CONTROL "Contactos", -1, "Button", BS_GROUPBOX, 44, 29, 448, 220
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 200
+  CONTROL "Contactos", -1, "Button", BS_GROUPBOX, 44, 29, 448, 232
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Personas de contacto, responsable de compras, contabilidad, comerciales, etc.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
   CONTROL "&Llamar ahora", 504, "Button", WS_TABSTOP, 438, 41, 50, 14
 }
 
-CLIENT_17 DIALOG DISCARDABLE 26, 26, 496, 254
+CLIENT_17 DIALOG DISCARDABLE 26, 26, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "Aña&dir [F2]", 501, "Button", WS_TABSTOP, 48, 40, 50, 14
   CONTROL "&Modificar [F3]", 502, "Button", WS_TABSTOP, 103, 40, 50, 14
   CONTROL "&Eliminar [F4]", 503, "Button", WS_TABSTOP, 159, 40, 50, 14
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00200000, 48, 56, 440, 188
-  CONTROL "Plantillas automáticas", -1, "Button", BS_GROUPBOX, 44, 29, 448, 220
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00200000, 48, 56, 440, 200
+  CONTROL "Plantillas automáticas", -1, "Button", BS_GROUPBOX, 44, 29, 448, 232
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Plantillas para automatizar la generación de facturas o albaranes.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
 
-CLIENT_18 DIALOG DISCARDABLE 26, 26, 496, 254
+CLIENT_18 DIALOG DISCARDABLE 26, 26, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -3798,10 +3801,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "Desde", -1, "Static", WS_GROUP, 184, 49, 22, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 273, 49, 21, 8
   CONTROL "Estado", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 369, 32, 121, 32
-  CONTROL "", 170, "TXBrowse", WS_TABSTOP|0x00300000, 44, 66, 446, 184
+  CONTROL "", 170, "TXBrowse", WS_TABSTOP|0x00300000, 44, 66, 446, 196
 }
 
-CLIENT_2 DIALOG DISCARDABLE 26, 26, 496, 254
+CLIENT_2 DIALOG DISCARDABLE 26, 26, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -3809,13 +3812,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "Modi&ficar [F3]", 102, "Button", WS_TABSTOP, 102, 39, 50, 14
   CONTROL "Z&oom", 103, "Button", WS_TABSTOP, 156, 39, 50, 14
   CONTROL "El&iminar [F4]", 104, "Button", WS_TABSTOP, 210, 39, 50, 14
-  CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 48, 55, 442, 192
-  CONTROL "Datos bancarios", -1, "Button", BS_GROUPBOX, 44, 29, 449, 222
+  CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 48, 55, 442, 204
+  CONTROL "Datos bancarios", -1, "Button", BS_GROUPBOX, 44, 29, 449, 234
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Relación de bancos", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
 
-CLIENT_3 DIALOG DISCARDABLE 26, 26, 496, 254
+CLIENT_3 DIALOG DISCARDABLE 26, 26, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -3827,11 +3830,11 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 99, 66, 70, 11
   CONTROL "", 371, "Edit", WS_BORDER|WS_TABSTOP, 172, 66, 216, 11
   CONTROL "", 372, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 416, 66, 72, 11
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 93, 440, 154
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 93, 440, 166
   CONTROL "Cuenta venta", -1, "Static", WS_GROUP, 48, 56, 45, 8
   CONTROL "Subcuenta cli.", -1, "Static", WS_GROUP, 48, 43, 48, 8
   CONTROL "Enlace contabilidad", -1, "Button", BS_GROUPBOX, 44, 29, 448, 52
-  CONTROL "Mayor", -1, "Button", BS_GROUPBOX, 43, 82, 448, 168
+  CONTROL "Mayor", -1, "Button", BS_GROUPBOX, 43, 82, 448, 180
   CONTROL "Saldo", -1, "Static", WS_GROUP, 393, 43, 20, 8
   CONTROL "Subcuenta dto.", -1, "Static", WS_GROUP, 48, 69, 49, 8
   CONTROL "Saldo", -1, "Static", WS_GROUP, 393, 69, 20, 8
@@ -3839,23 +3842,23 @@ FONT 8, "MS Sans Serif"
   CONTROL "Subcuentas contables de nuestro cliente en contaplus(r).", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
 
-CLIENT_4 DIALOG DISCARDABLE 32, 32, 496, 254
+CLIENT_4 DIALOG DISCARDABLE 32, 32, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 370, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 52, 438, 195
+  CONTROL "", 370, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 52, 438, 207
   CONTROL "Mostrar comentario", 380, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 39, 75, 10
-  CONTROL "Comentario", -1, "Button", BS_GROUPBOX, 44, 29, 447, 222
+  CONTROL "Comentario", -1, "Button", BS_GROUPBOX, 44, 29, 447, 234
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Comentarios a mostar al realizar un documento.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
 
-CLIENT_5 DIALOG DISCARDABLE 32, 32, 496, 254
+CLIENT_5 DIALOG DISCARDABLE 32, 32, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 442, 190
-  CONTROL "Tarifa personalizada", -1, "Button", BS_GROUPBOX, 44, 29, 449, 222
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 442, 202
+  CONTROL "Tarifa personalizada", -1, "Button", BS_GROUPBOX, 44, 29, 449, 234
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 48, 39, 50, 14
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 99, 39, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 151, 39, 50, 14
@@ -20116,7 +20119,7 @@ FONT 8, "MS Sans Serif"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
-CLIENT_FACTURAE DIALOG DISCARDABLE 26, 26, 496, 254
+CLIENT_FACTURAE DIALOG DISCARDABLE 26, 26, 496, 266
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -20124,8 +20127,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Modificar [F3]", 501, "Button", WS_TABSTOP, 102, 40, 50, 14
   CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 156, 40, 50, 14
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 210, 40, 50, 14
-  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 188
-  CONTROL "Organismos", -1, "Button", BS_GROUPBOX, 44, 29, 448, 220
+  CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 200
+  CONTROL "Organismos", -1, "Button", BS_GROUPBOX, 44, 29, 448, 232
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Directorio de organismos para emisión de facturas electronicas con facturae.", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
 }
