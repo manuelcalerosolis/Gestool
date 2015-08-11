@@ -49,10 +49,10 @@ METHOD New() CLASS InvoiceCustomer
    ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
    ( ::getWorkArea() )->( dbgotop() ) 
 
-   if !empty( ::CodigoAgente )
+   /*if !empty( ::CodigoAgente )
       ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == ::CodigoAgente }, "cCodAge == CodigoAgente" ) )
       ( ::getWorkArea() )->( dbgotop() )
-   end if 
+   end if */
 
 Return ( self )
 

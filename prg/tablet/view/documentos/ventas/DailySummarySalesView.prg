@@ -40,6 +40,8 @@ CLASS DailySummarySalesView FROM ViewBase
 
    METHOD cargaPeriodo()
 
+   METHOD changePeriodo()
+
    METHOD getTitleTipoDocumento()   INLINE ( ::getTextoTipoDocumento() )
 
 END CLASS
@@ -98,7 +100,7 @@ METHOD defineFechas() CLASS DailySummarySalesView
                                                 "nWidth"    => {|| GridWidth( 3.5, ::oDlg ) },;
                                                 "nHeight"   => 25,;
                                                 "aItems"    => ::aCbxRango,;
-                                                "bChange"   => {|| MsgInfo( "Cambio el combo" ) } } )
+                                                "bChange"   => {|| ::changePeriodo() } } )
 
    ::oFecIni      := TGridGet():Build( {        "nRow"      => 50,;
                                                 "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
@@ -330,5 +332,71 @@ METHOD cargaPeriodo() CLASS DailySummarySalesView
    aAdd( ::aCbxRango, "Año anterior" )
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD changePeriodo() CLASS DailySummarySalesView 
+
+   MsgInfo( ::cCbxRango )
+
+   do case
+      case ::cCbxRango == "Hoy"
+
+         ::oFecIni:cText( GetSysDate() )
+         ::oFecFin:cText( GetSysDate() )
+
+      case ::cCbxRango == "Ayer"
+
+         ::oFecIni:cText( GetSysDate() -1 )
+         ::oFecFin:cText( GetSysDate() -1 )
+
+      case ::cCbxRango == "Mes en curso"
+
+         ::oFecIni:cText( CtoD( "01/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFecFin:cText( GetSysDate() )
+
+      case ::cCbxRango == "Mes anterior"
+
+         ::oFecIni:cText( BoM( addMonth( GetSysDate(), - 1 ) ) )
+         ::oFecFin:cText( EoM( addMonth( GetSysDate(), - 1 ) ) )
+
+      case ::cCbxRango == "Primer trimestre"
+
+         ::oFecIni:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFecFin:cText( CtoD( "31/03/" + Str( Year( GetSysDate() ) ) ) )
+
+      case ::cCbxRango == "Segundo trimestre"
+
+         ::oFecIni:cText( CtoD( "01/04/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFecFin:cText( CtoD( "30/06/" + Str( Year( GetSysDate() ) ) ) )
+
+      case ::cCbxRango == "Tercer trimestre"
+
+         ::oFecIni:cText( CtoD( "01/07/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFecFin:cText( CtoD( "30/09/" + Str( Year( GetSysDate() ) ) ) )
+
+      case ::cCbxRango == "Cuatro trimestre"
+
+         ::oFecIni:cText( CtoD( "01/10/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFecFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+
+      case ::cCbxRango == "Doce últimos meses"
+
+         ::oFecIni:cText( BoY( GetSysDate() ) )
+         ::oFecFin:cText( EoY( GetSysDate() ) )
+
+      case ::cCbxRango == "Año en curso"
+
+         ::oFecIni:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
+         ::oFecFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
+
+      case ::cCbxRango == "Año anterior"
+
+         ::oFecIni:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
+         ::oFecFin:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
+
+   end case
+
+RETURN ( .t. )
 
 //---------------------------------------------------------------------------//

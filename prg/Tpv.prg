@@ -1185,7 +1185,9 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
                "Código",;
                "Nombre",;
                "Dirección",;
-               "Sesión" ;
+               "Sesión",;
+               "Almacén",;
+               "Delegación" ;
       MRU      "Cashier_user1_16";
       BITMAP   clrTopTPV ;
       ALIAS    ( dbfTikT );
@@ -1259,8 +1261,10 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
+         :cSortOrder       := "cSufTik"
          :bEditValue       := {|| ( dbfTikT )->cSufTik } // ( dbfTikT )->cCodDlg }
          :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1322,8 +1326,10 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
+         :cSortOrder       := "cAlmTik"
          :bEditValue       := {|| ( dbfTikT )->cAlmTik }
          :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -16935,6 +16941,12 @@ FUNCTION rxTpv( cPath, oMeter )
 
       ( dbfTikT )->( ordCondSet( "!Deleted() .and. !Empty( cTurTik )", {||!Deleted() .and. !Empty( Field->cTurTik ) }  ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CTURTIK", "CTURTIK + CSUFTIK + CNCJTIK", {|| Field->CTURTIK + Field->cSufTik + Field->CNCJTIK } ) )
+
+      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cAlmTik", "CALMTIK", {|| Field->CALMTIK } ) )
+
+      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cSufTik", "cSufTik", {|| Field->cSufTik } ) )
 
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted() }  ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CNUMDOC", "CNUMDOC", {|| Field->CNUMDOC } ) )

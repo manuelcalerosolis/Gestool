@@ -52,7 +52,7 @@ METHOD CalculatePedido() CLASS DailySummarySales
    ::oDailySummarySales:oPedido                 := 0
    ::oDailySummarySales:oPedidoTotal            := 0
 
-    D():getStatusPedidosClientes( ::nView )
+   D():getStatusPedidosClientes( ::nView )
 
    ( D():PedidosClientes( ::nView ) )->( ordSetFocus( "DFECPED" ) )
 
