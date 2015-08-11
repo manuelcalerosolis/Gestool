@@ -1439,8 +1439,10 @@ CLASS sTpvSala
    DATA nPreCmb
    DATA cImagen
    DATA lComensal
+   DATA cArticulo
+   DATA lMultiplicar
 
-   DATA aPunto     AS ARRAY INIT {}
+   DATA aPunto          AS ARRAY INIT {}
 
    Method New( oSender )
    Method BuildPuntos()
@@ -1459,6 +1461,8 @@ Method New( oSender ) CLASS sTpvSala
    ::nPreCmb      := oSender:oDbf:nPreCmb
    ::cDescripcion := Rtrim( oSender:oDbf:cDescrip )
    ::lComensal    := oSender:oDbf:lComensal
+   ::cArticulo    := oSender:oDbf:cArticulo
+   ::lMultiplicar := oSender:oDbf:lMultipli
 
    ::cImagen      := oSender:cBigResource()
 

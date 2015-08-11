@@ -370,7 +370,10 @@ CLASS TpvTactil
    DATA nDialogHeight
 
    DATA nNumeroLinea
+
    DATA nUnidades
+   METHOD setUnidades( nUnidades )  INLINE ( ::nUnidades := nUnidades )
+   METHOD getUnidades()             INLINE ( ::nUnidades )
 
    DATA aTemporalOriginal
    DATA aTemporalNuevoTicket
@@ -469,6 +472,7 @@ CLASS TpvTactil
       METHOD AgregarKit()
       METHOD AgregarPLU()
       METHOD AgregarFavoritos( cNombreArticulo )
+      METHOD AgregarArticulosInicio( cCodigoArticulo, nUnidades )
 
       METHOD AgregarAcompannamiento()
 
@@ -647,9 +651,12 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
-   METHOD EliminarLinea()
-   METHOD EliminaMenu( nLineaMenu )
-   METHOD EliminaEscandallo( nNumeroLinea )
+   METHOD OnClickEliminarTicket()
+
+   METHOD OnClickEliminarLinea()
+      METHOD eliminarLinea()
+      METHOD eliminaMenu( nLineaMenu )
+      METHOD eliminaEscandallo( nNumeroLinea )
 
    // Colores-----------------------------------------------------------------
 
@@ -854,7 +861,10 @@ CLASS TpvTactil
 
    METHOD OnClickReabrirTicket()
 
-   METHOD getComensales()                    INLINE ( if( ::oRestaurante:lComensal, ::OnClickComensales(), ) )
+   METHOD getComensales()                    
+
+   METHOD setTicketParcial()
+   METHOD setTicketPagado()
 
 END CLASS
 
@@ -2257,11 +2267,11 @@ METHOD Resource() CLASS TpvTactil
    Botones para acciones de las lineas--------------------------------------
    */
 
-   ::oBtnLineasTop            := TButtonBmp():ReDefine( 120, {|| ::oBrwLineas:GoUp() },    ::oDlg, , , .f., , , , .f., "Navigate_up" )
-   ::oBtnLineasBottom         := TButtonBmp():ReDefine( 121, {|| ::oBrwLineas:GoDown() },  ::oDlg, , , .f., , , , .f., "Navigate_down" )
-   ::oBtnLineasDelete         := TButtonBmp():ReDefine( 122, {|| ::EliminarLinea() },      ::oDlg, , , .f., , , , .f., "Garbage_Empty_32" )
-   ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios(.t.) }, ::oDlg, , , .f., , , , .f., "Message_32" )
-   ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },   ::oDlg, , , .f., , , , .f., "Text_code_32" ) 
+   ::oBtnLineasTop            := TButtonBmp():ReDefine( 120, {|| ::oBrwLineas:GoUp() },      ::oDlg, , , .f., , , , .f., "Navigate_up" )
+   ::oBtnLineasBottom         := TButtonBmp():ReDefine( 121, {|| ::oBrwLineas:GoDown() },    ::oDlg, , , .f., , , , .f., "Navigate_down" )
+   ::oBtnLineasDelete         := TButtonBmp():ReDefine( 122, {|| ::OnClickEliminarLinea() }, ::oDlg, , , .f., , , , .f., "Garbage_Empty_32" )
+   ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios(.t.) },   ::oDlg, , , .f., , , , .f., "Message_32" )
+   ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },     ::oDlg, , , .f., , , , .f., "Text_code_32" ) 
 
    /*
    TButtonBmp():ReDefine( 123, {|| ::OnClickDescuento() },                                  ::oDlg, , , .f., , , , .f., "Percent_32" )
@@ -2599,8 +2609,9 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Lote", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Barcode_32",                    "Lote",              1, {|| ::AgregarLote() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Reabrir ticket", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Reabrir",           1, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Operaciones", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Eliminar",          1, {|| ::OnClickEliminarTicket() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Reabrir",           2, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cajas", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar",       1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
@@ -3023,20 +3034,33 @@ RETURN ( .t. )
 
 METHOD SetDocumentoPagado()
 
-  ::oTiketCabecera:cTipTik         := SAVTIK
+   ::oTiketCabecera:cTipTik         := SAVTIK
 
-  do case
-     case ::oTpvCobros:nEstado == nParcial
+   do case
+      case ::oTpvCobros:nEstado == nParcial
+         ::setTicketParcial()
 
-        ::oTiketCabecera:lPgdTik   := .f.
-        ::oTiketCabecera:lAbierto  := .t.
+      case ::oTpvCobros:nEstado == nPagado
+         ::setTicketPagado()
+   end case
 
-     case ::oTpvCobros:nEstado == nPagado
+RETURN ( Self )
 
-        ::oTiketCabecera:lPgdTik   := .t.
-        ::oTiketCabecera:lAbierto  := .f.
+//-----------------------------------------------------------------------//
 
-  end case
+METHOD setTicketParcial()
+
+   ::oTiketCabecera:lPgdTik   := .f.
+   ::oTiketCabecera:lAbierto  := .t.
+
+RETURN ( Self )
+
+//-----------------------------------------------------------------------//
+
+METHOD setTicketPagado()
+
+   ::oTiketCabecera:lPgdTik   := .t.
+   ::oTiketCabecera:lAbierto  := .f.
 
 RETURN ( Self )
 
@@ -4163,17 +4187,9 @@ METHOD AgregarLineas( cCodigoArticulo, cCodigoMenu, cCodigoOrden ) CLASS TpvTact
    // Tomamos las unidades del teclado-----------------------------------------
 
    if ( ::oArticulo:lPeso )
-      
       ::nUnidades             := Calculadora( 0, , , "Peso: " + ::cNombreArticulo() )
-      
-      // if ( ::nUnidades == 0 )
-      //    Return .f.
-      // end if
-
    else
-
       ::nUnidades             := ::nGetUnidades( .t. )
-
    end if
 
    // Preguntamos si estamos combinando----------------------------------------
@@ -4447,12 +4463,9 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    // Agregamos los kits si es el caso-----------------------------------------
 
    if !Empty( cCodigoMenu )
-
       ::AgregarKit( cCodigoArticulo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2, ::GetLineaMenu() )
    else
-
       ::AgregarKit( cCodigoArticulo, ::nUnidades, ::oArticulo:cTipImp1, ::oArticulo:cTipImp2 )
-
    end if
 
    ::oBrwLineas:Refresh()
@@ -9321,56 +9334,60 @@ Return ( Self )
 
 //------------------------------------------------------------------------//
 
-METHOD EliminarLinea()
+METHOD OnClickEliminarLinea()
 
-  local nLineaMenu 
+   local nLineaMenu 
 
-  if !::lEditableDocumento()
-     MsgStop( "El documento ya está cerrado" )
-     Return ( .t. )
-  end if
+   if !::lEditableDocumento()
+      msgStop( "El documento ya está cerrado" )
+      Return ( .t. )
+   end if
 
-  //Si es una línea hija de un escandallo no permitimos borrarla.----------
-  if ::oTemporalLinea:lKitChl
-     MsgStop( "No se puede borrar un componente de un escandallo" )
-     Return ( .t. )
-  end if
+   // Si es una línea hija de un escandallo no permitimos borrarla.----------
 
-  ::DisableDialog()
+   if ::oTemporalLinea:lKitChl
+      MsgStop( "No se puede borrar un componente de un escandallo" )
+      Return ( .t. )
+   end if
 
-  if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
+   if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
+      ::eliminarLinea()
+   end if
 
-     if ::oTemporalLinea:lMnuTil
+   // Nuevo total-----------------------------------------------------------
 
-        ::EliminaMenu( ::oTemporalLinea:nNumLin )
+   ::SetTotal()
 
-        ::CargaBrowseFamilias()
-        ::ChangeFamilias()
+Return ( .t. )
 
-     else
+//------------------------------------------------------------------------//
 
-     //Si la línea es un escandallo eliminamos el escandallo completo
-        if ( ::oTemporalLinea:lKitArt )
+METHOD eliminarLinea()
 
-           ::EliminaEscandallo( ::oTemporalLinea:nNumLin )
+   ::DisableDialog()
 
-        else
+   if ::oTemporalLinea:lMnuTil
 
-           ::EliminaLineaTemporal()
+      ::EliminaMenu( ::oTemporalLinea:nNumLin )
 
-        end if
+      ::CargaBrowseFamilias()
+      ::ChangeFamilias()
 
-     end if
+   else
 
-     ::oBrwLineas:Refresh()
-  
-  end if
+      // Si la línea es un escandallo eliminamos el escandallo completo
 
-  ::EnableDialog()
+      if ( ::oTemporalLinea:lKitArt )
+         ::EliminaEscandallo( ::oTemporalLinea:nNumLin )
+      else
+         ::EliminaLineaTemporal()
+      end if
 
-  // Nuevo total-----------------------------------------------------------
+   end if
 
-  ::SetTotal()
+   ::oBrwLineas:Refresh()
+
+   ::EnableDialog()
 
 Return ( .t. )
 
@@ -9378,24 +9395,22 @@ Return ( .t. )
 
 METHOD EliminaMenu( nLineaMenu )
 
-  ::oTemporalLinea:GetStatus()
+   ::oTemporalLinea:GetStatus()
 
-  ::oTemporalLinea:OrdSetFocus( "cCodMnu" )
-  ::oTemporalLinea:GoTop()
+   ::oTemporalLinea:OrdSetFocus( "cCodMnu" )
+   ::oTemporalLinea:GoTop()
 
-  while !( ::oTemporalLinea:eof() )
+   while !( ::oTemporalLinea:eof() )
      
-     if ( nLineaMenu == ::oTemporalLinea:nLinMnu )
+      if ( nLineaMenu == ::oTemporalLinea:nLinMnu )
+         ::EliminaLineaTemporal()
+      end if
 
-        ::EliminaLineaTemporal()
+      ::SaltaLineaTemporal()
 
-     end if
+   end while
 
-     ::SaltaLineaTemporal()
-
-  end while
-
-  ::oTemporalLinea:SetStatus()
+   ::oTemporalLinea:SetStatus()
 
 Return( Self )
 
@@ -10205,6 +10220,14 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
+METHOD OnClickEliminarTicket()
+
+   msgAlert( "OnClickEliminarTicket" )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 METHOD OnClickReabrirTicket()
 
    local cTextoTicket   := ::cNumeroTicketByNameFormato()
@@ -10236,6 +10259,46 @@ METHOD OnClickReabrirTicket()
       CursorWE()
 
    end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getComensales()
+
+   ::setUnidades( 1 )
+
+   if ::oRestaurante:lComensal
+
+      ::OnClickComensales()
+
+      // unidades 
+
+      if ::oRestaurante:lMultiplicar
+         ::setUnidades( ::oTiketCabecera:nNumCom )
+      end if 
+
+   end if
+
+   // Articulos al inicio
+
+   if !empty( ::oRestaurante:cArticulo ) 
+      ::AgregarArticulosInicio( ::oRestaurante:cArticulo )         
+   end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AgregarArticulosInicio( cCodigoArticulo )
+
+   if !::oArticulo:Seek( cCodigoArticulo )
+      Return ( .f. )
+   end if 
+
+   // Agregamos el articulo----------------------------------------------
+
+   ::AgregarPrincipal( cCodigoArticulo )
 
 Return ( .t. )
 

@@ -121,6 +121,8 @@ CLASS sTpvPunto
    DATA nPreCmb
 
    DATA lComensal          INIT .f.
+   DATA cArticulo          INIT ""
+   DATA lMultiplicar       INIT .f.
 
    DATA nTotal             INIT 0
    DATA cTotal             INIT ""
@@ -209,6 +211,9 @@ Method CreateFromSala( nNumero, oSender ) CLASS sTpvPunto
    ::nPrecio         := ::oSender:nPrecio
    ::nPreCmb         := ::oSender:nPreCmb
    ::lComensal       := ::oSender:lComensal
+   ::cArticulo       := ::oSender:cArticulo
+   ::lMultiplicar    := ::oSender:lMultiplicar
+
    ::nUbicacion      := ubiSala
 
    ::cImagen         := ::cImagenPunto( ::nType )

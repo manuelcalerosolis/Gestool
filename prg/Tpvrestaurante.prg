@@ -180,6 +180,8 @@ CLASS TTpvRestaurante FROM TMasDet
    DATA cSelectedTexto
 
    DATA lComensal          AS LOGIC    INIT .f.
+   DATA cArticulo
+   DATA lMultiplicar       AS LOGIC    INIT .f.
 
    Method New( cPath, oWndParent, oMenuItem )
    Method Create( cPath )
@@ -387,6 +389,8 @@ Method SetTicket() CLASS TTpvRestaurante
       ::nSelectedUbicacion             := ::oSelectedPunto:nUbicacion
       ::cSelectedImagen                := ::oSelectedPunto:cImagen
       ::lComensal                      := ::oSelectedPunto:lComensal
+      ::cArticulo                      := ::oSelectedPunto:cArticulo
+      ::lMultiplicar                   := ::oSelectedPunto:lMultiplicar
 
       ::SelectedPrecio(    ::oSelectedPunto:nPrecio )
       ::SelectedCombinado( ::oSelectedPunto:nPreCmb )
@@ -537,7 +541,7 @@ METHOD OpenFiles( lExclusive ) CLASS TTpvRestaurante
    BEGIN SEQUENCE
 
       if empty( ::oDbf )
-         ::DefineFiles()
+         ::defineFiles()
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
@@ -590,7 +594,9 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TTpvRestaurante
       FIELD NAME "nPrecio"       TYPE "N" LEN  1  DEC 0 COMMENT "Precios sala"      HIDE                                OF ::oDbf
       FIELD NAME "nImagen"       TYPE "N" LEN  2  DEC 0 COMMENT "Imagen"            HIDE                                OF ::oDbf
       FIELD NAME "nPreCmb"       TYPE "N" LEN  1  DEC 0 COMMENT "Precio Combinado"  HIDE                                OF ::oDbf
-      FIELD NAME "lComensal"     TYPE "L" LEN  1  DEC 0 COMMENT "Solicitar comensales"    HIDE                          OF ::oDbf
+      FIELD NAME "lComensal"     TYPE "L" LEN  1  DEC 0 COMMENT "Solicitar comensales"                HIDE              OF ::oDbf
+      FIELD NAME "cArticulo"     TYPE "C" LEN 18  DEC 0 COMMENT "Artículo"                            HIDE              OF ::oDbf
+      FIELD NAME "lMultipli"     TYPE "L" LEN  1  DEC 0 COMMENT "Multiplicar artículo por comensal"   HIDE              OF ::oDbf
 
       INDEX TO "SalaVta.Cdx" TAG "cCodigo"      ON "cCodigo"      COMMENT "Código" NODELETED                            OF ::oDbf
       INDEX TO "SalaVta.Cdx" TAG "cDescrip"     ON "cDescrip"     COMMENT "Nombre" NODELETED                            OF ::oDbf
@@ -617,6 +623,7 @@ METHOD Resource( nMode ) CLASS TTpvRestaurante
 
 	local oDlg
    local oGet
+   local oArticulo
    local oCmbImagen
    local cCmbImagen     := ::cImagen()
    local oCmbPrecio
@@ -670,6 +677,20 @@ METHOD Resource( nMode ) CLASS TTpvRestaurante
          ID       150 ;
          OF       oDlg
 
+      REDEFINE GET oArticulo VAR ::oDbf:cArticulo ;
+         ID       160 ;
+         IDTEXT   161 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         VALID    cArticulo( oArticulo, nil, oArticulo:oHelpText );
+         ON HELP  brwArticulo( oArticulo, oArticulo:oHelpText );
+         OF       oDlg
+
+      REDEFINE CHECKBOX ::oDbf:lMultipli ;
+         WHEN     ( nMode != ZOOM_MODE .and. ::oDbf:lComensal ) ;
+         ID       170 ;
+         OF       oDlg
+
       REDEFINE BUTTON ;
          ID       503 ;
          OF       oDlg ;
@@ -693,7 +714,7 @@ METHOD Resource( nMode ) CLASS TTpvRestaurante
          oDlg:AddFastKey( VK_F5, {|| if( ::lPreSave( nMode, oCmbImagen, oCmbPrecio, oCmbPreCmb ), oDlg:end( IDOK ), ) } )
       end if
 
-      oDlg:bStart := { || oGet:SetFocus() }
+      oDlg:bStart := { || oArticulo:lValid(), oGet:SetFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -1473,6 +1494,8 @@ Method SetPunto( sPunto ) CLASS TTpvRestaurante
       ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
       ::nSelectedUbicacion             := ::oSelectedPunto:nUbicacion
       ::lComensal                      := ::oSelectedPunto:lComensal
+      ::cArticulo                      := ::oSelectedPunto:cArticulo
+      ::lMultiplicar                   := ::oSelectedPunto:lMultiplicar
      
       ::SelectedPrecio(    ::oSelectedPunto:nPrecio )             
       ::SelectedCombinado( ::oSelectedPunto:nPreCmb )             

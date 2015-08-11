@@ -20171,50 +20171,50 @@ Function cArticulo( aGet, dbfArticulo, aGet2, lCodeBar )
    local oBlock
    local oError
    local nOrdAnt
-   local lClose      := .F.
-   local lValid      := .F.
+   local lClose      := .f.
+   local lValid      := .f.
    local cCodArt     := aGet:varGet()
 
-   DEFAULT lCodeBar  := .F.
+   DEFAULT lCodeBar  := .f.
 
-   if Empty( cCodArt ) .or. ( cCodArt == Replicate( "Z", 18 ) )
-      return .T.
+   if empty( cCodArt ) .or. ( cCodArt == Replicate( "Z", 18 ) )
+      Return .T.
    end if
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if dbfArticulo == NIL
+   if empty( dbfArticulo )
       USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-      lClose := .T.
+      lClose         := .t.
    end if
 
    if lCodeBar
-      nOrdAnt  := ( dbfArticulo )->( ordSetFocus( "CODEBAR" ) )
+      nOrdAnt        := ( dbfArticulo )->( ordSetFocus( "CODEBAR" ) )
    else
-      nOrdAnt  := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) ) 
+      nOrdAnt        := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) ) 
    end if
 
-   IF (dbfArticulo)->( dbSeek( cCodArt ) )
+   if ( dbfArticulo )->( dbSeek( cCodArt ) )
 
-      IF lCodeBar
+      if lCodeBar
          aGet:cText( (dbfArticulo)->CODEBAR )
-      ELSE
+      else
          aGet:cText( (dbfArticulo)->CODIGO )
-      END IF
+      end if
 
-      IF aGet2 != nil
+      if aGet2 != nil
          aGet2:cText( (dbfArticulo)->NOMBRE )
-      END IF
+      end if
 
-      lValid   := .t.
+      lValid         := .t.
 
-   ELSE
+   else
 
       msgStop( "Artículo no encontrado", "Cadena buscada : " + cCodArt )
 
-   END IF
+   end if
 
    RECOVER USING oError
 
@@ -20224,13 +20224,13 @@ Function cArticulo( aGet, dbfArticulo, aGet2, lCodeBar )
 
    ErrorBlock( oBlock )
 
-   IF lClose
+   if lClose
       CLOSE( dbfArticulo )
-   END IF
+   end if
 
-   IF lCodeBar
+   if lCodeBar
       ( dbfArticulo )->( ordSetFocus( nOrdAnt ) )
-   END IF
+   end if
 
 RETURN lValid
 
