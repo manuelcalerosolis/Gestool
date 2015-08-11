@@ -17,6 +17,8 @@ CLASS DailySummarySales FROM DocumentsSales
 
    METHOD CalculateTotal()
 
+   METHOD CalculateGeneral()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -119,5 +121,18 @@ METHOD CalculateTotal() CLASS DailySummarySales
    ::oDailySummarySales:oTotal        += ::oDailySummarySales:oFacturaTotal
 
 Return( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD CalculateGeneral() CLASS DailySummarySales
+
+   Msginfo( "Calcula los totales" )
+
+   ::CalculatePedido()
+   ::CalculateAlbaran()
+   ::CalculateFactura()
+   ::CalculateTotal()
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//

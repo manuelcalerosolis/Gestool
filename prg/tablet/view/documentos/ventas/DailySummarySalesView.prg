@@ -72,12 +72,13 @@ METHOD insertControls() CLASS DailySummarySalesView
 
    ::defineTotal()
 
+   ::oSender:CalculateGeneral()
+
 Return( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD defineAceptarCancelar() CLASS DailySummarySalesView
-
    
    TGridImage():Build(  {  "nTop"      => 5,;
                            "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
@@ -100,7 +101,7 @@ METHOD defineFechas() CLASS DailySummarySalesView
                                                 "nWidth"    => {|| GridWidth( 3.5, ::oDlg ) },;
                                                 "nHeight"   => 25,;
                                                 "aItems"    => ::aCbxRango,;
-                                                "bChange"   => {|| ::changePeriodo() } } )
+                                                "bChange"   => {|| ::changePeriodo(), ::oSender:CalculateGeneral() } } )
 
    ::oFecIni      := TGridGet():Build( {        "nRow"      => 50,;
                                                 "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
@@ -109,6 +110,7 @@ METHOD defineFechas() CLASS DailySummarySalesView
                                                 "lPixels"   => .t.,;
                                                 "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                                                 "nHeight"   => 23,;
+                                                "bValid"    => {|| ::oSender:CalculateGeneral(), .t. },;
                                                 "lRight"    => .t. } ) 
 
    ::oFecFin      := TGridGet():Build( {        "nRow"      => 50,;
@@ -118,6 +120,7 @@ METHOD defineFechas() CLASS DailySummarySalesView
                                                 "lPixels"   => .t.,;
                                                 "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
                                                 "nHeight"   => 23,;
+                                                "bValid"    => {|| ::oSender:CalculateGeneral(), .t. },;
                                                 "lRight"    => .t. } )
 
 Return ( Self )
@@ -159,7 +162,7 @@ Return ( self )
 
 METHOD definePedidos() CLASS DailySummarySalesView
 
-   ::oSender:CalculatePedido()
+   //::oSender:CalculatePedido()
 
    TGridSay():Build( {  "nRow"      => 120,;
                         "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -201,7 +204,7 @@ Return( Self )
 
 METHOD defineAlbaranes() CLASS DailySummarySalesView
 
-   ::oSender:CalculateAlbaran()
+   //::oSender:CalculateAlbaran()
 
    TGridSay():Build( {  "nRow"      => 148,;
                         "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -243,7 +246,7 @@ Return( Self )
 
 METHOD defineFacturas() CLASS DailySummarySalesView
 
-   ::oSender:CalculateFactura()
+   //::oSender:CalculateFactura()
 
    TGridSay():Build( {  "nRow"      => 176,;
                         "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -285,7 +288,7 @@ Return( Self )
 
 METHOD defineTotal() CLASS DailySummarySalesView
 
-   ::oSender:CalculateTotal()
+   //::oSender:CalculateTotal()
 
    TGridSay():Build(    {  "nRow"      => 204,;
                            "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -335,9 +338,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD changePeriodo() CLASS DailySummarySalesView 
-
-   MsgInfo( ::cCbxRango )
+METHOD changePeriodo() CLASS DailySummarySalesView
 
    do case
       case ::cCbxRango == "Hoy"
