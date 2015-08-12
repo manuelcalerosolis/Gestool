@@ -4450,13 +4450,15 @@ METHOD AgregarPrincipal( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
    // Guardamos las propiedades del articulo-----------------------------------
 
    if !Empty( ::oArticulo:cCodPrp1 )
-      ::oTemporalLinea:cCodPr1      := ::GetCodigoPropiedadArticulo1()
-      ::oTemporalLinea:cValPr1      := ::GetValorPropiedadArticulo1()
+      ::oTemporalLinea:cCodPr1   := ::GetCodigoPropiedadArticulo1()
+      ::oTemporalLinea:cValPr1   := ::GetValorPropiedadArticulo1()
    end if
 
    // Obtenemos el precio del articulo-----------------------------------------
 
-   ::oTemporalLinea:nPvpTil         := ::nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+   ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo( cCodigoArticulo, cCodigoMenu, cCodigoOrden )
+
+   // guardar linea
 
    ::oTemporalLinea:Save()
 
@@ -9351,7 +9353,9 @@ METHOD OnClickEliminarLinea()
    end if
 
    if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
+      ::disableDialog()
       ::eliminarLinea()
+      ::enableDialog()
    end if
 
    // Nuevo total-----------------------------------------------------------
@@ -9364,13 +9368,12 @@ Return ( .t. )
 
 METHOD eliminarLinea()
 
-   ::DisableDialog()
-
    if ::oTemporalLinea:lMnuTil
 
       ::EliminaMenu( ::oTemporalLinea:nNumLin )
 
       ::CargaBrowseFamilias()
+
       ::ChangeFamilias()
 
    else
@@ -9386,8 +9389,6 @@ METHOD eliminarLinea()
    end if
 
    ::oBrwLineas:Refresh()
-
-   ::EnableDialog()
 
 Return ( .t. )
 
@@ -10222,6 +10223,8 @@ Return ( .t. )
 
 METHOD OnClickEliminarTicket()
 
+   ::disableDialog()
+
    ::oTemporalLinea:GoTop()
    while !( ::oTemporalLinea:eof() )
       ::eliminarLinea()
@@ -10229,6 +10232,8 @@ METHOD OnClickEliminarTicket()
    end while
 
    ::setTicketPagado()
+
+   ::enableDialog()
 
    msgAlert( "OnClickEliminarTicket" )
 
@@ -10282,7 +10287,7 @@ METHOD getComensales()
 
       // unidades 
 
-      if ::oRestaurante:lMultiplicar
+      if ( ::oRestaurante:lMultiplicar .and. ::oTiketCabecera:nNumCom > 0 )
          ::setUnidades( ::oTiketCabecera:nNumCom )
       end if 
 

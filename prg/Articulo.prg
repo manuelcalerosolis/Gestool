@@ -5333,18 +5333,6 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
    IXBrowse():CloseData()
 
    /*
-   Mostamos la imagen del articulo---------------------------------------------
-   */
-
-   //ChgBmp( cFirstImage( aGet[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ] ), bmpImage )
-   //cFirstImage( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfImg )
-
-   /*ChgBmp( if( !Empty( aGet[ ( dbfArticulo )->( fieldpos( "cImagenWeb" ) ) ] ),;
-                                    cNoPath( cFirstImage( aGet[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cAlias" ) ) ] ) ),;
-                                    aGet[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ), bmpImage )    */
-   //ChgBmp(  aGet[ ( dbfArticulo )->( fieldpos( "CIMAGENWEB" ) ) ] , bmpImage )
-
-   /*
    Mostramos y ocultamos los precios de venta y alquiler dependiendo de en cual estemos
    */
 
