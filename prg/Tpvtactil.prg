@@ -6787,7 +6787,7 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
 
    if ( !lGuardaDocumento .or. ::GuardaDocumentoPendiente() )
 
-      ::InitDocumento()
+      ::InitDocumento( ubiGeneral )
 
       ::DestroyFastReport()
 
