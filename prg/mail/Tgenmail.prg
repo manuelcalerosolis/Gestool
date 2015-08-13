@@ -100,7 +100,6 @@ CLASS TGenMailing
 
    DATA oGetCopiaOculta                
    DATA cGetCopiaOculta                   INIT Padr( uFieldEmpresa( "cCcoMai" ), 250 )
-
    
    DATA oGetDe                         
    DATA cGetDe                            INIT Padr( uFieldEmpresa( "cNombre" ), 250 )

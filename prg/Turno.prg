@@ -11100,6 +11100,7 @@ RETURN ( ::oDbf:SeekInOrd( ::cCurTurno, "cNumTur" ) )
 METHOD MailArqueo( cCurrentTruno )
 
    local cMensajeMail   := ""
+   local hMail          := {=>}
 
    ::cPdfFileName       := "Arqueo" + Alltrim( cCurrentTruno ) + "Caja" + Alltrim( ::oDbfCaj:cCodCaj ) + ".pdf"
    ::cHtmlFileName      := "Arqueo" + Alltrim( cCurrentTruno ) + "Caja" + Alltrim( ::oDbfCaj:cCodCaj ) + ".html"
@@ -11136,25 +11137,20 @@ METHOD MailArqueo( cCurrentTruno )
 
    ::lPdfShowDialog     := .t.
 
-   /*
-   Envío de  mail al usuario----------------------------------------------
-   */
+   // Envío de  mail al usuario----------------------------------------------
 
-   with object TGenMailing():New()
+   hSet( hMail, "mail", rtrim( ::cEnviarMail ) )
+   hSet( hMail, "subject", "Arqueo de caja " + alltrim( ::oDbfCaj:cCodCaj ) + " sesión " + alltrim( cCurrentTruno ) )
+   hSet( hMail, "message", rtrim( cMensajeMail ) )
 
-      :cGetDe           := __GSTROTOR__ + Space( 1 ) + __GSTVERSION__
-      :cGetAsunto       := "Arqueo de caja " + Alltrim( ::oDbfCaj:cCodCaj ) + " sesión " + Alltrim( cCurrentTruno )
-      :cNombre          := __GSTROTOR__
-      :cDireccion       := Rtrim( ::cEnviarMail )
+   if file( ::cPdfDefaultPath + ::cHtmlFileName )
+      hSet( hMail, "attachments", ::cPdfDefaultPath + ::cHtmlFileName )
+   end if 
 
-      if File( ::cPdfDefaultPath + ::cHtmlFileName )
-         :lCargaHtml( ::cPdfDefaultPath + ::cHtmlFileName )
-      else
-         :cGetMensaje   := Rtrim( cMensajeMail )
-      end if
-
-      :lExternalSend()
-
+   with object TSendMail():New()
+      if :buildMailerObject()
+         :sendMail( hMail )
+      end if 
    end with
 
    // Borramos los temporales--------------------------------------------------

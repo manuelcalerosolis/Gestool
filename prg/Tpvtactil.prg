@@ -2269,7 +2269,7 @@ METHOD Resource() CLASS TpvTactil
 
    ::oBtnLineasTop            := TButtonBmp():ReDefine( 120, {|| ::oBrwLineas:GoUp() },      ::oDlg, , , .f., , , , .f., "Navigate_up" )
    ::oBtnLineasBottom         := TButtonBmp():ReDefine( 121, {|| ::oBrwLineas:GoDown() },    ::oDlg, , , .f., , , , .f., "Navigate_down" )
-   ::oBtnLineasDelete         := TButtonBmp():ReDefine( 122, {|| ::OnClickEliminarLinea() }, ::oDlg, , , .f., , , , .f., "Garbage_Empty_32" )
+   ::oBtnLineasDelete         := TButtonBmp():ReDefine( 122, {|| ::OnClickEliminarLinea() }, ::oDlg, , , .f., , , , .f., "Delete_32" )
    ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios(.t.) },   ::oDlg, , , .f., , , , .f., "Message_32" )
    ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },     ::oDlg, , , .f., , , , .f., "Text_code_32" ) 
 
@@ -2609,8 +2609,8 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Lote", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Barcode_32",                    "Lote",              1, {|| ::AgregarLote() }, , , .f., .f., .f. )
 
-      oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Operaciones", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Eliminar",          1, {|| ::OnClickEliminarTicket() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Delete_32",                     "Eliminar",          1, {|| ::OnClickEliminarTicket() }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo, "Recycle_32",                    "Reabrir",           2, {|| ::OnClickReabrirTicket() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cajas", .f. )
@@ -2810,8 +2810,6 @@ METHOD ResizedResource() CLASS TpvTactil
 
    ::oBtnCombinado:Move( ::oBtnCombinado:nTop + nDialogHeight, ::oBtnCombinado:nLeft + nDialogWidth, , , .f. )
    
-   // ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f. )
-
    /*
    Ocupa todo el area cliente--------------------------------------------------
    */
@@ -5872,12 +5870,12 @@ METHOD OnClickUsuarios() CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    ::DisableDialog()
 
@@ -6568,12 +6566,12 @@ METHOD OnClickPendientes() CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -6643,12 +6641,12 @@ METHOD OnClickLista() CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    ::DisableDialog()
 
@@ -6771,12 +6769,12 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
 
    /*
    Si el docmuento no es nuevo y no tiene lineas lo tengo q borrar-------------
-   */
 
    if ::lEmptyLineas()
       ::EliminarDocumento( ::cNumeroTicket() )
       lGuardaDocumento     := .f.
    end if
+   */
 
    ::DisableDialog()
 
@@ -7188,11 +7186,13 @@ Return .t.
 
 METHOD EliminarDocumento( cNumeroTicket ) CLASS TpvTactil
 
-   local lElimina    := .f.
+   local lElimina          := .f.
 
-   ::DisableDialog()
+   DEFAULT cNumeroTicket   := ::cNumeroTicket()
 
    if ApoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::cNumeroTicketFormato( cNumeroTicket ) + " ?", "Atención", .t. )
+
+      ::DisableDialog()
 
       ::oTiketCabecera:GetStatus()
       ::oTiketLinea:GetStatus()
@@ -7210,11 +7210,11 @@ METHOD EliminarDocumento( cNumeroTicket ) CLASS TpvTactil
 
       logwrite( "Ticket eliminado " + cNumeroTicket, "Eliminados.txt" )
 
-      lElimina       := .t.
+      lElimina             := .t.
+
+      ::EnableDialog()
 
    end if
-
-   ::EnableDialog()
 
 Return ( lElimina )
 
@@ -7554,37 +7554,34 @@ METHOD OnClickGeneral() CLASS TpvTactil
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   /*
-   Guarda la venta actual------------------------------------------------------
-   */
+   // Guarda la venta actual---------------------------------------------------
 
    if ( !lGuardaDocumento .or. ::GuardaDocumentoPendiente() )
 
-      /*
-      Recoger usuario-------------------------------------------------------------
-      */
+      // Recoger usuario-------------------------------------------------------
 
       if ::GetUsuario()
 
-         /*
-         Inicializa los valores para el documento---------------------------------
-         */
+         // Inicializa los valores para el documento---------------------------
 
          ::InitDocumento( ubiGeneral )
 
-         // Cargamos las tarifas-----------------------------------------------------
+         // Cargamos las tarifas-----------------------------------------------
 
          ::SetTarifaSolo(        Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
          ::SetTarifaCombinado(   Max( uFieldEmpresa( "nPreTCmb" ), 1 ) )
          
-         // Pintamos la información de la zona donde nos encontramos-----------------
+         // Pintamos la información de la zona donde nos encontramos-----------
 
          ::SetUbicacion()
 
-         // Datos del documento------------------------------------------------------
-         */
+         // Datos del documento------------------------------------------------
 
          ::SetInfo()
+
+         // Ponemos el total---------------------------------------------------
+
+         ::SetTotal()
 
       end if
 
@@ -9348,7 +9345,7 @@ METHOD OnClickEliminarLinea()
    // Si es una línea hija de un escandallo no permitimos borrarla.----------
 
    if ::oTemporalLinea:lKitChl
-      MsgStop( "No se puede borrar un componente de un escandallo" )
+      msgStop( "No se puede borrar un componente de un escandallo" )
       Return ( .t. )
    end if
 
@@ -9541,7 +9538,7 @@ METHOD InitDocumento( nUbicacion )
 
    CursorWE()
 
-   ::getComensales()
+   ::getComensales( nUbicacion )
 
 RETURN ( Self )
 
@@ -10223,7 +10220,23 @@ Return ( .t. )
 
 METHOD OnClickEliminarTicket()
 
+   if !oUser():lAdministrador()
+      apoloMsgStop( "Eliminar tickets solo esta permitido a adeministradores" )
+      Return .f.
+   end if 
+
+   if ::lEmptyNumeroTicket()
+      apoloMsgStop( "El ticket aún no ha sido guardado." )
+      Return .f.
+   end if 
+
+   if !apoloMsgNoYes( "¿ Desea realmente eliminar el ticket " + ::cNumeroTicketFormato() + " ?", "Atención", .t. )
+      Return .f.
+   end if 
+
    ::disableDialog()
+
+   ::oTemporalLinea:GetStatus()
 
    ::oTemporalLinea:GoTop()
    while !( ::oTemporalLinea:eof() )
@@ -10231,11 +10244,17 @@ METHOD OnClickEliminarTicket()
       ::oTemporalLinea:Skip()
    end while
 
+   ::oTemporalLinea:SetStatus()
+
    ::setTicketPagado()
 
-   ::enableDialog()
+   // nos vamos a una ubicacion general
 
-   msgAlert( "OnClickEliminarTicket" )
+   ::OnClickGeneral()
+
+   //
+
+   ::enableDialog()
 
 Return .t.
 
@@ -10277,7 +10296,11 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD getComensales()
+METHOD getComensales( nUbicacion )
+
+   if !isNil( nUbicacion )
+      Return .t.
+   end if 
 
    ::setUnidades( 1 )
 

@@ -1321,6 +1321,13 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre agente"
+         :bEditValue       := {|| retNbrAge( ( D():PedidosClientes( nView ) )->cCodAge, dbfAgent )  }
+         :nWidth           := 200
+         :lHide            := .t.
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cCodRut }
          :nWidth           := 40
