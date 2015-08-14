@@ -3697,7 +3697,6 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
    local oSayTotal
 
    if nMode == APPD_MODE
-      ::oDbfVir:nUndMov    := 1
       ::oDbfVir:nNumLin    := nLastNum( ::oDbfVir:cAlias )
    end if
 
@@ -4352,8 +4351,14 @@ METHOD loadArticulo( oDlg, lValidDetalle, nMode ) CLASS TDetMovimientos
                ::oCajMov:cText( ::oParent:oArt:nCajEnt )
             end if
 
-            if ::oParent:oArt:nUniCaja != 0 .and. ::oDbfVir:nUndMov == 0
-               ::oUndMov:cText( ::oParent:oArt:nUniCaja )
+            if ::oDbfVir:nUndMov == 0
+
+               if ::oParent:oArt:nUniCaja != 0
+                  ::oUndMov:cText( ::oParent:oArt:nUniCaja )
+               else
+                  ::oUndMov:cText( 1 )
+               end if
+
             end if
 
             /*

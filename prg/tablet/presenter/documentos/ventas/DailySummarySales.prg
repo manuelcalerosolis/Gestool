@@ -112,7 +112,7 @@ METHOD CalculateFactura() CLASS DailySummarySales
    ::oDailySummarySales:nFactura                := 0
    ::oDailySummarySales:nFacturaTotal           := 0
 
-    D():getStatusFacturasClientes( ::nView )
+   D():getStatusFacturasClientes( ::nView )
 
    ( D():FacturasClientes( ::nView ) )->( ordSetFocus( "DFECFAC" ) )
 
