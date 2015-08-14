@@ -5474,6 +5474,9 @@ CLASS D
    METHOD getStatusAlbaranesClientesLineas( nView )   INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientesLineas( nView ) ) )
    METHOD setStatusAlbaranesClientesLineas( nView )   INLINE ( SetStatus( ::AlbaranesClientesLineas( nView ), ::aStatus ) )
 
+   METHOD getStatusAlbaranesClientes( nView )   INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )
+   METHOD setStatusAlbaranesClientes( nView )   INLINE ( SetStatus( ::AlbaranesClientes( nView ), ::aStatus ) )
+
    METHOD AlbaranesClientesSeries( nView )            INLINE ( ::Get( "AlbCliS", nView ) )
       METHOD AlbaranesClientesSeriesId( nView )       INLINE ( ( ::Get( "AlbCliS", nView ) )->cSerAlb + str( ( ::Get( "AlbCliS", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliS", nView ) )->cSufAlb )
 

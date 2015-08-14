@@ -8,13 +8,20 @@ CLASS DailySummarySalesView FROM ViewBase
    DATA dFecIni               INIT GetSysDate()
    DATA oFecFin
    DATA dFecFin               INIT GetSysDate()
-   DATA oPedido               INIT ""
-   DATA oPedidoTotal          INIT ""
-   DATA oAlbaran              INIT ""
-   DATA oAlbaranTotal         INIT ""
-   DATA oFactura              INIT ""
-   DATA oFacturaTotal         INIT ""
-   DATA oTotal                INIT ""
+   DATA oPedido
+   DATA oPedidoTotal
+   DATA nPedido               INIT 0
+   DATA nPedidoTotal          INIT 0
+   DATA oAlbaran
+   DATA oAlbaranTotal
+   DATA nAlbaran              INIT 0
+   DATA nAlbaranTotal         INIT 0
+   DATA oFactura
+   DATA oFacturaTotal
+   DATA nFactura              INIT 0
+   DATA nFacturaTotal         INIT 0
+   DATA oTotal
+   DATA nTotal                INIT 0
 
    DATA oCbxRango
    DATA aCbxRango             INIT {}
@@ -176,26 +183,26 @@ METHOD definePedidos() CLASS DailySummarySalesView
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 120,;
-                        "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::oPedido },;
-                        "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
-                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "nHeight"   => 23,;
-                        "lRight"    => .t.,;
-                        "bWhen"     => {|| .f. } } )
+   ::oPedido         := TGridGet():Build( {  "nRow"      => 120,;
+                                             "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, ::nPedido, ::nPedido := u ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "lPixels"   => .t.,;
+                                             "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "nHeight"   => 23,;
+                                             "lRight"    => .t.,;
+                                             "bWhen"     => {|| .f. } } )
 
-   TGridGet():Build( {  "nRow"      => 120,;
-                        "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::oPedidoTotal },;
-                        "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
-                        "cPict"     => cPorDiv(),;
-                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "nHeight"   => 23,;
-                        "lRight"    => .t.,;
-                        "bWhen"     => {|| .f. } } )
+   ::oPedidoTotal    := TGridGet():Build( {  "nRow"      => 120,;
+                                             "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, ::nPedidoTotal, ::nPedidoTotal := u ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "lPixels"   => .t.,;
+                                             "cPict"     => cPorDiv(),;
+                                             "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },; 
+                                             "nHeight"   => 23,;
+                                             "lRight"    => .t.,;
+                                             "bWhen"     => {|| .f. } } )
 
 
 Return( Self )
@@ -218,26 +225,26 @@ METHOD defineAlbaranes() CLASS DailySummarySalesView
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 148,;
-                        "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::oAlbaran },;
-                        "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
-                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "nHeight"   => 23,;
-                        "lRight"    => .t.,;
-                        "bWhen"     => {|| .f. } } )
+   ::oAlbaran        := TGridGet():Build( {  "nRow"      => 148,;
+                                             "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, ::nAlbaran, ::nAlbaran := u ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "lPixels"   => .t.,;
+                                             "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "nHeight"   => 23,;
+                                             "lRight"    => .t.,;
+                                             "bWhen"     => {|| .f. } } )
 
-   TGridGet():Build( {  "nRow"      => 148,;
-                        "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::oAlbaranTotal },;
-                        "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
-                        "cPict"     => cPorDiv(),;
-                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "nHeight"   => 23,;
-                        "lRight"    => .t.,;
-                        "bWhen"     => {|| .f. } } )
+   ::oAlbaranTotal   := TGridGet():Build( {  "nRow"      => 148,;
+                                             "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, ::nAlbaranTotal, ::nAlbaranTotal := u ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "lPixels"   => .t.,;
+                                             "cPict"     => cPorDiv(),;
+                                             "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "nHeight"   => 23,;
+                                             "lRight"    => .t.,;
+                                             "bWhen"     => {|| .f. } } )
 
 
 Return( Self )
@@ -260,26 +267,26 @@ METHOD defineFacturas() CLASS DailySummarySalesView
                         "nHeight"   => 23,;
                         "lDesign"   => .f. } )
 
-   TGridGet():Build( {  "nRow"      => 176,;
-                        "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::oFactura },;
-                        "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
-                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "nHeight"   => 23,;
-                        "lRight"    => .t.,;
-                        "bWhen"     => {|| .f. } } )
+   ::oFactura           := TGridGet():Build( {  "nRow"      => 176,;
+                                                "nCol"      => {|| GridWidth( 5, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::nFactura, ::nFactura := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "lPixels"   => .t.,;
+                                                "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lRight"    => .t.,;
+                                                "bWhen"     => {|| .f. } } )
 
-   TGridGet():Build( {  "nRow"      => 176,;
-                        "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
-                        "bSetGet"   => {|u| ::oFacturaTotal },;
-                        "oWnd"      => ::oDlg,;
-                        "lPixels"   => .t.,;
-                        "cPict"     => cPorDiv(),;
-                        "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                        "nHeight"   => 23,;
-                        "lRight"    => .t.,;
-                        "bWhen"     => {|| .f. } } )
+   ::oFacturaTotal      := TGridGet():Build( {  "nRow"      => 176,;
+                                                "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
+                                                "bSetGet"   => {|u| if( PCount() == 0, ::nFacturaTotal, ::nFacturaTotal := u ) },;
+                                                "oWnd"      => ::oDlg,;
+                                                "lPixels"   => .t.,;
+                                                "cPict"     => cPorDiv(),;
+                                                "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                                "nHeight"   => 23,;
+                                                "lRight"    => .t.,;
+                                                "bWhen"     => {|| .f. } } )
 
 
 Return( Self )
@@ -302,17 +309,17 @@ METHOD defineTotal() CLASS DailySummarySalesView
                            "nHeight"   => 23,;
                            "lDesign"   => .f. } )
 
-   TGridGet():Build(   {   "nRow"      => 204,;
-                           "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
-                           "bSetGet"   => {|u| ::oTotal },;
-                           "oWnd"      => ::oDlg,;
-                           "oFont"     => oGridFontBold(),;
-                           "lPixels"   => .t.,;
-                           "cPict"     => cPorDiv(),;
-                           "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
-                           "nHeight"   => 23,;
-                           "lRight"    => .t.,;
-                           "bWhen"     => {|| .f. } } )
+   ::oTotal       := TGridGet():Build(   {   "nRow"      => 204,;
+                                             "nCol"      => {|| GridWidth( 8, ::oDlg ) },;
+                                             "bSetGet"   => {|u| if( PCount() == 0, ::nTotal, ::nTotal := u ) },;
+                                             "oWnd"      => ::oDlg,;
+                                             "oFont"     => oGridFontBold(),;
+                                             "lPixels"   => .t.,;
+                                             "cPict"     => cPorDiv(),;
+                                             "nWidth"    => {|| GridWidth( 2.5, ::oDlg ) },;
+                                             "nHeight"   => 23,;
+                                             "lRight"    => .t.,;
+                                             "bWhen"     => {|| .f. } } )
 
 Return( Self )
 

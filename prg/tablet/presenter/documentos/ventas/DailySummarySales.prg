@@ -51,21 +51,25 @@ Return( self )
 
 METHOD CalculatePedido() CLASS DailySummarySales
 
-   ::oDailySummarySales:oPedido                 := 0
-   ::oDailySummarySales:oPedidoTotal            := 0
+   ::oDailySummarySales:nPedido                 := 0
+   ::oDailySummarySales:nPedidoTotal            := 0
 
    D():getStatusPedidosClientes( ::nView )
 
    ( D():PedidosClientes( ::nView ) )->( ordSetFocus( "DFECPED" ) )
 
-   while ( D():PedidosClientes( ::nView ) )->dFecPed == getSysDate() .and. !( D():PedidosClientes( ::nView ) )->( eof() )
+   while !( D():PedidosClientes( ::nView ) )->( eof() )
 
-         ::oDailySummarySales:oPedido           += 1 
+      if ( D():PedidosClientes( ::nView ) )->dFecPed >= ::oDailySummarySales:dFecIni .and. ( D():PedidosClientes( ::nView ) )->dFecPed <= ::oDailySummarySales:dFecFin
 
-         ::oDailySummarySales:oPedidoTotal      += ( D():PedidosClientes( ::nView ) )->nTotped
-      
-         ( D():PedidosClientes( ::nView ) )->( dbSkip() ) 
-      
+         ::oDailySummarySales:nPedido           += 1 
+
+         ::oDailySummarySales:nPedidoTotal      += ( D():PedidosClientes( ::nView ) )->nTotPed
+
+      end if
+   
+      ( D():PedidosClientes( ::nView ) )->( dbSkip() ) 
+   
    end while
 
    D():setStatusPedidosClientes( ::nView )
@@ -76,8 +80,28 @@ Return( self )
 
 METHOD CalculateAlbaran() CLASS DailySummarySales
 
-   ::oDailySummarySales:oAlbaran                := 0
-   ::oDailySummarySales:oAlbaranTotal           := 0
+   ::oDailySummarySales:nAlbaran                := 0
+   ::oDailySummarySales:nAlbaranTotal           := 0
+
+   D():getStatusAlbaranesClientes( ::nView )
+
+   ( D():AlbaranesClientes( ::nView ) )->( ordSetFocus( "DFECALB" ) )
+
+   while !( D():AlbaranesClientes( ::nView ) )->( eof() )
+
+      if ( D():AlbaranesClientes( ::nView ) )->dFecAlb >= ::oDailySummarySales:dFecIni .and. ( D():AlbaranesClientes( ::nView ) )->dFecAlb <= ::oDailySummarySales:dFecFin
+
+         ::oDailySummarySales:nAlbaran           += 1 
+
+         ::oDailySummarySales:nAlbaranTotal      += ( D():AlbaranesClientes( ::nView ) )->nTotAlb
+
+      end if
+   
+      ( D():AlbaranesClientes( ::nView ) )->( dbSkip() ) 
+   
+   end while
+
+   D():setStatusAlbaranesClientes( ::nView )
 
 Return( self )
 
@@ -85,26 +109,26 @@ Return( self )
 
 METHOD CalculateFactura() CLASS DailySummarySales
 
-   ::oDailySummarySales:oFactura                := 0
-   ::oDailySummarySales:oFacturaTotal           := 0
+   ::oDailySummarySales:nFactura                := 0
+   ::oDailySummarySales:nFacturaTotal           := 0
 
     D():getStatusFacturasClientes( ::nView )
 
    ( D():FacturasClientes( ::nView ) )->( ordSetFocus( "DFECFAC" ) )
 
-   if ( D():FacturasClientes( ::nView ) )->( dbSeek( getSysDate() ) )
+   while !( D():FacturasClientes( ::nView ) )->( eof() )
 
-      while ( D():FacturasClientes( ::nView ) )->dFecFac == getSysDate() .and. !( D():FacturasClientes( ::nView ) )->( eof() )
+      if ( D():FacturasClientes( ::nView ) )->dFecFac >= ::oDailySummarySales:dFecIni .and. ( D():FacturasClientes( ::nView ) )->dFecFac <= ::oDailySummarySales:dFecFin
 
-         ::oDailySummarySales:oFactura           += 1 
+         ::oDailySummarySales:nFactura           += 1 
 
-         ::oDailySummarySales:oFacturaTotal      += ( D():FacturasClientes( ::nView ) )->nTotFac
-      
-         ( D():FacturasClientes( ::nView ) )->( dbSkip() ) 
-      
-      end while
+         ::oDailySummarySales:nFacturaTotal      += ( D():FacturasClientes( ::nView ) )->nTotFac
 
-   end if
+      end if
+   
+      ( D():FacturasClientes( ::nView ) )->( dbSkip() ) 
+   
+   end while
 
    D():setStatusFacturasClientes( ::nView )
 
@@ -114,19 +138,26 @@ Return( self )
 
 METHOD CalculateTotal() CLASS DailySummarySales
 
-   ::oDailySummarySales:oTotal        := 0
+   ::oDailySummarySales:nTotal        := 0
 
-   ::oDailySummarySales:oTotal        += ::oDailySummarySales:oPedidoTotal
-   ::oDailySummarySales:oTotal        += ::oDailySummarySales:oAlbaranTotal
-   ::oDailySummarySales:oTotal        += ::oDailySummarySales:oFacturaTotal
+   ::oDailySummarySales:nTotal        += ::oDailySummarySales:nPedidoTotal
+   ::oDailySummarySales:nTotal        += ::oDailySummarySales:nAlbaranTotal
+   ::oDailySummarySales:nTotal        += ::oDailySummarySales:nFacturaTotal
+
+   ::oDailySummarySales:oPedido:Refresh()
+   ::oDailySummarySales:oAlbaran:Refresh()
+   ::oDailySummarySales:oFactura:Refresh()
+
+   ::oDailySummarySales:oPedidoTotal:Refresh()
+   ::oDailySummarySales:oAlbaranTotal:Refresh()
+   ::oDailySummarySales:oFacturaTotal:Refresh()
+   ::oDailySummarySales:oTotal:Refresh()
 
 Return( self )
 
 //---------------------------------------------------------------------------//
 
 METHOD CalculateGeneral() CLASS DailySummarySales
-
-   Msginfo( "Calcula los totales" )
 
    ::CalculatePedido()
    ::CalculateAlbaran()
