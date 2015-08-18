@@ -14520,8 +14520,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
             else
 
-               //saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
-               WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
+               saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
+               //WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
             end if
 
@@ -14529,7 +14529,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
       else
 
-         WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
+         saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
+         //WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
       end if
 
