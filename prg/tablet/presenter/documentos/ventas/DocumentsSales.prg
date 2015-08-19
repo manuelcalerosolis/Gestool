@@ -84,7 +84,7 @@ CLASS DocumentsSales FROM Documents
    METHOD EditGuardaLinea()
 
    METHOD isPrintDocument()
-   METHOD printDocument()
+   METHOD printDocument()                          VIRTUAL
 
    METHOD saveEditDocumento()
    METHOD saveAppendDocumento()
@@ -607,11 +607,13 @@ Return( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD printDocument() CLASS DocumentsSales
+/*METHOD printDocument() CLASS DocumentsSales
+
+   ?"entro en printDocument"
 
    visualizaPedidoCliente( ::getID(), ::cFormatToPrint )
 
-Return ( .t. )
+Return ( .t. )*/
 
 //---------------------------------------------------------------------------//
 

@@ -23,6 +23,8 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD getAppendDetail()
    METHOD deleteLinesDocument()
 
+   METHOD printDocument()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -149,3 +151,10 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD printDocument() CLASS InvoiceCustomer
+
+   imprimeFacturaCliente( ::getID(), ::cFormatToPrint )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//

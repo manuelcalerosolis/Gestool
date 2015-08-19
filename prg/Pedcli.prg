@@ -14548,6 +14548,36 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+FUNCTION imprimePedidoCliente( cNumeroPedido, cFormatoDocumento )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( .t. )
+
+      if dbSeekInOrd( cNumeroPedido, "nNumPed", D():PedidosClientes( nView ) )
+
+         nTotPedCli()
+
+         genPedCli( IS_PRINTER, nil, cFormatoDocumento )
+
+      else
+
+         msgStop( "Número de pedido " + alltrim(  cNumeroPedido ) + " no encontrado" )
+
+      end if
+
+      CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 FUNCTION PrnEntPed( cNumEnt, lPrint, dbfPedCliP )
 

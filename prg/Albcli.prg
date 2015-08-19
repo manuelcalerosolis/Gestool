@@ -2128,7 +2128,38 @@ STATIC FUNCTION GenAlbCli( nDevice, cCaption, cCodigoDocumento, cPrinter, nCopie
 
 Return nil
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+FUNCTION imprimeAlbaranCliente( cNumeroAlbaran, cFormatoDocumento )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( .t. )
+
+      if dbSeekInOrd( cNumeroAlbaran, "nNumAlb", D():Get( "AlbCliT", nView ) )
+
+         nTotAlbCli()
+
+         genAlbCli( IS_PRINTER, nil, cFormatoDocumento )
+
+      else
+
+         msgStop( "Número de albarán " + alltrim(  cNumeroAlbaran ) + " no encontrado" )
+
+      end if
+
+      CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 Static Function AlbCliReportSkipper()
 

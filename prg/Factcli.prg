@@ -1394,7 +1394,42 @@ STATIC FUNCTION GenFacCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
 Return ( nil )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+FUNCTION imprimeFacturaCliente( cNumeroFactura, cFormatoDocumento )
+
+   local nLevel         := nLevelUsr( _MENUITEM_ )
+
+   if nAnd( nLevel, 1 ) != 0 .or. nAnd( nLevel, ACC_IMPR ) == 0
+      msgStop( 'Acceso no permitido.' )
+      return .t.
+   end if
+
+   if OpenFiles( .t. )
+
+      if dbSeekInOrd( cNumeroFactura, "nNumFac", D():FacturasClientes( nView ) )
+
+         nTotFacCli()
+
+         genFacCli( IS_PRINTER, nil, cFormatoDocumento )
+
+      else
+
+         msgStop( "Número de factura " + alltrim( cNumeroFactura ) + " no encontrado" )
+
+      end if
+
+      CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+
+
+//---------------------------------------------------------------------------//
 
 Static Function oldReportFacCli( nDevice, nCopies, cPrinter, cCodDoc )
 

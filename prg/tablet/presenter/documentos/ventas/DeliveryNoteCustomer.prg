@@ -22,6 +22,8 @@ CLASS DeliveryNoteCustomer FROM DocumentsSales
    METHOD getAppendDetail()
    METHOD deleteLinesDocument()
 
+   METHOD printDocument()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -142,3 +144,10 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD printDocument() CLASS DeliveryNoteCustomer
+
+   imprimeAlbaranCliente( ::getID(), ::cFormatToPrint )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//

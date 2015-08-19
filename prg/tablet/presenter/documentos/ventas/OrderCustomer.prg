@@ -21,6 +21,8 @@ CLASS OrderCustomer FROM DocumentsSales
    METHOD getAppendDetail()
    METHOD deleteLinesDocument() 
 
+   METHOD printDocument()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -141,3 +143,10 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD printDocument() CLASS OrderCustomer
+
+   imprimePedidoCliente( ::getID(), ::cFormatToPrint )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
