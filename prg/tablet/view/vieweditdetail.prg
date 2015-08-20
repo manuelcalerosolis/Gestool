@@ -120,6 +120,8 @@ METHOD startDialog() CLASS ViewDetail
 
    ::hideLote()
 
+   ::oGetArticulo:SetFocus()
+
    ::oSender:StartResourceDetail()
 
 Return( Self )

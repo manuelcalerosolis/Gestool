@@ -257,7 +257,7 @@ METHOD lValidCliente( oGet, oGet2, nMode, oSerie ) CLASS DocumentsSales
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
 
-   if ::setDatasFromClientes()
+   if ::setDatasFromClientes( cNewCodCli )
 
       if !Empty( oGet )
          oGet:Refresh()
@@ -785,20 +785,20 @@ Return ( ::setDatasInDictionaryMaster( NumeroDocumento ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD setDatasFromClientes() CLASS DocumentsSales
+METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
 
    Local lReturn           := .f.
-   Local CodidoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
    local AgenteIni         := GetPvProfString( "Tablet", "Agente", "",   FullCurDir() + "GstApolo.Ini" )
 
    D():getStatusClientes( ::nView )
 
    ( D():Clientes( ::nView ) )->( ordSetFocus( 1 ) )
 
-   if ( D():Clientes( ::nView ) )->( dbseek( CodidoCliente ) )
+   if ( D():Clientes( ::nView ) )->( dbseek( CodigoCliente ) )
 
       lReturn           := .t.
 
+      hSet( ::hDictionaryMaster, "Cliente", CodigoCliente )
       hSet( ::hDictionaryMaster, "NombreCliente", ( D():Clientes( ::nView ) )->Titulo )
       hSet( ::hDictionaryMaster, "DomicilioCliente", ( D():Clientes( ::nView ) )->Domicilio )
       hSet( ::hDictionaryMaster, "PoblacionCliente", ( D():Clientes( ::nView ) )->Poblacion )
