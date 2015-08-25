@@ -51,6 +51,7 @@ CLASS TSpecialSearchArticulo
    METHOD Resource()
 
    METHOD GetArrayNombres( dbf )
+   METHOD GetArrayExcludeNames( dbf )
 
    METHOD SearchArticulos()
 
@@ -128,6 +129,8 @@ METHOD OpenFiles() CLASS TSPECIALSEARCHARTICULO
 
       D():Operarios( ::nView )
 
+      D():SatClientes( ::nView )
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de números de serie" )
@@ -200,11 +203,11 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          SPINNER ;
          OF          ::oDlg
 
-      ::oGetArticulo       := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, ::cGetArticulo, ::cGetArticulo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetArticulo",, ::GetArrayNombres( D():Articulos( ::nView ), 1 ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, self )} )
-      ::oGetTipo           := TAutoGet():ReDefine( 110, { | u | iif( pcount() == 0, ::cGetTipo, ::cGetTipo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, ::GetArrayNombres( D():TipoArticulos( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      ::oGetEstado         := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, ::cGetEstado, ::cGetEstado := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, ::GetArrayNombres( D():EstadoArticulo( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      ::oGetCliente        := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, ::cGetCliente, ::cGetCliente := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCliente",, ::GetArrayNombres( D():Clientes( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
-      ::oGetOperario       := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, ::cGetOperario, ::cGetOperario := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetOperario",, ::GetArrayNombres( D():Operarios( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetArticulo := TAutoGet():ReDefine( 100, { | u | iif( pcount() == 0, ::cGetArticulo, ::cGetArticulo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetArticulo",, ::GetArrayNombres( D():Articulos( ::nView ), 1 ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, self )} )
+      ::oGetTipo     := TAutoGet():ReDefine( 110, { | u | iif( pcount() == 0, ::cGetTipo, ::cGetTipo := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetTipo",, ::GetArrayNombres( D():TipoArticulos( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetEstado   := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, ::cGetEstado, ::cGetEstado := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, ::GetArrayNombres( D():EstadoArticulo( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetCliente  := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, ::cGetCliente, ::cGetCliente := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCliente",, ::GetArrayExcludeNames( D():SatClientes( ::nView ), ( D():SatClientes( ::nView ) )->( fieldpos( "cNomCli" ) ), ( D():SatClientes( ::nView ) )->( fieldpos( "cCodCli" ) )  ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetOperario := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, ::cGetOperario, ::cGetOperario := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetOperario",, ::GetArrayNombres( D():Operarios( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
 
       REDEFINE BUTTON ::oBotonBuscar ;
          ID          200 ;
@@ -419,12 +422,9 @@ METHOD GetArrayNombres( dbf, nPosNombre, nPosCodigo ) CLASS TSPECIALSEARCHARTICU
 
    ( dbf )->( dbGoTop() )
 
-   while !( dbf )->( Eof() )
-
+   while !( dbf )->( eof() )
       aAdd( aNombres, { ( dbf )->( fieldget( nPosNombre ) ), ( dbf )->( fieldget( nPosCodigo ) ) } )
-
       ( dbf )->( dbSkip() )
-
    end while
 
    ( dbf )->( dbGoTo( nRec ) )
@@ -432,6 +432,30 @@ METHOD GetArrayNombres( dbf, nPosNombre, nPosCodigo ) CLASS TSPECIALSEARCHARTICU
 Return aNombres
 
 //---------------------------------------------------------------------------//
+
+METHOD GetArrayExcludeNames( dbf, nPosNombre, nPosCodigo ) CLASS TSPECIALSEARCHARTICULO
+
+   local nRec           := ( dbf )->( Recno() )
+   local aNombres       := {}
+
+   DEFAULT nPosNombre   := 2
+   DEFAULT nPosCodigo   := 1
+
+   ( dbf )->( dbGoTop() )
+
+   while !( dbf )->( eof() )
+      if aScan( aNombres, {|x| alltrim( x[ 1 ] ) == alltrim( ( dbf )->( fieldget( nPosNombre ) ) ) } ) == 0
+         aAdd( aNombres, { ( dbf )->( fieldget( nPosNombre ) ), ( dbf )->( fieldget( nPosCodigo ) ) } )
+      end if 
+      ( dbf )->( dbSkip() )
+   end while
+
+   ( dbf )->( dbGoTo( nRec ) )
+
+Return aNombres
+
+//---------------------------------------------------------------------------//
+
 
 METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
 
@@ -457,7 +481,7 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
    cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat=cabecerasat.cSerSat AND lineasSat.nNumSat=cabecerasat.nNumSat AND lineasSat.cSufSat=cabecerasat.cSufSat "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat = cabecerasat.cSerSat AND lineasSat.nNumSat = cabecerasat.nNumSat AND lineasSat.cSufSat = cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
    cSentencia        += "WHERE EstadoSat.nDisp=2 "
    cSentencia        += "ORDER BY articulos.Codigo"
@@ -496,7 +520,7 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
    cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
-   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat=cabecerasat.cSerSat AND lineasSat.nNumSat=cabecerasat.nNumSat AND lineasSat.cSufSat=cabecerasat.cSufSat "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat = cabecerasat.cSerSat AND lineasSat.nNumSat = cabecerasat.nNumSat AND lineasSat.cSufSat = cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
    cSentencia        += ::cGetWhereSentencia()
    cSentencia        += " ORDER BY articulos.Codigo"

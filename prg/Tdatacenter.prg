@@ -1882,9 +1882,9 @@ METHOD BuildData()
 
    oDataTable              := TDataTable()
    oDataTable:cArea        := "Centro de coste"
-   oDataTable:cName        := cPatDat() + "CentroCoste"
-   oDataTable:cDataFile    := cPatDat( .t. ) + "CentroCoste.Dbf"
-   oDataTable:cIndexFile   := cPatDat( .t. ) + "CentroCoste.Cdx"
+   oDataTable:cName        := cPatDat() + "CCoste"
+   oDataTable:cDataFile    := cPatDat( .t. ) + "CCoste.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "CCoste.Cdx"
    oDataTable:cDescription := "Centro de coste"
    oDataTable:bCreateFile  := {| cPath | TCentroCoste():BuildFiles( .t., cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
@@ -3901,45 +3901,51 @@ RETURN ( Self )
 
 METHOD CreateOperationLogTable()
 
-   local cTable
+   local cSqlStatement
 
    if file( cPatADS(.t.) + "SqlOperationLog.adt" )
       ferase( cPatADS(.t.) + "SqlOperationLog.adt" )
    end if
 
-   cTable         := 'CREATE TABLE SqlOperationLog (' + CRLF
-   cTable         +=    'ID AUTOINC CONSTRAINT NOT NULL,'               + CRLF
-   cTable         +=    'DATETIME TIMESTAMP CONSTRAINT NOT NULL,'       + CRLF
-   cTable         +=    'USERNAME CHAR(50) CONSTRAINT NOT NULL,'        + CRLF
-   cTable         +=    'APPNAME CHAR(50),'                             + CRLF
-   cTable         +=    'TABLENAME CHAR(150) CONSTRAINT NOT NULL,'      + CRLF
-   cTable         +=    'OPERATION CHAR(6) CONSTRAINT NOT NULL )'       + CRLF
-   cTable         +=    'IN DATABASE;' + CRLF
+   // cSqlStatement         := 'DROP TABLE SqlOperationLog'
+   // ::ExecuteSqlStatement( cSqlStatement, "OperationLog", ADS_ADT )
 
-Return ( ::ExecuteSqlStatement( cTable, "OperationLog" ) )
+   cSqlStatement         := 'CREATE TABLE SqlOperationLog (' + CRLF
+   cSqlStatement         +=    'ID AUTOINC CONSTRAINT NOT NULL,'               + CRLF
+   cSqlStatement         +=    'DATETIME TIMESTAMP CONSTRAINT NOT NULL,'       + CRLF
+   cSqlStatement         +=    'USERNAME CHAR(50) CONSTRAINT NOT NULL,'        + CRLF
+   cSqlStatement         +=    'APPNAME CHAR(50),'                             + CRLF
+   cSqlStatement         +=    'TABLENAME CHAR(150) CONSTRAINT NOT NULL,'      + CRLF
+   cSqlStatement         +=    'OPERATION CHAR(6) CONSTRAINT NOT NULL )'       + CRLF
+   cSqlStatement         +=    'IN DATABASE;' + CRLF
+
+Return ( ::ExecuteSqlStatement( cSqlStatement, "OperationLog", ADS_ADT ) )
 
 //---------------------------------------------------------------------------//
 
 METHOD CreateColumnLogTable()
 
-   local cTable
+   local cSqlStatement
 
    if file( cPatADS(.t.) + "SqlColumnLog.adt" )
       ferase( cPatADS(.t.) + "SqlColumnLog.adt" )
    end if
 
-   cTable         := 'CREATE TABLE SqlColumnLog (' + CRLF
-   cTable         +=    'ID AUTOINC CONSTRAINT NOT NULL,'            + CRLF
-   cTable         +=    'OPERATIONID INTEGER CONSTRAINT NOT NULL,'   + CRLF
-   cTable         +=    'COLUMNNAME CHAR(50) CONSTRAINT NOT NULL,'   + CRLF
-   cTable         +=    'USERNAME CHAR(50) CONSTRAINT NOT NULL,'     + CRLF
-   cTable         +=    'APPNAME CHAR(50),'                          + CRLF
-   cTable         +=    'TABLENAME CHAR(150) CONSTRAINT NOT NULL,'   + CRLF
-   cTable         +=    'OLDVALUE CHAR(250),'                        + CRLF
-   cTable         +=    'NEWVALUE CHAR(250) )'                       + CRLF
-   cTable         +=    'IN DATABASE;'                               + CRLF
+   // cSqlStatement         := 'DROP TABLE SqlColumnLog'
+   // ::ExecuteSqlStatement( cSqlStatement, "ColumnLog", ADS_ADT )
 
-Return ( ::ExecuteSqlStatement( cTable, "ColumnLog" ) )
+   cSqlStatement         := 'CREATE TABLE SqlColumnLog (' + CRLF
+   cSqlStatement         +=    'ID AUTOINC CONSTRAINT NOT NULL,'            + CRLF
+   cSqlStatement         +=    'OPERATIONID INTEGER CONSTRAINT NOT NULL,'   + CRLF
+   cSqlStatement         +=    'COLUMNNAME CHAR(50) CONSTRAINT NOT NULL,'   + CRLF
+   cSqlStatement         +=    'USERNAME CHAR(50) CONSTRAINT NOT NULL,'     + CRLF
+   cSqlStatement         +=    'APPNAME CHAR(50),'                          + CRLF
+   cSqlStatement         +=    'TABLENAME CHAR(150) CONSTRAINT NOT NULL,'   + CRLF
+   cSqlStatement         +=    'OLDVALUE CHAR(250),'                        + CRLF
+   cSqlStatement         +=    'NEWVALUE CHAR(250) )'                       + CRLF
+   cSqlStatement         +=    'IN DATABASE;'                               + CRLF
+
+Return ( ::ExecuteSqlStatement( cSqlStatement, "ColumnLog", ADS_ADT ) )
 
 //---------------------------------------------------------------------------//
 
@@ -4918,7 +4924,7 @@ RETURN ( ::ExecuteSqlStatement( cStm, "SetAplicationID" ) )
 
 //---------------------------------------------------------------------------//
 
-METHOD ExecuteSqlStatement( cSql, cSqlStatement )
+METHOD ExecuteSqlStatement( cSql, cSqlStatement, hStatement )
 
    local lOk
    local nError
@@ -4926,27 +4932,29 @@ METHOD ExecuteSqlStatement( cSql, cSqlStatement )
    local oBlock
    local cErrorAds
 
+   DEFAULT hStatement   := ADS_CDX
+
    CursorWait()
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       dbSelectArea( 0 )
 
       ::CloseArea( cSqlStatement )
    
-      lOk            := ADSCreateSQLStatement( cSqlStatement, ADS_CDX )
+      lOk               := ADSCreateSQLStatement( cSqlStatement, hStatement )
       if lOk
    
-         lOk         := ADSExecuteSQLDirect( cSql )
+         lOk            := ADSExecuteSQLDirect( cSql )
          if !lOk
-            nError   := AdsGetLastError( @cErrorAds )
+            nError      := AdsGetLastError( @cErrorAds )
             msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en AdsExecuteSqlDirect' )
          endif
    
       else
    
-         nError      := AdsGetLastError( @cErrorAds )
+         nError         := AdsGetLastError( @cErrorAds )
          msgStop( "Error : " + Str( nError) + "[" + cErrorAds + "]", 'ERROR en ADSCreateSQLStatement' )
    
       end if

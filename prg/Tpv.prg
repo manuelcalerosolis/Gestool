@@ -528,6 +528,8 @@ static hTextoUbicacion     := {  ubiSala => {|| Rtrim( ( dbfTikT )->cPntVenta ) 
                                  ubiLlevar => {|| "Para llevar: " + Rtrim( ( dbfTikT )->cNomTik ) },;
                                  ubiEncargar => {|| "Encargo: " + Rtrim( ( dbfTikT )->cNomTik ) } }
 
+static oDetCamposExtra
+
 //---------------------------------------------------------------------------//
 
 #ifndef __PDA__
@@ -828,9 +830,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       end if
 
       if uFieldEmpresa( "lRealWeb" )
-
          oComercio            := TComercio():New()
-
       end if
 
       /*
@@ -885,6 +885,14 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
 
          ( dbfTikT )->( AdsSetAOF( cFiltro ) )
       end if
+
+      /*
+      Campos extras------------------------------------------------------------------------
+      */
+
+      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra:OpenFiles()
+      oDetCamposExtra:SetTipoDocumento( "TPV" )
 
       EnableAcceso()
 
@@ -1028,6 +1036,10 @@ STATIC FUNCTION CloseFiles()
 
    if !Empty( oFabricante )
       oFabricante:End()
+   end if
+
+   if !Empty( oDetCamposExtra )
+      oDetCamposExtra:CloseFiles()
    end if
 
    D():DeleteView( nView )
@@ -2703,6 +2715,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
       oDlgTpv:AddFastKey( VK_F7, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVALB .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( VK_F8, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVFAC .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( VK_F9, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ), ) } )
+      
+      oDlgTpv:AddFastKey( VK_F10,{|| oDetCamposExtra:Play( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ] ) } )
+
       oDlgTpv:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
