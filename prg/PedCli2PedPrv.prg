@@ -56,17 +56,13 @@ CLASS PedCliente2PedProveedor
    Method New( nView )   CONSTRUCTOR
 
    Method Resource()
-
-   Method Prev()
-
-   Method Next()
+      Method Prev()
+      Method Next()
 
    Method CreateLines()
-
    Method DestroyLines()
 
    Method aCreaArrayPeriodos()
-
    Method lRecargaFecha()
 
    Method StartDialog()
@@ -111,7 +107,7 @@ METHOD New( nView, oTipoArticulo, oFabricante, oStock ) CLASS PedCliente2PedProv
    ::nStockDisponible   := 2
    ::nStockFin          := 3
 
-   ::aPedidos         := {}
+   ::aPedidos           := {}
 
    if ::CreateLines()
       ::Resource()
@@ -262,7 +258,7 @@ METHOD Resource() CLASS PedCliente2PedProveedor
          ID       212, 213, 214 ;
          OF       ::oPag:aDialogs[1]  
 
-      ::oMtr  := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nMtr, ::nMtr := u ) }, 10, ::oPag:aDialogs[1], .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::oMtr               := TApoloMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nMtr, ::nMtr := u ) }, 10, ::oPag:aDialogs[1], .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       /*
       Segunda Caja de diálogo--------------------------------------------------
@@ -298,8 +294,7 @@ METHOD Resource() CLASS PedCliente2PedProveedor
          :bOnPostEdit      := {|o,x| ::ChangeProveedor( x ) }
          :bEditValid       := {|oGet| cProvee( oGet, D():Proveedores( ::nView ) ) }
          :bEditBlock       := {|oGet| BrwProvee( oGet ) }
-         :nWidth           := 120
-         :lHide            := .t.
+         :nWidth           := 80
          :nEditType        := 5
          :nBtnBmp          := 1
          :AddResource( "Lupa" )
@@ -334,14 +329,12 @@ METHOD Resource() CLASS PedCliente2PedProveedor
          :cHeader          := "Propiedad 1"
          :bEditValue       := {|| AllTrim( ( ::dbfTemporal )->cValPr1 ) + if( !Empty( ( ::dbfTemporal )->cValPr1 ), " - " + retValProp( ( ::dbfTemporal )->cCodPr1 + ( ::dbfTemporal )->cValPr1, D():PropiedadesLineas( ::nView ) ) , "" ) }
          :nWidth           := 80
-         :lHide            := .t.
       end with
 
       with object ( ::oBrw:AddCol() )
          :cHeader          := "Propiedad 2"
          :bEditValue       := {|| AllTrim( ( ::dbfTemporal )->cValPr2 ) + if( !Empty( ( ::dbfTemporal )->cValPr2 ), " - " + retValProp( ( ::dbfTemporal )->cCodPr2 + ( ::dbfTemporal )->cValPr2, D():PropiedadesLineas( ::nView ) ) , "" ) }
          :nWidth           := 80
-         :lHide            := .t.
       end with
 
       with object ( ::oBrw:AddCol() )
@@ -440,7 +433,8 @@ METHOD Resource() CLASS PedCliente2PedProveedor
 
       with object ( ::oBrwFin:AddCol() )
          :cHeader                := "Total"
-         :bEditValue             := {|| nTotPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Serie" ) + Str( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Numero" ) ) + hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Sufijo" ), D():PedidosProveedores( ::nView ), D():PedidosProveedoresLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), nil, cDivEmp(), .t. ) }
+         :bEditValue             := {|| ( D():PedidosClientes( ::nView ) )->nTotPed }
+         :cEditPicture           := cPorDiv( ( D():PedidosClientes( ::nView ) )->cDivPed, D():Divisas( ::nView ) )
          :nWidth                 := 80
          :nDataStrAlign          := 1
          :nHeadStrAlign          := 1
@@ -450,22 +444,22 @@ METHOD Resource() CLASS PedCliente2PedProveedor
       REDEFINE BUTTON ;
          ID       110;
          OF       ::oPag:aDialogs[3] ;
-         ACTION   ( EdtPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Serie" ) + Str( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Numero" ) ) + hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Sufijo" ) ) )
+         ACTION   ( EdtPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Id" ) ) )
 
       REDEFINE BUTTON ;
          ID       120;
          OF       ::oPag:aDialogs[3] ;
-         ACTION   ( ZooPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Serie" ) + Str( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Numero" ) ) + hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Sufijo" ) ) )
+         ACTION   ( ZooPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Id" ) ) )
 
       REDEFINE BUTTON ;
          ID       140;
          OF       ::oPag:aDialogs[3] ;
-         ACTION   ( VisPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Serie" ) + Str( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Numero" ) ) + hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Sufijo" ) ) )
+         ACTION   ( VisPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Id" ) ) )
 
       REDEFINE BUTTON ;
          ID       150;
          OF       ::oPag:aDialogs[3] ;
-         ACTION   ( PrnPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Serie" ) + Str( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Numero" ) ) + hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Sufijo" ) ) )
+         ACTION   ( PrnPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Id" ) ) )
 
       REDEFINE BUTTON ::oBtnPrev ;
          ID       500 ;
@@ -524,6 +518,8 @@ Method Next() CLASS PedCliente2PedProveedor
 
          ::oPag:GoNext()
 
+         ::oBrw:MakeTotals()
+
          ::oBtnPrev:Show()
 
          SetWindowText( ::oBtnNext:hWnd, "&Procesar" )
@@ -542,6 +538,8 @@ Method Next() CLASS PedCliente2PedProveedor
          SetWindowText( ::oBtnCancel:hWnd, "&Terminar" )
 
          ::oBrwFin:Refresh()
+         ::oBrwFin:MakeTotals()
+         ::oBrwFin:RefreshFooters()
 
       case ::oPag:nOption == 3
 
@@ -558,7 +556,10 @@ METHOD StartDialog() CLASS PedCliente2PedProveedor
    ::oBtnPrev:Hide()
 
    ::oBrw:Load()
+
    ::oBrwFin:Load()
+
+   ::oBrwRangos:ResizeColumns()
 
    ::lRecargaFecha()
 
@@ -750,8 +751,6 @@ METHOD LoadLineasPedidos() CLASS PedCliente2PedProveedor
       ( "SelectLineasPedidos" )->( dbGoTop() )
       while !( "SelectLineasPedidos" )->( Eof() )
 
-         msgAlert( ("SelectLineasPedidos" )->nNumPed, "nNumPed" )
-
          nStock                        := ::oStock:nTotStockAct( ( "SelectLineasPedidos" )->cRef )
          nReserva                      := nTotReserva( ( "SelectLineasPedidos" )->cRef )
 
@@ -791,8 +790,8 @@ METHOD AddLineasPedidos( nStock, nReserva ) CLASS PedCliente2PedProveedor
    if ( ::dbfTemporal )->( dbSeek( cBusqueda ) )
 
       if dbLock( ::dbfTemporal )
-         ( ::dbfTemporal )->nNumCaj       += ( "SelectLineasPedidos" )->nCanPed
-         ( ::dbfTemporal )->nNumUni       += ( "SelectLineasPedidos" )->nUniCaja
+         ( ::dbfTemporal )->nNumCaj    += ( "SelectLineasPedidos" )->nCanPed
+         ( ::dbfTemporal )->nNumUni    += ( "SelectLineasPedidos" )->nUniCaja
          ( ::dbfTemporal )->( dbUnlock() )
       end if
 
@@ -1039,21 +1038,22 @@ METHOD TotalPedidoProveedor() CLASS PedCliente2PedProveedor
 
       if ( D():PedidosClientes( ::nView ) )->( dbSeek( hPedido["Id"] ) )
 
-         if ( D():PedidosClientesLineas( ::nView ) )->nTotPed == 0 .and. dbLock( D():PedidosClientes( ::nView ) )
+         if ( D():PedidosClientesLineas( ::nView ) )->nTotPed == 0 
 
-         aPedido  := aTotPedCli( hPedido["Id"], D():PedidosClientes( ::nView ), D():PedidosClientesLineas( ::nView ), D():Divisas( ::nView ), cdbfDiv, dbfFPago, ( dbfPedCliT )->cDivPed )
+            aPedido  := aTotPedCli( hPedido["Id"], D():PedidosClientes( ::nView ), D():PedidosClientesLineas( ::nView ), D():Divisas( ::nView ), D():FormasPagos( ::nView ), ( D():PedidosClientes( ::nView ) )->cDivPed )
 
-         ( dbfPedCliT )->nTotNet := aTotPed[ 1 ]
-         ( dbfPedCliT )->nTotIva := aTotPed[ 2 ]
-         ( dbfPedCliT )->nTotReq := aTotPed[ 3 ]
-         ( dbfPedCliT )->nTotPed := aTotPed[ 4 ]
+            if dbLock( D():PedidosClientes( ::nView ) )
+               ( D():PedidosClientes( ::nView ) )->nTotNet := aPedido[ 1 ]
+               ( D():PedidosClientes( ::nView ) )->nTotIva := aPedido[ 2 ]
+               ( D():PedidosClientes( ::nView ) )->nTotReq := aPedido[ 3 ]
+               ( D():PedidosClientes( ::nView ) )->nTotPed := aPedido[ 4 ]
+               ( D():PedidosClientes( ::nView ) )->( dbUnLock() )
+            end if
 
-         ( dbfPedCliT )->( dbUnLock() )
+         end if 
 
-      end if
+      end if 
 
-      ( dbfPedCliT )->( dbSkip() )
-*/
    next 
 
 Return .t.

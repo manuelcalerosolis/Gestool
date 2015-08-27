@@ -4395,7 +4395,6 @@ CLASS BrowseRangos
    DATA oColHasta
 
    METHOD New()
-
    METHOD Resource()
 
    METHOD AddGroup( oGroup )  INLINE ( aAdd( ::aInitGroup, oGroup ) )
@@ -4407,6 +4406,8 @@ CLASS BrowseRangos
 
    METHOD ValidValueTextDesde( oGet )  INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:ValidDesde, oGet ) )
    METHOD ValidValueTextHasta( oGet )  INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:ValidHasta, oGet ) )
+
+   METHOD ResizeColumns()
 
 END CLASS 
 
@@ -4448,7 +4449,8 @@ METHOD Resource() CLASS BrowseRangos
    ::oColNombre:cHeader             := ""
    ::oColNombre:bStrData            := {|| ::aInitGroup[ ::oBrwRango:nArrayAt ]:Nombre }
    ::oColNombre:bBmpData            := {|| ::oBrwRango:nArrayAt }
-   ::oColNombre:nWidth              := 90
+   ::oColNombre:nWidth              := 200
+   ::oColNombre:Cargo               := 0.20
 
    for each o in ::aInitGroup
       ::oColNombre:AddResource( o:cBitmap )
@@ -4463,6 +4465,7 @@ METHOD Resource() CLASS BrowseRangos
       :cEditPicture  := "@!"
       :nEditType     := 5
       :nWidth        := 120
+      :Cargo         := 0.15
       :nBtnBmp       := 1
       :AddResource( "Lupa" )
    end with
@@ -4471,7 +4474,8 @@ METHOD Resource() CLASS BrowseRangos
       :cHeader       := ""
       :bEditValue    := {|| ::EditTextDesde() } 
       :nEditType     := 0
-      :nWidth        := 160
+      :nWidth        := 200
+      :Cargo         := 0.25
    end with
 
    with object ( ::oColHasta := ::oBrwRango:AddCol() )
@@ -4483,6 +4487,7 @@ METHOD Resource() CLASS BrowseRangos
       :cEditPicture  := "@!"
       :nEditType     := 5
       :nWidth        := 120
+      :Cargo         := 0.15
       :nBtnBmp       := 1
       :AddResource( "Lupa" )
    end with
@@ -4491,8 +4496,19 @@ METHOD Resource() CLASS BrowseRangos
       :cHeader       := ""
       :bEditValue    := {|| ::EditTextHasta() }
       :nEditType     := 0
-      :nWidth        := 160
+      :nWidth        := 200
+      :Cargo         := 0.25
    end with
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD ResizeColumns() CLASS BrowseRangos
+
+   ::oBrwRango:CheckSize()
+
+   aeval( ::oBrwRango:aCols, {|o, n, oCol| o:nWidth := ::oBrwRango:nWidth * o:Cargo } )
 
 Return .t.
 
