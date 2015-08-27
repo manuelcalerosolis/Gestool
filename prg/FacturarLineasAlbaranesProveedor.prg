@@ -843,7 +843,7 @@ METHOD setLineaFacturada( id )
    if ( D():AlbaranesProveedoresLineas( ::nView ) )->( dbSeek( id ) )
    
       if D():Lock( "AlbProvL", ::nView ) 
-         ( D():AlbaranesProveedoresLineas( ::nView ) )->cNumFac      := id
+         ( D():AlbaranesProveedoresLineas( ::nView ) )->cNumFac      := ::getIdFacturaProveedor()
          ( D():AlbaranesProveedoresLineas( ::nView ) )->lFacturado   := .t.
          D():UnLock( "AlbProvL", ::nView ) 
       end if 
