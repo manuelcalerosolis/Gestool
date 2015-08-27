@@ -368,7 +368,6 @@ static dbfPromoL
 static dbfPromoC
 static dbfAgent
 static dbfCodebar
-static dbfFPago
 static dbfKit
 static dbfArtDiv
 static dbfRuta
@@ -524,14 +523,14 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    else
 
-      nTotPedCli( nNumPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), dbfFPago, nil, cDivEmp() )
+      nTotPedCli( nNumPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), D():FormasPagos( nView ), nil, cDivEmp() )
       nPagPedCli( nNumPed, D():PedidosClientesPagos( nView ), D():Divisas( nView ), cDivEmp() )
 
       ( D():PedidosClientesLineas( nView ) )->( dbSeek( nNumPed ) )
       ( D():PedidosClientesPagos( nView ) )->( dbSeek( nNumPed ) )
-      ( D():Clientes( nView )  )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODCLI ) )
+      ( D():Clientes( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODCLI ) )
+      ( D():FormasPagos( nView ) )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODPGO ) )
       ( dbfAgent   )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODAGE ) )
-      ( dbfFPago   )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODPGO ) )
       ( dbfObrasT  )->( dbSeek( ( D():PedidosClientes( nView ) )->CCODCLI + ( D():PedidosClientes( nView ) )->CCODOBR ) )
 
       oTrans:oDbf:Seek( ( D():PedidosClientes( nView ) )->cCodTrn )
@@ -546,8 +545,8 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       private cDbfAge      := dbfAgent
       private cIva         := D():TiposIva( nView )
       private cDbfIva      := D():TiposIva( nView )
-      private cFPago       := dbfFPago
-      private cDbfPgo      := dbfFPago
+      private cFPago       := D():FormasPagos( nView )
+      private cDbfPgo      := D():FormasPagos( nView )
       private cDbfObr      := dbfObrasT
       private cTarPreL     := dbfTarPreL
       private cTarPreS     := dbfTarPreS
@@ -740,6 +739,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Divisas( nView )
 
+      D():FormasPagos( nView )
+
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
 
@@ -794,8 +795,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatArt() + "PROMOC.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOC", @dbfPromoC ) )
       SET ADSINDEX TO ( cPatArt() + "PROMOC.CDX" ) ADDITIVE
 
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
       USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
@@ -1347,7 +1346,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Forma pago"
-         :bEditValue       := {|| if( !Empty( ( D():PedidosClientes( nView ) )->cCodPgo ), ( D():PedidosClientes( nView ) )->cCodPgo + " - " + AllTrim( RetFld( ( D():PedidosClientes( nView ) )->cCodPgo, dbfFPago, "cDesPago" ) ), "" ) }
+         :bEditValue       := {|| if( !Empty( ( D():PedidosClientes( nView ) )->cCodPgo ), ( D():PedidosClientes( nView ) )->cCodPgo + " - " + AllTrim( RetFld( ( D():PedidosClientes( nView ) )->cCodPgo, D():FormasPagos( nView ), "cDesPago" ) ), "" ) }
          :nWidth           := 200
          :lHide            := .t.
       end with
@@ -1424,7 +1423,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Pendiente"
-         :bEditValue       := {|| ( nTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), dbfFPago, nil, nil, .f. ) - nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientesPagos( nView ), D():Divisas( nView ), nil, .f. ) ) }
+         :bEditValue       := {|| ( nTotPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientes( nView ), D():PedidosClientesLineas( nView ), D():TiposIva( nView ), D():Divisas( nView ), D():FormasPagos( nView ), nil, nil, .f. ) - nPagPedCli( ( D():PedidosClientes( nView ) )->cSerPed + Str( ( D():PedidosClientes( nView ) )->nNumPed ) + ( D():PedidosClientes( nView ) )->cSufPed, D():PedidosClientesPagos( nView ), D():Divisas( nView ), nil, .f. ) ) }
          :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1969,7 +1968,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
    cSay[ 2 ]        := RetFld( aTmp[ _CCODTAR ], dbfTarPreS )
    cSay[ 3 ]        := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr" )
    cSay[ 4 ]        := RetFld( aTmp[ _CCODALM ], dbfAlm )
-   cSay[ 5 ]        := RetFld( aTmp[ _CCODPGO ], dbfFPago )
+   cSay[ 5 ]        := RetFld( aTmp[ _CCODPGO ], D():FormasPagos( nView ) )
    cSay[ 6 ]        := cNbrAgent( aTmp[ _CCODAGE ], dbfAgent )
    cSay[ 7 ]        := RetFld( aTmp[ _CCODRUT ], dbfRuta )
    cSay[ 8 ]        := oTrans:cNombre( aTmp[ _CCODTRN ] )
@@ -2766,7 +2765,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@E 99.99" ;
          VALID    ( lTiva( D():TiposIva( nView ), aTmp[ _NIVAMAN ] ) );
-         ON CHANGE( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, D():TiposIva( nView ), D():Divisas( nView ), dbfFPago, aTmp ) );
+         ON CHANGE( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, D():TiposIva( nView ), D():Divisas( nView ), D():FormasPagos( nView ), aTmp ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwIva( aGet[ _NIVAMAN ], D():TiposIva( nView ), , .t. ) );
          OF       oFld:aDialogs[1]
@@ -2775,8 +2774,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ID       400 ;
          PICTURE  cPorDiv ;
          WHEN     ( lWhen ) ;
-         VALID    ( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, D():TiposIva( nView ), D():Divisas( nView ), dbfFPago, aTmp ), .t. ) ;
-         ON CHANGE( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, D():TiposIva( nView ), D():Divisas( nView ), dbfFPago, aTmp ) );
+         VALID    ( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, D():TiposIva( nView ), D():Divisas( nView ), D():FormasPagos( nView ), aTmp ), .t. ) ;
+         ON CHANGE( nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, D():TiposIva( nView ), D():Divisas( nView ), D():FormasPagos( nView ), aTmp ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE SAY oGetNet VAR nTotNet ;
@@ -2955,7 +2954,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          COLOR    CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    (  cPreCli( aTmp, aGet, oBrwLin, nMode ), SetDialog( aGet, oSayGetRnt, oGetRnt ) );
-         ON HELP  (  BrwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, D():TiposIva( nView ), D():Divisas( nView ), dbfFPago, aGet[ _LIVAINC ] ) );
+         ON HELP  (  BrwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, D():TiposIva( nView ), D():Divisas( nView ), D():FormasPagos( nView ), aGet[ _LIVAINC ] ) );
 			OF 		oFld:aDialogs[1]
 
       REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
@@ -3711,15 +3710,15 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cDivPgo" ) ) ]      	:= aTmpPed[ _CDIVPED ]
          aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodPgo" ) ) ]      	:= aTmpPed[ _CCODPGO ]
 
-         if dbSeekInOrd( aTmpPed[ _CCODPGO ], "cCodPago", dbfFPago ) .and. ( dbfFPago )->lUtlBnc
+         if dbSeekInOrd( aTmpPed[ _CCODPGO ], "cCodPago", D():FormasPagos( nView ) ) .and. ( D():FormasPagos( nView ) )->lUtlBnc
 
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cBncEmp" ) ) ]   	:= ( dbfFPago )->cBanco
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ]   := ( dbfFPago )->cPaisIBAN
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cECtrlIBAN" ) ) ]   := ( dbfFPago )->cCtrlIBAN
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEntEmp" ) ) ]   	:= ( dbfFPago )->cEntBnc
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cSucEmp" ) ) ]   	:= ( dbfFPago )->cSucBnc
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cDigEmp" ) ) ]   	:= ( dbfFPago )->cDigBnc
-            aTmp[ ( dbfTmpPgo )->( FieldPos( "cCtaEmp" ) ) ]   	:= ( dbfFPago )->cCtaBnc
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cBncEmp" ) ) ]   	:= ( D():FormasPagos( nView ) )->cBanco
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEPaisIBAN" ) ) ]   := ( D():FormasPagos( nView ) )->cPaisIBAN
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cECtrlIBAN" ) ) ]   := ( D():FormasPagos( nView ) )->cCtrlIBAN
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cEntEmp" ) ) ]   	:= ( D():FormasPagos( nView ) )->cEntBnc
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cSucEmp" ) ) ]   	:= ( D():FormasPagos( nView ) )->cSucBnc
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cDigEmp" ) ) ]   	:= ( D():FormasPagos( nView ) )->cDigBnc
+            aTmp[ ( dbfTmpPgo )->( FieldPos( "cCtaEmp" ) ) ]   	:= ( D():FormasPagos( nView ) )->cCtaBnc
 
             aTmp[ ( dbfTmpPgo )->( FieldPos( "cBncCli" ) ) ]   	:= aTmpPed[ _CBANCO  ]
             aTmp[ ( dbfTmpPgo )->( FieldPos( "cPaisIBAN" ) ) ] 	:= aTmpPed[ _CPAISIBAN ]
@@ -3744,7 +3743,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
    cGetAge           := cNbrAgent( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodAge" ) ) ], dbfAgent )
    cGetCaj           := RetFld( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodCaj" ) ) ], dbfCajT, "cNomCaj" )
    cPorDiv           := cPorDiv(aTmp[ ( dbfTmpPgo )->( FieldPos( "cDivPgo" ) ) ], D():Divisas( nView ) )
-   cFPago            := RetFld( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodPgo" ) ) ], dbfFPago )
+   cFPago            := RetFld( aTmp[ ( dbfTmpPgo )->( FieldPos( "cCodPgo" ) ) ], D():FormasPagos( nView ) )
 
    DEFINE DIALOG  oDlg ;
          RESOURCE "Recibos" ;
@@ -3796,7 +3795,7 @@ Static Function EdtEnt( aTmp, aGet, dbfTmpPgo, oBrw, bWhen, bValid, nMode, aTmpP
          ID       180 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			PICTURE  "@!" ;
-         VALID    ( cFPago( aGet[ ( dbfTmpPgo )->( FieldPos( "cCodPgo" ) ) ], dbfFPago, oFpago ) ) ;
+         VALID    ( cFPago( aGet[ ( dbfTmpPgo )->( FieldPos( "cCodPgo" ) ) ], D():FormasPagos( nView ), oFpago ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwFPago( aGet[ ( dbfTmpPgo )->( FieldPos( "cCodPgo" ) ) ], oFpago ) ) ;
          OF       oFld:aDialogs[ 1 ]
@@ -6576,8 +6575,8 @@ static function GenPrnEntregas( lPrint, cFmtEnt, cPrinter, nCopies )
       private cDbfEnt      := D():PedidosClientesPagos( nView )
       private cCliente     := D():Clientes( nView )
       private cDbfCli      := D():Clientes( nView )
-      private cFPago       := dbfFPago
-      private cDbfPgo      := dbfFPago
+      private cFPago       := D():FormasPagos( nView )
+      private cDbfPgo      := D():FormasPagos( nView )
       private cDbfAge      := dbfAgent
       private cDbfDiv      := D():Divisas( nView )
       private cPorDivEnt   := cPorDiv( ( D():PedidosClientesPagos( nView ) )->cDivPgo, D():Divisas( nView ) )
@@ -8271,7 +8270,7 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Agentes", ( dbfAgent )->( Select() ) )
    oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
 
-   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
+   oFr:SetWorkArea(     "Formas de pago", ( D():FormasPagos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
    oFr:SetWorkArea(     "Artículos", ( D():Articulos( nView ) )->( Select() ) )
@@ -8443,7 +8442,7 @@ Static Function DataReportEntPedCli( oFr, cPedCliP )
    oFr:SetWorkArea(     "Clientes", ( D():Clientes( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
 
-   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
+   oFr:SetWorkArea(     "Formas de pago", ( D():FormasPagos( nView ) )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
    if !Empty( cPedCliP )
@@ -8611,7 +8610,6 @@ STATIC FUNCTION CloseFiles()
    if( !Empty( dbfPromoC  ), ( dbfPromoC  )->( dbCloseArea() ), )
    if( !Empty( dbfAgent   ), ( dbfAgent   )->( dbCloseArea() ), )
    if( !Empty( dbfCodebar ), ( dbfCodebar )->( dbCloseArea() ), )
-   if( !Empty( dbfFPago   ), ( dbfFPago   )->( dbCloseArea() ), )
    if( !Empty( dbfObrasT  ), ( dbfObrasT  )->( dbCloseArea() ), )
    if( !Empty( dbfTVta    ), ( dbfTVta    )->( dbCloseArea() ), )
    if( !Empty( dbfOferta  ), ( dbfOferta  )->( dbCloseArea() ), )
@@ -8681,7 +8679,6 @@ STATIC FUNCTION CloseFiles()
    dbfAgent       := nil
    dbfArtPrv      := nil
    dbfCodebar     := nil
-   dbfFpago       := nil
    dbfObrasT      := nil
    dbfTVta        := nil
    dbfOferta      := nil
@@ -9115,7 +9112,7 @@ Return .t.
 
 Static Function RecalculaTotal( aTmp )
 
-   local nTotPedCli  := nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, D():TiposIva( nView ), D():Divisas( nView ), dbfFPago, aTmp, nil, .f. )
+   local nTotPedCli  := nTotPedCli( nil, D():PedidosClientes( nView ), dbfTmpLin, D():TiposIva( nView ), D():Divisas( nView ), D():FormasPagos( nView ), aTmp, nil, .f. )
    local nEntPedCli  := nPagPedCli( nil, dbfTmpPgo, D():Divisas( nView ) )
 
    aTotIva              := aSort( aTotIva,,, {|x,y| x[1] > y[1] } )
@@ -13444,6 +13441,7 @@ Function SynPedCli( cPath )
    local dbfArticulo
    local cdbfIva
    local dbfFamilia
+   local dbfFPago
    local cDbfDiv
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -13485,36 +13483,34 @@ Function SynPedCli( cPath )
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @cdbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-   	( dbfPedCliT )->( ordSetFocus( 0 ) )
-   	( dbfPedCliT )->( dbGoTop() )
+   ( dbfPedCliT )->( ordSetFocus( 0 ) )
+   ( dbfPedCliT )->( dbGoTop() )
     
-    while !( dbfPedCliT )->( eof() )
+   while !( dbfPedCliT )->( eof() )
 
-        if Empty( ( dbfPedCliT )->cSufPed )
-            ( dbfPedCliT )->cSufPed := "00"
-        end if
+      if Empty( ( dbfPedCliT )->cSufPed )
+         ( dbfPedCliT )->cSufPed := "00"
+      end if
 
-        if !Empty( ( dbfPedCliT )->cNumPre ) .and. Len( AllTrim( ( dbfPedCliT )->cNumPre ) ) != 12
-        	( dbfPedCliT )->cNumPre := AllTrim( ( dbfPedCliT )->cNumPre ) + "00"
-      	end if
+      if !Empty( ( dbfPedCliT )->cNumPre ) .and. Len( AllTrim( ( dbfPedCliT )->cNumPre ) ) != 12
+      	( dbfPedCliT )->cNumPre := AllTrim( ( dbfPedCliT )->cNumPre ) + "00"
+      end if
 
-        if !Empty( ( dbfPedCliT )->cNumAlb ) .and. Len( AllTrim( ( dbfPedCliT )->cNumAlb ) ) != 12
-        	( dbfPedCliT )->cNumAlb := AllTrim( ( dbfPedCliT )->cNumAlb ) + "00"
-      	end if
+      if !Empty( ( dbfPedCliT )->cNumAlb ) .and. Len( AllTrim( ( dbfPedCliT )->cNumAlb ) ) != 12
+      	( dbfPedCliT )->cNumAlb := AllTrim( ( dbfPedCliT )->cNumAlb ) + "00"
+      end if
 
-        if Empty( ( dbfPedCliT )->cCodCaj )
-        	( dbfPedCliT )->cCodCaj := "000"
-        end if
+      if Empty( ( dbfPedCliT )->cCodCaj )
+      	( dbfPedCliT )->cCodCaj := "000"
+      end if
 
-        ( dbfPedCliT )->( dbSkip() )
+      ( dbfPedCliT )->( dbSkip() )
 
-      end while
+   end while
 
 
-
-   	( dbfPedCliT )->( ordSetFocus( 1 ) )
-
-   	( dbfPedCliT )->( dbGoTop() )
+   ( dbfPedCliT )->( ordSetFocus( 1 ) )
+ 	( dbfPedCliT )->( dbGoTop() )
 
     while !( dbfPedCliT )->( eof() )
 
@@ -13526,10 +13522,10 @@ Function SynPedCli( cPath )
 
            	aTotPed                 := aTotPedCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfPedCliT, dbfPedCliL, cdbfIva, cdbfDiv, dbfFPago, ( dbfPedCliT )->cDivPed )
 
-            ( dbfPedCliT )->nTotNet := aTotPed[1]
-            ( dbfPedCliT )->nTotIva := aTotPed[2]
-            ( dbfPedCliT )->nTotReq := aTotPed[3]
-            ( dbfPedCliT )->nTotPed := aTotPed[4]
+            ( dbfPedCliT )->nTotNet := aTotPed[ 1 ]
+            ( dbfPedCliT )->nTotIva := aTotPed[ 2 ]
+            ( dbfPedCliT )->nTotReq := aTotPed[ 3 ]
+            ( dbfPedCliT )->nTotPed := aTotPed[ 4 ]
 
             ( dbfPedCliT )->( dbUnLock() )
 
@@ -13620,8 +13616,8 @@ Function SynPedCli( cPath )
    CLOSE ( dbfPedCliP )
    CLOSE ( dbfArticulo)
    CLOSE ( dbfFamilia )
-   CLOSE ( cdbfIva     )
-   CLOSE ( cdbfDiv     )
+   CLOSE ( cdbfIva    )
+   CLOSE ( cdbfDiv    )
    CLOSE ( dbfFPago   )
    CLOSE ( dbfPedCliE ) 
 
@@ -15943,9 +15939,9 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
       DEFAULT cPedCliL     := D():PedidosClientesLineas( nView )
       DEFAULT cIva         := D():TiposIva( nView )
       DEFAULT cDiv         := D():Divisas( nView )
+	  DEFAULT cFPago        := D():FormasPagos( nView )
    end if
-	
-	DEFAULT cFPago          := dbfFPago
+   
 	DEFAULT cPedido         := ( cPedCliT )->cSerPed + Str( ( cPedCliT )->nNumPed ) + ( cPedCliT )->cSufPed
 	DEFAULT lPic            := .f.
 
@@ -17581,8 +17577,8 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
    CLOSE ( dbfPedCliI )
    CLOSE ( dbfPedCliD )
    CLOSE ( dbfFPago   )
-   CLOSE ( cdbfDiv     )
-   CLOSE ( cdbfIva     )
+   CLOSE ( cdbfDiv    )
+   CLOSE ( cdbfIva    )
    CLOSE ( dbfClient  )
    CLOSE ( dbfTmpLin  )
 
