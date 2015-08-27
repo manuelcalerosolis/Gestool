@@ -17,8 +17,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oProLin
    DATA  oProMat
    DATA  oHisMov
-   DATA  oArtPrv
    DATA  oArtAlm
+   DATA  oArtPrv
    DATA  oCtrCoste
    DATA  oObras
 
@@ -338,6 +338,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oArtCod:end()
       end if
 
+      if !Empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
+         ::oArtPrv:end()
+      end if
+
       if !Empty( ::oSatCliT ) .and. ( ::oSatCliT:Used() )
          ::oSatCliT:end()
       end if
@@ -436,10 +440,6 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
 
       if !Empty( ::oHisMov ) .and. ( ::oHisMov:Used() )
          ::oHisMov:end()
-      end if
-
-      if !Empty( ::oArtPrv ) .and. ( ::oArtPrv:Used() )
-         ::oArtPrv:end()
       end if
 
       if !Empty( ::oArtAlm ) .and. ( ::oArtAlm:Used() )
@@ -858,17 +858,18 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Propiedades 2",              ::oPrp2:nArea ) 
    ::oFastReport:SetFieldAliases(   "Propiedades 2",              cItemsToReport( aItmPro() ) )
 
-   /*
-   Relaciones entre tablas-----------------------------------------------------
-   */
+   ::oFastReport:SetWorkArea(       "Codificación de proveedores",   ::oArtPrv:nArea )
+   ::oFastReport:SetFieldAliases(   "Codificación de proveedores",   cItemsToReport( aItmArtPrv() ) )
 
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",              {|| ::oDbfArt:cCodCate } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ::oDbfArt:cCodTemp } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ::oDbfArt:cCodFab } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Estado artículo",         {|| ::oDbfArt:cCodEst } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ::oDbfArt:TipoIva } )
+   // Relaciones entre tablas-----------------------------------------------------
+
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                      {|| ::oDbfArt:Familia } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",                {|| ::oDbfArt:cCodTip } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",                    {|| ::oDbfArt:cCodCate } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",                    {|| ::oDbfArt:cCodTemp } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",                   {|| ::oDbfArt:cCodFab } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Estado artículo",               {|| ::oDbfArt:cCodEst } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),            {|| ::oDbfArt:TipoIva } )
 
    ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
 
@@ -880,19 +881,19 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",                       {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
    ::oFastReport:SetMasterDetail(   "Informe", "Rutas",                             {|| ::oDbf:cCodRut } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",  {|| ::oDbf:cCodArt } )  
-   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",           {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",        {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",  {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )  
+   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Codificación de proveedores",       {|| ::oDbf:cCodArt } )
+
    ::oFastReport:SetMasterDetail(   "Informe", "Stock por almacén",  {|| ::oDbf:cCodArt + ::oDbf:cCodAlm } )
    ::oFastReport:SetMasterDetail(   "Informe", "Centro de coste",    {|| ::oDbf:cCtrCoste } )   
 
    ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 1",    {|| ::oDbf:cCodPr1 + ::oDbf:cValPr1 } )   
    ::oFastReport:SetMasterDetail(   "Informe", "Propiedades 2",    {|| ::oDbf:cCodPr2 + ::oDbf:cValPr2 } )   
 
-   /*
-   Resincronizar con los movimientos-------------------------------------------
-   */
+   // Resincronizar con los movimientos-------------------------------------------
 
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Familias" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipo artículos" )
@@ -911,6 +912,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Almacenes" )
    ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
    ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
+   ::oFastReport:SetResyncPair(     "Informe", "Codificación de proveedores" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
@@ -1254,6 +1256,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ::oPedCliL:OrdSetFocus( "nNumPed" )
 
    cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead          += ' .and. !lCancel '
    cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:getDesde() ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:getDesde() )   + '" .and. cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:getHasta() ) + '"'
    cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'

@@ -3634,7 +3634,7 @@ Return ( Self )
 
 METHOD insertIfValid()
 
-   local lValidRegister := ::lValidRegister()
+   local lValidRegister    := ::lValidRegister()
 
    if lValidRegister
       ::oDbf:Insert()

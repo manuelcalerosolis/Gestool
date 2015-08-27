@@ -2490,8 +2490,8 @@ METHOD lGrupoTipoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
    ::oGrupoTArticulo:Cargo:Nombre     := "Tipo artículo"
    ::oGrupoTArticulo:Cargo:Expresion  := "cCodTArt"
    ::oGrupoTArticulo:Cargo:Todos      := .t.
-   ::oGrupoTArticulo:Cargo:Desde      := Space( 3 )            // dbFirst( ::oTipArt:oDbf, 1 )
-   ::oGrupoTArticulo:Cargo:Hasta      := Replicate( "Z", 3 )   // dbLast( ::oTipArt:oDbf, 1 )
+   ::oGrupoTArticulo:Cargo:Desde      := Space( 4 )            // dbFirst( ::oTipArt:oDbf, 1 )
+   ::oGrupoTArticulo:Cargo:Hasta      := Replicate( "Z", 4 )   // dbLast( ::oTipArt:oDbf, 1 )
    ::oGrupoTArticulo:Cargo:cPicDesde  := "@!"
    ::oGrupoTArticulo:Cargo:cPicHasta  := "@!"
    ::oGrupoTArticulo:Cargo:HelpDesde  := {|| ::oTipArt:Buscar( ::oDesde ) }

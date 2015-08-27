@@ -1009,7 +1009,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Pedidos a clientes" )
 
-
    RECOVER USING oError
 
       lOpenFiles           := .f.
@@ -1108,6 +1107,17 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lCloPed }
          :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Zoom16" )
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Cancelado"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->lCancel }
+         :nWidth           := 20
+         :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Zoom16" )
       end with
@@ -1365,7 +1375,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nTotNet }
+         :bEditValue       := {|| iif( ( D():PedidosClientes( nView ) )->lCancel, 0, ( D():PedidosClientes( nView ) )->nTotNet ) }
          :cEditPicture     := cPorDiv( ( D():PedidosClientes( nView ) )->cDivPed, D():Divisas( nView ) )
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1375,7 +1385,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nTotIva }
+         :bEditValue       := {|| iif( ( D():PedidosClientes( nView ) )->lCancel, 0, ( D():PedidosClientes( nView ) )->nTotIva ) }
          :cEditPicture     := cPorDiv( ( D():PedidosClientes( nView ) )->cDivPed, D():Divisas( nView ) )
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1385,7 +1395,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nTotReq }
+         :bEditValue       := {|| iif( ( D():PedidosClientes( nView ) )->lCancel, 0, ( D():PedidosClientes( nView ) )->nTotReq ) }
          :cEditPicture     := cPorDiv( ( D():PedidosClientes( nView ) )->cDivPed, D():Divisas( nView ) )
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -1395,7 +1405,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( D():PedidosClientes( nView ) )->nTotPed }
+         :bEditValue       := {|| iif( ( D():PedidosClientes( nView ) )->lCancel, 0, ( D():PedidosClientes( nView ) )->nTotPed ) }
          :cEditPicture     := cPorDiv( ( D():PedidosClientes( nView ) )->cDivPed, D():Divisas( nView ) )
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -3136,6 +3146,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       REDEFINE CHECKBOX aGet[ _LCANCEL ] VAR aTmp[ _LCANCEL ] ;
          ID       130 ;
          ON CHANGE( lChangeCancel( aGet, aTmp, dbfTmpLin ) ) ;
+         VALID    ( lValidCancel( aGet, aTmp, oBrwLin ) ) ;
          WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() .and. aTmp[ _NESTADO ] != 2 ) ;
          OF       oFld:aDialogs[2]
 
@@ -11748,6 +11759,18 @@ Static function lChangeCancel( aGet, aTmp, dbfTmpLin )
 
    if !Empty( aGet[ _CCANCEL ] )
       aGet[ _CCANCEL ]:Refresh()
+   end if
+
+return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static function lValidCancel( aGet, aTmp, oBrwLin )
+
+   if aTmp[ _LCANCEL ]
+      oBrwLin:Hide()
+   else
+      oBrwLin:Show()
    end if
 
 return ( .t. )

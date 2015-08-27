@@ -12230,9 +12230,7 @@ function SynArt( cPath )
          else 
          
             if ( dbfArtPrv )->cCodArt  != ( dbfArticulo )->cPrvHab
-
                ( dbfArticulo )->cPrvHab            := ( dbfArtPrv )->cCodPrv
-
             end if
 
          end if 
@@ -16519,7 +16517,7 @@ Function aItmArtPrv()
 
    aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código del artículo referenciado"  , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodPrv",   "C", 12, 0, "Código del proveedor"              , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cRefPrv",   "C", 18, 0, "Referencia del proveedor al artículo" , "",               "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefPrv",   "C", 60, 0, "Referencia del proveedor al artículo" , "",               "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nDtoPrv",   "N",  6, 2, "Descuento del proveedor"           , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nDtoPrm",   "N",  6, 2, "Descuento por promoción"           , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cDivPrv",   "C",  3, 0, "Código de la divisa"               , "",                  "", "( cDbfArt )", nil } )
