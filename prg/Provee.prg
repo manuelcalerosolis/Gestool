@@ -2947,8 +2947,9 @@ Function lTmpImpPrv( aTmp, dbfTmpPrv, dbfDiv, oTotal )
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
-/*Función que edita la caja de diálogo de bancos*/
+//
+// Función que edita la caja de diálogo de bancos
+//
 
 Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, bWhen, bValid, nMode, cCodPrv )
 
@@ -3368,8 +3369,9 @@ Function SynProvee( cPath )
 Return ( nil )
 
 //---------------------------------------------------------------------------//
-
-/*funcion que devuelve la referencia del proveedor*/
+//
+// Funcion que devuelve la referencia del proveedor
+//
 
 Function cRefArtPrv( cCodArt, cCodPrv, dbfArtPrv )
 
@@ -3387,6 +3389,29 @@ Function cRefArtPrv( cCodArt, cCodPrv, dbfArtPrv )
 Return cRefArtPrv
 
 //---------------------------------------------------------------------------//
+
+Function cProveedorDefecto( cCodArt, dbfArtPrv )
+
+   local nRec                 := ( dbfArtPrv )->( recno() )
+   local nOrd                 := ( dbfArtPrv )->( ordsetfocus( "cCodArt" ) )
+   local cProveedorDefecto    := ""
+
+   if ( dbfArtPrv )->( dbSeek( cCodArt ) )
+      while ( dbfArtPrv )->cCodArt == cCodArt .and. !( dbfArtPrv )->( eof() )
+         if empty( cProveedorDefecto ) .or. ( dbfArtPrv )->lDefPrv
+            cProveedorDefecto := ( dbfArtPrv )->cCodPrv
+         end if 
+         ( dbfArtPrv )->( dbSkip() )
+      end while
+   end if
+
+   ( dbfArtPrv )->( ordsetfocus( nOrd ) )
+   ( dbfArtPrv )->( dbgoto( nRec ) )
+
+Return ( cProveedorDefecto )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 
 #ifndef __PDA__

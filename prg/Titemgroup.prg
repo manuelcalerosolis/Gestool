@@ -217,8 +217,8 @@ END CLASS
 METHOD New( nView, oTipoArticulo ) CLASS TItemGroupTipoArticulo
 
    ::Nombre       := "Tipo artículo"
-   ::Desde        := Space( 3 )
-   ::Hasta        := Replicate( "Z", 3 )
+   ::Desde        := Space( 4 )
+   ::Hasta        := Replicate( "Z", 4 )
    ::cPicDesde    := "@!"
    ::cPicHasta    := "@!"
    ::TextDesde    := {|| oRetFld( ::Desde, oTipoArticulo:oDbf, "cNomTip", "cCodTip" ) }

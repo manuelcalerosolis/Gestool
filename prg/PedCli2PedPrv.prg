@@ -83,6 +83,7 @@ CLASS PedCliente2PedProveedor
 
    Method ChangeCajas( oCol, uNewValue, nKey )
 
+   METHOD getCodigoProveerdor()
    Method ChangeProveedor( x )
 
    Method GeneraPedidoProveedor()
@@ -720,18 +721,18 @@ METHOD LoadLineasPedidos() CLASS PedCliente2PedProveedor
    cSentencia        +=       "lineaspedidos.cRef<>'' AND "
    cSentencia        +=       "lineaspedidos.nUniCaja<>0 AND "
    cSentencia        +=       "NOT(lineaspedidos.lControl) AND "
-   cSentencia        +=       "cabecerapedidos.dFecPed>='" + dToc( ::dFecIni ) + "' AND "
-   cSentencia        +=       "cabecerapedidos.dFecPed<='" + dToc( ::dFecFin ) + "' AND "   
-   cSentencia        +=       "articulos.Familia>='" + Padr( ::oItemGroupFamilia:GetDesde(), 16 ) + "' AND "
-   cSentencia        +=       "articulos.Familia<='" + Padr( ::oItemGroupFamilia:GetHasta(), 16 ) + "' AND "
-   cSentencia        +=       "articulos.cCodTip>='" + Padr( ::oItemGroupTipoArticulo:GetDesde(), 3 ) + "' AND "
-   cSentencia        +=       "articulos.cCodTip<='" + Padr( ::oItemGroupTipoArticulo:GetHasta(), 3 ) + "' AND "
-   cSentencia        +=       "articulos.cCodCate>='" + Padr( ::oItemGroupCategoria:GetDesde(), 3 ) + "' AND "
-   cSentencia        +=       "articulos.cCodCate<='" + Padr( ::oItemGroupCategoria:GetHasta(), 3 ) + "' AND "
-   cSentencia        +=       "articulos.cCodTemp>='" + Padr( ::oItemGroupTemporada:GetDesde(), 5 ) + "' AND "
-   cSentencia        +=       "articulos.cCodTemp<='" + Padr( ::oItemGroupTemporada:GetHasta(), 5 ) + "' AND "
-   cSentencia        +=       "articulos.cCodFab>='" + Padr( ::oItemGroupFabricante:GetDesde(), 3 ) + "' AND "
-   cSentencia        +=       "articulos.cCodFab<='" + Padr( ::oItemGroupFabricante:GetHasta(), 3 ) + "' "
+   cSentencia        +=       "cabecerapedidos.dFecPed >='" + dToc( ::dFecIni ) + "' AND "
+   cSentencia        +=       "cabecerapedidos.dFecPed <='" + dToc( ::dFecFin ) + "' AND "   
+   cSentencia        +=       "articulos.Familia >='" + Padr( ::oItemGroupFamilia:GetDesde(), 16 ) + "' AND "
+   cSentencia        +=       "articulos.Familia <='" + Padr( ::oItemGroupFamilia:GetHasta(), 16 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTip >='" + ::oItemGroupTipoArticulo:GetDesde() + "' AND "
+   cSentencia        +=       "articulos.cCodTip <='" + ::oItemGroupTipoArticulo:GetHasta() + "' AND "
+   cSentencia        +=       "articulos.cCodCate >='" + Padr( ::oItemGroupCategoria:GetDesde(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodCate <='" + Padr( ::oItemGroupCategoria:GetHasta(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTemp >='" + Padr( ::oItemGroupTemporada:GetDesde(), 5 ) + "' AND "
+   cSentencia        +=       "articulos.cCodTemp <='" + Padr( ::oItemGroupTemporada:GetHasta(), 5 ) + "' AND "
+   cSentencia        +=       "articulos.cCodFab >='" + Padr( ::oItemGroupFabricante:GetDesde(), 3 ) + "' AND "
+   cSentencia        +=       "articulos.cCodFab <='" + Padr( ::oItemGroupFabricante:GetHasta(), 3 ) + "' "
    cSentencia        += "ORDER BY lineaspedidos.cRef"
 
    if TDataCenter():ExecuteSqlStatement( cSentencia, "SelectLineasPedidos" )
@@ -793,7 +794,7 @@ METHOD AddLineasPedidos( nStock, nReserva ) CLASS PedCliente2PedProveedor
       ( ::dbfTemporal )->cRef       := ( "SelectLineasPedidos" )->cRef
       ( ::dbfTemporal )->cDetalle   := ( "SelectLineasPedidos" )->cDetalle
       ( ::dbfTemporal )->lSelArt    := .t.
-      ( ::dbfTemporal )->cCodPrv    := ( "SelectLineasPedidos" )->cCodPrv
+      ( ::dbfTemporal )->cCodPrv    := ::getCodigoProveerdor( ) 
       ( ::dbfTemporal )->cCodPr1    := ( "SelectLineasPedidos" )->cCodPr1
       ( ::dbfTemporal )->cCodPr2    := ( "SelectLineasPedidos" )->cCodPr2
       ( ::dbfTemporal )->cValPr1    := ( "SelectLineasPedidos" )->cValPr1
@@ -1036,5 +1037,17 @@ METHOD Calculaunidades( nCantidad, nStockDis, nStockMinMax ) CLASS PedCliente2Pe
    end if
 
 return nUnidades
+
+//---------------------------------------------------------------------------//
+
+METHOD getCodigoProveerdor()
+
+   local cCodigoProveedor  := ( "SelectLineasPedidos" )->cCodPrv
+
+   if empty( cCodigoProveedor )
+      cCodigoProveedor     := cProveedorDefecto( ( "SelectLineasPedidos" )->cRef, D():ProveedorArticulo( ::nView ) )
+   end if 
+
+Return ( cCodigoProveedor )   
 
 //---------------------------------------------------------------------------//

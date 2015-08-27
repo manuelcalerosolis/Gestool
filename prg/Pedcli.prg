@@ -711,14 +711,16 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():Articulos( nView )
 
+      D():ArticuloLenguaje( nView )
+
+      D():ProveedorArticulo( nView ) 
+
       D():Familias( nView )
 
       D():Documentos( nView )
       ( D():Documentos( nView ) )->( OrdSetFocus( "cTipo" ) )
 
       D():Situaciones( nView )
-
-      D():ArticuloLenguaje( nView )
 
       D():PedidosProveedores( nView )
 
