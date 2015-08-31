@@ -10698,6 +10698,18 @@ Function SynFacPrv( cPath )
 
       if !Empty( ( dbfFacPrvL )->iNumAlb )
          ( dbfFacPrvL )->cAlmOrigen := RetFld( ( dbfFacPrvL )->iNumAlb, dbfAlbPrvL, "cAlmOrigen", "nNumLin" )
+
+         //para distribumar, corregir numero de factura para líneas sueltas facturadas
+         /*
+         if dbSeekInOrd( ( dbfFacPrvL )->iNumAlb, "nNumLin", dbfAlbPrvL )
+            if dbLock( dbfAlbPrvL )
+               ( dbfAlbPrvL )->cNumFac := ( dbfFacPrvL )->cSerFac + str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac
+               ( dbfAlbPrvL )->( dbUnLock() )
+            end if
+         end if 
+         
+         */
+
       end if
 
       ( dbfFacPrvL )->( dbSkip() )
