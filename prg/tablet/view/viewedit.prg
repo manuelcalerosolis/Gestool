@@ -46,6 +46,8 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD getTitleTipoDocumento()   INLINE ( lblTitle( ::getMode() ) + ::getTextoTipoDocumento() )
 
+   METHOD gridCustomer()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -196,7 +198,7 @@ METHOD defineCliente() CLASS ViewEdit
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| GridBrwClient( ::oGetCliente, ::oNombreCliente ) } } )
+                           "bAction"   => {|| ::gridCustomer() } } )
 
    ::oGetCliente        := TGridGet():Build( {  "nRow"      => 95,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
@@ -219,6 +221,16 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD gridCustomer() CLASS ViewEdit
+
+   ::SetGetValue( ::oSender:oCliente:runGridCustomer(), "Cliente" )
+
+   ::oSender:lValidCliente()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD defineDireccion() CLASS ViewEdit
 
    TGridUrllink():Build(   {  "nTop"      => 120,;
@@ -230,7 +242,7 @@ METHOD defineDireccion() CLASS ViewEdit
                               "nClrInit"  => nGridColor(),;
                               "nClrOver"  => nGridColor(),;
                               "nClrVisit" => nGridColor(),;
-                              "bAction"   => {|| GridBrwObras( hGet( ::oSender:hDictionaryMaster, "Cliente" ) ) } } )
+                              "bAction"   => {|| MsgInfo( hGet( ::oSender:hDictionaryMaster, "Cliente" ), "GridBrwObras" ) } } ) //GridBrwObras( hGet( ::oSender:hDictionaryMaster, "Cliente" ) ) } } )
 
    ::getCodigoDireccion := TGridGet():Build( {  "nRow"      => 120,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;

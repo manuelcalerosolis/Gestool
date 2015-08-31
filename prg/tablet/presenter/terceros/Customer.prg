@@ -7,6 +7,8 @@ CLASS Customer FROM Editable
 
    DATA oViewIncidencia
 
+   DATA oGridCustomer
+
    DATA cTipoCliente                   INIT ""
 
    DATA hTipoCliente                   INIT { "1" => "Clientes", "2" => "Potenciales", "3" => "Web" }
@@ -15,6 +17,8 @@ CLASS Customer FROM Editable
    METHOD Init( nView )
 
    METHOD runNavigatorCustomer()
+
+   METHOD runGridCustomer()
 
    METHOD OpenFiles()
    METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
@@ -47,6 +51,8 @@ METHOD New() CLASS Customer
 
       ::oViewNavigator        := CustomerViewSearchNavigator():New( self )
 
+      ::oGridCustomer         := CustomerGridViewSearchNavigator():New( self )
+
       ::oViewEdit             := CustomerView():New( self )
 
       ::oClienteIncidencia    := CustomerIncidence():New( self )
@@ -62,6 +68,10 @@ Return ( self )
 METHOD Init( oSender ) CLASS Customer
 
    ::nView                 := oSender:nView
+
+   ::oViewNavigator        := CustomerViewSearchNavigator():New( self )
+
+   ::oGridCustomer         := CustomerGridViewSearchNavigator():New( self )
 
    ::oViewEdit             := CustomerView():New( self )
 
@@ -82,6 +92,26 @@ METHOD runNavigatorCustomer() CLASS Customer
    ::CloseFiles()
 
 return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridCustomer() CLASS Customer
+
+   local result   := ""
+
+   if !Empty( ::oGridCustomer )
+
+      ::oGridCustomer:showView()
+
+      if ::oGridCustomer:oDlg:nResult == IDOK
+
+         result   := ( D():Clientes( ::nView ) )->Cod
+
+      end if
+
+   end if
+
+Return ( result )
 
 //---------------------------------------------------------------------------//
 

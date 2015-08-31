@@ -127,7 +127,7 @@ METHOD New( oSender ) CLASS DocumentsSales
 
    ::oViewEdit             := DocumentSalesViewEdit():New( oSender )
 
-   ::oCliente              := Customer():Init( oSender )  
+   ::oCliente              := Customer():init( oSender )  
 
    ::oDocumentLines        := DocumentLines():New( oSender ) 
 

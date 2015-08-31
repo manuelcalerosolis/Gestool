@@ -416,8 +416,7 @@ LinesInvoiceCustomer.prg               \
 ViewSearchNavigator.prg                \
 DocumentSalesViewSearchNavigator.prg   \
 CustomerViewSearchNavigator.prg        \
-CustomerIncidence.prg                  \
-CustomerIncidenceView.prg              \
+CustomerGridViewSearchNavigator.prg    \
 CustomerIncidenceViewNavigator.prg     \
 DocumentSalesViewEdit.prg              \
 GeneraFacturasClientes.prg             \
@@ -838,6 +837,7 @@ LinesInvoiceCustomer.obj               \
 ViewSearchNavigator.obj                \
 DocumentSalesViewSearchNavigator.obj   \
 CustomerViewSearchNavigator.obj        \
+CustomerGridViewSearchNavigator.obj    \
 CustomerIncidence.obj                  \
 CustomerIncidenceView.obj              \
 CustomerIncidenceViewNavigator.obj     \
@@ -1243,6 +1243,7 @@ $(OBJ)\LinesInvoiceCustomer.obj              +
 $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\DocumentSalesViewSearchNavigator.obj  +
 $(OBJ)\CustomerViewSearchNavigator.obj       +
+$(OBJ)\CustomerGridViewSearchNavigator.obj   +
 $(OBJ)\CustomerIncidence.obj                 +
 $(OBJ)\CustomerIncidenceView.obj             +
 $(OBJ)\CustomerIncidenceViewNavigator.obj    +

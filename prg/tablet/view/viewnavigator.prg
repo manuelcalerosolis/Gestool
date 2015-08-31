@@ -3,14 +3,16 @@
 
 CLASS ViewNavigator FROM ViewBase
 
+   DATA bDblClickBrowseGeneral
+
    METHOD New()
 
    METHOD Resource()
 
-   METHOD getWorkArea()                INLINE ( ::oSender:getWorkArea() )
+   METHOD getWorkArea()                      INLINE ( ::oSender:getWorkArea() )
 
    METHOD setBrowseConfigurationName( cName ) ;
-                                       INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
+                                             INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
 
    METHOD BotonesAcciones()
 
@@ -18,12 +20,12 @@ CLASS ViewNavigator FROM ViewBase
 
    METHOD BrowseGeneral()
 
-   METHOD insertControls()             INLINE ( ::BrowseGeneral() )
+   METHOD insertControls()                   INLINE ( ::BrowseGeneral() )
 
-   METHOD setColumns()                 VIRTUAL
-      METHOD addColumn()               INLINE ( ::oBrowse:addCol() )
+   METHOD setColumns()                       VIRTUAL
+      METHOD addColumn()                     INLINE ( ::oBrowse:addCol() )
 
-   METHOD refreshBrowse()              INLINE ( iif(  !empty( ::oBrowse),;
+   METHOD refreshBrowse()                    INLINE ( iif(  !empty( ::oBrowse),;
                                                       ( ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() ),;
                                                       ) )
 
@@ -33,7 +35,9 @@ END CLASS
 
 METHOD New( oSender ) CLASS ViewNavigator
 
-   ::oSender   := oSender
+   ::oSender                     := oSender
+
+   ::bDblClickBrowseGeneral      := {|| ::oSender:Edit(), ::refreshBrowse() }
 
 Return ( self )
 
@@ -150,7 +154,7 @@ METHOD BrowseGeneral( oDlg ) CLASS ViewNavigator
 
    ::setColumns()
 
-   ::oBrowse:bLDblClick       := {|| ::oSender:Edit(), ::refreshBrowse() }
+   ::oBrowse:bLDblClick       := ::bDblClickBrowseGeneral
 
    ::oBrowse:CreateFromCode()
 
