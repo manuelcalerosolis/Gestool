@@ -5587,8 +5587,10 @@ CLASS D
       METHOD GetPedidoClienteBlank( nView )           INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )
       METHOD GetPedidoClienteDefaultValue( nView )    INLINE ( ::getHashRecordDefaultValues( ::PedidosClientes( nView ), nView ) )
 
-      METHOD getStatusPedidosClientes( nView )    INLINE ( ::aStatus := aGetStatus( ::PedidosClientes( nView ) ) )
-      METHOD setStatusPedidosClientes( nView )    INLINE ( SetStatus( ::PedidosClientes( nView ), ::aStatus ) ) 
+      METHOD gotoIdPedidosClientes( id, nView )       INLINE ( ::seekInOrd( ::PedidosClientes( nView ), id, "nNumPed" ) ) 
+
+      METHOD getStatusPedidosClientes( nView )        INLINE ( ::aStatus := aGetStatus( ::PedidosClientes( nView ) ) )
+      METHOD setStatusPedidosClientes( nView )        INLINE ( SetStatus( ::PedidosClientes( nView ), ::aStatus ) ) 
 
    METHOD PedidosClientesReservas( nView )            INLINE ( ::Get( "PedCliR", nView ) )
 
@@ -5611,8 +5613,8 @@ CLASS D
    METHOD PedidosClientesDocumentos( nView )            INLINE ( ::Get( "PedCliD", nView ) )
       METHOD PedidosClientesDocumentosId( nView )       INLINE ( ( ::Get( "PedCliD", nView ) )->cSerPed + str( ( ::Get( "PedCliD", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliD", nView ) )->cSufPed )
 
-   METHOD PedidosClientesPagos( nView )            INLINE ( ::Get( "PedCliP", nView ) )
-      METHOD PedidosClientesPagosId( nView )       INLINE ( ( ::Get( "PedCliP", nView ) )->cSerPed + str( ( ::Get( "PedCliP", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliP", nView ) )->cSufPed )
+   METHOD PedidosClientesPagos( nView )               INLINE ( ::Get( "PedCliP", nView ) )
+      METHOD PedidosClientesPagosId( nView )          INLINE ( ( ::Get( "PedCliP", nView ) )->cSerPed + str( ( ::Get( "PedCliP", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliP", nView ) )->cSufPed )
 
    // Situaciones----------------------------------------------------------------
 
@@ -5684,6 +5686,7 @@ CLASS D
 
    METHOD PedidosProveedores( nView )                 INLINE ( ::Get( "PedProvT", nView ) )
       METHOD PedidosProveedoresId( nView )            INLINE ( ( ::Get( "PedProvT", nView ) )->cSerPed + str( ( ::Get( "PedProvT", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvT", nView ) )->cSufPed )
+      METHOD gotoIdPedidosProveedores( id, nView )    INLINE ( ::seekInOrd( ::PedidosProveedores( nView ), id, "nNumPed" ) ) 
 
       METHOD PedidosProveedoresLineas( nView )        INLINE ( ::Get( "PedProvL", nView ) )
       METHOD PedidosProveedoresLineasId( nView )      INLINE ( ( ::Get( "PedProvL", nView ) )->cSerPed + str( ( ::Get( "PedProvL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedProvL", nView ) )->cSufPed )
@@ -5691,6 +5694,7 @@ CLASS D
       METHOD PedidosProveedoresIncidencias( nView )   INLINE ( ::Get( "PedPrvI", nView ) )
 
       METHOD PedidosProveedoresDocumentos( nView )    INLINE ( ::Get( "PedPrvD", nView ) )
+
 
    // Albaranes de proveedores-------------------------------------------------
 

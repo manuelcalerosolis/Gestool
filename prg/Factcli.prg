@@ -14391,8 +14391,9 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
    local i 
    local nRec
    local aClo
-   local nTotUnd  	:= 0
+   local nTotUnd                 := 0
    local hAtipica
+   local nPrecioPropiedades      := 0
 
    if !Empty( oBtn )
       oBtn:SetFocus()
@@ -14539,6 +14540,13 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
                         aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
                         aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
 
+                        // Precio por propiedades --------------------------------------------------
+
+                        nPrecioPropiedades   := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[ _CCODTAR ] )
+                        if !empty( nPrecioPropiedades )
+                           aTmp[ _NPREUNIT ] := nPrecioPropiedades
+                        end if 
+
                         // guarda la linea------------------------------------------- 
 
                         saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
@@ -14618,14 +14626,6 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
    local sOfertaArticulo
    local nCajasGratis         := 0
    local nUnidadesGratis      := 0
-   local nPrecioPropiedades   := 0
-
-   // Precio por propiedades --------------------------------------------------
-
-   nPrecioPropiedades         := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[ _CCODTAR ] )
-   if !empty(nPrecioPropiedades)
-      aTmp[ _NPREUNIT ]       := nPrecioPropiedades
-   end if 
 
    // Atipicas ----------------------------------------------------------------
 

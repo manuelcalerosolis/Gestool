@@ -20643,7 +20643,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Todos los artículos del pedido", 204, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 10, 242, 110, 12
   CONTROL "Stock mínimo", 212, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 324, 200, 55, 12
   CONTROL "Stock máximo", 213, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 324, 214, 56, 12
-  CONTROL "Cant. pedido cliente", 214, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 324, 228, 79, 12
+  CONTROL "Cantidad pedido cliente", 214, "Button", BS_AUTORADIOBUTTON|WS_TABSTOP, 324, 228, 87, 12
   CONTROL "", 220, "msctls_progress32", 0x00000000, 9, 270, 610, 6
   CONTROL "Stock disponible", -1, "Button", BS_GROUPBOX, 3, 189, 309, 74
   CONTROL "Igualar stock a", -1, "Button", BS_GROUPBOX, 317, 189, 307, 74
@@ -20672,7 +20672,7 @@ PEDCLI2PEDPROV_3 DIALOG DISCARDABLE 102, 64, 624, 285
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Informe", -1, "Button", BS_GROUPBOX, 3, 3, 617, 281
+  CONTROL "Pedidos a proveedores generados", -1, "Button", BS_GROUPBOX, 3, 3, 617, 281
   CONTROL "&Modificar [F3]", 110, "Button", WS_TABSTOP, 8, 14, 50, 14
   CONTROL "&Zoom", 120, "Button", WS_TABSTOP, 60, 14, 50, 14
   CONTROL "&Visualizar", 140, "Button", WS_TABSTOP, 112, 14, 50, 14

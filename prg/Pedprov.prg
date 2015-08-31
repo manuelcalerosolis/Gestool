@@ -1094,24 +1094,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
         TRANSPARENT ;
         OF       oFld:aDialogs[4]
 
-      REDEFINE GET aGet[_CCODPRV] VAR aTmp[_CCODPRV] ;
-            ID 		140 ;
-            PICTURE	( RetPicCodPrvEmp() ) ;
-		WHEN 		( nMode != ZOOM_MODE ) ;
-            VALID       ( LoaPrv( aGet, aTmp, D():Proveedores( nView ), nMode, oSay[ 4 ], oTlfPrv ) ) ;
-            ON HELP     ( BrwProvee( aGet[_CCODPRV], oSay[ 4 ] ) ) ;
-            BITMAP      "LUPA" ;
-            OF          oFld:aDialogs[1]
+      REDEFINE GET aGet[ _CCODPRV ] VAR aTmp[ _CCODPRV ] ;
+         ID       140 ;
+         PICTURE	( RetPicCodPrvEmp() ) ;
+         WHEN 		( nMode != ZOOM_MODE ) ;
+         VALID    ( LoaPrv( aGet, aTmp, D():Proveedores( nView ), nMode, oSay[ 4 ], oTlfPrv ) ) ;
+         ON HELP  ( BrwProvee( aGet[ _CCODPRV ], oSay[ 4 ] ) ) ;
+         BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CNOMPRV ] VAR aTmp[ _CNOMPRV ];
-		ID 		141 ;
-            WHEN        ( nMode != ZOOM_MODE ) ;
-            OF 		oFld:aDialogs[1]
+         ID 		141 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CDNIPRV] VAR aTmp[_CDNIPRV] ;
          ID       145 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oTlfPrv VAR cTlfPrv ;
@@ -2113,12 +2112,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    end case
 
 	ACTIVATE DIALOG oDlg	;
-         ON INIT  (  EdtRecMenu( aGet, aTmp, oBrw, oBrwLin, nMode, oDlg ),;
-                     ShowKitCom( D():PedidosProveedores( nView ), dbfTmpLin, oBrwLin, cCodPrv, dbfTmpInc, aGet ),;
-                     oBrwLin:Load(),;
-                     oBrwInc:Load() ) ;
-         ON PAINT (  RecalculaTotal( aTmp ) );
-			CENTER
+      ON INIT  (  initEdtRec( aGet, aTmp, oBrw, oBrwLin, oBrwInc, nMode, cCodPrv, oDlg ) ) ;
+      ON PAINT (  recalculaTotal( aTmp ) );
+      CENTER
 
    KillTrans( oBrwLin )
 
@@ -2136,6 +2132,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    */
 
 RETURN ( oDlg:nResult == IDOK )
+
+//--------------------------------------------------------------------------//
+
+static Function initEdtRec( aGet, aTmp, oBrw, oBrwLin, oBrwInc, nMode, cCodPrv, oDlg )
+
+   edtRecMenu( aGet, aTmp, oBrw, oBrwLin, nMode, oDlg )
+
+   showKitCom( D():PedidosProveedores( nView ), dbfTmpLin, oBrwLin, cCodPrv, dbfTmpInc, aGet )
+   
+   oBrwLin:Load()
+   oBrwLin:MakeTotals()
+   oBrwLin:RefreshFooters()
+
+   oBrwInc:Load()
+
+RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -6372,9 +6384,9 @@ RETURN ( if( lPic, Trans( nTotPed, cPirDiv ), nTotPed ) ) //
 
 //--------------------------------------------------------------------------//
 
-FUNCTION aTotPedPrv( cFactura, cPedPrvT, dbfLine, cIva, cDiv, cDivRet )
+FUNCTION aTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, cDivRet )
 
-   nTotPedPrv( cFactura, cPedPrvT, dbfLine, cIva, cDiv, nil, cDivRet, .f. )
+   nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, nil, cDivRet, .f. )
 
 RETURN ( { nTotNet, nTotIva, nTotReq, nTotPed, aTotIva } )
 

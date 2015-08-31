@@ -433,8 +433,8 @@ METHOD Resource() CLASS PedCliente2PedProveedor
 
       with object ( ::oBrwFin:AddCol() )
          :cHeader                := "Total"
-         :bEditValue             := {|| ( D():PedidosClientes( ::nView ) )->nTotPed }
-         :cEditPicture           := cPorDiv( ( D():PedidosClientes( ::nView ) )->cDivPed, D():Divisas( ::nView ) )
+         :bEditValue             := {|| nTotPedPrv( hGet( ::aPedidos[ ::oBrwFin:nArrayAt ], "Id" ), D():PedidosProveedores( ::nView ), D():PedidosProveedoresLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) ) }
+         :cEditPicture           := cPirDiv()
          :nWidth                 := 80
          :nDataStrAlign          := 1
          :nHeadStrAlign          := 1
@@ -1036,21 +1036,17 @@ METHOD TotalPedidoProveedor() CLASS PedCliente2PedProveedor
 
    for each hPedido in ::aPedidos
 
-      if ( D():PedidosClientes( ::nView ) )->( dbSeek( hPedido["Id"] ) )
+      if D():gotoIdPedidosProveedores( hPedido[ "Id" ], ::nView )
 
-         if ( D():PedidosClientesLineas( ::nView ) )->nTotPed == 0 
+         aPedido  := aTotPedPrv( hPedido[ "Id" ], D():PedidosProveedores( ::nView ), D():PedidosProveedoresLineas( ::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ), D():FormasPago( ::nView ), ( D():PedidosProveedores( ::nView ) )->cDivPed )
 
-            aPedido  := aTotPedCli( hPedido["Id"], D():PedidosClientes( ::nView ), D():PedidosClientesLineas( ::nView ), D():Divisas( ::nView ), D():FormasPagos( ::nView ), ( D():PedidosClientes( ::nView ) )->cDivPed )
-
-            if dbLock( D():PedidosClientes( ::nView ) )
-               ( D():PedidosClientes( ::nView ) )->nTotNet := aPedido[ 1 ]
-               ( D():PedidosClientes( ::nView ) )->nTotIva := aPedido[ 2 ]
-               ( D():PedidosClientes( ::nView ) )->nTotReq := aPedido[ 3 ]
-               ( D():PedidosClientes( ::nView ) )->nTotPed := aPedido[ 4 ]
-               ( D():PedidosClientes( ::nView ) )->( dbUnLock() )
-            end if
-
-         end if 
+         if dbLock( D():PedidosProveedores( ::nView ) )
+            ( D():PedidosProveedores( ::nView ) )->nTotNet := aPedido[ 1 ]
+            ( D():PedidosProveedores( ::nView ) )->nTotIva := aPedido[ 2 ]
+            ( D():PedidosProveedores( ::nView ) )->nTotReq := aPedido[ 3 ]
+            ( D():PedidosProveedores( ::nView ) )->nTotPed := aPedido[ 4 ]
+            ( D():PedidosProveedores( ::nView ) )->( dbUnLock() )
+         end if
 
       end if 
 

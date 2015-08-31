@@ -10292,6 +10292,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
    local aClo     
    local nRec
    local hAtipica
+   local nPrecioPropiedades   := 0
 
    oBtn:SetFocus()
 
@@ -10324,13 +10325,13 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
 
    CursorWait()
 
-   aClo     							:= aClone( aTmp )
+   aClo                          := aClone( aTmp )
    nRec                          := ( dbfTmpLin )->( RecNo() )
 
    // Estado de la produccion--------------------------------------------------
 
    aTmp[ _NREQ ]                 := nPReq( D():TiposIva( nView ), aTmp[ _NIVA ] )
-   aTmp[ _NPRODUC ]  				:= oEstadoProduccion:nAt - 1
+   aTmp[ _NPRODUC ]              := oEstadoProduccion:nAt - 1
 
    if nMode == APPD_MODE
 
@@ -10355,7 +10356,12 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
                   aTmp[ _CCODPR2 ]     := oBrwProperties:Cargo[ n, i ]:cCodigoPropiedad2
                   aTmp[ _CVALPR2 ]     := oBrwProperties:Cargo[ n, i ]:cValorPropiedad2
 
-                  // Cargamos el precio del artículo---------------------------------
+                  // Precio por propiedades --------------------------------------------------
+
+                  nPrecioPropiedades   := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPed[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPed[ _CCODTAR ] )
+                  if !empty(nPrecioPropiedades)
+                     aTmp[ _NPREDIV ]  := nPrecioPropiedades
+                  end if 
 
                   saveDetail( aTmp, aClo, aGet, aTmpPed, dbfTmpLin, oBrw, nMode )
 
@@ -10428,14 +10434,6 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpPed, dbfTmpLin, oBrw, nMode )
    local sOfertaArticulo
    local nCajasGratis         := 0
    local nUnidadesGratis      := 0
-   local nPrecioPropiedades   := 0
-
-   // Precio por propiedades --------------------------------------------------
-
-   nPrecioPropiedades         := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPed[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPed[ _CCODTAR ] )
-   if !empty(nPrecioPropiedades)
-      aTmp[ _NPREDIV ]        := nPrecioPropiedades
-   end if 
 
    // Atipicas ----------------------------------------------------------------
 
@@ -12389,9 +12387,9 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION aTotPedCli( cPed, cPedCliT, cPedCliL, cdbfIva, cdbfDiv, dbfFPago, cDivRet )
+FUNCTION aTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFormaPago, cDivRet )
 
-   nTotPedCli( cPed, cPedCliT, cPedCliL, cdbfIva, cdbfDiv, dbfFPago, nil, cDivRet, .f. )
+   nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFormaPago, nil, cDivRet, .f. )
 
 RETURN ( { nTotNet, nTotIva, nTotReq, nTotPed, nTotPnt, nTotTrn, nTotAge, nTotCos } )
 
