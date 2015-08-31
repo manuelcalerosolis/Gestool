@@ -31,9 +31,9 @@ CLASS Editable
    DATA cFormatToPrint
 
    METHOD Append()
-   METHOD saveAppend()
+      METHOD saveAppend()
    METHOD Edit()
-   METHOD saveEdit()
+      METHOD saveEdit()
    METHOD Delete()
 
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
@@ -81,7 +81,6 @@ CLASS Editable
 
    METHOD setFormatToPrint( cFormat )           INLINE ( ::cFormatToPrint := cFormat )
    METHOD resetFormatToPrint( cFormat )         INLINE ( ::cFormatToPrint := "" )
-
 
 ENDCLASS
 

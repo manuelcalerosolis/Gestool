@@ -9,7 +9,7 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD New()
 
-   METHOD ResourceDetail( nMode )         INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
+   METHOD resourceDetail( nMode )         INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
 
    METHOD getAppendDocumento()
    METHOD getEditDocumento()

@@ -11211,7 +11211,7 @@ STATIC FUNCTION FacRecDup( cDbf, xField1, xField2, xField3, lCab, lPag, lActual,
       aTabla[ _CDOCORG     ]  := Space( 10 )
       aTabla[ _LCLOFAC     ]  := .f.
       aTabla[ _CCODUSR     ]  := cCurUsr()
-      aTabla[ _DFECCRE     ]  := GetSysDate()
+      aTabla[ _DFECCRE     ]  := Date()
       aTabla[ _CTIMCRE     ]  := Time()
       aTabla[ _LIMPRIMIDO  ]  := .f.
       aTabla[ _DFECIMP     ]  := Ctod("")
@@ -15170,7 +15170,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Primero hacer el RollBack---------------------------------------------------
       */
 
-      aTmp[ _DFECCRE ]        := GetSysDate()
+      aTmp[ _DFECCRE ]        := Date()
       aTmp[ _CTIMCRE ]        := Time()
       aTmp[ _NTARIFA ]        := oGetTarifa:getTarifa()
 
@@ -21220,8 +21220,8 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"nTipRet"     ,"N",  1, 0, "Tipo de retención ( 1. Base / 2. Base+IVA )",                "TipoRetencion",               "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retención",                                    "PorcentajeRetencion",         "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                          "Usuario",                     "", "( cDbf )", {|| cCurUsr() } } )
-   aAdd( aItmFacCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación/modificación del documento",               "FechaCreacion",               "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"cTimCre"     ,"C",  5, 0, "Hora de creación/modificación del documento",                "HoraCreacion",                "", "( cDbf )", nil } )
+   aAdd( aItmFacCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación/modificación del documento",               "FechaCreacion",               "", "( cDbf )", {|| Date() } } )
+   aAdd( aItmFacCli, {"cTimCre"     ,"C",  5, 0, "Hora de creación/modificación del documento",                "HoraCreacion",                "", "( cDbf )", {|| Time() } } )
    aAdd( aItmFacCli, {"cCodGrp"     ,"C",  4, 0, "Código de grupo de cliente" ,                                "GrupoCliente",                "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"lImprimido"  ,"L",  1, 0, "Lógico de imprimido" ,                                       "Imprimido",                   "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"dFecImp"     ,"D",  8, 0, "Última fecha de impresión" ,                                 "FechaImpresion",              "", "( cDbf )", nil } )
@@ -24320,7 +24320,7 @@ STATIC FUNCTION EndTransTablet( aTmp, aGet, nMode, oDlg )
       Primero hacer el RollBack---------------------------------------------------
       */
 
-      aTmp[ _DFECCRE ]        := GetSysDate()
+      aTmp[ _DFECCRE ]        := Date()
       aTmp[ _CTIMCRE ]        := Time()
       aTmp[ _LALQUILER ]      := .f.
 

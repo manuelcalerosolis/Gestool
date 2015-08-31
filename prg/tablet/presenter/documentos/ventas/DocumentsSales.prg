@@ -56,7 +56,7 @@ CLASS DocumentsSales FROM Documents
    METHOD isResumenVenta()
    METHOD lValidResumenVenta()
 
-   METHOD getDataBrowse( Name )        INLINE ( hGet( ::oDocumentLineTemporal:hDictionary[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
+   METHOD getDataBrowse( Name )                 INLINE ( hGet( ::oDocumentLineTemporal:hDictionary[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
    METHOD isChangeSerieTablet( lReadyToSend, getSerie )
    
@@ -118,7 +118,7 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New( oSender ) CLASS DocumentsSales
-   
+
    if !::OpenFiles()
       Return ( self )
    end if 
@@ -246,7 +246,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidCliente( oGet, oGet2, nMode, oSerie ) CLASS DocumentsSales
+METHOD lValidCliente() CLASS DocumentsSales
 
    local lValid      := .t.
    local cNewCodCli  := hGet( ::hDictionaryMaster, "Cliente" )
@@ -259,24 +259,16 @@ METHOD lValidCliente( oGet, oGet2, nMode, oSerie ) CLASS DocumentsSales
 
    if ::setDatasFromClientes( cNewCodCli )
 
-      if !Empty( oGet )
-         oGet:Refresh()
-      end if
+      ::oViewEdit:refreshCliente()
+      ::oViewEdit:refreshSerie()
 
-      if !Empty( oGet2 )
-         oGet2:Refresh()
-      end if
-
-      if !Empty( oSerie )
-         oSerie:Refresh()
-      end if
-
-      lValid      := .t.
+      lValid         := .t.
 
    else
 
       ApoloMsgStop( "Cliente no encontrado" )
-      lValid := .f.
+
+      lValid         := .f.
 
    end if
 
@@ -284,49 +276,41 @@ RETURN lValid
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidDireccion( oGet, oGet2, cCodCli ) CLASS DocumentsSales
+METHOD lValidDireccion() CLASS DocumentsSales
 
-   local lValid   := .f.
-   local xValor   := oGet:VarGet()
    local nOrdAnt
+   local lValid            := .f.
+   local codigoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
+   local codigoDireccion   := ::oViewEdit:getCodigoDireccion:varGet()
 
-   if Empty( xValor )
-      if !Empty( oGet2 )
-         oGet2:cText( "" )
-      end if
+   if Empty( codigoCliente )
       return .t.
    end if
 
-   if Empty( cCodCli )
-      ApoloMsgStop( "Es necesario codificar un cliente" )
+   if empty( codigoDireccion )
       return .t.
    end if
 
-   nOrdAnt        := ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
+   ::oViewEdit:getNombreDireccion:cText( "" )
 
-   xValor         := Padr( cCodCli, 12 ) + xValor
+   codigoDireccion         := padr( codigoCliente, 12 ) + padr( codigoDireccion, 10 )
 
-   if ( D():ClientesDirecciones( ::nView ) )->( dbSeek( xValor ) )
+   msgAlert( codigoDireccion, "codigoDireccion" )
 
-      oGet:cText( ( D():ClientesDirecciones( ::nView ) )->cCodObr )
+   nOrdAnt                 := ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
 
-      if !Empty( oGet2 )
-         oGet2:cText( ( D():ClientesDirecciones( ::nView ) )->cNomObr )
-      end if
+   if ( D():ClientesDirecciones( ::nView ) )->( dbSeek( codigoDireccion ) )
 
-      lValid      := .t.
+      ::oViewEdit:getCodigoDireccion:cText( ( D():ClientesDirecciones( ::nView ) )->cCodObr )
+      ::oViewEdit:getNombreDireccion:cText( ( D():ClientesDirecciones( ::nView ) )->cNomObr )
+
+      lValid               := .t.
 
    else
 
-      ApoloMsgStop( "Dirección no encontrada" )
+      apoloMsgStop( "Dirección no encontrada" )
       
-      if !Empty( oGet )
-         oGet:SetFocus()
-      end if
-
-      if !Empty( oGet2 )
-         oGet2:cText( Space( 50 ) )
-      end if
+      ::oViewEdit:getCodigoDireccion:setFocus()
 
    end if
 
@@ -796,51 +780,51 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
 
    if ( D():Clientes( ::nView ) )->( dbseek( CodigoCliente ) )
 
-      lReturn           := .t.
+      lReturn              := .t.
 
-      hSet( ::hDictionaryMaster, "Cliente", CodigoCliente )
-      hSet( ::hDictionaryMaster, "NombreCliente", ( D():Clientes( ::nView ) )->Titulo )
-      hSet( ::hDictionaryMaster, "DomicilioCliente", ( D():Clientes( ::nView ) )->Domicilio )
-      hSet( ::hDictionaryMaster, "PoblacionCliente", ( D():Clientes( ::nView ) )->Poblacion )
-      hSet( ::hDictionaryMaster, "ProvinciaCliente", ( D():Clientes( ::nView ) )->Provincia )
-      hSet( ::hDictionaryMaster, "CodigoPostalCliente", ( D():Clientes( ::nView ) )->CodPostal )
-      hSet( ::hDictionaryMaster, "TelefonoCliente", ( D():Clientes( ::nView ) )->Telefono )
-      hSet( ::hDictionaryMaster, "DniCliente", ( D():Clientes( ::nView ) )->Nif )
-      hSet( ::hDictionaryMaster, "GrupoCliente", ( D():Clientes( ::nView ) )->Nif )
-      hSet( ::hDictionaryMaster, "OperarPuntoVerde", ( D():Clientes( ::nView ) )->lPntVer )
+      hSet( ::hDictionaryMaster, "Cliente",              CodigoCliente )
+      hSet( ::hDictionaryMaster, "NombreCliente",        ( D():Clientes( ::nView ) )->Titulo )
+      hSet( ::hDictionaryMaster, "DomicilioCliente",     ( D():Clientes( ::nView ) )->Domicilio )
+      hSet( ::hDictionaryMaster, "PoblacionCliente",     ( D():Clientes( ::nView ) )->Poblacion )
+      hSet( ::hDictionaryMaster, "ProvinciaCliente",     ( D():Clientes( ::nView ) )->Provincia )
+      hSet( ::hDictionaryMaster, "CodigoPostalCliente",  ( D():Clientes( ::nView ) )->CodPostal )
+      hSet( ::hDictionaryMaster, "TelefonoCliente",      ( D():Clientes( ::nView ) )->Telefono )
+      hSet( ::hDictionaryMaster, "DniCliente",           ( D():Clientes( ::nView ) )->Nif )
+      hSet( ::hDictionaryMaster, "GrupoCliente",         ( D():Clientes( ::nView ) )->Nif )
+      hSet( ::hDictionaryMaster, "OperarPuntoVerde",     ( D():Clientes( ::nView ) )->lPntVer )
 
-      if ::nMode == APPD_MODE
+      if ::lAppendMode() //  ::nMode == APPD_MODE
 
-         if !Empty( ( D():Clientes( ::nView ) )->Serie )
+         if !empty( ( D():Clientes( ::nView ) )->Serie )
             hSet( ::hDictionaryMaster, "Serie", ( D():Clientes( ::nView ) )->Serie )
          end if
 
-         hSet( ::hDictionaryMaster, "TipoImpuesto", ( D():Clientes( ::nView ) )->nRegIva )
-         hSet( ::hDictionaryMaster, "Almacen", ( D():Clientes( ::nView ) )->cCodAlm )
-         hSet( ::hDictionaryMaster, "Tarifa", ( D():Clientes( ::nView ) )->cCodTar )
-         hSet( ::hDictionaryMaster, "Pago", ( D():Clientes( ::nView ) )->CodPago )
-         hSet( ::hDictionaryMaster, "Agente", ( if( Empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
-         hSet( ::hDictionaryMaster, "Ruta", ( D():Clientes( ::nView ) )->cCodRut )
-         hSet( ::hDictionaryMaster, "NumeroTarifa", ( D():Clientes( ::nView ) )->nTarifa )
-         hSet( ::hDictionaryMaster, "DescuentoTarifa", ( D():Clientes( ::nView ) )->nDtoArt )
-         hSet( ::hDictionaryMaster, "Transportista", ( D():Clientes( ::nView ) )->cCodTrn )
-         hSet( ::hDictionaryMaster, "DescripcionDescuento1", ( D():Clientes( ::nView ) )->cDtoEsp )
-         hSet( ::hDictionaryMaster, "PorcentajeDescuento1", ( D():Clientes( ::nView ) )->nDtoEsp )
-         hSet( ::hDictionaryMaster, "DescripcionDescuento2", ( D():Clientes( ::nView ) )->cDpp )
-         hSet( ::hDictionaryMaster, "PorcentajeDescuento2", ( D():Clientes( ::nView ) )->nDpp )
-         hSet( ::hDictionaryMaster, "DescripcionDescuento3", ( D():Clientes( ::nView ) )->cDtoUno )
-         hSet( ::hDictionaryMaster, "PorcentajeDescuento3", ( D():Clientes( ::nView ) )->nDtoCnt )
-         hSet( ::hDictionaryMaster, "DescripcionDescuento4", ( D():Clientes( ::nView ) )->cDtoDos )
-         hSet( ::hDictionaryMaster, "PorcentajeDescuento4", ( D():Clientes( ::nView ) )->nDtoRap )
-         hSet( ::hDictionaryMaster, "DescuentoAtipico", ( D():Clientes( ::nView ) )->nDtoAtp )
-         hSet( ::hDictionaryMaster, "LugarAplicarDescuentoAtipico", ( D():Clientes( ::nView ) )->nSbrAtp )
+         hSet( ::hDictionaryMaster, "TipoImpuesto",                  ( D():Clientes( ::nView ) )->nRegIva )
+         hSet( ::hDictionaryMaster, "Almacen",                       ( D():Clientes( ::nView ) )->cCodAlm )
+         hSet( ::hDictionaryMaster, "Tarifa",                        ( D():Clientes( ::nView ) )->cCodTar )
+         hSet( ::hDictionaryMaster, "Pago",                          ( D():Clientes( ::nView ) )->CodPago )
+         hSet( ::hDictionaryMaster, "Agente",                        ( if( Empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
+         hSet( ::hDictionaryMaster, "Ruta",                          ( D():Clientes( ::nView ) )->cCodRut )
+         hSet( ::hDictionaryMaster, "NumeroTarifa",                  ( D():Clientes( ::nView ) )->nTarifa )
+         hSet( ::hDictionaryMaster, "DescuentoTarifa",               ( D():Clientes( ::nView ) )->nDtoArt )
+         hSet( ::hDictionaryMaster, "Transportista",                 ( D():Clientes( ::nView ) )->cCodTrn )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento1",         ( D():Clientes( ::nView ) )->cDtoEsp )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento1",          ( D():Clientes( ::nView ) )->nDtoEsp )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento2",         ( D():Clientes( ::nView ) )->cDpp )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento2",          ( D():Clientes( ::nView ) )->nDpp )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento3",         ( D():Clientes( ::nView ) )->cDtoUno )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento3",          ( D():Clientes( ::nView ) )->nDtoCnt )
+         hSet( ::hDictionaryMaster, "DescripcionDescuento4",         ( D():Clientes( ::nView ) )->cDtoDos )
+         hSet( ::hDictionaryMaster, "PorcentajeDescuento4",          ( D():Clientes( ::nView ) )->nDtoRap )
+         hSet( ::hDictionaryMaster, "DescuentoAtipico",              ( D():Clientes( ::nView ) )->nDtoAtp )
+         hSet( ::hDictionaryMaster, "LugarAplicarDescuentoAtipico",  ( D():Clientes( ::nView ) )->nSbrAtp )
+         hSet( ::hDictionaryMaster, "RecargoEquivalencia",           ( D():Clientes( ::nView ) )->lReq )
 
       end if
 
    end if
 
    D():setStatusClientes( ::nView )
-
 
 Return( lReturn ) 
 
