@@ -28,7 +28,7 @@ METHOD setColumns() CLASS DocumentSalesViewSearchNavigator
       :cHeader           := "Id"
       :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + CRLF +;
                                  dtoc( ::getField( "Fecha" ) ) }
-      :nWidth            := 160
+      :nWidth            := 165
    end with
 
    with object ( ::addColumn() )
@@ -71,7 +71,7 @@ METHOD setColumns() CLASS DocumentSalesViewSearchNavigator
       :cHeader           := "Total"
       :bEditValue        := {|| ::getField( "TotalDocumento" ) }
       :cEditPicture      := cPorDiv()
-      :nWidth            := 160
+      :nWidth            := 155
       :nDataStrAlign     := 1
       :nHeadStrAlign     := 1
    end with

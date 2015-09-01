@@ -3,6 +3,10 @@
 
 CLASS ViewBase
 
+   DATA buttonEnd
+   DATA buttonCancel
+   DATA buttonOk
+
    DATA columnLabel                    INIT 0.2
 
    DATA widthLabel                     INIT 1.8
@@ -126,13 +130,13 @@ Return ( self )
 
 METHOD defineSalir() CLASS ViewBase
 
-   TGridImage():Build(  {  "nTop"      => 5,;
-                           "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_end_64",;
-                           "bLClicked" => {|| ::oDlg:End() },;
-                           "oWnd"      => ::oDlg } )
+   ::buttonEnd       :=    TGridImage():Build(  {  "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_end_64",;
+                                                   "bLClicked" => {|| ::oDlg:End() },;
+                                                   "oWnd"      => ::oDlg } )
 
 Return ( self )
 
@@ -140,21 +144,21 @@ Return ( self )
 
 METHOD defineAceptarCancelar() CLASS ViewBase
 
-   TGridImage():Build(  {  "nTop"      => 5,;
-                           "nLeft"     => {|| GridWidth( 9.0, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_del_64",;
-                           "bLClicked" => {|| ::cancelView() },;
-                           "oWnd"      => ::oDlg } )
+   ::buttonCancel    :=    TGridImage():Build(  {  "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 9.0, ::oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_del_64",;
+                                                   "bLClicked" => {|| ::cancelView() },;
+                                                   "oWnd"      => ::oDlg } )
 
-   TGridImage():Build(  {  "nTop"      => 5,;
-                           "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_check_64",;
-                           "bLClicked" => {|| ::endView() },;
-                           "oWnd"      => ::oDlg } )
+   ::buttonOk        :=    TGridImage():Build(  {  "nTop"      => 5,;
+                                                   "nLeft"     => {|| GridWidth( 10.5, ::oDlg ) },;
+                                                   "nWidth"    => 64,;
+                                                   "nHeight"   => 64,;
+                                                   "cResName"  => "flat_check_64",;
+                                                   "bLClicked" => {|| ::endView() },;
+                                                   "oWnd"      => ::oDlg } )
 
 Return ( self )
 
@@ -219,4 +223,4 @@ METHOD evalDialog() CLASS ViewBase
 
 return ( lValid )
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//

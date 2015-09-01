@@ -49,13 +49,17 @@ METHOD New() CLASS Customer
 
       ::setFilterAgentes()
 
-      ::oViewNavigator        := CustomerViewSearchNavigator():New( self )
+      ::oViewNavigator                       := CustomerViewSearchNavigator():New( self )
+      ::oViewNavigator:setTextoTipoDocumento( "Clientes" )
 
-      ::oGridCustomer         := CustomerGridViewSearchNavigator():New( self )
+      ::oGridCustomer                        := CustomerViewSearchNavigator():New( self )
+      ::oGridCustomer:setSelectorMode()
+      ::oGridCustomer:setTextoTipoDocumento( "Seleccione cliente" )
+      ::oGridCustomer:setDblClickBrowseGeneral( {|| ::oGridCustomer:endView() } )
 
-      ::oViewEdit             := CustomerView():New( self )
+      ::oViewEdit                            := CustomerView():New( self )
 
-      ::oClienteIncidencia    := CustomerIncidence():New( self )
+      ::oClienteIncidencia                   := CustomerIncidence():New( self )
 
       ::setEnviroment()
 
@@ -67,15 +71,19 @@ Return ( self )
 
 METHOD Init( oSender ) CLASS Customer
 
-   ::nView                 := oSender:nView
+   ::nView                                := oSender:nView
 
-   ::oViewNavigator        := CustomerViewSearchNavigator():New( self )
+   ::oViewNavigator                       := CustomerViewSearchNavigator():New( self )
+   ::oViewNavigator:setTextoTipoDocumento( "Clientes" )
 
-   ::oGridCustomer         := CustomerGridViewSearchNavigator():New( self )
+   ::oGridCustomer                        := CustomerViewSearchNavigator():New( self )
+   ::oGridCustomer:setSelectorMode()
+   ::oGridCustomer:setTextoTipoDocumento( "Seleccione cliente" )
+   ::oGridCustomer:setDblClickBrowseGeneral( {|| ::oGridCustomer:endView() } )
 
-   ::oViewEdit             := CustomerView():New( self )
+   ::oViewEdit                            := CustomerView():New( self )
 
-   ::oClienteIncidencia    := CustomerIncidence():New( self )
+   ::oClienteIncidencia                   := CustomerIncidence():New( self )
 
    ::setEnviroment()
 

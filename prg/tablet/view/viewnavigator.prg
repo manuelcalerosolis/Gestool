@@ -3,6 +3,8 @@
 
 CLASS ViewNavigator FROM ViewBase
 
+   DATA bDblClickBrowseGeneral
+
    METHOD New()
 
    METHOD Resource()
@@ -28,7 +30,7 @@ CLASS ViewNavigator FROM ViewBase
                                                       ( ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() ),;
                                                       ) )
 
-   METHOD onDblClickBrowseGeneral()
+   METHOD setDblClickBrowseGeneral( block )  INLINE ( ::bDblClickBrowseGeneral := block )
 
 END CLASS
 
@@ -37,6 +39,8 @@ END CLASS
 METHOD New( oSender ) CLASS ViewNavigator
 
    ::oSender                     := oSender
+
+   ::bDblClickBrowseGeneral      := {|| ::oSender:Edit(), ::refreshBrowse() }
 
 Return ( self )
 
@@ -153,18 +157,9 @@ METHOD BrowseGeneral( oDlg ) CLASS ViewNavigator
 
    ::setColumns()
 
-   ::oBrowse:bLDblClick       := {|| ::onDblClickBrowseGeneral() }
+   ::oBrowse:bLDblClick       := ::bDblClickBrowseGeneral
 
    ::oBrowse:CreateFromCode()  
-
-Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD onDblClickBrowseGeneral() CLASS ViewNavigator
-
-   ::oSender:Edit()
-   ::refreshBrowse()
 
 Return ( self )
 

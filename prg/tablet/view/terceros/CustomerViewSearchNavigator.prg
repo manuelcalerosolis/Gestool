@@ -3,8 +3,6 @@
 
 CLASS CustomerViewSearchNavigator FROM ViewSearchNavigator
 
-   METHOD setTextoTipoDocumento()      INLINE ( ::cTextoTipoDocumento := "Clientes" ) 
-
    METHOD setItemsBusqueda()           INLINE ( ::aItemsBusqueda := { "Código", "Nombre" } )   
 
    METHOD setColumns()

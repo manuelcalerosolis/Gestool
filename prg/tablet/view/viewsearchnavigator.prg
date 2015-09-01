@@ -3,6 +3,8 @@
 
 CLASS ViewSearchNavigator FROM ViewNavigator
 
+   DATA lSelectorMode                  INIT .f.
+
    METHOD New( oSender )
 
    DATA aItemsBusqueda
@@ -15,6 +17,8 @@ CLASS ViewSearchNavigator FROM ViewNavigator
    METHOD getComboboxOrden()
       METHOD changeComboboxOrden()
 
+   METHOD setSelectorMode()            INLINE ( ::lSelectorMode  := .t. )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -22,6 +26,8 @@ END CLASS
 METHOD New( oSender ) CLASS ViewSearchNavigator
 
    ::oSender   := oSender
+
+   ::bDblClickBrowseGeneral      := {|| ::oSender:Edit(), ::refreshBrowse() }
 
    ::setTextoTipoDocumento()
 
@@ -37,7 +43,11 @@ METHOD Resource() CLASS ViewSearchNavigator
 
    ::defineTitulo()
 
-   ::defineSalir()
+   if ::lSelectorMode
+      ::defineAceptarCancelar()
+   else
+      ::defineSalir()
+   end if
 
    ::defineBarraBusqueda()
 
