@@ -25,7 +25,8 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD printDocument()
 
-   METHOD onPostSaveEditDocumento()       INLINE ( msgAlert( "onPostSaveEditDocumento InvoiceCustomer" ) )
+   METHOD onPostSaveAppendDocumento()     INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
+                                                   checkPagosFacturaCliente( ::getId(), ::nView ) )
 
 END CLASS
 

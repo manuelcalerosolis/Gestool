@@ -168,6 +168,12 @@ METHOD OpenFiles() CLASS DocumentsSales
 
       D():AlbaranesClientesLineas( ::nView )
 
+      D():FacturasClientes( ::nView )
+
+      D():FacturasClientesLineas( ::nView )
+
+      D():FacturasClientesCobros( ::nView )
+
       D():TiposIva( ::nView )
 
       D():Divisas( ::nView )

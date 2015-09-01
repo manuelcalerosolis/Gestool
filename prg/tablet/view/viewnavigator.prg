@@ -7,6 +7,7 @@ CLASS ViewNavigator FROM ViewBase
 
    METHOD Resource()
 
+   METHOD getView()                          INLINE ( ::oSender:nView )
    METHOD getWorkArea()                      INLINE ( ::oSender:getWorkArea() )
 
    METHOD setBrowseConfigurationName( cName ) ;

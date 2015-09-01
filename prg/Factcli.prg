@@ -22475,6 +22475,11 @@ return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION checkPagosFacturaCliente( Id, nView )
+
+Return ( ChkLqdFacCli( nil, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():TiposIva( nView ), D():Divisas( nView ) ) )   
+
+//---------------------------------------------------------------------------//
 /*
 Comprueba si una factura esta liquidada
 */
