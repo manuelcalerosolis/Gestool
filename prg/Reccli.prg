@@ -4559,7 +4559,7 @@ Return ( aBasRecCli )
 // Fachada para vistas
 //
 
-FUNCTION generatePagosFacturaCliente( Id, nView )
+FUNCTION generatePagosFacturaCliente( Id, nView, nMode )
 
 Return ( GenPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), D():Divisas( nView ), D():TiposIva( nView ), nMode, .f. ) )   
 
@@ -4569,7 +4569,7 @@ Return ( GenPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLi
 Genera los recibos de una factura
 */
 
-FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfCli, dbfFPago, dbfDiv, dbfIva, nMode, lMessage )
+FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfCli, dbfFPago, dbfDiv, dbfIva, nMode, lMessage ) 
 
    local cCodPgo
    local cSerFac
