@@ -25,6 +25,8 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD printDocument()
 
+   METHOD onPostSaveEditDocumento()       INLINE ( msgAlert( "onPostSaveEditDocumento InvoiceCustomer" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//

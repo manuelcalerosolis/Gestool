@@ -4555,6 +4555,15 @@ FUNCTION aItmGruposRecibos()
 Return ( aBasRecCli )
 
 //---------------------------------------------------------------------------//
+// 
+// Fachada para vistas
+//
+
+FUNCTION generatePagosFacturaCliente( Id, nView )
+
+Return ( GenPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), D():Divisas( nView ), D():TiposIva( nView ), nMode, .f. ) )   
+
+//---------------------------------------------------------------------------//
 
 /*
 Genera los recibos de una factura
