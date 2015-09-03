@@ -415,9 +415,11 @@ LinesDeliveryNoteCustomer.prg          \
 LinesInvoiceCustomer.prg               \
 ViewSearchNavigator.prg                \
 Product.prg                            \
+Payment.prg                            \
 DocumentSalesViewSearchNavigator.prg   \
 CustomerViewSearchNavigator.prg        \
 ProductViewSearchNavigator.prg         \
+PaymentViewSearchNavigator.prg         \
 CustomerIncidenceViewNavigator.prg     \
 DocumentSalesViewEdit.prg              \
 GeneraFacturasClientes.prg             \
@@ -839,10 +841,12 @@ ViewSearchNavigator.obj                \
 DocumentSalesViewSearchNavigator.obj   \
 CustomerViewSearchNavigator.obj        \
 ProductViewSearchNavigator.obj         \
+PaymentViewSearchNavigator.obj         \
 CustomerIncidence.obj                  \
 CustomerIncidenceView.obj              \
 CustomerIncidenceViewNavigator.obj     \
 Product.obj                            \
+Payment.obj                            \
 DocumentSalesViewEdit.obj              \
 GeneraFacturasClientes.obj             \
 CamposExtra.obj                        \
@@ -1246,10 +1250,12 @@ $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\DocumentSalesViewSearchNavigator.obj  +
 $(OBJ)\CustomerViewSearchNavigator.obj       +
 $(OBJ)\ProductViewSearchNavigator.obj        +
+$(OBJ)\PaymentViewSearchNavigator.obj        +
 $(OBJ)\CustomerIncidence.obj                 +
 $(OBJ)\CustomerIncidenceView.obj             +
 $(OBJ)\CustomerIncidenceViewNavigator.obj    +
 $(OBJ)\Product.obj                           +
+$(OBJ)\Payment.obj                           +
 $(OBJ)\DocumentSalesViewEdit.obj             +
 $(OBJ)\GeneraFacturasClientes.obj            + 
 $(OBJ)\CamposExtra.obj                       +

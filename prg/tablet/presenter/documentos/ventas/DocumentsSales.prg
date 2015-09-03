@@ -4,6 +4,7 @@
 CLASS DocumentsSales FROM Documents
 
    DATA oProduct
+   DATA oPayment
 
    DATA oViewEditResumen
    DATA oDocumentLines
@@ -65,6 +66,8 @@ CLASS DocumentsSales FROM Documents
    METHOD lValidCliente()
 
    METHOD lValidDireccion()
+
+   METHOD lValidPayment()
 
    METHOD ChangeRuta()
 
@@ -130,6 +133,8 @@ METHOD New( oSender ) CLASS DocumentsSales
    ::oCliente              := Customer():init( oSender )  
 
    ::oProduct              := Product():init( oSender )
+
+   ::oPayment              := Payment():init( oSender )
 
    ::oDocumentLines        := DocumentLines():New( oSender ) 
 
@@ -303,8 +308,6 @@ METHOD lValidDireccion() CLASS DocumentsSales
 
    codigoDireccion         := padr( codigoCliente, 12 ) + padr( codigoDireccion, 10 )
 
-   msgAlert( codigoDireccion, "codigoDireccion" )
-
    nOrdAnt                 := ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
 
    if ( D():ClientesDirecciones( ::nView ) )->( dbSeek( codigoDireccion ) )
@@ -323,6 +326,41 @@ METHOD lValidDireccion() CLASS DocumentsSales
    end if
 
    ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+
+Return lValid
+
+//---------------------------------------------------------------------------//
+
+METHOD lValidPayment() CLASS DocumentsSales
+
+   local nOrdAnt
+   local lValid            := .f.
+   local codigoPayment     := hGet( ::hDictionaryMaster, "Pago" )
+
+   if Empty( codigoPayment )
+      return .t.
+   end if
+
+   ::oViewEditResumen:oNombreFormaPago:cText( "" )
+
+   nOrdAnt                 := ( D():FormasPago( ::nView ) )->( OrdSetFocus( "cCodPago" ) )
+
+   if ( D():FormasPago( ::nView ) )->( dbSeek( codigoPayment ) )
+
+      ::oViewEditResumen:oCodigoFormaPago:cText( ( D():FormasPago( ::nView ) )->cCodPago )
+      ::oViewEditResumen:oNombreFormaPago:cText( ( D():FormasPago( ::nView ) )->cDesPago )
+
+      lValid               := .t.
+
+   else
+
+      apoloMsgStop( "Forma de pago no encontrada" )
+      
+      ::oViewEditResumen:oCodigoFormaPago:setFocus()
+
+   end if
+
+   ( D():FormasPago( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
 
 Return lValid
 
