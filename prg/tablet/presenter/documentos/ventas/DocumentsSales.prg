@@ -3,7 +3,7 @@
  
 CLASS DocumentsSales FROM Documents
 
-   DATA nMode
+   DATA oProduct
 
    DATA oViewEditResumen
    DATA oDocumentLines
@@ -128,6 +128,8 @@ METHOD New( oSender ) CLASS DocumentsSales
    ::oViewEdit             := DocumentSalesViewEdit():New( oSender )
 
    ::oCliente              := Customer():init( oSender )  
+
+   ::oProduct              := Product():init( oSender )
 
    ::oDocumentLines        := DocumentLines():New( oSender ) 
 

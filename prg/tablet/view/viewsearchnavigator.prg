@@ -19,6 +19,8 @@ CLASS ViewSearchNavigator FROM ViewNavigator
 
    METHOD setSelectorMode()            INLINE ( ::lSelectorMode  := .t. )
 
+   METHOD isEndOk()                    INLINE ( ::oDlg:nResult == IDOK )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
