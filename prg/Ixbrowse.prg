@@ -595,11 +595,7 @@ METHOD MakeTotals( aCols ) CLASS IXBrowse
 
       nCols    := Len( aCols )
 
-      // msgAlert( (::cAlias)->(Recno()), "recno antes de MakeTotals")
-
       uBm      := (::cAlias)->(Recno()) // ::BookMark()
-
-      // msgAlert( uBm, "valor q devuelve uBm")
 
       Eval( ::bGoTop )
       do

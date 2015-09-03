@@ -340,7 +340,6 @@ METHOD setCodeAndValue( cCodImp, uValue )
    end if 
    
    sysRefresh()
-   // msgAlert( ::nValImp( cCodImp ), "::nValImp( cCodImp )" )
 
    if isObject( uValue )
       uValue:cText( ::nValImp( cCodImp ) )

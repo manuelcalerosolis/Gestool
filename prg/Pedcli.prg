@@ -12252,7 +12252,7 @@ Static Function hValue( aTmp, aTmpPed )
          hValue[ "cValorPropiedad2"  ] := aTmp[ _CVALPR2 ]
          hValue[ "cCodigoFamilia"    ] := aTmp[ _CCODFAM ]
          hValue[ "nTarifaPrecio"     ] := aTmp[ _NTARLIN ]
-         hValue[ "nCajas"            ] := aTmp[ _NCANENT ]
+         hValue[ "nCajas"            ] := aTmp[ _NCANPED ]
          hValue[ "nUnidades"         ] := aTmp[ _NUNICAJA ]
 
       case ValType( aTmp ) == "C"
@@ -12264,7 +12264,7 @@ Static Function hValue( aTmp, aTmpPed )
          hValue[ "cValorPropiedad2"  ] := ( aTmp )->cValPr2
          hValue[ "cCodigoFamilia"    ] := ( aTmp )->cCodFam
          hValue[ "nTarifaPrecio"     ] := ( aTmp )->nTarLin         
-         hValue[ "nCajas"            ] := ( aTmp )->nCanEnt
+         hValue[ "nCajas"            ] := ( aTmp )->nCanPed
          hValue[ "nUnidades"         ] := ( aTmp )->nUniCaja
 
    end case      
@@ -15609,8 +15609,8 @@ function aColPedCli()
    aAdd( aColPedCli, { "cValPr2",   "C",   40,  0, "Valor de la segunda propiedad",                   "ValorPropiedad2",            "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cDetalle",  "C",  250,  0, "Descripción de artículo",                         "DescripcionArticulo",        "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nIva"    ,  "N",    6,  2, "Porcentaje de impuesto",                          "PorcentajeImpuesto",         "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nCanPed" ,  "N",   16,  6, "Cantidad pedida",                                 "Cajas",                      "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "nUniCaja",  "N",   16,  6, "Unidades por caja",                               "Unidades",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nCanPed" ,  "N",   16,  6, cNombreCajas(),                                    "Cajas",                      "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "nUniCaja",  "N",   16,  6, cNombreUnidades(),                                 "Unidades",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nUndKit",   "N",   16,  6, "Unidades del producto kit",                       "UnidadesKit",                "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nPreDiv" ,  "N",   16,  6, "Precio del artículo",                             "PrecioVenta",                "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nPntVer",   "N",   16,  6, "Importe punto verde",                             "PuntoVerde",                 "", "( cDbfCol )", nil } )

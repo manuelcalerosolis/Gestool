@@ -6103,7 +6103,7 @@ Function Test()
 
       else 
 
-         msgAlert( "No he podido crear el buildMailerObject")
+         msgStop( "No he podido crear el buildMailerObject")
    
       end if 
 

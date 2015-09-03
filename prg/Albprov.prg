@@ -10174,7 +10174,6 @@ FUNCTION setFacturadoAlbaranProveedorCabecera( lFacturado, nView, cNumFac )
    /*
    Cambiamos las cabeceras-----------------------------------------------------
    */
-   //msgAlert( lFacturado, "lFacturado" )
 
    if dbDialogLock( D():AlbaranesProveedores( nView ) )
       ( D():AlbaranesProveedores( nView ) )->lFacturado := lFacturado

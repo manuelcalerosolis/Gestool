@@ -674,9 +674,7 @@ METHOD okDialog() CLASS TReplaceDialog
    local nFldPos
 
    if !::ValidDialog()
-
-      msgAlert( "salida por dialog invalido" )
-
+      msgStop( "Salida por dialogo invalido." )
       Return .f.
    end if
 

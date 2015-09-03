@@ -13949,11 +13949,6 @@ Function AppendFacturaProveedores( hHeader, aLines )
 
    hHeader  := hb_deserialize( memoread( "c:\ads\serialize.txt" ) )
 
-      for n := 1 to len( hHeader )
-         // msgAlert( HGetKeyAt( hHeader, n ) )  
-         // msgAlert( HGetValueAt( hHeader, n ) )
-      next
-
    Return .f.
 
    if !OpenFiles()

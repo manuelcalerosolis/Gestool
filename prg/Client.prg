@@ -12547,9 +12547,7 @@ Function hAtipica( hValue )
 
    endif 
 
-   /*
-   Guardamos la posición inicial-----------------------------------------------
-   */
+   // Atipicas por clientes-----------------------------------------------
 
    nRec              		:= ( D():Atipicas( hValue[ "nView" ] ) )->( Recno() )
 
@@ -12562,12 +12560,12 @@ Function hAtipica( hValue )
          while hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ] == ( D():Atipicas( hValue[ "nView" ] ) )->cCodCli + ( D():Atipicas( hValue[ "nView" ] ) )->cCodArt + ( D():Atipicas( hValue[ "nView" ] ) )->cCodPr1 + ( D():Atipicas( hValue[ "nView" ] ) )->cCodPr2 + ( D():Atipicas( hValue[ "nView" ] ) )->cValPr1 + ( D():Atipicas( hValue[ "nView" ] ) )->cValPr2 .and.;
                !( D():Atipicas( hValue[ "nView" ] ) )->( Eof() )
 
-               if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-                  lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
+            if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
+               lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
 
-                  hAtipica       := hValoresAtipica( hValue, hAtipica )
+               hAtipica       := hValoresAtipica( hValue, hAtipica )
 
-               end if
+            end if
 
             ( D():Atipicas( hValue[ "nView" ] ) )->( dbSkip() )
 
@@ -12578,6 +12576,8 @@ Function hAtipica( hValue )
    end if
 
    ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( nOrdAnt ) )
+
+   // Atipicas por grupo de clientes-----------------------------------------------
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cGrpArt" ) )
 
@@ -12609,10 +12609,7 @@ Function hAtipica( hValue )
 
    ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( nOrdAnt ) )
 
-   /*
-   Buscamos por familia--------------------------------------------------------
-   */
-
+   // Buscamos por familia--------------------------------------------------------
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cCodFam" ) )
 
@@ -12643,6 +12640,8 @@ Function hAtipica( hValue )
    end if
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( nOrdAnt ) )
+
+   // Buscamos familias y grupos de clientes-----------------------------------
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cGrpFam" ) )
 
@@ -12685,12 +12684,12 @@ Function hAtipica( hValue )
          hhaskey( hAtipica, "nUnidadesCobrar" )
 
          do case
-            case hAtipica[ "nTipoXY" ] == 1     //Cajas
+            case hAtipica[ "nTipoXY" ] == 1     // Cajas
 
                nModOferta                          := Int( Div( hValue[ "nCajas" ], hAtipica[ "nUnidadesVender" ] ) )
                hAtipica[ "nCajasGratis" ]          := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] ) * nModOferta
 
-            case hAtipica[ "nTipoXY" ] == 2     //Unidades
+            case hAtipica[ "nTipoXY" ] == 2     // Unidades
 
                if mod( hValue[ "nCajas" ] * hValue[ "nUnidades" ], hAtipica[ "nUnidadesVender" ] ) == 0
 

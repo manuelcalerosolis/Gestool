@@ -14475,6 +14475,8 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 
    end if
 
+   // Control de stock --------------------------------------------------------
+
    if !Empty( aTmp[ _CREF ] ) .and. ( aTmp[ _LNOTVTA ] .or. aTmp[ _LMSGVTA ] )
 
       nTotUnd     := nTotNFacCli( aTmp )
@@ -14633,6 +14635,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpFac, dbfTmpLin, oBrw, nMode )
 
    hAtipica                   := hAtipica( hValue( aTmp, aTmpFac ) )
    if !empty( hAtipica ) 
+
       if hhaskey( hAtipica, "nCajasGratis" ) .and. hget( hAtipica, "nCajasGratis" ) != 0
          nCajasGratis         := hget( hAtipica, "nCajasGratis" ) 
       end if 

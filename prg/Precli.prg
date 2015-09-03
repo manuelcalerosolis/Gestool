@@ -4565,6 +4565,7 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
 
    hAtipica                   := hAtipica( hValue( aTmp, aTmpPre ) )
    if !empty( hAtipica ) 
+
       if hhaskey( hAtipica, "nCajasGratis" ) .and. hget( hAtipica, "nCajasGratis" ) != 0
          nCajasGratis         := hget( hAtipica, "nCajasGratis" ) 
       end if 
@@ -4572,9 +4573,6 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
          nUnidadesGratis      := hget( hAtipica, "nUnidadesGratis" ) 
       end if
    end if
-
-   msgalert( nCajasGratis, "nCajasGratis antes de ofertas")
-   msgalert( nUnidadesGratis, "nUnidadesGratis antes de ofertas")
 
    // Ofertas------------------------------------------------------------------
 
@@ -4586,9 +4584,6 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
          nUnidadesGratis      := sOfertaArticulo:nUnidadesGratis
       end if
    end if 
-
-   msgalert( nUnidadesGratis, "nUnidadesGratis")
-   msgalert( nCajasGratis, "nCajasGratis")
 
    // Cajas gratis ---------------------------------------------------------
 
@@ -8199,7 +8194,7 @@ Static Function hValue( aTmp, aTmpPre )
          hValue[ "cValorPropiedad2"  ] := aTmp[ _CVALPR2 ]
          hValue[ "cCodigoFamilia"    ] := aTmp[ _CCODFAM ]
          hValue[ "nTarifaPrecio"     ] := aTmp[ _NTARLIN ]
-         hValue[ "nCajas"            ] := aTmp[ _NCANENT ]
+         hValue[ "nCajas"            ] := aTmp[ _NCANPRE ]
          hValue[ "nUnidades"         ] := aTmp[ _NUNICAJA ]
 
       case ValType( aTmp ) == "C"
@@ -8211,7 +8206,7 @@ Static Function hValue( aTmp, aTmpPre )
          hValue[ "cValorPropiedad2"  ] := ( aTmp )->cValPr2
          hValue[ "cCodigoFamilia"    ] := ( aTmp )->cCodFam
          hValue[ "nTarifaPrecio"     ] := ( aTmp )->nTarLin         
-         hValue[ "nCajas"            ] := ( aTmp )->nCanEnt
+         hValue[ "nCajas"            ] := ( aTmp )->nCanPre
          hValue[ "nUnidades"         ] := ( aTmp )->nUniCaja
 
    end case      
@@ -10459,9 +10454,9 @@ function aColPreCli()
    aAdd( aColPreCli, { "cRef",    "C",   18,  0, "Referencia del producto" ,                 "Articulo",                      "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "cDetalle","C",  250,  0, "Descripción de artículo" ,                 "DescripcionArticulo",           "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "nIva"    ,"N",    6,  2, "Importe del " + cImp() ,                   "PorcentajeImpuesto",            "", "( cDbfCol )", nil } )
-   aAdd( aColPreCli, { "nCanPre" ,"N",   16,  6, "Cantidad Preida" ,                         "Cajas",                         "", "( cDbfCol )", nil } )
-   aAdd( aColPreCli, { "nUniCaja","N",   16,  6, "Unidades por caja" ,                       "Unidades",                      "", "( cDbfCol )", nil } )
-   aAdd( aColPreCli, { "lConTrol","L",    1,  0, "" ,                                        "",                              "", "( cDbfCol )", nil } )
+   aAdd( aColPreCli, { "nCanPre" ,"N",   16,  6, cNombreCajas(),                             "Cajas",                         "", "( cDbfCol )", nil } )
+   aAdd( aColPreCli, { "nUniCaja","N",   16,  6, cNombreUnidades(),                          "Unidades",                      "", "( cDbfCol )", nil } )
+   aAdd( aColPreCli, { "lControl","L",    1,  0, "" ,                                        "",                              "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "nUndKit", "N",   16,  6, "Unidades tipo kit" ,                       "UnidadesKit",                   "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "nPreDiv" ,"N",   16,  6, "Importe del producto" ,                    "PrecioVenta",                   "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "nPntVer", "N",   16,  6, "Importe punto verde" ,                     "PuntoVerde",                    "", "( cDbfCol )", nil } )
