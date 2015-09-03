@@ -4573,6 +4573,9 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
       end if
    end if
 
+   msgalert( nCajasGratis, "nCajasGratis antes de ofertas")
+   msgalert( nUnidadesGratis, "nUnidadesGratis antes de ofertas")
+
    // Ofertas------------------------------------------------------------------
 
    if empty( nCajasGratis ) .and. empty( nUnidadesGratis )
@@ -4583,6 +4586,9 @@ Static Function saveDetail( aTmp, aClo, aGet, aTmpPre, dbfTmpLin, oBrw, nMode )
          nUnidadesGratis      := sOfertaArticulo:nUnidadesGratis
       end if
    end if 
+
+   msgalert( nUnidadesGratis, "nUnidadesGratis")
+   msgalert( nCajasGratis, "nCajasGratis")
 
    // Cajas gratis ---------------------------------------------------------
 

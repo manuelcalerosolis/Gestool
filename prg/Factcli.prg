@@ -14041,6 +14041,91 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
          end if
 
 	      /*
+         Cargamos el codigo de las unidades---------------------------------
+         */
+
+         if !Empty( aGet[ _CUNIDAD ] )
+            aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
+         else
+            aTmp[ _CUNIDAD ]  := ( D():Articulos( nView ) )->cUnidad
+         end if
+
+         /*
+         Guardamos el precio del artículo dependiendo de las propiedades--//
+         */
+
+        	if !empty( aGet[ _NPREUNIT ] ) // .and. empty( aTmp[ _NPREUNIT ] )
+
+	         nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
+        		if nPrePro != 0
+	           	aGet[ _NPREUNIT ]:cText( nPrePro )
+            else
+               aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
+        		end if
+
+        	end if
+
+        	// Precios en tarifas-------------------------------------------------
+
+        	if !Empty( aTmpFac[ _CCODTAR ] ) // .and. empty( aTmp[ _NPREUNIT ] )
+
+            // Precio----------------------------------------------------------
+
+            nImpOfe  := RetPrcTar( aTmp[ _CREF ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
+            if nImpOfe != 0
+            	if !empty( aGet[ _NPREUNIT ] )
+            		aGet[ _NPREUNIT ]:cText( nImpOfe )
+            	end if
+            end if
+
+            // Descuento porcentual--------------------------------------------
+
+            nImpOfe  := RetPctTar( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
+            if nImpOfe != 0
+            	if !Empty( aGet[_NDTO ] )
+            		aGet[_NDTO   ]:cText( nImpOfe )
+            	end if	
+            end if
+
+            // Descuento lineal------------------------------------------------
+
+            nImpOfe  := RetLinTar( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
+            if nImpOfe != 0
+            	if !empty( aGet[ _NDTODIV ] )
+            		aGet[ _NDTODIV ]:cText( nImpOfe )
+            	end if	
+            end if
+
+            // Comision de agente----------------------------------------------
+
+            nImpOfe  := retComTar( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
+            if nImpOfe != 0
+            	if !empty( aGet[ _NCOMAGE ] )
+            		aGet[ _NCOMAGE ]:cText( nImpOfe )
+            	end if	
+            end if
+
+            // Descuento de promoción------------------------------------------
+
+            nImpOfe  := RetDtoPrm( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
+            if nImpOfe  != 0
+            	if !empty( aGet[ _NDTOPRM ] )
+            		aGet[ _NDTOPRM ]:cText( nImpOfe )
+            	end if	
+            end if
+
+            // Descuento de promoción para el agente---------------------------
+
+            nDtoAge  := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
+            if nDtoAge  != 0
+            	if !empty( aGet[ _NCOMAGE] )
+            		aGet[ _NCOMAGE ]:cText( nDtoAge )
+            	end if	
+            end if
+
+        	end if
+
+        	/*
 			Estudiamos los casos de las atipicas de clientes-----------------------
 	      */
 
@@ -14098,90 +14183,7 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
         	end if
 
-        	// Precios en tarifas-------------------------------------------------
-
-        	if !Empty( aTmpFac[ _CCODTAR ] ) // .and. empty( aTmp[ _NPREUNIT ] )
-
-            // Precio----------------------------------------------------------
-
-            nImpOfe  := RetPrcTar( aTmp[ _CREF ], aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL, aTmp[ _NTARLIN ] )
-            if nImpOfe != 0
-            	if !empty( aGet[ _NPREUNIT ] )
-            		aGet[ _NPREUNIT ]:cText( nImpOfe )
-            	end if
-            end if
-
-            // Descuento porcentual--------------------------------------------
-
-            nImpOfe  := RetPctTar( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], dbfTarPreL )
-            if nImpOfe != 0
-            	if !Empty( aGet[_NDTO ] )
-            		aGet[_NDTO   ]:cText( nImpOfe )
-            	end if	
-            end if
-
-            // Descuento lineal------------------------------------------------
-
-            nImpOfe  := RetLinTar( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
-            if nImpOfe != 0
-            	if !empty( aGet[ _NDTODIV ] )
-            		aGet[ _NDTODIV ]:cText( nImpOfe )
-            	end if	
-            end if
-
-            // Comision de agente----------------------------------------------
-
-            nImpOfe  := retComTar( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmpFac[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
-            if nImpOfe != 0
-            	if !empty( aGet[ _NCOMAGE ] )
-            		aGet[ _NCOMAGE ]:cText( nImpOfe )
-            	end if	
-            end if
-
-            // Descuento de promoci¢n------------------------------------------
-
-            nImpOfe  := RetDtoPrm( aTmp[ _CREF ], cCodFam, aTmpFac[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], dbfTarPreL )
-            if nImpOfe  != 0
-            	if !empty( aGet[ _NDTOPRM ] )
-            		aGet[ _NDTOPRM ]:cText( nImpOfe )
-            	end if	
-            end if
-
-            // Descuento de promoci¢n para el agente---------------------------
-
-            nDtoAge  := RetDtoAge( aTmp[ _CREF ], cCodFam, aTmpFac[ _CCODTAR ], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpFac[_DFECFAC], aTmpFac[_CCODAGE], dbfTarPreL, dbfTarPreS )
-            if nDtoAge  != 0
-            	if !empty( aGet[ _NCOMAGE] )
-            		aGet[ _NCOMAGE ]:cText( nDtoAge )
-            	end if	
-            end if
-
-        	end if
-
-         //--guardamos el precio del artículo dependiendo de las propiedades--//
-
          sysRefresh()
-
-        	if !empty( aGet[ _NPREUNIT ] ) // .and. empty( aTmp[ _NPREUNIT ] )
-
-	         nPrePro           := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpFac[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpFac[_CCODTAR] )
-        		if nPrePro != 0
-	           	aGet[ _NPREUNIT ]:cText( nPrePro )
-            else
-               aGet[ _NPREUNIT ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpFac[ _CDIVFAC ], aTmpFac[ _LIVAINC ], D():Articulos( nView ), dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ], oNewImp ) )
-        		end if
-
-        	end if
-
-         /*
-         Cargamos el codigo de las unidades---------------------------------
-         */
-
-         if !Empty( aGet[ _CUNIDAD ] )
-            aGet[ _CUNIDAD ]:cText( ( D():Articulos( nView ) )->cUnidad )
-         else
-            aTmp[ _CUNIDAD ]  := ( D():Articulos( nView ) )->cUnidad
-         end if
 
          ValidaMedicion( aTmp, aGet )
 
