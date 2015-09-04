@@ -82,7 +82,11 @@ METHOD runGridPayment() CLASS Payment
 
    if !Empty( ::oGridPayment )
 
+      ?"Antes del showView"
+
       ::oGridPayment:showView()
+
+      ?"Despues del showView"
 
       if ::oGridPayment:isEndOk()
          result   := ( D():FormasPago( ::nView ) )->cCodPago

@@ -333,16 +333,18 @@ Return lValid
 
 METHOD lValidPayment() CLASS DocumentsSales
 
+   local nRec
    local nOrdAnt
    local lValid            := .f.
    local codigoPayment     := hGet( ::hDictionaryMaster, "Pago" )
 
    if Empty( codigoPayment )
-      return .t.
+      return .f.
    end if
 
    ::oViewEditResumen:oNombreFormaPago:cText( "" )
-
+   
+   nRec                    := ( D():FormasPago( ::nView ) )->( Recno() )
    nOrdAnt                 := ( D():FormasPago( ::nView ) )->( OrdSetFocus( "cCodPago" ) )
 
    if ( D():FormasPago( ::nView ) )->( dbSeek( codigoPayment ) )
@@ -354,13 +356,14 @@ METHOD lValidPayment() CLASS DocumentsSales
 
    else
 
-      apoloMsgStop( "Forma de pago no encontrada" )
+      apoloMsgStop( "Forma de pago no encontradaaaaaa" )
       
       ::oViewEditResumen:oCodigoFormaPago:setFocus()
 
    end if
 
    ( D():FormasPago( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():FormasPago( ::nView ) )->( dbGoTo( nRec ) )
 
 Return lValid
 
@@ -848,7 +851,7 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
          hSet( ::hDictionaryMaster, "TipoImpuesto",                  ( D():Clientes( ::nView ) )->nRegIva )
          hSet( ::hDictionaryMaster, "Almacen",                       ( D():Clientes( ::nView ) )->cCodAlm )
          hSet( ::hDictionaryMaster, "Tarifa",                        ( D():Clientes( ::nView ) )->cCodTar )
-         hSet( ::hDictionaryMaster, "Pago",                          ( D():Clientes( ::nView ) )->CodPago )
+         hSet( ::hDictionaryMaster, "Pago",                          if( !Empty( ( D():Clientes( ::nView ) )->CodPago ), ( D():Clientes( ::nView ) )->CodPago, cDefFpg() ) )
          hSet( ::hDictionaryMaster, "Agente",                        ( if( Empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
          hSet( ::hDictionaryMaster, "Ruta",                          ( D():Clientes( ::nView ) )->cCodRut )
          hSet( ::hDictionaryMaster, "NumeroTarifa",                  ( D():Clientes( ::nView ) )->nTarifa )
