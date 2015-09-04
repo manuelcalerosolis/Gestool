@@ -433,6 +433,8 @@ TSpecialSearchArticulo.prg             \
 TSpecialInfoArticulo.prg               \
 TSpecialInfoCliente.prg                \
 PedCli2PedPrv.prg                      \
+Directions.prg                         \
+DirectionsViewSearchNavigator.prg      \
 
 C               =       	            \
 Img2pdf.c               	            \
@@ -859,6 +861,8 @@ TSpecialSearchArticulo.obj             \
 TSpecialInfoArticulo.obj               \
 TSpecialInfoCliente.obj                \
 PedCli2PedPrv.obj                      \
+Directions.obj                         \
+DirectionsViewSearchNavigator.obj      \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1269,6 +1273,8 @@ $(OBJ)\CentroCoste.Obj                       +
 $(OBJ)\TSpecialSearchArticulo.obj            +
 $(OBJ)\TSpecialInfoArticulo.obj              +
 $(OBJ)\TSpecialInfoCliente.obj               +
+$(OBJ)\Directions.obj                        +
+$(OBJ)\DirectionsViewSearchNavigator.obj     +
 $(OBJ)\PedCli2PedPrv.obj                     +
 $(OBJ)\Autoget.Obj                  
 $<,$*

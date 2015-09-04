@@ -230,7 +230,7 @@ METHOD defineDireccion() CLASS ViewEdit
                               "nClrInit"  => nGridColor(),;
                               "nClrOver"  => nGridColor(),;
                               "nClrVisit" => nGridColor(),;
-                              "bAction"   => {|| GridBrwObras( ::getCodigoDireccion, ::getNombreDireccion, hGet( ::oSender:hDictionaryMaster, "Cliente" ) ) } } )
+                              "bAction"   => {|| ::oSender:runGridDirections() } } )
 
    ::getCodigoDireccion := TGridGet():Build( {  "nRow"      => 120,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;

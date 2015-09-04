@@ -6118,7 +6118,7 @@ Cliente--------------------------------------------------------------------
                                           		"nClrInit"  => nGridColor(),;
                                           		"nClrOver" 	=> nGridColor(),;
 												            "nClrVisit" => nGridColor(),;
-                                          		"bAction"   => {|| if( !lRecibosPagadosTmp( dbfTmpPgo ), GridBrwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ), ) } } )
+                                          		"bAction"   => {|| MsgInfo( "" ) } } )
 
 	aGet[ _CCODOBR ]  	:= TGridGet():Build( { 	"nRow"      => 120,;
                                        			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
