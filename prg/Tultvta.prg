@@ -513,7 +513,7 @@ METHOD AddAlbaran()
                ::oDbf:cCodCli := ::cCliDoc
                ::oDbf:cNomCli := ::cNomDoc
 
-               ::AddCliente( ::cCliDoc )
+               ::AddCliente( ::cCliDoc, ::oAlbCliT )
 
                ::oDbf:cDocFac := StrTran( ::oAlbCliL:cSerAlb + "/" + Str( ::oAlbCliL:nNumAlb ) + "/" + ::oAlbCliL:cSufAlb, " ", "" )
                aTotAlb        := aTotAlbCli( ::cNumDoc, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::cDivInf )
