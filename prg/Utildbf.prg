@@ -1198,6 +1198,25 @@ RETURN cAlias
 
 //---------------------------------------------------------------------------//
 
+Function dbSeekArticuloUpperLower( uVal, nView )
+
+   if dbSeekInOrd( uVal, "Codigo", D():Articulos( nView ) )
+      return .t.
+   end if 
+
+   if dbSeekInOrd( upper( uVal ), "Codigo", D():Articulos( nView ) )
+      return .t.
+   end if 
+
+   if dbSeekInOrd( lower( uVal ), "Codigo", D():Articulos( nView ) )
+      return .t.
+   end if 
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+
 Function dbSeekUpperLower( uVal, nView )
 
    local lReturn

@@ -120,9 +120,6 @@ CLASS DocumentsSales FROM Documents
    
    METHOD Resource( nMode )
 
-   METHOD FilterDirections()
-   METHOD FreeDirections()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -956,18 +953,17 @@ METHOD runGridDirections() CLASS DocumentsSales
    local codigoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
 
    if Empty( codigoCliente )
-
       ApoloMsgStop( "No puede seleccionar una dirección con cliente vacío" )
-
-      Return .f.
-
+      Return ( self )
    end if
 
    ::oViewEdit:getCodigoDireccion:Disable()
 
    if !Empty( ::oDirections:oGridDirections )
 
-      ::FilterDirections()
+      ::oDirections:setIdCustomer( codigoCliente )
+
+      ::oDirections:putFilter()
 
       ::oDirections:oGridDirections:showView()
 
@@ -977,7 +973,7 @@ METHOD runGridDirections() CLASS DocumentsSales
 
       ::lValidDireccion()
 
-      ::FreeDirections()
+      ::oDirections:quitFilter()
 
    end if
 
@@ -987,24 +983,3 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD FilterDirections() CLASS DocumentsSales
-
-   local codigoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
-
-   ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
-   ( D():ClientesDirecciones( ::nView ) )->( OrdScope( 0, codigoCliente ) )
-   ( D():ClientesDirecciones( ::nView ) )->( OrdScope( 1, codigoCliente ) )
-   ( D():ClientesDirecciones( ::nView ) )->( dbGoTop() )
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD FreeDirections() CLASS DocumentsSales
-
-   ( D():ClientesDirecciones( ::nView ) )->( OrdScope( 0, nil ) )
-   ( D():ClientesDirecciones( ::nView ) )->( OrdScope( 1, nil ) )
-
-Return self
-
-//---------------------------------------------------------------------------//

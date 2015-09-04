@@ -140,15 +140,15 @@ Return ( self )
 
 METHOD lSeekArticulo() CLASS LinesDocumentsSales
 
-   local cCodArt     := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
+   local cCodigoArticulo     := ::oViewEditDetail:oGetArticulo:varGet()   //hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
 
-   if Empty( cCodArt )
+   if empty( cCodigoArticulo )
       Return .f.
    end if
 
-   cCodArt           := cSeekCodebarView( cCodArt, ::getView() )
+   cCodigoArticulo           := cSeekCodebarView( cCodigoArticulo, ::getView() )
 
-Return ( dbSeekUpperLower( cCodArt, ::getView() ) )
+Return ( dbSeekArticuloUpperLower( cCodigoArticulo, ::getView() ) )
 
 //---------------------------------------------------------------------------//
 
@@ -320,12 +320,12 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
       Return .f.
    end if
 
-   if cCodArt == ::cOldCodigoArticulo
+   if ( cCodArt == ::cOldCodigoArticulo )
       Return .f.
    end if
 
    if !::lSeekArticulo()
-      ApoloMsgStop( "Artículo no encontrado" )
+      apoloMsgStop( "Artículo no encontrado" )
       Return .f.
    end if
 
@@ -407,7 +407,7 @@ Return ( self )
 
 METHOD recalcularTotal() CLASS LinesDocumentsSales
 
-   if !Empty( ::oViewEditDetail:oTotalLinea )
+   if !empty( ::oViewEditDetail:oTotalLinea )
       ::oViewEditDetail:oTotalLinea:cText( ::oSender:oDocumentLineTemporal:Total() )
    end if
 
@@ -417,11 +417,9 @@ RETURN ( .t. )
 
 METHOD runGridProduct() CLASS LinesDocumentsSales
 
-   local result   := ""
-
    ::oViewEditDetail:oGetArticulo:Disable()
 
-   if !Empty( ::oSender:oProduct:oGridProduct )
+   if !empty( ::oSender:oProduct:oGridProduct )
 
       ::oSender:oProduct:oGridProduct:showView()
 
@@ -429,13 +427,15 @@ METHOD runGridProduct() CLASS LinesDocumentsSales
          ::oViewEditDetail:SetGetValue( ( D():Articulos( ::oSender:nView ) )->Codigo, "Articulo" )
       end if
 
-      ::CargaArticulo()
+      ::cargaArticulo()
+
       ::recalcularTotal()
 
    end if
 
    ::oViewEditDetail:oGetArticulo:Enable()
+   ::oViewEditDetail:oGetArticulo:setFocus()
 
-Return ( result )
+Return ( self )
 
 //---------------------------------------------------------------------------//

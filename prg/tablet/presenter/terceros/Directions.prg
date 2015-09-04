@@ -7,6 +7,8 @@ CLASS Directions FROM Editable
    
    DATA oGridDirections
 
+   DATA idCustomer
+
    METHOD New()
 
    METHOD Init( oSender )
@@ -15,6 +17,12 @@ CLASS Directions FROM Editable
    METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
 
    METHOD setEnviroment()              INLINE ( ::setDataTable( "ObrasT" ) ) 
+
+   METHOD setIdCustomer( id )          INLINE ( ::idCustomer := id )
+   METHOD getIdCustomer()              INLINE ( ::idCustomer )
+
+   METHOD putFilter()
+   METHOD quitFilter()
 
 ENDCLASS
 
@@ -77,5 +85,25 @@ METHOD OpenFiles() CLASS Directions
    end if
 
 Return ( lOpenFiles )
+
+//---------------------------------------------------------------------------//
+
+METHOD putFilter() CLASS Directions
+
+   ( D():ClientesDirecciones( ::nView ) )->( ordsetfocus( "cCodCli" ) )
+   ( D():ClientesDirecciones( ::nView ) )->( ordscope( 0, ::getIdCustomer() ) )
+   ( D():ClientesDirecciones( ::nView ) )->( ordscope( 1, ::getIdCustomer() ) )
+   ( D():ClientesDirecciones( ::nView ) )->( dbgotop() )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD quitFilter() CLASS Directions
+
+   ( D():ClientesDirecciones( ::nView ) )->( ordscope( 0, nil ) )
+   ( D():ClientesDirecciones( ::nView ) )->( ordscope( 1, nil ) )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

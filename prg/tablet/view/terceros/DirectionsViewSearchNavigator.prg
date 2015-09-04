@@ -9,7 +9,7 @@ CLASS DirectionsViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD botonesAcciones()            INLINE ( self )
 
-   METHOD validBarraBusqueda()         INLINE ( ::oSender:oSender:FilterDirections() )
+   METHOD validBarraBusqueda()         INLINE ( .t. )
 
 END CLASS
 

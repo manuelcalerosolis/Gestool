@@ -17976,7 +17976,7 @@ RETURN ( lTmp )
 
 Function cSeekCodebarView( cCodBar, nView )
 
-Return ( cSeekCodebar( cCodBar, D():ArticulosCodigosBarras( nView ), D():Articulos( nView ) ) )
+Return ( alltrim( cSeekCodebar( cCodBar, D():ArticulosCodigosBarras( nView ), D():Articulos( nView ) ) ) )
 
 //---------------------------------------------------------------------------//
 
