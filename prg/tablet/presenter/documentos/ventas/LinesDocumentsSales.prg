@@ -115,6 +115,8 @@ CLASS LinesDocumentsSales FROM Editable
       METHOD SetDescuentoLinealAtipicaCliente()             VIRTUAL
       METHOD SetDescuentoLinealOfertaArticulo()             VIRTUAL
 
+   METHOD runGridProduct()
+
    METHOD CargaArticulo()
    METHOD resetCodigoArticulo()                             INLINE ( ::cOldCodigoArticulo := "" )
 
@@ -410,5 +412,30 @@ METHOD recalcularTotal() CLASS LinesDocumentsSales
    end if
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridProduct() CLASS LinesDocumentsSales
+
+   local result   := ""
+
+   ::oViewEditDetail:oGetArticulo:Disable()
+
+   if !Empty( ::oSender:oProduct:oGridProduct )
+
+      ::oSender:oProduct:oGridProduct:showView()
+
+      if ::oSender:oProduct:oGridProduct:isEndOk()
+         ::oViewEditDetail:SetGetValue( ( D():Articulos( ::oSender:nView ) )->Codigo, "Articulo" )
+      end if
+
+      ::CargaArticulo()
+      ::recalcularTotal()
+
+   end if
+
+   ::oViewEditDetail:oGetArticulo:Enable()
+
+Return ( result )
 
 //---------------------------------------------------------------------------//

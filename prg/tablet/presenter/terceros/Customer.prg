@@ -18,8 +18,6 @@ CLASS Customer FROM Editable
 
    METHOD runNavigatorCustomer()
 
-   METHOD runGridCustomer()
-
    METHOD OpenFiles()
    METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
 
@@ -100,24 +98,6 @@ METHOD runNavigatorCustomer() CLASS Customer
    ::CloseFiles()
 
 return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD runGridCustomer() CLASS Customer
-
-   local result   := ""
-
-   if !Empty( ::oGridCustomer )
-
-      ::oGridCustomer:showView()
-
-      if ::oGridCustomer:IsEndOk()
-         result   := ( D():Clientes( ::nView ) )->Cod
-      end if
-
-   end if
-
-Return ( result )
 
 //---------------------------------------------------------------------------//
 

@@ -14,8 +14,6 @@ CLASS Payment FROM Editable
 
    METHOD setEnviroment()              INLINE ( ::setDataTable( "FPago" ) ) 
 
-   METHOD runGridPayment()
-
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -36,7 +34,7 @@ METHOD Init( oSender ) CLASS Payment
 
    ::oGridPayment                        := PaymentViewSearchNavigator():New( self )
    ::oGridPayment:setSelectorMode()
-   ::oGridPayment:setTextoTipoDocumento( "Seleccione Forma de pago" )
+   ::oGridPayment:setTextoTipoDocumento( "Seleccione forma de pago" )
    ::oGridPayment:setDblClickBrowseGeneral( {|| ::oGridPayment:endView() } )
 
    ::setEnviroment()
@@ -73,27 +71,5 @@ METHOD OpenFiles() CLASS Payment
    end if
 
 Return ( lOpenFiles )
-
-//---------------------------------------------------------------------------//
-
-METHOD runGridPayment() CLASS Payment
-
-   local result   := ""
-
-   if !Empty( ::oGridPayment )
-
-      ?"Antes del showView"
-
-      ::oGridPayment:showView()
-
-      ?"Despues del showView"
-
-      if ::oGridPayment:isEndOk()
-         result   := ( D():FormasPago( ::nView ) )->cCodPago
-      end if
-
-   end if
-
-Return ( result )
 
 //---------------------------------------------------------------------------//

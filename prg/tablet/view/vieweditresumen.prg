@@ -48,8 +48,6 @@ CLASS ViewEditResumen FROM ViewBase
 
    METHOD SetGet( u )                           INLINE ( hset( ::oSender:hDictionaryMaster, "RecargoEquivalencia", u ) )
 
-   METHOD gridPayment()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -168,18 +166,18 @@ METHOD defineFormaPago() CLASS ViewEditResumen
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| ::gridPayment() } } )
+                           "bAction"   => {|| ::oSender:runGridPayment() } } )
 
-   ::oCodigoFormaPago  := TGridGet():Build( {   "nRow"      => 65,;
+   ::oCodigoFormaPago   := TGridGet():Build( {   "nRow"      => 65,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                                 "bSetGet"   => {|u| ::SetGetValue( u, "Pago" ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lPixels"   => .t.,;
-                                                "bValid"    => {|| ::oSender:lValidPayment() } } )
+                                                "bValid"    => {||  ::oSender:lValidPayment() } } )
 
-   ::oNombreFormaPago  := TGridGet():Build(  {  "nRow"      => 65,;
+   ::oNombreFormaPago   := TGridGet():Build(  {  "nRow"      => 65,;
                                                 "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
@@ -188,16 +186,6 @@ METHOD defineFormaPago() CLASS ViewEditResumen
                                                 "nHeight"   => 23 } )
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD gridPayment() CLASS ViewEditResumen
-
-   ::SetGetValue( ::oSender:oPayment:runGridPayment(), "Pago" )
-
-   ::oSender:lValidPayment()
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
 

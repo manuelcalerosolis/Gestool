@@ -63,10 +63,12 @@ CLASS DocumentsSales FROM Documents
    
    METHOD ChangeSerieTablet( getSerie )
 
+   METHOD runGridCustomer()
    METHOD lValidCliente()
 
    METHOD lValidDireccion()
 
+   METHOD runGridPayment()
    METHOD lValidPayment()
 
    METHOD ChangeRuta()
@@ -259,36 +261,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD lValidCliente() CLASS DocumentsSales
-
-   local lValid      := .t.
-   local cNewCodCli  := hGet( ::hDictionaryMaster, "Cliente" )
-
-   if Empty( cNewCodCli )
-      Return .t.
-   else
-      cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
-   end if
-
-   if ::setDatasFromClientes( cNewCodCli )
-
-      ::oViewEdit:refreshCliente()
-      ::oViewEdit:refreshSerie()
-
-      lValid         := .t.
-
-   else
-
-      ApoloMsgStop( "Cliente no encontrado" )
-
-      lValid         := .f.
-
-   end if
-
-RETURN lValid
-
-//---------------------------------------------------------------------------//
-
 METHOD lValidDireccion() CLASS DocumentsSales
 
    local nOrdAnt
@@ -342,6 +314,8 @@ METHOD lValidPayment() CLASS DocumentsSales
       return .f.
    end if
 
+   ::oViewEditResumen:oCodigoFormaPago:Disable()
+
    ::oViewEditResumen:oNombreFormaPago:cText( "" )
    
    nRec                    := ( D():FormasPago( ::nView ) )->( Recno() )
@@ -356,16 +330,50 @@ METHOD lValidPayment() CLASS DocumentsSales
 
    else
 
-      apoloMsgStop( "Forma de pago no encontradaaaaaa" )
+      apoloMsgStop( "Forma de pago no encontrada" )
       
-      ::oViewEditResumen:oCodigoFormaPago:setFocus()
-
    end if
 
    ( D():FormasPago( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
    ( D():FormasPago( ::nView ) )->( dbGoTo( nRec ) )
 
+   ::oViewEditResumen:oCodigoFormaPago:Enable()
+
 Return lValid
+
+//---------------------------------------------------------------------------//
+
+METHOD lValidCliente() CLASS DocumentsSales
+
+   local lValid      := .t.
+   local cNewCodCli  := hGet( ::hDictionaryMaster, "Cliente" )
+
+   if Empty( cNewCodCli )
+      Return .t.
+   else
+      cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
+   end if
+
+   ::oViewEdit:oGetCliente:Disable()
+
+   if ::setDatasFromClientes( cNewCodCli )
+
+      ::oViewEdit:refreshCliente()
+      ::oViewEdit:refreshSerie()
+
+      lValid         := .t.
+
+   else
+
+      ApoloMsgStop( "Cliente no encontrado" )
+
+      lValid         := .f.
+
+   end if
+
+   ::oViewEdit:oGetCliente:Enable()
+
+RETURN lValid
 
 //---------------------------------------------------------------------------//
 
@@ -876,5 +884,49 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
    D():setStatusClientes( ::nView )
 
 Return( lReturn ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridPayment() CLASS DocumentsSales
+
+   ::oViewEditResumen:oCodigoFormaPago:Disable()
+
+   if !Empty( ::oPayment:oGridPayment )
+
+      ::oPayment:oGridPayment:showView()
+
+      if ::oPayment:oGridPayment:isEndOk()
+         ::oViewEditResumen:SetGetValue( ( D():FormasPago( ::nView ) )->cCodPago, "Pago" )
+      end if
+
+      ::lValidPayment()
+
+   end if
+
+   ::oViewEditResumen:oCodigoFormaPago:Enable()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridCustomer() CLASS DocumentsSales
+
+   ::oViewEdit:oGetCliente:Disable()
+
+   if !Empty( ::oCliente:oGridCustomer )
+
+      ::oCliente:oGridCustomer:showView()
+
+      if ::oCliente:oGridCustomer:IsEndOk()
+         ::oViewEdit:SetGetValue( ( D():Clientes( ::nView ) )->Cod, "Cliente" )
+      end if
+
+      ::lValidCliente()
+
+   end if
+
+   ::oViewEdit:oGetCliente:Enable()
+
+Return ( self )
 
 //---------------------------------------------------------------------------//

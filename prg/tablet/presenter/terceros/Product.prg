@@ -14,8 +14,6 @@ CLASS Product FROM Editable
 
    METHOD setEnviroment()              INLINE ( ::setDataTable( "Articulo" ) ) 
 
-   METHOD runGridProduct()
-
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -73,23 +71,5 @@ METHOD OpenFiles() CLASS Product
    end if
 
 Return ( lOpenFiles )
-
-//---------------------------------------------------------------------------//
-
-METHOD runGridProduct() CLASS Product
-
-   local result   := ""
-
-   if !Empty( ::oGridProduct )
-
-      ::oGridProduct:showView()
-
-      if ::oGridProduct:isEndOk()
-         result   := ( D():Articulos( ::nView ) )->Codigo
-      end if
-
-   end if
-
-Return ( result )
 
 //---------------------------------------------------------------------------//

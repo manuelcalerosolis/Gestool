@@ -49,8 +49,6 @@ CLASS ViewDetail FROM ViewBase
 
    METHOD defineTotal()
 
-   METHOD gridProduct()
-
    METHOD ShowLote()    INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
    METHOD HideLote()    INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
    METHOD RefreshLote() INLINE ( ::oGetLote:Refresh() )
@@ -163,7 +161,7 @@ METHOD defineArticulo() CLASS ViewDetail
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| ::gridProduct() } } )
+                           "bAction"   => {|| ::oSender:runGridProduct() } } )
 
    ::oGetArticulo             := TGridGet():Build( {  "nRow"      => 40,;
                                                       "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
@@ -183,18 +181,6 @@ METHOD defineArticulo() CLASS ViewDetail
                                                       "nHeight"   => 23 } )
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD gridProduct() CLASS ViewDetail
-
-   ::SetGetValue( ::oSender:oSender:oProduct:runGridProduct(), "Articulo" )
-
-   ::oSender:CargaArticulo()
-
-   ::oSender:recalcularTotal()
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
 

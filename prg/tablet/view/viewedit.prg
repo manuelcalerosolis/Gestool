@@ -46,8 +46,6 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD getTitleTipoDocumento()   INLINE ( lblTitle( ::getMode() ) + ::getTextoTipoDocumento() )
 
-   METHOD gridCustomer()
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -198,7 +196,7 @@ METHOD defineCliente() CLASS ViewEdit
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| ::gridCustomer() } } )
+                           "bAction"   => {|| ::oSender:runGridCustomer() } } )
 
    ::oGetCliente        := TGridGet():Build( {  "nRow"      => 95,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
@@ -218,16 +216,6 @@ METHOD defineCliente() CLASS ViewEdit
                                                 "nHeight"   => 23 } )
 
 Return ( self )
-
-//---------------------------------------------------------------------------//
-
-METHOD gridCustomer() CLASS ViewEdit
-
-   ::SetGetValue( ::oSender:oCliente:runGridCustomer(), "Cliente" )
-
-   ::oSender:lValidCliente()
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
 
