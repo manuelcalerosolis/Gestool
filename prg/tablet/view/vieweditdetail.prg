@@ -27,7 +27,7 @@ CLASS ViewDetail FROM ViewBase
    METHOD Resource()
    METHOD getSenderDocument()           INLINE ( ::oSender:getSender() )
 
-   METHOD SetGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
+   METHOD SetGetValue( uValue, cName ) INLINE ( if (  isNil( uValue ),;
                                                 hGet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cName ),;
                                                 hSet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cName, uValue ) ) )
 

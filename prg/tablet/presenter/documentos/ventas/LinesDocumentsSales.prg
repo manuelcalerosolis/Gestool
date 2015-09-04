@@ -158,7 +158,7 @@ METHOD lArticuloObsoleto() CLASS LinesDocumentsSales
       Return .f.
    end if
 
-   ApoloMsgStop( "Art√≠culo catalogado como obsoleto" )
+   ApoloMsgStop( "ArtÌculo catalogado como obsoleto" )
 
    ::oViewEditDetail:oGetArticulo:SetFocus()
 
@@ -238,7 +238,7 @@ METHOD SetPrecioCosto() CLASS LinesDocumentsSales
    ::hSetDetail( "PrecioCosto", nCosto )
 
    if !uFieldEmpresa( "lCosAct" )
-      ::SetPrecioCostoMedio()       //M√©todo Virtual no creado
+      ::SetPrecioCostoMedio()       //MÈtodo Virtual no creado
    end if
 
 Return ( self )
@@ -248,9 +248,9 @@ Return ( self )
 METHOD SetPrecioVenta() CLASS LinesDocumentsSales
 
    ::SetPrecioArticulo()
-   ::SetPrecioTarifaCliente()    //M√©todo Virtual no creado
-   ::SetPrecioAtipicaCliente()   //M√©todo Virtual no creado
-   ::SetPrecioOfertaArticulo()   //M√©todo Virtual no creado
+   ::SetPrecioTarifaCliente()    //MÈtodo Virtual no creado
+   ::SetPrecioAtipicaCliente()   //MÈtodo Virtual no creado
+   ::SetPrecioOfertaArticulo()   //MÈtodo Virtual no creado
 
 Return ( self )
 
@@ -275,8 +275,8 @@ Return ( self )
 METHOD SetComisionAgente() CLASS LinesDocumentsSales
 
    ::SetComisionMaster()
-   ::SetComisionTarifaCliente()     //M√©todo Virtual no creado
-   ::SetComisionAtipicaCliente()    //M√©todo Virtual no creado
+   ::SetComisionTarifaCliente()     //MÈtodo Virtual no creado
+   ::SetComisionAtipicaCliente()    //MÈtodo Virtual no creado
 
 Return ( self )
 
@@ -285,9 +285,9 @@ Return ( self )
 METHOD SetDescuentoPorcentual() CLASS LinesDocumentsSales
 
    ::SetDescuentoPorcentualArticulo()
-   ::SetDescuentoPorcentualTarifaCliente()   //M√©todo Virtual no creado
-   ::SetDescuentoPorcentualAtipicaCliente()  //M√©todo Virtual no creado
-   ::SetDescuentoPorcentualOfertaArticulo()  //M√©todo Virtual no creado
+   ::SetDescuentoPorcentualTarifaCliente()   //MÈtodo Virtual no creado
+   ::SetDescuentoPorcentualAtipicaCliente()  //MÈtodo Virtual no creado
+   ::SetDescuentoPorcentualOfertaArticulo()  //MÈtodo Virtual no creado
 
 Return ( self )
 
@@ -295,8 +295,8 @@ Return ( self )
 
 METHOD SetDescuentoPromocional() CLASS LinesDocumentsSales
 
-   ::SetDescuentoPromocionalTarifaCliente()     //M√©todo Virtual no creado
-   ::SetDescuentoPromocionalAtipicaCliente()    //M√©todo Virtual no creado
+   ::SetDescuentoPromocionalTarifaCliente()     //MÈtodo Virtual no creado
+   ::SetDescuentoPromocionalAtipicaCliente()    //MÈtodo Virtual no creado
 
 Return ( self )
 
@@ -304,9 +304,9 @@ Return ( self )
 
 METHOD SetDescuentoLineal() CLASS LinesDocumentsSales
 
-   ::SetDescuentoLinealTarifaCliente()       //M√©todo Virtual no creado
-   ::SetDescuentoLinealAtipicaCliente()      //M√©todo Virtual no creado
-   ::SetDescuentoLinealOfertaArticulo()      //M√©todo Virtual no creado
+   ::SetDescuentoLinealTarifaCliente()       //MÈtodo Virtual no creado
+   ::SetDescuentoLinealAtipicaCliente()      //MÈtodo Virtual no creado
+   ::SetDescuentoLinealOfertaArticulo()      //MÈtodo Virtual no creado
 
 Return ( self )
 
@@ -325,7 +325,7 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
    end if
 
    if !::lSeekArticulo()
-      ApoloMsgStop( "Art√≠culo no encontrado" )
+      ApoloMsgStop( "ArtÌculo no encontrado" )
       Return .f.
    end if
 
@@ -386,7 +386,7 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
    ::cOldCodigoArticulo    := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
 
    /*
-   Refrescamos el di√°logo, una vez insertado los datos-------------------------
+   Refrescamos el di·logo, una vez insertado los datos-------------------------
    */
 
    ::oViewEditDetail:RefreshDialog()
