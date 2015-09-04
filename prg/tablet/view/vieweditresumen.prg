@@ -80,6 +80,8 @@ METHOD Resource() CLASS ViewEditResumen
 
    ::oDlg:bResized         := {|| ::resizeDialog() }
 
+   ::oDlg:bStart           := {|| ::oSender:lValidPayment() }
+
    ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
 
 Return ( ::oDlg:nResult == IDOK )
@@ -164,23 +166,23 @@ METHOD defineFormaPago() CLASS ViewEditResumen
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| GridBrwfPago( ::oCodigoFormaPago, ::oNombreFormaPago ) } } )
+                           "bAction"   => {|| ::oSender:runGridPayment() } } )
 
-   ::oCodigoFormaPago  := TGridGet():Build( {   "nRow"      => 65,;
+   ::oCodigoFormaPago   := TGridGet():Build( {   "nRow"      => 65,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
-                                                "bSetGet"   => {|u| hGet( ::oSender:hDictionaryMaster, "Pago" ) },;
+                                                "bSetGet"   => {|u| ::SetGetValue( u, "Pago" ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lPixels"   => .t.,;
-                                                "bValid"    => {|| cFpago( ::oCodigoFormaPago, D():FormasPago( ::oSender:nView ), ::oNombreFormaPago ) } } )
+                                                "bValid"    => {||  ::oSender:lValidPayment() } } )
 
-   ::oNombreFormaPago  := TGridGet():Build(  {  "nRow"      => 65,;
+   ::oNombreFormaPago   := TGridGet():Build(  {  "nRow"      => 65,;
                                                 "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
-                                                "bSetGet"   => {|u| cNbrFPago( hGet( ::oSender:hDictionaryMaster, "Pago" ), D():FormasPago( ::oSender:nView ) ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
                                                 "lPixels"   => .t.,;
+                                                "bWhen"     => {|| .f. },;
                                                 "nHeight"   => 23 } )
 
 Return ( self )

@@ -414,9 +414,12 @@ LinesOrderCustomer.prg                 \
 LinesDeliveryNoteCustomer.prg          \
 LinesInvoiceCustomer.prg               \
 ViewSearchNavigator.prg                \
+Product.prg                            \
+Payment.prg                            \
 DocumentSalesViewSearchNavigator.prg   \
 CustomerViewSearchNavigator.prg        \
-CustomerGridViewSearchNavigator.prg    \
+ProductViewSearchNavigator.prg         \
+PaymentViewSearchNavigator.prg         \
 CustomerIncidenceViewNavigator.prg     \
 DocumentSalesViewEdit.prg              \
 GeneraFacturasClientes.prg             \
@@ -430,6 +433,8 @@ TSpecialSearchArticulo.prg             \
 TSpecialInfoArticulo.prg               \
 TSpecialInfoCliente.prg                \
 PedCli2PedPrv.prg                      \
+Directions.prg                         \
+DirectionsViewSearchNavigator.prg      \
 
 C               =       	            \
 Img2pdf.c               	            \
@@ -837,10 +842,13 @@ LinesInvoiceCustomer.obj               \
 ViewSearchNavigator.obj                \
 DocumentSalesViewSearchNavigator.obj   \
 CustomerViewSearchNavigator.obj        \
-CustomerGridViewSearchNavigator.obj    \
+ProductViewSearchNavigator.obj         \
+PaymentViewSearchNavigator.obj         \
 CustomerIncidence.obj                  \
 CustomerIncidenceView.obj              \
 CustomerIncidenceViewNavigator.obj     \
+Product.obj                            \
+Payment.obj                            \
 DocumentSalesViewEdit.obj              \
 GeneraFacturasClientes.obj             \
 CamposExtra.obj                        \
@@ -853,6 +861,8 @@ TSpecialSearchArticulo.obj             \
 TSpecialInfoArticulo.obj               \
 TSpecialInfoCliente.obj                \
 PedCli2PedPrv.obj                      \
+Directions.obj                         \
+DirectionsViewSearchNavigator.obj      \
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $? /n /p$(PPO)\$&.ppo /w /es2 /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -1243,10 +1253,13 @@ $(OBJ)\LinesInvoiceCustomer.obj              +
 $(OBJ)\ViewSearchNavigator.obj               +
 $(OBJ)\DocumentSalesViewSearchNavigator.obj  +
 $(OBJ)\CustomerViewSearchNavigator.obj       +
-$(OBJ)\CustomerGridViewSearchNavigator.obj   +
+$(OBJ)\ProductViewSearchNavigator.obj        +
+$(OBJ)\PaymentViewSearchNavigator.obj        +
 $(OBJ)\CustomerIncidence.obj                 +
 $(OBJ)\CustomerIncidenceView.obj             +
 $(OBJ)\CustomerIncidenceViewNavigator.obj    +
+$(OBJ)\Product.obj                           +
+$(OBJ)\Payment.obj                           +
 $(OBJ)\DocumentSalesViewEdit.obj             +
 $(OBJ)\GeneraFacturasClientes.obj            + 
 $(OBJ)\CamposExtra.obj                       +
@@ -1260,6 +1273,8 @@ $(OBJ)\CentroCoste.Obj                       +
 $(OBJ)\TSpecialSearchArticulo.obj            +
 $(OBJ)\TSpecialInfoArticulo.obj              +
 $(OBJ)\TSpecialInfoCliente.obj               +
+$(OBJ)\Directions.obj                        +
+$(OBJ)\DirectionsViewSearchNavigator.obj     +
 $(OBJ)\PedCli2PedPrv.obj                     +
 $(OBJ)\Autoget.Obj                  
 $<,$*

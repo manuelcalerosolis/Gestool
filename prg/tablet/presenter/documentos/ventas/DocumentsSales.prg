@@ -3,7 +3,9 @@
  
 CLASS DocumentsSales FROM Documents
 
-   DATA nMode
+   DATA oProduct
+   DATA oPayment
+   DATA oDirections
 
    DATA oViewEditResumen
    DATA oDocumentLines
@@ -62,9 +64,14 @@ CLASS DocumentsSales FROM Documents
    
    METHOD ChangeSerieTablet( getSerie )
 
+   METHOD runGridCustomer()
    METHOD lValidCliente()
 
+   METHOD runGridDirections()
    METHOD lValidDireccion()
+
+   METHOD runGridPayment()
+   METHOD lValidPayment()
 
    METHOD ChangeRuta()
 
@@ -113,6 +120,9 @@ CLASS DocumentsSales FROM Documents
    
    METHOD Resource( nMode )
 
+   METHOD FilterDirections()
+   METHOD FreeDirections()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -128,6 +138,12 @@ METHOD New( oSender ) CLASS DocumentsSales
    ::oViewEdit             := DocumentSalesViewEdit():New( oSender )
 
    ::oCliente              := Customer():init( oSender )  
+
+   ::oProduct              := Product():init( oSender )
+
+   ::oPayment              := Payment():init( oSender )
+
+   ::oDirections           := Directions():init( oSender )
 
    ::oDocumentLines        := DocumentLines():New( oSender ) 
 
@@ -252,6 +268,93 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD lValidDireccion() CLASS DocumentsSales
+
+   local nRec
+   local nOrdAnt
+   local lValid            := .f.
+   local codigoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
+   local codigoDireccion   := ::oViewEdit:getCodigoDireccion:varGet()
+
+   if Empty( codigoCliente )
+      return .t.
+   end if
+
+   if empty( codigoDireccion )
+      return .t.
+   end if
+
+   ::oViewEdit:getCodigoDireccion:Disable()
+
+   ::oViewEdit:getNombreDireccion:cText( "" )
+
+   codigoDireccion         := padr( codigoCliente, 12 ) + padr( codigoDireccion, 10 )
+
+   nRec                    := ( D():ClientesDirecciones( ::nView ) )->( Recno() )
+   nOrdAnt                 := ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
+
+   if ( D():ClientesDirecciones( ::nView ) )->( dbSeek( codigoDireccion ) )
+
+      ::oViewEdit:getCodigoDireccion:cText( ( D():ClientesDirecciones( ::nView ) )->cCodObr )
+      ::oViewEdit:getNombreDireccion:cText( ( D():ClientesDirecciones( ::nView ) )->cNomObr )
+
+      lValid               := .t.
+
+   else
+
+      apoloMsgStop( "Dirección no encontrada" )
+      
+   end if
+
+   ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():ClientesDirecciones( ::nView ) )->( dbGoTo( nRec ) )
+
+   ::oViewEdit:getCodigoDireccion:Enable()
+
+Return lValid
+
+//---------------------------------------------------------------------------//
+
+METHOD lValidPayment() CLASS DocumentsSales
+
+   local nRec
+   local nOrdAnt
+   local lValid            := .f.
+   local codigoPayment     := hGet( ::hDictionaryMaster, "Pago" )
+
+   if Empty( codigoPayment )
+      return .f.
+   end if
+
+   ::oViewEditResumen:oCodigoFormaPago:Disable()
+
+   ::oViewEditResumen:oNombreFormaPago:cText( "" )
+   
+   nRec                    := ( D():FormasPago( ::nView ) )->( Recno() )
+   nOrdAnt                 := ( D():FormasPago( ::nView ) )->( OrdSetFocus( "cCodPago" ) )
+
+   if ( D():FormasPago( ::nView ) )->( dbSeek( codigoPayment ) )
+
+      ::oViewEditResumen:oCodigoFormaPago:cText( ( D():FormasPago( ::nView ) )->cCodPago )
+      ::oViewEditResumen:oNombreFormaPago:cText( ( D():FormasPago( ::nView ) )->cDesPago )
+
+      lValid               := .t.
+
+   else
+
+      apoloMsgStop( "Forma de pago no encontrada" )
+      
+   end if
+
+   ( D():FormasPago( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+   ( D():FormasPago( ::nView ) )->( dbGoTo( nRec ) )
+
+   ::oViewEditResumen:oCodigoFormaPago:Enable()
+
+Return lValid
+
+//---------------------------------------------------------------------------//
+
 METHOD lValidCliente() CLASS DocumentsSales
 
    local lValid      := .t.
@@ -261,6 +364,16 @@ METHOD lValidCliente() CLASS DocumentsSales
       Return .t.
    else
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
+   end if
+
+   ::oViewEdit:oGetCliente:Disable()
+
+   if !Empty( ::oViewEdit:getCodigoDireccion )
+      ::oViewEdit:getCodigoDireccion:cText( "" )
+   end if
+
+   if !Empty( ::oViewEdit:getNombreDireccion )
+      ::oViewEdit:getNombreDireccion:cText( "" )
    end if
 
    if ::setDatasFromClientes( cNewCodCli )
@@ -278,51 +391,9 @@ METHOD lValidCliente() CLASS DocumentsSales
 
    end if
 
+   ::oViewEdit:oGetCliente:Enable()
+
 RETURN lValid
-
-//---------------------------------------------------------------------------//
-
-METHOD lValidDireccion() CLASS DocumentsSales
-
-   local nOrdAnt
-   local lValid            := .f.
-   local codigoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
-   local codigoDireccion   := ::oViewEdit:getCodigoDireccion:varGet()
-
-   if Empty( codigoCliente )
-      return .t.
-   end if
-
-   if empty( codigoDireccion )
-      return .t.
-   end if
-
-   ::oViewEdit:getNombreDireccion:cText( "" )
-
-   codigoDireccion         := padr( codigoCliente, 12 ) + padr( codigoDireccion, 10 )
-
-   msgAlert( codigoDireccion, "codigoDireccion" )
-
-   nOrdAnt                 := ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
-
-   if ( D():ClientesDirecciones( ::nView ) )->( dbSeek( codigoDireccion ) )
-
-      ::oViewEdit:getCodigoDireccion:cText( ( D():ClientesDirecciones( ::nView ) )->cCodObr )
-      ::oViewEdit:getNombreDireccion:cText( ( D():ClientesDirecciones( ::nView ) )->cNomObr )
-
-      lValid               := .t.
-
-   else
-
-      apoloMsgStop( "Dirección no encontrada" )
-      
-      ::oViewEdit:getCodigoDireccion:setFocus()
-
-   end if
-
-   ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
-
-Return lValid
 
 //---------------------------------------------------------------------------//
 
@@ -808,7 +879,7 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
          hSet( ::hDictionaryMaster, "TipoImpuesto",                  ( D():Clientes( ::nView ) )->nRegIva )
          hSet( ::hDictionaryMaster, "Almacen",                       ( D():Clientes( ::nView ) )->cCodAlm )
          hSet( ::hDictionaryMaster, "Tarifa",                        ( D():Clientes( ::nView ) )->cCodTar )
-         hSet( ::hDictionaryMaster, "Pago",                          ( D():Clientes( ::nView ) )->CodPago )
+         hSet( ::hDictionaryMaster, "Pago",                          if( !Empty( ( D():Clientes( ::nView ) )->CodPago ), ( D():Clientes( ::nView ) )->CodPago, cDefFpg() ) )
          hSet( ::hDictionaryMaster, "Agente",                        ( if( Empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
          hSet( ::hDictionaryMaster, "Ruta",                          ( D():Clientes( ::nView ) )->cCodRut )
          hSet( ::hDictionaryMaster, "NumeroTarifa",                  ( D():Clientes( ::nView ) )->nTarifa )
@@ -833,5 +904,107 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
    D():setStatusClientes( ::nView )
 
 Return( lReturn ) 
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridPayment() CLASS DocumentsSales
+
+   ::oViewEditResumen:oCodigoFormaPago:Disable()
+
+   if !Empty( ::oPayment:oGridPayment )
+
+      ::oPayment:oGridPayment:showView()
+
+      if ::oPayment:oGridPayment:isEndOk()
+         ::oViewEditResumen:SetGetValue( ( D():FormasPago( ::nView ) )->cCodPago, "Pago" )
+      end if
+
+      ::lValidPayment()
+
+   end if
+
+   ::oViewEditResumen:oCodigoFormaPago:Enable()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridCustomer() CLASS DocumentsSales
+
+   ::oViewEdit:oGetCliente:Disable()
+
+   if !Empty( ::oCliente:oGridCustomer )
+
+      ::oCliente:oGridCustomer:showView()
+
+      if ::oCliente:oGridCustomer:IsEndOk()
+         ::oViewEdit:SetGetValue( ( D():Clientes( ::nView ) )->Cod, "Cliente" )
+      end if
+
+      ::lValidCliente()
+
+   end if
+
+   ::oViewEdit:oGetCliente:Enable()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridDirections() CLASS DocumentsSales
+
+   local codigoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
+
+   if Empty( codigoCliente )
+
+      ApoloMsgStop( "No puede seleccionar una dirección con cliente vacío" )
+
+      Return .f.
+
+   end if
+
+   ::oViewEdit:getCodigoDireccion:Disable()
+
+   if !Empty( ::oDirections:oGridDirections )
+
+      ::FilterDirections()
+
+      ::oDirections:oGridDirections:showView()
+
+      if ::oDirections:oGridDirections:IsEndOk()
+         ::oViewEdit:SetGetValue( ( D():ClientesDirecciones( ::nView ) )->cCodObr, "Direccion" )
+      end if
+
+      ::lValidDireccion()
+
+      ::FreeDirections()
+
+   end if
+
+   ::oViewEdit:getCodigoDireccion:Enable()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD FilterDirections() CLASS DocumentsSales
+
+   local codigoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
+
+   ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
+   ( D():ClientesDirecciones( ::nView ) )->( OrdScope( 0, codigoCliente ) )
+   ( D():ClientesDirecciones( ::nView ) )->( OrdScope( 1, codigoCliente ) )
+   ( D():ClientesDirecciones( ::nView ) )->( dbGoTop() )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD FreeDirections() CLASS DocumentsSales
+
+   ( D():ClientesDirecciones( ::nView ) )->( OrdScope( 0, nil ) )
+   ( D():ClientesDirecciones( ::nView ) )->( OrdScope( 1, nil ) )
+
+Return self
 
 //---------------------------------------------------------------------------//

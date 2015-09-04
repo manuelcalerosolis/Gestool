@@ -19,6 +19,10 @@ CLASS ViewSearchNavigator FROM ViewNavigator
 
    METHOD setSelectorMode()            INLINE ( ::lSelectorMode  := .t. )
 
+   METHOD isEndOk()                    INLINE ( ::oDlg:nResult == IDOK )
+
+   METHOD validBarraBusqueda()         INLINE ( OrdClearScope( ::oBrowse, ::getWorkArea() ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -81,7 +85,7 @@ METHOD defineBarraBusqueda() CLASS ViewSearchNavigator
                                                    "oWnd"      => ::oDlg,;
                                                    "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                                                    "nHeight"   => 25,;
-                                                   "bValid"    => {|| OrdClearScope( ::oBrowse, ::getWorkArea() ) },;
+                                                   "bValid"    => {|| ::validBarraBusqueda() },;
                                                    "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetSearch, ::oBrowse, ::getWorkArea(), .t. ) } } )
 
    oComboboxOrden    := TGridComboBox():Build(  {  "nRow"      => 45,;

@@ -115,6 +115,8 @@ CLASS LinesDocumentsSales FROM Editable
       METHOD SetDescuentoLinealAtipicaCliente()             VIRTUAL
       METHOD SetDescuentoLinealOfertaArticulo()             VIRTUAL
 
+   METHOD runGridProduct()
+
    METHOD CargaArticulo()
    METHOD resetCodigoArticulo()                             INLINE ( ::cOldCodigoArticulo := "" )
 
@@ -156,7 +158,7 @@ METHOD lArticuloObsoleto() CLASS LinesDocumentsSales
       Return .f.
    end if
 
-   ApoloMsgStop( "ArtÃ­culo catalogado como obsoleto" )
+   ApoloMsgStop( "Artículo catalogado como obsoleto" )
 
    ::oViewEditDetail:oGetArticulo:SetFocus()
 
@@ -236,7 +238,7 @@ METHOD SetPrecioCosto() CLASS LinesDocumentsSales
    ::hSetDetail( "PrecioCosto", nCosto )
 
    if !uFieldEmpresa( "lCosAct" )
-      ::SetPrecioCostoMedio()       //MÃ©todo Virtual no creado
+      ::SetPrecioCostoMedio()       //Método Virtual no creado
    end if
 
 Return ( self )
@@ -246,9 +248,9 @@ Return ( self )
 METHOD SetPrecioVenta() CLASS LinesDocumentsSales
 
    ::SetPrecioArticulo()
-   ::SetPrecioTarifaCliente()    //MÃ©todo Virtual no creado
-   ::SetPrecioAtipicaCliente()   //MÃ©todo Virtual no creado
-   ::SetPrecioOfertaArticulo()   //MÃ©todo Virtual no creado
+   ::SetPrecioTarifaCliente()    //Método Virtual no creado
+   ::SetPrecioAtipicaCliente()   //Método Virtual no creado
+   ::SetPrecioOfertaArticulo()   //Método Virtual no creado
 
 Return ( self )
 
@@ -273,8 +275,8 @@ Return ( self )
 METHOD SetComisionAgente() CLASS LinesDocumentsSales
 
    ::SetComisionMaster()
-   ::SetComisionTarifaCliente()     //MÃ©todo Virtual no creado
-   ::SetComisionAtipicaCliente()    //MÃ©todo Virtual no creado
+   ::SetComisionTarifaCliente()     //Método Virtual no creado
+   ::SetComisionAtipicaCliente()    //Método Virtual no creado
 
 Return ( self )
 
@@ -283,9 +285,9 @@ Return ( self )
 METHOD SetDescuentoPorcentual() CLASS LinesDocumentsSales
 
    ::SetDescuentoPorcentualArticulo()
-   ::SetDescuentoPorcentualTarifaCliente()   //MÃ©todo Virtual no creado
-   ::SetDescuentoPorcentualAtipicaCliente()  //MÃ©todo Virtual no creado
-   ::SetDescuentoPorcentualOfertaArticulo()  //MÃ©todo Virtual no creado
+   ::SetDescuentoPorcentualTarifaCliente()   //Método Virtual no creado
+   ::SetDescuentoPorcentualAtipicaCliente()  //Método Virtual no creado
+   ::SetDescuentoPorcentualOfertaArticulo()  //Método Virtual no creado
 
 Return ( self )
 
@@ -293,8 +295,8 @@ Return ( self )
 
 METHOD SetDescuentoPromocional() CLASS LinesDocumentsSales
 
-   ::SetDescuentoPromocionalTarifaCliente()     //MÃ©todo Virtual no creado
-   ::SetDescuentoPromocionalAtipicaCliente()    //MÃ©todo Virtual no creado
+   ::SetDescuentoPromocionalTarifaCliente()     //Método Virtual no creado
+   ::SetDescuentoPromocionalAtipicaCliente()    //Método Virtual no creado
 
 Return ( self )
 
@@ -302,9 +304,9 @@ Return ( self )
 
 METHOD SetDescuentoLineal() CLASS LinesDocumentsSales
 
-   ::SetDescuentoLinealTarifaCliente()       //MÃ©todo Virtual no creado
-   ::SetDescuentoLinealAtipicaCliente()      //MÃ©todo Virtual no creado
-   ::SetDescuentoLinealOfertaArticulo()      //MÃ©todo Virtual no creado
+   ::SetDescuentoLinealTarifaCliente()       //Método Virtual no creado
+   ::SetDescuentoLinealAtipicaCliente()      //Método Virtual no creado
+   ::SetDescuentoLinealOfertaArticulo()      //Método Virtual no creado
 
 Return ( self )
 
@@ -323,7 +325,7 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
    end if
 
    if !::lSeekArticulo()
-      ApoloMsgStop( "ArtÃ­culo no encontrado" )
+      ApoloMsgStop( "Artículo no encontrado" )
       Return .f.
    end if
 
@@ -384,7 +386,7 @@ METHOD CargaArticulo() CLASS LinesDocumentsSales
    ::cOldCodigoArticulo    := hGet( ::oSender:oDocumentLineTemporal:hDictionary, "Articulo" )
 
    /*
-   Refrescamos el diÃ¡logo, una vez insertado los datos-------------------------
+   Refrescamos el diálogo, una vez insertado los datos-------------------------
    */
 
    ::oViewEditDetail:RefreshDialog()
@@ -410,5 +412,30 @@ METHOD recalcularTotal() CLASS LinesDocumentsSales
    end if
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD runGridProduct() CLASS LinesDocumentsSales
+
+   local result   := ""
+
+   ::oViewEditDetail:oGetArticulo:Disable()
+
+   if !Empty( ::oSender:oProduct:oGridProduct )
+
+      ::oSender:oProduct:oGridProduct:showView()
+
+      if ::oSender:oProduct:oGridProduct:isEndOk()
+         ::oViewEditDetail:SetGetValue( ( D():Articulos( ::oSender:nView ) )->Codigo, "Articulo" )
+      end if
+
+      ::CargaArticulo()
+      ::recalcularTotal()
+
+   end if
+
+   ::oViewEditDetail:oGetArticulo:Enable()
+
+Return ( result )
 
 //---------------------------------------------------------------------------//

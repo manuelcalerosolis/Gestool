@@ -6084,7 +6084,7 @@ Cliente--------------------------------------------------------------------
                                           		"nClrInit"  => nGridColor(),;
                                           		"nClrOver" 	=> nGridColor(),;
 																"nClrVisit" => nGridColor(),;
-                                          		"bAction"   => {|| if( !lRecibosPagadosTmp( dbfTmpPgo ), GridBrwClient( aGet[ _CCODCLI ], aGet[ _CNOMCLI ] ), ) } } )
+                                          		"bAction"   => {|| MsgInfo( "" ) } } )
 
 	aGet[ _CCODCLI ]  	:= TGridGet():Build( { 	"nRow"      => 95,;
                                        			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
@@ -6118,7 +6118,7 @@ Cliente--------------------------------------------------------------------
                                           		"nClrInit"  => nGridColor(),;
                                           		"nClrOver" 	=> nGridColor(),;
 												            "nClrVisit" => nGridColor(),;
-                                          		"bAction"   => {|| if( !lRecibosPagadosTmp( dbfTmpPgo ), GridBrwObras( aGet[ _CCODOBR ], oGetNombreDireccion, aTmp[ _CCODCLI ], dbfObrasT ), ) } } )
+                                          		"bAction"   => {|| MsgInfo( "" ) } } )
 
 	aGet[ _CCODOBR ]  	:= TGridGet():Build( { 	"nRow"      => 120,;
                                        			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
@@ -6472,7 +6472,7 @@ STATIC FUNCTION EdtDetTablet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt,
                                              		"nClrInit"  => nGridColor(),;
                                              		"nClrOver" 	=> nGridColor(),;
 													            "nClrVisit" => nGridColor(),;
-                                             		"bAction"   => {|| GridBrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) } } )
+                                             		"bAction"   => {|| MsgInfo( "" ) } } )
 
    	aGet[ _CREF ]  	:= TGridGet():Build( { 		"nRow"      => 40,;
                                           			"nCol"      => {|| GridWidth( 2.5, oDlg ) },;
@@ -6838,7 +6838,7 @@ static function EdtResumenTablet( aTmp, aGet, nMode, oDlgFac )
                                                 "nClrInit"  => nGridColor(),;
                                                 "nClrOver"  => nGridColor(),;
                                                 "nClrVisit" => nGridColor(),;
-                                                "bAction"   => {|| GridBrwfPago( aGet[ _CCODPAGO ], oGetNombrePago ) } } )
+                                                "bAction"   => {|| MsgInfo( "" ) } } )
 
    aGet[ _CCODPAGO ] := TGridGet():Build( {     "nRow"      => 65,;
                                                 "nCol"      => {|| GridWidth( 2.5, oDlg ) },;

@@ -27,7 +27,7 @@ CLASS ViewDetail FROM ViewBase
    METHOD Resource()
    METHOD getSenderDocument()           INLINE ( ::oSender:getSender() )
 
-   METHOD SetGetValue( uValue, cName ) INLINE ( if (  Empty( uValue ),;
+   METHOD SetGetValue( uValue, cName ) INLINE ( if (  isNil( uValue ),;
                                                 hGet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cName ),;
                                                 hSet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cName, uValue ) ) )
 
@@ -161,7 +161,7 @@ METHOD defineArticulo() CLASS ViewDetail
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| GridBrwArticulo( ::oGetArticulo, ::oGetDescripcionArticulo ) } } )
+                           "bAction"   => {|| ::oSender:runGridProduct() } } )
 
    ::oGetArticulo             := TGridGet():Build( {  "nRow"      => 40,;
                                                       "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;

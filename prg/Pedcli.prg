@@ -18012,7 +18012,7 @@ function defineGetCliente( aGet, aTmp, getCodCli, getNomCli, nMode, oDlg )
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| Prueba(), GridBrwClient( getCodCli, getNomCli ) } } )
+                           "bAction"   => {|| Prueba() } } )
 
    getCodCli         := TGridGet():Build( {  "nRow"      => 95,;
                                              "nCol"      => {|| GridWidth( 2.5, oDlg ) },;
