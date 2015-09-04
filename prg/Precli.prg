@@ -1733,7 +1733,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, PreCli( nil, nil, nil, nil, ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( D():PresupuestosClientes( nView ) )->lEstado, PedCli( nil, nil, nil, nil, ( D():PresupuestosClientes( nView ) )->cSerPre + Str( ( D():PresupuestosClientes( nView ) )->nNumPre ) + ( D():PresupuestosClientes( nView ) )->cSufPre ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar pedido" ;
             FROM     oRotor ;
 
