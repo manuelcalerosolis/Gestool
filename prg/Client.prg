@@ -12497,11 +12497,9 @@ Return cCuenta
 Nos informa si tenemos atipicas para este cliente------------------------------
 */
 
-function lAtipicaCliente( cCodCli, dbfAtpCli )
+Function lAtipicaCliente( cCodCli, dbfAtpCli )
 
-return ( dbfAtpCli )->( dbSeek( cCodCli ) )
-
-
+Return ( dbfAtpCli )->( dbSeek( cCodCli ) )
 
 //---------------------------------------------------------------------------//
 
@@ -12530,30 +12528,6 @@ Return ( hAtipica['nUnidadesVender'] - hAtipica['nUnidadesCobrar'] )
 
 //---------------------------------------------------------------------------//
 
-Static Function isValidAtipicaXY( hValue, hNewAtipica, hOldAtipica )
-
-   if hNewAtipica[ "isTypeXY" ]
-      
-      do case
-         case hNewAtipica[ "nCajasGratis" ] != 0
-            if hValue[ "nCajas" ] >= hNewAtipica[ "nUnidadesVender" ] 
-               Return ( .t. ) // nUnidadesGratis( hNewAtipica ) > nUnidadesGratis( hOldAtipica ) )
-            end if                
-
-         case hNewAtipica[ "nUnidadesGratis" ] != 0
-            if hValue[ "nUnidades" ] >= hNewAtipica[ "nUnidadesVender" ] 
-               Return ( .t. ) // nUnidadesGratis( hNewAtipica ) > nUnidadesGratis( hOldAtipica ) )
-            end if                
-      end case
-
-      Return .f.
-
-   end if 
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
 Static Function nImporteUnitario( hAtipica )
 
    if empty(hAtipica)
@@ -12566,10 +12540,8 @@ Return ( hAtipica['nImporteUnitario'] )
 
 Static Function isBetterAtipica( hValue, hNewAtipica, hOldAtipica )
 
-   msgAlert( isValidAtipicaXY( hValue, hNewAtipica, hOldAtipica ), "isValidAtipicaXY" )
-
-   if !( isValidAtipicaXY( hValue, hNewAtipica, hOldAtipica ) )
-      Return .f.
+   if empty(hOldAtipica)
+      return .t.
    end if 
 
 Return ( nImporteUnitario( hOldAtipica ) > nImporteUnitario( hNewAtipica ) )
@@ -12580,13 +12552,45 @@ Static function getSelectedAtipica( hValue, hSelectedAtipica )
 
    local hCurrentAtipica   := hValoresAtipica( hValue ) // hCurrentAtipica )
 
-   if isBetterAtipica( hValue, hCurrentAtipica, hSelectedAtipica )
-      hSelectedAtipica     := hCurrentAtipica
-   end if
+   if isValidAtipicaXY( hValue, hCurrentAtipica ) 
+
+      if isBetterAtipica( hValue, hCurrentAtipica, hSelectedAtipica )
+         Return ( hCurrentAtipica )
+      end if
+
+   end if 
 
 Return ( hSelectedAtipica )
 
 //---------------------------------------------------------------------------//
+
+Static Function isValidAtipicaXY( hValue, hAtipica )
+
+   if hAtipica[ "isTypeXY" ]
+      
+      do case
+         case hhaskey( hAtipica, "nCajasGratis" ) .and. hAtipica[ "nCajasGratis" ] != 0
+
+            if hAtipica[ "nUnidadesVender" ] >= hValue[ "nCajas" ] 
+               Return ( .t. ) // nUnidadesGratis( hNewAtipica ) > nUnidadesGratis( hOldAtipica ) )
+            end if                
+
+         case hhaskey( hAtipica, "nUnidadesGratis" ) .and. hAtipica[ "nUnidadesGratis" ] != 0
+
+            if hAtipica[ "nUnidadesVender" ] >= hValue[ "nUnidades" ] 
+               Return ( .t. ) // nUnidadesGratis( hNewAtipica ) > nUnidadesGratis( hOldAtipica ) )
+            end if                
+
+      end case
+
+      Return ( .f. )
+
+   end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 
 Function hAtipica( hValue )
 
@@ -12612,13 +12616,11 @@ Function hAtipica( hValue )
       !hhaskey( hValue, "nUnidades" )           .or.;
       !hhaskey( hValue, "nView" )               
 
-      msgStop( "Faltan parametros función hCurrentAtipica" )
+      msgStop( "Faltan parametros función hAtipica" )
 
-      return ( hCurrentAtipica )
+      return ( hSelectedAtipica )
 
    endif 
-
-   msgAlert( hb_valtoexp( hSelectedAtipica ), "al inicio" )
 
    // Atipicas por clientes-----------------------------------------------
 
@@ -12631,19 +12633,10 @@ Function hAtipica( hValue )
       if ( D():Atipicas( hValue[ "nView" ] ) )->( dbSeek( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ] ) )
          
          while hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ] == ( D():Atipicas( hValue[ "nView" ] ) )->cCodCli + ( D():Atipicas( hValue[ "nView" ] ) )->cCodArt + ( D():Atipicas( hValue[ "nView" ] ) )->cCodPr1 + ( D():Atipicas( hValue[ "nView" ] ) )->cCodPr2 + ( D():Atipicas( hValue[ "nView" ] ) )->cValPr1 + ( D():Atipicas( hValue[ "nView" ] ) )->cValPr2 .and.;
-               !( D():Atipicas( hValue[ "nView" ] ) )->( eof() )
+               !( D():Atipicas( hValue[ "nView" ] ) )->( Eof() )
 
-            if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-               lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
+            if isValidAtipica( hValue )
                hSelectedAtipica     := getSelectedAtipica( hValue, hSelectedAtipica )
-/*
-               hCurrentAtipica      := hValoresAtipica( hValue ) // hCurrentAtipica )
-
-               if isBetterAtipica( hCurrentAtipica, hSelectedAtipica )
-                  hSelectedAtipica  := hCurrentAtipica
-               end if
-*/
             end if
 
             ( D():Atipicas( hValue[ "nView" ] ) )->( dbSkip() )
@@ -12660,7 +12653,7 @@ Function hAtipica( hValue )
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cGrpArt" ) )
 
-   if Empty( hCurrentAtipica ) .or. ( !Empty( hCurrentAtipica ) .and. hhaskey( hCurrentAtipica, "nImporte" ) .and. empty( hCurrentAtipica[ "nImporte" ] ) )
+   if Empty( hSelectedAtipica ) .or. ( !Empty( hSelectedAtipica ) .and. hhaskey( hSelectedAtipica, "nImporte" ) .and. empty( hSelectedAtipica[ "nImporte" ] ) )
 
       if !Empty( hValue[ "cCodigoGrupo" ] )
 
@@ -12669,12 +12662,9 @@ Function hAtipica( hValue )
             while hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ] == ( D():Atipicas( hValue[ "nView" ] ) )->cCodGrp + ( D():Atipicas( hValue[ "nView" ] ) )->cCodArt + ( D():Atipicas( hValue[ "nView" ] ) )->cCodPr1 + ( D():Atipicas( hValue[ "nView" ] ) )->cCodPr2 + ( D():Atipicas( hValue[ "nView" ] ) )->cValPr1 + ( D():Atipicas( hValue[ "nView" ] ) )->cValPr2 .and.;
                !( D():Atipicas( hValue[ "nView" ] ) )->( Eof() )
 
-               if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-                  lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-                  hCurrentAtipica    := hValoresAtipica( hValue, hCurrentAtipica )
-
-               end if   
+               if isValidAtipica( hValue )
+                  hSelectedAtipica     := getSelectedAtipica( hValue, hSelectedAtipica )
+               end if
 
                ( D():Atipicas( hValue[ "nView" ] ) )->( dbSkip() )
 
@@ -12701,11 +12691,8 @@ Function hAtipica( hValue )
             while hValue[ "cCodigoCliente" ] + hValue[ "cCodigoFamilia" ] == ( D():Atipicas( hValue[ "nView" ] ) )->cCodCli + ( D():Atipicas( hValue[ "nView" ] ) )->cCodFam .and.;
                !( D():Atipicas( hValue[ "nView" ] ) )->( Eof() )
          
-               if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-                  lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-                  hCurrentAtipica       := hValoresAtipica( hValue, hCurrentAtipica )
-
+               if isValidAtipica( hValue )
+                  hSelectedAtipica     := getSelectedAtipica( hValue, hSelectedAtipica )
                end if
 
                ( D():Atipicas( hValue[ "nView" ] ) )->( dbSkip() )
@@ -12724,21 +12711,18 @@ Function hAtipica( hValue )
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cGrpFam" ) )
 
-   if !Empty( hValue[ "cCodigoGrupo" ] )
+   if !empty( hValue[ "cCodigoGrupo" ] )
 
-      if !Empty( hValue[ "cCodigoFamilia" ] )
+      if !empty( hValue[ "cCodigoFamilia" ] )
 
          if ( D():Atipicas( hValue[ "nView" ] ) )->( dbSeek( hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ] ) )
 
             while hValue[ "cCodigoGrupo" ] + hValue[ "cCodigoFamilia" ] == ( D():Atipicas( hValue[ "nView" ] ) )->cCodGrp + ( D():Atipicas( hValue[ "nView" ] ) )->cCodFam .and.;
                !( D():Atipicas( hValue[ "nView" ] ) )->( Eof() )
 
-               if lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and.;
-                  lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] )
-
-                  hCurrentAtipica    := hValoresAtipica( hValue, hCurrentAtipica )
-
-               end if  
+               if isValidAtipica( hValue )
+                  hSelectedAtipica     := getSelectedAtipica( hValue, hSelectedAtipica )
+               end if
 
                ( D():Atipicas( hValue[ "nView" ] ) )->( dbSkip() )
 
@@ -12752,11 +12736,7 @@ Function hAtipica( hValue )
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( nOrdAnt ) )
 
-   /*
-   Informamos de las unidades de Regalo de las Unidades XY---------------------
-   */
-
-   msgAlert( hb_valtoexp( hSelectedAtipica ), "hSelectedAtipica" )
+   // Informamos de las unidades de Regalo de las Unidades XY------------------
 
    if !Empty( hSelectedAtipica )
 
@@ -12767,15 +12747,15 @@ Function hAtipica( hValue )
          do case
             case hSelectedAtipica[ "nTipoXY" ] == 1     // Cajas
 
-               nModOferta                                   := Int( Div( hValue[ "nCajas" ], hSelectedAtipica[ "nUnidadesVender" ] ) )
-               hSelectedAtipica[ "nCajasGratis" ]           := ( hSelectedAtipica[ "nUnidadesVender" ] - hSelectedAtipica[ "nUnidadesCobrar" ] ) * nModOferta
+               nModOferta                                := Int( Div( hValue[ "nCajas" ], hSelectedAtipica[ "nUnidadesVender" ] ) )
+               hSelectedAtipica[ "nCajasGratis" ]        := ( hSelectedAtipica[ "nUnidadesVender" ] - hSelectedAtipica[ "nUnidadesCobrar" ] ) * nModOferta
 
             case hSelectedAtipica[ "nTipoXY" ] == 2     // Unidades
 
                if mod( hValue[ "nCajas" ] * hValue[ "nUnidades" ], hSelectedAtipica[ "nUnidadesVender" ] ) == 0
 
-                  nModOferta                                := Int( Div( hValue[ "nUnidades" ], hSelectedAtipica[ "nUnidadesVender" ] ) )
-                  hSelectedAtipica[ "nUnidadesGratis" ]    := ( hSelectedAtipica[ "nUnidadesVender" ] - hSelectedAtipica[ "nUnidadesCobrar" ] ) * nModOferta
+                  nModOferta                             := Int( Div( hValue[ "nUnidades" ], hSelectedAtipica[ "nUnidadesVender" ] ) )
+                  hSelectedAtipica[ "nUnidadesGratis" ]  := ( hSelectedAtipica[ "nUnidadesVender" ] - hSelectedAtipica[ "nUnidadesCobrar" ] ) * nModOferta
 
                end if
 
@@ -12785,6 +12765,8 @@ Function hAtipica( hValue )
 
    end if 
 
+   // Devolvemos a su posición inicial-----------------------------------------
+   
    ( D():Atipicas( hValue[ "nView" ] ) )->( dbGoTo( nRec ) )
 
 Return ( hSelectedAtipica )
@@ -12806,18 +12788,8 @@ Function hValoresAtipica( hValue, hAtipica )
       nDescuentoTarifa                 := hValue[ "nDescuentoTarifa" ]
    end if 
 
-   /*
-   Carga de valores------------------------------------------------------------
-   */
+   // Carga de valores------------------------------------------------------------
    
-   /*if hhaskey( hAtipica, "nDescuentoPorcentual" )
-      if hAtipica[ "nDescuentoPorcentual" ] == 0
-         hAtipica[ "nDescuentoPorcentual" ]  := ( D():Atipicas( hValue[ "nView" ] ) )->nDtoArt
-      end if
-   else
-      hAtipica[ "nDescuentoPorcentual" ]  := ( D():Atipicas( hValue[ "nView" ] ) )->nDtoArt
-   end if*/
-
    if hhaskey( hAtipica, "nDescuentoLineal" )
       if hAtipica[ "nDescuentoLineal" ] == 0
          hAtipica[ "nDescuentoLineal" ]  := ( D():Atipicas( hValue[ "nView" ] ) )->nDtoDiv
@@ -12837,8 +12809,6 @@ Function hValoresAtipica( hValue, hAtipica )
    if ( D():Atipicas( hValue[ "nView" ] ) )->lComAge
       hAtipica[ "nComisionAgente" ]       := ( D():Atipicas( hValue[ "nView" ] ) )->nComAge
    end if
-
-   // Tipo de atipica
       
    hAtipica[ "nTipoXY" ]                  := ( D():Atipicas( hValue[ "nView" ] ) )->nTipXby
    hAtipica[ "nUnidadesVender" ]          := ( D():Atipicas( hValue[ "nView" ] ) )->nUnvOfe
@@ -12848,13 +12818,13 @@ Function hValoresAtipica( hValue, hAtipica )
       hAtipica[ "nCostoParticular" ]      := ( D():Atipicas( hValue[ "nView" ] ) )->nPrcCom
    end if
 
-   /*
-   Buscamos en las tarifas anteriores si lo tiene marcado en la empresa--------
-   */
+   // Buscamos en las tarifas anteriores si lo tiene marcado en la empresa--------
 
    if empty( nTarifa )
       nTarifa        := 1
    end if
+
+   // Buscamos en las tarifas anteriores si lo tiene marcado en la empresa--------
 
    while .t.
 
@@ -12980,9 +12950,7 @@ Function hValoresAtipica( hValue, hAtipica )
 
    hAtipica[ "nTarifaPrecio" ]  :=  nTarifa
    
-   /*
-   Aplicamos el descuento segun el descuento de tarifa que tenemos en la ficha del cliente
-   */
+   // Aplicamos el descuento segun el descuento de tarifa que tenemos en la ficha del cliente
 
    do case
       case nDescuentoTarifa == 1
@@ -13046,39 +13014,37 @@ Function hValoresAtipica( hValue, hAtipica )
 
    end case
 
-   /*
-   Cogemos ahora el descuento por si ya lo tenemos cogio-----------------------
-   */
+   // Cogemos ahora el descuento por si ya lo tenemos cogio-----------------------
 
    if hhaskey( hAtipica, "nDescuentoPorcentual" )
       if hAtipica[ "nDescuentoPorcentual" ] == 0
          hAtipica[ "nDescuentoPorcentual" ]  := ( D():Atipicas( hValue[ "nView" ] ) )->nDtoArt
       end if
    else
-      hAtipica[ "nDescuentoPorcentual" ]     := ( D():Atipicas( hValue[ "nView" ] ) )->nDtoArt
+      hAtipica[ "nDescuentoPorcentual" ]  := ( D():Atipicas( hValue[ "nView" ] ) )->nDtoArt
    end if
 
    // Valores para las atipicas de cajas y unidades gratis
 
+   hAtipica[ "isTypeXY" ]                 := .f.
+
    do case
       case hAtipica[ "nTipoXY" ] == 1     // Cajas
          hAtipica[ "nCajasGratis" ]       := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] )
+         hAtipica[ "isTypeXY" ]           := .t.
 
       case hAtipica[ "nTipoXY" ] == 2     // Unidades
          hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] )
+         hAtipica[ "isTypeXY" ]           := .t.
    end case
-
-   hAtipica[ "isTypeXY"]                  := ( hAtipica[ "nCajasGratis" ] != 0 .or. hAtipica[ "nUnidadesGratis" ] != 0 )
 
    // Calculos de importe final
 
-   if hAtipica[ "isTypeXY"] 
+   if hAtipica[ "isTypeXY" ]  
       hAtipica[ "nImporteUnitario" ]      := nImporteUnitarioXY( hValue, hAtipica )
    else
       hAtipica[ "nImporteUnitario" ]      := nImporteUnitarioDescuentos( hValue, hAtipica )
    end if 
-
-   msgAlert( hb_valtoexp( hAtipica ), "estturctura")
 
 Return ( hAtipica )
 
@@ -13098,15 +13064,11 @@ Static Function nImporteUnitarioXY( hValue, hAtipica )
       nUnidadesVender                  := hValue[ "nCajas"] * hValue[ "nUnidades" ]
       nImporteUnitario                 := nUnidadesCobrar * hAtipica[ "nImporte" ] / nUnidadesVender
 
-      msgAlert( nImporteUnitario, "nImporteUnitario oferta cajas" )
-
    else 
 
       nUnidadesCobrar                  := hValue[ "nUnidades" ] - hAtipica[ "nUnidadesGratis" ]
       nUnidadesVender                  := hValue[ "nUnidades" ]
       nImporteUnitario                 := nUnidadesCobrar * hAtipica[ "nImporte" ] / nUnidadesVender
-
-      msgAlert( nImporteUnitario, "nImporteUnitario oferta Unidades" )
 
    end if 
 
@@ -13117,12 +13079,26 @@ Return ( nImporteUnitario )
 
 Static Function nImporteUnitarioDescuentos( hValue, hAtipica )
 
-   local nCajasCobrar                     
-   local nUnidadesCobrar                  
-   local nUnidadesVender                  
    local nImporteUnitario  := 0
 
+   nImporteUnitario        := hValue[ "nImporte" ] 
+   nImporteUnitario        -= hValue[ "nDescuentoLineal" ]
+   
+   if hValue[ "nDescuentoPorcentual" ] != 0
+      nImporteUnitario     -= nImporteUnitario * hValue[ "nDescuentoPorcentual" ] / 100
+   end if      
+
+   if hValue[ "nDescuentoPromocional" ] != 0
+      nImporteUnitario     -= nImporteUnitario * hValue[ "nDescuentoPromocional" ] / 100
+   end if 
+
 Return ( nImporteUnitario )
+
+//---------------------------------------------------------------------------//
+
+Static function isValidAtipica( hValue )
+
+Return ( lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and. lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] ) )
 
 //---------------------------------------------------------------------------//
 
