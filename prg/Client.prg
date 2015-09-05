@@ -13031,11 +13031,11 @@ Function hValoresAtipica( hValue, hAtipica )
    do case
       case hAtipica[ "nTipoXY" ] == 1     // Cajas
          hAtipica[ "nCajasGratis" ]       := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] )
-         hAtipica[ "isTypeXY" ]           := .t.
+         hAtipica[ "isTypeXY" ]           := ( hAtipica[ "nCajasGratis" ] != 0 )
 
       case hAtipica[ "nTipoXY" ] == 2     // Unidades
          hAtipica[ "nUnidadesGratis" ]    := ( hAtipica[ "nUnidadesVender" ] - hAtipica[ "nUnidadesCobrar" ] )
-         hAtipica[ "isTypeXY" ]           := .t.
+         hAtipica[ "isTypeXY" ]           := ( hAtipica[ "nUnidadesGratis" ] != 0 )
    end case
 
    // Calculos de importe final
@@ -13043,7 +13043,7 @@ Function hValoresAtipica( hValue, hAtipica )
    if hAtipica[ "isTypeXY" ]  
       hAtipica[ "nImporteUnitario" ]      := nImporteUnitarioXY( hValue, hAtipica )
    else
-      hAtipica[ "nImporteUnitario" ]      := nImporteUnitarioDescuentos( hValue, hAtipica )
+      hAtipica[ "nImporteUnitario" ]      := nImporteUnitarioDescuentos( hAtipica )
    end if 
 
 Return ( hAtipica )
@@ -13077,19 +13077,19 @@ Return ( nImporteUnitario )
 //---------------------------------------------------------------------------//
 // TODO
 
-Static Function nImporteUnitarioDescuentos( hValue, hAtipica )
+Static Function nImporteUnitarioDescuentos( hAtipica )
 
    local nImporteUnitario  := 0
 
-   nImporteUnitario        := hValue[ "nImporte" ] 
-   nImporteUnitario        -= hValue[ "nDescuentoLineal" ]
+   nImporteUnitario        := hAtipica[ "nImporte" ] 
+   nImporteUnitario        -= hAtipica[ "nDescuentoLineal" ]
    
-   if hValue[ "nDescuentoPorcentual" ] != 0
-      nImporteUnitario     -= nImporteUnitario * hValue[ "nDescuentoPorcentual" ] / 100
+   if hAtipica[ "nDescuentoPorcentual" ] != 0
+      nImporteUnitario     -= nImporteUnitario * hAtipica[ "nDescuentoPorcentual" ] / 100
    end if      
 
-   if hValue[ "nDescuentoPromocional" ] != 0
-      nImporteUnitario     -= nImporteUnitario * hValue[ "nDescuentoPromocional" ] / 100
+   if hAtipica[ "nDescuentoPromocional" ] != 0
+      nImporteUnitario     -= nImporteUnitario * hAtipica[ "nDescuentoPromocional" ] / 100
    end if 
 
 Return ( nImporteUnitario )

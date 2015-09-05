@@ -224,6 +224,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      lOpenFiles  := .t.
+      
       oMsgText( 'Abriendo ficheros artículos' )
 
       nView       := D():CreateView()
@@ -234,7 +236,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       
       D():EstadoArticulo( nView )
 
-      lOpenFiles  := .t.
+      D():Articulo( nView )
 
       USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -5868,7 +5870,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    // Ejecutamos script del evento before append-------------------------------
 
    if nMode == APPD_MODE
-      runEventScript( "Articulos\beforeAppend", aTmp )
+      runEventScript( "Articulos\beforeAppend", aTmp, nView )
    end if
 
    // Notificaciones en pantalla-----------------------------------------------
