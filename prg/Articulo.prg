@@ -236,8 +236,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       
       D():EstadoArticulo( nView )
 
-      D():Articulo( nView )
-
       USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
       SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
