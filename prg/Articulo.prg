@@ -5867,7 +5867,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    // Ejecutamos script del evento before append-------------------------------
 
-   if nMode == APPD_MODE
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
       runEventScript( "Articulos\beforeAppend", aTmp, nView )
    end if
 
@@ -6212,6 +6212,12 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       */
 
       CommitTransaction()
+
+   // Ejecutamos script del evento after append--------------------------------
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      runEventScript( "Articulos\afterAppend", aTmp, nView )
+   end if
 
    RECOVER USING oError
 

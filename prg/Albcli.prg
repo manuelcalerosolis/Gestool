@@ -11461,6 +11461,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    oMsgText( "Archivando" )
 
+   // Ejecutamos script del evento before append-------------------------------
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      runEventScript( "AlbaranesClientes\beforeAppend", aTmp, nView )
+   end if
+
    oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -11719,6 +11725,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    dbCommitAll()
 
    CommitTransaction()
+
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      runEventScript( "AlbaranesClientes\afterAppend", aTmp, nView )
+   end if
 
    CursorWE()
 
