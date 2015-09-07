@@ -41,6 +41,12 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfContactos, oBrw, bWhen, bValid, nMode,
 			PICTURE 	"@!" ;
 			OF 		oDlg
 
+      REDEFINE GET aBlank[ ( dbfContactos )->( FieldPos( "cNifCon" ) ) ] ;
+         ID       101 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         PICTURE  "@!" ;
+         OF       oDlg
+
       REDEFINE GET aBlank[ ( dbfContactos )->( FieldPos( "cDirCon" ) ) ] ;
          ID       110 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
@@ -257,6 +263,7 @@ FUNCTION aItmContacto()
 
    aAdd( aItmCon, { "cCodCli",   "C",   12,    0, "Código del cliente" ,               "",                  "", "( cDbfCon )" } )
    aAdd( aItmCon, { "cNomCon",   "C",  150,    0, "Nombre del contacto" ,              "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cNifCon",   "C",   30,    0, "NIF del contacto" ,                 "'@!'",              "", "( cDbfCon )" } )
    aAdd( aItmCon, { "cDirCon",   "C",  100,    0, "Domicilio del contacto" ,           "'@!'",              "", "( cDbfCon )" } )
    aAdd( aItmCon, { "cPobCon",   "C",  100,    0, "Población del contacto" ,           "'@!'",              "", "( cDbfCon )" } )
    aAdd( aItmCon, { "cPrvCon",   "C",   20,    0, "Provincia del contacto" ,           "'@!'",              "", "( cDbfCon )" } )

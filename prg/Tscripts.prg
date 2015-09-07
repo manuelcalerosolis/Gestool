@@ -383,7 +383,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD EjecutarFicheroScript( uParam ) CLASS TScripts
+METHOD EjecutarFicheroScript( uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) CLASS TScripts
 
    // Desactivamos todos los Scripts-------------------------------------------
 
@@ -391,7 +391,7 @@ METHOD EjecutarFicheroScript( uParam ) CLASS TScripts
 
    // Ejecutamos el script compilado----------------------------------------
 
-   ::RunScript( ::cFicheroHbr, uParam )
+   ::RunScript( ::cFicheroHbr, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    // Activamos todos los scripts----------------------------------------------
 
@@ -401,7 +401,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD RunScript( cFichero, uParam ) CLASS TScripts
+METHOD RunScript( cFichero, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) CLASS TScripts
 
    local u
    local pHrb
@@ -413,7 +413,7 @@ METHOD RunScript( cFichero, uParam ) CLASS TScripts
 
       if file( cFichero )
          pHrb        := hb_hrbLoad( cFichero )
-         u           := hb_hrbDo( pHrb, uParam )
+         u           := hb_hrbDo( pHrb, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
          hb_hrbUnload( pHrb )   
       end if
 
@@ -480,7 +480,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD CompilarEjecutarFicheroScript( cFicheroPrg, uParam )
+METHOD CompilarEjecutarFicheroScript( cFicheroPrg, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) 
 
    if !empty( cFicheroPrg )
       ::cFicheroPrg  := cFicheroPrg
@@ -489,7 +489,7 @@ METHOD CompilarEjecutarFicheroScript( cFicheroPrg, uParam )
 
    ::CompilarFicheroScript()
 
-   ::EjecutarFicheroScript( uParam )
+   ::EjecutarFicheroScript( uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) 
 
 Return ( Self )
 
@@ -514,7 +514,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function runEventScript( cDirectory, uParam )
+Function runEventScript( cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) 
 
    local aFile
    local aDirectory  
@@ -524,7 +524,7 @@ Function runEventScript( cDirectory, uParam )
    if !empty( aDirectory )
 
       for each aFile in aDirectory
-         TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam )
+         TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) 
       next 
 
    end if 

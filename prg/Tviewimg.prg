@@ -638,8 +638,7 @@ rc      := {rc[1],rc[2],rc[3],rc[4]}
 
 //msgAlert( int( ( ( rc[4] - rc[2] ) - ( ::nWItem * ::nCols ) ) / ::nCols ), "me keda este espacio" )
 
-// nHOffset := int( ( ( rc[3] - rc[1] ) - ( ::nHItem * ::nRows ) ) / ::nRows )
-
+nHOffset := int( ( ( rc[3] - rc[1] ) - ( ::nHItem * ::nRows ) ) / ::nRows )
 nWOffset := int( ( ( rc[4] - rc[2] ) - ( ::nWItem * ::nCols ) ) / ::nCols )
 
 // logwrite( nWOffset )
@@ -650,8 +649,8 @@ nWOffset := int( ( ( rc[4] - rc[2] ) - ( ::nWItem * ::nCols ) ) / ::nCols )
 
 for nR := 1 to ::nRows
 
-    nTop     := ( nR - 1 ) * ::nHItem + rc[1] //+ nHOffset
-    nBottom  := nTop + ::nHItem //+ nHOffset
+    nTop     := ( nR - 1 ) * ( ::nHItem + nHOffset ) + rc[1] 
+    nBottom  := nTop + ::nHItem + nHOffset
 
     for nC := 1 to ::nCols
         nLeft               := ( nC - 1 ) * ( ::nWItem + rc[2] + nWOffset )

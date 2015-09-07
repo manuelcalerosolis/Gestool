@@ -1977,6 +1977,7 @@ METHOD Resource() CLASS TpvTactil
    ::oBrwFamilias:lHeader                 := .f.
    ::oBrwFamilias:lTransparent            := .f.
    ::oBrwFamilias:lAutoSort               := .f.
+   ::oBrwFamilias:lKinetic                := .t.
    ::oBrwFamilias:nDataLines              := 1
    ::oBrwFamilias:nRowHeight              := 48
 
