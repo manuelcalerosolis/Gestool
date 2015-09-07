@@ -66,9 +66,9 @@ METHOD GetEditDocumento() CLASS DeliveryNoteCustomer
 
    local id                := D():AlbaranesClientesId( ::nView )
 
-   if Val( id ) == 0
+   if Empty( id )
       Return .f.
-   end if      
+   end if  
 
    ::hDictionaryMaster     := D():getAlbaranCliente( ::nView )
 
