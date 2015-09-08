@@ -4176,6 +4176,10 @@ Function structOfertaArticulo( hCabecera, hLinea, nTotalLinea, nView  )
    local sOfertaArticulo
    local lOfertaArticulo   := .f.
 
+   if empty( hLinea[ "Articulo" ] )
+      Return nil
+   end if 
+
    if !( D():Articulos( nView ) )->( dbSeek( hLinea[ "Articulo" ] ) )
       msgStop( "Código de artículo " + alltrim( hLinea[ "Articulo" ] ) + " no encontrado", "Busqueda de ofertas" )
       Return nil

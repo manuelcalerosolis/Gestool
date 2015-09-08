@@ -25,8 +25,8 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "LENGUAJE.DBF" CLASS "LENGUAJE" PATH ( cPath ) VIA ( cDriver ) COMMENT "Lenguajes"
 
-      FIELD NAME "cCodLen"    TYPE "C" LEN  4  DEC 0  COMMENT "Código"  DEFAULT Space( 4 )   COLSIZE 80  OF ::oDbf
-      FIELD NAME "cNomLen"    TYPE "C" LEN 50  DEC 0  COMMENT "Nombre"  DEFAULT Space( 50 )  COLSIZE 200 OF ::oDbf
+      FIELD NAME "cCodLen"    TYPE "C" LEN   4  DEC 0  COMMENT "Código"  DEFAULT Space( 4 )     COLSIZE 80  OF ::oDbf
+      FIELD NAME "cNomLen"    TYPE "C" LEN  50  DEC 0  COMMENT "Nombre"  DEFAULT Space( 200 )   COLSIZE 200 OF ::oDbf
 
       INDEX TO "LENGUAJE.CDX" TAG "CCODLEN" ON "CCODLEN" COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "LENGUAJE.CDX" TAG "CNOMLEN" ON "CNOMLEN" COMMENT "Nombre" NODELETED OF ::oDbf

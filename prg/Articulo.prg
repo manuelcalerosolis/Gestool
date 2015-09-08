@@ -1620,8 +1620,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oImpComanda2
    local cImpComanda1
    local cImpComanda2
-   local aNombreTarifas    := aNombreTarifas()
-   local cNombreTarifaWeb  := aNombreTarifas[1]
+   local aNombreTarifas       := aNombreTarifas()
+   local cNombreTarifaWeb     := aNombreTarifas[1]
 
    CursorWait()
 
@@ -16540,8 +16540,8 @@ Function aItmArtLeng()
 
    aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código del artículo", "",   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodLen",   "C",  4, 0, "Código del lenguaje", "",   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDesTik",   "C", 30, 0, "Descripción corta",   "",   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDesArt",   "M",200, 0, "Descripción larga",   "",   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesTik",   "C",200, 0, "Descripción corta",   "",   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesArt",   "M", 10, 0, "Descripción larga",   "",   "", "( cDbfArt )", nil } )
 
 Return ( aBase )
 

@@ -65,7 +65,7 @@ METHOD GetEditDocumento() CLASS OrderCustomer
 
    local id                := D():PedidosClientesId( ::nView )
 
-   if Val( id ) == 0
+   if Empty( id )
       Return .f.
    end if
 

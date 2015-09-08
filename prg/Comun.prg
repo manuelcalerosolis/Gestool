@@ -3230,7 +3230,7 @@ function aNombreTarifas()
    
    for n := 1 to NUMERO_TARIFAS
 
-      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) 
+      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .or. ( n == 1 )
          aadd( aNombreTarifas, uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ), "Precio " + alltrim( str( n ) ) ) )
       endif
 
@@ -3246,7 +3246,8 @@ function nNumeroTarifa( cNombreTarifa )
    
    for n := 1 to NUMERO_TARIFAS
 
-      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .and. alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == cNombreTarifa
+      if ( uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .or. ( n == 1 ) ) .and. ;
+         alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == cNombreTarifa
          Return ( n )
       endif
 
