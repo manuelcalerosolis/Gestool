@@ -819,9 +819,9 @@ METHOD OpenFiles( lExclusive )
 
       ::oDbfDet:Activate(     .f., !( lExclusive ) )
 
-      DATABASE NEW ::oUser       PATH ( cPatDat() ) FILE "USERS.DBF"          VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
-
       DATABASE NEW ::oDbfDiv     PATH ( cPatDat() ) FILE "DIVISAS.DBF"        VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
+
+      DATABASE NEW ::oUser       PATH ( cPatDat() ) FILE "USERS.DBF"          VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
 
       DATABASE NEW ::oIvaImp     PATH ( cPatDat() ) FILE "TIVA.DBF"           VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 

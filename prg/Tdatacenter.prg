@@ -5836,6 +5836,8 @@ CLASS D
 
    METHOD Propiedades( nView )               INLINE ( ::Get( "Pro", nView ) )
       METHOD PropiedadesLineas( nView )      INLINE ( ::Get( "TblPro", nView ) )
+      METHOD PropiedadesLineas1( nView )     INLINE ( ::Get( "TblPro1", nView ) )
+      METHOD PropiedadesLineas2( nView )     INLINE ( ::Get( "TblPro2", nView ) )
 
    METHOD Almacen( nView )                   INLINE ( ::Get( "Almacen", nView ) )
 

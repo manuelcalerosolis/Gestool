@@ -1557,10 +1557,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    	   WHEN 	( nMode != ZOOM_MODE ) ;
          ACTION   ( LineUp( dbfTmpLin, oBrwLin ) )
 
-	REDEFINE BUTTON ;
-	   ID 	525 ;
-	   OF 	oFld:aDialogs[1] ;
-	   WHEN 	( nMode != ZOOM_MODE ) ;
+      REDEFINE BUTTON ;
+         ID 	525 ;
+         OF 	oFld:aDialogs[1] ;
+         WHEN 	( nMode != ZOOM_MODE ) ;
          ACTION   ( LineDown( dbfTmpLin, oBrwLin ) )
 
       REDEFINE BUTTON oBtnAtp;
@@ -1569,28 +1569,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          ACTION   ( ImportaComprasProveedor( aTmp, oBrwLin, oDlg ) )
 
-      /*
+   /*
 	Descuentos______________________________________________________________
 	*/
 
-      REDEFINE GET aGet[ _CDTOESP ] VAR aTmp[ _CDTOESP ] ;
-            ID          199 ;
-            WHEN        ( nMode != ZOOM_MODE ) ;
-            ON CHANGE   ( RecalculaTotal( aTmp ) );
-            OF 		oFld:aDialogs[1]
+   REDEFINE GET aGet[ _CDTOESP ] VAR aTmp[ _CDTOESP ] ;
+      ID          199 ;
+      WHEN        ( nMode != ZOOM_MODE ) ;
+      ON CHANGE   ( RecalculaTotal( aTmp ) );
+      OF 		oFld:aDialogs[1]
 
 	REDEFINE GET aGet[ _NDTOESP ] VAR aTmp[ _NDTOESP ] ;
-		ID 		200 ;
-		WHEN 		( nMode != ZOOM_MODE ) ;
-            PICTURE     "@E 999.99" ;
-            SPINNER ;
-            ON CHANGE   ( RecalculaTotal( aTmp ) );
-		OF 		oFld:aDialogs[1]
+      ID 		200 ;
+      WHEN 		( nMode != ZOOM_MODE ) ;
+      PICTURE     "@E 999.99" ;
+      SPINNER ;
+      ON CHANGE   ( RecalculaTotal( aTmp ) );
+      OF 		oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CDPP ] VAR aTmp[ _CDPP ] ;
-            ID          209 ;
-            WHEN 		( nMode != ZOOM_MODE ) ;
-            ON CHANGE   ( RecalculaTotal( aTmp ) );
+   REDEFINE GET aGet[ _CDPP ] VAR aTmp[ _CDPP ] ;
+      ID          209 ;
+      WHEN 		( nMode != ZOOM_MODE ) ;
+      ON CHANGE   ( RecalculaTotal( aTmp ) );
 		OF 		oFld:aDialogs[1]
 
 		REDEFINE GET aGet[ _NDPP ] VAR aTmp[ _NDPP ];
@@ -1681,8 +1681,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          :nHeadStrAlign := 1
          :nFootStrAlign := 1
          :nEditType     := 1
-         :bEditWhen     := {|| !IsNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ) }
-         :bOnPostEdit   := {|o,x| EdtIva( o, x, aTotIva[ oBrwIva:nArrayAt, 3 ], dbfTmp, D():TiposIva( nView ), oBrwLin ), RecalculaTotal( aTmp ) }
+         :bEditWhen     := {|| !isNil( aTotIva[ oBrwIva:nArrayAt, 3 ] ) }
+         :bOnPostEdit   := {|o,x| EdtIva( o, x, aTotIva[ oBrwIva:nArrayAt, 3 ], dbfTmpLin, D():TiposIva( nView ), oBrwLin ), RecalculaTotal( aTmp ) }
       end with
 
       with object ( oBrwIva:aCols[ 4 ] )
@@ -5641,6 +5641,9 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de pedidos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPedPrv')" )
    oFr:AddVariable(     "Lineas de pedidos",   "Total línea de pedido",               "CallHbFunc('nTotLPedPrv')" )
 
+   oFr:AddVariable(     "Lineas de pedidos",   "Nombre primera propiedad",            "CallHbFunc('nombrePrimeraPropiedad')" )
+   oFr:AddVariable(     "Lineas de pedidos",   "Nombre segunda propiedad",            "CallHbFunc('nombreSegundaPropiedad')" )
+
 Return nil
 
 //---------------------------------------------------------------------------//
@@ -9340,5 +9343,17 @@ Function DesignLabelPedidoProveedores( oFr, cDoc )
    oLabel:End()
 
 Return .t.
+
+//--------------------------------------------------------------------------//
+
+Function nombrePrimeraPropiedad()
+
+Return ( retValProp( ( D():PedidosProveedoresLineas( nView ) )->cCodPr1 + ( D():PedidosProveedoresLineas( nView ) )->cValPr1, D():PropiedadesLineas( nView ) ) )
+
+//--------------------------------------------------------------------------//
+
+Function nombreSegundaPropiedad()
+
+Return ( retValProp( ( D():PedidosProveedoresLineas( nView ) )->cCodPr2 + ( D():PedidosProveedoresLineas( nView ) )->cValPr2, D():PropiedadesLineas( nView ) ) )
 
 //--------------------------------------------------------------------------//

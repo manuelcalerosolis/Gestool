@@ -358,8 +358,8 @@ Return ( lOpen )
 
 Method CloseFiles() CLASS TSndRecInf
 
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    local lOpen    := .t.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    BEGIN SEQUENCE
 
@@ -773,7 +773,6 @@ Return nil
 //----------------------------------------------------------------------------//
 
 Method BotonSiguiente() CLASS TSndRecInf
-
 
    do case
       case ::oFld:nOption == 1 .and. ::nTipoEnvio == 1

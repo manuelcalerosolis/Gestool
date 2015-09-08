@@ -1249,8 +1249,11 @@ RETURN ( Self )
 
 METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
+   local nSec
    local cExpHead
    local cExpLine
+
+   nSec              := seconds()
 
    ::oPedCliT:OrdSetFocus( "dFecPed" )
    ::oPedCliL:OrdSetFocus( "nNumPed" )
@@ -1397,6 +1400,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
    ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
    ::oPedCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ) )
+
+   msgAlert( seconds() - nSec, "seconds()" )
 
 RETURN ( Self )
 

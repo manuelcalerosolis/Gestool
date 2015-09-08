@@ -257,7 +257,7 @@ CLASS TDbf
     Method SwapUp()
     Method SwapDown()
 
-    Method lRddAdsCdx()                   INLINE ( ::cRDD == "ADSCDX" )
+    Method lRddAdsCdx()                   INLINE ( ::cRDD == "ADSCDX" .or. lAIS() )
 
     Method aCommentIndex()
 
@@ -1251,8 +1251,8 @@ METHOD AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOp
 
         if ::nArea != 0
             ( ::nArea )->( OrdListClear() )
-            if ( !::lRddAdsCdx() .or. !lAIS() )
-              aEval( ::aTIndex, { | o | ( ::nArea )->( OrdListAdd( o:cFile, o:cName ) ) } )
+            if !::lRddAdsCdx() 
+                aEval( ::aTIndex, { | o | ( ::nArea )->( OrdListAdd( o:cFile, o:cName ) ) } )
             end if 
             ( ::nArea )->( OrdSetFocus( 1 ) )
         end if
@@ -1287,8 +1287,8 @@ METHOD AddBag( cFile ) CLASS TDbf
 
 
         if ::lExistFile( cFile )
-            if ( !::lRddAdsCdx() .or. !lAIS() )
-               ( ::nArea )->( OrdListAdd( cFile ) )
+            if !::lRddAdsCdx() 
+                ( ::nArea )->( OrdListAdd( cFile ) )
             end if
             ( ::nArea )->( OrdSetFocus( 1 ) )
         else
