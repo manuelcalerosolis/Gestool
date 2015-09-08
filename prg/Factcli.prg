@@ -22981,9 +22981,14 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 	/*
 	Buscamos ahora por loas facturas--------------------------------------------
 	*/
-
+/*
 	if ( D():FacturasClientesLineas( nView ) )->( dbSeek( cCodArt + cCodCli ) )
 		dUltimaFactura 		:= ( D():FacturasClientesLineas( nView ) )->dFecFac
+	end if
+*/
+	
+	if ( dbfFacCliL )->( dbSeek( cCodArt + cCodCli ) )
+		dUltimaFactura 		:= ( dbfFacCliL )->dFecFac
 	end if
 
 	/*
@@ -22991,9 +22996,11 @@ Function dFechaUltimaVenta( cCodCli, cCodArt, dbfAlbCliL, dbfFacCliL, dbfTikL )
 	*/
 
 	( dbfAlbCliL )->( OrdSetFocus( nOrdAlbL ) )
-	( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( nOrdFacL ) )
+//	( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( nOrdFacL ) )
+	( dbfFacCliL )->( OrdSetFocus( nOrdFacL ) )
 	( dbfAlbCliL )->( dbGoTo( nRecAlbL ) )
-	( D():FacturasClientesLineas( nView ) )->( dbGoTo( nRecFacL ) )
+//	( D():FacturasClientesLineas( nView ) )->( dbGoTo( nRecFacL ) )
+	( dbfFacCliL )->( dbGoTo( nRecFacL ) )
 
 	CursorWE()
 
