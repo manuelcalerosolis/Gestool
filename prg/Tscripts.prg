@@ -370,8 +370,8 @@ METHOD CompilarFicheroScript() CLASS TScripts
       ferase( ::cFicheroHbr )
 
       msginfo( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log" ) 
-      logwrite( FullCurDir() + "harbour\harbour.exe " + valtoprg( ::cFicheroPrg ) + " /i" + FullCurDir() + "include /gh /n /p /o" + valtoprg( ::cFicheroHbr ) + " > " )     
-      waitRun( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " > " + FullCurDir() + "compile.log", 6 )
+      logwrite( FullCurDir() + "harbour\harbour.exe " + valtoprg( ::cFicheroPrg ) + " /i" + FullCurDir() + "include /gh /n /p /o" + valtoprg( ::cFicheroHbr ) + " | " + FullCurDir() + "compile.log" )     
+      waitRun( FullCurDir() + "harbour\harbour.exe " + ::cFicheroPrg + " /i" + FullCurDir() + "include /gh /n /p /o" + ::cFicheroHbr + " | " + FullCurDir() + "compile.log", 6 )
 
       if !file( ::cFicheroHbr )
          msgStop( "Error al compilar el fichero " + ::cFicheroHbr )
@@ -495,7 +495,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Function ImportScript( oMainWindow, oBoton, cDirectory )
+Function ImportScript( oMainWindow, oBoton, cDirectory, uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 )
 
    local aFile
    local aDirectory  
@@ -505,7 +505,7 @@ Function ImportScript( oMainWindow, oBoton, cDirectory )
    if !Empty( aDirectory )
 
       for each aFile in aDirectory
-         oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ] ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
+         oMainWindow:NewAt( "Document", , , {|| TScripts():CompilarEjecutarFicheroScript( cPatScript() + cDirectory + '\' + aFile[ 1 ], uParam1, uParam2, uParam3, uParam4, uParam5, uParam6, uParam7, uParam8, uParam9, uParam10 ) }, GetFileNoExt( Rtrim( aFile[ 1 ] ) ), , , , , oBoton )
       next 
 
    end if 

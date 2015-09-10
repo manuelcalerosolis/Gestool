@@ -3,7 +3,7 @@
 
 CLASS PaymentViewSearchNavigator FROM ViewSearchNavigator
 
-   METHOD setItemsBusqueda()           INLINE ( ::aItemsBusqueda := { "Nombre", "Código" } )
+   METHOD setItemsBusqueda()           INLINE ( ::hashItemsSearch := { "Nombre" => "cDesPago", "Código" => "cCodPago" } )
 
    METHOD setColumns()
 

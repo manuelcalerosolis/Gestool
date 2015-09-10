@@ -10,7 +10,7 @@ CLASS DocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD setTextoTipoDocumento( cName )      INLINE ( ::cTextoTipoDocumento := cName ) 
 
-   METHOD setItemsBusqueda( aItems )   INLINE ( ::aItemsBusqueda := { "Número", "Fecha", "Código", "Nombre" } )   
+   METHOD setItemsBusqueda( aItems )   INLINE ( ::hashItemsSearch := { "Número" => 1, "Fecha" => 2, "Código" => 3, "Nombre" => 4 } )   
 
    METHOD setColumns()
 

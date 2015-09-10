@@ -46,6 +46,7 @@ CLASS DocumentsSales FROM Documents
    METHOD getSerie()                   INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
    METHOD getNumero()                  INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
    METHOD getSufijo()                  INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
+   METHOD getAlmacen()                 INLINE ( hGet( ::hDictionaryMaster, "Almacen" ) )
 
    METHOD getID()                      INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
 
@@ -80,9 +81,8 @@ CLASS DocumentsSales FROM Documents
    METHOD moveClient()
 
    METHOD CargaSiguienteCliente()
-
-   METHOD gotoUltimoCliente( oCbxRuta )
-   METHOD setUltimoCliente( oCbxRuta )
+      METHOD gotoUltimoCliente( oCbxRuta )
+      METHOD setUltimoCliente( oCbxRuta )
 
    METHOD Total()                                  INLINE ( ::oDocumentLines:Total() )
    METHOD calculaIVA()                             VIRTUAL
@@ -96,7 +96,7 @@ CLASS DocumentsSales FROM Documents
    METHOD saveEditDocumento()
    METHOD saveAppendDocumento()
 
-   // Lineas
+   // Lineas-------------------------------------------------------------------
 
    METHOD addDocumentLine()
       METHOD assignLinesDocument()
@@ -712,6 +712,7 @@ METHOD assignLinesDocument() CLASS DocumentsSales
       oDocumentLine:setSerieMaster()
       oDocumentLine:setNumeroMaster()
       oDocumentLine:setSufijoMaster()
+      oDocumentLine:setAlmacenMaster()
    next
 
 Return( self )

@@ -3,7 +3,7 @@
 
 CLASS ProductViewSearchNavigator FROM ViewSearchNavigator
 
-   METHOD setItemsBusqueda()           INLINE ( ::aItemsBusqueda := { "Nombre", "Código" } )
+   METHOD setItemsBusqueda()           INLINE ( ::hashItemsSearch := { "Nombre" => "Nombre", "Código" => "Codigo" } )
 
    METHOD setColumns()
 

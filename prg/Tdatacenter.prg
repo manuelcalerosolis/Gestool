@@ -5592,6 +5592,8 @@ CLASS D
       METHOD getStatusPedidosClientes( nView )        INLINE ( ::aStatus := aGetStatus( ::PedidosClientes( nView ) ) )
       METHOD setStatusPedidosClientes( nView )        INLINE ( SetStatus( ::PedidosClientes( nView ), ::aStatus ) ) 
 
+      METHOD setFocusPedidosClientes( cTag, nView )   INLINE ( ::cTag   := ( ::PedidosClientes( nView )  )->( ordSetFocus( cTag ) ) )
+
    METHOD PedidosClientesReservas( nView )            INLINE ( ::Get( "PedCliR", nView ) )
 
    METHOD PedidosClientesLineas( nView )              INLINE ( ::Get( "PedCliL", nView ) )

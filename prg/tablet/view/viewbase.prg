@@ -218,7 +218,9 @@ METHOD evalDialog() CLASS ViewBase
             oControl:SetFocus()
 
          endif
+
       end if 
+      
    next
 
 return ( lValid )

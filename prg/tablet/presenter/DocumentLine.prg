@@ -24,6 +24,9 @@ CLASS DocumentLine
    METHOD getSufijo()                                          INLINE ( hGet( ::hDictionary, "Sufijo" ) )
    METHOD setSufijoMaster()                                    INLINE ( hSet( ::hDictionary, "Sufijo", ::oSender:getSufijo() ) )
 
+   METHOD getAlmacen()                                         INLINE ( hGet( ::hDictionary, "Almacen" ) )
+   METHOD setAlmacenMaster()                                   INLINE ( hSet( ::hDictionary, "Almacen", ::oSender:getAlmacen() ) )
+
    METHOD getNumeroLinea()                                     INLINE ( hGet( ::hDictionary, "NumeroLinea" ) )
    METHOD setNumeroLinea( NumeroLinea )                        INLINE ( hSet( ::hDictionary, "NumeroLinea", NumeroLinea ) )
 

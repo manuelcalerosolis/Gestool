@@ -1671,12 +1671,6 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
    end if
 
-   /*DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
-      NOBORDER ;
-      ACTION   ( TPedidosClientes2PedidosProveedor():New( ( D():PedidosClientes( nView ) )->cSerPed, ( D():PedidosClientes( nView ) )->nNumPed, ( D():PedidosClientes( nView ) )->cSufPed, oStock ):Dialog() ) ;
-      TOOLTIP  "(G)enerar pedido a proveedores" ;
-      HOTKEY   "G";*/
-
    DEFINE BTNSHELL RESOURCE "SHOPPINGCART" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( PedCliente2PedProveedor():New( nView, oTipArt, oFabricante, oStock ) ) ;
@@ -1695,7 +1689,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "PedidosClientes" )  
+      ImportScript( oWndBrw, oScript, "PedidosClientes", nView )  
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
          ACTION   ( oRotor:Expand() ) ;
@@ -15335,7 +15329,7 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "iNumPed", "'09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {||!Deleted()} ) )
-      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "CSUPED", "Field->CSUPED", {|| Field->CSUPED } ) )
+      ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cSuPed", "Field->cSuPed", {|| Field->cSuPed } ) )
 
       ( cPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }, , , , , , , , , .t. ) )
       ( cPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "dFecDes", "Field->dFecPed", {|| Field->dFecPed } ) )
@@ -15511,7 +15505,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "cCodRut", "C",    4,  0, "Código de la ruta",                                       "Ruta",                    "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "dFecEnt", "D",    8,  0, "Fecha de salida",                                         "FechaSalida",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "nEstAdo", "N",    1,  0, "Estado del pedido",                                       "Estado",                  "", "( cDbf )", {|| 1 } } )
-   aAdd( aItmPedCli, { "cSupEd",  "C",   35,  0, "Su pedido",                                               "DocumentoOrigen",         "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "cSuPed",  "C",   35,  0, "Su pedido",                                               "DocumentoOrigen",         "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "cCondent","C",  100,  0, "Condiciones del pedido",                                  "Condiciones",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "mComent", "M",   10,  0, "Comentarios",                                             "Comentarios",             "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "mObserv", "M",   10,  0, "Observaciones",                                           "Observaciones",           "", "( cDbf )", nil } )

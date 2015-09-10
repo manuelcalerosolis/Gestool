@@ -5,12 +5,21 @@ CLASS ViewSearchNavigator FROM ViewNavigator
 
    DATA lSelectorMode                  INIT .f.
 
+   DATA getSearch
+   DATA comboboxSearch
+
+   DATA hashItemsSearch
+   DATA aOrderBusqueda
+
+
+
    METHOD New( oSender )
 
-   DATA aItemsBusqueda
    METHOD setItemsBusqueda()           VIRTUAL
 
    METHOD Resource()
+
+   METHOD initDialog()
    
    METHOD defineBarraBusqueda()
 
@@ -63,7 +72,17 @@ METHOD Resource() CLASS ViewSearchNavigator
 
    ::oDlg:bResized         := {|| ::resizeDialog() }
 
-   ::oDlg:Activate( ,,,.t.,,, {|| ::InitDialog() } )
+   ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD initDialog()
+
+   ::Super:initDialog()
+
+   ::changeComboboxOrden()
 
 Return ( self )
 
@@ -72,30 +91,28 @@ Return ( self )
 METHOD defineBarraBusqueda() CLASS ViewSearchNavigator
 
    local cGetSearch
-   local oGetSearch
-   local oComboboxOrden
    local cComboboxOrden
 
    cGetSearch        := Space( 100 )
    cComboboxOrden    := ::getComboboxOrden()
 
-   oGetSearch        := TGridGet():Build(       {  "nRow"      => 45,;
+   ::getSearch       := TGridGet():Build(       {  "nRow"      => 45,;
                                                    "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, cGetSearch, cGetSearch := u ) },;
                                                    "oWnd"      => ::oDlg,;
                                                    "nWidth"    => {|| GridWidth( 9, ::oDlg ) },;
                                                    "nHeight"   => 25,;
                                                    "bValid"    => {|| ::validBarraBusqueda() },;
-                                                   "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetSearch, ::oBrowse, ::getWorkArea(), .t. ) } } )
+                                                   "bChanged"  => {| nKey, nFlags | AutoSeek( nKey, nFlags, ::getSearch, ::oBrowse, ::getWorkArea(), .t. ) } } )
 
-   oComboboxOrden    := TGridComboBox():Build(  {  "nRow"      => 45,;
+   ::comboboxSearch  := TGridComboBox():Build(  {  "nRow"      => 45,;
                                                    "nCol"      => {|| GridWidth( 9.5, ::oDlg ) },;
                                                    "bSetGet"   => {|u| if( PCount() == 0, cComboboxOrden, cComboboxOrden := u ) },;
                                                    "oWnd"      => ::oDlg,;
                                                    "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                    "nHeight"   => 25,;
-                                                   "aItems"    => ::aItemsBusqueda,;
-                                                   "bChange"   => {|| ::ChangeComboboxOrden( oComboboxOrden, oGetSearch ) } } )
+                                                   "aItems"    => hGetKeys( ::hashItemsSearch ),;
+                                                   "bChange"   => {|| ::ChangeComboboxOrden() } } )
 
 Return ( self )
 
@@ -105,19 +122,23 @@ METHOD getComboboxOrden() CLASS ViewSearchNavigator
 
    local cOrden   := ""
 
-   if isArray( ::aItemsBusqueda ) .and. len( ::aItemsBusqueda ) > 1
-      cOrden      := ::aItemsBusqueda[1]
+   if isHash( ::hashItemsSearch ) .and. len( ::hashItemsSearch ) > 1
+      cOrden      := hgetkeyat( ::hashItemsSearch, 1 )
    end if
 
 Return ( cOrden )
 
 //---------------------------------------------------------------------------//
 
-METHOD ChangeComboboxOrden( oComboboxOrden, oGetSearch ) CLASS ViewSearchNavigator
+METHOD changeComboboxOrden() CLASS ViewSearchNavigator
 
-   ( ::getWorkArea() )->( OrdSetFocus( oComboboxOrden:nAt ) )
-   
-   oGetSearch:SetFocus()
+   local textComboboxSearch   := ::comboboxSearch:varGet() 
+
+   if !empty(textComboboxSearch)
+      ( ::getWorkArea() )->( ordsetfocus( ::hashItemsSearch[ textComboboxSearch ] ) )
+   end if 
+
+   ::getSearch:SetFocus()
 
    ::oBrowse:Refresh()
 
