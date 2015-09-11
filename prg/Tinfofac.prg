@@ -178,7 +178,7 @@ METHOD lGenerate() CLASS TInfOFac
    end case
 
    if !::lAllFpg
-      cExpHead       += ' .and. cCodPgo >= "' + Rtrim( ::cFpgDes ) + '" .and. cCodPgo <= "' + Rtrim( ::cFpgHas ) + '"'
+      cExpHead       += ' .and. cCodPago >= "' + Rtrim( ::cFpgDes ) + '" .and. cCodPago <= "' + Rtrim( ::cFpgHas ) + '"'
    end if
 
    if !Empty( ::oFilter:cExpresionFilter )
