@@ -11526,6 +11526,11 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
+   if nUsrInUse() > 1
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+      return .f.
+   end if
+
    DisableMainWnd( oWnd )
 
    oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
