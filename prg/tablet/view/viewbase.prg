@@ -21,6 +21,11 @@ CLASS ViewBase
 
    DATA Style                          INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
 
+   METHOD setBrowseConfigurationName( cName ) ;
+                                       INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
+
+   METHOD loadBrowseConfiguration()    INLINE ( if( !empty( ::oBrowse ), ::oBrowse:Load(), ) )
+
    DATA cTextoTipoDocumento
       METHOD setTextoTipoDocumento( cTextoTipoDocumento );
                                        INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
@@ -166,7 +171,9 @@ Return ( self )
 
 METHOD resizeDialog() CLASS ViewBase
 
-   GridResize( ::oDlg )
+   gridResize( ::oDlg )
+
+   ::loadBrowseConfiguration()
 
 Return ( self )
 

@@ -12,9 +12,6 @@ CLASS ViewNavigator FROM ViewBase
    METHOD getView()                          INLINE ( ::oSender:nView )
    METHOD getWorkArea()                      INLINE ( ::oSender:getWorkArea() )
 
-   METHOD setBrowseConfigurationName( cName ) ;
-                                             INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
-
    METHOD BotonesAcciones()
 
    METHOD BotonesMovimientoBrowse()
