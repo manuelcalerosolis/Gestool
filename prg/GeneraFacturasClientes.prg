@@ -1361,6 +1361,7 @@ METHOD appendLineasAlbaran( oItem ) CLASS GeneraFacturasClientes
             ( D():FacturasClientesLineas( ::nView ) )->cCodAlb    := hGet( oItem:Cargo, "id" )
             ( D():FacturasClientesLineas( ::nView ) )->dFecAlb    := hGet( oItem:Cargo, "fecha" )
             ( D():FacturasClientesLineas( ::nView ) )->dFecFac    := hGet( oItem:Cargo, "fecha" )
+            ( D():FacturasClientesLineas( ::nView ) )->cCodObr    := hGet( oItem:Cargo, "direccion" )
 
             // Metemos si tiene numeros de serie-------------------------------
 

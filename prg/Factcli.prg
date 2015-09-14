@@ -249,6 +249,9 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CFORMATO 			 94
 #define __TFECFAC 			 95
 #define __CCENTROCOSTE		 96
+#define _NLABEL             97
+#define _LLABEL             98
+#define __CCODOBR           99
 
 /*
 Definici¢n de Array para impuestos
@@ -5449,6 +5452,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
         ON HELP  ( BrwProvee( aGet[ _CCODPRV ], aGet[ _CCODPRV ]:oHelpText ) ) ;
         OF       oFld:aDialogs[ 2 ]
 
+      REDEFINE GET aGet[ __CCODOBR ] VAR aTmp[ __CCODOBR ] ;
+         ID       190 ;
+         IDTEXT   191 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cObras( aGet[ __CCODOBR ], aGet[ __CCODOBR ]:oHelpText, aTmpFac[ _CCODCLI ], dbfObrasT ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( brwObras( aGet[ __CCODOBR ], aGet[ __CCODOBR ]:oHelpText, aTmpFac[ _CCODCLI ], dbfObrasT ) ) ;
+         OF       oFld:aDialogs[ 2 ]
+
     REDEFINE GET aGet[ __CCENTROCOSTE ] VAR  aTmp[ __CCENTROCOSTE ] ;
         ID       370 ;
         IDTEXT 	 371 ;
@@ -5546,7 +5558,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
    oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
    oDlg:bStart    := {||   SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac, oRentabilidadLinea ),;
-                           if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ), aGet[ _CCODPRV ]:lValid() }
+                           if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ), aGet[ _CCODPRV ]:lValid(), aGet[ __CCODOBR ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -7831,7 +7843,12 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
             while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == cAlbaran .and. !( dbfAlbCliL )->( eof() ) )
 			      
-			     appendRegisterByHash( dbfAlbCliL, dbfTmpLin, { "cSerie" => Space(1), "nNumFac" => 0, "cSuPed" => cSuPed, "dFecFac" => ( dbfAlbCliL )->dFecAlb, "tFecFac" => ( dbfAlbCliL )->tFecAlb } )
+			     appendRegisterByHash( dbfAlbCliL, dbfTmpLin, { "cSerie" => Space(1),;
+                                                             "nNumFac" => 0,;
+                                                             "cSuPed" => cSuPed,;
+                                                             "dFecFac" => ( dbfAlbCliL )->dFecAlb,;
+                                                             "tFecFac" => ( dbfAlbCliL )->tFecAlb,;
+                                                             "cCodObr" => ( dbfAlbCliT )->cCodObr } )
                
                	( dbfAlbCliL )->( dbSkip() )
 
@@ -9067,6 +9084,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
                (dbfTmpLin)->nBultos 	:= (dbfPedCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfPedCliL)->cFormato
+               (dbfTmpLin)->cCodObr    := (dbfPedCliT)->cCodObr
 
                /*
                Vamos a ver si se estan llavando cajas
@@ -9450,6 +9468,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->lLinOfe    := (dbfPreCliL)->lLinOfe
                (dbfTmpLin)->nBultos 	:= (dbfPreCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfPreCliL)->cFormato
+               (dbfTmpLin)->cCodObr    := (dbfPedCliT)->cCodObr
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -10264,6 +10283,8 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->lControl := .t.
                ( dbfTmpLin )->nNumLin  := ++nOffSet
 
+               
+
             end if
 
             while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == aAlbaranes[ nItem, 2] .and. !( dbfAlbCliL )->( Eof() ) )
@@ -10277,7 +10298,8 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                                                                "cCodAlb" => ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb,;
                                                                "dFecFac" => ( dbfAlbCliT )->dFecAlb,;
                                                                "tFecFac" => ( dbfAlbCliT )->tFecAlb,;
-                                                               "cSuPed"  => cSuPed } )
+                                                               "cSuPed"  => cSuPed,;
+                                                               "cCodObr" => aAlbaranes[ nItem, 8 ] } )
 
                /*
                Pasamos series de albaranes-------------------------------------
@@ -17404,6 +17426,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->cNumSat 	:= cNumSat 
                (dbfTmpLin)->nBultos 	:= (dbfSatCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfSatCliL)->cFormato
+               (dbfTmpLin)->cCodObr    := (dbfSatCliT)->cCodObr 
 
                (dbfSatCliL)->( dbSkip() )
 
@@ -17475,473 +17498,6 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
    end if
 
 RETURN lValid
-
-//---------------------------------------------------------------------------//
-
-/*
-Funcion que nos permite a¤adir a los albaranes pedidos ye existentes
-*/
-
-STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
-
-   local oDlg
-   local nDiv
-   local nItem       := 1
-   local cCodAge
-   local oBrwLin
-   local nOrdAnt
-   local nNumLin
-   local lCodAge     := .f.
-   local nOffSet     := 0
-   local cDesAlb     := ""
-   local cCodCli     := aGet[ _CCODCLI ]:varGet()
-   local nTotPed
-   local nTotRec
-   local nTotPdt
-   local lAlquiler   := .f.
-   local cCliente    := Rtrim( aTmp[ _CNOMCLI ] )
-   local cObra       := if( Empty( aTmp[ _CCODOBR ] ), "Todas", Rtrim( aTmp[ _CCODOBR ] ) )  
-   local cIva        := cImp() + Space( 1 ) + if( aTmp[ _LIVAINC ], "Incluido", "Desglosado" )
-
-   aNumalb           := {}
-
-   if Empty( cCodCli )
-      msgStop( "Es necesario codificar un cliente", "Agrupar SAT" )
-      return .t.
-   end if
-
-   if !Empty( aGet[ _CNUMSAT ]:VarGet() )
-      msgStop( "Ya ha importado un SAT", "Agrupar SAT" )
-      return .t.
-   end if
-
-   if !Empty( oTipFac ) .and. ( oTipFac:nAt == 2 )
-      lAlquiler      := .t.
-   end if
-
-   /*
-   Seleccion de Registros
-   --------------------------------------------------------------------------
-   */
-
-   CursorWait()
-   
-   nOrdAnt           := ( dbfSatCliT )->( ordSetFocus( "cCodCli" ) )
-
-   if ( dbfSatCliT )->( dbSeek( cCodCli ) )
-
-      while ( dbfSatCliT )->cCodCli == cCodCli .and. ( dbfSatCliT )->( !eof() )
-
-         if ( dbfSatCliT )->lAlquiler == lAlquiler                                              .and.;
-            !( dbfSatCliT )->lEstado                                                            .and.;
-            ( dbfSatCliT )->lIvaInc == aTmp[ _LIVAINC ]                                         .and.;
-            if( Empty( aTmp[ _CCODOBR ] ), .t., ( dbfSatCliT )->cCodObr == aTmp[ _CCODOBR ] )   .and.;
-            aScan( aNumSat, ( dbfSatCliT )->cSerSat + str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) == 0
-
-            aAdd( aNumalb,    {  .f. ,;
-                                 ( dbfSatCliT )->lEstado,;
-                                 ( dbfSatCliT )->cSerSat + str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat,;
-                                 ( dbfSatCliT )->dFecSat ,;
-                                 ( dbfSatCliT )->cCodCli ,;
-                                 ( dbfSatCliT )->cNomCli ,;
-                                 ( dbfSatCliT )->cCodObr ,;
-                                 RetObras( ( dbfSatCliT )->cCodCli, ( dbfSatCliT )->cCodObr, dbfObrasT ),;
-                                 ( dbfSatCliT )->cCodAge,;
-                                 ( dbfSatCliT )->nTotSat } )
-
-         endif
-
-         ( dbfSatCliT )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfSatCliT )->( ordSetFocus( nOrdAnt ) )
-
-   CursorWE()
-
-   /*
-   Puede que no hay albaranes que facturar-------------------------------------
-   */
-
-   if Len( aNumalb ) == 0
-      msgStop( "No existen S.A.T. pendientes de este cliente" )
-      return .t.
-   end if
-
-   /*
-   Caja de Dialogo
-   ----------------------------------------------------------------------------
-   */
-
-   DEFINE DIALOG  oDlg ;
-      RESOURCE    "SET_ALBARAN" ;
-      TITLE       "Agrupando S.A.T."
-
-      REDEFINE SAY PROMPT cCliente ;
-         ID       501 ;
-         OF       oDlg
-
-      REDEFINE SAY PROMPT cObra ;
-         ID       502 ;
-         OF       oDlg
-
-      REDEFINE SAY PROMPT cIva ;
-         ID       503 ;
-         OF       oDlg
-
-      oBrwLin                       := IXBrowse():New( oDlg )
-
-      oBrwLin:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwLin:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwLin:SetArray( aNumalb, , , .f. )
-      oBrwLin:lHscroll              := .f.
-
-      oBrwLin:nMarqueeStyle         := 5
-      oBrwLin:lRecordSelector       := .f.
-
-      oBrwLin:CreateFromResource( 130 )
-
-      oBrwLin:bLDblClick            := {|| aNumalb[ oBrwLin:nArrayAt, 1 ] := !aNumalb[ oBrwLin:nArrayAt, 1 ], oBrwLin:refresh() }
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader          := "Seleccionado"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| aNumalb[ oBrwLin:nArrayAt, 1 ] }
-         :nWidth           := 20
-         :SetCheck( { "Sel16", "Nil16" } )
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader          := "Estado"
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( aNumalb[ oBrwLin:nArrayAt, 2 ] ) }
-         :nWidth           := 20
-         :SetCheck( { "Bullet_Square_Yellow_16", "Bullet_Square_Red_16" } )
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader          := "Número"
-         :bEditValue       := {|| aNumalb[ oBrwLin:nArrayAt, 3 ] }
-         :cEditPicture     := "@R #/999999999/##"
-         :nWidth           := 80
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader          := "Fecha"
-         :bEditValue       := {|| Dtoc( aNumalb[ oBrwLin:nArrayAt, 4 ] ) }
-         :nWidth           := 80
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader          := "Cliente"
-         :bEditValue       := {|| Rtrim( aNumalb[ oBrwLin:nArrayAt, 5 ] ) + Space(1) + aNumalb[ oBrwLin:nArrayAt, 6 ] }
-         :nWidth           := 250
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader          := "Dirección"
-         :bEditValue       := {|| Rtrim( aNumalb[ oBrwLin:nArrayAt, 7 ] ) + Space(1) + aNumalb[ oBrwLin:nArrayAt, 8 ] }
-         :nWidth           := 220
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader          := "Agente"
-         :bEditValue       := {|| aNumalb[ oBrwLin:nArrayAt, 9 ] }
-         :lHide            := .t.
-         :nWidth           := 60
-      end with
-
-      with object ( oBrwLin:AddCol() )
-         :cHeader          := "Total"
-         :bEditValue       := {|| aNumalb[ oBrwLin:nArrayAt, 10 ] }
-         :cEditPicture     := cPorDiv()
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-      REDEFINE BUTTON ;
-         ID       514 ;
-         OF       oDlg ;
-         ACTION   (  aNumalb[ oBrwLin:nArrayAt, 1 ] := !aNumalb[ oBrwLin:nArrayAt, 1 ],;
-                     oBrwLin:refresh(),;
-                     oBrwLin:setFocus() )
-
-      REDEFINE BUTTON ;
-         ID       516 ;
-         OF       oDlg ;
-         ACTION   (  aEval( aNumalb, { |aItem| aItem[1] := .t. } ),;
-                     oBrwLin:refresh(),;
-                     oBrwLin:setFocus() )
-
-      REDEFINE BUTTON ;
-         ID       517 ;
-         OF       oDlg ;
-         ACTION   (  aEval( aNumalb, { |aItem| aItem[1] := .f. } ),;
-                     oBrwLin:Refresh(),;
-                     oBrwLin:SetFocus() )
-
-      REDEFINE BUTTON ;
-         ID       518 ;
-         OF       oDlg ;
-         ACTION   ( ZooSatCli( aNumalb[ oBrwLin:nArrayAt, 3 ] ) )
-
-      REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
-
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end() )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   if oDlg:nResult != IDOK
-      aNumalb       := {}
-   end if
-
-   /*
-   Llamada a la funcion que busca el Albaran-----------------------------------
-   */
-
-   if oDlg:nResult == IDOK .and. Len( aNumalb ) >= 1
-
-      CursorWait()
-
-      HideImportacion()      
-
-      /*
-      A¤adimos los albaranes seleccionado para despues-------------------------
-      */
-
-      for nItem := 1 to Len( aNumalb )
-
-         if ( aNumalb[ nItem, 1 ] )
-
-            aAdd( aNumSat, aNumalb[ nItem, 3 ] )
-
-            if Empty( cCodAge )
-               cCodAge  := aNumalb[ nItem, 9 ]
-            end if
-
-            if cCodAge != aNumalb[ nItem, 9 ]
-               lCodAge  := .t.
-            end if
-
-         end if
-
-      next
-
-      if lCodAge
-         MsgInfo( "Existen conflictos de agentes" )
-      end if
-
-      for nItem := 1 to Len( aNumalb )
-
-         /*
-         Cabeceras de albaranes a facturas-------------------------------------
-         */
-
-         if !lCodAge .and. cCodAge != nil
-            aGet[ _CCODAGE ]:cText( cCodAge )
-            aGet[ _CCODAGE ]:lValid()
-         end if
-
-         if ( dbfSatCliT )->( dbSeek( aNumalb[ nItem, 3 ] ) ) .and. aNumalb[ nItem, 1 ]
-
-            if ( dbfSatCliT )->lRecargo
-               aGet[ _LRECARGO ]:Click( .t. )
-            end if
-
-            if ( dbfSatCliT )->lOperPv
-               aGet[ _LOPERPV ]:Click( .t. )
-            end if
-
-         end if
-
-         /*
-         Detalle de albaranes a facturas---------------------------------------
-         */
-
-         if ( dbfSatCliL )->( dbSeek( aNumalb[ nItem, 3] ) ) .and. aNumalb[ nItem, 1]
-
-            /*
-            Cabeceras de Albaranes-----------------------------------------------
-            */
-
-            nNumLin                       := nil
-
-            ( dbfTmpLin )->( dbAppend() )
-            cDesAlb                       := "SAT Nº " + StrTran( Alltrim( Trans( aNumalb[ nItem, 3 ], "@R #/999999999/##" ) ), " ", "" )
-            cDesAlb                       += " - Fecha " + Dtoc( aNumalb[ nItem, 4] )
-            ( dbfTmpLin )->mLngDes        := cDesAlb
-            ( dbfTmpLin )->lControl       := .t.
-            ( dbfTmpLin )->nNumLin        := ++nOffSet
-
-            /*
-            Mientras estemos en el mismo Satido--------------------------------
-            */
-
-            while ( dbfSatCliL )->cSerSat + str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat == aNumalb[ nItem, 3]
-
-               if nNumLin != (dbfSatCliL)->nNumLin
-                  ++nOffSet
-                  nNumLin                 := ( dbfSatCliL )->nNumLin
-               end if
-
-               ( dbfTmpLin )->( dbAppend() )
-
-               ( dbfTmpLin )->cNumSat     := aNumalb[ nItem, 3 ]
-               ( dbfTmpLin )->nNumLin     := nOffSet
-               ( dbfTmpLin )->cRef        := ( dbfSatCliL )->cRef
-               ( dbfTmpLin )->cDetalle    := ( dbfSatCliL )->cDetalle
-               ( dbfTmpLin )->mLngDes     := ( dbfSatCliL )->mLngDes
-               ( dbfTmpLin )->nPreUnit    := ( dbfSatCliL )->nPreDiv
-               ( dbfTmpLin )->cUnidad     := ( dbfSatCliL )->cUnidad
-               ( dbfTmpLin )->nPesoKg     := ( dbfSatCliL )->nPesoKg
-               ( dbfTmpLin )->cPesoKg     := ( dbfSatCliL )->cPesoKg
-               ( dbfTmpLin )->nVolumen    := ( dbfSatCliL )->nVolumen
-               ( dbfTmpLin )->cVolumen    := ( dbfSatCliL )->cVolumen
-               ( dbfTmpLin )->nIva        := ( dbfSatClil )->nIva
-               ( dbfTmpLin )->nReq        := ( dbfSatClil )->nReq
-               ( dbfTmpLin )->nDto        := ( dbfSatClil )->nDto
-               ( dbfTmpLin )->nPntVer     := ( dbfSatCliL )->nPntVer
-               ( dbfTmpLin )->nImpTrn     := ( dbfSatCliL )->nImpTrn
-               ( dbfTmpLin )->nDtoPrm     := ( dbfSatCliL )->nDtoPrm
-               ( dbfTmpLin )->nComAge     := ( dbfSatCliL )->nComAge
-               ( dbfTmpLin )->dFecHa      := ( dbfSatCliL )->dFecha
-               ( dbfTmpLin )->cTipMov     := ( dbfSatCliL )->cTipMov
-               ( dbfTmpLin )->nDtoDiv     := ( dbfSatCliL )->nDtoDiv
-               ( dbfTmpLin )->nUniCaja    := ( dbfSatCliL )->nUniCaja
-               ( dbfTmpLin )->nCanEnt     := ( dbfSatCliL )->nCanSat 
-               ( dbfTmpLin )->nUndKit     := ( dbfSatCliL )->nUndKit
-               ( dbfTmpLin )->lKitArt     := ( dbfSatCliL )->lKitArt
-               ( dbfTmpLin )->lKitChl     := ( dbfSatCliL )->lKitChl
-               ( dbfTmpLin )->lKitPrc     := ( dbfSatCliL )->lKitPrc
-               ( dbfTmpLin )->cCodPr1     := ( dbfSatCliL )->cCodPr1
-               ( dbfTmpLin )->cCodPr2     := ( dbfSatCliL )->cCodPr2
-               ( dbfTmpLin )->cValPr1     := ( dbfSatCliL )->cValPr1
-               ( dbfTmpLin )->cValPr2     := ( dbfSatCliL )->cValPr2
-               ( dbfTmpLin )->nCosDiv     := ( dbfSatCliL )->nCosDiv
-               ( dbfTmpLin )->lMsgVta     := ( dbfSatCliL )->lMsgVta
-               ( dbfTmpLin )->lNotVta     := ( dbfSatCliL )->lNotVta
-               ( dbfTmpLin )->lLote       := ( dbfSatCliL )->lLote
-               ( dbfTmpLin )->nLote       := ( dbfSatCliL )->nLote
-               ( dbfTmpLin )->cLote       := ( dbfSatCliL )->cLote
-               ( dbfTmpLin )->mObsLin     := ( dbfSatCliL )->mObsLin
-               ( dbfTmpLin )->Descrip     := ( dbfSatCliL )->Descrip
-               ( dbfTmpLin )->cCodPrv     := ( dbfSatCliL )->cCodPrv
-               ( dbfTmpLin )->cCodFam     := ( dbfSatCliL )->cCodFam
-               ( dbfTmpLin )->cGrpFam     := ( dbfSatCliL )->cGrpFam
-               ( dbfTmpLin )->cAlmLin     := ( dbfSatCliL )->cAlmLin
-               ( dbfTmpLin )->cRefPrv     := ( dbfSatCliL )->cRefPrv
-               ( dbfTmpLin )->dFecEnt     := ( dbfSatCliL )->dFecEnt
-               ( dbfTmpLin )->dFecSal     := ( dbfSatCliL )->dFecSal
-               ( dbfTmpLin )->lAlquiler   := ( dbfSatCliL )->lAlquiler
-               ( dbfTmpLin )->nPreAlq     := ( dbfSatCliL )->nPreAlq
-               ( dbfTmpLin )->cUnidad     := ( dbfSatCliL )->cUnidad
-               ( dbfTmpLin )->nNumMed     := ( dbfSatCliL )->nNumMed
-               ( dbfTmpLin )->nMedUno     := ( dbfSatCliL )->nMedUno
-               ( dbfTmpLin )->nMedDos     := ( dbfSatCliL )->nMedDos
-               ( dbfTmpLin )->nMedTre     := ( dbfSatCliL )->nMedTre
-               ( dbfTmpLin )->nPuntos     := ( dbfSatCliL )->nPuntos
-               ( dbfTmpLin )->nValPnt     := ( dbfSatCliL )->nValPnt
-               ( dbfTmpLin )->nDtoPnt     := ( dbfSatCliL )->nDtoPnt
-               ( dbfTmpLin )->nIncPnt     := ( dbfSatCliL )->nIncPnt
-               ( dbfTmpLin )->lLinOfe     := ( dbfSatCliL )->lLinOfe
-               
-               ( dbfTmpLin )->( dbUnLock() )
-             
-               /*
-               Pasamos todas las series----------------------------------------
-               */
-
-               if ( dbfSatCliS )->( dbSeek( aNumalb[ nItem, 3] + str( nNumLin, 4 ) ) ) .and. ( aNumalb[ nItem, 1 ] )
-
-                  while ( dbfSatCliS )->cSerSat + str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat + str( ( dbfSatCliS )->nNumLin ) == aNumalb[ nItem, 3] + str( nNumLin, 4 ) .and. !( dbfSatCliS )->( Eof() )
-                  
-                     ( dbfTmpSer )->( dbAppend() )
-                     ( dbfTmpSer )->nNumLin  := nOffSet
-                     ( dbfTmpSer )->cRef     := ( dbfSatCliS )->cRef
-                     ( dbfTmpSer )->cAlmLin  := ( dbfSatCliS )->cAlmLin
-                     ( dbfTmpSer )->cNumSer  := ( dbfSatCliS )->cNumSer
-                     ( dbfTmpSer )->( dbUnLock() )
-                  
-                     ( dbfSatCliS )->( dbSkip() )
-
-                  end while
-
-               end if 
-
-               ( dbfSatCliL )->( dbSkip() ) 
-
-            end while
-
-            ( dbfTmpLin )->( dbGoTop() )
-
-            /*
-            Pasamos las incidencias del SAT------------------------------------
-            */
-
-            if ( dbfSatCliI )->( dbSeek( aNumalb[ nItem, 3] ) ) .and. aNumalb[ nItem, 1 ]
-
-               while ( dbfSatCliI )->cSerSat + str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat == aNumalb[ nItem, 3] .and. !( dbfSatCliI )->( Eof() )
-                  dbPass( dbfSatCliI, dbfTmpInc, .t. )
-                  ( dbfSatCliI )->( dbSkip() )
-               end while
-
-            end if
-
-            ( dbfSatCliI )->( dbGoTop() )
-
-            /*
-            Pasamos los documentos del SAT-------------------------------------
-            */
-
-            if ( dbfSatCliD )->( dbSeek( aNumalb[ nItem, 3] ) ) .and. aNumalb[ nItem, 1 ]
-
-               while ( dbfSatCliD )->cSerSat + str( ( dbfSatCliD )->nNumSat ) + ( dbfSatCliD )->cSufSat == aNumalb[ nItem, 3] .and. !( dbfSatCliD )->( Eof() )
-                  dbPass( dbfSatCliD, dbfTmpDoc, .t. )
-                  ( dbfSatCliD )->( dbSkip() )
-               end while
-
-            end if 
-   
-         end if
-
-      next
-
-      /*
-      No dejamos importar Albaranes directos-----------------------------------
-      */
-
-      aGet[ _LRECC 	]:Click( lRECCEmpresa() )
-
-      aGet[ _CNUMSAT ]:bWhen           := {|| .f. }
-      aGet[ _CNUMSAT ]:Disable()
-
-      /*
-      Refresco de lineas------------------------------------------------------- 
-      */
-      
-      oBrw:Refresh()
-
-      /*
-      Recalculo de totales-----------------------------------------------------
-      */ 
-
-      RecalculaTotal( aTmp )
-
-      CursorWE()
-
-   end if
-
-return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -21138,6 +20694,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "cCtrCoste", "C",   9, 0, "Código del centro de coste"             , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "lLabel"   , "L",   1, 0, "Lógico para marca de etiqueta"          , "LogicoEtiqueta",              "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nLabel"   , "N",   6, 0, "Unidades de etiquetas a imprimir"       , "NumeroEtiqueta",              "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "cCodObr"  , "C",  10, 0, "Código de la dirección"                 , "Direccion",                   "", "( cDbfCol )", nil } )
 
 return ( aColFacCli )
 
