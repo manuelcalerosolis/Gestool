@@ -5,6 +5,7 @@
 CLASS InvoiceCustomer FROM DocumentsSales  
 
    DATA oLinesDeliveryNoteCustomer
+   
    DATA CodigoAgente                      INIT AccessCode():cAgente
 
    METHOD New()

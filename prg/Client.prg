@@ -12591,7 +12591,6 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-
 Function hAtipica( hValue )
 
    local nRec
@@ -12611,7 +12610,6 @@ Function hAtipica( hValue )
       !hhaskey( hValue, "nTarifaPrecio" )       .or.;
       !hhaskey( hValue, "lIvaIncluido" )        .or.;
       !hhaskey( hValue, "dFecha" )              .or.;
-      !hhaskey( hValue, "nTipoDocumento" )      .or.;
       !hhaskey( hValue, "nCajas" )              .or.;
       !hhaskey( hValue, "nUnidades" )           .or.;
       !hhaskey( hValue, "nView" )               
@@ -12624,14 +12622,14 @@ Function hAtipica( hValue )
 
    // Atipicas por clientes-----------------------------------------------
 
-   nRec              		:= ( D():Atipicas( hValue[ "nView" ] ) )->( Recno() )
+   nRec              		       := ( D():Atipicas( hValue[ "nView" ] ) )->( Recno() )
 
    nOrdAnt  := ( D():Atipicas( hValue[ "nView" ] ) )->( OrdSetFocus( "cCliArt" ) )
 
    if !Empty( hValue[ "cCodigoCliente" ] )
 
       if ( D():Atipicas( hValue[ "nView" ] ) )->( dbSeek( hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ] ) )
-         
+
          while hValue[ "cCodigoCliente" ] + hValue[ "cCodigoArticulo" ] + hValue[ "cCodigoPropiedad1" ] + hValue[ "cCodigoPropiedad2" ] + hValue[ "cValorPropiedad1" ] + hValue[ "cValorPropiedad2" ] == ( D():Atipicas( hValue[ "nView" ] ) )->cCodCli + ( D():Atipicas( hValue[ "nView" ] ) )->cCodArt + ( D():Atipicas( hValue[ "nView" ] ) )->cCodPr1 + ( D():Atipicas( hValue[ "nView" ] ) )->cCodPr2 + ( D():Atipicas( hValue[ "nView" ] ) )->cValPr1 + ( D():Atipicas( hValue[ "nView" ] ) )->cValPr2 .and.;
                !( D():Atipicas( hValue[ "nView" ] ) )->( Eof() )
 
@@ -13098,36 +13096,40 @@ Return ( nImporteUnitario )
 
 Static function isValidAtipica( hValue )
 
-Return ( lFechasAtipicas( hValue[ "nView" ], hValue[ "dFecha" ] ) .and. lAplicaDocumento( hValue[ "nView" ], hValue[ "nTipoDocumento" ] ) )
+Return ( lFechasAtipicas( hValue ) .and. lAplicaDocumento( hValue ) )
 
 //---------------------------------------------------------------------------//
 
-function lFechasAtipicas( nView, dFecha )
+Static Function lFechasAtipicas( hValue )
 
-Return ( ( empty( ( D():Atipicas( nView ) )->dFecIni ) .or. ( D():Atipicas( nView ) )->dFecIni <= dFecha ) .and. ;
-       ( empty( ( D():Atipicas( nView ) )->dFecFin ) .or. ( D():Atipicas( nView ) )->dFecFin >= dFecha ) )
+Return ( ( empty( ( D():Atipicas( hValue[ "nView" ] ) )->dFecIni ) .or. ( D():Atipicas( hValue[ "nView" ] ) )->dFecIni <= hValue[ "dFecha" ] ) .and. ;
+       ( empty( ( D():Atipicas( hValue[ "nView" ] ) )->dFecFin ) .or. ( D():Atipicas( hValue[ "nView" ] ) )->dFecFin >= hValue[ "dFecha" ] ) )
 
 //---------------------------------------------------------------------------//
 
-function lAplicaDocumento( nView, nDocumento )
+Static Function lAplicaDocumento( hValue )
 
    local lReturn  := .f.
 
+   if !hhaskey( hValue, "nTipoDocumento" ) .or. empty( hValue[ "nTipoDocumento" ] ) 
+      Return ( .t. )
+   end if 
+
    do case
-      case nDocumento == PRE_CLI
-         lReturn  := ( D():Atipicas( nView ) )->lAplPre
+      case hValue[ "nTipoDocumento" ] == PRE_CLI
+         lReturn  := ( D():Atipicas( hValue[ "nView" ] ) )->lAplPre
 
-      case nDocumento == PED_CLI
-         lReturn  := ( D():Atipicas( nView ) )->lAplPed
+      case hValue[ "nTipoDocumento" ] == PED_CLI
+         lReturn  := ( D():Atipicas( hValue[ "nView" ] ) )->lAplPed
 
-      case nDocumento == ALB_CLI
-         lReturn  := ( D():Atipicas( nView ) )->lAplAlb
+      case hValue[ "nTipoDocumento" ] == ALB_CLI
+         lReturn  := ( D():Atipicas( hValue[ "nView" ] ) )->lAplAlb
 
-      case nDocumento == FAC_CLI .or. nDocumento == FAC_REC .or. nDocumento == TIK_CLI
-         lReturn  := ( D():Atipicas( nView ) )->lAplFac
+      case hValue[ "nTipoDocumento" ] == FAC_CLI .or. hValue[ "nTipoDocumento" ] == FAC_REC .or. hValue[ "nTipoDocumento" ] == TIK_CLI
+         lReturn  := ( D():Atipicas( hValue[ "nView" ] ) )->lAplFac
 
-      case nDocumento == SAT_CLI
-         lReturn  := ( D():Atipicas( nView ) )->lAplSat
+      case hValue[ "nTipoDocumento" ] == SAT_CLI
+         lReturn  := ( D():Atipicas( hValue[ "nView" ] ) )->lAplSat
 
    end case   
 

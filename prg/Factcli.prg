@@ -9813,7 +9813,7 @@ static function RecFacCli( aTmpFac, lMessage )
          // Precios en tarifas
 
          do case
-         case !Empty( aTmpFac[_CCODTAR] )
+         case !Empty( aTmpFac[ _CCODTAR ] )
 
             nImpOfe     := RetPrcTar( ( dbfTmpLin )->cRef, aTmpFac[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
             if nImpOfe != 0
@@ -20631,7 +20631,7 @@ function aColFacCli()
    aAdd( aColFacCli, { "nDtoDiv"    ,"N", 16, 6, "Descuento lineal de la compra"          , "DescuentoLineal",             "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "lSel"       ,"L",  1, 0, ""                                       , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nNumLin"    ,"N",  4, 0, "Número de la línea"                     , "NumeroLinea",                 "", "( cDbfCol )", nil } )
-   aAdd( aColFacCli, { "nCtlStk"    ,"N",  1, 0, "Tipo de stock de la línea"              , "TipoStock",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "nCtlStk"    ,"N",  1, 0, "Tipo de stock de la línehba"              , "TipoStock",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nCosDiv"    ,"N", 16, 6, "Costo del producto"                     , "PrecioCosto",                 "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nPvpRec"    ,"N", 16, 6, "Precio de venta recomendado"            , "PrecioVentaRecomendado",      "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cAlmLin"    ,"C", 16, 0, "Código de almacén"                      , "Almacen",                     "", "( cDbfCol )", {|| oUser():cAlmacen() } } )

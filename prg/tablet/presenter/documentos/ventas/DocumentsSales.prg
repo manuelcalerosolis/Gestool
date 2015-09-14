@@ -857,7 +857,7 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
 
       lReturn              := .t.
 
-      hSet( ::hDictionaryMaster, "Cliente",              CodigoCliente )
+      hSet( ::hDictionaryMaster, "Cliente",              ( D():Clientes( ::nView ) )->Cod )
       hSet( ::hDictionaryMaster, "NombreCliente",        ( D():Clientes( ::nView ) )->Titulo )
       hSet( ::hDictionaryMaster, "DomicilioCliente",     ( D():Clientes( ::nView ) )->Domicilio )
       hSet( ::hDictionaryMaster, "PoblacionCliente",     ( D():Clientes( ::nView ) )->Poblacion )
@@ -868,7 +868,7 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
       hSet( ::hDictionaryMaster, "GrupoCliente",         ( D():Clientes( ::nView ) )->Nif )
       hSet( ::hDictionaryMaster, "OperarPuntoVerde",     ( D():Clientes( ::nView ) )->lPntVer )
 
-      if ::lAppendMode() //  ::nMode == APPD_MODE
+      if ::lAppendMode() 
 
          if !empty( ( D():Clientes( ::nView ) )->Serie )
             hSet( ::hDictionaryMaster, "Serie", ( D():Clientes( ::nView ) )->Serie )
@@ -877,8 +877,8 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
          hSet( ::hDictionaryMaster, "TipoImpuesto",                  ( D():Clientes( ::nView ) )->nRegIva )
          hSet( ::hDictionaryMaster, "Almacen",                       ( D():Clientes( ::nView ) )->cCodAlm )
          hSet( ::hDictionaryMaster, "Tarifa",                        ( D():Clientes( ::nView ) )->cCodTar )
-         hSet( ::hDictionaryMaster, "Pago",                          if( !Empty( ( D():Clientes( ::nView ) )->CodPago ), ( D():Clientes( ::nView ) )->CodPago, cDefFpg() ) )
-         hSet( ::hDictionaryMaster, "Agente",                        ( if( Empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
+         hSet( ::hDictionaryMaster, "Pago",                          ( if( empty( ( D():Clientes( ::nView ) )->CodPago ), cDefFpg(), ( D():Clientes( ::nView ) )->CodPago ) ) )
+         hSet( ::hDictionaryMaster, "Agente",                        ( if( empty( AgenteIni ), ( D():Clientes( ::nView ) )->cAgente, AgenteIni ) ) )
          hSet( ::hDictionaryMaster, "Ruta",                          ( D():Clientes( ::nView ) )->cCodRut )
          hSet( ::hDictionaryMaster, "NumeroTarifa",                  ( D():Clientes( ::nView ) )->nTarifa )
          hSet( ::hDictionaryMaster, "DescuentoTarifa",               ( D():Clientes( ::nView ) )->nDtoArt )

@@ -25,11 +25,14 @@ CLASS ViewDetail FROM ViewBase
    METHOD New()
 
    METHOD Resource()
-   METHOD getSenderDocument()           INLINE ( ::oSender:getSender() )
+   METHOD getSenderDocument()                INLINE   ( ::oSender:getSender() )
 
-   METHOD SetGetValue( uValue, cName ) INLINE ( if (  isNil( uValue ),;
-                                                hGet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cName ),;
-                                                hSet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cName, uValue ) ) )
+   METHOD setGetValue( uValue, cFieldName )  INLINE   ( if( isNil( uValue ), ::getValue( cFieldName ), ::setValue( uValue, cFieldName ) ) )
+
+   METHOD getValue( cFieldName )             INLINE   ( hGet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cFieldName ) )
+   METHOD setValue( uValue, cFieldName )     INLINE   ( hSet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cFieldName, uValue ) ) 
+
+   METHOD getChangePrecio()                  INLINE   ( ::Super:getChangePrecio() .or. ::getValue( "PrecioVenta" ) == 0 )
 
    METHOD defineAceptarCancelar()
 
@@ -321,6 +324,7 @@ METHOD defineDescuentoPorcentual() CLASS ViewDetail
                                              "cPict"     => "@E 999.99",;
                                              "lRight"    => .t.,;
                                              "nHeight"   => 23,;
+                                             "bWhen"     => {|| ::getChangePrecio() },;
                                              "bValid"    => {|| ::oSender:recalcularTotal() } } )
 
 Return ( self )
@@ -347,7 +351,7 @@ METHOD defineDescuentoLineal() CLASS ViewDetail
                                                    "oWnd"      => ::oDlg,;
                                                    "lPixels"   => .t.,;
                                                    "nWidth"    => {|| GridWidth( 3, ::oDlg ) },;
-                                                   "cPict"     => cPouDiv( hGet( ::getSenderDocument():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView( ) ) ),;
+                                                   "cPict"     => cPouDiv( hGet( ::getSenderDocument():hDictionaryMaster, "Divisa" ), D():Divisas( ::oSender:getView() ) ),;
                                                    "lRight"    => .t.,;
                                                    "nHeight"   => 23,;
                                                    "bWhen"     => {|| ::getChangePrecio() },;
