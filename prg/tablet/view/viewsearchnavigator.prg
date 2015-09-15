@@ -52,7 +52,7 @@ Return ( self )
 
 METHOD Resource() CLASS ViewSearchNavigator
 
-   ::oDlg                  := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
+   ::oDlg                     := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., ::Style,, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )
 
    ::defineTitulo()
 
@@ -70,7 +70,7 @@ METHOD Resource() CLASS ViewSearchNavigator
 
    ::browseGeneral()
 
-   ::oDlg:bResized         := {|| ::resizeDialog() }
+   ::oDlg:bResized            := {|| ::resizeDialog() }
 
    ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
 
@@ -81,6 +81,8 @@ Return ( self )
 METHOD initDialog()
 
    ::Super:initDialog()
+
+   ::oSender:initDialog()
 
    ::changeComboboxOrden()
 
