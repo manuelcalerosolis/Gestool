@@ -57,7 +57,6 @@ METHOD setColumns() CLASS CustomerViewSearchNavigator
       :nWidth            := 420
    end with
 
-
 Return ( self )
 
 //---------------------------------------------------------------------------//

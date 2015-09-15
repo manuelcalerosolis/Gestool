@@ -11,8 +11,6 @@ CLASS ViewSearchNavigator FROM ViewNavigator
    DATA hashItemsSearch
    DATA aOrderBusqueda
 
-
-
    METHOD New( oSender )
 
    METHOD setItemsBusqueda()           VIRTUAL
@@ -26,11 +24,13 @@ CLASS ViewSearchNavigator FROM ViewNavigator
    METHOD getComboboxOrden()
       METHOD changeComboboxOrden()
 
+   METHOD changeComboboxSearch()       INLINE ( ::changeComboboxOrden(), ::getSearch:setFocus(), ::refreshBrowse() )
+
    METHOD setSelectorMode()            INLINE ( ::lSelectorMode  := .t. )
 
    METHOD isEndOk()                    INLINE ( ::oDlg:nResult == IDOK )
 
-   METHOD validBarraBusqueda()         INLINE ( OrdClearScope( ::oBrowse, ::getWorkArea() ) )
+   METHOD validBarraBusqueda()         INLINE ( ordClearScope( ::oBrowse, ::getWorkArea() ) )
 
 END CLASS
 
@@ -38,9 +38,9 @@ END CLASS
 
 METHOD New( oSender ) CLASS ViewSearchNavigator
 
-   ::oSender   := oSender
+   ::oSender                  := oSender
 
-   ::bDblClickBrowseGeneral      := {|| ::oSender:Edit(), ::refreshBrowse() }
+   ::bDblClickBrowseGeneral   := {|| ::oSender:Edit(), ::refreshBrowse() }
 
    ::setTextoTipoDocumento()
 
@@ -84,6 +84,10 @@ METHOD initDialog()
 
    ::changeComboboxOrden()
 
+   ( ::getWorkArea() )->( dbgotop() )
+
+   ::refreshBrowse()
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -112,7 +116,7 @@ METHOD defineBarraBusqueda() CLASS ViewSearchNavigator
                                                    "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                    "nHeight"   => 25,;
                                                    "aItems"    => hGetKeys( ::hashItemsSearch ),;
-                                                   "bChange"   => {|| ::ChangeComboboxOrden() } } )
+                                                   "bChange"   => {|| ::changeComboboxSearch() } } )
 
 Return ( self )
 
@@ -134,13 +138,9 @@ METHOD changeComboboxOrden() CLASS ViewSearchNavigator
 
    local textComboboxSearch   := ::comboboxSearch:varGet() 
 
-   if !empty(textComboboxSearch)
+   if !empty( textComboboxSearch )
       ( ::getWorkArea() )->( ordsetfocus( ::hashItemsSearch[ textComboboxSearch ] ) )
    end if 
-
-   ::getSearch:SetFocus()
-
-   ::oBrowse:Refresh()
 
 Return ( self )
 

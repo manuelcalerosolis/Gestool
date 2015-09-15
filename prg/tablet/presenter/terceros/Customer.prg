@@ -18,8 +18,8 @@ CLASS Customer FROM Editable
 
    METHOD runNavigatorCustomer()
 
-   METHOD OpenFiles()
-   METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
+   METHOD openFiles()
+   METHOD closeFiles()                 INLINE ( D():DeleteView( ::nView ) )
 
    METHOD setEnviroment()              INLINE ( ::setDataTable( "Client" ) ) 
    
@@ -35,7 +35,7 @@ CLASS Customer FROM Editable
    METHOD onPostGetDocumento()
    METHOD onPreSaveDocumento()
 
-   METHOD EditCustomer( Codigo ) 
+   METHOD editCustomer( Codigo ) 
 
 ENDCLASS
 

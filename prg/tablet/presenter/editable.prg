@@ -55,7 +55,9 @@ CLASS Editable
    METHOD getAppendDocumento()                  INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
    METHOD getEditDocumento()
    METHOD deleteDocumento()                     INLINE ( D():deleteRecord( ::getDataTable(), ::nView ) )
+   
       METHOD Resource()                         INLINE ( msgStop( "Resource method must be redefined" ) )
+      METHOD initDialog()                       VIRTUAL
 
    METHOD saveAppendDocumento()                 INLINE ( D():appendHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
    METHOD saveEditDocumento()                   INLINE ( D():editHashRecord( ::hDictionaryMaster, ::getDataTable(), ::nView ) )
