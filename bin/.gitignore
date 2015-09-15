@@ -1,5 +1,30 @@
 # Ignore everything in this directory
-*
+
 # Except this file
-![Ss]cript
+[Aa]ds/
+[Bb]mp/
+[Ff]irma/
+[Hh]tml/
+[Ee]mp*/
+[Ii]nclude/
+[Jj]re7/
+[Mm]etro/
+[Oo]ut/
+
+*.jar
+*.old
+*.xxx
+*.xlsx
+*.all*
+*.dcf
+*.fr3
+*.json
+*.bmp
+*.xml
+*.hbr
+*.hrb
+*.c
+*.html
+*.xsig
+
 !.gitignore
