@@ -15,7 +15,7 @@
 *.old
 *.xxx
 *.xlsx
-*.all*
+*.all
 *.dcf
 *.fr3
 *.json
