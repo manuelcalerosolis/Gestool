@@ -5,9 +5,6 @@ CLASS LinesOrderCustomer FROM LinesDocumentsSales
 
    METHOD ResourceDetail( nMode )
 
-   METHOD getSender()     INLINE ( ::oSender )
-   METHOD getView()       INLINE ( ::getSender():nView )
-
 END CLASS
 
 //---------------------------------------------------------------------------//

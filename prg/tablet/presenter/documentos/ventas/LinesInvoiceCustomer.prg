@@ -11,15 +11,15 @@ END CLASS
 
 METHOD ResourceDetail( nMode ) CLASS LinesInvoiceCustomer
 
-   local lResult     := .f.
+   local lResult        := .f.
 
-   ::oViewEditDetail := ViewDetail():New( self )
+   ::oViewEditDetail    := ViewDetail():New( self )
 
    if !Empty( ::oViewEditDetail )
 
       ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de factura" )
 
-      lResult        := ::oViewEditDetail:Resource( nMode )
+      lResult           := ::oViewEditDetail:Resource( nMode )
 
    end if
 
