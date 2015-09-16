@@ -90,9 +90,12 @@ Return ( lOpenFiles )
 
 METHOD putFilter() CLASS Directions
 
-   ( D():ClientesDirecciones( ::nView ) )->( ordsetfocus( "cCodCli" ) )
-   ( D():ClientesDirecciones( ::nView ) )->( ordscope( 0, ::getIdCustomer() ) )
-   ( D():ClientesDirecciones( ::nView ) )->( ordscope( 1, ::getIdCustomer() ) )
+   if lAIS()
+      ( D():ClientesDirecciones( ::nView ) )->( adsSetAOF( "Field->cCodCli == '" + ::getIdCustomer() + "'" ) )
+   else
+      ( D():ClientesDirecciones( ::nView ) )->( dbsetfilter( {|| Field->cCodCli == ::getIdCustomer() }, "cCodCli" ) )
+   end if 
+
    ( D():ClientesDirecciones( ::nView ) )->( dbgotop() )
 
 Return ( .t. )
@@ -101,8 +104,7 @@ Return ( .t. )
 
 METHOD quitFilter() CLASS Directions
 
-   ( D():ClientesDirecciones( ::nView ) )->( ordscope( 0, nil ) )
-   ( D():ClientesDirecciones( ::nView ) )->( ordscope( 1, nil ) )
+   ( D():ClientesDirecciones( ::nView ) )->( dbsetfilter() )
 
 Return ( self )
 

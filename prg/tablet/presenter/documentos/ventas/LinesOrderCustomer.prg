@@ -3,8 +3,6 @@
 
 CLASS LinesOrderCustomer FROM LinesDocumentsSales  
 
-   DATA oSender
-   
    METHOD ResourceDetail( nMode )
 
    METHOD getSender()     INLINE ( ::oSender )
@@ -12,7 +10,6 @@ CLASS LinesOrderCustomer FROM LinesDocumentsSales
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD ResourceDetail( nMode ) CLASS LinesOrderCustomer

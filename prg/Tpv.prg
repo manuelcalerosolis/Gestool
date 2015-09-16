@@ -3825,7 +3825,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          return .f.
       end if
 
-      if lClienteEvaluarRiesgo( aTmp[ _CCLITIK ], oStock, dbfClient )
+      if lClienteEvaluarRiesgo( aTmp[ _CCLITIK ], oStock, dbfClient , nTotTik, nMode )
          msgStop( "Este cliente supera el limite de riesgo permitido." )
          aGet[ _CCLITIK ]:SetFocus()
          return .f.

@@ -1233,10 +1233,8 @@ METHOD AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOp
 
     if ::lRddAdsCdx()
 
-        if Empty( cFor ) 
-          ( ::nArea )->( AdsClearAOF( cFor ) )
-        else 
-          ( ::nArea )->( AdsSetAOF( cFor ) )
+        if ::nArea != 0 .and. !empty(cFor)
+            ( ::nArea )->( adsSetAOF( cFor ) )
         end if 
 
     else

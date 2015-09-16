@@ -2718,7 +2718,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
    Mostramos datos de clientes-------------------------------------------------
    */
 
-   nRiesgoCliente                 := oStock:nRiesgo( aTmp[ _CCODCLI ] )
+   nRiesgoCliente          := oStock:nRiesgo( aTmp[ _CCODCLI ] )
 
    if Empty( aTmp[ _CTLFCLI ] )
       aTmp[ _CTLFCLI ]     := RetFld( aTmp[ _CCODCLI ], D():Clientes( nView ), "Telefono" )
@@ -2946,6 +2946,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET aGet[ _CCODALM ] VAR aTmp[ _CCODALM ] ;
          ID       230 ;
+         PICTURE  "@!" ;
          WHEN     ( lWhen ) ;
          VALID    ( cAlmacen( aGet[ _CCODALM ], , oSay[ 2 ] ) ) ;
          BITMAP   "LUPA" ;
@@ -10031,14 +10032,14 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
    else
 
       msgStop( "No existen albaranes de este cliente." )
+
       ( dbfAlbCliT )->( ordSetFocus( nOrd ) )
       return .t.
 
    end if
 
-
    /*
-   Reposicionamos el focus en el indice
+   Reposicionamos el focus en el indice-------------------------------------
    */
 
    ( dbfAlbCliT )->( ordSetFocus( nOrd ) )
@@ -10216,7 +10217,7 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
       A¤adimos los albaranes seleccionado para despues
       */
 
-      for nItem := 1 TO Len( aAlbaranes )
+      for nItem := 1 to Len( aAlbaranes )
          if ( aAlbaranes[ nItem, 1 ] )
             if ( dbfAlbCliT )->( dbSeek( aAlbaranes[ nItem, 2] ) )
                SetFacturadoAlbaranCliente( .t., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
@@ -10283,8 +10284,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->lControl := .t.
                ( dbfTmpLin )->nNumLin  := ++nOffSet
 
-               
-
             end if
 
             while ( ( dbfAlbCliL )->cSerAlb + str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == aAlbaranes[ nItem, 2] .and. !( dbfAlbCliL )->( Eof() ) )
@@ -10338,43 +10337,6 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             nDtoDos                    += aAlbaranes[ nItem, 9 ]:nTotalDescuentoDos
 
             /*
-            if !Empty( ( dbfAlbCliT )->nDtoEsp )
-               ( dbfTmpLin )->( dbAppend() )
-               ( dbfTmpLin )->nNumLin  := nOffSet
-               ( dbfTmpLin )->cDetalle := "Descuento" + Space( 1 ) + Rtrim( ( dbfAlbCliT )->cDtoEsp ) + Space( 1 ) + Alltrim( Trans( ( dbfAlbCliT )->nDtoEsp, "@E 99.99" ) ) + "%"
-               ( dbfTmpLin )->mLngDes  := "Descuento" + Space( 1 ) + Rtrim( ( dbfAlbCliT )->cDtoEsp ) + Space( 1 ) + Alltrim( Trans( ( dbfAlbCliT )->nDtoEsp, "@E 99.99" ) ) + "%"
-               ( dbfTmpLin )->cCodAlb  := ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-               ( dbfTmpLin )->dFecAlb  := ( dbfAlbCliT )->dFecAlb
-               ( dbfTmpLin )->nUniCaja := 1
-               ( dbfTmpLin )->nPreUnit := - aAlbaranes[ nItem, 9, 12 ]
-            end if
-
-            if !Empty( ( dbfAlbCliT )->nDpp )
-               ( dbfTmpLin )->( dbAppend() )
-               ( dbfTmpLin )->nNumLin  := nOffSet
-               ( dbfTmpLin )->cDetalle := "Descuento" + Space( 1 ) + Rtrim( ( dbfAlbCliT )->cDpp ) + Space( 1 ) + Alltrim( Trans( ( dbfAlbCliT )->nDpp, "@E 99.99" ) ) + "%"
-               ( dbfTmpLin )->mLngDes  := "Descuento" + Space( 1 ) + Rtrim( ( dbfAlbCliT )->cDpp ) + Space( 1 ) + Alltrim( Trans( ( dbfAlbCliT )->nDpp, "@E 99.99" ) ) + "%"
-               ( dbfTmpLin )->cCodAlb  := ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-            end if
-
-            if !Empty( ( dbfAlbCliT )->nDtoUno )
-               ( dbfTmpLin )->( dbAppend() )
-               ( dbfTmpLin )->nNumLin  := nOffSet
-               ( dbfTmpLin )->cDetalle := "Descuento" + Space( 1 ) + Rtrim( ( dbfAlbCliT )->cDtoUno ) + Space( 1 ) + Alltrim( Trans( ( dbfAlbCliT )->nDtoUno, "@E 99.99" ) ) + "%"
-               ( dbfTmpLin )->mLngDes  := "Descuento" + Space( 1 ) + Rtrim( ( dbfAlbCliT )->cDtoUno ) + Space( 1 ) + Alltrim( Trans( ( dbfAlbCliT )->nDtoUno, "@E 99.99" ) ) + "%"
-               ( dbfTmpLin )->cCodAlb  := ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-            end if
-
-            if !Empty( ( dbfAlbCliT )->nDtoDos )
-               ( dbfTmpLin )->( dbAppend() )
-               ( dbfTmpLin )->nNumLin  := nOffSet
-               ( dbfTmpLin )->cDetalle := "Descuento" + Space( 1 ) + Rtrim( ( dbfAlbCliT )->cDtoDos ) + Space( 1 ) + Alltrim( Trans( ( dbfAlbCliT )->nDtoDos, "@E 99.99" ) ) + "%"
-               ( dbfTmpLin )->mLngDes  := "Descuento" + Space( 1 ) + Rtrim( ( dbfAlbCliT )->cDtoDos ) + Space( 1 ) + Alltrim( Trans( ( dbfAlbCliT )->nDtoDos, "@E 99.99" ) ) + "%"
-               ( dbfTmpLin )->cCodAlb  := ( dbfAlbCliT )->cSerAlb + str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-            end if
-            */
-
-            /*
             Total albaran------------------------------------------------------
             */
 
@@ -10392,12 +10354,10 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             */
 
             if ( dbfAlbCliI )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
-
                while ( dbfAlbCliI )->cSerAlb + str( ( dbfAlbCliI )->nNumAlb ) + ( dbfAlbCliI )->cSufAlb == aAlbaranes[ nItem, 2 ] .and. !( dbfAlbCliI )->( Eof() )
                   dbPass( dbfAlbCliI, dbfTmpInc, .t. )
                   ( dbfAlbCliI )->( dbSkip() )
                end while
-
             end if
 
             ( dbfAlbCliI )->( dbGoTop() )
@@ -10407,12 +10367,10 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
             */
 
             if ( dbfAlbCliD )->( dbSeek( aAlbaranes[ nItem, 2 ] ) )
-
                while ( dbfAlbCliD )->cSerAlb + str( ( dbfAlbCliD )->nNumAlb ) + ( dbfAlbCliD )->cSufAlb == aAlbaranes[ nItem, 2 ] .and. !( dbfAlbCliD )->( Eof() )
                   dbPass( dbfAlbCliD, dbfTmpDoc, .t. )
                   ( dbfAlbCliD )->( dbSkip() )
                end while
-
             end if
 
             ( dbfAlbCliD )->( dbGoTop() )
@@ -10557,8 +10515,6 @@ static function nTotalAlbaranesAgrupar( aAlbaranes )
    next
 
 return Trans( nTotal, cPorDiv )
-
-//---------------------------------------------------------------------------//
 
 //----------------------------------------------------------------------------//
 
@@ -12624,10 +12580,6 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
 	      	if !Empty( oRiesgoCliente ) .and. lChgCodCli
          		oStock:SetRiesgo( cNewCodCli, oRiesgoCliente, ( D():Clientes( nView ) )->Riesgo )
       		end if
-
-            if ( ( D():Clientes( nView ) )->lCreSol ) .and. ( nRiesgoCliente >= ( D():Clientes( nView ) )->Riesgo )
-            	msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
-         	end if 
 
             // Retenciones desde la ficha de cliente----------------------------------
 
@@ -15077,19 +15029,19 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Return .f.
    end if
 
+   if Empty( aTmp[ _CDNICLI ] )
+      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacío." )
+      if !Empty( aGet[ _CDNICLI ] )
+         aGet[ _CDNICLI ]:SetFocus()
+      end if   
+      return .f.
+   end if
+
    if Empty( aTmp[ _CDIRCLI ] )
       msgStop( "Domicilio de cliente no puede estar vacío." )
       if !Empty( aGet[ _CDIRCLI ] )
       	aGet[ _CDIRCLI ]:SetFocus()
       end if
-      return .f.
-   end if
-
-   if Empty( aTmp[ _CDNICLI ] )
-      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacío." )
-      if !Empty( aGet[ _CDNICLI ] )
-      	aGet[ _CDNICLI ]:SetFocus()
-      end if	
       return .f.
    end if
 
@@ -15105,13 +15057,15 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Return .f.
    end if
 
-   if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, D():Clientes( nView ) )
-      msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
-      if !Empty( aGet[ _CCODCLI ] )
-      	aGet[ _CCODCLI ]:SetFocus()
-      end if	
-      return .f.
-   end if
+   if !lFormaPagoCobrado( aTmp[ _CCODPAGO ], dbfFPago )
+      if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, D():Clientes( nView ), nTotFac, nMode )
+         msgStop( "Este cliente supera el limite de riesgo permitido." )
+         if !empty( aGet[ _CCODCLI ] )
+         	aGet[ _CCODCLI ]:SetFocus()
+         end if	
+         return .f.
+      end if
+   end if 
 
    if Empty( aTmp[ _CCODAGE ] ) .and. lRecogerAgentes()
       msgStop( "Agente no puede estar vacío." )
@@ -15132,13 +15086,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    if lLineasVacias()
       return .f.
    end if
-
-   if ( ( D():Get( "Client", nView ) )->lCreSol ) .and. ( nMode == APPD_MODE .or. nMode == EDIT_MODE ) 
-      if ( nRiesgoCliente + nTotFac >= ( D():Get( "Client", nView ) )->Riesgo )
-         msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como factura" )
-         return .f.
-      end if 
-   end if 
 
    if lPasNil() .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
@@ -20769,7 +20716,7 @@ function aItmFacCli()
    aAdd( aItmFacCli, {"cRetPor"     ,"C",100, 0, "Retirado por" ,                                              "RetiradoPor",                 "", "( cDbf )", nil } )                                     
    aAdd( aItmFacCli, {"cRetMat"     ,"C", 20, 0, "Matrícula" ,                                                 "Matricula",                   "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"cNumDoc"     ,"C", 13, 0, "" ,                                                          "",                            "", "( cDbf )", nil } )
-   aAdd( aItmFacCli, {"nRegIva"     ,"N",  1, 0, "Régimen de " + cImp() ,                                      "",                "", "( cDbf )", nil } ) 
+   aAdd( aItmFacCli, {"nRegIva"     ,"N",  1, 0, "Régimen de " + cImp() ,                                      "TipoImpuesto",                "", "( cDbf )", nil } ) 
    aAdd( aItmFacCli, {"cCodPro"     ,"C",  9, 0, "Código de proyecto en contabilidad" ,                        "ProyectoContable",            "", "( cDbf )", nil } ) 
    aAdd( aItmFacCli, {"cDocOrg"     ,"C", 10, 0, "Número del documento origen" ,                               "",                            "", "( cDbf )", nil } )
    aAdd( aItmFacCli, {"nNumLiq"     ,"N",  9, 0, "Número liquidación",                                         "NumeroLiquidacion",           "", "( cDbf )", nil } )

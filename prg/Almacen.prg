@@ -261,6 +261,7 @@ STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
 
       REDEFINE GET oGet VAR aTemp[ _CCODALM ];
          ID       100 ;
+         PICTURE  "@!" ;
          WHEN     ( nMode == APPD_MODE .or. nMode == DUPL_MODE ) ;
          VALID    ( NotValid( oGet, dbfAlmT, .f. ) ) ;
          OF       oFld:aDialogs[1]

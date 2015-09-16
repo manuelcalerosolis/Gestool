@@ -10,6 +10,12 @@ CLASS DocumentLine
 
    METHOD new( hDictionary )
 
+   METHOD hSetMaster( cField, uValue ) INLINE ( hSet( ::oSender:hDictionaryMaster, cField, uValue ) )
+   METHOD hGetMaster( cField )         INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
+
+   METHOD hSetDetail( cField, uValue ) INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, cField, uValue ) )
+   METHOD hGetDetail( cField )         INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, cField ) )
+
    METHOD totalUnidades()
    METHOD Total()
    METHOD Impuesto()  
@@ -61,9 +67,10 @@ END CLASS
 
 METHOD new( hDictionary, oSender ) CLASS DocumentLine
 
+   ::oSender            := oSender
+
    ::hDictionary        := hDictionary
    ::hDictionaryMaster  := oSender:hDictionaryMaster
-   ::oSender            := oSender
 
 Return ( Self )
 

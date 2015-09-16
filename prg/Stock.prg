@@ -5428,10 +5428,14 @@ Method nOperacionesCliente( cCodigoCliente, lRiesgo )
 
       while ( Alltrim( ( ::cAlbCliT )->cCodCli ) == Alltrim( cCodigoCliente ) ) .and. !( ::cAlbCliT )->( Eof() )
 
-         nRiesgo     += ( ::cAlbCliT )->nTotAlb
+         if !( ::cAlbCliT )->lFacturado
 
-         if lRiesgo
-            nRiesgo  -= ( ::cAlbCliT )->nTotPag
+            nRiesgo     += ( ::cAlbCliT )->nTotAlb
+
+            if lRiesgo
+               nRiesgo  -= ( ::cAlbCliT )->nTotPag
+            end if 
+
          end if 
 
          ( ::cAlbCliT )->( dbSkip() )

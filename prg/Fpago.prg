@@ -735,6 +735,29 @@ RETURN cText
 
 //---------------------------------------------------------------------------//
 
+FUNCTION lFormaPagoCobrado( cCodPago, dbfFormasPago )
+
+   local lCobrado    := .f.
+   local lClose      := .f.
+
+   if dbfFormasPago == NIL
+      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFormasPago ) )
+      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+      lClose         := .t.
+   end if
+
+   if ( dbfFormasPago )->( dbSeek( cCodPago ) )
+      lCobrado       := ( dbfFormasPago )->nCobRec < 2
+   end if
+
+   if lClose
+      CLOSE ( dbfFormasPago )
+   end if
+
+RETURN lCobrado
+
+//---------------------------------------------------------------------------//
+
 /*
 Devuelve si la forma de pago es en efectivo
 */

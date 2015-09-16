@@ -2357,8 +2357,8 @@ Method CreateXBrowse() CLASS TShell
 
       if lAIS()
          ::oBrw:bKeyNo        := {| n | iif( n == nil,;
-                                       ( if( ( ::xAlias )->( Used() ), Round( ( ::xAlias )->( ADSGetRelKeyPos() ) * ::oBrw:nLen, 0 ), ) ),;
-                                       ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( ADSSetRelKeyPos( n / ::oBrw:nLen ) ), ) ) ) }
+                                       ( if( ( ::xAlias )->( Used() ), Round( ( ::xAlias )->( ADSGetRelKeyPos() ) * if( !empty(::oBrw), ::oBrw:nLen, 1 ), 0 ), ) ),;
+                                       ( if( ( ::xAlias )->( Used() ), ( ::xAlias )->( ADSSetRelKeyPos( n / if( !empty(::oBrw), ::oBrw:nLen, 1 ) ) ), ) ) ) }
          ::oBrw:bKeyCount     := {|| if( ( ::xAlias )->( Used() ), ( ::xAlias )->( ADSKeyCount(,,1) ), ) }
       else
          ::oBrw:bKeyNo        := {| n | iif( n == nil,;

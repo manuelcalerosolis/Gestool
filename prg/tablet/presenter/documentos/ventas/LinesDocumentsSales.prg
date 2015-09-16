@@ -3,6 +3,8 @@
  
 CLASS LinesDocumentsSales FROM Editable
 
+   DATA oSender
+
    DATA cOldCodigoArticulo             INIT ""
 
    DATA hAtipicaClienteValues
@@ -10,6 +12,9 @@ CLASS LinesDocumentsSales FROM Editable
    DATA oViewEditDetail
 
    METHOD New( oSender )
+
+   METHOD getSender()                  INLINE ( ::oSender )
+   METHOD getView()                    INLINE ( ::getSender():nView )
 
    METHOD hSetMaster( cField, uValue ) INLINE ( hSet( ::oSender:hDictionaryMaster, cField, uValue ) )
    METHOD hGetMaster( cField )         INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
@@ -255,6 +260,7 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
    ::setUnidades( ( D():Articulos( ::getView() ) )->nUniCaja )
 
    ::setImpuestoEspecial( ( D():Articulos( ::getView() ) )->cCodImp )
+
    ::setImporteImpuestoEspecial( ::getValorImpuestoEspecial() )
 
    ::setVolumenImpuestosEspeciales( retFld( ( D():Articulos( ::getView() ) )->cCodImp, D():ImpuestosEspeciales( ::getView() ):Select(), "lIvaVol" ) )

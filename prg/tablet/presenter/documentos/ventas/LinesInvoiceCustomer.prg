@@ -3,16 +3,10 @@
 
 CLASS LinesInvoiceCustomer FROM LinesDocumentsSales  
 
-   DATA oSender
-   
    METHOD ResourceDetail( nMode )
-
-   METHOD getSender()               INLINE ( ::oSender )
-   METHOD getView()                 INLINE ( ::getSender():nView )
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD ResourceDetail( nMode ) CLASS LinesInvoiceCustomer

@@ -12233,27 +12233,36 @@ RETURN cText
 
 FUNCTION lClienteBloquearRiesgo( cCodCli, dbfCli )
 
-   local lRet     := .f.
+   local lRet        := .f.
 
    if dbSeekInOrd( cCodCli, "Cod", dbfCli )
-      lRet        := ( dbfCli )->lCreSol
+      lRet           := ( dbfCli )->lCreSol
    end if
 
 RETURN lRet
 
 //---------------------------------------------------------------------------//
 
-Function lClienteEvaluarRiesgo( cCodCli, oStock, dbfClient )
+Function lClienteEvaluarRiesgo( cCodCli, oStock, dbfClient, nImporte, nMode )
 
-   if lClienteBloquearRiesgo( cCodCli, dbfClient )
+   local nRiesgoAlcanzado  := 0
 
-      if oStock:nRiesgo( cCodCli ) >= ( dbfClient )->Riesgo
+   DEFAULT nImporte        := 0
+   DEFAULT nMode           := APPD_MODE
 
-         Return .t.
+   if !lClienteBloquearRiesgo( cCodCli, dbfClient )
+      Return .t.
+   end if 
 
-      end if 
+   nRiesgoAlcanzado          := oStock:nRiesgo( cCodCli )
 
-   end if   
+   if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
+      nRiesgoAlcanzado       += nImporte
+   end if
+
+   if nRiesgoAlcanzado >= ( dbfClient )->Riesgo
+      Return .t.
+   end if 
 
 Return .f. 
 
