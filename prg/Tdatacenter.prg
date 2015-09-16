@@ -5642,6 +5642,7 @@ CLASS D
                                                                ( ::Clientes( nView ) )->( ordScope( 1, nil ) ),;
                                                                ::setStatusClientes( nView ) )
       METHOD getLastKeyClientes( nView )              INLINE ( nextkey( space(12), ::Clientes( nView ), "0", retNumCodCliEmp() ) )
+      METHOD setFocusClientes( cTag, nView )          INLINE ( ::cTag   := ( ::Clientes( nView )  )->( ordSetFocus( cTag ) ) )
 
 
 
