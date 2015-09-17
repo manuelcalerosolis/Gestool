@@ -30,5 +30,6 @@
 *.xsig
 *.pdf
 *.ch
+*.h
 
 !.gitignore
