@@ -26,8 +26,7 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD printDocument()
 
-   METHOD onPostSaveAppendDocumento()     INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
-                                                   checkPagosFacturaCliente( ::getId(), ::nView ) )
+   METHOD onPostSaveAppendDocumento()     INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ), checkPagosFacturaCliente( ::getId(), ::nView ) )
 
 END CLASS
 
@@ -43,9 +42,9 @@ METHOD New() CLASS InvoiceCustomer
 
    ::setCounterDocuments( "nFacCli" )
 
-   ::oViewSearchNavigator:setTextoTipoDocumento( "Facturas de clientes" )  
+   ::oViewSearchNavigator:setTitle( "Facturas de clientes" )  
 
-   ::oViewEdit:setTextoTipoDocumento( "Factura" )  
+   ::oViewEdit:setTitle( "Factura" )  
 
    ::oLinesInvoiceCustomer           := LinesInvoiceCustomer():New( self )
  

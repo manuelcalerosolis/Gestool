@@ -394,14 +394,14 @@ Return ( self )
 
 METHOD RefreshDialog() CLASS ViewDetail
 
-   ::RefreshGetArticulo()
-   ::RefreshGetDescripcion()
-   ::RefreshGetLote()
-   ::RefreshGetCajas()
-   ::RefreshGetUnidades()
-   ::RefreshGetPrecio()
-   ::RefreshGetDescuento()
-   ::RefreshGetDescuentoLineal()
+   ::refreshGetArticulo()
+   ::refreshGetDescripcion()
+   ::refreshGetLote()
+   ::refreshGetCajas()
+   ::refreshGetUnidades()
+   ::refreshGetPrecio()
+   ::refreshGetDescuento()
+   ::refreshGetDescuentoLineal()
 
 Return ( Self )
 

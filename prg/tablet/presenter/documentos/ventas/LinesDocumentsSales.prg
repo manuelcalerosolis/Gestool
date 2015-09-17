@@ -327,7 +327,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesDocumentsSales
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( ::oSender:nModeDetail ) + "linea de factura" )
+      ::oViewEditDetail:setTitle( LblTitle( ::oSender:nModeDetail ) + "linea de factura" )
 
 
       lResult           := ::oViewEditDetail:Resource( nMode )

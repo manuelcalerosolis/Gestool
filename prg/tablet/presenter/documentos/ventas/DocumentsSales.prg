@@ -14,15 +14,10 @@ CLASS DocumentsSales FROM Documents
 
    DATA nUltimoCliente
 
-   DATA hTextDocuments                 INIT  {  "textDetail"   => "lineas de facturas",;
-                                                "textSummary"  => "lVisLun",;
-                                                "3" => "lVisMar",;
-                                                "4" => "lVisMie",;
-                                                "5" => "lVisJue",;
-                                                "6" => "lVisVie",;
-                                                "7" => "lVisSab",;
-                                                "8" => "Cod" }
-
+   DATA hTextDocuments                 INIT  {  "textMain"     => "Facturas de clientes",;
+                                                "textShort"    => "Factura",;
+                                                "textDetail"   => "lineas de facturas",;
+                                                "textSummary"  => "Resumen factura" }
    
    DATA hOrdenRutas                    INIT  {  "1" => "lVisDom",;
                                                 "2" => "lVisLun",;
@@ -33,23 +28,12 @@ CLASS DocumentsSales FROM Documents
                                                 "7" => "lVisSab",;
                                                 "8" => "Cod" }
 
-
-
    DATA cTextSummaryDocument           INIT ""
-      METHOD setTextSummaryDocument( cTextSummaryDocument ) ;
-                                       INLINE ( ::cTextSummaryDocument := cTextSummaryDocument )
-
    DATA cTypePrintDocuments            INIT ""                                       
-      METHOD setTypePrintDocuments( cTypePrintDocuments ) ;
-                                       INLINE ( ::cTypePrintDocuments := cTypePrintDocuments )
-      METHOD getTypePrintDocuments()   INLINE ( ::cTypePrintDocuments )
-
    DATA cCounterDocuments              INIT ""                                       
-      METHOD setCounterDocuments( cCounterDocuments ) ;
-                                       INLINE ( ::cCounterDocuments := cCounterDocuments )
-      METHOD getCounterDocuments()     INLINE ( ::cCounterDocuments )
 
    DATA oTotalDocument
+
 
    METHOD New( oSender )
    METHOD runNavigator()
@@ -59,6 +43,15 @@ CLASS DocumentsSales FROM Documents
 
    METHOD hSetDetail( cField, uValue )    INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, cField, uValue ) )
    METHOD hGetDetail( cField )            INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, cField ) )
+
+   METHOD setTextSummaryDocument( cTextSummaryDocument )    INLINE ( ::cTextSummaryDocument := cTextSummaryDocument )
+   METHOD getTextSummaryDocument()                          INLINE ( if( hhaskey( ::hTextDocuments, "textSummary" ), hget( ::hTextDocuments, "textSummary"), ::cTextSummaryDocument ) )
+
+   METHOD setTypePrintDocuments( cTypePrintDocuments )      INLINE ( ::cTypePrintDocuments := cTypePrintDocuments )
+   METHOD getTypePrintDocuments()                           INLINE ( ::cTypePrintDocuments )
+
+   METHOD setCounterDocuments( cCounterDocuments )          INLINE ( ::cCounterDocuments := cCounterDocuments )
+   METHOD getCounterDocuments()                             INLINE ( ::cCounterDocuments )
 
    METHOD OpenFiles()
    METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
@@ -664,7 +657,7 @@ METHOD isResumenVenta() CLASS DocumentsSales
       Return .f.
    end if 
 
-   ::oViewEditResumen:SetTextoTipoDocumento( ::cTextSummaryDocument )
+   ::oViewEditResumen:setTitle( ::getTextSummaryDocument() )
 
 Return ( ::oViewEditResumen:Resource() )
 
@@ -855,7 +848,7 @@ Return ( lResource )
 
 METHOD onPreSaveAppendDocumento() CLASS DocumentsSales
 
-   Local NumeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::cCounterDocuments, , D():Contadores( ::nView ) )
+   Local NumeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    
    if empty( NumeroDocumento )
       Return ( .f. )

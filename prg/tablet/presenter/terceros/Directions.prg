@@ -46,7 +46,7 @@ METHOD Init( oSender ) CLASS Directions
 
    ::oGridDirections                         := DirectionsViewSearchNavigator():New( self )
    ::oGridDirections:setSelectorMode()
-   ::oGridDirections:setTextoTipoDocumento( "Seleccione dirección de cliente" )
+   ::oGridDirections:setTitle( "Seleccione dirección de cliente" )
    ::oGridDirections:setDblClickBrowseGeneral( {|| ::oGridDirections:endView() } )
 
    ::setEnviroment()

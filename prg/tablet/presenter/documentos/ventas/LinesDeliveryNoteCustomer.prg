@@ -17,7 +17,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesDeliveryNoteCustomer
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de albarán" )
+      ::oViewEditDetail:setTitle( LblTitle( nMode ) + "linea de albarán" )
 
       lResult        := ::oViewEditDetail:Resource( nMode )
 

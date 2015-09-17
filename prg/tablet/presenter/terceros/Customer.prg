@@ -48,11 +48,11 @@ METHOD New() CLASS Customer
       ::setFilterAgentes()
 
       ::oViewNavigator                       := CustomerViewSearchNavigator():New( self )
-      ::oViewNavigator:setTextoTipoDocumento( "Clientes" )
+      ::oViewNavigator:setTitle( "Clientes" )
 
       ::oGridCustomer                        := CustomerViewSearchNavigator():New( self )
       ::oGridCustomer:setSelectorMode()
-      ::oGridCustomer:setTextoTipoDocumento( "Seleccione cliente" )
+      ::oGridCustomer:setTitle( "Seleccione cliente" )
       ::oGridCustomer:setDblClickBrowseGeneral( {|| ::oGridCustomer:endView() } )
 
       ::oViewEdit                            := CustomerView():New( self )
@@ -72,11 +72,11 @@ METHOD Init( oSender ) CLASS Customer
    ::nView                                := oSender:nView
 
    ::oViewNavigator                       := CustomerViewSearchNavigator():New( self )
-   ::oViewNavigator:setTextoTipoDocumento( "Clientes" )
+   ::oViewNavigator:setTitle( "Clientes" )
 
    ::oGridCustomer                        := CustomerViewSearchNavigator():New( self )
    ::oGridCustomer:setSelectorMode()
-   ::oGridCustomer:setTextoTipoDocumento( "Seleccione cliente" )
+   ::oGridCustomer:setTitle( "Seleccione cliente" )
    ::oGridCustomer:setDblClickBrowseGeneral( {|| ::oGridCustomer:endView() } )
 
    ::oViewEdit                            := CustomerView():New( self )

@@ -35,6 +35,9 @@ CLASS ImportarPedidosClientesEDI
    DATA hDocument
    DATA hLine
 
+   DATA hPedidoCabecera
+   DATA hPedidoLinea
+
    DATA ordTipo                              INIT  {  '220' => 'Pedido normal',;
                                                       '22E' => 'Propuesta de pedido',;
                                                       '221' => 'Pedido abierto',;
@@ -122,7 +125,7 @@ CLASS ImportarPedidosClientesEDI
 
    METHOD isClient()
 
-   METHOD buildCabeceraPedido()
+   METHOD buildPedido()
 
 ENDCLASS
 
@@ -439,7 +442,7 @@ METHOD buildPedidoCliente()
 
       MsgInfo( "Creamos el pedido de cliente" )
 
-      ::buildCabeceraPedido()
+      ::buildPedido()
 
    end if 
 
@@ -479,11 +482,22 @@ Return ( isClient )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildCabeceraPedido()
+METHOD buildPedido()
+
+   ::hPedidoCabecera       := D():getPedidoClienteDefaultValue( ::nView )
+
+   ::hPedidoCabecera[ "Cliente"   ]  := ::hDocument[ "receptorFactura" ]
 
 
 
+   D():appendHashPedidoCabecera( ::hPedidoCabecera, D():PedidosClientes( ::nView ), ::nView )   
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD buildCabecera()
+
+   ::hPedidoCabecera[ "Serie"     ]  := "A"
+   ::hPedidoCabecera[ "Numero"    ]  := nNewDoc( "A", D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
+   ::hPedidoCabecera[ "Fecha"     ]  := getSysDate()

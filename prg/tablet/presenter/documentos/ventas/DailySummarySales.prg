@@ -31,7 +31,7 @@ METHOD New() CLASS DailySummarySales
    end if 
 
    ::oDailySummarySales    := DailySummarySalesView():New( self )
-   ::oDailySummarySales:setTextoTipoDocumento( "Resumen de ventas diario" )
+   ::oDailySummarySales:setTitle( "Resumen de ventas diario" )
 
 Return( self )
 

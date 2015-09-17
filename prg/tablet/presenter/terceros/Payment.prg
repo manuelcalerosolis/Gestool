@@ -34,7 +34,7 @@ METHOD Init( oSender ) CLASS Payment
 
    ::oGridPayment                        := PaymentViewSearchNavigator():New( self )
    ::oGridPayment:setSelectorMode()
-   ::oGridPayment:setTextoTipoDocumento( "Seleccione forma de pago" )
+   ::oGridPayment:setTitle( "Seleccione forma de pago" )
    ::oGridPayment:setDblClickBrowseGeneral( {|| ::oGridPayment:endView() } )
 
    ::setEnviroment()

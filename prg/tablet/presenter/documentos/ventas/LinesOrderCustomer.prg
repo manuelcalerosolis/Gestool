@@ -17,7 +17,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesOrderCustomer
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de pedido" )
+      ::oViewEditDetail:setTitle( LblTitle( nMode ) + "linea de pedido" )
 
       lResult        := ::oViewEditDetail:Resource( nMode )
 

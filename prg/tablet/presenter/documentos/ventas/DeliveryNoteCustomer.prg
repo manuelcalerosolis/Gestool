@@ -36,9 +36,9 @@ METHOD New() CLASS DeliveryNoteCustomer
    ::setTypePrintDocuments( "AC" )
    ::setCounterDocuments( "nAlbCli" )
 
-   ::oViewSearchNavigator:setTextoTipoDocumento( "Albaranes de clientes" )  
+   ::oViewSearchNavigator:setTitle( "Albaranes de clientes" )  
 
-   ::oViewEdit:setTextoTipoDocumento( "Albarán" )  
+   ::oViewEdit:setTitle( "Albarán" )  
 
    ::oLinesDeliveryNoteCustomer           := LinesDeliveryNoteCustomer():New( self )
  

@@ -29,7 +29,7 @@ CLASS ViewBase
 
    METHOD loadBrowseConfiguration()                      INLINE ( if( !empty( ::oBrowse ), ::oBrowse:Load(), ) )
 
-   METHOD setTextoTipoDocumento( cTextoTipoDocumento )   INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
+   METHOD setTitle( cTextoTipoDocumento )   INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
    METHOD getTextoTipoDocumento()                        INLINE ( ::cTextoTipoDocumento )
    METHOD getTitleTipoDocumento()                        INLINE ( ::getTextoTipoDocumento() )
 
