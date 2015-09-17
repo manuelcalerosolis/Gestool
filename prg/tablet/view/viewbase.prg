@@ -7,9 +7,8 @@ CLASS ViewBase
    DATA buttonCancel
    DATA buttonOk
 
-   DATA columnLabel                    INIT 0.2
-
-   DATA widthLabel                     INIT 1.8
+   DATA columnLabel                                      INIT 0.2
+   DATA widthLabel                                       INIT 1.8
 
    DATA oDlg
 
@@ -17,40 +16,37 @@ CLASS ViewBase
 
    DATA oSender
 
-   DATA cErrorValidator                INIT ""
+   DATA cErrorValidator                                  INIT ""
 
-   DATA Style                          INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
-
-   METHOD setBrowseConfigurationName( cName ) ;
-                                       INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
-
-   METHOD loadBrowseConfiguration()    INLINE ( if( !empty( ::oBrowse ), ::oBrowse:Load(), ) )
-
-   DATA cTextoTipoDocumento
-      METHOD setTextoTipoDocumento( cTextoTipoDocumento );
-                                       INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
-      METHOD getTextoTipoDocumento()   INLINE ( ::cTextoTipoDocumento )
-
-   METHOD getTitleTipoDocumento()      INLINE ( ::getTextoTipoDocumento() )
-
-   DATA bPreShowDialog
-   METHOD setPreShowDialog( bPreShowDialog );
-                                       INLINE ( ::bPreShowDialog := bPreShowDialog )
-   METHOD evalPreShowDialog()          INLINE ( if( !empty( ::bPreShowDialog ), eval( ::bPreShowDialog, self ), ) )
+   DATA Style                                            INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
    
+   DATA cTextoTipoDocumento
+   
+   DATA bPreShowDialog
    DATA bPostDialog 
-   METHOD setPostShowDialog( bPostShowDialog );
-                                       INLINE ( ::bPostShowDialog := bPostShowDialog )
-   METHOD evalPostDialog()             INLINE ( if( !empty( ::bPostDialog ), eval( ::bPostDialog, self ), ) )
+
+   METHOD setBrowseConfigurationName( cName )            INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
+
+   METHOD loadBrowseConfiguration()                      INLINE ( if( !empty( ::oBrowse ), ::oBrowse:Load(), ) )
+
+   METHOD setTextoTipoDocumento( cTextoTipoDocumento )   INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
+   METHOD getTextoTipoDocumento()                        INLINE ( ::cTextoTipoDocumento )
+   METHOD getTitleTipoDocumento()                        INLINE ( ::getTextoTipoDocumento() )
+
+   METHOD setPreShowDialog( bPreShowDialog )             INLINE ( ::bPreShowDialog := bPreShowDialog )
+   METHOD evalPreShowDialog()                            INLINE ( if( !empty( ::bPreShowDialog ), eval( ::bPreShowDialog, self ), ) )
+   
+   METHOD setPostShowDialog( bPostShowDialog )           INLINE ( ::bPostShowDialog := bPostShowDialog )
+   METHOD evalPostDialog()                               INLINE ( if( !empty( ::bPostDialog ), eval( ::bPostDialog, self ), ) )
 
    METHOD showView()            
 
    METHOD Resource()
-      METHOD insertControls()          VIRTUAL
+      METHOD insertControls()                            VIRTUAL
 
-   METHOD getView()                    INLINE ( ::oSender:nView )
-   METHOD getMode()                    INLINE ( ::oSender:nMode )
-   METHOD getChangePrecio()            INLINE ( ::oSender:oSender:lChangePrecio )
+   METHOD getView()                                      INLINE ( ::oSender:nView )
+   METHOD getMode()                                      INLINE ( ::oSender:nMode )
+   METHOD getChangePrecio()                              INLINE ( ::oSender:oSender:lChangePrecio )
 
    METHOD defineTitulo()
    METHOD defineAceptarCancelar()
@@ -58,7 +54,7 @@ CLASS ViewBase
 
    METHOD resizeDialog()
    METHOD initDialog()
-   METHOD startDialog()                VIRTUAL
+   METHOD startDialog()                                  VIRTUAL
 
    METHOD setDialog( oDlg )            INLINE ( ::oDlg := oDlg )
 

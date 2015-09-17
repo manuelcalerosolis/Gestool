@@ -13,8 +13,18 @@ CLASS DocumentsSales FROM Documents
    DATA oDocumentLines
 
    DATA nUltimoCliente
+
+   DATA hTextDocuments                 INIT  {  "textDetail"   => "lineas de facturas",;
+                                                "textSummary"  => "lVisLun",;
+                                                "3" => "lVisMar",;
+                                                "4" => "lVisMie",;
+                                                "5" => "lVisJue",;
+                                                "6" => "lVisVie",;
+                                                "7" => "lVisSab",;
+                                                "8" => "Cod" }
+
    
-   DATA hOrdenRutas                    INIT {   "1" => "lVisDom",;
+   DATA hOrdenRutas                    INIT  {  "1" => "lVisDom",;
                                                 "2" => "lVisLun",;
                                                 "3" => "lVisMar",;
                                                 "4" => "lVisMie",;
