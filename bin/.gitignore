@@ -10,6 +10,8 @@
 [Jj]re7/
 [Mm]etro/
 [Oo]ut/
+[Pp]sion/
+[Cc]h/
 
 *.jar
 *.old
@@ -26,5 +28,8 @@
 *.c
 *.html
 *.xsig
+*.pdf
+*.ch
+*.h
 
 !.gitignore

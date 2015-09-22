@@ -16,8 +16,6 @@
 
 Function ImportarEDI( nView )
 
-   msgAlert( nView )
-
    ImportarPedidosClientesEDI():Run( nView )
 
 Return ( nil )
@@ -36,6 +34,9 @@ CLASS ImportarPedidosClientesEDI
 
    DATA hDocument
    DATA hLine
+
+   DATA hPedidoCabecera
+   DATA hPedidoLinea
 
    DATA ordTipo                              INIT  {  '220' => 'Pedido normal',;
                                                       '22E' => 'Propuesta de pedido',;
@@ -118,8 +119,13 @@ CLASS ImportarPedidosClientesEDI
    METHOD getDate( nPosition )               INLINE ( stod( ::getField( nPosition ) ) )
    METHOD getNum( nPosition )                INLINE ( val( ::getField( nPosition ) ) )
 
+   METHOD isbuildPedidoCliente()
    METHOD buildPedidoCliente()
    METHOD isDocumentImported()
+
+   METHOD isClient()
+
+   METHOD buildPedido()
 
 ENDCLASS
 
@@ -272,8 +278,7 @@ Return ( nil )
 
 METHOD proccessNADIV()
 
-   ::hDocument[ "receptorFactura" ]    := ::getField( 1 )
-   ::hDocument[ "codigoUneco" ]        := ::getField( 2 )
+   ::hDocument[ "receptorFactura" ]        := ::getField( 1 )
 
 Return ( nil )
 
@@ -415,19 +420,33 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildPedidoCliente()
+METHOD isbuildPedidoCliente()
 
    if ::isDocumentImported()
       msgStop( "El documento ya ha sido importado" )
-      Return ( nil )
+      Return ( .f. )
    end if 
 
    if !::isClient()
       msgStop( "Cliente no encontrado")
-      Return ( nil )
+      Return ( .f. )
    end if 
 
-   msgAlert( "El documento no se ha importado")
+return .t.
+
+//-----------------------------------------------------------------------------
+
+METHOD buildPedidoCliente()
+
+   if ::isbuildPedidoCliente()
+
+      MsgInfo( "Creamos el pedido de cliente" )
+
+      ::buildPedido()
+
+   end if 
+
+   msgAlert( "Fin de la importación")
 
 Return ( nil )
 
@@ -451,11 +470,11 @@ Return ( isDocumentImported )
 METHOD isClient()
 
    local isClient   := .f.
-
+ 
    D():getStatusClientes( ::nView )
    D():setFocusClientes( "cCodEdi", ::nView )
 
-   isClient         := ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "codigoUneco" ] ) )
+   isClient         := ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "receptorFactura" ] ) )
 
    D():setStatusClientes( ::nView )
 
@@ -463,3 +482,22 @@ Return ( isClient )
 
 //---------------------------------------------------------------------------//
 
+METHOD buildPedido()
+
+   ::hPedidoCabecera       := D():getPedidoClienteDefaultValue( ::nView )
+
+   ::hPedidoCabecera[ "Cliente"   ]  := ::hDocument[ "receptorFactura" ]
+
+
+
+   D():appendHashPedidoCabecera( ::hPedidoCabecera, D():PedidosClientes( ::nView ), ::nView )   
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildCabecera()
+
+   ::hPedidoCabecera[ "Serie"     ]  := "A"
+   ::hPedidoCabecera[ "Numero"    ]  := nNewDoc( "A", D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
+   ::hPedidoCabecera[ "Fecha"     ]  := getSysDate()

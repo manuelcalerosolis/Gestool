@@ -3,12 +3,7 @@
 
 CLASS LinesDeliveryNoteCustomer FROM LinesDocumentsSales  
 
-   DATA oSender
-   
    METHOD ResourceDetail( nMode )
-
-   METHOD getSender()               INLINE ( ::oSender )
-   METHOD getView()                 INLINE ( ::getSender():nView )
 
 END CLASS
 
@@ -22,7 +17,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesDeliveryNoteCustomer
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de albarán" )
+      ::oViewEditDetail:setTitle( LblTitle( nMode ) + "linea de albarán" )
 
       lResult        := ::oViewEditDetail:Resource( nMode )
 

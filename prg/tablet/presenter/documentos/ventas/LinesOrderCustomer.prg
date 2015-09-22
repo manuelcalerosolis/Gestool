@@ -3,16 +3,10 @@
 
 CLASS LinesOrderCustomer FROM LinesDocumentsSales  
 
-   DATA oSender
-   
    METHOD ResourceDetail( nMode )
-
-   METHOD getSender()     INLINE ( ::oSender )
-   METHOD getView()       INLINE ( ::getSender():nView )
 
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD ResourceDetail( nMode ) CLASS LinesOrderCustomer
@@ -23,7 +17,7 @@ METHOD ResourceDetail( nMode ) CLASS LinesOrderCustomer
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de pedido" )
+      ::oViewEditDetail:setTitle( LblTitle( nMode ) + "linea de pedido" )
 
       lResult        := ::oViewEditDetail:Resource( nMode )
 

@@ -3,32 +3,28 @@
 
 CLASS LinesInvoiceCustomer FROM LinesDocumentsSales  
 
-   DATA oSender
-   
-   METHOD ResourceDetail( nMode )
-
-   METHOD getSender()               INLINE ( ::oSender )
-   METHOD getView()                 INLINE ( ::getSender():nView )
+   //METHOD ResourceDetail( nMode )
 
 END CLASS
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
+/*
 METHOD ResourceDetail( nMode ) CLASS LinesInvoiceCustomer
 
-   local lResult     := .f.
+   local lResult        := .f.
 
-   ::oViewEditDetail := ViewDetail():New( self )
+   ::oViewEditDetail    := ViewDetail():New( self )
+
+   msgAlert( ::oSender:nModeDetail, "::oSender:nModeDetail" )
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:SetTextoTipoDocumento( LblTitle( nMode ) + "linea de factura" )
+      ::oViewEditDetail:setTitle( LblTitle( ::oSender:nModeDetail ) + "linea de factura" )
 
-      lResult        := ::oViewEditDetail:Resource( nMode )
+      lResult           := ::oViewEditDetail:Resource( nMode )
 
    end if
 
 Return ( lResult )   
-
+*/
 //---------------------------------------------------------------------------//

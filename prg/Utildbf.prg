@@ -17,7 +17,7 @@
 static aResources             := {}
 static aAdsDirectory          := {}
 
-static cLenguajeSegundario    := {}
+static cLenguajeSegundario    := ""
 
 static hTraslations           := {=>}
 

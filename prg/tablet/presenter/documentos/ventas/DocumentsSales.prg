@@ -3,6 +3,8 @@
  
 CLASS DocumentsSales FROM Documents
 
+   DATA oSender
+
    DATA oProduct
    DATA oPayment
    DATA oDirections
@@ -11,8 +13,13 @@ CLASS DocumentsSales FROM Documents
    DATA oDocumentLines
 
    DATA nUltimoCliente
+
+   DATA hTextDocuments                 INIT  {  "textMain"     => "Facturas de clientes",;
+                                                "textShort"    => "Factura",;
+                                                "textDetail"   => "lineas de facturas",;
+                                                "textSummary"  => "Resumen factura" }
    
-   DATA hOrdenRutas                    INIT {   "1" => "lVisDom",;
+   DATA hOrdenRutas                    INIT  {  "1" => "lVisDom",;
                                                 "2" => "lVisLun",;
                                                 "3" => "lVisMar",;
                                                 "4" => "lVisMie",;
@@ -22,37 +29,42 @@ CLASS DocumentsSales FROM Documents
                                                 "8" => "Cod" }
 
    DATA cTextSummaryDocument           INIT ""
-      METHOD setTextSummaryDocument( cTextSummaryDocument ) ;
-                                       INLINE ( ::cTextSummaryDocument := cTextSummaryDocument )
-
    DATA cTypePrintDocuments            INIT ""                                       
-      METHOD setTypePrintDocuments( cTypePrintDocuments ) ;
-                                       INLINE ( ::cTypePrintDocuments := cTypePrintDocuments )
-      METHOD getTypePrintDocuments()   INLINE ( ::cTypePrintDocuments )
-
    DATA cCounterDocuments              INIT ""                                       
-      METHOD setCounterDocuments( cCounterDocuments ) ;
-                                       INLINE ( ::cCounterDocuments := cCounterDocuments )
-      METHOD getCounterDocuments()     INLINE ( ::cCounterDocuments )
 
    DATA oTotalDocument
+
 
    METHOD New( oSender )
    METHOD runNavigator()
 
+   METHOD hSetMaster( cField, uValue )    INLINE ( hSet( ::oSender:hDictionaryMaster, cField, uValue ) )
+   METHOD hGetMaster( cField )            INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
+
+   METHOD hSetDetail( cField, uValue )    INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, cField, uValue ) )
+   METHOD hGetDetail( cField )            INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, cField ) )
+
+   METHOD setTextSummaryDocument( cTextSummaryDocument )    INLINE ( ::cTextSummaryDocument := cTextSummaryDocument )
+   METHOD getTextSummaryDocument()                          INLINE ( if( hhaskey( ::hTextDocuments, "textSummary" ), hget( ::hTextDocuments, "textSummary"), ::cTextSummaryDocument ) )
+
+   METHOD setTypePrintDocuments( cTypePrintDocuments )      INLINE ( ::cTypePrintDocuments := cTypePrintDocuments )
+   METHOD getTypePrintDocuments()                           INLINE ( ::cTypePrintDocuments )
+
+   METHOD setCounterDocuments( cCounterDocuments )          INLINE ( ::cCounterDocuments := cCounterDocuments )
+   METHOD getCounterDocuments()                             INLINE ( ::cCounterDocuments )
+
    METHOD OpenFiles()
    METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
 
-   METHOD getSerie()                   INLINE ( hGet( ::hDictionaryMaster, "Serie" ) )
-   METHOD getNumero()                  INLINE ( hGet( ::hDictionaryMaster, "Numero" ) )
-   METHOD getSufijo()                  INLINE ( hGet( ::hDictionaryMaster, "Sufijo" ) )
-   METHOD getAlmacen()                 INLINE ( hGet( ::hDictionaryMaster, "Almacen" ) )
+   METHOD getSerie()                   INLINE ( ::hGetMaster( "Serie" ) )
+   METHOD getNumero()                  INLINE ( ::hGetMaster( "Numero" ) )
+   METHOD getSufijo()                  INLINE ( ::hGetMaster( "Sufijo" ) )
+   METHOD getAlmacen()                 INLINE ( ::hGetMaster( "Almacen" ) )
 
    METHOD getID()                      INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
 
-   METHOD isPuntoVerde()               INLINE ( hGet( ::hDictionaryMaster, "OperarPuntoVerde" ) )
-
-   METHOD isRecargoEquivalencia()      INLINE ( hGet( ::hDictionaryMaster, "lRecargo" ) )
+   METHOD isPuntoVerde()               INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
+   METHOD isRecargoEquivalencia()      INLINE ( ::hGetMaster( "lRecargo" ) )
 
    METHOD onViewCancel()
    METHOD onViewSave()
@@ -125,6 +137,8 @@ END CLASS
 //---------------------------------------------------------------------------//
 
 METHOD New( oSender ) CLASS DocumentsSales
+
+   ::oSender               := oSender
 
    if !::OpenFiles()
       Return ( self )
@@ -643,7 +657,7 @@ METHOD isResumenVenta() CLASS DocumentsSales
       Return .f.
    end if 
 
-   ::oViewEditResumen:SetTextoTipoDocumento( ::cTextSummaryDocument )
+   ::oViewEditResumen:setTitle( ::getTextSummaryDocument() )
 
 Return ( ::oViewEditResumen:Resource() )
 
@@ -834,7 +848,7 @@ Return ( lResource )
 
 METHOD onPreSaveAppendDocumento() CLASS DocumentsSales
 
-   Local NumeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::cCounterDocuments, , D():Contadores( ::nView ) )
+   Local NumeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    
    if empty( NumeroDocumento )
       Return ( .f. )
@@ -847,7 +861,7 @@ Return ( ::setDatasInDictionaryMaster( NumeroDocumento ) )
 METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
 
    Local lReturn           := .f.
-   local AgenteIni         := GetPvProfString( "Tablet", "Agente", "",   FullCurDir() + "GstApolo.Ini" )
+   local AgenteIni         := GetPvProfString( "Tablet", "Agente", "", FullCurDir() + "GstApolo.Ini" )
 
    D():getStatusClientes( ::nView )
 

@@ -4,13 +4,13 @@
 
 CLASS InvoiceCustomer FROM DocumentsSales  
 
-   DATA oLinesDeliveryNoteCustomer
+   DATA oLinesInvoiceCustomer
    
    DATA CodigoAgente                      INIT AccessCode():cAgente
 
    METHOD New()
 
-   METHOD resourceDetail( nMode )         INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
+   METHOD resourceDetail( nMode )         INLINE ( ::oLinesInvoiceCustomer:ResourceDetail( nMode ) )
 
    METHOD getAppendDocumento()
    METHOD getEditDocumento()
@@ -26,8 +26,7 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD printDocument()
 
-   METHOD onPostSaveAppendDocumento()     INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
-                                                   checkPagosFacturaCliente( ::getId(), ::nView ) )
+   METHOD onPostSaveAppendDocumento()     INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ), checkPagosFacturaCliente( ::getId(), ::nView ) )
 
 END CLASS
 
@@ -38,16 +37,18 @@ METHOD New() CLASS InvoiceCustomer
    ::super:New( self )
 
    ::setTextSummaryDocument( "Resumen factura" )
+
    ::setTypePrintDocuments( "FC" )
+
    ::setCounterDocuments( "nFacCli" )
 
-   ::oViewSearchNavigator:setTextoTipoDocumento( "Facturas de clientes" )  
+   ::oViewSearchNavigator:setTitle( "Facturas de clientes" )  
 
-   ::oViewEdit:setTextoTipoDocumento( "Factura" )  
+   ::oViewEdit:setTitle( "Factura" )  
 
-   ::oLinesDeliveryNoteCustomer           := LinesInvoiceCustomer():New( self )
+   ::oLinesInvoiceCustomer           := LinesInvoiceCustomer():New( self )
  
-   // Areas
+   // Areas--------------------------------------------------------------------
 
    ::setDataTable( "FacCliT" )
    ::setDataTableLine( "FacCliL" )

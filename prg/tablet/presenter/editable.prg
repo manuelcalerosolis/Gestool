@@ -8,6 +8,8 @@ CLASS Editable
    DATA nView
 
    DATA nMode
+   DATA nModeDetail
+
    DATA lChangePrecio                           INIT .t.
 
    DATA cDataTable
@@ -35,6 +37,10 @@ CLASS Editable
    METHOD Edit()
       METHOD saveEdit()
    METHOD Delete()
+
+   METHOD lAppendMode()                         INLINE ( ::nMode == APPD_MODE )
+   METHOD lEditMode()                           INLINE ( ::nMode == EDIT_MODE )
+   METHOD lZoomMode()                           INLINE ( ::nMode == ZOOM_MODE )
 
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
    METHOD getDataTable()                        INLINE ( ::cDataTable )
@@ -70,16 +76,16 @@ CLASS Editable
    METHOD setDetailArea( cDetailArea )          INLINE ( ::cDetailArea  := cDetailArea )
    METHOD getDetailArea()                       INLINE ( ::cDetailArea )
 
-   METHOD lAppendMode()                         INLINE ( ::nMode == APPD_MODE )
-   METHOD lEditMode()                           INLINE ( ::nMode == EDIT_MODE )
-   METHOD lZoomMode()                           INLINE ( ::nMode == ZOOM_MODE )
+   METHOD appendDetail()
+   METHOD editDetail()
+   METHOD deleteDetail()
+   METHOD resourceDetail()                      VIRTUAL
+   METHOD getAppendDetail()                     VIRTUAL
+   METHOD getEditDetail()                       VIRTUAL
 
-   METHOD AppendDetail()
-   METHOD EditDetail()
-   METHOD DeleteDetail()
-   METHOD ResourceDetail()                      VIRTUAL
-   METHOD GetAppendDetail()                     VIRTUAL
-   METHOD GetEditDetail()                       VIRTUAL
+   METHOD lAppendModeDetail()                   INLINE ( ::nModeDetail == APPD_MODE )
+   METHOD lEditModeDetail()                     INLINE ( ::nModeDetail == EDIT_MODE )
+   METHOD lZoomModeDetail()                     INLINE ( ::nModeDetail == ZOOM_MODE )
 
    METHOD setFormatToPrint( cFormat )           INLINE ( ::cFormatToPrint := cFormat )
    METHOD resetFormatToPrint( cFormat )         INLINE ( ::cFormatToPrint := "" )
@@ -217,6 +223,8 @@ METHOD AppendDetail() CLASS Editable
 
    ::GetAppendDetail()
 
+   ::nModeDetail     := APPD_MODE
+
    if ::ResourceDetail( APPD_MODE )
 
       ::AppendGuardaLinea()
@@ -240,6 +248,8 @@ METHOD EditDetail( nPos ) CLASS Editable
    ::nPosDetail   := nPos
 
    ::GetEditDetail()
+
+   ::nModeDetail     := EDIT_MODE
 
    if ::ResourceDetail( EDIT_MODE )
       ::EditGuardaLinea()

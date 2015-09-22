@@ -42,7 +42,7 @@ METHOD New( oSender ) CLASS ViewSearchNavigator
 
    ::bDblClickBrowseGeneral   := {|| ::oSender:Edit(), ::refreshBrowse() }
 
-   ::setTextoTipoDocumento()
+   ::setTitle()
 
    ::setItemsBusqueda()
 

@@ -1303,7 +1303,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
          :bEditValue       := {|| ( D():PedidosClientes( nView ) )->cNomCli }
-         :nWidth           := 180
+         :nWidth           := 280
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 

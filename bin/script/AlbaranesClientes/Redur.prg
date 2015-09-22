@@ -34,46 +34,65 @@ ENDCLASS
 
    METHOD New() CLASS AlbarenesClientesRedur
 
+   local cExpresion     := ""   
+
       if ::OpenFiles()
 
-         if ( TDataView():AlbaranesClientes( ::nView ) )->( dbseek( date() ) )
+         ( D():AlbaranesClientes( ::nView ) )->( dbSetFilter( {|| Field->lEntregado .and. rTrim( Field->cCodTrn ) == "001" },;
+                                                                  "lEntregado .and. rTrim( cCodTrn ) == 001" ) )
 
-            while !( TDataView():AlbaranesClientes( ::nView ) )->( eof() )
+         ( D():AlbaranesClientes( ::nView ) )->( dbGoTop() )
 
-               if rtrim( ( TDataView():AlbaranesClientes( ::nView ) )->cCodTrn ) == "001"
+         while !( D():AlbaranesClientes( ::nView ) )->( eof() )
 
-                  if Empty( ::oAlbaran )
-                     ::oAlbaran                          := Redur():New()
-                  end if 
+            if ( D():AlbaranesClientes( ::nView ) )->dFecEnv == Date()
 
-                  ::oAlbaran:Tracking(                   '500324' + strzero( ( TDataView():AlbaranesClientes( ::nView ) )->nNumAlb, 9 ) )
-                  ::oAlbaran:Remitente(                  'CAZU' )
-                  ::oAlbaran:NombreConsignatario(        ( TDataView():AlbaranesClientes( ::nView ) )->cNomCli )
-                  ::oAlbaran:DireccionConsignatario(     ( TDataView():AlbaranesClientes( ::nView ) )->cDirCli )
-                  ::oAlbaran:PoblacionConsignatario(     ( TDataView():AlbaranesClientes( ::nView ) )->cPobCli )
-                  ::oAlbaran:CodigoPostalConsignatario(  ( TDataView():AlbaranesClientes( ::nView ) )->cPosCli )
-                  ::oAlbaran:ProvinciaConsignatario(     '00' + left( ( TDataView():AlbaranesClientes( ::nView ) )->cPosCli, 2 ) )
-                  ::oAlbaran:Bultos(                     ( TDataView():AlbaranesClientes( ::nView ) )->nBultos )
-                  ::oAlbaran:Referencia(                 str( ( TDataView():AlbaranesClientes( ::nView ) )->nNumAlb ) )
-                  ::oAlbaran:Peso(                       nTotalPesoAlbaranCliente( ( TDataView():AlbaranesClientesId( ::nView ) ), ::nView ) )
-                  
-                  ::oAlbaran:SerializeASCII()
-
+               if Empty( ::oAlbaran )
+                  ::oAlbaran                          := Redur():New()
                end if 
 
-               ( TDataView():AlbaranesClientes( ::nView ) )->( dbSkip() )
+               ::oAlbaran:Tracking(                   '500324' + strzero( ( D():AlbaranesClientes( ::nView ) )->nNumAlb, 8 ) )
+               ::oAlbaran:Remitente(                  'CAZU' )
+               ::oAlbaran:NombreConsignatario(        ( D():AlbaranesClientes( ::nView ) )->cNomCli )
 
-            end while
+               if Empty( ( D():AlbaranesClientes( ::nView ) )->cCodObr )
 
-            if !empty( ::oAlbaran )
-               ::oAlbaran:WriteASCII()
-               ::SendFile()
-            end if 
+                  ::oAlbaran:DireccionConsignatario(     ( D():AlbaranesClientes( ::nView ) )->cDirCli )
+                  ::oAlbaran:PoblacionConsignatario(     ( D():AlbaranesClientes( ::nView ) )->cPobCli )
+                  ::oAlbaran:CodigoPostalConsignatario(  ( D():AlbaranesClientes( ::nView ) )->cPosCli )
+                  ::oAlbaran:ProvinciaConsignatario(     '00' + left( ( D():AlbaranesClientes( ::nView ) )->cPosCli, 2 ) )
 
-         else
+               else
 
-            msgStop( "No hay albaranes para " + dtoc( date() ) )
+                  if dbSeekInOrd( ( D():AlbaranesClientes( ::nView ) )->cCodCli + ( D():AlbaranesClientes( ::nView ) )->cCodObr, "cCodCli", D():Get( "ObrasT", ::nView ) )
+                     ::oAlbaran:DireccionConsignatario(     ( D():Get( "ObrasT", ::nView ) )->cDirObr )
+                     ::oAlbaran:PoblacionConsignatario(     ( D():Get( "ObrasT", ::nView ) )->cPobObr )
+                     ::oAlbaran:CodigoPostalConsignatario(  ( D():Get( "ObrasT", ::nView ) )->cPosObr )
+                     ::oAlbaran:ProvinciaConsignatario(     '00' + left( ( D():Get( "ObrasT", ::nView ) )->cPosObr, 2 ) )
+                  end if   
 
+               end if
+               
+               ::oAlbaran:Bultos(                     ( D():AlbaranesClientes( ::nView ) )->nBultos )
+               ::oAlbaran:Referencia(                 str( ( D():AlbaranesClientes( ::nView ) )->nNumAlb ) )
+               ::oAlbaran:Peso(                       nTotalPesoAlbaranCliente( ( D():AlbaranesClientesId( ::nView ) ), ::nView ) )
+               
+               ::oAlbaran:SerializeASCII()
+
+            end if
+
+            msgWait( "Procesando " + str( ( D():AlbaranesClientes( ::nView ) )->( ordkeyNo() ) ) + " de " + ;
+                     str( ( D():AlbaranesClientes( ::nView ) )->( ordkeyCount() ) ), , 0.3 )
+
+            ( D():AlbaranesClientes( ::nView ) )->( dbSkip() )
+
+         end while
+
+         DestroyFastFilter( D():AlbaranesClientes( ::nView ) )
+
+         if !empty( ::oAlbaran )
+            ::oAlbaran:WriteASCII()
+            ::SendFile()
          end if 
 
          ::CloseFiles()
@@ -93,13 +112,13 @@ ENDCLASS
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::nView           := TDataView():CreateView()
+      ::nView           := D():CreateView()
 
-      TDataView():AlbaranesClientes( ::nView )
+      D():AlbaranesClientes( ::nView )
 
-      TDataView():AlbaranesClientesLineas( ::nView )      
+      D():AlbaranesClientesLineas( ::nView )      
 
-      ( TDataView():AlbaranesClientes( ::nView ) )->( ordsetfocus( "dFecAlb" ) )
+      D():Get( "ObrasT", ::nView )
 
    RECOVER USING oError
 
@@ -117,7 +136,7 @@ ENDCLASS
 
    METHOD CloseFiles CLASS AlbarenesClientesRedur
 
-      TDataView():DeleteView( ::nView )
+      D():DeleteView( ::nView )
 
    Return ( Self )
 
@@ -125,35 +144,39 @@ ENDCLASS
 
    METHOD SendFile() CLASS AlbarenesClientesRedur
 
+      local oUrl
+      local cUrl
       local oFtp
-      local oFile
-      local oInternet
+      local lOpen             := .t.
 
-      oInternet         := TInternet():New()
-      oFtp              := TFtp():New( 'redlab.redur.es', oInternet, 'CAZU', 'bU5B80rU', .f. )
+      cUrl                 := "ftp://CAZU:bU5B80rU@redlab.redur.es"
 
-      if Empty( oFtp ) .or. Empty( oFtp:hFtp )
+      oUrl               := TUrl():New( cUrl )
+      oFTP               := TIPClientFTP():New( oUrl, .t. )
+      oFTP:nConnTimeout  := 20000
 
-         msgStop( "Imposible conectar con el sitio ftp redlab.redur.es" )
+      lOpen                := oFTP:Open( cUrl )
 
-      else
-
-         oFile          := TFtpFile():New( ::oAlbaran:cFile, oFtp )
-
-         if ( oFile:PutFile() )
-            msgInfo( ::oAlbaran:cFile + " enviado con exito" )
-         else 
-            msgStop( GetErrMsg(), "Error" )
-         end if
-
-      end if 
-
-      if !Empty( oInternet )
-         oInternet:end()
+      if !lOpen
+         cStr              := "Could not connect to FTP server " + oURL:cServer
+         if empty( oFTP:SocketCon )
+            cStr           += hb_eol() + "Connection not initialized"
+         elseif hb_inetErrorCode( oFTP:SocketCon ) == 0
+            cStr           += hb_eol() + "Server response:" + " " + oFTP:cReply
+         else
+            cStr           += hb_eol() + "Error in connection:" + " " + hb_inetErrorDesc( oFTP:SocketCon )
+         endif
+         msgStop( cStr, "Error" )
       end if
 
-      if !Empty( oFtp )
-         oFtp:end()
+      if oFtp:UploadFile( ::oAlbaran:cFile )
+         MsgInfo( "Fichero enviado correctamente" )
+      else
+         MsgStop( "Error al enviar el fichero" )
+      end if
+
+      if !empty( oFTP )
+         oFTP:Close()
       end if
 
 /*
@@ -172,7 +195,7 @@ quit
 
 CLASS Redur FROM Cuaderno
 
-   DATA cFile                             INIT 'redur_CAZU_' + dtos( date() ) + '.dcf'
+   DATA cFile                             INIT 'redur_CAZU_' + dateToEU( date() ) + '.dcf'
    DATA cBuffer                           INIT ''
 
    DATA cTipoRegisto                      INIT 'R00'
@@ -238,8 +261,8 @@ CLASS Redur FROM Cuaderno
    METHOD CodigoConsignatario(uValue)            INLINE ( if( !Empty(uValue), ::cCodigoConsignatario             := uValue, padr( ::cCodigoConsignatario, 12 ) ) )
    METHOD Documentacion(uValue)                  INLINE ( if( !Empty(uValue), ::cDocumentacion                   := uValue, padr( ::cDocumentacion, 20 ) ) )
    METHOD Producto(uValue)                       INLINE ( if( !Empty(uValue), ::cProducto                        := uValue, padr( ::cProducto, 3 ) ) )
-   METHOD Preparacion(uValue)                    INLINE ( if( !Empty(uValue), ::dPreparacion                     := uValue, dtos( ::dPreparacion ) ) )
-   METHOD Recogida(uValue)                       INLINE ( if( !Empty(uValue), ::dRecogida                        := uValue, dtos( ::dRecogida ) ) )
+   METHOD Preparacion(uValue)                    INLINE ( if( !Empty(uValue), ::dPreparacion                     := uValue, dateToEU( ::dPreparacion ) ) )
+   METHOD Recogida(uValue)                       INLINE ( if( !Empty(uValue), ::dRecogida                        := uValue, dateToEU( ::dRecogida ) ) )
    METHOD NombreConsignatario(uValue)            INLINE ( if( !Empty(uValue), ::cNombreConsignatario             := uValue, padr( ::cNombreConsignatario, 35 ) ) )
    METHOD DireccionConsignatario(uValue)         INLINE ( if( !Empty(uValue), ::cDireccionConsignatario          := uValue, padr( ::cDireccionConsignatario, 60 ) ) )
    METHOD PoblacionConsignatario(uValue)         INLINE ( if( !Empty(uValue), ::cPoblacionConsignatario          := uValue, padr( ::cPoblacionConsignatario, 35 ) ) )
@@ -260,7 +283,7 @@ CLASS Redur FROM Cuaderno
    METHOD Observaciones3(uValue)                 INLINE ( if( !Empty(uValue), ::cObservaciones3                  := uValue, padr( ::cObservaciones3, 40 ) ) )
    METHOD ValorAsegurado(uValue)                 INLINE ( if( !Empty(uValue), ::nValorAsegurado                  := uValue, strzero( round( ::nValorAsegurado * 100, 0 ), 11 ) ) )
    METHOD NumeroFactura(uValue)                  INLINE ( if( !Empty(uValue), ::cNumeroFactura                   := uValue, padr( ::cNumeroFactura, 12 ) ) )
-   METHOD FechaFactura(uValue)                   INLINE ( if( !Empty(uValue), ::dFechaFactura                    := uValue, dtos( ::dFechaFactura ) ) )
+   METHOD FechaFactura(uValue)                   INLINE ( if( !Empty(uValue), ::dFechaFactura                    := uValue, dateToEU( ::dFechaFactura ) ) )
    METHOD ImporteFactura(uValue)                 INLINE ( if( !Empty(uValue), ::nImporteFactura                  := uValue, strzero( round( ::nImporteFactura * 100, 0 ), 13 ) ) )
    METHOD ImporteReembolso(uValue)               INLINE ( if( !Empty(uValue), ::nImporteReembolso                := uValue, strzero( round( ::nImporteReembolso * 100, 0 ), 13 ) ) )
    METHOD TipoServicio(uValue)                   INLINE ( if( !Empty(uValue), ::cTipoServicio                    := uValue, padr( ::cTipoServicio, 1 ) ) )
@@ -371,4 +394,11 @@ ENDCLASS
 
 //---------------------------------------------------------------------------//
 
-
+Function DateToEU( dDate )
+   
+   local strDate  := if( dDate != NIL, dtoc( dDate ), dtoc( date() ) )
+   strDate        := strtran( strDate, "/", "" )
+
+Return( strDate )
+
+//---------------------------------------------------------------------------//

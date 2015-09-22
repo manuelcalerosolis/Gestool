@@ -11392,13 +11392,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    end if
 
    if !lCliChg( aTmp[ _CCODCLI ], D():Get( "Client", nView ) )
-      msgStop( "Este cliente no tiene autorización para venta a credito.", "Imposible archivar como albarán" )
+      msgStop( "Este cliente no tiene autorización para venta a credito." )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if
 
-   if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, D():Get( "Client", nView ) )
-      msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como albarán" )
+   if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, D():Get( "Client", nView ), nTotAlb, nMode )
+      msgStop( "Este cliente supera el limite de riesgo permitido." )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.
    end if
@@ -11443,13 +11443,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       MsgStop( "No puede almacenar un documento sin líneas." )
       return .f.
    end if
-
-   if ( ( D():Get( "Client", nView ) )->lCreSol ) .and. ( nMode == APPD_MODE .or. nMode == EDIT_MODE ) 
-      if ( nRieCli + nTotAlb >= ( D():Get( "Client", nView ) )->Riesgo )
-         msgStop( "Este cliente supera el limite de riesgo permitido.", "Imposible archivar como albarán" )
-         return .f.
-      end if 
-   end if 
 
    if nTotDif < 0
       MsgStop( "La carga excede la capacidad del medio de transporte." )

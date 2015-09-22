@@ -35,9 +35,9 @@ METHOD New() CLASS OrderCustomer
    ::setTypePrintDocuments( "PC" )
    ::setCounterDocuments( "nPedCli" )
 
-   ::oViewSearchNavigator:setTextoTipoDocumento( "Pedidos de clientes" )
+   ::oViewSearchNavigator:setTitle( "Pedidos de clientes" )
 
-   ::oViewEdit:setTextoTipoDocumento( "Pedido" )  
+   ::oViewEdit:setTitle( "Pedido" )  
 
    ::oLinesOrderCustomer   := LinesOrderCustomer():New( self )
 

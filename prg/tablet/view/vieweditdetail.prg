@@ -52,9 +52,9 @@ CLASS ViewDetail FROM ViewBase
 
    METHOD defineTotal()
 
-   METHOD ShowLote()    INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
-   METHOD HideLote()    INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
-   METHOD RefreshLote() INLINE ( ::oGetLote:Refresh() )
+   METHOD ShowLote()                   INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
+   METHOD HideLote()                   INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
+   METHOD RefreshLote()                INLINE ( ::oGetLote:Refresh() )
 
    METHOD RefreshGetArticulo()         INLINE ( ::oGetArticulo:Refresh() )
    METHOD RefreshGetDescripcion()      INLINE ( ::oGetDescripcionArticulo:Refresh() )
@@ -394,14 +394,14 @@ Return ( self )
 
 METHOD RefreshDialog() CLASS ViewDetail
 
-   ::RefreshGetArticulo()
-   ::RefreshGetDescripcion()
-   ::RefreshGetLote()
-   ::RefreshGetCajas()
-   ::RefreshGetUnidades()
-   ::RefreshGetPrecio()
-   ::RefreshGetDescuento()
-   ::RefreshGetDescuentoLineal()
+   ::refreshGetArticulo()
+   ::refreshGetDescripcion()
+   ::refreshGetLote()
+   ::refreshGetCajas()
+   ::refreshGetUnidades()
+   ::refreshGetPrecio()
+   ::refreshGetDescuento()
+   ::refreshGetDescuentoLineal()
 
 Return ( Self )
 
