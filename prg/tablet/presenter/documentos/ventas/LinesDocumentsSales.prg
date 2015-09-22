@@ -109,6 +109,8 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD recalcularTotal()
 
+   METHOD onPreSaveAppendDetail()                           INLINE ( msgAlert( "onPreSaveAppendDetail" ), .t. )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -321,9 +323,6 @@ METHOD ResourceDetail( nMode ) CLASS LinesDocumentsSales
    local lResult        := .f.
 
    ::oViewEditDetail    := ViewDetail():New( self )
-
-   msgAlert( ::oSender:ClassName(), "::oSender:ClassName" )   
-   msgAlert( ::oSender:nModeDetail, "::oSender:nModeDetail" )   
 
    if !Empty( ::oViewEditDetail )
 

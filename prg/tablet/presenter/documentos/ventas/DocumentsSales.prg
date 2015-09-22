@@ -99,8 +99,8 @@ CLASS DocumentsSales FROM Documents
    METHOD Total()                                  INLINE ( ::oDocumentLines:Total() )
    METHOD calculaIVA()                             VIRTUAL
 
-   METHOD AppendGuardaLinea()
-   METHOD EditGuardaLinea()
+   METHOD saveAppendDetail()
+   METHOD saveEditDetail()
 
    METHOD isPrintDocument()
    METHOD printDocument()                          VIRTUAL
@@ -116,11 +116,13 @@ CLASS DocumentsSales FROM Documents
       METHOD appendDocumentLine( oDocumentLine )   INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, ::getDataTableLine(), ::nView ) )
       METHOD delDocumentLine()                     INLINE ( D():deleteRecord( ::getDataTableLine(), ::nView ) )
 
-   METHOD onPreSaveEditDocumento()                 INLINE ( ::setDatasInDictionaryMaster() )
-   METHOD onPreSaveAppendDocumento()
+   METHOD onPreSaveEdit()                          INLINE ( ::setDatasInDictionaryMaster() )
+   METHOD onPreSaveAppend()
    METHOD onPreEnd()
       METHOD setDatasFromClientes()
       METHOD setDatasInDictionaryMaster( NumeroDocumento ) 
+
+   METHOD onPreSaveAppendDetail()                  INLINE ( MSGaLERT( "onPreSaveAppendDetail DocumentsSales" ), .T. )
 
    METHOD cComboRecargoValue()
 
@@ -571,7 +573,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendGuardaLinea() CLASS DocumentsSales
+METHOD saveAppendDetail() CLASS DocumentsSales
 
    ::oDocumentLines:appendLineDetail( ::oDocumentLineTemporal )
 
@@ -583,7 +585,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EditGuardaLinea() CLASS DocumentsSales
+METHOD saveEditDetail() CLASS DocumentsSales
 
    ::oDocumentLines:GuardaLineDetail( ::nPosDetail, ::oDocumentLineTemporal )
 
@@ -846,7 +848,7 @@ Return ( lResource )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPreSaveAppendDocumento() CLASS DocumentsSales
+METHOD onPreSaveAppend() CLASS DocumentsSales
 
    Local NumeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    

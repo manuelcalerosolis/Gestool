@@ -28,9 +28,8 @@ CLASS ViewDetail FROM ViewBase
    METHOD getSenderDocument()                INLINE   ( ::oSender:getSender() )
 
    METHOD setGetValue( uValue, cFieldName )  INLINE   ( if( isNil( uValue ), ::getValue( cFieldName ), ::setValue( uValue, cFieldName ) ) )
-
-   METHOD getValue( cFieldName )             INLINE   ( hGet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cFieldName ) )
-   METHOD setValue( uValue, cFieldName )     INLINE   ( hSet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cFieldName, uValue ) ) 
+      METHOD getValue( cFieldName )          INLINE   ( hGet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cFieldName ) )
+      METHOD setValue( uValue, cFieldName )  INLINE   ( hSet( ::getSenderDocument():oDocumentLineTemporal:hDictionary, cFieldName, uValue ) ) 
 
    METHOD getChangePrecio()                  INLINE   ( ::Super:getChangePrecio() .or. ::getValue( "PrecioVenta" ) == 0 )
 
@@ -52,18 +51,18 @@ CLASS ViewDetail FROM ViewBase
 
    METHOD defineTotal()
 
-   METHOD ShowLote()                   INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
-   METHOD HideLote()                   INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
-   METHOD RefreshLote()                INLINE ( ::oGetLote:Refresh() )
+   METHOD showLote()                   INLINE ( ::oGetLote:Show(), ::oSayLote:Show() )
+   METHOD hideLote()                   INLINE ( ::oGetLote:Hide(), ::oSayLote:Hide() )
+   METHOD refreshLote()                INLINE ( ::oGetLote:Refresh() )
 
-   METHOD RefreshGetArticulo()         INLINE ( ::oGetArticulo:Refresh() )
-   METHOD RefreshGetDescripcion()      INLINE ( ::oGetDescripcionArticulo:Refresh() )
-   METHOD RefreshGetLote()             INLINE ( ::oGetLote:Refresh() )
-   METHOD RefreshGetCajas()            INLINE ( ::oGetCajas:Refresh() )
-   METHOD RefreshGetUnidades()         INLINE ( ::oGetUnidades:Refresh() )
-   METHOD RefreshGetPrecio()           INLINE ( ::oGetPrecio:Refresh() )
-   METHOD RefreshGetDescuento()        INLINE ( ::oGetDescuento:Refresh() )
-   METHOD RefreshGetDescuentoLineal()  INLINE ( ::oGetDescuentoLineal:Refresh() )
+   METHOD refreshGetArticulo()         INLINE ( ::oGetArticulo:Refresh() )
+   METHOD refreshGetDescripcion()      INLINE ( ::oGetDescripcionArticulo:Refresh() )
+   METHOD refreshGetLote()             INLINE ( ::oGetLote:Refresh() )
+   METHOD refreshGetCajas()            INLINE ( ::oGetCajas:Refresh() )
+   METHOD refreshGetUnidades()         INLINE ( ::oGetUnidades:Refresh() )
+   METHOD refreshGetPrecio()           INLINE ( ::oGetPrecio:Refresh() )
+   METHOD refreshGetDescuento()        INLINE ( ::oGetDescuento:Refresh() )
+   METHOD refreshGetDescuentoLineal()  INLINE ( ::oGetDescuentoLineal:Refresh() )
 
    METHOD RefreshDialog()
 

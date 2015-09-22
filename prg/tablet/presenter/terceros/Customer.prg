@@ -29,7 +29,7 @@ CLASS Customer FROM Editable
 
    METHOD setFilterAgentes()
 
-   METHOD onPreSaveEditDocumento()     INLINE ( .t. )
+   METHOD onPreSaveEdit()     INLINE ( .t. )
    METHOD onPreEnd()                   INLINE ( .t. )
 
    METHOD onPostGetDocumento()
