@@ -34,6 +34,8 @@ END CLASS
 
 METHOD New() CLASS InvoiceCustomer
 
+   local cCodigoAgente              := AccessCode():cAgente
+
    ::super:New( self )
 
    ::setTextSummaryDocument( "Resumen factura" )
@@ -46,7 +48,7 @@ METHOD New() CLASS InvoiceCustomer
 
    ::oViewEdit:setTitle( "Factura" )  
 
-   ::oLinesInvoiceCustomer           := LinesInvoiceCustomer():New( self )
+   ::oLinesInvoiceCustomer          := LinesInvoiceCustomer():New( self )
  
    // Areas--------------------------------------------------------------------
 
@@ -55,6 +57,11 @@ METHOD New() CLASS InvoiceCustomer
 
    ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
    ( ::getWorkArea() )->( dbgotop() ) 
+
+   if !empty(cCodigoAgente)
+      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == cCodigoAgente }, "cCodAge == cCodigoAgente" ) )
+      ( ::getWorkArea() )->( dbgotop() )
+   end if 
 
 Return ( self )
 
