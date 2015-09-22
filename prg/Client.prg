@@ -12243,7 +12243,7 @@ RETURN lRet
 
 //---------------------------------------------------------------------------//
 
-Function lClienteEvaluarRiesgo( cCodCli, oStock, dbfClient, nImporte, nMode )
+Function lClienteRiesgoAlcanzado( cCodCli, oStock, dbfClient, nImporte, nMode )
 
    local nRiesgoAlcanzado  := 0
 
@@ -12251,7 +12251,7 @@ Function lClienteEvaluarRiesgo( cCodCli, oStock, dbfClient, nImporte, nMode )
    DEFAULT nMode           := APPD_MODE
 
    if !lClienteBloquearRiesgo( cCodCli, dbfClient )
-      Return .t.
+      Return .f.
    end if 
 
    nRiesgoAlcanzado          := oStock:nRiesgo( cCodCli )

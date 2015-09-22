@@ -15058,7 +15058,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    end if
 
    if !lFormaPagoCobrado( aTmp[ _CCODPAGO ], dbfFPago )
-      if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, D():Clientes( nView ), nTotFac, nMode )
+      if lClienteRiesgoAlcanzado( aTmp[ _CCODCLI ], oStock, D():Clientes( nView ), nTotFac, nMode )
          msgStop( "Este cliente supera el limite de riesgo permitido." )
          if !empty( aGet[ _CCODCLI ] )
          	aGet[ _CCODCLI ]:SetFocus()
