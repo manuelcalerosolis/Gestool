@@ -587,7 +587,7 @@ Return ( self )
 
 METHOD saveEditDetail() CLASS DocumentsSales
 
-   ::oDocumentLines:GuardaLineDetail( ::nPosDetail, ::oDocumentLineTemporal )
+   ::oDocumentLines:saveLineDetail( ::nPosDetail, ::oDocumentLineTemporal )
 
    if !Empty( ::oViewEdit:oBrowse )
       ::oViewEdit:oBrowse:Refresh()
