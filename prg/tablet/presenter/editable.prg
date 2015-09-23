@@ -143,19 +143,19 @@ Return ( lSave )
 
 METHOD Edit() CLASS Editable
 
-   local lEdit          := .f.
+   local lEdit    := .f.
    local nord
 
    // nOrd                 := ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
 
-   ::nMode              := EDIT_MODE
+   ::nMode        := EDIT_MODE
 
    if ::getEditDocumento()
 
       ::onPostGetDocumento()
 
       if ::Resource()
-         lEdit          := ::saveEdit()
+         lEdit    := ::saveEdit()
       end if
 
       ::onPreEnd()
@@ -195,7 +195,7 @@ METHOD Delete() CLASS Editable
       Return ( lDelete )
    end if 
 
-   if ApoloMsgNoYes( "¿Desea eliminar el registro?", "Seleccione", .t. )
+   if apoloMsgNoYes( "¿Desea eliminar el registro?", "Seleccione", .t. )
       lDelete     := ::deleteDocumento()
    end if 
 

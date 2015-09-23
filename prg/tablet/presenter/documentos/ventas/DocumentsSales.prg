@@ -117,12 +117,13 @@ CLASS DocumentsSales FROM Documents
       METHOD delDocumentLine()                     INLINE ( D():deleteRecord( ::getDataTableLine(), ::nView ) )
 
    METHOD onPreSaveEdit()                          INLINE ( ::setDatasInDictionaryMaster() )
+   
    METHOD onPreSaveAppend()
+      METHOD onPreSaveAppendDetail()                  
+   
    METHOD onPreEnd()
       METHOD setDatasFromClientes()
       METHOD setDatasInDictionaryMaster( NumeroDocumento ) 
-
-   METHOD onPreSaveAppendDetail()                  INLINE ( MSGaLERT( "onPreSaveAppendDetail DocumentsSales" ), .T. )
 
    METHOD cComboRecargoValue()
 
@@ -850,13 +851,24 @@ Return ( lResource )
 
 METHOD onPreSaveAppend() CLASS DocumentsSales
 
-   Local NumeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
+   Local numeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    
-   if empty( NumeroDocumento )
+   if empty( numeroDocumento )
       Return ( .f. )
    end if 
 
-Return ( ::setDatasInDictionaryMaster( NumeroDocumento ) )
+Return ( ::setDatasInDictionaryMaster( numeroDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreSaveAppendDetail() CLASS DocumentsSales
+
+   local oDocumentLine        := ::getDocumentLine()
+   local cDescripcionArticulo := alltrim( oDocumentLine:getDictionary( "DescripcionArticulo" ) )
+
+   oDocumentLine:setDictionary( "DescripcionAmpliada", cDescripcionArticulo )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
