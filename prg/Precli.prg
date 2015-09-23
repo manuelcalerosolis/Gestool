@@ -400,6 +400,7 @@ static oUndMedicion
 static cFiltroUsuario   := ""
 
 static nTarifaPrecio    := 0
+static oBtnPrecio
 
 static oComisionLinea
 static nComisionLinea   := 0

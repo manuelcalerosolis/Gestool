@@ -450,6 +450,7 @@ static oGrpFam
 static oTipArt
 static oFabricante
 static oUndMedicion
+static oBtnPrecio
 
 static oBtnKit
 static oBtnAtp
@@ -2074,6 +2075,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 132, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
+
+      REDEFINE BTNBMP oBtnPrecio ;
+         ID       174 ;
+         OF       oFld:aDialogs[1] ;
+         RESOURCE "arrow_down_blue_16" ;
+         NOBORDER ;
+         ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
 
       REDEFINE GET oRieCli VAR nRieCli;
          ID       133 ;
