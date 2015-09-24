@@ -56,6 +56,8 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD setPrecioRecomendado( nPrecio )                INLINE ( ::hSetDetail( "PrecioVentaRecomendado", nPrecio ) )
    METHOD setPuntoVerde( nPuntoVerde )                   INLINE ( ::hSetDetail( "PuntoVerde", nPuntoVerde ) )
    METHOD setUnidadMedicion( cUnidad )                   INLINE ( ::hSetDetail( "UnidadMedicion", cUnidad ) )
+
+   METHOD setTarifa()                                    INLINE ( ::hSetDetail( "NumeroTarifa", ::hGetMaster( "NumeroTarifa" ) ) ) 
    METHOD setPrecioCosto( nCosto )                       INLINE ( ::hSetDetail( "PrecioCosto", nCosto ) )
       METHOD setPrecioCostoMedio()                       VIRTUAL         
    METHOD setPrecioVenta( nPrecioVenta )                 INLINE ( ::hSetDetail( "PrecioVenta", nPrecioVenta  ) )
@@ -187,7 +189,7 @@ METHOD buildAtipicaClienteValues() CLASS LinesDocumentsSales
    hAtipicaClienteValues[ "cValorPropiedad1"  ] := ::hGetDetail( "ValorPropiedad1" )
    hAtipicaClienteValues[ "cValorPropiedad2"  ] := ::hGetDetail( "ValorPropiedad2" )
    hAtipicaClienteValues[ "cCodigoFamilia"    ] := ::hGetDetail( "Familia" )
-   hAtipicaClienteValues[ "nTarifaPrecio"     ] := ::hGetDetail( "Tarifa" )
+   hAtipicaClienteValues[ "nTarifaPrecio"     ] := ::hGetDetail( "NumeroTarifa" )
    hAtipicaClienteValues[ "nCajas"            ] := ::hGetDetail( "Cajas" )
    hAtipicaClienteValues[ "nUnidades"         ] := ::hGetDetail( "Unidades" )
 
@@ -265,7 +267,9 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
    ::setUnidadMedicion( ( D():Articulos( ::getView() ) )->cUnidad ) 
 
-   ::setPrecioVenta( nRetPreArt( ::hGetDetail( "Tarifa" ), ::hGetMaster( "Divisa" ), ::hGetMaster( "ImpuestosIncluidos" ), D():Articulos( ::getView() ), D():Divisas( ::getView() ), D():Kit( ::getView() ), D():TiposIva( ::getView() ) ) )
+   ::setTarifa()
+
+   ::setPrecioVenta( nRetPreArt( ::hGetDetail( "NumeroTarifa" ), ::hGetMaster( "Divisa" ), ::hGetMaster( "ImpuestosIncluidos" ), D():Articulos( ::getView() ), D():Divisas( ::getView() ), D():Kit( ::getView() ), D():TiposIva( ::getView() ) ) )
 
    if ( D():Articulos( ::getView() ) )->lLote
       ::setLogicoLote( ( D():Articulos( ::getView() ) )->lLote )

@@ -2356,9 +2356,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       oGetTarifa:Resource( oFld:aDialogs[1] )
       oGetTarifa:setWhen( {|| nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) } )
 
-      msgalert( oGetTarifa:getTarifa(), "oGetTarifa:getTarifa()" )
-      msgalert( aTmp[ _NTARIFA ], "aTmp[ _NTARIFA ]")
-
       REDEFINE BTNBMP oBtnPrecio ;
          ID       174 ;
          OF       oFld:aDialogs[1] ;
@@ -13216,7 +13213,7 @@ function aItmFacRec()
    aAdd( aItmFacRec, { "cDniCli"     ,"C", 30, 0, "DNI/Cif del cliente" ,                                    "DniCliente",              "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "lModCli"     ,"L",  1, 0, "Lógico de modificar datos del cliente" ,                  "ModificarDatosCliente",   "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "lMayor"      ,"L",  1, 0, "Lógico de mayorista" ,                                    "",                        "", "( cDbf )", nil } )
-   aAdd( aItmFacRec, { "nTarifa"     ,"N",  1, 0, "Tarifa de precio aplicada" ,                              "Tarifa",                  "", "( cDbf )", nil } )
+   aAdd( aItmFacRec, { "nTarifa"     ,"N",  1, 0, "Tarifa de precio aplicada" ,                              "NumeroTarifa",            "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCodAge"     ,"C",  3, 0, "Código del agente" ,                                      "Agente",                  "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCodRut"     ,"C",  4, 0, "Código de la ruta" ,                                      "Ruta",                    "", "( cDbf )", nil } )
    aAdd( aItmFacRec, { "cCodTar"     ,"C",  5, 0, "Código de la tarifa" ,                                    "Tarifa",                  "", "( cDbf )", nil } )
@@ -13437,7 +13434,7 @@ function aColFacRec()
    aAdd( aColFacRec, { "nMedUno"     ,"N", 16, 6, "Primera unidad de medición"            , "Medicion1",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "nMedDos"     ,"N", 16, 6, "Segunda unidad de medición"            , "Medicion2",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "nMedTre"     ,"N", 16, 6, "Tercera unidad de medición"            , "Medicion3",                   "", "( cDbfCol )", nil } )
-   aAdd( aColFacRec, { "nTarLin"     ,"N",  1, 0, "Tarifa de precio aplicada"             , "Tarifa",                      "", "( cDbfCol )", nil } )
+   aAdd( aColFacRec, { "nTarLin"     ,"N",  1, 0, "Tarifa de precio aplicada"             , "NumeroTarifa",                "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "Descrip"     ,"M", 10, 0, "Descripción larga del artículo"        , "DescripcionTecnica",          "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "lLinOfe"     ,"L",  1, 0, "Linea con oferta"                      , "LineaOferta",                 "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "lVolImp"     ,"L",  1, 0, "Aplicar volumen impuestos especiales " , "VolumenImpuestosEspeciales",  "", "( cDbfCol )", nil } )

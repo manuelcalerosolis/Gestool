@@ -15,8 +15,6 @@ METHOD ResourceDetail( nMode ) CLASS LinesInvoiceCustomer
 
    ::oViewEditDetail    := ViewDetail():New( self )
 
-   msgAlert( ::oSender:nModeDetail, "::oSender:nModeDetail" )
-
    if !Empty( ::oViewEditDetail )
 
       ::oViewEditDetail:setTitle( LblTitle( ::oSender:nModeDetail ) + "linea de factura" )

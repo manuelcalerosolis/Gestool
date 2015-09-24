@@ -423,6 +423,7 @@ METHOD ChangeRuta( oGetCliente, oGetDireccion, oSayTextRuta ) CLASS DocumentsSal
       if ( D():Clientes( ::nView ) )->( OrdKeyCount() ) != 0 
          
          ( D():Clientes( ::nView ) )->( dbGoTop() )
+
          if !( D():Clientes( ::nView ) )->( Eof() )
             cCliente       := ( D():Clientes( ::nView ) )->Cod
          end if   
@@ -437,7 +438,7 @@ METHOD ChangeRuta( oGetCliente, oGetDireccion, oSayTextRuta ) CLASS DocumentsSal
          ( D():Clientes( ::nView ) )->( OrdSetFocus( "Cod" ) )
          ( D():Clientes( ::nView ) )->( dbGoTop() )
 
-         cCliente             := ( D():Clientes( ::nView ) )->Cod
+         cCliente          := ( D():Clientes( ::nView ) )->Cod
 
          if !Empty( oSayTextRuta )
             oSayTextRuta:cText( "1/1" )
@@ -681,17 +682,6 @@ METHOD isPrintDocument() CLASS DocumentsSales
 Return( self )
 
 //---------------------------------------------------------------------------//
-
-/*METHOD printDocument() CLASS DocumentsSales
-
-   ?"entro en printDocument"
-
-   visualizaPedidoCliente( ::getID(), ::cFormatToPrint )
-
-Return ( .t. )*/
-
-//---------------------------------------------------------------------------//
-
 
 METHOD saveEditDocumento() CLASS DocumentsSales            
 
@@ -937,7 +927,7 @@ METHOD runGridPayment() CLASS DocumentsSales
 
    ::oViewEditResumen:oCodigoFormaPago:Disable()
 
-   if !Empty( ::oPayment:oGridPayment )
+   if !empty( ::oPayment:oGridPayment )
 
       ::oPayment:oGridPayment:showView()
 
@@ -959,7 +949,7 @@ METHOD runGridCustomer() CLASS DocumentsSales
 
    ::oViewEdit:oGetCliente:Disable()
 
-   if !Empty( ::oCliente:oGridCustomer )
+   if !empty( ::oCliente:oGridCustomer )
 
       ::oCliente:oGridCustomer:showView()
 

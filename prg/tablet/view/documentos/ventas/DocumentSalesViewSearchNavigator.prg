@@ -8,7 +8,7 @@ CLASS DocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD getView()                       INLINE ( ::oSender:nView )
 
-   METHOD setItemsBusqueda( aItems )      INLINE ( ::hashItemsSearch := { "Número" => 1, "Fecha" => 2, "Código" => 3, "Nombre" => 4 } )   
+   METHOD setItemsBusqueda( aItems )      INLINE ( ::hashItemsSearch := { "Número" => 1, "Fecha" => "dFecDes", "Código" => "cCodCli", "Nombre" => "cNomCli" } )   
 
    METHOD setColumns()
 
