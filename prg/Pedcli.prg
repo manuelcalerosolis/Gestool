@@ -213,6 +213,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LLABEL                   95
 #define _NLABEL                   96
 #define _DFECFIN                  97  
+#define _COBRLIN                  98  
 
 /*
 Array para impuestos
@@ -4232,6 +4233,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       aTmp[ __DFECSAL   ]  := aTmpPed[ _DFECSAL ]
       aTmp[ __DFECENT   ]  := aTmpPed[ _DFECENTR]
       aTmp[ _NTARLIN    ]  := oGetTarifa:getTarifa()
+      aTmp[ _COBRLIN    ]  := aTmpPed[ _CCODOBR ]
 
       if aTmpPed[ _NREGIVA ] <= 1
          aTmp[ _NIVA ]  	:= nIva( D():TiposIva( nView ), cDefIva() )
@@ -4757,6 +4759,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       REDEFINE GET oSayAlm VAR cSayAlm ;
 			WHEN 		.F. ;
          ID       301 ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _COBRLIN ] VAR aTmp[ _COBRLIN ] ;
+         ID       330 ;
+         IDTEXT   331 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpPed[ _CCODCLI ], dbfObrasT ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpPed[ _CCODCLI ], dbfObrasT ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oStkAct VAR nStkAct ;
@@ -5354,7 +5365,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPed, oFld, oRentLin, oBrwAlbCli, oBrwAlbPrv, oBrwFacCli ),;
                            if( !Empty( oBtnSer ), oBtnSer:Hide(), ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid() }
+                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid(), aGet[ _COBRLIN ]:lValid() }
 
    ACTIVATE DIALOG oDlg ; 
          ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ), oBrwResCli:Load() );
@@ -12851,6 +12862,7 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
                (dbfTmpLin)->lLinOfe    := (dbfPreCliL)->lLinOfe
                (dbfTmpLin)->nBultos 	:= (dbfPreCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfPreCliL)->cFormato
+               (dbfTmpLin)->cObrLin    := (dbfPreCliL)->cObrLin
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -15690,6 +15702,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "lLabel",    "L",    1,  0, "Lógico para marca de etiqueta",					      "LogicoEtiqueta",             "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "nLabel",    "N",    6,  0, "Unidades de etiquetas a imprimir",                "NumeroEtiqueta",             "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "dFecFin",   "D",    8,  0, "Fecha fin de entrega",                            "FechaEntregaFin",            "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cObrLin",   "C",   10,  0, "Dirección de la linea",                           "Direccion",                  "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 

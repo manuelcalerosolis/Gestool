@@ -181,7 +181,10 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                  79
 #define _DFECCAD                  80
 #define __NBULTOS                 81
-#DEFINE _CFORMATO                 82
+#define _CFORMATO                 82
+#define _LLABEL                   83
+#define _NLABEL                   84
+#define _COBRLIN                  85
 
 /*
 Array para impuestos
@@ -3384,6 +3387,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       aTmp[ __DFECSAL ]    := aTmpPre[ _DFECSAL ]
       aTmp[ __DFECENT ]    := aTmpPre[ _DFECENTR ]
       aTmp[ __LALQUILER ]  := !Empty( oTipPre ) .and. ( oTipPre:nAt == 2 )
+      aTmp[ _COBRLIN ]     := aTmpPre[ _CCODOBR ]
 
       if !Empty( cCodArtEnt )
          cCodArt           := Padr( cCodArtEnt, 200 )
@@ -3869,6 +3873,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
          ID       301 ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ _COBRLIN ] VAR aTmp[ _COBRLIN ] ;
+         ID       330 ;
+         IDTEXT   331 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpPre[ _CCODCLI ], dbfObrasT ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpPre[ _CCODCLI ], dbfObrasT ) ) ;
+         OF       oFld:aDialogs[1]   
+
       REDEFINE GET oStkAct VAR nStkAct ;
          ID       310 ;
          WHEN     .f. ;
@@ -4037,7 +4050,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre,  oRentLin ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid() }
+                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid(), aGet[ _COBRLIN ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER ;
          ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -10532,6 +10545,7 @@ function aColPreCli()
    aAdd( aColPreCli, { "cFormato" ,"C", 100,  0, "Formato de venta",                         "",                              "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "lLabel"   ,"L",   1,  0, "Lógico para marca de etiqueta",            "LogicoEtiqueta",                "", "( cDbfCol )", nil } )
    aAdd( aColPreCli, { "nLabel"   ,"N",   6,  0, "Unidades de etiquetas a imprimir",         "NumeroEtiqueta",                "", "( cDbfCol )", nil } )
+   aAdd( aColPreCli, { "cObrLin"  ,"C",  10,  0, "Dirección de la linea",                    "Direccion",                     "", "( cDbfCol )", nil } )
 
 return ( aColPreCli )
 

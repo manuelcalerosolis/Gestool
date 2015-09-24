@@ -188,6 +188,9 @@ Definici¢n de la base de datos de lineas de detalle
 #define __DFECSAT                 83
 #define _NCNTACT                  84
 #define _CDESUBI                  85
+#define _LLABEL                   86
+#define _NLABEL                   87
+#define _COBRLIN                  88  
 
 /*
 Array para impuestos
@@ -3326,6 +3329,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       aTmp[ _NTARLIN  ]    := oGetTarifa:getTarifa()
 
+      aTmp[ _COBRLIN  ]    := aTmpSat[ _CCODOBR ]
+
       if !Empty( cCodArtEnt )
          cCodArt           := Padr( cCodArtEnt, 32 )
       end if
@@ -3783,6 +3788,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       301 ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ _COBRLIN ] VAR aTmp[ _COBRLIN ] ;
+         ID       330 ;
+         IDTEXT   331 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpSat[ _CCODCLI ], dbfObrasT ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpSat[ _CCODCLI ], dbfObrasT ) ) ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET oStkAct VAR nStkAct ;
          ID       310 ;
          WHEN     .f. ;
@@ -3964,7 +3978,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, oRentLin ),;
                            if( !Empty( oGetCaducidad ), oGetCaducidad:Hide(), ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
-                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid() }
+                           aGet[ _CUNIDAD ]:lValid(), aGet[ _CCODPRV ]:lValid(), aGet[ _COBRLIN ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER ;
          ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -10406,6 +10420,7 @@ function aColSatCli()
    aAdd( aColSatCli, { "CDESUBI"  ,"C", 200,  0, "Descripción de la ubicación",                       "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "lLabel"   ,"L",   1,  0, "Lógico para marca de etiqueta",                     "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "nLabel"   ,"N",   6,  0, "Unidades de etiquetas a imprimir",                  "",                        "", "( cDbfCol )", nil } )
+   aAdd( aColSatCli, { "cObrLin"  ,"C",  10,  0, "Dirección de la linea",                             "Direccion",               "", "( cDbfCol )", nil } )
   
 return ( aColSatCli )
 

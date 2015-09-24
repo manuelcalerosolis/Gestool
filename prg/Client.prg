@@ -135,6 +135,7 @@
 #define _TELEFONO2               125
 #define _MOVIL2                  126
 #define _CAGENTE2                127      //   C      3     0
+#define _CDEPARTA                128
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -1536,6 +1537,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[ _CCODEDI ] VAR aTmp[ _CCODEDI ] ;
          ID       146 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CDEPARTA ] VAR aTmp[ _CDEPARTA ] ;
+         ID       147 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
@@ -8972,6 +8978,7 @@ FUNCTION aItmCli()
    aAdd( aBase, { "Telefono2", "C", 50, 0, "Segundo teléfono",                              "Telefono2",             "", "( cDbfCli )", nil } )
    aAdd( aBase, { "Movil2",    "C", 50, 0, "Segundo móvil",                                 "Movil2",                "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cAgente2",  "C",  3, 0, "Código de segundo agente comercial ",           "CodigoAgente2",         "", "( cDbfCli )", {|| accessCode():cAgente } } )
+   aAdd( aBase, { "cDeparta",  "C",  4, 0, "Código de departamento",                        "Departamento",          "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
 
@@ -12251,7 +12258,7 @@ Function lClienteEvaluarRiesgo( cCodCli, oStock, dbfClient, nImporte, nMode )
    DEFAULT nMode           := APPD_MODE
 
    if !lClienteBloquearRiesgo( cCodCli, dbfClient )
-      Return .t.
+      Return .f.
    end if 
 
    nRiesgoAlcanzado          := oStock:nRiesgo( cCodCli )

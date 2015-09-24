@@ -56,9 +56,9 @@ function InicioHRB()
       ImportacionFPago()
    end if
 
-   if MsgYesNo( "Grupos de clientes", "" )
+   /*if MsgYesNo( "Grupos de clientes", "" )
       ImportacionGrupoCliente()
-   end if
+   end if*/
 
    if MsgYesNo( "Ruta", "" )
       ImportacionRuta()
@@ -435,7 +435,10 @@ Static Function ImportacionClientes()
          ( D():Clientes( nView ) )->Riesgo      := GetNumeric( "AR", n )
          ( D():Clientes( nView ) )->mObserv     := GetRange( "AQ", n )
          ( D():Clientes( nView ) )->cCodRut     := GetRange( "F", n )
-         ( D():Clientes( nView ) )->cCodGrp     := GetRange( "D", n )      
+         //( D():Clientes( nView ) )->cCodGrp     := GetRange( "D", n )
+         ( D():Clientes( nView ) )->cCodEdi     := GetRange( "EG", n )
+         ( D():Clientes( nView ) )->cDeparta    := if( Empty( GetRange( "EA", n ) ), "", Padr( RJust( GetRange( "EA", n ), "0", 4 ), 4 ) )
+         ( D():Clientes( nView ) )->lChgPre     := .t.
    
          ( D():Clientes( nView ) )->( dbUnlock() )
 
@@ -444,7 +447,6 @@ Static Function ImportacionClientes()
          ( D():ClientesDirecciones( nView ) )->( dbAppend() )
 
          ( D():ClientesDirecciones( nView ) )->cCodCli   := Padr( RJust( Substr( cCodigoCliente, 1, 3 ), "0", RetNumCodCliEmp() ), 12 )
-         Substr( cCodigoCliente, 1, 3 )
          ( D():ClientesDirecciones( nView ) )->cCodObr   := Substr( cCodigoCliente, 5 )
          ( D():ClientesDirecciones( nView ) )->cNomObr   := GetRange( "C", n )
          ( D():ClientesDirecciones( nView ) )->cDirObr   := GetRange( "G", n )
@@ -453,7 +455,8 @@ Static Function ImportacionClientes()
          ( D():ClientesDirecciones( nView ) )->cPosObr   := GetRange( "J", n )
          ( D():ClientesDirecciones( nView ) )->cTelObr   := GetRange( "M", n )
          ( D():ClientesDirecciones( nView ) )->cFaxObr   := GetRange( "P", n )
-         //( D():ClientesDirecciones( nView ) )->cCodEdi   := 
+         ( D():ClientesDirecciones( nView ) )->cCodEdi   := GetRange( "EG", n )
+         ( D():ClientesDirecciones( nView ) )->cDeparta  := if( Empty( GetRange( "EA", n ) ), "", Padr( RJust( GetRange( "EA", n ), "0", 4 ), 4 ) )
 
          ( D():ClientesDirecciones( nView ) )->( dbUnlock() )
       

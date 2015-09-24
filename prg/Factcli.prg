@@ -4922,6 +4922,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
          aTmp[ __LALQUILER ]  := .f.
       end if
 
+      aTmp[ __CCODOBR ]       := aTmpFac[ _CCODOBR ]
+
    case nMode == EDIT_MODE
 
       aTmp[ _NPREUNIT ] := Round( aTmp[ _NPREUNIT ], nDouDiv )
@@ -5454,13 +5456,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
         OF       oFld:aDialogs[ 2 ]
 
       REDEFINE GET aGet[ __CCODOBR ] VAR aTmp[ __CCODOBR ] ;
-         ID       190 ;
-         IDTEXT   191 ;
+         ID       330 ;
+         IDTEXT   331 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cObras( aGet[ __CCODOBR ], aGet[ __CCODOBR ]:oHelpText, aTmpFac[ _CCODCLI ], dbfObrasT ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( brwObras( aGet[ __CCODOBR ], aGet[ __CCODOBR ]:oHelpText, aTmpFac[ _CCODCLI ], dbfObrasT ) ) ;
-         OF       oFld:aDialogs[ 2 ]
+         OF       oFld:aDialogs[ 1 ]
 
     REDEFINE GET aGet[ __CCENTROCOSTE ] VAR  aTmp[ __CCENTROCOSTE ] ;
         ID       370 ;
@@ -9085,7 +9087,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
                (dbfTmpLin)->nBultos 	:= (dbfPedCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfPedCliL)->cFormato
-               (dbfTmpLin)->cCodObr    := (dbfPedCliT)->cCodObr
+               (dbfTmpLin)->cCodObr    := (dbfPedCliL)->cObrLin
 
                /*
                Vamos a ver si se estan llavando cajas
@@ -17373,7 +17375,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->cNumSat 	:= cNumSat 
                (dbfTmpLin)->nBultos 	:= (dbfSatCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfSatCliL)->cFormato
-               (dbfTmpLin)->cCodObr    := (dbfSatCliT)->cCodObr 
+               (dbfTmpLin)->cCodObr    := (dbfSatCliL)->cObrLin
 
                (dbfSatCliL)->( dbSkip() )
 

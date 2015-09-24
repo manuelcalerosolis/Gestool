@@ -90,6 +90,11 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cC
          COLOR    CLR_GET ;
          OF       oDlg
 
+      REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CDEPARTA" ) ) ] ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
       REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CESTOBR" ) ) ] ;
          ID       240 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -727,6 +732,7 @@ FUNCTION aItmObr()
    aAdd( aItmObr, { "cCodWeb",   "N",   11,    0, "Codigo para la web             ",   "",                  "", "( cDbfObr )" } )
    aAdd( aItmObr, { "cEstObr",   "C",   35,    0, "Nombre del establecimiento     ",   "",                  "", "( cDbfObr )" } )
    aAdd( aItmObr, { "cCodPos",   "C",   12,    0, "Número operacional" ,               "",                  "", "( cDbfObr )" } )
+   aAdd( aItmObr, { "cDeparta",  "C",    4,    0, "Departamento" ,                     "",                  "", "( cDbfObr )" } )
 
 RETURN ( aItmObr )
 

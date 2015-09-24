@@ -125,7 +125,11 @@ CLASS ImportarPedidosClientesEDI
 
    METHOD isClient()
 
+   METHOD CodigoClient()
+
    METHOD buildPedido()
+
+   METHOD buildCabecera()
 
 ENDCLASS
 
@@ -474,6 +478,8 @@ METHOD isClient()
    D():getStatusClientes( ::nView )
    D():setFocusClientes( "cCodEdi", ::nView )
 
+   MsgInfo( ::hDocument[ "receptorFactura" ] )
+
    isClient         := ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "receptorFactura" ] ) )
 
    D():setStatusClientes( ::nView )
@@ -482,15 +488,30 @@ Return ( isClient )
 
 //---------------------------------------------------------------------------//
 
+METHOD CodigoClient()
+
+   local CodClient    := ""
+ 
+   D():getStatusClientes( ::nView )
+   D():setFocusClientes( "cCodEdi", ::nView )
+
+   if ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "receptorFactura" ] ) )
+
+      CodigoClient      := ( D():Clientes( ::nView ) )->Cod
+
+   end if
+
+   D():setStatusClientes( ::nView )
+
+Return ( CodigoClient )
+
+//---------------------------------------------------------------------------//
+
 METHOD buildPedido()
 
-   ::hPedidoCabecera       := D():getPedidoClienteDefaultValue( ::nView )
+   ::buildCabecera()
 
-   ::hPedidoCabecera[ "Cliente"   ]  := ::hDocument[ "receptorFactura" ]
-
-
-
-   D():appendHashPedidoCabecera( ::hPedidoCabecera, D():PedidosClientes( ::nView ), ::nView )   
+   //D():appendHashPedidoCabecera( ::hPedidoCabecera, D():PedidosClientes( ::nView ), ::nView )   
 
 Return ( nil )
 
@@ -498,6 +519,17 @@ Return ( nil )
 
 METHOD buildCabecera()
 
-   ::hPedidoCabecera[ "Serie"     ]  := "A"
-   ::hPedidoCabecera[ "Numero"    ]  := nNewDoc( "A", D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
-   ::hPedidoCabecera[ "Fecha"     ]  := getSysDate()
+   MsgInfo( "entro en el buildCabecera" )
+
+   ::hPedidoCabecera                   := D():getPedidoClienteDefaultValue( ::nView )
+
+   ::hPedidoCabecera[ "Serie"     ]    := "A"
+   ::hPedidoCabecera[ "Numero"    ]    := nNewDoc( "A", D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
+   ::hPedidoCabecera[ "Fecha"     ]    := getSysDate()
+   ::hPedidoCabecera[ "Cliente"   ]    := ::CodigoClient()
+
+   Msginfo( hb_valtoexp( ::hPedidoCabecera ), "buildCabecera" )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//

@@ -191,11 +191,14 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DESCRIP                 72
 #define _LLINOFE                 73      //   L      1     0
 #define _LVOLIMP                 74
-#define __DFECFAC				 75
-#define __NBULTOS 				 76
-#define _CFORMATO 				 77
+#define __DFECFAC				      75
+#define __NBULTOS 				   76
+#define _CFORMATO 				   77
 #define __TFECFAC                78      //   C      6    0
-#define __CCENTROCOSTE	   		 79
+#define __CCENTROCOSTE	   		79
+#define _LLABEL                  80
+#define _NLABEL                  81
+#define _COBRLIN                 82
 
 /*
 Definici¢n de Array para impuestos
@@ -3870,6 +3873,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          cCodArt        := Padr( cCodArtEnt, 32 )
       end if
 
+      aTmp[ _COBRLIN ]  := aTmpFac[ _CCODOBR ]
+
    case nMode == EDIT_MODE
       aTmp[ _NPREUNIT ] := Round( aTmp[ _NPREUNIT ], nDouDiv )
       aTmp[ _NPNTVER  ] := Round( aTmp[ _NPNTVER  ], nDpvDiv )
@@ -4294,6 +4299,15 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       301 ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET aGet[ _COBRLIN ] VAR aTmp[ _COBRLIN ] ;
+         ID       330 ;
+         IDTEXT   331 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpFac[ _CCODCLI ], dbfObrasT ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwObras( aGet[ _COBRLIN ], aGet[ _COBRLIN ]:oHelpText, aTmpFac[ _CCODCLI ], dbfObrasT ) ) ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE GET oStkAct VAR nStkAct ;
          ID       310 ;
 			COLOR 	CLR_GET ;
@@ -4487,7 +4501,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
    oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
 
    oDlg:bStart    := {|| SetDlgMode( aTmp, aGet, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oStkAct, nMode, oTotalLinea, aTmpFac ),;
-   						 aGet[ _CCODPRV ]:lValid() }
+   						 aGet[ _CCODPRV ]:lValid(), aGet[ _COBRLIN ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
@@ -9505,8 +9519,8 @@ STATIC FUNCTION cFacCli( aGet, aTmp, oBrw, oBrwiva, nMode )
                   ( dbfTmpLin )->dFecFac    := ( dbfFacCliL )->dFecFac
                   ( dbfTmpLin )->tFecfac    := ( dbfFacCliL )->tFecfac
                   ( dbfTmpLin )->cCtrCoste  := ( dbfFacCliL )->cCtrCoste
-                  ( dbfTmpLin )->nTarLin 	:= ( dbfFacCliL )->nTarLin
-
+                  ( dbfTmpLin )->nTarLin 	  := ( dbfFacCliL )->nTarLin
+                  ( dbfTmpLin )->cObrLin    := ( dbfFacCliL )->cCodObr
 
                end if
 
@@ -13421,6 +13435,7 @@ function aColFacRec()
    aAdd( aColFacRec, { "cCtrCoste" 	 ,"C",  9, 0, "Código del centro de coste"            , "",                            "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "lLabel"      ,"L",  1, 0, "Lógico para marca de etiqueta"         , "LogicoEtiqueta",              "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "nLabel"      ,"N",  6, 0, "Unidades de etiquetas a imprimir"      , "NumeroEtiqueta",              "", "( cDbfCol )", nil } )
+   aAdd( aColFacRec, { "cObrLin"     ,"C", 10, 0, "Dirección de la linea"                 , "Direccion",                   "", "( cDbfCol )", nil } )
 
 return ( aColFacRec )
 
