@@ -461,7 +461,7 @@ METHOD GuardaValores( cClave ) CLASS TDetCamposExtra
 
       ::oDbf:cTipDoc    := hGet( DOCUMENTOS_ITEMS, ::TipoDocumento )
       ::oDbf:cCodTipo   := hGet( hCampos, "código" )
-      ::oDbf:cClave     := Padr( cClave, 20 )
+      ::oDbf:cClave     := padr( cClave, 20 )
       ::oDbf:cValor     := ::cFormat2Char( hGet( hCampos, "valor" ) )
 
       ::oDbf:Save()
@@ -471,3 +471,5 @@ METHOD GuardaValores( cClave ) CLASS TDetCamposExtra
 Return ( self ) 
 
 //---------------------------------------------------------------------------//
+
+

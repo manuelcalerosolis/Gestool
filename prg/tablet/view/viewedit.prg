@@ -63,7 +63,7 @@ METHOD StartDialog() CLASS ViewEdit
    ::getCodigoDireccion:lValid()
 
    if ::oSender:nMode == APPD_MODE
-      ::oSender:cargaSiguienteCliente( ::oCbxRuta, ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion, ::nMode )
+      ::oSender:loadNextClient( ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion, ::nMode )
    else   
       ::RefreshBrowse()
    end if
@@ -153,14 +153,14 @@ METHOD defineRuta() CLASS ViewEdit
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 25,;
                                                 "aItems"    => aCbxRuta,;
-                                                "bChange"   => {|| ::oSender:ChangeRuta( ::oCbxRuta, ::oGetCliente, ::getCodigoDireccion, ::oSayTextRuta ) } } )
+                                                "bChange"   => {|| ::oSender:ChangeRuta( ::oGetCliente, ::getCodigoDireccion, ::oSayTextRuta ) } } )
 
    TGridImage():Build(  {  "nTop"      => 63,;
                            "nLeft"     => {|| GridWidth( 4.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_left_64",;
-                           "bLClicked" => {|| ::oSender:priorClient( ::oCbxRuta, ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion ) },;
+                           "bLClicked" => {|| ::oSender:priorClient( ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion ) },;
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 63,;
@@ -168,7 +168,7 @@ METHOD defineRuta() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_right_64",;
-                           "bLClicked" => {|| ::oSender:nextClient( ::oCbxRuta, ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion ) },;
+                           "bLClicked" => {|| ::oSender:nextClient( ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion ) },;
                            "oWnd"      => ::oDlg } )
 
    ::oSayTextRuta := TGridGet():Build(    {  "nRow"      => 67,;

@@ -535,8 +535,6 @@ static cRentabilidadLinea  := ""
 static oComisionLinea
 static nComisionLinea      := 0
 
-static aFastReportVariable
-
 static aNumAlb             := {}
 static aNumSat             := {}
 
@@ -2065,15 +2063,13 @@ STATIC FUNCTION OpenFiles( lExt )
       public aImpVto    := {}
       public aDatVto    := {}
 
-
       /*
       Campos extras------------------------------------------------------------------------
       */
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra   := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
-      oDetCamposExtra:SetTipoDocumento( "Facturas a clientes" )
-
+      oDetCamposExtra:setTipoDocumento( "Facturas a clientes" )
 
       lOpenFiles        := .t.
 
@@ -11591,36 +11587,34 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Impuestos especiales",  oNewImp:Select() )
    oFr:SetFieldAliases( "Impuestos especiales",  cObjectsToReport( oNewImp:oDbf ) )
 
-   oFr:SetMasterDetail( "Facturas", "Lineas de facturas",               {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
-//   oFr:SetMasterDetail( "Facturas", "Series de lineas de facturas",     {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas", "Incidencias de facturas",          {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas", "Documentos de facturas",           {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas", "Clientes",                         {|| ( D():FacturasClientes( nView ) )->cCodCli } )
-   oFr:SetMasterDetail( "Facturas", "Obras",                            {|| ( D():FacturasClientes( nView ) )->cCodCli + ( D():FacturasClientes( nView ) )->cCodObr } )
-   oFr:SetMasterDetail( "Facturas", "Almacenes",                        {|| ( D():FacturasClientes( nView ) )->cCodAlm } )
-   oFr:SetMasterDetail( "Facturas", "Rutas",                            {|| ( D():FacturasClientes( nView ) )->cCodRut } )
-   oFr:SetMasterDetail( "Facturas", "Agentes",                          {|| ( D():FacturasClientes( nView ) )->cCodAge } )
-   oFr:SetMasterDetail( "Facturas", "Formas de pago",                   {|| ( D():FacturasClientes( nView ) )->cCodPago } )
-   oFr:SetMasterDetail( "Facturas", "Transportistas",                   {|| ( D():FacturasClientes( nView ) )->cCodTrn } )
-   oFr:SetMasterDetail( "Facturas", "Empresa",                          {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Facturas", "Recibos",                          {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas", "Anticipos",                        {|| ( D():FacturasClientes( nView ) )->cSerie + str( ( D():FacturasClientes( nView ) )->nNumFac ) + ( D():FacturasClientes( nView ) )->cSufFac } )
-   oFr:SetMasterDetail( "Facturas", "Usuarios",                         {|| ( D():FacturasClientes( nView ) )->cCodUsr } )
-   oFr:SetMasterDetail( "Facturas", "Bancos",                           {|| ( D():FacturasClientes( nView ) )->cCodCli } )
-   oFr:SetMasterDetail( "Facturas", "País",                    			{|| RetFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
+   oFr:SetMasterDetail( "Facturas", "Lineas de facturas",                     {|| D():FacturasClientesId( nView ) } )
+   oFr:SetMasterDetail( "Facturas", "Incidencias de facturas",                {|| D():FacturasClientesId( nView ) } )
+   oFr:SetMasterDetail( "Facturas", "Documentos de facturas",                 {|| D():FacturasClientesId( nView ) } )
+   oFr:SetMasterDetail( "Facturas", "Clientes",                               {|| ( D():FacturasClientes( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Facturas", "Obras",                                  {|| ( D():FacturasClientes( nView ) )->cCodCli + ( D():FacturasClientes( nView ) )->cCodObr } )
+   oFr:SetMasterDetail( "Facturas", "Almacenes",                              {|| ( D():FacturasClientes( nView ) )->cCodAlm } )
+   oFr:SetMasterDetail( "Facturas", "Rutas",                                  {|| ( D():FacturasClientes( nView ) )->cCodRut } )
+   oFr:SetMasterDetail( "Facturas", "Agentes",                                {|| ( D():FacturasClientes( nView ) )->cCodAge } )
+   oFr:SetMasterDetail( "Facturas", "Formas de pago",                         {|| ( D():FacturasClientes( nView ) )->cCodPago } )
+   oFr:SetMasterDetail( "Facturas", "Transportistas",                         {|| ( D():FacturasClientes( nView ) )->cCodTrn } )
+   oFr:SetMasterDetail( "Facturas", "Empresa",                                {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Facturas", "Recibos",                                {|| D():FacturasClientesId( nView ) } )
+   oFr:SetMasterDetail( "Facturas", "Anticipos",                              {|| D():FacturasClientesId( nView ) } )
+   oFr:SetMasterDetail( "Facturas", "Usuarios",                               {|| ( D():FacturasClientes( nView ) )->cCodUsr } )
+   oFr:SetMasterDetail( "Facturas", "Bancos",                                 {|| ( D():FacturasClientes( nView ) )->cCodCli } )
+   oFr:SetMasterDetail( "Facturas", "País",                    			      {|| retFld( ( D():FacturasClientes( nView ) )->cCodCli, D():Clientes( nView ), "cCodPai" ) } )
 
-   oFr:SetMasterDetail( "Lineas de facturas", "Artículos",              {|| ( D():FacturasClientesLineas( nView ) )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Familia",                {|| ( D():FacturasClientesLineas( nView ) )->cCodFam } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Tipo artículo",          {|| ( D():FacturasClientesLineas( nView ) )->cCodTip } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Tipo de venta",          {|| ( D():FacturasClientesLineas( nView ) )->cTipMov } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Ofertas",                {|| ( D():FacturasClientesLineas( nView ) )->cRef } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",   {|| ( D():FacturasClientesLineas( nView ) )->cUnidad } )
-   oFr:SetMasterDetail( "Lineas de facturas", "SAT",                   	{|| ( D():FacturasClientesLineas( nView ) )->cNumSat } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",   {|| ( D():FacturasClientesLineas( nView ) )->cCodImp } )
-   oFr:SetMasterDetail( "Lineas de facturas", "Series de lineas de facturas",   {|| ( D():FacturasClientesLineas( nView ) )->cSerie + str( ( D():FacturasClientesLineas( nView ) )->nNumFac ) + ( D():FacturasClientesLineas( nView ) )->cSufFac + str( ( D():FacturasClientesLineas( nView ) )->nNumLin ) } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Artículos",                    {|| ( D():FacturasClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Familia",                      {|| ( D():FacturasClientesLineas( nView ) )->cCodFam } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Tipo artículo",                {|| ( D():FacturasClientesLineas( nView ) )->cCodTip } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Tipo de venta",                {|| ( D():FacturasClientesLineas( nView ) )->cTipMov } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Ofertas",                      {|| ( D():FacturasClientesLineas( nView ) )->cRef } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",         {|| ( D():FacturasClientesLineas( nView ) )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas", "SAT",                   	      {|| ( D():FacturasClientesLineas( nView ) )->cNumSat } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Impuestos especiales",         {|| ( D():FacturasClientesLineas( nView ) )->cCodImp } )
+   oFr:SetMasterDetail( "Lineas de facturas", "Series de lineas de facturas", {|| D():FacturasClientesLineasId( nView ) + str( ( D():FacturasClientesLineas( nView ) )->nNumLin ) } )
 
    oFr:SetResyncPair(   "Facturas", "Lineas de facturas" )
-//   oFr:SetResyncPair(   "Facturas", "Series de lineas de facturas" )
    oFr:SetResyncPair(   "Facturas", "Incidencias de facturas" )
    oFr:SetResyncPair(   "Facturas", "Documentos de facturas" )
    oFr:SetResyncPair(   "Facturas", "Empresa" )
@@ -24594,3 +24588,11 @@ Function DesignLabelFacturaClientes( oFr, cDoc )
    oLabel:End()
 
 Return .t.   
+
+//---------------------------------------------------------------------------//
+
+Function getExtraFieldFacturaCliente( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasClientesId( nView ) ) )
+
+//---------------------------------------------------------------------------//

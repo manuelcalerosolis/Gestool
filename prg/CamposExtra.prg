@@ -104,6 +104,7 @@ CLASS TCamposExtra FROM TMant
    Method lValidResource( nMode )
 
    Method aCamposExtra( cTipoCampo )
+   Method getCodigoCampoExtra( cNombreCampo )
 
 END CLASS
 
@@ -570,14 +571,14 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
                cValor   := Space( 100 )
          end case
 
-         aAdd( aCamposExtra, {   "código" => ::oDbf:cCodigo,;
-                                 "descripción" => ::oDbf:cNombre,;
-                                 "tipo" => ::oDbf:nTipo,;
-                                 "longitud" => ::oDbf:nLongitud,;
-                                 "decimales" => ::oDbf:nDecimales,;
-                                 "lrequerido" => ::oDbf:lRequerido,;
-                                 "valores" => hb_deserialize( ::oDbf:mDefecto ),;
-                                 "valor" => cValor } )
+         aAdd( aCamposExtra, {   "código"       => ::oDbf:cCodigo,;
+                                 "descripción"  => ::oDbf:cNombre,;
+                                 "tipo"         => ::oDbf:nTipo,;
+                                 "longitud"     => ::oDbf:nLongitud,;
+                                 "decimales"    => ::oDbf:nDecimales,;
+                                 "lrequerido"   => ::oDbf:lRequerido,;
+                                 "valores"      => hb_deserialize( ::oDbf:mDefecto ),;
+                                 "valor"        => cValor } )
 
       end if
 
@@ -586,6 +587,23 @@ Method aCamposExtra( cTipoCampo ) CLASS TCamposExtra
    end while
 
 Return ( aCamposExtra )
+
+//---------------------------------------------------------------------------//
+
+Method getCodigoCampoExtra( cNombreCampo ) CLASS TCamposExtra
+
+   local cCodigo  := ""
+
+   ::oDbf:getStatus()
+   ::oDbf:ordsetfocus( "cNombre" )
+
+   if ::oDbf:seek( cNombreCampo )
+      cCodigo     := ::oDbf:cCodigo
+   end if
+
+   ::oDbf:setStatus()
+
+Return ( cCodigo )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -631,3 +649,29 @@ FUNCTION CamposExtra( oMenuItem, oWnd )
 RETURN NIL
 
 //--------------------------------------------------------------------------//     
+
+Function getExtraField( cFieldName, oDetCamposExtra, Id )
+
+   local cExtraField    := ""
+   local cTipoDocumento := ""
+   local cCodigoCampo   := ""
+
+   cTipoDocumento       := hGet( DOCUMENTOS_ITEMS, oDetCamposExtra:TipoDocumento )
+   cCodigoCampo         := oDetCamposExtra:oCamposExtra:getCodigoCampoExtra( cFieldName )
+
+   if empty(cTipoDocumento) .or. empty(cCodigoCampo) .or. empty(Id)
+      Return ( cExtraField )
+   end if 
+
+   oDetCamposExtra:oDbf:getStatus()
+   oDetCamposExtra:oDbf:ordsetfocus( "cTotClave" )
+
+   oDetCamposExtra:oDbf:Seek( cTipoDocumento + cCodigoCampo + Id )
+
+   cExtraField          := oDetCamposExtra:oDbf:cValor
+   
+   oDetCamposExtra:oDbf:setStatus()
+
+Return ( cExtraField )
+
+//---------------------------------------------------------------------------//

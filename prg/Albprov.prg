@@ -639,7 +639,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total unidades"
-         :bEditValue       := {|| nTotalUnd( ( D():AlbaranesProveedores( nView ) )->cSerAlb + Str( ( D():AlbaranesProveedores( nView ) )->nNumAlb ) + ( D():AlbaranesProveedores( nView ) )->cSufAlb, cPicUnd ) }
+         :bEditValue       := {|| nTotalUnd( D():AlbaranesProveedoresId( nView ), cPicUnd ) }
          :nWidth           := 80
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -12108,4 +12108,11 @@ Function getNumeroAlbaranProveedorLinea( nView )
 Return ( substr( ( D():FacturasProveedoresLineas( nView ) )->iNumAlb, 1, 12 ) )
 
 //---------------------------------------------------------------------------//
+
+Function getExtraFieldAlbaranProveedor( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():AlbaranesProveedoresId( nView ) ) )
+
+//---------------------------------------------------------------------------//
+
 

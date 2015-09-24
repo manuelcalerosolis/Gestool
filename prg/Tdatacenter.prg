@@ -5503,23 +5503,23 @@ CLASS D
 
    // Facturas de clientes-----------------------------------------------------
 
-   METHOD FacturasClientes( nView )             INLINE ( ::Get( "FacCliT", nView ) )
-      METHOD FacturasClientesFecha( nView )     INLINE ( ( ::FacturasClientes( nView ) )->dFecFac )
-      METHOD FacturasClientesId( nView )        INLINE ( if( ( ::Get( "FacCliT", nView ) )->nNumFac == 0, "", ( ::Get( "FacCliT", nView ) )->cSerie + Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) + ( ::Get( "FacCliT", nView ) )->cSufFac ) )
+   METHOD FacturasClientes( nView )                   INLINE ( ::Get( "FacCliT", nView ) )
+      METHOD FacturasClientesFecha( nView )           INLINE ( ( ::FacturasClientes( nView ) )->dFecFac )
+      METHOD FacturasClientesId( nView )              INLINE ( if( ( ::Get( "FacCliT", nView ) )->nNumFac == 0, "", ( ::Get( "FacCliT", nView ) )->cSerie + Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) + ( ::Get( "FacCliT", nView ) )->cSufFac ) )
       METHOD FacturasClientesIdTextShort( nView );
-                                                INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) )
-      METHOD FacturasClientesIdText( nView )    INLINE ( ::FacturasClientesIdTextShort( nView ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )
+                                                      INLINE ( ( ::Get( "FacCliT", nView ) )->cSerie + "/" + Alltrim( Str( ( ::Get( "FacCliT", nView ) )->nNumFac ) ) )
+      METHOD FacturasClientesIdText( nView )          INLINE ( ::FacturasClientesIdTextShort( nView ) + "/" + ( ::Get( "FacCliT", nView ) )->cSufFac )
       METHOD getFacturaCliente( nView )               INLINE ( ::getHashRecordById( ::FacturasClientesId( nView ), ::FacturasClientes( nView ), nView ) )
       METHOD getDefaultHashFacturaCliente( nView )    INLINE ( ::getHashRecordDefaultValues( ::FacturasClientes( nView ), nView ) )
 
       METHOD getStatusFacturasClientes( nView )       INLINE ( ::aStatus := aGetStatus( ::FacturasClientes( nView ) ) )
       METHOD setStatusFacturasClientes( nView )       INLINE ( SetStatus( ::FacturasClientes( nView ), ::aStatus ) ) 
 
-   METHOD FacturasClientesLineas( nView )           INLINE ( ::Get( "FacCliL", nView ) )
-      METHOD FacturasClientesLineasId( nView )      INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
-      METHOD GetFacturaClienteLineasHash( nView )   INLINE ( ::getHashRecord( ::FacturasClientesLineas( nView ), nView ) )
-      METHOD GetFacturaClienteLineas( nView )       INLINE ( ::getArrayRecordById( ::FacturasClientesId( nView ), ::FacturasClientesLineas( nView ), nView ) )
-      METHOD GetFacturaClienteLineaBlank( nView )   INLINE ( ::getHashRecordBlank( ::FacturasClientesLineas( nView ), nView ) )
+   METHOD FacturasClientesLineas( nView )             INLINE ( ::Get( "FacCliL", nView ) )
+      METHOD FacturasClientesLineasId( nView )        INLINE ( ( ::Get( "FacCliL", nView ) )->cSerie + Str( ( ::Get( "FacCliL", nView ) )->nNumFac ) +  ( ::Get( "FacCliL", nView ) )->cSufFac )
+      METHOD GetFacturaClienteLineasHash( nView )     INLINE ( ::getHashRecord( ::FacturasClientesLineas( nView ), nView ) )
+      METHOD GetFacturaClienteLineas( nView )         INLINE ( ::getArrayRecordById( ::FacturasClientesId( nView ), ::FacturasClientesLineas( nView ), nView ) )
+      METHOD GetFacturaClienteLineaBlank( nView )     INLINE ( ::getHashRecordBlank( ::FacturasClientesLineas( nView ), nView ) )
 
    METHOD getStatusFacturasClientesLineas( nView )   INLINE ( ::aStatus := aGetStatus( ::FacturasClientesLineas( nView ) ) )
    METHOD setStatusFacturasClientesLineas( nView )   INLINE ( SetStatus( ::FacturasClientesLineas( nView ), ::aStatus ) )
