@@ -558,6 +558,7 @@ static oBtnGrp
 static oBtnSat
 static oBtnKit
 static oBtnAtp
+static oBtnPrecio
 
 static cOldCodCli          := ""
 static cOldCodArt          := ""
@@ -2861,6 +2862,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       oGetTarifa 	:= comboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
+
+      REDEFINE BTNBMP oBtnPrecio ;
+         ID       174 ;
+         OF       oFld:aDialogs[1] ;
+         RESOURCE "arrow_down_blue_16" ;
+         NOBORDER ;
+         ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
 
       /*
       Codigo de Divisas______________________________________________________________
@@ -15060,7 +15069,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
    end if
 
    if !lFormaPagoCobrado( aTmp[ _CCODPAGO ], dbfFPago )
-      if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, D():Clientes( nView ), nTotFac, nMode )
+      if lClienteRiesgoAlcanzado( aTmp[ _CCODCLI ], oStock, D():Clientes( nView ), nTotFac, nMode )
          msgStop( "Este cliente supera el limite de riesgo permitido." )
          if !empty( aGet[ _CCODCLI ] )
          	aGet[ _CCODCLI ]:SetFocus()

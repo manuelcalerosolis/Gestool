@@ -12250,7 +12250,7 @@ RETURN lRet
 
 //---------------------------------------------------------------------------//
 
-Function lClienteEvaluarRiesgo( cCodCli, oStock, dbfClient, nImporte, nMode )
+Function lClienteRiesgoAlcanzado( cCodCli, oStock, dbfClient, nImporte, nMode )
 
    local nRiesgoAlcanzado  := 0
 

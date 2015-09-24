@@ -3,6 +3,8 @@
 
 CLASS LinesOrderCustomer FROM LinesDocumentsSales  
 
+   METHOD onPreSaveAppendDetail()                           INLINE ( msgAlert( "onPreSaveAppendDetail LinesOrderCustomer" ), .t. )
+
    METHOD ResourceDetail( nMode )
 
 END CLASS

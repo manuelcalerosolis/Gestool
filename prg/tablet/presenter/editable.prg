@@ -33,9 +33,15 @@ CLASS Editable
    DATA cFormatToPrint
 
    METHOD Append()
+      METHOD onPreSaveAppend()                  INLINE ( .t. )
       METHOD saveAppend()
+      METHOD onPostSaveAppend()                 INLINE ( .t. )
+
    METHOD Edit()
+      METHOD onPreSaveEdit()                    VIRTUAL
       METHOD saveEdit()
+      METHOD onPostSaveEdit()                   INLINE ( .t. )
+      
    METHOD Delete()
 
    METHOD lAppendMode()                         INLINE ( ::nMode == APPD_MODE )
@@ -50,11 +56,6 @@ CLASS Editable
    METHOD getWorkAreaLine()                     INLINE ( D():Get( ::cDataTableLine, ::nView ) )
 
    METHOD onPostGetDocumento()                  INLINE ( .t. )
-   METHOD onPreSaveAppendDocumento()            INLINE ( .t. )
-   METHOD onPostSaveAppendDocumento()           INLINE ( .t. )
-
-   METHOD onPreSaveEditDocumento()              VIRTUAL
-   METHOD onPostSaveEditDocumento()             INLINE ( .t. )
 
    METHOD onPreEnd()                            VIRTUAL
 
@@ -77,6 +78,9 @@ CLASS Editable
    METHOD getDetailArea()                       INLINE ( ::cDetailArea )
 
    METHOD appendDetail()
+      METHOD onPreSaveAppendDetail()            INLINE ( msgAlert( ::ClassName() ) )
+      METHOD onPreSaveEditDetail()              INLINE ( .t. )
+
    METHOD editDetail()
    METHOD deleteDetail()
    METHOD resourceDetail()                      VIRTUAL
@@ -96,26 +100,24 @@ ENDCLASS
 
 METHOD Append() CLASS Editable
 
+   local nOrd
    local lAppend  := .f.
-   local nord
 
-   nOrd                 := ( ::getWorkArea )->( OrdSetFocus( "dFecDes" ) )
+   // nOrd           := ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
 
-   ::nMode              := APPD_MODE
-
-   ::lChangePrecio      := oUser():lCambiarPrecio()
+   ::nMode        := APPD_MODE
 
    ::getAppendDocumento()
 
    ::onPostGetDocumento()
 
    if ::Resource()
-      lAppend           := ::saveAppend()
+      lAppend     := ::saveAppend()
    end if
 
    ::onPreEnd()
 
-   ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
+   // ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 
 Return ( lAppend )
 
@@ -125,14 +127,14 @@ METHOD saveAppend() CLASS Editable
 
    local lSave    := .f.
 
-   if !::onPreSaveAppendDocumento()
+   if !::onPreSaveAppend()
       Return .f.
    end if 
 
    lSave          := ::saveAppendDocumento()
 
    if lSave 
-      ::onPostSaveAppendDocumento()
+      ::onPostSaveAppend()
    end if 
 
 Return ( lSave )
@@ -141,28 +143,26 @@ Return ( lSave )
 
 METHOD Edit() CLASS Editable
 
-   local lEdit          := .f.
+   local lEdit    := .f.
    local nord
 
-   nOrd                 := ( ::getWorkArea )->( OrdSetFocus( "dFecDes" ) )
+   // nOrd                 := ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
 
-   ::nMode              := EDIT_MODE
-
-   ::lChangePrecio      := oUser():lCambiarPrecio()
+   ::nMode        := EDIT_MODE
 
    if ::getEditDocumento()
 
       ::onPostGetDocumento()
 
       if ::Resource()
-         lEdit          := ::saveEdit()
+         lEdit    := ::saveEdit()
       end if
 
       ::onPreEnd()
 
    end if
 
-   ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
+   // ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 
 Return ( lEdit )
 
@@ -172,14 +172,14 @@ METHOD saveEdit() CLASS Editable
 
    local lEdit    := .f.
 
-   if !::onPreSaveEditDocumento()
+   if !::onPreSaveEdit()
       Return .f.
    end if 
 
    lEdit          := ::saveEditDocumento()
 
    if lEdit 
-      ::onPostSaveEditDocumento()
+      ::onPostSaveEdit()
    end if 
 
 Return ( lEdit )
@@ -195,7 +195,7 @@ METHOD Delete() CLASS Editable
       Return ( lDelete )
    end if 
 
-   if ApoloMsgNoYes( "¿Desea eliminar el registro?", "Seleccione", .t. )
+   if apoloMsgNoYes( "¿Desea eliminar el registro?", "Seleccione", .t. )
       lDelete     := ::deleteDocumento()
    end if 
 
@@ -221,13 +221,15 @@ Return ( self )
 
 METHOD AppendDetail() CLASS Editable
 
-   ::GetAppendDetail()
-
    ::nModeDetail     := APPD_MODE
+
+   ::getAppendDetail()
 
    if ::ResourceDetail( APPD_MODE )
 
-      ::AppendGuardaLinea()
+      if ::onPreSaveAppendDetail()
+         ::saveAppendDetail()
+      end if 
 
       if lEntCon()
          ::AppendDetail()
@@ -245,14 +247,18 @@ METHOD EditDetail( nPos ) CLASS Editable
       Return nil
    end if
 
-   ::nPosDetail   := nPos
-
-   ::GetEditDetail()
+   ::nPosDetail      := nPos
 
    ::nModeDetail     := EDIT_MODE
 
+   ::getEditDetail()
+
    if ::ResourceDetail( EDIT_MODE )
-      ::EditGuardaLinea()
+
+      if ::onPreSaveEditDetail()
+         ::saveEditDetail()
+      end if 
+
    end if   
 
 Return ( self )

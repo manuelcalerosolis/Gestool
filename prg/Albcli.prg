@@ -11377,7 +11377,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
       return .f.
    end if
 
-   if lClienteEvaluarRiesgo( aTmp[ _CCODCLI ], oStock, D():Get( "Client", nView ), nTotAlb, nMode )
+   if lClienteRiesgoAlcanzado( aTmp[ _CCODCLI ], oStock, D():Get( "Client", nView ), nTotAlb, nMode )
       msgStop( "Este cliente supera el limite de riesgo permitido." )
       aGet[ _CCODCLI ]:SetFocus()
       return .f.

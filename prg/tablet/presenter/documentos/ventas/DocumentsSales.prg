@@ -99,8 +99,8 @@ CLASS DocumentsSales FROM Documents
    METHOD Total()                                  INLINE ( ::oDocumentLines:Total() )
    METHOD calculaIVA()                             VIRTUAL
 
-   METHOD AppendGuardaLinea()
-   METHOD EditGuardaLinea()
+   METHOD saveAppendDetail()
+   METHOD saveEditDetail()
 
    METHOD isPrintDocument()
    METHOD printDocument()                          VIRTUAL
@@ -116,8 +116,11 @@ CLASS DocumentsSales FROM Documents
       METHOD appendDocumentLine( oDocumentLine )   INLINE ( D():appendHashRecord( oDocumentLine:hDictionary, ::getDataTableLine(), ::nView ) )
       METHOD delDocumentLine()                     INLINE ( D():deleteRecord( ::getDataTableLine(), ::nView ) )
 
-   METHOD onPreSaveEditDocumento()                 INLINE ( ::setDatasInDictionaryMaster() )
-   METHOD onPreSaveAppendDocumento()
+   METHOD onPreSaveEdit()                          INLINE ( ::setDatasInDictionaryMaster() )
+   
+   METHOD onPreSaveAppend()
+      METHOD onPreSaveAppendDetail()                  
+   
    METHOD onPreEnd()
       METHOD setDatasFromClientes()
       METHOD setDatasInDictionaryMaster( NumeroDocumento ) 
@@ -571,7 +574,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD AppendGuardaLinea() CLASS DocumentsSales
+METHOD saveAppendDetail() CLASS DocumentsSales
 
    ::oDocumentLines:appendLineDetail( ::oDocumentLineTemporal )
 
@@ -583,9 +586,9 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD EditGuardaLinea() CLASS DocumentsSales
+METHOD saveEditDetail() CLASS DocumentsSales
 
-   ::oDocumentLines:GuardaLineDetail( ::nPosDetail, ::oDocumentLineTemporal )
+   ::oDocumentLines:saveLineDetail( ::nPosDetail, ::oDocumentLineTemporal )
 
    if !Empty( ::oViewEdit:oBrowse )
       ::oViewEdit:oBrowse:Refresh()
@@ -846,15 +849,26 @@ Return ( lResource )
 
 //---------------------------------------------------------------------------//
 
-METHOD onPreSaveAppendDocumento() CLASS DocumentsSales
+METHOD onPreSaveAppend() CLASS DocumentsSales
 
-   Local NumeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
+   Local numeroDocumento   := nNewDoc( ::getSerie(), ::getWorkArea(), ::getCounterDocuments(), , D():Contadores( ::nView ) )
    
-   if empty( NumeroDocumento )
+   if empty( numeroDocumento )
       Return ( .f. )
    end if 
 
-Return ( ::setDatasInDictionaryMaster( NumeroDocumento ) )
+Return ( ::setDatasInDictionaryMaster( numeroDocumento ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD onPreSaveAppendDetail() CLASS DocumentsSales
+
+   local oDocumentLine        := ::getDocumentLine()
+   local cDescripcionArticulo := alltrim( oDocumentLine:getDictionary( "DescripcionArticulo" ) )
+
+   oDocumentLine:setDictionary( "DescripcionAmpliada", cDescripcionArticulo )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 

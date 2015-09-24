@@ -18,8 +18,9 @@ CLASS DocumentLines
 
    METHOD getLineDetail( nPosDetail )                       INLINE ( ::aLines[ nPosDetail ] )
       METHOD getCloneLineDetail( nPosDetail )               INLINE ( oClone( ::getLineDetail( nPosDetail ) ) )
-   METHOD GuardaLineDetail( nPosDetail, oDocumentLine )     INLINE ( ::aLines[ nPosDetail ] := oDocumentLine )
+      
    METHOD appendLineDetail( oDocumentLine )                 INLINE ( aadd( ::aLines, oDocumentLine ) )
+   METHOD saveLineDetail( nPosDetail, oDocumentLine )       INLINE ( ::aLines[ nPosDetail ] := oDocumentLine )
 
    METHOD Total()
  

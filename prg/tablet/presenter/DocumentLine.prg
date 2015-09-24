@@ -3,23 +3,28 @@
  
 CLASS DocumentLine 
 
-   DATA hDictionary
-   DATA hDictionaryMaster
-
    DATA oSender
+   DATA hDictionary
 
    METHOD new( hDictionary )
 
-   METHOD hSetMaster( cField, uValue ) INLINE ( hSet( ::oSender:hDictionaryMaster, cField, uValue ) )
-   METHOD hGetMaster( cField )         INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
+   METHOD getDictionaryMaster()                                INLINE ( ::oSender:hDictionaryMaster )
 
-   METHOD hSetDetail( cField, uValue ) INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, cField, uValue ) )
-   METHOD hGetDetail( cField )         INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, cField ) )
+   METHOD hSetMaster( key, value )                             INLINE ( hSet( ::getDictionaryMaster(), key, value ) )
+   METHOD hGetMaster( key )                                    INLINE ( hGet( ::getDictionaryMaster(), key ) )
+
+   METHOD getDictionary( key )                                 INLINE ( hGet( ::hDictionary, key ) )
+   METHOD setDictionary( key, value )                          INLINE ( hSet( ::hDictionary, key, value ) )
+
+   METHOD hSetDetail( key, value )                             INLINE ( hSet( ::oSender:oDocumentLineTemporal:hDictionary, key, value ) )
+   METHOD hGetDetail( key )                                    INLINE ( hGet( ::oSender:oDocumentLineTemporal:hDictionary, key ) )
 
    METHOD totalUnidades()
    METHOD Total()
    METHOD Impuesto()  
    METHOD Importe()
+
+   METHOD getDivisa()                                          INLINE ( hGet( ::getDictionaryMaster(), "Divisa" ) ) 
 
    METHOD getSerie()                                           INLINE ( hGet( ::hDictionary, "Serie" ) )
    METHOD setSerieMaster()                                     INLINE ( hSet( ::hDictionary, "Serie", ::oSender:getSerie() ) )
@@ -48,8 +53,6 @@ CLASS DocumentLine
    METHOD getUnidades()                                        INLINE ( hGet( ::hDictionary, "Unidades" ) )
    METHOD getDescuento()                                       INLINE ( hGet( ::hDictionary, "Descuento" ) )
    METHOD getRecargoEquivalencia()                             INLINE ( hGet( ::hDictionary, "RecargoEquivalencia" ) )
-   METHOD getDivisa()                                          INLINE ( hGet( ::hDictionaryMaster, "Divisa" ) ) 
-
 
    METHOD getDescuentoPorcentual()                             INLINE ( hGet( ::hDictionary, "DescuentoPorcentual" ) )
    METHOD getDescuentoPromocion()                              INLINE ( hGet( ::hDictionary, "DescuentoPromocion" ) )
@@ -67,10 +70,8 @@ END CLASS
 
 METHOD new( hDictionary, oSender ) CLASS DocumentLine
 
-   ::oSender            := oSender
-
    ::hDictionary        := hDictionary
-   ::hDictionaryMaster  := oSender:hDictionaryMaster
+   ::oSender            := oSender
 
 Return ( Self )
 
@@ -82,10 +83,10 @@ METHOD totalUnidades() CLASS DocumentLine
 
    totalUnidades        := notCaja( ::getCajas() )
    totalUnidades        *= ::getUnidades()
-   totalUnidades        *= notCero( hGet( ::hDictionary, "UnidadesKit" ) )
-   totalUnidades        *= notCero( hGet( ::hDictionary, "Medicion1" ) )
-   totalUnidades        *= notCero( hGet( ::hDictionary, "Medicion2" ) )
-   totalUnidades        *= notCero( hGet( ::hDictionary, "Medicion3" ) )
+   totalUnidades        *= notCero( ::getDictionary( "UnidadesKit" ) )
+   totalUnidades        *= notCero( ::getDictionary( "Medicion1" ) )
+   totalUnidades        *= notCero( ::getDictionary( "Medicion2" ) )
+   totalUnidades        *= notCero( ::getDictionary( "Medicion3" ) )
 
 Return ( totalUnidades )
 
@@ -126,8 +127,6 @@ Return ( totalImporte )
 
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
 METHOD Impuesto() CLASS DocumentLine
    
    Local Impuesto := 0
@@ -142,9 +141,7 @@ METHOD Impuesto() CLASS DocumentLine
 
    endif
 
-Return( Impuesto )
-
-//---------------------------------------------------------------------------//
+Return ( Impuesto )
 
 //---------------------------------------------------------------------------//
 

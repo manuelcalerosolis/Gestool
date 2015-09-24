@@ -441,6 +441,8 @@ static nTotOld
 static cCodDiv
 static oBanco
 
+static oBtnPrecio
+
 static oTotalLinea
 static nTotalLinea         := 0
 static oRentabilidadLinea
@@ -2353,6 +2355,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, aNumDoc 
       oGetTarifa 		:= comboTarifa():Build( { "idCombo" => 171, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
       oGetTarifa:setWhen( {|| nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) } )
+
+      msgalert( oGetTarifa:getTarifa(), "oGetTarifa:getTarifa()" )
+      msgalert( aTmp[ _NTARIFA ], "aTmp[ _NTARIFA ]")
+
+      REDEFINE BTNBMP oBtnPrecio ;
+         ID       174 ;
+         OF       oFld:aDialogs[1] ;
+         RESOURCE "arrow_down_blue_16" ;
+         NOBORDER ;
+         ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
 
       /*
       Bancos-------------------------------------------------------------------
