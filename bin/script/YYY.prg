@@ -109,6 +109,7 @@ static function OpenFiles()
       D():ArticulosCodigosBarras( nView )
       D():DetCamposExtras( nView )
       D():ClientesDirecciones( nView )
+      D():ClientesBancos( nView )
 
    RECOVER USING oError
 
@@ -439,8 +440,23 @@ Static Function ImportacionClientes()
          ( D():Clientes( nView ) )->cCodEdi     := GetRange( "EG", n )
          ( D():Clientes( nView ) )->cDeparta    := if( Empty( GetRange( "EA", n ) ), "", Padr( RJust( GetRange( "EA", n ), "0", 4 ), 4 ) )
          ( D():Clientes( nView ) )->lChgPre     := .t.
-   
+
          ( D():Clientes( nView ) )->( dbUnlock() )
+
+         if !Empty( GetRange( "AG", n ) )
+
+            ( D():ClientesBancos( nView ) )->( dbAppend() )
+
+            ( D():ClientesBancos( nView ) )->cCodCli  := Padr( RJust( cCodigoCliente, "0", RetNumCodCliEmp() ), 12 )
+            ( D():ClientesBancos( nView ) )->lBncDef  := .t.
+            ( D():ClientesBancos( nView ) )->cEntBnc  := GetRange( "AH", n )
+            ( D():ClientesBancos( nView ) )->cSucBnc  := GetRange( "AI", n )
+            ( D():ClientesBancos( nView ) )->cDigBnc  := GetRange( "AJ", n )
+            ( D():ClientesBancos( nView ) )->cCtaBnc  := GetRange( "AG", n )
+
+            ( D():ClientesBancos( nView ) )->( dbUnlock() )
+
+         end if
 
       else
 

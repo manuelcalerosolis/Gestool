@@ -5647,8 +5647,11 @@ CLASS D
 
 
       
-   METHOD ClientesDirecciones( nView )                INLINE ( ::Get( "ObrasT", nView ) )
-      METHOD ClientesDireccionesId( nView )           INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
+   METHOD ClientesDirecciones( nView )                   INLINE ( ::Get( "ObrasT", nView ) )
+      METHOD ClientesDireccionesId( nView )              INLINE ( ( ::Get( "ObrasT", nView ) )->cCodCli )
+      METHOD getStatusClientesDirecciones( nView )       INLINE ( ::aStatus := aGetStatus( ::ClientesDirecciones( nView ) ) )
+      METHOD setStatusClientesDirecciones( nView )       INLINE ( SetStatus( ::Get( "ObrasT", nView ), ::aStatus ) ) 
+      METHOD setFocusClientesDirecciones( cTag, nView )  INLINE ( ::cTag   := ( ::ClientesDirecciones( nView )  )->( ordSetFocus( cTag ) ) )
 
    METHOD TiposIncidencias( nView )                   INLINE ( ::Get( "TipInci", nView ) )
       METHOD TiposIncidenciasId( nView )              INLINE ( ( ::Get( "TipInci", nView ) )->cCodInci )
@@ -5676,6 +5679,9 @@ CLASS D
                                                                ::setStatusClientesIncidencias( nView ) )  
 
    METHOD ClientesBancos( nView )                     INLINE ( ::Get( "CliBnc", nView ) )
+      METHOD getStatusClientesBancos( nView )         INLINE ( ::aStatus := aGetStatus( ::ClientesBancos( nView ) ) )
+      METHOD setStatusClientesBancos( nView )         INLINE ( SetStatus( ::Get( "CliBnc", nView ), ::aStatus ) ) 
+      METHOD setFocusClientesBancos( cTag, nView )    INLINE ( ::cTag   := ( ::ClientesBancos( nView )  )->( ordSetFocus( cTag ) ) )
 
    METHOD ClientesEntidad( nView )                    INLINE ( ::Get( "CliDad", nView ) )
       METHOD ClientesEntidadId( nView )               INLINE ( ( ::Get( "CliDad", nView ) )->cCodCli )

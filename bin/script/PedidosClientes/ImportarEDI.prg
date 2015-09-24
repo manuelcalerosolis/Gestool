@@ -38,6 +38,10 @@ CLASS ImportarPedidosClientesEDI
    DATA hPedidoCabecera
    DATA hPedidoLinea
 
+   DATA seriePedido
+   DATA numeroPedido
+   DATA sufijoPedido
+
    DATA ordTipo                              INIT  {  '220' => 'Pedido normal',;
                                                       '22E' => 'Propuesta de pedido',;
                                                       '221' => 'Pedido abierto',;
@@ -90,7 +94,7 @@ CLASS ImportarPedidosClientesEDI
    METHOD Run( nView )
    
    METHOD labelToken()                       INLINE ( ::aTokens[ 1 ] )
-   METHOD say()                              INLINE ( hb_valtoexp( ::hDocument ) )
+   METHOD say()                              INLINE ( hb_valtoexp( ::hPedidoCabecera ) )
    
    METHOD proccessEDIFiles( cEDIFiles )
    METHOD proccessEDILine()
@@ -125,11 +129,17 @@ CLASS ImportarPedidosClientesEDI
 
    METHOD isClient()
 
-   METHOD CodigoClient()
+   METHOD isDireccion()
 
-   METHOD buildPedido()
+   METHOD buildCabeceraPedido()
 
-   METHOD buildCabecera()
+   METHOD codigoCliente()
+   METHOD codigoDireccion()
+   METHOD datosCliente()
+   METHOD datosCabecera()
+   METHOD datosBancoCliente()
+
+   METHOD buildLineasPedido()
 
 ENDCLASS
 
@@ -262,8 +272,8 @@ Return ( nil )
 
 METHOD proccessNADBY()
 
-   ::hDocument[ "comprador" ]    := ::getField( 1 )
-   ::hDocument[ "departamento" ] := ::getField( 2 )
+   ::hDocument[ "comprador" ]    := Padr( ::getField( 1 ), 17 )
+   ::hDocument[ "departamento" ] := RJust( ::getField( 2 ), "0", 4 )
    ::hDocument[ "reposicion" ]   := ::getField( 3 )
    ::hDocument[ "sucursal" ]     := ::getField( 4 )
 
@@ -431,12 +441,17 @@ METHOD isbuildPedidoCliente()
       Return ( .f. )
    end if 
 
-   if !::isClient()
-      msgStop( "Cliente no encontrado")
-      Return ( .f. )
-   end if 
+   if ::isClient()
+      return ( .t. )
+   end if
 
-return .t.
+   if ::isDireccion()
+      return ( .t. )
+   end if
+
+   msgStop( "Cliente no encontrado" )
+
+return .f.
 
 //-----------------------------------------------------------------------------
 
@@ -444,9 +459,9 @@ METHOD buildPedidoCliente()
 
    if ::isbuildPedidoCliente()
 
-      MsgInfo( "Creamos el pedido de cliente" )
+      ::buildCabeceraPedido()
 
-      ::buildPedido()
+      ::buildLineasPedido()
 
    end if 
 
@@ -478,9 +493,7 @@ METHOD isClient()
    D():getStatusClientes( ::nView )
    D():setFocusClientes( "cCodEdi", ::nView )
 
-   MsgInfo( ::hDocument[ "receptorFactura" ] )
-
-   isClient         := ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "receptorFactura" ] ) )
+   isClient         := ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "comprador" ] + Padr( ::hDocument[ "departamento" ], 4 ) ) )
 
    D():setStatusClientes( ::nView )
 
@@ -488,48 +501,190 @@ Return ( isClient )
 
 //---------------------------------------------------------------------------//
 
-METHOD CodigoClient()
+METHOD isDireccion()
 
-   local CodClient    := ""
+   local isDireccion   := .f.
  
+   D():getStatusClientesDirecciones( ::nView )
+   D():setFocusClientesDirecciones( "cCodEdi", ::nView )
+
+   isDireccion         := ( D():ClientesDirecciones( ::nView ) )->( dbseek( ::hDocument[ "comprador" ] + ::hDocument[ "departamento" ] ) )
+
+   D():setStatusClientesDirecciones( ::nView )
+
+Return ( isDireccion )
+
+//---------------------------------------------------------------------------//
+
+METHOD codigoCliente()
+
+   D():getStatusClientesDirecciones( ::nView )
+   D():setFocusClientesDirecciones( "cCodEdi", ::nView )
+
+   if ( D():ClientesDirecciones( ::nView ) )->( dbseek( ::hDocument[ "comprador" ] + ::hDocument[ "departamento" ] ) )
+
+      ::hPedidoCabecera[ "Cliente" ]      := ( D():ClientesDirecciones( ::nView ) )->cCodCli
+
+   end if
+
+   D():setStatusClientesDirecciones( ::nView )
+
+   if Empty( ::hPedidoCabecera[ "Cliente" ] )
+
+      D():getStatusClientes( ::nView )
+      D():setFocusClientes( "cCodEdi", ::nView )
+
+      if ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "receptorFactura" ] ) )
+
+         ::hPedidoCabecera[ "Cliente" ]      := ( D():Clientes( ::nView ) )->Cod
+
+      end if
+
+      D():setStatusClientes( ::nView )
+
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD codigoDireccion()
+
+   D():getStatusClientesDirecciones( ::nView )
+   D():setFocusClientesDirecciones( "cCodEdi", ::nView )
+
+   if ( D():ClientesDirecciones( ::nView ) )->( dbseek( ::hDocument[ "comprador" ] + ::hDocument[ "departamento" ] ) )
+
+      ::hPedidoCabecera[ "Direccion" ]    := ( D():ClientesDirecciones( ::nView ) )->cCodObr
+
+   end if
+
+   D():setStatusClientesDirecciones( ::nView )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD buildCabeceraPedido()
+
+   ::hPedidoCabecera                   := D():getPedidoClienteDefaultValue( ::nView )
+
+   ::codigoCliente()
+   ::codigoDireccion()
+
+   ::datosCliente()
+   ::datosBancoCliente()
+
+   ::datosCabecera()
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD datosCabecera()
+
+   ::numeroPedido                           := nNewDoc( ::hPedidoCabecera[ "Serie" ], D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) ) 
+   ::sufijoPedido                           := "00"
+
+   ::hPedidoCabecera[ "Numero"            ] := ::numeroPedido
+   ::hPedidoCabecera[ "Sufijo"            ] := ::sufijoPedido
+   ::hPedidoCabecera[ "Fecha"             ] := ::hDocument[ "documento" ]
+   ::hPedidoCabecera[ "FechaCreacion"     ] := getSysDate()
+   ::hPedidoCabecera[ "HoraCreacion"      ] := Time()
+   ::hPedidoCabecera[ "DocumentoOrigen"   ] := ::hDocument[ "documentoOrigen" ]
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD datosCliente()
+
+   if Empty( ::hPedidoCabecera[ "Cliente" ] )
+      Return .f.
+   end if
+
    D():getStatusClientes( ::nView )
-   D():setFocusClientes( "cCodEdi", ::nView )
+   D():setFocusClientes( "Cod", ::nView )
 
-   if ( D():Clientes( ::nView ) )->( dbseek( ::hDocument[ "receptorFactura" ] ) )
+   if ( D():Clientes( ::nView ) )->( dbseek( ::hPedidoCabecera[ "Cliente" ] ) )
 
-      CodigoClient      := ( D():Clientes( ::nView ) )->Cod
+      ::seriePedido                                  := if( Empty( ( D():Clientes( ::nView ) )->Serie ), "A", ( D():Clientes( ::nView ) )->Serie ) 
+
+      ::hPedidoCabecera[ "NombreCliente"           ] := ( D():Clientes( ::nView ) )->Titulo
+      ::hPedidoCabecera[ "DomicilioCliente"        ] := ( D():Clientes( ::nView ) )->Domicilio
+      ::hPedidoCabecera[ "PoblacionCliente"        ] := ( D():Clientes( ::nView ) )->Poblacion
+      ::hPedidoCabecera[ "ProvinciaCliente"        ] := ( D():Clientes( ::nView ) )->Provincia
+      ::hPedidoCabecera[ "CodigoPostalCliente"     ] := ( D():Clientes( ::nView ) )->CodPostal
+      ::hPedidoCabecera[ "DniCliente"              ] := ( D():Clientes( ::nView ) )->Nif
+      ::hPedidoCabecera[ "TelefonoCliente"         ] := ( D():Clientes( ::nView ) )->Telefono
+      ::hPedidoCabecera[ "GrupoCliente"            ] := ( D():Clientes( ::nView ) )->cCodGrp
+
+      ::hPedidoCabecera[ "ModificarDatosCliente"   ] := ( D():Clientes( ::nView ) )->lModDat
+      ::hPedidoCabecera[ "Serie"                   ] := ::seriePedido
+      ::hPedidoCabecera[ "Tarifa"                  ] := ( D():Clientes( ::nView ) )->cCodTar
+      ::hPedidoCabecera[ "Pago"                    ] := ( D():Clientes( ::nView ) )->CodPago
+      ::hPedidoCabecera[ "Agente"                  ] := ( D():Clientes( ::nView ) )->cAgente
+      ::hPedidoCabecera[ "Ruta"                    ] := ( D():Clientes( ::nView ) )->cCodRut
+      ::hPedidoCabecera[ "NumeroTarifa"            ] := ( D():Clientes( ::nView ) )->nTarifa
+      ::hPedidoCabecera[ "RecargoEquivalencia"     ] := ( D():Clientes( ::nView ) )->lReq
+      ::hPedidoCabecera[ "OperarPuntoVerde"        ] := ( D():Clientes( ::nView ) )->lPntVer
+
+      ::hPedidoCabecera[ "DescripcionDescuento1"   ] := ( D():Clientes( ::nView ) )->cDtoEsp
+      ::hPedidoCabecera[ "PorcentajeDescuento1"    ] := ( D():Clientes( ::nView ) )->nDtoEsp
+      ::hPedidoCabecera[ "DescripcionDescuento2"   ] := ( D():Clientes( ::nView ) )->cDpp
+      ::hPedidoCabecera[ "PorcentajeDescuento2"    ] := ( D():Clientes( ::nView ) )->nDpp
+      ::hPedidoCabecera[ "DescripcionDescuento3"   ] := ( D():Clientes( ::nView ) )->cDtoUno
+      ::hPedidoCabecera[ "PorcentajeDescuento3"    ] := ( D():Clientes( ::nView ) )->nDtoCnt
+      ::hPedidoCabecera[ "DescripcionDescuento4"   ] := ( D():Clientes( ::nView ) )->cDtoDos
+      ::hPedidoCabecera[ "PorcentajeDescuento4"    ] := ( D():Clientes( ::nView ) )->nDtoRap
 
    end if
 
    D():setStatusClientes( ::nView )
 
-Return ( CodigoClient )
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildPedido()
+METHOD datosBancoCliente()
 
-   ::buildCabecera()
+   D():getStatusClientesBancos( ::nView )
+   D():setFocusClientesBancos( "cCodDef", ::nView )
 
-   //D():appendHashPedidoCabecera( ::hPedidoCabecera, D():PedidosClientes( ::nView ), ::nView )   
+   if ( D():ClientesBancos( ::nView ) )->( dbseek( ::hPedidoCabecera[ "Cliente" ] ) )
+
+      ::hPedidoCabecera[ "NombreBanco"          ]    := ( D():ClientesBancos( ::nView ) )->cCodBnc
+      ::hPedidoCabecera[ "CuentaIBAN"           ]    := ( D():ClientesBancos( ::nView ) )->cPaisIBAN
+      ::hPedidoCabecera[ "DigitoControlIBAN"    ]    := ( D():ClientesBancos( ::nView ) )->cCtrlIBAN
+      ::hPedidoCabecera[ "EntidadCuenta"        ]    := ( D():ClientesBancos( ::nView ) )->cEntBnc
+      ::hPedidoCabecera[ "SucursalCuenta"       ]    := ( D():ClientesBancos( ::nView ) )->cSucBnc
+      ::hPedidoCabecera[ "DigitoControlCuenta"  ]    := ( D():ClientesBancos( ::nView ) )->cDigBnc
+      ::hPedidoCabecera[ "CuentaBancaria"       ]    := ( D():ClientesBancos( ::nView ) )->cCtaBnc
+
+   end if
+
+   D():setStatusClientesBancos( ::nView )
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD buildCabecera()
+METHOD buildLineasPedido()
 
-   MsgInfo( "entro en el buildCabecera" )
+   MsgInfo( "Lineas de pedidos" )
 
-   ::hPedidoCabecera                   := D():getPedidoClienteDefaultValue( ::nView )
+   MsgInfo( ::seriePedido, "seriePedido" )
+   MsgInfo( ::numeroPedido, "numeroPedido" )
+   MsgInfo( ::sufijoPedido, "sufijoPedido" )
 
-   ::hPedidoCabecera[ "Serie"     ]    := "A"
-   ::hPedidoCabecera[ "Numero"    ]    := nNewDoc( "A", D():PedidosClientes( ::nView ), "nPedCli", , D():Contadores( ::nView ) )
-   ::hPedidoCabecera[ "Fecha"     ]    := getSysDate()
-   ::hPedidoCabecera[ "Cliente"   ]    := ::CodigoClient()
+   Msginfo( hb_valtoexp( ::hDocument[ "lineas" ][1] ) )
+   MsgInfo( ValType( ::hDocument[ "lineas" ] ) )
+   MsgInfo( Len( ::hDocument[ "lineas" ] ) )
 
-   Msginfo( hb_valtoexp( ::hPedidoCabecera ), "buildCabecera" )
 
-Return ( nil )
+
+
+
+return ( nil )
 
 //---------------------------------------------------------------------------//

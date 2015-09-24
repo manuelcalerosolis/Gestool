@@ -8529,7 +8529,7 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "lVisDom", "Str( Field->nVisDom )", {|| Str( Field->nVisDom ) } ) )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCodEdi", "Field->cCodEdi", {|| Field->cCodEdi } ) )
+      ( dbfCli )->( ordCreate( cPath + "CLIENT.CDX", "cCodEdi", "Field->cCodEdi + Field->cDeparta", {|| Field->cCodEdi + Field->cDeparta } ) )
 
       ( dbfCli )->( dbCloseArea() )
 
@@ -8568,6 +8568,9 @@ FUNCTION rxClient( cPath, oMeter )
 
       ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "cCodPos", "cCodPos", {|| Field->cCodPos } ) )
+
+      ( dbfCli )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfCli )->( ordCreate( cPath + "OBRAST.CDX", "cCodEdi", "Field->cCodEdi + Field->cDeparta", {|| Field->cCodEdi + Field->cDeparta } ) )
 
       ( dbfCli )->( dbCloseArea() )
    else
