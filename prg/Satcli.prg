@@ -406,6 +406,7 @@ static oUndMedicion
 static cFiltroUsuario   := ""
 
 static nTarifaPrecio    := 0
+static oBtnPrecio
 
 static oComisionLinea
 static nComisionLinea   := 0
@@ -1980,6 +1981,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode )
 
       oGetTarifa  := comboTarifa():Build( { "idCombo" => 132, "uValue" => aTmp[ _NTARIFA ] } )
       oGetTarifa:Resource( oFld:aDialogs[1] )
+
+      REDEFINE BTNBMP oBtnPrecio ;
+         ID       174 ;
+         OF       oFld:aDialogs[1] ;
+         RESOURCE "arrow_down_blue_16" ;
+         NOBORDER ;
+         ACTION   ( ChangeTarifaCabecera( oGetTarifa:getTarifa(), dbfTmpLin, oBrwLin ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) )
 
 
       //____________________________________________________________________
