@@ -9357,3 +9357,9 @@ Function nombreSegundaPropiedad()
 Return ( retValProp( ( D():PedidosProveedoresLineas( nView ) )->cCodPr2 + ( D():PedidosProveedoresLineas( nView ) )->cValPr2, D():PropiedadesLineas( nView ) ) )
 
 //--------------------------------------------------------------------------//
+
+Function getExtraFieldPedidoProveedor( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():PedidosProveedoresId( nView ) )
+
+//---------------------------------------------------------------------------//   

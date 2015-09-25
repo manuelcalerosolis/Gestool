@@ -5728,3 +5728,9 @@ Function aTotAntCli( dbfMaster, dbfIva, dbfDiv, aTmp, cDivRet, lPic )
 Return { nTotNet, nTotIva, nTotReq, nTotRet, nTotAnt }
 
 //---------------------------------------------------------------------------//
+
+Function getExtraFieldFacturaAnticipo( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt ) )
+
+//---------------------------------------------------------------------------//

@@ -11796,3 +11796,10 @@ Function DesignLabelSATClientes( oFr, cDoc )
 
 Return .t.
 
+//---------------------------------------------------------------------------//
+
+Function getExtraFieldSATCliente( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():SATClientesId( nView ) ) )
+
+//---------------------------------------------------------------------------//

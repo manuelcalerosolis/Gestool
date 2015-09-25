@@ -405,7 +405,6 @@ Static Function initPublics()
 
 Return ( nil )
 
-
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
@@ -13985,3 +13984,9 @@ Function AppendFacturaProveedores( hHeader, aLines )
 Return .f.
 
 //------------------------------------------------------------------------//
+
+Function getExtraFieldFacturaProveedor( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasProveedoresId( nView ) )
+
+//---------------------------------------------------------------------------//

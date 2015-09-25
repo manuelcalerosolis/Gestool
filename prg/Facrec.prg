@@ -15043,3 +15043,10 @@ Function DesignLabelFacturaRectificativaClientes( oFr, cDoc )
 
 Return .t.
 
+//--------------------------------------------------------------------------//
+
+Function getExtraFieldFacturaRectificativa( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasRectificativasId( nView ) ) )
+
+//---------------------------------------------------------------------------//

@@ -13740,3 +13740,10 @@ function aplicaEntidadCliente( cCodCli, nView, dbfTmpEntidades )
 Return( .t. )
 
 //---------------------------------------------------------------------------//
+
+Function getExtraFieldCliente( cFieldName )
+
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():ClientesId( nView ) ) )
+
+//---------------------------------------------------------------------------//
+

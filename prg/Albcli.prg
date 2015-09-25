@@ -17966,6 +17966,6 @@ Return .t.
 
 Function getExtraFieldAlbaranCliente( cFieldName )
 
-Return ( getExtraField( cFieldName, oDetCamposExtra, D():AlbaranClienteId( nView ) ) )
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():AlbaranesClientesId( nView ) ) )
 
 //---------------------------------------------------------------------------//

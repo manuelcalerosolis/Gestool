@@ -5442,7 +5442,6 @@ CLASS D
    METHOD SatClientes( nView )                  INLINE ( ::Get( "SatCliT", nView ) )
       METHOD SatClientesId( nView )             INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
       METHOD SatClientesFecha( nView )          INLINE ( ( ::Get( "SatCliT", nView ) )->dFecSat )
-      METHOD SatClientesId( nView )             INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) + ( ::Get( "SatCliT", nView ) )->cSufSat )
       METHOD SatClientesIdTextShort( nView ) ;
                                                 INLINE ( ( ::Get( "SatCliT", nView ) )->cSerSat + "/" + alltrim( str( ( ::Get( "SatCliT", nView ) )->nNumSat, 9 ) ) )
       METHOD SatClientesIdText( nView ) ;
