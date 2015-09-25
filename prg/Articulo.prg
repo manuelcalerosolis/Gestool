@@ -2050,6 +2050,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldGeneral
    */
 
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodEdi" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodEdi" ) ) ] ;
+         ID       260 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         OF       fldGeneral
+
    /*
    Tactil----------------------------------------------------------------------
    */
@@ -15971,6 +15977,9 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCondSet( "!Deleted() .and. lPubInt", {|| !Deleted() .and. Field->lPubInt }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "lPubInt", "Codigo", {|| Field->Codigo } ) )
 
+      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "cCodEdi", "cCodEdi", {|| Field->cCodEdi } ) )
+
       ( dbfArticulo )->( dbCloseArea() )
 
    else
@@ -16436,6 +16445,7 @@ function aItmArt()
    aAdd( aBase, { "cDesSeo",   "C",160, 0, "Meta-descripcion",                         "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cKeySeo",   "C",160, 0, "Meta-keywords",                            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodEst",   "C",  3, 0, "Estado del artículo",                      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodEdi",   "C", 20, 0, "Código normalizado del artículo",          "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

@@ -314,7 +314,7 @@ Static Function ImportacionArticulos()
    local cCodBar     := ""
    local cCodArtCli  := ""
 
-   msgwait( "Importamos artículos", , .1 )
+   msgwait( "Importamos artículos", , 1 )
 
    Conexion( cFicheroArticulos )
 
@@ -348,6 +348,8 @@ Static Function ImportacionArticulos()
       ( D():Articulos( nView ) )->pVenta2       := GetNumeric( "I", n )
       ( D():Articulos( nView ) )->pVenta3       := GetNumeric( "J", n )
       ( D():Articulos( nView ) )->pVenta4       := GetNumeric( "K", n )
+
+      ( D():Articulos( nView ) )->cCodEdi       := GetRange( "EZ", n )
 
       cCodBar                                   := GetRange( "E", n )
 

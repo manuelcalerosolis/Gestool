@@ -937,7 +937,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "General", -1, "Button", BS_GROUPBOX, 44, 29, 336, 36
   CONTROL "Código de barras", -1, "Button", BS_GROUPBOX, 382, 29, 108, 251
   CONTROL "Clasificación", -1, "Button", BS_GROUPBOX, 44, 66, 336, 98
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 45, 233, 336, 47
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 45, 233, 163, 47
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 98, 39, 102, 11
   CONTROL "", 130, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 51, 279, 11
   CONTROL "Añ&d [F2]", 300, "Button", WS_TABSTOP, 387, 39, 33, 14
@@ -967,9 +967,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 250, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 98, 210, 41, 11
   CONTROL "", 251, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 141, 210, 45, 41
   CONTROL "Producto obsoleto ", 139, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 216, 211, 128, 10
-  CONTROL "Convertir unidades", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 242, 73, 10
-  CONTROL "Aplicar factor de conversión", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 254, 101, 10
-  CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 98, 265, 56, 11
+  CONTROL "Convertir unidades", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 244, 73, 10
+  CONTROL "Aplicar factor de conversión", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 255, 101, 10
+  CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 98, 266, 56, 11
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 42, 33, 8
   CONTROL "Descripción", -1, "Static", WS_GROUP, 49, 54, 39, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 49, 78, 33, 8
@@ -982,12 +982,15 @@ FONT 8, "MS Sans Serif"
   CONTROL "Lote actual", -1, "Static", WS_GROUP, 49, 190, 41, 8
   CONTROL "Lote", -1, "Button", BS_GROUPBOX, 44, 164, 164, 37
   CONTROL "Numero de serie", -1, "Button", BS_GROUPBOX, 210, 164, 170, 37
-  CONTROL "Factor", -1, "Static", WS_GROUP, 49, 268, 33, 8
+  CONTROL "Factor", -1, "Static", WS_GROUP, 49, 269, 33, 8
   CONTROL "Caducidad", -1, "Static", WS_GROUP, 49, 213, 40, 8
   CONTROL "Ubicación", -1, "Static", WS_GROUP, 49, 151, 39, 8
   CONTROL "Estado", -1, "Static", WS_GROUP, 49, 138, 35, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 200, 164, 31
-  CONTROL "", 4004, "Button", BS_GROUPBOX, 210, 200, 169, 31
+  CONTROL "", -1, "Button", BS_GROUPBOX, 210, 200, 170, 31
+  CONTROL "EDI [EAN]", -1, "Button", BS_GROUPBOX, 210, 233, 170, 47
+  CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 282, 243, 95, 11
+  CONTROL "Código normalizado", -1, "Static", WS_GROUP, 216, 246, 62, 8
 }
 
 ART_10 DIALOG DISCARDABLE 32, 6, 496, 286

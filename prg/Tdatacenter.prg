@@ -5596,11 +5596,12 @@ CLASS D
 
    METHOD PedidosClientesReservas( nView )            INLINE ( ::Get( "PedCliR", nView ) )
 
-   METHOD PedidosClientesLineas( nView )              INLINE ( ::Get( "PedCliL", nView ) )
-      METHOD PedidosClientesLineasId( nView )         INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
-      METHOD GetPedidoClienteLineasHash( nView )      INLINE ( ::getHashRecord( ::PedidosClientesLineas( nView ), nView ) )
-      METHOD GetPedidoClienteLineas( nView )          INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
-      METHOD GetPedidoClienteLineaBlank( nView )      INLINE ( ::getHashRecordBlank( ::PedidosClientesLineas( nView ), nView ) )
+   METHOD PedidosClientesLineas( nView )                    INLINE ( ::Get( "PedCliL", nView ) )
+      METHOD PedidosClientesLineasId( nView )               INLINE ( ( ::Get( "PedCliL", nView ) )->cSerPed + str( ( ::Get( "PedCliL", nView ) )->nNumPed, 9 ) + ( ::Get( "PedCliL", nView ) )->cSufPed )
+      METHOD GetPedidoClienteLineasHash( nView )            INLINE ( ::getHashRecord( ::PedidosClientesLineas( nView ), nView ) )
+      METHOD GetPedidoClienteLineas( nView )                INLINE ( ::getArrayRecordById( ::PedidosClientesId( nView ), ::PedidosClientesLineas( nView ), nView ) )
+      METHOD GetPedidoClienteLineaBlank( nView )            INLINE ( ::getHashRecordBlank( ::PedidosClientesLineas( nView ), nView ) )
+      METHOD GetPedidoClienteLineasDefaultValue( nView )    INLINE ( ::getHashRecordDefaultValues( ::PedidosClientesLineas( nView ), nView ) )
 
       METHOD getStatusPedidosClientesLineas( nView )    INLINE ( ::aStatus := aGetStatus( ::PedidosClientesLineas( nView ) ) )
       METHOD setStatusPedidosClientesLineas( nView )    INLINE ( SetStatus( ::PedidosClientesLineas( nView ), ::aStatus ) ) 
@@ -5817,6 +5818,10 @@ CLASS D
    METHOD Articulos( nView )                                      INLINE ( ::Get( "Articulo", nView ) )
    METHOD ArticulosId( nView )                                    INLINE ( ( ::Get( "Articulo", nView ) )->Codigo )
    METHOD ArticulosIdText( nView )                                INLINE ( alltrim( ( ::Get( "Articulo", nView ) )->Codigo ) + Space(1) + alltrim( ( ::Get( "Articulo", nView ) )->Nombre ) )
+
+      METHOD getStatusArticulos( nView )                          INLINE ( ::aStatus := aGetStatus( ::Articulos( nView ) ) )
+      METHOD setStatusArticulos( nView )                          INLINE ( SetStatus( ::Get( "Articulo", nView ), ::aStatus ) ) 
+      METHOD setFocusArticulos( cTag, nView )                     INLINE ( ::cTag   := ( ::Articulos( nView )  )->( ordSetFocus( cTag ) ) )
 
       METHOD ArticulosCodigosBarras( nView )                      INLINE ( ::Get( "ArtCodebar", nView ) )
       METHOD ArticuloPrecioPropiedades( nView )                   INLINE ( ::Get( "ArtDiv", nView ) )

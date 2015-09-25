@@ -138,8 +138,14 @@ CLASS ImportarPedidosClientesEDI
    METHOD datosCliente()
    METHOD datosCabecera()
    METHOD datosBancoCliente()
+   METHOD saveCabecera()                     INLINE ( D():appendHashRecord( ::hPedidoCabecera, D():PedidosClientes( ::nView ), ::nView ) )
 
    METHOD buildLineasPedido()
+   METHOD CreaLinea()
+   METHOD datosArticulo( cNormalizado )
+
+   METHOD appendLinea()                      INLINE ( ::hPedidoLinea := D():GetPedidoClienteLineasDefaultValue( ::nView ) )
+   METHOD saveLinea()                        INLINE ( D():appendHashRecord( ::hPedidoLinea, D():PedidosClientesLineas( ::nView ), ::nView ) )
 
 ENDCLASS
 
@@ -175,8 +181,10 @@ METHOD proccessEDIFiles( cEDIFile )
       Return .f.
    end if 
 
-   ::hDocument          := {=>}
-   ::oFileEDI           := TTxtFile():New( __localDirectory + cEDIFile )
+   ::hDocument             := {=>}
+   ::hDocument[ "lineas" ] := {}
+
+   ::oFileEDI              := TTxtFile():New( __localDirectory + cEDIFile )
 
    while ! ::oFileEDI:lEoF()
       ::proccessEDILine()
@@ -301,13 +309,7 @@ Return ( nil )
 METHOD insertLineInDcoument()
 
    if !empty(::hLine)
-
-      if !hhaskey( ::hDocument, "lineas" )
-         ::hDocument[ "lineas" ]       := {}         
-      end if 
-
       aadd( ::hDocument[ "lineas" ], ::hLine )
-
    end if 
 
 Return ( nil )
@@ -317,8 +319,9 @@ Return ( nil )
 METHOD proccessLIN()
 
    ::hLine                       := {=>}
+   ::hLine[ "destinatarios" ]    := {}
 
-   ::hLine[ "codigo" ]           := ::getField( 1 )
+   ::hLine[ "codigo" ]           := Padr( ::getField( 1 ), 20 )
    ::hLine[ "tipoCodigo" ]       := ::getField( 2 )
    ::hLine[ "linea" ]            := ::getNum( 3 )
 
@@ -414,12 +417,17 @@ Return ( nil )
 
 METHOD proccessLOCLIN() 
 
+   local hDestinatario     := {=>}
+
    if empty( ::hLine )
       Return ( nil )
    end if 
 
-   ::hLine[ "puntoEntrega" ]           := ::getField( 1 )
-   ::hLine[ "unidadesEntrega" ]        := ::getField( 3 )
+   hDestinatario[ "puntoEntrega" ]           := ::getField( 1 )
+   hDestinatario[ "unidadesEntrega" ]        := ::getField( 3 )
+   hDestinatario[ "departamentoEntrega" ]    := ::getField( 6 )
+
+   aAdd( ::hLine[ "destinatarios" ], hDestinatario )
 
 Return ( nil )
 
@@ -577,6 +585,8 @@ METHOD buildCabeceraPedido()
 
    ::datosCabecera()
 
+   ::saveCabecera()
+
 Return ( nil )
 
 //---------------------------------------------------------------------------//
@@ -671,20 +681,62 @@ Return ( nil )
 
 METHOD buildLineasPedido()
 
-   MsgInfo( "Lineas de pedidos" )
+   local n
+   local hLine
+   
+   MsgInfo( "Entro a hacer las líneas de pedidos" )
 
-   MsgInfo( ::seriePedido, "seriePedido" )
-   MsgInfo( ::numeroPedido, "numeroPedido" )
-   MsgInfo( ::sufijoPedido, "sufijoPedido" )
+   for each hLine in ::hDocument[ "lineas" ]
 
-   Msginfo( hb_valtoexp( ::hDocument[ "lineas" ][1] ) )
-   MsgInfo( ValType( ::hDocument[ "lineas" ] ) )
-   MsgInfo( Len( ::hDocument[ "lineas" ] ) )
+      if Len( hLine[ "destinatarios" ] ) > 1
 
+         for n := 2 to Len( hLine[ "destinatarios" ] )
 
+            ::CreaLinea( hLine )
 
+         next
 
+      else
+
+         ::CreaLinea( hLine )
+
+      end if
+ 
+   next
 
 return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD CreaLinea( hLine )
+
+   ::appendLinea()
+
+   ::hPedidoLinea[ "Serie"    ]  := ::seriePedido
+   ::hPedidoLinea[ "Numero"   ]  := ::numeroPedido
+   ::hPedidoLinea[ "Sufijo"   ]  := ::sufijoPedido
+   ::datosArticulo( hLine[ "codigo" ] )
+
+   ::saveLinea()
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD datosArticulo( cNormalizado )
+
+   local CodigoArticulo             := ""
+
+   D():getStatusArticulos( ::nView )
+   D():setFocusArticulos( "cCodEdi", ::nView )
+
+   if ( D():Articulos( ::nView ) )->( dbSeek( cNormalizado ) )
+      ::hPedidoLinea[ "Articulo" ]              := ( D():Articulos( ::nView ) )->Codigo
+      ::hPedidoLinea[ "DescripcionArticulo" ]   := ( D():Articulos( ::nView ) )->Nombre
+   end if
+
+   D():setStatusArticulos( ::nView )
+
+return ( CodigoArticulo )
 
 //---------------------------------------------------------------------------//
