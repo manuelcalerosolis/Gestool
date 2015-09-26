@@ -26,10 +26,9 @@ CLASS ViewBase
    DATA bPostDialog 
 
    METHOD setBrowseConfigurationName( cName )            INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
+   METHOD loadBrowseConfiguration()                      VIRTUAL // INLINE ( if( !empty( ::oBrowse ), ::oBrowse:Load(), ) )
 
-   METHOD loadBrowseConfiguration()                      INLINE ( if( !empty( ::oBrowse ), ::oBrowse:Load(), ) )
-
-   METHOD setTitle( cTextoTipoDocumento )   INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
+   METHOD setTitle( cTextoTipoDocumento )                INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
    METHOD getTextoTipoDocumento()                        INLINE ( ::cTextoTipoDocumento )
    METHOD getTitleTipoDocumento()                        INLINE ( ::getTextoTipoDocumento() )
 

@@ -13987,6 +13987,6 @@ Return .f.
 
 Function getExtraFieldFacturaProveedor( cFieldName )
 
-Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasProveedoresId( nView ) )
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():FacturasProveedoresId( nView ) ) )
 
 //---------------------------------------------------------------------------//

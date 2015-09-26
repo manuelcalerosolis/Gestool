@@ -130,7 +130,7 @@ METHOD columnsBrowseLineas() CLASS DocumentSalesViewEdit
       :nFooterType            := AGGR_SUM
    end with
 
-Return ( self )
+Return ( self ) 
 
 //---------------------------------------------------------------------------//
 

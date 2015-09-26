@@ -3,12 +3,11 @@
 
 CLASS DocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
-
    METHOD getDataTable()                  INLINE ( ::oSender:getDataTable() )
 
    METHOD getView()                       INLINE ( ::oSender:nView )
 
-   METHOD setItemsBusqueda( aItems )      INLINE ( ::hashItemsSearch := { "Número" => 1, "Fecha" => "dFecDes", "Código" => "cCodCli", "Nombre" => "cNomCli" } )   
+   METHOD setItemsBusqueda()              INLINE ( ::hashItemsSearch := { "Número" => 1, "Fecha" => "dFecDes", "Código" => "cCodCli", "Nombre" => "cNomCli" } )   
 
    METHOD setColumns()
 
@@ -24,14 +23,13 @@ METHOD setColumns() CLASS DocumentSalesViewSearchNavigator
 
    with object ( ::addColumn() )
       :cHeader           := "Id"
-      :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + CRLF +;
-                                 dtoc( ::getField( "Fecha" ) ) }
+      :bEditValue        := {|| ::getField( "Serie" ) + "/" + alltrim( str( ::getField( "Numero" ) ) ) + CRLF + dtoc( ::getField( "Fecha" ) ) }
       :nWidth            := 165
    end with
 
    with object ( ::addColumn() )
       :cHeader           := "Cliente"
-      :bEditValue        := {|| AllTrim( ::getField( "Cliente" ) ) + CRLF + AllTrim( ::getField( "NombreCliente" ) ) }
+      :bEditValue        := {|| alltrim( ::getField( "Cliente" ) ) + CRLF + alltrim( ::getField( "NombreCliente" ) ) }
       :nWidth            := 310
    end with
 

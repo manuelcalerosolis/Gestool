@@ -9360,6 +9360,6 @@ Return ( retValProp( ( D():PedidosProveedoresLineas( nView ) )->cCodPr2 + ( D():
 
 Function getExtraFieldPedidoProveedor( cFieldName )
 
-Return ( getExtraField( cFieldName, oDetCamposExtra, D():PedidosProveedoresId( nView ) )
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():PedidosProveedoresId( nView ) ) )
 
 //---------------------------------------------------------------------------//   

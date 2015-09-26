@@ -18247,6 +18247,6 @@ Return .t.
 
 Function getExtraFieldPedidoCliente( cFieldName )
 
-Return ( getExtraField( cFieldName, oDetCamposExtra, D():PedidosClientesId( nView ) )
+Return ( getExtraField( cFieldName, oDetCamposExtra, D():PedidosClientesId( nView ) ) )
 
 //---------------------------------------------------------------------------//   
