@@ -14,7 +14,6 @@ CLASS Editable
 
    DATA cDataTable
    DATA cDataTableLine
-   DATA cDataTableLineID
 
    DATA oViewNavigator
    DATA oViewSearchNavigator
