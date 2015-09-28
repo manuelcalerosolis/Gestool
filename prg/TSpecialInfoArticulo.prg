@@ -125,7 +125,7 @@ METHOD Resource() CLASS TSpecialInfoArticulo
 
       with object ( oBrwArticulo:addCol() )
          :cHeader          := "Contador"
-         :bEditValue       := {|| Trans( SatCliArticulos->contadorLineaSAT, "@E 999,999,999.99" ) }
+         :bEditValue       := {|| if( !Empty( SatCliArticulos->contadorLineaSAT ), Trans( SatCliArticulos->contadorLineaSAT, "999999999999" ), "" ) }
          :nWidth           := 130
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT

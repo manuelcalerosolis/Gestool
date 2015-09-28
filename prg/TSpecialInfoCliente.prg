@@ -134,10 +134,17 @@ METHOD Resource() CLASS TSpecialInfoCliente
 
       with object ( oBrwCliente:addCol() )
          :cHeader          := "Contador"
-         :bEditValue       := {|| Trans( oBrwCliente:oTreeItem:Cargo[ "nCntAct" ], "@E 999,999,999.99" ) }
+         :bEditValue       := {|| if( !Empty( oBrwCliente:oTreeItem:Cargo[ "nCntAct" ] ), Trans( oBrwCliente:oTreeItem:Cargo[ "nCntAct" ], "99999999999" ), "" ) }
          :nWidth           := 130
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
+         :lHide            := .t.
+      end with
+
+      with object ( oBrwCliente:addCol() )
+         :cHeader          := "Observaciones"
+         :bEditValue       := {|| oBrwCliente:oTreeItem:Cargo[ "mObsLin" ] }
+         :nWidth           := 150
          :lHide            := .t.
       end with
 

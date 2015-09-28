@@ -20,12 +20,14 @@ CLASS TSpecialSearchArticulo
    DATA oGetEstado
    DATA oGetCliente
    DATA oGetOperario
+   DATA oGetRuta
 
    DATA cGetArticulo
    DATA cGetTipo
    DATA cGetEstado
    DATA cGetCliente
    DATA cGetOperario
+   DATA cGetRuta
 
    DATA oFecIni
    DATA oFecFin
@@ -131,6 +133,8 @@ METHOD OpenFiles() CLASS TSPECIALSEARCHARTICULO
 
       D():SatClientes( ::nView )
 
+      D():Ruta( ::nView )
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de números de serie" )
@@ -208,6 +212,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oGetEstado   := TAutoGet():ReDefine( 120, { | u | iif( pcount() == 0, ::cGetEstado, ::cGetEstado := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetEstado",, ::GetArrayNombres( D():EstadoArticulo( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
       ::oGetCliente  := TAutoGet():ReDefine( 130, { | u | iif( pcount() == 0, ::cGetCliente, ::cGetCliente := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetCliente",, ::GetArrayExcludeNames( D():SatClientes( ::nView ), ( D():SatClientes( ::nView ) )->( fieldpos( "cNomCli" ) ), ( D():SatClientes( ::nView ) )->( fieldpos( "cCodCli" ) )  ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
       ::oGetOperario := TAutoGet():ReDefine( 140, { | u | iif( pcount() == 0, ::cGetOperario, ::cGetOperario := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetOperario",, ::GetArrayNombres( D():Operarios( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
+      ::oGetRuta     := TAutoGet():ReDefine( 190, { | u | iif( pcount() == 0, ::cGetRuta, ::cGetRuta := u ) }, ::oDlg,,,,,,,,, .f.,,, .f., .f.,,,,,,, "cGetRuta",, ::GetArrayNombres( D():Ruta( ::nView ) ),, 400, {|uDataSource, cData, Self| cfilter( uDataSource, cData, Self )} )
 
       REDEFINE BUTTON ::oBotonBuscar ;
          ID          200 ;
@@ -283,8 +288,10 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
 
       with object ( ::oBrwArticulo:AddCol() ) 
          :cHeader             := "Contador"
-         :bEditValue          := {|| SelectArticulo->nCntAct }
+         :bEditValue          := {|| if( !Empty( SelectArticulo->nCntAct ), Trans( SelectArticulo->nCntAct, "999999999999" ), "" ) }
          :nWidth              := 120
+         :nDataStrAlign       := AL_RIGHT
+         :nHeadStrAlign       := AL_RIGHT
          :lHide               := .t.
       end with
 
@@ -400,7 +407,7 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
       ::oDlg:AddFastKey( VK_F4, {|| ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() } )   
       ::oDlg:AddFastKey( VK_F5, {|| ::SearchArticulos() } )   
 
-      ::oDlg:bStart     := {|| ::oBrwArticulo:LoadData(), ::lRecargaFecha() }
+      ::oDlg:bStart     := {|| ::oBrwArticulo:Load(), ::lRecargaFecha() }
 
    ACTIVATE DIALOG ::oDlg CENTER
 
@@ -476,13 +483,16 @@ METHOD DefaultSelect() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "cabecerasat.cCodOpe, "
    cSentencia        +=        "cabecerasat.cCodCli, "
    cSentencia        +=        "cabecerasat.cNomCli, "
-   cSentencia        +=        "operario.cNomTra "
+   cSentencia        +=        "cabecerasat.cCodRut, "
+   cSentencia        +=        "operario.cNomTra, "
+   cSentencia        +=        "ruta.cDesRut "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
    cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat = cabecerasat.cSerSat AND lineasSat.nNumSat = cabecerasat.nNumSat AND lineasSat.cSufSat = cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabecerasat.cCodRut = ruta.cCodRut "
    cSentencia        += "WHERE EstadoSat.nDisp=2 "
    cSentencia        += "ORDER BY articulos.Codigo"
 
@@ -515,13 +525,16 @@ METHOD SearchArticulos() CLASS TSPECIALSEARCHARTICULO
    cSentencia        +=        "cabecerasat.cCodOpe, "
    cSentencia        +=        "cabecerasat.cCodCli, "
    cSentencia        +=        "cabecerasat.cNomCli, "
-   cSentencia        +=        "operario.cNomTra "
+   cSentencia        +=        "cabecerasat.cCodRut, "
+   cSentencia        +=        "operario.cNomTra, "
+   cSentencia        +=        "ruta.cDesRut "
    cSentencia        += "FROM " + cPatEmp() + "Articulo articulos "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "EstadoSat estadoSat on articulos.cCodEst = estadoSat.cCodigo "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "TipArt tipoArticulo on articulos.cCodTip = tipoArticulo.cCodTip "
    cSentencia        += "LEFT JOIN ( SELECT cRef, Max( nCntAct ) AS nCntAct, MAX(dFecSat) AS dFecSat, Max(cSerSat) AS cSerSat, Max(nNumSat) AS nNumSat, Max(cSufSat) AS cSufSat FROM " + cPatEmp() + "SatCliL GROUP BY cRef ) lineasSat on articulos.Codigo = lineasSat.cRef "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "SatCliT cabecerasat on lineasSat.cSerSat = cabecerasat.cSerSat AND lineasSat.nNumSat = cabecerasat.nNumSat AND lineasSat.cSufSat = cabecerasat.cSufSat "
    cSentencia        += "LEFT JOIN " + cPatEmp() + "OpeT operario on cabecerasat.cCodOpe = operario.cCodTra "
+   cSentencia        += "LEFT JOIN " + cPatEmp() + "Ruta ruta on cabecerasat.cCodRut = ruta.cCodRut "
    cSentencia        += ::cGetWhereSentencia()
    cSentencia        += " ORDER BY articulos.Codigo"
 
@@ -566,6 +579,10 @@ METHOD cGetWhereSentencia() CLASS TSPECIALSEARCHARTICULO
       cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "operario.cNomTra='" + Padr( ::cGetOperario, 35 ) + "'" 
    end if
 
+   if !Empty( ::cGetRuta )
+      cSentencia     += if( !Empty( cSentencia ), " AND ", "" ) + "ruta.cDesRut='" + Padr( ::cGetRuta, 30 ) + "'" 
+   end if
+
    if !Empty( cSentencia )
       cSentencia     := "WHERE " + cSentencia + space( 1 )
    end if
@@ -581,12 +598,14 @@ METHOD ReiniciaValores() CLASS TSPECIALSEARCHARTICULO
    ::cGetCliente     := Space( 200 )
    ::cGetEstado      := Space( 200 )
    ::cGetOperario    := Space( 200 )
+   ::cGetRuta        := Space( 200 )
 
    ::oGetArticulo:Refresh()
    ::oGetTipo:Refresh()
    ::oGetCliente:Refresh()
    ::oGetEstado:Refresh()
    ::oGetOperario:Refresh()
+   ::oGetRuta:Refresh()
 
    ::cPeriodo        := "Todos"
    ::oPeriodo:Refresh()

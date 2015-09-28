@@ -2,23 +2,65 @@
 Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 */
 
-#define __GSTROTOR__            		"Gestool"
-#define __GSTTACTIL__           		"Gestool táctil"
-#define __GSTVERSION__          		"2Ktorce"
-#define __GSTTPV__              		"Gestool"
-#define __GSTFACTORY__          		"Gestool"
-#define __GSTCOPYRIGHT__        		"(c) Gestool 2014"
-#define __GSTWEB__              		"http://www.gestool.es"
-#define __GSTHELP__             		"http://www.gstrotor.com/ayuda/Index.html"
-#define __GSTBROWSER__          		"http://www.gestool.es/fondo2ktorce/index.html"
-#define __GSTICON__             		"GstRotor.Ico"
-#define __GSTTELEFONO__         		"902.930.252"
-#define __GSTLOGO__             		"Bmp\GstWellcome.Bmp"
-#define __GSTDIRECCION__        		"Cl. Ronda de legionarios, 58"
-#define __GSTPOBLACION__        		"21700 La Palma del Condado"
-#define __GSTOTROS__            		"Teléfono: +34 902.930.252 Correo electónico: info@gestool.es"
+#ifdef __GST__
+        #define __GSTROTOR__            "Gestool"
+        #define __GSTTACTIL__           "Gestool táctil"
+        #define __GSTVERSION__          "2K13"
+        #define __GSTTPV__              "Gestool"
+        #define __GSTFACTORY__          "Gestool"
+        #define __GSTCOPYRIGHT__        "(c) Gestool 2013"
+        #define __GSTWEB__              "http://www.gestool.es"
+        #define __GSTHELP__             "http://www.gstrotor.com/ayuda/Index.html"
+        #define __GSTBROWSER__          "http://www.gestool.es/fondo/index.html"
+        #define __GSTICON__             "GstRotor.Ico"
+        #define __GSTTELEFONO__         "902.930.252"
+        #define __GSTLOGO__             "Bmp\GstWellcome.Bmp"
+        #define __GSTDIRECCION__        "Cl. Ronda de legionarios, 58"
+        #define __GSTPOBLACION__        "21700 La Palma del Condado"
+        #define __GSTOTROS__            "Teléfono: +34 902.930.252 Correo electónico: info@gestool.es"
+#endif
 
+#ifdef __MK__
+        #define __GSTROTOR__            "MKShop Sistema de Gestión"
+        #define __GSTTACTIL__           "MKShop Sistema de Gestión - Táctil"
+        #define __GSTVERSION__          "2012"
+        #define __GSTTPV__              "MKShop Sistema de Gestión - Terminal punto de venta"
+        #define __GSTFACTORY__          "Micro K Informática S.L."
+        #define __GSTCOPYRIGHT__        "(c) Micro K Informática S.L. 2012"
+        #define __GSTWEB__              "http://www.microkinformatica.es"
+        #define __GSTHELP__             "http://www.microk.com/ayudamkshopgestion/"
+        #define __GSTBROWSER__          "http://www.microk.com/mkgestion"
+        #define __GSTICON__             "Logomk.Ico"
+        #define __GSTTELEFONO__         "902.107.474"
+        #define __GSTLOGO__             "Bmp\MkWellcome.Bmp"
+        #define __GSTDIRECCION__        "Calle San Raimundo 15"
+        #define __GSTPOBLACION__        "03005 Alicante"
+        #define __GSTOTROS__            "Teléfono: +34 965927474 Correo electónico: info@microkinformatica.es"
+#endif
+
+#ifdef __OC__
+        #define __GSTROTOR__            "Oido Cocina - TPV"
+        #define __GSTTACTIL__           "Oido Cocina - TPV táctil"
+        #define __GSTVERSION__          "2012"
+        #define __GSTTPV__              "Oido Cocina - Terminal punto de venta"
+        #define __GSTFACTORY__          "Asema Consultora Informática SL"
+        #define __GSTCOPYRIGHT__        "(c) Asema Consultora Informática SL 2012"
+        #define __GSTWEB__              "http://www.asemasl.es"
+        #define __GSTHELP__             "http://www.gstrotor.com/ayuda/Index.html"
+        #define __GSTBROWSER__          "http://www.gstrotor.com/gst/indexoidococina.html"
+        #define __GSTICON__             "Oidococina.Ico"
+        #define __GSTTELEFONO__         "Tlf 955776888"
+        #define __GSTLOGO__             "Bmp\OidoCocina.Bmp"
+        #define __GSTDIRECCION__        "Avda. Espartinas, 21-25 C.C. PIBO Local 32 "
+        #define __GSTPOBLACION__        "41110 Bollullos de la  Mitación. Sevilla"
+        #define __GSTOTROS__            "Teléfono: +34 955776888 Correo electónico: manuelmiguez@asemasl.es"
+#endif
+
+#ifdef __MK__
 #define SERIALNUMBER                    1234554321
+#else
+#define SERIALNUMBER                    9876556789
+#endif
 
 #define __DAYS__                        5
 
@@ -30,8 +72,6 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 #define clrTopVentas                    Rgb( 190, 57, 0 )
 #define clrTopTPV                       Rgb( 164, 55, 58 )
 #define clrTopHerramientas              Rgb( 33, 115, 70 )
-
-#define txtFilters                      "[Mis filtros]"
 
 /*
 Defines para ficheros INI
@@ -172,14 +212,6 @@ Defines para ficheros INI
 #define PAR_PRO                 '30'
 #define COB_TIK                 '31'
 #define SAT_CLI                 '32'
-#define FST_ART                 '33'
-#define FST_CLI                 '34'
-#define FST_PRV                 '35'
-#define FST_PRO                 '36'
-#define FAM_TBL                 '37'
-#define AGE_TBL                 '38'
-
-
 
 #define ACC_ACCE                1        // Acceso
 #define ACC_APPD                2        // Acceso añadir
@@ -247,9 +279,6 @@ Defines para ficheros INI
 #define COLOR_INACTIVECAPTIONTEXT 19
 #define COLOR_BTNHIGHLIGHT      20
 
-#define REGIMENES_IVA_ITEMS     {       "Devengo",;
-                                        "Caja" }
-
 #define RECTIFICATIVA_ITEMS     {       "01. Número factura",;
                                         "02. Serie factura",;
                                         "03. Fecha expedición",;
@@ -293,56 +322,6 @@ Defines para ficheros INI
                                         "18. Pago contra reembolso",;
                                         "19. Pago mediante tarjeta" }
 
-#define DOCUMENTOS_SELECTED     {  "Artículos" => .f.,;
-                                   "Clientes" => .f.,;
-                                   "Proveedores" => .f.,;
-                                   "Familias" => .f.,;
-                                   "Agentes" => .f.,;
-                                   "Presupuestos a clientes"=> .f.,;
-                                   "Pedidos a clientes" => .f.,;
-                                   "Albaranes a clientes" => .f.,;
-                                   "Facturas a clientes" => .f.,;
-                                   "Facturas de anticipos a clientes" => .f.,;
-                                   "Facturas rectificativa a clientes" => .f.,;
-                                   "Pedidos a proveedores" => .f.,;
-                                   "Albaranes a proveedores" => .f.,;
-                                   "Facturas a proveedores" => .f.,;
-                                   "Facturas rectificativa a proveedores" => .f.,;
-                                   "S.A.T" => .f. }
-
-#define DOCUMENTOS_ITEMS        {   "Artículos" => ART_TBL,;
-                                    "Clientes" => CLI_TBL,;
-                                    "Proveedores" => PRV_TBL,;
-                                    "Familias" => FAM_TBL,;
-                                    "Agentes" => AGE_TBL,;
-                                    "Presupuestos a clientes" => PRE_CLI,;
-                                    "Pedidos a clientes" => PED_CLI,;
-                                    "Albaranes a clientes" => ALB_CLI,;
-                                    "Facturas a clientes" => FAC_CLI,;
-                                    "Facturas de anticipos a clientes" => ANT_CLI,;
-                                    "Facturas rectificativa a clientes" => FAC_REC,;
-                                    "Pedidos a proveedores" => PED_PRV,;
-                                    "Albaranes a proveedores" => ALB_PRV,;
-                                    "Facturas a proveedores" => FAC_PRV,;
-                                    "Facturas rectificativa a proveedores" => RCT_PRV,;
-                                    "S.A.T" => SAT_CLI }
-
-#define ICONOS_DOCUMENTOS_ITEMS {   "Artículos" => "Cube_Yellow_16",;
-                                    "Clientes" => "User1_16",;
-                                    "Proveedores" => "Businessman_16",;
-                                    "Familias" => "Cubes_16",;
-                                    "Agentes" => "Security_Agent_16",;
-                                    "Presupuestos a clientes" => "Notebook_user1_16",;
-                                    "Pedidos a clientes" => "Clipboard_empty_user1_16",;
-                                    "Albaranes a clientes" => "Document_plain_user1_16",;
-                                    "Facturas a clientes" => "Document_user1_16",;
-                                    "Facturas de anticipos a clientes" => "Document_money2_16",;
-                                    "Facturas rectificativa a clientes" => "Document_delete_16",;
-                                    "Pedidos a proveedores" => "Clipboard_empty_businessman_16",;
-                                    "Albaranes a proveedores" => "Document_plain_businessman_16",;
-                                    "Facturas a proveedores" => "Document_businessman_16",;
-                                    "Facturas rectificativa a proveedores" => "Document_navigate_cross_16",;
-                                    "S.A.T" => "Power-drill_user1_16" }
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )
@@ -678,47 +657,6 @@ Browse inteligente
              [\{<aJustify>\}],;
              [\{<aSelected>\}] )
 
-/*----------------------------------------------------------------------------//
-Meter autoinclemenatado
-!short: Meter  */
-
-#xcommand @ <nRow>, <nCol> APOLOMETER [ <oMeter> VAR ] <nActual> ;
-           [ TOTAL <nTotal> ] ;
-           [ SIZE <nWidth>, <nHeight> ];
-           [ OF <oWnd> ] ;
-           [ <update: UPDATE > ] ;
-           [ <lPixel: PIXEL > ] ;
-           [ FONT <oFont> ] ;
-           [ PROMPT <cPrompt> ] ;
-           [ <lNoPercentage: NOPERCENTAGE > ] ;
-           [ <color: COLOR, COLORS> <nClrPane>, <nClrText> ] ;
-           [ BARCOLOR <nClrBar>, <nClrBText> ] ;
-           [ <lDesign: DESIGN> ] ;
-     => ;
-        [ <oMeter> := ] TApoloMeter():New( <nRow>, <nCol>, bSETGET(<nActual>),;
-           <nTotal>, <oWnd>, <nWidth>, <nHeight>, <.update.>, ;
-           <.lPixel.>, <oFont>, <cPrompt>, <.lNoPercentage.>,;
-           <nClrPane>, <nClrText>, <nClrBar>, <nClrBText>, <.lDesign.> )
-
-#xcommand REDEFINE APOLOMETER [ <oMeter> VAR ] <nActual> ;
-             [ TOTAL <nTotal> ] ;
-             [ ID <nId> ];
-             [ OF <oWnd> ] ;
-             [ <update: UPDATE > ] ;
-             [ FONT <oFont> ] ;
-             [ PROMPT <cPrompt> ] ;
-             [ <lNoPercentage: NOPERCENTAGE > ] ;
-             [ <color: COLOR, COLORS> <nClrPane>, <nClrText> ] ;
-             [ BARCOLOR <nClrBar>, <nClrBText> ] ;
-       => ;
-          [ <oMeter> := ] TApoloMeter():ReDefine( <nId>, bSETGET(<nActual>),;
-              <nTotal>, <oWnd>, <.update.>, <oFont>, <cPrompt>, <.lNoPercentage.>, ;
-              <nClrPane>, <nClrText>, <nClrBar>, <nClrBText> )
-
-/*
-//----------------------------------------------------------------------------//
-*/
-
 #command SET ADSINDEX TO [<(i)> ] [<add: ADDITIVE>] => ;
          [ if !lAIS() ; ordListAdd( <(i)> ) ; else ; ordSetFocus( 1 ) ; end ]
 
@@ -748,5 +686,3 @@ Meter autoinclemenatado
 #define ZipExtractFiles         MyZipExtractFiles
 
 #endif
-
-#xtranslate MinMax( <xValue>, <nMin>, <nMax> ) => Min( Max( <xValue>, <nMin> ), <nMax> )

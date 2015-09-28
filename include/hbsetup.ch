@@ -1,13 +1,9 @@
 /*
- * $Id: hbsetup.ch,v 1.10 2008/12/03 11:09:45 marchuet Exp $
- */
-
-/*
  * Harbour Project source code:
  * Header file for runtime configuration, common for Harbour and C level.
  *
- * Copyright 1999-2001 Viktor Szakats <viktor.szakats@syenar.hu>
- * www - http://www.harbour-project.org
+ * Copyright 1999-2009 Viktor Szakats (harbour syenar.net)
+ * www - http://harbour-project.org
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this software; see the file COPYING.  If not, write to
+ * along with this software; see the file COPYING.txt.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA (or visit the web site http://www.gnu.org/).
  *
@@ -50,45 +46,23 @@
  *
  */
 
-/* NOTE: This file is also used by C code. */
+/* NOTE: This file is used by C code and at Harbour build time.
+         Normally you never need to #include it in any .prg code. */
 
 #ifndef HB_SETUP_CH_
 #define HB_SETUP_CH_
 
-/* NOTE: You can select here, which features you want to include of the
-         different Clipper implementations. */
+/* NOTE: You can fine-tune here, which Clipper features you want to include. */
 
-#define HB_EXTENSION              /* Enable Harbour extensions */
+/* #define HB_CLP_STRICT */       /* Enable Cl*pper 5.2e/5.3b strict compatibility */
+#define HB_CLP_UNDOC              /* Enable Cl*pper 5.2e/5.3b undocumented features */
+#define HB_COMPAT_C53             /* Enable Cl*pper 5.3b extensions */
 
-#define HB_C52_UNDOC              /* Enable CA-Cl*pper 5.2e undocumented features */
-/* #define HB_C52_STRICT */       /* Enable CA-Cl*pper 5.2e strict compatibility */
-
-#define HB_COMPAT_C53             /* Enable CA-Cl*pper 5.3x extensions */
-#define HB_COMPAT_XPP             /* Enable Alaska Xbase++ extensions */
-/* #define HB_COMPAT_VO */        /* Enable CA-VO extensions */
-#define HB_COMPAT_FLAGSHIP        /* Enable Flagship extensions */
-#define HB_COMPAT_FOXPRO          /* Enable FoxPro extensions */
-/* #define HB_COMPAT_DBASE */     /* Enable dBase extensions */
-/* #define HB_COMPAT_CLIP */      /* Enable CLIP extensions */
-
-/* NOTE: HB_SHORTNAMES must be defined manually if the symbol name length is
-         set to 10 explicitly and not through the HB_C52_STRICT option
-         [vszakats] */
-
-/* Turn on short names support for the class engine */
-#ifdef HB_C52_STRICT
-   #define HB_SHORTNAMES
+#ifndef HB_LEGACY_OFF
+#define HB_LEGACY_LEVEL4
 #endif
 
-/* #define HB_FILE_VER_STATIC */  /* Enable inclusion of file version strings */
-
-/*#define HB_CLS_ENFORCERO */     /* Activate the RO checking on OO DATA    */
-
-                                  /* when not called from a constructor     */
-
-#ifdef HB_EXTENSION
-   #define HB_EXT_INKEY           /* Enable Extended Inkey codes */
-#endif
+/* Future level of legacy cleanup */
+#define HB_LEGACY_LEVEL5
 
 #endif /* HB_SETUP_CH_ */
-

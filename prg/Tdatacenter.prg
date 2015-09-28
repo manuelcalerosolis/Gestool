@@ -4996,6 +4996,7 @@ METHOD selectSATFromClient( cCodigoCliente, cAnno, cCodigoArticulo )
    cStm           +=          "lineasSat.nNumSat, "
    cStm           +=          "lineasSat.cSufSat, "
    cStm           +=          "lineasSat.nCntAct, "
+   cStm           +=          "lineasSat.mObsLin, "
    cStm           +=          "cabeceraSat.dFecSat, "
    cStm           +=          "cabeceraSat.cSerSat, "
    cStm           +=          "cabeceraSat.cCodOpe, "

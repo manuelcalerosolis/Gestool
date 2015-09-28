@@ -1,13 +1,9 @@
 /*
- * $Id: hboo.ch,v 1.14 2008/03/07 03:53:46 walito Exp $
- */
-
-/*
  * Harbour Project source code:
  * Header file for low-level object engine
  *
- * Copyright 1999-2001 Viktor Szakats <viktor.szakats@syenar.hu>
- * www - http://www.harbour-project.org
+ * Copyright 1999-2001 Viktor Szakats (harbour syenar.net)
+ * www - http://harbour-project.org
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +16,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this software; see the file COPYING.  If not, write to
+ * along with this software; see the file COPYING.txt.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA (or visit the web site http://www.gnu.org/).
  *
@@ -52,12 +48,12 @@
 
 /*
  * The following parts are Copyright of the individual authors.
- * www - http://www.harbour-project.org
+ * www - http://harbour-project.org
  *
  * Copyright 2000 JF Lefebvre <jfl@mafact.com> and RA Cuylen <rac@mafact.com>
  *    Many enhancements (scopes, class methods)
  *
- * See doc/license.txt for licensing terms.
+ * See COPYING.txt for licensing terms.
  *
  */
 
@@ -66,36 +62,27 @@
 #ifndef HB_OO_CH_
 #define HB_OO_CH_
 
-// Used by ObjFunc.prg (__objGetMsgList) and Classes.c (hb___msgClsSel())
+/* Used by objfunc.prg (__objGetMsgList) and classes.c (hb___msgClsSel()) */
 #define HB_MSGLISTALL   0
 #define HB_MSGLISTCLASS 1
 #define HB_MSGLISTPURE  2
 
 /* Method or Data attribute (nScope)*/
-#define HB_OO_CLSTP_EXPORTED    1 /* No comment, default */
-#define HB_OO_CLSTP_PUBLISHED   2 /* Filtering scope only */
-#define HB_OO_CLSTP_PROTECTED   4 /* Only usable from one of the object's method (even sublclassed object) */
-#define HB_OO_CLSTP_HIDDEN      8 /* Only usable from one of the object's method (and not from sublclassed one) */
-#define HB_OO_CLSTP_CTOR       16 /* Constructor  (Not yet used) */
-#define HB_OO_CLSTP_READONLY   32 /* No comment */
-#define HB_OO_CLSTP_SHARED     64 /* Allow a classvar (or classmethod) to be shared by all the subclasses.
-                                     Not the default behaviour as each subclass will have its own copy by default. */
-#define HB_OO_CLSTP_CLASS     128 /* The related message is a superobject call, uidata is the superclass handle
-                                     pInitValue contain one superclass object instance (absolutely needed for Inline msg and class data) */
-#define HB_OO_CLSTP_SUPER     256 /* The related message is inherited from a superclass */
-#define HB_OO_CLSTP_CLASSCTOR 512
-
-#define HB_OO_CLSTP_SYNC     1024
-#define HB_OO_CLSTP_SYMBOL   2048 /* The related pointer function is a PHB_SYMB */
-#define HB_OO_CLSTP_PFUNC   32768
-
-#define HB_OO_CLS_INSTANCED         1 /* The class was instanced one time almost */
-#define HB_OO_CLS_CLASSCTOR       512
-#define HB_OO_CLS_ONERROR_SYMB   2048
-#define HB_OO_CLS_DESTRUC_SYMB   4096
-#define HB_OO_CLS_REALLOCINIT    8192 /* Realloc pInitValues in AddMsg */
-#define HB_OO_CLS_ONERROR_SUPER 16384 /* Onerror handler is inherited */
-
+#define HB_OO_CLSTP_EXPORTED        1 /* No comment, default */
+#define HB_OO_CLSTP_PROTECTED       2 /* Only usable from one of the object's method (even sublclassed object) */
+#define HB_OO_CLSTP_HIDDEN          4 /* Only usable from one of the object's method (and not from sublclassed one) */
+#define HB_OO_CLSTP_CTOR            8 /* Constructor  (Not yet used) */
+#define HB_OO_CLSTP_READONLY       16 /* No comment */
+#define HB_OO_CLSTP_SHARED         32 /* Allow a classvar (or classmethod) to be shared by all the subclasses.
+                                         Not the default behaviour as each subclass will have its own copy by default. */
+#define HB_OO_CLSTP_CLASS          64 /* message is class message not object */
+#define HB_OO_CLSTP_SUPER         128 /* The related message is inherited from a superclass */
+#define HB_OO_CLSTP_PERSIST       256 /* Message is persistent (PROPERTY) */
+#define HB_OO_CLSTP_NONVIRTUAL    512 /* Non Virtual message - should not be covered
+                                         by subclass(es) messages with the same name when executed
+                                         from a given class message */
+#define HB_OO_CLSTP_OVERLOADED   1024 /* message overload NONVIRTUAL one */
+#define HB_OO_CLSTP_SYNC         2048 /* message synchronized by object or class mutex */
 
 /* Message types */
 #define HB_OO_MSG_METHOD        0
@@ -105,20 +92,27 @@
 #define HB_OO_MSG_VIRTUAL       4
 #define HB_OO_MSG_SUPER         5
 #define HB_OO_MSG_ONERROR       6
-#define HB_OO_MSG_DESTRUCTOR    7
+#define HB_OO_MSG_CLSMTHD       7 /* for the future */
+#define HB_OO_MSG_ASSIGN        8
+#define HB_OO_MSG_ACCESS        9
+#define HB_OO_MSG_CLSASSIGN    10
+#define HB_OO_MSG_CLSACCESS    11
+#define HB_OO_MSG_REALCLASS    12
+#define HB_OO_MSG_DESTRUCTOR   13
+#define HB_OO_MSG_INITIALIZED  14 /* initialized class data: HB_OO_MSG_CLASSDATA */
+#define HB_OO_MSG_PERFORM      15
+#define HB_OO_MSG_DELEGATE     16
 
-#define HB_OO_PROPERTY          8
-#define HB_OO_MSG_PROPERTY      HB_OO_MSG_DATA      + HB_OO_PROPERTY // Auto management of DATA.
-#define HB_OO_MSG_CLASSPROPERTY HB_OO_MSG_CLASSDATA + HB_OO_PROPERTY // Auto management of CLASSDATA.
-#define HB_OO_MSG_DELEGATE     11
+/* to make xHarbour users happy ;-) */
+#define HB_OO_PROPERTY          32
+#define HB_OO_MSG_PROPERTY      HB_OO_PROPERTY + HB_OO_MSG_DATA      /* Auto management of DATA */
+#define HB_OO_MSG_CLASSPROPERTY HB_OO_PROPERTY + HB_OO_MSG_CLASSDATA /* Auto management of CLASSDATA */
 
 /* Data */
 #define HB_OO_DATA_SYMBOL       1
 #define HB_OO_DATA_VALUE        2
-#define HB_OO_DATA_SYMBOL_PTR   2
 #define HB_OO_DATA_TYPE         3
 #define HB_OO_DATA_SCOPE        4
-#define HB_OO_DATA_PERSISTENT   5
 
 /* ClassData */
 #define HB_OO_CLSD_SYMBOL       1
@@ -129,21 +123,17 @@
 /* Method */
 #define HB_OO_MTHD_SYMBOL       1
 #define HB_OO_MTHD_PFUNCTION    2
-#define HB_OO_MTHD_DELEGNAME    2
 #define HB_OO_MTHD_SCOPE        3
-#define HB_OO_MTHD_PERSISTENT   4
-#define HB_OO_MTHD_DELEGOBJ     5
 
 /* ClassMethod */ /* for the future */
 #define HB_OO_CLSM_SYMBOL       1
 #define HB_OO_CLSM_PFUNCTION    2
 #define HB_OO_CLSM_SCOPE        3
 
-#define HB_OO_MCLSCTOR_INSTANCE 1
-#define HB_OO_MCLSCTOR_CLONE    2
-
-#define FOREACH_BEGIN           1
-#define FOREACH_ENUMERATE       2
-#define FOREACH_END             3
+/* Delegate messages */
+#define HB_OO_DELEG_SYMBOL      1
+#define HB_OO_DELEG_MESSAGE     2
+#define HB_OO_DELEG_OBJECT      3
+#define HB_OO_DELEG_SCOPE       4
 
 #endif /* HB_OO_CH_ */

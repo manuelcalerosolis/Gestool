@@ -1,6 +1,6 @@
+#include "FiveWin.Ch"
 #include "HbXml.ch"
 #include "TDbfDbf.ch"
-#include "FiveWin.Ch"
 #include "Struct.ch"
 #include "Factu.ch" 
 #include "Ini.ch"
@@ -146,6 +146,10 @@ CLASS ImportarPedidosClientesEDI
 
    METHOD appendLinea()                      INLINE ( ::hPedidoLinea := D():GetPedidoClienteLineasDefaultValue( ::nView ) )
    METHOD saveLinea()                        INLINE ( D():appendHashRecord( ::hPedidoLinea, D():PedidosClientesLineas( ::nView ), ::nView ) )
+
+   METHOD datosDireccion( hDestinatario )
+
+   METHOD buildTotalPedido()
 
 ENDCLASS
 
@@ -471,6 +475,8 @@ METHOD buildPedidoCliente()
 
       ::buildLineasPedido()
 
+      ::buildTotalPedido()
+
    end if 
 
    msgAlert( "Fin de la importación")
@@ -556,20 +562,22 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD codigoDireccion()
+METHOD codigoDireccion( comprador, departamento )
+
+   local direccion
 
    D():getStatusClientesDirecciones( ::nView )
    D():setFocusClientesDirecciones( "cCodEdi", ::nView )
 
-   if ( D():ClientesDirecciones( ::nView ) )->( dbseek( ::hDocument[ "comprador" ] + ::hDocument[ "departamento" ] ) )
+   if ( D():ClientesDirecciones( ::nView ) )->( dbseek( Padr( comprador, 17 ) + Padr( departamento, 4 ) ) )
 
-      ::hPedidoCabecera[ "Direccion" ]    := ( D():ClientesDirecciones( ::nView ) )->cCodObr
+      direccion         := ( D():ClientesDirecciones( ::nView ) )->cCodObr
 
    end if
 
    D():setStatusClientesDirecciones( ::nView )
 
-Return ( nil )
+Return ( direccion )
 
 //---------------------------------------------------------------------------//
 
@@ -578,7 +586,7 @@ METHOD buildCabeceraPedido()
    ::hPedidoCabecera                   := D():getPedidoClienteDefaultValue( ::nView )
 
    ::codigoCliente()
-   ::codigoDireccion()
+   ::hPedidoCabecera[ "Direccion" ]    := ::codigoDireccion( ::hDocument[ "comprador" ], ::hDocument[ "departamento" ] )
 
    ::datosCliente()
    ::datosBancoCliente()
@@ -692,13 +700,13 @@ METHOD buildLineasPedido()
 
          for n := 2 to Len( hLine[ "destinatarios" ] )
 
-            ::CreaLinea( hLine )
+            ::CreaLinea( hLine, n )
 
          next
 
       else
 
-         ::CreaLinea( hLine )
+         ::CreaLinea( hLine, 1 )
 
       end if
  
@@ -708,14 +716,16 @@ return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreaLinea( hLine )
+METHOD CreaLinea( hLine, n )
 
    ::appendLinea()
 
-   ::hPedidoLinea[ "Serie"    ]  := ::seriePedido
-   ::hPedidoLinea[ "Numero"   ]  := ::numeroPedido
-   ::hPedidoLinea[ "Sufijo"   ]  := ::sufijoPedido
+   ::hPedidoLinea[ "Serie"    ]     := ::seriePedido
+   ::hPedidoLinea[ "Numero"   ]     := ::numeroPedido
+   ::hPedidoLinea[ "Sufijo"   ]     := ::sufijoPedido
    ::datosArticulo( hLine[ "codigo" ] )
+   ::datosDireccion( hLine[ "destinatarios" ][n] )
+   ::hPedidoLinea[ "Almacen" ]      := oUser():cAlmacen()
 
    ::saveLinea()
 
@@ -731,12 +741,76 @@ METHOD datosArticulo( cNormalizado )
    D():setFocusArticulos( "cCodEdi", ::nView )
 
    if ( D():Articulos( ::nView ) )->( dbSeek( cNormalizado ) )
-      ::hPedidoLinea[ "Articulo" ]              := ( D():Articulos( ::nView ) )->Codigo
-      ::hPedidoLinea[ "DescripcionArticulo" ]   := ( D():Articulos( ::nView ) )->Nombre
+      ::hPedidoLinea[ "Articulo" ]                 := ( D():Articulos( ::nView ) )->Codigo
+      ::hPedidoLinea[ "DescripcionArticulo" ]      := ( D():Articulos( ::nView ) )->Nombre
+      ::hPedidoLinea[ "DescripcionAmpliada" ]      := ( D():Articulos( ::nView ) )->Descrip
+      ::hPedidoLinea[ "Familia" ]                  := ( D():Articulos( ::nView ) )->Familia
+      ::hPedidoLinea[ "GrupoFamilia" ]             := if( !Empty( ( D():Articulos( ::nView ) )->Familia ), cGruFam( ( D():Articulos( ::nView ) )->Familia, D():Familias( ::nView ) ), "" )
+      ::hPedidoLinea[ "LogicoLote" ]               := ( D():Articulos( ::nView ) )->lLote
+      ::hPedidoLinea[ "Lote" ]                     := if( ( D():Articulos( ::nView ) )->lLote, ( D():Articulos( ::nView ) )->nLote, "" )
+      ::hPedidoLinea[ "AvisarSinStock" ]           := ( D():Articulos( ::nView ) )->lMsgVta
+      ::hPedidoLinea[ "NoPermitirSinStock" ]       := ( D():Articulos( ::nView ) )->lNotVta
+      ::hPedidoLinea[ "Peso" ]                     := ( D():Articulos( ::nView ) )->nPesoKg
+      ::hPedidoLinea[ "Volumen" ]                  := ( D():Articulos( ::nView ) )->nVolumen
+      ::hPedidoLinea[ "TipoArticulo" ]             := ( D():Articulos( ::nView ) )->cCodTip
+      ::hPedidoLinea[ "FactorConversion" ]         := ( D():Articulos( ::nView ) )->nFacCnv
+      ::hPedidoLinea[ "Imagen" ]                   := ( D():Articulos( ::nView ) )->cImagen
+      ::hPedidoLinea[ "PrecioVentaRecomendado" ]   := ( D():Articulos( ::nView ) )->PvpRec
+      ::hPedidoLinea[ "PuntoVerde" ]               := ( D():Articulos( ::nView ) )->nPntVer1
+      ::hPedidoLinea[ "PorcentajeImpuesto" ]       := nIva( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva )
+      ::hPedidoLinea[ "RecargoEquivalencia" ]      := nReq( D():TiposIva( ::nView ), ( D():Articulos( ::nView ) )->TipoIva )
+      ::hPedidoLinea[ "PrecioCosto" ]              := ( D():Articulos( ::nView ) )->pCosto
+      ::hPedidoLinea[ "PrecioVenta" ]              := ( D():Articulos( ::nView ) )->pVenta1
+
    end if
 
    D():setStatusArticulos( ::nView )
 
-return ( CodigoArticulo )
+return ( nil )
 
 //---------------------------------------------------------------------------//
+
+METHOD datosDireccion( hDestinatario )
+
+   ::hPedidoLinea[ "Unidades" ]     := val( hDestinatario[ "unidadesEntrega" ] )
+   ::hPedidoLinea[ "Direccion" ]    := ::codigoDireccion( hDestinatario[ "puntoEntrega" ], hDestinatario[ "departamentoEntrega" ] )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD buildTotalPedido()
+
+   local aTotales
+
+   aTotales       := aTotPedCli( ::seriePedido + Str( ::numeroPedido ) + ::sufijoPedido,;
+                                 D():PedidosClientes( ::nView ),;
+                                 D():PedidosClientesLineas( ::nView ),;
+                                 D():TiposIva( ::nView ),;
+                                 D():Divisas( ::nView ),;
+                                 D():FormasPago( ::nView ) )
+
+   D():getStatusPedidosClientes( ::nView )
+   D():setFocusPedidosClientes( "nNumPed", ::nView )
+
+   if ( D():PedidosClientes( ::nView ) )->( dbseek( ::seriePedido + Str( ::numeroPedido ) + ::sufijoPedido ) )
+
+      if dbLock( D():PedidosClientes( ::nView ) )
+
+         ( D():PedidosClientes( ::nView ) )->nTotNet  := aTotales[1]
+         ( D():PedidosClientes( ::nView ) )->nTotIva  := aTotales[2]
+         ( D():PedidosClientes( ::nView ) )->nTotReq  := aTotales[3]
+         ( D():PedidosClientes( ::nView ) )->nTotPed  := aTotales[4]
+
+
+         ( D():PedidosClientes( ::nView ) )->( dbUnlock() )
+
+      end if
+
+   end if
+
+   D():setStatusPedidosClientes( ::nView )
+
+Return nil
+
+//----------------------------------------------------------------------------//

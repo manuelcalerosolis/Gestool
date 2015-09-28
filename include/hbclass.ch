@@ -1,13 +1,11 @@
 /*
- * $Id: hbclass.ch,v 1.68 2010/03/08 04:48:06 ronpinkas Exp $
- */
-
-/*
  * Harbour Project source code:
  * Header file for Class commands
  *
- * Copyright 1999 Antonio Linares <alinares@fivetech.com>
- * www - http://www.harbour-project.org
+ * Copyright 1999 Antonio Linares <alinares@fivetechsoft.com>
+ * Copyright 2006 Przemyslaw Czerpak <druzus / at / priv.onet.pl>
+ *    most of rules rewritten
+ * www - http://harbour-project.org
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +18,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this software; see the file COPYING.  If not, write to
+ * along with this software; see the file COPYING.txt.  If not, write to
  * the Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307 USA (or visit the web site http://www.gnu.org/).
  *
@@ -52,7 +50,7 @@
 
 /*
  * The following parts are Copyright of the individual authors.
- * www - http://www.harbour-project.org
+ * www - http://harbour-project.org
  *
  * Copyright 2000 ( ->07/2000 ) JF. Lefebvre <jfl@mafact.com> & RA. Cuylen <rac@mafact.com>
  *    Support for Class(y), TopClass and Visual Object compatibility
@@ -63,14 +61,13 @@
  *    Delegating, DATA Shared
  *    Support of 10 Chars limits
  *
- * See doc/license.txt for licensing terms.
+ * See COPYING.txt for licensing terms.
  *
  */
 
 #ifndef HB_CLASS_CH_
 #define HB_CLASS_CH_
 
-#include "hbsetup.ch"
 #include "hboo.ch"
 
 /* You can actually define one or all the syntax, they do not collide each other */
@@ -95,1020 +92,505 @@
 /* So Each class _inherit_ of HBObject by default and */
 /*    Each type logical or numerical is initiated to .F. and 0 by default */
 
-/* #define HB_CLS_NOTOBJECT  */ /* Should be included in some compatibility include files as needed */
-/* #define HB_CLS_NOAUTOINIT */ /* Idem */
-/* #define HB_CLS_ALLOWCLASS */ /* Work in progress, don't define it now */
-/* #define HB_CLS_ENFORCERO FLAG to disable Write access to RO VAR outside */
-/*         of Constructors /!\ Could be related to some incompatibility */
+/* #define HB_CLS_NOTOBJECT     */ /* Should be included in some compatibility include files as needed */
+/* #define HB_CLS_NOAUTOINIT    */ /* Idem */
+/* #define HB_CLS_NO_DECORATION */ /* disable adding <class>_ prefix to method function names */
+/* #define HB_CLS_NO_PARAMS_ERR */ /* disable parameters validation in method declaration and implementation */
+/* #define HB_CLS_NO_OO_ERR     */ /* disable all code validation */
 
-// Harbour
-#xtranslate AS INTEGER => AS NUMERIC
-
-#ifndef HB_CONSTRUCTOR_NO_DIVERT
-  #define HB_CONSTRUCTOR_USE_DIVERT
-#endif
-
-#ifdef HB_CONSTRUCTOR_USE_DIVERT
-   DYNAMIC DivertConstructorCall
-#endif
-
-DECLARE HBClass ;
-        New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass ;
-        Create() AS Object ;
-        Instance() AS Object ;
-        AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric ) ;
-        AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL ) ;
-        AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String ) ;
-        AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL ) ;
-        AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL ) ;
-        AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL ) ;
-        AddVirtual( cName AS String ) ;
-        ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL ) ;
-        ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric ) ;
-        ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL ) ;
-        SetOnError( @MethodName() )
-
-#xtranslate __ERR([<msg,...>]) => #error [<msg>]
-
-#xtranslate _InheritFrom_( <cSuperClasses,...> ) => {<cSuperClasses>}
-
-#ifdef HB_CLS_NOTOBJECT
-   #xtranslate _InheritFrom_() => nil
-#else
-   #xtranslate _InheritFrom_() => { HBObject():Classh }
-#endif
-
-//----------------------------------------------------------------------------//
-// Traductores Genericos de <Func>[( [ <parms,...>] )]
-
-#xtranslate _AsFunc_( <itm> )                   => <itm>()
-#xtranslate _AsFunc_( <itm>( [<prm,...>] ) )    => <itm>( [<prm>] )
-
-#xtranslate _AsName_( <itm> )                   => <itm>
-#xtranslate _AsName_( <itm>( [<prm,...>] ) )    => <itm>
-
-#xtranslate _AsStr_( <itm> )                    => <(itm)>
-#xtranslate _AsStr_( <itm>( [<prm,...>] ) )     => #<itm>
-#xtranslate _AsStrLst_( <Typ> [, <TypN> ] )     =>;
-                            _AsStr_( <Typ> )[ , _AsStr_( <TypN> ) ]
-
-#xtranslate _AsNameFrom_( <itm> ) => _AsName_( <itm> )
-#xtranslate _AsNameFrom_( <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> ) ;
-            =>;
-            _<type>
-
-
-//----------------------------------------------------------------------------//
-
-#xtranslate __OPT__( <a>, <b> )  => <a>
-#xtranslate __OPT__( <a> )       => <a>
-
-//----------------------------------------------------------------------------//
-
-#ifdef HB_CLS_NOAUTOINIT
- #define __HB_CLS_NOINI .T.
-#else
- #define __HB_CLS_NOINI .F.
-#endif
 
 #ifndef HB_CLS_FWO
 #ifndef HB_CLS_CSY
 #ifndef HB_CLS_VO
 #ifndef HB_CLS_TOP
-#ifndef HB_CLS_XB
 
 /* IF NOTHING DECIDED BY THE PROGRAMMER USE ALL */
 #define HB_CLS_FWO
 #define HB_CLS_CSY
 #define HB_CLS_VO
 #define HB_CLS_TOP
-#define HB_CLS_XB
+#define HB_CLS_XPP
 
 #endif
 #endif
 #endif
 #endif
+
+
+/* Disable method decoration when Harbour compiled strict compatibility mode.
+   In strict mode, PP doesn't support identifier concatenation, which
+   would be needed for method decoration. */
+#ifdef HB_CLP_STRICT
+   #ifndef HB_CLS_NO_DECORATION
+      #define HB_CLS_NO_DECORATION
+   #endif
+   #ifndef HB_CLS_PARAM_LIST
+      #define HB_CLS_PARAM_LIST
+   #endif
 #endif
 
-//#xtranslate HBCLSCHOICE( <publish> <export>, <protect>, <hidde> ) => IIF( <export>, HB_OO_CLSTP_EXPORTED , IIF( <export>, HB_OO_CLSTP_EXPORTED , IIF( <protect>, HB_OO_CLSTP_PROTECTED, IIF( <hidde>, HB_OO_CLSTP_HIDDEN, nScope) ) ) )
-//#xtranslate HBCLSCHOICE( <x,...> ) => ;__ERR( Can not use multiple scope qualifiers! );;
-#xtranslate HBCLSCHOICE( <x,...> ) => ) ;__ERR( Can not use multiple scope qualifiers! );#line
+/* disable strict parameters validation in method declaration and
+   implementation when warning level (-w?) is not 3 or higher */
+#if __pragma( WARNINGLEVEL ) < 3
+   #ifndef HB_CLS_NO_PARAMS_ERR
+      #define HB_CLS_NO_PARAMS_ERR
+   #endif
+#endif
 
-#xtranslate HBCLSCHOICE( .T., .F., .F., .F. ) => HB_OO_CLSTP_PUBLISHED
-#xtranslate HBCLSCHOICE( .F., .F., .T., .F. ) => HB_OO_CLSTP_PROTECTED
-#xtranslate HBCLSCHOICE( .F., .F., .F., .T. ) => HB_OO_CLSTP_HIDDEN
-#xtranslate HBCLSCHOICE( .F., .T., .F., .F. ) => HB_OO_CLSTP_EXPORTED
-#xtranslate HBCLSCHOICE( .F., .F., .F., .F. ) => nScope  // Default
+/* should we use <ClassName>_ prefix for real method names? */
+#ifdef HB_CLS_NO_DECORATION
+   #xtranslate __HB_CLS_MTHNAME <ClassName> <MethodName> => <MethodName>
+#else
+   #xtranslate __HB_CLS_MTHNAME <ClassName> <MethodName> => <ClassName>_<MethodName>
+#endif
+
+/* parameters list passed throw - it's Harbour extension */
+#ifndef HB_CLS_PARAM_LIST
+   #define HB_CLS_PARAM_LIST ...
+#endif
+
+/* should we use _HB_CLASS/_HB_MEMBER declarations? */
+#ifdef HB_CLS_NO_DECLARATIONS
+   #xcommand _HB_CLASS  <name>        =>
+   #xcommand _HB_CLASS  <name> <name> =>
+   #xcommand _HB_MEMBER <name>        =>
+   #xcommand DECLARE    <*decl*>      =>
+   #xtranslate AS <type>              =>
+   #xtranslate AS CLASS <name>        =>
+#endif
+
+/* should we inherit from HBObject class by default ? */
+#ifdef HB_CLS_NOTOBJECT
+   #xtranslate __HB_CLS_PAR([<cls,...>])  => { <cls> }
+#else
+   #xtranslate __HB_CLS_PAR([<cls,...>])  => iif( <.cls.>, { <cls> }, { @HBObject() } )
+#endif
+
+/* Should we initialize typed instance variables? */
+#ifdef HB_CLS_NOAUTOINIT
+   #define __HB_CLS_NOINI .T.
+#else
+   #define __HB_CLS_NOINI .F.
+#endif
+
+/* Should we generate compile error when method declaration has different parameters? */
+#ifdef HB_CLS_NO_PARAMS_ERR
+   #xtranslate __HB_CLS_PARAMS(<Method>)     => __HB_CLS_ASID(<Method>)
+#else
+   #xtranslate __HB_CLS_PARAMS(<Method>)     => <Method>
+#endif
+
+/* Should we disable compile errors for undeclared methods? */
+#ifdef HB_CLS_NO_OO_ERR
+   #xtranslate __HB_CLS_ERR([<msg,...>]) =>
+   #xtranslate __HB_CLS_WARN([<msg,...>]) =>
+#else
+   #xtranslate __HB_CLS_ERR([<msg,...>]) => ;#error [ <msg>] ; #line
+   #xtranslate __HB_CLS_WARN([<msg,...>]) => ;#warning [ <msg>] ; #line
+#endif
+
+#xtranslate __HB_CLS_VARERR(<var>) => __HB_CLS_ERR( Invalid instance variable name \<<var>> )
+
+DECLARE HBClass ;
+        New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass ;
+        Create() AS Object ;
+        Instance() AS Object ;
+        AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric ) ;
+        AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String ) ;
+        AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL ) ;
+        AddMethod( cName AS String, @MethodName(), nScope AS Numeric ) ;
+        AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric ) ;
+        AddVirtual( cName AS String )
+
+/*
+ * Class(y) like non virtual send operator but instead of using early
+ * bindings it casts object to class in which current method were defined.
+ */
+#translate @:<MessageName>([<MsgParams,...>]) => ;
+                                ::realclass:<MessageName>([ <MsgParams>])
+
+/* Indirect super casting translation */
+#xtranslate :Super( <!SuperClass!> ): => :<SuperClass>:
+
+
+#xtranslate __HB_CLS_OPT(<a>,<b>) =>  <a>
+#xtranslate __HB_CLS_OPT(<a>)     =>  <a>
+
+#xtranslate __HB_CLS_ASSTRING( <FuncName> )                 => <(FuncName)>
+#xtranslate __HB_CLS_ASSTRING( <FuncName>([<params,...>]) ) => <(FuncName)>
+#xtranslate __HB_CLS_ASFUNC( <FuncName> )                   => <FuncName>()
+#xtranslate __HB_CLS_ASFUNC( <FuncName>([<params,...>]) )   => <FuncName>([ <params>])
+#xtranslate __HB_CLS_ASID( <FuncName> )                     => <FuncName>
+#xtranslate __HB_CLS_ASID( <FuncName>([<params,...>]) )     => <FuncName>
+#xtranslate __HB_CLS_ASARGS( <FuncName> )                   =>
+#xtranslate __HB_CLS_ASARGS( <FuncName>([<Args,...>]) )     => [ <Args>]
+#xtranslate __HB_CLS_ASARGSOPT( <FuncName> )                =>
+#xtranslate __HB_CLS_ASARGSOPT( <FuncName>([<Args,...>]) )  => [, <Args>]
+#xtranslate __HB_CLS_ISVAR( <var> )                         => __HB_CLS_VARERR(<var>)
+#xtranslate __HB_CLS_ISVAR( <!var!> )                       =>
+#xcommand __HB_CLS_CHECKVAR( <param1> [,<paramN>] )         => __HB_CLS_ISVAR( <param1> ) [;__HB_CLS_ISVAR( <paramN> )]
+
+/* #xtranslate __HB_CLS_SCOPE( <export>, <protect>, <hidde> ) => ;
+      iif( <export>, HB_OO_CLSTP_EXPORTED , ;
+      iif( <protect>, HB_OO_CLSTP_PROTECTED, ;
+      iif( <hidde>, HB_OO_CLSTP_HIDDEN, nScope ) ) ) */
+#xtranslate __HB_CLS_SCOPE( <x,...> )        => ) __HB_CLS_ERR( Can not use multiple scope qualifiers! )
+#xtranslate __HB_CLS_SCOPE( .T., .F., .F. )  => HB_OO_CLSTP_EXPORTED
+#xtranslate __HB_CLS_SCOPE( .F., .T., .F. )  => HB_OO_CLSTP_PROTECTED
+#xtranslate __HB_CLS_SCOPE( .F., .F., .T. )  => HB_OO_CLSTP_HIDDEN
+#xtranslate __HB_CLS_SCOPE( .F., .F., .F. )  => nScope /* Default */
+
+
+#xcommand CLASS <ClassName> [METACLASS <metaClass>] ;
+             [ <frm: FROM, INHERIT> <SuperClass1> [,<SuperClassN>] ] ;
+             [ <modulfriend: MODULE FRIENDLY> ] ;
+             [ <static: STATIC> ] [ FUNCTION <FuncName> ] => ;
+   _HB_CLASS <ClassName> <FuncName> ;;
+   <static> function __HB_CLS_OPT( [<FuncName>,] <ClassName> ) ( HB_CLS_PARAM_LIST ) ;;
+      STATIC s_oClass ;;
+      LOCAL nScope, oClass, oInstance ;;
+      IF s_oClass == NIL .AND. __clsLockDef( @s_oClass ) ;;
+         BEGIN SEQUENCE ;;
+            nScope := HB_OO_CLSTP_EXPORTED ; HB_SYMBOL_UNUSED( nScope ) ;;
+            oClass  := iif( <.metaClass.>, <(metaClass)>, HBClass():new( <(ClassName)>, __HB_CLS_PAR( [ @<SuperClass1>() ] [ , @<SuperClassN>() ] ), @__HB_CLS_OPT([__HB_CLS_ASID(<FuncName>),] <ClassName>)() [, <.modulfriend.> ] ) ) ;;
+   #undef  _CLASS_NAME_ ; #define _CLASS_NAME_ <ClassName> ;;
+   #undef  _CLASS_MODE_ ; #define _CLASS_MODE_ _CLASS_DECLARATION_
+
+#xcommand ENDCLASS [<lck: LOCK, LOCKED>] => ;
+            oClass:Create() ; [<-lck-> __clsLock( oClass:hClass ) ] ;;
+         ALWAYS ;;
+            __clsUnlockDef( @s_oClass, oClass ) ;;
+         END SEQUENCE ;;
+         oInstance := oClass:Instance() ;;
+         IF __objHasMsg( oInstance, "InitClass" ) ;;
+            oInstance:InitClass( HB_CLS_PARAM_LIST ) ;;
+         END ;;
+         RETURN oInstance ;;
+      END ;;
+      RETURN s_oClass:Instance() AS CLASS _CLASS_NAME_ ;;
+   #undef  _CLASS_MODE_ ; #define _CLASS_MODE_ _CLASS_IMPLEMENTATION_
+
+
+#xcommand DECLARED METHOD <type: FUNCTION, PROCEDURE> <MethodName> CLASS <ClassName> => ;
+      static <type> __HB_CLS_MTHNAME <ClassName> <MethodName> ;;
+      local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
+
+#xcommand __HB_CLS_DECLARE_METHOD <MethodName> <ClassName> => ;
+      #xcommand METHOD \<type: FUNCTION, PROCEDURE> <MethodName> CLASS <ClassName> _CLASS_IMPLEMENTATION_ => ;
+         DECLARED METHOD \<type> <MethodName> CLASS <ClassName>
+
+#xcommand __HB_CLS_DECLARE_METHOD <!MethodName!> <ClassName> => ;
+   #xcommand METHOD \<type: FUNCTION, PROCEDURE> <MethodName> CLASS <ClassName> _CLASS_IMPLEMENTATION_ => ;
+         DECLARED METHOD \<type> <MethodName> CLASS <ClassName> ;;
+   #xcommand METHOD \<type: FUNCTION, PROCEDURE> <MethodName>(\[ \<xparams,...>] ) CLASS <ClassName> _CLASS_IMPLEMENTATION_ => ;
+         DECLARED METHOD \<type> <MethodName>(\[ \<xparams>] ) CLASS <ClassName>
+
+#xcommand METHOD <type: FUNCTION, PROCEDURE> <MethodName> CLASS <ClassName> _CLASS_IMPLEMENTATION_ => ;
+   __HB_CLS_WARN( Method \<<MethodName>> not declared or declaration mismatch in class \<<ClassName>> ) ;;
+   DECLARED METHOD <type> <MethodName> CLASS <ClassName>
+
+#xcommand METHOD <MethodName> [ <ctor: CONSTRUCTOR> ] [ AS <type> ] [ <export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] [_CLASS_DECLARATION_] => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MethodName>) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
+   __HB_CLS_DECLARE_METHOD __HB_CLS_PARAMS(<MethodName>) _CLASS_NAME_ ;;
+   oClass:AddMethod( __HB_CLS_ASSTRING(<MethodName>), @__HB_CLS_ASID( __HB_CLS_MTHNAME _CLASS_NAME_ <MethodName> )(), __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
+
+#xcommand ACCESS <AccessName> [ AS <type> ] [ <export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] [_CLASS_DECLARATION_] => ;
+   METHOD <AccessName> [ AS <type> ] <export> <protect> <hidde> <persistent> <sync> _CLASS_DECLARATION_
+
+#xcommand ASSIGN <AssignName> [ AS <type> ] [ <export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] [_CLASS_DECLARATION_] => ;
+   METHOD _<AssignName> [ AS <type> ] <export> <protect> <hidde> <persistent> <sync> _CLASS_DECLARATION_
+
+#xcommand METHOD <type: FUNCTION, PROCEDURE> <MethodName> [CLASS <ClassName>] => ;
+   METHOD <type> <MethodName> CLASS __HB_CLS_OPT([<ClassName>,] _CLASS_NAME_) _CLASS_MODE_
+#xcommand METHOD <MethodName> CLASS <ClassName> => METHOD FUNCTION  <MethodName> CLASS <ClassName> _CLASS_MODE_
+#xcommand ACCESS <AccessName> CLASS <ClassName> => METHOD FUNCTION  <AccessName> CLASS <ClassName> _CLASS_MODE_
+#xcommand ASSIGN <AssignName> CLASS <ClassName> => METHOD FUNCTION _<AssignName> CLASS <ClassName> _CLASS_MODE_
+
+#xcommand METHOD <MethodName> _CLASS_IMPLEMENTATION_ => ;
+   METHOD FUNCTION <MethodName> CLASS _CLASS_NAME_
+#xcommand METHOD <MethodName> => METHOD <MethodName> _CLASS_MODE_
+
+/* For backward compatibility */
+#xcommand PROCEDURE <MethodName> CLASS <ClassName> => METHOD PROCEDURE <MethodName> CLASS <ClassName> _CLASS_MODE_
+
+
+/* special method(s) */
+#xcommand CONSTRUCTOR <Name>        => METHOD <Name> CONSTRUCTOR
+#xcommand DESTRUCTOR <MethodName>   => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MethodName>);;
+   __HB_CLS_DECLARE_METHOD __HB_CLS_PARAMS(<MethodName>) _CLASS_NAME_ ;;
+   oClass:SetDestructor( @__HB_CLS_ASID( __HB_CLS_MTHNAME _CLASS_NAME_ <MethodName> )() )
+#xcommand DESTRUCTOR FUNCTION <FuncName> => ;
+   oClass:SetDestructor( @__HB_CLS_ASID( <FuncName> )() )
+
+#xcommand ON ERROR <MethodName>     => ERROR HANDLER <MethodName>
+#xcommand ERROR HANDLER <MethodName> => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MethodName>);;
+   __HB_CLS_DECLARE_METHOD __HB_CLS_PARAMS(<MethodName>) _CLASS_NAME_ ;;
+   oClass:SetOnError( @__HB_CLS_ASID( __HB_CLS_MTHNAME _CLASS_NAME_ <MethodName> )() )
+#xcommand ON ERROR FUNCTION <FuncName> => ;
+   oClass:SetOnError( @__HB_CLS_ASID( <FuncName> )() )
+
+/* Friend function/class definitions */
+#xcommand FRIEND CLASS <ClassName1> [, <ClassNameN> ] => ;
+   oClass:AddFriendClass( @__HB_CLS_ASID(<ClassName1>)() [, @__HB_CLS_ASID(<ClassNameN>)() ] )
+
+#xcommand FRIEND FUNCTION <FuncName1> [, <FuncNameN> ] => ;
+   oClass:AddFriendFunc( @__HB_CLS_ASID(<FuncName1>)() [, @__HB_CLS_ASID(<FuncNameN>)() ] )
+
+/* Operator overloading */
+#xcommand OPERATOR <op> [<arg: ARG, ARGS> <Args,...>] [LOCAL <Locals,...>] INLINE <Code,...> [ <export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<sync: SYNC>] => ;
+   oClass:AddInline( <(op)>, {|Self [,<Args>] [,<Locals>]| HB_SYMBOL_UNUSED(Self), <Code>}, __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
+
+#xcommand METHOD <MethodName> [ AS <type> ] OPERATOR <op> [ <export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<sync: SYNC>] => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MethodName>) [ AS <type> ];;
+   __HB_CLS_DECLARE_METHOD __HB_CLS_PARAMS(<MethodName>) _CLASS_NAME_ ;;
+   oClass:AddMethod( <(op)>, @__HB_CLS_ASID( __HB_CLS_MTHNAME _CLASS_NAME_ <MethodName> )(), __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
+
+#xcommand OPERATOR <op> FUNCTION <FuncName> [ <export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<sync: SYNC>] => ;
+   oClass:AddMethod( <(op)>, @__HB_CLS_ASID( <FuncName> )(), __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
+
+/* Set/Get Method */
+#xcommand METHOD <MethodName> [ AS <type> ] SETGET [ <export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<ro: READONLY, RO>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MethodName>) [ AS <type> ];;
+   _HB_MEMBER __HB_CLS_ASFUNC(_<MethodName>) [ AS <type> ];;
+   __HB_CLS_DECLARE_METHOD __HB_CLS_PARAMS(<MethodName>) _CLASS_NAME_ ;;
+   oClass:AddMethod( __HB_CLS_ASSTRING(<MethodName>), @__HB_CLS_ASID( __HB_CLS_MTHNAME _CLASS_NAME_ <MethodName> )(), __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) ;;
+   oClass:AddMethod( __HB_CLS_ASSTRING(_<MethodName>), @__HB_CLS_ASID( __HB_CLS_MTHNAME _CLASS_NAME_ <MethodName> )(), __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
+
+/* Message definitions */
+
+/* Virtual / Deferred Methods */
+#xcommand MESSAGE <MessageName> [ AS <type> ] VIRTUAL => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MessageName>) ;;
+   oClass:AddVirtual( __HB_CLS_ASSTRING(<MessageName>) )
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] DEFERRED => ;
+   MESSAGE <MessageName> [ AS <type> ] VIRTUAL
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] IS DEFERRED => ;
+   MESSAGE <MessageName> [ AS <type> ] VIRTUAL
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] METHOD <MethodName> [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MessageName>) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
+   __HB_CLS_DECLARE_METHOD __HB_CLS_PARAMS(<MethodName>) _CLASS_NAME_ ;;
+   oClass:AddMethod( __HB_CLS_ASSTRING(<MessageName>), @__HB_CLS_ASID( __HB_CLS_MTHNAME _CLASS_NAME_ <MethodName> )(), __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] EXTERN <FuncName> [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MessageName>) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
+   oClass:AddMethod( __HB_CLS_ASSTRING(<MessageName>), @__HB_CLS_ASID( <FuncName> )(), __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] BLOCK <CodeBlock> [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MessageName>) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
+   oClass:AddInline( __HB_CLS_ASSTRING(<MessageName>), <CodeBlock>, __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] [LOCAL <Locals,...>] INLINE <Code,...> [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] BLOCK {|Self __HB_CLS_ASARGSOPT(<MessageName>) [,<Locals>]| HB_SYMBOL_UNUSED(Self), <Code>} <ctor> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] <arg: ARG, ARGS> <Args,...> [LOCAL <Locals,...>] INLINE <Code,...> [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE __HB_CLS_ASID(<MessageName>)(<Args>) [ AS <type> ] [LOCAL <Locals>] INLINE <Code> <ctor> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] IS <AltMsgName> [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] INLINE Self:<AltMsgName> <ctor> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] TO <oObject> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] INLINE Self:<oObject>:<MessageName> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] IN <SuperClass> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] INLINE Self:<SuperClass>:<MessageName> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] IS <AltMsgName> TO <oObject> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] INLINE Self:<oObject>:__HB_CLS_ASID(<AltMsgName>)(__HB_CLS_ASARGS(<MessageName>)) <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand MESSAGE <MessageName> [ AS <type> ] IS <SprMethodName> IN <SuperClass> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] INLINE Self:<SuperClass>:__HB_CLS_ASID(<SprMethodName>)(__HB_CLS_ASARGS(<MessageName>)) <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand DELEGATE <MessageName> [ AS <type> ] TO <oObject> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] =>;
+   MESSAGE <MessageName> [ AS <type> ] TO <oObject> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand ACCESS <MessageName> [ AS <type> ] [LOCAL <Locals,...>] INLINE <Code,...> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] [LOCAL <Locals>] INLINE <Code> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand ASSIGN <MessageName> [ AS <type> ] [LOCAL <Locals,...>] INLINE <Code,...> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE _<MessageName> [ AS <type> ] [LOCAL <Locals>] INLINE <Code> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand ACCESS <MessageName> [ AS <type> ] <mth: METHOD, IS> <MethodName> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] <mth> <MethodName> <export> <protect> <hidde> <persistent> <sync>
+
+#xcommand ASSIGN <MessageName> [ AS <type> ] <mth: METHOD, IS> <MethodName> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE _<MessageName> [ AS <type> ] <mth> <MethodName> <export> <protect> <hidde> <persistent> <sync>
+
+/*
+ * These definitions are for backward compatibility only.
+ * They are using METHOD keyword instead of MESSAGE
+ * or only single local parameter in INLINED blocks.
+ * If possible please do not use them and update your
+ * code to use supported syntax. [druzus]
+ */
+#xcommand METHOD <MessageName> [ AS <type> ] VIRTUAL => ;
+   MESSAGE <MessageName> [ AS <type> ] VIRTUAL
+#xcommand METHOD <MessageName> [ AS <type> ] DEFERRED => ;
+   MESSAGE <MessageName> [ AS <type> ] VIRTUAL
+#xcommand METHOD <MessageName> [ AS <type> ] EXTERN <FuncName> [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] EXTERN <FuncName> <ctor> <export> <protect> <hidde> <persistent> <sync>
+#xcommand METHOD <MessageName> [ AS <type> ] INLINE <Code,...> [LOCAL <Locals,...>] [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] [LOCAL <Locals>] INLINE <Code> <ctor> <export> <protect> <hidde> <persistent> <sync>
+#xcommand METHOD <MessageName> [ AS <type> ] BLOCK <CodeBlock> [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] BLOCK <CodeBlock> <ctor> <export> <protect> <hidde> <persistent> <sync>
+#xcommand METHOD <MessageName> [ AS <type> ] INLINE [LOCAL <v>] <Code,...> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] [LOCAL <v>] INLINE <Code> <export> <protect> <hidde> <persistent> <sync>
+#xcommand ACCESS <MessageName> [ AS <type> ] INLINE LOCAL <v> <Code,...> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE <MessageName> [ AS <type> ] LOCAL <v> INLINE <Code> <export> <protect> <hidde> <persistent> <sync>
+#xcommand ASSIGN <MessageName> [ AS <type> ] INLINE LOCAL <v> <Code,...> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   MESSAGE _<MessageName> [ AS <type> ] LOCAL <v> INLINE <Code> <export> <protect> <hidde> <persistent> <sync>
+
+
+/* Definitions of instance variables */
 
 /* CLASSY SYNTAX */
 #ifdef HB_CLS_CSY
-#xtranslate CREATE CLASS => CLASS
-#xtranslate _HB_MEMBER {AS Num  => _HB_MEMBER {AS Numeric
-#xtranslate _HB_MEMBER {AS Char => _HB_MEMBER {AS Character
-#endif
 
-// Extend Classes
-#xcommand OVERRIDE METHOD <!Message!> [IN] CLASS <!Class!> WITH [METHOD] <!Method!> [SCOPE <Scope>] => ;
-  <Class>(); __clsModMsg( __ClsGetHandleFromName( #<Class> ), #<Message>, @<Method>(), IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ) )
+   #xcommand CREATE CLASS <ClassName> [<*more*>] => CLASS <ClassName> <more>
+   #xcommand END CLASS [<*more*>]   => ENDCLASS <more>
+   #xcommand CLASS VAR <*more*>     => CLASSVAR <more>
+   #xcommand CLASS METHOD <*more*>  => CLASSMETHOD <more>
 
-#xcommand EXTEND CLASS <!Class!> WITH <data: DATA, VAR> <Data> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  <Class>(); __clsAddMsg( __ClsGetHandleFromName( #<Class> ), <(Data)>, __cls_IncData( __ClsGetHandleFromName( #<Class> ) ), HB_OO_MSG_PROPERTY, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
+   /* Disable the message :Class */
+   #xtranslate  :CLASS  =>
+   #xtranslate  :CLASS: => :
 
-#xcommand EXTEND CLASS <!Class!> WITH METHOD <!Method!> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  <Class>(); __clsAddMsg( __ClsGetHandleFromName( #<Class> ), #<Method>, @<Method>(), HB_OO_MSG_METHOD, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
+   #xtranslate _HB_MEMBER {AS Int      => _HB_MEMBER {AS Numeric
+   #xtranslate _HB_MEMBER {AS Integer  => _HB_MEMBER {AS Numeric
+   #xtranslate _HB_MEMBER {AS Num      => _HB_MEMBER {AS Numeric
+   #xtranslate _HB_MEMBER {AS Char     => _HB_MEMBER {AS Character
+   #xtranslate _HB_MEMBER {AS Block    => _HB_MEMBER {AS CodeBlock
 
-#xcommand EXTEND CLASS <!Class!> WITH MESSAGE <Message> METHOD <!Method!> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  <Class>(); __clsAddMsg( __ClsGetHandleFromName( #<Class> ), <(Message)>, @<Method>(), HB_OO_MSG_METHOD, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND CLASS <!Class!> WITH MESSAGE <Message> INLINE <code,...> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  <Class>(); __clsAddMsg( __ClsGetHandleFromName( #<Class> ), <(Message)>, {|Self| Self, <code> }, HB_OO_MSG_INLINE, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND CLASS <!Class!> WITH MESSAGE <Message>( <params,...> ) INLINE <code,...> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  <Class>(); __clsAddMsg( __ClsGetHandleFromName( #<Class> ), <(Message)>, {|Self, <params>| Self, <code> }, HB_OO_MSG_INLINE, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-// EXTEND native type classes.
-#xcommand OVERRIDE METHOD <!Message!> [IN] CLASS <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH [METHOD] <!Method!> [SCOPE <Scope>] => ;
-  _<type>(); __clsModMsg( __ClsGetHandleFromName( #<type> ), <(Message)>, @<Method>(), IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ) )
-
-#xcommand EXTEND CLASS <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH <data: DATA, VAR> <Data> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  _<type>(); __clsAddMsg( __ClsGetHandleFromName( #<type> ), <(Data)>, __cls_IncData( __ClsGetHandleFromName( #<type> ) ), HB_OO_MSG_PROPERTY, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND CLASS <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH METHOD <!Method!> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  _<type>(); __clsAddMsg( __ClsGetHandleFromName( #<type> ), #<Method>, @<Method>(), HB_OO_MSG_METHOD, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND CLASS <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH MESSAGE <Message> METHOD <!Method!> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  _<type>(); __clsAddMsg( __ClsGetHandleFromName( #<type> ), <(Message)>, @<Method>(), HB_OO_MSG_METHOD, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND CLASS <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER,  HASH> WITH MESSAGE <Message> INLINE <code,...> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  _<type>(); __clsAddMsg( __ClsGetHandleFromName( #<type> ), <(Message)>, {|Self| Self, <code> }, HB_OO_MSG_INLINE, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND CLASS <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH MESSAGE <Message>( <params,...> ) INLINE <code,...> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  _<type>(); __clsAddMsg( __ClsGetHandleFromName( #<type> ), <(Message)>, {|Self, <params>| Self, <code> }, HB_OO_MSG_INLINE, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-// Extend native type (NOT using standard classes)
-#xcommand EXTEND [TYPE] <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH METHOD <!Method!> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  __clsAddMsg( __ClsGetHandleFromName( #<type> ), #<Method>, @<Method>(), HB_OO_MSG_METHOD, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND [TYPE] <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH MESSAGE <Message> METHOD <!Method!> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  __clsAddMsg( __ClsGetHandleFromName( #<type> ), <(Message)>, @<Method>(), HB_OO_MSG_METHOD, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND [TYPE] <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH MESSAGE <Message> INLINE <code,...> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  __clsAddMsg( __ClsGetHandleFromName( #<type> ), <(Message)>, {|Self| Self, <code>}, HB_OO_MSG_INLINE, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-#xcommand EXTEND [TYPE] <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> WITH MESSAGE <Message>(<params,...>) INLINE <code,...> [SCOPE <Scope>] [<Persistent: PERSISTENT> ] [<Case: NOUPPER>] => ;
-  __clsAddMsg( __ClsGetHandleFromName( #<type> ), <(Message)>, {|Self, <params>| <code>}, HB_OO_MSG_INLINE, NIL, IIF( <.Scope.>, <Scope>, HB_OO_CLSTP_EXPORTED ), <.Persistent.>, <.Case.> )
-
-// ENABLE
-#xcommand ENABLE TYPE CLASS <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> [, <typeN: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH>] => _<type>() [;_<typeN>()]
-#xcommand ENABLE TYPE CLASS ALL => _Array(); _Block(); _Character(); _Date(); _Logical(); _Nil(); _Numeric(); _Pointer(); _Hash()
-
-#xcommand ASSOCIATE CLASS <ClassName> WITH TYPE <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> => ;
-  __clsAssocType( IIF( __ClsGetHandleFromName( <(ClassName)> ) == 0, <ClassName>():ClassH, __ClsGetHandleFromName( <(ClassName)> ) ), #<type> )
-
-#xcommand EXTERNAL <type: ARRAY, BLOCK, CHARACTER, DATE, LOGICAL, NIL, NUMERIC, POINTER, HASH> [, <*rest*>] => _<type>() [; EXTERNAL <rest>]
-
-#ifdef HB_CLS_ALLOWCLASS  /* DONT DECLARE IT ! WORK IN PROGRESS !!! */
-
-#ifndef HB_SHORTNAMES
-/*
-#xtranslate DECLMETH <ClassName> <MethodName> => <ClassName>_<MethodName>
-
-#xcommand CLASS <ClassName> [METACLASS <metaClass>] [ <frm: FROM, INHERIT> <SuperClass1> [,<SuperClassN>] ] [<static: STATIC>] => ;
-   _HB_CLASS <ClassName> ;;
-   UTILITY <static> FUNCTION <ClassName>(...) ;;
-      static s_oClass ;;
-      local MetaClass,nScope ;;
-      [ REQUEST <SuperClass1> ] [ ,<SuperClassN> ] ;;
-      nScope := HB_OO_CLSTP_EXPORTED ;;
-      if s_oClass == NIL ;;
-         s_oClass  := IIF(<.metaClass.>, <(metaClass)>, HBClass():new( <(ClassName)> , __HB_CLS_PAR ( [ <(SuperClass1)> ] [ ,<(SuperClassN)> ] ) ) ) ;;
-         if ! <.metaClass.> ;;
-          Metaclass := HBClass():new( <(ClassName)>+" class", __HB_CLS_PAR0 ( [ <SuperClass1>():class ] [ ,<SuperClassN>():class ] ) )  ;;
-         end              ;;
-     #undef  _CLASS_NAME_ ;;
-     #define _CLASS_NAME_ <ClassName> ;;
-     #undef  _CLASS_MODE_ ;;
-     #define _CLASS_MODE_ _CLASS_DECLARATION_ ;;
-     #untranslate CLSMETH ;;
-     #untranslate DECLCLASS ;;
-     #xtranslate CLSMETH <ClassName> \<MethodName> => @<ClassName>_\<MethodName> ;;
-     #xtranslate DECLCLASS <ClassName> => <ClassName> ;
-     ; #xuntranslate Super() : ;
-     ; #xuntranslate Super : ;
-     ; #xuntranslate : Super : ;
-     [ ; #translate Super( <SuperClassN> ) : => ::<SuperClassN>: ] ;
-     ; #translate Super( <SuperClass1> ) : => ::<SuperClass1>: ;
-     ; #translate Super() : => ::<SuperClass1>: ;
-     ; #translate Super : => ::<SuperClass1>: ;
-     ; #translate : Super : => :<SuperClass1>:
-*/
-#else
-/*
-#xcommand CLASS <ClassName> [METACLASS <metaClass>] [ <frm: FROM, INHERIT> <SuperClass1> [,<SuperClassN>] ] [<static: STATIC>] => ;
-   _HB_CLASS <ClassName> ;;
-   UTILITY <static> FUNCTION <ClassName>(...) ;;
-      static s_oClass  ;;
-      local MetaClass,nScope ;;
-      [ REQUEST <SuperClass1> ] [ ,<SuperClassN> ] ;;
-      nScope := HB_OO_CLSTP_EXPORTED ;;
-      if s_oClass == NIL ;;
-         s_oClass  := IIF(<.metaClass.>, <(metaClass)>, HBClass():new( <(ClassName)> , __HB_CLS_PAR ( [ <(SuperClass1)> ] [ ,<(SuperClassN)> ] ) ) ) ;;
-         if ! <.metaClass.> ;;
-          Metaclass := HBClass():new( <(ClassName)>+" class", __HB_CLS_PAR0 ( [ <SuperClass1>():class ] [ ,<SuperClassN>():class ] ) )  ;;
-         end              ;;
-     #undef  _CLASS_NAME_ ;;
-     #define _CLASS_NAME_ <ClassName> ;;
-     #undef  _CLASS_MODE_ ;;
-     #define _CLASS_MODE_ _CLASS_DECLARATION_ ;;
-     #untranslate CLSMETH ;;
-     #translate CLSMETH <ClassName> \<MethodName>() => @\<MethodName> ;
-     ; #xuntranslate Super() : ;
-     ; #xuntranslate Super : ;
-     ; #xuntranslate : Super : ;
-     [ ; #translate Super( <SuperClassN> ) : => ::<SuperClassN>: ] ;
-     ; #translate Super( <SuperClass1> ) : => ::<SuperClass1>: ;
-     ; #translate Super() : => ::<SuperClass1>: ;
-     ; #translate Super : => ::<SuperClass1>: ;
-     ; #translate : Super : => :<SuperClass1>:
-*/
-#endif /* HB_SHORTNAMES */
-
-#else
-
-#ifndef HB_SHORTNAMES
-
-#xtranslate DECLMETH <ClassName> <MethodName> => <ClassName>_<MethodName>
-
-#xcommand CLASS <ClassName> [METACLASS <metaClass>] [ <frm: FROM, INHERIT> <SuperClass1> [,<SuperClassN> ] ] [<static: STATIC>] [ FUNCTION <FuncName> ] [ IMPLEMENTS NAMESPACE <ns> ] => ;
-   _HB_CLASS <ClassName> ;;
-   UTILITY <static> FUNCTION __OPT__( [ _AsName_( <FuncName> ), ] _AsName_( <ClassName> ))(...) [ IMPLEMENTS NAMESPACE <ns> ];;
-      static s_oClass ;;
-      local oClassInstance ;;
-      local nScope ;;
-   #if defined( __HRB__ ) || defined( __EXPORT__ ) ;;
-      local __lInactive := s_oClass != NIL .and. !__clsIsActive(s_oClass:hClass) ;;
-   #else ;;
-      #undef __lInactive ;;
-      #define __lInactive .F. ;;
-   #endif ;;
-      nScope := HB_OO_CLSTP_EXPORTED ;;
-   #if defined( __HRB__ ) || defined( __EXPORT__ ) ;;
-      if s_oClass == NIL .or. __lInactive ;;
-   #endif ;;
-         if s_oClass == NIL ;;
-            s_oClass  := IIF(<.metaClass.>, <(metaClass)>, HBClass():New( _AsStr_( <ClassName> ) , _InheritFrom_( [ _AsNameFrom_( <SuperClass1> )():classh ] [ , _AsNameFrom_( <SuperClassN> )():classh ] ) ) ) ;;
-   #if defined( __HRB__ ) || defined( __EXPORT__ ) ;;
-         endif ;;
-   #endif ;;
-     #undef  _CLASS_NAME_ ;;
-     #define _CLASS_NAME_ <ClassName>;;
-     #undef  _CLASS_MODE_ ;;
-     #define _CLASS_MODE_ _CLASS_DECLARATION_ ;;
-     #untranslate CLSMETH ;;
-     #untranslate DECLCLASS ;;
-     #xtranslate CLSMETH <ClassName> \<MethodName> => @<ClassName>_\<MethodName> ;;
-     #xtranslate DECLCLASS <ClassName> => <ClassName> ;
-     ;DECLSUPER <SuperClass1> [, <SuperClassN> ]
+   #xcommand EXPORTED:   =>    nScope := HB_OO_CLSTP_EXPORTED ; HB_SYMBOL_UNUSED( nScope )
+   #xcommand EXPORT:     =>    nScope := HB_OO_CLSTP_EXPORTED ; HB_SYMBOL_UNUSED( nScope )
+   #xcommand VISIBLE:    =>    nScope := HB_OO_CLSTP_EXPORTED ; HB_SYMBOL_UNUSED( nScope )
+   #xcommand HIDDEN:     =>    nScope := HB_OO_CLSTP_HIDDEN   ; HB_SYMBOL_UNUSED( nScope )
+   #xcommand PROTECTED:  =>    nScope := HB_OO_CLSTP_PROTECTED; HB_SYMBOL_UNUSED( nScope )
 
 
-#else
+   /* Classy compatibility... Added By JF Lefebvre (mafact) 2006-11-07 */
+   #xcommand METHOD <MethodName> [ AS <type> ] INLINE [Local <v>,] <Code,...> [<other>] => ;
+             MESSAGE <MethodName> [ AS <type> ] BLOCK {|Self [,<v>] | HB_SYMBOL_UNUSED(Self), <Code>} [ <other>]
 
-#xcommand CLASS <ClassName> [METACLASS <metaClass>] [ <frm: FROM, INHERIT> <SuperClass1> [,<SuperClassN>] ] [<static: STATIC>] [ FUNCTION <FuncName> ] [ IMPLEMENTS NAMESPACE <ns> ] => ;
-   _HB_CLASS <ClassName> ;;
-   UTILITY <static> FUNCTION __OPT__( [ _AsName_( <FuncName> ), ] _AsName_( <ClassName> ))(...) [ IMPLEMENTS NAMESPACE <ns> ] ;;
-      static s_oClass  ;;
-      local oClassInstance ;;
-      local nScope ;;
-   #if defined( __HRB__ ) || defined( __EXPORT__ ) ;;
-      local __lInactive := s_oClass != NIL .and. !__clsIsActive(s_oClass:hClass) ;;
-   #else ;;
-      #undef __lInactive ;;
-      #define __lInactive .F. ;;
-   #endif ;;
-      nScope := HB_OO_CLSTP_EXPORTED ;;
-   #if defined( __HRB__ ) || defined( __EXPORT__ ) ;;
-      if s_oClass == NIL .or. __lInactive ;;
-   #endif ;;
-         if s_oClass == NIL ;;
-            s_oClass  := IIF(<.metaClass.>, <(metaClass)>, HBClass():New( _AsStr_( <ClassName> ) , _InheritFrom_( [ _AsNameFrom_( <SuperClass1> )():classh ] [ , _AsNameFrom_( <SuperClassN> )():classh ] ) ) ) ;;
-   #if defined( __HRB__ ) || defined( __EXPORT__ ) ;;
-         endif ;;
-   #endif ;;
-     #undef  _CLASS_NAME_ ;;
-     #define _CLASS_NAME_ <ClassName> ;;
-     #undef  _CLASS_MODE_ ;;
-     #define _CLASS_MODE_ _CLASS_DECLARATION_ ;;
-     #untranslate CLSMETH ;;
-     #translate CLSMETH <ClassName> \<MethodName>() => @\<MethodName> ;
-     ;DECLSUPER <SuperClass1> [, <SuperClassN> ]
-
-#endif /* HB_SHORTNAMES */
-
-#xcommand  DECLSUPER =>
-
-#xcommand  DECLSUPER <SuperClass1> [, <SuperClassN> ] ;
-      =>;
-     ; #xuntranslate Super() : ;
-     ; #xuntranslate Super : ;
-     ; #xuntranslate : Super : ;
-     ;;
-     [ ; DECLSUPERN <SuperClassN> ] ;
-     ; #translate Super( <SuperClass1> ) : => ::<SuperClass1>: ;
-     ; #translate Super() : => ::<SuperClass1>: ;
-     ; #translate Super : => ::<SuperClass1>: ;
-     ; #translate : Super : => :<SuperClass1>:
-
-#xcommand  DECLSUPER <Func>( <SuperClass1> ) [, <SuperClassN> ] ;
-      =>;
-     ; #xuntranslate Super() : ;
-     ; #xuntranslate Super : ;
-     ; #xuntranslate : Super : ;
-     ;;
-     [ ; DECLSUPERN <SuperClassN> ] ;
-     ; #translate Super( <SuperClass1> ) : => ::<SuperClass1>: ;
-     ; #translate Super() : => ::<SuperClass1>: ;
-     ; #translate Super : => ::<SuperClass1>: ;
-     ; #translate : Super : => :<SuperClass1>:
-
-#xcommand DECLSUPERN <SuperClass> ;
-      =>;
-      #translate Super( <SuperClass> ) : => ::<SuperClass>:
-
-#xcommand DECLSUPERN <Func>( <SuperClass> ) ;
-      =>;
-      #translate Super( <SuperClass> ) : => ::<SuperClass>:
-
-/* Disable the message :Class */
-/* CLASSY SYNTAX */
-#ifdef HB_CLS_CSY
-#xtranslate  :CLASS  =>
-#xtranslate  :CLASS: => :
-#endif
-
-#endif /* HB_CLS_ALLOWCLASS */
+   #xcommand METHOD <MethodName>( [<params,...>] ) [ AS <type> ] INLINE [Local <v>,] <Code,...> [<other>] => ;
+             MESSAGE <MethodName> [ AS <type> ] BLOCK {|Self [, <params>] [, <v>] | HB_SYMBOL_UNUSED(Self), <Code> } [ <other>]
 
 
-/* CLASSY SYNTAX */
-#IFDEF HB_CLS_CSY
+   /* These definitions are not Class(y) compatible - I'm leaving them as is now */
 
-// VAR ...
-#xcommand VAR <DataNames,...> [ TYPE <type> ] [ ASSIGN <uValue> ] [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ) , )
+   #xcommand VAR <DataNames,...> [ <tp: TYPE, AS> <type> ] [ <as: ASSIGN, INIT> <uValue> ] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<ro: READONLY, RO>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+      __HB_CLS_CHECKVAR(<DataNames>);;
+      _HB_MEMBER {[ AS <type>] <DataNames> } ;;
+      oClass:AddMultiData( <(type)>, <uValue>, __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), {<(DataNames)>}, __HB_CLS_NOINI )
 
-// VAR ...
-#xcommand VAR <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ) , )
+   #xcommand VAR <DataName> [ AS <type> ] IN <SuperClass> => ;
+      __HB_CLS_CHECKVAR(<DataName>);;
+      _HB_MEMBER {[ AS <type>] <DataName> } ;;
+      oClass:AddInline( <(DataName)>, {|Self| Self:<SuperClass>:<DataName> }, HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY ) ;;
+      oClass:AddInline( "_" + <(DataName)>, {|Self, param| Self:<SuperClass>:<DataName> := param }, HB_OO_CLSTP_EXPORTED )
 
-// VAR ... IN ...
-#xcommand VAR <DataName> [ AS <type> ] IN <SuperClass> [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataName>} ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <DataName> ),, <(SuperClass)>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), ) ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( _<DataName> ),, <(SuperClass)>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), )
+   #xcommand VAR <DataName> [ AS <type> ] IS <SprDataName> IN <SuperClass> => ;
+      __HB_CLS_CHECKVAR(<DataName>);;
+      _HB_MEMBER {[ AS <type>] <DataName> } ;;
+      oClass:AddInline( <(DataName)>, {|Self| Self:<SuperClass>:<SprDataName> }, HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY ) ;;
+      oClass:AddInline( "_" + <(DataName)>, {|Self, param| Self:<SuperClass>:<SprDataName> := param }, HB_OO_CLSTP_EXPORTED )
 
-// VAR ... IS ... IN ...
-#xcommand VAR <DataName> [ AS <type> ] IS <SprDataName> IN <SuperClass> [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataName>} ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <DataName> ), _AsStr_( <SprDataName> ), <(SuperClass)>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), ) ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( _<DataName> ), _AsStr_( _<SprDataName> ), <(SuperClass)>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), )
+   #xcommand VAR <DataName1> [ AS <type> ] IS <DataName2> => ;
+      __HB_CLS_CHECKVAR(<DataName1>);;
+      _HB_MEMBER {[ AS <type>] <DataName1> } ;;
+      oClass:AddInline( <(DataName1)>, {|Self| Self:<DataName2> }, HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY ) ;;
+      oClass:AddInline( "_" + <(DataName1)>, {|Self, param| Self:<DataName2> := param }, HB_OO_CLSTP_EXPORTED )
 
-// VAR ... IS ...
-#xcommand VAR <DataName> [ AS <type> ] IS <SprDataName> [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataName>} ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <DataName> ), _AsStr_( <SprDataName> ),, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), ) ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( _<DataName> ), _AsStr_( _<SprDataName> ),, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), )
-
-// VAR ... TO ...
-#xcommand VAR <DataName> [ AS <type> ] TO <SuperClass> [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataName>} ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <DataName> ),, <(SuperClass)>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), ) ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( _<DataName> ),, <(SuperClass)>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), )
-
-// VAR ... IS ... TO ...
-#xcommand VAR <DataName> [ AS <type> ] IS <SprDataName> TO <SuperClass> [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataName>} ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <DataName> ), _AsStr_( <SprDataName> ), <(SuperClass)>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), ) ;;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( _<DataName> ), _AsStr_( _<SprDataName> ), <(SuperClass)>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), <.persistent.> ), )
-
-#xcommand CLASS VAR <*rest*> => CLASSVAR <rest>
-#xcommand CLASS METHOD <*rest*> => CLASSMETHOD <rest>
-
-#xcommand METHOD <MethodName> [ AS <type> ] DEFERRED => ;
-   _HB_MEMBER _AsFunc_( <MethodName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddVirtual( _AsStr_( <MethodName> ) ), )
+   #xcommand VAR <DataName1> [ AS <type> ] IS <DataName2> TO <oObject> => ;
+      __HB_CLS_CHECKVAR(<DataName1>);;
+      _HB_MEMBER {[ AS <type>] <DataName1> } ;;
+      oClass:AddInline( <(DataName1)>, {|Self| Self:<oObject>:<DataName2> }, HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY ) ;;
+      oClass:AddInline( "_" + <(DataName1)>, {|Self, param| Self:<oObject>:<DataName2> := param }, HB_OO_CLSTP_EXPORTED )
 
 #endif /* HB_CLS_CSY */
 
+/* FWOBJECT SYNTAX */
+#ifdef HB_CLS_FWO
+
+   #xcommand DATA <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [ <export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<ro: READONLY, RO>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+      __HB_CLS_CHECKVAR(<DataNames>);;
+      _HB_MEMBER {[ AS <type>] <DataNames> } ;;
+      oClass:AddMultiData( <(type)>, <uValue>, __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), {<(DataNames)>}, __HB_CLS_NOINI )
+
+   /* Warning! For backward compatibility this CLASSDATA ignores the
+      SHARED clause and always create shared class variables */
+   #xcommand CLASSDATA <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<ro: READONLY, RO>] [<share: SHARED>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+      _HB_MEMBER {[ AS <type>] <DataNames> } ;;
+   oClass:AddMultiClsData( <(type)>, <uValue>, __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + iif( /* <.share.> */ .T., HB_OO_CLSTP_SHARED, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), {<(DataNames)>}, __HB_CLS_NOINI )
+
+#endif /* HB_CLS_FWO */
 
 /* VO SYNTAX */
 #ifdef HB_CLS_VO
 
 #xtranslate  ( <!name!>{ [<p,...>] }        =>  ( <name>():New( <p> )
-#xtranslate  = <!name!>{ [<p,...>] }        =>  = <name>():New( <p> )
 #xtranslate  , <!name!>{ [<p,...>] }        =>  , <name>():New( <p> )
-#xtranslate  := <!name!>{ [<p,...>] }       =>  := <name>():New( <p> )
+#xtranslate  = <!name!>{ [<p,...>] }        =>  = <name>():New( <p> )
+#xtranslate := <!name!>{ [<p,...>] }        => := <name>():New( <p> )
 
-#xcommand EXPORT <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_EXPORTED + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ), ) ;
+#xcommand EXPORT <!DataName1!> [, <!DataNameN!>] [ <tp: TYPE, AS> <type> ] [ <as: ASSIGN, INIT> <uValue> ] [<ro: READONLY, RO>] [<persistent: PERSISTENT, PROPERTY>] => ;
+   _HB_MEMBER {[ AS <type>] <DataName1> [, <DataNameN>] } ;;
+   oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_EXPORTED + iif( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ), {<(DataName1)> [, <(DataNameN)>]}, __HB_CLS_NOINI )
 
-#xcommand EXPORT <DataNames,...> [ TYPE <type> ] [ ASSIGN <uValue> ] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_EXPORTED + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ), ) ;
+#xcommand PROTECT <!DataName1!> [, <!DataNameN!>] [ <tp: TYPE, AS> <type> ] [ <as: ASSIGN, INIT> <uValue> ] [<ro: READONLY, RO>] [<persistent: PERSISTENT, PROPERTY>] => ;
+   _HB_MEMBER {[ AS <type>] <DataName1> [, <DataNameN>] } ;;
+   oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_PROTECTED + iif( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ), {<(DataName1)> [, <(DataNameN)>]}, __HB_CLS_NOINI )
 
-#xcommand PROTECT <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_PROTECTED + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ), ) ;
+#xcommand HIDDEN <!DataName1!> [, <!DataNameN!>] [ <tp: TYPE, AS> <type> ] [ <as: ASSIGN, INIT> <uValue> ] [<ro: READONLY, RO>] [<persistent: PERSISTENT, PROPERTY>] => ;
+   _HB_MEMBER {[ AS <type>] <DataName1> [, <DataNameN>] } ;;
+   oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_HIDDEN + iif( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ), {<(DataName1)> [, <(DataNameN)>]}, __HB_CLS_NOINI )
 
-#xcommand PROTECT <DataNames,...> [ TYPE <type> ] [ ASSIGN <uValue> ] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_PROTECTED + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ), ) ;
+#endif /* HB_CLS_VO */
 
-#xcommand HIDDEN <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_HIDDEN + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ), ) ;
+/* Xbase++ syntax */
+#ifdef HB_CLS_XPP
 
-#xcommand HIDDEN <DataNames,...> [ TYPE <type> ] [ ASSIGN <uValue> ] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HB_OO_CLSTP_HIDDEN + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ), ) ;
+   #xcommand SYNC METHOD <MethodName> [<decl,...>] => METHOD <MethodName> [<decl>] SYNC
+   #xcommand SYNC CLASS METHOD <MethodName> [<decl,...>] => CLASSMETHOD <MethodName> [<decl>] SYNC
 
-#ENDIF /* HB_CLS_VO */
+   #xcommand METHOD <!MethodName1!>[([<params,...>])], <!MethodName2!>[([<params,...>])] [, <!MethodNameN!>[([<params,...>])]] => ;
+             METHOD <MethodName1> [ ; METHOD <MethodName2> ] [ ; METHOD <MethodNameN> ]
+   #xcommand SYNC METHOD <!MethodName1!>[([<params,...>])], <!MethodName2!>[([<params,...>])] [, <!MethodNameN!>[([<params,...>])]] => ;
+             SYNC METHOD <MethodName1> [ ; SYNC METHOD <MethodName2> ] [ ; SYNC METHOD <MethodNameN> ]
 
+   #xcommand METHOD <!className!>:<!methodName!>[([<params,...>])] => ;
+             METHOD <methodName>( <params> ) CLASS <className>
 
-#xcommand CLASSVAR <DataNames,...> [ TYPE <type> ] [ ASSIGN <uValue> ] [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] [<share: SHARED>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiClsData(<(type)>, <uValue>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI ), ) ;
+#endif /* HB_CLS_XPP */
 
-#xcommand CLASSVAR <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] [<share: SHARED>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiClsData(<(type)>, <uValue>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI ), ) ;
+/* Class datas and messages - we do not support real class messages yet */
+#xcommand CLASSMETHOD <MethodName> [ AS <type> ] [<ctor: CONSTRUCTOR>] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<share: SHARED>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   _HB_MEMBER __HB_CLS_ASFUNC(<MethodName>) [ AS <type> ];;
+   __HB_CLS_DECLARE_METHOD __HB_CLS_PARAMS(<MethodName>) _CLASS_NAME_ ;;
+   oClass:AddClsMethod( __HB_CLS_ASSTRING(<MethodName>), @__HB_CLS_ASID( __HB_CLS_MTHNAME _CLASS_NAME_ <MethodName> )(), __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + iif( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) )
 
+#xcommand CLASSVAR <!DataName1!> [, <!DataNameN!>] [ <tp: TYPE, AS> <type> ] [ <as: ASSIGN, INIT> <uValue> ] [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<ro: READONLY, RO>] [<share: SHARED>] [<persistent: PERSISTENT, PROPERTY>] [<sync: SYNC>] => ;
+   _HB_MEMBER {[ AS <type>] <DataName1> [, <DataNameN>] } ;;
+   oClass:AddMultiClsData( <(type)>, <uValue>, __HB_CLS_SCOPE( <.export.>, <.protect.>, <.hidde.> ) + iif( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + iif( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + iif( <.persistent.>, HB_OO_CLSTP_PERSIST, 0 ) + iif( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), {<(DataName1)> [, <(DataNameN)>]}, __HB_CLS_NOINI )
 
-/* FWOBJECT SYNTAX */
-#ifdef HB_CLS_FWO
 
-#xcommand DATA <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [<publish: PUBLISHED>] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] ;
-   [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiData( <(type)>, <uValue>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ), { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI, <.persistent.> ), ) ;
+/* Scalar classes support */
+#command ASSOCIATE CLASS <ClassFuncName> WITH TYPE <type: ;
+   ARRAY, BLOCK, CHARACTER, DATE, HASH, LOGICAL, NIL, NUMERIC, SYMBOL, TIMESTAMP, POINTER> => ;
+      __clsAssocType( __clsInstSuper( @<ClassFuncName>() ), #<type> )
 
+#command ENABLE TYPE CLASS <type: ;
+   ARRAY, BLOCK, CHARACTER, DATE, HASH, LOGICAL, NIL, NUMERIC, SYMBOL, TIMESTAMP, POINTER> ;
+   [, <typeN: ;
+   ARRAY, BLOCK, CHARACTER, DATE, HASH, LOGICAL, NIL, NUMERIC, SYMBOL, TIMESTAMP, POINTER>] => ;
+      REQUEST HB<type> [, HB<typeN>]
 
-#xcommand CLASSDATA <DataNames,...> [ AS <type> ] [ INIT <uValue> ] [<publish: PUBLISHED>] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ro: READONLY, RO>] [<share: SHARED>] => ;
-   _HB_MEMBER {[AS <type>] <DataNames>} ;;
-   IIF( !__lInactive, s_oClass:AddMultiClsData(<(type)>, <uValue>, HBCLSCHOICE( <.publish.>, <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ro.>, HB_OO_CLSTP_READONLY, 0 ) + HB_OO_CLSTP_SHARED, { _AsStrLst_( <DataNames> ) }, __HB_CLS_NOINI ), ) ;
-
-#endif /* HB_CLS_FWO */
-
-
-/* XBASE SYNTAX */
-#ifdef HB_CLS_XB
-
-#xcommand SYNC METHOD <Name> [<*x*>] => METHOD <Name> SYNC [<x>]
-
-#endif
-
-#xcommand CLASSMETHOD <MethodName> [ <clsctor: CONSTRUCTOR> ] [ AS <type> ] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<share: SHARED>] => ;
-   _HB_MEMBER _AsFunc_( <MethodName> ) [ AS <type> ];;
-   IIF( __lInactive, s_oClass:ModClsMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + IIF( <.clsctor.>, HB_OO_CLSTP_CLASSCTOR, 0 ) ) ), ;
-   s_oClass:AddClsMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + IIF( <.clsctor.>, HB_OO_CLSTP_CLASSCTOR, 0 ) ) );;
-   #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>])
-
-#xcommand CONSTRUCTOR <Name> [<*x*>] => METHOD <Name> CONSTRUCTOR [<x>]
-#xcommand CONSTRUCTOR <Name> INLINE <Code,...> [<*x*>] => METHOD <Name> INLINE <Code> CONSTRUCTOR [<x>]
-
-#ifdef STRICT_OO
-  #xcommand METHOD <MethodName> [ <ctor: CONSTRUCTOR> ] [ AS <type> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] [_CLASS_DECLARATION_] ;
-    [<persistent: PERSISTENT, PROPERTY>] [<ov: OVERRIDE>] => ;
-    _HB_MEMBER _AsFunc_( <MethodName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ),;
-    s_oClass:AddMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ));;
-    #xcommand METHOD <MethodName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>;;
-    #xcommand PROCEDURE <MethodName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>;;
-    #xcommand METHOD <MethodName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>;;
-    #xcommand PROCEDURE <MethodName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE \<ClassName> <MethodName>
-
-  #xcommand CLASSMETHOD <MethodName> [ <clsctod: CONSTRUCTOR> ] [ AS <type> ] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<share: SHARED>] [<sync: SYNC>] [_CLASS_DECLARATION_] => ;
-    _HB_MEMBER _AsFunc_( <MethodName> ) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModClsMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + IIF( <.clsctod.>, HB_OO_CLSTP_CLASSCTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ), ;
-    s_oClass:AddClsMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + IIF( <.clsctod.>, HB_OO_CLSTP_CLASSCTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ));;
-    #xcommand METHOD <MethodName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>;;
-    #xcommand PROCEDURE <MethodName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>;;
-    #xcommand METHOD <MethodName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>;;
-    #xcommand PROCEDURE <MethodName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE \<ClassName> <MethodName>
-#else
-  #xcommand METHOD <MethodName> [ <ctor: CONSTRUCTOR> ] [ AS <type> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] [_CLASS_DECLARATION_] ;
-    [<persistent: PERSISTENT, PROPERTY>] [<ov: OVERRIDE>] => ;
-    _HB_MEMBER _AsFunc_( <MethodName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ),;
-    s_oClass:AddMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ));;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[ \<anyParams>]);;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>(\[ \<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[ \<anyParams>]);;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE \<ClassName> <MethodName>(\[ \<anyParams>])
-
-  #xcommand METHOD <MethodName>([<params,...>]) [ <ctor: CONSTRUCTOR> ] [ AS <type> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] [_CLASS_DECLARATION_] ;
-    [<persistent: PERSISTENT, PROPERTY>] [<ov: OVERRIDE>] => ;
-    _HB_MEMBER <MethodName>([ <params>]) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ),;
-    s_oClass:AddMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ));;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[ \<anyParams>]);;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>(\[ \<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[ \<anyParams>]);;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE \<ClassName> <MethodName>(\[ \<anyParams>])
-
-  #xcommand CLASSMETHOD <MethodName> [ <clsctor: CONSTRUCTOR> ] [ AS <type> ] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<share: SHARED>] [<sync: SYNC>] [_CLASS_DECLARATION_] => ;
-    _HB_MEMBER _AsFunc_( <MethodName> ) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModClsMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + IIF( <.clsctor.>, HB_OO_CLSTP_CLASSCTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ), ;
-    s_oClass:AddClsMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + IIF( <.clsctor.>, HB_OO_CLSTP_CLASSCTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ));;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[ \<anyParams>]);;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>(\[ \<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[ \<anyParams>]);;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE \<ClassName> <MethodName>(\[ \<anyParams>])
-
-  #xcommand CLASSMETHOD <MethodName>([<params,...>]) [ <clsctor: CONSTRUCTOR> ] [ AS <type> ] [<export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<share: SHARED>] [<sync: SYNC>] [_CLASS_DECLARATION_] => ;
-    _HB_MEMBER <MethodName>([ <params>]) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModClsMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + IIF( <.clsctor.>, HB_OO_CLSTP_CLASSCTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ), ;
-    s_oClass:AddClsMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.share.>, HB_OO_CLSTP_SHARED, 0 ) + IIF( <.clsctor.>, HB_OO_CLSTP_CLASSCTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[ \<anyParams>]);;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>(\[ \<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[ \<anyParams>]);;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE \<ClassName> <MethodName>(\[ \<anyParams>])
-
-#endif /* STRICT_OO */
-
-// METHOD ... BLOCK ...
-#xcommand METHOD <MethodName> [ AS <type> ] BLOCK <CodeBlock> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] ;
-   [<persistent: PERSISTENT, PROPERTY>] [<ov: OVERRIDE>] => ;
-   _HB_MEMBER _AsFunc_( <MethodName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-   IIF( __lInactive, s_oClass:ModInline( _AsStr_( <MethodName> ), <CodeBlock>, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ),;
-   s_oClass:AddInline( _AsStr_( <MethodName> ), <CodeBlock>, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ) )
-
-// METHOD ... EXTERN ...
-#xcommand METHOD <MethodName> [ AS <type> ] EXTERN <FuncName> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] ;
-   [<persistent: PERSISTENT, PROPERTY>] [<ov: OVERRIDE>] => ;
-   _HB_MEMBER _AsFunc_( <MethodName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-   IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MethodName> ), @_AsName_( <FuncName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ),;
-   s_oClass:AddMethod( _AsStr_( <MethodName> ), @_AsName_( <FuncName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ) )
-
-// METHOD ... INLINE LOCAL ...
-#xcommand METHOD <MethodName> [ AS <type> ] INLINE [Local <v>,] <Code,...> [<other>] => ;
-          METHOD <MethodName> [ AS <type> ] BLOCK {|Self [,<v>] | Self, <Code> } [<other>]
-
-// METHOD ...( <,...> ) INLINE LOCAL ...
-/* Must have secondary version with params becuase params are used in the block */
-#xcommand METHOD <MethodName>( [<params,...>] ) [ AS <type> ] INLINE [Local <v>,] <Code,...> [<other>] => ;
-          METHOD <MethodName>( [<params>] ) [ AS <type> ] BLOCK {|Self [,<params>] [,<v>] | Self, <Code> } [<other>]
-
-// METHOD ... INLINE ...
-#xcommand METHOD <MethodName> [ AS <type> ] INLINE <Code,...> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] ;
-   [<persistent: PERSISTENT, PROPERTY>] [<ov: OVERRIDE>] => ;
-   _HB_MEMBER _AsFunc_( <MethodName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-   IIF( __lInactive, s_oClass:ModInline( _AsStr_( <MethodName> ), {|Self | Self, <Code> }, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ), ;
-   s_oClass:AddInline( _AsStr_( <MethodName> ), {|Self | Self, <Code> }, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ) )
-
-// METHOD ...( <,...> ) INLINE ...
-/* Must have secondary version with params because params are used in the block */
-#xcommand METHOD <MethodName>( [<params,...>] ) [ AS <type> ] INLINE <Code,...> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] ;
-   [<persistent: PERSISTENT, PROPERTY>] [<ov: OVERRIDE>] => ;
-   _HB_MEMBER <MethodName>([<params>]) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-   IIF( __lInactive, s_oClass:ModInline( _AsStr_( <MethodName> ), {|Self [,<params>] | Self, <Code> }, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ), ;
-   s_oClass:AddInline( _AsStr_( <MethodName> ), {|Self [,<params>] | Self, <Code> }, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ), <.persistent.> ) )
-
-
-#XCOMMAND INLINE METHOD <!Method!>[()] => WITH OBJECT \<|Self|; #undef __METHOD__; #define __METHOD__ <Method>
-#XCOMMAND INLINE METHOD <!Method!>( <params,...> ) => WITH OBJECT \<|Self, <params>|; #undef __METHOD__; #define __METHOD__ <Method>
-#XCOMMAND ENDMETHOD => \>; METHOD __METHOD__ BLOCK HB_QWith(); END
-
-#xcommand METHOD <MethodName> [ AS <type> ] [ <ctor: CONSTRUCTOR> ] VIRTUAL => ;
-   _HB_MEMBER _AsFunc_( <MethodName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddVirtual( _AsStr_( <MethodName> ) ), )
-
-#xcommand METHOD <MethodName> [ AS <type> ] [ <ctor: CONSTRUCTOR> ] DYNAMIC => ;
-   _HB_MEMBER _AsFunc_( <MethodName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddVirtual( _AsStr_( <MethodName> ) ), )
-
-#ifdef STRICT_OO
-  #xcommand METHOD <MethodName> [ AS <type> ] OPERATOR <op> [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] [<ov: OVERRIDE>] => ;
-    _HB_MEMBER _AsFunc_( <MethodName> )  [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( <(op)>, CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-    s_oClass:AddMethod( <(op)>, CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand METHOD <MethodName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName> ;;
-    #xcommand METHOD <MethodName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>
-#else
-  #xcommand METHOD <MethodName> [ AS <type> ] OPERATOR <op> [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] [<ov: OVERRIDE>] => ;
-    _HB_MEMBER _AsFunc_( <MethodName> )  [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( <(op)>, CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-    s_oClass:AddMethod( <(op)>, CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]) ;;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-
-  #xcommand METHOD <MethodName>( [<params,...>] ) [ AS <type> ] OPERATOR <op> [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] [<ov: OVERRIDE>] => ;
-    _HB_MEMBER <MethodName>([<params>])  [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( <(op)>, CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-    s_oClass:AddMethod( <(op)>, CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-#endif /* STRICT_OO */
-
-#xcommand OPERATOR <op> [ARG <xArg>] INLINE <Code,...> [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVARE>] => ;
-if( __lInactive, s_oClass:ModInline( <(op)>, {|Self [, <xArg>] | Self, <Code> }, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) ), ;
-s_oClass:AddInline( <(op)>, {|Self [, <xArg>] | Self, <Code> }, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) ) )
-
-//command OPERATOR <op> ARG <xArg> INLINE [Local lx,...] <Code,...> [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] => ;
-//oClass:AddInline( <(op)>, {|Self, <xArg> [,<lx>] | <Code> }, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) )
-
-#ifdef STRICT_OO
-  #xcommand MESSAGE <MessageName> [ AS <type> ] METHOD <MethodName> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] => ;
-     _HB_MEMBER _AsFunc_( <MessageName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-     IIF( __lInactive, s_oClass:ModMethod( <(MessageName)>, CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-     s_oClass:AddMethod( <(MessageName)>, CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-     #xcommand METHOD <MethodName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>;;
-     #xcommand METHOD <MethodName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>
-#else
-  #xcommand MESSAGE <MessageName> [ AS <type> ] METHOD <MethodName> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] => ;
-     _HB_MEMBER _AsFunc_( <MessageName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-     IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-     s_oClass:AddMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-
-  #xcommand MESSAGE <MessageName> [ AS <type> ] METHOD <MethodName>([<MtdParams,...>]) [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] => ;
-     _HB_MEMBER <MessageName>([<MtdParams>]) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-     IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-     s_oClass:AddMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-
-  #xcommand MESSAGE <MessageName>([<MsgParams,...>]) [ AS <type> ] METHOD <MethodName>([<MtdParams,...>]) [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] => ;
-     _HB_MEMBER <MessageName>([<MtdParams>]) [<-MsgParams->] [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-     IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-     s_oClass:AddMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-
-#endif /* STRICT_OO */
-
-#ifdef STRICT_OO
-  #xcommand MESSAGE <MessageName> [ AS <type> ] PROCEDURE <MethodName> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] => ;
-     _HB_MEMBER _AsFunc_( <MessageName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-     IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-     s_oClass:AddMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-     #xcommand PROCEDURE <MethodName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>
-#else
-  #xcommand MESSAGE <MessageName> [ AS <type> ] PROCEDURE <MethodName> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] => ;
-     _HB_MEMBER _AsFunc_( <MessageName> ) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-     IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-     s_oClass:AddMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>(\[\<anyParams>])
-
-  #xcommand MESSAGE <MessageName> [ AS <type> ] PROCEDURE <MethodName>([<MtdParams,...>]) [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] => ;
-     _HB_MEMBER <MessageName>([<MtdParams>]) [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-     IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-     s_oClass:AddMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>(\[\<anyParams>])
-
-  #xcommand MESSAGE <MessageName>([<MsgParams,...>]) [ AS <type> ] PROCEDURE <MethodName>([<MtdParams,...>]) [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<sync: SYNC>] => ;
-     _HB_MEMBER <MessageName>([<MtdParams>]) [<-MsgParams->] [<-ctor-> AS CLASS _CLASS_NAME_] [ AS <type> ];;
-     IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ),;
-     s_oClass:AddMethod( _AsStr_( <MessageName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) + IIF( <.sync.>, HB_OO_CLSTP_SYNC, 0 ) ) );;
-    #xcommand PROCEDURE <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>(\[\<anyParams>])
-
-#endif /* STRICT_OO */
-
-// MESSAGE ... IS ...
-#xcommand MESSAGE <MessageName> [ AS <type> ] IS <DelegateName> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ov: OVERRIDE>] =>;
-   _HB_MEMBER _AsFunc_( <MessageName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <MessageName> ), _AsStr_( <DelegateName> ),, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) ), )
-
-// MESSAGE ... TO ...
-#xcommand MESSAGE <MessageName> [ AS <type> ] TO <oObject> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ov: OVERRIDE>] =>;
-   _HB_MEMBER _AsFunc_( <MessageName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <MessageName> ),, <(oObject)>, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) ), )
-
-// MESSAGE ... IN ...
-#xcommand MESSAGE <MessageName> [ AS <type> ] IN <oObject> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ov: OVERRIDE>] =>;
-   _HB_MEMBER _AsFunc_( <MessageName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <MessageName> ),, <(oObject)>, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) ), )
-
-// MESSAGE ... IS ... TO
-#xcommand MESSAGE <MessageName> [ AS <type> ] IS <DelegateName> TO <oObject> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ov: OVERRIDE>] =>;
-   _HB_MEMBER _AsFunc_( <MessageName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <MessageName> ), _AsStr_( <DelegateName> ), <(oObject)>, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) ), )
-
-// MESSAGE ... IS ... IN
-#xcommand MESSAGE <MessageName> [ AS <type> ] IS <DelegateName> IN <oObject> [ <ctor: CONSTRUCTOR> ] [ <export: EXPORTED, VISIBLE, PUBLIC>] [<protect: PROTECTED>] [<hidde: HIDDEN, PRIVATE>] [<ov: OVERRIDE>] =>;
-   _HB_MEMBER _AsFunc_( <MessageName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddDelegate( _AsStr_( <MessageName> ), _AsStr_( <DelegateName> ), <(oObject)>, HBCLSCHOICE( .F., <.export.>, <.protect.>, <.hidde.> ) + IIF( <.ctor.>, HB_OO_CLSTP_CTOR, 0 ) ), )
-
-#xcommand DELEGATE <*x*> => MESSAGE <x>
-
-#xcommand ACCESS <MessageName> [ AS <type> ] <mth: METHOD, IS> <MethodName> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] => ;
-   MESSAGE <MessageName> [ AS <type> ] <mth> <MethodName> <export> <protect> <hidde> <persistent>
-
-#xcommand ASSIGN <MessageName> [ AS <type> ] <mth: METHOD, IS> <MethodName> [<export: EXPORTED, VISIBLE>] [<protect: PROTECTED>] [<hidde: HIDDEN>] [<persistent: PERSISTENT, PROPERTY>] => ;
-   MESSAGE _<MessageName> [ AS <type> ] <mth> <MethodName> <export> <protect> <hidde> <persistent>
-
-#ifdef STRICT_OO
-  #xcommand METHOD <MethodName> [ AS <type> ]  [<persistent: PERSISTENT, PROPERTY>] SETGET => ;
-    _HB_MEMBER _AsFunc_( <MethodName> ) [ AS <type> ];;
-    _HB_MEMBER _AsFunc_( _<MethodName> ) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( _<MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ),;
-    s_oClass:AddMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ) );;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( _<MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ),;
-    s_oClass:AddMethod( _AsStr_( _<MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ) );;
-    #xcommand METHOD <MethodName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName> ;;
-    #xcommand METHOD <MethodName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>
-#else
-  #xcommand METHOD <MethodName> [ AS <type> ]  [<persistent: PERSISTENT, PROPERTY>] SETGET => ;
-    _HB_MEMBER _AsFunc_( <MethodName> ) [ AS <type> ];;
-    _HB_MEMBER _AsFunc_( _<MethodName> ) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ), ;
-    s_oClass:AddMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ) );;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( _<MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ), ;
-    s_oClass:AddMethod( _AsStr_( _<MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ) );;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]) ;;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-
-  #xcommand METHOD <MethodName>([<params,...>]) [ AS <type> ]  [<persistent: PERSISTENT, PROPERTY>] SETGET => ;
-    _HB_MEMBER <MethodName>([<params>]) [ AS <type> ];;
-    _HB_MEMBER _<MethodName>([<params>]) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY, <.persistent.> ), ;
-    s_oClass:AddMethod( _AsStr_( <MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY, <.persistent.> ) ) ;;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( _<MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ), ;
-    s_oClass:AddMethod( _AsStr_( _<MethodName> ), CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ) ) ;;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]) ;;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-
-#endif /* STRICT_OO */
-
-#ifdef STRICT_OO
-  #xcommand ACCESS <AccessName> [ AS <type> ] [<persistent: PERSISTENT, PROPERTY>] => ;
-    _HB_MEMBER _AsFunc_( <AccessName> ) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <AccessName> ), CLSMETH _CLASS_NAME_ _AsName_( <AccessName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ), ;
-    s_oClass:AddMethod( _AsStr_( <AccessName> ), CLSMETH _CLASS_NAME_ _AsName_( <AccessName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ) ) ;;
-    #xcommand METHOD <AccessName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <AccessName>;;
-    #xcommand METHOD <AccessName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <AccessName>
-#else
-  #xcommand ACCESS <AccessName> [ AS <type> ] [<persistent: PERSISTENT, PROPERTY>] => ;
-    _HB_MEMBER _AsFunc_( <AccessName> ) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <AccessName> ), CLSMETH _CLASS_NAME_ _AsName_( <AccessName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ), ;
-    s_oClass:AddMethod( _AsStr_( <AccessName> ), CLSMETH _CLASS_NAME_ _AsName_( <AccessName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ) );;
-    #xcommand METHOD <AccessName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <AccessName>(\[\<anyParams>]);;
-    #xcommand METHOD <AccessName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <AccessName>(\[\<anyParams>])
-
-  #xcommand ACCESS <AccessName>([<params,...>]) [ AS <type> ] [<persistent: PERSISTENT, PROPERTY>] => ;
-    _HB_MEMBER <AccessName>([<params>]) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( <AccessName> ), CLSMETH _CLASS_NAME_ _AsName_( <AccessName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ), ;
-    s_oClass:AddMethod( _AsStr_( <AccessName> ), CLSMETH _CLASS_NAME_ _AsName_( <AccessName> )(), HB_OO_CLSTP_EXPORTED + HB_OO_CLSTP_READONLY , <.persistent.> ) ) ;;
-    #xcommand METHOD <AccessName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <AccessName>(\[\<anyParams>]);;
-    #xcommand METHOD <AccessName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <AccessName>(\[\<anyParams>])
-
-#endif /* STRICT_OO */
-
-#xcommand ACCESS <AccessName> [ AS <type> ] INLINE [Local <v>,] <code,...> [<persistent: PERSISTENT, PROPERTY>] => ;
-   _HB_MEMBER _AsFunc_( <AccessName> ) [ AS <type> ];;
-   IIF( __lInactive, s_oClass:ModInline( _AsStr_( <AccessName> ), {|Self [,<v>] | Self, <code> }, HB_OO_CLSTP_EXPORTED, <.persistent.> ), ;
-   s_oClass:AddInline( _AsStr_( <AccessName> ), {|Self [,<v>] | Self, <code> }, HB_OO_CLSTP_EXPORTED, <.persistent.> ) )
-
-#xcommand ACCESS <AccessName> [ AS <type> ] DEFERRED => ;
-   _HB_MEMBER _AsFunc_( <AccessName> ) [ AS <type> ];;
-   IIF( !__lInactive, s_oClass:AddVirtual( _AsStr_( <AccessName> ) ) )
-
-#ifdef STRICT_OO
-  #xcommand ASSIGN <AssignName> [ AS <type> ] => ;
-    _HB_MEMBER _AsFunc_( _<AssignName> ) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( _<AssignName> ), CLSMETH _CLASS_NAME_ _AsName_( _<AssignName> )(), HB_OO_CLSTP_EXPORTED ), ;
-    s_oClass:AddMethod( _AsStr_( _<AssignName> ), CLSMETH _CLASS_NAME_ _AsName_( _<AssignName> )(), HB_OO_CLSTP_EXPORTED ) ) ;;
-    #xcommand METHOD <AssignName> \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <AssignName>);;
-    #xcommand METHOD <AssignName> \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <AssignName>)
-#else
-  #xcommand ASSIGN <AssignName> [ AS <type> ] => ;
-    _HB_MEMBER _AsFunc_( _<AssignName> ) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( _<AssignName> ), CLSMETH _CLASS_NAME_ _AsName_( _<AssignName> )(), HB_OO_CLSTP_EXPORTED ), ;
-    s_oClass:AddMethod( _AsStr_( _<AssignName> ), CLSMETH _CLASS_NAME_ _AsName_( _<AssignName> )(), HB_OO_CLSTP_EXPORTED ) );;
-    #xcommand METHOD <AssignName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <AssignName>(\[\<anyParams>]);;
-    #xcommand METHOD <AssignName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <AssignName>(\[\<anyParams>])
-
-  #xcommand ASSIGN <AssignName>([<params,...>]) [ AS <type> ] => ;
-    _HB_MEMBER _<AssignName>([<params>]) [ AS <type> ];;
-    IIF( __lInactive, s_oClass:ModMethod( _AsStr_( _<AssignName> ), CLSMETH _CLASS_NAME_ _AsName_( _<AssignName> )(), HB_OO_CLSTP_EXPORTED ), ;
-    s_oClass:AddMethod( _AsStr_( _<AssignName> ), CLSMETH _CLASS_NAME_ _AsName_( _<AssignName> )(), HB_OO_CLSTP_EXPORTED ) ) ;;
-    #xcommand METHOD <AssignName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <AssignName>(\[\<anyParams>]);;
-    #xcommand METHOD <AssignName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <AssignName>(\[\<anyParams>])
-
-#endif /* STRICT_OO */
-
-#xcommand ASSIGN <AssignName>( [<params,...>] ) [ AS <type> ] INLINE [Local <v>,] <Code,...> => ;
-   _HB_MEMBER _<AssignName>([<params>]) [ AS <type> ];;
-   IIF( __lInactive, s_oClass:ModInline( _AsStr_( _<AssignName> ), {|Self [,<params>] [,<v>] | Self, <Code> }, HB_OO_CLSTP_EXPORTED ), ;
-   s_oClass:AddInline( _AsStr_( _<AssignName> ), {|Self [,<params>] [,<v>] | Self, <Code> }, HB_OO_CLSTP_EXPORTED ) )
-
-#xcommand ON ERROR <MethodName> => ERROR HANDLER <MethodName>;
-
-#ifdef STRICT_OO
-   #xcommand ERROR HANDLER <MethodName> => ;
-     _HB_MEMBER _AsFunc_( <MethodName> );;
-     s_oClass:SetOnError( CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ) ;;
-     #xcommand METHOD <MethodName>                    \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>;;
-     #xcommand METHOD <MethodName>                    \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>
-#else
-   #xcommand ERROR HANDLER <MethodName> => ;
-     _HB_MEMBER _AsFunc_( <MethodName> );;
-     s_oClass:SetOnError( CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ) ;;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-
-   #xcommand ERROR HANDLER <MethodName>([<params,...>]) => ;
-     _HB_MEMBER <MethodName>([<params>]);;
-     s_oClass:SetOnError( CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ) ;;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>(\[\<anyParams>]);;
-    #xcommand METHOD <MethodName> \[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED METHOD \<ClassName> <MethodName>(\[\<anyParams>])
-#endif /* STRICT_OO */
-
-#xcommand DESTRUCTOR <MethodName> => ;
-  _HB_MEMBER _AsFunc_( <MethodName> );;
-  s_oClass:SetDestructor( CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ) ;;
- #xcommand PROCEDURE <MethodName>\[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>;;
- #xcommand PROCEDURE <MethodName>\[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE \<ClassName> <MethodName>
-
-#xcommand DESTRUCTOR <MethodName>() => ;
-  _HB_MEMBER _AsFunc_( <MethodName> );;
-  s_oClass:SetDestructor( CLSMETH _CLASS_NAME_ _AsName_( <MethodName> )() ) ;;
- #xcommand PROCEDURE <MethodName>\[(\[\<anyParams,...>])] \[DECLCLASS _CLASS_NAME_] _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>;;
- #xcommand PROCEDURE <MethodName>\[(\[\<anyParams,...>])] \<ClassName> _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE \<ClassName> <MethodName>
-
-#xtranslate END CLASS => ENDCLASS
-
-#ifdef HB_CLS_ALLOWCLASS
-#xcommand ENDCLASS => ;;
-                        IF __lInactive ;;
-                           __clsActive(s_oClass:hClass) ;;
-                           s_oClass:Refresh() ;;
-                        ELSE ;;
-                           s_oClass:Create(MetaClass) ;;
-                        END ;;
-                        oClassInstance := __clsInst( s_oClass:hClass ) ;;
-                        IF __ObjHasMsg( oClassInstance, "InitClass" );;
-                          oClassInstance:InitClass( hb_aParams() ) ;;
-                        END ;;
-                      ELSE ;;
-                        oClassInstance := __clsInst( s_oClass:hClass ) ;;
-                      END ;;
-                      IF PCount() > 0 ;;
-                       #ifdef HB_CONSTRUCTOR_USE_DIVERT ;;
-                         DIVERT TO (@DivertConstructorCall()) OF s_oClass ;;
-                       #else ;;
-                         RETURN s_oClass:ConstructorCall( oClassInstance, hb_aparams() ) ;;
-                       #endif ;;
-                      END ;;
-                      RETURN oClassInstance AS CLASS _CLASS_NAME_ ;;
-                      #undef  _CLASS_MODE_ ;;
-                      #define _CLASS_MODE_ _CLASS_IMPLEMENTATION_
-#else
-#xcommand ENDCLASS => ;;
-                        IF __lInactive ;;
-                           __clsActive(s_oClass:hClass) ;;
-                           s_oClass:Refresh() ;;
-                        ELSE ;;
-                           s_oClass:Create() ;;
-                        END ;;
-                        oClassInstance := __clsInst( s_oClass:hClass ) ;;
-                        IF __ObjHasMsg( oClassInstance, "InitClass" );;
-                          oClassInstance:InitClass( hb_aParams() ) ;;
-                        END ;;
-                      ELSE ;;
-                        oClassInstance := __clsInst( s_oClass:hClass ) ;;
-                      END ;;
-                      IF PCount() > 0 ;;
-                       #ifdef HB_CONSTRUCTOR_USE_DIVERT;;
-                         DIVERT TO (@DivertConstructorCall()) OF s_oClass ;;
-                       #else ;;
-                         RETURN s_oClass:ConstructorCall( oClassInstance, hb_aparams() ) ;;
-                       #endif ;;
-                      END ;;
-                      RETURN oClassInstance AS CLASS _CLASS_NAME_ ;;
-                      #undef  _CLASS_MODE_ ;;
-                      #define _CLASS_MODE_ _CLASS_IMPLEMENTATION_
-#endif /* HB_CLS_ALLOWCLASS */
-
-#xtranslate :Super( <SuperClass> ) : => :<SuperClass>:
-#xtranslate :Super() : => :Super:
-#xtranslate :Super() => :Super
-
-
-#ifndef HB_SHORTNAMES
-
-#xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName>  => METHOD <MethodName>  _CLASS_MODE_
-#xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName> CLASS <ClassName> => METHOD <MethodName>  CLASS <ClassName>  _CLASS_MODE_
-
-//#define HB_CLS_NO_OO_ERR
-
-#ifdef HB_CLS_NO_OO_ERR
-   #xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName> CLASS <ClassName> => METHOD <MethodName>     CLASS <ClassName> _CLASS_IMPLEMENTATION_
-
-   #xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName>                      _CLASS_IMPLEMENTATION_ => DECLARED METHOD _CLASS_NAME_ <MethodName>
-   #xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName> CLASS <ClassName>    _CLASS_IMPLEMENTATION_ => DECLARED METHOD <ClassName> <MethodName>
-
-   #xcommand PROCEDURE [FUNCTION] [PROCEDURE] <MethodName> CLASS <ClassName> => PROCEDURE <MethodName>     CLASS <ClassName> _CLASS_IMPLEMENTATION_
-
-   // Do NOT uncomment!
-   //#xcommand PROCEDURE [FUNCTION] [PROCEDURE] <MethodName>                      _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE _CLASS_NAME_ <MethodName>
-   #xcommand PROCEDURE [FUNCTION] [PROCEDURE] <MethodName> CLASS <ClassName>    _CLASS_IMPLEMENTATION_ => DECLARED PROCEDURE <ClassName> <MethodName>
-#else
-   #xcommand METHOD [FUNCTION] <MethodName> CLASS <ClassName> => METHOD <MethodName> DECLCLASS <ClassName> _CLASS_IMPLEMENTATION_
-
-   #ifdef STRICT_OO
-      #xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName>                   _CLASS_IMPLEMENTATION_ => __ERR(Method <"MethodName"> not declared or declaration mismatch in class: _CLASS_NAME_) ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-      #xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName> [CLASS] <ClassName> _CLASS_IMPLEMENTATION_ => #error Method <"MethodName"> not declared or declaration mismatch in class: <ClassName> ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-   #else
-      #xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName>                   _CLASS_IMPLEMENTATION_ => __ERR(Method <"MethodName"> not declared in class: _CLASS_NAME_) ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-      #xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName> [CLASS] <ClassName> _CLASS_IMPLEMENTATION_ => #error Method <"MethodName"> not declared in class: <ClassName> ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-   #endif
-
-   #xcommand PROCEDURE [FUNCTION] <MethodName> CLASS <ClassName> => PROCEDURE <MethodName> DECLCLASS <ClassName> _CLASS_IMPLEMENTATION_
-
-   #ifdef STRICT_OO
-      #xcommand PROCEDURE [FUNCTION] [PROCEDURE] <MethodName>                   _CLASS_IMPLEMENTATION_ => #error Procedure <"MethodName"> not declared or declaration mismatch in class: _CLASS_NAME_ ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-      #xcommand PROCEDURE [FUNCTION] [PROCEDURE] <MethodName> [CLASS] <ClassName> _CLASS_IMPLEMENTATION_ => #error Procedure <"MethodName"> not declared or declaration mismatch in class: <ClassName> ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-   #else
-      #xcommand PROCEDURE [FUNCTION] [PROCEDURE] <MethodName>                   _CLASS_IMPLEMENTATION_ => #error Procedure <"MethodName"> not declared in class: _CLASS_NAME_ ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-      #xcommand PROCEDURE [FUNCTION] [PROCEDURE] <MethodName> [CLASS] <ClassName> _CLASS_IMPLEMENTATION_ => #error Procedure <"MethodName"> not declared in class: <ClassName> ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-   #endif
-#endif /* HB_CLS_NO_OO_ERR */
-
-//#xcommand METHOD [FUNCTION] [PROCEDURE] <MethodName> DECLCLASS <ClassName> _CLASS_IMPLEMENTATION_ => #error Class <"ClassName"> not declared for method: <MethodName> ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-//#xcommand PROCEDURE [FUNCTION] [PROCEDURE] <MethodName> DECLCLASS <ClassName> _CLASS_IMPLEMENTATION_ => #error Class <"ClassName"> not declared for procedure: <MethodName> ; UTILITY FUNCTION <MethodName> ; local self := QSelf()
-
-#xcommand DECLARED METHOD <ClassName> <MethodName> => ;
-          UTILITY STATIC function DECLMETH <ClassName> <MethodName> ;;
-          local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
-
-#xcommand DECLARED PROCEDURE <ClassName> <MethodName> => ;
-          UTILITY STATIC PROCEDURE DECLMETH <ClassName> <MethodName> ;;
-          local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
-
-#xcommand ACCESS <AccessName> CLASS <ClassName> => ;
-          UTILITY STATIC FUNCTION <ClassName>_<AccessName> ;;
-          local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
-
-#xcommand ASSIGN <AssignName> CLASS <ClassName> => ;
-          UTILITY STATIC FUNCTION <ClassName>__<AssignName> ;;
-          local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
-#else
-
-#xcommand DECLARED METHOD <ClassName> <MethodName>=> ;
-          UTILITY STATIC FUNCTION <MethodName> ;;
-          local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
-
-#xcommand DECLARED PROCEDURE <ClassName> <MethodName>=> ;
-          UTILITY STATIC PROCEDURE <MethodName> ;;
-          local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
-
-#xcommand ACCESS <AccessName> CLASS <ClassName> => ;
-          UTILITY STATIC FUNCTION <AccessName> ;;
-          local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
-
-#xcommand ASSIGN <AssignName> CLASS <ClassName> => ;
-          UTILITY STATIC FUNCTION _<AssignName> ;;
-          local Self AS CLASS <ClassName> := QSelf() AS CLASS <ClassName>
-
-#endif /* HB_SHORTNAMES */
-
-#xcommand METHOD <!ClassName!>:<MethodName> => METHOD <MethodName> CLASS <ClassName>
-
-/* Friend function/class definitions */
-#xcommand FRIEND CLASS <ClassName1> [, <ClassNameN> ] => ;
-   s_oClass:AddFriends( <ClassName1> [, <ClassNameN> ] )
-
-#xcommand FRIEND FUNCTION <FuncName1> [, <FuncNameN> ] => ;
-   s_oClass:AddFriends( @<FuncName1>() [, @<FuncNameN>() ] )
-
-
-#ifdef HB_CLS_CSY
-   #xcommand    EXPORTED:       =>      nScope := HB_OO_CLSTP_EXPORTED
-   #xcommand    EXPORT:         =>      nScope := HB_OO_CLSTP_EXPORTED
-   #xcommand    VISIBLE:        =>      nScope := HB_OO_CLSTP_EXPORTED
-   #xcommand    PUBLIC:         =>      nScope := HB_OO_CLSTP_EXPORTED
-
-   #xcommand    HIDDEN:         =>      nScope := HB_OO_CLSTP_HIDDEN
-   #xcommand    PRIVATE:        =>      nScope := HB_OO_CLSTP_HIDDEN
-
-   #xcommand    PROTECTED:      =>      nScope := HB_OO_CLSTP_PROTECTED
-   #xcommand    PUBLISHED:      =>      nScope := HB_OO_CLSTP_PUBLISHED
-#endif
+#command ENABLE TYPE CLASS ALL => ;
+      REQUEST HBArray, HBBlock, HBCharacter, HBDate, HBHash, ;
+              HBLogical, HBNil, HBNumeric, HBSymbol, HBTimeStamp, HBPointer
 
 #endif /* HB_CLASS_CH_ */
