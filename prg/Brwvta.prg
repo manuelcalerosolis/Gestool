@@ -2052,7 +2052,9 @@ Static Function LoadPedidoProveedor( cCodArt, nYear )
 Return nil
 
 //---------------------------------------------------------------------------//
-/*Carga los albaranes de proveedor*/
+/*
+Carga los albaranes de proveedor
+*/
 
 Static Function LoadAlbaranProveedor( cCodArt, nYear )
 
@@ -2287,7 +2289,13 @@ Static Function LoadPedidosCliente( cCodArt, nYear )
             oDbfTmp:nTypDoc   := PED_CLI
             oDbfTmp:cNumDoc   := ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed
             oDbfTmp:cSufDoc   := ( dbfPedCliL )->cSufPed
+
+            if retFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lCancel" )
+            oDbfTmp:cEstDoc   := "Cancelado"
+            else
             oDbfTmp:cEstDoc   := aEstadoPedido[ Max( RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "nEstado" ), 1 ) ]
+            end if 
+
             oDbfTmp:dFecDoc   := dFecPedCli( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT )
             oDbfTmp:tFecDoc   := ""
             oDbfTmp:cCodDoc   := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "cCodCli" )
