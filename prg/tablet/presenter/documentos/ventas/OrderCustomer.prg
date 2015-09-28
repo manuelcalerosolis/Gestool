@@ -31,17 +31,27 @@ METHOD New() CLASS OrderCustomer
 
    ::super:New( self )
 
-   ::setTextSummaryDocument( "Resumen pedidos" )
-   ::setTypePrintDocuments( "PC" )
-   ::setCounterDocuments( "nPedCli" )
+   ::hTextDocuments                    := {  "textMain"     => "Pedidos de clientes",;
+                                             "textShort"    => "Pedido",;
+                                             "textTitle"    => "lineas de pedidos",;
+                                             "textSummary"  => "Resumen pedido",;
+                                             "textGrid"     => "Grid pedido clientes" }
+
+   // Vistas--------------------------------------------------------------------
 
    ::oViewSearchNavigator:setTitle( "Pedidos de clientes" )
 
    ::oViewEdit:setTitle( "Pedido" )  
 
-   ::oLinesOrderCustomer   := LinesOrderCustomer():New( self )
+   ::oViewEditResumen:setTitle( "Resumen pedidos" )
 
-   // Areas
+   // Tipos--------------------------------------------------------------------
+   
+   ::setTypePrintDocuments( "PC" )
+
+   ::setCounterDocuments( "nPedCli" )
+
+   // Areas--------------------------------------------------------------------
 
    ::setDataTable( "PedCliT" )
    ::setDataTableLine( "PedCliL" )

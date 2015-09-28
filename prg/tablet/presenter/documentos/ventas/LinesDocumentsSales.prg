@@ -121,6 +121,9 @@ METHOD New( oSender ) CLASS LinesDocumentsSales
 
    ::oSender      := oSender
 
+   msgAlert( ::oSender:ClassName(), "ClassName" )
+   msgAlert( ::oSender:getTextGrid(), "getTextGrid" )
+
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -330,10 +333,10 @@ METHOD ResourceDetail( nMode ) CLASS LinesDocumentsSales
 
    if !Empty( ::oViewEditDetail )
 
-      ::oViewEditDetail:setTitle( LblTitle( ::oSender:nModeDetail ) + "linea de factura" )
-
+      ::oViewEditDetail:setTitle( lblTitle( ::oSender:nModeDetail ) + ::oSender:getTextTitle() )
 
       lResult           := ::oViewEditDetail:Resource( nMode )
+
    end if
 
 Return ( lResult )   

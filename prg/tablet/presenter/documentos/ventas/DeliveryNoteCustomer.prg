@@ -8,7 +8,7 @@ CLASS DeliveryNoteCustomer FROM DocumentsSales
 
    METHOD New()
 
-   METHOD ResourceDetail( nMode )         INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
+   METHOD ResourceDetail( nMode )      INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
 
    METHOD getAppendDocumento()
    METHOD getEditDocumento()
@@ -16,8 +16,8 @@ CLASS DeliveryNoteCustomer FROM DocumentsSales
    METHOD getLinesDocument( id )
    METHOD getDocumentLine()
 
-   METHOD getLines()                      INLINE ( ::oDocumentLines:getLines() )
-   METHOD getLineDetail()                 INLINE ( ::oDocumentLines:getLineDetail( ::nPosDetail ) )
+   METHOD getLines()                   INLINE ( ::oDocumentLines:getLines() )
+   METHOD getLineDetail()              INLINE ( ::oDocumentLines:getLineDetail( ::nPosDetail ) )
 
    METHOD getAppendDetail()
    METHOD deleteLinesDocument()
@@ -32,17 +32,27 @@ METHOD New() CLASS DeliveryNoteCustomer
 
    ::super:New( self )
 
-   ::setTextSummaryDocument( "Resumen albarán" )
-   ::setTypePrintDocuments( "AC" )
-   ::setCounterDocuments( "nAlbCli" )
+   ::hTextDocuments                    := {  "textMain"     => "Albaranes de clientes",;
+                                             "textShort"    => "Albarán",;
+                                             "textTitle"    => "lineas de albaranes",;
+                                             "textSummary"  => "Resumen albarán",;
+                                             "textGrid"     => "Grid albarán clientes" }
+
+  // Vistas--------------------------------------------------------------------
 
    ::oViewSearchNavigator:setTitle( "Albaranes de clientes" )  
 
    ::oViewEdit:setTitle( "Albarán" )  
 
-   ::oLinesDeliveryNoteCustomer           := LinesDeliveryNoteCustomer():New( self )
- 
-   // Areas
+   ::oViewEditResumen:setTitle( "Resumen albarán" )
+
+   // Tipos--------------------------------------------------------------------
+
+   ::setTypePrintDocuments( "AC" )
+
+   ::setCounterDocuments( "nAlbCli" )
+
+   // Areas--------------------------------------------------------------------
 
    ::setDataTable( "AlbCliT" )
    ::setDataTableLine( "AlbCliL" )

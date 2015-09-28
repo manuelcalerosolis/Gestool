@@ -3,14 +3,8 @@
 #include "Xbrowse.ch"
 
 CLASS InvoiceCustomer FROM DocumentsSales  
-
-   DATA oLinesInvoiceCustomer
-   
-   DATA CodigoAgente                      INIT AccessCode():cAgente
-
+  
    METHOD New()
-
-   METHOD resourceDetail( nMode )         INLINE ( ::oLinesInvoiceCustomer:ResourceDetail( nMode ) )
 
    METHOD getAppendDocumento()
    METHOD getEditDocumento()
@@ -34,22 +28,22 @@ END CLASS
 
 METHOD New() CLASS InvoiceCustomer
 
-   local cCodigoAgente              := AccessCode():cAgente
-
    ::super:New( self )
 
-   ::setTextSummaryDocument( "Resumen factura" )
-
-   ::setTypePrintDocuments( "FC" )
-
-   ::setCounterDocuments( "nFacCli" )
+   // Vistas--------------------------------------------------------------------
 
    ::oViewSearchNavigator:setTitle( "Facturas de clientes" )  
 
    ::oViewEdit:setTitle( "Factura" )  
 
-   ::oLinesInvoiceCustomer          := LinesInvoiceCustomer():New( self )
- 
+   ::oViewEditResumen:setTitle( "Resumen factura" )
+
+   // Tipos--------------------------------------------------------------------
+
+   ::setTypePrintDocuments( "FC" )
+
+   ::setCounterDocuments( "nFacCli" )
+
    // Areas--------------------------------------------------------------------
 
    ::setDataTable( "FacCliT" )
@@ -58,8 +52,8 @@ METHOD New() CLASS InvoiceCustomer
    ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
    ( ::getWorkArea() )->( dbgotop() ) 
 
-   if !empty(cCodigoAgente)
-      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == cCodigoAgente }, "cCodAge == cCodigoAgente" ) )
+   if !empty( ::CodigoAgente )
+      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == ::CodigoAgente }, "cCodAge == CodigoAgente" ) )
       ( ::getWorkArea() )->( dbgotop() )
    end if 
 

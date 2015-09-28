@@ -20,17 +20,16 @@ CLASS ViewBase
 
    DATA Style                                            INIT ( nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ) )
    
-   DATA cTextoTipoDocumento
+   DATA cTitleDocumento
    
    DATA bPreShowDialog
    DATA bPostDialog 
 
    METHOD setBrowseConfigurationName( cName )            INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
-   METHOD loadBrowseConfiguration()                      VIRTUAL // INLINE ( if( !empty( ::oBrowse ), ::oBrowse:Load(), ) )
+   METHOD loadBrowseConfiguration()                      INLINE ( if( !empty( ::oBrowse ) .and. !empty( ::oBrowse:cName ), ::oBrowse:Load(), ) )
 
-   METHOD setTitle( cTextoTipoDocumento )                INLINE ( ::cTextoTipoDocumento := cTextoTipoDocumento )
-   METHOD getTextoTipoDocumento()                        INLINE ( ::cTextoTipoDocumento )
-   METHOD getTitleTipoDocumento()                        INLINE ( ::getTextoTipoDocumento() )
+   METHOD setTitle( cTitleDocumento )                    INLINE ( ::cTitleDocumento := cTitleDocumento )
+   METHOD getTitleDocumento()                            INLINE ( ::cTitleDocumento )
 
    METHOD setPreShowDialog( bPreShowDialog )             INLINE ( ::bPreShowDialog := bPreShowDialog )
    METHOD evalPreShowDialog()                            INLINE ( if( !empty( ::bPreShowDialog ), eval( ::bPreShowDialog, self ), ) )
@@ -114,7 +113,7 @@ METHOD defineTitulo() CLASS ViewBase
 
    TGridSay():Build(    {  "nRow"      => 0,;
                            "nCol"      => {|| GridWidth( ::columnLabel, ::oDlg ) },;
-                           "bText"     => {|| ::getTitleTipoDocumento() },;
+                           "bText"     => {|| ::getTitleDocumento() },;
                            "oWnd"      => ::oDlg,;
                            "oFont"     => oGridFontBold(),;
                            "lPixels"   => .t.,;

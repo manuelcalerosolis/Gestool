@@ -7,7 +7,7 @@ CLASS DocumentSalesViewSearchNavigator FROM ViewSearchNavigator
 
    METHOD getView()                       INLINE ( ::oSender:nView )
 
-   METHOD setItemsBusqueda()              INLINE ( ::hashItemsSearch := { "Número" => 1, "Fecha" => "dFecDes", "Código" => "cCodCli", "Nombre" => "cNomCli" } )   
+   METHOD setItemsBusqueda()              INLINE ( ::hashItemsSearch := { "Fecha" => "dFecDes", "Número" => 1, "Código" => "cCodCli", "Nombre" => "cNomCli" } )   
 
    METHOD setColumns()
 
@@ -19,7 +19,7 @@ END CLASS
 
 METHOD setColumns() CLASS DocumentSalesViewSearchNavigator
 
-   ::setBrowseConfigurationName( ::cTextoTipoDocumento )
+   ::setBrowseConfigurationName( "Grid ventas" )
 
    with object ( ::addColumn() )
       :cHeader           := "Id"

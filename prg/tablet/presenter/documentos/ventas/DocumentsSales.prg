@@ -10,14 +10,18 @@ CLASS DocumentsSales FROM Documents
    DATA oDirections
 
    DATA oViewEditResumen
+
    DATA oDocumentLines
+
+   DATA oLinesDocumentsSales
 
    DATA nUltimoCliente
 
    DATA hTextDocuments                 INIT  {  "textMain"     => "Facturas de clientes",;
                                                 "textShort"    => "Factura",;
-                                                "textDetail"   => "lineas de facturas",;
-                                                "textSummary"  => "Resumen factura" }
+                                                "textTitle"    => "lineas de facturas",;
+                                                "textSummary"  => "Resumen factura",;
+                                                "textGrid"     => "Grid facturas clientes" }
    
    DATA hOrdenRutas                    INIT  {  "1" => "lVisDom",;
                                                 "2" => "lVisLun",;
@@ -34,6 +38,7 @@ CLASS DocumentsSales FROM Documents
 
    DATA oTotalDocument
 
+   DATA CodigoAgente                      INIT AccessCode():cAgente
 
    METHOD New( oSender )
    METHOD runNavigator()
@@ -47,6 +52,9 @@ CLASS DocumentsSales FROM Documents
    METHOD setTextSummaryDocument( cTextSummaryDocument )    INLINE ( ::cTextSummaryDocument := cTextSummaryDocument )
    METHOD getTextSummaryDocument()                          INLINE ( if( hhaskey( ::hTextDocuments, "textSummary" ), hget( ::hTextDocuments, "textSummary"), ::cTextSummaryDocument ) )
 
+   METHOD getTextGrid()                                     INLINE ( if( hhaskey( ::hTextDocuments, "textGrid" ), hget( ::hTextDocuments, "textGrid"), "" ) )
+   METHOD getTextTitle()                                    INLINE ( if( hhaskey( ::hTextDocuments, "textTitle" ), hget( ::hTextDocuments, "textTitle"), "" ) )
+
    METHOD setTypePrintDocuments( cTypePrintDocuments )      INLINE ( ::cTypePrintDocuments := cTypePrintDocuments )
    METHOD getTypePrintDocuments()                           INLINE ( ::cTypePrintDocuments )
 
@@ -54,24 +62,26 @@ CLASS DocumentsSales FROM Documents
    METHOD getCounterDocuments()                             INLINE ( ::cCounterDocuments )
 
    METHOD OpenFiles()
-   METHOD CloseFiles()                 INLINE ( D():DeleteView( ::nView ) )
+   METHOD CloseFiles()                    INLINE ( D():DeleteView( ::nView ) )
 
-   METHOD getSerie()                   INLINE ( ::hGetMaster( "Serie" ) )
-   METHOD getNumero()                  INLINE ( ::hGetMaster( "Numero" ) )
-   METHOD getSufijo()                  INLINE ( ::hGetMaster( "Sufijo" ) )
-   METHOD getAlmacen()                 INLINE ( ::hGetMaster( "Almacen" ) )
+   METHOD getSerie()                      INLINE ( ::hGetMaster( "Serie" ) )
+   METHOD getNumero()                     INLINE ( ::hGetMaster( "Numero" ) )
+   METHOD getSufijo()                     INLINE ( ::hGetMaster( "Sufijo" ) )
+   METHOD getAlmacen()                    INLINE ( ::hGetMaster( "Almacen" ) )
 
-   METHOD getID()                      INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
+   METHOD getID()                         INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
 
-   METHOD isPuntoVerde()               INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
-   METHOD isRecargoEquivalencia()      INLINE ( ::hGetMaster( "lRecargo" ) )
+   METHOD isPuntoVerde()                  INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
+   METHOD isRecargoEquivalencia()         INLINE ( ::hGetMaster( "lRecargo" ) )
+
+   METHOD resourceDetail( nMode )         INLINE ( ::oLinesDocumentsSales:ResourceDetail( nMode ) )
 
    METHOD onViewCancel()
    METHOD onViewSave()
    METHOD isResumenVenta()
    METHOD lValidResumenVenta()
 
-   METHOD getDataBrowse( Name )                 INLINE ( hGet( ::oDocumentLineTemporal:hDictionary[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
+   METHOD getDataBrowse( Name )           INLINE ( hGet( ::oDocumentLineTemporal:hDictionary[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
    METHOD isChangeSerieTablet( lReadyToSend, getSerie )
    
@@ -151,6 +161,8 @@ METHOD New( oSender ) CLASS DocumentsSales
 
    ::oViewEdit             := DocumentSalesViewEdit():New( oSender )
 
+   ::oViewEditResumen      := ViewEditResumen():New( oSender )
+
    ::oCliente              := Customer():init( oSender )  
 
    ::oProduct              := Product():init( oSender )
@@ -159,7 +171,9 @@ METHOD New( oSender ) CLASS DocumentsSales
 
    ::oDirections           := Directions():init( oSender )
 
-   ::oDocumentLines        := DocumentLines():New( oSender ) 
+   ::oDocumentLines        := DocumentLines():New( oSender )
+
+   ::oLinesDocumentsSales  := LinesDocumentsSales():New( oSender )
 
    ::oTotalDocument        := TotalDocument():New( oSender )
 
@@ -238,7 +252,7 @@ METHOD OpenFiles() CLASS DocumentsSales
 
       lOpenFiles     := .f.
 
-      ApoloMsgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+      apoloMsgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -341,7 +355,6 @@ METHOD lValidPayment() CLASS DocumentsSales
    end if
 
    ::oViewEditResumen:oCodigoFormaPago:Disable()
-
    ::oViewEditResumen:oNombreFormaPago:cText( "" )
    
    nRec                    := ( D():FormasPago( ::nView ) )->( Recno() )
@@ -655,7 +668,6 @@ METHOD isResumenVenta() CLASS DocumentsSales
       Return .f.
    end if
 
-   ::oViewEditResumen            := ViewEditResumen():New( self )
 
    if Empty( ::oViewEditResumen )
       Return .f.
