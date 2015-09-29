@@ -394,6 +394,12 @@ METHOD Resource() CLASS TSPECIALSEARCHARTICULO
          :nWidth              := 170
       end with
 
+      with object ( ::oBrwArticulo:AddCol() )
+         :cHeader             := "Ruta"
+         :bEditValue          := {|| SelectArticulo->cDesRut }
+         :nWidth              := 150
+      end with
+
       ::oBrwArticulo:bLDblClick      := {|| EdtArticulo( SelectArticulo->Codigo ), ::ReiniciaValores(), ::DefaultSelect(), ::oBrwArticulo:Refresh() }
 
       REDEFINE BUTTON ::oBotonSalir;
