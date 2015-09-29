@@ -110,6 +110,7 @@ static function OpenFiles()
       D():DetCamposExtras( nView )
       D():ClientesDirecciones( nView )
       D():ClientesBancos( nView )
+      D():TiposIva( nView )
 
    RECOVER USING oError
 
@@ -335,13 +336,7 @@ Static Function ImportacionArticulos()
       ( D():Articulos( nView ) )->Familia       := GetRange( "F", n )
       ( D():Articulos( nView ) )->cCodCate      := GetRange( "AD", n )
 
-      TipoIva                                   := GetRange( "L", n )
-
-      if TipoIva == "3"
-         ( D():Articulos( nView ) )->TipoIva    := "G"
-      else  
-         ( D():Articulos( nView ) )->TipoIva    := "N"
-      end if
+      ( D():Articulos( nView ) )->TipoIva       := cCodTerToCodIva( Str( GetNumeric( "L", n ), 1 ), D():TiposIva( nView ) )
 
       ( D():Articulos( nView ) )->pCosto        := GetNumeric( "M", n )
       ( D():Articulos( nView ) )->pVenta1       := GetNumeric( "H", n )

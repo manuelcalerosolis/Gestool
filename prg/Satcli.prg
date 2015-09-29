@@ -462,7 +462,7 @@ FUNCTION GenSatCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    Si el documento es de tipo visual-------------------------------------------
    */
 
-   PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
+   PrintReportSatCli( nDevice, nCopies, cPrinter, cCodDoc )
 
    lChgImpDoc( D():SatClientes( nView ) )
 
@@ -6902,7 +6902,7 @@ static function nGenSatCli( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
    local nCopyClient := Retfld( ( D():SatClientes( nView ) )->cCodCli, D():Clientes( nView ), "CopiasF" )
 
    DEFAULT nDevice   := IS_PRINTER
-   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Documentos( nView ) ) )
+   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( D():SatClientes( nView ) )->cSerSat, "nSatCli", D():Contadores( nView ) ) )
 
    nCopy             := Max( nCopy, 1 )
 
@@ -7528,11 +7528,11 @@ STATIC FUNCTION DupSerie( oWndBrw )
       CANCEL ;
       ACTION   ( lCancel := .t., oDlg:end() )
 
- REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
+   /*REDEFINE APOLOMETER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
       TOTAL    ( D():SatClientes( nView ) )->( OrdKeyCount() ) ;
-      OF       oDlg
+      OF       oDlg*/
 
       oDlg:AddFastKey( VK_F5, {|| DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, @lCancel, cFecDoc ) } )
 
@@ -11704,7 +11704,7 @@ Static Function cFormatoSATClientes( cSerie )
 
    local cFormato
 
-   DEFAULT cSerie    := ( D():PresupuestosClientes( nView ) )->cSerPre
+   DEFAULT cSerie    := ( D():SatClientes( nView ) )->cSerSat
 
    cFormato          := cFormatoDocumento( cSerie, "nSatCli", D():Contadores( nView ) )
 

@@ -602,7 +602,7 @@ Devuelve el codigo de del tipo de " + cImp() + " pasandole el codigo del termina
 FUNCTION cCodTerToCodIva( cCodTer, dbfIva )
 
    local cTmp     := Space(1)
-   local nOrd     := ( dbfIva )->( OrdSetFocus( 4 ) )
+   local nOrd     := ( dbfIva )->( OrdSetFocus( "CodTer" ) )
 
    if ( dbfIva )->( DbSeek( cCodTer ) )
       cTmp        := ( dbfIva )->Tipo
