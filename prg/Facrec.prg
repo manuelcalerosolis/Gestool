@@ -14320,7 +14320,7 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Function DesignReportFacRec( oFr )
+Function DesignReportFacRec( oFr, dbfDoc)
 
    local lOpen    := .f.
    local lFlag    := .f.
@@ -14352,9 +14352,9 @@ Function DesignReportFacRec( oFr )
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( D():Documentos( nView ) )->mReport )
+      if !Empty( ( dbfDoc )->mReport )
 
-         oFr:LoadFromBlob( ( D():Documentos( nView ) )->( Select() ), "mReport")
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
       else
 
