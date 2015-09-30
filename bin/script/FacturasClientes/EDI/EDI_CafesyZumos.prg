@@ -79,7 +79,9 @@ CLASS TEdiExporarFacturas
       METHOD writeDetallesLinea()
       METHOD writeImpuestosLinea()
 
-   METHOD writeResumenImpuestos()
+   METHOD writeResumenPrimerImpuesto()
+   METHOD writeResumenSegundoImpuesto()
+   METHOD writeResumenTercerImpuesto()
 
    METHOD writeVencimientos()
       METHOD writeDetallesVencimientos()
@@ -116,15 +118,22 @@ METHOD Run()
    ::sTotalFactura         := sTotFacCli()
 
    ::createFile()
+   
    if ::isFile()
       ::writeDatosGenerales()
       ::writeDatosProveedor()
       ::writeDatosCliente()
       ::writeDatosEstablecimiento()
+      
       ::writeLineas()  
-      ::writeResumenImpuestos()
+
+      ::writeResumenPrimerImpuesto()
+      ::writeResumenSegundoImpuesto()
+      ::writeResumenTercerImpuesto()
+
       ::writeVencimientos()
       ::writeResumenTotales()
+      
       ::closeFile()
    end if
 
@@ -273,7 +282,17 @@ Return ( self )
 
 METHOD writeDetallesLinea()
 
-   local cLine    := "Detalle"                                               + __separator__
+   local cLine    := "Detalle" + __separator__
+   cLine          += alltrim( ( D():FacturasClientesLineas( ::nView ) )->cRef ) + __separator__       // Código de artículo interno del proveedor
+   cLine          += "" + __separator__                                                               // Código de artículo interno del cliente
+   cLine          += alltrim( ( D():FacturasClientesLineas( ::nView ) )->cDescrip ) + __separator__   // Descripción (nombre) del artículo
+   cLine          += ::getNumero( nTotNFacCli() ) + __separator__                                     // Cantidad del artículo
+   cLine          += "Unidades" + __separator__                                                       // Unidad de medida de la cantidad
+   cLine          += "" + __separator__                                                               // Número de unidades de expedición (bultos, cajas, etc.)
+   cLine          += "" + __separator__                                                               // Número de unidades de consumo por unidad de expedición
+
+
+
 
    ::oFileEDI:add( cLine )
 
@@ -291,15 +310,66 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD writeResumenImpuestos()
+METHOD writeResumenPrimerImpuesto()
 
-   local cLine    := "ResumenImpuestos"                                        + __separator__
+   local cLine    := ""
+
+   if empty( ::sTotalFactura:nPorcentajePrimerIva() )
+      Return ( self )
+   end if 
+
+   cLine          += "ResumenImpuestos" + __separator__
+   cLine          += "IVA" + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nPorcentajePrimerIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nBasePrimerIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nTotalPrimerIva() ) + __separator__
 
    ::oFileEDI:add( cLine )
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD writeResumenSegundoImpuesto()
+
+   local cLine    := ""
+
+   if empty( ::sTotalFactura:nPorcentajeSegundoIva() )
+      Return ( self )
+   end if 
+
+   cLine          += "ResumenImpuestos" + __separator__
+   cLine          += "IVA" + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nPorcentajeSegundoIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nBaseSegundoIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nTotalSegundoIva() ) + __separator__
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeResumenTercerImpuesto()
+
+   local cLine    := ""
+
+   if empty( ::sTotalFactura:nPorcentajeTercerIva() )
+      Return ( self )
+   end if 
+
+   cLine          += "ResumenImpuestos" + __separator__
+   cLine          += "IVA" + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nPorcentajeTercerIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nBaseTercerIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nTotalTercerIva() ) + __separator__
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD writeVencimientos()
 

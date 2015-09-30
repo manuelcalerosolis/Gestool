@@ -20,47 +20,7 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
         #define __GSTOTROS__            "Teléfono: +34 902.930.252 Correo electónico: info@gestool.es"
 #endif
 
-#ifdef __MK__
-        #define __GSTROTOR__            "MKShop Sistema de Gestión"
-        #define __GSTTACTIL__           "MKShop Sistema de Gestión - Táctil"
-        #define __GSTVERSION__          "2012"
-        #define __GSTTPV__              "MKShop Sistema de Gestión - Terminal punto de venta"
-        #define __GSTFACTORY__          "Micro K Informática S.L."
-        #define __GSTCOPYRIGHT__        "(c) Micro K Informática S.L. 2012"
-        #define __GSTWEB__              "http://www.microkinformatica.es"
-        #define __GSTHELP__             "http://www.microk.com/ayudamkshopgestion/"
-        #define __GSTBROWSER__          "http://www.microk.com/mkgestion"
-        #define __GSTICON__             "Logomk.Ico"
-        #define __GSTTELEFONO__         "902.107.474"
-        #define __GSTLOGO__             "Bmp\MkWellcome.Bmp"
-        #define __GSTDIRECCION__        "Calle San Raimundo 15"
-        #define __GSTPOBLACION__        "03005 Alicante"
-        #define __GSTOTROS__            "Teléfono: +34 965927474 Correo electónico: info@microkinformatica.es"
-#endif
-
-#ifdef __OC__
-        #define __GSTROTOR__            "Oido Cocina - TPV"
-        #define __GSTTACTIL__           "Oido Cocina - TPV táctil"
-        #define __GSTVERSION__          "2012"
-        #define __GSTTPV__              "Oido Cocina - Terminal punto de venta"
-        #define __GSTFACTORY__          "Asema Consultora Informática SL"
-        #define __GSTCOPYRIGHT__        "(c) Asema Consultora Informática SL 2012"
-        #define __GSTWEB__              "http://www.asemasl.es"
-        #define __GSTHELP__             "http://www.gstrotor.com/ayuda/Index.html"
-        #define __GSTBROWSER__          "http://www.gstrotor.com/gst/indexoidococina.html"
-        #define __GSTICON__             "Oidococina.Ico"
-        #define __GSTTELEFONO__         "Tlf 955776888"
-        #define __GSTLOGO__             "Bmp\OidoCocina.Bmp"
-        #define __GSTDIRECCION__        "Avda. Espartinas, 21-25 C.C. PIBO Local 32 "
-        #define __GSTPOBLACION__        "41110 Bollullos de la  Mitación. Sevilla"
-        #define __GSTOTROS__            "Teléfono: +34 955776888 Correo electónico: manuelmiguez@asemasl.es"
-#endif
-
-#ifdef __MK__
-#define SERIALNUMBER                    1234554321
-#else
 #define SERIALNUMBER                    9876556789
-#endif
 
 #define __DAYS__                        5
 
@@ -360,7 +320,6 @@ Defines para ficheros INI
 #define DUPLICATE_CLIENTES                      "Duplicado cliente"
 #define EDIT_CLIENTES                           "Modifica cliente"
 #define DELETE_CLIENTES                         "Elimina cliente"
-
 
 /*----------------------------------------------------------------------------//
 Extend FW

@@ -55,7 +55,7 @@ CLASS TGetHlp FROM TGet
    Method SetText( cText )       INLINE ( if( ::oSay != nil, ::oSay:SetText( cText ), ::cText( cText ) ) )
 
    Method HardEnable()
-
+   
    Method HardDisable()
 
    METHOD GotFocus()
