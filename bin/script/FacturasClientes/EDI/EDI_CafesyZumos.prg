@@ -302,7 +302,10 @@ Return ( self )
 
 METHOD writeImpuestosLinea()
 
-   local cLine    := "ImpuestosLinea"                                        + __separator__
+   local cLine    := "ImpuestosLinea" + __separator__
+   cLine          += "IVA" + __separator__
+   cLine          += ::getNumero( D():FacturasClientesLineas( ::nView )->nIva ) + __separator__
+   cLine          += ::getNumero( nTotNFacCli() * nIvaUFacCli() )  
 
    ::oFileEDI:add( cLine )
 
