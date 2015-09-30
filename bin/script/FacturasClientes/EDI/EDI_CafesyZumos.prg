@@ -57,21 +57,37 @@ CLASS TEdiExporarFacturas
    DATA cFileEDI
    DATA oFileEDI
 
+   DATA sTotalFactura
+
    METHOD New( lNoExportados, oTree, nView )
    METHOD Run()
 
+   METHOD isFacturaProcesada()
+   METHOD infoFacturaEnProceso() INLINE   ( ::oTree:Select( ::oTree:Add( "Factura : " + D():FacturasClientesIdText( ::nView ) + " en proceso.", 1 ) ) )
+
    METHOD getSerlizeFileName()
    METHOD createFile()
-   METHOD closeFile()         INLINE ( ::oFileEDI:Close() )
-   METHOD isFile()            INLINE ( file( ::cFileEDI ) )
+   METHOD closeFile()            INLINE   ( ::oFileEDI:Close() )
+   METHOD isFile()               INLINE   ( file( ::cFileEDI ) )
 
    METHOD writeDatosGenerales()
    METHOD writeDatosProveedor()
    METHOD writeDatosCliente()
    METHOD writeDatosEstablecimiento()
+
    METHOD writeLineas()
       METHOD writeDetallesLinea()
       METHOD writeImpuestosLinea()
+
+   METHOD writeResumenImpuestos()
+
+   METHOD writeVencimientos()
+      METHOD writeDetallesVencimientos()
+   
+   METHOD writeResumenTotales()
+
+   METHOD getNumero( nNumero )   INLINE   ( alltrim( transform( nNumero, "@E 99999999999999.99" ) ) )
+   METHOD getFecha( dFecha )     INLINE   ( transform( dtos( dFecha ), "@R 9999-99-99") )
 
 END CLASS
 
@@ -91,14 +107,13 @@ METHOD Run()
 
    local oNode
 
-   if ( D():FacturasClientes( ::nView ) )->lExpEdi .and. ::lNoExportados
-      oNode                   := ::oTree:Add( "Factura : " + D():FacturasClientesIdText( ::nView ) + " anteriormente generada.", 1 )
-      ::oTree:Select( oNode )
+   if ::isFacturaProcesada()
       Return ( self )
    end if
    
-   oNode                   := ::oTree:Add( "Factura : " + D():FacturasClientesIdText( ::nView ) + " en proceso.", 1 )
-   ::oTree:Select( oNode )
+   ::infoFacturaEnProceso()
+
+   ::sTotalFactura         := sTotFacCli()
 
    ::createFile()
    if ::isFile()
@@ -106,11 +121,28 @@ METHOD Run()
       ::writeDatosProveedor()
       ::writeDatosCliente()
       ::writeDatosEstablecimiento()
-      ::writeLineas()      
+      ::writeLineas()  
+      ::writeResumenImpuestos()
+      ::writeVencimientos()
+      ::writeResumenTotales()
       ::closeFile()
    end if
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isFacturaProcesada()
+
+   local oNode
+
+   if ( D():FacturasClientes( ::nView ) )->lExpEdi .and. ::lNoExportados
+      oNode                   := ::oTree:Add( "Factura : " + D():FacturasClientesIdText( ::nView ) + " anteriormente generada.", 1 )
+      ::oTree:Select( oNode )
+      Return ( .t. )
+   end if
+
+Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
@@ -139,14 +171,14 @@ Return ( self )
 
 METHOD writeDatosGenerales()
 
-   local cLine    := "DatosGenerales"                                      + __separator__
-   cLine          += D():FacturasClientesIdShort( ::nView )                + __separator__
+   local cLine    := "DatosGenerales" + __separator__
+   cLine          += D():FacturasClientesIdShort( ::nView ) + __separator__
    if ( D():FacturasClientes( ::nView ) )->nTotFac > 0
-      cLine       += "FacturaComercial"                                    + __separator__ 
+      cLine       += "FacturaComercial" + __separator__ 
    else 
-      cLine       += "FacturaAbono"                                        + __separator__
+      cLine       += "FacturaAbono" + __separator__
    end if 
-   cLine          += transform( dtos( ( D():FacturasClientes( ::nView ) )->dFecFac ), "@R 9999-99-99")  + __separator__
+   cLine          += ::getFecha( ( D():FacturasClientes( ::nView ) )->dFecFac ) + __separator__
    cLine          += "EUR"
 
    ::oFileEDI:add( cLine )
@@ -252,6 +284,66 @@ Return ( self )
 METHOD writeImpuestosLinea()
 
    local cLine    := "ImpuestosLinea"                                        + __separator__
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeResumenImpuestos()
+
+   local cLine    := "ResumenImpuestos"                                        + __separator__
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeVencimientos()
+
+   local id       := D():FacturasClientesId( ::nView )
+
+   if ( D():FacturasClientesCobros( ::nView ) )->( dbSeek( id ) )  
+
+      while ( D():FacturasClientesCobrosIdShort( ::nView ) == id ) .and. !( D():FacturasClientesCobros( ::nView ) )->( eof() ) 
+
+         ::writeDetallesVencimientos()
+      
+         ( D():FacturasClientesCobros( ::nView ) )->( dbSkip() ) 
+      
+      end while
+
+   end if 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeDetallesVencimientos()
+
+   local cLine    := "Vencimientos" + __separator__
+   cLine          += ::getFecha( ( D():FacturasClientesCobros( ::nView ) )->dPreCob ) + __separator__
+   cLine          += ::getNumero( ( D():FacturasClientesCobros( ::nView ) )->nImporte ) + __separator__
+   cLine          += "Recibo" + __separator__
+   cLine          += alltrim( ( D():FacturasClientesCobros( ::nView ) )->cDescrip ) 
+
+   ::oFileEDI:add( cLine )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD writeResumenTotales()
+
+   local cLine    := "ResumenTotales" + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nTotalBruto ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nTotalNeto ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:TotalDescuento() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:TotalBase() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:TotalIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:TotalDocumento() )
 
    ::oFileEDI:add( cLine )
 

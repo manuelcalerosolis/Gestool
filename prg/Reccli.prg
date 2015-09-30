@@ -1861,7 +1861,6 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-
 Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
 
    local cDivPgo
