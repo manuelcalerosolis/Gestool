@@ -91,6 +91,8 @@ CLASS TEdiExporarFacturas
    METHOD getNumero( nNumero )   INLINE   ( alltrim( transform( nNumero, "@E 99999999999999.99" ) ) )
    METHOD getFecha( dFecha )     INLINE   ( transform( dtos( dFecha ), "@R 9999-99-99") )
 
+   METHOD isLineaValida()        INLINE   ( lValLine( D():FacturasClientesLineas( ::nView ) ) .and. !( D():FacturasClientesLineas( ::nView ) )->lTotLin .and. nTotNFacCli() != 0 )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -143,11 +145,8 @@ Return ( self )
 
 METHOD isFacturaProcesada()
 
-   local oNode
-
    if ( D():FacturasClientes( ::nView ) )->lExpEdi .and. ::lNoExportados
-      oNode                   := ::oTree:Add( "Factura : " + D():FacturasClientesIdText( ::nView ) + " anteriormente generada.", 1 )
-      ::oTree:Select( oNode )
+      ::oTree:Select( ::oTree:Add( "Factura : " + D():FacturasClientesIdText( ::nView ) + " anteriormente generada.", 1 ) )
       Return ( .t. )
    end if
 
@@ -171,8 +170,8 @@ Return ( cFileName )
 
 METHOD createFile()
 
-   ::cFileEDI              := ::getSerlizeFileName()
-   ::oFileEDI              := TTxtFile():New( ::cFileEDI )
+   ::cFileEDI     := ::getSerlizeFileName()
+   ::oFileEDI     := TTxtFile():New( ::cFileEDI )
 
 Return ( self )
 
@@ -219,9 +218,9 @@ Return ( self )
 
 METHOD writeDatosCliente()
 
-   local cLine    := "DatosCliente"                                        + __separator__
-   cLine          += "IDCliente"                                           + __separator__
-   cLine          += "IDCliProv"                                           + __separator__ 
+   local cLine    := "DatosCliente" + __separator__                                                   
+   cLine          += "" + __separator__                                                               // Código del cliente (interno del cliente)
+   cLine          += alltrim( ( D():FacturasClientes( ::nView ) )->cCodCli ) + __separator__          // Código del cliente (interno del proveedor)
    cLine          += "IDCentroCli"                                         + __separator__
    cLine          += "CIF"                                                 + __separator__
    cLine          += "Empresa"                                             + __separator__
@@ -267,8 +266,10 @@ METHOD writeLineas()
 
       while ( D():FacturasClientesLineasId( ::nView ) == id ) .and. !( D():FacturasClientesLineas( ::nView ) )->( eof() ) 
 
-         ::writeDetallesLinea()
-         ::writeImpuestosLinea()
+         if ::isLineaValida()
+            ::writeDetallesLinea()
+            ::writeImpuestosLinea()
+         end if 
       
          ( D():FacturasClientesLineas( ::nView ) )->( dbSkip() ) 
       
@@ -285,12 +286,14 @@ METHOD writeDetallesLinea()
    local cLine    := "Detalle" + __separator__
    cLine          += alltrim( ( D():FacturasClientesLineas( ::nView ) )->cRef ) + __separator__       // Código de artículo interno del proveedor
    cLine          += "" + __separator__                                                               // Código de artículo interno del cliente
-   cLine          += alltrim( ( D():FacturasClientesLineas( ::nView ) )->cDescrip ) + __separator__   // Descripción (nombre) del artículo
+   cLine          += alltrim( ( D():FacturasClientesLineas( ::nView ) )->cDetalle ) + __separator__   // Descripción (nombre) del artículo
    cLine          += ::getNumero( nTotNFacCli() ) + __separator__                                     // Cantidad del artículo
    cLine          += "Unidades" + __separator__                                                       // Unidad de medida de la cantidad
+   /*
    cLine          += "" + __separator__                                                               // Número de unidades de expedición (bultos, cajas, etc.)
    cLine          += "" + __separator__                                                               // Número de unidades de consumo por unidad de expedición
    cLine          += "" + __separator__                                                               // Peso en gramos de una unidad. Solo tiene sentido cuando UM
+   */
    cLine          += ::getNumero( nTotUFacCli() ) + __separator__                                     // Precio bruto unitario (sin descuentos, impuestos, etc.)
    cLine          += ::getNumero( nTotLFacCli() )                                                     // Importe bruto total de esta línea (Cdad x Punit)
 
@@ -302,10 +305,10 @@ Return ( self )
 
 METHOD writeImpuestosLinea()
 
-   local cLine    := "ImpuestosLinea" + __separator__
-   cLine          += "IVA" + __separator__
-   cLine          += ::getNumero( D():FacturasClientesLineas( ::nView )->nIva ) + __separator__
-   cLine          += ::getNumero( nTotNFacCli() * nIvaUFacCli() )  
+   local cLine    := "ImpuestosLinea" + __separator__                                                 
+   cLine          += "IVA" + __separator__                                                            // Identifica el tipo de impuesto. En la tabla códigos de impuesto se describen los valores posibles de este campo
+   cLine          += ::getNumero( ( D():FacturasClientesLineas( ::nView ) )->nIva ) + __separator__   // Indica el % o el importe unitario del impuesto a aplicar
+   cLine          += ::getNumero( nTotNFacCli() * nIvaUFacCli() )                                     // Importe del impuesto
 
    ::oFileEDI:add( cLine )
 
@@ -325,7 +328,7 @@ METHOD writeResumenPrimerImpuesto()
    cLine          += "IVA" + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nPorcentajePrimerIva() ) + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nBasePrimerIva() ) + __separator__
-   cLine          += ::getNumero( ::sTotalFactura:nTotalPrimerIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nTotalPrimerIva() ) 
 
    ::oFileEDI:add( cLine )
 
@@ -345,7 +348,7 @@ METHOD writeResumenSegundoImpuesto()
    cLine          += "IVA" + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nPorcentajeSegundoIva() ) + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nBaseSegundoIva() ) + __separator__
-   cLine          += ::getNumero( ::sTotalFactura:nTotalSegundoIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nTotalSegundoIva() ) 
 
    ::oFileEDI:add( cLine )
 
@@ -365,7 +368,7 @@ METHOD writeResumenTercerImpuesto()
    cLine          += "IVA" + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nPorcentajeTercerIva() ) + __separator__
    cLine          += ::getNumero( ::sTotalFactura:nBaseTercerIva() ) + __separator__
-   cLine          += ::getNumero( ::sTotalFactura:nTotalTercerIva() ) + __separator__
+   cLine          += ::getNumero( ::sTotalFactura:nTotalTercerIva() ) 
 
    ::oFileEDI:add( cLine )
 

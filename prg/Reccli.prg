@@ -2166,7 +2166,6 @@ function SynRecCli( cPath )
 
    while !( dbfFacCliT )->( eof() )
 
-
       nTotFac  := nTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f. )
       nTotRec  := nPagFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliP, dbfIva, dbfDiv, nil, .f. )
 

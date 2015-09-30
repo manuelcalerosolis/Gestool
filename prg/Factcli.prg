@@ -16855,19 +16855,20 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 Devuelve el valor del impuestos de un artículo
 */
 
-FUNCTION nIvaUFacCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nIvaUFacCli( uTmpLin, nDec, nVdv )
 
    local nCalculo
 
+   DEFAULT uTmpLin   := D():FacturasClientesLineas( nView )
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
-   nCalculo          := nTotUFacCli( dbfTmpLin, nDec, nVdv )
+   nCalculo          := nTotUFacCli( uTmpLin, nDec, nVdv )
 
-   if ( dbfTmpLin )->lIvaLin
-      nCalculo       -= nCalculo / ( 1 + ( dbfTmpLin )->nIva / 100 )
+   if ( uTmpLin )->lIvaLin
+      nCalculo       -= nCalculo / ( 1 + ( uTmpLin )->nIva / 100 )
    else
-      nCalculo       := nCalculo * ( dbfTmpLin )->nIva / 100
+      nCalculo       := nCalculo * ( uTmpLin )->nIva / 100
    end if
 
    if nVdv != 0
