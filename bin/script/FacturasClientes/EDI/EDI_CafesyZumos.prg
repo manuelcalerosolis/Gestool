@@ -219,9 +219,9 @@ Return ( self )
 METHOD writeDatosCliente()
 
    local cLine    := "DatosCliente" + __separator__                                                   
-   cLine          += "" + __separator__                                                               // Código del cliente (interno del cliente)
-   cLine          += alltrim( ( D():FacturasClientes( ::nView ) )->cCodCli ) + __separator__          // Código del cliente (interno del proveedor)
-   cLine          += "IDCentroCli"                                         + __separator__
+   cLine          += "" + __separator__                                                                                                      // Código del cliente (interno del cliente)
+   cLine          += alltrim( ( D():FacturasClientes( ::nView ) )->cCodCli ) + __separator__                                                 // Código del cliente (interno del proveedor)
+   cLine          += alltrim( retfld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cCodEdi" ) ) + __separator__   // Código de un centro del cliente (interno del proveedor). Algunos proveedores no lo utilizan (solo usan el campo IDCliProv)
    cLine          += "CIF"                                                 + __separator__
    cLine          += "Empresa"                                             + __separator__
    cLine          += "Domicilio"                                           + __separator__
