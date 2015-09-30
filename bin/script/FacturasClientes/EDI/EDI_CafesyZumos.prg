@@ -290,9 +290,9 @@ METHOD writeDetallesLinea()
    cLine          += "Unidades" + __separator__                                                       // Unidad de medida de la cantidad
    cLine          += "" + __separator__                                                               // Número de unidades de expedición (bultos, cajas, etc.)
    cLine          += "" + __separator__                                                               // Número de unidades de consumo por unidad de expedición
-
-
-
+   cLine          += "" + __separator__                                                               // Peso en gramos de una unidad. Solo tiene sentido cuando UM
+   cLine          += ::getNumero( nTotUFacCli() ) + __separator__                                     // Precio bruto unitario (sin descuentos, impuestos, etc.)
+   cLine          += ::getNumero( nTotLFacCli() )                                                     // Importe bruto total de esta línea (Cdad x Punit)
 
    ::oFileEDI:add( cLine )
 

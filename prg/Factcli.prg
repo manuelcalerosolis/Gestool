@@ -16864,10 +16864,10 @@ FUNCTION nIvaUFacCli( dbfTmpLin, nDec, nVdv )
 
    nCalculo          := nTotUFacCli( dbfTmpLin, nDec, nVdv )
 
-   if !( dbfTmpLin )->lIvaLin
-      nCalculo       := nCalculo * ( dbfTmpLin )->nIva / 100
-   else
+   if ( dbfTmpLin )->lIvaLin
       nCalculo       -= nCalculo / ( 1 + ( dbfTmpLin )->nIva / 100 )
+   else
+      nCalculo       := nCalculo * ( dbfTmpLin )->nIva / 100
    end if
 
    if nVdv != 0
@@ -20458,24 +20458,24 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    Estudio de la Forma de Pago-------------------------------------------------
    */
 
-   if !Empty( D():FacturasClientesCobros( nView ) ) .and. ( D():FacturasClientesCobros( nView ) )->( Used() )
+   if !Empty( cFacCliP ) .and. ( cFacCliP )->( Used() )
 
-      nOrd           := ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( "nNumFac" ) )
+      nOrd           := ( cFacCliP )->( OrdSetFocus( "nNumFac" ) )
 
-      if ( D():FacturasClientesCobros( nView ) )->( dbSeek( cFactura ) )
+      if ( cFacCliP )->( dbSeek( cFactura ) )
 
-         while ( D():FacturasClientesCobros( nView ) )->cSerie + str( ( D():FacturasClientesCobros( nView ) )->nNumFac ) + ( D():FacturasClientesCobros( nView ) )->cSufFac == cFactura .and. !( D():FacturasClientesCobros( nView ) )->( eof() )
+         while ( cFacCliP )->cSerie + str( ( cFacCliP )->nNumFac ) + ( cFacCliP )->cSufFac == cFactura .and. !( cFacCliP )->( eof() )
 
-            aAdd( aImpVto, ( D():FacturasClientesCobros( nView ) )->nImporte )
-            aAdd( aDatVto, if( Empty( ( D():FacturasClientesCobros( nView ) )->dFecVto ), ( D():FacturasClientesCobros( nView ) )->dPreCob,  ( D():FacturasClientesCobros( nView ) )->dFecVto ) )
+            aAdd( aImpVto, ( cFacCliP )->nImporte )
+            aAdd( aDatVto, if( Empty( ( cFacCliP )->dFecVto ), ( cFacCliP )->dPreCob,  ( cFacCliP )->dFecVto ) )
 
-            ( D():FacturasClientesCobros( nView ) )->( dbSkip() )
+            ( cFacCliP )->( dbSkip() )
 
          end while
 
       end if
 
-      ( D():FacturasClientesCobros( nView ) )->( OrdSetFocus( nOrd ) )
+      ( cFacCliP )->( OrdSetFocus( nOrd ) )
 
    end if
 
