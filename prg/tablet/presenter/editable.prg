@@ -77,7 +77,7 @@ CLASS Editable
    METHOD getDetailArea()                       INLINE ( ::cDetailArea )
 
    METHOD appendDetail()
-      METHOD onPreSaveAppendDetail()            INLINE ( msgAlert( ::ClassName() ) )
+      METHOD onPreSaveAppendDetail()            INLINE ( .t. )
       METHOD onPreSaveEditDetail()              INLINE ( .t. )
 
    METHOD editDetail()

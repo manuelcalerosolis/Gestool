@@ -76,10 +76,10 @@ CLASS TSndRecInf
    DATA  oImageList
 
    DATA  cPath
-   DATA  cPathComunication    INIT ""
+   DATA  cPathComunication                INIT ""
 
    Method New()
-   Method Create()                  INLINE ( Self )
+   Method Create()                        INLINE ( Self )
 
    Method LoadFromIni()
    Method SaveToIni()
@@ -228,27 +228,6 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-Method StartTimer() CLASS TSndRecInf
-
-   if ::lPlanificarEnvio .or. ::lPlanificarRecepcion
-      ::oTimer             := TTimer():New( 60000, {|| ::AutoExecute() }, oWnd() )
-      ::oTimer:Activate()
-   end if
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-Method StopTimer() CLASS TSndRecInf
-
-   if ::oTimer != nil .and. ::oTimer:lActive
-      ::oTimer:DeActivate()
-   end if
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
 Method SaveToIni( lMessage ) CLASS TSndRecInf
 
    DEFAULT lMessage  := .f.
@@ -268,6 +247,27 @@ Method SaveToIni( lMessage ) CLASS TSndRecInf
 
    if lMessage
       MsgInfo( "Configuración de envio guardada" )
+   end if
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method StartTimer() CLASS TSndRecInf
+
+   if ::lPlanificarEnvio .or. ::lPlanificarRecepcion
+      ::oTimer             := TTimer():New( 60000, {|| ::AutoExecute() }, oWnd() )
+      ::oTimer:Activate()
+   end if
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method StopTimer() CLASS TSndRecInf
+
+   if ::oTimer != nil .and. ::oTimer:lActive
+      ::oTimer:DeActivate()
    end if
 
 RETURN ( Self )
@@ -860,6 +860,8 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
 
    ::SaveToIni()
 
+   ? "estoy en Execute"
+
    /*
    Nos vamos a la ultima pagina------------------------------------------------
    */
@@ -878,9 +880,9 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
    Limpiamos los directorios de envios y recepciones---------------------------
    */
 
-   EraseFilesInDirectory(cPatIn(),  "*.*" )
-   EraseFilesInDirectory(cPatOut(), "*.*" )
-   EraseFilesInDirectory(cPatSnd(), "*.*" )
+   eraseFilesInDirectory( cPatIn(),  "*.*" )
+   eraseFilesInDirectory( cPatOut(), "*.*" )
+   eraseFilesInDirectory( cPatSnd(), "*.*" )
 
    /*
    Segun el tipo de envio------------------------------------------------------

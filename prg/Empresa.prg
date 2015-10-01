@@ -1504,7 +1504,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       125 ;
          OF       fldTPV
 
-      REDEFINE CHECKBOX aGet[ _LENCARGO ] VAR aTmp[ _LENCARGO ] ;
+      REDEFINE CHECKBOX aGet[ _LENCARGAR ] VAR aTmp[ _LENCARGAR ] ;
          ID       127 ;
          OF       fldTPV
 
@@ -1658,12 +1658,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       151 ;
          OF       fldValores
 
-      REDEFINE GET aGet[ _CDEFVTA ] VAR aTmp[ _CDEFVTA ] ;
+      REDEFINE GET aGet[ _CDEDVTA ] VAR aTmp[ _CDEDVTA ] ;
          ID       400;
          PICTURE  "@!" ;
-         VALID    ( cTVta( aGet[ _CDEFVTA ], dbfTVta, oSay[43] ) ) ;
+         VALID    ( cTVta( aGet[ _CDEDVTA ], dbfTVta, oSay[43] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTVta( aGet[ _CDEFVTA ], dbfTVta, oSay[43] ) ) ;
+         ON HELP  ( BrwTVta( aGet[ _CDEDVTA ], dbfTVta, oSay[43] ) ) ;
          OF       fldValores
 
       REDEFINE GET oSay[43] VAR cSay[43] ;
@@ -1959,13 +1959,13 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          --------------------------------------------
          */
 
-      REDEFINE CHECKBOX aGet[ _LBULTOS ] VAR aTmp[ _LBULTOS ] ;
+      REDEFINE CHECKBOX aGet[ _LUSEBULTOS ] VAR aTmp[ _LUSEBULTOS ] ;
          ID       450 ;
          OF       fldArticulos
 
       REDEFINE GET aGet[ _CNBRBULTOS ] VAR aTmp[ _CNBRBULTOS ] ;
          ID       460 ;
-         WHEN     aTmp[ _LBULTOS ] ;
+         WHEN     aTmp[ _LUSEBULTOS ] ;
          OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LUSECAJ ] VAR aTmp[ _LUSECAJ ] ;
@@ -3418,9 +3418,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
       oMsgText( 'Comprobando formas de pago' )
       IsFPago()
-
-      oMsgText( 'Comprobando familias' )
-      IsFamilia()
 
       oMsgText( 'Comprobando articulos' )
       IsArticulo()

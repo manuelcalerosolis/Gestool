@@ -201,6 +201,14 @@ Return ( SysRefresh() )
 
 //--------------------------------------------------------------------------//
 
+Function incWaitMeter()
+
+   oDlgWat:incMeter()
+
+Return ( SysRefresh() )
+
+//--------------------------------------------------------------------------//
+
 Function EndWaitMeter()
 
    oDlgWat:End()
@@ -223,14 +231,16 @@ CLASS TWaitMeter
 
    DATA  oMeter
    DATA  nTotal
+   DATA  nCurrent
 
    Method New( cMsg, cTitle, nTotal )
 
-   Method SetMessage( cMessage )       INLINE   ( ::oMessage:SetText( cMessage ) )
+   Method setMessage( cMessage )       INLINE   ( ::oMessage:SetText( cMessage ) )
 
-   Method RefreshMeter( nPosition )    INLINE   ( ::oProgress:Set( nPosition ) )
+   Method incMeter()                   INLINE   ( ::refreshMeter( ++::nCurrent ) )
+   Method refreshMeter( nPosition )    INLINE   ( ::oProgress:Set( nPosition ) )
 
-   Method SetTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
+   Method setTotal( nTotal )           INLINE   ( ::oProgress:SetTotal( nTotal ) )
 
    Method End()
 
@@ -247,6 +257,7 @@ Method New( cTitle, cMsg, nTotal ) CLASS TWaitMeter
    ::cMessage           := cMsg
    ::cTitle             := cTitle
    ::nTotal             := nTotal
+   ::nCurrent           := 0
 
    CursorWait()
 

@@ -11008,7 +11008,7 @@ STATIC FUNCTION lSelectAll( oBrw, dbf, dbfFam, lSel, lTop )
    DEFAULT lSel   := .t.
    DEFAULT lTop   := .t.
 
-   CreateWaitMeter( nil, nil, ( dbf )->( OrdKeyCount() ) )
+   createWaitMeter( nil, nil, ( dbf )->( OrdKeyCount() ) )
 
    if lTop
       ( dbf )->( dbGoTop() )
@@ -11016,13 +11016,13 @@ STATIC FUNCTION lSelectAll( oBrw, dbf, dbfFam, lSel, lTop )
 
    while !( dbf )->( eof() )
       lSelArt( lSel, nil, dbf, dbfFam )
-      RefreshWaitMeter( ( dbf )->( OrdKeyNo() ) )
+      incWaitMeter()
       ( dbf )->( dbSkip() )
    end do
 
    ( dbf )->( dbGoTo( nRecAct ) )
 
-   EndWaitMeter()
+   endWaitMeter()
 
    if oBrw != nil
       oBrw:Refresh()
@@ -12800,30 +12800,30 @@ Method CreateData()
    */
 
    mkArticulo( cPatSnd() )
-   mkOferta(   cPatSnd() )
+   mkOferta( cPatSnd() )
 
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatSnd() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @tmpArticulo ) )
+   USE ( cPatSnd() + "ARTICULO.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @tmpArticulo ) )
    SET ADSINDEX TO ( cPatSnd() + "ARTICULO.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @tmpArtPrv ) )
+   USE ( cPatSnd() + "PROVART.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @tmpArtPrv ) )
    SET ADSINDEX TO ( cPatSnd() + "PROVART.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "ARTDIV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @tmpArtVta ) )
+   USE ( cPatSnd() + "ARTDIV.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @tmpArtVta ) )
    SET ADSINDEX TO ( cPatSnd() + "ARTDIV.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @tmpKit ) )
+   USE ( cPatSnd() + "ARTKIT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @tmpKit ) )
    SET ADSINDEX TO ( cPatSnd() + "ARTKIT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "ArtImg.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ArtImg", @tmpImg ) )
+   USE ( cPatSnd() + "ArtImg.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "ArtImg", @tmpImg ) )
    SET ADSINDEX TO ( cPatSnd() + "ArtImg.Cdx" ) ADDITIVE
 
-   USE ( cPatSnd() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @tmpOfe ) )
+   USE ( cPatSnd() + "OFERTA.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @tmpOfe ) )
    SET ADSINDEX TO ( cPatSnd() + "OFERTA.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @tmpCodebar ) )
+   USE ( cPatSnd() + "ArtCodebar.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @tmpCodebar ) )
    SET ADSINDEX TO ( cPatSnd() + "ArtCodebar.Cdx" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
@@ -13090,30 +13090,30 @@ Method Process()
 
       if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-         if lExistTable( cPatSnd() + "Articulo.Dbf" )     .and.;
-            lExistTable( cPatSnd() + "ProvArt.Dbf"  )     .and.;
-            lExistTable( cPatSnd() + "ArtDiv.Dbf"   )     .and.;
-            lExistTable( cPatSnd() + "ArtKit.Dbf"   )     .and.;
-            lExistTable( cPatSnd() + "Oferta.Dbf"   )     .and.;
-            lExistTable( cPatSnd() + "ArtCodebar.Dbf" )   .and.;
+         if lExistTable( cPatSnd() + "Articulo.Dbf", cLocalDriver() )      .and.;
+            lExistTable( cPatSnd() + "ProvArt.Dbf", cLocalDriver() )       .and.;
+            lExistTable( cPatSnd() + "ArtDiv.Dbf", cLocalDriver() )        .and.;
+            lExistTable( cPatSnd() + "ArtKit.Dbf", cLocalDriver() )        .and.;
+            lExistTable( cPatSnd() + "Oferta.Dbf", cLocalDriver() )        .and.;
+            lExistTable( cPatSnd() + "ArtCodebar.Dbf", cLocalDriver() )    .and.;
             OpenFiles( .f. )
 
-            USE ( cPatSnd() + "ARTICULO.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "ARTICULO", @tmpArticulo ) )
+            USE ( cPatSnd() + "ARTICULO.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "ARTICULO", @tmpArticulo ) )
             SET ADSINDEX TO ( cPatSnd() + "ARTICULO.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "PROVART.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "PROVART", @tmpArtPrv ) )
+            USE ( cPatSnd() + "PROVART.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "PROVART", @tmpArtPrv ) )
             SET ADSINDEX TO ( cPatSnd() + "PROVART.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "ARTDIV.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "ARTDIV", @tmpArtDiv ) )
+            USE ( cPatSnd() + "ARTDIV.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "ARTDIV", @tmpArtDiv ) )
             SET ADSINDEX TO ( cPatSnd() + "ARTDIV.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "ARTKIT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "ARTTIK", @tmpKit ) )
+            USE ( cPatSnd() + "ARTKIT.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "ARTTIK", @tmpKit ) )
             SET ADSINDEX TO ( cPatSnd() + "ARTKIT.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "OFERTA.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "OFERTA", @tmpOfe ) )
+            USE ( cPatSnd() + "OFERTA.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "OFERTA", @tmpOfe ) )
             SET ADSINDEX TO ( cPatSnd() + "OFERTA.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @tmpCodebar ) )
+            USE ( cPatSnd() + "ArtCodebar.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @tmpCodebar ) )
             SET ADSINDEX TO ( cPatSnd() + "ArtCodebar.Cdx" ) ADDITIVE
 
             if !Empty( ::oSender:oMtr )
@@ -15800,40 +15800,40 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
 		sysrefresh()
    end if
 
-   if !lExistTable( cPath + "Articulo.Dbf" )
-      dbCreate( cPath + "Articulo.Dbf",   aSqlStruct( aItmArt() ),      cDriver() )
+   if !lExistTable( cPath + "Articulo.Dbf", cLocalDriver() )
+      dbCreate( cPath + "Articulo.Dbf", aSqlStruct( aItmArt() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ArtDiv.Dbf" )
-      dbCreate( cPath + "ArtDiv.Dbf",     aSqlStruct( aItmVta() ),      cDriver() )
+   if !lExistTable( cPath + "ArtDiv.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ArtDiv.Dbf", aSqlStruct( aItmVta() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ArtKit.Dbf" )
-      dbCreate( cPath + "ArtKit.Dbf",     aSqlStruct( aItmKit() ),      cDriver() )
+   if !lExistTable( cPath + "ArtKit.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ArtKit.Dbf", aSqlStruct( aItmKit() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ArtCodebar.Dbf" )
-      dbCreate( cPath + "ArtCodebar.Dbf", aSqlStruct( aItmBar() ),      cDriver() )
+   if !lExistTable( cPath + "ArtCodebar.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ArtCodebar.Dbf", aSqlStruct( aItmBar() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ProvArt.Dbf" )
-      dbCreate( cPath + "ProvArt.Dbf",    aSqlStruct( aItmArtPrv() ),   cDriver() )
+   if !lExistTable( cPath + "ProvArt.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ProvArt.Dbf", aSqlStruct( aItmArtPrv() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ArtLeng.Dbf" )
-      dbCreate( cPath + "ArtLeng.Dbf",    aSqlStruct( aItmArtLeng() ),   cDriver() )
+   if !lExistTable( cPath + "ArtLeng.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ArtLeng.Dbf", aSqlStruct( aItmArtLeng() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ArtLbl.Dbf" )
-      dbCreate( cPath + "ArtLbl.Dbf",     aSqlStruct( aItmLbl() ),      cDriver() )
+   if !lExistTable( cPath + "ArtLbl.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ArtLbl.Dbf", aSqlStruct( aItmLbl() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ArtImg.Dbf" )
-      dbCreate( cPath + "ArtImg.Dbf",     aSqlStruct( aItmImg() ),      cDriver() )
+   if !lExistTable( cPath + "ArtImg.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ArtImg.Dbf", aSqlStruct( aItmImg() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ArtAlm.Dbf" )
-      dbCreate( cPath + "ArtAlm.Dbf",     aSqlStruct( aItmStockaAlmacenes() ),      cDriver() )
+   if !lExistTable( cPath + "ArtAlm.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ArtAlm.Dbf", aSqlStruct( aItmStockaAlmacenes() ), cLocalDriver() )
    end if
 
    /*
@@ -15858,19 +15858,19 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
 
    end if
 
-   rxArticulo( cPath, oMeter )
+   rxArticulo( cPath, cLocalDriver(), oMeter )
 
 RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
+FUNCTION rxArticulo( cPath, cDriver, oMeter )
 
    local dbfCodebar
    local dbfArticulo
 
    DEFAULT cPath     := cPatArt()
-   DEFAULT lRecPrc   := .f.
+   DEFAULT cDriver   := cDriver()
 
    if !lExistTable( cPath + "Articulo.Dbf"   ) .or. ;
       !lExistTable( cPath + "ProvArt.Dbf"    ) .or. ;
@@ -15896,7 +15896,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    fErase( cPath + "ArtImg.Cdx"     )
    fErase( cPath + "ArtAlm.Cdx"     )
 
-   dbUseArea( .t., cDriver(), cPath + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
 
    if !( dbfArticulo )->( neterr() )
 
@@ -15992,7 +15992,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    Articulos proveedores-------------------------------------------------------
    */
 
-   dbUseArea( .t., cDriver(), cPath + "PROVART.DBF", cCheckArea( "PROVART", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PROVART.DBF", cCheckArea( "PROVART", @dbfArticulo ), .f. )
 
    if !( dbfArticulo )->( neterr() )
 
@@ -16025,7 +16025,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    Articulos lenguajes---------------------------------------------------------
    */
 
-   dbUseArea( .t., cDriver(), cPath + "ARTLENG.DBF", cCheckArea( "ARTLENG", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ARTLENG.DBF", cCheckArea( "ARTLENG", @dbfArticulo ), .f. )
 
    if !( dbfArticulo )->( neterr() )
 
@@ -16049,7 +16049,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 	Indice de precios en divisas_______________________________________________
 	*/
 
-   dbUseArea( .t., cDriver(), cPath + "ARTDIV.DBF", cCheckArea( "ARTDIV", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ARTDIV.DBF", cCheckArea( "ARTDIV", @dbfArticulo ), .f. )
 
    if !( dbfArticulo )->( neterr() )
       ( dbfArticulo )->( __dbPack() )
@@ -16072,7 +16072,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    Articulos Kit______________________________________________________________________________________________
    */
 
-   dbUseArea( .t., cDriver(), cPath + "ARTKIT.DBF", cCheckArea( "ARTKIT", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ARTKIT.DBF", cCheckArea( "ARTKIT", @dbfArticulo ), .f. )
    if !( dbfArticulo )->( neterr() )
       ( dbfArticulo )->( __dbPack() )
 
@@ -16094,7 +16094,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    Codigos de barras___________________________________________________________
 	*/
 
-   dbUseArea( .t., cDriver(), cPath + "ArtCodebar.Dbf", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ArtCodebar.Dbf", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
 
    if !( dbfArticulo )->( neterr() )
 
@@ -16124,7 +16124,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    Indice de unidades para etiquetas___________________________________________
 	*/
 
-   dbUseArea( .t., cDriver(), cPath + "ArtLbl.Dbf", cCheckArea( "ArtLbl", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ArtLbl.Dbf", cCheckArea( "ArtLbl", @dbfArticulo ), .f. )
 
    if !( dbfArticulo )->( neterr() )
       ( dbfArticulo )->( __dbPack() )
@@ -16141,7 +16141,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    Indice de unidades para imagenes___________________________________________
 	*/
 
-   dbUseArea( .t., cDriver(), cPath + "ArtImg.Dbf", cCheckArea( "ArtImg", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ArtImg.Dbf", cCheckArea( "ArtImg", @dbfArticulo ), .f. )
 
    if !( dbfArticulo )->( neterr() )
       ( dbfArticulo )->( __dbPack() )
@@ -16164,7 +16164,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    Articulos Kit______________________________________________________________________________________________
    */
 
-   dbUseArea( .t., cDriver(), cPath + "ArtAlm.Dbf", cCheckArea( "ArtAlm", @dbfArticulo ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ArtAlm.Dbf", cCheckArea( "ArtAlm", @dbfArticulo ), .f. )
    if !( dbfArticulo )->( neterr() )
       ( dbfArticulo )->( __dbPack() )
 
@@ -16175,56 +16175,6 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
    end if
-
-   /*
-   Recalculo de precios--------------------------------------------------------
-   */
-
-   /*
-   if lRecPrc
-
-      dbUseArea( .t., cDriver(), cPath + "Articulo.Dbf", cCheckArea( "Articulo", @dbfArticulo ), .f. )
-
-      if !( dbfArticulo )->( neterr() )
-
-         ( dbfArticulo )->( ordListAdd( cPath + "Articulo.Cdx" ) )
-
-         dbUseArea( .t., cDriver(), cPath + "ArtCodebar.Dbf", cCheckArea( "CODEBAR", @dbfCodebar ), .f. )
-
-         if !( dbfCodebar )->( neterr() )
-
-            ( dbfCodebar )->( ordListAdd( cPath + "ArtCodebar.Cdx" ) )
-            ( dbfCodebar )->( ordSetFocus( "cArtBar" ) )
-
-            while !( dbfArticulo )->( Eof() )
-
-               if !Empty( ( dbfArticulo )->CodeBar )                                                  .and. ;
-                  !( dbfCodebar )->( dbSeek( ( dbfArticulo )->Codigo + ( dbfArticulo )->CodeBar ) )
-
-                  ( dbfCodebar )->( dbAppend() )
-                  ( dbfCodebar )->cCodArt    := ( dbfArticulo )->Codigo
-                  ( dbfCodebar )->cCodBar    := ( dbfArticulo )->CodeBar
-                  ( dbfCodebar )->nTipBar    := ( dbfArticulo )->nTipBar
-
-               end if
-
-               ( dbfArticulo )->( dbSkip() )
-
-            end while
-
-            if ( dbfCodebar ) != nil
-               ( dbfCodebar )->( dbCloseArea() )
-            end if
-
-         end if
-
-         if ( dbfArticulo ) != nil
-            ( dbfArticulo )->( dbCloseArea() )
-         end if
-
-      end if
-
-   end if*/
 
 RETURN NIL
 

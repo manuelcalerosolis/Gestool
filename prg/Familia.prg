@@ -1919,7 +1919,7 @@ Method CreateData()
 
    mkFamilia( cPatSnd() )
 
-   USE ( cPatSnd() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @tmpFam ) )
+   USE ( cPatSnd() + "Familias.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @tmpFam ) )
    SET ADSINDEX TO ( cPatSnd() + "Familias.Cdx" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
@@ -2096,9 +2096,9 @@ Method Process()
 
          if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-            if File( cPatSnd() + "Familias.Dbf" )
+            if file( cPatSnd() + "Familias.Dbf" )
 
-               USE ( cPatSnd() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @tmpFam ) )
+               USE ( cPatSnd() + "Familias.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @tmpFam ) )
                SET ADSINDEX TO ( cPatSnd() + "Familias.Cdx" ) ADDITIVE
 
                USE ( cPatArt() + "Familias.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFam ) )
@@ -2878,49 +2878,22 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//Comenzamos la parte de código que se compila para el programa y el PDA
-
-Function IsFamilia( cPath )
-
-   DEFAULT cPath  := cPatArt()
-
-   if !lExistTable( cPath + "Familias.Dbf" )
-      dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "FamPrv.Dbf" )
-      dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cDriver() )
-   end if
-
-   if !lExistIndex( cPath + "Familias.Cdx" ) .or. ;
-      !lExistIndex( cPath + "FamPrv.Cdx" )
-      rxFamilia( cPath )
-   end if
-
-Return nil
-
-//-----------------------------------------------------------------------------
-
-FUNCTION mkFamilia( cPath, lAppend, cPathOld, oMeter )
+FUNCTION mkFamilia( cPath, lAppend, cPathOld )
 
 	local dbfFamilia
 
 	DEFAULT lAppend := .f.
    DEFAULT cPath   := cPatArt()
 
-   if lExistTable( cPath + "Familias.Dbf" )
+   if lExistTable( cPath + "Familias.Dbf", cLocalDriver() )
       fEraseTable( cPath + "Familias.dbf" )
    end if
 
-   if lExistTable( cPath + "FamPrv.Dbf" )
+   if lExistTable( cPath + "FamPrv.Dbf", cLocalDriver() )
       fEraseTable( cPath + "FamPrv.Dbf" )
    end if
 
-   dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cDriver() )
+   dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cLocalDriver() )
 
    if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
       dbUseArea( .t., cDriver(), cPath + "Familias.Dbf", cCheckArea( "Familias", @dbfFamilia ), .f. )
@@ -2930,7 +2903,7 @@ FUNCTION mkFamilia( cPath, lAppend, cPathOld, oMeter )
       end if
    end if
 
-   dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cDriver() )
+   dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cLocalDriver() )
 
    if lAppend .and. cPathOld != nil .and. lIsDir( cPathOld )
       dbUseArea( .t., cDriver(), cPath + "FamPrv.Dbf", cCheckArea( "FamPrv", @dbfFamilia ), .f. )
@@ -2940,31 +2913,32 @@ FUNCTION mkFamilia( cPath, lAppend, cPathOld, oMeter )
       end if
    end if
 
-   rxFamilia( cPath, oMeter )
+   rxFamilia( cPath, cLocalDriver() )
 
 RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxFamilia( cPath, oMeter )
+FUNCTION rxFamilia( cPath, cDriver )
 
 	local dbfFamilia
 
-   DEFAULT cPath  := cPatArt()
+   DEFAULT cPath     := cPatArt()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "Familias.Dbf" )
-      dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cDriver() )
+   if !lExistTable( cPath + "Familias.Dbf", cDriver )
+      dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cDriver )
    end if
 
    fEraseIndex(  cPath + "Familias.Cdx" )
 
-   if !lExistTable( cPath + "FamPrv.Dbf" )
-      dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cDriver() )
+   if !lExistTable( cPath + "FamPrv.Dbf", cDriver )
+      dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cDriver )
    end if
 
    fEraseIndex(  cPath + "FamPrv.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
    if !( dbfFamilia )->( neterr() )
       ( dbfFamilia )->( __dbPack() )
 
@@ -2994,7 +2968,7 @@ FUNCTION rxFamilia( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de familias" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FamPrv.Dbf", cCheckArea( "FAMPRV", @dbfFamilia ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FamPrv.Dbf", cCheckArea( "FAMPRV", @dbfFamilia ), .f. )
    if !( dbfFamilia )->( neterr() )
       ( dbfFamilia )->( __dbPack() )
 

@@ -421,13 +421,7 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    ::Super:New( 0, 0, 0, 0, cTitle, 0, oMenu, oWnd, oIcon, , , , oCursor, , .t., , nHelpId, "NONE", .f., .f., .f., .f. )
 
-//   ::nWindow            := len( oWnd():aWnd )
-
-//   msgAlert( ::nWindow, "nWindow" )
-
    // Imagelist----------------------------------------------------------------
-
-
 
    if ::lBigStyle
       ::oImageList      := TImageList():New( 32, 32 )
@@ -436,12 +430,6 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
    end if
 
    // Barra de botones---------------------------------------------------------
-   /*
-   if file( cBitmap )
-     ::oBtnTop          := TWebBar():New( 0, 0, 400, dfnSplitterHeight,, ( cBitmap ),, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ),,,,,, Self )
-   else
-   end
-   */
 
    if IsNum( cBitmap )
       ::oBtnTop         := TWebBar():New( 0, 0, 400, dfnSplitterHeight,,,, Rgb( 255, 255, 255 ), ( cBitmap ),,,,,, Self )
@@ -2573,25 +2561,24 @@ Return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD ChgFilter() CLASS TShell
+METHOD chgFilter() CLASS TShell
 
    local cFilter              := ""
    local cFilterExpresion     := ""
 
    CursorWait()
 
-   if !Empty( ::oWndBar )
+   if !empty( ::oWndBar )
       cFilter                 := ::oWndBar:GetComboFilter()
    end if
 
-   if !Empty( cFilter )
+   if !empty( cFilter )
 
-      if cFilter != txtFilters 
+      if cFilter != __txtFilters__
          
-         cFilterExpresion     := ::oActiveFilter:getExpresionFilter( cFilter )
+         cFilterExpresion     := ::oActiveFilter:ExpresionFilter( cFilter )
          if !Empty ( cFilterExpresion )
-            buildSetFilter( cFilterExpresion, ::xAlias, .f. )
-            // CreateFastFilter( cFilterExpresion, ::xAlias, .f. )
+            CreateFastFilter( cFilterExpresion, ::xAlias, .f. )
          endif
 
          ::ShowButtonFilter()
@@ -2599,8 +2586,7 @@ METHOD ChgFilter() CLASS TShell
 
       else 
 
-         quitSetFilter( ::xAlias )
-         // DestroyFastFilter( ::xAlias )
+         DestroyFastFilter( ::xAlias )
 
          ::HideButtonFilter()
          ::HideEditButtonFilter()
@@ -2610,6 +2596,8 @@ METHOD ChgFilter() CLASS TShell
       ::Refresh() 
 
    end if
+
+   ::Refresh() 
 
    CursorWE()
 

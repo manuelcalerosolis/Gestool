@@ -33,8 +33,8 @@ CLASS TAcceso
    DATA  aComboBox         INIT  {}
 
    DATA  oComboFilter
-   DATA  cComboFilter      INIT  txtFilters
-   DATA  aComboFilter      INIT  {txtFilters}
+   DATA  cComboFilter      INIT  __txtFilters__
+   DATA  aComboFilter      INIT  {__txtFilters__}
 
    DATA  oYearComboBox
    DATA  cYearComboBox     INIT  "[Todos]"
@@ -139,7 +139,7 @@ CLASS TAcceso
 
    Method DisableComboFilter()            INLINE ( if( !Empty( ::oComboFilter ), ( ::SetComboFilterItems( {} ), ::oComboFilter:Hide() ), ) )
    Method EnableComboFilter( aItems )
-   Method SetDefaultComboFilter()         INLINE ( if( !Empty( ::oComboFilter ), ::oComboFilter:Set( txtFilters ), ) )
+   Method SetDefaultComboFilter()         INLINE ( if( !Empty( ::oComboFilter ), ::oComboFilter:Set( __txtFilters__ ), ) )
    Method SetComboFilter( cItem )         INLINE ( if( !Empty( ::oComboFilter ) .and. !Empty( cItem ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) )
 
    Method SetGetChange( bBlock )          INLINE ( if( !Empty( ::oGet ), ( ::oGet:bChange       := bBlock ), ) )
@@ -1040,8 +1040,8 @@ Method EnableComboFilter( aItems )
 
    if !Empty( ::oComboFilter )
 
-      ::cComboFilter       := txtFilters
-      ::aComboFilter       := { txtFilters }
+      ::cComboFilter       := __txtFilters__
+      ::aComboFilter       := { __txtFilters__ }
 
       // Cargamos los filtros-----------------------------------------------
 

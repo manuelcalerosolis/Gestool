@@ -57,6 +57,8 @@ CLASS TEdiExporarFacturas
    DATA cFileEDI
    DATA oFileEDI
 
+   DATA cCodigoCliente
+
    DATA sTotalFactura
 
    METHOD New( lNoExportados, oTree, nView )
@@ -93,6 +95,8 @@ CLASS TEdiExporarFacturas
 
    METHOD isLineaValida()        INLINE   ( lValLine( D():FacturasClientesLineas( ::nView ) ) .and. !( D():FacturasClientesLineas( ::nView ) )->lTotLin .and. nTotNFacCli() != 0 )
 
+   METHOD setFacturaClienteGeneradaEDI()
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -119,6 +123,8 @@ METHOD Run()
 
    ::sTotalFactura         := sTotFacCli()
 
+   ::cCodigoCliente        := ( D():FacturasClientes( ::nView ) )->cCodCli
+
    ::createFile()
    
    if ::isFile()
@@ -137,6 +143,8 @@ METHOD Run()
       ::writeResumenTotales()
       
       ::closeFile()
+
+      ::setFacturaClienteGeneradaEDI()
    end if
 
 Return ( self )
@@ -219,18 +227,18 @@ Return ( self )
 METHOD writeDatosCliente()
 
    local cLine    := "DatosCliente" + __separator__                                                   
-   cLine          += "" + __separator__                                                                                                      // Código del cliente (interno del cliente)
-   cLine          += alltrim( ( D():FacturasClientes( ::nView ) )->cCodCli ) + __separator__                                                 // Código del cliente (interno del proveedor)
-   cLine          += alltrim( retfld( ( D():FacturasClientes( ::nView ) )->cCodCli, D():Clientes( ::nView ), "cCodEdi" ) ) + __separator__   // Código de un centro del cliente (interno del proveedor). Algunos proveedores no lo utilizan (solo usan el campo IDCliProv)
-   cLine          += "CIF"                                                 + __separator__
-   cLine          += "Empresa"                                             + __separator__
-   cLine          += "Domicilio"                                           + __separator__
-   cLine          += "Población"                                           + __separator__
-   cLine          += "CodigoPostal"                                        + __separator__
-   cLine          += "Provincia"                                           + __separator__
-   cLine          += "Pais"                                                + __separator__
-   cLine          += "Registro"                                            + __separator__
-   cLine          += "Email"                                               
+   cLine          += "" + __separator__                                                                           // Código del cliente (interno del cliente)
+   cLine          += alltrim( ::cCodigoCliente ) + __separator__                                                  // Código del cliente (interno del proveedor)
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodEdi" ) ) + __separator__    // Código de un centro del cliente (interno del proveedor). Algunos proveedores no lo utilizan (solo usan el campo IDCliProv)
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Nif" ) ) + __separator__        // CIF del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Titulo" ) ) + __separator__     // Razón social del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Domicilio" ) ) + __separator__  // Domicilio del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Poblacion" ) ) + __separator__  // Población del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "CodPostal" ) ) + __separator__  // Codigo postal del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "Provincia" ) ) + __separator__  // Provincia del cliente
+   cLine          += alltrim( retfld( ::cCodigoCliente, D():Clientes( ::nView ), "cCodPai" ) )                    // País del cliente (España: ESP)
+   cLine          += ""                                                                                           // Nº de registro mercantil del cliente
+   cLine          += ""                                                                                           // Dirección de email del cliente
 
    ::oFileEDI:add( cLine )
 
@@ -427,3 +435,15 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD setFacturaClienteGeneradaEDI()
+
+   if D():lockFacturasClientes( ::nView )
+      ( D():FacturasClientes( ::nView ) )->lExpEdi    := .t.
+      ( D():FacturasClientes( ::nView ) )->dFecEdi    := getSysDate()
+      ( D():FacturasClientes( ::nView ) )->cHorEdi    := time()
+      D():unlockFacturasClientes( ::nView )
+   end if 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//

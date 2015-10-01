@@ -121,9 +121,6 @@ METHOD New( oSender ) CLASS LinesDocumentsSales
 
    ::oSender      := oSender
 
-   msgAlert( ::oSender:ClassName(), "ClassName" )
-   msgAlert( ::oSender:getTextGrid(), "getTextGrid" )
-
 Return ( self )
 
 //---------------------------------------------------------------------------//

@@ -1,14 +1,9 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Font.ch"
-   #include "Report.ch"
-   #include "Factu.ch" 
-   #include "Xbrowse.ch"
-   #include "FastRepH.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
+#include "Font.ch"
+#include "Report.ch"
+#include "Factu.ch" 
+#include "Xbrowse.ch"
+#include "FastRepH.ch"
 
 #define _CARTOFE     ( dbfOferta )->( FieldPos( "CARTOFE" ) )
 #define _CDESOFE     ( dbfOferta )->( FieldPos( "CDESOFE" ) )
@@ -49,8 +44,6 @@
 #define _NIMPMIN     ( dbfOferta )->( FieldPos( "NIMPMIN" ) )
 #define _NMINCAN     ( dbfOferta )->( FieldPos( "NMINCAN" ) )
 #define _NMINTIP     ( dbfOferta )->( FieldPos( "NMINTIP" ) )
-
-#ifndef __PDA__
 
 static oWndBrw
 
@@ -111,10 +104,6 @@ static nLabels    := 1
 
 static lEuro      := .f.
 static bEdit      := { |aBlank, aoGet, dbfOferta, oBrw, bWhen, bValid, nMode, cCodArt | EdtRec( aBlank, aoGet, dbfOferta, oBrw, bWhen, bValid, nMode, cCodArt ) }
-
-#endif
-
-#ifndef __PDA__
 
 //----------------------------------------------------------------------------//
 //Funciones del programa
@@ -654,8 +643,6 @@ FUNCTION Oferta( oMenuItem, oWnd )
          HOTKEY   "F" ;
          LEVEL    ACC_DELE
 
-#ifndef __TACTIL__
-
       DEFINE BTNSHELL RESOURCE "IMP" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( TInfOfr():New( "Listado de ofertas" ):Play() ) ;
@@ -663,18 +650,12 @@ FUNCTION Oferta( oMenuItem, oWnd )
          HOTKEY   "L" ;
          LEVEL    ACC_IMPR
 
-#endif
-
-#ifndef __PDA__
-
       DEFINE BTNSHELL RESOURCE "RemoteControl_" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( TOfertaLabelGenerator():Create() ) ;
          TOOLTIP  "Eti(q)uetas" ;
          HOTKEY   "Q";
          LEVEL    ACC_IMPR
-
-#endif
 
       DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -2004,33 +1985,6 @@ Function nPreOfe( cCodArt, nTarifa, dFecOfe, lIvaInc, dbfOferta )
 Return ( nPreOfe )
 
 //---------------------------------------------------------------------------//
-
-#else
-
-//---------------------------------------------------------------------------//
-//Funciones del pda
-//---------------------------------------------------------------------------//
-
-Function IsOferta()
-
-   local oError
-   local oBlock
-
-   if !lExistTable( cPatGrp() + "OFERTA.Dbf" )
-      mkOferta( cPatGrp() )
-   end if
-
-   if !lExistIndex( cPatGrp() + "OFERTA.Cdx" )
-      rxOferta( cPatGrp() )
-   end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-#endif
-
-//---------------------------------------------------------------------------//
 //Funciones comunes del programa y pda
 //---------------------------------------------------------------------------//
 
@@ -2624,13 +2578,13 @@ FUNCTION mkOferta( cPath, lAppend, cPathOld, oMeter )
    DEFAULT lAppend   := .f.
    DEFAULT cPath     := cPatArt()
 
-   if !lExistTable( cPath + "Oferta.Dbf" )
-      dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cDriver() )
+   if !lExistTable( cPath + "Oferta.Dbf", cLocalDriver() )
+      dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cLocalDriver() )
    end if 
 
    if lAppend .and. !Empty( cPathOld ) .and. lExistTable( cPathOld + "Oferta.Dbf" )
 
-      dbUseArea( .t., cDriver(), cPath + "Oferta.Dbf", cCheckArea( "Oferta", @dbfOfe ), .f. )
+      dbUseArea( .t., cLocalDriver(), cPath + "Oferta.Dbf", cCheckArea( "Oferta", @dbfOfe ), .f. )
    
       if !( dbfOfe )->( neterr() )
          ( dbfOfe )->( __dbApp( cPathOld + "Oferta.Dbf" ) )
@@ -2645,14 +2599,15 @@ RETURN NIL
 
 //----------------------------------------------------------------------------//
 
-FUNCTION rxOferta( cPath, oMeter )
+FUNCTION rxOferta( cPath, cDriver )
 
    local dbfOferta
 
-   DEFAULT cPath := cPatArt()
+   DEFAULT cPath     := cPatArt()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "Oferta.Dbf" )
-      dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cDriver() )
+   if !lExistTable( cPath + "Oferta.Dbf", cDriver )
+      dbCreate( cPath + "Oferta.Dbf", aSqlStruct( aItmOfe() ), cDriver )
    end if 
 
    fEraseIndex( cPath + "OFERTA.CDX" )
@@ -2784,22 +2739,20 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION CreateFiles( cPath, oMeter )
+Static Function CreateFiles( cPath )
 
-   DEFAULT cPath := cPatArt()
+   DEFAULT cPath  := cPatArt()
 
-   dbCreate( cPath + "OFERTA.DBF", aSqlStruct( aItmOfe() ), cDriver() )
+   dbCreate( cPath + "OFERTA.DBF", aSqlStruct( aItmOfe() ), cLocalDriver() )
 
-   rxOferta( cPath, oMeter )
+   rxOferta( cPath, cLocalDriver() )
 
-RETURN NIL
+Return nil
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 CLASS TOfertaLabelGenerator
 
@@ -2896,10 +2849,6 @@ CLASS TOfertaLabelGenerator
    Method SelectColumn( oCombo )
 
 END CLASS
-
-#endif
-
-#ifndef __PDA__
 
 //----------------------------------------------------------------------------//
 
@@ -3570,8 +3519,6 @@ Method LoadPropertiesLabels( aTblPrp ) CLASS TOfertaLabelGenerator
 
 Return ( aTblPrp )
 
-#endif
-
 //--------------------------------------------------------------------------//
 
 Static Function bGenEditText( aTblPrp, oBrwPrp, n )
@@ -3585,8 +3532,6 @@ Static Function bGenEditValue( aTblPrp, oBrwPrp, n )
 Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:Value } )
 
 //--------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 Method AddLabel() CLASS TOfertaLabelGenerator
 
@@ -4166,8 +4111,6 @@ Function PrintReportOferta( nDevice, nCopies, cPrinter, dbfDoc )
    oFr:DestroyFr()
 
 Return .t.
-
-#endif
 
 //---------------------------------------------------------------------------//
 

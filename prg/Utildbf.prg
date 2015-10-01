@@ -1309,22 +1309,26 @@ Return ( aSqlStruct )
 //----------------------------------------------------------------------------//
 
 Function lExistTable( cTable, cVia )
-
-   if lAIS()
+   
+   DEFAULT cVia   := cDriver()
+   
+   if cVia == "ADS"
       return .t.
    end if
 
-Return ( File( cTable ) ) // dbExists( cTable ) )
+Return ( file( cTable ) ) // dbExists( cTable ) )
 
 //----------------------------------------------------------------------------//
 
 Function lExistIndex( cIndex, cVia )
 
-   if lAIS()
+   DEFAULT cVia   := cDriver()
+
+   if cVia == "ADS"
       return .t.
    end if
 
-Return ( File( cIndex ) )
+Return ( file( cIndex ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1345,15 +1349,7 @@ Return ( lErase )
 
 //----------------------------------------------------------------------------//
 
-Function fRenameTable( cTableOld, cTableNew, cVia )
-
-#ifdef __SQLLIB__
-   DEFAULT cVia   := cDriver()
-
-   if cVia == "SQLRDD"
-      Return ( SR_RenameTable( cTableOld, cTableNew ) )
-   end if
-#endif
+Function fRenameTable( cTableOld, cTableNew )
 
 Return ( fRename( cTableOld, cTableNew ) )
 
