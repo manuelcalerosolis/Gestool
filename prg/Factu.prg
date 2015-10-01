@@ -1762,7 +1762,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tipos'
    oItem:cMessage       := 'Clasificación de artículos por tipos'
-   oItem:bAction        := {|| TTipArt():New( cPatArt(), oWnd, "01013" ):Activate() }
+   oItem:bAction        := {|| TTipArt():New( cPatArt(), cDriver(), oWnd, "01013" ):Activate() }
    oItem:cId            := "01013"
    oItem:cBmp           := "Cubes_Blue_16"
    oItem:cBmpBig        := "Cubes_Blue_32"
@@ -3418,7 +3418,7 @@ Function BuildMenu()
                   MENUITEM    "&4. Fabricantes";
                      HELPID   "01070" ;
                      MESSAGE  "Fabricantes" ;
-                     ACTION   ( TFabricantes():New( cPatArt(), oWnd, oMenuItem ):Activate() );
+                     ACTION   ( TFabricantes():New( cPatArt(), cDriver(), oWnd, oMenuItem ):Activate() );
                      RESOURCE "Nut_and_bolt_16" ;
 
                   SEPARATOR
@@ -3435,13 +3435,6 @@ Function BuildMenu()
                      MESSAGE  "Comentarios para los artículos";
                      ACTION   ( TComentarios():New( cPatArt(), oWnd, oMenuItem ):Activate() );
                      RESOURCE "message_16" ;
-
-                 /* MENUITEM    "&7. Códigos de barras";
-                     MESSAGE  "Acceso a los códigos de barras de los artículos" ;
-                     ACTION   ( ArtCodebar( oMenuItem, oWnd ) ) ;
-                     HELPID   "01024" ;
-                     RESOURCE "Remotecontrol_16" ;
-                  */
 
                   SEPARATOR
 

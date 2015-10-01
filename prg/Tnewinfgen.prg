@@ -2481,7 +2481,7 @@ METHOD lGrupoTipoArticulo( lInitGroup, lImp ) CLASS TNewInfGen
 
    BEGIN SEQUENCE
 
-   ::oTipArt            := TTipArt():New( cPatArt() )
+   ::oTipArt            := TTipArt():New( cPatArt(), cDriver() )
    ::oTipArt:OpenFiles()
 
    ::oGrupoTArticulo                  := TRGroup():New( {|| ::oDbf:cCodTArt }, {|| "Tip. artículo : " + AllTrim( ::oDbf:cCodTArt ) + " - " + AllTRim( ::oDbf:cNomTArt ) }, {|| "Total tip. artículo : " + ::oDbf:cCodTArt }, {|| 3 }, ::lSalto )

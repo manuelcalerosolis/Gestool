@@ -18,7 +18,7 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 #define __GSTPOBLACION__                "21700 La Palma del Condado"
 #define __GSTOTROS__                    "Teléfono: +34 902.930.252 Correo electónico: info@gestool.es"
 
-#define SERIALNUMBER                    9876556789
+#define SERIALNUMBER                    1234554321
 
 #define __DAYS__                        5
 

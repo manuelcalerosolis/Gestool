@@ -18,6 +18,8 @@ CLASS TMant
    DATA nMode
 
    DATA cPath
+   DATA cDriver         INIT cDriver()
+
    DATA cMru
 
    DATA aGet
@@ -88,12 +90,12 @@ CLASS TMant
    DATA lModificarBuscar   INIT .t.
 
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
-   METHOD Create( cPath )                       CONSTRUCTOR
+   METHOD Create( cPath, cDriver )              CONSTRUCTOR
 
    Method Play( cPath, oWndParent, oMenuItem )
 
    METHOD OpenFiles()  
-   METHOD DefineFiles() VIRTUAL
+   METHOD DefineFiles()    VIRTUAL
    METHOD CheckFiles( cFileAppendFrom )
 
    METHOD Append()
@@ -117,11 +119,9 @@ CLASS TMant
    METHOD CloseFiles()
    MESSAGE CloseService()  METHOD CloseFiles()
 
-#ifndef __PDA__
    METHOD Buscar()
 
    MESSAGE Search()        METHOD Buscar()
-#endif
 
    METHOD Existe( uValue, oGetTxt, uField, lFill, cFillChar )
 
@@ -177,17 +177,20 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem ) CLASS TMant
+METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TMant
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := oWnd()
+
+   ::cPath              := cPath
+   ::cDriver            := cDriver
+   ::oWndParent         := oWndParent
 
    if oMenuItem != nil
       ::nLevel          := nLevelUsr( oMenuItem )
    end if
 
-   ::cPath              := cPath
-   ::oWndParent         := oWndParent
    ::oDbf               := nil
 
    ::lAutoButtons       := .t.
@@ -202,18 +205,18 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( cPath ) CLASS TMant
+METHOD Create( cPath, cDriver )
 
-   DEFAULT cPath        := cPatEmp()
+   DEFAULT cPath        := cPatArt()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
    ::oDbf               := nil
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 METHOD CreateShell( nLevel ) CLASS TMant
 
@@ -316,8 +319,6 @@ METHOD CreateShell( nLevel ) CLASS TMant
    ::lCreateShell    := .t.
 
 RETURN ( Self )
-
-#endif
 
 //---------------------------------------------------------------------------//
 

@@ -18,7 +18,6 @@ CLASS TTipArt FROM TMant
    DATA  lSelectSend                            INIT .f.
    DATA  lSelectRecive                          INIT .f.
 
-   METHOD Create( cPath )                       CONSTRUCTOR
    METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
    METHOD Initiate( cText, oSender )            CONSTRUCTOR
 
@@ -66,30 +65,21 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Create( cPath )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatArt()
+   DEFAULT cDriver      := cDriver()
+   DEFAULT oWndParent   := GetWndFrame()
 
    ::cPath              := cPath
-   ::oDbf               := nil
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD New( cPath, oWndParent, oMenuItem )
-
-   DEFAULT cPath        := cPatArt()
-   DEFAULT oWndParent   := GetWndFrame()
+   ::cDriver            := cDriver()
+   ::oWndParent         := oWndParent
 
    if oMenuItem != nil
       ::nLevel          := nLevelUsr( oMenuItem )
    else
       ::nLevel          := nLevelUsr( "01013" )
    end if
-
-   ::cPath              := cPath
-   ::oWndParent         := oWndParent
 
    ::oDbf               := nil
 
@@ -152,7 +142,10 @@ RETURN ( lOpen )
 METHOD DefineFiles( cPath, cDriver )
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
+
+   msgAlert( cPath, "DefineFiles")
+   msgAlert( cDriver, "DefineFiles")
 
    DEFINE DATABASE ::oDbf FILE "Tipart.Dbf" CLASS "Tipart" ALIAS "Tipart" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de artículos"
 
@@ -520,12 +513,12 @@ Method CreateData()
    local oTipoArtTmp
    local cFileName      := "TipArt" + StrZero( ::nGetNumberToSend(), 6 ) + "." + retSufEmp()
 
-   oTipoArt             := TTipArt():Create( cPatEmp() )
+   oTipoArt             := TTipArt():Create( cPatEmp(), cDriver() )
    oTipoArt:OpenService()
 
    // Apertura de bases de dataos------------------------------------------------
 
-   oTipoArtTmp          := TTipArt():Create( cPatSnd() )
+   oTipoArtTmp          := TTipArt():Create( cPatSnd(), cLocalDriver() )
    oTipoArtTmp:OpenService( .t. )
 
    // Traspaso ----------------------------------------------------------------
@@ -630,6 +623,8 @@ Method ReciveData()
    local cDelegacion
    local aDelegaciones  := aRetDlgEmp()
 
+   msgAlert( hb_valtoexp( aDelegaciones ), "aDelegaciones" )
+
    /*
    Recibirlo de internet
    */
@@ -670,10 +665,10 @@ Method Process()
 
             if file( cPatSnd() + "TipArt.Dbf" )
 
-               oTipArtTmp   := TTipArt():New( cPatSnd() )
+               oTipArtTmp   := TTipArt():New( cPatSnd(), cLocalDriver() )
                oTipArtTmp:OpenService( .f. )
 
-               oTipArt      := TTipArt():New( cPatEmp() )
+               oTipArt      := TTipArt():New( cPatEmp(), cDriver() )
                oTipArt:OpenService()
 
                // Trasbase de tipos de articulos-------------------------------
@@ -704,6 +699,10 @@ Method Process()
 
                oTipArtTmp:CloseService()
                oTipArtTmp:End()
+
+            else 
+
+               ::oSender:SetText( "No existe el fichero " + cPatSnd() + "TipArt.Dbf" )
 
             end if
 

@@ -3079,7 +3079,7 @@ METHOD oDefTipInf( nIdOrg, nIdSayOrg, nIdDes, nIdSayDes, nIdAllTip ) CLASS TInfG
 
    BEGIN SEQUENCE
 
-   ::oTipArt         :=  TTipArt():New( cPatArt() )
+   ::oTipArt         :=  TTipArt():New( cPatArt(), cDriver() )
    ::oTipArt:OpenFiles()
 
    /*
