@@ -473,7 +473,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Neto", 708, "Static", WS_GROUP, 489, 302, 18, 8
   CONTROL "Margen", 709, "Static", WS_GROUP, 45, 359, 24, 8
   CONTROL "I.V.H.M.", 710, "Static", WS_GROUP, 489, 320, 27, 8
-  CONTROL "Impuestos", 711, "Static", WS_GROUP, 489, 338, 41, 8
+  CONTROL "Impuestos", -1, "Static", WS_GROUP, 500, 338, 41, 8
   CONTROL "", 488, "Static", WS_GROUP, 489, 358, 27, 15
   CONTROL "", -1, "Button", BS_GROUPBOX, 43, 349, 155, 23
   CONTROL "Transporte", 712, "Static", WS_GROUP, 489, 311, 39, 8
@@ -495,6 +495,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 603, "TBtnBmp", 0x00000000, 57, 102, 12, 11
   CONTROL "", 151, "Edit", NOT WS_VISIBLE|ES_MULTILINE|WS_BORDER|WS_TABSTOP, 103, 103, 94, 11
   CONTROL "", 174, "TBtnBmp", 0x00000000, 435, 28, 10, 13
+  CONTROL "", 711, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 489, 338, 10, 9
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -6609,7 +6610,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "0", 491, "Static", SS_RIGHT|WS_GROUP, 602, 344, 61, 8
   CONTROL "Número", -1, "Static", WS_GROUP, 44, 46, 48, 8
   CONTROL "Neto", 708, "Static", WS_GROUP, 486, 287, 53, 8
-  CONTROL "Impuestos", 709, "Static", WS_GROUP, 486, 323, 53, 8
   CONTROL "Imp. especiales", 710, "Static", WS_GROUP, 486, 305, 53, 8
   CONTROL "Divisa", -1, "Static", WS_GROUP, 466, 116, 29, 8
   CONTROL "Cliente", -1, "Static", WS_GROUP, 206, 33, 48, 8
@@ -6649,6 +6649,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 424, "Edit", WS_BORDER|WS_TABSTOP, 495, 66, 18, 11
   CONTROL "", 425, "Edit", WS_BORDER|WS_TABSTOP, 514, 66, 18, 11
   CONTROL "", 174, "TBtnBmp", 0x00000000, 454, 28, 10, 13
+  CONTROL "", 709, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 486, 323, 10, 10
+  CONTROL "Impuestos", -1, "Static", WS_GROUP, 496, 323, 53, 8
 }
 
 FACCLI_2 DIALOG DISCARDABLE 26, -29, 670, 375
@@ -7001,7 +7003,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Número", -1, "Static", WS_GROUP, 44, 33, 30, 8
   CONTROL "Factura", -1, "Static", WS_GROUP, 44, 60, 30, 8
   CONTROL "Neto", 708, "Static", WS_GROUP, 486, 301, 18, 8
-  CONTROL "Impuestos", 709, "Static", WS_GROUP, 486, 337, 41, 8
+  CONTROL "Impuestos", -1, "Static", WS_GROUP, 497, 337, 41, 8
   CONTROL "%", 703, "Static", WS_GROUP, 181, 301, 8, 8
   CONTROL "%", 704, "Static", WS_GROUP, 181, 314, 8, 8
   CONTROL "%", 705, "Static", WS_GROUP, 181, 326, 8, 8
@@ -7036,6 +7038,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Punto verde", 409, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 486, 327, 52, 10
   CONTROL "", 192, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 561, 115, 102, 11
   CONTROL "", 174, "TBtnBmp", 0x00000000, 433, 28, 10, 13
+  CONTROL "", 709, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 486, 336, 11, 10
 }
 
 FACREC_02 DIALOG DISCARDABLE 26, -29, 670, 375
@@ -15321,7 +15324,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Neto", 708, "Static", WS_GROUP, 485, 300, 18, 8
   CONTROL "Margen", 709, "Static", WS_GROUP, 50, 355, 29, 8
   CONTROL "I.V.M.H.", 710, "Static", WS_GROUP, 485, 318, 25, 8
-  CONTROL "Impuestos", 711, "Static", WS_GROUP, 485, 336, 37, 8
+  CONTROL "Impuestos", -1, "Static", WS_GROUP, 496, 336, 37, 8
   CONTROL "", 490, "TXBrowse", 0x00200000, 202, 287, 278, 78
   CONTROL "Número", -1, "Static", WS_GROUP, 45, 33, 51, 8
   CONTROL "Estado", 121, "Static", WS_GROUP, 45, 81, 51, 8
@@ -15363,6 +15366,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 425, "Edit", WS_BORDER|WS_TABSTOP, 493, 66, 18, 11
   CONTROL "Situación", -1, "Static", WS_GROUP, 45, 117, 51, 8
   CONTROL "", 174, "TBtnBmp", 0x00000000, 431, 28, 10, 13
+  CONTROL "", 711, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 485, 336, 10, 9
 }
 
 PEDCLI_2 DIALOG DISCARDABLE 45, 10, 670, 375
@@ -15753,7 +15757,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Imp. inc.", 129, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 116, 51, 10
   CONTROL "", 218, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 96, 114, 78, 186
   CONTROL "", 217, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_NOINTEGRALHEIGHT|WS_TABSTOP, 96, 29, 77, 104
-  CONTROL "Punto verde", 409, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 484, 329, 52, 10
+  CONTROL "Punto verde", 409, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 484, 328, 52, 10
   CONTROL "Descuentos", 700, "Button", BS_GROUPBOX, 44, 289, 158, 61
   CONTROL "Recargo de equivalencia", 406, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 484, 347, 93, 10
   CONTROL "Número", -1, "Static", WS_GROUP, 44, 46, 51, 8
@@ -15782,7 +15786,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Neto", 708, "Static", WS_GROUP, 484, 302, 18, 8
   CONTROL "Margen", 709, "Static", WS_GROUP, 51, 360, 27, 8
   CONTROL "I.V.M.H.", 710, "Static", WS_GROUP, 484, 320, 25, 8
-  CONTROL "Impuestos", 711, "Static", WS_GROUP, 484, 338, 37, 8
+  CONTROL "Impuestos", -1, "Static", WS_GROUP, 495, 338, 37, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 350, 160, 21
   CONTROL "Transporte", 712, "Static", WS_GROUP, 484, 311, 39, 8
   CONTROL "0", 402, "Static", SS_RIGHT|WS_GROUP, 582, 311, 80, 8
@@ -15799,6 +15803,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Presupuesto cliente", -1, "Static", WS_GROUP, 44, 3, 120, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 58, 51, 8
   CONTROL "", 174, "TBtnBmp", 0x00000000, 422, 28, 10, 13
+  CONTROL "", 711, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 484, 337, 9, 10
 }
 
 PRECLI_2 DIALOG DISCARDABLE 45, 10, 670, 375
@@ -17602,7 +17607,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Neto", 708, "Static", WS_GROUP, 485, 301, 18, 8
   CONTROL "Margen", 709, "Static", WS_GROUP, 51, 360, 27, 8
   CONTROL "I.V.M.H.", 710, "Static", WS_GROUP, 485, 319, 25, 8
-  CONTROL "Impuestos", 711, "Static", WS_GROUP, 485, 337, 37, 8
+  CONTROL "Impuestos", -1, "Static", WS_GROUP, 496, 337, 37, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 350, 160, 21
   CONTROL "Transporte", 712, "Static", WS_GROUP, 485, 310, 39, 8
   CONTROL "0", 402, "Static", SS_RIGHT|WS_GROUP, 582, 310, 80, 8
@@ -17623,6 +17628,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Estado art.", -1, "Static", WS_GROUP, 432, 117, 34, 8
   CONTROL "", 352, "TBitMap", 0x00800000, 648, 114, 14, 11
   CONTROL "", 174, "TBtnBmp", 0x00000000, 421, 28, 10, 13
+  CONTROL "", 711, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 485, 337, 11, 10
 }
 
 SATCLI_2 DIALOG DISCARDABLE 45, 10, 670, 375

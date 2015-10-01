@@ -411,6 +411,9 @@ static dbfPro
 static dbfPedCliE
 static dbfTmpEst
 
+static oImpuestos
+static lImpuestos
+
 static dbfAgeCom
 static dbfCajT
 static oStock
@@ -1891,6 +1894,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
             Return .f.
          end if
 
+         lChangeRegIva( aTmp )
+
    end case
 
    if empty( rtrim( aTmp[ _CSERPED ] ) )
@@ -2822,6 +2827,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
          ON CHANGE( RecalculaTotal( aTmp ) );
          OF       oFld:aDialogs[1]
 
+      REDEFINE CHECKBOX oImpuestos VAR lImpuestos ;
+         ID       711 ;
+         WHEN     ( .f.) ;
+         OF       oFld:aDialogs[1]
+
       REDEFINE SAY oGetReq VAR nTotReq ;
          ID       407 ;
 			OF 		oFld:aDialogs[1]
@@ -3502,7 +3512,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodCli, cCodArt, nMode, cCodPre 
       REDEFINE SAY   oSayLabels[ 5 ] ID 706 OF oFld:aDialogs[ 1 ]
       REDEFINE SAY   oSayLabels[ 6 ] ID 708 OF oFld:aDialogs[ 1 ]
       REDEFINE SAY   oSayLabels[ 7 ] ID 710 OF oFld:aDialogs[ 1 ]
-      REDEFINE SAY   oSayLabels[ 8 ] ID 711 OF oFld:aDialogs[ 1 ]
       REDEFINE SAY   oSayLabels[ 9 ] ID 712 OF oFld:aDialogs[ 1 ]
 
    if nMode != ZOOM_MODE
@@ -4244,9 +4253,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
       aTmp[ _NTARLIN    ]  := oGetTarifa:getTarifa()
       aTmp[ _COBRLIN    ]  := aTmpPed[ _CCODOBR ]
 
-      if aTmpPed[ _NREGIVA ] <= 1
+      /*if aTmpPed[ _NREGIVA ] <= 1
          aTmp[ _NIVA ]  	:= nIva( D():TiposIva( nView ), cDefIva() )
-      end if
+      end if*/
 
       if !Empty( cCodArtEnt )
          cCodArt        	:= Padr( cCodArtEnt, 200 )
@@ -6096,7 +6105,7 @@ STATIC FUNCTION RecPedCli( aTmpPed )
 
       if ( D():Articulos( nView ) )->( dbSeek( ( dbfTmpLin )->cRef ) )
 
-         if aTmpPed[ _NREGIVA ] <= 1
+         if aTmpPed[ _NREGIVA ] <= 2
             ( dbfTmpLin )->nIva     := nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva )
             ( dbfTmpLin )->nReq     := nReq( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva )
          end if
@@ -11192,7 +11201,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             Preguntamos si el regimen de " + cImp() + " es distinto de Exento
             */
 
-            if aTmpPed[ _NREGIVA ] <= 1
+            if aTmpPed[ _NREGIVA ] <= 2
                aGet[ _NIVA ]:cText( nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) )
                aTmp[ _NREQ ]     := nReq( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva )
             end if
@@ -12086,7 +12095,7 @@ Static Function AppendDatosAtipicas( aTmpPed )
 
          ( dbfTmpLin )->cDetalle       := ( D():Articulos( nView ) )->Nombre
          
-         if aTmpPed[ _NREGIVA ] <= 1
+         if aTmpPed[ _NREGIVA ] <= 2
             ( dbfTmpLin )->nIva        := nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva )
          end if
            
@@ -15946,6 +15955,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    local n
    local nDescuentosLineas := 0
    local lPntVer           := .f.
+   local nRegIva
 
 	if !Empty( nView )
 		DEFAULT cPedCliT   	:= D():PedidosClientes( nView )
@@ -16037,6 +16047,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
       nDtoAtp           := aTmp[ _NDTOATP ]
       nKgsTrn           := aTmp[ _NKGSTRN ]
       lPntVer           := aTmp[ _LOPERPV ]
+      nRegIva           := aTmp[ _NREGIVA ]
       bCondition        := {|| ( cPedCliL )->( !eof() ) }
       ( cPedCliL )->( dbGoTop() )
 
@@ -16057,6 +16068,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
       nDtoAtp           := ( cPedCliT )->nDtoAtp
       nKgsTrn           := ( cPedCliT )->nKgsTrn
       lPntVer           := ( cPedCliT )->lOperPv
+      nRegIva           := ( cPedCliT )->nRegIva
       bCondition        := {|| ( cPedCliL )->cSerPed + Str( ( cPedCliL )->nNumPed ) + ( cPedCliL )->cSufPed == cPedido .AND. ( cPedCliL )->( !eof() ) }
       ( cPedCliL )->( dbSeek( cPedido ) )
 
@@ -16391,28 +16403,32 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 
    if !lIvaInc
 
-      /*
-      Calculos de impuestos
-      */
+      if nRegIva <= 1
 
-      _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
-      _NIMPIVA2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nRouDiv ), 0 )
-      _NIMPIVA3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nRouDiv ), 0 )
+         /*
+         Calculos de impuestos
+         */
 
-      /*
-      Calculo de recargo
-      */
+         _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
+         _NIMPIVA2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nRouDiv ), 0 )
+         _NIMPIVA3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nRouDiv ), 0 )
 
-      if lRecargo
-         _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
-         _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
-         _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
-      end if
+         /*
+         Calculo de recargo
+         */
 
-      if uFieldEmpresa( "lIvaImpEsp")
-         _NBASIVA1            -= _NIVMIVA1
-         _NBASIVA2            -= _NIVMIVA2
-         _NBASIVA3            -= _NIVMIVA3
+         if lRecargo
+            _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
+            _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
+            _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
+         end if
+
+         if uFieldEmpresa( "lIvaImpEsp")
+            _NBASIVA1            -= _NIVMIVA1
+            _NBASIVA2            -= _NIVMIVA2
+            _NBASIVA3            -= _NIVMIVA3
+         end if
+
       end if
 
    else
@@ -16423,41 +16439,45 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
          _NBASIVA3         -= _NIVMIVA3   
       end if   
 
-      if _NPCTIVA1 != 0
-         _NIMPIVA1   := if( _NPCTIVA1 != nil, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
-      end if
-      if _NPCTIVA2 != 0
-         _NIMPIVA2   := if( _NPCTIVA2 != nil, Round( _NBASIVA2 / ( 100 / _NPCTIVA2 + 1 ), nRouDiv ), 0 )
-      end if
-      if _NPCTIVA3 != 0
-         _NIMPIVA3   := if( _NPCTIVA3 != nil, Round( _NBASIVA3 / ( 100 / _NPCTIVA3 + 1 ), nRouDiv ), 0 )
-      end if
+      if nRegIva <= 1
 
-      if lRecargo
-         if _NPCTREQ1 != 0
-            _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 / ( 100 / _NPCTREQ1 + 1 ), nRouDiv ), 0 )
+         if _NPCTIVA1 != 0
+            _NIMPIVA1   := if( _NPCTIVA1 != nil, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
          end if
-         if _NPCTREQ3 != 0
-            _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 / ( 100 / _NPCTREQ2 + 1 ), nRouDiv ), 0 )
+         if _NPCTIVA2 != 0
+            _NIMPIVA2   := if( _NPCTIVA2 != nil, Round( _NBASIVA2 / ( 100 / _NPCTIVA2 + 1 ), nRouDiv ), 0 )
          end if
-         if _NPCTREQ3 != 0
-            _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 / ( 100 / _NPCTREQ3 + 1 ), nRouDiv ), 0 )
+         if _NPCTIVA3 != 0
+            _NIMPIVA3   := if( _NPCTIVA3 != nil, Round( _NBASIVA3 / ( 100 / _NPCTIVA3 + 1 ), nRouDiv ), 0 )
          end if
-      end if
 
-      _NBASIVA1      -= _NIMPIVA1
-      _NBASIVA2      -= _NIMPIVA2
-      _NBASIVA3      -= _NIMPIVA3
+         if lRecargo
+            if _NPCTREQ1 != 0
+               _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 / ( 100 / _NPCTREQ1 + 1 ), nRouDiv ), 0 )
+            end if
+            if _NPCTREQ3 != 0
+               _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 / ( 100 / _NPCTREQ2 + 1 ), nRouDiv ), 0 )
+            end if
+            if _NPCTREQ3 != 0
+               _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 / ( 100 / _NPCTREQ3 + 1 ), nRouDiv ), 0 )
+            end if
+         end if
+
+         _NBASIVA1      -= _NIMPIVA1
+         _NBASIVA2      -= _NIMPIVA2
+         _NBASIVA3      -= _NIMPIVA3
+
+         _NBASIVA1      -= _NIMPREQ1
+         _NBASIVA2      -= _NIMPREQ2
+         _NBASIVA3      -= _NIMPREQ3
+
+      end if
 
       if uFieldEmpresa( "lIvaImpEsp")
          _NBASIVA1         -= _NIVMIVA1
          _NBASIVA2         -= _NIVMIVA2
          _NBASIVA3         -= _NIVMIVA3
       end if
-
-      _NBASIVA1      -= _NIMPREQ1
-      _NBASIVA2      -= _NIMPREQ2
-      _NBASIVA3      -= _NIMPREQ3
 
    end if
 
@@ -18250,3 +18270,15 @@ Function getExtraFieldPedidoCliente( cFieldName )
 Return ( getExtraField( cFieldName, oDetCamposExtra, D():PedidosClientesId( nView ) ) )
 
 //---------------------------------------------------------------------------//   
+
+Static Function lChangeRegIva( aTmp )
+
+   lImpuestos     := ( aTmp[ _NREGIVA ] <= 1 )
+
+   if !Empty( oImpuestos )
+      oImpuestos:Refresh()
+   end if
+
+return ( .t. )
+
+//---------------------------------------------------------------------------//
