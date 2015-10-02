@@ -12826,6 +12826,28 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
             cCodFam        := aTmp[ _CCODFAM ]
          end if
 
+         // Inicializamos el descuento y el logico de oferta
+
+            if !Empty( aGet[ _NDTO ] )
+               aGet[ _NDTO ]:cText( 0 )
+            else
+               aTmp[ _NDTO ] := 0
+            end if
+
+            if !Empty( aGet[ _NDTODIV ] )
+               aGet[ _NDTODIV ]:cText( 0 )
+            else 
+               aTmp[ _NDTODIV ] := 0
+            end if 
+
+            if !Empty( aGet[ _NDTOPRM ] )
+               aGet[ _NDTOPRM ]:cText( 0 )
+            else 
+               aTmp[ _NDTOPRM ]:= 0
+            end if
+
+            aTmp[ _LLINOFE  ] := .f.
+
          /*
          Cargamos el precio recomendado ,el precio de costo y el punto verde
          */

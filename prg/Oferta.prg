@@ -4517,7 +4517,7 @@ CLASS sPrecioOferta
 
    METHOD get( nTarifa, nImpuestosIncluidos, nView )
    METHOD getPrecio( hLinea, nView ) ;
-                                       INLINE ( getPrecioOferta( hLinea[ "Tarifa" ], hLinea[ "LineaImpuestoIncluido" ], nView ) )
+                                       INLINE ( getPrecioOferta( hLinea[ "NumeroTarifa" ], hLinea[ "LineaImpuestoIncluido" ], nView ) )
    METHOD getDtoPorcentual( nView )    INLINE ( ( D():Ofertas( nView ) )->nDtoPct )
    METHOD getDtoLineal( nView )        INLINE ( ( D():Ofertas( nView ) )->nDtoLin )
 

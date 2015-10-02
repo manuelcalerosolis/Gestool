@@ -5648,6 +5648,26 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
                cCodFam        := aTmp[ _CCODFAM ]
             end if
 
+            if !Empty( aGet[ _NDTO ] )
+               aGet[ _NDTO ]:cText( 0 )
+            else
+               aTmp[ _NDTO ] := 0
+            end if
+
+            if !Empty( aGet[ _NDTODIV ] )
+               aGet[ _NDTODIV ]:cText( 0 )
+            else 
+               aTmp[ _NDTODIV ] := 0
+            end if 
+
+            if !Empty( aGet[ _NDTOPRM ] )
+               aGet[ _NDTOPRM ]:cText( 0 )
+            else 
+               aTmp[ _NDTOPRM ]:= 0
+            end if
+
+            aTmp[ _LLINOFE  ] := .f.
+
             /*
             Cargamos el precio recomendado y el precio de costo
             */
@@ -10400,7 +10420,7 @@ function aColSatCli()
    aAdd( aColSatCli, { "NCOSDIV", "N",   16,  6, "Costo del artículo" ,                               "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "NPVSATC", "N",   16,  6, "Precio de venta recomendado" ,                      "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "CALMLIN", "C",   16,  0, "Código de almacén" ,                                "",                        "", "( cDbfCol )", nil } )
-   aAdd( aColSatCli, { "LIVALIN", "L",    1,  0, "Línea con " + cImp() + " incluido",                 "ImpuestosIncluidos",      "", "( cDbfCol )", nil } )
+   aAdd( aColSatCli, { "LIVALIN", "L",    1,  0, "Línea con " + cImp() + " incluido",                 "LineaImpuestoIncluido",   "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "CCODIMP", "C",    3,  0, "Código del impuesto especial",                      "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "NVALIMP", "N",   16,  6, "Importe de impuesto",                               "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "LLOTE",   "L",    1,  0, "",                                                  "",                        "", "( cDbfCol )", nil } )
