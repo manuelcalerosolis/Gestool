@@ -4540,28 +4540,28 @@ RETURN .T.
 
 STATIC FUNCTION CreateFiles( cPath )
 
-   if !lExistTable( cPath + "PedProvT.DBF" )
-      dbCreate( cPath + "PedProvT.DBF", aSqlStruct( aItmPedPrv() ), cDriver() )
+   if !lExistTable( cPath + "PedProvT.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedProvT.Dbf", aSqlStruct( aItmPedPrv() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedProvL.DBF" )
-      dbCreate( cPath + "PedProvL.DBF", aSqlStruct( aColPedPrv() ), cDriver() )
+   if !lExistTable( cPath + "PedProvL.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedProvL.Dbf", aSqlStruct( aColPedPrv() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedPrvI.Dbf" )
-      dbCreate( cPath + "PedPrvI.Dbf", aSqlStruct( aIncPedPrv() ), cDriver() )
+   if !lExistTable( cPath + "PedPrvI.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedPrvI.Dbf", aSqlStruct( aIncPedPrv() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedPrvD.Dbf" )
-      dbCreate( cPath + "PedPrvD.Dbf", aSqlStruct( aPedPrvDoc() ), cDriver() )
+   if !lExistTable( cPath + "PedPrvD.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedPrvD.Dbf", aSqlStruct( aPedPrvDoc() ), cLocalDriver() )
    end if
 
 RETURN NIL
 
 //--------------------------------------------------------------------------//
-/*
-Cambia el estado de un pedido
-*/
+//
+// Cambia el estado de un pedido
+//
 
 STATIC FUNCTION ChgState( oBrw )
 
@@ -4572,9 +4572,10 @@ STATIC FUNCTION ChgState( oBrw )
    local lQuit
 
    CursorWait()
+
    SysRefresh()
 
-   if ApoloMsgNoYes( "Al cambiar el estado perderá la referencia a cualquier documento que esté asociado.", "¿Desea cambiarlo?" )
+   if apoloMsgNoYes( "Al cambiar el estado perderá la referencia a cualquier documento que esté asociado.", "¿Desea cambiarlo?" )
 
       /*
       Cambia el estado del pedido----------------------------------------------
@@ -6975,9 +6976,9 @@ FUNCTION mkPedPrv( cPath, lAppend, cPathOld, oMeter, bFor )
       SysRefresh()
    end if
 
-   CreateFiles( cPath )
+   createFiles( cPath )
 
-   rxPedPrv( cPath, oMeter )
+   rxPedPrv( cPath, cLocalDriver() )
 
    IF lAppend .and. lIsDir( cPathOld )
 
@@ -7074,29 +7075,28 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxPedPrv( cPath, oMeter )
+FUNCTION rxPedPrv( cPath, cDriver )
 
       local cPedPrvT
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "PEDPROVT.DBF" ) .or. ;
-      !lExistTable( cPath + "PEDPROVL.DBF" ) .or. ;
-      !lExistTable( cPath + "PEDPRVI.DBF" )  .or. ;
-      !lExistTable( cPath + "PEDPRVD.DBF" )
-      CreateFiles( cPath )
+   if !lExistTable( cPath + "PEDPROVT.DBF", cDriver ) .or. ;
+      !lExistTable( cPath + "PEDPROVL.DBF", cDriver ) .or. ;
+      !lExistTable( cPath + "PEDPRVI.DBF", cDriver )  .or. ;
+      !lExistTable( cPath + "PEDPRVD.DBF", cDriver )
+      createFiles( cPath, cDriver )
    end if
 
-      /*
-      Eliminamos los indices
-      */
+   // Eliminamos los indices---------------------------------------------------
 
-   fEraseIndex( cPath + "PEDPROVT.CDX" )
-   fEraseIndex( cPath + "PEDPROVL.CDX" )
-   fEraseIndex( cPath + "PEDPRVI.CDX" )
-   fEraseIndex( cPath + "PEDPRVD.CDX" )
+   fEraseIndex( cPath + "PEDPROVT.CDX", cDriver )
+   fEraseIndex( cPath + "PEDPROVL.CDX", cDriver )
+   fEraseIndex( cPath + "PEDPRVI.CDX", cDriver )
+   fEraseIndex( cPath + "PEDPRVD.CDX", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @cPedPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @cPedPrvT ), .f. )
    if !( cPedPrvT )->( neterr() )
       ( cPedPrvT)->( __dbPack() )
 
@@ -7161,7 +7161,7 @@ FUNCTION rxPedPrv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @cPedPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @cPedPrvT ), .f. )
    if !( cPedPrvT )->( neterr() )
       ( cPedPrvT )->( __dbPack() )
 
@@ -7194,7 +7194,7 @@ FUNCTION rxPedPrv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PedPrvI.DBF", cCheckArea( "PedPrvI", @cPedPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PedPrvI.DBF", cCheckArea( "PedPrvI", @cPedPrvT ), .f. )
    if !( cPedPrvT )->( neterr() )
       ( cPedPrvT )->( __dbPack() )
 
@@ -7206,7 +7206,7 @@ FUNCTION rxPedPrv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PedPrvD.DBF", cCheckArea( "PedPrvD", @cPedPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PedPrvD.DBF", cCheckArea( "PedPrvD", @cPedPrvT ), .f. )
    if !( cPedPrvT )->( neterr() )
       ( cPedPrvT )->( __dbPack() )
 
@@ -8219,7 +8219,7 @@ Method CreateData()
    local oBlock
    local oError
    local lSnd        := .f.
-   local cPedPrvT
+   local dbfPedPrvT
    local dbfPedPrvL
    local tmpPedPrvT
    local tmpPedPrvL
@@ -8236,43 +8236,39 @@ Method CreateData()
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
+   USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
 
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-   */
+   // Creamos todas las bases de datos relacionadas con Articulos
 
-   CreateFiles( cPatSnd() )
+   mkPedPrv( cPatSnd() )
 
-   rxPedPrv( cPatSnd() )
-
-   USE ( cPatSnd() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @tmpPedPrvT ) )
+   USE ( cPatSnd() + "PEDPROVT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @tmpPedPrvT ) )
    SET ADSINDEX TO ( cPatSnd() + "PEDPROVT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @tmpPedPrvL ) )
+   USE ( cPatSnd() + "PEDPROVL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @tmpPedPrvL ) )
    SET ADSINDEX TO ( cPatSnd() + "PEDPROVL.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( cPedPrvT )->( lastrec() )
+      ::oSender:oMtr:nTotal := ( dbfPedPrvT )->( lastrec() )
    end if
 
-   while !( cPedPrvT )->( eof() )
+   while !( dbfPedPrvT )->( eof() )
 
-      if ( cPedPrvT )->lSndDoc
+      if ( dbfPedPrvT )->lSndDoc
 
          lSnd  := .t.
 
-         dbPass( cPedPrvT, tmpPedPrvT, .t. )
+         dbPass( dbfPedPrvT, tmpPedPrvT, .t. )
 
-         ::oSender:SetText( ( cPedPrvT )->cSerPed + "/" + AllTrim( Str( ( cPedPrvT )->nNumPed ) ) + "/" + Alltrim( ( cPedPrvT )->cSufPed ) + "; " + Dtoc( ( cPedPrvT )->dFecPed ) + "; " + AllTrim( ( cPedPrvT )->cCodPrv ) + "; " + ( cPedPrvT )->cNomPrv )
+         ::oSender:SetText( ( dbfPedPrvT )->cSerPed + "/" + AllTrim( Str( ( dbfPedPrvT )->nNumPed ) ) + "/" + Alltrim( ( dbfPedPrvT )->cSufPed ) + "; " + Dtoc( ( dbfPedPrvT )->dFecPed ) + "; " + AllTrim( ( dbfPedPrvT )->cCodPrv ) + "; " + ( dbfPedPrvT )->cNomPrv )
 
-         if ( dbfPedPrvL )->( dbSeek( ( cPedPrvT )->CSERPED + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed ) )
+         if ( dbfPedPrvL )->( dbSeek( ( dbfPedPrvT )->CSERPED + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed ) )
 
-            while ( ( dbfPedPrvL )->CSERPED + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed ) == ( ( cPedPrvT )->CSERPED + Str( ( cPedPrvT )->nNumPed ) + ( cPedPrvT )->cSufPed ) .AND. !( dbfPedPrvL )->( eof() )
+            while ( ( dbfPedPrvL )->CSERPED + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed ) == ( ( dbfPedPrvT )->CSERPED + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed ) .AND. !( dbfPedPrvL )->( eof() )
 
                dbPass( dbfPedPrvL, tmpPedPrvL, .t. )
                ( dbfPedPrvL )->( dbSkip() )
@@ -8283,10 +8279,10 @@ Method CreateData()
 
       end if
 
-      ( cPedPrvT )->( dbSkip() )
+      ( dbfPedPrvT )->( dbSkip() )
 
       if !Empty( ::oSender:oMtr )
-         ::oSender:oMtr:Set( ( cPedPrvT )->( OrdKeyNo() ) )
+         ::oSender:oMtr:Set( ( dbfPedPrvT )->( OrdKeyNo() ) )
       end if
 
    END DO
@@ -8299,7 +8295,7 @@ Method CreateData()
 
    ErrorBlock( oBlock )
 
-   CLOSE ( cPedPrvT )
+   CLOSE ( dbfPedPrvT )
    CLOSE ( dbfPedPrvL )
    CLOSE ( tmpPedPrvT )
    CLOSE ( tmpPedPrvL )
@@ -8422,66 +8418,56 @@ Method Process()
    local m
    local oBlock
    local oError
-   local cPedPrvT
+   local dbfPedPrvT
    local dbfPedPrvL
    local tmpPedPrvT
    local tmpPedPrvL
    local aFiles      := Directory( cPatIn() + "PedPrv*.*" )
 
-   /*
-   Procesamos los ficheros recibidos
-   */
+   // Procesamos los ficheros recibidos
 
    for m := 1 to len( aFiles )
 
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
 
       oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
       BEGIN SEQUENCE
 
-      /*
-      descomprimimos el fichero
-      */
+      // descomprimimos el fichero---------------------------------------------
 
       if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-         dbUseArea(.t., cDriver(), cPatSnd() + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @tmpPedPrvT ), .f., .t. )
-         if !( cPedPrvT )->( neterr() )
-               ( tmpPedPrvT )->( ordListAdd( cPatSnd() + "PEDPROVT.CDX" ) )
-         end if
+         ? "ya esta descomprimimos"
 
-         dbUseArea(.t., cDriver(), cPatSnd() + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @tmpPedPrvL ), .f., .t. )
-         if !( dbfPedPrvL )->( neterr() )
-               ( tmpPedPrvL )->( ordListAdd( cPatSnd() + "PEDPROVL.CDX" ) )
-         end if
+         dbUseArea(.t., cLocalDriver(), cPatSnd() + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @tmpPedPrvT ), .f., .t. )
 
-         USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @cPedPrvT ) )
+         dbUseArea(.t., cLocalDriver(), cPatSnd() + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @tmpPedPrvL ), .f., .t. )
+
+         USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
          SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
 
          USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
          SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
 
-         WHILE ( tmpPedPrvT )->( !eof() )
+         ? ( tmpPedPrvT )->( ordkeyno() )
 
-            /*
-            Comprobamos que no exista el pedido en la base de datos
-            */
+         ( tmpPedPrvT )->( dbGoTop() )
+         while !( tmpPedPrvT )->( eof() )
 
-            if lValidaOperacion( ( tmpPedPrvT )->dFecPed, .f. ) .and. ;
-               !( cPedPrvT )->( dbSeek( ( tmpPedPrvT )->cSerPed + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
+            if lValidaOperacion( ( tmpPedPrvT )->dFecPed, .f. ) .and. !( dbfPedPrvT )->( dbSeek( ( tmpPedPrvT )->cSerPed + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
 
-               dbPass( tmpPedPrvT, cPedPrvT, .t. )
-               ::oSender:SetText( "Añadido     : " + ( tmpPedPrvT )->cSerPed + "/" + AllTrim( Str( ( tmpPedPrvT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedPrvT )->cSufPed ) + "; " + Dtoc( ( tmpPedPrvT )->dFecPed ) + "; " + AllTrim( ( tmpPedPrvT )->cCodPrv ) + "; " + ( tmpPedPrvT )->cNomPrv )
+               dbPass( tmpPedPrvT, dbfPedPrvT, .t. )
+               ::oSender:SetText( "Añadido : " + ( tmpPedPrvT )->cSerPed + "/" + AllTrim( Str( ( tmpPedPrvT )->nNumPed ) ) + "/" + AllTrim( ( tmpPedPrvT )->cSufPed ) + "; " + Dtoc( ( tmpPedPrvT )->dFecPed ) + "; " + AllTrim( ( tmpPedPrvT )->cCodPrv ) + "; " + ( tmpPedPrvT )->cNomPrv )
 
                if ( tmpPedPrvL )->( dbSeek( ( tmpPedPrvT )->CSERPED + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) )
 
                   while ( ( tmpPedPrvL )->CSERPED + Str( ( tmpPedPrvL )->nNumPed ) + ( tmpPedPrvL )->cSufPed ) == ( ( tmpPedPrvT )->CSERPED + Str( ( tmpPedPrvT )->nNumPed ) + ( tmpPedPrvT )->cSufPed ) .AND. !( tmpPedPrvL )->( eof() )
 
                      dbPass( tmpPedPrvL, dbfPedPrvL, .t. )
+
                      ( tmpPedPrvL )->( dbSkip() )
 
-                  end do
+                  end while
 
                end if
 
@@ -8493,9 +8479,9 @@ Method Process()
 
             ( tmpPedPrvT )->( dbSkip() )
 
-         END DO
+         end while
 
-         CLOSE ( cPedPrvT )
+         CLOSE ( dbfPedPrvT )
          CLOSE ( dbfPedPrvL )
          CLOSE ( tmpPedPrvT )
          CLOSE ( tmpPedPrvL )
@@ -8506,7 +8492,7 @@ Method Process()
 
       RECOVER USING oError
 
-         CLOSE ( cPedPrvT )
+         CLOSE ( dbfPedPrvT )
          CLOSE ( dbfPedPrvL )
          CLOSE ( tmpPedPrvT )
          CLOSE ( tmpPedPrvL )

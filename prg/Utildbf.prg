@@ -1424,13 +1424,11 @@ Return ( lPass )
 
 Function fEraseIndex( cTable, cVia )
 
-#ifdef __SQLLIB__
    DEFAULT cVia   := cDriver()
 
-   if cVia == "SQLRDD"
-      Return ( SR_DropIndex( cTable ) )
+   if cVia == "ADS"
+      return .t.
    end if
-#endif
 
 Return ( fErase( cTable ) )
 

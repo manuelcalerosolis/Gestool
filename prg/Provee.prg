@@ -2565,7 +2565,7 @@ Method CreateData()
 
    mkProvee( cPatSnd() )
 
-   dbUseArea( .t., cDriver(), cPatSnd() + "Provee.Dbf", cCheckArea( "Provee", @tmpPrv ), .f. )
+   dbUseArea( .t., cLocalDriver(), cPatSnd() + "Provee.Dbf", cCheckArea( "Provee", @tmpPrv ), .f. )
    if !( tmpPrv )->( neterr() )
       ( tmpPrv )->( ordListAdd( cPatSnd() + "Provee.Cdx" ) )
    end if
@@ -2760,9 +2760,9 @@ Method Process()
 
          if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-            if lExistTable( cPatSnd() + "Provee.Dbf" )
+            if lExistTable( cPatSnd() + "Provee.Dbf", cLocalDriver() )
 
-               dbUseArea( .t., cDriver(), cPatSnd() + "Provee.Dbf", cCheckArea( "Provee", @tmpPrv ), .f. )
+               USE ( cPatSnd() + "Provee.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @tmpPrv ) )
 
                USE ( cPatPrv() + "Provee.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
                SET ADSINDEX TO ( cPatPrv() + "Provee.Cdx" ) ADDITIVE
@@ -2782,8 +2782,8 @@ Method Process()
                         ::oSender:SetText( "Desestimado : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
                      end if
                   else
-                        dbPass( tmpPrv, dbfProvee, .t. )
-                        ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
+                     dbPass( tmpPrv, dbfProvee, .t. )
+                     ::oSender:SetText( "Añadido : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
                   end if
 
                   ( tmpPrv )->( dbSkip() )
@@ -2804,7 +2804,7 @@ Method Process()
 
                ::oSender:SetText( "Ficheros no encontrados" )
 
-               if lExistTable( cPatSnd() + "Provee.Dbf" )
+               if lExistTable( cPatSnd() + "Provee.Dbf", cLocalDriver() )
                   ::oSender:SetText( "Falta" + cPatSnd() + "Provee.Dbf" )
                end if
 
@@ -4465,89 +4465,42 @@ FUNCTION mkProvee( cPath, lAppend, cPathOld, oMeter )
 		sysrefresh()
 	END IF
 
-   IF !lExistTable( cPath + "PROVEE.DBF" )
-      dbCreate( cPath + "PROVEE.DBF", aSqlStruct( aItmPrv() ), cDriver() )
+   IF !lExistTable( cPath + "Provee.Dbf", cLocalDriver() )
+      dbCreate( cPath + "Provee.Dbf", aSqlStruct( aItmPrv() ), cLocalDriver() )
    END IF
 
-   IF !lExistTable( cPath + "PROVEED.DBF" )
-      dbCreate( cPath + "PROVEED.DBF", aSqlStruct( aPrvDoc() ), cDriver() )
+   IF !lExistTable( cPath + "PROVEED.DBF", cLocalDriver() )
+      dbCreate( cPath + "PROVEED.DBF", aSqlStruct( aPrvDoc() ), cLocalDriver() )
    END IF
 
-   IF !lExistTable( cPath + "PRVBNC.DBF" )
-      dbCreate( cPath + "PRVBNC.DBF", aSqlStruct( aPrvBnc() ), cDriver() )
+   IF !lExistTable( cPath + "PRVBNC.DBF", cLocalDriver() )
+      dbCreate( cPath + "PRVBNC.DBF", aSqlStruct( aPrvBnc() ), cLocalDriver() )
    END IF
 
-   rxProvee( cPath, oMeter )
+   rxProvee( cPath, cLocalDriver() )
 
-	IF lAppend .and. lIsDir( cPathOld )
-
-      dbUseArea( .t., cDriver(), cPath + "PROVEE.DBF", cCheckArea( "PROVEE", @dbfPrv ), .f. )
-      if !( dbfPrv )->( neterr() )
-         ordListAdd( cPath + "PROVEE.CDX"  )
-      end if
-
-      dbUseArea( .t., cDriver(), cPathOld + "PROVEE.DBF", cCheckArea( "PROVEE", @oldPrv ), .f. )
-      if !( oldPrv )->( neterr() )
-         ordListAdd( cPathOld + "PROVEE.CDX"  )
-      end  if
-
-      dbUseArea( .t., cDriver(), cPath + "PROVEED.DBF", cCheckArea( "PROVEED", @dbfPrvD ), .f. )
-      if !( dbfPrvD )->( neterr() )
-         ordListAdd( cPath + "PROVEED.CDX"  )
-      end if
-
-      dbUseArea( .t., cDriver(), cPathOld + "PROVEED.DBF", cCheckArea( "PROVEED", @oldPrvD ), .f. )
-      if !( oldPrvD )->( neterr() )
-         ordListAdd( cPathOld + "PROVEED.CDX"  )
-      end if
-
-      dbUseArea( .t., cDriver(), cPath + "PrvBnc.DBF", cCheckArea( "PrvBnc", @dbfBnc ), .f. )
-      if !( dbfBnc )->( neterr() )
-         ordListAdd( cPath + "PrvBnc.CDX"  )
-      end if
-
-      dbUseArea( .t., cDriver(), cPathOld + "PrvBnc.DBF", cCheckArea( "PrvBnc", @oldBnc ), .f. )
-      if !( oldBnc )->( neterr() )
-         ordListAdd( cPathOld + "PrvBnc.CDX"  )
-      end  if
-
-      while !( oldPrv )->( Eof() )
-         dbCopy( oldPrv, dbfPrv, .t. )
-         ( oldPrv )->( dbSkip() )
-      end while
-
-      while !( oldPrvD )->( Eof() )
-         dbCopy( oldPrvD, dbfPrvD, .t. )
-         ( oldPrvD )->( dbSkip() )
-      end while
-
-      while !( oldBnc )->( Eof() )
-         dbCopy( oldBnc, dbfBnc, .t. )
-         ( oldBnc )->( dbSkip() )
-      end while
-
-      ( dbfPrv  )->( dbCloseArea() )
-      ( oldPrv  )->( dbCloseArea() )
-      ( dbfBnc  )->( dbCloseArea() )
-      ( oldBnc  )->( dbCloseArea() )
-      ( dbfPrvD )->( dbCloseArea() )
-      ( oldPrvD )->( dbCloseArea() )
-
+	if lAppend .and. lIsDir( cPathOld )
+      appDbf( cPathOld, cPath, "Provee" )
+      appDbf( cPathOld, cPath, "ProveeD" )
+      appDbf( cPathOld, cPath, "PrvBnc" )
    end if
 
 RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxProvee( cPath, oMeter )
+FUNCTION rxProvee( cPath, cDriver )
 
 	local dbfProvee
 
-   DEFAULT cPath  := cPatPrv()
+   DEFAULT cPath     := cPatPrv()
+   DEFAULT cDriver   := cDriver()
 
-   fEraseIndex( cPath + "PROVEE.Cdx" )
+   fEraseIndex( cPath + "Provee.Cdx", cDriver )
+   fEraseIndex( cPath + "ProveeD.Cdx", cDriver )
+   fEraseIndex( cPath + "PrvBnc.Cdx", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "PROVEE.DBF", cCheckArea( "PROVEE", @dbfProvee ), .f. )
+   dbUseArea( .t., cDriver, cPath + "Provee.Dbf", cCheckArea( "PROVEE", @dbfProvee ), .f. )
    if !( dbfProvee )->( neterr() )
       ( dbfProvee )->( __dbPack() )
 
@@ -4592,7 +4545,7 @@ FUNCTION rxProvee( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PROVEED.DBF", cCheckArea( "PROVEED", @dbfProvee ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PROVEED.DBF", cCheckArea( "PROVEED", @dbfProvee ), .f. )
    if !( dbfProvee )->( neterr() )
       ( dbfProvee )->( __dbPack() )
 
@@ -4606,7 +4559,7 @@ FUNCTION rxProvee( cPath, oMeter )
 
    fEraseIndex( cPath + "PrvBnc.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "PrvBnc.DBF", cCheckArea( "PrvBnc", @dbfProvee ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PrvBnc.DBF", cCheckArea( "PrvBnc", @dbfProvee ), .f. )
    if !( dbfProvee )->( neterr() )
       ( dbfProvee )->( __dbPack() )
 

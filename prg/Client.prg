@@ -8387,8 +8387,6 @@ FUNCTION rxClient( cPath, cDriver )
    DEFAULT cPath     := cPatCli()
    DEFAULT cDriver   := cDriver()
 
-   assertClient( cPath )
-
    fEraseIndex( cPath + "CLIENT.CDX" )
 
    dbUseArea( .t., cDriver, cPath + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfCli ), .f. )
