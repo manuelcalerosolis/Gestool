@@ -108,7 +108,7 @@ CLASS TBackup
    Method OpenFiles()
    Method OpenService( lExclusive, cPath )   INLINE ( ::OpenFiles( lExclusive, cPath ))
 
-   Method BuildFiles( lExclusive, cPath )    INLINE ( ::DefineFiles( cPath ):Create() )
+   Method BuildFiles( cPath )                INLINE ( ::DefineFiles( cPath ):Create() )
 
    Method CloseFiles()
 

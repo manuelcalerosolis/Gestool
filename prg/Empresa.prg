@@ -1459,7 +1459,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          OF       fldGeneral
 
       // Controles de TPV---------------------------------------------------------
-/*
+
       REDEFINE BITMAP oBmpTPV ;
          ID       500 ;
          RESOURCE "Cashier_48_alpha" ;
@@ -1528,12 +1528,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       200 ;
          OF       fldTPV
 
-//      REDEFINE COMBOBOX aGet[ _NTIPIMPTPV ] VAR aTmp[ _NTIPIMPTPV ] ;
-//         ITEMS    aTipImpTpv ;
-//         ID       210;
-//         OF       fldTPV   
+      REDEFINE COMBOBOX aGet[ _NTIPIMPTPV ] VAR aTmp[ _NTIPIMPTPV ] ;
+         ITEMS    aTipImpTpv ;
+         ID       210;
+         OF       fldTPV    
       
-      //Page 2 Defecto-----------------------------------------------------------
+      // Page 2 Defecto-----------------------------------------------------------
 
       REDEFINE BITMAP oBmpDefecto ;
          ID       500 ;
@@ -1731,10 +1731,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          SPINNER ;
          OF       fldValores
 
-      //REDEFINE COMBOBOX oSay[ 42 ] VAR cSay[ 42 ] ;
-      //   ITEMS    aCifRut ;
-      //   ID       160;
-      //   OF       fldValores
+      REDEFINE COMBOBOX oSay[ 42 ] VAR cSay[ 42 ] ;
+         ITEMS    aCifRut ;
+         ID       160;
+         OF       fldValores
 
       // Page 3 Articulos---------------------------------------------------------
 
@@ -1760,10 +1760,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  "@E 999.99" ;
          OF       fldArticulos
 
-      //REDEFINE COMBOBOX oSay[ 36 ] VAR cSay[ 36 ] ;
-      //   ITEMS    aBnfSobre ;
-      //   ID       130;
-      //   OF       fldArticulos
+      REDEFINE COMBOBOX oSay[ 36 ] VAR cSay[ 36 ] ;
+         ITEMS    aBnfSobre ;
+         ID       130;
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR2 ] VAR aTmp[ _LSHWTAR2 ] ;
          ID       200 ;
@@ -1782,11 +1782,11 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  "@E 999.99" ;
          OF       fldArticulos
 
-      //REDEFINE COMBOBOX oSay[ 37 ] VAR cSay[ 37 ] ;
-      //   ITEMS    aBnfSobre ;
-      //   WHEN     ( aTmp[ _LSHWTAR2 ] ) ;
-      //   ID       230;
-      //   OF       fldArticulos
+      REDEFINE COMBOBOX oSay[ 37 ] VAR cSay[ 37 ] ;
+         ITEMS    aBnfSobre ;
+         WHEN     ( aTmp[ _LSHWTAR2 ] ) ;
+         ID       230;
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR3 ] VAR aTmp[ _LSHWTAR3 ] ;
          ID       300 ;
@@ -1805,11 +1805,11 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  "@E 999.99" ;
          OF       fldArticulos
 
-      //REDEFINE COMBOBOX oSay[ 38 ] VAR cSay[ 38 ] ;
-      //   ITEMS    aBnfSobre ;
-      //   WHEN     ( aTmp[ _LSHWTAR3 ] ) ;
-      //   ID       330;
-      //   OF       fldArticulos
+      REDEFINE COMBOBOX oSay[ 38 ] VAR cSay[ 38 ] ;
+         ITEMS    aBnfSobre ;
+         WHEN     ( aTmp[ _LSHWTAR3 ] ) ;
+         ID       330;
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR4 ] VAR aTmp[ _LSHWTAR4 ] ;
          ID       400 ;
@@ -1828,11 +1828,11 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  "@E 999.99" ;
          OF       fldArticulos
 
-      //REDEFINE COMBOBOX oSay[ 39 ] VAR cSay[ 39 ] ;
-      //   ITEMS    aBnfSobre ;
-      //   WHEN     ( aTmp[ _LSHWTAR4 ] ) ;
-      //   ID       430;
-      //   OF       fldArticulos
+      REDEFINE COMBOBOX oSay[ 39 ] VAR cSay[ 39 ] ;
+         ITEMS    aBnfSobre ;
+         WHEN     ( aTmp[ _LSHWTAR4 ] ) ;
+         ID       430;
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR5 ] VAR aTmp[ _LSHWTAR5 ] ;
          ID       501 ;
@@ -1851,11 +1851,11 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  "@E 999.99" ;
          OF       fldArticulos
 
-      //REDEFINE COMBOBOX oSay[ 40 ] VAR cSay[ 40 ] ;
-      //   ITEMS    aBnfSobre ;
-      //   WHEN     ( aTmp[ _LSHWTAR5 ] ) ;
-      //   ID       530;
-      //   OF       fldArticulos
+      REDEFINE COMBOBOX oSay[ 40 ] VAR cSay[ 40 ] ;
+         ITEMS    aBnfSobre ;
+         WHEN     ( aTmp[ _LSHWTAR5 ] ) ;
+         ID       530;
+         OF       fldArticulos
 
       REDEFINE CHECKBOX aGet[ _LSHWTAR6 ] VAR aTmp[ _LSHWTAR6 ] ;
          ID          600 ;
@@ -1874,31 +1874,31 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          PICTURE  "@E 999.99" ;
          OF       fldArticulos
 
-      //REDEFINE COMBOBOX oSay[ 41 ] VAR cSay[ 41 ] ;
-      //   ITEMS    aBnfSobre ;
-      //   WHEN     ( aTmp[ _LSHWTAR6 ] ) ;
-      //   ID       630;
-      //   OF       fldArticulos
+      REDEFINE COMBOBOX oSay[ 41 ] VAR cSay[ 41 ] ;
+         ITEMS    aBnfSobre ;
+         WHEN     ( aTmp[ _LSHWTAR6 ] ) ;
+         ID       630;
+         OF       fldArticulos
 
-         // Precio Venta------------------------------
+      // Precio Venta------------------------------
 
-         // oGetPrecioVenta   := comboTarifa():Build( { "idCombo" => 800, "uValue" => aTmp[ _NPREVTA ] } )
-         // oGetPrecioVenta:Resource( fldArticulos )
+      oGetPrecioVenta   := comboTarifa():Build( { "idCombo" => 800, "uValue" => aTmp[ _NPREVTA ] } )
+      oGetPrecioVenta:Resource( fldArticulos )
 
-         // Precio venta web--------------------------
+      // Precio venta web--------------------------
 
-         // oGetPrecioWebVenta   := comboTarifa():Build( { "idCombo" => 810, "uValue" => aTmp[ _NPREWEBVTA ] } ) 
-         // oGetPrecioWebVenta:Resource( fldArticulos )
+      oGetPrecioWebVenta   := comboTarifa():Build( { "idCombo" => 810, "uValue" => aTmp[ _NPREWEBVTA ] } ) 
+      oGetPrecioWebVenta:Resource( fldArticulos )
 
-         // Precio Producto----------------------------
+      // Precio Producto----------------------------
 
-         // oGetPrecioProducto   := comboTarifa():Build( { "idCombo" => 740, "uValue" => aTmp[ _NPRETPRO ] } )
-         // oGetPrecioProducto:Resource( fldArticulos )
+      oGetPrecioProducto   := comboTarifa():Build( { "idCombo" => 740, "uValue" => aTmp[ _NPRETPRO ] } )
+      oGetPrecioProducto:Resource( fldArticulos )
 
-         // Precio de Combinado-------------------------
+      // Precio de Combinado-------------------------
 
-         // oGetPrecioCombinado    := comboTarifa():Build( { "idCombo" => 750, "uValue" => aTmp[ _NPRETCMB ] } )
-         // oGetPrecioCombinado:Resource( fldArticulos )
+      oGetPrecioCombinado    := comboTarifa():Build( { "idCombo" => 750, "uValue" => aTmp[ _NPRETCMB ] } )
+      oGetPrecioCombinado:Resource( fldArticulos )
 
       REDEFINE CHECKBOX aGet[ _LUSEBULTOS ] VAR aTmp[ _LUSEBULTOS ] ;
          ID       450 ;
@@ -1993,14 +1993,14 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             TRANSPARENT ;
             OF       fldContadores 
 
-      // REDEFINE COMBOBOX oCmbDocumentos VAR cCmbDocumentos ;
-      //       ID       100;
-      //       OF       fldContadores  ;
-      //       WHEN     ( nMode != ZOOM_MODE ) ;
-      //       ITEMS    aDocumentos ;
-      //       BITMAPS  aImagenes
+      REDEFINE COMBOBOX oCmbDocumentos VAR cCmbDocumentos ;
+            ID       100;
+            OF       fldContadores  ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            ITEMS    aDocumentos ;
+            BITMAPS  aImagenes
 
-      //oCmbDocumentos:bChange  := {|| CmbDocumentosChanged() }
+      oCmbDocumentos:bChange  := {|| CmbDocumentosChanged() }
 
       REDEFINE GET oGetSerie VAR cGetSerie ;
             ID       150 ;
@@ -2012,29 +2012,29 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             VALID    ( Empty( cGetSerie ) .or. ( cGetSerie >= "A" .and. cGetSerie <= "Z" ) ) ;
             OF       fldContadores 
 
-      // REDEFINE COMBOBOX oCmbSerie VAR cCmbSerie ;
-      //       ITEMS    { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" } ;
-      //       ID       110 ;
-      //       OF       fldContadores 
+      REDEFINE COMBOBOX oCmbSerie VAR cCmbSerie ;
+            ITEMS    { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" } ;
+            ID       110 ;
+            OF       fldContadores 
 
-      //oCmbSerie:bChange       := {|| CmbSerieChanged() }
+      oCmbSerie:bChange       := {|| CmbSerieChanged() }
 
       REDEFINE GET oGetContador VAR nGetContador ;
-            ID       120 ;
-            IDSAY    122 ;
-            SPINNER ;
-            PICTURE  "999999999" ;
-            VALID    ( nGetContador > 0 ) ;
-            OF       fldContadores 
+         ID       120 ;
+         IDSAY    122 ;
+         SPINNER ;
+         PICTURE  "999999999" ;
+         VALID    ( nGetContador > 0 ) ;
+         OF       fldContadores 
 
       REDEFINE GET oGetFormato VAR cGetFormato ;
-            ID       130 ;
-            IDTEXT   131 ;
-            IDSAY    132 ;
-            BITMAP   "LUPA" ;
-            VALID    ( cDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
-            ON HELP  ( brwDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
-            OF       fldContadores 
+         ID       130 ;
+         IDTEXT   131 ;
+         IDSAY    132 ;
+         BITMAP   "LUPA" ;
+         VALID    ( cDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
+         ON HELP  ( brwDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
+         OF       fldContadores 
 
       REDEFINE GET oGetCopias VAR nGetCopias ;
             ID       140 ;
@@ -2072,12 +2072,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
       // Tipo de exportacion contable------------------------------------------
 
-      // REDEFINE COMBOBOX oCmbContabilidad VAR cCmbContabilidad ;
-      //    ITEMS    { "Contaplus", "A3 CON" } ;
-      //    ID       90 ;
-      //    OF       fldContabilidad
+      REDEFINE COMBOBOX oCmbContabilidad VAR cCmbContabilidad ;
+         ITEMS    { "Contaplus", "A3 CON" } ;
+         ID       90 ;
+         OF       fldContabilidad
 
-      // oCmbContabilidad:bChange      := {|| SetAplicacionContable( oCmbContabilidad:nAt ) }
+      oCmbContabilidad:bChange      := {|| SetAplicacionContable( oCmbContabilidad:nAt ) }
 
       // Directorio contabilidad o exportacion---------------------------------
 
@@ -2285,84 +2285,84 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          TRANSPARENT ;
          OF          fldEnvios
 
-      // REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
-      //       ITEMS    { "Cliente", "Servidor" } ;
-      //       ID       100 ;
-      //       OF       fldEnvios
+      REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
+         ITEMS    { "Cliente", "Servidor" } ;
+         ID       100 ;
+         OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LEMPFRNQ ] VAR aTmp[ _LEMPFRNQ ] ;
-            ID       400 ;
-            OF       fldEnvios      
+         ID       400 ;
+         OF       fldEnvios      
 
       REDEFINE RADIO aTmp[ _NTIPCON ] ;
-            ID       110, 111 ;
-            OF       fldEnvios
+         ID       110, 111 ;
+         OF       fldEnvios
 
       REDEFINE GET aGet[ _CRUTCON ] VAR aTmp[ _CRUTCON ] ;
-            ID       120;
-            PICTURE  "@!" ;
-            BITMAP   "FOLDER" ;
-            ON HELP  ( aGet[ _CRUTCON ]:cText( Padr( cGetDir32( "Seleccione directorio", Rtrim( aTmp[ _CRUTCON ] ), .t. ), 100 ) ) );
-            OF       fldEnvios
+         ID       120;
+         PICTURE  "@!" ;
+         BITMAP   "FOLDER" ;
+         ON HELP  ( aGet[ _CRUTCON ]:cText( Padr( cGetDir32( "Seleccione directorio", Rtrim( aTmp[ _CRUTCON ] ), .t. ), 100 ) ) );
+         OF       fldEnvios
 
       REDEFINE GET aTmp[ _CSITFTP ] ;
-            ID       160;
-            WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
-            OF       fldEnvios
+         ID       160;
+         WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
+         OF       fldEnvios
 
       REDEFINE GET aTmp[ _CUSRFTP ] ;
-            ID       170 ;
-            WHEN     ( aTmp[_NTIPCON] == 2 ) ;
-            OF       fldEnvios
+         ID       170 ;
+         WHEN     ( aTmp[_NTIPCON] == 2 ) ;
+         OF       fldEnvios
 
       REDEFINE GET aTmp[ _CPSWFTP ] ;
-            ID       180;
-            WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
-            OF       fldEnvios
+         ID       180;
+         WHEN     ( aTmp[ _NTIPCON ] == 2 ) ;
+         OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LPASENVIO ] VAR aTmp[ _LPASENVIO ] ;
-            ID       200 ;
-            OF       fldEnvios
+         ID       200 ;
+         OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LENVENT ] VAR aTmp[ _LENVENT ] ;
-            ID       190 ;
-            OF       fldEnvios
+         ID       190 ;
+         OF       fldEnvios
 
       REDEFINE CHECKBOX aGet[ _LRECENT ] VAR aTmp[ _LRECENT ] ;
-            ID       191 ;
-            OF       fldEnvios
+         ID       191 ;
+         OF       fldEnvios
 
       REDEFINE CHECKBOX aTmp[ _LMAILTRNO ] ;
-            ID       300;
-            WHEN     ( lUsrMaster() ) ;
-            OF       fldEnvios
+         ID       300;
+         WHEN     ( lUsrMaster() ) ;
+         OF       fldEnvios
 
       REDEFINE GET aTmp[ _CMAILTRNO ] ;
-            ID       310 ;
-            WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTRNO ] ) ;
-            OF       fldEnvios
+         ID       310 ;
+         WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTRNO ] ) ;
+         OF       fldEnvios
 
       REDEFINE GET aTmp[ _CCODCLIFRQ ] ;
-            ID       320 ;
-            PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) ) ;
-            OF       fldEnvios
+         ID       320 ;
+         PICTURE  ( Replicate( "X", RetNumCodCliEmp() ) ) ;
+         OF       fldEnvios
 
       REDEFINE GET aTmp[ _CCODPRVFRQ ] ;
-            ID       330;
-            PICTURE  ( Replicate( "X", RetNumCodPrvEmp() ) ) ;
-            OF       fldEnvios
+         ID       330;
+         PICTURE  ( Replicate( "X", RetNumCodPrvEmp() ) ) ;
+         OF       fldEnvios
 
       // Page 7 comunicacion------------------------------------------------------
 
       REDEFINE BITMAP oBmpComunicacion ;
-            ID       500 ;
-            RESOURCE "Earth2_Alpha_48" ;
-            TRANSPARENT ;
-            OF       fldComunicaciones
+         ID       500 ;
+         RESOURCE "Earth2_Alpha_48" ;
+         TRANSPARENT ;
+         OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _CSRVMAI ] ;
-            ID       160;
-            OF       fldComunicaciones
+         ID       160;
+         OF       fldComunicaciones
 
       REDEFINE GET aTmp[ _NPRTMAI ] ;
             ID       165;
@@ -2449,10 +2449,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             TOOLTIP  "" ;
             ACTION   ( TMySql():New( aTmp[ _CSITSQL ], aTmp[ _CUSRSQL ], aTmp[ _CPSWSQL ], aTmp[ _CDTBSQL ], aTmp[ _NPRTSQL ] ):TestConexion() )
 
-      // REDEFINE COMBOBOX cTiempoPed ;
-      //       ITEMS    aTiempo ;
-      //       ID       220 ;
-      //       OF       fldComunicaciones
+      REDEFINE COMBOBOX cTiempoPed ;
+            ITEMS    aTiempo ;
+            ID       220 ;
+            OF       fldComunicaciones
 
       REDEFINE CHECKBOX aGet[ _LREALWEB ] VAR aTmp[ _LREALWEB ] ;
             ID       400 ;
@@ -2501,10 +2501,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE GET aTmp[ _CCODEDI ] ;
             ID       310 ;
             OF       fldComunicaciones
-*/
-      /*            
-      Botones --------------------------------------------------------------------
-      */
+
+      // Botones --------------------------------------------------------------------
 
       fldContadores:AddFastKey( VK_F3, {|| EdtCon( oBrwCon ) } )
 
@@ -2516,9 +2514,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       ON INIT        ( InitEdtCnf( oFld, nSelFolder ) ) ;
       CENTER
 
-   /*
-   Fin del control de errores--------------------------------------------------
-   */
+   // Fin del control de errores--------------------------------------------------
 
 //   RECOVER USING oError
 //
@@ -2586,9 +2582,6 @@ RETURN ( oDlg:nResult == IDOK )
 //--------------------------------------------------------------------------//
 
 Static Function InitEdtCnf( oFld, nSelFolder )
-
-   msgAlert( len( oFld:aDialogs ), "len aDialogs" )
-   msgAlert( nSelFolder, "nSelFolder" )
 
    oFld:SetOption( nSelFolder ) 
 
@@ -3362,9 +3355,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
       oMsgText( 'Comprobando articulos' )
       IsArticulo()
-
-      oMsgText( 'Comprobando clientes' )
-      IsClient()
 
       oMsgText( 'Comprobando pedidos a proveedor' )
       IsPedPrv()
@@ -5765,7 +5755,7 @@ Static Function SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode )
 
    // Escribimos en el definitivo----------------------------------------------
 
-   WinGather( aTmp, , dbfEmp, oBrw, nMode )
+   winGather( aTmp, , dbfEmp, oBrw, nMode )
 
    oDlg:Enable()
    oDlg:End( IDOK )

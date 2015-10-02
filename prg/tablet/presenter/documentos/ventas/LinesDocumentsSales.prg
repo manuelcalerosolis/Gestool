@@ -111,7 +111,7 @@ CLASS LinesDocumentsSales FROM Editable
 
    METHOD recalcularTotal()
 
-   METHOD onPreSaveAppendDetail()                           INLINE ( msgAlert( "onPreSaveAppendDetail" ), .t. )
+   METHOD onPreSaveAppendDetail()                           INLINE ( .t. )
 
 END CLASS
 

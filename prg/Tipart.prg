@@ -72,7 +72,7 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    DEFAULT oWndParent   := GetWndFrame()
 
    ::cPath              := cPath
-   ::cDriver            := cDriver()
+   ::cDriver            := cDriver
    ::oWndParent         := oWndParent
 
    if oMenuItem != nil
@@ -143,9 +143,6 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := ::cDriver
-
-   msgAlert( cPath, "DefineFiles")
-   msgAlert( cDriver, "DefineFiles")
 
    DEFINE DATABASE ::oDbf FILE "Tipart.Dbf" CLASS "Tipart" ALIAS "Tipart" PATH ( cPath ) VIA ( cDriver ) COMMENT "Tipos de artículos"
 
@@ -621,9 +618,13 @@ Return ( Self )
 Method ReciveData()
 
    local cDelegacion
-   local aDelegaciones  := aRetDlgEmp()
+   local aDelegaciones
 
-   msgAlert( hb_valtoexp( aDelegaciones ), "aDelegaciones" )
+   if ::oSender:lServer
+      aDelegaciones     := aRetDlgEmp()
+   else
+      aDelegaciones     := { "All" }
+   end if
 
    /*
    Recibirlo de internet
@@ -666,6 +667,7 @@ Method Process()
             if file( cPatSnd() + "TipArt.Dbf" )
 
                oTipArtTmp   := TTipArt():New( cPatSnd(), cLocalDriver() )
+               msgAlert( oTipArtTmp:cDriver, "cDriver" )
                oTipArtTmp:OpenService( .f. )
 
                oTipArt      := TTipArt():New( cPatEmp(), cDriver() )

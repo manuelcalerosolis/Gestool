@@ -14,6 +14,7 @@ CLASS TDet
    DATA  oDbfVir
 
    DATA  cPath
+   DATA  cDriver                                      INIT cDriver()
 
    DATA  cFirstKey
    DATA  bWhile
@@ -22,7 +23,7 @@ CLASS TDet
 
    DATA  bWhile
 
-   DATA  nRegisterLoaded      AS NUMERIC  INIT  0
+   DATA  nRegisterLoaded                              AS NUMERIC  INIT  0
 
    DATA  nMode           
 
@@ -39,20 +40,20 @@ CLASS TDet
    // Datas para la selecion generica de registros-----------------------------
 
    DATA  oRadSelect
-   DATA  nRadSelect           AS NUMERIC
+   DATA  nRadSelect                                   AS NUMERIC
    DATA  oChkSelect
-   DATA  lChkSelect           AS LOGIC    INIT  .t.
+   DATA  lChkSelect                                   AS LOGIC    INIT  .t.
    DATA  oDlgSelect
 
    // Metodos------------------------------------------------------------------
 
-   METHOD New( cPath, oParent )              CONSTRUCTOR
-   MESSAGE Create( cPath, oParent )          METHOD New( cPath, oParent )
+   METHOD New( cPath, cDriver, oParent )              CONSTRUCTOR
+   MESSAGE Create( cPath, cDriver, oParent )          METHOD New( cPath, cDriver, oParent )
 
-   METHOD End()                              INLINE ( ::CloseFiles(), Self := nil )
+   METHOD End()                                       INLINE ( ::CloseFiles(), Self := nil )
 
    METHOD Load()
-   METHOD LoadAppend()                       INLINE ( ::Load( .t. ) )
+   METHOD LoadAppend()                                INLINE ( ::Load( .t. ) )
    METHOD RollBack()
 
    METHOD Append()
@@ -61,24 +62,24 @@ CLASS TDet
    METHOD Del()
    METHOD Duplicate()
 
-   METHOD DefineFiles()                      VIRTUAL
+   METHOD DefineFiles()                               VIRTUAL
    METHOD OpenFiles( lExclusive, cPath )     
    METHOD CloseFiles()
 
-   METHOD OpenService( lExclusive, cPath )   INLINE ( ::OpenFiles( lExclusive, cPath ) )
-   METHOD CloseService()                     INLINE ( ::CloseFiles() )
+   METHOD OpenService( lExclusive, cPath )            INLINE ( ::OpenFiles( lExclusive, cPath ) )
+   METHOD CloseService()                              INLINE ( ::CloseFiles() )
 
-   METHOD Resource( nMode )   VIRTUAL
+   METHOD Resource( nMode )                           VIRTUAL
 
    METHOD CreateBrowse()
 
    METHOD Save()
    METHOD Cancel()
 
-   METHOD GetFirstKey()                      INLINE ( if( ::bFirstKey != nil, ::cFirstKey := Eval( ::bFirstKey, Self ), ) )
+   METHOD GetFirstKey()                               INLINE ( if( ::bFirstKey != nil, ::cFirstKey := Eval( ::bFirstKey, Self ), ) )
 
-   METHOD GetStatus()                        INLINE ( ::oDbf:GetStatus() )
-   METHOD SetStatus()                        INLINE ( ::oDbf:SetStatus() )
+   METHOD GetStatus()                                 INLINE ( ::oDbf:GetStatus() )
+   METHOD SetStatus()                                 INLINE ( ::oDbf:SetStatus() )
 
    METHOD AppendFrom( cPath )
 
@@ -91,21 +92,23 @@ CLASS TDet
    METHOD Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar )
    METHOD NotExiste( uValue, oGetTxt, uField, lMessage, lFill, cFillChar )
 
-   METHOD BuildFiles( lExclusive, cPath )    INLINE ( ::DefineFiles( cPath ):Create() )
+   METHOD BuildFiles( cPath )                         INLINE ( ::DefineFiles( cPath ):Create() )
 
-   METHOD NewInstance( cPath, oParent )      INLINE ( ::EndInstance(), ::oInstance := ::New( cPath, oParent ), ::oInstance ) 
-   METHOD GetInstance( cPath, oParent )      INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( cPath, oParent ), ::oInstance ) ) 
-   METHOD EndInstance()                      INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
+   METHOD NewInstance( cPath, cDriver, oParent )      INLINE ( ::EndInstance(), ::oInstance := ::New( cPath, cDriver, oParent ), ::oInstance ) 
+   METHOD GetInstance( cPath, cDriver, oParent )      INLINE ( if( empty( ::oInstance ), ::oInstance := ::New( cPath, cDriver, oParent ), ::oInstance ) ) 
+   METHOD EndInstance()                               INLINE ( if( !empty( ::oInstance ), ::oInstance := nil, ), nil ) 
 
 END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oParent ) CLASS TDet
+METHOD New( cPath, cDriver, oParent ) CLASS TDet
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
    ::oParent            := oParent
 
 RETURN ( Self )

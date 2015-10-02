@@ -114,14 +114,14 @@ CLASS TMant
 
    METHOD Activate()
 
-   METHOD SetFocus()       INLINE   ( if( ::oWndBrw != nil, ::oWndBrw:SetFocus(), ) )
+   METHOD SetFocus()                      INLINE   ( if( ::oWndBrw != nil, ::oWndBrw:SetFocus(), ) )
 
    METHOD CloseFiles()
-   MESSAGE CloseService()  METHOD CloseFiles()
+   MESSAGE CloseService()                 METHOD CloseFiles()
 
    METHOD Buscar()
 
-   MESSAGE Search()        METHOD Buscar()
+   MESSAGE Search()                       METHOD Buscar()
 
    METHOD Existe( uValue, oGetTxt, uField, lFill, cFillChar )
 
@@ -129,9 +129,9 @@ CLASS TMant
 
    METHOD ReturnField( uValue )
 
-   METHOD GetAlias()       INLINE ( ::oDbf:cAlias )
+   METHOD GetAlias()                      INLINE ( ::oDbf:cAlias )
 
-   METHOD Select()         INLINE ( ( ::oDbf:cAlias)->( Select() ) )
+   METHOD Select()                        INLINE ( ( ::oDbf:cAlias)->( Select() ) )
 
    METHOD End()
 
@@ -144,7 +144,7 @@ CLASS TMant
    METHOD OpenService( lExclusive )
    METHOD CloseService()
 
-   METHOD BuildFiles( lExclusive, cPath ) INLINE ( ::DefineFiles( cPath ):Create() ) 
+   METHOD BuildFiles( cPath )             INLINE ( ::DefineFiles( cPath ):Create() ) 
 
    METHOD lValid( oGet, oSay )
 

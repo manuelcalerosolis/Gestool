@@ -86,8 +86,6 @@ Return ( ::nNumberSend )
 
 //----------------------------------------------------------------------------//
 
-//----------------------------------------------------------------------------//
-
 CLASS TClienteSenderReciver FROM TSenderReciverItem
 
    Method CreateData()
@@ -152,21 +150,23 @@ Method CreateData() CLASS TClienteSenderReciver
 
    mkClient( cPatSnd() )
 
-   dbUseArea( .t., cDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
+   dbUseArea( .t., cLocalDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
    ( tmpCli )->( ordListAdd( cPatSnd() + "Client.Cdx" ) )
 
-   dbUseArea( .t., cDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
+   dbUseArea( .t., cLocalDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
    ( tmpObr )->( ordListAdd( cPatSnd() + "ObrasT.Cdx" ) )
 
-   dbUseArea( .t., cDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
+   dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
    ( tmpCon )->( ordListAdd( cPatSnd() + "CliContactos.Cdx" ) )
 
    /*
    Creamos la temporal de atípicas---------------------------------------------
    */
 
-   TAtipicas():GetInstance():OpenFiles( .f., cPatSnd() )
-   tmpAtp   := TAtipicas():GetInstance():oDbf:cAlias
+   oAtipicas   := TAtipicas():New( cPatSnd(), cLocalDriver() )
+   oAtipicas:OpenFiles( .f., cPatSnd() )
+   
+   tmpAtp      := oAtipicas:oDbf:cAlias
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfClient )->( lastrec() )
@@ -230,8 +230,8 @@ Method CreateData() CLASS TClienteSenderReciver
    END SEQUENCE
    ErrorBlock( oBlock )
 
-   TAtipicas():GetInstance():CloseFiles()
-   TAtipicas():EndInstance()
+   oAtipicas:CloseFiles()
+   oAtipicas:End()
 
    CLOSE ( tmpCli       )
    CLOSE ( tmpObr       )
@@ -241,9 +241,7 @@ Method CreateData() CLASS TClienteSenderReciver
    CLOSE ( dbfObrasT    )
    CLOSE ( dbfContactos )
 
-   /*
-   Comprimir los archivos------------------------------------------------------
-   */
+   // Comprimir los archivos------------------------------------------------------
 
    if lSnd
 
@@ -396,18 +394,18 @@ Method Process() CLASS TClienteSenderReciver
 
          if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-            if lExistTable( cPatSnd() + "Client.Dbf" ) .and.;
-               lExistTable( cPatSnd() + "CliAtp.Dbf" ) .and.;
-               lExistTable( cPatSnd() + "ObrasT.Dbf" ) .and.;
-               lExistTable( cPatSnd() + "CliContactos.Dbf" )
+            if lExistTable( cPatSnd() + "Client.Dbf", cLocalDriver() ) .and.;
+               lExistTable( cPatSnd() + "CliAtp.Dbf", cLocalDriver() ) .and.;
+               lExistTable( cPatSnd() + "ObrasT.Dbf", cLocalDriver() ) .and.;
+               lExistTable( cPatSnd() + "CliContactos.Dbf", cLocalDriver() )
 
-               dbUseArea( .t., cDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
+               dbUseArea( .t., cLocalDriver(), cPatSnd() + "Client.Dbf", cCheckArea( "Client", @tmpCli ), .f. )
 
-               dbUseArea( .t., cDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
+               dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliAtp.Dbf", cCheckArea( "CliAtp", @tmpAtp ), .f. )
 
-               dbUseArea( .t., cDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
+               dbUseArea( .t., cLocalDriver(), cPatSnd() + "ObrasT.Dbf", cCheckArea( "ObrasT", @tmpObr ), .f. )
 
-               dbUseArea( .t., cDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CLICONTA", @tmpCon ), .f. )
+               dbUseArea( .t., cLocalDriver(), cPatSnd() + "CliContactos.Dbf", cCheckArea( "CliConta", @tmpCon ), .f. )
 
                USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
                SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
@@ -432,14 +430,14 @@ Method Process() CLASS TClienteSenderReciver
                   if ( dbfClient )->( dbSeek( ( tmpCli )->Cod ) )
                      if !::oSender:lServer
                         dbPass( tmpCli, dbfClient, .f. )
-                        ::oSender:SetText( "Reemplazado : " + AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
+                        ::oSender:SetText( "Reemplazado : " + alltrim( ( tmpCli )->Cod ) + "; " + ( tmpCli )->Titulo )
                         ::CleanRelation( ( tmpCli )->Cod, dbfCliAtp, dbfObrasT, dbfContactos )
                      else
-                        ::oSender:SetText( "Desestimado : " + AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
+                        ::oSender:SetText( "Desestimado : " + alltrim( ( tmpCli )->Cod ) + "; " + ( tmpCli )->Titulo )
                      end if
                   else
                         dbPass( tmpCli, dbfClient, .t. )
-                        ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfClient )->Cod ) + "; " + ( dbfClient )->Titulo )
+                        ::oSender:SetText( "Añadido : " + alltrim( ( tmpCli )->Cod ) + "; " + ( tmpCli )->Titulo )
                         //::CleanRelation( ( tmpCli )->Cod, dbfCliAtp, dbfObrasT, dbfContactos )
                   end if
 
@@ -463,13 +461,13 @@ Method Process() CLASS TClienteSenderReciver
                   if ( dbfCliAtp )->( dbSeek( ( tmpAtp )->cCodCli + ( tmpAtp )->cCodArt ) )
                      if !::oSender:lServer
                         dbPass( tmpAtp, dbfCliAtp, .f. )
-                        ::oSender:SetText( "Reemplazado : " + Rtrim( ( tmpAtp )->cCodCli ) + "; " + Rtrim( ( tmpAtp )->cCodArt + "; " + Rtrim( ( tmpAtp )->cCodFam ) ) )
+                        ::oSender:SetText( "Reemplazado : " + alltrim( ( tmpAtp )->cCodCli ) + "; " + alltrim( ( tmpAtp )->cCodArt ) + "; " + alltrim( ( tmpAtp )->cCodFam ) ) 
                      else
-                        ::oSender:SetText( "Desestimado : " + Rtrim( ( tmpAtp )->cCodCli ) + "; " + Rtrim( ( tmpAtp )->cCodArt + "; " + Rtrim( ( tmpAtp )->cCodFam ) ) )
+                        ::oSender:SetText( "Desestimado : " + alltrim( ( tmpAtp )->cCodCli ) + "; " + alltrim( ( tmpAtp )->cCodArt ) + "; " + alltrim( ( tmpAtp )->cCodFam ) ) 
                      end if
                   else
                         dbPass( tmpAtp, dbfCliAtp, .t. )
-                        ::oSender:SetText( "Añadido     : " + Rtrim( ( tmpAtp )->cCodCli ) + "; " + Rtrim( ( tmpAtp )->cCodArt + "; " + Rtrim( ( tmpAtp )->cCodFam ) ) )
+                        ::oSender:SetText( "Añadido : " + alltrim( ( tmpAtp )->cCodCli ) + "; " + alltrim( ( tmpAtp )->cCodArt ) + "; " + alltrim( ( tmpAtp )->cCodFam ) ) 
                   end if
 
                   ( tmpAtp )->( dbSkip() )
@@ -539,19 +537,19 @@ Method Process() CLASS TClienteSenderReciver
 
                ::oSender:SetText( "Faltan ficheros" )
 
-               if !lExistTable( cPatSnd() + "Client.Dbf" )
+               if !lExistTable( cPatSnd() + "Client.Dbf", cLocalDriver() )
                   ::oSender:SetText( "Falta" + cPatSnd() + "Client.Dbf" )
                end if
 
-               if !lExistTable( cPatSnd() + "CliAtp.Dbf" )
+               if !lExistTable( cPatSnd() + "CliAtp.Dbf", cLocalDriver() )
                   ::oSender:SetText( "Falta" + cPatSnd() + "CliAtp.Dbf" )
                end if
 
-               if !lExistTable( cPatSnd() + "ObrasT.Dbf" )
+               if !lExistTable( cPatSnd() + "ObrasT.Dbf", cLocalDriver() )
                   ::oSender:SetText( "Falta" + cPatSnd() + "ObrasT.Dbf" )
                end if
 
-               if !lExistTable( cPatSnd() + "CliContactos.Dbf" )
+               if !lExistTable( cPatSnd() + "CliContactos.Dbf", cLocalDriver() )
                   ::oSender:SetText( "Falta" + cPatSnd() + "CliContactos.Dbf" )
                end if
 

@@ -219,7 +219,7 @@ STATIC FUNCTION OpenFiles()
       lOpenFiles     := .f.
    end if
 
-   oGrpCli              := TGrpCli():Create( cPatCli() )
+   oGrpCli              := TGrpCli():Create()
    if !oGrpCli:OpenFiles()
       lOpenFiles        := .f.
    end if

@@ -11008,7 +11008,7 @@ Method Process()
 
                dbPass( tmpAlbPrvT, cAlbPrvT, .t. )
                
-               ::oSender:SetText( "Añadido     : " + ( tmpAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( cAlbPrvT )->cCodPrv ) + "; " + ( cAlbPrvT )->cNomPrv )
+               ::oSender:SetText( "Añadido : " + ( tmpAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( cAlbPrvT )->cCodPrv ) + "; " + ( cAlbPrvT )->cNomPrv )
 
                if ( tmpAlbPrvL )->( dbSeek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->CSUFAlb ) )
 

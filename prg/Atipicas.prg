@@ -105,7 +105,6 @@ CLASS TAtipicas FROM TDet
    DATA oPrecioCompra
    DATA nPrecioCompra                  INIT 0
 
-
    DATA oChangeCostoParticular
 
    DATA oCostoParticular
@@ -183,11 +182,13 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oParent ) CLASS TAtipicas
+METHOD New( cPath, cDriver, oParent ) CLASS TAtipicas
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
    ::oParent            := oParent
 
    ::bOnPreSaveDetail   := {|| ::SaveDetails() }
@@ -197,12 +198,12 @@ RETURN ( Self )
  
 //---------------------------------------------------------------------------//
 
-METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TAtipicas
+METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TAtipicas
 
    local oDbf
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cVia         := cDriver()
+   DEFAULT cDriver      := ::cDriver
    DEFAULT lUniqueName  := .f.
    DEFAULT cFileName    := "CliAtp"
 
@@ -210,7 +211,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TAtipicas
       cFileName         := cGetNewFileName( cFileName, , , cPath )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Atipicas de clientes y grupos"
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cDriver ) COMMENT "Atipicas de clientes y grupos"
 
       FIELD NAME "cCodCli"    TYPE "C" LEN 12  DEC 0 COMMENT "Código del cliente"                           OF oDbf
       FIELD NAME "cCodGrp"    TYPE "C" LEN  4  DEC 0 COMMENT "Código de grupo de cliente"                   OF oDbf

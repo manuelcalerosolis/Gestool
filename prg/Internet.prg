@@ -92,7 +92,7 @@ CLASS TSndRecInf
    Method OpenFiles()
    Method CloseFiles()
 
-   Method BuildFiles( lExclusive, cPath ) INLINE ( ::DefineFiles( cPath ), ::oDbfSenderReciver:Create(), ::oDbfFilesReciver:Create() )
+   Method BuildFiles( cPath )             INLINE ( ::DefineFiles( cPath ), ::oDbfSenderReciver:Create(), ::oDbfFilesReciver:Create() )
 
    Method BotonSiguiente()
    Method BotonAnterior()
@@ -860,11 +860,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
 
    ::SaveToIni()
 
-   ? "estoy en Execute"
-
-   /*
-   Nos vamos a la ultima pagina------------------------------------------------
-   */
+   // Nos vamos a la ultima pagina------------------------------------------------
 
    if !Empty( ::oFld )
       ::oFld:SetOption( 4 )
@@ -876,9 +872,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio ) CLASS TSndRecInf
       ::oTree:DeleteAll()
    end if
 
-   /*
-   Limpiamos los directorios de envios y recepciones---------------------------
-   */
+   // Limpiamos los directorios de envios y recepciones---------------------------
 
    eraseFilesInDirectory( cPatIn(),  "*.*" )
    eraseFilesInDirectory( cPatOut(), "*.*" )

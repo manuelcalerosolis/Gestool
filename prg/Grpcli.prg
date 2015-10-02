@@ -6,28 +6,27 @@
 
 CLASS TGrpCli FROM TMasDet
 
-   DATA  cName                                  INIT "GruposClientes"
+   DATA  cName                                           INIT "GruposClientes"
 
-   DATA  cMru                                   INIT "Users2_16"
+   DATA  cMru                                            INIT "Users2_16"
 
-   DATA  cParentSelect                          INIT Space( 4 )
+   DATA  cParentSelect                                   INIT Space( 4 )
 
    DATA  oGetCodigo
    DATA  oGetNombre
 
    DATA  oTreePadre
 
-   METHOD New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
-   METHOD Create( cPath )                       CONSTRUCTOR
+   METHOD New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
+   METHOD Create( cPath, cDriver )                       CONSTRUCTOR
 
-   METHOD View()                                INLINE ( ::nView )
-   //METHOD End()
+   METHOD View()                                         INLINE ( ::nView )
 
    METHOD OpenFiles( lExclusive )
    METHOD CloseFiles()                          
 
-   METHOD OpenService( lExclusive, cPath )      INLINE ( ::Super:OpenService() )
-   METHOD CloseService()                        INLINE ( ::Super:CloseService() )
+   METHOD OpenService( lExclusive, cPath )               INLINE ( ::Super:OpenService() )
+   METHOD CloseService()                                 INLINE ( ::Super:CloseService() )
 
    METHOD DefineFiles()
 
@@ -50,9 +49,10 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatCli()
+   DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01030"
 
@@ -69,6 +69,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    end if
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
    ::oWndParent         := oWndParent
    ::oDbf               := nil
 
@@ -77,22 +78,24 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::bFirstKey          := {|| ::oDbf:cCodGrp }
 
-   ::AddDetail( TAtipicas():NewInstance( ::cPath, Self ) )
+   ::AddDetail( TAtipicas():NewInstance( ::cPath, , Self ) )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( cPath )
+METHOD Create( cPath, cDriver )
 
    DEFAULT cPath        := cPatCli()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
    ::oDbf               := nil
 
    ::bFirstKey          := {|| ::oDbf:cCodGrp }
 
-   ::AddDetail( TAtipicas():GetInstance( ::cPath, Self ) )
+   ::AddDetail( TAtipicas():GetInstance( ::cPath, , Self ) )
 
 RETURN ( Self )
 

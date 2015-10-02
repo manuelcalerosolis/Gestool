@@ -13133,7 +13133,7 @@ Method Process()
                else
                      ::CleanRelation( ( tmpArticulo )->Codigo )
                      dbPass( tmpArticulo, dbfArticulo, .t. )
-                     ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfArticulo )->Codigo ) + "; " + AllTrim( ( dbfArticulo )->Nombre ) + "; " + AllTrim( Trans( ( dbfArticulo )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( dbfArticulo )->pVtaIva1, PicOut() ) ) )
+                     ::oSender:SetText( "Añadido : " + AllTrim( ( dbfArticulo )->Codigo ) + "; " + AllTrim( ( dbfArticulo )->Nombre ) + "; " + AllTrim( Trans( ( dbfArticulo )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( dbfArticulo )->pVtaIva1, PicOut() ) ) )
                end if
 
                ( tmpArticulo )->( dbSkip() )
@@ -15858,13 +15858,13 @@ FUNCTION mkArticulo( cPath, lAppend, cPathOld, oMeter, lMovAlm )
 
    end if
 
-   rxArticulo( cPath, cLocalDriver(), oMeter )
+   rxArticulo( cPath, cLocalDriver() )
 
 RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxArticulo( cPath, cDriver, oMeter )
+FUNCTION rxArticulo( cPath, cDriver )
 
    local dbfCodebar
    local dbfArticulo

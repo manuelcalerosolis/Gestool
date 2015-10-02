@@ -469,7 +469,7 @@ STATIC FUNCTION OpenFiles( lExt )
       oBanco               := TBancos():Create()
       oBanco:OpenFiles()
 
-      oGrpCli              := TGrpCli():Create( cPatCli() )
+      oGrpCli              := TGrpCli():Create()
       if !oGrpCli:OpenFiles()
          lOpenFiles        := .f.
       end if
@@ -8314,91 +8314,38 @@ FUNCTION LoaIniCli( cPath, IniCli )
 RETURN ( cIniCli )
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//Funciones comunes del programa y pda
-//---------------------------------------------------------------------------//
-
-Function IsClient( cPath )
-
-   DEFAULT cPath  := cPatCli()
-
-   if !lExistTable( cPath + "Client.Dbf" )
-      dbCreate( cPath + "Client.Dbf", aSqlStruct( aItmCli() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "CliAtp.Dbf" )
-      dbCreate( cPath + "CliAtp.Dbf", aSqlStruct( aItmAtp() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "ObrasT.Dbf" )
-      dbCreate( cPath + "ObrasT.Dbf", aSqlStruct( aItmObr() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "ClientD.Dbf" )
-      dbCreate( cPath + "ClientD.Dbf", aSqlStruct( aCliDoc() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "CliBnc.Dbf" )
-      dbCreate( cPath + "CliBnc.Dbf", aSqlStruct( aCliBnc() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "CliInc.Dbf" )
-      dbCreate( cPath + "CliInc.Dbf", aSqlStruct( aCliInc() ), cDriver() )
-   end if
-
-   if !lExistIndex( cPath + "Client.Cdx"  ) .or. ;
-      !lExistIndex( cPath + "CliAtp.Cdx"  ) .or. ;
-      !lExistIndex( cPath + "ObrasT.Cdx"  ) .or. ;
-      !lExistTable( cPath + "ClientD.Dbf" ) .or. ;
-      !lExistTable( cPath + "CliBnc.Cdx"  ) .or. ;
-      !lExistTable( cPath + "CliInc.Cdx"  )
-
-      rxClient( cPath )
-
-   end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
 /*
 Crea las BD clientes
 */
 
 FUNCTION AssertClient( cPath )
 
-   IF !lExistTable( cPath + "CLIENT.DBF" )
-      dbCreate( cPath + "CLIENT.DBF", aSqlStruct( aItmCli() ), cDriver() )
+   IF !lExistTable( cPath + "Client.Dbf", cLocalDriver() )
+      dbCreate( cPath + "Client.Dbf", aSqlStruct( aItmCli() ), cLocalDriver() )
    END IF
 
-   IF !lExistTable( cPath + "OBRAST.DBF" )
-      dbCreate( cPath + "OBRAST.DBF", aSqlStruct( aItmObr() ), cDriver() )
+   IF !lExistTable( cPath + "ObrasT.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ObrasT.Dbf", aSqlStruct( aItmObr() ), cLocalDriver() )
    END IF
 
-   IF !lExistTable( cPath + "CLIENTD.DBF" )
-      dbCreate( cPath + "CLIENTD.DBF", aSqlStruct( aCliDoc() ), cDriver() )
+   IF !lExistTable( cPath + "ClientD.Dbf", cLocalDriver() )
+      dbCreate( cPath + "ClientD.Dbf", aSqlStruct( aCliDoc() ), cLocalDriver() )
    END IF
 
-   IF !lExistTable( cPath + "CLIBNC.DBF" )
-      dbCreate( cPath + "CLIBNC.DBF", aSqlStruct( aCliBnc() ), cDriver() )
+   IF !lExistTable( cPath + "CliBnc.Dbf", cLocalDriver() )
+      dbCreate( cPath + "CliBnc.Dbf", aSqlStruct( aCliBnc() ), cLocalDriver() )
    END IF
 
-   if !lExistTable( cPath + "CLIINC.DBF" )
-      dbCreate( cPath + "CLIINC.DBF", aSqlStruct( aCliInc() ), cDriver() )
+   if !lExistTable( cPath + "CliInc.Dbf", cLocalDriver() )
+      dbCreate( cPath + "CliInc.Dbf", aSqlStruct( aCliInc() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "CLICONTACTOS.Dbf" )
-      dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
+   if !lExistTable( cPath + "CliContactos.Dbf", cLocalDriver() )
+      dbCreate( cPath + "CliContactos.Dbf", aSqlStruct( aItmContacto() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "CliDad.Dbf" )
-      dbCreate( cPath + "CliDad.Dbf", aSqlStruct( aCliDad() ), cDriver() )
+   if !lExistTable( cPath + "CliDad.Dbf", cLocalDriver() )
+      dbCreate( cPath + "CliDad.Dbf", aSqlStruct( aCliDad() ), cLocalDriver() )
    end if
 
 RETURN ( nil )
@@ -8410,40 +8357,41 @@ FUNCTION mkClient( cPath, lAppend, cPathOld, oMeter )
    DEFAULT cPath        := cPatCli()
    DEFAULT lAppend      := .f.
 
-   AssertClient( cPath )
+   assertClient( cPath )
 
    if oMeter != NIL
       oMeter:cText      := "Generando Bases"
       sysRefresh()
    end if
 
-   rxClient( cPath, oMeter )
+   rxClient( cPath, cLocalDriver() )
 
    if lAppend .and. lIsDir( cPathOld )
-      AppDbf( cPathOld, cPath, "Client"         )
-      AppDbf( cPathOld, cPath, "ObrasT"         )
-      AppDbf( cPathOld, cPath, "CliBnc"         )
-      AppDbf( cPathOld, cPath, "CliInc"         )
-      AppDbf( cPathOld, cPath, "CliContactos"   )
-      AppDbf( cPathOld, cPath, "ClientD"        )
-      AppDbf( cPathOld, cPath, "CliDad"    )
+      AppDbf( cPathOld, cPath, "Client" )
+      AppDbf( cPathOld, cPath, "ObrasT" )
+      AppDbf( cPathOld, cPath, "CliBnc" )
+      AppDbf( cPathOld, cPath, "CliInc" )
+      AppDbf( cPathOld, cPath, "CliContactos" )
+      AppDbf( cPathOld, cPath, "ClientD" )
+      AppDbf( cPathOld, cPath, "CliDad" )
    end if
 
 RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxClient( cPath, oMeter )
+FUNCTION rxClient( cPath, cDriver )
 
    local dbfCli
 
-   DEFAULT cPath  := cPatCli()
+   DEFAULT cPath     := cPatCli()
+   DEFAULT cDriver   := cDriver()
 
-   AssertClient( cPath )
+   assertClient( cPath )
 
    fEraseIndex( cPath + "CLIENT.CDX" )
 
-   dbUseArea( .t., cDriver(), cPath + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver, cPath + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfCli ), .f. )
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
@@ -8541,7 +8489,7 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "ObrasT.CDX" )
 
-   dbUseArea( .t., cDriver(), cPath + "OBRAST.DBF", cCheckArea( "OBRAST", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver, cPath + "OBRAST.DBF", cCheckArea( "OBRAST", @dbfCli ), .f. )
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
@@ -8579,7 +8527,7 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "CliBnc.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliBnc.DBF", cCheckArea( "CliBnc", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver, cPath + "CliBnc.DBF", cCheckArea( "CliBnc", @dbfCli ), .f. )
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
@@ -8605,7 +8553,7 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "ClientD.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "ClientD.DBF", cCheckArea( "ClientD", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ClientD.DBF", cCheckArea( "ClientD", @dbfCli ), .f. )
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
@@ -8619,7 +8567,7 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "CliInc.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliInc.Dbf", cCheckArea( "CliInc", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver, cPath + "CliInc.Dbf", cCheckArea( "CliInc", @dbfCli ), .f. )
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
 
@@ -8635,7 +8583,7 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "CliContactos.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliContactos.Dbf", cCheckArea( "CLICONTA", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver, cPath + "CliContactos.Dbf", cCheckArea( "CLICONTA", @dbfCli ), .f. )
 
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
@@ -8667,7 +8615,7 @@ FUNCTION rxClient( cPath, oMeter )
 
    fEraseIndex( cPath + "CliDad.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "CliDad.Dbf", cCheckArea( "CliDad", @dbfCli ), .f. )
+   dbUseArea( .t., cDriver, cPath + "CliDad.Dbf", cCheckArea( "CliDad", @dbfCli ), .f. )
 
    if !( dbfCli )->( neterr() )
       ( dbfCli )->( __dbPack() )
@@ -8687,44 +8635,6 @@ FUNCTION rxClient( cPath, oMeter )
 RETURN NIL
 
 //--------------------------------------------------------------------------//
-
-STATIC FUNCTION CreateFiles( cPath )
-
-   IF !lExistTable( cPath + "CLIENT.DBF" )
-      dbCreate( cPath + "CLIENT.DBF", aSqlStruct( aItmCli() ), cDriver() )
-   END IF
-
-   IF !lExistTable( cPath + "CLIATP.DBF" )
-      dbCreate( cPath + "CLIATP.DBF", aSqlStruct( aItmAtp() ), cDriver() )
-   END IF
-
-   IF !lExistTable( cPath + "OBRAST.DBF" )
-      dbCreate( cPath + "OBRAST.DBF", aSqlStruct( aItmObr() ), cDriver() )
-   END IF
-
-   IF !lExistTable( cPath + "CLIENTD.DBF" )
-      dbCreate( cPath + "CLIENTD.DBF", aSqlStruct( aCliDoc() ), cDriver() )
-   END IF
-
-   IF !lExistTable( cPath + "CLIBNC.DBF" )
-      dbCreate( cPath + "CLIBNC.DBF", aSqlStruct( aCliBnc() ), cDriver() )
-   END IF
-
-   if !lExistTable( cPath + "CLIINC.DBF" )
-      dbCreate( cPath + "CLIINC.DBF", aSqlStruct( aCliInc() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "CLICONTACTOS.Dbf" )
-      dbCreate( cPath + "CLICONTACTOS.Dbf", aSqlStruct( aItmContacto() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "CliDad.Dbf" )
-      dbCreate( cPath + "CliDad.Dbf", aSqlStruct( aCliDad() ), cDriver() )
-   end if
-
-RETURN NIL
-
-//---------------------------------------------------------------------------//
 
 FUNCTION aCliInc()
 

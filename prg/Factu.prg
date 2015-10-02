@@ -2502,7 +2502,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Grupos'
    oItem:cMessage       := 'Acceso a los grupos de clientes'
-   oItem:bAction        := {|| TGrpCli():New( cPatCli(), oWnd, "01030" ):Activate() }
+   oItem:bAction        := {|| TGrpCli():New( cPatCli(), cDriver(), oWnd, "01030" ):Activate() }
    oItem:cId            := "01030"
    oItem:cBmp           := "Users2_16"
    oItem:cBmpBig        := "Users2_32"
@@ -3528,7 +3528,7 @@ Function BuildMenu()
                   MENUITEM    "&1. Grupos"; 
                      HELPID   "01030" ;
                      MESSAGE  "Base de datos de grupos de clientes" ;
-                     ACTION   ( TGrpCli():New( cPatCli(), oWnd, oMenuItem ):Activate() );
+                     ACTION   ( TGrpCli():New( cPatCli(), cDriver(), oWnd, oMenuItem ):Activate() );
                      RESOURCE "Users2_16" ;
 
                   MENUITEM    "&2. Rutas";
