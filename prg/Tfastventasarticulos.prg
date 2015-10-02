@@ -20,6 +20,7 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    DATA  oArtAlm
    DATA  oArtPrv
    DATA  oCtrCoste
+   DATA  oOperario
    DATA  oObras
 
    DATA  oPrp1
@@ -299,9 +300,14 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
       ::oCtrCoste    := TCentroCoste():Create( cPatDat() )
       if !::oCtrCoste:OpenFiles()
          
-         lOpen    := .f.
+         lOpen       := .f.
 
       endif
+
+      ::oOperario    := TOperarios():Create()
+      if !::oOperario:OpenFiles()
+         lOpen       := .f.
+      end if
 
    RECOVER USING oError
 
@@ -475,6 +481,10 @@ METHOD CloseFiles() CLASS TFastVentasArticulos
          ::oStock:End()
       end if
 
+      if !Empty( ::oOperario )
+         ::oOperario:End()
+      end if
+
    RECOVER
 
       msgStop( "Imposible cerrar todas las bases de datos" )
@@ -508,6 +518,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cCodAge",     "C", 12, 0, {|| "@!" }, "Código del agente"                       )
    ::AddField( "cCodTrn",     "C", 12, 0, {|| "@!" }, "Código del transportista"                )
    ::AddField( "cCodUsr",     "C",  3, 0, {|| "@!" }, "Código usuario"                          )
+   ::AddField( "cCodOpe",     "C",  5, 0, {|| "@!" }, "Código operario"                         )
 
    ::AddField( "cCodCli",     "C", 12, 0, {|| "@!" }, "Código cliente/proveedor"                )
    ::AddField( "cNomCli",     "C", 80, 0, {|| "@!" }, "Nombre cliente/proveedor"                )
@@ -861,6 +872,9 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetWorkArea(       "Codificación de proveedores",   ::oArtPrv:nArea )
    ::oFastReport:SetFieldAliases(   "Codificación de proveedores",   cItemsToReport( aItmArtPrv() ) )
 
+   ::oFastReport:SetWorkArea(       "Operario",                      ::oOperario:Select() )
+   ::oFastReport:SetFieldAliases(   "Operario",                      cObjectsToReport( ::oOperario:oDbf ) )
+
    // Relaciones entre tablas-----------------------------------------------------
 
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                      {|| ::oDbfArt:Familia } )
@@ -868,7 +882,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",                    {|| ::oDbfArt:cCodCate } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",                    {|| ::oDbfArt:cCodTemp } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",                   {|| ::oDbfArt:cCodFab } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Estado artículo",               {|| ::oDbfArt:cCodEst } )
    ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),            {|| ::oDbfArt:TipoIva } )
 
    ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
@@ -880,6 +893,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Almacenes",                         {|| ::oDbf:cCodAlm } )
    ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",                       {|| ::oDbf:cCodCli + ::oDbf:cCodObr } )
    ::oFastReport:SetMasterDetail(   "Informe", "Rutas",                             {|| ::oDbf:cCodRut } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Estado artículo",                   {|| ::oDbf:cCodEst } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Operario",                          {|| ::oDbf:cCodOpe } )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )  
    ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
@@ -900,7 +915,6 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Categorias" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Estado artículo" )
    ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
    
    ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
@@ -913,6 +927,8 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
    ::oFastReport:SetResyncPair(     "Informe", "Rutas" )
    ::oFastReport:SetResyncPair(     "Informe", "Codificación de proveedores" )
+   ::oFastReport:SetResyncPair(     "Informe", "Estado artículo" )
+   ::oFastReport:SetResyncPair(     "Informe", "Operario" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
    ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
@@ -950,7 +966,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
    ::oMtrInf:SetTotal( ::oSatCliT:OrdKeyCount() )
 
    /*
-   Lineas de Satidos-----------------------------------------------------------
+   Lineas de Sat---------------------------------------------------------------
    */
 
    cExpLine          := '!lTotLin .and. !lControl'
@@ -970,106 +986,102 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
 
             while !::lBreak .and. ( ::oSatCliT:cSerSat + Str( ::oSatCliT:nNumSat ) + ::oSatCliT:cSufSat == ::oSatCliL:cSerSat + Str( ::oSatCliL:nNumSat ) + ::oSatCliL:cSufSat )
 
-               if !( ::lExcCero  .and. nTotNSATCli( ::oSatCliL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLSATCli( ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               /*
+               AÃ±adimos un nuevo registro-----------------------------------
+               */
 
-                  /*
-                  AÃ±adimos un nuevo registro-----------------------------------
-                  */
+               ::oDbf:Blank()
 
-                  ::oDbf:Blank()
+               ::oDbf:cCodArt    := ::oSatCliL:cRef
+               ::oDbf:cNomArt    := ::oSatCliL:cDetalle
 
-                  ::oDbf:cCodArt    := ::oSatCliL:cRef
-                  ::oDbf:cNomArt    := ::oSatCliL:cDetalle
+               ::oDbf:cCodPr1    := ::oSatCliL:cCodPr1
+               ::oDbf:cCodPr2    := ::oSatCliL:cCodPr2
+               ::oDbf:cValPr1    := ::oSatCliL:cValPr1
+               ::oDbf:cValPr2    := ::oSatCliL:cValPr2
 
-                  ::oDbf:cCodPr1    := ::oSatCliL:cCodPr1
-                  ::oDbf:cCodPr2    := ::oSatCliL:cCodPr2
-                  ::oDbf:cValPr1    := ::oSatCliL:cValPr1
-                  ::oDbf:cValPr2    := ::oSatCliL:cValPr2
+               ::oDbf:cCodPrv    := ::oSatCliL:cCodPrv
+               ::oDbf:cNomPrv    := RetFld( ::oSatCliL:cCodPrv, ::oDbfPrv:cAlias )
 
-                  ::oDbf:cCodPrv    := ::oSatCliL:cCodPrv
-                  ::oDbf:cNomPrv    := RetFld( ::oSatCliL:cCodPrv, ::oDbfPrv:cAlias )
+               ::oDbf:cCodFam    := ::oSatCliL:cCodFam
+               ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oSatCliL:nIva )
+               ::oDbf:cCodTip    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+               ::oDbf:cCodCate   := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+               ::oDbf:cCodEst    := ::oSatCliT:cCodEst
+               ::oDbf:cCodTemp   := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+               ::oDbf:cCodFab    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+               
+               ::oDbf:cCodAlm    := ::oSatCliL:cAlmLin
+               ::oDbf:cCodPago   := ::oSatCliT:cCodPgo
+               ::oDbf:cCodRut    := ::oSatCliT:cCodRut
+               ::oDbf:cCodAge    := ::oSatCliT:cCodAge
+               ::oDbf:cCodTrn    := ::oSatCliT:cCodTrn
+               ::oDbf:cCodUsr    := ::oSatCliT:cCodUsr
+               ::oDbf:cCodOpe    := ::oSatCliT:cCodOpe
 
-                  ::oDbf:cCodFam    := ::oSatCliL:cCodFam
-                  ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oSatCliL:nIva )
-                  ::oDbf:cCodTip    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ::oSatCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
-                  
-                  ::oDbf:cCodAlm    := ::oSatCliL:cAlmLin
-                  ::oDbf:cCodPago   := ::oSatCliT:cCodPgo
-                  ::oDbf:cCodRut    := ::oSatCliT:cCodRut
-                  ::oDbf:cCodAge    := ::oSatCliT:cCodAge
-                  ::oDbf:cCodTrn    := ::oSatCliT:cCodTrn
-                  ::oDbf:cCodUsr    := ::oSatCliT:cCodUsr
+               ::oDbf:cCodCli    := ::oSatCliT:cCodCli
+               ::oDbf:cNomCli    := ::oSatCliT:cNomCli
+               ::oDbf:cPobCli    := ::oSatCliT:cPobCli
+               ::oDbf:cPrvCli    := ::oSatCliT:cPrvCli
+               ::oDbf:cPosCli    := ::oSatCliT:cPosCli
+               ::oDbf:cCodObr    := ::oSatCliT:cCodObr
+               ::oDbf:cCodGrp    := cGruCli( ::oSatCliT:cCodCli, ::oDbfCli )
 
-                  ::oDbf:cCodCli    := ::oSatCliT:cCodCli
-                  ::oDbf:cNomCli    := ::oSatCliT:cNomCli
-                  ::oDbf:cPobCli    := ::oSatCliT:cPobCli
-                  ::oDbf:cPrvCli    := ::oSatCliT:cPrvCli
-                  ::oDbf:cPosCli    := ::oSatCliT:cPosCli
-                  ::oDbf:cCodObr    := ::oSatCliT:cCodObr
-                  ::oDbf:cCodGrp    := cGruCli( ::oSatCliT:cCodCli, ::oDbfCli )
+               ::oDbf:nTotDto    := nDtoLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotPrm    := nPrmLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                  ::oDbf:nTotDto    := nDtoLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotPrm    := nPrmLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nUniArt    := nTotNSATCli( ::oSatCliL:cAlias )
 
-                  ::oDbf:nUniArt    := nTotNSATCli( ::oSatCliL:cAlias )
+               ::oDbf:nDtoArt    := ::oSatCliL:nDto
+               ::oDbf:nLinArt    := ::oSatCliL:nDtoDiv 
+               ::oDbf:nPrmArt    := ::oSatCliL:nDtoPrm
 
-                  ::oDbf:nDtoArt    := ::oSatCliL:nDto
-                  ::oDbf:nLinArt    := ::oSatCliL:nDtoDiv 
-                  ::oDbf:nPrmArt    := ::oSatCliL:nDtoPrm
+               ::oDbf:nPreArt    := nImpUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nTrnArt    := nTrnUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nPntArt    := nPntLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
 
-                  ::oDbf:nPreArt    := nImpUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
-                  ::oDbf:nTrnArt    := nTrnUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
-                  ::oDbf:nPntArt    := nPntLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nBrtArt    := nBrtLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nImpArt    := nImpLSATCli( ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+               ::oDbf:nIvaArt    := nIvaLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotArt    := nImpLSATCli( ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+               ::oDbf:nTotArt    += nIvaLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
-                  ::oDbf:nBrtArt    := nBrtLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nImpArt    := nImpLSATCli( ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-                  ::oDbf:nIvaArt    := nIvaLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotArt    := nImpLSATCli( ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                  ::oDbf:nTotArt    += nIvaLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nCosArt    := nTotCSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               if Empty( ::oDbf:nCosArt )
+                  ::oDbf:nCosArt := ::oDbf:nUniArt * pCosto( ::oDbfArt:cAlias )
+               end if 
 
-                  ::oDbf:nCosArt    := nTotCSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  if Empty( ::oDbf:nCosArt )
-                     ::oDbf:nCosArt := ::oDbf:nUniArt * pCosto( ::oDbfArt:cAlias )
-                  end if 
+               ::oDbf:cClsDoc    := SAT_CLI
+               ::oDbf:cTipDoc    := "SAT cliente"
+               ::oDbf:cSerDoc    := ::oSatCliT:cSerSat
+               ::oDbf:cNumDoc    := Str( ::oSatCliT:nNumSat )
+               ::oDbf:cSufDoc    := ::oSatCliT:cSufSat
 
-                  ::oDbf:cClsDoc    := SAT_CLI
-                  ::oDbf:cTipDoc    := "SAT cliente"
-                  ::oDbf:cSerDoc    := ::oSatCliT:cSerSat
-                  ::oDbf:cNumDoc    := Str( ::oSatCliT:nNumSat )
-                  ::oDbf:cSufDoc    := ::oSatCliT:cSufSat
+               ::oDbf:cIdeDoc    :=  ::idDocumento()
+               ::oDbf:nNumLin    :=  ::oSatCliL:nNumLin
 
-                  ::oDbf:cIdeDoc    :=  ::idDocumento()
-                  ::oDbf:nNumLin    :=  ::SatCliL:nNumLin
+               ::oDbf:nAnoDoc    := Year( ::oSatCliT:dFecSat )
+               ::oDbf:nMesDoc    := Month( ::oSatCliT:dFecSat )
+               ::oDbf:dFecDoc    := ::oSatCliT:dFecSat
+               ::oDbf:cHorDoc    := SubStr( ::oSatCliT:cTimCre, 1, 2 )
+               ::oDbf:cMinDoc    := SubStr( ::oSatCliT:cTimCre, 4, 2 )
 
-                  ::oDbf:nAnoDoc    := Year( ::oSatCliT:dFecSat )
-                  ::oDbf:nMesDoc    := Month( ::oSatCliT:dFecSat )
-                  ::oDbf:dFecDoc    := ::oSatCliT:dFecSat
-                  ::oDbf:cHorDoc    := SubStr( ::oSatCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oSatCliT:cTimCre, 4, 2 )
+               ::oDbf:nBultos    := ::oSatCliL:nBultos
+               ::oDbf:cFormato   := ::osatCliL:cFormato
+               ::oDbf:nCajas     := ::oSatCliL:nCanSat
+               ::oDbf:nPeso      := nPesLSatCli( ::oSatCliL:cAlias )
 
-                  ::oDbf:nBultos    := ::oSatCliL:nBultos
-                  ::oDbf:cFormato   := ::osatCliL:cFormato
-                  ::oDbf:nCajas     := ::oSatCliL:nCanSat
-                  ::oDbf:nPeso      := nPesLSatCli( ::oSatCliL:cAlias )
+               ::oDbf:lKitArt    := ::oSatCliL:lKitArt
+               ::oDbf:lKitChl    := ::oSatCliL:lKitChl
 
-                  ::oDbf:lKitArt    := ::oSatCliL:lKitArt
-                  ::oDbf:lKitChl    := ::oSatCliL:lKitChl
+               /*
+               AÃ±adimos un nuevo registro-----------------------------------
+               */
 
-                  /*
-                  AÃ±adimos un nuevo registro-----------------------------------
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
-
+               if ::lValidRegister()
+                  ::oDbf:Insert()
+               else
+                  ::oDbf:Cancel()
                end if
 
                ::oSatCliL:Skip()
