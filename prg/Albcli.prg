@@ -10329,12 +10329,12 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                end if
             end if
 
-            /*
-            Buscamos la familia del articulo y anotamos las propiedades--------
-            */
-
             aTmp[ _CCODPR1 ]   := ( D():Articulos( nView ) )->cCodPrp1
             aTmp[ _CCODPR2 ]   := ( D():Articulos( nView ) )->cCodPrp2
+
+            /*
+            Comprobamos que tenga valores las propiedades----------------------
+            */
 
             if ( !Empty( aTmp[ _CCODPR1 ] ) .or. !Empty( aTmp[ _CCODPR2 ] ) ) .and. ( uFieldEmpresa( "lUseTbl" ) .and. ( nMode == APPD_MODE ) )
 

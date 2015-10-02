@@ -1625,6 +1625,14 @@ FUNCTION lPrpAct( cVal, oSay, cPrp, dbfTblPro )
       return .t.
    end if
 
+   /*
+   Es para cuando no hay valores poder meter valores libres.
+   */
+
+   if !dbSeekInOrd( cPrp, "CPRO", dbfTblPro )
+      Return .t.
+   end if
+
    if ValType( cVal ) == "O"
       cVal        := cVal:VarGet()
    end if
@@ -1869,6 +1877,15 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 
    if !OpenFiles()
       Return .f.
+   end if
+
+   /*
+   Es para cuando no hay valores poder meter valores libres.
+   */
+
+   if !dbSeekInOrd( cPrp, "CPRO", dbfProL )
+      MsgStop( "No existen valores para esta propiedad" )
+      Return .t.
    end if
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )

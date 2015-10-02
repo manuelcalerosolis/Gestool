@@ -17,6 +17,8 @@ CLASS TImpFactu
 
    DATA oDbfArtGst
    DATA oDbfArtFac
+   DATA oDbfProGst
+   DATA oDbfProFac
    DATA oDbfArCFac
    DATA oDbfCliGst
    DATA oDbfCliFac
@@ -161,6 +163,9 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfArcFac     PATH ( ::cPathFac ) FILE "ARTCOM.DBF"   VIA ( cLocalDriver() ) CLASS "ARTCOM"
       DATABASE NEW ::oDbfPrePrvGst  PATH ( cPatArt() )  FILE "ProvArt.DBF"  VIA ( cDriver() ) CLASS "PROPRVGST" SHARED INDEX "ProvArt.CDX"
       DATABASE NEW ::oDbfPrePrvFac  PATH ( ::cPathFac ) FILE "PrecProv.DBF" VIA ( cLocalDriver() ) CLASS "PROPRVFAC"
+      DATABASE NEW ::oDbfProGst     PATH ( cPatEmp() )  FILE "PRO.DBF"      VIA ( cDriver() ) CLASS "PROGST" SHARED INDEX "PRO.CDX"
+      DATABASE NEW ::oDbfProFac     PATH ( ::cPathFac ) FILE "Prop.DBF"     VIA ( cLocalDriver() ) CLASS "PROPFAC"
+
    end if
 
    if !File( ::cPathFac + "FAMILIAS.DBF" )
@@ -410,6 +415,18 @@ METHOD CloseFiles()
       ::oDbfArtFac:End()
    else
       ::oDbfArtFac := nil
+   end if
+
+   if !Empty( ::oDbfProGst )
+      ::oDbfProGst:End()
+   else
+      ::oDbfProGst := nil
+   end if
+
+   if !Empty( ::oDbfProFac )
+      ::oDbfProFac:End()
+   else
+      ::oDbfProFac := nil
    end if
 
    if !Empty( ::oDbfArCFac )
@@ -1098,7 +1115,7 @@ METHOD Importar()
             ::oDbfArtGst:nDtoArt4   := ::oDbfArtFac:nDto4
             ::oDbfArtGst:nDtoArt5   := ::oDbfArtFac:nDto5
             ::oDbfArtGst:nDtoArt6   := ::oDbfArtFac:nDto6
-
+            
             /*
             ----------------------------------------------------------------------
             Metemos los comentarios de los artículos------------------------------
@@ -1126,6 +1143,36 @@ METHOD Importar()
             ::aMtrIndices[ 1 ]:Set( ::oDbfArtFac:Recno() )
 
             ::oDbfArtFac:Skip()
+
+         end while
+
+      end if
+
+      /*
+      Traspasamos las propiedades
+      */
+
+      if ::aLgcIndices[ 1 ]
+
+         ::aMtrIndices[ 1 ]:SetTotal( ::oDbfProFac:LastRec() )
+
+         ::oDbfProFac:GoTop()
+         while !( ::oDbfProFac:eof() )
+
+            while ::oDbfProGst:Seek( ::oDbfProFac:cCodProp )
+               ::oDbfProGst:Delete( .f. )
+            end if
+
+            ::oDbfProGst:Append()
+
+            ::oDbfProGst:cCodPro    := ::oDbfProFac:cCodProp
+            ::oDbfProGst:cDesPro    := ::oDbfProFac:cNomProp
+
+            ::oDbfProGst:Save()
+
+            ::aMtrIndices[ 1 ]:Set( ::oDbfProFac:Recno() )
+
+            ::oDbfProFac:Skip()
 
          end while
 
@@ -2067,7 +2114,7 @@ METHOD Importar()
             ::oDbfPedLGst:nDto         := aLinea:nDto
             ::oDbfPedLGst:cLote        := aLinea:cLote
             ::oDbfPedLGst:nNumLin      := aLinea:nNumLin
-
+            
             ::oDbfPedLGst:Save()
 
          next
@@ -2163,16 +2210,10 @@ METHOD Importar()
             ::oDbfAlbLGst:nComAge      := ::oDbfAlbLFac:nComision
             ::oDbfAlbLGst:nUniCaja     := ::oDbfAlbLFac:nCanEnt
             ::oDbfAlbLGst:dFecha       := ::oDbfAlbLFac:dFecPed
-            ::oDbfAlbLGst:cCodPr1      := ::oDbfAlbLFac:cProp1
-            ::oDbfAlbLGst:cCodPr2      := ::oDbfAlbLFac:cProp2
-
-            /*
-            Solo importación ayamonte------------------------------------------
-            */
-
-            ::oDbfAlbLGst:lLote        := !Empty( ::oDbfAlbLFac:cProp2 )
-            ::oDbfAlbLGst:cLote        := ::oDbfAlbLFac:cProp2
-            ::oDbfAlbLGst:dFecCad      := cTod( SubStr( ::oDbfAlbLFac:cProp1, 8, 2 ) + "/" + SubStr( ::oDbfAlbLFac:cProp1, 6, 2 ) + "/" + SubStr( ::oDbfAlbLFac:cProp1, 1, 4 ) )
+            ::oDbfAlbLGst:cCodPr1      := RetFld( ::oDbfAlbLFac:cRef, ::oDbfArtGst:cAlias, "cCodPrp1", "Codigo" )
+            ::oDbfAlbLGst:cCodPr2      := RetFld( ::oDbfAlbLFac:cRef, ::oDbfArtGst:cAlias, "cCodPrp2", "Codigo" )
+            ::oDbfAlbLGst:cValPr1      := ::oDbfAlbLFac:cProp1
+            ::oDbfAlbLGst:cValPr2      := ::oDbfAlbLFac:cProp2
 
             ::oDbfAlbLGst:Save()
 
@@ -2359,13 +2400,10 @@ METHOD Importar()
                ::oDbfFacLGst:nUniCaja     := ::oDbfFacLFac:nCanEnt
                ::oDbfFacLGst:dFecAlb      := ::oDbfFacLFac:dFecAlb
 
-               /*
-               Solo importación ayamonte------------------------------------------
-               */
-
-               ::oDbfFacLGst:lLote        := !Empty( ::oDbfFacLFac:cProp2 )
-               ::oDbfFacLGst:cLote        := ::oDbfFacLFac:cProp2
-               ::oDbfFacLGst:dFecCad      := cTod( SubStr( ::oDbfFacLFac:cProp1, 8, 2 ) + "/" + SubStr( ::oDbfFacLFac:cProp1, 6, 2 ) + "/" + SubStr( ::oDbfFacLFac:cProp1, 1, 4 ) )
+               ::oDbfFacLGst:cCodPr1      := RetFld( ::oDbfFacLFac:cRef, ::oDbfArtGst:cAlias, "cCodPrp1", "Codigo" )
+               ::oDbfFacLGst:cCodPr2      := RetFld( ::oDbfFacLFac:cRef, ::oDbfArtGst:cAlias, "cCodPrp2", "Codigo" )
+               ::oDbfFacLGst:cValPr1      := ::oDbfFacLFac:cProp1
+               ::oDbfFacLGst:cValPr2      := ::oDbfFacLFac:cProp2
 
                ::oDbfFacLGst:Save()
 
@@ -3339,13 +3377,40 @@ METHOD Importar()
 
       end if
 
+      /*
+      Pasamos las propiedades de Familias a artículos--------------------------
+      */
+
+      ::oDbfArtGst:GoTop()
+
+      ::aMtrIndices[ 1 ]:SetTotal( ::oDbfArtGst:LastRec() )
+
+      while !::oDbfArtGst:Eof()
+
+         if !Empty( ::oDbfArtGst:Familia )
+
+            ::oDbfArtGst:Load()
+            ::oDbfArtGst:cCodPrp1      := retFld( ::oDbfArtGst:Familia, ::oDbfFamGst:cAlias, "cCodPrp1", "cCodFam" )
+            ::oDbfArtGst:cCodPrp2      := retFld( ::oDbfArtGst:Familia, ::oDbfFamGst:cAlias, "cCodPrp2", "cCodFam" )
+            ::oDbfArtGst:Save()
+
+         end if
+
+         ::aMtrIndices[ 1 ]:Set( ::oDbfArtGst:Recno() )
+
+         ::oDbfArtGst:Skip()
+
+      end while
+
+      ::aMtrIndices[ 1 ]:SetTotal( ::oDbfArtGst:LastRec() )
+
       ::CloseFiles()
 
 //      SynFacCli( cPatEmp() )
 //      SynFacRec( cPatEmp() )
 //      SynRecCli( cPatEmp() )
 
-      msgInfo( "Traspaso realizado con éxito.", "Bienvenido a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ )
+      msgInfo( "Traspaso realizado con éxito.", "Bienvenido a Gestool" )
 
       ::oDlg:end()
       ::oDlg:Enable()
