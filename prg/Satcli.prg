@@ -5648,6 +5648,8 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
                cCodFam        := aTmp[ _CCODFAM ]
             end if
 
+            // Inicializamos el descuento y el logico de oferta
+
             if !Empty( aGet[ _NDTO ] )
                aGet[ _NDTO ]:cText( 0 )
             else
