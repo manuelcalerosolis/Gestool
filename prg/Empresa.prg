@@ -3356,12 +3356,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       oMsgText( 'Comprobando articulos' )
       IsArticulo()
 
-      oMsgText( 'Comprobando pedidos a proveedor' )
-      IsPedPrv()
-
-      oMsgText( 'Comprobando albaran a proveedor' )
-      IsAlbPrv()
-
       oMsgText( 'Comprobando facturas a proveedor' )
       IsFacPrv()
 

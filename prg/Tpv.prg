@@ -7,16 +7,16 @@
 #include "Factu.ch" 
 #include "DbInfo.ch"
 
-#define CABECERA                 "1"
-#define CUERPO                   "2"
-#define PIE                      "3"
+#define CABECERA                    "1"
+#define CUERPO                      "2"
+#define PIE                         "3"
 
-#define _MENUITEM_               "01063"
+#define _MENUITEM_                  "01063"
 
-#define NUM_BTN_FAM               7
-#define NUM_BTN_ART              19
+#define NUM_BTN_FAM                 7
+#define NUM_BTN_ART                 19
 
-#define FONT_NAME                "Segoe UI" // "Arial" //
+#define FONT_NAME                   "Segoe UI" // "Arial" //
 
 #define ubiGeneral                  0
 #define ubiLlevar                   1
@@ -13649,34 +13649,7 @@ Return ( Min( nTik, nVal ) )
 
 FUNCTION IsTpv( cPath )
 
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "TIKET.DBF" )
-      dbCreate( cPath + "TIKET.DBF", aSqlStruct( aItmTik() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "TIKEL.DBF" )
-      dbCreate( cPath + "TIKEL.DBF", aSqlStruct( aColTik() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "TIKEP.DBF" )
-      dbCreate( cPath + "TIKEP.DBF", aSqlStruct( aPgoTik() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "TIKEC.DBF" )
-      dbCreate( cPath + "TIKEC.DBF", aSqlStruct( aPgoCli() ), cDriver() )
-   end if
-
-   if !lExistIndex( cPath + "TIKET.Cdx" ) .or. ;
-      !lExistIndex( cPath + "TIKEL.Cdx" ) .or. ;
-      !lExistIndex( cPath + "TIKEP.Cdx" ) .or. ;
-      !lExistIndex( cPath + "TIKEC.Cdx" )
-
-      rxTpv( cPath )
-
-   end if
-
-Return ( nil )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -13780,16 +13753,16 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
    Creamos todas las bases de datos relacionadas con Articulos
    */
 
-   MkTpv( cPatSnd() )
+   mkTpv( cPatSnd() )
 
-   USE ( cPatSnd() + "TIKET.DBF" ) NEW VIA ( cDriver() )ALIAS ( cCheckArea( "TIKET", @tmpTikT ) )
-   SET ADSINDEX TO ( cPatSnd() + "TIKET.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "TIKET.DBF" ) NEW VIA ( cLocalDriver() )ALIAS ( cCheckArea( "TIKET", @tmpTikT ) )
+   SET INDEX TO ( cPatSnd() + "TIKET.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "TIKEL.DBF" ) NEW VIA ( cDriver() )ALIAS ( cCheckArea( "TIKEL", @tmpTikL ) )
-   SET ADSINDEX TO ( cPatSnd() + "TIKEL.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "TIKEL.DBF" ) NEW VIA ( cLocalDriver() )ALIAS ( cCheckArea( "TIKEL", @tmpTikL ) )
+   SET INDEX TO ( cPatSnd() + "TIKEL.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "TIKEP.DBF" ) NEW VIA ( cDriver() )ALIAS ( cCheckArea( "TIKEP", @tmpTikP ) )
-   SET ADSINDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "TIKEP.DBF" ) NEW VIA ( cLocalDriver() )ALIAS ( cCheckArea( "TIKEP", @tmpTikP ) )
+   SET INDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfTikT )->( OrdKeyCount() )
@@ -13978,9 +13951,8 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
 
-      /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-      BEGIN SEQUENCE*/
+      oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
 
       /*
       descomprimimos el fichero------------------------------------------------
@@ -13992,9 +13964,9 @@ Method Process() CLASS TTiketsClientesSenderReciver
          Ficheros temporales
          */
 
-         if lExistTable( cPatSnd() + "TIKET.DBF" ) .and.;
-            lExistTable( cPatSnd() + "TIKEL.DBF" ) .and.;
-            lExistTable( cPatSnd() + "TIKEP.DBF" )
+         if lExistTable( cPatSnd() + "TIKET.DBF", cLocalDriver() ) .and.;
+            lExistTable( cPatSnd() + "TIKEL.DBF", cLocalDriver() ) .and.;
+            lExistTable( cPatSnd() + "TIKEP.DBF", cLocalDriver() )
 
             USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
             SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
@@ -14005,20 +13977,14 @@ Method Process() CLASS TTiketsClientesSenderReciver
             USE ( cPatEmp() + "TIKEP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEP", @dbfTikP ) )
             SET ADSINDEX TO ( cPatEmp() + "TIKEP.CDX" ) ADDITIVE
 
-            USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-            SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
+            USE ( cPatSnd() + "TIKET.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "TIKET", @tmpTikT ) )
+            SET INDEX TO ( cPatSnd() + "TIKET.CDX" ) ADDITIVE
 
-            USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-            SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+            USE ( cPatSnd() + "TIKEL.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "TIKEL", @tmpTikL ) )
+            SET INDEX TO ( cPatSnd() + "TIKEL.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "TIKET.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "TIKET", @tmpTikT ) )
-            SET ADSINDEX TO ( cPatSnd() + "TIKET.CDX" ) ADDITIVE
-
-            USE ( cPatSnd() + "TIKEL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "TIKEL", @tmpTikL ) )
-            SET ADSINDEX TO ( cPatSnd() + "TIKEL.CDX" ) ADDITIVE
-
-            USE ( cPatSnd() + "TIKEP.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "TIKEP", @tmpTikP ) )
-            SET ADSINDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
+            USE ( cPatSnd() + "TIKEP.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "TIKEP", @tmpTikP ) )
+            SET INDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
 
             oStock            := TStock():New()
             oStock:cTikT      := dbfTikT
@@ -14041,17 +14007,6 @@ Method Process() CLASS TTiketsClientesSenderReciver
                      dbPass( tmpTikT, dbfTikT, .f. )
 
                      ::oSender:SetText( "Reemplazado : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
-
-                     /*
-                     Rollback de articulos y stocks-------------------------------
-                     */
-
-                     //oStock:TpvCli( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik, ( tmpTikT )->cAlmTik, .t. )
-
-                     //nTotTikNew := nTotTik( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik, tmpTikT, tmpTikL, dbfDiv )
-                     //nTotTikOld := nTotTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv )
-
-                     // AddRiesgo( nTotTikNew - nTotTikOld, ( dbfTikT )->cCliTik, dbfClient )
 
                      /*
                      Eliminamos las lineas----------------------------------------
@@ -14148,7 +14103,6 @@ Method Process() CLASS TTiketsClientesSenderReciver
             CLOSE ( dbfTikT   )
             CLOSE ( dbfTikL   )
             CLOSE ( dbfTikP   )
-            CLOSE ( dbfClient )
             CLOSE ( dbfDiv    )
             CLOSE ( tmpTikT   )
             CLOSE ( tmpTikL   )
@@ -14166,15 +14120,15 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
             ::oSender:SetText( "Faltan ficheros" )
 
-            if !lExistTable( cPatSnd() + "TikeT.Dbf" )
+            if !lExistTable( cPatSnd() + "TikeT.Dbf", cLocalDriver() )
                ::oSender:SetText( "Falta " + cPatSnd() + "TikeT.Dbf" )
             end if
 
-            if !lExistTable( cPatSnd() + "TikeL.Dbf" )
+            if !lExistTable( cPatSnd() + "TikeL.Dbf", cLocalDriver() )
                ::oSender:SetText( "Falta " + cPatSnd() + "TikeL.Dbf" )
             end if
 
-            if !lExistTable( cPatSnd() + "TikeP.Dbf" )
+            if !lExistTable( cPatSnd() + "TikeP.Dbf", cLocalDriver() )
                ::oSender:SetText( "Falta " + cPatSnd() + "TikeP.Dbf" )
             end if
 
@@ -14182,7 +14136,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
       end if
 
-      /*RECOVER USING oError
+      RECOVER USING oError
 
          CLOSE ( dbfTikT   )
          CLOSE ( dbfTikL   )
@@ -14198,7 +14152,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
       END SEQUENCE
 
-      ErrorBlock( oBlock )*/
+      ErrorBlock( oBlock )
 
    next
 
@@ -16730,35 +16684,35 @@ FUNCTION mkTpv( cPath, lAppend, cPathOld, oMeter )
       SysRefresh()
    end if
 
-   if !lExistTable( cPath + "TIKET.DBF" )
-      dbCreate( cPath + "TIKET.DBF", aSqlStruct( aItmTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKET.DBF", cLocalDriver() )
+      dbCreate( cPath + "TIKET.DBF", aSqlStruct( aItmTik() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "TIKEL.DBF" )
-      dbCreate( cPath + "TIKEL.DBF", aSqlStruct( aColTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKEL.DBF", cLocalDriver() )
+      dbCreate( cPath + "TIKEL.DBF", aSqlStruct( aColTik() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "TIKEP.DBF" )
-      dbCreate( cPath + "TIKEP.DBF", aSqlStruct( aPgoTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKEP.DBF", cLocalDriver() )
+      dbCreate( cPath + "TIKEP.DBF", aSqlStruct( aPgoTik() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "TIKEC.DBF" )
-      dbCreate( cPath + "TIKEC.DBF", aSqlStruct( aPgoCli() ), cDriver() )
+   if !lExistTable( cPath + "TIKEC.DBF", cLocalDriver() )
+      dbCreate( cPath + "TIKEC.DBF", aSqlStruct( aPgoCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "TIKES.DBF" )
-      dbCreate( cPath + "TIKES.DBF", aSqlStruct( aSerTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKES.DBF", cLocalDriver() )
+      dbCreate( cPath + "TIKES.DBF", aSqlStruct( aSerTik() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "TIKEM.DBF" )
-      dbCreate( cPath + "TIKEM.DBF", aSqlStruct( aMesTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKEM.DBF", cLocalDriver() )
+      dbCreate( cPath + "TIKEM.DBF", aSqlStruct( aMesTik() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "TIKETIMP.DBF" )
-      dbCreate( cPath + "TIKETIMP.DBF", aSqlStruct( aImpTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKETIMP.DBF", cLocalDriver() )
+      dbCreate( cPath + "TIKETIMP.DBF", aSqlStruct( aImpTik() ), cLocalDriver() )
    end if
 
-   rxTpv( cPath, oMeter )
+   rxTpv( cPath, cLocalDriver() )
 
    if lAppend .and. lIsDir( cPathOld )
 
@@ -16870,7 +16824,7 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxTpv( cPath, oMeter )
+FUNCTION rxTpv( cPath, cDriver )
 
 	local dbfTikT
 	local dbfTikL
@@ -16880,55 +16834,50 @@ FUNCTION rxTpv( cPath, oMeter )
    local dbfTikS
    local dbfImp
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "TIKET.DBF" )
-      dbCreate( cPath + "TIKET.DBF", aSqlStruct( aItmTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKET.DBF", cDriver )
+      dbCreate( cPath + "TIKET.DBF", aSqlStruct( aItmTik() ), cDriver )
    end if
 
-   if !lExistTable( cPath + "TIKEL.DBF" )
-      dbCreate( cPath + "TIKEL.DBF", aSqlStruct( aColTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKEL.DBF", cDriver )
+      dbCreate( cPath + "TIKEL.DBF", aSqlStruct( aColTik() ), cDriver )
    end if
 
-   if !lExistTable( cPath + "TIKEP.DBF" )
-      dbCreate( cPath + "TIKEP.DBF", aSqlStruct( aPgoTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKEP.DBF", cDriver )
+      dbCreate( cPath + "TIKEP.DBF", aSqlStruct( aPgoTik() ), cDriver )
    end if
 
-   if !lExistTable( cPath + "TIKEC.DBF" )
-      dbCreate( cPath + "TIKEC.DBF", aSqlStruct( aPgoCli() ), cDriver() )
+   if !lExistTable( cPath + "TIKEC.DBF", cDriver )
+      dbCreate( cPath + "TIKEC.DBF", aSqlStruct( aPgoCli() ), cDriver )
    end if
 
-   if !lExistTable( cPath + "TIKEM.DBF" )
-      dbCreate( cPath + "TIKEM.DBF", aSqlStruct( aMesTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKEM.DBF", cDriver )
+      dbCreate( cPath + "TIKEM.DBF", aSqlStruct( aMesTik() ), cDriver )
    end if
 
-   if !lExistTable( cPath + "TIKES.DBF" )
-      dbCreate( cPath + "TIKES.DBF", aSqlStruct( aSerTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKES.DBF", cDriver )
+      dbCreate( cPath + "TIKES.DBF", aSqlStruct( aSerTik() ), cDriver )
    end if
 
-   if !lExistTable( cPath + "TIKETIMP.DBF" )
-      dbCreate( cPath + "TIKETIMP.DBF", aSqlStruct( aImpTik() ), cDriver() )
+   if !lExistTable( cPath + "TIKETIMP.DBF", cDriver )
+      dbCreate( cPath + "TIKETIMP.DBF", aSqlStruct( aImpTik() ), cDriver )
    end if
 
-   fEraseIndex( cPath + "TikeT.Cdx" )
-
-   fEraseIndex( cPath + "TikeL.Cdx" )
-
-   fEraseIndex( cPath + "TikeP.Cdx" )
-
-   fEraseIndex( cPath + "TikeC.Cdx" )
-
-   fEraseIndex( cPath + "TikeM.Cdx" )
-
-   fEraseIndex( cPath + "TikeS.Cdx" )
-
-   fEraseIndex( cPath + "TiketImp.Cdx" )
+   fEraseIndex( cPath + "TikeT.Cdx", cDriver )
+   fEraseIndex( cPath + "TikeL.Cdx", cDriver )
+   fEraseIndex( cPath + "TikeP.Cdx", cDriver )
+   fEraseIndex( cPath + "TikeC.Cdx", cDriver )
+   fEraseIndex( cPath + "TikeM.Cdx", cDriver )
+   fEraseIndex( cPath + "TikeS.Cdx", cDriver )
+   fEraseIndex( cPath + "TiketImp.Cdx", cDriver )
 
    /*
    Apertura de ficheros--------------------------------------------------------
    */
 
-   dbUseArea( .t., cDriver(), cPath + "TIKET.DBF", cCheckArea( "TIKET", @dbfTikT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "TIKET.DBF", cCheckArea( "TIKET", @dbfTikT ), .f. )
 
    if !( dbfTikT )->( neterr() )
       ( dbfTikT )->( __dbPack() )
@@ -17022,7 +16971,7 @@ FUNCTION rxTpv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de tikets" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "TIKEL.DBF", cCheckArea( "TIKEL", @dbfTikL ), .f. )
+   dbUseArea( .t., cDriver, cPath + "TIKEL.DBF", cCheckArea( "TIKEL", @dbfTikL ), .f. )
 
    if !( dbfTikL )->( neterr() )
       ( dbfTikL )->( __dbPack() )
@@ -17069,7 +17018,7 @@ FUNCTION rxTpv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de tikets" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "TIKEP.DBF", cCheckArea( "TIKEP", @dbfTikP ), .f. )
+   dbUseArea( .t., cDriver, cPath + "TIKEP.DBF", cCheckArea( "TIKEP", @dbfTikP ), .f. )
    if !( dbfTikP )->( neterr() )
       ( dbfTikP )->( __dbPack() )
 
@@ -17096,7 +17045,7 @@ FUNCTION rxTpv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de tikets" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "TIKEC.DBF", cCheckArea( "TIKEC", @dbfTikC ), .f. )
+   dbUseArea( .t., cDriver, cPath + "TIKEC.DBF", cCheckArea( "TIKEC", @dbfTikC ), .f. )
    if !( dbfTikC )->( neterr() )
 
       ( dbfTikC )->( __dbPack() )
@@ -17112,7 +17061,7 @@ FUNCTION rxTpv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de tikets" )
    end if
 
-  dbUseArea( .t., cDriver(), cPath + "TIKETIMP.DBF", cCheckArea( "TIKETIMP", @dbfImp ), .f. )
+  dbUseArea( .t., cDriver, cPath + "TIKETIMP.DBF", cCheckArea( "TIKETIMP", @dbfImp ), .f. )
    if !( dbfImp )->( neterr() )
       ( dbfImp )->( __dbPack() )
 
@@ -17130,7 +17079,7 @@ FUNCTION rxTpv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de Impresion" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "TikeM.DBF", cCheckArea( "TIKEM", @dbfTikM ), .f. )
+   dbUseArea( .t., cDriver, cPath + "TikeM.DBF", cCheckArea( "TIKEM", @dbfTikM ), .f. )
    if !( dbfTikM )->( neterr() )
       ( dbfTikM )->( __dbPack() )
 
@@ -17142,7 +17091,7 @@ FUNCTION rxTpv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de mesas libres" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "TikeS.Dbf", cCheckArea( "TikeS", @dbfTikS ), .f. )
+   dbUseArea( .t., cDriver, cPath + "TikeS.Dbf", cCheckArea( "TikeS", @dbfTikS ), .f. )
    if !( dbfTikS )->( neterr() )
       ( dbfTikS )->( __dbPack() )
 

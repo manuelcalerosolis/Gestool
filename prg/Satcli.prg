@@ -6800,24 +6800,24 @@ RETURN lValid
 
 STATIC FUNCTION CreateFiles( cPath )
 
-   if !lExistTable( cPath + "SatCliT.Dbf" )
-      dbCreate( cPath + "SatCliT.Dbf", aSqlStruct( aItmSatCli() ), cDriver() )
+   if !lExistTable( cPath + "SatCliT.Dbf", cLocalDriver() )
+      dbCreate( cPath + "SatCliT.Dbf", aSqlStruct( aItmSatCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "SatCliL.Dbf" )
-      dbCreate( cPath + "SatCliL.Dbf", aSqlStruct( aColSatCli() ),  cDriver() )
+   if !lExistTable( cPath + "SatCliL.Dbf", cLocalDriver() )
+      dbCreate( cPath + "SatCliL.Dbf", aSqlStruct( aColSatCli() ),  cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "SatCliI.Dbf" )
-      dbCreate( cPath + "SatCliI.Dbf", aSqlStruct( aIncSatCli() ),  cDriver() )
+   if !lExistTable( cPath + "SatCliI.Dbf", cLocalDriver() )
+      dbCreate( cPath + "SatCliI.Dbf", aSqlStruct( aIncSatCli() ),  cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "SatCliD.Dbf" )
-      dbCreate( cPath + "SatCliD.Dbf", aSqlStruct( aSatCliDoc() ),  cDriver() )
+   if !lExistTable( cPath + "SatCliD.Dbf", cLocalDriver() )
+      dbCreate( cPath + "SatCliD.Dbf", aSqlStruct( aSatCliDoc() ),  cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "SatCliS.Dbf" )
-      dbCreate( cPath + "SatCliS.Dbf", aSqlStruct( aSerSatCli() ),  cDriver() )
+   if !lExistTable( cPath + "SatCliS.Dbf", cLocalDriver() )
+      dbCreate( cPath + "SatCliS.Dbf", aSqlStruct( aSerSatCli() ),  cLocalDriver() )
    end if
 
 RETURN NIL
@@ -9691,9 +9691,9 @@ FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
    DEFAULT lAppend   := .f.
    DEFAULT bFor      := {|| .t. }
 
-   CreateFiles( cPath )
+   createFiles( cPath )
 
-   rxSatCli( cPath, oMeter )
+   rxSatCli( cPath, cLocalDriver() )
 
    if lAppend .and. lIsDir( cPathOld )
 
@@ -9794,27 +9794,28 @@ Return Nil
 
 //---------------------------------------------------------------------------//
 
-FUNCTION rxSatCli( cPath, oMeter )
+FUNCTION rxSatCli( cPath, cDriver )
 
    local cSatCliT
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "SATCLIT.DBF" ) .OR. ;
-      !lExistTable( cPath + "SATCLIL.DBF" ) .OR. ;
-      !lExistTable( cPath + "SATCLII.DBF" ) .OR. ;
-      !lExistTable( cPath + "SATCLID.DBF" )
-      !lExistTable( cPath + "SATCLIS.DBF" )
-      CreateFiles( cPath )
+   if !lExistTable( cPath + "SatCliT.Dbf", cDriver ) .OR. ;
+      !lExistTable( cPath + "SatCliL.Dbf", cDriver ) .OR. ;
+      !lExistTable( cPath + "SatCliI.Dbf", cDriver ) .OR. ;
+      !lExistTable( cPath + "SatCliD.Dbf", cDriver )
+      !lExistTable( cPath + "SatCliS.Dbf", cDriver )
+      createFiles( cPath )
    end if
 
-   fEraseIndex( cPath + "SATCLIT.CDX" )
-   fEraseIndex( cPath + "SATCLIL.CDX" )
-   fEraseIndex( cPath + "SATCLII.CDX" )
-   fEraseIndex( cPath + "SATCLID.CDX" )
-   fEraseIndex( cPath + "SatCliS.Cdx" )
+   fEraseIndex( cPath + "SatCliT.Cdx", cDriver )
+   fEraseIndex( cPath + "SatCliL.Cdx", cDriver )
+   fEraseIndex( cPath + "SatCliI.Cdx", cDriver )
+   fEraseIndex( cPath + "SatCliD.Cdx", cDriver )
+   fEraseIndex( cPath + "SatCliS.Cdx", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "SATCLIT.DBF", cCheckArea( "SATCLIT", @cSatCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "SATCLIT.DBF", cCheckArea( "SATCLIT", @cSatCliT ), .f. )
    if !( cSatCliT )->( neterr() )
       ( cSatCliT )->( __dbPack() )
 
@@ -9872,7 +9873,7 @@ FUNCTION rxSatCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "SATCLIL.DBF", cCheckArea( "SATCLIL", @cSatCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "SATCLIL.DBF", cCheckArea( "SATCLIL", @cSatCliT ), .f. )
    if !( cSatCliT )->( neterr() )
       ( cSatCliT )->( __dbPack() )
 
@@ -9899,7 +9900,7 @@ FUNCTION rxSatCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "SATCLII.DBF", cCheckArea( "SATCLII", @cSatCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "SATCLII.DBF", cCheckArea( "SATCLII", @cSatCliT ), .f. )
    if !( cSatCliT )->( neterr() )
       ( cSatCliT )->( __dbPack() )
 
@@ -9914,7 +9915,7 @@ FUNCTION rxSatCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "SATCLID.DBF", cCheckArea( "SATCLID", @cSatCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "SATCLID.DBF", cCheckArea( "SATCLID", @cSatCliT ), .f. )
    if !( cSatCliT )->( neterr() )
       ( cSatCliT )->( __dbPack() )
 
@@ -9929,7 +9930,7 @@ FUNCTION rxSatCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "SatCliS.Dbf", cCheckArea( "SatCliS", @cSatCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "SatCliS.Dbf", cCheckArea( "SatCliS", @cSatCliT ), .f. )
 
    if !( cSatCliT )->( neterr() )
       ( cSatCliT )->( __dbPack() )
@@ -10759,7 +10760,7 @@ Method CreateData()
    local oBlock
    local oError
    local lSnd        := .f.
-   local cSatCliT
+   local dbfSatCliT
    local dbfSatCliL
    local dbfSatCliI
    local tmpSatCliT
@@ -10772,7 +10773,7 @@ Method CreateData()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @cSatCliT ) )
+   USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
@@ -10781,43 +10782,42 @@ Method CreateData()
    USE ( cPatEmp() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @dbfSatCliI ) )
    SET ADSINDEX TO ( cPatEmp() + "SatCliI.CDX" ) ADDITIVE
 
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-   */
+   // Creamos todas las bases de datos relacionadas con Articulos
 
-   rxSatCli( cPatSnd() )
+   mkSatCli( cPatSnd() )
 
-   USE ( cPatSnd() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @tmpSatCliT ) )
-   SET ADSINDEX TO ( cPatSnd() + "SatCliT.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "SatCliT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @tmpSatCliT ) )
+   SET INDEX TO ( cPatSnd() + "SatCliT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @tmpSatCliL ) )
-   SET ADSINDEX TO ( cPatSnd() + "SatCliL.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "SatCliL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @tmpSatCliL ) )
+   SET INDEX TO ( cPatSnd() + "SatCliL.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @tmpSatCliI ) )
-   SET ADSINDEX TO ( cPatSnd() + "SatCliI.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "SatCliI.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @tmpSatCliI ) )
+   SET INDEX TO ( cPatSnd() + "SatCliI.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( cSatCliT )->( LastRec() )
+      ::oSender:oMtr:nTotal := ( dbfSatCliT )->( LastRec() )
    end if
 
-   while !( cSatCliT )->( eof() )
+   while !( dbfSatCliT )->( eof() )
 
-      if ( cSatCliT )->lSndDoc
+      if ( dbfSatCliT )->lSndDoc
 
          lSnd  := .t.
 
-         dbPass( cSatCliT, tmpSatCliT, .t. )
-         ::oSender:SetText( ( cSatCliT )->cSerSat + "/" + AllTrim( Str( ( cSatCliT )->nNumSat ) ) + "/" + AllTrim( ( cSatCliT )->cSufSat ) + "; " + Dtoc( ( cSatCliT )->dFecSat ) + "; " + AllTrim( ( cSatCliT )->cCodCli ) + "; " + ( cSatCliT )->cNomCli )
+         dbPass( dbfSatCliT, tmpSatCliT, .t. )
+         
+         ::oSender:SetText( ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + AllTrim( ( dbfSatCliT )->cSufSat ) + "; " + Dtoc( ( dbfSatCliT )->dFecSat ) + "; " + AllTrim( ( dbfSatCliT )->cCodCli ) + "; " + ( dbfSatCliT )->cNomCli )
 
-         if ( dbfSatCliL )->( dbSeek( ( cSatCliT )->CSERSat + Str( ( cSatCliT )->NNUMSat ) + ( cSatCliT )->CSUFSat ) )
-            while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->NNUMSat ) + ( dbfSatCliL )->CSUFSat ) == ( ( cSatCliT )->CSERSat + Str( ( cSatCliT )->NNUMSat ) + ( cSatCliT )->CSUFSat ) .AND. !( dbfSatCliL )->( eof() )
+         if ( dbfSatCliL )->( dbSeek( ( dbfSatCliT )->CSERSat + Str( ( dbfSatCliT )->NNUMSat ) + ( dbfSatCliT )->CSUFSat ) )
+            while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->NNUMSat ) + ( dbfSatCliL )->CSUFSat ) == ( ( dbfSatCliT )->CSERSat + Str( ( dbfSatCliT )->NNUMSat ) + ( dbfSatCliT )->CSUFSat ) .AND. !( dbfSatCliL )->( eof() )
                dbPass( dbfSatCliL, tmpSatCliL, .t. )
                ( dbfSatCliL )->( dbSkip() )
             end do
          end if
 
-         if ( dbfSatCliI )->( dbSeek( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat ) )
-            while ( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat ) == ( ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat ) .AND. !( dbfSatCliI )->( eof() )
+         if ( dbfSatCliI )->( dbSeek( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) )
+            while ( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat ) == ( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) .AND. !( dbfSatCliI )->( eof() )
                dbPass( dbfSatCliI, tmpSatCliI, .t. )
                ( dbfSatCliI )->( dbSkip() )
             end do
@@ -10825,13 +10825,13 @@ Method CreateData()
 
       end if
 
-      ( cSatCliT )->( dbSkip() )
+      ( dbfSatCliT )->( dbSkip() )
 
       if !Empty( ::oSender:oMtr )
-         ::oSender:oMtr:Set( ( cSatCliT )->( OrdKeyNo() ) )
+         ::oSender:oMtr:Set( ( dbfSatCliT )->( OrdKeyNo() ) )
       end if
 
-   END DO
+   end do
 
    RECOVER USING oError
 
@@ -10841,7 +10841,7 @@ Method CreateData()
 
    ErrorBlock( oBlock )
 
-   CLOSE ( cSatCliT )
+   CLOSE ( dbfSatCliT )
    CLOSE ( dbfSatCliL )
    CLOSE ( dbfSatCliI )
    CLOSE ( tmpSatCliT )
@@ -10849,10 +10849,6 @@ Method CreateData()
    CLOSE ( tmpSatCliI )
 
    if lSnd
-
-      /*
-      Comprimir los archivos---------------------------------------------------
-      */
 
       ::oSender:SetText( "Comprimiendo S.A.T. a clientes" )
 
@@ -10880,10 +10876,6 @@ Method RestoreData()
 
    if ::lSuccesfullSend
 
-      /*
-      Retorna el valor anterior
-      */
-
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
@@ -10899,13 +10891,13 @@ Method RestoreData()
          end if
       end do
 
-   RECOVER USING oError
+      RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+         msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
 
-   END SEQUENCE
+      END SEQUENCE
 
-   ErrorBlock( oBlock )
+      ErrorBlock( oBlock )
 
       CLOSE ( cSatCliT )
 
@@ -10965,7 +10957,7 @@ Method Process()
    local m
    local oBlock
    local oError
-   local cSatCliT
+   local dbfSatCliT
    local dbfSatCliL
    local dbfSatCliI
    local dbfSatClid
@@ -10986,27 +10978,24 @@ Method Process()
 
          if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-            /*
-            Ficheros temporales
-            */
+            if lExistTable( cPatSnd() + "SatCliT.DBF", cLocalDriver() )    .and.;
+               lExistTable( cPatSnd() + "SatCliL.DBF", cLocalDriver() )    .and.;
+               lExistTable( cPatSnd() + "SatCliI.DBF", cLocalDriver() )    .and.;
+               lExistTable( cPatSnd() + "SatCliD.DBF", cLocalDriver() )
 
-            if lExistTable( cPatSnd() + "SatCliT.DBF" )   .and.;
-               lExistTable( cPatSnd() + "SatCliL.DBF" )   .and.;
-               lExistTable( cPatSnd() + "SatCliI.DBF" )
+               USE ( cPatSnd() + "SatCliT.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "SatCliT", @tmpSatCliT ) )
+               SET INDEX TO ( cPatSnd() + "SatCliT.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "SatCliT", @tmpSatCliT ) )
-               SET ADSINDEX TO ( cPatSnd() + "SatCliT.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "SatCliL.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "SatCliL", @tmpSatCliL ) )
+               SET INDEX TO ( cPatSnd() + "SatCliL.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "SatCliL", @tmpSatCliL ) )
-               SET ADSINDEX TO ( cPatSnd() + "SatCliL.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "SatCliI.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "SatCliI", @tmpSatCliI ) )
+               SET INDEX TO ( cPatSnd() + "SatCliI.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "SatCliI", @tmpSatCliI ) )
-               SET ADSINDEX TO ( cPatSnd() + "SatCliI.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "SatCliD.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "SatCliD", @tmpSatCliD ) )
+               SET INDEX TO ( cPatSnd() + "SatCliD.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "SatCliD.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "SatCliD", @tmpSatCliD ) )
-               SET ADSINDEX TO ( cPatSnd() + "SatCliD.CDX" ) ADDITIVE
-
-               USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @cSatCliT ) )
+               USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
                SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
@@ -11022,9 +11011,9 @@ Method Process()
 
                   if ( Empty( cOperario ) .or. ( tmpSatCliT )->cCodOpe == cOperario )  .and.;
                      lValidaOperacion( ( tmpSatCliT )->dFecSat, .f. )                  .and. ;
-                     !( cSatCliT )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
+                     !( dbfSatCliT )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
 
-                     dbPass( tmpSatCliT, cSatCliT, .t. )
+                     dbPass( tmpSatCliT, dbfSatCliT, .t. )
                      ::oSender:SetText( "Añadido     : " + ( tmpSatCliL )->cSerSat + "/" + AllTrim( Str( ( tmpSatCliL )->nNumSat ) ) + "/" + AllTrim( ( tmpSatCliL )->cSufSat ) + "; " + Dtoc( ( tmpSatCliT )->dFecSat ) + "; " + AllTrim( ( tmpSatCliT )->cCodCli ) + "; " + ( tmpSatCliT )->cNomCli )
 
                      if ( tmpSatCliL )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
@@ -11058,12 +11047,14 @@ Method Process()
 
                end do
 
-               CLOSE ( cSatCliT )
+               CLOSE ( dbfSatCliT )
                CLOSE ( dbfSatCliL )
                CLOSE ( dbfSatCliI )
+               CLOSE ( dbfSatCliD )
                CLOSE ( tmpSatCliT )
                CLOSE ( tmpSatCliL )
                CLOSE ( tmpSatCliI )
+               CLOSE ( tmpSatCliD )
 
                ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
 
@@ -11071,20 +11062,20 @@ Method Process()
 
                ::oSender:SetText( "Faltan ficheros" )
 
-               if !lExistTable( cPatSnd() + "SatCliT.DBF" )
+               if !lExistTable( cPatSnd() + "SatCliT.DBF", cLocalDriver() )
                   ::oSender:SetText( "Falta " + cPatSnd() + "SatCliT.DBF" )
                end if
 
-               if !lExistTable( cPatSnd() + "SatCliL.DBF" )
+               if !lExistTable( cPatSnd() + "SatCliL.DBF", cLocalDriver() )
                   ::oSender:SetText( "Falta " + cPatSnd() + "SatCliL.DBF" )
                end if
 
 
-               if !lExistTable( cPatSnd() + "SatCliI.DBF" )
+               if !lExistTable( cPatSnd() + "SatCliI.DBF", cLocalDriver() )
                   ::oSender:SetText( "Falta " + cPatSnd() + "SatCliL.DBF" )
                end if
 
-               if !lExistTable( cPatSnd() + "SatCliD.DBF" )
+               if !lExistTable( cPatSnd() + "SatCliD.DBF", cLocalDriver() )
                   ::oSender:SetText( "Falta " + cPatSnd() + "SatCliD.DBF" )
                end if
 
@@ -11103,7 +11094,7 @@ Method Process()
 
       RECOVER USING oError
 
-         CLOSE ( cSatCliT )
+         CLOSE ( dbfSatCliT )
          CLOSE ( dbfSatCliL )
          CLOSE ( dbfSatCliI )
          CLOSE ( dbfSatCliD )

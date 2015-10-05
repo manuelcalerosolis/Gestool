@@ -5330,28 +5330,6 @@ RETURN ( nTotAnt )
 
 FUNCTION IsAntCli( cPath )
 
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "AntCliT.DBF" )
-      dbCreate( cPath + "AntCliT.DBF", aSqlStruct( aItmAntCli() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AntCliI.DBF" )
-      dbCreate( cPath + "AntCliI.DBF", aSqlStruct( aIncAntCli() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AntCliD.DBF" )
-      dbCreate( cPath + "AntCliD.DBF", aSqlStruct( aAntCliDoc() ), cDriver() )
-   end if
-
-   if !lExistIndex( cPath + "AntCliT.Cdx" ) .or. ;
-      !lExistIndex( cPath + "AntCliI.Cdx" ) .or. ;
-      !lExistIndex( cPath + "AntCliD.Cdx" )
-
-      rxAntCli( cPath )
-
-   end if
-
 Return ( .t. )
 
 //----------------------------------------------------------------------------//
@@ -5381,7 +5359,6 @@ FUNCTION mkAntCli( cPath, lAppend, cPathOld, oMeter )
    CreateFiles( cPath, .t. )
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
    BEGIN SEQUENCE
 
    if lAppend .and. lIsDir( cPathOld )
@@ -5488,27 +5465,28 @@ Return .t.
 Regenera indices
 */
 
-FUNCTION rxAntCli( cPath, oMeter )
+FUNCTION rxAntCli( cPath, cDriver )
 
    local dbfAntCliT
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
    /*
    Crea los ficheros si no existen
    */
 
-   if !lExistTable( cPath + "AntCliT.Dbf" )   .or.;
-      !lExistTable( cPath + "AntCliI.Dbf" )   .or.;
-      !lExistTable( cPath + "AntCliD.Dbf" )
+   if !lExistTable( cPath + "AntCliT.Dbf", cDriver )   .or.;
+      !lExistTable( cPath + "AntCliI.Dbf", cDriver )   .or.;
+      !lExistTable( cPath + "AntCliD.Dbf", cDriver )
       CreateFiles( cPath, .f. )
    end if
 
-   fEraseIndex( cPath + "AntCliT.Cdx" )
-   fEraseIndex( cPath + "AntCliI.Cdx" )
-   fEraseIndex( cPath + "AntCliD.Cdx" )
+   fEraseIndex( cPath + "AntCliT.Cdx", cDriver )
+   fEraseIndex( cPath + "AntCliI.Cdx", cDriver )
+   fEraseIndex( cPath + "AntCliD.Cdx", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "AntCliT.DBF", cCheckArea( "AntCliT", @dbfAntCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AntCliT.DBF", cCheckArea( "AntCliT", @dbfAntCliT ), .f. )
    if !( dbfAntCliT )->( neterr() )
       ( dbfAntCliT )->( __dbPack() )
 
@@ -5576,7 +5554,7 @@ FUNCTION rxAntCli( cPath, oMeter )
 
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AntCliI.DBF", cCheckArea( "AntCliI", @dbfAntCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AntCliI.DBF", cCheckArea( "AntCliI", @dbfAntCliT ), .f. )
    if !( dbfAntCliT )->( neterr() )
       ( dbfAntCliT )->( __dbPack() )
 
@@ -5586,7 +5564,7 @@ FUNCTION rxAntCli( cPath, oMeter )
       ( dbfAntCliT )->( dbCloseArea() )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AntCliD.DBF", cCheckArea( "AntCliD", @dbfAntCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AntCliD.DBF", cCheckArea( "AntCliD", @dbfAntCliT ), .f. )
    if !( dbfAntCliT )->( neterr() )
       ( dbfAntCliT )->( __dbPack() )
 
@@ -5608,20 +5586,20 @@ STATIC FUNCTION CreateFiles( cPath, lReindex )
 
    DEFAULT lReindex  := .t.
 
-   if !lExistTable( cPath + "AntCliT.DBF" )
-      dbCreate( cPath + "AntCliT.DBF", aSqlStruct( aItmAntCli() ), cDriver() )
+   if !lExistTable( cPath + "AntCliT.DBF", cLocalDriver() )
+      dbCreate( cPath + "AntCliT.DBF", aSqlStruct( aItmAntCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "AntCliI.DBF" )
-      dbCreate( cPath + "AntCliI.DBF", aSqlStruct( aIncAntCli() ), cDriver() )
+   if !lExistTable( cPath + "AntCliI.DBF", cLocalDriver() )
+      dbCreate( cPath + "AntCliI.DBF", aSqlStruct( aIncAntCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "AntCliD.DBF" )
-      dbCreate( cPath + "AntCliD.DBF", aSqlStruct( aAntCliDoc() ), cDriver() )
+   if !lExistTable( cPath + "AntCliD.DBF", cLocalDriver() )
+      dbCreate( cPath + "AntCliD.DBF", aSqlStruct( aAntCliDoc() ), cLocalDriver() )
    end if
 
    if lReindex
-      rxAntCli( cPath )
+      rxAntCli( cPath, cLocalDriver() )
    end if
 
 RETURN NIL

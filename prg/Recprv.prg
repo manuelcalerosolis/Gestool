@@ -138,8 +138,6 @@ STATIC FUNCTION OpenFiles( cPatEmp )
 
       D():Cajas( nView )
 
-      
-
       oBandera          := TBandera():New
 
       /*
@@ -2547,29 +2545,26 @@ FUNCTION mkRecPrv( cPath, oMeter, lReindex )
       sysrefresh()
    end if
 
-   dbCreate( cPath + "FacPrvP.DBF", aSqlStruct( aItmRecPrv() ), cDriver() )
+   dbCreate( cPath + "FacPrvP.DBF", aSqlStruct( aItmRecPrv() ), cLocalDriver() )
 
    if lReindex
-      rxRecPrv( cPath )
+      rxRecPrv( cPath, cLocalDriver() )
    end if
 
 RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxRecPrv( cPath, oMeter )
+FUNCTION rxRecPrv( cPath, cDriver )
 
    local dbfFacPrvP
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "FacPrvP.DBF" )
-      mkRecPrv( cPath, oMeter, .f. )
-   end if
+   fEraseIndex( cPath + "FacPrvP.CDX", cDriver )
 
-   fEraseIndex( cPath + "FacPrvP.CDX" )
-
-   dbUseArea( .t., cDriver(), cPath + "FacPrvP.DBF", cCheckArea( "FacPrvP", @dbfFacPrvP ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacPrvP.DBF", cCheckArea( "FacPrvP", @dbfFacPrvP ), .f. )
 
    if !( dbfFacPrvP )->( neterr() )
 

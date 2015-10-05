@@ -8547,32 +8547,32 @@ Return nil
 
 STATIC FUNCTION CreateFiles( cPath )
 
-   if !lExistTable( cPath + "PedCliT.Dbf" )
-      dbCreate( cPath + "PedCliT.Dbf", aSqlStruct( aItmPedCli() ), cDriver() )
+   if !lExistTable( cPath + "PedCliT.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedCliT.Dbf", aSqlStruct( aItmPedCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedCliL.Dbf" )
-      dbCreate( cPath + "PedCliL.Dbf", aSqlStruct( aColPedCli() ), cDriver() )
+   if !lExistTable( cPath + "PedCliL.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedCliL.Dbf", aSqlStruct( aColPedCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedCliR.DBF" )
-      dbCreate( cPath + "PedCliR.Dbf", aSqlStruct( aPedCliRes() ), cDriver() )
+   if !lExistTable( cPath + "PedCliR.DBF", cLocalDriver() )
+      dbCreate( cPath + "PedCliR.Dbf", aSqlStruct( aPedCliRes() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedCliI.Dbf" )
-      dbCreate( cPath + "PedCliI.Dbf", aSqlStruct( aIncPedCli() ), cDriver() )
+   if !lExistTable( cPath + "PedCliI.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedCliI.Dbf", aSqlStruct( aIncPedCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedCliD.Dbf" )
-      dbCreate( cPath + "PedCliD.Dbf", aSqlStruct( aPedCliDoc() ), cDriver() )
+   if !lExistTable( cPath + "PedCliD.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedCliD.Dbf", aSqlStruct( aPedCliDoc() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedCliP.Dbf" )
-      dbCreate( cPath + "PedCliP.Dbf", aSqlStruct( aPedCliPgo() ), cDriver() )
+   if !lExistTable( cPath + "PedCliP.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedCliP.Dbf", aSqlStruct( aPedCliPgo() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "PedCliE.Dbf" )
-      dbCreate( cPath + "PedCliE.Dbf", aSqlStruct( aPedCliEst() ), cDriver() )
+   if !lExistTable( cPath + "PedCliE.Dbf", cLocalDriver() )
+      dbCreate( cPath + "PedCliE.Dbf", aSqlStruct( aPedCliEst() ), cLocalDriver() )
    end if
 
 RETURN NIL
@@ -13723,16 +13723,16 @@ Method CreateData() CLASS TPedidosClientesSenderReciver
    Creamos todas las bases de datos relacionadas con Articulos
    */
 
-   rxPedCli( cPatSnd() )
+   mkPedCli( cPatSnd() )
 
-   USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
-   SET ADSINDEX TO ( cPatSnd() + "PedCliT.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
+   SET INDEX TO ( cPatSnd() + "PedCliT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @tmpPedCliL ) )
-   SET ADSINDEX TO ( cPatSnd() + "PedCliL.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "PedCliL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @tmpPedCliL ) )
+   SET INDEX TO ( cPatSnd() + "PedCliL.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "PedCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliI", @tmpPedCliI ) )
-   SET ADSINDEX TO ( cPatSnd() + "PedCliI.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "PedCliI.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "PedCliI", @tmpPedCliI ) )
+   SET INDEX TO ( cPatSnd() + "PedCliI.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( cPedCliT )->( LastRec() )
@@ -13935,14 +13935,14 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
             	if file( cPatSnd() + "PedCliT.DBF" ) .and. file( cPatSnd() + "PedCliL.DBF" ) .and. file( cPatSnd() + "PedCliI.DBF" )
 
-                  USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
-                  SET ADSINDEX TO ( cPatSnd() + "PedCliT.CDX" ) ADDITIVE
+                  USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
+                  SET INDEX TO ( cPatSnd() + "PedCliT.CDX" ) ADDITIVE
 
-                  USE ( cPatSnd() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliL", @tmpPedCliL ) )
-                  SET ADSINDEX TO ( cPatSnd() + "PedCliL.CDX" ) ADDITIVE
+                  USE ( cPatSnd() + "PedCliL.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "PedCliL", @tmpPedCliL ) )
+                  SET INDEX TO ( cPatSnd() + "PedCliL.CDX" ) ADDITIVE
 
-                  USE ( cPatSnd() + "PedCliI.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliI", @tmpPedCliI ) )
-                  SET ADSINDEX TO ( cPatSnd() + "PedCliI.CDX" ) ADDITIVE
+                  USE ( cPatSnd() + "PedCliI.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "PedCliI", @tmpPedCliI ) )
+                  SET INDEX TO ( cPatSnd() + "PedCliI.CDX" ) ADDITIVE
 
                   USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @cPedCliT ) )
                   SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
@@ -14010,11 +14010,11 @@ Method Process() CLASS TPedidosClientesSenderReciver
 
             	if file( cPatSnd() + "PedProvT.dbf" ) .and. file( cPatSnd() + "PedProvL.dbf" )
 
-            		USE ( cPatSnd() + "PedProvT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedProvT", @tmpPedCliT ) )
-            		SET ADSINDEX TO ( cPatSnd() + "PedProvT.CDX" ) ADDITIVE
+            		USE ( cPatSnd() + "PedProvT.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "PedProvT", @tmpPedCliT ) )
+            		SET INDEX TO ( cPatSnd() + "PedProvT.CDX" ) ADDITIVE
 
-            		USE ( cPatSnd() + "PedProvL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedProvL", @tmpPedCliL ) )
-            		SET ADSINDEX TO ( cPatSnd() + "PedProvL.CDX" ) ADDITIVE
+            		USE ( cPatSnd() + "PedProvL.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "PedProvL", @tmpPedCliL ) )
+            		SET INDEX TO ( cPatSnd() + "PedProvL.CDX" ) ADDITIVE
 
             		USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @cPedCliT ) )
             		SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
@@ -14022,9 +14022,8 @@ Method Process() CLASS TPedidosClientesSenderReciver
             		USE ( cPatEmp() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @dbfPedCliL ) )
             		SET ADSINDEX TO ( cPatEmp() + "PedCliL.CDX" ) ADDITIVE
 
-            		USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @cdbfCount ) )
-            		SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-
+            		USE ( cPatEmp() + "nCount.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "nCount", @cdbfCount ) )
+            		SET ADSINDEX TO ( cPatEmp() + "nCount.CDX" ) ADDITIVE
 
             		while ( tmpPedCliT )->( !eof() )
 
@@ -15175,9 +15174,9 @@ FUNCTION mkPedCli( cPath, lAppend, cPathOld, oMeter, bFor )
 		sysrefresh()
 	END IF
 
-   CreateFiles( cPath )
+   createFiles( cPath )
 
-   rxPedCli( cPath, oMeter )
+   rxPedCli( cPath, cLocalDriver() )
 
    IF lAppend .and. lIsDir( cPathOld )
 
@@ -15303,33 +15302,34 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION rxPedCli( cPath, oMeter )
+FUNCTION rxPedCli( cPath, cDriver )
 
 	local cPedCliT
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "PEDCLIT.DBF" ) .OR. ;
-      !lExistTable( cPath + "PEDCLIL.DBF" ) .OR. ;
-      !lExistTable( cPath + "PEDCLIR.DBF" ) .OR. ;
-      !lExistTable( cPath + "PEDCLII.DBF" ) .OR. ;
-      !lExistTable( cPath + "PEDCLID.DBF" ) .OR. ;
-      !lExistTable( cPath + "PEDCLIP.DBF" ) .OR. ;
-      !lExistTable( cPath + "PEDCLIE.DBF" )
+   if !lExistTable( cPath + "PEDCLIT.DBF", cDriver ) .OR. ;
+      !lExistTable( cPath + "PEDCLIL.DBF", cDriver ) .OR. ;
+      !lExistTable( cPath + "PEDCLIR.DBF", cDriver ) .OR. ;
+      !lExistTable( cPath + "PEDCLII.DBF", cDriver ) .OR. ;
+      !lExistTable( cPath + "PEDCLID.DBF", cDriver ) .OR. ;
+      !lExistTable( cPath + "PEDCLIP.DBF", cDriver ) .OR. ;
+      !lExistTable( cPath + "PEDCLIE.DBF", cDriver )
 
       CreateFiles( cPath )
 
    end if
 
-   fEraseIndex( cPath + "PEDCLIT.CDX" )
-   fEraseIndex( cPath + "PEDCLIL.CDX" )
-   fEraseIndex( cPath + "PEDCLIR.CDX" )
-   fEraseIndex( cPath + "PEDCLII.CDX" )
-   fEraseIndex( cPath + "PEDCLID.CDX" )
-   fEraseIndex( cPath + "PEDCLIP.CDX" )
-   fEraseIndex( cPath + "PEDCLIE.CDX" )
+   fEraseIndex( cPath + "PEDCLIT.CDX", cDriver )
+   fEraseIndex( cPath + "PEDCLIL.CDX", cDriver )
+   fEraseIndex( cPath + "PEDCLIR.CDX", cDriver )
+   fEraseIndex( cPath + "PEDCLII.CDX", cDriver )
+   fEraseIndex( cPath + "PEDCLID.CDX", cDriver )
+   fEraseIndex( cPath + "PEDCLIP.CDX", cDriver )
+   fEraseIndex( cPath + "PEDCLIE.CDX", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "PEDCLIT.DBF", cCheckArea( "PEDCLIT", @cPedCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PEDCLIT.DBF", cCheckArea( "PEDCLIT", @cPedCliT ), .f. )
    if !( cPedCliT )->( neterr() )
       ( cPedCliT )->( __dbPack() )
 
@@ -15398,7 +15398,7 @@ FUNCTION rxPedCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PEDCLIL.DBF", cCheckArea( "PEDCLIL", @cPedCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PEDCLIL.DBF", cCheckArea( "PEDCLIL", @cPedCliT ), .f. )
    if !( cPedCliT )->( neterr() )
       ( cPedCliT )->( __dbPack() )
 
@@ -15419,7 +15419,7 @@ FUNCTION rxPedCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PEDCLIR.DBF", cCheckArea( "PEDCLIR", @cPedCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PEDCLIR.DBF", cCheckArea( "PEDCLIR", @cPedCliT ), .f. )
    if !( cPedCliT )->( neterr() )
       ( cPedCliT )->( __dbPack() )
 
@@ -15437,7 +15437,7 @@ FUNCTION rxPedCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PedCliI.DBF", cCheckArea( "PedCliI", @cPedCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PedCliI.DBF", cCheckArea( "PedCliI", @cPedCliT ), .f. )
    if !( cPedCliT )->( neterr() )
       ( cPedCliT )->( __dbPack() )
 
@@ -15455,7 +15455,7 @@ FUNCTION rxPedCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PedCliD.DBF", cCheckArea( "PedCliD", @cPedCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PedCliD.DBF", cCheckArea( "PedCliD", @cPedCliT ), .f. )
 
    if !( cPedCliT )->( neterr() )
 
@@ -15475,7 +15475,7 @@ FUNCTION rxPedCli( cPath, oMeter )
 
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PedCliP.DBF", cCheckArea( "PedCliP", @cPedCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PedCliP.DBF", cCheckArea( "PedCliP", @cPedCliT ), .f. )
 
    if !( cPedCliT )->( neterr() )
 
@@ -15504,7 +15504,7 @@ FUNCTION rxPedCli( cPath, oMeter )
 
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PedCliE.DBF", cCheckArea( "PedCliE", @cPedCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "PedCliE.DBF", cCheckArea( "PedCliE", @cPedCliT ), .f. )
 
    if !( cPedCliT )->( neterr() )
 

@@ -176,7 +176,7 @@ METHOD New( oMenuItem, oWnd )
    aAdd( ::aSend, TPedidosProveedorSenderReciver():New(     "Pedidos de proveedor",    Self ) )
    aAdd( ::aSend, TAlbaranesProveedorSenderReciver():New(   "Albaranes de proveedor",  Self ) )
    aAdd( ::aSend, TFacturasProveedorSenderReciver():New(    "Facturas de proveedor",   Self ) )
-   aAdd( ::aSend, TSATClientesSenderReciver():New(          "Sat de clientes",         Self ) )
+   aAdd( ::aSend, TSATClientesSenderReciver():New(          "SAT de clientes",         Self ) )
    aAdd( ::aSend, TPresupuestosClientesSenderReciver():New( "Presupuestos clientes",   Self ) )
    aAdd( ::aSend, TPedidosClientesSenderReciver():New(      "Pedidos clientes",        Self ) )
    aAdd( ::aSend, TAlbaranesClientesSenderReciver():New(    "Albaranes clientes",      Self ) )
@@ -397,7 +397,7 @@ METHOD Activate( oWnd, lAuto ) CLASS TSndRecInf
 
    DEFAULT lAuto     := .f.
 
-   if !isInternet()
+   if ( nTipConInt() == 2 .and. !isInternet() )
       msgStop( "No dispone de conexión a internet en estos momentos.")
       return ( Self )
    end if

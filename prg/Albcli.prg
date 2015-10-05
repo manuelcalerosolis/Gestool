@@ -6994,16 +6994,16 @@ Method CreateData()
    Creamos todas las bases de datos relacionadas con Articulos
    */
 
-   rxAlbCli( cPatSnd() )
+   mkAlbCli( cPatSnd() )
 
-   USE ( cPatSnd() + "AlbCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @tmpAlbCliT ) )
-   SET ADSINDEX TO ( cPatSnd() + "AlbCliT.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "AlbCliT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @tmpAlbCliT ) )
+   SET INDEX TO ( cPatSnd() + "AlbCliT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "AlbCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliL", @tmpAlbCliL ) )
-   SET ADSINDEX TO ( cPatSnd() + "AlbCliL.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "AlbCliL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliL", @tmpAlbCliL ) )
+   SET INDEX TO ( cPatSnd() + "AlbCliL.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "AlbCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliI", @tmpAlbCliI ) )
-   SET ADSINDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "AlbCliI.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliI", @tmpAlbCliI ) )
+   SET INDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( cAlbCliT )->( LastRec() )
@@ -7212,18 +7212,18 @@ Method Process()
             Ficheros temporales
             */
 
-            if lExistTable( cPatSnd() + "AlbCliT.DBF" )   .and.;
-               lExistTable( cPatSnd() + "AlbCliL.DBF" )   .and.;
-               lExistTable( cPatSnd() + "AlbCliI.DBF" )
+            if lExistTable( cPatSnd() + "AlbCliT.DBF", cLocalDriver() )   .and.;
+               lExistTable( cPatSnd() + "AlbCliL.DBF", cLocalDriver() )   .and.;
+               lExistTable( cPatSnd() + "AlbCliI.DBF", cLocalDriver() )
 
-               USE ( cPatSnd() + "AlbCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliT", @tmpAlbCliT ) )
-               SET ADSINDEX TO ( cPatSnd() + "AlbCliT.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "AlbCliT.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "AlbCliT", @tmpAlbCliT ) )
+               SET INDEX TO ( cPatSnd() + "AlbCliT.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "AlbCliL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliL", @tmpAlbCliL ) )
-               SET ADSINDEX TO ( cPatSnd() + "AlbCliL.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "AlbCliL.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "AlbCliL", @tmpAlbCliL ) )
+               SET INDEX TO ( cPatSnd() + "AlbCliL.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "AlbCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliI", @tmpAlbCliI ) )
-               SET ADSINDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "AlbCliI.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "AlbCliI", @tmpAlbCliI ) )
+               SET INDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @cAlbCliT ) )
                SET ADSINDEX TO ( cPatEmp() + "AlbCliT.CDX" ) ADDITIVE
@@ -8745,32 +8745,32 @@ Return nil
 
 STATIC FUNCTION CreateFiles( cPath )
 
-   if !lExistTable( cPath + "AlbCliT.Dbf" )
-      dbCreate( cPath + "AlbCliT.Dbf", aSqlStruct( aItmAlbCli() ), cDriver() )
+   if !lExistTable( cPath + "AlbCliT.Dbf", cLocalDriver() )
+      dbCreate( cPath + "AlbCliT.Dbf", aSqlStruct( aItmAlbCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "AlbCliL.Dbf" )
-      dbCreate( cPath + "AlbCliL.Dbf", aSqlStruct( aColAlbCli() ), cDriver() )
+   if !lExistTable( cPath + "AlbCliL.Dbf", cLocalDriver() )
+      dbCreate( cPath + "AlbCliL.Dbf", aSqlStruct( aColAlbCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "AlbCliP.Dbf" )
-      dbCreate( cPath + "AlbCliP.Dbf", aSqlStruct( aItmAlbPgo() ), cDriver() )
+   if !lExistTable( cPath + "AlbCliP.Dbf", cLocalDriver() )
+      dbCreate( cPath + "AlbCliP.Dbf", aSqlStruct( aItmAlbPgo() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "AlbCliI.Dbf" )
-      dbCreate( cPath + "AlbCliI.Dbf", aSqlStruct( aIncAlbCli() ), cDriver() )
+   if !lExistTable( cPath + "AlbCliI.Dbf", cLocalDriver() )
+      dbCreate( cPath + "AlbCliI.Dbf", aSqlStruct( aIncAlbCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "AlbCliD.Dbf" )
-      dbCreate( cPath + "AlbCliD.Dbf", aSqlStruct( aAlbCliDoc() ), cDriver() )
+   if !lExistTable( cPath + "AlbCliD.Dbf", cLocalDriver() )
+      dbCreate( cPath + "AlbCliD.Dbf", aSqlStruct( aAlbCliDoc() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "AlbCliS.Dbf" )
-      dbCreate( cPath + "AlbCliS.Dbf", aSqlStruct( aSerAlbCli() ), cDriver() )
+   if !lExistTable( cPath + "AlbCliS.Dbf", cLocalDriver() )
+      dbCreate( cPath + "AlbCliS.Dbf", aSqlStruct( aSerAlbCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "AlbCliE.Dbf" )
-      dbCreate( cPath + "AlbCliE.Dbf", aSqlStruct( aAlbCliEst() ), cDriver() )
+   if !lExistTable( cPath + "AlbCliE.Dbf", cLocalDriver() )
+      dbCreate( cPath + "AlbCliE.Dbf", aSqlStruct( aAlbCliEst() ), cLocalDriver() )
    end if
 
 RETURN NIL
@@ -15751,7 +15751,7 @@ FUNCTION mkAlbCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
    CreateFiles( cPath )
 
-   rxAlbCli( cPath, oMeter )
+   rxAlbCli( cPath, cLocalDriver() )
 
    if lAppend .and. lIsDir( cPathOld )
 
@@ -15859,33 +15859,34 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-FUNCTION rxAlbCli( cPath, oMeter )
+FUNCTION rxAlbCli( cPath, cDriver )
 
    local cAlbCliT
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cLocalDriver()
 
-   if !lExistTable( cPath + "ALBCLIT.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLIL.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLII.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLID.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLIP.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLIS.DBF" )   .OR. ;
-      !lExistTable( cPath + "ALBCLIE.DBF" )
+   if !lExistTable( cPath + "ALBCLIT.DBF", cDriver )   .OR. ;
+      !lExistTable( cPath + "ALBCLIL.DBF", cDriver )   .OR. ;
+      !lExistTable( cPath + "ALBCLII.DBF", cDriver )   .OR. ;
+      !lExistTable( cPath + "ALBCLID.DBF", cDriver )   .OR. ;
+      !lExistTable( cPath + "ALBCLIP.DBF", cDriver )   .OR. ;
+      !lExistTable( cPath + "ALBCLIS.DBF", cDriver )   .OR. ;
+      !lExistTable( cPath + "ALBCLIE.DBF", cDriver )
 
-      CreateFiles( cPath )
+      CreateFiles( cPath, cDriver )
 
    end if
 
-   fEraseIndex( cPath + "ALBCLIT.CDX" )
-   fEraseIndex( cPath + "ALBCLIL.CDX" )
-   fEraseIndex( cPath + "ALBCLII.CDX" )
-   fEraseIndex( cPath + "ALBCLID.CDX" )
-   fEraseIndex( cPath + "ALBCLIP.CDX" )
-   fEraseIndex( cPath + "ALBCLIS.CDX" )
-   fEraseIndex( cPath + "ALBCLIE.CDX" )
+   fEraseIndex( cPath + "ALBCLIT.CDX", cDriver )
+   fEraseIndex( cPath + "ALBCLIL.CDX", cDriver )
+   fEraseIndex( cPath + "ALBCLII.CDX", cDriver )
+   fEraseIndex( cPath + "ALBCLID.CDX", cDriver )
+   fEraseIndex( cPath + "ALBCLIP.CDX", cDriver )
+   fEraseIndex( cPath + "ALBCLIS.CDX", cDriver )
+   fEraseIndex( cPath + "ALBCLIE.CDX", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @cAlbCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @cAlbCliT ), .f. )
 
    if !( cAlbCliT )->( neterr() )
       ( cAlbCliT )->( __dbPack() )
@@ -15972,7 +15973,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @cAlbCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @cAlbCliT ), .f. )
 
    if !( cAlbCliT )->( neterr() )
       ( cAlbCliT )->( __dbPack() )
@@ -16028,7 +16029,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
 
    // Pagos de albaranes
 
-   dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @cAlbCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @cAlbCliT ), .f. )
 
    if !( cAlbCliT )->( neterr() )
       ( cAlbCliT )->( __dbPack() )
@@ -16056,7 +16057,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbCliI.DBF", cCheckArea( "AlbCliI", @cAlbCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AlbCliI.DBF", cCheckArea( "AlbCliI", @cAlbCliT ), .f. )
 
    if !( cAlbCliT )->( neterr() )
       ( cAlbCliT )->( __dbPack() )
@@ -16072,7 +16073,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbCliD.DBF", cCheckArea( "AlbCliD", @cAlbCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AlbCliD.DBF", cCheckArea( "AlbCliD", @cAlbCliT ), .f. )
 
    if !( cAlbCliT )->( neterr() )
       ( cAlbCliT )->( __dbPack() )
@@ -16088,7 +16089,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbCliS.Dbf", cCheckArea( "AlbCliS", @cAlbCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AlbCliS.Dbf", cCheckArea( "AlbCliS", @cAlbCliT ), .f. )
 
    if !( cAlbCliT )->( neterr() )
       ( cAlbCliT )->( __dbPack() )
@@ -16110,7 +16111,7 @@ FUNCTION rxAlbCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de albaranes de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbCliE.DBF", cCheckArea( "AlbCliE", @cAlbCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AlbCliE.DBF", cCheckArea( "AlbCliE", @cAlbCliT ), .f. )
 
    if !( cAlbCliT )->( neterr() )
 

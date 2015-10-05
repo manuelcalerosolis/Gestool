@@ -7380,20 +7380,20 @@ RETURN NIL
 
 STATIC FUNCTION CreateFiles( cPath )
 
-   if !lExistTable( cPath + "FACPRVT.DBF" )
-      dbCreate( cPath + "FACPRVT.DBF", aSqlStruct( aItmFacPrv() ), cDriver() )
+   if !lExistTable( cPath + "FACPRVT.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACPRVT.DBF", aSqlStruct( aItmFacPrv() ), cLocalDriver() )
    end if
-   if !lExistTable( cPath + "FACPRVL.DBF" )
-      dbCreate( cPath + "FACPRVL.DBF", aSqlStruct( aColFacPrv() ), cDriver() )
+   if !lExistTable( cPath + "FACPRVL.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACPRVL.DBF", aSqlStruct( aColFacPrv() ), cLocalDriver() )
    end if
-   if !lExistTable( cPath + "FACPRVI.DBF" )
-      dbCreate( cPath + "FACPRVI.DBF", aSqlStruct( aIncFacPrv() ), cDriver() )
+   if !lExistTable( cPath + "FACPRVI.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACPRVI.DBF", aSqlStruct( aIncFacPrv() ), cLocalDriver() )
    end if
-   if !lExistTable( cPath + "FACPRVD.DBF" )
-      dbCreate( cPath + "FACPRVD.DBF", aSqlStruct( aFacPrvDoc() ), cDriver() )
+   if !lExistTable( cPath + "FACPRVD.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACPRVD.DBF", aSqlStruct( aFacPrvDoc() ), cLocalDriver() )
    end if
-   if !lExistTable( cPath + "FACPRVS.DBF" )
-      dbCreate( cPath + "FACPRVS.DBF", aSqlStruct( aSerFacPrv() ), cDriver() )
+   if !lExistTable( cPath + "FACPRVS.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACPRVS.DBF", aSqlStruct( aSerFacPrv() ), cLocalDriver() )
    end if
 
 RETURN NIL
@@ -9441,40 +9441,41 @@ FUNCTION mkFacPrv( cPath, oMeter )
       sysrefresh()
    END IF
 
-   CreateFiles( cPath )
+   createFiles( cPath )
 
-   rxFacPrv( cPath, oMeter )
+   rxFacPrv( cPath, cLocalDriver() )
 
 RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-FUNCTION rxFacPrv( cPath, oMeter )
+FUNCTION rxFacPrv( cPath, cDriver )
 
    local cFacPrvT
    local cFacPrvL
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "FacPrvT.DBF" ) .OR. ;
-      !lExistTable( cPath + "FacPrvL.DBF" ) .OR. ;
-      !lExistTable( cPath + "FacPrvI.Dbf" ) .OR. ;
-      !lExistTable( cPath + "FacPrvD.Dbf" ) .or. ;
-      !lExistTable( cPath + "FacPrvS.Dbf" )
-      CreateFiles( cPath )
+   if !lExistTable( cPath + "FacPrvT.DBF", cDriver ) .OR. ;
+      !lExistTable( cPath + "FacPrvL.DBF", cDriver ) .OR. ;
+      !lExistTable( cPath + "FacPrvI.Dbf", cDriver ) .OR. ;
+      !lExistTable( cPath + "FacPrvD.Dbf", cDriver ) .or. ;
+      !lExistTable( cPath + "FacPrvS.Dbf", cDriver )
+      createFiles( cPath )
    end if
 
    /*
    Eliminamos los indices
    */
 
-   fEraseIndex( cPath + "FacPrvT.CDX" )
-   fEraseIndex( cPath + "FacPrvL.CDX" )
-   fEraseIndex( cPath + "FacPrvI.CDX" )
-   fEraseIndex( cPath + "FacPrvD.CDX" )
-   fEraseIndex( cPath + "FacPrvS.CDX" )
+   fEraseIndex( cPath + "FacPrvT.CDX", cDriver )
+   fEraseIndex( cPath + "FacPrvL.CDX", cDriver )
+   fEraseIndex( cPath + "FacPrvI.CDX", cDriver )
+   fEraseIndex( cPath + "FacPrvD.CDX", cDriver )
+   fEraseIndex( cPath + "FacPrvS.CDX", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "FACPRVT.DBF", cCheckArea( "FACPRVT", @cFacPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FACPRVT.DBF", cCheckArea( "FACPRVT", @cFacPrvT ), .f. )
 
    if !( cFacPrvT )->( neterr() )
 
@@ -9528,7 +9529,7 @@ FUNCTION rxFacPrv( cPath, oMeter )
    Nuevo Area------------------------------------------------------------------
    */
 
-   dbUseArea( .t., cDriver(), cPath + "FACPRVL.DBF", cCheckArea( "FACPRVL", @cFacPrvL ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FACPRVL.DBF", cCheckArea( "FACPRVL", @cFacPrvL ), .f. )
    if !( cFacPrvL )->( neterr() )
       ( cFacPrvL )->( __dbPack() )
 
@@ -9567,7 +9568,7 @@ FUNCTION rxFacPrv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacPrvI.DBF", cCheckArea( "FacPrvI", @cFacPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacPrvI.DBF", cCheckArea( "FacPrvI", @cFacPrvT ), .f. )
    if !( cFacPrvT )->( neterr() )
       ( cFacPrvT )->( __dbPack() )
 
@@ -9579,7 +9580,7 @@ FUNCTION rxFacPrv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacPrvD.DBF", cCheckArea( "FacPrvD", @cFacPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacPrvD.DBF", cCheckArea( "FacPrvD", @cFacPrvT ), .f. )
    if !( cFacPrvT )->( neterr() )
       ( cFacPrvT )->( __dbPack() )
 
@@ -9591,7 +9592,7 @@ FUNCTION rxFacPrv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacPrvS.DBF", cCheckArea( "FacPrvS", @cFacPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacPrvS.DBF", cCheckArea( "FacPrvS", @cFacPrvT ), .f. )
    if !( cFacPrvT )->( neterr() )
       ( cFacPrvT )->( __dbPack() )
 
@@ -10948,23 +10949,22 @@ Method CreateData() CLASS TFacturasProveedorSenderReciver
    USE ( cPatEmp() + "FacPrvP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvP", @cFacPrvP ) )
    SET ADSINDEX TO ( cPatEmp() + "FacPrvP.CDX" ) ADDITIVE
 
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-   */
+   // Creamos todas las bases de datos relacionadas ---------------------------
 
-   rxFacPrv( cPatSnd() )
-   rxRecPrv( cPatSnd() )
+   mkFacPrv( cPatSnd() )
 
-   USE ( cPatSnd() + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @tmpFacPrvT ) )
+   mkRecPrv( cPatSnd() )
+
+   USE ( cPatSnd() + "FACPRVT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @tmpFacPrvT ) )
    SET ADSINDEX TO ( cPatSnd() + "FACPRVT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @tmpFacPrvL ) )
+   USE ( cPatSnd() + "FACPRVL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @tmpFacPrvL ) )
    SET ADSINDEX TO ( cPatSnd() + "FACPRVL.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "FacPrvI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvI", @tmpFacPrvI ) )
+   USE ( cPatSnd() + "FacPrvI.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvI", @tmpFacPrvI ) )
    SET ADSINDEX TO ( cPatSnd() + "FacPrvI.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "FacPrvP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvP", @tmpFacPrvP ) )
+   USE ( cPatSnd() + "FacPrvP.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvP", @tmpFacPrvP ) )
    SET ADSINDEX TO ( cPatSnd() + "FacPrvP.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
@@ -11060,17 +11060,13 @@ Method RestoreData() CLASS TFacturasProveedorSenderReciver
 
    if ::lSuccesfullSend
 
-      /*
-      Retorna el valor anterior
-      */
-
-      oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       USE ( cPatEmp() + "FacPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvT", @cFacPrvT ) )
       SET ADSINDEX TO ( cPatEmp() + "FacPrvT.CDX" ) ADDITIVE
 
-         lSelectAll( oWndBrw, cFacPrvT, "lSndDoc", .f., .t., .t. )
+      lSelectAll( oWndBrw, cFacPrvT, "lSndDoc", .f., .t., .t. )
 
    RECOVER USING oError
 
@@ -11098,11 +11094,7 @@ Method SendData() CLASS TFacturasProveedorSenderReciver
       cFileName         := "FacPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
    end if
 
-   if File( cPatOut() + cFileName )
-
-      /*
-      Enviarlos a internet
-      */
+   if file( cPatOut() + cFileName )
 
       if ::oSender:SendFiles( cPatOut() + cFileName, cFileName )
          ::lSuccesfullSend := .t.
@@ -11188,12 +11180,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
 
       oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-
       BEGIN SEQUENCE
-
-      /*
-      descomprimimos el fichero
-      */
 
       if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
@@ -11207,18 +11194,18 @@ Method Process() CLASS TFacturasProveedorSenderReciver
             Ficheros temporales------------------------------------------------
             */
 
-            if lExistTable( cPatSnd() + "FacPrvT.DBF" ) .and.;
-               lExistTable( cPatSnd() + "FacPrvL.DBF" ) .and.;
-               lExistTable( cPatSnd() + "FacPrvP.DBF" )
+            if lExistTable( cPatSnd() + "FacPrvT.DBF", cLocalDriver() ) .and.;
+               lExistTable( cPatSnd() + "FacPrvL.DBF", cLocalDriver() ) .and.;
+               lExistTable( cPatSnd() + "FacPrvP.DBF", cLocalDriver() )
 
-               USE ( cPatSnd() + "FacPrvT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacPrvT", @tmpFacPrvT ) )
-               SET ADSINDEX TO ( cPatSnd() + "FacPrvT.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "FacPrvT.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "FacPrvT", @tmpFacPrvT ) )
+               SET INDEX TO ( cPatSnd() + "FacPrvT.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "FacPrvL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacPrvL", @tmpFacPrvL ) )
-               SET ADSINDEX TO ( cPatSnd() + "FacPrvL.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "FacPrvL.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "FacPrvL", @tmpFacPrvL ) )
+               SET INDEX TO ( cPatSnd() + "FacPrvL.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "FacPrvP.Dbf" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "FacPrvP", @tmpFacPrvP ) )
-               SET ADSINDEX TO ( cPatSnd() + "FacPrvP.Cdx" ) ADDITIVE
+               USE ( cPatSnd() + "FacPrvP.Dbf" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "FacPrvP", @tmpFacPrvP ) )
+               SET INDEX TO ( cPatSnd() + "FacPrvP.Cdx" ) ADDITIVE
 
                USE ( cPatEmp() + "FacPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvT", @cFacPrvT ) )
                SET ADSINDEX TO ( cPatEmp() + "FacPrvT.CDX" ) ADDITIVE
@@ -11228,12 +11215,6 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
                USE ( cPatEmp() + "FacPrvP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvP", @cFacPrvP ) )
                SET ADSINDEX TO ( cPatEmp() + "FacPrvP.CDX" ) ADDITIVE
-
-               USE ( cPatPrv() + "Provee.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
-               SET ADSINDEX TO ( cPatPrv() + "Provee.CDX" ) ADDITIVE
-
-               USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-               SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
 
                oStock            := TStock():New()
                oStock:cFacPrvT   := cFacPrvT
@@ -11292,27 +11273,22 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
          else
 
-
-            /*
-            Caso de que se trate de un cliente franquiciado--------------------
-            */
-
             /*
             Ficheros temporales
             */
 
-            if file( cPatSnd() + "FacCliT.Dbf" ) .and.;
-               file( cPatSnd() + "FacPrvL.Dbf" ) .and.;
-               file( cPatSnd() + "FacCliP.Dbf" )
+            if lExistTable( cPatSnd() + "FacCliT.Dbf", cLocalDriver() ) .and.;
+               lExistTable( cPatSnd() + "FacPrvL.Dbf", cLocalDriver() ) .and.;
+               lExistTable( cPatSnd() + "FacCliP.Dbf", cLocalDriver() )
 
-               USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacPrvT ) )
-               SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacPrvT ) )
+               SET INDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "FacPrvL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacPrvL", @tmpFacPrvL ) )
-               SET ADSINDEX TO ( cPatSnd() + "FacPrvL.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "FacPrvL.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacPrvL", @tmpFacPrvL ) )
+               SET INDEX TO ( cPatSnd() + "FacPrvL.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacPrvP ) )
-               SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacPrvP ) )
+               SET INDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "FacPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvT", @cFacPrvT ) )
                SET ADSINDEX TO ( cPatEmp() + "FacPrvT.CDX" ) ADDITIVE
@@ -11323,11 +11299,8 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                USE ( cPatEmp() + "FacPrvP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacPrvP", @cFacPrvP ) )
                SET ADSINDEX TO ( cPatEmp() + "FacPrvP.CDX" ) ADDITIVE
 
-               USE ( cPatPrv() + "Provee.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Provee", @dbfProvee ) )
-               SET ADSINDEX TO ( cPatPrv() + "Provee.CDX" ) ADDITIVE
-
-               USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-               SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
+               USE ( cPatEmp() + "nCount.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "nCount", @dbfCount ) )
+               SET ADSINDEX TO ( cPatEmp() + "nCount.CDX" ) ADDITIVE
 
                while ( tmpFacPrvT )->( !eof() )
 
@@ -11345,7 +11318,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
                      cSerie      := ( tmpFacPrvT )->cSerie
                      nNumero     := nNewDoc( ( tmpFacPrvT )->cSerie, cFacPrvT, "NFACPRV", , dbfCount )
-                     cSufijo  := oUser():cDelegacion()
+                     cSufijo     := oUser():cDelegacion()
 
                      ( cFacPrvT)->( dbAppend() )
 
@@ -11397,11 +11370,9 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
                      ( cFacPrvT )->( dbUnLock() )
 
-                     ::oSender:SetText( "Añadida factura     : " + cSerie + "/" + AllTrim( Str( nNumero ) ) + "/" +  AllTrim( cSufijo ) )
+                     ::oSender:SetText( "Añadida factura : " + cSerie + "/" + AllTrim( Str( nNumero ) ) + "/" +  AllTrim( cSufijo ) )
 
-                     /*
-                     Pasamos las lineas de las facturas---------------------
-                     */
+                     // Pasamos las lineas de las facturas--------------------
 
                      if ( tmpFacPrvL )->( dbSeek( ( tmpFacPrvT )->cSerie + Str( ( tmpFacPrvT )->nNumFac ) + ( tmpFacPrvT )->cSufFac ) )
                            
@@ -11464,9 +11435,7 @@ Method Process() CLASS TFacturasProveedorSenderReciver
 
                      end if
 
-                     /*
-                     Pasamos los recibos de las facturas--------------------
-                     */
+                     // Pasamos los recibos de las facturas--------------------
 
                      if ( tmpFacPrvP )->( dbSeek( ( tmpFacPrvT )->cSerie + Str( ( tmpFacPrvT )->nNumFac ) + ( tmpFacPrvT )->cSufFac ) )
                            
@@ -11527,7 +11496,6 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                CLOSE ( tmpFacPrvT )
                CLOSE ( tmpFacPrvL )
                CLOSE ( tmpFacPrvP )
-               CLOSE ( dbfProvee  )
                CLOSE ( dbfCount   )
 
                ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
@@ -11537,15 +11505,15 @@ Method Process() CLASS TFacturasProveedorSenderReciver
                ::oSender:SetText( "Faltan ficheros" )
 
                if !file( cPatSnd() + "FacCliT.Dbf" )
-               ::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
+                  ::oSender:SetText( "Falta" + cPatSnd() + "FacCliT.Dbf" )
                end if
 
                if !file( cPatSnd() + "FacPrvL.Dbf" )
-                     ::oSender:SetText( "Falta" + cPatSnd() + "FacPrvL.Dbf" )
+                  ::oSender:SetText( "Falta" + cPatSnd() + "FacPrvL.Dbf" )
                end if
 
                if !file( cPatSnd() + "FacCliP.Dbf" )
-                     ::oSender:SetText( "Falta" + cPatSnd() + "FacCliP.Dbf" )
+                  ::oSender:SetText( "Falta" + cPatSnd() + "FacCliP.Dbf" )
                end if
 
             end if
@@ -11564,7 +11532,6 @@ Method Process() CLASS TFacturasProveedorSenderReciver
          CLOSE ( tmpFacPrvT )
          CLOSE ( tmpFacPrvL )
          CLOSE ( tmpFacPrvP )
-         CLOSE ( dbfProvee  )
          CLOSE ( dbfCount   )
 
          ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )

@@ -5775,24 +5775,24 @@ RETURN NIL
 
 STATIC FUNCTION CreateFiles( cPath )
 
-   if !lExistTable( cPath + "ALBPROVT.DBF" )
-      dbCreate( cPath + "ALBPROVT.DBF", aSqlStruct( aItmAlbPrv() ), cDriver() )
+   if !lExistTable( cPath + "ALBPROVT.DBF", cLocalDriver() )
+      dbCreate( cPath + "ALBPROVT.DBF", aSqlStruct( aItmAlbPrv() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ALBPROVL.DBF" )
-      dbCreate( cPath + "ALBPROVL.DBF", aSqlStruct( aColAlbPrv() ), cDriver() )
+   if !lExistTable( cPath + "ALBPROVL.DBF", cLocalDriver() )
+      dbCreate( cPath + "ALBPROVL.DBF", aSqlStruct( aColAlbPrv() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ALBPRVI.DBF" )
-      dbCreate( cPath + "ALBPRVI.DBF", aSqlStruct( aIncAlbPrv() ), cDriver() )
+   if !lExistTable( cPath + "ALBPRVI.DBF", cLocalDriver() )
+      dbCreate( cPath + "ALBPRVI.DBF", aSqlStruct( aIncAlbPrv() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ALBPRVD.DBF" )
-      dbCreate( cPath + "ALBPRVD.DBF", aSqlStruct( aAlbPrvDoc() ), cDriver() )
+   if !lExistTable( cPath + "ALBPRVD.DBF", cLocalDriver() )
+      dbCreate( cPath + "ALBPRVD.DBF", aSqlStruct( aAlbPrvDoc() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "ALBPRVS.DBF" )
-      dbCreate( cPath + "ALBPRVS.DBF", aSqlStruct( aSerAlbPrv() ), cDriver() )
+   if !lExistTable( cPath + "ALBPRVS.DBF", cLocalDriver() )
+      dbCreate( cPath + "ALBPRVS.DBF", aSqlStruct( aSerAlbPrv() ), cLocalDriver() )
    end if
 
 RETURN NIL
@@ -8430,9 +8430,9 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
       sysrefresh()
    END IF
 
-   CreateFiles( cPath )
+   createFiles( cPath )
 
-   rxAlbPrv( cPath, oMeter )
+   rxAlbPrv( cPath, cLocalDriver() )
 
    if lAppend .and. lIsDir( cPathOld )
 
@@ -8440,10 +8440,10 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
       BEGIN SEQUENCE
 
       dbUseArea( .t., cDriver(), cPath + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @cAlbPrvT ), .f. )
-      ordListAdd( cPath + "ALBPROVT.CDX"  )
+      ordListAdd( cPath + "AlbProvT.Cdx"  )
 
       dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @cAlbPrvL ), .f. )
-      ordListAdd( cPath + "ALBPROVL.CDX"  )
+      ordListAdd( cPath + "AlbProvL.Cdx"  )
 
       dbUseArea( .t., cDriver(), cPath + "AlbPrvI.Dbf", cCheckArea( "AlbPrvI", @cAlbPrvI ), .f. )
       ( cAlbPrvI )->( ordListAdd( cPath + "AlbPrvI.Cdx"  ) )
@@ -8452,16 +8452,16 @@ FUNCTION mkAlbPrv( cPath, lAppend, cPathOld, oMeter, bFor, dbfMov )
       ( cAlbPrvD )->( ordListAdd( cPath + "AlbPrvD.Cdx"  ) )
 
       dbUseArea( .t., cDriver(), cPathOld + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @oldAlbPrvT ), .f. )
-      ordListAdd( cPathOld + "ALBPROVT.CDX"  )
+      ordListAdd( cPathOld + "AlbProvT.Cdx"  )
 
       dbUseArea( .t., cDriver(), cPathOld + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @oldAlbPrvL ), .f. )
-      ordListAdd( cPathOld + "ALBPROVL.CDX"  )
+      ordListAdd( cPathOld + "AlbProvL.Cdx"  )
 
       dbUseArea( .t., cDriver(), cPathOld + "ALBPRVI.Dbf", cCheckArea( "ALBPRVI", @oldAlbPrvI ), .f. )
-      ( oldAlbPrvI )->( ordListAdd( cPathOld + "ALBPRVI.Cdx"  ) )
+      ( oldAlbPrvI )->( ordListAdd( cPathOld + "AlbPrvI.Cdx"  ) )
 
       dbUseArea( .t., cDriver(), cPathOld + "ALBPRVD.Dbf", cCheckArea( "ALBPRVD", @oldAlbPrvD ), .f. )
-      ( oldAlbPrvD )->( ordListAdd( cPathOld + "ALBPRVD.Cdx"  ) )
+      ( oldAlbPrvD )->( ordListAdd( cPathOld + "AlbPrvD.Cdx"  ) )
 
       /*
       Pasamos los datos
@@ -8528,67 +8528,68 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-FUNCTION rxAlbPrv( cPath, oMeter )
+FUNCTION rxAlbPrv( cPath, cDriver )
 
    local cAlbPrvT
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "ALBPROVT.DBF" ) .or. ;
-      !lExistTable( cPath + "ALBPROVL.DBF" ) .or. ;
-      !lExistTable( cPath + "ALBPRVI.DBF" )  .or. ;
-      !lExistTable( cPath + "ALBPRVD.DBF" )  .or. ;
-      !lExistTable( cPath + "AlbPrvS.DBF" )
-      CreateFiles( cPath )
+   if !lExistTable( cPath + "ALBPROVT.DBF", cDriver ) .or. ;
+      !lExistTable( cPath + "ALBPROVL.DBF", cDriver ) .or. ;
+      !lExistTable( cPath + "ALBPRVI.DBF", cDriver )  .or. ;
+      !lExistTable( cPath + "ALBPRVD.DBF", cDriver )  .or. ;
+      !lExistTable( cPath + "AlbPrvS.DBF", cDriver )
+      createFiles( cPath )
    end if
 
    /*
    Eliminamos los indices
    */
 
-   fEraseIndex( cPath + "ALBPROVT.CDX" )
-   fEraseIndex( cPath + "ALBPROVL.CDX" )
-   fEraseIndex( cPath + "ALBPRVI.CDX" )
-   fEraseIndex( cPath + "ALBPRVD.CDX" )
-   fEraseIndex( cPath + "AlbPrvS.Cdx" )
+   fEraseIndex( cPath + "AlbProvT.Cdx", cDriver )
+   fEraseIndex( cPath + "AlbProvL.Cdx", cDriver )
+   fEraseIndex( cPath + "AlbPrvI.Cdx", cDriver )
+   fEraseIndex( cPath + "AlbPrvD.Cdx", cDriver )
+   fEraseIndex( cPath + "AlbPrvS.Cdx", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @cAlbPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @cAlbPrvT ), .f. )
 
    if !( cAlbPrvT )->( neterr() )
       ( cAlbPrvT)->( __dbPack() )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->cSerAlb + STR( Field->nNumAlb ) + Field->CSUFALB } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->cSerAlb + STR( Field->nNumAlb ) + Field->CSUFALB } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "DFECALB", "DFECALB", {|| Field->DFECALB } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "DFECALB", "DFECALB", {|| Field->DFECALB } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "CCODPRV", "CCODPRV", {|| Field->CCODPRV } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "CCODPRV", "CCODPRV", {|| Field->CCODPRV } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "CNOMPRV", "Upper( CNOMPRV )", {|| Upper( Field->CNOMPRV ) } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "CNOMPRV", "Upper( CNOMPRV )", {|| Upper( Field->CNOMPRV ) } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "CSUALB", "CSUALB", {|| Field->CSUALB } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "CSUALB", "CSUALB", {|| Field->CSUALB } ) )
 
       ( cAlbPrvT)->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "CNUMFAC", "CNUMFAC", {|| Field->CNUMFAC }, ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "CNUMFAC", "CNUMFAC", {|| Field->CNUMFAC }, ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "CTURALB", "CTURALB + CSUFALB + cCodCaj", {|| Field->CTURALB + Field->CSUFALB + Field->cCodCaj } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "CTURALB", "CTURALB + CSUFALB + cCodCaj", {|| Field->CTURALB + Field->CSUFALB + Field->cCodCaj } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "CNUMPED", "CNUMPED", {|| Field->CNUMPED } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "CNUMPED", "CNUMPED", {|| Field->CNUMPED } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->CSUFALB } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->CSUFALB } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
 
       ( cAlbPrvT )->( dbCloseArea() )
 
@@ -8598,7 +8599,7 @@ FUNCTION rxAlbPrv( cPath, oMeter )
 
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @cAlbPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @cAlbPrvT ), .f. )
 
    if !( cAlbPrvT )->( neterr() )
       ( cAlbPrvT)->( __dbPack() )
@@ -8643,7 +8644,7 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cRefFec", "cRef + dtos( dFecAlb )", {|| Field->cRef + dtos( Field->dFecAlb ) } ) )
 
       ( cAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.CDX", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->cSufAlb } ) )
+      ( cAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->cSufAlb } ) )
 
       ( cAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
       ( cAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
@@ -8662,33 +8663,33 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbPrvI.DBF", cCheckArea( "AlbPrvI", @cAlbPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AlbPrvI.DBF", cCheckArea( "AlbPrvI", @cAlbPrvT ), .f. )
 
    if !( cAlbPrvT )->( neterr() )
       ( cAlbPrvT )->( __dbPack() )
 
       ( cAlbPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT )->( ordCreate( cPath + "AlbPrvI.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbPrvI.Cdx", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
 
       ( cAlbPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbPrvD.DBF", cCheckArea( "AlbPrvD", @cAlbPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AlbPrvD.DBF", cCheckArea( "AlbPrvD", @cAlbPrvT ), .f. )
 
    if !( cAlbPrvT )->( neterr() )
       ( cAlbPrvT )->( __dbPack() )
 
       ( cAlbPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( cAlbPrvT )->( ordCreate( cPath + "AlbPrvD.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
+      ( cAlbPrvT )->( ordCreate( cPath + "AlbPrvD.Cdx", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
 
       ( cAlbPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de proveedores" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "AlbPrvS.DBF", cCheckArea( "AlbPrvS", @cAlbPrvT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "AlbPrvS.DBF", cCheckArea( "AlbPrvS", @cAlbPrvT ), .f. )
    if !( cAlbPrvT )->( neterr() )
       ( cAlbPrvT )->( __dbPack() )
 
@@ -8940,7 +8941,7 @@ FUNCTION Ped2Alb( cNumPed, lZoom )
    BEGIN SEQUENCE
 
    USE ( cPatEmp() + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @cAlbPrvT ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBPROVT.CDX" ) ADDITIVE
+   SET ADSINDEX TO ( cPatEmp() + "AlbProvT.Cdx" ) ADDITIVE
    ( cAlbPrvT )->( OrdSetFocus( "cNumPed" ) )
 
    if ( cAlbPrvT )->( dbSeek( cNumPed ) )
@@ -9490,16 +9491,16 @@ Function SynAlbPrv( cPath )
    BEGIN SEQUENCE
 
    dbUseArea( .t., cDriver(), cPath + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @cAlbPrvT ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBPROVT.CDX" ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS(); ordListAdd( cPath + "AlbProvT.Cdx" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @cAlbPrvL ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS(); ordListAdd( cPath + "AlbProvL.Cdx" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBPRVS.DBF", cCheckArea( "ALBPRVS", @cAlbPrvS ), .f. )
    if !lAIS(); ordListAdd( cPath + "ALBPRVS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBPRVI.DBF", cCheckArea( "ALBPRVI", @cAlbPrvI ), .f. )
-   if !lAIS(); ordListAdd( cPath + "ALBPRVI.CDX" ); else ; ordSetFocus( 1 ) ; end
+   if !lAIS(); ordListAdd( cPath + "AlbPrvI.Cdx" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @cFamilia ), .f. )
    if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
@@ -10376,41 +10377,7 @@ RETURN ( nFacturado )
 
 Function IsAlbPrv( cPath )
 
-   DEFAULT cPath  := cPatEmp()
-
-   if !lExistTable( cPath + "AlbProvT.Dbf" )
-      dbCreate( cPath + "AlbProvT.Dbf", aSqlStruct( aItmAlbPrv() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AlbProvL.Dbf" )
-      dbCreate( cPath + "AlbProvL.Dbf", aSqlStruct( aColAlbPrv() ), cDriver() )
-      dbFieldInfo( DBS_COUNTER, 1, 10 ) 
-      dbFieldInfo( DBS_STEP, 1, 5 ) 
-   end if
-
-   if !lExistTable( cPath + "AlbPrvI.Dbf" )
-      dbCreate( cPath + "AlbPrvI.Dbf", aSqlStruct( aIncAlbPrv() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AlbPrvD.Dbf" )
-      dbCreate( cPath + "AlbPrvD.Dbf", aSqlStruct( aAlbPrvDoc() ), cDriver() )
-   end if
-
-   if !lExistTable( cPath + "AlbPrvS.Dbf" )
-      dbCreate( cPath + "AlbPrvS.Dbf", aSqlStruct( aSerAlbPrv() ), cDriver() )
-   end if
-
-   if !lExistIndex( cPath + "AlbProvT.Cdx" ) .or. ;
-      !lExistIndex( cPath + "AlbProvL.Cdx" ) .or. ;
-      !lExistIndex( cPath + "AlbPrvI.Cdx" )  .or. ;
-      !lExistIndex( cPath + "AlbPrvD.Cdx" )  .or. ;
-      !lExistIndex( cPath + "AlbPrvS.Cdx" )
-
-      rxAlbPrv( cPath )
-
-   end if
-
-Return ( nil )
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -10766,8 +10733,8 @@ Method CreateData()
    local oBlock
    local oError
    local lSnd        := .f.
-   local cAlbPrvT
-   local cAlbPrvL
+   local dbfAlbPrvT
+   local dbfAlbPrvL
    local tmpAlbPrvT
    local tmpAlbPrvL
 
@@ -10779,73 +10746,73 @@ Method CreateData()
 
    ::oSender:SetText( "Enviando albaranes a proveedores" )
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+//   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+//   BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "AlbProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @cAlbPrvT ) )
+   USE ( cPatEmp() + "AlbProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @dbfAlbPrvT ) )
    SET ADSINDEX TO ( cPatEmp() + "AlbProvT.Cdx" ) ADDITIVE
 
-   USE ( cPatEmp() + "AlbProvL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvL", @cAlbPrvL ) )
+   USE ( cPatEmp() + "AlbProvL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvL", @dbfAlbPrvL ) )
    SET ADSINDEX TO ( cPatEmp() + "AlbProvL.Cdx" ) ADDITIVE
 
    /*
    Creamos todas las bases de datos relacionadas con Articulos
    */
 
-   rxAlbPrv( cPatSnd() )
+   mkAlbPrv( cPatSnd() )
 
-   USE ( cPatSnd() + "AlbProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @tmpAlbPrvT ) )
-   SET ADSINDEX TO ( cPatSnd() + "AlbProvT.Cdx" ) ADDITIVE
+   USE ( cPatSnd() + "AlbProvT.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @tmpAlbPrvT ) )
+   SET INDEX TO ( cPatSnd() + "AlbProvT.Cdx" ) ADDITIVE
 
-   USE ( cPatSnd() + "AlbProvL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvL", @tmpAlbPrvL ) )
-   SET ADSINDEX TO ( cPatSnd() + "AlbProvL.Cdx" ) ADDITIVE
+   USE ( cPatSnd() + "AlbProvL.Dbf" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvL", @tmpAlbPrvL ) )
+   SET INDEX TO ( cPatSnd() + "AlbProvL.Cdx" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( cAlbPrvT )->( lastrec() )
+      ::oSender:oMtr:nTotal := ( dbfAlbPrvT )->( lastrec() )
    end if
 
-   while !( cAlbPrvT )->( eof() )
+   while !( dbfAlbPrvT )->( eof() )
 
-      if ( cAlbPrvT )->lSndDoc
+      if ( dbfAlbPrvT )->lSndDoc
 
          lSnd  := .t.
 
-         dbPass( cAlbPrvT, tmpAlbPrvT, .t. )
+         dbPass( dbfAlbPrvT, tmpAlbPrvT, .t. )
 
-         ::oSender:SetText( ( cAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( cAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( cAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( cAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( cAlbPrvT )->cCodPrv ) + "; " + ( cAlbPrvT )->cNomPrv )
+         ::oSender:SetText( ( dbfAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( dbfAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( dbfAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( dbfAlbPrvT )->cCodPrv ) + "; " + ( dbfAlbPrvT )->cNomPrv )
 
-         if ( cAlbPrvL )->( dbSeek( ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->cSufAlb ) )
-            while ( ( cAlbPrvL )->cSerAlb + Str( ( cAlbPrvL )->nNumAlb ) + ( cAlbPrvL )->CSUFAlb ) == ( ( cAlbPrvT )->cSerAlb + Str( ( cAlbPrvT )->nNumAlb ) + ( cAlbPrvT )->CSUFAlb ) .AND. !( cAlbPrvL )->( eof() )
-               dbPass( cAlbPrvL, tmpAlbPrvL, .t. )
-               ( cAlbPrvL )->( dbSkip() )
+         if ( dbfAlbPrvL )->( dbSeek( ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT )->cSufAlb ) )
+            while ( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->CSUFAlb ) == ( ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT )->CSUFAlb ) .AND. !( dbfAlbPrvL )->( eof() )
+               dbPass( dbfAlbPrvL, tmpAlbPrvL, .t. )
+               ( dbfAlbPrvL )->( dbSkip() )
             end do
          end if
 
       end if
 
-      ( cAlbPrvT )->( dbSkip() )
+      ( dbfAlbPrvT )->( dbSkip() )
 
       if !Empty( ::oSender:oMtr )
-         ::oSender:oMtr:Set( ( cAlbPrvT )->( OrdKeyNo() ) )
+         ::oSender:oMtr:Set( ( dbfAlbPrvT )->( OrdKeyNo() ) )
       end if
 
    END DO
 
-   RECOVER USING oError
+//   RECOVER USING oError
+//
+//      msgStop( "Imposible abrir todas las bases de datos de albaranes de proveedores" + CRLF + ErrorMessage( oError ) )
+//
+//   END SEQUENCE
+//
+//   ErrorBlock( oBlock )
 
-      msgStop( "Imposible abrir todas las bases de datos de albaranes de proveedores" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   CLOSE ( cAlbPrvT )
-   CLOSE ( cAlbPrvL )
+   CLOSE ( dbfAlbPrvT )
+   CLOSE ( dbfAlbPrvL )
    CLOSE ( tmpAlbPrvT )
    CLOSE ( tmpAlbPrvL )
 
-   cAlbPrvT  := nil
-   cAlbPrvL  := nil
+   dbfAlbPrvT  := nil
+   dbfAlbPrvL  := nil
    tmpAlbPrvT  := nil
    tmpAlbPrvL  := nil
 
@@ -10963,8 +10930,8 @@ Return Self
 Method Process()
 
    local m
-   local cAlbPrvT
-   local cAlbPrvL
+   local dbfAlbPrvT
+   local dbfAlbPrvL
    local tmpAlbPrvT
    local tmpAlbPrvL
    local aFiles      := Directory( cPatIn() + "AlbPrv*.*" )
@@ -10976,44 +10943,37 @@ Method Process()
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
 
       oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
       BEGIN SEQUENCE
-
-      /*
-      descomprimimos el fichero
-      */
 
       if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-         dbUseArea(.t., cDriver(), cPatSnd() + "AlbProvT.Dbf", cCheckArea( "AlbProvT", @tmpAlbPrvT ), .f., .t. )
+         dbUseArea(.t., cLocalDriver(), cPatSnd() + "AlbProvT.Dbf", cCheckArea( "AlbProvT", @tmpAlbPrvT ), .f., .t. )
          ( tmpAlbPrvT )->( ordListAdd( cPatSnd() + "AlbProvT.Cdx" ) )
 
-         dbUseArea(.t., cDriver(), cPatSnd() + "AlbProvL.Dbf", cCheckArea( "AlbProvL", @tmpAlbPrvL ), .f., .t. )
+         dbUseArea(.t., cLocalDriver(), cPatSnd() + "AlbProvL.Dbf", cCheckArea( "AlbProvL", @tmpAlbPrvL ), .f., .t. )
          ( tmpAlbPrvL )->( ordListAdd( cPatSnd() + "AlbProvL.Cdx" ) )
 
-         USE ( cPatEmp() + "AlbProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @cAlbPrvT ) )
+         USE ( cPatEmp() + "AlbProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @dbfAlbPrvT ) )
          SET ADSINDEX TO ( cPatEmp() + "AlbProvT.Cdx" ) ADDITIVE
 
-         USE ( cPatEmp() + "AlbProvL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvL", @cAlbPrvL ) )
+         USE ( cPatEmp() + "AlbProvL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvL", @dbfAlbPrvL ) )
          SET ADSINDEX TO ( cPatEmp() + "AlbProvL.Cdx" ) ADDITIVE
 
-         WHILE ( tmpAlbPrvT )->( !eof() )
+         while ( tmpAlbPrvT )->( !eof() )
 
-            /*
-            Comprobamos que no exista el pedido en la base de datos
-            */
+            // Comprobamos que no exista el pedido en la base de datos
 
             if lValidaOperacion( ( tmpAlbPrvT )->dFecAlb, .f. ) .and. ;
-               !( cAlbPrvT )->( dbSeek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->cSufAlb ) )
+               !( dbfAlbPrvT )->( dbSeek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->cSufAlb ) )
 
-               dbPass( tmpAlbPrvT, cAlbPrvT, .t. )
+               dbPass( tmpAlbPrvT, dbfAlbPrvT, .t. )
                
-               ::oSender:SetText( "Añadido : " + ( tmpAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( cAlbPrvT )->cCodPrv ) + "; " + ( cAlbPrvT )->cNomPrv )
+               ::oSender:SetText( "Añadido : " + ( tmpAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( dbfAlbPrvT )->cCodPrv ) + "; " + ( dbfAlbPrvT )->cNomPrv )
 
                if ( tmpAlbPrvL )->( dbSeek( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->CSUFAlb ) )
 
                   do while ( ( tmpAlbPrvL )->cSerAlb + Str( ( tmpAlbPrvL )->nNumAlb ) + ( tmpAlbPrvL )->CSUFAlb ) == ( ( tmpAlbPrvT )->cSerAlb + Str( ( tmpAlbPrvT )->nNumAlb ) + ( tmpAlbPrvT )->CSUFAlb ) .AND. !( tmpAlbPrvL )->( eof() )
-                     dbPass( tmpAlbPrvL, cAlbPrvL, .t. )
+                     dbPass( tmpAlbPrvL, dbfAlbPrvL, .t. )
                      ( tmpAlbPrvL )->( dbSkip() )
                   end do
 
@@ -11021,16 +10981,16 @@ Method Process()
 
             else
 
-               ::oSender:SetText( "Desestimado : " + ( tmpAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( cAlbPrvT )->cCodPrv ) + "; " + ( cAlbPrvT )->cNomPrv )
+               ::oSender:SetText( "Desestimado : " + ( tmpAlbPrvT )->cSerAlb + "/" + AllTrim( Str( ( tmpAlbPrvT )->nNumAlb ) ) + "/" + AllTrim( ( tmpAlbPrvT )->cSufAlb ) + "; " + Dtoc( ( tmpAlbPrvT )->dFecAlb ) + "; " + AllTrim( ( dbfAlbPrvT )->cCodPrv ) + "; " + ( dbfAlbPrvT )->cNomPrv )
 
             end if
 
             ( tmpAlbPrvT )->( dbSkip() )
 
-         END DO
+         end do
 
-         CLOSE ( cAlbPrvT )
-         CLOSE ( cAlbPrvL )
+         CLOSE ( dbfAlbPrvT )
+         CLOSE ( dbfAlbPrvL )
          CLOSE ( tmpAlbPrvT )
          CLOSE ( tmpAlbPrvL )
 
@@ -11040,8 +11000,8 @@ Method Process()
 
       RECOVER USING oError
 
-         CLOSE ( cAlbPrvT )
-         CLOSE ( cAlbPrvL )
+         CLOSE ( dbfAlbPrvT )
+         CLOSE ( dbfAlbPrvL )
          CLOSE ( tmpAlbPrvT )
          CLOSE ( tmpAlbPrvL )
 
@@ -11057,7 +11017,6 @@ Method Process()
 Return Self
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

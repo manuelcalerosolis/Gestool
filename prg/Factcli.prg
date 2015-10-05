@@ -19138,36 +19138,36 @@ FUNCTION mkFacCli( cPath, oMeter, lReindex )
       sysrefresh()
    end if
 
-   if !lExistTable( cPath + "FACCLIT.DBF" )
-      dbCreate( cPath + "FACCLIT.DBF", aSqlStruct( aItmFacCli() ), cDriver() )
+   if !lExistTable( cPath + "FACCLIT.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACCLIT.DBF", aSqlStruct( aItmFacCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FACCLIL.DBF" )
-      dbCreate( cPath + "FACCLIL.DBF", aSqlStruct( aColFacCli() ), cDriver() )
+   if !lExistTable( cPath + "FACCLIL.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACCLIL.DBF", aSqlStruct( aColFacCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FACCLII.DBF" )
-      dbCreate( cPath + "FACCLII.DBF", aSqlStruct( aIncFacCli() ), cDriver() )
+   if !lExistTable( cPath + "FACCLII.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACCLII.DBF", aSqlStruct( aIncFacCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FACCLID.DBF" )
-      dbCreate( cPath + "FACCLID.DBF", aSqlStruct( aFacCliDoc() ), cDriver() )
+   if !lExistTable( cPath + "FACCLID.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACCLID.DBF", aSqlStruct( aFacCliDoc() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FACCLIS.DBF" )
-      dbCreate( cPath + "FACCLIS.DBF", aSqlStruct( aSerFacCli() ), cDriver() )
+   if !lExistTable( cPath + "FACCLIS.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACCLIS.DBF", aSqlStruct( aSerFacCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FACCLIE.DBF" )
-      dbCreate( cPath + "FACCLIE.DBF", aSqlStruct( aEntidadesFacCli() ), cDriver() )
+   if !lExistTable( cPath + "FACCLIE.DBF", cLocalDriver() )
+      dbCreate( cPath + "FACCLIE.DBF", aSqlStruct( aEntidadesFacCli() ), cLocalDriver() )
    end if
 
-   if !lExistTable( cPath + "FACCLIC.Dbf" )
-      dbCreate( cPath + "FACCLIC.Dbf", aSqlStruct( aFacCliEst() ), cDriver() )
+   if !lExistTable( cPath + "FACCLIC.Dbf", cLocalDriver() )
+      dbCreate( cPath + "FACCLIC.Dbf", aSqlStruct( aFacCliEst() ), cLocalDriver() )
    end if
 
    if lReindex
-      rxFacCli( cPath )
+      rxFacCli( cPath, cLocalDriver() )
    end if
 
 RETURN .t.
@@ -19177,38 +19177,39 @@ RETURN .t.
 Regenera indices
 */
 
-FUNCTION rxFacCli( cPath, oMeter )
+FUNCTION rxFacCli( cPath, cDriver )
 
    local cFacCliT
    local cFacCliL
    local dbfFacCliI
    local dbfFacCliD
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
    /*
    Crea los ficheros si no existen
    */
 
-   if !lExistTable( cPath + "FacCliT.Dbf" )   .or.;
-      !lExistTable( cPath + "FacCliL.Dbf" )   .or.;
-      !lExistTable( cPath + "FacCliI.Dbf" )   .or.;
-      !lExistTable( cPath + "FacCliD.Dbf" )   .or.;
-      !lExistTable( cPath + "FacCliS.Dbf" )   .or.;
-      !lExistTable( cPath + "FacCliE.Dbf" )   .or.;
-      !lExistTable( cPath + "FacCliC.Dbf" )  
+   if !lExistTable( cPath + "FacCliT.Dbf", cDriver )   .or.;
+      !lExistTable( cPath + "FacCliL.Dbf", cDriver )   .or.;
+      !lExistTable( cPath + "FacCliI.Dbf", cDriver )   .or.;
+      !lExistTable( cPath + "FacCliD.Dbf", cDriver )   .or.;
+      !lExistTable( cPath + "FacCliS.Dbf", cDriver )   .or.;
+      !lExistTable( cPath + "FacCliE.Dbf", cDriver )   .or.;
+      !lExistTable( cPath + "FacCliC.Dbf", cDriver )  
       mkFacCli( cPath, nil, .f. )
    end if
 
-   fEraseIndex( cPath + "FacCliT.Cdx" )
-   fEraseIndex( cPath + "FacCliT.Cdx" )
-   fEraseIndex( cPath + "FacCliI.Cdx" )
-   fEraseIndex( cPath + "FacCliD.Cdx" )
-   fEraseIndex( cPath + "FacCliS.Cdx" )
-   fEraseIndex( cPath + "FacCliE.Cdx" )
-   fEraseIndex( cPath + "FacCliC.Cdx" )
+   fEraseIndex( cPath + "FacCliT.Cdx", cDriver )
+   fEraseIndex( cPath + "FacCliT.Cdx", cDriver )
+   fEraseIndex( cPath + "FacCliI.Cdx", cDriver )
+   fEraseIndex( cPath + "FacCliD.Cdx", cDriver )
+   fEraseIndex( cPath + "FacCliS.Cdx", cDriver )
+   fEraseIndex( cPath + "FacCliE.Cdx", cDriver )
+   fEraseIndex( cPath + "FacCliC.Cdx", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @cFacCliL ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @cFacCliL ), .f. )
    if !( cFacCliL )->( neterr() )
       ( cFacCliL )->( __dbPack() )
 
@@ -19253,7 +19254,7 @@ FUNCTION rxFacCli( cPath, oMeter )
 
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacCliI.DBF", cCheckArea( "FacCliI", @dbfFacCliI ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacCliI.DBF", cCheckArea( "FacCliI", @dbfFacCliI ), .f. )
    if !( dbfFacCliI )->( neterr() )
       ( dbfFacCliI )->( __dbPack() )
 
@@ -19268,7 +19269,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacCliD.DBF", cCheckArea( "FacCliD", @dbfFacCliD ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacCliD.DBF", cCheckArea( "FacCliD", @dbfFacCliD ), .f. )
    if !( dbfFacCliD )->( neterr() )
       ( dbfFacCliD )->( __dbPack() )
 
@@ -19283,7 +19284,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FACCLIT.DBF", cCheckArea( "FACCLIT", @cFacCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FACCLIT.DBF", cCheckArea( "FACCLIT", @cFacCliT ), .f. )
 
    if !( cFacCliT )->( neterr() )
       ( cFacCliT )->( __dbPack() )
@@ -19369,7 +19370,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacCliS.Dbf", cCheckArea( "FacCliS", @cFacCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacCliS.Dbf", cCheckArea( "FacCliS", @cFacCliT ), .f. )
 
    if !( cFacCliT )->( neterr() )
       ( cFacCliT )->( __dbPack() )
@@ -19391,7 +19392,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de números de series de facturas de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacCliE.Dbf", cCheckArea( "FacCliE", @cFacCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacCliE.Dbf", cCheckArea( "FacCliE", @cFacCliT ), .f. )
 
    if !( cFacCliT )->( neterr() )
       ( cFacCliT )->( __dbPack() )
@@ -19401,10 +19402,10 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( cFacCliT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de entidades de facturas de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de entidades de facturas de clientes" ) 
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "FacCliC.Dbf", cCheckArea( "FacCliC", @cFacCliT ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacCliC.Dbf", cCheckArea( "FacCliC", @cFacCliT ), .f. )
 
    if !( cFacCliT )->( neterr() )
       ( cFacCliT )->( __dbPack() )
@@ -21645,24 +21646,23 @@ Method CreateData()
    SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
    ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
  
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-   */
+   // Creamos todas las bases de datos relacionadas 
 
    mkFacCli( cPatSnd() )
+
    mkRecCli( cPatSnd() )
 
-   USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
+   SET INDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
+   USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
+   SET INDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
 
-   USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
+   SET INDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "FacCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliI", @tmpFacCliI ) )
-   SET ADSINDEX TO ( cPatSnd() + "FacCliI.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "FacCliI.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "FacCliI", @tmpFacCliI ) )
+   SET INDEX TO ( cPatSnd() + "FacCliI.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfFacCliT )->( LastRec() )
@@ -21738,10 +21738,6 @@ Method CreateData()
 
    if lSndFacCli
 
-     /*
-     Comprimir los archivos---------------------------------------------------
-     */
-
       ::oSender:SetText( "Comprimiendo facturas de clientes" )
 
       if ::oSender:lZipData( cFileNameFacturas )
@@ -21775,8 +21771,8 @@ Method CreateData()
    USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @tmpAntCliT ) )
-   SET ADSINDEX TO ( cPatSnd() + "AntCliT.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "AntCliT.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @tmpAntCliT ) )
+   SET INDEX TO ( cPatSnd() + "AntCliT.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal  := ( dbfAntCliT )->( LastRec() )
@@ -21811,10 +21807,6 @@ Method CreateData()
 
    if lSndAntCli
 
-      /*
-      Comprimir los archivos---------------------------------------------------
-      */
-
       ::oSender:SetText( "Comprimiendo anticipos de clientes" )
 
       if ::oSender:lZipData( cFileNameAnticipos )
@@ -21847,7 +21839,6 @@ Method RestoreData()
 
       USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
-
       ( dbfFacCliT )->( OrdSetFocus( "lSndDoc" ) )
 
       while ( dbfFacCliT )->( dbSeek( .t. ) ) .and. !( dbfFacCliT )->( eof() )
@@ -22026,14 +22017,14 @@ Method Process()
 
          if file( cPatSnd() + "FacCliT.Dbf" ) .and. file( cPatSnd() + "FacCliL.Dbf" ) .and. file( cPatSnd() + "FacCliP.Dbf" )
 
-            USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
+            USE ( cPatSnd() + "FacCliT.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
+            SET INDEX TO ( cPatSnd() + "FacCliT.CDX" ) ADDITIVE
 
-            USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
+            USE ( cPatSnd() + "FacCliL.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
+            SET INDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
 
-            USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
+            USE ( cPatSnd() + "FacCliP.DBF" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
+            SET INDEX TO ( cPatSnd() + "FacCliP.CDX" ) ADDITIVE
 
             USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
             SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
@@ -22184,8 +22175,8 @@ Method Process()
 
             if file( cPatSnd() + "AntCliT.DBF" )
 
-               USE ( cPatSnd() + "AntCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AntCliT", @tmpAntCliT ) )
-               SET ADSINDEX TO ( cPatSnd() + "AntCliT.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "AntCliT.DBF" ) NEW VIA ( cLocalDriver() )READONLY ALIAS ( cCheckArea( "AntCliT", @tmpAntCliT ) )
+               SET INDEX TO ( cPatSnd() + "AntCliT.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
                SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
@@ -22334,14 +22325,14 @@ Method ProcessFrq()
 
          if file( cPatSnd() + "FacCliT.Dbf" ) .and. file( cPatSnd() + "FacCliL.Dbf" ) .and. file( cPatSnd() + "FacCliP.Dbf" )
 
-            USE ( cPatSnd() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliT.Cdx" ) ADDITIVE
+            USE ( cPatSnd() + "FacCliT.Dbf" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacCliT", @tmpFacCliT ) )
+            SET INDEX TO ( cPatSnd() + "FacCliT.Cdx" ) ADDITIVE
 
-            USE ( cPatSnd() + "FacCliL.Dbf" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
+            USE ( cPatSnd() + "FacCliL.Dbf" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacCliL", @tmpFacCliL ) )
+            SET INDEX TO ( cPatSnd() + "FacCliL.Cdx" ) ADDITIVE
 
-            USE ( cPatSnd() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
-            SET ADSINDEX TO ( cPatSnd() + "FacCliP.Cdx" ) ADDITIVE
+            USE ( cPatSnd() + "FacCliP.Dbf" ) NEW VIA ( cLocalDriver() ) READONLY ALIAS ( cCheckArea( "FacCliP", @tmpFacCliP ) )
+            SET INDEX TO ( cPatSnd() + "FacCliP.Cdx" ) ADDITIVE
 
             while ( tmpFacCliT )->( !eof() )
 

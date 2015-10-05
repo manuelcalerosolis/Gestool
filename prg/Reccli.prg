@@ -3996,9 +3996,7 @@ FUNCTION IsRecCli( cPath )
    end if
 
    if !lExistTable( cPath + "FacCliP.Cdx" )
-
       rxRecCli( cPath )
-
    end if
 
 Return ( nil )
@@ -4296,21 +4294,17 @@ Return oMenu
 Regenera indices
 */
 
-Function rxRecCli( cPath, oMeter )
+Function rxRecCli( cPath, cDriver )
 
    local dbfFacCliT
    local dbfFacCliG
 
-   DEFAULT cPath  := cPatEmp()
+   DEFAULT cPath     := cPatEmp()
+   DEFAULT cDriver   := cDriver()
 
-   if !lExistTable( cPath + "FacCliP.Dbf" ) .or. !lExistTable( cPath + "FacCliG.Dbf" ) 
-      mkRecCli( cPath, oMeter, .f. )
-   end if
+   fEraseIndex( cPath + "FACCLIP.CDX", cDriver )
 
-   fEraseIndex( cPath + "FACCLIP.CDX" )
-
-   dbUseArea( .t., cDriver(), cPath + "FACCLIP.DBF", cCheckArea( "FACCLIP", @dbfFacCliT ), .f. )
-
+   dbUseArea( .t., cDriver, cPath + "FACCLIP.DBF", cCheckArea( "FACCLIP", @dbfFacCliT ), .f. )
    if !( dbfFacCliT )->( neterr() )
 
       ( dbfFacCliT )->( __dbPack() )
@@ -4409,9 +4403,9 @@ Function rxRecCli( cPath, oMeter )
 
    // Tabla de grupos de recibos-----------------------------------------------
 
-   fEraseIndex( cPath + "FacCliG.Cdx" )
+   fEraseIndex( cPath + "FacCliG.Cdx", cDriver )
 
-   dbUseArea( .t., cDriver(), cPath + "FacCliG.Dbf", cCheckArea( "FACCLIG", @dbfFacCliG ), .f. )
+   dbUseArea( .t., cDriver, cPath + "FacCliG.Dbf", cCheckArea( "FACCLIG", @dbfFacCliG ), .f. )
 
    if !( dbfFacCliG )->( neterr() )
 
@@ -4445,21 +4439,21 @@ FUNCTION mkRecCli( cPath, oMeter, lReindex )
 
    DEFAULT lReindex  := .t.
 
-   if oMeter != NIL
+   if oMeter != nil
 		oMeter:cText	:= "Generando Bases"
 		sysrefresh()
    end if
 
-   if !lExistTable( cPath + "FacCliP.Dbf" )
-      dbCreate( cPath + "FacCliP.Dbf", aSqlStruct( aItmRecCli() ), cDriver() )
+   if !lExistTable( cPath + "FacCliP.Dbf", cLocalDriver() )
+      dbCreate( cPath + "FacCliP.Dbf", aSqlStruct( aItmRecCli() ), cLocalDriver() )
    end if 
 
-   if !lExistTable( cPath + "FacCliG.Dbf" )
-      dbCreate( cPath + "FacCliG.Dbf", aSqlStruct( aItmGruposRecibos() ), cDriver() )
+   if !lExistTable( cPath + "FacCliG.Dbf", cLocalDriver() )
+      dbCreate( cPath + "FacCliG.Dbf", aSqlStruct( aItmGruposRecibos() ), cLocalDriver() )
    end if
 
    if lReindex
-      rxRecCli( cPath )
+      rxRecCli( cPath, cLocalDriver() )
    end if
 
 RETURN NIL
