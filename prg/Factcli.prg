@@ -17562,15 +17562,13 @@ RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 // Devuelve el total de la venta en Facturas de un clientes determinado
 //
 
-function nVtaFacCli( cCodCli, dDesde, dHasta, cFacCliT, cFacCliL, dbfIva, dbfDiv, nYear )
+function nVtaFacCli( cCodCli, dDesde, dHasta, cFacCliT, cFacCliL, cFacCliP, dbfIva, dbfDiv, nYear )
 
    local nCon     := 0
    local nOrd     := ( cFacCliT )->( OrdSetFocus( "CCODCLI" ) )
    local nRec     := ( cFacCliT )->( Recno() )
 
-   /*
-   Facturas a Clientes -------------------------------------------------------
-   */
+   // Facturas a Clientes -------------------------------------------------------
 
    if ( cFacCliT )->( dbSeek( cCodCli ) )
 
@@ -17580,7 +17578,7 @@ function nVtaFacCli( cCodCli, dDesde, dHasta, cFacCliT, cFacCliL, dbfIva, dbfDiv
             ( dHasta == nil .or. ( cFacCliT )->DFECFAC <= dHasta ) .and.;
             ( nYear == nil .or. Year( ( cFacCliT )->dFecFac ) == nYear )
 
-            nCon  += nTotFacCli( ( cFacCliT )->cSerie + str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac, cFacCliT, cFacCliL, dbfIva, dbfDiv, nil, dbfAntCliT, nil, cDivEmp(), .f. )
+            nCon  += nTotFacCli( ( cFacCliT )->cSerie + str( ( cFacCliT )->nNumFac ) + ( cFacCliT )->cSufFac, cFacCliT, cFacCliL, dbfIva, dbfDiv, cFacCliP, dbfAntCliT, nil, cDivEmp(), .f. )
 
          end if
 

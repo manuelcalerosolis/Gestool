@@ -2142,8 +2142,8 @@ static function TotalFacturasClientes( cCodCli, dbfFacCliT, dbfFacCliL, dbfAntCl
 
          if ( nYear == nil .or. Year( ( dbfFacCliT )->dFecFac ) == nYear )
 
-            nMes                    := Month( ( dbfFacCliT )->dFecFac )
-            a                       := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, nil, dbfAntCliT, cDivEmp() )
+            nMes                    := month( ( dbfFacCliT )->dFecFac )
+            a                       := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, cDivEmp() )
 
             aVta[ nMes, 3 ]         += a[ 4 ]
             aVta[ nMes, 4 ]         += a[ 11 ]
@@ -2299,7 +2299,7 @@ Return ( nVtaFacRec( cCodCli, nil, nil, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, 
 
 Static Function nTotalFacturas( cCodCli, nYear )
 
-Return ( nVtaFacCli( cCodCli, nil, nil, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, nYear ) )
+Return ( nVtaFacCli( cCodCli, nil, nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, nYear ) )
 
 //---------------------------------------------------------------------------//
 
