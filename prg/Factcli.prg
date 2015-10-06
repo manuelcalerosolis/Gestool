@@ -15271,7 +15271,7 @@ CLASS sTotal
    DATA nTotalAgente                   INIT 0
 
    DATA nTotalIva                      INIT 0
-   DATA aTotalIva                      INIT { 0, 0, 0 }
+   DATA aTotalIva
 
    DATA aPorcentajeIva                 INIT { nil, nil, nil }
 
@@ -15328,9 +15328,9 @@ CLASS sTotal
    METHOD nPorcentajeSegundoIva()      INLINE ( ::aTotalIva[ 2, 3 ] )
    METHOD nPorcentajeTercerIva()       INLINE ( ::aTotalIva[ 3, 3 ] )
 
-   METHOD nTotalPrimerIva()            INLINE ( ::aTotalIva[ 1, 8 ] )
-   METHOD nTotalSegundoIva()           INLINE ( ::aTotalIva[ 2, 8 ] )
-   METHOD nTotalTercerIva()            INLINE ( ::aTotalIva[ 3, 8 ] )
+   METHOD nTotalPrimerIva()            INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[1], ::aTotalIva[ 1, 8 ] ) )
+   METHOD nTotalSegundoIva()           INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[2], ::aTotalIva[ 2, 8 ] ) )
+   METHOD nTotalTercerIva()            INLINE ( if( empty( ::aTotalIva ), ::aIvaTik[3], ::aTotalIva[ 3, 8 ] ) )
 
    METHOD TotalIva()                   INLINE ( ::nTotalPrimerIva() + ::nTotalSegundoIva() + ::nTotalTercerIva() )
 

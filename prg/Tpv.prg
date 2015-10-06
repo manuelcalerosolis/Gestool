@@ -19876,8 +19876,6 @@ FUNCTION sTotTikCli( cNumTik, cTikT, cTikL, cDiv, cDivRet )
 
    sTotal:nTotalDescuentoProntoPago       := nTotDpp
 
-   sTotal:aTotalIva                       := aImpTik
-
    sTotal:aBrtTik                         := aBrtTik
    sTotal:aBasTik                         := aBasTik
    sTotal:aIvmTik                         := aIvmTik

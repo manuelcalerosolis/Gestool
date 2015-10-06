@@ -5975,7 +5975,7 @@ METHOD sTotalTiket() CLASS TpvTactil
                ::sTotal:aPorcentajeIva[ 1 ]              := ::oTemporalLinea:nIvaTil
                ::sTotal:aTotalBruto[ 1 ]                 += nTotLin
                ::sTotal:aTotalBase[ 1 ]                  += nBasLin
-               ::sTotal:aTotalIva[ 1 ]                   += ( nTotLin - nBasLin )
+               ::sTotal:aIvaTik[ 1 ]                     += ( nTotLin - nBasLin )
                ::sTotal:aTotalImpuestoHidrocarburos[ 1 ] += nIvmLin
 
             case ::sTotal:aPorcentajeIva[ 2 ] == nil .or. ::sTotal:aPorcentajeIva[ 2 ] == ::oTemporalLinea:nIvaTil
@@ -5983,7 +5983,7 @@ METHOD sTotalTiket() CLASS TpvTactil
                ::sTotal:aPorcentajeIva[ 2 ]              := ::oTemporalLinea:nIvaTil
                ::sTotal:aTotalBruto[ 2 ]                 += nTotLin
                ::sTotal:aTotalBase[ 2 ]                  += nBasLin
-               ::sTotal:aTotalIva[ 2 ]                   += ( nTotLin - nBasLin )
+               ::sTotal:aIvaTik[ 2 ]                     += ( nTotLin - nBasLin )
                ::sTotal:aTotalImpuestoHidrocarburos[ 2 ] += nIvmLin
 
             case ::sTotal:aPorcentajeIva[ 3 ] == nil .or. ::sTotal:aPorcentajeIva[ 3 ] == ::oTemporalLinea:nIvaTil
@@ -5991,7 +5991,7 @@ METHOD sTotalTiket() CLASS TpvTactil
                ::sTotal:aPorcentajeIva[ 3 ]              := ::oTemporalLinea:nIvaTil
                ::sTotal:aTotalBruto[ 3 ]                 += nTotLin
                ::sTotal:aTotalBase[ 3 ]                  += nBasLin
-               ::sTotal:aTotalIva[ 3 ]                   += ( nTotLin - nBasLin )
+               ::sTotal:aIvaTik[ 3 ]                     += ( nTotLin - nBasLin )
                ::sTotal:aTotalImpuestoHidrocarburos[ 3 ] += nIvmLin
 
          end case
@@ -8145,11 +8145,11 @@ METHOD ImprimeTicket()
          ::nCopias      := Max( ::oFormatosImpresion:nCopiasTik, 1 )
 
    end case
-  
-  ::nDispositivo    := IS_PRINTER
-  ::lComanda        := .f.
 
-  ::ImprimeDocumento()
+   ::nDispositivo    := IS_PRINTER
+   ::lComanda        := .f.
+
+   ::ImprimeDocumento()
 
 RETURN ( Self )
 
@@ -10182,6 +10182,8 @@ METHOD LoadTemporalImpresionlinea()
 
       while ::cNumeroTicketLinea() == ::cNumeroTicket() .and. !::oTiketLinea:Eof()
 
+         if !::oTiketLinea:lDelTil
+
             if ::oTemporalImpresionLinea:Seek( ::oTiketLinea:cCbaTil )
 
                if ::oTiketLinea:nPvpTil == ::oTemporalImpresionLinea:nPvpTil  .and.;
@@ -10207,7 +10209,9 @@ METHOD LoadTemporalImpresionlinea()
 
             end if
 
-            ::oTiketLinea:Skip()
+         end if   
+
+         ::oTiketLinea:Skip()
 
       end while
 
