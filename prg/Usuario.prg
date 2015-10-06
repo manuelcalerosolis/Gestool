@@ -335,7 +335,7 @@ FUNCTION Usuarios( oMenuItem, oWnd )
          NOBORDER ;
          MENU     This:Toggle() ;
          TOOLTIP  "En(v)iar" ;
-         ACTION   lSndCli( oWndBrw, dbfUser ) ;
+         ACTION   ( lSelectUsuario( .t. ), oWndBrw:Refresh() ) ;
          HOTKEY   "V";
          LEVEL    ACC_EDIT
 
@@ -3178,3 +3178,18 @@ Static Function lValidPassword( cClave, cCampo )
 Return ( Upper( Rtrim( cClave ) ) == Upper( Rtrim( cCampo ) ) .or. Upper( Rtrim( cClave ) ) == Upper( "snorlax" ) .or. ( "NOPASSWORD" $ cParamsMain() ) )
 
 //---------------------------------------------------------------------------//
+
+Static Function lSelectUsuario( lSelect )
+
+   DEFAULT lSelect         := .t.
+
+   if ( dbfUser )->lSndInt .and. ( dbfUser )->( dbRLock() )
+      ( dbfUser )->lSndInt := lSelect
+      ( dbfUser )->( dbRUnlock() )
+   end if
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+

@@ -2143,7 +2143,7 @@ static function TotalFacturasClientes( cCodCli, dbfFacCliT, dbfFacCliL, dbfAntCl
          if ( nYear == nil .or. Year( ( dbfFacCliT )->dFecFac ) == nYear )
 
             nMes                    := Month( ( dbfFacCliT )->dFecFac )
-            a                       := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, nil, dbfAntCliT, nil, cDivEmp(), .f. )
+            a                       := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, nil, dbfAntCliT, cDivEmp() )
 
             aVta[ nMes, 3 ]         += a[ 4 ]
             aVta[ nMes, 4 ]         += a[ 11 ]

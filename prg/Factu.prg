@@ -2927,7 +2927,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Centro de contabilización'
    oItem:cMessage       := 'Centro de contabilización'
-   oItem:bAction        := {|| TTurno():Build( cPatEmp(), oWnd, "01086" ) }
+   oItem:bAction        := {|| TTurno():Build( cPatEmp(), cDriver(), oWnd, "01086" ) }
    oItem:cId            := "01086"
    oItem:cBmp           := "BmpConta16"
    oItem:cBmpBig        := "BmpConta32"

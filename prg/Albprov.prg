@@ -4889,8 +4889,7 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
 
             aTmp[ _NPVPREC ]        := nCnv2Div( ( D():Articulos( nView ) )->PvpRec, cDivEmp(), aTmpAlb[ _CDIVALB ] )
 
-            /*
-            Situacion posterior------------------------------------------------
+            // Situacion posterior------------------------------------------------
 
             aGet[ _NBNFLIN1 ]:cText( ( D():Articulos( nView ) )->Benef1 )
             aGet[ _NBNFLIN2 ]:cText( ( D():Articulos( nView ) )->Benef2 )
@@ -4926,11 +4925,8 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             oBeneficioSobre[ 4 ]:Select( Max( ( D():Articulos( nView ) )->nBnfSbr4, 1 ) )
             oBeneficioSobre[ 5 ]:Select( Max( ( D():Articulos( nView ) )->nBnfSbr5, 1 ) )
             oBeneficioSobre[ 6 ]:Select( Max( ( D():Articulos( nView ) )->nBnfSbr6, 1 ) )
-            */
 
-            /*
-            Guardamos el precio de costo para posteriores comprobaciones
-            */
+            // Guardamos el precio de costo para posteriores comprobaciones
 
             nPreCos  := nCnv2Div( ( D():Articulos( nView ) )->pCosto, cDivEmp(), aTmpAlb[ _CDIVALB ] )
 

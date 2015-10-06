@@ -678,9 +678,10 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
@@ -694,6 +695,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    end if
 
    ::cPath                    := cPath
+   ::cDriver                  := cDriver
    ::oWndParent               := oWndParent
 
    ::oDbf                     := nil
@@ -752,9 +754,10 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Build( cPath, oWnd, oMenuItem )
+METHOD Build( cPath, cDriver, oWnd, oMenuItem )
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
    DEFAULT oWnd         := GetWndFrame()
 
    if !Empty( oWnd )
@@ -774,6 +777,7 @@ METHOD Build( cPath, oWnd, oMenuItem )
    end if
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
    ::oWndParent         := oWnd
    ::oDbf               := nil
 
@@ -971,23 +975,22 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive, cPath )
+METHOD OpenService( lExclusive )
 
    local lOpen          := .t.
    local oError
    local oBlock
 
    DEFAULT lExclusive   := .f.
-   DEFAULT cPath        := ::cPath
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::DefineFiles( cPath )
+      ::DefineFiles()
 
-      ::oDbf:Activate(        .f., !( lExclusive ) )
-      ::oDbfCaj:Activate(     .f., !( lExclusive ) )
-      ::oDbfDet:Activate(     .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbfCaj:Activate( .f., !( lExclusive ) )
+      ::oDbfDet:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
@@ -1005,11 +1008,12 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
-METHOD DefineFiles( cPath )
+METHOD DefineFiles( cPath, cDriver )
 
    DEFAULT cPath        := ::cPath
+   DEFAULT cDriver      := ::cDriver
 
-   DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( cPath ) VIA ( cDriver() ) COMMENT  "Sesiones"
+   DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Sesiones"
 
       FIELD NAME "lSndTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
       FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "Lbl16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
@@ -1041,7 +1045,7 @@ METHOD DefineFiles( cPath )
                   
    END DATABASE ::oDbf
 
-   DEFINE DATABASE ::oDbfCaj FILE "TURNOC.DBF" CLASS "TurnoC" ALIAS "TurnoC" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Cajas por sesiones"
+   DEFINE DATABASE ::oDbfCaj FILE "TURNOC.DBF" CLASS "TurnoC" ALIAS "TurnoC" PATH ( cPath ) VIA ( cDriver ) COMMENT "Cajas por sesiones"
 
       FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT ""                                                  OF ::oDbfCaj
       FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT ""                                                  OF ::oDbfCaj
@@ -1078,7 +1082,7 @@ METHOD DefineFiles( cPath )
    Chequa la concordancia entre estructuras------------------------------------
    */
 
-   DEFINE DATABASE ::oDbfDet FILE "TURNOL.DBF" CLASS "TurnoL" ALIAS "TurnoL" PATH ( cPath ) VIA ( cDriver() ) COMMENT  "Lineas de contadores en turnos de venta"
+   DEFINE DATABASE ::oDbfDet FILE "TURNOL.DBF" CLASS "TurnoL" ALIAS "TurnoL" PATH ( cPath ) VIA ( cDriver ) COMMENT  "Lineas de contadores en turnos de venta"
 
       FIELD NAME "cNumTur" TYPE "C" LEN  6   DEC 0 COMMENT "Número"                          PICTURE "######"  OF ::oDbfDet
       FIELD NAME "cSufTur" TYPE "C" LEN  2   DEC 0 COMMENT "Sufijo"                                            OF ::oDbfDet
@@ -1091,7 +1095,7 @@ METHOD DefineFiles( cPath )
       FIELD NAME "nIvaArt" TYPE "N" LEN  5   DEC 2 COMMENT "Porcentaje de " + cImp() + " del artículo"         OF ::oDbfDet
       FIELD NAME "nValImp" TYPE "N" LEN 16   DEC 6 COMMENT "Importe de impuesto especial"    PICTURE ::cPouDiv OF ::oDbfDet
 
-      INDEX TO "Turnol.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur + cCodCaj + cCodArt" FOR "!Deleted()"  OF ::oDbfDet
+      INDEX TO "Turnol.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur + cCodCaj + cCodArt" FOR "!Deleted()"          OF ::oDbfDet
 
    END DATABASE ::oDbfDet
 
@@ -7394,14 +7398,14 @@ Method CreateData()
    local oTurnoTmp
    local cFileName   := "Tur" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
 
-   oTurno            := TTurno():Create( cPatEmp() )
+   oTurno            := TTurno():Create( cPatEmp(), cDriver() )
    oTurno:OpenService()
 
    /*
    Creamos todas las bases de datos relacionadas con Articulos
    */
 
-   oTurnoTmp         := TTurno():Create( cPatSnd() )
+   oTurnoTmp         := TTurno():Create( cPatSnd(), cLocalDriver() )
    oTurnoTmp:OpenService( .t. )
 
    /*
@@ -7572,10 +7576,10 @@ Method Process()
 
          if file( cPatSnd() + "Turno.Dbf" )
 
-            oTurnoTmp   := TTurno():New( cPatSnd() )
-            oTurnoTmp:OpenService( .f., .t. )
+            oTurnoTmp   := TTurno():Create( cPatSnd(), cLocalDriver() )
+            oTurnoTmp:OpenService( .f. )
 
-            oTurno      := TTurno():New( cPatEmp() )
+            oTurno      := TTurno():Create( cPatEmp(), cDriver() )
             oTurno:OpenService()
 
             /*
@@ -11380,7 +11384,7 @@ Return ( .t. )
 
 //------------------------------------------------------------------------//
 
-Method cBancoCuenta( uRctCli )
+Method cBancoCuenta( uRctCli ) 
 
    local cBanco      := ""
    local cCuenta     := ""
@@ -11477,16 +11481,14 @@ FUNCTION Turnos( oMenuItem, oWnd )
    DEFAULT  oMenuItem   := "01002"
    DEFAULT  oWnd        := oWnd()
 
-   /*
-   Cerramos todas las ventanas
-   */
+   // Cerramos todas las ventanas----------------------------------------------
 
    if !Empty( oWnd )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
       oWnd:Disable()
    end if
 
-   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
+   oTurno               := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )
    if !Empty( oTurno ) .and. oTurno:lAccess
       if oTurno:OpenFiles()
          oTurno:Activate()
@@ -11533,7 +11535,7 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
 
    DisableMainWnd( oWnd )
 
-   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
+   oTurno               := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )
 
    if !Empty( oTurno ) .and. oTurno:lCreated
 
@@ -11579,7 +11581,7 @@ FUNCTION Arqueos( oMenuItem, oWnd )
       oWnd:Disable()
    end if
 
-   oTurno               := TTurno():New( cPatEmp(), oWnd, oMenuItem )
+   oTurno               := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )
 
    if !Empty( oTurno ) .and. oTurno:lCreated
       if oTurno:OpenFiles()
@@ -11630,7 +11632,7 @@ Function ChkTurno( oMenuItem, oWnd )
 
    local oTurno
 
-   oTurno         := TTurno():New( cPatEmp(), oWnd, oMenuItem )   
+   oTurno         := TTurno():New( cPatEmp(), cDriver(), oWnd, oMenuItem )   
 
    if !Empty( oTurno )
 

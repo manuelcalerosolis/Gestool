@@ -19317,25 +19317,13 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cCodPago", "cCodPago", {|| Field->cCodPago } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CCODRUT", "CCODRUT", {|| Field->CCODRUT } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CDOCORG", "CDOCORG", {|| Field->CDOCORG } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CAGEFEC", "CCODAGE + DtoS( DFECFAC )", {|| Field->CCODAGE + DtoS( Field->DFECFAC ) } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "NNUMLIQ", "str( NNUMLIQ ) + CSUFLIQ", {|| str( Field->NNUMLIQ ) + Field->CSUFLIQ } ) )
 
-      ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "CABNFAC", "CABNFAC", {|| Field->CABNFAC } ) )
-
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted()  } ))
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
-
-      ( cFacCliT )->( ordCondSet("!Deleted() .and. lSndDoc", {|| !Deleted() .and. Field->lSndDoc }  ) )
-      ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "SndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
       ( cFacCliT )->( ordCondSet("!Deleted()", {|| !Deleted() } ))
       ( cFacCliT )->( ordCreate( cPath + "FACCLIT.CDX", "cNumDoc", "cNumDoc", {|| Field->cNumDoc } ) )
@@ -22056,7 +22044,7 @@ Method Process()
                  	   ( dbfFacCliT )->( dbUnLock() )
                	end if
 
-               	::oSender:SetText( "Añadida factura     : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+               	::oSender:SetText( "Añadida factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
 
                	if ( tmpFacCliL )->( dbSeek( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
                     	while ( tmpFacCliL )->cSerie + str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac .and. !( tmpFacCliL )->( eof() )
@@ -22188,6 +22176,7 @@ Method Process()
                   */
 
                   if !( dbfAntCliT )->( dbSeek( ( tmpAntCliT )->CSERANT + str( ( tmpAntCliT )->NNUMANT ) + ( tmpAntCliT )->CSUFANT ) )
+                     
                      dbPass( tmpAntCliT, dbfAntCliT, .t. )
 
                      if lClient .and. dbLock( dbfAntCliT )
@@ -22196,7 +22185,9 @@ Method Process()
                      end if
 
                      ::oSender:SetText( "Añadido : " + ( tmpAntCliT )->cSerAnt + "/" + AllTrim( str( ( tmpAntCliT )->NNUMANT ) ) + "/" + AllTrim( ( tmpAntCliT )->CSUFANT ) + "; " + Dtoc( ( tmpAntCliT )->DFECANT ) + "; " + Alltrim( ( tmpAntCliT )->cCodCli ) + "; " + ( tmpAntCliT )->cNomCli )
+                  
                   else
+                     
                      if dbLock( dbfAntCliT )
                         ( dbfAntCliT )->lLiquidada := ( tmpAntCliT )->lLiquidada
                         ( dbfAntCliT )->dLiquidada := ( tmpAntCliT )->dLiquidada
@@ -22205,6 +22196,7 @@ Method Process()
                      end if
 
                      ::oSender:SetText( "Actualizado : " + ( tmpAntCliT )->cSerAnt + "/" + AllTrim( str( ( tmpAntCliT )->NNUMANT ) ) + "/" + AllTrim( ( tmpAntCliT )->CSUFANT ) + "; " + Dtoc( ( tmpAntCliT )->DFECANT ) + "; " + Alltrim( ( tmpAntCliT )->cCodCli ) + "; " + ( tmpAntCliT )->cNomCli )
+                  
                   end if
 
                   SysRefresh()

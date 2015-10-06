@@ -1137,28 +1137,22 @@ METHOD Activate( lAlone ) CLASS TpvTactil
 
    ::oTpvUtilidadesMesa       := TpvUtilidadesMesa():New( Self )
 
-   ::oTurno                   := TTurno():New( cPatEmp(), oWnd(), "01001" )
+   ::oTurno                   := TTurno():New( cPatEmp(), cDriver(), oWnd(), "01001" )
 
    if lFamInTpv( ::oFamilias:cAlias )
 
       ::lAlone       := lAlone
       ::lGetUsuario  := !lAlone
 
-      /*
-      Creamos las base de datos temporales-------------------------------------
-      */
+      // Creamos las base de datos temporales-------------------------------------
 
       ::CreateTemporal()
 
-      /*
-      Cargamos el Array de Familias--------------------------------------------
-      */
+      // Cargamos el Array de Familias--------------------------------------------
 
       ::CargaBrowseFamilias()
 
-      /*
-      Inicializa los valores para el documento---------------------------------
-      */
+      // Inicializa los valores para el documento---------------------------------
 
       ::InitDocumento( ubiGeneral )
 

@@ -160,7 +160,7 @@ CLASS TRemMovAlm FROM TMasDet
    DATA  oDetMovimientos
    DATA  oDetSeriesMovimientos
 
-   Method New( cPath, oWndParent, oMenuItem )   CONSTRUCTOR
+   Method New( cPath, cDriver, oWndParent, oMenuItem )   CONSTRUCTOR
 
    Method Initiate( cText, oSender )            CONSTRUCTOR
 
@@ -245,15 +245,17 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem ) CLASS TRemMovAlm
+METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TRemMovAlm
 
    DEFAULT cPath           := cPatEmp()
+   DEFAULT cDriver         := cDriver()
    DEFAULT oWndParent      := oWnd()
    DEFAULT oMenuItem       := "01050"
 
    ::nLevel                := nLevelUsr( oMenuItem )
 
    ::cPath                 := cPath
+   ::cDriver               := cDriver
    ::oWndParent            := oWndParent
    ::oDbf                  := nil
 
@@ -267,11 +269,10 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TRemMovAlm
    ::bFirstKey             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
    ::bWhile                := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDetMovimientos:oDbf:nNumRem, 9 ) + ::oDetMovimientos:oDbf:cSufRem .and. !::oDetMovimientos:oDbf:Eof() }
 
+   ::oDetMovimientos       := TDetMovimientos():New( cPath, cDriver, Self )
+   ::addDetail( ::oDetMovimientos )
 
-   ::oDetMovimientos       := TDetMovimientos():New( cPath, Self )
-   ::AddDetail( ::oDetMovimientos )
-
-   ::oDetSeriesMovimientos := TDetSeriesMovimientos():New( cPath, Self )
+   ::oDetSeriesMovimientos := TDetSeriesMovimientos():New( cPath, cDriver, Self )
    ::AddDetail( ::oDetSeriesMovimientos )
 
    ::oDetSeriesMovimientos:bOnPreSaveDetail  := {|| ::oDetSeriesMovimientos:SaveDetails() }
@@ -302,7 +303,7 @@ RETURN ( Self )
 METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
 
    DEFINE DATABASE ::oDbf FILE "REMMOVT.DBF" CLASS "TRemMovT" ALIAS "RemMovT" PATH ( cPath ) VIA ( cDriver ) COMMENT "Movimientos de almacén"
 
@@ -335,7 +336,6 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TRemMovAlm
 RETURN ( ::oDbf )
 
 //---------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------//
 //
 // Campos calculados
@@ -951,8 +951,6 @@ METHOD OpenService( lExclusive, cPath ) CLASS TRemMovAlm
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   ::CloseFiles()
 
 RETURN ( lOpen )
 
@@ -1726,23 +1724,19 @@ Method CreateData() CLASS TRemMovAlm
 
    ::oSender:SetText( "Enviando movimientos de almacén" )
 
-   oRemMov           := TRemMovAlm():New( cPatEmp() )
+   oRemMov           := TRemMovAlm():New( cPatEmp(), cDriver() )
    oRemMov:OpenService()
 
    oRemMov:oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
 
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-   */
+   // Creamos todas las bases de datos relacionadas con Articulos
 
-   oRemMovTmp        := TRemMovAlm():New( cPatSnd() )
+   oRemMovTmp        := TRemMovAlm():New( cPatSnd(), cLocalDriver() )
    oRemMovTmp:OpenService()
 
    oRemMovTmp:oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
 
-   /*
-   Creamos todas las bases de datos relacionadas con Articulos
-   */
+   // Creamos todas las bases de datos relacionadas con Articulos
 
    while !oRemMov:oDbf:eof()
 
@@ -1752,9 +1746,9 @@ Method CreateData() CLASS TRemMovAlm
 
          dbPass( oRemMov:oDbf:nArea, oRemMovTmp:oDbf:nArea, .t. )
 
-         ::oSender:SetText( Str( oRemMov:oDbf:nNumRem, 9 ) + "/" + oRemMov:oDbf:cSufRem )
+         ::oSender:SetText( alltrim( str( oRemMov:oDbf:nNumRem, 9 ) ) + "/" + oRemMov:oDbf:cSufRem )
 
-         if oRemMov:oDetMovimientos:oDbf:Seek( Str( oRemMov:oDbf:nNumRem, 9 ) + oRemMov:oDbf:cSufRem )
+         if oRemMov:oDetMovimientos:oDbf:Seek( str( oRemMov:oDbf:nNumRem, 9 ) + oRemMov:oDbf:cSufRem )
 
             while Str( oRemMov:oDbf:nNumRem, 9 ) + oRemMov:oDbf:cSufRem == Str( oRemMov:oDetMovimientos:oDbf:nNumRem, 9 ) + oRemMov:oDetMovimientos:oDbf:cSufRem .and. !oRemMov:oDetMovimientos:oDbf:Eof()
                dbPass( oRemMov:oDetMovimientos:oDbf:nArea, oRemMovTmp:oDetMovimientos:oDbf:nArea, .t. )
@@ -1928,12 +1922,12 @@ Method Process() CLASS TRemMovAlm
 
          if file( cPatSnd() + "RemMovT.Dbf" )
 
-            oRemMovTmp        := TRemMovAlm():New( cPatSnd() )
+            oRemMovTmp        := TRemMovAlm():New( cPatSnd(), cLocalDriver() )
             oRemMovTmp:OpenService( .f. )
 
             oRemMovTmp:oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
 
-            oRemMov           := TRemMovAlm():New( cPatEmp() )
+            oRemMov           := TRemMovAlm():New( cPatEmp(), cDriver() )
             oRemMov:OpenService()
 
             oRemMov:oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
@@ -2286,7 +2280,7 @@ METHOD DeleteDet() CLASS TRemMovAlm
    if nMarked > 1
       cTxtDel        := "¿ Desea eliminar definitivamente " + AllTrim( Str( nMarked, 3 ) ) + " registros ?"
    else
-      cTxtDel        := "¿Desea eliminar el registro en curso?"
+      cTxtDel        := "¿ Desea eliminar el registro en curso ?"
    end if
 
    if oUser():lNotConfirmDelete() .or.  ApoloMsgNoYes(cTxtDel, "Confirme supersión" )
@@ -2689,7 +2683,7 @@ FUNCTION RemMovAlm( oMenuItem, oWnd )
 
       AddMnuNext( "Movimientos de almacén", ProcName() )
 
-      oRemesas          := TRemMovAlm():New( cPatEmp(), oWnd, oMenuItem )
+      oRemesas          := TRemMovAlm():New( cPatEmp(), cDriver(), oWnd, oMenuItem )
       if !Empty( oRemesas )
          oRemesas:Play()
       end if
@@ -3537,20 +3531,20 @@ END CLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
+METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimientos
 
    local oDbf
 
    DEFAULT cPath        := ::cPath
+   DEFAULT cDriver      := ::cDriver
    DEFAULT lUniqueName  := .f.
    DEFAULT cFileName    := "HisMov"
-   DEFAULT cVia         := cDriver()
 
    if lUniqueName
       cFileName         := cGetNewFileName( cFileName, , , cPatTmp() )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS "HisMov" ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia )
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS "HisMov" ALIAS ( cFileName ) PATH ( cPath ) VIA ( cDriver )
 
       FIELD NAME "dFecMov"    TYPE "D" LEN   8 DEC 0 COMMENT "Fecha movimiento"                    OF oDbf
       FIELD NAME "cTimMov"    TYPE "C" LEN   6 DEC 0 COMMENT "Hora movimiento"                     OF oDbf
@@ -3615,7 +3609,7 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive, cPath ) CLASS TDetMovimientos
+METHOD OpenFiles( lExclusive) CLASS TDetMovimientos
 
    local lOpen             := .t.
    local oBlock
@@ -3626,7 +3620,7 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS TDetMovimientos
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::oDbf            := ::DefineFiles( cPath )
+         ::oDbf            := ::DefineFiles()
       end if
 
       ::oDbf:Activate( .f., !lExclusive )
@@ -3678,8 +3672,6 @@ METHOD Reindexa() CLASS TDetMovimientos
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-
 /*
 Edita las lineas de Detalle
 */
@@ -5087,20 +5079,20 @@ END CLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetSeriesMovimientos
+METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetSeriesMovimientos
 
    local oDbf
 
    DEFAULT cPath        := ::cPath
+   DEFAULT cDriver      := ::cDriver
    DEFAULT lUniqueName  := .f.
    DEFAULT cFileName    := "MovSer"
-   DEFAULT cVia         := cDriver()
 
    if lUniqueName
       cFileName         := cGetNewFileName( cFileName, , , cPath )
    end if
 
-   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cVia ) COMMENT "Números de serie de movimientos de almacen"
+   DEFINE TABLE oDbf FILE ( cFileName ) CLASS ( cFileName ) ALIAS ( cFileName ) PATH ( cPath ) VIA ( cDriver ) COMMENT "Números de serie de movimientos de almacen"
 
       FIELD NAME "nNumRem"    TYPE "N" LEN  9  DEC 0 PICTURE "999999999"                        HIDE        OF oDbf
       FIELD NAME "cSufRem"    TYPE "C" LEN  2  DEC 0 PICTURE "@!"                               HIDE        OF oDbf
@@ -5322,7 +5314,7 @@ Function AppMovimientosAlmacen()
 
    local oRemMovAlm
 
-   oRemMovAlm           := TRemMovAlm():New( cPatEmp() )
+   oRemMovAlm           := TRemMovAlm():New()
 
    if oRemMovAlm:OpenFiles()
 
@@ -5344,7 +5336,7 @@ Function EditMovimientosAlmacen( cNumParte, oBrw )
 
    local oRemMovAlm
 
-   oRemMovAlm           := TRemMovAlm():New( cPatEmp() )
+   oRemMovAlm           := TRemMovAlm():New()
 
    if oRemMovAlm:OpenFiles()
 
@@ -5371,7 +5363,7 @@ function ZoomMovimientosAlmacen( cNumParte, oBrw )
 
    local oRemMovAlm
 
-   oRemMovAlm           := TRemMovAlm():New( cPatEmp() )
+   oRemMovAlm           := TRemMovAlm():New()
 
    if oRemMovAlm:OpenFiles()
 
@@ -5398,7 +5390,7 @@ function DelMovimientosAlmacen( cNumParte, oBrw )
 
    local oRemMovAlm
 
-   oRemMovAlm           := TRemMovAlm():New( cPatEmp() )
+   oRemMovAlm           := TRemMovAlm():New()
 
    if oRemMovAlm:OpenFiles()
 
@@ -5427,7 +5419,7 @@ function PrnMovimientosAlmacen( cNumParte )
 
    local oRemMovAlm
 
-   oRemMovAlm           := TRemMovAlm():New( cPatEmp() )
+   oRemMovAlm           := TRemMovAlm():New()
 
    if oRemMovAlm:OpenFiles()
 
@@ -5456,7 +5448,7 @@ function VisMovimientosAlmacen( cNumParte )
 
    local oRemMovAlm
 
-   oRemMovAlm           := TRemMovAlm():New( cPatEmp() )
+   oRemMovAlm           := TRemMovAlm():New()
 
    if oRemMovAlm:OpenFiles()
 
