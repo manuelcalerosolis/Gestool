@@ -452,6 +452,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
    local oPdf
    local oMail
    local oRotor
+   local oScript
    local oBtnEur
    local nLevel
    local LabelGeneratorPedidoProveedores
@@ -855,6 +856,13 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
+
+   DEFINE BTNSHELL oScript RESOURCE "Folder_document_" GROUP OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( oScript:Expand() ) ;
+      TOOLTIP  "Scripts" ;
+
+      ImportScript( oWndBrw, oScript, "PedidosProveedores" )
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;

@@ -832,8 +832,18 @@ METHOD getTarifa()
    local n
 
    for n := 1 to NUMERO_TARIFAS
-      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) ) .and. alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == ::VarGet()
-         Return ( n )
+
+      if uFieldEmpresa( "lShwTar" + alltrim( str( n ) ) )
+         if !Empty( alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ))
+            if alltrim( uFieldEmpresa( "cTxtTar" + alltrim( str( n ) ) ) ) == ::VarGet()
+               Return ( n )
+            end if 
+         else
+            if ( 'Precio ' + alltrim( str( n ) ) ) == ::VarGet()
+               Return( n )
+            end if 
+         end if
+
       endif
    next
 
