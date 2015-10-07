@@ -1,185 +1,54 @@
-#include "c:\fw195\gestool\bin\include\Factu.ch"
-
-static dbfProvee
-static dbfArticulo
-static dbfCodebar
-static dbfIva
-static dbfFabricantes
-static dbfTipArt
-static dbfArtPrv
-static lOpenFiles       := .f.
-static nLineaComienzo   := 2
+#include "Factu.ch"
+#include "FiveWin.Ch"
 
 //---------------------------------------------------------------------------//
 
-function InicioHRB()
+function PedidosProveedores()
 
-   local cDirOrigen
-   local aDirectorio
+   local cFichero
 
-   /*
-   Abrimos los ficheros necesarios---------------------------------------------
-   */
+   cFichero := ImportarPedidosProveedor():GetFile()
 
-   if !OpenFiles( .f. )
-      return .f.
-   end if
+   msgalert( cFichero, "cFichero")
 
-   CursorWait()
+   ImportarPedidosProveedor():ReadFile( cFichero )
    
-   if ImportaArticulos()
-      Msginfo( "Importación realizada con éxito" )
-   else
-      Msginfo( "No se han importado datos")
-   end if
-
-   CursorWe()
-
-   /*
-   Cerramos los ficheros abiertos anteriormente--------------------------------
-   */
-
-   CloseFiles()
-
+   msgalert( "terminado" )
+   
 return .t.
 
 //---------------------------------------------------------------------------//
 
-static function OpenFiles()
+CLASS ImportarPedidosProveedor
 
-   local oError
-   local oBlock
+   METHOD GetFile()
+   METHOD ReadFile( cFichero )
 
-   if lOpenFiles
-      MsgStop( 'Imposible abrir ficheros' )
-      Return ( .f. )
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+METHOD GetFile() CLASS ImportarPedidosProveedor
+
+   local cFichero
+
+   cFichero  := cGetFile( ".xls,xlsx | *.xls; *.xlsx", "Seleccione el fichero a importar", "*.xls; *.xlsx" , , .f.)
+
+   if empty(cFichero)
+      Return ( "No se encuentra el fichero")
    end if
 
-   CursorWait()
 
-   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
 
-      lOpenFiles  := .t.
-
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
-      SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "TipArt.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TipArt", @dbfTipArt ) )
-      SET ADSINDEX TO ( cPatArt() + "TipArt.Cdx" ) ADDITIVE
-
-      USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() )   SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
-      SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" )   ADDITIVE
-
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "Fabricantes.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Fabricantes", @dbfFabricantes ) )
-      SET ADSINDEX TO ( cPatArt() + "Fabricantes.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
-   
-   RECOVER USING oError
-
-      lOpenFiles           := .f.
-
-      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos' )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !lOpenFiles
-      CloseFiles()
-   end if
-
-   CursorWE()
-
-return ( lOpenFiles )
-
-//--------------------------------------------------------------------------//
-
-static function CloseFiles()
-
-   if dbfArticulo != nil
-      ( dbfArticulo )->( dbCloseArea() )
-   end if
-
-   if dbfCodebar != nil
-      ( dbfCodebar )->( dbCloseArea() )
-   end if 
-
-   if dbfTipArt != nil
-      ( dbfTipArt )->( dbCloseArea() )
-   end if 
-
-   if dbfProvee != nil
-      ( dbfProvee )->( dbCloseArea() )
-   end if
-
-   if dbfIva != nil
-      ( dbfIva )->( dbCloseArea() )
-   end if
-
-   if dbfFabricantes != nil
-      ( dbfFabricantes )->( dbCloseArea() )
-   end if
-
-   if dbfArtPrv != nil
-      ( dbfArtPrv )->( dbCloseArea() )
-   end if
-   
-   dbfArticulo    := nil
-   dbfCodebar     := nil
-   dbfProvee      := nil
-   dbfIva         := nil
-   dbfFabricantes := nil 
-   dbfArtPrv      := nil
-
-   lOpenFiles     := .f.
-
-RETURN ( .t. )
+Return( cFichero)
 
 //----------------------------------------------------------------------------//
 
-static function ImportaArticulos()
+METHOD ReadFile( cFichero ) CLASS ImportarPedidosProveedor
 
-   local n
-
-   local oBlock
-   local oError
    local oOleExcel
-   local cFabricante := ""
-   local cCodigoArticulo
-   local cCodBarFab := ""
-   local cFichero
-   local nOrdAntCode
-   local nOrdAntArtPrv 
 
-   CursorWait()
-
-   cFichero  := cGetFile( "All | *.*", "Seleccione el fichero a importar", "*.*" , , .f.)
-
-   if empty(cFichero)
-      Return .f.
-   else 
-
-      /*
-      Control de errores-------------------------------------------------------
-      */
-
-      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
-      
-      /*
-      Creamos el objeto oOleExcel----------------------------------------------
-      */
-
-      oOleExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
+   oOleExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
 
       oOleExcel:oExcel:Visible         := .f.
       oOleExcel:oExcel:DisplayAlerts   := .f.
@@ -187,19 +56,15 @@ static function ImportaArticulos()
 
       oOleExcel:oExcel:WorkSheets( 1 ):Activate()   //Hojas de la hoja de calculo
 
-      /*
-      Recorremos la hoja de cálculo--------------------------------------------
-      */
+   /*
+   Si no encontramos mas líneas nos salimos------------------------------
+   */
 
-      SysRefresh()  
+      for n := 1 to 6
 
-   RECOVER USING oError      
+         msgalert( oOleExcel:oExcel:ActiveSheet:Range( "A" + lTrim( Str( n ) ) ):Value)
 
-      msgStop( ErrorMessage( oError ), 'Imposible importar los datos' )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+      next
 
    /*
    Cerramos la conexion con el objeto oOleExcel-----------------------------
@@ -213,11 +78,5 @@ static function ImportaArticulos()
 
    oOleExcel:End()
 
-   end if
-
-   CursorWE()
-
 Return .t.
 
-//------------------------------------------------------------------------
-
