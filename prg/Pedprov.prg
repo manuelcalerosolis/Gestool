@@ -862,7 +862,7 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       ACTION   ( oScript:Expand() ) ;
       TOOLTIP  "Scripts" ;
 
-      ImportScript( oWndBrw, oScript, "PedidosProveedores" )
+      ImportScript( oWndBrw, oScript, "PedidosProveedores", nView )
 
    DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
       NOBORDER ;

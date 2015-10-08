@@ -2152,12 +2152,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          RESOURCE "Symbol_euro_48" ;
          TRANSPARENT ;
          OF       fldPrecios
-
+/*
    REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ] ;
       ID       820 ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       OF       fldPrecios
-
+*/
    REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
       ID       800;
