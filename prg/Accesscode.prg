@@ -11,8 +11,10 @@
 
 CLASS AccessCode
 
-   CLASSDATA   cAgente
-   CLASSDATA   cRuta
+   CLASSDATA   cAgente           INIT space( 3 )
+   CLASSDATA   cRuta             INIT space( 4 )
+   CLASSDATA   lFilterByAgent    INIT .f.
+   CLASSDATA   lInvoiceModify    INIT .f.
    
    DATA  oDlg
    DATA  oDlgConnect
@@ -65,7 +67,7 @@ CLASS AccessCode
    METHOD InitResource()
    METHOD EndResource( oDlg )
 
-   METHOD FileResource()
+   METHOD loadTableConfiguration()
 
    METHOD TactilResource()
    METHOD InitTactilResource( oDlg, oImgUsr, oLstUsr, dbfUsr )
@@ -251,7 +253,7 @@ RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
-METHOD FileResource( oDlg ) CLASS AccessCode
+METHOD loadTableConfiguration() CLASS AccessCode
 
    local cTag
 
@@ -263,10 +265,14 @@ METHOD FileResource( oDlg ) CLASS AccessCode
       cTag           += right( cParamsMain(), 1 )
    end if 
 
-   ::cGetUser        := GetPvProfString( cTag, "User",       "",   FullCurDir() + "GstApolo.Ini" )
-   ::cGetPassword    := GetPvProfString( cTag, "Password",   "",   FullCurDir() + "GstApolo.Ini" )
-   ::cAgente         := GetPvProfString( cTag, "Agente",     "",   FullCurDir() + "GstApolo.Ini" )
-   ::cRuta           := GetPvProfString( cTag, "Ruta",       "",   FullCurDir() + "GstApolo.Ini" )
+   ::cGetUser        := getPvProfString( cTag, "User",               "",      ::cIniFile )
+   ::cGetPassword    := getPvProfString( cTag, "Password",           "",      ::cIniFile )
+   ::cAgente         := getPvProfString( cTag, "Agente",             "",      ::cIniFile )
+   ::cRuta           := getPvProfString( cTag, "Ruta",               "",      ::cIniFile )
+   ::lInvoiceModify  := getPvProfString( cTag, "ModificarFactura",   ".t.",   ::cIniFile )
+   ::lInvoiceModify  := lower( ::lInvoiceModify ) == ".t."
+   ::lFilterByAgent  := getPvProfString( cTag, "FiltrarAgente",      ".f.",   ::cIniFile )
+   ::lFilterByAgent  := lower( ::lFilterByAgent ) == ".t."
 
    if empty( ::cGetUser ) 
       apoloMsgStop( "Código de usuario esta vacio")
@@ -285,7 +291,6 @@ METHOD FileResource( oDlg ) CLASS AccessCode
 Return ( .f. )
 
 //--------------------------------------------------------------------------//
-
 
 METHOD InitResource( oDlg ) CLASS AccessCode
 

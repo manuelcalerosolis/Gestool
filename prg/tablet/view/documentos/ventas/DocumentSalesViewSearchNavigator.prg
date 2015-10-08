@@ -34,6 +34,13 @@ METHOD setColumns() CLASS DocumentSalesViewSearchNavigator
    end with
 
    with object ( ::addColumn() )
+      :cHeader           := "Agente"
+      :bEditValue        := {|| ::getField( "Agente" ) }
+      :nWidth            := 100
+      :lHide             := .t.
+   end with
+
+   with object ( ::addColumn() )
       :cHeader           := "Base"
       :bEditValue        := {|| ::getField( "TotalNeto" ) }
       :cEditPicture      := cPorDiv()

@@ -256,7 +256,7 @@ function Main( ParamsMain, ParamsSecond )
 
       case ( "TABLET" $ cParamsMain )
          
-         if AccessCode():FileResource()
+         if AccessCode():loadTableConfiguration()
             CreateMainTabletWindow( oIconApp )
          end if
 
@@ -5870,14 +5870,13 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//--------------PDA ROCIO----------------------------------------------------//
 
 Function MainTablet()
 
 	local oDlg
    local nRow           
    local oGridTree
-   local cAgente        := GetPvProfString( "Tablet", "Agente", "",   FullCurDir() + "GstApolo.Ini" )
+   local cAgente        := GetPvProfString( "Tablet", "Agente", "", FullCurDir() + "GstApolo.Ini" )
 
    nRow                 := 0
    oDlg                 := TDialog():New( 1, 5, 40, 100, "GESTOOL TABLET",,, .f., nOR( DS_MODALFRAME, WS_POPUP, WS_CAPTION, WS_SYSMENU, WS_MINIMIZEBOX, WS_MAXIMIZEBOX ),, rgb( 255, 255, 255 ),,, .F.,, oGridFont(),,,, .f.,, "oDlg" )  
@@ -5955,7 +5954,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_clipboard_empty_user1_64",;
-                           "bLClicked" => {|| OrderCustomer():New():runNavigator() },;
+                           "bLClicked" => {|| OrderCustomer():New():Play() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 6 ) },;
@@ -5967,7 +5966,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| OrderCustomer():New():runNavigator() } } )
+                           "bAction"   => {|| OrderCustomer():New():Play() } } )
 
    //----------------Resumen diario
 
@@ -5976,7 +5975,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_about_64",;
-                           "bLClicked" => {|| DailySummarySales():New():runNavigator() },;
+                           "bLClicked" => {|| DailySummarySales():New():Play() },;
                            "oWnd"      => oDlg } )
 
    //----------------Albaranes de clientes
@@ -5986,7 +5985,7 @@ Function MainTablet()
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "document_plain_user1_64",;
-                           "bLClicked" => {|| DeliveryNoteCustomer():New():runNavigator() },;
+                           "bLClicked" => {|| DeliveryNoteCustomer():New():Play() },;
                            "oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 9 ) },;
@@ -5998,7 +5997,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| DeliveryNoteCustomer():New():runNavigator() } } )
+                           "bAction"   => {|| DeliveryNoteCustomer():New():Play() } } )
 
    //----------------Facturas
    
@@ -6007,7 +6006,7 @@ Function MainTablet()
                      		"nWidth"    => 64,;
                      		"nHeight"   => 64,;
                      		"cResName"  => "flat_document_64",;
-                     		"bLClicked" => {|| InvoiceCustomer():New():runNavigator() },;     //FacCliTablet()
+                     		"bLClicked" => {|| InvoiceCustomer():New():play() },;     //FacCliTablet()
                      		"oWnd"      => oDlg } )
 
    TGridUrllink():Build({  "nTop"      => {|| GridRow( 12 ) },;
@@ -6019,7 +6018,7 @@ Function MainTablet()
                            "nClrInit"  => nGridColor(),;
                            "nClrOver"  => nGridColor(),;
                            "nClrVisit" => nGridColor(),;
-                           "bAction"   => {|| InvoiceCustomer():New():runNavigator() } } )        //FacCliTablet()
+                           "bAction"   => {|| InvoiceCustomer():New():play() } } )        //FacCliTablet()
 
    //----------------Envio y recepcion
 

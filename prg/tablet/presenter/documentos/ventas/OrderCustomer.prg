@@ -3,11 +3,7 @@
 
 CLASS OrderCustomer FROM DocumentsSales  
 
-   DATA oLinesOrderCustomer
-
    METHOD New()
-
-   METHOD ResourceDetail( nMode )      INLINE ( ::oLinesOrderCustomer:ResourceDetail( nMode ) )
 
    METHOD GetAppendDocumento()
    METHOD GetEditDocumento()

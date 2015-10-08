@@ -7,7 +7,11 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD New()
 
    METHOD getAppendDocumento()
+
    METHOD getEditDocumento()
+      METHOD onPreEditDocumento           INLINE   (  iif(  !accessCode():lInvoiceModify,;
+                                                            ( apoloMsgStop( "La modificación de facturas no esta permitida." ), .f. ),;
+                                                            .t. ) )
 
    METHOD getLinesDocument( id )
    METHOD getDocumentLine()
@@ -51,11 +55,6 @@ METHOD New() CLASS InvoiceCustomer
 
    ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
    ( ::getWorkArea() )->( dbgotop() ) 
-
-   if !empty( ::CodigoAgente )
-      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == ::CodigoAgente }, "cCodAge == CodigoAgente" ) )
-      ( ::getWorkArea() )->( dbgotop() )
-   end if 
 
 Return ( self )
 

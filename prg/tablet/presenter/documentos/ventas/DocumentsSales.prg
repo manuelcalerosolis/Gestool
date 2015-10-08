@@ -17,31 +17,32 @@ CLASS DocumentsSales FROM Documents
 
    DATA nUltimoCliente
 
-   DATA hTextDocuments                 INIT  {  "textMain"     => "Facturas de clientes",;
-                                                "textShort"    => "Factura",;
-                                                "textTitle"    => "lineas de facturas",;
-                                                "textSummary"  => "Resumen factura",;
-                                                "textGrid"     => "Grid facturas clientes" }
+   DATA hTextDocuments                    INIT  {  "textMain"     => "Facturas de clientes",;
+                                                   "textShort"    => "Factura",;
+                                                   "textTitle"    => "lineas de facturas",;
+                                                   "textSummary"  => "Resumen factura",;
+                                                   "textGrid"     => "Grid facturas clientes" }
    
-   DATA hOrdenRutas                    INIT  {  "1" => "lVisDom",;
-                                                "2" => "lVisLun",;
-                                                "3" => "lVisMar",;
-                                                "4" => "lVisMie",;
-                                                "5" => "lVisJue",;
-                                                "6" => "lVisVie",;
-                                                "7" => "lVisSab",;
-                                                "8" => "Cod" }
+   DATA hOrdenRutas                       INIT  {  "1" => "lVisDom",;
+                                                   "2" => "lVisLun",;
+                                                   "3" => "lVisMar",;
+                                                   "4" => "lVisMie",;
+                                                   "5" => "lVisJue",;
+                                                   "6" => "lVisVie",;
+                                                   "7" => "lVisSab",;
+                                                   "8" => "Cod" }
 
-   DATA cTextSummaryDocument           INIT ""
-   DATA cTypePrintDocuments            INIT ""                                       
-   DATA cCounterDocuments              INIT ""                                       
+   DATA cTextSummaryDocument              INIT ""
+   DATA cTypePrintDocuments               INIT ""                                       
+   DATA cCounterDocuments                 INIT ""                                       
 
    DATA oTotalDocument
 
-   DATA CodigoAgente                      INIT AccessCode():cAgente
-
    METHOD New( oSender )
+   METHOD play() 
+
    METHOD runNavigator()
+      METHOD onPreRunNavigator()
 
    METHOD hSetMaster( cField, uValue )    INLINE ( hSet( ::oSender:hDictionaryMaster, cField, uValue ) )
    METHOD hGetMaster( cField )            INLINE ( hGet( ::oSender:hDictionaryMaster, cField ) )
@@ -62,30 +63,30 @@ CLASS DocumentsSales FROM Documents
    METHOD getCounterDocuments()                             INLINE ( ::cCounterDocuments )
 
    METHOD OpenFiles()
-   METHOD CloseFiles()                    INLINE ( D():DeleteView( ::nView ) )
+   METHOD CloseFiles()                                      INLINE ( D():DeleteView( ::nView ) )
 
-   METHOD getSerie()                      INLINE ( ::hGetMaster( "Serie" ) )
-   METHOD getNumero()                     INLINE ( ::hGetMaster( "Numero" ) )
-   METHOD getSufijo()                     INLINE ( ::hGetMaster( "Sufijo" ) )
-   METHOD getAlmacen()                    INLINE ( ::hGetMaster( "Almacen" ) )
+   METHOD getSerie()                                        INLINE ( ::hGetMaster( "Serie" ) )
+   METHOD getNumero()                                       INLINE ( ::hGetMaster( "Numero" ) )
+   METHOD getSufijo()                                       INLINE ( ::hGetMaster( "Sufijo" ) )
+   METHOD getAlmacen()                                      INLINE ( ::hGetMaster( "Almacen" ) )
 
-   METHOD getID()                         INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
+   METHOD getID()                                           INLINE ( ::getSerie() + str( ::getNumero() ) + ::getSufijo() )
 
-   METHOD isPuntoVerde()                  INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
-   METHOD isRecargoEquivalencia()         INLINE ( ::hGetMaster( "lRecargo" ) )
+   METHOD isPuntoVerde()                                    INLINE ( ::hGetMaster( "OperarPuntoVerde" ) )
+   METHOD isRecargoEquivalencia()                           INLINE ( ::hGetMaster( "lRecargo" ) )
 
-   METHOD resourceDetail( nMode )         INLINE ( ::oLinesDocumentsSales:ResourceDetail( nMode ) )
+   METHOD resourceDetail( nMode )                           INLINE ( ::oLinesDocumentsSales:ResourceDetail( nMode ) )
 
    METHOD onViewCancel()
    METHOD onViewSave()
    METHOD isResumenVenta()
    METHOD lValidResumenVenta()
 
-   METHOD getDataBrowse( Name )           INLINE ( hGet( ::oDocumentLineTemporal:hDictionary[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
+   METHOD getDataBrowse( Name )                             INLINE ( hGet( ::oDocumentLineTemporal:hDictionary[ ::oViewEdit:oBrowse:nArrayAt ], Name ) )
 
    METHOD isChangeSerieTablet( lReadyToSend, getSerie )
    
-   METHOD ChangeSerieTablet( getSerie )
+   METHOD changeSerieTablet( getSerie )
 
    METHOD runGridCustomer()
    METHOD lValidCliente()
@@ -96,7 +97,7 @@ CLASS DocumentsSales FROM Documents
    METHOD runGridPayment()
    METHOD lValidPayment()
 
-   METHOD ChangeRuta()
+   METHOD changeRuta()
 
    METHOD priorClient()
    METHOD nextClient()
@@ -153,8 +154,8 @@ METHOD New( oSender ) CLASS DocumentsSales
 
    ::oSender               := oSender
 
-   if !::OpenFiles()
-      Return ( self )
+   if !::openFiles()
+      return ( self )
    end if 
 
    ::oViewSearchNavigator  := DocumentSalesViewSearchNavigator():New( oSender )
@@ -181,13 +182,37 @@ return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD play() CLASS DocumentsSales
+
+   if ::onPreRunNavigator()
+      ::runNavigator()
+   end if 
+
+   ::closeFiles()
+
+return ( self )
+
+//---------------------------------------------------------------------------//
+//
+// Filtro para codigos de agente
+//
+
+METHOD onPreRunNavigator() CLASS DocumentsSales
+
+   if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
+      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == accessCode():cAgente }, "cCodAge == cAgente" ) )
+      ( ::getWorkArea() )->( dbgotop() )
+   end if 
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD runNavigator() CLASS DocumentsSales
 
    if !empty( ::oViewSearchNavigator )
       ::oViewSearchNavigator:Resource()
    end if
-
-   ::CloseFiles()
 
 return ( self )
 
@@ -250,7 +275,7 @@ METHOD OpenFiles() CLASS DocumentsSales
 
    RECOVER USING oError
 
-      lOpenFiles     := .f.
+      lOpenFiles        := .f.
 
       apoloMsgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
@@ -259,7 +284,7 @@ METHOD OpenFiles() CLASS DocumentsSales
    ErrorBlock( oBlock )
 
    if !lOpenFiles
-      ::CloseFiles( "" )
+      ::closeFiles()
    end if
 
 Return ( lOpenFiles )

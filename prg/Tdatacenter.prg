@@ -5417,26 +5417,26 @@ CLASS D
 
    // Presupuestos de clientes-------------------------------------------------
 
-   METHOD PresupuestosClientes( nView )                   INLINE ( ::Get( "PreCliT", nView ) )
-      METHOD PresupuestosClientesFecha( nView )           INLINE ( ( ::Get( "PreCliT", nView ) )->dFecPre )
-      METHOD PresupuestosClientesId( nView )              INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliT", nView ) )->cSufPre )
+   METHOD PresupuestosClientes( nView )                  INLINE ( ::Get( "PreCliT", nView ) )
+      METHOD PresupuestosClientesFecha( nView )          INLINE ( ( ::Get( "PreCliT", nView ) )->dFecPre )
+      METHOD PresupuestosClientesId( nView )             INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliT", nView ) )->cSufPre )
       METHOD PresupuestosClientesIdTextShort( nView ) ;
-                                                          INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + "/" + alltrim( str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) ) )
+                                                         INLINE ( ( ::Get( "PreCliT", nView ) )->cSerPre + "/" + alltrim( str( ( ::Get( "PreCliT", nView ) )->nNumPre, 9 ) ) )
       METHOD PresupuestosClientesIdText( nView ) ;
-                                                          INLINE ( ::PresupuestosClientesIdTextShort( nView ) + "/" + ( ::Get( "PreCliT", nView ) )->cSufPre )
+                                                         INLINE ( ::PresupuestosClientesIdTextShort( nView ) + "/" + ( ::Get( "PreCliT", nView ) )->cSufPre )
 
-   METHOD PresupuestosClientesLineas( nView )         INLINE ( ::Get( "PreCliL", nView ) )
-      METHOD PresupuestosClientesLineasId( nView )    INLINE ( ( ::Get( "PreCliL", nView ) )->cSerPre + str( ( ::Get( "PreCliL", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliL", nView ) )->cSufPre )
+   METHOD PresupuestosClientesLineas( nView )            INLINE ( ::Get( "PreCliL", nView ) )
+      METHOD PresupuestosClientesLineasId( nView )       INLINE ( ( ::Get( "PreCliL", nView ) )->cSerPre + str( ( ::Get( "PreCliL", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliL", nView ) )->cSufPre )
 
-   METHOD PresupuestosClientesDocumentos( nView )         INLINE ( ::Get( "PreCliD", nView ) )
-      METHOD PresupuestosClientesDocumentosId( nView )    INLINE ( ( ::Get( "PreCliD", nView ) )->cSerPre + str( ( ::Get( "PreCliD", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliD", nView ) )->cSufPre )
+   METHOD PresupuestosClientesDocumentos( nView )        INLINE ( ::Get( "PreCliD", nView ) )
+      METHOD PresupuestosClientesDocumentosId( nView )   INLINE ( ( ::Get( "PreCliD", nView ) )->cSerPre + str( ( ::Get( "PreCliD", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliD", nView ) )->cSufPre )
 
-   METHOD PresupuestosClientesIncidencias( nView )         INLINE ( ::Get( "PreCliI", nView ) )
-      METHOD PresupuestosClientesIncidenciasId( nView )    INLINE ( ( ::Get( "PreCliI", nView ) )->cSerPre + str( ( ::Get( "PreCliI", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliI", nView ) )->cSufPre )
+   METHOD PresupuestosClientesIncidencias( nView )          INLINE ( ::Get( "PreCliI", nView ) )
+      METHOD PresupuestosClientesIncidenciasId( nView )     INLINE ( ( ::Get( "PreCliI", nView ) )->cSerPre + str( ( ::Get( "PreCliI", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliI", nView ) )->cSufPre )
 
-   METHOD PresupuestosClientesSituaciones( nView )           INLINE ( ::Get( "PreCliE", nView ) )
-      METHOD PresupuestosClientesSituacionesId( nView )      INLINE ( ( ::Get( "PreCliE", nView ) )->cSerPre + str( ( ::Get( "PreCliE", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliE", nView ) )->cSufPre )
-      METHOD PresupuestosClientesSituacionesIdText( nView )  INLINE ( ::Get( "PreCliE", nView ) )->cSerPre + "/" + Alltrim( Str( ( ::Get( "PreCliE", nView ) )->nNumPre ) )
+   METHOD PresupuestosClientesSituaciones( nView )          INLINE ( ::Get( "PreCliE", nView ) )
+      METHOD PresupuestosClientesSituacionesId( nView )     INLINE ( ( ::Get( "PreCliE", nView ) )->cSerPre + str( ( ::Get( "PreCliE", nView ) )->nNumPre, 9 ) + ( ::Get( "PreCliE", nView ) )->cSufPre )
+      METHOD PresupuestosClientesSituacionesIdText( nView ) INLINE ( ::Get( "PreCliE", nView ) )->cSerPre + "/" + Alltrim( Str( ( ::Get( "PreCliE", nView ) )->nNumPre ) )
 
    // SAT de clientes------------------------------------------------------
 

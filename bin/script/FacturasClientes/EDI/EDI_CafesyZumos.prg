@@ -205,18 +205,18 @@ Return ( self )
 
 METHOD writeDatosProveedor()
 
-   local cLine    := "DatosProveedor"                                      + __separator__
-   cLine          += "IdProveedor"                                         + __separator__
-   cLine          += "IDProvCli"                                           + __separator__ 
-   cLine          += "CIF"                                                 + __separator__
-   cLine          += "Cafes y Zumos S.L."                                  + __separator__
-   cLine          += "Domicilio"                                           + __separator__
-   cLine          += "Población"                                           + __separator__
-   cLine          += "CodigoPostal"                                        + __separator__
-   cLine          += "Provincia"                                           + __separator__
-   cLine          += "Pais"                                                + __separator__
-   cLine          += "Registro"                                            + __separator__
-   cLine          += "Email"                                               
+   local cLine    := "DatosProveedor" + __separator__
+   cLine          += "9990000076857" + __separator__
+   cLine          += "9990000076857" + __separator__ 
+   cLine          += "B91012468" + __separator__
+   cLine          += "Cafés y Zumos, S.L." + __separator__
+   cLine          += "Pol. Ind. El Pino C7 Pino Silvestre, 21-22" + __separator__
+   cLine          += "Sevilla" + __separator__
+   cLine          += "41017" + __separator__
+   cLine          += "Sevilla" + __separator__
+   cLine          += "España" 
+   // cLine          += "Registro" + __separator__
+   // cLine          += "Email"                                               
 
    ::oFileEDI:add( cLine )
 

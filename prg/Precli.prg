@@ -298,7 +298,6 @@ static oBrwIva
 static dbfUsr
 static dbfRuta
 static dbfPreCliT
-static dbfPreCliL
 static dbfPreCliI
 static dbfPreCliD
 static dbfClient
@@ -469,14 +468,14 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       Recalculo del total
       */
 
-      nTotPreCli( nNumPre, D():PresupuestosClientes( nView ), dbfPreCliL, dbfIva, dbfDiv, dbfFpago, nil, nil, .t. )
+      nTotPreCli( nNumPre, D():PresupuestosClientes( nView ), D():PresupuestosClientesLineas( nView ), dbfIva, dbfDiv, dbfFpago, nil, nil, .t. )
 
       /*
       Posicionamiento
       */
 
-      ( dbfPreCliL )->( dbSeek( nNumPre ) )
-      ( D():Clientes( nView )  )->( dbSeek( ( D():PresupuestosClientes( nView ) )->CCODCLI ) )
+      ( D():PresupuestosClientesLineas( nView ) )->( dbSeek( nNumPre ) )
+      ( D():Clientes( nView ) )->( dbSeek( ( D():PresupuestosClientes( nView ) )->CCODCLI ) )
       ( dbfAgent   )->( dbSeek( ( D():PresupuestosClientes( nView ) )->CCODAGE ) )
       ( dbfFPago   )->( dbSeek( ( D():PresupuestosClientes( nView ) )->CCODPGO ) )
       ( dbfRuta    )->( dbSeek( ( D():PresupuestosClientes( nView ) )->cCodRut ) )
@@ -485,8 +484,8 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       oTrans:oDbf:Seek( ( D():PresupuestosClientes( nView ) )->cCodTrn )
 
       private cDbf         := D():PresupuestosClientes( nView )
-      private cDbfCol      := dbfPreCliL
-      private cDetalle     := dbfPreCliL
+      private cDbfCol      := D():PresupuestosClientesLineas( nView )
+      private cDetalle     := D():PresupuestosClientesLineas( nView )
       private cCliente     := D():Clientes( nView )
       private cDbfCli      := D():Clientes( nView )
       private cDbfObr      := dbfObrasT
@@ -505,7 +504,7 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       private cDbfTrn      := oTrans:GetAlias()
       private cDbfPro      := dbfPro
       private cDbfTblPro   := dbfTblPro
-      private nTotPage     := nTotLPreCli( dbfPreCliL )
+      private nTotPage     := nTotLPreCli( D():PresupuestosClientesLineas( nView ) )
       private cPicUndPre   := cPicUnd
       private nVdvDivPre   := nVdvDiv
       private cPouDivPre   := cPouDiv
@@ -534,7 +533,7 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
          oInf:lAutoland       := .f.
          oInf:lFinish         := .f.
          oInf:lNoCancel       := .t.
-         oInf:bSkip           := {|| PreCliReportSkipper( D():PresupuestosClientes( nView ), dbfPreCliL ) }
+         oInf:bSkip           := {|| PreCliReportSkipper( D():PresupuestosClientes( nView ), D():PresupuestosClientesLineas( nView ) ) }
 
          oInf:oDevice:lPrvModal  := .t.
 
@@ -561,8 +560,8 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       if !Empty( oInf )
 
          ACTIVATE REPORT oInf ;
-            WHILE             ( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre == nNumPre .and. !( dbfPreCliL )->( Eof() ));
-            FOR               ( !( dbfPreCliL )->lImpLin ) ;
+            WHILE             ( D():PresupuestosClientesLineasId( nView ) == nNumPre .and. !( D():PresupuestosClientesLineasId( nView ) )->( eof() ));
+            FOR               ( !( D():PresupuestosClientesLineasId( nView ) )->lImpLin ) ;
             ON ENDPAGE        ePage( oInf, cCodDoc )
 
          if nDevice == IS_PRINTER
@@ -9760,7 +9759,7 @@ RETURN ( round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION mkPreCli(cPath, lAppend, cPathOld, oMeter, bFor )
+FUNCTION mkPreCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
    local dbfPreCliT
    local dbfPreCliL
@@ -10855,7 +10854,15 @@ Function SynPreCli( cPath )
    local oBlock
    local nOrdAnt
    local aTotPre
+   local dbfPreCliT
+   local dbfPreCliL
+   local dbfPreCliI
+   local dbfClient
    local dbfArticulo
+   local dbfFamilia
+   local dbfFPago
+   local dbfIva
+   local dbfDiv
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE

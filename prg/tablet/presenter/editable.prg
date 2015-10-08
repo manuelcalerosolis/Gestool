@@ -55,11 +55,14 @@ CLASS Editable
    METHOD getWorkAreaLine()                     INLINE ( D():Get( ::cDataTableLine, ::nView ) )
 
    METHOD onPostGetDocumento()                  INLINE ( .t. )
-
    METHOD onPreEnd()                            VIRTUAL
 
    METHOD getAppendDocumento()                  INLINE ( ::hDictionaryMaster := D():getHashRecordDefaultValues( ::getDataTable(), ::nView ) )
+      METHOD onPreAppendDocumento()             INLINE ( .t. )
+
    METHOD getEditDocumento()
+      METHOD onPreEditDocumento()               INLINE ( .t. )
+
    METHOD deleteDocumento()                     INLINE ( D():deleteRecord( ::getDataTable(), ::nView ) )
    
       METHOD Resource()                         INLINE ( msgStop( "Resource method must be redefined" ) )
@@ -99,10 +102,11 @@ ENDCLASS
 
 METHOD Append() CLASS Editable
 
-   local nOrd
    local lAppend  := .f.
 
-   // nOrd           := ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
+   if !::onPreAppendDocumento()
+      Return ( lAppend )
+   end if 
 
    ::nMode        := APPD_MODE
 
@@ -115,8 +119,6 @@ METHOD Append() CLASS Editable
    end if
 
    ::onPreEnd()
-
-   // ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 
 Return ( lAppend )
 
@@ -143,9 +145,10 @@ Return ( lSave )
 METHOD Edit() CLASS Editable
 
    local lEdit    := .f.
-   local nord
 
-   // nOrd                 := ( ::getWorkArea() )->( OrdSetFocus( "dFecDes" ) )
+   if !::onPreEditDocumento()
+      Return ( lEdit )
+   end if 
 
    ::nMode        := EDIT_MODE
 
@@ -160,8 +163,6 @@ METHOD Edit() CLASS Editable
       ::onPreEnd()
 
    end if
-
-   // ( ::getWorkArea )->( OrdSetFocus( nOrd ) )
 
 Return ( lEdit )
 

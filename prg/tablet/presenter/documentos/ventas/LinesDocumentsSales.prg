@@ -271,6 +271,8 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
    ::setPrecioVenta( nRetPreArt( ::hGetDetail( "NumeroTarifa" ), ::hGetMaster( "Divisa" ), ::hGetMaster( "ImpuestosIncluidos" ), D():Articulos( ::getView() ), D():Divisas( ::getView() ), D():Kit( ::getView() ), D():TiposIva( ::getView() ) ) )
 
+   ::setPrecioCosto( ( D():Articulos( ::getView() ) )->pCosto ) 
+
    if ( D():Articulos( ::getView() ) )->lLote
       ::setLogicoLote( ( D():Articulos( ::getView() ) )->lLote )
       ::setLote( ( D():Articulos( ::getView() ) )->cLote )
