@@ -5589,7 +5589,7 @@ CLASS D
       METHOD GetPedidoCliente( nView )                INLINE ( ::getHashRecordById( ::PedidosClientesId( nView ), ::PedidosClientes( nView ), nView ) )
       METHOD GetPedidoClienteById( id, nView )        INLINE ( ::getHashRecordById( id, ::PedidosClientes( nView ), nView ) )
       METHOD GetPedidoClienteBlank( nView )           INLINE ( ::getHashRecordBlank( ::PedidosClientes( nView ), nView ) )
-      METHOD GetPedidoClienteDefaultValue( nView )    INLINE ( ::getHashRecordDefaultValues( ::PedidosClientes( nView ), nView ) )
+      METHOD getDefaultHashPedidoCliente( nView )     INLINE ( ::getHashRecordDefaultValues( ::PedidosClientes( nView ), nView ) )
 
       METHOD gotoIdPedidosClientes( id, nView )       INLINE ( ::seekInOrd( ::PedidosClientes( nView ), id, "nNumPed" ) ) 
 

@@ -95,6 +95,15 @@ RETURN lReturn
 
 //----------------------------------------------------------------------------//
 
+Function chkEmpresaAsociada( cCodigoEmpresa )
+
+   if lAplicacionA3()
+      Return ( .t. )
+   end if 
+
+Return ( !empty( cCodigoEmpresa ) )
+
+//----------------------------------------------------------------------------//
 /*
 Comprueba si la fecha esta dentro del margen contable
 */
@@ -2664,86 +2673,68 @@ CLASS EnlaceA3
    METHOD Signo( nImporte )      
    METHOD Porcentaje( nPorcentaje )         
 
-   METHOD TipoFormato()                   INLINE ( ::cBuffer   += '3' )
-   METHOD Empresa()                       INLINE ( ::cBuffer   += padr( ::hAsiento[ "Empresa" ], 5 ) )
-   METHOD FechaApunte()                   INLINE ( ::cBuffer   += dtos( ::hAsiento[ "Fecha"] ) )
-   METHOD TipoRegistro()                  INLINE ( ::cBuffer   += ::hAsiento[ "TipoRegistro"] ) 
-   METHOD TipoImporte()                   INLINE ( ::cBuffer   += ::hAsiento[ "TipoImporte" ] )
-   METHOD FechaFactura()                  INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaFactura"] ) )
-   METHOD NumeroFactura()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "NumeroFactura" ], 10 ) ) 
-   METHOD DescripcionApunte()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionApunte" ], 30 ) )
-   METHOD Importe()                       INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "Importe" ] ) )
-   METHOD Reserva( nSpace )               INLINE ( ::cBuffer   += space( nSpace ) )
-   METHOD NIF()                           INLINE ( ::cBuffer   += padr( trimNif( ::hAsiento[ "Nif" ] ), 14 ) )
-   METHOD NombreCliente()                 INLINE ( ::cBuffer   += padr( ::hAsiento[ "NombreCliente" ], 40 ) )
-   METHOD CodigoPostal()                  INLINE ( ::cBuffer   += padr( ::hAsiento[ "CodigoPostal" ], 5 ) )
-   METHOD FechaOperacion()                INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaOperacion"] ) )
-   METHOD FechaFactura()                  INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaFactura"] ) )
-   METHOD Moneda()                        INLINE ( ::cBuffer   += ::hAsiento[ "Moneda" ] )
+   METHOD appendBuffer( cValue )          INLINE ( ::cBuffer   += cValue )
 
-   METHOD Cuenta()                        INLINE ( ::cBuffer   += padr( ::hAsiento[ "Cuenta" ], 12 ) ) 
-   METHOD CuentaTesoreria()               INLINE ( ::cBuffer   += padr( ::hAsiento[ "CuentaTesoreria" ], 12 ) ) 
+   METHOD TipoFormato()                   INLINE ( ::appendBuffer( '3' ) )
+   METHOD Empresa()                       INLINE ( ::appendBuffer( padr( ::hAsiento[ "Empresa" ], 5 ) ) )
+   METHOD FechaApunte()                   INLINE ( ::appendBuffer( dtos( ::hAsiento[ "Fecha"] ) ) )
+   METHOD TipoRegistro()                  INLINE ( ::appendBuffer( ::hAsiento[ "TipoRegistro"] )  )
+   METHOD TipoImporte()                   INLINE ( ::appendBuffer( ::hAsiento[ "TipoImporte" ] ) )
+   METHOD FechaFactura()                  INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaFactura"] ) ) )
+   METHOD NumeroFactura()                 INLINE ( ::appendBuffer( padr( ::hAsiento[ "NumeroFactura" ], 10 ) )  )
+   METHOD DescripcionApunte()             INLINE ( ::appendBuffer( padr( ::hAsiento[ "DescripcionApunte" ], 30 ) ) )
+   METHOD Importe()                       INLINE ( ::appendBuffer( ::Signo( ::hAsiento[ "Importe" ] ) ) )
+   METHOD Reserva( nSpace )               INLINE ( ::appendBuffer( space( nSpace ) ) )
+   METHOD NIF()                           INLINE ( ::appendBuffer( padr( trimNif( ::hAsiento[ "Nif" ] ), 14 ) ) )
+   METHOD NombreCliente()                 INLINE ( ::appendBuffer( padr( ::hAsiento[ "NombreCliente" ], 40 ) ) )
+   METHOD CodigoPostal()                  INLINE ( ::appendBuffer( padr( ::hAsiento[ "CodigoPostal" ], 5 ) ) )
+   METHOD FechaOperacion()                INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaOperacion"] ) ) )
+   METHOD FechaFactura()                  INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaFactura"] ) ) )
+   METHOD Moneda()                        INLINE ( ::appendBuffer( ::hAsiento[ "Moneda" ] ) )
 
-   METHOD DescripcionCuenta()             INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionCuenta" ], 30 ) )
+   METHOD Cuenta()                        INLINE ( ::appendBuffer( padr( ::hAsiento[ "Cuenta" ], 12 ) )  )
+   METHOD CuentaTesoreria()               INLINE ( ::appendBuffer( padr( ::hAsiento[ "CuentaTesoreria" ], 12 ) )  )
 
-   METHOD SubtipoFactura()                INLINE ( ::cBuffer   += ::hAsiento[ "SubtipoFactura" ] ) 
+   METHOD DescripcionCuenta()             INLINE ( ::appendBuffer( padr( ::hAsiento[ "DescripcionCuenta" ], 30 ) ) )
 
-   METHOD BaseImponible()                 INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "BaseImponible" ] ) )
-   METHOD PorcentajeIVA()                 INLINE ( ::cBuffer   += ::Porcentaje( ::hAsiento[ "PorcentajeIVA" ], 5, 2 ) )
-   METHOD CuotaIVA()                      INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeIVA" ] / 100 ) )
+   METHOD SubtipoFactura()                INLINE ( ::appendBuffer( ::hAsiento[ "SubtipoFactura" ] )  )
 
-   METHOD PorcentajeRecargo()             INLINE ( ::cBuffer   += ::Porcentaje( ::hAsiento[ "PorcentajeRecargo" ], 5, 2 ) )
-   METHOD CuotaRecargo()                  INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeRecargo" ] / 100 ) )
+   METHOD BaseImponible()                 INLINE ( ::appendBuffer( ::Signo( ::hAsiento[ "BaseImponible" ] ) ) )
+   METHOD PorcentajeIVA()                 INLINE ( ::appendBuffer( ::Porcentaje( ::hAsiento[ "PorcentajeIVA" ], 5, 2 ) ) )
+   METHOD CuotaIVA()                      INLINE ( ::appendBuffer( ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeIVA" ] / 100 ) ) )
 
-   METHOD PorcentajeRetencion()           INLINE ( ::cBuffer   += ::Porcentaje( ::hAsiento[ "PorcentajeRetencion" ], 5, 2 ) )
-   METHOD CuotaRetencion()                INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeRetencion" ] / 100 ) )
+   METHOD PorcentajeRecargo()             INLINE ( ::appendBuffer( ::Porcentaje( ::hAsiento[ "PorcentajeRecargo" ], 5, 2 ) ) )
+   METHOD CuotaRecargo()                  INLINE ( ::appendBuffer( ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeRecargo" ] / 100 ) ) )
 
-   METHOD Impreso()                       INLINE ( ::cBuffer   += ::hAsiento[ "Impreso" ] )
-   METHOD SujetaIVA()                     INLINE ( ::cBuffer   += ::hAsiento[ "SujetaIVA" ] )
-   METHOD Modelo415()                     INLINE ( ::cBuffer   += ::hAsiento[ "Modelo415" ] )
-   METHOD Analitico()                     INLINE ( ::cBuffer   += ::hAsiento[ "Analitico" ] )
+   METHOD PorcentajeRetencion()           INLINE ( ::appendBuffer( ::Porcentaje( ::hAsiento[ "PorcentajeRetencion" ], 5, 2 ) ) )
+   METHOD CuotaRetencion()                INLINE ( ::appendBuffer( ::Signo( ::hAsiento[ "BaseImponible" ] * ::hAsiento[ "PorcentajeRetencion" ] / 100 ) ) )
 
-   METHOD TipoFacturaVenta()              INLINE ( ::cBuffer   += '1' )
-   METHOD TipoFacturaCompras()            INLINE ( ::cBuffer   += '2' )
-   METHOD TipoFacturaBienes()             INLINE ( ::cBuffer   += '3' )
+   METHOD Impreso()                       INLINE ( ::appendBuffer( ::hAsiento[ "Impreso" ] ) )
+   METHOD SujetaIVA()                     INLINE ( ::appendBuffer( ::hAsiento[ "SujetaIVA" ] ) )
+   METHOD Modelo415()                     INLINE ( ::appendBuffer( ::hAsiento[ "Modelo415" ] ) )
+   METHOD Analitico()                     INLINE ( ::appendBuffer( ::hAsiento[ "Analitico" ] ) )
 
-   METHOD FechaOperacion()                INLINE ( ::cBuffer   += dtos( ::hAsiento[ "Fecha"] ) )
-   METHOD Generado()                      INLINE ( ::cBuffer   += 'N' )
+   METHOD TipoFacturaVenta()              INLINE ( ::appendBuffer( '1' ) )
+   METHOD TipoFacturaCompras()            INLINE ( ::appendBuffer( '2' ) )
+   METHOD TipoFacturaBienes()             INLINE ( ::appendBuffer( '3' ) )
 
-   METHOD TipoImporte()                   INLINE ( ::cBuffer   += 'C' )
+   METHOD FechaOperacion()                INLINE ( ::appendBuffer( dtos( ::hAsiento[ "Fecha"] ) ) )
+   METHOD Generado()                      INLINE ( ::appendBuffer( 'N' ) )
 
-   // Vencimientos-------------------------------------------------------------
+   METHOD TipoImporte()                   INLINE ( ::appendBuffer( 'C' ) )
 
-   METHOD FechaVencimiento()              INLINE ( ::cBuffer   += dtos( ::hAsiento[ "FechaVencimiento"] ) )
-   METHOD TipoVencimiento()               INLINE ( ::cBuffer   += ::hAsiento[ "TipoVencimiento" ] )
-   METHOD DescripcionVencimiento()        INLINE ( ::cBuffer   += padr( ::hAsiento[ "DescripcionVencimiento" ], 30 ) )   
-   METHOD ImporteVencimiento()            INLINE ( ::cBuffer   += ::Signo( ::hAsiento[ "ImporteVencimiento" ] ) )
-   METHOD NumeroVencimiento()             INLINE ( ::cBuffer   += str( ::hAsiento[ "NumeroVencimiento" ], 2 ) )
-   METHOD FormaPago()                     INLINE ( ::cBuffer   += ::hAsiento[ "FormaPago" ] )
+   METHOD FechaVencimiento()              INLINE ( ::appendBuffer( dtos( ::hAsiento[ "FechaVencimiento"] ) ) )
+   METHOD TipoVencimiento()               INLINE ( ::appendBuffer( ::hAsiento[ "TipoVencimiento" ] ) )
+   METHOD DescripcionVencimiento()        INLINE ( ::appendBuffer( padr( ::hAsiento[ "DescripcionVencimiento" ], 30 ) ) )
+   METHOD ImporteVencimiento()            INLINE ( ::appendBuffer( ::Signo( ::hAsiento[ "ImporteVencimiento" ] ) ) )
+   METHOD NumeroVencimiento()             INLINE ( ::appendBuffer( str( ::hAsiento[ "NumeroVencimiento" ], 2 ) ) )
+   METHOD FormaPago()                     INLINE ( ::appendBuffer( ::hAsiento[ "FormaPago" ] ) )
 
-   METHOD Referencia()                    INLINE ( ::cBuffer   += substr( ::hAsiento[ "Concepto" ], 1, 10 ) )
+   METHOD Referencia()                    INLINE ( ::appendBuffer( substr( ::hAsiento[ "Concepto" ], 1, 10 ) ) )
    
-   METHOD LineaApunte()                   INLINE ( ::cBuffer   += if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )   
+   METHOD LineaApunte()                   INLINE ( ::appendBuffer( if( hb_enumindex() == 1, 'I', if( hb_enumindex() > 1 .and. hb_enumindex() < len( ::aAsiento ), 'M', 'U' ) ) )    )
    
-   METHOD FinLinea()                      INLINE ( ::cBuffer   += CRLF ) 
-
-      /* 
-         EnlaceA3():GetInstance():Add( {  "Empresa"               => cEmpCnt( ( dbfFacCliP )->cSerie ),;
-                                          "Fecha"                 => ( dbfFacCliP )->dFecVto,;
-                                          "TipoRegistro"          => 'V',; // Vencimientos
-                                          "Cuenta"                => cCtaCli,;
-                                          "DescripcionCuenta"     => cTerNom,;
-                                          "TipoVencimiento"       => 'C',; // Cobro
-                                          "NumeroFactura"         => cRecibo,; 
-                                          "DescripcionVencimiento"=> cConcepto,;
-                                          "ImporteVencimiento"    => nImpRec,;
-                                          "FechaFactura"          => ( dbfFacCliT )->dFecFac,;
-                                          "CuentaTesoreria"       => cCtaPgo,;
-                                          "FormaPago"             => '  ',;
-                                          "NumeroVencimiento"     => ( dbfFacCliP )->nNumRec,;
-                                          "Render"                => 'ReciboFactura' } )
-      */
-
+   METHOD FinLinea()                      INLINE ( ::appendBuffer( CRLF ) )
 
 ENDCLASS
 
@@ -2941,16 +2932,81 @@ ENDCLASS
 //------------------------------------------------------------------------//
 
    METHOD AutoRender() CLASS EnlaceA3
-/*
-      for each hAsiento in ::aAsiento
-         msgAlert( HaaGetValueAt( hAsiento, 1 ) )
 
-      next
-*/
    Return ( Self )
 
 //------------------------------------------------------------------------//
 
+CLASS EnlaceExcel FROM EnlaceA3
 
+   DATA oOleExcel
+   DATA oWorkBook
+
+   DATA cDirectory                        INIT "C:\Enlace_Excel"
+   DATA cFile                             INIT "SuEnlace.Xls" 
+
+   METHOD createExcelObject()
+   METHOD closeExcelObject()
+
+   METHOD appendBuffer( cValue )          INLINE ( ::cBuffer   += ( cValue + ";" ) )
+   METHOD finLinea()                      INLINE ( ::cBuffer   += ":" ) 
+
+   METHOD writeASCII() 
+
+ENDCLASS
+
+//---------------------------------------------------------------------------//
+
+   METHOD createExcelObject()
+
+      local oBlock
+      local oError
+
+      oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+         ::oOleExcel                         := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
+         ::oOleExcel:oExcel:Visible          := .t.
+         ::oOleExcel:oExcel:DisplayAlerts    := .f.
+         ::oWorkBook                         := ::oOleExcel:oExcel:WorkBooks:Add()
+
+      RECOVER USING oError
+
+         msgStop( "Imposible crear el fichero de excel." + CRLF + ErrorMessage( oError ) )
+
+      END SEQUENCE
+
+      ErrorBlock( oBlock )
+
+
+   Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD WriteASCII() CLASS EnlaceExcel
+
+      ::createExcelObject()
+
+      if empty( ::oWorkBook )
+         Return ( self )
+      end if 
+
+      msgAlert( ::cBuffer, "cBuffer" )
+
+      ::closeExcelObject()
+
+   Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+   METHOD closeExcelObject() CLASS EnlaceExcel
+
+      ::oOleExcel:oExcel:Quit()
+      ::oOleExcel:oExcel:DisplayAlerts    := .t.
+      ::oOleExcel:End()
+
+   Return ( Self )
+
+//---------------------------------------------------------------------------//
 
 

@@ -294,7 +294,7 @@ METHOD definePrecio() CLASS ViewDetail
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
                                           "bWhen"     => {|| ::getChangePrecio() },;
-                                          "bValid"    => {|| ::oSender:recalcularTotal() } } )
+                                          "bValid"    => {|| ::oSender:recalcularTotal() } } )  
 
 Return ( self )
 

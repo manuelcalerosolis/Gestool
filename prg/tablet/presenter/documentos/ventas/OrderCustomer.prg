@@ -61,7 +61,7 @@ return ( self )
 
 METHOD GetAppendDocumento() CLASS OrderCustomer
 
-   ::hDictionaryMaster      := D():GetPedidoClienteDefaultValue( ::nView )
+   ::hDictionaryMaster      := D():getDefaultHashPedidoCliente( ::nView )
 
 Return ( self )
 

@@ -54,22 +54,22 @@ CLASS ViewBase
    METHOD initDialog()
    METHOD startDialog()                                  VIRTUAL
 
-   METHOD setDialog( oDlg )            INLINE ( ::oDlg := oDlg )
+   METHOD setDialog( oDlg )                              INLINE ( ::oDlg := oDlg )
 
-   METHOD setGetValue( uValue, cName ) INLINE ( iif(  isNil( uValue ),;
-                                                      hGet( ::oSender:hDictionaryMaster, cName ),;
-                                                      hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
+   METHOD setGetValue( uValue, cName )                   INLINE ( iif(  isNil( uValue ),;
+                                                                        hGet( ::oSender:hDictionaryMaster, cName ),;
+                                                                        hSet( ::oSender:hDictionaryMaster, cName, uValue ) ) )
 
-   METHOD getValue( cName )            INLINE ( hGet( ::oSender:hDictionaryMaster, cName ) )
+   METHOD getValue( cName )                              INLINE ( hGet( ::oSender:hDictionaryMaster, cName ) )
 
    METHOD setErrorValidator( cErrorText )
 
    METHOD errorValidator() 
 
-   METHOD endView()                    INLINE ( ::oDlg:goNextCtrl( GetFocus() ),;
-                                                ::oDlg:goPrevCtrl( GetFocus() ),;
-                                                iif( ::errorValidator(), apoloMsgStop( ::cErrorValidator ), ::oDlg:End( IDOK ) ) )
-   METHOD cancelView()                 INLINE ( ::oDlg:End()  )
+   METHOD endView()                                      INLINE ( ::oDlg:goNextCtrl( GetFocus() ),;
+                                                                  ::oDlg:goPrevCtrl( GetFocus() ),;
+                                                                  iif( ::errorValidator(), apoloMsgStop( ::cErrorValidator ), ::oDlg:End( IDOK ) ) )
+   METHOD cancelView()                                   INLINE ( ::oDlg:End()  )
 
    METHOD evalDialog()
 

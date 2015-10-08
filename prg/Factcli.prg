@@ -3166,6 +3166,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Número"
          :bEditValue          := {|| ( dbfTmpLin )->nNumLin }
+         :cSortOrder          := "nNumLin"
          :cEditPicture        := "9999"
          :nWidth              := 55
          :nDataStrAlign       := 1
@@ -3174,6 +3175,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Código"
+         :cSortOrder          := "cRef"
          :bEditValue          := {|| ( dbfTmpLin )->cRef }
          :nWidth              := 60
       end with
@@ -4511,33 +4513,29 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
          oBrwEst:CreateFromResource( 210 )
 
-    REDEFINE BUTTON ;
+   REDEFINE BUTTON ;
         ID       500 ;
         OF       oFld:aDialogs[ 6 ] ;
         WHEN     ( lWhen ) ;
         ACTION   ( WinAppRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 
-    REDEFINE BUTTON ;
-        ID       501 ;
-        OF       oFld:aDialogs[ 6 ] ;
-        WHEN     ( lWhen ) ;
-        ACTION   ( WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
-
+   REDEFINE BUTTON ;
+      ID       501 ;
+      OF       oFld:aDialogs[ 6 ] ;
+      WHEN     ( lWhen ) ;
+      ACTION   ( WinEdtRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
 	REDEFINE BUTTON ;
 		ID 		 502 ;
-        OF       oFld:aDialogs[ 6 ] ;
-        WHEN     ( lWhen ) ;
-        ACTION   ( WinDelRec( oBrwEst, dbfTmpEst ) )
-
+      OF       oFld:aDialogs[ 6 ] ;
+      WHEN     ( lWhen ) ;
+      ACTION   ( WinDelRec( oBrwEst, dbfTmpEst ) )
 
 	REDEFINE BUTTON ;
-		ID 		 503 ;
-        OF       oFld:aDialogs[ 6 ] ;
-        ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
-
-
+      ID 		 503 ;
+      OF       oFld:aDialogs[ 6 ] ;
+      ACTION   ( WinZooRec( oBrwEst, bEdtEst, dbfTmpEst, nil, nil, aTmp ) )
 
       /*
       Fin de los Folders
@@ -13886,11 +13884,13 @@ Funcion Auxiliar para borrar las Lineas de Detalle en una Factura
 
 STATIC FUNCTION DelDeta()
 
+   /*
    if lRecibosPagadosTmp( dbfTmpPgo )
       MsgStop( "No se pueden eliminar registros a una factura con recibos cobrados" )
       return .f.
    end if
-
+   */
+   
    CursorWait()
 
    while ( dbfTmpSer )->( dbSeek( str( ( dbfTmpLin )->nNumLin, 4 ) ) )
