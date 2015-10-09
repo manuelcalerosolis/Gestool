@@ -181,6 +181,8 @@ Ficheros-----------------------------------------------------------------------
 #define _NCOMSTK                  80
 #define __TFECTIK                 81
 #define _LPESO                    82
+#define _LSAVE                    83
+#define _LMNUACO                  84
 
 #define _NNUMREC                   4
 #define _CCODCAJ                   5
@@ -17346,6 +17348,7 @@ function aColTik()
    aAdd( aColTik, { "tFecTik",  "C",      6,     0, "",                                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lPeso",    "L",      1,     0, "Lógico articulo con peso",           "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lSave",    "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "lMnuAco",  "L",      1,     0, "Lógico menu acompañamiento",         "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 

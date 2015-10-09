@@ -4047,7 +4047,7 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalComanda:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalComanda ) TAG "TikC" ON Field->cSerTil + Field->cNumTil + Field->cSufTil + Field->cOrdOrd + Str( Recno() )    COMMENT "Orden"   NODELETED OF ::oTemporalComanda
+      INDEX TO ( ::cTemporalComanda ) TAG "TikC" ON Field->cSerTil + Field->cNumTil + Field->cSufTil + Str( Recno() )    COMMENT "Orden"   NODELETED OF ::oTemporalComanda
 
    END DATABASE ::oTemporalComanda
 
@@ -4483,7 +4483,9 @@ METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu, cCodigoMenu, cCod
 
    SysRefresh()
 
-   ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
+   if Empty( ::nNumeroLinea )
+      ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
+   end if
 
    ::oTemporalLinea:Append()
    ::oTemporalLinea:Blank()
@@ -4521,6 +4523,8 @@ METHOD AgregarAcompannamiento( cCodigoArticulo, nUnidadesMenu, cCodigoMenu, cCod
    ::oTemporalLinea:lKitPrc      := lPreciosCompuestos( ::oArticulo:Codigo, ::oArticulo:cAlias )
 
    ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
+
+   ::oTemporalLinea:lMnuAco      := .t.
 
    // Orden de la comanda------------------------------------------------------
 
@@ -8226,7 +8230,9 @@ METHOD ImprimeDocumento() CLASS TpvTactil
 
    CursorWait()
 
-   ::LoadTemporalImpresionlinea()
+   if !::lComanda
+      ::LoadTemporalImpresionlinea()
+   end if
 
    if ::nTipoDocumento == documentoAlbaran
 
@@ -8314,7 +8320,6 @@ METHOD ProcesaComandas( lCopia )
             end if
 
          end if
-
 
          // Siguiente linea----------------------------------------------------
 
@@ -10164,7 +10169,7 @@ RETURN ( lValid )
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadTemporalImpresionlinea()
+METHOD LoadTemporalImpresionLinea()
 
    local nOrdAnt
 
