@@ -2127,7 +2127,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
    cRuta             := cRutCnt()
    cCodEmp           := cCodEmpCnt( ( dbfAlbCliT )->cSerAlb )
 
-   if Empty( cCodEmp ) .AND. !lSimula
+   if !lSimula .and. !chkEmpresaAsociada( cCodEmp )
       oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " no se definierón empresas asociadas.", 0 ) )
       lErrorFound    := .t.
    end if
@@ -2807,7 +2807,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    cRuta             := cRutCnt()
    lIvaCEE           := ( ( dbfFacRecT )->nRegIva == 2 )
 
-   if Empty( cCodEmp )
+   if !chkEmpresaAsociada( cCodEmp )
       oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " no se definierón empresas asociadas.", 0 ) )
       lErrorFound    := .t.
    end if
