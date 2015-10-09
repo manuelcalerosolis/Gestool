@@ -24,6 +24,9 @@ CLASS ImportarPedidosProveedorExcel
    DATA nView
    DATA cFile
    DATA oExcelFile
+   DATA hTallas
+   DATA nRowTalla
+   DATA nColumnTalla
 
    METHOD New()
    
@@ -32,6 +35,10 @@ CLASS ImportarPedidosProveedorExcel
    METHOD processFile()
       METHOD isOpenFile()
       METHOD closeFile()
+      METHOD getTallas()
+         METHOD isFilaTallas()
+         METHOD getValoresTallas()
+
 
 ENDCLASS
 
@@ -61,7 +68,7 @@ Return .t.
 METHOD processFile() CLASS ImportarPedidosProveedorExcel
 
    if ::isOpenFile()
-      msgalert( "fichero abierto con exito")
+      ::getTallas()
    end if 
 
    ::closeFile()
@@ -112,6 +119,53 @@ METHOD closeFile() CLASS ImportarPedidosProveedorExcel
    ::oExcelFile:oExcel:DisplayAlerts   := .t.
 
    ::oExcelFile:End()
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getTallas() CLASS ImportarPedidosProveedorExcel
+
+   if ::isFilaTallas()
+      ::getValoresTallas()
+   else
+      msgalert( "no encuentro las tallas")
+   end if
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD isFilaTallas() CLASS ImportarPedidosProveedorExcel
+   
+   local oRange
+
+   ::nRowTalla             := 0
+   ::nColumnTalla          := 0
+
+   oRange                  := ::oExcelFile:oExcel:ActiveSheet:Range("A1:AA10"):Find("Ref. fabricante")
+   if !empty(oRange)
+      ::nRowTalla          := oRange:row
+      ::nColumnTalla       := oRange:column
+      return .t.
+   end if
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD getValoresTallas() CLASS ImportarPedidosProveedorExcel
+
+   local lFindArticulo := .t.
+
+   for nColumna:= ::nColumnTalla to 50
+
+      if lFindArticulo .and. !empty(::oExcelFile:oExcel:ActiveSheet:Range( lTrim( Str( nColumna ) ) + lTrim( Str( ::nRowTalla ) ) ):Value)
+          msgalert( ::oExcelFile:oExcel:ActiveSheet:Range( lTrim( Str( nColumna ) ) + lTrim( Str( ::nRowTalla ) ) ):Value, "guardo")                          
+      end if 
+
+   next 
+
 
 Return ( self )
 
