@@ -1,6 +1,10 @@
 #include "Factu.ch"
 #include "FiveWin.Ch"
 
+#define __referenciaFabricante__    "Ref. fabricante"
+#define __articulo__                "Artículo"
+#define __total__                   "Total"
+
 //---------------------------------------------------------------------------//
 
 function ImportaPedidosProveedorExcel( nView )
@@ -23,8 +27,12 @@ CLASS ImportarPedidosProveedorExcel
 
    DATA nView
    DATA cFile
+   
    DATA oExcelFile
-   DATA hTallas
+   DATA oActiveSheet
+
+   DATA hTallas                              INIT {=>}
+   
    DATA nRowTalla
    DATA nColumnTalla
 
@@ -35,10 +43,13 @@ CLASS ImportarPedidosProveedorExcel
    METHOD processFile()
       METHOD isOpenFile()
       METHOD closeFile()
+   
       METHOD getTallas()
          METHOD isFilaTallas()
          METHOD getValoresTallas()
+         METHOD addValoresTallas( cValueTalla, nColumna )
 
+   METHOD getActiveSheetValue( nRow, nCol )  INLINE ( ::oActiveSheet:Cells( nRow, nCol ):Value )
 
 ENDCLASS
 
@@ -79,21 +90,21 @@ Return ( self )
 
 METHOD isOpenFile() CLASS ImportarPedidosProveedorExcel
 
-
    local oError
    local oBlock
-   local isOpen                    := .t.
+   local isOpen                        := .t.
 
-   oBlock                          := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                              := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oExcelFile                    := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
+   ::oExcelFile                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .f. )
+   ::oExcelFile:oExcel:Visible         := .f.
+   ::oExcelFile:oExcel:DisplayAlerts   := .f.
+   ::oExcelFile:oExcel:WorkBooks:Open( ::cFile )
 
-      ::oExcelFile:oExcel:Visible         := .f.
-      ::oExcelFile:oExcel:DisplayAlerts   := .f.
-      ::oExcelFile:oExcel:WorkBooks:Open( ::cFile )
+   ::oExcelFile:oExcel:WorkSheets( 1 ):Activate()   //Hojas de la hoja de calculo
 
-      ::oExcelFile:oExcel:WorkSheets( 1 ):Activate()   //Hojas de la hoja de calculo
+   ::oActiveSheet                      := ::oExcelFile:oExcel:ActiveSheet()
 
    RECOVER USING oError
 
@@ -143,7 +154,7 @@ METHOD isFilaTallas() CLASS ImportarPedidosProveedorExcel
    ::nRowTalla             := 0
    ::nColumnTalla          := 0
 
-   oRange                  := ::oExcelFile:oExcel:ActiveSheet:Range("A1:AA10"):Find("Ref. fabricante")
+   oRange                  := ::oActiveSheet:Range("A1:AA10"):Find( __referenciaFabricante__ )
    if !empty(oRange)
       ::nRowTalla          := oRange:row
       ::nColumnTalla       := oRange:column
@@ -156,16 +167,36 @@ Return ( .f. )
 
 METHOD getValoresTallas() CLASS ImportarPedidosProveedorExcel
 
-   local lFindArticulo := .t.
+   local cValueTalla
 
-   for nColumna:= ::nColumnTalla to 50
+   for nColumna := ::nColumnTalla to ::nColumnTalla + 50
 
-      if lFindArticulo .and. !empty(::oExcelFile:oExcel:ActiveSheet:Range( lTrim( Str( nColumna ) ) + lTrim( Str( ::nRowTalla ) ) ):Value)
-          msgalert( ::oExcelFile:oExcel:ActiveSheet:Range( lTrim( Str( nColumna ) ) + lTrim( Str( ::nRowTalla ) ) ):Value, "guardo")                          
-      end if 
+      cValueTalla          := ::getActiveSheetValue( ::nRowTalla, nColumna )    
+
+      ::addValoresTallas( cValueTalla, nColumna )
 
    next 
 
+   ? hb_valtoexp( ::hTallas, "hTallas" )
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD addValoresTallas( cValueTalla, nColumna )
+
+   if empty( cValueTalla )
+      Return ( self )
+   end if 
+
+   if alltrim(cValueTalla) != __referenciaFabricante__ .and. alltrim(cValueTalla) != __articulo__ .and. alltrim(cValueTalla) != __total__
+      hset( ::hTallas, cValueTalla, nColumna )
+   end if 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+      
+
 
