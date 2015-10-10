@@ -24,7 +24,8 @@ CLASS InvoiceCustomer FROM DocumentsSales
 
    METHOD printDocument()
 
-   METHOD onPostSaveAppendDocumento()     INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ), checkPagosFacturaCliente( ::getId(), ::nView ) )
+   METHOD onPostSaveAppend()              INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
+                                                   checkPagosFacturaCliente( ::getId(), ::nView ) )
 
 END CLASS
 
@@ -53,9 +54,6 @@ METHOD New() CLASS InvoiceCustomer
    ::setDataTable( "FacCliT" )
    ::setDataTableLine( "FacCliL" )
 
-   ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
-   ( ::getWorkArea() )->( dbgotop() ) 
-
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -77,6 +75,10 @@ METHOD GetEditDocumento() CLASS InvoiceCustomer
    end if
 
    ::hDictionaryMaster     := D():getFacturaCliente( ::nView )
+
+   if empty( ::hDictionaryMaster )
+      Return .f.
+   end if 
 
    ::getLinesDocument( id )
 

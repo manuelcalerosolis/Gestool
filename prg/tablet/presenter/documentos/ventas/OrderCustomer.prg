@@ -52,10 +52,7 @@ METHOD New() CLASS OrderCustomer
    ::setDataTable( "PedCliT" )
    ::setDataTableLine( "PedCliL" )
    
-   ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
-   ( ::getWorkArea() )->( dbgotop() ) 
-
-return ( self )
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -76,6 +73,10 @@ METHOD GetEditDocumento() CLASS OrderCustomer
    end if
 
    ::hDictionaryMaster     := D():GetPedidoCliente( ::nView )
+
+   if empty( ::hDictionaryMaster )
+      Return .f.
+   end if 
 
    ::getLinesDocument( id )
 

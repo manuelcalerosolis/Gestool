@@ -4553,7 +4553,7 @@ Return ( aBasRecCli )
 
 FUNCTION generatePagosFacturaCliente( Id, nView, nMode )
 
-Return ( GenPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), D():Divisas( nView ), D():TiposIva( nView ), nMode, .f. ) )   
+Return ( genPgoFacCli( Id, D():FacturasClientes( nView ), D():FacturasClientesLineas( nView ), D():FacturasClientesCobros( nView ), D():AnticiposClientes( nView ), D():Clientes( nView ), D():FormasPago( nView ), D():Divisas( nView ), D():TiposIva( nView ), nMode, .f. ) )   
 
 //---------------------------------------------------------------------------//
 
@@ -4760,10 +4760,10 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
 
             end if
 
-            ( dbfFacCliP )->dFecCre       := GetSysDate()
-            ( dbfFacCliP )->cHorCre       := SubStr( Time(), 1, 5 )
+            ( dbfFacCliP )->dFecCre          := GetSysDate()
+            ( dbfFacCliP )->cHorCre          := SubStr( Time(), 1, 5 )
 
-            lAlert                        := .f.
+            lAlert                           := .f.
 
             ( dbfFacCliP )->( dbUnLock() )
 

@@ -53,9 +53,6 @@ METHOD New() CLASS DeliveryNoteCustomer
    ::setDataTable( "AlbCliT" )
    ::setDataTableLine( "AlbCliL" )
 
-   ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
-   ( ::getWorkArea() )->( dbgotop() ) 
-
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -68,15 +65,19 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetEditDocumento() CLASS DeliveryNoteCustomer
+METHOD getEditDocumento() CLASS DeliveryNoteCustomer
 
    local id                := D():AlbaranesClientesId( ::nView )
 
-   if Empty( id )
+   if empty( id )
       Return .f.
    end if  
 
-   ::hDictionaryMaster     := D():getAlbaranCliente( ::nView )
+   ::hDictionaryMaster     := D():getHashAlbaranCliente( ::nView )
+
+   if empty( ::hDictionaryMaster )
+      Return .f.
+   end if 
 
    ::getLinesDocument( id )
 

@@ -5470,7 +5470,9 @@ CLASS D
       METHOD AlbaranesClientesIdTextShort( nView );
                                                       INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
       METHOD AlbaranesClientesIdText( nView )         INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
-      METHOD getAlbaranCliente( nView )               INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
+      METHOD getHashAlbaranCliente( nView )           INLINE ( msgAlert( ::AlbaranesClientesId( nView ), "id"),;
+                                                               msgAlert( ::AlbaranesClientes( nView ), "tabla" ),;
+                                                               ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
       METHOD getDefaultHashAlbaranCliente( nView )    INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
    METHOD AlbaranesClientesLineas( nView )            INLINE ( ::Get( "AlbCliL", nView ) )

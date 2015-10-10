@@ -207,6 +207,10 @@ METHOD getEditDocumento() CLASS Editable
 
    ::hDictionaryMaster := D():getHashRecord( ::getDataTable(), ::nView )
 
+   if empty( ::hDictionaryMaster )
+      Return .f.
+   end if 
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
