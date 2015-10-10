@@ -43,8 +43,6 @@ METHOD runNavigator() CLASS DailySummarySales
       ::oDailySummarySales:Resource()
    end if
 
-   ::CloseFiles()
-
 Return( self )
 
 //---------------------------------------------------------------------------//

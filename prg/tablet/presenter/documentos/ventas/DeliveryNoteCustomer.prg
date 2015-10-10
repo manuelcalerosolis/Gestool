@@ -4,11 +4,7 @@
 
 CLASS DeliveryNoteCustomer FROM DocumentsSales  
 
-   DATA oLinesDeliveryNoteCustomer
-
    METHOD New()
-
-   METHOD ResourceDetail( nMode )      INLINE ( ::oLinesDeliveryNoteCustomer:ResourceDetail( nMode ) )
 
    METHOD getAppendDocumento()
    METHOD getEditDocumento()
