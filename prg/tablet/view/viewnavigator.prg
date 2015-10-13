@@ -75,6 +75,8 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "bLClicked" => {|| if( ::oSender:Append(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
+   if ::oSender:lAlowEdit
+
    TGridImage():Build(  {  "nTop"      => 75,;
                            "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
                            "nWidth"    => 64,;
@@ -82,6 +84,19 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "cResName"  => "flat_edit_64",;
                            "bLClicked" => {|| if( ::oSender:Edit(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
+
+   else
+
+   TGridImage():Build(  {  "nTop"      => 75,;
+                           "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_check_64",;
+                           "bLClicked" => {|| if( ::oSender:Zoom(), ::refreshBrowse(), ) },;
+                           "oWnd"      => ::oDlg } )
+
+
+   end if 
 
    TGridImage():Build(  {  "nTop"      => 75,;
                            "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;

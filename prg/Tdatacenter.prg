@@ -5470,9 +5470,7 @@ CLASS D
       METHOD AlbaranesClientesIdTextShort( nView );
                                                       INLINE ( ::Get( "AlbCliT", nView ) )->cSerAlb + "/" + Alltrim( Str( ( ::Get( "AlbCliT", nView ) )->nNumAlb ) )
       METHOD AlbaranesClientesIdText( nView )         INLINE ( ::AlbaranesClientesIdTextShort( nView ) + "/" + ( ::Get( "AlbCliT", nView ) )->cSufAlb ) 
-      METHOD getHashAlbaranCliente( nView )           INLINE ( msgAlert( ::AlbaranesClientesId( nView ), "id"),;
-                                                               msgAlert( ::AlbaranesClientes( nView ), "tabla" ),;
-                                                               ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
+      METHOD getHashAlbaranCliente( nView )           INLINE ( ::getHashRecordById( ::AlbaranesClientesId( nView ), ::AlbaranesClientes( nView ), nView ) )
       METHOD getDefaultHashAlbaranCliente( nView )    INLINE ( ::getHashRecordDefaultValues( ::AlbaranesClientes( nView ), nView ) )
 
    METHOD AlbaranesClientesLineas( nView )            INLINE ( ::Get( "AlbCliL", nView ) )
@@ -5484,8 +5482,8 @@ CLASS D
    METHOD getStatusAlbaranesClientesLineas( nView )   INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientesLineas( nView ) ) )
    METHOD setStatusAlbaranesClientesLineas( nView )   INLINE ( SetStatus( ::AlbaranesClientesLineas( nView ), ::aStatus ) )
 
-   METHOD getStatusAlbaranesClientes( nView )   INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )
-   METHOD setStatusAlbaranesClientes( nView )   INLINE ( SetStatus( ::AlbaranesClientes( nView ), ::aStatus ) )
+   METHOD getStatusAlbaranesClientes( nView )         INLINE ( ::aStatus := aGetStatus( ::AlbaranesClientes( nView ) ) )
+   METHOD setStatusAlbaranesClientes( nView )         INLINE ( SetStatus( ::AlbaranesClientes( nView ), ::aStatus ) )
 
    METHOD AlbaranesClientesSeries( nView )            INLINE ( ::Get( "AlbCliS", nView ) )
       METHOD AlbaranesClientesSeriesId( nView )       INLINE ( ( ::Get( "AlbCliS", nView ) )->cSerAlb + str( ( ::Get( "AlbCliS", nView ) )->nNumAlb, 9 ) + ( ::Get( "AlbCliS", nView ) )->cSufAlb )
@@ -5549,31 +5547,31 @@ CLASS D
                                                                ) )  
       METHOD eofFacturasClientesEntidades( nView ) INLINE ( ( ::FacturasClientesEntidades( nView ) )->( eof() ) )
 
-   METHOD FacturasClientesSituaciones( nView )            INLINE ( ::Get( "FacCliC", nView ) )
-      METHOD FacturasClientesSituacionesId( nView )       INLINE ( ( ::Get( "FacCliC", nView ) )->cSerFac + str( ( ::Get( "FacCliC", nView ) )->nNumFac, 9 ) + ( ::Get( "FacCliC", nView ) )->cSufFac )
-      METHOD FacturasClientesSituacionesIdText( nView )   INLINE ( ::Get( "FacCliC", nView ) )->cSerFac + "/" + Alltrim( Str( ( ::Get( "FacCliC", nView ) )->nNumFac ) )
+   METHOD FacturasClientesSituaciones( nView )           INLINE ( ::Get( "FacCliC", nView ) )
+      METHOD FacturasClientesSituacionesId( nView )      INLINE ( ( ::Get( "FacCliC", nView ) )->cSerFac + str( ( ::Get( "FacCliC", nView ) )->nNumFac, 9 ) + ( ::Get( "FacCliC", nView ) )->cSufFac )
+      METHOD FacturasClientesSituacionesIdText( nView )  INLINE ( ::Get( "FacCliC", nView ) )->cSerFac + "/" + Alltrim( Str( ( ::Get( "FacCliC", nView ) )->nNumFac ) )
 
-   METHOD FacturasClientesSeries( nView )       INLINE ( ::Get( "FacCliS", nView ) )
+   METHOD FacturasClientesSeries( nView )                INLINE ( ::Get( "FacCliS", nView ) )
 
-   METHOD AnticiposClientes( nView )            INLINE ( ::Get( "AntCliT", nView ) )
+   METHOD AnticiposClientes( nView )                     INLINE ( ::Get( "AntCliT", nView ) )
 
    // Facturas rectificativas--------------------------------------------------
 
-   METHOD FacturasRectificativas( nView )             INLINE ( ::Get( "FacRecT", nView ) )
-      METHOD FacturasRectificativasId( nView )        INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
+   METHOD FacturasRectificativas( nView )                      INLINE ( ::Get( "FacRecT", nView ) )
+      METHOD FacturasRectificativasId( nView )                 INLINE ( ( ::Get( "FacRecT", nView ) )->cSerie + str( ( ::Get( "FacRecT", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecT", nView ) )->cSufFac )
 
-   METHOD FacturasRectificativasLineas( nView )             INLINE ( ::Get( "FacRecL", nView ) )
-      METHOD FacturasRectificativasLineasId( nView )        INLINE ( ( ::Get( "FacRecL", nView ) )->cSerie + str( ( ::Get( "FacRecL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecL", nView ) )->cSufFac )
+   METHOD FacturasRectificativasLineas( nView )                INLINE ( ::Get( "FacRecL", nView ) )
+      METHOD FacturasRectificativasLineasId( nView )           INLINE ( ( ::Get( "FacRecL", nView ) )->cSerie + str( ( ::Get( "FacRecL", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecL", nView ) )->cSufFac )
 
-   METHOD FacturasRectificativasIncidencias( nView )             INLINE ( ::Get( "FacRecI", nView ) )
-      METHOD FacturasRectificativasIncidenciasId( nView )        INLINE ( ( ::Get( "FacRecI", nView ) )->cSerie + str( ( ::Get( "FacRecI", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecI", nView ) )->cSufFac )
+   METHOD FacturasRectificativasIncidencias( nView )           INLINE ( ::Get( "FacRecI", nView ) )
+      METHOD FacturasRectificativasIncidenciasId( nView )      INLINE ( ( ::Get( "FacRecI", nView ) )->cSerie + str( ( ::Get( "FacRecI", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecI", nView ) )->cSufFac )
 
-   METHOD FacturasRectificativasDocumentos( nView )             INLINE ( ::Get( "FacRecD", nView ) )
-      METHOD FacturasRectificativasDocumentosId( nView )        INLINE ( ( ::Get( "FacRecD", nView ) )->cSerie + str( ( ::Get( "FacRecD", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecD", nView ) )->cSufFac )
+   METHOD FacturasRectificativasDocumentos( nView )            INLINE ( ::Get( "FacRecD", nView ) )
+      METHOD FacturasRectificativasDocumentosId( nView )       INLINE ( ( ::Get( "FacRecD", nView ) )->cSerie + str( ( ::Get( "FacRecD", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecD", nView ) )->cSufFac )
 
-   METHOD FacturasRectificativasSituaciones( nView )            INLINE ( ::Get( "FacRecE", nView ) )
-      METHOD FacturasRectificativasSituacionesId( nView )       INLINE ( ( ::Get( "FacRecE", nView ) )->cSerFac + str( ( ::Get( "FacRecE", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecE", nView ) )->cSufFac )
-      METHOD FacturasRectificativasSituacionesIdText( nView )   INLINE ( ::Get( "FacRecE", nView ) )->cSerFac + "/" + Alltrim( Str( ( ::Get( "FacRecE", nView ) )->nNumFac ) )
+   METHOD FacturasRectificativasSituaciones( nView )           INLINE ( ::Get( "FacRecE", nView ) )
+      METHOD FacturasRectificativasSituacionesId( nView )      INLINE ( ( ::Get( "FacRecE", nView ) )->cSerFac + str( ( ::Get( "FacRecE", nView ) )->nNumFac, 9 ) + ( ::Get( "FacRecE", nView ) )->cSufFac )
+      METHOD FacturasRectificativasSituacionesIdText( nView )  INLINE ( ::Get( "FacRecE", nView ) )->cSerFac + "/" + Alltrim( Str( ( ::Get( "FacRecE", nView ) )->nNumFac ) )
 
    // Tikets de clientes-------------------------------------------------------
 

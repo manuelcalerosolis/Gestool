@@ -129,6 +129,7 @@ Return ( DocumentLine():New( hLine, self ) )
 METHOD GetAppendDetail() CLASS DeliveryNoteCustomer
 
    local hLine             := D():GetAlbaranClienteLineaBlank( ::nView )
+   
    ::oDocumentLineTemporal := DocumentLine():New( hLine, self )
 
 Return ( self )

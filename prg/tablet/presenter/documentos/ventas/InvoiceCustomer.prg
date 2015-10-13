@@ -4,14 +4,17 @@
 
 CLASS InvoiceCustomer FROM DocumentsSales  
   
+   DATA lAlowEdit                         INIT accessCode():lInvoiceModify
+
    METHOD New()
 
    METHOD getAppendDocumento()
 
    METHOD getEditDocumento()
+      /*
       METHOD onPreEditDocumento           INLINE   (  iif(  !accessCode():lInvoiceModify,;
                                                             ( apoloMsgStop( "La modificación de facturas no esta permitida." ), .f. ),;
-                                                            .t. ) )
+                                                            .t. ) ) */
 
    METHOD getLinesDocument( id )
    METHOD getDocumentLine()
@@ -66,7 +69,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD GetEditDocumento() CLASS InvoiceCustomer
+METHOD getEditDocumento() CLASS InvoiceCustomer
 
    local id                := D():FacturasClientesId( ::nView )
 

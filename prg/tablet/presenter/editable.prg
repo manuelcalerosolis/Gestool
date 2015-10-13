@@ -12,6 +12,8 @@ CLASS Editable
 
    DATA lChangePrecio                           INIT .t.
 
+   DATA lAlowEdit                               INIT .t.                                      
+
    DATA cDataTable
    DATA cDataTableLine
 
@@ -40,12 +42,15 @@ CLASS Editable
       METHOD onPreSaveEdit()                    VIRTUAL
       METHOD saveEdit()
       METHOD onPostSaveEdit()                   INLINE ( .t. )
+
+   METHOD Zoom()
       
    METHOD Delete()
 
    METHOD lAppendMode()                         INLINE ( ::nMode == APPD_MODE )
    METHOD lEditMode()                           INLINE ( ::nMode == EDIT_MODE )
    METHOD lZoomMode()                           INLINE ( ::nMode == ZOOM_MODE )
+   METHOD lNotZoomMode()                        INLINE ( ::nMode != ZOOM_MODE )
 
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
    METHOD getDataTable()                        INLINE ( ::cDataTable )
@@ -185,6 +190,29 @@ METHOD saveEdit() CLASS Editable
 Return ( lEdit )
 
 //---------------------------------------------------------------------------//
+
+METHOD Zoom() CLASS Editable
+
+   if !::onPreEditDocumento()
+      Return ( .f. )
+   end if 
+
+   ::nMode        := ZOOM_MODE
+
+   if ::getEditDocumento()
+
+      ::onPostGetDocumento()
+
+      ::Resource()
+
+      ::onPreEnd()
+
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD Delete() CLASS Editable
 

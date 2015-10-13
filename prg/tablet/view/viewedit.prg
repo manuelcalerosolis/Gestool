@@ -6,7 +6,7 @@ CLASS ViewEdit FROM ViewBase
 
    DATA nMode
    
-   DATA oGetCliente
+   DATA getCodigoCliente
    DATA oNombreCliente
 
    DATA getCodigoDireccion
@@ -14,7 +14,7 @@ CLASS ViewEdit FROM ViewBase
    DATA textNombreDireccion         INIT Space( 200 )
 
    DATA oCbxRuta
-   DATA oSayTextRuta
+   DATA getRuta
 
    DATA getSerie
 
@@ -30,7 +30,7 @@ CLASS ViewEdit FROM ViewBase
    METHOD defineRuta()
 
    METHOD defineCliente()
-      METHOD refreshCliente()       INLINE ( ::oGetCliente:Refresh(), ::oNombreCliente:Refresh() )
+      METHOD refreshCliente()       INLINE ( ::getCodigoCliente:Refresh(), ::oNombreCliente:Refresh() )
 
    METHOD defineDireccion()
 
@@ -63,7 +63,7 @@ METHOD StartDialog() CLASS ViewEdit
    ::getCodigoDireccion:lValid()
 
    if ::oSender:nMode == APPD_MODE
-      ::oSender:loadNextClient( ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion, ::nMode )
+      ::oSender:loadNextClient( ::nMode )
    else   
       ::RefreshBrowse()
    end if
@@ -113,15 +113,17 @@ METHOD defineSerie() CLASS ViewEdit
                                        "nClrInit"  => nGridColor(),;
                                        "nClrOver"  => nGridColor(),;
                                        "nClrVisit" => nGridColor(),;
+                                       "bWhen"     => {|| ::oSender:lNotZoomMode() },;
                                        "bAction"   => {|| ::oSender:isChangeSerieTablet( ::getSerie ) } } )
 
-   ::getSerie    := TGridGet():Build( {  "nRow"      => 40,;
+   ::getSerie  := TGridGet():Build( {  "nRow"      => 40,;
                                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                        "bSetGet"   => {|u| ::SetGetValue( u, "Serie" ) },;
                                        "oWnd"      => ::oDlg,;
                                        "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                        "nHeight"   => 23,;
                                        "cPict"     => "@!",;
+                                       "bWhen"     => {|| ::oSender:lNotZoomMode() },;
                                        "lPixels"   => .t. } )
 
 Return ( self )
@@ -153,14 +155,16 @@ METHOD defineRuta() CLASS ViewEdit
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 25,;
                                                 "aItems"    => aCbxRuta,;
-                                                "bChange"   => {|| ::oSender:ChangeRuta( ::oGetCliente, ::getCodigoDireccion, ::oSayTextRuta ) } } )
+                                                "bWhen"     => {|| ::oSender:lNotZoomMode() },;
+                                                "bChange"   => {|| ::oSender:ChangeRuta() } } )
 
    TGridImage():Build(  {  "nTop"      => 63,;
                            "nLeft"     => {|| GridWidth( 4.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_left_64",;
-                           "bLClicked" => {|| ::oSender:priorClient( ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion ) },;
+                           "bLClicked" => {|| ::oSender:priorClient() },;
+                           "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 63,;
@@ -168,10 +172,11 @@ METHOD defineRuta() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_right_64",;
-                           "bLClicked" => {|| ::oSender:nextClient( ::oSayTextRuta, ::oGetCliente, ::getCodigoDireccion ) },;
+                           "bLClicked" => {|| ::oSender:nextClient() },;
+                           "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                            "oWnd"      => ::oDlg } )
 
-   ::oSayTextRuta := TGridGet():Build(    {  "nRow"      => 67,;
+   ::getRuta      := TGridGet():Build(    {  "nRow"      => 67,;
                                              "nCol"      => {|| GridWidth( 7, ::oDlg ) },;
                                              "bSetGet"   => {|u| if( PCount() == 0, cSayTextRuta, cSayTextRuta := u ) },;
                                              "oWnd"      => ::oDlg,;
@@ -198,13 +203,14 @@ METHOD defineCliente() CLASS ViewEdit
                            "nClrVisit" => nGridColor(),;
                            "bAction"   => {|| ::oSender:runGridCustomer() } } )
 
-   ::oGetCliente        := TGridGet():Build( {  "nRow"      => 95,;
+   ::getCodigoCliente   := TGridGet():Build( {  "nRow"      => 95,;
                                                 "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
                                                 "bSetGet"   => {|u| ::SetGetValue( u, "Cliente" ) },;
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lPixels"   => .t.,;
+                                                "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                                                 "bValid"    => {|| ::oSender:lValidCliente() } } )
    
    ::oNombreCliente     := TGridGet():Build( {  "nRow"      => 95,;
@@ -213,7 +219,8 @@ METHOD defineCliente() CLASS ViewEdit
                                                 "oWnd"      => ::oDlg,;
                                                 "lPixels"   => .t.,;
                                                 "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
-                                                "nHeight"   => 23 } )
+                                                "nHeight"   => 23,;
+                                                "bWhen"     => {|| ::oSender:lNotZoomMode() } } )
 
 Return ( self )
 
@@ -230,6 +237,7 @@ METHOD defineDireccion() CLASS ViewEdit
                               "nClrInit"  => nGridColor(),;
                               "nClrOver"  => nGridColor(),;
                               "nClrVisit" => nGridColor(),;
+                              "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                               "bAction"   => {|| ::oSender:runGridDirections() } } )
 
    ::getCodigoDireccion := TGridGet():Build( {  "nRow"      => 120,;
@@ -239,6 +247,7 @@ METHOD defineDireccion() CLASS ViewEdit
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lPixels"   => .t.,;
+                                                "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                                                 "bValid"    => {|| ::oSender:lValidDireccion() } } )
 
    ::getNombreDireccion := TGridGet():Build( {  "nRow"      => 120,;
@@ -247,6 +256,7 @@ METHOD defineDireccion() CLASS ViewEdit
                                                 "oWnd"      => ::oDlg,;
                                                 "nWidth"    => {|| GridWidth( 7, ::oDlg ) },;
                                                 "lPixels"   => .t.,;
+                                                "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                                                 "nHeight"   => 23 } )
 
 Return ( self )
@@ -263,6 +273,7 @@ METHOD defineBotonesAcciones() CLASS ViewEdit
                               "nHeight"   => 64,;
                               "cResName"  => "flat_add_64",;
                               "bLClicked" => {|| ::oSender:AppendDetail(), ::RefreshBrowse() },;
+                              "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                               "oWnd"      => ::oDlg } )
 
       TGridImage():Build(  {  "nTop"      => 145,;
@@ -270,6 +281,7 @@ METHOD defineBotonesAcciones() CLASS ViewEdit
                               "nWidth"    => 64,;
                               "nHeight"   => 64,;
                               "cResName"  => "flat_edit_64",;
+                              "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                               "bLClicked" => {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse() },;
                               "oWnd"      => ::oDlg } )
 
@@ -278,6 +290,7 @@ METHOD defineBotonesAcciones() CLASS ViewEdit
                               "nWidth"    => 64,;
                               "nHeight"   => 64,;
                               "cResName"  => "flat_minus_64",;
+                              "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
                               "bLClicked" => {|| ::oSender:DeleteDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse()},;
                               "oWnd"      => ::oDlg } )
    endif
