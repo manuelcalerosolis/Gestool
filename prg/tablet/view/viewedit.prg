@@ -113,8 +113,7 @@ METHOD defineSerie() CLASS ViewEdit
                                        "nClrInit"  => nGridColor(),;
                                        "nClrOver"  => nGridColor(),;
                                        "nClrVisit" => nGridColor(),;
-                                       "bWhen"     => {|| ::oSender:lNotZoomMode() },;
-                                       "bAction"   => {|| ::oSender:isChangeSerieTablet( ::getSerie ) } } )
+                                       "bAction"   => {|| ::oSender:isChangeSerieTablet() } } )
 
    ::getSerie  := TGridGet():Build( {  "nRow"      => 40,;
                                        "nCol"      => {|| GridWidth( 2.5, ::oDlg ) },;
@@ -265,35 +264,36 @@ Return ( self )
 
 METHOD defineBotonesAcciones() CLASS ViewEdit
 
-   if oUser():lAdministrador()
+   if ::oSender:lZoomMode()
+      return ( self )
+   end if 
 
-      TGridImage():Build(  {  "nTop"      => 145,;
-                              "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
-                              "nWidth"    => 64,;
-                              "nHeight"   => 64,;
-                              "cResName"  => "flat_add_64",;
-                              "bLClicked" => {|| ::oSender:AppendDetail(), ::RefreshBrowse() },;
-                              "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
-                              "oWnd"      => ::oDlg } )
+   TGridImage():Build(  {  "nTop"      => 145,;
+                           "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_add_64",;
+                           "bLClicked" => {|| ::oSender:AppendDetail(), ::RefreshBrowse() },;
+                           "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
+                           "oWnd"      => ::oDlg } )
 
-      TGridImage():Build(  {  "nTop"      => 145,;
-                              "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
-                              "nWidth"    => 64,;
-                              "nHeight"   => 64,;
-                              "cResName"  => "flat_edit_64",;
-                              "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
-                              "bLClicked" => {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse() },;
-                              "oWnd"      => ::oDlg } )
+   TGridImage():Build(  {  "nTop"      => 145,;
+                           "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_edit_64",;
+                           "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
+                           "bLClicked" => {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse() },;
+                           "oWnd"      => ::oDlg } )
 
-      TGridImage():Build(  {  "nTop"      => 145,;
-                              "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;
-                              "nWidth"    => 64,;
-                              "nHeight"   => 64,;
-                              "cResName"  => "flat_minus_64",;
-                              "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
-                              "bLClicked" => {|| ::oSender:DeleteDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse()},;
-                              "oWnd"      => ::oDlg } )
-   endif
+   TGridImage():Build(  {  "nTop"      => 145,;
+                           "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_minus_64",;
+                           "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
+                           "bLClicked" => {|| ::oSender:DeleteDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse()},;
+                           "oWnd"      => ::oDlg } )
 
 Return ( self )
 
@@ -333,7 +333,6 @@ METHOD defineBotonesMovimiento() CLASS ViewEdit
                            "bLClicked" => {|| ::oBrowse:PageDown(), ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() },;
                            "oWnd"      => ::oDlg } )
 
-
 Return ( self ) 
 
 //---------------------------------------------------------------------------//   
@@ -360,7 +359,9 @@ METHOD defineBrowseLineas() CLASS ViewEdit
 
    ::oBrowse:SetArray( ::oSender:getLines(), , , .f. )
 
-   ::oBrowse:bLDblClick       := {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse() }
+   if ::oSender:lNotZoomMode()
+      ::oBrowse:bLDblClick    := {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ), ::refreshBrowse() }
+   end if 
 
    ::oBrowse:CreateFromCode()
 

@@ -294,10 +294,14 @@ Return ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
-METHOD isChangeSerieTablet( getSerie ) CLASS DocumentsSales
+METHOD isChangeSerieTablet() CLASS DocumentsSales
    
+   if ::lZoomMode()
+      Return ( self )
+   end if 
+
    if hGet( ::hDictionaryMaster, "Envio" )
-      ::ChangeSerieTablet( getSerie )
+      ::ChangeSerieTablet( ::oViewEdit:getSerie )
    end if
 
 Return ( self )
@@ -329,7 +333,7 @@ METHOD lValidDireccion() CLASS DocumentsSales
    local nRec
    local nOrdAnt
    local lValid            := .f.
-   local codigoCliente     := hGet( ::hDictionaryMaster, "Cliente" )
+   local codigoCliente     := ::oViewEdit:getCodigoCliente:varGet()     // hGet( ::hDictionaryMaster, "Cliente" )
    local codigoDireccion   := ::oViewEdit:getCodigoDireccion:varGet()
 
    if empty( codigoCliente )
@@ -952,6 +956,10 @@ Return( lReturn )
 //---------------------------------------------------------------------------//
 
 METHOD runGridPayment() CLASS DocumentsSales
+
+   if ::lZoomMode()
+      Return ( self )
+   end if 
 
    ::oViewEditResumen:oCodigoFormaPago:Disable()
 

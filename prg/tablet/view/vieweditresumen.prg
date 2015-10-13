@@ -175,7 +175,8 @@ METHOD defineFormaPago() CLASS ViewEditResumen
                                                 "nWidth"    => {|| GridWidth( 2, ::oDlg ) },;
                                                 "nHeight"   => 23,;
                                                 "lPixels"   => .t.,;
-                                                "bValid"    => {||  ::oSender:lValidPayment() } } )
+                                                "bWhen"     => {|| ::oSender:lNotZoomMode() },; 
+                                                "bValid"    => {|| ::oSender:lValidPayment() } } )
 
    ::oNombreFormaPago   := TGridGet():Build(  {  "nRow"      => 65,;
                                                 "nCol"      => {|| GridWidth( 4.5, ::oDlg ) },;
@@ -228,6 +229,7 @@ METHOD defineCheckRecargo() CLASS ViewEditResumen
                                                       "nHeight"   => 23,;
                                                       "oFont"     => oGridFont(),;
                                                       "lPixels"   => .t.,;
+                                                      "bWhen"     => {|| ::oSender:lNotZoomMode() },;
                                                       "bChange"   => {|| ::oBrowse:Refresh() } } )
 
 
