@@ -32,9 +32,17 @@ CLASS ImportarPedidosProveedorExcel
    DATA oActiveSheet
 
    DATA hTallas                              INIT {=>}
+   DATA hTallasColores                       INIT {=>}               
    
    DATA nRowTalla
+      METHOD getRow()                        INLINE ( ::nRowTalla )
+      METHOD nextRow()                       INLINE ( ::nRowTalla++ )
+
    DATA nColumnTalla
+
+   DATA cCodigoProveedor
+   DATA cCodigoArticulo
+   DATA cCodigoColor
 
    METHOD New()
    
@@ -49,7 +57,13 @@ CLASS ImportarPedidosProveedorExcel
          METHOD getValoresTallas()
          METHOD addValoresTallas( cValueTalla, nColumna )
 
+      METHOD getArticulo()      
+      METHOD getTallaColorArticulo()
+         METHOD getUnidadesPorTallas()
+
    METHOD getActiveSheetValue( nRow, nCol )  INLINE ( ::oActiveSheet:Cells( nRow, nCol ):Value )
+
+   METHOD getTallaFromColumna( nCol )        INLINE ( if( hhaskey( ::hTallas, nCol ), hGet( ::hTallas, nCol ), "" ) )
 
 ENDCLASS
 
@@ -80,7 +94,11 @@ METHOD processFile() CLASS ImportarPedidosProveedorExcel
 
    if ::isOpenFile()
       ::getTallas()
+      ::getArticulo()
+      ::getTallaColorArticulo()
    end if 
+
+   msgalert( hb_valtoexp( ::hTallasColores ), "hTallasColores")
 
    ::closeFile()
 
@@ -190,12 +208,78 @@ METHOD addValoresTallas( cValueTalla, nColumna )
    end if 
 
    if alltrim(cValueTalla) != __referenciaFabricante__ .and. alltrim(cValueTalla) != __articulo__ .and. alltrim(cValueTalla) != __total__
-      hset( ::hTallas, cValueTalla, nColumna )
+      hset( ::hTallas, nColumna, cValueTalla )
    end if 
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD getArticulo() CLASS ImportarPedidosProveedorExcel
+
+   local nCol
+
+   ::nextRow()
+
+   ::cCodigoProveedor   := ""
+   ::cCodigoArticulo    := ""
+
+   for nCol := 1 to 50
+      uValue            := ::getActiveSheetValue( ::getRow(), nCol )    
+      if !empty(uValue) 
+         if empty( ::cCodigoProveedor )
+            ::cCodigoProveedor   := alltrim( cvaltochar( uValue ) )
+         else 
+            ::cCodigoArticulo    := alltrim( cvaltochar( uValue ) )
+         end if
+      end if
+
+   next 
+
+   msgalert( ::cCodigoProveedor, "cCodigoProveedor" )
+   msgalert( ::cCodigoArticulo, "cCodigoArticulo" )
+
+Return ( self )
+
+METHOD getTallaColorArticulo()
+
+   local nCol
+
+   ::nextRow()
+   
+   ::cCodigoColor    := ""
+
+   for nCol := 1 to 50 
+      uValue :=  ::getActiveSheetValue( ::getRow(), nCol )
+      if !empty(uValue) 
+         if empty( ::cCodigoColor )
+            ::cCodigoColor   := alltrim( cvaltochar( uValue ) )
+         else
+            ::getUnidadesPorTallas( uValue, nCol )
+         end if 
+      end if
+   next 
+
+   msgAlert( hb_valtoexp( ::hTallasColores ), "hTallasColores" )
+
+Return ( self )
+
+METHOD getUnidadesPorTallas( uValue, nCol ) 
+
+   local cTalla
+
+   cTalla   := ::getTallaFromColumna( nCol )
+
+   if !empty( cTalla )
+      hset( ::hTallasColores, cTalla, uValue )
+   end if 
+
+Return ( self ) 
+
+
+
+
+
 
       
 
