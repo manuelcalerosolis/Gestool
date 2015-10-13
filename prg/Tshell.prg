@@ -2576,7 +2576,8 @@ METHOD chgFilter() CLASS TShell
 
       if cFilter != __txtFilters__
          
-         cFilterExpresion     := ::oActiveFilter:ExpresionFilter( cFilter )
+         cFilterExpresion     := ::oActiveFilter:getExpresionFilter( cFilter )
+
          if !Empty ( cFilterExpresion )
             CreateFastFilter( cFilterExpresion, ::xAlias, .f. )
          endif

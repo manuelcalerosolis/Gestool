@@ -174,27 +174,31 @@ METHOD Load( lAppend ) CLASS TDet
 
    ::oDbfVir:Zap()   
 
-   if ::oParent:cFirstKey != nil
+   if !Empty( ::oParent )
 
-      if ( lAppend ) .and. ::oDbf:Seek( ::oParent:cFirstKey )
+      if ::oParent:cFirstKey != nil
 
-         while !Empty( ::oDbf:OrdKeyVal() ) .and. ( ::oDbf:OrdKeyVal() == ::oParent:cFirstKey ) .and. !( ::oDbf:Eof() )
+         if ( lAppend ) .and. ::oDbf:Seek( ::oParent:cFirstKey )
 
-            if ::bOnPreLoad != nil
-               Eval( ::bOnPreLoad, Self )
-            end if
+            while !Empty( ::oDbf:OrdKeyVal() ) .and. ( ::oDbf:OrdKeyVal() == ::oParent:cFirstKey ) .and. !( ::oDbf:Eof() )
 
-            ::oDbfVir:AppendFromObject( ::oDbf )
+               if ::bOnPreLoad != nil
+                  Eval( ::bOnPreLoad, Self )
+               end if
 
-            ::nRegisterLoaded++
+               ::oDbfVir:AppendFromObject( ::oDbf )
 
-            if ::bOnPostLoad != nil
-               Eval( ::bOnPostLoad, Self )
-            end if
+               ::nRegisterLoaded++
 
-            ::oDbf:Skip()
+               if ::bOnPostLoad != nil
+                  Eval( ::bOnPostLoad, Self )
+               end if
 
-         end while
+               ::oDbf:Skip()
+
+            end while
+
+         end if
 
       end if
 

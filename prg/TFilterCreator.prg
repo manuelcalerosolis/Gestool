@@ -65,7 +65,7 @@ CLASS TFilterCreator
    METHOD setFiltersName( aFilter )          INLINE ( ::aFiltersName := aFilter )
    METHOD getFiltersName( )                  INLINE ( ::aFiltersName )
 
-   METHOD getExpresionFilter(  cFilterName )     INLINE ( if( ::BuildFilter( ::oFilterDatabase:ArrayFilter( cFilterName ) ), ::cExpresionFilter, "" ) ) // ::oFilterDatabase:getExpresionFilter(  cFilterName ) ) 
+   METHOD getExpresionFilter(  cFilterName ) INLINE ( if( ::BuildFilter( ::oFilterDatabase:ArrayFilter( cFilterName ) ), ::cExpresionFilter, "" ) ) // ::oFilterDatabase:getExpresionFilter(  cFilterName ) ) 
    METHOD ArrayFilter( cFilterName )         INLINE ( ::oFilterDatabase:ArrayFilter( cFilterName ) )
 
    METHOD BuildFilter( aFilter )

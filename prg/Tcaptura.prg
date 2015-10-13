@@ -66,7 +66,7 @@ Method New( cPath, oWndParent, oMenuItem )
 
    ::bFirstKey             := {|| ::oDbf:cCodigo }
 
-   ::oCapCampos            := TDetCaptura():New( cPath, Self )
+   ::oCapCampos            := TDetCaptura():New( cPath, , Self )
    ::AddDetail( ::oCapCampos )
 
    ::bOnPreAppend          := {|| ::oCapCampos:CheckDefault( Space( 3 ), .t. ) }
