@@ -188,7 +188,7 @@ METHOD OpenFiles()
          FIELD NAME "cCodCli"    TYPE "C" LEN  12 DEC 0 OF ::oDbfTmp
          FIELD NAME "cNomCli"    TYPE "C" LEN  50 DEC 0 OF ::oDbfTmp
          FIELD NAME "cCodObr"    TYPE "C" LEN  10 DEC 0 OF ::oDbfTmp
-         FIELD NAME "cLote"      TYPE "C" LEN  12 DEC 0 OF ::oDbfTmp  
+         FIELD NAME "cLote"      TYPE "C" LEN  14 DEC 0 OF ::oDbfTmp  
          FIELD NAME "dFecCad"    TYPE "D" LEN   8 DEC 0 OF ::oDbfTmp
 
          INDEX TO ( ::cFileTrazaLote ) TAG "cLote"     ON "cLote"                       NODELETED OF ::oDbfTmp

@@ -4135,7 +4135,7 @@ METHOD DefineAuxiliar()
       FIELD NAME "cValPr1"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de primera propiedad"               OF ::cAreaTmpLabel
       FIELD NAME "cValPr2"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTmpLabel
       FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::cAreaTmpLabel
-      FIELD NAME "cLote"      TYPE "C" LEN  12  DEC 0 COMMENT "Lote"                                     OF ::cAreaTmpLabel
+      FIELD NAME "cLote"      TYPE "C" LEN  14  DEC 0 COMMENT "Lote"                                     OF ::cAreaTmpLabel
       FIELD NAME "dFecCad"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha caducidad"                          OF ::cAreaTmpLabel
       FIELD NAME "lLabel"     TYPE "L" LEN   1  DEC 0 COMMENT "Lógico para marca de etiquetas"           OF ::cAreaTmpLabel
       FIELD NAME "nLabel"     TYPE "N" LEN   6  DEC 0 COMMENT "Unidades de etiquetas a imprimir"         OF ::cAreaTmpLabel
@@ -4546,7 +4546,7 @@ Method lPrepareDataReportLbl( lDesign ) CLASS TProduccion
       FIELD NAME "cValPr1"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de primera propiedad"               OF ::cAreaTemporalLabel
       FIELD NAME "cValPr2"    TYPE "C" LEN  40  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTemporalLabel
       FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::cAreaTemporalLabel
-      FIELD NAME "cLote"      TYPE "C" LEN  12  DEC 0 COMMENT "Lote"                                     OF ::cAreaTemporalLabel
+      FIELD NAME "cLote"      TYPE "C" LEN  14  DEC 0 COMMENT "Lote"                                     OF ::cAreaTemporalLabel
       FIELD NAME "dFecCad"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha caducidad"                          OF ::cAreaTemporalLabel
       FIELD NAME "lLabel"     TYPE "L" LEN   1  DEC 0 COMMENT "Lógico para marca de etiquetas"           OF ::cAreaTemporalLabel
       FIELD NAME "nLabel"     TYPE "N" LEN   6  DEC 0 COMMENT "Unidades de etiquetas a imprimir"         OF ::cAreaTemporalLabel

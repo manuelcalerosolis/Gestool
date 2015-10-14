@@ -3409,7 +3409,7 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       FIELD NAME "cRef"       TYPE "C" LEN 18 DEC 0 COMMENT "Referencia artículo"            OF oDbf
       FIELD NAME "cValPr1"    TYPE "C" LEN 10 DEC 0 COMMENT "Valor de la primera propiedad"  OF oDbf
       FIELD NAME "cValPr2"    TYPE "C" LEN 10 DEC 0 COMMENT "Valor de la segunda propiedad"  OF oDbf
-      FIELD NAME "cLote"      TYPE "C" LEN 12 DEC 0 COMMENT "Número de lote"                 OF oDbf
+      FIELD NAME "cLote"      TYPE "C" LEN 14 DEC 0 COMMENT "Número de lote"                 OF oDbf
       FIELD NAME "cAlmDoc"    TYPE "C" LEN 16 DEC 0 COMMENT "Almacén"                        OF oDbf
       FIELD NAME "nUndDoc"    TYPE "N" LEN 16 DEC 6 COMMENT "Unidades vendidas"              OF oDbf
       FIELD NAME "nFacCnv"    TYPE "N" LEN 16 DEC 6 COMMENT "Factor de conversión"           OF oDbf

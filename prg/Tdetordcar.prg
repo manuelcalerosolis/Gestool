@@ -113,7 +113,7 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "CVALPR1"    TYPE "C" LEN  40 DEC  0 COMMENT "Valor de primera propiedad"         OF oDbf
       FIELD NAME "CVALPR2"    TYPE "C" LEN  40 DEC  0 COMMENT "Valor de segunda propiedad"         OF oDbf
       FIELD NAME "LLOTE"      TYPE "L" LEN   1 DEC  0 COMMENT "Lógico de lote"                     OF oDbf
-      FIELD NAME "CLOTE"      TYPE "C" LEN  12 DEC  0 COMMENT "Número de lote"                     OF oDbf
+      FIELD NAME "cLote"      TYPE "C" LEN  14 DEC  0 COMMENT "Número de lote"                     OF oDbf
       FIELD NAME "NCAJORD"    TYPE "N" LEN  16 DEC  6 COMMENT cNombreCajas()                       OF oDbf
       FIELD NAME "NUNIORD"    TYPE "N" LEN  16 DEC  6 COMMENT cNombreUnidades()                    OF oDbf
       FIELD NAME "NPESO"      TYPE "N" LEN  16 DEC  6 COMMENT "Peso del artículo"                  OF oDbf

@@ -3562,7 +3562,7 @@ METHOD DefineFiles( cPath, cDriver, lUniqueName, cFileName ) CLASS TDetMovimient
       FIELD NAME "cCodDlg"    TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
       FIELD NAME "lLote"      TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf
       FIELD NAME "nLote"      TYPE "N" LEN   9 DEC 0 COMMENT "Número de lote"                      OF oDbf
-      FIELD NAME "cLote"      TYPE "C" LEN  12 DEC 0 COMMENT "Lote"                                OF oDbf
+      FIELD NAME "cLote"      TYPE "C" LEN  14 DEC 0 COMMENT "Lote"                                OF oDbf
       FIELD NAME "nCajMov"    TYPE "N" LEN  19 DEC 6 PICTURE {|| MasUnd() } COMMENT "Caj."         OF oDbf
       FIELD NAME "nUndMov"    TYPE "N" LEN  19 DEC 6 PICTURE {|| MasUnd() } COMMENT "Und."         OF oDbf
       FIELD NAME "nCajAnt"    TYPE "N" LEN  19 DEC 6 COMMENT "Caj. ant."                           OF oDbf

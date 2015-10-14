@@ -4347,7 +4347,7 @@ METHOD FldArticulo( lVisible, lPropiedades, lLote )
 
    if lLote
 
-      ::AddField( "cLote",    "C", 12, 0, {|| "@!" },                "Lote",              .f., "Número de lote",                 10, .f. )
+      ::AddField( "cLote",    "C", 14, 0, {|| "@!" },                "Lote",              .f., "Número de lote",                 10, .f. )
 
    end if
 

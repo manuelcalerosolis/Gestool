@@ -35,7 +35,7 @@ METHOD Create()
    ::AddField( "cCodigo",  "C",18, 0, {|| "@!" },     "Código artículo",    .t., "Código del artículo",   18, .f.  )
    ::AddField( "cNomArt",  "C",100,0, {|| "@!" },     "Nom. Art.",          .t., "Nombre del artículo",   20, .f.  )
    ::AddField( "nUnidades","N",16, 6, {|| MasUnd() }, "Und.",               .t., "Unidades de artículo",  10, .t.  )
-   ::AddField( "cLote",    "C",12, 0, {|| "@!" },     "Lote",               .t., "Lote",                  10, .f.  )
+   ::AddField( "cLote",    "C",14, 0, {|| "@!" },     "Lote",               .t., "Lote",                  10, .f.  )
 
    ::AddTmpIndex ( "cTipDoc", "cTipDoc + Dtos( dFecDoc )" ) 
 

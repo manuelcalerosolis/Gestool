@@ -93,7 +93,7 @@ RETURN ( Self )
 
 METHOD Create() CLASS OInfLot
 
-   ::AddField( "cLote",   "C", 12, 0, {|| "@!" },           "Lote",              .f., "Lote",             12, .f. )
+   ::AddField( "cLote",   "C", 14, 0, {|| "@!" },           "Lote",              .f., "Lote",             12, .f. )
    ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },           "Código artículo",         .t., "Código artículo",  14, .f. )
    ::AddField( "cNomArt", "C",100, 0, {|| "@!" },           "Artículo",          .t., "Artículo",         35, .f. )
    ::AddField( "cCodFam", "C", 16, 0, {|| "@!" },           "Família",           .f., "Família",           5, .f. )
