@@ -2985,7 +2985,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Scripts'
    oItem:cMessage       := 'Ejecutar scripts'
-   oItem:bAction        := {|| TScripts():New( cPatEmp(), oWnd, "01117" ):Activate() }
+   oItem:bAction        := {|| TScripts():New( cPatEmp(), , oWnd, "01117" ):Activate() }
    oItem:cId            := "01117"
    oItem:cBmp           := "Text_code_colored_16"
    oItem:cBmpBig        := "Text_code_colored_32"
