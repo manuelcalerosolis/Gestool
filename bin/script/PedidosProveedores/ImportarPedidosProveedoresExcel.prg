@@ -330,11 +330,14 @@ METHOD setLineasPedidos()
 
 Return ( self )
 
+//---------------------------------------------------------------------------//
+
 METHOD addLineasPedido()
 
    local hLinea  :=  {=>}
 
    ? ::cCodigoArticulo
+   ? ::
 
    if .f.
 

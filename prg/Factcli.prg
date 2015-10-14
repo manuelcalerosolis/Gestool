@@ -21984,6 +21984,9 @@ Method Process()
    local nNumero
    local cSufijo
 
+   local cNumeroFactura
+   local cTextoFactura
+
    for m := 1 to len( aFiles )
 
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
@@ -22029,33 +22032,54 @@ Method Process()
 
             while ( tmpFacCliT )->( !eof() )
 
-            	/*
-            	Comprobamos que no exista la factura en la base de datos
-            	*/
+               if lValidaOperacion( ( tmpFacCliT )->dFecFac, .f. )
 
-            	if lValidaOperacion( ( tmpFacCliT )->dFecFac, .f. ) .and. !( dbfFacCliT )->( dbSeek( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
+                  cNumeroFactura    := ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac
+                  cTextoFactura     := ( tmpFacCliT )->cSerie + "/" + AllTrim( str( ( tmpFacCliT )->nNumFac ) ) + "/" + AllTrim( ( tmpFacCliT )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli
 
-                  dbPass( tmpFacCliT, dbfFacCliT, .t. )
+               	// Comprobamos que no exista la factura en la base de datos
 
-               	if lClient .and. dbLock( dbfFacCliT )
-                 	   ( dbfFacCliT )->lSndDoc := .f.
-                 	   ( dbfFacCliT )->( dbUnLock() )
-               	end if
+                  if !( dbfFacCliT )->( dbSeek( cNumeroFactura ) )
 
-               	::oSender:SetText( "Añadida factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+                     dbPass( tmpFacCliT, dbfFacCliT, .t. )
 
-               	if ( tmpFacCliL )->( dbSeek( ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac ) )
-                    	while ( tmpFacCliL )->cSerie + str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == ( tmpFacCliT )->cSerie + str( ( tmpFacCliT )->nNumFac ) + ( tmpFacCliT )->cSufFac .and. !( tmpFacCliL )->( eof() )
-                        dbPass( tmpFacCliL, dbfFacCliL, .t. )
-                        ( tmpFacCliL )->( dbSkip() )
-                    	end do
-               	end if
+                  	if lClient .and. dbLock( dbfFacCliT )
+                    	   ( dbfFacCliT )->lSndDoc := .f.
+                    	   ( dbfFacCliT )->( dbUnLock() )
+                  	end if
 
-            	else
+                  	::oSender:SetText( "Añadida factura : " + cTextoFactura )
 
-                	::oSender:SetText( "Desestimada factura : " + ( tmpFacCliL )->cSerie + "/" + AllTrim( str( ( tmpFacCliL )->nNumFac ) ) + "/" +  AllTrim( ( tmpFacCliL )->cSufFac ) + "; " + Dtoc( ( tmpFacCliT )->dFecFac ) + "; " + AllTrim( ( tmpFacCliT )->cCodCli ) + "; " + ( tmpFacCliT )->cNomCli )
+                  else
 
-           		end if
+                     ::oSender:SetText( "Desestimada factura : " + cTextoFactura )
+
+                  end if
+
+                  // Pasamos las lineas----------------------------------------
+
+                  if ( dbfFacCliL )->( dbSeek( cNumeroFactura ) )
+
+                     ::oSender:setText( "Desestimada lineas de facturas : " + cTextoFactura )
+                  
+                  else 
+
+                     if ( tmpFacCliL )->( dbSeek( cNumeroFactura ) )
+                        while ( tmpFacCliL )->cSerie + str( ( tmpFacCliL )->nNumFac ) + ( tmpFacCliL )->cSufFac == cNumeroFactura .and. !( tmpFacCliL )->( eof() )
+                           dbPass( tmpFacCliL, dbfFacCliL, .t. )
+                           ( tmpFacCliL )->( dbSkip() )
+                        end do
+                     end if
+
+                     ::oSender:setText( "Añadidas lineas de facturas : " + cTextoFactura )
+
+                  end if 
+
+               else
+
+                  ::oSender:SetText( "Factura fecha invalida : " + cTextoFactura )
+
+               end if 
 
           		( tmpFacCliT )->( dbSkip() )
 
