@@ -199,6 +199,10 @@ return ( self )
 
 METHOD onPreRunNavigator() CLASS DocumentsSales
 
+   if empty( ::getWorkArea() )
+      Return .t.
+   end if 
+
    ( ::getWorkArea() )->( ordsetfocus( "dFecDes" ) )
    ( ::getWorkArea() )->( dbgotop() ) 
 

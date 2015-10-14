@@ -19,9 +19,10 @@ CLASS DailySummarySales FROM DocumentsSales
 
    METHOD CalculateGeneral()
 
+   METHOD onPreRunNavigator()    INLINE ( .t. )
+
 END CLASS
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 
 METHOD New() CLASS DailySummarySales
