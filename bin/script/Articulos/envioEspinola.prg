@@ -2,7 +2,7 @@
 
 #define CRLF                        chr( 13 ) + chr( 10 )
 
-#define __path__                    "C:\Users\calero\Dropbox\Buzon\"
+#define __path__                    "C:\Users\Usuario 001\Dropbox\Buzones\"
 
 static nView
 static aBuzones
@@ -49,25 +49,9 @@ Return nil
 Function Buzones()
 
    aBuzones             := {}    
-
-   ( D():Clientes( nView ) )->( ordsetfocus(0) )
-
-   ( D():Clientes( nView ) )->( dbGoTop() )
-   while ( !( D():Clientes( nView ) )->( eof() ) )
-
-      if rtrim( ( D():Clientes( nView ) )->cCodGrp ) == "GENS"
-         aAdd( aBuzones, ( rtrim( D():ClientesId( nView ) ) ) )
-      end if 
-
-      ( D():Clientes( nView ) )->( dbSkip() )
-
-   end while
-
-   ( D():Clientes( nView ) )->( ordsetfocus(1) )
-
-//   msgInfo( hb_valToExp( aBuzones ), "buzones" )
-
-   aEval( aBuzones, {|cBuzon| makedir( __path__ + cBuzon ) } )
+   ( D():Clientes( nView ) )->( dbeval(   {|| aAdd( aBuzones, ( rtrim( D():ClientesId( nView ) ) ) ) },;
+                                          {|| rtrim( ( D():Clientes( nView ) )->cCodGrp ) == "GENS" } ) )
+   aeval( aBuzones, {|cBuzon| makedir( __path__ + cBuzon ) } )
 
 Return nil
 
@@ -76,7 +60,6 @@ Return nil
 Function EnvioArticulos()
 
    local cFile
-
    local hArticulo
    local aCodebar       := {}
    local sArticulos
@@ -85,46 +68,37 @@ Function EnvioArticulos()
    ( D():Articulos( nView ) )->( dbGoTop() )
    while !( D():Articulos( nView ) )->( eof() )
 
-      if ( D():Articulos( nView ) )->lSndDoc
+      hArticulo         := hashRecord( D():Articulos( nView ) )
 
-         hArticulo         := hashRecord( D():Articulos( nView ) )
+      // Si tiene tarifa 4 se conviernte en la tarfa principal del vendedor
 
-         // Si tiene tarifa 4 se conviernte en la tarfa principal del vendedor
+      if hArticulo["PVENTA4"] != 0
+      	hArticulo["PVENTA1"] 	:= hArticulo["PVENTA4"]
+      end if
 
-         if !empty( hArticulo["PVENTA4"] )
-         	hArticulo["PVENTA1"] 	:= hArticulo["PVENTA4"]
-         end if
+      if hArticulo["PVTAIVA4"] != 0
+      	hArticulo["PVTAIVA1"] 	:= hArticulo["PVTAIVA4"]
+      end if
 
-         if !empty( hArticulo["PVTAIVA4"] )
-         	hArticulo["PVTAIVA1"] 	:= hArticulo["PVTAIVA4"]
-         end if
+      if ( D():ArticulosCodigosBarras( nView ) )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) )
 
-         if ( D():ArticulosCodigosBarras( nView ) )->( dbSeek( ( D():Articulos( nView ) )->Codigo ) )
+         aCodebar       := {}
 
-            aCodebar       := {}
+         while ( D():ArticulosCodigosBarras( nView ) )->cCodArt == ( D():Articulos( nView ) )->Codigo .and. !( D():ArticulosCodigosBarras( nView ) )->( eof() )
 
-            while ( D():ArticulosCodigosBarras( nView ) )->cCodArt == ( D():Articulos( nView ) )->Codigo .and. !( D():ArticulosCodigosBarras( nView ) )->( eof() )
+            aAdd( aCodebar, hashRecord( D():ArticulosCodigosBarras( nView ) ) )
 
-               aAdd( aCodebar, hashRecord( D():ArticulosCodigosBarras( nView ) ) )
+            ( D():ArticulosCodigosBarras( nView ) )->( dbSkip( 1 ) ) 
 
-               ( D():ArticulosCodigosBarras( nView ) )->( dbSkip( 1 ) ) 
+         end while
 
-            end while
-
-            hSet( hArticulo, "Codebar", aCodebar )
-
-         end if
-
-         aAdd( aArticulos, hArticulo )
-
-         msgAlert( hb_valToExp( hArticulo ), "Artículo " + ( D():Articulos( nView ) )->Codigo )
-
-         if ( D():Articulos( nView ) )->( dbRLock() )
-            ( D():Articulos( nView ) )->lSndDoc   := .f.
-            ( D():Articulos( nView ) )->( dbUnLock() )
-         end if 
+         hSet( hArticulo, "Codebar", aCodebar )
 
       end if
+
+      aAdd( aArticulos, hArticulo )
+
+      msgWait( "Artículo " + ( D():ArticulosCodigosBarras( nView ) )->cCodArt, "Procesando", 0.1 )
 
       ( D():Articulos( nView ) )->( dbSkip() )
 
@@ -133,7 +107,7 @@ Function EnvioArticulos()
    sArticulos           := hb_serialize( aArticulos )
    cFile                := "Articulos" + dtos( date() ) + strtran( time(), ":", "" ) + ".txt"
 
-   aeval( aBuzones, {|cBuzon| hb_memowrit( __path__ + cBuzon + "\" + cFile, sArticulos )} )
+   aeval( aBuzones, {|cBuzon| hb_memowrit( __path__ + cBuzon + "\" + cFile, sArticulos ) } )
 
 Return ( nil )
 
@@ -150,10 +124,7 @@ Function EnvioClientes()
    ( D():Clientes( nView ) )->( dbGoTop() )
    while !( D():Clientes( nView ) )->( eof() )
 
-      if (  rtrim( ( D():Clientes( nView ) )->cCodRut ) == "0001" .or. ;
-            rtrim( ( D():Clientes( nView ) )->cCodRut ) == "0002" .or. ;
-            rtrim( ( D():Clientes( nView ) )->cCodRut ) == "003" ) .and. ;
-            ( D():Clientes( nView ) )->lSndInt 
+   	  if rtrim( ( D():Clientes( nView ) )->cCodRut ) == "0002"
 
 	      hCliente          := hashRecord( D():Clientes( nView ) )
 
@@ -176,11 +147,6 @@ Function EnvioClientes()
 	      aAdd( aClientes, hCliente )
 
 	      msgWait( "Clientes " + ( D():ClientesId( nView ) ), "Procesando", 0.01 )
-
-         if ( D():Clientes( nView ) )->( dbRLock() )
-            ( D():Clientes( nView ) )->lSndInt   := .f.
-            ( D():Clientes( nView ) )->( dbUnLock() )
-         end if 
 
       end if
 

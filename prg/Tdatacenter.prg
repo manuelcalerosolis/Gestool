@@ -6261,6 +6261,7 @@ METHOD getHashRecordBlank( cDatabase, nView ) CLASS D
    
    ( ::Get( cDatabase, nView ) )->( dbgobottom() )      
    ( ::Get( cDatabase, nView ) )->( dbskip() )
+   
    hash  := ::getHashRecord( cDatabase, nView )
 
    ::SetStatus( cDatabase, nView )

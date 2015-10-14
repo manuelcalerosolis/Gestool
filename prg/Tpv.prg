@@ -799,9 +799,9 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       end if
 
       cVisor               := cVisorEnCaja( oUser():cCaja(), dbfCajT )
-      if !Empty( cVisor )
+      if !empty( cVisor )
          oVisor            := TVisor():Create( cVisor )
-         if !Empty( oVisor )
+         if !empty( oVisor )
             oVisor:Wellcome()
          end if
       end if
@@ -1000,47 +1000,47 @@ STATIC FUNCTION CloseFiles()
 
    CLOSE ( dbfTImp     )
 
-   if !Empty( oCaptura )
+   if !empty( oCaptura )
       oCaptura:End()
    end if
 
-   if !Empty( oTComandas )
+   if !empty( oTComandas )
       oTComandas:End()
    end if
 
-   if !Empty( oStock )
+   if !empty( oStock )
       oStock:end()
    end if
 
-   if !Empty( oNewImp )
+   if !empty( oNewImp )
       oNewImp:End()
    end if
 
-   if !Empty( oVisor )
+   if !empty( oVisor )
       oVisor:End()
    end if
 
-   if !Empty( oUndMedicion )
+   if !empty( oUndMedicion )
       oUndMedicion:end()
    end if
 
-   if !Empty( oInvitacion )
+   if !empty( oInvitacion )
       oInvitacion:End()
    end if
 
-   if !Empty( oFideliza )
+   if !empty( oFideliza )
       oFideliza:End()
    end if
 
-   if !Empty( oTipArt )
+   if !empty( oTipArt )
       oTipArt:End()
    end if
 
-   if !Empty( oFabricante )
+   if !empty( oFabricante )
       oFabricante:End()
    end if
 
-   if !Empty( oDetCamposExtra )
+   if !empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
    end if
 
@@ -1693,9 +1693,9 @@ end if
 
    EnableAcceso()
 
-   if !Empty( cCodCli ) .or. !Empty( cCodArt ) .or. lEntCon .or. !Empty( aNumDoc )
+   if !empty( cCodCli ) .or. !empty( cCodArt ) .or. lEntCon .or. !empty( aNumDoc )
 
-      if !Empty( oWndBrw )
+      if !empty( oWndBrw )
          oWndBrw:RecAdd()
       end if
 
@@ -1740,7 +1740,7 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
    DEFAULT lImpMenu     := .f.
    DEFAULT nDevice      := IS_PRINTER
 
-   if Empty( oDatos )
+   if empty( oDatos )
       oDatos            := TFormatosImpresion():Load( dbfCajT )
    end if
 
@@ -1856,7 +1856,7 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
    Cambio el estado a imprimido para que el ticket no se vuelva a imprimir-----
    */
 
-   if !Empty( dbfImp )
+   if !empty( dbfImp )
 
       nNumTik  := ( dbfImp )->cSerTik + ( dbfImp )->cNumTik + ( dbfImp )->cSufTik
 
@@ -1873,7 +1873,7 @@ Static Function ImpTiket( nDevice, lEntrega, lImpMenu, dbfImp, oDatos )
 
    end if
 
-   if !Empty( oWndBrw )
+   if !empty( oWndBrw )
       oWndBrw:Refresh()
    end if
 
@@ -1922,7 +1922,7 @@ FUNCTION TpvDelRec()
    Cambiamos el estado del albarán del que proviene----------------------------
    */
 
-   if !Empty( ( dbfTikT )->cAlbTik )
+   if !empty( ( dbfTikT )->cAlbTik )
 
       if dbSeekInOrd( ( dbfTikT )->cAlbTik, "nNumAlb", dbfAlbCliT )
 
@@ -1969,7 +1969,7 @@ FUNCTION TpvDelRec()
    Cambiamos el estado del pedido del que proviene----------------------------
    */
 
-   if !Empty( ( dbfTikT )->cPedTik )
+   if !empty( ( dbfTikT )->cPedTik )
 
       if dbSeekInOrd( ( dbfTikT )->cPedTik, "nNumPed", dbfPedCliT )
 
@@ -2002,7 +2002,7 @@ FUNCTION TpvDelRec()
    Cambiamos el estado del presupuestos del que proviene----------------------------
    */
 
-   if !Empty( ( dbfTikT )->cPreTik )
+   if !empty( ( dbfTikT )->cPreTik )
 
       if dbSeekInOrd( ( dbfTikT )->cPreTik, "nNumPre", dbfPreCliT )
 
@@ -2060,7 +2060,7 @@ FUNCTION TpvDelRec()
    Borramos el doc. asociados-----------------------------------------------
    */
 
-   if !Empty( cNumDoc )
+   if !empty( cNumDoc )
 
       /*
       Localizamos el documento segun su tipo
@@ -2169,7 +2169,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
       return .f.
    end if
 
-   if nMode == APPD_MODE .and. !Empty( cCodCli )
+   if nMode == APPD_MODE .and. !empty( cCodCli )
       aTmp[ _CCLITIK ]     := cCodCli
    end if
 
@@ -2187,7 +2187,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
    Tarifa de venta del ticket--------------------------------------------------
    */
 
-   if Empty( aTmp[ _NTARIFA ] )
+   if empty( aTmp[ _NTARIFA ] )
       aTmp[ _NTARIFA ]     := Max( uFieldEmpresa( "nPreVta" ), 1 )
    end if
 
@@ -2230,7 +2230,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
    cCapCaj                 := cCapturaCaja( oUser():cCaja(), dbfCajT )
 
-   if Empty( aTmp[ _CTLFCLI ] )
+   if empty( aTmp[ _CTLFCLI ] )
       aTmp[ _CTLFCLI ]     := RetFld( aTmp[ _CCLITIK ], dbfClient, "Telefono" )
    end if
 
@@ -2408,7 +2408,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
       REDEFINE GET aGet[ _CFPGTIK ] VAR aTmp[ _CFPGTIK ];
          ID       180 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    !Empty( aTmp[ _CFPGTIK ] ) .and. cFpago( aGet[ _CFPGTIK ], dbfFPago, oGetTxt[ 3 ] ) ;
+         VALID    !empty( aTmp[ _CFPGTIK ] ) .and. cFpago( aGet[ _CFPGTIK ], dbfFPago, oGetTxt[ 3 ] ) ;
 			PICTURE	"@!" ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwFPago( aGet[ _CFPGTIK ], oGetTxt[ 3 ] ) ) ;
@@ -2454,7 +2454,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
          OF       oDlgTpv
 
       REDEFINE GET aGet[ _NCOMAGE ] VAR aTmp[ _NCOMAGE ] ;
-         WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( !empty( aTmp[ _CCODAGE ] ) .AND. nMode != ZOOM_MODE ) ;
          SPINNER;
          PICTURE  "@E 99.99" ;
          ID       242 ;
@@ -2704,6 +2704,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
          OF       oDlgTpv
 
    oDlgTpv:bStart       := {|| StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc, cCodArt ) }
+   // oDlgTpv:bGotFocus    := {|| msgAlert( "bGotFocus") }
 
    /*
    Apertura de la caja de dialogo
@@ -2785,8 +2786,8 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
          oBtnOld        := TDotNetButton():New( 60, oGrupo, "Cashier_Scroll_32",        "Vale",                7, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .f. ), NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f. )
-         oBtnUp         := TDotNetButton():New( 60, oGrupo, "Arrow_Up_Blue_Save_32",    "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .t., aTmp, aGet, nMode ), if( !Empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
-         oBtnDown       := TDotNetButton():New( 60, oGrupo, "Arrow_Down_Blue_Save_32",  "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .f., aTmp, aGet, nMode ), if( !Empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
+         oBtnUp         := TDotNetButton():New( 60, oGrupo, "Arrow_Up_Blue_Save_32",    "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .t., aTmp, aGet, nMode ), if( !empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
+         oBtnDown       := TDotNetButton():New( 60, oGrupo, "Arrow_Down_Blue_Save_32",  "",                    1, , , {|| nMode != ZOOM_MODE }, .f., .f., .f. ) //lCambiaTicket( .f., aTmp, aGet, nMode ), if( !empty( oBrw ), ( oBrw:Select( 0 ), oBrw:Select( 1 ), oBrw:Refresh() ), )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
          oBoton         := TDotNetButton():New( 60, oGrupo, "End32",                    "Salida",              1, {|| oDlgTpv:End() }, , , .f., .f., .f. )
@@ -2794,9 +2795,9 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
       oCarpeta          := TCarpeta():New( oOfficeBar, "Rotor" )
 
       oGrupo            := TDotNetGroup():New( oCarpeta, 306, "Cobros", .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "User1_32",                 "Modificar cliente",   1, {|| if( !Empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe cliente",     2, {|| if( !Empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
-         oBoton         := TDotNetButton():New( 60, oGrupo, "Worker_32",                "Modificar obras",     3, {|| if( !Empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "User1_32",                 "Modificar cliente",   1, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtCli( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe cliente",     2, {|| if( !empty( aTmp[ _CCLITIK ] ), InfCliente( aTmp[ _CCLITIK ] ), MsgStop( "Código cliente vacío" ) ) }, , , .f., .f., .f. )
+         oBoton         := TDotNetButton():New( 60, oGrupo, "Worker_32",                "Modificar obras",     3, {|| if( !empty( aTmp[ _CCLITIK ] ), EdtObras( aTmp[ _CCLITIK ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) }, , , .f., .f., .f. )
          oBoton         := TDotNetButton():New( 60, oGrupo, "Cube_Yellow_32",           "Modificar artículo",  4, {|| EdtArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
          oBoton         := TDotNetButton():New( 60, oGrupo, "Info_32",                  "Informe artículo",    5, {|| InfArticulo( ( dbfTmpL )->cCbaTil ) }, , , .f., .f., .f. )
 
@@ -2826,7 +2827,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
    if aNumDoc != nil
 
       do case
-         case !Empty( aNumDoc[ 1 ] )
+         case !empty( aNumDoc[ 1 ] )
 
             cPreCli( aTmp, aGet, @aNumDoc[ 1 ], oBrwDet )
 
@@ -2844,7 +2845,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
             oBtnUp:lEnabled   := .f.
             oBtnDown:lEnabled := .f.
 
-         case !Empty( aNumDoc[ 2 ] )
+         case !empty( aNumDoc[ 2 ] )
 
             cPedCli( aTmp, aGet, @aNumDoc[ 2 ], oBrwDet )
 
@@ -2862,7 +2863,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
             oBtnUp:lEnabled   := .f.
             oBtnDown:lEnabled := .f.
 
-         case !Empty( aNumDoc[ 3 ] )
+         case !empty( aNumDoc[ 3 ] )
 
             cAlbCli( aTmp, aGet, @aNumDoc[ 3 ], oBrwDet )
 
@@ -2888,7 +2889,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
    Ocultamos el bitmap para la imagen de los productos-------------------------
    */
 
-   if !Empty( oBmpVis )
+   if !empty( oBmpVis )
       oBmpVis:Hide()
    end if
 
@@ -2912,7 +2913,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
    Comportamiento inicial------------------------------------------------------
    */
 
-   if !Empty( oDlgTpv )
+   if !empty( oDlgTpv )
 
       // aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Disable() } )
 
@@ -2936,7 +2937,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
          Return ( nil )         
       end if
 
-      if !Empty( cCodArt ) .or. lEntCon()
+      if !empty( cCodArt ) .or. lEntCon()
          AppDetRec( oBrwDet, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
       end if 
 
@@ -3323,7 +3324,7 @@ static function cPreCli( aTmp, aGet, cNumPre, oBrwLin )
       aGet[ _CDNICLI ]:cText( ( dbfPreCliT )->cDniCli )
       aGet[ _CFPGTIK ]:cText( ( dbfPreCliT )->cCodPgo )
       aGet[ _CDIVTIK ]:cText( ( dbfPreCliT )->cDivPre )
-      if !Empty ( aGet[ _NVDVTIK ] )
+      if !empty ( aGet[ _NVDVTIK ] )
          aGet[ _NVDVTIK ]:cText( ( dbfPreCliT )->nVdvPre )
       end if
       aGet[ _CCODAGE ]:cText( ( dbfPreCliT )->cCodAge )
@@ -3432,7 +3433,7 @@ Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet, o
       nRec              := ( dbfTikT )->( Recno() )
       nOrdAnt           := ( dbfTikT )->( OrdSetFocus( "CNUMTIK" ) )
 
-      if !Empty( cSelApartado )                 .and.;
+      if !empty( cSelApartado )                 .and.;
          ( dbfTikT )->( dbSeek( cSelApartado ) )
 
          /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -3476,7 +3477,7 @@ Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet, o
 
          cOldCodCli           := ""
 
-         if !Empty( aGet[ _CCLITIK ] )
+         if !empty( aGet[ _CCLITIK ] )
             aGet[ _CCLITIK ]:SetFocus()
             aGet[ _CCLITIK ]:lValid()
          end if
@@ -3743,7 +3744,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    Matamos el dialogo----------------------------------------------------------
    */
 
-   if !Empty( oDlgDet )
+   if !empty( oDlgDet )
       oDlgDet:nResult      := IDCANCEL
    end if
 
@@ -3757,15 +3758,15 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       return .f.
    end if
 
-   if !Empty( aGet[ _CCLITIK ] ) .and. !( aGet[ _CCLITIK ]:lValid() )
+   if !empty( aGet[ _CCLITIK ] ) .and. !( aGet[ _CCLITIK ]:lValid() )
       aGet[ _CCLITIK ]:SetFocus()
       lSaveNewTik          := .f.
       return .f.
    end if
 
-   if !Empty( aGet[ _CALMTIK ] )
+   if !empty( aGet[ _CALMTIK ] )
 
-      if Empty( aTmp[ _CALMTIK ] )
+      if empty( aTmp[ _CALMTIK ] )
          aGet[ _CALMTIK ]:SetFocus()
          MsgInfo( "Almacén no puede estar vacio" )
          lSaveNewTik       := .f.
@@ -3780,18 +3781,18 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
    end if
 
-   if !Empty( aGet[ _CCCJTIK ] ) .and. Empty( aTmp[ _CCCJTIK ] )
+   if !empty( aGet[ _CCCJTIK ] ) .and. empty( aTmp[ _CCCJTIK ] )
       aGet[ _CCCJTIK ]:cText( cCurUsr() )
    end if
 
-   if lRecogerAgentes() .and. !Empty( aGet[ _CCODAGE ] ) .and.  Empty( aTmp[ _CCODAGE ] )
+   if lRecogerAgentes() .and. !empty( aGet[ _CCODAGE ] ) .and.  empty( aTmp[ _CCODAGE ] )
       msgStop( "Agente no puede estar vacio." )
       aGet[ _CCODAGE ]:SetFocus()
       lSaveNewTik         := .f.
       return .f.
    end if
 
-   if lRecogerAgentes() .and. !Empty( aGet[ _CCODAGE ] ) .and. !( aGet[ _CCODAGE ]:lValid() )
+   if lRecogerAgentes() .and. !empty( aGet[ _CCODAGE ] ) .and. !( aGet[ _CCODAGE ]:lValid() )
       aGet[ _CCODAGE ]:SetFocus()
       lSaveNewTik         := .f.
       return .f.
@@ -3808,20 +3809,20 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       Estos campos no pueden estar vacios--------------------------------------
       */
 
-      if !Empty( aGet[ _CNOMTIK ] ) .and. Empty( aTmp[ _CNOMTIK ] ) .and. !( "GA" $ oWnd():Cargo )
+      if !empty( aGet[ _CNOMTIK ] ) .and. empty( aTmp[ _CNOMTIK ] ) .and. !( "GA" $ oWnd():Cargo )
          msgStop( "Nombre de cliente no puede estar vacio." )
          aGet[ _CCLITIK ]:SetFocus()
          lSaveNewTik         := .f.
          return .f.
       end if
 
-      if Empty( aTmp[ _CDIRCLI ] ) .and. !( "GA" $ oWnd():Cargo )
+      if empty( aTmp[ _CDIRCLI ] ) .and. !( "GA" $ oWnd():Cargo )
          msgStop( "Domicilio de cliente no puede estar vacio." )
          lSaveNewTik         := .f.
          return .f.
       end if
 
-      if Empty( aTmp[ _CDNICLI ] ) .and. !( "GA" $ oWnd():Cargo )
+      if empty( aTmp[ _CDNICLI ] ) .and. !( "GA" $ oWnd():Cargo )
          msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacio." )
          lSaveNewTik         := .f.
          return .f.
@@ -3835,7 +3836,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       if !lBig
 
-         if Empty( aTmp[ _CFPGTIK ] )
+         if empty( aTmp[ _CFPGTIK ] )
             MsgStop( "Debe de introducir una forma de pago", "Imposible archivar como factura" )
             aGet[ _CFPGTIK ]:SetFocus()
             lSaveNewTik         := .f.
@@ -3848,14 +3849,14 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
             return .f.
          end if
 
-         if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. Empty( aTmp[ _CCODOBR ] )
+         if lObras() .and. !empty( aGet[ _CCODOBR ] ) .and. empty( aTmp[ _CCODOBR ] )
             MsgStop( "Debe de introducir una dirección", "Imposible archivar como factura" )
             aGet[ _CCODOBR ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
          end if
 
-         if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. !( aGet[ _CCODOBR ]:lValid() )
+         if lObras() .and. !empty( aGet[ _CCODOBR ] ) .and. !( aGet[ _CCODOBR ]:lValid() )
             aGet[ _CCODOBR ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
@@ -3865,14 +3866,14 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
    case nSave == SAVALB
 
-      if Empty( aTmp[ _CCLITIK ] )
+      if empty( aTmp[ _CCLITIK ] )
          msgStop( "Código de cliente no puede estar vacio." )
          aGet[ _CCLITIK ]:SetFocus()
          lSaveNewTik         := .f.
          return .f.
       end if
 
-      if !Empty( aGet[ _CCLITIK ] ) .and. lCliBlq( aTmp[ _CCLITIK ], dbfClient )
+      if !empty( aGet[ _CCLITIK ] ) .and. lCliBlq( aTmp[ _CCLITIK ], dbfClient )
          msgStop( "Cliente bloqueado, no se pueden realizar operaciones de venta" + CRLF + ;
                   "Motivo: " + AllTrim( RetFld( aTmp[ _CCLITIK ], dbfClient, "cMotBlq" ) ),;
                   "Imposible archivar" )
@@ -3881,7 +3882,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          return .f.
       end if
 
-      if !Empty( aGet[ _CCLITIK ] ) .and. !lCliChg( aTmp[ _CCLITIK ], dbfClient )
+      if !empty( aGet[ _CCLITIK ] ) .and. !lCliChg( aTmp[ _CCLITIK ], dbfClient )
          msgStop( "Este cliente no tiene autorización para venta a credito.", "Imposible archivar como albarán" )
          aGet[ _CCLITIK ]:SetFocus()
          lSaveNewTik         := .f.
@@ -3890,27 +3891,27 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       if !lBig
 
-         if !Empty( aGet[ _CFPGTIK ] ) .and. Empty( aTmp[ _CFPGTIK ] )
+         if !empty( aGet[ _CFPGTIK ] ) .and. empty( aTmp[ _CFPGTIK ] )
             MsgStop( "Debe de introducir una forma de pago", "Imposible archivar como albarán" )
             aGet[ _CFPGTIK ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
          end if
 
-         if !Empty( aGet[ _CFPGTIK ] ) .and. !( aGet[ _CFPGTIK ]:lValid() )
+         if !empty( aGet[ _CFPGTIK ] ) .and. !( aGet[ _CFPGTIK ]:lValid() )
             aGet[ _CFPGTIK ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
          end if
 
-         if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. Empty( aTmp[ _CCODOBR ] )
+         if lObras() .and. !empty( aGet[ _CCODOBR ] ) .and. empty( aTmp[ _CCODOBR ] )
             MsgStop( "Debe de introducir una dirección", "Imposible archivar como albarán" )
             aGet[ _CCODOBR ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
          end if
 
-         if lObras() .and. !Empty( aGet[ _CCODOBR ] ) .and. !( aGet[ _CCODOBR ]:lValid() )
+         if lObras() .and. !empty( aGet[ _CCODOBR ] ) .and. !( aGet[ _CCODOBR ]:lValid() )
             aGet[ _CCODOBR ]:SetFocus()
             lSaveNewTik         := .f.
             return .f.
@@ -3933,7 +3934,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    Serie del ticket------------------------------------------------------------
    */
 
-   if Empty( aTmp[ _CSERTIK ] )
+   if empty( aTmp[ _CSERTIK ] )
       aTmp[ _CSERTIK ]  := "A"
    end if
 
@@ -3941,7 +3942,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    Turno del ticket------------------------------------------------------------
    */
 
-   if Empty( aTmp[ _CTURTIK ] )
+   if empty( aTmp[ _CTURTIK ] )
       aTmp[ _CTURTIK ]  := cCurSesion()
    end if
 
@@ -3949,7 +3950,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    Usuario del ticket----------------------------------------------------------
    */
 
-   if Empty( aTmp[ _CCCJTIK ] )
+   if empty( aTmp[ _CCCJTIK ] )
       aTmp[ _CCCJTIK ]  := cCurUsr()
    end if
 
@@ -3957,7 +3958,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    Caja del ticket-------------------------------------------------------------
    */
 
-   if Empty( aTmp[ _CNCJTIK ] )
+   if empty( aTmp[ _CNCJTIK ] )
       aTmp[ _CNCJTIK ]  := oUser():cCaja()
    end if
 
@@ -3965,7 +3966,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    Tarifa de venta del ticket--------------------------------------------------
    */
 
-   if Empty( aTmp[ _NTARIFA ] )
+   if empty( aTmp[ _NTARIFA ] )
       aTmp[ _NTARIFA ]  := Max( uFieldEmpresa( "nPreVta" ), 1 )
    end if
 
@@ -4123,7 +4124,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
             setAutoTextDialog( 'Eliminando anticipos' )
 
-            if !Empty( cNumDoc )
+            if !empty( cNumDoc )
 
             nRec  := ( dbfAntCliT )->( Recno() )
             nOrd  := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
@@ -4187,7 +4188,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Antes de guardar, si venimos de un albarán, cambiamos el estado al albarán
          */
 
-         if !Empty( aTmp[ _CALBTIK ] )
+         if !empty( aTmp[ _CALBTIK ] )
 
             setAutoTextDialog( 'Estado albarán' )
 
@@ -4228,7 +4229,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Antes de guardar, si venimos de un pedido, cambiamos el estado al pedido
          */
 
-         if !Empty( aTmp[ _CPEDTIK ] )
+         if !empty( aTmp[ _CPEDTIK ] )
 
             setAutoTextDialog( 'Estado pedido' )
 
@@ -4248,7 +4249,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Antes de guardar, si venimos de un presupuesto, cambiamos el estado al presupuesto
          */
 
-         if !Empty( aTmp[ _CPRETIK ] )
+         if !empty( aTmp[ _CPRETIK ] )
 
             setAutoTextDialog( 'Estado presupuesto' )
 
@@ -4456,7 +4457,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       Preparados para un nuevo registro----------------------------------------
       */
 
-      if ( lBig ) .or. ( lEntCon() .and. ( nMode == APPD_MODE ) .and. ( Empty( cAlbTik ) .and. Empty( cPedTik ) .and. Empty( cPreTik ) ) )
+      if ( lBig ) .or. ( lEntCon() .and. ( nMode == APPD_MODE ) .and. ( empty( cAlbTik ) .and. empty( cPedTik ) .and. empty( cPreTik ) ) )
 
          setAutoTextDialog( 'Inicializado entorno' )
 
@@ -4473,7 +4474,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Validamos los controles-----------------------------------------------
          */
 
-         if !Empty( aGet[ _CCLITIK ] )
+         if !empty( aGet[ _CCLITIK ] )
             aGet[ _CCLITIK ]:lValid()
          end if
 
@@ -4481,11 +4482,11 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Tarifa de venta del ticket--------------------------------------------
          */
 
-         if Empty( aTmp[ _NTARIFA ] )
+         if empty( aTmp[ _NTARIFA ] )
             aTmp[ _NTARIFA ]  := Max( uFieldEmpresa( "nPreVta" ), 1 )
          end if
 
-         if Empty( aTmp[ _NTARIFA ] ) .and. !Empty( RetFld( cDefCli(), dbfClient, "nTarifa" ) )
+         if empty( aTmp[ _NTARIFA ] ) .and. !empty( RetFld( cDefCli(), dbfClient, "nTarifa" ) )
             aTmp[ _NTARIFA ]  := RetFld( cDefCli(), dbfClient, "nTarifa" )
          end if
 
@@ -4493,7 +4494,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Articulos de inicio---------------------------------------------------
          */
 
-         if !Empty( oBtnIni )
+         if !empty( oBtnIni )
             oBtnIni:Click()
          end if
 
@@ -4535,7 +4536,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
       end if
 
-      lStopEntCont         := !( Empty( cAlbTik ) .and. Empty( cPedTik ) .and. Empty( cPreTik ) )
+      lStopEntCont         := !( empty( cAlbTik ) .and. empty( cPedTik ) .and. empty( cPreTik ) )
 
    end if
 
@@ -4901,11 +4902,11 @@ Function nIvaLTpv( cTikT, cTikL, nDec, nRou, nVdv, nPrc )
 
          if ( cTikL )->nIvaTil != 0
 
-            if Empty( nPrc ) .or. nPrc == 1
+            if empty( nPrc ) .or. nPrc == 1
                nCalculo += nTotLUno( cTikL, nDec, nRou, nVdv )
             end if
 
-            if Empty( nPrc ) .or. nPrc == 2
+            if empty( nPrc ) .or. nPrc == 2
                nCalculo += nTotLDos( cTikL, nDec, nRou, nVdv )
             end if
 
@@ -4917,11 +4918,11 @@ Function nIvaLTpv( cTikT, cTikL, nDec, nRou, nVdv, nPrc )
 
          if cTikL:nIvaTil != 0
 
-            if Empty( nPrc ) .or. nPrc == 1
+            if empty( nPrc ) .or. nPrc == 1
                nCalculo += nTotLUno( cTikL:cAlias, nDec, nRou, nVdv )
             end if
 
-            if Empty( nPrc ) .or. nPrc == 2
+            if empty( nPrc ) .or. nPrc == 2
                nCalculo += nTotLDos( cTikL:cAlias, nDec, nRou, nVdv )
             end if
 
@@ -5429,19 +5430,19 @@ Static Function EdtCobTik( oWndBrw, lBig )
 
    ErrorBlock( oBlock )
 
-   if !Empty( dbfTmpP ) .and. ( dbfTmpP )->( Used() )
+   if !empty( dbfTmpP ) .and. ( dbfTmpP )->( Used() )
       ( dbfTmpP )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpV ) .and. ( dbfTmpV )->( Used() )
+   if !empty( dbfTmpV ) .and. ( dbfTmpV )->( Used() )
       ( dbfTmpV )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpA ) .and. ( dbfTmpA )->( Used() )
+   if !empty( dbfTmpA ) .and. ( dbfTmpA )->( Used() )
       ( dbfTmpA )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpE ) .and. ( dbfTmpE )->( Used() )
+   if !empty( dbfTmpE ) .and. ( dbfTmpE )->( Used() )
       ( dbfTmpE )->( dbCloseArea() )
    end if
 
@@ -5450,7 +5451,7 @@ Static Function EdtCobTik( oWndBrw, lBig )
    dbfErase( cNewFilA )
    dbfErase( cNewFilE )
 
-   if !Empty( oWndBrw )
+   if !empty( oWndBrw )
       oWndBrw:oBrw:DrawSelect()
    end if
 
@@ -5490,14 +5491,14 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
       return .f.
    end if
 
-   if !Empty( aGet[ _CCLITIK ] ) .and. !aGet[ _CCLITIK ]:lValid()
+   if !empty( aGet[ _CCLITIK ] ) .and. !aGet[ _CCLITIK ]:lValid()
       aGet[ _CCLITIK ]:SetFocus()
       return .f.
    end if
 
-   if !Empty( aGet[ _CALMTIK ] )
+   if !empty( aGet[ _CALMTIK ] )
 
-      if Empty( aTmp[ _CALMTIK ] )
+      if empty( aTmp[ _CALMTIK ] )
          aGet[ _CALMTIK ]:SetFocus()
          MsgInfo( "Almacén no puede estar vacio" )
          return .f.
@@ -5520,7 +5521,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
    Serie por defecto-----------------------------------------------------------
    */
 
-   if Empty( aTmp[ _CSERTIK ] )
+   if empty( aTmp[ _CSERTIK ] )
       aTmp[ _CSERTIK ]     := "A"
    end if
 
@@ -5528,19 +5529,19 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
    Turno del ticket------------------------------------------------------------
    */
 
-   if Empty( aTmp[ _CTURTIK ] )
+   if empty( aTmp[ _CTURTIK ] )
       aTmp[ _CTURTIK ]     := cCurSesion()
    end if
 
-   if Empty( aTmp[ _CTIPTIK ] )
+   if empty( aTmp[ _CTIPTIK ] )
       aTmp[ _CTIPTIK ]     := SAVTIK
    end if
 
-   if Empty( aTmp[ _DFECCRE ] )
+   if empty( aTmp[ _DFECCRE ] )
       aTmp[ _DFECCRE ]     := Date()
    end if
 
-   if Empty( aTmp[ _CTIMCRE ] )
+   if empty( aTmp[ _CTIMCRE ] )
       aTmp[ _CTIMCRE ]     := SubStr( Time(), 1, 5 )
    end if
 
@@ -5578,7 +5579,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
          Obtenemos el nuevo numero del Tiket-----------------------------------
          */
 
-         if !Empty( oMetMsg )
+         if !empty( oMetMsg )
             oMetMsg:cText           := 'Obtenemos el nuevo número'
             oMetMsg:Refresh()
          end if
@@ -5604,7 +5605,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
          */
 
          if !( dbfTikT )->( dbSeek( nNumTik ) )
-            if !Empty( oMetMsg )
+            if !empty( oMetMsg )
                oMetMsg:cText  := 'Ticket no encontrado'
                oMetMsg:Refresh()
             end if
@@ -5614,7 +5615,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
          Eliminamos las lineas----------------------------------------------------
          */
 
-         if !Empty( oMetMsg )
+         if !empty( oMetMsg )
             oMetMsg:cText     := 'Eliminando lineas'
             oMetMsg:Refresh()
          end if
@@ -5632,7 +5633,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
       Guardamos el tipo como tiket---------------------------------------------
       */
 
-      if !Empty( oMetMsg )
+      if !empty( oMetMsg )
          oMetMsg:cText        := 'Archivando lineas'
          oMetMsg:SetTotal( ( dbfTmpL )->( ordKeyCount() ) )
       end if
@@ -5642,7 +5643,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
       ( dbfTmpL )->( dbGoTop() )
       while !( dbfTmpL )->( eof() )
 
-         if !Empty( oMetMsg )
+         if !empty( oMetMsg )
             oMetMsg:Set( ( dbfTmpL )->( Recno() ) )
          end if
 
@@ -5658,7 +5659,7 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
       Escribimos definitivamente en el disco-----------------------------------
       */
 
-      if !Empty( oMetMsg )
+      if !empty( oMetMsg )
          oMetMsg:Set( 0 )
          oMetMsg:cText        := 'Archivando ticket'
          oMetMsg:Refresh()
@@ -5946,7 +5947,7 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
       uNumHas        := dFecHas
    end if
 
-   if !Empty( oDlg )
+   if !empty( oDlg )
       oDlg:Disable()
    end if
 
@@ -5984,7 +5985,7 @@ Static Function PrnSerTik( nSelTik, cNumDes, cNumHas, dFecDes, dFecHas, oDlg, lI
 
    end if
 
-   if !Empty( oDlg )
+   if !empty( oDlg )
       oDlg:Enable()
    end if
 
@@ -6442,7 +6443,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( aTmp[ _CDIVTIK ] )
+   if empty( aTmp[ _CDIVTIK ] )
       aTmp[ _CDIVTIK ]  := cDivEmp()
    end if
 
@@ -6477,35 +6478,35 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       ( dbfTmpS   )->( dbCloseArea() )
       ( dbfTmpN   )->( dbCloseArea() )
 
-      if !Empty( cNewFilL )
+      if !empty( cNewFilL )
          dbfErase( cNewFilL )
       end if
 
-      if !Empty( cNewFilP )
+      if !empty( cNewFilP )
          dbfErase( cNewFilP )
       end if
 
-      if !Empty( cNewFilV )
+      if !empty( cNewFilV )
          dbfErase( cNewFilV )
       end if
 
-      if !Empty( cNewFilA )
+      if !empty( cNewFilA )
          dbfErase( cNewFilA )
       end if
 
-      if !Empty( cNewFilE )
+      if !empty( cNewFilE )
          dbfErase( cNewFilE )
       end if
 
-      if !Empty( cNewFilC )
+      if !empty( cNewFilC )
          dbfErase( cNewFilC )
       end if
 
-      if !Empty( cNewFilS )
+      if !empty( cNewFilS )
          dbfErase( cNewFilS )
       end if
 
-      if !Empty( cNewFilN )
+      if !empty( cNewFilN )
          dbfErase( cNewFilN )
       end if
 
@@ -6660,8 +6661,8 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       aTmp[ _NREGIVA    ]              := RetFld( cDefCli(), dbfClient, "nRegIva" )
       aTmp[ _NUNDANT    ]              := 0
 
-      if !Empty( RetFld( cDefCli(), dbfClient, "nTarifa" ) )
-         if !Empty( aGet[ _NTARIFA ] )
+      if !empty( RetFld( cDefCli(), dbfClient, "nTarifa" ) )
+         if !empty( aGet[ _NTARIFA ] )
             aGet[ _NTARIFA ]:cText( RetFld( cDefCli(), dbfClient, "nTarifa" ) )
          else
             aTmp[ _NTARIFA ]           := RetFld( cDefCli(), dbfClient, "nTarifa" )
@@ -6670,11 +6671,11 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          aTmp[ _NTARIFA    ]           := Max( uFieldEmpresa( "nPreVta" ), 1 )
       end if
 
-      if !Empty( aGet[ _CCLITIK ] )
+      if !empty( aGet[ _CCLITIK ] )
          aGet[ _CCLITIK ]:cText( cDefCli() )
       end if
 
-      if !Empty( aGet[ _CNOMTIK ] )
+      if !empty( aGet[ _CNOMTIK ] )
          aGet[ _CNOMTIK ]:cText( RetFld( cDefCli(), dbfClient, "Titulo" ) )
       end if
 
@@ -6684,55 +6685,55 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
 
       cSerCli                 := RetFld( cDefCli(), dbfClient, "Serie" )
 
-      if !Empty( aGet[ _CSERTIK ] )
-         if Empty( cSerCli )
+      if !empty( aGet[ _CSERTIK ] )
+         if empty( cSerCli )
             aGet[ _CSERTIK ]:cText( cNewSer( "nTikCli", dbfCount ) )
          else
             aGet[ _CSERTIK ]:cText( cSerCli )
          end if
       else
-         if Empty( cSerCli )
+         if empty( cSerCli )
             aTmp[ _CSERTIK ]  := cNewSer( "nTikCli", dbfCount )
          else
             aTmp[ _CSERTIK ]  := cSerCli
          end if
       end if
 
-      if !Empty( oGrupoSerie )
+      if !empty( oGrupoSerie )
          oGrupoSerie:cPrompt  := "Serie: " + aTmp[ _CSERTIK ]
       end if
 
-      if !Empty( aGet[ _CNCJTIK ] )
+      if !empty( aGet[ _CNCJTIK ] )
          aGet[ _CNCJTIK ]:cText( oUser():cCaja() )
       else
          aTmp[ _CNCJTIK ]     := oUser():cCaja()
       end if
 
-      if !Empty( aGet[ _CFPGTIK ] )
+      if !empty( aGet[ _CFPGTIK ] )
          aGet[ _CFPGTIK ]:cText( cDefFpg() )
       else
          aTmp[ _CFPGTIK ]     := cDefFpg()
       end if
 
-      if !Empty( aGet[ _CALMTIK ] )
+      if !empty( aGet[ _CALMTIK ] )
          aGet[ _CALMTIK ]:cText( oUser():cAlmacen() )
       else
          aTmp[ _CALMTIK ]     := oUser():cAlmacen()
       end if
 
-      if !Empty( aGet[ _CCCJTIK ] )
+      if !empty( aGet[ _CCCJTIK ] )
          aGet[ _CCCJTIK ]:cText( cCurUsr() )
       else
          aTmp[ _CCCJTIK ]     := cCurUsr()
       end if
 
-      if !Empty( aGet[ _CCODPRO ] )
+      if !empty( aGet[ _CCODPRO ] )
          aGet[ _CCODPRO ]:cText( cProCnt() )
       else
          aTmp[ _CCODPRO ]     := cProCnt()
       end if
 
-      if !Empty( aGet[ _CCODDLG ] )
+      if !empty( aGet[ _CCODDLG ] )
          aGet[ _CCODDLG ]:cText( RetFld( cCurUsr(), dbfUsr, "cCodDlg" ) )
       else
          aTmp[ _CCODDLG ]     := RetFld( cCurUsr(), dbfUsr, "cCodDlg" )
@@ -6740,35 +6741,35 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
 
       aTmp[ _NNUMCOM    ]     := 0
 
-      if !Empty( aGet[ _CDTOESP ] )
+      if !empty( aGet[ _CDTOESP ] )
          aGet[ _CDTOESP ]:cText( Padr( "General", 50 ) )
       else
          aTmp[ _CDTOESP ]     := Padr( "General", 50 )
       end if
 
-      if !Empty( aGet[ _NDTOESP ] )
+      if !empty( aGet[ _NDTOESP ] )
          aGet[ _NDTOESP ]:cText( 0 )
       else
          aTmp[ _NDTOESP ]     := 0
       end if
 
-      if !Empty( aGet[ _CDPP ] )
+      if !empty( aGet[ _CDPP ] )
          aGet[ _CDPP    ]:cText( Padr( "Pronto pago", 50 ) )
       else
          aTmp[ _CDPP    ]     := Padr( "Pronto pago", 50 )
       end if
 
-      if !Empty( aGet[ _NDPP ] )
+      if !empty( aGet[ _NDPP ] )
          aGet[ _NDPP    ]:cText( 0 )
       else
          aTmp[ _NDPP    ]     := 0
       end if
 
-      if !Empty( oTotEsp )
+      if !empty( oTotEsp )
          oTotEsp:cText( 0 )
       end if
 
-      if !Empty( oTotDpp )
+      if !empty( oTotDpp )
          oTotDpp:cText( 0 )
       end if
 
@@ -6776,7 +6777,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       Colocamos los valores de la sala-----------------------------------------
       */
 
-      if !Empty( oBtnTipoVta )
+      if !empty( oBtnTipoVta )
          oBtnTipoVta:cPrompt           := "Ticket"
          oBtnTipoVta:cxBmp             := "Cashier_user1_32"
       end if
@@ -6791,14 +6792,14 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
 
          cSerCli                       := RetFld( cDefCli(), dbfClient, "Serie" )
 
-         if !Empty( aGet[ _CSERTIK ] )
-            if Empty( cSerCli )
+         if !empty( aGet[ _CSERTIK ] )
+            if empty( cSerCli )
                aGet[ _CSERTIK ]:cText( cNewSer( "nFacCli", dbfCount ) )
             else
                aGet[ _CSERTIK ]:cText( cSerCli )
             end if
          else
-            if Empty( cSerCli )
+            if empty( cSerCli )
                aTmp[ _CSERTIK ]        := cNewSer( "nFacCli", dbfCount )
             else
                aTmp[ _CSERTIK ]        := cSerCli
@@ -6974,7 +6975,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    Desabilitamos los botones de up y down para el caso del tactil--------------
    */
 
-   if !Empty( oBtnUp ) .and. !Empty( oBtnDown )
+   if !empty( oBtnUp ) .and. !empty( oBtnDown )
       oBtnUp:lEnabled   := ( nMode == EDIT_MODE .or. nMode == ZOOM_MODE )
       oBtnDown:lEnabled := ( nMode == EDIT_MODE .or. nMode == ZOOM_MODE )
    end if
@@ -6995,7 +6996,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    Etiquetas-------------------------------------------------------------------
    */
 
-   if !Empty( aGetTxt )
+   if !empty( aGetTxt )
       aGetTxt[ 1 ]      := RetFld( aTmp[ _CNCJTIK ], dbfCajT )
       aGetTxt[ 2 ]      := RetFld( aTmp[ _CALMTIK ], dbfAlm )
       aGetTxt[ 3 ]      := RetFld( aTmp[ _CFPGTIK ], dbfFPago )
@@ -7014,7 +7015,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    lSave                := .f.
 
    /*
-   if !Empty( ( dbfUsr )->cImagen )
+   if !empty( ( dbfUsr )->cImagen )
       oBmpVis:LoadBmp( cFileBmpName( ( dbfUsr )->cImagen ) )
    end if
    */
@@ -7023,7 +7024,7 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
    Refrescamos el browse-------------------------------------------------------
    */
 
-   if !Empty( oBrwDet )
+   if !empty( oBrwDet )
       oBrwDet:Refresh()
    end if
 
@@ -7049,35 +7050,35 @@ Static Function KillTrans( oBrwPgo, oBrwVal )
 
    CursorWait()
 
-   if !Empty( dbfTmpL ) .and. ( dbfTmpL )->( Used() )
+   if !empty( dbfTmpL ) .and. ( dbfTmpL )->( Used() )
       ( dbfTmpL )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpP ) .and. ( dbfTmpP )->( Used() )
+   if !empty( dbfTmpP ) .and. ( dbfTmpP )->( Used() )
       ( dbfTmpP )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpV ) .and. ( dbfTmpV )->( Used() )
+   if !empty( dbfTmpV ) .and. ( dbfTmpV )->( Used() )
       ( dbfTmpV )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpA ) .and. ( dbfTmpA )->( Used() )
+   if !empty( dbfTmpA ) .and. ( dbfTmpA )->( Used() )
       ( dbfTmpA )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpE ) .and. ( dbfTmpE )->( Used() )
+   if !empty( dbfTmpE ) .and. ( dbfTmpE )->( Used() )
       ( dbfTmpE )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpC ) .and. ( dbfTmpC )->( Used() )
+   if !empty( dbfTmpC ) .and. ( dbfTmpC )->( Used() )
       ( dbfTmpC )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpS ) .and. ( dbfTmpS )->( Used() )
+   if !empty( dbfTmpS ) .and. ( dbfTmpS )->( Used() )
       ( dbfTmpS )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTmpN ) .and. ( dbfTmpN )->( Used() )
+   if !empty( dbfTmpN ) .and. ( dbfTmpN )->( Used() )
       ( dbfTmpN )->( dbCloseArea() )
    end if
 
@@ -7149,7 +7150,7 @@ Static Function BeginTrans( aTmp, aGet, nMode )
 
    ( dbfTmpL )->( dbCloseArea() )
 
-   if !Empty( cNewFilL )
+   if !empty( cNewFilL )
       dbfErase( cNewFilL )
    end if
 
@@ -7192,7 +7193,7 @@ Return ( lErrors )
 
 Static Function KillTrans()
 
-   if !Empty( dbfTmpL ) .and. ( dbfTmpL )->( Used() )
+   if !empty( dbfTmpL ) .and. ( dbfTmpL )->( Used() )
       ( dbfTmpL )->( dbCloseArea() )
    end if
 
@@ -7221,7 +7222,7 @@ STATIC FUNCTION AppDetRec( oBrw, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
       return ( lRecTotal( aTmp ) )
    end if
 
-   if Empty( aTmp[ _NTARIFA ] )
+   if empty( aTmp[ _NTARIFA ] )
       aTmp[ _NTARIFA ]  := Max( uFieldEmpresa( "nPreVta" ), 1 )
    end if
 
@@ -7235,7 +7236,7 @@ STATIC FUNCTION AppDetRec( oBrw, bEditL, aTmp, cPorDiv, cPicEur, cCodArt )
 
       sysrefresh()
 
-      if !Empty( cCodArt )
+      if !empty( cCodArt )
          cCodArt        := nil
       end if
 
@@ -7278,7 +7279,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
    if nMode == APPD_MODE
 
-      if !Empty( oBrw )
+      if !empty( oBrw )
          oBrw:GoBottom()
       end if
 
@@ -7297,7 +7298,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
          nTop              := ( ( oBrw:nRowSel ) * oBrw:nRowHeight ) + oBrw:HeaderHeight() - 1
       end if
 
-      if !Empty( cCodArt )
+      if !empty( cCodArt )
          aTmp[ _CCBATIL ]  := cCodArt
       end if
 
@@ -7325,7 +7326,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
    Este valor los guaradamos para detectar los posibles cambios----------------
    */
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
       cOldCodArt           := aTmp[ _CCBATIL ]
    end if
    cOldPrpArt              := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
@@ -7384,7 +7385,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _NUNTTIL ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _NUNTTIL ]:bValid          := {|| !Empty( aTmp[ _NUNTTIL ] ) }
+                  aGet[ _NUNTTIL ]:bValid          := {|| !empty( aTmp[ _NUNTTIL ] ) }
                case nCaptura == 3
                   aGet[ _NUNTTIL ]:lNeedGetFocus   := .t.
                end if
@@ -7457,7 +7458,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            NOBORDER ;
                            FONT     oBrw:oFont ;
                            PICTURE  "@!" ;
-                           WHEN     ( !Empty( aTmp[ _CCODPR1 ] ) ) ;
+                           WHEN     ( !empty( aTmp[ _CCODPR1 ] ) ) ;
                            VALID    ( if( lPrpAct( aTmp[ _CVALPR1 ], nil, aTmp[ _CCODPR1 ], dbfTblPro ),;
                                           LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlgDet, @lMsgVta, @lNotVta ),;
                                           .f. ) );
@@ -7470,7 +7471,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _CVALPR1 ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _CVALPR1 ]:bWhen           := {|| .t. } //!Empty( aTmp[ _CCODPR1 ] ) }
+                  aGet[ _CVALPR1 ]:bWhen           := {|| .t. } //!empty( aTmp[ _CCODPR1 ] ) }
                case nCaptura == 3
                   aGet[ _CVALPR1 ]:lNeedGetFocus   := .t.
                end case
@@ -7481,7 +7482,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                            NOBORDER ;
                            FONT     oBrw:oFont ;
                            PICTURE  "@!" ;
-                           WHEN     ( !Empty( aTmp[ _CCODPR2 ] ) ) ;
+                           WHEN     ( !empty( aTmp[ _CCODPR2 ] ) ) ;
                            VALID    ( if( lPrpAct( aTmp[ _CVALPR2 ], nil, aTmp[ _CCODPR2 ], dbfTblPro ),;
                                           LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlgDet, @lMsgVta, @lNotVta ),;
                                           .f. ) );
@@ -7494,7 +7495,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _CVALPR2 ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _CVALPR2 ]:bWhen           := {|| .t. } // !Empty( aTmp[ _CCODPR2 ] ) }
+                  aGet[ _CVALPR2 ]:bWhen           := {|| .t. } // !empty( aTmp[ _CCODPR2 ] ) }
                case nCaptura == 3
                   aGet[ _CVALPR2 ]:lNeedGetFocus   := .t.
                end case
@@ -7511,7 +7512,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _CLOTE ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _CLOTE ]:bWhen           := {|| !Empty( aTmp[ _CLOTE ] ) }
+                  aGet[ _CLOTE ]:bWhen           := {|| !empty( aTmp[ _CLOTE ] ) }
                case nCaptura == 3
                   aGet[ _CLOTE ]:lNeedGetFocus   := .t.
                end case
@@ -7530,7 +7531,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _DFECCAD ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _DFECCAD ]:bWhen           := {|| !Empty( aTmp[ _DFECCAD ] ) }
+                  aGet[ _DFECCAD ]:bWhen           := {|| !empty( aTmp[ _DFECCAD ] ) }
                case nCaptura == 3
                   aGet[ _DFECCAD ]:lNeedGetFocus   := .t.
                end case   
@@ -7548,7 +7549,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _CNOMTIL ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _CNOMTIL ]:bWhen           := {|| lModDes() .or. Empty( aTmp[ _CNOMTIL ] ) }
+                  aGet[ _CNOMTIL ]:bWhen           := {|| lModDes() .or. empty( aTmp[ _CNOMTIL ] ) }
                case nCaptura == 3
                   aGet[ _CNOMTIL ]:lNeedGetFocus   := .t.
                end case
@@ -7567,7 +7568,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _NPVPTIL ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _NPVPTIL ]:bWhen           := {|| Empty( aTmp[ _NPVPTIL ] ) }
+                  aGet[ _NPVPTIL ]:bWhen           := {|| empty( aTmp[ _NPVPTIL ] ) }
                case nCaptura == 3
                   aGet[ _NPVPTIL ]:lNeedGetFocus   := .t.
                end if
@@ -7587,7 +7588,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _NDTODIV ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _NDTODIV ]:bWhen           := {|| Empty( aTmp[ _NDTODIV ] ) }
+                  aGet[ _NDTODIV ]:bWhen           := {|| empty( aTmp[ _NDTODIV ] ) }
                case nCaptura == 3
                   aGet[ _NDTODIV ]:lNeedGetFocus   := .t.
                end if
@@ -7606,7 +7607,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                case nCaptura == 1
                   aGet[ _NDTOLIN ]:bWhen           := {|| .f. }
                case nCaptura == 2
-                  aGet[ _NDTOLIN ]:bWhen           := {|| Empty( aTmp[ _NDTOLIN ] ) }
+                  aGet[ _NDTOLIN ]:bWhen           := {|| empty( aTmp[ _NDTOLIN ] ) }
                case nCaptura == 3
                   aGet[ _NDTOLIN ]:lNeedGetFocus   := .t.
                end if
@@ -7626,7 +7627,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                @ 0, 0 BUTTON oBtnSer ;
                            PROMPT   ( "&Series" );
                            FONT     oBrw:oFont ;
-                           ACTION   ( SetLostFocusOff(), EditarNumeroSerie( aTmp, oStock, nMode ),SetLostFocusOn() ) ;
+                           ACTION   ( SetLostFocusOff(), EditarNumeroSerie( aTmp, oStock, nMode ), SetLostFocusOn() ) ;
                            OF       oDlgDet
 
             case cName == "Promoción"
@@ -7694,23 +7695,22 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
 
       oDlgDet:AddFastKey( VK_F11, {|| GetPesoBalanza( aGet, oBtn ) } )
 
-      oDlgDet:bKeyDown        := { | nKey | EdtDetKeyDown( nKey, aGet, oDlgDet, oBtn ) }
-      oDlgDet:bStart          := { || if( !Empty( cCodArt ), ( Eval( aGet[ _CCBATIL ]:bLostFocus ), aGet[ _CCBATIL ]:lValid() ), ), SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn ) } //, nTop, nLeft, nHeight, nWidth ) }
-
-      oDlgDet:bLostFocus      := { || DlgLostFocus( nMode, aTmp ) }
-
-      SetLostFocusOn()
+      oDlgDet:bKeyDown        := {| nKey | EdtDetKeyDown( nKey, aGet, oDlgDet, oBtn ) }
+      oDlgDet:bStart          := {|| if( !empty( cCodArt ), ( Eval( aGet[ _CCBATIL ]:bLostFocus ), aGet[ _CCBATIL ]:lValid() ), ), SetDlgMode( oDlgDet, aTmp, aGet, nMode, oBrw, oBtn ) }
+      oDlgDet:bLostFocus      := {|| dlgLostFocus( nMode, aTmp ) }
+      
+      setLostFocusOff()
 
    oDlgDet:Activate( , , , .f., , .t. )
 
-   oBrw:SetFocus()
+   oBrw:setFocus()
    oBrw:Refresh()
 
 RETURN ( oDlgDet:nResult == IDOK )
 
 //-------------------------------------------------------------------------//
 
-static function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLeft, nHeight, nWidth )
+Static Function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLeft, nHeight, nWidth )
 
    local n
    local oCtl
@@ -7737,17 +7737,17 @@ static function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLe
 
    oBtn:Move( nRow, nGWidth, nHeight + 4, nHeight + 4, .t. )
 
-   if Empty( aTmp[ _NPVPTIL ] ) .or. oUser():lAdministrador() .or. oUser():lCambiarPrecio()
-      if( !Empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardEnable(), )
-      if( !Empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardEnable(), )
-      if( !Empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardEnable(), )
+   if empty( aTmp[ _NPVPTIL ] ) .or. oUser():lAdministrador() .or. oUser():lCambiarPrecio()
+      if( !empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardEnable(), )
+      if( !empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardEnable(), )
+      if( !empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardEnable(), )
    else
-      if( !Empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardDisable(), )
-      if( !Empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardDisable(), )
-      if( !Empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardDisable(), )
+      if( !empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardDisable(), )
+      if( !empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardDisable(), )
+      if( !empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardDisable(), )
    end if
 
-   if !Empty( aGet[ _LINPROMO ] )
+   if !empty( aGet[ _LINPROMO ] )
 
       if aTmp[ _LINPROMO ]
          aGet[ _LINPROMO ]:Show()
@@ -7757,7 +7757,7 @@ static function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLe
 
    end if
 
-   if !Empty( aGet[ _LLINOFE ] )
+   if !empty( aGet[ _LLINOFE ] )
 
       if aTmp[ _LLINOFE ]
          aGet[ _LLINOFE ]:Show()
@@ -7773,9 +7773,9 @@ static function SetDlgMode( oDlg, aTmp, aGet, nMode, oBrw, oBtn ) // , nTop, nLe
 
    for each oCtl in oDlg:aControls
 
-      if !Empty( oCtl ) .and. oCtl:ClassName == "TGETHLP"
+      if !empty( oCtl ) .and. oCtl:ClassName == "TGETHLP"
 
-         if Empty( oCtl:bWhen ) .or. Eval( oCtl:bWhen )
+         if empty( oCtl:bWhen ) .or. Eval( oCtl:bWhen )
 
             if oCtl:lNeedGetFocus .and. !oCtl:lGotFocus
 
@@ -7813,7 +7813,7 @@ Static Function lCalcDeta( aTmp, oTotal, lTotal )
 
    nCalculo       -= aTmp[ _NDTODIV ]
 
-   if !Empty( oTotal )
+   if !empty( oTotal )
       oTotal:cText( nCalculo )
    end if
 
@@ -7834,7 +7834,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
       case nKey == VK_F5
 
-         if !Empty( aGet[ _CCBATIL ]:VarGet() )
+         if !empty( aGet[ _CCBATIL ]:VarGet() )
 
             Eval( oBtn:bAction )
 
@@ -7842,7 +7842,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
             oDlg:End()
 
-            if !Empty( oBtnTik:bWhen ) .and. Eval( oBtnTik:bWhen )
+            if !empty( oBtnTik:bWhen ) .and. Eval( oBtnTik:bWhen )
                Eval( oBtnTik:bAction )
             end if
 
@@ -7850,7 +7850,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
       case nKey == VK_F7
 
-         if !Empty( aGet[ _CCBATIL ]:VarGet() )
+         if !empty( aGet[ _CCBATIL ]:VarGet() )
 
             Eval( oBtn:bAction )
 
@@ -7858,7 +7858,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
             oDlg:End()
 
-            if !Empty( oBtnAlb:bWhen ) .and. Eval( oBtnAlb:bWhen )
+            if !empty( oBtnAlb:bWhen ) .and. Eval( oBtnAlb:bWhen )
                Eval( oBtnAlb:bAction )
             end if
 
@@ -7866,7 +7866,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
       case nKey == VK_F8
 
-         if !Empty( aGet[ _CCBATIL ]:VarGet() )
+         if !empty( aGet[ _CCBATIL ]:VarGet() )
 
             Eval( oBtn:bAction )
 
@@ -7874,7 +7874,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
             oDlg:End()
 
-            if !Empty( oBtnFac:bWhen ) .and. Eval( oBtnFac:bWhen )
+            if !empty( oBtnFac:bWhen ) .and. Eval( oBtnFac:bWhen )
                Eval( oBtnFac:bAction )
             end if
 
@@ -7882,7 +7882,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
       case nKey == VK_F9
 
-         if !Empty( aGet[ _CCBATIL ]:VarGet() )
+         if !empty( aGet[ _CCBATIL ]:VarGet() )
 
             Eval( oBtn:bAction )
 
@@ -7890,7 +7890,7 @@ Static Function EdtDetKeyDown( nKey, aGet, oDlg, oBtn )
 
             oDlg:End()
 
-            if !Empty( oBtnApt:bWhen ) .and. Eval( oBtnApt:bWhen )
+            if !empty( oBtnApt:bWhen ) .and. Eval( oBtnApt:bWhen )
                Eval( oBtnApt:bAction )
             end if
 
@@ -7933,11 +7933,11 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    Comprobamos todas las lineas de detalle tengan precio y unidades------------
 	*/
 
-   if !Empty( aGet[ _NPVPTIL ] )
+   if !empty( aGet[ _NPVPTIL ] )
       aGet[ _NPVPTIL ]:Refresh()
    end if
 
-   if !Empty( aGet[ _NUNTTIL ] )
+   if !empty( aGet[ _NUNTTIL ] )
       aGet[ _NUNTTIL ]:Refresh()
    end if
 
@@ -7947,9 +7947,9 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
    for each oCtl in oDlgDet:aControls
 
-      if !Empty( oCtl ) .and. oCtl:ClassName == "TGETHLP"
+      if !empty( oCtl ) .and. oCtl:ClassName == "TGETHLP"
 
-         if Empty( oCtl:bWhen ) .or. Eval( oCtl:bWhen )
+         if empty( oCtl:bWhen ) .or. Eval( oCtl:bWhen )
 
             if oCtl:lNeedGetFocus .and. !oCtl:lGotFocus
 
@@ -7973,7 +7973,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    Control de vacios-----------------------------------------------------------
    */
 
-   if Empty( aTmp[ _NUNTTIL ] )
+   if empty( aTmp[ _NUNTTIL ] )
       aGet[ _NUNTTIL ]:SetFocus()
       return .f.
    end if
@@ -8013,7 +8013,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
    end if
 
-   if !Empty( aTmp[ _CCODPR1 ] ) .and. Empty( aTmp[ _CVALPR1 ] ) .and. !Empty( aGet[ _CVALPR1 ] )
+   if !empty( aTmp[ _CCODPR1 ] ) .and. empty( aTmp[ _CVALPR1 ] ) .and. !empty( aGet[ _CVALPR1 ] )
 
       SetLostFocusOff()
       MsgBeepStop( "Primera propiedad no puede estar vacia", "Aviso del sistema" )
@@ -8025,7 +8025,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
    end if
 
-   if !Empty( aTmp[ _CCODPR2 ] ) .and. Empty( aTmp[ _CVALPR2 ] ) .and. !Empty( aGet[ _CVALPR2 ] )
+   if !empty( aTmp[ _CCODPR2 ] ) .and. empty( aTmp[ _CVALPR2 ] ) .and. !empty( aGet[ _CVALPR2 ] )
 
       SetLostFocusOff()
       MsgBeepStop( "Segunda propiedad no puede estar vacia", "Aviso del sistema" )
@@ -8041,7 +8041,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    Precios vacios--------------------------------------------------------------
    */
 
-   if Empty( aTmp[ _NPVPTIL ] )
+   if empty( aTmp[ _NPVPTIL ] )
 
       if !lPermitirVentaSinValorar( aTmp[ _CCBATIL ], dbfArticulo, dbfFamilia )
 
@@ -8170,7 +8170,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
 
       hAtipica := hAtipica( hValue( aTmp, aTik ) )
 
-      if !Empty( hAtipica )
+      if !empty( hAtipica )
 
          if hhaskey( hAtipica, "nTipoXY" )               .and.;
             hhaskey( hAtipica, "nUnidadesGratis" )
@@ -8365,7 +8365,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    Pos to the end--------------------------------------------------------------
 	*/
 
-   if !Empty( oDlgDet )
+   if !empty( oDlgDet )
       SetLostFocusOff()
       oDlgDet:End( IDOK )
       SetLostFocusOn()
@@ -8390,7 +8390,7 @@ STATIC FUNCTION lCodigoArticulo( aGet, aTmp, lMessage, oDlg )
 
    DEFAULT lMessage     := .t.
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
       return ( !lRetCodArt() )
    end if
 
@@ -8448,7 +8448,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
    local nDtoLin     := 0
    local hAtipica
 
-   if Empty( cCodArt )
+   if empty( cCodArt )
       if lRetCodArt()
          //MsgStop( "No se pueden añadir lineas sin codificar" )
          return .f.
@@ -8488,9 +8488,9 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          Rellenamos el nombre del articulo-------------------------------------
          */
 
-         if Empty( aTmp[ _CNOMTIL ] )
+         if empty( aTmp[ _CNOMTIL ] )
 
-            if !Empty( ( dbfArticulo)->cDesTik )
+            if !empty( ( dbfArticulo)->cDesTik )
                aGet[ _CNOMTIL ]:cText( ( dbfArticulo )->cDesTik )
             else
                aGet[ _CNOMTIL ]:cText( ( dbfArticulo )->Nombre  )
@@ -8502,7 +8502,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          Texto para la comanda-------------------------------------------------
          */
 
-         if ( dbfArticulo )->lMosCom .and. !Empty( ( dbfArticulo )->mComent )
+         if ( dbfArticulo )->lMosCom .and. !empty( ( dbfArticulo )->mComent )
             MsgStop( Trim( ( dbfArticulo )->mComent ) )
          end if
 
@@ -8510,7 +8510,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          Texto para la comanda-------------------------------------------------
          */
 
-         if !Empty( ( dbfArticulo )->cDesCmd )
+         if !empty( ( dbfArticulo )->cDesCmd )
             aTmp[ _CNOMCMD ]                 := ( dbfArticulo )->cDesCmd
          else
             aTmp[ _CNOMCMD ]                 := aTmp[ _CNOMTIL ]
@@ -8528,7 +8528,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
 
          aTmp[ _LTIPACC ]                    := ( dbfArticulo )->lTipAcc
 
-         if !Empty( aGet[ _NPVPTIL ] )
+         if !empty( aGet[ _NPVPTIL ] )
             aGet[ _NPVPTIL ]:lNeedGetFocus   := aTmp[ _LTIPACC ]
          end if
 
@@ -8565,17 +8565,17 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          aTmp[ _CCODPR1 ]        := ( dbfArticulo )->cCodPrp1
          aTmp[ _CCODPR2 ]        := ( dbfArticulo )->cCodPrp2
 
-         if !Empty( aTmp[ _CCODPR1 ] ) .and. !Empty( aGet[ _CVALPR1 ] )
+         if !empty( aTmp[ _CCODPR1 ] ) .and. !empty( aGet[ _CVALPR1 ] )
 
-            if !Empty( cValPr1 )
+            if !empty( cValPr1 )
                aGet[ _CVALPR1 ]:cText( cCodPrp( aTmp[ _CCODPR1 ], cValPr1, dbfTblPro ) )
             end if
 
          end if
 
-         if !empty( aTmp[ _CCODPR2 ] ) .and. !Empty( aGet[ _CVALPR2 ] )
+         if !empty( aTmp[ _CCODPR2 ] ) .and. !empty( aGet[ _CVALPR2 ] )
 
-            if !Empty( cValPr2 )
+            if !empty( cValPr2 )
                aGet[ _CVALPR2 ]:cText( cCodPrp( aTmp[ _CCODPR2 ], cValPr2, dbfTblPro ) )
             end if
 
@@ -8586,7 +8586,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          */
 
          cCodFam              := ( dbfArticulo )->Familia
-         if !Empty( cCodFam )
+         if !empty( cCodFam )
             aTmp[ _CCODFAM ]  := cCodFam
             aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
          end if
@@ -8597,7 +8597,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
 
          if aTik[ _NREGIVA ] <= 1
 
-            if !Empty( aGet[ _NIVATIL ] )
+            if !empty( aGet[ _NIVATIL ] )
                aGet[ _NIVATIL ]:cText( nIva( dbfIva, ( dbfArticulo )->TipoIva ) )
             end if
 
@@ -8609,7 +8609,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          Recogemos los impuestos especiales---------------------------------------
          */
 
-         if !Empty( ( dbfArticulo )->cCodImp )
+         if !empty( ( dbfArticulo )->cCodImp )
             aTmp[ _CCODIMP ]  := ( dbfArticulo )->cCodImp
             aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, .t., aTmp[ _NIVATIL ] )
          end if
@@ -8678,7 +8678,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
             */
 
             cCodFam  := RetFamArt( cCodArt, dbfArticulo )
-            if !Empty( cCodFam )
+            if !empty( cCodFam )
                aTmp[ _CCODFAM ]  := cCodFam
                aTmp[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
             end if
@@ -8695,7 +8695,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
             Recogemos los impuestos especiales---------------------------------
             */
 
-            if !Empty( ( dbfArticulo )->cCodImp )
+            if !empty( ( dbfArticulo )->cCodImp )
                aTmp[ _CCODIMP ]     := ( dbfArticulo )->cCodImp
                if aTik[ _NREGIVA ] <= 1
                   aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, .t., aTmp[ _NIVATIL ] )
@@ -8736,15 +8736,15 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
 
          if oUndMedicion:oDbf:Seek( ( dbfArticulo )->cUnidad )
 
-            if !Empty( oUndMedicion:oDbf:cTextoDim1 )
-               if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ] )
+            if !empty( oUndMedicion:oDbf:cTextoDim1 )
+               if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ] )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ]:Show()
                else
                   aTmp[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ]  := ( dbfArticulo )->nLngArt
                end if
             else
-               if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ] )
+               if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ] )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ]:Hide()
                else
@@ -8752,15 +8752,15 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
                end if
             end if
 
-            if !Empty( oUndMedicion:oDbf:cTextoDim2 )
-               if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ] )
+            if !empty( oUndMedicion:oDbf:cTextoDim2 )
+               if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ] )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ]:Show()
                else
                   aTmp[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ]  := ( dbfArticulo )->nAltArt
                end if
             else
-               if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ] )
+               if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ] )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ]:Hide()
                else
@@ -8768,15 +8768,15 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
                end if
             end if
 
-            if !Empty( oUndMedicion:oDbf:cTextoDim3 )
-               if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ] )
+            if !empty( oUndMedicion:oDbf:cTextoDim3 )
+               if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ] )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo )->nAncArt )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ]:Show()
                else
                   aTmp[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ]  := ( dbfArticulo )->nAncArt
                end if
             else
-               if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ] )
+               if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ] )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
                   aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ]:Hide()
                else
@@ -8786,21 +8786,21 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
 
          else
 
-            if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ] )
+            if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ] )
                aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
                aGet[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
                aTmp[ ( dbfTikL )->( fieldpos( "nMedUno" ) ) ]  := 0
             end if
 
-            if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ] )
+            if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ] )
                aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
                aGet[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
                aTmp[ ( dbfTikL )->( fieldpos( "nMedDos" ) ) ]  := 0
             end if
 
-            if !Empty( aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ] )
+            if !empty( aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ] )
                aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
                aGet[ ( dbfTikL )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
@@ -8866,7 +8866,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
 
             if nDtoLin != 0
 
-               if !Empty( aGet[ _NDTOLIN ] )
+               if !empty( aGet[ _NDTOLIN ] )
                   aGet[ _NDTOLIN ]:cText( nDtoLin )
                end if
 
@@ -8879,7 +8879,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          */
 
          if nDtoLin == 0
-            if !Empty( aGet[ _NDTOLIN ] )
+            if !empty( aGet[ _NDTOLIN ] )
                aGet[ _NDTOLIN ]:cText( nDescuentoFamilia( cCodFam, dbfFamilia ) )
             else
                aTmp[ _NDTOLIN ]  := nDescuentoFamilia( cCodFam, dbfFamilia )
@@ -8892,7 +8892,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
 
          aTmp[ _LINPROMO ]    := oFideliza:InPrograma( aTmp[ _CCBATIL ], aTik[ _DFECTIK ], dbfArticulo )
 
-         if !Empty( aGet[ _LINPROMO ] )
+         if !empty( aGet[ _LINPROMO ] )
             if aTmp[ _LINPROMO ]
                aGet[ _LINPROMO ]:Show()
             else
@@ -8905,7 +8905,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
          */
 
          do case
-         case !Empty( aTik[ _CCODTAR ] )
+         case !empty( aTik[ _CCODTAR ] )
 
             //--Precio--//
 
@@ -8936,7 +8936,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
 
          hAtipica := hAtipica( hValue( aTmp, aTik ) )
 
-         if !Empty( hAtipica )
+         if !empty( hAtipica )
                
             if hhaskey( hAtipica, "nImporte" )
                if hAtipica[ "nImporte" ] != 0
@@ -8973,14 +8973,14 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lM
       cOldCodArt  := cCodArt
       cOldPrpArt  := cPrpArt
 
-      if Empty( aTmp[ _NPVPTIL ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
-         if( !Empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardEnable(), )
-         if( !Empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardEnable(), )
-         if( !Empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardEnable(), )
+      if empty( aTmp[ _NPVPTIL ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+         if( !empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardEnable(), )
+         if( !empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardEnable(), )
+         if( !empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardEnable(), )
       else
-         if( !Empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardDisable(), )
-         if( !Empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardDisable(), )
-         if( !Empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardDisable(), )
+         if( !empty( aGet[ _NPVPTIL ] ), aGet[ _NPVPTIL ]:HardDisable(), )
+         if( !empty( aGet[ _NDTODIV ] ), aGet[ _NDTODIV ]:HardDisable(), )
+         if( !empty( aGet[ _NDTOLIN ] ), aGet[ _NDTOLIN ]:HardDisable(), )
       end if
 
    else
@@ -9098,19 +9098,19 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    Desabilitamos la caja de detras---------------------------------------------
    */
 
-   if !Empty( oDlgTpv )
+   if !empty( oDlgTpv )
       aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Disable() } )
    end if
 
    oFntDlg                 := TFont():New( FONT_NAME, 12, 32, .F., .T.,  )
 
-   if Empty( oTotDiv )
+   if empty( oTotDiv )
       oTotDiv              := TotalesTPV():Init()
    end if
 
    oTotDiv:nTotal          := aTmp[ _NCOBTIK ]
 
-   if Empty( aTmp[ _CCLITIK ] )
+   if empty( aTmp[ _CCLITIK ] )
       aTmp[ _CCLITIK ]     := cDefCli()
    end if
 
@@ -9831,8 +9831,8 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
 
       oDlg:bStart    := {|| StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob, oBtnTop, oBtnDwn, oBtnInsertarCobro, oBtnAceptarRegalo, oBtnCalculator, nSave, nMode, lBig ) }
 
-      oDlg:AddFastKey( VK_F5, {|| if( !Empty( oBtnAceptar ), oBtnAceptar:Click(), ) } )
-      oDlg:AddFastKey( VK_F6, {|| if( !Empty( oBtnAceptarImprimir ), oBtnAceptarImprimir:Click(), ) } )
+      oDlg:AddFastKey( VK_F5, {|| if( !empty( oBtnAceptar ), oBtnAceptar:Click(), ) } )
+      oDlg:AddFastKey( VK_F6, {|| if( !empty( oBtnAceptarImprimir ), oBtnAceptarImprimir:Click(), ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -9840,7 +9840,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    Habilitamos los controles---------------------------------------------------
    */
 
-   if !Empty( oDlgTpv )
+   if !empty( oDlgTpv )
       aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Enable() } )
    end if
 
@@ -9877,27 +9877,27 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
       do case
       case ( nSave == SAVVAL .and. aTmp[ _LFRETIK ] )  // Cheque regalo
 
-         if !Empty( oBrwVal )
+         if !empty( oBrwVal )
             oBrwVal:Hide()
          end if
 
-         if !Empty( aBtnCob[ 4 ] )
+         if !empty( aBtnCob[ 4 ] )
             aBtnCob[ 4 ]:Hide()
          end if
 
-         if !Empty( aBtnCob[ 5 ] )
+         if !empty( aBtnCob[ 5 ] )
             aBtnCob[ 5 ]:Hide()
          end if
 
-         if !Empty( aBtnCob[ 6 ] )
+         if !empty( aBtnCob[ 6 ] )
             aBtnCob[ 6 ]:Hide()
          end if
 
-         if !Empty( aBtnCob[ 7 ] )
+         if !empty( aBtnCob[ 7 ] )
             aBtnCob[ 7 ]:Hide()
          end if
 
-         if !Empty( aBtnCob[ 8 ] )
+         if !empty( aBtnCob[ 8 ] )
             aBtnCob[ 8 ]:Hide()
          end if
 
@@ -9906,11 +9906,11 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
          aEval( aButtonsPago, {|o| o:oButton:Hide() } )
          aEval( aButtonsMoney, {|o| o:Hide() } )
 
-         if !Empty( oBtnInsertarCobro )
+         if !empty( oBtnInsertarCobro )
             oBtnInsertarCobro:Hide()
          end if 
 
-         if !Empty( oBtnAceptarRegalo )
+         if !empty( oBtnAceptarRegalo )
             oBtnAceptarRegalo:Hide()
          endif
 
@@ -9918,32 +9918,32 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
          oTotDiv:oCobrado:Hide()
          oTotDiv:oCambio:Hide()
 
-         if ( !Empty( aBtnCob[ 1 ] ), aBtnCob[ 1 ]:Hide(), )
-         if ( !Empty( aBtnCob[ 2 ] ), aBtnCob[ 2 ]:Hide(), )
-         if ( !Empty( aBtnCob[ 3 ] ), aBtnCob[ 3 ]:Hide(), )
-         if ( !Empty( aBtnCob[ 4 ] ), aBtnCob[ 4 ]:Hide(), )
-         if ( !Empty( aBtnCob[ 5 ] ), aBtnCob[ 5 ]:Hide(), )
-         if ( !Empty( aBtnCob[ 6 ] ), aBtnCob[ 6 ]:Hide(), )
-         if ( !Empty( aBtnCob[ 7 ] ), aBtnCob[ 7 ]:Hide(), )
-         if ( !Empty( aBtnCob[ 8 ] ), aBtnCob[ 8 ]:Hide(), )
+         if ( !empty( aBtnCob[ 1 ] ), aBtnCob[ 1 ]:Hide(), )
+         if ( !empty( aBtnCob[ 2 ] ), aBtnCob[ 2 ]:Hide(), )
+         if ( !empty( aBtnCob[ 3 ] ), aBtnCob[ 3 ]:Hide(), )
+         if ( !empty( aBtnCob[ 4 ] ), aBtnCob[ 4 ]:Hide(), )
+         if ( !empty( aBtnCob[ 5 ] ), aBtnCob[ 5 ]:Hide(), )
+         if ( !empty( aBtnCob[ 6 ] ), aBtnCob[ 6 ]:Hide(), )
+         if ( !empty( aBtnCob[ 7 ] ), aBtnCob[ 7 ]:Hide(), )
+         if ( !empty( aBtnCob[ 8 ] ), aBtnCob[ 8 ]:Hide(), )
 
          aSay[ 1 ]:Hide()
          aSay[ 2 ]:Hide()
          aSay[ 3 ]:Hide()
 
-         if !Empty( aGetCob[ 1 ] )
+         if !empty( aGetCob[ 1 ] )
             aGetCob[ 1 ]:SetFocus()
          end if
 
-         if !Empty( oBrwVal )
+         if !empty( oBrwVal )
             oBrwVal:Hide()
          end if
 
-         if !Empty( oBrwPgo )
+         if !empty( oBrwPgo )
             oBrwPgo:Hide()
          end if
 
-         if !Empty( oBtnCalculator )
+         if !empty( oBtnCalculator )
             oBtnCalculator:Hide()
          end if
 
@@ -9953,27 +9953,27 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
          oTotDiv:oCobrado:Hide()
          oTotDiv:oCambio:Hide()
 
-         if !Empty( aBtnCob[ 4 ] )
+         if !empty( aBtnCob[ 4 ] )
             aBtnCob[ 4 ]:Hide()
          end if
 
-         if !Empty( aBtnCob[ 5 ] )
+         if !empty( aBtnCob[ 5 ] )
             aBtnCob[ 5 ]:Hide()
          end if
 
          if ( nSave == SAVALB )
-            if !Empty( aBtnCob[ 6 ] )
+            if !empty( aBtnCob[ 6 ] )
                aBtnCob[ 6 ]:Show()
             else
                aBtnCob[ 6 ]:Hide()
             end if
          end if
 
-         if !Empty( aBtnCob[ 7 ] )
+         if !empty( aBtnCob[ 7 ] )
             aBtnCob[ 7 ]:Hide()
          end if
 
-         if !Empty( aBtnCob[ 8 ] )
+         if !empty( aBtnCob[ 8 ] )
             aBtnCob[ 8 ]:Hide()
          end if
 
@@ -9981,25 +9981,25 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
          aSay[ 2 ]:Hide()
          aSay[ 3 ]:Hide()
 
-         if !Empty( aGetCob[ 1 ] )
+         if !empty( aGetCob[ 1 ] )
             aGetCob[ 1 ]:SetFocus()
          end if
 
-         if !Empty( oBrwVal )
+         if !empty( oBrwVal )
             oBrwVal:Hide()
          end if
 
-         if !Empty( oBtnCalculator )
+         if !empty( oBtnCalculator )
             oBtnCalculator:Hide()
          end if
 
       case nSave == SAVFAC
 
-         if !Empty( aGetCob[ 1 ] )
+         if !empty( aGetCob[ 1 ] )
             aGetCob[ 1 ]:SetFocus()
          end if
 
-         if !Empty( aBtnCob[ 6 ] )
+         if !empty( aBtnCob[ 6 ] )
             aBtnCob[ 6 ]:Hide()
          end if
 
@@ -10012,13 +10012,13 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
          aGet[ _CFPGTIK ]:Show()
          aGet[ _CFPGTIK ]:lValid()
 
-         aEval( aButtonsPago, {|oBtn| if( !Empty( oBtn:oButton ), oBtn:oButton:Hide(), ), if( !Empty( oBtn:oSay ), oBtn:oSay:Hide(), ) } )
+         aEval( aButtonsPago, {|oBtn| if( !empty( oBtn:oButton ), oBtn:oButton:Hide(), ), if( !empty( oBtn:oSay ), oBtn:oSay:Hide(), ) } )
 
       else 
       
          aGet[ _CFPGTIK ]:Hide()
 
-         aEval( aButtonsPago, {|oBtn| if( !Empty( oBtn:oButton ), oBtn:oButton:Show(), ), if( !Empty( oBtn:oSay ), oBtn:oSay:Show(), ) } )
+         aEval( aButtonsPago, {|oBtn| if( !empty( oBtn:oButton ), oBtn:oButton:Show(), ), if( !empty( oBtn:oSay ), oBtn:oSay:Show(), ) } )
 
       end if 
 
@@ -10034,7 +10034,7 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
             oBtnDwn:Hide()
          end if
 
-         if nSave != SAVALB .and. !Empty( aBtnCob[ 6 ] )
+         if nSave != SAVALB .and. !empty( aBtnCob[ 6 ] )
             aBtnCob[ 6 ]:Hide()
          end if
 
@@ -10048,7 +10048,7 @@ Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob
       Valid del codigo de cliente-------------------------------------------------
       */
 
-      if !Empty( aGet[ _CCLITIK ] )
+      if !empty( aGet[ _CCLITIK ] )
          aGet[ _CCLITIK ]:lValid()
       end if
 
@@ -10066,7 +10066,7 @@ Static Function lValidaCobro( aGet, aTmp, lGenVale, nDifVale, nSave, oDlg )
    Chequeamos la forma de pago para que no esté vacía--------------------------
    */
 
-   if Empty( aTmp[ _CFPGTIK ] )
+   if empty( aTmp[ _CFPGTIK ] )
       msgStop( "Tiene que seleccionar una forma de pago" )
       aGet[ _CFPGTIK ]:SetFocus()
       Return .f.
@@ -10153,15 +10153,15 @@ static function CalImpCob( aTmp )
    oTotDiv:nCobrado        := ( oTotDiv:nTotal - oTotDiv:nEntregado )
    oTotDiv:nCambio         := - ( oTotDiv:nTotal - oTotDiv:nEntregado - oTotDiv:nCobrado )
 
-   if !Empty( oTotDiv:oEntregado )
+   if !empty( oTotDiv:oEntregado )
       oTotDiv:oEntregado:Refresh()
    end if
 
-   if !Empty( oTotDiv:oCobrado )
+   if !empty( oTotDiv:oCobrado )
       oTotDiv:oCobrado:Refresh()
    end if
 
-   if !Empty( oTotDiv:oCambio )
+   if !empty( oTotDiv:oCambio )
       oTotDiv:oCambio:Refresh()
    end if
 
@@ -10173,11 +10173,11 @@ static function ChkCobro( aTmp )
 
    oTotDiv:nCambio            := - ( oTotDiv:nTotal - oTotDiv:nEntregado - oTotDiv:nCobrado )
 
-   if !Empty( oTotDiv:oCobrado )
+   if !empty( oTotDiv:oCobrado )
       oTotDiv:oCobrado:Refresh()
    end if
 
-   if !Empty( oTotDiv:oCambio )
+   if !empty( oTotDiv:oCambio )
       oTotDiv:oCambio:Refresh()
    end if
 
@@ -10473,7 +10473,7 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
 
       ( dbfVal )->( dbGoTop() )
 
-      if !Empty( cText )
+      if !empty( cText )
          MsgStop( "Atención : " +  CRLF + cText )
       end if
 
@@ -10483,7 +10483,7 @@ Static Function BrwVale( dbfTikT, dbfTikL, dbfIva, dbfDiv, dbfTmpV, oBrwVal, lCl
    Repos-----------------------------------------------------------------------
    */
 
-   if !Empty( cNewFil ) .and. ( cNewFil )->( Used() )
+   if !empty( cNewFil ) .and. ( cNewFil )->( Used() )
       ( cNewFil )->( dbCloseArea() )
    end if
 
@@ -10538,7 +10538,7 @@ STATIC FUNCTION lStdChange( aTmp, aGet )
       Si le tipo de articulo es de acceso a preciso----------------------------
       */
 
-      if aTmp[ _LTIPACC ] .and. !Empty( nOldPvp )
+      if aTmp[ _LTIPACC ] .and. !empty( nOldPvp )
          aGet[ _NUNTTIL ]:cText( aTmp[ _NPVPTIL ] / nOldPvp )
          aGet[ _NPVPTIL ]:cText( nOldPvp )
       end if
@@ -11145,7 +11145,7 @@ Static Function cTitleDialog( aTmp )
 
    oDlgTpv:cTitle             := LblTitle( nSaveMode ) + "tickets a clientes "
 
-   if !Empty( aTmp[ _CNUMTIK ] )
+   if !empty( aTmp[ _CNUMTIK ] )
       oDlgTpv:cTitle          += Space( 1 )
       oDlgTpv:cTitle          += "[ Ticket : " + aTmp[ _CSERTIK ] + "/" + Alltrim( aTmp[ _CNUMTIK ] ) + "/" + Alltrim( aTmp[ _CSUFTIK ] ) + "]"
    end if
@@ -11318,7 +11318,7 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
    local lChgCodCli  := .f.
    local cNewCodCli  := aGet[ _CCLITIK ]:VarGet()
 
-   if Empty( cNewCodCli )
+   if empty( cNewCodCli )
       Return .t.
    end if
 
@@ -11328,7 +11328,7 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
 
-   lChgCodCli        := ( Empty( cOldCodCli ) .or. AllTrim( cOldCodCli ) != AllTrim( cNewCodCli ) )
+   lChgCodCli        := ( empty( cOldCodCli ) .or. AllTrim( cOldCodCli ) != AllTrim( cNewCodCli ) )
 
    if ( dbfClient )->( dbSeek( cNewCodCli ) )
 
@@ -11349,7 +11349,7 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
       aGet[ _CCLITIK ]:cText( ( dbfClient )->Cod )
 
-      if Empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli
+      if empty( aGet[ _NTARIFA ]:varGet() ) .or. lChgCodCli
          aGet[ _NTARIFA ]:cText( ( dbfClient )->nTarifa )
       end if
 
@@ -11361,35 +11361,35 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
          aGet[ _CNOMTIK ]:cText( ( dbfClient )->Titulo  )
       end if
 
-      if Empty( aGet[ _CDIRCLI ]:varGet() ) .or. lChgCodCli
+      if empty( aGet[ _CDIRCLI ]:varGet() ) .or. lChgCodCli
          aGet[ _CDIRCLI ]:cText( ( dbfClient )->Domicilio )
       end if
 
-      if Empty( aGet[ _CPOBCLI ]:varGet() ) .or. lChgCodCli
+      if empty( aGet[ _CPOBCLI ]:varGet() ) .or. lChgCodCli
          aGet[ _CPOBCLI ]:cText( ( dbfClient )->Poblacion )
       end if
 
-      if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
+      if empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli
          aGet[ _CTLFCLI ]:cText( ( dbfClient )->Telefono )
       end if
 
-      if Empty( aGet[ _CPRVCLI ]:varGet() ) .or. lChgCodCli
+      if empty( aGet[ _CPRVCLI ]:varGet() ) .or. lChgCodCli
          aGet[ _CPRVCLI ]:cText( ( dbfClient )->Provincia )
       end if
 
-      if Empty( aGet[ _CPOSCLI ]:varGet() ) .or. lChgCodCli
+      if empty( aGet[ _CPOSCLI ]:varGet() ) .or. lChgCodCli
          aGet[ _CPOSCLI ]:cText( ( dbfClient )->CodPostal )
       end if
 
-      if Empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli
+      if empty( aGet[ _CDNICLI ]:varGet() ) .or. lChgCodCli
          aGet[ _CDNICLI ]:cText( ( dbfClient )->Nif )
       end if
 
-      if Empty( aTmp[ _CCODGRP ] ) .or. lChgCodCli
+      if empty( aTmp[ _CCODGRP ] ) .or. lChgCodCli
          aTmp[ _CCODGRP ]  := ( dbfClient )->cCodGrp
       end if
 
-      if !Empty( oRieCli ) .and. lChgCodCli
+      if !empty( oRieCli ) .and. lChgCodCli
          oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
       end if
 
@@ -11401,7 +11401,7 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
       Cargamos la obra por defecto-------------------------------------
       */
 
-      if ( lChgCodCli ) .and. !Empty( aGet[ _CCODOBR ] )
+      if ( lChgCodCli ) .and. !empty( aGet[ _CCODOBR ] )
 
          if dbSeekInOrd( cNewCodCli, "lDefObr", dbfObrasT )
             aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
@@ -11427,25 +11427,25 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
       if lChgCodCli
 
-         if !Empty( aGet[ _CDTOESP ] )
+         if !empty( aGet[ _CDTOESP ] )
             aGet[ _CDTOESP ]:cText( ( dbfClient )->cDtoEsp )
          else
             aTmp[ _CDTOESP ]  := ( dbfClient )->cDtoEsp
          end if
 
-         if !Empty( aGet[ _NDTOESP ] )
+         if !empty( aGet[ _NDTOESP ] )
             aGet[ _NDTOESP ]:cText( ( dbfClient )->nDtoEsp )
          else
             aTmp[ _NDTOESP ]  := ( dbfClient )->nDtoEsp
          end if
 
-         if !Empty( aGet[ _CDPP    ] )
+         if !empty( aGet[ _CDPP    ] )
             aGet[ _CDPP    ]:cText( ( dbfClient )->cDpp )
          else
             aTmp[ _CDPP    ]  := ( dbfClient )->cDpp
          end if
 
-         if !Empty( aGet[ _NDPP    ] )
+         if !empty( aGet[ _NDPP    ] )
             aGet[ _NDPP    ]:cText( ( dbfClient )->nDpp )
          else
             aTmp[ _NDPP    ]  := ( dbfClient )->nDpp
@@ -11459,33 +11459,33 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
       if nMode == APPD_MODE
 
-         if !Empty( ( dbfClient )->Serie ) .and. lChgCodCli
+         if !empty( ( dbfClient )->Serie ) .and. lChgCodCli
             aGet[ _CSERTIK ]:cText( ( dbfClient )->Serie )
          end if
 
-         if Empty( aGet[ _CALMTIK ]:varGet() ) .and. lChgCodCli .and. !Empty( ( dbfClient )->cCodAlm )
+         if empty( aGet[ _CALMTIK ]:varGet() ) .and. lChgCodCli .and. !empty( ( dbfClient )->cCodAlm )
             aGet[ _CALMTIK ]:cText( ( dbfClient )->cCodAlm )
             aGet[ _CALMTIK ]:lValid()
          end if
 
-         if ( Empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->cCodTar )
+         if ( empty( aGet[ _CCODTAR ]:varGet() ) .or. lChgCodCli ) .and. !empty( ( dbfClient )->cCodTar )
             aGet[ _CCODTAR ]:cText( ( dbfClient )->cCodTar )
             aGet[ _CCODTAR ]:lValid()
          end if
 
-         if ( Empty( aGet[ _CFPGTIK ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->CodPago )
+         if ( empty( aGet[ _CFPGTIK ]:varGet() ) .or. lChgCodCli ) .and. !empty( ( dbfClient )->CodPago )
             if !uFieldEmpresa( "lGetFpg" )
                aGet[ _CFPGTIK ]:cText( ( dbfClient )->CodPago )
             end if
             aGet[ _CFPGTIK ]:lValid()
          end if
 
-         if ( Empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->cAgente )
+         if ( empty( aGet[ _CCODAGE ]:varGet() ) .or. lChgCodCli ) .and. !empty( ( dbfClient )->cAgente )
             aGet[ _CCODAGE ]:cText( ( dbfClient )->cAgente )
             aGet[ _CCODAGE ]:lValid()
          end if
 
-         if ( Empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !Empty( ( dbfClient )->cCodRut )
+         if ( empty( aGet[ _CCODRUT ]:varGet() ) .or. lChgCodCli ) .and. !empty( ( dbfClient )->cCodRut )
             aGet[ _CCODRUT ]:cText( ( dbfClient )->cCodRut )
             aGet[ _CCODRUT ]:lValid()
          end if
@@ -11494,11 +11494,11 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
       end if
 
-      if ( dbfClient )->lMosCom .and. !Empty( ( dbfClient )->mComent ) .and. lChgCodCli
+      if ( dbfClient )->lMosCom .and. !empty( ( dbfClient )->mComent ) .and. lChgCodCli
          MsgStop( Trim( ( dbfClient )->mComent ) )
       end if
 
-      if lObras() .and. Empty( aTmp[ _CCODOBR ] ) .and. lChgCodCli
+      if lObras() .and. empty( aTmp[ _CCODOBR ] ) .and. lChgCodCli
          msgWait( "Introduzca la dirección", "Info", 0 )
          aGet[ _CCODOBR ]:SetFocus()
       end if
@@ -11642,7 +11642,7 @@ Function SavTik2Alb( aTik, aGet, nMode, nSave )
       ( dbfAlbCliT )->cDpp          := aTik[ _CDPP    ]
       ( dbfAlbCliT )->nDpp          := aTik[ _NDPP    ]
 
-      if Empty( ( dbfAlbCliT )->cTurAlb )
+      if empty( ( dbfAlbCliT )->cTurAlb )
          ( dbfAlbCliT )->cTurAlb    := cCurSesion()
       end if
 
@@ -11796,11 +11796,11 @@ Function nTotalizer( cNumTik, cTikT, cTikL, cTikP, cAlbCliT, cAlbCliL, cFacCliT,
    DEFAULT cDiv         := dbfDiv
    DEFAULT lPic         := .t.
 
-   if Empty( cTikT ) .or. Empty( cTikL )
+   if empty( cTikT ) .or. empty( cTikL )
       Return ( uTotal )
    end if
 
-   if Empty( cNumTik )
+   if empty( cNumTik )
       cNumTik           := ( cTikT )->cSerTik + ( cTikT )->cNumTik + ( cTikT )->cSufTik
    end if
 
@@ -12092,11 +12092,11 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
    if dbLock( dbfFacCliT )
 
-      if Empty( ( dbfFacCliT )->dFecFac )
+      if empty( ( dbfFacCliT )->dFecFac )
          ( dbfFacCliT )->dFecFac    := aTik[ _DFECTIK ]
       end if
 
-      if Empty( ( dbfFacCliT )->tFecFac )
+      if empty( ( dbfFacCliT )->tFecFac )
          ( dbfFacCliT )->tFecFac    := aTik[ _TFECTIK ]
       end if
 
@@ -12349,7 +12349,7 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
 
    aArticulosWeb           := {}
 
-   if !Empty( oMetMsg )
+   if !empty( oMetMsg )
       oMetMsg:cText        := 'Archivando lineas'
       oMetMsg:Refresh()
    end if
@@ -12379,7 +12379,7 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
    /*
    Ahora escribimos en el fichero definitivo los pagos-------------------------
    */
-   if !Empty( oMetMsg )
+   if !empty( oMetMsg )
       oMetMsg:cText           := 'Archivando pagos'
       oMetMsg:Refresh()
    end if
@@ -12394,7 +12394,7 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
    Guardamos las series--------------------------------------------------------
    */
 
-   if !Empty( oMetMsg )
+   if !empty( oMetMsg )
       oMetMsg:cText           := 'Archivando series'
       oMetMsg:Refresh()
    end if
@@ -12411,7 +12411,7 @@ Static Function SavTik2Tik( aTmp, aGet, nMode, nSave, nNumDev )
    Escribimos definitivamente en el disco--------------------------------------
    */
 
-   if !Empty( oMetMsg )
+   if !empty( oMetMsg )
       oMetMsg:cText  := 'Archivando ticket'
       oMetMsg:Refresh()
    end if
@@ -12748,7 +12748,7 @@ Static Function SetBigUser( aTmp, aGet )
 
    aTmp[ _CCCJTIK ]  := oUser():cCodigo()
 
-   if !Empty( oUser():cImagen() )
+   if !empty( oUser():cImagen() )
       oBtnUsuario:cBmp( cFileBmpName( oUser():cImagen() ) )
    else
       oBtnUsuario:cBmp( if( oUser():lAdministrador(), "Security_Agent_32", "Dude4_32" ) )
@@ -13596,7 +13596,7 @@ Static Function AppendKit( uTmpLin, aTik )
             Estudio de los tipos de " + cImp() + " si el padre el cero todos cero------
             */
 
-            if !Empty( nIvaTil )
+            if !empty( nIvaTil )
                ( dbfTmpL )->nIvaTil := nIva( dbfIva, ( dbfArticulo )->TipoIva )
             else
                ( dbfTmpL )->nIvaTil := 0
@@ -13766,7 +13766,7 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
    USE ( cPatSnd() + "TIKEP.DBF" ) NEW VIA ( cLocalDriver() )ALIAS ( cCheckArea( "TIKEP", @tmpTikP ) )
    SET INDEX TO ( cPatSnd() + "TIKEP.CDX" ) ADDITIVE
 
-   if !Empty( ::oSender:oMtr )
+   if !empty( ::oSender:oMtr )
       ::oSender:oMtr:nTotal := ( dbfTikT )->( OrdKeyCount() )
    end if
 
@@ -13803,7 +13803,7 @@ Method CreateData() CLASS TTiketsClientesSenderReciver
 
          ( dbfTikT )->( dbSkip() )
 
-         if !Empty( ::oSender:oMtr )
+         if !empty( ::oSender:oMtr )
             ::oSender:oMtr:Set( ( dbfTikT )->( OrdKeyNo() ) )
          end if
 
@@ -13992,7 +13992,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
             oStock:cTikT      := dbfTikT
             oStock:cTikL      := dbfTikL
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := ( tmpTikT )->( ordKeyCount() )
             end if
 
@@ -14086,7 +14086,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
                ( tmpTikT )->( dbSkip() )
 
-               if !Empty( ::oSender:oMtr )
+               if !empty( ::oSender:oMtr )
                   ::oSender:oMtr:Set( ( tmpTikT )->( OrdKeyNo() ) )
                end if
 
@@ -14094,7 +14094,7 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
             end do
 
-            if !Empty( ::oSender:oMtr )
+            if !empty( ::oSender:oMtr )
                ::oSender:oMtr:nTotal := ( tmpTikT )->( ordKeyCount() )
             end if
 
@@ -14175,7 +14175,7 @@ Static Function GenTikCli( nDevice, cCaption, cCodDoc, cPrinter )
    DEFAULT cCodDoc      := cFormatoTicketEnCaja( oUser():cCaja(), dbfCajT )
    DEFAULT cPrinter     := cWindowsPrinterEnCaja( oUser():cCaja(), dbfCajT )
 
-   if Empty( cCodDoc )
+   if empty( cCodDoc )
       cCodDoc           := cFormatoTicketEnCaja( oUser():cCaja(), dbfCajT )
    end if
 
@@ -14515,11 +14515,11 @@ Function cTextoLineaTicket( cTikL )
 
    cTexto         := Rtrim( ( dbfTikL )->cNomTil )
 
-   if !Empty( ( dbfTikL )->cNcmTil )
+   if !empty( ( dbfTikL )->cNcmTil )
       cTexto      += " con " + CRLF + ( dbfTikL )->cNcmTil
    end if
 
-   if !Empty( ( dbfTikL )->lKitChl )
+   if !empty( ( dbfTikL )->lKitChl )
       cTexto      := Space( 3 ) + "<" + cTexto + ">"
    end if
 
@@ -14540,18 +14540,18 @@ Function cTextoLineaTicketLeng( cTikL, cArtLeng )
    if !( cArtLeng )->( dbSeek( ( dbfTikL )->cCbaTil + getLenguajeSegundario() ) )
       cTexto         := Rtrim( ( dbfTikL )->cNomTil )
    else
-      if !Empty( ( cArtLeng )->cDesArt ) 
+      if !empty( ( cArtLeng )->cDesArt ) 
         cTexto       := AllTrim( ( cArtLeng )->cDesArt )
       else
         cTexto       := AllTrim( ( cArtLeng )->cDesTik )
       end if
    end if
 
-   if !Empty( ( dbfTikL )->cNcmTil )
+   if !empty( ( dbfTikL )->cNcmTil )
       cTexto         += " con " + CRLF + ( dbfTikL )->cNcmTil
    end if
 
-   if !Empty( ( dbfTikL )->lKitChl )
+   if !empty( ( dbfTikL )->lKitChl )
       cTexto         := Space( 3 ) + "<" + cTexto + ">"
    end if
 
@@ -14575,7 +14575,7 @@ Function DesignReportTikCli( oFr, dbfDoc )
       Paginas y bandas---------------------------------------------------------
       */
 
-      if !Empty( ( dbfDoc )->mReport )
+      if !empty( ( dbfDoc )->mReport )
 
          oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -14688,7 +14688,7 @@ Function PrintReportTikCli( nDevice, nCopies, cPrinter )
    Cargar el informe-----------------------------------------------------------
    */
 
-   if !Empty( ( dbfDoc )->mReport )
+   if !empty( ( dbfDoc )->mReport )
 
       oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
 
@@ -14810,7 +14810,7 @@ function cTpvDesCmd( cTikL )
 
    DEFAULT cTikL     := dbfTikL
 
-   if !Empty( ( cTikL )->cNomCmd )
+   if !empty( ( cTikL )->cNomCmd )
       cReturn        := Rtrim( ( cTikL )->cNomCmd )
    else
       cReturn        := Rtrim( ( cTikL )->cNomTil )
@@ -14940,7 +14940,7 @@ Static Function AddFreeProduct()
          ( dbfTmpL )->cImpCom1   := cGetImpresora
       end if
 
-      if !Empty( oBrwDet )
+      if !empty( oBrwDet )
          oBrwDet:Refresh()
       end if
 
@@ -14954,7 +14954,7 @@ Return ( oDlg:nResult == IDOK )
 
 Static Function lValidAddFreeProduct( oGetDescripcion, oDlg )
 
-   if Empty( oGetDescripcion:VarGet() )
+   if empty( oGetDescripcion:VarGet() )
       MsgStop( "Descripción no puede estar vacia" )
       Return .f.
    end if
@@ -14969,7 +14969,7 @@ Static Function RenombrarUbicacion( aTmp, aGet )
 
    local cNombreUbicacion  := VirtualKey( .f., aTmp[ _CALIASTIK ], "Asignar alias" )
 
-   if !Empty( cNombreUbicacion )
+   if !empty( cNombreUbicacion )
 
       aTmp[ _CALIASTIK ]   := cNombreUbicacion
 
@@ -15234,7 +15234,7 @@ Static Function CrearDescuento( dbfTmpL, oBrwDet )
 
    oFnt:end()
 
-   if !Empty( oBrwDet )
+   if !empty( oBrwDet )
       oBrwDet:Refresh()
    end if
 
@@ -15275,7 +15275,7 @@ Static Function CrearInvitacion( dbfTmpL, oBrwDet )
       ON INIT     ( InitInvitaciones( oDlg, oImgInv, oLstInv ) ) ;
       CENTER
 
-   if !Empty( oBrwDet )
+   if !empty( oBrwDet )
       oBrwDet:Refresh()
    end if
 
@@ -15344,7 +15344,7 @@ Function InitInvitaciones( oDlg, oImgInv, oLstInv )
 
    local nInvi := 0
 
-   if !Empty( oImgInv ) .and. !Empty( oLstInv ) .and. !Empty( oInvitacion )
+   if !empty( oImgInv ) .and. !empty( oLstInv ) .and. !empty( oInvitacion )
 
       oInvitacion:oDbf:GoTop()
 
@@ -15379,11 +15379,11 @@ Static Function GetPesoBalanza( aGet, oBtn )
 
       aGet[ _NUNTTIL ]:cText( oBal:nPeso() )
 
-      if !Empty( nGetFocus )
+      if !empty( nGetFocus )
          SendMessage( nGetFocus, FM_CLICK, 0, 0 )
       end if
 
-      if !Empty( oBtn )
+      if !empty( oBtn )
          oBtn:Click()
       end if
 
@@ -15466,31 +15466,31 @@ Function SynTikCli( cPath )
 
    while !( dbfTikT )->( eof() )
 
-      if Empty( ( dbfTikT )->cSufTik )
+      if empty( ( dbfTikT )->cSufTik )
          ( dbfTikT )->cSufTik := "00"
       end if
 
-      if !Empty( ( dbfTikT )->cNumDoc ) .and. Len( AllTrim( ( dbfTikT )->cNumDoc ) ) != 12
+      if !empty( ( dbfTikT )->cNumDoc ) .and. Len( AllTrim( ( dbfTikT )->cNumDoc ) ) != 12
          ( dbfTikT )->cNumDoc := AllTrim( ( dbfTikT )->cNumDoc ) + "00"
       end if
 
-      if !Empty( ( dbfTikT )->cAlbTik ) .and. Len( AllTrim( ( dbfTikT )->cAlbTik ) ) != 12
+      if !empty( ( dbfTikT )->cAlbTik ) .and. Len( AllTrim( ( dbfTikT )->cAlbTik ) ) != 12
          ( dbfTikT )->cAlbTik := AllTrim( ( dbfTikT )->cAlbTik ) + "00"
       end if
 
-      if !Empty( ( dbfTikT )->cPedTik ) .and. Len( AllTrim( ( dbfTikT )->cPedTik ) ) != 12
+      if !empty( ( dbfTikT )->cPedTik ) .and. Len( AllTrim( ( dbfTikT )->cPedTik ) ) != 12
          ( dbfTikT )->cPedTik := AllTrim( ( dbfTikT )->cPedTik ) + "00"
       end if
 
-      if !Empty( ( dbfTikT )->cPreTik ) .and. Len( AllTrim( ( dbfTikT )->cPreTik ) ) != 12
+      if !empty( ( dbfTikT )->cPreTik ) .and. Len( AllTrim( ( dbfTikT )->cPreTik ) ) != 12
          ( dbfTikT )->cPreTik := AllTrim( ( dbfTikT )->cPreTik ) + "00"
       end if
 
-      if !Empty( ( dbfTikT )->cTikVal ) .and. Len( AllTrim( ( dbfTikT )->cTikVal ) ) != 13
+      if !empty( ( dbfTikT )->cTikVal ) .and. Len( AllTrim( ( dbfTikT )->cTikVal ) ) != 13
          ( dbfTikT )->cTikVal := AllTrim( ( dbfTikT )->cTikVal ) + "00"
       end if
 
-      if Empty( ( dbfTikT )->cNcjTik )
+      if empty( ( dbfTikT )->cNcjTik )
          ( dbfTikT )->cNcjTik := "000"
       end if
 
@@ -15511,11 +15511,11 @@ Function SynTikCli( cPath )
 
    while !( dbfTikP )->( eof() )
 
-      if Empty( ( dbfTikP )->cSufTik )
+      if empty( ( dbfTikP )->cSufTik )
          ( dbfTikP )->cSufTik := "00"
       end if
 
-      if Empty( ( dbfTikP )->cCodCaj )
+      if empty( ( dbfTikP )->cCodCaj )
          ( dbfTikP )->cCodCaj := oUser():cCaja()
       end if
 
@@ -15536,27 +15536,27 @@ Function SynTikCli( cPath )
 
    while !( dbfTikL )->( eof() )
 
-      if Empty( ( dbfTikL )->cSufTil )
+      if empty( ( dbfTikL )->cSufTil )
          ( dbfTikL )->cSufTil := "00"
       end if
 
-      if !Empty( ( dbfTikL )->cNumDev ) .and. Len( AllTrim( ( dbfTikL )->cNumDev ) ) != 13
+      if !empty( ( dbfTikL )->cNumDev ) .and. Len( AllTrim( ( dbfTikL )->cNumDev ) ) != 13
          ( dbfTikL )->cNumDev := AllTrim( ( dbfTikL )->cNumDev ) + "00"
       end if
 
-      if !Empty( ( dbfTikL )->cCbaTil ) .and. Empty( ( dbfTikL )->cCodFam )
+      if !empty( ( dbfTikL )->cCbaTil ) .and. empty( ( dbfTikL )->cCodFam )
          ( dbfTikL )->cCodFam := RetFamArt( ( dbfTikL )->cCbaTil, dbfArticulo )
       end if
 
-      if !Empty( ( dbfTikL )->cCbaTil ) .and. !Empty( ( dbfTikL )->cCodFam )
+      if !empty( ( dbfTikL )->cCbaTil ) .and. !empty( ( dbfTikL )->cCodFam )
          ( dbfTikL )->cGrpFam := cGruFam( ( dbfTikL )->cCodFam, dbfFamilia )
       end if
 
-      if Empty( ( dbfTikL )->cLote ) .and. !Empty( ( dbfTikL )->nLote )
+      if empty( ( dbfTikL )->cLote ) .and. !empty( ( dbfTikL )->nLote )
          ( dbfTikL )->cLote   := AllTrim( Str( ( dbfTikL )->nLote ) )
       end if
 
-      if Empty( ( dbfTikL )->cAlmLin ) .or. ( dbfTikL )->cAlmLin != ( dbfTikT )->cAlmTik
+      if empty( ( dbfTikL )->cAlmLin ) .or. ( dbfTikL )->cAlmLin != ( dbfTikT )->cAlmTik
          ( dbfTikL )->cAlmLin := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "cAlmTik" )
       end if
 
@@ -15583,7 +15583,7 @@ Function SynTikCli( cPath )
 
    while !( dbfTikS )->( eof() )
 
-      if Empty( ( dbfTikS )->cSufTik )
+      if empty( ( dbfTikS )->cSufTik )
          ( dbfTikS )->cSufTik := "00"
       end if
 
@@ -15675,63 +15675,63 @@ Function SynTikCli( cPath )
 
    ErrorBlock( oBlock )
 
-   if !Empty( dbfTikT ) .and. ( dbfTikT )->( Used() )
+   if !empty( dbfTikT ) .and. ( dbfTikT )->( Used() )
       ( dbfTikT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTikL ) .and. ( dbfTikL )->( Used() )
+   if !empty( dbfTikL ) .and. ( dbfTikL )->( Used() )
       ( dbfTikL )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTikP ) .and. ( dbfTikP )->( Used() )
+   if !empty( dbfTikP ) .and. ( dbfTikP )->( Used() )
       ( dbfTikP )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTikS ) .and. ( dbfTikS )->( Used() )
+   if !empty( dbfTikS ) .and. ( dbfTikS )->( Used() )
       ( dbfTikS )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
+   if !empty( dbfFamilia ) .and. ( dbfFamilia )->( Used() )
       ( dbfFamilia )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
+   if !empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
       ( dbfArticulo )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfTblCnv ) .and. ( dbfTblCnv )->( Used() )
+   if !empty( dbfTblCnv ) .and. ( dbfTblCnv )->( Used() )
       ( dbfTblCnv )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
+   if !empty( dbfDiv ) .and. ( dbfDiv )->( Used() )
       ( dbfDiv )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFacCliT ) .and. ( dbfFacCliT )->( Used() )
+   if !empty( dbfFacCliT ) .and. ( dbfFacCliT )->( Used() )
       ( dbfFacCliT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFacCliL ) .and. ( dbfFacCliL )->( Used() )
+   if !empty( dbfFacCliL ) .and. ( dbfFacCliL )->( Used() )
       ( dbfFacCliL )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfFacCliP ) .and. ( dbfFacCliP )->( Used() )
+   if !empty( dbfFacCliP ) .and. ( dbfFacCliP )->( Used() )
       ( dbfFacCliP )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAntCliT ) .and. ( dbfAntCliT )->( Used() )
+   if !empty( dbfAntCliT ) .and. ( dbfAntCliT )->( Used() )
       ( dbfAntCliT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfIva ) .and. ( dbfIva )->( Used() )
+   if !empty( dbfIva ) .and. ( dbfIva )->( Used() )
       ( dbfIva )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAlbCliT ) .and. ( dbfAlbCliT )->( Used() )
+   if !empty( dbfAlbCliT ) .and. ( dbfAlbCliT )->( Used() )
       ( dbfAlbCliT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAlbCliL ) .and. ( dbfAlbCliL )->( Used() )
+   if !empty( dbfAlbCliL ) .and. ( dbfAlbCliL )->( Used() )
       ( dbfAlbCliL )->( dbCloseArea() )
    end if
 
@@ -15741,7 +15741,7 @@ return nil
 
 Function lStartAvisoPedidos()
 
-   if !Empty( oBtnPedidos )
+   if !empty( oBtnPedidos )
       lStopAvisoPedidos()
       oTimerBtn               := TTimer():New( 900, {|| lSelectedButton() }, )
       oTimerBtn:Activate()
@@ -15753,7 +15753,7 @@ return .t.
 
 Function lStopAvisoPedidos()
 
-   if !Empty( oTimerBtn )
+   if !empty( oTimerBtn )
       oTimerBtn:End()
       oTimerBtn               := nil
    endif
@@ -15764,7 +15764,7 @@ return .t.
 
 Function lSelectedButton()
 
-   if !Empty( oBtnPedidos )
+   if !empty( oBtnPedidos )
       oBtnPedidos:lSelected   := !oBtnPedidos:lSelected
       oBtnPedidos:Refresh()
    end if
@@ -15784,7 +15784,7 @@ Function ProcesaPedidosWeb( aTmp )
 
    cNumeroPedido  := MuestraPedidosWeb( oBtnPedidos )
 
-   if !Empty( cNumeroPedido )
+   if !empty( cNumeroPedido )
 
       // Traspaso de cabeceras de pedidos a ticket--------------------------------
 
@@ -16000,7 +16000,7 @@ Return ( nil )
 
 static function SeleccionarDefecto( cDefCom, dbfComentariosT, dbfComentariosL, oBrwLineasComentarios, oBrwComentarios )
 
-   if !Empty( cDefCom )
+   if !empty( cDefCom )
 
       if ( dbfComentariosT )->( dbSeek( cDefCom ) )
 
@@ -16020,27 +16020,27 @@ static function cTextoOfficeBar( aTmp )
 
    local uValor
 
-   if !Empty( oBtnCliente )
+   if !empty( oBtnCliente )
 
       uValor         := AllTrim( RetFld( aTmp[ _CCLITIK ], dbfClient, "Titulo" ) )
 
-      oBtnCliente:cCaption( if( !Empty( uValor ), uValor, "..." ) )
+      oBtnCliente:cCaption( if( !empty( uValor ), uValor, "..." ) )
 
    end if
 
-   if !Empty( oBtnDireccion )
+   if !empty( oBtnDireccion )
 
       uValor         := AllTrim( RetFld( aTmp[ _CCLITIK ], dbfClient, "Domicilio" ) )
 
-      oBtnDireccion:cCaption( if( !Empty( uValor ), uValor, "..." ) )
+      oBtnDireccion:cCaption( if( !empty( uValor ), uValor, "..." ) )
 
    end if
 
-   if !Empty( oBtnTelefono )
+   if !empty( oBtnTelefono )
 
       uValor         := AllTrim( RetFld( aTmp[ _CCLITIK ], dbfClient, "Telefono" ) ) + Space( 1 ) + AllTrim( RetFld( aTmp[ _CCLITIK ], dbfClient, "cMeiInt" ) )
 
-      oBtnTelefono:cCaption( if( !Empty( uValor ), uValor, "..." ) )
+      oBtnTelefono:cCaption( if( !empty( uValor ), uValor, "..." ) )
 
    end if
 
@@ -16150,7 +16150,7 @@ Static Function lCambiaTicket( lSubir, aTmp, aGet, nMode )
 
    cOldCodCli        := ""
 
-   if !Empty( aGet[ _CCLITIK ] )
+   if !empty( aGet[ _CCLITIK ] )
       aGet[ _CCLITIK ]:SetFocus()
       aGet[ _CCLITIK ]:lValid()
    end if
@@ -16191,7 +16191,7 @@ Function SetAutoImp()
 
    local nSecondTime
 
-   if Empty( oTimer )
+   if empty( oTimer )
 
       nSecondTime    := uFieldEmpresa( "nTiempoImp", 0 )
 
@@ -16208,7 +16208,7 @@ Return nil
 
 Function KillAutoImp()
 
-   if !Empty( oTimer )
+   if !empty( oTimer )
       oTimer:End()
    end if
 
@@ -16220,7 +16220,7 @@ Return( nil )
 
 Function StartAutoImp()
 
-   if !Empty( oTimer )
+   if !empty( oTimer )
       oTimer:Activate()
    end if
 
@@ -16230,7 +16230,7 @@ Return( nil )
 
 Function StopAutoImp()
 
-   if !Empty( oTimer )
+   if !empty( oTimer )
       oTimer:DeActivate()
    end if
 
@@ -16299,11 +16299,11 @@ static Function ComprobarFamilia( dbfTmpL, oFntTit, oBrwLin, cNumTik, oTitArt, o
    Informamos del último artículo vendido--------------------------------------
    */
 
-   if !Empty( oTitArt )
-      oTitArt:SetText( if( Empty( ( dbfTmpL )->cComent ), Upper( Rtrim( ( dbfTmpL )->cNomTil ) ),"[*] " + Upper( Rtrim( ( dbfTmpL )->cNomTil ) ) ) )
+   if !empty( oTitArt )
+      oTitArt:SetText( if( empty( ( dbfTmpL )->cComent ), Upper( Rtrim( ( dbfTmpL )->cNomTil ) ),"[*] " + Upper( Rtrim( ( dbfTmpL )->cNomTil ) ) ) )
    end if
 
-   if !Empty( oTitPrc )
+   if !empty( oTitPrc )
       oTitPrc:SetText( AllTrim( Trans( nTotLTpv( dbfTmpL, nDouDiv, nDorDiv ), cPorDiv ) ) )
    end if
 
@@ -16397,7 +16397,7 @@ Static Function GuardarBtnLibre( oDlg, oGetNombre, oGetUnidades, oGetPrecio, oBr
    local nUnidades   := oGetUnidades:VarGet()
    local nPrecio     := oGetPrecio:VarGet()
 
-   if !Empty( cNombre )
+   if !empty( cNombre )
 
       ( dbfTmpL )->( dbAppend() )
 
@@ -16436,7 +16436,7 @@ Return nil
 
 function cPdaZona( cNombre )
 
-   if Empty( cZona )
+   if empty( cZona )
       cZona    := cNombre
    end if
 
@@ -16458,7 +16458,7 @@ Esta funcion graba el tiket
 */
 //---------------------------------------------------------------------------//
 
-Static Function pdaNewTiket( aTmp, aGet, nMode, lEmpty, lNota, lCobrar )
+Static Function pdaNewTiket( aTmp, aGet, nMode, lempty, lNota, lCobrar )
 
 Return .t.
 
@@ -16507,7 +16507,7 @@ Static Function ChangeFamilias( cCodFam, oBrwArticulo )
    ( dbfArticulo )->( OrdScope( 1, cCodFam ) )
    ( dbfArticulo )->( dbGoTop() )
 
-   if !Empty( oBrwArticulo )
+   if !empty( oBrwArticulo )
       oBrwArticulo:GoTop()
       oBrwArticulo:Refresh()
    end if
@@ -16602,7 +16602,7 @@ static function EdtPdaL( aTmp, aGet, dbfTmpL, oBrw, aTmpHead, lNegative, nMode )
    aTmp[ _CCBATIL ]     := ( dbfArticulo )->Codigo
    aTmp[ _CNOMTIL ]     := ( dbfArticulo )->Nombre
 
-   if !Empty( ( dbfArticulo )->cDesCmd )
+   if !empty( ( dbfArticulo )->cDesCmd )
       aTmp[ _CNOMCMD ]  := ( dbfArticulo )->cDesCmd
    else
       aTmp[ _CNOMCMD ]  := ( dbfArticulo )->Nombre
@@ -16905,7 +16905,7 @@ FUNCTION rxTpv( cPath, cDriver )
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CRETMAT", "CRETMAT", {|| Field->CRETMAT } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. !Empty( cTurTik )", {||!Deleted() .and. !Empty( Field->cTurTik ) }  ) )
+      ( dbfTikT )->( ordCondSet( "!Deleted() .and. !empty( cTurTik )", {||!Deleted() .and. !empty( Field->cTurTik ) }  ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "CTURTIK", "CTURTIK + CSUFTIK + CNCJTIK", {|| Field->CTURTIK + Field->cSufTik + Field->CNCJTIK } ) )
 
       ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
@@ -17582,7 +17582,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    Reposicionamiento-----------------------------------------------------------
    */
 
-   if !Empty( nOrdAnt )
+   if !empty( nOrdAnt )
       ( cTikL )->( OrdSetFocus( nOrdAnt ) )
    end if
 
@@ -17865,13 +17865,13 @@ FUNCTION nTotNComandas()
 
    local nTotNTpv    := 0
 
-   if !Empty( dbfTmpC )
+   if !empty( dbfTmpC )
       nTotNTpv       := ( dbfTmpC )->nUntTil
       nTotNTpv       *= NotCero( ( dbfTmpC )->nUndKit )
       RETURN ( nTotNTpv )
    end if
 
-   if !Empty( dbfTikL )
+   if !empty( dbfTikL )
       nTotNTpv       := ( dbfTikL )->nUntTil
       nTotNTpv       *= NotCero( ( dbfTikL )->nUndKit )
    end if
@@ -18058,7 +18058,7 @@ Static Function ChangeLineasComentarios( oGetComentario, cComentariosL )
 
    cText                   := AllTrim( oGetComentario:VarGet() )
 
-   if Empty( cText )
+   if empty( cText )
       cText                := AllTrim( ( cComentariosL )->cDescri )
    else
       cText                += ", " + AllTrim( ( cComentariosL )->cDescri )
@@ -18108,7 +18108,7 @@ FUNCTION cUpSerie( cSer )
    local nAsc
    local cChr
 
-   if Empty( cSer ) .or. cSer < "A"
+   if empty( cSer ) .or. cSer < "A"
       cSer     := "A"
       nAsc     := Asc( cSer )
    else
@@ -18143,31 +18143,28 @@ return cChr
 //---------------------------------------------------------------------------//
 
 Static Function SetLostFocusOn()
-
    oDlgDet:Cargo           := .t.
-
 Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
 Static Function SetLostFocusOff()
-
    oDlgDet:Cargo           := .f.
-
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function DlgLostFocus( nMode, aTmp )
+Static Function getLostFocus()
+Return ( isLogic( oDlgDet:Cargo ) .and. ( oDlgDet:Cargo ) )
 
-   if IsLogic( oDlgDet:Cargo ) .and. ( oDlgDet:Cargo )
+//---------------------------------------------------------------------------//
 
-      if ( nMode != APPD_MODE ) .or. ( Empty( aTmp[ _CCBATIL ] ) .and. Empty( aTmp[ _CNOMTIL ] ) )
+Static Function dlgLostFocus( nMode, aTmp )
 
+   if getLostFocus()
+      if ( nMode != APPD_MODE ) .or. ( empty( aTmp[ _CCBATIL ] ) .and. empty( aTmp[ _CNOMTIL ] ) )
          oDlgDet:End()
-
       end if
-
    end if
 
 Return ( .t. )
@@ -18188,7 +18185,7 @@ Static Function lFidelity( aGet, aTmp, nMode )
       return .f.
    end if
 
-   if !Empty( aTmp[ _CCLITIK ] ) .and. ( aTmp[ _CCLITIK ] != cDefCli() )
+   if !empty( aTmp[ _CCLITIK ] ) .and. ( aTmp[ _CCLITIK ] != cDefCli() )
       return .f.
    end if
 
@@ -18196,7 +18193,7 @@ Static Function lFidelity( aGet, aTmp, nMode )
 
       TBitmap():ReDefine( 700, "FidelizacionClientes", , oDlg )
 
-      ApoloBtnBmp():Redefine( 500, "Id_Card_32", , , , , {|| oDlg:end( IDOK ), if( !Empty( aGet[ _CCLITIK ] ), aGet[ _CCLITIK ]:SetFocus(), ) }, oDlg, , , .f., .f., "Si. [ F5 ]", ,,, .t., "TOP", .t., , , .f., )
+      ApoloBtnBmp():Redefine( 500, "Id_Card_32", , , , , {|| oDlg:end( IDOK ), if( !empty( aGet[ _CCLITIK ] ), aGet[ _CCLITIK ]:SetFocus(), ) }, oDlg, , , .f., .f., "Si. [ F5 ]", ,,, .t., "TOP", .t., , , .f., )
 
       ApoloBtnBmp():Redefine( 510, "Id_Card_Delete_32", , , , , {|| oDlg:end( IDOK ), appCli( .f. ) }, oDlg, , , .f., .f., "No, pero deseo tenerla. [ F6 ]", ,,, .t., "TOP", .t., , , .f., )
 
@@ -18469,7 +18466,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
             o:oButton:Cargo   := o:cCode
          next
 
-         oDlg:bStart          := {|| aEval( aButtonsPago, {|o| if( !Empty( o:oButton:Cargo ), o:oButton:Show(), ) } ) }
+         oDlg:bStart          := {|| aEval( aButtonsPago, {|o| if( !empty( o:oButton:Cargo ), o:oButton:Show(), ) } ) }
 
       else
 
@@ -18485,7 +18482,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
 
    oBmp:End()
 
-   if !Empty( dbfTmp ) .and. ( dbfTmp )->( Used() )
+   if !empty( dbfTmp ) .and. ( dbfTmp )->( Used() )
       ( dbfTmp )->( dbCloseArea() )
    end if
 
@@ -18544,7 +18541,7 @@ Static Function ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTm
 
    cNumero        := Upper( oNumero:VarGet() )
 
-   if Empty( cNumero )
+   if empty( cNumero )
       Return .t.
    end if
 
@@ -18614,7 +18611,7 @@ Static Function ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTm
 
          end if
 
-         if !Empty( oBrwDev )
+         if !empty( oBrwDev )
             oBrwDev:Refresh()
             oBrwDev:GoTop()
          end if
@@ -18648,7 +18645,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    local cSufijoTicket
    local cNumeroTicket
    local nTotalTicket            := 0
-   local cTipoDocumento          := !Empty( oBtn )
+   local cTipoDocumento          := !empty( oBtn )
    local nTotalDevolucion        := 0
    local nTotTicketOriginal      := 0
    local nTotTicketResultado     := 0
@@ -18857,7 +18854,7 @@ Static Function FinalizaDevolucionTicket( oBtn, aTmp, aGet, dbfTmp, oNumero, oBr
    end if 
 
    /*
-         if !Empty( oMetMsg )
+         if !empty( oMetMsg )
             oMetMsg:cText        := 'Generando vales'
             oMetMsg:Refresh()
          end if
@@ -18990,7 +18987,7 @@ Static Function cInformeDevolucionTpv( dbfTmp )
    local oDlg
    local oBmp
 
-   if Empty( ( dbfTmp )->cSerTil )
+   if empty( ( dbfTmp )->cSerTil )
       Return ( nil ) 
    end if
 
@@ -19020,7 +19017,7 @@ Static Function cInformeDevolucionTpv( dbfTmp )
    ( dbfTikL )->( dbGoto( nRec ) )
    ( dbfTikL )->( OrdSetFocus( nOrd ) )
 
-   if !Empty( aInf )
+   if !empty( aInf )
 
       DEFINE DIALOG oDlg RESOURCE "TICKETINFO"
 
@@ -19111,7 +19108,7 @@ Static Function dFecMaxVale( cNumTik, cTikT  )
    ( cTikT )->( OrdSetFocus( nOrdAnt ) )
    ( cTikT )->( dbGoTo( nRec ) )
 
-   if Empty( dFecMaxVale )
+   if empty( dFecMaxVale )
       dFecMaxVale       := Date()
    end if
 
@@ -19299,7 +19296,7 @@ Static Function EndBrwTikCli( oGet, oDlg )
       Return .f.
    end if 
 
-   if !Empty( oGet )
+   if !empty( oGet )
 
 
       oGet:cText( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik )
@@ -19476,7 +19473,7 @@ Function ImpresionAnulaciones( cNumTik )
 
    CursorWait()
 
-   if Empty( dbfTmpN )
+   if empty( dbfTmpN )
 
       cNewFilN             := cGetNewFileName( cPatTmp() + "TikAnu" )
 
@@ -19516,7 +19513,7 @@ Function ImpresionAnulaciones( cNumTik )
             Impresora una------------------------------------------------------
             */
 
-            if !Empty( ( dbfTikL )->cImpCom1 ) .and. AllTrim( ( dbfTikL )->cImpCom1 )  != "No imprimir"
+            if !empty( ( dbfTikL )->cImpCom1 ) .and. AllTrim( ( dbfTikL )->cImpCom1 )  != "No imprimir"
 
                if aScan( aImp, ( dbfTikL )->cImpCom1 ) == 0
                   aAdd( aImp, ( dbfTikL )->cImpCom1 )
@@ -19528,7 +19525,7 @@ Function ImpresionAnulaciones( cNumTik )
             Impresora Dos------------------------------------------------------
             */
 
-            if !Empty( ( dbfTikL )->cImpCom2 ) .and. AllTrim( ( dbfTikL )->cImpCom2 ) != "No imprimir"
+            if !empty( ( dbfTikL )->cImpCom2 ) .and. AllTrim( ( dbfTikL )->cImpCom2 ) != "No imprimir"
 
                if aScan( aImp, ( dbfTikL )->cImpCom2 ) == 0
                   aAdd( aImp, ( dbfTikL )->cImpCom2 )
@@ -19565,7 +19562,7 @@ Function ImpresionAnulaciones( cNumTik )
          cPrinter := cNombreImpresoraComanda( oUser():cCaja(), aImp[ nPos ], dbfCajL )
          cFormato := cFormatoAnulacionEnCaja( oUser():cCaja(), aImp[ nPos ], dbfCajT, dbfCajL )
 
-         if !Empty( cPrinter )
+         if !empty( cPrinter )
             GenTikCli( IS_PRINTER, "Imprimiendo anulacion", cFormato, AllTrim( cPrinter ), .f., .t., aImp[ nPos ] )
          end if
 
@@ -19583,7 +19580,7 @@ Function ImpresionAnulaciones( cNumTik )
 
       cWav        := AllTrim( cWavImpresoraComanda( oUser():cCaja(), aImp[ nPos ], dbfCajL ) )
 
-      if !Empty( cWav ) .and. File( cWav )
+      if !empty( cWav ) .and. File( cWav )
 
          SndPlaySound( cWav )
 
@@ -19597,7 +19594,7 @@ Function ImpresionAnulaciones( cNumTik )
 
    if lCreateTemporal
 
-      if !Empty( dbfTmpN ) .and. ( dbfTmpN )->( Used() )
+      if !empty( dbfTmpN ) .and. ( dbfTmpN )->( Used() )
          ( dbfTmpN )->( dbCloseArea() )
       end if
 
@@ -19629,7 +19626,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
       sOfeArt     := sOfertaArticulo( Padr( cCodArt, 18 ), aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmp[ _NUNTTIL ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], .t., aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVTIK ], 1, nTotalLinea )
 
-      if !Empty( sOfeArt ) 
+      if !empty( sOfeArt ) 
 
          if ( sOfeArt:nPrecio != 0 )
             aGet[ _NPVPTIL ]:cText( sOfeArt:nPrecio )
@@ -19645,7 +19642,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
          aTmp[ _LLINOFE  ] := .t.
 
-         if !Empty( aGet[ _LLINOFE ] )
+         if !empty( aGet[ _LLINOFE ] )
             aGet[ _LLINOFE ]:Show()
          end if
 
@@ -19659,7 +19656,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], dbfArticulo, aTmp[ _NUNTTIL ], 1, nTotalLinea )
 
-         if !Empty( sOfeArt ) 
+         if !empty( sOfeArt ) 
             
             if ( sOfeArt:nDtoPorcentual != 0 )
                aGet[ _NDTOLIN ]:cText( sOfeArt:nDtoPorcentual )
@@ -19671,7 +19668,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
             
             aTmp[ _LLINOFE ]  := .t.
             
-            if !Empty( aGet[ _LLINOFE ] )
+            if !empty( aGet[ _LLINOFE ] )
                aGet[ _LLINOFE ]:Show()
             end if     
 
@@ -19687,7 +19684,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], dbfArticulo, aTmp[ _NUNTTIL ], 1, nTotalLinea )
 
-         if !Empty( sOfeArt ) 
+         if !empty( sOfeArt ) 
             
             if ( sOfeArt:nDtoPorcentual != 0 )
                aGet[ _NDTOLIN ]:cText( sOfeArt:nDtoPorcentual )
@@ -19699,7 +19696,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
             
             aTmp[ _LLINOFE ]  := .t.
             
-            if !Empty( aGet[ _LLINOFE ] )
+            if !empty( aGet[ _LLINOFE ] )
                aGet[ _LLINOFE ]:Show()
             end if     
 
@@ -19715,7 +19712,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], dbfArticulo, aTmp[ _NUNTTIL ], 1, nTotalLinea )
 
-         if !Empty( sOfeArt ) 
+         if !empty( sOfeArt ) 
             
             if ( sOfeArt:nDtoPorcentual != 0 )
                aGet[ _NDTOLIN ]:cText( sOfeArt:nDtoPorcentual )
@@ -19727,7 +19724,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
             
             aTmp[ _LLINOFE ]  := .t.
             
-            if !Empty( aGet[ _LLINOFE ] )
+            if !empty( aGet[ _LLINOFE ] )
                aGet[ _LLINOFE ]:Show()
             end if     
 
@@ -19743,7 +19740,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], dbfArticulo, aTmp[ _NUNTTIL ], 1, nTotalLinea )
 
-         if !Empty( sOfeArt ) 
+         if !empty( sOfeArt ) 
             
             if ( sOfeArt:nDtoPorcentual != 0 )
                aGet[ _NDTOLIN ]:cText( sOfeArt:nDtoPorcentual )
@@ -19755,7 +19752,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
             
             aTmp[ _LLINOFE ]  := .t.
             
-            if !Empty( aGet[ _LLINOFE ] )
+            if !empty( aGet[ _LLINOFE ] )
                aGet[ _LLINOFE ]:Show()
             end if     
 
@@ -19771,7 +19768,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], dbfArticulo, aTmp[ _NUNTTIL ], 1, nTotalLinea )
 
-         if !Empty( sOfeArt ) 
+         if !empty( sOfeArt ) 
             
             if ( sOfeArt:nDtoPorcentual != 0 )
                aGet[ _NDTOLIN ]:cText( sOfeArt:nDtoPorcentual )
@@ -19783,7 +19780,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
             
             aTmp[ _LLINOFE ]  := .t.
             
-            if !Empty( aGet[ _LLINOFE ] )
+            if !empty( aGet[ _LLINOFE ] )
                aGet[ _LLINOFE ]:Show()
             end if     
 
@@ -19896,7 +19893,7 @@ Static Function lValidaLote( aTmp, aGet )
    local nRecAnt
    local lEncontrado       :=.f.
 
-   if Empty( aTmp[ _CLOTE ] )
+   if empty( aTmp[ _CLOTE ] )
       return .t.
    end if 
 
@@ -20084,7 +20081,7 @@ Return ( nil )
 /*
       if ( lValePromocion ) .and. ( nValePromocion > 0 )
 
-         if !Empty( oMetMsg )
+         if !empty( oMetMsg )
             oMetMsg:cText        := 'Generando vales'
             oMetMsg:Refresh()
          end if

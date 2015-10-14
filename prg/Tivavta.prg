@@ -40,24 +40,27 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField( "cTipIva", "C",  1, 0, {|| "@!" },         "Tipo",        .f., "Tipo I.V.A",            1, .f. )
-   ::AddField( "cNomIva", "C", 30, 0, {|| "@!" },         "Nom. " + cImp(),    .f., "Nombre tipo I.V.A",    35, .f. )
-   ::AddField( "nPctIva", "N",  6, 2, {|| "@ 99.99" },    "% " + cImp(),       .f., "Porcentaje de I.V.A",  12, .f. )
-   ::AddField( "cTipDoc", "C", 20, 0, {|| "@!" },         "Tipo",        .t., "Tipo documento",       15, .f. )
-   ::AddField( "cDocMov", "C", 14, 0, {|| "@!" },         "Doc.",        .t., "Documento",            14, .f. )
-   ::AddField( "dFecMov", "D",  8, 0, {|| "@!" },         "Fecha",       .t., "Fecha",                10, .f. )
-   ::AddField( "cCodCli", "C", 12, 0, {|| "@!" },         "Cód. cli.",   .t., "Código cliente",        8, .f. )
-   ::AddField( "cNomCli", "C", 50, 0, {|| "@!" },         "Cliente",     .t., "Nombre cliente",       30, .f. )
-   ::AddField( "nTotNet", "N", 16, 6, {|| ::cPicOut },    "Neto",        .t., "Neto",                 10, .t. )
-   ::AddField( "nTotPnt", "N", 16, 6, {|| ::cPicPnt },    "P.V.",        .f., "Punto verde",          10, .t. )
-   ::AddField( "nTotTrn", "N", 16, 6, {|| ::cPicOut },    "Transp.",     .f., "Transporte",           10, .t. )
-   ::AddField( "nTotIva", "N", 16, 6, {|| ::cPicOut },    cImp(),         .t., cImp(),                  10, .t. )
-   ::AddField( "nTotReq", "N", 16, 3, {|| ::cPicOut },    "Rec",         .f., "Rec",                  10, .t. )
-   ::AddField( "nTotDoc", "N", 16, 6, {|| ::cPicOut },    "Total",       .t., "Total",                10, .t. )
+   ::AddField( "cTipIva", "C",  1, 0, {|| "@!" },         "Tipo",             .f., "Tipo I.V.A",            1, .f. )
+   ::AddField( "cNomIva", "C", 30, 0, {|| "@!" },         "Nom. " + cImp(),   .f., "Nombre tipo I.V.A",    35, .f. )
+   ::AddField( "nPctIva", "N",  6, 2, {|| "@ 99.99" },    "% " + cImp(),      .f., "Porcentaje de I.V.A",  12, .f. )
+   ::AddField( "cTipDoc", "C", 20, 0, {|| "@!" },         "Tipo",             .t., "Tipo documento",       15, .f. )
+   ::AddField( "cDocMov", "C", 14, 0, {|| "@!" },         "Documento",        .t., "Documento",            14, .f. )
+   ::AddField( "cSerDoc", "C",  1, 0, {|| "@!" },         "Serie documento",  .f., "Serie",                 4, .f. )
+   ::AddField( "nNumDoc", "N",  9, 0, {|| "999999999" },  "Número documento", .f., "Número",               10, .f. )
+   ::AddField( "cSufDoc", "C",  2, 0, {|| "@!" },         "Sufijo documento", .f., "Sufijo",                4, .f. )
+   ::AddField( "dFecMov", "D",  8, 0, {|| "@!" },         "Fecha",            .t., "Fecha",                10, .f. )
+   ::AddField( "cCodCli", "C", 12, 0, {|| "@!" },         "Cód. cli.",        .t., "Código cliente",        8, .f. )
+   ::AddField( "cNomCli", "C", 50, 0, {|| "@!" },         "Cliente",          .t., "Nombre cliente",       30, .f. )
+   ::AddField( "nTotNet", "N", 16, 6, {|| ::cPicOut },    "Neto",             .t., "Neto",                 10, .t. )
+   ::AddField( "nTotPnt", "N", 16, 6, {|| ::cPicPnt },    "P.V.",             .f., "Punto verde",          10, .t. )
+   ::AddField( "nTotTrn", "N", 16, 6, {|| ::cPicOut },    "Transp.",          .f., "Transporte",           10, .t. )
+   ::AddField( "nTotIva", "N", 16, 6, {|| ::cPicOut },    cImp(),             .t., cImp(),                 10, .t. )
+   ::AddField( "nTotReq", "N", 16, 3, {|| ::cPicOut },    "Rec",              .f., "Rec",                  10, .t. )
+   ::AddField( "nTotDoc", "N", 16, 6, {|| ::cPicOut },    "Total",            .t., "Total",                10, .t. )
 
    ::AddTmpIndex( "cTipIva", "cTipIva + dTos( dFecMov )" )
 
-   ::AddGroup( {|| ::oDbf:cTipIva }, {|| "tipo " + cImp() + " : " + Rtrim( ::oDbf:cTipIva ) + "-" + AllTrim( ::oDbf:cNomIva ) + " - " + AllTrim( Trans( ::oDbf:nPctIva, "@EZ 99.99%" ) ) }, {||"Total tipo impuestos.."} )
+   ::AddGroup( {|| ::oDbf:cTipIva }, {|| "Tipo " + cImp() + " : " + Rtrim( ::oDbf:cTipIva ) + "-" + alltrim( ::oDbf:cNomIva ) + " - " + alltrim( Trans( ::oDbf:nPctIva, "@EZ 99.99%" ) ) }, {||"Total tipo impuestos.."} )
 
    ::dIniInf := GetSysDate()
 
@@ -73,7 +76,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   ::oAlbCliT := TDataCenter():oAlbCliT()
+   ::oAlbCliT     := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
@@ -85,7 +88,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   ::oFacCliP := TDataCenter():oFacCliP()
+   ::oFacCliP     := TDataCenter():oFacCliP()
 
    DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF"    VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
@@ -252,7 +255,7 @@ METHOD lGenerate()
 
    ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) },;
                         {|| "Periodo  : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) },;
-                        {|| "tipo " + cImp() + " : " + if( ::lAllIva, "Todos",  AllTrim( ::cIvaDes ) + " > " + AllTrim( ::cIvaHas ) ) } }
+                        {|| "Tipo     : " + cImp() + " : " + if( ::lAllIva, "Todos",  alltrim( ::cIvaDes ) + " > " + alltrim( ::cIvaHas ) ) } }
 
 
    /*Albaranes de clientes*/
@@ -286,7 +289,13 @@ METHOD lGenerate()
                   ::oDbf:Append()
 
                   ::oDbf:dFecMov := ::oAlbCliT:dFecAlb
-                  ::oDbf:cDocMov := AllTrim( ::oAlbCliT:cSerAlb ) + "/" + AllTrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + AllTrim( ::oAlbCliT:cSufAlb )
+
+                  ::oDbf:cDocMov := alltrim( ::oAlbCliT:cSerAlb ) + "/" + alltrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + alltrim( ::oAlbCliT:cSufAlb )
+
+                  ::oDbf:cSerDoc := ::oAlbCliT:cSerAlb
+                  ::oDbf:nNumDoc := ::oAlbCliT:nNumAlb
+                  ::oDbf:cSufDoc := ::oAlbCliT:cSufAlb 
+
                   ::oDbf:cCodCli := ::oAlbCliT:cCodCli
                   ::oDbf:cNomCli := ::oAlbCliT:cNomCli
                   ::oDbf:cTipIva := cCodIva
@@ -349,7 +358,12 @@ METHOD lGenerate()
                   ::oDbf:Append()
 
                   ::oDbf:dFecMov := ::oFacCliT:dFecFac
-                  ::oDbf:cDocMov := AllTrim( ::oFacCliT:cSerie ) + "/" + AllTrim( Str( ::oFacCliT:nNumFac ) ) + "/" + AllTrim( ::oFacCliT:cSufFac )
+                  ::oDbf:cDocMov := alltrim( ::oFacCliT:cSerie ) + "/" + alltrim( Str( ::oFacCliT:nNumFac ) ) + "/" + alltrim( ::oFacCliT:cSufFac )
+
+                  ::oDbf:cSerDoc := ::oFacCliT:cSerie
+                  ::oDbf:nNumDoc := ::oFacCliT:nNumFac
+                  ::oDbf:cSufDoc := ::oFacCliT:cSufFac 
+
                   ::oDbf:cCodCli := ::oFacCliT:cCodCli
                   ::oDbf:cNomCli := ::oFacCliT:cNomCli
                   ::oDbf:cTipIva := cCodIva
@@ -412,7 +426,12 @@ METHOD lGenerate()
                   ::oDbf:Append()
 
                   ::oDbf:dFecMov := ::oFacRecT:dFecFac
-                  ::oDbf:cDocMov := AllTrim( ::oFacRecT:cSerie ) + "/" + AllTrim( Str( ::oFacRecT:nNumFac ) ) + "/" + AllTrim( ::oFacRecT:cSufFac )
+                  ::oDbf:cDocMov := alltrim( ::oFacRecT:cSerie ) + "/" + alltrim( Str( ::oFacRecT:nNumFac ) ) + "/" + alltrim( ::oFacRecT:cSufFac )
+
+                  ::oDbf:cSerDoc := ::oFacRecT:cSerie
+                  ::oDbf:nNumDoc := ::oFacRecT:nNumFac
+                  ::oDbf:cSufDoc := ::oFacRecT:cSufFac 
+
                   ::oDbf:cCodCli := ::oFacRecT:cCodCli
                   ::oDbf:cNomCli := ::oFacRecT:cNomCli
                   ::oDbf:cTipIva := cCodIva
@@ -479,7 +498,12 @@ METHOD lGenerate()
                      ::oDbf:Append()
 
                      ::oDbf:dFecMov := ::oTikCliT:dFecTik
-                     ::oDbf:cDocMov := AllTrim( ::oTikCliT:cSerTik ) + "/" + AllTrim( ::oTikCliT:cNumTik ) + "/" + AllTrim( ::oTikCliT:cSufTik )
+                     ::oDbf:cDocMov := alltrim( ::oTikCliT:cSerTik ) + "/" + alltrim( ::oTikCliT:cNumTik ) + "/" + alltrim( ::oTikCliT:cSufTik )
+
+                     ::oDbf:cSerDoc := ::oTikCliT:cSerTik
+                     ::oDbf:nNumDoc := ::oTikCliT:cNumTik
+                     ::oDbf:cSufDoc := ::oTikCliT:cSufTik 
+
                      ::oDbf:cCodCli := ::oTikCliT:cCliTik
                      ::oDbf:cNomCli := ::oTikCliT:cNomTik
                      ::oDbf:cTipIva := cCodIva

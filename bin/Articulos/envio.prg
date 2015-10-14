@@ -2,7 +2,7 @@
 
 #define CRLF                        chr( 13 ) + chr( 10 )
 
-#define __path__                    "C:\Users\calero\Dropbox\Buzon\"
+#define __path__                    "C:\Users\calero\Dropbox\Buzon"
 
 static nView
 static aBuzones
@@ -117,7 +117,7 @@ Function EnvioArticulos()
 
          aAdd( aArticulos, hArticulo )
 
-         msgAlert( hb_valToExp( hArticulo ), "Artículo " + ( D():Articulos( nView ) )->Codigo )
+         //msgWait( "Artículo " + ( D():Articulos( nView ) )->Codigo, "Procesando", 0.1 )
 
          if ( D():Articulos( nView ) )->( dbRLock() )
             ( D():Articulos( nView ) )->lSndDoc   := .f.
