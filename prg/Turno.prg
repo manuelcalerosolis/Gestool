@@ -4498,8 +4498,9 @@ Method lValidCajas()
       if ::lInCajaSelect( ::oDbfCaj:cCodCaj )
 
          nUsrCaj        := nUserCaja( ::oDbfCaj:cCodCaj )
-      
+
          if !( nUsrCaj == 0 .or. ( nUsrCaj == 1 .and. ::oDbfCaj:cCodCaj == ::GetCurrentCaja() ) )
+
             if !ApoloMsgNoYes( "Hay usuarios trabajando en la caja " + ::oDbfCaj:cCodCaj, "¿ Desea continuar con el cierre ?" )
                lValidCajas := .f.
                exit
@@ -11528,8 +11529,10 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+   MsgInfo( nUserCaja( oUser():cCaja() ), "Número en cajas" )
+
+   if nUserCaja( oUser():cCaja() ) > 1
+      msgStop( "Hay más de un usuario conectado a la caja", "Atención" )
       return .f.
    end if
 

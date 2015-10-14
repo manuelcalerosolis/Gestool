@@ -242,6 +242,7 @@ METHOD EndResource( oDlg ) CLASS AccessCode
       ::oMessage:Show()
 
       lInitCheck( ::oMessage, ::oProgress )
+      lSetCaja()
 
       ::oProgress:Hide()
 
