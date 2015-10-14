@@ -32,7 +32,8 @@ CLASS ImportarPedidosProveedorExcel
    DATA oActiveSheet
 
    DATA hTallas                              INIT {=>}
-   DATA hTallasColores                       INIT {=>}               
+   DATA hTallasColores                       INIT {=>}  
+   DATA aLineasPedidos                       INIT {}                          
    
    DATA nRowTalla
       METHOD getRow()                        INLINE ( ::nRowTalla )
@@ -40,7 +41,7 @@ CLASS ImportarPedidosProveedorExcel
 
    DATA nColumnTalla
 
-   DATA cCodigoProveedor
+   DATA cReferenciaProveedor
    DATA cCodigoArticulo
    DATA cCodigoColor
 
@@ -60,6 +61,7 @@ CLASS ImportarPedidosProveedorExcel
       METHOD getArticulo()      
       METHOD getTallaColorArticulo()
          METHOD getUnidadesPorTallas()
+         METHOD setLineasPedidos()
 
    METHOD getActiveSheetValue( nRow, nCol )  INLINE ( ::oActiveSheet:Cells( nRow, nCol ):Value )
 
@@ -96,6 +98,7 @@ METHOD processFile() CLASS ImportarPedidosProveedorExcel
       ::getTallas()
       ::getArticulo()
       ::getTallaColorArticulo()
+      // ::setLineasPedidos()
    end if 
 
    msgalert( hb_valtoexp( ::hTallasColores ), "hTallasColores")
@@ -136,6 +139,7 @@ METHOD isOpenFile() CLASS ImportarPedidosProveedorExcel
 
 Return ( isOpen )
 
+//---------------------------------------------------------------------------//
 
 METHOD closeFile() CLASS ImportarPedidosProveedorExcel
 
@@ -195,7 +199,7 @@ METHOD getValoresTallas() CLASS ImportarPedidosProveedorExcel
 
    next 
 
-   ? hb_valtoexp( ::hTallas, "hTallas" )
+    msgalert( hb_valtoexp( ::hTallas), "hTallas" )
 
 Return ( self )
 
@@ -218,66 +222,142 @@ Return ( self )
 METHOD getArticulo() CLASS ImportarPedidosProveedorExcel
 
    local nCol
+   local uValue
 
    ::nextRow()
 
-   ::cCodigoProveedor   := ""
-   ::cCodigoArticulo    := ""
+   ::cReferenciaProveedor  := ""
+   ::cCodigoArticulo       := ""
 
    for nCol := 1 to 50
-      uValue            := ::getActiveSheetValue( ::getRow(), nCol )    
+      uValue               := ::getActiveSheetValue( ::getRow(), nCol )    
       if !empty(uValue) 
-         if empty( ::cCodigoProveedor )
-            ::cCodigoProveedor   := alltrim( cvaltochar( uValue ) )
+         if empty( ::cReferenciaProveedor )
+            ::cReferenciaProveedor  := alltrim( cvaltochar( uValue ) )
          else 
-            ::cCodigoArticulo    := alltrim( cvaltochar( uValue ) )
+            ::cCodigoArticulo       := alltrim( cvaltochar( uValue ) )
          end if
       end if
 
    next 
 
-   msgalert( ::cCodigoProveedor, "cCodigoProveedor" )
+   msgalert( ::cReferenciaProveedor, "cReferenciaProveedor" )
    msgalert( ::cCodigoArticulo, "cCodigoArticulo" )
 
 Return ( self )
 
+//----------------------------------------------------------------------------//
+
 METHOD getTallaColorArticulo()
 
    local nCol
+   local uValue
 
    ::nextRow()
    
    ::cCodigoColor    := ""
 
    for nCol := 1 to 50 
-      uValue :=  ::getActiveSheetValue( ::getRow(), nCol )
+
+      uValue         :=  ::getActiveSheetValue( ::getRow(), nCol )
+
       if !empty(uValue) 
          if empty( ::cCodigoColor )
             ::cCodigoColor   := alltrim( cvaltochar( uValue ) )
          else
             ::getUnidadesPorTallas( uValue, nCol )
+            ::addLineasPedido()
          end if 
       end if
    next 
 
-   msgAlert( hb_valtoexp( ::hTallasColores ), "hTallasColores" )
+   msgAlert( ::cCodigoColor, "cCodigoColor" )
 
 Return ( self )
 
-METHOD getUnidadesPorTallas( uValue, nCol ) 
+//---------------------------------------------------------------------------//
+
+METHOD getUnidadesPorTallas( nUnidades, nCol ) 
 
    local cTalla
 
-   cTalla   := ::getTallaFromColumna( nCol )
+   ::cTalla       := ""
+   ::nUnidades    := 0
+
+   cTalla         := ::getTallaFromColumna( nCol )
 
    if !empty( cTalla )
-      hset( ::hTallasColores, cTalla, uValue )
+      ::cTalla       := cTalla
+      ::nUnidades    := nUnidades
+      hset( ::hTallasColores, cTalla, nUnidades )
    end if 
 
 Return ( self ) 
 
+//---------------------------------------------------------------------------//
 
+METHOD setLineasPedidos()
 
+   local cTalla
+   local hLinea  :=  {=>}
+
+   for each cTalla in ::hTallas
+
+      hLinea  :=  {=>}
+
+      if hhaskey( ::hTallasColores, cTalla )
+
+         hset( hLinea, "Articulo", substr( ::cCodigoArticulo, 1, at( " ", ::cCodigoArticulo )-1 ) )  
+         hset( hLinea, "ReferenciaProveedor", ::cReferenciaProveedor)
+         hset( hLinea, "DescripcionArticulo", substr( ::cCodigoArticulo, at(" ", ::cCodigoArticulo )+1 ) )
+         hset( hLinea, "PorcentajeImpuesto", 21 )           //hay que buscarlo en la ficha del art
+         hset( hLinea, "Unidades", hGet( ::hTallasColores, cTalla ) )
+         hset( hLinea, "CodigoPropiedad1", '00001')
+         hset( hLinea, "CodigoPropiedad2", '00002')
+         hset( hLinea, "ValorPropiedad1", 'cCodigoColor')   //aqui tengo el nombre, debo buscar el codigo en la tabla de propiedades
+         hset( hLinea, "ValorPropiedad2", cTalla )
+         hset( hLinea, "Almacen", '000' )
+         hset( hLinea, "PrecioCosto", 16.95 )               //hay que buscarlo en la ficha del art
+         hset( hLinea, "Familia", '323' )                   //hay que buscarlo en la ficha del art
+
+         aAdd( ::aLineasPedidos, hLinea)
+
+      end if
+
+   next 
+
+   msgAlert( hb_valtoexp( ::aLineasPedidos), " final aLineasPedidos")
+
+Return ( self )
+
+METHOD addLineasPedido()
+
+   local hLinea  :=  {=>}
+
+   ? ::cCodigoArticulo
+
+   if .f.
+
+      hset( hLinea, "Articulo", substr( ::cCodigoArticulo, 1, at( " ", ::cCodigoArticulo )-1 ) )  
+      hset( hLinea, "ReferenciaProveedor", ::cReferenciaProveedor)
+      hset( hLinea, "DescripcionArticulo", substr( ::cCodigoArticulo, at(" ", ::cCodigoArticulo )+1 ) )
+      hset( hLinea, "PorcentajeImpuesto", 21 )           //hay que buscarlo en la ficha del art
+      hset( hLinea, "Unidades", hGet( ::hTallasColores, cTalla ) )
+      hset( hLinea, "CodigoPropiedad1", '00001')
+      hset( hLinea, "CodigoPropiedad2", '00002')
+      hset( hLinea, "ValorPropiedad1", 'cCodigoColor')   //aqui tengo el nombre, debo buscar el codigo en la tabla de propiedades
+      hset( hLinea, "ValorPropiedad2", cTalla )
+      hset( hLinea, "Almacen", '000' )
+      hset( hLinea, "PrecioCosto", 16.95 )               //hay que buscarlo en la ficha del art
+      hset( hLinea, "Familia", '323' )                   //hay que buscarlo en la ficha del art
+
+      aAdd( ::aLineasPedidos, hLinea)
+
+   end if
+
+Return ( self )
+
+                
 
 
 
