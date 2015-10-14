@@ -199,7 +199,7 @@ return ( self )
 
 METHOD onPreRunNavigator() CLASS DocumentsSales
 
-   ( ::getWorkArea() )->( ordSetFocus( "dFecDes" ) )
+   ( ::getWorkArea() )->( ordsetfocus( "dFecDes" ) )
    ( ::getWorkArea() )->( dbgotop() ) 
 
    if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
@@ -350,10 +350,10 @@ METHOD lValidDireccion() CLASS DocumentsSales
 
    codigoDireccion         := padr( codigoCliente, 12 ) + padr( codigoDireccion, 10 )
 
-   nRec                    := ( D():ClientesDirecciones( ::nView ) )->( Recno() )
-   nOrdAnt                 := ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( "cCodCli" ) )
+   nRec                    := ( D():ClientesDirecciones( ::nView ) )->( recno() )
+   nOrdAnt                 := ( D():ClientesDirecciones( ::nView ) )->( ordsetfocus( "cCodCli" ) )
 
-   if ( D():ClientesDirecciones( ::nView ) )->( dbSeek( codigoDireccion ) )
+   if ( D():ClientesDirecciones( ::nView ) )->( dbseek( codigoDireccion ) )
 
       ::oViewEdit:getCodigoDireccion:cText( ( D():ClientesDirecciones( ::nView ) )->cCodObr )
       ::oViewEdit:getNombreDireccion:cText( ( D():ClientesDirecciones( ::nView ) )->cNomObr )
@@ -366,8 +366,8 @@ METHOD lValidDireccion() CLASS DocumentsSales
       
    end if
 
-   ( D():ClientesDirecciones( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():ClientesDirecciones( ::nView ) )->( dbGoTo( nRec ) )
+   ( D():ClientesDirecciones( ::nView ) )->( ordsetfocus( nOrdAnt ) )
+   ( D():ClientesDirecciones( ::nView ) )->( dbgoto( nRec ) )
 
    ::oViewEdit:getCodigoDireccion:Enable()
 
@@ -390,7 +390,7 @@ METHOD lValidPayment() CLASS DocumentsSales
    ::oViewEditResumen:oNombreFormaPago:cText( "" )
    
    nRec                    := ( D():FormasPago( ::nView ) )->( Recno() )
-   nOrdAnt                 := ( D():FormasPago( ::nView ) )->( OrdSetFocus( "cCodPago" ) )
+   nOrdAnt                 := ( D():FormasPago( ::nView ) )->( ordsetfocus( "cCodPago" ) )
 
    if ( D():FormasPago( ::nView ) )->( dbSeek( codigoPayment ) )
 
@@ -405,8 +405,8 @@ METHOD lValidPayment() CLASS DocumentsSales
       
    end if
 
-   ( D():FormasPago( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
-   ( D():FormasPago( ::nView ) )->( dbGoTo( nRec ) )
+   ( D():FormasPago( ::nView ) )->( ordsetfocus( nOrdAnt ) )
+   ( D():FormasPago( ::nView ) )->( dbgoto( nRec ) )
 
    ::oViewEditResumen:oCodigoFormaPago:Enable()
 
@@ -459,15 +459,15 @@ RETURN lValid
 METHOD ChangeRuta() CLASS DocumentsSales
 
    local cCliente          := ""
-   local nOrdAnt           := ( D():Clientes( ::nView ) )->( OrdSetFocus() )
+   local nOrdAnt           := ( D():Clientes( ::nView ) )->( ordsetfocus() )
 
    if hhaskey( ::hOrdenRutas, alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) )
 
-      nOrdAnt              := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+      nOrdAnt              := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
 
       if ( D():Clientes( ::nView ) )->( OrdKeyCount() ) != 0 
          
-         ( D():Clientes( ::nView ) )->( dbGoTop() )
+         ( D():Clientes( ::nView ) )->( dbgotop() )
 
          if !( D():Clientes( ::nView ) )->( eof() )
             cCliente       := ( D():Clientes( ::nView ) )->Cod
@@ -480,8 +480,8 @@ METHOD ChangeRuta() CLASS DocumentsSales
 
       else
 
-         ( D():Clientes( ::nView ) )->( OrdSetFocus( "Cod" ) )
-         ( D():Clientes( ::nView ) )->( dbGoTop() )
+         ( D():Clientes( ::nView ) )->( ordsetfocus( "Cod" ) )
+         ( D():Clientes( ::nView ) )->( dbgotop() )
 
          cCliente          := ( D():Clientes( ::nView ) )->Cod
 
@@ -492,7 +492,7 @@ METHOD ChangeRuta() CLASS DocumentsSales
       
       end if   
 
-      ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )
+      ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) )
 
    end if
 
@@ -519,7 +519,7 @@ METHOD moveClient( lAnterior ) CLASS DocumentsSales
 
    if hhaskey( ::hOrdenRutas, AllTrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) )
       
-      nOrdAnt              := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+      nOrdAnt              := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
 
       if isTrue( lAnterior )
 
@@ -548,7 +548,7 @@ METHOD moveClient( lAnterior ) CLASS DocumentsSales
          ::oViewEdit:getRuta:Refresh()
       end if
 
-      ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) )   
+      ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) )   
 
       if lSet
 
@@ -582,15 +582,15 @@ Return ( self )
 
 METHOD gotoUltimoCliente() CLASS DocumentsSales
 
-   local nOrdAnt     := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+   local nOrdAnt     := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
 
    if empty( ::nUltimoCliente )
-      ( D():Clientes( ::nView ) )->( dbGoTop() )
+      ( D():Clientes( ::nView ) )->( dbgotop() )
    else
       ( D():Clientes( ::nView ) )->( OrdKeyGoto( ::nUltimoCliente ) )
    end if 
 
-   ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) ) 
+   ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) ) 
          
 Return .t.
 
@@ -598,11 +598,11 @@ Return .t.
 
 METHOD setUltimoCliente() CLASS DocumentsSales
 
-   local nOrdAnt     := ( D():Clientes( ::nView ) )->( OrdSetFocus( ::hOrdenRutas[ AllTrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+   local nOrdAnt     := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ AllTrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
 
    ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( OrdKeyNo() )
 
-   ( D():Clientes( ::nView ) )->( OrdSetFocus( nOrdAnt ) ) 
+   ( D():Clientes( ::nView ) )->( ordsetfocus( nOrdAnt ) ) 
 
 Return nil
 
@@ -901,7 +901,7 @@ METHOD setDatasFromClientes( CodigoCliente ) CLASS DocumentsSales
 
    D():getStatusClientes( ::nView )
 
-   ( D():Clientes( ::nView ) )->( ordSetFocus( 1 ) )
+   ( D():Clientes( ::nView ) )->( ordsetfocus( 1 ) )
 
    if ( D():Clientes( ::nView ) )->( dbseek( CodigoCliente ) )
 
