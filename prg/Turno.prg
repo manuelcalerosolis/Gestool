@@ -2410,8 +2410,8 @@ METHOD lInvCierre()
       Return .f.
    end if
 
-   if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+   if nUserCaja( oUser():cCaja() ) > 1
+      msgStop( "Hay más de un usuario conectado a la caja", "Atención" )
       return .f.
    end if
 
@@ -11528,8 +11528,6 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
    if !lTactilMode() .and. !lTpvMode() .and. !Empty( oWnd )
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
-
-   MsgInfo( nUserCaja( oUser():cCaja() ), "Número en cajas" )
 
    if nUserCaja( oUser():cCaja() ) > 1
       msgStop( "Hay más de un usuario conectado a la caja", "Atención" )

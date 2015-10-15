@@ -2152,13 +2152,13 @@ FUNCTION lFreeCaja( cCajUsr, cCodUsr )
    DEFAULT cCajUsr   := oUser():cCaja()
    DEFAULT cCodUsr   := cCurUsr()
 
-   if !file( FullCurDir() + cCajUsr + cCodUsr + ".Caj" )
-      if ( nHandle := fCreate( FullCurDir() + cCajUsr + cCodUsr + ".Caj", 0 ) ) != -1
+   if !file( cPatUsr() + cCajUsr + cCodUsr + ".caj" )
+      if ( nHandle := fCreate( cPatUsr() + cCajUsr + cCodUsr + ".caj", 0 ) ) != -1
          fClose( nHandle )
       end if
    end if
 
-   if ( nHandle   := fOpen( FullCurDir() + cCajUsr + cCodUsr + ".Caj", 16 ) ) != -1
+   if ( nHandle   := fOpen( cPatUsr() + cCajUsr + cCodUsr + ".caj", 16 ) ) != -1
       fClose( nHandle )
       lFree       := .t.
    end if
@@ -2179,7 +2179,7 @@ FUNCTION nUserCaja( cCajUsr )
 
    DEFAULT cCajUsr   := oUser():cCaja()
 
-   aDirCaj           := Directory( FullCurDir() + cCajUsr + "*.Caj" )
+   aDirCaj           := Directory( cPatUsr() + cCajUsr + "*.caj" )
 
    for n := 1 to len( aDirCaj )
 
@@ -2210,13 +2210,13 @@ Function lSetCaja( cCajUsr, cCodUsr, oWndBrw )
 
    // Creo un fichero y lo pongo en uso asi se siempre cuando el usuario esta en la aplicacion
 
-   if !file( FullCurDir() + cFilCaj + ".Caj" )
-      if ( nHndCaj   := fCreate( FullCurDir() + cFilCaj + ".Caj", 0 ) ) != -1
+   if !file( cPatUsr() + cFilCaj + ".caj" )
+      if ( nHndCaj   := fCreate( cPatUsr() + cFilCaj + ".caj", 0 ) ) != -1
          fClose( nHndCaj )
       end if
    end if
 
-   nHndCaj           := fOpen( FullCurDir() + cFilCaj + ".Caj", 16 )
+   nHndCaj           := fOpen( cPatUsr() + cFilCaj + ".caj", 16 )
 
    if nHndCaj != -1
       nHndCaj( nHndCaj )
