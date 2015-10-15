@@ -124,6 +124,8 @@ METHOD processFile() CLASS ImportarPedidosProveedorExcel
          endif
       end while
 
+      msgAlert( hb_valtoexp( ::aLineasPedidos ), "aLineasPedidos" )
+
       // ::setLineasPedidos()
    end if 
 
@@ -451,7 +453,7 @@ METHOD addLineasPedido()
 
    local hLinea  :=  {=>}
 
-   if .t.
+   if !empty(::cCodigoArticulo)
 
       hset( hLinea, "Articulo", ::cCodigoArticulo )  
       hset( hLinea, "Descripcion", ::cDescrpcionArticulo )
@@ -463,14 +465,14 @@ METHOD addLineasPedido()
       hset( hLinea, "ValorPropiedad1", ::cCodigoColor )   //aqui tengo el nombre, debo buscar el codigo en la tabla de propiedades
       hset( hLinea, "ValorPropiedad2", ::cTalla )
       hset( hLinea, "Almacen", '000' )
-      hset( hLinea, "PrecioCosto", retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "pCosto" ) )               //hay que buscarlo en la ficha del art
-      hset( hLinea, "Familia", retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "Familia" ) )                  //hay que buscarlo en la ficha del art
+      hset( hLinea, "PrecioCosto",  retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "pCosto" ) )                //hay que buscarlo en la ficha del art
+      hset( hLinea, "Familia",      retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "Familia" ) )               //hay que buscarlo en la ficha del art
 
       aAdd( ::aLineasPedidos, hLinea)
 
    end if
 
-   msgAlert( hb_valtoexp( hLinea ), "hLinea" )
+   
 
 Return ( self )
 
