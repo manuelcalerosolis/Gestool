@@ -572,11 +572,13 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          mkTpv()
       end if
 
-      nView             := D():CreateView()
+      // Script beforeOpenFiles------------------------------------------------
 
-      /*
-      Atipicas de clientes-----------------------------------------------------
-      */
+      runEventScript( "TPV\beforeOpenFiles" )
+
+      // Creacion de la vista--------------------------------------------------
+
+      nView             := D():CreateView()
 
       D():Atipicas( nView )
 
@@ -895,6 +897,10 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       oDetCamposExtra      := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "TPV" )
+
+      // Script afterOpenFiles------------------------------------------------
+
+      runEventScript( "TPV\afterOpenFiles", nView, dbfTikT )
 
       EnableAcceso()
 

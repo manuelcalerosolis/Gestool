@@ -13922,12 +13922,11 @@ Method Process() CLASS TPedidosClientesSenderReciver
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
 
       oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
       BEGIN SEQUENCE
 
         if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
-            if !::oSender:lFranquiciado
+            if .t.
 
             	/*
             	Ficheros temporales
