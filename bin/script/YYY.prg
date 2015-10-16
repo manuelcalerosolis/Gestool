@@ -437,6 +437,10 @@ Static Function ImportacionClientes()
          ( D():Clientes( nView ) )->cCodEdi     := GetRange( "EG", n )
          ( D():Clientes( nView ) )->cDeparta    := if( Empty( GetRange( "EA", n ) ), "", Padr( RJust( GetRange( "EA", n ), "0", 4 ), 4 ) )
          ( D():Clientes( nView ) )->lChgPre     := .t.
+         ( D():Clientes( nView ) )->cDomEnt     := GetRange( "Z", n )
+         ( D():Clientes( nView ) )->cPobEnt     := GetRange( "AA", n )
+         ( D():Clientes( nView ) )->cCpEnt      := GetRange( "AC", n )
+         ( D():Clientes( nView ) )->cPrvEnt     := GetRange( "AB", n )
 
          ( D():Clientes( nView ) )->( dbUnlock() )
 
@@ -470,6 +474,12 @@ Static Function ImportacionClientes()
          ( D():ClientesDirecciones( nView ) )->cFaxObr   := GetRange( "P", n )
          ( D():ClientesDirecciones( nView ) )->cCodEdi   := GetRange( "EG", n )
          ( D():ClientesDirecciones( nView ) )->cDeparta  := if( Empty( GetRange( "EA", n ) ), "", Padr( RJust( GetRange( "EA", n ), "0", 4 ), 4 ) )
+
+         ( D():ClientesDirecciones( nView ) )->Nif       := GetRange( "K", n )
+         ( D():ClientesDirecciones( nView ) )->cDomEnt   := GetRange( "Z", n )
+         ( D():ClientesDirecciones( nView ) )->cPobEnt   := GetRange( "AA", n )
+         ( D():ClientesDirecciones( nView ) )->cCpEnt    := GetRange( "AC", n )
+         ( D():ClientesDirecciones( nView ) )->cPrvEnt   := GetRange( "AB", n )
 
          ( D():ClientesDirecciones( nView ) )->( dbUnlock() )
       

@@ -123,6 +123,36 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cC
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
 
+      REDEFINE GET aoGet[ ( dbfObrasT )->( FieldPos( "Nif" ) ) ] ;
+         VAR      aBlank[ ( dbfObrasT )->( FieldPos( "Nif" ) ) ] ;
+         ID       310 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aoGet[ ( dbfObrasT )->( FieldPos( "cDomEnt" ) ) ] ;
+         VAR      aBlank[ ( dbfObrasT )->( FieldPos( "cDomEnt" ) ) ] ;
+         ID       320 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+         
+      REDEFINE GET aoGet[ ( dbfObrasT )->( FieldPos( "cPobEnt" ) ) ] ;
+         VAR      aBlank[ ( dbfObrasT )->( FieldPos( "cPobEnt" ) ) ] ;
+         ID       330 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aoGet[ ( dbfObrasT )->( FieldPos( "cCPEnt" ) ) ] ;
+         VAR      aBlank[ ( dbfObrasT )->( FieldPos( "cCPEnt" ) ) ] ;
+         ID       340 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
+      REDEFINE GET aoGet[ ( dbfObrasT )->( FieldPos( "cPrvEnt" ) ) ] ;
+         VAR      aBlank[ ( dbfObrasT )->( FieldPos( "cPrvEnt" ) ) ] ;
+         ID       350 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg   
+
       REDEFINE BUTTON ;
          ID       IDOK ;
 			OF 		oDlg ;
@@ -133,11 +163,6 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cC
          ID       IDCANCEL ;
 			OF 		oDlg ;
 			ACTION 	( oDlg:end() )
-
-      REDEFINE BUTTON ;
-         ID       559 ;
-			OF 		oDlg ;
-         ACTION   ( ChmHelp( "Clientes" ) )
 
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| EndTrans( aBlank, aoGet, dbfObrasT, oBrw, nMode, oDlg, oGet, oGet2 ) } )
@@ -733,6 +758,11 @@ FUNCTION aItmObr()
    aAdd( aItmObr, { "cEstObr",   "C",   35,    0, "Nombre del establecimiento     ",   "",                  "", "( cDbfObr )" } )
    aAdd( aItmObr, { "cCodPos",   "C",   12,    0, "Número operacional" ,               "",                  "", "( cDbfObr )" } )
    aAdd( aItmObr, { "cDeparta",  "C",    4,    0, "Departamento" ,                     "",                  "", "( cDbfObr )" } )
+   aAdd( aItmObr, { "Nif",       "C",   30,    0, "Nif de la dirección" ,              "",                  "", "( cDbfObr )" } )
+   aAdd( aItmObr, { "cDomEnt",   "C",  200,    0, "Domicilio de entrega" ,             "",                  "", "( cDbfObr )" } )
+   aAdd( aItmObr, { "cPobEnt",   "C",  200,    0, "Población de entrega" ,             "",                  "", "( cDbfObr )" } )
+   aAdd( aItmObr, { "cCPEnt",    "C",   15,    0, "Código postal de entrega" ,         "",                  "", "( cDbfObr )" } )
+   aAdd( aItmObr, { "cPrvEnt",   "C",  100,    0, "Provincia de entrega" ,             "",                  "", "( cDbfObr )" } )
 
 RETURN ( aItmObr )
 

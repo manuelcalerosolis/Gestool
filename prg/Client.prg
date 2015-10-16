@@ -136,6 +136,10 @@
 #define _MOVIL2                  126
 #define _CAGENTE2                127      //   C      3     0
 #define _CDEPARTA                128
+#define _CDOMENT                 129
+#define _CPOBENT                 130
+#define _CCPENT                  131
+#define _CPRVENT                 132
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -184,18 +188,19 @@
 
 #define fldGeneral                oFld:aDialogs[1]
 #define fldComercial              oFld:aDialogs[2]
-#define fldAutomaticas            oFld:aDialogs[3]
-#define fldDirecciones            oFld:aDialogs[4]
-#define fldBancos                 oFld:aDialogs[5]
-#define fldContabilidad           oFld:aDialogs[6]
-#define fldDefinidos              oFld:aDialogs[7]
-#define fldTarifa                 oFld:aDialogs[8]
-#define fldDocumentos             oFld:aDialogs[9]
-#define fldIncidencias            oFld:aDialogs[10]
-#define fldObservaciones          oFld:aDialogs[11]
-#define fldContactos              oFld:aDialogs[12]
-#define fldFacturae               oFld:aDialogs[13]
-#define fldRecibos                oFld:aDialogs[14]
+#define fldImpuestos              oFld:aDialogs[3]
+#define fldAutomaticas            oFld:aDialogs[4]
+#define fldDirecciones            oFld:aDialogs[5]
+#define fldBancos                 oFld:aDialogs[6]
+#define fldContabilidad           oFld:aDialogs[7]
+#define fldDefinidos              oFld:aDialogs[8]
+#define fldTarifa                 oFld:aDialogs[9]
+#define fldDocumentos             oFld:aDialogs[10]
+#define fldIncidencias            oFld:aDialogs[11]
+#define fldObservaciones          oFld:aDialogs[12]
+#define fldContactos              oFld:aDialogs[13]
+#define fldFacturae               oFld:aDialogs[14]
+#define fldRecibos                oFld:aDialogs[15]
 
 #define FW_BOLD                   700
 
@@ -1446,6 +1451,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          OF       oDlg ;
          PROMPT   "&General",;
                   "C&omercial",;
+                  "I&mpuestos",;
                   "Au&tomáticas",;
                   "&Direcciones",;
                   "&Bancos",;
@@ -1460,6 +1466,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   "&Recibos" ;
          DIALOGS  "CLIENT_0"  ,;
                   "CLIENT_1"  ,;
+                  "CLIENT_19" ,;
                   "CLIENT_17" ,;
                   "CLIENT_15" ,;
                   "CLIENT_2"  ,;
@@ -1534,16 +1541,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ON HELP  GoogleMaps( aTmp[ _DOMICILIO ], Rtrim( aTmp[ _POBLACION ] ) + Space( 1 ) + Rtrim( aTmp[ _PROVINCIA ] ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
-
-      REDEFINE GET aGet[ _CCODEDI ] VAR aTmp[ _CCODEDI ] ;
-         ID       146 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
-
-      REDEFINE GET aGet[ _CDEPARTA ] VAR aTmp[ _CDEPARTA ] ;
-         ID       147 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
 
       REDEFINE GET aGet[ _POBLACION ] VAR aTmp[ _POBLACION ];
          ID       150 ;
@@ -1888,6 +1885,36 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
 
+      REDEFINE GET aGet[ _CCODEDI ] VAR aTmp[ _CCODEDI ] ;
+         ID       146 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CDEPARTA ] VAR aTmp[ _CDEPARTA ] ;
+         ID       147 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+         
+      REDEFINE GET aGet[ _CDOMENT ] VAR aTmp[ _CDOMENT ] ;
+         ID       310 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CPOBENT ] VAR aTmp[ _CPOBENT ] ;
+         ID       320 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CCPENT ] VAR aTmp[ _CCPENT ] ;
+         ID       340 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CPRVENT ] VAR aTmp[ _CPRVENT ] ;
+         ID       350 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
       /*
       INTERNET_________________________________________________________________
       */
@@ -1920,12 +1947,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                   242,;
                   243 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE CHECKBOX aTmp[_LREQ] ;
          ID       130 ;
          WHEN     ( aTmp[_NREGIVA] == 1 .AND. nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE CHECKBOX aTmp[ _LCHGPRE ] ;
          ID       140 ;
@@ -1957,55 +1984,55 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ID       159;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _NDTOESP ] VAR aTmp[ _NDTOESP ] ;
          SPINNER ;
          ID       160;
          PICTURE  "@E 999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _CDPP ] VAR aTmp[ _CDPP ] ;
          SPINNER ;
          ID       169;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[_NDPP] VAR aTmp[_NDPP] ;
          SPINNER ;
          ID       170;
          PICTURE  "@E 999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _CDTOUNO ] VAR aTmp[ _CDTOUNO ] ;
          SPINNER ;
          ID       175;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _NDTOCNT ] VAR aTmp[ _NDTOCNT ];
          SPINNER ;
          ID       180 ;
          PICTURE  "@E 999.99" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _CDTODOS ] VAR aTmp[ _CDTODOS ] ;
          SPINNER ;
          ID       185;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lRecargaArray( aGet, aTmp ) ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _CDTOATP ] VAR aTmp[ _CDTOATP ] ;
          SPINNER ;
          ID       205;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _NDTORAP ] VAR aTmp[ _NDTORAP ];
          SPINNER ;
@@ -2013,7 +2040,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          PICTURE  "@E 999.99" ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _NDTOATP ] VAR aTmp[ _NDTOATP ];
          SPINNER ;
@@ -2021,14 +2048,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          PICTURE  "@E 999.99" ;
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE COMBOBOX aGet[ _NSBRATP ] ;
          VAR      aTmp[ _NSBRATP ] ;
          ITEMS    aDescuentosAtipicos ;
          ID       300 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE CHECKBOX aGet[ _LBLQCLI ] VAR aTmp[ _LBLQCLI ] ;
          ID       155 ;
@@ -2220,7 +2247,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          ITEMS    aStrRetencion ;
          ID       310 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE GET aGet[ _NPCTRET ] ;
          VAR      aTmp[ _NPCTRET ] ;
@@ -2228,7 +2255,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@E 999.99" ;
-         OF       fldComercial
+         OF       fldImpuestos
 
       REDEFINE CHECKBOX aTmp[ _LEXCFID ] ;
          ID       158 ;
@@ -8890,6 +8917,11 @@ FUNCTION aItmCli()
    aAdd( aBase, { "Movil2",    "C", 50, 0, "Segundo móvil",                                 "Movil2",                "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cAgente2",  "C",  3, 0, "Código de segundo agente comercial ",           "CodigoAgente2",         "", "( cDbfCli )", {|| accessCode():cAgente } } )
    aAdd( aBase, { "cDeparta",  "C",  4, 0, "Código de departamento",                        "Departamento",          "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cDomEnt",   "C",200, 0, "Domicilio de entrega",                          "DomicilioEntrega",      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cPobEnt",   "C",200, 0, "Población de entrega",                          "PoblacionEntrega",      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCPEnt",    "C", 15, 0, "Código postal de entrega",                      "CodigoPostalEntrega",   "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cPrvEnt",   "C",200, 0, "Provincia de entrega",                          "ProvinciaEntrega",      "", "( cDbfCli )", nil } )
+
 
 RETURN ( aBase )
 
