@@ -99,7 +99,7 @@ STATIC FUNCTION CloseFiles()
    dbfVisor    := nil
    dbfCajPorta := nil
 
-   if !Empty( oCaptura )
+   if !empty( oCaptura )
       oCaptura:End()
    end if
 
@@ -1152,7 +1152,7 @@ Static Function SavRec( aTmp, aGet, dbfCajT, oBrw, oDlg, nMode )
 
    end if
 
-   if Empty( aTmp[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ] )
+   if empty( aTmp[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ] )
       MsgStop( "Nombre de caja no puede estar vacío" )
       aGet[ ( dbfCajT )->( FieldPos( "cNomCaj" ) ) ]:SetFocus()
       Return nil
@@ -1292,13 +1292,13 @@ STATIC FUNCTION EndDetalle( aTmp, aGet, dbfTmpLin, oBrw, oDlg, nMode, aTmpCaj )
 
    //Comprobaciones antes de guardar-------------------------------------------
 
-   if Empty( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] )
+   if empty( aTmp[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ] )
       msginfo( "El tipo de impresora no puede estar vacío" )
       aGet[ ( dbfTmpLin )->( FieldPos( "cTipImp" ) ) ]:SetFocus()
       return .f.
    end if
 
-   if Empty( aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] )
+   if empty( aTmp[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ] )
       msginfo( "El nombre de la impresora no puede estar vacío" )
       aGet[ ( dbfTmpLin )->( FieldPos( "cNomPrn" ) ) ]:SetFocus()
       return .f.
@@ -1344,8 +1344,8 @@ FUNCTION cCajas( oGet, dbfCajT, oGet2 )
    local lValid   := .f.
 	local xValor 	:= oGet:varGet()
 
-   if Empty( xValor )
-      if !Empty( oGet2 )
+   if empty( xValor )
+      if !empty( oGet2 )
 			oGet2:cText( "" )
       end if
       return .t.
@@ -1356,7 +1356,7 @@ FUNCTION cCajas( oGet, dbfCajT, oGet2 )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfCajT )
+   if empty( dbfCajT )
       USE ( cPatDat() + "CAJAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
       lClose      := .t.
@@ -1366,7 +1366,7 @@ FUNCTION cCajas( oGet, dbfCajT, oGet2 )
 
       oGet:cText( ( dbfCajT )->cCodCaj )
 
-      if !Empty( oGet2 )
+      if !empty( oGet2 )
          oGet2:cText( ( dbfCajT )->cNomCaj )
       end if
 
@@ -1603,7 +1603,7 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
    DEFAULT lReturnCaja     := .f.
    DEFAULT lParaLlevar     := .f.
 
-   if Empty( dbfCaja )
+   if empty( dbfCaja )
 
       if !OpenFiles( .t. )
          Return nil
@@ -1735,11 +1735,11 @@ Function BrwCajaTactil( oGet, dbfCaja, oGet2, lReturnCaja, lParaLlevar )
 
       cCajas      := ( dbfCaja )->cCodCaj
 
-      if !Empty( oGet )
+      if !empty( oGet )
          oGet:cText( cCajas )
       end if
 
-      if !Empty( oGet2 )
+      if !empty( oGet2 )
          oGet2:cText( Rtrim( ( dbfCaja )->cNomCaj ) )
       end if
 
@@ -1950,7 +1950,7 @@ Static Function KillTrans()
    Borramos los ficheros-------------------------------------------------------
 	*/
 
-   if !Empty( dbfTmpLin ) .and. ( dbfTmpLin )->( Used() )
+   if !empty( dbfTmpLin ) .and. ( dbfTmpLin )->( Used() )
       ( dbfTmpLin )->( dbCloseArea() )
    end if
 
@@ -2183,7 +2183,9 @@ FUNCTION nUserCaja( cCajUsr )
 
    for n := 1 to len( aDirCaj )
 
-      if ( nHandle := fOpen( aDirCaj[ n, 1 ], 16 ) ) != -1
+      nHandle        := fOpen( cPatUsr() + aDirCaj[ n, 1 ], 16 )
+
+      if nHandle != -1
          fClose( nHandle )
       else
          nUsrCaj++
@@ -2223,12 +2225,12 @@ Function lSetCaja( cCajUsr, cCodUsr, oWndBrw )
       oUser():cCaja( cCajUsr )
    end if
 
-   if !Empty( oWndBrw )
+   if !empty( oWndBrw )
       oWndBrw:End( .t. )
       oWndBrw        := nil
    end if
 
-   ChkTurno()
+   chkTurno()
 
 Return ( .t. )
 
@@ -2639,7 +2641,7 @@ Function cPrinterEntrega( cCodCaj, dbfCajT )
 
    else
          
-      if !Empty( ( dbfCajT )->cPrnNota )
+      if !empty( ( dbfCajT )->cPrnNota )
          cPrn  := Rtrim( ( dbfCajT )->cPrnNota )
       else
          cPrn  := Rtrim( ( dbfCajT )->cWinTik )
@@ -3071,7 +3073,7 @@ Function cImpresoraTicketEnCaja( cCodCaj, dbfCajT )
    oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( dbfCajT )
+   if empty( dbfCajT )
       USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
       lClo     := .t.
@@ -3106,8 +3108,8 @@ Function cCortePapelEnCaja( cCodCaj, dbfCajT, dbfCajL, lComanda, cTipImpCom, lAn
    if !lComanda .and. !lAnulacion
 
       if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )               .and.;
-         !Empty( ( dbfCajT )->cCodCut )                           .and.;
-         !Empty( ( dbfCajT )->cWinTik )
+         !empty( ( dbfCajT )->cCodCut )                           .and.;
+         !empty( ( dbfCajT )->cWinTik )
 
          PrintEscCode( ( dbfCajT )->cCodCut, ( dbfCajT )->cWinTik )
 
@@ -3116,8 +3118,8 @@ Function cCortePapelEnCaja( cCodCaj, dbfCajT, dbfCajL, lComanda, cTipImpCom, lAn
    else
 
       if dbSeekInOrd( cCodCaj + cTipImpCom, "cCodCaj", dbfCajL )  .and.;
-         !Empty( ( dbfCajL )->cCodCut )                           .and.;
-         !Empty( ( dbfCajL )->cNomPrn )
+         !empty( ( dbfCajL )->cCodCut )                           .and.;
+         !empty( ( dbfCajL )->cNomPrn )
 
          PrintEscCode( ( dbfCajL )->cCodCut, ( dbfCajL )->cNomPrn )
 
@@ -3145,7 +3147,7 @@ Function SelCajTactil( oWnd, lInicio )
    Si el usuario ya tiene elegida una caja y estamos al inicio de la app pasamos
    */
 
-   if lInicio .and. !Empty( oUser():cCaja() )
+   if lInicio .and. !empty( oUser():cCaja() )
       Return ( nil )
    end if
 
@@ -3320,25 +3322,23 @@ Function SelectCajas()
 
    if oDlg:nResult == IDOK
 
-      oUser():cCaja( ( dbfCajT )->cCodCaj )
+      lChgCaja( ( dbfCajT )->cCodCaj )
 
-      if !Empty( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
+      if !empty( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
          oUser():oCajon    := TCajon():Create( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
       end if
 
-      ChkTurno()
-
-      SetKey( VK_F12, {|| oUser():OpenCajonTest() } )
+      setKey( VK_F12, {|| oUser():OpenCajonTest() } )
 
    else
 
-      MsgInfo( "No selecciono ninguna caja, se establecerá la caja por defecto." + CRLF + ;
+      msgInfo( "No selecciono ninguna caja, se establecerá la caja por defecto." + CRLF + ;
                "Caja actual, " + oUser():cCaja() )
    end if
 
    CloseFiles()
 
-   if !Empty( oBmp )
+   if !empty( oBmp )
       oBmp:End()
    end if
 
@@ -3352,7 +3352,7 @@ Function SelectCajon()
       Return .f.
    end if
 
-   if !Empty( cCajonEnCaja( oUser():cCaja(), dbfCajT ) )
+   if !empty( cCajonEnCaja( oUser():cCaja(), dbfCajT ) )
       oUser():oCajon      := TCajon():Create( cCajonEnCaja( oUser():cCaja(), dbfCajT ) )
    end if
 
