@@ -212,6 +212,7 @@ METHOD Create( cPath, cDriver )
 
    ::cPath              := cPath
    ::cDriver            := cDriver
+
    ::oDbf               := nil
 
 RETURN ( Self )

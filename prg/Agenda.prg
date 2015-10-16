@@ -6,26 +6,27 @@
 
 CLASS TAgenda FROM TMant 
 
-   METHOD Create( cPath )
+   METHOD Create( cPath, cDriver )
 
    METHOD OpenFiles()
    MESSAGE OpenService()   METHOD OpenFiles()
 
    METHOD DefineFiles()
-   /*
-   METHOD Activate( oWnd )
-   */
+
    METHOD Resource( nMode )
 
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD Create( cPath )
+METHOD Create( cPath, cDriver )
 
    DEFAULT cPath     := cPatDat()
+   DEFAULT cDriver   := cDriver()
 
    ::cPath           := cPath
+   ::cDriver         := cDriver
+
    ::oDbf            := nil
 
 RETURN ( Self )
@@ -66,7 +67,7 @@ RETURN lOpen
 METHOD DefineFiles( cPath, cDriver )
 
    DEFAULT cPath     := ::cPath
-   DEFAULT cDriver   := cDriver()
+   DEFAULT cDriver   := ::cDriver
 
    DEFINE TABLE ::oDbf FILE "Agenda.Dbf" CLASS "Agenda" PATH ( cPath ) ALIAS "Agenda" VIA ( cDriver ) COMMENT "Listín telefónico"
 

@@ -246,7 +246,7 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
 
    ::setImporteImpuestoEspecial( ::getValorImpuestoEspecial() )
 
-   ::setVolumenImpuestosEspeciales( retFld( ( D():Articulos( ::getView() ) )->cCodImp, D():ImpuestosEspeciales( ::getView() ):Select(), "lIvaVol" ) )
+   // ::setVolumenImpuestosEspeciales( retFld( ( D():Articulos( ::getView() ) )->cCodImp, D():ImpuestosEspeciales( ::getView() ):Select(), "lIvaVol" ) )
 
    if ::hGetMaster( "TipoImpuesto" ) <= 1
       ::setPorcentajeImpuesto( nIva( D():TiposIva( ::getView() ), ( D():Articulos( ::getView() ) )->TipoIva ) )

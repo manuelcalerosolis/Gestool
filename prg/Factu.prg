@@ -2965,7 +2965,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Agenda/ CRM'
    oItem:cMessage       := 'Acceso a la agenda del usuario'
-   oItem:bAction        := {|| TNotas():New( cPatDat(), oWnd, "01075" ):Activate() }
+   oItem:bAction        := {|| TNotas():New( cPatDat(), , oWnd, "01075" ):Activate() }
    oItem:cId            := "01075"
    oItem:cBmp           := "Note_16"
    oItem:cBmpBig        := "Note_32"
@@ -2975,7 +2975,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Listín telefónico'
    oItem:cMessage       := 'Acceso al listín telefónico'
-   oItem:bAction        := {|| TAgenda():New( cPatDat(), oWnd, "01076" ):Activate() }
+   oItem:bAction        := {|| TAgenda():New( cPatDat(), , oWnd, "01076" ):Activate() }
    oItem:cId            := "01076"
    oItem:cBmp           := "Telephone_16"
    oItem:cBmpBig        := "Telephone_32"

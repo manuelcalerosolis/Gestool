@@ -31,7 +31,7 @@ CLASS TNotas FROM TMant
    DATA oDbfAge
    DATA oDbfAlm
 
-   METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
+   METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CONSTRUCTOR
 
    METHOD Activate()
 
@@ -69,9 +69,10 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem ) CLASS TNotas
+METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TNotas
 
    DEFAULT cPath        := cPatDat()
+   DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := oWnd()
    DEFAULT oMenuItem    := "01075"
 
@@ -86,6 +87,8 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TNotas
    end if
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
+
    ::oWndParent         := oWndParent
    ::oDbf               := nil
 
@@ -149,15 +152,15 @@ METHOD OpenFiles( lExclusive, lCloseNotas ) CLASS TNotas
    ::oDbf:Activate( .f., !( lExclusive ) )
    ::oDbf:OrdScope( cCurUsr() )
 
-   DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "Client.DBF"   VIA ( cDriver() ) SHARED INDEX "CLIENT.CDX"
+   DATABASE NEW ::oDbfCli PATH ( cPatCli() ) FILE "Client.DBF"   VIA ( ::cDriver ) SHARED INDEX "CLIENT.CDX"
 
-   DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "Provee.DBF"   VIA ( cDriver() ) SHARED INDEX "PROVEE.CDX"
+   DATABASE NEW ::oDbfPrv PATH ( cPatPrv() ) FILE "Provee.DBF"   VIA ( ::cDriver ) SHARED INDEX "PROVEE.CDX"
 
-   DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "Articulo.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
+   DATABASE NEW ::oDbfArt PATH ( cPatArt() ) FILE "Articulo.DBF" VIA ( ::cDriver ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "Agentes.Dbf"  VIA ( cDriver() ) SHARED INDEX "Agentes.Cdx"
+   DATABASE NEW ::oDbfAge PATH ( cPatCli() ) FILE "Agentes.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Agentes.Cdx"
 
-   DATABASE NEW ::oDbfAlm PATH ( cPatAlm() ) FILE "Almacen.Dbf"  VIA ( cDriver() ) SHARED INDEX "Almacen.Cdx"
+   DATABASE NEW ::oDbfAlm PATH ( cPatAlm() ) FILE "Almacen.Dbf"  VIA ( ::cDriver ) SHARED INDEX "Almacen.Cdx"
 
    if lCloseNotas .and. oUser():lAlerta()
       CloseNotas()
