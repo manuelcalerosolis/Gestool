@@ -14,7 +14,8 @@ CLASS AccessCode
    CLASSDATA   cAgente           INIT space( 3 )
    CLASSDATA   cRuta             INIT space( 4 )
    CLASSDATA   lFilterByAgent    INIT .f.
-   CLASSDATA   lInvoiceModify    INIT .f.
+   CLASSDATA   lInvoiceModify    INIT .t.
+   CLASSDATA   lUnitsModify      INIT .t.
    
    DATA  oDlg
    DATA  oDlgConnect
@@ -270,8 +271,13 @@ METHOD loadTableConfiguration() CLASS AccessCode
    ::cGetPassword    := getPvProfString( cTag, "Password",           "",      ::cIniFile )
    ::cAgente         := getPvProfString( cTag, "Agente",             "",      ::cIniFile )
    ::cRuta           := getPvProfString( cTag, "Ruta",               "",      ::cIniFile )
+
    ::lInvoiceModify  := getPvProfString( cTag, "ModificarFactura",   ".t.",   ::cIniFile )
    ::lInvoiceModify  := lower( ::lInvoiceModify ) == ".t."
+
+   ::lUnitsModify    := getPvProfString( cTag, "ModificarUnidades",  ".t.",   ::cIniFile )
+   ::lUnitsModify    := lower( ::lUnitsModify ) == ".t."
+
    ::lFilterByAgent  := getPvProfString( cTag, "FiltrarAgente",      ".f.",   ::cIniFile )
    ::lFilterByAgent  := lower( ::lFilterByAgent ) == ".t."
 

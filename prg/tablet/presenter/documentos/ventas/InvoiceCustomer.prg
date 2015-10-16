@@ -4,17 +4,11 @@
 
 CLASS InvoiceCustomer FROM DocumentsSales  
   
-   DATA lAlowEdit                         INIT accessCode():lInvoiceModify
-
    METHOD New()
 
    METHOD getAppendDocumento()
 
    METHOD getEditDocumento()
-      /*
-      METHOD onPreEditDocumento           INLINE   (  iif(  !accessCode():lInvoiceModify,;
-                                                            ( apoloMsgStop( "La modificación de facturas no esta permitida." ), .f. ),;
-                                                            .t. ) ) */
 
    METHOD getLinesDocument( id )
    METHOD getDocumentLine()

@@ -91,7 +91,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
-                           "cResName"  => "flat_check_64",;
+                           "cResName"  => "find_64",;
                            "bLClicked" => {|| if( ::oSender:Zoom(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 

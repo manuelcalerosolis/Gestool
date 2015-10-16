@@ -264,6 +264,7 @@ METHOD defineUnidades() CLASS ViewDetail
                                           "cPict"     => MasUnd(),;
                                           "lRight"    => .t.,;
                                           "nHeight"   => 23,;
+                                          "bWhen"     => {|| accessCode():lUnitsModify },;
                                           "bValid"    => {|| ::oSender:recalcularTotal() } } )
 
 Return ( self )
