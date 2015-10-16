@@ -12,11 +12,11 @@ CLASS ViewNavigator FROM ViewBase
    METHOD getView()                          INLINE ( ::oSender:nView )
    METHOD getWorkArea()                      INLINE ( ::oSender:getWorkArea() )
 
-   METHOD BotonesAcciones()
+   METHOD botonesAcciones()
 
-   METHOD BotonesMovimientoBrowse()
+   METHOD botonesMovimientoBrowse()
 
-   METHOD BrowseGeneral()
+   METHOD browseGeneral()
 
    METHOD insertControls()                   INLINE ( ::BrowseGeneral() )
 
@@ -24,8 +24,8 @@ CLASS ViewNavigator FROM ViewBase
       METHOD addColumn()                     INLINE ( ::oBrowse:addCol() )
 
    METHOD refreshBrowse()                    INLINE ( iif(  !empty( ::oBrowse),;
-                                                      ( ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() ),;
-                                                      ) )
+                                                            ( ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() ),;
+                                                         ) )
 
    METHOD setDblClickBrowseGeneral( block )  INLINE ( ::bDblClickBrowseGeneral := block )
 
@@ -75,7 +75,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "bLClicked" => {|| if( ::oSender:Append(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
-   if ::oSender:lAlowEdit
+   if accessCode():lInvoiceModify
 
    TGridImage():Build(  {  "nTop"      => 75,;
                            "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
