@@ -17,7 +17,7 @@ function ImportaPedidosProveedorExcel( nView )
       oImportarPedidoProveedor:processFile()
    end if 
 
-   msgalert( "terminado" )
+   //msgAlert( D():PedidosProveedoresId( ::nView ), "Se ha añadido el pedido de proveedor nº "  )
    
 return .t.
 
@@ -50,6 +50,9 @@ CLASS ImportarPedidosProveedorExcel
    DATA cColor 
    DATA nUnidades
 
+   DATA nNumeroPedido                      
+   DATA cCodigoProveedor
+
    METHOD New()
    
    METHOD isFile()
@@ -73,7 +76,12 @@ CLASS ImportarPedidosProveedorExcel
       METHOD getTallaColor()
          METHOD getUnidadesPorTallas()
          METHOD addLineasPedido()
-         METHOD setLineasPedidos()
+
+   METHOD getCodigoProveedor()
+   METHOD setCabeceraPedido()
+      METHOD getNumeroPedido()               INLINE nNewDoc( 'A', D():PedidosProveedores( ::nView ), "NPEDPRV", , D():Contadores( ::nView ) )                
+   METHOD setLineasPedidos()
+   METHOD setTotalesPedido()
 
    METHOD getCodigoColor( cColorDescripcion )
 
@@ -119,14 +127,14 @@ METHOD processFile() CLASS ImportarPedidosProveedorExcel
          if ::isLineaTallaColor()
             ::getTallaColor()
          end if 
-         if ::isLineaTotal()
-            msgAlert( ::getRow(), "isLineaTotal" ) 
-         endif
       end while
 
-      msgAlert( hb_valtoexp( ::aLineasPedidos ), "aLineasPedidos" )
+      if !empty( ::getCodigoProveedor() )
+         ::setCabeceraPedido()
+         ::setLineasPedidos()
+         ::setTotalesPedido()
+      end if 
 
-      // ::setLineasPedidos()
    end if 
 
    ::closeFile()
@@ -198,7 +206,7 @@ Return ( self )
 METHOD isInformationInExcel()
 
    local nCol
-   
+
    ::nextRow()
 
    for nCol := 1 to 50
@@ -386,7 +394,7 @@ METHOD getCodigoColor( cColorDescripcion )
    if ( D():PropiedadesLineas( ::nView ) )->( dbseek( padr( '00001', 20 ) + cColorDescripcion ) )
       cCodigoColor      := ( D():PropiedadesLineas( ::nView ) )->cCodTbl
    else
-      msgAlert( padr( '00001', 20 ) + cColorDescripcion, "no existe" )
+      msgAlert( padr( '00001', 20 ) + cColorDescripcion, "No existe el color:" )
    end if 
 
    ( D():PropiedadesLineas( ::nView ) )->( ordsetfocus( ordAnterior ) ) 
@@ -413,70 +421,132 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD setLineasPedidos()
+METHOD addLineasPedido()
 
-   local cTalla
    local hLinea  :=  {=>}
 
-   for each cTalla in ::hTallas
+   if !empty( ::cCodigoArticulo ) .and. !empty( ::cReferenciaProveedor ) .and. !empty( ::nUnidades ) .and. ;
+      !empty( ::cCodigoColor ) .and. !empty( ::cTalla ) 
 
-      hLinea  :=  {=>}
+      hset( hLinea, "Articulo", ::cCodigoArticulo )  
+      hset( hLinea, "Descripcion", ::cDescrpcionArticulo )
+      hset( hLinea, "ReferenciaProveedor", ::cReferenciaProveedor )
+      hset( hLinea, "PorcentajeImpuesto", retFld( retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "tipoIva" ), D():TiposIva( ::nView ), "TPIva" ) )           //hay que buscarlo en la ficha del art
+      hset( hLinea, "Unidades", ::nUnidades )
+      hset( hLinea, "CodigoPropiedad1", '00001')
+      hset( hLinea, "CodigoPropiedad2", '00002')
+      hset( hLinea, "ValorPropiedad1", ::cCodigoColor )   
+      hset( hLinea, "ValorPropiedad2", ::cTalla )
+      hset( hLinea, "Almacen", '000' )
+      hset( hLinea, "PrecioCosto",  retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "pCosto" ) )                
+      hset( hLinea, "Familia",      retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "Familia" ) ) 
 
-      if hhaskey( ::hTallasColores, cTalla )
+      aAdd( ::aLineasPedidos, hLinea)
 
-         hset( hLinea, "Articulo", substr( ::cCodigoArticulo, 1, at( " ", ::cCodigoArticulo ) - 1 ) )  
-         hset( hLinea, "ReferenciaProveedor", ::cReferenciaProveedor)
-         hset( hLinea, "DescripcionArticulo", substr( ::cCodigoArticulo, at(" ", ::cCodigoArticulo )+1 ) )
-         hset( hLinea, "PorcentajeImpuesto", 21 )           //hay que buscarlo en la ficha del art
-         hset( hLinea, "Unidades", hGet( ::hTallasColores, cTalla ) )
-         hset( hLinea, "CodigoPropiedad1", '00001')
-         hset( hLinea, "CodigoPropiedad2", '00002')
-         hset( hLinea, "ValorPropiedad1", 'cCodigoColor')   //aqui tengo el nombre, debo buscar el codigo en la tabla de propiedades
-         hset( hLinea, "ValorPropiedad2", cTalla )
-         hset( hLinea, "Almacen", '000' )
-         hset( hLinea, "PrecioCosto", 16.95 )               //hay que buscarlo en la ficha del art
-         hset( hLinea, "Familia", '323' )                   //hay que buscarlo en la ficha del art
-
-         aAdd( ::aLineasPedidos, hLinea)
-
-      end if
-
-   next 
-
-   msgAlert( hb_valtoexp( ::aLineasPedidos), " final aLineasPedidos")
+   end if   
 
 Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD addLineasPedido()
+METHOD getCodigoProveedor()
 
-   local hLinea  :=  {=>}
+   ::cCodigoProveedor :=  BrwProvee( nil, nil, .f. )
 
-   if !empty(::cCodigoArticulo)
+Return ( ::cCodigoProveedor )
 
-      hset( hLinea, "Articulo", ::cCodigoArticulo )  
-      hset( hLinea, "Descripcion", ::cDescrpcionArticulo )
-      hset( hLinea, "ReferenciaProveedor", ::cReferenciaProveedor )
-      hset( hLinea, "PorcentajeImpuesto", 21 )           //hay que buscarlo en la ficha del art
-      hset( hLinea, "Unidades", ::nUnidades )
-      hset( hLinea, "CodigoPropiedad1", '00001')
-      hset( hLinea, "CodigoPropiedad2", '00002')
-      hset( hLinea, "ValorPropiedad1", ::cCodigoColor )   //aqui tengo el nombre, debo buscar el codigo en la tabla de propiedades
-      hset( hLinea, "ValorPropiedad2", ::cTalla )
-      hset( hLinea, "Almacen", '000' )
-      hset( hLinea, "PrecioCosto",  retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "pCosto" ) )                //hay que buscarlo en la ficha del art
-      hset( hLinea, "Familia",      retFld( ::cCodigoArticulo, D():Articulos( ::nView ), "Familia" ) )               //hay que buscarlo en la ficha del art
+//---------------------------------------------------------------------------//     
 
-      aAdd( ::aLineasPedidos, hLinea)
+METHOD setCabeceraPedido()           
 
-   end if
+   ::nNumeroPedido   :=  ::getNumeroPedido()
 
-   
+   ( D():PedidosProveedores( ::nView ) )->( dbappend() )
+
+      ( D():PedidosProveedores( ::nView ) )->cSerPed        := 'A'
+      ( D():PedidosProveedores( ::nView ) )->nNumPed        := ::nNumeroPedido
+      ( D():PedidosProveedores( ::nView ) )->cSufPed        := '00'
+      ( D():PedidosProveedores( ::nView ) )->cTurPed        := cCurSesion()
+      ( D():PedidosProveedores( ::nView ) )->dFecPed        := GetSysDate()
+      ( D():PedidosProveedores( ::nView ) )->cCodPrv        := ::cCodigoProveedor 
+      ( D():PedidosProveedores( ::nView ) )->cCodAlm        := '000' 
+      ( D():PedidosProveedores( ::nView ) )->cCodCaj        := oUser():cCaja()
+      ( D():PedidosProveedores( ::nView ) )->cNomPrv        := retFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "TITULO" ) 
+      ( D():PedidosProveedores( ::nView ) )->cDirPrv        := retFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "DOMICILIO" )
+      ( D():PedidosProveedores( ::nView ) )->cPobPrv        := retFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "POBLACION" )
+      ( D():PedidosProveedores( ::nView ) )->cProPrv        := retFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "PROVINCIA" )
+      ( D():PedidosProveedores( ::nView ) )->cPosPrv        := retFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "CODPOSTAL" )
+      ( D():PedidosProveedores( ::nView ) )->cDniPrv        := retFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "NIF" )
+      ( D():PedidosProveedores( ::nView ) )->nEstado        := 1
+      ( D():PedidosProveedores( ::nView ) )->cCodPgo        := retFld( ::cCodigoProveedor, D():Proveedores( ::nView ), "FPAGO" )
+      ( D():PedidosProveedores( ::nView ) )->cDivPed        := cDivEmp()
+      ( D():PedidosProveedores( ::nView ) )->nVdvPed        := nChgDiv( cDivEmp(), D():Divisas( ::nView ) )
+      ( D():PedidosProveedores( ::nView ) )->lSndDoc        := .t.
+      ( D():PedidosProveedores( ::nView ) )->cCodUsr        := cCurUsr()
+      ( D():PedidosProveedores( ::nView ) )->cCodDlg        := '00'
+      ( D():PedidosProveedores( ::nView ) )->nRegIva        := 1
+     
+   ( D():PedidosProveedores( ::nView ) )->( dbunlock() ) 
 
 Return ( self )
 
-//---------------------------------------------------------------------------//                
+//---------------------------------------------------------------------------//
+
+METHOD setLineasPedidos()
+
+   local hLinea
+   local nNumLin     := 1
+
+   for each hLinea in ::aLineasPedidos
+
+      ( D():PedidosProveedoresLineas( ::nView ) )->( dbappend() )
+      
+         ( D():PedidosProveedoresLineas( ::nView ) )->cSerPed  := 'A'
+         ( D():PedidosProveedoresLineas( ::nView ) )->nNumPed  := ::nNumeroPedido
+         ( D():PedidosProveedoresLineas( ::nView ) )->cSufPed  := '00'
+         ( D():PedidosProveedoresLineas( ::nView ) )->cRef     := hLinea['Articulo']         
+         ( D():PedidosProveedoresLineas( ::nView ) )->cRefPrv  := hLinea['ReferenciaProveedor']
+         ( D():PedidosProveedoresLineas( ::nView ) )->cDetalle := hLinea['Descripcion']
+         ( D():PedidosProveedoresLineas( ::nView ) )->nIva     := hLinea['PorcentajeImpuesto']
+         ( D():PedidosProveedoresLineas( ::nView ) )->nUniCaja := hLinea['Unidades']
+         ( D():PedidosProveedoresLineas( ::nView ) )->nPreDiv  := hLinea['PrecioCosto']
+         ( D():PedidosProveedoresLineas( ::nView ) )->cCodPr1  := hLinea['CodigoPropiedad1']
+         ( D():PedidosProveedoresLineas( ::nView ) )->cCodPr2  := hLinea['CodigoPropiedad2']
+         ( D():PedidosProveedoresLineas( ::nView ) )->cValPr1  := hLinea['ValorPropiedad1']
+         ( D():PedidosProveedoresLineas( ::nView ) )->cValPr2  := hLinea['ValorPropiedad2']         
+         ( D():PedidosProveedoresLineas( ::nView ) )->nCtlStk  := 1
+         ( D():PedidosProveedoresLineas( ::nView ) )->cAlmLin  := hLinea['Almacen']
+         ( D():PedidosProveedoresLineas( ::nView ) )->lLote    := .f.         
+         ( D():PedidosProveedoresLineas( ::nView ) )->nNumLin  := nNumLin
+         ( D():PedidosProveedoresLineas( ::nView ) )->cCodFam  := hLinea['Familia']
+         ( D():PedidosProveedoresLineas( ::nView ) )->nEstado  := 1
+
+      nNumLin++
+      ( D():PedidosProveedoresLineas( ::nView ) )->( dbunlock() )
+
+   next 
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD setTotalesPedido()
+
+   local sPedido 
+
+   sPedido     := sTotPedPrv( D():PedidosProveedoresId( ::nView ), D():PedidosProveedores (::nView ), D():PedidosProveedoresLineas (::nView ), D():TiposIva( ::nView ), D():Divisas( ::nView ) )
+
+   if ( D():PedidosProveedores( ::nView ) )->( dbrlock() )
+
+      ( D():PedidosProveedores( ::nView ) )->nTotNet    := sPedido:nTotalNeto
+      ( D():PedidosProveedores( ::nView ) )->nTotIva    := sPedido:nTotalIva
+      ( D():PedidosProveedores( ::nView ) )->nTotReq    := sPedido:nTotalRecargoEquivalencia
+      ( D():PedidosProveedores( ::nView ) )->nTotPed    := sPedido:nTotalDocumento
+
+      ( D():PedidosProveedores( ::nView ) )->( dbunlock() )
+   end if
+
+Return ( self )
 
 
 
