@@ -2655,13 +2655,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
 
       REDEFINE GET oSay[ 4 ] VAR cSay[ 4 ] ;
          ID       221 ;
-         WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .AND. lWhen ) ;
+         WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .and. lWhen ) ;
          BITMAP   "Bot" ;
          ON HELP  ( ExpAgente( aTmp[ _CCODAGE ], aTmp[ _NPCTCOMAGE ], dbfTmpLin, oBrwLin ), RecalculaTotal( aTmp ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NPCTCOMAGE ] VAR aTmp[ _NPCTCOMAGE ] ;
-         WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .AND. lWhen ) ;
+         WHEN     ( !Empty( aTmp[ _CCODAGE ] ) .and. lWhen ) ;
          PICTURE  "@E 999.99" ;
          SPINNER;
          ID       222 ;
@@ -3337,7 +3337,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, hHash, bValid, nMode )
          PICTURE  "@!" ;
          COLOR    CLR_GET ;
          WHEN     ( nMode == APPD_MODE .OR. nMode == DUPL_MODE );
-         VALID    ( aTmp[ _CSERALB ] >= "A" .AND. aTmp[ _CSERALB ] <= "Z"  );
+         VALID    ( aTmp[ _CSERALB ] >= "A" .and. aTmp[ _CSERALB ] <= "Z"  );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NNUMALB ] VAR aTmp[ _NNUMALB ] ;
@@ -4389,13 +4389,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
          ID       110 ;
-         WHEN     ( ( lModDes() .or. Empty( aTmp[ _CDETALLE ] ) ) .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( ( lModDes() .or. Empty( aTmp[ _CDETALLE ] ) ) .and. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
       REDEFINE GET aGet[ _MLNGDES ] VAR aTmp[ _MLNGDES ] ;
          MEMO ;
          ID       111 ;
-         WHEN     ( ( lModDes() .or. Empty( aTmp[ _MLNGDES ] ) ) .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( ( lModDes() .or. Empty( aTmp[ _MLNGDES ] ) ) .and. nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -4495,7 +4495,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[ _NIVA ] VAR aTmp[ _NIVA ] ;
          ID       120 ;
          PICTURE  "@E 99.99" ;
-         WHEN     ( !aTmp[ _LCONTROL ] .AND. lModIva() .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( !aTmp[ _LCONTROL ] .and. lModIva() .and. nMode != ZOOM_MODE ) ;
          VALID    ( lTiva( D():Get( "TIva", nView ), aTmp[ _NIVA ], @aTmp[ _NREQ ] ) );
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          BITMAP   "LUPA" ;
@@ -4517,7 +4517,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       450 ;
          IDSAY    451 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) .AND. uFieldEmpresa( "lUseBultos" ) ;
+         WHEN     ( nMode != ZOOM_MODE ) .and. uFieldEmpresa( "lUseBultos" ) ;
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1] 
 
@@ -4525,7 +4525,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       130 ;
          IDSAY    131 ;
          SPINNER ;
-         WHEN     ( !aTmp[ _LCONTROL ] .AND. lUseCaj() .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( !aTmp[ _LCONTROL ] .and. lUseCaj() .and. nMode != ZOOM_MODE ) ;
          PICTURE  cPicUnd ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
@@ -4535,23 +4535,21 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       140 ;
          IDSAY    141 ;
          SPINNER ;
-         WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !accessCode():lUnitsModify ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1] ;
 
-//         VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
-
       REDEFINE GET aGet[ _NFACCNV ] VAR aTmp[ _NFACCNV ] ;
          ID       295 ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE ) ;
          PICTURE  "@E 999,999.999999";
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NPREUNIT ] VAR aTmp[ _NPREUNIT ];
          ID       150 ;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE ) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  cPouDiv;
@@ -4563,7 +4561,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          MIN      1 ;
          MAX      6 ;
          PICTURE  "9" ;
-         VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
+         VALID    ( aTmp[ _NTARLIN ] >= 1 .and. aTmp[ _NTARLIN ] <= 6 );
          WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
          ON CHANGE(  ChangeTarifa( aTmp, aGet, aTmpAlb ),;
                      loadComisionAgente( aTmp, aGet, aTmpAlb ),;
@@ -4636,7 +4634,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       350 ;
          IDSAY    351 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  cPouDiv ;
@@ -4647,30 +4645,30 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          IDSAY    152 ;
          SPINNER ;
          PICTURE  cPpvDiv ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin) ;
          VALID    ( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NPESOKG ] VAR aTmp[ _NPESOKG ] ;
          ID       160 ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin) ;
          PICTURE  "@E 999,999.999999";
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CPESOKG ] VAR aTmp[ _CPESOKG ] ;
          ID       175 ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NVOLUMEN ] VAR aTmp[ _NVOLUMEN ] ;
          ID       400 ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin) ;
          PICTURE  "@E 999,999.999999";
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CVOLUMEN ] VAR aTmp[ _CVOLUMEN ] ;
          ID       410;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
@@ -4682,7 +4680,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
          ID       180 ;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          COLOR    CLR_GET ;
          PICTURE  "@E 999.99";
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
@@ -4691,7 +4689,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[_NDTOPRM] VAR aTmp[_NDTOPRM] ;
          ID       190 ;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          COLOR    CLR_GET ;
          PICTURE  "@E 999.99";
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
@@ -4700,7 +4698,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[_NCOMAGE] VAR aTmp[_NCOMAGE] ;
          ID       200 ;
          SPINNER ;
-         WHEN     ( !aTmp[_LCONTROL] .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( !aTmp[_LCONTROL] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          COLOR    CLR_GET ;
          PICTURE  "@E 999.99";
          OF       oFld:aDialogs[1]
@@ -4722,8 +4720,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          MIN      0 ;
          COLOR    Rgb( 255, 0, 0 ) ;
          ON CHANGE( lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         VALID    ( !aTmp[_LCONTROL] .AND. aTmp[_NDTODIV] >= 0 ) ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         VALID    ( !aTmp[_LCONTROL] .and. aTmp[_NDTODIV] >= 0 ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
@@ -4736,7 +4734,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
          ID       290 ;
          IDTEXT   291 ;
          IDSAY    292 ;
-         WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE .and. !lTotLin ) ;
          VALID    ( cTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwTVta( aGet[ _CTIPMOV ], dbfTVta, aGet[ _CTIPMOV ]:oHelpText ) ) ;
@@ -4761,7 +4759,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
 
       REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
          ID       300 ;
-         WHEN     ( !aTmp[ _LCONTROL ] .AND. nMode != ZOOM_MODE ) ;         
+         WHEN     ( !aTmp[ _LCONTROL ] .and. nMode != ZOOM_MODE ) ;         
          VALID    ( cAlmacen( aGet[ _CALMLIN ], , oSayAlm ), if( !uFieldEmpresa( "lNStkAct" ), oStock:lPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwAlmacen( aGet[ _CALMLIN ], oSayAlm ) ) ;
@@ -4808,7 +4806,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpA
       REDEFINE GET aGet[ _NNUMLIN ] VAR aTmp[ _NNUMLIN ] ;
          ID       100 ;
          SPINNER ;
-         WHEN     ( .f. ) ; // !aTmp[ _LCONTROL ] .AND. nMode == APPD_MODE ) ;
+         WHEN     ( .f. ) ; // !aTmp[ _LCONTROL ] .and. nMode == APPD_MODE ) ;
          PICTURE  "9999" ;
          OF       oFld:aDialogs[2]
 
@@ -5846,7 +5844,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
 
    if ( dbfPedCliT )->( dbSeek( cCodCli ) )
 
-      while ( dbfPedCliT )->cCodCli == cCodCli .AND. ( dbfPedCliT )->( !eof() )
+      while ( dbfPedCliT )->cCodCli == cCodCli .and. ( dbfPedCliT )->( !eof() )
 
          if ( dbfPedCliT )->lAlquiler == lAlquiler                                              .and.;
             ( dbfPedCliT )->nEstado != 3                                                        .and.;
@@ -6008,7 +6006,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
    Llamada a la funcion que busca el Albaran-----------------------------------
    */
 
-   if oDlg:nResult == IDOK .AND. Len( aPedidos ) >= 1
+   if oDlg:nResult == IDOK .and. Len( aPedidos ) >= 1
 
       CursorWait()
 
@@ -6051,7 +6049,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
             aGet[ _CCODAGE ]:lValid()
          end if
 
-         if ( dbfPedCliT )->( dbSeek( aPedidos[ nItem, 3 ] ) ) .AND. aPedidos[ nItem, 1 ]
+         if ( dbfPedCliT )->( dbSeek( aPedidos[ nItem, 3 ] ) ) .and. aPedidos[ nItem, 1 ]
 
             if ( dbfPedCliT )->lRecargo
                aTmp[ _LRECARGO ] := .t.
@@ -6069,7 +6067,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
          Detalle de albaranes a facturas---------------------------------------
          */
 
-         if ( dbfPedCliL )->( dbSeek( aPedidos[ nItem, 3] ) ) .AND. aPedidos[ nItem, 1]
+         if ( dbfPedCliL )->( dbSeek( aPedidos[ nItem, 3] ) ) .and. aPedidos[ nItem, 1]
 
             /*
             Cabeceras de pedidos-----------------------------------------------
@@ -6267,7 +6265,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
             Pasamos las entregas a cuenta--------------------------------------
             */
 
-            if ( dbfPedCliP )->( dbSeek( aPedidos[ nItem, 3 ] ) ) .AND. aPedidos[ nItem, 1 ]
+            if ( dbfPedCliP )->( dbSeek( aPedidos[ nItem, 3 ] ) ) .and. aPedidos[ nItem, 1 ]
 
                while ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed == aPedidos[ nItem, 3 ] .and. !( dbfPedCliP )->( Eof() )
 
@@ -7023,14 +7021,14 @@ Method CreateData()
             ::oSender:SetText( ( cAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( cAlbCliT )->nNumAlb ) ) + "/" + AllTrim( ( cAlbCliT )->cSufAlb ) + "; " + Dtoc( ( cAlbCliT )->dFecAlb ) + "; " + AllTrim( ( cAlbCliT )->cCodCli ) + "; " + ( cAlbCliT )->cNomCli )
 
             if ( cAlbCliL )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->NNUMAlb ) + ( cAlbCliT )->CSUFAlb ) )
-               while ( ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->NNUMAlb ) + ( cAlbCliL )->CSUFAlb ) == ( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->NNUMAlb ) + ( cAlbCliT )->CSUFAlb ) .AND. !( cAlbCliL )->( eof() )
+               while ( ( cAlbCliL )->cSerAlb + Str( ( cAlbCliL )->NNUMAlb ) + ( cAlbCliL )->CSUFAlb ) == ( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->NNUMAlb ) + ( cAlbCliT )->CSUFAlb ) .and. !( cAlbCliL )->( eof() )
                   dbPass( cAlbCliL, tmpAlbCliL, .t. )
                   ( cAlbCliL )->( dbSkip() )
                end do
             end if
 
             if ( cAlbCliI )->( dbSeek( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) )
-               while ( ( cAlbCliI )->cSerAlb + Str( ( cAlbCliI )->nNumAlb ) + ( cAlbCliI )->cSufAlb ) == ( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) .AND. !( cAlbCliI )->( eof() )
+               while ( ( cAlbCliI )->cSerAlb + Str( ( cAlbCliI )->nNumAlb ) + ( cAlbCliI )->cSufAlb ) == ( ( cAlbCliT )->cSerAlb + Str( ( cAlbCliT )->nNumAlb ) + ( cAlbCliT )->cSufAlb ) .and. !( cAlbCliI )->( eof() )
                   dbPass( cAlbCliI, tmpAlbCliI, .t. )
                   ( cAlbCliI )->( dbSkip() )
                end do
@@ -8977,7 +8975,7 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
          if ( D():AlbaranesClientesSituaciones( nView ) )->( dbSeek( cAlbaran ) )
 
-            while ( ( D():AlbaranesClientesSituaciones( nView ) )->cSerAlb + Str( ( D():AlbaranesClientesSituaciones( nView ) )->nNumAlb ) + ( D():AlbaranesClientesSituaciones( nView ) )->cSufAlb == cAlbaran ) .AND. ( D():AlbaranesClientesSituaciones( nView ) )->( !eof() ) 
+            while ( ( D():AlbaranesClientesSituaciones( nView ) )->cSerAlb + Str( ( D():AlbaranesClientesSituaciones( nView ) )->nNumAlb ) + ( D():AlbaranesClientesSituaciones( nView ) )->cSufAlb == cAlbaran ) .and. ( D():AlbaranesClientesSituaciones( nView ) )->( !eof() ) 
                dbPass( D():AlbaranesClientesSituaciones( nView ), dbfTmpEst, .t. )
                ( D():AlbaranesClientesSituaciones( nView ) )->( dbSkip() )
             end while
@@ -10879,6 +10877,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       return nil 
    end if
 
+   if aTmp[ _NUNICAJA ] == 0
+      aTmp[ _NUNICAJA ] := 1
+   end if 
+
    if !Empty( aTmp[ _CREF ] ) .and. ( aTmp[ _LNOTVTA ] .or. aTmp[ _LMSGVTA ] )
 
       nTotUnd     := nTotNAlbCli( aTmp )
@@ -10978,7 +10980,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       aGet[ _CUNIDAD ]:lValid()
    end if
 
-   if nMode == APPD_MODE .AND. lEntCon()
+   if nMode == APPD_MODE .and. lEntCon()
 
       RecalculaTotal( aTmpAlb )
 
@@ -13968,7 +13970,7 @@ Static Function lGenAlbCli( oBrw, oBtn, nDevice )
 
    ELSE
 
-      WHILE ( D():Documentos( nView ) )->CTIPO == "AC" .AND. !( D():Documentos( nView ) )->( eof() )
+      WHILE ( D():Documentos( nView ) )->CTIPO == "AC" .and. !( D():Documentos( nView ) )->( eof() )
 
          bAction  := bGenAlbCli( nDevice, "Imprimiendo albaranes de clientes", ( D():Documentos( nView ) )->Codigo )
 

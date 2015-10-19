@@ -21,6 +21,8 @@ static cLenguajeSegundario    := ""
 
 static hTraslations           := {=>}
 
+static scriptSystem
+
 //--------------------------------------------------------------------------//
 // Funciones para DBF's
 //
@@ -1486,6 +1488,54 @@ RETURN ( bBlock )
 
 //---------------------------------------------------------------------------//
 
+Function setScriptSystem( cScriptSystem )
+
+   scriptSystem   := cScriptSystem
+
+Return ( nil )   
+
+//---------------------------------------------------------------------------//
+
+Function runScriptBeforeAppend()
+
+   if !empty(scriptSystem)
+      runEventScript( scriptSystem + "\beforeAppend" )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function runScriptAfterAppend()
+
+   if !empty(scriptSystem)
+      runEventScript( scriptSystem + "\afterAppend" )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function runScriptBeforeEdit()
+
+   if !empty(scriptSystem)
+      runEventScript( scriptSystem + "\beforeEdit" )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function runScriptAfterEdit()
+
+   if !empty(scriptSystem)
+      runEventScript( scriptSystem + "\afterEdit" )
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 /*
 A¤ade regsitros a la base de datos
 	- oBrw. Browse de procedencia
@@ -1517,6 +1567,12 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       return .f.
    end if
 
+   // Script antes de añadir
+
+   runScriptBeforeAppend()
+
+   // Orden principal
+
    if Empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
@@ -1525,9 +1581,7 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
 
    aGet           := Array( ( cAlias )->( fCount() ) )
 
-	/*
-	Bloqueamos el registro durante la edición-----------------------------------
-	*/
+	// Bloqueamos el registro durante la edición-----------------------------------
 
    lReturn        := Eval( bEdit, aTmp, aGet, cAlias, oBrw, bWhen, bValid, APPD_MODE, xOthers )
 
@@ -1538,6 +1592,14 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    if IsNum( nOrd ) .and. ( nOrd != 0 )
       ( cAlias )->( OrdSetFocus ( nOrd ) )
    end if
+
+   // Script despues de añadir
+
+   runScriptAfterAppend()
+
+   runScriptAfterEdit()
+
+   // refrescos en pantalla
 
    if !Empty( oBrw ) .and. ( oBrw:lActive )
 
@@ -1583,6 +1645,12 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       Return .f.
    end if
 
+   // Script antes de añadir
+
+   runScriptBeforeAppend()
+
+   // Orden principal
+
    nRec           := ( cAlias )->( Recno() )
 
    if Empty( ( cAlias )->( OrdSetFocus() ) )
@@ -1618,6 +1686,14 @@ FUNCTION WinDupRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    if !lResult
       ( cAlias )->( dbGoTo( nRec ) )
    end if
+
+   // Script despues de añadir
+
+   runScriptAfterAppend()
+
+   runScriptAfterEdit()
+
+   // refrescos en pantalla
 
    if lResult .and. !Empty( oBrw ) .and. ( oBrw:lActive )
 
@@ -1663,6 +1739,12 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       return .f.
    end if
 
+   // Script antes de añadir
+
+   runScriptBeforeEdit()
+
+   // Orden principal
+
    if Empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd           := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
@@ -1681,6 +1763,12 @@ FUNCTION WinEdtRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
    if isNum( nOrd ) .and. nOrd != 0
       ( cAlias )->( OrdSetFocus( nOrd ) )
    end if
+
+   // Script despues de añadir
+
+   runScriptAfterEdit()
+
+   // refrescos en pantalla
 
    if lResult .and. oBrw != nil
 
@@ -3620,3 +3708,4 @@ Function signatureToMemo( )
    end if 
 
 Return ( cMemo )
+

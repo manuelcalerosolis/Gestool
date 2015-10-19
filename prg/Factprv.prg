@@ -518,18 +518,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oBandera          := TBandera():New()
 
-      oFntTot           := TFont():New( "Arial", 8, 26, .F., .T. )// Font del total
-
-      initPublics()
-
-      /*
-      Limitaciones de cajero y cajas--------------------------------------------------------
-      */
-
-      if oUser():lFiltroVentas()
-         cFiltroUsuario       := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-      end if
-
       /*
       Numeros de serie---------------------------------------------------------
       */
@@ -545,7 +533,7 @@ STATIC FUNCTION OpenFiles( lExt )
       Campos extras------------------------------------------------------------------------
       */
 
-      oDetCamposExtra      := TDetCamposExtra():New()
+      oDetCamposExtra         := TDetCamposExtra():New()
       oDetCamposExtra:OpenFiles()
       oDetCamposExtra:SetTipoDocumento( "Facturas a proveedores" )
 
@@ -553,9 +541,19 @@ STATIC FUNCTION OpenFiles( lExt )
       Centro de coste-----------------------------------------------------------------------
       */
 
-      oCentroCoste      := TCentroCoste():Create( cPatDat() )
+      oCentroCoste            := TCentroCoste():Create( cPatDat() )
       if !oCentroCoste:OpenFiles()
-         lOpenFiles     := .f.
+         lOpenFiles           := .f.
+      end if
+
+      oFntTot                 := TFont():New( "Arial", 8, 26, .F., .T. )// Font del total
+
+      initPublics()
+
+      // Limitaciones de cajero y cajas--------------------------------------------------------
+
+      if oUser():lFiltroVentas()
+         cFiltroUsuario       := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
       end if
 
       EnableAcceso()
@@ -645,21 +643,33 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       return .f.
    end if
 
-   /*
-   Cerramos todas las ventanas
-   */
+   // Cerramos todas las ventanas
 
    if oWnd != nil
       SysRefresh(); oWnd:CloseAll(); SysRefresh()
    end if
 
+   // Script beforeOpenFiles--------------------------------------------------
+
+   runEventScript( "FacturasProveedores\beforeOpenFiles" )
+
+   // Apertura de ficheros-----------------------------------------------------
+
    if !OpenFiles()
+
+      // Script afterOpenFiles------------------------------------------------
+
+      runEventScript( "FacturasProveedores\afterOpenFiles" )
+
       return .f.
+
    end if
 
-   /*
-   Anotamos el movimiento para el navegador
-   */
+   // Anotamos el sistema de script
+
+   setScriptSystem( "FacturasProveedores" )
+
+   // Abrimos la navegacion
 
    DisableAcceso()
 
@@ -1166,6 +1176,10 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       cCodArt  := nil
       cNumAlb  := nil
    end if
+
+   // Quitamos el sistema de script
+
+   setScriptSystem()
 
 Return .t.
 
