@@ -41,6 +41,10 @@ CLASS ImportarPedidosProveedorExcel
 
    DATA nColumnTalla
 
+   DATA codigoArticuloAnterior               INIT ''
+
+   DATA numeroLinea                          INIT 0
+
    DATA cReferenciaProveedor
    DATA cCodigoArticulo
    DATA cCodigoColor
@@ -88,6 +92,8 @@ CLASS ImportarPedidosProveedorExcel
    METHOD getActiveSheetValue( nRow, nCol )  INLINE ( ::oActiveSheet:Cells( nRow, nCol ):Value )
 
    METHOD getTallaFromColumna( nCol )        INLINE ( if( hhaskey( ::hTallas, nCol ), hGet( ::hTallas, nCol ), "" ) )
+
+   METHOD getNumeroLinea( hLinea )
 
 ENDCLASS
 
@@ -517,7 +523,7 @@ METHOD setLineasPedidos()
          ( D():PedidosProveedoresLineas( ::nView ) )->nCtlStk  := 1
          ( D():PedidosProveedoresLineas( ::nView ) )->cAlmLin  := hLinea['Almacen']
          ( D():PedidosProveedoresLineas( ::nView ) )->lLote    := .f.         
-         ( D():PedidosProveedoresLineas( ::nView ) )->nNumLin  := nNumLin
+         ( D():PedidosProveedoresLineas( ::nView ) )->nNumLin  := ::getNumeroLinea(hLinea)
          ( D():PedidosProveedoresLineas( ::nView ) )->cCodFam  := hLinea['Familia']
          ( D():PedidosProveedoresLineas( ::nView ) )->nEstado  := 1
 
@@ -527,6 +533,17 @@ METHOD setLineasPedidos()
    next 
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD getNumeroLinea( hLinea )
+
+   if hLinea['Articulo'] != ::codigoArticuloAnterior
+      ::codigoArticuloAnterior   := hLinea['Articulo']
+      ::numeroLinea++
+   endif
+
+Return ( ::numeroLinea )
 
 //---------------------------------------------------------------------------//
 
@@ -548,6 +565,7 @@ METHOD setTotalesPedido()
 
 Return ( self )
 
+//---------------------------------------------------------------------------//
 
 
       
