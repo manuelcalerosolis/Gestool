@@ -4553,7 +4553,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, lTotLin, cCodArtEnt, nMode, aTmpP
 		REDEFINE GET aGet[_NUNICAJA] VAR aTmp[_NUNICAJA];
 			ID 		140 ;
 			SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
+         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .and. !accessCode():lUnitsModify ) ;
          ON CHANGE( RecalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) ) ;
          VALID    ( RecalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ), LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) ) ;
 			PICTURE 	cPicUnd ;
@@ -10344,6 +10344,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPed, aGet, oFld, oDlg2, oBrw, bmpImage, nMod
       return nil
    end if 
    
+   if aTmp[ _NUNICAJA ] == 0
+      aTmp[ _NUNICAJA ] := 0
+   end if 
+
    // Situaciones atipicas-----------------------------------------------------
 
    CursorWait()

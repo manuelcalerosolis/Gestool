@@ -5132,7 +5132,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, cFacCliL, oBrw, lTotLin, cCodArtEnt, nMode, 
       REDEFINE GET aGet[_NUNICAJA] VAR aTmp[_NUNICAJA] ;
          ID       140 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .AND. nMode != MULT_MODE ) ; // .AND. !aTmpFac[ _LIMPALB ]
+         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .AND. nMode != MULT_MODE .and. !accessCode():lUnitsModify ) ; // .AND. !aTmpFac[ _LIMPALB ]
          ON CHANGE( lCalcDeta( aTmp, aTmpFac ), loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          VALID    ( lCalcDeta( aTmp, aTmpFac ), loaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, nMode, .f. ) );
          PICTURE  cPicUnd ;
@@ -13339,6 +13339,10 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpFac, aGet, oBrw, oDlg, oFld, oSayPr1, oSayPr
 	      oBtnSer:Click()
 	   end if 
       Return nil
+   end if
+
+   if aTmp[ _NUNICAJA ] == 0
+      aTmp[ _NUNICAJA ] := 1
    end if
 
    aClo     	:= aClone( aTmp )

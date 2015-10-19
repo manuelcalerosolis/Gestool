@@ -7947,6 +7947,10 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
       aGet[ _NUNTTIL ]:Refresh()
    end if
 
+   if aTmp[ _NUNTTIL ] == 0
+      aTmp[ _NUNTTIL ] := 1
+   end if 
+
    /*
    Control de capturas---------------------------------------------------------
    */
