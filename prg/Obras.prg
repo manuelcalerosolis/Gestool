@@ -95,6 +95,11 @@ STATIC FUNCTION EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cC
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
+      REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CPROVEE" ) ) ] ;
+         ID       260 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg
+
       REDEFINE GET aBlank[ (dbfObrasT)->( FieldPos( "CESTOBR" ) ) ] ;
          ID       240 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -763,6 +768,7 @@ FUNCTION aItmObr()
    aAdd( aItmObr, { "cPobEnt",   "C",  200,    0, "Población de entrega" ,             "",                  "", "( cDbfObr )" } )
    aAdd( aItmObr, { "cCPEnt",    "C",   15,    0, "Código postal de entrega" ,         "",                  "", "( cDbfObr )" } )
    aAdd( aItmObr, { "cPrvEnt",   "C",  100,    0, "Provincia de entrega" ,             "",                  "", "( cDbfObr )" } )
+   aAdd( aItmObr, { "cProvee",   "C",   50,    0, "Código de proveedor" ,              "",                  "", "( cDbfObr )" } )
 
 RETURN ( aItmObr )
 

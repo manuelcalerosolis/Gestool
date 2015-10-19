@@ -135,6 +135,9 @@ CLASS TShell FROM TMdiChild
 
    DATA  bFilter
 
+   DATA  lFilterClient  AS LOGIC    INIT .f.
+   DATA  lFilterProvee  AS LOGIC    INIT .f.
+
    CLASSDATA nToolTip   AS NUMERIC  INIT 900
 
    METHOD New( nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
@@ -1011,7 +1014,7 @@ METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
 
    lSeek             := ::FastFilter( xCadena, cAlias ) // 
    if !lSeek
-      lSeek          := lMiniSeek( nil, xCadena, cAlias, nLen )
+      lSeek          := lMiniSeek( nil, xCadena, cAlias, nLen, ::lFilterClient )
    end if
 
    if lSeek .or. empty( xCadena )

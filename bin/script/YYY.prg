@@ -390,6 +390,7 @@ Static Function ImportacionClientes()
 
    local n
    local cCodigoCliente    := ""
+   local cMail
 
    msgwait( "Importamos clientes", , .1 )
 
@@ -421,7 +422,15 @@ Static Function ImportacionClientes()
          ( D():Clientes( nView ) )->SubCta      := GetRange( "L", n )
          ( D():Clientes( nView ) )->Telefono    := GetRange( "M", n )
          ( D():Clientes( nView ) )->Telefono2   := GetRange( "N", n )
-         ( D():Clientes( nView ) )->mComent     := GetRange( "O", n )
+         
+         cMail                                  := GetRange( "O", n )
+
+         if At( "@", cMail ) != 0
+            ( D():Clientes( nView ) )->cMeiInt  := cMail
+         else
+            ( D():Clientes( nView ) )->mComent  := cMail
+         end if
+
          ( D():Clientes( nView ) )->Fax         := GetRange( "P", n )
          ( D():Clientes( nView ) )->CodPago     := GetRange( "AK", n )
          ( D():Clientes( nView ) )->lReq        := ( AllTrim( GetRange( "AM", n ) ) == "S" )
@@ -441,6 +450,7 @@ Static Function ImportacionClientes()
          ( D():Clientes( nView ) )->cPobEnt     := GetRange( "AA", n )
          ( D():Clientes( nView ) )->cCpEnt      := GetRange( "AC", n )
          ( D():Clientes( nView ) )->cPrvEnt     := GetRange( "AB", n )
+         ( D():Clientes( nView ) )->cProvee     := GetRange( "BE", n )
 
          ( D():Clientes( nView ) )->( dbUnlock() )
 
@@ -480,6 +490,7 @@ Static Function ImportacionClientes()
          ( D():ClientesDirecciones( nView ) )->cPobEnt   := GetRange( "AA", n )
          ( D():ClientesDirecciones( nView ) )->cCpEnt    := GetRange( "AC", n )
          ( D():ClientesDirecciones( nView ) )->cPrvEnt   := GetRange( "AB", n )
+         ( D():ClientesDirecciones( nView ) )->cProvee   := GetRange( "BE", n )
 
          ( D():ClientesDirecciones( nView ) )->( dbUnlock() )
       

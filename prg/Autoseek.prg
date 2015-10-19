@@ -229,20 +229,21 @@ RETURN ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
+Function lMiniSeek( cPrefij, xCadena, xAlias, nLen, lFilterClient )
 
-   local n
    local nRec
-   local lRet     := .f.
-   local cPre
-   local cPos
+   local lRet              := .f.
    local cType
    local oBlock
    local oError
+   local n
+   local cPre
+   local cPos
 
-   DEFAULT nLen   := 10
+   DEFAULT nLen            := 10
+   DEFAULT lFilterClient   := .f.
 
-   cType          := ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) )
+   cType                   := ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) )
 
    if !( cType $ "CDN" )
       return .f.
@@ -298,45 +299,10 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
          else
 
-            //nLen     := 11 // 13
-
-            /*if Empty( nLen )
-               nLen  := len( ( xAlias )->( ordKeyVal() ) ) - 2 
-            end if*/
-
-            if Empty( cPrefij )
-
-               cPre  := SubStr( xCadena, 1, 1 )
-               cPos  := Padl( Rtrim( SubStr( xCadena, 2, nLen - 1 ) ), nLen - 1 )
-
-               for n := 1 to nLen
-
-                  if ( xAlias )->( dbSeek( cPre + cPos, .f. ) )
-
-                     ( xAlias )->( OrdScope( 0, cPre + cPos ) )
-                     ( xAlias )->( OrdScope( 1, cPre + cPos ) )
-
-                     lRet  := .t.
-                     
-                     exit
-
-                  end if
-
-                  if Empty( SubStr( cPos, 2, 1 ) )
-                     lRet  := .f.
-                     cPos  := SubStr( cPos, 2, len( cPos ) - 1 )
-                  else
-                     lRet  := .f.
-                     exit
-                  end if
-
-               next
-
+            if lFilterClient
+               lRet     := SeekClient( cPrefij, xCadena, xAlias, nLen )
             else
-
-               ( xAlias )->( OrdScope( 0, cPreFij ) )
-               ( xAlias )->( OrdScope( 1, cPreFij ) )
-
+               lRet     := SeekDocumento( cPrefij, xCadena, xAlias, nLen )
             end if
 
          end if
@@ -361,6 +327,64 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+Return ( lRet )
+
+//---------------------------------------------------------------------------//
+
+Function SeekClient( cPrefij, xCadena, xAlias, nLen )
+
+   local lRet        := .f.
+
+   //?"Hacemos la búsqueda de los clientes"
+
+
+
+return ( lRet )
+
+//---------------------------------------------------------------------------//
+
+Function SeekDocumento( cPrefij, xCadena, xAlias, nLen )
+   
+   local n
+   local cPre
+   local cPos
+   local lRet     := .f.
+
+   if Empty( cPrefij )
+
+      cPre  := SubStr( xCadena, 1, 1 )
+      cPos  := Padl( Rtrim( SubStr( xCadena, 2, nLen - 1 ) ), nLen - 1 )
+
+      for n := 1 to nLen
+
+         if ( xAlias )->( dbSeek( cPre + cPos, .f. ) )
+
+            ( xAlias )->( OrdScope( 0, cPre + cPos ) )
+            ( xAlias )->( OrdScope( 1, cPre + cPos ) )
+
+            lRet  := .t.
+            
+            exit
+
+         end if
+
+         if Empty( SubStr( cPos, 2, 1 ) )
+            lRet  := .f.
+            cPos  := SubStr( cPos, 2, len( cPos ) - 1 )
+         else
+            lRet  := .f.
+            exit
+         end if
+
+      next
+
+   else
+
+      ( xAlias )->( OrdScope( 0, cPreFij ) )
+      ( xAlias )->( OrdScope( 1, cPreFij ) )
+
+   end if
 
 Return ( lRet )
 
