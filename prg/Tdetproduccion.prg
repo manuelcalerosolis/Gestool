@@ -13,6 +13,8 @@ CLASS TDetProduccion FROM TDetalleArticulos
 
    DATA  oGetCaja
    DATA  oGetUnd
+   DATA  oGetBultos
+   DATA  oGetFormato
    DATA  oImpOrd
 
    DATA  oGetTotalUnidades
@@ -138,6 +140,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetProduccion
       FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT "Clasificación"                 HIDE        OF oDbf
       FIELD NAME "dFecCad"    TYPE "D" LEN  8  DEC 0 COMMENT "Fecha de caducidad"            COLSIZE  80 OF oDbf
       FIELD NAME "cHorIni"    TYPE "C" LEN  6  DEC 0 COMMENT "Hora"                          HIDE        OF oDbf           
+      FIELD NAME "nBultos"    TYPE "N" LEN 16  DEC 6 COMMENT "Numero de bultos en líneas"    HIDE        OF oDbf           
+      FIELD NAME "cFormato"   TYPE "C" LEN 100 DEC 0 COMMENT "Formato"                       HIDE        OF oDbf           
 
       ::CommunFields( oDbf )
 
@@ -347,8 +351,16 @@ METHOD Resource( nMode ) CLASS TDetProduccion
          OF       oFld:aDialogs[1]
 
       /*
-      Cajas y unidades---------------------------------------------------------
+      Bultos, cajas y unidades-------------------------------------------------
       */
+
+      REDEFINE GET ::oGetBultos VAR ::oDbfVir:nBultos ;
+         ID       330 ;
+         IDSAY    331 ;
+         SPINNER ;
+         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE  ::oParent:cPicUnd ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET ::oGetCaja VAR ::oDbfVir:nCajOrd ;
          ID       120 ;
@@ -464,6 +476,11 @@ METHOD Resource( nMode ) CLASS TDetProduccion
       REDEFINE GET oSayAlm VAR cSayAlm ;
          ID       191 ;
          WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET ::oGetFormato VAR ::oDbfVir:cFormato;
+         ID       340;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
       /*
