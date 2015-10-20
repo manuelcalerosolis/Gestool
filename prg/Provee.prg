@@ -471,6 +471,7 @@ FUNCTION Provee( oMenuItem, oWnd )
       HOTKEY   "B";
 
    oWndBrw:AddSeaBar()
+   oWndBrw:lFilterProvee   := .t.
 
 	DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
 		NOBORDER ;

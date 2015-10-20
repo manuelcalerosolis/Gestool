@@ -1012,9 +1012,9 @@ METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
 
    // Comenzamos la busqueda------------------------------------------------------
 
-   lSeek             := ::FastFilter( xCadena, cAlias ) // 
+   lSeek             := ::FastFilter( xCadena, cAlias )
    if !lSeek
-      lSeek          := lMiniSeek( nil, xCadena, cAlias, nLen, ::lFilterClient )
+      lSeek          := lMiniSeek( nil, xCadena, cAlias, nLen, ::lFilterClient, ::lFilterProvee )
    end if
 
    if lSeek .or. empty( xCadena )

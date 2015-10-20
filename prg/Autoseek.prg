@@ -229,7 +229,7 @@ RETURN ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function lMiniSeek( cPrefij, xCadena, xAlias, nLen, lFilterClient )
+Function lMiniSeek( cPrefij, xCadena, xAlias, nLen, lFilterClient, lFilterProvee )
 
    local nRec
    local lRet              := .f.
@@ -299,10 +299,14 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen, lFilterClient )
 
          else
 
+            lRet     := SeekDocumento( cPrefij, xCadena, xAlias, nLen )
+
             if lFilterClient
-               lRet     := SeekClient( cPrefij, xCadena, xAlias, nLen )
-            else
-               lRet     := SeekDocumento( cPrefij, xCadena, xAlias, nLen )
+               lRet  := SeekClient( cPrefij, xCadena, xAlias )
+            end if
+
+            if lFilterProvee
+               lRet  := SeekProvee( cPrefij, xCadena, xAlias )
             end if
 
          end if
@@ -332,13 +336,53 @@ Return ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function SeekClient( cPrefij, xCadena, xAlias, nLen )
+Function SeekClient( cPrefij, xCadena, xAlias )
 
    local lRet        := .f.
 
-   //?"Hacemos la búsqueda de los clientes"
+   if Empty( cPrefij )
 
+      if ( xAlias )->( dbSeek( Rjust( AllTrim( xCadena ), "0", RetNumCodCliEmp() ) ) )
 
+         ( xAlias )->( OrdScope( 0, Rjust( AllTrim( xCadena ), "0", RetNumCodCliEmp() ) ) )
+         ( xAlias )->( OrdScope( 1, Rjust( AllTrim( xCadena ), "0", RetNumCodCliEmp() ) ) )
+
+         lRet  := .t.
+            
+      end if
+
+   else
+
+      ( xAlias )->( OrdScope( 0, cPreFij ) )
+      ( xAlias )->( OrdScope( 1, cPreFij ) )
+
+   end if
+
+return ( lRet )
+
+//---------------------------------------------------------------------------//
+
+Function SeekProvee( cPrefij, xCadena, xAlias )
+
+   local lRet        := .f.
+
+   if Empty( cPrefij )
+
+      if ( xAlias )->( dbSeek( Rjust( AllTrim( xCadena ), "0", RetNumCodPrvEmp() ) ) )
+
+         ( xAlias )->( OrdScope( 0, Rjust( AllTrim( xCadena ), "0", RetNumCodPrvEmp() ) ) )
+         ( xAlias )->( OrdScope( 1, Rjust( AllTrim( xCadena ), "0", RetNumCodPrvEmp() ) ) )
+
+         lRet  := .t.
+            
+      end if
+
+   else
+
+      ( xAlias )->( OrdScope( 0, cPreFij ) )
+      ( xAlias )->( OrdScope( 1, cPreFij ) )
+
+   end if
 
 return ( lRet )
 
