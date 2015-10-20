@@ -198,28 +198,12 @@ FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha, nLen )
    end if
 
    /*
-   Probando ordWildSeek-------------------------------------------------------- 
-
-   if Left( xCadena, 1 ) == "*"
-      if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
-         if ( xAlias )->( ordWildSeek( xCadena, .t. ) )
-            return .t.
-         else
-            return .f.
-         end if
-      else
-         return .t.
-      end if
-   end if
-   */
-
-   /*
    Comprobaciones antes de buscar----------------------------------------------
    */
 
    cSort       := ( xAlias )->( OrdSetFocus() )
 
-   lRet        := lMiniSeek( cPrefij, xCadena, xAlias, nLen )
+   lRet        := lMiniSeek( xCadena, xAlias, nLen )
 
    if !lRet
       ( xAlias )->( OrdSetFocus( cSort ) )
@@ -229,19 +213,29 @@ RETURN ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function lMiniSeek( cPrefij, xCadena, xAlias, nLen, lFilterClient, lFilterProvee )
+Function lMiniSeek( xCadena, xAlias, nLen )
+
+   local lRet              := .f.
+
+   DEFAULT nLen            := 10
+
+   lRet                    := lSeekKeyType( xCadena, xAlias )
+
+   if !lRet .and. ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) ) == "C"
+      lRet                 := seekDocumento( xCadena, xAlias, nLen )
+   end if 
+
+Return ( lRet )
+
+//---------------------------------------------------------------------------//
+
+Function lSeekKeyType( xCadena, xAlias )
 
    local nRec
    local lRet              := .f.
    local cType
    local oBlock
    local oError
-   local n
-   local cPre
-   local cPos
-
-   DEFAULT nLen            := 10
-   DEFAULT lFilterClient   := .f.
 
    cType                   := ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) )
 
@@ -249,18 +243,12 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen, lFilterClient, lFilterProvee
       return .f.
    end if
 
-/*
-   if !isChar( ( xAlias )->( ordKeyVal() ) )
-      return .f.
-   end if
-*/
-
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    nRec           := ( xAlias )->( Recno() )
 
-   if !Empty( xCadena )
+   if !empty( xCadena )
 
       ( xAlias )->( OrdScope( 0, nil ) )
       ( xAlias )->( OrdScope( 1, nil ) )
@@ -297,28 +285,9 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen, lFilterClient, lFilterProvee
 
             lRet     := .t.
 
-         else
-
-            lRet     := SeekDocumento( cPrefij, xCadena, xAlias, nLen )
-
-            if lFilterClient
-               lRet  := SeekClient( cPrefij, xCadena, xAlias )
-            end if
-
-            if lFilterProvee
-               lRet  := SeekProvee( cPrefij, xCadena, xAlias )
-            end if
-
          end if
 
       end case
-
-   else
-
-      ( xAlias )->( OrdScope( 0, cPreFij ) )
-      ( xAlias )->( OrdScope( 1, cPreFij ) )
-
-      lRet           := .f.
 
    end if
 
@@ -336,98 +305,70 @@ Return ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function SeekClient( cPrefij, xCadena, xAlias )
+Function seekCodigoTerceros( xCadena, xAlias, nLenCodigo )
 
+   local nRec
    local lRet        := .f.
 
-   if Empty( cPrefij )
+   nRec              := ( xAlias )->( Recno() )
 
-      if ( xAlias )->( dbSeek( Rjust( AllTrim( xCadena ), "0", RetNumCodCliEmp() ) ) )
+   xCadena           :=  rjust( alltrim( xCadena ), "0", nLenCodigo )
 
-         ( xAlias )->( OrdScope( 0, Rjust( AllTrim( xCadena ), "0", RetNumCodCliEmp() ) ) )
-         ( xAlias )->( OrdScope( 1, Rjust( AllTrim( xCadena ), "0", RetNumCodCliEmp() ) ) )
+   if ( xAlias )->( dbSeek( xCadena ) ) 
 
-         lRet  := .t.
+      ( xAlias )->( OrdScope( 0, xCadena ) )
+      ( xAlias )->( OrdScope( 1, xCadena ) )
+
+      lRet           := .t.
             
-      end if
+   end if
 
-   else
-
-      ( xAlias )->( OrdScope( 0, cPreFij ) )
-      ( xAlias )->( OrdScope( 1, cPreFij ) )
-
+   if !lRet
+      ( xAlias )->( dbGoTo( nRec ) )
    end if
 
 return ( lRet )
 
 //---------------------------------------------------------------------------//
 
-Function SeekProvee( cPrefij, xCadena, xAlias )
-
-   local lRet        := .f.
-
-   if Empty( cPrefij )
-
-      if ( xAlias )->( dbSeek( Rjust( AllTrim( xCadena ), "0", RetNumCodPrvEmp() ) ) )
-
-         ( xAlias )->( OrdScope( 0, Rjust( AllTrim( xCadena ), "0", RetNumCodPrvEmp() ) ) )
-         ( xAlias )->( OrdScope( 1, Rjust( AllTrim( xCadena ), "0", RetNumCodPrvEmp() ) ) )
-
-         lRet  := .t.
-            
-      end if
-
-   else
-
-      ( xAlias )->( OrdScope( 0, cPreFij ) )
-      ( xAlias )->( OrdScope( 1, cPreFij ) )
-
-   end if
-
-return ( lRet )
-
-//---------------------------------------------------------------------------//
-
-Function SeekDocumento( cPrefij, xCadena, xAlias, nLen )
+Function seekDocumento( xCadena, xAlias, nLen )
    
    local n
+   local nRec
    local cPre
    local cPos
-   local lRet     := .f.
+   local lRet        := .f.
 
-   if Empty( cPrefij )
+   nRec              := ( xAlias )->( Recno() )
 
-      cPre  := SubStr( xCadena, 1, 1 )
-      cPos  := Padl( Rtrim( SubStr( xCadena, 2, nLen - 1 ) ), nLen - 1 )
+   cPre              := SubStr( xCadena, 1, 1 )
+   cPos              := Padl( Rtrim( SubStr( xCadena, 2, nLen - 1 ) ), nLen - 1 )
 
-      for n := 1 to nLen
+   for n := 1 to nLen
 
-         if ( xAlias )->( dbSeek( cPre + cPos, .f. ) )
+      if ( xAlias )->( dbSeek( cPre + cPos, .f. ) )
 
-            ( xAlias )->( OrdScope( 0, cPre + cPos ) )
-            ( xAlias )->( OrdScope( 1, cPre + cPos ) )
+         ( xAlias )->( OrdScope( 0, cPre + cPos ) )
+         ( xAlias )->( OrdScope( 1, cPre + cPos ) )
 
-            lRet  := .t.
-            
-            exit
+         lRet  := .t.
+         
+         exit
 
-         end if
+      end if
 
-         if Empty( SubStr( cPos, 2, 1 ) )
-            lRet  := .f.
-            cPos  := SubStr( cPos, 2, len( cPos ) - 1 )
-         else
-            lRet  := .f.
-            exit
-         end if
+      if Empty( SubStr( cPos, 2, 1 ) )
+         lRet  := .f.
+         cPos  := SubStr( cPos, 2, len( cPos ) - 1 )
+      else
+         lRet  := .f.
+         exit
+      end if
 
-      next
+   next
 
-   else
-
-      ( xAlias )->( OrdScope( 0, cPreFij ) )
-      ( xAlias )->( OrdScope( 1, cPreFij ) )
-
+   if !lRet
+      ( xAlias )->( dbGoTo( nRec ) )
    end if
 
 Return ( lRet )

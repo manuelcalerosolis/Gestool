@@ -1024,7 +1024,7 @@ FUNCTION FactCli( oMenuItem, oWnd, hHash )
       TOOLTIP  "(B)uscar" ;
       HOTKEY   "B"
 
-   oWndBrw:AddSeaBar()
+      oWndBrw:AddSeaBar()
 
       DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
          NOBORDER ;

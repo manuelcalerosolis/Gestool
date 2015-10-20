@@ -470,8 +470,7 @@ FUNCTION Provee( oMenuItem, oWnd )
 		TOOLTIP 	"(B)uscar" ;
       HOTKEY   "B";
 
-   oWndBrw:AddSeaBar()
-   oWndBrw:lFilterProvee   := .t.
+   oWndBrw:AddSeaBar( "justZero", retNumCodPrvEmp() )
 
 	DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
 		NOBORDER ;

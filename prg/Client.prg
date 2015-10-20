@@ -907,8 +907,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
          TOOLTIP  "(B)uscar" ;
          HOTKEY   "B"
 
-      oWndBrw:AddSeaBar()
-      oWndBrw:lFilterClient   := .t.
+      oWndBrw:AddSeaBar( "justZero", retNumCodCliEmp() )
 
       DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
          NOBORDER ;

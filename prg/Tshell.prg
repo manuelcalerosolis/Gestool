@@ -135,6 +135,9 @@ CLASS TShell FROM TMdiChild
 
    DATA  bFilter
 
+   DATA cSearchType     INIT "justSpace"
+   DATA nLenSearchType  INIT 10
+
    DATA  lFilterClient  AS LOGIC    INIT .f.
    DATA  lFilterProvee  AS LOGIC    INIT .f.
 
@@ -771,7 +774,7 @@ METHOD End( lForceExit ) CLASS TShell
       // Guardamos la pos actual ----------------------------------------------
 
       if ( ::xAlias )->( Used() )
-         ::nRec               := ( ::xAlias )->( RecNo() )
+         ::nRec               := ( ::xAlias )->( recno() )
       end if 
 
       if !::lBigStyle .and. !Empty( ::oWndBar )
@@ -826,53 +829,6 @@ Return ( .t. )
 
 METHOD Search() CLASS TShell
 
-	local oDlg
-   local oIndice
-   local cIndice
-   local oAutoSeek
-   local oThis    := Self
-   local xCadena  := Space( 100 )
-
-   if len( ::aPrompt ) == 0
-      msgStop( "No hay indices definidos" )
-      return nil
-   end if
-
-   if ( ::xAlias )->( Used() )
-      cIndice     := ::aPrompt[ ( ::xAlias )->( OrdNumber() ) ]
-   end if 
-
-   DEFINE DIALOG oDlg RESOURCE "SEARCH"
-
-   REDEFINE COMBOBOX ::oTxtSea VAR xCadena;
-      ITEMS       ::aLstSea ;
-      ID          100 ;
-      OF          oDlg ;
-      STYLE       CBS_DROPDOWN
-
-      ::oTxtSea:bValid        := {|| ::AddSearch() }
-      ::oTxtSea:bChange       := {|| ::ChangeSeek( oIndice ) }
-
-      ::oTxtSea:oGet:bChange  := {| nKey, nFlags | ::FastSeek( nKey, nFlags, ::oTxtSea ) }
-
-   REDEFINE COMBOBOX oIndice VAR cIndice ;
-      ID          101 ;
-      ITEMS       ::aPrompt ;
-      OF          oDlg
-
-      oIndice:bChange         := {|| ::ChgIndex( oIndice ) }
-
-   REDEFINE CHECKBOX oAutoSeek VAR ::lAutoSeek ;
-      ID          102 ;
-      OF          oDlg ;
-
-   REDEFINE BUTTON ;
-      ID          510 ;
-      OF          oDlg ;
-      ACTION      ( oDlg:end() )
-
-   ACTIVATE DIALOG oDlg CENTER VALID ( oThis:AddSearch() )
-
 RETURN NIL
 
 //--------------------------------------------------------------------------//
@@ -890,7 +846,7 @@ METHOD AddSearch() CLASS TShell
 
    if ( ::xAlias )->( Used() )
 
-      nRec  := ( ::xAlias )->( Recno() )
+      nRec  := ( ::xAlias )->( recno() )
 
       ( ::xAlias )->( OrdScope( 0, nil ) )
       ( ::xAlias )->( OrdScope( 1, nil ) )
@@ -982,15 +938,13 @@ RETURN .T.
 // Realiza busquedas de manera progresiva
 //
 
-METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
+METHOD FastSeek( oGet, xCadena ) CLASS TShell
 
    local nRec
-   local cOrd
+   local nOrd
    local oCol
    local lSeek
    local cAlias
-
-   DEFAULT nLen      := 10
 
    cAlias            := ::xAlias
 
@@ -1007,15 +961,27 @@ METHOD FastSeek( oGet, xCadena, nLen ) CLASS TShell
 
    // Guradamos valores iniciales-------------------------------------------------
 
-   nRec              := ( cAlias )->( RecNo() )
-   cOrd              := ( cAlias )->( OrdSetFocus() )
+   nRec              := ( cAlias )->( recno() )
+   nOrd              := ( cAlias )->( ordnumber() )
 
    // Comenzamos la busqueda------------------------------------------------------
 
    lSeek             := ::FastFilter( xCadena, cAlias )
    if !lSeek
-      lSeek          := lMiniSeek( nil, xCadena, cAlias, nLen, ::lFilterClient, ::lFilterProvee )
+      lSeek          := lSeekKeyType( xCadena, cAlias ) // lMiniSeek( xCadena, cAlias, ::cSearchType, ::nLenSearchType )
    end if
+
+   if ( nOrd == 1 .and. !lSeek )
+
+      if ::cSearchType == "justZero"
+         lSeek       := seekCodigoTerceros( xCadena, cAlias, ::nLenSearchType )
+      end if
+
+      if ::cSearchType == "justSpace"
+         lSeek       := seekDocumento( xCadena, cAlias, ::nLenSearchType )          
+      endif
+
+   end if 
 
    if lSeek .or. empty( xCadena )
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
@@ -1838,9 +1804,13 @@ return ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD AddSeaBar( nLen ) CLASS TShell
+METHOD addSeaBar( cSearchType, nLenSearchType ) CLASS TShell
 
-   DEFAULT nLen   := 10
+   DEFAULT cSearchType     := "justSpace"
+   DEFAULT nLenSearchType  := 10
+
+   ::cSearchType           := cSearchType
+   ::nLenSearchType        := nLenSearchType
 
    if !Empty( ::oWndBar )
 
@@ -1853,7 +1823,7 @@ METHOD AddSeaBar( nLen ) CLASS TShell
       ::oWndBar:SetEditButtonFilter(   {|| ::EditFilter() } )
 
       ::oWndBar:SetGetLostFocus(       {|| ::AddSearch() } )
-      ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText, nLen ) } )
+      ::oWndBar:SetGetPostKey(         {| oGet, cText  | ::FastSeek( oGet, cText ) } )
       ::oWndBar:SetGetKeyDown(         {| nKey, nFlags | ::KeySearch( nKey ) } )
 
    end if
@@ -2170,7 +2140,7 @@ Method LoadData()
 
             ( ::xAlias )->( dbGoTo( ::nRec ) )
 
-            if ( ::xAlias )->( Recno() ) != ::nRec .or. ::nRec > ( ::xAlias )->( Lastrec() )
+            if ( ::xAlias )->( recno() ) != ::nRec .or. ::nRec > ( ::xAlias )->( Lastrec() )
                ( ::xAlias )->( dbGoTop() )
             end if
 

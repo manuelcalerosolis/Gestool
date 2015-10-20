@@ -747,6 +747,7 @@ METHOD assignLinesDocument() CLASS DocumentsSales
    Local nNumeroLinea   := 0
 
    for each oDocumentLine in ::oDocumentLines:aLines
+   
       oDocumentLine:setNumeroLinea( ++nNumeroLinea )
       oDocumentLine:setSerieMaster()
       oDocumentLine:setNumeroMaster()

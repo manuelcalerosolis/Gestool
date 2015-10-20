@@ -1448,7 +1448,7 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
       BEGIN GROUP ;
       HOTKEY   "B"
 
-   oWndBrw:AddSeaBar( 11 )
+   oWndBrw:AddSeaBar( "justSpace", 11 )
 
    DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
       NOBORDER ;
