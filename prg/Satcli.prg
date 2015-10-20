@@ -3612,7 +3612,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE GET aGet[ _NUNICAJA ] VAR aTmp[ _NUNICAJA ];
          ID       140 ;
          SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .and. !accessCode():lUnitsModify ) ;
+         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin .and. accessCode():lUnitsModify ) ;
          ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
          VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
          PICTURE  cPicUnd ;

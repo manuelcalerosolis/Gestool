@@ -141,6 +141,8 @@
 #define _CCPENT                  131
 #define _CPRVENT                 132
 #define _CPROVEE                 133
+#define _CCODBIC                 134
+#define _CHORARIO                135
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODGRP                  2      //   C     12     0
@@ -1898,6 +1900,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
 
       REDEFINE GET aGet[ _CPROVEE ] VAR aTmp[ _CPROVEE ] ;
          ID       148 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CCODBIC ] VAR aTmp[ _CCODBIC ] ;
+         ID       149 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldComercial
+
+      REDEFINE GET aGet[ _CHORARIO ] VAR aTmp[ _CHORARIO ] ;
+         ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldComercial
          
@@ -8928,6 +8940,8 @@ FUNCTION aItmCli()
    aAdd( aBase, { "cCPEnt",    "C", 15, 0, "Código postal de entrega",                      "CodigoPostalEntrega",   "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cPrvEnt",   "C",200, 0, "Provincia de entrega",                          "ProvinciaEntrega",      "", "( cDbfCli )", nil } )
    aAdd( aBase, { "cProvee",   "C", 50, 0, "Código de proveedor",                           "CodigoProveedor",       "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cCodBic",   "C", 50, 0, "Código Bic",                                    "",                      "", "( cDbfCli )", nil } )
+   aAdd( aBase, { "cHorario",  "C", 50, 0, "Horario",                                       "",                      "", "( cDbfCli )", nil } )
 
 RETURN ( aBase )
 

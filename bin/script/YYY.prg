@@ -451,6 +451,8 @@ Static Function ImportacionClientes()
          ( D():Clientes( nView ) )->cCpEnt      := GetRange( "AC", n )
          ( D():Clientes( nView ) )->cPrvEnt     := GetRange( "AB", n )
          ( D():Clientes( nView ) )->cProvee     := GetRange( "BE", n )
+         ( D():Clientes( nView ) )->cCodBic     := GetRange( "EO", n )
+         ( D():Clientes( nView ) )->cHorario    := GetRange( "BD", n )
 
          ( D():Clientes( nView ) )->( dbUnlock() )
 
@@ -491,6 +493,8 @@ Static Function ImportacionClientes()
          ( D():ClientesDirecciones( nView ) )->cCpEnt    := GetRange( "AC", n )
          ( D():ClientesDirecciones( nView ) )->cPrvEnt   := GetRange( "AB", n )
          ( D():ClientesDirecciones( nView ) )->cProvee   := GetRange( "BE", n )
+         ( D():ClientesDirecciones( nView ) )->cCodBic     := GetRange( "EO", n )
+         ( D():ClientesDirecciones( nView ) )->cHorario    := GetRange( "BD", n )
 
          ( D():ClientesDirecciones( nView ) )->( dbUnlock() )
       

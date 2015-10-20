@@ -14776,6 +14776,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "Dirección de entrega", -1, "Button", BS_GROUPBOX, 3, 171, 320, 55
   CONTROL "CP / Provincia", -1, "Static", WS_GROUP, 8, 212, 52, 8
   CONTROL "Proveedor", -1, "Static", WS_GROUP, 8, 144, 49, 8
+  CONTROL "", 231, "Edit", WS_BORDER|WS_TABSTOP, 232, 114, 80, 12
+  CONTROL "", 232, "Edit", WS_BORDER|WS_TABSTOP, 232, 127, 80, 12
+  CONTROL "Código BIC", -1, "Static", WS_GROUP, 163, 117, 38, 8
+  CONTROL "Horario", -1, "Static", WS_GROUP, 163, 131, 49, 8
 }
 
 OFERTA DIALOG DISCARDABLE 94, -202, 351, 320
@@ -20704,8 +20708,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 600, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 403, 175, 56, 11
   CONTROL "", 601, "Edit", WS_BORDER|WS_TABSTOP, 460, 175, 26, 11
   CONTROL "", 602, "TBtnBmp", 0x00000000, 390, 175, 12, 11
-  CONTROL "EDI [EAN]", -1, "Button", BS_GROUPBOX, 43, 90, 338, 50
-  CONTROL "Código", -1, "Static", WS_GROUP, 50, 103, 38, 8
+  CONTROL "Codificación especial", -1, "Button", BS_GROUPBOX, 43, 90, 338, 50
+  CONTROL "EDI [EAN]", -1, "Static", WS_GROUP, 50, 103, 38, 8
   CONTROL "Última llamada", -1, "Button", BS_GROUPBOX, 384, 161, 108, 30
   CONTROL "Departamento", 4002, "Static", WS_GROUP, 50, 116, 50, 8
   CONTROL "", 310, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 101, 153, 270, 11
@@ -20718,6 +20722,10 @@ FONT 8, "MS Sans Serif"
   CONTROL "CP y Provincia", 4001, "Static", WS_GROUP, 50, 181, 51, 8
   CONTROL "", 148, "Edit", WS_BORDER|WS_TABSTOP, 101, 126, 114, 11
   CONTROL "Proveedor", -1, "Static", WS_GROUP, 50, 129, 50, 8
+  CONTROL "", 149, "Edit", WS_BORDER|WS_TABSTOP, 257, 100, 114, 11
+  CONTROL "BIC", -1, "Static", WS_GROUP, 219, 103, 28, 8
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 257, 113, 114, 11
+  CONTROL "Horario", -1, "Static", WS_GROUP, 219, 116, 28, 8
 }
 
 CLIENT_19 DIALOG DISCARDABLE -3, 20, 496, 263
