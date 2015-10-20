@@ -11,6 +11,8 @@ CLASS TDetMaterial FROM TDetalleArticulos
 
    DATA  oGetCaja
    DATA  oGetUnidades
+   DATA  oGetBultos
+   DATA  oGetFormato
    DATA  oGetPrecio
    DATA  oLote
    DATA  oFecCad
@@ -135,6 +137,8 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName )
       FIELD NAME "nTipArt"    TYPE "N" LEN  1  DEC 0 COMMENT "Clasificación"                 HIDE        OF oDbf 
       FIELD NAME "dFecCad"    TYPE "D" LEN 08  DEC 0 COMMENT "Fecha caducidad"               COLSIZE 80  OF oDbf
       FIELD NAME "cHorIni"    TYPE "C" LEN  6  DEC 0 COMMENT "Hora"                          HIDE        OF oDbf             
+      FIELD NAME "nBultos"    TYPE "N" LEN 16  DEC 6 COMMENT "Numero de bultos en líneas"    HIDE        OF oDbf           
+      FIELD NAME "cFormato"   TYPE "C" LEN 100 DEC 0 COMMENT "Formato"                       HIDE        OF oDbf 
 
       ::CommunFields( oDbf )
 
@@ -334,11 +338,20 @@ METHOD Resource( nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      Cajas y unidades---------------------------------------------------------
+      Bultos, cajas y unidades---------------------------------------------------------
       */
+
+      REDEFINE GET ::oGetBultos VAR ::oDbfVir:nBultos ;
+         ID       330 ;
+         IDSAY    331 ;
+         SPINNER ;
+         WHEN     ( uFieldEmpresa( "lUseBultos" ) .AND. nMode != ZOOM_MODE ) ;
+         PICTURE  ::oParent:cPicUnd ;
+         OF       oFld:aDialogs[1]
 
       REDEFINE GET ::oGetCaja VAR ::oDbfVir:nCajOrd ;
          ID       120;
+         IDSAY    121 ;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPicUnd ;
@@ -352,7 +365,7 @@ METHOD Resource( nMode )
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPicUnd ;
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[1]      
 
       ::oGetUnidades:bChange  := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
       ::oGetUnidades:bValid   := {|| ::lUnidades( ::oDbfVir ), ::lPrecio( ::oDbfVir ), ::lTotPeso( ::oDbfVir ), ::lTotVolumen( ::oDbfVir ) }
@@ -448,6 +461,11 @@ METHOD Resource( nMode )
          WHEN     ( .f. ) ;
          OF       oFld:aDialogs[1]
 
+      REDEFINE GET ::oGetFormato VAR ::oDbfVir:cFormato;
+         ID       340;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[1]
+
       /*
       Stock Actual-------------------------------------------------------------
       */
@@ -517,6 +535,16 @@ METHOD SetResource( nMode )
 
    if !lUseCaj()
       ::oGetCaja:Hide()
+   end if
+
+   if !uFieldEmpresa( "lUseBultos" )
+      if !Empty( ::oGetBultos )
+         ::oGetBultos:Hide()
+      end if   
+   else
+      if !Empty( ::oGetBultos )
+         ::oGetBultos:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
    end if
 
    if nMode == APPD_MODE
