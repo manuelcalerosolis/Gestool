@@ -6,7 +6,9 @@
 
 Function Inicio( nView, dbfTikT )
 
-   ( dbfTikT )->( dbSetFilter( {|| Field->cNcjTik == oUser():cCaja() }, "cNcjTik == oUser():cCaja()" ) )
+   if ( oUser():cCodigo != '000' )
+   	( dbfTikT )->( dbSetFilter( {|| Field->cNcjTik == oUser():cCaja() }, "cNcjTik == oUser():cCaja()" ) )
+   end if
 
 Return ( nil )
 
