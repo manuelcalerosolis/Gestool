@@ -31,8 +31,9 @@ CLASS LinesDocumentsSales FROM Editable
    METHOD setCodigoProveedor( cCodigo )                  INLINE ( ::hSetDetail( "Proveedor", cCodigo ) )
    METHOD setNombreProveedor( cNombreProveedor )         INLINE ( ::hSetDetail( "NombreProveedor", cNombreProveedor ) )
    METHOD setReferenciaProveedor( cRefProveedor )        INLINE ( ::hSetDetail( "ReferenciaProveedor", cRefProveedor ) )
-   METHOD setLogicoLote( lLote )                         INLINE ( ::hSetDetail( "LogicoLote", ( D():Articulos( ::getView() ) )->lLote ) )
-   METHOD setLote( cLote )                               INLINE ( ::hSetDetail( "Lote", ( D():Articulos( ::getView() ) )->cLote ) )
+   METHOD setAlmacen( cCodigoAlmacen )                   INLINE ( ::hSetDetail( "Almacen", cCodigoAlmacen ) )
+   METHOD setLogicoLote( lLote )                         INLINE ( ::hSetDetail( "LogicoLote", lLote ) )
+   METHOD setLote( cLote )                               INLINE ( ::hSetDetail( "Lote", cLote ) )
    METHOD setTipoVenta( lTipoVenta )                     INLINE ( ::hSetDetail( "AvisarSinStock", lTipoVenta ) )
    METHOD setNoPermitirVentaSinStock( lVentaSinStock )   INLINE ( ::hSetDetail( "NoPermitirSinStock", lVentaSinStock ) )
    METHOD setFamilia( cCodigoFamilia )                   INLINE ( ::hSetDetail( "Familia", cCodigoFamilia ) )
@@ -252,6 +253,8 @@ METHOD setLineFromArticulo() CLASS LinesDocumentsSales
       ::setPorcentajeImpuesto( nIva( D():TiposIva( ::getView() ), ( D():Articulos( ::getView() ) )->TipoIva ) )
       ::setRecargoEquivalencia( nReq( D():TiposIva( ::getView() ), ( D():Articulos( ::getView() ) )->TipoIva ) )
    end if 
+
+   ::setAlmacen( ::hGetMaster( "Almacen" ) )
 
    if ( D():Articulos( ::getView() ) )->lFacCnv
       ::setFactorConversion( ( D():Articulos( ::getView() ) )->nFacCnv )

@@ -640,18 +640,14 @@ METHOD lValidResumenVenta() CLASS DocumentsSales
 
    local lReturn  := .t.
    
-   /*
-   Comprobamos que el cliente no esté vacío-----------------------------------
-   */
+   // Comprobamos que el cliente no esté vacío-----------------------------------
 
    if empty( hGet( ::hDictionaryMaster, "Cliente" ) )
       ApoloMsgStop( "Cliente no puede estar vacío.", "¡Atención!" )
       return .f.
    end if
 
-   /*
-   Comprobamos que el documento tenga líneas----------------------------------
-   */
+   // Comprobamos que el documento tenga líneas----------------------------------
 
    if len( ::oDocumentLines:aLines ) <= 0
       ApoloMsgStop( "No puede almacenar un documento sin lineas.", "¡Atención!" )
@@ -756,6 +752,9 @@ METHOD assignLinesDocument() CLASS DocumentsSales
       oDocumentLine:setNumeroMaster()
       oDocumentLine:setSufijoMaster()
       oDocumentLine:setAlmacenMaster()
+
+      // msgAlert( hGet( oDocumentLine:hDictionary, "Almacen" ), "almacen" )
+
    next
 
 Return( self )
