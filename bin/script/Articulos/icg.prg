@@ -1,4 +1,4 @@
-#include "hbclass.ch"
+﻿#include "hbclass.ch"
 
 #define CRLF                        chr( 13 ) + chr( 10 )
 
@@ -15,7 +15,8 @@
 
 Function Inicio()
 
-   msgRun( "Procesando hoja de calculo", "Espere", {|| ArticulosICG():New() } )
+   ArticulosICG():New()
+
    msgInfo( "Proceso finalizado")
 
 Return ( nil )
@@ -26,36 +27,322 @@ CLASS ArticulosICG
 
    DATA nView
 
-   DATA cTarifa              INIT  "MDR 'P44'"
+   DATA cTarifa              INIT  "00 Netos T/4 al 30 margen "
    DATA aTarifa              INIT  {}
 
-   DATA hTarifa              INIT  {   {  "MDR 'P44'",; 
+   DATA hTarifa              INIT  {   {  "00 Netos T/4 al 30 margen ",; 
+                                          {  "Factor descuento 1" => 2,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 1.80,;
+                                             "Descuento 2" => 20,;
+                                             "Factor descuento 3" => 1.60,;
+                                             "Descuento 3" => 20,;
+                                             "Factor descuento 4" => 1.30,;
+                                             "Descuento 4" => 35,;
+                                             "Factor descuento 5" => 1.25,;
+                                             "Descuento 5" => 37.5,;
+                                             "Factor descuento 6" => 1.20,;
+                                             "Descuento 6" => 40 } },;
+					{  "15 LUK 53% ",; 
                                           {  "Factor descuento 1" => 1,;
-                                             "Descuento 1" => 10,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.85,;
+                                             "Descuento 2" => 15,;
+                                             "Factor descuento 3" => 0.70,;
+                                             "Descuento 3" => 30,;
+                                             "Factor descuento 4" => 0.58,;
+                                             "Descuento 4" => 42,;
+                                             "Factor descuento 5" => 0.55,;
+                                             "Descuento 5" => 45,;
+                                             "Factor descuento 6" => 0.50,;
+                                             "Descuento 6" => 50 } },;
+					{  "19 Hella 40% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.90,;
+                                             "Descuento 2" => 10,;
+                                             "Factor descuento 3" => 0.85,;
+                                             "Descuento 3" => 15,;
+                                             "Factor descuento 4" => 0.78,;
+                                             "Descuento 4" => 22,;
+                                             "Factor descuento 5" => 0.75,;
+                                             "Descuento 5" => 25,;
+                                             "Factor descuento 6" => 0.70,;
+                                             "Descuento 6" => 30 } },;
+					{  "20 Carbureibar 42% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.90,;
+                                             "Descuento 2" => 10,;
+                                             "Factor descuento 3" => 0.85,;
+                                             "Descuento 3" => 15,;
+                                             "Factor descuento 4" => 0.75,;
+                                             "Descuento 4" => 25,;
+                                             "Factor descuento 5" => 0.70,;
+                                             "Descuento 5" => 30,;
+                                             "Factor descuento 6" => 0.65,;
+                                             "Descuento 6" => 35 } },;
+					{  "24 Bottari 40% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
                                              "Factor descuento 2" => 0.85,;
                                              "Descuento 2" => 15,;
                                              "Factor descuento 3" => 0.80,;
-                                             "Descuento 3" => 15,;
-                                             "Factor descuento 4" => 0.60,;
-                                             "Descuento 4" => 15,;
-                                             "Factor descuento 5" => 0.50,;
-                                             "Descuento 5" => 15,;
-                                             "Factor descuento 6" => 0.45,;
-                                             "Descuento 6" => 15 } },;
-                                       {  "IADA LIMPIEZA PROF 57",;
+                                             "Descuento 3" => 20,;
+                                             "Factor descuento 4" => 0.75,;
+                                             "Descuento 4" => 25,;
+                                             "Factor descuento 5" => 0.75,;
+                                             "Descuento 5" => 25,;
+                                             "Factor descuento 6" => 0.70,;
+                                             "Descuento 6" => 30 } },;
+					{  "27 Dayco Scooter 50% ",; 
                                           {  "Factor descuento 1" => 1,;
-                                             "Descuento 1" => 15,;
-                                             "Factor descuento 2" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.90,;
+                                             "Descuento 2" => 10,;
+                                             "Factor descuento 3" => 0.80,;
+                                             "Descuento 3" => 20,;
+                                             "Factor descuento 4" => 0.65,;
+                                             "Descuento 4" => 35,;
+                                             "Factor descuento 5" => 0.63,;
+                                             "Descuento 5" => 37,;
+                                             "Factor descuento 6" => 0.57,;
+                                             "Descuento 6" => 43 } },;
+					{  "33 Luk Embragues 57% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.80,;
+                                             "Descuento 2" => 20,;
+                                             "Factor descuento 3" => 0.70,;
+                                             "Descuento 3" => 30,;
+                                             "Factor descuento 4" => 0.55,;
+                                             "Descuento 4" => 45,;
+                                             "Factor descuento 5" => 0.50,;
+                                             "Descuento 5" => 50,;
+                                             "Factor descuento 6" => 0.48,;
+                                             "Descuento 6" => 52 } },;
+					{  "44 Mdr 55% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.85,;
                                              "Descuento 2" => 15,;
-                                             "Factor descuento 3" => 1,;
-                                             "Descuento 3" => 15,;
-                                             "Factor descuento 4" => 1,;
+                                             "Factor descuento 3" => 0.75,;
+                                             "Descuento 3" => 25,;
+                                             "Factor descuento 4" => 0.60,;
+                                             "Descuento 4" => 40,;
+                                             "Factor descuento 5" => 0.55,;
+                                             "Descuento 5" => 45,;
+                                             "Factor descuento 6" => 0.53,;
+                                             "Descuento 6" => 47 } },;
+					{  "59 OJO Costo+neto ",; 
+                                          {  "Factor descuento 1" => 2,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 1.80,;
+                                             "Descuento 2" => 10,;
+                                             "Factor descuento 3" => 1.60,;
+                                             "Descuento 3" => 20,;
+                                             "Factor descuento 4" => 1.30,;
+                                             "Descuento 4" => 35,;
+                                             "Factor descuento 5" => 1.25,;
+                                             "Descuento 5" => 37.5,;
+                                             "Factor descuento 6" => 1.20,;
+                                             "Descuento 6" => 40 } },;
+					{  "60 Andel transmisiones 58% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.85,;
+                                             "Descuento 2" => 15,;
+                                             "Factor descuento 3" => 0.75,;
+                                             "Descuento 3" => 25,;
+                                             "Factor descuento 4" => 0.55,;
+                                             "Descuento 4" => 45,;
+                                             "Factor descuento 5" => 0.53,;
+                                             "Descuento 5" => 47,;
+                                             "Factor descuento 6" => 0.50,;
+                                             "Descuento 6" => 50 } },;
+					{  "67 Trw direcciones 48% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.90,;
+                                             "Descuento 2" => 10,;
+                                             "Factor descuento 3" => 0.80,;
+                                             "Descuento 3" => 20,;
+                                             "Factor descuento 4" => 0.70,;
+                                             "Descuento 4" => 30,;
+                                             "Factor descuento 5" => 0.65,;
+                                             "Descuento 5" => 35,;
+                                             "Factor descuento 6" => 0.60,;
+                                             "Descuento 6" => 40 } },;
+					{  "68 Rinder Rotativos 32% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.95,;
+                                             "Descuento 2" => 5,;
+                                             "Factor descuento 3" => 0.90,;
+                                             "Descuento 3" => 10,;
+                                             "Factor descuento 4" => 0.85,;
                                              "Descuento 4" => 15,;
-                                             "Factor descuento 5" => 1,;
-                                             "Descuento 5" => 15,;
-                                             "Factor descuento 6" => 1,;
-                                             "Descuento 6" => 15 } };
-                                    }    
+                                             "Factor descuento 5" => 0.83,;
+                                             "Descuento 5" => 17,;
+                                             "Factor descuento 6" => 0.80,;
+                                             "Descuento 6" => 20 } },;
+					{  "69 Ngk 62% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.80,;
+                                             "Descuento 2" => 20,;
+                                             "Factor descuento 3" => 0.65,;
+                                             "Descuento 3" => 35,;
+                                             "Factor descuento 4" => 0.50,;
+                                             "Descuento 4" => 50,;
+                                             "Factor descuento 5" => 0.48,;
+                                             "Descuento 5" => 52,;
+                                             "Factor descuento 6" => 0.45,;
+                                             "Descuento 6" => 55 } },;
+					{  "70 Dayco Ktb 70% ",; 
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.75,;
+                                             "Descuento 2" => 25,;
+                                             "Factor descuento 3" => 0.60,;
+                                             "Descuento 3" => 40,;
+                                             "Factor descuento 4" => 0.38,;
+                                             "Descuento 4" => 62,;
+                                             "Factor descuento 5" => 0.36,;
+                                             "Descuento 5" => 64,;
+                                             "Factor descuento 6" => 0.34,;
+                                             "Descuento 6" => 66 } },;
+					{  "82 Snr rodamientos 78% ",;
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.65,;
+                                             "Descuento 2" => 35,;
+                                             "Factor descuento 3" => 0.55,;
+                                             "Descuento 3" => 45,;
+                                             "Factor descuento 4" => 0.30,;
+                                             "Descuento 4" => 70,;
+                                             "Factor descuento 5" => 0.28,;
+                                             "Descuento 5" => 72,;
+                                             "Factor descuento 6" => 0.26,;
+                                             "Descuento 6" => 74 } },;
+                                       {  "84 fAE 59% ",;
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.80,;
+                                             "Descuento 2" => 20,;
+                                             "Factor descuento 3" => 0.70,;
+                                             "Descuento 3" => 30,;
+                                             "Factor descuento 4" => 0.53,;
+                                             "Descuento 4" => 47,;
+                                             "Factor descuento 5" => 0.50,;
+                                             "Descuento 5" => 50,;
+                                             "Factor descuento 6" => 0.47,;
+                                             "Descuento 6" => 53 } },;
+					{  "85 Dayco correas 74% ",;
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.65,;
+                                             "Descuento 2" => 35,;
+                                             "Factor descuento 3" => 0.55,;
+                                             "Descuento 3" => 45,;
+                                             "Factor descuento 4" => 0.35,;
+                                             "Descuento 4" => 65,;
+                                             "Factor descuento 5" => 0.33,;
+                                             "Descuento 5" => 67,;
+                                             "Factor descuento 6" => 0.30,;
+                                             "Descuento 6" => 70 } },;
+					{  "87 Costo+margen baterias ",;
+                                          {  "Factor descuento 1" => 2,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 1.35,;
+                                             "Descuento 2" => 33,;
+                                             "Factor descuento 3" => 1.35,;
+                                             "Descuento 3" => 33,;
+                                             "Factor descuento 4" => 1.20,;
+                                             "Descuento 4" => 40,;
+                                             "Factor descuento 5" => 1.15,;
+                                             "Descuento 5" => 43,;
+                                             "Factor descuento 6" => 1.10,;
+                                             "Descuento 6" => 45 } },;
+					{  "88 Andel escobillas 65% ",;
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.75,;
+                                             "Descuento 2" => 25,;
+                                             "Factor descuento 3" => 0.60,;
+                                             "Descuento 3" => 40,;
+                                             "Factor descuento 4" => 0.45,;
+                                             "Descuento 4" => 55,;
+                                             "Factor descuento 5" => 0.43,;
+                                             "Descuento 5" => 57,;
+                                             "Factor descuento 6" => 0.40,;
+                                             "Descuento 6" => 60 } },;
+					{  "89 Textar pastillas 75% ",;
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.60,;
+                                             "Descuento 2" => 40,;
+                                             "Factor descuento 3" => 0.50,;
+                                             "Descuento 3" => 50,;
+                                             "Factor descuento 4" => 0.32,;
+                                             "Descuento 4" => 68,;
+                                             "Factor descuento 5" => 0.30,;
+                                             "Descuento 5" => 70,;
+                                             "Factor descuento 6" => 0.28,;
+                                             "Descuento 6" => 72 } },;
+					{  "90 Conti Correa+rodillo 65% ",;
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.75,;
+                                             "Descuento 2" => 25,;
+                                             "Factor descuento 3" => 0.65,;
+                                             "Descuento 3" => 35,;
+                                             "Factor descuento 4" => 0.46,;
+                                             "Descuento 4" => 54,;
+                                             "Factor descuento 5" => 0.44,;
+                                             "Descuento 5" => 56,;
+                                             "Factor descuento 6" => 0.42,;
+                                             "Descuento 6" => 58 } },;
+					{  "91 Purflux con * 68.98% ",;
+                                          {  "Factor descuento 1" => 1,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 0.75,;
+                                             "Descuento 2" => 25,;
+                                             "Factor descuento 3" => 0.6,;
+                                             "Descuento 3" => 40,;
+                                             "Factor descuento 4" => 0.4,;
+                                             "Descuento 4" => 60,;
+                                             "Factor descuento 5" => 0.38,;
+                                             "Descuento 5" => 62,;
+                                             "Factor descuento 6" => 0.35,;
+                                             "Descuento 6" => 65 } },;
+					{  "99 OJO Cascos Netos+30% ",;
+                                          {  "Factor descuento 1" => 1.3,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 1.3,;
+                                             "Descuento 2" => 0,;
+                                             "Factor descuento 3" => 1.3,;
+                                             "Descuento 3" => 0,;
+                                             "Factor descuento 4" => 1.3,;
+                                             "Descuento 4" => 0,;
+                                             "Factor descuento 5" => 1.30,;
+                                             "Descuento 5" => 0,;
+                                             "Factor descuento 6" => 1.30,;
+                                             "Descuento 6" => 0 } },;
+					{  "100 OJO Netos especiales ",;
+                                          {  "Factor descuento 1" => 2,;
+                                             "Descuento 1" => 0,;
+                                             "Factor descuento 2" => 1.6,;
+                                             "Descuento 2" => 20,;
+                                             "Factor descuento 3" => 1.4,;
+                                             "Descuento 3" => 30,;
+                                             "Factor descuento 4" => 1.15,;
+                                             "Descuento 4" => 42.50,;
+                                             "Factor descuento 5" => 1.10,;
+                                             "Descuento 5" => 45,;
+                                             "Factor descuento 6" => 1.10,;
+                                             "Descuento 6" => 45 } };
+					                                    }    
 
    DATA cPrecio            INIT "P.V.P."
    DATA aPrecio            INIT { "P.V.P.", "Costo" }                                                                    
@@ -160,12 +447,12 @@ METHOD New() CLASS ArticulosICG
 		Return ( Self )
 	end if 
 
-   if !::showDescuentos()
+   ::AddFichero()
+   if empty( ::aFichero )
       Return ( Self )
    end if 
 
-   ::AddFichero()
-   if empty( ::aFichero )
+   if !::showDescuentos()
       Return ( Self )
    end if 
 
@@ -174,7 +461,9 @@ METHOD New() CLASS ArticulosICG
 	end if 
 
    for each cFichero in ::aFichero
-      ::ProcessFile( cFichero )
+      if !empty(cFichero)
+         msgRun( "Procesando hoja de calculo " + cFichero, "Espere", {|| ::ProcessFile( cFichero ) } )
+      end if 
    next 
 
    ::CloseFiles()
@@ -220,14 +509,23 @@ Return ( oDlg:nResult == 1 )
 METHOD showDescuentos()
 
    local cTexto
+   local cFichero
 
-   cTexto   := ""
-   cTexto   += "Factor descuento 1 : (" + cValtoChar( ::factorDescuento1() ) + ") > " + alltrim( cValtoChar( ::descuento1() ) ) + "%" + CRLF
-   cTexto   += "Factor descuento 2 : (" + cValtoChar( ::factorDescuento2() ) + ") > " + alltrim( cValtoChar( ::descuento2() ) ) + "%" + CRLF
-   cTexto   += "Factor descuento 3 : (" + cValtoChar( ::factorDescuento3() ) + ") > " + alltrim( cValtoChar( ::descuento3() ) ) + "%" + CRLF
-   cTexto   += "Factor descuento 4 : (" + cValtoChar( ::factorDescuento4() ) + ") > " + alltrim( cValtoChar( ::descuento4() ) ) + "%" + CRLF
-   cTexto   += "Factor descuento 5 : (" + cValtoChar( ::factorDescuento5() ) + ") > " + alltrim( cValtoChar( ::descuento5() ) ) + "%" + CRLF
-   cTexto   += "Factor descuento 6 : (" + cValtoChar( ::factorDescuento6() ) + ") > " + alltrim( cValtoChar( ::descuento6() ) ) + "%" 
+   cTexto         := ""
+
+   for each cFichero in ::aFichero
+      if !empty( cFichero )
+         cTexto   += "Fichero a procesar " + cFichero + CRLF
+      end if 
+   next 
+
+   cTexto         += replicate( "-", 40 ) + CRLF
+   cTexto         += "Factor descuento 1 : (" + cValtoChar( ::factorDescuento1() ) + ") > " + alltrim( cValtoChar( ::descuento1() ) ) + "%" + CRLF
+   cTexto         += "Factor descuento 2 : (" + cValtoChar( ::factorDescuento2() ) + ") > " + alltrim( cValtoChar( ::descuento2() ) ) + "%" + CRLF
+   cTexto         += "Factor descuento 3 : (" + cValtoChar( ::factorDescuento3() ) + ") > " + alltrim( cValtoChar( ::descuento3() ) ) + "%" + CRLF
+   cTexto         += "Factor descuento 4 : (" + cValtoChar( ::factorDescuento4() ) + ") > " + alltrim( cValtoChar( ::descuento4() ) ) + "%" + CRLF
+   cTexto         += "Factor descuento 5 : (" + cValtoChar( ::factorDescuento5() ) + ") > " + alltrim( cValtoChar( ::descuento5() ) ) + "%" + CRLF
+   cTexto         += "Factor descuento 6 : (" + cValtoChar( ::factorDescuento6() ) + ") > " + alltrim( cValtoChar( ::descuento6() ) ) + "%" 
 
 Return ( msgYesNo( cTexto, "Valores" ) )   
 
@@ -515,6 +813,7 @@ METHOD SetArticulo()
       ( D():Articulos( ::nView ) )->cCodSus     := ::cSustituyeA
       ( D():Articulos( ::nView ) )->cCodPor     := ::cSustituidoPor
       ( D():Articulos( ::nView ) )->lNotVta     := .t.
+      ( D():Articulos( ::nView ) )->lMsgvta     := .t.
       ( D():Articulos( ::nView ) )->lMsgMov     := .t.
       ( D():Articulos( ::nView ) )->lMsgSer     := .t.
       ( D():Articulos( ::nView ) )->lMosCom     := !empty( ::cDescipcionCasco ) 
@@ -604,7 +903,7 @@ METHOD AppendEscandallo()
    local cCodigo  
 
    if empty( ::cDescipcionCasco )
-      ::cReferenciaCasco   := "9999000"
+      ::cReferenciaCasco   := "1"
    else 
       ::cReferenciaCasco   := ::getReferenciaCasco()
    end if 

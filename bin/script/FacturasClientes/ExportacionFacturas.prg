@@ -64,7 +64,7 @@ METHOD New() CLASS ExportacionFacturas
 
    ::aProducts       := {}
 
-   MsgRun( "Porcesando facturas", "Espere por favor...", {|| ::Run() } )
+   ::Run()
 
    msgInfo( "Porceso finalizado" )
 
@@ -137,22 +137,24 @@ METHOD processInformation() CLASS ExportacionFacturas
 
    ( D():FacturasClientes( ::nView ) )->( dbseek( ::dInicio, .t. ) )
 
-   while ( D():FacturasClientes( ::nView ) )->dFecFac <= ::dFin .and. ( D():FacturasClientes( ::nView ) )->( !eof() )
+   while !( D():FacturasClientes( ::nView ) )->( eof() )
 
-      // msgAlert( D():FacturasClientesId( ::nView ), "D():FacturasClientesId( ::nView )" )
-
-      if ( D():AlbaranesClientes( ::nView ) )->( dbSeek( D():FacturasClientesId( ::nView ) ) )
-
-         // msgAlert( D():FacturasClientesId( ::nView ), "Encontrado" )
-
-         while ( ( D():AlbaranesClientes( ::nView ) )->cNumFac == D():FacturasClientesId( ::nView ) ) .and. ( D():AlbaranesClientes( ::nView ) )->( !eof() ) 
-
-            ::buildFacturaInformation()
-            
-            ( D():AlbaranesClientes( ::nView ) )->( dbSkip() ) 
+      if ( D():FacturasClientes( ::nView ) )->dFecFac <= ::dFin 
       
-         end while
-   
+         msgWait( "procesando factura " + D():FacturasClientesIdText( ::nView ), "Espere", 0.0001 )
+
+         if ( D():AlbaranesClientes( ::nView ) )->( dbSeek( D():FacturasClientesId( ::nView ) ) )
+
+            while ( ( D():AlbaranesClientes( ::nView ) )->cNumFac == D():FacturasClientesId( ::nView ) ) .and. !( D():AlbaranesClientes( ::nView ) )->( eof() ) 
+
+               ::buildFacturaInformation()
+
+               ( D():AlbaranesClientes( ::nView ) )->( dbSkip() ) 
+         
+            end while
+      
+         end if 
+
       end if 
 
       ( D():FacturasClientes( ::nView ) )->( dbskip() )
@@ -167,8 +169,20 @@ Return ( Self )
 
 METHOD buildFacturaInformation()
 
-   local aProduct    := {  "FacturaId" =>    D():FacturasClientesId( ::nView ),;
-                           "AlbaranId" =>    D():AlbaranesClientesId( ::nView )  } 
+   local aProduct    := {  "FacturaId" =>             D():FacturasClientesId( ::nView ),;
+                           "SerieFactura" =>          ( D():FacturasClientes( ::nView ) )->cSerie,;
+                           "NumeroFactura" =>         ( D():FacturasClientes( ::nView ) )->nNumFac,;
+                           "SufijoFactura" =>         ( D():FacturasClientes( ::nView ) )->cSufFac,;
+                           "FechaFactura" =>          dtos( ( D():FacturasClientes( ::nView ) )->dFecFac ),;
+                           "ClienteFactura" =>        ( D():FacturasClientes( ::nView ) )->cCodCli,;
+                           "BaseFactura" =>          ( D():FacturasClientes( ::nView ) )->nTotNet,;
+                           "PorcentajeIvaFactura" =>  21,;
+                           "ImporteIvaFactura" =>     ( D():FacturasClientes( ::nView ) )->nTotIva,;
+                           "TotalFactura" =>          ( D():FacturasClientes( ::nView ) )->nTotFac,;
+                           "AlbaranId" =>             D():AlbaranesClientesId( ::nView ),;
+                           "SerieAlbaran" =>          ( D():AlbaranesClientes( ::nView ) )->cSerAlb,;
+                           "NumeroAlbaran" =>         ( D():AlbaranesClientes( ::nView ) )->nNumAlb,;
+                           "SufijoAlbaran" =>         ( D():AlbaranesClientes( ::nView ) )->cSufAlb } 
 
    aadd( ::aProducts, aProduct )
 
@@ -241,13 +255,23 @@ METHOD writeDetail()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::oExcel:oExcel:WorkSheets( 1 ):Cells( 1, 1 ):Value   := "Factura"
-   ::oExcel:oExcel:WorkSheets( 1 ):Cells( 1, 2 ):Value   := "Albaran"
+   // ::oExcel:oExcel:WorkSheets( 1 ):Cells( 1, 1 ):Value   := "Factura"
+   // ::oExcel:oExcel:WorkSheets( 1 ):Cells( 1, 2 ):Value   := "Albaran"
 
    for each hProduct in ::aProducts
 
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex() + 1, 1 ):Value := hProduct["FacturaId"]
-      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex() + 1, 2 ):Value := hProduct["AlbaranId"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 1 ):Value := hProduct["SerieFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 2 ):Value := hProduct["NumeroFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 3 ):Value := hProduct["SufijoFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 4 ):Value := hProduct["FechaFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 5 ):Value := hProduct["ClienteFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 6 ):Value := hProduct["BaseFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 7 ):Value := hProduct["PorcentajeIvaFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 8 ):Value := hProduct["ImporteIvaFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 9 ):Value := hProduct["TotalFactura"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 10 ):Value := hProduct["SerieAlbaran"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 11 ):Value := hProduct["NumeroAlbaran"]
+      ::oExcel:oExcel:WorkSheets( 1 ):Cells( hb_enumindex(), 12 ):Value := hProduct["SufijoAlbaran"]
 
    next
 

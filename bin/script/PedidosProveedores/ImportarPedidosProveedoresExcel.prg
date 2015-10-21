@@ -16,9 +16,7 @@ function ImportaPedidosProveedorExcel( nView )
    if oImportarPedidoProveedor:isFile()
       oImportarPedidoProveedor:processFile()
    end if 
-
-   //msgAlert( D():PedidosProveedoresId( ::nView ), "Se ha añadido el pedido de proveedor nº "  )
-   
+  
 return .t.
 
 //---------------------------------------------------------------------------//
@@ -88,6 +86,7 @@ CLASS ImportarPedidosProveedorExcel
    METHOD setTotalesPedido()
 
    METHOD getCodigoColor( cColorDescripcion )
+   METHOD getCodigoTalla( cTallaDescripcion )
 
    METHOD getActiveSheetValue( nRow, nCol )  INLINE ( ::oActiveSheet:Cells( nRow, nCol ):Value )
 
@@ -140,6 +139,8 @@ METHOD processFile() CLASS ImportarPedidosProveedorExcel
          ::setLineasPedidos()
          ::setTotalesPedido()
       end if 
+
+      msgAlert( "Se ha añadido el pedido de proveedor nº " + D():PedidosProveedoresId( ::nView ) )
 
    end if 
 
@@ -409,17 +410,36 @@ Return ( cCodigoColor )
 
 //---------------------------------------------------------------------------//
 
+METHOD getCodigoTalla( cTallaDescripcion )
+
+   local ordAnterior
+   local cCodigoTalla   := ""
+
+   ordAnterior          := ( D():PropiedadesLineas( ::nView ) )->( ordsetfocus( "cCodDes" ) ) 
+
+   if ( D():PropiedadesLineas( ::nView ) )->( dbseek( padr( '00002', 20 ) + cTallaDescripcion ) )
+      cCodigoTalla      := ( D():PropiedadesLineas( ::nView ) )->cCodTbl
+   else
+      msgAlert( padr( '00002', 20 ) + cTallaDescripcion, "No existe el color:" )
+   end if 
+
+   ( D():PropiedadesLineas( ::nView ) )->( ordsetfocus( ordAnterior ) ) 
+
+Return ( cCodigoTalla )
+
+//---------------------------------------------------------------------------//
+
 METHOD getUnidadesPorTallas( nUnidades, nCol ) 
 
    local cTalla
 
-   ::cTalla       := ""
-   ::nUnidades    := 0
+   ::cTalla          := ""
+   ::nUnidades       := 0
 
-   cTalla         := ::getTallaFromColumna( nCol )
+   cTalla            := ::getTallaFromColumna( nCol )
 
    if !empty( cTalla )
-      ::cTalla       := cTalla
+      ::cTalla       := ::getCodigoTalla( cTalla )
       ::nUnidades    := nUnidades
    end if 
 

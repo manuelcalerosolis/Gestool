@@ -1868,7 +1868,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
    local cGetNbr
    local oCbxOrd
    local cCbxOrd     := "Código"
-   local aCbxOrd     := { "Código" }
+   local aCbxOrd     := { "Código", "Nombre" }
 
    if Empty( cPrp )
       MsgStop( "No hay propiedades seleccionadas para este artículo." )
@@ -1879,9 +1879,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
       Return .f.
    end if
 
-   /*
-   Es para cuando no hay valores poder meter valores libres.
-   */
+   // Es para cuando no hay valores poder meter valores libres
 
    if !dbSeekInOrd( cPrp, "CPRO", dbfProL )
       MsgStop( "No existen valores para esta propiedad" )
@@ -1907,7 +1905,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 
       REDEFINE GET oGetNbr VAR cGetNbr ;
          ID       	104 ;
-         ON CHANGE 	AutoSeek( nKey, nFlags, Self, oBrw, dbfProL, nil, cPrp ) ;
+         ON CHANGE 	autoSeek( nKey, nFlags, Self, oBrw, dbfProL, nil, cPrp ) ;
          VALID       ( ( dbfProL )->( ordScope( 0, cPrp ) ), ( dbfProL )->( ordScope( 1, cPrp ) ) ) ;
          BITMAP   	"FIND" ;
          OF       	oDlg
@@ -2520,7 +2518,7 @@ FUNCTION brwSelectPropiedad( cPrp, cVal )
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   aVal              := Hb_aTokens( cVal, "," )
+   aVal              := hb_atokens( cVal, "," )
 
    // Creacion de array--------------------------------------------------------
 
