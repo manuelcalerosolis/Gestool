@@ -1751,20 +1751,20 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
 
    // Mostramos el dialogo-----------------------------------------------------
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE cTitle
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE cTitle
 
       REDEFINE GET oGetNbr VAR cGetNbr ;
-         ID       104 ;
-         ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfTmpBrw ) ;
-         BITMAP   "FIND" ;
-         OF       oDlg
+         ID                104 ;
+         ON CHANGE         autoSeek( nKey, nFlags, Self, oBrw, dbfTmpBrw ) ;
+         BITMAP            "FIND" ;
+         OF                oDlg
 
       REDEFINE COMBOBOX oCbxOrd ;
-         VAR      cCbxOrd ;
-         ID       102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfTmpBrw )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() ) ;
-         OF       oDlg
+         VAR               cCbxOrd ;
+         ID                102 ;
+         ITEMS             aCbxOrd ;
+         ON CHANGE         ( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfTmpBrw )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() ) ;
+         OF                oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -1781,7 +1781,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
          :cSortOrder       := "cCodTbl"
          :bEditValue       := {|| ( dbfTmpBrw )->cCodTbl }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -1789,7 +1789,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
          :cSortOrder       := "cDesTbl"
          :bEditValue       := {|| ( dbfTmpBrw )->cDesTbl }
          :nWidth           := 280
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
       end with
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
@@ -1903,7 +1903,8 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE cTitle
 
-      REDEFINE GET oGetNbr VAR cGetNbr ;
+      REDEFINE GET oGetNbr ;
+         VAR         cGetNbr ;
          ID       	104 ;
          ON CHANGE 	autoSeek( nKey, nFlags, Self, oBrw, dbfProL, nil, cPrp ) ;
          VALID       ( ( dbfProL )->( ordScope( 0, cPrp ) ), ( dbfProL )->( ordScope( 1, cPrp ) ) ) ;
@@ -1914,6 +1915,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
          VAR      	cCbxOrd ;
          ID       	102 ;
          ITEMS    	aCbxOrd ;
+         ON CHANGE   ( ( dbfProL )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfProL )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() ) ;
          OF       	oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -1931,7 +1933,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
          :cSortOrder       := "cCodTbl"
          :bEditValue       := {|| ( dbfProL )->cCodTbl }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -1939,7 +1941,7 @@ FUNCTION brwPropiedadActual( oGet, oSay, cPrp )
          :cSortOrder       := "cDesTbl"
          :bEditValue       := {|| ( dbfProL )->cDesTbl }
          :nWidth           := 280
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ), eval( oCbxOrd:bChange ) }
       end with
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
