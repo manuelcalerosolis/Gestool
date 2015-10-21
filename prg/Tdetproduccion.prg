@@ -555,6 +555,16 @@ METHOD SetResource( nMode ) CLASS TDetProduccion
       ::oGetCaja:Hide()
    end if
 
+   if !uFieldEmpresa( "lUseBultos" )
+      if !Empty( ::oGetBultos )
+         ::oGetBultos:Hide()
+      end if   
+   else
+      if !Empty( ::oGetBultos )
+         ::oGetBultos:SetText( uFieldempresa( "cNbrBultos" ) )
+      end if 
+   end if
+
    if nMode == APPD_MODE
 
       ::oLote:Hide()
