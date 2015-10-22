@@ -1265,6 +1265,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    local cExpHead
    local cExpLine
 
+   nSec              := seconds()
+
    ::oPedCliT:OrdSetFocus( "dFecPed" )
    ::oPedCliL:OrdSetFocus( "nNumPed" )
 
@@ -1275,7 +1277,11 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    cExpHead          += ' .and. nNumPed >= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getDesde() ) + '" ) .and. nNumPed <= Val( "' + Rtrim( ::oGrupoNumero:Cargo:getHasta() ) + '" )'
    cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
-   ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   if .f. // lAIS()
+      ( ::oPedCliT:cAlias )->( adsSetAOF( cExpHead ) )
+   else
+      ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+   end if 
 
    ::oMtrInf:cText   := "Procesando pedidos"
    ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
@@ -1290,7 +1296,11 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
       cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:getDesde() + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:getHasta() + '"'
    end if
 
-   ::oPedCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ), ::oPedCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   if .f. // lAIS()
+      ( ::oPedCliL:cAlias )->( adsSetAOF( cExpLine ) )
+   else
+      ::oPedCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ), ::oPedCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+   end if 
 
    ::oPedCliT:GoTop()
    while !::lBreak .and. !::oPedCliT:Eof()
@@ -1307,7 +1317,6 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   /*
                   Añadimos un nuevo registro
                   */
-
                   ::oDbf:Blank()
 
                   ::oDbf:cCodArt    := ::oPedCliL:cRef
@@ -1316,13 +1325,15 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cCodPrv    := ::oPedCliL:cCodPrv
                   ::oDbf:cNomPrv    := RetFld( ::oPedCliL:cCodPrv, ::oDbfPrv:cAlias )
 
-                  ::oDbf:cCodFam    := ::oPedCliL:cCodFam
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPedCliL:nIva )
+                  ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
                   ::oDbf:cCodTip    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
                   ::oDbf:cCodEst    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  
+                  ::oDbf:cCodFam    := ::oPedCliL:cCodFam
                   ::oDbf:cCodAlm    := ::oPedCliL:cAlmLin
                   ::oDbf:cCodPago   := ::oPedCliT:cCodPgo
                   ::oDbf:cCodRut    := ::oPedCliT:cCodRut
@@ -1336,7 +1347,6 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cPrvCli    := ::oPedCliT:cPrvCli
                   ::oDbf:cPosCli    := ::oPedCliT:cPosCli
                   ::oDbf:cCodObr    := ::oPedCliT:cCodObr
-                  ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
 
                   ::oDbf:nUniArt    := nTotNPedCli( ::oPedCliL:cAlias )
 
@@ -1411,6 +1421,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
    ::oPedCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ) )
 
+   msgAlert( seconds() - nSec, "tiempo empleado" )
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -1476,13 +1488,15 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodPrv    := ::oAlbCliL:cCodPrv
                   ::oDbf:cNomPrv    := RetFld( ::oAlbCliL:cCodPrv, ::oDbfPrv:cAlias )
 
-                  ::oDbf:cCodFam    := ::oAlbCliL:cCodFam
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oAlbCliL:nIva )
+                  ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
                   ::oDbf:cCodTip    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
                   ::oDbf:cCodCate   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
                   ::oDbf:cCodEst    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
                   ::oDbf:cCodTemp   := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
                   ::oDbf:cCodFab    := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+
+                  ::oDbf:cCodFam    := ::oAlbCliL:cCodFam
                   ::oDbf:cCodAlm    := ::oAlbCliL:cAlmLin
                   ::oDbf:cCodPago   := ::oAlbCliT:cCodPago
                   ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
@@ -1496,7 +1510,6 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cPrvCli    := ::oAlbCliT:cPrvCli
                   ::oDbf:cPosCli    := ::oAlbCliT:cPosCli
                   ::oDbf:cCodObr    := ::oAlbCliT:cCodObr
-                  ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
 
                   ::oDbf:nUniArt    := nTotNAlbCli( ::oAlbCliL:cAlias ) * if( ::lUnidadesNegativo, -1, 1 )
 

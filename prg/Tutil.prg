@@ -484,6 +484,7 @@ function retFld( cCod, cAlias, xFld, nOrd )
    local nRec
    local nAnt
    local xRet     := ""
+   local typeField
 
    if Empty( cAlias )
       return xRet
@@ -497,34 +498,28 @@ function retFld( cCod, cAlias, xFld, nOrd )
       nOrd        := 1
    end if
 
-   nAnt           := ( cAlias )->( OrdSetFocus( nOrd ) )
+   nAnt           := ( cAlias )->( ordsetfocus( nOrd ) )
    nRec           := ( cAlias )->( Recno() )
+   typeField      := valType( xFld )
 
-   /*
-   si no existe no situamos en EOF + 1 para que devuelva un campo vacio
-   con el mismo formato de campo pedido
-   */
-
-   ( cAlias )->( dbgotop() )
+   // si no existe no situamos en EOF + 1 para que devuelva un campo vacio con el mismo formato de campo pedido
 
    if !( cAlias )->( dbSeek( cCod ) )
-       ( cAlias )->( dbGoBottom() )
-       ( cAlias )->( dbSkip() )
+       if typeField == "N"
+          xRet    := 0
+       elseif typeField == "C"
+          xRet    := ""
+       end if 
+   else 
+       if typeField == "N"
+          xRet    := ( cAlias )->( fieldget( xFld ) )
+       elseif typeField == "C"
+          xFld    := ( cAlias )->( fieldpos( xFld ) )
+          xRet    := ( cAlias )->( fieldget( xFld ) )
+       end if 
    endif
 
-   do case
-   case ( valType( xFld ) == "N" )
-
-      xRet        := ( cAlias )->( fieldget( xFld ) )
-
-   case ( valType( xFld ) == "C" )
-
-      xFld        := ( cAlias )->( fieldpos( xFld ) )
-      xRet        := ( cAlias )->( fieldget( xFld ) )
-
-   end case
-
-   ( cAlias )->( OrdSetFocus( nAnt ) )
+   ( cAlias )->( ordsetfocus( nAnt ) )
    ( cAlias )->( dbGoTo( nRec ) )
 
 return ( xRet )
@@ -592,7 +587,7 @@ function NextKey( uVal, uAlias, cChar, nLen )
             nLen  := Len( uVal )
          end if
 
-         nOrd     := ( uAlias )->( OrdSetFocus( 1 ) )
+         nOrd     := ( uAlias )->( ordsetfocus( 1 ) )
          nRec     := ( uAlias )->( OrdKeyNo() )
 
          ( uAlias )->( OrdKeyGoto( ( uAlias )->( OrdKeyCount() ) ) )
@@ -619,12 +614,12 @@ function NextKey( uVal, uAlias, cChar, nLen )
 
          end while
 
-         ( uAlias )->( OrdSetFocus( nOrd ) )
+         ( uAlias )->( ordsetfocus( nOrd ) )
          ( uAlias )->( OrdKeyGoTo( nRec ) )
 
       else
 
-         nOrd     := uAlias:OrdSetFocus( 1 )
+         nOrd     := uAlias:ordsetfocus( 1 )
          nRec     := uAlias:OrdKeyNo()
 
          uAlias:OrdKeyGoto( uAlias:OrdKeyCount() )
@@ -637,7 +632,7 @@ function NextKey( uVal, uAlias, cChar, nLen )
 
          uVal     := AllTrim( Str( Val( uVal ) + 1 ) )
 
-         uAlias:OrdSetFocus( nOrd )
+         uAlias:ordsetfocus( nOrd )
          uAlias:OrdKeyGoTo( nRec )
 
       end if
@@ -660,37 +655,6 @@ return ( uVal )
 
 //----------------------------------------------------------------------------//
 
-/*
-function NextKey( uVal, uAlias )
-
-   local nLen
-
-   if ValType( uVal ) == "C"
-
-      nLen     := Len( uVal )
-
-      if IsChar( Valtype( uAlias ) )
-         uVal  := AllTrim( Str( ( uAlias )->( OrdKeyCount() ) + 1 ) )
-      else
-         uVal  := AllTrim( Str( uAlias:OrdKeyCount() + 1 ) )
-      end if
-
-      uVal     := Padr( uVal, nLen )
-
-   else
-
-      if IsChar( Valtype( uAlias ) )
-         uVal  := ( uAlias )->( OrdKeyCount() ) + 1
-      else
-         uVal  := uAlias:OrdKeyCount() + 1
-      end if
-
-   end if
-
-return ( uVal )
-*/
-//----------------------------------------------------------------------------//
-
 function oRetFld( cCod, oDbf, xFld, nOrd )
 
    local nRec
@@ -708,7 +672,7 @@ function oRetFld( cCod, oDbf, xFld, nOrd )
    nRec           := oDbf:Recno()
 
    if nOrd != nil
-      nAnt        := oDbf:OrdSetFocus( nOrd )
+      nAnt        := oDbf:ordsetfocus( nOrd )
    end if
 
    /*
@@ -735,7 +699,7 @@ function oRetFld( cCod, oDbf, xFld, nOrd )
    oDbf:GoTo( nRec )
 
    if nAnt != nil
-      oDbf:OrdSetFocus( nAnt )
+      oDbf:ordsetfocus( nAnt )
    end if
 
 return ( xRet )

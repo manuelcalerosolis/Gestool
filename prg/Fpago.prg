@@ -49,6 +49,7 @@ REQUEST DBFCDX
 #define _CDIGBNC                   37      //
 #define _CCTABNC                   38      //
 #define _CCODWEB                   39  
+#define _LDOMBAN                   40
 
 static oWndBrw
 static aBigResource
@@ -404,7 +405,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFormasPago, oBrw, bWhen, bValid, nMode )
          PICTURE  "@E 99.99" ;
          OF       oDlg
 
-      REDEFINE CHECKBOX aTmp[ _LESPERADOC ];
+      REDEFINE CHECKBOX aTmp[ _LDOMBAN ];
          ID       125;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
@@ -1196,6 +1197,7 @@ function aItmFPago()
    aAdd( aBase, { "cDigBnc",   "C",   2,   0, "Dígito de control de la cuenta"                         ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCtaBnc",   "C",  10,   0, "Cuenta bancaria"                                        ,  "",   "", "( cDbfPgo )" } )
    aAdd( aBase, { "cCodWeb",   "C", 200,   0, "Modulo web para la forma de pago"                       ,  "",   "", "( cDbfPgo )" } )
+   aAdd( aBase, { "lDomBan",   "L",   1,   0, "Domiciliacion bancaria"                                 ,  "",   "", "( cDbfPgo )" } )
    
 return ( aBase )
 

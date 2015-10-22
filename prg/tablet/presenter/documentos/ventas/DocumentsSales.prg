@@ -478,7 +478,7 @@ METHOD ChangeRuta() CLASS DocumentsSales
          end if   
 
          if !empty( ::oViewEdit:getRuta )
-            ::oViewEdit:getRuta:cText( AllTrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyCount() ) ) ) )
+            ::oViewEdit:getRuta:cText( alltrim( Str( ( D():Clientes( ::nView ) )->( OrdKeyNo() ) ) ) + "/" + alltrim( str( ( D():Clientes( ::nView ) )->( OrdKeyCount() ) ) ) )
             ::oViewEdit:getRuta:Refresh()
          end if
 
@@ -502,13 +502,11 @@ METHOD ChangeRuta() CLASS DocumentsSales
 
    if !empty( ::oViewEdit:getCodigoCliente )
       ::oViewEdit:getCodigoCliente:cText( cCliente )
-      ::oViewEdit:getCodigoCliente:Refresh()
       ::oViewEdit:getCodigoCliente:lValid()
    end if 
 
    if !empty( ::oViewEdit:getCodigoDireccion )
-      ::oViewEdit:getCodigoDireccion:cText( Space( 10 ) )
-      ::oViewEdit:getCodigoDireccion:Refresh()
+      ::oViewEdit:getCodigoDireccion:cText( space( 10 ) )
       ::oViewEdit:getCodigoDireccion:lValid()
    end if   
 
@@ -521,7 +519,7 @@ METHOD moveClient( lAnterior ) CLASS DocumentsSales
    local lSet              := .f.
    local nOrdAnt
 
-   if hhaskey( ::hOrdenRutas, AllTrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) )
+   if hhaskey( ::hOrdenRutas, alltrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) )
       
       nOrdAnt              := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
 
@@ -602,7 +600,7 @@ Return .t.
 
 METHOD setUltimoCliente() CLASS DocumentsSales
 
-   local nOrdAnt     := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ AllTrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
+   local nOrdAnt     := ( D():Clientes( ::nView ) )->( ordsetfocus( ::hOrdenRutas[ alltrim( Str( ::oViewEdit:oCbxRuta:nAt ) ) ] ) )
 
    ::nUltimoCliente  := ( D():Clientes( ::nView ) )->( OrdKeyNo() )
 
