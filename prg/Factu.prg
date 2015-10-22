@@ -2320,7 +2320,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Secciones'
    oItem:cMessage       := 'Acceso a las secciones de producción'
-   oItem:bAction        := {|| TSeccion():New( cPatEmp(), oWnd, "04001" ):Activate() }
+   oItem:bAction        := {|| TSeccion():New( cPatEmp(), cDriver(), oWnd, "04001" ):Activate() }
    oItem:cId            := "04001"
    oItem:cBmp           := "Group_Worker2_16"
    oItem:cBmpBig        := "Group_Worker2_32"
@@ -2330,7 +2330,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Operarios'
    oItem:cMessage       := 'Acceso a los operarios'
-   oItem:bAction        := {|| TOperarios():New( cPatEmp(), oWnd, "04002" ):Activate() }
+   oItem:bAction        := {|| TOperarios():New( cPatEmp(), cDriver(), oWnd, "04002" ):Activate() }
    oItem:cId            := "04002"
    oItem:cBmp           := "Worker2_16"
    oItem:cBmpBig        := "Worker2_32"
@@ -2340,7 +2340,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo  
    oItem:cPrompt        := 'Tipos de horas'
    oItem:cMessage       := 'Acceso a tipos de horas de producción'
-   oItem:bAction        := {|| THoras():New( cPatEmp(), oWnd, "04003" ):Activate() }
+   oItem:bAction        := {|| THoras():New( cPatEmp(), cDriver(), oWnd, "04003" ):Activate() }
    oItem:cId            := "04003"
    oItem:cBmp           := "Worker2_Clock_16"
    oItem:cBmpBig        := "Worker2_Clock_32"
@@ -2350,7 +2350,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Operaciones'
    oItem:cMessage       := 'Acceso a las operaciones'
-   oItem:bAction        := {|| TOperacion():New( cPatEmp(), oWnd, "04004" ):Activate() }
+   oItem:bAction        := {|| TOperacion():New( cPatEmp(), cDriver(), oWnd, "04004" ):Activate() }
    oItem:cId            := "04004"
    oItem:cBmp           := "Worker2_Hammer2_16"
    oItem:cBmpBig        := "Worker2_Hammer2_32"
@@ -2360,7 +2360,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tipos de operaciones'
    oItem:cMessage       := 'Acceso a tipos de operaciones'
-   oItem:bAction        := {|| TTipOpera():New( cPatEmp(), oWnd, "04005" ):Activate() }
+   oItem:bAction        := {|| TTipOpera():New( cPatEmp(), cDriver(), oWnd, "04005" ):Activate() }
    oItem:cId            := "04005"
    oItem:cBmp           := "Worker_Folder_Blue_16"
    oItem:cBmpBig        := "Worker_Folder_Blue_32"
@@ -2380,7 +2380,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Costes maquinaria'
    oItem:cMessage       := 'Acceso a los costes de la maquinaria'
-   oItem:bAction        := {|| TCosMaq():New( cPatEmp(), oWnd, "04007" ):Activate() }
+   oItem:bAction        := {|| TCosMaq():New( cPatEmp(), cDriver(), oWnd, "04007" ):Activate() }
    oItem:cId            := "04007"
    oItem:cBmp           := "Robot_Money2_16"
    oItem:cBmpBig        := "Robot_Money2_32"
