@@ -65,8 +65,8 @@ CLASS ImportarPedidosProveedorExcel
 
       METHOD isInformationInExcel()
       METHOD valoresLineaArticulo() 
-         METHOD isLineaArticulo()            INLINE   ( ::valoresLineaArticulo() == 2 )
-         METHOD isLineaTallaColor()          INLINE   ( ::valoresLineaArticulo() > 2 )
+         METHOD isLineaArticulo()            INLINE   ( msgAlert( ::valoresLineaArticulo(), "isLineaArticulo" ), ::valoresLineaArticulo() >= 1 .or. ::valoresLineaArticulo() <= 2 )
+         METHOD isLineaTallaColor()          INLINE   ( msgAlert( ::valoresLineaArticulo(), "isLineaTallaColor" ), ::valoresLineaArticulo() > 2 )
          METHOD isLineaTotal()         
    
       METHOD getTallas()
@@ -100,7 +100,7 @@ ENDCLASS
 
 METHOD New( nView ) CLASS ImportarPedidosProveedorExcel
 
-   ::nView  := nView
+   ::nView  := nView 
 
 Return ( Self )
 
@@ -284,7 +284,7 @@ METHOD valoresLineaArticulo() CLASS ImportarPedidosProveedorExcel
       uValue      := ::getActiveSheetValue( ::getRow(), nCol )
       if !empty(uValue)
          uValue   := cvaltochar( uValue )
-         if ( uValue != __total__)
+         if ( uValue != __total__ )
             ++nValue
          end if 
       end if
@@ -301,7 +301,7 @@ METHOD isLineaTotal() CLASS ImportarPedidosProveedorExcel
 
    for nCol := 1 to 50
       uValue      := ::getActiveSheetValue( ::getRow(), nCol )
-      if !empty(uValue)
+      if !empty( uValue )
          uValue   := cvaltochar( uValue )
          if ( uValue == __total__ )
             Return ( .t. )
@@ -340,6 +340,12 @@ METHOD getArticulo() CLASS ImportarPedidosProveedorExcel
 
    next 
 
+
+   msgAlert( ::cReferenciaProveedor, "cReferenciaProveedor" )
+   msgAlert( ::cCodigoArticulo, "cCodigoArticulo" )
+   msgAlert( ::cDescrpcionArticulo, "cDescrpcionArticulo" )
+
+
 Return ( self )
 
 //----------------------------------------------------------------------------//
@@ -353,9 +359,11 @@ METHOD isLineaTallaColorArticulo()
 
    for nCol := 1 to 50
 
-      uValue                        := ::getActiveSheetValue( ::getRow(), nCol )    
+      uValue                  := ::getActiveSheetValue( ::getRow(), nCol )    
 
-      if !empty(uValue) .and. ( uValue != __total__ )
+      msgAlert( cvaltochar( uValue ), "isLineaTallaColorArticulo" )
+
+      if !empty(uValue) .and. ( alltrim( uValue ) != __total__ )
          return .f.
       end if
 

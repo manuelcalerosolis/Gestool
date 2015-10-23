@@ -1827,7 +1827,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
 
       oGet:cText( ( dbfTmpBrw )->cCodTbl )
 
-      if IsObject( oSay )
+      if isObject( oSay )
          oSay:SetText( ( dbfTmpBrw )->cDesTbl )
       end if
 

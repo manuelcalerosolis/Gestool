@@ -7430,69 +7430,69 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Dirección:", -1, "Button", BS_GROUPBOX|WS_GROUP, 14, 35, 74, 37
 }
 
-FORMPAGO DIALOG DISCARDABLE 162, 101, 287, 364
+FORMPAGO DIALOG DISCARDABLE 162, 101, 287, 369
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Formas de pago"
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", -1, "Button", BS_GROUPBOX, 2, 149, 282, 40
+  CONTROL "", -1, "Button", BS_GROUPBOX, 2, 152, 282, 40
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 68, 4, 40, 11
   CONTROL "", 110, "Edit", ES_AUTOHSCROLL|WS_HSCROLL|WS_BORDER|WS_TABSTOP, 68, 17, 214, 11
   CONTROL "Efectivo", 111, "Button", BS_RADIOBUTTON, 6, 41, 40, 10
   CONTROL "No efectivo", 112, "Button", BS_RADIOBUTTON, 6, 54, 73, 10
   CONTROL "Tarjeta de credito", 113, "Button", BS_RADIOBUTTON, 6, 66, 73, 10
-  CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 68, 78, 42, 11
+  CONTROL "Domiciliaciaón bancaria", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 6, 79, 88, 10
   CONTROL "", 500, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 40, 42, 11
   CONTROL "", 510, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 53, 42, 11
-  CONTROL "A la espera de documentación", 125, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 150, 79, 109, 10
-  CONTROL "Cobrados", 140, "Button", BS_RADIOBUTTON, 6, 109, 48, 10
-  CONTROL "No cobrados", 141, "Button", BS_RADIOBUTTON, 6, 122, 66, 10
-  CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 106, 42, 11
-  CONTROL "", 330, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 119, 42, 11
-  CONTROL "", 340, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 132, 42, 11
-  CONTROL "Utilizar entidad bancaria de la empresa", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 148, 135, 10
-  CONTROL "", 210, "Edit", ES_AUTOHSCROLL|WS_HSCROLL|WS_BORDER|WS_TABSTOP, 66, 161, 214, 11
-  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 66, 174, 20, 11
-  CONTROL "", 380, "Edit", WS_BORDER|WS_TABSTOP, 88, 174, 20, 11
-  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 109, 174, 32, 11
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 143, 174, 32, 11
-  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 177, 174, 20, 11
-  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 199, 174, 80, 11
-  CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 66, 200, 70, 11
-  CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 140, 200, 140, 11
-  CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 66, 213, 70, 11
-  CONTROL "", 301, "Edit", WS_BORDER|WS_TABSTOP, 140, 213, 140, 11
-  CONTROL "", 425, "ComboBox", WS_BORDER|CBS_DROPDOWN|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 66, 241, 212, 101
-  CONTROL "Incluir en terminal punto de venta", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 6, 270, 118, 10
-  CONTROL "", 410, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 68, 282, 212, 101
-  CONTROL "", 420, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 66, 298, 40, 11
-  CONTROL "", 430, "Edit", WS_HSCROLL|WS_BORDER|WS_TABSTOP, 66, 327, 214, 11
-  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 124, 348, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 179, 348, 50, 14
-  CONTROL "&Ayuda", 559, "Button", WS_TABSTOP, 234, 348, 50, 14
-  CONTROL "Emitir como ", -1, "Button", BS_GROUPBOX, 2, 95, 140, 52
-  CONTROL "Aplazamientos", -1, "Button", BS_GROUPBOX, 144, 95, 140, 52
-  CONTROL "Tipo de pago", -1, "Button", BS_GROUPBOX, 2, 31, 282, 62
+  CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 65, 42, 11
+  CONTROL "Cobrados", 140, "Button", BS_RADIOBUTTON, 6, 112, 48, 10
+  CONTROL "No cobrados", 141, "Button", BS_RADIOBUTTON, 6, 125, 66, 10
+  CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 109, 42, 11
+  CONTROL "", 330, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 122, 42, 11
+  CONTROL "", 340, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 221, 135, 42, 11
+  CONTROL "Utilizar entidad bancaria de la empresa", 126, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 151, 135, 10
+  CONTROL "", 210, "Edit", ES_AUTOHSCROLL|WS_HSCROLL|WS_BORDER|WS_TABSTOP, 66, 164, 214, 11
+  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 66, 177, 20, 11
+  CONTROL "", 380, "Edit", WS_BORDER|WS_TABSTOP, 88, 177, 20, 11
+  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 109, 177, 32, 11
+  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 143, 177, 32, 11
+  CONTROL "", 240, "Edit", WS_BORDER|WS_TABSTOP, 177, 177, 20, 11
+  CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 199, 177, 80, 11
+  CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 66, 203, 70, 11
+  CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 140, 203, 140, 11
+  CONTROL "", 300, "Edit", WS_BORDER|WS_TABSTOP, 66, 216, 70, 11
+  CONTROL "", 301, "Edit", WS_BORDER|WS_TABSTOP, 140, 216, 140, 11
+  CONTROL "", 425, "ComboBox", WS_BORDER|CBS_DROPDOWN|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 66, 244, 212, 101
+  CONTROL "Incluir en terminal punto de venta", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 6, 273, 118, 10
+  CONTROL "", 410, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|CBS_OWNERDRAWFIXED|CBS_DISABLENOSCROLL|WS_VSCROLL|WS_TABSTOP, 66, 285, 212, 101
+  CONTROL "", 420, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 66, 301, 40, 11
+  CONTROL "", 430, "Edit", WS_HSCROLL|WS_BORDER|WS_TABSTOP, 66, 330, 214, 11
+  CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 124, 351, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 179, 351, 50, 14
+  CONTROL "&Ayuda", 559, "Button", WS_TABSTOP, 234, 351, 50, 14
+  CONTROL "Emitir como ", -1, "Button", BS_GROUPBOX, 2, 98, 140, 52
+  CONTROL "Aplazamientos", -1, "Button", BS_GROUPBOX, 144, 98, 140, 52
+  CONTROL "Tipo de pago", -1, "Button", BS_GROUPBOX, 2, 31, 282, 64
   CONTROL "Código ", -1, "Static", WS_GROUP, 6, 6, 40, 8
   CONTROL "Descripción", -1, "Static", WS_GROUP, 6, 20, 44, 8
-  CONTROL "Comisión %", -1, "Static", WS_GROUP, 17, 81, 41, 8
-  CONTROL "Subcuenta cobro", -1, "Static", WS_GROUP, 6, 203, 60, 8
-  CONTROL "Contabilidad", -1, "Button", BS_GROUPBOX, 2, 191, 282, 37
-  CONTROL "Subcuenta gastos", -1, "Static", WS_GROUP, 6, 216, 60, 8
-  CONTROL "Nº de plazos", -1, "Static", WS_GROUP, 150, 109, 45, 8
-  CONTROL "Días primer plazo", -1, "Static", WS_GROUP, 150, 122, 60, 8
-  CONTROL "Días entre plazos", -1, "Static", WS_GROUP, 150, 135, 61, 8
-  CONTROL "Terminal punto de venta", -1, "Button", BS_GROUPBOX, 2, 259, 282, 54
-  CONTROL "Imagen", -1, "Static", WS_GROUP, 6, 287, 29, 8
-  CONTROL "Posición", -1, "Static", WS_GROUP, 6, 301, 32, 8
-  CONTROL "Código de pago para generación de factura electónica", -1, "Button", BS_GROUPBOX, 2, 230, 282, 28
+  CONTROL "Comisión %", -1, "Static", WS_GROUP, 150, 68, 41, 8
+  CONTROL "Subcuenta cobro", -1, "Static", WS_GROUP, 6, 206, 60, 8
+  CONTROL "Contabilidad", -1, "Button", BS_GROUPBOX, 2, 194, 282, 37
+  CONTROL "Subcuenta gastos", -1, "Static", WS_GROUP, 6, 219, 60, 8
+  CONTROL "Nº de plazos", -1, "Static", WS_GROUP, 150, 112, 45, 8
+  CONTROL "Días primer plazo", -1, "Static", WS_GROUP, 150, 125, 60, 8
+  CONTROL "Días entre plazos", -1, "Static", WS_GROUP, 150, 138, 61, 8
+  CONTROL "Terminal punto de venta", -1, "Button", BS_GROUPBOX, 2, 262, 282, 54
+  CONTROL "Imagen", -1, "Static", WS_GROUP, 6, 290, 29, 8
+  CONTROL "Posición", -1, "Static", WS_GROUP, 6, 304, 32, 8
+  CONTROL "Código de pago para generación de factura electónica", -1, "Button", BS_GROUPBOX, 2, 233, 282, 28
   CONTROL "Entrega inicial %", -1, "Static", WS_GROUP, 150, 43, 57, 8
   CONTROL "Descuento %", -1, "Static", WS_GROUP, 150, 56, 49, 8
-  CONTROL "Código pago", -1, "Static", WS_GROUP, 5, 244, 45, 8
-  CONTROL "Banco", -1, "Static", WS_GROUP, 6, 164, 23, 8
-  CONTROL "Cuenta IBAN", -1, "Static", WS_GROUP, 6, 177, 47, 8
-  CONTROL "Web", -1, "Button", BS_GROUPBOX, 2, 315, 282, 28
-  CONTROL "Código web", -1, "Static", WS_GROUP, 6, 328, 40, 8
+  CONTROL "Código pago", -1, "Static", WS_GROUP, 5, 247, 45, 8
+  CONTROL "Banco", -1, "Static", WS_GROUP, 6, 167, 23, 8
+  CONTROL "Cuenta IBAN", -1, "Static", WS_GROUP, 6, 180, 47, 8
+  CONTROL "Web", -1, "Button", BS_GROUPBOX, 2, 318, 282, 28
+  CONTROL "Código web", -1, "Static", WS_GROUP, 6, 331, 40, 8
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH

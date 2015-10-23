@@ -23,7 +23,7 @@ CLASS TCamposExtra FROM TMant
    DATA oTipo
    DATA cTipo              INIT "Texto"
    DATA aTipo              INIT { "Texto", "Número", "Fecha", "Si/No", "Lista" }
-   DATA oLongitud
+   DATA oLongitudfa
    DATA oDecimales
    DATA hActions
    DATA oValorDefecto
@@ -93,7 +93,7 @@ CLASS TCamposExtra FROM TMant
    Method setDocumentos()              INLINE ( ::oDbf:mDocumento := hb_serialize( ::aDocumentos ) )
    Method getDocumentos()              INLINE ( ::aDocumentos     := hb_deserialize( ::oDbf:mDocumento ) )
    Method readDocumentos()             
-   Method initDocumentos()             INLINE ( ::aDocumentos     := DOCUMENTOS_SELECTED )
+   Method initDocumentos()             INLINE ( ::aDocumentos     := DOCUMENTOS_SELECTED ) 
 
    Method cargaValoresDocumentos( nMode )
 
@@ -627,7 +627,7 @@ FUNCTION CamposExtra( oMenuItem, oWnd )
       */
 
       if oWnd != nil
-         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+         SysRefresh(); oWnd:CloseAll(); SysRefresh() 
       end if
 
       /*
@@ -675,3 +675,16 @@ Function getExtraField( cFieldName, oDetCamposExtra, Id )
 Return ( cExtraField )
 
 //---------------------------------------------------------------------------//
+
+Function getCustomExtraField( cFieldName, cDocumentType, Id )
+
+   local cExtraField    := ""
+   local cCodigoCampo
+   local cTipoDocumento := ""
+
+   cTipoDocumento       := hGet( DOCUMENTOS_ITEMS, cDocumentType )
+
+Return ( cExtraField )
+
+//---------------------------------------------------------------------------//
+
