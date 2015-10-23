@@ -191,8 +191,6 @@ CLASS TDataCenter
    METHOD getDictionary( cDataTable )
    METHOD getDeFaultValue( cDataTable )  
 
-   
-
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
    METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
 
@@ -6309,9 +6307,7 @@ METHOD getFieldDictionary( cField, cDataTable, nView ) CLASS D
 
    local dbf         := ::Get( cDataTable, nView )   
    local aDictionary := TDataCenter():getDictionary( cDataTable )
-   local value
-
-   value             := hGet( aDictionary, cField )
+   local value       := hGet( aDictionary, cField )
 
    if !empty( value )
      Return( ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) )

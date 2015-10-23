@@ -3039,6 +3039,24 @@ return ( hash )
 
 //---------------------------------------------------------------------------//
 
+function getFieldNameFromDictionary( cName, hashDictionary )
+
+  local cFieldName  := ""
+
+  if empty( hashDictionary )
+    return ( cFieldName )
+  end if 
+
+  if hhaskey( hashDictionary, cName )
+    cFieldName      := hGet( hashDictionary, cName )
+  end if 
+
+return ( cFieldName )
+
+//---------------------------------------------------------------------------//
+  
+
+
 FUNCTION HtmlConvertChars( cString, cQuote_style, aTranslations )
 
    DEFAULT cQuote_style := "ENT_COMPAT"

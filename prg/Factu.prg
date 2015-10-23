@@ -6078,6 +6078,8 @@ Return ( by( nRow ) )
 
 Function Test() 
 
+   TFastVentasArticulos():sqlPedidoClientes()
+
    /*
    Envío de  mail al usuario----------------------------------------------
    

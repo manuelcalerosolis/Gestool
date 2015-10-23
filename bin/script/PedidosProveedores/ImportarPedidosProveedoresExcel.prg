@@ -340,12 +340,6 @@ METHOD getArticulo() CLASS ImportarPedidosProveedorExcel
 
    next 
 
-
-   msgAlert( ::cReferenciaProveedor, "cReferenciaProveedor" )
-   msgAlert( ::cCodigoArticulo, "cCodigoArticulo" )
-   msgAlert( ::cDescrpcionArticulo, "cDescrpcionArticulo" )
-
-
 Return ( self )
 
 //----------------------------------------------------------------------------//
