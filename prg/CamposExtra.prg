@@ -23,7 +23,7 @@ CLASS TCamposExtra FROM TMant
    DATA oTipo
    DATA cTipo              INIT "Texto"
    DATA aTipo              INIT { "Texto", "Número", "Fecha", "Si/No", "Lista" }
-   DATA oLongitud
+   DATA oLongitudfa
    DATA oDecimales
    DATA hActions
    DATA oValorDefecto
@@ -627,7 +627,7 @@ FUNCTION CamposExtra( oMenuItem, oWnd )
       */
 
       if oWnd != nil
-         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+         SysRefresh(); oWnd:CloseAll(); SysRefresh() 
       end if
 
       /*

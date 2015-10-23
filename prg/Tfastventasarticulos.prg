@@ -1323,15 +1323,15 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cNomArt    := ::oPedCliL:cDetalle
 
                   ::oDbf:cCodPrv    := ::oPedCliL:cCodPrv
-                  ::oDbf:cNomPrv    := RetFld( ::oPedCliL:cCodPrv, ::oDbfPrv:cAlias )
+                  ::oDbf:cNomPrv    := "" // RetFld( ::oPedCliL:cCodPrv, ::oDbfPrv:cAlias )
 
-                  ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPedCliL:nIva )
-                  ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
-                  ::oDbf:cCodTip    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:TipoIva    := "" // cCodigoIva( ::oDbfIva:cAlias, ::oPedCliL:nIva )
+                  ::oDbf:cCodGrp    := "" // cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
+                  ::oDbf:cCodTip    := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+                  ::oDbf:cCodCate   := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+                  ::oDbf:cCodTemp   := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+                  ::oDbf:cCodFab    := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   
                   ::oDbf:cCodFam    := ::oPedCliL:cCodFam
                   ::oDbf:cCodAlm    := ::oPedCliL:cAlmLin

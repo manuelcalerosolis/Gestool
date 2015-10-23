@@ -282,6 +282,56 @@ Defines para ficheros INI
                                         "18. Pago contra reembolso",;
                                         "19. Pago mediante tarjeta" }
 
+#define DOCUMENTOS_ITEMS        {       "Artículos" => "20",;
+                                        "Clientes" => "21",;
+                                        "Proveedores" => "22",;
+                                        "Familias" => "37",;
+                                        "Agentes" => "38",;
+                                        "Presupuestos a clientes" => "08",;
+                                        "Pedidos a clientes" => "09",;
+                                        "Albaranes a clientes" => "10",;
+                                        "Facturas a clientes" => "11",;
+                                        "Facturas de anticipos a clientes" => "13",;
+                                        "Facturas rectificativa a clientes" => "14",;
+                                        "Pedidos a proveedores" => "01",;
+                                        "Albaranes a proveedores" => "02",;
+                                        "Facturas a proveedores" => "03",;
+                                        "Facturas rectificativa a proveedores" => "04",;
+                                        "S.A.T" => "32" } }
+
+#define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "Cube_Yellow_16",;
+                                        "Clientes" => "User1_16",;
+                                        "Proveedores" => "Businessman_16",;
+                                        "Familias" => "Cubes_16",;
+                                        "Agentes" => "Security_Agent_16",;
+                                        "Presupuestos a clientes" => "Notebook_user1_16",;
+                                        "Pedidos a clientes" => "Clipboard_empty_user1_16",;
+                                        "Albaranes a clientes" => "Document_plain_user1_16",;
+                                        "Facturas a clientes" => "Document_user1_16",;
+                                        "Facturas de anticipos a clientes" => "Document_money2_16",;
+                                        "Facturas rectificativa a clientes" => "Document_delete_16",;
+                                        "Pedidos a proveedores" => "Clipboard_empty_businessman_16",;
+                                        "Albaranes a proveedores" => "Document_plain_businessman_16",;
+                                        "Facturas a proveedores" => "Document_businessman_16",;
+                                        "Facturas rectificativa a proveedores" => "Document_navigate_cross_16",;
+                                        "S.A.T" => "Power-drill_user1_16" } 
+
+#define DOCUMENTOS_SELECTED     {       "Artículos" => .F.,;
+                                        "Clientes" => .F.,;
+                                        "Proveedores" => .F.,;
+                                        "Familias" => .F.,;
+                                        "Agentes" => .F.,;
+                                        "Presupuestos a clientes"=> .F.,;
+                                        "Pedidos a clientes" => .F.,;
+                                        "Albaranes a clientes" => .F.,;
+                                        "Facturas a clientes" => .F.,;
+                                        "Facturas de anticipos a clientes" => .F.,;
+                                        "Facturas rectificativa a clientes" => .F.,;
+                                        "Pedidos a proveedores" => .F.,;
+                                        "Albaranes a proveedores" => .F.,;
+                                        "Facturas a proveedores" => .F.,;
+                                        "Facturas rectificativa a proveedores" => .F.,;
+                                        "S.A.T" => .F. } ) }
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )
