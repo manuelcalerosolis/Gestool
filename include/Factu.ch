@@ -297,7 +297,7 @@ Defines para ficheros INI
                                         "Albaranes a proveedores" => "02",;
                                         "Facturas a proveedores" => "03",;
                                         "Facturas rectificativa a proveedores" => "04",;
-                                        "S.A.T" => "32" } }
+                                        "S.A.T" => "32" } 
 
 #define ICONOS_DOCUMENTOS_ITEMS {       "Artículos" => "Cube_Yellow_16",;
                                         "Clientes" => "User1_16",;
@@ -331,7 +331,7 @@ Defines para ficheros INI
                                         "Albaranes a proveedores" => .F.,;
                                         "Facturas a proveedores" => .F.,;
                                         "Facturas rectificativa a proveedores" => .F.,;
-                                        "S.A.T" => .F. } ) }
+                                        "S.A.T" => .F. } 
 
 #command SET TAG TO <tag> [OF <(cdx)>] ;
       => ordSetFocus( <(tag)> [, <(cdx)>] )
