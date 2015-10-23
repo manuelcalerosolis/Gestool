@@ -93,7 +93,7 @@ CLASS TCamposExtra FROM TMant
    Method setDocumentos()              INLINE ( ::oDbf:mDocumento := hb_serialize( ::aDocumentos ) )
    Method getDocumentos()              INLINE ( ::aDocumentos     := hb_deserialize( ::oDbf:mDocumento ) )
    Method readDocumentos()             
-   Method initDocumentos()             INLINE ( ::aDocumentos     := DOCUMENTOS_SELECTED )
+   Method initDocumentos()             INLINE ( ::aDocumentos     := DOCUMENTOS_SELECTED ) 
 
    Method cargaValoresDocumentos( nMode )
 
