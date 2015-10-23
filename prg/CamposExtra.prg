@@ -678,11 +678,24 @@ Return ( cExtraField )
 
 Function getCustomExtraField( cFieldName, cDocumentType, Id )
 
-   local cExtraField    := ""
-   local cCodigoCampo
-   local cTipoDocumento := ""
+   local cExtraField       := ""
+   local cTipoDocumento    := ""
+   local oDetCamposExtra
 
-   cTipoDocumento       := hGet( DOCUMENTOS_ITEMS, cDocumentType )
+   cTipoDocumento          := hGet( DOCUMENTOS_ITEMS, cDocumentType )
+
+   oDetCamposExtra         := TDetCamposExtra():New()
+   oDetCamposExtra:OpenFiles()
+
+   oDetCamposExtra:oDbf:ordsetfocus( "cTotClave" )
+
+   if oDetCamposExtra:oDbf:Seek( cTipoDocumento + cFieldName + Id )
+
+      cExtraField          := oDetCamposExtra:oDbf:cValor
+
+   end if
+   
+   oDetCamposExtra:CloseFiles()
 
 Return ( cExtraField )
 

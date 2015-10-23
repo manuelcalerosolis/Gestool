@@ -20082,4 +20082,3 @@ Function getExtraFieldArticulo( cFieldName )
 Return ( getExtraField( cFieldName, oDetCamposExtra, ( dbfArticulo )->Codigo ) )
 
 //---------------------------------------------------------------------------//
-
