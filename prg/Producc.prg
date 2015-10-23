@@ -31,12 +31,12 @@ static oThis
 
 //---------------------------------------------------------------------------//
 
-Function StartTProduccion()
+Function StartTProduccion( cDriver )
 
-   local oProduccion := TProduccion():New( cPatEmp(), oWnd(), "04008" )
+   local oProduccion := TProduccion():New( cPatEmp(), cDriver(), oWnd(), "04008" )
 
    if !Empty( oProduccion )
-      oProduccion:Activate()
+      oProduccion:Activate( cDriver )
    end if
 
 Return nil
@@ -188,10 +188,10 @@ CLASS TProduccion FROM TMasDet
 
    Data oBrwLabel
 
-   METHOD New( cPath, oWndParent, oMenuItem )
+   METHOD New( cPath, cDriver, oWndParent, oMenuItem )
    METHOD Create( cPath, oWndParent )  INLINE ( ::New( cPath, oWndParent ) )
 
-   METHOD Activate()
+   METHOD Activate( cDriver )
 
    METHOD OpenFiles( lExclusive )
    METHOD OpenService( lExclusive )
@@ -293,10 +293,13 @@ ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath           := cPatEmp()
    DEFAULT oWndParent      := GetWndFrame()
+   DEFAULT cDriver         := cDriver()
+
+   ::cDriver               := cDriver
 
    if !Empty( oMenuItem )
 
@@ -340,10 +343,10 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::oDetSeriesMaterial    := TDetSeriesMaterial():New( cPath, Self )
    ::AddDetail( ::oDetSeriesMaterial )
 
-   ::oDetPersonal          := TDetPersonal():New( cPath, Self )
+   ::oDetPersonal          := TDetPersonal():New( cPath, cDriver, Self )
    ::AddDetail( ::oDetPersonal )
 
-   ::oDetHorasPersonal     := TDetHorasPersonal():New( cPath, Self )
+   ::oDetHorasPersonal     := TDetHorasPersonal():New( cPath, cDriver, Self )
    ::AddDetail( ::oDetHorasPersonal )
 
    ::oDetMaquina           := TDetMaquina():New( cPath, Self )
@@ -366,11 +369,15 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Activate()
+METHOD Activate( cDriver )
 
    local oImp
    local oPrv
    local oPdf
+
+   DEFAULT cDriver   := cDriver()
+
+   ::cDriver         := cDriver
 
    if ::oWndParent != nil
       ::oWndParent:CloseAll()

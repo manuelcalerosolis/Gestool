@@ -2396,7 +2396,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Partes producción'
    oItem:cMessage       := 'Acceso a los partes de producción'
-   oItem:bAction        := {|| StartTProduccion() }
+   oItem:bAction        := {|| StartTProduccion( cDriver()) }
    oItem:cId            := "04008"
    oItem:cBmp           := "Worker2_Form_Red_16"
    oItem:cBmpBig        := "Worker2_Form_Red_32"

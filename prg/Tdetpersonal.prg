@@ -17,7 +17,7 @@ CLASS TDetPersonal FROM TDet
 
    DATA  lAppendTrabajador                   INIT  .f.
 
-   METHOD New( cPath, oParent )  
+   METHOD New( cPath, cDriver, oParent )  
    
    METHOD DefineFiles()
 
@@ -48,12 +48,14 @@ END CLASS
 
 //--------------------------------------------------------------------------//
 
-METHOD New( cPath, oParent ) 
+METHOD New( cPath, cDriver, oParent ) 
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
    ::oParent            := oParent
+   ::cDriver            := cDriver
 
    ::bOnPreSaveDetail   := {|| ::SaveDetails() }
    ::bOnPreDelete       := {|| ::DeleteDetails() }

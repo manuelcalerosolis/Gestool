@@ -65,13 +65,17 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cDriver )
 
    local lOpen          := .t.
    local oError
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
+   DEFAULT cDriver      := cDriver
+
    DEFAULT lExclusive   := .f.
+
+   ::cDriver            := cDriver
 
    BEGIN SEQUENCE
 
