@@ -8605,13 +8605,15 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Albaranes",             "Total saldo envase 8",                                          "CallHbFunc('nTotalSaldoAlbCli8')" )
    oFr:AddVariable(     "Albaranes",             "Total saldo envase 16",                                         "CallHbFunc('nTotalSaldoAlbCli16')" )
    
-   oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",                "CallHbFunc('cDesAlbCli')"  )
-   oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo otro lenguaje",  "CallHbFunc('cDesAlbCliLeng')"  )
-   oFr:AddVariable(     "Lineas de albaranes",   "Total unidades artículo",             "CallHbFunc('nTotNAlbCli')" )
-   oFr:AddVariable(     "Lineas de albaranes",   "Precio unitario del artículo",        "CallHbFunc('nTotUAlbCli')" )
-   oFr:AddVariable(     "Lineas de albaranes",   "Total línea de albaran",              "CallHbFunc('nTotLAlbCli')" )
-   oFr:AddVariable(     "Lineas de albaranes",   "Total peso por línea",                "CallHbFunc('nPesLAlbCli')" )
-   oFr:AddVariable(     "Lineas de albaranes",   "Total línea sin " + cImp(),           "CallHbFunc('nNetLAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",                     "CallHbFunc('cDesAlbCli')"  )
+   oFr:AddVariable(     "Lineas de albaranes",   "Detalle del artículo otro lenguaje",       "CallHbFunc('cDesAlbCliLeng')"  )
+   oFr:AddVariable(     "Lineas de albaranes",   "Total unidades artículo",                  "CallHbFunc('nTotNAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Precio unitario del artículo",             "CallHbFunc('nTotUAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Total línea de albaran",                   "CallHbFunc('nTotLAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Total peso por línea",                     "CallHbFunc('nPesLAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Total línea sin " + cImp(),                "CallHbFunc('nNetLAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Total línea "+ cImp() + " incluido",       "CallHbFunc('nIncLAlbCli')" )
+   oFr:AddVariable(     "Lineas de albaranes",   "Precio unitario "+ cImp() + " incluido",   "CallHbFunc('nIncUAlbCli')" )
 
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 4 meses",            "CallHbFunc('dJuliano4AlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 6 meses",            "CallHbFunc('dJulianoAlbCli')" )
@@ -13642,14 +13644,15 @@ Devuelve el precio unitario impuestos incluido
 
 FUNCTION nIncUAlbCli( cTmpLin, nDec, nVdv )
 
-   local nCalculo
+   local nCalculo    := 0
 
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
+   DEFAULT cTmpLin   := D():Get( "AlbCliL", nView )
+   DEFAULT nDec      := 0
+   DEFAULT nVdv      := 1
 
    nCalculo       := nTotUAlbCli( cTmpLin, nDec, nVdv )
 
-   if !( dbfTmpLin )->lIvaLin
+   if !( cTmpLin )->lIvaLin
       nCalculo    += nCalculo * ( cTmpLin )->nIva / 100
    end if
 
@@ -13689,7 +13692,17 @@ Devuelve el total de una linea con impuestos incluido
 
 FUNCTION nIncLAlbCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLAlbCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo    := 0
+
+   DEFAULT cDbfLin   := D():Get( "AlbCliL", nView )
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRouDec   := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   nCalculo          := nTotLAlbCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    if !( cDbfLin )->lIvaLin
       nCalculo    += nCalculo * ( cDbfLin )->nIva / 100

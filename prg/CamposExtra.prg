@@ -23,7 +23,7 @@ CLASS TCamposExtra FROM TMant
    DATA oTipo
    DATA cTipo              INIT "Texto"
    DATA aTipo              INIT { "Texto", "Número", "Fecha", "Si/No", "Lista" }
-   DATA oLongitudfa
+   DATA oLongitud
    DATA oDecimales
    DATA hActions
    DATA oValorDefecto
@@ -153,8 +153,8 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TCamposExtra
       FIELD NAME "nDecimales"    TYPE "N" LEN   1  DEC 0              COMMENT "Decimales campo"        HIDE           OF ::oDbf
       FIELD NAME "mDefecto"      TYPE "M" LEN  10  DEC 0              COMMENT "Valores por defecto"    HIDE           OF ::oDbf
 
-      INDEX TO "CAMPOEXTRA.Cdx" TAG "cCodigo"   ON "cCodigo"   COMMENT "Código"        NODELETED OF ::oDbf
-      INDEX TO "CAMPOEXTRA.Cdx" TAG "cNombre"   ON "cNombre"   COMMENT "Descripción"   NODELETED OF ::oDbf
+      INDEX TO "CAMPOEXTRA.Cdx" TAG "cCodigo"   ON "cCodigo"          COMMENT "Código"        NODELETED OF ::oDbf
+      INDEX TO "CAMPOEXTRA.Cdx" TAG "cNombre"   ON Upper( "cNombre" ) COMMENT "Descripción"   NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -682,10 +682,10 @@ Function getCustomExtraField( cFieldName, cDocumentType, Id )
    local cTipoDocumento    := ""
    local oDetCamposExtra
 
-   cTipoDocumento          := hGet( DOCUMENTOS_ITEMS, cDocumentType )
-
    oDetCamposExtra         := TDetCamposExtra():New()
    oDetCamposExtra:OpenFiles()
+
+   cTipoDocumento          := hGet( DOCUMENTOS_ITEMS, cDocumentType )
 
    oDetCamposExtra:oDbf:ordsetfocus( "cTotClave" )
 
