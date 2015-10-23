@@ -313,7 +313,6 @@ Static Function ImportacionArticulos()
    local n
    local TipoIva
    local cCodBar     := ""
-   local cCodArtCli  := ""
 
    msgwait( "Importamos artículos", , 1 )
 
@@ -359,20 +358,7 @@ Static Function ImportacionArticulos()
 
       end if
 
-      cCodArtCli                                := GetRange( "Q", n )
-
-      if !Empty( cCodArtCli )
-
-         ( D():DetCamposExtras( nView ) )->( dbAppend() )
-
-         ( D():DetCamposExtras( nView ) )->cTipDoc    := ART_TBL
-         ( D():DetCamposExtras( nView ) )->cCodTipo   := "001"
-         ( D():DetCamposExtras( nView ) )->cClave     := GetRange( "B", n )
-         ( D():DetCamposExtras( nView ) )->cValor     := cCodArtCli
-
-         ( D():DetCamposExtras( nView ) )->( dbUnlock() )         
-
-      end if
+      ImportaArticulosCamposExtra( n )
 
       ( D():Articulos( nView ) )->( dbUnlock() )
 
@@ -381,6 +367,69 @@ Static Function ImportacionArticulos()
    next
 
    Desconexion()
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
+Static Function ImportaArticulosCamposExtra( nLin )
+
+   ImportaCampoExtra( "001", "Q", nLin ) //Memo
+
+   ImportaCampoExtra( "002", "N", nLin ) //Referencia
+
+   ImportaCampoExtra( "003", "BA", nLin ) //Auxiliar
+
+   ImportaCampoExtra( "004", "DJ", nLin ) //Barco
+
+   ImportaCampoExtra( "005", "DR", nLin ) //Observaciones ventas
+
+   ImportaCampoExtra( "006", "AQ", nLin ) //Factor
+
+   ImportaCampoExtra( "007", "DU", nLin ) //Nombre científico
+
+   ImportaCampoExtra( "008", "DV", nLin ) //Composición
+
+   ImportaCampoExtra( "009", "DW", nLin ) //Neto
+
+   ImportaCampoExtra( "010", "DX", nLin ) //Conservación
+
+   ImportaCampoExtra( "011", "DY", nLin ) //Lugar procedencia
+
+   ImportaCampoExtra( "012", "ED", nLin ) //Formato
+
+   ImportaCampoExtra( "013", "EE", nLin ) //Talla
+
+   ImportaCampoExtra( "014", "EF", nLin ) //Presentación
+
+   ImportaCampoExtra( "015", "EG", nLin ) //Origen
+
+   ImportaCampoExtra( "016", "EH", nLin ) //Observación formato
+
+   ImportaCampoExtra( "017", "FI", nLin ) //Descripción aAlternativa
+
+Return ( .t. )
+
+//----------------------------------------------------------------------------//
+
+Static Function ImportaCampoExtra( cCod, cCol, nLin )
+
+   local cValor   := ""
+
+   cValor         := GetRange( cCol, nLin )
+
+   if !Empty( cValor )
+
+      ( D():DetCamposExtras( nView ) )->( dbAppend() )
+
+      ( D():DetCamposExtras( nView ) )->cTipDoc    := ART_TBL
+      ( D():DetCamposExtras( nView ) )->cCodTipo   := cCod
+      ( D():DetCamposExtras( nView ) )->cClave     := GetRange( "B", nLin )
+      ( D():DetCamposExtras( nView ) )->cValor     := cValor
+
+      ( D():DetCamposExtras( nView ) )->( dbUnlock() )
+
+   end if
 
 Return ( .t. )
 

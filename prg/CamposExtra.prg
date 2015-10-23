@@ -656,6 +656,8 @@ Function getExtraField( cFieldName, oDetCamposExtra, Id )
    local cTipoDocumento := ""
    local cCodigoCampo   := ""
 
+   ?"Entro a buscar"
+
    cTipoDocumento       := hGet( DOCUMENTOS_ITEMS, oDetCamposExtra:TipoDocumento )
    cCodigoCampo         := oDetCamposExtra:oCamposExtra:getCodigoCampoExtra( cFieldName )
 

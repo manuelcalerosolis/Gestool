@@ -28,7 +28,7 @@
 
 #define fldGeneral                  oFld:aDialogs[1]
 #define fldPrecios                  oFld:aDialogs[2]
-#define fldTactil                   oFld:aDialogs[3]
+#define fldTactil                   oFld:aDialogs[3] 
 #define fldDescripciones            oFld:aDialogs[4]
 #define fldImagenes                 oFld:aDialogs[5]
 #define fldPropiedades              oFld:aDialogs[6]
@@ -6592,6 +6592,18 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ]   := aArt[ ( dbfArticulo )->( fieldpos( "cCodPrp1") ) ]
       aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ]   := aArt[ ( dbfArticulo )->( fieldpos( "cCodPrp2") ) ]
    end if
+
+   /*
+   Comprobamos que existan valores en las propiedades--------------------------
+   */
+
+   if !Empty( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] )
+
+      
+
+
+
+   end if   
 
    /*
    Llenamos los arrays con las posibles propiedades----------------------------
