@@ -1314,24 +1314,23 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                if !( ::lExcCero  .and. nTotNPedCli( ::oPedCliL:cAlias ) == 0 )  .and.;
                   !( ::lExcImp   .and. nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
-                  /*
-                  AÃ±adimos un nuevo registro
-                  */
+                  // Añadimos un nuevo registro
+
                   ::oDbf:Blank()
 
                   ::oDbf:cCodArt    := ::oPedCliL:cRef
                   ::oDbf:cNomArt    := ::oPedCliL:cDetalle
 
                   ::oDbf:cCodPrv    := ::oPedCliL:cCodPrv
-                  ::oDbf:cNomPrv    := "" // RetFld( ::oPedCliL:cCodPrv, ::oDbfPrv:cAlias )
+                  // ::oDbf:cNomPrv    := RetFld( ::oPedCliL:cCodPrv, ::oDbfPrv:cAlias )
 
-                  ::oDbf:TipoIva    := "" // cCodigoIva( ::oDbfIva:cAlias, ::oPedCliL:nIva )
-                  ::oDbf:cCodGrp    := "" // cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
-                  ::oDbf:cCodTip    := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := "" // RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ::oPedCliL:nIva )
+                  ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
+                  ::oDbf:cCodTip    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
+                  ::oDbf:cCodCate   := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
+                  ::oDbf:cCodEst    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
+                  ::oDbf:cCodTemp   := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
+                  ::oDbf:cCodFab    := RetFld( ::oPedCliL:cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
                   
                   ::oDbf:cCodFam    := ::oPedCliL:cCodFam
                   ::oDbf:cCodAlm    := ::oPedCliL:cAlmLin
@@ -1340,7 +1339,6 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cCodAge    := ::oPedCliT:cCodAge
                   ::oDbf:cCodTrn    := ::oPedCliT:cCodTrn
                   ::oDbf:cCodUsr    := ::oPedCliT:cCodUsr
-
                   ::oDbf:cCodCli    := ::oPedCliT:cCodCli
                   ::oDbf:cNomCli    := ::oPedCliT:cNomCli
                   ::oDbf:cPobCli    := ::oPedCliT:cPobCli
@@ -1348,11 +1346,11 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cPosCli    := ::oPedCliT:cPosCli
                   ::oDbf:cCodObr    := ::oPedCliT:cCodObr
 
-                  ::oDbf:nUniArt    := nTotNPedCli( ::oPedCliL:cAlias )
-
                   ::oDbf:nDtoArt    := ::oPedcliL:nDto
                   ::oDbf:nLinArt    := ::oPedcliL:nDtoDiv
                   ::oDbf:nPrmArt    := ::oPedcliL:nDtoPrm
+
+                  ::oDbf:nUniArt    := nTotNPedCli( ::oPedCliL:cAlias )
 
                   ::oDbf:nTotDto    := nDtoLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotPrm    := nPrmLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
@@ -1364,41 +1362,18 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nBrtArt    := nBrtLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nImpArt    := nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
                   ::oDbf:nIvaArt    := nIvaLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+
                   ::oDbf:nTotArt    := nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  
+                  ::oDbf:nPeso      := nPesLPedCli( ::oPedCliL:cAlias )
 
                   ::oDbf:nCosArt    := nTotCPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  if Empty( ::oDbf:nCosArt )
+
+                  if empty( ::oDbf:nCosArt )
                      ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
                   end if 
 
-                  ::oDbf:cCodPr1    := ::oPedCliL:cCodPr1
-                  ::oDbf:cCodPr2    := ::oPedCliL:cCodPr2
-                  ::oDbf:cValPr1    := ::oPedCliL:cValPr1
-                  ::oDbf:cValPr2    := ::oPedCliL:cValPr2
-
-                  ::oDbf:cClsDoc    := PED_CLI
-                  ::oDbf:cTipDoc    := "Pedido cliente"
-                  ::oDbf:cSerDoc    := ::oPedCliT:cSerPed
-                  ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumPed )
-                  ::oDbf:cSufDoc    := ::oPedCliT:cSufPed
-
-                  ::oDbf:cIdeDoc    :=  ::idDocumento()
-                  ::oDbf:nNumLin    :=  ::oPedCliL:nNumLin
-
-                  ::oDbf:nAnoDoc    := Year( ::oPedCliT:dFecPed )
-                  ::oDbf:nMesDoc    := Month( ::oPedCliT:dFecPed )
-                  ::oDbf:dFecDoc    := ::oPedCliT:dFecPed
-                  ::oDbf:cHorDoc    := SubStr( ::oPedCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 4, 2 )
-
-                  ::oDbf:nBultos    := ::oPedCliL:nBultos
-                  ::oDbf:cFormato   := ::oPedCliL:cFormato
-                  ::oDbf:nCajas     := ::oPedCliL:nCanPed
-                  ::oDbf:nPeso      := nPesLPedCli( ::oPedCliL:cAlias )
-
-                  ::oDbf:lKitArt    := ::oPedCliL:lKitArt
-                  ::oDbf:lKitChl    := ::oPedCliL:lKitChl
 
                   ::InsertIfValid()
 
