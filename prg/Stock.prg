@@ -2337,6 +2337,7 @@ RETURN ( lDup )
          :cValorPropiedad2    := ( ::cProducL )->cValPr2
          :cLote               := ( ::cProducL )->cLote
          :dFechaCaducidad     := ( ::cProducL )->dFecCad
+         :nBultos             := ( ::cProducL )->nBultos
 
           if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, 1, -1 )
@@ -2373,6 +2374,7 @@ RETURN ( lDup )
          :cValorPropiedad1    := ( ::cProducM )->cValPr1
          :cValorPropiedad2    := ( ::cProducM )->cValPr2
          :cLote               := ( ::cProducM )->cLote
+         :nBultos             := -( ::cProducM )->nBultos
 
          if IsTrue( lNumeroSerie )
             :nUnidades        := if( nUnidades > 0, -1, 1 )
@@ -5093,6 +5095,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cProducL )->cValPr1
                      :cValorPropiedad2    := ( ::cProducL )->cValPr2
                      :cLote               := ( ::cProducL )->cLote
+                     :nBultos             := ( ::cProducL )->nBultos
                      :nUnidades           := nTotNProduccion( ::cProducL )
                      ::Integra( hb_QWith() )
                   end with
@@ -5124,6 +5127,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
                      :cValorPropiedad1    := ( ::cProducM )->cValPr1
                      :cValorPropiedad2    := ( ::cProducM )->cValPr2
                      :cLote               := ( ::cProducM )->cLote
+                     :nBultos             := -( ::cProducM )->nBultos
                      :nUnidades           := - nTotNMaterial( ::cProducM )
                      ::Integra( hb_QWith() )
                   end with

@@ -212,6 +212,10 @@ RETURN ( Self )
 
 METHOD RollBack() CLASS TDet
 
+   if empty(::oParent)
+      return ( self )
+   end if 
+
    if ::oParent:cFirstKey != nil
 
       while ::oDbf:Seek( ::oParent:cFirstKey )

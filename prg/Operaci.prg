@@ -36,9 +36,10 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil .and. ::nLevel == nil
@@ -46,6 +47,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
    end if
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
    ::oWndParent         := oWndParent
    ::oDbf               := nil
 
@@ -60,11 +62,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD CreateInit( cPath )
+METHOD CreateInit( cPath, cDriver )
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
 
    ::oTipOpera          := TTipOpera():Create( cPath )
 
