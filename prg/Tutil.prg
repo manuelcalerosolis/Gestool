@@ -484,7 +484,6 @@ function retFld( cCod, cAlias, xFld, nOrd )
    local nRec
    local nAnt
    local xRet     := ""
-   local typeField
 
    if Empty( cAlias )
       return xRet
@@ -493,33 +492,29 @@ function retFld( cCod, cAlias, xFld, nOrd )
    if Empty( xFld )
       xFld        := 2
    end if
-
    if Empty( nOrd )
       nOrd        := 1
    end if
 
-   nAnt           := ( cAlias )->( ordsetfocus( nOrd ) )
+   nAnt           := ( cAlias )->( OrdSetFocus( nOrd ) )
    nRec           := ( cAlias )->( Recno() )
-   typeField      := valType( xFld )
 
-   // si no existe no situamos en EOF + 1 para que devuelva un campo vacio con el mismo formato de campo pedido
+   // si no existe no situamos en EOF + 1 para que devuelva un campo vacio
 
+   ( cAlias )->( dbgotop() )
    if !( cAlias )->( dbSeek( cCod ) )
-       if typeField == "N"
-          xRet    := 0
-       elseif typeField == "C"
-          xRet    := ""
-       end if 
-   else 
-       if typeField == "N"
-          xRet    := ( cAlias )->( fieldget( xFld ) )
-       elseif typeField == "C"
-          xFld    := ( cAlias )->( fieldpos( xFld ) )
-          xRet    := ( cAlias )->( fieldget( xFld ) )
-       end if 
+       ( cAlias )->( dbGoBottom() )
+       ( cAlias )->( dbSkip() )
    endif
 
-   ( cAlias )->( ordsetfocus( nAnt ) )
+   if ( valType( xFld ) == "N" )
+      xRet        := ( cAlias )->( fieldget( xFld ) )
+   elseif ( valType( xFld ) == "C" )
+      xFld        := ( cAlias )->( fieldpos( xFld ) )
+      xRet        := ( cAlias )->( fieldget( xFld ) )
+   endif
+
+   ( cAlias )->( OrdSetFocus( nAnt ) )
    ( cAlias )->( dbGoTo( nRec ) )
 
 return ( xRet )

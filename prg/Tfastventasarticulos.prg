@@ -9,6 +9,8 @@
 
 CLASS TFastVentasArticulos FROM TFastReportInfGen
 
+   DATA  nView
+
    DATA  cType                            INIT "Articulos"
 
    DATA  lUnidadesNegativo                INIT .f.
@@ -211,6 +213,8 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+      ::nView     := D():CreateView()
 
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtImg.Cdx"
 
