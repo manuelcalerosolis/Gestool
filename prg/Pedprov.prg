@@ -218,6 +218,8 @@ static dbfArtPrv
 
 static oMailing
 
+static oCodigosPostales
+
 static dbfClient
 static oStock
 static oGetNet
@@ -371,7 +373,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloLenguaje( nView )
 
-
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
@@ -380,6 +381,9 @@ STATIC FUNCTION OpenFiles( lExt )
       oBandera          := TBandera():New()
 
       oMailing          := TGenmailingDatabasePedidosProveedor():New( nView )
+
+      oCodigosPostales  := CodigosPostales():New()
+      oCodigosPostales:openFiles()
 
       /*
       Recursos y fuente--------------------------------------------------------
@@ -422,6 +426,10 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
    end if
+
+   if !empty(oCodigosPostales)
+      oCodigosPostales:CloseFiles()
+   end if 
 
    if oStock != nil
       oStock:end()
@@ -1136,7 +1144,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET aGet[ _CPOSPRV ] VAR aTmp[ _CPOSPRV ] ;
          ID       143 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
+			VALID    ( oCodigosPostales:validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CPOBPRV ] VAR aTmp[ _CPOBPRV ] ;
@@ -2102,22 +2110,23 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aGet, aTmp, oBrw, nMode, oDlg ), GenPedPrv( IS_PRINTER ), ) } )
          oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERPED ] + str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) } )
          oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
-
       end if
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
-   do case
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), , oDlg:end() ) }
+      do case
+         case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
+            oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), , oDlg:end() ) }
 
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
+         case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
+            oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
 
-      case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
+         case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
+            oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
 
-   end case
+      end case
+
+      oCodigosPostales:setBinding( aGet[ _CPOSPRV ] )
 
 	ACTIVATE DIALOG oDlg	;
       ON INIT  (  initEdtRec( aGet, aTmp, oBrw, oBrwLin, oBrwInc, nMode, cCodPrv, oDlg ) ) ;

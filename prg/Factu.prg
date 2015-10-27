@@ -2014,9 +2014,29 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Codigos postales'
+   oItem:cMessage       := 'Acceso al fichero de codigos postales'
+   oItem:bAction        := {|| CodigosPostales():New( cPatDat(), cDriver(), oWnd, "01011" ):Activate() }
+   oItem:cId            := "01041"
+   oItem:cBmp           := "Flag_spain_16"
+   oItem:cBmpBig        := "Flag_spain_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Provincias'
+   oItem:cMessage       := 'Acceso al fichero de grupos de provincias'
+   oItem:bAction        := {|| Provincias():New( cPatDat(), cDriver(), oWnd, "01011" ):Activate() }
+   oItem:cId            := "01041"
+   oItem:cBmp           := "Flag_spain_16"
+   oItem:cBmpBig        := "Flag_spain_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemArchivo:Add()
+   oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Paises"
    oItem:cMessage       := "Acceso a los paises"
-   oItem:bAction        := {|| TPais():New( cPatDat(), oWnd, "01041" ):Activate() }
+   oItem:bAction        := {|| TPais():New( cPatDat(), cDriver(), oWnd, "01041" ):Activate() }
    oItem:cId            := "01041"
    oItem:cBmp           := "Flag_spain_16"
    oItem:cBmpBig        := "Flag_spain_32"

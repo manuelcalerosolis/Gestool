@@ -203,6 +203,7 @@ Timptik.prg             	\
 Tprntik.prg             	\
 Tvisor.prg              	\
 Tgrpfam.prg             	\
+Provincias.prg             \
 Tdiacli.prg             	\
 Tdiprvfa.prg            	\
 Tcomvta.prg             	\
@@ -624,6 +625,7 @@ Timptik.obj             \
 Tprntik.obj             \
 Tvisor.obj              \
 Tgrpfam.obj             \
+Provincias.obj          \
 Tdiacli.obj             \
 Tdiprvfa.obj            \
 Tinftik.obj             \
@@ -1044,6 +1046,7 @@ $(OBJ)\Timptik.obj              +
 $(OBJ)\Tprntik.obj              +
 $(OBJ)\Tvisor.obj               +
 $(OBJ)\Tgrpfam.obj              +
+$(OBJ)\Provincias.obj           +
 $(OBJ)\Tinftik.obj              +
 $(OBJ)\Tcomvta.obj              +
 $(OBJ)\Ctarem.obj               +

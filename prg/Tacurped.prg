@@ -131,7 +131,7 @@ METHOD lGenerate()
    ::oPedCliT:OrdSetFocus( "dFecPed" )
    ::oPedCliL:OrdSetFocus( "nNumPed" )
 
-   cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead          := '!lCancel .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
    if !Empty( ::oFilter:cExpresionFilter )
       cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter

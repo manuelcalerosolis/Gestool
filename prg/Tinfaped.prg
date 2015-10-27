@@ -170,16 +170,18 @@ METHOD lGenerate()
    ::oPedCliT:OrdSetFocus( "dFecPed" )
    ::oPedCliL:OrdSetFocus( "nNumPed" )
 
+   cExpHead          := "!lCancel"
+
    do case
       case ::oEstado:nAt == 1
-         cExpHead    := 'nEstado == 1 .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead    += ' .and. nEstado == 1'
       case ::oEstado:nAt == 2
-         cExpHead    := 'nEstado == 2 .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead    += ' .and. nEstado == 2'
       case ::oEstado:nAt == 3
-         cExpHead    := 'nEstado == 3 .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      case ::oEstado:nAt == 4
-         cExpHead    := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead    += ' .and. nEstado == 3'
    end case
+
+   cExpHead          += ' .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
    if !::lAllCli
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'
@@ -193,9 +195,7 @@ METHOD lGenerate()
 
    ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
 
-   /*
-   Lineas de albaranes
-   */
+   // Lineas de pedidos--------------------------------------------------------
 
    cExpLine          := '!lTotLin .and. !lControl'
 
@@ -209,9 +209,7 @@ METHOD lGenerate()
 
    ::oPedCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliL:cFile ), ::oPedCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
-   /*
-   Nos movemos por las cabeceras de los pedidos a proveedores
-	*/
+   // Nos movemos por las cabeceras de los pedidos a proveedores
 
    ::oPedCliT:GoTop()
 
@@ -219,9 +217,7 @@ METHOD lGenerate()
 
       if lChkSer( ::oPedCliT:cSerPed, ::aSer )
 
-         /*
-         Posicionamos en las lineas de detalle --------------------------------
-         */
+         // Posicionamos en las lineas de detalle --------------------------------
 
          if ::oPedCliL:Seek( ::oPedCliT:cSerPed + Str( ::oPedCliT:nNumPed ) + ::oPedCliT:cSufPed )
 

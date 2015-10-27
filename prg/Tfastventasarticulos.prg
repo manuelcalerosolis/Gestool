@@ -50,6 +50,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD BuildTree()
    METHOD BuildReportCorrespondences()
 
+   METHOD loadPropiedadesArticulos()
+
    METHOD AddSATClientes()
    METHOD AddPresupuestoClientes()
    METHOD AddPedidoClientes()
@@ -227,9 +229,9 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       ::nView                          := D():CreateView()
 
-      ::aliasPedidosClientes           := D():PedidosClientes( ::nView )
+      D():PedidosClientes( ::nView )
 
-      ::aliasPedidosClientesLineas     := D():PedidosClientesLineas( ::nView )
+      D():PedidosClientesLineas( ::nView )
 
       DATABASE NEW ::oArtImg  PATH ( cPatArt() ) CLASS "ArtImg"      FILE "ArtImg.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtImg.Cdx"
 
@@ -949,6 +951,20 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD loadPropiedadesArticulos( cCodigoArticulo )
+
+   if ( ::oDbfArt:cAlias )->( dbseek( cCodigoArticulo ) )
+      ::oDbf:cCodTip    := ( ::oDbfArt:cAlias )->cCodTip
+      ::oDbf:cCodCate   := ( ::oDbfArt:cAlias )->cCodCate
+      ::oDbf:cCodEst    := ( ::oDbfArt:cAlias )->cCodEst
+      ::oDbf:cCodTemp   := ( ::oDbfArt:cAlias )->cCodTemp
+      ::oDbf:cCodFab    := ( ::oDbfArt:cAlias )->cCodFab
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    local cExpHead
@@ -1267,13 +1283,16 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    local nSec
    local cExpHead
    local cExpLine
+   local aliasPedidosClientes
+   local aliasPedidosClientesLineas
 
-   return ( ::sqlPedidoClientes() )
+   nSec                       := seconds()
 
-   nSec              := seconds()
+   aliasPedidosClientes       := D():PedidosClientes( ::nView )
+   aliasPedidosClientesLineas := D():PedidosClientesLineas( ::nView )
 
-   ( ::aliasPedidosClientes )->( OrdSetFocus( "dFecPed" ) )
-   ( ::aliasPedidosClientesLineas )->( OrdSetFocus( "nNumPed" ) )
+   ( aliasPedidosClientes )->( OrdSetFocus( "dFecPed" ) )
+   ( aliasPedidosClientesLineas )->( OrdSetFocus( "nNumPed" ) )
 
    cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    cExpHead          += ' .and. !lCancel '
@@ -1283,13 +1302,13 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    if lAIS()
-      ( ::aliasPedidosClientes )->( adsSetAOF( cExpHead ) )
+      ( aliasPedidosClientes )->( adsSetAOF( cExpHead ) )
    else
-      ( ::aliasPedidosClientes )->( dbSetFilter( bCheck2Block( cExpHead ), cExpHead ) )
+      ( aliasPedidosClientes )->( dbSetFilter( bCheck2Block( cExpHead ), cExpHead ) )
    end if 
 
    ::oMtrInf:cText   := "Procesando pedidos"
-   ::oMtrInf:SetTotal( ( ::aliasPedidosClientes )->( OrdKeyCount() ) )
+   ::oMtrInf:SetTotal( ( aliasPedidosClientes )->( OrdKeyCount() ) )
 
    // Lineas de pedidos-----------------------------------------------------------
 
@@ -1300,78 +1319,76 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    end if
 
    if lAIS()
-      ( ::aliasPedidosClientesLineas )->( adsSetAOF( cExpLine ) )
+      ( aliasPedidosClientesLineas )->( adsSetAOF( cExpLine ) )
    else
-      ( ::aliasPedidosClientesLineas )->( dbsetfilter( bCheck2Block( cExpLine ), cExpLine ) )
+      ( aliasPedidosClientesLineas )->( dbsetfilter( bCheck2Block( cExpLine ), cExpLine ) )
    end if 
 
-   ( ::aliasPedidosClientes )->( dbGoTop() )
-   while !::lBreak .and. !( ::aliasPedidosClientes )->( Eof() )
+   ( aliasPedidosClientes )->( dbGoTop() )
+   while !::lBreak .and. !( aliasPedidosClientes )->( Eof() )
 
-      if lChkSer( ( ::aliasPedidosClientes )->cSerPed, ::aSer )
+      if lChkSer( ( aliasPedidosClientes )->cSerPed, ::aSer )
 
-         if ( ::aliasPedidosClientesLineas )->( dbseek( D():PedidosClientesId( ::nView ) ) )
+         if ( aliasPedidosClientesLineas )->( dbseek( D():PedidosClientesId( ::nView ) ) )
 
             while !::lBreak .and. D():PedidosClientesId( ::nView ) == D():PedidosClientesLineasId( ::nView ) 
 
-               if !( ::lExcCero  .and. nTotNPedCli( ::aliasPedidosClientesLineas ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLPedCli( ::aliasPedidosClientes, ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               if !( ::lExcCero  .and. nTotNPedCli( aliasPedidosClientesLineas ) == 0 )  .and.;
+                  !( ::lExcImp   .and. nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   // Añadimos un nuevo registro
 
                   ::oDbf:Blank()
 
-                  ::oDbf:cCodArt    := ( ::aliasPedidosClientesLineas )->cRef
-                  ::oDbf:cNomArt    := ( ::aliasPedidosClientesLineas )->cDetalle
+                  ::oDbf:cCodArt    := ( aliasPedidosClientesLineas )->cRef
+                  ::oDbf:cNomArt    := ( aliasPedidosClientesLineas )->cDetalle
 
-                  ::oDbf:cCodPrv    := ( ::aliasPedidosClientesLineas )->cCodPrv
-                  ::oDbf:cNomPrv    := RetFld( ( ::aliasPedidosClientesLineas )->cCodPrv, ::oDbfPrv:cAlias )
+                  ::oDbf:cCodPrv    := ( aliasPedidosClientesLineas )->cCodPrv
+                  ::oDbf:cNomPrv    := RetFld( ( aliasPedidosClientesLineas )->cCodPrv, ::oDbfPrv:cAlias )
 
-                  ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( ::aliasPedidosClientesLineas )->nIva )
-                  ::oDbf:cCodGrp    := cGruCli( ( ::aliasPedidosClientes )->cCodCli, ::oDbfCli )
-                  ::oDbf:cCodTip    := RetFld( ( ::aliasPedidosClientesLineas )->cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCate   := RetFld( ( ::aliasPedidosClientesLineas )->cRef, ::oDbfArt:cAlias, "cCodCate", "Codigo" )
-                  ::oDbf:cCodEst    := RetFld( ( ::aliasPedidosClientesLineas )->cRef, ::oDbfArt:cAlias, "cCodEst", "Codigo" )
-                  ::oDbf:cCodTemp   := RetFld( ( ::aliasPedidosClientesLineas )->cRef, ::oDbfArt:cAlias, "cCodTemp", "Codigo" )
-                  ::oDbf:cCodFab    := RetFld( ( ::aliasPedidosClientesLineas )->cRef, ::oDbfArt:cAlias, "cCodFab", "Codigo" )
+                  ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( aliasPedidosClientesLineas )->nIva )
+                  ::oDbf:cCodGrp    := cGruCli( ( aliasPedidosClientes )->cCodCli, ::oDbfCli )
+
+                  ::loadPropiedadesArticulos( ( aliasPedidosClientesLineas )->cRef )
+
+                  ::oDbf:cCodPago   := ( aliasPedidosClientes )->cCodPgo
+                  ::oDbf:cCodRut    := ( aliasPedidosClientes )->cCodRut
+                  ::oDbf:cCodAge    := ( aliasPedidosClientes )->cCodAge
+                  ::oDbf:cCodTrn    := ( aliasPedidosClientes )->cCodTrn
+                  ::oDbf:cCodUsr    := ( aliasPedidosClientes )->cCodUsr
+                  ::oDbf:cCodCli    := ( aliasPedidosClientes )->cCodCli
+                  ::oDbf:cNomCli    := ( aliasPedidosClientes )->cNomCli
+                  ::oDbf:cPobCli    := ( aliasPedidosClientes )->cPobCli
+                  ::oDbf:cPrvCli    := ( aliasPedidosClientes )->cPrvCli
+                  ::oDbf:cPosCli    := ( aliasPedidosClientes )->cPosCli
+                  ::oDbf:cCodObr    := ( aliasPedidosClientes )->cCodObr
+
+                  ::oDbf:cCodFam    := ( aliasPedidosClientesLineas )->cCodFam
+                  ::oDbf:cCodAlm    := ( aliasPedidosClientesLineas )->cAlmLin
+
+                  ::oDbf:nDtoArt    := ( aliasPedidosClientesLineas )->nDto
+                  ::oDbf:nLinArt    := ( aliasPedidosClientesLineas )->nDtoDiv
+                  ::oDbf:nPrmArt    := ( aliasPedidosClientesLineas )->nDtoPrm
+
+                  ::oDbf:nUniArt    := nTotNPedCli( aliasPedidosClientesLineas ) 
+
+                  ::oDbf:nTotDto    := nDtoLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::oDbf:nTotPrm    := nPrmLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+
+                  ::oDbf:nPreArt    := nImpUPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
+                  ::oDbf:nTrnArt    := nTrnUPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
+                  ::oDbf:nPntArt    := nPntLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
+
+                  ::oDbf:nBrtArt    := nBrtLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::oDbf:nImpArt    := nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+                  ::oDbf:nIvaArt    := nIvaLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+
+                  ::oDbf:nTotArt    := nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+                  ::oDbf:nTotArt    += nIvaLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
                   
-                  ::oDbf:cCodFam    := ( ::aliasPedidosClientesLineas )->cCodFam
-                  ::oDbf:cCodAlm    := ( ::aliasPedidosClientesLineas )->cAlmLin
-                  ::oDbf:cCodPago   := ( ::aliasPedidosClientes )->cCodPgo
-                  ::oDbf:cCodRut    := ( ::aliasPedidosClientes )->cCodRut
-                  ::oDbf:cCodAge    := ( ::aliasPedidosClientes )->cCodAge
-                  ::oDbf:cCodTrn    := ( ::aliasPedidosClientes )->cCodTrn
-                  ::oDbf:cCodUsr    := ( ::aliasPedidosClientes )->cCodUsr
-                  ::oDbf:cCodCli    := ( ::aliasPedidosClientes )->cCodCli
-                  ::oDbf:cNomCli    := ( ::aliasPedidosClientes )->cNomCli
-                  ::oDbf:cPobCli    := ( ::aliasPedidosClientes )->cPobCli
-                  ::oDbf:cPrvCli    := ( ::aliasPedidosClientes )->cPrvCli
-                  ::oDbf:cPosCli    := ( ::aliasPedidosClientes )->cPosCli
-                  ::oDbf:cCodObr    := ( ::aliasPedidosClientes )->cCodObr
+                  ::oDbf:nPeso      := nPesLPedCli( aliasPedidosClientesLineas ) 
 
-                  ::oDbf:nDtoArt    := ( ::aliasPedidosClientesLineas )->nDto
-                  ::oDbf:nLinArt    := ( ::aliasPedidosClientesLineas )->nDtoDiv
-                  ::oDbf:nPrmArt    := ( ::aliasPedidosClientesLineas )->nDtoPrm
-
-                  ::oDbf:nUniArt    := nTotNPedCli( ::aliasPedidosClientesLineas ) 
-
-                  ::oDbf:nTotDto    := nDtoLPedCli( ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotPrm    := nPrmLPedCli( ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                  ::oDbf:nPreArt    := nImpUPedCli( ::aliasPedidosClientes, ::aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
-                  ::oDbf:nTrnArt    := nTrnUPedCli( ::aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
-                  ::oDbf:nPntArt    := nPntLPedCli( ::aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
-
-                  ::oDbf:nBrtArt    := nBrtLPedCli( ::aliasPedidosClientes, ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nImpArt    := nImpLPedCli( ::aliasPedidosClientes, ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-                  ::oDbf:nIvaArt    := nIvaLPedCli( ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                  ::oDbf:nTotArt    := nImpLPedCli( ::aliasPedidosClientes, ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                  ::oDbf:nTotArt    += nIvaLPedCli( ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
-                  
-                  ::oDbf:nPeso      := nPesLPedCli( ::aliasPedidosClientesLineas ) 
-
-                  ::oDbf:nCosArt    := nTotCPedCli( ::aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::oDbf:nCosArt    := nTotCPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
 
                   if empty( ::oDbf:nCosArt )
                      ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
@@ -1381,7 +1398,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                end if
 
-               ( ::aliasPedidosClientesLineas )->( dbSkip() )
+               ( aliasPedidosClientesLineas )->( dbSkip() )
 
             end while
 
@@ -1389,7 +1406,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
       end if
 
-      ( ::aliasPedidosClientes )->( dbSkip() )
+      ( aliasPedidosClientes )->( dbSkip() )
 
       ::oMtrInf:AutoInc()
 
@@ -3004,6 +3021,7 @@ METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
 RETURN ( resultado )
 
 //---------------------------------------------------------------------------//
+
 METHOD StartDialog() CLASS TFastVentasArticulos
 
    ::CreateTreeImageList()
@@ -3028,13 +3046,13 @@ RETURN ( Self )
 
 METHOD FastReportPedidoCliente()
       
-   ( ::aliasPedidosClientes )->( OrdSetFocus( "iNumPed" ) )
-   ( ::aliasPedidosClientesLineas )->( OrdSetFocus( "iNumPed" ) )
+   ( D():PedidosClientes( ::nView ) )->( OrdSetFocus( "iNumPed" ) )
+   ( D():PedidosClientesLineas( ::nView ) )->( OrdSetFocus( "iNumPed" ) )
 
-   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ( ::aliasPedidosClientes )->( Select() ) )
+   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ( D():PedidosClientes( ::nView ) )->( Select() ) )
    ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
 
-   ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ( ::aliasPedidosClientesLineas )->( Select() ) )
+   ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ( D():PedidosClientesLineas( ::nView ) )->( Select() ) )
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| ::idDocumento() } )

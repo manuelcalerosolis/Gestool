@@ -161,13 +161,13 @@ METHOD lGenerate() CLASS TInfFPed
 
    do case
       case ::oEstado:nAt == 1
-         bValid   := {|| ::oPedCliT:nEstado == 1 }
+         bValid   := {|| !::oPedCliT:lCancel .and. ::oPedCliT:nEstado == 1 }
       case ::oEstado:nAt == 2
-         bValid   := {|| ::oPedCliT:nEstado == 2 }
+         bValid   := {|| !::oPedCliT:lCancel .and. ::oPedCliT:nEstado == 2 }
       case ::oEstado:nAt == 3
-         bValid   := {|| ::oPedCliT:nEstado == 3 }
+         bValid   := {|| !::oPedCliT:lCancel .and. ::oPedCliT:nEstado == 3 }
       case ::oEstado:nAt == 4
-         bValid   := {|| .t. }
+         bValid   := {|| !::oPedCliT:lCancel }
    end case
 
    ::aHeader   := {  {|| "Fecha  : " + Dtoc( Date() ) },;

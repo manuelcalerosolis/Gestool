@@ -1850,6 +1850,26 @@ METHOD BuildData()
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cArea        := "CodPostal"
+   oDataTable:cName        := cPatDat() + "CodPostal"
+   oDataTable:cDataFile    := cPatDat( .t. ) + "CodPostal.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "CodPostal.Cdx"
+   oDataTable:cDescription := "CodPostal"
+   oDataTable:bCreateFile  := {| cPath | CodigosPostales():BuildFiles( cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddDataTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "Provincia"
+   oDataTable:cName        := cPatDat() + "Provincia"
+   oDataTable:cDataFile    := cPatDat( .t. ) + "Provincia.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "Provincia.Cdx"
+   oDataTable:cDescription := "Provincia"
+   oDataTable:bCreateFile  := {| cPath | Provincias():BuildFiles( cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddDataTable( oDataTable )
+
+   oDataTable              := TDataTable()
    oDataTable:cArea        := "Pais"
    oDataTable:cName        := cPatDat() + "Pais"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Pais.Dbf"
