@@ -31,8 +31,13 @@ CLASS CodigosPostales FROM TMant
       METHOD lSaveResource()
       METHOD startResource()                          INLINE ( ::getCodigo:setFocus(), ::getProvincia:lValid() )
 
-
    METHOD getCodigoPostal()                           INLINE ( if( hhaskey( ::hCodigoPostal, "CodigoPostal" ), hget( ::hCodigoPostal, "CodigoPostal" ), nil ) )
+
+   METHOD getPoblacion()                              INLINE ( if( hhaskey( ::hCodigoPostal, "Poblacion" ), hget( ::hCodigoPostal, "Poblacion" ), nil ) 
+   METHOD setPoblacion( cPoblacion )                  INLINE ( if( !empty( ::getPoblacion() ), ::getPoblacion():cText( cPoblacion ), nil ) )
+
+   METHOD getProvincia()                              INLINE ( if( hhaskey( ::hCodigoPostal, "Provincia" ), hget( ::hCodigoPostal, "Provincia" ), nil ) 
+   METHOD setProvincia( cProvincia )                  INLINE ( if( !empty( ::getProvincia() ), ::getProvincia():cText( cProvincia ), nil ) )
 
    METHOD setBinding( hCodigoPostal )               
    METHOD setOldValueCodigoPostal( cCodigoPostal )    INLINE ( ::oldCodigoPostal := cCodigoPostal )
@@ -262,12 +267,8 @@ METHOD validCodigoPostal()
    if ::oldCodigoPostal != cCodigoPostal
       
       if ::oDbf:seek( cCodigoPostal )
-
-         if hhaskey( ::hCodigoPostal, "Poblacion" )
-            msgAlert( ::oDbf:cNomPos, "cambio" )
-            hget( ::hCodigoPostal, "Poblacion" ):cText( ::oDbf:cNomPos )
-         end if 
-
+         ::setPoblacion( ::oDbf:cNomPos )
+         ::setProvincia( ::oProvincias:getNombreProvincia( ::oDbf:cCodPrv ) )
       end if  
 
       ::setOldValueCodigoPostal( cCodigoPostal )

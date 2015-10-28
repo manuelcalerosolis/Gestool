@@ -1767,7 +1767,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       oDlg:bStart := { || ShowComentario( aTmp, nMode ), StartEdtRec( aTmp, aGet, oValPnt ), oBrwBnc:Load(), oBrwCta:Load(), oGet:SetFocus() }
 
-      CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CODPOSTAL ], "Poblacion" => aGet[ _POBLACION ] } )
+      CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CODPOSTAL ], "Poblacion" => aGet[ _POBLACION ], "Provincia" => aGet[ _PROVINCIA ] } )
 
    ACTIVATE DIALOG oDlg CENTER ;
       ON INIT  ( EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ) );

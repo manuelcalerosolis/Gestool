@@ -30,7 +30,9 @@ CLASS Provincias FROM TMant
 
    METHOD Resource( nMode )
       METHOD lSaveResource()
-      METHOD startResource()           INLINE ( ::getCodigo:setFocus() )
+      METHOD startResource()                       INLINE ( ::getCodigo:setFocus() )
+
+   METHOD getNombreProvincia( cCodigoProvincia )   INLINE ( oRetFld( cCodigoProvincia, ::oDbf, "cNomPrv", 1 ) )
 
 END CLASS
 
