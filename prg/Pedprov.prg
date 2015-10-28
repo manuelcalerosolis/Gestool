@@ -218,8 +218,6 @@ static dbfArtPrv
 
 static oMailing
 
-static oCodigosPostales
-
 static dbfClient
 static oStock
 static oGetNet
@@ -382,9 +380,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oMailing          := TGenmailingDatabasePedidosProveedor():New( nView )
 
-      oCodigosPostales  := CodigosPostales():New()
-      oCodigosPostales:openFiles()
-
       /*
       Recursos y fuente--------------------------------------------------------
       */
@@ -426,10 +421,6 @@ STATIC FUNCTION CloseFiles()
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:CloseFiles()
    end if
-
-   if !empty(oCodigosPostales)
-      oCodigosPostales:CloseFiles()
-   end if 
 
    if oStock != nil
       oStock:end()
@@ -1144,7 +1135,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET aGet[ _CPOSPRV ] VAR aTmp[ _CPOSPRV ] ;
          ID       143 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			VALID    ( oCodigosPostales:validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CPOBPRV ] VAR aTmp[ _CPOBPRV ] ;
@@ -2125,8 +2115,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
             oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
 
       end case
-
-      oCodigosPostales:setBinding( aGet[ _CPOSPRV ] )
 
 	ACTIVATE DIALOG oDlg	;
       ON INIT  (  initEdtRec( aGet, aTmp, oBrw, oBrwLin, oBrwInc, nMode, cCodPrv, oDlg ) ) ;

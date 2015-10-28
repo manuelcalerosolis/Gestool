@@ -33,10 +33,10 @@ CLASS CodigosPostales FROM TMant
 
    METHOD getCodigoPostal()                           INLINE ( if( hhaskey( ::hCodigoPostal, "CodigoPostal" ), hget( ::hCodigoPostal, "CodigoPostal" ), nil ) )
 
-   METHOD getPoblacion()                              INLINE ( if( hhaskey( ::hCodigoPostal, "Poblacion" ), hget( ::hCodigoPostal, "Poblacion" ), nil ) 
+   METHOD getPoblacion()                              INLINE ( if( hhaskey( ::hCodigoPostal, "Poblacion" ), hget( ::hCodigoPostal, "Poblacion" ), nil ) )
    METHOD setPoblacion( cPoblacion )                  INLINE ( if( !empty( ::getPoblacion() ), ::getPoblacion():cText( cPoblacion ), nil ) )
 
-   METHOD getProvincia()                              INLINE ( if( hhaskey( ::hCodigoPostal, "Provincia" ), hget( ::hCodigoPostal, "Provincia" ), nil ) 
+   METHOD getProvincia()                              INLINE ( if( hhaskey( ::hCodigoPostal, "Provincia" ), hget( ::hCodigoPostal, "Provincia" ), nil ) )
    METHOD setProvincia( cProvincia )                  INLINE ( if( !empty( ::getProvincia() ), ::getProvincia():cText( cProvincia ), nil ) )
 
    METHOD setBinding( hCodigoPostal )               
@@ -273,8 +273,6 @@ METHOD validCodigoPostal()
 
       ::setOldValueCodigoPostal( cCodigoPostal )
 
-   else 
-      msgAlert( "No ha cambiado el codigo")
    end if 
 
 RETURN ( .t. )

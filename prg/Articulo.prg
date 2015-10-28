@@ -26,6 +26,8 @@
 #define DT_NOPREFIX                 0x00000800
 #define DT_INTERNAL                 0x00001000
 
+#define __lenCodigoMatriz__         6
+
 #define fldGeneral                  oFld:aDialogs[1]
 #define fldPrecios                  oFld:aDialogs[2]
 #define fldTactil                   oFld:aDialogs[3] 
@@ -1795,8 +1797,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ON HELP  ( aGet[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]:cText( NextKey( aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ], dbfArticulo ) ) ) ;
          OF       fldGeneral
 
-   REDEFINE GET   aGet[( dbfArticulo )->( fieldpos( "Nombre" ) ) ] ;
-         VAR      aTmp[( dbfArticulo )->( fieldpos( "Nombre" ) ) ];
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "Nombre" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "Nombre" ) ) ];
 			ID 		130 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
@@ -1805,6 +1807,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    /*
    Codigos de barras___________________________________________________________
 	*/
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "Matriz" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "Matriz" ) ) ] ;
+         ID       340 ;
+         BITMAP   "Recycle_16" ;
+         ON HELP  ( generateMatrizCodigoBarras( aGet[ ( dbfArticulo )->( fieldpos( "Matriz" ) ) ] ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( validMatrizCodigoBarras( aTmp[ ( dbfArticulo )->( fieldpos( "Matriz" ) ) ] ) );
+         OF       fldGeneral
 
    oBrwCodebar                   := IXBrowse():New( fldGeneral )
 
@@ -15992,6 +16003,9 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "cCodEdi", "cCodEdi", {|| Field->cCodEdi } ) )
 
+      ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "Matriz", "Matriz", {|| Field->Matriz } ) )
+
       ( dbfArticulo )->( dbCloseArea() )
 
    else
@@ -16408,6 +16422,7 @@ function aItmArt()
    aAdd( aBase, { "cKeySeo",   "C",160, 0, "Meta-keywords",                            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodEst",   "C",  3, 0, "Estado del artículo",                      "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodEdi",   "C", 20, 0, "Código normalizado del artículo",          "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "Matriz",    "C", 18, 0, "Matriz para código de barras" ,            "",               "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -20064,6 +20079,49 @@ Function nDescuentoArticulo( cCodArt, cCodCli, nView )
    end case
 
 Return nDescuento
+
+//---------------------------------------------------------------------------//
+
+Static Function validMatrizCodigoBarras( codigoMatriz )
+
+   local lValid   := .t.
+   local aStatus  
+
+   if empty(codigoMatriz)
+      Return ( .t. )
+   end if 
+
+   aStatus        := aGetStatus( dbfArticulo, .t. )
+
+   ( dbfArticulo )->( ordSetFocus( "Matriz" ) )
+
+   if ( dbfArticulo )->( dbseek( codigoMatriz ) )
+      lValid      := .f.
+   end if 
+
+   setStatus( dbfArticulo, aStatus )
+
+Return ( lValid )
+
+//---------------------------------------------------------------------------//
+
+Static Function generateMatrizCodigoBarras( getCodigoMatriz ) 
+
+   local nValue
+   local aStatus   := aGetStatus( dbfArticulo, .t. )
+
+   ( dbfArticulo )->( ordsetfocus( "Matriz" ) )
+
+   ( dbfArticulo )->( dbgobottom() )
+
+   nValue            := val( ( dbfArticulo )->( ordkeyval() ) ) + 1
+   nValue            := strzero( nValue, __lenCodigoMatriz__ )
+
+   getCodigoMatriz:cText( nValue )
+
+   setStatus( dbfArticulo, aStatus )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
