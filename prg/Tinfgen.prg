@@ -9,7 +9,21 @@ static lExcelInstl
 static lCalcInstl
 static nxlLangID, cxlTrue := "=(1=1)", cxlFalse := "=(1=0)", cxlSum, cxlSubTotal, lxlEnglish := .f., hLib
 
-Static oThis
+static oThis
+
+//---------------------------------------------------------------------------//
+
+Function setFastReportObject( self )
+
+   oThis  := self
+
+Return ( oThis )
+
+//---------------------------------------------------------------------------//
+
+Function getFastReportObject()
+
+Return ( oThis )
 
 //---------------------------------------------------------------------------//
 
@@ -696,7 +710,7 @@ METHOD New( cSubTitle, aFields, aIndex, oMenuItem, oWnd, cHelp, xOthers ) CLASS 
       ::lOpenFiles      := .t.
    end if
 
-   oThis                := Self
+   setFastReportObject( self )
 
 RETURN Self
 

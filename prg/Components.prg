@@ -10,6 +10,7 @@
 
 //---------------------------------------------------------------------------//
 
+
 CLASS DialogBuilder
 
    DATA aComponents                    INIT {}
@@ -2195,42 +2196,43 @@ CLASS TLabelGenerator
 
    Data nView
 
-   Method New()
+   METHOD New()
 
-   Method Dialog()
-   Method lCreateTempLabelEdition()      
-   Method DestroyTempLabelEdition()
-   Method LoadTempLabelEdition()         VIRTUAL
+   METHOD Dialog()
+   METHOD lCreateTempLabelEdition()      
+   METHOD DestroyTempLabelEdition()
+   METHOD LoadTempLabelEdition()         VIRTUAL
 
-   Method lCreateTempReport()            
-   Method loadTempReport()   
-   Method PrepareTempReport( oFr )    
-   Method DestroyTempReport()     
+   METHOD lCreateTempReport()            
+   METHOD loadTempReport()   
+   METHOD PrepareTempReport( oFr )    
+   METHOD DestroyTempReport()     
 
-   Method End()
+   METHOD End()
 
-   Method BotonAnterior()
-   Method BotonSiguiente()
+   METHOD BotonAnterior()
+   METHOD BotonSiguiente()
 
-   Method PutLabel()
+   METHOD PutLabel()
 
-   Method SelectAllLabels()
-   Method AddLabel()
-   Method DelLabel()
-   Method EditLabel()
-   Method SelectColumn( oCombo )
+   METHOD SelectAllLabels()
+   METHOD AddLabel()
+   METHOD DelLabel()
+   METHOD EditLabel()
+   METHOD SelectColumn( oCombo )
 
-   Method lPrintLabels()
-   Method InitLabel( oLabel )
+   METHOD lPrintLabels()
+   METHOD InitLabel( oLabel )
 
-   Method closeFiles()                 INLINE ( D():DeleteView( ::nView ) )
-   Method dataLabel( oFr, lTemporal )  VIRTUAL
+   METHOD closeFiles()                 INLINE ( D():DeleteView( ::nView ) )
+   METHOD dataLabel( oFr, lTemporal )  VIRTUAL
+   METHOD VariableLabel( oFr )         VIRTUAL 
 
 END CLASS
 
 //----------------------------------------------------------------------------//
 
-Method New( nView ) CLASS TLabelGenerator
+METHOD New( nView ) CLASS TLabelGenerator
 
    local oError
    local oBlock
@@ -2259,6 +2261,8 @@ Method New( nView ) CLASS TLabelGenerator
 
       ::lErrorOnCreate     := .f.
 
+      setFastReportObject( self )
+
    RECOVER USING oError
 
       ::lErrorOnCreate     := .t.
@@ -2272,7 +2276,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method Dialog() CLASS TLabelGenerator
+METHOD Dialog() CLASS TLabelGenerator
 
    local oBtnPrp
    local oBtnMod
@@ -2365,7 +2369,7 @@ Method Dialog() CLASS TLabelGenerator
          OF       ::oFld:aDialogs[ 1 ]
 
          ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::dbfDocumento, ::inicialDoc ) }
-         ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::inicialDoc ) }
+         ::oFormatoLabel:bHelp   := {|| brwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::inicialDoc ) }
 
       TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,, {|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
 
@@ -2508,7 +2512,6 @@ Method Dialog() CLASS TLabelGenerator
          :bOnPostEdit      := {|o,x| if( dbDialogLock( ::tmpLabelEdition ), ( ( ::tmpLabelEdition )->nLabel := x, ( ::tmpLabelEdition )->( dbUnlock() ) ), ) }
       end with
 
-
       //----------------------------
 
       REDEFINE APOLOMETER ::oMtrLabel ;
@@ -2558,7 +2561,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method lCreateTempLabelEdition() CLASS TLabelGenerator
+METHOD lCreateTempLabelEdition() CLASS TLabelGenerator
 
    local oBlock
    local oError
@@ -2585,6 +2588,7 @@ Method lCreateTempLabelEdition() CLASS TLabelGenerator
       end if
 
       ( ::tmpLabelEdition )->( OrdsetFocus( "cRef" ) )
+
    RECOVER USING oError
 
       lCreateTempLabelEdition      := .f.
@@ -2600,7 +2604,7 @@ Return ( lCreateTempLabelEdition )
 
 //---------------------------------------------------------------------------//
 
-Method DestroyTempLabelEdition() CLASS TLabelGenerator
+METHOD DestroyTempLabelEdition() CLASS TLabelGenerator
 
    if !Empty( ::tmpLabelEdition ) .and. ( ::tmpLabelEdition )->( Used() )
       ( ::tmpLabelEdition )->( dbCloseArea() )
@@ -2614,7 +2618,7 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-Method BotonAnterior() CLASS TLabelGenerator
+METHOD BotonAnterior() CLASS TLabelGenerator
 
    ::oFld:GoPrev()
 
@@ -2626,7 +2630,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method BotonSiguiente() CLASS TLabelGenerator
+METHOD BotonSiguiente() CLASS TLabelGenerator
 
    do case
       case ::oFld:nOption == 1
@@ -2659,7 +2663,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method lPrintLabels() CLASS TLabelGenerator
+METHOD lPrintLabels() CLASS TLabelGenerator
 
    local oFr
 
@@ -2681,13 +2685,15 @@ Method lPrintLabels() CLASS TLabelGenerator
 
       oFr:SetTitle(        "Diseñador de documentos" )
 
-      //Manejador de eventos--------------------------------------------------------
+      // Manejador de eventos--------------------------------------------------------
 
       oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( ::dbfDocumento )->( Select() ), "mReport" ) } )
       
-      //Zona de datos---------------------------------------------------------------
+      // Zona de datos---------------------------------------------------------------
 
       ::DataLabel( oFr, .t. )
+
+      ::VariableLabel( oFr )
 
       //Cargar el informe-----------------------------------------------------------
       
@@ -2734,7 +2740,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method lCreateTempReport() CLASS TLabelGenerator
+METHOD lCreateTempReport() CLASS TLabelGenerator
 
    local oBlock
    local oError
@@ -2764,7 +2770,7 @@ Return ( lCreateTempReport )
 
 //---------------------------------------------------------------------------//
 
-Method loadTempReport()
+METHOD loadTempReport()
 
    local n
    local nRec           := ( ::tmpLabelEdition )->( Recno() )
@@ -2790,7 +2796,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method DestroyTempReport() CLASS TLabelGenerator
+METHOD DestroyTempReport() CLASS TLabelGenerator
 
    if ( ::tmpLabelReport )->( Used() )
       ( ::tmpLabelReport )->( dbCloseArea() )
@@ -2806,7 +2812,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Method PrepareTempReport( oFr ) CLASS TLabelGenerator
+METHOD PrepareTempReport( oFr ) CLASS TLabelGenerator
 
    local n
    local nBlancos       := 0
@@ -2834,7 +2840,7 @@ Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method End() CLASS TLabelGenerator
+METHOD End() CLASS TLabelGenerator
 
    if !Empty( ::nRecno )
       ( ::DbfCabecera)->( dbGoTo( ::nRecno ) )
@@ -2854,7 +2860,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method PutLabel() CLASS TLabelGenerator
+METHOD PutLabel() CLASS TLabelGenerator
 
    ( ::tmpLabelEdition )->lLabel   := !( ::tmpLabelEdition )->lLabel
 
@@ -2865,7 +2871,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method SelectAllLabels( lLabel ) CLASS TLabelGenerator
+METHOD SelectAllLabels( lLabel ) CLASS TLabelGenerator
 
    local n        := 0
    local nRecno   := ( ::tmpLabelEdition )->( Recno() )
@@ -2896,7 +2902,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method AddLabel() CLASS TLabelGenerator
+METHOD AddLabel() CLASS TLabelGenerator
 
    ( ::tmpLabelEdition )->nLabel++
 
@@ -2907,7 +2913,7 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-Method DelLabel() CLASS TLabelGenerator
+METHOD DelLabel() CLASS TLabelGenerator
 
    if ( ::tmpLabelEdition )->nLabel > 1
       ( ::tmpLabelEdition )->nLabel--
@@ -2920,7 +2926,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method EditLabel() CLASS TLabelGenerator
+METHOD EditLabel() CLASS TLabelGenerator
 
    ::oBrwLabel:aCols[ 6 ]:Edit()
 
@@ -2928,7 +2934,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method InitLabel( oLabel ) CLASS TLabelGenerator
+METHOD InitLabel( oLabel ) CLASS TLabelGenerator
 
    local nStartRow
 
@@ -2949,7 +2955,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method SelectColumn( oCombo ) CLASS TLabelGenerator
+METHOD SelectColumn( oCombo ) CLASS TLabelGenerator
 
    local oCol
    local cOrd                    := oCombo:VarGet()
@@ -2988,8 +2994,12 @@ Return ( Self )
 CLASS TLabelGeneratorPedidoProveedores FROM TLabelGenerator
 
    METHOD New( nView )
-   METHOD LoadTempLabelEdition() 
-   Method dataLabel( oFr, lTemporal )
+   METHOD loadTempLabelEdition() 
+   METHOD dataLabel( oFr, lTemporal )
+   METHOD variableLabel( oFr )
+
+   METHOD nombrePrimeraPropiedad()  INLINE ( nombrePrimeraPropiedad( ::nView ) )
+   METHOD nombreSegundaPropiedad()  INLINE ( nombreSegundaPropiedad( ::nView ) )
 
 ENDCLASS
 
@@ -3017,7 +3027,7 @@ METHOD New( nView ) CLASS TLabelGeneratorPedidoProveedores
 
    ::tmpLabelReport     := "LblRpt"
 
-   ::aStructureField     := aSqlStruct( aColPedPrv() )
+   ::aStructureField    := aSqlStruct( aColPedPrv() )
 
    ::nView              := nView 
 
@@ -3027,7 +3037,7 @@ Return( Self )
 
 //---------------------------------------------------------------------------//
 
-Method LoadTempLabelEdition() CLASS TLabelGeneratorPedidoProveedores
+METHOD loadTempLabelEdition() CLASS TLabelGeneratorPedidoProveedores
 
    local nRec
    local nOrd
@@ -3095,7 +3105,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoProveedores
+METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoProveedores
 
    oFr:ClearDataSets()
 
@@ -3159,7 +3169,6 @@ Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoProveedores
       oFr:SetMasterDetail( "Lineas de pedidos", "Impuestos especiales",       {|| ( ::DbfLineas )->cCodImp } )
    end if
 
-
    oFr:SetMasterDetail(    "Pedidos", "Proveedores",                          {|| ( ::DbfCabecera)->cCodPrv } )
    oFr:SetMasterDetail(    "Pedidos", "Almacenes",                            {|| ( ::DbfCabecera)->cCodAlm } )
    oFr:SetMasterDetail(    "Pedidos", "Formas de pago",                       {|| ( ::DbfCabecera)->cCodPgo} )
@@ -3182,6 +3191,15 @@ Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoProveedores
 Return nil
 
 //---------------------------------------------------------------------------//
+
+METHOD variableLabel( oFr ) CLASS TLabelGeneratorPedidoProveedores
+
+   oFr:AddVariable(     "Lineas de pedidos",   "Nombre primera propiedad",            "CallHbFunc( 'oTInfGen', ['nombrePrimeraPropiedad()'] )" )
+   oFr:AddVariable(     "Lineas de pedidos",   "Nombre segunda propiedad",            "CallHbFunc( 'oTInfGen', ['nombreSegundaPropiedad()'] )" )
+
+Return nil
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -3194,7 +3212,7 @@ CLASS TLabelGeneratorAlbaranClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   Method dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr, lTemporal )
 
 ENDCLASS
 
@@ -3231,7 +3249,7 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-Method LoadTempLabelEdition() CLASS TLabelGeneratorAlbaranClientes
+METHOD LoadTempLabelEdition() CLASS TLabelGeneratorAlbaranClientes
 
    local nRec
    local nOrd
@@ -3299,7 +3317,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorAlbaranClientes
+METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorAlbaranClientes
 
    oFr:ClearDataSets()
 
@@ -3398,7 +3416,7 @@ CLASS TLabelGeneratorPedidoClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   Method dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr, lTemporal )
 
 ENDCLASS
 
@@ -3435,7 +3453,7 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-Method LoadTempLabelEdition() CLASS TLabelGeneratorPedidoClientes
+METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPedidoClientes
 
    local nRec
    local nOrd
@@ -3503,7 +3521,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoClientes
+METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPedidoClientes
 
    oFr:ClearDataSets()
 
@@ -3599,7 +3617,7 @@ CLASS TLabelGeneratorPresupuestoClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   Method dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr, lTemporal )
 
 ENDCLASS
 
@@ -3636,7 +3654,7 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-Method LoadTempLabelEdition() CLASS TLabelGeneratorPresupuestoClientes
+METHOD LoadTempLabelEdition() CLASS TLabelGeneratorPresupuestoClientes
 
    local nRec
    local nOrd
@@ -3704,7 +3722,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPresupuestoClientes
+METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorPresupuestoClientes
 
    oFr:ClearDataSets()
 
@@ -3800,7 +3818,7 @@ CLASS TLabelGeneratorFacturasClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   Method dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr, lTemporal )
 
 ENDCLASS
 
@@ -3837,7 +3855,7 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-Method LoadTempLabelEdition() CLASS TLabelGeneratorFacturasClientes
+METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasClientes
 
    local nRec
    local nOrd
@@ -3905,7 +3923,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasClientes
+METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasClientes
 
    oFr:ClearDataSets()
 
@@ -4001,7 +4019,7 @@ CLASS TLabelGeneratorFacturasRectificativaClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   Method dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr, lTemporal )
 
 ENDCLASS
 
@@ -4038,7 +4056,7 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-Method LoadTempLabelEdition() CLASS TLabelGeneratorFacturasRectificativaClientes
+METHOD LoadTempLabelEdition() CLASS TLabelGeneratorFacturasRectificativaClientes
 
    local nRec
    local nOrd
@@ -4106,7 +4124,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasRectificativaClientes
+METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorFacturasRectificativaClientes
 
    oFr:ClearDataSets()
 
@@ -4202,7 +4220,7 @@ CLASS TLabelGeneratorSATClientes FROM TLabelGenerator
 
    METHOD New( nView )
    METHOD LoadTempLabelEdition() 
-   Method dataLabel( oFr, lTemporal )
+   METHOD dataLabel( oFr, lTemporal )
 
 ENDCLASS
 
@@ -4239,7 +4257,7 @@ Return( Self )
  
 //---------------------------------------------------------------------------//
 
-Method LoadTempLabelEdition() CLASS TLabelGeneratorSATClientes
+METHOD LoadTempLabelEdition() CLASS TLabelGeneratorSATClientes
 
    local nRec
    local nOrd
@@ -4307,7 +4325,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorSATClientes
+METHOD dataLabel( oFr, lTemporal ) CLASS TLabelGeneratorSATClientes
 
    oFr:ClearDataSets()
 

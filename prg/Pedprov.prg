@@ -2113,7 +2113,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 
          case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
             oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
-
       end case
 
 	ACTIVATE DIALOG oDlg	;
@@ -2121,9 +2120,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       ON PAINT (  recalculaTotal( aTmp ) );
       CENTER
 
-   KillTrans( oBrwLin )
+   killTrans( oBrwLin )
 
-   EndEdtRecMenu()
+   endEdtRecMenu()
 
    oBmpDiv:end()
    oBmpEmp:end()
@@ -2131,10 +2130,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    oBmpIncidencias:end()
    oBmpDatos:end()
    oBmpDocumentos:end()
-
-   /*
-   Guardamos los datos del browse----------------------------------------------
-   */
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -9325,15 +9320,19 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Function nombrePrimeraPropiedad()
+Function nombrePrimeraPropiedad( view )
 
-Return ( retValProp( ( D():PedidosProveedoresLineas( nView ) )->cCodPr1 + ( D():PedidosProveedoresLineas( nView ) )->cValPr1, D():PropiedadesLineas( nView ) ) )
+   DEFAULT view   := nView
+
+Return ( retValProp( ( D():PedidosProveedoresLineas( view ) )->cCodPr1 + ( D():PedidosProveedoresLineas( view ) )->cValPr1, D():PropiedadesLineas( view ) ) )
 
 //--------------------------------------------------------------------------//
 
-Function nombreSegundaPropiedad()
+Function nombreSegundaPropiedad( view )
 
-Return ( retValProp( ( D():PedidosProveedoresLineas( nView ) )->cCodPr2 + ( D():PedidosProveedoresLineas( nView ) )->cValPr2, D():PropiedadesLineas( nView ) ) )
+   DEFAULT view   := nView
+
+Return ( retValProp( ( D():PedidosProveedoresLineas( view ) )->cCodPr2 + ( D():PedidosProveedoresLineas( view ) )->cValPr2, D():PropiedadesLineas( view ) ) )
 
 //--------------------------------------------------------------------------//
 

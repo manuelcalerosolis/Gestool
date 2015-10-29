@@ -17975,11 +17975,6 @@ Return ( alltrim( cSeekCodebar( cCodBar, D():ArticulosCodigosBarras( nView ), D(
 
 Function cSeekCodebar( cCodBar, dbfCodebar, dbfArticulo )
 
-   local n
-   local cCodigo
-   local cPropiedades         := ""
-   local nOrdenAnterior
-
    if IsObject( dbfCodebar )
       dbfCodebar              := dbfCodebar:cAlias
    end if
@@ -17987,6 +17982,29 @@ Function cSeekCodebar( cCodBar, dbfCodebar, dbfArticulo )
    if IsObject( dbfArticulo )
       dbfArticulo             := dbfArticulo:cAlias
    end if
+
+   cSeekCodebar               := cSeekInternalCodebar( cCodBar, dbfCodebar, dbfArticulo )
+
+   if empty( cSeekCodebar )
+      cSeekCodebar            := cSeekExternalCodebar( cCodBar, dbfCodebar, dbfArticulo )
+   end if 
+
+Return ( cCodBar )
+
+//---------------------------------------------------------------------------//
+
+Function cSeekInternalCodebar( cCodBar, dbfCodebar, dbfArticulo )
+
+Return ( "" )
+
+//---------------------------------------------------------------------------//
+
+Function cSeekExternalCodebar( cCodBar, dbfCodebar, dbfArticulo )
+
+   local n
+   local cCodigo
+   local cPropiedades         := ""
+   local nOrdenAnterior
 
    // Buscamos los puntos dentro del codigo------------------------------------
 
@@ -18039,6 +18057,7 @@ Function cSeekCodebar( cCodBar, dbfCodebar, dbfArticulo )
 Return ( cCodBar )
 
 //---------------------------------------------------------------------------//
+
 
 Static Function SeekPrvArt( nKey, nFlags, oGet, oBrw, dbfArtPrv, dbfArticulo, oGetPrv )
 
@@ -19504,7 +19523,7 @@ FUNCTION cNomValPrp1Art( uArticulo, uTblPro )
 
    local cBarPrp1     := ""
 
-   DEFAULT uArticulo  := if( !Empty( tmpArticulo ), tmpArticulo, dbfArticulo )
+   DEFAULT uArticulo  := if( !empty( tmpArticulo ), tmpArticulo, dbfArticulo )
    DEFAULT uTblPro    := dbfTblPro
 
    if dbSeekInOrd( ( uArticulo )->cCodPrp1 + ( uArticulo )->cValPrp1, "cCodPro", uTblPro )
