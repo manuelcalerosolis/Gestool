@@ -18000,6 +18000,8 @@ Return ( alltrim( cSeekCodebar( cCodBar, D():ArticulosCodigosBarras( nView ), D(
 
 Function cSeekCodebar( cCodBar, dbfCodebar, dbfArticulo )
 
+   local cSeekCodebar 
+
    if IsObject( dbfCodebar )
       dbfCodebar              := dbfCodebar:cAlias
    end if

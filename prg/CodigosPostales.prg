@@ -10,9 +10,9 @@ CLASS CodigosPostales FROM TMant
 
    DATA oDlg
 
-   DATA getCodigo
-   DATA getPoblacion
-   DATA getProvincia
+   DATA codigoPostal
+   DATA Poblacion
+   DATA codigoProvincia
 
    DATA hCodigoPostal
    DATA oldCodigoPostal
@@ -22,16 +22,16 @@ CLASS CodigosPostales FROM TMant
    METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
    METHOD Create( cPath ) CONSTRUCTOR
 
-   METHOD OpenFiles( lExclusive )
-      MESSAGE OpenService( lExclusive )               METHOD OpenFiles( lExclusive )
+   METHOD OpenFiles( lExclusive, cPath )
+   METHOD OpenService( lExclusive, cPath )
    METHOD CloseFiles() 
    METHOD DefineFiles()
 
    METHOD Resource( nMode )
       METHOD lSaveResource()
-      METHOD startResource()                          INLINE ( ::getCodigo:setFocus(), ::getProvincia:lValid() )
+      METHOD startResource()                          INLINE ( ::codigoPostal:setFocus(), ::codigoProvincia:lValid() )
 
-   METHOD getCodigoPostal()                           INLINE ( if( hhaskey( ::hCodigoPostal, "CodigoPostal" ), hget( ::hCodigoPostal, "CodigoPostal" ), nil ) )
+   METHOD getCodigo()                                 INLINE ( if( hhaskey( ::hCodigoPostal, "CodigoPostal" ), hget( ::hCodigoPostal, "CodigoPostal" ), nil ) )
 
    METHOD getPoblacion()                              INLINE ( if( hhaskey( ::hCodigoPostal, "Poblacion" ), hget( ::hCodigoPostal, "Poblacion" ), nil ) )
    METHOD setPoblacion( cPoblacion )                  INLINE ( if( !empty( ::getPoblacion() ), ::getPoblacion():cText( cPoblacion ), nil ) )
@@ -49,14 +49,14 @@ END CLASS
 
 METHOD Create( cPath, cDriver ) CLASS CodigosPostales
 
-   DEFAULT cPath     := cPatDat()
-   DEFAULT cDriver   := cDriver()
+   DEFAULT cPath        := cPatDat()
+   DEFAULT cDriver      := cDriver()
 
-   ::cPath           := cPath
-   ::cDriver         := cDriver
-   ::oDbf            := nil
+   ::cPath              := cPath
+   ::cDriver            := cDriver
+   ::oDbf               := nil
 
-   ::oProvincias     := Provincias():Create( cPath, cDriver )  
+   ::oProvincias        := Provincias():Create( cPath, cDriver )  
 
 RETURN ( Self )
 
@@ -76,19 +76,44 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS CodigosPostales
       oWndParent:CloseAll()
    end if
 
+   ::Create( cPath, cDriver )
+
    ::oWndParent         := oWndParent
 
    ::lCreateShell       := .f.
    ::cMru               := "Flag_spain_16"
    ::cBitmap            := clrTopArchivos
 
-   ::Create( cPath, cDriver )
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
 METHOD OpenFiles( lExclusive, cPath ) CLASS CodigosPostales
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         
+
+   DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
+
+   if !::OpenService()
+      RETURN ( .f. )
+   end if 
+
+   if !empty( ::oProvincias )
+      lOpen             := ::oProvincias:OpenFiles()
+   end if
+
+   if !lOpen      
+      ::CloseFiles()
+   end if 
+
+RETURN ( lOpen )
+
+//----------------------------------------------------------------------------//
+
+METHOD OpenService( lExclusive, cPath ) CLASS CodigosPostales
 
    local lOpen          := .t.
    local oError
@@ -106,15 +131,11 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS CodigosPostales
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
-      if !empty( ::oProvincias )
-         ::oProvincias:OpenFiles()
-      end if
-
-   RECOVER
+   RECOVER USING oError
 
       lOpen             := .f.
       
-      msgStop( "Imposible abrir las bases de datos de codigos postales" )
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de codigos postales" )
       
       ::CloseFiles()
 
@@ -126,18 +147,18 @@ RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
+
 METHOD CloseFiles() CLASS CodigosPostales
 
-   if ::oDbf != nil .and. ::oDbf:Used()
+   if !empty( ::oDbf ) .and. ( ::oDbf:Used() )
       ::oDbf:End()
-      ::oDbf      := nil
+      ::oDbf         := nil
    end if
 
    if !empty( ::oProvincias )
       ::oProvincias:End()
+      ::oProvincias  := nil
    end if
-
-   ::oProvincias  := nil
 
 RETURN .t.
 
@@ -167,29 +188,29 @@ METHOD Resource( nMode ) CLASS CodigosPostales
 
    DEFINE DIALOG ::oDlg RESOURCE "CodigoPostal" TITLE LblTitle( nMode ) + "codigos postales"
 
-      REDEFINE GET ::getCodigo VAR ::oDbf:cCodPos UPDATE;
+      REDEFINE GET ::codigoPostal VAR ::oDbf:cCodPos UPDATE;
 			ID 		100 ;
          WHEN     ( nMode == APPD_MODE ) ;
          PICTURE  "@!" ;
          OF       ::oDlg
 
-      ::getCodigo:bValid         := {|| notValid( ::getCodigo, ::oDbf:cAlias ) .and. !empty( ::getCodigo:VarGet() ) }
+      ::codigoPostal:bValid         := {|| notValid( ::codigoPostal, ::oDbf:cAlias ) .and. !empty( ::codigoPostal:VarGet() ) }
 
-      REDEFINE GET ::getPoblacion VAR ::oDbf:cNomPos UPDATE;
+      REDEFINE GET ::Poblacion VAR ::oDbf:cNomPos UPDATE;
 			ID 		110 ;
          PICTURE  "@!" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		::oDlg
       
-      REDEFINE GET ::getProvincia VAR ::oDbf:cCodPrv ;
+      REDEFINE GET ::codigoProvincia VAR ::oDbf:cCodPrv ;
          ID       120 ;
          IDTEXT   121 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
          OF       ::oDlg
 
-         ::getProvincia:bHelp    := {|| ::oProvincias:Buscar( ::getProvincia ) }
-         ::getProvincia:bValid   := {|| ::oProvincias:Existe( ::getProvincia, ::getProvincia:oHelpText, "cNomPrv", .t., .t., "0" ) }
+         ::codigoProvincia:bHelp    := {|| ::oProvincias:Buscar( ::codigoProvincia ) }
+         ::codigoProvincia:bValid   := {|| ::oProvincias:Existe( ::codigoProvincia, ::codigoProvincia:oHelpText, "cNomPrv", .t., .t., "0" ) }
 
       REDEFINE BUTTON;
          ID       IDOK ;
@@ -219,22 +240,22 @@ METHOD lSaveResource( nMode ) CLASS CodigosPostales
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
       
-      if empty( ::getCodigo:varGet() )
+      if empty( ::Codigo:varGet() )
          msgStop( "Código de grupo de família no puede estar vacío." )
-         ::getCodigo:setFocus()
+         ::Codigo:setFocus()
          return .f.
       end if
 
-      if ::oDbf:seekInOrd( ::getCodigo:varGet(), "cCodPrv" )
+      if ::oDbf:seekInOrd( ::Codigo:varGet(), "cCodPrv" )
          msgStop( "Código ya existe."  )
          return .f.
       end if
 
    end if
 
-   if empty( ::getPoblacion:varGet() )
-      msgStop( "Nombre de provincia no puede estar vacía." )
-      ::getPoblacion:setFocus()
+   if empty( ::Poblacion:varGet() )
+      msgStop( "Nombre de población no puede estar vacía." )
+      ::Poblacion:setFocus()
       return .f.
    end if
 
