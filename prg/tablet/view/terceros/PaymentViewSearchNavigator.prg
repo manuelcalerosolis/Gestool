@@ -15,7 +15,7 @@ END CLASS
 
 METHOD setColumns() CLASS PaymentViewSearchNavigator
 
-   ::setBrowseConfigurationName( "Grid forma de pago" )
+   ::setBrowseConfigurationName( "grid_forma_de_pago" )
 
    with object ( ::addColumn() )
       :cHeader          := "Forma de pago"

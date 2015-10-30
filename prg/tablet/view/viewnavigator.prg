@@ -85,6 +85,14 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "bLClicked" => {|| if( ::oSender:Edit(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
+   TGridImage():Build(  {  "nTop"      => 75,;
+                           "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_minus_64",;
+                           "bLClicked" => {|| if( ::oSender:Delete(), ::refreshBrowse(), ) },;
+                           "oWnd"      => ::oDlg } )
+
    else
 
    TGridImage():Build(  {  "nTop"      => 75,;
@@ -97,14 +105,6 @@ METHOD BotonesAcciones() CLASS ViewNavigator
 
 
    end if 
-
-   TGridImage():Build(  {  "nTop"      => 75,;
-                           "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_minus_64",;
-                           "bLClicked" => {|| if( ::oSender:Delete(), ::refreshBrowse(), ) },;
-                           "oWnd"      => ::oDlg } )
 
 Return ( self )
 

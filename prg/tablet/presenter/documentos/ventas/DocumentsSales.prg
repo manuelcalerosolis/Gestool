@@ -206,6 +206,9 @@ METHOD onPreRunNavigator() CLASS DocumentsSales
    ( ::getWorkArea() )->( ordsetfocus( "dFecDes" ) )
    ( ::getWorkArea() )->( dbgotop() ) 
 
+   // msgAlert( accessCode():lFilterByAgent, "lFilterByAgent" )
+   // msgAlert( accessCode():cAgente, "cAgente" )
+
    if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
       ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == accessCode():cAgente }, "cCodAge == cAgente" ) )
       ( ::getWorkArea() )->( dbgotop() )

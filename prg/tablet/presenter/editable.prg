@@ -88,6 +88,10 @@ CLASS Editable
       METHOD onPreSaveAppendDetail()            INLINE ( .t. )
       METHOD onPreSaveEditDetail()              INLINE ( .t. )
 
+      METHOD appendButtonMode()                 INLINE ( ::lNotZoomMode() )
+      METHOD editButtonMode()                   INLINE ( ::lNotZoomMode() )
+      METHOD deleteButtonMode()                 INLINE ( ::lNotZoomMode() )
+
    METHOD editDetail()
    METHOD deleteDetail()
    METHOD resourceDetail()                      VIRTUAL
@@ -212,7 +216,6 @@ METHOD Zoom() CLASS Editable
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD Delete() CLASS Editable
 

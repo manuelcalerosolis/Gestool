@@ -29,6 +29,9 @@ CLASS ViewSearchNavigator FROM ViewNavigator
 
    METHOD changeComboboxSearch()       INLINE ( ::changeComboboxOrden(), ::getSearch:setFocus(), ::refreshBrowse() )
 
+   METHOD restoreStatusComboboxSearch()
+   METHOD saveStatusComboboxSearch()   INLINE ( setGridOrder( ::getBrowseConfigurationName(), ::getComboboxOrden() ) )
+
    METHOD setSelectorMode()            INLINE ( ::lSelectorMode  := .t. )
 
    METHOD isEndOk()                    INLINE ( ::oDlg:nResult == IDOK )
@@ -85,21 +88,11 @@ Return ( self )
 
 METHOD initDialog()
 
-   local gridOrder
-
    ::Super:initDialog()
 
    ::oSender:initDialog()
 
-   gridOrder               := getGridOrder( ::getBrowseConfigurationName() )
-
-   if !empty( gridOrder )
-      ::setComboboxOrden( gridOrder ) 
-   else 
-      ::changeComboboxOrden()
-   end if 
-
-   ( ::getWorkArea() )->( dbgotop() )
+   ::restoreStatusComboboxSearch()
 
    ::refreshBrowse()
 
@@ -109,7 +102,7 @@ Return ( self )
 
 METHOD validDialog()
 
-   setGridOrder( ::getBrowseConfigurationName(), ::getComboboxOrden() )
+   ::saveStatusComboboxSearch()
 
 Return ( .t. )
 
@@ -168,3 +161,20 @@ METHOD changeComboboxOrden() CLASS ViewSearchNavigator
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD restoreStatusComboboxSearch()
+
+   local gridOrder            := getGridOrder( ::getBrowseConfigurationName() )
+
+   if !empty( gridOrder )
+      ::setComboboxOrden( gridOrder ) 
+   else 
+      ::changeComboboxOrden()
+   end if 
+
+   ( ::getWorkArea() )->( dbgotop() )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+

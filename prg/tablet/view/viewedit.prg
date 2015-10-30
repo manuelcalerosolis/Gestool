@@ -264,17 +264,13 @@ Return ( self )
 
 METHOD defineBotonesAcciones() CLASS ViewEdit
 
-   if ::oSender:lZoomMode()
-      return ( self )
-   end if 
-
    TGridImage():Build(  {  "nTop"      => 145,;
                            "nLeft"     => {|| GridWidth( 0.5, ::oDlg ) },;
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_add_64",;
-                           "bLClicked" => {|| ::oSender:AppendDetail(), ::RefreshBrowse() },;
-                           "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
+                           "bLClicked" => {|| ::oSender:appendDetail(), ::RefreshBrowse() },;
+                           "bWhen"     => {|| ::oSender:appendButtonMode() },;                           
                            "oWnd"      => ::oDlg } )
 
    TGridImage():Build(  {  "nTop"      => 145,;
@@ -282,7 +278,7 @@ METHOD defineBotonesAcciones() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_edit_64",;
-                           "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
+                           "bWhen"     => {|| ::oSender:editButtonMode() },;                           
                            "bLClicked" => {|| ::oSender:EditDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse() },;
                            "oWnd"      => ::oDlg } )
 
@@ -291,7 +287,7 @@ METHOD defineBotonesAcciones() CLASS ViewEdit
                            "nWidth"    => 64,;
                            "nHeight"   => 64,;
                            "cResName"  => "flat_minus_64",;
-                           "bWhen"     => {|| ::oSender:lNotZoomMode() },;                           
+                           "bWhen"     => {|| ::oSender:deleteButtonMode() },;                           
                            "bLClicked" => {|| ::oSender:DeleteDetail( ::oBrowse:nArrayAt ), ::RefreshBrowse()},;
                            "oWnd"      => ::oDlg } )
 
