@@ -30,6 +30,11 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA  oStock
 
+   DATA fileHeader                        
+   DATA fileLine                          
+   DATA dictionaryHeader                  
+   DATA dictionaryLine                    
+
    METHOD lResource( cFld )
 
    METHOD Create()
@@ -45,9 +50,14 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD BuildTree()
    METHOD BuildReportCorrespondences()
 
+   METHOD loadPropiedadesArticulos()
+
    METHOD AddSATClientes()
    METHOD AddPresupuestoClientes()
    METHOD AddPedidoClientes()
+      METHOD sqlPedidoClientes()
+      METHOD FastReportPedidoCliente()
+
    METHOD AddAlbaranCliente()
    METHOD AddFacturaCliente()
    METHOD AddFacturaRectificativa()
@@ -91,6 +101,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
       METHOD GetDatoAlbaranProveedor( cCodArt, cCodAlm, cLote, cDatoRequerido )
       //METHOD isEntradaMovimientoAlmacen( cCodArt, cCodAlm, cLote )
       METHOD GetDatoMovimientosAlamcen( cCodArt, cCodAlm, cLote, cDatoRequerido )
+
+      METHOD getNameFieldLine( cFieldName )     INLINE ( getFieldNameFromDictionary( cFieldName, ::dictionaryLine ) )
+      METHOD getNameFieldHeader( cFieldName )   INLINE ( getFieldNameFromDictionary( cFieldName, ::dictionaryHeader ) )
 
 END CLASS
 
@@ -214,7 +227,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::nView     := D():CreateView()
+      ::nView                          := D():CreateView()
 
       D():PedidosClientes( ::nView )
 
@@ -938,6 +951,20 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD loadPropiedadesArticulos( cCodigoArticulo )
+
+   if ( ::oDbfArt:cAlias )->( dbseek( cCodigoArticulo ) )
+      ::oDbf:cCodTip    := ( ::oDbfArt:cAlias )->cCodTip
+      ::oDbf:cCodCate   := ( ::oDbfArt:cAlias )->cCodCate
+      ::oDbf:cCodEst    := ( ::oDbfArt:cAlias )->cCodEst
+      ::oDbf:cCodTemp   := ( ::oDbfArt:cAlias )->cCodTemp
+      ::oDbf:cCodFab    := ( ::oDbfArt:cAlias )->cCodFab
+   end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD AddSATClientes() CLASS TFastVentasArticulos
 
    local cExpHead
@@ -1256,11 +1283,16 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    local nSec
    local cExpHead
    local cExpLine
+   local aliasPedidosClientes
+   local aliasPedidosClientesLineas
 
-   nSec              := seconds()
+   nSec                       := seconds()
 
-   ( D():PedidosClientes( ::nView ) )->( OrdSetFocus( "dFecPed" ) )
-   ( D():PedidosClientesLineas( ::nView ) )->( OrdSetFocus( "nNumPed" ) )
+   aliasPedidosClientes       := D():PedidosClientes( ::nView )
+   aliasPedidosClientesLineas := D():PedidosClientesLineas( ::nView )
+
+   ( aliasPedidosClientes )->( OrdSetFocus( "dFecPed" ) )
+   ( aliasPedidosClientesLineas )->( OrdSetFocus( "nNumPed" ) )
 
    cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    cExpHead          += ' .and. !lCancel '
@@ -1270,13 +1302,13 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    cExpHead          += ' .and. cSufPed >= "' + Rtrim( ::oGrupoSufijo:Cargo:getDesde() )   + '" .and. cSufPed <= "' + Rtrim( ::oGrupoSufijo:Cargo:getHasta() ) + '"'
 
    if lAIS()
-      ( D():PedidosClientes( ::nView ) )->( adsSetAOF( cExpHead ) )
+      ( aliasPedidosClientes )->( adsSetAOF( cExpHead ) )
    else
-      ( D():PedidosClientes( ::nView ) )->( dbSetFilter( bCheck2Block( cExpHead ), cExpHead ) )
+      ( aliasPedidosClientes )->( dbSetFilter( bCheck2Block( cExpHead ), cExpHead ) )
    end if 
 
    ::oMtrInf:cText   := "Procesando pedidos"
-   ::oMtrInf:SetTotal( ( D():PedidosClientes( ::nView ) )->( OrdKeyCount() ) )
+   ::oMtrInf:SetTotal( ( aliasPedidosClientes )->( OrdKeyCount() ) )
 
    // Lineas de pedidos-----------------------------------------------------------
 
@@ -1287,33 +1319,34 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    end if
 
    if lAIS()
-      ( D():PedidosClientesLineas( ::nView ) )->( adsSetAOF( cExpLine ) )
+      ( aliasPedidosClientesLineas )->( adsSetAOF( cExpLine ) )
    else
-      ( D():PedidosClientesLineas( ::nView ) )->( dbsetfilter( bCheck2Block( cExpLine ), cExpLine ) )
+      ( aliasPedidosClientesLineas )->( dbsetfilter( bCheck2Block( cExpLine ), cExpLine ) )
    end if 
 
-   ( D():PedidosClientes( ::nView ) )->( dbGoTop() )
-   while !::lBreak .and. !( D():PedidosClientes( ::nView ) )->( Eof() )
+   ( aliasPedidosClientes )->( dbGoTop() )
+   while !::lBreak .and. !( aliasPedidosClientes )->( Eof() )
 
-      if lChkSer( ( D():PedidosClientes( ::nView ) )->cSerPed, ::aSer )
+      if lChkSer( ( aliasPedidosClientes )->cSerPed, ::aSer )
 
-         if ( D():PedidosClientesLineas( ::nView ) )->( dbseek( D():PedidosClientesId( ::nView ) ) )
+         if ( aliasPedidosClientesLineas )->( dbseek( D():PedidosClientesId( ::nView ) ) )
 
             while !::lBreak .and. D():PedidosClientesId( ::nView ) == D():PedidosClientesLineasId( ::nView ) 
 
-               if !( ::lExcCero  .and. nTotNPedCli( D():PedidosClientes( ::nView ) ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLPedCli( D():PedidosClientesLineas( ::nView ), D():PedidosClientes( ::nView ), ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+               if !( ::lExcCero  .and. nTotNPedCli( aliasPedidosClientesLineas ) == 0 )  .and.;
+                  !( ::lExcImp   .and. nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   // Añadimos un nuevo registro
 
                   ::oDbf:Blank()
 
-                  ::oDbf:cCodArt    := ( D():PedidosClientesLineas( ::nView ) )->cRef
-                  ::oDbf:cNomArt    := ( D():PedidosClientesLineas( ::nView ) )->cDetalle
+                  ::oDbf:cCodArt    := ( aliasPedidosClientesLineas )->cRef
+                  ::oDbf:cNomArt    := ( aliasPedidosClientesLineas )->cDetalle
 
-                  ::oDbf:cCodPrv    := ( D():PedidosClientesLineas( ::nView ) )->cCodPrv
-                  // ::oDbf:cNomPrv    := RetFld( ( D():PedidosClientesLineas( ::nView ) )->cCodPrv, ::oDbfPrv:cAlias )
+                  ::oDbf:cCodPrv    := ( aliasPedidosClientesLineas )->cCodPrv
+                  ::oDbf:cNomPrv    := RetFld( ( aliasPedidosClientesLineas )->cCodPrv, ::oDbfPrv:cAlias )
 
+<<<<<<< HEAD
                   ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( D():PedidosClientesLineas( ::nView ) )->nIva )
                   ::oDbf:cCodGrp    := cGruCli( ( D():PedidosClientes( ::nView ) )->cCodCli, ::oDbfCli )
                   ::oDbf:cCodTip    := RetFld( ( D():PedidosClientesLineas( ::nView ) )->cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
@@ -1355,10 +1388,51 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:nTotArt    := nImpLPedCli( ( D():PedidosClientes( ::nView ) ), ( D():PedidosClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLPedCli( ( D():PedidosClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
-                  
-                  ::oDbf:nPeso      := nPesLPedCli( ( D():PedidosClientesLineas( ::nView ) ) )
+=======
+                  ::oDbf:TipoIva    := cCodigoIva( ::oDbfIva:cAlias, ( aliasPedidosClientesLineas )->nIva )
+                  ::oDbf:cCodGrp    := cGruCli( ( aliasPedidosClientes )->cCodCli, ::oDbfCli )
 
-                  ::oDbf:nCosArt    := nTotCPedCli( ( D():PedidosClientesLineas( ::nView ) ), ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::loadPropiedadesArticulos( ( aliasPedidosClientesLineas )->cRef )
+
+                  ::oDbf:cCodPago   := ( aliasPedidosClientes )->cCodPgo
+                  ::oDbf:cCodRut    := ( aliasPedidosClientes )->cCodRut
+                  ::oDbf:cCodAge    := ( aliasPedidosClientes )->cCodAge
+                  ::oDbf:cCodTrn    := ( aliasPedidosClientes )->cCodTrn
+                  ::oDbf:cCodUsr    := ( aliasPedidosClientes )->cCodUsr
+                  ::oDbf:cCodCli    := ( aliasPedidosClientes )->cCodCli
+                  ::oDbf:cNomCli    := ( aliasPedidosClientes )->cNomCli
+                  ::oDbf:cPobCli    := ( aliasPedidosClientes )->cPobCli
+                  ::oDbf:cPrvCli    := ( aliasPedidosClientes )->cPrvCli
+                  ::oDbf:cPosCli    := ( aliasPedidosClientes )->cPosCli
+                  ::oDbf:cCodObr    := ( aliasPedidosClientes )->cCodObr
+
+                  ::oDbf:cCodFam    := ( aliasPedidosClientesLineas )->cCodFam
+                  ::oDbf:cCodAlm    := ( aliasPedidosClientesLineas )->cAlmLin
+
+                  ::oDbf:nDtoArt    := ( aliasPedidosClientesLineas )->nDto
+                  ::oDbf:nLinArt    := ( aliasPedidosClientesLineas )->nDtoDiv
+                  ::oDbf:nPrmArt    := ( aliasPedidosClientesLineas )->nDtoPrm
+
+                  ::oDbf:nUniArt    := nTotNPedCli( aliasPedidosClientesLineas ) 
+
+                  ::oDbf:nTotDto    := nDtoLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::oDbf:nTotPrm    := nPrmLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+
+                  ::oDbf:nPreArt    := nImpUPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
+                  ::oDbf:nTrnArt    := nTrnUPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
+                  ::oDbf:nPntArt    := nPntLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nValDiv )
+
+                  ::oDbf:nBrtArt    := nBrtLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::oDbf:nImpArt    := nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
+                  ::oDbf:nIvaArt    := nIvaLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+
+                  ::oDbf:nTotArt    := nImpLPedCli( aliasPedidosClientes, aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
+                  ::oDbf:nTotArt    += nIvaLPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
+>>>>>>> origin/master
+                  
+                  ::oDbf:nPeso      := nPesLPedCli( aliasPedidosClientesLineas ) 
+
+                  ::oDbf:nCosArt    := nTotCPedCli( aliasPedidosClientesLineas, ::nDecOut, ::nDerOut, ::nValDiv )
 
                   if empty( ::oDbf:nCosArt )
                      ::oDbf:nCosArt := ::oDbf:nUniArt * nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
@@ -1368,7 +1442,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                end if
 
-               ( D():PedidosClientesLineas( ::nView ) )->( dbSkip() )
+               ( aliasPedidosClientesLineas )->( dbSkip() )
 
             end while
 
@@ -1376,7 +1450,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
       end if
 
-      ( D():PedidosClientes( ::nView ) )->( dbSkip() )
+      ( aliasPedidosClientes )->( dbSkip() )
 
       ::oMtrInf:AutoInc()
 
@@ -2991,6 +3065,7 @@ METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
 RETURN ( resultado )
 
 //---------------------------------------------------------------------------//
+
 METHOD StartDialog() CLASS TFastVentasArticulos
 
    ::CreateTreeImageList()
@@ -3012,3 +3087,89 @@ METHOD AddVariableStock()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD FastReportPedidoCliente()
+      
+   ( D():PedidosClientes( ::nView ) )->( OrdSetFocus( "iNumPed" ) )
+   ( D():PedidosClientesLineas( ::nView ) )->( OrdSetFocus( "iNumPed" ) )
+
+   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ( D():PedidosClientes( ::nView ) )->( Select() ) )
+   ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
+
+   ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ( D():PedidosClientesLineas( ::nView ) )->( Select() ) )
+   ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| ::idDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| ::IdDocumentoLinea() } )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD sqlPedidoClientes() CLASS TFastVentasArticulos
+
+   local cStm 
+
+   local cArticuloDesde       := "" // ::oGrupoArticulo:Cargo:getDesde()
+   local cArticuloHasta       := "ZZZZZZZZZZZZZZ" // ::oGrupoArticulo:Cargo:getHasta()
+
+   ::fileHeader               := cPatEmp() + "PedCliT"
+   ::fileLine                 := cPatEmp() + "PedCliL"   
+   ::dictionaryHeader         := TDataCenter():getDictionary( "PedCliT" )
+   ::dictionaryLine           := TDataCenter():getDictionary( "PedCliL" )
+
+   cStm           := "SELECT  lineasDocumento." + ::getNameFieldLine( "Articulo" )     +  " AS Articulo, "           
+   cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Serie" )       +  " AS Serie, "
+   cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Numero" )      +  " AS Numero, "
+   cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Sufijo" )      +  " AS Sufijo, "
+   cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Proveedor" )   +  " AS CodigoProveedor, "
+
+   cStm           +=          "cabeceraDocumento." + ::getNameFieldHeader( "Fecha" )   +  " AS Fecha , "
+
+   cStm           +=          "articulos.cCodTip" +                                       " AS TipoArticulo ,"
+   cStm           +=          "articulos.cCodCate" +                                      " AS CategoriaArticulo ,"
+   cStm           +=          "articulos.cCodEst" +                                       " AS EstadoArticulo ,"
+   cStm           +=          "articulos.cCodTemp" +                                      " AS TemporadaArticulo ,"
+   cStm           +=          "articulos.cCodFab" +                                       " AS FabricanteArticulo ,"
+
+   cStm           +=          "tiposIva.Tipo" +                                           " AS CodigoIva ,"
+
+   cStm           +=          "clientes.cCodGrp" +                                        " AS GrupoCliente ,"
+
+   cStm           +=          "proveedores.Titulo" +                                      " AS NombreProveedor "
+
+   cStm           += "FROM " + ::fileLine + " lineasDocumento "
+   
+   cStm           += "INNER JOIN " + ::fileHeader + " cabeceraDocumento ON " 
+   cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Serie" )       + " = cabeceraDocumento." + ::getNameFieldHeader( "Serie" )   + " AND "
+   cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Numero" )      + " = cabeceraDocumento." + ::getNameFieldHeader( "Numero" )  + " AND "
+   cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Sufijo" )      + " = cabeceraDocumento." + ::getNameFieldHeader( "Sufijo" )  + " "
+   
+   cStm           += "LEFT JOIN " + cPatCli() + "Client      clientes ON cabeceraDocumento." + ::getNameFieldHeader( "Cliente" )  + " = clientes.Cod "
+   cStm           += "LEFT JOIN " + cPatPrv() + "Provee      proveedores ON lineasDocumento." + ::getNameFieldLine( "Proveedor" ) + " = proveedores.Cod "
+   cStm           += "LEFT JOIN " + cPatDat() + "Tiva        tiposIva ON lineasDocumento." + ::getNameFieldLine( "PorcentajeImpuesto" ) + " = tiposIva.tpIva "
+   cStm           += "LEFT JOIN " + cPatArt() + "Articulo    articulos ON lineasDocumento." + ::getNameFieldLine( "Articulo" )  + " = articulos.Codigo "
+
+   cStm           += "WHERE   lineasDocumento." + ::getNameFieldLine( "Articulo" )     + " >= '" + cArticuloDesde + "' AND " 
+   cStm           +=          "lineasDocumento." + ::getNameFieldLine( "Articulo" )    + " <= '" + cArticuloHasta + "' "
+
+   cStm           += "ORDER BY lineasDocumento." + ::getNameFieldLine( "Articulo" )    
+
+   msgAlert( cStm, "cStm" )
+   
+   logWrite( cStm )
+
+   TDataCenter():ExecuteSqlStatement( cStm, "lineasDocumento" ) 
+
+   msgAlert( cStm, "Run" )
+
+   ( "lineasDocumento" )->( browse() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+

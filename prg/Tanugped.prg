@@ -158,15 +158,15 @@ METHOD lGenerate() CLASS TAnuGPed
    ::oPedCliT:OrdSetFocus( "dFecPed" )
    ::oPedCliL:OrdSetFocus( "nNumPed" )
 
+   cExpHead          := "!lCancel "
+
    do case
       case ::oEstado:nAt == 1
-         cExpHead    := 'nEstado == 1'
+         cExpHead    += ' .and. nEstado == 1'
       case ::oEstado:nAt == 2
-         cExpHead    := 'nEstado == 2'
+         cExpHead    += ' .and. nEstado == 2'
       case ::oEstado:nAt == 3
-         cExpHead    := 'nEstado == 3'
-      otherwise
-         cExpHead    := '.t.'
+         cExpHead    += ' .and. nEstado == 3'
    end case
 
    if !Empty( ::oFilter:cExpresionFilter )

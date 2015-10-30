@@ -182,6 +182,8 @@ TItemacceso.prg         	\
 Tdbfserv.prg            	\
 Tpanelex.prg              	\
 Pais.prg                	\
+Provincias.prg             \
+CodigosPostales.prg        \
 Bandera.prg             	\
 Tvisor.prg              	\
 Tgrpfam.prg             	\
@@ -612,6 +614,8 @@ TItemacceso.obj                                    \
 Tdbfserv.obj                                       \
 Tpanelex.obj                                       \
 Pais.obj                                           \
+Provincias.obj                                     \
+CodigosPostales.obj                                \
 Bandera.obj                                        \
 Tvisor.obj                                         \
 Tgrpfam.obj                                        \
@@ -1040,6 +1044,8 @@ $(OBJ)\Titemacceso.obj          	+
 $(OBJ)\Tdbfserv.obj             	+
 $(OBJ)\Tpanelex.obj             	+
 $(OBJ)\Pais.obj                 	+
+$(OBJ)\Provincias.obj            +
+$(OBJ)\CodigosPostales.obj       +
 $(OBJ)\Bandera.obj              	+
 $(OBJ)\Tvisor.obj               	+
 $(OBJ)\Tgrpfam.obj              	+

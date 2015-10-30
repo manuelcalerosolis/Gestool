@@ -21,6 +21,9 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  hReport 
 
+   DATA  aliasPedidosClientes
+   DATA  aliasPedidosClientesLineas
+
    DATA  nUnidadesTiempo   INIT 1
    DATA  oUnidadesTiempo
    DATA  cUnidadesTiempo   INIT "Semana(s)"

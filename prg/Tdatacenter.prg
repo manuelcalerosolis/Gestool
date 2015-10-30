@@ -191,8 +191,6 @@ CLASS TDataCenter
    METHOD getDictionary( cDataTable )
    METHOD getDeFaultValue( cDataTable )  
 
-   
-
    METHOD DataName( cDatabase )              INLINE   ( if( lAIS(), upper( cPatDat() + cDatabase ), upper( cDatabase ) ) )
    METHOD EmpresaName( cDatabase )           INLINE   ( if( lAIS(), upper( cPatEmp() + cDatabase ), upper( cDatabase ) ) )
 
@@ -1849,6 +1847,26 @@ METHOD BuildData()
    oDataTable:cDescription := "Situaciones"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:bCreateFile  := {| cPath | TSituaciones():BuildFiles( cPath ) }
+   ::AddDataTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "CodPostal"
+   oDataTable:cName        := cPatDat() + "CodPostal"
+   oDataTable:cDataFile    := cPatDat( .t. ) + "CodPostal.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "CodPostal.Cdx"
+   oDataTable:cDescription := "CodPostal"
+   oDataTable:bCreateFile  := {| cPath | CodigosPostales():BuildFiles( cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
+   ::AddDataTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cArea        := "Provincia"
+   oDataTable:cName        := cPatDat() + "Provincia"
+   oDataTable:cDataFile    := cPatDat( .t. ) + "Provincia.Dbf"
+   oDataTable:cIndexFile   := cPatDat( .t. ) + "Provincia.Cdx"
+   oDataTable:cDescription := "Provincia"
+   oDataTable:bCreateFile  := {| cPath | Provincias():BuildFiles( cPath ) }
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -6309,9 +6327,7 @@ METHOD getFieldDictionary( cField, cDataTable, nView ) CLASS D
 
    local dbf         := ::Get( cDataTable, nView )   
    local aDictionary := TDataCenter():getDictionary( cDataTable )
-   local value
-
-   value             := hGet( aDictionary, cField )
+   local value       := hGet( aDictionary, cField )
 
    if !empty( value )
      Return( ( dbf )->( fieldget( ( dbf )->( fieldPos( value ) ) ) ) )

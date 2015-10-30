@@ -375,7 +375,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       D():ArticuloLenguaje( nView )
 
-
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
@@ -1140,7 +1139,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET aGet[ _CPOSPRV ] VAR aTmp[ _CPOSPRV ] ;
          ID       143 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CPOBPRV ] VAR aTmp[ _CPOBPRV ] ;
@@ -2106,31 +2104,29 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aGet, aTmp, oBrw, nMode, oDlg ), GenPedPrv( IS_PRINTER ), ) } )
          oDlg:AddFastKey( VK_F9, {|| oDetCamposExtra:Play( aTmp[ _CSERPED ] + str( aTmp[ _NNUMPED ] ) + aTmp[ _CSUFPED ] ) } )
          oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
-
       end if
 
       oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
 
-   do case
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), , oDlg:end() ) }
+      do case
+         case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
+            oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), , oDlg:end() ) }
 
-      case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
+         case nMode == APPD_MODE .and. lRecogerUsuario() .and. !Empty( cCodArt )
+            oDlg:bStart := {|| if( lGetUsuario( aGet[ _CCODUSR ], D():Usuarios( nView ) ), AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ), oDlg:end() ) }
 
-      case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
-         oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
-
-   end case
+         case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
+            oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, cCodArt ) }
+      end case
 
 	ACTIVATE DIALOG oDlg	;
       ON INIT  (  initEdtRec( aGet, aTmp, oBrw, oBrwLin, oBrwInc, nMode, cCodPrv, oDlg ) ) ;
       ON PAINT (  recalculaTotal( aTmp ) );
       CENTER
 
-   KillTrans( oBrwLin )
+   killTrans( oBrwLin )
 
-   EndEdtRecMenu()
+   endEdtRecMenu()
 
    oBmpDiv:end()
    oBmpEmp:end()
@@ -2138,10 +2134,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
    oBmpIncidencias:end()
    oBmpDatos:end()
    oBmpDocumentos:end()
-
-   /*
-   Guardamos los datos del browse----------------------------------------------
-   */
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -9339,15 +9331,19 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-Function nombrePrimeraPropiedad()
+Function nombrePrimeraPropiedad( view )
 
-Return ( retValProp( ( D():PedidosProveedoresLineas( nView ) )->cCodPr1 + ( D():PedidosProveedoresLineas( nView ) )->cValPr1, D():PropiedadesLineas( nView ) ) )
+   DEFAULT view   := nView
+
+Return ( retValProp( ( D():PedidosProveedoresLineas( view ) )->cCodPr1 + ( D():PedidosProveedoresLineas( view ) )->cValPr1, D():PropiedadesLineas( view ) ) )
 
 //--------------------------------------------------------------------------//
 
-Function nombreSegundaPropiedad()
+Function nombreSegundaPropiedad( view )
 
-Return ( retValProp( ( D():PedidosProveedoresLineas( nView ) )->cCodPr2 + ( D():PedidosProveedoresLineas( nView ) )->cValPr2, D():PropiedadesLineas( nView ) ) )
+   DEFAULT view   := nView
+
+Return ( retValProp( ( D():PedidosProveedoresLineas( view ) )->cCodPr2 + ( D():PedidosProveedoresLineas( view ) )->cValPr2, D():PropiedadesLineas( view ) ) )
 
 //--------------------------------------------------------------------------//
 

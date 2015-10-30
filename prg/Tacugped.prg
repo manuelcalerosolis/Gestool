@@ -159,16 +159,18 @@ METHOD lGenerate() CLASS TAcuGPed
    ::oPedCliT:OrdSetFocus( "dFecPed" )
    ::oPedCliL:OrdSetFocus( "nNumPed" )
 
+   cExpHead          := "!lCancel "
+
    do case
       case ::oEstado:nAt == 1
-         cExpHead    := 'nEstado == 1 .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead    += ' .and. nEstado == 1'
       case ::oEstado:nAt == 2
-         cExpHead    := 'nEstado == 2 .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead    += ' .and. nEstado == 2'
       case ::oEstado:nAt == 3
-         cExpHead    := 'nEstado == 3 .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-      case ::oEstado:nAt == 4
-         cExpHead    := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+         cExpHead    += ' .and. nEstado == 3'
    end case
+
+   cExpHead          += ' .and. dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
    if !::lAllCli
       cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::cCliOrg ) + '" .and. cCodCli <= "' + Rtrim( ::cCliDes ) + '"'

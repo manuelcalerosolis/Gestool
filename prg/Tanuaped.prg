@@ -140,45 +140,43 @@ Esta funcion crea la base de datos para generar posteriormente el informe
 
 METHOD lGenerate()
 
-   local cExpHead  := ""
-   local cExpLine  := ""
+   local cExpHead       := ""
+   local cExpLine       := ""
 
    ::oDlg:Disable()
    ::oBtnCancel:Enable()
    ::oDbf:Zap()
 
-   ::aHeader      := {  {|| "Fecha   : " + Dtoc( Date() ) },;
-                        {|| "Año     : " + AllTrim( Str( ::nYeaInf ) ) },;
-                        {|| "Almacén : " + if( ::lAllAlm, "Todos", AllTrim( ::cAlmOrg ) + " > " + AllTrim( ::cAlmDes ) ) } ,;
-                        {|| "Estado  : " + ::aEstado[ ::oEstado:nAt ] } }
+   ::aHeader            := {  {|| "Fecha   : " + Dtoc( Date() ) },;
+                              {|| "Año     : " + AllTrim( Str( ::nYeaInf ) ) },;
+                              {|| "Almacén : " + if( ::lAllAlm, "Todos", AllTrim( ::cAlmOrg ) + " > " + AllTrim( ::cAlmDes ) ) } ,;
+                              {|| "Estado  : " + ::aEstado[ ::oEstado:nAt ] } }
 
    ::oPedCliT:OrdSetFocus( "dFecPed" )
    ::oPedCliL:OrdSetFocus( "nNumPed" )
 
+   cExpHead             := "!lCancel"
+
    do case
       case ::oEstado:nAt == 1
-         cExpHead    := 'nEstado == 1'
+         cExpHead       += ' .and. nEstado == 1'
       case ::oEstado:nAt == 2
-         cExpHead    := 'nEstado == 2'
+         cExpHead       += ' .and. nEstado == 2'
       case ::oEstado:nAt == 3
-         cExpHead    := 'nEstado == 3'
-      case ::oEstado:nAt == 4
-         cExpHead    := '.t.'
+         cExpHead       += ' .and. nEstado == 3'
    end case
-
+         
    if !Empty( ::oFilter:cExpresionFilter )
-      cExpHead       += ' .and. ' + ::oFilter:cExpresionFilter
+      cExpHead          += ' .and. ' + ::oFilter:cExpresionFilter
    end if
 
    ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
 
-   /*
-   Lineas de albaranes
-   */
+   // Lineas de pedidos
 
-      cExpLine       := ' !lTotLin .and. !lControl '
+   cExpLine          := ' !lTotLin .and. !lControl '
 
    if !::lAllAlm
       cExpLine       += ' .and. cAlmLin >= "' + Rtrim( ::cAlmOrg ) + '" .and. cAlmLin <= "' + Rtrim( ::cAlmDes ) + '"'

@@ -251,6 +251,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       end if
       oDetCamposExtra:SetTipoDocumento( "Proveedores" )
 
+      CodigosPostales():GetInstance():OpenFiles()
+
       cPinDiv        := cPinDiv( cDivEmp(), dbfDiv ) // Picture de la divisa
       cPirDiv        := cPirDiv( cDivEmp(), dbfDiv ) // Picture de la divisa redondeada
 
@@ -795,7 +797,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
       REDEFINE GET aGet[ _CODPOSTAL ] VAR aTmp[ _CODPOSTAL ] ;
          ID       160 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
+         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _PROVINCIA ] VAR aTmp[ _PROVINCIA ] ;
@@ -1765,6 +1767,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
 
       oDlg:bStart := { || ShowComentario( aTmp, nMode ), StartEdtRec( aTmp, aGet, oValPnt ), oBrwBnc:Load(), oBrwCta:Load(), oGet:SetFocus() }
 
+      CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CODPOSTAL ], "Poblacion" => aGet[ _POBLACION ], "Provincia" => aGet[ _PROVINCIA ] } )
+
    ACTIVATE DIALOG oDlg CENTER ;
       ON INIT  ( EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ) );
       VALID    ( KillTrans() )
@@ -2194,6 +2198,8 @@ STATIC FUNCTION CloseFiles( lDestroy )
    if !Empty( oDetCamposExtra )
       oDetCamposExtra:End()
    end if
+
+   CodigosPostales():GetInstance():CloseFiles()
 
    dbfProvee         := nil
    dbfProveeD        := nil

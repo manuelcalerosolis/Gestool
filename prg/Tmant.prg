@@ -10,6 +10,7 @@
 CLASS TMant
 
    CLASSDATA oBandera
+   CLASSDATA oInstance
    
    DATA nView
 
