@@ -16,12 +16,15 @@ CLASS ViewSearchNavigator FROM ViewNavigator
    METHOD setItemsBusqueda()           VIRTUAL
 
    METHOD Resource()
-
-   METHOD initDialog()
+      METHOD initDialog()
+      METHOD validDialog()
    
    METHOD defineBarraBusqueda()
 
-   METHOD getComboboxOrden()
+   METHOD getComboboxOrden()           INLINE ( if( !empty( ::comboboxSearch ), ::comboboxSearch:varGet(), "" ) )
+   METHOD setComboboxOrden( cOrden )   INLINE ( if( !empty( ::comboboxSearch ), ( ::comboboxSearch:set( cOrden ), ::changeComboboxOrden() ), ) )
+
+   METHOD getInitialComboboxOrden()
       METHOD changeComboboxOrden()
 
    METHOD changeComboboxSearch()       INLINE ( ::changeComboboxOrden(), ::getSearch:setFocus(), ::refreshBrowse() )
@@ -72,7 +75,9 @@ METHOD Resource() CLASS ViewSearchNavigator
 
    ::oDlg:bResized            := {|| ::resizeDialog() }
 
-   ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
+   ::oDlg:Activate( , , ,.t., {|| ::validDialog() },, {|| ::initDialog() } )
+
+   ::endDialog()
 
 Return ( self )
 
@@ -80,11 +85,19 @@ Return ( self )
 
 METHOD initDialog()
 
+   local gridOrder
+
    ::Super:initDialog()
 
    ::oSender:initDialog()
 
-   ::changeComboboxOrden()
+   gridOrder               := getGridOrder( ::getBrowseConfigurationName() )
+
+   if !empty( gridOrder )
+      ::setComboboxOrden( gridOrder ) 
+   else 
+      ::changeComboboxOrden()
+   end if 
 
    ( ::getWorkArea() )->( dbgotop() )
 
@@ -94,13 +107,21 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD validDialog()
+
+   setGridOrder( ::getBrowseConfigurationName(), ::getComboboxOrden() )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
 METHOD defineBarraBusqueda() CLASS ViewSearchNavigator
 
    local cGetSearch
    local cComboboxOrden
 
    cGetSearch        := Space( 100 )
-   cComboboxOrden    := ::getComboboxOrden()
+   cComboboxOrden    := ::getInitialComboboxOrden()
 
    ::getSearch       := TGridGet():Build(       {  "nRow"      => 45,;
                                                    "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -124,7 +145,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getComboboxOrden() CLASS ViewSearchNavigator
+METHOD getInitialComboboxOrden() CLASS ViewSearchNavigator
 
    local cOrden   := ""
 
@@ -138,7 +159,7 @@ Return ( cOrden )
 
 METHOD changeComboboxOrden() CLASS ViewSearchNavigator
 
-   local textComboboxSearch   := ::comboboxSearch:varGet() 
+   local textComboboxSearch   :=  ::getComboboxOrden()
 
    if !empty( textComboboxSearch )
       ( ::getWorkArea() )->( ordsetfocus( ::hashItemsSearch[ textComboboxSearch ] ) )

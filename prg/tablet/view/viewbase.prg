@@ -26,6 +26,7 @@ CLASS ViewBase
    DATA bPostDialog 
 
    METHOD setBrowseConfigurationName( cName )            INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName := cName, ) )
+   METHOD getBrowseConfigurationName()                   INLINE ( if( !empty( ::oBrowse ), ::oBrowse:cName, "" ) )
    METHOD loadBrowseConfiguration()                      INLINE ( if( !empty( ::oBrowse ) .and. !empty( ::oBrowse:cName ), ::oBrowse:Load(), ) )
 
    METHOD setTitle( cTitleDocumento )                    INLINE ( ::cTitleDocumento := cTitleDocumento )
@@ -52,6 +53,7 @@ CLASS ViewBase
 
    METHOD resizeDialog()
    METHOD initDialog()
+   METHOD endDialog()                                    VIRTUAL
    METHOD startDialog()                                  VIRTUAL
 
    METHOD setDialog( oDlg )                              INLINE ( ::oDlg := oDlg )

@@ -10,7 +10,6 @@ CLASS Customer FROM Editable
    DATA oGridCustomer
 
    DATA cTipoCliente                   INIT ""
-
    DATA hTipoCliente                   INIT { "1" => "Clientes", "2" => "Potenciales", "3" => "Web" }
 
    METHOD New()
@@ -29,7 +28,7 @@ CLASS Customer FROM Editable
 
    METHOD setFilterAgentes()
 
-   METHOD onPreSaveEdit()     INLINE ( .t. )
+   METHOD onPreSaveEdit()              INLINE ( .t. )
    METHOD onPreEnd()                   INLINE ( .t. )
 
    METHOD onPostGetDocumento()

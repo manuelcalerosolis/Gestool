@@ -1599,13 +1599,25 @@ Return ( "" )
 
 Function SetBrwOpt( cName, cOption )
 
-Return ( WritePProString( "browse", cName, cValToChar( cOption ), cPatEmp() + "Empresa.Ini" ) )
+Return ( writePProString( "browse", cName, cValToChar( cOption ), cPatEmp() + "Empresa.Ini" ) )
 
 //---------------------------------------------------------------------------//
 
 Function GetBrwOpt( cName )
 
 Return ( GetPvProfInt( "browse", cName, 2, cPatEmp() + "Empresa.Ini" ) )
+
+//---------------------------------------------------------------------------//
+
+Function setGridOrder( cName, cOption )
+
+Return ( writePProString( "grid", cName, cValToChar( cOption ), cPatEmp() + "Empresa.Ini" ) )
+
+//---------------------------------------------------------------------------//
+
+Function getGridOrder( cName )
+
+Return ( getPvProfString( "grid", cName, "", cPatEmp() + "Empresa.Ini" ) )
 
 //---------------------------------------------------------------------------//
 

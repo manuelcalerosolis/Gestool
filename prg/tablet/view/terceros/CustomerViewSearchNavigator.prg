@@ -31,7 +31,7 @@ Return ( self )
 
 METHOD setColumns() CLASS CustomerViewSearchNavigator
 
-   ::setBrowseConfigurationName( "Grid clientes" )
+   ::setBrowseConfigurationName( "grid_clientes" )
 
    with object ( ::addColumn() )
       :cHeader           := "Cliente"
