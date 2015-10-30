@@ -989,9 +989,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "Estado", -1, "Static", WS_GROUP, 49, 138, 35, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 200, 164, 31
   CONTROL "", -1, "Button", BS_GROUPBOX, 210, 200, 170, 31
-  CONTROL "EDI [EAN]", -1, "Button", BS_GROUPBOX, 210, 233, 170, 47
-  CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 282, 243, 95, 11
-  CONTROL "Código normalizado", -1, "Static", WS_GROUP, 216, 246, 62, 8
+  CONTROL "", -1, "Button", BS_GROUPBOX, 210, 233, 170, 47
+  CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 282, 241, 95, 11
+  CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 282, 253, 95, 11
+  CONTROL "Código EDI [EAN]", -1, "Static", WS_GROUP, 216, 244, 62, 8
+  CONTROL "Ref. auxiliar", -1, "Static", WS_GROUP, 216, 256, 62, 8
+  CONTROL "", 291, "Edit", WS_BORDER|WS_TABSTOP, 282, 265, 95, 11
+  CONTROL "Ref. auxiliar 2", -1, "Static", WS_GROUP, 216, 268, 62, 8
 }
 
 ART_10 DIALOG DISCARDABLE 32, 6, 496, 286

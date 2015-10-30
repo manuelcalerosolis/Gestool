@@ -207,6 +207,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define __TFECALB                119     //   D      8     0 "",  
 #define __CCENTROCOSTE           120
 #define __CSUALB                 121    //   C      2     0 "CSUFALB",
+#define _CREFAUX                 122
+#define _CREFAUX2                123
 
 /*
 Definici¢n de Array para impuestos
@@ -4578,6 +4580,11 @@ Static Function LoaArt( cCodArt, aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oS
             aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
             aTmp[ _CREF ]        := cCodArt
 
+            //Pasamos las referencias adicionales------------------------------
+
+            aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
+            aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
+
             /*
             Preguntamos si el regimen de impuestos es distinto de Exento-------------
             */
@@ -5091,6 +5098,8 @@ Static Function cPedPrv( aGet, aTmp, oBrw, nMode )
                   (dbfTmp)->cCodImp    := ( D():PedidosProveedoresLineas( nView ) )->cCodImp
                   (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
                   (dbfTmp)->cCodFam    := ( D():PedidosProveedoresLineas( nView ) )->cCodFam
+                  (dbfTmp)->cRefAux    := ( D():PedidosProveedoresLineas( nView ) )->cRefAux
+                  (dbfTmp)->cRefAux2   := ( D():PedidosProveedoresLineas( nView ) )->cRefAux2
 
                   /*
                   Comprobamos si hay calculos por cajas
@@ -6348,6 +6357,8 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmp)->nMedTre    := ( D():PedidosProveedoresLineas( nView ) )->nMedTre
                      (dbfTmp)->cCodImp    := ( D():PedidosProveedoresLineas( nView ) )->cCodImp
                      (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
+                     (dbfTmp)->cRefAux    := ( D():PedidosProveedoresLineas( nView ) )->cRefAux
+                     (dbfTmp)->cRefAux2   := ( D():PedidosProveedoresLineas( nView ) )->cRefAux2
 
                      if dbSeekInOrd( ( D():PedidosProveedoresLineas( nView ) )->cRef, "Codigo", D():Articulos( nView ) )
 
@@ -6470,6 +6481,8 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   (dbfTmp)->nMedTre    := ( D():PedidosProveedoresLineas( nView ) )->nMedTre
                   (dbfTmp)->cCodImp    := ( D():PedidosProveedoresLineas( nView ) )->cCodImp
                   (dbfTmp)->nValImp    := ( D():PedidosProveedoresLineas( nView ) )->nValImp
+                  (dbfTmp)->cRefAux    := ( D():PedidosProveedoresLineas( nView ) )->cRefAux
+                  (dbfTmp)->cRefAux2   := ( D():PedidosProveedoresLineas( nView ) )->cRefAux2
 
                   if dbSeekInOrd( ( D():PedidosProveedoresLineas( nView ) )->cRef, "Codigo", D():Articulos( nView ) )
 
@@ -9368,6 +9381,8 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "tFecAlb",      "C",  6,  0, "Hora del albarán" ,             "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cCtrCoste",    "C",  9,  0, "Código del centro de coste" ,   "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "cSuAlb",       "C", 12,  0, "Número de su albarán",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cRefAux",      "C", 18,  0, "Referencia auxiliar",           "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "cRefAux2",     "C", 18,  0, "Segunda referencia auxiliar",   "",                  "", "( cDbfCol )" } )
 
 return ( aColAlbPrv )
 

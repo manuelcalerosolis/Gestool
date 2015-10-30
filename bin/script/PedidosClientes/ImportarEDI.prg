@@ -94,7 +94,7 @@ CLASS ImportarPedidosClientesEDI
    METHOD Run( nView )
    
    METHOD labelToken()                       INLINE ( ::aTokens[ 1 ] )
-   METHOD say()                              INLINE ( hb_valtoexp( ::hPedidoCabecera ) )
+   METHOD say()                              INLINE ( "Proceso terminado con éxito" ) //hb_valtoexp( ::hPedidoCabecera ) )
    
    METHOD proccessEDIFiles( cEDIFiles )
    METHOD proccessEDILine()
@@ -461,7 +461,7 @@ METHOD isbuildPedidoCliente()
       return ( .t. )
    end if
 
-   msgStop( "Cliente no encontrado" )
+   msgWait( "Cliente no encontrado", "", .001 )
 
 return .f.
 
@@ -479,7 +479,7 @@ METHOD buildPedidoCliente()
 
    end if 
 
-   msgAlert( "Fin de la importación")
+   //msgAlert( "Fin de la importación")
 
 Return ( nil )
 
@@ -583,7 +583,7 @@ Return ( direccion )
 
 METHOD buildCabeceraPedido()
 
-   ::hPedidoCabecera                   := D():getPedidoClienteDefaultValue( ::nView )
+   ::hPedidoCabecera                   := D():getDefaultHashPedidoCliente( ::nView )
 
    ::codigoCliente()
    ::hPedidoCabecera[ "Direccion" ]    := ::codigoDireccion( ::hDocument[ "comprador" ], ::hDocument[ "departamento" ] )
@@ -692,8 +692,6 @@ METHOD buildLineasPedido()
    local n
    local hLine
    
-   MsgInfo( "Entro a hacer las líneas de pedidos" )
-
    for each hLine in ::hDocument[ "lineas" ]
 
       if Len( hLine[ "destinatarios" ] ) > 1

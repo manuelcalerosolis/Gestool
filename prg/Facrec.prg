@@ -199,6 +199,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LLABEL                  80
 #define _NLABEL                  81
 #define _COBRLIN                 82
+#define _CREFAUX                 83
+#define _CREFAUX2                84
 
 /*
 Definici¢n de Array para impuestos
@@ -6319,6 +6321,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
          aTmp[ _CREF ]        := cCodArt
+
+         //Pasamos las referencias adicionales------------------------------
+
+         aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
+         aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
 
          if ( D():Articulos( nView ) )->lMosCom .and. !Empty( ( D():Articulos( nView ) )->mComent )
             MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
@@ -13495,6 +13502,8 @@ function aColFacRec()
    aAdd( aColFacRec, { "lLabel"      ,"L",  1, 0, "Lógico para marca de etiqueta"         , "LogicoEtiqueta",              "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "nLabel"      ,"N",  6, 0, "Unidades de etiquetas a imprimir"      , "NumeroEtiqueta",              "", "( cDbfCol )", nil } )
    aAdd( aColFacRec, { "cObrLin"     ,"C", 10, 0, "Dirección de la linea"                 , "Direccion",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacRec, { "cRefAux"     ,"C", 18, 0, "Referencia auxiliar"                   , "ReferenciaAuxiliar",          "", "( cDbfCol )", nil } )
+   aAdd( aColFacRec, { "cRefAux2"    ,"C", 18, 0, "Segunda referencia auxiliar"           , "ReferenciaAuxiliar2",         "", "( cDbfCol )", nil } )
 
 return ( aColFacRec )
 

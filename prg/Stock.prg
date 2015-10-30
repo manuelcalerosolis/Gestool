@@ -5740,7 +5740,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    DEFAULT cCodPrp2     := Space( 20 )
    DEFAULT cValPrp1     := Space( 40 )
    DEFAULT cValPrp2     := Space( 40 )
-   DEFAULT cLote        := Space( 12 )
+   DEFAULT cLote        := Space( 14 )
 
    // Hay veces que los valores no tienen la longitud correcta pr eso obligamos a que cada una tenga la longitud que debe tener
 
@@ -5750,7 +5750,7 @@ METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp
    cCodPrp2             := if ( len( cCodPrp2 ) != 20, Padr( cCodPrp2, 20 ), cCodPrp2 )
    cValPrp1             := if ( len( cValPrp1 ) != 40, Padr( cValPrp1, 40 ), cValPrp1 )
    cValPrp2             := if ( len( cValPrp2 ) != 40, Padr( cValPrp2, 40 ), cValPrp2 )
-   cLote                := if ( len( cLote )    != 12, Padr( cLote, 12 ), cLote )
+   cLote                := if ( len( cLote )    != 14, Padr( cLote, 14 ), cLote )
 
    // Entramos en el calculo real de la consolidacion--------------------------
 

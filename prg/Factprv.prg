@@ -201,7 +201,8 @@ Lineas de Detalle
 #define __TFECFAC                102
 #define __CCENTROCOSTE           103
 #define __CALMORIGEN             104
-
+#define _CREFAUX                 105
+#define _CREFAUX2                106
 
 /*
 Definici¢n de Array para impuestos--------------------------------------------------
@@ -5042,6 +5043,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
             aTmp[ _CREF ]        := cCodArt
 
+            //Pasamos las referencias adicionales------------------------------
+
+            aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
+            aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
+
             /*
             Lotes
             ---------------------------------------------------------------------
@@ -8546,6 +8552,8 @@ Function AddLineasAlbaranProveedor( cAlbaran, lNewLin )
             ( dbfTmp )->tFecFac     := ( D():AlbaranesProveedoresLineas( nView ) )->tFecAlb
             ( dbfTmp )->cCtrCoste   := ( D():AlbaranesProveedoresLineas( nView ) )->cCtrCoste
             ( dbfTmp )->cCodFam     := ( D():AlbaranesProveedoresLineas( nView ) )->cCodFam
+            ( dbfTmp )->cRefAux     := ( D():AlbaranesProveedoresLineas( nView ) )->cRefAux
+            ( dbfTmp )->cRefAux2    := ( D():AlbaranesProveedoresLineas( nView ) )->cRefAux2
 
             ( dbfTmp )->iNumAlb     := D():AlbaranesProveedoresLineasNumero( nView )
 
@@ -10519,6 +10527,8 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,          "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Codig del centro de coste" ,   "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cAlmOrigen" ,"C", 16, 0, "Almacén de origen de la mercancía", "",              "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "cRefAux"    ,"C", 18, 0, "Referencia auxiliar",          "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "cRefAux2"   ,"C", 18, 0, "Segunda referencia auxiliar",  "",                   "", "( cDbfCol )" } )
 
 return ( aColFacPrv )
 

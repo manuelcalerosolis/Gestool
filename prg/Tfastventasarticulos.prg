@@ -1016,7 +1016,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                ::oDbf:cPobCli    := ::oSatCliT:cPobCli
                ::oDbf:cPrvCli    := ::oSatCliT:cPrvCli
                ::oDbf:cPosCli    := ::oSatCliT:cPosCli
-               ::oDbf:cCodObr    := ::oSatCliT:cCodObr
+               ::oDbf:cCodObr    := ::oSatCliL:cObrLin
                ::oDbf:cCodGrp    := cGruCli( ::oSatCliT:cCodCli, ::oDbfCli )
 
                ::oDbf:nTotDto    := nDtoLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
@@ -1176,7 +1176,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cPobCli    := ::oPreCliT:cPobCli
                   ::oDbf:cPrvCli    := ::oPreCliT:cPrvCli
                   ::oDbf:cPosCli    := ::oPreCliT:cPosCli
-                  ::oDbf:cCodObr    := ::oPreCliT:cCodObr
+                  ::oDbf:cCodObr    := ::oPreCliL:cObrLin
                   ::oDbf:cCodGrp    := cGruCli( ::oPreCliT:cCodCli, ::oDbfCli )
 
                   ::oDbf:nTotDto    := nDtoLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
@@ -1334,7 +1334,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cPobCli    := ( D():PedidosClientes( ::nView ) )->cPobCli
                   ::oDbf:cPrvCli    := ( D():PedidosClientes( ::nView ) )->cPrvCli
                   ::oDbf:cPosCli    := ( D():PedidosClientes( ::nView ) )->cPosCli
-                  ::oDbf:cCodObr    := ( D():PedidosClientes( ::nView ) )->cCodObr
+                  ::oDbf:cCodObr    := ( D():PedidosClientesLineas( ::nView ) )->cObrLin
 
                   ::oDbf:nDtoArt    := ( D():PedidosClientesLineas( ::nView ) )->nDto
                   ::oDbf:nLinArt    := ( D():PedidosClientesLineas( ::nView ) )->nDtoDiv
@@ -1470,7 +1470,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cPobCli    := ::oAlbCliT:cPobCli
                   ::oDbf:cPrvCli    := ::oAlbCliT:cPrvCli
                   ::oDbf:cPosCli    := ::oAlbCliT:cPosCli
-                  ::oDbf:cCodObr    := ::oAlbCliT:cCodObr
+                  ::oDbf:cCodObr    := ::oAlbCliL:cObrLin
 
                   ::oDbf:nUniArt    := nTotNAlbCli( ::oAlbCliL:cAlias ) * if( ::lUnidadesNegativo, -1, 1 )
 
@@ -1628,7 +1628,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cPobCli    := ::oFacCliT:cPobCli
                   ::oDbf:cPrvCli    := ::oFacCliT:cPrvCli
                   ::oDbf:cPosCli    := ::oFacCliT:cPosCli
-                  ::oDbf:cCodObr    := ::oFacCliT:cCodObr
+                  ::oDbf:cCodObr    := ::oFacCliL:cCodObr
                   ::oDbf:cCodGrp    := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
 
                   ::oDbf:nUniArt    := nTotNFacCli( ::oFacCliL:cAlias ) * if( ::lUnidadesNegativo, -1, 1 )
@@ -1784,7 +1784,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:cPobCli    := ::oFacRecT:cPobCli
                   ::oDbf:cPrvCli    := ::oFacRecT:cPrvCli
                   ::oDbf:cPosCli    := ::oFacRecT:cPosCli
-                  ::oDbf:cCodObr    := ::oFacRecT:cCodObr
+                  ::oDbf:cCodObr    := ::oFacRecL:cObrLin
                   ::oDbf:cCodGrp    := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
 
                   ::oDbf:nUniArt    := nTotNFacRec( ::oFacRecL:cAlias ) * if( ::lUnidadesNegativo, -1, 1 )

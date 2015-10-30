@@ -345,6 +345,9 @@ Static Function ImportacionArticulos()
 
       ( D():Articulos( nView ) )->cCodEdi       := GetRange( "EZ", n )
 
+      ( D():Articulos( nView ) )->cRefAux       := GetRange( "N", n )
+      ( D():Articulos( nView ) )->cRefAux2      := GetRange( "BA", n )
+
       cCodBar                                   := GetRange( "E", n )
 
       if !Empty( cCodBar )
@@ -376,9 +379,9 @@ Static Function ImportaArticulosCamposExtra( nLin )
 
    ImportaCampoExtra( "001", "Q", nLin ) //Memo
 
-   ImportaCampoExtra( "002", "N", nLin ) //Referencia
+   //ImportaCampoExtra( "002", "N", nLin ) //Referencia
 
-   ImportaCampoExtra( "003", "BA", nLin ) //Auxiliar
+   //ImportaCampoExtra( "003", "BA", nLin ) //Auxiliar
 
    ImportaCampoExtra( "004", "DJ", nLin ) //Barco
 

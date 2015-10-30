@@ -214,6 +214,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NLABEL                   96
 #define _DFECFIN                  97  
 #define _COBRLIN                  98  
+#define _CREFAUX                  99
+#define _CREFAUX2                100
 
 /*
 Array para impuestos
@@ -10992,6 +10994,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
             aTmp[ _CREF ]        := cCodArt
 
+            //Pasamos las referencias adicionales------------------------------
+
+            aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
+            aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
+
             if ( D():Articulos( nView ) )->lMosCom .and. !Empty( ( D():Articulos( nView ) )->mComent )
                MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
             end if
@@ -12908,6 +12915,8 @@ STATIC FUNCTION cPreCli( aTmp, aGet, oBrw, nMode )
                (dbfTmpLin)->nBultos 	:= (dbfPreCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfPreCliL)->cFormato
                (dbfTmpLin)->cObrLin    := (dbfPreCliL)->cObrLin
+               (dbfTmpLin)->cRefAux    := (dbfPreCliL)->cRefAux
+               (dbfTmpLin)->cRefAux2   := (dbfPreCliL)->cRefAux2
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -15746,6 +15755,8 @@ function aColPedCli()
    aAdd( aColPedCli, { "nLabel",    "N",    6,  0, "Unidades de etiquetas a imprimir",                "NumeroEtiqueta",             "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "dFecFin",   "D",    8,  0, "Fecha fin de entrega",                            "FechaEntregaFin",            "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "cObrLin",   "C",   10,  0, "Dirección de la linea",                           "Direccion",                  "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cRefAux",   "C",   18,  0, "Referencia auxiliar",                             "ReferenciaAuxiliar",         "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "cRefAux2",  "C",   18,  0, "Segunda referencia auxiliar",                     "ReferenciaAuxiliar2",        "", "( cDbfCol )", nil } )
 
 return ( aColPedCli )
 

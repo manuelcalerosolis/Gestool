@@ -124,6 +124,10 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _CFORMATO                 59
 #define _CCODIMP                  60  
 #define _NVALIMP                  61
+#define _LLABEL                   62
+#define _NLABEL                   63
+#define _CREFAUX                  64
+#define _CREFAUX2                 65
 
 /*
 Definici¢n de Array para impuestos
@@ -3163,17 +3167,22 @@ STATIC FUNCTION LoaArt( aGet, aTmp, nMode, aTmpPed, oSayPr1, oSayPr2, oSayVp1, o
             aGet[ _CREF     ]:cText( ( D():Articulos( nView ) )->Codigo )
             aGet[ _CDETALLE ]:cText( ( D():Articulos( nView ) )->Nombre )
 
+            //Pasamos las referencias adicionales------------------------------
+
+            aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
+            aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
+
             if ( D():Articulos( nView ) )->lMosCom .and. !Empty( ( D():Articulos( nView ) )->mComent )
                MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
             end if
 
-            // Ahora recogemos el impuesto especial si lo hay---------------------
+            // Ahora recogemos el impuesto especial si lo hay------------------
 
             aTmp[ _CCODIMP ]  := ( D():Articulos( nView ) )->cCodImp
 
             D():ImpuestosEspeciales( nView ):setCodeAndValue( aTmp[ _CCODIMP ], aGet[ _NVALIMP ] )
 
-            // Preguntamos si el regimen de " + cImp() + " es distinto de Exento-------------
+            // Preguntamos si el regimen de " + cImp() + " es distinto de Exento
 
             if aTmpPed[ _NREGIVA ] <= 1
                aGet[ _NIVA ]:cText( nIva( D():TiposIva( nView ), ( D():Articulos( nView ) )->TipoIva ) )
@@ -7802,8 +7811,10 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "cFormato","C",100,   0, "Formato de compra",                "",                  "", "( cDbfCol )" } )
    aAdd( aColPedPrv,  { "cCodImp", "C",  3,   0, "Código de impuesto especial",      "",                  "", "( cDbfCol )" } )
    aAdd( aColPedPrv,  { "nValImp", "N", 16,   6, "Importe de impuesto especial",     "",                  "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "lLabel",  "L",  1,   0, "Lógico para marca de etiqueta",     "",                 "", "( cDbfCol )" } )
-   aAdd( aColPedPrv,  { "nLabel",  "N",  6,   0, "Unidades de etiquetas a imprimir",  "",                 "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "lLabel",  "L",  1,   0, "Lógico para marca de etiqueta",    "",                 "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "nLabel",  "N",  6,   0, "Unidades de etiquetas a imprimir", "",                 "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "cRefAux", "C", 18,   0, "Referencia auxiliar",              "",                 "", "( cDbfCol )" } )
+   aAdd( aColPedPrv,  { "cRefAux2","C", 18,   0, "Segunda referencia auxiliar",      "",                 "", "( cDbfCol )" } )
 
 Return ( aColPedPrv )
 

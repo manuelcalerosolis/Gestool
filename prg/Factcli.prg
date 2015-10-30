@@ -252,6 +252,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NLABEL             97
 #define _LLABEL             98
 #define __CCODOBR           99
+#define _CREFAUX           100
+#define _CREFAUX2          101
 
 /*
 Definici¢n de Array para impuestos
@@ -7989,6 +7991,8 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->nBultos 	:= (dbfPedCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfPedCliL)->cFormato
                (dbfTmpLin)->cCodObr    := (dbfPedCliL)->cObrLin
+               (dbfTmpLin)->cRefAux    := (dbfPedCliL)->cRefAux
+               (dbfTmpLin)->cRefAux2   := (dbfPedCliL)->cRefAux2
 
                /*
                Vamos a ver si se estan llavando cajas
@@ -8373,6 +8377,8 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->nBultos 	:= (dbfPreCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfPreCliL)->cFormato
                (dbfTmpLin)->cCodObr    := (dbfPedCliT)->cCodObr
+               (dbfTmpLin)->cRefAux    := (dbfPreCliL)->cRefAux
+               (dbfTmpLin)->cRefAux2   := (dbfPreCliL)->cRefAux2
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -10644,6 +10650,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "dirección del SAT",                   				"CallHbFunc('cFacturaClienteDireccionSAT')" )
    oFr:AddVariable(     "Lineas de facturas",   "Stock actual en almacén",             				"CallHbFunc('nStockLineaFasCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Cambia orden",             					         "CallHbFunc('FacturaClienteLineaOrdSetFocus')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Total línea "+ cImp() + " incluido",              "CallHbFunc('nIncLFacCli')" )
+   oFr:AddVariable(     "Lineas de facturas",   "Precio unitario "+ cImp() + " incluido",          "CallHbFunc('nIncUFacCli')" )
 
 Return nil
 
@@ -11313,10 +11321,6 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oGetEstablecimiento, lShowInc )
       if nMode == APPD_MODE
 
          aTmp[ _NREGIVA ]  := ( D():Clientes( nView ) )->nRegIva
-
-         if !Empty( aGet[ _NREGIVA ] )
-            aGet[ _NREGIVA ]:Refresh()
-         end if
 
          lChangeRegIva( aTmp )
 
@@ -12432,10 +12436,15 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2,
 
          CursorWait()
 
-         cCodArt              := ( D():Articulos( nView ) )->Codigo
+         cCodArt                 := ( D():Articulos( nView ) )->Codigo
 
          aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
-         aTmp[ _CREF ]        := cCodArt
+         aTmp[ _CREF ]           := cCodArt
+
+         //Pasamos las referencias adicionales------------------------------
+
+         aTmp[ _CREFAUX ]        := ( D():Articulos( nView ) )->cRefAux
+         aTmp[ _CREFAUX2 ]       := ( D():Articulos( nView ) )->cRefAux2
 
          /*
          Buscamos la familia del articulo y anotamos las propiedades-----------
@@ -16313,6 +16322,8 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->nBultos 	:= (dbfSatCliL)->nBultos
                (dbfTmpLin)->cFormato 	:= (dbfSatCliL)->cFormato
                (dbfTmpLin)->cCodObr    := (dbfSatCliL)->cObrLin
+               (dbfTmpLin)->cRefAux    := (dbfSatCliL)->cRefAux
+               (dbfTmpLin)->cRefAux2   := (dbfSatCliL)->cRefAux2
 
                (dbfSatCliL)->( dbSkip() )
 
@@ -16951,21 +16962,22 @@ RETURN ( Round( nCalculo, nDec ) )
 Devuelve el precio unitario impuestos incluido
 */
 
-FUNCTION nIncUFacCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nIncUFacCli( cTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := nDouDiv()
-   DEFAULT nVdv   := 1
+   DEFAULT cTmpLin   := D():FacturasClientesLineas( nView )
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nVdv      := 1
 
-   nCalculo       := nTotUFacCli( dbfTmpLin, nDec, nVdv )
+   nCalculo          := nTotUFacCli( cTmpLin, nDec, nVdv )
 
-   if !( dbfTmpLin )->lIvaLin
-      nCalculo    += nCalculo * ( dbfTmpLin )->nIva / 100
+   if !( cTmpLin )->lIvaLin
+      nCalculo       += nCalculo * ( cTmpLin )->nIva / 100
    end if
 
    IF nVdv != 0
-      nCalculo    := nCalculo / nVdv
+      nCalculo       := nCalculo / nVdv
    END IF
 
 RETURN ( Round( nCalculo, nDec ) )
@@ -17022,12 +17034,24 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 Devuelve el total de una lina con impuestos incluido
 */
 
-FUNCTION nIncLFacCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+FUNCTION nIncLFacCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
 
-   local nCalculo := nTotLFacCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn )
 
-   if !( dbfLin )->lIvaLin
-      nCalculo    += nCalculo * ( dbfLin )->nIva / 100
+   local lIvaInc  
+   local nCalculo    := 0
+
+   DEFAULT nDec      := 0
+   DEFAULT nRouDec   := 0111
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .f.
+   DEFAULT lImpTrn   := .f.
+   DEFAULT cDbfLin   := D():FacturasClientesLineas( nView )          
+
+   nCalculo          := nTotLFacCli( cDbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn )
+
+   if !( cDbfLin )->lIvaLin
+      nCalculo    += nCalculo * ( cDbfLin )->nIva / 100
    end if
 
 RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
@@ -19248,6 +19272,9 @@ FUNCTION rxFacCli( cPath, cDriver )
       ( cFacCliL )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "cCtrCoste", "cCtrCoste", {|| Field->cCtrCoste } ) )
 
+      ( cFacCliL )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( cFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "REFAUX", "cSerie + str( nNumFac ) + cSufFac + cRefAux", {|| Field->cSerie + str( Field->nNumFac ) + Field->cSufFac + Field->cRefAux } ) )
+
       ( cFacCliL )->( dbCloseArea() )
 
    else
@@ -19569,6 +19596,8 @@ function aColFacCli()
    aAdd( aColFacCli, { "lLabel"   , "L",   1, 0, "Lógico para marca de etiqueta"          , "LogicoEtiqueta",              "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "nLabel"   , "N",   6, 0, "Unidades de etiquetas a imprimir"       , "NumeroEtiqueta",              "", "( cDbfCol )", nil } )
    aAdd( aColFacCli, { "cCodObr"  , "C",  10, 0, "Código de la dirección"                 , "Direccion",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "cRefAux",   "C",  18, 0, "Referencia auxiliar"                    , "ReferenciaAuxiliar",          "", "( cDbfCol )", nil } )
+   aAdd( aColFacCli, { "cRefAux2",  "C",  18, 0, "Segunda referencia auxiliar"            , "ReferenciaAuxiliar2",         "", "( cDbfCol )", nil } )
 
 return ( aColFacCli )
 
@@ -23561,5 +23590,27 @@ Static Function lChangeRegIva( aTmp )
    end if
 
 return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function SetOrderFacturaClienteLineas( cOrder )
+
+   if Empty( cOrder )
+      Return .f.
+   end if
+
+   D():getStatusFacturasClientes( nView )
+      
+   ( D():FacturasClientesLineas( nView ) )->( OrdSetFocus( cOrder ) )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function RollBackOrderFacturaClienteLineas()
+
+   D():setStatusFacturasClientes( nView )
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//

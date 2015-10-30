@@ -191,6 +191,8 @@ Lineas de Detalle
 #define __TFECFAC                  94
 #define __CCENTROCOSTE             95
 #define __CALMORIGEN               96
+#define _CREFAUX                   97 
+#define _CREFAUX2                  98 
 
 /*
 Definici¢n de Array para impuestos
@@ -4776,6 +4778,11 @@ STATIC FUNCTION LoaArt( cCodArt, aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oS
             aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
             aTmp[ _CREF ]        := cCodArt
 
+            //Pasamos las referencias adicionales------------------------------
+
+            aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
+            aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
+
             if ( D():Articulos( nView ) )->lLote
 
                if Empty( cLote )
@@ -6204,6 +6211,8 @@ STATIC FUNCTION cFacPrv( aGet, oBrw, nMode, aTmp )
             ( dbfTmp )->tFecFac     := ( D():FacturasProveedoresLineas( nView ) )->tFecFac
             ( dbfTmp )->cCtrCoste   := ( D():FacturasProveedoresLineas( nView ) )->cCtrCoste
             ( dbfTmp )->cCodFam     := ( D():FacturasProveedoresLineas( nView ) )->cCodFam
+            ( dbfTmp )->cRefAux     := ( D():FacturasProveedoresLineas( nView ) )->cRefAux
+            ( dbfTmp )->cRefAux2    := ( D():FacturasProveedoresLineas( nView ) )->cRefAux2
 
             ( D():FacturasProveedoresLineas( nView ) )->( dbSkip() )
 
@@ -11090,6 +11099,8 @@ function aColRctPrv()
    aAdd( aColFacPrv, { "tFecFac"    ,"C",  6, 0, "Hora de la Factura" ,          "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "cCtrCoste"  ,"C",  9, 0, "Código del centro de coste" ,  "",                   "", "( cDbfCol )" } )
    aAdd( aColFacPrv, { "cAlmOrigen" ,"C", 16, 0, "Almacén de origen de la mercancía", "",              "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "cRefAux"    ,"C", 18, 0, "Referencia auxiliar",          "",                   "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "cRefAux2"   ,"C", 18, 0, "Segunda referencia auxiliar",  "",                   "", "( cDbfCol )" } )
 
 Return ( aColFacPrv )
 

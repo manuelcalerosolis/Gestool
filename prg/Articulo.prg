@@ -2056,6 +2056,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE );
          OF       fldGeneral
 
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cRefAux" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cRefAux" ) ) ] ;
+         ID       290 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         OF       fldGeneral
+
+   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cRefAux2" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cRefAux2" ) ) ] ;
+         ID       291 ;
+         WHEN     ( nMode != ZOOM_MODE );
+         OF       fldGeneral
+
    /*
    Tactil----------------------------------------------------------------------
    */
@@ -15992,6 +16004,12 @@ FUNCTION rxArticulo( cPath, cDriver )
       ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "cCodEdi", "cCodEdi", {|| Field->cCodEdi } ) )
 
+      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "cRefAux", "cRefAux", {|| Field->cRefAux } ) )
+
+      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "Articulo.Cdx", "cRefAux2", "cRefAux2", {|| Field->cRefAux2 } ) )
+
       ( dbfArticulo )->( dbCloseArea() )
 
    else
@@ -16408,6 +16426,8 @@ function aItmArt()
    aAdd( aBase, { "cKeySeo",   "C",160, 0, "Meta-keywords",                            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodEst",   "C",  3, 0, "Estado del artículo",                      "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodEdi",   "C", 20, 0, "Código normalizado del artículo",          "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefAux",   "C", 18, 0, "Referencia auxiliar",                      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefAux2",  "C", 18, 0, "Referencia auxiliar 2",                    "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

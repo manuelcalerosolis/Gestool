@@ -4932,7 +4932,7 @@ METHOD TotVenta( cTurno, cCaja )
          Marca para detectar si hay tikets abiertos
          */
 
-         if ( ::oTikT:lAbierto .or. !::oTikT:lPgdTik ) .and. ::oTikT:nUbiTik != ubiEncargar
+         if ::oTikT:cTipTik == SAVTIK .and. ( ::oTikT:lAbierto .or. !::oTikT:lPgdTik ) .and. ::oTikT:nUbiTik != ubiEncargar
             ::lTikAbiertos    := .t.
             if !Empty( ::cTikAbiertos )
                ::cTikAbiertos += ", "

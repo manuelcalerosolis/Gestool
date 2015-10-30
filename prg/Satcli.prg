@@ -190,7 +190,9 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CDESUBI                  85
 #define _LLABEL                   86
 #define _NLABEL                   87
-#define _COBRLIN                  88  
+#define _COBRLIN                  88
+#define _CREFAUX                  89
+#define _CREFAUX2                 90
 
 /*
 Array para impuestos
@@ -740,7 +742,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
       if !oFraPub:OpenFiles()
-         lOpenFiles     := .f.
+         lOpenFiles     := .f. 
       end if
 
       // Unidades de medicion
@@ -5227,6 +5229,11 @@ STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1,
             cCodArt              := ( D():Articulos( nView ) )->Codigo
             aTmp[ _CREF ]        := cCodArt
             aGet[ _CREF ]:cText( cCodArt )
+
+            //Pasamos las referencias adicionales------------------------------
+
+            aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
+            aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
 
             if ( D():Articulos( nView ) )->lMosCom .and. !Empty( ( D():Articulos( nView ) )->mComent )
                MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
@@ -10479,6 +10486,8 @@ function aColSatCli()
    aAdd( aColSatCli, { "lLabel"   ,"L",   1,  0, "Lógico para marca de etiqueta",                     "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "nLabel"   ,"N",   6,  0, "Unidades de etiquetas a imprimir",                  "",                        "", "( cDbfCol )", nil } )
    aAdd( aColSatCli, { "cObrLin"  ,"C",  10,  0, "Dirección de la linea",                             "Direccion",               "", "( cDbfCol )", nil } )
+   aAdd( aColSatCli, { "cRefAux"  ,"C",  18,  0, "Referencia auxiliar",                               "",                        "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cRefAux2" ,"C",  18,  0, "Segunda referencia auxiliar",                       "",                        "", "( cDbfCol )" } )
   
 return ( aColSatCli )
 

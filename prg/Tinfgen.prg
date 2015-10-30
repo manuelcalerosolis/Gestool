@@ -5661,7 +5661,10 @@ METHOD Xml() // Excel()
                uValue      := DToC( uValue )
             endif
 
-            oSheet:Cells( nRow, ++nCol ):Value  := uValue
+            if !Empty( uValue )
+               oSheet:Cells( nRow, ++nCol ):Value  := uValue
+            end if
+
          end if
       next
 

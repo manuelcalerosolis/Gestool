@@ -236,7 +236,8 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LLABEL                  103
 #define _NLABEL                  104
 #define _COBRLIN                 105
-
+#define _CREFAUX                 106
+#define _CREFAUX2                107
 
 /*
 Definici¢n de Array para impuestos
@@ -5582,6 +5583,8 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                   (dbfTmpLin)->nBultos    := (dbfPedCliL)->nBultos
                   (dbfTmpLin)->cFormato   := (dbfPedCliL)->cFormato
                   (dbfTmpLin)->cObrLin    := (dbfPedCliL)->cObrLin
+                  (dbfTmpLin)->cRefAux    := (dbfPedCliL)->cRefAux
+                  (dbfTmpLin)->cRefAux2   := (dbfPedCliL)->cRefAux2
 
                   if !( dbfPedCliL )->lKitArt
 
@@ -6162,6 +6165,8 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                      (dbfTmpLin)->lImpLin    := (dbfPedCliL)->lImpLin
                      (dbfTmpLin)->lLinOfe    := (dbfPedCliL)->lLinOfe
                      (dbfTmpLin)->cObrLin    := (dbfPedCliL)->cObrLin
+                     (dbfTmpLin)->cRefAux    := (dbfPedCliL)->cRefAux
+                     (dbfTmpLin)->cRefAux2   := (dbfPedCliL)->cRefAux2
 
                      if lCalCaj()
                         if nTotRec != 0
@@ -6252,6 +6257,8 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
                   ( dbfTmpLin )->nIncPnt     := ( dbfPedCliL )->nIncPnt
                   ( dbfTmpLin )->lLinOfe     := ( dbfPedCliL )->lLinOfe
                   ( dbfTmpLin )->cObrLin     := ( dbfPedCliL )->cObrLin
+                  ( dbfTmpLin )->cRefAux     := (dbfPedCliL)->cRefAux
+                  ( dbfTmpLin )->cRefAux2    := (dbfPedCliL)->cRefAux2
 
                end if
 
@@ -10077,6 +10084,11 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             aGet[ _CREF ]:cText( Padr( cCodArt, 200 ) )
             aTmp[ _CREF ]        := cCodArt
 
+            //Pasamos las referencias adicionales------------------------------
+
+            aTmp[ _CREFAUX ]     := ( D():Articulos( nView ) )->cRefAux
+            aTmp[ _CREFAUX2 ]    := ( D():Articulos( nView ) )->cRefAux2
+
             if ( D():Articulos( nView ) )->lMosCom .and. !Empty( ( D():Articulos( nView ) )->mComent )
                MsgStop( Trim( ( D():Articulos( nView ) )->mComent ) )
             end if
@@ -12289,6 +12301,8 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->lLinOfe    := (dbfPreCliL)->lLinOfe
                (dbfTmpLin)->nBultos    := (dbfPreCliL)->nBultos
                (dbfTmpLin)->cFormato   := (dbfPreCliL)->cFormato
+               (dbfTmpLin)->cRefAux    := (dbfPreCliL)->cRefAux
+               (dbfTmpLin)->cRefAux2   := (dbfPreCliL)->cRefAux2
 
                (dbfPreCliL)->( dbSkip() )
 
@@ -16354,6 +16368,8 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lLabel",    "L",  1, 0, "Lógico para marca de etiqueta",                   "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "nLabel",    "N",  6, 0, "Unidades de etiquetas a imprimir",                "",                              "", "( cDbfCol )", nil } )
    aAdd( aColAlbCli, { "cObrLin",   "C", 10, 0, "Dirección de la linea",                           "Direccion",                     "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cRefAux",   "C",  18, 0, "Referencia auxiliar",                            "ReferenciaAuxiliar",            "", "( cDbfCol )", nil } )
+   aAdd( aColAlbCli, { "cRefAux2",  "C",  18, 0, "Segunda referencia auxiliar",                    "ReferenciaAuxiliar2",           "", "( cDbfCol )", nil } )
 
 Return ( aColAlbCli )
 
