@@ -38,6 +38,8 @@ CLASS ViewEdit FROM ViewBase
 
    METHOD defineBrowseLineas()
 
+   METHOD gotopBrowseLineas()       INLINE ( ::oBrowse:goTop(), ::oBrowse:select(0), ::oBrowse:select(1) )
+
    METHOD defineBotonesMovimiento()
 
    METHOD refreshBrowse()           INLINE ( ::oBrowse:MakeTotals(), ::oBrowse:Refresh() )
@@ -65,7 +67,7 @@ METHOD StartDialog() CLASS ViewEdit
    if ::oSender:nMode == APPD_MODE
       ::oSender:loadNextClient( ::nMode )
    else   
-      ::RefreshBrowse()
+      ::gotopBrowseLineas()
    end if
 
 Return Self

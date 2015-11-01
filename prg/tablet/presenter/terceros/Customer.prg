@@ -171,7 +171,7 @@ Return ( .t. )
 
 METHOD setFilterAgentes() CLASS Customer
 
-   local cCodigoAgente     := AccessCode():cAgente
+   local cCodigoAgente     := accessCode():cAgente
 
    if !empty(cCodigoAgente)
       ( D():Clientes( ::nView ) )->( dbsetfilter( {|| Field->cAgente == cCodigoAgente }, "cAgente == cCodigoAgente" ) )

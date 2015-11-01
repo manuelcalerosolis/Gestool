@@ -46,7 +46,7 @@ METHOD New( oSender ) CLASS ViewSearchNavigator
 
    ::oSender                  := oSender
 
-   ::bDblClickBrowseGeneral   := {|| ::oSender:Edit(), ::refreshBrowse() }
+   ::setDblClickBrowseGeneral( {|| if( ::oSender:lAlowEdit, ::oSender:Edit(), ::oSender:Zoom() ), ::refreshBrowse() } )
 
    ::setTitle()
 

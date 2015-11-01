@@ -51,6 +51,7 @@ CLASS Editable
    METHOD lEditMode()                           INLINE ( ::nMode == EDIT_MODE )
    METHOD lZoomMode()                           INLINE ( ::nMode == ZOOM_MODE )
    METHOD lNotZoomMode()                        INLINE ( ::nMode != ZOOM_MODE )
+   METHOD TextMode()                            INLINE ( lblTitle( ::nMode ) )
 
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
    METHOD getDataTable()                        INLINE ( ::cDataTable )

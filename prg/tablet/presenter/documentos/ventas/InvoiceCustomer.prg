@@ -36,11 +36,13 @@ METHOD New() CLASS InvoiceCustomer
 
    ::super:New( self )
 
+   ::lAlowEdit          := accessCode():lInvoiceModify
+
    // Vistas--------------------------------------------------------------------
 
    ::oViewSearchNavigator:setTitle( "Facturas de clientes" )  
 
-   ::oViewEdit:setTitle( "Factura" )  
+   ::oViewEdit:setTitle( "Factura cliente" )  
 
    ::oViewEditResumen:setTitle( "Resumen factura" )
 

@@ -2991,8 +2991,6 @@ ENDCLASS
          Return ( self )
       end if 
 
-      msgAlert( ::cBuffer, "cBuffer" )
-
       ::closeExcelObject()
 
    Return ( Self )
