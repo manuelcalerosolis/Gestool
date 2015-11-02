@@ -211,7 +211,7 @@ METHOD onPreRunNavigator() CLASS DocumentsSales
       ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == accessCode():cAgente }, "Field->cCodAge == cAgente" ) )
       ( ::getWorkArea() )->( dbgotop() )
 
-      ( D():Clientes( ::nView ) )->( dbsetfilter( {|| Field->cAgente == accessCode()}, "Field->cAgente == cAgente" ) )
+      ( D():Clientes( ::nView ) )->( dbsetfilter( {|| Field->cAgente == accessCode():cAgente }, "Field->cAgente == cAgente" ) )
       ( D():Clientes( ::nView ) )->( dbgotop() )
 
    end if 
