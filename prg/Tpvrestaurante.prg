@@ -271,9 +271,10 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem ) CLASS TTpvRestaurante
+METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS TTpvRestaurante
 
    DEFAULT cPath           := cPatEmp()
+   DEFAULT cDriver         := cDriver()
 
    DEFAULT oWndParent      := GetWndFrame()
 
@@ -283,14 +284,14 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TTpvRestaurante
       ::nLevel             := 0
    end if
 
-   ::cPath                 := cPath
+   ::Create( cPath, cDriver )
    ::oWndParent            := oWndParent
 
    ::bFirstKey             := {|| ::oDbf:cCodigo }
 
    ::oSalon                := TTpvSalon():New( Self )
 
-   ::oDetSalaVta           := TDetSalaVenta():New( cPath, Self )
+   ::oDetSalaVta           := TDetSalaVenta():New( cPath, cDriver, Self )
    ::AddDetail( ::oDetSalaVta )
 
    ::SelectedPrecio(    Max( uFieldEmpresa( "nPreTPro" ), 1 ) )
@@ -300,11 +301,13 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( cPath ) CLASS TTpvRestaurante
+METHOD Create( cPath, cDriver ) CLASS TTpvRestaurante
 
    DEFAULT cPath           := cPatEmp()
+   DEFAULT cDriver         := cDriver()
 
    ::cPath                 := cPath
+   ::cDriver               := cDriver
 
 RETURN ( Self )
 
@@ -583,7 +586,7 @@ RETURN ( .t. )
 METHOD DefineFiles( cPath, cDriver ) CLASS TTpvRestaurante
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
 
    DEFINE TABLE ::oDbf FILE "SalaVta.Dbf" CLASS "SalaVta" ALIAS "SalaVta" PATH ( cPath ) VIA ( cDriver ) COMMENT "Sala de ventas"
 

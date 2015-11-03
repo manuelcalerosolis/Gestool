@@ -2802,7 +2802,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Sala de ventas'
    oItem:cMessage       := 'Sala de ventas'
-   oItem:bAction        := {|| TTpvRestaurante():New( cPatEmp(), oWnd, "01105" ):Activate() }
+   oItem:bAction        := {|| TTpvRestaurante():New( cPatEmp(), cDriver(), oWnd, "01105" ):Activate() }
    oItem:cId            := "01105"
    oItem:cBmp           := "Cup_16"
    oItem:cBmpBig        := "Cup_32"
@@ -3360,7 +3360,7 @@ Return ( nil ) // if( !Empty( oWndBar ), oWndBar:Disable(), ) )
 
 Function BuildMenu()
 
-   if ( "MENU" $ cParamsMain )
+   /*if ( "MENU" $ cParamsMain )
 
       MENU oMenu // 2007
 
@@ -3826,7 +3826,7 @@ Function BuildMenu()
                WHEN     lCurSesion() ;
                RESOURCE "Package_book_red_16"
             */
-            SEPARATOR
+/*            SEPARATOR
 
             MENUITEM    "&3. Introducción depósitos";
                HELPID   "01052" ;
@@ -4087,7 +4087,7 @@ Function BuildMenu()
 
             MENUITEM    "&4. Sala de ventas";
                MESSAGE  "Sala de ventas" ;
-               ACTION   ( TSalaVenta():New( cPatEmp(), oWnd, oMenuItem ):Activate() ) ;
+               ACTION   ( TSalaVenta():New( cPatEmp(), cDriver(), oWnd, oMenuItem ):Activate() ) ;
                HELPID   "01105" ;
                RESOURCE "Cup_16" ;
 
@@ -4130,7 +4130,7 @@ Function BuildMenu()
                RESOURCE "Policeman_usa_16"
             */
 
-            SEPARATOR
+/*            SEPARATOR
 
             MENUITEM    "&3. Documentos y etiquetas";
                MESSAGE  "Configurar documentos y etiquetas" ;
@@ -4324,7 +4324,7 @@ Function BuildMenu()
                RESOURCE "Data_Replace_16"
          */
 
-         ENDMENU
+/*         ENDMENU
 
          MENUITEM "&0. Ayudas"
 
@@ -4372,13 +4372,12 @@ Function BuildMenu()
 
       ENDMENU
 
-   else
+   else*/
 
       MENU oMenu
       ENDMENU
 
-   end if
-
+   //end if
 
 RETURN oMenu
 

@@ -176,6 +176,8 @@ METHOD Resource( nMode )
    local cCmbPreCmb
    local oBrwDetSalaVta
 
+   ?"Entro en resource"
+
    if nMode == APPD_MODE
       cCmbPrecio        := ::aPrecio[ Min( Max( uFieldEmpresa( "NPRETPRO" ), 1 ), len( ::aPrecio ) ) ]
       cCmbPreCmb        := ::aPrecio[ Min( Max( uFieldEmpresa( "NPRETCMB" ), 1 ), len( ::aPrecio ) ) ]
@@ -225,7 +227,7 @@ METHOD Resource( nMode )
          ID       503 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( ::oSalon:Design( ::oDetSalaVta:oDbfVir, oDlg ) )
+         ACTION   ( Msginfo( ::oDetSalaVta:oDbfVir, "Sala de ventas" ), ::oSalon:Design( ::oDetSalaVta:oDbfVir, oDlg ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -1097,9 +1099,7 @@ Return ( cTextoSala )
 
 //---------------------------------------------------------------------------//
 
-METHOD New( cPath, oWndParent, oMenuItem )
-
-   DEFAULT cPath           := cPatEmp()
+METHOD New( cPath, cDriver, oWndParent, oMenuItem )
 
    DEFAULT oWndParent      := GetWndFrame()
 
@@ -1109,7 +1109,8 @@ METHOD New( cPath, oWndParent, oMenuItem )
       ::nLevel             := 0
    end if
 
-   ::cPath                 := cPath
+   ::Create( cPath, cDriver )
+
    ::oWndParent            := oWndParent
 
    ::bFirstKey             := {|| :: oDbf:cCodigo }
@@ -1119,18 +1120,20 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::oSalon                := TSalon():New()
 
-   ::oDetSalaVta           := TDetSalaVta():New( cPath, Self )
+   ::oDetSalaVta           := TDetSalaVta():New( cPath, cDriver, Self )
    ::AddDetail( ::oDetSalaVta )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( cPath )
+METHOD Create( cPath, cDriver )
 
    DEFAULT cPath           := cPatEmp()
+   DEFAULT cDriver         := cDriver()
 
    ::cPath                 := cPath
+   ::cDriver               := cDriver
 
 RETURN ( Self )
 
@@ -1451,7 +1454,7 @@ RETURN ( .t. )
 METHOD DefineFiles( cPath, cDriver )
 
    DEFAULT cPath        := ::cPath
-   DEFAULT cDriver      := cDriver()
+   DEFAULT cDriver      := ::cDriver
 
    DEFINE TABLE ::oDbf FILE "SalaVta.Dbf" CLASS "SalaVta" ALIAS "SalaVta" PATH ( cPath ) VIA ( cDriver ) COMMENT "Sala de ventas"
 
@@ -1490,6 +1493,8 @@ Return ( ::Super:End() )
 //---------------------------------------------------------------------------//
 
 CLASS TDetSalaVta FROM TDet
+
+   DATA cDriver
 
    METHOD Create( cPath )
 
@@ -1552,13 +1557,15 @@ RETURN .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD Create( cPath ) CLASS TDetSalaVta
+METHOD Create( cPath, cDriver ) CLASS TDetSalaVta
 
    DEFAULT cPath        := cPatEmp()
+   DEFAULT cDriver      := cDriver()
 
    ::cPath              := cPath
+   ::cDriver            := cDriver
 
-   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+   ::bOnPreSaveDetail   := {|| MsgInfo( "Antes del SaveDetail" ), ::SaveDetails(), MsgInfo( "Después del SaveDetail" ) }
 
 RETURN ( Self )
 

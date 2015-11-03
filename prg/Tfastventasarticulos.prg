@@ -105,6 +105,9 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
       METHOD getNameFieldLine( cFieldName )     INLINE ( getFieldNameFromDictionary( cFieldName, ::dictionaryLine ) )
       METHOD getNameFieldHeader( cFieldName )   INLINE ( getFieldNameFromDictionary( cFieldName, ::dictionaryHeader ) )
 
+   METHOD getNumeroAlbaranProveedor()
+   METHOD getFechaAlbaranProveedor()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -3014,6 +3017,64 @@ METHOD GetDatoMovimientosAlamcen( cCodArt, cLote, cCampoRequerido )
    ::oHisMov:setStatus()
 
 RETURN ( resultado )
+
+//--------------------------------------------------------------------------//
+
+METHOD getNumeroAlbaranProveedor() CLASS TFastVentasArticulos
+
+   local nRec
+   local nOrdAnt
+   local cClave
+   local cNumero  := ""
+
+   cClave         := ::oDbf:cSerDoc
+   cClave         += Padr( ::oDbf:cNumDoc, 9 )
+   cClave         += ::oDbf:cSufDoc
+   cClave         += ::oDbf:cCodArt
+   cClave         += ::oDbf:cValPr1
+   cClave         += ::oDbf:cValPr2
+   cClave         += ::oDbf:cLote
+
+   nRec           := ::oAlbPrvL:Recno()
+   nOrdAnt        := ::oAlbPrvL:OrdSetFocus( "cPedPrvRef" )
+
+   if ::oAlbPrvL:Seek( cClave )
+      cNumero     := ::oAlbPrvL:cSerAlb + "/" + AllTrim( Str( ::oAlbPrvL:nNumAlb ) ) + "/" + ::oAlbPrvL:cSufAlb
+   end if
+
+   ::oAlbPrvL:OrdSetFocus( nOrdAnt )
+   ::oAlbPrvL:GoTo( nRec )
+
+Return ( cNumero )
+
+//---------------------------------------------------------------------------//
+
+METHOD getFechaAlbaranProveedor() CLASS TFastVentasArticulos
+
+   local nRec
+   local nOrdAnt
+   local cClave
+   local dFecha   := ctod( "" )
+
+   cClave         := ::oDbf:cSerDoc
+   cClave         += Padr( ::oDbf:cNumDoc, 9 )
+   cClave         += ::oDbf:cSufDoc
+   cClave         += ::oDbf:cCodArt
+   cClave         += ::oDbf:cValPr1
+   cClave         += ::oDbf:cValPr2
+   cClave         += ::oDbf:cLote
+
+   nRec           := ::oAlbPrvL:Recno()
+   nOrdAnt        := ::oAlbPrvL:OrdSetFocus( "cPedPrvRef" )
+
+   if ::oAlbPrvL:Seek( cClave )
+      dFecha     := ::oAlbPrvL:dFecAlb
+   end if
+
+   ::oAlbPrvL:OrdSetFocus( nOrdAnt )
+   ::oAlbPrvL:GoTo( nRec )
+
+Return ( dFecha )
 
 //---------------------------------------------------------------------------//
 
