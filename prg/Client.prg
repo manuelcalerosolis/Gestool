@@ -494,6 +494,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oDetCamposExtra:SetTipoDocumento( "Clientes" )
 
+      CodigosPostales():GetInstance():OpenFiles()
+
       cPinDiv              := cPinDiv( cDivEmp() ) // Picture de la divisa de compra
       cPouDiv              := cPouDiv( cDivEmp() ) // Picture de la divisa
       cPorDiv              := cPorDiv( cDivEmp() ) // Picture de la divisa redondeada
@@ -584,6 +586,8 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oEntidades:End()
    end if
 
+   CodigosPostales():GetInstance():CloseFiles()
+
    D():DeleteView( nView )
 
    dbfArtKit         := nil
@@ -609,7 +613,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
 
    lOpenFiles        := .f.
 
-   EnableAcceso()
+   enableAcceso()
 
 Return .t.
 
@@ -1553,6 +1557,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
       REDEFINE GET aGet[ _CODPOSTAL ] VAR aTmp[ _CODPOSTAL ] ;
          ID       160 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );
          OF       fldGeneral
 
       REDEFINE GET aGet[ _PROVINCIA ] VAR aTmp[ _PROVINCIA ] ;
@@ -3740,6 +3745,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, nTab, bValid, nMode )
                            if( !empty( nTab ), oFld:setOption( nTab ), ),;
                            lRecargaFecha( oFecIniCli, oFecFinCli, cPeriodoCli ),;
                            LoadPageClient( aTmp[ _COD ] ) }
+         
+      CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CODPOSTAL ], "Poblacion" => aGet[ _POBLACION ], "Provincia" => aGet[ _PROVINCIA ] } )
 
    ACTIVATE DIALOG oDlg ;
       ON INIT  ( EdtRotorMenu( aTmp, aGet, oDlg, oBrw, nMode ) ) ;

@@ -15,7 +15,8 @@ CLASS CodigosPostales FROM TMant
    DATA codigoProvincia
 
    DATA hCodigoPostal
-   DATA oldCodigoPostal
+   
+   DATA oldCodigo
 
    DATA oProvincias
 
@@ -40,7 +41,7 @@ CLASS CodigosPostales FROM TMant
    METHOD setProvincia( cProvincia )                  INLINE ( if( !empty( ::getProvincia() ), ::getProvincia():cText( cProvincia ), nil ) )
 
    METHOD setBinding( hCodigoPostal )               
-   METHOD setOldValueCodigoPostal( cCodigoPostal )    INLINE ( ::oldCodigoPostal := cCodigoPostal )
+   METHOD setOldValueCodigoPostal( cCodigoPostal )    INLINE ( ::oldCodigo := cCodigoPostal )
    METHOD validCodigoPostal()
 
 END CLASS
@@ -265,10 +266,10 @@ RETURN ( ::oDlg:end( IDOK ) )
 
 METHOD setBinding( hCodigoPostal )
 
-   ::hCodigoPostal  := hCodigoPostal
+   ::hCodigoPostal   := hCodigoPostal
 
-   if !empty( ::getCodigoPostal() )
-      ::setOldValueCodigoPostal( ::getCodigoPostal():varGet() )
+   if !empty( ::getCodigo() )
+      ::setOldValueCodigoPostal( ::getCodigo():varGet() )
    end if 
 
 RETURN ( self )
@@ -277,22 +278,22 @@ RETURN ( self )
 
 METHOD validCodigoPostal()
 
-   local cCodigoPostal  
+   local cCodigo  
 
-   if empty( ::getCodigoPostal() )
+   if empty( ::getCodigo() )
       RETURN .t.
    end if 
 
-   cCodigoPostal        := ::getCodigoPostal():varGet() 
+   cCodigo           := ::getCodigo():varGet() 
 
-   if ::oldCodigoPostal != cCodigoPostal
+   if ::oldCodigo != cCodigo
       
-      if ::oDbf:seek( cCodigoPostal )
+      if ::oDbf:seek( cCodigo )
          ::setPoblacion( ::oDbf:cNomPos )
          ::setProvincia( ::oProvincias:getNombreProvincia( ::oDbf:cCodPrv ) )
       end if  
 
-      ::setOldValueCodigoPostal( cCodigoPostal )
+      ::setOldValueCodigoPostal( cCodigo )
 
    end if 
 
