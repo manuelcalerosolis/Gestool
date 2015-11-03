@@ -6,7 +6,15 @@ taskkill /F /IM gestool.exe
 
 cd \fw195\gestool\bin\
 
-gestool.exe /NOPASSWORD
+if "%1"=="" goto NOPASSWORD
+
+   gestool.exe %1
+   goto EXIT
+
+:NOPASSWORD
+   gestool.exe /NOPASSWORD
+
+:EXIT
 
 cd \fw195\gestool\
 

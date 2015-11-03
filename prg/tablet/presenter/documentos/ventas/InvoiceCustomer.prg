@@ -24,6 +24,10 @@ CLASS InvoiceCustomer FROM DocumentsSales
    METHOD onPostSaveAppend()              INLINE ( generatePagosFacturaCliente( ::getId(), ::nView ),;
                                                    checkPagosFacturaCliente( ::getId(), ::nView ) )
 
+   METHOD appendButtonMode()              INLINE ( ::lAppendMode() .or. ( ::lEditMode() .and. accessCode():lInvoiceModify ) )
+   METHOD editButtonMode()                INLINE ( ::appendButtonMode() )
+   METHOD deleteButtonMode()              INLINE ( ::appendButtonMode() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -32,11 +36,13 @@ METHOD New() CLASS InvoiceCustomer
 
    ::super:New( self )
 
+   ::lAlowEdit          := accessCode():lInvoiceModify
+
    // Vistas--------------------------------------------------------------------
 
    ::oViewSearchNavigator:setTitle( "Facturas de clientes" )  
 
-   ::oViewEdit:setTitle( "Factura" )  
+   ::oViewEdit:setTitle( "Factura cliente" )  
 
    ::oViewEditResumen:setTitle( "Resumen factura" )
 

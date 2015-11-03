@@ -15,7 +15,7 @@ END CLASS
 
 METHOD setColumns() CLASS ProductViewSearchNavigator
 
-   ::setBrowseConfigurationName( "Grid articulo" )
+   ::setBrowseConfigurationName( "grid_articulo" )
 
    with object ( ::addColumn() )
       :cHeader          := "Artículo"

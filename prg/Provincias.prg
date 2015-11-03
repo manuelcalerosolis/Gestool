@@ -24,7 +24,7 @@ CLASS Provincias FROM TMant
    METHOD Create( cPath ) CONSTRUCTOR
 
    METHOD OpenFiles( lExclusive )
-   MESSAGE OpenService( lExclusive )   METHOD OpenFiles( lExclusive )
+   MESSAGE OpenService( lExclusive )               METHOD OpenFiles( lExclusive )
 
    METHOD DefineFiles()
 
@@ -45,6 +45,7 @@ METHOD Create( cPath, cDriver ) CLASS Provincias
 
    ::cPath           := cPath
    ::cDriver         := cDriver
+
    ::oDbf            := nil
 
 RETURN ( Self )
@@ -53,8 +54,6 @@ RETURN ( Self )
 
 METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS Provincias
 
-   DEFAULT cPath        := cPatArt()
-   DEFAULT cDriver      := cDriver()
    DEFAULT oWndParent   := GetWndFrame()
 
    if oMenuItem != nil
@@ -67,11 +66,10 @@ METHOD New( cPath, cDriver, oWndParent, oMenuItem ) CLASS Provincias
       oWndParent:CloseAll()
    end if
 
-   ::cPath              := cPath
-   ::cDriver            := cDriver
-   ::oWndParent         := oWndParent
-   ::oDbf               := nil
+   ::Create()
 
+   ::oWndParent         := oWndParent
+   
    ::lCreateShell       := .f.
 
    ::cMru               := "Flag_spain_16"
@@ -102,11 +100,11 @@ METHOD OpenFiles( lExclusive, cPath ) CLASS Provincias
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
-   RECOVER
+   RECOVER USING oError
 
       lOpen             := .f.
       
-      msgStop( "Imposible abrir las bases de datos de provincias" )
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de provincias" )
       
       ::CloseFiles()
 
@@ -123,13 +121,13 @@ METHOD DefineFiles( cPath, cDriver ) CLASS Provincias
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := ::cDriver
 
-   DEFINE DATABASE ::oDbf FILE "PROVINCIA.DBF" CLASS "PROVINCIA" ALIAS "PROVINCIA" PATH ( cPath ) VIA ( cDriver ) COMMENT "Provincias"
+   DEFINE DATABASE ::oDbf FILE "Provincia.DBF" CLASS "PROVINCIA" ALIAS "PROVINCIA" PATH ( cPath ) VIA ( cDriver ) COMMENT "Provincias"
 
-      FIELD NAME "cCodPrv"       TYPE "C" LEN  2  DEC 0  COMMENT "Código"                             COLSIZE 80  OF ::oDbf
-      FIELD NAME "cNomPrv"       TYPE "C" LEN 30  DEC 0  COMMENT "Provincia"                          COLSIZE 200 OF ::oDbf
+      FIELD NAME "cCodPrv"       TYPE "C" LEN  2  DEC 0  COMMENT "Código"                 COLSIZE 80  OF ::oDbf
+      FIELD NAME "cNomPrv"       TYPE "C" LEN 30  DEC 0  COMMENT "Provincia"              COLSIZE 200 OF ::oDbf
 
-      INDEX TO "PROVINCIA.CDX" TAG "cCodPrv" ON "cCodPrv"            COMMENT "Código"     NODELETED OF ::oDbf
-      INDEX TO "PROVINCIA.CDX" TAG "cNomPrv" ON "Upper( cNomPrv )"   COMMENT "Provincia"  NODELETED OF ::oDbf
+      INDEX TO "Provincia.CDX" TAG "cCodPrv" ON "cCodPrv"            COMMENT "Código"     NODELETED OF ::oDbf
+      INDEX TO "Provincia.CDX" TAG "cNomPrv" ON "Upper( cNomPrv )"   COMMENT "Provincia"  NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
 

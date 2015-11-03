@@ -41,6 +41,8 @@ CLASS TImpFacCom
    DATA oDbfIva
    DATA oDbfPgo
    DATA oDbfDiv
+   DATA oDbfCampoExtra
+   DATA oDbfDetCampoExtra   
 
    METHOD New()
 
@@ -70,6 +72,10 @@ CLASS TImpFacCom
 
    METHOD ImportaPedidosProveedores()
 
+   METHOD AgregaCamposExtra( )
+
+   METHOD ImportaValorCampoExtra( )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -79,6 +85,7 @@ METHOD OpenFiles()
 
    local lOpen    := .t.
    local oError
+   local lOpenCliPrv := .f.
    local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    if Empty( ::cPathFac )
@@ -96,12 +103,14 @@ METHOD OpenFiles()
    DATABASE NEW ::oDbfDiv PATH ( cPatDat() )  FILE "DIVISAS.DBF" VIA ( cDriver() )CLASS cImp() INDEX "DIVISAS.CDX"
    DATABASE NEW ::oDbfPgo PATH ( cPatGrp() )  FILE "FPAGO.DBF" VIA ( cDriver() )CLASS cImp() INDEX "FPAGO.CDX"
 
+
    if !File( alltrim( ::cPathFac ) + "PROVEEDO.DBF" )
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
    else
       DATABASE NEW ::oDbfPrvGst PATH ( cPatPrv() )  FILE "PROVEE.DBF" VIA ( cDriver() )CLASS "PRVGST" INDEX "PROVEE.CDX"
       DATABASE NEW ::oDbfPrvFac PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cDriver() )CLASS "PRVFAC"
+      lOpenCliPrv := .t.
    end if
 
    if !File( ::cPathFac + "CLIENTE.DBF" )
@@ -111,7 +120,13 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfCliBnc PATH ( cPatCli() )  FILE "CLIBNC.DBF"   VIA ( cDriver() )CLASS "CLIBNCGST"  INDEX "CLIBNC.CDX"
       DATABASE NEW ::oDbfCliGst PATH ( cPatCli() )  FILE "CLIENT.DBF"   VIA ( cDriver() )CLASS "CLIGST"  INDEX "CLIENT.CDX"
       DATABASE NEW ::oDbfCliFac PATH ( ::cPathFac ) FILE "CLIENTE.DBF"  VIA ( cDriver() )CLASS "CLIFAC"
+      lOpenCliPrv := .t.
    end if
+
+   if lOpenCliPrv
+      DATABASE NEW ::oDbfCampoExtra    PATH ( cPatEmp() )  FILE "CAMPOEXTRA.DBF" VIA ( cDriver() )CLASS "CAMPOEXTRA"  INDEX "CAMPOEXTRA.CDX"
+      DATABASE NEW ::oDbfDetCampoExtra PATH ( cPatEmp() )  FILE "DETCEXTRA.DBF"  VIA ( cDriver() )CLASS "DETCEXTRA"   INDEX "DETCEXTRA.CDX"
+   end if 
 
    if !File( ::cPathFac + "Articulo.DBF" )      
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
@@ -242,6 +257,18 @@ METHOD CloseFiles()
       ::oDbfPrvFac:End()
    else
       ::oDbfPrvFac := nil
+   end if
+
+   if !Empty( ::oDbfCampoExtra )
+      ::oDbfCampoExtra:End()
+   else
+      ::oDbfCampoExtra := nil
+   end if
+
+   if !Empty( ::oDbfDetCampoExtra )
+      ::oDbfDetCampoExtra:End()
+   else
+      ::oDbfDetCampoExtra := nil
    end if
 
    if !Empty( ::oDbfArtPrv )
@@ -461,6 +488,10 @@ METHOD Importar()
 
    ::oDlg:Disable()
 
+   if ::aLgcIndices[ 1 ] .or. ::aLgcIndices[ 2 ]
+      ::AgregaCamposExtra()
+   end if
+
    if ::aLgcIndices[ 1 ]
       ::ImportaProveedores()
    end if 
@@ -506,6 +537,8 @@ METHOD ImportaProveedores()
    //Empezamos el trasbase de proveedores
 
    local nOrdAnt
+   local cTipoCampoExtra      := '22'
+   local cCodigoCampoExtra  
 
    ::aMtrIndices[ 1 ]:SetTotal( ::oDbfPrvFac:LastRec() )  
 
@@ -549,6 +582,21 @@ METHOD ImportaProveedores()
 
       ::oDbfPrvGst:Save()
 
+      if !Empty( ::oDbfPrvFac:Libre1 )
+         cCodigoCampoExtra   := 1
+         ::ImportaValorCampoExtra(  cTipoCampoExtra, cCodigoCampoExtra, ::oDbfPrvFac:Codigo, ::oDbfPrvFac:Libre1 )
+      end if 
+
+      if !Empty( ::oDbfPrvFac:Libre2 )
+         cCodigoCampoExtra   := 2
+         ::ImportaValorCampoExtra(  cTipoCampoExtra, cCodigoCampoExtra, ::oDbfPrvFac:Codigo, ::oDbfPrvFac:Libre2 )
+      end if
+
+      if !Empty( ::oDbfPrvFac:Libre3 )
+         cCodigoCampoExtra   := 3
+         ::ImportaValorCampoExtra(  cTipoCampoExtra, cCodigoCampoExtra, ::oDbfPrvFac:Codigo, ::oDbfPrvFac:Libre3 )
+      end if
+
       ::aMtrIndices[ 1 ]:Set( ::oDbfPrvFac:Recno() )
 
       ::oDbfPrvFac:Skip()
@@ -563,6 +611,8 @@ METHOD ImportaClientes()
 
    local cCuenta
    local nOrdAnt
+   local cTipoCampoExtra      := '21'
+   local cCodigoCampoExtra 
 
    ::aMtrIndices[ 2 ]:SetTotal( ::oDbfCliFac:LastRec() )
 
@@ -614,6 +664,10 @@ METHOD ImportaClientes()
          ::oDbfCliGst:CodPago := ''
       end if
 
+      ::oDbfPgo:OrdSetFocus( nOrdAnt )
+
+      ::oDbfCliGst:Save()
+
       //LLenamos la tabla de bancos de clientes
 
       if !Empty( ::oDbfCliFac:Ccc )
@@ -637,11 +691,24 @@ METHOD ImportaClientes()
          
          ::oDbfCliBnc:Save()
 
+      end if      
+
+      //Importamos los valores de los campos libres en los campos extra
+
+      if !Empty( ::oDbfCliFac:Libre1 )
+         cCodigoCampoExtra    := 1
+         ::ImportaValorCampoExtra( cTipoCampoExtra, cCodigoCampoExtra, ::oDbfCliFac:Codigo, ::oDbfCliFac:Libre1 )
       end if
 
-      ::oDbfPgo:OrdSetFocus( nOrdAnt )
+      if !Empty( ::oDbfCliFac:Libre2 )
+         cCodigoCampoExtra    := 2
+         ::ImportaValorCampoExtra( cTipoCampoExtra, cCodigoCampoExtra, ::oDbfCliFac:Codigo, ::oDbfCliFac:Libre2 )
+      end if
 
-      ::oDbfCliGst:Save()
+      if !Empty( ::oDbfCliFac:Libre3 )
+         cCodigoCampoExtra    := 3
+         ::ImportaValorCampoExtra( cTipoCampoExtra, cCodigoCampoExtra, ::oDbfCliFac:Codigo, ::oDbfCliFac:Libre3 )
+      end if      
 
       ::aMtrIndices[ 2 ]:Set( ::oDbfCliFac:Recno() )
 
@@ -1511,6 +1578,8 @@ METHOD ImportaPedidosProveedores()
             ::oDbfPedPrvTGst:cProPrv   := ::oDbfPrvGst:Provincia
             ::oDbfPedPrvTGst:cDniPrv   := ::oDbfPrvGst:Nif
             ::oDbfPedPrvTGst:cPosPrv   := ::oDbfPrvGst:CodPostal
+         else
+            ::oDbfPedPrvTGst:cDniPrv   := ::oDbfPedPrvTFac:Cif
          end if
 
          ::oDbfPedPrvTGst:cCodAlm      := oUser():cAlmacen()
@@ -1615,8 +1684,8 @@ METHOD ImportaPedidosProveedores()
          if Empty( ::oDbfAlbLFac:Codigo ) 
             ::oDbfPedPrvLGst:mLngDes   := ::oDbfAlbLFac:Concepto
          else 
-            ::oDbfPedPrvLGst:cRef         := ::oDbfAlbLFac:Codigo
-            ::oDbfPedPrvLGst:cDetalle     := ::oDbfAlbLFac:Concepto
+            ::oDbfPedPrvLGst:cRef      := ::oDbfAlbLFac:Codigo
+            ::oDbfPedPrvLGst:cDetalle  := ::oDbfAlbLFac:Concepto
          end if 
          ::oDbfPedPrvLGst:nIva         := ::oDbfAlbLFac:Iva
          ::oDbfPedPrvLGst:nCanPed      := 1 
@@ -1624,7 +1693,7 @@ METHOD ImportaPedidosProveedores()
          ::oDbfPedPrvLGst:nPreDiv      := ::oDbfAlbLFac:Precio
          ::oDbfPedPrvLGst:cUnidad      := "UD"
          ::oDbfPedPrvLGst:cAlmLin      := oUser():cAlmacen()
-         ::oDbfPedPrvLGst:nNumLin      := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12, 3 ) )
+         ::oDbfPedPrvLGst:nNumLin      := Val( SubStr( AllTrim( ::oDbfAlbLFac:RfaLin ), 12 ) )
 
          if ::oDbfAlbLFac:Valestock 
             ::oDbfPedPrvLGst:nCtlStk := 1
@@ -1647,6 +1716,47 @@ METHOD ImportaPedidosProveedores()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD AgregaCamposExtra()
+
+   local mDocumento  := hb_serialize( {"Clientes" => .t. , "Proveedores"=> .t. } )
+   local n 
+
+   if  !(::oDbfCampoExtra:Seek('01') )
+
+      for n:= 1 to 3 
+
+         ::oDbfCampoExtra:Append()
+         ::oDbfCampoExtra:Blank()
+
+         ::oDbfCampoExtra:cCodigo    := PadL( n, 2, '0' )
+         ::oDbfCampoExtra:cNombre    := 'Libre' + Alltrim( Str( n ) )
+         ::oDbfCampoExtra:nTipo      := 1
+         ::oDbfCampoExtra:mDocumento := mDocumento 
+
+         ::oDbfCampoExtra:Save()
+
+      next 
+
+   end if 
+
+RETURN ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ImportaValorCampoExtra( cTipoCampoExtra, cCodigoCampoExtra, cCodCliPrv, cValor)
+
+   ::oDbfDetCampoExtra:Append()
+   ::oDbfDetCampoExtra:Blank()
+
+      ::oDbfDetCampoExtra:cTipDoc      := cTipoCampoExtra
+      ::oDbfDetCampoExtra:cCodTipo     := PadL( cCodigoCampoExtra, 2, '0' )
+      ::oDbfDetCampoExtra:cClave       := cCodCliPrv
+      ::oDbfDetCampoExtra:cValor       := cValor
+
+   ::oDbfDetCampoExtra:Save()
+
+RETURN ( self )
 
 /*Funcion que llama a la clase*/
 

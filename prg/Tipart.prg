@@ -667,7 +667,6 @@ Method Process()
             if file( cPatSnd() + "TipArt.Dbf" )
 
                oTipArtTmp   := TTipArt():New( cPatSnd(), cLocalDriver() )
-               msgAlert( oTipArtTmp:cDriver, "cDriver" )
                oTipArtTmp:OpenService( .f. )
 
                oTipArt      := TTipArt():New( cPatEmp(), cDriver() )

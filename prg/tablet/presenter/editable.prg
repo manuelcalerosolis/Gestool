@@ -51,6 +51,7 @@ CLASS Editable
    METHOD lEditMode()                           INLINE ( ::nMode == EDIT_MODE )
    METHOD lZoomMode()                           INLINE ( ::nMode == ZOOM_MODE )
    METHOD lNotZoomMode()                        INLINE ( ::nMode != ZOOM_MODE )
+   METHOD TextMode()                            INLINE ( lblTitle( ::nMode ) )
 
    METHOD setDataTable( cDataTable )            INLINE ( ::cDataTable := cDataTable )
    METHOD getDataTable()                        INLINE ( ::cDataTable )
@@ -87,6 +88,10 @@ CLASS Editable
    METHOD appendDetail()
       METHOD onPreSaveAppendDetail()            INLINE ( .t. )
       METHOD onPreSaveEditDetail()              INLINE ( .t. )
+
+      METHOD appendButtonMode()                 INLINE ( ::lNotZoomMode() )
+      METHOD editButtonMode()                   INLINE ( ::lNotZoomMode() )
+      METHOD deleteButtonMode()                 INLINE ( ::lNotZoomMode() )
 
    METHOD editDetail()
    METHOD deleteDetail()
@@ -212,7 +217,6 @@ METHOD Zoom() CLASS Editable
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
-
 
 METHOD Delete() CLASS Editable
 

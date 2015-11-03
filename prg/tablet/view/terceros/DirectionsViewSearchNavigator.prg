@@ -17,7 +17,7 @@ END CLASS
 
 METHOD setColumns() CLASS DirectionsViewSearchNavigator
 
-   ::setBrowseConfigurationName( "Grid direcciones" )
+   ::setBrowseConfigurationName( "grid_direcciones" )
 
    with object ( ::addColumn() )
       :cHeader          := "Cliente"

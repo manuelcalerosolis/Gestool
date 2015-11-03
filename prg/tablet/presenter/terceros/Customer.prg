@@ -10,7 +10,6 @@ CLASS Customer FROM Editable
    DATA oGridCustomer
 
    DATA cTipoCliente                   INIT ""
-
    DATA hTipoCliente                   INIT { "1" => "Clientes", "2" => "Potenciales", "3" => "Web" }
 
    METHOD New()
@@ -29,7 +28,7 @@ CLASS Customer FROM Editable
 
    METHOD setFilterAgentes()
 
-   METHOD onPreSaveEdit()     INLINE ( .t. )
+   METHOD onPreSaveEdit()              INLINE ( .t. )
    METHOD onPreEnd()                   INLINE ( .t. )
 
    METHOD onPostGetDocumento()
@@ -172,7 +171,7 @@ Return ( .t. )
 
 METHOD setFilterAgentes() CLASS Customer
 
-   local cCodigoAgente     := AccessCode():cAgente
+   local cCodigoAgente     := accessCode():cAgente
 
    if !empty(cCodigoAgente)
       ( D():Clientes( ::nView ) )->( dbsetfilter( {|| Field->cAgente == cCodigoAgente }, "cAgente == cCodigoAgente" ) )

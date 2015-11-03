@@ -19,7 +19,7 @@ END CLASS
 
 METHOD setColumns() CLASS DocumentSalesViewSearchNavigator
 
-   ::setBrowseConfigurationName( "Grid ventas" )
+   ::setBrowseConfigurationName( "grid_ventas" )
 
    with object ( ::addColumn() )
       :cHeader           := "Id"

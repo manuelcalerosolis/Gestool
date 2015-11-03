@@ -207,8 +207,13 @@ METHOD onPreRunNavigator() CLASS DocumentsSales
    ( ::getWorkArea() )->( dbgotop() ) 
 
    if ( accessCode():lFilterByAgent ) .and. !empty( accessCode():cAgente )
-      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == accessCode():cAgente }, "cCodAge == cAgente" ) )
+   
+      ( ::getWorkArea() )->( dbsetfilter( {|| Field->cCodAge == accessCode():cAgente }, "Field->cCodAge == cAgente" ) )
       ( ::getWorkArea() )->( dbgotop() )
+
+      ( D():Clientes( ::nView ) )->( dbsetfilter( {|| Field->cAgente == accessCode():cAgente }, "Field->cAgente == cAgente" ) )
+      ( D():Clientes( ::nView ) )->( dbgotop() )
+
    end if 
 
 Return ( .t. )

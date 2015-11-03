@@ -3,7 +3,10 @@
 
 CLASS CustomerViewSearchNavigator FROM ViewSearchNavigator
 
-   METHOD setItemsBusqueda()           INLINE ( ::hashItemsSearch := { "Establecimiento" => "NbrEst", "Nombre" => "Titulo", "Código" => "Cod" } )
+   METHOD setItemsBusqueda()           INLINE ( ::hashItemsSearch := {  "Establecimiento" => "NbrEst",;
+                                                                        "Nombre" => "Titulo",;
+                                                                        "Código" => "Cod",;
+                                                                        "Población" => "Poblacion" } )
 
    METHOD setColumns()
 
@@ -31,7 +34,7 @@ Return ( self )
 
 METHOD setColumns() CLASS CustomerViewSearchNavigator
 
-   ::setBrowseConfigurationName( "Grid clientes" )
+   ::setBrowseConfigurationName( "grid_clientes" )
 
    with object ( ::addColumn() )
       :cHeader           := "Cliente"

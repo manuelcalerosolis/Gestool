@@ -16,15 +16,21 @@ CLASS ViewSearchNavigator FROM ViewNavigator
    METHOD setItemsBusqueda()           VIRTUAL
 
    METHOD Resource()
-
-   METHOD initDialog()
+      METHOD initDialog()
+      METHOD validDialog()
    
    METHOD defineBarraBusqueda()
 
-   METHOD getComboboxOrden()
+   METHOD getComboboxOrden()           INLINE ( if( !empty( ::comboboxSearch ), ::comboboxSearch:varGet(), "" ) )
+   METHOD setComboboxOrden( cOrden )   INLINE ( if( !empty( ::comboboxSearch ), ( ::comboboxSearch:set( cOrden ), ::changeComboboxOrden() ), ) )
+
+   METHOD getInitialComboboxOrden()
       METHOD changeComboboxOrden()
 
    METHOD changeComboboxSearch()       INLINE ( ::changeComboboxOrden(), ::getSearch:setFocus(), ::refreshBrowse() )
+
+   METHOD restoreStatusComboboxSearch()
+   METHOD saveStatusComboboxSearch()   INLINE ( setGridOrder( ::getBrowseConfigurationName(), ::getComboboxOrden() ) )
 
    METHOD setSelectorMode()            INLINE ( ::lSelectorMode  := .t. )
 
@@ -40,7 +46,7 @@ METHOD New( oSender ) CLASS ViewSearchNavigator
 
    ::oSender                  := oSender
 
-   ::bDblClickBrowseGeneral   := {|| ::oSender:Edit(), ::refreshBrowse() }
+   ::setDblClickBrowseGeneral( {|| if( ::oSender:lAlowEdit, ::oSender:Edit(), ::oSender:Zoom() ), ::refreshBrowse() } )
 
    ::setTitle()
 
@@ -72,7 +78,9 @@ METHOD Resource() CLASS ViewSearchNavigator
 
    ::oDlg:bResized            := {|| ::resizeDialog() }
 
-   ::oDlg:Activate( ,,,.t.,,, {|| ::initDialog() } )
+   ::oDlg:Activate( , , ,.t., {|| ::validDialog() },, {|| ::initDialog() } )
+
+   ::endDialog()
 
 Return ( self )
 
@@ -84,13 +92,19 @@ METHOD initDialog()
 
    ::oSender:initDialog()
 
-   ::changeComboboxOrden()
-
-   ( ::getWorkArea() )->( dbgotop() )
+   ::restoreStatusComboboxSearch()
 
    ::refreshBrowse()
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD validDialog()
+
+   ::saveStatusComboboxSearch()
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -100,7 +114,7 @@ METHOD defineBarraBusqueda() CLASS ViewSearchNavigator
    local cComboboxOrden
 
    cGetSearch        := Space( 100 )
-   cComboboxOrden    := ::getComboboxOrden()
+   cComboboxOrden    := ::getInitialComboboxOrden()
 
    ::getSearch       := TGridGet():Build(       {  "nRow"      => 45,;
                                                    "nCol"      => {|| GridWidth( 0.5, ::oDlg ) },;
@@ -124,7 +138,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD getComboboxOrden() CLASS ViewSearchNavigator
+METHOD getInitialComboboxOrden() CLASS ViewSearchNavigator
 
    local cOrden   := ""
 
@@ -138,7 +152,7 @@ Return ( cOrden )
 
 METHOD changeComboboxOrden() CLASS ViewSearchNavigator
 
-   local textComboboxSearch   := ::comboboxSearch:varGet() 
+   local textComboboxSearch   :=  ::getComboboxOrden()
 
    if !empty( textComboboxSearch )
       ( ::getWorkArea() )->( ordsetfocus( ::hashItemsSearch[ textComboboxSearch ] ) )
@@ -147,3 +161,20 @@ METHOD changeComboboxOrden() CLASS ViewSearchNavigator
 Return ( self )
 
 //---------------------------------------------------------------------------//
+
+METHOD restoreStatusComboboxSearch()
+
+   local gridOrder            := getGridOrder( ::getBrowseConfigurationName() )
+
+   if !empty( gridOrder )
+      ::setComboboxOrden( gridOrder ) 
+   else 
+      ::changeComboboxOrden()
+   end if 
+
+   ( ::getWorkArea() )->( dbgotop() )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+

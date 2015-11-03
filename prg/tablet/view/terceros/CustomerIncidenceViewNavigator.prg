@@ -16,7 +16,7 @@ END CLASS
 
 METHOD setColumns() CLASS CustomerIncidenceViewNavigator
 
-   ::setBrowseConfigurationName( "Grid clientes incidencias" )
+   ::setBrowseConfigurationName( "grid_clientes_incidencias" )
 
    with object ( ::addColumn() )
       :cHeader             := "Incidencia"

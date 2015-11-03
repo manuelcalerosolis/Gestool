@@ -40,6 +40,8 @@ METHOD insertControls() CLASS DocumentSalesViewEdit
 
    ::columnsBrowseLineas()
 
+   ::gotopBrowseLineas()
+
 Return ( self )
 
 //---------------------------------------------------------------------------//

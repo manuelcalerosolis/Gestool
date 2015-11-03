@@ -3,7 +3,6 @@
 
 CLASS ViewNavigator FROM ViewBase
 
-   DATA bDblClickBrowseGeneral
 
    METHOD New()
 
@@ -27,7 +26,9 @@ CLASS ViewNavigator FROM ViewBase
                                                             ( ::oBrowse:Select( 0 ), ::oBrowse:Select( 1 ), ::oBrowse:Refresh() ),;
                                                          ) )
 
+   DATA bDblClickBrowseGeneral
    METHOD setDblClickBrowseGeneral( block )  INLINE ( ::bDblClickBrowseGeneral := block )
+   METHOD getDblClickBrowseGeneral()         INLINE ( ::bDblClickBrowseGeneral )
 
 END CLASS
 
@@ -35,10 +36,9 @@ END CLASS
 
 METHOD New( oSender ) CLASS ViewNavigator
 
-   ::oSender                     := oSender
+   ::oSender               := oSender
 
-   ::bDblClickBrowseGeneral      := {|| ::oSender:Edit(), ::refreshBrowse() }
-
+Return ( self )
 Return ( self )
 
 //---------------------------------------------------------------------------//
@@ -75,7 +75,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "bLClicked" => {|| if( ::oSender:Append(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
-   if accessCode():lInvoiceModify
+   if ::oSender:lAlowEdit
 
    TGridImage():Build(  {  "nTop"      => 75,;
                            "nLeft"     => {|| GridWidth( 2, ::oDlg ) },;
@@ -83,6 +83,14 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "nHeight"   => 64,;
                            "cResName"  => "flat_edit_64",;
                            "bLClicked" => {|| if( ::oSender:Edit(), ::refreshBrowse(), ) },;
+                           "oWnd"      => ::oDlg } )
+
+   TGridImage():Build(  {  "nTop"      => 75,;
+                           "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;
+                           "nWidth"    => 64,;
+                           "nHeight"   => 64,;
+                           "cResName"  => "flat_minus_64",;
+                           "bLClicked" => {|| if( ::oSender:Delete(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
    else
@@ -95,16 +103,7 @@ METHOD BotonesAcciones() CLASS ViewNavigator
                            "bLClicked" => {|| if( ::oSender:Zoom(), ::refreshBrowse(), ) },;
                            "oWnd"      => ::oDlg } )
 
-
    end if 
-
-   TGridImage():Build(  {  "nTop"      => 75,;
-                           "nLeft"     => {|| GridWidth( 3.5, ::oDlg ) },;
-                           "nWidth"    => 64,;
-                           "nHeight"   => 64,;
-                           "cResName"  => "flat_minus_64",;
-                           "bLClicked" => {|| if( ::oSender:Delete(), ::refreshBrowse(), ) },;
-                           "oWnd"      => ::oDlg } )
 
 Return ( self )
 
@@ -169,7 +168,7 @@ METHOD BrowseGeneral( oDlg ) CLASS ViewNavigator
 
    ::setColumns()
 
-   ::oBrowse:bLDblClick       := ::bDblClickBrowseGeneral
+   ::oBrowse:bLDblClick       := ::getDblClickBrowseGeneral()
 
    ::oBrowse:CreateFromCode()  
 
