@@ -380,6 +380,8 @@ STATIC FUNCTION OpenFiles( lExt )
          lOpenFiles     := .f.
       end if
 
+      CodigosPostales():GetInstance():OpenFiles()
+
       oBandera          := TBandera():New()
 
       oMailing          := TGenmailingDatabasePedidosProveedor():New( nView )
@@ -429,6 +431,8 @@ STATIC FUNCTION CloseFiles()
    if oStock != nil
       oStock:end()
    end if
+
+   CodigosPostales():GetInstance():CloseFiles()
 
    D():DeleteView( nView )
 
@@ -1139,18 +1143,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
       REDEFINE GET aGet[ _CPOSPRV ] VAR aTmp[ _CPOSPRV ] ;
          ID       143 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
+         VALID    ( CodigosPostales():GetInstance():validCodigoPostal() );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CPOBPRV ] VAR aTmp[ _CPOBPRV ] ;
          ID       144 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CPROPRV ] VAR aTmp[ _CPROPRV ] ;
          ID       147 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aGet[_CCODALM] VAR aTmp[_CCODALM]	;
@@ -1159,7 +1162,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
          VALID    ( cAlmacen( aGet[_CCODALM], D():Almacen( nView ), oSay[ 1 ] ) ) ;
          ON HELP  ( BrwAlmacen( aGet[_CCODALM], oSay[ 1 ] ) ) ;
          BITMAP   "LUPA" ;
-         COLOR    CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 1 ] VAR cSay[ 1 ] ;
@@ -2086,6 +2088,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbf, oBrw, cCodPrv, cCodArt, nMode )
 			OF 		oDlg ;
          CANCEL ;
          ACTION   ( If( ExitNoSave( nMode, dbfTmpLin ), ( oDlg:end() ), ) )
+
+      CodigosPostales():GetInstance():setBinding( { "CodigoPostal" => aGet[ _CPOSPRV ], "Poblacion" => aGet[ _CPOBPRV ], "Provincia" => aGet[ _CPROPRV ] } )
 
       if nMode != ZOOM_MODE
          oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp ) } )
