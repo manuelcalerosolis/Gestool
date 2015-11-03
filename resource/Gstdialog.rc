@@ -979,11 +979,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Temporada", 800, "Static", WS_GROUP, 49, 115, 47, 8
   CONTROL "", 500, "TBitMap", 0x0000020e, 4, 3, 34, 30, 0x00000020
   CONTROL "Datos generales del artículo", -1, "Static", SS_LEFTNOWORDWRAP, 44, 3, 446, 8
-<<<<<<< HEAD
   CONTROL "Ref. auxiliar", -1, "Static", WS_GROUP, 216, 261, 62, 8
   CONTROL "Ref. secundaria", -1, "Static", WS_GROUP, 216, 273, 62, 8
-=======
->>>>>>> origin/master
   CONTROL "Lote actual", -1, "Static", WS_GROUP, 49, 193, 41, 8
   CONTROL "Lote", -1, "Button", BS_GROUPBOX, 44, 167, 164, 37
   CONTROL "Numero de serie", -1, "Button", BS_GROUPBOX, 210, 167, 170, 37
@@ -1002,11 +999,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "Código normalizado", -1, "Static", WS_GROUP, 216, 248, 62, 8
   CONTROL "Matriz", -1, "Static", WS_GROUP, 388, 42, 24, 8
   CONTROL "Relación de codigos barras", -1, "Button", BS_GROUPBOX, 382, 67, 108, 216
-<<<<<<< HEAD
-=======
-  CONTROL "Ref. auxiliar", -1, "Static", WS_GROUP, 216, 261, 62, 8
-  CONTROL "Referencia segundaria", -1, "Static", WS_GROUP, 216, 273, 75, 8
->>>>>>> origin/master
 }
 
 ART_10 DIALOG DISCARDABLE 32, 6, 496, 286
